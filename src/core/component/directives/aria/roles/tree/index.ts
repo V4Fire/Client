@@ -15,11 +15,11 @@ export class Tree extends ARIARole {
 	/** @inheritDoc */
 	init(): void {
 		const
-			{orientation, isRoot} = this.params;
+			{orientation, root} = this.params;
 
 		this.setRootRole();
 
-		if (orientation === 'horizontal' && isRoot) {
+		if (root) {
 			this.setAttribute('aria-orientation', orientation);
 		}
 	}
@@ -28,7 +28,7 @@ export class Tree extends ARIARole {
 	 * Sets the role to the element depending on whether the tree is root or nested
 	 */
 	protected setRootRole(): void {
-		this.setAttribute('role', this.params.isRoot ? 'tree' : 'group');
+		this.setAttribute('role', this.params.root ? 'tree' : 'group');
 	}
 
 	/**

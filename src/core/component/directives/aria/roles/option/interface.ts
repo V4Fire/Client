@@ -8,7 +8,11 @@
 
 import type { HandlerAttachment } from 'core/component/directives/aria/roles/interface';
 
+export interface OptionParams {
+	selected: boolean;
+	'@change': HandlerAttachment;
+}
+
 export class OptionParams {
-	isSelected: boolean = false;
 	'@change': HandlerAttachment = () => undefined;
 }

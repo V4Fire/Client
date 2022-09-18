@@ -15,7 +15,7 @@
  */
 
 import type iBlock from 'super/i-block/i-block';
-import type iAccess from 'traits/i-access/i-access';
+import iAccess from 'traits/i-access/i-access';
 
 import { TabParams } from 'core/component/directives/aria/roles/tab/interface';
 import { ARIARole, KeyCodes } from 'core/component/directives/aria/roles/interface';
@@ -26,24 +26,26 @@ export class Tab extends ARIARole {
 
 	/** @inheritDoc */
 	init(): void {
+		if (!iAccess.is(this.ctx)) {
+			Object.throw('Tab aria directive expects the component to realize iAccess interface');
+		}
+
 		const {
 			el,
 			params: {
-				isFirst,
-				isSelected,
+				first,
 				hasDefaultSelectedTabs
 			}
 		} = this;
 
 		this.setAttribute('role', 'tab');
-		this.setAttribute('aria-selected', String(isSelected));
 
-		if (isFirst && !hasDefaultSelectedTabs) {
+		if (first && !hasDefaultSelectedTabs) {
 			if (el.tabIndex < 0) {
 				this.setAttribute('tabindex', '0');
 			}
 
-		} else if (hasDefaultSelectedTabs && isSelected) {
+		} else if (hasDefaultSelectedTabs && this.params.selected) {
 			if (el.tabIndex < 0) {
 				this.setAttribute('tabindex', '0');
 			}
@@ -98,9 +100,9 @@ export class Tab extends ARIARole {
 	 * @param active
 	 */
 	protected onChange(active: Element | NodeListOf<Element>): void {
-		const setAttributes = (isSelected: boolean) => {
-			this.setAttribute('aria-selected', String(isSelected));
-			this.setAttribute('tabindex', isSelected ? '0' : '-1');
+		const setAttributes = (selected: boolean) => {
+			this.setAttribute('aria-selected', String(selected));
+			this.setAttribute('tabindex', selected ? '0' : '-1');
 		};
 
 		if (Object.isArrayLike(active)) {
@@ -114,12 +116,16 @@ export class Tab extends ARIARole {
 		setAttributes(this.el === active);
 	}
 
+	protected get tablist(): Element | null {
+		return this.el.closest('[role="tablist"]');
+	}
+
 	/**
 	 * Handler: a keyboard event has occurred
 	 */
 	protected onKeydown(e: KeyboardEvent): void {
 		const
-			isVertical = this.params.orientation === 'vertical';
+			isVertical = this.tablist?.getAttribute('aria-orientation') === 'vertical';
 
 		switch (e.key) {
 			case KeyCodes.LEFT:

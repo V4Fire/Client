@@ -715,23 +715,15 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	protected getAriaConfig(role: 'tab', item: this['Item'], i: number): Dictionary;
 
 	protected getAriaConfig(role: 'tab' | 'tablist', item?: this['Item'], i?: number): Dictionary {
-		const
-			isActive = this.isActive.bind(this, item?.value);
-
 		const tablistConfig = {
-			isMultiple: this.multiple,
+			multiselectable: this.multiple,
 			orientation: this.orientation
 		};
 
 		const tabConfig = {
-			orientation: this.orientation,
-
-			isFirst: i === 0,
+			first: i === 0,
 			hasDefaultSelectedTabs: this.active != null,
-
-			get isSelected() {
-				return isActive();
-			},
+			selected: this.isActive(item?.value),
 
 			'@change': bindChangeEvent.bind(this)
 		};

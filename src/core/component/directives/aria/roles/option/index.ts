@@ -15,7 +15,6 @@ export class Option extends ARIARole {
 	/** @inheritDoc */
 	init(): void {
 		this.setAttribute('role', 'option');
-		this.setAttribute('aria-selected', String(this.params.isSelected));
 	}
 
 	/**

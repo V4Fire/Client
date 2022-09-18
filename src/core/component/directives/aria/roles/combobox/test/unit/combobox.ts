@@ -39,7 +39,15 @@ test.describe('v-aria:combobox', () => {
 		).toBe('false');
 	});
 
-	test('aria-multiselectable is set', async ({page}) => {
+	test('aria-multiselectable is set to false', async ({page}) => {
+		const target = await init(page);
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.unsafe.block?.element('input')?.getAttribute('aria-multiselectable'))
+		).toBe('false');
+	});
+
+	test('aria-multiselectable is set to true', async ({page}) => {
 		const target = await init(page, {multiple: true});
 
 		test.expect(

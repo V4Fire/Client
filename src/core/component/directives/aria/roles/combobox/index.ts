@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iAccess from 'traits/i-access/i-access';
+import iAccess from 'traits/i-access/i-access';
 import type { ComponentInterface } from 'super/i-block/i-block';
 
 import { ComboboxParams } from 'core/component/directives/aria/roles/combobox/interface';
@@ -20,6 +20,10 @@ export class Combobox extends ARIARole {
 	constructor(options: RoleOptions<ComboboxParams, ComponentInterface & iAccess>) {
 		super(options);
 
+		if (!iAccess.is(this.ctx)) {
+			Object.throw('Combobox aria directive expects the component to realize iAccess interface');
+		}
+
 		const
 			{el} = this;
 
@@ -30,10 +34,6 @@ export class Combobox extends ARIARole {
 	init(): void {
 		this.setAttribute('role', 'combobox');
 		this.setAttribute('aria-expanded', 'false');
-
-		if (this.params.isMultiple) {
-			this.setAttribute('aria-multiselectable', 'true');
-		}
 
 		if (this.el.tabIndex < 0) {
 			this.setAttribute('tabindex', '0');

@@ -10,13 +10,17 @@ For recommendations how to make accessible widget go to [tablist](`https://www.w
 
 ## API
 
-The engine expects specific parameters to be passed.
-- `isMultiple`:`boolean`.
-If true widget supports multiple selected options.
-- `orientation`: `string`.
-The tablist widget view orientation.
+The role introduces several additional settings.
 
-The engine expects the component to realize`iAccess` trait.
+### [multiselectable = `false`]
+
+Whether the widget supports a feature of multiple active items
+
+### [orientation]
+
+Whether the widget orientation is `horizontal` or `vertical`.
+
+The role expects the component to realize`iAccess` trait.
 
 ## Usage
 

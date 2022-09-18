@@ -14,10 +14,10 @@ export class Tabpanel extends ARIARole {
 		const
 			{el} = this;
 
+		this.setAttribute('role', 'tabpanel');
+
 		if (!el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) {
 			Object.throw('Tabpanel aria directive expects "label" or "labelledby" value to be passed');
 		}
-
-		this.setAttribute('role', 'tabpanel');
 	}
 }

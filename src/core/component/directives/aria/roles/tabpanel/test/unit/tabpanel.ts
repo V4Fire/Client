@@ -18,19 +18,11 @@ test.describe('v-aria:tabpanel', () => {
 	});
 
 	test('role is set', async ({page}) => {
-		const target = await init(page, {});
+		const target = await init(page);
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.$el?.getAttribute('role'))
 		).toBe('tabpanel');
-	});
-
-	test('no label passed', async ({page}) => {
-		const target = await init(page, {'v-aria:tabpanel': {}});
-
-		test.expect(
-			await target.evaluate((ctx) => ctx.$el?.hasAttribute('role'))
-		).toBe(false);
 	});
 
 	/**

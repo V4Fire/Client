@@ -7,10 +7,6 @@ The `dialog` role is used to mark up an HTML based application dialog or window 
 
 For more information go to [dialog](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/dialog_role`).
 
-## API
-
-The engine expects the component to realize the`iOpen` trait.
-
 ## Usage
 
 ```

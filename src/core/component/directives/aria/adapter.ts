@@ -50,9 +50,9 @@ export default class ARIAAdapter {
 	 * Initializes the adapter according to the associated directive parameters
 	 */
 	init(): void {
-		this.setAttributes();
-		this.attachRoleHandlers();
 		this.role?.init();
+		this.attachRoleHandlers();
+		this.setAttributes();
 	}
 
 	/**
@@ -99,7 +99,7 @@ export default class ARIAAdapter {
 				continue;
 			}
 
-			this.setAttribute('aria-labelledby', this.ctx.dom.getId(mod.slice(1)));
+			this.setAttribute('aria-labelledby', this.ctx.dom.getId(mod.slice(1)), this.role?.el);
 			break;
 		}
 
@@ -112,7 +112,7 @@ export default class ARIAAdapter {
 					return;
 				}
 
-				this.setAttribute(`aria-${key}`.dasherize(), param);
+				this.setAttribute(`aria-${key}`.dasherize(), param, this.role?.el);
 			});
 		}
 	}
@@ -122,11 +122,9 @@ export default class ARIAAdapter {
 	 *
 	 * @param name - the attribute name
 	 * @param value - the attribute value or a list of values
+	 * @param [el] - the element to set an attribute
 	 */
-	protected setAttribute(name: string, value: CanUndef<CanArray<unknown>>): void {
-		const
-			{el} = this.params;
-
+	protected setAttribute(name: string, value: CanUndef<CanArray<unknown>>, el: Element = this.params.el): void {
 		if (value == null) {
 			return;
 		}
@@ -144,7 +142,7 @@ export default class ARIAAdapter {
 	 */
 	protected attachRoleHandlers(): void {
 		const
-			{role, params: {binding}} = this;
+			{async, role, params: {binding}} = this;
 
 		if (role == null || !Object.isDictionary(binding.value)) {
 			return;
@@ -166,13 +164,13 @@ export default class ARIAAdapter {
 				handler = role[handlerName].bind(this.role);
 
 			if (Object.isFunction(val)) {
-				val(handler);
+				val(async.proxy(handler, {single: false}));
 
 			} else if (Object.isPromiseLike(val)) {
-				val.then(handler, stderr);
+				async.promise(val).then(handler, stderr);
 
 			} else if (Object.isString(val)) {
-				this.async.on(this.ctx, val, handler);
+				async.on(this.ctx, val, handler);
 			}
 		});
 	}

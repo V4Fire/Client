@@ -894,14 +894,14 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			() => undefined;
 
 		const comboboxConfig = {
-			isMultiple: this.multiple,
+			multiselectable: this.multiple,
 			'@change': (cb) => this.localEmitter.on('el.mod.set.*.marked.*', ({link}) => cb(link)),
 			'@close': (cb) => this.on('close', cb),
 			'@open': (cb) => this.on('open', () => this.$nextTick(() => cb(this.selectedElement)))
 		};
 
 		const optionConfig = {
-			get isSelected() {
+			get selected() {
 				return isSelected();
 			},
 

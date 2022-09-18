@@ -10,8 +10,14 @@ import type { HandlerAttachment } from 'core/component/directives/aria/roles/int
 
 const defaultFn = (): void => undefined;
 
+export interface ComboboxParams {
+	multiselectable: boolean;
+	'@change': HandlerAttachment;
+	'@open': HandlerAttachment;
+	'@close': HandlerAttachment;
+}
+
 export class ComboboxParams {
-	isMultiple: boolean = false;
 	'@change': HandlerAttachment = defaultFn;
 	'@open': HandlerAttachment = defaultFn;
 	'@close': HandlerAttachment = defaultFn;

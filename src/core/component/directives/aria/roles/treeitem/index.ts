@@ -28,10 +28,11 @@ export class Treeitem extends ARIARole {
 		this.async.on(this.el, 'keydown', this.onKeyDown.bind(this));
 
 		const
-			isMuted = this.ctx?.removeAllFromTabSequence(this.el);
+			muted = this.ctx?.removeAllFromTabSequence(this.el),
+			{firstRootItem, expandable, expanded} = this.params;
 
-		if (this.params.isFirstRootItem) {
-			if (isMuted) {
+		if (firstRootItem) {
+			if (muted) {
 				this.ctx?.restoreAllToTabSequence(this.el);
 
 			} else {
@@ -42,8 +43,8 @@ export class Treeitem extends ARIARole {
 		this.setAttribute('role', 'treeitem');
 
 		this.ctx?.$nextTick(() => {
-			if (this.params.isExpandable) {
-				this.setAttribute('aria-expanded', String(this.params.isExpanded));
+			if (expandable) {
+				this.setAttribute('aria-expanded', String(expanded));
 			}
 		});
 	}
@@ -90,16 +91,8 @@ export class Treeitem extends ARIARole {
 	 * Moves focus to the parent treeitem
 	 */
 	protected focusParent(): void {
-		let
-			parent = this.el.parentElement;
-
-		while (parent != null) {
-			if (parent.getAttribute('role') === 'treeitem') {
-				break;
-			}
-
-			parent = parent.parentElement;
-		}
+		const
+			parent = this.el.parentElement?.closest('[role="treeitem"]');
 
 		if (parent == null) {
 			return;
@@ -157,11 +150,14 @@ export class Treeitem extends ARIARole {
 		}
 
 		const
-			isHorizontal = this.params.orientation === 'horizontal';
+			{rootElement, expandable, expanded, toggleFold} = this.params;
+
+		const
+			isHorizontal = rootElement?.getAttribute('aria-orientation') === 'horizontal';
 
 		const open = () => {
-			if (this.params.isExpandable) {
-				if (this.params.isExpanded) {
+			if (expandable) {
+				if (expanded) {
 					this.moveFocus(1);
 
 				} else {
@@ -171,7 +167,7 @@ export class Treeitem extends ARIARole {
 		};
 
 		const close = () => {
-			if (this.params.isExpandable && this.params.isExpanded) {
+			if (expandable && expanded) {
 				this.closeFold();
 
 			} else {
@@ -217,8 +213,8 @@ export class Treeitem extends ARIARole {
 				break;
 
 			case KeyCodes.ENTER:
-				if (this.params.isExpandable) {
-					this.params.toggleFold(this.el);
+				if (expandable) {
+					toggleFold(this.el);
 				}
 
 				break;

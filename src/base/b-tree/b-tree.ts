@@ -277,7 +277,7 @@ class bTree extends iData implements iItems, iAccess {
 			root = () => this.top?.$el ?? this.$el;
 
 		const treeConfig = {
-			isRoot: this.top == null,
+			root: this.top == null,
 			orientation: this.orientation,
 			'@change': (cb: Function) => {
 				this.on('fold', (ctx, el: Element, item, value: boolean) => cb(el, !value));
@@ -286,13 +286,13 @@ class bTree extends iData implements iItems, iAccess {
 
 		const treeitemConfig = {
 			orientation: this.orientation,
-			isFirstRootItem: this.top == null && i === 0,
+			firstRootItem: this.top == null && i === 0,
 
-			get isExpanded() {
+			get expanded() {
 				return getFoldedMod() === 'false';
 			},
 
-			get isExpandable() {
+			get expandable() {
 				return item?.children != null;
 			},
 

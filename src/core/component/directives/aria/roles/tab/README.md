@@ -12,8 +12,8 @@ For more information see [this](`https://developer.mozilla.org/en-US/docs/Web/Ac
     < div :id = 'tab-' + i | v-aria:tab = { &
       controls: 'content-' + i,
 
-      isFirst: i === 0,
-      isSelected: tab.active,
+      first: i === 0,
+      selected: tab.active,
       hasDefaultSelectedTabs: tab.some((tab) => Boolean(tab.active)),
 
       '@change': (cb) => cb(tab.active)
@@ -38,13 +38,17 @@ Any ARIA attributes could be added in options through the short syntax.
 
 Also, the role introduces several additional settings.
 
-### [isFirst = `false`]
+### [first = `false`]
 
 Whether the tab is the first in the tablist.
 
-### [isSelected = `false`]
+### [selected = `false`]
 
 Whether the tab is selected.
+
+### [orientation]
+
+Whether the widget orientation is `horizontal` or `vertical`.
 
 ### [hasDefaultSelectedTabs = `false`]
 

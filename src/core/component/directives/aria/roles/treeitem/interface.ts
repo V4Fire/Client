@@ -9,10 +9,9 @@
 type FoldToggle = (el: Element, value?: boolean) => void;
 
 export class TreeitemParams {
-	isFirstRootItem: boolean = false;
-	isExpandable: boolean = false;
-	isExpanded: boolean = false;
-	orientation: string = 'false';
+	firstRootItem: boolean = false;
+	expandable: boolean = false;
+	expanded: boolean = false;
 	rootElement?: Element = undefined;
 	toggleFold: FoldToggle = () => undefined;
 }

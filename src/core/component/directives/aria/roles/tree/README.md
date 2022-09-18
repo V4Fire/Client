@@ -10,15 +10,21 @@ For recommendations how to make accessible widget go to [tree](`https://www.w3.o
 
 ## API
 
-The engine expects specific parameters to be passed.
-- `isRoot`: `boolean`.
-If true current tree is the root tree in the component.
-- `orientation`: `string`.
-The tablist widget view orientation.
-- `@change`:`HandlerAttachment`, see `core/component/directives/aria/roles/README.md`.
-Internal callback `onChange` expects an `Element` and `boolean` value if current tree is expanded.
+The role introduces several additional settings.
 
-The engine expects the component to realize`iAccess` trait.
+### [root = `false`]
+
+Whether the current tree is the root tree
+
+### [orientation]
+
+Whether the widget orientation is `horizontal` or `vertical`.
+
+### [@change]
+
+A handler for expanding the tree item.
+
+The role expects the component to realize`iAccess` trait.
 
 ## Usage
 

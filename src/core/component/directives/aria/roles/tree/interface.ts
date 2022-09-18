@@ -9,7 +9,7 @@
 import type { HandlerAttachment } from 'core/component/directives/aria/roles/interface';
 
 export class TreeParams {
-	isRoot: boolean = false;
-	orientation: string = 'false';
+	root: boolean = false;
+	orientation: string = 'vertical';
 	'@change': HandlerAttachment = () => undefined;
 }

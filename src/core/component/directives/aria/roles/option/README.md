@@ -9,17 +9,21 @@ For more information go to [option](`https://developer.mozilla.org/en-US/docs/We
 
 ## API
 
-The engine expects specific parameters to be passed.
-- `isSelected`: `boolean`.
-If true current option is selected by default.
-- `@change`:`HandlerAttachment`, see `core/component/directives/aria/roles/README.md`.
-Internal callback `onChange` expects an `boolean` value if current option is selected.
+The role introduces several additional settings.
+
+### [selected = `false`]
+
+Whether the option is selected.
+
+### [@change]
+
+A handler for changing the active option.
 
 ## Usage
 
 ```
 < div v-aria:option = { &
-    isSelected: el.active
+    selected: el.active
     '@change': (cb) => on('actionChange', () => cb(el.active))
   }
 ```

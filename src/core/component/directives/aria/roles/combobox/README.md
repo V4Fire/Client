@@ -10,14 +10,23 @@ For recommendations how to make accessible widget go to [combobox](`https://www.
 
 ## API
 
-The engine expects specific parameters to be passed.
-- `isMultiple`:`boolean`.
-If true widget supports multiple selected options.
-- `@change`:`HandlerAttachment`, see `core/component/directives/aria/roles/README.md`.
-Internal callback `onChange` expects an `Element` to be passed.
-- `@open`:`HandlerAttachment`.
-Internal callback `onChange` expects an `Element` to be passed.
-- `@close`:`HandlerAttachment`.
+The role introduces several additional settings.
+
+### [multiselectable = `false`]
+
+Whether the widget supports a feature of multiple active options
+
+### [@change]
+
+A handler for changing the active option.
+
+### [@open]
+
+A handler for opening the option list.
+
+### [@close]
+
+A handler for closing the option list.
 
 ## Usage
 

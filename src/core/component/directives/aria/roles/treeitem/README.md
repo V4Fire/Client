@@ -10,18 +10,30 @@ For recommendations how to make accessible widget go to [treeitem](`https://www.
 
 ## API
 
-The engine expects specific parameters to be passed.
-- `isFirstRootItem`: `boolean`.
-If true the item is first one in the root tree.
-- `isExpandable`: `boolean`.
-If true the item has children and can be expanded.
-- `isExpanded`: `boolean`.
-If true the item is expanded in the current moment.
-- `orientation`: `string`.
-The tablist widget view orientation.
-- `rootElement`: `Element`.
-The link to the root tree element.
-- `toggleFold`: `function`.
+The role introduces several additional settings.
+
+### [firstRootItem = `false`]
+
+Whether the tree item is the first one in the root tree.
+
+### [expandable = `false`]
+
+Whether the tree item has children.
+
+### [expanded = `false`]
+
+Whether the tree item is expanded.
+
+### [orientation]
+
+Whether the widget orientation is `horizontal` or `vertical`.
+
+### [rootElement]
+
+the link to the root tree element.
+
+### [toggleFold]
+
 The function to toggle the expandable item.
 
 The engine expects the component to realize`iAccess` trait.

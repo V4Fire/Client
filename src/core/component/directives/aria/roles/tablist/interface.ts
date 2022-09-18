@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export class TablistParams {
-	isMultiple: boolean = false;
-	orientation: string = 'false';
+export interface TablistParams {
+	multiselectable: boolean;
+	orientation: string;
 }
