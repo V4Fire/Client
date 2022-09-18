@@ -12,9 +12,6 @@ const defaultFn = (): void => undefined;
 
 export interface ComboboxParams {
 	multiselectable: boolean;
-	'@change': HandlerAttachment;
-	'@open': HandlerAttachment;
-	'@close': HandlerAttachment;
 }
 
 export class ComboboxParams {

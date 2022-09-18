@@ -10,11 +10,8 @@ import type { Orientation } from 'base/b-list/interface';
 import type { HandlerAttachment } from 'core/component/directives/aria/roles/interface';
 
 export interface TabParams {
-	first: boolean;
 	selected: boolean;
-	hasDefaultSelectedTabs: boolean;
 	orientation: Orientation;
-	'@change': HandlerAttachment;
 }
 
 export class TabParams {
