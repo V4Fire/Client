@@ -422,6 +422,7 @@ export default class Sync extends Friend {
 			});
 		}
 
+		// eslint-disable-next-line no-lone-blocks
 		{
 			let
 				key;
@@ -833,6 +834,7 @@ export default class Sync extends Friend {
 				});
 			}
 
+			// eslint-disable-next-line no-lone-blocks
 			{
 				let
 					key;

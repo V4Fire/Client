@@ -49,6 +49,7 @@ export function wrapRender(meta: ComponentMeta): RenderFunction {
 
 					'forceUpdate';
 
+				// eslint-disable-next-line no-console
 				console.warn(
 					`There is too frequent redrawing of the component "${this.componentName}" (# ${renderCounter}; ${diff}ms).`,
 					printableReason

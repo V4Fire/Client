@@ -307,6 +307,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			const
 				links: object[] = [];
 
+			// eslint-disable-next-line no-lone-blocks
 			{
 				const
 					e = ['mousemove', 'touchmove'];
@@ -338,6 +339,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 				}
 			};
 
+			// eslint-disable-next-line no-lone-blocks
 			{
 				const
 					e = ['mouseup', 'touchend'];

@@ -2358,10 +2358,9 @@ export default abstract class iBlock extends ComponentInterface {
 	 * is equal to `'remote'`.
 	 *
 	 * @param [data] - advanced data
-	 * @param [type] - call type
+	 * @param [_type] - call type
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+	protected syncStorageState(data?: Dictionary, _type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2401,8 +2400,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [data] - advanced data
 	 * @param [type] - call type
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+	protected syncRouterState(_data?: Dictionary, _type: ConverterCallType = 'component'): Dictionary {
 		return {};
 	}
 

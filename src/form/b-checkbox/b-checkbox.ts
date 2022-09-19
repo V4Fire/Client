@@ -314,8 +314,7 @@ export default class bCheckbox extends iInput implements iSize {
 	 * @param e
 	 * @emits `actionChange(value: this['Value'])`
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected onClick(e: Event): void {
+	protected onClick(_e: Event): void {
 		void this.focus();
 
 		if (this.value === undefined || this.value === false || this.changeable) {

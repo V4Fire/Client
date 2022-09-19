@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -214,9 +212,9 @@ export default abstract class iLockPageScroll {
 	 * Locks the document scroll, i.e.,
 	 * it prevents any scrolling on the document except withing the specified node
 	 *
-	 * @param [scrollableNode] - node inside which is allowed to scroll
+	 * @param _scrollableNode - node inside which is allowed to scroll
 	 */
-	lock(scrollableNode?: Element): Promise<void> {
+	lock(_scrollableNode?: Element): Promise<void> {
 		return Object.throw();
 	}
 

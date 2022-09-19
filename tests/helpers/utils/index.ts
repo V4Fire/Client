@@ -193,6 +193,7 @@ export default class Utils {
 			logs = logsMap.get(page);
 
 		if (logs) {
+			// eslint-disable-next-line no-console
 			console.log(logs.join('\n'));
 			logsMap.delete(page);
 		}

@@ -18,7 +18,7 @@ export interface RequestFn<T extends object = object> {
 	(params: DataState<T>): boolean;
 }
 
-export interface GetData<T extends unknown = unknown> {
+export interface GetData<T = unknown> {
 	(ctx: bVirtualScroll, query: CanUndef<Dictionary>): Promise<T>;
 }
 
@@ -49,7 +49,7 @@ export type OptionEl<T extends object = object> = VirtualItemEl<T>;
  * @typeparam ITEM - data item to render
  * @typeparam RAW - raw provider data
  */
-export interface DataState<ITEM extends object = object, RAW extends unknown = unknown> {
+export interface DataState<ITEM extends object = object, RAW = unknown> {
 	/**
 	 * Number of the last loaded page
 	 */
@@ -159,7 +159,7 @@ export type ItemAttrs = {
  * @typeparam DATA - data to render
  * @typeparam RAW - raw provider data
  */
-export interface LastLoadedChunk<DATA extends object = object[], RAW extends unknown = unknown> {
+export interface LastLoadedChunk<DATA extends object = object[], RAW = unknown> {
 	normalized: DATA;
 	raw: CanUndef<RAW>;
 }

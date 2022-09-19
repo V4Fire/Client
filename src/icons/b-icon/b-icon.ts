@@ -18,6 +18,7 @@ import iBlock, { component, prop, ModsDecl } from 'super/i-block/i-block';
 
 export * from 'super/i-block/i-block';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface bIcon extends Trait<typeof iIcon> {}
 
 /**

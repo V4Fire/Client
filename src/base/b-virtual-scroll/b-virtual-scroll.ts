@@ -272,8 +272,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		};
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected override set requestParams(value: RequestParams) {
+	protected override set requestParams(_value: RequestParams) {
 		// Loopback
 	}
 
@@ -459,7 +458,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	protected getDataStateSnapshot<
 		ITEM extends object = object,
-		RAW extends unknown = unknown
+		RAW = unknown
 	>(
 		overrideParams?: MergeDataStateParams,
 		chunkRequest?: ChunkRequest,

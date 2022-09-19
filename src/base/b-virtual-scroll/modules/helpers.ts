@@ -21,7 +21,7 @@ import type { DataState } from 'base/b-virtual-scroll/interface';
  * @typeparam ITEM - data item to render
  * @typeparam RAW - raw provider data
  */
-export function getRequestParams<ITEM extends object = object, RAW extends unknown = unknown>(
+export function getRequestParams<ITEM extends object = object, RAW = unknown>(
 	chunkRequestCtx?: ChunkRequest,
 	chunkRenderCtx?: ChunkRender,
 	merge?: Dictionary

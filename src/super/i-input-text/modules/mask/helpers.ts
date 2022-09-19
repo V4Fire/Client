@@ -311,6 +311,7 @@ export function getNormalizedSelectionBounds<C extends iInputText>(
 		normalizedSelectionStart = selectionStart,
 		normalizedSelectionEnd = selectionEnd;
 
+	// eslint-disable-next-line no-lone-blocks
 	{
 		const
 			slicedText = text.slice(0, selectionStart),
@@ -321,6 +322,7 @@ export function getNormalizedSelectionBounds<C extends iInputText>(
 		}
 	}
 
+	// eslint-disable-next-line no-lone-blocks
 	{
 		const
 			slicedText = text.slice(0, selectionEnd),

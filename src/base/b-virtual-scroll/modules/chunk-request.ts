@@ -107,7 +107,6 @@ export default class ChunkRequest extends Friend {
 		this.total = 0;
 		this.page = 1;
 
-		// tslint:disable-next-line: deprecation
 		this.lastLoadedData = [];
 		this.data = [];
 		this.lastLoadedChunk = {raw: undefined, normalized: []};

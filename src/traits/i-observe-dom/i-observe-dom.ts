@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -198,10 +196,10 @@ export default abstract class iObserveDOM {
 	/**
 	 * Handler: the DOM tree has been changed
 	 *
-	 * @param records
-	 * @param options
+	 * @param _records
+	 * @param _options
 	 */
-	onDOMChange(records: MutationRecord[], options: ObserveOptions): void {
+	onDOMChange(_records: MutationRecord[], _options: ObserveOptions): void {
 		return Object.throw();
 	}
 }

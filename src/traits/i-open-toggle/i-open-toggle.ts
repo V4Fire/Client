@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -25,9 +23,9 @@ export default abstract class iOpenToggle extends iOpen {
 
 	/**
 	 * Toggles the component to open or close
-	 * @param args
+	 * @param _args
 	 */
-	toggle(...args: unknown[]): Promise<boolean> {
+	toggle(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 }

@@ -1,6 +1,5 @@
 /*
 eslint-disable
-@typescript-eslint/no-unused-vars-experimental,
 @typescript-eslint/no-empty-function,
 @typescript-eslint/unified-signatures
 */
@@ -335,9 +334,9 @@ export abstract class ComponentInterface {
 	 * Basically, you don't need to think about a component activation,
 	 * because it's automatically synchronized with `keep-alive` or the special input property.
 	 *
-	 * @param [force] - if true, then the component will be forced to activate, even if it is already activated
+	 * @param [_force] - if true, then the component will be forced to activate, even if it is already activated
 	 */
-	activate(force?: boolean): void {}
+	activate(_force?: boolean): void {}
 
 	/**
 	 * Deactivates the component.
@@ -367,9 +366,9 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Mounts the component to a DOM element
-	 * @param elementOrSelector - link to an element or selector to an element
+	 * @param _elementOrSelector - link to an element or selector to an element
 	 */
-	protected $mount(elementOrSelector?: Element | string): this {
+	protected $mount(_elementOrSelector?: Element | string): this {
 		return this;
 	}
 
@@ -395,7 +394,7 @@ export abstract class ComponentInterface {
 	 * @param object
 	 * @param key
 	 */
-	protected $delete(object: object, key: unknown): void {}
+	protected $delete(_object: object, _key: unknown): void {}
 
 	/**
 	 * Sets a watcher to a component/object property by the specified path
@@ -452,40 +451,40 @@ export abstract class ComponentInterface {
 	/**
 	 * Attaches an event listener to the specified component event
 	 *
-	 * @param event
-	 * @param handler
+	 * @param _event
+	 * @param _handler
 	 */
-	protected $on<E = unknown, R = unknown>(event: CanArray<string>, handler: ProxyCb<E, R, this>): this {
+	protected $on<E = unknown, R = unknown>(_event: CanArray<string>, _handler: ProxyCb<E, R, this>): this {
 		return this;
 	}
 
 	/**
 	 * Attaches a single event listener to the specified component event
 	 *
-	 * @param event
-	 * @param handler
+	 * @param _event
+	 * @param _handler
 	 */
-	protected $once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): this {
+	protected $once<E = unknown, R = unknown>(_event: string, _handler: ProxyCb<E, R, this>): this {
 		return this;
 	}
 
 	/**
 	 * Detaches an event listeners from the component
 	 *
-	 * @param [event]
-	 * @param [handler]
+	 * @param [_event]
+	 * @param [_handler]
 	 */
-	protected $off(event?: CanArray<string>, handler?: Function): this {
+	protected $off(_event?: CanArray<string>, _handler?: Function): this {
 		return this;
 	}
 
 	/**
 	 * Emits a component event
 	 *
-	 * @param event
-	 * @param args
+	 * @param _event
+	 * @param _args
 	 */
-	protected $emit(event: string, ...args: unknown[]): this {
+	protected $emit(_event: string, ..._args: unknown[]): this {
 		return this;
 	}
 

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -189,33 +187,33 @@ export default abstract class iAccess {
 
 	/**
 	 * Enables the component
-	 * @param args
+	 * @param _args
 	 */
-	enable(...args: unknown[]): Promise<boolean> {
+	enable(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
 	 * Disables the component
-	 * @param args
+	 * @param _args
 	 */
-	disable(...args: unknown[]): Promise<boolean> {
+	disable(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
 	 * Sets the focus to the component
-	 * @param args
+	 * @param _args
 	 */
-	focus(...args: unknown[]): Promise<boolean> {
+	focus(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
 	 * Unsets the focus from the component
-	 * @param args
+	 * @param _args
 	 */
-	blur(...args: unknown[]): Promise<boolean> {
+	blur(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 }

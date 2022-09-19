@@ -70,6 +70,7 @@ export * from 'form/b-select/interface';
 
 export { $$, Value, FormValue };
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface bSelect extends Trait<typeof iOpenToggle> {}
 
 /**

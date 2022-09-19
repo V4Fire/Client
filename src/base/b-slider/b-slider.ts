@@ -48,6 +48,7 @@ export * from 'base/b-slider/interface';
 export const
 	$$ = symbolGenerator();
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface bSlider extends Trait<typeof iObserveDOM> {}
 
 /**

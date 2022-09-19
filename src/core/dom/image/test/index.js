@@ -492,7 +492,7 @@ module.exports = async (page, params) => {
 					await page.setViewportSize({
 						width: 580,
 						height: 480
-					 });
+					});
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, pngImage2x, pngImage]) => {
 						const target = document.getElementById(`${tag}-target`);
@@ -593,7 +593,7 @@ module.exports = async (page, params) => {
 					await page.setViewportSize({
 						width: 580,
 						height: 480
-					 });
+					});
 
 					const
 						baseSrc = 'https://fakeim.pl',
@@ -625,7 +625,7 @@ module.exports = async (page, params) => {
 					await page.setViewportSize({
 						width: 580,
 						height: 480
-					 });
+					});
 
 					const
 						baseSrc = 'https://fakeim.pl',
@@ -667,7 +667,7 @@ module.exports = async (page, params) => {
 					await page.setViewportSize({
 						width: 580,
 						height: 480
-					 });
+					});
 
 					const
 						baseSrc = 'https://fakeim.pl',

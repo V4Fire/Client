@@ -26,7 +26,7 @@ export default class Component {
 	 * @param scheme
 	 * @param [opts]
 	 */
-	 static async createComponents(
+	static async createComponents(
 		page: Page,
 		componentName: string,
 		scheme: RenderParams[],
@@ -48,7 +48,7 @@ export default class Component {
 	 * @param [scheme]
 	 * @param [opts]
 	 */
-	 static async createComponent<T extends iBlock>(
+	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
 		scheme?: Partial<RenderParams>,
@@ -63,7 +63,8 @@ export default class Component {
 	 * @param [scheme]
 	 * @param [opts]
 	 */
-	 static async createComponent<T extends iBlock>(
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
 		scheme: RenderParams[],
@@ -141,7 +142,7 @@ export default class Component {
 	 * @param ctx
 	 * @param selector
 	 */
-	 static async waitForComponentByQuery<T extends iBlock>(
+	static async waitForComponentByQuery<T extends iBlock>(
 		ctx: Page | ElementHandle,
 		selector: string
 	): Promise<JSHandle<T>> {

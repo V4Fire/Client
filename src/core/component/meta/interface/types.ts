@@ -298,6 +298,7 @@ export interface ComponentField<CTX extends ComponentInterface = ComponentInterf
 	forceUpdate?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ComponentComputedField<T = unknown> extends ComputedOptions<T> {
 
 }
@@ -339,6 +340,7 @@ export interface ComponentMethod {
 	hooks?: ComponentMethodHooks;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ComponentDirectiveOptions extends DirectiveOptions {
 
 }
