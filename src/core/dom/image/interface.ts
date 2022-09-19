@@ -6,12 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from 'super/i-block';
-
 import {
 
 	ID,
-	INIT_LOAD,
+	loadImage,
 
 	SHADOW_PREVIEW,
 	SHADOW_BROKEN,
@@ -24,34 +22,41 @@ import {
 
 export interface ImageOptions {
 	/**
-	 * URL of an image
+	 * The image URL.
+	 * On browsers supporting `srcset`, `src` is treated like a candidate image with a pixel density descriptor 1x,
+	 * unless an image with this pixel density descriptor is already defined in `srcset`,
+	 * or unless `srcset` contains `w` descriptors.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#src
 	 */
 	src?: string;
 
 	/**
-	 * Base URL for `src` and `srcset`
+	 * The base image URL.
+	 * If given, it will be used as a prefix for all values in the `src` and `srcset` parameters.
 	 *
 	 * @example
 	 * ```typescript
 	 * {
 	 *   src: 'img.png',
-	 *   baseSrc: 'https://url-to-img',
-	 *   ctx: this
+	 *   baseSrc: 'https://url-to-img'
 	 * }
 	 * ```
 	 *
 	 * ```html
-	 * <img src="https://url-to-img/img.png">
+	 * <img src="https://url-to-img/img.png" />
 	 * ```
 	 */
 	baseSrc?: string;
 
 	/**
-	 * Srcset of an image. This option helps to manage the situation with multiple resolutions of the image to load.
+	 * A value of the `srcset` image attribute.
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-srcset
+	 *
+	 * This option helps to create responsive images.
 	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 *
 	 * @example
-	 *
 	 * ```typescript
 	 * {
 	 *   src: 'img.jpg',
@@ -62,122 +67,93 @@ export interface ImageOptions {
 	srcset?: Dictionary<string> | string;
 
 	/**
-	 * Image `sizes` attribute
+	 * A value of the `sizes` image attribute.
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-sizes
+	 *
+	 * This option helps to create responsive images.
 	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 */
 	sizes?: string;
 
 	/**
-	 * Values of `source` tags within `picture`
+	 * A list of attributes for `source` elements.
+	 * If this option is given, then `picture` will be used to load the image, not `img`.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	sources?: ImageSource[];
 
 	/**
-	 * Alternative value of an image to improve accessibility
+	 * A text description of the image, which isn't mandatory but is incredibly useful for accessibility - screen readers
+	 * read this description out to their users, so they know what the image means
 	 */
 	alt?: string;
 
-	/** @see [[ImageBackgroundOptions]] */
+	/**
+	 * Additional options to display the image to be used when displaying the image via CSS background properties
+	 */
 	bgOptions?: ImageBackgroundOptions;
 
 	/**
-	 * If true, then for each changing of an imaging stage (initial, preview, broken, main),
-	 * the image element will get a class with the stage value
+	 * An image URL to use as a placeholder while the main one is loading.
+	 * The option can also accept an object with additional image settings.
+	 */
+	preview?: string | ImagePlaceholderOptions;
+
+	/**
+	 * An image URL to use as a placeholder if the main one cannot be loaded due to an error.
+	 * The option can also accept an object with additional image settings.
+	 */
+	broken?: string | ImagePlaceholderOptions;
+
+	/**
+	 * If true, then each time the image stage changes (initial, preview, broken, main), the image element will be
+	 * assigned a class with the stage value. If the value is a string, then it will be used as a BEM block name when
+	 * forming the class name.
 	 *
 	 * @example
 	 * ```typescript
 	 * {
 	 *   src: 'img.png',
-	 *   stageClasses: true,
-	 *   ctx: this
+	 *   stageClasses: 'b-block'
 	 * }
 	 * ```
 	 *
 	 * ```html
-	 * <div class="b-block b-block__v-image_stage_preview"></div>
+	 * <img class="b-block b-block__v-image_stage_preview" src="img.png" />
 	 * ```
 	 *
 	 * @default `false`
 	 */
-	stageClasses?: boolean;
+	stageClasses?: boolean | string;
 
 	/**
-	 * Options of a loading placeholder. The placeholder will be shown while the main image is loading.
-	 */
-	preview?: string | ImagePlaceholderOptions;
-
-	/**
-	 * Options of an error placeholder.
-	 * The placeholder will be shown when the main image hasn't been loaded due to an error.
-	 */
-	broken?: string | ImagePlaceholderOptions;
-
-	/**
-	 * If this option is set to `false` – `update` directive hook will be ignored.
-	 * It only makes sense if used in directive mode.
-	 *
-	 * When calling the state update method for a node, the old parameters, and new parameters will be compared.
-	 * If they differ, the current state will be completely cleared and recreated.
-	 * This can be useful if you change the image's src or any options on the same node during re-rendering.
-	 *
-	 * @default `false`
-	 */
-	handleUpdate?: boolean;
-
-	/**
-	 * Execution context.
-	 *
-	 * The context is used to provide a component environment, like, async, event emitters, etc.
-	 * When API is used as a directive, the context will be automatically taken from a VNode instance.
-	 *
-	 * Make sure you are not using `load` or `error` without the context provided,
-	 * because this can lead to unexpected results.
+	 * A function to resolve the passed image options.
+	 * The options returned by this function will be used to load the image.
 	 *
 	 * @example
 	 * ```typescript
-	 * class Test {
-	 *   setImageToDiv() {
-	 *     ImageLoader.init(this.$refs.div, {src: 'https://img.jpg', ctx: this})
-	 *   }
-	 * }
-	 * ```
-	 */
-	ctx?: iBlock;
-
-	/**
-	 * Will be called after successful loading (`img.onload`)
-	 * @param el
-	 */
-	load?(el: Element): unknown;
-
-	/**
-	 * Will be called if loading error appears
-	 * @param el
-	 */
-	error?(el: Element): unknown;
-
-	/**
-	 * A function to resolve given options.
-	 * It takes an object with the passed operation options, can modify them or create new ones.
-	 * It should return resolved options.
-	 *
-	 * @example
-	 * ```typescript
-	 * const optionsResolver = (options) => {
-	 *   options.src += '?size=42';
-	 *   return options;
+	 * const optionsResolver = (opts) => {
+	 *   return {...opts, src: opts.src + '?size=42'};
 	 * }
 	 * ```
 	 */
 	optionsResolver?: OptionsResolver;
+
+	/**
+	 * A handler to be called when the image is successfully uploaded
+	 * @param el
+	 */
+	onLoad?(el: Element): void;
+
+	/**
+	 * A handler to be called in case of an error while loading the image
+	 * @param el
+	 */
+	onError?(el: Element): void;
 }
 
-export type OptionsResolver = (opts: ImageOptions) => ImageOptions;
-
-/**
- * Options of a background image
- */
 export interface ImageBackgroundOptions {
 	/**
 	 * Image background size type
@@ -209,6 +185,8 @@ export interface ImageBackgroundOptions {
 	 */
 	ratio?: number;
 }
+
+export type OptionsResolver = (opts: ImageOptions) => ImageOptions;
 
 export type ImagePlaceholderOptions = Omit<ImageOptions, 'preview' | 'broken' | 'ctx'>;
 
@@ -259,7 +237,7 @@ export interface ImageSource {
  * The hidden state that binds to the node.
  * This state contains Shadow DOM, image loading state, etc.
  */
-export interface ShadowElState {
+export interface ImageState {
 	/**
 	 * True if an image loading has been failed
 	 */
@@ -268,27 +246,27 @@ export interface ShadowElState {
 	/**
 	 * Type of the shadow image
 	 */
-	stageType: ImageStage;
+	role: ImageRole;
 
 	/**
 	 * Shadow picture node
 	 */
-	pictureNode?: HTMLPictureElement;
+	picture: HTMLPictureElement | null;
 
 	/**
 	 * Shadow image node
 	 */
-	imgNode: HTMLShadowImageElement;
+	img: HTMLShadowImageElement;
 
 	/**
 	 * Options of the shadow state
 	 */
-	selfOptions: ImageOptions;
+	imageParams: ImageOptions;
 
 	/**
 	 * Options of the main shadow state
 	 */
-	mainOptions: ImageOptions;
+	commonParams: ImageOptions;
 
 	/**
 	 * Image loading promise
@@ -299,15 +277,15 @@ export interface ShadowElState {
 /**
  * Result of generating HTMLPictureElement
  */
-export interface PictureFactoryResult {
+export interface Picture {
 	picture: HTMLPictureElement;
 	img: HTMLShadowImageElement;
 }
 
 export interface ImageNode extends HTMLElement {
-	[SHADOW_PREVIEW]?: ShadowElState;
-	[SHADOW_BROKEN]?: ShadowElState;
-	[SHADOW_MAIN]: ShadowElState;
+	[SHADOW_PREVIEW]?: ImageState;
+	[SHADOW_BROKEN]?: ImageState;
+	[SHADOW_MAIN]: ImageState;
 	[ID]: string;
 }
 
@@ -315,7 +293,7 @@ interface HTMLShadowImageElement extends HTMLImageElement {
 	/**
 	 * Initializes loading of the image
 	 */
-	[INIT_LOAD]?: Function;
+	[loadImage]?: Function;
 
 	/**
 	 * If
@@ -337,7 +315,8 @@ export interface DefaultParams {
 	optionsResolver?: OptionsResolver;
 }
 
-export type ImagePlaceholderType = 'preview' | 'broken';
-export type ImageStage = 'initial' | 'main' | ImagePlaceholderType;
+export type ImagePlaceholderRole = 'preview' | 'broken';
+export type ImageRole = 'initial' | 'main' | ImagePlaceholderRole;
+
 export type BackgroundSizeType = 'contain' | 'cover';
 export type InitValue = string | ImageOptions;
