@@ -27,6 +27,8 @@ export const
 	ID = Symbol('Element Id');
 
 export const
-	INIT_LOAD = Symbol('Load initializer'),
-	IS_LOADED = Symbol('Load indicator'),
-	IS_LOADING = Symbol('Loading indicator');
+	IS_LOADED = Symbol('The image is loaded'),
+	IS_LOADING = Symbol('The image is loading');
+
+export const
+	loadImage = Symbol('Load the image');
