@@ -64,6 +64,7 @@ Icon
 /app-std-cache
 /src/entries/tmp
 /db
+.eslintcache
 
 # Statoscope
 statoscope-*/*

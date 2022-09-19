@@ -33,10 +33,10 @@ declare const DS_COMPONENTS_MODS: CanUndef<{
 }>;
 
 interface RenderOptions {
-	/** @default `'rootSelector'` */
+	/** @defaultValue `'rootSelector'` */
 	selectorToInject?: string;
 
-	/** @default `'#root-component'` */
+	/** @defaultValue `'#root-component'` */
 	rootSelector?: string;
 }
 
@@ -206,7 +206,7 @@ interface TouchGesturesCreateOptions {
 
 	/**
 	 * Delay between steps
-	 * @default `5`
+	 * @defaultValue `5`
 	 */
 	pause?: number;
 }
