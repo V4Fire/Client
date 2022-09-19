@@ -10,6 +10,8 @@ import { isProxy } from 'core/object/watch';
 import { customWatcherRgxp, getPropertyInfo, PropertyInfo } from 'super/i-block/i-block';
 
 import type Sync from 'friends/sync/class';
+
+import { compareNewAndOldValue } from 'friends/sync/helpers';
 import type { Link, PropLinks, AsyncWatchOptions } from 'friends/sync/interface';
 
 /**
@@ -352,7 +354,7 @@ export function object(
 						oldVal = mutation[1];
 					}
 
-					if (this.fastCompare(val, oldVal, destPath, isolatedOpts)) {
+					if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, isolatedOpts))) {
 						return;
 					}
 				}
@@ -377,7 +379,7 @@ export function object(
 						oldVal ??= args[0];
 					}
 
-					if (this.fastCompare(val, oldVal, destPath, isolatedOpts)) {
+					if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, isolatedOpts))) {
 						return;
 					}
 				}

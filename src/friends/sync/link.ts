@@ -379,7 +379,7 @@ export function link<D = unknown, R = D>(
 					oldVal = mutation[1];
 				}
 
-				if (compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts)) {
+				if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
 					return;
 				}
 			}
@@ -404,7 +404,7 @@ export function link<D = unknown, R = D>(
 					oldVal ??= args[0];
 				}
 
-				if (compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts)) {
+				if (Object.isTruly(compareNewAndOldValue.call(this, val, oldVal, destPath, resolvedOpts))) {
 					return;
 				}
 			}
