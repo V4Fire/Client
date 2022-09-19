@@ -4,8 +4,10 @@ This module provides a directive to bind a component template element to some pr
 Binding is carried out through the passed handler function, which will always take as the first parameter a link to
 the element to which the directive is applied.
 
-It is convenient to use this directive to describe the logic of point-by-point updating of template fragments without
-forced re-rendering of the entire template. For example, you can use this directive with your functional components.
+## Why is this directive needed?
+
+This directive is convenient to use to describe the logic of point-by-point updating of template fragments without
+forcing re-rendering of the entire template. For example, you can use this directive with your functional components.
 
 ## How to include a directive?
 

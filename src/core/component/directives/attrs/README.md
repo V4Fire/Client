@@ -1,6 +1,6 @@
 # core/component/directives/attrs
 
-This module provides a directive to set any input parameters to a component or tag based on the passed dictionary.
+This module provides a directive to set any input parameters/attributes/directives to a component or tag based on the passed dictionary.
 
 ## Usage
 
