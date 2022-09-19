@@ -47,7 +47,7 @@ export function createImageState(
  * The method returns a structure with a link to the created `picture` element,
  * as well as to the associated `img` element.
  *
- * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/picture
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
  *
  * @example
  * ```typescript
@@ -93,7 +93,7 @@ export function createPicture(
 
 /**
  * Creates `source` elements by the passed parameters and returns them in a single document fragment
- * @see https://developer.mozilla.org/ru/docs/Web/HTML/Element/source
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
  *
  * @param imageParams - the requested image parameters
  * @param commonParams - common parameters
