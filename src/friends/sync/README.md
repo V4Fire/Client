@@ -1,4 +1,4 @@
-_# friends/sync
+# friends/sync
 
 This module provides an API to synchronize fields and props of a component.
 
