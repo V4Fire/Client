@@ -268,7 +268,7 @@ ComponentEngine.directive('attrs', {
 
 				if (attrChunks.includes('prop') && !attrName.startsWith('.')) {
 					if (attrName.startsWith('^')) {
-						throw new SyntaxError('Invalid v-bind modifiers');
+						throw new SyntaxError('Invalid `v-bind` modifiers');
 					}
 
 					attrName = `.${attrName}`;
@@ -276,7 +276,7 @@ ComponentEngine.directive('attrs', {
 
 				if (attrChunks.includes('attr') && !attrName.startsWith('^')) {
 					if (attrName.startsWith('.')) {
-						throw new SyntaxError('Invalid v-bind modifiers');
+						throw new SyntaxError('Invalid `v-bind` modifiers');
 					}
 
 					attrName = `^${attrName}`;
