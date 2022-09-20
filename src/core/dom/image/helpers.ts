@@ -9,43 +9,30 @@
 import { concatURLs } from 'core/url';
 import { getSrcSet } from 'core/html';
 
-import { loadImage, IS_LOADED, IS_LOADING } from 'core/dom/image/const';
-import type { Picture, ImageOptions, ImageRole, ImageState } from 'core/dom/image/interface';
+import type { ImageOptions } from 'core/dom/image/interface';
 
 /**
- * Creates an image state object by the passed parameters and returns it
+ * Creates an `img` element by the passed parameters and returns it
  *
  * @param imageParams - the requested image parameters
  * @param commonParams - common parameters
- * @param role - a role of the created image
  */
-export function createImageState(
+export function createImgElement(
 	imageParams: ImageOptions,
-	commonParams: ImageOptions,
-	role: ImageRole
-): ImageState {
-	const state = {
-		role,
-		isFailed: false,
-		imageParams,
-		commonParams
-	};
+	commonParams: ImageOptions
+): HTMLImageElement {
+	const
+		img = document.createElement('img');
 
-	if (Object.isArray(imageParams.sources) && imageParams.sources.length > 0) {
-		return {...state, ...createPicture(imageParams, commonParams, role)};
-	}
+	img.src = resolveSrc(imageParams.src, imageParams, commonParams);
+	img.srcset = resolveSrcSet(imageParams.srcset, imageParams, commonParams);
+	img.sizes = imageParams.sizes ?? '';
 
-	return {
-		...state,
-		picture: null,
-		img: createImgElement(imageParams, commonParams, role)
-	};
+	return img;
 }
 
 /**
- * Creates a `picture` element with resources by the passed parameters.
- * The method returns a structure with a link to the created `picture` element,
- * as well as to the associated `img` element.
+ * Creates a `picture` element with resources by the passed parameters and returns it
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
  *
@@ -72,29 +59,27 @@ export function createImageState(
  *
  * @param imageParams - the requested image parameters
  * @param commonParams - common parameters
- * @param role - a role of the created image
  */
-export function createPicture(
+export function createPictureElement(
 	imageParams: ImageOptions,
-	commonParams: ImageOptions,
-	role: ImageRole
-): Picture {
+	commonParams: ImageOptions
+): HTMLPictureElement {
 	const
 		picture = document.createElement('picture'),
-		img = createImgElement(imageParams, commonParams, role);
+		img = createImgElement(imageParams, commonParams);
 
 	if (imageParams.sources != null && imageParams.sources.length > 0) {
 		picture.appendChild(createSourceElements(imageParams, commonParams));
 	}
 
 	picture.appendChild(img);
-	return {picture, img};
+	return picture;
 }
 
 /**
  * Creates `source` elements by the passed parameters and returns them in a single document fragment
- * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
  *
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
  * @param imageParams - the requested image parameters
  * @param commonParams - common parameters
  */
@@ -119,41 +104,6 @@ export function createSourceElements(imageParams: ImageOptions, commonParams: Im
 	});
 
 	return fragment;
-}
-
-/**
- * Creates an `img` element by the passed parameters and returns it
- *
- * @param imageParams - the requested image parameters
- * @param commonParams - common parameters
- * @param role - a role of the created image
- */
-export function createImgElement(
-	imageParams: ImageOptions,
-	commonParams: ImageOptions,
-	role: ImageRole
-): HTMLImageElement {
-	const
-		img = document.createElement('img');
-
-	img[loadImage] = () => {
-		img[IS_LOADING] = true;
-
-		img.src = resolveSrc(imageParams.src, imageParams, commonParams);
-		img.srcset = resolveSrcSet(imageParams.srcset, imageParams, commonParams);
-		img.sizes = imageParams.sizes ?? '';
-
-		img.init.then(
-			() => img[IS_LOADED] = true,
-			() => img[IS_LOADED] = false
-		);
-	};
-
-	if (role !== 'broken') {
-		img[loadImage]();
-	}
-
-	return img;
 }
 
 /**

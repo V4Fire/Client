@@ -6,19 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import {
+export type OptionsResolver = (opts: ImageOptions) => ImageOptions;
 
-	ID,
-	loadImage,
-
-	SHADOW_PREVIEW,
-	SHADOW_BROKEN,
-	SHADOW_MAIN,
-
-	IS_LOADED,
-	IS_LOADING
-
-} from 'core/dom/image/const';
+export type ImagePlaceholderOptions = Omit<ImageOptions, 'preview' | 'broken' | 'ctx'>;
 
 export interface ImageOptions {
 	/**
@@ -36,7 +26,7 @@ export interface ImageOptions {
 	 * If given, it will be used as a prefix for all values in the `src` and `srcset` parameters.
 	 *
 	 * @example
-	 * ```typescript
+	 * ```js
 	 * {
 	 *   src: 'img.png',
 	 *   baseSrc: 'https://url-to-img'
@@ -57,7 +47,7 @@ export interface ImageOptions {
 	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 *
 	 * @example
-	 * ```typescript
+	 * ```js
 	 * {
 	 *   src: 'img.jpg',
 	 *   srcset: {'2x': 'http://img-hdpi.png', '3x': 'http://img-xhdpi.png'}
@@ -113,7 +103,7 @@ export interface ImageOptions {
 	 * forming the class name.
 	 *
 	 * @example
-	 * ```typescript
+	 * ```js
 	 * {
 	 *   src: 'img.png',
 	 *   stageClasses: 'b-block'
@@ -133,7 +123,7 @@ export interface ImageOptions {
 	 * The options returned by this function will be used to load the image.
 	 *
 	 * @example
-	 * ```typescript
+	 * ```js
 	 * const optionsResolver = (opts) => {
 	 *   return {...opts, src: opts.src + '?size=42'};
 	 * }
@@ -154,70 +144,72 @@ export interface ImageOptions {
 	onError?(el: Element): void;
 }
 
+/**
+ * Additional options to display the image to be used when displaying the image via CSS background properties
+ */
 export interface ImageBackgroundOptions {
 	/**
-	 * Image background size type
+	 * Rendered image size via `background-image`
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/background-size
 	 */
-	size?: BackgroundSizeType;
+	size?: string;
 
 	/**
-	 * Image background position
+	 * The initial position for the image
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/background-position
 	 */
 	position?: string;
 
 	/**
-	 * Image background repeat
+	 * How the image is repeated via `background-image`
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/background-repeat
 	 */
 	repeat?: string;
 
 	/**
-	 * The string to add to the background image before the URL
+	 * A preferred aspect ratio for the image.
+	 * The option value can be given as a width-to-height ratio string or number, such as '2/1' or 16/9.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio
+	 */
+	ratio?: string | number;
+
+	/**
+	 * A string property or a list of such properties to add to the `background-image` before the main image.
+	 * This property is useful for overlaying watermarks, gradients, and more on top of an image.
 	 */
 	beforeImg?: CanArray<string>;
 
 	/**
-	 * The string to add to the background image after the URL
+	 * A string property or a list of such properties to add to the `background-image` before the main image.
+	 * This property is useful for overlaying watermarks, gradients, and more on top of an image.
 	 */
 	afterImg?: CanArray<string>;
-
-	/**
-	 * Image aspect ratio
-	 */
-	ratio?: number;
-}
-
-export type OptionsResolver = (opts: ImageOptions) => ImageOptions;
-
-export type ImagePlaceholderOptions = Omit<ImageOptions, 'preview' | 'broken' | 'ctx'>;
-
-export interface DefaultImagePlaceholderOptions extends ImagePlaceholderOptions {
-	/**
-	 * True if the placeholder is the default image
-	 */
-	isDefault?: boolean;
 }
 
 /** @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source */
 export interface ImageSource {
 	/**
-	 * MIME resource type
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
+	 * The MIME media type of the image
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-type
 	 */
 	type?: string;
 
 	/**
-	 * `media` attribute
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
+	 * The image media query
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-media
 	 */
 	media?: string;
 
 	/**
-	 * `srcset` attribute
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
+	 * A value of the `srcset` source attribute.
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-srcset
+	 *
+	 * This option helps to create responsive images.
+	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 *
 	 * @example
-	 *
-	 * ```typescript
+	 * ```js
 	 * {
 	 *   src: 'img.jpg',
 	 *   srcset: {'2x': 'http://img-hdpi.png', '3x': 'http://img-xhdpi.png'}
@@ -227,96 +219,11 @@ export interface ImageSource {
 	srcset?: Dictionary<string> | string;
 
 	/**
-	 * `sizes` attribute
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
+	 * A value of the `sizes` source attribute.
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-sizes
+	 *
+	 * This option helps to create responsive images.
+	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 */
 	sizes?: string;
 }
-
-/**
- * The hidden state that binds to the node.
- * This state contains Shadow DOM, image loading state, etc.
- */
-export interface ImageState {
-	/**
-	 * True if an image loading has been failed
-	 */
-	isFailed: boolean;
-
-	/**
-	 * Type of the shadow image
-	 */
-	role: ImageRole;
-
-	/**
-	 * Shadow picture node
-	 */
-	picture: HTMLPictureElement | null;
-
-	/**
-	 * Shadow image node
-	 */
-	img: HTMLShadowImageElement;
-
-	/**
-	 * Options of the shadow state
-	 */
-	imageParams: ImageOptions;
-
-	/**
-	 * Options of the main shadow state
-	 */
-	commonParams: ImageOptions;
-
-	/**
-	 * Image loading promise
-	 */
-	loadPromise?: Promise<unknown>;
-}
-
-/**
- * Result of generating HTMLPictureElement
- */
-export interface Picture {
-	picture: HTMLPictureElement;
-	img: HTMLShadowImageElement;
-}
-
-export interface ImageNode extends HTMLElement {
-	[SHADOW_PREVIEW]?: ImageState;
-	[SHADOW_BROKEN]?: ImageState;
-	[SHADOW_MAIN]: ImageState;
-	[ID]: string;
-}
-
-interface HTMLShadowImageElement extends HTMLImageElement {
-	/**
-	 * Initializes loading of the image
-	 */
-	[loadImage]?: Function;
-
-	/**
-	 * If
-	 *   - `true` – the image has been successfully loaded;
-	 *   - `false`– the image loading has been failed;
-	 *   - `undefined` – initial state, loading isn't finished
-	 */
-	[IS_LOADED]?: boolean;
-
-	/**
-	 * True if the image is loading
-	 */
-	[IS_LOADING]?: true;
-}
-
-export interface DefaultParams {
-	broken?: string | ImageOptions['broken'];
-	preview?: string | ImageOptions['preview'];
-	optionsResolver?: OptionsResolver;
-}
-
-export type ImagePlaceholderRole = 'preview' | 'broken';
-export type ImageRole = 'initial' | 'main' | ImagePlaceholderRole;
-
-export type BackgroundSizeType = 'contain' | 'cover';
-export type InitValue = string | ImageOptions;
