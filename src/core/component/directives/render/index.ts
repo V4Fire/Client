@@ -19,6 +19,10 @@ export * from 'core/component/directives/render/interface';
 ComponentEngine.directive('render', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
 		const
+			DYNAMIC_SLOTS = 6,
+			DYNAMIC_CHILDREN = 16;
+
+		const
 			newVNode = params.value,
 			originalChildren = vnode.children;
 
@@ -35,9 +39,19 @@ ComponentEngine.directive('render', {
 			if (Object.isString(vnode.type)) {
 				vnode.children = Array.concat([], newVNode);
 
+				// eslint-disable-next-line no-bitwise
+				if ((vnode.shapeFlag & DYNAMIC_CHILDREN) === 0) {
+					vnode.shapeFlag += DYNAMIC_CHILDREN;
+				}
+
 			} else {
 				const slots = Object.isPlainObject(originalChildren) ? Object.reject(originalChildren, /^_/) : {};
 				vnode.children = slots;
+
+				// eslint-disable-next-line no-bitwise
+				if ((vnode.shapeFlag & DYNAMIC_SLOTS) === 0) {
+					vnode.shapeFlag += DYNAMIC_SLOTS;
+				}
 
 				if (Object.isArray(newVNode)) {
 					if (isSlot(newVNode[0])) {
