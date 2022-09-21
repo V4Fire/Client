@@ -14,7 +14,10 @@
  */
 
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
+
+import { DYNAMIC_CLASSES, DYNAMIC_STYLES, DYNAMIC_PROPS } from 'core/component/const';
 import { mergeProps, normalizeStyle, normalizeClass } from 'core/component/render';
+
 import { getDirectiveContext } from 'core/component/directives/helpers';
 
 import {
@@ -40,11 +43,6 @@ export * from 'core/component/directives/attrs/interface';
 
 ComponentEngine.directive('attrs', {
 	beforeCreate(params: DirectiveParams, vnode: VNode) {
-		const
-			DYNAMIC_CLASSES = 2,
-			DYNAMIC_STYLES = 4,
-			DYNAMIC_PROPS = 8;
-
 		let
 			handlerStore;
 

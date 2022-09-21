@@ -12,16 +12,14 @@
  */
 
 import { ComponentEngine, VNode } from 'core/component/engines';
+
+import { DYNAMIC_SLOTS, DYNAMIC_CHILDREN } from 'core/component/const';
 import type { DirectiveParams } from 'core/component/directives/render/interface';
 
 export * from 'core/component/directives/render/interface';
 
 ComponentEngine.directive('render', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
-		const
-			DYNAMIC_SLOTS = 6,
-			DYNAMIC_CHILDREN = 16;
-
 		const
 			newVNode = params.value,
 			originalChildren = vnode.children;
