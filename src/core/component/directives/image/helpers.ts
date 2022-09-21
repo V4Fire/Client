@@ -48,6 +48,16 @@ export function createImgElement(
 	imageParams: ImageOptions,
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLImageElement> {
+	let
+		broken = '';
+
+	if (Object.isString(imageParams.broken)) {
+		broken = `url(${imageParams.broken})`;
+
+	} else if (Object.isDictionary(imageParams.broken)) {
+		broken = `url(${getCurrentSrc(createImageElement(imageParams.broken, imageParams).toElement())})`;
+	}
+
 	const attrs = {
 		src: resolveSrc(imageParams.src, imageParams, commonParams),
 		srcset: resolveSrcSet(imageParams.srcset, imageParams, commonParams),
@@ -59,27 +69,23 @@ export function createImgElement(
 		height: imageParams.height,
 		sizes: imageParams.sizes,
 
-		onload: "this.closest('span').style['background-image'] = ''; this.style.opacity = 1",
-		onerror: '',
+		onload: [
+			"this._ = this.closest('span')",
+			"this._.style['background-image'] = ''",
+			"this._.setAttribute('data-image', 'loaded')",
+			'this.style.opacity = 1'
+		].join(';'),
+
+		onerror: [
+			"this._ = this.closest('span')",
+			`this._.style['background-image'] = '${broken}'`,
+			"this._.setAttribute('data-image', 'failed')"
+		].join(';'),
 
 		style: {
 			opacity: 0
 		}
 	};
-
-	let
-		broken;
-
-	if (Object.isString(imageParams.broken)) {
-		broken = `url(${imageParams.broken})`;
-
-	} else if (Object.isDictionary(imageParams.broken)) {
-		broken = `url(${getCurrentSrc(createImageElement(imageParams.broken, imageParams).toElement())})`;
-	}
-
-	if (broken != null) {
-		attrs.onerror = `this.closest('span').style['background-image'] = '${broken}';`;
-	}
 
 	return {
 		toElement: () => {

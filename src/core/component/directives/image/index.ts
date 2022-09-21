@@ -77,5 +77,6 @@ ComponentEngine.directive('image', {
 
 	unmounted(el: Element) {
 		el.removeAttribute('style');
+		el.removeAttribute('data-image');
 	}
 });
