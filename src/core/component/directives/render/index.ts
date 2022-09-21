@@ -13,7 +13,7 @@
 
 import { ComponentEngine, VNode } from 'core/component/engines';
 
-import { DYNAMIC_SLOTS, DYNAMIC_CHILDREN } from 'core/component/const';
+import { setVNodePatchFlags } from 'core/component/render';
 import type { DirectiveParams } from 'core/component/directives/render/interface';
 
 export * from 'core/component/directives/render/interface';
@@ -36,20 +36,15 @@ ComponentEngine.directive('render', {
 
 			if (Object.isString(vnode.type)) {
 				vnode.children = Array.concat([], newVNode);
-
-				// eslint-disable-next-line no-bitwise
-				if ((vnode.shapeFlag & DYNAMIC_CHILDREN) === 0) {
-					vnode.shapeFlag += DYNAMIC_CHILDREN;
-				}
+				setVNodePatchFlags(vnode, 'children');
 
 			} else {
-				const slots = Object.isPlainObject(originalChildren) ? Object.reject(originalChildren, /^_/) : {};
-				vnode.children = slots;
+				const slots = Object.isPlainObject(originalChildren) ?
+					Object.reject(originalChildren, /^_/) :
+					{};
 
-				// eslint-disable-next-line no-bitwise
-				if ((vnode.shapeFlag & DYNAMIC_SLOTS) === 0) {
-					vnode.shapeFlag += DYNAMIC_SLOTS;
-				}
+				vnode.children = slots;
+				setVNodePatchFlags(vnode, 'slots');
 
 				if (Object.isArray(newVNode)) {
 					if (isSlot(newVNode[0])) {

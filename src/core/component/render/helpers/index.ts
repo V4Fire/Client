@@ -9,3 +9,4 @@
 export * from 'core/component/render/helpers/normalizers';
 export * from 'core/component/render/helpers/props';
 export * from 'core/component/render/helpers/attrs';
+export * from 'core/component/render/helpers/flags';

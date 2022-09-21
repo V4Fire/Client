@@ -15,9 +15,7 @@
 
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
-import { DYNAMIC_CLASSES, DYNAMIC_STYLES, DYNAMIC_PROPS } from 'core/component/const';
-import { mergeProps, normalizeStyle, normalizeClass } from 'core/component/render';
-
+import { mergeProps, normalizeStyle, normalizeClass, setVNodePatchFlags } from 'core/component/render';
 import { getDirectiveContext } from 'core/component/directives/helpers';
 
 import {
@@ -238,11 +236,7 @@ ComponentEngine.directive('attrs', {
 				}
 
 				props[event] = attrVal;
-
-				// eslint-disable-next-line no-bitwise
-				if ((vnode.patchFlag & DYNAMIC_PROPS) === 0) {
-					vnode.patchFlag += DYNAMIC_PROPS;
-				}
+				setVNodePatchFlags(vnode, 'props');
 
 				const dynamicProps = vnode.dynamicProps ?? [];
 				vnode.dynamicProps = dynamicProps;
@@ -284,25 +278,14 @@ ComponentEngine.directive('attrs', {
 			if (classAttrs[attrName] != null) {
 				attrName = classAttrs[attrName];
 				attrVal = normalizeClass(Object.cast(attrVal));
-
-				// eslint-disable-next-line no-bitwise
-				if ((vnode.patchFlag & DYNAMIC_CLASSES) === 0) {
-					vnode.patchFlag += DYNAMIC_CLASSES;
-				}
+				setVNodePatchFlags(vnode, 'classes');
 
 			} else if (styleAttrs[attrName] != null) {
 				attrVal = normalizeStyle(Object.cast(attrVal));
-
-				// eslint-disable-next-line no-bitwise
-				if ((vnode.patchFlag & DYNAMIC_STYLES) === 0) {
-					vnode.patchFlag += DYNAMIC_STYLES;
-				}
+				setVNodePatchFlags(vnode, 'styles');
 
 			} else {
-				// eslint-disable-next-line no-bitwise
-				if ((vnode.patchFlag & DYNAMIC_PROPS) === 0) {
-					vnode.patchFlag += DYNAMIC_PROPS;
-				}
+				setVNodePatchFlags(vnode, 'props');
 
 				if (attrName.startsWith('-')) {
 					attrName = `data${attrName}`;
