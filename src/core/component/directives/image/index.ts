@@ -31,11 +31,17 @@ ComponentEngine.directive('image', {
 		}
 
 		const
-			p = params.value,
 			ctx = getDirectiveContext(params, vnode);
 
 		if (ctx == null) {
 			return;
+		}
+
+		let
+			p = params.value;
+
+		if (p.optionsResolver != null) {
+			p = p.optionsResolver(p);
 		}
 
 		const
@@ -65,10 +71,16 @@ ComponentEngine.directive('image', {
 	},
 
 	beforeUpdate(el: Element, params: DirectiveParams, vnode: VNode, oldVNode: VNode) {
-		const p = params.value;
+		let
+			p = params.value;
+
+		if (p.optionsResolver != null) {
+			p = p.optionsResolver(p);
+		}
+
 		vnode[dirParams] = p;
 
-		if (Object.fastCompare(params.value, oldVNode[dirParams])) {
+		if (Object.fastCompare(p, oldVNode[dirParams])) {
 			return;
 		}
 
