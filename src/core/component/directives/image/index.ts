@@ -12,18 +12,20 @@
  */
 
 import { ComponentEngine, VNode } from 'core/component/engines';
+
+import { setVNodePatchFlags, mergeProps } from 'core/component/render';
 import { getDirectiveContext } from 'core/component/directives/helpers';
 
-import { createImg, createPictureElement } from 'core/component/directives/image/helpers';
+import { createImageElement, getCurrentSrc } from 'core/component/directives/image/helpers';
 import type { DirectiveParams } from 'core/component/directives/image/interface';
 
 export * from 'core/component/directives/image/interface';
 
-ComponentEngine.directive('image', {
-	beforeCreate(params: DirectiveParams, vnode: VNode): void {
-		const
-			DYNAMIC_CHILDREN = 16;
+const
+	dirParams = Symbol('The `v-image` directive params');
 
+ComponentEngine.directive('image', {
+	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
 		if (!Object.isString(vnode.type)) {
 			throw new TypeError('The `v-image` directive cannot be applied to a component');
 		}
@@ -39,23 +41,41 @@ ComponentEngine.directive('image', {
 		const
 			{r} = ctx.$renderEngine;
 
-		const
-			el = p.sources != null ? createPictureElement(p, p) : createImg(p, p),
-			img = el.toVNode(r.createVNode.bind(ctx));
+		vnode[dirParams] = p;
+		vnode.type = 'span';
 
-		img.props = {
-			...img.props,
+		let
+			preview;
 
-			style: {
-				'object-fit': p.objectFit
-			}
+		if (Object.isString(p.preview)) {
+			preview = `url(${p.preview})`;
+
+		} else if (Object.isDictionary(p.preview)) {
+			preview = `url(${getCurrentSrc(createImageElement(p.preview, p).toElement())})`;
+		}
+
+		const style = {
+			'background-image': preview
 		};
 
-		vnode.children = Object.cast(Array.concat([], Object.cast(vnode.children), img));
+		vnode.props = vnode.props != null ? mergeProps(vnode.props, {style}) : {style};
+		vnode.children = [createImageElement(p).toVNode(r.createVNode.bind(ctx))];
 
-		// eslint-disable-next-line no-bitwise
-		if ((vnode.shapeFlag & DYNAMIC_CHILDREN) === 0) {
-			vnode.shapeFlag += DYNAMIC_CHILDREN;
+		setVNodePatchFlags(vnode, 'styles', 'children');
+	},
+
+	beforeUpdate(el: Element, params: DirectiveParams, vnode: VNode, oldVNode: VNode) {
+		const p = params.value;
+		vnode[dirParams] = p;
+
+		if (Object.fastCompare(params.value, oldVNode[dirParams])) {
+			return;
 		}
+
+		vnode.el?.children[0].replaceWith(createImageElement(p).toElement());
+	},
+
+	unmounted(el: Element) {
+		el.removeAttribute('style');
 	}
 });

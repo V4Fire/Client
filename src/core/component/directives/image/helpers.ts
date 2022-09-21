@@ -8,28 +8,78 @@
 
 import { concatURLs } from 'core/url';
 import { getSrcSet } from 'core/html';
-import type { VNode } from 'core/component/engines';
 
+import { setVNodePatchFlags } from 'core/component/render';
+
+import type { VNode } from 'core/component/engines';
 import type { ImageOptions, ImageSource, VirtualElement } from 'core/component/directives/image/interface';
 
 /**
- * Creates an `img` element by the passed parameters and returns it
+ * Returns a value of the `currentSrc` property from the passed image element
+ * @param image
+ */
+export function getCurrentSrc(image: HTMLImageElement | HTMLPictureElement): CanUndef<string> {
+	return image instanceof HTMLImageElement ? image.currentSrc : image.querySelector('img')?.currentSrc;
+}
+
+/**
+ * Creates an image element by the passed parameters.
+ * The function returns a special structure, with methods to create the element as a DOM or VDOM node.
  *
  * @param imageParams - the requested image parameters
- * @param commonParams - common parameters
+ * @param [commonParams] - common parameters
  */
-export function createImg(
+export function createImageElement(
 	imageParams: ImageOptions,
-	commonParams: ImageOptions
-): VirtualElement<HTMLElement> {
+	commonParams: ImageOptions = imageParams
+): VirtualElement<HTMLImageElement | HTMLPictureElement> {
+	const fn = imageParams.sources != null ? createPictureElement : createImgElement;
+	return fn(imageParams, commonParams);
+}
+
+/**
+ * Creates an `img` element by the passed parameters.
+ * The function returns a special structure, with methods to create the element as a DOM or VDOM node.
+ *
+ * @param imageParams - the requested image parameters
+ * @param [commonParams] - common parameters
+ */
+export function createImgElement(
+	imageParams: ImageOptions,
+	commonParams: ImageOptions = imageParams
+): VirtualElement<HTMLImageElement> {
 	const attrs = {
 		src: resolveSrc(imageParams.src, imageParams, commonParams),
 		srcset: resolveSrcSet(imageParams.srcset, imageParams, commonParams),
+
+		alt: imageParams.alt,
 		loading: imageParams === commonParams && imageParams.lazy !== false ? 'lazy' : undefined,
+
 		width: imageParams.width,
 		height: imageParams.height,
-		sizes: imageParams.sizes
+		sizes: imageParams.sizes,
+
+		onload: "this.closest('span').style['background-image'] = ''; this.style.opacity = 1",
+		onerror: '',
+
+		style: {
+			opacity: 0
+		}
 	};
+
+	let
+		broken;
+
+	if (Object.isString(imageParams.broken)) {
+		broken = `url(${imageParams.broken})`;
+
+	} else if (Object.isDictionary(imageParams.broken)) {
+		broken = `url(${getCurrentSrc(createImageElement(imageParams.broken, imageParams).toElement())})`;
+	}
+
+	if (broken != null) {
+		attrs.onerror = `this.closest('span').style['background-image'] = '${broken}';`;
+	}
 
 	return {
 		toElement: () => {
@@ -37,7 +87,10 @@ export function createImg(
 				img = document.createElement('img');
 
 			Object.forEach(attrs, (val, prop) => {
-				if (Object.isTruly(val)) {
+				if (Object.isDictionary(val)) {
+					Object.assign(img[prop], val);
+
+				} else if (Object.isTruly(val)) {
 					img[prop] = val;
 				}
 			});
@@ -63,37 +116,16 @@ export function createImg(
 }
 
 /**
- * Creates a `picture` element with resources by the passed parameters and returns it
+ * Creates a `picture` element with resources by the passed parameters.
+ * The function returns a special structure, with methods to create the element as a DOM or VDOM node.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
- *
- * @example
- * ```typescript
- * const {picture, img} = createPicture({
- *   src: 'preview.jpg',
- *   sources: [{srcset: 'srcset-with-webp-img', role: 'webp'}]
- * }, {
- *   src: 'main.jpg',
- *   sources: [{srcset: 'srcset-with-webp-img', role: 'webp'}],
- *   baseSrc: 'https://path'
- * });
- *
- * document.appendChild(picture);
- * ```
- *
- * ```html
- * <picture>
- *   <source srcset="https://path/srcset-with-webp-img" role="image/webp">
- *   <img src="https://path/preview.jpg">
- * </picture>
- * ```
- *
  * @param imageParams - the requested image parameters
- * @param commonParams - common parameters
+ * @param [commonParams] - common parameters
  */
 export function createPictureElement(
 	imageParams: ImageOptions,
-	commonParams: ImageOptions
+	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLElement> {
 	return {
 		toElement: () => {
@@ -101,36 +133,38 @@ export function createPictureElement(
 				picture = document.createElement('picture');
 
 			picture.appendChild(createSourceElements(imageParams, commonParams).toElement());
-			picture.appendChild(createImg(imageParams, commonParams).toElement());
+			picture.appendChild(createImgElement(imageParams, commonParams).toElement());
 
 			return picture;
 		},
 
 		toVNode: (create) => {
-			const picture = create('picture');
-			picture.shapeFlag += 16;
+			const
+				picture = create('picture');
 
 			picture.children = Array.concat(
 				[],
 				createSourceElements(imageParams, commonParams).toVNode(create),
-				createImg(imageParams, commonParams).toVNode(create)
+				createImgElement(imageParams, commonParams).toVNode(create)
 			);
 
+			setVNodePatchFlags(picture, 'children');
 			return picture;
 		}
 	};
 }
 
 /**
- * Creates `source` elements by the passed parameters and returns them in a single document fragment
+ * Creates `source` elements by the passed parameters.
+ * The function returns a special structure, with methods to create the elements as a DOM or VDOM nodes.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
  * @param imageParams - the requested image parameters
- * @param commonParams - common parameters
+ * @param [commonParams] - common parameters
  */
 export function createSourceElements(
 	imageParams: ImageOptions,
-	commonParams: ImageOptions
+	commonParams: ImageOptions = imageParams
 ): VirtualElement<DocumentFragment, []> {
 	return {
 		toElement: () => {
@@ -142,9 +176,7 @@ export function createSourceElements(
 			}
 
 			imageParams.sources.forEach((source) => {
-				const
-					node = document.createElement('source');
-
+				const node = document.createElement('source');
 				addPropsFromSource(Object.cast(node), source);
 				fragment.appendChild(node);
 			});
@@ -167,7 +199,6 @@ export function createSourceElements(
 
 				node.props = props;
 				addPropsFromSource(props, source);
-
 				fragment.push(node);
 			});
 
@@ -175,26 +206,24 @@ export function createSourceElements(
 		}
 	};
 
-	function addPropsFromSource(props: Dictionary, source: ImageSource) {
-		props.src = resolveSrc(source.src, imageParams, commonParams);
-		props.srcset = resolveSrcSet(source.srcset, imageParams, commonParams);
-		props.type = getSourceType(source.type);
-
-		if (source.media != null) {
-			props.media = source.media;
+	function addPropsFromSource(props: Dictionary, source: ImageSource): void {
+		if (Object.isTruly(source.src)) {
+			props.src = resolveSrc(source.src, imageParams, commonParams);
 		}
 
-		if (source.sizes != null) {
-			props.sizes = source.sizes;
+		if (Object.isTruly(source.srcset)) {
+			props.srcset = resolveSrcSet(source.srcset, imageParams, commonParams);
 		}
 
-		if (source.width != null) {
-			props.width = source.width;
+		if (Object.isTruly(source.type)) {
+			props.type = `image/${source.type}`;
 		}
 
-		if (source.width != null) {
-			props.width = source.width;
-		}
+		['media', 'sizes', 'width', 'height'].forEach((attr) => {
+			if (Object.isTruly(source[attr])) {
+				props[attr] = source[attr];
+			}
+		});
 	}
 }
 
@@ -264,16 +293,4 @@ export function resolveSrc(
  */
 function getBaseSrc(imageParams: ImageOptions, commonParams: ImageOptions): CanUndef<string> {
 	return imageParams.baseSrc ?? commonParams.baseSrc ?? '';
-}
-
-/**
- * Returns a value of the `type` attribute for the `source` element, based on the passed image type
- * @param type - the original image type
- */
-export function getSourceType(type: Nullable<string>): string {
-	if (type == null || type === '') {
-		return '';
-	}
-
-	return `image/${type}`;
 }

@@ -103,18 +103,6 @@ export interface ImageOptions {
 	lazy?: boolean;
 
 	/**
-	 * A preferred aspect ratio for the image.
-	 * The option value can be given as a width-to-height ratio string or number, such as '2/1' or 16/9.
-	 */
-	aspectRatio?: string | number;
-
-	/**
-	 * How the image content should be resized to fit its container
-	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit
-	 */
-	objectFit?: 'fill' | 'contain' | 'cover' | 'none' | 'scale-down';
-
-	/**
 	 * An image URL to use as a placeholder while the main one is loading.
 	 * The option can also accept an object with additional image settings.
 	 */
