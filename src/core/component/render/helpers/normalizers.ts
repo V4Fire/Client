@@ -9,32 +9,32 @@
 import type { ComponentMeta } from 'core/component/meta';
 
 /**
- * Normalizes the passed class attribute and returns the result
- * @param classValue
+ * Normalizes the passed CSS classes and returns the result
+ * @param classes
  */
-export function normalizeClass(classValue: CanArray<string | Dictionary>): string {
+export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 	let
 		res = '';
 
-	if (Object.isString(classValue)) {
-		res = classValue;
+	if (Object.isString(classes)) {
+		res = classes;
 
-	} else if (Object.isArray(classValue)) {
-		for (let i = 0; i < classValue.length; i++) {
+	} else if (Object.isArray(classes)) {
+		for (let i = 0; i < classes.length; i++) {
 			const
-				normalizedClass = normalizeClass(classValue[i]);
+				normalizedClass = normalizeClass(classes[i]);
 
 			if (normalizedClass !== '') {
 				res += `${normalizedClass} `;
 			}
 		}
 
-	} else if (Object.isDictionary(classValue)) {
-		for (let keys = Object.keys(classValue), i = 0; i < keys.length; i++) {
+	} else if (Object.isDictionary(classes)) {
+		for (let keys = Object.keys(classes), i = 0; i < keys.length; i++) {
 			const
 				key = keys[i];
 
-			if (Object.isTruly(classValue[key])) {
+			if (Object.isTruly(classes[key])) {
 				res += `${key} `;
 			}
 		}
@@ -44,21 +44,21 @@ export function normalizeClass(classValue: CanArray<string | Dictionary>): strin
 }
 
 /**
- * Normalizes the passed CSS style value and returns the result
- * @param style
+ * Normalizes the passed CSS styles and returns the result
+ * @param styles
  */
-export function normalizeStyle(style: CanArray<string | Dictionary<string>>): string | Dictionary<string> {
-	if (Object.isArray(style)) {
+export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): string | Dictionary<string> {
+	if (Object.isArray(styles)) {
 		const
 			res = {};
 
-		for (let i = 0; i < style.length; i++) {
+		for (let i = 0; i < styles.length; i++) {
 			const
-				el = style[i],
-				normalizedStyle = Object.isString(el) ? parseStringStyle(el) : normalizeStyle(el);
+				style = styles[i],
+				normalizedStyle = Object.isString(style) ? parseStringStyle(style) : normalizeStyle(style);
 
 			if (Object.size(normalizedStyle) > 0) {
-				for (let keys = Object.keys(normalizedStyle), i = keys.length; i < keys.length; i++) {
+				for (let keys = Object.keys(normalizedStyle), i = 0; i < keys.length; i++) {
 					const key = keys[i];
 					res[key] = normalizedStyle[key];
 				}
@@ -68,12 +68,12 @@ export function normalizeStyle(style: CanArray<string | Dictionary<string>>): st
 		return res;
 	}
 
-	if (Object.isString(style)) {
-		return style.trim();
+	if (Object.isString(styles)) {
+		return styles.trim();
 	}
 
-	if (Object.isDictionary(style)) {
-		return style;
+	if (Object.isDictionary(styles)) {
+		return styles;
 	}
 
 	return '';
