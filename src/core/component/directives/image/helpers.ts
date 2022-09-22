@@ -8,7 +8,6 @@
 
 import { concatURLs } from 'core/url';
 import { getSrcSet } from 'core/html';
-
 import { setVNodePatchFlags } from 'core/component/render';
 
 import type { VNode } from 'core/component/engines';
@@ -48,42 +47,24 @@ export function createImgElement(
 	imageParams: ImageOptions,
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLImageElement> {
-	let
-		broken = '';
-
-	if (Object.isString(imageParams.broken)) {
-		broken = `url(${imageParams.broken})`;
-
-	} else if (Object.isDictionary(imageParams.broken)) {
-		broken = `url(${getCurrentSrc(createImageElement(imageParams.broken, imageParams).toElement())})`;
-	}
-
 	const attrs = {
+		'data-img': Math.random(),
+
 		src: resolveSrc(imageParams.src, imageParams, commonParams),
 		srcset: resolveSrcSet(imageParams.srcset, imageParams, commonParams),
 
 		alt: imageParams.alt,
 		loading: imageParams === commonParams && imageParams.lazy !== false ? 'lazy' : undefined,
 
-		width: imageParams.width,
-		height: imageParams.height,
+		width: normalizeSizeAttr(imageParams.width),
+		height: normalizeSizeAttr(imageParams.height),
 		sizes: imageParams.sizes,
 
-		onload: [
-			"this._ = this.closest('span')",
-			"this._.style['background-image'] = ''",
-			"this._.setAttribute('data-image', 'loaded')",
-			'this.style.opacity = 1'
-		].join(';'),
-
-		onerror: [
-			"this._ = this.closest('span')",
-			`this._.style['background-image'] = '${broken}'`,
-			"this._.setAttribute('data-image', 'failed')"
-		].join(';'),
+		onload: "this.setAttribute('data-img', 'loaded')",
+		onerror: "this.setAttribute('data-img', 'failed')",
 
 		style: {
-			opacity: 0
+			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined
 		}
 	};
 
@@ -106,15 +87,22 @@ export function createImgElement(
 
 		toVNode: (create) => {
 			const
-				img = create('img', {}),
-				props = img.props ?? {};
+				img: VNode = create('img');
 
-			img.props = props;
+			const
+				props = {},
+				dynamicProps: string[] = [];
+
 			Object.forEach(attrs, (val, prop) => {
 				if (Object.isTruly(val)) {
 					props[prop] = val;
+					dynamicProps.push(prop);
 				}
 			});
+
+			img.props = props;
+			img.dynamicProps = dynamicProps;
+			setVNodePatchFlags(img, 'props', 'styles');
 
 			return img;
 		}
@@ -146,7 +134,7 @@ export function createPictureElement(
 
 		toVNode: (create) => {
 			const
-				picture = create('picture');
+				picture: VNode = create('picture');
 
 			picture.children = Array.concat(
 				[],
@@ -154,7 +142,9 @@ export function createPictureElement(
 				createImgElement(imageParams, commonParams).toVNode(create)
 			);
 
+			picture.dynamicChildren = Object.cast(picture.children.slice());
 			setVNodePatchFlags(picture, 'children');
+
 			return picture;
 		}
 	};
@@ -200,11 +190,13 @@ export function createSourceElements(
 
 			imageParams.sources.forEach((source) => {
 				const
-					node = create('source'),
-					props = node.props ?? {};
+					node: VNode = create('source'),
+					props = {};
 
 				node.props = props;
-				addPropsFromSource(props, source);
+				node.dynamicProps = addPropsFromSource(props, source);
+				setVNodePatchFlags(node, 'props');
+
 				fragment.push(node);
 			});
 
@@ -212,24 +204,35 @@ export function createSourceElements(
 		}
 	};
 
-	function addPropsFromSource(props: Dictionary, source: ImageSource): void {
-		if (Object.isTruly(source.src)) {
-			props.src = resolveSrc(source.src, imageParams, commonParams);
-		}
+	function addPropsFromSource(props: Dictionary, source: ImageSource): string[] {
+		const
+			addedProps: string[] = [];
 
 		if (Object.isTruly(source.srcset)) {
 			props.srcset = resolveSrcSet(source.srcset, imageParams, commonParams);
+			addedProps.push('srcset');
 		}
 
 		if (Object.isTruly(source.type)) {
 			props.type = `image/${source.type}`;
+			addedProps.push('type');
 		}
 
-		['media', 'sizes', 'width', 'height'].forEach((attr) => {
+		['media', 'sizes'].forEach((attr) => {
 			if (Object.isTruly(source[attr])) {
 				props[attr] = source[attr];
+				addedProps.push(attr);
 			}
 		});
+
+		['width', 'height'].forEach((attr) => {
+			if (Object.isTruly(source[attr])) {
+				props[attr] = normalizeSizeAttr(source[attr]);
+				addedProps.push(attr);
+			}
+		});
+
+		return addedProps;
 	}
 }
 
@@ -297,6 +300,18 @@ export function resolveSrc(
  * @param imageParams - the requested image parameters
  * @param commonParams - common parameters
  */
-function getBaseSrc(imageParams: ImageOptions, commonParams: ImageOptions): CanUndef<string> {
+export function getBaseSrc(imageParams: ImageOptions, commonParams: ImageOptions): CanUndef<string> {
 	return imageParams.baseSrc ?? commonParams.baseSrc ?? '';
+}
+
+/**
+ * Normalizes the passed value of a size attribute (`width` or `height`) and returns it
+ * @param size
+ */
+export function normalizeSizeAttr(size: Nullable<string | number>): CanUndef<string> {
+	if (size == null || size === '') {
+		return;
+	}
+
+	return String(size).replace(/[^\d%]/g, '');
 }

@@ -21,9 +21,6 @@ import type { DirectiveParams } from 'core/component/directives/image/interface'
 
 export * from 'core/component/directives/image/interface';
 
-const
-	dirParams = Symbol('The `v-image` directive params');
-
 ComponentEngine.directive('image', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
 		if (!Object.isString(vnode.type)) {
@@ -47,48 +44,115 @@ ComponentEngine.directive('image', {
 		const
 			{r} = ctx.$renderEngine;
 
-		vnode[dirParams] = p;
-		vnode.type = 'span';
-
-		let
-			preview;
-
-		if (Object.isString(p.preview)) {
-			preview = `url(${p.preview})`;
-
-		} else if (Object.isDictionary(p.preview)) {
-			preview = `url(${getCurrentSrc(createImageElement(p.preview, p).toElement())})`;
-		}
-
-		const style = {
-			'background-image': preview
+		const placeholders = {
+			preview: undefined,
+			broken: undefined
 		};
 
-		vnode.props = vnode.props != null ? mergeProps(vnode.props, {style}) : {style};
-		vnode.children = [createImageElement(p).toVNode(r.createVNode.bind(ctx))];
+		Object.keys(placeholders).forEach((nm) => {
+			const
+				placeholder = p[nm];
 
-		setVNodePatchFlags(vnode, 'styles', 'children');
-	},
+			let
+				url;
 
-	beforeUpdate(el: Element, params: DirectiveParams, vnode: VNode, oldVNode: VNode) {
-		let
-			p = params.value;
+			if (Object.isString(placeholder)) {
+				url = `url("${placeholder}")`;
 
-		if (p.optionsResolver != null) {
-			p = p.optionsResolver(p);
+			} else if (Object.isDictionary(placeholder)) {
+				url = `url("${getCurrentSrc(createImageElement(placeholder, p).toElement())}")`;
+			}
+
+			if (url != null) {
+				placeholders[nm] = url;
+			}
+		});
+
+		const props = {
+			'data-image': 'preview',
+
+			'data-preview-image': placeholders.preview,
+			'data-broken-image': placeholders.broken,
+
+			style: {
+				'background-image': placeholders.preview
+			}
+		};
+
+		vnode.type = 'span';
+
+		vnode.props = vnode.props != null ? mergeProps(vnode.props, props) : props;
+		vnode.dynamicProps = Array.union(vnode.dynamicProps ?? [], Object.keys(props));
+
+		if (Object.isTruly(placeholders.preview) && !hasDisplay(vnode.props.style)) {
+			vnode.props.style.display = 'inline-block';
 		}
 
-		vnode[dirParams] = p;
+		vnode.children = [createImageElement(p).toVNode(r.createVNode.bind(ctx))];
+		vnode.dynamicChildren = Object.cast(vnode.children.slice());
+		setVNodePatchFlags(vnode, 'props', 'styles', 'children');
 
-		if (Object.fastCompare(p, oldVNode[dirParams])) {
+		function hasDisplay(style: CanUndef<Dictionary<string>>): boolean {
+			if (style == null) {
+				return false;
+			}
+
+			return Object.isTruly(style.display?.trim());
+		}
+	},
+
+	mounted,
+	updated: mounted
+});
+
+function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
+	const
+		p = params.value,
+		img = el.querySelector('img'),
+		ctx = getDirectiveContext(params, vnode);
+
+	if (img == null || ctx == null) {
+		return;
+	}
+
+	const
+		{async: $a} = ctx;
+
+	switch (img.getAttribute('data-img')) {
+		case 'loaded':
+			onLoad();
+			break;
+
+		case 'failed':
+			onError();
+			break;
+
+		default:
+			$a.once(img, 'load', onLoad);
+			$a.once(img, 'error', onError);
+	}
+
+	function onLoad() {
+		if (img == null) {
 			return;
 		}
 
-		vnode.el?.children[0].replaceWith(createImageElement(p).toElement());
-	},
+		img.style.opacity = '1';
 
-	unmounted(el: Element) {
-		el.removeAttribute('style');
-		el.removeAttribute('data-image');
+		el.style['background-image'] = '';
+		el.setAttribute('data-image', 'loaded');
+
+		p.onLoad?.(img);
 	}
-});
+
+	function onError() {
+		if (img == null) {
+			return;
+		}
+
+		el.style['background-image'] = el.getAttribute('data-broken-image') ?? '';
+		el.setAttribute('data-image', 'broken');
+
+		p.onError?.(img);
+	}
+}

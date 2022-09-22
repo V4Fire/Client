@@ -143,16 +143,6 @@ export interface ImageOptions {
 /** @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source */
 export interface ImageSource {
 	/**
-	 * The image URL.
-	 * On browsers supporting `srcset`, `src` is treated like a candidate image with a pixel density descriptor 1x,
-	 * unless an image with this pixel density descriptor is already defined in `srcset`,
-	 * or unless `srcset` contains `w` descriptors.
-	 *
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#src
-	 */
-	src?: string;
-
-	/**
 	 * A value of the `srcset` source attribute.
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-srcset
 	 *
