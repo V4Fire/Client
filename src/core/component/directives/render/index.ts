@@ -36,6 +36,7 @@ ComponentEngine.directive('render', {
 
 			if (Object.isString(vnode.type)) {
 				vnode.children = Array.concat([], newVNode);
+				vnode.dynamicChildren = Object.cast(vnode.children.slice());
 				setVNodePatchFlags(vnode, 'children');
 
 			} else {
