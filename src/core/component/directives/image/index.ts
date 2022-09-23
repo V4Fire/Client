@@ -83,7 +83,6 @@ ComponentEngine.directive('image', {
 		};
 
 		vnode.type = 'span';
-
 		vnode.props = vnode.props != null ? mergeProps(vnode.props, props) : props;
 		vnode.dynamicProps = Array.union(vnode.dynamicProps ?? [], Object.keys(props));
 

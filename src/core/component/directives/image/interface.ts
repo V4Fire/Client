@@ -115,7 +115,7 @@ export interface ImageOptions {
 	broken?: string | ImagePlaceholderOptions;
 
 	/**
-	 * A handler to be called when the image is successfully uploaded
+	 * A handler to be called when the image is successfully loaded
 	 * @param el
 	 */
 	onLoad?(el: Element): void;
@@ -132,9 +132,7 @@ export interface ImageOptions {
 	 *
 	 * @example
 	 * ```js
-	 * const optionsResolver = (opts) => {
-	 *   return {...opts, src: opts.src + '?size=42'};
-	 * }
+	 * const optionsResolver = (opts) => ({...opts, src: opts.src + '?size=42'});
 	 * ```
 	 */
 	optionsResolver?: OptionsResolver;
