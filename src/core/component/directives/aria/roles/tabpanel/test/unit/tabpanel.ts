@@ -17,7 +17,7 @@ test.describe('v-aria:tabpanel', () => {
 		await demoPage.goto();
 	});
 
-	test('role is set', async ({page}) => {
+	test('tabpanel must have the `role` attribute', async ({page}) => {
 		const target = await init(page);
 
 		test.expect(
