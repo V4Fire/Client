@@ -10,6 +10,24 @@ import type { DirectiveBinding, VNode } from 'core/component/engines';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
+ * Returns the unique directive identifier for the passed element
+ *
+ * @param el - the element to which the directive applies
+ * @param idsCache - a store for the registered elements
+ */
+export function getElementId(el: Element, idsCache: WeakMap<Element, string>): string {
+	let
+		id = idsCache.get(el);
+
+	if (id == null) {
+		id = Math.random().toString().slice(2);
+		idsCache.set(el, id);
+	}
+
+	return id;
+}
+
+/**
  * Returns a directive context associated with the directive
  *
  * @param binding - the directive binding

@@ -7,6 +7,7 @@
  */
 
 import { idsCache } from 'core/component/directives/bind-with/const';
+import { getElementId as getElementIdFromStore } from 'core/component/directives/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { DirectiveValue, Listener } from 'core/component/directives/bind-with/interface';
@@ -16,15 +17,7 @@ import type { DirectiveValue, Listener } from 'core/component/directives/bind-wi
  * @param el - the element to which the directive applies
  */
 export function getElementId(el: Element): string {
-	let
-		id = idsCache.get(el);
-
-	if (id == null) {
-		id = Math.random().toString().slice(2);
-		idsCache.set(el, id);
-	}
-
-	return id;
+	return getElementIdFromStore(el, idsCache);
 }
 
 /**
