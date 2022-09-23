@@ -14,12 +14,15 @@
 import { ComponentEngine, VNode } from 'core/component/engines';
 
 import { setVNodePatchFlags, mergeProps } from 'core/component/render';
-import { getDirectiveContext } from 'core/component/directives/helpers';
+import { getDirectiveContext, getElementId } from 'core/component/directives/helpers';
 
 import { createImageElement, getCurrentSrc } from 'core/component/directives/image/helpers';
 import type { DirectiveParams } from 'core/component/directives/image/interface';
 
 export * from 'core/component/directives/image/interface';
+
+export const
+	idsCache = new WeakMap<Element, string>();
 
 ComponentEngine.directive('image', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
@@ -115,12 +118,19 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		return;
 	}
 
-	const
-		{async: $a} = ctx;
+	const {
+		async: $a
+	} = ctx;
+
+	const group = {
+		group: getElementId(el, idsCache)
+	};
+
+	$a.clearAll(group);
 
 	switch (img.getAttribute('data-img')) {
 		case 'loaded':
-			onLoad();
+			void onLoad();
 			break;
 
 		case 'failed':
@@ -128,24 +138,36 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 			break;
 
 		default:
-			$a.once(img, 'load', onLoad);
-			$a.once(img, 'error', onError);
+			$a.once(img, 'load', onLoad, group);
+			$a.once(img, 'error', onError, group);
 	}
 
-	function onLoad() {
+	async function onLoad() {
+		$a.off(group);
+
 		if (img == null) {
 			return;
 		}
 
-		img.style.opacity = '1';
+		try {
+			await $a.sleep(50, group);
 
-		el.style['background-image'] = '';
-		el.setAttribute('data-image', 'loaded');
+			// eslint-disable-next-line require-atomic-updates
+			img.style.opacity = '1';
 
-		p.onLoad?.(img);
+			el.style['background-image'] = '';
+			el.setAttribute('data-image', 'loaded');
+
+			p.onLoad?.(img);
+
+		} catch (err) {
+			stderr(err);
+		}
 	}
 
 	function onError() {
+		$a.off(group);
+
 		if (img == null) {
 			return;
 		}

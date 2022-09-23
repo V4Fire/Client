@@ -48,7 +48,7 @@ export function createImgElement(
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLImageElement> {
 	const attrs = {
-		'data-img': Math.random(),
+		'data-img': Object.fastHash(imageParams),
 
 		src: resolveSrc(imageParams.src, imageParams, commonParams),
 		srcset: resolveSrcSet(imageParams.srcset, imageParams, commonParams),
