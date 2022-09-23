@@ -20,7 +20,7 @@ test.describe('v-aria:tab', () => {
 	const
 		selector = '[data-id="target"]';
 
-	test('role is set', async ({page}) => {
+	test('list items must have the `role` attributes', async ({page}) => {
 		const target = await init(page);
 
 		test.expect(
@@ -40,7 +40,7 @@ test.describe('v-aria:tab', () => {
 		).toEqual(['tab', 'tab', 'tab']);
 	});
 
-	test('aria-controls is set', async ({page}) => {
+	test('list items must have the `aria-controls` attributes', async ({page}) => {
 		const target = await init(page);
 
 		test.expect(
@@ -60,7 +60,7 @@ test.describe('v-aria:tab', () => {
 		).toEqual(['id4', 'id5', 'id6']);
 	});
 
-	test('has active value', async ({page}) => {
+	test('the active element must have the `aria-selected` attribute', async ({page}) => {
 		const target = await init(page, {active: 1});
 
 		await page.focus(selector);
@@ -82,7 +82,7 @@ test.describe('v-aria:tab', () => {
 		).toEqual(['false', 'true', 'false']);
 	});
 
-	test('tabindexes are set without active item', async ({page}) => {
+	test('if there is no active element, then all elements except the first must have the `tabindex` attribute equal to `-1`', async ({page}) => {
 		const target = await init(page);
 
 		test.expect(
@@ -102,7 +102,7 @@ test.describe('v-aria:tab', () => {
 		).toEqual([0, -1, -1]);
 	});
 
-	test('tabindexes are set with active item', async ({page}) => {
+	test('all elements except the active must have the `tabindex` attribute equal to `-1`', async ({page}) => {
 		const target = await init(page, {active: 1});
 
 		test.expect(
@@ -122,7 +122,7 @@ test.describe('v-aria:tab', () => {
 		).toEqual([-1, 0, -1]);
 	});
 
-	test('active item changed', async ({page}) => {
+	test('changing the active element', async ({page}) => {
 		const target = await init(page);
 
 		test.expect(
@@ -150,7 +150,7 @@ test.describe('v-aria:tab', () => {
 		]);
 	});
 
-	test('keyboard keys handle on horizontal orientation', async ({page}) => {
+	test('keyboard support with the horizontal orientation', async ({page}) => {
 		const target = await init(page);
 
 		test.expect(
@@ -187,7 +187,7 @@ test.describe('v-aria:tab', () => {
 		).toEqual(['id2', 'id1', 'id1', 'id1', 'id3', 'id1']);
 	});
 
-	test('keyboard keys handle on vertical orientation', async ({page}) => {
+	test('keyboard support with the vertical orientation', async ({page}) => {
 		const target = await init(page, {orientation: 'vertical'});
 
 		test.expect(
@@ -232,11 +232,13 @@ test.describe('v-aria:tab', () => {
 		return Component.createComponent(page, 'b-list', {
 			attrs: {
 				'data-id': 'target',
+
 				items: [
-					{label: 'Male', value: 0, id: 'id1', controls: 'id4'},
-					{label: 'Female', value: 1, id: 'id2', controls: 'id5'},
-					{label: 'Other', value: 2, id: 'id3', controls: 'id6'}
+					{id: 'id1', label: 'Male', value: 0, controls: 'id4'},
+					{id: 'id2', label: 'Female', value: 1, controls: 'id5'},
+					{id: 'id3', label: 'Other', value: 2, controls: 'id6'}
 				],
+
 				...attrs
 			}
 		});
