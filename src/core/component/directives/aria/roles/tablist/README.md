@@ -1,33 +1,46 @@
 # core/component/directives/aria/roles/tablist
 
-This module provides an engine for `v-aria` directive.
+This module provides an implementation of the ARIA [tablist](https://www.w3.org/TR/wai-aria/#tablist) role.
+An element with this role should be used in conjunction with elements with the roles [tabpanel](https://www.w3.org/TR/wai-aria/#tabpanel) and [tab](https://www.w3.org/TR/wai-aria/#tab).
 
-The engine to set `tablist` role attribute.
-The `tablist` role identifies the element that serves as the container for a set of `tabs`. The `tab` content are referred to as `tabpanel` elements.
+For more information see [this](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/tab_role`).
 
-For more information go to [tablist](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/tablist_role`).
-For recommendations how to make accessible widget go to [tablist](`https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/`).
+```
+< div v-aria:tablist
+  < template v-for = (tab, i) of tabs
+    < div :id = 'tab-' + i | v-aria:tab = { &
+      controls: 'content-' + i,
 
-## API
+      first: i === 0,
+      selected: tab.active,
+      hasDefaultSelectedTabs: tab.some((tab) => Boolean(tab.active)),
 
-The role introduces several additional settings.
+      '@change': (cb) => cb(tab.active)
+    } .
+
+< template v-for = (content, i) of tabsContent
+  < div :id = 'content-' + i | v-aria:tabpanel = {labelledby: 'tab-' + i}
+    {{ content }}
+```
+
+## Available options
+
+Any ARIA attributes could be added in options through the short syntax.
+
+```
+< div v-aria = {label: 'foo', desribedby: 'id1', details: 'id2'}
+
+/// The same as
+
+< div :aria-label = 'foo' | :aria-desribedby = 'id1' | :aria-details = 'id2'
+```
+
+Also, the role introduces several additional settings.
 
 ### [multiselectable = `false`]
 
-Whether the widget supports a feature of multiple active items
+Indicates that the user may select more than one item from the current selectable descendants.
 
-### [orientation]
+### [orientation = `'horizontal'`]
 
-Whether the widget orientation is `horizontal` or `vertical`.
-
-The role expects the component to realize`iAccess` trait.
-
-## Usage
-
-```
-< div v-aria:tablist = { &
-    isMultiple: multiple;
-	  orientation: orientation;
-  }
-.
-```
+Indicates whether the element orientation is `horizontal`, `vertical`, or unknown/ambiguous.
