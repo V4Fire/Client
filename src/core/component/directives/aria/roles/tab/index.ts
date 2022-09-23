@@ -27,7 +27,7 @@ export class Tab extends ARIARole {
 	/** @inheritDoc */
 	init(): void {
 		if (!iAccess.is(this.ctx)) {
-			Object.throw('Tab aria directive expects the component to realize iAccess interface');
+			throw new TypeError('The `tab` role requires that a component in whose context the directive is used implement the `iAccess` interface');
 		}
 
 		const {
