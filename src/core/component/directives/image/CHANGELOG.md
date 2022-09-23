@@ -11,6 +11,16 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :boom: Breaking Change
+
+* Removed the ability to render an image as a background
+* Removed all properties that can be configured via CSS
+* The directive now adds nodes to its container
+
+#### :rocket: New Feature
+
+* Added support for lazy loading
+
 #### :house: Internal
 
 * Migration to Vue3
