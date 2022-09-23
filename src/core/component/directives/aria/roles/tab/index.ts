@@ -20,6 +20,8 @@ import iAccess from 'traits/i-access/i-access';
 import { TabParams } from 'core/component/directives/aria/roles/tab/interface';
 import { ARIARole, KeyCodes } from 'core/component/directives/aria/roles/interface';
 
+export * from 'core/component/directives/aria/roles/tab/interface';
+
 export class Tab extends ARIARole {
 	override Params: TabParams = new TabParams();
 	override Ctx!: iBlock & iAccess;
