@@ -17,7 +17,7 @@ test.describe('v-aria:tablist', () => {
 		await demoPage.goto();
 	});
 
-	test('role is set', async ({page}) => {
+	test('tablist must have the `role` attribute', async ({page}) => {
 		const target = await init(page);
 
 		test.expect(
@@ -29,25 +29,23 @@ test.describe('v-aria:tablist', () => {
 		).toBe('tablist');
 	});
 
-	test('multiselectable is set', async ({page}) => {
+	test('when passing the `multiselectable` parameter, a special attribute must be set', async ({page}) => {
 		const target = await init(page, {multiple: true});
 
 		test.expect(
 			await target.evaluate((ctx) => {
 				const el = ctx.unsafe.block?.element('wrapper');
-
 				return el?.getAttribute('aria-multiselectable');
 			})
 		).toBe('true');
 	});
 
-	test('orientation is set', async ({page}) => {
+	test('when passing the `orientation` parameter, a special attribute must be set', async ({page}) => {
 		const target = await init(page, {orientation: 'vertical'});
 
 		test.expect(
 			await target.evaluate((ctx) => {
 				const el = ctx.unsafe.block?.element('wrapper');
-
 				return el?.getAttribute('aria-orientation');
 			})
 		).toBe('vertical');

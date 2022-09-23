@@ -9,6 +9,8 @@
 import { ARIARole } from 'core/component/directives/aria/roles/interface';
 import type { TablistParams } from 'core/component/directives/aria/roles/tablist/interface';
 
+export * from 'core/component/directives/aria/roles/tablist/interface';
+
 export class Tablist extends ARIARole {
 	override Params!: TablistParams ;
 
