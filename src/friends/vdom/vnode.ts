@@ -34,7 +34,7 @@ import type { VNodeOptions, VNodeDescriptor } from 'friends/vdom/interface';
 export function create(this: VDOM, type: string, opts?: VNodeOptions): VNode;
 
 /**
- * Creates a VNodes by the specified descriptors
+ * Creates VNode-s by the specified descriptors
  *
  * @param descriptors
  *
@@ -63,7 +63,7 @@ export function create(this: VDOM, type: string, opts?: VNodeOptions): VNode;
 export function create(this: VDOM, ...descriptors: VNodeDescriptor[]): VNode[];
 
 /**
- * Creates a VNodes by the specified descriptors
+ * Creates VNode-s by the specified descriptors
  *
  * @param descriptors
  *
