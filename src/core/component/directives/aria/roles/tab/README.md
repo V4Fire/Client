@@ -1,7 +1,7 @@
 # core/component/directives/aria/roles/tab
 
 This module provides an implementation of the ARIA [tab](https://www.w3.org/TR/wai-aria/#tab) role.
-An element with this role should be used in conjunction with elements with the roles [tablist](https://www.w3.org/TR/wai-aria/#tablist) and [tabpanel](https://www.w3 .org/TR /wai-aria/#tabpanel)
+An element with this role should be used in conjunction with elements with the roles [tablist](https://www.w3.org/TR/wai-aria/#tablist) and [tabpanel](https://www.w3 .org/TR /wai-aria/#tabpanel).
 The role expects the component within which the directive is used to implement the [[iAccess]] characteristic.
 
 For more information see [this](`https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/tab_role`).
@@ -45,10 +45,6 @@ Whether the tab is the first in the tablist.
 ### [selected = `false`]
 
 Whether the tab is selected.
-
-### [orientation]
-
-Whether the widget orientation is `horizontal` or `vertical`.
 
 ### [hasDefaultSelectedTabs = `false`]
 
