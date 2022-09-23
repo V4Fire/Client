@@ -29,3 +29,4 @@ class bExample extends iBlock {}
 * `core/component/directives/bind-with` - this module provides a directive to bind a component template element to some property or event;
 * `core/component/directives/on-resize` - this module provides a directive to watch element resizing;
 * `core/component/directives/in-view` - this module provides a directive to track elements entering or leaving the viewport.
+* `core/component/directives/image` - this module provides a directive to load and display images using `img` and/or `picture` tags.
