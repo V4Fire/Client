@@ -12,7 +12,6 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-import { deprecate } from 'core/functools/deprecation';
 
 export * from '@v4fire/core/core/event';
 
@@ -29,24 +28,3 @@ export function resolveAfterDOMLoaded(): SyncPromise<void> {
 		}
 	});
 }
-
-/**
- * @deprecated
- * @see [[resolveAfterDOMLoaded]]
- */
-export const afterDOMLoaded = deprecate(
-	{
-		alternative: 'resolveAfterDOMLoaded'
-	},
-
-	function afterDOMLoaded(cb?: AnyFunction): SyncPromise<void> {
-		const
-			promise = resolveAfterDOMLoaded();
-
-		if (cb) {
-			void promise.then(cb);
-		}
-
-		return promise;
-	}
-);
