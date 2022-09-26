@@ -79,7 +79,7 @@ import Opt from 'super/i-block/modules/opt';
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
 import Analytics from 'friends/analytics';
 
-import DOM from 'super/i-block/modules/dom';
+import DOM from 'friends/dom';
 import VDOM from 'friends/vdom';
 
 import Lfc from 'super/i-block/modules/lfc';
