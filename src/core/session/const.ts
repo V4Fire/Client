@@ -9,14 +9,7 @@
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
- * Event emitter to broadcast session events
+ * The event emitter to broadcast session events
  */
 export const
 	emitter = new EventEmitter({maxListeners: 100, newListener: false});
-
-/**
- * @deprecated
- * @see [[emitter]]
- */
-export const
-	event = emitter;
