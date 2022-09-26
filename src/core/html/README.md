@@ -2,13 +2,15 @@
 
 This module provides a bunch of helper functions to work with HTML tags and attributes.
 
-## getSrcSet
+## Functions
 
-Returns a srcset string for an image tag by the specified resolution map.
+### getSrcSet
+
+Returns a value for the `srcset` attribute, based on the passed dictionary.
 
 ```js
 import { getSrcSet } from 'core/html';
 
-// 'http://img-hdpi.png 2x, http://img-xhdpi.png 3x'
-console.log(getSrcSet({'2x': 'http://img-hdpi.png', '3x': 'http://img-xhdpi.png'}));
+// '/img-hdpi.png 2x, /img-xhdpi.png 3x'
+console.log(getSrcSet({'2x': '/img-hdpi.png', '3x': '/img-xhdpi.png'}));
 ```
