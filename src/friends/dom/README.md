@@ -162,7 +162,7 @@ and invokes the specified handler each time the element enters the viewport.
 The function returns a destructor to cancel the watching.
 
 ```js
-const unwatch = this.watchForIntersection(myElem, {delay: 200, group: 'inView'})
+const unwatch = this.watchForIntersection(myElem, {delay: 200, group: 'inView'});
 unwatch();
 ```
 
@@ -175,6 +175,6 @@ Note, changes occurring at the same tick are merged into one.
 You can disable this behavior by passing the `immediate: true` option.
 
 ```js
-const unwatch = this.watchForResize(myElem, {immediate: true, group: 'resize'})
+const unwatch = this.watchForResize(myElem, {immediate: true, group: 'resize'});
 unwatch();
 ```
