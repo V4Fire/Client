@@ -8,21 +8,21 @@
 
 export interface SetOptions {
 	/**
-	 * Path where the cookie is defined
+	 * A path where the cookie is defined
 	 * @default `'/'`
 	 */
 	path?: string;
 
 	/**
 	 * A domain where the cookie is defined.
-	 * By default, the cookie can be used only with the current domain.
-	 * To allow usage of the cookie for all subdomains, provide the root domain to this option.
+	 * By default, cookies can only be used with the current domain.
+	 * To allow cookies for all subdomains, set this option to the root domain.
 	 */
 	domain?: string;
 
 	/**
 	 * A date when the cookie is expired.
-	 * The option can take string or number parameters to create a date.
+	 * Also, the option can take string or numeric parameters to create a date.
 	 *
 	 * @example
 	 * ```js
@@ -32,19 +32,19 @@ export interface SetOptions {
 	expires?: Date | string | number;
 
 	/**
-	 * The maximum seconds to live of the created cookie.
+	 * The maximum lifetime of the created cookie in seconds.
 	 * This option is an alternative to `expires`.
 	 */
 	maxAge?: number;
 
 	/**
-	 * True if the cookie can be transferred only through secure HTTPS connections
+	 * True if the cookie can only be transmitted over a secure HTTPS connection
 	 * @default `false`
 	 */
 	secure?: boolean;
 
 	/**
-	 * This option declares if the cookie should be restricted to a first-party or same-site context.
+	 * This option specifies whether the cookie should be restricted to a first-party/same-site context.
 	 * The option accepts three values:
 	 *
 	 * 1. `lax` - cookies are not sent on normal cross-site subrequests
@@ -64,13 +64,13 @@ export interface SetOptions {
 
 export interface RemoveOptions {
 	/**
-	 * Path where the cookie is defined
+	 * A path where the cookie is defined
 	 * @default `'/'`
 	 */
 	path?: string;
 
 	/**
-	 * Domain where the cookie is defined
+	 * A domain where the cookie is defined
 	 */
 	domain?: string;
 }

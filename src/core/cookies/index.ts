@@ -16,7 +16,7 @@ import type { SetOptions, RemoveOptions } from 'core/cookies/interface';
 export * from 'core/cookies/interface';
 
 /**
- * Returns true, if a cookie by the specified name is defined
+ * Returns true if a cookie with the specified name is defined.
  * @param name
  */
 export function has(name: string): boolean {
@@ -63,17 +63,13 @@ export function set(name: string, value: string, opts?: SetOptions): string {
 	let
 		cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value)}`;
 
-	for (let keys = Object.keys(opts), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			val = opts[key];
-
+	Object.entries(opts).forEach(([key, val]) => {
 		cookie += `; ${key}`;
 
 		if (val !== true) {
 			cookie += `=${val}`;
 		}
-	}
+	});
 
 	document.cookie = cookie;
 	return value;
@@ -81,7 +77,7 @@ export function set(name: string, value: string, opts?: SetOptions): string {
 
 /**
  * Removes a cookie by the specified name.
- * Notice, the cookie to remove should have the same domain and path used to install it.
+ * Notice, the cookie to be removed must have the same domain and path that was used to set it.
  *
  * @param name
  * @param [opts] - additional options
