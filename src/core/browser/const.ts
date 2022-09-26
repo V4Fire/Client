@@ -9,7 +9,7 @@
 import { match } from 'core/browser/helpers';
 
 /**
- * Map of the supported environment to detect. If the current `navigator.userAgent` matches one of the map' key,
+ * A map of the supported environments to detect. If the current `navigator.userAgent` matches one of the map keys,
  * the value will contain a tuple `[browserName, browserVersion?[]]`. Otherwise, it is `false`.
  */
 export const is = {

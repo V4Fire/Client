@@ -10,7 +10,7 @@ const
 	{userAgent} = navigator;
 
 /**
- * Takes a string pattern and returns a tuple `[browserName, browserVersion?[]]` if the pattern
+ * Takes the given string pattern and returns a tuple `[browserName, browserVersion?[]]` if the pattern
  * is matched with `navigator.userAgent`. Otherwise, returns `false`.
  *
  * @param pattern
