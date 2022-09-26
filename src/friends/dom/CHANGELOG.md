@@ -9,6 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* The module has been moved to`friends/dom`
+* The module has been rewritten to a new tree-shake friendly API
+* Renamed `putInStream`, to `getFullElementName`
+* Removed `localInView`
+
 ## v3.0.0-rc.151 (2021-03-04)
 
 #### :house: Internal
