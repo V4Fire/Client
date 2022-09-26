@@ -1,6 +1,6 @@
 # core/component/meta
 
-This module provides API to create an abstract representation of the component.
+This module provides an API to create an abstract representation of the component.
 This structure is used by component library adapters to register "real" components such as Vue or React components.
 
 ## Functions

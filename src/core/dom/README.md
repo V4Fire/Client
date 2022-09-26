@@ -4,7 +4,7 @@ This module provides a bunch of helper functions to work with DOM objects.
 
 ## Submodules
 
-* `intersection-watcher` - this module provides API to track elements entering or leaving the viewport;
+* `intersection-watcher` - this module provides an API to track elements entering or leaving the viewport;
 * `resize-watcher` - this module provides an API for more convenient work with [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver).
 
 ## Functions

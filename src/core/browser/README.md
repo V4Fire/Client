@@ -1,6 +1,6 @@
 # core/browser
 
-This module provides API to determine the current browser name/version.
+This module provides an API to determine the current browser name/version.
 
 ```js
 import { is, test } from 'core/browser'

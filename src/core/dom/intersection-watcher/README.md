@@ -1,6 +1,6 @@
 # core/dom/intersection-watcher
 
-This module provides API to track elements entering or leaving the viewport.
+This module provides an API to track elements entering or leaving the viewport.
 The module supports several element tracking strategies. The default is IntersectionObserver, but if the environment does not support it,
 then a strategy based on the elements heightmap and MutationObserver will be used.
 
