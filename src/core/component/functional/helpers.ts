@@ -107,20 +107,20 @@ export function inheritContext(
 	];
 
 	fields.forEach((cluster) => {
-		Object.entries(cluster).forEach(([key, field]) => {
+		Object.entries(cluster).forEach(([name, field]) => {
 			if (field == null) {
 				return;
 			}
 
 			const
-				link = linkedFields[key];
+				link = linkedFields[name];
 
 			const
-				val = ctx[key],
-				oldVal = parentCtx[key];
+				val = ctx[name],
+				oldVal = parentCtx[name];
 
 			const needMerge =
-				ctx.$modifiedFields[key] !== true &&
+				ctx.$modifiedFields[name] !== true &&
 
 				(
 					Object.isFunction(field.unique) ?
@@ -149,14 +149,14 @@ export function inheritContext(
 							newVal = Object.assign([], val, oldVal);
 						}
 
-						ctx[key] = newVal;
+						ctx[name] = newVal;
 
 					} else if (Object.isFunction(field.merge)) {
-						field.merge(ctx, parentCtx, key, link);
+						field.merge(ctx, parentCtx, name, link);
 					}
 
 				} else {
-					ctx[key] = parentCtx[key];
+					ctx[name] = parentCtx[name];
 				}
 			}
 		});

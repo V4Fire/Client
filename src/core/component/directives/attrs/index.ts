@@ -80,9 +80,9 @@ ComponentEngine.directive('attrs', {
 
 					case 'on': {
 						if (Object.isDictionary(attrVal)) {
-							Object.entries(attrVal).forEach(([key, val]) => {
-								const event = `@${key}`;
-								attrs[event] = val;
+							Object.entries(attrVal).forEach(([name, handler]) => {
+								const event = `@${name}`;
+								attrs[event] = handler;
 								keys.push(event);
 							});
 						}
@@ -92,9 +92,9 @@ ComponentEngine.directive('attrs', {
 
 					case 'bind': {
 						if (Object.isDictionary(attrVal)) {
-							Object.entries(attrVal).forEach(([key, val]) => {
-								attrs[key] = val;
-								keys.push(key);
+							Object.entries(attrVal).forEach(([name, val]) => {
+								attrs[name] = val;
+								keys.push(name);
 							});
 						}
 
@@ -149,14 +149,8 @@ ComponentEngine.directive('attrs', {
 					throw new ReferenceError(`The specified directive "${name}" is not registered`);
 				}
 
-				const
-					modifiers = {};
-
-				if (rawModifiers.length > 0) {
-					rawModifiers.split('.').forEach((el) => {
-						modifiers[el] = true;
-					});
-				}
+				const modifiers = {};
+				rawModifiers.split('.').forEach((el) => modifiers[el] = true);
 
 				const dirDecl: DirectiveBinding = {
 					dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,
@@ -185,10 +179,7 @@ ComponentEngine.directive('attrs', {
 					eventChunks = event.split('.'),
 					flags = Object.createDict<boolean>();
 
-				eventChunks.forEach((chunk) => {
-					flags[chunk] = true;
-				});
-
+				eventChunks.forEach((chunk) => flags[chunk] = true);
 				event = eventChunks[0];
 
 				if (flags.right && !event.startsWith('key')) {

@@ -100,13 +100,13 @@ export function paramsFactory<T = object>(
 					if (p.watch != null) {
 						watchers ??= {};
 
-						(<Array<typeof p.watch>>[].concat(p.watch)).forEach((el) => {
-							if (Object.isPlainObject(el)) {
-								const path = String(el.path ?? el.field);
-								watchers[path] = wrapOpts({...p.watchParams, ...el, path});
+						Array.concat([], p.watch).forEach((watcher) => {
+							if (Object.isPlainObject(watcher)) {
+								const path = String(watcher.path ?? watcher.field);
+								watchers[path] = wrapOpts({...p.watchParams, ...watcher, path});
 
 							} else {
-								watchers[el] = wrapOpts({...p.watchParams, path: el});
+								watchers[watcher] = wrapOpts({...p.watchParams, path: watcher});
 							}
 						});
 					}
@@ -114,11 +114,11 @@ export function paramsFactory<T = object>(
 					if (p.hook != null) {
 						hooks ??= {};
 
-						(<Array<typeof p.hook>>[].concat(p.hook)).forEach((el) => {
-							if (Object.isSimpleObject(el)) {
+						Array.concat([], p.hook).forEach((hook) => {
+							if (Object.isSimpleObject(hook)) {
 								const
-									key = Object.keys(el)[0],
-									val = el[key];
+									key = Object.keys(hook)[0],
+									val = hook[key];
 
 								hooks[key] = wrapOpts({
 									...val,
@@ -128,7 +128,7 @@ export function paramsFactory<T = object>(
 								});
 
 							} else {
-								hooks[el] = wrapOpts({name, hook: el});
+								hooks[hook] = wrapOpts({name, hook});
 							}
 						});
 					}
@@ -210,14 +210,14 @@ export function paramsFactory<T = object>(
 			}
 
 			if (p.watch != null) {
-				(<Array<typeof p.watch>>[].concat(p.watch)).forEach((val) => {
+				Array.concat([], p.watch).forEach((watcher) => {
 					watchers ??= new Map();
 
-					if (Object.isPlainObject(val)) {
-						watchers.set(val.handler ?? val.fn, wrapOpts({...val, handler: val.handler}));
+					if (Object.isPlainObject(watcher)) {
+						watchers.set(watcher.handler ?? watcher.fn, wrapOpts({...watcher, handler: watcher.handler}));
 
 					} else {
-						watchers.set(val, wrapOpts({handler: val}));
+						watchers.set(watcher, wrapOpts({handler: watcher}));
 					}
 				});
 			}

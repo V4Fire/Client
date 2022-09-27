@@ -49,9 +49,9 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 		modsFromConstructor = {...constructor['mods']};
 
 	if (Object.isDictionary(modsFromDS)) {
-		Object.entries(modsFromDS).forEach(([key, dsModDecl]) => {
-			const modDecl = modsFromConstructor[key];
-			modsFromConstructor[key] = modDecl != null ? modDecl.concat(dsModDecl) : dsModDecl;
+		Object.entries(modsFromDS).forEach(([name, dsModDecl]) => {
+			const modDecl = modsFromConstructor[name];
+			modsFromConstructor[name] = modDecl != null ? modDecl.concat(dsModDecl) : dsModDecl;
 		});
 	}
 

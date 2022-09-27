@@ -55,7 +55,7 @@ export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): s
 				normalizeStyle(style);
 
 			if (Object.size(normalizedStyle) > 0) {
-				Object.entries(normalizedStyle).forEach(([key, val]) => res[key] = val);
+				Object.entries(normalizedStyle).forEach(([name, style]) => res[name] = style);
 			}
 		});
 
@@ -115,30 +115,30 @@ export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: 
 		return;
 	}
 
-	Object.keys(attrs).forEach((key) => {
+	Object.keys(attrs).forEach((name) => {
 		let
-			propKey = `${key}Prop`;
+			propKey = `${name}Prop`;
 
-		if (key === 'ref' || key === 'ref_for') {
+		if (name === 'ref' || name === 'ref_for') {
 			return;
 		}
 
 		if (deprecatedProps != null) {
 			const
-				alternativeKey = deprecatedProps[key] ?? deprecatedProps[propKey];
+				alternativeKey = deprecatedProps[name] ?? deprecatedProps[propKey];
 
 			if (alternativeKey != null) {
-				attrs[alternativeKey] = attrs[key];
-				delete attrs[key];
+				attrs[alternativeKey] = attrs[name];
+				delete attrs[name];
 
-				key = alternativeKey;
+				name = alternativeKey;
 				propKey = `${alternativeKey}Prop`;
 			}
 		}
 
 		if (propKey in props) {
-			attrs[propKey] = attrs[key];
-			delete attrs[key];
+			attrs[propKey] = attrs[name];
+			delete attrs[name];
 		}
 	});
 }

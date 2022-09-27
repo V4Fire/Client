@@ -41,9 +41,9 @@ export function initFields(
 		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = params.functional === true;
 
-	sortFields(from).forEach(([key, field]) => {
+	sortFields(from).forEach(([name, field]) => {
 		const
-			sourceVal = store[key];
+			sourceVal = store[name];
 
 		const canSkip =
 			field == null ||
@@ -52,14 +52,14 @@ export function initFields(
 			// Don't initialize a property for the functional component unless explicitly required
 			!ssrMode && isFunctional && field.functional === false ||
 
-			field.init == null && field.default === undefined && instance[key] === undefined;
+			field.init == null && field.default === undefined && instance[name] === undefined;
 
 		if (field == null || canSkip) {
-			store[key] = sourceVal;
+			store[name] = sourceVal;
 			return;
 		}
 
-		unsafe.$activeField = key;
+		unsafe.$activeField = name;
 
 		let
 			val;
@@ -69,15 +69,15 @@ export function initFields(
 		}
 
 		if (val === undefined) {
-			if (store[key] === undefined) {
+			if (store[name] === undefined) {
 				// We need to clone the default value from the constructor
 				// to prevent linking to the same type component for a non-primitive value
-				val = field.default !== undefined ? field.default : Object.fastClone(instance[key]);
-				store[key] = val;
+				val = field.default !== undefined ? field.default : Object.fastClone(instance[name]);
+				store[name] = val;
 			}
 
 		} else {
-			store[key] = val;
+			store[name] = val;
 		}
 
 		unsafe.$activeField = undefined;

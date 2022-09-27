@@ -63,8 +63,9 @@ export function bindListenerToElement(
 	});
 
 	Array.concat([], listener).forEach((listener: Listener) => {
-		const
-			group = {group: `${listener.group ?? ''}:${id}`};
+		const group = {
+			group: `${listener.group ?? ''}:${id}`
+		};
 
 		if ('path' in listener) {
 			const

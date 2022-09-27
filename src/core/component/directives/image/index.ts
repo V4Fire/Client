@@ -52,9 +52,9 @@ ComponentEngine.directive('image', {
 			broken: undefined
 		};
 
-		Object.keys(placeholders).forEach((nm) => {
+		Object.keys(placeholders).forEach((kind) => {
 			const
-				placeholder = p[nm];
+				placeholder = p[kind];
 
 			let
 				url;
@@ -67,7 +67,7 @@ ComponentEngine.directive('image', {
 			}
 
 			if (url != null) {
-				placeholders[nm] = url;
+				placeholders[kind] = url;
 			}
 		});
 

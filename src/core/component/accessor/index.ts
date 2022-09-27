@@ -68,11 +68,11 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = meta.params.functional === true;
 
-	Object.entries(meta.computedFields).forEach(([key, computed]) => {
+	Object.entries(meta.computedFields).forEach(([name, computed]) => {
 		const canSkip =
 			computed == null ||
 			computed.cache === 'auto' ||
-			component[key] != null ||
+			component[name] != null ||
 			!ssrMode && isFunctional && computed.functional === false;
 
 		if (canSkip) {
@@ -92,7 +92,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			return get[cacheStatus] = computed.get!.call(this);
 		};
 
-		Object.defineProperty(component, key, {
+		Object.defineProperty(component, name, {
 			configurable: true,
 			enumerable: true,
 			get: computed.get != null ? get : undefined,
@@ -100,17 +100,17 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		});
 	});
 
-	Object.entries(meta.accessors).forEach(([key, accessor]) => {
+	Object.entries(meta.accessors).forEach(([name, accessor]) => {
 		const canSkip =
 			accessor == null ||
-			component[key] != null ||
+			component[name] != null ||
 			!ssrMode && isFunctional && accessor.functional === false;
 
 		if (canSkip) {
 			return;
 		}
 
-		Object.defineProperty(component, key, {
+		Object.defineProperty(component, name, {
 			configurable: true,
 			enumerable: true,
 			get: accessor.get,
@@ -119,22 +119,22 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	});
 
 	if (deprecatedProps != null) {
-		Object.entries(deprecatedProps).forEach(([key, alternative]) => {
-			if (alternative == null) {
+		Object.entries(deprecatedProps).forEach(([name, renamedTo]) => {
+			if (renamedTo == null) {
 				return;
 			}
 
-			Object.defineProperty(component, key, {
+			Object.defineProperty(component, name, {
 				configurable: true,
 				enumerable: true,
 				get: () => {
-					deprecate({type: 'property', name: key, renamedTo: alternative});
-					return component[alternative];
+					deprecate({type: 'property', name, renamedTo});
+					return component[renamedTo];
 				},
 
 				set: (val) => {
-					deprecate({type: 'property', name: key, renamedTo: alternative});
-					component[alternative] = val;
+					deprecate({type: 'property', name, renamedTo});
+					component[renamedTo] = val;
 				}
 			});
 		});

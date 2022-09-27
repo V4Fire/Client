@@ -51,20 +51,20 @@ export function createVirtualContext(
 			return handler.name !== 'withModifiers' && handler.name !== 'withKeys';
 		};
 
-		Object.entries(props).forEach(([key, prop]) => {
+		Object.entries(props).forEach(([name, prop]) => {
 			const
-				normalizedKey = key.camelize(false);
+				normalizedName = name.camelize(false);
 
-			if (normalizedKey in meta.props) {
-				$props[normalizedKey] = prop;
+			if (normalizedName in meta.props) {
+				$props[normalizedName] = prop;
 
 			} else {
-				if (isComponentEventHandler(key, prop)) {
+				if (isComponentEventHandler(name, prop)) {
 					let
-						event = key.slice('on'.length).camelize(false);
+						event = name.slice('on'.length).camelize(false);
 
 					const
-						once = isOnceEvent.test(key);
+						once = isOnceEvent.test(name);
 
 					if (once) {
 						event = event.replace(/Once$/, '');
@@ -73,7 +73,7 @@ export function createVirtualContext(
 					handlers.push([event, once, prop]);
 				}
 
-				$attrs[key] = prop;
+				$attrs[name] = prop;
 			}
 		});
 	}

@@ -31,10 +31,10 @@ const flagDest = {
  * @param flags - flags to set
  */
 export function setVNodePatchFlags(vnode: VNode, ...flags: Array<keyof typeof flagValues>): void {
-	flags.forEach((nm) => {
+	flags.forEach((flag) => {
 		const
-			val = flagValues[nm],
-			dest = flagDest[nm];
+			val = flagValues[flag],
+			dest = flagDest[flag];
 
 		// eslint-disable-next-line no-bitwise
 		if ((vnode[dest] & val) === 0) {

@@ -30,13 +30,13 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		methods
 	} = meta;
 
-	ownProps.forEach((key) => {
-		if (key === 'constructor') {
+	ownProps.forEach((name) => {
+		if (name === 'constructor') {
 			return;
 		}
 
 		const
-			desc = Object.getOwnPropertyDescriptor(proto, key);
+			desc = Object.getOwnPropertyDescriptor(proto, name);
 
 		if (desc == null) {
 			return;
@@ -51,21 +51,21 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				return;
 			}
 
-			methods[key] = Object.assign(methods[key] ?? {watchers: {}, hooks: {}}, {src, fn});
+			methods[name] = Object.assign(methods[name] ?? {watchers: {}, hooks: {}}, {src, fn});
 
 		// Accessors
 		} else {
 			const
-				propKey = `${key}Prop`,
-				storeKey = `${key}Store`;
+				propKey = `${name}Prop`,
+				storeKey = `${name}Store`;
 
 			let
 				metaKey;
 
 			// Computed fields are cached by default
 			if (
-				key in computedFields ||
-				!(key in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
+				name in computedFields ||
+				!(name in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
 			) {
 				metaKey = 'computedFields';
 
@@ -76,10 +76,10 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			let
 				field;
 
-			if (props[key] != null) {
+			if (props[name] != null) {
 				field = props;
 
-			} else if (fields[key] != null) {
+			} else if (fields[name] != null) {
 				field = fields;
 
 			} else {
@@ -91,13 +91,13 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			// If we already have a property by this key, like a prop or field,
 			// we need to delete it to correct override
-			if (field[key] != null) {
-				Object.defineProperty(proto, key, defProp);
-				delete field[key];
+			if (field[name] != null) {
+				Object.defineProperty(proto, name, defProp);
+				delete field[name];
 			}
 
 			const
-				old = obj[key],
+				old = obj[name],
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				set = desc.set ?? old?.set,
 				// eslint-disable-next-line @typescript-eslint/unbound-method
@@ -105,11 +105,10 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			// To use `super` within the setter we also create a new method with a name `${key}Setter`
 			if (set != null) {
-				const
-					k = `${key}Setter`;
+				const nm = `${name}Setter`;
+				proto[nm] = set;
 
-				proto[k] = set;
-				meta.methods[k] = {
+				meta.methods[nm] = {
 					src,
 					fn: set,
 					watchers: {},
@@ -119,11 +118,10 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			// To using `super` within the getter we also create a new method with a name `${key}Getter`
 			if (get != null) {
-				const
-					k = `${key}Getter`;
+				const nm = `${name}Getter`;
+				proto[nm] = get;
 
-				proto[k] = get;
-				meta.methods[k] = {
+				meta.methods[nm] = {
 					src,
 					fn: get,
 					watchers: {},
@@ -131,7 +129,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				};
 			}
 
-			obj[key] = Object.assign(obj[key] ?? {}, {
+			obj[name] = Object.assign(obj[name] ?? {}, {
 				src,
 				// eslint-disable-next-line @typescript-eslint/unbound-method
 				get: desc.get ?? old?.get,

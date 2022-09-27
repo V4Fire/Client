@@ -48,8 +48,8 @@ export function inheritMeta(
 	// Watcher dependencies inheritance
 
 	if (meta.watchDependencies.size > 0) {
-		pWatchDependencies.forEach((pVal, key) => {
-			meta.watchDependencies.set(key, (meta.watchDependencies.get(key) ?? []).concat(pVal));
+		pWatchDependencies.forEach((deps, path) => {
+			meta.watchDependencies.set(path, (meta.watchDependencies.get(path) ?? []).concat(deps));
 		});
 
 	} else {
@@ -158,19 +158,17 @@ export function inheritMeta(
 	const
 		{mods} = meta;
 
-	Object.keys(pMods).forEach((key) => {
+	Object.keys(pMods).forEach((name) => {
 		const
-			current = mods[key],
-			parent = (pMods[key] ?? []).slice();
+			currentMods = mods[name],
+			parentMods = (pMods[name] ?? []).slice();
 
-		if (current != null) {
-			const
-				values = Object.createDict<ModDeclVal>();
-
-			current.slice().forEach((el, i, mods) => {
-				if (el !== PARENT) {
-					if (Object.isArray(el) || !(<string>el in values)) {
-						values[String(el)] = Object.cast(el);
+		if (currentMods != null) {
+			const values = Object.createDict<ModDeclVal>();
+			currentMods.slice().forEach((val, i, mods) => {
+				if (val !== PARENT) {
+					if (Object.isArray(val) || !(<string>val in values)) {
+						values[String(val)] = Object.cast(val);
 					}
 
 					return;
@@ -192,18 +190,18 @@ export function inheritMeta(
 				let
 					parentDef = !hasDefault;
 
-				parent.forEach((el) => {
-					if (!(<string>el in values)) {
-						values[String(el)] = Object.cast(el);
+				parentMods.forEach((val) => {
+					if (!(<string>val in values)) {
+						values[String(val)] = Object.cast(val);
 					}
 
-					if (!parentDef && Object.isArray(el)) {
-						parent[i] = el[0];
+					if (!parentDef && Object.isArray(val)) {
+						parentMods[i] = val[0];
 						parentDef = true;
 					}
 				});
 
-				current.splice(i, 1, ...parent);
+				currentMods.splice(i, 1, ...parentMods);
 			});
 
 			const
@@ -215,10 +213,10 @@ export function inheritMeta(
 				}
 			});
 
-			mods[key] = valuesList;
+			mods[name] = valuesList;
 
-		} else if (!(key in mods)) {
-			mods[key] = parent;
+		} else if (!(name in mods)) {
+			mods[name] = parentMods;
 		}
 	});
 

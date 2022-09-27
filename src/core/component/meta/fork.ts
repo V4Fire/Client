@@ -21,17 +21,17 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 	meta.watchers = {};
 	meta.hooks = {};
 
-	Object.entries(base.hooks).forEach(([key, val]) => {
+	Object.entries(base.hooks).forEach(([key, hooks]) => {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (val != null) {
-			meta.hooks[key] = val.slice();
+		if (hooks != null) {
+			meta.hooks[key] = hooks.slice();
 		}
 	});
 
-	Object.entries(base.watchers).forEach(([key, val]) => {
+	Object.entries(base.watchers).forEach(([key, watchers]) => {
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (val != null) {
-			meta.watchers[key] = val.slice();
+		if (watchers != null) {
+			meta.watchers[key] = watchers.slice();
 		}
 	});
 

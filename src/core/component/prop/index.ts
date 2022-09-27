@@ -48,26 +48,26 @@ export function initProps(
 		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = meta.params.functional === true;
 
-	Object.entries(props).forEach(([key, prop]) => {
+	Object.entries(props).forEach(([name, prop]) => {
 		if (prop == null || !ssrMode && isFunctional && prop.functional === false) {
 			return;
 		}
 
-		unsafe.$activeField = key;
+		unsafe.$activeField = name;
 
 		let
-			val = (from ?? component)[key];
+			val = (from ?? component)[name];
 
 		if (val === undefined) {
-			val = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[key]);
+			val = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[name]);
 		}
 
 		if (val === undefined) {
 			const
-				obj = props[key];
+				obj = props[name];
 
 			if (obj?.required) {
-				throw new TypeError(`Missing the required property "${key}" of the "${component.componentName}" component`);
+				throw new TypeError(`Missing the required property "${name}" of the "${component.componentName}" component`);
 			}
 		}
 
@@ -82,7 +82,7 @@ export function initProps(
 		}
 
 		if (needSaveToStore) {
-			store[key] = val;
+			store[name] = val;
 		}
 	});
 

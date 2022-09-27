@@ -61,7 +61,7 @@ export function fillMeta(
 	const
 		defaultProps = params.defaultProps !== false;
 
-	Object.entries(meta.props).forEach(([propName, prop]) => {
+	Object.entries(meta.props).forEach(([name, prop]) => {
 		if (prop == null) {
 			return;
 		}
@@ -73,7 +73,7 @@ export function fillMeta(
 
 		if (defaultProps || prop.forceDefault) {
 			skipDefault = false;
-			def = instance[propName];
+			def = instance[name];
 			defWrapper = def;
 
 			if (def != null && typeof def === 'object' && (!isTypeCanBeFunc(prop.type) || !Object.isFunction(def))) {
@@ -90,7 +90,7 @@ export function fillMeta(
 		}
 
 		if (!isRoot || defValue !== undefined) {
-			component.props[propName] = {
+			component.props[name] = {
 				type: prop.type,
 				required: prop.required !== false && defaultProps && defValue === undefined,
 
@@ -104,8 +104,8 @@ export function fillMeta(
 
 		if (!isRoot && !isFunctional) {
 			if (Object.size(prop.watchers) > 0) {
-				const watcherListeners = watchers[propName] ?? [];
-				watchers[propName] = watcherListeners;
+				const watcherListeners = watchers[name] ?? [];
+				watchers[name] = watcherListeners;
 
 				prop.watchers.forEach((watcher) => {
 					watcherListeners.push(watcher);
@@ -113,27 +113,27 @@ export function fillMeta(
 			}
 
 			const
-				normalizedKey = propName.replace(bindingRgxp, '');
+				normalizedKey = name.replace(bindingRgxp, '');
 
 			if ((computedFields[normalizedKey] ?? accessors[normalizedKey]) != null) {
 				const
 					props = watchPropDependencies.get(normalizedKey) ?? new Set();
 
-				props.add(propName);
+				props.add(name);
 				watchPropDependencies.set(normalizedKey, props);
 
 			} else {
-				watchDependencies.forEach((deps, key) => {
+				watchDependencies.forEach((deps, path) => {
 					for (let i = 0; i < deps.length; i++) {
 						const
 							dep = deps[i];
 
-						if ((Object.isArray(dep) ? dep : dep.split('.'))[0] === propName) {
+						if ((Object.isArray(dep) ? dep : dep.split('.'))[0] === name) {
 							const
-								props = watchPropDependencies.get(key) ?? new Set();
+								props = watchPropDependencies.get(path) ?? new Set();
 
-							props.add(propName);
-							watchPropDependencies.set(key, props);
+							props.add(name);
+							watchPropDependencies.set(path, props);
 							break;
 						}
 					}
@@ -162,12 +162,12 @@ export function fillMeta(
 
 	// Computed fields
 
-	Object.entries(computedFields).forEach(([nm, computed]) => {
+	Object.entries(computedFields).forEach(([name, computed]) => {
 		if (computed == null || computed.cache !== 'auto') {
 			return;
 		}
 
-		component.computed[nm] = {
+		component.computed[name] = {
 			get: computed.get,
 			set: computed.set
 		};
@@ -175,12 +175,12 @@ export function fillMeta(
 
 	// Methods
 
-	Object.entries(methods).forEach(([nm, method]) => {
+	Object.entries(methods).forEach(([name, method]) => {
 		if (method == null) {
 			return;
 		}
 
-		component.methods[nm] = function wrapper() {
+		component.methods[name] = function wrapper() {
 			// eslint-disable-next-line prefer-rest-params
 			return method.fn.apply(getComponentContext(this), arguments);
 		};
@@ -196,7 +196,7 @@ export function fillMeta(
 
 				watcherListeners.push({
 					...watcher,
-					method: nm,
+					method: name,
 					args: Array.concat([], watcher.args),
 					handler: Object.cast(method.fn)
 				});

@@ -61,9 +61,9 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			const dynamicProps = vnode.dynamicProps ?? [];
 			vnode.dynamicProps = dynamicProps;
 
-			Object.keys(props).forEach((key) => {
-				if (isHandler.test(key)) {
-					dynamicProps.push(key);
+			Object.keys(props).forEach((prop) => {
+				if (isHandler.test(prop)) {
+					dynamicProps.push(prop);
 				}
 			});
 

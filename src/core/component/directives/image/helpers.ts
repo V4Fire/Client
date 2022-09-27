@@ -73,12 +73,12 @@ export function createImgElement(
 			const
 				img = document.createElement('img');
 
-			Object.forEach(attrs, (val, prop) => {
-				if (Object.isDictionary(val)) {
-					Object.assign(img[prop], val);
+			Object.forEach(attrs, (prop, name) => {
+				if (Object.isDictionary(prop)) {
+					Object.assign(img[name], prop);
 
-				} else if (Object.isTruly(val)) {
-					img[prop] = val;
+				} else if (Object.isTruly(prop)) {
+					img[name] = prop;
 				}
 			});
 
@@ -93,10 +93,10 @@ export function createImgElement(
 				props = {},
 				dynamicProps: string[] = [];
 
-			Object.forEach(attrs, (val, prop) => {
-				if (Object.isTruly(val)) {
-					props[prop] = val;
-					dynamicProps.push(prop);
+			Object.forEach(attrs, (prop, name) => {
+				if (Object.isTruly(prop)) {
+					props[name] = prop;
+					dynamicProps.push(name);
 				}
 			});
 

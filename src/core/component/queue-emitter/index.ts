@@ -38,10 +38,10 @@ export default class QueueEmitter {
 	 */
 	on(event: Nullable<Set<string>>, handler: Function): void {
 		if (event != null && event.size > 0) {
-			event.forEach((key) => {
-				const listeners = this.listeners[key] ?? [];
+			event.forEach((name) => {
+				const listeners = this.listeners[name] ?? [];
 				listeners.push({event, handler});
-				this.listeners[key] = listeners;
+				this.listeners[name] = listeners;
 			});
 
 			return;
