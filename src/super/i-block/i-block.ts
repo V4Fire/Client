@@ -81,6 +81,7 @@ import Cache from 'super/i-block/modules/cache';
 import Opt from 'super/i-block/modules/opt';
 
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
+import DebugMode from 'super/i-block/modules/debug-mode';
 import Analytics from 'super/i-block/modules/analytics';
 
 import DOM from 'super/i-block/modules/dom';
@@ -167,6 +168,7 @@ export * from 'super/i-block/modules/module-loader';
 
 export * from 'super/i-block/modules/daemons';
 export * from 'super/i-block/modules/event-emitter';
+export * from 'super/i-block/modules/debug-mode';
 
 export * from 'super/i-block/modules/sync';
 export * from 'super/i-block/modules/async-render';
@@ -777,6 +779,17 @@ export default abstract class iBlock extends ComponentInterface {
 
 		return res != null ? Object.freeze(res) : undefined;
 	}
+
+	/**
+	 * API for debug mode
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new DebugMode(ctx)
+	})
+
+	readonly debugMode!: DebugMode;
 
 	/**
 	 * API for analytic engines
