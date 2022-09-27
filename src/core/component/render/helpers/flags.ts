@@ -31,9 +31,8 @@ const flagDest = {
  * @param flags - flags to set
  */
 export function setVNodePatchFlags(vnode: VNode, ...flags: Array<keyof typeof flagValues>): void {
-	for (let i = 0; i < flags.length; i++) {
+	flags.forEach((nm) => {
 		const
-			nm = flags[i],
 			val = flagValues[nm],
 			dest = flagDest[nm];
 
@@ -41,5 +40,5 @@ export function setVNodePatchFlags(vnode: VNode, ...flags: Array<keyof typeof fl
 		if ((vnode[dest] & val) === 0) {
 			vnode[dest] += val;
 		}
-	}
+	});
 }

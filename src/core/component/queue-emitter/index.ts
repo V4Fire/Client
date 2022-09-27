@@ -68,25 +68,24 @@ export default class QueueEmitter {
 		const
 			tasks: Array<CanPromise<unknown>> = [];
 
-		for (let i = 0; i < queue.length; i++) {
-			const
-				el = queue[i];
-
+		queue.forEach((el) => {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (el != null) {
-				const ev = el.event;
-				ev.delete(event);
+			if (el == null) {
+				return;
+			}
 
-				if (ev.size === 0) {
-					const
-						task = el.handler();
+			const ev = el.event;
+			ev.delete(event);
 
-					if (Object.isPromise(task)) {
-						tasks.push(task);
-					}
+			if (ev.size === 0) {
+				const
+					task = el.handler();
+
+				if (Object.isPromise(task)) {
+					tasks.push(task);
 				}
 			}
-		}
+		});
 
 		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);
@@ -105,14 +104,14 @@ export default class QueueEmitter {
 		const
 			tasks: Array<Promise<unknown>> = [];
 
-		for (let i = 0; i < queue.length; i++) {
+		queue.forEach((el) => {
 			const
-				task = queue[i]();
+				task = el();
 
 			if (Object.isPromise(task)) {
 				tasks.push(task);
 			}
-		}
+		});
 
 		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);

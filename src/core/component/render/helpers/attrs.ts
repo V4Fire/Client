@@ -120,9 +120,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		{children} = vnode;
 
 	if (Object.isArray(children)) {
-		for (let i = 0; i < children.length; i++) {
-			resolveAttrs.call(this, Object.cast(children[i]));
-		}
+		children.forEach((child) => resolveAttrs.call(this, Object.cast(child)));
 	}
 
 	return vnode;

@@ -19,10 +19,7 @@ export function mergeProps(...args: Dictionary[]): Dictionary {
 	const
 		res: Dictionary = {};
 
-	for (let i = 0; i < args.length; i++) {
-		const
-			toMerge = args[i];
-
+	args.forEach((toMerge) => {
 		for (const key in toMerge) {
 			if (key === 'class') {
 				if (res.class !== toMerge.class) {
@@ -48,7 +45,7 @@ export function mergeProps(...args: Dictionary[]): Dictionary {
 				res[key] = toMerge[key];
 			}
 		}
-	}
+	});
 
 	return res;
 }

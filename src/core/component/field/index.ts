@@ -41,10 +41,7 @@ export function initFields(
 		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = params.functional === true;
 
-	for (let sortedFields = sortFields(from), i = 0; i < sortedFields.length; i++) {
-		const
-			[key, field] = sortedFields[i];
-
+	sortFields(from).forEach(([key, field]) => {
 		const
 			sourceVal = store[key];
 
@@ -59,7 +56,7 @@ export function initFields(
 
 		if (field == null || canSkip) {
 			store[key] = sourceVal;
-			continue;
+			return;
 		}
 
 		unsafe.$activeField = key;
@@ -84,7 +81,7 @@ export function initFields(
 		}
 
 		unsafe.$activeField = undefined;
-	}
+	});
 
 	return store;
 }

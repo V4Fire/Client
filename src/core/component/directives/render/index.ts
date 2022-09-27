@@ -49,15 +49,14 @@ ComponentEngine.directive('render', {
 
 				if (Object.isArray(newVNode)) {
 					if (isSlot(newVNode[0])) {
-						for (let i = 0; i < newVNode.length; i++) {
+						newVNode.forEach((el) => {
 							const
-								el = newVNode[i],
 								slot = el.props?.slot;
 
 							if (slot != null) {
 								slots[slot] = () => el.children ?? getDefSlotFromChildren(slot);
 							}
-						}
+						});
 
 						return;
 					}

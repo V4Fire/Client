@@ -20,14 +20,14 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 		res = classes;
 
 	} else if (Object.isArray(classes)) {
-		for (let i = 0; i < classes.length; i++) {
+		classes.forEach((className) => {
 			const
-				normalizedClass = normalizeClass(classes[i]);
+				normalizedClass = normalizeClass(className);
 
 			if (normalizedClass !== '') {
 				res += `${normalizedClass} `;
 			}
-		}
+		});
 
 	} else if (Object.isDictionary(classes)) {
 		Object.entries(classes).forEach(([className, has]) => {
@@ -49,15 +49,15 @@ export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): s
 		const
 			res = {};
 
-		for (let i = 0; i < styles.length; i++) {
-			const
-				style = styles[i],
-				normalizedStyle = Object.isString(style) ? parseStringStyle(style) : normalizeStyle(style);
+		styles.forEach((style) => {
+			const normalizedStyle = Object.isString(style) ?
+				parseStringStyle(style) :
+				normalizeStyle(style);
 
 			if (Object.size(normalizedStyle) > 0) {
 				Object.entries(normalizedStyle).forEach(([key, val]) => res[key] = val);
 			}
-		}
+		});
 
 		return res;
 	}

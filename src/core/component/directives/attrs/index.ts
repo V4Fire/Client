@@ -80,14 +80,11 @@ ComponentEngine.directive('attrs', {
 
 					case 'on': {
 						if (Object.isDictionary(attrVal)) {
-							for (let events = Object.keys(attrVal), i = 0; i < events.length; i++) {
-								const
-									key = events[i],
-									event = `@${key}`;
-
-								attrs[event] = attrVal[key];
+							Object.entries(attrVal).forEach(([key, val]) => {
+								const event = `@${key}`;
+								attrs[event] = val;
 								keys.push(event);
-							}
+							});
 						}
 
 						continue;
@@ -95,11 +92,10 @@ ComponentEngine.directive('attrs', {
 
 					case 'bind': {
 						if (Object.isDictionary(attrVal)) {
-							for (let events = Object.keys(attrVal), i = 0; i < events.length; i++) {
-								const key = events[i];
-								attrs[key] = attrVal[key];
+							Object.entries(attrVal).forEach(([key, val]) => {
+								attrs[key] = val;
 								keys.push(key);
-							}
+							});
 						}
 
 						continue;
@@ -189,9 +185,9 @@ ComponentEngine.directive('attrs', {
 					eventChunks = event.split('.'),
 					flags = Object.createDict<boolean>();
 
-				for (let i = 1; i < eventChunks.length; i++) {
-					flags[eventChunks[i]] = true;
-				}
+				eventChunks.forEach((chunk) => {
+					flags[chunk] = true;
+				});
 
 				event = eventChunks[0];
 

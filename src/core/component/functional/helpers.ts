@@ -106,18 +106,10 @@ export function inheritContext(
 		parentCtx.meta.fields
 	];
 
-	for (let i = 0; i < fields.length; i++) {
-		const
-			cluster = fields[i],
-			keys = Object.keys(cluster);
-
-		for (let j = 0; j < keys.length; j++) {
-			const
-				key = keys[j],
-				field = cluster[key];
-
+	fields.forEach((cluster) => {
+		Object.entries(cluster).forEach(([key, field]) => {
 			if (field == null) {
-				continue;
+				return;
 			}
 
 			const
@@ -167,6 +159,6 @@ export function inheritContext(
 					ctx[key] = parentCtx[key];
 				}
 			}
-		}
-	}
+		});
+	});
 }

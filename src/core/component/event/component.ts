@@ -93,12 +93,9 @@ export function implementEventEmitterAPI(component: object): void {
 
 	function getMethod(method: 'on' | 'once' | 'off') {
 		return function wrapper(this: unknown, e, cb) {
-			const
-				events = Array.concat([], e);
-
-			for (let i = 0; i < events.length; i++) {
-				$e[method](events[i], Object.cast(cb));
-			}
+			Array.concat([], e).forEach((event) => {
+				$e[method](event, Object.cast(cb));
+			});
 
 			return this;
 		};

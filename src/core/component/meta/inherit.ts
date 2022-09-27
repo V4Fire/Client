@@ -65,10 +65,7 @@ export function inheritMeta(
 			[meta.systemFields, pSystemFields]
 		];
 
-		for (let i = 0; i < list.length; i++) {
-			const
-				[store, parentObj] = list[i];
-
+		list.forEach(([store, parentObj]) => {
 			Object.entries(parentObj).forEach(([key, parent]) => {
 				if (parent == null) {
 					return;
@@ -97,7 +94,7 @@ export function inheritMeta(
 
 				store[key] = {...parent, after, watchers};
 			});
-		}
+		});
 	}
 
 	// Tied fields inheritance
@@ -112,26 +109,24 @@ export function inheritMeta(
 			[meta.accessors, pAccessors]
 		];
 
-		for (let i = 0; i < list.length; i++) {
-			const [store, parentObj] = list[i];
+		list.forEach(([store, parentObj]) => {
 			Object.entries(parentObj).forEach(([key, parent]) => store[key] = {...parent!});
-		}
+		});
 	}
 
 	// Methods inheritance
 
-	for (let {methods} = meta, keys = Object.keys(pMethods), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			parent = pMethods[key];
+	const
+		{methods} = meta;
 
+	Object.entries(pMethods).forEach(([key, parent]) => {
 		if (parent == null) {
-			continue;
+			return;
 		}
 
 		if (metaPointer == null || !metaPointer[key]) {
 			methods[key] = {...parent};
-			continue;
+			return;
 		}
 
 		const
@@ -156,7 +151,7 @@ export function inheritMeta(
 		}
 
 		methods[key] = {...parent, watchers, hooks};
-	}
+	});
 
 	// Modifiers inheritance
 
@@ -165,14 +160,14 @@ export function inheritMeta(
 
 	Object.keys(pMods).forEach((key) => {
 		const
-			currentMods = mods[key],
-			parentMods = (pMods[key] ?? []).slice();
+			current = mods[key],
+			parent = (pMods[key] ?? []).slice();
 
-		if (currentMods != null) {
+		if (current != null) {
 			const
 				values = Object.createDict<ModDeclVal>();
 
-			currentMods.slice().forEach((el, i, mods) => {
+			current.slice().forEach((el, i, mods) => {
 				if (el !== PARENT) {
 					if (Object.isArray(el) || !(<string>el in values)) {
 						values[String(el)] = Object.cast(el);
@@ -197,21 +192,18 @@ export function inheritMeta(
 				let
 					parentDef = !hasDefault;
 
-				for (let i = 0; i < parentMods.length; i++) {
-					const
-						el = parentMods[i];
-
+				parent.forEach((el) => {
 					if (!(<string>el in values)) {
 						values[String(el)] = Object.cast(el);
 					}
 
 					if (!parentDef && Object.isArray(el)) {
-						parentMods[i] = el[0];
+						parent[i] = el[0];
 						parentDef = true;
 					}
-				}
+				});
 
-				currentMods.splice(i, 1, ...parentMods);
+				current.splice(i, 1, ...parent);
 			});
 
 			const
@@ -226,7 +218,7 @@ export function inheritMeta(
 			mods[key] = valuesList;
 
 		} else if (!(key in mods)) {
-			mods[key] = parentMods;
+			mods[key] = parent;
 		}
 	});
 

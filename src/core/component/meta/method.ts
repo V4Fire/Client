@@ -30,19 +30,16 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		methods
 	} = meta;
 
-	for (let i = 0; i < ownProps.length; i++) {
-		const
-			key = ownProps[i];
-
+	ownProps.forEach((key) => {
 		if (key === 'constructor') {
-			continue;
+			return;
 		}
 
 		const
 			desc = Object.getOwnPropertyDescriptor(proto, key);
 
 		if (desc == null) {
-			continue;
+			return;
 		}
 
 		// Methods
@@ -51,7 +48,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				fn = desc.value;
 
 			if (!Object.isFunction(fn)) {
-				continue;
+				return;
 			}
 
 			methods[key] = Object.assign(methods[key] ?? {watchers: {}, hooks: {}}, {src, fn});
@@ -141,5 +138,5 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				set
 			});
 		}
-	}
+	});
 }

@@ -113,9 +113,8 @@ export function beforeCreateState(
 
 	unsafe.$normalParent = getNormalParent(component);
 
-	for (let keys = ['$root', '$parent', '$normalParent'], i = 0; i < keys.length; i++) {
+	['$root', '$parent', '$normalParent'].forEach((key) => {
 		const
-			key = keys[i],
 			val = unsafe[key];
 
 		if (val != null) {
@@ -126,7 +125,7 @@ export function beforeCreateState(
 				value: getComponentContext(Object.cast(val))
 			});
 		}
-	}
+	});
 
 	if (opts?.addMethods) {
 		attachMethodsFromMeta(component);
@@ -163,15 +162,14 @@ export function beforeCreateState(
 			watchSet = new Set<PropertyInfo>();
 
 		watchDependencies.forEach((deps) => {
-			for (let i = 0; i < deps.length; i++) {
+			deps.forEach((dep) => {
 				const
-					dep = deps[i],
 					info = getPropertyInfo(Object.isArray(dep) ? dep.join('.') : String(dep), component);
 
 				if (info.type === 'system' || isFunctional && info.type === 'field') {
 					watchSet.add(info);
 				}
-			}
+			});
 		});
 
 		// If a computed property has a field or system field as a dependency

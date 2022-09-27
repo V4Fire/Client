@@ -52,28 +52,24 @@ export const initEmitter = new EventEmitter({
 		listener: ListenerFn,
 		opts?: true | OnOptions
 	): EventEmitter {
-		const
-			events = Array.concat([], event);
-
-		for (let i = 0; i < events.length; i++) {
+		Array.concat([], event).forEach((event) => {
 			const
-				el = events[i],
-				chunks = el.split('.', 2);
+				chunks = event.split('.', 2);
 
 			if (chunks[0] === 'constructor') {
-				initEventOnce(el, listener, opts);
+				initEventOnce(event, listener, opts);
 
 				const
 					p = componentParams.get(chunks[1]);
 
 				if (p && Object.isPlainObject(p.functional)) {
-					initEventOnce(`${el}-functional`, listener, opts);
+					initEventOnce(`${event}-functional`, listener, opts);
 				}
 
 			} else {
-				initEventOnce(el, listener, opts);
+				initEventOnce(event, listener, opts);
 			}
-		}
+		});
 
 		return this;
 	};

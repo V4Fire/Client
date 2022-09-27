@@ -142,17 +142,14 @@ export function createVirtualContext(
 		implementEventAPI: true
 	});
 
-	for (let i = 0; i < handlers.length; i++) {
-		const
-			[event, once, handler] = handlers[i];
-
+	handlers.forEach(([event, once, handler]) => {
 		if (once) {
 			virtualCtx.$once(event, handler);
 
 		} else {
 			virtualCtx.$on(event, handler);
 		}
-	}
+	});
 
 	init.beforeDataCreateState(virtualCtx, {tieFields: true});
 	return initDynamicComponentLifeCycle(virtualCtx);

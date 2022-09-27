@@ -68,9 +68,8 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 				emitter = new QueueEmitter(),
 				filteredHooks: ComponentHook[] = [];
 
-			for (let i = 0; i < hooks.length; i++) {
+			hooks.forEach((hook) => {
 				const
-					hook = hooks[i],
 					nm = hook.name;
 
 				if (!hook.once) {
@@ -92,7 +91,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 						return tasks;
 					}
 				});
-			}
+			});
 
 			m.hooks[hook] = filteredHooks;
 

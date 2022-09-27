@@ -243,9 +243,8 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			Object.cast(this.$normalParent) :
 			this;
 
-		for (let i = 0; i < dirs.length; i++) {
+		dirs.forEach((decl) => {
 			const
-				decl = dirs[i],
 				[dir, value, arg, modifiers] = decl;
 
 			const binding: DirectiveBinding = {
@@ -282,7 +281,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			} else if (cantIgnoreDir) {
 				bindings.push(binding);
 			}
-		}
+		})
 
 		return vnode;
 	});

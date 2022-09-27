@@ -55,10 +55,9 @@ class Block extends Friend {
 		super(component);
 		this.mods = Object.createDict();
 
-		for (let m = component.mods, keys = Object.keys(m), i = 0; i < keys.length; i++) {
-			const name = keys[i];
-			this.setMod(name, m[name], 'initSetMod');
-		}
+		Object.entries(component.mods).forEach(([name, val]) => {
+			this.setMod(name, val, 'initSetMod');
+		});
 	}
 }
 
