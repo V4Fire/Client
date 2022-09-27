@@ -166,17 +166,14 @@ export default class MutationObserverEngine extends AbstractEngine {
 		const
 			newIntersectionWindow = [...newIntersectionSet];
 
-		for (let i = 0; i < intersectionWindow.length; i++) {
-			const
-				el = intersectionWindow[i];
-
+		intersectionWindow.forEach((el) => {
 			if (newIntersectionSet.has(el)) {
 				newIntersectionSet.delete(el);
 
 			} else {
 				this.onObservableOut(el.watcher, scrollTarget);
 			}
-		}
+		});
 
 		newIntersectionSet.forEach((el) => {
 			this.onObservableIn(el.watcher, scrollTarget);

@@ -389,15 +389,15 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 								tiedLinks = handler[tiedWatchers];
 
 							if (Object.isArray(tiedLinks)) {
-								for (let i = 0; i < tiedLinks.length; i++) {
+								tiedLinks.forEach((path) => {
 									const modifiedInfo = {
 										...info,
-										path: tiedLinks[i],
+										path,
 										parent: {value, oldValue, info}
 									};
 
 									watchHandler(value, oldValue, modifiedInfo);
-								}
+								});
 
 							} else {
 								watchHandler(value, oldValue, info);
@@ -461,12 +461,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					};
 
 					attachDeepProxy();
-
-					return wrapDestructor(() => {
-						for (let i = 0; i < destructors.length; i++) {
-							destructors[i]();
-						}
-					});
+					return wrapDestructor(() => destructors.forEach((destroy) => destroy()));
 				}
 
 				default:

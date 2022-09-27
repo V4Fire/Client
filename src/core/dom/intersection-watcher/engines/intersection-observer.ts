@@ -101,9 +101,8 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 		entries: IntersectionObserverEntry[],
 		observer: IntersectionObserver
 	): void {
-		for (let i = 0; i < entries.length; i++) {
+		entries.forEach((entry) => {
 			const
-				entry = entries[i],
 				watchers = this.elements.get(entry.target)?.get(threshold);
 
 			if (!Object.isSet(watchers)) {
@@ -128,7 +127,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 					this.onObservableIn(watcher, entry);
 				}
 			});
-		}
+		});
 	}
 
 	/**

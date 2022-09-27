@@ -101,8 +101,7 @@ export function implementComponentWatchAPI(
 			let
 				needForkDeps = false;
 
-			for (let i = 0; i < deps.length; i++) {
-				const dep = deps[i];
+			deps.forEach((dep, i) => {
 				newDeps[i] = dep;
 
 				const
@@ -112,7 +111,7 @@ export function implementComponentWatchAPI(
 				if (watchInfo.ctx === component && !watchDependencies.has(dep)) {
 					needForkDeps = true;
 					newDeps[i] = watchInfo.path;
-					continue;
+					return;
 				}
 
 				const invalidateCache = (value, oldValue, info) => {
@@ -145,10 +144,7 @@ export function implementComponentWatchAPI(
 					const
 						modifiedMutations: Array<[unknown, unknown, WatchHandlerParams]> = [];
 
-					for (let i = 0; i < mutations.length; i++) {
-						const
-							[value, oldValue, info] = mutations[i];
-
+					mutations.forEach(([value, oldValue, info]) => {
 						modifiedMutations.push([
 							value,
 							oldValue,
@@ -163,14 +159,15 @@ export function implementComponentWatchAPI(
 								parent: {value, oldValue, info}
 							})
 						]);
-					}
+					});
 
 					broadcastAccessorMutations(modifiedMutations);
 				};
 
 				attachDynamicWatcher(component, watchInfo, watchOpts, broadcastMutations, dynamicHandlers);
-			}
+			});
 
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (needForkDeps) {
 				watchDependencies.set(path, newDeps);
 			}
@@ -400,13 +397,12 @@ export function implementComponentWatchAPI(
 				mutations = [Object.cast([mutations, ...args])];
 			}
 
-			for (let i = 0; i < mutations.length; i++) {
+			mutations.forEach(([val, oldVal, info]) => {
 				const
-					[val, oldVal, info] = mutations[i],
 					{path} = info;
 
 				if (path[path.length - 1] === '__proto__') {
-					continue;
+					return;
 				}
 
 				if (info.parent != null) {
@@ -414,7 +410,7 @@ export function implementComponentWatchAPI(
 						{path: parentPath} = info.parent.info;
 
 					if (parentPath[parentPath.length - 1] === '__proto__') {
-						continue;
+						return;
 					}
 				}
 
@@ -440,7 +436,7 @@ export function implementComponentWatchAPI(
 						});
 					}
 				});
-			}
+			});
 		};
 	}
 }

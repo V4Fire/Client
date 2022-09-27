@@ -99,9 +99,8 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 			}
 
 			// Iterates over all registered handlers for this watcher
-			for (let i = 0; i < watchers.length; i++) {
+			watchers.forEach((watchInfo) => {
 				const
-					watchInfo = watchers[i],
 					rawHandler = watchInfo.handler;
 
 				const asyncParams = {
@@ -310,7 +309,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 							}
 						}
 
-						continue;
+						return;
 					}
 
 					// eslint-disable-next-line prefer-const
@@ -333,7 +332,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 					const toWatch = p.info ?? getPropertyInfo(watchPath, component);
 					unwatch = $watch.call(component, toWatch, watchInfo, handler);
 				}
-			}
+			});
 		};
 
 		// Add listener to a component `created` hook if the component isn't created yet
