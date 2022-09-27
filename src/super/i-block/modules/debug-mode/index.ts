@@ -51,21 +51,7 @@ export default class DebugMode extends Friend {
 	/**
 	 *
 	 */
-	protected setDataGatheringStrategy(strategy: GatheringStrategy): void {
-		this.dataGatheringStrategy = strategy;
-	}
-
-	/**
-	 *
-	 */
-	protected setDataRenderStrategy(strategy: RenderStrategy): void {
-		this.dataRenderStrategy = strategy;
-	}
-
-	/**
-	 *
-	 */
-	protected initDebugDataGathering(): void {
+	initDebugDataGathering(): void {
 		if (this.dataGatheringStrategy == null) {
 			const
 				db = this.field.get('DB');
@@ -84,7 +70,21 @@ export default class DebugMode extends Friend {
 	/**
 	 *
 	 */
-	protected initDebugDataRendering(): void {
+	initDebugDataRendering(): void {
 
+	}
+
+	/**
+	 *
+	 */
+	protected setDataGatheringStrategy(strategy: GatheringStrategy): void {
+		this.dataGatheringStrategy = strategy;
+	}
+
+	/**
+	 *
+	 */
+	protected setDataRenderStrategy(strategy: RenderStrategy): void {
+		this.dataRenderStrategy = strategy;
 	}
 }
