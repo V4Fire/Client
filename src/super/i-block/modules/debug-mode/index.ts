@@ -14,8 +14,8 @@
 import Friend from 'super/i-block/modules/friend';
 
 import backendDebugDataEngine from 'super/i-block/modules/debug-mode/data-gathering-engines/backend-debug-data';
+import bottomBlockRenderEngine from 'super/i-block/modules/debug-mode/render-engines/bottom-block';
 
-import type iBlock from 'super/i-block/i-block';
 import type {
 
 	DebugData,
@@ -31,22 +31,22 @@ export default class DebugMode extends Friend {
 	/**
 	 *
 	 */
+	dataRenderComponent!: string;
+
+	/**
+	 *
+	 */
+	dataGatheringStrategy!: GatheringStrategy;
+
+	/**
+	 *
+	 */
+	dataRenderStrategy!: RenderStrategy;
+
+	/**
+	 *
+	 */
 	protected debugData!: DebugData;
-
-	/**
-	 *
-	 */
-	protected dataRenderComponent!: iBlock;
-
-	/**
-	 *
-	 */
-	protected dataGatheringStrategy!: GatheringStrategy;
-
-	/**
-	 *
-	 */
-	protected dataRenderStrategy!: RenderStrategy;
 
 	/**
 	 *
@@ -65,13 +65,22 @@ export default class DebugMode extends Friend {
 		}
 
 		this.debugData = this.dataGatheringStrategy(this.ctx);
+		this.initDebugDataRendering();
 	}
 
 	/**
 	 *
 	 */
 	protected initDebugDataRendering(): void {
+		if (this.dataRenderComponent == null) {
+			this.dataRenderComponent = 'b-debug-data';
+		}
 
+		if (this.dataRenderStrategy == null) {
+			this.setDataRenderStrategy(bottomBlockRenderEngine);
+		}
+
+		this.dataRenderStrategy(this.debugData, this.ctx, this.dataRenderComponent);
 	}
 
 	/**

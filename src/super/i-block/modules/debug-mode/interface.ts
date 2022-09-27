@@ -32,5 +32,5 @@ export type RenderStrategy = (
 	/**
 	 *
 	 */
-	renderComponent?: iBlock
+	renderComponent?: string
 ) => void;
