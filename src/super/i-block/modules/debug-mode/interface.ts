@@ -1,4 +1,5 @@
 import type iBlock from 'super/i-block/i-block';
+import type { UnsafeIBlock } from 'super/i-block/i-block';
 
 /**
  *
@@ -28,6 +29,11 @@ export type RenderStrategy = (
 	 *
 	 */
 	rootComponent: iBlock,
+
+	/**
+	 *
+	 */
+	context: UnsafeIBlock,
 
 	/**
 	 *

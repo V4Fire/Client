@@ -80,7 +80,7 @@ export default class DebugMode extends Friend {
 			this.setDataRenderStrategy(bottomBlockRenderEngine);
 		}
 
-		this.dataRenderStrategy(this.debugData, this.ctx, this.dataRenderComponent);
+		this.dataRenderStrategy(this.debugData, this.component, this.ctx, this.dataRenderComponent);
 	}
 
 	/**
