@@ -70,7 +70,7 @@ export default class DebugMode extends Friend {
 	/**
 	 *
 	 */
-	initDebugDataRendering(): void {
+	protected initDebugDataRendering(): void {
 
 	}
 

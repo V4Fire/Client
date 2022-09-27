@@ -41,6 +41,8 @@ package('p-v4-components-demo')
 		'b-slider',
 		'b-bottom-slide',
 
+		'b-debug-data',
+
 		'b-icon',
 		'b-image',
 
