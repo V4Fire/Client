@@ -136,11 +136,7 @@ export function getRenderFn(
 
 	return (bindings) => {
 		if (bindings != null) {
-			for (let keys = Object.keys(bindings), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					value = bindings[key];
-
+			Object.entries(bindings).forEach(([key, value]) => {
 				if (key in ctx) {
 					Object.defineProperty(instanceCtx, key, {
 						configurable: true,
@@ -152,7 +148,7 @@ export function getRenderFn(
 				} else {
 					instanceCtx[key] = value;
 				}
-			}
+			});
 		}
 
 		return Object.cast(render());

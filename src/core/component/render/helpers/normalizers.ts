@@ -30,14 +30,11 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 		}
 
 	} else if (Object.isDictionary(classes)) {
-		for (let keys = Object.keys(classes), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
-
-			if (Object.isTruly(classes[key])) {
-				res += `${key} `;
+		Object.entries(classes).forEach(([className, has]) => {
+			if (Object.isTruly(has)) {
+				res += `${className} `;
 			}
-		}
+		});
 	}
 
 	return res.trim();
@@ -58,10 +55,7 @@ export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): s
 				normalizedStyle = Object.isString(style) ? parseStringStyle(style) : normalizeStyle(style);
 
 			if (Object.size(normalizedStyle) > 0) {
-				for (let keys = Object.keys(normalizedStyle), i = 0; i < keys.length; i++) {
-					const key = keys[i];
-					res[key] = normalizedStyle[key];
-				}
+				Object.entries(normalizedStyle).forEach(([key, val]) => res[key] = val);
 			}
 		}
 
@@ -121,13 +115,12 @@ export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: 
 		return;
 	}
 
-	for (let keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
+	Object.keys(attrs).forEach((key) => {
 		let
-			key = keys[i],
 			propKey = `${key}Prop`;
 
 		if (key === 'ref' || key === 'ref_for') {
-			continue;
+			return;
 		}
 
 		if (deprecatedProps != null) {
@@ -147,5 +140,5 @@ export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: 
 			attrs[propKey] = attrs[key];
 			delete attrs[key];
 		}
-	}
+	});
 }

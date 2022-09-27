@@ -69,11 +69,7 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 		}
 
 		if (Object.isDictionary(data)) {
-			for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				normalizer(data[key], key, data);
-			}
-
+			Object.entries(data).forEach(([key, val]) => normalizer(val, key, data));
 			return;
 		}
 
@@ -166,19 +162,18 @@ export function convertRouteToPlainObjectWithoutProto<T extends AnyRoute>(route:
 		res = {};
 
 	if (route) {
-		for (let keys = Object.keys(route).sort(), i = 0; i < keys.length; i++) {
+		Object.keys(route).sort().forEach((key) => {
 			const
-				key = keys[i],
 				el = route[key];
 
 			if (key.startsWith('_')) {
-				continue;
+				return;
 			}
 
 			if (!Object.isFunction(el)) {
 				res[key] = el;
 			}
-		}
+		});
 	}
 
 	return res;

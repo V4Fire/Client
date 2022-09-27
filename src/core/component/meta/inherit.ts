@@ -69,18 +69,14 @@ export function inheritMeta(
 			const
 				[store, parentObj] = list[i];
 
-			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					parent = parentObj[key];
-
+			Object.entries(parentObj).forEach(([key, parent]) => {
 				if (parent == null) {
-					continue;
+					return;
 				}
 
 				if (metaPointer == null || !metaPointer[key]) {
 					store[key] = parent;
-					continue;
+					return;
 				}
 
 				let
@@ -100,7 +96,7 @@ export function inheritMeta(
 				}
 
 				store[key] = {...parent, after, watchers};
-			}
+			});
 		}
 	}
 
@@ -117,13 +113,8 @@ export function inheritMeta(
 		];
 
 		for (let i = 0; i < list.length; i++) {
-			const
-				[store, parentObj] = list[i];
-
-			for (let keys = Object.keys(parentObj), i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				store[key] = {...parentObj[key]!};
-			}
+			const [store, parentObj] = list[i];
+			Object.entries(parentObj).forEach(([key, parent]) => store[key] = {...parent!});
 		}
 	}
 
@@ -148,29 +139,20 @@ export function inheritMeta(
 			hooks = {};
 
 		if (parent.watchers != null) {
-			const
-				{watchers} = parent;
-
-			for (let keys = Object.keys(watchers), i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				watchers[key] = {...watchers[key]};
-			}
+			const {watchers} = parent;
+			Object.entries(watchers).forEach(([key, val]) => watchers[key] = {...val});
 		}
 
 		if (parent.hooks != null) {
 			const
 				{hooks} = parent;
 
-			for (let keys = Object.keys(hooks), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					hook = hooks[key];
-
+			Object.entries(hooks).forEach(([key, hook]) => {
 				hooks[key] = {
 					...hook,
 					after: Object.size(hook.after) > 0 ? new Set(hook.after) : undefined
 				};
-			}
+			});
 		}
 
 		methods[key] = {...parent, watchers, hooks};
@@ -236,14 +218,11 @@ export function inheritMeta(
 			const
 				valuesList: ModDeclVal[] = [];
 
-			for (let keys = Object.keys(values), i = 0; i < keys.length; i++) {
-				const
-					el = values[keys[i]];
-
-				if (el !== undefined) {
-					valuesList.push(el);
+			Object.values(values).forEach((val) => {
+				if (val !== undefined) {
+					valuesList.push(val);
 				}
-			}
+			});
 
 			mods[key] = valuesList;
 

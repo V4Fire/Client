@@ -33,10 +33,9 @@ export function getBlockSelector(this: Friend, mods?: ModsDict): string {
 		res = `.${(<Function>getFullBlockName).call(this)}`;
 
 	if (mods != null) {
-		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-			const key = keys[i];
-			res += `.${getFullBlockName.call(this, key, mods[key])}`;
-		}
+		Object.entries(mods).forEach(([key, val]) => {
+			res += `.${getFullBlockName.call(this, key, val)}`;
+		});
 	}
 
 	return res;
@@ -105,10 +104,9 @@ export function getElementSelector(this: Friend, name: string, mods?: ModsDict):
 	}
 
 	if (mods != null) {
-		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-			const key = keys[i];
-			res += `.${getFullElementName.call(this, name, key, mods[key])}`;
-		}
+		Object.entries(mods).forEach(([key, val]) => {
+			res += `.${getFullElementName.call(this, name, key, val)}`;
+		});
 	}
 
 	return res;

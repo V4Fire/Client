@@ -49,14 +49,10 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 		modsFromConstructor = {...constructor['mods']};
 
 	if (Object.isDictionary(modsFromDS)) {
-		for (let keys = Object.keys(modsFromDS), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				dsModDecl = modsFromDS[key],
-				modDecl = modsFromConstructor[key];
-
+		Object.entries(modsFromDS).forEach(([key, dsModDecl]) => {
+			const modDecl = modsFromConstructor[key];
 			modsFromConstructor[key] = modDecl != null ? modDecl.concat(dsModDecl) : dsModDecl;
-		}
+		});
 	}
 
 	for (let o = modsFromConstructor, keys = Object.keys(o), i = 0; i < keys.length; i++) {

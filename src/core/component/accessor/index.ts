@@ -127,13 +127,9 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	}
 
 	if (deprecatedProps != null) {
-		for (let keys = Object.keys(deprecatedProps), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				alternative = deprecatedProps[key];
-
+		Object.entries(deprecatedProps).forEach(([key, alternative]) => {
 			if (alternative == null) {
-				continue;
+				return;
 			}
 
 			Object.defineProperty(component, key, {
@@ -149,6 +145,6 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 					component[alternative] = val;
 				}
 			});
-		}
+		});
 	}
 }

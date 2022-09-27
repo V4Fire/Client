@@ -70,19 +70,15 @@ export function syncLinks(this: Sync, path?: LinkDecl, value?: unknown): void {
 			return;
 		}
 
-		for (let keys = Object.keys(o), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				el = o[key];
-
+		Object.entries(([key, el]) => {
 			if (el == null) {
-				continue;
+				return;
 			}
 
 			if (storePath == null || key === storePath) {
 				el.sync(value ?? this.field.get(linkName));
 			}
-		}
+		});
 	};
 
 	if (linkPath != null) {

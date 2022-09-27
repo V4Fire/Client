@@ -27,17 +27,13 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = meta.params.functional === true;
 
-	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			method = methods[key];
-
+	Object.entries(methods).forEach(([key, method]) => {
 		if (method == null || !ssrMode && isFunctional && method.functional === false) {
-			continue;
+			return;
 		}
 
 		component[key] = method.fn.bind(component);
-	}
+	});
 
 	if (isFunctional) {
 		component.render = Object.cast(meta.component.render);

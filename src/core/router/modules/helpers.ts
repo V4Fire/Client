@@ -233,16 +233,12 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			const
 				p = {};
 
-			if (params) {
-				for (let keys = Object.keys(params), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						el = params[key];
-
+			if (params != null) {
+				Object.entries(params).forEach(([key, el]) => {
 					if (el !== undefined) {
 						p[key] = String(el);
 					}
-				}
+				});
 			}
 
 			if (externalRedirect) {
@@ -343,9 +339,8 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 		{basePath = ''} = opts,
 		compiledRoutes = {};
 
-	for (let keys = Object.keys(routes), i = 0; i < keys.length; i++) {
+	Object.keys(routes).forEach((name) => {
 		const
-			name = keys[i],
 			route = routes[name] ?? {},
 			pathParams = [];
 
@@ -363,22 +358,9 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 					return pathParams;
 				},
 
-				/** @deprecated */
-				get page(): string {
-					return this.name;
-				},
-
-				/** @deprecated */
-				get index(): boolean {
-					return this.meta.default;
-				},
-
 				meta: {
 					name,
-					external: isExternal.test(pattern),
-
-					/** @deprecated */
-					page: name
+					external: isExternal.test(pattern)
 				}
 			};
 
@@ -400,16 +382,6 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 					return pathParams;
 				},
 
-				/** @deprecated */
-				get page(): string {
-					return this.name;
-				},
-
-				/** @deprecated */
-				get index(): boolean {
-					return this.meta.default;
-				},
-
 				meta: {
 					...route,
 
@@ -419,14 +391,11 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 					external: route.external ?? (
 						isExternal.test(pattern) ||
 						isExternal.test(route.redirect ?? '')
-					),
-
-					/** @deprecated */
-					page: name
+					)
 				}
 			};
 		}
-	}
+	});
 
 	return compiledRoutes;
 }

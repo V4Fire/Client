@@ -53,15 +53,9 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		customAsync = $a !== unsafe.$async;
 
 	// Iterate over all registered watchers and listeners and initialize their
-	for (let keys = Object.keys(watchersMap), i = 0; i < keys.length; i++) {
-		let
-			watchPath = keys[i];
-
-		const
-			watchers = watchersMap[watchPath];
-
+	Object.entries(watchersMap).forEach(([watchPath, watchers]) => {
 		if (watchers == null) {
-			continue;
+			return;
 		}
 
 		let
@@ -345,16 +339,16 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		// Add listener to a component `created` hook if the component isn't created yet
 		if (watcherNeedCreated && isBeforeCreate) {
 			hooks.created.unshift({fn: attachWatcher});
-			continue;
+			return;
 		}
 
 		// Add listener to a component `mounted/activate`d hook if the component isn't mounted/activates yet
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (watcherNeedMounted && (isBeforeCreate || component.$el == null)) {
 			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
-			continue;
+			return;
 		}
 
 		attachWatcher();
-	}
+	});
 }

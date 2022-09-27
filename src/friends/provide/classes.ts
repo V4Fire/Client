@@ -97,13 +97,7 @@ export function classes(
 	const
 		map = {};
 
-	for (let keys = Object.keys(classes), i = 0; i < keys.length; i++) {
-		const
-			innerEl = keys[i];
-
-		let
-			outerEl = classes[innerEl];
-
+	Object.entries(classes).forEach(([innerEl, outerEl]) => {
 		if (outerEl === true) {
 			outerEl = innerEl;
 
@@ -118,7 +112,7 @@ export function classes(
 		}
 
 		map[innerEl.dasherize()] = fullElementName.apply(this, Object.cast(Array.concat([componentName], outerEl)));
-	}
+	});
 
 	baseClassesCache[key] = Object.freeze(map);
 	return map;
@@ -201,15 +195,11 @@ export function componentClasses(
 	const
 		classes = [(<Function>fullComponentName).call(this, componentName)];
 
-	for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			val = mods[key];
-
+	Object.entries(mods).forEach(([key, val]) => {
 		if (val !== undefined) {
 			classes.push(fullComponentName.call(this, componentName, key, val));
 		}
-	}
+	});
 
 	cache[key] = Object.freeze(classes);
 	return classes;
@@ -304,29 +294,21 @@ export function elementClasses(
 	const
 		classes = componentId != null ? [componentId] : [];
 
-	for (let keys = Object.keys(els), i = 0; i < keys.length; i++) {
-		const
-			el = keys[i],
-			mods = els[el];
-
+	Object.entries(els).forEach(([el, mods]) => {
 		classes.push(
 			(<Function>fullElementName).call(this, componentName, el)
 		);
 
 		if (!Object.isDictionary(mods)) {
-			continue;
+			return;
 		}
 
-		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				val = mods[key];
-
+		Object.entries(mods).forEach(([key, val]) => {
 			if (val !== undefined) {
 				classes.push(fullElementName.call(this, componentName, el, key, val));
 			}
-		}
-	}
+		});
+	});
 
 	cache[key] = Object.freeze(classes);
 	return classes;

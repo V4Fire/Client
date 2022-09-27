@@ -88,22 +88,18 @@ export function inheritContext(
 	const
 		linkedFields = {};
 
-	for (let keys = Object.keys(parentProps), i = 0; i < keys.length; i++) {
+	Object.keys(parentProps).forEach((prop) => {
 		const
-			prop = keys[i],
 			linked = parentCtx.$syncLinkCache.get(prop);
 
 		if (linked != null) {
-			for (let keys = Object.keys(linked), i = 0; i < keys.length; i++) {
-				const
-					link = linked[keys[i]];
-
+			Object.values(linked).forEach((link) => {
 				if (link != null) {
 					linkedFields[link.path] = prop;
 				}
-			}
+			});
 		}
-	}
+	});
 
 	const fields = [
 		parentCtx.meta.systemFields,

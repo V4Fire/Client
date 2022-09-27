@@ -48,13 +48,9 @@ export function initProps(
 		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = meta.params.functional === true;
 
-	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			prop = props[key];
-
+	Object.entries(props).forEach(([key, prop]) => {
 		if (prop == null || !ssrMode && isFunctional && prop.functional === false) {
-			continue;
+			return;
 		}
 
 		unsafe.$activeField = key;
@@ -88,7 +84,7 @@ export function initProps(
 		if (needSaveToStore) {
 			store[key] = val;
 		}
-	}
+	});
 
 	unsafe.$activeField = undefined;
 	return store;

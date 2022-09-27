@@ -199,13 +199,9 @@ export function beforeCreateState(
 	// If a computed property is tied with a field or system field
 	// and the host component does not have any watchers to this field,
 	// we need to register the "fake" watcher to force watching
-	for (let keys = Object.keys(tiedFields), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			normalizedKey = tiedFields[key];
-
+	Object.entries(tiedFields).forEach(([key, normalizedKey]) => {
 		if (normalizedKey == null) {
-			continue;
+			return;
 		}
 
 		const needToForceWatching = watchers[key] == null && (
@@ -223,7 +219,7 @@ export function beforeCreateState(
 				}
 			];
 		}
-	}
+	});
 
 	runHook('beforeCreate', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeCreate');

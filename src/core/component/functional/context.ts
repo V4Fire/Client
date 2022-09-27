@@ -51,11 +51,9 @@ export function createVirtualContext(
 			return handler.name !== 'withModifiers' && handler.name !== 'withKeys';
 		};
 
-		for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
+		Object.entries(props).forEach(([key, prop]) => {
 			const
-				key = keys[i],
-				normalizedKey = key.camelize(false),
-				prop = props[key];
+				normalizedKey = key.camelize(false);
 
 			if (normalizedKey in meta.props) {
 				$props[normalizedKey] = prop;
@@ -77,7 +75,7 @@ export function createVirtualContext(
 
 				$attrs[key] = prop;
 			}
-		}
+		});
 	}
 
 	let
