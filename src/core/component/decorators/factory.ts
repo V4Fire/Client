@@ -100,10 +100,7 @@ export function paramsFactory<T = object>(
 					if (p.watch != null) {
 						watchers ??= {};
 
-						for (let o = <Array<typeof p.watch>>[].concat(p.watch), i = 0; i < o.length; i++) {
-							const
-								el = o[i];
-
+						(<Array<typeof p.watch>>[].concat(p.watch)).forEach((el) => {
 							if (Object.isPlainObject(el)) {
 								const path = String(el.path ?? el.field);
 								watchers[path] = wrapOpts({...p.watchParams, ...el, path});
@@ -111,16 +108,13 @@ export function paramsFactory<T = object>(
 							} else {
 								watchers[el] = wrapOpts({...p.watchParams, path: el});
 							}
-						}
+						});
 					}
 
 					if (p.hook != null) {
 						hooks ??= {};
 
-						for (let o = <Array<typeof p.hook>>[].concat(p.hook), i = 0; i < o.length; i++) {
-							const
-								el = o[i];
-
+						(<Array<typeof p.hook>>[].concat(p.hook)).forEach((el) => {
 							if (Object.isSimpleObject(el)) {
 								const
 									key = Object.keys(el)[0],
@@ -136,7 +130,7 @@ export function paramsFactory<T = object>(
 							} else {
 								hooks[el] = wrapOpts({name, hook: el});
 							}
-						}
+						});
 					}
 
 					metaCluster[key] = wrapOpts({...info, ...p, watchers, hooks});
@@ -216,11 +210,8 @@ export function paramsFactory<T = object>(
 			}
 
 			if (p.watch != null) {
-				for (let o = <Array<typeof p.watch>>[].concat(p.watch), i = 0; i < o.length; i++) {
+				(<Array<typeof p.watch>>[].concat(p.watch)).forEach((val) => {
 					watchers ??= new Map();
-
-					const
-						val = o[i];
 
 					if (Object.isPlainObject(val)) {
 						watchers.set(val.handler ?? val.fn, wrapOpts({...val, handler: val.handler}));
@@ -228,7 +219,7 @@ export function paramsFactory<T = object>(
 					} else {
 						watchers.set(val, wrapOpts({handler: val}));
 					}
-				}
+				});
 			}
 
 			metaCluster[key] = wrapOpts({

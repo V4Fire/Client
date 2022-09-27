@@ -157,9 +157,9 @@ ComponentEngine.directive('attrs', {
 					modifiers = {};
 
 				if (rawModifiers.length > 0) {
-					for (let o = rawModifiers.split('.'), i = 0; i < o.length; i++) {
-						modifiers[o[i]] = true;
-					}
+					rawModifiers.split('.').forEach((el) => {
+						modifiers[el] = true;
+					});
 				}
 
 				const dirDecl: DirectiveBinding = {

@@ -103,14 +103,11 @@ function saveHistoryPos(): void {
 try {
 	historyLogPointer = historyStorage.get('pos') ?? 0;
 
-	for (let o = <HistoryLog>historyStorage.get('log'), i = 0; i < o.length; i++) {
-		const
-			el = o[i];
-
+	(<HistoryLog>historyStorage.get('log')).forEach((el) => {
 		if (Object.isPlainObject(el)) {
 			historyLog.push(el);
 		}
-	}
+	});
 
 	truncateHistoryLog();
 } catch {}

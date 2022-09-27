@@ -61,13 +61,9 @@ export function fillMeta(
 	const
 		defaultProps = params.defaultProps !== false;
 
-	for (let o = meta.props, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			propName = keys[i],
-			prop = o[propName];
-
+	Object.entries(meta.props).forEach(([propName, prop]) => {
 		if (prop == null) {
-			continue;
+			return;
 		}
 
 		let
@@ -144,17 +140,13 @@ export function fillMeta(
 				});
 			}
 		}
-	}
+	});
 
 	// Fields
 
-	for (let fields = [meta.systemFields, meta.fields], i = 0; i < fields.length; i++) {
-		for (let o = fields[i], keys = Object.keys(o), j = 0; j < keys.length; j++) {
-			const
-				key = keys[j],
-				field = <NonNullable<ComponentField>>o[key];
-
-			field.watchers?.forEach((watcher) => {
+	[meta.systemFields, meta.fields].forEach((field) => {
+		Object.entries(field).forEach(([key, field]) => {
+			field?.watchers?.forEach((watcher) => {
 				if (isFunctional && watcher.functional === false) {
 					return;
 				}
@@ -165,35 +157,27 @@ export function fillMeta(
 				watchers[key] = watcherListeners;
 				watcherListeners.push(watcher);
 			});
-		}
-	}
+		});
+	});
 
 	// Computed fields
 
-	for (let o = computedFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			nm = keys[i],
-			computed = o[nm];
-
+	Object.entries(computedFields).forEach(([nm, computed]) => {
 		if (computed == null || computed.cache !== 'auto') {
-			continue;
+			return;
 		}
 
 		component.computed[nm] = {
 			get: computed.get,
 			set: computed.set
 		};
-	}
+	});
 
 	// Methods
 
-	for (let o = methods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			nm = keys[i],
-			method = o[nm];
-
+	Object.entries(methods).forEach(([nm, method]) => {
 		if (method == null) {
-			continue;
+			return;
 		}
 
 		component.methods[nm] = function wrapper() {
@@ -202,59 +186,47 @@ export function fillMeta(
 		};
 
 		if (method.watchers != null) {
-			for (let o = method.watchers, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					watcher = <NonNullable<WatchObject>>o[key];
-
-				if (isFunctional && watcher.functional === false) {
-					continue;
+			Object.entries(method.watchers).forEach(([key, watcher]) => {
+				if (watcher == null || isFunctional && watcher.functional === false) {
+					return;
 				}
 
-				const
-					watcherListeners = watchers[key] ?? [];
-
+				const watcherListeners = watchers[key] ?? [];
 				watchers[key] = watcherListeners;
+
 				watcherListeners.push({
 					...watcher,
 					method: nm,
 					args: Array.concat([], watcher.args),
 					handler: Object.cast(method.fn)
 				});
-			}
+			});
 		}
 
 		// Method hooks
 
 		if (method.hooks) {
-			for (let o = method.hooks, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-				const
-					key = <Hook>keys[i],
-					hook = o[key];
-
+			Object.entries(method.hooks).forEach(([key, hook]) => {
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (hook == null || isFunctional && hook.functional === false) {
-					continue;
+					return;
 				}
 
 				hooks[key].push({...hook, fn: method.fn});
-			}
+			});
 		}
-	}
+	});
 
 	// Modifiers
 
 	const
 		{mods} = component;
 
-	for (let o = meta.mods, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			mod = o[key];
-
+	Object.entries(meta.mods).forEach(([key, mod]) => {
 		let
 			def;
 
-		if (mod) {
+		if (mod != null) {
 			for (let i = 0; i < mod.length; i++) {
 				const
 					el = mod[i];
@@ -267,7 +239,7 @@ export function fillMeta(
 
 			mods[key] = def !== undefined ? String(def[0]) : undefined;
 		}
-	}
+	});
 
 	return meta;
 }

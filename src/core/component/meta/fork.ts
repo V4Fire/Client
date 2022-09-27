@@ -21,25 +21,19 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 	meta.watchers = {};
 	meta.hooks = {};
 
-	for (let o = meta.hooks, p = base.hooks, keys = Object.keys(p), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			v = p[key];
-
-		if (v != null) {
-			o[key] = v.slice();
+	Object.entries(base.hooks).forEach(([key, val]) => {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (val != null) {
+			meta.hooks[key] = val.slice();
 		}
-	}
+	});
 
-	for (let o = meta.watchers, p = base.watchers, keys = Object.keys(p), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			v = p[key];
-
-		if (v != null) {
-			o[key] = v.slice();
+	Object.entries(base.watchers).forEach(([key, val]) => {
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (val != null) {
+			meta.watchers[key] = val.slice();
 		}
-	}
+	});
 
 	return meta;
 }

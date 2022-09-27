@@ -68,11 +68,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = meta.params.functional === true;
 
-	for (let o = meta.computedFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			computed = o[key];
-
+	Object.entries(meta.computedFields).forEach(([key, computed]) => {
 		const canSkip =
 			computed == null ||
 			computed.cache === 'auto' ||
@@ -80,7 +76,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			!ssrMode && isFunctional && computed.functional === false;
 
 		if (canSkip) {
-			continue;
+			return;
 		}
 
 		// eslint-disable-next-line func-style
@@ -102,20 +98,16 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			get: computed.get != null ? get : undefined,
 			set: computed.set
 		});
-	}
+	});
 
-	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			accessor = o[key];
-
+	Object.entries(meta.accessors).forEach(([key, accessor]) => {
 		const canSkip =
 			accessor == null ||
 			component[key] != null ||
 			!ssrMode && isFunctional && accessor.functional === false;
 
 		if (canSkip) {
-			continue;
+			return;
 		}
 
 		Object.defineProperty(component, key, {
@@ -124,7 +116,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			get: accessor.get,
 			set: accessor.set
 		});
-	}
+	});
 
 	if (deprecatedProps != null) {
 		Object.entries(deprecatedProps).forEach(([key, alternative]) => {
