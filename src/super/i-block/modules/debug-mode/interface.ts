@@ -3,7 +3,7 @@ import type iBlock from 'super/i-block/i-block';
 /**
  *
  */
-export type DebugData = Dictionary<any>;
+export type DebugData = Dictionary<unknown>;
 
 /**
  *

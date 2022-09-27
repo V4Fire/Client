@@ -13,6 +13,8 @@
 
 import Friend from 'super/i-block/modules/friend';
 
+import backendDebugDataEngine from 'super/i-block/modules/debug-mode/data-gathering-engines/backend-debug-data';
+
 import type iBlock from 'super/i-block/i-block';
 import type {
 
@@ -34,17 +36,17 @@ export default class DebugMode extends Friend {
 	/**
 	 *
 	 */
+	protected dataRenderComponent!: iBlock;
+
+	/**
+	 *
+	 */
 	protected dataGatheringStrategy!: GatheringStrategy;
 
 	/**
 	 *
 	 */
 	protected dataRenderStrategy!: RenderStrategy;
-
-	/**
-	 *
-	 */
-	protected dataRenderComponent!: iBlock;
 
 	/**
 	 *
@@ -64,7 +66,19 @@ export default class DebugMode extends Friend {
 	 *
 	 */
 	protected initDebugDataGathering(): void {
+		if (this.dataGatheringStrategy == null) {
+			const
+				db = this.field.get('DB');
 
+			if (db != null && Object.has(db, 'debug')) {
+				this.setDataGatheringStrategy(backendDebugDataEngine);
+
+			} else {
+				return;
+			}
+		}
+
+		this.debugData = this.dataGatheringStrategy(this.ctx);
 	}
 
 	/**
