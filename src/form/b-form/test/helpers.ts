@@ -23,7 +23,7 @@ export async function createFormAndEnvironment(page: Page, attrs: Dictionary = {
 	const
 		formConverter = (v) => v.reduce((res, el) => <number>res + Number(el), 0);
 
-	const scheme = [
+	const scheme: RenderParams[] = [
 		{
 			content: {
 				default: {
@@ -111,7 +111,7 @@ export async function createFormAndEnvironment(page: Page, attrs: Dictionary = {
 		}
 	];
 
-	await Component.createComponents(page, 'b-dummy', <RenderParams[]>scheme);
+	await Component.createComponents(page, 'b-dummy', scheme);
 
 	return Component.waitForComponentByQuery(page, '[data-id="target"]');
 }

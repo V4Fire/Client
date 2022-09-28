@@ -121,7 +121,7 @@ interface RenderParams<A = CanUndef<Dictionary>> {
 	/**
 	 * Component attrs
 	 */
-	attrs: A;
+	attrs?: A;
 
 	/** @see [[RenderContent]] */
 	content?: Dictionary<RenderContent | RenderContentFn | string>;
