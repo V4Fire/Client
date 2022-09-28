@@ -1898,7 +1898,7 @@ export default abstract class iBlock extends ComponentInterface {
 				[],
 
 				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-				this.state.initFromStorage() || []
+				this.state.globalName != null && this.state.initFromStorage() || []
 			);
 
 			if (this.dependencies.length > 0) {

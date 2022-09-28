@@ -56,11 +56,11 @@ export function activate(component: iBlock, force?: boolean): void {
 		canActivate = !unsafe.isActivated || force;
 
 	if (canActivate) {
-		if (isBeforeCreate) {
-			state.initFromRouter();
-		}
-
 		if (state.needRouterSync) {
+			if (isBeforeCreate) {
+				state.initFromRouter();
+			}
+
 			void lfc.execCbAfterComponentCreated(() => {
 				rootEmitter.on('onTransition', handler, {
 					label: $$.activate
@@ -84,7 +84,7 @@ export function activate(component: iBlock, force?: boolean): void {
 							}
 						}
 
-						if (!inactiveStatuses[unsafe.componentStatus]) {
+						if (state.needRouterSync && !inactiveStatuses[unsafe.componentStatus]) {
 							state.initFromRouter();
 						}
 
@@ -201,7 +201,10 @@ export function onActivated(component: iBlock, force?: boolean): void {
 		unsafe.componentStatus = 'ready';
 	}
 
-	unsafe.state.initFromRouter();
+	if (unsafe.state.needRouterSync) {
+		unsafe.state.initFromRouter();
+	}
+
 	unsafe.isActivated = true;
 
 	function load(): void {
