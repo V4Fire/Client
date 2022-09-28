@@ -153,17 +153,22 @@ export abstract class ComponentInterface {
 	/**
 	 * A link to the component parent
 	 */
-	readonly $parent?: this['Component'];
+	readonly $parent!: this['Component'] | null;
 
 	/**
 	 * A link to the closest non-functional parent component
 	 */
-	readonly $normalParent?: this['Component'];
+	readonly $normalParent!: this['Component'] | null;
 
 	/**
 	 * A link to the component parent if the current component was dynamically created and mounted
 	 */
-	readonly $remoteParent?: this['Component'];
+	readonly $remoteParent!: this['Component'] | null;
+
+	/**
+	 * A list of child components
+	 */
+	readonly $children!: Array<this['Component']>;
 
 	/**
 	 * An API of the used render engine

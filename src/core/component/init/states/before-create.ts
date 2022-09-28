@@ -24,7 +24,7 @@ import { implementEventEmitterAPI } from 'core/component/event';
 import { beforeDestroyState } from 'core/component/init/states/before-destroy';
 import { destroyedState } from 'core/component/init/states/destroyed';
 
-import type { ComponentInterface, ComponentMeta } from 'core/component/interface';
+import type { ComponentInterface, ComponentMeta, ComponentElement } from 'core/component/interface';
 import type { InitBeforeCreateStateOptions } from 'core/component/init/interface';
 
 /**
@@ -107,7 +107,7 @@ export function beforeCreateState(
 			configurable: true,
 			enumerable: true,
 			writable: true,
-			value: root.$remoteParent
+			value: root.$remoteParent ?? null
 		});
 	}
 
@@ -124,6 +124,21 @@ export function beforeCreateState(
 				writable: false,
 				value: getComponentContext(Object.cast(val))
 			});
+		}
+	});
+
+	Object.defineProperty(unsafe, '$children', {
+		configurable: true,
+		enumerable: true,
+		get() {
+			const
+				{$el} = unsafe;
+
+			if ($el == null) {
+				return [];
+			}
+
+			return Array.from($el.querySelectorAll<ComponentElement>('.i-block-helper')).map((el) => el.component);
 		}
 	});
 
