@@ -12,16 +12,10 @@
  */
 
 import Friend from 'friends/friend';
-
-import { literalCache } from 'super/i-block/modules/opt/const';
 import type { IfOnceValue } from 'super/i-block/modules/opt/interface';
 
-export * from 'super/i-block/modules/opt/const';
 export * from 'super/i-block/modules/opt/interface';
 
-/**
- * Class provides some methods to optimize an application
- */
 export default class Opt extends Friend {
 	/** @see [[iBlock.ifOnceStore]] */
 	protected get ifOnceStore(): Dictionary<number> {
@@ -34,11 +28,11 @@ export default class Opt extends Friend {
 	 *   `1` -> just written in the cache;
 	 *   `0` -> does not exist in the cache.
 	 *
-	 * This method is used with conditions to provide a logic: if the condition was switched to true,
-	 * then further, it always returns true.
+	 * This method is used with conditions to provide logic: if the condition switched to true,
+	 * then it always returns true in the future.
 	 *
-	 * @param label
-	 * @param [value] - label value (will be saved in the cache only if true)
+	 * @param label - the label name
+	 * @param [value] - the label value (will be saved in the cache only if true)
 	 *
 	 * @example
 	 * ```
@@ -62,30 +56,7 @@ export default class Opt extends Friend {
 	}
 
 	/**
-	 * Tries to find a blueprint in the cache to the specified value and returns it,
-	 * or if the value wasn't found in the cache, it would be frozen, cached, and returned.
-	 *
-	 * This method is used to cache raw literals within component templates to avoid redundant re-renders that occurs
-	 * because links to objects were changed.
-	 *
-	 * @param literal
-	 *
-	 * @example
-	 * ```
-	 * < b-button :mods = opt.memoizeLiteral({foo: 'bla'})
-	 * ```
-	 */
-	memoizeLiteral<T>(literal: T): T extends Array<infer V> ? readonly V[] : T extends object ? Readonly<T> : T {
-		if (Object.isFrozen(literal)) {
-			return Object.cast(literal);
-		}
-
-		const key = Object.fastHash(literal);
-		return Object.cast(literalCache[key] = literalCache[key] ?? Object.freeze(literal));
-	}
-
-	/**
-	 * Shows in a terminal/console any changes of component properties.
+	 * Shows any changes to the component properties in the debugger console.
 	 * This method is useful to debug.
 	 *
 	 * @example
