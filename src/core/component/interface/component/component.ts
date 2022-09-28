@@ -163,7 +163,7 @@ export abstract class ComponentInterface {
 	/**
 	 * A link to the component parent if the current component was dynamically created and mounted
 	 */
-	readonly $remoteParent!: this['Component'] | null;
+	readonly $remoteParent?: this['Component'];
 
 	/**
 	 * A list of child components
