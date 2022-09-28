@@ -9,9 +9,9 @@
 import Friend, { fakeMethods } from 'friends/friend';
 import iBlock from 'super/i-block/i-block';
 
-import type * as router from 'super/i-block/modules/state/router';
-import type * as storage from 'super/i-block/modules/state/storage';
-import type * as helpers from 'super/i-block/modules/state/helpers';
+import type * as router from 'friends/state/router';
+import type * as storage from 'friends/state/storage';
+import type * as helpers from 'friends/state/helpers';
 
 let
 	baseSyncRouterState;
@@ -29,12 +29,12 @@ interface State {
 }
 
 @fakeMethods(
-	'saveToRouter',
 	'initFromRouter',
+	'saveToRouter',
 	'resetRouter',
 
-	'saveToStorage',
 	'initFromStorage',
+	'saveToStorage',
 	'resetStorage',
 
 	'set'

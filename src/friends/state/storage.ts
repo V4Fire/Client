@@ -9,34 +9,14 @@
 import symbolGenerator from 'core/symbol';
 
 import type Friend from 'friends/friend';
-import { set } from 'super/i-block/modules/state/helpers';
+import { set } from 'friends/state/helpers';
 
 const
 	$$ = symbolGenerator();
 
 /**
- * Saves the component state to its local storage
- * @param [data] - additional data to save
- */
-export async function saveToStorage(this: Friend, data?: Dictionary): Promise<boolean> {
-	if (this.globalName == null) {
-		return false;
-	}
-
-	const
-		{ctx} = this;
-
-	data = ctx.syncStorageState(data, 'remote');
-	set.call(this, ctx.syncStorageState(data));
-
-	await this.storage.set(data, '[[STORE]]');
-	ctx.log('state:save:storage', this, data);
-
-	return true;
-}
-
-/**
- * Initializes the component state from its local storage
+ * Initializes the component state from its local storage.
+ * This method is required for `syncStorageState` to work.
  */
 export function initFromStorage(this: Friend): CanPromise<boolean> {
 	if (this.globalName == null) {
@@ -106,7 +86,32 @@ export function initFromStorage(this: Friend): CanPromise<boolean> {
 }
 
 /**
- * Resets the component local storage state
+ * Saves the component state to its local storage.
+ * The data to save is taken from the component `syncStorageState` method.
+ * Also, you can pass additional parameters.
+ *
+ * @param [data] - additional data to save
+ */
+export async function saveToStorage(this: Friend, data?: Dictionary): Promise<boolean> {
+	if (this.globalName == null) {
+		return false;
+	}
+
+	const
+		{ctx} = this;
+
+	data = ctx.syncStorageState(data, 'remote');
+	set.call(this, ctx.syncStorageState(data));
+
+	await this.storage.set(data, '[[STORE]]');
+	ctx.log('state:save:storage', this, data);
+
+	return true;
+}
+
+/**
+ * Resets the component local storage state.
+ * The function takes the result of `convertStateToStorageReset` and maps it to the component.
  */
 export async function resetStorage(this: Friend): Promise<boolean> {
 	if (this.globalName == null) {

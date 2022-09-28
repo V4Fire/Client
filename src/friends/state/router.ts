@@ -8,41 +8,15 @@
 
 import symbolGenerator from 'core/symbol';
 
-import type State from 'super/i-block/modules/state/class';
-import { set } from 'super/i-block/modules/state/helpers';
+import type State from 'friends/state/class';
+import { set } from 'friends/state/helpers';
 
 const
 	$$ = symbolGenerator();
 
 /**
- * Saves the component state to the router state
- * @param [data] - additional data to save
- */
-export async function saveToRouter(this: State, data?: Dictionary): Promise<boolean> {
-	if (!this.needRouterSync) {
-		return false;
-	}
-
-	const {
-		ctx,
-		ctx: {r: {router}}
-	} = this;
-
-	data = ctx.syncRouterState(data, 'remote');
-	set.call(this, ctx.syncRouterState(data));
-
-	if (!ctx.isActivated || !router) {
-		return false;
-	}
-
-	await router.push(null, {query: data});
-	ctx.log('state:save:router', this, data);
-
-	return true;
-}
-
-/**
- * Initializes the component state from the router state
+ * Initializes the component state from the router state.
+ * This method is required for `syncRouterState` to work.
  */
 export function initFromRouter(this: State): boolean {
 	if (!this.needRouterSync) {
@@ -147,7 +121,38 @@ export function initFromRouter(this: State): boolean {
 }
 
 /**
- * Resets the component router state
+ * Saves the component state to the router state.
+ * The data to save is taken from the component `syncRouterState` method.
+ * Also, you can pass additional parameters.
+ *
+ * @param [data] - additional data to save
+ */
+export async function saveToRouter(this: State, data?: Dictionary): Promise<boolean> {
+	if (!this.needRouterSync) {
+		return false;
+	}
+
+	const {
+		ctx,
+		ctx: {r: {router}}
+	} = this;
+
+	data = ctx.syncRouterState(data, 'remote');
+	set.call(this, ctx.syncRouterState(data));
+
+	if (!ctx.isActivated || !router) {
+		return false;
+	}
+
+	await router.push(null, {query: data});
+	ctx.log('state:save:router', this, data);
+
+	return true;
+}
+
+/**
+ * Resets the component router state.
+ * The function takes the result of `convertStateToRouterReset` and maps it to the component.
  */
 export async function resetRouter(this: State): Promise<boolean> {
 	const {
