@@ -23,13 +23,23 @@ import type { Cb } from 'super/i-block/modules/lfc/interface';
 
 export * from 'super/i-block/modules/lfc/interface';
 
-/**
- * Class to work with a component life cycle
- */
 export default class Lfc extends Friend {
 	/**
-	 * Returns true if the component hook is equal to one of "before create" hooks
-	 * @param [skip] - name of a skipped hook
+	 * Returns true if the active component hook is equal to one of "before-create" hooks:
+	 *
+	 * 1. `beforeRuntime`
+	 * 2. `beforeCreate`
+	 * 3. `beforeDataCreate`
+	 *
+	 * @param [skip] - a hook name to be ignored, i.e. method with this hook value will return false
+	 *
+	 * @example
+	 * ```js
+	 * console.log(this.lfc.isBeforeCreate());
+	 *
+	 * // Returns `false` for `beforeCreate` or `beforeDataCreate`
+	 * console.log(this.lfc.isBeforeCreate('beforeCreate', 'beforeDataCreate'));
+	 * ```
 	 */
 	isBeforeCreate(...skip: Hook[]): boolean {
 		const beforeHooks = {
@@ -38,24 +48,27 @@ export default class Lfc extends Friend {
 			beforeDataCreate: true
 		};
 
-		for (let i = 0; i < skip.length; i++) {
-			beforeHooks[skip[i]] = false;
-		}
-
+		skip.forEach((hook) => beforeHooks[hook] = false);
 		return Boolean(beforeHooks[<string>this.hook]);
 	}
 
 	/**
-	 * Executes the specified callback after the `beforeDataCreate` hook or `beforeReady` event
-	 * and returns a result of the invocation. If the callback can be invoked immediately, it will be invoked,
-	 * and the method returns the invocation' result. Otherwise, the method returns a promise.
+	 * Executes the specified callback after the `beforeDataCreate` hook or `beforeReady` event.
+	 * If the callback can be called immediately, it will be called and the method will return the call result.
+	 * Otherwise, the method returns a promise.
 	 *
-	 * This method is helpful to execute a function after the component is initialized and
-	 * does not wait for its providers.
+	 * This method is helpful to execute a function after a component is initialized and does not wait for its providers.
 	 *
 	 * @see [[Async.proxy]]
 	 * @param cb
 	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * this.lfc.execCbAtTheRightTime(() => {
+	 *   this.db.total = this.db.length;
+	 * });
+	 * ```
 	 */
 	execCbAtTheRightTime<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate('beforeDataCreate')) {
@@ -81,12 +94,19 @@ export default class Lfc extends Friend {
 	}
 
 	/**
-	 * Executes the specified callback after the Block' instance is ready and returns a result of the invocation.
-	 * If the callback can be invoked immediately, it will be invoked, and the method returns the invocation' result.
+	 * Executes the specified callback after the Block instance is ready.
+	 * If the callback can be called immediately, it will be called and the method will return the call result.
 	 * Otherwise, the method returns a promise.
 	 *
 	 * @param cb
 	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * this.lfc.execCbAfterBlockReady(() => {
+	 *   console.log(this.block.element('foo'));
+	 * });
+	 * ```
 	 */
 	execCbAfterBlockReady<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanUndef<CanPromise<R>> {
 		if (this.ctx.block) {
@@ -105,12 +125,19 @@ export default class Lfc extends Friend {
 	}
 
 	/**
-	 * Executes the specified callback after the component switched to `created` and returns a result of the invocation.
-	 * If the callback can be invoked immediately, it will be invoked, and the method returns the invocation' result.
+	 * Executes the specified callback after the component switched to `created`.
+	 * If the callback can be called immediately, it will be called and the method will return the call result.
 	 * Otherwise, the method returns a promise.
 	 *
 	 * @param cb
 	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * this.lfc.execCbAfterComponentCreated(() => {
+	 *   console.log(this.componentName);
+	 * });
+	 * ```
 	 */
 	execCbAfterComponentCreated<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate()) {
