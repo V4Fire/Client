@@ -90,7 +90,7 @@ import Block from 'friends/block';
 import Field from 'friends/field';
 
 import Provide, { Classes } from 'friends/provide';
-import State, { ConverterCallType } from 'super/i-block/modules/state';
+import State, { ConverterCallType } from 'friends/state';
 import Storage from 'friends/storage';
 import ModuleLoader, { Module } from 'friends/module-loader';
 
@@ -148,7 +148,7 @@ export * from 'super/i-block/interface';
 
 export * from 'friends/block';
 export * from 'friends/field';
-export * from 'super/i-block/modules/state';
+export * from 'friends/state';
 export * from 'friends/module-loader';
 
 export * from 'super/i-block/modules/daemons';
@@ -2183,9 +2183,9 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * This method works as a two-way connector between local storage and a component.
+	 * This method works as a two-way connector between the component and its storage.
 	 *
-	 * When the component initializes, it asks the local storage for data associated with it by using a global name
+	 * When the component initializes, it requests the storage for data associated with it by using a global name
 	 * as a namespace to search. When the local storage is ready to provide data to the component,
 	 * it passes data to this method. After this, the method returns a dictionary mapped to the component as properties
 	 * (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
