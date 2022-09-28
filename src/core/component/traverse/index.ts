@@ -17,9 +17,9 @@ import type { ComponentInterface } from 'core/component/interface';
  * Returns a link to a "normal" (non-functional) parent component for the passed one
  * @param component
  */
-export function getNormalParent(component: ComponentInterface): CanUndef<ComponentInterface> {
+export function getNormalParent(component: ComponentInterface): ComponentInterface | null {
 	let
-		normalParent: CanUndef<ComponentInterface> = component.$parent;
+		normalParent: Nullable<ComponentInterface> = component.$parent;
 
 	while (
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
