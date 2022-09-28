@@ -12,6 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import { unwrap } from 'core/object/watch';
 import { runHook, callMethodFromComponent } from 'core/component';
 
@@ -37,13 +38,13 @@ export const
 
 /**
  * Activates the component.
- * The deactivated component won't load data from providers on initializing.
+ * A deactivated component won't load data from providers on initializing.
  *
- * Basically, you don't need to think about a component activation,
- * because it's automatically synchronized with `keep-alive` or the special input property.
+ * Basically, you don't need to think about component activation,
+ * because it automatically synchronizes with the `keep-alive` mode or a special component prop.
  *
  * @param component
- * @param [force] - if true, then the component will be forced to activate, even if it is already activated
+ * @param [force] - if true, then the component will be forced to be activated, even if it is already activated
  */
 export function activate(component: iBlock, force?: boolean): void {
 	const {
@@ -55,45 +56,43 @@ export function activate(component: iBlock, force?: boolean): void {
 		isBeforeCreate = lfc.isBeforeCreate(),
 		canActivate = !unsafe.isActivated || force;
 
-	if (canActivate) {
-		if (state.needRouterSync) {
-			if (isBeforeCreate) {
-				state.initFromRouter();
-			}
-
-			void lfc.execCbAfterComponentCreated(() => {
-				rootEmitter.on('onTransition', handler, {
-					label: $$.activate
-				});
-
-				async function handler(route: typeof r.route, type: string): Promise<void> {
-					try {
-						if (type === 'hard') {
-							const
-								actualRoute = unwrap(r.route) ?? r.route;
-
-							if (route !== actualRoute) {
-								await unsafe.promisifyOnce('setRoute', {
-									label: $$.activateAfterTransition
-								});
-
-							} else {
-								await unsafe.nextTick({
-									label: $$.activateAfterHardChange
-								});
-							}
-						}
-
-						if (state.needRouterSync && !inactiveStatuses[unsafe.componentStatus]) {
-							state.initFromRouter();
-						}
-
-					} catch (err) {
-						stderr(err);
-					}
-				}
-			});
+	if (canActivate && state.needRouterSync) {
+		if (isBeforeCreate) {
+			state.initFromRouter();
 		}
+
+		void lfc.execCbAfterComponentCreated(() => {
+			rootEmitter.on('onTransition', handler, {
+				label: $$.activate
+			});
+
+			async function handler(route: typeof r.route, type: string): Promise<void> {
+				try {
+					if (type === 'hard') {
+						const
+							actualRoute = unwrap(r.route) ?? r.route;
+
+						if (route !== actualRoute) {
+							await unsafe.promisifyOnce('setRoute', {
+								label: $$.activateAfterTransition
+							});
+
+						} else {
+							await unsafe.nextTick({
+								label: $$.activateAfterHardChange
+							});
+						}
+					}
+
+					if (!inactiveStatuses[unsafe.componentStatus]) {
+						state.initFromRouter();
+					}
+
+				} catch (err) {
+					stderr(err);
+				}
+			}
+		});
 	}
 
 	if (isBeforeCreate) {
@@ -107,22 +106,19 @@ export function activate(component: iBlock, force?: boolean): void {
 		}).catch(stderr);
 	}
 
-	const
-		children = unsafe.$children;
-
-	if (children != null) {
-		for (let i = 0; i < children.length; i++) {
-			children[i].unsafe.activate(true);
+	unsafe.$children.forEach((component) => {
+		if (!component.isFunctional) {
+			component.unsafe.activate(true);
 		}
-	}
+	});
 }
 
 /**
  * Deactivates the component.
- * The deactivated component won't load data from providers on initializing.
+ * A deactivated component won't load data from providers on initializing.
  *
- * Basically, you don't need to think about a component activation,
- * because it's automatically synchronized with keep-alive or the special input property.
+ * Basically, you don't need to think about component activation,
+ * because it automatically synchronizes with the `keep-alive` mode or a special component prop.
  *
  * @param component
  */
@@ -141,21 +137,18 @@ export function deactivate(component: iBlock): void {
 		}).catch(stderr);
 	}
 
-	const
-		children = unsafe.$children;
-
-	if (children != null) {
-		for (let i = 0; i < children.length; i++) {
-			children[i].unsafe.deactivate();
+	unsafe.$children.forEach((component) => {
+		if (!component.isFunctional) {
+			component.unsafe.deactivate();
 		}
-	}
+	});
 }
 
 /**
  * Hook handler: the component has been activated
  *
  * @param component
- * @param [force] - if true, then the component will be forced to activate, even if it is already activated
+ * @param [force] - if true, then the component will be forced to be activated, even if it is already activated
  */
 export function onActivated(component: iBlock, force?: boolean): void {
 	const
@@ -174,10 +167,7 @@ export function onActivated(component: iBlock, force?: boolean): void {
 		unsafe.async
 	];
 
-	for (let i = 0; i < async.length; i++) {
-		const $a = async[i];
-		$a.unmuteAll().unsuspendAll();
-	}
+	async.forEach(($a) => $a.unmuteAll().unsuspendAll());
 
 	if (unsafe.isReadyOnce && !readyStatuses[unsafe.componentStatus]) {
 		unsafe.componentStatus = 'beforeReady';
@@ -188,13 +178,8 @@ export function onActivated(component: iBlock, force?: boolean): void {
 		force || unsafe.reloadOnActivation;
 
 	if (needInitLoadOrReload) {
-		const
-			group = {group: 'requestSync:get'};
-
-		for (let i = 0; i < async.length; i++) {
-			const $a = async[i];
-			$a.clearAll(group).setImmediate(load, group);
-		}
+		const group = {group: 'requestSync:get'};
+		async.forEach(($a) => $a.clearAll(group).setImmediate(load, group));
 	}
 
 	if (unsafe.isReadyOnce) {
@@ -208,8 +193,9 @@ export function onActivated(component: iBlock, force?: boolean): void {
 	unsafe.isActivated = true;
 
 	function load(): void {
-		const
-			res = unsafe.isReadyOnce ? unsafe.reload() : unsafe.initLoad();
+		const res = unsafe.isReadyOnce ?
+			unsafe.reload() :
+			unsafe.initLoad();
 
 		if (Object.isPromise(res)) {
 			res.catch(stderr);
@@ -230,16 +216,10 @@ export function onDeactivated(component: iBlock): void {
 		unsafe.async
 	];
 
-	for (let i = 0; i < async.length; i++) {
-		const
-			$a = async[i];
-
-		for (let keys = Object.keys(asyncNames), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
-
+	async.forEach(($a) => {
+		Object.keys(asyncNames).forEach((key) => {
 			if (nonMuteAsyncLinkNames[key]) {
-				continue;
+				return;
 			}
 
 			const
@@ -248,10 +228,10 @@ export function onDeactivated(component: iBlock): void {
 			if (Object.isFunction(fn)) {
 				fn.call($a);
 			}
-		}
+		});
 
 		$a.unmuteAll({group: suspendRgxp}).suspendAll();
-	}
+	});
 
 	if (statuses[component.componentStatus] >= 2) {
 		component.componentStatus = 'inactive';
