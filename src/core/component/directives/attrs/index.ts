@@ -102,26 +102,16 @@ ComponentEngine.directive('attrs', {
 					}
 
 					case 'model': {
-						switch (vnode.type) {
-							case 'input':
-								dir = r?.[`vModel${(props.type ?? '').capitalize()}`] ?? r?.vModelText;
-								break;
-
-							case 'select':
-								dir = r?.vModelSelect;
-								break;
-
-							default:
-								dir = r?.vModelDynamic;
-						}
+						const
+							modelName = arg !== '' ? arg : 'modelValue',
+							modelVal = String(attrVal);
 
 						const
-							cache = getHandlerStore(),
-							modelProp = String(attrVal),
-							handlerKey = `onUpdate:modelValue:${modelProp}`;
+							handlerCache = getHandlerStore(),
+							handlerKey = `onUpdate:${modelName}:${modelVal}`;
 
 						let
-							handler = cache.get(handlerKey);
+							handler = handlerCache.get(handlerKey);
 
 						if (handler == null) {
 							handler = (newVal) => {
@@ -129,14 +119,30 @@ ComponentEngine.directive('attrs', {
 									throw new ReferenceError('The directive context is not found');
 								}
 
-								ctx[modelProp] = newVal;
+								ctx[modelVal] = newVal;
 							};
 
-							cache.set(handlerKey, handler);
+							handlerCache.set(handlerKey, handler);
 						}
 
-						props['onUpdate:modelValue'] = handler;
-						attrVal = ctx?.[modelProp];
+						attrVal = ctx?.[modelVal];
+
+						keys.push(modelName);
+						attrs[modelName] = attrVal;
+
+						keys.push(`@onUpdate:${modelName}`);
+						attrs[`@onUpdate:${modelName}`] = handler;
+
+						switch (vnode.type) {
+							case 'input':
+							case 'textarea':
+							case 'select':
+								dir = r?.vModelDynamic;
+								break;
+
+							default:
+								continue;
+						}
 
 						break;
 					}
@@ -173,7 +179,7 @@ ComponentEngine.directive('attrs', {
 			// Event listener
 			if (attrName.startsWith('@')) {
 				let
-					event = attrName.slice(1);
+					event = attrName.slice(1).camelize(false);
 
 				const
 					eventChunks = event.split('.'),
@@ -223,7 +229,7 @@ ComponentEngine.directive('attrs', {
 				}
 
 				props[event] = attrVal;
-				setVNodePatchFlags(vnode, 'props');
+				setVNodePatchFlags(vnode, 'events');
 
 				const dynamicProps = vnode.dynamicProps ?? [];
 				vnode.dynamicProps = dynamicProps;
