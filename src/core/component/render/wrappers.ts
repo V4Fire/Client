@@ -140,12 +140,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			return vnode;
 		}
 
-		const vnode = resolveAttrs.call(
-			this,
-			original.apply(null, args)
-		);
-
-		return vnode;
+		return resolveAttrs.call(this, original.apply(null, args));
 	});
 }
 
