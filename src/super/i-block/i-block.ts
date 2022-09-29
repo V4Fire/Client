@@ -1572,12 +1572,12 @@ export default abstract class iBlock extends ComponentInterface {
 	emit(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			eventDecl = Object.isString(event) ? {event} : event,
-			eventName = eventDecl.event.dasherize();
+			eventName = eventDecl.event.camelize(false);
 
 		eventDecl.event = eventName;
 
 		this.$emit(eventName, this, ...args);
-		this.$emit(`on-${eventName}`, ...args);
+		this.$emit(`on-${eventName}`.camelize(false), ...args);
 
 		if (this.dispatching) {
 			this.dispatch(eventDecl, ...args);
@@ -1620,7 +1620,7 @@ export default abstract class iBlock extends ComponentInterface {
 	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
 			eventDecl = Object.isString(event) ? {event} : event,
-			eventName = eventDecl.event.dasherize();
+			eventName = eventDecl.event.camelize(false);
 
 		eventDecl.event = eventName;
 
@@ -1630,7 +1630,7 @@ export default abstract class iBlock extends ComponentInterface {
 		} = this;
 
 		const
-			globalName = (this.globalName ?? '').dasherize(),
+			globalName = (this.globalName ?? '').camelize(false),
 			logArgs = args.slice();
 
 		if (eventDecl.type === 'error') {
