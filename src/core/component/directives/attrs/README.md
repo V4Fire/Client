@@ -45,6 +45,8 @@ This way of creating the directive is more versatile, because works correctly wi
 
 ## Usage
 
+### Providing directives, events, attributes and props
+
 ```
 < div :v-attrs = { &
   /// We can pass any available directive except `v-if`
@@ -62,7 +64,12 @@ This way of creating the directive is more versatile, because works correctly wi
   /// Attribute modifiers are also supported
   '.some-field.camel': someFieldValue
 } .
+```
 
-/// To use `v-model`, provide the model store as a string
+### Providing the `v-model` directive
+
+To use the `v-model` directive, provide the model store as a string.
+
+```
 < input :v-attrs = {'v-model': 'textStore'}
 ```
