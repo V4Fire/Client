@@ -67,7 +67,7 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		const
-			[name, attrs] = args;
+			[name, attrs, slots] = args;
 
 		let
 			component: CanUndef<ComponentMeta>;
@@ -79,8 +79,11 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			component = registerComponent(name.name);
 		}
 
+		const
+			vnode = resolveAttrs.call(this, original.apply(null, args));
+
 		if (component == null) {
-			return original.apply(null, args);
+			return vnode;
 		}
 
 		normalizeComponentAttrs(attrs, component);
@@ -94,36 +97,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 				attachTemplatesToMeta(component, TPLS[componentName]);
 			}
 
-			const
-				vnode: VNode = original.apply(null, args),
-				[_, props, slots] = args;
-
 			const virtualCtx = createVirtualContext(component, {
 				parent: this,
-				props,
+				props: attrs,
 				slots
 			});
 
 			vnode.virtualComponent = virtualCtx;
-
-			if (props?.['v-attrs'] != null) {
-				const
-					dir = r.resolveDirective.call(virtualCtx, 'attrs');
-
-				dir.beforeCreate({
-					dir,
-
-					modifiers: {},
-					arg: undefined,
-
-					value: props['v-attrs'],
-					oldValue: undefined,
-
-					instance: this
-				}, vnode);
-
-				delete props['v-attrs'];
-			}
 
 			const
 				functionalVNode = virtualCtx.render(virtualCtx, []);
@@ -158,11 +138,9 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			functionalVNode.dirs = null;
 			functionalVNode.children = [];
 			functionalVNode.dynamicChildren = [];
-
-			return vnode;
 		}
 
-		return resolveAttrs.call(this, original.apply(null, args));
+		return vnode;
 	});
 }
 
@@ -298,7 +276,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			} else if (cantIgnoreDir) {
 				bindings.push(binding);
 			}
-		})
+		});
 
 		return vnode;
 	});

@@ -15,7 +15,7 @@ const
 	staticAttrsCache: Dictionary<Function> = Object.createDict();
 
 /**
- * Resolves values from some attributes of the passed VNode
+ * Resolves values from special attributes of the passed VNode
  *
  * @param vnode
  *
@@ -38,14 +38,39 @@ const
  */
 export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T): T {
 	const
-		{props} = vnode;
+		{props} = vnode,
+		{r} = this.$renderEngine;
 
 	if (vnode.ref != null) {
-		vnode.ref['i'] ??= this.$renderEngine.r.getCurrentInstance();
+		vnode.ref['i'] ??= r.getCurrentInstance();
 	}
 
 	if (props == null) {
 		return vnode;
+	}
+
+	{
+		const
+			key = 'v-attrs';
+
+		if (props[key] != null) {
+			const
+				dir = r.resolveDirective.call(this, 'attrs');
+
+			dir.beforeCreate({
+				dir,
+
+				modifiers: {},
+				arg: undefined,
+
+				value: props[key],
+				oldValue: undefined,
+
+				instance: this
+			}, vnode);
+
+			delete props[key];
+		}
 	}
 
 	{
