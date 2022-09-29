@@ -94,19 +94,41 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 				attachTemplatesToMeta(component, TPLS[componentName]);
 			}
 
-			const virtualCtx = createVirtualContext(component, {
-				parent: this,
-				props: args[1],
-				slots: args[2]
-			});
-
 			const
 				vnode: VNode = original.apply(null, args),
+				[_, props, slots] = args;
+
+			const virtualCtx = createVirtualContext(component, {
+				parent: this,
+				props,
+				slots
+			});
+
+			vnode.virtualComponent = virtualCtx;
+
+			if (props?.['v-attrs'] != null) {
+				const
+					dir = r.resolveDirective.call(virtualCtx, 'attrs');
+
+				dir.beforeCreate({
+					dir,
+
+					modifiers: {},
+					arg: undefined,
+
+					value: props['v-attrs'],
+					oldValue: undefined,
+
+					instance: this
+				}, vnode);
+
+				delete props['v-attrs'];
+			}
+
+			const
 				functionalVNode = virtualCtx.render(virtualCtx, []);
 
 			vnode.type = functionalVNode.type;
-			vnode.virtualComponent = virtualCtx;
-
 			vnode.props = {...vnode.props, ...functionalVNode.props};
 			vnode.children = functionalVNode.children;
 			vnode.dynamicChildren = functionalVNode.dynamicChildren;

@@ -46,6 +46,10 @@ ComponentEngine.directive('attrs', {
 
 		const
 			ctx = getDirectiveContext(params, vnode),
+			component = vnode.virtualComponent?.unsafe,
+			isFunctional = component?.meta.params.functional === true;
+
+		const
 			props = vnode.props ?? {},
 			attrs = {...params.value};
 
@@ -248,27 +252,21 @@ ComponentEngine.directive('attrs', {
 					}
 				}
 
-				props[event] = attrVal;
-				setVNodePatchFlags(vnode, 'events');
-
-				const dynamicProps = vnode.dynamicProps ?? [];
-				vnode.dynamicProps = dynamicProps;
-				dynamicProps.push(event);
-
-				const
-					component = vnode.virtualComponent?.unsafe;
-
-				if (
-					!isDOMEvent &&
-					Object.isFunction(attrVal) &&
-					component?.meta.params.functional === true
-				) {
+				if (isFunctional && !isDOMEvent && Object.isFunction(attrVal)) {
 					if (isOnceEvent) {
 						component.$on(originalEvent, attrVal);
 
 					} else {
 						component.$once(originalEvent, attrVal);
 					}
+
+				} else {
+					props[event] = attrVal;
+					setVNodePatchFlags(vnode, 'events');
+
+					const dynamicProps = vnode.dynamicProps ?? [];
+					vnode.dynamicProps = dynamicProps;
+					dynamicProps.push(event);
 				}
 
 				continue;
@@ -304,35 +302,43 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
-			if (classAttrs[attrName] != null) {
-				attrName = classAttrs[attrName];
-				attrVal = normalizeClass(Object.cast(attrVal));
-				setVNodePatchFlags(vnode, 'classes');
+			const
+				isAttr = component?.meta.props[attrName] == null;
 
-			} else if (styleAttrs[attrName] != null) {
-				attrVal = normalizeStyle(Object.cast(attrVal));
-				setVNodePatchFlags(vnode, 'styles');
+			if (isAttr || !isFunctional) {
+				if (classAttrs[attrName] != null) {
+					attrName = classAttrs[attrName];
+					attrVal = normalizeClass(Object.cast(attrVal));
+					setVNodePatchFlags(vnode, 'classes');
 
-			} else {
-				setVNodePatchFlags(vnode, 'props');
+				} else if (styleAttrs[attrName] != null) {
+					attrVal = normalizeStyle(Object.cast(attrVal));
+					setVNodePatchFlags(vnode, 'styles');
 
-				if (attrName.startsWith('-')) {
-					attrName = `data${attrName}`;
+				} else {
+					setVNodePatchFlags(vnode, 'props');
+
+					if (attrName.startsWith('-')) {
+						attrName = `data${attrName}`;
+					}
+
+					const dynamicProps = vnode.dynamicProps ?? [];
+					vnode.dynamicProps = dynamicProps;
+
+					if (!dynamicProps.includes(attrName)) {
+						dynamicProps.push(attrName);
+					}
 				}
 
-				const dynamicProps = vnode.dynamicProps ?? [];
-				vnode.dynamicProps = dynamicProps;
+				if (props[attrName] != null) {
+					Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
 
-				if (!dynamicProps.includes(attrName)) {
-					dynamicProps.push(attrName);
+				} else {
+					props[attrName] = attrVal;
 				}
-			}
-
-			if (props[attrName] != null) {
-				Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
 
 			} else {
-				props[attrName] = attrVal;
+				component[attrName] = attrVal;
 			}
 		}
 
