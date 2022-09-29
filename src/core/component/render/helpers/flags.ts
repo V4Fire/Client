@@ -12,6 +12,8 @@ const flagValues = {
 	classes: 2,
 	styles: 4,
 	props: 8,
+	fullProps: 16,
+	events: 32,
 	slots: 8,
 	children: 16
 };
@@ -20,6 +22,8 @@ const flagDest = {
 	classes: 'patchFlag',
 	styles: 'patchFlag',
 	props: 'patchFlag',
+	fullProps: 'patchFlag',
+	events: 'patchFlag',
 	slots: 'shapeFlag',
 	children: 'shapeFlag'
 };
