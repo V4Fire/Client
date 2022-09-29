@@ -117,7 +117,7 @@ interface RenderContentFn {
 	(props: Dictionary): string;
 }
 
-interface RenderParams<A = CanUndef<Dictionary>> {
+interface RenderParams<A extends object = Dictionary> {
 	/**
 	 * Component attrs
 	 */
