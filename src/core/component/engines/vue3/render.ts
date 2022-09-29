@@ -82,10 +82,6 @@ export {
 	withModifiers,
 
 	vShow,
-	vModelText,
-	vModelSelect,
-	vModelCheckbox,
-	vModelRadio,
 	vModelDynamic
 
 } from 'vue';

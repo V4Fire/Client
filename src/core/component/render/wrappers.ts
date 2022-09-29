@@ -107,7 +107,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.type = functionalVNode.type;
 			vnode.virtualComponent = virtualCtx;
 
-			vnode.props = functionalVNode.props;
+			vnode.props = {...vnode.props, ...functionalVNode.props};
 			vnode.children = functionalVNode.children;
 			vnode.dynamicChildren = functionalVNode.dynamicChildren;
 

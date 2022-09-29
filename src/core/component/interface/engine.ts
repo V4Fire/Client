@@ -48,10 +48,6 @@ import type {
 	withDirectives,
 
 	vShow,
-	vModelText,
-	vModelSelect,
-	vModelCheckbox,
-	vModelRadio,
 	vModelDynamic
 
 } from 'core/component/engines';
@@ -122,10 +118,6 @@ export interface RenderAPI {
 	withDirectives: typeof withDirectives;
 
 	vShow: typeof vShow;
-	vModelText: typeof vModelText;
-	vModelSelect: typeof vModelSelect;
-	vModelCheckbox: typeof vModelCheckbox;
-	vModelRadio: typeof vModelRadio;
 	vModelDynamic: typeof vModelDynamic;
 }
 

@@ -103,12 +103,12 @@ ComponentEngine.directive('attrs', {
 
 					case 'model': {
 						const
-							modelName = arg !== '' ? arg : 'modelValue',
-							modelVal = String(attrVal);
+							modelProp = arg !== '' ? arg : 'modelValue',
+							modelValLink = String(attrVal);
 
 						const
 							handlerCache = getHandlerStore(),
-							handlerKey = `onUpdate:${modelName}:${modelVal}`;
+							handlerKey = `onUpdate:${modelProp}:${modelValLink}`;
 
 						let
 							handler = handlerCache.get(handlerKey);
@@ -119,29 +119,35 @@ ComponentEngine.directive('attrs', {
 									throw new ReferenceError('The directive context is not found');
 								}
 
-								ctx[modelVal] = newVal;
+								ctx[modelValLink] = newVal;
 							};
 
 							handlerCache.set(handlerKey, handler);
 						}
 
-						attrVal = ctx?.[modelVal];
+						attrVal = ctx?.[modelValLink];
 
-						keys.push(modelName);
-						attrs[modelName] = attrVal;
+						keys.push(modelProp);
+						attrs[modelProp] = attrVal;
 
-						keys.push(`@onUpdate:${modelName}`);
-						attrs[`@onUpdate:${modelName}`] = handler;
+						const attachEvent = (event) => {
+							keys.push(event);
+							attrs[event] = handler;
+						};
 
 						switch (vnode.type) {
 							case 'input':
 							case 'textarea':
-							case 'select':
+							case 'select': {
 								dir = r?.vModelDynamic;
+								attachEvent('@update:modelValue');
 								break;
+							}
 
-							default:
+							default: {
+								attachEvent(`@onUpdate:${modelProp}`);
 								continue;
+							}
 						}
 
 						break;
@@ -156,7 +162,13 @@ ComponentEngine.directive('attrs', {
 				}
 
 				const modifiers = {};
-				rawModifiers.split('.').forEach((el) => modifiers[el] = true);
+				rawModifiers.split('.').forEach((modifier) => {
+					modifier = modifier.trim();
+
+					if (modifier !== '') {
+						modifiers[modifier] = true;
+					}
+				});
 
 				const dirDecl: DirectiveBinding = {
 					dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,
@@ -179,11 +191,16 @@ ComponentEngine.directive('attrs', {
 			// Event listener
 			if (attrName.startsWith('@')) {
 				let
+					isDOMEvent = true,
 					event = attrName.slice(1).camelize(false);
 
 				const
-					eventChunks = event.split('.'),
-					flags = Object.createDict<boolean>();
+					originalEvent = event,
+					eventChunks = event.split('.');
+
+				const
+					flags = Object.createDict<boolean>(),
+					isOnceEvent = flags.once;
 
 				eventChunks.forEach((chunk) => flags[chunk] = true);
 				event = eventChunks[0];
@@ -197,10 +214,12 @@ ComponentEngine.directive('attrs', {
 
 				} else {
 					event = `on${event.capitalize()}`;
+					isDOMEvent = false;
 				}
 
 				if (flags.capture) {
 					event += 'Capture';
+					isDOMEvent = true;
 					delete flags.capture;
 				}
 
@@ -211,6 +230,7 @@ ComponentEngine.directive('attrs', {
 
 				if (flags.passive) {
 					event += 'Passive';
+					isDOMEvent = true;
 					delete flags.passive;
 				}
 
@@ -234,6 +254,22 @@ ComponentEngine.directive('attrs', {
 				const dynamicProps = vnode.dynamicProps ?? [];
 				vnode.dynamicProps = dynamicProps;
 				dynamicProps.push(event);
+
+				const
+					component = vnode.virtualComponent?.unsafe;
+
+				if (
+					!isDOMEvent &&
+					Object.isFunction(attrVal) &&
+					component?.meta.params.functional === true
+				) {
+					if (isOnceEvent) {
+						component.$on(originalEvent, attrVal);
+
+					} else {
+						component.$once(originalEvent, attrVal);
+					}
+				}
 
 				continue;
 			}
