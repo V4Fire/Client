@@ -13,14 +13,16 @@
 
 import Friend from 'super/i-block/modules/friend';
 
+// TODO delete
 import backendDebugDataEngine from 'super/i-block/modules/debug-mode/data-gathering-engines/backend-debug-data';
 import bottomBlockRenderEngine from 'super/i-block/modules/debug-mode/render-engines/bottom-block';
 
+import type iBlock from 'super/i-block/i-block';
 import type {
 
-	DebugData,
 	GatheringStrategy,
-	RenderStrategy
+	RenderStrategy,
+	DebugData
 
 } from 'super/i-block/modules/debug-mode/interface';
 
@@ -28,72 +30,81 @@ import type {
  * Class provides methods to work with debug data
  */
 export default class DebugMode extends Friend {
-	/**
-	 *
-	 */
-	dataRenderComponent!: string;
+	constructor(component: iBlock) {
+		super(component);
+
+		void this.initDebugDataGathering();
+
+		// TODO delete
+		this.dataGatheringStrategies = [backendDebugDataEngine];
+		this.dataRenderStrategy = bottomBlockRenderEngine;
+	}
 
 	/**
 	 *
 	 */
-	dataGatheringStrategy!: GatheringStrategy;
+	protected dataGatheringStrategies: GatheringStrategy[];
 
 	/**
 	 *
 	 */
-	dataRenderStrategy!: RenderStrategy;
+	protected dataRenderStrategy: RenderStrategy;
 
 	/**
 	 *
 	 */
-	protected debugData!: DebugData;
+	// TODO how the fuck do i add it in a children components ?
+	addDataGatheringStrategy(strategy: GatheringStrategy): void {
+		this.dataGatheringStrategies.push(strategy);
+	}
 
 	/**
 	 *
 	 */
-	initDebugDataGathering(): void {
-		if (this.dataGatheringStrategy == null) {
+	addDataRenderStrategy(strategy: RenderStrategy): void {
+		this.dataRenderStrategy = strategy;
+	}
+
+	/**
+	 *
+	 */
+	protected async initDebugDataGathering(): Promise<void> {
+		if (this.dataGatheringStrategies.length === 0 || this.dataRenderStrategy == null) {
+			return;
+		}
+
+		const
+			data: DebugData[] = [];
+
+		for (let strategy of this.dataGatheringStrategies) {
 			const
-				db = this.field.get('DB');
+				result = await strategy(this.ctx);
 
-			if (db != null && Object.has(db, 'debug')) {
-				this.setDataGatheringStrategy(backendDebugDataEngine);
-
-			} else {
-				return;
+			if (Object.isDictionary(result)) {
+				data.push(result);
 			}
 		}
 
-		this.debugData = this.dataGatheringStrategy(this.ctx);
-		this.initDebugDataRendering();
-	}
-
-	/**
-	 *
-	 */
-	protected initDebugDataRendering(): void {
-		if (this.dataRenderComponent == null) {
-			this.dataRenderComponent = 'b-debug-data';
+		if (data.length === 0) {
+			return;
 		}
 
-		if (this.dataRenderStrategy == null) {
-			this.setDataRenderStrategy(bottomBlockRenderEngine);
+		await this.storage.set(data, `${this.globalName}DebugData`);
+		await this.initDebugDataRendering();
+	}
+
+	/**
+	 *
+	 */
+	protected async initDebugDataRendering(): Promise<void> {
+		// TODO продумать для нескольких способов вывода: группировка по компоненту, объединение данных
+
+		const
+			isSuccessful = await this.dataRenderStrategy(this.component, this.ctx);
+
+		if (isSuccessful) {
+			// TODO check iDebugMode
+			// TODO set mod
 		}
-
-		this.dataRenderStrategy(this.debugData, this.component, this.ctx, this.dataRenderComponent);
-	}
-
-	/**
-	 *
-	 */
-	protected setDataGatheringStrategy(strategy: GatheringStrategy): void {
-		this.dataGatheringStrategy = strategy;
-	}
-
-	/**
-	 *
-	 */
-	protected setDataRenderStrategy(strategy: RenderStrategy): void {
-		this.dataRenderStrategy = strategy;
 	}
 }

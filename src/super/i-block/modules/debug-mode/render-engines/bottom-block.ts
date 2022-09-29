@@ -1,24 +1,29 @@
 import type iBlock from 'super/i-block/i-block';
 import type { UnsafeIBlock } from 'super/i-block/i-block';
-import type { DebugData } from 'super/i-block/modules/debug-mode/interface';
-import type { ComponentElement } from 'core/component';
+// import type { ComponentElement } from 'core/component';
 
 /**
  *
- * @param debugData
  * @param rootComponent
  * @param context
- * @param renderComponent
  */
-export default function bottomBlockRenderEngine(
-	debugData: DebugData,
+export default async function bottomBlockRenderEngine(
 	rootComponent: iBlock,
-	context: UnsafeIBlock,
-	renderComponent?: string
-): void {
-	const vNode = context.$createElement(renderComponent, {
+	context: UnsafeIBlock
+): Promise<boolean> {
+	const
+		data = Object.fastClone(context.storage.get('DebugModeData'));
+
+	return true;
+	// TODO:
+	// Перебор объектов ->
+	// У тех, которые с одинаковым компонентом вывода (напр. b-debug-data), собирать дату в один объект ->
+	// Пройти по итоговым объектам (их столько, сколько компонентов вывода) ->
+	// Вызвать на каждом функцию рендера через Promise.all
+
+	/*const vNode = context.$createElement(data[0].component, {
 		attrs: {
-			data: debugData
+			data: data[0].data
 		}
 	});
 
@@ -26,5 +31,5 @@ export default function bottomBlockRenderEngine(
 		node = rootComponent.vdom.render(vNode),
 		root = <ComponentElement<iBlock>>rootComponent.$el;
 
-	context.dom.appendChild(root, node);
+	context.dom.appendChild(root, node);*/
 }

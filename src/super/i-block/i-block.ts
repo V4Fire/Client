@@ -2524,14 +2524,6 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 *
-	 */
-	@hook('mounted')
-	protected initDebugData(): void {
-		this.debugMode.initDebugDataGathering();
-	}
-
-	/**
 	 * Initializes remote watchers from the prop
 	 */
 	@hook({beforeDataCreate: {functional: false}})

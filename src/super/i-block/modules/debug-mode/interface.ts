@@ -4,7 +4,17 @@ import type { UnsafeIBlock } from 'super/i-block/i-block';
 /**
  *
  */
-export type DebugData = Dictionary<unknown>;
+export interface DebugData {
+	/**
+	 *
+	 */
+	component: string;
+
+	/**
+	 *
+	 */
+	data: Dictionary;
+}
 
 /**
  *
@@ -14,17 +24,12 @@ export type GatheringStrategy = (
 	 *
 	 */
 	context: iBlock
-) => DebugData;
+) => Promise<CanUndef<DebugData>>;
 
 /**
  *
  */
 export type RenderStrategy = (
-	/**
-	 *
-	 */
-	debugData: DebugData,
-
 	/**
 	 *
 	 */
@@ -39,4 +44,4 @@ export type RenderStrategy = (
 	 *
 	 */
 	renderComponent?: string
-) => void;
+) => Promise<boolean>;
