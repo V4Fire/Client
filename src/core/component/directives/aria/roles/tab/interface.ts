@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Orientation } from 'base/b-list/interface';
 import type { HandlerAttachment } from 'core/component/directives/aria/roles/interface';
+import type { Orientation } from 'core/component/directives/aria';
 
 export interface TabParams {
 	selected: boolean;

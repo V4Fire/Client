@@ -18,11 +18,19 @@ test.describe('v-aria:tabpanel', () => {
 	});
 
 	test('tabpanel must have the `role` attribute', async ({page}) => {
-		const target = await init(page);
+		const target = await init(page, {label: 'foo'});
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.$el?.getAttribute('role'))
 		).toBe('tabpanel');
+	});
+
+	test('tabpanel must have the `label` or `labelledby` params to be passed', async ({page}) => {
+		const target = await init(page);
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.$el?.getAttribute('role'))
+		).toBe(null);
 	});
 
 	/**
@@ -32,8 +40,9 @@ test.describe('v-aria:tabpanel', () => {
 	async function init(page: Page, attrs: Dictionary = {}): Promise<JSHandle<iBlock>> {
 		return Component.createComponent(page, 'b-dummy', {
 			attrs: {
-				'v-aria:tabpanel': {label: 'foo'},
-				...attrs
+				'v-aria:tabpanel': {
+					...attrs
+				}
 			}
 		});
 	}

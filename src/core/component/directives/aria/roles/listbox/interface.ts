@@ -9,8 +9,14 @@
 import type { HandlerAttachment } from 'core/component/directives/aria/roles/interface';
 import type { Orientation } from 'core/component/directives/aria';
 
-export class TreeParams {
-	root: boolean = false;
-	orientation: Orientation = 'vertical';
-	'@change': HandlerAttachment = () => undefined;
+export interface ListboxParams {
+	multiselectable?: boolean;
+	orientation?: Orientation;
+	label?: string;
+	labelledby?: string;
+}
+
+export class ListboxParams {
+	standAlone: boolean = true;
+	'@change'?: HandlerAttachment = () => undefined;
 }

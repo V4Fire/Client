@@ -1,5 +1,5 @@
 {
-  "hash": "18506bae5f4874b01c4ad66a342b83571739c7f8713e0762997f1b75b4e9b26f",
+  "hash": "642520426f817d93ef77303abd6014f9507e63f6c0da7de6dad758d8a2139632",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -262,6 +262,38 @@
             "src/dummies/b-dummy-lfc/b-dummy-lfc.styl"
           ],
           "tpl": "src/dummies/b-dummy-lfc/b-dummy-lfc.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-listbox",
+        {
+          "index": "src/dummies/b-dummy-listbox/index.js",
+          "declaration": {
+            "name": "b-dummy-listbox",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-listbox",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-listbox/b-dummy-listbox.ts",
+          "styles": [
+            "src/dummies/b-dummy-listbox/b-dummy-listbox.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-listbox/b-dummy-listbox.ss",
           "etpl": null
         }
       ],
@@ -1997,7 +2029,8 @@
               "b-dummy-sync",
               "b-dummy-state",
               "b-dummy-control-list",
-              "b-dummy-decorators"
+              "b-dummy-decorators",
+              "b-dummy-listbox"
             ],
             "libs": [
               "core/cookies",
@@ -2041,7 +2074,8 @@
             "b-dummy-sync",
             "b-dummy-state",
             "b-dummy-control-list",
-            "b-dummy-decorators"
+            "b-dummy-decorators",
+            "b-dummy-listbox"
           ],
           "libs": [
             "core/cookies",

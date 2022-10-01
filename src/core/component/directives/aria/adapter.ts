@@ -157,7 +157,7 @@ export default class ARIAAdapter {
 				$a.promise(val).then(handler, stderr);
 
 			} else if (Object.isString(val)) {
-				$a.on(this.ctx, val, handler);
+				$a.on(this.ctx, val, (ctx, ...args) => handler(...args));
 			}
 		});
 	}

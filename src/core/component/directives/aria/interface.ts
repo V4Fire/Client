@@ -13,3 +13,5 @@ export interface DirectiveOptions {
 	binding: VNodeDirective;
 	vnode: VNode;
 }
+
+export type Orientation = 'vertical' | 'horizontal';

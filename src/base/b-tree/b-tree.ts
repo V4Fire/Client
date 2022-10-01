@@ -25,7 +25,8 @@ import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iData, { component, prop, field, TaskParams, TaskI } from 'super/i-data/i-data';
 import iAccess from 'traits/i-access/i-access';
 
-import type { Item, Orientation, RenderFilter } from 'base/b-tree/interface';
+import type { Item, RenderFilter } from 'base/b-tree/interface';
+import type { Orientation } from 'core/component/directives/aria';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-tree/interface';

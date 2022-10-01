@@ -38,5 +38,3 @@ export interface Item extends Dictionary {
 export interface RenderFilter {
 	(ctx: bTree, el: Item, i: number, task: TaskI): CanPromise<boolean>;
 }
-
-export type Orientation = 'vertical' | 'horizontal';

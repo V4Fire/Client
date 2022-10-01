@@ -30,7 +30,8 @@ import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iAccess from 'traits/i-access/i-access';
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
 
-import type { Active, Item, Items, Orientation } from 'base/b-list/interface';
+import type { Active, Item, Items } from 'base/b-list/interface';
+import type { Orientation } from 'core/component/directives/aria';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';

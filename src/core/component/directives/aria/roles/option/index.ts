@@ -15,6 +15,10 @@ export class Option extends ARIARole {
 	/** @inheritDoc */
 	init(): void {
 		this.setAttribute('role', 'option');
+
+		if (this.el.getAttribute('id') == null) {
+			throw new TypeError('The `option` role requires the element to have an `id` attribute');
+		}
 	}
 
 	/**
@@ -22,6 +26,6 @@ export class Option extends ARIARole {
 	 * @param isSelected
 	 */
 	protected onChange(isSelected: boolean): void {
-		this.el.setAttribute('aria-selected', String(isSelected));
+		this.setAttribute('aria-selected', String(isSelected));
 	}
 }

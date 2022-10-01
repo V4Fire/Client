@@ -12,15 +12,20 @@
  */
 
 import { ARIARole } from 'core/component/directives/aria/roles/interface';
+import type { TabpanelParams } from 'core/component/directives/aria/roles/tabpanel/interface';
 
 export class Tabpanel extends ARIARole {
+	override Params!: TabpanelParams;
+
 	/** @inheritDoc */
 	init(): void {
-		const {el} = this;
-		this.setAttribute('role', 'tabpanel');
+		const
+			{label, labelledby} = this.params;
 
-		if (!el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) {
-			throw new TypeError('The tabpanel role expects a `label` or `labelledby` value to be passed');
+		if (label == null && labelledby == null) {
+			throw new TypeError('The `tabpanel` role expects a `label` or `labelledby` value to be passed');
 		}
+
+		this.setAttribute('role', 'tabpanel');
 	}
 }
