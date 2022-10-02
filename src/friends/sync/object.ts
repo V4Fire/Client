@@ -348,7 +348,7 @@ export function object(
 				} else {
 					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
 						const
-							mutation = <[unknown, unknown]>val[val.length - 1];
+							mutation = <[unknown, unknown]>val.at(-1);
 
 						val = mutation[0];
 						oldVal = mutation[1];
@@ -370,7 +370,7 @@ export function object(
 				if (!isCustomWatcher) {
 					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
 						const
-							mutation = <[unknown, unknown]>val[val.length - 1];
+							mutation = <[unknown, unknown]>val.at(-1);
 
 						val = mutation[0];
 						oldVal = mutation[1];
