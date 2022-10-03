@@ -27,14 +27,14 @@ interface Sync {
 @fakeMethods('object')
 class Sync extends Friend {
 	/**
+	 * Cache of functions to synchronize modifiers
+	 */
+	readonly syncModCache!: Dictionary<Function>;
+
+	/**
 	 * Cache for links
 	 */
 	protected readonly linksCache!: Dictionary<Dictionary>;
-
-	/**
-	 * Cache of functions to synchronize modifiers
-	 */
-	protected readonly syncModCache!: Dictionary<Function>;
 
 	/** @see [[iBlock.$syncLinkCache]] */
 	protected get syncLinkCache(): SyncLinkCache {

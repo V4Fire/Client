@@ -12,98 +12,21 @@
  */
 
 import type iBlock from 'super/i-block/i-block';
-import type { ModsTable, ModsNTable } from 'super/i-block/modules/mods/interface';
+import type { ComponentInterface, ModsProp, ModsDict } from 'core/component';
 
 export * from 'super/i-block/modules/mods/interface';
-
-/**
- * Merges old component modifiers with new modifiers
- * (for functional components)
- *
- * @param component
- * @param oldComponent
- * @param key - field key
- * @param link - link key
- */
-export function mergeMods(
-	component: iBlock,
-	oldComponent: iBlock,
-	key: string,
-	link?: string
-): void {
-	if (link == null) {
-		return;
-	}
-
-	const
-		ctx = component.unsafe,
-		cache = ctx.$syncLinkCache.get(link);
-
-	if (!cache) {
-		return;
-	}
-
-	const
-		l = cache[key];
-
-	if (!l) {
-		return;
-	}
-
-	const getFullModsProp = (o) => {
-		const
-			declMods = o.meta.component.mods,
-			res = {...o.$props[link]};
-
-		for (let attrs = o.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i];
-
-			if (key in declMods) {
-				const
-					attrVal = attrs[key];
-
-				if (attrVal != null) {
-					res[key] = attrVal;
-				}
-			}
-		}
-
-		return res;
-	};
-
-	const
-		modsProp = getFullModsProp(ctx),
-		mods = {...oldComponent.mods};
-
-	for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i];
-
-		if (ctx.sync.syncModCache[key]) {
-			delete mods[key];
-		}
-	}
-
-	if (Object.fastCompare(modsProp, getFullModsProp(oldComponent))) {
-		l.sync(mods);
-
-	} else {
-		l.sync(Object.assign(mods, modsProp));
-	}
-}
 
 /**
  * Initializes the component modifiers
  * @param component
  */
-export function initMods(component: iBlock): ModsNTable {
+export function initMods(component: iBlock): ModsDict {
 	const
 		ctx = component.unsafe,
 		declMods = ctx.meta.component.mods;
 
 	const
-		attrMods = <string[][]>[],
+		attrMods: string[][] = [],
 		modVal = (val) => val != null ? String(val) : undefined;
 
 	for (let attrs = ctx.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
@@ -128,7 +51,7 @@ export function initMods(component: iBlock): ModsNTable {
 		}
 	}
 
-	function link(propMods: CanUndef<ModsTable>): ModsNTable {
+	function link(propMods: CanUndef<ModsProp>): ModsDict {
 		const
 			mods = Object.isDictionary(ctx.mods) ? ctx.mods : {...declMods};
 
@@ -153,36 +76,28 @@ export function initMods(component: iBlock): ModsNTable {
 			{experiments} = ctx.r.remoteState;
 
 		if (Object.isArray(experiments)) {
-			for (let i = 0; i < experiments.length; i++) {
+			experiments.forEach((exp) => {
 				const
-					el = experiments[i],
-					experimentMods = el.meta?.mods;
+					experimentMods = exp.meta?.mods;
 
-				if (experimentMods) {
-					for (let keys = Object.keys(experimentMods), i = 0; i < keys.length; i++) {
-						const
-							key = keys[i],
-							val = experimentMods[key];
-
-						if (val != null || mods[key] == null) {
-							mods[key] = modVal(val);
+				if (Object.isDictionary(experimentMods)) {
+					Object.entries(experimentMods).forEach(([name, val]) => {
+						if (val != null || mods[name] == null) {
+							mods[name] = modVal(val);
 						}
-					}
+					});
 				}
-			}
+			});
 		}
 
-		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				val = modVal(mods[key]);
-
+		Object.entries(mods).forEach(([key, val]) => {
+			val = modVal(mods[key]);
 			mods[key] = val;
 
 			if (ctx.hook !== 'beforeDataCreate') {
 				void ctx.setMod(key, val);
 			}
-		}
+		});
 
 		return mods;
 	}
@@ -191,36 +106,120 @@ export function initMods(component: iBlock): ModsNTable {
 }
 
 /**
- * Returns a dictionary with watchable modifiers
+ * Merges old component modifiers with new modifiers
+ * (for functional components)
+ *
  * @param component
+ * @param oldComponent
+ * @param key
+ * @param link
  */
-export function getWatchableMods(component: iBlock): Readonly<ModsNTable> {
-	const
-		watchMods = {},
-		watchers = component.field.get<ModsNTable>('watchModsStore')!,
-		systemMods = component.mods;
+export function mergeMods(
+	component: iBlock,
+	oldComponent: iBlock,
+	key: string,
+	link?: string
+): void {
+	if (link == null) {
+		return;
+	}
 
-	for (let keys = Object.keys(systemMods), i = 0; i < keys.length; i++) {
+	const
+		ctx = component.unsafe,
+		cache = ctx.$syncLinkCache.get(link);
+
+	if (cache == null) {
+		return;
+	}
+
+	const
+		l = cache[key];
+
+	if (l == null) {
+		return;
+	}
+
+	const
+		modsProp = getExpandedModsProp(ctx),
+		mods = {...oldComponent.mods};
+
+	for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
 		const
 			key = keys[i];
 
-		if (key in watchers) {
-			watchMods[key] = systemMods[key];
+		if (ctx.sync.syncModCache[key]) {
+			delete mods[key];
+		}
+	}
+
+	if (Object.fastCompare(modsProp, getExpandedModsProp(oldComponent))) {
+		l.sync(mods);
+
+	} else {
+		l.sync(Object.assign(mods, modsProp));
+	}
+
+	function getExpandedModsProp(component: ComponentInterface): ModsDict {
+		const
+			{unsafe} = component;
+
+		if (link == null) {
+			return {};
+		}
+
+		const
+			modsProp = unsafe.$props[link];
+
+		if (!Object.isDictionary(modsProp)) {
+			return {};
+		}
+
+		const
+			declMods = unsafe.meta.component.mods,
+			res = <ModsDict>{...modsProp};
+
+		Object.entries(unsafe.$attrs).forEach(([name, attr]) => {
+			if (name in declMods) {
+				if (attr != null) {
+					res[key] = attr;
+				}
+			}
+		});
+
+		return res;
+	}
+}
+
+/**
+ * Returns a dictionary with modifiers that reactively affect the component template
+ * @param component
+ */
+export function getReactiveMods(component: iBlock): Readonly<ModsDict> {
+	const
+		watchMods = {},
+		watchers = component.field.get<ModsDict>('reactiveModsStore')!;
+
+	const
+		systemMods = component.mods;
+
+	Object.entries(systemMods).forEach(([name, val]) => {
+		if (name in watchers) {
+			watchMods[name] = val;
 
 		} else {
-			Object.defineProperty(watchMods, key, {
+			Object.defineProperty(watchMods, name, {
 				configurable: true,
 				enumerable: true,
 				get: () => {
-					if (!(key in watchers)) {
-						Object.getPrototypeOf(watchers)[key] = systemMods[key];
+					if (!(name in watchers)) {
+						Object.getPrototypeOf(watchers)[name] = val;
 					}
 
-					return watchers[key];
+					return watchers[name];
 				}
 			});
 		}
-	}
+	});
 
 	return Object.freeze(watchMods);
 }

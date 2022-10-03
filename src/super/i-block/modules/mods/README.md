@@ -1,3 +1,3 @@
 # super/i-block/modules/mods
 
-This module provides additional API to work with component modifiers.
+This module provides a set of helper functions to work with component modifiers.

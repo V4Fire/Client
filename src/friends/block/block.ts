@@ -152,11 +152,11 @@ export function setMod(this: Block, name: string, value: unknown, reason: ModEve
 
 	if (!ctx.isFunctional) {
 		const
-			watchModsStore = ctx.field.get<ModsDict>('watchModsStore');
+			reactiveModsStore = ctx.field.get<ModsDict>('reactiveModsStore');
 
-		if (watchModsStore != null && name in watchModsStore && watchModsStore[name] !== normalizedValue) {
-			delete Object.getPrototypeOf(watchModsStore)[name];
-			ctx.field.set(`watchModsStore.${name}`, normalizedValue);
+		if (reactiveModsStore != null && name in reactiveModsStore && reactiveModsStore[name] !== normalizedValue) {
+			delete Object.getPrototypeOf(reactiveModsStore)[name];
+			ctx.field.set(`reactiveModsStore.${name}`, normalizedValue);
 		}
 	}
 
@@ -231,11 +231,11 @@ export function removeMod(this: Block, name: string, value?: unknown, reason: Mo
 
 		if (!ctx.isFunctional) {
 			const
-				watchModsStore = ctx.field.get<ModsDict>('watchModsStore');
+				reactiveModsStore = ctx.field.get<ModsDict>('reactiveModsStore');
 
-			if (watchModsStore != null && name in watchModsStore && watchModsStore[name] != null) {
-				delete Object.getPrototypeOf(watchModsStore)[name];
-				ctx.field.set(`watchModsStore.${name}`, undefined);
+			if (reactiveModsStore != null && name in reactiveModsStore && reactiveModsStore[name] != null) {
+				delete Object.getPrototypeOf(reactiveModsStore)[name];
+				ctx.field.set(`reactiveModsStore.${name}`, undefined);
 			}
 		}
 	}

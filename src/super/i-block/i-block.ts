@@ -117,7 +117,7 @@ import {
 
 	mergeMods,
 	initMods,
-	getWatchableMods,
+	getReactiveMods,
 
 	ModVal,
 	ModsDecl,
@@ -1049,7 +1049,7 @@ export default abstract class iBlock extends ComponentInterface {
 		init: () => Object.create({})
 	})
 
-	protected watchModsStore!: ModsDict;
+	protected reactiveModsStore!: ModsDict;
 
 	/**
 	 * True if the component context is based on another component via `vdom.bindRenderObject`
@@ -1064,8 +1064,8 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Don't use this getter outside the component template.
 	 */
 	@computed({cache: true})
-	protected get m(): Readonly<ModsNTable> {
-		return getWatchableMods(this);
+	protected get m(): Readonly<ModsDict> {
+		return getReactiveMods(this);
 	}
 
 	/**
@@ -1872,6 +1872,7 @@ export default abstract class iBlock extends ComponentInterface {
 							this.beforeReadyListeners = 0;
 							this.emit('initLoad', get(), opts);
 						})
+
 						.catch(stderr);
 
 				} else {
