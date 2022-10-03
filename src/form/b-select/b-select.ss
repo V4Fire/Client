@@ -150,7 +150,7 @@
 				ref = dropdown |
 				v-if = !native && items.length && (
 					isFunctional ||
-					opt.ifOnce('opened', m.opened !== 'false') && delete watchModsStore.opened
+					opt.ifOnce('opened', m.opened !== 'false') && delete reactiveModsStore.opened
 				)
 			.
 				+= self.items()
