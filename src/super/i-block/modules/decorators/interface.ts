@@ -26,8 +26,6 @@ import type {
 
 } from 'core/component/decorators';
 
-export type DecoratorEventListenerMethod = 'on' | 'once';
-
 export interface InitFieldFn<
 	CTX extends ComponentInterface = iBlock
 > extends BaseInitFieldFn<CTX> {}
@@ -71,15 +69,15 @@ export type WaitStatuses =
 
 export interface WaitDecoratorOptions extends AsyncOptions {
 	/**
-	 * If true, then the wrapped function will always return a promise
+	 * If true, then the wrapped function will always be executed deferred
 	 * @default `false`
 	 */
-	defer?: boolean | number;
+	defer?: boolean;
 }
 
 export interface WaitOptions<F extends Function = Function> extends WaitDecoratorOptions {
 	/**
-	 * Function to wrap
+	 * A function to wrap
 	 */
 	fn: F;
 }
