@@ -12,17 +12,18 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import { customWatcherRgxp } from 'core/component';
 import iBlock from 'super/i-block/i-block';
 
-export const
+const
 	$$ = symbolGenerator();
 
 let
 	baseInitLoad;
 
 /**
- * Initializes global event listeners for the specified component
+ * Initializes the global event listeners for the specified component
  *
  * @param component
  * @param [resetListener]
@@ -103,7 +104,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 }
 
 /**
- * Initializes watchers from `watchProp` for the specified component
+ * Initializes watchers from the `watchProp` prop for the specified component
  * @param component
  */
 export function initRemoteWatchers(component: iBlock): void {
@@ -116,15 +117,8 @@ export function initRemoteWatchers(component: iBlock): void {
 		return;
 	}
 
-	for (let keys = Object.keys(watchProp), i = 0; i < keys.length; i++) {
-		const
-			method = keys[i],
-			watchers = Array.concat([], watchProp[method]);
-
-		for (let i = 0; i < watchers.length; i++) {
-			const
-				watcher = watchers[i];
-
+	Object.entries(watchProp).forEach(([method, watchers]) => {
+		Array.concat([], watchers).forEach((watcher) => {
 			if (Object.isString(watcher)) {
 				const
 					path = normalizePath(watcher),
@@ -135,7 +129,7 @@ export function initRemoteWatchers(component: iBlock): void {
 
 			} else {
 				const
-					path = normalizePath(watcher.path ?? watcher.field),
+					path = normalizePath(watcher.path),
 					wList = watchMap[path] ?? [];
 
 				watchMap[path] = wList;
@@ -147,8 +141,8 @@ export function initRemoteWatchers(component: iBlock): void {
 					handler: method
 				});
 			}
-		}
-	}
+		});
+	});
 
 	function normalizePath(field?: string): string {
 		if (field == null) {
