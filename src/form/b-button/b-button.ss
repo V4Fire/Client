@@ -20,7 +20,6 @@
 		< .&__button &
 			ref = button |
 
-			:is = type === 'link' ? 'a' : 'button' |
 			:class = provide.hintClasses(hintPos) |
 			:autofocus = autofocus |
 			:tabindex = tabIndex |
@@ -51,6 +50,7 @@
 
 				- block value
 					< _.&__cell.&__value
+						{{ type }}
 						+= self.slot()
 
 				- block expand

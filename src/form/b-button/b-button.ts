@@ -294,6 +294,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	 * @see [[bButton.attrsProp]]
 	 * @see [[bButton.$refs.button]]
 	 */
+	@computed({dependencies: ['type', 'form', 'href', 'hasDropdown']})
 	get attrs(): Dictionary {
 		const
 			attrs = {...this.attrsProp};
@@ -342,7 +343,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 		return Boolean(
 			this.$slots['dropdown'] && (
 				this.isFunctional ||
-				this.opt.ifOnce('opened', this.m.opened !== 'false') > 0 && delete this.watchModsStore.opened
+				this.opt.ifOnce('opened', this.m.opened !== 'false') > 0 && delete this.reactiveModsStore.opened
 			)
 		);
 	}
@@ -439,7 +440,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	 * @emits `click(e: Event)`
 	 */
 	protected async onClick(e: Event): Promise<void> {
-		console.log(this.componentStatus, this.componentId, this.$el?.className);
+		this.emit('update:type', '1111111');
 
 		switch (this.type) {
 			case 'link':
