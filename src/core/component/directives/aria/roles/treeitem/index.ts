@@ -9,7 +9,6 @@
  * Copyright © [2022] W3C® (MIT, ERCIM, Keio, Beihang).
  */
 
-import iAccess from 'traits/i-access/i-access';
 import type iBlock from 'super/i-block/i-block';
 
 import { TreeitemParams } from 'core/component/directives/aria/roles/treeitem/interface';
@@ -17,23 +16,19 @@ import { ARIARole, KeyCodes } from 'core/component/directives/aria/roles/interfa
 
 export class Treeitem extends ARIARole {
 	override Params: TreeitemParams = new TreeitemParams();
-	override Ctx!: iBlock & iAccess;
+	override Ctx!: iBlock['unsafe'];
 
 	/** @inheritDoc */
 	init(): void {
-		if (!iAccess.is(this.ctx)) {
-			Object.throw('Treeitem aria directive expects the component to realize iAccess interface');
-		}
-
 		this.async.on(this.el, 'keydown', this.onKeyDown.bind(this));
 
 		const
-			muted = this.ctx?.removeAllFromTabSequence(this.el),
+			muted = this.ctx?.dom.removeAllFromTabSequence(this.el),
 			{firstRootItem, expandable, expanded} = this.params;
 
 		if (firstRootItem) {
 			if (muted) {
-				this.ctx?.restoreAllToTabSequence(this.el);
+				this.ctx?.dom.restoreAllToTabSequence(this.el);
 
 			} else {
 				this.setAttribute('tabindex', '0');
@@ -61,8 +56,8 @@ export class Treeitem extends ARIARole {
 	 * @param el
 	 */
 	protected focusNext(el: AccessibleElement): void {
-		this.ctx?.removeAllFromTabSequence(this.el);
-		this.ctx?.restoreAllToTabSequence(el);
+		this.ctx?.dom.removeAllFromTabSequence(this.el);
+		this.ctx?.dom.restoreAllToTabSequence(el);
 
 		el.focus();
 	}
@@ -73,7 +68,7 @@ export class Treeitem extends ARIARole {
 	 */
 	protected moveFocus(step: 1 | -1): void {
 		const
-			nextEl = this.ctx?.getNextFocusableElement(step);
+			nextEl = this.ctx?.dom.getNextFocusableElement(step);
 
 		if (nextEl != null) {
 			this.focusNext(nextEl);
@@ -106,7 +101,7 @@ export class Treeitem extends ARIARole {
 		}
 
 		const
-			focusableParent = this.ctx?.findFocusableElement(parent);
+			focusableParent = this.ctx?.dom.findFocusableElement(parent);
 
 		if (focusableParent != null) {
 			this.focusNext(focusableParent);
@@ -118,7 +113,7 @@ export class Treeitem extends ARIARole {
 	 */
 	protected setFocusToFirstItem(): void {
 		const
-			firstItem = this.ctx?.findFocusableElement(this.params.rootElement);
+			firstItem = this.ctx?.dom.findFocusableElement(this.params.rootElement);
 
 		if (firstItem != null) {
 			this.focusNext(firstItem);
@@ -130,7 +125,7 @@ export class Treeitem extends ARIARole {
 	 */
 	protected setFocusToLastItem(): void {
 		const
-			items = this.ctx?.findFocusableElements(this.params.rootElement);
+			items = this.ctx?.dom.findFocusableElements(this.params.rootElement);
 
 		if (items == null) {
 			return;

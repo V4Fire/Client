@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iAccess from 'traits/i-access/i-access';
 import type iBlock from 'super/i-block/i-block';
 
 import { ARIARole, KeyCodes } from 'core/component/directives/aria/roles/interface';
@@ -14,7 +13,7 @@ import { ListboxParams } from 'core/component/directives/aria/roles/listbox/inte
 
 export class Listbox extends ARIARole {
 	override Params: ListboxParams = new ListboxParams();
-	override Ctx!: iBlock['unsafe'] & iAccess;
+	override Ctx!: iBlock['unsafe'];
 
 	options: CanUndef<AccessibleElement[]>;
 
@@ -26,10 +25,6 @@ export class Listbox extends ARIARole {
 		if (standAlone) {
 			if (this.ctx == null) {
 				return;
-			}
-
-			if (!iAccess.is(this.ctx)) {
-				throw new TypeError('The `listbox` role requires that a component in whose context the directive is used implement the `iAccess` interface');
 			}
 
 			if (label == null && labelledby == null) {
@@ -46,7 +41,7 @@ export class Listbox extends ARIARole {
 
 				this.options?.forEach((el) => {
 					el.setAttribute('tabindex', '0');
-					this.ctx?.removeAllFromTabSequence(el);
+					this.ctx?.dom.removeAllFromTabSequence(el);
 				});
 			});
 		}
@@ -69,8 +64,8 @@ export class Listbox extends ARIARole {
 	 * @param el
 	 */
 	protected focusNext(el: AccessibleElement): void {
-		this.ctx?.removeAllFromTabSequence(this.el);
-		this.ctx?.restoreAllToTabSequence(el);
+		this.ctx?.dom.removeAllFromTabSequence(this.el);
+		this.ctx?.dom.restoreAllToTabSequence(el);
 
 		el.focus();
 	}
@@ -81,7 +76,7 @@ export class Listbox extends ARIARole {
 	 */
 	protected moveFocus(step: 1 | -1): void {
 		const
-			nextEl = this.ctx?.getNextFocusableElement(step);
+			nextEl = this.ctx?.dom.getNextFocusableElement(step);
 
 		if (nextEl?.getAttribute('role') !== 'option') {
 			return;

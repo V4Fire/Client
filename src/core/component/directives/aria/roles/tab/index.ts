@@ -24,7 +24,7 @@ export * from 'core/component/directives/aria/roles/tab/interface';
 
 export class Tab extends ARIARole {
 	override Params: TabParams = new TabParams();
-	override Ctx!: iBlock & iAccess;
+	override Ctx!: iBlock['unsafe'];
 
 	/** @inheritDoc */
 	init(): void {
@@ -70,7 +70,7 @@ export class Tab extends ARIARole {
 	 * Moves focus to the first tab in the tablist
 	 */
 	protected moveFocusToFirstTab(): void {
-		const firstTab = this.ctx?.findFocusableElement();
+		const firstTab = this.ctx?.dom.findFocusableElement();
 		firstTab?.focus();
 	}
 
@@ -79,7 +79,7 @@ export class Tab extends ARIARole {
 	 */
 	protected moveFocusToLastTab(): void {
 		const
-			tabs = this.ctx?.findFocusableElements();
+			tabs = this.ctx?.dom.findFocusableElements();
 
 		if (tabs == null) {
 			return;
@@ -100,7 +100,7 @@ export class Tab extends ARIARole {
 	 * @param step
 	 */
 	protected moveFocus(step: 1 | -1): void {
-		const focusable = this.ctx?.getNextFocusableElement(step);
+		const focusable = this.ctx?.dom.getNextFocusableElement(step);
 		focusable?.focus();
 	}
 

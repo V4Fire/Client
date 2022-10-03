@@ -226,7 +226,11 @@ test.describe('v-aria:listbox', () => {
 	 * @param attrs
 	 * @param component
 	 */
-	async function init(page: Page, attrs: Dictionary = {}, component: string = 'b-dummy-listbox'): Promise<JSHandle<iBlock>> {
+	async function init(
+		page: Page,
+		attrs: Dictionary = {},
+		component: string = 'b-dummy-listbox'
+	): Promise<JSHandle<iBlock>> {
 		return Component.createComponent(page, component, {
 			attrs: {
 				'data-id': 'target',

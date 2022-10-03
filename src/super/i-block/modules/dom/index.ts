@@ -13,6 +13,8 @@
 
 import { memoize } from 'core/promise/sync';
 import { deprecated } from 'core/functools/deprecation';
+import { intoIter } from 'core/iter';
+import { sequence } from 'core/iter/combinators';
 import { wrapAsDelegateHandler } from 'core/dom';
 
 import type { InViewInitOptions, InViewAdapter } from 'core/dom/in-view';
@@ -27,6 +29,7 @@ import Friend from 'super/i-block/modules/friend';
 
 import { componentRgxp } from 'super/i-block/modules/dom/const';
 import { ElCb, inViewInstanceStore, DOMManipulationOptions } from 'super/i-block/modules/dom/interface';
+import { FOCUSABLE_SELECTOR } from 'traits/i-access/const';
 
 export * from 'super/i-block/modules/dom/const';
 export * from 'super/i-block/modules/dom/interface';
@@ -503,5 +506,194 @@ export default class DOM extends Friend {
 			ctx: resolvedCtx,
 			component: resolvedCtx
 		});
+	}
+
+	/**
+	 * Removes all children of the specified element that can be focused from the Tab toggle sequence.
+	 * In effect, these elements are set to -1 for the tabindex attribute.
+	 *
+	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
+	 * @param [opts] - dictionary with options of including the search context, {includeCtx: true} by default
+	 */
+	removeAllFromTabSequence(
+		searchCtx: CanUndef<Element> = this.ctx.$el,
+		opts: {includeCtx: boolean} = {includeCtx: true}
+	): boolean {
+		let
+			areElementsRemoved = false;
+
+		if (searchCtx == null) {
+			return areElementsRemoved;
+		}
+
+		const
+			ctx = opts.includeCtx ? searchCtx : (searchCtx.nextElementSibling ?? searchCtx);
+
+		const
+			focusableEls = this.findFocusableElements(ctx);
+
+		for (const el of focusableEls) {
+			if (!el.hasAttribute('data-tabindex')) {
+				el.setAttribute('data-tabindex', String(el.tabIndex));
+			}
+
+			el.tabIndex = -1;
+			areElementsRemoved = true;
+		}
+
+		return areElementsRemoved;
+	}
+
+	/**
+	 * Restores all children of the specified element that can be focused to the Tab toggle sequence.
+	 * This method is used to restore the state of elements to the state they had before `removeAllFromTabSequence` was
+	 * applied.
+	 *
+	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
+	 * @param [opts] - dictionary with options of including the search context, {includeCtx: true} by default
+	 */
+	restoreAllToTabSequence(
+		searchCtx: CanUndef<Element> = this.ctx.$el,
+		opts: {includeCtx: boolean} = {includeCtx: true}
+		): boolean {
+		let
+			areElementsRestored = false;
+
+		if (searchCtx == null) {
+			return areElementsRestored;
+		}
+
+		let
+			removedEls = intoIter(searchCtx.querySelectorAll<AccessibleElement>('[data-tabindex]'));
+
+		if (opts.includeCtx && searchCtx.hasAttribute('data-tabindex')) {
+			removedEls = sequence(removedEls, intoIter([<AccessibleElement>searchCtx]));
+		}
+
+		for (const elem of removedEls) {
+			const
+				originalTabIndex = elem.getAttribute('data-tabindex');
+
+			if (originalTabIndex != null) {
+				elem.tabIndex = Number(originalTabIndex);
+				elem.removeAttribute('data-tabindex');
+				areElementsRestored = true;
+			}
+		}
+
+		return areElementsRestored;
+	}
+
+	/**
+	 * Returns the next (or previous) element to which focus will be switched by pressing Tab.
+	 * The method takes a "step" parameter, i.e. you can control the Tab sequence direction. For example,
+	 * by setting the step to `-1` you will get an element that will be switched to focus by pressing Shift+Tab.
+	 *
+	 * @param step
+	 * @param [searchCtx] - a context to search, if not set, document will be used
+	 */
+	getNextFocusableElement<T extends AccessibleElement = AccessibleElement>(
+		step: 1 | -1,
+		searchCtx: Element = document.documentElement
+	): T | null {
+		const
+			{activeElement} = document;
+
+		if (activeElement == null) {
+			return null;
+		}
+
+		const
+			focusableEls = [...this.findFocusableElements<T>(searchCtx, {native: false})],
+			index = focusableEls.indexOf(<T>activeElement);
+
+		if (index < 0) {
+			return null;
+		}
+
+		focusableEls.forEach((el) => {
+			if (el.tabIndex > 0) {
+				Object.throw('The tab sequence has an element with tabindex more than 0. The sequence would be different in different browsers. It is strongly recommended not to use tabindexes more than 0.');
+			}
+		});
+
+		return focusableEls[index + step] ?? null;
+	}
+
+	/**
+	 * Finds the first non-disabled visible focusable element from the passed context to search and returns it.
+	 * The element that is the search context is also taken into account in the search.
+	 *
+	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
+	 */
+	findFocusableElement<T extends AccessibleElement = AccessibleElement>(searchCtx?: Element): T | null {
+		const
+			search = this.findFocusableElements<T>(searchCtx).next();
+
+		if (search.done) {
+			return null;
+		}
+
+		return search.value;
+	}
+
+	/**
+	 * Finds all non-disabled visible focusable elements and returns an iterator with the found ones.
+	 * The element that is the search context is also taken into account in the search.
+	 * Also expects a dictionary with option of filtration  invisible elements.
+	 * If native property is set to true, the method filters invisible elements by css properties
+	 * `disabled`, `visible` and `display`.
+	 * Native in false also adds the filtration by element's current visibility on the screen.
+	 *
+	 * @param [searchCtx] - a context to search, if not set, the component root element will be used
+	 * @param [opts] - dictionary with options of elements' visibility filtration, {native: true} by default
+	 */
+	findFocusableElements<
+		T extends AccessibleElement = AccessibleElement
+		>(searchCtx: CanUndef<Element> = this.ctx.$el, opts: {native: boolean} = {native: true}): IterableIterator<T> {
+		const
+			accessibleEls = searchCtx?.querySelectorAll<AccessibleElement>(FOCUSABLE_SELECTOR);
+
+		let
+			searchIter = intoIter(accessibleEls ?? []);
+
+		if (searchCtx?.matches(FOCUSABLE_SELECTOR)) {
+			searchIter = sequence(searchIter, intoIter([<AccessibleElement>searchCtx]));
+		}
+
+		const
+			focusableWithoutDisabled = filterDisabledElements(searchIter);
+
+		return {
+			[Symbol.iterator]() {
+				return this;
+			},
+
+			next: focusableWithoutDisabled.next.bind(focusableWithoutDisabled)
+		};
+
+		function* filterDisabledElements(
+			iter: IterableIterator<AccessibleElement>
+		): IterableIterator<AccessibleElement> {
+			for (const el of iter) {
+				const
+					rect = el.getBoundingClientRect();
+
+				if (
+					!el.hasAttribute('disabled') &&
+					el.getAttribute('visibility') !== 'hidden' &&
+					el.getAttribute('display') !== 'none'
+				) {
+					if (!opts.native) {
+						if (rect.height > 0 || rect.width > 0) {
+							yield el;
+						}
+
+					} else {
+						yield el;
+					}
+				}
+			}
+		}
 	}
 }
