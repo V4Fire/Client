@@ -15,6 +15,8 @@ Changelog
 
 * The module has been moved to`friends/field`
 * The module has been rewritten to a new tree-shake friendly API
+* Removed the `spawn` method
+* Removed the `asyncOptions` option
 
 #### :memo: Documentation
 
