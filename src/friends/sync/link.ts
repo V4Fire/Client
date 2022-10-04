@@ -258,7 +258,7 @@ export function link<D = unknown, R = D>(
 	}
 
 	if (destPath == null) {
-		throw new Error('The path to the property containing the reference is not defined');
+		throw new ReferenceError('The path to the property containing the reference is not defined');
 	}
 
 	const {
