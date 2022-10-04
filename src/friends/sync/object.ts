@@ -252,7 +252,7 @@ export function object(
 
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (destHead == null) {
-		throw new ReferenceError('The path to the property contained in the final object is not defined');
+		throw new Error('The path to the property contained in the final object is not defined');
 	}
 
 	const {
