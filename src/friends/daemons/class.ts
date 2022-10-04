@@ -9,14 +9,12 @@
 import Friend, { fakeMethods } from 'friends/friend';
 
 import type iBlock from 'super/i-block/i-block';
-import type { DaemonsDict } from 'friends/daemons/interface';
+import type { WrappedDaemonsDict } from 'friends/daemons/interface';
 
 import type { run } from 'friends/daemons/init';
-import type { spawn } from 'friends/daemons/create';
 
 interface Daemons {
 	run: typeof run;
-	spawn: typeof spawn;
 }
 
 @fakeMethods('run')
@@ -24,7 +22,7 @@ class Daemons extends Friend {
 	/**
 	 * A dictionary with the declared component daemons
 	 */
-	protected get daemons(): DaemonsDict<this['CTX']> {
+	protected get daemons(): WrappedDaemonsDict<this['CTX']> {
 		return (<typeof iBlock>this.ctx.instance.constructor).daemons;
 	}
 

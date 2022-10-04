@@ -12,6 +12,24 @@ import type { Hook, WatchOptions } from 'core/component';
 import type iBlock from 'super/i-block';
 import type { ComponentStatus } from 'super/i-block';
 
+export interface Daemon<CTX extends iBlock = iBlock> {
+	fn: DaemonFn<CTX>;
+
+	hook?: DaemonHook;
+	watch?: DaemonWatcher[];
+	wait?: ComponentStatus;
+
+	immediate?: boolean;
+	asyncOptions?: DaemonsAsyncOptions;
+}
+
+export interface WrappedDaemon<CTX extends iBlock = iBlock> extends Daemon<CTX> {
+	wrappedFn?: WrappedDaemonFn<CTX>;
+}
+
+export type DaemonsDict<CTX extends iBlock = iBlock> = Dictionary<Daemon<CTX>>;
+export type WrappedDaemonsDict<CTX extends iBlock = iBlock> = Dictionary<WrappedDaemon<CTX>>;
+
 export interface DaemonsAsyncOptions {
 	group?: Group;
 	label?: Nullable<Label>;
@@ -37,31 +55,6 @@ export interface DaemonWatchOptions extends WatchOptions {
 export type DaemonWatcher =
 	DaemonWatchOptions |
 	string;
-
-export interface Daemon<CTX extends iBlock = iBlock> {
-	fn: DaemonFn<CTX>;
-	wrappedFn?: WrappedDaemonFn<CTX>;
-
-	hook?: DaemonHook;
-	watch?: DaemonWatcher[];
-	wait?: ComponentStatus;
-
-	immediate?: boolean;
-	asyncOptions?: DaemonsAsyncOptions;
-}
-
-export interface SpawnedDaemonObject<CTX extends iBlock = iBlock> {
-	fn: WrappedDaemonFn<CTX>;
-	wait?: ComponentStatus;
-	immediate?: boolean;
-	asyncOptions?: DaemonsAsyncOptions;
-}
-
-export type SpawnedDaemon<CTX extends iBlock = iBlock> =
-	SpawnedDaemonObject<CTX> |
-	WrappedDaemonFn<CTX>;
-
-export type DaemonsDict<CTX extends iBlock = iBlock> = Dictionary<Daemon<CTX>>;
 
 export interface DaemonFn<
 	CTX extends iBlock = iBlock,
