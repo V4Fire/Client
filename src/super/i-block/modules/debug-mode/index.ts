@@ -14,15 +14,17 @@
 import Friend from 'super/i-block/modules/friend';
 
 // TODO delete
-import backendDebugDataEngine from 'super/i-block/modules/debug-mode/data-gathering-engines/backend-debug-data';
-import bottomBlockRenderEngine from 'super/i-block/modules/debug-mode/render-engines/bottom-block';
+import getDataFromDbField from 'super/i-block/modules/debug-mode/data-gathering-engines/from-db';
+import getDataFromDataField from 'super/i-block/modules/debug-mode/data-gathering-engines/from-data';
+import bottomBlockRender from 'super/i-block/modules/debug-mode/render-engines/bottom-block';
+
+import composeDataEngine from 'super/i-block/modules/debug-mode/compose-data';
 
 import type iBlock from 'super/i-block/i-block';
 import type {
 
 	GatheringStrategy,
-	RenderStrategy,
-	DebugData
+	RenderStrategy
 
 } from 'super/i-block/modules/debug-mode/interface';
 
@@ -30,16 +32,6 @@ import type {
  * Class provides methods to work with debug data
  */
 export default class DebugMode extends Friend {
-	constructor(component: iBlock) {
-		super(component);
-
-		void this.initDebugDataGathering();
-
-		// TODO delete
-		this.dataGatheringStrategies = [backendDebugDataEngine];
-		this.dataRenderStrategy = bottomBlockRenderEngine;
-	}
-
 	/**
 	 *
 	 */
@@ -48,63 +40,53 @@ export default class DebugMode extends Friend {
 	/**
 	 *
 	 */
-	protected dataRenderStrategy: RenderStrategy;
+	protected dataRenderStrategies: RenderStrategy[];
 
-	/**
-	 *
-	 */
-	// TODO how the fuck do i add it in a children components ?
-	addDataGatheringStrategy(strategy: GatheringStrategy): void {
-		this.dataGatheringStrategies.push(strategy);
+	constructor(component: iBlock) {
+		super(component);
+
+		// TODO перенести в едадил
+		this.dataGatheringStrategies = [getDataFromDbField, getDataFromDataField];
+		this.dataRenderStrategies = [bottomBlockRender];
+
+		this.initDebugDataGathering();
 	}
 
 	/**
 	 *
 	 */
-	addDataRenderStrategy(strategy: RenderStrategy): void {
-		this.dataRenderStrategy = strategy;
-	}
-
-	/**
-	 *
-	 */
-	protected async initDebugDataGathering(): Promise<void> {
-		if (this.dataGatheringStrategies.length === 0 || this.dataRenderStrategy == null) {
+	protected initDebugDataGathering(): void {
+		if (this.dataGatheringStrategies.length === 0) {
 			return;
 		}
 
-		const
-			data: DebugData[] = [];
+		Promise.allSettled(
+			this.dataGatheringStrategies.map((strategy) => strategy(this.ctx))
+		).then((results) => composeDataEngine(results, this.ctx))
+			.then(() => this.initDebugDataRendering())
+			.catch(stderr);
+	}
 
-		for (let strategy of this.dataGatheringStrategies) {
+	/**
+	 *
+	 */
+	protected initDebugDataRendering(): void {
+		if (this.dataRenderStrategies.length === 0) {
+			return;
+		}
+
+		Promise.allSettled(
+			this.dataRenderStrategies.map((strategy) => strategy(this.component, this.ctx))
+		).then((results) => {
 			const
-				result = await strategy(this.ctx);
+				isSomeRenderSuccessful = results.some((result) => result.status === 'fulfilled');
 
-			if (Object.isDictionary(result)) {
-				data.push(result);
+			if (!isSomeRenderSuccessful) {
+				return Promise.reject('Debug data was not rendered');
 			}
-		}
-
-		if (data.length === 0) {
-			return;
-		}
-
-		await this.storage.set(data, `${this.globalName}DebugData`);
-		await this.initDebugDataRendering();
-	}
-
-	/**
-	 *
-	 */
-	protected async initDebugDataRendering(): Promise<void> {
-		// TODO продумать для нескольких способов вывода: группировка по компоненту, объединение данных
-
-		const
-			isSuccessful = await this.dataRenderStrategy(this.component, this.ctx);
-
-		if (isSuccessful) {
 			// TODO check iDebugMode
 			// TODO set mod
-		}
+			})
+			.catch(stderr);
 	}
 }

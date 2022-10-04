@@ -13,7 +13,7 @@
 
 import iBlock, { component, prop } from 'super/i-block/i-block';
 
-import type { DebugData } from 'super/i-block/modules/debug-mode/interface';
+import type { RenderData } from 'super/i-block/modules/debug-mode/interface';
 
 export * from 'super/i-block/i-block';
 
@@ -23,5 +23,5 @@ export * from 'super/i-block/i-block';
 @component({functional: true})
 export default class bDebugData extends iBlock {
 	@prop(Object)
-	readonly data!: DebugData;
+	readonly data!: RenderData;
 }

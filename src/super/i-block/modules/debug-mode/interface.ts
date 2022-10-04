@@ -4,11 +4,26 @@ import type { UnsafeIBlock } from 'super/i-block/i-block';
 /**
  *
  */
-export interface DebugData {
+export type RenderBy = 'bottom-block' | 'upper-block';
+
+/**
+ *
+ */
+export type RenderData = Map<string, any>;
+
+/**
+ *
+ */
+export type ComponentDebugData = Map<RenderBy, RenderData>;
+
+/**
+ *
+ */
+export interface GatheringStrategyData {
 	/**
 	 *
 	 */
-	component: string;
+	renderBy: RenderBy;
 
 	/**
 	 *
@@ -24,7 +39,7 @@ export type GatheringStrategy = (
 	 *
 	 */
 	context: iBlock
-) => Promise<CanUndef<DebugData>>;
+) => Promise<GatheringStrategyData>;
 
 /**
  *
@@ -44,4 +59,4 @@ export type RenderStrategy = (
 	 *
 	 */
 	renderComponent?: string
-) => Promise<boolean>;
+) => Promise<void>;
