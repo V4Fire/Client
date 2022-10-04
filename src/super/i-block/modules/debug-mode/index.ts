@@ -12,21 +12,10 @@
  */
 
 import Friend from 'super/i-block/modules/friend';
-
-// TODO delete
-import getDataFromDbField from 'super/i-block/modules/debug-mode/data-gathering-engines/from-db';
-import getDataFromDataField from 'super/i-block/modules/debug-mode/data-gathering-engines/from-data';
-import bottomBlockRender from 'super/i-block/modules/debug-mode/render-engines/bottom-block';
-
 import composeDataEngine from 'super/i-block/modules/debug-mode/compose-data';
 
 import type iBlock from 'super/i-block/i-block';
-import type {
-
-	GatheringStrategy,
-	RenderStrategy
-
-} from 'super/i-block/modules/debug-mode/interface';
+import type { GatheringStrategy, RenderStrategy } from 'super/i-block/modules/debug-mode/interface';
 
 /**
  * Class provides methods to work with debug data
@@ -35,19 +24,15 @@ export default class DebugMode extends Friend {
 	/**
 	 *
 	 */
-	protected dataGatheringStrategies: GatheringStrategy[];
+	protected dataGatheringStrategies!: GatheringStrategy[];
 
 	/**
 	 *
 	 */
-	protected dataRenderStrategies: RenderStrategy[];
+	protected dataRenderStrategies!: RenderStrategy[];
 
 	constructor(component: iBlock) {
 		super(component);
-
-		// TODO перенести в едадил
-		this.dataGatheringStrategies = [getDataFromDbField, getDataFromDataField];
-		this.dataRenderStrategies = [bottomBlockRender];
 
 		this.initDebugDataGathering();
 	}

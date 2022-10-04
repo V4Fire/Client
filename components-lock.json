@@ -1,5 +1,5 @@
 {
-  "hash": "def7fa9ed3f05378741ad920d08986fdd7d6f794a4b4967d5e445fa4976234cf",
+  "hash": "581a72686ecc2eafefd8b8907245b3fbb09c1f06071deb81093e8d63b082cd61",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -102,38 +102,6 @@
             "src/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/form/b-checkbox/b-checkbox.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-debug-data",
-        {
-          "index": "src/base/b-debug-data/index.js",
-          "declaration": {
-            "name": "b-debug-data",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-debug-data",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/base/b-debug-data/b-debug-data.ts",
-          "styles": [
-            "src/base/b-debug-data/b-debug-data.styl"
-          ],
-          "tpl": "src/base/b-debug-data/b-debug-data.ss",
           "etpl": null
         }
       ],
@@ -2018,7 +1986,6 @@
               "b-sidebar",
               "b-slider",
               "b-bottom-slide",
-              "b-debug-data",
               "b-icon",
               "b-image",
               "b-dummy",
@@ -2063,7 +2030,6 @@
             "b-sidebar",
             "b-slider",
             "b-bottom-slide",
-            "b-debug-data",
             "b-icon",
             "b-image",
             "b-dummy",
