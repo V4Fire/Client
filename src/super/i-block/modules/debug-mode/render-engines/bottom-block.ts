@@ -3,8 +3,7 @@ import type { UnsafeIBlock } from 'super/i-block/i-block';
 import type { ComponentDebugData } from 'super/i-block/modules/debug-mode/interface';
 import type { ComponentElement } from 'core/component';
 
-const
-	renderComponent = 'b-debug-data';
+import { renderInBottomBlockBy } from 'super/i-block/modules/debug-mode/const';
 
 /**
  *
@@ -33,7 +32,7 @@ export default function bottomBlockRender(
 		}
 
 		try {
-			const vNode = context.$createElement(renderComponent, {
+			const vNode = context.$createElement(renderInBottomBlockBy, {
 				attrs: {
 					data: bottomBlockData
 				}
@@ -48,7 +47,7 @@ export default function bottomBlockRender(
 			return resolve();
 
 		} catch {
-			stderr(`Failed to render the ${renderComponent} component`);
+			stderr(`Failed to render the ${renderInBottomBlockBy} component`);
 			return reject();
 		}
 	});

@@ -9,6 +9,11 @@ export type RenderBy = 'bottom-block' | 'upper-block';
 /**
  *
  */
+export type RenderComponent = 'b-debug-data';
+
+/**
+ *
+ */
 export type RenderData = Map<string, any>;
 
 /**

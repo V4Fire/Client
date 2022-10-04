@@ -1,8 +1,7 @@
 import type iBlock from 'super/i-block/i-block';
 import type { GatheringStrategyData } from 'super/i-block/modules/debug-mode/interface';
 
-const
-	renderBy = 'upper-block';
+import { renderFromDbFieldIn } from 'super/i-block/modules/debug-mode/const';
 
 /**
  *
@@ -24,6 +23,6 @@ export default function getDataFromDbField(
 		const
 			data = <Dictionary>Object.get(componentDb, 'debug');
 
-		return resolve({renderBy, data});
+		return resolve({renderBy: renderFromDbFieldIn, data});
 	});
 }
