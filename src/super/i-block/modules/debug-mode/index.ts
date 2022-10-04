@@ -26,12 +26,12 @@ export default class DebugMode extends Friend {
 	/**
 	 *
 	 */
-	protected dataGatheringStrategies!: GatheringStrategy[];
+	protected readonly dataGatheringStrategies!: GatheringStrategy[];
 
 	/**
 	 *
 	 */
-	protected dataRenderStrategies!: RenderStrategy[];
+	protected readonly dataRenderStrategies!: RenderStrategy[];
 
 	constructor(component: iBlock) {
 		super(component);
