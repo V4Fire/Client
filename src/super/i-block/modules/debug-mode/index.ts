@@ -17,6 +17,8 @@ import composeDataEngine from 'super/i-block/modules/debug-mode/compose-data';
 import type iBlock from 'super/i-block/i-block';
 import type { GatheringStrategy, RenderStrategy } from 'super/i-block/modules/debug-mode/interface';
 
+export * from 'super/i-block/modules/debug-mode/interface';
+
 /**
  * Class provides methods to work with debug data
  */
@@ -46,7 +48,7 @@ export default class DebugMode extends Friend {
 		}
 
 		Promise.allSettled(
-			this.dataGatheringStrategies.map((strategy) => strategy(this.ctx))
+			this.dataGatheringStrategies.map((strategy) => strategy(this.component))
 		).then((results) => composeDataEngine(results, this.ctx))
 			.then(() => this.initDebugDataRendering())
 			.catch(stderr);

@@ -23,7 +23,7 @@ export type GatheringStrategy = (
 	/**
 	 *
 	 */
-	context: iBlock
+	component: iBlock
 ) => Promise<GatheringStrategyData>;
 
 /**
