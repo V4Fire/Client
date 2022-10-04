@@ -13,10 +13,3 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
  */
 export const
 	emitter = new EventEmitter({maxListeners: 1e3, newListener: false});
-
-/**
- * @deprecated
- * @see [[emitter]]
- */
-export const
-	event = emitter;
