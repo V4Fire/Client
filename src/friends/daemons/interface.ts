@@ -7,51 +7,71 @@
  */
 
 import type { Group, Label, Join } from 'core/async';
-import type { Hook, WatchOptions } from 'core/component';
+import type { Hook, MethodWatcher } from 'core/component';
 
 import type iBlock from 'super/i-block';
 import type { ComponentStatus } from 'super/i-block';
 
 export interface Daemon<CTX extends iBlock = iBlock> {
+	/**
+	 * A function that is called by the daemon.
+	 * The function context is the component that the daemon is bound to.
+	 * The function arguments are taken from the handlers that the daemon is binding on.
+	 */
 	fn: DaemonFn<CTX>;
+
+	/**
+	 * If true, the daemon function is called immediately when the listener event fires
+	 * @default `false`
+	 */
 	immediate?: boolean;
 
-	hook?: DaemonHook;
-	watch?: DaemonWatcher[];
+	/**
+	 * A component hook (or hooks) on which the daemon function should be called
+	 */
+	hook?: CanArray<Hook>;
+
+	/**
+	 * A path (or paths) to the component property or event on which the daemon function should be called.
+	 * @see `core/component/decorators/watch`
+	 */
+	watch?: DaemonWatcher;
+
+	/**
+	 * Sets the `componentStatus` value for the associated component on which the daemon function can be called
+	 * @see `super/i-block/modules/decorators`
+	 */
 	wait?: ComponentStatus;
 
+	/**
+	 * A name of the group the daemon belongs to.
+	 * The parameter is provided to [[Async]].
+	 */
 	group?: Group;
+
+	/**
+	 * A label associated with the daemon.
+	 * The parameter is provided to [[Async]].
+	 */
 	label?: Nullable<Label>;
+
+	/**
+	 * A strategy type to join conflict tasks.
+	 * The parameter is provided to [[Async]].
+	 */
 	join?: Join;
 }
 
-export interface WrappedDaemon<CTX extends iBlock = iBlock> extends Daemon<CTX> {
-	wrappedFn?: WrappedDaemonFn<CTX>;
+export interface WrappedDaemon extends Daemon {
+	wrappedFn?: WrappedDaemonFn;
 }
 
 export type DaemonsDict<CTX extends iBlock = iBlock> = Dictionary<Daemon<CTX>>;
-export type WrappedDaemonsDict<CTX extends iBlock = iBlock> = Dictionary<WrappedDaemon<CTX>>;
-
-
-export type DaemonHook =
-	Hook[] |
-	DaemonHookObject;
-
-export interface DaemonHookOptions {
-	after: CanUndef<Set<string>>;
-}
-
-export type DaemonHookObject = {
-	[P in keyof Record<Hook, string>]?: CanArray<string>;
-};
-
-export interface DaemonWatchOptions extends WatchOptions {
-	field: string;
-}
+export type WrappedDaemonsDict = Dictionary<WrappedDaemon>;
 
 export type DaemonWatcher =
-	DaemonWatchOptions |
-	string;
+	string |
+	MethodWatcher;
 
 export interface DaemonFn<
 	CTX extends iBlock = iBlock,

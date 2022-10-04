@@ -7,10 +7,11 @@
  */
 
 import { asyncOptionsKeys } from 'core/async';
-import type Daemons from 'friends/daemons/class';
+import type { WatchObject } from 'core/component';
 
+import type Daemons from 'friends/daemons/class';
 import { createDaemonWrappedFn } from 'friends/daemons/create';
-import type { DaemonHookOptions, DaemonWatcher } from 'friends/daemons/interface';
+import type { DaemonWatcher } from 'friends/daemons/interface';
 
 /**
  * Runs a daemon by the given name with the passed arguments
@@ -60,18 +61,13 @@ export function init(this: Daemons): void {
 
 		createDaemonWrappedFn.call(this, daemon);
 
-		const
-			hooks = Object.isPlainObject(daemon.hook) ? Object.keys(daemon.hook) : daemon.hook;
-
-		hooks?.forEach((hook) => {
-			const params = {
-				after: Object.isPlainObject(daemon.hook) ? new Set<string>(...[].concat(daemon.hook[hook])) : undefined
-			};
-
-			attachHook.call(this, name, hook, params);
+		Array.concat([], daemon.hook).forEach((hook) => {
+			attachHook.call(this, name, hook);
 		});
 
-		daemon.watch?.forEach((watcher) => attachWatcher.call(this, name, watcher));
+		Array.concat([], daemon.watch).forEach((watcher) => {
+			attachWatcher.call(this, name, watcher);
+		});
 	});
 }
 
@@ -80,13 +76,9 @@ export function init(this: Daemons): void {
  *
  * @param name
  * @param hook
- * @param [opts] - additional options
  */
-export function attachHook(this: Daemons, name: string, hook: string, opts?: DaemonHookOptions): void {
-	this.ctx.meta.hooks[hook].push({
-		fn: () => run.call(this, name),
-		...opts
-	});
+export function attachHook(this: Daemons, name: string, hook: string): void {
+	this.ctx.on(`componentHook:${hook}`, () => run.call(this, name));
 }
 
 /**
@@ -97,26 +89,37 @@ export function attachHook(this: Daemons, name: string, hook: string, opts?: Dae
  */
 export function attachWatcher(this: Daemons, name: string, watcher: DaemonWatcher): void {
 	const
+		daemon = this.daemons[name];
+
+	if (daemon == null) {
+		return;
+	}
+
+	const
 		{watchers} = this.ctx.meta;
 
 	const
-		watchName = Object.isSimpleObject(watcher) ? watcher.field : watcher,
-		watchParams = Object.isPlainObject(watcher) ? Object.reject(watcher, 'field') : {};
+		watchPath = Object.isPlainObject(watcher) ? watcher.path : watcher,
+		watchParams = Object.isDictionary(watcher) ? Object.reject(watcher, 'path') : {};
 
-	const watchDaemon = {
+	if (watchPath == null) {
+		throw new Error('The path to watch is not defined');
+	}
+
+	const watchDaemon: WatchObject = {
 		handler: (...args) => run.call(this, name, ...args),
 		method: name,
 		args: [],
 		...watchParams
 	};
 
-	const
-		w = watchers[watchName];
-
-	if (w) {
-		w.push(watchDaemon);
-
-	} else {
-		watchers[watchName] = [watchDaemon];
+	if (daemon.immediate) {
+		watchDaemon.flush = 'sync';
 	}
+
+	const
+		w = watchers[watchPath] ?? [];
+
+	watchers[watchPath] = w;
+	w.push(watchDaemon);
 }
