@@ -32,7 +32,7 @@ export interface Daemon<CTX extends iBlock = iBlock> {
 	hook?: CanArray<Hook>;
 
 	/**
-	 * A path (or paths) to the component property or event on which the daemon function should be called.
+	 * A path (or paths) to the component property or event on which the daemon function should be called
 	 * @see `core/component/decorators/watch`
 	 */
 	watch?: DaemonWatcher;
@@ -71,7 +71,7 @@ export type WrappedDaemonsDict = Dictionary<WrappedDaemon>;
 
 export type DaemonWatcher =
 	string |
-	MethodWatcher;
+	MethodWatcher & {path: string};
 
 export interface DaemonFn<
 	CTX extends iBlock = iBlock,

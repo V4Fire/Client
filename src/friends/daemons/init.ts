@@ -37,17 +37,17 @@ export function run<R = unknown>(this: Daemons, name: string, ...args: unknown[]
 		return fn.apply(ctx, args);
 	}
 
-	const asyncOptions = {
+	const asyncOps = {
 		group: `daemons:${this.ctx.componentName}`,
 		label: `daemons:${name}`,
 		...Object.select(daemon, asyncOptionsKeys)
 	};
 
-	if (asyncOptions.label == null) {
-		Object.delete(asyncOptions, 'label');
+	if (asyncOps.label == null) {
+		Object.delete(asyncOps, 'label');
 	}
 
-	ctx.async.setImmediate(() => fn.apply(ctx, args), Object.cast(asyncOptions));
+	ctx.async.setImmediate(() => fn.apply(ctx, args), Object.cast(asyncOps));
 }
 
 /**
@@ -101,10 +101,6 @@ export function attachWatcher(this: Daemons, name: string, watcher: DaemonWatche
 	const
 		watchPath = Object.isPlainObject(watcher) ? watcher.path : watcher,
 		watchParams = Object.isDictionary(watcher) ? Object.reject(watcher, 'path') : {};
-
-	if (watchPath == null) {
-		throw new Error('The path to watch is not defined');
-	}
 
 	const watchDaemon: WatchObject = {
 		handler: (...args) => run.call(this, name, ...args),
