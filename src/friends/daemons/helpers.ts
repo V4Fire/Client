@@ -6,47 +6,60 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Daemon, DaemonHook } from 'friends/daemons/interface';
+import type { Hook } from 'core/component';
+import type { Daemon, DaemonWatcher } from 'friends/daemons/interface';
 
 /**
  * Merges two specified daemons into one new one and returns it
  *
- * @param daemon1
- * @param daemon2
+ * @param baseDaemon
+ * @param parentDaemon
  */
-export function mergeDaemons(daemon1: Daemon, daemon2: Daemon): Daemon {
-	const
-		hook = mergeHooks(daemon1, daemon2),
-		watch = (daemon2.watch ?? []).union(daemon1.watch ?? []);
-
+export function mergeDaemons(baseDaemon: Daemon, parentDaemon: Daemon): Daemon {
 	return {
-		...daemon2,
-		...daemon1,
-		hook,
-		watch
+		...parentDaemon,
+		...baseDaemon,
+		hook: mergeHooks(baseDaemon, parentDaemon),
+		watch: mergeWatchers(baseDaemon, parentDaemon)
 	};
 }
 
 /**
  * Merges hooks of the two specified daemons into one new one and returns it
  *
- * @param daemon1
- * @param daemon2
+ * @param baseDaemon
+ * @param parentDaemon
  */
-export function mergeHooks(daemon1: Daemon, daemon2: Daemon): CanUndef<DaemonHook> {
+export function mergeHooks(baseDaemon: Daemon, parentDaemon: Daemon): Hook[] {
 	const
-		{hook: hooks1} = daemon1,
-		{hook: hooks2} = daemon2;
+		{hook: baseHook} = baseDaemon,
+		{hook: parentHook} = parentDaemon;
 
-	if (hooks1 == null && hooks2 == null) {
-		return;
+	if (baseHook == null && parentHook == null) {
+		return [];
 	}
 
-	const
-		convertHooksToObject = (h) => Array.isArray(h) ? h.reduce((acc, a) => (acc[a] = undefined, acc), {}) : h;
+	return Array.from(
+		new Set(Array.concat(<Hook[]>[], parentHook, baseHook))
+	);
+}
 
-	return {
-		...convertHooksToObject(hooks2),
-		...convertHooksToObject(hooks1)
-	};
+/**
+ * Merges watchers of the two specified daemons into one new one and returns it
+ *
+ * @param baseDaemon
+ * @param parentDaemon
+ */
+export function mergeWatchers(baseDaemon: Daemon, parentDaemon: Daemon): DaemonWatcher[] {
+	const
+		{watch: baseWatch} = baseDaemon,
+		{watch: parentWatch} = parentDaemon;
+
+	if (baseWatch == null && parentWatch == null) {
+		return [];
+	}
+
+	return Array.from(
+		new Set(Array.concat(<DaemonWatcher[]>[], parentWatch, baseWatch))
+	);
 }
