@@ -78,7 +78,11 @@ export function init(this: Daemons): void {
  * @param hook
  */
 export function attachHook(this: Daemons, name: string, hook: string): void {
-	this.ctx.on(`componentHook:${hook}`, () => run.call(this, name));
+	this.meta.hooks[hook].push({
+		fn: () => {
+			run.call(this, name);
+		}
+	});
 }
 
 /**
