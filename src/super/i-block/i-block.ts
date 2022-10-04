@@ -76,7 +76,7 @@ import { statuses } from 'super/i-block/const';
 
 import Opt from 'super/i-block/modules/opt';
 
-import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
+import Daemons, { DaemonsDict } from 'friends/daemons';
 import Analytics from 'friends/analytics';
 
 import DOM from 'friends/dom';
@@ -146,15 +146,6 @@ export * from 'core/component';
 export * from 'super/i-block/const';
 export * from 'super/i-block/interface';
 
-export * from 'friends/block';
-export * from 'friends/field';
-export * from 'friends/state';
-export * from 'friends/module-loader';
-
-export * from 'super/i-block/modules/daemons';
-
-export * from 'friends/sync';
-export * from 'friends/async-render';
 export { prop, field, system, computed, hook, watch, wait } from 'super/i-block/modules/decorators';
 
 export { default as Friend } from 'friends/friend';
