@@ -92,5 +92,6 @@ export const enum KeyCodes {
 	LEFT = 'ArrowLeft',
 	UP = 'ArrowUp',
 	RIGHT = 'ArrowRight',
-	DOWN = 'ArrowDown'
+	DOWN = 'ArrowDown',
+	TAB = 'Tab'
 }

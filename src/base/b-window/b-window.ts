@@ -314,6 +314,16 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		super.beforeDestroy();
 		this.removeRootMod('hidden');
 	}
+
+	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive
+	 */
+	protected getAriaConfig(): Dictionary {
+		return {
+			'@open': (cb) => this.on('open', cb),
+			'@close': (cb) => this.on('close', cb)
+		};
+	}
 }
 
 export default bWindow;

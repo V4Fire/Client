@@ -55,6 +55,7 @@ package('p-v4-components-demo')
 		'b-dummy-control-list',
 		'b-dummy-decorators',
 		'b-dummy-listbox',
+		'b-dummy-dialog',
 
 		components
 	)

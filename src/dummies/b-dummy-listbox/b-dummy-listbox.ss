@@ -13,18 +13,18 @@
 - template index() extends ['i-block'].index
 
 	- block body
-			- super
+		- super
 
-			< ul.&__wrapper v-aria:listbox = {...getAriaConfig('listbox'), label: 'test'}
+		< ul.&__wrapper v-aria:listbox = {...getAriaConfig('listbox'), label: 'test'}
 
-				< template v-for = (el, i) in items | :key = getItemKey(el, i)
-					< li.&__item &
-						:id = el.id |
-						:value = el.value |
+			< template v-for = (el, i) in items | :key = getItemKey(el, i)
+				< li.&__item &
+					:id = el.id |
+					:value = el.value |
 
-						v-aria:option = getAriaConfig('option', el) |
-						@click = onItemClick |
-						@keydown = onItemKeydown
-					.
-							< span.&__cell.&__link-value
-								{{ el.label }}
+					v-aria:option = getAriaConfig('option', el) |
+					@click = onItemClick |
+					@keydown = onItemKeydown
+				.
+						< span.&__cell.&__link-value
+							{{ el.label }}

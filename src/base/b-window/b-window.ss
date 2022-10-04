@@ -26,7 +26,13 @@
 
 				< :section.&__window &
 					ref = window |
-					v-aria:dialog.#title
+					:v-attrs = title ?
+						{
+							'v-aria:dialog': {...getAriaConfig(), label: title}
+						} :
+						{
+							'v-aria:dialog.#title': getAriaConfig()
+						}
 				.
 					- if thirdPartySlots
 						< template v-if = slotName
