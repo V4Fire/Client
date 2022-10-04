@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { asyncOptionsKeys } from 'core/async';
 import type Daemons from 'friends/daemons/class';
 
 import { createDaemonWrappedFn } from 'friends/daemons/create';
@@ -38,7 +39,7 @@ export function run<R = unknown>(this: Daemons, name: string, ...args: unknown[]
 	const asyncOptions = {
 		group: `daemons:${this.ctx.componentName}`,
 		label: `daemons:${name}`,
-		...daemon.asyncOptions
+		...Object.select(daemon, asyncOptionsKeys)
 	};
 
 	if (asyncOptions.label == null) {

@@ -14,13 +14,15 @@ import type { ComponentStatus } from 'super/i-block';
 
 export interface Daemon<CTX extends iBlock = iBlock> {
 	fn: DaemonFn<CTX>;
+	immediate?: boolean;
 
 	hook?: DaemonHook;
 	watch?: DaemonWatcher[];
 	wait?: ComponentStatus;
 
-	immediate?: boolean;
-	asyncOptions?: DaemonsAsyncOptions;
+	group?: Group;
+	label?: Nullable<Label>;
+	join?: Join;
 }
 
 export interface WrappedDaemon<CTX extends iBlock = iBlock> extends Daemon<CTX> {
@@ -30,11 +32,6 @@ export interface WrappedDaemon<CTX extends iBlock = iBlock> extends Daemon<CTX> 
 export type DaemonsDict<CTX extends iBlock = iBlock> = Dictionary<Daemon<CTX>>;
 export type WrappedDaemonsDict<CTX extends iBlock = iBlock> = Dictionary<WrappedDaemon<CTX>>;
 
-export interface DaemonsAsyncOptions {
-	group?: Group;
-	label?: Nullable<Label>;
-	join?: Join;
-}
 
 export type DaemonHook =
 	Hook[] |
