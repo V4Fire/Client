@@ -13,7 +13,7 @@ import type { ComponentElement } from 'super/i-block/i-block';
 import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
 
-test.describe.only('v-aria:dialog', () => {
+test.describe('v-aria:dialog', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
@@ -78,7 +78,7 @@ test.describe.only('v-aria:dialog', () => {
 		).toEqual(['-1', '0']);
 	});
 
-	test.only('previous focused element get focus', async ({page}) => {
+	test('previous focused element get focus', async ({page}) => {
 		const target = await init(page);
 
 		test.expect(

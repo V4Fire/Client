@@ -271,6 +271,76 @@ class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 
 	protected activeStore!: this['Active'];
 
+	/** @see [[iAccess.focus]] */
+	focus(): Promise<boolean> {
+		const
+			element = <AccessibleElement | null>this.block?.element('link');
+
+		if (element != null) {
+			element.focus();
+			return iAccess.focus(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
+	/** @see [[iAccess.blur]] */
+	blur(): Promise<boolean> {
+		const
+			active = <AccessibleElement | null>document.activeElement;
+
+		if (active != null && this.$el?.contains(active)) {
+			active.blur();
+			return iAccess.blur(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
+	/** @see [[iAccess.disable]] */
+	disable(): Promise<boolean> {
+		let
+			areDisabled = false;
+
+		const
+			elements = this.dom.findFocusableElements(this.$el);
+
+		for (const element of elements) {
+			element.setAttribute('disabled', 'true');
+			areDisabled = true;
+		}
+
+		if (areDisabled) {
+			return iAccess.disable(this);
+		}
+
+		return SyncPromise.resolve(areDisabled);
+	}
+
+	/** @see [[iAccess.enable]] */
+	enable(): Promise<boolean> {
+		let
+			areEnabled = false;
+
+		if (this.$el == null) {
+			return SyncPromise.resolve(areEnabled);
+		}
+
+		const
+			elements = this.$el.querySelectorAll('[disabled="true"]');
+
+		for (const element of Array.from(elements)) {
+			element.removeAttribute('disabled');
+			areEnabled = true;
+		}
+
+		if (areEnabled) {
+			return iAccess.enable(this);
+		}
+
+		return SyncPromise.resolve(areEnabled);
+	}
+
 	/**
 	 * A link to the active item element.
 	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.

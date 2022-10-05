@@ -64,6 +64,7 @@ import type {
 	UnsafeBSelect
 
 } from 'form/b-select/interface';
+import iAccess from 'traits/i-access/i-access';
 
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';
@@ -84,8 +85,8 @@ interface bSelect extends Trait<typeof iOpenToggle> {}
 	}
 })
 
-@derive(iOpenToggle)
-class bSelect extends iInputText implements iOpenToggle, iItems {
+@derive(iOpenToggle, iAccess)
+class bSelect extends iInputText implements iOpenToggle, iItems, iAccess {
 	override readonly Value!: Value;
 	override readonly FormValue!: FormValue;
 
@@ -775,6 +776,18 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	// eslint-disable-next-line @typescript-eslint/require-await
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await on.openedChange(this, e);
+	}
+
+	/** @see [[iAccess.focus]] */
+	override focus(): Promise<boolean> {
+		this.onFocus();
+		return iAccess.focus(this);
+	}
+
+	/** @see [[iAccess.blur]] */
+	override blur(): Promise<boolean> {
+		void this.close();
+		return iAccess.blur(this);
 	}
 
 	/**

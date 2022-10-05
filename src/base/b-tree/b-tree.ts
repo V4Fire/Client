@@ -21,6 +21,7 @@ import symbolGenerator from 'core/symbol';
 
 import { derive } from 'core/functools/trait';
 
+import SyncPromise from 'core/promise/sync';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iData, { component, prop, field, TaskParams, TaskI } from 'super/i-data/i-data';
 import iAccess from 'traits/i-access/i-access';
@@ -128,6 +129,58 @@ class bTree extends iData implements iItems, iAccess {
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
 	items!: this['Items'];
+
+	/** @see [[iAccess.focus]] */
+	focus(): Promise<boolean> {
+		const
+			element = this.dom.findFocusableElement(this.top != null ? this.top.$el : this.$el);
+
+		if (element != null) {
+			element.focus();
+			return iAccess.focus(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
+	/** @see [[iAccess.blur]] */
+	blur(): Promise<boolean> {
+		const
+			active = <AccessibleElement | null>document.activeElement;
+
+		if (active != null && this.$el?.contains(active)) {
+			active.blur();
+			return iAccess.blur(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
+	/** @see [[iAccess.disable]] */
+	disable(): Promise<boolean> {
+		const
+			element = this.dom.findFocusableElement(this.top != null ? this.top.$el : this.$el);
+
+		if (element != null) {
+			element.setAttribute('disabled', 'true');
+			return iAccess.disable(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
+	/** @see [[iAccess.enable]] */
+	enable(): Promise<boolean> {
+		const
+			element = this.$el?.querySelector('[disabled="true"]');
+
+		if (element != null) {
+			element.removeAttribute('disabled');
+			return iAccess.enable(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
 
 	/**
 	 * Parameters for async render tasks
