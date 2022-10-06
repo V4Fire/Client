@@ -31,7 +31,6 @@ import Storage from 'friends/storage';
 import { component } from 'core/component';
 import { system, computed } from 'super/i-block/modules/decorators';
 
-import 'super/i-block/directives';
 import iBlockProps from 'super/i-block/props';
 
 @component()
