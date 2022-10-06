@@ -25,10 +25,11 @@ import type {
 import { component, globalEmitter } from 'core/component';
 import { system } from 'super/i-block/modules/decorators';
 
-import iBlockFriends from 'super/i-block/friends';
+import iBlockBase from 'super/i-block/base';
+import type { ComponentEvent } from 'super/i-block/interface';
 
 @component()
-export default abstract class iBlockEvent extends iBlockFriends {
+export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * The component event emitter.
 	 * All events fired by this emitter can be listened to "outside" with the `v-on` directive.
@@ -191,5 +192,124 @@ export default abstract class iBlockEvent extends iBlockFriends {
 	 */
 	off(opts?: ClearOptionsId<EventId>): void {
 		this.selfEmitter.off(opts);
+	}
+
+	/**
+	 * Returns true if the specified event can be dispatched as a component own event (`selfDispatching`)
+	 * @param event
+	 */
+	canSelfDispatchEvent(event: string): boolean {
+		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event);
+	}
+
+	/**
+	 * Emits a component event.
+	 * Note that this method always fires two events:
+	 *
+	 * 1. `${event}`(self, ...args)
+	 * 2. `on-${event}`(...args)
+	 *
+	 * @param event
+	 * @param args
+	 */
+	emit(event: string | ComponentEvent, ...args: unknown[]): void {
+		const
+			eventDecl = Object.isString(event) ? {event} : event,
+			eventName = eventDecl.event.camelize(false);
+
+		eventDecl.event = eventName;
+
+		this.$emit(eventName, this, ...args);
+		this.$emit(`on-${eventName}`.camelize(false), ...args);
+
+		if (this.dispatching) {
+			this.dispatch(eventDecl, ...args);
+		}
+
+		const
+			logArgs = args.slice();
+
+		if (eventDecl.type === 'error') {
+			for (let i = 0; i < logArgs.length; i++) {
+				const
+					el = logArgs[i];
+
+				if (Object.isFunction(el)) {
+					logArgs[i] = () => el;
+				}
+			}
+		}
+
+		this.log(`event:${eventName}`, this, ...logArgs);
+	}
+
+	/**
+	 * Emits a component error event
+	 * (all functions from arguments will be wrapped for logging)
+	 *
+	 * @param event
+	 * @param args
+	 */
+	emitError(event: string, ...args: unknown[]): void {
+		this.emit({event, type: 'error'}, ...args);
+	}
+
+	/**
+	 * Emits a component event to a parent component
+	 *
+	 * @param event
+	 * @param args
+	 */
+	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
+		const
+			eventDecl = Object.isString(event) ? {event} : event,
+			eventName = eventDecl.event.camelize(false);
+
+		eventDecl.event = eventName;
+
+		let {
+			componentName,
+			$parent: parent
+		} = this;
+
+		const
+			globalName = (this.globalName ?? '').camelize(false),
+			logArgs = args.slice();
+
+		if (eventDecl.type === 'error') {
+			for (let i = 0; i < logArgs.length; i++) {
+				const
+					el = logArgs[i];
+
+				if (Object.isFunction(el)) {
+					logArgs[i] = () => el;
+				}
+			}
+		}
+
+		while (parent) {
+			if (parent.selfDispatching && parent.canSelfDispatchEvent(eventName)) {
+				parent.$emit(eventName, this, ...args);
+				parent.$emit(`on-${eventName}`, ...args);
+				parent.log(`event:${eventName}`, this, ...logArgs);
+
+			} else {
+				parent.$emit(`${componentName}::${eventName}`, this, ...args);
+				parent.$emit(`${componentName}::on-${eventName}`, ...args);
+				parent.log(`event:${componentName}::${eventName}`, this, ...logArgs);
+
+				if (globalName !== '') {
+					parent.$emit(`${globalName}::${eventName}`, this, ...args);
+					parent.$emit(`${globalName}::on-${eventName}`, ...args);
+					parent.log(`event:${globalName}::${eventName}`, this, ...logArgs);
+				}
+			}
+
+			if (!parent.dispatching) {
+				break;
+			}
+
+			parent = parent.$parent;
+		}
 	}
 }
