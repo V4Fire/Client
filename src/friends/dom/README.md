@@ -1,6 +1,6 @@
 # friends/dom
 
-This module provides a class to low-level working with a component DOM tree.
+This module provides a class for low-level working with a component DOM tree.
 
 ## How to include this module to your component?
 

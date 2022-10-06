@@ -1,6 +1,6 @@
 # friends/vdom
 
-This module provides a class to low-level working with a component VDOM tree.
+This module provides a class for low-level working with a component VDOM tree.
 
 ## How to include this module to your component?
 

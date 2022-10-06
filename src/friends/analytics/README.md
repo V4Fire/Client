@@ -1,6 +1,6 @@
 # friends/analytics
 
-This module provides a class for sending component analytic events.
+This module provides a class to send component analytic events.
 The module uses `core/analytics` with the default engine.
 
 ```js
