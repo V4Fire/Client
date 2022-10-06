@@ -23,8 +23,9 @@ import { derive } from 'core/functools/trait';
 
 import SyncPromise from 'core/promise/sync';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
-import iData, { component, prop, field, TaskParams, TaskI } from 'super/i-data/i-data';
+import iData, { component, prop, field, TaskParams, TaskI, ComponentElement } from 'super/i-data/i-data';
 import iAccess from 'traits/i-access/i-access';
+import type iBlock from 'super/i-block/i-block';
 
 import type { Item, RenderFilter } from 'base/b-tree/interface';
 import type { Orientation } from 'core/component/directives/aria';
@@ -159,27 +160,57 @@ class bTree extends iData implements iItems, iAccess {
 	/** @see [[iAccess.disable]] */
 	disable(): Promise<boolean> {
 		const
-			element = this.dom.findFocusableElement(this.top != null ? this.top.$el : this.$el);
+			items = this.block?.elements<ComponentElement<iBlock>>('item'),
+			children = this.block?.elements<ComponentElement<iBlock>>('child');
 
-		if (element != null) {
-			element.setAttribute('disabled', 'true');
-			return iAccess.disable(this);
+		items?.forEach(disableElement);
+		children?.forEach(disableElement);
+
+		return iAccess.disable(this);
+
+		function disableElement(element: ComponentElement<iBlock>) {
+			const
+				{component} = element;
+
+			if (component == null) {
+				element.setAttribute('disabled', 'true');
+				return;
+			}
+
+			if (iAccess.is(component)) {
+				return component.disable();
+			}
+
+			void iAccess.disable(component);
 		}
-
-		return SyncPromise.resolve(false);
 	}
 
 	/** @see [[iAccess.enable]] */
 	enable(): Promise<boolean> {
 		const
-			element = this.$el?.querySelector('[disabled="true"]');
+			items = this.block?.elements<ComponentElement<iBlock>>('item'),
+			children = this.block?.elements<ComponentElement<iBlock>>('child');
 
-		if (element != null) {
-			element.removeAttribute('disabled');
-			return iAccess.enable(this);
+		items?.forEach(enableElement);
+		children?.forEach(enableElement);
+
+		return iAccess.enable(this);
+
+		function enableElement(element: ComponentElement<iBlock>) {
+			const
+				{component} = element;
+
+			if (component == null) {
+				element.removeAttribute('disabled');
+				return;
+			}
+
+			if (iAccess.is(component)) {
+				return component.enable();
+			}
+
+			void iAccess.enable(component);
 		}
-
-		return SyncPromise.resolve(false);
 	}
 
 	/**
