@@ -2573,6 +2573,14 @@ export default abstract class iBlock extends ComponentInterface {
 		this.emit('mounted', this.$el);
 	}
 
+	/**
+	 *
+	 */
+	@hook('mounted')
+	protected initDebugMode(): void {
+		this.debugMode.initDebugDataGathering();
+	}
+
 	protected override onCreatedHook(): void {
 		if (this.isFlyweight || this.isSSR) {
 			this.componentStatusStore = 'ready';
