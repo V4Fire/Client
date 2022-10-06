@@ -14,7 +14,6 @@
 import Friend from 'super/i-block/modules/friend';
 import composeDataEngine from 'super/i-block/modules/debug-mode/compose-data';
 
-import type iBlock from 'super/i-block/i-block';
 import type { GatheringStrategy, RenderStrategy } from 'super/i-block/modules/debug-mode/interface';
 
 export * from 'super/i-block/modules/debug-mode/interface';
@@ -33,16 +32,10 @@ export default class DebugMode extends Friend {
 	 */
 	protected readonly dataRenderStrategies: RenderStrategy[] = [];
 
-	constructor(component: iBlock) {
-		super(component);
-
-		this.initDebugDataGathering();
-	}
-
 	/**
 	 *
 	 */
-	protected initDebugDataGathering(): void {
+	initDebugDataGathering(): void {
 		if (this.dataGatheringStrategies.length === 0) {
 			return;
 		}
