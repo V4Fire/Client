@@ -12,7 +12,7 @@ export default function composeDataEngine(
 ): Promise<void> {
 	return new Promise(async (resolve, reject) => {
 		const
-			storageDebugData = new Map();
+			storageDebugData = {};
 
 		data.forEach((result) => {
 			if (result.status === 'rejected') {
@@ -23,22 +23,22 @@ export default function composeDataEngine(
 				{value} = result,
 				{renderBy, data} = value;
 
-			if (!storageDebugData.has(renderBy)) {
-				storageDebugData.set(renderBy, new Map());
+			if (!Object.has(storageDebugData, renderBy)) {
+				Object.set(storageDebugData, renderBy, {});
 			}
 
 			const
-				oldFieldData = storageDebugData.get(renderBy),
-				newFieldData = new Map([oldFieldData, data]);
+				oldFieldData = Object.get(storageDebugData, renderBy),
+				newFieldData = Object.assign(oldFieldData, data);
 
-			storageDebugData.set(renderBy, newFieldData);
+			Object.set(storageDebugData, renderBy, newFieldData);
 		});
 
-		if (storageDebugData.size === 0) {
+		if (Object.size(storageDebugData) === 0) {
 			return reject('No data was received');
 		}
 
-		await context.storage.set(storageDebugData, 'ComponentDebugData');
+		await context.storage.set(storageDebugData, 'DebugData');
 
 		return resolve();
 	});
