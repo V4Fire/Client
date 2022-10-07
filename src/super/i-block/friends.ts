@@ -9,7 +9,7 @@
 import * as helpers from 'core/helpers';
 import * as browser from 'core/browser';
 
-import Daemons from 'friends/daemons';
+import Daemons, { DaemonsDict } from 'friends/daemons';
 import Analytics from 'friends/analytics';
 
 import DOM from 'friends/dom';
@@ -29,7 +29,7 @@ import State from 'friends/state';
 import Storage from 'friends/storage';
 
 import { component } from 'core/component';
-import { system, computed } from 'super/i-block/modules/decorators';
+import { system } from 'super/i-block/modules/decorators';
 
 import iBlockProps from 'super/i-block/props';
 
@@ -136,6 +136,11 @@ export default abstract class iBlockFriends extends iBlockProps {
 	readonly lfc!: Lfc;
 
 	/**
+	 * A dictionary with component daemons
+	 */
+	static readonly daemons: DaemonsDict = {};
+
+	/**
 	 * A class to create daemons associated with a component
 	 */
 	@system({
@@ -226,14 +231,6 @@ export default abstract class iBlockFriends extends iBlockProps {
 	})
 
 	protected readonly browser: typeof browser = browser;
-
-	/**
-	 * An alias for the `i18n` prop
-	 */
-	@computed()
-	protected get t(): this['i18n'] {
-		return this.i18n;
-	}
 
 	/**
 	 * A link to the `globalThis.l` function

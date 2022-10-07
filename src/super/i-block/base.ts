@@ -88,6 +88,20 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
+	 * A link to the root component
+	 */
+	get r(): this['$root'] {
+		const
+			r = this.$root;
+
+		if ('$remoteParent' in r.unsafe) {
+			return r.unsafe.$remoteParent!.$root;
+		}
+
+		return r;
+	}
+
+	/**
 	 * Number of listeners for the `beforeReady` event.
 	 * This is used to optimize component initialization.
 	 */
@@ -141,6 +155,14 @@ export default abstract class iBlockBase extends iBlockFriends {
 	@computed()
 	protected get self(): this {
 		return this;
+	}
+
+	/**
+	 * An alias for the `i18n` prop
+	 */
+	@computed()
+	protected get t(): this['i18n'] {
+		return this.i18n;
 	}
 
 	/**
