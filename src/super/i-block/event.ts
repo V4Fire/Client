@@ -9,6 +9,7 @@
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import type Async from 'core/async';
+
 import type {
 
 	ProxyCb,
@@ -30,6 +31,8 @@ import type { ComponentEvent } from 'super/i-block/interface';
 
 @component()
 export default abstract class iBlockEvent extends iBlockBase {
+	override readonly Component!: iBlockEvent;
+
 	/**
 	 * The component event emitter.
 	 * All events fired by this emitter can be listened to "outside" with the `v-on` directive.
@@ -209,8 +212,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * 1. `${event}`(self, ...args)
 	 * 2. `on-${event}`(...args)
 	 *
-	 * @param event
-	 * @param args
+	 * @param event - the event name to dispatch
+	 * @param args - the event arguments
 	 */
 	emit(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
@@ -230,14 +233,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 			logArgs = args.slice();
 
 		if (eventDecl.type === 'error') {
-			for (let i = 0; i < logArgs.length; i++) {
-				const
-					el = logArgs[i];
-
+			logArgs.forEach((el, i) => {
 				if (Object.isFunction(el)) {
 					logArgs[i] = () => el;
 				}
-			}
+			});
 		}
 
 		this.log(`event:${eventName}`, this, ...logArgs);
@@ -245,20 +245,27 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Emits a component error event
-	 * (all functions from arguments will be wrapped for logging)
 	 *
-	 * @param event
-	 * @param args
+	 * @param event - the event name to dispatch
+	 * @param args - the event arguments
 	 */
 	emitError(event: string, ...args: unknown[]): void {
 		this.emit({event, type: 'error'}, ...args);
 	}
 
 	/**
-	 * Emits a component event to a parent component
+	 * Emits a component event to the parent component.
 	 *
-	 * @param event
-	 * @param args
+	 * This means that all component events will bubble up to the parent component:
+	 * if the parent also has the `dispatching` property set to true, then events will bubble up to the next
+	 * (from the hierarchy) parent component.
+	 *
+	 * All dispatched events have special prefixes to avoid collisions with events from other components.
+	 * For example: bButton `click` will bubble up as `b-button::click`.
+	 * Or if the component has the `globalName` prop, it will additionally bubble up as `${globalName}::click`.
+	 *
+	 * @param event - the event name to dispatch
+	 * @param args - the event arguments
 	 */
 	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
@@ -277,17 +284,14 @@ export default abstract class iBlockEvent extends iBlockBase {
 			logArgs = args.slice();
 
 		if (eventDecl.type === 'error') {
-			for (let i = 0; i < logArgs.length; i++) {
-				const
-					el = logArgs[i];
-
+			logArgs.forEach((el, i) => {
 				if (Object.isFunction(el)) {
 					logArgs[i] = () => el;
 				}
-			}
+			});
 		}
 
-		while (parent) {
+		while (parent != null) {
 			if (parent.selfDispatching && parent.canSelfDispatchEvent(eventName)) {
 				parent.$emit(eventName, this, ...args);
 				parent.$emit(`on-${eventName}`, ...args);
