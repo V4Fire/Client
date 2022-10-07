@@ -12,11 +12,13 @@ import { component, globalState, Hook } from 'core/component';
 import type { Module } from 'friends/module-loader';
 
 import { readyStatuses } from 'super/i-block/modules/activation';
-import { field, system, computed } from 'super/i-block/modules/decorators';
+import {field, system, computed, WaitDecoratorOptions} from 'super/i-block/modules/decorators';
 import type { Stage, ComponentStatus } from 'super/i-block/interface';
 
 import iBlockMods from 'super/i-block/mods';
 import {ComponentStatuses} from "super/i-block/interface";
+import {BoundFn} from "core/async";
+import SyncPromise from "core/promise/sync";
 
 @component()
 export default abstract class iBlockState extends iBlockMods {
@@ -237,5 +239,94 @@ export default abstract class iBlockState extends iBlockMods {
 			this.emit(`componentHook:${value}`, value, oldValue);
 			this.emit('componentHookChange', value, oldValue);
 		}
+	}
+
+	/** @inheritDoc */
+	getComponentInfo(): Dictionary {
+		return {
+			name: this.componentName,
+			hook: this.hook,
+			componentStatus: this.componentStatus
+		};
+	}
+
+	/**
+	 * Returns a promise that will be resolved when the component is toggled to the specified status
+	 *
+	 * @see [[Async.promise]]
+	 * @param status
+	 * @param [opts] - additional options
+	 */
+	waitStatus(status: ComponentStatus, opts?: WaitDecoratorOptions): Promise<void>;
+
+	/**
+	 * Executes a callback when the component is toggled to the specified status.
+	 * The method returns a promise resulting from invoking the function or raw result without wrapping
+	 * if the component is already in the specified status.
+	 *
+	 * @see [[Async.promise]]
+	 * @param status
+	 * @param cb
+	 * @param [opts] - additional options
+	 */
+	waitStatus<F extends BoundFn<this>>(
+		status: ComponentStatus,
+		cb: F,
+		opts?: WaitDecoratorOptions
+	): CanPromise<ReturnType<F>>;
+
+	waitStatus<F extends BoundFn<this>>(
+		status: ComponentStatus,
+		cbOrOpts?: F | WaitDecoratorOptions,
+		opts?: WaitDecoratorOptions
+	): CanPromise<undefined | ReturnType<F>> {
+		let
+			needWrap = true;
+
+		let
+			cb;
+
+		if (Object.isFunction(cbOrOpts)) {
+			cb = cbOrOpts;
+			needWrap = false;
+
+		} else {
+			opts = cbOrOpts;
+		}
+
+		opts = {...opts, join: false};
+
+		if (!needWrap) {
+			return wait(status, {...opts, fn: cb}).call(this);
+		}
+
+		let
+			isResolved = false;
+
+		const promise = new SyncPromise((resolve) => wait(status, {
+			...opts,
+			fn: () => {
+				isResolved = true;
+				resolve();
+			}
+		}).call(this));
+
+		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+		if (isResolved) {
+			return promise;
+		}
+
+		return this.async.promise<undefined>(promise);
+	}
+
+	/**
+	 * Hook handler: component will be destroyed
+	 */
+	protected beforeDestroy(): void {
+		this.componentStatus = 'destroyed';
+
+		try {
+			delete classesCache.dict.els?.[this.componentId];
+		} catch {}
 	}
 }

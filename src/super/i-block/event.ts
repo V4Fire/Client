@@ -30,6 +30,8 @@ import { initGlobalListeners } from 'super/i-block/modules/listeners';
 
 import iBlockBase from 'super/i-block/base';
 import type { ComponentEvent } from 'super/i-block/interface';
+import SyncPromise from "core/promise/sync";
+import {ParentMessage} from "super/i-block/interface";
 
 @component()
 export default abstract class iBlockEvent extends iBlockBase {
@@ -320,11 +322,79 @@ export default abstract class iBlockEvent extends iBlockBase {
 	}
 
 	/**
+	 * Waits until the specified reference won't be available and returns it.
+	 * The method returns a promise.
+	 *
+	 * @see [[Async.wait]]
+	 * @param ref - ref name
+	 * @param [opts] - additional options
+	 */
+	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
+		let
+			that = <iBlock>this;
+
+		if (this.isFunctional) {
+			ref += `:${this.componentId}`;
+			that = this.$normalParent ?? that;
+		}
+
+		const
+			refVal = that.$refs[ref];
+
+		return this.async.promise<T>(() => new SyncPromise((resolve) => {
+			if (refVal != null && (!Object.isArray(refVal) || refVal.length > 0)) {
+				resolve(<T>refVal);
+
+			} else {
+				this.once(`[[REF:${ref}]]`, resolve, opts);
+			}
+		}), opts);
+	}
+
+	/**
 	 * Initializes the global event listeners
 	 * @param [resetListener]
 	 */
 	@hook({created: {functional: false}})
 	protected initGlobalEvents(resetListener?: boolean): void {
 		initGlobalListeners(Object.cast(this), resetListener);
+	}
+
+	@hook({beforeRuntime: {functional: false}})
+	protected override initBaseAPI(): void {
+		super.initBaseAPI();
+
+		const
+			i = this.instance;
+
+		this.on = i.on.bind(this);
+		this.once = i.once.bind(this);
+		this.off = i.off.bind(this);
+		this.emit = i.emit.bind(this);
+	}
+
+	/**
+	 * Initializes the `callChild` event listener
+	 */
+	@watch({field: 'proxyCall', immediate: true})
+	protected initCallChildListener(value: boolean): void {
+		if (!value) {
+			return;
+		}
+
+		this.parentEmitter.on('onCallChild', this.onCallChild.bind(this));
+	}
+
+	/**
+	 * Handler: `callChild` event
+	 * @param e
+	 */
+	protected onCallChild(e: ParentMessage<this>): void {
+		if (
+			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
+			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]
+		) {
+			return e.action.call(this);
+		}
 	}
 }

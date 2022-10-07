@@ -45,6 +45,34 @@ export default abstract class iBlockMods extends iBlockEvent {
 	}
 
 	/**
+	 * The special link to a parent component.
+	 * This parameter is used with the static declaration of modifiers to refer to parent modifiers.
+	 *
+	 * @example
+	 * ```js
+	 * @component()
+	 * class Foo extends iBlock {
+	 *   static mods = {
+	 *     theme: [
+	 *       ['light']
+	 *     ]
+	 *   };
+	 * }
+	 *
+	 * @component()
+	 * class Bar extends Foo {
+	 *   static mods = {
+	 *     theme: [
+	 *       Bar.PARENT,
+	 *       ['dark']
+	 *     ]
+	 *   };
+	 * }
+	 * ```
+	 */
+	static readonly PARENT: object = PARENT;
+
+	/**
 	 * Static declaration of component modifiers.
 	 *
 	 * This declaration helps to declare a default modifier value: wrap the value with square brackets.

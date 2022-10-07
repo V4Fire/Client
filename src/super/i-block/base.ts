@@ -534,4 +534,15 @@ export default abstract class iBlockBase extends iBlockFriends {
 	protected initRemoteWatchers(): void {
 		initRemoteWatchers(this);
 	}
+
+	/**
+	 * Initializes the core component API
+	 */
+	@hook({beforeRuntime: {functional: false}})
+	protected initBaseAPI(): void {
+		const
+			i = this.instance;
+
+		this.watch = i.watch.bind(this);
+	}
 }
