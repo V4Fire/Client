@@ -114,7 +114,7 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 	tmp: CTX['tmp'];
 
 	// @ts-ignore (access)
-	watchTmp: CTX['watchTmp'];
+	reactiveTmp: CTX['reactiveTmp'];
 
 	// @ts-ignore (access)
 	ifOnceStore: CTX['ifOnceStore'];

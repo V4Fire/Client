@@ -26,9 +26,6 @@ export const
 
 @component()
 export default abstract class iBlockBase extends iBlockFriends {
-	/**
-	 * Component unique identifier
-	 */
 	@system({
 		atom: true,
 		unique: (ctx, oldCtx) => !ctx.$el?.classList.contains(oldCtx.componentId),
@@ -69,13 +66,13 @@ export default abstract class iBlockBase extends iBlockFriends {
 	isActivated!: boolean;
 
 	/**
-	 * True if the component was in `ready` status at least once
+	 * True if the component has been in the `ready` state at least once
 	 */
 	@system({unique: true})
 	isReadyOnce: boolean = false;
 
 	/**
-	 * True if the current component is a functional
+	 * True if the component is a functional
 	 */
 	@computed()
 	get isFunctional(): boolean {
@@ -83,7 +80,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * True if the current component is rendered by using server-side rendering
+	 * True if the component is rendered by using server-side rendering
 	 */
 	@computed()
 	get isSSR(): boolean {
@@ -91,22 +88,22 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * Number of `beforeReady` event listeners:
-	 * it's used to optimize component initializing
+	 * Number of listeners for the `beforeReady` event.
+	 * This is used to optimize component initialization.
 	 */
 	@system({unique: true})
 	protected beforeReadyListeners: number = 0;
 
 	/**
-	 * A list of `blockReady` listeners:
-	 * it's used to optimize component initializing
+	 * A list of `blockReady` listeners.
+	 * This is used to optimize component initialization.
 	 */
 	@system({unique: true})
 	protected blockReadyListeners: Function[] = [];
 
 	/**
-	 * A temporary cache.
-	 * Mutation of this object don't emits re-rendering of the component.
+	 * A temporary cache dictionary.
+	 * Mutation of this object does not cause the component to re-render.
 	 */
 	@system({
 		merge: true,
@@ -116,14 +113,14 @@ export default abstract class iBlockBase extends iBlockFriends {
 	protected tmp!: Dictionary;
 
 	/**
-	 * A temporary cache.
-	 * Mutation of this object emits re-rendering of the component.
+	 * A temporary cache dictionary.
+	 * Mutation of this object can cause the component to re-render.
 	 */
 	@field({merge: true})
-	protected watchTmp: Dictionary = {};
+	protected reactiveTmp: Dictionary = {};
 
 	/**
-	 * Cache of watched values
+	 * A cache dictionary of watched values
 	 */
 	@system({
 		merge: true,
@@ -133,13 +130,13 @@ export default abstract class iBlockBase extends iBlockFriends {
 	protected watchCache!: Dictionary;
 
 	/**
-	 * Cache object for `opt.ifOnce`
+	 * A cache dictionary for the `opt.ifOnce` method
 	 */
 	@system({merge: true})
 	protected readonly ifOnceStore: Dictionary<number> = {};
 
 	/**
-	 * Link to the current component
+	 * A link to the component itself
 	 */
 	@computed()
 	protected get self(): this {
@@ -160,11 +157,11 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * Sets a watcher to a component/object property or event by the specified path.
+	 * Sets a watcher to the component/object property or event by the specified path.
 	 *
-	 * When you watch for some property changes, the handler function can take the second argument that refers
-	 * to the old value of a property. If the object watching is non-primitive, the old value will be cloned from the
-	 * original old value to avoid having two links to one object.
+	 * When you watch some properties change, the handler function can take a second argument that refers to
+	 * the property old value. If the watched value is not a primitive, the old value will be cloned from
+	 * the original old value to avoid two references to the same object.
 	 *
 	 * ```typescript
 	 * @component()
@@ -179,7 +176,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 *     console.log(value[0] !== oldValue[0]);
 	 *   }
 	 *
-	 *   // When you don't declare the second argument in a watcher,
+	 *   // When you don't declare a second argument in the watcher,
 	 *   // the previous value isn't cloned
 	 *   @watch('list')
 	 *   onListChangeWithoutCloning(value: Dictionary[]): void {
@@ -188,8 +185,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 *     console.log(value[0] === oldValue[0]);
 	 *   }
 	 *
-	 *   // When you watch a property in a deep and declare the second argument
-	 *   // in a watcher, the previous value is cloned deeply
+	 *   // When you watch a property in a deep and declare a second argument
+	 *   // in the watcher, the previous value is cloned deeply
 	 *   @watch({path: 'list', deep: true})
 	 *   onListChangeWithDeepCloning(value: Dictionary[], oldValue: Dictionary[]): void {
 	 *     // true
@@ -204,27 +201,27 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * }
 	 * ```
 	 *
-	 * You need to use the special delimiter ":" within a path to listen to an event.
-	 * Also, you can specify an event emitter to listen to by writing a link before ":".
+	 * You need to use the special ":" delimiter within a path to listen for an event.
+	 * Also, you can specify an event emitter to listen for by writing a link before the ":" character.
 	 * For instance:
 	 *
-	 * 1. `':onChange'` - a component will listen to its own event `onChange`;
-	 * 2. `'localEmitter:onChange'` - a component will listen to an event `onChange` from `localEmitter`;
-	 * 3. `'$parent.localEmitter:onChange'` - a component will listen to an event `onChange` from `$parent.localEmitter`;
-	 * 4. `'document:scroll'` - a component will listen to an event `scroll` from `window.document`.
+	 * 1. `':onChange'` - will listen to the component `onChange` event;
+	 * 2. `'localEmitter:onChange'` - will listen to the `onChange` event from `localEmitter`;
+	 * 3. `'$parent.localEmitter:onChange'` - will listen to the `onChange` event from `$parent.localEmitter`;
+	 * 4. `'document:scroll'` - will listen to the `scroll` event from `window.document`.
 	 *
-	 * A link to the event emitter is taken from component properties or the global object.
-	 * The empty link '' is a link to a component itself.
+	 * A link to the event emitter is taken from the component properties or the global object.
+	 * An empty reference '' is a reference to the component itself.
 	 *
-	 * Also, if you listen to an event, you can manage when to start to listen to the event by using special characters
-	 * at the beginning of a path string:
+	 * Also, if you are listening to an event, you can control when to start listening to the event by using special
+	 * characters at the beginning of the path string:
 	 *
-	 * 1. `'!'` - start to listen to an event on the "beforeCreate" hook, for example: `'!rootEmitter:reset'`;
-	 * 2. `'?'` - start to listen an event on the "mounted" hook, for example: `'?$el:click'`.
+	 * 1. `'!'` - start listening to an event on the "beforeCreate" hook, eg: `'!rootEmitter:reset'`;
+	 * 2. `'?'` - start listening to an event on the "mounted" hook, eg: `'?$el:click'`.
 	 *
-	 * By default, all events start to listen on the "created" hook.
+	 * By default, all events start listening on the "created" hook.
 	 *
-	 * To listen for changes of another watchable object, you need to specify the watch path as an object:
+	 * To listen for changes to another observable, you need to specify the watch path as an object:
 	 *
 	 * ```
 	 * {
@@ -233,7 +230,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * }
 	 * ```
 	 *
-	 * @param path - path to a component property to watch or event to listen
+	 * @param path - a path to the component property to watch or an event to listen
 	 * @param opts - additional options
 	 * @param handler
 	 *
@@ -259,12 +256,12 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 *   console.log(val, oldVal);
 	 * });
 	 *
-	 * // Listen to `onChange` event of the current component
+	 * // Listen to the `onChange` event of the component
 	 * this.watch(':onChange', (val, oldVal) => {
 	 *   console.log(val, oldVal);
 	 * });
 	 *
-	 * // Listen to `onChange` event of `parentEmitter`
+	 * // Listen to the `onChange` event of `parentEmitter`
 	 * this.watch('parentEmitter:onChange', (val, oldVal) => {
 	 *   console.log(val, oldVal);
 	 * });
@@ -277,9 +274,9 @@ export default abstract class iBlockBase extends iBlockFriends {
 	): void;
 
 	/**
-	 * Sets a watcher to a component property/event by the specified path
+	 * Sets a watcher to the component property/event by the specified path
 	 *
-	 * @param path - path to a component property to watch or event to listen
+	 * @param path - a path to the component property to watch or an event to listen
 	 * @param handler
 	 * @param [opts] - additional options
 	 */
@@ -290,7 +287,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	): void;
 
 	/**
-	 * Sets a watcher to the specified watchable object
+	 * Sets a watcher to the specified observable object
 	 *
 	 * @param obj
 	 * @param opts - additional options
@@ -310,7 +307,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	): void;
 
 	/**
-	 * Sets a watcher to the specified watchable object
+	 * Sets a watcher to the specified observable object
 	 *
 	 * @param obj
 	 * @param handler
@@ -415,7 +412,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			{async: $a} = this;
 
 		if (Object.isFunction(fnOrOpts)) {
-			this.$nextTick($a.proxy(fnOrOpts, opts));
+			this.$nextTick($a.proxy(Object.cast<BoundFn<any>>(fnOrOpts), opts));
 			return;
 		}
 
@@ -423,7 +420,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * Forces the component' re-rendering
+	 * Forces the component to re-render
 	 */
 	@wait({defer: true, label: $$.forceUpdate})
 	forceUpdate(): Promise<void> {
@@ -435,7 +432,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * Logs an event with the specified context
 	 *
 	 * @param ctxOrOpts - the logging context or logging options
-	 * @param [details] - event details
+	 * @param [details] - the event details
 	 */
 	log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
@@ -475,7 +472,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * Initializes an instance of the `Block` class for the current component
+	 * Initializes an instance of the `Block` class for the component
 	 */
 	@hook('mounted')
 	protected initBlockInstance(): void {
@@ -496,10 +493,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 		this.block = new Block(Object.cast(this));
 
 		if (this.blockReadyListeners.length > 0) {
-			for (let i = 0; i < this.blockReadyListeners.length; i++) {
-				this.blockReadyListeners[i]();
-			}
-
+			this.blockReadyListeners.forEach((listener) => listener());
 			this.blockReadyListeners = [];
 		}
 	}
