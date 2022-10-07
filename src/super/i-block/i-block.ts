@@ -2576,7 +2576,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 *
 	 */
-	@hook('mounted')
+	@hook(['mounted', 'updated'])
 	protected initDebugMode(): void {
 		this.debugMode.initDebugDataGathering();
 	}

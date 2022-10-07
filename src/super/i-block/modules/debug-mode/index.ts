@@ -42,21 +42,22 @@ export default class DebugMode extends Friend {
 
 		Promise.allSettled(
 			this.dataGatheringStrategies.map((strategy) => strategy(this.component))
-		).then((results) => composeDataEngine(results, this.ctx))
-			.then(() => this.initDebugDataRendering())
+		).then((results) => composeDataEngine(results))
+			.then((data) => this.initDebugDataRendering(data))
 			.catch(stderr);
 	}
 
 	/**
 	 *
+	 * @param data
 	 */
-	protected initDebugDataRendering(): void {
+	protected initDebugDataRendering(data: Dictionary): void {
 		if (this.dataRenderStrategies.length === 0) {
 			return;
 		}
 
 		Promise.allSettled(
-			this.dataRenderStrategies.map((strategy) => strategy(this.component, this.ctx))
+			this.dataRenderStrategies.map((strategy) => strategy(this.component, this.ctx, data))
 		).then((results) => {
 			const
 				isSomeRenderSuccessful = results.some((result) => result.status === 'fulfilled');

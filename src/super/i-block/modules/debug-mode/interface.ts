@@ -38,5 +38,10 @@ export type RenderStrategy = (
 	/**
 	 *
 	 */
-	context: UnsafeIBlock
+	context: UnsafeIBlock,
+
+	/**
+	 *
+	 */
+	debugDataStore: Dictionary
 ) => Promise<void>;
