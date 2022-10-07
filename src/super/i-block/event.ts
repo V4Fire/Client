@@ -24,7 +24,9 @@ import type {
 } from 'core/async';
 
 import { component, globalEmitter } from 'core/component';
-import { system } from 'super/i-block/modules/decorators';
+
+import { system, hook } from 'super/i-block/modules/decorators';
+import { initGlobalListeners } from 'super/i-block/modules/listeners';
 
 import iBlockBase from 'super/i-block/base';
 import type { ComponentEvent } from 'super/i-block/interface';
@@ -315,5 +317,14 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 			parent = parent.$parent;
 		}
+	}
+
+	/**
+	 * Initializes the global event listeners
+	 * @param [resetListener]
+	 */
+	@hook({created: {functional: false}})
+	protected initGlobalEvents(resetListener?: boolean): void {
+		initGlobalListeners(Object.cast(this), resetListener);
 	}
 }

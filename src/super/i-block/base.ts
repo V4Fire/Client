@@ -15,6 +15,7 @@ import { bindRemoteWatchers, component, customWatcherRgxp, RawWatchHandler, Watc
 
 import { field, system, computed, hook, wait } from 'super/i-block/modules/decorators';
 import { activate, deactivate } from 'super/i-block/modules/activation';
+import { initRemoteWatchers } from 'super/i-block/modules/listeners';
 
 import Block from 'friends/block';
 import type { AsyncWatchOptions } from 'friends/sync';
@@ -100,6 +101,12 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 		return r;
 	}
+
+	/**
+	 * True if the component context is based on another component via `vdom.bindRenderObject`
+	 */
+	@system()
+	protected readonly isVirtualTpl: boolean = false;
 
 	/**
 	 * Number of listeners for the `beforeReady` event.
@@ -518,5 +525,13 @@ export default abstract class iBlockBase extends iBlockFriends {
 			this.blockReadyListeners.forEach((listener) => listener());
 			this.blockReadyListeners = [];
 		}
+	}
+
+	/**
+	 * Initializes remote watchers from the prop
+	 */
+	@hook({beforeDataCreate: {functional: false}})
+	protected initRemoteWatchers(): void {
+		initRemoteWatchers(this);
 	}
 }
