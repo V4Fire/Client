@@ -30,9 +30,9 @@
 					< tag &
 						:is = el.href !== undefined ? 'a' : 'button' |
 
+						:id = el.id |
 						:href = el.href |
 						:value = el.value |
-						:aria-selected = el.href === undefined ? isActive(el.value) : undefined |
 
 						:-id = values.get(el.value) |
 						:-hint = el.hint |
@@ -48,7 +48,13 @@
 							}
 						})) |
 
-						:v-attrs = el.attrs
+						:v-attrs = isTablist ?
+							{
+								'v-aria:tab': getAriaConfig('tab', el, i),
+								'v-aria:controls': {for: el.controls},
+								...el.attrs
+							} :
+							el.attrs
 					.
 						- block preIcon
 							< span.&__cell.&__link-icon.&__link-pre-icon v-if = el.preIcon || vdom.getSlot('preIcon')
@@ -101,6 +107,11 @@
 
 		< tag.&__wrapper &
 			:is = listTag |
-			:v-attrs = attrs
+			:v-attrs = isTablist ?
+				{
+					'v-aria:tablist': getAriaConfig('tablist'),
+					...attrs
+				} :
+				attrs
 		.
 			+= self.list('items')

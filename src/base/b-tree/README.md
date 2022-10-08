@@ -6,9 +6,11 @@ This module provides a component to render a recursive list of elements.
 
 * The component extends [[iData]].
 
-* The component implements the [[iItems]] trait.
+* The component implements the [[iAccess]], [[iItems]] trait.
 
 * By default, the root tag of the component is `<div>`.
+
+* The component is accessible.
 
 ## Features
 
@@ -197,11 +199,11 @@ Also, you can see the implemented traits or the parent component.
 
 ### Props
 
-### folded
+#### [folded = `true`]
 
 If true, then all nested elements are folded by default.
 
-### renderFilter
+#### [renderFilter]
 
 A common filter to render items via `asyncRender`.
 It is used to optimize the process of rendering items.
@@ -210,7 +212,7 @@ It is used to optimize the process of rendering items.
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :renderFilter = () => async.idle()
 ```
 
-### nestedRenderFilter
+#### [nestedRenderFilter]
 
 A filter to render nested items via `asyncRender`.
 It is used to optimize the process of rendering child items.
@@ -219,10 +221,23 @@ It is used to optimize the process of rendering child items.
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :nestedRenderFilter = () => async.idle()
 ```
 
-### renderChunks
+#### [renderChunks = `5`]
 
 Number of chunks to render per tick via `asyncRender`.
 
 ```
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :renderChunks = 3
 ```
+
+#### [orientation = `horizontal`]
+
+The component view orientation.
+
+## Accessibility
+
+The component implements an ARIA role [tree](https://www.w3.org/TR/wai-aria/#tree).
+Only basic accessible functionality (without optional keyboard combinations) included in this [widget](https://www.w3.org/WAI/ARIA/apg/patterns/treeview/) is supported.
+
+The component includes the following roles:
+- [tree](https://www.w3.org/TR/wai-aria/#tree)
+- [treeitem](https://www.w3.org/TR/wai-aria/#treeitem)

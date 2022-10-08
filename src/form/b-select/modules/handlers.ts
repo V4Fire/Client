@@ -225,11 +225,21 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 			break;
 
 		case 'ArrowUp':
+			if (unsafe.mods.opened !== 'true') {
+				await unsafe.open();
+				break;
+			}
+
 			if (currentItemEl?.previousElementSibling != null) {
 				markItem(currentItemEl.previousElementSibling);
+			}
 
-			} else {
-				await unsafe.close();
+			if (currentItemEl == null) {
+				const
+					items = $b.elements('item'),
+					lastItem = items[items.length - 1];
+
+				markItem(lastItem);
 			}
 
 			break;
@@ -245,7 +255,17 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 				currentItemEl ??= getMarkedOrSelectedItem();
 			}
 
-			markItem(currentItemEl?.nextElementSibling) || markItem($b.element('item'));
+			if (currentItemEl?.nextElementSibling != null) {
+				markItem(currentItemEl.nextElementSibling);
+			}
+
+			if (currentItemEl == null) {
+				const
+					firstItem = $b.elements('item')[0];
+
+				markItem(firstItem);
+			}
+
 			break;
 		}
 

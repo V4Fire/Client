@@ -215,3 +215,5 @@ interface TouchGesturePoint extends Partial<TouchGesturesCreateOptions> {
 	x: number;
 	y: number;
 }
+
+type AccessibleElement = Element & HTMLOrSVGElement;

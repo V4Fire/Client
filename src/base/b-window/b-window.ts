@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import 'core/component/directives/aria';
+
 import symbolGenerator from 'core/symbol';
 import { derive } from 'core/functools/trait';
 
@@ -311,6 +313,16 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 	protected override beforeDestroy(): void {
 		super.beforeDestroy();
 		this.removeRootMod('hidden');
+	}
+
+	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive
+	 */
+	protected getAriaConfig(): Dictionary {
+		return {
+			'@open': (cb) => this.on('open', cb),
+			'@close': (cb) => this.on('close', cb)
+		};
 	}
 }
 

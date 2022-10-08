@@ -15,23 +15,45 @@
 import 'models/demo/list';
 //#endif
 
+import 'core/component/directives/aria';
+
 import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import { isAbsURL } from 'core/url';
 
+import { derive } from 'core/functools/trait';
+
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
+import iAccess from 'traits/i-access/i-access';
+import type iBlock from 'super/i-block/i-block';
 
-import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
+import iData, {
+
+	component,
+	prop,
+	field,
+	system,
+	computed,
+	hook,
+	watch,
+	ModsDecl,
+	ComponentElement
+
+} from 'super/i-data/i-data';
+
 import type { Active, Item, Items } from 'base/b-list/interface';
+import type { Orientation } from 'core/component/directives/aria';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';
 
 export const
 	$$ = symbolGenerator();
+
+interface bList extends Trait<typeof iAccess> {}
 
 /**
  * Component to create a list of tabs/links
@@ -47,7 +69,8 @@ export const
 	}
 })
 
-export default class bList extends iData implements iVisible, iWidth, iItems {
+@derive(iAccess)
+class bList extends iData implements iVisible, iWidth, iItems, iAccess {
 	/** @see [[iVisible.prototype.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
@@ -80,13 +103,13 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
-	 * Type of the list' root tag
+	 * Type of the list root tag
 	 */
 	@prop(String)
 	readonly listTag: string = 'ul';
 
 	/**
-	 * Type of list' element tags
+	 * Type of list element tags
 	 */
 	@prop(String)
 	readonly listElTag: string = 'li';
@@ -112,6 +135,13 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	readonly multiple: boolean = false;
 
 	/**
+	 * Indicates whether the component orientation is `horizontal`, `vertical`, or unknown/ambiguous.
+	 * This props affects the ARIA component role.
+	 */
+	@prop(String)
+	readonly orientation: Orientation = 'horizontal';
+
+	/**
 	 * If true, the active item can be unset by using another click to it.
 	 * By default, if the component is switched to the `multiple` mode, this value is set to `true`,
 	 * otherwise to `false`.
@@ -130,15 +160,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * @see [[bList.attrsProp]]
 	 */
 	get attrs(): Dictionary {
-		const
-			attrs = {...this.attrsProp};
-
-		if (this.items.some((el) => el.href === undefined)) {
-			attrs.role = 'tablist';
-			attrs['aria-multiselectable'] = this.multiple;
-		}
-
-		return attrs;
+		return {...this.attrsProp};
 	}
 
 	/**
@@ -263,15 +285,85 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	protected activeStore!: this['Active'];
 
+	/** @see [[iAccess.focus]] */
+	focus(): Promise<boolean> {
+		const
+			element = <AccessibleElement | null>this.block?.element('link');
+
+		if (element != null) {
+			element.focus();
+			return iAccess.focus(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
+	/** @see [[iAccess.blur]] */
+	blur(): Promise<boolean> {
+		const
+			active = <AccessibleElement | null>document.activeElement;
+
+		if (active != null && this.$el?.contains(active)) {
+			active.blur();
+			return iAccess.blur(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
+	/** @see [[iAccess.disable]] */
+	disable(): Promise<boolean> {
+		const
+			items = this.block?.elements<ComponentElement<iBlock>>('link');
+
+		items?.forEach((item) => {
+			const
+				{component} = item;
+
+			if (component == null) {
+				item.setAttribute('disabled', 'true');
+				return;
+			}
+
+			if (iAccess.is(component)) {
+				return component.disable();
+			}
+
+			void iAccess.disable(component);
+		});
+
+		return iAccess.disable(this);
+	}
+
+	/** @see [[iAccess.enable]] */
+	enable(): Promise<boolean> {
+		const
+			items = this.block?.elements<ComponentElement<iBlock>>('link');
+
+		items?.forEach((item) => {
+			const
+				{component} = item;
+
+			if (component == null) {
+				item.removeAttribute('disabled');
+				return;
+			}
+
+			if (iAccess.is(component)) {
+				return component.enable();
+			}
+
+			void iAccess.enable(component);
+		});
+
+		return iAccess.enable(this);
+	}
+
 	/**
 	 * A link to the active item element.
 	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
 	 */
-	@computed({
-		cache: true,
-		dependencies: ['active']
-	})
-
+	@computed({dependencies: ['active']})
 	protected get activeElement(): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> {
 		const
 			{active} = this;
@@ -296,6 +388,14 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 			return getEl(active);
 		});
+	}
+
+	/**
+	 * True if the component is used as a tablist
+	 */
+	@computed({dependencies: ['items']})
+	protected get isTablist(): boolean {
+		return this.items.some((el) => el.href === undefined);
 	}
 
 	/**
@@ -385,10 +485,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (previousLinkEl !== linkEl) {
 						$b.setElMod(previousLinkEl, 'link', 'active', false);
-
-						if (previousLinkEl.hasAttribute('aria-selected')) {
-							previousLinkEl.setAttribute('aria-selected', 'false');
-						}
 					}
 				}
 			}
@@ -400,10 +496,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 				for (let i = 0; i < els.length; i++) {
 					const el = els[i];
 					$b.setElMod(el, 'link', 'active', true);
-
-					if (el.hasAttribute('aria-selected')) {
-						el.setAttribute('aria-selected', 'true');
-					}
 				}
 			}, stderr);
 		}
@@ -489,10 +581,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 					if (needChangeMod) {
 						$b.setElMod(el, 'link', 'active', false);
-
-						if (el.hasAttribute('aria-selected')) {
-							el.setAttribute('aria-selected', 'false');
-						}
 					}
 				}
 			}, stderr);
@@ -621,13 +709,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			item.classes = this.provide.hintClasses(item.hintPos)
 				.concat(item.classes ?? []);
 
-			if (href === undefined) {
-				item.attrs = {
-					...item.attrs,
-					role: 'tab'
-				};
-			}
-
 			normalizedItems.push({...item, value, href});
 		}
 
@@ -707,6 +788,53 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		}
 	}
 
+	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a tablist
+	 * @param role
+	 */
+	protected getAriaConfig(role: 'tablist'): Dictionary;
+
+	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a tab
+	 *
+	 * @param role
+	 * @param item - tab item data
+	 * @param i - tab item position index
+	 */
+	protected getAriaConfig(role: 'tab', item: this['Item'], i: number): Dictionary;
+
+	protected getAriaConfig(role: 'tab' | 'tablist', item?: this['Item'], i?: number): Dictionary {
+		const tablistConfig = {
+			multiselectable: this.multiple,
+			orientation: this.orientation
+		};
+
+		const tabConfig = {
+			first: i === 0,
+			hasDefaultSelectedTabs: this.active != null,
+			selected: this.isActive(item?.value),
+
+			'@change': bindChangeEvent.bind(this)
+		};
+
+		switch (role) {
+			case 'tablist': return tablistConfig;
+			case 'tab': return tabConfig;
+			default: return {};
+		}
+
+		function bindChangeEvent(this: bList, cb: Function) {
+			this.on('change', () => {
+				if (Object.isSet(this.active)) {
+					cb(this.block?.elements('link', {active: true}));
+
+				} else {
+					cb(this.block?.element('link', {active: true}));
+				}
+			});
+		}
+	}
+
 	protected override onAddData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
@@ -739,3 +867,5 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		this.emit('actionChange', this.active);
 	}
 }
+
+export default bList;

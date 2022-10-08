@@ -97,6 +97,16 @@ export interface Item extends Dictionary {
 	 * Map of additional attributes of the item
 	 */
 	attrs?: Dictionary;
+
+	/**
+	 * The id of the item
+	 */
+	id?: string;
+
+	/**
+	 * The id of the element which is controlled by the item in ARIA terms
+	 */
+	controls?: string;
 }
 
 export type Items = Item[];

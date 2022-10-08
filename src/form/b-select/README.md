@@ -17,6 +17,8 @@ The select can contain multiple values.
 
 * The component has `skeletonMarker`.
 
+* The component is accessible.
+
 ## Modifiers
 
 | Name       | Description                                      | Values    | Default |
@@ -384,3 +386,13 @@ Checks that a component value must be filled.
   size 20px
   background-image url("assets/my-icon.svg")
 ```
+
+## Accessibility
+
+The component implements an ARIA role [combobox](https://www.w3.org/TR/wai-aria/#combobox).
+Only basic accessible functionality (without optional keyboard combinations) included in this [widget](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) is supported.
+
+The component includes the following roles:
+- [combobox](https://www.w3.org/TR/wai-aria/#combobox)
+- [listbox](https://www.w3.org/TR/wai-aria/#listbox)
+- [option](https://www.w3.org/TR/wai-aria/#option)

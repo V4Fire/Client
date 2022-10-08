@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added a new method `removeAllFromTabSequence`
+* Added a new method `restoreAllToTabSequence`
+* Added a new method `getNextFocusableElement`
+* Added a new method `findFocusableElement`
+* Added a new method `findFocusableElements`
+* Added a new static method `is`
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 * Now the trait uses `aria` attributes

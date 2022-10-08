@@ -10,13 +10,13 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 * The component extends [[iData]].
 
-* The component implements [[iVisible]], [[iWidth]], [[iItems]] traits.
+* The component implements [[iAccess]], [[iVisible]], [[iWidth]], [[iItems]] traits.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
 * The component supports tooltips.
 
-* The component uses `aria` attributes.
+* The component is accessible.
 
 * By default, the list will be created using `<ul>` and `<li>` tags.
 
@@ -48,6 +48,43 @@ Also, you can see the parent component and the component traits.
 | `itemsChange`     | A list of items has been changed                                                                                            | List of items                         | `Items`  |
 
 Also, you can see the parent component and the component traits.
+
+## Accessibility
+
+The component supports two standard logical roles.
+
+### List of links
+
+If the component is used as a list of links, then standard HTML link semantics will be used.
+That is, links can be navigated using the Tab key, etc.
+
+### List of tabs
+
+If the component is used as a list of tabs it will implement the ARIA [tablist](https://www.w3.org/TR/wai-aria/#tablist) role.
+All available features included in this [widget](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/) are supported.
+
+Please note that the component does not support the ability to set the content of the tabs.
+You need to do it yourself using the ARIA [tabpanel](https://www.w3.org/TR/wai-aria/#tabpanel) role.
+
+```
+< b-list :items = [ &
+  {label: 'First tab', id: 'tab-1', controls: 'panel-1'},
+  {label: 'Second tag', id: 'tab-2', controls: 'panel-2'},
+  {label: 'Third tab', id: 'tab-3', controls: 'panel-3'}
+] .
+
+< div id = 'panel-1' | v-aria:tabpanel = {labelledby: 'tab-1'}
+  < p
+    Content for the first panel
+
+< div id = 'panel-2' | v-aria:tabpanel = {labelledby: 'tab-2'}
+  < p
+    Content for the second panel
+
+< div id = 'panel-3' | v-aria:tabpanel = {labelledby: 'tab-3'}
+  < p
+    Content for the third panel
+```
 
 ## Associated types
 
@@ -213,13 +250,18 @@ Also, you can see the implemented traits or the parent component.
 
 ### Props
 
+#### [orientation = `horizontal`]
+
+Indicates whether the component orientation is `horizontal`, `vertical`, or unknown/ambiguous.
+This props affects the ARIA component role.
+
 #### [listTag = `'ul'`]
 
-A type of the list' root tag.
+A type of the list root tag.
 
 #### [listElTag = `'li'`]
 
-A type of list' element tags.
+A type of list element tags.
 
 #### [activeProp]
 

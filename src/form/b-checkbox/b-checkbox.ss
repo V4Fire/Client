@@ -37,6 +37,9 @@
 								< _.&__check
 
 					- block label
-						< span.&__label v-if = label || vdom.getSlot('label')
+						< label.&__label &
+							v-if = label || vdom.getSlot('label') |
+							:for = id || dom.getId('hidden-input')
+						.
 							+= self.slot('label', {':label': 'label'})
 								{{ t(label) }}

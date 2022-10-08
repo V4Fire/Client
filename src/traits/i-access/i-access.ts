@@ -51,6 +51,19 @@ export default abstract class iAccess {
 		(component) => SyncPromise.resolve(component.setMod('focused', false));
 
 	/**
+	 * Checks if the passed object realize the current trait
+	 * @param obj
+	 */
+	static is(obj: unknown): obj is iAccess {
+		if (Object.isPrimitive(obj)) {
+			return false;
+		}
+
+		const dict = Object.cast<Dictionary>(obj);
+		return Object.isFunction(dict.focus) && Object.isFunction(dict.initModEvents);
+	}
+
+	/**
 	 * Returns true if the component in focus
 	 * @param component
 	 */
@@ -147,10 +160,10 @@ export default abstract class iAccess {
 					return;
 				}
 
-				if ($el.hasAttribute('tab-index')) {
-					const
-						el = (<HTMLButtonElement>$el);
+				const
+					el = (<HTMLButtonElement>$el);
 
+				if (el.hasAttribute('tabindex') || el.tabIndex > -1) {
 					if (focused) {
 						el.focus();
 

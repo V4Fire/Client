@@ -1,5 +1,5 @@
 {
-  "hash": "18506bae5f4874b01c4ad66a342b83571739c7f8713e0762997f1b75b4e9b26f",
+  "hash": "02638d9c8a09972771dc7664065e29dfbb9cb4fbc36405d85f85e5230ec4cba6",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -234,6 +234,38 @@
         }
       ],
       [
+        "b-dummy-dialog",
+        {
+          "index": "src/dummies/b-dummy-dialog/index.js",
+          "declaration": {
+            "name": "b-dummy-dialog",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-dialog",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-dialog/b-dummy-dialog.ts",
+          "styles": [
+            "src/dummies/b-dummy-dialog/b-dummy-dialog.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-dialog/b-dummy-dialog.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-dummy-lfc",
         {
           "index": "src/dummies/b-dummy-lfc/index.js",
@@ -262,6 +294,38 @@
             "src/dummies/b-dummy-lfc/b-dummy-lfc.styl"
           ],
           "tpl": "src/dummies/b-dummy-lfc/b-dummy-lfc.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-listbox",
+        {
+          "index": "src/dummies/b-dummy-listbox/index.js",
+          "declaration": {
+            "name": "b-dummy-listbox",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-listbox",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/dummies/b-dummy-listbox/b-dummy-listbox.ts",
+          "styles": [
+            "src/dummies/b-dummy-listbox/b-dummy-listbox.styl"
+          ],
+          "tpl": "src/dummies/b-dummy-listbox/b-dummy-listbox.ss",
           "etpl": null
         }
       ],
@@ -1997,7 +2061,9 @@
               "b-dummy-sync",
               "b-dummy-state",
               "b-dummy-control-list",
-              "b-dummy-decorators"
+              "b-dummy-decorators",
+              "b-dummy-listbox",
+              "b-dummy-dialog"
             ],
             "libs": [
               "core/cookies",
@@ -2041,7 +2107,9 @@
             "b-dummy-sync",
             "b-dummy-state",
             "b-dummy-control-list",
-            "b-dummy-decorators"
+            "b-dummy-decorators",
+            "b-dummy-listbox",
+            "b-dummy-dialog"
           ],
           "libs": [
             "core/cookies",

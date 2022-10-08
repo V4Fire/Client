@@ -15,6 +15,8 @@
 import 'models/demo/select';
 //#endif
 
+import 'core/component/directives/aria';
+
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
@@ -62,6 +64,7 @@ import type {
 	UnsafeBSelect
 
 } from 'form/b-select/interface';
+import iAccess from 'traits/i-access/i-access';
 
 export * from 'form/b-input/b-input';
 export * from 'traits/i-open-toggle/i-open-toggle';
@@ -82,8 +85,8 @@ interface bSelect extends Trait<typeof iOpenToggle> {}
 	}
 })
 
-@derive(iOpenToggle)
-class bSelect extends iInputText implements iOpenToggle, iItems {
+@derive(iOpenToggle, iAccess)
+class bSelect extends iInputText implements iOpenToggle, iItems, iAccess {
 	override readonly Value!: Value;
 	override readonly FormValue!: FormValue;
 
@@ -257,18 +260,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	override get rootAttrs(): Dictionary {
-		const attrs = {
+		return {
 			...super['rootAttrsGetter']()
 		};
-
-		if (!this.native) {
-			Object.assign(attrs, {
-				role: 'listbox',
-				'aria-multiselectable': this.multiple
-			});
-		}
-
-		return attrs;
 	}
 
 	override get value(): this['Value'] {
@@ -581,9 +575,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 					if (this.native) {
 						previousItemEl.selected = false;
-
-					} else {
-						previousItemEl.setAttribute('aria-selected', 'false');
 					}
 				}
 			}
@@ -599,9 +590,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 				if (this.native) {
 					el.selected = true;
-
-				} else {
-					el.setAttribute('aria-selected', 'true');
 				}
 			}
 		}).catch(stderr);
@@ -688,9 +676,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 					if (this.native) {
 						el.selected = false;
-
-					} else {
-						el.setAttribute('aria-selected', 'false');
 					}
 				}
 			}
@@ -793,6 +778,18 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		await on.openedChange(this, e);
 	}
 
+	/** @see [[iAccess.focus]] */
+	override focus(): Promise<boolean> {
+		this.onFocus();
+		return iAccess.focus(this);
+	}
+
+	/** @see [[iAccess.blur]] */
+	override blur(): Promise<boolean> {
+		void this.close();
+		return iAccess.blur(this);
+	}
+
 	/**
 	 * Sets the scroll position to the first marked or selected item
 	 */
@@ -883,9 +880,52 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	protected override initModEvents(): void {
 		super.initModEvents();
+		iOpenToggle.initModEvents(this);
+
 		this.sync.mod('native', 'native', Boolean);
 		this.sync.mod('multiple', 'multiple', Boolean);
 		this.sync.mod('opened', 'multiple', Boolean);
+	}
+
+	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a combobox
+	 * @param role
+	 */
+	protected getAriaConfig(role: 'combobox'): Dictionary;
+
+	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive used as an option
+	 *
+	 * @param role
+	 * @param item - option item data
+	 */
+	protected getAriaConfig(role: 'option', item: this['Item']): Dictionary;
+
+	protected getAriaConfig(role: 'combobox' | 'option', item?: this['Item']): Dictionary {
+		const isSelected = item?.value != null ?
+			this.isSelected.bind(this, item.value) :
+			() => undefined;
+
+		const comboboxConfig = {
+			multiselectable: this.multiple,
+			'@change': (cb) => this.localEmitter.on('el.mod.set.*.marked.*', ({link}) => cb(link)),
+			'@close': (cb) => this.on('close', cb),
+			'@open': (cb) => this.on('open', () => this.$nextTick(() => cb(this.selectedElement)))
+		};
+
+		const optionConfig = {
+			get selected() {
+				return isSelected();
+			},
+
+			'@change': (cb) => this.on('actionChange', () => cb(isSelected()))
+		};
+
+		switch (role) {
+			case 'combobox': return comboboxConfig;
+			case 'option': return optionConfig;
+			default: return {};
+		}
 	}
 
 	protected override beforeDestroy(): void {

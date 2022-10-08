@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added a new prop `orientation`
+* Now the component derives `iAccess`
+
+#### :house: Internal
+
+* Improved component accessibility
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :house: Internal

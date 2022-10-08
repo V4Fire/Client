@@ -47,7 +47,7 @@
 							< template v-else
 								< input &
 									:type = 'checkbox' |
-									:id = dom.getId(key) |
+									v-id = key |
 									:checked = debugComponent.mods[key] === getModValue(mod[0]) |
 									:class = provide.elClasses({
 										highlighted: field.get(['highlighting', key, mod[0]].join('.')) || false

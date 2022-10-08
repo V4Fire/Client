@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2022-??-??)
+
+#### :bug: Bug Fix
+
+* The `for` attribute has been added to the label to link to the checkbox
+
+#### :house: Internal
+
+* Improved component accessibility
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :boom: Breaking Change

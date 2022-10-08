@@ -15,12 +15,20 @@
 import 'models/demo/nested-list';
 //#endif
 
+import 'core/component/directives/aria';
+
 import symbolGenerator from 'core/symbol';
 
-import iItems, { IterationKey } from 'traits/i-items/i-items';
+import { derive } from 'core/functools/trait';
 
-import iData, { component, prop, field, TaskParams, TaskI } from 'super/i-data/i-data';
+import SyncPromise from 'core/promise/sync';
+import iItems, { IterationKey } from 'traits/i-items/i-items';
+import iData, { component, prop, field, TaskParams, TaskI, ComponentElement } from 'super/i-data/i-data';
+import iAccess from 'traits/i-access/i-access';
+import type iBlock from 'super/i-block/i-block';
+
 import type { Item, RenderFilter } from 'base/b-tree/interface';
+import type { Orientation } from 'core/component/directives/aria';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-tree/interface';
@@ -28,11 +36,14 @@ export * from 'base/b-tree/interface';
 export const
 	$$ = symbolGenerator();
 
+interface bTree extends Trait<typeof iAccess> {}
+
 /**
  * Component to render tree of any elements
  */
 @component()
-export default class bTree extends iData implements iItems {
+@derive(iAccess)
+class bTree extends iData implements iItems, iAccess {
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
 
@@ -99,6 +110,12 @@ export default class bTree extends iData implements iItems {
 	readonly folded: boolean = true;
 
 	/**
+	 * The component view orientation
+	 */
+	@prop(String)
+	readonly orientation: Orientation = 'vertical';
+
+	/**
 	 * Link to the top level component (internal parameter)
 	 */
 	@prop({type: Object, required: false})
@@ -113,6 +130,88 @@ export default class bTree extends iData implements iItems {
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
 	items!: this['Items'];
+
+	/** @see [[iAccess.focus]] */
+	focus(): Promise<boolean> {
+		const
+			element = this.dom.findFocusableElement(this.top != null ? this.top.$el : this.$el);
+
+		if (element != null) {
+			element.focus();
+			return iAccess.focus(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
+	/** @see [[iAccess.blur]] */
+	blur(): Promise<boolean> {
+		const
+			active = <AccessibleElement | null>document.activeElement;
+
+		if (active != null && this.$el?.contains(active)) {
+			active.blur();
+			return iAccess.blur(this);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
+	/** @see [[iAccess.disable]] */
+	disable(): Promise<boolean> {
+		const
+			items = this.block?.elements<ComponentElement<iBlock>>('item'),
+			children = this.block?.elements<ComponentElement<iBlock>>('child');
+
+		items?.forEach(disableElement);
+		children?.forEach(disableElement);
+
+		return iAccess.disable(this);
+
+		function disableElement(element: ComponentElement<iBlock>) {
+			const
+				{component} = element;
+
+			if (component == null) {
+				element.setAttribute('disabled', 'true');
+				return;
+			}
+
+			if (iAccess.is(component)) {
+				return component.disable();
+			}
+
+			void iAccess.disable(component);
+		}
+	}
+
+	/** @see [[iAccess.enable]] */
+	enable(): Promise<boolean> {
+		const
+			items = this.block?.elements<ComponentElement<iBlock>>('item'),
+			children = this.block?.elements<ComponentElement<iBlock>>('child');
+
+		items?.forEach(enableElement);
+		children?.forEach(enableElement);
+
+		return iAccess.enable(this);
+
+		function enableElement(element: ComponentElement<iBlock>) {
+			const
+				{component} = element;
+
+			if (component == null) {
+				element.removeAttribute('disabled');
+				return;
+			}
+
+			if (iAccess.is(component)) {
+				return component.enable();
+			}
+
+			void iAccess.enable(component);
+		}
+	}
 
 	/**
 	 * Parameters for async render tasks
@@ -240,6 +339,78 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a tree
+	 * @param role
+	 */
+	protected getAriaConfig(role: 'tree'): Dictionary
+
+	/**
+	 * Returns a dictionary with configurations for the `v-aria` directive used as a treeitem
+	 *
+	 * @param role
+	 * @param item - tree item data
+	 * @param i - tree item position index
+	 */
+	protected getAriaConfig(role: 'treeitem', item: this['Item'], i: number): Dictionary
+
+	protected getAriaConfig(role: 'tree' | 'treeitem', item?: this['Item'], i?: number): Dictionary {
+		const getFoldedMod = (item?.id != null) ?
+			this.getFoldedModById.bind(this, item.id) :
+			() => '';
+
+		const
+			root = () => this.top?.$el ?? this.$el;
+
+		const treeConfig = {
+			root: this.top == null,
+			orientation: this.orientation,
+			'@change': (cb: Function) => {
+				this.on('fold', (ctx, el: Element, item, value: boolean) => cb(el, !value));
+			}
+		};
+
+		const treeitemConfig = {
+			orientation: this.orientation,
+			firstRootItem: this.top == null && i === 0,
+
+			get expanded() {
+				return getFoldedMod() === 'false';
+			},
+
+			get expandable() {
+				return item?.children != null;
+			},
+
+			toggleFold: toggleFold.bind(this),
+
+			get rootElement() {
+				return root();
+			}
+		};
+
+		switch (role) {
+			case 'tree': return treeConfig;
+			case 'treeitem': return treeitemConfig;
+			default: return {};
+		}
+
+		function toggleFold(this: bTree, target: HTMLElement, value?: boolean) {
+			const
+				mod = this.block?.getElMod(target, 'node', 'folded');
+
+			if (mod == null) {
+				return;
+			}
+
+			const
+				newVal = value ? value : mod === 'false';
+
+			this.block?.setElMod(target, 'node', 'folded', newVal);
+			this.emit('fold', target, item, newVal);
+		}
+	}
+
+	/**
 	 * Handler: fold element has been clicked
 	 *
 	 * @param item
@@ -256,3 +427,5 @@ export default class bTree extends iData implements iItems {
 		}
 	}
 }
+
+export default bTree;

@@ -9,6 +9,22 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Now the component derives `iAccess`
+
+#### :bug: Bug Fix
+
+* Fixed a bug due to which the component did not emit `iOpen` events
+
+#### :house: Internal
+
+* Improved component accessibility
+
+* Changed keyboard keys handling according to ARIA specification
+
 ## v3.5.3 (2021-10-06)
 
 #### :bug: Bug Fix

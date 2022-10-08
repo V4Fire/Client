@@ -15,6 +15,8 @@
 import 'models/demo/checkbox';
 //#endif
 
+import 'core/component/directives/aria';
+
 import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
@@ -156,6 +158,9 @@ export default class bCheckbox extends iInput implements iSize {
 		return this.defaultProp;
 	}
 
+	@system((ctx) => ctx.sync.link((v: Dictionary) => ({...v, id: ctx.id ?? ctx.dom.getId('hidden-input')})))
+	override attrs?: Dictionary;
+
 	/**
 	 * True if the checkbox is checked
 	 */
@@ -196,7 +201,7 @@ export default class bCheckbox extends iInput implements iSize {
 	@system()
 	protected override valueStore!: this['Value'];
 
-	protected override readonly $refs!: {input: HTMLInputElement};
+	protected override readonly $refs!: { input: HTMLInputElement };
 
 	/**
 	 * Checks the checkbox
@@ -316,6 +321,13 @@ export default class bCheckbox extends iInput implements iSize {
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected onClick(e: Event): void {
+		const
+			target = <HTMLElement>e.target;
+
+		if (target.tagName === 'LABEL') {
+			e.preventDefault();
+		}
+
 		void this.focus();
 
 		if (this.value === undefined || this.value === false || this.changeable) {

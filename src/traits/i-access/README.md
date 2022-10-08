@@ -80,7 +80,7 @@ The trait specifies a getter to determine when the component in focus or not.
 
 ### isFocused
 
-True if the component in focus.
+True if the component is in focus.
 The getter has the default implementation via a static method `iAccess.isFocused`.
 
 ```typescript
@@ -97,6 +97,21 @@ export default class bButton implements iAccess {
 ## Methods
 
 The trait specifies a bunch of methods to implement.
+
+### is
+
+True if the component realize `iAccess` trait.
+
+```typescript
+import iAccess from 'traits/i-access/i-access';
+
+export default class bButton implements iAccess {
+  /** @see iAccess.is */
+  is(): boolean {
+    return iAccess.is(this);
+  }
+}
+```
 
 ### enable
 
@@ -158,6 +173,93 @@ export default class bButton implements iAccess {
   /** @see iAccess.blur */
   blur(): Promise<boolean> {
     return iAccess.blur(this);
+  }
+}
+```
+
+### removeAllFromTabSequence
+
+Removes all children of the specified element that can be focused from the Tab toggle sequence.
+In effect, these elements are set to -1 for the tabindex attribute.
+The method has the default implementation.
+
+```typescript
+import iAccess from 'traits/i-access/i-access';
+
+export default class bButton implements iAccess {
+  /** @see iAccess.removeAllFromTabSequence */
+  removeAllFromTabSequence(): boolean {
+    return iAccess.removeAllFromTabSequence(this);
+  }
+}
+```
+
+### restoreAllToTabSequence
+
+Restores all children of the specified element that can be focused to the Tab toggle sequence.
+This method is used to restore the state of elements to the state they had before `removeAllFromTabSequence` was
+applied.
+The method has the default implementation.
+
+```typescript
+import iAccess from 'traits/i-access/i-access';
+
+export default class bButton implements iAccess {
+  /** @see iAccess.restoreAllToTabSequence */
+  restoreAllToTabSequence(): boolean {
+    return iAccess.restoreAllToTabSequence(this);
+  }
+}
+```
+
+### getNextFocusableElement
+
+Returns the next (or previous) element to which focus will be switched by pressing Tab.
+The method takes a "step" parameter, i.e. you can control the Tab sequence direction. For example,
+by setting the step to `-1` you will get an element that will be switched to focus by pressing Shift+Tab.
+The method has the default implementation.
+
+```typescript
+import iAccess from 'traits/i-access/i-access';
+
+export default class bButton implements iAccess {
+  /** @see iAccess.getNextFocusableElement */
+  getNextFocusableElement(): AccessibleElement | null {
+    return iAccess.getNextFocusableElement(this);
+  }
+}
+```
+
+### findFocusableElement
+
+Finds the first non-disabled visible focusable element from the passed context to search and returns it.
+The element that is the search context is also taken into account in the search.
+The method has the default implementation.
+
+```typescript
+import iAccess from 'traits/i-access/i-access';
+
+export default class bButton implements iAccess {
+  /** @see iAccess.findFocusableElement */
+  findFocusableElement(): AccessibleElement | null {
+    return iAccess.findFocusableElement(this);
+  }
+}
+```
+
+### findFocusableElements
+
+Finds all non-disabled visible focusable elements and returns an iterator with the found ones.
+The element that is the search context is also taken into account in the search.
+The method has the default implementation.
+
+```typescript
+import iAccess from 'traits/i-access/i-access';
+
+export default class bButton implements iAccess {
+  /** @see iAccess.findFocusableElements */
+  findFocusableElements(): IterableIterator<AccessibleElement> {
+    return iAccess.findFocusableElements(this);
   }
 }
 ```

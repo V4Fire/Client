@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (2022-0?-??)
+
+#### :house: Internal
+
+* Now element's `id` attribute is added with `v-id` directive
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :house: Internal

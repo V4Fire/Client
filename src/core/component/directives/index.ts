@@ -23,3 +23,5 @@ import 'core/component/directives/update-on';
 //#endif
 
 import 'core/component/directives/hook';
+
+import 'core/component/directives/id';
