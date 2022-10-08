@@ -668,18 +668,6 @@ abstract class iInput extends iData implements iVisible, iAccess {
 	@system()
 	private validationMsg?: string;
 
-	/** @see [[iAccess.enable]] */
-	@p({replace: false})
-	enable(): Promise<boolean> {
-		return iAccess.enable(this);
-	}
-
-	/** @see [[iAccess.disable]] */
-	@p({replace: false})
-	disable(): Promise<boolean> {
-		return iAccess.disable(this);
-	}
-
 	/** @see [[iAccess.focus]] */
 	@p({replace: false})
 	@wait('ready', {label: $$.focus})

@@ -15,6 +15,10 @@ Changelog
 
 * Now the component derives `iAccess`
 
+#### :house: Internal
+
+* Removed `enable` and `disable` methods
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :boom: Breaking Change
