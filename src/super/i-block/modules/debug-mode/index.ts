@@ -19,34 +19,34 @@ import type { GatheringStrategy, RenderStrategy } from 'super/i-block/modules/de
 export * from 'super/i-block/modules/debug-mode/interface';
 
 /**
- * Class provides methods to work with debug data
+ * Class provides methods for working with debug data
  */
 export default class DebugMode extends Friend {
 	/**
-	 *
+	 * Strategies for collecting debug data
 	 */
 	protected dataGatheringStrategies!: GatheringStrategy[];
 
 	/**
-	 *
+	 * Strategies for rendering debug data
 	 */
 	protected dataRenderStrategies!: RenderStrategy[];
 
 	/**
-	 *
+	 * Sets strategies for collecting debug data
 	 */
-	setDataGatheringStrategies(strategies: GatheringStrategy[]) {
+	setDataGatheringStrategies(strategies: GatheringStrategy[]): void {
 		this.dataGatheringStrategies = strategies;
 	}
 
 	/**
-	 *
+	 * Sets strategies for rendering debug data
 	 */
-	setDataRenderStrategies(strategies: RenderStrategy[]) {
+	setDataRenderStrategies(strategies: RenderStrategy[]): void {
 		this.dataRenderStrategies = strategies;
 	}
 	/**
-	 *
+	 * Starts debugging data collection
 	 */
 	initDebugDataGathering(): void {
 		if (Object.isNullable(this.dataGatheringStrategies)) {
@@ -61,10 +61,10 @@ export default class DebugMode extends Friend {
 	}
 
 	/**
-	 *
+	 * Starts rendering debug data
 	 * @param data
 	 */
-	protected initDebugDataRendering(data: Dictionary): void {
+	protected initDebugDataRendering(data: Dictionary): CanUndef<Promise<void>> {
 		if (Object.isNullable(this.dataRenderStrategies)) {
 			return;
 		}
@@ -78,9 +78,9 @@ export default class DebugMode extends Friend {
 			if (!isSomeRenderSuccessful) {
 				return Promise.reject('Debug data was not rendered');
 			}
-			// TODO check iDebugMode
-			// TODO set mod
-			})
-			.catch(stderr);
+
+			return Promise.resolve();
+		})
+		.catch(stderr);
 	}
 }

@@ -1,7 +1,7 @@
 import type { GatheringStrategyData } from 'super/i-block/modules/debug-mode/interface';
 
 /**
- *
+ * Combines data into a single object
  * @param data
  */
 export default function composeDataEngine(
