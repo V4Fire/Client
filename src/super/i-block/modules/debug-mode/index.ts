@@ -25,18 +25,31 @@ export default class DebugMode extends Friend {
 	/**
 	 *
 	 */
-	protected readonly dataGatheringStrategies: GatheringStrategy[] = [];
+	protected dataGatheringStrategies!: GatheringStrategy[];
 
 	/**
 	 *
 	 */
-	protected readonly dataRenderStrategies: RenderStrategy[] = [];
+	protected dataRenderStrategies!: RenderStrategy[];
 
+	/**
+	 *
+	 */
+	setDataGatheringStrategies(strategies: GatheringStrategy[]) {
+		this.dataGatheringStrategies = strategies;
+	}
+
+	/**
+	 *
+	 */
+	setDataRenderStrategies(strategies: RenderStrategy[]) {
+		this.dataRenderStrategies = strategies;
+	}
 	/**
 	 *
 	 */
 	initDebugDataGathering(): void {
-		if (this.dataGatheringStrategies.length === 0) {
+		if (Object.isNullable(this.dataGatheringStrategies)) {
 			return;
 		}
 
@@ -52,7 +65,7 @@ export default class DebugMode extends Friend {
 	 * @param data
 	 */
 	protected initDebugDataRendering(data: Dictionary): void {
-		if (this.dataRenderStrategies.length === 0) {
+		if (Object.isNullable(this.dataRenderStrategies)) {
 			return;
 		}
 
