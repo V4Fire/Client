@@ -70,7 +70,7 @@ export default class DebugMode extends Friend {
 			return;
 		}
 
-		Promise.allSettled(
+		return Promise.allSettled(
 			this.dataRenderStrategies.map((strategy) => strategy(this.component, this.ctx, data))
 		).then((results) => {
 			const
