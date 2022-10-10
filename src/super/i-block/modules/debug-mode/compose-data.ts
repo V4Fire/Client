@@ -13,7 +13,7 @@ export default function composeDataEngine(
 
 		data.forEach((result) => {
 			if (result.status === 'rejected') {
-				return stderr(result.reason);
+				return;
 			}
 
 			const
@@ -31,10 +31,8 @@ export default function composeDataEngine(
 			Object.set(storageDebugData, renderBy, newFieldData);
 		});
 
-		if (Object.size(storageDebugData) === 0) {
-			return reject('No data was received');
-		}
-
-		return resolve(storageDebugData);
+		return Object.size(storageDebugData) === 0 ?
+			reject('No data was received') :
+			resolve(storageDebugData);
 	});
 }

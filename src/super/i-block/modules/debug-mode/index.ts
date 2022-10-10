@@ -45,6 +45,7 @@ export default class DebugMode extends Friend {
 	setDataRenderStrategies(strategies: RenderStrategy[]): void {
 		this.dataRenderStrategies = strategies;
 	}
+
 	/**
 	 * Starts debugging data collection
 	 */
@@ -75,11 +76,9 @@ export default class DebugMode extends Friend {
 			const
 				isSomeRenderSuccessful = results.some((result) => result.status === 'fulfilled');
 
-			if (!isSomeRenderSuccessful) {
-				return Promise.reject('Debug data was not rendered');
-			}
-
-			return Promise.resolve();
+			return isSomeRenderSuccessful ?
+				Promise.resolve() :
+				Promise.reject('Debug data was not rendered');
 		})
 		.catch(stderr);
 	}
