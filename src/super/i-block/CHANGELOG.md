@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## ()
+
+#### :rocket: New Feature
+
+* Added new module `DebugMode`
+* Added new `initDebugMode` method
+
 ## v3.17.0 (2022-02-24)
 
 #### :boom: Breaking Change
