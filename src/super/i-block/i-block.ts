@@ -2574,7 +2574,7 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 *
+	 * Initializes debug data collection
 	 */
 	@hook(['mounted', 'updated'])
 	protected initDebugMode(): void {
