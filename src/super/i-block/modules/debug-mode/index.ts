@@ -65,9 +65,9 @@ export default class DebugMode extends Friend {
 	 * Starts rendering debug data
 	 * @param data
 	 */
-	protected initDebugDataRendering(data: Dictionary): CanUndef<Promise<void>> {
+	protected initDebugDataRendering(data: Dictionary): Promise<void> {
 		if (Object.isNullable(this.dataRenderStrategies)) {
-			return;
+			return Promise.reject();
 		}
 
 		return Promise.allSettled(
