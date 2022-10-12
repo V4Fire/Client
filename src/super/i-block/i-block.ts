@@ -14,8 +14,6 @@
 import { component, UnsafeGetter } from 'core/component';
 import type { Classes } from 'friends/provide';
 
-import 'super/i-block/directives';
-
 import type { ModVal, ModsDecl, ModsProp, ModsDict } from 'super/i-block/modules/mods';
 import type { UnsafeIBlock } from 'super/i-block/interface';
 
