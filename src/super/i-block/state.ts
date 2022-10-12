@@ -245,7 +245,7 @@ export default abstract class iBlockState extends iBlockMods {
 		const oldValue = this.hook;
 		this.hookStore = value;
 
-		if (!this.lfc.isBeforeCreate('beforeDataCreate')) {
+		if ('lfc' in this && !this.lfc.isBeforeCreate('beforeDataCreate')) {
 			this.emit(`componentHook:${value}`, value, oldValue);
 			this.emit('componentHookChange', value, oldValue);
 		}
