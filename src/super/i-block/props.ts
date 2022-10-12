@@ -112,8 +112,34 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly dontWaitRemoteProvidersProp?: boolean;
 
 	/**
-	 * If true, the component will listen to its parent special event.
-	 * It is used to provide general functionality for proxy calls from the parent.
+	 * If true, the component will listen to the `callChild` special event on its parent.
+	 * The event handler will receive as a payload an object that implements the `CallChild` interface.
+	 *
+	 * ```typescript
+	 * interface CallChild<CTX extends iBlock = iBlock> {
+	 *   check: [ParentMessageProperty, unknown];
+	 *   action(ctx: CTX): Function;
+	 * }
+	 *
+	 * export type ParentMessageProperty =
+	 *   'instanceOf' |
+	 *   'globalName' |
+	 *   'componentName' |
+	 *   'componentId';
+	 * ```
+	 *
+	 * The `check` property allows you to specify which components should handle this event.
+	 * If the check is successful, then the `action` method will be called with the handler component context as
+	 * an argument.
+	 *
+	 * @example
+	 * ```js
+	 * // Reload all child iData components
+	 * this.emit('callChild', {
+	 *   check: ['instanceOf', iData],
+	 *   action: (ctx) => ctx.reload()
+	 * });
+	 * ```
 	 */
 	@prop(Boolean)
 	readonly proxyCall: boolean = false;

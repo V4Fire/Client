@@ -401,7 +401,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
 			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]
 		) {
-			return e.action.call(this);
+			e.action(this);
 		}
 	}
 }

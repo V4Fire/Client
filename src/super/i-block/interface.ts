@@ -32,7 +32,7 @@ export type ParentMessageProperty =
 
 export interface CallChild<CTX extends iBlockEvent = iBlockEvent> {
 	check: [ParentMessageProperty, unknown];
-	action(this: CTX): Function;
+	action(ctx: CTX): void;
 }
 
 export type Stage =
