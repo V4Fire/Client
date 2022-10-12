@@ -149,7 +149,7 @@ module.exports = (page) => {
 							'stage',
 
 							{
-								path: 'watchTmp.foo',
+								path: 'reactiveTmp.foo',
 								collapse: false,
 								immediate: true
 							}
@@ -167,7 +167,7 @@ module.exports = (page) => {
 
 				expect(
 					await target.evaluate(async (ctx) => {
-						ctx.$parent.watchTmp.foo = 'bar';
+						ctx.$parent.reactiveTmp.foo = 'bar';
 						await ctx.nextTick();
 						return ctx.stage;
 					})

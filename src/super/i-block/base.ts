@@ -12,6 +12,9 @@ import log, { LogMessageOptions } from 'core/log';
 import { wrapWithSuspending, AsyncOptions, BoundFn } from 'core/async';
 import { component, bindRemoteWatchers, customWatcherRgxp, RawWatchHandler, WatchPath } from 'core/component';
 
+import type iBlock from 'super/i-block/i-block';
+import type iStaticPage from 'super/i-static-page/i-static-page';
+
 import { field, system, computed, hook, wait } from 'super/i-block/modules/decorators';
 import { activate, deactivate } from 'super/i-block/modules/activation';
 import { initRemoteWatchers } from 'super/i-block/modules/listeners';
@@ -26,6 +29,10 @@ export const
 
 @component()
 export default abstract class iBlockBase extends iBlockFriends {
+	override readonly Component!: iBlock;
+	override readonly Root!: iStaticPage;
+	override readonly $root!: this['Root'];
+
 	@system({
 		atom: true,
 		unique: (ctx, oldCtx) => !ctx.$el?.classList.contains(oldCtx.componentId),
@@ -102,6 +109,13 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
+	 * A dictionary with additional attributes for the component root tag
+	 */
+	get rootAttrs(): Dictionary {
+		return this.field.get<Dictionary>('rootAttrsStore')!;
+	}
+
+	/**
 	 * True if the component context is based on another component via `vdom.bindRenderObject`
 	 */
 	@system()
@@ -148,6 +162,13 @@ export default abstract class iBlockBase extends iBlockFriends {
 	})
 
 	protected watchCache!: Dictionary;
+
+	/**
+	 * A dictionary with additional attributes for the component root tag
+	 * @see [[iBlock.rootAttrsStore]]
+	 */
+	@field()
+	protected rootAttrsStore: Dictionary = {};
 
 	/**
 	 * A link to the component itself

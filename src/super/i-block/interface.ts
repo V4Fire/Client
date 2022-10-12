@@ -46,19 +46,19 @@ export interface ComponentEvent {
 
 export interface InitLoadOptions {
 	/**
-	 * If true, the component is loaded in silent, i.e. without toggling .componentStatus to 'loading'
+	 * If true, the component is loaded silently, i.e. without switching `componentStatus` to `loading`
 	 * @default `false`
 	 */
 	silent?: boolean;
 
 	/**
-	 * If true, the component force all child components to load/reload
+	 * If true, the component is forced to load/reload all child components
 	 * @default `false`
 	 */
 	recursive?: boolean;
 
 	/**
-	 * If false, there won't be fired an event of load beginning
+	 * If false, then the data loading start event won't be fired
 	 * @default `true`
 	 */
 	emitStartEvent?: boolean;

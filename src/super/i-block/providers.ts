@@ -6,17 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { component, globalState, Hook } from 'core/component';
+import symbolGenerator from 'core/symbol';
+
+import SyncPromise from 'core/promise/sync';
+import config from 'config';
+
+import type { AsyncOptions } from 'core/async';
+import { component } from 'core/component';
+
+import type bRouter from 'base/b-router/b-router';
+import type { ConverterCallType } from 'friends/state';
+
+import { statuses } from 'super/i-block/const';
+import { system, hook } from 'super/i-block/modules/decorators';
+import type { InitLoadCb, InitLoadOptions } from 'super/i-block/interface';
 
 import iBlockState from 'super/i-block/state';
-import {InitLoadCb, InitLoadOptions} from "super/i-block/interface";
-import {AsyncOptions} from "core/async";
-import SyncPromise from "core/promise/sync";
-import {statuses} from "super/i-block/const";
-import {$$} from "super/i-block/i-block";
-import {ConverterCallType} from "friends/state";
-import bRouter from "base/b-router/b-router";
-import config from "config";
+
+export const
+	$$ = symbolGenerator();
 
 @component()
 export default abstract class iBlockProviders extends iBlockState {
@@ -38,38 +46,27 @@ export default abstract class iBlockProviders extends iBlockState {
 	dontWaitRemoteProviders!: boolean;
 
 	/**
-	 * Link to an application router
+	 * A link to the application router
 	 */
 	get router(): CanUndef<bRouter> {
 		return this.field.get('routerStore', this.r);
 	}
 
 	/**
-	 * Link to an application route object
+	 * A link to the active route object
 	 */
 	get route(): CanUndef<this['r']['CurrentPage']> {
 		return this.field.get('route', this.r);
 	}
 
 	/**
-	 * Dictionary with additional attributes for the component' root tag
-	 */
-	get rootAttrs(): Dictionary {
-		return this.field.get<Dictionary>('rootAttrsStore')!;
-	}
-
-	/**
-	 * Internal dictionary with additional attributes for the component' root tag
-	 * @see [[iBlock.rootAttrsStore]]
-	 */
-	@field()
-	protected rootAttrsStore: Dictionary = {};
-
-	/**
-	 * Loads initial data to the component
+	 * Loads component initialization data.
+	 * The method loads data from external providers (if any), local storage, etc.
+	 * It is called when the component is created.
 	 *
-	 * @param [data] - data object (for events)
+	 * @param [data] - additional initialization data
 	 * @param [opts] - additional options
+	 *
 	 * @emits `initLoadStart(options: CanUndef<InitLoadOptions>)`
 	 * @emits `initLoad(data: CanUndef<unknown>, options: CanUndef<InitLoadOptions>)`
 	 */
@@ -151,7 +148,7 @@ export default abstract class iBlockProviders extends iBlockState {
 			}
 
 			if (
-				(this.isNotRegular || this.dontWaitRemoteProviders) &&
+				(this.isFunctional || this.dontWaitRemoteProviders) &&
 				!this.$renderEngine.supports.ssr
 			) {
 				if (tasks.length > 0) {
@@ -164,63 +161,59 @@ export default abstract class iBlockProviders extends iBlockState {
 				return;
 			}
 
-			const res = this.nextTick(label).then((() => {
-				const
-					{$children: childComponents} = this;
+			const initializing = this.nextTick(label).then((() => {
+				this.$children.forEach((component) => {
+					const
+						status = component.componentStatus;
 
-				if (childComponents) {
-					for (let i = 0; i < childComponents.length; i++) {
-						const
-							component = childComponents[i],
-							status = component.componentStatus;
+					if (!component.remoteProvider || !Object.isTruly(statuses[status])) {
+						return;
+					}
 
-						if (component.remoteProvider && Object.isTruly(statuses[status])) {
-							if (status === 'ready') {
-								if (opts.recursive) {
-									component.reload({silent: opts.silent === true, ...opts}).catch(stderr);
+					if (status === 'ready') {
+						if (opts.recursive) {
+							component.reload({silent: opts.silent === true, ...opts}).catch(stderr);
 
-								} else {
-									continue;
-								}
-							}
-
-							let
-								isLoaded = false;
-
-							tasks.push(Promise.race([
-								component.waitStatus('ready').then(() => isLoaded = true),
-
-								$a.sleep((10).seconds(), {}).then(() => {
-									if (isLoaded) {
-										return;
-									}
-
-									this.log(
-										{
-											logLevel: 'warn',
-											context: 'initLoad:remoteProviders'
-										},
-
-										{
-											message: 'The component is waiting too long a remote provider',
-											waitFor: {
-												globalName: component.globalName,
-												component: component.componentName,
-												dataProvider: Object.get(component, 'dataProvider')
-											}
-										}
-									);
-								})
-							]));
+						} else {
+							return;
 						}
 					}
-				}
+
+					let
+						isLoaded = false;
+
+					tasks.push(Promise.race([
+						component.waitStatus('ready').then(() => isLoaded = true),
+
+						$a.sleep((10).seconds(), {}).then(() => {
+							if (isLoaded) {
+								return;
+							}
+
+							this.log(
+								{
+									logLevel: 'warn',
+									context: 'initLoad:remoteProviders'
+								},
+
+								{
+									message: 'The component waits too long for the remote provider',
+									waitFor: {
+										globalName: component.globalName,
+										component: component.componentName,
+										dataProvider: Object.get(component, 'dataProvider')
+									}
+								}
+							);
+						})
+					]));
+				});
 
 				return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
 			}));
 
-			this.$initializer = res;
-			return res;
+			this.$initializer = initializing;
+			return initializing;
 
 		} catch (err) {
 			doneOnError(err);
@@ -228,7 +221,7 @@ export default abstract class iBlockProviders extends iBlockState {
 	}
 
 	/**
-	 * Reloads component data
+	 * Reloads component providers data
 	 * @param [opts] - additional options
 	 */
 	reload(opts?: InitLoadOptions): Promise<void> {
@@ -245,18 +238,17 @@ export default abstract class iBlockProviders extends iBlockState {
 	/**
 	 * This method works as a two-way connector between the component and its storage.
 	 *
-	 * When the component initializes, it requests the storage for data associated with it by using a global name
-	 * as a namespace to search. When the local storage is ready to provide data to the component,
-	 * it passes data to this method. After this, the method returns a dictionary mapped to the component as properties
+	 * When the component is initializing, it requests the storage for its associated data, using the `globalName` prop
+	 * as the namespace to search. When the storage is ready to provide data to the component, it passes the data to
+	 * this method. After that, the method returns a dictionary associated with the component properties
 	 * (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
 	 *
-	 * Also, the component will watch for changes of every property in that dictionary.
-	 * When at least one of these properties is changed, the whole butch of data will be sent to the local storage
-	 * by using this method. When the component provides local storage data, the method's second argument
-	 * is equal to `'remote'`.
+	 * Also, the component will watch for changes to each property in this dictionary.
+	 * If at least one of  these properties is changed, the entire data batch will be synchronized with the storage
+	 * using this method. When the component provides the storage data, the second argument to the method is `'remote'`.
 	 *
 	 * @param [data] - advanced data
-	 * @param [type] - call type
+	 * @param [type] - the call type
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
@@ -264,7 +256,9 @@ export default abstract class iBlockProviders extends iBlockState {
 	}
 
 	/**
-	 * Returns a dictionary with default component properties to reset a local storage state
+	 * Returns a dictionary with the default component properties to reset the storage state.
+	 * This method will be used when calling `state.resetStorage`.
+	 *
 	 * @param [data] - advanced data
 	 */
 	protected convertStateToStorageReset(data?: Dictionary): Dictionary {
@@ -282,22 +276,21 @@ export default abstract class iBlockProviders extends iBlockState {
 	}
 
 	/**
-	 * This method works as a two-way connector between the global router and a component.
+	 * This method works as a two-way connector between the component and the application router.
 	 *
-	 * When the component initializes, it asks the router for data. The router provides the data by using this method.
-	 * After this, the method returns a dictionary mapped to the
-	 * component as properties (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
+	 * When the component is initializing, it requests the router for its associated data.
+	 * The router provides the data by using this method. After that, the method returns a dictionary associated with
+	 * the component properties (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
 	 *
-	 * Also, the component will watch for changes of every property that was in that dictionary.
-	 * When at least one of these properties is changed, the whole butch of data will be sent to the router
-	 * by using this method (the router will produce a new transition by using `push`).
-	 * When the component provides router data, the method's second argument is equal to `'remote'`.
+	 * Also, the component will watch for changes to each property in this dictionary.
+	 * If at least one of  these properties is changed, the entire data batch will be synchronized with the router
+	 * using this method. When the component provides the router data, the second argument to the method is `'remote'`.
 	 *
-	 * Mind that the router is global for all components, i.e., a dictionary that this method passes to the router
-	 * will extend the current route data but not override (`router.push(null, {...route, ...componentData}})`).
+	 * Keep in mind that the router is global to all components, meaning the dictionary this method passes to the router
+	 * will extend the current route data, but not override  (`router.push(null, {...route, ...componentData}})`).
 	 *
 	 * @param [data] - advanced data
-	 * @param [type] - call type
+	 * @param [type] - the call type
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 	protected syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
@@ -305,7 +298,9 @@ export default abstract class iBlockProviders extends iBlockState {
 	}
 
 	/**
-	 * Returns a dictionary with default component properties to reset a router state
+	 * Returns a dictionary with the default component properties to reset the router state.
+	 * This method will be used when calling `state.resetRouter`.
+	 *
 	 * @param [data] - advanced data
 	 */
 	protected convertStateToRouterReset(data?: Dictionary): Dictionary {
@@ -322,11 +317,8 @@ export default abstract class iBlockProviders extends iBlockState {
 		return res;
 	}
 
-	/**
-	 * Initializes the core component API
-	 */
 	@hook({beforeRuntime: {functional: false}})
-	protected initBaseAPI(): void {
+	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
 		const

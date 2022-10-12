@@ -7,7 +7,6 @@
  */
 
 import { component, PARENT } from 'core/component';
-import type iStaticPage from 'super/i-static-page/i-static-page';
 
 import { field, system, computed, hook } from 'super/i-block/modules/decorators';
 import { initMods, mergeMods, getReactiveMods, ModsDict, ModsDecl } from 'super/i-block/modules/mods';
@@ -16,8 +15,6 @@ import iBlockEvent from 'super/i-block/event';
 
 @component()
 export default abstract class iBlockMods extends iBlockEvent {
-	override readonly Root!: iStaticPage;
-
 	@system({merge: mergeMods, init: initMods})
 	override readonly mods!: ModsDict;
 

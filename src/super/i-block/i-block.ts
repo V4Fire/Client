@@ -1,5 +1,3 @@
-/* eslint-disable max-lines,@typescript-eslint/unified-signatures */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -13,23 +11,13 @@
  * @packageDocumentation
  */
 
-import type iStaticPage from 'super/i-static-page/i-static-page';
-
 import { component, UnsafeGetter } from 'core/component';
+import type { Classes } from 'friends/provide';
 
 import 'super/i-block/directives';
 
-import type { Classes } from 'friends/provide';
+import type { ModVal, ModsDecl, ModsProp, ModsDict } from 'super/i-block/modules/mods';
 import type { UnsafeIBlock } from 'super/i-block/interface';
-
-import type {
-
-	ModVal,
-	ModsDecl,
-	ModsProp,
-	ModsDict
-
-} from 'super/i-block/modules/mods';
 
 import iBlockProviders from 'super/i-block/providers';
 
@@ -38,31 +26,12 @@ export * from 'super/i-block/const';
 export * from 'super/i-block/interface';
 
 export { prop, field, system, computed, hook, watch, wait } from 'super/i-block/modules/decorators';
-
 export { default as Friend } from 'friends/friend';
 
-export {
+export { Classes, ModVal, ModsDecl, ModsProp, ModsDict };
 
-	Classes,
-
-	ModVal,
-	ModsDecl,
-	ModsProp,
-	ModsDict
-
-};
-
-/**
- * Superclass for all components
- */
 @component()
 export default abstract class iBlock extends iBlockProviders {
-	override readonly Component!: iBlock;
-	override readonly Root!: iStaticPage;
-
-	// @ts-ignore (override)
-	override readonly $root!: this['Root'];
-
 	override get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
 		return Object.cast(this);
 	}
@@ -82,7 +51,7 @@ export default abstract class iBlock extends iBlockProviders {
 	 * Returns true if the specified object is a component
 	 *
 	 * @param obj
-	 * @param [constructor] - component constructor
+	 * @param [constructor] - the component constructor
 	 */
 	isComponent<T extends iBlock>(obj: unknown, constructor?: {new(): T} | Function): obj is T {
 		return Object.isTruly(obj) && (<Dictionary>obj).instance instanceof (constructor ?? iBlock);

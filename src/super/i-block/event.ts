@@ -40,8 +40,6 @@ export const
 
 @component()
 export default abstract class iBlockEvent extends iBlockBase {
-	override readonly Component!: iBlockEvent;
-
 	/**
 	 * The component event emitter.
 	 * All events fired by this emitter can be listened to "outside" with the `v-on` directive.
