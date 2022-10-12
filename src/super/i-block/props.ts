@@ -36,10 +36,10 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly rootTag: string = 'div';
 
 	/**
-	 * The initial value of the component stage.
+	 * A string value that specifies in which logical state the component should run.
 	 *
-	 * The stage property can be used to indicate different states of a component.
-	 * For example, we have a component that implements an image upload form, and we have two options for the form:
+	 * This property can be used to indicate different states of a component.
+	 * For instance, we have a component that implements an image upload form. And, we have two options for this form:
 	 * upload from a link or upload from a computer.
 	 *
 	 * Therefore, we can create two stage values: "link" and "file", in order to separate the component template into two
@@ -82,7 +82,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly renderOnActivation: boolean = false;
 
 	/**
-	 * A list of additional dependencies to load when the component is initialized
+	 * A list of additional dependencies to load when the component is initializing
 	 *
 	 * @example
 	 * ```js

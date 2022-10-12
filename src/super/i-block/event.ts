@@ -6,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
+import SyncPromise from 'core/promise/sync';
 import type Async from 'core/async';
 
 import type {
@@ -25,13 +27,16 @@ import type {
 
 import { component, globalEmitter } from 'core/component';
 
-import { system, hook } from 'super/i-block/modules/decorators';
+import { system, hook, watch } from 'super/i-block/modules/decorators';
 import { initGlobalListeners } from 'super/i-block/modules/listeners';
 
+import type iBlock from 'super/i-block';
+import type { ComponentEvent, CallChild } from 'super/i-block/interface';
+
 import iBlockBase from 'super/i-block/base';
-import type { ComponentEvent } from 'super/i-block/interface';
-import SyncPromise from "core/promise/sync";
-import {ParentMessage} from "super/i-block/interface";
+
+export const
+	$$ = symbolGenerator();
 
 @component()
 export default abstract class iBlockEvent extends iBlockBase {
@@ -137,7 +142,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	protected readonly rootEmitter!: EventEmitterWrapper<this>;
 
 	/**
-	 * The global event emitter of the whole application.
+	 * The global event emitter located in `core/component/event`.
 	 * This emitter should be used to listen for external events, such as events coming over a WebSocket connection, etc.
 	 * Also, such events can be listened to by a wildcard mask. To avoid memory leaks, only this emitter is used to listen
 	 * for global events.
@@ -326,7 +331,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The method returns a promise.
 	 *
 	 * @see [[Async.wait]]
-	 * @param ref - ref name
+	 * @param ref - the reference name
 	 * @param [opts] - additional options
 	 */
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
@@ -374,22 +379,26 @@ export default abstract class iBlockEvent extends iBlockBase {
 	}
 
 	/**
-	 * Initializes the `callChild` event listener
+	 * Initializes the parent `callChild` event listener.
+	 * It is used to provide general functionality for proxy calls from the parent.
 	 */
-	@watch({field: 'proxyCall', immediate: true})
+	@watch({path: 'proxyCall', immediate: true})
 	protected initCallChildListener(value: boolean): void {
+		const label = {label: $$.initCallChildListener};
+		this.parentEmitter.off(label);
+
 		if (!value) {
 			return;
 		}
 
-		this.parentEmitter.on('onCallChild', this.onCallChild.bind(this));
+		this.parentEmitter.on('onCallChild', this.onCallChild.bind(this), label);
 	}
 
 	/**
-	 * Handler: `callChild` event
+	 * Handler: the `callChild` event occurred in the parent component
 	 * @param e
 	 */
-	protected onCallChild(e: ParentMessage<this>): void {
+	protected onCallChild(e: CallChild<this>): void {
 		if (
 			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
 			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]

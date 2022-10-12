@@ -117,7 +117,9 @@ export abstract class ComponentInterface {
 	abstract readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
 	/**
-	 * The active component hook name
+	 * A string value that indicates what lifecycle hook the component is in.
+	 * For instance, `created`, `mounted` or `destroyed`.
+	 * @see https://vuejs.org/guide/essentials/lifecycle.html
 	 */
 	abstract hook: Hook;
 

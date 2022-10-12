@@ -7,7 +7,7 @@
  */
 
 /**
- * Enum of available component statuses
+ * Enumeration of available component statuses
  */
 export enum statuses {
 	destroyed = -1,

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { component } from 'core/component';
+import { component, PARENT } from 'core/component';
 import type iStaticPage from 'super/i-static-page/i-static-page';
 
 import { field, system, computed, hook } from 'super/i-block/modules/decorators';
@@ -45,8 +45,8 @@ export default abstract class iBlockMods extends iBlockEvent {
 	}
 
 	/**
-	 * The special link to a parent component.
-	 * This parameter is used with the static declaration of modifiers to refer to parent modifiers.
+	 * A special link to the parent component.
+	 * This option is used with static modifier declarations to refer to parent modifiers.
 	 *
 	 * @example
 	 * ```js

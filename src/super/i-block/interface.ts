@@ -7,6 +7,7 @@
  */
 
 import type iBlock from 'super/i-block/i-block';
+import type iBlockEvent from 'super/i-block/event';
 
 import type { UnsafeComponentInterface } from 'core/component';
 import type { statuses } from 'super/i-block/const';
@@ -29,7 +30,7 @@ export type ParentMessageProperty =
 	'componentName' |
 	'componentId';
 
-export interface ParentMessage<CTX extends iBlock = iBlock> {
+export interface CallChild<CTX extends iBlockEvent = iBlockEvent> {
 	check: [ParentMessageProperty, unknown];
 	action(this: CTX): Function;
 }

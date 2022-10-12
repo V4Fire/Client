@@ -190,6 +190,12 @@ export default abstract class iBlockFriends extends iBlockProps {
 	protected block?: Block;
 
 	/**
+	 * A cache dictionary for the `opt.ifOnce` method
+	 */
+	@system({merge: true})
+	protected readonly ifOnceStore: Dictionary<number> = {};
+
+	/**
 	 * A class with helper methods to optimize component rendering
 	 */
 	@system({

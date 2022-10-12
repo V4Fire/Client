@@ -6,24 +6,24 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import SyncPromise from 'core/promise/sync';
 import config from 'config';
 
+import type { BoundFn } from 'core/async';
 import { component, globalState, Hook } from 'core/component';
-import type { Module } from 'friends/module-loader';
 
+import type { Module } from 'friends/module-loader';
 import { readyStatuses } from 'super/i-block/modules/activation';
-import {field, system, computed, WaitDecoratorOptions} from 'super/i-block/modules/decorators';
-import type { Stage, ComponentStatus } from 'super/i-block/interface';
+
+import { field, system, computed, wait, WaitDecoratorOptions } from 'super/i-block/modules/decorators';
+import type { Stage, ComponentStatus, ComponentStatuses } from 'super/i-block/interface';
 
 import iBlockMods from 'super/i-block/mods';
-import {ComponentStatuses} from "super/i-block/interface";
-import {BoundFn} from "core/async";
-import SyncPromise from "core/promise/sync";
 
 @component()
 export default abstract class iBlockState extends iBlockMods {
 	/**
-	 * List of additional dependencies to load
+	 * A list of additional dependencies to load when the component is initializing
 	 * @see [[iBlock.dependenciesProp]]
 	 */
 	@system((o) => o.sync.link((val) => {
@@ -34,7 +34,10 @@ export default abstract class iBlockState extends iBlockMods {
 	dependencies!: Module[];
 
 	/**
-	 * Component stage value
+	 * A string value that specifies in which logical state the component should run.
+	 * For instance, depending on this option, the component can render different templates
+	 * by separating them with `v-if` directives.
+	 *
 	 * @see [[iBlock.stageProp]]
 	 */
 	@computed()
@@ -44,7 +47,7 @@ export default abstract class iBlockState extends iBlockMods {
 
 	/**
 	 * Sets a new component stage value.
-	 * By default, it clears all async listeners from the group of `stage.${oldGroup}`.
+	 * By default, it clears all asynchronous listeners from the `stage.${oldGroup}` group.
 	 *
 	 * @see [[iBlock.stageProp]]
 	 * @emits `stage:${value}(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
@@ -69,7 +72,7 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Group name of the current stage
+	 * A name of the [[Async]] group associated with the `stage` parameter
 	 */
 	@computed()
 	get stageGroup(): string {
@@ -77,11 +80,13 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * A Link to the remote state object.
+	 * A link to an application state object located in `core/component/state`.
 	 *
-	 * The remote state object is a special watchable object that provides some parameters
-	 * that can't be initialized within a component directly. You can modify this object outside of components,
-	 * but remember that these mutations may force the re-rendering of all components.
+	 * This object is used to set any general application parameters. For example, the status of user authorization or
+	 * online connection; global sharable application data, etc.
+	 *
+	 * The way you work with the state object itself is up to you. You can use an API like Redux or just set
+	 * properties directly. Note that the state object is observable and can be reactively bond to component templates.
 	 */
 	@computed({watchable: true})
 	get remoteState(): typeof globalState {
@@ -89,29 +94,26 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * A component status.
-	 * This parameter is pretty similar to the `hook` parameter.
-	 * But, the hook represents a component status relative to its MVVM instance: created, mounted, destroyed, etc.
-	 * Opposite to "hook", "componentStatus" represents a logical component status:
+	 * A string value indicating the component initialize status:
 	 *
-	 *   *) unloaded - a component was just created without any initializing:
-	 *      this status can intersect with some hooks, like `beforeCreate` or `created`.
+	 *   1. `unloaded` - the component has just been created without any initializing:
+	 *      this status may overlap with some component hooks such as `beforeCreate` or `created`.
 	 *
-	 *   *) loading - a component starts to load data from its own providers:
-	 *      this status can intersect with some hooks, like `created` or `mounted`.
-	 *      If the component was mounted with this status, you can show by using UI that the data is loading.
+	 *   2. `loading` - the component starts loading data from its providers:
+	 *      this status may overlap with some component hooks such as `created` or `mounted`.
+	 *      If the component has been mounted with this status, you can display this in the component UI.
+	 *      For example by showing a loading indicator.
 	 *
-	 *   *) beforeReady - a component was fully loaded and started to prepare to render:
-	 *      this status can intersect with some hooks like `created` or `mounted`.
+	 *   3. `beforeReady` - the component has been fully loaded and has started preparing to render:
+	 *      this status may overlap with some component hooks such as `created` or `mounted`.
 	 *
-	 *   *) ready - a component was fully loaded and rendered:
-	 *      this status can intersect with the `mounted` hook.
+	 *   4. `ready` - the component has been fully loaded and rendered: this status may overlap with the `mounted` hook.
 	 *
-	 *   *) inactive - a component is frozen by keep-alive mechanism or special input property:
-	 *      this status can intersect with the `deactivated` hook.
+	 *   5. `inactive` - the component is frozen by a keep-alive manager or directly using `activatedProp`:
+	 *       this status can overlap with the `deactivated` hook.
 	 *
-	 *   *) destroyed - a component was destroyed:
-	 *      this status can intersect with some hooks, like `beforeDestroy` or `destroyed`.
+	 *   6. `destroyed` - the component has been destroyed:
+	 *      this status may overlap with some component hooks such as `beforeDestroy` or `destroyed`.
 	 */
 	@computed()
 	get componentStatus(): ComponentStatus {
@@ -120,7 +122,8 @@ export default abstract class iBlockState extends iBlockMods {
 
 	/**
 	 * Sets a new component status.
-	 * Notice, not all statuses emit component' re-rendering: `unloaded`, `inactive`, `destroyed` will emit only an event.
+	 * Notice, not all statuses cause the component to re-render: `unloaded`, `inactive`, `destroyed`
+	 * will only emit events.
 	 *
 	 * @param value
 	 * @emits `componentStatus:{$value}(value: ComponentStatus, oldValue: ComponentStatus)`
@@ -135,12 +138,12 @@ export default abstract class iBlockState extends iBlockMods {
 		}
 
 		const isShadowStatus =
-			this.isNotRegular ||
+			this.isFunctional ||
 
 			value === 'ready' && oldValue === 'beforeReady' ||
 			value === 'inactive' && !this.renderOnActivation ||
 
-			(<typeof iBlock>this.instance.constructor).shadowComponentStatuses[value];
+			(<typeof iBlockState>this.instance.constructor).shadowComponentStatuses[value];
 
 		if (isShadowStatus) {
 			this.shadowComponentStatusStore = value;
@@ -165,7 +168,7 @@ export default abstract class iBlockState extends iBlockMods {
 
 	/**
 	 * True if the current component is completely ready to work.
-	 * The `ready` status is mean, that component was mounted an all data provider are loaded.
+	 * The `ready` status is mean that the component is mounted an all data provider are loaded.
 	 */
 	@computed()
 	get isReady(): boolean {
@@ -173,8 +176,8 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * A map of component shadow statuses.
-	 * These statuses don't emit re-rendering of a component.
+	 * A dictionary with component shadow statuses.
+	 * Switching to these states doesn't cause the component to re-render.
 	 *
 	 * @see [[iBlock.componentStatus]]
 	 */
@@ -185,7 +188,9 @@ export default abstract class iBlockState extends iBlockMods {
 	};
 
 	/**
-	 * Component initialize status store
+	 * A string value indicating the component initialize status.
+	 * This property stores the statuses that cause the component to re-rendering.
+	 *
 	 * @see [[iBlock.componentStatus]]
 	 */
 	@field({
@@ -197,14 +202,16 @@ export default abstract class iBlockState extends iBlockMods {
 	protected componentStatusStore: ComponentStatus = 'unloaded';
 
 	/**
-	 * Component initialize status store for unwatchable statuses
+	 * A string value indicating the component initialize status.
+	 * This property stores the statuses that don't cause the component to re-rendering.
+	 *
 	 * @see [[iBlock.componentStatus]]
 	 */
 	@system({unique: true})
 	protected shadowComponentStatusStore?: ComponentStatus;
 
 	/**
-	 * Component stage store
+	 * A string value that specifies in which logical state the component should run
 	 * @see [[iBlock.stageProp]]
 	 */
 	@field({
@@ -219,23 +226,26 @@ export default abstract class iBlockState extends iBlockMods {
 	protected stageStore?: Stage;
 
 	/**
-	 * Component hook store
+	 * A string value that indicates what lifecycle hook the component is in
+	 *
+	 * @see https://vuejs.org/guide/essentials/lifecycle.html
 	 * @see [[iBlock.hook]]
 	 */
 	protected hookStore: Hook = 'beforeRuntime';
 
 	/**
-	 * Switches the component to a new hook
+	 * Switches the component to a new lifecycle hook
 	 *
 	 * @param value
 	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
 	 * @emits `componentHookChange(value: Hook, oldValue: Hook)
 	 */
+	// eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
 	protected set hook(value: Hook) {
 		const oldValue = this.hook;
 		this.hookStore = value;
 
-		if ('lfc' in this && !this.lfc.isBeforeCreate('beforeDataCreate')) {
+		if (!this.lfc.isBeforeCreate('beforeDataCreate')) {
 			this.emit(`componentHook:${value}`, value, oldValue);
 			this.emit('componentHookChange', value, oldValue);
 		}
@@ -251,7 +261,7 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Returns a promise that will be resolved when the component is toggled to the specified status
+	 * Returns a promise that will be resolved when the component is switched to the specified component status
 	 *
 	 * @see [[Async.promise]]
 	 * @param status
@@ -260,9 +270,9 @@ export default abstract class iBlockState extends iBlockMods {
 	waitStatus(status: ComponentStatus, opts?: WaitDecoratorOptions): Promise<void>;
 
 	/**
-	 * Executes a callback when the component is toggled to the specified status.
-	 * The method returns a promise resulting from invoking the function or raw result without wrapping
-	 * if the component is already in the specified status.
+	 * Executes the passed callback when the component is switched to the specified component status.
+	 * The method returns a promise resulting from the function call, or the unwrapped raw result if the component is
+	 * already in the specified status.
 	 *
 	 * @see [[Async.promise]]
 	 * @param status
@@ -320,13 +330,9 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Hook handler: component will be destroyed
+	 * Hook handler: the component is preparing to be destroyed
 	 */
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
-
-		try {
-			delete classesCache.dict.els?.[this.componentId];
-		} catch {}
 	}
 }

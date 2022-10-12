@@ -10,8 +10,7 @@ import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
 import { wrapWithSuspending, AsyncOptions, BoundFn } from 'core/async';
-
-import { bindRemoteWatchers, component, customWatcherRgxp, RawWatchHandler, WatchPath } from 'core/component';
+import { component, bindRemoteWatchers, customWatcherRgxp, RawWatchHandler, WatchPath } from 'core/component';
 
 import { field, system, computed, hook, wait } from 'super/i-block/modules/decorators';
 import { activate, deactivate } from 'super/i-block/modules/activation';
@@ -149,12 +148,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	})
 
 	protected watchCache!: Dictionary;
-
-	/**
-	 * A cache dictionary for the `opt.ifOnce` method
-	 */
-	@system({merge: true})
-	protected readonly ifOnceStore: Dictionary<number> = {};
 
 	/**
 	 * A link to the component itself
@@ -528,11 +521,11 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * Initializes remote watchers from the prop
+	 * Initializes remote watchers from `watchProp`
 	 */
 	@hook({beforeDataCreate: {functional: false}})
 	protected initRemoteWatchers(): void {
-		initRemoteWatchers(this);
+		initRemoteWatchers(Object.cast(this));
 	}
 
 	/**
@@ -540,9 +533,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 */
 	@hook({beforeRuntime: {functional: false}})
 	protected initBaseAPI(): void {
-		const
-			i = this.instance;
-
-		this.watch = i.watch.bind(this);
+		this.watch = this.instance.watch.bind(this);
 	}
 }
