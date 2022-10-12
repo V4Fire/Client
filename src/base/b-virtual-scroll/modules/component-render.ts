@@ -13,7 +13,7 @@ import { Friend } from 'super/i-block/i-block';
 import type ScrollRender from 'base/b-virtual-scroll/modules/chunk-render';
 import type bVirtualScroll from 'base/b-virtual-scroll/b-virtual-scroll';
 
-import type { RenderItem, DataToRender, ItemAttrs } from 'base/b-virtual-scroll/interface';
+import type { RenderItem, DataToRender, ItemAttrs, VirtualItemEl } from 'base/b-virtual-scroll/interface';
 
 export const
 	$$ = symbolGenerator();
@@ -101,7 +101,7 @@ export default class ComponentRender extends Friend {
 	}
 
 	/** @see [[bVirtualScroll.getOptionKey]] */
-	getItemKey(data: object, index: number): string {
+	getItemKey(data: VirtualItemEl, index: number): string {
 		return String(this.ctx.getItemKey(data, index));
 	}
 
@@ -115,7 +115,7 @@ export default class ComponentRender extends Friend {
 
 		const
 			res: HTMLElement[] = [],
-			needRender: Array<[RenderItem, number]> = [];
+			needRender: Array<[RenderItem, number, VirtualItemEl]> = [];
 
 		for (let i = 0; i < items.length; i++) {
 			const
@@ -126,19 +126,25 @@ export default class ComponentRender extends Friend {
 				continue;
 			}
 
+			const getItemKeyData = {
+				current: item.data,
+				prev: items[i - 1]?.data,
+				next: items[i + 1]?.data
+			};
+
 			if (canCache) {
 				const
-					key = this.getItemKey(item.data, item.index),
+					key = this.getItemKey(getItemKeyData, item.index),
 					node = this.getCachedComponent(key);
 
 				if (node) {
-						res[i] = node;
-						item.node = node;
-						continue;
+					res[i] = node;
+					item.node = node;
+					continue;
 				}
 			}
 
-			needRender.push([item, i]);
+			needRender.push([item, i, getItemKeyData]);
 		}
 
 		if (needRender.length > 0) {
@@ -147,10 +153,11 @@ export default class ComponentRender extends Friend {
 
 			for (let i = 0; i < needRender.length; i++) {
 				const
-					item = needRender[i][0],
-					indexesToAssign = needRender[i][1],
-					node = nodes[i],
-					key = this.getItemKey(item.data, item.index);
+					[item, indexesToAssign, getItemKeyData] = needRender[i],
+					node = nodes[i];
+
+				const
+					key = this.getItemKey(getItemKeyData, item.index);
 
 				if (canCache) {
 					this.cacheNode(key, item.node = node);
