@@ -7,11 +7,13 @@
  */
 
 import watch, { mute, unmute, unwrap, getProxyType, isProxy, WatchHandlerParams } from 'core/object/watch';
-import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
 
 import { tiedWatchers, watcherInitializer } from 'core/component/watch/const';
 import { cloneWatchValue } from 'core/component/watch/clone';
 import { attachDynamicWatcher } from 'core/component/watch/helpers';
+
+import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
+import { toRaw } from 'core/component/context';
 
 import type { ComponentMeta } from 'core/component/meta';
 import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
@@ -292,17 +294,19 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 						unmute(proxy);
 
-						Object.defineProperty(propCtx, info.name, {
-							configurable: true,
-							enumerable: true,
+						if (!(info.name in propCtx) || info.type === 'system') {
+							Object.defineProperty(propCtx, info.name, {
+								configurable: true,
+								enumerable: true,
 
-							get: () =>
-								proxy[info.name],
+								get: () =>
+									proxy[info.name],
 
-							set: (val) => {
-								propCtx.$set(proxy, info.name, val);
-							}
-						});
+								set: (val) => {
+									propCtx.$set(proxy, info.name, val);
+								}
+							});
+						}
 					}
 
 					break;
