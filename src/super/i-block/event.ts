@@ -42,13 +42,26 @@ export const
 export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * The component event emitter.
-	 * All events fired by this emitter can be listened to "outside" with the `v-on` directive.
-	 * Also, these events can bubble up the component hierarchy.
+	 *
+	 * All events fired by this emitter can be listened to "outside" using the `v-on` directive.
+	 * Also, if the component is in `dispatching` mode, then the emitted events will start bubbling up to
+	 * the parent component.
+	 *
+	 * Note that `selfEmitter.emit` always fires two events:
+	 *
+	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
+	 * 2. `on-${event}`(...args)
+	 *
+	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @example
 	 * ```js
-	 * this.selfEmitter.on('example', console.log);
-	 * this.selfEmitter.emit('example');
+	 * this.selfEmitter.on('example', console.log, {group: 'example'});   // [this, 42]
+	 * this.selfEmitter.on('onExample', console.log, {group: 'example'}); // [42]
+	 * this.selfEmitter.emit('example', 42);
+	 * this.selfEmitter.off({group: 'example'});
 	 * ```
 	 */
 	@system({
@@ -57,7 +70,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 		init: (o, d) => (<Async>d.async).wrapEventEmitter({
 			on: o.$on.bind(o),
 			once: o.$once.bind(o),
-			off: o.$off.bind(o)
+			off: o.$off.bind(o),
+			emit: o.emit.bind(o)
 		})
 	})
 
@@ -65,14 +79,20 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * The component local event emitter.
+	 *
 	 * Unlike `selfEmitter`, events that are fired by this emitter cannot be caught "outside" with the `v-on` directive,
 	 * and these events do not bubble up. Also, such events can be listened to by a wildcard mask.
+	 *
+	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @example
 	 * ```js
 	 * this.localEmitter.on('example.*', console.log);
 	 * this.localEmitter.emit('example.a', 1);
 	 * this.localEmitter.emit('example.b', 2);
+	 * this.localEmitter.off({group: 'example.*'});
 	 * ```
 	 */
 	@system({
@@ -91,10 +111,15 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The parent component event emitter.
 	 * To avoid memory leaks, only this emitter is used to listen for parent events.
 	 *
+	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
+	 *
 	 * @example
 	 * ```js
-	 * this.parentEmitter.on('example', console.log);
+	 * this.parentEmitter.on('example', console.log, {group: 'myEvent'});
 	 * this.$parent.emit('example', 1);
+	 * this.parentEmitter.off({group: 'myEvent'});
 	 * ```
 	 */
 	@system({
@@ -121,10 +146,15 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The root component event emitter.
 	 * To avoid memory leaks, only this emitter is used to listen for root events.
 	 *
+	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
+	 *
 	 * @example
 	 * ```js
-	 * this.rootEmitter.on('example', console.log);
+	 * this.rootEmitter.on('example', console.log, {group: 'myEvent'});
 	 * this.$root.emit('example', 1);
+	 * this.parentEmitter.off({group: 'myEvent'});
 	 * ```
 	 */
 	@system({
@@ -137,18 +167,30 @@ export default abstract class iBlockEvent extends iBlockBase {
 		})
 	})
 
-	protected readonly rootEmitter!: EventEmitterWrapper<this>;
+	protected readonly rootEmitter!: ReadonlyEventEmitterWrapper<this>;
 
 	/**
 	 * The global event emitter located in `core/component/event`.
+	 *
 	 * This emitter should be used to listen for external events, such as events coming over a WebSocket connection, etc.
 	 * Also, such events can be listened to by a wildcard mask. To avoid memory leaks, only this emitter is used to listen
 	 * for global events.
 	 *
+	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
+	 *
 	 * @see `core/component/event`
 	 *
 	 * ```js
-	 * this.globalEmitter.on('example.*', console.log);
+	 * import { globalEmitter } from 'core/component';
+	 *
+	 * this.globalEmitter.on('example.*', console.log, {group: 'myEvent'});
+	 *
+	 * globalEmitter.emit('example.a', 1);
+	 * globalEmitter.emit('example.b', 2);
+	 *
+	 * this.globalEmitter.off({group: 'myEvent'});
 	 * ```
 	 */
 	@system({
@@ -195,10 +237,25 @@ export default abstract class iBlockEvent extends iBlockBase {
 	}
 
 	/**
-	 * Detaches an event listener from the component
+	 * Detaches an event listener from the component.
+	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @see [[Async.off]]
 	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * this.on('someEvent', console.log);
+	 * this.off({group: 'someEvent'});
+	 *
+	 * this.on('someEvent', console.log, {label: 'myLabel'});
+	 * this.off({group: 'someEvent'});
+	 *
+	 * // Detach all listeners
+	 * this.off();
+	 * ```
 	 */
 	off(opts?: ClearOptionsId<EventId>): void {
 		this.selfEmitter.off(opts);
@@ -206,13 +263,24 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Emits a component event.
+	 *
+	 * All events fired by this method can be listened to "outside" using the `v-on` directive.
+	 * Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
+	 *
 	 * Note that this method always fires two events:
 	 *
-	 * 1. `${event}`(self, ...args)
+	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
 	 * 2. `on-${event}`(...args)
 	 *
 	 * @param event - the event name to dispatch
 	 * @param args - the event arguments
+	 *
+	 * @example
+	 * ```js
+	 * this.on('someEvent', console.log);   // [this, 42]
+	 * this.on('onSomeEvent', console.log); // [42]
+	 * this.emit('someEvent', 42);
+	 * ```
 	 */
 	emit(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
@@ -243,10 +311,25 @@ export default abstract class iBlockEvent extends iBlockBase {
 	}
 
 	/**
-	 * Emits a component error event
+	 * Emits a component error event.
+	 *
+	 * All events fired by this method can be listened to "outside" using the `v-on` directive.
+	 * Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
+	 *
+	 * Note that this method always fires two events:
+	 *
+	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
+	 * 2. `on-${event}`(...args)
 	 *
 	 * @param event - the event name to dispatch
 	 * @param args - the event arguments
+	 *
+	 * @example
+	 * ```js
+	 * this.on('someEvent', console.log);   // [this, 42]
+	 * this.on('onSomeEvent', console.log); // [42]
+	 * this.emitError('someEvent', 42);
+	 * ```
 	 */
 	emitError(event: string, ...args: unknown[]): void {
 		this.emit({event, type: 'error'}, ...args);
