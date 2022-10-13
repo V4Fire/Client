@@ -299,7 +299,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 		const
 			logArgs = args.slice();
 
-		if (eventDecl.type === 'error') {
+		if (eventDecl.logLevel === 'error') {
 			logArgs.forEach((el, i) => {
 				if (Object.isFunction(el)) {
 					logArgs[i] = () => el;
@@ -307,7 +307,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 			});
 		}
 
-		this.log(`event:${eventName}`, this, ...logArgs);
+		this.log({context: `event:${eventName}`, logLevel: eventDecl.logLevel}, this, ...logArgs);
 	}
 
 	/**
@@ -332,7 +332,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * ```
 	 */
 	emitError(event: string, ...args: unknown[]): void {
-		this.emit({event, type: 'error'}, ...args);
+		this.emit({event, logLevel: 'error'}, ...args);
 	}
 
 	/**
@@ -351,6 +351,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 */
 	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
+			that = this;
+
+		const
 			eventDecl = Object.isString(event) ? {event} : event,
 			eventName = eventDecl.event.camelize(false);
 
@@ -365,7 +368,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 			globalName = (this.globalName ?? '').camelize(false),
 			logArgs = args.slice();
 
-		if (eventDecl.type === 'error') {
+		if (eventDecl.logLevel === 'error') {
 			logArgs.forEach((el, i) => {
 				if (Object.isFunction(el)) {
 					logArgs[i] = () => el;
@@ -377,17 +380,17 @@ export default abstract class iBlockEvent extends iBlockBase {
 			if (parent.selfDispatching && parent.canSelfDispatchEvent(eventName)) {
 				parent.$emit(eventName, this, ...args);
 				parent.$emit(`on-${eventName}`, ...args);
-				parent.log(`event:${eventName}`, this, ...logArgs);
+				logFromParent(parent, `event:${eventName}`);
 
 			} else {
 				parent.$emit(`${componentName}::${eventName}`, this, ...args);
 				parent.$emit(`${componentName}::on-${eventName}`, ...args);
-				parent.log(`event:${componentName}::${eventName}`, this, ...logArgs);
+				logFromParent(parent, `event:${componentName}::${eventName}`);
 
 				if (globalName !== '') {
 					parent.$emit(`${globalName}::${eventName}`, this, ...args);
 					parent.$emit(`${globalName}::on-${eventName}`, ...args);
-					parent.log(`event:${globalName}::${eventName}`, this, ...logArgs);
+					logFromParent(parent, `event:${globalName}::${eventName}`);
 				}
 			}
 
@@ -396,6 +399,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 			}
 
 			parent = parent.$parent;
+		}
+
+		function logFromParent(parent: iBlockEvent, context: string) {
+			parent.log({context, logLevel: eventDecl.logLevel}, that, ...logArgs);
 		}
 	}
 

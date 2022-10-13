@@ -6,10 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { LogLevel } from 'core/log';
+import type { UnsafeComponentInterface } from 'core/component';
+
 import type iBlock from 'super/i-block/i-block';
 import type iBlockEvent from 'super/i-block/event';
 
-import type { UnsafeComponentInterface } from 'core/component';
 import type { statuses } from 'super/i-block/const';
 
 export type ComponentStatus =
@@ -41,7 +43,7 @@ export type Stage =
 
 export interface ComponentEvent {
 	event: string;
-	type?: 'error';
+	logLevel?: LogLevel;
 }
 
 export interface InitLoadOptions {
