@@ -47,6 +47,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * Also, if the component is in `dispatching` mode, then the emitted events will start bubbling up to
 	 * the parent component.
 	 *
+	 * In addition, all emitted events are automatically logged using the `log` method.
+	 * The default logging level is `info` (logging requires the `verbose` prop to be set to true),
+	 * but you can set the logging level explicitly.
+	 *
 	 * Note that `selfEmitter.emit` always fires two events:
 	 *
 	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
@@ -267,6 +271,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * All events fired by this method can be listened to "outside" using the `v-on` directive.
 	 * Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
 	 *
+	 * In addition, all emitted events are automatically logged using the `log` method.
+	 * The default logging level is `info` (logging requires the `verbose` prop to be set to true),
+	 * but you can set the logging level explicitly.
+	 *
 	 * Note that this method always fires two events:
 	 *
 	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
@@ -279,7 +287,12 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * ```js
 	 * this.on('someEvent', console.log);   // [this, 42]
 	 * this.on('onSomeEvent', console.log); // [42]
+	 *
 	 * this.emit('someEvent', 42);
+	 *
+	 * // Enable logging
+	 * setEnv('log', {patterns: ['event:']});
+	 * this.emit({event: 'someEvent', logLevel: 'warn'}, 42);
 	 * ```
 	 */
 	emit(event: string | ComponentEvent, ...args: unknown[]): void {
@@ -311,7 +324,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 	}
 
 	/**
-	 * Emits a component error event.
+	 * Emits a component event with the `error` logging level.
+	 * All event parameters that are functions are passed to the logger "as is".
 	 *
 	 * All events fired by this method can be listened to "outside" using the `v-on` directive.
 	 * Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
@@ -328,6 +342,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * ```js
 	 * this.on('someEvent', console.log);   // [this, 42]
 	 * this.on('onSomeEvent', console.log); // [42]
+	 *
+	 * // Enable logging
+	 * setEnv('log', {patterns: ['event:']});
 	 * this.emitError('someEvent', 42);
 	 * ```
 	 */
@@ -345,6 +362,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * All dispatched events have special prefixes to avoid collisions with events from other components.
 	 * For example: bButton `click` will bubble up as `b-button::click`.
 	 * Or if the component has the `globalName` prop, it will additionally bubble up as `${globalName}::click`.
+	 *
+	 * In addition, all emitted events are automatically logged using the `log` method.
+	 * The default logging level is `info` (logging requires the `verbose` prop to be set to true),
+	 * but you can set the logging level explicitly.
 	 *
 	 * @param event - the event name to dispatch
 	 * @param args - the event arguments
