@@ -195,21 +195,13 @@ export default abstract class iBlockEvent extends iBlockBase {
 	}
 
 	/**
-	 * Detaches an event listeners from the component
+	 * Detaches an event listener from the component
 	 *
 	 * @see [[Async.off]]
 	 * @param [opts] - additional options
 	 */
 	off(opts?: ClearOptionsId<EventId>): void {
 		this.selfEmitter.off(opts);
-	}
-
-	/**
-	 * Returns true if the specified event can be dispatched as a component own event (`selfDispatching`)
-	 * @param event
-	 */
-	canSelfDispatchEvent(event: string): boolean {
-		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event);
 	}
 
 	/**
@@ -322,6 +314,14 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 			parent = parent.$parent;
 		}
+	}
+
+	/**
+	 * Returns true if the specified event can be dispatched as the component own event (`selfDispatching`)
+	 * @param event
+	 */
+	canSelfDispatchEvent(event: string): boolean {
+		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event);
 	}
 
 	/**

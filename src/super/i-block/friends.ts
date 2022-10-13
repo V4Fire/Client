@@ -151,6 +151,23 @@ export default abstract class iBlockFriends extends iBlockProps {
 	protected readonly daemons!: Daemons;
 
 	/**
+	 * An API to work with a component in terms of [BEM](https://en.bem.info/methodology/quick-start/)
+	 */
+	@system({unique: true})
+	protected block?: Block;
+
+	/**
+	 * A class for low-level working with a component DOM tree
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new DOM(Object.cast(ctx))
+	})
+
+	protected readonly dom!: DOM;
+
+	/**
 	 * A class for persistent storage of component data
 	 */
 	@system({
@@ -173,21 +190,15 @@ export default abstract class iBlockFriends extends iBlockProps {
 	protected readonly state!: State;
 
 	/**
-	 * A class for low-level working with a component DOM tree.
+	 * A class to manage dynamically loaded modules
 	 */
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new DOM(Object.cast(ctx))
+		init: (ctx) => new ModuleLoader(Object.cast(ctx))
 	})
 
-	protected readonly dom!: DOM;
-
-	/**
-	 * An API to work with a component in terms of [BEM](https://en.bem.info/methodology/quick-start/)
-	 */
-	@system({unique: true})
-	protected block?: Block;
+	protected readonly moduleLoader!: ModuleLoader;
 
 	/**
 	 * A cache dictionary for the `opt.ifOnce` method
@@ -207,15 +218,14 @@ export default abstract class iBlockFriends extends iBlockProps {
 	protected readonly opt!: Opt;
 
 	/**
-	 * A class to manage dynamically loaded modules
+	 * An API to determine the current browser name/version
 	 */
 	@system({
 		atom: true,
-		unique: true,
-		init: (ctx) => new ModuleLoader(Object.cast(ctx))
+		unique: true
 	})
 
-	protected readonly moduleLoader!: ModuleLoader;
+	protected readonly browser: typeof browser = browser;
 
 	/**
 	 * A dictionary with some helper functions.
@@ -229,16 +239,6 @@ export default abstract class iBlockFriends extends iBlockProps {
 	protected readonly h: typeof helpers = helpers;
 
 	/**
-	 * An API to determine the current browser name/version.
-	 */
-	@system({
-		atom: true,
-		unique: true
-	})
-
-	protected readonly browser: typeof browser = browser;
-
-	/**
 	 * A link to the `globalThis.l` function
 	 */
 	@system({
@@ -249,18 +249,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	protected readonly l: typeof l = globalThis.l;
 
 	/**
-	 * A link to the `console` API
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		init: () => console
-	})
-
-	protected readonly console!: Console;
-
-	/**
-	 * A link to the `location` API
+	 * A link to the native `location` API
 	 */
 	@system({
 		atom: true,
@@ -280,4 +269,15 @@ export default abstract class iBlockFriends extends iBlockProps {
 	})
 
 	protected readonly global!: Window;
+
+	/**
+	 * A link to the native `console` API
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: () => console
+	})
+
+	protected readonly console!: Console;
 }
