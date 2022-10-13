@@ -58,7 +58,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	/**
 	 * True, if this route can be used as default.
 	 * The default route is used when the router can't automatically detect the current route,
-	 * for example, you have routes for URL-s "/foo" and "/bar", but if somebody tries to enter different paths
+	 * for example, you have routes for URLs "/foo" and "/bar", but if somebody tries to enter different paths
 	 * that weren't described, it will be redirected to the default route.
 	 *
 	 * There can be only one default route, but if you defined several routes with this flag,

@@ -1,6 +1,6 @@
 # core/component/render
 
-This module provides a bunch of functions to create and work with VNode-s.
+This module provides a bunch of functions to create and work with VNodes.
 
 ## Wrappers
 

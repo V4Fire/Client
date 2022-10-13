@@ -100,7 +100,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * A form action URL (the URL where the data will be sent) or a function to create action.
-	 * If the value is not specified, the component will use the default URL-s from the data provider.
+	 * If the value is not specified, the component will use the default URLs from the data provider.
 	 *
 	 * @example
 	 * ```

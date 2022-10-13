@@ -25,7 +25,7 @@ See the [[iVisible]] trait and the [[iData]] component.
 ## Basic concepts
 
 A page component is a special component kind represents a container bound to some URL.
-Why would we need these containers? In a world of "static" websites, we have URL-s and HTML pages,
+Why would we need these containers? In a world of "static" websites, we have URLs and HTML pages,
 but nowadays, many sites transform to SPA. It means that physically we have only one HTML page, and all the rest pages are virtualized.
 This is a case when we use page components. They represent virtual analogs of static HTML pages.
 

@@ -53,7 +53,7 @@ console.log(this.vdom.findElement('elem', vnode));
 
 ### create
 
-Creates a VNode or a list of VNode-s with the specified parameters.
+Creates a VNode or a list of VNodes with the specified parameters.
 
 ```js
 const vnode = this.vdom.create('b-button', {
@@ -107,7 +107,7 @@ const vnodesFromArr = this.vdom.create([
 
 ### render
 
-Renders the specified VNode or a list of VNode-s and returns the result.
+Renders the specified VNode or a list of VNodes and returns the result.
 
 ```js
 const div = this.vdom.render(this.create('div', {attrs: {class: 'foo'}}));

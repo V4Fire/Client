@@ -210,7 +210,7 @@ do the transitions; other parameters can provide some meta-information of a rout
 
 #### Specifying paths to routes
 
-When using an engine that tied routes with some URL-s, as the History API engine does, we need to specify the special
+When using an engine that tied routes with some URLs, as the History API engine does, we need to specify the special
 path that works as a blueprint to form a route URL. Just look at the example below.
 
 ```js
@@ -235,12 +235,12 @@ export default {
 
 We have created four routes:
 
-* The `main` route has bound to `/`, it means if we have our site on URL like `https://foo.com`, the `main` is tied with URL-s
+* The `main` route has bound to `/`, it means if we have our site on URL like `https://foo.com`, the `main` is tied with URLs
   `https://foo.com` and `https://foo.com/`.
 
 * The `help` route will be tied with `https://foo.com/help`.
 
-* The `friends` route is dynamically tied with a set of URL-s because it has the `:userId` part in its path pattern that
+* The `friends` route is dynamically tied with a set of URLs because it has the `:userId` part in its path pattern that
   takes a value from parameters that are specified with a router transition.
 
   ```js
@@ -276,7 +276,7 @@ We have created four routes:
   };
   ```
 
-* The `notFound` route isn't directly tied with any URL-s (because it hasn't the `path` property),
+* The `notFound` route isn't directly tied with any URLs (because it hasn't the `path` property),
   but it has the `default` property in `true`, i.e. every time some URL can't be matched directly will be used `notFound`.
   For example, `https://foo.com/bro` or `https://foo.com/bla/bar`. You can also name the default route as `index` instead of
   setting the `default` property.
@@ -318,7 +318,7 @@ this.router.push('help');
 this.router.push('friends', {params: {userId: '109'}});
 ```
 
-You can pass routes with absolute URL-s, too, even there aren't specified within the routing schema.
+You can pass routes with absolute URLs, too, even there aren't specified within the routing schema.
 
 ```js
 this.router.push('https://google.com');

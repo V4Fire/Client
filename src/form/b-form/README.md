@@ -40,7 +40,7 @@ Also, you can see the [[iVisible]] trait and the [[iData]] component.
 
 ## Why another component?
 
-* The native form API is based on simple URL-s and HTTP methods, but it's a low-level approach.
+* The native form API is based on simple URLs and HTTP methods, but it's a low-level approach.
   Opposite, `bForm` uses data providers to submit data.
 
 * `<form>` works with tags; `bForm` works with `iInput/bButton` components.
@@ -145,7 +145,7 @@ console.log(document.forms['bla']);
 #### [action]
 
 A form action URL (the URL where the data will be sent) or a function to create action.
-If the value is not specified, the component will use the default URL-s from the data provider.
+If the value is not specified, the component will use the default URLs from the data provider.
 
 ```
 < b-form :action = '/create-user'

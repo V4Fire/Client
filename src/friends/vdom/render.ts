@@ -27,7 +27,7 @@ import type { RenderFactory, RenderFn } from 'friends/vdom/interface';
 export function render(this: Friend, vnode: VNode): Node;
 
 /**
- * Renders the specified list of VNode-s and returns the result
+ * Renders the specified list of VNodes and returns the result
  * @param vnodes
  *
  * @example

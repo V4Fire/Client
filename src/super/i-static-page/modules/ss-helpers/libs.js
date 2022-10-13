@@ -198,7 +198,7 @@ exports.resolveAsLib = resolveAsLib;
  * @param {boolean=} [dest='lib'] - where to store the library
  * @param {boolean=} [relative=true] - if false, the function will return an absolute path
  * @param {(Array<string>|string)=} cwd - active working directory (can be defined as an array to enable layers)
- * @param {...string} paths - string paths to join (also, can take URL-s)
+ * @param {...string} paths - string paths to join (also, can take URLs)
  * @returns {string}
  *
  * @example

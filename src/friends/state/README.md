@@ -33,7 +33,7 @@ Any component can bind its state to a state of another external module.
 For example, a component may store some of its properties in a local storage.
 This means that when such a property changes, it should be automatically synchronized with the storage,
 and on the other hand, when the component is initialized, we must read its value from the storage.
-This is exactly what this module does - it offers a set of API-s to synchronize external states with a component state.
+This is exactly what this module does - it offers a set of APIs to synchronize external states with a component state.
 
 ## How does synchronization work?
 

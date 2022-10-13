@@ -119,7 +119,7 @@ export function render(
 ): Node;
 
 /**
- * Renders the specified list of VNode-s and returns the result
+ * Renders the specified list of VNodes and returns the result
  *
  * @param vnodes
  * @param [parent] - the parent component

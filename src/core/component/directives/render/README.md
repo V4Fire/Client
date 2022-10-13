@@ -1,6 +1,6 @@
 # core/component/directives/render
 
-This module provides a directive to create a composition of multiple functions that return VNode-s without using JSX.
+This module provides a directive to create a composition of multiple functions that return VNodes without using JSX.
 
 ## Usage
 
@@ -17,7 +17,7 @@ If the passed value is undefined or null, the directive will do nothing.
 ### Adding child nodes
 
 If you use the directive with a regular tag, the VNode that passed to `v-render`
-will replace all children VNode-s of the original one. Also, in this case, you can provide a list of VNode-s to insert.
+will replace all children VNodes of the original one. Also, in this case, you can provide a list of VNodes to insert.
 If the passed value is undefined or null, the directive will do nothing.
 
 ```
@@ -32,7 +32,7 @@ If the passed value is undefined or null, the directive will do nothing.
 
 If you use the directive with a component, the VNode that passed to `v-render` will replace the default or named
 (if the name passed via the `slot` attribute) children slot of the original VNode. Also, in this case,
-you can provide a list of VNode-s or slots to insert. If the passed value is undefined or null, the directive will do nothing.
+you can provide a list of VNodes or slots to insert. If the passed value is undefined or null, the directive will do nothing.
 
 ```
 < b-button v-render = mySlot
