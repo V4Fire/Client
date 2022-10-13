@@ -12,27 +12,27 @@
 - import $C from 'collection.js'
 
 /**
- * Base component template
+ * The base component template
  */
 - template index()
-	/** Hardcoded component name */
+	/** The hardcoded name of the component. If not set, a name based on the template file name will be used. */
 	- componentName = ''
 
-	/** Type of the root tag (if not specified, it will be taken from the component `rootTag` prop) */
+	/** The root tag type. If not specified, will be taken from the component's `rootTag` prop. */
 	- rootTag = null
 
-	/** Should or not generate additional wrapper within the root tag */
+	/** Should or not to create an extra wrapper inside the root tag */
 	- rootWrapper = false
 
-	/** Should or not generate a layout for overlap */
+	/** Should or not create a layout for overlapping */
 	- overWrapper = false
 
-	/** Should or not the component have a skeleton */
+	/** Should or not the component have a skeleton marker attribute */
 	- skeletonMarker = false
 
 	/**
 	 * Returns the component name
-	 * @param {string=} [name] - custom template name
+	 * @param {string=} [name] - the custom template name
 	 */
 	- block name(name)
 		? name = name || componentName || TPL_NAME
@@ -121,9 +121,9 @@
 					+= content
 
 	/**
-	 * Render the specified content by using passed options
+	 * Renders the specified content by using the passed options
 	 *
-	 * @param {{renderKey: string, wait: string}} opts - options to render
+	 * @param {{renderKey: string, wait: string}} opts - the options to render
 	 * @param {string} content
 	 *
 	 * @example
@@ -148,14 +148,14 @@
 		- return $C(exports).get(path)
 
 	/**
-	 * Applies Typograf to the specified content
+	 * Applies the `Typograf` library for the specified content and returns the result
 	 * @param {string} content
 	 */
 	- block typograf(content)
 		+= content|typograf
 
 	/**
-	 * Appends the specified value to root component classes
+	 * Appends the specified value to the root component classes
 	 * @param {string} value
 	 */
 	- block appendToRootClasses(value)
@@ -186,7 +186,7 @@
 		< ?.${self.name()}
 			< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 				/**
-				 * Generates an icon layout
+				 * Generates an icon layout by the specified parameters
 				 *
 				 * @param {(string|!Array<gIcon>)} iconId
 				 * @param {Object=} [classes]
@@ -209,11 +209,11 @@
 							} .
 
 				/**
-				 * Generates a slot declaration (scoped and plain)
+				 * Generates a slot declaration by the specified parameters
 				 *
-				 * @param {string=} [name] - slot name
-				 * @param {Object=} [attrs] - scoped slot attributes
-				 * @param {string=} [content] - slot content
+				 * @param {string=} [name] - the slot name
+				 * @param {Object=} [attrs] - the scoped slot attributes
+				 * @param {string=} [content] - the slot content
 				 */
 				- block slot(name = 'default', attrs, content)
 					- switch arguments.length
