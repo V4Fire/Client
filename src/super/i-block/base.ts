@@ -472,10 +472,28 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * Logs an event with the specified context
+	 * Logs the given message on behalf of the component.
+	 * The `core/log` module is used for logging, so see the documentation for this module for details.
+	 *
+	 * All component messages are prefixed with `component:` and also contain the component name itself.
+	 * For example, `log('fBar')` from the `bExample` component will create a logging message: `component:fBar:b-example`.
+	 * If the component has the `globalName` prop specified, then the message will be as follows (for example,
+	 * `globalName` is equal to `myExample`): `component:global:myExample:fBar:b-example`.
+	 *
+	 * By default, all messages have a logging level of `info`. Such messages will not be logged unless the component has
+	 * the `verbose` prop set to true. It is allowed to set the logging level explicitly.
 	 *
 	 * @param ctxOrOpts - the logging context or logging options
 	 * @param [details] - the event details
+	 *
+	 * @example
+	 * ```js
+	 * // Enable logging
+	 * setEnv('log', {patterns: ['myMessage']});
+	 *
+	 * this.log('myMessage', 'some', 'parameters', () => 'the function will be called dynamically');
+	 * this.log({context: 'myMessage', logLevel: 'error'});
+	 * ```
 	 */
 	log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
@@ -491,27 +509,25 @@ export default abstract class iBlockBase extends iBlockFriends {
 			return;
 		}
 
+		let
+			resolvedContext;
+
+		if (this.globalName != null) {
+			resolvedContext = ['component:global', this.globalName, context, this.componentName];
+
+		} else {
+			resolvedContext = ['component', context, this.componentName];
+		}
+
 		log(
 			{
-				context: ['component', context, this.componentName].join(':'),
+				context: resolvedContext.join(':'),
 				logLevel
 			},
 
 			...details,
 			this
 		);
-
-		if (this.globalName != null) {
-			log(
-				{
-					context: ['component:global', this.globalName, context, this.componentName].join(':'),
-					logLevel
-				},
-
-				...details,
-				this
-			);
-		}
 	}
 
 	/**
