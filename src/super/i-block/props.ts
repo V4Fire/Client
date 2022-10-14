@@ -17,12 +17,6 @@ import type { Stage } from 'super/i-block/interface';
 @component()
 export default abstract class iBlockProps extends ComponentInterface {
 	/**
-	 * If true, the component will log informational messages, not just errors and warnings
-	 */
-	@prop(Boolean)
-	readonly verbose: boolean = false;
-
-	/**
 	 * The unique or global name of the component.
 	 * Used to synchronize component data with different external storages.
 	 */
@@ -34,6 +28,13 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 */
 	@prop(String)
 	readonly rootTag: string = 'div';
+
+	/**
+	 * If true, the component will log informational messages, not just errors and warnings.
+	 * This option affects the messages output by the `log` method.
+	 */
+	@prop(Boolean)
+	readonly verbose: boolean = false;
 
 	/**
 	 * A string value that specifies in which logical state the component should run.
