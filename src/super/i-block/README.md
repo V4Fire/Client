@@ -66,6 +66,332 @@ For more information on any of these properties, refer to their module documenta
 Any V4Fire component implements the event emitter interface, and also contains a number of getters for convenient work
 with events from other components, such as parent events, root component events, etc.
 
+### Basic concept
+
+The component has a set of methods for emitting and listening to events: `on`, `once`, `promisifyOnce`, `off`, `emit`,
+`emitError` and `dispatch`.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.on('myEvent', (component, ...eventArgs) => {
+      console.log(component, ...eventArgs);
+    });
+
+    this.emit('myEvent', 1, 2, 3);
+  }
+}
+```
+
+It is worth noting here that in addition to the arguments that we explicitly passed to `emit`, the event handler received a
+reference to the component that fired this event. This is very handy in cases where we listen to the events of one component
+from another component. However, this behavior is not always convenient. Therefore, the `emit` method automatically sends a second event,
+where only explicit arguments are passed. The name of such an event is formed according to the pattern `on${eventName}`,
+for example, `click` and `onClick`.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.on('onMyEvent', (...eventArgs) => {
+      console.log(...eventArgs);
+    });
+
+    this.emit('myEvent', 1, 2, 3);
+  }
+}
+```
+
+All event names are converted to camelCase.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.on('on-my-event', (...eventArgs) => {
+      console.log(...eventArgs);
+    });
+
+    this.emit('myEvent', 1, 2, 3);
+  }
+}
+```
+
+In addition to the `on` method, we can use the `once` and `promisifyOnce` methods, which will only catch the event once,
+and then the listener will be detached. The `promisifyOnce` method takes the event name to listen for and returns a promise.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.once('onMyEvent', (...eventArgs) => {
+      console.log(...eventArgs);
+    });
+
+    this.promisifyOnce('myEvent').then(console.log);
+
+    this.emit('myEvent', 1, 2, 3);
+    this.emit('myEvent', 2, 3, 4);
+  }
+}
+```
+
+Also, all methods for listening to events are wrapped by the [[Async]] instance of the component within which they are used.
+Therefore, you do not need to think about clearing events after the component is destroyed, and you can also provide
+additional Async parameters when adding a listener.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.on('onMyEvent', (...eventArgs) => {
+      console.log(...eventArgs);
+    }, {
+      label: 'myEvent',
+      join: true
+    });
+
+    this.promisifyOnce('myEvent', {group: 'myGroup'}).then(console.log);
+
+    this.emit('myEvent', 1, 2, 3);
+  }
+}
+```
+
+To cancel listening to an event, use the `off` method. Event listeners can be detached by a link,
+or by a group and/or label. If nothing is passed, all registered handlers will be detached.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    const id = this.on('onMyEvent', console.log);
+
+    this.on('onMyEvent', console.log, {group: 'events'});
+    this.on('onMyEvent', console.log, {label: 'onMyEvent'});
+
+    this.emit('myEvent', 1, 2, 3);
+
+    this.off(id);
+    this.off({group: 'events'});
+
+    // Detach all listeners with groups starting with `even`
+    this.off({group: /^even/});
+
+    this.off({label: 'onMyEvent'});
+
+    // Detach all listeners
+    this.off();
+  }
+}
+```
+
+To cancel a listener with `promisefyOnce`, simply use the `async.cancelPromise` method.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.promisifyOnce('onMyEvent', {group: 'events'}).then(console.log);
+    this.async.cancelPromise({group: 'events'});
+  }
+}
+```
+
+Note that if you do not explicitly set a group name, it will be equal to the event name being listened to.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.on('onMyEvent', console.log);
+    this.on('onMyEvent', console.log);
+    this.on('onMyEvent', console.log);
+    this.on('onMyEvent', console.log);
+
+    this.off({group: 'onMyEvent'});
+  }
+}
+```
+
+To emit events, use the `emit` method. In addition to `emit`, there is also the `emitError` method. The main difference between these methods is the logging level of emitted events.
+See the section on event logging for more details.
+
+All such events can be caught both using the `on`, `once`, `promisifyOnce` methods,
+and using the `v-on` directive in the component template.
+
+__b-example.ts__
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.emit('myEvent', {data: 'some message'});
+  }
+}
+```
+
+__b-another-example.ss__
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    < b-example @myEvent = console.log
+```
+
+In addition, if you set the `dispatching` prop to a component, then when an event is fired, the component will emit the same event,
+but from its parent. That is, the event begins to "bubble up" in the hierarchy, like DOM events. If the parent component also
+has `dispatching` set, then bubbling will continue. When bubbling, the name of such an event changes according to
+the pattern `${componentName}::${eventName}`.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override dispatching: boolean = true;
+
+  created() {
+    this.$parent.on('bExample::fooBar', console.log);
+    this.$parent.on('bExample::onFooBar', console.log);
+    this.emit('fooBar', 42);
+  }
+}
+```
+
+If the component, in addition to `dispatching`, also has `globalName` set, then such events also bubble up with a name
+based on the pattern `${globalName}::${eventName}`.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override globalName: string = 'myTest';
+  override dispatching: boolean = true;
+
+  created() {
+    this.$parent.on('myTest::fooBar', console.log);
+    this.$parent.on('myTest::onFooBar', console.log);
+    this.emit('fooBar', 42);
+  }
+}
+```
+
+Finally, if the parent component has the `selfDispatching` prop set to true, then such bubbling events will be fired
+on the component as their own, rather than by the changed name.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override globalName: string = 'myTest';
+  override dispatching: boolean = true;
+
+  created() {
+    if (this.$parent.selfDispatching === true) {
+      this.$parent.on('fooBar', console.log);
+      this.$parent.on('onFooBar', console.log);
+    }
+
+    this.emit('fooBar', 42);
+  }
+}
+```
+
+However, there are a number of events that cannot bubble up in this way, because this would lead to errors.
+There is a special `canSelfDispatchEvent` method that returns true if the component can handle the passed event in `selfDispatching` mode.
+
+In addition to the above, any component also has the `dispatch` method that triggers the event dispatch mechanism.
+Generally, you don't need to explicitly use this method.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    if (this.$parent.selfDispatching === true) {
+      this.$parent.on('fooBar', console.log);
+      this.$parent.on('onFooBar', console.log);
+    }
+
+    this.dispatch('fooBar', 42);
+  }
+}
+```
+
+### Event logging
+
+All component events that are emitted by the `emit` method are additionally logged. The `log` method is used for logging.
+To enable logging of certain events, simply set the required pattern using the `setEnv` function.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    setEnv('log', {patterns: ['event:fooBar']});
+    this.emit('fooBar', 42);
+  }
+}
+```
+
+By default, events that are emitted via `emit` use the `info` logging context. Such messages will be ignored unless
+the component explicitly sets the `verbose` prop to true. It is allowed to explicitly specify the logging level for the emitted event.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    setEnv('log', {patterns: ['event:fooBar']});
+    this.emit({event: 'fooBar', logLevel: 'warn'}, 42);
+    this.emit({event: 'fooBar', logLevel: 'error'}, 42);
+  }
+}
+```
+
+Events emitted with the `emitError` method always have the `error` logging context.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    setEnv('log', {patterns: ['event:fooBar']});
+    this.emitError('fooBar', 42);
+  }
+}
+```
+
 ### Getters
 
 #### selfEmitter
@@ -77,7 +403,7 @@ Also, these events can bubble up the component hierarchy.
 __b-example.ts__
 
 ```typescript
-import iBlock, { component, prop, field } from 'super/i-block/i-block';
+import iBlock, { component } from 'super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
@@ -106,7 +432,7 @@ Unlike `selfEmitter`, events that are fired by this emitter cannot be caught "ou
 and these events do not bubble up. Also, such events can be listened to by a wildcard mask.
 
 ```typescript
-import iBlock, { component, prop, field } from 'super/i-block/i-block';
+import iBlock, { component } from 'super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
