@@ -446,8 +446,15 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The method returns a promise.
 	 *
 	 * @see [[Async.wait]]
+	 * @see https://vuejs.org/guide/essentials/template-refs.html
+	 *
 	 * @param ref - the reference name
 	 * @param [opts] - additional options
+	 *
+	 * @example
+	 * ```js
+	 * this.ref('my-component').then(console.log);
+	 * ```
 	 */
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
 		let
