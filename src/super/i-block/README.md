@@ -397,8 +397,24 @@ export default class bExample extends iBlock {
 #### selfEmitter
 
 The component event emitter.
-All events fired by this emitter can be listened to "outside" with the `v-on` directive.
-Also, these events can bubble up the component hierarchy.
+In fact, component methods such as `on` or `off` are just aliases to the methods of the given emitter.
+
+All events fired by this emitter can be listened to "outside" using the `v-on` directive.
+Also, if the component is in `dispatching` mode, then the emitted events will start bubbling up to
+the parent component.
+
+In addition, all emitted events are automatically logged using the `log` method.
+The default logging level is `info` (logging requires the `verbose` prop to be set to true),
+but you can set the logging level explicitly.
+
+Note that `selfEmitter.emit` always fires two events:
+
+1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
+2. `on-${event}`(...args)
+
+Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+the group/label to which the listener is attached. By default, all listeners have a group name equal to
+the event name being listened to. If nothing is specified, then all component event listeners will be detached.
 
 __b-example.ts__
 
@@ -428,8 +444,13 @@ __b-another-example.ss__
 #### localEmitter
 
 The component local event emitter.
+
 Unlike `selfEmitter`, events that are fired by this emitter cannot be caught "outside" with the `v-on` directive,
 and these events do not bubble up. Also, such events can be listened to by a wildcard mask.
+
+Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+the group/label to which the listener is attached. By default, all listeners have a group name equal to
+the event name being listened to. If nothing is specified, then all component event listeners will be detached.
 
 ```typescript
 import iBlock, { component } from 'super/i-block/i-block';
@@ -440,6 +461,7 @@ export default class bExample extends iBlock {
     this.localEmitter.on('example.*', console.log);
     this.localEmitter.emit('example.a', 1);
     this.localEmitter.emit('example.b', 2);
+    this.localEmitter.off({group: 'example.*'});
   }
 }
 ```
@@ -449,14 +471,19 @@ export default class bExample extends iBlock {
 The parent component event emitter.
 To avoid memory leaks, only this emitter is used to listen for parent events.
 
+Note that to detach a listener, you can specify a group/label name to which the listener is bound.
+By default, all listeners have a group name equal to the event name being listened to.
+If nothing is specified, then all component event listeners will be detached.
+
 ```typescript
 import iBlock, { component, prop, field } from 'super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
   created() {
-    this.parentEmitter.on('example', console.log);
+    this.parentEmitter.on('example', console.log, {group: 'myEvent'});
     this.$parent.emit('example', 1);
+    this.parentEmitter.off({group: 'myEvent'});
   }
 }
 ```
@@ -466,14 +493,19 @@ export default class bExample extends iBlock {
 The root component event emitter.
 To avoid memory leaks, only this emitter is used to listen for root events.
 
+Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+the group/label to which the listener is attached. By default, all listeners have a group name equal to
+the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+
 ```typescript
 import iBlock, { component, prop, field } from 'super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
   created() {
-    this.rootEmitter.on('example', console.log);
+    this.rootEmitter.on('example', console.log, {group: 'myEvent'});
     this.$root.emit('example', 1);
+    this.parentEmitter.off({group: 'myEvent'});
   }
 }
 ```
@@ -481,21 +513,28 @@ export default class bExample extends iBlock {
 #### globalEmitter
 
 The global event emitter located in `core/component/event`.
+
 This emitter should be used to listen for external events, such as events coming over a WebSocket connection, etc.
 Also, such events can be listened to by a wildcard mask. To avoid memory leaks, only this emitter is used to listen
 for global events.
+
+Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+the group/label to which the listener is attached. By default, all listeners have a group name equal to
+the event name being listened to. If nothing is specified, then all component event listeners will be detached.
 
 ```typescript
 import { globalEmitter } from 'core/component';
 import iBlock, { component, prop, field } from 'super/i-block/i-block';
 
-globalEmitter.emit('example.a', 1);
-globalEmitter.emit('example.b', 2);
-
 @component()
 export default class bExample extends iBlock {
   created() {
-    this.globalEmitter.on('example.*', console.log);
+    this.globalEmitter.on('example.*', console.log, {group: 'myEvent'});
+
+    globalEmitter.emit('example.a', 1);
+    globalEmitter.emit('example.b', 2);
+
+    this.globalEmitter.off({group: 'myEvent'});
   }
 }
 ```
@@ -556,16 +595,27 @@ export default class bExample extends iBlock {
 
 Detaches an event listener from the component.
 
+Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+the group/label to which the listener is attached. By default, all listeners have a group name equal to
+the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+
 ```typescript
 import iBlock, { component, prop, field } from 'super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
   created() {
-    this.on('myEvent', console.log, {group: 'myEvent'});
-    this.emit('myEvent', 42);
-    this.off({group: 'myEvent'});
-    this.emit('myEvent', 42);
+    const id = this.on('someEvent', console.log);
+    this.off(id);
+
+    this.on('someEvent', console.log);
+    this.off({group: 'someEvent'});
+
+    this.on('someEvent', console.log, {label: 'myLabel'});
+    this.off({group: 'someEvent'});
+
+    // Detach all listeners
+    this.off();
   }
 }
 ```
@@ -573,10 +623,83 @@ export default class bExample extends iBlock {
 #### emit
 
 Emits a component event.
+The event name is converted to camelCase. In simple terms, `foo-bar` and `fooBar` will end up being the same event.
+
+All events fired by this method can be listened to "outside" using the `v-on` directive.
+Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
+
+In addition, all emitted events are automatically logged using the `log` method.
+The default logging level is `info` (logging requires the `verbose` prop to be set to true),
+but you can set the logging level explicitly.
+
 Note that this method always fires two events:
 
-1. `${event}`(self, ...args)
+1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
 2. `on-${event}`(...args)
+
+```typescript
+import iBlock, { component, prop, field } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.on('someEvent', console.log);   // [this, 42]
+    this.on('onSomeEvent', console.log); // [42]
+
+    this.emit('someEvent', 42);
+
+    // Enable logging
+    setEnv('log', {patterns: ['event:']});
+    this.emit({event: 'someEvent', logLevel: 'warn'}, 42);
+  }
+}
+```
+
+#### emitError
+
+Emits a component event with the `error` logging level.
+All event parameters that are functions are passed to the logger "as is".
+The event name is converted to camelCase. In simple terms, `foo-bar` and `fooBar` will end up being the same event.
+
+All events fired by this method can be listened to "outside" using the `v-on` directive.
+Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
+
+Note that this method always fires two events:
+
+1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
+2. `on-${event}`(...args)
+
+```typescript
+import iBlock, { component, prop, field } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.on('someEvent', console.log);   // [this, 42]
+    this.on('onSomeEvent', console.log); // [42]
+
+    // Enable logging
+    setEnv('log', {patterns: ['event:']});
+    this.emitError('someEvent', 42);
+  }
+}
+```
+
+#### dispatch
+
+Emits a component event to the parent component.
+
+This means that all component events will bubble up to the parent component:
+if the parent also has the `dispatching` property set to true, then events will bubble up to the next
+(from the hierarchy) parent component.
+
+All dispatched events have special prefixes to avoid collisions with events from other components.
+For example: bButton `click` will bubble up as `b-button::click`.
+Or if the component has the `globalName` prop, it will additionally bubble up as `${globalName}::click`.
+
+In addition, all emitted events are automatically logged using the `log` method.
+The default logging level is `info` (logging requires the `verbose` prop to be set to true),
+but you can set the logging level explicitly.
 
 #### canSelfDispatchEvent
 

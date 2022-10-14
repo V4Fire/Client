@@ -42,6 +42,7 @@ export const
 export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * The component event emitter.
+	 * In fact, component methods such as `on` or `off` are just aliases to the methods of the given emitter.
 	 *
 	 * All events fired by this emitter can be listened to "outside" using the `v-on` directive.
 	 * Also, if the component is in `dispatching` mode, then the emitted events will start bubbling up to
@@ -56,9 +57,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
 	 * 2. `on-${event}`(...args)
 	 *
-	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
-	 * By default, all listeners have a group name equal to the event name being listened to.
-	 * If nothing is specified, then all component event listeners will be detached.
+	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
+	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @example
 	 * ```js
@@ -87,9 +88,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * Unlike `selfEmitter`, events that are fired by this emitter cannot be caught "outside" with the `v-on` directive,
 	 * and these events do not bubble up. Also, such events can be listened to by a wildcard mask.
 	 *
-	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
-	 * By default, all listeners have a group name equal to the event name being listened to.
-	 * If nothing is specified, then all component event listeners will be detached.
+	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
+	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @example
 	 * ```js
@@ -150,9 +151,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The root component event emitter.
 	 * To avoid memory leaks, only this emitter is used to listen for root events.
 	 *
-	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
-	 * By default, all listeners have a group name equal to the event name being listened to.
-	 * If nothing is specified, then all component event listeners will be detached.
+	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
+	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @example
 	 * ```js
@@ -180,9 +181,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * Also, such events can be listened to by a wildcard mask. To avoid memory leaks, only this emitter is used to listen
 	 * for global events.
 	 *
-	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
-	 * By default, all listeners have a group name equal to the event name being listened to.
-	 * If nothing is specified, then all component event listeners will be detached.
+	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
+	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @see `core/component/event`
 	 *
@@ -242,15 +243,19 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Detaches an event listener from the component.
-	 * Note that to detach a listener, you can specify a group/label name to which the listener is bound.
-	 * By default, all listeners have a group name equal to the event name being listened to.
-	 * If nothing is specified, then all component event listeners will be detached.
+	 *
+	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
+	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
+	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @see [[Async.off]]
 	 * @param [opts] - additional options
 	 *
 	 * @example
 	 * ```js
+	 * const id = this.on('someEvent', console.log);
+	 * this.off(id);
+	 *
 	 * this.on('someEvent', console.log);
 	 * this.off({group: 'someEvent'});
 	 *
