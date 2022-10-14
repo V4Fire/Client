@@ -72,8 +72,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 		atom: true,
 		unique: true,
 		init: (o, d) => (<Async>d.async).wrapEventEmitter({
-			on: o.$on.bind(o),
-			once: o.$once.bind(o),
+			on: (event, handler) => o.$on(normalizeEventName(event), handler),
+			once: (event, handler) => o.$once(normalizeEventName(event), handler),
 			off: o.$off.bind(o),
 			emit: o.emit.bind(o)
 		})
@@ -213,8 +213,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param handler
 	 * @param [opts] - additional options
 	 */
-	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
-		this.selfEmitter.on(event.dasherize(), handler, opts);
+	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): object {
+		return this.selfEmitter.on(event, handler, opts);
 	}
 
 	/**
@@ -225,8 +225,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param handler
 	 * @param [opts] - additional options
 	 */
-	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): void {
-		this.selfEmitter.once(event.dasherize(), handler, opts);
+	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): object {
+		return this.selfEmitter.once(event, handler, opts);
 	}
 
 	/**
@@ -237,7 +237,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param [opts] - additional options
 	 */
 	promisifyOnce<T = unknown>(event: string, opts?: AsyncOptions): Promise<CanUndef<T>> {
-		return this.selfEmitter.promisifyOnce(event.dasherize(), opts);
+		return this.selfEmitter.promisifyOnce(event, opts);
 	}
 
 	/**
@@ -267,6 +267,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Emits a component event.
+	 * The event name is converted to camelCase. In simple terms, `foo-bar` and `fooBar` will end up being the same event.
 	 *
 	 * All events fired by this method can be listened to "outside" using the `v-on` directive.
 	 * Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
@@ -297,13 +298,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 */
 	emit(event: string | ComponentEvent, ...args: unknown[]): void {
 		const
-			eventDecl = Object.isString(event) ? {event} : event,
-			eventName = eventDecl.event.camelize(false);
-
-		eventDecl.event = eventName;
+			eventDecl = normalizeEvent(event),
+			eventName = eventDecl.event;
 
 		this.$emit(eventName, this, ...args);
-		this.$emit(`on-${eventName}`.camelize(false), ...args);
+		this.$emit(getWrappedEventName(eventName), ...args);
 
 		if (this.dispatching) {
 			this.dispatch(eventDecl, ...args);
@@ -326,6 +325,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * Emits a component event with the `error` logging level.
 	 * All event parameters that are functions are passed to the logger "as is".
+	 * The event name is converted to camelCase. In simple terms, `foo-bar` and `fooBar` will end up being the same event.
 	 *
 	 * All events fired by this method can be listened to "outside" using the `v-on` directive.
 	 * Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
@@ -375,18 +375,19 @@ export default abstract class iBlockEvent extends iBlockBase {
 			that = this;
 
 		const
-			eventDecl = Object.isString(event) ? {event} : event,
-			eventName = eventDecl.event.camelize(false);
+			eventDecl = normalizeEvent(event);
 
-		eventDecl.event = eventName;
+		const
+			eventName = eventDecl.event,
+			wrappedEventName = getWrappedEventName(eventName);
 
 		let {
+			globalName,
 			componentName,
 			$parent: parent
 		} = this;
 
 		const
-			globalName = (this.globalName ?? '').camelize(false),
 			logArgs = args.slice();
 
 		if (eventDecl.logLevel === 'error') {
@@ -400,17 +401,17 @@ export default abstract class iBlockEvent extends iBlockBase {
 		while (parent != null) {
 			if (parent.selfDispatching && parent.canSelfDispatchEvent(eventName)) {
 				parent.$emit(eventName, this, ...args);
-				parent.$emit(`on-${eventName}`, ...args);
+				parent.$emit(wrappedEventName, ...args);
 				logFromParent(parent, `event:${eventName}`);
 
 			} else {
-				parent.$emit(`${componentName}::${eventName}`, this, ...args);
-				parent.$emit(`${componentName}::on-${eventName}`, ...args);
+				parent.$emit(normalizeEventName(`${componentName}::${eventName}`), this, ...args);
+				parent.$emit(normalizeEventName(`${componentName}::${wrappedEventName}`), ...args);
 				logFromParent(parent, `event:${componentName}::${eventName}`);
 
-				if (globalName !== '') {
-					parent.$emit(`${globalName}::${eventName}`, this, ...args);
-					parent.$emit(`${globalName}::on-${eventName}`, ...args);
+				if (globalName != null) {
+					parent.$emit(normalizeEventName(`${globalName}::${eventName}`), this, ...args);
+					parent.$emit(normalizeEventName(`${globalName}::${wrappedEventName}`), ...args);
 					logFromParent(parent, `event:${globalName}::${eventName}`);
 				}
 			}
@@ -432,7 +433,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param event
 	 */
 	canSelfDispatchEvent(event: string): boolean {
-		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event);
+		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
 	}
 
 	/**
@@ -515,4 +516,26 @@ export default abstract class iBlockEvent extends iBlockBase {
 			e.action(this);
 		}
 	}
+}
+
+function normalizeEvent(event: ComponentEvent | string): ComponentEvent {
+	if (Object.isString(event)) {
+		return {
+			event: normalizeEventName(event),
+			logLevel: 'info'
+		};
+	}
+
+	return {
+		...event,
+		event: normalizeEventName(event.event)
+	};
+}
+
+function getWrappedEventName(event: string): string {
+	return normalizeEventName(`on-${event}`);
+}
+
+function normalizeEventName(event: string): string {
+	return event.camelize(false);
 }
