@@ -20,6 +20,7 @@ import log, { LogMessageOptions } from 'core/log';
 import { deprecated } from 'core/functools/deprecation';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
+import RenderInfo from 'super/i-block/modules/render-info';
 import config from 'config';
 
 import Async, {
@@ -81,7 +82,6 @@ import Cache from 'super/i-block/modules/cache';
 import Opt from 'super/i-block/modules/opt';
 
 import Daemons, { DaemonsDict } from 'super/i-block/modules/daemons';
-import DebugMode from 'super/i-block/modules/debug-mode';
 import Analytics from 'super/i-block/modules/analytics';
 
 import DOM from 'super/i-block/modules/dom';
@@ -168,7 +168,7 @@ export * from 'super/i-block/modules/module-loader';
 
 export * from 'super/i-block/modules/daemons';
 export * from 'super/i-block/modules/event-emitter';
-export * from 'super/i-block/modules/debug-mode';
+export * from 'super/i-block/modules/render-info';
 
 export * from 'super/i-block/modules/sync';
 export * from 'super/i-block/modules/async-render';
@@ -781,15 +781,15 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * API for debug mode
+	 * API for info rendering
 	 */
 	@system({
 		atom: true,
 		unique: true,
-		init: (ctx) => new DebugMode(ctx)
+		init: (ctx) => new RenderInfo(ctx)
 	})
 
-	readonly debugMode!: DebugMode;
+	readonly renderInfo!: RenderInfo;
 
 	/**
 	 * API for analytic engines
@@ -2574,11 +2574,11 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Initializes debug data collection
+	 * Initializes data collection
 	 */
 	@hook(['mounted', 'updated'])
-	protected initDebugMode(): void {
-		this.debugMode.initDebugDataGathering();
+	protected initRenderInfo(): void {
+		this.renderInfo.initDataGathering();
 	}
 
 	protected override onCreatedHook(): void {

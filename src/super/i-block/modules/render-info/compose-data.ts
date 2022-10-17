@@ -1,4 +1,4 @@
-import type { GatheringStrategyData } from 'super/i-block/modules/debug-mode/interface';
+import type { GatheringStrategyData } from 'super/i-block/modules/render-info/interface';
 
 /**
  * Combines data into a single object
@@ -9,7 +9,7 @@ export default function composeDataEngine(
 ): Promise<Dictionary> {
 	return new Promise((resolve, reject) => {
 		const
-			storageDebugData = {};
+			composedData = {};
 
 		data.forEach((result) => {
 			if (result.status === 'rejected') {
@@ -20,19 +20,19 @@ export default function composeDataEngine(
 				{value} = result,
 				{renderBy, data} = value;
 
-			if (!Object.has(storageDebugData, renderBy)) {
-				Object.set(storageDebugData, renderBy, {});
+			if (!Object.has(composedData, renderBy)) {
+				Object.set(composedData, renderBy, {});
 			}
 
 			const
-				oldFieldData = Object.get(storageDebugData, renderBy),
+				oldFieldData = <Dictionary>Object.get(composedData, renderBy),
 				newFieldData = Object.assign(oldFieldData, data);
 
-			Object.set(storageDebugData, renderBy, newFieldData);
+			Object.set(composedData, renderBy, newFieldData);
 		});
 
-		return Object.size(storageDebugData) === 0 ?
+		return Object.size(composedData) === 0 ?
 			reject('No data was received') :
-			resolve(storageDebugData);
+			resolve(composedData);
 	});
 }

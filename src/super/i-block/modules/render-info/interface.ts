@@ -43,5 +43,5 @@ export type RenderStrategy = (
 	/**
 	 * Data for rendering
 	 */
-	debugDataStore: Dictionary
+	data: Dictionary
 ) => Promise<void>;

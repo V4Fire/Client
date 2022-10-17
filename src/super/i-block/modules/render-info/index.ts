@@ -7,33 +7,33 @@
  */
 
 /**
- * [[include:super/i-block/modules/debug-mode/README.md]]
+ * [[include:super/i-block/modules/render-info/README.md]]
  * @packageDocumentation
  */
 
 import Friend from 'super/i-block/modules/friend';
-import composeDataEngine from 'super/i-block/modules/debug-mode/compose-data';
+import composeDataEngine from 'super/i-block/modules/render-info/compose-data';
 
-import type { GatheringStrategy, RenderStrategy } from 'super/i-block/modules/debug-mode/interface';
+import type { GatheringStrategy, RenderStrategy } from 'super/i-block/modules/render-info/interface';
 
-export * from 'super/i-block/modules/debug-mode/interface';
+export * from 'super/i-block/modules/render-info/interface';
 
 /**
- * Class provides methods for working with debug data
+ * Class provides methods for rendering custom data
  */
-export default class DebugMode extends Friend {
+export default class RenderInfo extends Friend {
 	/**
-	 * Strategies for collecting debug data
+	 * Strategies for collecting data
 	 */
 	protected dataGatheringStrategies!: GatheringStrategy[];
 
 	/**
-	 * Strategies for rendering debug data
+	 * Strategies for rendering data
 	 */
 	protected dataRenderStrategies!: RenderStrategy[];
 
 	/**
-	 * Sets strategies for collecting debug data
+	 * Sets strategies for collecting data
 	 * @param strategies
 	 */
 	setDataGatheringStrategies(strategies: GatheringStrategy[]): void {
@@ -41,7 +41,7 @@ export default class DebugMode extends Friend {
 	}
 
 	/**
-	 * Sets strategies for rendering debug data
+	 * Sets strategies for rendering data
 	 * @param strategies
 	 */
 	setDataRenderStrategies(strategies: RenderStrategy[]): void {
@@ -49,7 +49,7 @@ export default class DebugMode extends Friend {
 	}
 
 	/**
-	 * Starts debugging data collection
+	 * Starts data collection
 	 */
 	initDataGathering(): void {
 		if (Object.isNullable(this.dataGatheringStrategies)) {
@@ -64,7 +64,7 @@ export default class DebugMode extends Friend {
 	}
 
 	/**
-	 * Starts rendering debug data
+	 * Starts rendering data
 	 * @param data
 	 */
 	protected initDataRendering(data: Dictionary): Promise<void> {
@@ -80,7 +80,7 @@ export default class DebugMode extends Friend {
 
 			return isSomeRenderSuccessful ?
 				Promise.resolve() :
-				Promise.reject('Debug data was not rendered');
+				Promise.reject('Data was not rendered');
 		})
 		.catch(stderr);
 	}
