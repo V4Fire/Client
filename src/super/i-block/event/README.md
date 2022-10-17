@@ -761,3 +761,39 @@ export default class bExample extends iBlock {
   }
 }
 ```
+
+### Helper methods
+
+#### waitRef
+
+Waits until the specified template [reference](https://vuejs.org/guide/essentials/template-refs.html) won't be available and returns it.
+The method returns a promise.
+
+__b-example.ts__
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override $refs!: {myInput: HTMLInputElement};
+
+  created() {
+    this.waitRef('myInput').then((myInput) => {
+      console.log(myInput.value);
+    });
+  }
+}
+```
+
+__b-example.ss__
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    < input ref = myInput
+```

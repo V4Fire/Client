@@ -457,8 +457,33 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param [opts] - additional options
 	 *
 	 * @example
-	 * ```js
-	 * this.ref('my-component').then(console.log);
+	 * __b-example.ts__
+	 *
+	 * ```typescript
+	 * import iBlock, { component } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * export default class bExample extends iBlock {
+	 *   override $refs!: {myInput: HTMLInputElement};
+	 *
+	 *   created() {
+	 *     this.waitRef('myInput').then((myInput) => {
+	 *       console.log(myInput.value);
+	 *     });
+	 *   }
+	 * }
+	 * ```
+	 *
+	 * __b-example.ss__
+	 *
+	 * ```
+	 * - namespace [%fileName%]
+	 *
+	 * - include 'super/i-block'|b as placeholder
+	 *
+	 * - template index() extends ['i-block'].index
+	 *   - block body
+	 *     < input ref = myInput
 	 * ```
 	 */
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
