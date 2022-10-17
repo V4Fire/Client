@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/mods/README.md]]
+ * @packageDocumentation
+ */
+
 import { component, PARENT } from 'core/component';
 
 import { field, system, computed, hook } from 'super/i-block/modules/decorators';
@@ -140,6 +145,22 @@ export default abstract class iBlockMods extends iBlockEvent {
 	}
 
 	/**
+	 * Returns a value of the specified root application element modifier.
+	 * The method uses the component `globalName` prop if it's provided. Otherwise, the `componentName` property.
+	 * Notice that the method returns a normalized value.
+	 *
+	 * @param name - modifier name
+	 * @example
+	 * ```js
+	 * this.setRootMod('foo', 'blaBar');
+	 * console.log(this.getRootMod('foo') === 'bla-bar');
+	 * ```
+	 */
+	getRootMod(name: string): CanUndef<string> {
+		return this.r.getRootMod(name, Object.cast(this));
+	}
+
+	/**
 	 * Sets a modifier to the root application element by the specified name.
 	 *
 	 * This method is useful when you need to attach a class that can affect the entire application.
@@ -186,22 +207,6 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 */
 	removeRootMod(name: string, value?: unknown): boolean {
 		return this.r.removeRootMod(name, value, Object.cast(this));
-	}
-
-	/**
-	 * Returns a value of the specified root application element modifier.
-	 * The method uses the component `globalName` prop if it's provided. Otherwise, the `componentName` property.
-	 * Notice that the method returns a normalized value.
-	 *
-	 * @param name - modifier name
-	 * @example
-	 * ```js
-	 * this.setRootMod('foo', 'blaBar');
-	 * console.log(this.getRootMod('foo') === 'bla-bar');
-	 * ```
-	 */
-	getRootMod(name: string): CanUndef<string> {
-		return this.r.getRootMod(name, Object.cast(this));
 	}
 
 	/**
