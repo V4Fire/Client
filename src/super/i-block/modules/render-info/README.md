@@ -2,12 +2,15 @@
 
 This module provides API for rendering custom data.
 
-## Why is this module needed?
+## What is the purpose of this module?
+This module allows you to collect any data about a component and render it on the page.
 
+The method and source of data collection is defined in the data gathering strategies.
+The rendering location and the component used for this is specified in the data rendering strategies.
 
 ## Usage
 
-You need to implement the strategies for collecting and rendering custom data so that the module will execute them.
+You need to implement the strategies for collecting and rendering data so that the module will execute them.
 
 Strategies can be set using the `setDataGatheringStrategies` and `setDataRenderStrategies` methods directly in your component that inherits from iBlock.
 
