@@ -34,6 +34,7 @@ export default class DebugMode extends Friend {
 
 	/**
 	 * Sets strategies for collecting debug data
+	 * @param strategies
 	 */
 	setDataGatheringStrategies(strategies: GatheringStrategy[]): void {
 		this.dataGatheringStrategies = strategies;
@@ -41,6 +42,7 @@ export default class DebugMode extends Friend {
 
 	/**
 	 * Sets strategies for rendering debug data
+	 * @param strategies
 	 */
 	setDataRenderStrategies(strategies: RenderStrategy[]): void {
 		this.dataRenderStrategies = strategies;
@@ -49,7 +51,7 @@ export default class DebugMode extends Friend {
 	/**
 	 * Starts debugging data collection
 	 */
-	initDebugDataGathering(): void {
+	initDataGathering(): void {
 		if (Object.isNullable(this.dataGatheringStrategies)) {
 			return;
 		}
@@ -57,7 +59,7 @@ export default class DebugMode extends Friend {
 		Promise.allSettled(
 			this.dataGatheringStrategies.map((strategy) => strategy(this.component))
 		).then((results) => composeDataEngine(results))
-			.then((data) => this.initDebugDataRendering(data))
+			.then((data) => this.initDataRendering(data))
 			.catch(stderr);
 	}
 
@@ -65,7 +67,7 @@ export default class DebugMode extends Friend {
 	 * Starts rendering debug data
 	 * @param data
 	 */
-	protected initDebugDataRendering(data: Dictionary): Promise<void> {
+	protected initDataRendering(data: Dictionary): Promise<void> {
 		if (Object.isNullable(this.dataRenderStrategies)) {
 			return Promise.reject();
 		}
