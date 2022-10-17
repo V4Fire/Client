@@ -447,7 +447,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	}
 
 	/**
-	 * Waits until the specified reference won't be available and returns it.
+	 * Waits until the specified template reference won't be available and returns it.
 	 * The method returns a promise.
 	 *
 	 * @see [[Async.wait]]
