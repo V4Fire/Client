@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/event/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
@@ -521,11 +526,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param e
 	 */
 	protected onCallChild(e: CallChild<this>): void {
-		if (
-			e.check[0] !== 'instanceOf' && e.check[1] === this[e.check[0]] ||
-			e.check[0] === 'instanceOf' && this.instance instanceof <Function>e.check[1]
-		) {
-			e.action(this);
+		if (Object.isTruly(e.if(this))) {
+			e.then(this);
 		}
 	}
 }

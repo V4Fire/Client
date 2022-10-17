@@ -26,15 +26,9 @@ export type ComponentStatuses = Partial<
 	Record<keyof typeof statuses, boolean>
 >;
 
-export type ParentMessageProperty =
-	'instanceOf' |
-	'globalName' |
-	'componentName' |
-	'componentId';
-
 export interface CallChild<CTX extends iBlockEvent = iBlockEvent> {
-	check: [ParentMessageProperty, unknown];
-	action(ctx: CTX): void;
+	if(ctx: CTX): AnyToBoolean;
+	then(ctx: CTX): void;
 }
 
 export type Stage =

@@ -118,27 +118,21 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 *
 	 * ```typescript
 	 * interface CallChild<CTX extends iBlock = iBlock> {
-	 *   check: [ParentMessageProperty, unknown];
-	 *   action(ctx: CTX): Function;
+	 *   if(ctx: CTX): AnyToBoolean;
+	 *   then(ctx: CTX): Function;
 	 * }
-	 *
-	 * export type ParentMessageProperty =
-	 *   'instanceOf' |
-	 *   'globalName' |
-	 *   'componentName' |
-	 *   'componentId';
 	 * ```
 	 *
-	 * The `check` property allows you to specify which components should handle this event.
-	 * If the check is successful, then the `action` method will be called with the handler component context as
+	 * The `if` function allows you to specify which components should handle this event.
+	 * If the check is successful, then the `then` method will be called with the handler component context as
 	 * an argument.
 	 *
 	 * @example
 	 * ```js
 	 * // Reload all child iData components
 	 * this.emit('callChild', {
-	 *   check: ['instanceOf', iData],
-	 *   action: (ctx) => ctx.reload()
+	 *   if: (ctx) => ctx.instance instanceof iData,
+	 *   then: (ctx) => ctx.reload()
 	 * });
 	 * ```
 	 */
