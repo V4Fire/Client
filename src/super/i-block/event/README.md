@@ -106,6 +106,8 @@ export default class bExample extends iBlock {
 }
 ```
 
+### Detaching listeners
+
 To cancel listening to an event, use the `off` method. Event listeners can be detached by a link,
 or by a group and/or label. If nothing is passed, all registered handlers will be detached.
 
@@ -168,11 +170,11 @@ export default class bExample extends iBlock {
 }
 ```
 
-To emit events, use the `emit` method. In addition to `emit`, there is also the `emitError` method. The main difference between these methods is the logging level of emitted events.
-See the section on event logging for more details.
+### Firing events
 
-All such events can be caught both using the `on`, `once`, `promisifyOnce` methods,
-and using the `v-on` directive in the component template.
+To emit an event, use the `emit` method. In addition to `emit`, there is also the `emitError` method.
+The main difference between these methods is the logging level of emitted events. See the section on event logging for more details.
+All such events can be caught both using the `on`, `once`, `promisifyOnce` methods, and using the `v-on` directive in the component template.
 
 __b-example.ts__
 
@@ -198,6 +200,8 @@ __b-another-example.ss__
   - block body
     < b-example @myEvent = console.log
 ```
+
+### Event bubbling
 
 In addition, if you set the `dispatching` prop to a component, then when an event is fired, the component will emit the same event,
 but from its parent. That is, the event begins to "bubble up" in the hierarchy, like DOM events. If the parent component also
@@ -282,6 +286,53 @@ export default class bExample extends iBlock {
 }
 ```
 
+### Event logging
+
+All component events that are emitted by the `emit` method are additionally logged. The `log` method is used for logging.
+To enable logging of certain events, simply set the required pattern using the `setEnv` function.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    setEnv('log', {patterns: ['event:fooBar']});
+    this.emit('fooBar', 42);
+  }
+}
+```
+
+By default, events that are emitted via `emit` use the `info` logging context. Such messages will be ignored unless
+the component explicitly sets the `verbose` prop to true. It is allowed to explicitly specify the logging level for the emitted event.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    setEnv('log', {patterns: ['event:fooBar']});
+    this.emit({event: 'fooBar', logLevel: 'warn'}, 42);
+    this.emit({event: 'fooBar', logLevel: 'error'}, 42);
+  }
+}
+```
+
+Events emitted with the `emitError` method always have the `error` logging context.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    setEnv('log', {patterns: ['event:fooBar']});
+    this.emitError('fooBar', 42);
+  }
+}
+```
+
 ## Call proxy protocol
 
 Often, when creating an application, we need to organize the management of a group of child components by their parent,
@@ -346,50 +397,41 @@ __b-parent.ss__
     < b-children
 ```
 
+## Global events
 
-## Event logging
+All non-functional components listen to a set of events from `core/component/event`.
+With the help of these events, we can initialize the reloading of these components, for example, in the event of a user
+re-login under a different account. All events are divided into two types: normal and "silent".
+In the case of non-silent events, the components will force their statuses to change, thereby causing redraws.
 
-All component events that are emitted by the `emit` method are additionally logged. The `log` method is used for logging.
-To enable logging of certain events, simply set the required pattern using the `setEnv` function.
+```js
+import { globalEmitter } from 'core/component';
 
-```typescript
-import iBlock, { component } from 'super/i-block/i-block';
-
-@component()
-export default class bExample extends iBlock {
-  created() {
-    setEnv('log', {patterns: ['event:fooBar']});
-    this.emit('fooBar', 42);
-  }
-}
+// Reset all components in silent mode
+globalEmitter.emit('reset.silence');
 ```
 
-By default, events that are emitted via `emit` use the `info` logging context. Such messages will be ignored unless
-the component explicitly sets the `verbose` prop to true. It is allowed to explicitly specify the logging level for the emitted event.
+### Supported events
+
+* `reset` - reloads all data providers (including the tied storage and router);
+* `reset.silence` - reloads all data providers (including the tied storage and router) in silent mode;
+* `reset.load` - reloads the tied data providers;
+* `reset.load.silence` - reloads the tied data providers in silent mode;
+* `reset.router` - resets the router data (the `convertStateToRouterReset` method will be called);
+* `reset.router.silence`- resets the router data (the `convertStateToRouterReset` method will be called) in silent mode;
+* `reset.storage`- resets the storage data (the `convertStateToStorageReset` method will be called);
+* `reset.storage.silence`- resets the router data (the `convertStateToStorageReset` method will be called) in silent mode.
+
+### Adding support for functional components
 
 ```typescript
-import iBlock, { component } from 'super/i-block/i-block';
+import iBlock, { component, hook } from 'super/i-block/i-block';
 
-@component()
+@component({functional: true})
 export default class bExample extends iBlock {
-  created() {
-    setEnv('log', {patterns: ['event:fooBar']});
-    this.emit({event: 'fooBar', logLevel: 'warn'}, 42);
-    this.emit({event: 'fooBar', logLevel: 'error'}, 42);
-  }
-}
-```
-
-Events emitted with the `emitError` method always have the `error` logging context.
-
-```typescript
-import iBlock, { component } from 'super/i-block/i-block';
-
-@component()
-export default class bExample extends iBlock {
-  created() {
-    setEnv('log', {patterns: ['event:fooBar']});
-    this.emitError('fooBar', 42);
+  @hook({created: {functional: true}})
+  protected override initGlobalEvents(resetListener?: boolean): void {
+    super.initGlobalEvents(resetListener);
   }
 }
 ```
@@ -709,3 +751,13 @@ but you can set the logging level explicitly.
 
 Returns true if the specified event can be dispatched as the component own event (`selfDispatching`).
 
+```typescript
+import iBlock, { component, prop, field } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override canSelfDispatchEvent(event: string): boolean {
+    return super.canSelfDispatchEvent(event) && event.dasherize() !== 'my-event';
+  }
+}
+```
