@@ -1,5 +1,4 @@
 import type iBlock from 'super/i-block/i-block';
-import type { UnsafeIBlock } from 'super/i-block/i-block';
 
 /**
  * Data collection result
@@ -33,12 +32,7 @@ export type RenderStrategy = (
 	/**
 	 * Current component
 	 */
-	rootComponent: iBlock,
-
-	/**
-	 * Current context
-	 */
-	context: UnsafeIBlock,
+	component: iBlock,
 
 	/**
 	 * Data for rendering

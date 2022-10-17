@@ -73,7 +73,7 @@ export default class RenderInfo extends Friend {
 		}
 
 		return Promise.allSettled(
-			this.dataRenderStrategies.map((strategy) => strategy(this.component, this.ctx, data))
+			this.dataRenderStrategies.map((strategy) => strategy(this.component, data))
 		).then((results) => {
 			const
 				isSomeRenderSuccessful = results.some((result) => result.status === 'fulfilled');
