@@ -312,7 +312,7 @@ This means that when such a property changes, it should be automatically synchro
 and on the other hand, when the component is initialized, we must read its value from the storage.
 This is exactly what this module does - it offers a set of APIs to synchronize external states with a component state.
 
-## How does synchronization work?
+### How does synchronization work?
 
 Synchronization works using two-way connector methods. For example, when a component is initializing,
 it calls the special `syncStorageState` method, which takes data from the storage associated with the component as
