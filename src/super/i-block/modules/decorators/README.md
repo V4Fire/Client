@@ -59,7 +59,7 @@ But how can this situation be improved so that we can call any method of the com
 Solving this problem requires an integrated approach.
 
 First, we need to introduce a special status for components that displays their state: the component is loading, the component is ready,
-and so on. We already have a similar status - these are component life cycle hooks, like `created` or `mounted`.
+and so on. We already have a similar status - these are component lifecycle hooks, like `created` or `mounted`.
 But they don't reflect the component state in terms of loading. For example, a component can be mounted, but in fact
 show a spinner and load data. Therefore, all V4Fire components have the special `componentStatus` property.
 This property can take the following values:

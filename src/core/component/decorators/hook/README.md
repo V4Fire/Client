@@ -31,15 +31,15 @@ class bExample extends iBlock {
 
 ## Component life cycle
 
-V4 components have a standard life cycle: the component is created, the component is inserted into the DOM,
-the component is removed, and so on. V4 implements an extended version of the [Vue component life cycle](https://vuejs.org/api/options-lifecycle.html#options-lifecycle).
+V4Fire components have a standard life cycle: the component is created, the component is mounted to the DOM,
+the component is unmounted from the DOM, and so on. V4Fire implements an extended version of the [Vue component life cycle](https://vuejs.org/api/options-lifecycle.html#options-lifecycle).
 That is, the V4 component supports all the lifecycle states (hereinafter referred to as hooks) of the Vue component and
 adds two of its own.
 
 1. `beforeRuntime` is a hook that is called before `beforeCreate`;
 2. `beforeDataCreate` is a hook that is called after `beforeCreate` but before `created`.
 
-Also, V4 uses the `beforeDestroy` and `destroyed` hooks, not `beforeUnmount` and `unmounted` as Vue3 does.
+Also, V4Fire uses the `beforeDestroy` and `destroyed` hooks, not `beforeUnmount` and `unmounted` as Vue3 does.
 
 ### beforeRuntime
 
@@ -72,7 +72,7 @@ to be used in this way, you can always override the `initBaseAPI` method.
 
 ### beforeDataCreate
 
-It is often necessary to make some modification to watchable fields (such as normalization) before a component is created,
+It is often necessary to make some modification to watchable fields (such as normalization) before creating a component,
 because once created, any change to such fields can cause re-rendering and can be disastrous for performance.
 We have links, initializers, and API to control the order of initialization, but what if we need to get the entire
 watchable store and modify it in a complex way. It is to solve this problem that the `beforeDataCreate` hook exists:
@@ -107,9 +107,18 @@ so no special methods or hooks are needed to access them.
 As a rule, it is better to use link mechanisms to create relationships during initialization and normalization,
 but nevertheless, `beforeDataCreate` can be quite useful.
 
-## Adding listeners to a hook
+## Hook change events
 
-To bind a method to a specific hook, there are 2 ways:
+Every time a component hook value changes, the component emits a series of events that can be listened to both inside and outside the component.
+
+| EventName    | Description                                  | Payload description                         | Payload            |
+|--------------|----------------------------------------------|---------------------------------------------|--------------------|
+| `hook:$name` | The component switched to a hook named $name | The new hook value; The previous hook value | `string`; `string` |
+| `hookChange` | The component switched to a new hook         | The new hook value; The previous hook value | `string`; `string` |
+
+## Registering lifecycle hooks
+
+To bind a method to a specific hook, there are three ways:
 
 1. For all Vue compatible hooks, you can define a method of the same name that will automatically link with the hook.
 
@@ -128,6 +137,8 @@ To bind a method to a specific hook, there are 2 ways:
    ```
 
 2. You can use the `@hook` decorator, which accepts a hook name or a list of names.
+   This way is preferred because it allows you to write more flexible code.
+   Note that the non-standard `beforeRuntime` and `beforeDataCreate` hooks can only be used through a decorator.
 
    ```typescript
    import iBlock, { component, field, hook } from 'super/i-block/i-block';
@@ -144,12 +155,28 @@ To bind a method to a specific hook, there are 2 ways:
    }
    ```
 
-The second way is preferred because it allows you to write more flexible code.
-Note that the non-standard `beforeRuntime` and `beforeDataCreate` hooks can only be used through a decorator.
+3. You can listen to a specific hook change event or a transition to a specific hook.
+
+   ```typescript
+   import iBlock, { component } from 'super/i-block/i-block';
+
+   @component()
+   export default class bExample extends iBlock {
+     created() {
+       this.on('onHookChange', (currentHook, prevHook) => {
+         console.log(currentHook, prevHook);
+       });
+
+       this.once('onHook:mounted', (currentHook, prevHook) => {
+         console.log(currentHook, prevHook);
+       });
+     }
+   }
+   ```
 
 ### Component hook accessor
 
-All V4 components have a hook accessor that indicates which hook the component is currently in.
+All V4Fire components have a hook accessor that indicates which hook the component is currently in.
 
 ```typescript
 import iBlock, { component, hook } from 'super/i-block/i-block';

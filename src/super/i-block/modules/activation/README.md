@@ -76,8 +76,8 @@ You should use the special `isActivated` getter.
 ### How to handle activation and deactivation states?
 
 There are two standard component lifecycle hooks: `activated` and `deactivated`.
-Therefore, to add a handler, you can either use the `@hook` decorator, or listen to the component `componentHookChange` and
-`componentHook:activated`/`componentHook:deactivated` events. It is also possible to override the `activated` and `deactivated`
+Therefore, to add a handler, you can either use the `@hook` decorator, or listen to the component `hookChange` and
+`hook:activated`/`hook:deactivated` events. It is also possible to override the `activated` and `deactivated`
 methods on the component, although this is not recommended.
 
 ```typescript
@@ -91,7 +91,7 @@ export default class bExample extends iBlock {
   }
 
   created() {
-    this.on('componentHook:deactivated', () => {
+    this.on('hook:deactivated', () => {
       console.log('Time to sleep');
     });
   }

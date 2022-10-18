@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/state/README.md]]
+ * @packageDocumentation
+ */
+
 import SyncPromise from 'core/promise/sync';
 import config from 'config';
 
@@ -35,52 +40,6 @@ export default abstract class iBlockState extends iBlockMods {
 	}))
 
 	dependencies!: Module[];
-
-	/**
-	 * A string value that specifies in which logical state the component should run.
-	 * For instance, depending on this option, the component can render different templates
-	 * by separating them with `v-if` directives.
-	 *
-	 * @see [[iBlock.stageProp]]
-	 */
-	@computed()
-	get stage(): CanUndef<Stage> {
-		return this.field.get('stageStore');
-	}
-
-	/**
-	 * Sets a new component stage value.
-	 * By default, it clears all asynchronous listeners from the `stage.${oldGroup}` group.
-	 *
-	 * @see [[iBlock.stageProp]]
-	 * @emits `stage:${value}(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
-	 * @emits `stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
-	 */
-	set stage(value: CanUndef<Stage>) {
-		const
-			oldValue = this.stage;
-
-		if (oldValue === value) {
-			return;
-		}
-
-		this.async.clearAll({group: this.stageGroup});
-		this.field.set('stageStore', value);
-
-		if (value != null) {
-			this.emit(`stage:${value}`, value, oldValue);
-		}
-
-		this.emit('stageChange', value, oldValue);
-	}
-
-	/**
-	 * A name of the [[Async]] group associated with the `stage` parameter
-	 */
-	@computed()
-	get stageGroup(): string {
-		return `stage.${this.stage}`;
-	}
 
 	/**
 	 * A link to an application state object located in `core/component/state`.
@@ -164,9 +123,64 @@ export default abstract class iBlockState extends iBlockMods {
 		this.emit('componentStatusChange', value, oldValue);
 	}
 
+	/**
+	 * True if the current component is completely ready to work.
+	 * The `ready` status is mean that the component is mounted an all data provider are loaded.
+	 */
+	@computed()
+	get isReady(): boolean {
+		return Boolean(readyStatuses[this.componentStatus]);
+	}
+
 	/** @inheritDoc */
 	get hook(): Hook {
 		return this.hookStore;
+	}
+
+	/**
+	 * A string value that specifies in which logical state the component should run.
+	 * For instance, depending on this option, the component can render different templates
+	 * by separating them with `v-if` directives.
+	 *
+	 * @see [[iBlock.stageProp]]
+	 */
+	@computed()
+	get stage(): CanUndef<Stage> {
+		return this.field.get('stageStore');
+	}
+
+	/**
+	 * Sets a new component stage value.
+	 * By default, it clears all asynchronous listeners from the `stage.${oldGroup}` group.
+	 *
+	 * @see [[iBlock.stageProp]]
+	 * @emits `stage:${value}(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
+	 * @emits `stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
+	 */
+	set stage(value: CanUndef<Stage>) {
+		const
+			oldValue = this.stage;
+
+		if (oldValue === value) {
+			return;
+		}
+
+		this.async.clearAll({group: this.stageGroup});
+		this.field.set('stageStore', value);
+
+		if (value != null) {
+			this.emit(`stage:${value}`, value, oldValue);
+		}
+
+		this.emit('stageChange', value, oldValue);
+	}
+
+	/**
+	 * A name of the [[Async]] group associated with the `stage` parameter
+	 */
+	@computed()
+	get stageGroup(): string {
+		return `stage.${this.stage}`;
 	}
 
 	/**
@@ -181,15 +195,6 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	get route(): CanUndef<this['r']['CurrentPage']> {
 		return this.field.get('route', this.r);
-	}
-
-	/**
-	 * True if the current component is completely ready to work.
-	 * The `ready` status is mean that the component is mounted an all data provider are loaded.
-	 */
-	@computed()
-	get isReady(): boolean {
-		return Boolean(readyStatuses[this.componentStatus]);
 	}
 
 	/**
@@ -254,8 +259,8 @@ export default abstract class iBlockState extends iBlockMods {
 	 * Switches the component to a new lifecycle hook
 	 *
 	 * @param value
-	 * @emits `componentHook:{$value}(value: Hook, oldValue: Hook)`
-	 * @emits `componentHookChange(value: Hook, oldValue: Hook)
+	 * @emits `hook:{$value}(value: Hook, oldValue: Hook)`
+	 * @emits `hookChange(value: Hook, oldValue: Hook)
 	 */
 	// eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
 	protected set hook(value: Hook) {
@@ -263,8 +268,8 @@ export default abstract class iBlockState extends iBlockMods {
 		this.hookStore = value;
 
 		if ('lfc' in this && !this.lfc.isBeforeCreate('beforeDataCreate')) {
-			this.emit(`componentHook:${value}`, value, oldValue);
-			this.emit('componentHookChange', value, oldValue);
+			this.emit(`hook:${value}`, value, oldValue);
+			this.emit('hookChange', value, oldValue);
 		}
 	}
 
