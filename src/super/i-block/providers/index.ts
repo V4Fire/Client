@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/providers/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 
 import SyncPromise from 'core/promise/sync';

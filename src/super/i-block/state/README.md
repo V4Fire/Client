@@ -1,6 +1,6 @@
 # super/i-block/state
 
-This module provides a base class to convenient work with component states.
+This module provides an API for convenient work with component states.
 
 ## Component lifecycle
 
