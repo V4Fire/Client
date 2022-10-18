@@ -95,7 +95,7 @@ export default class ChunkRender extends Friend {
 
 	constructor(component: iBlock) {
 		super(component);
-		this.component.on('componentHook:mounted', this.initEventHandlers.bind(this));
+		this.component.on('hook:mounted', this.initEventHandlers.bind(this));
 	}
 
 	/**

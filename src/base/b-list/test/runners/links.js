@@ -24,7 +24,7 @@ module.exports = (page) => {
 	});
 
 	describe('b-list providing items with hrefs', () => {
-		it('providing a list with href-s', async () => {
+		it('providing a list with hrefs', async () => {
 			const target = await init({
 				items: [
 					{
@@ -49,7 +49,7 @@ module.exports = (page) => {
 			expect(await target.evaluate(() => location.hash)).toBe('#bla');
 		});
 
-		it('generation of href-s', async () => {
+		it('generation of hrefs', async () => {
 			const target = await init({
 				autoHref: true,
 

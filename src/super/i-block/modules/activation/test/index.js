@@ -43,7 +43,7 @@ module.exports = (page) => {
 		describe('events', () => {
 			it('deactivated', async () => {
 				const eventPromise = dummyComponent.evaluate((ctx) => new Promise((res) => {
-					ctx.once('componentHook:deactivated', res);
+					ctx.once('hook:deactivated', res);
 					ctx.deactivate();
 				}));
 
@@ -52,7 +52,7 @@ module.exports = (page) => {
 
 			it('activated', async () => {
 				const eventPromise = dummyComponent.evaluate((ctx) => new Promise((res) => {
-					ctx.once('componentHook:activated', res);
+					ctx.once('hook:activated', res);
 					ctx.deactivate();
 					ctx.activate();
 				}));

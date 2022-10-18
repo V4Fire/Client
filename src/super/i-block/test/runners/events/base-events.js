@@ -24,18 +24,18 @@ module.exports = (page) => {
 	});
 
 	describe('i-block base events', () => {
-		it('`componentHook`', async () => {
+		it('`hook`', async () => {
 			const target = await init();
 
 			const scan = await target.evaluate((ctx) => {
 				const
 					res = [];
 
-				ctx.on('onComponentHook:beforeDestroy', (...args) => {
+				ctx.on('onHook:beforeDestroy', (...args) => {
 					res.push(args);
 				});
 
-				ctx.on('onComponentHookChange', (...args) => {
+				ctx.on('onHookChange', (...args) => {
 					res.push(args);
 				});
 

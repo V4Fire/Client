@@ -21,7 +21,7 @@ import * as session from 'core/session';
 
 import { inViewFactory } from 'core/dom/in-view';
 import { ImageLoader, imageLoaderFactory } from 'core/dom/image';
-import { ResizeWatcher } from 'core/dom/resize-observer';
+import { ResizeObserverHandle } from 'core/dom/resize-observer';
 
 import updateOn from 'core/component/directives/bind-with/engines';
 
@@ -88,7 +88,7 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 
 	get modules(): Modules {
 		return {
-			resizeWatcher: ResizeWatcher,
+			resizeWatcher: ResizeObserverHandle,
 			iObserveDOM,
 			htmlHelpers,
 			session,

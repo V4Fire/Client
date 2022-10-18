@@ -170,17 +170,17 @@ module.exports = async (page, params) => {
 
 				const scan = await target.evaluate((ctx) => {
 					const
-						res = [ctx.field.get('watchTmp.foo.bar')];
+						res = [ctx.field.get('reactiveTmp.foo.bar')];
 
-					ctx.watch('watchTmp.foo.bar', {deep: true, immediate: true, collapse: false}, (val) => {
+					ctx.watch('reactiveTmp.foo.bar', {deep: true, immediate: true, collapse: false}, (val) => {
 						res.push(val);
 					});
 
-					ctx.field.set('watchTmp.foo.bar', 1);
-					res.push(ctx.field.get('watchTmp.foo.bar'));
+					ctx.field.set('reactiveTmp.foo.bar', 1);
+					res.push(ctx.field.get('reactiveTmp.foo.bar'));
 
-					ctx.field.delete('watchTmp.foo.bar');
-					res.push(ctx.field.get('watchTmp.foo.bar'));
+					ctx.field.delete('reactiveTmp.foo.bar');
+					res.push(ctx.field.get('reactiveTmp.foo.bar'));
 
 					return res;
 				});
@@ -202,17 +202,17 @@ module.exports = async (page, params) => {
 
 				const scan = await target.evaluate((ctx) => {
 					const
-						res = [ctx.field.get('watchTmp.foo.bar', ctx.r)];
+						res = [ctx.field.get('reactiveTmp.foo.bar', ctx.r)];
 
-					ctx.watch('r.watchTmp.foo.bar', {deep: true, immediate: true, collapse: false}, (val) => {
+					ctx.watch('r.reactiveTmp.foo.bar', {deep: true, immediate: true, collapse: false}, (val) => {
 						res.push(val);
 					});
 
-					ctx.field.set('watchTmp.foo.bar', 1, ctx.r);
-					res.push(ctx.field.get('watchTmp.foo.bar', ctx.r));
+					ctx.field.set('reactiveTmp.foo.bar', 1, ctx.r);
+					res.push(ctx.field.get('reactiveTmp.foo.bar', ctx.r));
 
-					ctx.field.delete('watchTmp.foo.bar', ctx.r);
-					res.push(ctx.field.get('watchTmp.foo.bar', ctx.r));
+					ctx.field.delete('reactiveTmp.foo.bar', ctx.r);
+					res.push(ctx.field.get('reactiveTmp.foo.bar', ctx.r));
 
 					return res;
 				});
@@ -235,17 +235,17 @@ module.exports = async (page, params) => {
 				const scan = await target.evaluate((ctx) => {
 					const
 						getter = (prop, obj) => Object.get(obj, prop.camelize(false)),
-						res = [ctx.field.get('watchTmp.foo_bla.bar', getter)];
+						res = [ctx.field.get('reactiveTmp.foo_bla.bar', getter)];
 
-					ctx.watch('watchTmp.fooBla.bar', {deep: true, immediate: true, collapse: false}, (val) => {
+					ctx.watch('reactiveTmp.fooBla.bar', {deep: true, immediate: true, collapse: false}, (val) => {
 						res.push(val);
 					});
 
-					ctx.field.set('watchTmp.foo_bla.bar', 1, String.camelize(false));
-					res.push(ctx.field.get('watchTmp.foo_bla.bar', getter));
+					ctx.field.set('reactiveTmp.foo_bla.bar', 1, String.camelize(false));
+					res.push(ctx.field.get('reactiveTmp.foo_bla.bar', getter));
 
-					ctx.field.delete('watchTmp.foo_bla.bar', String.camelize(false));
-					res.push(ctx.field.get('watchTmp.foo_bla.bar', getter));
+					ctx.field.delete('reactiveTmp.foo_bla.bar', String.camelize(false));
+					res.push(ctx.field.get('reactiveTmp.foo_bla.bar', getter));
 
 					return res;
 				});
@@ -268,17 +268,17 @@ module.exports = async (page, params) => {
 				const scan = await target.evaluate((ctx) => {
 					const
 						getter = (prop, obj) => Object.get(obj, prop.camelize(false)),
-						res = [ctx.field.get('watchTmp.foo_bla.bar', ctx.r, getter)];
+						res = [ctx.field.get('reactiveTmp.foo_bla.bar', ctx.r, getter)];
 
-					ctx.watch('r.watchTmp.fooBla.bar', {deep: true, immediate: true, collapse: false}, (val) => {
+					ctx.watch('r.reactiveTmp.fooBla.bar', {deep: true, immediate: true, collapse: false}, (val) => {
 						res.push(val);
 					});
 
-					ctx.field.set('watchTmp.foo_bla.bar', 1, ctx.r, String.camelize(false));
-					res.push(ctx.field.get('watchTmp.foo_bla.bar', ctx.r, getter));
+					ctx.field.set('reactiveTmp.foo_bla.bar', 1, ctx.r, String.camelize(false));
+					res.push(ctx.field.get('reactiveTmp.foo_bla.bar', ctx.r, getter));
 
-					ctx.field.delete('watchTmp.foo_bla.bar', ctx.r, String.camelize(false));
-					res.push(ctx.field.get('watchTmp.foo_bla.bar', ctx.r, getter));
+					ctx.field.delete('reactiveTmp.foo_bla.bar', ctx.r, String.camelize(false));
+					res.push(ctx.field.get('reactiveTmp.foo_bla.bar', ctx.r, getter));
 
 					return res;
 				});

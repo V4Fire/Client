@@ -48,7 +48,7 @@
 						< template #default = {ctx}
 							Element: {{ el }}; Hook: {{ ctx.hook }};
 
-			< button.&__update @click = watchTmp.foo=Math.random()
+			< button.&__update @click = reactiveTmp.foo=Math.random()
 				Update state
 
 		< template v-if = stage === 'clearing by the specified group name'
@@ -58,7 +58,7 @@
 				}) .
 					Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
 
-			< button.&__update @click = watchTmp.foo=Math.random()
+			< button.&__update @click = reactiveTmp.foo=Math.random()
 				Update state
 
 			< button.&__clear @click = async.clearAll({group: /foo/})

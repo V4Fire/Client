@@ -303,7 +303,7 @@ module.exports = (page) => {
 
 					Object.set(ctx.r, 'selfDispatching', true);
 
-					ctx.on('onComponentHook:beforeDestroy', (...args) => {
+					ctx.on('onHook:beforeDestroy', (...args) => {
 						res.push(...args);
 					});
 
@@ -311,7 +311,7 @@ module.exports = (page) => {
 						res.push(...args);
 					});
 
-					ctx.rootEmitter.on('onComponentHook:beforeDestroy', (ctx, ...args) => {
+					ctx.rootEmitter.on('onHook:beforeDestroy', (ctx, ...args) => {
 						res.push(ctx.componentName, ...args);
 					});
 
