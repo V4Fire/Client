@@ -3,6 +3,7 @@
 This module provides API for rendering custom data.
 
 ## What is the purpose of this module?
+
 This module allows you to collect any data about a component and render it on the page.
 
 The method and source of data collection is defined in the data gathering strategies.
