@@ -7,21 +7,21 @@
  */
 
 /**
- * [[include:super/i-block/modules/render-info/README.md]]
+ * [[include:super/i-block/modules/info-render/README.md]]
  * @packageDocumentation
  */
 
 import Friend from 'super/i-block/modules/friend';
-import composeDataEngine from 'super/i-block/modules/render-info/compose-data';
+import composeDataEngine from 'super/i-block/modules/info-render/compose-data';
 
-import type { GatheringStrategy, RenderStrategy } from 'super/i-block/modules/render-info/interface';
+import type { GatheringStrategy, RenderStrategy } from 'super/i-block/modules/info-render/interface';
 
-export * from 'super/i-block/modules/render-info/interface';
+export * from 'super/i-block/modules/info-render/interface';
 
 /**
  * Class provides methods for rendering custom data
  */
-export default class RenderInfo extends Friend {
+export default class InfoRender extends Friend {
 	/**
 	 * Strategies for collecting data
 	 */

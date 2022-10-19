@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { GatheringStrategyData } from 'super/i-block/modules/render-info/interface';
+import type { GatheringStrategyData } from 'super/i-block/modules/info-render/interface';
 
 /**
  * Combines data into a single object

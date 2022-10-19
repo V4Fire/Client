@@ -13,8 +13,8 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added new module `DebugMode`
-* Added new `initDebugMode` method
+* Added new module `InfoRender`
+* Added new `initInfoRender` method
 
 ## v3.17.0 (2022-02-24)
 

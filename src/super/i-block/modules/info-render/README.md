@@ -1,4 +1,4 @@
-# super/i-block/modules/render-info
+# super/i-block/modules/info-render
 
 This module provides API for rendering custom data.
 
@@ -16,10 +16,10 @@ Strategies can be set using the `setDataGatheringStrategies` and `setDataRenderS
 
 ```typescript
 @hook(['mounted', 'updated'])
-protected override initRenderInfo(): void {
-  this.renderInfo.setDataGatheringStrategies([getDataFromDebugField]);
-  this.renderInfo.setDataRenderStrategies([bottomNextBlockRender]);
+protected override initInfoRender(): void {
+  this.infoRender.setDataGatheringStrategies([getDataFromDebugField]);
+  this.infoRender.setDataRenderStrategies([bottomNextBlockRender]);
 
-  super.initRenderInfo();
+  super.initInfoRender();
 }
 ```

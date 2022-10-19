@@ -15,8 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ### :rocket: New Feature
 
-* A new `debugMode` module has been added to `iBlock`
-* Added new `initDebugMode` method to `iBlock`
+* A new `InfoRender` module has been added to `iBlock`
+* Added new `initInfoRender` method to `iBlock`
 
 ## v3.29.0 (2022-09-13)
 
