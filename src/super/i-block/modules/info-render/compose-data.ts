@@ -9,7 +9,7 @@
 import type { GatheringStrategyData } from 'super/i-block/modules/info-render/interface';
 
 /**
- * Combines data into a single object
+ * Combines multiple data object into a single one
  * @param data
  */
 export default function composeDataEngine(
@@ -40,7 +40,7 @@ export default function composeDataEngine(
 		});
 
 		return Object.size(composedData) === 0 ?
-			reject('No data was received') :
+			reject(new Error('No data was received')) :
 			resolve(composedData);
 	});
 }
