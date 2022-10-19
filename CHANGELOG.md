@@ -13,7 +13,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.30.0 (2022-10-19)
 
-### :rocket: New Feature
+#### :rocket: New Feature
 
 * `iBlock`:
   * Added a new `InfoRender` module
