@@ -55,8 +55,8 @@ export default abstract class iBlockProviders extends iBlockState {
 	 * @param [data] - additional initialization data
 	 * @param [opts] - additional options
 	 *
-	 * @emits `initLoadStart(options: CanUndef<InitLoadOptions>)`
-	 * @emits `initLoad(data: CanUndef<unknown>, options: CanUndef<InitLoadOptions>)`
+	 * @emits `initLoadStart(opts: InitLoadOptions)`
+	 * @emits `initLoad(data: unknown, opts: InitLoadOptions)`
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
@@ -209,7 +209,10 @@ export default abstract class iBlockProviders extends iBlockState {
 	}
 
 	/**
-	 * Reloads component providers data
+	 * Reloads component providers: the method delegates functionality to the `initLoad` method.
+	 * By default, the reboot will run in silent mode, i.e. without switching the component status to `loading`.
+	 * You can customize this behavior by passing additional parameters.
+	 *
 	 * @param [opts] - additional options
 	 */
 	reload(opts?: InitLoadOptions): Promise<void> {

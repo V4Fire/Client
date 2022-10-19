@@ -153,9 +153,6 @@ To bind a method to a specific hook, there are three ways:
    }
    ```
 
-The second way is preferred because it allows you to write more flexible code.
-Note that the non-standard `beforeRuntime` and `beforeDataCreate` hooks can only be used through a decorator.
-
 ### Component hook accessor
 
 All V4Fire components have a hook accessor that indicates which hook the component is currently in.
@@ -352,6 +349,36 @@ By default, all components have two basic methods for synchronizing with the rou
 Also, all components have two similar methods for synchronizing with a storage: `syncStorageState` and `convertStateToStorageReset`.
 
 ## API
+
+### Props
+
+#### [syncRouterStoreOnInit = `false`]
+
+If true, the component state will be synchronized with the router after initializing.
+For example, you have a component that uses the `syncRouterState` method to create two-way binding with the router.
+
+```typescript
+@component()
+class Foo {
+  @field()
+  stage: string = 'defaultStage';
+
+  syncRouterState(data?: Dictionary) {
+    // This notation means that if there is a value within `route.query`
+    // it will be mapped to the component as `stage`.
+    // If the route has been changed, the mapping is repeated.
+    // Also, if the `stage` field of the component has been changed,
+    // it will be mapped to the router query parameters as `stage` by using `router.push`.
+    return {stage: data?.stage || this.stage};
+  }
+}
+```
+
+But, if in some cases we don't have `stage` in `route.query`, and the component has a default value,
+we trap in a situation where there is a route that has not been synchronized with the component.
+This can affect the "back" navigation logic. Sometimes this behavior does not meet our expectations.
+But if we switch `syncRouterStoreOnInit` to true, the component will force its state to be synchronized with
+the router after initialization.
 
 ### Getters
 

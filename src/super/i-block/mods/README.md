@@ -347,6 +347,13 @@ class bExample extends iBlock {
 
 ## API
 
+### Props
+
+#### [modsProp]
+
+Additional modifiers for the component.
+Modifiers allow binding component state properties directly to CSS classes without unnecessary re-rendering of a component.
+
 ### Getters
 
 #### mods
