@@ -11,12 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## ()
+## v3.30.0 (2022-10-19)
 
 ### :rocket: New Feature
 
-* A new `InfoRender` module has been added to `iBlock`
-* Added new `initInfoRender` method to `iBlock`
+* `iBlock`:
+  * Added a new `InfoRender` module
+  * Added a new `initInfoRender` method
 
 ## v3.29.0 (2022-09-13)
 
