@@ -20,6 +20,7 @@ import log, { LogMessageOptions } from 'core/log';
 import { deprecated } from 'core/functools/deprecation';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
+import InfoRender from 'super/i-block/modules/info-render';
 import config from 'config';
 
 import Async, {
@@ -167,6 +168,7 @@ export * from 'super/i-block/modules/module-loader';
 
 export * from 'super/i-block/modules/daemons';
 export * from 'super/i-block/modules/event-emitter';
+export * from 'super/i-block/modules/info-render';
 
 export * from 'super/i-block/modules/sync';
 export * from 'super/i-block/modules/async-render';
@@ -777,6 +779,17 @@ export default abstract class iBlock extends ComponentInterface {
 
 		return res != null ? Object.freeze(res) : undefined;
 	}
+
+	/**
+	 * API for info rendering
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new InfoRender(ctx)
+	})
+
+	readonly infoRender!: InfoRender;
 
 	/**
 	 * API for analytic engines
@@ -2558,6 +2571,14 @@ export default abstract class iBlock extends ComponentInterface {
 	@hook('mounted')
 	protected onMounted(): void {
 		this.emit('mounted', this.$el);
+	}
+
+	/**
+	 * Initializes data collection
+	 */
+	@hook(['mounted', 'updated'])
+	protected initInfoRender(): void {
+		this.infoRender.initDataGathering();
 	}
 
 	protected override onCreatedHook(): void {

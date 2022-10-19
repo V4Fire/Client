@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## ()
+
+#### :rocket: New Feature
+
+* Added new module `InfoRender`
+* Added new `initInfoRender` method
+
 ## v3.17.0 (2022-02-24)
 
 #### :boom: Breaking Change
