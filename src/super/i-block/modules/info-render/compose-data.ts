@@ -13,7 +13,7 @@ import type { GatheringStrategyData } from 'super/i-block/modules/info-render/in
  * @param data
  */
 export default function composeDataEngine(
-	data: Array<PromiseSettledResult<GatheringStrategyData>>
+	...data: Array<PromiseSettledResult<GatheringStrategyData>>
 ): Promise<Dictionary> {
 	return new Promise((resolve, reject) => {
 		const

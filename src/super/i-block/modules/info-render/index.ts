@@ -36,7 +36,7 @@ export default class InfoRender extends Friend {
 	 * Sets strategies for collecting data
 	 * @param strategies
 	 */
-	setDataGatheringStrategies(strategies: GatheringStrategy[]): void {
+	setDataGatheringStrategies(...strategies: GatheringStrategy[]): void {
 		this.dataGatheringStrategies = strategies;
 	}
 
@@ -44,7 +44,7 @@ export default class InfoRender extends Friend {
 	 * Sets strategies for rendering data
 	 * @param strategies
 	 */
-	setDataRenderStrategies(strategies: RenderStrategy[]): void {
+	setDataRenderStrategies(...strategies: RenderStrategy[]): void {
 		this.dataRenderStrategies = strategies;
 	}
 
@@ -58,7 +58,7 @@ export default class InfoRender extends Friend {
 
 		Promise.allSettled(
 			this.dataGatheringStrategies.map((strategy) => strategy(this.component))
-		).then((results) => composeDataEngine(results))
+		).then((results) => composeDataEngine(...results))
 			.then((data) => this.initDataRendering(data))
 			.catch(stderr);
 	}
