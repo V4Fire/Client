@@ -42,6 +42,7 @@ export default abstract class iBlock extends iBlockProviders {
 
 		theme: [],
 		exterior: [],
+		context: [],
 		stage: []
 	};
 
