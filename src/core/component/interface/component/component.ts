@@ -43,12 +43,12 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
-	 * The component string unique identifier
+	 * The unique component identifier
 	 */
 	readonly componentId!: string;
 
 	/**
-	 * The component name without special postfixes like `-functional`
+	 * The component name in dash-style without special postfixes like `-functional`
 	 */
 	readonly componentName!: string;
 
@@ -153,7 +153,7 @@ export abstract class ComponentInterface {
 	readonly $root!: this['Root'];
 
 	/**
-	 * A link to the component parent
+	 * A link to the parent component
 	 */
 	readonly $parent!: this['Component'] | null;
 

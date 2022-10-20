@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:super/i-block/base/README.md]]
+ * @packageDocumentation
+ */
+
 import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
@@ -73,12 +78,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	isActivated!: boolean;
 
 	/**
-	 * True if the component has been in the `ready` state at least once
-	 */
-	@system({unique: true})
-	isReadyOnce: boolean = false;
-
-	/**
 	 * True if the component is a functional
 	 */
 	@computed()
@@ -116,7 +115,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * True if the component context is based on another component via `vdom.bindRenderObject`
+	 * True if the component context is based on another component via `vdom.getRenderFn`
 	 */
 	@system()
 	protected readonly isVirtualTpl: boolean = false;
@@ -208,7 +207,10 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 *
 	 * ```typescript
 	 * @component()
-	 * class Foo extends iBlock {
+	 * import iBlock, { component, field, watch } from 'super/i-block/i-block';
+	 *
+	 * @component()
+	 * class bExample extends iBlock {
 	 *   @field()
 	 *   list: Dictionary[] = [];
 	 *

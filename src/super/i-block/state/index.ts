@@ -42,6 +42,12 @@ export default abstract class iBlockState extends iBlockMods {
 	dependencies!: Module[];
 
 	/**
+	 * True if the component has been in the `ready` state at least once
+	 */
+	@system({unique: true})
+	isReadyOnce: boolean = false;
+
+	/**
 	 * A link to an application state object located in `core/component/state`.
 	 *
 	 * This object is used to set any general application parameters. For example, the status of user authorization or

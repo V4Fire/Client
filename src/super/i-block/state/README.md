@@ -402,6 +402,10 @@ properties directly. Note that the state object is observable and can be reactiv
 True if the current component is completely ready to work.
 The `ready` status is mean that the component is mounted an all data provider are loaded.
 
+#### isReadyOnce
+
+True if the component has been in the `ready` state at least once.
+
 #### router
 
 A link to the application router.
