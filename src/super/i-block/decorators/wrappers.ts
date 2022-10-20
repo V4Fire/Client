@@ -28,7 +28,7 @@ import type {
 	DecoratorFieldWatcher,
 	DecoratorMethodWatcher
 
-} from 'super/i-block/modules/decorators/interface';
+} from 'super/i-block/decorators/interface';
 
 /**
  * @see core/component/decorators/prop

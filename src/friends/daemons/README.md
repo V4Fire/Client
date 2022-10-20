@@ -209,7 +209,7 @@ export default class bExample extends iBlock {
 ### [wait]
 
 Sets the `componentStatus` value for the associated component on which the daemon function can be called.
-See the `super/i-block/modules/decorators` module for more information.
+See the `super/i-block/decorators` module for more information.
 
 ```typescript
 import iBlock, { component, field } from 'super/i-block/i-block';

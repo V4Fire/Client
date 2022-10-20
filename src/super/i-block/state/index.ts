@@ -23,7 +23,7 @@ import type { Module } from 'friends/module-loader';
 import type { ConverterCallType } from 'friends/state';
 import { readyStatuses } from 'super/i-block/modules/activation';
 
-import { field, system, computed, wait, WaitDecoratorOptions } from 'super/i-block/modules/decorators';
+import { field, system, computed, wait, WaitDecoratorOptions } from 'super/i-block/decorators';
 import type { Stage, ComponentStatus, ComponentStatuses } from 'super/i-block/interface';
 
 import iBlockMods from 'super/i-block/mods';

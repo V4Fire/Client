@@ -23,7 +23,7 @@ export * from 'core/component';
 export * from 'super/i-block/const';
 export * from 'super/i-block/interface';
 
-export { prop, field, system, computed, hook, watch, wait } from 'super/i-block/modules/decorators';
+export { prop, field, system, computed, hook, watch, wait } from 'super/i-block/decorators';
 export { default as Friend } from 'friends/friend';
 
 export { Classes, ModVal, ModsDecl, ModsProp, ModsDict };

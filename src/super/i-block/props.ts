@@ -10,7 +10,7 @@ import { component, ComponentInterface } from 'core/component';
 import type { Module } from 'friends/module-loader';
 
 import type { ModsProp } from 'super/i-block/modules/mods';
-import { prop, DecoratorMethodWatcher } from 'super/i-block/modules/decorators';
+import { prop, DecoratorMethodWatcher } from 'super/i-block/decorators';
 
 import type { Stage } from 'super/i-block/interface';
 
@@ -113,39 +113,14 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly dontWaitRemoteProvidersProp?: boolean;
 
 	/**
-	 * If true, the component will listen to the `callChild` special event on its parent.
-	 * The event handler will receive as a payload an object that implements the `CallChild` interface.
-	 *
-	 * ```typescript
-	 * interface CallChild<CTX extends iBlock = iBlock> {
-	 *   if(ctx: CTX): AnyToBoolean;
-	 *   then(ctx: CTX): Function;
-	 * }
-	 * ```
-	 *
-	 * The `if` function allows you to specify which components should handle this event.
-	 * If the check is successful, then the `then` method will be called with the handler component context as
-	 * an argument.
-	 *
-	 * @example
-	 * ```js
-	 * // Reload all child iData components
-	 * this.emit('callChild', {
-	 *   if: (ctx) => ctx.instance instanceof iData,
-	 *   then: (ctx) => ctx.reload()
-	 * });
-	 * ```
-	 */
-	@prop(Boolean)
-	readonly proxyCall: boolean = false;
-
-	/**
 	 * If true, the component state will be synchronized with the router after initializing.
 	 * For example, you have a component that uses the `syncRouterState` method to create two-way binding with the router.
 	 *
 	 * ```typescript
+	 * import iBlock, { component, field } from 'super/i-block/i-block';
+	 *
 	 * @component()
-	 * class Foo {
+	 * class bExample extends iBlock {
 	 *   @field()
 	 *   stage: string = 'defaultStage';
 	 *
@@ -217,6 +192,33 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly watchProp?: Dictionary<DecoratorMethodWatcher>;
 
 	/**
+	 * If true, the component will listen to the `callChild` special event on its parent.
+	 * The event handler will receive as a payload an object that implements the `CallChild` interface.
+	 *
+	 * ```typescript
+	 * interface CallChild<CTX extends iBlock = iBlock> {
+	 *   if(ctx: CTX): AnyToBoolean;
+	 *   then(ctx: CTX): Function;
+	 * }
+	 * ```
+	 *
+	 * The `if` function allows you to specify which components should handle this event.
+	 * If the check is successful, then the `then` method will be called with the handler component context as
+	 * an argument.
+	 *
+	 * @example
+	 * ```js
+	 * // Reload all child iData components
+	 * this.emit('callChild', {
+	 *   if: (ctx) => ctx.instance instanceof iData,
+	 *   then: (ctx) => ctx.reload()
+	 * });
+	 * ```
+	 */
+	@prop(Boolean)
+	readonly proxyCall: boolean = false;
+
+	/**
 	 * If true, then the component event dispatching mode is enabled.
 	 *
 	 * This means that all component events will bubble up to the parent component:
@@ -251,7 +253,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	override readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
 	/**
-	 * Link to the `i18n` function that will be used to localize string literals
+	 * A link to the `i18n` function that will be used to localize string literals
 	 */
 	@prop(Function)
 	readonly i18n: typeof i18n = i18n;

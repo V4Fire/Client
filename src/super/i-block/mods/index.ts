@@ -13,7 +13,7 @@
 
 import { component, PARENT } from 'core/component';
 
-import { field, system, computed, hook } from 'super/i-block/modules/decorators';
+import { field, system, computed, hook } from 'super/i-block/decorators';
 import { initMods, mergeMods, getReactiveMods, ModsDict, ModsDecl } from 'super/i-block/modules/mods';
 
 import iBlockEvent from 'super/i-block/event';

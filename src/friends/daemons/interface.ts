@@ -39,7 +39,7 @@ export interface Daemon<CTX extends iBlock = iBlock> {
 
 	/**
 	 * Sets the `componentStatus` value for the associated component on which the daemon function can be called
-	 * @see `super/i-block/modules/decorators`
+	 * @see `super/i-block/decorators`
 	 */
 	wait?: ComponentStatus;
 

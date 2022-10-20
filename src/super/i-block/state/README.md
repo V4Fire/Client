@@ -267,7 +267,7 @@ class bExample extends iBlock {
 ### The `@wait` decorator
 
 This decorator solves the problem of calling component methods in a state when the component is not yet ready to do so.
-See the documentation for the `super/i-block/modules/decorators` module.
+See the documentation for the `super/i-block/decorators` module.
 
 ```typescript
 import iBlock, { component, field, wait } from 'super/i-block/i-block';
@@ -358,8 +358,10 @@ If true, the component state will be synchronized with the router after initiali
 For example, you have a component that uses the `syncRouterState` method to create two-way binding with the router.
 
 ```typescript
+import iBlock, { component, field } from 'super/i-block/i-block';
+
 @component()
-class Foo {
+class bExample extends iBlock {
   @field()
   stage: string = 'defaultStage';
 

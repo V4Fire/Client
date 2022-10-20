@@ -20,7 +20,7 @@ import { component, bindRemoteWatchers, customWatcherRgxp, RawWatchHandler, Watc
 import type iBlock from 'super/i-block/i-block';
 import type iStaticPage from 'super/i-static-page/i-static-page';
 
-import { field, system, computed, hook, wait } from 'super/i-block/modules/decorators';
+import { field, system, computed, hook, wait } from 'super/i-block/decorators';
 import { activate, deactivate } from 'super/i-block/modules/activation';
 import { initRemoteWatchers } from 'super/i-block/modules/listeners';
 

@@ -29,7 +29,7 @@ import State from 'friends/state';
 import Storage from 'friends/storage';
 
 import { component } from 'core/component';
-import { system } from 'super/i-block/modules/decorators';
+import { system } from 'super/i-block/decorators';
 
 import iBlockProps from 'super/i-block/props';
 

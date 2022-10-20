@@ -11,7 +11,7 @@ import type { ProxyCb } from 'core/async';
 import type iBlock from 'super/i-block/i-block';
 import { statuses } from 'super/i-block/const';
 
-import type { WaitStatuses, WaitDecoratorOptions, WaitOptions } from 'super/i-block/modules/decorators/interface';
+import type { WaitStatuses, WaitDecoratorOptions, WaitOptions } from 'super/i-block/decorators/interface';
 
 const
 	waitCtxRgxp = /([^:]+):(\w+)/;

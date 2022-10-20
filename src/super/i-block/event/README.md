@@ -438,6 +438,23 @@ export default class bExample extends iBlock {
 
 ## API
 
+### Props
+
+### [dispatching = `false`]
+
+If true, then the component event dispatching mode is enabled.
+
+This means that all component events will bubble up to the parent component:
+if the parent also has this property set to true, then events will bubble up to the next (from the hierarchy) parent component.
+
+All dispatched events have special prefixes to avoid collisions with events from other components.
+For example: bButton `click` will bubble up as `b-button::click`.
+Or if the component has the `globalName` prop, it will additionally bubble up as `${globalName}::click`.
+
+### [selfDispatching = `false`]
+
+If true, then all events that are bubbled up by child components will be fired as the component own events without any prefixes.
+
 ### Getters
 
 #### selfEmitter

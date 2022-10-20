@@ -20,7 +20,7 @@ import type { AsyncOptions } from 'core/async';
 import { component } from 'core/component';
 
 import { statuses } from 'super/i-block/const';
-import { system, hook } from 'super/i-block/modules/decorators';
+import { system, hook } from 'super/i-block/decorators';
 import type { InitLoadCb, InitLoadOptions } from 'super/i-block/interface';
 
 import iBlockState from 'super/i-block/state';

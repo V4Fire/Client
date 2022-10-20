@@ -1,4 +1,4 @@
-# super/i-block/modules/decorators
+# super/i-block/decorators
 
 This module re-exports the base decorators from `core/component/decorators` and also provides additional decorators.
 

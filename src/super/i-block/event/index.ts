@@ -32,7 +32,7 @@ import type {
 
 import { component, globalEmitter } from 'core/component';
 
-import { system, hook, watch } from 'super/i-block/modules/decorators';
+import { system, hook, watch } from 'super/i-block/decorators';
 import { initGlobalListeners } from 'super/i-block/modules/listeners';
 
 import type iBlock from 'super/i-block';

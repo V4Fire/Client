@@ -13,7 +13,7 @@ initialize re-rendering (if necessary).
 
 ### Props
 
-#### [dependenciesProp]
+#### [dependenciesProp = `[]`]
 
 A list of additional dependencies to load when the component is initializing.
 

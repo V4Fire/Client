@@ -7,7 +7,7 @@
  */
 
 import type iBlock from 'super/i-block/i-block';
-import { wait } from 'super/i-block/modules/decorators';
+import { wait } from 'super/i-block/decorators';
 
 import type Daemons from 'friends/daemons/class';
 import { mergeDaemons } from 'friends/daemons/helpers';
@@ -57,5 +57,5 @@ export function register(this: Daemons, name: string, daemon: WrappedDaemon): vo
  */
 export function createDaemonWrappedFn(daemon: Daemon): WrappedDaemon {
 	(<WrappedDaemon>daemon).wrappedFn = daemon.wait != null ? wait(daemon.wait, daemon.fn) : daemon.fn;
-	return daemon;
+	return Object.cast(daemon);
 }
