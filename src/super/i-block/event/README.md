@@ -440,6 +440,37 @@ export default class bExample extends iBlock {
 
 ### Props
 
+### [proxyCall = `false`]
+
+If true, the component will listen to the `callChild` special event on its parent.
+The event handler will receive as a payload an object that implements the `CallChild` interface.
+
+```typescript
+interface CallChild<CTX extends iBlock = iBlock> {
+  if(ctx: CTX): AnyToBoolean;
+  then(ctx: CTX): Function;
+}
+```
+
+The `if` function allows you to specify which components should handle this event.
+If the check is successful, then the `then` method will be called with the handler component context as an argument.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+import type { Module } from 'friends/module-loader';
+
+@component()
+class bExample extends iBlock {
+  mounted() {
+    // Reload all child iData components
+    this.emit('callChild', {
+      if: (ctx) => ctx.instance instanceof iData,
+      then: (ctx) => ctx.reload()
+    });
+  }
+}
+```
+
 ### [dispatching = `false`]
 
 If true, then the component event dispatching mode is enabled.

@@ -18,7 +18,7 @@
 	/** The hardcoded name of the component. If not set, a name based on the template file name will be used. */
 	- componentName = ''
 
-	/** The root tag type. If not specified, will be taken from the component's `rootTag` prop. */
+	/** The root tag type. If not specified, will be taken from the component `rootTag` prop. */
 	- rootTag = null
 
 	/** Should or not to create an extra wrapper inside the root tag */

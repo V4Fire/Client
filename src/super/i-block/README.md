@@ -241,15 +241,22 @@ interface CallChild<CTX extends iBlock = iBlock> {
 ```
 
 The `if` function allows you to specify which components should handle this event.
-If the check is successful, then the `then` method will be called with the handler component context as
-an argument.
+If the check is successful, then the `then` method will be called with the handler component context as an argument.
 
-```js
-// Reload all child iData components
-this.emit('callChild', {
-  if: (ctx) => ctx.instance instanceof iData,
-  then: (ctx) => ctx.reload()
-});
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+import type { Module } from 'friends/module-loader';
+
+@component()
+class bExample extends iBlock {
+  mounted() {
+    // Reload all child iData components
+    this.emit('callChild', {
+      if: (ctx) => ctx.instance instanceof iData,
+      then: (ctx) => ctx.reload()
+    });
+  }
+}
 ```
 
 ### [dispatching = `false`]
@@ -308,3 +315,127 @@ Be sure you know what you are doing because this mechanism is tied to the privat
 ### [i18n]
 
 A link to the `i18n` function that will be used to localize string literals.
+
+## Template helpers
+
+### Constants
+
+#### [componentName]
+
+The hardcoded name of the component. If not set, a name based on the template file name will be used.
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - componentName = 'my-component'
+```
+
+#### [rootTag]
+
+The root tag type. If not specified, will be taken from the component `rootTag` prop.
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - rootTag = 'span'
+```
+
+#### [rootWrapper = `false`]
+
+Should or not to create an extra wrapper inside the root tag.
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - rootWrapper = true
+```
+
+#### [overWrapper = `false`]
+
+Should or not create a layout for overlapping.
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - overWrapper = true
+```
+
+#### [skeletonMarker = `false`]
+
+Should or not the component have a skeleton marker attribute.
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - skeletonMarker = true
+```
+
+### Methods
+
+#### slot
+
+Generates a slot declaration by the specified parameters.
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    += self.slot()
+      The default content.
+
+    += self.slot('preIcon', {':item': 'el', ':icon': 'el.preIcon'})
+      < component &
+        v-if = el.preIconComponent |
+        :instanceOf = bIcon |
+        :is = el.preIconComponent |
+        :value = el.preIcon
+      .
+
+      < @b-icon v-else | :value = el.preIcon
+```
+
+#### appendToRootClasses
+
+Appends the specified value to the root component classes.
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    += self.appendToRootClasses('some-class')
+```
+
+#### typograf
+
+Applies the `Typograf` library for the specified content and returns the result.
+
+```
+- namespace [%fileName%]
+
+- include 'super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    += self.typograf('Hello "world"')
+```

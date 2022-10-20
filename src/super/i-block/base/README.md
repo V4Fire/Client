@@ -4,6 +4,37 @@ This module provides a common API to work with components.
 
 ## API
 
+### Associated types
+
+The class declares two associated types to specify a type of components: **Root** and **Component**.
+
+#### Root
+
+The root component type.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+import type iStaticPage from 'super/i-static-page/i-static-page';
+
+@component()
+export default class bExample extends iBlock {
+  override readonly Root!: iStaticPage;
+}
+```
+
+#### Component
+
+The base type for all components.
+
+```typescript
+import iBlock, { component } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override readonly Component!: iBlock;
+}
+```
+
 ### Fields
 
 #### tmp
@@ -141,6 +172,14 @@ export default class bExample extends iBlock {
   }
 }
 ```
+
+#### $refs
+
+A dictionary with references to component elements that have the "ref" attribute.
+
+#### $slots
+
+A dictionary with available render slots.
 
 #### $root
 
