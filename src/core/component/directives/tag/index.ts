@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:core/component/directives/hook/README.md]]
+ * [[include:core/component/directives/tag/README.md]]
  * @packageDocumentation
  */
 
