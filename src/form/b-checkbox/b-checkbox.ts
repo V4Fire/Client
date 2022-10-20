@@ -52,7 +52,6 @@ export const
  * Component to create a checkbox
  */
 @component({
-	flyweight: true,
 	functional: {
 		dataProvider: undefined
 	}

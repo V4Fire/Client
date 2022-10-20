@@ -18,5 +18,5 @@ export * from 'form/b-button/b-button';
 /**
  * Component to create a button based on icon
  */
-@component({flyweight: true})
+@component()
 export default class bIconButton extends bButton {}

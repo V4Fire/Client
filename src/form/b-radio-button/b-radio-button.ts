@@ -19,7 +19,7 @@ export * from 'super/i-input/i-input';
 /**
  * Component to create a radio button
  */
-@component({flyweight: true})
+@component()
 export default class bRadioButton extends bCheckbox {
 	override readonly changeable: boolean = false;
 

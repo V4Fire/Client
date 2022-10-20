@@ -23,11 +23,7 @@ interface bIcon extends Trait<typeof iIcon> {}
 /**
  * Component to use an SVG icon from the global SVG sprite
  */
-@component({
-	functional: true,
-	flyweight: true
-})
-
+@component({functional: true})
 @derive(iIcon)
 class bIcon extends iBlock implements iIcon {
 	/**
