@@ -383,7 +383,7 @@ module.exports = function init(gulp = require('gulp')) {
 				device = args['--device']?.replace(/_/g, ' ');
 
 			if (device != null && devices[device] == null) {
-				throw Error(`The specified devise "${device}" is not supported`);
+				throw new Error(`The specified devise "${device}" is not supported`);
 			}
 
 			const contextOpts = {
