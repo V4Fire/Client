@@ -1,0 +1,44 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "components/super/i-data/i-data.styl"
+@import "components/traits/i-visible/i-visible.styl"
+@import "components/traits/i-width/i-width.styl"
+
+$p = {
+	visibleHelpers: true
+	widthHelpers: true
+}
+
+b-list extends i-data
+	// @stlint-disable
+	i-visible({helpers: $p.visibleHelpers})
+	i-width({helpers: $p.widthHelpers})
+	// @stlint-enable
+
+	&__wrapper
+	&__link
+	&__cell
+		display flex
+
+	&__item
+	&__link
+		position relative
+
+	&__link:active
+		{$p.onActive}
+
+	&__item
+	&__link_progress_true &__link-progress
+		display block
+
+	&__link-progress
+		display none
+
+	&_hide-labels &__link-value
+		display none

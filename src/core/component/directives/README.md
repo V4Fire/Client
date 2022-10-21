@@ -10,7 +10,7 @@ Just add an import of the required directive in your component code.
 ```js
 import 'core/component/directives/bind-with';
 
-import iBlock, { component } from 'super/i-block/i-block';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {}

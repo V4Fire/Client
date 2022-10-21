@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iStaticPage from 'super/i-static-page/i-static-page';
-import type { ComponentElement } from 'super/i-static-page/i-static-page';
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
+import type { ComponentElement } from 'components/super/i-static-page/i-static-page';
 
 import { expandedParse } from 'core/prelude/test-env/components/json';
 

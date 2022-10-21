@@ -17,7 +17,7 @@ Attaches accessors and computed fields to the specified component instance from 
 The function creates cacheable wrappers for computed fields. Also, it creates accessors for deprecated component props.
 
 ```typescript
-import iBlock, { component, prop, computed } from 'super/i-block/i-block';
+import iBlock, { component, prop, computed } from 'components/super/i-block/i-block';
 
 @component({
   // Will create an accessor for `name` that refers to `fName` and emits a warning

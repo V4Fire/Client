@@ -22,7 +22,7 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  * the original old value to avoid the problem when we have two references to the one object.
  *
  * ```typescript
- * import iBlock, { component, field, watch } from 'super/i-block/i-block';
+ * import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
  *
  * @component()
  * class Foo extends iBlock {
@@ -85,7 +85,7 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  *
  * @example
  * ```typescript
- * import iBlock, { component, field, watch } from 'super/i-block/i-block';
+ * import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
  *
  * @component()
  * class bExample extends iBlock {

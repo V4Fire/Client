@@ -1,0 +1,55 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+/**
+ * [[include:components/dummies/b-dummy-state/README.md]]
+ * @packageDocumentation
+ */
+
+import iData, { component, field, system, ConverterCallType } from 'components/super/i-data/i-data';
+
+export * from 'components/super/i-data/i-data';
+
+@component({
+	functional: {
+		functional: true,
+		dataProvider: undefined
+	}
+})
+
+export default class bDummyState extends iData {
+	@system()
+	systemField: string = 'foo';
+
+	@field()
+	regularField?: number;
+
+	protected override syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+		if (type === 'remote') {
+			return {
+				normalizedSystemField: data?.systemField ?? this.systemField,
+				normalizedRegularField: data?.regularField ?? this.regularField ?? 0,
+				'mods.foo': data?.['mods.foo'] ?? this.mods.foo
+			};
+		}
+
+		return {
+			systemField: data?.normalizedSystemField ?? this.systemField,
+			regularField: data?.normalizedRegularField ?? this.regularField ?? 0,
+			'mods.foo': data?.['mods.foo'] ?? this.mods.foo
+		};
+	}
+
+	protected override convertStateToStorageReset(): Dictionary {
+		return {
+			systemField: 'foo',
+			regularField: 0,
+			'mods.foo': undefined
+		};
+	}
+}

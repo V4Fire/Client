@@ -25,7 +25,7 @@ import type { ComponentInterface } from 'core/component/interface';
  *
  * @example
  * ```typescript
- * import iBlock, { component, prop, computed } from 'super/i-block/i-block';
+ * import iBlock, { component, prop, computed } from 'components/super/i-block/i-block';
  *
  * @component({
  *   // Will create an accessor for `name` that refers to `fName` and emits a warning

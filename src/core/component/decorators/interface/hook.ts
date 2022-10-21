@@ -20,7 +20,7 @@ export type DecoratorHookOptions = {
 		 *
 		 * @example
 		 * ```typescript
-		 * import iBlock, { component, hook } from 'super/i-block/i-block';
+		 * import iBlock, { component, hook } from 'components/super/i-block/i-block';
 		 *
 		 * @component()
 		 * class bExample extends iBlock {

@@ -25,7 +25,7 @@ But how to declare that some class properties are component props? And how is a 
 To do this, V4Fire provides a set of decorators with which class properties and the classes themselves must be annotated.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 export default class bUser extends iBlock {

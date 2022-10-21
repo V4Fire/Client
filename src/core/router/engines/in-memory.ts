@@ -24,7 +24,7 @@ import {
 
 } from 'core/router';
 
-import type bRouter from 'base/b-router/b-router';
+import type bRouter from 'components/base/b-router/b-router';
 
 let
 	historyLog: Route[] = [],

@@ -11,7 +11,7 @@ Just add the directive import in your component code.
 ```js
 import 'core/component/directives/in-view';
 
-import iBlock, { component } from 'super/i-block/i-block';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {}

@@ -54,7 +54,7 @@ There are two ways to declare a functional component.
    Note that this option is inherited from parent component to child component, unless you explicitly override it.
 
    ```typescript
-   import iData, { component } from 'super/i-data/i-data';
+   import iData, { component } from 'components/super/i-data/i-data';
 
    // `bLink` will always be created as a functional component
    @component({functional: true})
@@ -82,7 +82,7 @@ There are two ways to declare a functional component.
    This option cannot be inherited.
 
    ```typescript
-   import iBlock, { component, prop, watch, hook } from 'super/i-block/i-block';
+   import iBlock, { component, prop, watch, hook } from 'components/super/i-block/i-block';
 
    @component({functional: null})
    class iData extends iBlock {
@@ -114,7 +114,7 @@ There are two ways to declare a functional component.
    Note that this option is inherited from parent component to child component, unless you explicitly override it.
 
    ```typescript
-   import iData, { component } from 'super/i-data/i-data';
+   import iData, { component } from 'components/super/i-data/i-data';
 
    // `bLink` will be created as a functional component if its `dataProvider` prop is not passed or undefined
    @component({functional: {dataProvider: undefined}})
@@ -127,7 +127,7 @@ There are two ways to declare a functional component.
    But you can still explicitly specify that a component should be non-functional at a particular place with the `v-func` directive.
 
    ```typescript
-   import iData, { component } from 'super/i-data/i-data';
+   import iData, { component } from 'components/super/i-data/i-data';
 
    @component({functional: {}})
    class bLink extends iData {
@@ -153,7 +153,7 @@ which is enough for 80% of the cases.
 __b-link/b-link.ts__
 
 ```typescript
-import iBlock, { component } from 'super/i-block/i-block';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component({functional: true})
 class bLink extends iBlock {
@@ -168,7 +168,7 @@ __b-link/b-link.ss__
 ```
 - namespace [%fileName%]
 
-- include 'super/i-block'|b as placeholder
+- include 'components/super/i-block'|b as placeholder
 
 - template index() extends ['i-block'].index
   - rootTag = 'a'
@@ -183,7 +183,7 @@ But be extremely careful when adding new DOM nodes to the component tree.
 __b-link/b-link.ts__
 
 ```typescript
-import iBlock, { component } from 'super/i-block/i-block';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component({functional: true})
 class bLink extends iBlock {
@@ -198,7 +198,7 @@ __b-link/b-link.ss__
 ```
 - namespace [%fileName%]
 
-- include 'super/i-block'|b as placeholder
+- include 'components/super/i-block'|b as placeholder
 
 - template index() extends ['i-block'].index
   - block body
@@ -218,7 +218,7 @@ See the [[AsyncRender]] module documentation for more information.
 __b-link/b-link.ts__
 
 ```typescript
-import iBlock, { component } from 'super/i-block/i-block';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component({functional: true})
 class bLink extends iBlock {
@@ -233,7 +233,7 @@ __b-link/b-link.ss__
 ```
 - namespace [%fileName%]
 
-- include 'super/i-block'|b as placeholder
+- include 'components/super/i-block'|b as placeholder
 
 - template index() extends ['i-block'].index
   - block body

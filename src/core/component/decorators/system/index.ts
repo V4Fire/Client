@@ -22,7 +22,7 @@ import type { InitFieldFn, DecoratorSystem } from 'core/component/decorators/int
  *
  * @example
  * ```typescript
- * import iBlock, { component, system } from 'super/i-block/i-block';
+ * import iBlock, { component, system } from 'components/super/i-block/i-block';
  *
  * @component()
  * class bExample extends iBlock {

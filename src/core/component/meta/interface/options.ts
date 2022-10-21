@@ -161,7 +161,7 @@ export interface ComponentOptions {
 	 *
 	 * @example
 	 * ```typescript
-	 * import iData, { component, prop } from 'super/i-data/i-data';
+	 * import iData, { component, prop } from 'components/super/i-data/i-data';
 	 *
 	 * @component()
 	 * class bInput extends iData {

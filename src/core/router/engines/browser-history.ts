@@ -20,7 +20,7 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import * as browser from 'core/browser';
 
-import type bRouter from 'base/b-router/b-router';
+import type bRouter from 'components/base/b-router/b-router';
 import type { Router, Route, HistoryClearFilter } from 'core/router/interface';
 
 export const

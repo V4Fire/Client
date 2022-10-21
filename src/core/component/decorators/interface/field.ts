@@ -39,7 +39,7 @@ export interface DecoratorSystem<
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 * import iBlock, { component, system } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -73,7 +73,7 @@ export interface DecoratorSystem<
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 * import iBlock, { component, system } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -93,7 +93,7 @@ export interface DecoratorSystem<
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 * import iBlock, { component, system } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -121,7 +121,7 @@ export interface DecoratorSystem<
 	 * @example
 	 * ```typescript
 	 * import Async from 'core/async';
-	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 * import iBlock, { component, system } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -144,7 +144,7 @@ export interface DecoratorSystem<
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 * import iBlock, { component, system } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -215,7 +215,7 @@ export interface DecoratorSystem<
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, system } from 'super/i-block/i-block';
+	 * import iBlock, { component, system } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {

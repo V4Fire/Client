@@ -1,0 +1,60 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "components/super/i-data/i-data.styl"
+@import "components/traits/i-visible/i-visible.styl"
+@import "components/traits/i-width/i-width.styl"
+
+$p = {
+	zIndexPos: overall
+	visibleHelpers: true
+	widthHelpers: true
+}
+
+b-window extends i-data
+	// @stint-disable
+	i-visible({helpers: $p.visibleHelpers})
+	i-width({helpers: $p.widthHelpers, selector: ("&__window")})
+	// @stint-enable
+
+	zIndex($p.zIndexPos)
+	top 0
+	left 0
+
+	min-width 100%
+
+	&__back
+		fixed top 0 left 0
+		size 100%
+
+	&__wrapper
+		position relative
+		zIndex(layer, 1)
+
+		display flex
+		justify-content center
+
+		size 100% 100vh
+
+	&__window
+		align-self center
+		width $p.width
+		max-width 100%
+
+	&__title
+		display block
+
+	&__control
+		display inline-block
+
+	&_position
+		&_absolute
+			position absolute
+
+		&_fixed
+			position fixed

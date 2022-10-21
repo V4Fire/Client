@@ -4,7 +4,7 @@ The decorator marks a class property as a system field.
 System property mutations never cause components to re-render.
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -37,7 +37,7 @@ Because the `init` function takes a reference to the fields store as the second 
 values from other fields. But, if we just write something like this.
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
@@ -55,7 +55,7 @@ dependencies explicitly. We must pass the `@system` decorator the `after` parame
 property name or a list of names.
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
@@ -75,7 +75,7 @@ Now everything will work as expected. Note that `after` only specifies the names
 That is, you cannot specify `@prop` or `@field` properties, but you can refer to them using `sync.link`
 
 ```typescript
-import iBlock, { component, prop, system } from 'super/i-block/i-block';
+import iBlock, { component, prop, system } from 'components/super/i-block/i-block';
 
 @component()
 export default class bInput extends iBlock {
@@ -98,7 +98,7 @@ especially since there can be many such properties. Therefore, there is another 
 with the `atom` parameter, and it will always be guaranteed to be initialized before non-atoms.
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
@@ -128,7 +128,7 @@ all asynchronous "permutations" of the property must be written using the `field
 the component instance (the first argument of the `init` function).
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
@@ -152,7 +152,7 @@ Please note that the uniqueness guarantee must be provided by the "external" cod
 because V4Fire does not perform special checks for uniqueness.
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -168,7 +168,7 @@ But using it, as a rule, is not explicitly required, since the default value can
 the native syntax of class properties.
 
 ```typescript
-import iBlock, { component, field } from 'super/i-block/i-block';
+import iBlock, { component, field } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -186,7 +186,7 @@ If this behavior does not suit you, then pass the value explicitly via `default`
 an initializer function.
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -212,7 +212,7 @@ As the second argument, the function takes a reference to a dictionary with othe
 have already been initialized.
 
 ```typescript
-import iBlock, { component, prop, system } from 'super/i-block/i-block';
+import iBlock, { component, prop, system } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -230,7 +230,7 @@ A name or a list of names after which this property should be initialized.
 Keep in mind, you can only specify names that are of the same type as the current field (`@system` or `@field`).
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -254,7 +254,7 @@ and you don't want to use `after` everywhere. But you can still use `after` alon
 
 ```typescript
 import Async from 'core/async';
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -275,7 +275,7 @@ The `core/watch` module is used to make objects watchable.
 Therefore, for more information, please refer to its documentation.
 
 ```typescript
-import iBlock, { component, field } from 'super/i-block/i-block';
+import iBlock, { component, field } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -337,7 +337,7 @@ A dictionary with some extra information of the field.
 You can access this information using `meta.fields`.
 
 ```typescript
-import iBlock, { component, system } from 'super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {

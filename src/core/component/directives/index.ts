@@ -16,4 +16,5 @@ import 'core/component/directives/ref';
 import 'core/component/directives/hook';
 import 'core/component/directives/attrs';
 import 'core/component/directives/image';
+import 'core/component/directives/icon';
 import 'core/component/directives/async-target';

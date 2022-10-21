@@ -3,7 +3,7 @@
 The decorator marks a class property as a component input property (aka "prop").
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -29,7 +29,7 @@ Keep in mind that any component prop is a readonly value, i.e. you cannot change
 To emphasize this, it is recommended to use the readonly modifier in TypeScript along with prop declarations.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -51,7 +51,7 @@ One way to implement the above is to use the `watch` method and an initializer f
 For instance:
 
 ```typescript
-import iBlock, { component, prop, field } from 'super/i-block/i-block';
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
 
 @component()
 export default class bInput extends iBlock {
@@ -72,7 +72,7 @@ This code works, however, it has a number of disadvantages:
 1. If the `initialValue` value needs to be normalized or converted somehow, then this logic will have to be duplicated in two places at once.
 
    ```typescript
-   import iBlock, { component, prop, field } from 'super/i-block/i-block';
+   import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
 
    @component()
    export default class bInput extends iBlock {
@@ -95,7 +95,7 @@ To solve these problems, V4 has a special `sync.link` method, which, in fact, do
 but hides it "under the hood". Let's rewrite our example using `sync.link`.
 
 ```typescript
-import iBlock, { component, prop, field } from 'super/i-block/i-block';
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
 
 @component()
 export default class bInput extends iBlock {
@@ -126,7 +126,7 @@ the watched property when calling `sync.link`. And finally, if we don’t need a
 then we can simply not write it. Let's rewrite our example again.
 
 ```typescript
-import iBlock, { component, prop, field } from 'super/i-block/i-block';
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
 
 @component()
 export default class bInput extends iBlock {
@@ -154,7 +154,7 @@ A constructor function of the prop type.
 If the prop can be of different types, then you need to specify a list of constructors.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -173,7 +173,7 @@ The values are either passed explicitly when a component is called, or are taken
 If you set the `required` option to false, then the prop can be non-initialized.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -192,7 +192,7 @@ But using it, as a rule, is not explicitly required, since the default value can
 class properties.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -211,7 +211,7 @@ That is, when set to each new instance, it will be cloned using `Object.fastClon
 If this behavior does not suit you, then pass the value explicitly via `default`.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -229,7 +229,7 @@ Also, you can pass the default value as a function. It will be called, and its r
 Note that if your prop type is `Function`, then the default value will be treated "as is".
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -244,7 +244,7 @@ A function to check the passed value for compliance with the requirements.
 Use it if you want to impose additional checks besides checking the prop type.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -262,7 +262,7 @@ The `core/watch` module is used to make objects watchable.
 Therefore, for more information, please refer to its documentation.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {

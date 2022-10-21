@@ -1,0 +1,54 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "components/super/i-block/i-block.styl"
+@import "components/traits/i-progress/i-progress.styl"
+@import "components/traits/i-visible/i-visible.styl"
+
+$p = {
+	progressHelpers: false
+	visibleHelpers: true
+}
+
+b-image extends i-block
+	// @stlint-disable
+	i-progress({helpers: $p.progressHelpers})
+	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable
+
+	position relative
+	size 100%
+	overflow hidden
+
+	&__overlay
+		position absolute
+
+	&__overlay
+	&__broken
+		size 100%
+		pointer-events none
+
+	&__overlay
+		opacity 0
+
+	&__broken
+		display none
+
+	&_disabled_true > &__overlay
+	&_progress_true > &__overlay
+		opacity 1
+
+	&__img
+		width 100%
+		background-repeat no-repeat
+
+	&_show-error_true > &__broken
+		display block
+
+	&_show-error_true > &__img
+		display none

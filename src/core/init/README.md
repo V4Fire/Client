@@ -15,7 +15,7 @@ that will block application initialization until all required dependencies are r
 **core/init/flags.js**
 
 ```js
-import parentFlags from '@super/core/init/flags';
+import parentFlags from '@components/super/core/init/flags';
 
 export default [
   ...parentFlags,
@@ -38,6 +38,6 @@ export default (() => {
 **core/init/index.js**
 
 ```js
-import '@super/core/init';
+import '@components/super/core/init';
 import 'core/init/my-task';
 ```

@@ -20,7 +20,7 @@ export interface DecoratorMethod<CTX extends ComponentInterface = ComponentInter
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, field, system, watch } from 'super/i-block/i-block';
+	 * import iBlock, { component, field, system, watch } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {

@@ -21,7 +21,7 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, field, computed } from 'super/i-block/i-block';
+	 * import iBlock, { component, field, computed } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -51,7 +51,7 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	 * @example
 	 * ```typescript
 	 * import watch from 'core/object/watch';
-	 * import iBlock, { component, computed } from 'super/i-block/i-block';
+	 * import iBlock, { component, computed } from 'components/super/i-block/i-block';
 	 *
 	 * const {proxy: state} = watch({
 	 *   a: 1,
@@ -90,7 +90,7 @@ export interface DecoratorComponentAccessor extends DecoratorFunctionalOptions {
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, {component, field, computed} from 'super/i-block/i-block';
+	 * import iBlock, {component, field, computed} from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {

@@ -3,7 +3,7 @@
 The decorator creates a component based on the specified class and its properties.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component()
 export default class bUser extends iBlock {
@@ -21,7 +21,7 @@ To register a new component, you need to create a simple JS class and add the `@
 Also, you can pass additional parameters to this decorator. For example, in order for a component to be created as functional.
 
 ```typescript
-import iBlock, { component, prop } from 'super/i-block/i-block';
+import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 @component({functional :true})
 export default class bUser extends iBlock {
@@ -48,7 +48,7 @@ If the name isn't specified, it will be taken from the tied class name by using 
 This parameter can't be inherited from the parent component.
 
 ```typescript
-import iBlock, { component } from 'super/i-block/i-block';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
 // name == 'bExample'
 @component({name: 'bExample'})
@@ -72,7 +72,7 @@ All components, even the root component, have a link to the root component.
 This parameter can be inherited from the parent component.
 
 ```typescript
-import iStaticPage, { component } from 'super/i-static-page/i-static-page';
+import iStaticPage, { component } from 'components/super/i-static-page/i-static-page';
 
 @component({root: true})
 class pRoot extends iStaticPage {
@@ -117,7 +117,7 @@ but avoid them if you have long animations inside a component or if you need to 
 structure of nested components.
 
 ```typescript
-import iData, { component } from 'super/i-data/i-data';
+import iData, { component } from 'components/super/i-data/i-data';
 
 // `bButton` will be created as a function component
 // if its `dataProvider` property is equal to `false` or not specified
@@ -156,7 +156,7 @@ The keys represent deprecated props; the values represent alternatives.
 This parameter can be inherited from the parent component.
 
 ```typescript
-import iData, { component, prop } from 'super/i-data/i-data';
+import iData, { component, prop } from 'components/super/i-data/i-data';
 
 @component({deprecatedProps: {
   value: 'items'
@@ -179,7 +179,7 @@ will be attached to a component node as attributes.
 This parameter can be inherited from the parent component.
 
 ```typescript
-import iData, { component, prop } from 'super/i-data/i-data';
+import iData, { component, prop } from 'components/super/i-data/i-data';
 
 @component()
 class bInput extends iData {

@@ -4,7 +4,7 @@ Attaches a hook listener to a component method.
 This means that when the component switches to the specified hook(s), the method will be called.
 
 ```typescript
-import iBlock, { component, hook } from 'super/i-block/i-block';
+import iBlock, { component, hook } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -80,7 +80,7 @@ it will be called exactly when all observable properties have been created, but 
 i.e. we can safely change them and not expect consequences.
 
 ```typescript
-import iBlock, { component, field, hook } from 'super/i-block/i-block';
+import iBlock, { component, field, hook } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
@@ -123,7 +123,7 @@ To bind a method to a specific hook, there are three ways:
 1. For all Vue compatible hooks, you can define a method of the same name that will automatically link with the hook.
 
    ```typescript
-   import iBlock, { component, field } from 'super/i-block/i-block';
+   import iBlock, { component, field } from 'components/super/i-block/i-block';
 
    @component()
    export default class bExample extends iBlock {
@@ -141,7 +141,7 @@ To bind a method to a specific hook, there are three ways:
    Note that the non-standard `beforeRuntime` and `beforeDataCreate` hooks can only be used through a decorator.
 
    ```typescript
-   import iBlock, { component, field, hook } from 'super/i-block/i-block';
+   import iBlock, { component, field, hook } from 'components/super/i-block/i-block';
 
    @component()
    export default class bExample extends iBlock {
@@ -158,7 +158,7 @@ To bind a method to a specific hook, there are three ways:
 3. You can listen to a specific hook change event or a transition to a specific hook.
 
    ```typescript
-   import iBlock, { component } from 'super/i-block/i-block';
+   import iBlock, { component } from 'components/super/i-block/i-block';
 
    @component()
    export default class bExample extends iBlock {
@@ -179,7 +179,7 @@ To bind a method to a specific hook, there are three ways:
 All V4Fire components have a hook accessor that indicates which hook the component is currently in.
 
 ```typescript
-import iBlock, { component, hook } from 'super/i-block/i-block';
+import iBlock, { component, hook } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -198,7 +198,7 @@ and then the associated methods (if any) are already executed. If we need to dec
 only after the execution of another, then we can set this explicitly through a decorator.
 
 ```typescript
-import iBlock, { component, field, hook } from 'super/i-block/i-block';
+import iBlock, { component, field, hook } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
@@ -236,7 +236,7 @@ That is, if one of the hook handlers returns a Promise, then the rest will wait 
 A method name or a list of names after which this handler should be invoked on a registered hook event.
 
 ```typescript
-import iBlock, { component, hook } from 'super/i-block/i-block';
+import iBlock, { component, hook } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {

@@ -32,7 +32,7 @@ import type { ComponentOptions } from 'core/component/interface';
  *
  * @example
  * ```typescript
- * import iBlock, { component, prop, computed } from 'super/i-block/i-block';
+ * import iBlock, { component, prop, computed } from 'components/super/i-block/i-block';
  *
  * @component({functional: true})
  * export default class bUser extends iBlock {

@@ -19,7 +19,7 @@ export interface PropOptions<T = unknown> {
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 * import iBlock, { component, prop } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -42,7 +42,7 @@ export interface PropOptions<T = unknown> {
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 * import iBlock, { component, prop } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -71,7 +71,7 @@ export interface PropOptions<T = unknown> {
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 * import iBlock, { component, prop } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -96,7 +96,7 @@ export interface PropOptions<T = unknown> {
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 * import iBlock, { component, prop } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -137,7 +137,7 @@ export interface DecoratorProp<
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 * import iBlock, { component, prop } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -183,7 +183,7 @@ export interface DecoratorProp<
 	 * You can access this information using `meta.props`.
 	 *
 	 * ```typescript
-	 * import iBlock, { component, prop } from 'super/i-block/i-block';
+	 * import iBlock, { component, prop } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {

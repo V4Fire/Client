@@ -12,7 +12,7 @@ the old value of the property. If the object being watched is non-primitive, the
 the original old value to avoid the problem when we have two references to the one object.
 
 ```typescript
-import iBlock, { component, field, watch } from 'super/i-block/i-block';
+import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
 
 @component()
 class Foo extends iBlock {
@@ -72,7 +72,7 @@ beginning of a watch path:
 By default, all events start to listen on the "created" hook.
 
 ```typescript
-import iBlock, { component, field, watch } from 'super/i-block/i-block';
+import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -121,7 +121,7 @@ so please refer to the documentation for that module. In addition, the decorator
 A handler (or a name of the component method) that is invoked on watcher events.
 
 ```typescript
-import iBlock, { component, field, watch } from 'super/i-block/i-block';
+import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -140,7 +140,7 @@ class bExample extends iBlock {
 If false, then a handler that is invoked on the watcher event does not take any arguments from the event.
 
 ```typescript
-import iBlock, { component, field } from 'super/i-block/i-block';
+import iBlock, { component, field } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
@@ -158,7 +158,7 @@ class bExample extends iBlock {
 A wrapper function for the registered handler. This option is useful for delegating DOM events, for instance:
 
 ```typescript
-import iBlock, { component, field, watch } from 'super/i-block/i-block';
+import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {

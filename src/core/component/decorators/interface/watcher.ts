@@ -18,7 +18,7 @@ export interface DecoratorFieldWatcherObject<
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, field, watch } from 'super/i-block/i-block';
+	 * import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
@@ -41,7 +41,7 @@ export interface DecoratorFieldWatcherObject<
 	 *
 	 * @example
 	 * ```typescript
-	 * import iBlock, { component, field } from 'super/i-block/i-block';
+	 * import iBlock, { component, field } from 'components/super/i-block/i-block';
 	 *
 	 * @component()
 	 * class bExample extends iBlock {
