@@ -34,7 +34,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @param {string=} [def] - default value
 	 * @returns {string}
 	 */
-	engine(def = 'vue') {
+	engine(def = 'vue3') {
 		return o('engine', {
 			env: true,
 			default: def,
@@ -363,7 +363,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		target(
 			def = /ES[35]$/.test(this.config.es()) ?
 				'browserslist:ie 11' :
-				undefined
+				'web'
 		) {
 			return o('target', {
 				env: true,
