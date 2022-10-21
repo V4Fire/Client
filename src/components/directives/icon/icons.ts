@@ -6,10 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Icon } from 'traits/i-icon/modules/interface';
-
-export const
-	iconsStore = Object.createDict<{ctx: Function; path: string}>();
+import { iconsStore } from 'components/directives/icon/const';
+import type { Icon } from 'components/directives/icon/interface';
 
 /**
  * Returns an icon by the specified identifier

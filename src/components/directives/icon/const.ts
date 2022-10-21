@@ -6,4 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('i-icon');
+export const
+	idsCache = new WeakMap<Element, string>(),
+	iconsStore = Object.createDict<{ctx: Function; path: string}>();
