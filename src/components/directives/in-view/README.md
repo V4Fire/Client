@@ -9,7 +9,7 @@ For more information, please refer its documentation.
 Just add the directive import in your component code.
 
 ```js
-import 'core/component/directives/in-view';
+import 'components/directives/in-view';
 
 import iBlock, { component } from 'components/super/i-block/i-block';
 

@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { idsCache } from 'core/component/directives/bind-with/const';
+import { idsCache } from 'components/directives/bind-with/const';
 import { getElementId as getElementIdFromStore } from 'core/component/directives/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
-import type { DirectiveValue, Listener } from 'core/component/directives/bind-with/interface';
+import type { DirectiveValue, Listener } from 'components/directives/bind-with/interface';
 
 /**
  * Returns the unique directive identifier for the passed element

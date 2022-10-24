@@ -7,20 +7,20 @@
  */
 
 /**
- * [[include:core/component/directives/bind-with/README.md]]
+ * [[include:components/directives/bind-with/README.md]]
  * @packageDocumentation
  */
 
 import { ComponentEngine, VNode } from 'core/component/engines';
 import { getDirectiveContext } from 'core/component/directives/helpers';
 
-import { idsCache } from 'core/component/directives/bind-with/const';
-import { bindListenerToElement, clearElementBindings } from 'core/component/directives/bind-with/helpers';
-import type { DirectiveParams } from 'core/component/directives/bind-with/interface';
+import { idsCache } from 'components/directives/bind-with/const';
+import { bindListenerToElement, clearElementBindings } from 'components/directives/bind-with/helpers';
+import type { DirectiveParams } from 'components/directives/bind-with/interface';
 
-export * from 'core/component/directives/bind-with/const';
-export * from 'core/component/directives/bind-with/helpers';
-export * from 'core/component/directives/bind-with/interface';
+export * from 'components/directives/bind-with/const';
+export * from 'components/directives/bind-with/helpers';
+export * from 'components/directives/bind-with/interface';
 
 ComponentEngine.directive('bind-with', {
 	mounted(el: Element, params: DirectiveParams, vnode: VNode): void {

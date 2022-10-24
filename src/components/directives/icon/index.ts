@@ -14,7 +14,7 @@
 import { ComponentEngine, VNode } from 'core/component/engines';
 
 import { getDirectiveContext } from 'core/component/directives/helpers';
-import { bindListenerToElement, clearElementBindings } from 'core/component/directives/bind-with/helpers';
+import { bindListenerToElement, clearElementBindings } from 'components/directives/bind-with/helpers';
 
 import { idsCache } from 'components/directives/icon/const';
 import { getIconHref, updateIconHref } from 'components/directives/icon/helpers';

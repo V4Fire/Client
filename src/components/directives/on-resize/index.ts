@@ -7,16 +7,16 @@
 */
 
 /**
- * [[include:core/component/directives/on-resize/README.md]]
+ * [[include:components/directives/on-resize/README.md]]
  * @packageDocumentation
  */
 
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
 import { ComponentEngine } from 'core/component/engines';
-import type { DirectiveValue, DirectiveParams } from 'core/component/directives/on-resize/interface';
+import type { DirectiveValue, DirectiveParams } from 'components/directives/on-resize/interface';
 
-export * from 'core/component/directives/on-resize/interface';
+export * from 'components/directives/on-resize/interface';
 
 ComponentEngine.directive('on-resize', {
 	mounted(el: HTMLElement, {value}: DirectiveParams): void {

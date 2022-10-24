@@ -1,4 +1,4 @@
-# core/component/directives/bind-with
+# components/directives/bind-with
 
 This module provides a directive to bind a component template element to some property or event.
 Binding is carried out through the passed handler function, which will always take as the first parameter a link to
@@ -14,7 +14,7 @@ forcing re-rendering of the entire template. For example, you can use this direc
 Just add the directive import in your component code.
 
 ```js
-import 'core/component/directives/bind-with';
+import 'components/directives/bind-with';
 
 import iBlock, { component } from 'components/super/i-block/i-block';
 

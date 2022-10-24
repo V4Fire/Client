@@ -14,7 +14,7 @@ the image depends on the passed properties. Passing `sources` will enable using 
 Just add the directive import in your component code.
 
 ```js
-import 'core/component/directives/image';
+import 'components/directives/image';
 
 import iBlock, { component } from 'components/super/i-block/i-block';
 

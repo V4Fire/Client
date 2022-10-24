@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:core/component/directives/image/README.md]]
+ * [[include:components/directives/image/README.md]]
  * @packageDocumentation
  */
 
@@ -16,10 +16,10 @@ import { ComponentEngine, VNode } from 'core/component/engines';
 import { setVNodePatchFlags, mergeProps } from 'core/component/render';
 import { getDirectiveContext, getElementId } from 'core/component/directives/helpers';
 
-import { createImageElement, getCurrentSrc } from 'core/component/directives/image/helpers';
-import type { DirectiveParams } from 'core/component/directives/image/interface';
+import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
+import type { DirectiveParams } from 'components/directives/image/interface';
 
-export * from 'core/component/directives/image/interface';
+export * from 'components/directives/image/interface';
 
 export const
 	idsCache = new WeakMap<Element, string>();

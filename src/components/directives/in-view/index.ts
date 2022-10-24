@@ -7,16 +7,16 @@
  */
 
 /**
- * [[include:core/component/directives/in-view/README.md]]
+ * [[include:components/directives/in-view/README.md]]
  * @packageDocumentation
  */
 
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
 
 import { ComponentEngine } from 'core/component/engines';
-import type { DirectiveValue, DirectiveParams } from 'core/component/directives/in-view/interface';
+import type { DirectiveValue, DirectiveParams } from 'components/directives/in-view/interface';
 
-export * from 'core/component/directives/in-view/interface';
+export * from 'components/directives/in-view/interface';
 
 ComponentEngine.directive('in-view', {
 	mounted(el: HTMLElement, {value}: DirectiveParams): void {

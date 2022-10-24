@@ -11,7 +11,7 @@ import { getSrcSet } from 'core/html';
 import { setVNodePatchFlags } from 'core/component/render';
 
 import type { VNode } from 'core/component/engines';
-import type { ImageOptions, ImageSource, VirtualElement } from 'core/component/directives/image/interface';
+import type { ImageOptions, ImageSource, VirtualElement } from 'components/directives/image/interface';
 
 /**
  * Returns a value of the `currentSrc` property from the passed image element

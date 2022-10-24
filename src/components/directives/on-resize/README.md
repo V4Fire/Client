@@ -9,7 +9,7 @@ For more information, please refer its documentation.
 Just add the directive import in your component code.
 
 ```js
-import 'core/component/directives/on-resize';
+import 'components/directives/on-resize';
 
 import iBlock, { component } from 'components/super/i-block/i-block';
 
