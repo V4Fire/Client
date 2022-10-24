@@ -1,0 +1,1 @@
+# components/friends/data

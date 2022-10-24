@@ -83,6 +83,9 @@ export interface UnsafeIData<CTX extends iData = iData> extends UnsafeIBlock<CTX
 	dp: CTX['dp'];
 
 	// @ts-ignore (access)
+	waitPermissionToRequest: CTX['waitPermissionToRequest'];
+
+	// @ts-ignore (access)
 	saveDataToRootStore: CTX['saveDataToRootStore'];
 
 	// @ts-ignore (access)
@@ -104,5 +107,5 @@ export interface UnsafeIData<CTX extends iData = iData> extends UnsafeIBlock<CTX
 	getDefaultRequestParams: CTX['getDefaultRequestParams'];
 
 	// @ts-ignore (access)
-	createRequest: CTX['createRequest'];
+	onRequestError: CTX['onRequestError']
 }
