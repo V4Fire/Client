@@ -134,7 +134,7 @@ export function post<D = unknown>(
 	const
 		args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'post');
 
-		if (Object.isArray(args)) {
+	if (Object.isArray(args)) {
 		return createRequest.call(this, 'post', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
 	}
 
@@ -153,13 +153,13 @@ export function add<D = unknown>(
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
 	const
-	args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'add');
+		args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'add');
 
 	if (Object.isArray(args)) {
-	return createRequest.call(this, 'add', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
-}
+		return createRequest.call(this, 'add', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
+	}
 
-return Promise.resolve(undefined);
+	return Promise.resolve(undefined);
 }
 
 /**
@@ -168,19 +168,19 @@ return Promise.resolve(undefined);
  * @param [body] - the request body
  * @param [opts] - additional request options
  */
-export function upd<D = unknown>(
+export function update<D = unknown>(
 	this: Data,
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
 	const
-	args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'upd');
+		args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'update');
 
 	if (Object.isArray(args)) {
-	return createRequest.call(this, 'upd', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
-}
+		return createRequest.call(this, 'update', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
+	}
 
-return Promise.resolve(undefined);
+	return Promise.resolve(undefined);
 }
 
 /**
@@ -195,10 +195,10 @@ export function del<D = unknown>(
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
 	const
-		args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'del');
+		args = arguments.length > 0 ? [body, opts] : getDefaultRequestParams.call(this, 'delete');
 
-		if (Object.isArray(args)) {
-		return createRequest.call(this, 'del', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
+	if (Object.isArray(args)) {
+		return createRequest.call(this, 'delete', ...Object.cast<[RequestBody, CreateRequestOptions<D>]>(args));
 	}
 
 	return Promise.resolve(undefined);

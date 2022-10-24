@@ -71,19 +71,7 @@ export type CheckDBEquality<T = unknown> =
 // @ts-ignore (extend)
 export interface UnsafeIData<CTX extends iData = iData> extends UnsafeIBlock<CTX> {
 	// @ts-ignore (access)
-	dataProviderEmitter: CTX['dataProviderEmitter'];
-
-	// @ts-ignore (access)
-	requestParams: CTX['requestParams'];
-
-	// @ts-ignore (access)
 	dbStore: CTX['dbStore'];
-
-	// @ts-ignore (access)
-	dp: CTX['dp'];
-
-	// @ts-ignore (access)
-	waitPermissionToRequest: CTX['waitPermissionToRequest'];
 
 	// @ts-ignore (access)
 	saveDataToRootStore: CTX['saveDataToRootStore'];
@@ -102,10 +90,4 @@ export interface UnsafeIData<CTX extends iData = iData> extends UnsafeIBlock<CTX
 
 	// @ts-ignore (access)
 	syncDataProviderWatcher: CTX['syncDataProviderWatcher'];
-
-	// @ts-ignore (access)
-	getDefaultRequestParams: CTX['getDefaultRequestParams'];
-
-	// @ts-ignore (access)
-	onRequestError: CTX['onRequestError']
 }
