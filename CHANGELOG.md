@@ -11,6 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2022-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with wrong arguments was provided into `getItemKey` `base/b-virtual-scroll`
 ## v3.30.0 (2022-10-19)
 
 #### :rocket: New Feature
