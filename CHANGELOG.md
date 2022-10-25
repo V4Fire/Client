@@ -16,6 +16,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an issue with wrong arguments was provided into `getItemKey` `base/b-virtual-scroll`
+## v3.30.0 (2022-10-19)
+
+#### :rocket: New Feature
+
+* `iBlock`:
+  * Added a new `InfoRender` module
+  * Added a new `initInfoRender` method
 
 ## v3.29.0 (2022-09-13)
 
