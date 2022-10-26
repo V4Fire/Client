@@ -7,15 +7,7 @@
  */
 
 import type Provider from 'core/data';
-
-import type {
-
-	RequestQuery,
-	RequestBody,
-	RequestResponseObject,
-	ModelMethod
-
-} from 'core/data';
+import type { RequestQuery, RequestBody, ModelMethod } from 'core/data';
 
 import { asyncOptionsKeys } from 'core/async';
 import type { CreateRequestOptions } from 'components/super/i-data';
@@ -189,7 +181,7 @@ export function update<D = unknown>(
  * @param [body] - the request body
  * @param [opts] - additional request options
  */
-export function del<D = unknown>(
+export function deleteData<D = unknown>(
 	this: Data,
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
@@ -235,7 +227,7 @@ export function createRequest<D = unknown>(
 			rawRequest = this.provider[method](Object.cast(body), reqParams);
 		}
 
-		return this.async.request<RequestResponseObject<D>>(rawRequest, asyncParams);
+		return this.async.request(rawRequest, asyncParams);
 	});
 
 	if (ctx.mods.progress !== 'true') {

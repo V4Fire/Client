@@ -10,7 +10,10 @@ import Provider, { providers, ProviderOptions } from 'core/data';
 import type { ReadonlyEventEmitterWrapper } from 'core/async';
 
 import Friend, { fakeMethods } from 'components/friends/friend';
-import type iDataCommon from 'components/super/i-data/common';
+import type iBlock from 'components/super/i-block';
+
+import type iProvider from 'components/traits/i-provider/i-provider';
+import type { DataProvider } from 'components/traits/i-provider/i-provider';
 
 import type * as request from 'components/friends/data/request';
 
@@ -21,7 +24,7 @@ interface Data {
 	peek: typeof request.peek;
 	post: typeof request.post;
 	update: typeof request.update;
-	delete: typeof request.del;
+	delete: typeof request.deleteData;
 	getDefaultRequestParams: typeof request.getDefaultRequestParams;
 }
 
@@ -37,7 +40,7 @@ interface Data {
 )
 
 class Data extends Friend {
-	override readonly C!: iDataCommon;
+	override readonly C!: iBlock & iProvider;
 
 	/**
 	 * The component data provider event emitter.
@@ -54,7 +57,7 @@ class Data extends Friend {
 	 */
 	readonly provider!: Provider;
 
-	constructor(component: iDataCommon, provider: string | Provider, opts?: ProviderOptions) {
+	constructor(component: iBlock & iProvider, provider: DataProvider, opts?: ProviderOptions) {
 		super(component);
 
 		let
@@ -74,8 +77,12 @@ class Data extends Friend {
 
 			dp = new ProviderConstructor(opts);
 
+		} else if (Object.isFunction(provider)) {
+			const ProviderConstructor = <typeof Provider>provider;
+			dp = new ProviderConstructor(opts);
+
 		} else {
-			dp = provider;
+			dp = <Provider>provider;
 		}
 
 		this.provider = dp;
