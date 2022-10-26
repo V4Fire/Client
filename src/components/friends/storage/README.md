@@ -1,7 +1,7 @@
 # components/friends/storage
 
 This module provides a class for persistent storage of component data.
-The module uses `core/kv-storage` with the default engine. But you can specify the engine to use manually.
+The module uses the `core/kv-storage` module with the default engine. But you can specify the engine to use manually.
 
 ```js
 this.storage.set(1, 'foo');
@@ -11,9 +11,9 @@ this.storage.remove('foo');
 
 ## Why not to use `core/kv-storage`?
 
-There are two reasons to use `Storage` instead of the pure `core/kv-storage` module.
+There are two reasons to use the `Storage` class instead of the pure `core/kv-storage` module.
 
-1. `Storage` wraps the `core/kv-storage` module with `Async` to prevent race conditions.
+1. `Storage` wraps the `core/kv-storage` module with `Async` to prevent race conditions and memory leaks.
 
 2. `Storage` uses the `globalName` prop to store values to prevent conflicts between different components that store
    data with the same key.
