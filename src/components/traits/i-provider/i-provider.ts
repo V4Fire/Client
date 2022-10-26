@@ -25,6 +25,8 @@ import type iBlock from 'components/super/i-block/i-block';
 
 import type { DataProvider, RequestParams } from 'components/traits/i-provider/interface';
 
+export * from 'components/traits/i-provider/interface';
+
 export const
 	$$ = symbolGenerator();
 
