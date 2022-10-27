@@ -48,15 +48,15 @@ export default abstract class iDataHandlers extends iDataData {
 			}
 		}, group);
 
-		$e.on('upd', async (data) => {
+		$e.on('update', async (data) => {
 			if (provider.getDefaultRequestParams('get')) {
-				this.onUpdData(await (Object.isFunction(data) ? data() : data));
+				this.onUpdateData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
-		$e.on('del', async (data) => {
+		$e.on('delete', async (data) => {
 			if (provider.getDefaultRequestParams('get')) {
-				this.onDelData(await (Object.isFunction(data) ? data() : data));
+				this.onDeleteData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
@@ -178,7 +178,7 @@ export default abstract class iDataHandlers extends iDataData {
 	 * Handler: data has been updated for the component provider
 	 * @param data
 	 */
-	protected onUpdData(data: unknown): void {
+	protected onUpdateData(data: unknown): void {
 		if (data != null) {
 			this.db = this.convertDataToDB(data);
 
@@ -191,7 +191,7 @@ export default abstract class iDataHandlers extends iDataData {
 	 * Handler: data has been deleted from the component provider
 	 * @param data
 	 */
-	protected onDelData(data: unknown): void {
+	protected onDeleteData(data: unknown): void {
 		if (data != null) {
 			this.db = this.convertDataToDB(data);
 
