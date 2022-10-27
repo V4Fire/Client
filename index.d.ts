@@ -32,6 +32,16 @@ declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
 
+declare module '*.styl' {
+  const styles: any;
+  export default styles;
+}
+
+declare module '*.ss' {
+	const block: any;
+  export = block;
+}
+
 interface RenderOptions {
 	/** @default `'rootSelector'` */
 	selectorToInject?: string;

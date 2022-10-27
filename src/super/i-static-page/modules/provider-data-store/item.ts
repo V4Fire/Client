@@ -6,9 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-//#if runtime has core/data
 import type Provider from 'core/data';
-//#endif
 
 import { providers } from 'core/data/const';
 import select, { SelectParams } from 'core/object/select';

@@ -25,6 +25,8 @@ const aliases = {
 		const
 			asset = resolve.depMap[el].config.assets;
 
+		map[el] = path.resolve('node_modules', el, 'src');
+
 		if (asset?.sprite == null) {
 			return map;
 		}

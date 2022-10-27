@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// @ts-ignore (ss import)
 import * as defTpls from 'core/block.ss';
 
 import { componentTemplates } from 'core/component/const';

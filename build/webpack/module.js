@@ -17,8 +17,7 @@ const
 	projectGraph = include('build/graph');
 
 const
-	{webpack} = config,
-	{resolve} = require('@pzlr/build-core');
+	{webpack} = config;
 
 const
 	{isExternalDep} = include('build/const'),
@@ -68,13 +67,6 @@ module.exports = async function module({plugins}) {
 	};
 
 	const tsHelperLoaders = [
-		{
-			loader: 'symbol-generator-loader',
-			options: {
-				modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
-			}
-		},
-
 		'prelude-loader',
 
 		{
@@ -88,7 +80,6 @@ module.exports = async function module({plugins}) {
 					[
 						include('build/monic/require-context'),
 						include('build/monic/super-import'),
-						include('build/monic/ts-import'),
 						include('build/monic/dynamic-component-import')
 					]
 				)
@@ -103,10 +94,10 @@ module.exports = async function module({plugins}) {
 			{
 				loader: 'ts-loader',
 				options: {
+					allowTsInNodeModules: true,
+					reportFiles: ['src/**/*.ts'],
 					...typescript.client,
-					getCustomTransformers: () => ({
-						after: [...Object.values(tsTransformers.before)]
-					})
+					getCustomTransformers: tsTransformers
 				}
 			},
 
