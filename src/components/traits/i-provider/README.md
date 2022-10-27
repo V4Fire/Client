@@ -41,7 +41,7 @@ To support these events, override `initModEvents` in your component and invoke t
 import iProvider from 'components/traits/i-provider/i-provider';
 
 export default class bButton implements iProvider {
-  override initModEvents() {
+  protected override initModEvents() {
     super.initModEvents();
     iProvider.initModEvents(this);
   }

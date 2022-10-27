@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Provider, { providers, ProviderOptions } from 'core/data';
+import Provider, { providers } from 'core/data';
 import type { ReadonlyEventEmitterWrapper } from 'core/async';
 
 import Friend, { fakeMethods } from 'components/friends/friend';
 import type iBlock from 'components/super/i-block';
 
 import type iProvider from 'components/traits/i-provider/i-provider';
-import type { DataProvider } from 'components/traits/i-provider/i-provider';
+import type { DataProvider, DataProviderOptions } from 'components/traits/i-provider/i-provider';
 
 import type * as request from 'components/friends/data/request';
 
@@ -57,7 +57,7 @@ class Data extends Friend {
 	 */
 	readonly provider!: Provider;
 
-	constructor(component: iBlock & iProvider, provider: DataProvider, opts?: ProviderOptions) {
+	constructor(component: iBlock & iProvider, provider: DataProvider, opts?: DataProviderOptions) {
 		super(component);
 
 		let

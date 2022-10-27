@@ -7,17 +7,12 @@
  */
 
 import symbolGenerator from 'core/symbol';
-
 import type RequestError from 'core/request/error';
-import { providers } from 'core/data/const';
-
-import type Provider from 'core/data';
 
 import Data from 'components/friends/data';
-
-import iDataData from 'components/super/i-data/data';
 import { component, watch, wait } from 'components/super/i-block/i-block';
 
+import iDataData from 'components/super/i-data/data';
 import type { RequestParams, RetryRequestFn } from 'components/super/i-data/interface';
 
 export const
@@ -75,28 +70,27 @@ export default abstract class iDataHandlers extends iDataData {
 	/**
 	 * Synchronization of request fields
 	 *
-	 * @param [value]
-	 * @param [oldValue]
+	 * @param [requestParams]
+	 * @param [oldRequestParams]
 	 */
 	protected syncRequestParamsWatcher<T = unknown>(
-		value?: RequestParams<T>,
-		oldValue?: RequestParams<T>
+		requestParams?: RequestParams<T>,
+		oldRequestParams?: RequestParams<T>
 	): void {
-		if (!value) {
+		if (!requestParams) {
 			return;
 		}
 
 		const
 			{async: $a} = this;
 
-		for (let o = Object.keys(value), i = 0; i < o.length; i++) {
+		Object.entries(requestParams).forEach(([key, val]) => {
 			const
-				key = o[i],
-				val = value[key],
-				oldVal = oldValue?.[key];
+				oldVal = oldRequestParams?.[key];
 
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (val != null && oldVal != null && Object.fastCompare(val, oldVal)) {
-				continue;
+				return;
 			}
 
 			const
@@ -113,7 +107,7 @@ export default abstract class iDataHandlers extends iDataData {
 			} else {
 				$a.setImmediate(() => this[m](...this.data?.getDefaultRequestParams(key) ?? []), group);
 			}
-		}
+		});
 	}
 
 	/**
@@ -139,17 +133,6 @@ export default abstract class iDataHandlers extends iDataData {
 		}
 
 		if (provider != null) {
-			const
-				ProviderConstructor = <CanUndef<typeof Provider>>providers[provider];
-
-			if (ProviderConstructor == null) {
-				if (provider === 'Provider') {
-					return;
-				}
-
-				throw new ReferenceError(`The provider "${provider}" is not defined`);
-			}
-
 			const watchParams = {
 				deep: true,
 				group: 'requestSync'
@@ -158,7 +141,7 @@ export default abstract class iDataHandlers extends iDataData {
 			this.watch('request', watchParams, this.syncRequestParamsWatcher.bind(this));
 			this.watch('requestParams', watchParams, this.syncRequestParamsWatcher.bind(this));
 
-			this.data = new Data(Object.cast(this), provider, this.dataProviderOptions);
+			this.data = new Data(this, provider, this.dataProviderOptions);
 			this.initDataListeners();
 
 			if (initLoad) {
@@ -168,10 +151,10 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: `dataProvider.error`
+	 * Handler: an error occurred while loading data from the provider
 	 *
-	 * @param err
-	 * @param retry - retry function
+	 * @param err - the caused error
+	 * @param retry - a function to repeat the request
 	 * @emits `requestError(err: Error |` [[RequestError]], retry:` [[RetryRequestFn]]`)`
 	 */
 	protected onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
@@ -179,7 +162,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: `dataProvider.add`
+	 * Handler: data has been added to the component provider
 	 * @param data
 	 */
 	protected onAddData(data: unknown): void {
@@ -192,7 +175,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: `dataProvider.upd`
+	 * Handler: data has been updated for the component provider
 	 * @param data
 	 */
 	protected onUpdData(data: unknown): void {
@@ -205,7 +188,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: `dataProvider.del`
+	 * Handler: data has been deleted from the component provider
 	 * @param data
 	 */
 	protected onDelData(data: unknown): void {
@@ -218,7 +201,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: `dataProvider.refresh`
+	 * Handler: need to reload data from the provider
 	 * @param data
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental

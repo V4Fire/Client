@@ -14,16 +14,16 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import SyncPromise from 'core/promise/sync';
 
-import type { ProviderOptions } from 'core/data';
+import SyncPromise from 'core/promise/sync';
 import type { ModsDecl } from 'core/component';
 
 import type Data from 'components/friends/data';
 import iProgress from 'components/traits/i-progress/i-progress';
+
 import type iBlock from 'components/super/i-block/i-block';
 
-import type { DataProvider, RequestParams } from 'components/traits/i-provider/interface';
+import type { DataProvider, DataProviderOptions, RequestParams } from 'components/traits/i-provider/interface';
 
 export * from 'components/traits/i-provider/interface';
 
@@ -54,7 +54,7 @@ export default abstract class iProvider implements iProgress {
 	 * < b-example :dataProvider = 'myProvider' | :dataProviderOptions = {socket: true}
 	 * ```
 	 */
-	dataProviderOptions?: ProviderOptions;
+	dataProviderOptions?: DataProviderOptions;
 
 	/**
 	 * External request parameters.

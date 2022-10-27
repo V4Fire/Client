@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-//#if runtime has core/data
-
 import type {
 
 	RequestBody,
@@ -17,8 +15,6 @@ import type {
 	CreateRequestOptions as BaseCreateRequestOptions
 
 } from 'core/data';
-
-//#endif
 
 import type { AsyncOptions } from 'core/async';
 import type { UnsafeIBlock } from 'components/super/i-block/i-block';

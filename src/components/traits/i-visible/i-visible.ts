@@ -19,7 +19,7 @@ export default abstract class iVisible {
 	/**
 	 * If true, then the component won't be displayed if there is no Internet connection
 	 */
-	readonly hideIfOffline: boolean = false;
+	hideIfOffline: boolean = false;
 
 	/**
 	 * Trait modifiers

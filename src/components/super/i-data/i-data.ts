@@ -27,10 +27,12 @@ export { RequestError };
 export {
 
 	Socket,
+
 	RequestQuery,
 	RequestBody,
 	RequestResponseObject,
 	Response,
+
 	ModelMethod,
 	ProviderOptions,
 	ExtraProvider,
@@ -39,7 +41,6 @@ export {
 } from 'core/data';
 
 export * from 'components/super/i-block/i-block';
-export * from 'components/super/i-data/const';
 export * from 'components/super/i-data/interface';
 
 export const
@@ -52,7 +53,7 @@ export default abstract class iData extends iDataHandlers {
 	}
 
 	/**
-	 * Unsuspend requests to the data provider
+	 * Unsuspends all requests to the data provider
 	 */
 	unsuspendRequests(): void {
 		if (Object.isFunction(this.suspendRequests)) {
@@ -181,7 +182,7 @@ export default abstract class iData extends iDataHandlers {
 	}
 
 	/**
-	 * Link to `iBlock.initLoad`
+	 * An alias to the original `initLoad` method
 	 *
 	 * @see [[iBlock.initLoad]]
 	 * @param [data]
@@ -201,21 +202,31 @@ export default abstract class iData extends iDataHandlers {
 
 	/**
 	 * Saves data to the root data store.
-	 * All components with specified global names or data providers by default store data from initial providers'
-	 * requests with the root component.
-	 *
+	 * All components with defined global names or data providers additionally store their data in the root component.
 	 * You can check each provider data by using `r.providerDataStore`.
 	 *
 	 * @param data
-	 * @param [key] - key to save data
+	 * @param [key] - the key that will be used to store the data
 	 */
 	protected saveDataToRootStore(data: unknown, key?: string): void {
-		key ??= this.globalName ?? this.dataProvider;
+		key ??= getKey(this.globalName ?? this.dataProvider);
 
 		if (key == null) {
 			return;
 		}
 
 		this.r.providerDataStore.set(key, data);
+
+		function getKey(val: CanUndef<typeof this.dataProvider>): CanUndef<string> {
+			if (val == null || Object.isString(val)) {
+				return val ?? undefined;
+			}
+
+			if (Object.isFunction(val)) {
+				return val.name;
+			}
+
+			return val.constructor.name;
+		}
 	}
 }
