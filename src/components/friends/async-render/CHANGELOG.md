@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* The module has been moved to`components/friends/async-render`
+* The module has been moved to `components/friends/async-render`
 * The module has been rewritten to a new tree-shake friendly API
 
 #### :memo: Documentation
