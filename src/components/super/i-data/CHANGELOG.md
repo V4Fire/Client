@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Renamed `suspendRequests` to `suspendedRequests`
+* Replaced `dp` with `dataProvider`
+
+#### :rocket: New Feature
+
+* Now any provider can be set using constructor or instance
+
 ## v3.18.3 (2022-04-01)
 
 #### :bug: Bug Fix

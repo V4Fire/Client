@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :memo: Documentation
+
+* Added complete documentation for the module
+
 ## v3.17.0 (2022-02-24)
 
 #### :boom: Breaking Change
