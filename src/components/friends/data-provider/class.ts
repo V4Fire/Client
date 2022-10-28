@@ -10,14 +10,14 @@ import Provider, { providers } from 'core/data';
 import type { ReadonlyEventEmitterWrapper } from 'core/async';
 
 import Friend, { fakeMethods } from 'components/friends/friend';
-import type iBlock from 'components/super/i-block';
 
+import type iBlock from 'components/super/i-block';
 import type iDataProvider from 'components/traits/i-data-provider/i-data-provider';
-import type { DataProvider, DataProviderOptions } from 'components/traits/i-data-provider/i-data-provider';
 
 import type * as request from 'components/friends/data-provider/request';
+import type { DataProviderProp, DataProviderOptions } from 'components/friends/data-provider/interface';
 
-interface Data {
+interface DataProvider {
 	url: typeof request.url;
 	base: typeof request.base;
 	get: typeof request.get;
@@ -39,7 +39,7 @@ interface Data {
 	'getDefaultRequestParams'
 )
 
-class Data extends Friend {
+class DataProvider extends Friend {
 	override readonly C!: iBlock & iDataProvider;
 
 	/**
@@ -57,7 +57,7 @@ class Data extends Friend {
 	 */
 	readonly provider!: Provider;
 
-	constructor(component: iBlock & iDataProvider, provider: DataProvider, opts?: DataProviderOptions) {
+	constructor(component: iBlock & iDataProvider, provider: DataProviderProp, opts?: DataProviderOptions) {
 		super(component);
 
 		let
@@ -109,4 +109,4 @@ class Data extends Friend {
 	}
 }
 
-export default Data;
+export default DataProvider;

@@ -10,14 +10,8 @@ import symbolGenerator from 'core/symbol';
 import { derive } from 'core/functools/trait';
 
 import type DataProvider from 'components/friends/data-provider';
-
-import iDataProvider, {
-
-	DataProviderProp,
-	DataProviderOptions,
-	RequestParams
-
-} from 'components/traits/i-data-provider/i-data-provider';
+import type { DataProviderProp, DataProviderOptions } from 'components/friends/data-provider';
+import iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 
 import iBlock, {
 
@@ -32,7 +26,15 @@ import iBlock, {
 
 } from 'components/super/i-block/i-block';
 
-import type { RequestFilter, ComponentConverter, CheckDBEquality } from 'components/super/i-data/interface';
+import type {
+
+	RequestParams,
+	RequestFilter,
+
+	ComponentConverter,
+	CheckDBEquality
+
+} from 'components/super/i-data/interface';
 
 export const
 	$$ = symbolGenerator();

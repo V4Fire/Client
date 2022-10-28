@@ -4,8 +4,8 @@ This module provides a class for working with external data providers.
 The module uses the `core/data` module. To better understand the concept of data providers, refer to the documentation for this module.
 
 ```js
-this.data.get({id: 10});
-this.data.update({newData: 10}, {query: {id: 10}});
+this.dataProvider.get({id: 10});
+this.dataProvider.update({newData: 10}, {query: {id: 10}});
 ```
 
 ## How to include this module to your component?

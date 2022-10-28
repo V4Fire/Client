@@ -19,11 +19,12 @@ import SyncPromise from 'core/promise/sync';
 import type { ModsDecl } from 'core/component';
 
 import type DataProvider from 'components/friends/data-provider';
-import iProgress from 'components/traits/i-progress/i-progress';
+import type { DataProviderProp, DataProviderOptions } from 'components/friends/data-provider';
 
+import iProgress from 'components/traits/i-progress/i-progress';
 import type iBlock from 'components/super/i-block/i-block';
 
-import type { DataProviderProp, DataProviderOptions, RequestParams } from 'components/traits/i-data-provider/interface';
+import type { RequestParams } from 'components/traits/i-data-provider/interface';
 
 export * from 'components/traits/i-data-provider/interface';
 

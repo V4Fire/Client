@@ -41,7 +41,6 @@ export {
 
 } from 'core/data';
 
-export * from 'components/traits/i-data-provider/i-data-provider';
 export * from 'components/super/i-block/i-block';
 export * from 'components/super/i-data/interface';
 

@@ -13,6 +13,9 @@ import type { UnsafeIBlock } from 'components/super/i-block/i-block';
 
 import type iData from 'components/super/i-data/i-data';
 
+export * from 'components/friends/data-provider';
+export * from 'components/traits/i-data-provider/i-data-provider';
+
 export interface RequestFilterOptions<D = unknown> {
 	isEmpty: boolean;
 	method: ModelMethod;

@@ -77,7 +77,7 @@ export default abstract class iDataHandlers extends iDataData {
 		requestParams?: RequestParams<T>,
 		oldRequestParams?: RequestParams<T>
 	): void {
-		if (!requestParams) {
+		if (requestParams == null) {
 			return;
 		}
 
@@ -121,7 +121,7 @@ export default abstract class iDataHandlers extends iDataData {
 
 	protected syncDataProviderWatcher(initLoad: boolean = true): void {
 		const
-			{dataProvider} = this;
+			{dataProviderProp} = this;
 
 		if (this.dataProvider != null) {
 			this.async
@@ -132,7 +132,7 @@ export default abstract class iDataHandlers extends iDataData {
 			this.dataProvider = undefined;
 		}
 
-		if (dataProvider != null) {
+		if (dataProviderProp != null) {
 			const watchParams = {
 				deep: true,
 				group: 'requestSync'
@@ -141,7 +141,7 @@ export default abstract class iDataHandlers extends iDataData {
 			this.watch('request', watchParams, this.syncRequestParamsWatcher.bind(this));
 			this.watch('requestParams', watchParams, this.syncRequestParamsWatcher.bind(this));
 
-			this.dataProvider = new DataProvider(this, dataProvider, this.dataProviderOptions);
+			this.dataProvider = new DataProvider(this, dataProviderProp, this.dataProviderOptions);
 			this.initDataListeners();
 
 			if (initLoad) {

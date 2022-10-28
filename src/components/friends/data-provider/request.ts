@@ -12,7 +12,7 @@ import type { RequestQuery, RequestBody, ModelMethod } from 'core/data';
 import { asyncOptionsKeys } from 'core/async';
 import type { CreateRequestOptions } from 'components/super/i-data';
 
-import type Data from 'components/friends/data-provider/class';
+import type DataProvider from 'components/friends/data-provider/class';
 import { providerMethods } from 'components/friends/data-provider/const';
 import type { DefaultRequest } from 'components/friends/data-provider/interface';
 
@@ -32,8 +32,8 @@ export function url(): CanUndef<string>;
  * this.url('list').get()
  * ```
  */
-export function url<T extends Data>(this: T, value: string): T;
-export function url(this: Data, value?: string): CanUndef<string> | Data {
+export function url<T extends DataProvider>(this: T, value: string): T;
+export function url(this: DataProvider, value?: string): CanUndef<string> | DataProvider {
 	if (value == null) {
 		return this.provider.url();
 	}
@@ -59,8 +59,8 @@ export function base(): CanUndef<string>;
  * this.base('list').get()
  * ```
  */
-export function base<T extends Data>(this: T, value: string): T;
-export function base(this: Data, value?: string): CanUndef<string> | Data {
+export function base<T extends DataProvider>(this: T, value: string): T;
+export function base(this: DataProvider, value?: string): CanUndef<string> | DataProvider {
 	if (value == null) {
 		return this.provider.base();
 	}
@@ -77,7 +77,7 @@ export function base(this: Data, value?: string): CanUndef<string> | Data {
  * @param [opts] - additional request options
  */
 export function get<D = unknown>(
-	this: Data,
+	this: DataProvider,
 	query?: RequestQuery,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
@@ -98,7 +98,7 @@ export function get<D = unknown>(
  * @param [opts] - additional request options
  */
 export function peek<D = unknown>(
-	this: Data,
+	this: DataProvider,
 	query?: RequestQuery,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
@@ -119,7 +119,7 @@ export function peek<D = unknown>(
  * @param [opts] - additional request options
  */
 export function post<D = unknown>(
-	this: Data,
+	this: DataProvider,
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
@@ -140,7 +140,7 @@ export function post<D = unknown>(
  * @param [opts] - additional request options
  */
 export function add<D = unknown>(
-	this: Data,
+	this: DataProvider,
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
@@ -161,7 +161,7 @@ export function add<D = unknown>(
  * @param [opts] - additional request options
  */
 export function update<D = unknown>(
-	this: Data,
+	this: DataProvider,
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
@@ -182,7 +182,7 @@ export function update<D = unknown>(
  * @param [opts] - additional request options
  */
 export function deleteData<D = unknown>(
-	this: Data,
+	this: DataProvider,
 	body?: RequestBody,
 	opts?: CreateRequestOptions<D>
 ): Promise<CanUndef<D>> {
@@ -204,7 +204,7 @@ export function deleteData<D = unknown>(
  * @param [opts] - additional options
  */
 export function createRequest<D = unknown>(
-	this: Data,
+	this: DataProvider,
 	method: ModelMethod | Provider[ModelMethod],
 	body?: RequestQuery | RequestBody,
 	opts: CreateRequestOptions<D> = {}
@@ -257,7 +257,7 @@ export function createRequest<D = unknown>(
  * Returns the default query options for the specified data provider method
  * @param method
  */
-export function getDefaultRequestParams<T = unknown>(this: Data, method: string): CanUndef<DefaultRequest<T>> {
+export function getDefaultRequestParams<T = unknown>(this: DataProvider, method: string): CanUndef<DefaultRequest<T>> {
 	const
 		{field} = this;
 
@@ -328,7 +328,7 @@ export function getDefaultRequestParams<T = unknown>(this: Data, method: string)
  * Modifies the given data context by adding methods for CRUD operations
  * @param ctx
  */
-export function patchProviderContext<T extends Data>(this: Data, ctx: T): T {
+export function patchProviderContext<T extends DataProvider>(this: DataProvider, ctx: T): T {
 	providerMethods.forEach((method) => {
 		Object.defineProperty(ctx, method, {
 			writable: true,
