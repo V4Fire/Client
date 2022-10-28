@@ -12,9 +12,9 @@ import type { RequestQuery, RequestBody, ModelMethod } from 'core/data';
 import { asyncOptionsKeys } from 'core/async';
 import type { CreateRequestOptions } from 'components/super/i-data';
 
-import type Data from 'components/friends/data/class';
-import { providerMethods } from 'components/friends/data/const';
-import type { DefaultRequest } from 'components/friends/data/interface';
+import type Data from 'components/friends/data-provider/class';
+import { providerMethods } from 'components/friends/data-provider/const';
+import type { DefaultRequest } from 'components/friends/data-provider/interface';
 
 /**
  * Returns the full URL of any provider request
@@ -23,7 +23,7 @@ export function url(): CanUndef<string>;
 
 /**
  * Sets an optional URL part for any provider request (it is concatenated with the base part of the URL).
- * This method returns a new Data object with the additional context.
+ * This method returns a new DataProvider object with the additional context.
  *
  * @param [value]
  *
@@ -50,7 +50,7 @@ export function base(): CanUndef<string>;
 
 /**
  * Sets the base part of the URL for any provider request.
- * This method returns a new Data object with the additional context.
+ * This method returns a new DataProvider object with the additional context.
  *
  * @param [value]
  *

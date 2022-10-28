@@ -1,4 +1,4 @@
-# components/traits/i-provider
+# components/traits/i-data-provider
 
 This module provides a trait for a component to allow it to work with different data providers.
 
@@ -19,11 +19,11 @@ This module provides a trait for a component to allow it to work with different 
 To support these modifiers, override the `mods` static parameter in your component.
 
 ```typescript
-import iProvider from 'components/traits/i-provider/i-provider';
+import iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 
-export default class bButton implements iProvider {
+export default class bButton implements iDataProvider {
   static override readonly mods: ModsDecl = {
-    ...iProvider.mods
+    ...iDataProvider.mods
   }
 }
 ```
@@ -38,12 +38,12 @@ export default class bButton implements iProvider {
 To support these events, override `initModEvents` in your component and invoke the same method from the trait.
 
 ```typescript
-import iProvider from 'components/traits/i-provider/i-provider';
+import iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 
-export default class bButton implements iProvider {
+export default class bButton implements iDataProvider {
   protected override initModEvents() {
     super.initModEvents();
-    iProvider.initModEvents(this);
+    iDataProvider.initModEvents(this);
   }
 }
 ```
@@ -52,7 +52,7 @@ export default class bButton implements iProvider {
 
 The trait specifies a bunch of optional props.
 
-### [dataProvider]
+### [dataProviderProp]
 
 The component data provider or its name.
 A provider can be specified in several ways: by its name, by its constructor, or simply by passing in an instance of the provider.
@@ -88,7 +88,7 @@ This option is useful for providing some query options from the parent component
 < b-select :dataProvider = 'Cities' | :request = {get: [{text: searchValue}, {cacheStrategy: 'never'}]}
 ```
 
-### [suspendRequests = `false`]
+### [suspendRequestsProp = `false`]
 
 If true, all requests to the data provider are suspended till you manually resolve them.
 This option is used when you want to lazy load components. For instance, you can only load components in
@@ -139,7 +139,7 @@ class bExample extends iData {
 }
 ```
 
-### data
+### dataProvider
 
 An instance of the component data provider.
 

@@ -21,7 +21,7 @@ import type {
 
 import type { AsyncOptions } from 'core/async';
 
-export type DataProvider = Provider | typeof Provider | string;
+export type DataProviderProp = Provider | typeof Provider | string;
 export type DataProviderOptions = ProviderOptions;
 
 export type DefaultRequest<D = unknown> = [RequestQuery | RequestBody, CreateRequestOptions<D>];

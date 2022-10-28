@@ -35,12 +35,13 @@ export {
 
 	ModelMethod,
 	ProviderOptions,
+
 	ExtraProvider,
 	ExtraProviders
 
 } from 'core/data';
 
-export * from 'components/traits/i-provider';
+export * from 'components/traits/i-data-provider/i-data-provider';
 export * from 'components/super/i-block/i-block';
 export * from 'components/super/i-data/interface';
 
@@ -68,7 +69,7 @@ export default abstract class iData extends iDataHandlers {
 		}
 
 		const {
-			data: provider,
+			dataProvider,
 			async: $a
 		} = this;
 
@@ -109,7 +110,7 @@ export default abstract class iData extends iDataHandlers {
 				return res;
 			}
 
-			if (this.dataProvider != null && provider == null) {
+			if (this.dataProvider != null && dataProvider == null) {
 				this.syncDataProviderWatcher(false);
 			}
 
@@ -121,9 +122,9 @@ export default abstract class iData extends iDataHandlers {
 				const db = this.convertDataToDB<this['DB']>(data);
 				void this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
-			} else if (provider?.provider.baseURL != null) {
+			} else if (dataProvider?.provider.baseURL != null) {
 				const
-					needRequest = Object.isArray(provider.getDefaultRequestParams('get'));
+					needRequest = Object.isArray(dataProvider.getDefaultRequestParams('get'));
 
 				if (needRequest) {
 					const res = $a
@@ -131,7 +132,7 @@ export default abstract class iData extends iDataHandlers {
 
 						.then(() => {
 							const
-								defParams = provider.getDefaultRequestParams<this['DB']>('get');
+								defParams = dataProvider.getDefaultRequestParams<this['DB']>('get');
 
 							if (defParams == null) {
 								return;
@@ -146,7 +147,7 @@ export default abstract class iData extends iDataHandlers {
 							void this.moduleLoader.load(...this.dependencies);
 							void this.state.initFromStorage();
 
-							return provider.get(<RequestQuery>defParams[0], defParams[1]);
+							return dataProvider.get(<RequestQuery>defParams[0], defParams[1]);
 						})
 
 						.then(

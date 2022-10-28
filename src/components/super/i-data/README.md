@@ -11,11 +11,11 @@ Please check out `core/data` before reading this documentation.
 
 * The component extends [[iBlock]].
 
-* The component implements the [[iProvider]] trait.
+* The component implements the [[iDataProvider]] trait.
 
 ## Basic concepts
 
-To set a data provider for a component, you need to specify the `dataProvider` prop or set its default value.
+To set a data provider for a component, you need to specify the `dataProviderProp` prop or set its default value.
 You can set a date provider by its name from the global pool of providers or by explicitly specifying a constructor or provider instance.
 To register a data provider within the global pool, you need to use the `@provider` decorator.
 
@@ -34,11 +34,11 @@ __b-example/b-example.ts__
 
 ```typescript
 import 'models/user';
-import iData, { component, wait, DataProvider } from 'components/super/i-data/i-data';
+import iData, { component, wait, DataProviderProp } from 'components/super/i-data/i-data';
 
 @component()
 export default class bExample extends iData {
-  override dataProvider: DataProvider = 'User';
+  override dataProviderProp: DataProviderProp = 'User';
 }
 ```
 
@@ -46,11 +46,11 @@ Or
 
 ```typescript
 import User from 'models/user';
-import iData, { component, wait, DataProvider } from 'components/super/i-data/i-data';
+import iData, { component, wait, DataProviderProp } from 'components/super/i-data/i-data';
 
 @component()
 export default class bExample extends iData {
-  override dataProvider: DataProvider = User;
+  override dataProviderProp: DataProviderProp = User;
 }
 ```
 
@@ -152,7 +152,7 @@ The provider data will be stored in the `db` field. By default, it has an object
 
 ```typescript
 import 'models/user';
-import iData, { component, wait } from 'components/super/i-data/i-data';
+import iData, { component, wait, DataProviderProp } from 'components/super/i-data/i-data';
 
 interface MyData {
   name: string;
@@ -163,7 +163,7 @@ interface MyData {
 export default class bExample extends iData {
   override readonly DB!: MyData;
 
-  override dataProvider: string = 'User';
+  override dataProviderProp: DataProviderProp = 'User';
 
   getUser(): CanUndef<this['DB']> {
     return this.db;
@@ -223,10 +223,10 @@ import iData, { component, prop, field } from 'components/super/i-data/i-data';
 
 export default class bExample extends iData {
   @prop(Object)
-  myDataProp: MyDataFormat;
+  dataProp: MyDataFormat;
 
   @field((o) => o.sync.link())
-  myData: MyDataFormat;
+  data: MyDataFormat;
 
   protected override initRemoteData(): CanUndef<MyDataFormat> {
     if (!this.db) {
@@ -235,7 +235,7 @@ export default class bExample extends iData {
 
     // `convertDBToComponent` will automatically apply `componentConverter` if it provided
     const data = this.convertDBToComponent<MyDataFormat>(this.db);
-    return this.myData = data;
+    return this.data = data;
   }
 }
 ```
@@ -263,11 +263,11 @@ Also, you can use the `@wait` decorator and similar methods.
 
 ```typescript
 import 'models/user';
-import iData, { component, wait } from 'components/super/i-data/i-data';
+import iData, { component, wait, DataProviderProp } from 'components/super/i-data/i-data';
 
 @component()
 export default class bExample extends iData {
-  override dataProvider: string = 'User';
+  override dataProviderProp: DataProviderProp = 'User';
 
   @wait('ready')
   getUser(): CanPromise<this['DB']> {
@@ -327,12 +327,13 @@ Just use `sync.object` and `requestParams`. See the [[Sync]] class for additiona
 import 'models/api/user';
 import { Data } from 'models/api/user/interface';
 
-import iData, { component, field, TitleValue, RequestParams, DataProvider } from 'components/super/i-data/i-data';
+import iData, { component, field, TitleValue, RequestParams, DataProviderProp } from 'components/super/i-data/i-data';
 
 @component()
 export default class bExample extends iData {
   override readonly DB!: Data;
-  override readonly dataProvider: DataProvider = 'api.User';
+
+  override readonly dataProviderProp: DataProviderProp = 'api.User';
 
   @field()
   name: string = 'Bill';
@@ -368,23 +369,23 @@ export default class bExample extends iData {
 
 ## Provider API
 
-All `iData` descendants have a `data` property through which you can work directly with the tied provider.
-Please see `components/friends/data` for more information.
+All `iData` descendants have a `dataProvider` property through which you can work directly with the tied provider.
+Please see `components/friends/data-provider` for more information.
 
 ```typescript
 import User, { UserData } from 'models/user';
-import iData, { component, system, DataProvider } from 'components/super/i-data/i-data';
+import iData, { component, system, DataProviderProp } from 'components/super/i-data/i-data';
 
 @component()
 export default class bExample extends iData {
-  override dataProvider: DataProvider = User;
+  override dataProviderProp: DataProviderProp = User;
 
   getUser(): Promise<UserData> {
-    return this.data.get();
+    return this.dataProvider.get();
   }
 
   created() {
-    this.data.emitter.on('error', console.error);
+    this.dataProvider.emitter.on('error', console.error);
   }
 }
 ```

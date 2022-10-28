@@ -6,17 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type {
+import type { RequestQuery, RequestBody, ModelMethod } from 'core/data';
+import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-data-provider';
 
-	RequestBody,
-	ModelMethod,
-
-	RequestQuery,
-	CreateRequestOptions as BaseCreateRequestOptions
-
-} from 'core/data';
-
-import type { AsyncOptions } from 'core/async';
 import type { UnsafeIBlock } from 'components/super/i-block/i-block';
 
 import type iData from 'components/super/i-data/i-data';
@@ -34,19 +26,6 @@ export interface RequestFilterFn<D = unknown> {
 export type RequestFilter<D = unknown> =
 	boolean |
 	RequestFilterFn<D>;
-
-export type DefaultRequest<D = unknown> = [RequestQuery | RequestBody, CreateRequestOptions<D>];
-export type RequestParams<D = unknown> = Partial<Record<ModelMethod, Request<D>>>;
-
-export type Request<D = unknown> =
-	RequestQuery |
-	RequestBody |
-	DefaultRequest<D>;
-
-export interface CreateRequestOptions<T = unknown> extends BaseCreateRequestOptions<T>, AsyncOptions {
-	showProgress?: boolean;
-	hideProgress?: boolean;
-}
 
 export interface RetryRequestFn<T = unknown> {
 	(): Promise<CanUndef<T>>;

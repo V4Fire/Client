@@ -9,8 +9,15 @@
 import symbolGenerator from 'core/symbol';
 import { derive } from 'core/functools/trait';
 
-import type Data from 'components/friends/data';
-import iProvider, { DataProvider, DataProviderOptions } from 'components/traits/i-provider/i-provider';
+import type DataProvider from 'components/friends/data-provider';
+
+import iDataProvider, {
+
+	DataProviderProp,
+	DataProviderOptions,
+	RequestParams
+
+} from 'components/traits/i-data-provider/i-data-provider';
 
 import iBlock, {
 
@@ -25,38 +32,34 @@ import iBlock, {
 
 } from 'components/super/i-block/i-block';
 
-import type {
-
-	RequestParams,
-	RequestFilter,
-
-	ComponentConverter,
-	CheckDBEquality
-
-} from 'components/super/i-data/interface';
+import type { RequestFilter, ComponentConverter, CheckDBEquality } from 'components/super/i-data/interface';
 
 export const
 	$$ = symbolGenerator();
 
-interface iDataData extends Trait<typeof iProvider> {}
+interface iDataData extends Trait<typeof iDataProvider> {}
 
 @component({functional: null})
-@derive(iProvider)
+@derive(iDataProvider)
 abstract class iDataData extends iBlock {
 	/**
 	 * Type: the raw provider data
 	 */
 	readonly DB!: object;
 
-	/** @see [[iProvider.dataProvider]] */
+	/** @see [[iDataProvider.dataProviderProp]] */
 	@prop({type: String, required: false})
-	readonly dataProvider?: DataProvider;
+	readonly dataProviderProp?: DataProviderProp;
 
-	/** @see [[iProvider.dataProviderOptions]] */
+	/** @see [[iDataProvider.dataProvider]] */
+	@system()
+	dataProvider?: DataProvider;
+
+	/** @see [[iDataProvider.dataProviderOptions]] */
 	@prop({type: Object, required: false})
 	readonly dataProviderOptions?: DataProviderOptions;
 
-	/** @see [[iProvider.request]] */
+	/** @see [[iDataProvider.request]] */
 	@prop({type: [Object, Array], required: false})
 	readonly request?: RequestParams;
 
@@ -82,11 +85,11 @@ abstract class iDataData extends iBlock {
 	@prop({type: [Boolean, Function], required: false})
 	readonly defaultRequestFilter?: RequestFilter;
 
-	/** @see [[iProvider.suspendRequests]] */
+	/** @see [[iDataProvider.suspendRequestsProp]] */
 	@prop(Boolean)
 	readonly suspendRequestsProp: boolean = false;
 
-	/** @see [[iData.suspendRequests]] */
+	/** @see [[iDataProvider.suspendRequests]] */
 	@system((o) => o.sync.link())
 	suspendRequests?: boolean | Function;
 
@@ -103,13 +106,9 @@ abstract class iDataData extends iBlock {
 	@prop({type: [Boolean, Function]})
 	readonly checkDBEquality: CheckDBEquality = true;
 
-	/** @see [[iProvider.requestParams]] */
+	/** @see [[iDataProvider.requestParams]] */
 	@system({merge: true})
 	readonly requestParams: RequestParams = {get: {}};
-
-	/** @see [[iProvider.data]] */
-	@system()
-	data?: Data;
 
 	/**
 	 * The raw component data from the data provider
@@ -151,7 +150,7 @@ abstract class iDataData extends iBlock {
 	}
 
 	static override readonly mods: ModsDecl = {
-		...iProvider.mods
+		...iDataProvider.mods
 	};
 
 	/**
@@ -159,6 +158,7 @@ abstract class iDataData extends iBlock {
 	 * @see [[iData.db]]
 	 */
 	@field()
+	// @ts-ignore (recursive type)
 	protected dbStore?: CanUndef<this['DB']>;
 
 	/**
@@ -234,7 +234,7 @@ abstract class iDataData extends iBlock {
 
 	protected override initModEvents(): void {
 		super.initModEvents();
-		iProvider.initModEvents(this);
+		iDataProvider.initModEvents(this);
 	}
 }
 

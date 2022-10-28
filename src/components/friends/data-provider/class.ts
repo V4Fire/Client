@@ -12,10 +12,10 @@ import type { ReadonlyEventEmitterWrapper } from 'core/async';
 import Friend, { fakeMethods } from 'components/friends/friend';
 import type iBlock from 'components/super/i-block';
 
-import type iProvider from 'components/traits/i-provider/i-provider';
-import type { DataProvider, DataProviderOptions } from 'components/traits/i-provider/i-provider';
+import type iDataProvider from 'components/traits/i-data-provider/i-data-provider';
+import type { DataProvider, DataProviderOptions } from 'components/traits/i-data-provider/i-data-provider';
 
-import type * as request from 'components/friends/data/request';
+import type * as request from 'components/friends/data-provider/request';
 
 interface Data {
 	url: typeof request.url;
@@ -40,7 +40,7 @@ interface Data {
 )
 
 class Data extends Friend {
-	override readonly C!: iBlock & iProvider;
+	override readonly C!: iBlock & iDataProvider;
 
 	/**
 	 * The component data provider event emitter.
@@ -57,7 +57,7 @@ class Data extends Friend {
 	 */
 	readonly provider!: Provider;
 
-	constructor(component: iBlock & iProvider, provider: DataProvider, opts?: DataProviderOptions) {
+	constructor(component: iBlock & iDataProvider, provider: DataProvider, opts?: DataProviderOptions) {
 		super(component);
 
 		let

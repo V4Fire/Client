@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('i-provider')
+package('i-data-provider')
 	.dependencies('i-progress');

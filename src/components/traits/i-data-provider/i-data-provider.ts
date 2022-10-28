@@ -9,7 +9,7 @@
  */
 
 /**
- * [[include:components/traits/i-provider/README.md]]
+ * [[include:components/traits/i-data-provider/README.md]]
  * @packageDocumentation
  */
 
@@ -18,19 +18,19 @@ import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 import type { ModsDecl } from 'core/component';
 
-import type Data from 'components/friends/data';
+import type DataProvider from 'components/friends/data-provider';
 import iProgress from 'components/traits/i-progress/i-progress';
 
 import type iBlock from 'components/super/i-block/i-block';
 
-import type { DataProvider, DataProviderOptions, RequestParams } from 'components/traits/i-provider/interface';
+import type { DataProviderProp, DataProviderOptions, RequestParams } from 'components/traits/i-data-provider/interface';
 
-export * from 'components/traits/i-provider/interface';
+export * from 'components/traits/i-data-provider/interface';
 
 export const
 	$$ = symbolGenerator();
 
-export default abstract class iProvider implements iProgress {
+export default abstract class iDataProvider implements iProgress {
 	/**
 	 * The component data provider.
 	 * A provider can be specified in several ways: by its name, by its constructor,
@@ -43,6 +43,11 @@ export default abstract class iProvider implements iProgress {
 	 * < b-example :dataProvider = myProvider
 	 * ```
 	 */
+	readonly dataProviderProp?: DataProviderProp;
+
+	/**
+	 * An instance of the component data provider
+	 */
 	dataProvider?: DataProvider;
 
 	/**
@@ -54,7 +59,7 @@ export default abstract class iProvider implements iProgress {
 	 * < b-example :dataProvider = 'myProvider' | :dataProviderOptions = {socket: true}
 	 * ```
 	 */
-	dataProviderOptions?: DataProviderOptions;
+	readonly dataProviderOptions?: DataProviderOptions;
 
 	/**
 	 * External request parameters.
@@ -71,7 +76,7 @@ export default abstract class iProvider implements iProgress {
 	 * < b-select :dataProvider = 'Cities' | :request = {get: [{text: searchValue}, {cacheStrategy: 'never'}]}
 	 * ```
 	 */
-	request?: RequestParams;
+	readonly request?: RequestParams;
 
 	/**
 	 * If true, all requests to the data provider are suspended till you manually resolve them.
@@ -83,6 +88,9 @@ export default abstract class iProvider implements iProgress {
 	 * < b-select :dataProvider = 'Cities' | :suspendRequests = true
 	 * ```
 	 */
+	readonly suspendRequestsProp?: boolean | Function;
+
+	/* ** @see [[iDataProvider.suspendRequestsProp]] */
 	suspendRequests?: boolean | Function;
 
 	/**
@@ -124,19 +132,14 @@ export default abstract class iProvider implements iProgress {
 	requestParams: RequestParams = {get: {}};
 
 	/**
-	 * An instance of the component data provider
-	 */
-	data?: Data;
-
-	/**
 	 * The trait modifiers
 	 */
 	static readonly mods: ModsDecl = {
 		...iProgress.mods
 	};
 
-	/** @see [[iProvider.waitPermissionToRequest]] */
-	static waitPermissionToRequest: AddSelf<iProvider['waitPermissionToRequest'], iBlock & iProvider> = (component) => {
+	/** @see [[iDataProvider.waitPermissionToRequest]] */
+	static waitPermissionToRequest: AddSelf<iDataProvider['waitPermissionToRequest'], iBlock & iDataProvider> = (component) => {
 		if (component.suspendRequests === false) {
 			return SyncPromise.resolve(true);
 		}

@@ -1,4 +1,4 @@
-# components/friends/data
+# components/friends/data-provider
 
 This module provides a class for working with external data providers.
 The module uses the `core/data` module. To better understand the concept of data providers, refer to the documentation for this module.
@@ -16,10 +16,10 @@ Just place the necessary import declaration within your component file.
 
 ```typescript
 import iData, { component } from 'components/super/i-data/i-data';
-import Data, { get, deleteData } from 'components/friends/data';
+import DataProvider, { get, deleteData } from 'components/friends/data-provider';
 
 // Import `get` and `delete` methods
-Data.addToPrototype({get, delete: deleteData});
+DataProvider.addToPrototype({get, delete: deleteData});
 
 @component()
 export default class bExample extends iData {}
@@ -40,14 +40,14 @@ The class constructor takes a reference to the component itself, as well as a da
 A provider can be specified in several ways: by its name, by its constructor, or simply by passing in an instance of the provider.
 
 ```typescript
-import Data from 'components/friends/data';
+import DataProvider from 'components/friends/data-provider';
 import MyProvider from 'providers/my-provider';
 
 import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
-  @system((o) => new Data(o, new MyProvider()))
+  @system((o) => new DataProvider(o, new MyProvider()))
   data!: Data;
 
   created() {

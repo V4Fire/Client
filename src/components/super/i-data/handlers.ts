@@ -9,7 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import type RequestError from 'core/request/error';
 
-import Data from 'components/friends/data';
+import DataProvider from 'components/friends/data-provider';
 import { component, watch, wait } from 'components/super/i-block/i-block';
 
 import iDataData from 'components/super/i-data/data';
@@ -30,32 +30,32 @@ export default abstract class iDataHandlers extends iDataData {
 	@wait('ready', {label: $$.initDataListeners})
 	protected initDataListeners(): void {
 		const
-			{data: provider} = this;
+			{dataProvider} = this;
 
-		if (provider == null) {
+		if (dataProvider == null) {
 			return;
 		}
 
 		const
-			{emitter: $e} = provider;
+			{emitter: $e} = dataProvider;
 
 		const group = {group: 'dataProviderSync'};
 		$e.off(group);
 
 		$e.on('add', async (data) => {
-			if (provider.getDefaultRequestParams('get')) {
+			if (dataProvider.getDefaultRequestParams('get')) {
 				this.onAddData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
 		$e.on('update', async (data) => {
-			if (provider.getDefaultRequestParams('get')) {
+			if (dataProvider.getDefaultRequestParams('get')) {
 				this.onUpdateData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
 		$e.on('delete', async (data) => {
-			if (provider.getDefaultRequestParams('get')) {
+			if (dataProvider.getDefaultRequestParams('get')) {
 				this.onDeleteData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
@@ -105,7 +105,7 @@ export default abstract class iDataHandlers extends iDataData {
 				$a.setImmediate(this.initLoad.bind(this), group);
 
 			} else {
-				$a.setImmediate(() => this[m](...this.data?.getDefaultRequestParams(key) ?? []), group);
+				$a.setImmediate(() => this[m](...this.dataProvider?.getDefaultRequestParams(key) ?? []), group);
 			}
 		});
 	}
@@ -121,18 +121,18 @@ export default abstract class iDataHandlers extends iDataData {
 
 	protected syncDataProviderWatcher(initLoad: boolean = true): void {
 		const
-			provider = this.dataProvider;
+			{dataProvider} = this;
 
-		if (this.data != null) {
+		if (this.dataProvider != null) {
 			this.async
 				.clearAll({group: /requestSync/})
 				.clearAll({label: $$.initLoad});
 
-			this.data.emitter.off();
-			this.data = undefined;
+			this.dataProvider.emitter.off();
+			this.dataProvider = undefined;
 		}
 
-		if (provider != null) {
+		if (dataProvider != null) {
 			const watchParams = {
 				deep: true,
 				group: 'requestSync'
@@ -141,7 +141,7 @@ export default abstract class iDataHandlers extends iDataData {
 			this.watch('request', watchParams, this.syncRequestParamsWatcher.bind(this));
 			this.watch('requestParams', watchParams, this.syncRequestParamsWatcher.bind(this));
 
-			this.data = new Data(this, provider, this.dataProviderOptions);
+			this.dataProvider = new DataProvider(this, dataProvider, this.dataProviderOptions);
 			this.initDataListeners();
 
 			if (initLoad) {
