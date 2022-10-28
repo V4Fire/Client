@@ -296,13 +296,13 @@ If the attribute is set to true, then all requests with no payload will be abort
 
 ### Suspending initial data loading
 
-You can use `suspendRequests` and `unsuspendRequests` to lazy load components.
+You can use `suspendedRequestsProp` and `unsuspendRequests` to lazy load components.
 For example, you can only load components in the viewport.
 
 ```
 < b-example &
   :dataProvider = 'myData' |
-  :suspendRequests = true |
+  :suspendedRequests = true |
   v-in-view = {
     threshold: 0.5,
     onEnter: (el) => el.node.component.unsuspendRequests()

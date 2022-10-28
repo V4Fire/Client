@@ -85,13 +85,13 @@ abstract class iDataData extends iBlock {
 	@prop({type: [Boolean, Function], required: false})
 	readonly defaultRequestFilter?: RequestFilter;
 
-	/** @see [[iDataProvider.suspendRequestsProp]] */
+	/** @see [[iDataProvider.suspendedRequestsProp]] */
 	@prop(Boolean)
-	readonly suspendRequestsProp: boolean = false;
+	readonly suspendedRequestsProp: boolean = false;
 
 	/** @see [[iDataProvider.suspendRequests]] */
 	@system((o) => o.sync.link())
-	suspendRequests?: boolean | Function;
+	suspendedRequests!: boolean;
 
 	/**
 	 * If true, then the component can reload data within the offline mode

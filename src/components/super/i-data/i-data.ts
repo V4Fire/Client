@@ -54,15 +54,6 @@ export default abstract class iData extends iDataHandlers {
 		return Object.cast(this);
 	}
 
-	/**
-	 * Unsuspends all requests to the data provider
-	 */
-	unsuspendRequests(): void {
-		if (Object.isFunction(this.suspendRequests)) {
-			this.suspendRequests();
-		}
-	}
-
 	override initLoad(data?: unknown, opts: InitLoadOptions = {}): CanPromise<void> {
 		if (!this.isActivated) {
 			return;

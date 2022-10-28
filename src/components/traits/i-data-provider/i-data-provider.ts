@@ -85,13 +85,16 @@ export default abstract class iDataProvider implements iProgress {
 	 *
 	 * @example
 	 * ```
-	 * < b-select :dataProvider = 'Cities' | :suspendRequests = true
+	 * < b-select :dataProvider = 'Cities' | :suspendedRequests = true
 	 * ```
 	 */
-	readonly suspendRequestsProp?: boolean | Function;
+	readonly suspendedRequestsProp?: boolean;
 
-	/* ** @see [[iDataProvider.suspendRequestsProp]] */
-	suspendRequests?: boolean | Function;
+	/**
+	 * If true, all requests to the data provider are suspended till you manually resolve them.
+	 * This parameter must be linked to `suspendedRequestsProp`.
+	 */
+	suspendedRequests?: boolean;
 
 	/**
 	 * Request parameters for the data provider.
@@ -138,16 +141,21 @@ export default abstract class iDataProvider implements iProgress {
 		...iProgress.mods
 	};
 
+	/** @see [[iDataProvider.unsuspendRequests]] */
+	static unsuspendRequests: AddSelf<iDataProvider['unsuspendRequests'], iBlock & iDataProvider> = (component) => {
+		// Loopback
+	};
+
 	/** @see [[iDataProvider.waitPermissionToRequest]] */
 	static waitPermissionToRequest: AddSelf<iDataProvider['waitPermissionToRequest'], iBlock & iDataProvider> = (component) => {
-		if (component.suspendRequests === false) {
+		if (component.suspendedRequests === false) {
 			return SyncPromise.resolve(true);
 		}
 
 		return component.unsafe.async.promise(() => new Promise((resolve) => {
-			component.suspendRequests = () => {
+			component.unsuspendRequests = () => {
 				resolve(true);
-				component.suspendRequests = false;
+				component.suspendedRequests = false;
 			};
 
 		}), {
@@ -166,6 +174,26 @@ export default abstract class iDataProvider implements iProgress {
 	 */
 	static initModEvents<T extends iBlock>(component: T): void {
 		iProgress.initModEvents(component);
+	}
+
+	/**
+	 * Unsuspends all requests to the data provider.
+	 * You can use `suspendedRequestsProp` and `unsuspendRequests` to lazy load components.
+	 * For example, you can only load components in the viewport.
+	 *
+	 * ```
+	 * < b-example &
+	 *   :dataProvider = 'myData' |
+	 *   :suspendedRequests = true |
+	 *   v-in-view = {
+	 *     threshold: 0.5,
+	 *     onEnter: (el) => el.node.component.unsuspendRequests()
+	 *   }
+	 * .
+	 * ```
+	 */
+	unsuspendRequests(): void {
+		return Object.throw();
 	}
 
 	/**

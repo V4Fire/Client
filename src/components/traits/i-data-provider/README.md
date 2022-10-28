@@ -88,7 +88,7 @@ This option is useful for providing some query options from the parent component
 < b-select :dataProvider = 'Cities' | :request = {get: [{text: searchValue}, {cacheStrategy: 'never'}]}
 ```
 
-### [suspendRequestsProp = `false`]
+### [suspendedRequestsProp = `false`]
 
 If true, all requests to the data provider are suspended till you manually resolve them.
 This option is used when you want to lazy load components. For instance, you can only load components in
@@ -139,6 +139,11 @@ class bExample extends iData {
 }
 ```
 
+### suspendedRequests
+
+If true, all requests to the data provider are suspended till you manually resolve them.
+This parameter must be linked to `suspendedRequestsProp`.
+
 ### dataProvider
 
 An instance of the component data provider.
@@ -147,9 +152,26 @@ An instance of the component data provider.
 
 The trait specifies a bunch of methods to implement.
 
+### unsuspendRequests
+
+Unsuspends all requests to the data provider.
+You can use `suspendedRequestsProp` and `unsuspendRequests` to lazy load components.
+For example, you can only load components in the viewport.
+
+```
+< b-example &
+  :dataProvider = 'myData' |
+  :suspendedRequests = true |
+  v-in-view = {
+    threshold: 0.5,
+    onEnter: (el) => el.node.component.unsuspendRequests()
+  }
+.
+```
+
 ### waitPermissionToRequest
 
-Returns a promise that will be resolved when the component can make requests to the data provider
+Returns a promise that will be resolved when the component can make requests to the data provider.
 
 ## Helpers
 
