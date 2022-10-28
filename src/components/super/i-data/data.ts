@@ -11,6 +11,7 @@ import { derive } from 'core/functools/trait';
 
 import type DataProvider from 'components/friends/data-provider';
 import type { DataProviderProp, DataProviderOptions } from 'components/friends/data-provider';
+
 import iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 
 import iBlock, {

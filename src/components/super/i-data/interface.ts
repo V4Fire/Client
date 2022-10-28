@@ -10,7 +10,6 @@ import type { RequestQuery, RequestBody, ModelMethod } from 'core/data';
 import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-data-provider';
 
 import type { UnsafeIBlock } from 'components/super/i-block/i-block';
-
 import type iData from 'components/super/i-data/i-data';
 
 export * from 'components/friends/data-provider';
