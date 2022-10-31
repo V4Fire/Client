@@ -14,7 +14,6 @@
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModEvent, ModsDecl } from 'components/super/i-block/i-block';
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class iVisible {
 	/**
 	 * If true, then the component won't be displayed if there is no Internet connection

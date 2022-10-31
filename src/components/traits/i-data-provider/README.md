@@ -155,6 +155,8 @@ The trait specifies a bunch of methods to implement.
 ### unsuspendRequests
 
 Unsuspends all requests to the data provider.
+The method has the default implementation.
+
 You can use `suspendedRequestsProp` and `unsuspendRequests` to lazy load components.
 For example, you can only load components in the viewport.
 
@@ -172,6 +174,7 @@ For example, you can only load components in the viewport.
 ### waitPermissionToRequest
 
 Returns a promise that will be resolved when the component can make requests to the data provider.
+The method has the default implementation.
 
 ## Helpers
 
@@ -185,8 +188,7 @@ Initializes modifier event listeners to emit trait events.
 import iProgress from 'components/traits/i-progress/i-progress';
 
 export default class bButton implements iProgress {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iProgress.initModEvents(this);
   }

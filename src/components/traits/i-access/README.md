@@ -17,7 +17,7 @@ This module provides a trait for a component that needs to implement the "access
 | `disabled` | The component is disabled. All actions, like, `input` or `click`, are prevented              | `boolean` | -       |
 | `focused`  | The component in focus. Form components can force the showing of native UI, like a keyboard. | `boolean` | -       |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+To support these events, override `initModEvents` in your component and invoke the same method from the trait.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
@@ -38,14 +38,13 @@ export default class bButton implements iAccess {
 | `focus`   | The component in focus           | -                   | -       |
 | `blur`    | The component has lost the focus | -                   | -       |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+To support these events, override `initModEvents` in your component and invoke the same method from the trait.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
 
 export default class bButton implements iAccess {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iAccess.initModEvents(this);
   }
@@ -87,7 +86,7 @@ The getter has the default implementation via a static method `iAccess.isFocused
 import iAccess from 'components/traits/i-access/i-access';
 
 export default class bButton implements iAccess {
-  /** @see iAccess.isFocused */
+  /** @see [[iAccess.isFocused]] */
   get isFocused(): Promise<boolean> {
     return iAccess.isFocused(this);
   }
@@ -107,7 +106,7 @@ The method has the default implementation.
 import iAccess from 'components/traits/i-access/i-access';
 
 export default class bButton implements iAccess {
-  /** @see iAccess.enable */
+  /** @see [[iAccess.enable]] */
   enable(): Promise<boolean> {
     return iAccess.enable(this);
   }
@@ -123,7 +122,7 @@ The method has the default implementation.
 import iAccess from 'components/traits/i-access/i-access';
 
 export default class bButton implements iAccess {
-  /** @see iAccess.disable */
+  /** @see [[iAccess.disable]] */
   disable(): Promise<boolean> {
     return iAccess.disable(this);
   }
@@ -139,7 +138,7 @@ The method has the default implementation.
 import iAccess from 'components/traits/i-access/i-access';
 
 export default class bButton implements iAccess {
-  /** @see iAccess.focus */
+  /** @see [[iAccess.focus]] */
   focus(): Promise<boolean> {
     return iAccess.focus(this);
   }
@@ -155,7 +154,7 @@ The method has the default implementation.
 import iAccess from 'components/traits/i-access/i-access';
 
 export default class bButton implements iAccess {
-  /** @see iAccess.blur */
+  /** @see [[iAccess.blur]] */
   blur(): Promise<boolean> {
     return iAccess.blur(this);
   }
@@ -168,14 +167,13 @@ The trait provides a bunch of helper functions to initialize event listeners.
 
 ### initModEvents
 
-Initialize modifier event listeners to emit trait events.
+Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
 
 export default class bButton implements iAccess {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iAccess.initModEvents(this);
   }
@@ -201,7 +199,7 @@ i-access
       display block
 ```
 
-To enable these styles, import the trait within your component and call the provided mixin within your component.
+To enable these styles, import the trait into your component and call the provided mixin in your component.
 
 ```stylus
 @import "components/traits/i-access/i-access.styl"

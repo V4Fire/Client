@@ -45,7 +45,7 @@ i-width
       width inherit
 ```
 
-To enable these styles, import the trait within your component and call the provided mixin within your component.
+To enable these styles, import the trait into your component and call the provided mixin in your component.
 
 ```stylus
 @import "components/traits/i-width/i-width.styl"

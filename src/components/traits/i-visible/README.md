@@ -16,7 +16,7 @@ This module provides a trait for a component that needs to implement the "visibi
 |----------|-------------------------|-----------|---------|
 | `hidden` | The component is hidden | `boolean` | -       |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+To support these modifiers, override the `mods` static parameter in your component.
 
 ```typescript
 import iVisible from 'components/traits/i-visible/i-visible';
@@ -35,14 +35,13 @@ export default class bButton implements iVisible {
 | `show` | The component has been shown  | -                   | -       |
 | `hide` | The component has been hidden | -                   | -       |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+To support these events, override `initModEvents` in your component and invoke the same method from the trait.
 
 ```typescript
 import iVisible from 'components/traits/i-visible/i-visible';
 
 export default class bButton implements iVisible {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iVisible.initModEvents(this);
   }
@@ -55,14 +54,13 @@ The trait provides a bunch of helper functions to initialize event listeners.
 
 ### initModEvents
 
-Initialize modifier event listeners to emit trait events.
+Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iVisible from 'components/traits/i-visible/i-visible';
 
 export default class bButton implements iVisible {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iVisible.initModEvents(this);
   }
@@ -84,7 +82,7 @@ i-visible
       display none
 ```
 
-To enable these styles, import the trait within your component and call the provided mixin within your component.
+To enable these styles, import the trait into your component and call the provided mixin in your component.
 
 ```stylus
 @import "components/traits/i-visible/i-visible.styl"

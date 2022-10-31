@@ -14,7 +14,7 @@ This module provides a trait for a component that needs to implement the "openin
 |----------|-------------------------|-----------|---------|
 | `opened` | The component is opened | `boolean` | -       |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+To support these modifiers, override the `mods` static parameter in your component.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
@@ -33,14 +33,13 @@ export default class bButton implements iOpen {
 | `open`  | The component has been opened | -                   | -       |
 | `close` | The component has been closed | -                   | -       |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+To support these events, override `initModEvents` in your component and invoke the same method from the trait.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iOpen.initModEvents(this);
   }
@@ -60,7 +59,7 @@ The method has the default implementation.
 import iOpen from 'components/traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.open */
+  /** @see [[iOpen.open]] */
   open(...args: unknown[]): Promise<boolean> {
     return iOpen.open(this, ...args);
   }
@@ -76,7 +75,7 @@ The method has the default implementation.
 import iOpen from 'components/traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.close */
+  /** @see [[iOpen.close]] */
   close(...args: unknown[]): Promise<boolean> {
     return iOpen.close(this, ...args);
   }
@@ -92,7 +91,7 @@ The method has the default implementation.
 import iOpen from 'components/traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.onOpenedChange */
+  /** @see [[iOpen.onOpenedChange]] */
   onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
     return iOpen.onOpenedChange(this, e);
   }
@@ -101,14 +100,14 @@ export default class bButton implements iOpen {
 
 ### onKeyClose
 
-Handler: closing by a keyboard event.
+Handler: closing the component by a keyboard event.
 The method has the default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.onKeyClose */
+  /** @see [[iOpen.onKeyClose]] */
   onKeyClose(e: KeyboardEvent): Promise<void> {
     return iOpen.onKeyClose(this, e);
   }
@@ -117,14 +116,14 @@ export default class bButton implements iOpen {
 
 ### onTouchClose
 
-Handler: closing by a touch event.
+Handler: closing the component by a touch event.
 The method has the default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.blur */
+  /** @see [[iOpen.blur]] */
   onTouchClose(e: MouseEvent): Promise<void> {
     return iOpen.onTouchClose(this, e);
   }
@@ -137,7 +136,7 @@ The trait provides a bunch of helper functions to initialize event listeners.
 
 ### initCloseHelpers
 
-Initialize default event listeners to close a component by a keyboard or mouse.
+Initializes default event listeners to close a component using the keyboard or mouse.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
@@ -153,14 +152,13 @@ export default class bButton implements iOpen {
 
 ### initModEvents
 
-Initialize modifier event listeners to emit component events.
+Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iOpen.initModEvents(this);
   }

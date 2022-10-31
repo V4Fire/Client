@@ -17,6 +17,7 @@ import SyncPromise from 'core/promise/sync';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModsDecl, ModEvent, SetModEvent } from 'components/super/i-block/i-block';
+
 import type { CloseHelperEvents } from 'components/traits/i-open/interface';
 
 export * from 'components/traits/i-open/interface';
@@ -67,14 +68,16 @@ export default abstract class iOpen {
 	};
 
 	/**
-	 * Initialize default event listeners to close a component by a keyboard or mouse
+	 * Initializes default event listeners to close a component using the keyboard or mouse
 	 *
 	 * @param component
-	 * @param [events] - map with events to listen
+	 * @param [events] - a map with events to listen
 	 */
 	static initCloseHelpers<T extends iBlock>(component: T & iOpen, events: CloseHelperEvents = {}): void {
-		const
-			{async: $a, localEmitter: $e} = component.unsafe;
+		const {
+			async: $a,
+			localEmitter: $e
+		} = component.unsafe;
 
 		const
 			helpersGroup = {group: 'closeHelpers'},
@@ -159,7 +162,7 @@ export default abstract class iOpen {
 	}
 
 	/**
-	 * Handler: closing by a keyboard event
+	 * Handler: closing the component by a keyboard event
 	 * @param e
 	 */
 	onKeyClose(e: KeyboardEvent): Promise<void> {
@@ -167,7 +170,7 @@ export default abstract class iOpen {
 	}
 
 	/**
-	 * Handler: closing by a touch event
+	 * Handler: closing the component by a touch event
 	 * @param e
 	 */
 	onTouchClose(e: MouseEvent): Promise<void> {

@@ -14,7 +14,7 @@ This module provides a trait for a component have some "progress" behaviour.
 |------------|------------------------------------------------------------------------------------------------------------------|-----------|---------|
 | `progress` | The component in the process: loading data, processing something, etc. Maybe, we need to show some progress bar. | `boolean` | -       |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+To support these modifiers, override the `mods` static parameter in your component.
 
 ```typescript
 import iProgress from 'components/traits/i-progress/i-progress';
@@ -33,14 +33,13 @@ export default class bButton implements iProgress {
 | `progressStart` | The component has started to process something | -                   | -       |
 | `progressEnd`   | The component has ended to process something   | -                   | -       |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+To support these events, override `initModEvents` in your component and invoke the same method from the trait.
 
 ```typescript
 import iProgress from 'components/traits/i-progress/i-progress';
 
 export default class bButton implements iProgress {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iProgress.initModEvents(this);
   }
@@ -53,14 +52,13 @@ The trait provides a bunch of helper functions to initialize event listeners.
 
 ### initModEvents
 
-Initialize modifier event listeners to emit trait events.
+Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iProgress from 'components/traits/i-progress/i-progress';
 
 export default class bButton implements iProgress {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iProgress.initModEvents(this);
   }
@@ -90,7 +88,7 @@ i-progress
       display block
 ```
 
-To enable these styles, import the trait within your component and call the provided mixin within your component.
+To enable these styles, import the trait into your component and call the provided mixin in your component.
 
 ```stylus
 @import "components/traits/i-progress/i-progress"

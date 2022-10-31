@@ -1,6 +1,6 @@
 # components/traits/i-open-toggle-toggle
 
-This module provides a trait for a component that extends the "opening/closing" behaviour with API to toggle.
+This module provides a trait for a component that extends the "opening/closing" behaviour with an API to toggle.
 
 ## Synopsis
 
@@ -23,7 +23,7 @@ The method has the default implementation.
 import iOpenToggle from 'components/traits/i-open-toggle/i-open-toggle';
 
 export default class bButton implements iOpenToggle {
-  /** @see iOpenToggle.toggle */
+  /** @see [[iOpenToggle.toggle]] */
   toggle(...args: unknown[]): Promise<boolean> {
     return iOpenToggle.toggle(this, ...args);
   }
