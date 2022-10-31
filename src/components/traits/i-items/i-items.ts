@@ -18,11 +18,11 @@ export * from 'components/traits/i-items/interface';
 
 export default abstract class iItems {
 	/**
-	 * Returns a value of the unique key (to optimize re-rendering) of the specified item
+	 * Returns a unique key (to optimize re-rendering) of the specified item
 	 *
 	 * @param component
 	 * @param item
-	 * @param i
+	 * @param i - iteration index
 	 */
 	static getItemKey<T extends iBlock>(
 		component: T & iItems,
@@ -67,12 +67,12 @@ export default abstract class iItems {
 	}
 
 	/**
-	 * Type: component item
+	 * Type: the component item
 	 */
 	abstract readonly Item: object;
 
 	/**
-	 * Type: list of component items
+	 * Type: a list of component items
 	 */
 	abstract readonly Items: Array<this['Item']>;
 
@@ -84,26 +84,27 @@ export default abstract class iItems {
 
 	/**
 	 * By design, the specified items are rendered by using other components.
-	 * This prop allows specifying the name of a component that is used to render.
-	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
+	 * This prop allows specifying the name of a component that is used for rendering.
+	 * The prop can be provided as a function. In that case, the value is taken from the call result.
 	 *
 	 * @prop
 	 */
 	abstract item?: string | CreateFromItemFn<this['Item'], string>;
 
 	/**
-	 * This prop allows specifying props that are passed to a component to render an item.
-	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
+	 * This prop allows specifying props that are passed to a component to render items.
+	 * The prop can be provided as a function. In that case, the value is taken from the call result.
 	 *
 	 * @prop
 	 */
 	abstract itemProps?: Dictionary | ItemPropsFn<this['Item']>;
 
 	/**
-	 * To optimize the re-rendering of items, we can specify the unique identifier for each item.
-	 * The prop value can be provided as a string or function. In the string case,
-	 * you are providing the name of a property that stores the identifier.
-	 * If the function case, you should return from the function a value of the identifier.
+	 * To optimize the re-rendering of items, we can specify a unique identifier for each item.
+	 *
+	 * The prop value can be provided as a string or a function.
+	 * In the case of a string, you are providing the property name that stores the identifier.
+	 * If the case of a function, you must return the identifier value from the function.
 	 *
 	 * @prop
 	 */

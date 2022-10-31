@@ -10,19 +10,46 @@ This module provides a trait for a component that needs to implement the "access
 
 * The trait contains TS logic and default styles.
 
+* The trait can be automatically derived.
+
+  ```typescript
+  import { derive } from 'core/functools/trait';
+
+  import iAccess from 'components/traits/i-access/i-access';
+  import iBlock, { component } from 'components/super/i-block/i-block';
+
+  interface bButton extends Trait<typeof iAccess> {}
+
+  @component()
+  @derive(iAccess)
+  class bButton extends iBlock implements iAccess {
+    static override readonly mods: ModsDecl = {
+      ...iAccess.mods
+    }
+
+    protected override initModEvents(): void {
+      super.initModEvents();
+      iAccess.initModEvents(this);
+    }
+  }
+
+  export default bButton;
+  ```
+
 ## Modifiers
 
 | Name       | Description                                                                                  | Values    | Default |
 |------------|----------------------------------------------------------------------------------------------|-----------|---------|
-| `disabled` | The component is disabled. All actions, like, `input` or `click`, are prevented              | `boolean` | -       |
+| `disabled` | The component is disabled. All actions, like, `input` or `click`, are prevented.             | `boolean` | -       |
 | `focused`  | The component in focus. Form components can force the showing of native UI, like a keyboard. | `boolean` | -       |
 
-To support these events, override `initModEvents` in your component and invoke the same method from the trait.
+To support these modifiers, override the `mods` static parameter in your component.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iAccess {
+export default class bButton extends iBlock implements iAccess {
   static override readonly mods: ModsDecl = {
     ...iAccess.mods
   }
@@ -42,8 +69,9 @@ To support these events, override `initModEvents` in your component and invoke t
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iAccess {
+export default class bButton extends iBlock implements iAccess {
   protected override initModEvents(): void {
     super.initModEvents();
     iAccess.initModEvents(this);
@@ -80,12 +108,13 @@ The trait specifies a getter to determine when the component in focus or not.
 ### isFocused
 
 True if the component in focus.
-The getter has the default implementation via a static method `iAccess.isFocused`.
+The getter has the default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iAccess {
+export default class bButton extends iBlock implements iAccess {
   /** @see [[iAccess.isFocused]] */
   get isFocused(): Promise<boolean> {
     return iAccess.isFocused(this);
@@ -104,8 +133,9 @@ The method has the default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iAccess {
+export default class bButton extends iBlock implements iAccess {
   /** @see [[iAccess.enable]] */
   enable(): Promise<boolean> {
     return iAccess.enable(this);
@@ -120,8 +150,9 @@ The method has the default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iAccess {
+export default class bButton extends iBlock implements iAccess {
   /** @see [[iAccess.disable]] */
   disable(): Promise<boolean> {
     return iAccess.disable(this);
@@ -131,13 +162,14 @@ export default class bButton implements iAccess {
 
 ### focus
 
-Sets the focus to the component
+Sets focus to the component
 The method has the default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iAccess {
+export default class bButton extends iBlock implements iAccess {
   /** @see [[iAccess.focus]] */
   focus(): Promise<boolean> {
     return iAccess.focus(this);
@@ -147,13 +179,14 @@ export default class bButton implements iAccess {
 
 ### blur
 
-Unsets the focus from the component.
+Unsets focus from the component.
 The method has the default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iAccess {
+export default class bButton extends iBlock implements iAccess {
   /** @see [[iAccess.blur]] */
   blur(): Promise<boolean> {
     return iAccess.blur(this);
@@ -171,8 +204,9 @@ Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iAccess {
+export default class bButton extends iBlock implements iAccess {
   protected override initModEvents(): void {
     super.initModEvents();
     iAccess.initModEvents(this);

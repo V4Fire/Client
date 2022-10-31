@@ -15,16 +15,10 @@ export interface ItemPropParams<CTX = iBlock> {
 	ctx: CTX;
 }
 
-/**
- * Factory to create a value from an item object and its index
- */
 export interface CreateFromItemFn<ITEM = object, R = unknown> {
 	(item: ITEM, i: number): R;
 }
 
-/**
- * Factory to create a dictionary with props to pass to every item of a list
- */
 export interface ItemPropsFn<ITEM = object, CTX = iBlock> {
 	(item: ITEM, i: number, params: ItemPropParams<CTX>): Dictionary;
 }

@@ -37,6 +37,7 @@ export default abstract class iDataProvider implements iProgress {
 	 * A provider can be specified in several ways: by its name, by its constructor,
 	 * or simply by passing in an instance of the provider.
 	 *
+	 * @prop
 	 * @example
 	 * ```
 	 * < b-example :dataProvider = 'myProvider'
@@ -44,23 +45,24 @@ export default abstract class iDataProvider implements iProgress {
 	 * < b-example :dataProvider = myProvider
 	 * ```
 	 */
-	readonly dataProviderProp?: DataProviderProp;
+	abstract readonly dataProviderProp?: DataProviderProp;
 
 	/**
 	 * An instance of the component data provider
 	 */
-	dataProvider?: DataProvider;
+	abstract dataProvider?: DataProvider;
 
 	/**
 	 * Additional data source initialization options.
 	 * This parameter is used when the provider is specified by name or constructor.
 	 *
+	 * @prop
 	 * @example
 	 * ```
 	 * < b-example :dataProvider = 'myProvider' | :dataProviderOptions = {socket: true}
 	 * ```
 	 */
-	readonly dataProviderOptions?: DataProviderOptions;
+	abstract readonly dataProviderOptions?: DataProviderOptions;
 
 	/**
 	 * External request parameters.
@@ -69,6 +71,7 @@ export default abstract class iDataProvider implements iProgress {
 	 *
 	 * This option is useful for providing some query options from the parent component.
 	 *
+	 * @prop
 	 * @example
 	 * ```
 	 * < b-select :dataProvider = 'Cities' | :request = {get: {text: searchValue}}
@@ -77,25 +80,26 @@ export default abstract class iDataProvider implements iProgress {
 	 * < b-select :dataProvider = 'Cities' | :request = {get: [{text: searchValue}, {cacheStrategy: 'never'}]}
 	 * ```
 	 */
-	readonly request?: RequestParams;
+	abstract readonly request?: RequestParams;
 
 	/**
 	 * If true, all requests to the data provider are suspended till you manually resolve them.
 	 * This option is used when you want to lazy load components. For instance, you can only load components in
 	 * the viewport.
 	 *
+	 * @prop
 	 * @example
 	 * ```
 	 * < b-select :dataProvider = 'Cities' | :suspendedRequests = true
 	 * ```
 	 */
-	readonly suspendedRequestsProp?: boolean;
+	abstract readonly suspendedRequestsProp?: boolean;
 
 	/**
 	 * If true, all requests to the data provider are suspended till you manually resolve them.
 	 * This parameter must be linked to `suspendedRequestsProp`.
 	 */
-	suspendedRequests?: boolean;
+	abstract suspendedRequests?: boolean;
 
 	/**
 	 * Request parameters for the data provider.
@@ -133,7 +137,7 @@ export default abstract class iDataProvider implements iProgress {
 	 * }
 	 * ```
 	 */
-	requestParams: RequestParams = {get: {}};
+	abstract requestParams: RequestParams;
 
 	/**
 	 * The trait modifiers

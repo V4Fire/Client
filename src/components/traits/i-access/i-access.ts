@@ -20,6 +20,31 @@ import type { ModsDecl, ModEvent } from 'components/super/i-block/i-block';
 
 export default abstract class iAccess {
 	/**
+	 * A Boolean attribute which, if present, indicates that the component should automatically
+	 * have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed)
+	 *
+	 * @prop
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus
+	 */
+	abstract readonly autofocus?: boolean;
+
+	/**
+	 * An integer attribute indicating if the component can take input focus (is focusable),
+	 * if it should participate to sequential keyboard navigation.
+	 * As all input types except for input of type hidden are focusable, this attribute should not be used on
+	 * form controls, because doing so would require the management of the focus order for all elements within
+	 * the document with the risk of harming usability and accessibility if done incorrectly.
+	 *
+	 * @prop
+	 */
+	abstract readonly tabIndex?: number;
+
+	/**
+	 * True if the component in focus
+	 */
+	abstract get isFocused(): boolean;
+
+	/**
 	 * Trait modifiers
 	 */
 	static readonly mods: ModsDecl = {
@@ -163,31 +188,6 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * A Boolean attribute which, if present, indicates that the component should automatically
-	 * have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed)
-	 *
-	 * @prop
-	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus
-	 */
-	abstract autofocus?: boolean;
-
-	/**
-	 * An integer attribute indicating if the component can take input focus (is focusable),
-	 * if it should participate to sequential keyboard navigation.
-	 * As all input types except for input of type hidden are focusable, this attribute should not be used on
-	 * form controls, because doing so would require the management of the focus order for all elements within
-	 * the document with the risk of harming usability and accessibility if done incorrectly.
-	 *
-	 * @prop
-	 */
-	abstract tabIndex?: number;
-
-	/**
-	 * True if the component in focus
-	 */
-	abstract isFocused: boolean;
-
-	/**
 	 * Enables the component
 	 * @param args
 	 */
@@ -204,7 +204,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Sets the focus to the component
+	 * Sets focus to the component
 	 * @param args
 	 */
 	focus(...args: unknown[]): Promise<boolean> {
@@ -212,7 +212,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Unsets the focus from the component
+	 * Unsets focus from the component
 	 * @param args
 	 */
 	blur(...args: unknown[]): Promise<boolean> {

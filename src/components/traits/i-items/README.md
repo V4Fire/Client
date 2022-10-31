@@ -3,7 +3,7 @@
 This module provides a trait for a component that renders a list of items.
 
 The default scenario of a component that implements this trait: the component iterates over the specified list of items
-and renders each item via the specified component. Take a look at [[bTree]] to see more.
+and renders each item as a component. Take a look at [[bTree]] to see more.
 
 ## Synopsis
 
@@ -39,8 +39,8 @@ A type of each item is specified as `iItem['Item']`.
 ### [item]
 
 By design, the specified items are rendered by using other components.
-This prop allows specifying the name of a component that is used to render.
-The prop can be provided as a function. In that case, a value is taken from the result of invoking.
+This prop allows specifying the name of a component that is used for rendering.
+The prop can be provided as a function. In that case, the value is taken from the call result.
 
 ```
 < b-tree :items = myItems | :item = 'b-checkbox'
@@ -49,8 +49,8 @@ The prop can be provided as a function. In that case, a value is taken from the 
 
 ### [itemProps]
 
-This prop allows specifying props that are passed to a component to render an item.
-The prop can be provided as a function. In that case, a value is taken from the result of invoking.
+This prop allows specifying props that are passed to a component to render items.
+The prop can be provided as a function. In that case, the value is taken from the call result.
 
 ```
 < b-tree :items = myItems | :item = 'b-checkbox' | :itemProps = {name: 'foo'}
@@ -59,9 +59,11 @@ The prop can be provided as a function. In that case, a value is taken from the 
 
 ### [itemKey]
 
-To optimize the re-rendering of items, we can specify the unique identifier for each item.
-The prop value can be provided as a string or function. In the string case, you are providing the name of a property that stores the identifier.
-If the function case, you should return from the function a value of the identifier.
+To optimize the re-rendering of items, we can specify a unique identifier for each item.
+
+The prop value can be provided as a string or a function.
+In the case of a string, you are providing the property name that stores the identifier.
+If the case of a function, you must return the identifier value from the function.
 
 ```
 < b-tree :items = myItems | :item = 'b-checkbox' | :itemKey = '_id'
@@ -70,14 +72,14 @@ If the function case, you should return from the function a value of the identif
 
 ## Helpers
 
-The trait provides a static helper function to resolve a value of the `itemKey` prop: if the value is passed as a string,
-it will be compiled into a function. The method returns a value of invoking the `itemKey` function or undefined
-(if it is not specified).
+The trait provides a static helper function to resolve the value of the `itemKey` prop: if the value is passed as a string,
+it will be compiled as a function. The method returns the value of the `itemKey` function call, or undefined (if it is not specified).
 
 ```typescript
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bTree implements iItems {
+export default class bTree extends iBlock implements iItems {
   /** @see [[iItems.getItemKey]] */
   protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
     return iItems.getItemKey(this, el, i);
