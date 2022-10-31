@@ -9,6 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Renamed the `lock` method/event to `lockPageScroll`
+* Renamed the `unlock` method/event to `unlockPageScroll`
+* Renamed the `lockScrollMobile` modifier to `lockPageScrollMobile`
+* Renamed the `lockScrollDesktop` modifier to `lockPageScrollDesktop`
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :bug: Bug Fix

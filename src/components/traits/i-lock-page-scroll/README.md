@@ -1,7 +1,7 @@
 # components/traits/i-lock-page-scroll
 
-This trait provides API to lock the document scroll.
-It is used if you have a problem with the scrolling page under pop-ups or other overlaying elements.
+This trait provides an API for blocking document scrolling.
+It is used if you have a problem with page scrolling under popups or other overlay elements.
 
 ## Synopsis
 
@@ -9,21 +9,27 @@ It is used if you have a problem with the scrolling page under pop-ups or other 
 
 * The trait contains TS logic and default styles.
 
+## Root modifiers
+
+| Name                    | Description                                     | Values    | Default |
+|-------------------------|-------------------------------------------------|-----------|---------|
+| `lockPageScrollMobile`  | The page scroll is locked (for mobile devices)  | `boolean` | -       |
+| `lockPageScrollDesktop` | The page scroll is locked (for desktop devices) | `boolean` | -       |
+
 ## Events
 
-| Name     | Description                       | Payload description | Payload |
-|----------|-----------------------------------|---------------------|---------|
-| `lock`   | The page scroll has been locked   | -                   | -       |
-| `unlock` | The page scroll has been unlocked | -                   | -       |
+| Name               | Description                       | Payload description | Payload |
+|--------------------|-----------------------------------|---------------------|---------|
+| `lockPageScroll`   | The page scroll has been locked   | -                   | -       |
+| `unlockPageScroll` | The page scroll has been unlocked | -                   | -       |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+To support these events, override `initModEvents` in your component and invoke the same method from the trait.
 
 ```typescript
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
 
 class bWindow implements iLockPageScroll {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iLockPageScroll.initModEvents(this);
   }
@@ -34,34 +40,34 @@ class bWindow implements iLockPageScroll {
 
 The trait specifies a bunch of methods to implement.
 
-### lock
+### lockPageScroll
 
-Locks the document scroll, i.e., it prevents any scrolling on the document except withing the specified node.
-The method has the default implementation.
+Blocks scrolling of the document, i.e. prevents any scrolling of the document except within the specified node.
+The method has a default implementation.
 
 ```typescript
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
 
 class bWindow implements iLockPageScroll {
-  /** @see iLockPageScroll.enlockable */
-  lock(scrollableNode?: Element): Promise<void> {
-    return iLockPageScroll.lock(this, scrollableNode);
+  /** @see [[iLockPageScroll.enlockable]] */
+  lockPageScroll(scrollableNode?: Element): Promise<void> {
+    return iLockPageScroll.lockPageScroll(this, scrollableNode);
   }
 }
 ```
 
-### unlock
+### unlockPageScroll
 
-Unlocks the document scroll.
+Unlocks scrolling of the document.
 The method has the default implementation.
 
 ```typescript
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
 
 class bWindow implements iLockPageScroll {
-  /** @see iLockPageScroll.unlock */
-  unlock(): Promise<void> {
-    return iLockPageScroll.unlock(this);
+  /** @see [[iLockPageScroll.unlockPageScroll]] */
+  unlockPageScroll(): Promise<void> {
+    return iLockPageScroll.unlockPageScroll(this);
   }
 }
 ```
@@ -72,14 +78,13 @@ The trait provides a bunch of helper functions to initialize event listeners.
 
 ### initModEvents
 
-Initialize modifier event listeners to emit trait events.
+Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
 
 class bWindow implements iLockPageScroll {
-  /** @override */
-  protected initModEvents(): void {
+  protected override initModEvents(): void {
     super.initModEvents();
     iLockPageScroll.initModEvents(this);
   }
@@ -97,20 +102,20 @@ $p = {
 
 i-lock-page-scroll
   if $p.helpers
-    &-lock-scroll-mobile-true
+    &-lock-page-scroll-mobile-true
       size 100%
       overflow hidden
 
-    &-lock-scroll-mobile-true body
+    &-lock-page-scroll-mobile-true body
       position fixed
       width 100%
       overflow hidden
 
-    &-lock-scroll-desktop-true body
+    &-lock-page-scroll-desktop-true body
       overflow hidden
 ```
 
-To enable these styles, import the trait within your component and call the provided mixin within your component.
+To enable these styles, import the trait into your component and call the provided mixin in your component.
 
 ```stylus
 @import "components/traits/i-lock-page-scroll/i-lock-page-scroll.styl"

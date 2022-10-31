@@ -26,8 +26,8 @@ const
 	group = 'lockHelpers';
 
 export default abstract class iLockPageScroll {
-	/** @see [[iLockPageScroll.lock]] */
-	static lock: AddSelf<iLockPageScroll['lock'], iBlock> = (component, scrollableNode?) => {
+	/** @see [[iLockPageScroll.lockPageScroll]] */
+	static lockPageScroll: AddSelf<iLockPageScroll['lockPageScroll'], iBlock> = (component, scrollableNode?) => {
 		const {
 			r,
 			r: {unsafe: {async: $a}}
@@ -114,7 +114,7 @@ export default abstract class iLockPageScroll {
 
 					r[$$.scrollTop] = scrollTop;
 					body.style.top = `-${scrollTop}px`;
-					r.setRootMod('lockScrollMobile', true);
+					r.setRootMod('lockPageScrollMobile', true);
 
 					r[$$.isLocked] = true;
 					res();
@@ -133,7 +133,7 @@ export default abstract class iLockPageScroll {
 
 					r[$$.paddingRight] = body.style.paddingRight;
 					body.style.paddingRight = `${scrollBarWidth}px`;
-					r.setRootMod('lockScrollDesktop', true);
+					r.setRootMod('lockPageScrollDesktop', true);
 
 					r[$$.isLocked] = true;
 					res();
@@ -145,8 +145,8 @@ export default abstract class iLockPageScroll {
 		return promise;
 	};
 
-	/** @see [[iLockPageScroll.unlock]] */
-	static unlock: AddSelf<iLockPageScroll['unlock'], iBlock> = (component) => {
+	/** @see [[iLockPageScroll.unlockPageScroll]] */
+	static unlockPageScroll: AddSelf<iLockPageScroll['unlockPageScroll'], iBlock> = (component) => {
 		const {
 			r,
 			r: {unsafe: {async: $a}}
@@ -160,8 +160,8 @@ export default abstract class iLockPageScroll {
 			$a.off({group});
 
 			$a.requestAnimationFrame(() => {
-				r.removeRootMod('lockScrollMobile', true);
-				r.removeRootMod('lockScrollDesktop', true);
+				r.removeRootMod('lockPageScrollMobile', true);
+				r.removeRootMod('lockPageScrollDesktop', true);
 				r[$$.isLocked] = false;
 
 				if (is.mobile !== false) {
@@ -200,30 +200,30 @@ export default abstract class iLockPageScroll {
 				return;
 			}
 
-			void component[e.value === 'false' || e.type === 'remove' ? 'unlock' : 'lock']();
+			void component[e.value === 'false' || e.type === 'remove' ? 'unlockPageScroll' : 'lockPageScroll']();
 		});
 
 		$a.worker(() => {
-			component.unlock().catch(stderr);
+			component.unlockPageScroll().catch(stderr);
 			delete r[$$.paddingRight];
 			delete r[$$.scrollTop];
 		});
 	}
 
 	/**
-	 * Locks the document scroll, i.e.,
-	 * it prevents any scrolling on the document except withing the specified node
+	 * Locks scrolling of the document,
+	 * i.e. prevents any scrolling of the document except within the specified node.
 	 *
-	 * @param [scrollableNode] - node inside which is allowed to scroll
+	 * @param [scrollableNode] - the node within which scrolling is allowed
 	 */
-	lock(scrollableNode?: Element): Promise<void> {
+	lockPageScroll(scrollableNode?: Element): Promise<void> {
 		return Object.throw();
 	}
 
 	/**
-	 * Unlocks the document scroll
+	 * Unlocks scrolling of the document
 	 */
-	unlock(): Promise<void> {
+	unlockPageScroll(): Promise<void> {
 		return Object.throw();
 	}
 }
