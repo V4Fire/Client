@@ -8,6 +8,32 @@ This module provides a trait for a component that needs to implement the "openin
 
 * The trait contains only TS logic.
 
+* The trait can be automatically derived.
+
+  ```typescript
+  import { derive } from 'core/functools/trait';
+
+  import iOpen from 'components/traits/i-open/i-open';
+  import iBlock, { component } from 'components/super/i-block/i-block';
+
+  interface bButton extends Trait<typeof iOpen> {}
+
+  @component()
+  @derive(iOpen)
+  class bButton extends iBlock implements iOpen {
+    static override readonly mods: ModsDecl = {
+      ...iOpen.mods
+    }
+
+    protected override initModEvents(): void {
+      super.initModEvents();
+      iOpen.initModEvents(this);
+    }
+  }
+
+  export default bButton;
+  ```
+
 ## Modifiers
 
 | Name     | Description             | Values    | Default |
@@ -37,8 +63,10 @@ To support these events, override `initModEvents` in your component and invoke t
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iOpen {
+@component()
+export default class bButton extends iBlock implements iOpen {
   protected override initModEvents(): void {
     super.initModEvents();
     iOpen.initModEvents(this);
@@ -57,8 +85,10 @@ The method has the default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iOpen {
+@component()
+export default class bButton extends iBlock implements iOpen {
   /** @see [[iOpen.open]] */
   open(...args: unknown[]): Promise<boolean> {
     return iOpen.open(this, ...args);
@@ -73,8 +103,10 @@ The method has the default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iOpen {
+@component()
+export default class bButton extends iBlock implements iOpen {
   /** @see [[iOpen.close]] */
   close(...args: unknown[]): Promise<boolean> {
     return iOpen.close(this, ...args);
@@ -89,8 +121,10 @@ The method has the default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iOpen {
+@component()
+export default class bButton extends iBlock implements iOpen {
   /** @see [[iOpen.onOpenedChange]] */
   onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
     return iOpen.onOpenedChange(this, e);
@@ -105,8 +139,10 @@ The method has the default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iOpen {
+@component()
+export default class bButton extends iBlock implements iOpen {
   /** @see [[iOpen.onKeyClose]] */
   onKeyClose(e: KeyboardEvent): Promise<void> {
     return iOpen.onKeyClose(this, e);
@@ -121,8 +157,10 @@ The method has the default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iOpen {
+@component()
+export default class bButton extends iBlock implements iOpen {
   /** @see [[iOpen.blur]] */
   onTouchClose(e: MouseEvent): Promise<void> {
     return iOpen.onTouchClose(this, e);
@@ -140,8 +178,10 @@ Initializes default event listeners to close a component using the keyboard or m
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iOpen {
+@component()
+export default class bButton extends iBlock implements iOpen {
   /** @see [[iOpen.initCloseHelpers]] */
   @hook('beforeDataCreate')
   protected initCloseHelpers(events?: CloseHelperEvents): void {
@@ -156,8 +196,10 @@ Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iOpen {
+@component()
+export default class bButton extends iBlock implements iOpen {
   protected override initModEvents(): void {
     super.initModEvents();
     iOpen.initModEvents(this);

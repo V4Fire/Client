@@ -20,8 +20,10 @@ To support these modifiers, override the `mods` static parameter in your compone
 
 ```typescript
 import iVisible from 'components/traits/i-visible/i-visible';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iVisible {
+@component()
+export default class bButton extends iBlock implements iVisible {
   static override readonly mods: ModsDecl = {
     ...iVisible.mods
   }
@@ -39,8 +41,10 @@ To support these events, override `initModEvents` in your component and invoke t
 
 ```typescript
 import iVisible from 'components/traits/i-visible/i-visible';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iVisible {
+@component()
+export default class bButton extends iBlock implements iVisible {
   protected override initModEvents(): void {
     super.initModEvents();
     iVisible.initModEvents(this);
@@ -58,8 +62,10 @@ Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iVisible from 'components/traits/i-visible/i-visible';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iVisible {
+@component()
+export default class bButton extends iBlock implements iVisible {
   protected override initModEvents(): void {
     super.initModEvents();
     iVisible.initModEvents(this);

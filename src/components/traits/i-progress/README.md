@@ -18,8 +18,10 @@ To support these modifiers, override the `mods` static parameter in your compone
 
 ```typescript
 import iProgress from 'components/traits/i-progress/i-progress';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iProgress {
+@component()
+export default class bButton extends iBlock implements iProgress {
   static override readonly mods: ModsDecl = {
     ...iProgress.mods
   }
@@ -37,8 +39,10 @@ To support these events, override `initModEvents` in your component and invoke t
 
 ```typescript
 import iProgress from 'components/traits/i-progress/i-progress';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iProgress {
+@component()
+export default class bButton extends iBlock implements iProgress {
   protected override initModEvents(): void {
     super.initModEvents();
     iProgress.initModEvents(this);
@@ -56,8 +60,10 @@ Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iProgress from 'components/traits/i-progress/i-progress';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bButton implements iProgress {
+@component()
+export default class bButton extends iBlock implements iProgress {
   protected override initModEvents(): void {
     super.initModEvents();
     iProgress.initModEvents(this);

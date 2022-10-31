@@ -8,6 +8,32 @@ This module provides a trait for a component to observe DOM changes by using [`M
 
 * The trait contains TS logic.
 
+* The trait can be automatically derived.
+
+  ```typescript
+  import { derive } from 'core/functools/trait';
+
+  import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
+  import iBlock, { component, wait } from 'components/super/i-block/i-block';
+
+  interface bExample extends Trait<typeof iObserveDOM> {}
+
+  @component()
+  @derive(iObserveDOM)
+  class bExample extends iBlock implements iObserveDOM {
+    @wait('ready')
+    initDOMObservers(): CanPromise<void> {
+      iObserveDOM.observe(this, {
+        node: this.$el,
+        childList: true,
+        characterData: false
+      });
+    }
+  }
+
+  export default bExample;
+  ```
+
 ## Events
 
 | Name                     | Description                               | Payload description                | Payload                                                   |
@@ -27,15 +53,12 @@ import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
-export default class component extends iBlock implements iObserveDOM {
+export default class bExample extends iBlock implements iObserveDOM {
   /** @see [[iObserveDOM.initDOMObservers]] */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
-    const
-      content = <HTMLElement>this.content;
-
     iObserveDOM.observe(this, {
-      node: content,
+      node: this.$el,
       childList: true,
       characterData: false
     });
@@ -56,15 +79,12 @@ import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
-export default class component extends iBlock implements iObserveDOM {
+export default class bExample extends iBlock implements iObserveDOM {
   /** @see [[iObserveDOM.prototype.initDOMObservers]] */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
-    const
-      content = <HTMLElement>this.content;
-
     iObserveDOM.observe(this, {
-      node: content,
+      node: this.$el,
       childList: true,
       characterData: false
     });
@@ -95,15 +115,12 @@ import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
-export default class component extends iBlock implements iObserveDOM {
+export default class bExample extends iBlock implements iObserveDOM {
   /** @see [[iObserveDOM.initDOMObservers]] */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
-    const
-      content = <HTMLElement>this.content;
-
     iObserveDOM.observe(this, {
-      node: content,
+      node: this.$el,
       childList: true,
       characterData: false
     });
@@ -120,15 +137,12 @@ import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
-export default class component extends iBlock implements iObserveDOM {
+export default class bExample extends iBlock implements iObserveDOM {
   /** @see [[iObserveDOM.initDOMObservers]] */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
-    const
-      content = <HTMLElement>this.content;
-
     iObserveDOM.observe(this, {
-      node: content,
+      node: this.$el,
       childList: true,
       characterData: false
     });
@@ -147,15 +161,12 @@ import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
-export default class component extends iBlock implements iObserveDOM {
+export default class bExample extends iBlock implements iObserveDOM {
   /** @see [[iObserveDOM.prototype.initDOMObservers]] */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
-    const
-      content = <HTMLElement>this.content;
-
     iObserveDOM.observe(this, {
-      node: content,
+      node: this.$el,
       childList: true,
       characterData: false
     });
@@ -178,15 +189,12 @@ import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
-export default class component extends iBlock implements iObserveDOM {
+export default class bExample extends iBlock implements iObserveDOM {
   /** @see [[iObserveDOM.prototype.initDOMObservers]] */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
-    const
-      content = <HTMLElement>this.content;
-
     iObserveDOM.observe(this, {
-      node: content,
+      node: this.$el,
       childList: true,
       characterData: false
     });

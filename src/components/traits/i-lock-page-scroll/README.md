@@ -9,6 +9,28 @@ It is used if you have a problem with page scrolling under popups or other overl
 
 * The trait contains TS logic and default styles.
 
+* The trait can be automatically derived.
+
+  ```typescript
+  import { derive } from 'core/functools/trait';
+
+  import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
+  import iBlock, { component, wait } from 'components/super/i-block/i-block';
+
+  interface bWindow extends Trait<typeof iLockPageScroll> {}
+
+  @component()
+  @derive(iLockPageScroll)
+  class bWindow extends iBlock implements iLockPageScroll {
+    protected override initModEvents(): void {
+      super.initModEvents();
+      iLockPageScroll.initModEvents(this);
+    }
+  }
+
+  export default bWindow;
+  ```
+
 ## Root modifiers
 
 | Name                    | Description                                     | Values    | Default |
@@ -27,8 +49,10 @@ To support these events, override `initModEvents` in your component and invoke t
 
 ```typescript
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-class bWindow implements iLockPageScroll {
+@component()
+export default class bWindow extends iBlock implements iLockPageScroll {
   protected override initModEvents(): void {
     super.initModEvents();
     iLockPageScroll.initModEvents(this);
@@ -47,8 +71,10 @@ The method has a default implementation.
 
 ```typescript
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-class bWindow implements iLockPageScroll {
+@component()
+export default class bWindow extends iBlock implements iLockPageScroll {
   /** @see [[iLockPageScroll.enlockable]] */
   lockPageScroll(scrollableNode?: Element): Promise<void> {
     return iLockPageScroll.lockPageScroll(this, scrollableNode);
@@ -63,8 +89,10 @@ The method has the default implementation.
 
 ```typescript
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-class bWindow implements iLockPageScroll {
+@component()
+export default class bWindow extends iBlock implements iLockPageScroll {
   /** @see [[iLockPageScroll.unlockPageScroll]] */
   unlockPageScroll(): Promise<void> {
     return iLockPageScroll.unlockPageScroll(this);
@@ -82,8 +110,10 @@ Initializes modifier event listeners to emit trait events.
 
 ```typescript
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-class bWindow implements iLockPageScroll {
+@component()
+export default class bWindow extends iBlock implements iLockPageScroll {
   protected override initModEvents(): void {
     super.initModEvents();
     iLockPageScroll.initModEvents(this);
