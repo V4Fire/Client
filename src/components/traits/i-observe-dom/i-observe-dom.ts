@@ -18,9 +18,10 @@ import type iBlock from 'components/super/i-block/i-block';
 
 import type {
 
-	ObserveOptions,
 	Observer,
 	Observers,
+	ObserveOptions,
+
 	ObserverMutationRecord,
 	ChangedNodes
 
@@ -33,7 +34,7 @@ export const
 
 export default abstract class iObserveDOM {
 	/**
-	 * Starts to observe DOM changes of the specified node
+	 * Starts watching for changes to the DOM of the specified node
 	 *
 	 * @param component
 	 * @param opts
@@ -57,7 +58,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Stops to observe DOM changes of the specified node
+	 * Stops watching for changes to the DOM of the specified node
 	 *
 	 * @param component
 	 * @param node
@@ -76,12 +77,12 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Filters the added and removed nodes
+	 * Filters added and removed nodes
 	 *
 	 * @param records
 	 * @param filter
 	 */
-	static filterNodes(records: MutationRecord[], filter: (node: Node) => boolean): ObserverMutationRecord[] {
+	static filterMutations(records: MutationRecord[], filter: (node: Node) => AnyToBoolean): ObserverMutationRecord[] {
 		return records.map((r) => ({
 			...r,
 			addedNodes: Array.from(r.addedNodes).filter(filter),
@@ -90,19 +91,19 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Returns changed nodes
+	 * Removes duplicates from `addedNodes` and `removedNodes` lists and returns the changed nodes
 	 * @param records
 	 */
 	static getChangedNodes(records: MutationRecord[] | ObserverMutationRecord[]): ChangedNodes {
-		const res = {
-			addedNodes: <ChangedNodes['addedNodes']>[],
-			removedNodes: <ChangedNodes['removedNodes']>[]
+		const res: ChangedNodes = {
+			addedNodes: [],
+			removedNodes: []
 		};
 
-		for (let i = 0; i < records.length; i++) {
-			res.addedNodes = res.addedNodes.concat(Array.from(records[i].addedNodes));
-			res.removedNodes = res.removedNodes.concat(Array.from(records[i].removedNodes));
-		}
+		records.forEach((mut) => {
+			res.addedNodes = res.addedNodes.concat(Array.from(mut.addedNodes));
+			res.removedNodes = res.removedNodes.concat(Array.from(mut.removedNodes));
+		});
 
 		res.addedNodes = [].union(res.addedNodes);
 		res.removedNodes = [].union(res.removedNodes);
@@ -111,23 +112,22 @@ export default abstract class iObserveDOM {
 	}
 
 	/** @see [[iObserveDOM.onDOMChange]] */
-	static onDOMChange<T extends iBlock>(
-		component: T & iObserveDOM,
-		records?: MutationRecord[],
-		opts?: ObserveOptions
-	): void {
+	static onDOMChange: AddSelf<iObserveDOM['onDOMChange'], iBlock & iObserveDOM> = (
+		component,
+		records,
+		opts
+	) => {
 		this.emitDOMChange(component, records, opts);
-	}
+	};
 
 	/**
-	 * Fires an event that the DOM tree has been changed
+	 * Fires an event that the DOM tree has changed
 	 *
 	 * @param component
 	 * @param [records]
 	 * @param [opts]
 	 *
 	 * @emits `localEmitter:DOMChange(records?: MutationRecord[], options?: ObserverOptions)`
-	 * @emits `DOMChange(records?: MutationRecord[], options?: ObserverOptions)`
 	 */
 	static emitDOMChange<T extends iBlock>(
 		component: T & iObserveDOM,
@@ -135,11 +135,10 @@ export default abstract class iObserveDOM {
 		opts?: ObserveOptions
 	): void {
 		component.unsafe.localEmitter.emit('DOMChange', records, opts);
-		component.emit('DOMChange', records, opts);
 	}
 
 	/**
-	 * Returns true if `MutationObserver` is already observing the specified node
+	 * Returns `true` if the specified node is being observed via `iObserveDOM`
 	 *
 	 * @param component
 	 * @param node
@@ -157,7 +156,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Creates an observer
+	 * Creates an observer with the passed options
 	 *
 	 * @param component
 	 * @param opts
@@ -184,7 +183,7 @@ export default abstract class iObserveDOM {
 	}
 
 	/**
-	 * Generates the unique key and returns it
+	 * Generates a unique key and returns it
 	 */
 	protected static getObserverKey(): string {
 		return String(Math.random());
@@ -199,9 +198,9 @@ export default abstract class iObserveDOM {
 	 * Handler: the DOM tree has been changed
 	 *
 	 * @param records
-	 * @param options
+	 * @param opts
 	 */
-	onDOMChange(records: MutationRecord[], options: ObserveOptions): void {
+	onDOMChange(records: MutationRecord[], opts: ObserveOptions): void {
 		return Object.throw();
 	}
 }

@@ -10,10 +10,9 @@ This module provides a trait for a component to observe DOM changes by using [`M
 
 ## Events
 
-| Name                     | Description                                        | Payload description                | Payload                                                   |
-|--------------------------|----------------------------------------------------|------------------------------------|-----------------------------------------------------------|
-| `DOMChange`              | The observable DOM tree was changed. (deprecated!) | Mutation records, observer options | `CanUndef<MutationRecord[]>`, `CanUndef<ObserverOptions>` |
-| `localEmitter:DOMChange` | The observable DOM tree was changed.               | Mutation records, observer options | `CanUndef<MutationRecord[]>`, `CanUndef<ObserverOptions>` |
+| Name                     | Description                               | Payload description                | Payload                                                   |
+|--------------------------|-------------------------------------------|------------------------------------|-----------------------------------------------------------|
+| `localEmitter:DOMChange` | The observable DOM tree has been changed. | Mutation records; Observer options | `CanUndef<MutationRecord[]>`; `CanUndef<ObserverOptions>` |
 
 ## Methods
 
@@ -21,12 +20,15 @@ The trait specifies a bunch of methods to implement.
 
 ### initDOMObservers
 
-In this method, the observer should be initialized. `iObserveDOM` provides a static method `observe` to initialize an observer.
+Method for initializing observers. The trait provides a static method `observe` to initialize the observer.
 
 ```typescript
+import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
+import iBlock, { component, wait } from 'components/super/i-block/i-block';
+
 @component()
 export default class component extends iBlock implements iObserveDOM {
-  /** @see [[iObserveDOM.prototype.initDOMObservers]] */
+  /** @see [[iObserveDOM.initDOMObservers]] */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
     const
@@ -43,11 +45,16 @@ export default class component extends iBlock implements iObserveDOM {
 
 ### onDOMChange
 
-This method is a handler. Every time a change occurs, the handler will be called. Changes of the DOM tree are provided into this method.
-`iObserveDOM` provides a static method `emitDOMChange` that will emit the `localEmitter:DOMChange` event.
+This method is a handler. Every time a change occurs, the handler will be called.
+The list of changes to the observed node will be passed to this method as an argument.
+
+The trait provides a static method `emitDOMChange` that will emit the `localEmitter:DOMChange` event.
 The method has the default implementation.
 
 ```typescript
+import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
+import iBlock, { component, wait } from 'components/super/i-block/i-block';
+
 @component()
 export default class component extends iBlock implements iObserveDOM {
   /** @see [[iObserveDOM.prototype.initDOMObservers]] */
@@ -63,13 +70,13 @@ export default class component extends iBlock implements iObserveDOM {
     });
   }
 
-  /** @see [[iObserveDOM.prototype.onDOMChange]] */
+  /** @see [[iObserveDOM.onDOMChange]] */
   onDOMChange(records: MutationRecord[]): void {
     const
-      filtered = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement),
+      filtered = iObserveDOM.filterMutations(records, (node) => node instanceof HTMLElement),
       {addedNodes, removedNodes} = iObserveDOM.getChangedNodes(filtered);
 
-    this.contentLengthStore += addedNodes.length - removedNodes.length;
+    console.log(addedNodes.length, removedNodes.length);
     iObserveDOM.emitDOMChange(this, records);
   }
 }
@@ -79,17 +86,87 @@ export default class component extends iBlock implements iObserveDOM {
 
 The trait provides a bunch of helper functions that are implemented as static methods.
 
-### unobserve
+### observe
 
-This method is useful when you need to stop observation of a specific node.
-
-### filterNodes
-
-This method is useful when you need to filter `addedNodes` and `removedNodes` via the filter function.
+Starts watching for changes to the DOM of the specified node.
 
 ```typescript
-const
-  filtered = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement)
+import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
+import iBlock, { component, wait } from 'components/super/i-block/i-block';
+
+@component()
+export default class component extends iBlock implements iObserveDOM {
+  /** @see [[iObserveDOM.initDOMObservers]] */
+  @wait('ready')
+  initDOMObservers(): CanPromise<void> {
+    const
+      content = <HTMLElement>this.content;
+
+    iObserveDOM.observe(this, {
+      node: content,
+      childList: true,
+      characterData: false
+    });
+  }
+}
+```
+
+### unobserve
+
+Stops watching for changes to the DOM of the specified node.
+
+```typescript
+import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
+import iBlock, { component, wait } from 'components/super/i-block/i-block';
+
+@component()
+export default class component extends iBlock implements iObserveDOM {
+  /** @see [[iObserveDOM.initDOMObservers]] */
+  @wait('ready')
+  initDOMObservers(): CanPromise<void> {
+    const
+      content = <HTMLElement>this.content;
+
+    iObserveDOM.observe(this, {
+      node: content,
+      childList: true,
+      characterData: false
+    });
+
+    iObserveDOM.unobserve(this, content);
+  }
+}
+```
+
+### filterMutations
+
+Filters added and removed nodes.
+
+```typescript
+import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
+import iBlock, { component, wait } from 'components/super/i-block/i-block';
+
+@component()
+export default class component extends iBlock implements iObserveDOM {
+  /** @see [[iObserveDOM.prototype.initDOMObservers]] */
+  @wait('ready')
+  initDOMObservers(): CanPromise<void> {
+    const
+      content = <HTMLElement>this.content;
+
+    iObserveDOM.observe(this, {
+      node: content,
+      childList: true,
+      characterData: false
+    });
+  }
+
+  /** @see [[iObserveDOM.onDOMChange]] */
+  onDOMChange(records: MutationRecord[]): void {
+    const filtered = iObserveDOM.filterMutations(records, (node) => node instanceof HTMLElement);
+    console.log(filtered)
+  }
+}
 ```
 
 ### getChangedNodes
@@ -97,15 +174,39 @@ const
 This method removes duplicates from `addedNodes` and `removedNodes` arrays.
 
 ```typescript
-const
-  filtered = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement),
-  {addedNodes, removedNodes} = iObserveDOM.getChangedNodes(filtered);
+import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
+import iBlock, { component, wait } from 'components/super/i-block/i-block';
+
+@component()
+export default class component extends iBlock implements iObserveDOM {
+  /** @see [[iObserveDOM.prototype.initDOMObservers]] */
+  @wait('ready')
+  initDOMObservers(): CanPromise<void> {
+    const
+      content = <HTMLElement>this.content;
+
+    iObserveDOM.observe(this, {
+      node: content,
+      childList: true,
+      characterData: false
+    });
+  }
+
+  /** @see [[iObserveDOM.onDOMChange]] */
+  onDOMChange(records: MutationRecord[]): void {
+    const
+      filtered = iObserveDOM.filterMutations(records, (node) => node instanceof HTMLElement),
+      {addedNodes, removedNodes} = iObserveDOM.getChangedNodes(filtered);
+
+    console.log(addedNodes.length, removedNodes.length);
+  }
+}
 ```
 
 ### emitDOMChange
 
-This method emits an `localEmitter:DOMChange` event.
+Fires an event that the DOM tree has changed.
 
 ### isNodeBeingObserved
 
-This method returns `true` if the specified node is being observed via `iObserveDOM`.
+Returns `true` if the specified node is being observed via `iObserveDOM`.
