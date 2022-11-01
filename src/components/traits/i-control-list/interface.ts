@@ -8,97 +8,16 @@
 
 import type iBlock from 'components/super/i-block/i-block';
 
-/**
- * A handler function to invoke on the specified control' event, like `click` or `change`.
- * It can be defined as a method's path from the component that implements this trait.
- * Also, it can be provided as a simple function. The handler will take all arguments produced with a listening event.
- * Finally, you can define the handler in an object form, where you can fully control which arguments should pass to
- * the handler.
- */
-export type ControlAction =
-	string |
-	Function |
-	ControlActionObject;
-
-/**
- * An object to specify a handler function that will be invoked on events
- */
-export interface ControlActionObject {
-	/**
-	 * A method's path from the component that implements this trait.
-	 * Also, it can be defined as a simple function.
-	 */
-	method: string | ControlActionMethodFn;
-
-	/**
-	 * A list of additional attributes to provide to the handler.
-	 * These arguments will follow after the event's arguments.
-	 */
-	args?: unknown[];
-
-	/**
-	 * A function that takes a list of handler arguments and returns a new one.
-	 * The function can be defined as a path to the component method or as a simple function.
-	 */
-	argsMap?: string | ControlActionArgsMapFn;
-
-	/**
-	 * Should or not provide as handler arguments values from the caught event
-	 */
-	defArgs?: boolean;
-}
-
-/**
- * Parameters to handle analytics that are tied with a control' event
- */
-export interface ControlEvent {
-	/**
-	 * A method's path from the component that implements this trait.
-	 * Also, it can be defined as a simple function.
-	 */
-	action?: ControlAction;
-
-	/**
-	 * Additional information
-	 */
-	analytics?: ControlAnalytics | ControlAnalyticsArgs;
-}
-
-/**
- * Additional information for event analytics
- * @deprecated
- * @see [[ControlAnalyticsArgs]]
- */
-export interface ControlAnalytics {
-	/**
-	 * Event name
-	 */
-	event: string;
-
-	/**
-	 * Event details
-	 */
-	details?: Dictionary;
-}
-
-/**
- * Additional information for event analytics
- */
-export type ControlAnalyticsArgs = unknown[];
-
-/**
- * Parameter of a control component
- */
 export interface Control extends ControlEvent {
 	/**
-	 * Text that will be inserted into the component
+	 * The text to be inserted into the component
 	 */
 	text?: string;
 
 	/**
-	 * Name of the component to create
+	 * The name of the component to create
 	 */
-	component?: 'b-button' | 'b-file-button' | string;
+	component?: string;
 
 	/**
 	 * Additional attributes (properties, modifiers, etc.) for the created component
@@ -106,10 +25,58 @@ export interface Control extends ControlEvent {
 	attrs?: Dictionary;
 }
 
-export type ControlActionMethodFn<T extends iBlock = iBlock> =
+export interface ControlEvent {
+	/**
+	 * A handler function that is called on events of the specified control, such as "click" or "change".
+	 * The function can be passed explicitly, or as a path to the component property where it is located.
+	 * In addition, the function can be decorated with additional parameters. To do this, you need to pass it
+	 * as a special object.
+	 */
+	action?: ControlAction;
+
+	/**
+	 * Additional arguments for analytics
+	 */
+	analytics?: unknown[];
+}
+
+export type ControlAction =
+	string |
+	Function |
+	ControlActionObject;
+
+/**
+ * An object to decorate the handler function that will be called on the events of the given control
+ */
+export interface ControlActionObject {
+	/**
+	 * A handler that is called on events of the specified control, such as "click" or "change".
+	 * The function can be passed explicitly, or as a path to the component property where it is located.
+	 */
+	handler: string | ControlActionHandler;
+
+	/**
+	 * A list of additional arguments to provide to the handler.
+	 * These arguments will follow after the event's arguments.
+	 */
+	args?: unknown[];
+
+	/**
+	 * A function that takes a list of handler arguments and returns a new one.
+	 * The function can be passed explicitly, or as a path to the component property where it is located.
+	 */
+	argsMap?: string | ControlActionArgsMap;
+
+	/**
+	 * Whether to provide the values of the intercepted event as arguments to the handler
+	 */
+	defArgs?: boolean;
+}
+
+export type ControlActionHandler<T extends iBlock = iBlock> =
 	((this: T, ...args: unknown[]) => unknown) |
 	Function;
 
-export interface ControlActionArgsMapFn<T extends iBlock = iBlock> {
+export interface ControlActionArgsMap<T extends iBlock = iBlock> {
 	(this: T, args: unknown[]): Nullable<unknown[]>;
 }

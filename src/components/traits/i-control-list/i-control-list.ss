@@ -12,18 +12,19 @@
  * Generates a layout for controls
  *
  * @param {!Object} params - additional parameters:
- *   *) [from] - data store
- *   *) [component] - name of the parent component (by default will used link from $parent)
- *   *) [elClasses] - classes for control elements
- *   *) [wrapperClasses] - classes for control wrappers
+ *   *) [from] - an Iterable with data to render controls
+ *   *) [component] - the component name within which the controls are rendered (taken from the context by default)
+ *   *) [controlClasses] - CSS classes for control elements
+ *   *) [wrapper] - a tag that will wrap the control elements
+ *   *) [wrapperClasses] - CSS classes for elements that wrap controls
  *
- * @param {string=} [content] - slot content
+ * @param {string=} [content] - slot content for control elements
  */
 - @@ignore
 - template index(@params, content)
 	: &
 		wrapperClasses = {},
-		elClasses = {}
+		controlClasses = {}
 	.
 
 	- if Object.isString(@wrapperClasses)
@@ -32,26 +33,25 @@
 	- else if (Object.isDictionary(@wrapperClasses))
 		? Object.assign(wrapperClasses, @wrapperClasses)
 
-	- if Object.isString(@elClasses)
-		? elClasses[@elClasses] = {}
+	- if Object.isString(@controlClasses)
+		? controlClasses[@controlClasses] = {}
 
-	- else if (Object.isDictionary(@elClasses))
-		? Object.assign(elClasses, @elClasses)
+	- else if (Object.isDictionary(@controlClasses))
+		? Object.assign(controlClasses, @controlClasses)
 
 	: &
 		componentName = @component ? (@component|json) : 'false',
-		elClassesJSON = (elClasses|json),
+		controlClassesJSON = (controlClasses|json),
 		wrapperClassesJSON = (wrapperClasses|json)
 	.
 
-	< ${@wrapperClasses ? 'span' : 'template'} &
-		v-for = el in ${@from} |
+	< ${@wrapperClasses ? @wrapper || 'span' : 'template'} &
+		v-for = el of ${@from} |
 		:class = ${componentName} ? provide.elementClasses(${componentName}, ${wrapperClassesJSON}) : provide.elementClasses(${wrapperClassesJSON})
 	.
 		< component &
-			:is = el.component || 'b-button-functional' |
-			:instanceOf = bButton |
-			:class = ${componentName} ? provide.elementClasses(${componentName}, ${elClassesJSON}) : provide.elementClasses(${elClassesJSON}) |
+			:is = el.component |
+			:class = ${componentName} ? provide.elementClasses(${componentName}, ${controlClassesJSON}) : provide.elementClasses(${controlClassesJSON}) |
 			v-attrs = el.attrs |
 			@[getControlEvent(el)] = callControlAction(el, ...arguments)
 		.

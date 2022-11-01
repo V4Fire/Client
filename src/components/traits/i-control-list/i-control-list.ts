@@ -14,26 +14,13 @@ import type { Control, ControlEvent } from 'components/traits/i-control-list/int
 export * from 'components/traits/i-control-list/interface';
 
 export default abstract class iControlList {
-	/**
-	 * Calls an event handler for the specified control
-	 *
-	 * @param component
-	 * @param [opts] - control options
-	 * @param [args]
-	 */
-	static callControlAction<R = unknown, CTX extends iBlock = iBlock>(
-		component: CTX,
-		opts: ControlEvent = {},
-		...args: unknown[]
-	): CanPromise<CanUndef<R>> {
+	/** @see [[iControlList.callControlAction]] */
+	static callControlAction: AddSelf<iControlList['callControlAction'], iBlock> = (component, opts = {}, ...args) => {
 		const
 			{action, analytics} = opts;
 
-		if (analytics) {
-			const
-				analyticsArgs = Object.isArray(analytics) ? analytics : [analytics.event, analytics.details];
-
-			component.analytics.sendEvent(...analyticsArgs);
+		if (analytics != null) {
+			component.analytics.send(...analytics);
 		}
 
 		if (action != null) {
@@ -66,12 +53,12 @@ export default abstract class iControlList {
 				fullArgs = Array.concat([], action.defArgs ? args : null, action.args);
 
 			const
-				{method, argsMap} = action,
+				{handler, argsMap} = action,
 				{field} = component;
 
 			let
 				argsMapFn,
-				methodFn;
+				handlerFn;
 
 			if (Object.isFunction(argsMap)) {
 				argsMapFn = argsMap;
@@ -80,69 +67,57 @@ export default abstract class iControlList {
 				argsMapFn = argsMap != null ? field.get<CanPromise<Function>>(argsMap) : null;
 			}
 
-			if (Object.isFunction(method)) {
-				methodFn = method;
+			if (Object.isFunction(handler)) {
+				handlerFn = handler;
 
-			} else if (Object.isString(method)) {
-				methodFn = field.get<Function>(method);
+			} else if (Object.isString(handler)) {
+				handlerFn = field.get<Function>(handler);
 			}
 
-			const callMethod = (methodFn, argsMapFn) => {
+			const callHandler = (methodFn, argsMapFn) => {
 				const args = argsMapFn != null ? argsMapFn.call(component, fullArgs) ?? [] : fullArgs;
 				return methodFn.call(component, ...args);
 			};
 
-			if (methodFn != null) {
-				if (Object.isPromise(methodFn)) {
-					return methodFn.then((methodFn) => {
+			if (handlerFn != null) {
+				if (Object.isPromise(handlerFn)) {
+					return handlerFn.then((methodFn) => {
 						if (!Object.isFunction(methodFn)) {
 							throw new TypeError('The action method is not a function');
 						}
 
 						if (Object.isPromise(argsMapFn)) {
-							return argsMapFn.then((argsMapFn) => callMethod(methodFn, argsMapFn));
+							return argsMapFn.then((argsMapFn) => callHandler(methodFn, argsMapFn));
 						}
 
-						return callMethod(methodFn, argsMapFn);
+						return callHandler(methodFn, argsMapFn);
 					});
 				}
 
 				if (Object.isPromise(argsMapFn)) {
-					return argsMapFn.then((argsMapFn) => callMethod(methodFn, argsMapFn));
+					return argsMapFn.then((argsMapFn) => callHandler(handlerFn, argsMapFn));
 				}
 
-				return callMethod(methodFn, argsMapFn);
+				return callHandler(handlerFn, argsMapFn);
 			}
 
 			throw new TypeError('The action method is not a function');
 		}
-	}
+	};
 
 	/**
-	 * Returns a type of the listening event for the control
-	 *
-	 * @param component
-	 * @param opts - control options
+	 * Returns the listening event name for the specified control
+	 * @param opts - the control options
 	 */
-	static getControlEvent<T extends iBlock>(component: T, opts: Control): string {
-		return opts.component === 'b-file-button' ? 'change' : 'click';
-	}
+	abstract getControlEvent(opts: Control): string;
 
 	/**
 	 * Calls an event handler for the specified control
 	 *
-	 * @param [opts]
-	 * @param [args]
+	 * @param [opts] - the control options
+	 * @param [args] - additional arguments
 	 */
 	callControlAction<R = unknown>(opts?: ControlEvent, ...args: unknown[]): CanPromise<CanUndef<R>> {
-		return Object.throw();
-	}
-
-	/**
-	 * Calls an event handler for the specified control
-	 * @param opts
-	 */
-	getControlEvent(opts: Control): string {
 		return Object.throw();
 	}
 }

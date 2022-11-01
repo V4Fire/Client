@@ -2,17 +2,35 @@
 
 This module provides a trait with helpers for a component that renders a list of controls.
 
-Instead of [[iInput]], which declares API for list-like components, this component contains simple helper templates and
-methods to render some list of components within a component' template, like a list of buttons or inputs.
-For example, you can specify some event/analytic listeners with this list.
-
 ## Synopsis
 
 * This module provides an abstract class, not a component.
 
 * The trait contains TS logic.
 
-* The trait provides a helper template.
+* The trait provides a template helper.
+
+* The trait can be automatically derived.
+
+  ```typescript
+  import { derive } from 'core/functools/trait';
+
+  import iControlList, { Control } from 'components/traits/i-control-list/i-control-list';
+  import iBlock, { component } from 'components/super/i-block/i-block';
+
+  interface bExample extends Trait<typeof iControlList> {}
+
+  @component()
+  @derive(iControlList)
+  class bExample extends iBlock implements iControlList {
+    getControlEvent(opts: Control): string {
+      return opts.component === 'b-button' ? 'click' : 'change';
+    }
+  }
+
+  export default bExample;
+  ```
+
 
 ## Methods
 
@@ -22,87 +40,55 @@ The trait specifies a bunch of methods to implement.
 
 Returns an event name to handle for the specified control.
 
-__b-dummy-control-list.ts__
-
 ```typescript
-import { derive } from 'core/functools/trait';
-
 import iControlList, { Control } from 'components/traits/i-control-list/i-control-list';
-import iBlock, { component, prop } from 'components/super/i-block/i-block';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export * from 'components/super/i-block/i-block';
-
-interface bDummyControlList extends
-  Trait<typeof iControlList> {}
-
-@component({
-  functional: {
-    functional: true,
-    dataProvider: undefined
-  }
-})
-
-@derive(iControlList)
-class bDummyControlList extends iBlock implements iControlList {
-  /**
-   * List of controls to render
-   */
-  @prop(Array)
-  controls!: Control[];
-
-  /**
-   * @override
-   * @see [[iControlList.prototype.getControlEvent]]
-   */
+@component()
+export default class bExample implements iControlList {
   getControlEvent(opts: Control): string {
-    if (opts.component === 'b-some-my-component') {
-      return 'myEventName';
-    }
-
-    return iControlList.getControlEvent(this, opts);
+    return opts.component === 'b-button' ? 'click' : 'change';
   }
 }
-```
-
-__b-dummy-control-list.ss__
-
-```snakeskin
-< template v-if = controls
-  < .&__primary-control
-    < component &
-      v-func = false |
-      v-attrs = {...controls[0].attrs} |
-      :is = controls[0].component || 'b-button' |
-      :instanceOf = bButton |
-      @[getControlEvent(controls[0])] = callControlAction(controls[0], ...arguments)
-    .
-      {{ controls[0].text }}
 ```
 
 ### callControlAction
 
 Calls an event handler for the specified control.
+The method has the default implementation.
 
-```snakeskin
+```typescript
+import iControlList, { Control, ControlEvent } from 'components/traits/i-control-list/i-control-list';
+import iBlock, { component } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample implements iControlList {
+  getControlEvent(opts: Control): string {
+    return opts.component === 'b-button' ? 'click' : 'change';
+  }
+
+  /** @see [[iOpen.iControlList]] */
+  callControlAction(opts: ControlEvent, ...args: unknown[]): string {
+    return iControlList.callControlAction(this, opts, ...args);
+  }
+}
+```
+
+```
 < template v-if = controls
-  < .&__primary-control
+  < .control v-for = control of controls
     < component &
-      v-func = false |
-      v-attrs = {...controls[0].attrs} |
-      :is = controls[0].component || 'b-button' |
-      :instanceOf = bButton |
-      @[getControlEvent(controls[0])] = callControlAction(controls[0], ...arguments)
+      v-attrs = control.attrs |
+      @[getControlEvent(control)] = callControlAction(control, ...arguments)
     .
-      {{ controls[0].text }}
+      {{ control.text }}
 ```
 
 ## Helpers
 
-### Template
+The trait also defines a helper to render a list of controls.
 
-The trait also defines a base template to render a list of controls.
-
-```snakeskin
+```
 - namespace [%fileName%]
 
 - include 'components/super/i-block'|b as placeholder
@@ -110,9 +96,22 @@ The trait also defines a base template to render a list of controls.
 
 - template index() extends ['i-block'].index
   - block body
+    /**
+     * Generates a layout for controls
+     *
+     * @param {!Object} params - additional parameters:
+     *   *) [from] - an Iterable with data to render controls
+     *   *) [component] - the component name within which the controls are rendered (taken from the context by default)
+     *   *) [controlClasses] - CSS classes for control elements
+     *   *) [wrapper] - a tag that will wrap the control elements
+     *   *) [wrapperClasses] - CSS classes for elements that wrap controls
+     *
+     * @param {string=} [content] - slot content for control elements
+     */
     += self.getTpl('i-control-list/')({ &
       from: 'controls',
       elClasses: 'control',
+      wrapper: 'div',
       wrapperClasses: 'control-wrapper'
     }) .
 ```

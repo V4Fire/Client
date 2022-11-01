@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Renamed `ControlActionObject.method` to `ControlActionObject.handler`
+
+#### :rocket: New Feature
+
+* Added a new template option `wrapper`
+
 ## v3.10.2 (2021-11-16)
 
 #### :bug: Bug Fix
