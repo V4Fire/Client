@@ -44,7 +44,9 @@ To support these modifiers, override the `mods` static parameter in your compone
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
+@component()
 export default class bButton implements iOpen {
   static override readonly mods: ModsDecl = {
     ...iOpen.mods
