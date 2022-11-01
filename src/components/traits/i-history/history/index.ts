@@ -9,13 +9,15 @@
 import symbolGenerator from 'core/symbol';
 
 import type { ModsDecl, ComponentHooks } from 'core/component';
-import { InView } from 'core/dom/in-view';
+import * as IntersectionWatcher from 'core/dom/intersection-watcher';
 
-import iBlock, { Friend } from 'components/super/i-block/i-block';
+import Friend from 'components/friends/friend';
+import type iBlock from 'components/super/i-block/i-block';
+
 import type iHistory from 'components/traits/i-history/i-history';
 
 import { INITIAL_STAGE } from 'components/traits/i-history/history/const';
-import type { Page, HistoryItem, HistoryConfig, Transition } from 'components/traits/i-history/history/interface';
+import type { Page, HistoryItem, HistoryConfig } from 'components/traits/i-history/history/interface';
 
 export * from 'components/traits/i-history/history/const';
 export * from 'components/traits/i-history/history/interface';
@@ -60,7 +62,7 @@ export default class History extends Friend {
 	}
 
 	/**
-	 * List of transitions
+	 * A list of transitions
 	 */
 	protected store: HistoryItem[] = [];
 
@@ -87,7 +89,7 @@ export default class History extends Friend {
 
 	/**
 	 * Initializes the index page
-	 * @param [item] - initial history item
+	 * @param [item] - the initial history item
 	 */
 	initIndex(item: HistoryItem = {stage: INITIAL_STAGE, options: {}}): void {
 		if (this.store.length > 0) {
@@ -167,7 +169,7 @@ export default class History extends Friend {
 				pageBelowEl = pageBelow.content?.el;
 
 			this.block?.removeElementMod(pageBelowEl, 'page', 'below');
-			this.ctx.emit('history:transition', <Transition>{page: current, type: 'back'});
+			this.ctx.emit('history:transition', {page: current, type: 'back'});
 		}
 
 		return current;
@@ -298,14 +300,15 @@ export default class History extends Friend {
 			label = {label: $$.setObserving};
 
 		if (observe) {
-			InView.observe(el, {
-				threshold: this.config.titleThreshold,
-				onEnter: () => this.onPageTopVisibilityChange(true),
-				onLeave: () => this.onPageTopVisibilityChange(false),
-				polling: true
-			});
+			const
+				handler = () => this.onPageTopVisibilityChange(true);
 
-			this.async.worker(() => InView.remove(el), label);
+			IntersectionWatcher.watch(el, {
+				threshold: this.config.titleThreshold,
+				onLeave: () => this.onPageTopVisibilityChange(false)
+			}, handler);
+
+			this.async.worker(() => IntersectionWatcher.unwatch(el, handler), label);
 
 		} else {
 			this.async.terminateWorker(label);
@@ -405,7 +408,7 @@ export default class History extends Friend {
 	}
 
 	/**
-	 * Scrolls a content to the top
+	 * Scrolls content up
 	 * @param [animate]
 	 */
 	protected scrollToTop(animate: boolean = false): void {
@@ -425,7 +428,7 @@ export default class History extends Friend {
 	}
 
 	/**
-	 * Initializes a title in-view state
+	 * Initializes a title `in-view` state
 	 *
 	 * @param [visible]
 	 * @emits `history:titleInView(visible: boolean)`
@@ -437,7 +440,7 @@ export default class History extends Friend {
 	}
 
 	/**
-	 * Handler: was changed the visibility state of the top of a content
+	 * Handler: the visibility state of the top content has been changed
 	 * @param state - if true, the top is visible
 	 */
 	protected onPageTopVisibilityChange(state: boolean): void {
@@ -449,7 +452,7 @@ export default class History extends Friend {
 	}
 
 	/**
-	 * Handler: click on a page title
+	 * Handler: there was a click on the title
 	 */
 	protected onTitleClick(): void {
 		this.scrollToTop(true);

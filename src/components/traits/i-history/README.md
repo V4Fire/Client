@@ -1,27 +1,24 @@
 ## components/traits/i-history
 
-This trait provides history transition API for any component.
-
-To turn on the functionality, you need to create the `History` class instance within your component.
-Now, you can access the current history item and control transitions.
+This trait provides a history transition API for any component.
 
 ## Initializing of the index page
 
-To initialize an index page, you should call the `initIndex` method with an optional argument of the `HistoryItem` type.
+To initialize an index page, you should call the `initIndex` method with an optional `HistoryItem` argument.
 The name of the index page is set to `index` by default.
 
 ## Creation of pages
 
-Page system at the History class based on HTML data attributes. Every page should have the unique string identifier,
-which is equal to the tied page route.
+The page system in the History class based on HTML data attributes.
+Each page must have a unique string ID equal to the associated page route.
 
-To create the main page and subpage templates, you can pass your markup into the default slot by following rules:
+To create the main page and subpage templates, you can pass your markup to the default slot by following the rules:
 
-* All page containers need to have the `data-page` attribute with the provided page name value.
+* All page containers must have a `data-page` attribute with the specified page name value.
 
-* All containers with subpages need to have the `data-sub-pages` attribute without any value.
+* All subpage containers must have a `data-sub-pages` attribute with no value.
 
-* All page titles need to have the `data-title` attribute without any value.
+* All page titles must have a `data-title` attribute with no value.
 
 For example:
 
@@ -37,5 +34,4 @@ For example:
   .
 ```
 
-In this case, to emit the transition of a page with the name that is equal to `key`,
-you can call the method `history.push(key)` of your history-based component.
+In this case, you can call the `history.push(key)` method of your history-based component to force a page transition with a name equal to `key`.
