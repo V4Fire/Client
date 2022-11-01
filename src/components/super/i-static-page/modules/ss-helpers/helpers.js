@@ -12,7 +12,7 @@ const
 exports.needInline = needInline;
 
 /**
- * Returns true if should inline a resource
+ * Returns true if should inline resources
  *
  * @param {boolean=} [forceInline]
  * @returns {boolean}
@@ -24,7 +24,7 @@ function needInline(forceInline) {
 exports.addPublicPath = addPublicPath;
 
 /**
- * Attaches `publicPath` to the specified path
+ * Attaches the `publicPath` property to the specified path
  *
  * @param {(string|!Array<string>)} path
  * @returns {(string|!Array<String>)}

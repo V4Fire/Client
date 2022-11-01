@@ -1,13 +1,13 @@
 # components/super/i-static-page/modules/provider-data-store
 
-This module provides API to work with data of data providers globally.
+This module provides an API to work with data of data providers.
 
 ## How does it work?
 
-When you create a component with a data provider, it will load data from the provider during the component's initialization.
-If the data has been successfully loaded, it will be stored in the root storage.
-A key to store data is taken from the used provider' name. Or, if the component has the passed `globalName` prop,
-it will be used as the key. After this, you are free to use the root storage API to access all loaded data from providers.
+When you create a component with a data provider, it loads the data from the provider during initialization.
+If the data was loaded successfully, it will be stored in the root storage. The key to store data is taken from the name of the provider used.
+Or, if the component has a `globalName` prop passed, it will be used as the key. After that, you can use the root storage API
+to access all loaded data from providers.
 
 ```
 < b-select :dataProvider = 'users.List'
@@ -26,13 +26,13 @@ console.log(this.r.providerDataStore.get('foo')?.data);
 
 ## providerDataStore
 
-`providerDataStore` is a property from the root component that implements a [[Cache]] data structure.
-The structure contains elements as [[ProviderDataItem]]. Each element has extra API based on `core/object/select`
-to find a chunk from the whole data by the specified query. Also, you can touch the `data` to access the raw data object.
+`providerDataStore` is a property from the root component that implements the [[Cache]] data structure.
+The structure contains elements as [[ProviderDataItem]]. Each element has an additional API based on `core/object/select`
+to find a fragment from all the data for the given query. Alternatively, you can touch `data` property to access the raw data object.
 
 ### Specifying an engine to cache data
 
-By default, providers' data are stored within a [[RestrictedCache]] structure, but you can specify the cache structure manually.
+By default, providers data are stored in the [[RestrictedCache]] structure, but you can specify the cache structure manually.
 
 ```typescript
 import Cache from 'core/cache/simple';

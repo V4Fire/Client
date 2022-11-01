@@ -14,7 +14,7 @@ const
 
 const deps = {
 	/**
-	 * Map of script libraries to require
+	 * A map of script libraries to require
 	 * @type {Libs}
 	 */
 	scripts: new Map([
@@ -23,19 +23,19 @@ const deps = {
 	]),
 
 	/**
-	 * Map of script libraries to require: the scripts are placed within the head tag
+	 * A map of script libraries to require: the scripts are placed within the head tag
 	 * @type {Libs}
 	 */
 	headScripts: new Map(),
 
 	/**
-	 * Map of style libraries to require
+	 * A map of style libraries to require
 	 * @type {StyleLibs}
 	 */
 	styles: new Map(),
 
 	/**
-	 * Map of links to require
+	 * A map of links to require
 	 * @type {Links}
 	 */
 	links: new Map()

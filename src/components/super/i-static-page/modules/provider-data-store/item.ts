@@ -14,9 +14,6 @@ import { providers } from 'core/data/const';
 import select, { SelectParams } from 'core/object/select';
 import type { ItemKey } from 'components/super/i-static-page/modules/provider-data-store/interface';
 
-/**
- * Wrapper for a data item
- */
 export default class ProviderDataItem<T = unknown> {
 	/**
 	 * Item key
@@ -29,7 +26,7 @@ export default class ProviderDataItem<T = unknown> {
 	readonly data: CanUndef<T>;
 
 	/**
-	 * Link to a data provider
+	 * A link to the source data provider
 	 */
 	protected get provider(): CanUndef<typeof Provider> {
 		return <typeof Provider>providers[this.key];
@@ -45,7 +42,7 @@ export default class ProviderDataItem<T = unknown> {
 	}
 
 	/**
-	 * Finds an element from the instance by the specified parameters
+	 * Finds data from the data provider by the specified parameters
 	 * @param params
 	 */
 	select<D = unknown>(params: SelectParams): CanUndef<D> {

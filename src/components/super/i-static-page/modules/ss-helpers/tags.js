@@ -44,8 +44,8 @@ exports.getScriptDecl = getScriptDecl;
  * Returns code to load the specified library.
  * If the `inline` parameter is set to `true`, the function will return a promise.
  *
- * @param {(InitializedLib|body)} lib - library or raw code
- * @param {string=} [body] - library body
+ * @param {(InitializedLib|body)} lib - the library or raw code
+ * @param {string=} [body] - the library body
  * @returns {(Promise<string>|string)}
  *
  * @example
@@ -175,8 +175,8 @@ exports.getStyleDecl = getStyleDecl;
  * Returns code to load the specified style library.
  * If the `inline` parameter is set to `true`, the function will return a promise.
  *
- * @param {(InitializedStyleLib|body)} lib - library or raw code
- * @param {string=} [body] - library body
+ * @param {(InitializedStyleLib|body)} lib - the library or raw code
+ * @param {string=} [body] - the library body
  * @returns {(Promise<string>|string)}
  *
  * @example
@@ -348,7 +348,7 @@ exports.normalizeAttrs = normalizeAttrs;
 /**
  * Takes an object with tag attributes and transforms it to a list with normalized attribute declarations
  *
- * @param {Object=} [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
+ * @param {Object=} [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
  *   1. a simple string, as `null` (when an attribute does not have a value);
  *   2. an array (to interpolate the value as JS);
  *   3. an object with the predefined `toString` method

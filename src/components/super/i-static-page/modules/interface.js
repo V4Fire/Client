@@ -9,9 +9,9 @@
 /**
  * Source type of library:
  *
- *   1. `lib` - external library, i.e, something from `node_modules`
- *   2. `src` - internal resource, i.e, something that builds from the `/src` folder
- *   3. `output` - output library, i.e, something that builds to the `/dist/client` folder
+ *   1. `lib` - the external library, i.e, something from `node_modules`
+ *   2. `src` - the internal resource, i.e, something that builds from the `/src` folder
+ *   3. `output` - the output library, i.e, something that builds to the `/dist/client` folder
  *
  * @typedef {('lib'|'src'|'output')}
  */
@@ -21,12 +21,12 @@ exports.LibSource = LibSource;
 /**
  * Parameters of a script library:
  *
- *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
- *   2. [source='lib'] - source type of the library, i.e. where the library is stored
+ *   1. src - a relative path to the loaded file, i.e. without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - the source type of the library, i.e. where the library is placed
  *   3. [inline=false] - if true, the library is placed as a text
  *   4. [defer=true] - if true, the library is declared with the `defer` attribute
  *   5. [load=true] - if false, the library won't be automatically loaded with a page
- *   6. [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
+ *   6. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
  *     1. a simple string, as `null` (when an attribute does not have a value);
  *     2. an array (to interpolate the value as JS);
  *     3. an object with the predefined `toString` method
@@ -47,9 +47,9 @@ exports.Lib = Lib;
 /**
  * Parameters of an initialized script library:
  *
- *   1. src - path to a file to load
+ *   1. src - a path to the loaded file
  *   2. [js] - if true, the function returns JS code to load the library
- *   3. [staticAttrs] - string with additional attributes
+ *   3. [staticAttrs] - a string with additional attributes
  *
  * @see Lib
  * @typedef {{
@@ -66,7 +66,7 @@ const InitializedLib = {};
 exports.InitializedLib = InitializedLib;
 
 /**
- * Map of script libraries to require:
+ * A map of script libraries to require:
  * the value can be declared as a string (relative path to a file to load) or object with parameters
  *
  * @typedef {Map<string, (string|Lib)>}
@@ -77,11 +77,11 @@ exports.Libs = Libs;
 /**
  * Parameters of a style library:
  *
- *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
- *   2. [source='lib'] - source type of the library, i.e. where the library is stored
+ *   1. src - a relative path to the loaded file, i.e. without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - the source type of the library, i.e. where the library is stored
  *   3. [inline=false] - if true, the library is placed as text into a style tag
  *   4. [defer=true] - if true, the library is loaded only after loading of the whole page
- *   5. [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
+ *   5. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
  *     1. a simple string, as `null` (when an attribute does not have a value);
  *     2. an array (to interpolate the value as JS);
  *     3. an object with the predefined `toString` method
@@ -102,9 +102,9 @@ exports.StyleLib = StyleLib;
 /**
  * Parameters of an initialized style library:
  *
- *   1. src - path to a file to load
+ *   1. src - a path to the loaded file
  *   2. [js] - if true, the function returns JS code to load the library
- *   3. [staticAttrs] - string with additional attributes
+ *   3. [staticAttrs] - a string with additional attributes
  *
  * @see StyleLib
  * @typedef {{
@@ -120,7 +120,7 @@ const InitializedStyleLib = {};
 exports.InitializedStyleLib = InitializedStyleLib;
 
 /**
- * Map of style libraries to require:
+ * A map of style libraries to require:
  * the value can be declared as a string (relative path to a file to load) or object with parameters
  *
  * @typedef {Map<string, (string|StyleLib)>}
@@ -131,10 +131,10 @@ exports.StyleLibs = StyleLibs;
 /**
  * Parameters of a link:
  *
- *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
- *   2. [source='lib'] - source type of the library, i.e. where the library is stored
- *   3. [tag='link'] - tag to create the link
- *   4. [attrs] - dictionary with attributes to set. You can provide an attribute value in different ways:
+ *   1. src - a relative path to the loaded file, i.e. without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - the source type of the library, i.e. where the library is stored
+ *   3. [tag='link'] - a tag to create the link
+ *   4. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
  *     1. a simple string, as `null` (when an attribute does not have a value);
  *     2. an array (to interpolate the value as JS);
  *     3. an object with the predefined `toString` method
@@ -154,10 +154,10 @@ exports.Link = Link;
 /**
  * Parameters of an initialized link:
  *
- *   1. src - path to a file to load
- *   2. [tag='link'] - tag to create the link
+ *   1. src - a path to the loaded file
+ *   2. [tag='link'] - a tag to create the link
  *   3. [js] - if true, the function returns JS code to load the library
- *   4. [staticAttrs] - string with additional attributes
+ *   4. [staticAttrs] - a string with additional attributes
  *
  * @see Link
  * @typedef {{
@@ -172,7 +172,7 @@ const InitializedLink = {};
 exports.InitializedLink = InitializedLink;
 
 /**
- * Map of links to require:
+ * A map of links to require:
  * the value can be declared as a string (relative path to a file to load) or object with parameters
  *
  * @typedef {Map<string, (string|Link)>}

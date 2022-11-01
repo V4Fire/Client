@@ -23,7 +23,6 @@ exports.getFaviconsDecl = getFaviconsDecl;
 
 /**
  * Returns declaration of project favicons
- *
  * @returns {string}
  */
 function getFaviconsDecl() {

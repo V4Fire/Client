@@ -11,14 +11,11 @@ import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import Friend from 'components/friends/friend';
 
-/**
- * Class to manage interface themes
- */
 export default class ThemeManager extends Friend {
 	override readonly C!: iStaticPage;
 
 	/**
-	 * Set of available themes of the app
+	 * A set of available app themes
 	 */
 	availableThemes!: Set<string>;
 
@@ -28,7 +25,7 @@ export default class ThemeManager extends Friend {
 	protected readonly initialValue!: string;
 
 	/**
-	 * Attribute to set a theme value to the root element
+	 * An attribute to set the theme value to the root element
 	 */
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
 

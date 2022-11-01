@@ -39,9 +39,6 @@ export * from 'components/super/i-static-page/interface';
 export const
 	$$ = symbolGenerator();
 
-/**
- * Superclass for all root components
- */
 @component()
 export default abstract class iStaticPage extends iPage {
 	/**
@@ -55,17 +52,17 @@ export default abstract class iStaticPage extends iPage {
 	readonly PageQuery!: this['Router']['PageQuery'];
 
 	/**
-	 * Type: page meta
+	 * Type: page meta information
 	 */
 	readonly PageMeta!: this['Router']['PageMeta'];
 
 	/**
-	 * Type: router
+	 * Type: the router
 	 */
 	readonly Router!: bRouter;
 
 	/**
-	 * Type: current page
+	 * Type: the current page
 	 */
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 

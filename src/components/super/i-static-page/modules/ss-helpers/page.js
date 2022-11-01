@@ -42,8 +42,8 @@ exports.getPageScriptDepsDecl = getPageScriptDepsDecl;
  * The function returns JS code to load the library by using JS.
  * You need to put this declaration within a script tag or use the "wrap" option.
  *
- * @param {Array<string>} dependencies - list of dependencies to load
- * @param {!Object<string>} assets - map with static page assets
+ * @param {Array<string>} dependencies - the list of dependencies to load
+ * @param {!Object<string>} assets - a dictionary with static page assets
  * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {string}
  */
@@ -89,8 +89,8 @@ exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
  * The function can return JS code to load the style by using `document.write` or pure CSS to inline.
  * You may use the "wrap" option to wrap the final code with a tag to load.
  *
- * @param {Array<string>} dependencies - list of dependencies to load
- * @param {!Object<string>} assets - map with static page assets
+ * @param {Array<string>} dependencies - the list of dependencies to load
+ * @param {!Object<string>} assets - a dictionary with static page assets
  * @param {boolean=} [wrap] - if true, the final code is wrapped by a tag to load
  * @param {boolean=} [js] - if true, the function will always return JS code to load the dependency
  * @returns {string}
@@ -125,7 +125,7 @@ exports.getScriptDeclByName = getScriptDeclByName;
  * You need to put this declaration within a script tag or use the "wrap" option.
  *
  * @param {string} name
- * @param {!Object<string>} assets - map with static page assets
+ * @param {!Object<string>} assets - a dictionary with static page assets
  * @param {boolean=} [optional] - if true, the missing of this script won't throw an error
  * @param {boolean=} [defer=true] - if true, the script is loaded with the "defer" attribute
  * @param {boolean=} [inline] - if true, the script is placed as a text
@@ -187,7 +187,7 @@ exports.getStyleDeclByName = getStyleDeclByName;
  * You may use the "wrap" option to wrap the final code with a tag to load.
  *
  * @param {string} name
- * @param {!Object<string>} assets - map with static page assets
+ * @param {!Object<string>} assets - a dictionary with static page assets
  * @param {boolean=} [optional] - if true, the missing of this style won't throw an error
  * @param {boolean=} [defer] - if true, the style is loaded only after loading of the whole page
  * @param {boolean=} [inline] - if true, the style is placed as a text
@@ -256,13 +256,13 @@ exports.generateInitJS = generateInitJS;
  *
  * @param pageName
  *
- * @param deps - map of external libraries to load
- * @param ownDeps - own dependencies of the page
+ * @param deps - a dictionary with external libraries to load
+ * @param ownDeps - the page dependencies
  *
- * @param assets - map with static page assets
+ * @param assets - a dictionary with static page assets
  * @param assetsRequest - should or not do a request for assets.js
  *
- * @param rootTag - type of the root tag (div, span, etc.)
+ * @param rootTag - the root tag type (div, span, etc.)
  * @param rootAttrs - attributes for the root tag
  *
  * @returns {!Promise<void>}
