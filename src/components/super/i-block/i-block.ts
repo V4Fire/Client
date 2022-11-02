@@ -24,7 +24,19 @@ export * from 'components/super/i-block/const';
 export * from 'components/super/i-block/interface';
 
 export { prop, field, system, computed, hook, watch, wait } from 'components/super/i-block/decorators';
-export { default as Friend } from 'components/friends/friend';
+
+export {
+
+	ModEvent,
+	ModEventName,
+	ModEventReason,
+	ModEventType,
+	SetModEvent,
+
+	ElementModEvent,
+	SetElementModEvent
+
+} from 'components/friends/block';
 
 export { Classes, ModVal, ModsDecl, ModsProp, ModsDict };
 
