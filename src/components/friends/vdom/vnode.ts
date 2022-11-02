@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { isComponent } from 'core/component';
+import { app, isComponent } from 'core/component';
 import type { VNode, ObjectDirective, ComponentPublicInstance } from 'core/component/engines';
 
 import type VDOM from 'components/friends/vdom/class';
@@ -161,7 +161,7 @@ function createVNode(
 
 	if (attrs != null) {
 		const vAttrs: {beforeCreate: NonNullable<ObjectDirective['beforeCreate']>} = Object.cast(
-			r.resolveDirective.call(ctx, 'attrs')
+			app.context!.directive('attrs')
 		);
 
 		vAttrs.beforeCreate.call(Object.cast(vAttrs), {
