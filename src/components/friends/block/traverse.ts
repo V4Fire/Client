@@ -195,13 +195,8 @@ export function elements<E extends Element = Element>(
 		$el.classList.add('i-block-helper');
 
 		if (redundantElements.length > 0) {
-			const
-				filteredElements = new Set(Object.cast(elements));
-
-			for (let i = 0; i < redundantElements.length; i++) {
-				filteredElements.delete(redundantElements[i]);
-			}
-
+			const filteredElements = new Set(Object.cast(elements));
+			redundantElements.forEach((el) => filteredElements.delete(el));
 			return Object.cast(Array.from(filteredElements));
 		}
 	}

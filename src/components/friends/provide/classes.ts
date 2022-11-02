@@ -109,6 +109,12 @@ export function classes(
 					outerEl[i] = innerEl;
 				}
 			}
+
+			outerEl.forEach((el, i) => {
+				if (el === true) {
+					outerEl![i] = innerEl;
+				}
+			});
 		}
 
 		map[innerEl.dasherize()] = fullElementName.apply(this, Object.cast(Array.concat([componentName], outerEl)));

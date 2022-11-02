@@ -24,15 +24,14 @@ export function load(this: Friend, ...modules: Module[]): CanPromise<IterableIte
 	const
 		tasks: Array<Promise<unknown>> = [];
 
-	for (let i = 0; i < modules.length; i++) {
+	modules.forEach((module) => {
 		const
-			module = modules[i],
 			resolvedModule = resolveModule.call(this, module);
 
 		if (Object.isPromise(resolvedModule)) {
 			tasks.push(resolvedModule);
 		}
-	}
+	});
 
 	const
 		i = [modules].values();
@@ -61,18 +60,15 @@ export function addToBucket(this: ModuleLoader, bucketName: string, ...modules: 
 		this.moduleBuckets.set(bucketName, bucket);
 	}
 
-	for (let i = 0; i < modules.length; i++) {
-		const
-			module = modules[i];
-
+	modules.forEach((module) => {
 		if (module.id != null) {
 			if (!cache.has(module.id)) {
 				cache.set(module.id, module);
 			}
 		}
 
-		bucket.add(module);
-	}
+		bucket!.add(module);
+	});
 
 	return bucket.size;
 }

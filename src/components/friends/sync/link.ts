@@ -463,11 +463,11 @@ export function link<D = unknown, R = D>(
 		let
 			pos = 0;
 
-		for (let i = 0; i < hooks.length; i++) {
-			if (hooks[i].name === name) {
+		hooks.forEach((hook, i) => {
+			if (hook.name === name) {
 				pos = i + 1;
 			}
-		}
+		});
 
 		hooks.splice(pos, 0, {fn: initSync, name});
 		return;

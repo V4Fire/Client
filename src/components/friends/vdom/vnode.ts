@@ -104,10 +104,9 @@ export function create(
 		resolvedDescriptors = Array.concat([], typeOrDesc, Object.cast(descriptors)),
 		vnodes = new Array(resolvedDescriptors.length);
 
-	for (let i = 0; i < resolvedDescriptors.length; i++) {
-		const el = resolvedDescriptors[i];
-		vnodes[i] = createVNode.call(this, el.type, el);
-	}
+	resolvedDescriptors.forEach((descriptor, i) => {
+		vnodes[i] = createVNode.call(this, descriptor.type, descriptor);
+	});
 
 	return vnodes;
 }
@@ -141,14 +140,11 @@ function createVNode(
 		if (Object.isArray(children)) {
 			resolvedChildren = new Array(children.length);
 
-			for (let i = 0; i < children.length; i++) {
-				const
-					el = children[i];
-
-				resolvedChildren[i] = Object.isString(el) ?
-					r.createTextVNode.call(ctx, el) :
-					createVNode.call(this, el.type, el);
-			}
+			children.forEach((child, i) => {
+				resolvedChildren[i] = Object.isString(child) ?
+					r.createTextVNode.call(ctx, child) :
+					createVNode.call(this, child.type, child);
+			});
 
 		} else {
 			resolvedChildren = children;

@@ -17,10 +17,7 @@ export function fakeMethods(...methods: string[]): ClassDecorator {
 		const
 			{prototype} = target;
 
-		for (let i = 0; i < methods.length; i++) {
-			const
-				method = methods[i];
-
+		methods.forEach((method) => {
 			if (!Object.isFunction(prototype[method])) {
 				prototype[method] = function fake() {
 					Object.throw(
@@ -28,6 +25,6 @@ export function fakeMethods(...methods: string[]): ClassDecorator {
 					);
 				};
 			}
-		}
+		});
 	};
 }

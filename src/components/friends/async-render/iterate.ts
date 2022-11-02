@@ -15,7 +15,7 @@ import { render } from 'components/friends/vdom';
 import { addRenderTask, destroyNode as nodeDestructor } from 'components/friends/async-render/helpers/render';
 import { getIterDescriptor } from 'components/friends/async-render/helpers/iter';
 
-import type { TaskOptions } from 'components/friends/async-render/interface';
+import type { TaskOptions, IterDescriptor } from 'components/friends/async-render/interface';
 
 const
 	isCached = Symbol('Is cached');
@@ -82,7 +82,7 @@ export function iterate(
 	}
 
 	const
-		iter = getIterDescriptor.call(this, value, {start, perChunk, filter});
+		iter: IterDescriptor = getIterDescriptor.call(this, value, {start, perChunk, filter});
 
 	let
 		toVNode: AnyFunction<unknown[], CanArray<VNode>>,
@@ -258,20 +258,17 @@ export function iterate(
 			const
 				renderedVNodes: Node[] = [];
 
-			for (let i = 0; i < valsToRender.length; i++) {
+			valsToRender.forEach((el) => {
 				const
-					el = valsToRender[i],
 					vnodes = toVNode(el, iterI);
 
 				if (Object.isArray(vnodes)) {
-					for (let i = 0; i < vnodes.length; i++) {
-						renderVNode(vnodes[i]);
-					}
+					vnodes.forEach(renderVNode);
 
 				} else {
 					renderVNode(vnodes);
 				}
-			}
+			});
 
 			valsToRender = [];
 
@@ -307,9 +304,7 @@ export function iterate(
 			}
 
 			function destructor() {
-				for (let i = 0; i < renderedVNodes.length; i++) {
-					destroyNode(renderedVNodes[i]);
-				}
+				renderedVNodes.forEach(destroyNode);
 
 				function destroyNode(el: CanUndef<ComponentElement | Node>) {
 					if (el == null) {

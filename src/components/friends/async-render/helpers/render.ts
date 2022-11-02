@@ -72,17 +72,14 @@ export function addRenderTask(
 export function destroyNode(this: Friend, node: Node, childComponentEls: Element[] = []): void {
 	node.parentNode?.removeChild(node);
 
-	for (let i = 0; i < childComponentEls.length; i++) {
-		const
-			el = childComponentEls[i];
-
+	childComponentEls.forEach((child) => {
 		try {
-			(<ComponentElement<iBlock>>el).component?.unsafe.$destroy();
+			(<ComponentElement<iBlock>>child).component?.unsafe.$destroy();
 
 		} catch (err) {
 			stderr(err);
 		}
-	}
+	});
 
 	try {
 		(<ComponentElement<iBlock>>node).component?.unsafe.$destroy();

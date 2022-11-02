@@ -423,10 +423,7 @@ export function object(
 		return ['regular', isolatedOpts, info];
 	};
 
-	for (let i = 0; i < fields.length; i++) {
-		const
-			el = fields[i];
-
+	fields.forEach((field) => {
 		let
 			type: string,
 			opts: AsyncWatchOptions,
@@ -471,24 +468,24 @@ export function object(
 			watchPath,
 			savePath;
 
-		if (Object.isArray(el)) {
-			if (el.length === 3) {
-				watchPath = el[1];
-				getter = el[2];
+		if (Object.isArray(field)) {
+			if (field.length === 3) {
+				watchPath = field[1];
+				getter = field[2];
 
-			} else if (Object.isFunction(el[1])) {
-				watchPath = el[0];
-				getter = el[1];
+			} else if (Object.isFunction(field[1])) {
+				watchPath = field[0];
+				getter = field[1];
 
 			} else {
-				watchPath = el[1];
+				watchPath = field[1];
 			}
 
-			savePath = el[0];
+			savePath = field[0];
 
 		} else {
-			watchPath = el;
-			savePath = el;
+			watchPath = field;
+			savePath = field;
 		}
 
 		const
@@ -499,7 +496,7 @@ export function object(
 			[type, opts, info] = attachWatcher(watchPath, destPath, getVal);
 			Object.set(cursor, savePath, getVal(null, null, true));
 		}
-	}
+	});
 
 	this.field.set(path, cursor);
 	return resObj;
