@@ -27,10 +27,10 @@ export { normalizeClass, normalizeStyle } from 'core/component/render';
 
 export {
 
-	isComponent,
+	app,
 
+	isComponent,
 	rootComponents,
-	globalRootComponent,
 
 	PARENT
 

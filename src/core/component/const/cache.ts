@@ -6,8 +6,24 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentEngine, ComponentOptions as ComponentEngineOptions } from 'core/component/engines';
-import type { ComponentInterface, ComponentMeta, ComponentOptions, RenderFactory } from 'core/component/interface';
+import type {
+
+	ComponentEngine,
+	ComponentOptions as ComponentEngineOptions,
+
+	CreateAppFunction
+
+} from 'core/component/engines';
+
+import type {
+
+	ComponentMeta,
+	ComponentInterface,
+	ComponentOptions,
+
+	RenderFactory
+
+} from 'core/component/interface';
 
 /**
  * A dictionary with component declaration parameters
@@ -19,11 +35,17 @@ export const componentParams = new Map<Function | string, ComponentOptions>();
  */
 export const rootComponents = Object.createDict<Promise<ComponentEngineOptions<typeof ComponentEngine>>>();
 
+interface App {
+	context: Nullable<ReturnType<CreateAppFunction>>;
+	component: Nullable<ComponentInterface>;
+}
+
 /**
- * A link to the root component instance
+ * A link to the application context and the root component
  */
-export const globalRootComponent = <{link: Nullable<ComponentInterface>}>{
-	link: null
+export const app: App = {
+	context: null,
+	component: null
 };
 
 /**

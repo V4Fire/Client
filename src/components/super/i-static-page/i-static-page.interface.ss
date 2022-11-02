@@ -31,9 +31,6 @@
 	- title = @@appName
 
 	/** @override */
-	- rootTag = 'div'
-
-	/** @override */
 	- rootAttrs = {}
 
 	/** Additional static page data */
@@ -76,7 +73,9 @@
 	- block root
 		- block pageData
 			? rootAttrs['data-root-component'] = self.name()
-			? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
+
+			- if Object.size(pageData) > 0
+				? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
 		? await h.generateInitJS(self.name(), { &
 			deps,
@@ -85,7 +84,6 @@
 			assets,
 			assetsRequest,
 
-			rootTag,
 			rootAttrs
 		}) .
 
@@ -142,30 +140,29 @@
 					- block headScripts
 						+= await h.loadLibs(deps.headScripts, {assets, wrap: true, js: true})
 
-			< body
-				< ${rootTag}.i-static-page.${self.name()} ${rootAttrs|!html}
-					- block headHelpers
+			< body ${rootAttrs|!html}
+				- block headHelpers
 
-					- block innerRoot
-						- if overWrapper
-							< .&__over-wrapper
-								- block overWrapper
+				- block innerRoot
+					- if overWrapper
+						< .&__over-wrapper
+							- block overWrapper
 
-							- block body
+						- block body
 
-						- block helpers
-						- block providers
+					- block helpers
+					- block providers
 
-				- block deps
-					- block styles
-						+= await h.loadStyles(deps.styles, {assets, wrap: true})
-						+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
+			- block deps
+				- block styles
+					+= await h.loadStyles(deps.styles, {assets, wrap: true})
+					+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
 
-					- block scripts
-						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
-						+= await h.loadLibs(deps.scripts, {assets, wrap: true, js: true})
+				- block scripts
+					+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
+					+= await h.loadLibs(deps.scripts, {assets, wrap: true, js: true})
 
-						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
-						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
+					+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
+					+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
 
-						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
+					+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})

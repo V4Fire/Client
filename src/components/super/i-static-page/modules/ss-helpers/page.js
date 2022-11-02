@@ -262,7 +262,6 @@ exports.generateInitJS = generateInitJS;
  * @param assets - a dictionary with static page assets
  * @param assetsRequest - should or not do a request for assets.js
  *
- * @param rootTag - the root tag type (div, span, etc.)
  * @param rootAttrs - attributes for the root tag
  *
  * @returns {!Promise<void>}
@@ -274,7 +273,6 @@ async function generateInitJS(pageName, {
 	assets,
 	assetsRequest,
 
-	rootTag,
 	rootAttrs
 }) {
 	if (needInline()) {
@@ -302,10 +300,8 @@ async function generateInitJS(pageName, {
 
 	body.push(`
 (function () {
-	var el = document.createElement('${rootTag || 'div'}');
+	var el = document.body;
 	${normalizeAttrs(rootAttrs, true)}
-	el.setAttribute('class', 'i-static-page ${pageName}');
-	document.body.appendChild(el);
 })();
 `);
 
