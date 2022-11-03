@@ -134,6 +134,16 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 				instance: Object.cast(virtualCtx)
 			});
 
+			if (functionalVNode.shapeFlag > vnode.shapeFlag) {
+				// eslint-disable-next-line no-bitwise
+				vnode.shapeFlag |= functionalVNode.shapeFlag;
+			}
+
+			if (functionalVNode.patchFlag > vnode.patchFlag) {
+				// eslint-disable-next-line no-bitwise
+				vnode.patchFlag |= functionalVNode.patchFlag;
+			}
+
 			functionalVNode.props = {};
 			functionalVNode.dirs = null;
 			functionalVNode.children = [];
@@ -188,16 +198,23 @@ export function wrapRenderList<T extends typeof renderList>(original: T): T {
  */
 export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 	return Object.cast(function renderSlot(this: ComponentInterface, ...args: Parameters<T>) {
+		const
+			{r} = this.$renderEngine;
+
 		if (this.meta.params.functional === true) {
 			try {
 				return original.apply(null, args);
 
-			} catch (e) {
-				const
-					[slots, name, props] = args,
-					{r} = this.$renderEngine;
+			} catch {
+				const [
+					slots,
+					name,
+					props,
+					fallback
+				] = args;
 
-				return r.createBlock(r.Fragment, {key: props?.key ?? `_${name}`}, slots[name]?.(props));
+				const children = slots[name]?.(props) ?? fallback?.() ?? [];
+				return r.createBlock.call(this, r.Fragment, {key: props?.key ?? `_${name}`}, children);
 			}
 		}
 

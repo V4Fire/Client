@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { app, isComponent } from 'core/component';
+import { isComponent } from 'core/component';
 import type { VNode, ObjectDirective, ComponentPublicInstance } from 'core/component/engines';
 
 import type VDOM from 'components/friends/vdom/class';
@@ -130,34 +130,56 @@ function createVNode(
 		ctx: {$renderEngine: {r}}
 	} = this;
 
-	const
-		resolvedType = isComponent.test(type) ? r.resolveComponent.call(ctx, type) : type;
-
 	let
 		resolvedChildren;
+
+	const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) =>
+		Object.isDictionary(vnode) && !('patchFlag' in vnode) ? createVNode.call(this, vnode.type, vnode) : vnode;
 
 	if (children != null) {
 		if (Object.isArray(children)) {
 			resolvedChildren = new Array(children.length);
 
 			children.forEach((child, i) => {
-				resolvedChildren[i] = Object.isString(child) ?
-					r.createTextVNode.call(ctx, child) :
-					createVNode.call(this, child.type, child);
+				resolvedChildren[i] = factory(child);
 			});
 
 		} else {
-			resolvedChildren = children;
+			const
+				slots = {};
+
+			Object.entries(children).forEach(([key, slot]) => {
+				slots[key] = Object.isFunction(slot) ?
+					function slotWrapper(this: unknown) {
+						// eslint-disable-next-line prefer-rest-params
+						return Array.concat([], slot.apply(this, arguments)).map(Object.cast(factory));
+					} :
+
+					() => Array.concat([], slot).map(factory);
+			});
+
+			resolvedChildren = slots;
 		}
 	}
 
-	const vnode = Object.isString(resolvedType) ?
-		r.createVNode.call(ctx, resolvedType, {}, resolvedChildren) :
-		r.createBlock.call(ctx, resolvedType, {}, resolvedChildren);
+	let
+		vnode;
+
+	if (isComponent.test(type)) {
+		const resolvedType = r.resolveDynamicComponent.call(ctx, type);
+		vnode = r.createBlock.call(ctx, resolvedType, {}, resolvedChildren);
+
+	} else {
+		vnode = r.createVNode.call(ctx, type, {}, resolvedChildren);
+	}
 
 	if (attrs != null) {
-		const vAttrs: {beforeCreate: NonNullable<ObjectDirective['beforeCreate']>} = Object.cast(
-			app.context!.directive('attrs')
+		interface VAttrs {
+			beforeCreate: NonNullable<ObjectDirective['beforeCreate']>;
+		}
+
+		const vAttrs = Object.cast<VAttrs>(
+			r.resolveDirective('attrs')
 		);
 
 		vAttrs.beforeCreate.call(Object.cast(vAttrs), {

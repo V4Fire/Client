@@ -13,7 +13,16 @@
 
 import { identity } from 'core/functools';
 
-import * as c from 'core/component/const';
+import {
+
+	app,
+
+	components,
+	rootComponents,
+
+	componentRegInitializers
+
+} from 'core/component/const';
 
 import { initEmitter } from 'core/component/event';
 import { createMeta, fillMeta, attachTemplatesToMeta } from 'core/component/meta';
@@ -62,8 +71,8 @@ export function component(opts?: ComponentOptions): Function {
 			regComponent();
 
 		} else {
-			const initList = c.componentRegInitializers[componentInfo.name] ?? [];
-			c.componentRegInitializers[componentInfo.name] = initList;
+			const initList = componentRegInitializers[componentInfo.name] ?? [];
+			componentRegInitializers[componentInfo.name] = initList;
 			initList.push(regComponent);
 		}
 
@@ -88,10 +97,10 @@ export function component(opts?: ComponentOptions): Function {
 				componentName = componentInfo.name;
 
 			if (componentInfo.params.name == null || !componentInfo.isSmart) {
-				c.components.set(target, meta);
+				components.set(target, meta);
 			}
 
-			c.components.set(componentName, meta);
+			components.set(componentName, meta);
 			initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
 
 			if (componentInfo.isAbstract || meta.params.functional === true) {
@@ -102,15 +111,12 @@ export function component(opts?: ComponentOptions): Function {
 				}
 
 			} else if (meta.params.root) {
-				c.rootComponents[componentName] = new Promise(loadTemplate(getComponent(meta)));
+				rootComponents[componentName] = new Promise(loadTemplate(getComponent(meta)));
 
 			} else {
-				const
-					c = ComponentEngine.component(componentName, loadTemplate(getComponent(meta), true)(identity));
-
-				if (Object.isPromise(c)) {
-					c.catch(stderr);
-				}
+				const args = [componentName, loadTemplate(getComponent(meta), true)(identity)] as const;
+				app.context?.component(...args);
+				ComponentEngine.component(...args);
 			}
 
 			// Function that waits till a component template is loaded
