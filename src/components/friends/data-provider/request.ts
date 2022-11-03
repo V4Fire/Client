@@ -13,7 +13,6 @@ import { asyncOptionsKeys } from 'core/async';
 import type { CreateRequestOptions } from 'components/super/i-data';
 
 import type DataProvider from 'components/friends/data-provider/class';
-import { providerMethods } from 'components/friends/data-provider/const';
 import type { DefaultRequest } from 'components/friends/data-provider/interface';
 
 /**
@@ -40,7 +39,7 @@ export function url(this: DataProvider, value?: string): CanUndef<string> | Data
 
 	const ctx = Object.create(this);
 	Object.set(ctx, 'provider', this.provider.url(value));
-	return patchProviderContext.call(this, ctx);
+	return ctx;
 }
 
 /**
@@ -67,7 +66,7 @@ export function base(this: DataProvider, value?: string): CanUndef<string> | Dat
 
 	const ctx = Object.create(this);
 	Object.set(ctx, 'provider', this.provider.base(value));
-	return patchProviderContext.call(this, ctx);
+	return ctx;
 }
 
 /**
@@ -322,20 +321,4 @@ export function getDefaultRequestParams<T = unknown>(this: DataProvider, method:
 	}
 
 	return res;
-}
-
-/**
- * Modifies the given data context by adding methods for CRUD operations
- * @param ctx
- */
-export function patchProviderContext<T extends DataProvider>(this: DataProvider, ctx: T): T {
-	providerMethods.forEach((method) => {
-		Object.defineProperty(ctx, method, {
-			writable: true,
-			configurable: true,
-			value: this.ctx.instance[method]
-		});
-	});
-
-	return ctx;
 }

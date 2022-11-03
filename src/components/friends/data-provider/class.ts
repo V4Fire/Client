@@ -86,17 +86,18 @@ class DataProvider extends Friend {
 		}
 
 		this.provider = dp;
+
 		this.emitter = this.async.wrapEventEmitter({
 			get on() {
-				return dp.emitter.on.bind(dp) ?? (() => Object.throw());
+				return dp.emitter.on.bind(dp.emitter) ?? (() => Object.throw());
 			},
 
 			get once() {
-				return dp.emitter.once.bind(dp) ?? (() => Object.throw());
+				return dp.emitter.once.bind(dp.emitter) ?? (() => Object.throw());
 			},
 
 			get off() {
-				return dp.emitter.off.bind(dp) ?? (() => Object.throw());
+				return dp.emitter.off.bind(dp.emitter) ?? (() => Object.throw());
 			}
 		});
 	}
