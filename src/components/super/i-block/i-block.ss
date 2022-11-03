@@ -204,6 +204,7 @@
 								? attrs = {}
 
 					< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
+						+= content
 
 				- block headHelpers
 
