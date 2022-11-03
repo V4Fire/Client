@@ -6,111 +6,78 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iStaticPage from 'components/super/i-static-page/i-static-page';
-import type { ComponentElement } from 'components/super/i-static-page/i-static-page';
+import { app } from 'core/component';
+import { render, create } from 'components/friends/vdom';
+
+import iBlock from 'components/super/i-block/i-block';
+import type { ComponentElement, ComponentInterface } from 'components/super/i-static-page/i-static-page';
 
 import { expandedParse } from 'core/prelude/test-env/components/json';
 
+const
+	createdComponents = Symbol('A set of created components');
+
 globalThis.renderComponents = (
 	componentName: string,
-	scheme: RenderParams[] | string,
-	options?: RenderOptions | string
+	scheme: RenderComponentsScheme
 ) => {
 	if (Object.isString(scheme)) {
-		scheme = expandedParse<RenderParams[]>(scheme);
+		scheme = expandedParse<RenderComponentsVnodeDescriptor[]>(scheme);
+
+		if (!Object.isArray(scheme)) {
+			throw new TypeError('The scheme for rendering is set incorrectly');
+		}
 	}
 
-	if (Object.isString(options) || Object.size(options) === 0) {
-		options = {rootSelector: '#root-component'};
+	const
+		ID_ATTR = 'data-test-id';
+
+	const
+		ctx = <Nullable<iBlock['unsafe']>>app.component;
+
+	if (ctx == null) {
+		throw new ReferenceError('The root context for rendering is not defined');
 	}
 
-	const {selectorToInject, rootSelector} = {
-		selectorToInject: options!.rootSelector,
-		...options
-	};
+	if (!(ctx.instance instanceof iBlock)) {
+		throw new TypeError('The root context does not implement the iBlock interface');
+	}
 
 	const
-		idAttrs = 'data-test-id',
-		rootEl = document.querySelector<ComponentElement<iStaticPage>>(<string>rootSelector),
-		ctx = rootEl!.component!.unsafe;
+		ids = scheme.map(() => Math.random().toString(16).slice(2));
 
-	const buildScopedSlots = (content) => {
-		const res = {};
+	const vNodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
+		type: componentName,
 
-		const createElement = (val) => {
-			if (Object.isFunction(val)) {
-				return val;
-			}
-
-			return (obj?) => {
-				const
-					{tag, attrs, content} = val;
-
-				let
-					convertedContent = content;
-
-				const
-					getTpl = (tpl) => Object.isString(tpl) === false && Object.isArray(tpl) === false ? [tpl] : tpl;
-
-				if (Object.isFunction(convertedContent)) {
-					convertedContent = getTpl(convertedContent(obj));
-
-				} else if (Object.isPlainObject(convertedContent)) {
-					convertedContent = getTpl(createElement(content)(obj));
-				}
-
-				return ctx.$createElement(<string>tag, {attrs: {'v-attrs': attrs}}, convertedContent);
-			};
-		};
-
-		Object.forEach(content, (val: Dictionary, key: string) => {
-			res[key] = createElement(val);
-		});
-
-		return res;
-	};
-
-	const
-		ids = scheme.map(() => Math.random());
-
-	const vNodes = scheme.map(({attrs, content}, i) => ctx.$createElement(componentName, {
 		attrs: {
-			'v-attrs': {
-				...attrs,
-				[idAttrs]: ids[i]
-			}
+			...attrs,
+			[ID_ATTR]: ids[i]
 		},
 
-		scopedSlots: buildScopedSlots(content)
-	}));
+		children
+	})));
 
-	const
-		nodes = ctx.vdom.render(vNodes);
+	const nodes = render.call(ctx.vdom, vNodes);
+	ctx.$el?.append(...nodes);
 
-	document.querySelector(<string>selectorToInject)?.append(...nodes);
-	globalThis.__createdComponents = globalThis.__createdComponents ?? new Set();
+	const components = globalThis[createdComponents] ?? new Set();
+	globalThis[createdComponents] = components;
 
 	ids.forEach((id) => {
-		globalThis.__createdComponents.add(document.querySelector(`[${idAttrs}="${id}"]`));
+		components.add(document.querySelector(`[${ID_ATTR}="${id}"]`));
 	});
 };
 
 globalThis.removeCreatedComponents = () => {
 	const
-		// @ts-expect-error (private)
-		{__createdComponents} = globalThis;
+		components = globalThis[createdComponents];
 
-	if (__createdComponents == null) {
-		return;
+	if (Object.isSet(components)) {
+		Object.cast<Set<ComponentElement<ComponentInterface>>>(components).forEach((node) => {
+			node.component?.unsafe.$destroy();
+			node.remove();
+		});
+
+		components.clear();
 	}
-
-	__createdComponents.forEach((node) => {
-		if (node.component != null) {
-			node.component.$destroy();
-		}
-
-		node.remove();
-	});
-
-	__createdComponents.clear();
 };

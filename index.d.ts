@@ -32,33 +32,25 @@ declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
 
-interface RenderOptions {
-	/** @default `'rootSelector'` */
-	selectorToInject?: string;
-
-	/** @default `'#root-component'` */
-	rootSelector?: string;
-}
-
 interface HTMLImageElement {
 	readonly init: Promise<this>;
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
 }
 
 /**
- * Default app theme to use
+ * Default app theme
  * @see config/default.js
  */
 declare const THEME: CanUndef<string>;
 
 /**
- * Attribute name to set a value of the theme to the root element
+ * Attribute name to set the theme value to the root element
  * @see config/default.js
  */
 declare const THEME_ATTRIBUTE: CanUndef<string>;
 
 /**
- * Array of available themes in the runtime
+ * A list of available app themes
  * @see config/default.js
  */
 declare const AVAILABLE_THEMES: CanUndef<string[]>;
@@ -113,94 +105,62 @@ interface Document {
 	};
 }
 
-interface RenderContentFn {
-	(props: Dictionary): string;
-}
+type RenderComponentsScheme = RenderComponentsVnodeDescriptor[] | string;
 
-interface RenderParams {
+interface RenderComponentsVnodeDescriptor {
 	/**
-	 * Component attrs
+	 * A simple tag name or component name
+	 */
+	type: string;
+
+	/**
+	 * A dictionary with attributes to pass to the created VNode
 	 */
 	attrs?: Dictionary;
 
-	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | RenderContentFn | string>;
+	/**
+	 * An array of children VNode descriptors or dictionary with slot functions
+	 */
+	children?: VNodeChildren;
 }
 
-/**
- * Content to render into an element
- *
- * @example
- *
- * ```typescript
- * globalThis.renderComponents('b-button', {
- *   attrs: {
- *      testProp: 1
- *   },
- *
- *   content: {
- *     default: {
- *       tag: 'b-button',
- *       content: {
- *         default: 'Test'
- *       }
- *     }
- *   }
- * });
- * ```
- *
- * This schema is the equivalent of such a template:
- *
- * ```ss
- * < b-button :testProp = 1
- *   < b-button
- *     Test
- * ```
- */
-interface RenderContent {
-	/**
-	 * Component name or tagName
-	 */
-	tag: string;
+type VNodeChild = string | RenderComponentsVnodeDescriptor;
 
-	/**
-	 * Component attrs
-	 */
-	attrs: Dictionary;
-
-	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | RenderContentFn | string>;
-}
+type VNodeChildren =
+	VNodeChild[] |
+	Dictionary<CanArray<VNodeChild> | ((...args: any[]) => CanArray<VNodeChild>)>;
 
 // eslint-disable-next-line no-var,vars-on-top
 declare var
 	/**
-	 * Renders the specified components
+	 * Renders the specified components.
+	 * This function should only be used when writing tests.
 	 *
 	 * @param componentName
 	 * @param scheme
-	 * @param [opts]
 	 */
-	renderComponents: (componentName: string, scheme: RenderParams[] | string, opts?: RenderOptions) => void,
+	renderComponents: (componentName: string, scheme: RenderComponentsScheme) => void,
 
 	/**
-	 * Removes all components created via `globalThis.renderComponents`
+	 * Removes all components created via `globalThis.renderComponents`.
+	 * This function should only be used when writing tests.
 	 */
 	removeCreatedComponents: () => void,
 
 	/**
-	 * Requires a module by the specified path
+	 * Requires a module by the specified path.
+	 * This function should only be used when writing tests.
 	 */
 	importModule: (path: string) => any;
 
 interface TouchGesturesCreateOptions {
 	/**
-	 * Element to dispatch an event
+	 * An element to dispatch the event
 	 */
 	dispatchEl: Element | string;
 
 	/**
-	 * Element that will be provided as a target in the dispatched event
+	 * An element to be provided as the target in the dispatched event
 	 */
 	targetEl: Element | string;
 
