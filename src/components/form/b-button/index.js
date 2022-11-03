@@ -9,4 +9,4 @@
 package('b-button')
 	.extends('i-data')
 	.dependencies('b-progress-icon')
-	.libs('core/component/directives/icon');
+	.libs('components/directives/icon');

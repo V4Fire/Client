@@ -13,9 +13,7 @@
 
 import { derive } from 'core/functools/trait';
 
-//#if runtime has core/data
 import 'core/data';
-//#endif
 
 import type bForm from 'components/form/b-form/b-form';
 
@@ -27,6 +25,8 @@ import iSize from 'components/traits/i-size/i-size';
 
 import iOpenToggle, { CloseHelperEvents } from 'components/traits/i-open-toggle/i-open-toggle';
 import type { HintPosition } from 'components/global/g-hint/interface';
+
+import DataProvider, { getDefaultRequestParams, base, get } from 'components/friends/data-provider';
 
 import iData, {
 
@@ -50,6 +50,8 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
 export * from 'components/form/b-button/interface';
 
+DataProvider.addToPrototype(getDefaultRequestParams, base, get);
+
 interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 
 /**
@@ -65,7 +67,7 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 @derive(iAccess, iOpenToggle)
 class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	override readonly rootTag: string = 'span';
-	override readonly dataProvider: string = 'Provider';
+	override readonly dataProviderProp: string = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
 	/** @see [[iVisible.prototype.hideIfOffline]] */
@@ -440,8 +442,6 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	 * @emits `click(e: Event)`
 	 */
 	protected async onClick(e: Event): Promise<void> {
-		this.emit('update:type', '1111111');
-
 		switch (this.type) {
 			case 'link':
 				break;
@@ -451,19 +451,16 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 				break;
 
 			default: {
-				const
-					dp = this.dataProvider;
-
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-				if (dp != null && (dp !== 'Provider' || this.href != null)) {
+				if (this.dataProviderProp != null && (this.dataProviderProp !== 'Provider' || this.href != null)) {
 					let
-						that = this;
+						dataProvider = this.dataProvider!;
 
 					if (this.href != null) {
-						that = this.base(this.href);
+						dataProvider = dataProvider.base(this.href);
 					}
 
-					await (<Function>that[this.method])(undefined);
+					await dataProvider[this.method](undefined);
 
 				// Form attribute fix for MS Edge && IE
 				} else if (this.form != null && this.type === 'submit') {
