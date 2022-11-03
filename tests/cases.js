@@ -62,5 +62,5 @@ module.exports = [
 
 	'--test-entry models/modules/test/session',
 
-	'--test-entry core/component/directives/update-on/test'
+	'--test-entry components/directives/bind-with/test'
 ];

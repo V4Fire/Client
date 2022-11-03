@@ -43,7 +43,6 @@
     "up": "npm i"
   },
   "dependencies": {
-    "@vue/compiler-sfc": "^3.2.26",
     "@babel/core": "7.17.5",
     "@babel/helpers": "7.17.7",
     "@babel/parser": "7.17.7",
@@ -53,6 +52,7 @@
     "@babel/preset-typescript": "7.16.7",
     "@swc/core": "1.2.153",
     "@swc/helpers": "0.3.8",
+    "@vue/compiler-sfc": "^3.2.26",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "escaper": "3.0.6",
@@ -63,7 +63,6 @@
     "requestidlecallback": "0.3.0",
     "sharp": "0.30.6",
     "snakeskin": "7.5.1",
-    "svg-transform-loader": "2.0.13",
     "tslib": "2.3.1",
     "vinyl": "2.2.1",
     "vue": "^3.2.26"
@@ -126,6 +125,7 @@
     "stylus": "0.54.8",
     "stylus-loader": "6.2.0",
     "svg-sprite-loader": "6.0.11",
+    "svg-transform-loader": "^2.0.13",
     "svg-url-loader": "7.1.1",
     "svgo": "2.8.0",
     "svgo-loader": "3.0.0",
@@ -136,6 +136,7 @@
     "typograf": "6.14.0",
     "upath": "2.0.1",
     "url-loader": "4.1.1",
+    "url-slug": "^3.0.4",
     "vue-template-compiler": "2.6.10",
     "vue-template-es2015-compiler": "1.9.1",
     "webpack-bundle-analyzer": "4.5.0",
@@ -143,8 +144,8 @@
   },
   "devDependencies": {
     "@playwright/test": "1.20.0",
-    "@types/jasmine": "3.10.3",
     "@types/glob": "7.2.0",
+    "@types/jasmine": "3.10.3",
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
     "@v4fire/core": "github:V4Fire/Core#prelude-review",

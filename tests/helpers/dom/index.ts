@@ -150,7 +150,7 @@ export default class DOM {
 	 *   elNameWithMods = modsBase('type', 'test'); // 'p-index__page_type_test'
 	 * ```
 	 */
-	static elModNameGenerator(fullElName: string): (modName: string, modVal: string) => string;
+	static elModNameGenerator(fullElementName: string): (modName: string, modVal: string) => string;
 
 	/**
 	 * Returns an element name with modifiers for the specified block
@@ -163,14 +163,14 @@ export default class DOM {
 	 *   modsBase = elModNameGenerator(elName, 'type', 'test'); // 'p-index__page_type_test'
 	 * ```
 	 */
-	static elModNameGenerator(fullElName: string, modName: string, modVal: string): string;
+	static elModNameGenerator(fullElementName: string, modName: string, modVal: string): string;
 
-	static elModNameGenerator(fullElName: string, modName?: string, modVal?: string): any {
+	static elModNameGenerator(fullElementName: string, modName?: string, modVal?: string): any {
 		if (modName != null) {
-			return `${fullElName}_${modName}_${modVal}`;
+			return `${fullElementName}_${modName}_${modVal}`;
 		}
 
-		return (modName, modVal) => `${fullElName}_${modName}_${modVal}`;
+		return (modName, modVal) => `${fullElementName}_${modName}_${modVal}`;
 	}
 
 	/**
@@ -186,7 +186,7 @@ export default class DOM {
 	 *   elNameWithMods = modsBase('type', 'test'); // '.p-index__page_type_test'
 	 * ```
 	 */
-	static elModSelectorGenerator(fullElName: string): (modName: string, modVal: string) => string;
+	static elModSelectorGenerator(fullElementName: string): (modName: string, modVal: string) => string;
 
 	/**
 	 * Returns an element class name with modifiers for the specified block
@@ -199,14 +199,14 @@ export default class DOM {
 	 *   modsBase = elModSelectorGenerator(elName, 'type', 'test'); // '.p-index__page_type_test'
 	 * ```
 	 */
-	static elModSelectorGenerator(fullElName: string, modName: string, modVal: string): string;
+	static elModSelectorGenerator(fullElementName: string, modName: string, modVal: string): string;
 
-	static elModSelectorGenerator(fullElName: string, modName?: string, modVal?: string): any {
+	static elModSelectorGenerator(fullElementName: string, modName?: string, modVal?: string): any {
 		if (modName != null) {
-			return `.${fullElName}_${modName}_${modVal}`;
+			return `.${fullElementName}_${modName}_${modVal}`;
 		}
 
-		return (modName, modVal) => `.${fullElName}_${modName}_${modVal}`;
+		return (modName, modVal) => `.${fullElementName}_${modName}_${modVal}`;
 	}
 
 	/**
@@ -387,32 +387,32 @@ export default class DOM {
 	 * @deprecated
 	 * @see [[DOM.elModNameGenerator]]
 	 *
-	 * @param fullElName
+	 * @param fullElementName
 	 * @param [modName]
 	 * @param [modVal]
 	 */
-	elModNameGenerator(fullElName: string, modName?: string, modVal?: string): any {
+	elModNameGenerator(fullElementName: string, modName?: string, modVal?: string): any {
 		if (modName != null) {
-			return `${fullElName}_${modName}_${modVal}`;
+			return `${fullElementName}_${modName}_${modVal}`;
 		}
 
-		return (modName, modVal) => `${fullElName}_${modName}_${modVal}`;
+		return (modName, modVal) => `${fullElementName}_${modName}_${modVal}`;
 	}
 
 	/**
 	 * @deprecated
 	 * @see [[DOM.elModSelectorGenerator]]
 	 *
-	 * @param fullElName
+	 * @param fullElementName
 	 * @param [modName]
 	 * @param [modVal]
 	 */
-	elModSelectorGenerator(fullElName: string, modName?: string, modVal?: string): any {
+	elModSelectorGenerator(fullElementName: string, modName?: string, modVal?: string): any {
 		if (modName != null) {
-			return `.${fullElName}_${modName}_${modVal}`;
+			return `.${fullElementName}_${modName}_${modVal}`;
 		}
 
-		return (modName, modVal) => `.${fullElName}_${modName}_${modVal}`;
+		return (modName, modVal) => `.${fullElementName}_${modName}_${modVal}`;
 	}
 
 	/**

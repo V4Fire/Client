@@ -7,7 +7,7 @@
  */
 
 import { isComponent } from 'core/component';
-import type { VNode, ObjectDirective, ComponentPublicInstance } from 'core/component/engines';
+import type { VNode } from 'core/component/engines';
 
 import type VDOM from 'components/friends/vdom/class';
 import type { VNodeOptions, VNodeDescriptor } from 'components/friends/vdom/interface';
@@ -167,31 +167,10 @@ function createVNode(
 
 	if (isComponent.test(type)) {
 		const resolvedType = r.resolveDynamicComponent.call(ctx, type);
-		vnode = r.createBlock.call(ctx, resolvedType, {}, resolvedChildren);
+		vnode = r.createBlock.call(ctx, resolvedType, {'v-attrs': attrs}, resolvedChildren);
 
 	} else {
-		vnode = r.createVNode.call(ctx, type, {}, resolvedChildren);
-	}
-
-	if (attrs != null) {
-		interface VAttrs {
-			beforeCreate: NonNullable<ObjectDirective['beforeCreate']>;
-		}
-
-		const vAttrs = Object.cast<VAttrs>(
-			r.resolveDirective('attrs')
-		);
-
-		vAttrs.beforeCreate.call(Object.cast(vAttrs), {
-			arg: '',
-			modifiers: {},
-
-			value: attrs,
-			oldValue: undefined,
-
-			dir: Object.cast<ObjectDirective>(vAttrs),
-			instance: Object.cast<ComponentPublicInstance>(ctx)
-		}, vnode);
+		vnode = r.createVNode.call(ctx, type, {'v-attrs': attrs}, resolvedChildren);
 	}
 
 	return vnode;
