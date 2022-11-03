@@ -115,8 +115,11 @@ export function component(opts?: ComponentOptions): Function {
 
 			} else {
 				const args = [componentName, loadTemplate(getComponent(meta), true)(identity)] as const;
-				app.context?.component(...args);
 				ComponentEngine.component(...args);
+
+				if (app.context != null && app.context.component(componentName) == null) {
+					app.context.component(...args);
+				}
 			}
 
 			// Function that waits till a component template is loaded
