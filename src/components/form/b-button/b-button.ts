@@ -36,6 +36,7 @@ import iData, {
 	ModelMethod,
 	ModEvent,
 
+	DataProviderProp,
 	RequestFilter
 
 } from 'components/super/i-data/i-data';
@@ -60,7 +61,7 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 @derive(iAccess, iOpenToggle)
 class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	override readonly rootTag: string = 'span';
-	override readonly dataProviderProp: string = 'Provider';
+	override readonly dataProviderProp: DataProviderProp = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
 	/** @see [[iVisible.hideIfOffline]] */
