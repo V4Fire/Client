@@ -12,9 +12,7 @@ import type { ComponentElement } from 'core/component';
 import type bButton from 'components/form/b-button/b-button';
 
 import test from 'tests/config/unit/test';
-
 import Component from 'tests/helpers/component';
-import BOM from 'tests/helpers/bom';
 
 test.describe('<b-button>', () => {
 	let
@@ -66,7 +64,7 @@ test.describe('<b-button>', () => {
 	});
 
 	test.describe('passing the `preIcon` prop as', () => {
-		test("`'dropdown'`", async ({page}) => {
+		test("`'foo'`", async ({page}) => {
 			const
 				iconName = 'foo';
 
@@ -76,49 +74,58 @@ test.describe('<b-button>', () => {
 
 			const
 				icon = await $el.$('svg'),
-				iconProvidedName = await icon!.evaluate((ctx) => ctx.href);
+				svgText = await icon!.evaluate((ctx) => ctx.innerHTML);
 
-			console.log(iconProvidedName);
-
-			//test.expect(iconProvidedName).toBe(iconName);
+			test.expect(svgText).toBe('<use xlink:href="#foo"></use>');
 		});
 
-		// test('`undefined`', async ({page}) => {
-		// 	await renderButton(page, {
-		// 		preIcon: undefined
-		// 	});
-		//
-		// 	const
-		// 		bIcon = await $el.$('.b-icon');
-		//
-		// 	test.expect(bIcon).toBeNull();
-		// });
+		test('`undefined`', async ({page}) => {
+			await renderButton(page, {
+				preIcon: undefined
+			});
+
+			const icon = await $el.$('svg');
+			test.expect(icon).toBeNull();
+		});
 	});
 
-	// test.describe('click event', () => {
-	// 	test.beforeEach(async ({page}) => {
-	// 		await renderButton(page);
-	// 	});
-	//
-	// 	test('fires on click', async () => {
-	// 		const
-	// 			pr = bButton.evaluate((ctx) => ctx.promisifyOnce('click'));
-	//
-	// 		await $el.click();
-	//
-	// 		await test.expect(pr).resolves.toBeUndefined();
-	// 	});
-	//
-	// 	test('does not emit an event without a click', async ({page}) => {
-	// 		await bButton.evaluate((ctx) => ctx.once('click', () => globalThis._t = 1));
-	// 		await BOM.waitForIdleCallback(page, {sleepAfterIdles: 400});
-	//
-	// 		const
-	// 			res = await page.evaluate(() => globalThis._t);
-	//
-	// 		test.expect(res).toBeUndefined();
-	// 	});
-	// });
+	test.describe('passing the `icon` prop as', () => {
+		test("`'foo'`", async ({page}) => {
+			const
+				iconName = 'foo';
+
+			await renderButton(page, {
+				preIcon: iconName
+			});
+
+			const
+				icon = await $el.$('svg'),
+				svgText = await icon!.evaluate((ctx) => ctx.innerHTML);
+
+			test.expect(svgText).toBe('<use xlink:href="#foo"></use>');
+		});
+
+		test('`undefined`', async ({page}) => {
+			await renderButton(page, {
+				preIcon: undefined
+			});
+
+			const icon = await $el.$('svg');
+			test.expect(icon).toBeNull();
+		});
+	});
+
+	test.describe('component events', () => {
+		test.beforeEach(async ({page}) => {
+			await renderButton(page);
+		});
+
+		test('when clicked, the component should emit the `click` event', async () => {
+			const pr = bButton.evaluate((ctx) => ctx.promisifyOnce('click'));
+			await $el.click();
+			await test.expect(pr).resolves.toBeUndefined();
+		});
+	});
 
 	/**
 	 * @param page
