@@ -45,9 +45,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param original
  */
 export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
-	return Object.cast(function createVNode(this: ComponentInterface, ...args: Parameters<T>) {
-		return resolveAttrs.call(this, original.apply(null, args));
-	});
+	return wrapCreateBlock(original);
 }
 
 /**
