@@ -41,16 +41,14 @@
 						+= self.slot('preIcon', {':icon': 'preIcon'})
 							< component &
 								v-if = preIconComponent |
-								:instanceOf = bIcon |
 								:is = preIconComponent |
 								:value = preIcon
 							.
 
-							< @b-icon v-else | :value = preIcon
+							< . v-else | v-icon:[preIcon]
 
 				- block value
 					< _.&__cell.&__value
-						{{ type }}
 						+= self.slot()
 
 				- block expand
@@ -59,14 +57,7 @@
 				- block icons
 					< _.&__cell.&__icon.&__post-icon v-if = icon || $slots['icon']
 						+= self.slot('icon', {':icon': 'icon'})
-							< component &
-								v-if = iconComponent |
-								:instanceOf = bIcon |
-								:is = iconComponent |
-								:value = icon
-							.
-
-							< @b-icon v-else | :value = icon
+							< .g-icon v-icon:[icon]
 
 				- block progress
 					< _.&__cell.&__icon.&__progress v-if = progressIcon != null || $slots['progressIcon']
@@ -76,7 +67,7 @@
 								:is = progressIcon
 							.
 
-							< @b-progress-icon v-else
+							< b-progress-icon v-else
 
 		< template v-if = type === 'file'
 			< input.&__file &
