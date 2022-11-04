@@ -62,7 +62,7 @@
 		- block wrapper
 			< _.&__wrapper @click = focus
 				- block preIcon
-					< _.&__cell.&__icon.&__pre-icon v-if = vdom.getSlot('preIcon')
+					< _.&__cell.&__icon.&__pre-icon v-if = $slots['preIcon']
 						+= self.slot('preIcon', { &
 							':icon': 'preIcon',
 							':hint': 'preIconHint',
@@ -96,7 +96,7 @@
 							+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onSearchInput'}})
 
 				- block icon
-					< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')
+					< _.&__cell.&__icon.&__post-icon v-if = $slots['icon']
 						+= self.slot('icon', { &
 							':icon': 'icon',
 							':hint': 'iconHint',
@@ -127,7 +127,7 @@
 					< _.&__cell.&__icon.&__expand @click = open
 
 				- block progress
-					< _.&__cell.&__icon.&__progress v-if = progressIcon != null || vdom.getSlot('progressIcon')
+					< _.&__cell.&__icon.&__progress v-if = progressIcon != null || $slots['progressIcon']
 						+= self.slot('progressIcon', {':icon': 'progressIcon'})
 							< component &
 								v-if = Object.isString(progressIcon) |

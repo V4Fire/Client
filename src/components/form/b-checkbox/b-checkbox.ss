@@ -37,6 +37,6 @@
 								< _.&__check
 
 					- block label
-						< span.&__label v-if = label || vdom.getSlot('label')
+						< span.&__label v-if = label || $slots['label']
 							+= self.slot('label', {':label': 'label'})
 								{{ t(label) }}

@@ -24,7 +24,7 @@
 		- super
 
 		- block limit
-			< template v-if = vdom.getSlot('limit')
+			< template v-if = $slots['limit']
 				< _.&__limit
 					+= self.slot('limit', {':limit': 'limit', ':maxLength': 'maxLength'})
 

@@ -16,7 +16,7 @@
 	- block value
 
 	- block icon
-		< _.&__cell.&__icon v-if = vdom.getSlot('default')
+		< _.&__cell.&__icon v-if = $slots['default']
 			+= self.slot('default', {':icon': 'icon'})
 
 		< _.&__cell.&__icon v-else

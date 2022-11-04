@@ -357,7 +357,7 @@ export default class bTextarea extends iInputText {
 			return;
 		}
 
-		if (this.vdom.getSlot('limit') != null) {
+		if (this.$slots['limit'] != null) {
 			void this.forceUpdate();
 		}
 	}
