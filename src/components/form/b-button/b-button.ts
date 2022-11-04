@@ -12,21 +12,17 @@
  */
 
 import { derive } from 'core/functools/trait';
-
-import 'core/data';
+import DataProvider, { getDefaultRequestParams, base, get } from 'components/friends/data-provider';
 
 import type bForm from 'components/form/b-form/b-form';
+import type { HintPosition } from 'components/global/g-hint';
 
 import iProgress from 'components/traits/i-progress/i-progress';
 import iAccess from 'components/traits/i-access/i-access';
 import iVisible from 'components/traits/i-visible/i-visible';
 import iWidth from 'components/traits/i-width/i-width';
 import iSize from 'components/traits/i-size/i-size';
-
 import iOpenToggle, { CloseHelperEvents } from 'components/traits/i-open-toggle/i-open-toggle';
-import type { HintPosition } from 'components/global/g-hint/interface';
-
-import DataProvider, { getDefaultRequestParams, base, get } from 'components/friends/data-provider';
 
 import iData, {
 
@@ -54,9 +50,6 @@ DataProvider.addToPrototype(getDefaultRequestParams, base, get);
 
 interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 
-/**
- * Component to create a button
- */
 @component({
 	functional: {
 		dataProvider: undefined,
@@ -70,17 +63,17 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	override readonly dataProviderProp: string = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** @see [[iVisible.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
 	/**
-	 * A button' type to create. There can be values:
+	 * The type of button to create. There may be values:
 	 *
-	 * 1. `button` - simple button control;
-	 * 2. `submit` - button to send the tied form;
-	 * 3. `file` - button to open the file uploading dialog;
-	 * 4. `link` - hyperlink to the specified URL (to provide URL, use the `href` prop).
+	 * 1. `button` - a simple button control;
+	 * 2. `submit` - a button to submit data of the tied form;
+	 * 3. `file` - a button to open the file chooser dialog;
+	 * 4. `link` - a hyperlink to the specified URL (to specify a URL, use the `href` prop).
 	 *
 	 * @example
 	 * ```
@@ -103,7 +96,8 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly type: ButtonType = 'button';
 
 	/**
-	 * If the `type` prop is passed to `file`, this prop defines which file types are selectable in a file upload control
+	 * If the `type` prop is passed to `file`, this prop specifies which file types can be selected in
+	 * the file chooser dialog
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefaccept
 	 * @example
@@ -117,7 +111,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 
 	/**
 	 * If the `type` prop is passed to `link`, this prop contains a value for `<a href>`.
-	 * Otherwise, the prop includes a base URL for a data provider.
+	 * Otherwise, the prop includes a base URL for the component data provider.
 	 *
 	 * @example
 	 * ```
@@ -132,7 +126,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly href?: string;
 
 	/**
-	 * A data provider method to use if `dataProvider` or `href` props are passed
+	 * A data provider method used if `dataProvider` or `href` props are passed
 	 *
 	 * @example
 	 * ```
@@ -148,10 +142,10 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 
 	/**
 	 * A string specifying the `<form>` element with which the component is associated (that is, its form owner).
-	 * This string's value, if present, must match the id of a `<form>` element in the same document.
-	 * If this attribute isn't specified, the component is associated with the nearest containing form, if any.
+	 * This string value, if present, must match the id of a `<form>` element in the same document.
+	 * If this prop isn't specified, the component is associated with the nearest containing form, if any.
 	 *
-	 * The form prop lets you place a component anywhere in the document but have it included with a form elsewhere
+	 * This prop lets you place a component anywhere in the document but have it included with a form elsewhere
 	 * in the document.
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform
@@ -178,7 +172,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly tabIndex?: number;
 
 	/**
-	 * Icon to show before the button text
+	 * An icon to show before the button text
 	 *
 	 * @example
 	 * ```
@@ -190,7 +184,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly preIcon?: string;
 
 	/**
-	 * Name of the used component to show `preIcon`
+	 * The name of the used component to display `preIcon`
 	 *
 	 * @default `'b-icon'`
 	 * @example
@@ -203,7 +197,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly preIconComponent?: string;
 
 	/**
-	 * Icon to show after the button text
+	 * An icon to show after the button text
 	 *
 	 * @example
 	 * ```
@@ -215,7 +209,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly icon?: string;
 
 	/**
-	 * Name of the used component to show `icon`
+	 * The name of the used component to display `icon`
 	 *
 	 * @default `'b-icon'`
 	 * @example
@@ -242,7 +236,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly progressIcon?: string | boolean;
 
 	/**
-	 * Tooltip text to show during hover the cursor
+	 * Tooltip text to show on hover
 	 *
 	 * @example
 	 * ```
@@ -254,7 +248,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly hint?: string;
 
 	/**
-	 * Tooltip position to show during hover the cursor
+	 * Tooltip position to show on hover
 	 *
 	 * @see [[gHint]]
 	 * @example
@@ -267,7 +261,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly hintPos?: HintPosition;
 
 	/**
-	 * The way to show dropdown if the `dropdown` slot is provided
+	 * A way to show a dropdown if the 'dropdown' slot is provided
 	 * @see [[gHint]]
 	 *
 	 * @example
@@ -284,14 +278,14 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	readonly dropdown: string = 'bottom';
 
 	/**
-	 * Initial additional attributes are provided to an "internal" (native) button tag
+	 * Additional attributes that are provided to the native button
 	 * @see [[bButton.$refs.button]]
 	 */
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;
 
 	/**
-	 * Additional attributes are provided to an "internal" (native) button tag
+	 * Additional attributes that are provided to the native button
 	 *
 	 * @see [[bButton.attrsProp]]
 	 * @see [[bButton.$refs.button]]
@@ -332,14 +326,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	}
 
 	/**
-	 * List of selected files (works with the `file` type)
-	 */
-	get files(): CanUndef<FileList> {
-		return this.$refs.file?.files ?? undefined;
-	}
-
-	/**
-	 * True if the component has a dropdown area
+	 * True if the component has a dropdown
 	 */
 	get hasDropdown(): boolean {
 		return Boolean(
@@ -348,6 +335,13 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 				this.opt.ifOnce('opened', this.m.opened !== 'false') > 0 && delete this.reactiveModsStore.opened
 			)
 		);
+	}
+
+	/**
+	 * A list of selected files (only works with the `file` type)
+	 */
+	get files(): FileList | null {
+		return this.$refs.file?.files ?? null;
 	}
 
 	static override readonly mods: ModsDecl = {
@@ -374,7 +368,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	};
 
 	/**
-	 * If the `type` prop is passed to `file`, resets a file input
+	 * If the `type` prop is passed to `file`, resets the file input
 	 */
 	@wait('ready')
 	reset(): CanPromise<void> {
@@ -436,7 +430,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	}
 
 	/**
-	 * Handler: button trigger
+	 * Handler: there was a click on the component
 	 *
 	 * @param e
 	 * @emits `click(e: Event)`
@@ -477,7 +471,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	}
 
 	/**
-	 * Handler: changing a value of the file input
+	 * Handler: the file input value has changed
 	 *
 	 * @param e
 	 * @emits `change(result: InputEvent)`

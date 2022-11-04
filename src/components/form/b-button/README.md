@@ -10,11 +10,9 @@ This module provides a component to create a button.
 
 * The component is used as functional if there are no provided `dataProvider` and `href` props.
 
-* The component can be used as flyweight.
+* By default, the component root tag is `<span>`.
 
-* By default, the root tag of the component is `<span>`.
-
-* The component uses `aria` attributes.
+* The component uses Aria attributes.
 
 * The component supports tooltips.
 
@@ -22,9 +20,9 @@ This module provides a component to create a button.
 
 ## Modifiers
 
-| Name    | Description                                               | Values    | Default |
-|---------|-----------------------------------------------------------|-----------|---------|
-| `upper` | The component displays the text content in the upper case | `boolean` | -       |
+| Name    | Description                                          | Values    | Default |
+|---------|------------------------------------------------------|-----------|---------|
+| `upper` | The component displays the text content in uppercase | `boolean` | -       |
 
 Also, you can see the parent component and the component traits.
 
@@ -32,14 +30,14 @@ Also, you can see the parent component and the component traits.
 
 | EventName | Description                               | Payload description | Payload      |
 |-----------|-------------------------------------------|---------------------|--------------|
-| `click`   | Click to the component                    | `Event` object      | `Event`      |
+| `click`   | The component has been clicked            | `Event` object      | `Event`      |
 | `change`  | A list of selected files has been changed | `InputEvent` object | `InputEvent` |
 
 Also, you can see the parent component and the component traits.
 
 ## Usage
 
-The component has four base scenarios of usage:
+The component has four basic use cases.
 
 ### A simple button with a custom event handler
 
@@ -48,7 +46,7 @@ The component has four base scenarios of usage:
   Click on me!
 ```
 
-### A trigger for the tied form
+### A trigger for a form
 
 ```
 < b-form
@@ -59,7 +57,7 @@ The component has four base scenarios of usage:
     Submit
 ```
 
-### Uploading a file
+### A file uploader
 
 ```
 < b-button :type = 'file' | @onChange = console.log($event)
@@ -73,85 +71,85 @@ The component has four base scenarios of usage:
   Go to google
 ```
 
-### Providing a custom data provider
+### A trigger for a data provider
 
 ```
 /// Get data from a provider
 < b-button :dataProvider = 'MyProvider'
   Go
 
-/// Add data by using default provider and custom URL
+/// Add data by using the default provider and a custom URL
 < b-button :href = '/add-to-friend' | :method = 'add'
   Add to friend
 ```
 
 ## Slots
 
-The component supports a bunch of slots to provide:
+The component supports a bunch of slots to provide.
 
-1. `default` to provide the base content.
+1. `default` to provide the default content.
 
-```
-< b-button
-  Click on me!
-```
+   ```
+   < b-button
+     Click on me!
+   ```
 
 2. `dropdown` to provide additional dropdown content.
 
-```
-< b-button
-  < template #default
-    Click on me!
+   ```
+   < b-button
+     < template #default
+       Click on me!
 
-  < template #dropdown
-    Additional data
-```
+     < template #dropdown
+       Additional data
+   ```
 
-3. `preIcon` and `icon` to inject icons around the value block.
+3. `preIcon` and `icon` to inject icons around the text block.
 
-```
-< b-button
-  < template #preIcon
-    < img src = expand.svg
+   ```
+   < b-button
+     < template #preIcon
+       < img src = expand.svg
 
-  < template #default
-    Click on me!
-```
+     < template #default
+       Click on me!
+   ```
 
-Also, these icons can be provided by props.
+   Also, these icons can be provided by props.
 
-```
-< b-button :icon = 'expand'
-  Click on me!
+   ```
+   < b-button :icon = 'expand'
+     Click on me!
 
-< b-button :icon = 'expand' | :iconComponent = 'b-custom-icon'
-  Click on me!
+   < b-button :icon = 'expand' | :iconComponent = 'b-custom-icon'
+     Click on me!
 
-< b-button
-  < template #icon = {icon}
-    < img :src = icon
+   < b-button
+     < template #icon = {icon}
+       < img :src = icon
 
-  < template #default
-    Click on me!
-```
+     < template #default
+       Click on me!
+   ```
 
-4. `progressIcon` to inject an icon that indicates loading, by default, is used [[bProgressIcon]].
+4. `progressIcon` to inject an icon indicating loading, the default is [[bProgressIcon]].
 
-```
-< b-button
-  < template #progressIcon
-    < img src = spinner.svg
+   ```
+   < b-button
+     < template #progressIcon
+       < img src = spinner.svg
 
-  < template #default
-    Click on me!
-```
+     < template #default
+       Click on me!
+   ```
 
-Also, this icon can be provided by a prop.
+   Also, this icon can be provided by a prop.
 
-```
-< b-button :progressIcon = 'bCustomLoader'
-  Click on me!
-```
+   ```
+   < b-button :progressIcon = 'bCustomLoader'
+     Click on me!
+   ```
 
 ## API
 
@@ -161,12 +159,12 @@ Also, you can see the parent component and the component traits.
 
 #### [type = `'button'`]
 
-A button' type to create. There can be values:
+The type of button to create. There may be values:
 
-1. `button` - simple button control;
-2. `submit` - button to send the tied form;
-3. `file` - button to open the file uploading dialog;
-4. `link` - hyperlink to the specified URL (to provide URL, use the `href` prop).
+1. `button` - a simple button control;
+2. `submit` - a button to submit data of the tied form;
+3. `file` - a button to open the file chooser dialog;
+4. `link` - a hyperlink to the specified URL (to specify a URL, use the `href` prop).
 
 ```
 < b-button @click = console.log('boom!')
@@ -186,7 +184,7 @@ A button' type to create. There can be values:
 
 #### [accept]
 
-If the `type` prop is passed to `file`, this prop defines which file types are selectable in a file upload control.
+If the `type` prop is passed to `file`, this prop specifies which file types can be selected in the file chooser dialog
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefaccept).
 
 ```
@@ -197,7 +195,7 @@ If the `type` prop is passed to `file`, this prop defines which file types are s
 #### [href]
 
 If the `type` prop is passed to `link`, this prop contains a value for `<a href>`.
-Otherwise, the prop includes a base URL for a data provider.
+Otherwise, the prop includes a base URL for the component data provider.
 
 ```
 < b-button :type = 'link' | :href = 'https://google.com'
@@ -209,7 +207,7 @@ Otherwise, the prop includes a base URL for a data provider.
 
 #### [method = 'get']
 
-A data provider method to use if `dataProvider` or `href` props are passed.
+A data provider method used if `dataProvider` or `href` props are passed.
 
 ```
 < b-button :href = '/generate/user' | :method = 'put'
@@ -222,10 +220,10 @@ A data provider method to use if `dataProvider` or `href` props are passed.
 #### [form]
 
 A string specifying the `<form>` element with which the component is associated (that is, its form owner).
-This string's value, if present, must match the id of a `<form>` element in the same document.
-If this attribute isn't specified, the component is associated with the nearest containing form, if any.
+This string value, if present, must match the id of a `<form>` element in the same document.
+If this prop isn't specified, the component is associated with the nearest containing form, if any.
 
-The form prop lets you place a component anywhere in the document but have it included with a form elsewhere in the document.
+This prop lets you place a component anywhere in the document but have it included with a form elsewhere in the document.
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform).
 
 ```
@@ -248,7 +246,7 @@ An icon to show before the button text.
 
 #### [preIconComponent = `'b-icon'`]
 
-A name of the used component to show `preIcon`.
+The name of the used component to show `preIcon`.
 
 ```
 < b-button :preIconComponent = 'b-my-icon'
@@ -266,7 +264,7 @@ An icon to show after the button text.
 
 #### [iconComponent = `'b-icon'`]
 
-A name of the used component to show `icon`.
+The name of the used component to show `icon`.
 
 ```
 < b-button :iconComponent = 'b-my-icon'
@@ -285,7 +283,7 @@ Boolean, if needed to show progress by slot or `b-progress-icon`.
 
 #### [hint]
 
-A tooltip text to show during hover the cursor.
+Tooltip text to show on hover.
 
 ```
 < b-button :hint = 'Click on me!!!'
@@ -294,8 +292,7 @@ A tooltip text to show during hover the cursor.
 
 #### [hintPos]
 
-Tooltip position to show during hover the cursor.
-See [[gIcon]] for more information.
+Tooltip position to show on hover.
 
 ```
 < b-button :hint = 'Click on me!!!' | :hintPos = 'bottom-right'
@@ -304,7 +301,7 @@ See [[gIcon]] for more information.
 
 #### [dropdown = `'bottom'`]
 
-The way to show dropdown if the `dropdown` slot is provided.
+A way to show a dropdown if the 'dropdown' slot is provided.
 
 ```
 < b-button :dropdown = 'bottom-right'
@@ -317,7 +314,7 @@ The way to show dropdown if the `dropdown` slot is provided.
 
 #### [attrsProp]
 
-Initial additional attributes are provided to an "internal" (native) button tag.
+Additional attributes that are provided to the native button.
 
 ```
 < b-button :attrs = {'aria-label': 'Open contacts'}
@@ -328,18 +325,18 @@ Initial additional attributes are provided to an "internal" (native) button tag.
 
 #### attrs
 
-Additional attributes are provided to an "internal" (native) button tag.
+Additional attributes that are provided to the native button.
 
 #### hasDropdown
 
-True if the component has a dropdown area.
+True if the component has a dropdown.
 
 #### files
 
-A list of selected files (works with the `file` type).
+A list of selected files (only works with the `file` type).
 
 ### Methods
 
 #### reset
 
-If the `type` prop is passed to `file`, resets a file input.
+f the `type` prop is passed to `file`, resets the file input.

@@ -353,7 +353,7 @@ export default class bTextarea extends iInputText {
 	 */
 	@watch('value')
 	protected syncLimitSlotWatcher(): void {
-		if (this.isNotRegular) {
+		if (this.isFunctional) {
 			return;
 		}
 

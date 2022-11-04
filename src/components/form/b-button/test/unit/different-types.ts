@@ -104,7 +104,7 @@ test.describe('<b-button> passing the `type` prop as', () => {
 				]);
 			});
 
-			test('when a file is selected, the component should emit the native `change` event', async () => {
+			test('when a file is selected, the component should emit the `change` event', async () => {
 				await test.expect(changeEventPr).resolves.toBeUndefined();
 			});
 
