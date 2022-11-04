@@ -1,16 +1,16 @@
 # components/global/g-hint
 
-This module provides a mixin to create tooltips or hints.
+This module provides a Stylus mixin for creating tooltips.
 
 ## Synopsis
 
-* This module provides a global Styl mixin, not a component.
+* This module provides a global Stylus mixin, not a component.
 
 ## Usage
 
-There are different ways to use this mixin:
+There are different ways to use this mixin.
 
-### Tooltip based on pseudo attributes
+### Embedded tooltip styles based on data attributes
 
 ```
 - namespace [%fileName%]
@@ -19,7 +19,7 @@ There are different ways to use this mixin:
 
 - template index() extends ['i-block'].index
   - block body
-    /// The "pos" modifier shows the way to position a hint
+    /// The "pos" modifier indicates how the tooltip should be placed
     < .&__hint.&_pos_right data-hint = Hello world
 ```
 
@@ -32,13 +32,13 @@ $p = {
 
 b-example
   g-hint({
-    // Selector to a hint container
+    // Selector to the hint container
     location: "&__hint"
 
     // Selector to show the hint
     showOn: '&:hover',
 
-    // From which attribute take a text to show
+    // From which attribute to take the text for display
     dataAttr: 'data-hint'
 
     contentStyles: {
@@ -49,9 +49,9 @@ b-example
   })
 ```
 
-### Global flyweight tooltip is based on pseudo attributes
+### Global tooltip styles based on data attributes
 
-Just add `g-hint` classes to any node and provide the hint message into the `data-hint` attribute.
+Just add the `g-hint` classes to any node and provide a hint message in the `data-hint` attribute.
 
 ```
 - namespace [%fileName%]
@@ -64,7 +64,7 @@ Just add `g-hint` classes to any node and provide the hint message into the `dat
       Hover me!
 ```
 
-Mind, you need to enable `globalHintHelpers` into your root component styles.
+Keep in mind you need to enable `globalHintHelpers` in the styles of the root component.
 
 ```stylus
 @import "components/super/i-static-page/i-static-page.styl"
@@ -76,7 +76,7 @@ $p = {
 p-root extends i-static-page
 ```
 
-### Tooltip bases on an HTML layout
+### Embedded tooltip styles based on HTML layout
 
 ```
 - namespace [%fileName%]
@@ -103,22 +103,22 @@ b-example
     transition opacity 1s
 
   g-hint({
-    // Selector to a hint container
+    // Selector to the hint container
     location: "&__dropdown"
 
-    // Selector to show a hint
+    // Selector to show the hint
     showOn: '&__button:hover + &__dropdown'
 
-    // Hide a hint by default
+    // Hide the hint by default
     hidden: true,
 
-    // CSS rules to hide a hint
+    // CSS rules to hide the hint
     hideStyles: {
       opacity: 0,
       height: 0
     }
 
-    // CSS rules to show a hint
+    // CSS rules to show the hint
     showSyles: {
       opacity: 1
       height: auto
@@ -128,61 +128,61 @@ b-example
 
 ## Variation of position modifiers
 
-You can manage the position of a hint by using the `pos` modifier.
+You can manage the position of the tooltip using the `pos` modifier.
 
 ```typescript
 type HintPosition =
 //     v
-// Hint message
+// A hint message
 'top' |
 
 // v
-// Hint message
+// A hint message
 'top-left' |
 
 //            v
-// Hint message
+// A hint message
 'top-right' |
 
-//   Hint message
+//   A hint message
 // > ...
 //   ...
 'left' |
 
-// > Hint message
+// > A hint message
 //   ...
 //   ...
 'left-top' |
 
-//   Hint message
+//   A hint message
 //   ...
 // > ...
 'left-bottom' |
 
-// Hint message
+// A hint message
 // ...          <
 // ...
 'right' |
 
-// Hint message <
+// A hint message <
 // ...
 // ...
 'right-top' |
 
-// Hint message
+// A hint message
 // ...
 // ...          <
 'right-bottom' |
 
-// Hint message
+// A hint message
 //     v
 'bottom' |
 
-// Hint message
+// A hint message
 // v
 'bottom-left' |
 
-// Hint message
+// A hint message
 //            v
 'bottom-right';
 ```

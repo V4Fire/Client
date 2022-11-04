@@ -13,55 +13,55 @@
  */
 export type HintPosition =
 	//     v
-	// Hint message
+	// A hint message
 	'top' |
 
 	// v
-	// Hint message
+	// A hint message
 	'top-left' |
 
 	//            v
-	// Hint message
+	// A hint message
 	'top-right' |
 
-	//   Hint message
+	//   A hint message
 	// > ...
 	//   ...
 	'left' |
 
-	// > Hint message
+	// > A hint message
 	//   ...
 	//   ...
 	'left-top' |
 
-	//   Hint message
+	//   A hint message
 	//   ...
 	// > ...
 	'left-bottom' |
 
-	// Hint message
+	// A hint message
 	// ...          <
 	// ...
 	'right' |
 
-	// Hint message <
+	// A hint message <
 	// ...
 	// ...
 	'right-top' |
 
-	// Hint message
+	// A hint message
 	// ...
 	// ...          <
 	'right-bottom' |
 
-	// Hint message
+	// A hint message
 	//     v
 	'bottom' |
 
-	// Hint message
+	// A hint message
 	// v
 	'bottom-left' |
 
-	// Hint message
+	// A hint message
 	//            v
 	'bottom-right';
