@@ -16,12 +16,3 @@ getGlobalFont($type = "")
 
 	else
 		unquote(replace("%t", "", BASE_FONT_PATTERN))
-
-/**
- * @see getGlobalFont
- * @deprecated
- * @param {string} [$type]
- */
-execFontPattern($type = "")
-	warn("`execFontPattern` function is deprecated. Please, use `getGlobalFont` as an alternative.")
-	getGlobalFont($type)
