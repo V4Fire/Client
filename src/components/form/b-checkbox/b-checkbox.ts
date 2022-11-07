@@ -48,9 +48,6 @@ export { Value, FormValue };
 export const
 	$$ = symbolGenerator();
 
-/**
- * Component to create a checkbox
- */
 @component({
 	functional: {
 		dataProvider: undefined
@@ -64,7 +61,7 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/**
 	 * If true, the component is checked by default.
-	 * Also, it will be checked after resetting.
+	 * Also, it will still be checked after the value reset.
 	 */
 	@prop(Boolean)
 	override readonly defaultProp: boolean = false;
@@ -129,6 +126,7 @@ export default class bCheckbox extends iInput implements iSize {
 	@prop(Boolean)
 	readonly changeable: boolean = true;
 
+	@computed({dependencies: ['mods.checked']})
 	override get value(): this['Value'] {
 		const
 			{checked} = this.mods;

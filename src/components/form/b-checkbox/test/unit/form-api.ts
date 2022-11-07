@@ -8,23 +8,37 @@
 
 import type { JSHandle, Page } from 'playwright';
 
-import test from 'tests/config/unit/test';
+import type * as DOM from 'components/friends/dom';
+import type * as Block from 'components/friends/block';
 
 import Component from 'tests/helpers/component';
-
 import type bCheckbox from 'components/form/b-checkbox/b-checkbox';
 
-test.describe('b-checkbox form API', () => {
+import test from 'tests/config/unit/test';
+import Utils from 'tests/helpers/utils';
+
+test.describe('<b-checkbox> form API', () => {
 	const
 		q = '[data-id="target"]';
 
-	test.beforeEach(async ({demoPage}) => {
+	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
+
+		const
+			DOMAPI = await Utils.import<typeof DOM>(page, 'components/friends/dom'),
+			BlockAPI = await Utils.import<typeof Block>(page, 'components/friends/block');
+
+		await DOMAPI.evaluate((ctx) => {
+			ctx.default.addToPrototype(ctx.getComponent);
+		});
+
+		await BlockAPI.evaluate((ctx) => {
+			ctx.default.addToPrototype(ctx.element);
+		});
 	});
 
-	test('validation', async ({page}) => {
-		const
-			target = await init(page);
+	test('component value validation', async ({page}) => {
+		const target = await renderCheckbox(page);
 
 		test.expect(await target.evaluate((ctx) => ctx.validate()))
 			.toEqual({validator: 'required', error: false, msg: 'Required field'});
@@ -38,8 +52,8 @@ test.describe('b-checkbox form API', () => {
 			.toBe(true);
 	});
 
-	test('getting a form value', async ({page}) => {
-		const target = await init(page);
+	test('getting component value from `formValue`', async ({page}) => {
+		const target = await renderCheckbox(page);
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.formValue)
@@ -58,8 +72,8 @@ test.describe('b-checkbox form API', () => {
 		).toBeUndefined();
 	});
 
-	test('getting a group form value', async ({page}) => {
-		const target = await init(page, {value: 'foo'});
+	test('getting component group value from `groupFormValue`', async ({page}) => {
+		const target = await renderCheckbox(page, {value: 'foo'});
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.groupFormValue)
@@ -84,9 +98,8 @@ test.describe('b-checkbox form API', () => {
 		).toEqual(['foo']);
 	});
 
-	test('resetting a checkbox without the default value', async ({page}) => {
-		const
-			target = await init(page, {checked: true});
+	test('resetting the checkbox with no default value', async ({page}) => {
+		const target = await renderCheckbox(page, {checked: true});
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.value)
@@ -99,9 +112,22 @@ test.describe('b-checkbox form API', () => {
 		).toBeUndefined();
 	});
 
-	test('clearing a checkbox without the default value', async ({page}) => {
-		const
-			target = await init(page, {checked: true});
+	test('resetting the checkbox with the default value', async ({page}) => {
+		const target = await renderCheckbox(page, {default: true});
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.value)
+		).toBe(true);
+
+		await target.evaluate((ctx) => ctx.reset());
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.value)
+		).toBe(true);
+	});
+
+	test('clearing the checkbox with no default value', async ({page}) => {
+		const target = await renderCheckbox(page, {checked: true});
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.value)
@@ -114,26 +140,11 @@ test.describe('b-checkbox form API', () => {
 		).toBeUndefined();
 	});
 
-	test('resetting a checkbox with the default value', async ({page}) => {
-		const
-			target = await init(page, {default: true});
-
-		test.expect(
-			await target.evaluate((ctx) => ctx.value)
-		).toBe(true);
-
-		await target.evaluate((ctx) => ctx.reset());
-
-		test.expect(
-			await target.evaluate((ctx) => ctx.value)
-		).toBe(true);
-	});
-
 	/**
 	 * @param page
 	 * @param attrs
 	 */
-	async function init(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bCheckbox>> {
+	async function renderCheckbox(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bCheckbox>> {
 		await Component.createComponent(page, 'b-checkbox', [
 			{
 				attrs: {
