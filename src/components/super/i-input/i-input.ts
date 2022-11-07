@@ -62,20 +62,7 @@ export * from 'components/super/i-input/interface';
 export const
 	$$ = symbolGenerator();
 
-/**
- * Superclass for all form components
- */
-@component({
-	model: {
-		prop: 'valueProp',
-		event: 'onChange'
-	},
-
-	deprecatedProps: {
-		dataType: 'formValueConverter'
-	}
-})
-
+@component()
 export default abstract class iInput extends iData implements iVisible, iAccess {
 	/**
 	 * Type: component value
@@ -87,7 +74,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	readonly FormValue!: FormValue;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** @see [[iVisible.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -304,7 +291,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Previous component value
 	 */
-	@system({replace: false})
+	@system()
 	prevValue?: this['Value'];
 
 	override get unsafe(): UnsafeGetter<UnsafeIInput<this>> {
@@ -624,29 +611,17 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	protected attrs?: Dictionary;
 
 	/** @see [[iInput.info]] */
-	@system({
-		replace: false,
-		init: (o) => o.sync.link()
-	})
-
+	@system((o) => o.sync.link())
 	protected infoStore?: string;
 
 	/** @see [[iInput.error]] */
-	@system({
-		replace: false,
-		init: (o) => o.sync.link()
-	})
-
+	@system((o) => o.sync.link())
 	protected errorStore?: string;
 
 	protected override readonly $refs!: {input?: HTMLInputElement};
 
 	/** @see [[iInput.value]] */
-	@field<iInput>({
-		replace: false,
-		init: (o) => o.sync.link((val) => o.resolveValue(val))
-	})
-
+	@field<iInput>((o) => o.sync.link((val) => o.resolveValue(val)))
 	protected valueStore!: unknown;
 
 	/**
