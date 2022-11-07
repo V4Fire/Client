@@ -1,7 +1,7 @@
 # components/form/b-checkbox
 
 This module provides a component to create a checkbox.
-Checkboxes can be combined in groups with a feature of the multiple checking.
+Checkboxes can be combined into groups with a feature of the multiple checks.
 
 ## Synopsis
 
@@ -11,9 +11,7 @@ Checkboxes can be combined in groups with a feature of the multiple checking.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
-* The component can be used as flyweight.
-
-* By default, the root tag of the component is `<span>`.
+* By default, the component root tag is `<span>`.
 
 * The component contains an `<input>` tag within.
 
@@ -29,11 +27,11 @@ Also, you can see the [[iSize]] trait and the [[iInput]] component.
 
 ## Events
 
-| EventName      | Description                                                       | Payload description                                                      | Payload         |
-|----------------|-------------------------------------------------------------------|--------------------------------------------------------------------------|-----------------|
-| `check`        | The checkbox has been checked                                     | Type of checking (`indeterminate` if not all child checkbox are checked) | `CheckType`     |
-| `uncheck`      | The checkbox has been unchecked                                   | -                                                                        | -               |
-| `actionChange` | A value of the component has been changed due to some user action | Component value                                                          | `this['Value']` |
+| EventName      | Description                                                  | Payload description                                                   | Payload         |
+|----------------|--------------------------------------------------------------|-----------------------------------------------------------------------|-----------------|
+| `check`        | The checkbox has been checked                                | Checking type (`indeterminate` if not all child checkbox are checked) | `CheckType`     |
+| `uncheck`      | The checkbox has been unchecked                              | -                                                                     | -               |
+| `actionChange` | The component value has been changed due to some user action | A new component value                                                 | `this['Value']` |
 
 Also, you can see the [[iSize]] trait and the [[iInput]] component.
 
@@ -55,7 +53,7 @@ Also, you can see the [[iSize]] trait and the [[iInput]] component.
 
 ### Providing a label
 
-You free to use any ways to define a label.
+You can use any label definition method.
 
 ```
 < b-checkbox :name = 'adult' | :label = 'Are you over 18?'
@@ -85,11 +83,11 @@ To group checkboxes, use the same name.
 < b-checkbox :dataProvider = 'AdultProvider'
 ```
 
-If a provider returns a dictionary, it will be mapped on the component
-(you can pass the complex property path using dots as separators).
+If the provider returns a dictionary, it will be mapped on the component
+(you can pass a complex property path using dots as determiners).
 
-If a key from the response is matched with a component method, this method will be invoked with a value from this key
-(if the value is an array, it will be spread to the method as arguments).
+If any key from the response matches a component method, that method will be called with the value from that key.
+(if the value is an array, it will be passed to the method as arguments).
 
 ```
 {
@@ -99,28 +97,28 @@ If a key from the response is matched with a component method, this method will 
 }
 ```
 
-In other cases, the response value is interpreted as a component value.
+In other cases, the response value is interpreted as the component value.
 
 ## Slots
 
-The component supports a few of slots to provide:
+The component supports multiple slots to provide.
 
 1. `check` to provide checkbox UI.
 
-```
-< b-checkbox
-  < template #check = {ctx}
-    < .check-ui :data-status = ctx.mods.checked
-```
+   ```
+   < b-checkbox
+     < template #check = {ctx}
+       < .check-ui :data-status = ctx.mods.checked
+   ```
 
 2. `label` to provide label UI.
 
-```
-< b-checkbox
-  < template #label = {label}
-    < .label
-      {{ label }}
-```
+   ```
+   < b-checkbox
+     < template #label = {label}
+       < .label
+         {{ label }}
+   ```
 
 ## API
 
@@ -131,7 +129,7 @@ Also, you can see the [[iSize]] trait and the [[iInput]] component.
 #### [default = false]
 
 If true, the component is checked by default.
-Also, it will be checked after resetting.
+Also, it will still be checked after the `reset` method is called.
 
 ```
 < b-checbox :name = 'bar' | :default = true
@@ -139,8 +137,8 @@ Also, it will be checked after resetting.
 
 #### [parentId]
 
-An identifier of the "parent" checkbox.
-Use this prop to organize a hierarchy of checkboxes. Checkboxes of the same level must have the same `name`.
+The identifier of the "parent" checkbox.
+Use this prop to organize the checkbox hierarchy. Checkboxes of the same level must have the same `name`.
 
 ```
 - [-]
@@ -151,8 +149,8 @@ Use this prop to organize a hierarchy of checkboxes. Checkboxes of the same leve
     - [X]
 ```
 
-When you click a parent checkbox, all children will be checked or unchecked.
-When you click a child, the parent checkbox will be
+When you click on a parent checkbox, all child elements will be checked or unchecked.
+When you click on a child checkbox, the parent checkbox will be
   * checked as `'indeterminate'` - if not all checkboxes with the same `name` are checked;
   * unchecked - if all checkboxes with the same `name` are checked.
 
@@ -184,11 +182,12 @@ When you click a child, the parent checkbox will be
 
 #### [label]
 
-A checkbox' label text. Basically, it outputs somewhere in the component layout.
+The checkbox label text.
+Basically, it's rendered somewhere in the component layout.
 
 #### [changeable = `true`]
 
-If true, the checkbox can be unchecked directly after the first check.
+If true, the checkbox can be unchecked immediately after the first check.
 
 ```
 < b-checbox :name = 'bar' | :changeable = false | :checked = true
@@ -217,7 +216,7 @@ The method returns a new value.
 
 ### Validation
 
-Because the component extends from [[iInput]], it supports validation API.
+Since the component extends from [[iInput]], it supports the validation API.
 
 ```
 < b-checkbox :name = 'adult' | :validators = ['required'] | @validationEnd = handler

@@ -61,14 +61,14 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/**
 	 * If true, the component is checked by default.
-	 * Also, it will still be checked after the value reset.
+	 * Also, it will still be checked after the `reset` method is called.
 	 */
 	@prop(Boolean)
 	override readonly defaultProp: boolean = false;
 
 	/**
-	 * An identifier of the "parent" checkbox.
-	 * Use this prop to organize a hierarchy of checkboxes. Checkboxes of the same level must have the same `name`.
+	 * The identifier of the "parent" checkbox.
+	 * Use this prop to organize the checkbox hierarchy. Checkboxes of the same level must have the same `name`.
 	 *
 	 * ```
 	 * - [-]
@@ -79,8 +79,8 @@ export default class bCheckbox extends iInput implements iSize {
 	 *     - [X]
 	 * ```
 	 *
-	 * When you click a parent checkbox, all children will be checked or unchecked.
-	 * When you click a child, the parent checkbox will be
+	 * When you click on a parent checkbox, all child elements will be checked or unchecked.
+	 * When you click on a child checkbox, the parent checkbox will be
 	 *   * checked as `'indeterminate'` - if not all checkboxes with the same `name` are checked;
 	 *   * unchecked - if all checkboxes with the same `name` are checked.
 	 *
@@ -115,13 +115,14 @@ export default class bCheckbox extends iInput implements iSize {
 	readonly parentId?: string;
 
 	/**
-	 * A checkbox' label text. Basically, it outputs somewhere in the component layout.
+	 * The checkbox label text.
+	 * Basically, it's rendered somewhere in the component layout.
 	 */
 	@prop({type: String, required: false})
 	readonly label?: string;
 
 	/**
-	 * If true, the checkbox can be unchecked directly after the first check
+	 * If true, the checkbox can be unchecked immediately after the first check
 	 */
 	@prop(Boolean)
 	readonly changeable: boolean = true;
@@ -274,7 +275,7 @@ export default class bCheckbox extends iInput implements iSize {
 	}
 
 	/**
-	 * Returns a modifier value by the component value
+	 * Converts the component value to the `checked` modifier value and returns it
 	 * @param value
 	 */
 	protected convertValueToChecked(value: Value): boolean | string {
@@ -306,7 +307,7 @@ export default class bCheckbox extends iInput implements iSize {
 	}
 
 	/**
-	 * Handler: checkbox trigger
+	 * Handler: the checkbox has been clicked
 	 *
 	 * @param e
 	 * @emits `actionChange(value: this['Value'])`
@@ -322,7 +323,7 @@ export default class bCheckbox extends iInput implements iSize {
 	}
 
 	/**
-	 * Handler: checkbox change
+	 * Handler: the checkbox has changed
 	 *
 	 * @param e
 	 * @emits `check(type:` [[CheckType]]`)`

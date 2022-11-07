@@ -8,24 +8,33 @@
 
 import type { Page } from 'playwright';
 
-import test from 'tests/config/unit/test';
-
-import Component from 'tests/helpers/component';
+import type * as DOM from 'components/friends/dom';
 
 import type { ComponentElement } from 'core/component';
-
 import type bCheckbox from 'components/form/b-checkbox/b-checkbox';
 
-test.describe('b-checkbox hierarchical groups', () => {
-	test.beforeEach(async ({demoPage}) => {
+import test from 'tests/config/unit/test';
+import Component from 'tests/helpers/component';
+import Utils from 'tests/helpers/utils';
+
+test.describe('<b-checkbox> hierarchical groups', () => {
+	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
+
+		const
+			DOMAPI = await Utils.import<typeof DOM>(page, 'components/friends/dom');
+
+		await DOMAPI.evaluate((ctx) => {
+			ctx.default.addToPrototype(ctx.getComponent);
+		});
+
 	});
 
-	test('checking the root checkbox', async ({page}) => {
+	test('clicking on the root checkbox should select or deselect all checkboxes in the group', async ({page}) => {
 		const
-			target = await init(page);
+			root = await renderCheckboxes(page);
 
-		test.expect(await target.evaluate(switcher, 'root')).toEqual([
+		test.expect(await root.evaluate(switcher, 'root')).toEqual([
 			['root', true, 'true', true],
 			['foo', true, 'true', 'foo'],
 			['foo2', true, 'true', true],
@@ -34,7 +43,7 @@ test.describe('b-checkbox hierarchical groups', () => {
 			['baz', true, 'true', true]
 		]);
 
-		test.expect(await target.evaluate(switcher, 'root')).toEqual([
+		test.expect(await root.evaluate(switcher, 'root')).toEqual([
 			['root', false, 'false', undefined],
 			['foo', false, 'false', undefined],
 			['foo2', false, 'false', undefined],
@@ -44,11 +53,11 @@ test.describe('b-checkbox hierarchical groups', () => {
 		]);
 	});
 
-	test('checking the middle-level checkbox', async ({page}) => {
+	test('clicking on the middle checkbox should select or deselect all nested checkboxes', async ({page}) => {
 		const
-			target = await init(page);
+			root = await renderCheckboxes(page);
 
-		test.expect(await target.evaluate(switcher, 'foo')).toEqual([
+		test.expect(await root.evaluate(switcher, 'foo')).toEqual([
 			['root', false, 'indeterminate', undefined],
 			['foo', true, 'true', 'foo'],
 			['foo2', false, 'false', undefined],
@@ -57,7 +66,7 @@ test.describe('b-checkbox hierarchical groups', () => {
 			['baz', false, 'false', undefined]
 		]);
 
-		test.expect(await target.evaluate(switcher, 'foo')).toEqual([
+		test.expect(await root.evaluate(switcher, 'foo')).toEqual([
 			['root', false, 'false', undefined],
 			['foo', false, 'false', undefined],
 			['foo2', false, 'false', undefined],
@@ -67,9 +76,9 @@ test.describe('b-checkbox hierarchical groups', () => {
 		]);
 	});
 
-	test('checking different checkboxes', async ({page}) => {
+	test('clicking on different checkboxes', async ({page}) => {
 		const
-			target = await init(page);
+			target = await renderCheckboxes(page);
 
 		test.expect(await target.evaluate(switcher, 'bla')).toEqual([
 			['root', false, 'indeterminate', undefined],
@@ -99,10 +108,8 @@ test.describe('b-checkbox hierarchical groups', () => {
 		]);
 	});
 
-	/**
-	 * @param page
-	 */
-	async function init(page: Page) {
+	/** @param page */
+	async function renderCheckboxes(page: Page) {
 		await Component.createComponents(page, 'b-checkbox', [
 				{
 					attrs: {
@@ -176,19 +183,18 @@ test.describe('b-checkbox hierarchical groups', () => {
 	 * @param ctx
 	 * @param id
 	 */
-	function switcher(ctx: bCheckbox, id: string = 'foo'): Array<[string | undefined, boolean, string | undefined, boolean | string | undefined]> {
-		const {$el} = ctx.r;
-
-		(<ComponentElement<bCheckbox>>$el!.querySelector(`[data-id="${id}"]`)).component?.toggle();
+	function switcher(ctx: bCheckbox, id: string = 'foo'): Array<[CanUndef<string>, boolean, CanUndef<string>, CanUndef<boolean | string>]> {
+		const $el = ctx.r.$el!;
+		(<ComponentElement<bCheckbox>>$el.querySelector(`[data-id="${id}"]`)).component?.toggle();
 
 		const
-			els = Array.from<Required<ComponentElement<bCheckbox>>>($el!.querySelectorAll('.b-checkbox'));
+			els = Array.from<Required<ComponentElement<bCheckbox>>>($el.querySelectorAll('.b-checkbox'));
 
 		return els.map(({component}) => [
 			component.id,
 			component.isChecked,
 			component.mods.checked,
-			<string | boolean | undefined>component.value
+			<CanUndef<boolean | string>>component.value
 		]);
 	}
 });

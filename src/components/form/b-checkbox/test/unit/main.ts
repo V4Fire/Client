@@ -84,7 +84,7 @@ test.describe('<b-checkbox>', () => {
 		).toBeUndefined();
 	});
 
-	test('the component should change its value on click', () => {
+	test.describe('the component should change its value on click', () => {
 		test('if the component does not have the `value` prop, then when it is selected, it will have a value equal to true - otherwise undefined', async ({page}) => {
 			const target = await renderCheckbox(page);
 
@@ -146,7 +146,7 @@ test.describe('<b-checkbox>', () => {
 		});
 	});
 
-	test('the component should change its value when calling special methods', () => {
+	test.describe('the component should change its value when calling special methods', () => {
 		test('if the component does not have the `value` prop, then when it is selected, it will have a value equal to true - otherwise undefined', async ({page}) => {
 			const target = await renderCheckbox(page);
 
