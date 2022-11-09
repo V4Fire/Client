@@ -201,7 +201,7 @@ This works because all providers override the default `valueOf` method for data 
 #### `dbConverter`
 
 Each child `iData` instance has a property that can transform the data from the provider before it is stored in `db`.
-You can pass a function or a list of functions to be applied to the provider data.
+You can pass a function or an iterable of functions to be applied to the provider data.
 
 ```
 < b-example :dataProvider = 'myData' | :dbConverter = convertToComponent
@@ -216,7 +216,7 @@ You can handle this situation using `sync.link` and `initRemoteData`. See the [[
 `initRemoteData` is a function that is called every time `db` is changed.
 You can override it in your component to apply the `db` data to the component field.
 Finally, each child `iData` instance has a property that can convert the data from the `db` format to a more appropriate bean field format.
-You can pass a function or a list of functions that will be applied to `db`.
+You can pass a function or an iterable of functions that will be applied to `db`.
 
 ```typescript
 import iData, { component, prop, field } from 'components/super/i-data/i-data';

@@ -68,16 +68,41 @@ abstract class iDataData extends iBlock {
 
 	/**
 	 * Remote data converter(s).
-	 * This function (or a list of functions) transforms the original provider data before storing it to `db`.
+	 * This function (or an iterable of functions) transforms the original provider data before storing it to `db`.
 	 */
-	@prop({type: [Function, Array], required: false})
-	readonly dbConverter?: CanArray<ComponentConverter>;
+	@prop({
+		type: Object,
+		validator: (val) => Object.isFunction(val) || Object.isIterable(val),
+		required: false
+	})
+
+	readonly dbConverter?: CanIter<ComponentConverter>;
 
 	/**
-	 * Converter(s) from the raw `db` to the component fields
+	 * A list of remote data converters.
+	 * These functions step by step transform the original provider data before storing it in `db`.
+	 * @see [[iDataProvider.dbConverter]]
 	 */
-	@prop({type: [Function, Array], required: false})
-	readonly componentConverter?: CanArray<ComponentConverter>;
+	@system((o) => o.sync.link('dbConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	dbConverters!: ComponentConverter[];
+
+	/**
+	 * Converter(s) from the raw `db` to the component field
+	 */
+	@prop({
+		type: Object,
+		validator: (val) => Object.isFunction(val) || Object.isIterable(val),
+		required: false
+	})
+
+	readonly componentConverter?: CanIter<ComponentConverter>;
+
+	/**
+	 * A list of converters from the raw `db` to the component field
+	 * @see [[iDataProvider.componentConverterProp]]
+	 */
+	@system((o) => o.sync.link('componentConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	componentConverters!: ComponentConverter[];
 
 	/**
 	 * A function to filter all "default" requests: all requests that were created implicitly, as the initial
@@ -171,34 +196,32 @@ abstract class iDataData extends iBlock {
 	protected convertDataToDB<O>(data: unknown): O;
 	protected convertDataToDB(data: unknown): this['DB'];
 	protected convertDataToDB<O>(data: unknown): O | this['DB'] {
+		const
+			{dbConverters} = this;
+
 		let
-			val = data;
+			convertedData = data;
 
-		if (this.dbConverter != null) {
-			const
-				converters = Array.concat([], this.dbConverter);
+		if (dbConverters.length > 0) {
+			const rawData = Object.isArray(convertedData) || Object.isDictionary(convertedData) ?
+				convertedData.valueOf() :
+				convertedData;
 
-			if (converters.length > 0) {
-				val = Object.isArray(val) || Object.isDictionary(val) ? val.valueOf() : val;
-
-				converters.forEach((converter) => {
-					val = converter.call(this, val, this);
-				});
-			}
+			convertedData = dbConverters.reduce((val, converter) => converter(val, Object.cast(this)), rawData);
 		}
 
 		const
 			{db, checkDBEquality} = this;
 
 		const canKeepOldData = Object.isFunction(checkDBEquality) ?
-			Object.isTruly(checkDBEquality.call(this, val, db)) :
-			checkDBEquality && Object.fastCompare(val, db);
+			Object.isTruly(checkDBEquality.call(this, convertedData, db)) :
+			checkDBEquality && Object.fastCompare(convertedData, db);
 
 		if (canKeepOldData) {
 			return <O | this['DB']>db;
 		}
 
-		return <O | this['DB']>val;
+		return <O | this['DB']>convertedData;
 	}
 
 	/**
@@ -206,23 +229,21 @@ abstract class iDataData extends iBlock {
 	 * @param data
 	 */
 	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
+		const
+			{componentConverters} = this;
+
 		let
-			val = data;
+			convertedData = data;
 
-		if (this.componentConverter) {
-			const
-				converters = Array.concat([], this.componentConverter);
+		if (componentConverters.length > 0) {
+			const rawData = Object.isArray(convertedData) || Object.isDictionary(convertedData) ?
+				convertedData.valueOf() :
+				convertedData;
 
-			if (converters.length > 0) {
-				val = Object.isArray(val) || Object.isDictionary(val) ? val.valueOf() : val;
-
-				converters.forEach((converter) => {
-					val = converter.call(this, val, this);
-				});
-			}
+			convertedData = componentConverters.reduce((val, converter) => converter(val, Object.cast(this)), rawData);
 		}
 
-		return <O | this['DB']>val;
+		return <O | this['DB']>convertedData;
 	}
 
 	/**

@@ -59,7 +59,6 @@ export default abstract class iData extends iDataHandlers {
 		}
 
 		const {
-			dataProvider,
 			async: $a
 		} = this;
 
@@ -100,9 +99,12 @@ export default abstract class iData extends iDataHandlers {
 				return res;
 			}
 
-			if (this.dataProvider != null && dataProvider == null) {
+			if (this.dataProviderProp != null && this.dataProvider == null) {
 				this.syncDataProviderWatcher(false);
 			}
+
+			const
+				{dataProvider} = this;
 
 			if (!opts.silent) {
 				this.componentStatus = 'loading';
@@ -133,9 +135,13 @@ export default abstract class iData extends iDataHandlers {
 								important: this.componentStatus === 'unloaded'
 							});
 
-							// Prefetch
-							void this.moduleLoader.load(...this.dependencies);
-							void this.state.initFromStorage();
+							if (this.dependencies.length > 0) {
+								void this.moduleLoader.load(...this.dependencies);
+							}
+
+							if (this.globalName != null) {
+								void this.state.initFromStorage();
+							}
 
 							return dataProvider.get(<RequestQuery>defParams[0], defParams[1]);
 						})

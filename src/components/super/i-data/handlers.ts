@@ -115,7 +115,7 @@ export default abstract class iDataHandlers extends iDataData {
 	 * @param [initLoad] - if false, there is no need to call `initLoad`
 	 */
 	@watch([
-		{path: 'dataProviderProp', provideArgs: false, immediate: true},
+		{path: 'dataProviderProp', provideArgs: false},
 		{path: 'dataProviderOptions', provideArgs: false}
 	])
 
