@@ -13,18 +13,17 @@ initialize re-rendering (if necessary).
 
 ### Props
 
-#### [dependenciesProp = `[]`]
+#### [dependenciesProp]
 
-A list of additional dependencies to load when the component is initializing.
+An iterable with additional dependencies to load when the component is initializing.
 
 ```typescript
-import iBlock, { component } from 'components/super/i-block/i-block';
-import type { Module } from 'components/friends/module-loader';
+import iBlock, { component, Module } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
   // Asynchronously load the following components
-  override dependenciesProp: Module[] = [
+  override dependenciesProp: Iterable<Module> = [
     {name: 'b-button', load: () => import('components/form/b-button')},
     {name: 'b-input', load: () => import('components/form/b-input')}
   ];

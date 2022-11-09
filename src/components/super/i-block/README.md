@@ -127,18 +127,17 @@ force-rendered from the keep-alive cache, but after that, the page will silently
 If true, the component is forced to re-render on reactivation.
 This parameter can be useful if you are using the keep-alive directive in your template.
 
-### [dependenciesProp = `[]`]
+### [dependenciesProp]
 
-A list of additional dependencies to load when the component is initializing
+An iterable with additional dependencies to load when the component is initializing.
 
 ```typescript
-import iBlock, { component } from 'components/super/i-block/i-block';
-import type { Module } from 'components/friends/module-loader';
+import iBlock, { component, Module } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
   // Asynchronously load the following components
-  override dependenciesProp: Module[] = [
+  override dependenciesProp: Iterable<Module> = [
     {name: 'b-button', load: () => import('components/form/b-button')},
     {name: 'b-input', load: () => import('components/form/b-input')}
   ];

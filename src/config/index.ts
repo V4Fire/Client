@@ -24,6 +24,5 @@ extend({
 		delay: 40
 	},
 
-	components: COMPONENTS,
-	componentStaticDependencies: {}
+	components: COMPONENTS
 });

@@ -83,7 +83,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly renderOnActivation: boolean = false;
 
 	/**
-	 * A list of additional dependencies to load when the component is initializing
+	 * An iterable with additional dependencies to load when the component is initializing
 	 *
 	 * @example
 	 * ```js
@@ -94,8 +94,14 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * }
 	 * ```
 	 */
-	@prop({type: Array, required: false})
-	readonly dependenciesProp: Module[] = [];
+	@prop({
+		type: Object,
+		// eslint-disable-next-line @typescript-eslint/unbound-method
+		validator: Object.isIterable,
+		required: false
+	})
+
+	readonly dependenciesProp?: Iterable<Module>;
 
 	/**
 	 * If true, the component is marked as a removed provider.

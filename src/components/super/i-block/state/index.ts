@@ -12,7 +12,6 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-import config from 'config';
 
 import type { BoundFn } from 'core/async';
 import { component, globalState, hook, Hook } from 'core/component';
@@ -34,11 +33,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * A list of additional dependencies to load when the component is initializing
 	 * @see [[iBlock.dependenciesProp]]
 	 */
-	@system((o) => o.sync.link((val) => {
-		const componentStaticDependencies = config.componentStaticDependencies[o.componentName];
-		return Array.concat([], componentStaticDependencies, val);
-	}))
-
+	@system((o) => o.sync.link((val: Iterable<Module>) => [...val]))
 	dependencies!: Module[];
 
 	/**

@@ -26,5 +26,4 @@ export interface Config extends SuperConfig {
 	};
 
 	components: typeof COMPONENTS;
-	componentStaticDependencies: Dictionary<Array<() => Promise<unknown>>>;
 }
