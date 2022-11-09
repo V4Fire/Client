@@ -276,7 +276,7 @@ export default class bExample extends iData {
 }
 ```
 
-### Init events
+### Initialization events
 
 | Name            | Description                                | Payload description                     | Payload                                   |
 |-----------------|--------------------------------------------|-----------------------------------------|-------------------------------------------|
