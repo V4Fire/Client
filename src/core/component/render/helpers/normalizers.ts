@@ -117,7 +117,7 @@ export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: 
 
 	Object.keys(attrs).forEach((name) => {
 		let
-			propKey = `${name}Prop`;
+			propKey = `${name}Prop`.camelize(false);
 
 		if (name === 'ref' || name === 'ref_for') {
 			return;
