@@ -21,13 +21,8 @@ test.describe('<b-checkbox> hierarchical groups', () => {
 	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
 
-		const
-			DOMAPI = await Utils.import<typeof DOM>(page, 'components/friends/dom');
-
-		await DOMAPI.evaluate((ctx) => {
-			ctx.default.addToPrototype(ctx.getComponent);
-		});
-
+		const DOMAPI = await Utils.import<typeof DOM>(page, 'components/friends/dom');
+		await DOMAPI.evaluate((ctx) => ctx.default.addToPrototype(ctx));
 	});
 
 	test('clicking on the root checkbox should select or deselect all checkboxes in the group', async ({page}) => {

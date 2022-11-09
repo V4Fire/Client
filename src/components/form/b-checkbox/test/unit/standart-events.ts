@@ -19,12 +19,8 @@ test.describe('<b-checkbox> standard component events', () => {
 	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
 
-		const
-			BlockAPI = await Utils.import<typeof Block>(page, 'components/friends/block');
-
-		await BlockAPI.evaluate((ctx) => {
-			ctx.default.addToPrototype(ctx.element);
-		});
+		const BlockAPI = await Utils.import<typeof Block>(page, 'components/friends/block');
+		await BlockAPI.evaluate((ctx) => ctx.default.addToPrototype(ctx));
 	});
 
 	test('the `change` event should be fired when the value of the component changes', async ({page}) => {

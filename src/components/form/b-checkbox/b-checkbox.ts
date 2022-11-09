@@ -11,10 +11,6 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/checkbox';
-//#endif
-
 import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 

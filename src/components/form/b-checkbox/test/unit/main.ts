@@ -23,12 +23,8 @@ test.describe('<b-checkbox>', () => {
 	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
 
-		const
-			BlockAPI = await Utils.import<typeof Block>(page, 'components/friends/block');
-
-		await BlockAPI.evaluate((ctx) => {
-			ctx.default.addToPrototype(ctx.element);
-		});
+		const BlockAPI = await Utils.import<typeof Block>(page, 'components/friends/block');
+		await BlockAPI.evaluate((ctx) => ctx.default.addToPrototype(ctx));
 	});
 
 	test('the component markup should have a <input type="checkbox"/> tag with the provided attributes', async ({page}) => {

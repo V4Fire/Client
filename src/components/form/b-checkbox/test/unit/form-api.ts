@@ -28,13 +28,8 @@ test.describe('<b-checkbox> form API', () => {
 			DOMAPI = await Utils.import<typeof DOM>(page, 'components/friends/dom'),
 			BlockAPI = await Utils.import<typeof Block>(page, 'components/friends/block');
 
-		await DOMAPI.evaluate((ctx) => {
-			ctx.default.addToPrototype(ctx.getComponent);
-		});
-
-		await BlockAPI.evaluate((ctx) => {
-			ctx.default.addToPrototype(ctx.element);
-		});
+		await DOMAPI.evaluate((ctx) => ctx.default.addToPrototype(ctx));
+		await BlockAPI.evaluate((ctx) => ctx.default.addToPrototype(ctx));
 	});
 
 	test('component value validation', async ({page}) => {
