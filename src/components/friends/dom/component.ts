@@ -20,7 +20,7 @@ import iBlock, { ComponentElement } from 'components/super/i-block/i-block';
  * console.log(this.dom.getComponent(someElement, '.b-form')?.componentName);
  * ```
  */
-export function getComponent<T extends iBlock>(el: ComponentElement<T>, selector?: string): T | null;
+export function getComponent<T extends iBlock>(el: ComponentElement<T>, selector?: string): CanNull<T>;
 
 /**
  * Returns a component instance that is associated with a DOM element by the passed selector
@@ -35,12 +35,12 @@ export function getComponent<T extends iBlock>(el: ComponentElement<T>, selector
  * ```
  */
 // eslint-disable-next-line @typescript-eslint/unified-signatures
-export function getComponent<T extends iBlock>(selector: string, rootSelector?: string): T | null;
+export function getComponent<T extends iBlock>(selector: string, rootSelector?: string): CanNull<T>;
 
 export function getComponent<T extends iBlock>(
 	query: string | ComponentElement<T>,
 	rootSelector: string = ''
-): T | null {
+): CanNull<T> {
 	const q = Object.isString(query) ?
 		document.body.querySelector<ComponentElement<T>>(query) :
 		query;

@@ -13,6 +13,6 @@ import ThemeManager from 'components/super/i-static-page/modules/theme/theme-man
  * Returns an instance of the class for managing interface themes, if that functionality is available
  * @param component
  */
-export default function themeManagerFactory(component: iBlock): ThemeManager | null {
+export default function themeManagerFactory(component: iBlock): CanNull<ThemeManager> {
 	return Object.isString(THEME) ? new ThemeManager(component) : null;
 }

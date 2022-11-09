@@ -33,9 +33,9 @@ import iData, {
 	hook,
 
 	ModsDecl,
-	ModelMethod,
 	ModEvent,
 
+	ModelMethod,
 	DataProviderProp,
 	RequestFilter
 
@@ -341,7 +341,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	/**
 	 * A list of selected files (only works with the `file` type)
 	 */
-	get files(): FileList | null {
+	get files(): CanNull<FileList> {
 		return this.$refs.file?.files ?? null;
 	}
 

@@ -223,7 +223,7 @@ export function element<E extends Element = Element>(
 	ctx: Element,
 	name: string,
 	mods?: ModsDict
-): E | null;
+): CanNull<E>;
 
 /**
  * Returns a block child element by the specified selector
@@ -241,14 +241,14 @@ export function element<E extends Element = Element>(
 	this: Friend,
 	name: string,
 	mods?: ModsDict
-): E | null;
+): CanNull<E>;
 
 export function element<E extends Element = Element>(
 	this: Friend,
 	ctxOrName: Element | string,
 	name?: string | ModsDict,
 	mods?: ModsDict
-): E | null {
+): CanNull<E> {
 	let
 		ctx = this.node,
 		elName;
