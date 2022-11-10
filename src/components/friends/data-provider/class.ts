@@ -14,18 +14,18 @@ import Friend, { fakeMethods } from 'components/friends/friend';
 import type iBlock from 'components/super/i-block';
 import type iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 
-import type * as request from 'components/friends/data-provider/request';
+import type * as api from 'components/friends/data-provider/api';
 import type { DataProviderProp, DataProviderOptions } from 'components/friends/data-provider/interface';
 
 interface DataProvider {
-	url: typeof request.url;
-	base: typeof request.base;
-	get: typeof request.get;
-	peek: typeof request.peek;
-	post: typeof request.post;
-	update: typeof request.update;
-	delete: typeof request.deleteData;
-	getDefaultRequestParams: typeof request.getDefaultRequestParams;
+	url: typeof api.url;
+	base: typeof api.base;
+	get: typeof api.get;
+	peek: typeof api.peek;
+	post: typeof api.post;
+	update: typeof api.update;
+	delete: typeof api.deleteData;
+	getDefaultRequestParams: typeof api.getDefaultRequestParams;
 }
 
 @fakeMethods(

@@ -9,23 +9,21 @@
 import Friend, { fakeMethods } from 'components/friends/friend';
 import iBlock from 'components/super/i-block/i-block';
 
-import type * as router from 'components/friends/state/router';
-import type * as storage from 'components/friends/state/storage';
-import type * as helpers from 'components/friends/state/helpers';
+import type * as api from 'components/friends/state/api';
 
 let
 	baseSyncRouterState;
 
 interface State {
-	saveToRouter: typeof router.saveToRouter;
-	initFromRouter: typeof router.initFromRouter;
-	resetRouter: typeof router.resetRouter;
+	saveToRouter: typeof api.saveToRouter;
+	initFromRouter: typeof api.initFromRouter;
+	resetRouter: typeof api.resetRouter;
 
-	saveToStorage: typeof storage.saveToStorage;
-	initFromStorage: typeof storage.initFromStorage;
-	resetStorage: typeof storage.resetStorage;
+	saveToStorage: typeof api.saveToStorage;
+	initFromStorage: typeof api.initFromStorage;
+	resetStorage: typeof api.resetStorage;
 
-	set: typeof helpers.set;
+	set: typeof api.set;
 }
 
 @fakeMethods(

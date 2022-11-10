@@ -13,7 +13,5 @@
 
 export { default } from 'components/friends/vdom/class';
 
-export * from 'components/friends/vdom/traverse';
-export * from 'components/friends/vdom/render';
-export * from 'components/friends/vdom/vnode';
+export * from 'components/friends/vdom/api';
 export * from 'components/friends/vdom/interface';

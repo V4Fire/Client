@@ -13,8 +13,5 @@
 
 export { default } from 'components/friends/state/class';
 
-export * from 'components/friends/state/router';
-export * from 'components/friends/state/storage';
-export * from 'components/friends/state/helpers';
-
+export * from 'components/friends/state/api';
 export * from 'components/friends/state/interface';

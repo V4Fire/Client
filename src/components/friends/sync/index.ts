@@ -13,9 +13,5 @@
 
 export { default } from 'components/friends/sync/class';
 
-export * from 'components/friends/sync/mod';
-export * from 'components/friends/sync/link';
-export * from 'components/friends/sync/object';
-export * from 'components/friends/sync/sync';
-
+export * from 'components/friends/sync/api';
 export * from 'components/friends/sync/interface';

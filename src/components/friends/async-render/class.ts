@@ -7,15 +7,14 @@
  */
 
 import Friend, { fakeMethods } from 'components/friends/friend';
-import type iBlock from 'components/super/i-block/i-block';
 
-import type * as iter from 'components/friends/async-render/iterate';
-import type * as render from 'components/friends/async-render/render';
+import type iBlock from 'components/super/i-block/i-block';
+import type * as api from 'components/friends/async-render/api';
 
 interface AsyncRender {
-	forceRender: typeof render.forceRender;
-	deferForceRender: typeof render.deferForceRender;
-	iterate: typeof iter.iterate;
+	forceRender: typeof api.forceRender;
+	deferForceRender: typeof api.deferForceRender;
+	iterate: typeof api.iterate;
 }
 
 @fakeMethods(

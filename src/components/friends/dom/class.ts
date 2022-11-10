@@ -8,23 +8,20 @@
 
 import Friend, { fakeMethods } from 'components/friends/friend';
 
-import type * as wrappers from 'components/friends/dom/wrappers';
-import type * as modifications from 'components/friends/dom/modification';
-import type * as component from 'components/friends/dom/component';
-import type * as helpers from 'components/friends/dom/helpers';
+import type * as api from 'components/friends/dom/api';
 
 interface DOM {
-	delegate: typeof wrappers.delegate;
-	delegateElement: typeof wrappers.delegateElement;
+	delegate: typeof api.delegate;
+	delegateElement: typeof api.delegateElement;
 
-	watchForIntersection: typeof wrappers.watchForIntersection;
-	watchForResize: typeof wrappers.watchForResize;
+	watchForIntersection: typeof api.watchForIntersection;
+	watchForResize: typeof api.watchForResize;
 
-	appendChild: typeof modifications.appendChild;
-	replaceWith: typeof modifications.replaceWith;
+	appendChild: typeof api.appendChild;
+	replaceWith: typeof api.replaceWith;
 
-	getComponent: typeof component.getComponent;
-	renderTemporarily: typeof helpers.renderTemporarily;
+	getComponent: typeof api.getComponent;
+	renderTemporarily: typeof api.renderTemporarily;
 }
 
 @fakeMethods(

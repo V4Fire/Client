@@ -13,9 +13,5 @@
 
 export { default } from 'components/friends/dom/class';
 
-export * from 'components/friends/dom/wrappers';
-export * from 'components/friends/dom/modification';
-export * from 'components/friends/dom/component';
-export * from 'components/friends/dom/helpers';
-
+export * from 'components/friends/dom/api';
 export * from 'components/friends/dom/interface';

@@ -9,23 +9,20 @@
 import Friend from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 
-import * as names from 'components/friends/provide/names';
-import * as classes from 'components/friends/provide/classes';
-import * as mods from 'components/friends/provide/mods';
-
+import * as api from 'components/friends/provide/api';
 import { elementClassesCache } from 'components/friends/provide/const';
 
 interface Provide {
-	fullComponentName: typeof names.fullComponentName;
-	fullElementName: typeof names.fullElementName;
+	fullComponentName: typeof api.fullComponentName;
+	fullElementName: typeof api.fullElementName;
 
-	classes: typeof classes.classes;
-	hintClasses: typeof classes.hintClasses;
+	classes: typeof api.classes;
+	hintClasses: typeof api.hintClasses;
 
-	componentClasses: typeof classes.componentClasses;
-	elementClasses: typeof classes.elementClasses;
+	componentClasses: typeof api.componentClasses;
+	elementClasses: typeof api.elementClasses;
 
-	mods: typeof mods.mods;
+	mods: typeof api.mods;
 }
 
 class Provide extends Friend {
@@ -38,6 +35,6 @@ class Provide extends Friend {
 	}
 }
 
-Provide.addToPrototype(names, classes, mods);
+Provide.addToPrototype(api);
 
 export default Provide;

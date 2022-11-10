@@ -7,21 +7,19 @@
  */
 
 import Friend, { fakeMethods } from 'components/friends/friend';
-import type iBlock from 'components/super/i-block/i-block';
 
-import type * as traverse from 'components/friends/vdom/traverse';
-import type * as vnode from 'components/friends/vdom/vnode';
-import type * as render from 'components/friends/vdom/render';
+import type iBlock from 'components/super/i-block/i-block';
+import type * as api from 'components/friends/vdom/api';
 
 interface VDOM {
-	closest: typeof traverse.closest;
-	findElement: typeof traverse.findElement;
+	closest: typeof api.closest;
+	findElement: typeof api.findElement;
 
-	create: typeof vnode.create;
-	render: typeof render.render;
+	create: typeof api.create;
+	render: typeof api.render;
 
-	getRenderFactory: typeof render.getRenderFactory;
-	getRenderFn: typeof render.getRenderFn;
+	getRenderFactory: typeof api.getRenderFactory;
+	getRenderFn: typeof api.getRenderFn;
 }
 
 @fakeMethods(

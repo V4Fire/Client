@@ -10,12 +10,13 @@ import Friend, { fakeMethods } from 'components/friends/friend';
 
 import { getField } from 'components/friends/field/get';
 import { setField } from 'components/friends/field/set';
-import type { deleteField } from 'components/friends/field/delete';
+
+import type * as api from 'components/friends/field/api';
 
 interface Field {
-	get: typeof getField;
-	set: typeof setField;
-	delete: typeof deleteField;
+	get: typeof api.getField;
+	set: typeof api.setField;
+	delete: typeof api.deleteField;
 }
 
 @fakeMethods('delete')

@@ -13,7 +13,5 @@
 
 export { default } from 'components/friends/daemons/class';
 
-export * from 'components/friends/daemons/create';
-export * from 'components/friends/daemons/init';
-
+export * from 'components/friends/daemons/api';
 export * from 'components/friends/daemons/interface';

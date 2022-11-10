@@ -13,5 +13,5 @@
 
 export { default } from 'components/friends/data-provider/class';
 
-export * from 'components/friends/data-provider/request';
+export * from 'components/friends/data-provider/api';
 export * from 'components/friends/data-provider/interface';

@@ -13,7 +13,5 @@
 
 export { default } from 'components/friends/provide/class';
 
-export * from 'components/friends/provide/names';
-export * from 'components/friends/provide/classes';
-export * from 'components/friends/provide/mods';
+export * from 'components/friends/provide/api';
 export * from 'components/friends/provide/interface';

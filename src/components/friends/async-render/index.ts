@@ -13,6 +13,4 @@
 
 export { default } from 'components/friends/async-render/class';
 
-export * from 'components/friends/async-render/render';
-export * from 'components/friends/async-render/iterate';
-export * from 'components/friends/async-render/interface';
+export * from 'components/friends/async-render/api';

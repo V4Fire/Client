@@ -13,9 +13,6 @@
 
 export { default } from 'components/friends/block/class';
 
-export * from 'components/friends/block/block';
-export * from 'components/friends/block/element';
-export * from 'components/friends/block/traverse';
-
+export * from 'components/friends/block/api';
 export * from 'components/friends/block/interface';
 

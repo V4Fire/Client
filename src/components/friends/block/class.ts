@@ -10,26 +10,25 @@ import Friend, { fakeMethods } from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 
 import * as block from 'components/friends/block/block';
-import type * as element from 'components/friends/block/element';
-import type * as traverse from 'components/friends/block/traverse';
+import type * as api from 'components/friends/block/api';
 
 interface Block {
 	getMod: typeof block.getMod;
 	setMod: typeof block.setMod;
 	removeMod: typeof block.removeMod;
 
-	getElementMod: typeof element.getElementMod;
-	setElementMod: typeof element.setElementMod;
-	removeElementMod: typeof element.removeElementMod;
+	getElementMod: typeof api.getElementMod;
+	setElementMod: typeof api.setElementMod;
+	removeElementMod: typeof api.removeElementMod;
 
-	getFullBlockName: typeof block.getFullBlockName;
-	getBlockSelector: typeof traverse.getBlockSelector;
+	getFullBlockName: typeof api.getFullBlockName;
+	getBlockSelector: typeof api.getBlockSelector;
 
-	getFullElementName: typeof traverse.getFullElementName;
-	getElementSelector: typeof traverse.getElementSelector;
+	getFullElementName: typeof api.getFullElementName;
+	getElementSelector: typeof api.getElementSelector;
 
-	element: typeof traverse.element;
-	elements: typeof traverse.elements;
+	element: typeof api.element;
+	elements: typeof api.elements;
 }
 
 @fakeMethods(

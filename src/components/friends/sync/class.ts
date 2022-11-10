@@ -14,14 +14,13 @@ import type { SyncLinkCache } from 'components/super/i-block/i-block';
 import { mod } from 'components/friends/sync/mod';
 import { link } from 'components/friends/sync/link';
 
-import type { object } from 'components/friends/sync/object';
-import type { syncLinks } from 'components/friends/sync/sync';
+import type * as api from 'components/friends/sync/api';
 
 interface Sync {
-	mod: typeof mod;
-	link: typeof link;
-	object: typeof object;
-	syncLinks: typeof syncLinks;
+	mod: typeof api.mod;
+	link: typeof api.link;
+	object: typeof api.object;
+	syncLinks: typeof api.syncLinks;
 }
 
 @fakeMethods('object')

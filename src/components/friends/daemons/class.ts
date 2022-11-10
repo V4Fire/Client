@@ -11,10 +11,10 @@ import Friend, { fakeMethods } from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 import type { WrappedDaemonsDict } from 'components/friends/daemons/interface';
 
-import type { run } from 'components/friends/daemons/init';
+import type * as api from 'components/friends/daemons/api';
 
 interface Daemons {
-	run: typeof run;
+	run: typeof api.run;
 }
 
 @fakeMethods('run')

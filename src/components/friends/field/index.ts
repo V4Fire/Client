@@ -13,8 +13,5 @@
 
 export { default } from 'components/friends/field/class';
 
-export * from 'components/friends/field/get';
-export * from 'components/friends/field/set';
-export * from 'components/friends/field/delete';
-
+export * from 'components/friends/field/api';
 export * from 'components/friends/field/interface';
