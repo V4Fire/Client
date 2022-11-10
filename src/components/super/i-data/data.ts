@@ -68,7 +68,9 @@ abstract class iDataData extends iBlock {
 
 	/**
 	 * Remote data converter(s).
-	 * This function (or an iterable of functions) transforms the original provider data before storing it to `db`.
+	 * This function transforms the original provider data before storing it to `db`.
+	 * To provide more than one function, pass an iterable of functions.
+	 * Functions from the iterable are called from left to right.
 	 */
 	@prop({
 		type: Object,
@@ -87,7 +89,9 @@ abstract class iDataData extends iBlock {
 	dbConverters!: ComponentConverter[];
 
 	/**
-	 * Converter(s) from the raw `db` to the component field
+	 * Converter(s) from the raw `db` to the component field.
+	 * To provide more than one function, pass an iterable of functions.
+	 * Functions from the iterable are called from left to right.
 	 */
 	@prop({
 		type: Object,

@@ -213,9 +213,9 @@ You can pass a function or an iterable of functions to be applied to the provide
 Sometimes you need to create a component that can receive data directly from a prop or by loading it from a data provider.
 You can handle this situation using `sync.link` and `initRemoteData`. See the [[Sync]] class for more information.
 
-`initRemoteData` is a function that is called every time `db` is changed.
+The `initRemoteData` method is called every time `db` is changed.
 You can override it in your component to apply the `db` data to the component field.
-Finally, each child `iData` instance has a property that can convert the data from the `db` format to a more appropriate bean field format.
+Finally, each descendant of `iData` has a property that can convert data from the `db` format to a more appropriate component field format.
 You can pass a function or an iterable of functions that will be applied to `db`.
 
 ```typescript
