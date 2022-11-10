@@ -24,26 +24,26 @@
 		 * Generates a native form input
 		 *
 		 * @param [params] - additional parameters:
-		 *   *) [tag=nativeInputTag] - name of the generated tag
-		 *   *) [elName='input'] - element name of the generated tag
+		 *   *) [tag=nativeInputTag] - the name of the generated tag
+		 *   *) [elName='input'] - the element name of the generated tag
 		 *
-		 *   *) [ref='input'] - value of the `ref` attribute
-		 *   *) [model=nativeInputModel] - value of the `v-model` attribute
+		 *   *) [ref='input'] - the `ref` attribute
+		 *   *) [model=nativeInputModel] - the `v-model` attribute
 		 *
-		 *   *) [id='id'] - value of the `:id` attribute
-		 *   *) [name='name'] - value of the `:name` attribute
-		 *   *) [form='form'] - value of the `:form` attribute
-		 *   *) [type=nativeInputType] - value of the `:type` attribute
+		 *   *) [id='id'] - the `:id` attribute
+		 *   *) [name='name'] - the `:name` attribute
+		 *   *) [form='form'] - the `:form` attribute
+		 *   *) [type=nativeInputType] - the `:type` attribute
 		 *
-		 *   *) [autofocus] - value of the `:autofocus` attribute
-		 *   *) [tabIndex] - value of the `:autofocus` attribute
+		 *   *) [autofocus] - the `:autofocus` attribute
+		 *   *) [tabIndex] - the `:autofocus` attribute
 		 *
-		 *   *) [focusHandler] - value of the `@focus` attribute
-		 *   *) [blurHandler] - value of the `@blur` attribute
+		 *   *) [focusHandler] - the `@focus` attribute
+		 *   *) [blurHandler] - the `@blur` attribute
 		 *
-		 *   *) [attrs] - dictionary with additional attributes
+		 *   *) [attrs] - a dictionary with additional attributes
 		 *
-		 * @param {string=} [content] - slot content
+		 * @param {string=} [content] - the slot content
 		 */
 		- block nativeInput(@params = {}, content = '')
 			{{ void(tmp.attrs = normalizeAttrs(attrs)) }}

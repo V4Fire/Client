@@ -14,7 +14,7 @@ This module provides a superclass for all form components.
 
 | Name        | Description                                                                                                            | Values    | Default |
 |-------------|------------------------------------------------------------------------------------------------------------------------|-----------|---------|
-| `form`      | The system modifier. Is used to find form components from DOM.                                                         | `boolean` | `true`  |
+| `form`      | The system modifier. Is used to find form components from the DOM tree.                                                | `boolean` | `true`  |
 | `valid`     | The component has passed data validation                                                                               | `boolean` | -       |
 | `showInfo`  | The component is showing some info message (like advices to generate a password) through output                        | `boolean` | -       |
 | `showError` | The component is showing some error message (like using of non-valid characters to generate a password) through output | `boolean` | -       |
@@ -23,24 +23,23 @@ Also, you can see [[iVisible]] and [[iAccess]] traits and the [[iData]] componen
 
 ## Events
 
-| Name                | Description                                                                                | Payload description                      | Payload                                         |
-|---------------------|--------------------------------------------------------------------------------------------|------------------------------------------|-------------------------------------------------|
-| `change`            | A value of the component has been changed                                                  | Component value                          | `this['Value']`                                 |
-| `actionChange`      | A value of the component has been changed due to some user action                          | Component value                          | `this['Value']`                                 |
-| `clear`             | A value of the component has been cleared via `clear`                                      | Component value                          | `this['Value']`                                 |
-| `reset`             | A value of the component has been reset via `reset`                                        | Component value                          | `this['Value']`                                 |
-| `validationStart`   | The component validation has been started                                                  | -                                        | -                                               |
-| `validationSuccess` | The component validation has been successfully finished, i.e., the component is valid      | -                                        | -                                               |
-| `validationFail`    | The component validation hasn't been successfully finished, i.e, the component isn't valid | Failed validation                        | `ValidationError<this['FormValue']>`            |
-| `validationEnd`     | The component validation has been ended                                                    | Validation result \[, Failed validation] | `boolean`, `ValidationError<this['FormValue']>` |
+| Name                | Description                                                                                      | Payload description                               | Payload                                         |
+|---------------------|--------------------------------------------------------------------------------------------------|---------------------------------------------------|-------------------------------------------------|
+| `change`            | The component value has been changed                                                             | Component value                                   | `this['Value']`                                 |
+| `actionChange`      | The component value has been changed due to some user action                                     | Component value                                   | `this['Value']`                                 |
+| `clear`             | The component value has been cleared via `clear`                                                 | Component value                                   | `this['Value']`                                 |
+| `reset`             | The component value has been reset via `reset`                                                   | Component value                                   | `this['Value']`                                 |
+| `validationStart`   | The component validation has been started                                                        | -                                                 | -                                               |
+| `validationSuccess` | The component validation has been successfully finished, i.e., the component value is valid      | -                                                 | -                                               |
+| `validationFail`    | The component validation hasn't been successfully finished, i.e, the component value isn't valid | Failed validation                                 | `ValidationError<this['FormValue']>`            |
+| `validationEnd`     | The component validation has been ended                                                          | Is the data valid or not?; \[, Failed validation] | `boolean`; `ValidationError<this['FormValue']>` |
 
 Also, you can see [[iVisible]] and [[iAccess]] traits and the [[iData]] component.
 
 ## Basic concepts
 
-Like, an `input` or `checkbox`, every form components have the core with a similar set of properties and methods:
-form attributes, validators, etc. This class provides this core, i.e., if you want your component to work as a form component,
-you should inherit it from this.
+Like native form tags (input, checkbox, etc.), every form component has an API with a similar set of properties and methods.
+This class provides that API, i.e. if you want your component to work as a form component, you should inherit it from this.
 
 ```typescript
 import iInput, { component } from 'components/super/i-input/i-input';
@@ -49,17 +48,16 @@ export * from 'components/super/i-input/i-input';
 
 @component()
 export default class MyInput extends iInput {
-  /** @override */
-  protected readonly $refs!: {input: HTMLInputElement};
+  protected override readonly $refs!: {input: HTMLInputElement};
 }
 ```
 
 ## Associated types
 
-The component has two associated types to specify types of an original value and form value.
+The component has two associated types to specify the original value and form value types.
 
 * **Value** is the original component value.
-* **FormValue** is the modified component value that will be sent from a form.
+* **FormValue** is the modified component value that will be sent with by the associated form.
 
 ```typescript
 import iInput, { component } from 'components/super/i-input/i-input';
@@ -68,14 +66,11 @@ export * from 'components/super/i-input/i-input';
 
 @component()
 export default class MyInput extends iInput {
-  /** @override */
-  readonly Value!: string;
+  override readonly Value!: string;
 
-  /** @override */
-  readonly FormValue!: Number;
+  override readonly FormValue!: Number;
 
-  /** @override */
-  readonly dataType: Function = parseInt;
+  override readonly dataType: Function = parseInt;
 
   getMyValue(): this['Value'] {
     return this.value;
@@ -93,25 +88,34 @@ All instances of the `iInput` class can be used with the `v-model` directive.
 < b-input v-model = value
 ```
 
-```js
-({
-  model: {
-    prop: 'valueProp',
-    event: 'onChange'
-  }
-})
-```
-
 ## API
 
 Also, you can see [[iVisible]] and [[iAccess]] traits and the [[iData]] component.
 
 ### Props
 
+#### [valueProp]
+
+The component value.
+
+```
+< b-input :name = 'fname' | :value = 'Andrey'
+```
+
+#### [defaultProp]
+
+The component default value.
+This value will be used if no prop value is specified or after a call to the `reset` method.
+
+```
+< b-input :name = 'fname' | :value = name | :default = 'Anonymous'
+```
+
 #### [id]
 
-An identifier of the form control.
-You free to use this prop to connect the component with a label tag or other stuff.
+The value of the ID attribute for the component.
+As a rule, this attribute is set to a native form control inside a component.
+Thus, you can use it to integrate with a label or other form element.
 
 ```
 < b-input :id = 'my-input'
@@ -123,7 +127,7 @@ You free to use this prop to connect the component with a label tag or other stu
 #### [name]
 
 A string specifying a name for the form control.
-This name is submitted along with the control's value when the form data is submitted.
+This name is submitted along with the control value when the form data is submitted.
 If you don't provide the name, your component will be ignored by the form.
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
 
@@ -136,30 +140,14 @@ If you don't provide the name, your component will be ignored by the form.
     Submit
 ```
 
-#### [valueProp]
-
-A initial component value.
-
-```
-< b-input :name = 'fname' | :value = 'Andrey'
-```
-
-#### [defaultProp]
-
-An initial component default value.
-This value will be used if the value prop is not specified or after invoking of `reset`.
-
-```
-< b-input :name = 'fname' | :value = name | :default = 'Anonymous'
-```
-
 #### [form]
 
 A string specifying the `<form>` element with which the component is associated (that is, its form owner).
-This string's value, if present, must match the id of a `<form>` element in the same document.
+This string value, if present, must match the id of a `<form>` element in the same document.
 If this attribute isn't specified, the component is associated with the nearest containing form, if any.
 
-The form prop lets you place a component anywhere in the document but have it included with a form elsewhere in the document.
+The form prop lets you place a component anywhere in the document but have it included with a form elsewhere
+in the document.
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefform).
 
 ```
@@ -172,24 +160,19 @@ The form prop lets you place a component anywhere in the document but have it in
 
 #### [attrsProp]
 
-Additional attributes are provided to the "internal" (native) input tag.
+Additional attributes that are provided to the native form control within the component.
 
 ```
 < b-input-hidden :attrs = {type: 'checkbox'}
 ```
 
-#### [cache]
-
-A boolean value that enables or disables caching of a component value by the associated form.
-The caching is mean that if the component value does not change since the last sending of the form, it won't be sent again.
-
 #### [disallow]
 
-Component values that are not allowed to send via a form.
-If a component value matches with one of the denied conditions, the form value will be equal to `undefined`.
+Component value(s) that cannot be submitted via the associated form.
+If the component value matches with one of the denied conditions, the component form value will be set to undefined.
 
-The parameter can take a value or a list of values to ban.
-Also, the parameter can be passed as a function or regular expression.
+The parameter can take a value or an iterable of values to disallow.
+You can also pass the parameter as a function or a regular expression.
 
 ```
 /// Disallow values that contain only whitespaces
@@ -198,28 +181,25 @@ Also, the parameter can be passed as a function or regular expression.
 
 #### [formValueConverter]
 
-Converter(s) of the original component value to a form value.
+Component value converter(s) to form value.
 
-You can provide one or more functions to convert the original value to a new form value.
-For instance, you have an input component. The input's original value is string, but you provide a function
-to parse this string into a data object.
+You can provide one or more functions to convert the original value into a new form value.
+For instance, you have an input component. The original input value is a string, but you provide a function to
+parse that string into a Date object.
 
 ```
 < b-input :formValueConverter = toDate
 ```
 
-To provide more than one function, use the array form. Functions from the array are invoked from
-the "left-to-right".
+To provide more than one function, pass an iterable of functions. Functions from the iterable are called from left
+to right.
 
 ```
 < b-input :formValueConverter = [toDate, toUTC]
 ```
 
-Any converter can return a promise (). In the case of a list of converters,
-they are waiting to resolve the previous invoking.
-
-Also, any converter can return the `Maybe` monad (all errors transform to undefined).
-It helps to combine validators and converters.
+Any converter can return a promise. In the case of an iterable of converters, they will wait for the previous call
+to resolve. Also, any transformer can return the `Maybe` monad. It helps to combine validators and converters.
 
 ```
 < b-input :formValueConverter = [toDate.option(), toUTC.option()]
@@ -227,11 +207,11 @@ It helps to combine validators and converters.
 
 #### [formConverter = `(v) => Object.isArray(v) && v.length < 2 ? v[0] : v`]
 
-Converter(s) that is/are used by the associated form.
+Converter(s) that is used by the associated form.
 The form applies these converters to the group form value of the component.
 
-To provide more than one function, use the array form. Functions from the array are invoked from
-the "left-to-right".
+To provide more than one function, pass an iterable of functions. Functions from the iterable are called from left
+to right.
 
 ```
 < b-input :formConverter = [toProtobuf, zip]
@@ -240,16 +220,22 @@ the "left-to-right".
 Any converter can return a promise. In the case of a list of converters,
 they are waiting to resolve the previous invoking.
 
-Also, any converter can return the `Maybe` monad (all errors transform to undefined).
-It helps to combine validators and converters.
+Any converter can return a promise. In the case of an iterable of converters, they will wait for the previous call
+to resolve. Also, any transformer can return the `Maybe` monad. It helps to combine validators and converters.
 
 ```
 < b-input :validators = ['required'] | :formConverter = [toProtobuf.option(), zip.option()]
 ```
 
+#### [cache]
+
+If false, then the component value won't be cached by the associated form.
+Caching means that if the component value hasn't changed since the last time the form was submitted,
+it won't be resubmitted.
+
 ### Loading data from a provider
 
-Because the class extends from [[iData]], all input component can load own data from providers.
+Because the class extends from [[iData]], all form components can load their own data from providers.
 By default, if the loaded data is a dictionary, it will be mapped to the component properties.
 Otherwise, it will be set as a component value. You can re-define this logic by overriding the `initRemoteData` method.
 
@@ -274,10 +260,10 @@ function initRemoteData(): CanUndef<CanPromise<unknown | Dictionary>> {
 ### Validation
 
 All instances of the `iInput` class support a feature of validation.
-The validation process can be triggered manually via invoking the `validate` method or implicitly by a
-form associated with the component.
+The validation process can be triggered manually by calling the `validate` method, or implicitly by using a form associated
+with the component.
 
-To specify validators to a component, use the `validators` prop. The prop takes an array of strings (validator names).
+To specify validators to a component, use the `validatorsProp` prop. The prop takes an iterable of strings (validator names).
 
 ```
 < b-input :validators = ['required', 'validUserName']
@@ -295,12 +281,12 @@ Also, you can set additional parameters to each validator.
 ] .
 ```
 
-Supported validators are placed within the static `validators` property.
-This property is an object: the keys represent validator names; the values are specified as functions that take validation parameters and
-return the `ValidatorResult` structure. Any validator can return a promise.
+Supported validators are placed in the `validators` static property.
+This property is a dictionary: the keys represent the names of the validators, and the values are functions that accept
+validation parameters and must return a `ValidatorResult` type. Any validator can return a promise.
 
-The `iInput` class provides out of the box only one validator: `required`, which checks that a component must be filled.
-You free to add new validator to your component.
+The `iInput` class provides only one validator out of the box: `required`, which checks that the component must be filled.
+You can add a new validator to your component.
 
 ```typescript
 import iInput, { component } from 'components/super/i-input/i-input';
@@ -309,35 +295,31 @@ export * from 'components/super/i-input/i-input';
 
 @component()
 export default class MyInput extends iInput {
-  /** @override */
-  readonly Value!: string;
+  override readonly Value!: string;
 
-  /** @override */
-  readonly FormValue!: Number;
+  override readonly FormValue!: Number;
 
-  /** @override */
-  readonly dataType: Function = parseInt;
+  override readonly dataType: Function = parseInt;
 
-  /** @override */
-  static validators: ValidatorsDecl = {
-    // Inherit parent validation
+  override static validators: ValidatorsDecl = {
+    // Inherit parent validators
     ...iInput.validators,
 
     async moreThan5({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
       if ((await this.formValue) <= 5) {
         // This method is set a validation message to the component
-        this.setValidationMsg(
+        this.setValidationMessage(
           // This function returns a validation message based on the validation result, custom parameters, etc.
-          this.getValidatorMsg(
+          this.getValidatorMessage(
             // Validation result: boolean or ValidatorError
             false,
 
-            // User defined message (if specified).
+            // The user defined message (if specified).
             // Or an object with messages for each type of errors.
             // Or a function to invoke.
             msg,
 
-            // Default message
+            // The default message
             'The value should be more than 5'
           ),
 
@@ -357,22 +339,22 @@ export default class MyInput extends iInput {
 #### Automatic validation
 
 By default, the validation process is automatically started on the `actionChange` event.
-This event fires only when a user changes the component value manually.
+This event fires only when the user manually changes the component value.
 
 ```
-/// Every time a user types some value into the component, the component will invoke validation
+/// Every time the user enters some value into the component, the component calls validation.
 < b-input :validators = ['required', 'email']
 ```
 
 ### info/error messages
 
-To output information about warnings and errors, descendants of `iInput` can use `infoProp/info` and `errorProp/error` properties.
+Descendants of `iInput` can use the `infoProp`/`info` and `errorProp`/`error` properties to display information about warnings and errors.
 
 ```
 < b-input :info = 'This is required field'
 ```
 
-You can put these properties somewhere in your component template, OR if you activate `messageHelpers` to `true`,
+You can put these properties somewhere in your component template, OR if you enable `messageHelpers` to `true`,
 the layout will be generated automatically: all you have to do is write the CSS rules.
 
 ```
@@ -383,35 +365,33 @@ the layout will be generated automatically: all you have to do is write the CSS 
 
 #### value
 
-The original component value. It can be modified directly from a component.
+The original component value. It can be modified directly from the component.
 
 #### default
 
-The default value of a component. It can be modified directly from a component.
-This value will be used after invoking of `reset`.
+The component default value.
+This value will be used after invoking of the `reset` method.
 
 ### Getters
 
 #### formValue
 
-A form value of the component.
+The component form value.
+The getter always returns a promise.
 
 By design, all `iInput` components have their "own" values and "form" values.
-The form value is based on the own component value, but they are equal in a simple case.
-The form associated with this component will use the form value, but not the original.
+The form value is based on the own component value, but in the simple case they are equal.
+The form associated with this component will use the value of the form, but not the original.
 
-This value is tested by parameters from `disallow`. If the value does not match allowing parameters,
-it will be skipped (the getter returns undefined). The value that passed the validation is converted
-via `formValueConverter` (if it's specified).
-
-The getter always returns a promise.
+When getting a form value, the functions passed to `disallow` are first applied to a component own value.
+If either of these functions returns true, then the form value will be undefined.
+Further, the functions passed to `formValueConverter` will be applied to the received value (if it is allowed) and
+the result will be returned.
 
 #### groupFormValue
 
-A list of form values. The values are taken from components with the same `name` prop and
-which are associated with the same form.
-
-The getter always returns a promise.
+A list of form values. The values are taken from components with the same `name` attribute that are associated
+with the same form. The getter always returns a promise.
 
 #### groupElements
 
@@ -421,15 +401,16 @@ A list of components with the same `name` prop and associated with the same form
 
 #### clear
 
-Clears a component value to undefined.
+Clears the component value to undefined.
 
 #### reset
 
-Resets a component value to default.
+Resets the component value to default.
 
 #### validate
 
-Validates a component value.
+Validates the component value.
+The method returns true if the validation is successful or an object with the error information.
 
 ### Template methods
 
@@ -447,26 +428,28 @@ You can also manage a type of the created tag and other options by using the pre
  * Generates a native form input
  *
  * @param [params] - additional parameters:
- *   *) [tag=nativeInputTag] - name of the generated tag
- *   *) [elName='input'] - element name of the generated tag
+ *   *) [tag=nativeInputTag] - the name of the generated tag
+ *   *) [elName='input'] - the element name of the generated tag
  *
- *   *) [ref='input'] - value of the `ref` attribute
- *   *) [model=nativeInputModel] - value of the `v-model` attribute
+ *   *) [ref='input'] - the `ref` attribute
+ *   *) [model=nativeInputModel] - the `v-model` attribute
  *
- *   *) [id='id'] - value of the `:id` attribute
- *   *) [name='name'] - value of the `:name` attribute
- *   *) [form='form'] - value of the `:form` attribute
- *   *) [type=nativeInputType] - value of the `:type` attribute
+ *   *) [id='id'] - the `:id` attribute
+ *   *) [name='name'] - the `:name` attribute
+ *   *) [form='form'] - the `:form` attribute
+ *   *) [type=nativeInputType] - the `:type` attribute
  *
- *   *) [autofocus] - value of the `:autofocus` attribute
- *   *) [tabIndex] - value of the `:autofocus` attribute
+ *   *) [autofocus] - the `:autofocus` attribute
+ *   *) [tabIndex] - the `:autofocus` attribute
  *
- *   *) [focusHandler] - value of the `@focus` attribute
- *   *) [blurHandler] - value of the `@blur` attribute
+ *   *) [focusHandler] - the `@focus` attribute
+ *   *) [blurHandler] - the `@blur` attribute
  *
- *   *) [attrs] - dictionary with additional attributes
+ *   *) [attrs] - a dictionary with additional attributes
+ *
+ * @param {string=} [content] - the slot content
  */
-- block nativeInput(@params = {})
+- block nativeInput(@params = {}, content = '')
   {{ void(tmp.attrs = normalizeAttrs(attrs)) }}
 
   < ${@tag || nativeInputTag}.&__${@elName || 'input'} &
@@ -479,7 +462,7 @@ You can also manage a type of the created tag and other options by using the pre
     :type = ${@type} || tmp.attrs.type || ${nativeInputType} |
 
     :autofocus = ${@autofocus || 'autofocus'} |
-    :tabIndex = ${@tabIndex || 'tabIndex'} |
+    :tabindex = ${@tabIndex || 'tabIndex'} |
 
     @focus = ${@focusHandler || 'onFocus'} |
     @blur = ${@blurHandler || 'onBlur'} |
@@ -487,6 +470,7 @@ You can also manage a type of the created tag and other options by using the pre
     v-attrs = tmp.attrs |
     ${Object.assign({}, attrs, @attrs)|!html}
   .
+    += content
 
 /**
  * Generates a hidden form input

@@ -16,6 +16,9 @@ import SyncPromise from 'core/promise/sync';
 
 import { Option } from 'core/prelude/structures';
 
+import State, { set } from 'components/friends/state';
+import Block, { element } from 'components/friends/block';
+
 import iAccess from 'components/traits/i-access/i-access';
 import iVisible from 'components/traits/i-visible/i-visible';
 
@@ -44,8 +47,8 @@ import type {
 	FormValue,
 	UnsafeIInput,
 
-	Validators,
-	ValidatorMsg,
+	Validator,
+	ValidatorMessage,
 	ValidatorParams,
 	ValidatorResult,
 	ValidationResult,
@@ -59,50 +62,48 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/super/i-input/modules/helpers';
 export * from 'components/super/i-input/interface';
 
+State.addToPrototype(set);
+Block.addToPrototype(element);
+
 export const
 	$$ = symbolGenerator();
 
 @component()
 export default abstract class iInput extends iData implements iVisible, iAccess {
 	/**
-	 * Type: component value
+	 * Type: the component value
 	 */
 	readonly Value!: Value;
 
 	/**
-	 * Type: component form value
+	 * Type: the component form value
 	 */
 	readonly FormValue!: FormValue;
 
-	/** @see [[iVisible.hideIfOffline]] */
-	@prop(Boolean)
-	readonly hideIfOffline: boolean = false;
-
 	/**
-	 * Initial component value
-	 * @see [[iInput.value]]
+	 * The component value
 	 */
 	@prop({required: false})
 	readonly valueProp?: this['Value'];
 
 	/**
-	 * An initial component default value.
-	 * This value will be used if the value prop is not specified or after invoking of `reset`.
-	 *
-	 * @see [[iInput.default]]
+	 * The component default value.
+	 * This value will be used if no prop value is specified or after a call to the `reset` method.
 	 */
 	@prop({required: false})
 	readonly defaultProp?: this['Value'];
 
 	/**
-	 * An input DOM identifier.
-	 * You free to use this prop to connect the component with a label tag or other stuff.
+	 * The value of the ID attribute for the component.
+	 * As a rule, this attribute is set to a native form control inside a component.
+	 * Thus, you can use it to integrate with a label or other form element.
 	 *
 	 * @example
 	 * ```
 	 * < b-input :id = 'my-input'
-	 *   < label for = my-input
-	 *     The input label
+	 *
+	 * < label for = my-input
+	 *   The input label
 	 * ```
 	 */
 	@prop({type: String, required: false})
@@ -110,7 +111,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * A string specifying a name for the form control.
-	 * This name is submitted along with the control's value when the form data is submitted.
+	 * This name is submitted along with the control value when the form data is submitted.
 	 * If you don't provide the name, your component will be ignored by the form.
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname
@@ -120,7 +121,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * < form
 	 *   < b-input :name = 'fname' | :value = 'Andrey'
 
-	 *   /// After pressing, the form generates an object to submit with values {fname: 'Andrey'}
+	 *   /// After clicking, the form generates an object to submit with the values `{fname: 'Andrey'}`
 	 *   < button type = submit
 	 *     Submit
 	 * ```
@@ -130,7 +131,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * A string specifying the `<form>` element with which the component is associated (that is, its form owner).
-	 * This string's value, if present, must match the id of a `<form>` element in the same document.
+	 * This string value, if present, must match the id of a `<form>` element in the same document.
 	 * If this attribute isn't specified, the component is associated with the nearest containing form, if any.
 	 *
 	 * The form prop lets you place a component anywhere in the document but have it included with a form elsewhere
@@ -159,18 +160,19 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly tabIndex?: number;
 
 	/**
-	 * Additional attributes are provided to an "internal" (native) input tag
+	 * Additional attributes that are provided to the native form control within the component
 	 * @see [[iInput.$refs.input]]
 	 */
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;
 
 	/**
-	 * Component values that are not allowed to send via the tied form.
-	 * If a component value matches with one of the denied conditions, the form value will be equal to undefined.
+	 * Component value(s) that cannot be submitted via the associated form.
+	 * If the component value matches with one of the denied conditions,
+	 * the component form value will be set to undefined.
 	 *
-	 * The parameter can take a value or list of values to ban.
-	 * Also, the parameter can be passed as a function or regular expression.
+	 * The parameter can take a value or an iterable of values to disallow.
+	 * You can also pass the parameter as a function or a regular expression.
 	 *
 	 * @see [[iInput.formValue]]
 	 * @example
@@ -180,31 +182,35 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * ```
 	 */
 	@prop({required: false})
-	readonly disallow?: CanArray<this['Value']> | Function | RegExp;
+	readonly disallowProp?: CanIter<this['Value'] | Function | RegExp>;
 
 	/**
-	 * Converter(s) of the original component value to a form value.
+	 * A list of component value(s) that cannot be submitted via the associated form
+	 * @see [[iInput.disallowProp]]
+	 */
+	@system((o) => o.sync.link((val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	disallow!: Array<this['Value'] | Function | RegExp>;
+
+	/**
+	 * Component value converter(s) to form value.
 	 *
-	 * You can provide one or more functions to convert the original value to a new form value.
-	 * For instance, you have an input component. The input's original value is string, but you provide a function
-	 * to parse this string into a data object.
+	 * You can provide one or more functions to convert the original value into a new form value.
+	 * For instance, you have an input component. The original input value is a string, but you provide a function to
+	 * parse that string into a Date object.
 	 *
 	 * ```
 	 * < b-input :formValueConverter = toDate
 	 * ```
 	 *
-	 * To provide more than one function, use the array form. Functions from the array are invoked from
-	 * the "left-to-right".
+	 * To provide more than one function, pass an iterable of functions. Functions from the iterable are called from left
+	 * to right.
 	 *
 	 * ```
 	 * < b-input :formValueConverter = [toDate, toUTC]
 	 * ```
 	 *
-	 * Any converter can return a promise. In the case of a list of converters,
-	 * they are waiting to resolve the previous invoking.
-	 *
-	 * Also, any converter can return the `Maybe` monad.
-	 * It helps to combine validators and converters.
+	 * Any converter can return a promise. In the case of an iterable of converters, they will wait for the previous call
+	 * to resolve. Also, any transformer can return the `Maybe` monad. It helps to combine validators and converters.
 	 *
 	 * ```
 	 * < b-input :validators = ['required'] | :formValueConverter = [toDate.option(), toUTC.toUTC()]
@@ -212,15 +218,27 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 *
 	 * @see [[iInput.formValue]]
 	 */
-	@prop({type: Function, required: false})
-	readonly formValueConverter?: CanArray<ComponentConverter>;
+	@prop({
+		type: Object,
+		validator: (val) => Object.isFunction(val) || Object.isIterable(val),
+		required: false
+	})
+
+	readonly formValueConverter?: CanIter<ComponentConverter>;
 
 	/**
-	 * Converter(s) that is/are used by the associated form.
+	 * A list of component value converter(s) to form value
+	 * @see [[iInput.formValueConverter]]
+	 */
+	@system((o) => o.sync.link('formValueConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	formValueConverters!: ComponentConverter[];
+
+	/**
+	 * Converter(s) that is used by the associated form.
 	 * The form applies these converters to the group form value of the component.
 	 *
-	 * To provide more than one function, use the array form. Functions from the array are invoked from
-	 * the "left-to-right".
+	 * To provide more than one function, pass an iterable of functions. Functions from the iterable are called from left
+	 * to right.
 	 *
 	 * ```
 	 * < b-input :formConverter = [toProtobuf, zip]
@@ -229,26 +247,39 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * Any converter can return a promise. In the case of a list of converters,
 	 * they are waiting to resolve the previous invoking.
 	 *
-	 * Also, any converter can return the `Maybe` monad (all errors transform to undefined).
-	 * It helps to combine validators and converters.
+	 * Any converter can return a promise. In the case of an iterable of converters, they will wait for the previous call
+	 * to resolve. Also, any transformer can return the `Maybe` monad. It helps to combine validators and converters.
 	 *
 	 * ```
 	 * < b-input :validators = ['required'] | :formConverter = [toProtobuf.option(), zip.toUTC()]
 	 * ```
 	 */
-	@prop({type: [Function, Array], required: false})
-	readonly formConverter?: CanArray<ComponentConverter> = unpackIf;
+	@prop({
+		type: Object,
+		validator: (val) => Object.isFunction(val) || Object.isIterable(val),
+		required: false
+	})
+
+	readonly formConverter?: CanIter<ComponentConverter> = unpackIf;
 
 	/**
-	 * If false, then a component value isn't cached by the associated form.
-	 * The caching is mean that if the component value does not change since the last sending of the form,
-	 * it won't be sent again.
+	 * A list of converters that are used by the associated form
+	 * @see [[iInput.formConverter]]
+	 */
+	@system((o) => o.sync.link('formConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	formConverters!: ComponentConverter[];
+
+	/**
+	 * If false, then the component value won't be cached by the associated form.
+	 * Caching means that if the component value hasn't changed since the last time the form was submitted,
+	 * it won't be resubmitted.
 	 */
 	@prop(Boolean)
 	readonly cache: boolean = true;
 
 	/**
-	 * List of component validators to check
+	 * An iterable of validators to validate the component value.
+	 * If any of the validators return a value other than true, the associated form will not submit the data.
 	 *
 	 * @example
 	 * ```
@@ -256,11 +287,20 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * ```
 	 */
 	@prop(Array)
-	readonly validators: Validators = [];
+	readonly validatorsProp?: Iterable<Validator>;
 
 	/**
-	 * An initial information message that the component needs to show.
-	 * This parameter logically is pretty similar to STDIN output from Unix.
+	 * A list of validators to validate the component value.
+	 * If any of the validators return a value other than true, the associated form will not submit the data.
+	 *
+	 * @see [[iInput.validatorsProp]]
+	 */
+	@system((o) => o.sync.link((val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	validators!: Validator[];
+
+	/**
+	 * An informational message that the component should display.
+	 * Logically, this option is very similar to the STDIN output from Unix.
 	 *
 	 * @example
 	 * ```
@@ -271,8 +311,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly infoProp?: string;
 
 	/**
-	 * An initial error message that the component needs to show.
-	 * This parameter logically is pretty similar to STDERR output from Unix.
+	 * An error message that the component should display.
+	 * Logically, this option is very similar to the STDERR output from Unix.
 	 *
 	 * @example
 	 * ```
@@ -283,13 +323,17 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	readonly errorProp?: string;
 
 	/**
-	 * If true, then is generated the default markup within a component template to show info/error messages
+	 * If true, default markup is generated in the component template to display information/error messages
 	 */
-	@prop({type: Boolean, required: false})
-	readonly messageHelpers?: boolean;
+	@prop(Boolean)
+	readonly messageHelpers: boolean = false;
+
+	/** @see [[iVisible.hideIfOffline]] */
+	@prop(Boolean)
+	readonly hideIfOffline: boolean = false;
 
 	/**
-	 * Previous component value
+	 * The component previous value
 	 */
 	@system()
 	prevValue?: this['Value'];
@@ -299,21 +343,20 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Link to a map of available component validators
+	 * A map of available component validators
 	 */
 	get validatorsMap(): typeof iInput['validators'] {
 		return (<typeof iInput>this.instance.constructor).validators;
 	}
 
 	/**
-	 * Link to a form that is associated with the component
+	 * A link to the form associated with the component
 	 */
-	get connectedForm(): CanPromise<CanUndef<HTMLFormElement>> {
+	get connectedForm(): CanPromise<CanNull<HTMLFormElement>> {
 		return this.waitStatus('ready', () => {
 			let
 				form;
 
-			// tslint:disable-next-line:prefer-conditional-expression
 			if (this.form != null) {
 				form = document.querySelector<HTMLFormElement>(`#${this.form}`);
 
@@ -321,13 +364,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				form = this.$el?.closest('form');
 			}
 
-			return form ?? undefined;
+			return form ?? null;
 		});
 	}
 
 	/**
-	 * Component value
-	 * @see [[iInput.valueStore]]
+	 * The component value
+	 * @see [[iInput.valueProp]]
 	 */
 	get value(): this['Value'] {
 		return this.field.get('valueStore');
@@ -342,7 +385,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Component default value
+	 * The component default value
 	 * @see [[iInput.defaultProp]]
 	 */
 	get default(): this['Value'] {
@@ -350,17 +393,17 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * A component form value.
+	 * The component form value.
+	 * The getter always returns a promise.
 	 *
 	 * By design, all `iInput` components have their "own" values and "form" values.
-	 * The form value is based on the own component value, but they are equal in a simple case.
-	 * The form associated with this component will use the form value but not the original.
+	 * The form value is based on the own component value, but in the simple case they are equal.
+	 * The form associated with this component will use the value of the form, but not the original.
 	 *
-	 * Parameters from `disallow` test this value. If the value does not match allowing parameters,
-	 * it will be skipped (the getter returns undefined). The value that passed the validation is converted
-	 * via `formValueConverter` (if it's specified).
-	 *
-	 * The getter always returns a promise.
+	 * When getting a form value, the functions passed to `disallow` are first applied to a component own value.
+	 * If either of these functions returns true, then the form value will be undefined.
+	 * Further, the functions passed to `formValueConverter` will be applied to the received value (if it is allowed) and
+	 * the result will be returned.
 	 */
 	get formValue(): Promise<this['FormValue']> {
 		return (async () => {
@@ -382,67 +425,50 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				return el === value;
 			};
 
-			let
-				allow = true;
-
 			for (let i = 0; i < test.length; i++) {
 				if (match(test[i])) {
-					allow = false;
-					break;
+					return undefined;
 				}
 			}
 
-			if (allow) {
-				if (this.formValueConverter != null) {
-					const
-						converters = Array.concat([], this.formValueConverter);
+			const
+				converters = this.formValueConverters;
 
-					let
-						res: CanUndef<typeof value> = value;
+			let
+				convertedValue: CanUndef<typeof value> = value;
 
-					for (let i = 0; i < converters.length; i++) {
-						const
-							validation = converters[i].call(this, res, this);
+			for (let i = 0; i < converters.length; i++) {
+				const
+					validation = converters[i].call(this, convertedValue, this);
 
-						if (validation instanceof Option) {
-							res = await validation.catch(() => undefined);
+				if (validation instanceof Option) {
+					convertedValue = await validation.catch(() => undefined);
 
-						} else {
-							res = await validation;
-						}
-					}
-
-					return res;
+				} else {
+					convertedValue = await validation;
 				}
-
-				return value;
 			}
 
-			return undefined;
+			return convertedValue;
 		})();
 	}
 
 	/**
-	 * A list of form values. The values are taken from components with the same `name` prop and
-	 * which are associated with the same form.
-	 *
-	 * The getter always returns a promise.
+	 * A list of form values. The values are taken from components with the same `name` attribute that are associated
+	 * with the same form. The getter always returns a promise.
 	 *
 	 * @see [[iInput.formValue]]
 	 */
 	get groupFormValue(): Promise<Array<this['FormValue']>> {
 		return (async () => {
 			const
-				list = await this.groupElements;
+				values: Array<this['FormValue']> = [],
+				tasks: Array<Promise<void>> = [];
 
-			const
-				values = <Array<this['FormValue']>>[],
-				tasks = <Array<Promise<void>>>[];
-
-			for (let i = 0; i < list.length; i++) {
+			for (const el of await this.groupElements) {
 				tasks.push((async () => {
 					const
-						v = await list[i].formValue;
+						v = await el.formValue;
 
 					if (v !== undefined) {
 						values.push(v);
@@ -460,26 +486,25 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	get groupElements(): CanPromise<readonly iInput[]> {
 		const
-			nm = this.name;
+			{name} = this;
 
-		if (nm != null) {
+		if (name != null) {
 			return this.waitStatus('ready', () => {
 				const
-					form = this.connectedForm,
-					list = document.getElementsByName(nm);
+					form = this.connectedForm;
 
 				const
-					els = <iInput[]>[];
+					els: iInput[] = [];
 
-				for (let i = 0; i < list.length; i++) {
+				document.getElementsByName(name).forEach((el) => {
 					const
-						component = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
+						component = this.dom.getComponent<iInput>(el, '[class*="_form_true"]');
 
 					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (component != null && form === component.connectedForm) {
 						els.push(component);
 					}
-				}
+				});
 
 				return Object.freeze(els);
 			});
@@ -489,8 +514,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * An information message that the component needs to show.
-	 * This parameter logically is pretty similar to STD output from Unix.
+	 * The informational message that the component should display.
+	 * Logically, this option is very similar to the STDIN output from Unix.
 	 */
 	get info(): CanUndef<string> {
 		return this.infoStore;
@@ -508,7 +533,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				const
 					box = this.block?.element('info-box');
 
-				if (box?.children[0]) {
+				if (box?.children[0] != null) {
 					box.children[0].innerHTML = this.infoStore ?? '';
 				}
 			});
@@ -516,8 +541,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * An error message that the component needs to show.
-	 * This parameter logically is pretty similar to STDERR output from Unix.
+	 * The error message that the component should display.
+	 * Logically, this option is very similar to the STDERR output from Unix.
 	 */
 	get error(): CanUndef<string> {
 		return this.errorStore;
@@ -535,7 +560,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				const
 					box = this.block?.element('error-box');
 
-				if (box?.children[0]) {
+				if (box?.children[0] != null) {
 					box.children[0].innerHTML = this.errorStore ?? '';
 				}
 			});
@@ -580,31 +605,27 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	};
 
 	/**
-	 * Map of available component validators
+	 * A map of available component validators
 	 */
 	static validators: ValidatorsDecl = {
-		//#if runtime has iInput/validators
-
 		/**
-		 * Checks that a component value must be filled
+		 * Checks that the component value must be filled
 		 *
-		 * @param msg
-		 * @param showMsg
+		 * @param message
+		 * @param showMessage
 		 */
-		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
+		async required({message, showMessage = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 			if (await this.formValue === undefined) {
-				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
+				this.setValidationMessage(this.getValidatorMessage(false, message, t`Required field`), showMessage);
 				return false;
 			}
 
 			return true;
 		}
-
-		//#endif
 	};
 
 	/**
-	 * Additional attributes that are provided to an "internal" (native) input tag
+	 * Additional attributes that are provided to the native form control within the component
 	 * @see [[iInput.attrsProp]]
 	 */
 	@system((o) => o.sync.link())
@@ -628,7 +649,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * Internal validation error message
 	 */
 	@system()
-	private validationMsg?: string;
+	private validationMessage?: string;
 
 	/** @see [[iAccess.enable]] */
 	enable(): Promise<boolean> {
@@ -695,7 +716,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Resets the component value to default
+	 * Resets the component value to its default value
 	 * @emits `reset(value: this['Value'])`
 	 */
 	@wait('ready', {label: $$.reset})
@@ -721,53 +742,52 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Returns a validator error message from the specified arguments
+	 * Returns a validator error message based on passed parameters
 	 *
-	 * @param err - error details
-	 * @param msg - error message / error table / error function
-	 * @param defMsg - default error message
+	 * @param err - the error details
+	 * @param message - the validator message object
+	 * @param defaultMessage - the default error message
 	 */
-	getValidatorMsg(err: ValidatorResult, msg: ValidatorMsg, defMsg: string): string {
-		if (Object.isFunction(msg)) {
-			const m = msg(err);
-			return Object.isTruly(m) ? m : defMsg;
+	getValidatorMessage(err: ValidatorResult, message: ValidatorMessage, defaultMessage: string): string {
+		if (Object.isFunction(message)) {
+			const m = message(err);
+			return Object.isTruly(m) ? m : defaultMessage;
 		}
 
-		if (Object.isPlainObject(msg)) {
-			return Object.isPlainObject(err) && msg[err.name] || defMsg;
+		if (Object.isPlainObject(message)) {
+			return Object.isPlainObject(err) && message[err.name] || defaultMessage;
 		}
 
-		return Object.isTruly(msg) ? String(msg) : defMsg;
+		return Object.isTruly(message) ? String(message) : defaultMessage;
 	}
 
 	/**
-	 * Sets a validation error message to the component
+	 * Sets a new validation error message to the component
 	 *
-	 * @param msg
-	 * @param [showMsg] - if true, then the message will be provided to .error
+	 * @param message
+	 * @param [showMessage] - if true, then the message will be provided to .error
 	 */
-	setValidationMsg(msg: string, showMsg: boolean = false): void {
-		this.validationMsg = msg;
+	setValidationMessage(message: string, showMessage: boolean = false): void {
+		this.validationMessage = message;
 
-		if (showMsg) {
-			this.error = msg;
+		if (showMessage) {
+			this.error = message;
 		}
 	}
 
 	/**
-	 * Validates a component value
-	 * (returns true or `ValidationError` if the validation is failed)
+	 * Validates the component value.
+	 * The method returns true if the validation is successful or an object with the error information.
 	 *
-	 * @param params - additional parameters
+	 * @param opts - additional options
+	 *
 	 * @emits `validationStart()`
 	 * @emits `validationSuccess()`
 	 * @emits `validationFail(failedValidation: ValidationError<this['FormValue']>)`
-	 * @emits `validationEnd(result: boolean, failedValidation?: ValidationError<this['FormValue']>)`
+	 * @emits `validationEnd(success: boolean, failedValidation?: ValidationError<this['FormValue']>)`
 	 */
 	@wait('ready', {defer: true, label: $$.validate})
-	async validate(params?: ValidatorParams): Promise<ValidationResult<this['FormValue']>> {
-		//#if runtime has iInput/validators
-
+	async validate(opts?: ValidatorParams): Promise<ValidationResult<this['FormValue']>> {
 		if (this.validators.length === 0) {
 			void this.removeMod('valid');
 			return true;
@@ -785,28 +805,28 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				isPlainObject = !isArray && Object.isPlainObject(decl);
 
 			let
-				key;
+				validatorName;
 
 			if (isPlainObject) {
-				key = Object.keys(decl)[0];
+				validatorName = Object.keys(decl)[0];
 
 			} else if (isArray) {
-				key = decl[0];
+				validatorName = decl[0];
 
 			} else {
-				key = decl;
+				validatorName = decl;
 			}
 
 			const
-				validator = this.validatorsMap[key];
+				validator = this.validatorsMap[validatorName];
 
 			if (validator == null) {
-				throw new Error(`The "${key}" validator is not defined`);
+				throw new Error(`The "${validatorName}" validator is not defined`);
 			}
 
 			const validation = validator.call(
 				this,
-				Object.assign((isPlainObject ? decl[key] : (isArray && decl[1])) ?? {}, params)
+				Object.assign((isPlainObject ? decl[validatorName] : (isArray && decl[1])) ?? {}, opts)
 			);
 
 			if (Object.isPromise(validation)) {
@@ -823,9 +843,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 			if (valid !== true) {
 				failedValidation = {
-					validator: key,
-					error: valid,
-					msg: this.validationMsg
+					validator: validatorName,
+					message: this.validationMessage,
+
+					error: {
+						name: validatorName,
+						...Object.isDictionary(valid) ? valid : {}
+					}
 				};
 
 				break;
@@ -848,20 +872,15 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			this.emit('validationFail', failedValidation);
 		}
 
-		this.validationMsg = undefined;
+		this.validationMessage = undefined;
 		this.emit('validationEnd', valid === true, failedValidation);
 
 		return valid === true ? valid : failedValidation;
-
-		//#endif
-
-		// eslint-disable-next-line no-unreachable
-		return true;
 	}
 
 	/**
-	 * Resolves the specified component value and returns it.
-	 * If the value argument is `undefined`, the method can return the default value.
+	 * Resolves the passed component value and returns it.
+	 * If the value argument is undefined, the method can return the default value.
 	 *
 	 * @param value
 	 */
@@ -877,7 +896,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Normalizes the specified additional attributes and returns it
+	 * Normalizes the passed attributes and returns it
 	 *
 	 * @see [[iInput.attrs]]
 	 * @param [attrs]
@@ -887,7 +906,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Initializes default event listeners of the component value
+	 * Initializes default event listeners for the component value
 	 */
 	@hook('created')
 	protected initValueListeners(): void {
@@ -954,19 +973,19 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		}));
 
 		const
-			msgInit = Object.createDict();
+			messageInitMap = Object.createDict();
 
-		const createMsgHandler = (type) => (val) => {
-			if (msgInit[type] == null && this.modsProp != null && String(this.modsProp[type]) === 'false') {
+		const createMessageHandler = (type) => (val) => {
+			if (messageInitMap[type] == null && this.modsProp != null && String(this.modsProp[type]) === 'false') {
 				return false;
 			}
 
-			msgInit[type] = true;
+			messageInitMap[type] = true;
 			return Boolean(val);
 		};
 
-		this.sync.mod('showInfo', 'infoStore', createMsgHandler('showInfo'));
-		this.sync.mod('showError', 'errorStore', createMsgHandler('showError'));
+		this.sync.mod('showInfo', 'infoStore', createMessageHandler('showInfo'));
+		this.sync.mod('showError', 'errorStore', createMessageHandler('showError'));
 	}
 
 	/**
@@ -984,7 +1003,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	/**
-	 * Handler: changing of a component value
+	 * Handler: the component value has changed
 	 * @emits `change(value: this['Value'])`
 	 */
 	protected onValueChange(value: this['Value'], oldValue: CanUndef<this['Value']>): void {

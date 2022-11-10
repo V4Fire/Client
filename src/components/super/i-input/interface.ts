@@ -9,31 +9,31 @@
 import type { UnsafeIData } from 'components/super/i-data/i-data';
 import type iInput from 'components/super/i-input/i-input';
 
-export interface ValidatorMsgFn {
+export interface ValidatorMessageFn {
 	(err: ValidatorResult): string;
 }
 
 /**
- * An error message to show a user.
- * It can be passed as a simple string, a dictionary of strings where the keys represent error names or a
- * function that takes an error object and returns a string.
+ * An error message.
+ * It can be passed as a simple string, a dictionary of strings where the keys represent error names,
+ * or a function that takes an error object and returns a string.
  */
-export type ValidatorMsg = Nullable<
+export type ValidatorMessage = Nullable<
 	string |
 	Dictionary<string> |
-	ValidatorMsgFn
+	ValidatorMessageFn
 >;
 
 export interface ValidatorParams extends Dictionary {
 	/**
-	 * Error message to show a user
+	 * The error message
 	 */
-	msg?: ValidatorMsg;
+	message?: ValidatorMessage;
 
 	/**
-	 * Should show or not to show an error message to a user
+	 * Should or should not show the error message
 	 */
-	showMsg?: boolean;
+	showMessage?: boolean;
 }
 
 export interface ValidatorError<E = unknown> extends Dictionary {
@@ -42,26 +42,22 @@ export interface ValidatorError<E = unknown> extends Dictionary {
 	params?: Dictionary;
 }
 
-export type ValidatorResult<E = unknown> =
+export type ValidatorResult<E = unknown> = CanNull<
 	boolean |
-	null |
-	ValidatorError<E>;
-
-export interface ValidationError<E = unknown> {
-	validator: string;
-	error: ValidatorError<E>;
-	msg?: string;
-}
+	ValidatorError<E>
+>;
 
 export type ValidationResult<E = unknown> =
 	boolean |
 	ValidationError<E>;
 
-export type Validators = Array<
-	string |
-	Dictionary<ValidatorParams> |
-	[string, ValidatorParams]
->;
+export interface ValidationError<E = unknown> {
+	validator: string;
+	error: ValidatorError<E>;
+	message?: string;
+}
+
+export type Validator = string | Dictionary<ValidatorParams> | [string, ValidatorParams];
 
 export type ValidatorsDecl<CTX extends iInput = any, P extends ValidatorParams = any> = Dictionary<
 	(this: CTX, params: P) => CanPromise<boolean | unknown>
