@@ -23,20 +23,17 @@ export * from 'components/super/i-page/interface';
 export const
 	$$ = symbolGenerator();
 
-/**
- * Superclass for all page components
- */
 @component({inheritMods: false})
 export default abstract class iPage extends iData implements iVisible {
 	override readonly reloadOnActivation: boolean = true;
 	override readonly syncRouterStoreOnInit: boolean = true;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** @see [[iVisible.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
 	/**
-	 * An initial page title.
+	 * The current page title.
 	 * Basically this title is set via `document.title`.
 	 */
 	@prop({type: [String, Function]})
@@ -44,16 +41,16 @@ export default abstract class iPage extends iData implements iVisible {
 
 	/**
 	 * A dictionary of page titles (basically these titles are set via `document.title`).
-	 * The dictionary values are tied to the `stage` values.
+	 * The dictionary values are bound to the `stage` values.
 	 *
-	 * A key with the name `[[DEFAULT]]` is used by default. If a key value is defined as a function,
-	 * it will be invoked (the result will be used as a title).
+	 * The key named `[[DEFAULT]]` is used by default. If the key value is defined as a function,
+	 * it will be called (the result will be used as the title).
 	 */
 	@prop({type: Object, required: false})
 	readonly stagePageTitles?: StageTitles<this>;
 
 	/**
-	 * Current page title
+	 * The current page title
 	 *
 	 * @see [[iPage.pageTitleProp]]
 	 * @see [[iPage.stagePageTitles]]
@@ -93,19 +90,19 @@ export default abstract class iPage extends iData implements iVisible {
 	};
 
 	/**
-	 * Page title store
+	 * The page title store
 	 */
 	@system((o) => o.sync.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
 
 	/**
-	 * Scrolls a page by the specified options
+	 * Scrolls the page by the specified options
 	 * @param opts
 	 */
 	scrollTo(opts: ScrollOptions): void;
 
 	/**
-	 * Scrolls a page to the specified coordinates
+	 * Scrolls the page to the specified coordinates
 	 *
 	 * @param x
 	 * @param y
@@ -120,7 +117,7 @@ export default abstract class iPage extends iData implements iVisible {
 				globalThis.scrollTo(opts);
 
 			} catch {
-				globalThis.scrollTo(opts.left == null ? pageXOffset : opts.left, opts.top == null ? pageYOffset : opts.top);
+				globalThis.scrollTo(opts.left == null ? scrollX : opts.left, opts.top == null ? scrollY : opts.top);
 			}
 		};
 
@@ -170,7 +167,7 @@ export default abstract class iPage extends iData implements iVisible {
 	}
 
 	/**
-	 * Initializes a custom page title
+	 * Initializes the custom page title
 	 */
 	@hook(['created', 'activated'])
 	protected initTitle(): void {

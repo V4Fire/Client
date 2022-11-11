@@ -1,6 +1,6 @@
 # components/super/i-page
 
-This module provides a super component for all page components.
+This module provides a super class for all page components.
 
 ## Synopsis
 
@@ -25,18 +25,18 @@ See the [[iVisible]] trait and the [[iData]] component.
 ## Basic concepts
 
 A page component is a special component kind represents a container bound to some URL.
-Why would we need these containers? In a world of "static" websites, we have URLs and HTML pages,
-but nowadays, many sites transform to SPA. It means that physically we have only one HTML page, and all the rest pages are virtualized.
-This is a case when we use page components. They represent virtual analogs of static HTML pages.
+Why would we need these containers? In the world of "static" websites, we have URLs and HTML pages,
+but nowadays, many sites are being transformed into SPAs. This means that physically we have only one HTML page,
+and all other pages are virtualized. This is the case when we use page components. They are virtual counterparts of static HTML pages.
 
-But there is one more case when we need the real static HTML page - it's an initialization page or the root page.
-The initialization page contents the default HTML layout, like `head` and `body` tags. Also,
-it loads core CSS and JS dependencies and does other initialization stuff. That's why `iPage` has two descendants:
+But there is one more case where we need a real static HTML page, which is the initialization page or the root page.
+The initialization page contains the default HTML layout, such as `head` and `body` tags. In addition, it loads the main
+CSS and JS dependencies and performs other initialization steps. That's why `iPage` has two descendants:
 
-1. [[iStaticPage]] - super component for static pages;
-2. [[iDynamicPage]] - super component for dynamic or virtual pages.
+1. [[iStaticPage]] - a super class for static pages;
+2. [[iDynamicPage]] - a super class for dynamic or virtual pages.
 
-So, when you want to create a new page, you should inherit from one of these, but not from  `iPage`.
+So, when you want to create a new page, you must inherit from one of these, not `iPage`.
 
 ## API
 
@@ -46,13 +46,16 @@ Also, you can see the implemented traits or the parent component.
 
 #### [pageTitleProp]
 
-An initial page title. Basically this title is set via `document.title`.
+The current page title.
+Basically this title is set via `document.title`.
 
 #### [stagePageTitles]
 
-A dictionary of page titles (basically these titles are set via `document.title`). The dictionary values are tied
-to the `stage` values. A key with the name `[[DEFAULT]]` is used by default. If a key value is defined as a function,
-it will be invoked (the result will be used as a title).
+A dictionary of page titles (basically these titles are set via `document.title`).
+The dictionary values are bound to the `stage` values.
+
+The key named `[[DEFAULT]]` is used by default. If the key value is defined as a function,
+it will be called (the result will be used as the title).
 
 ```typescript
 class bMyPage extends iPage {
@@ -93,7 +96,7 @@ class bMyPage extends iPage {
 
 #### scrollTo
 
-Scrolls a page to the specified coordinates.
+Scrolls the page to the specified coordinates.
 
 ```typescript
 class bMyPage extends iPage {
@@ -105,4 +108,5 @@ class bMyPage extends iPage {
 
 #### scrollToProxy
 
-A wrapped version of the `scrollTo` method. The calling cancels all previous tasks.
+A wrapped version of the `scrollTo` method.
+The calling cancels all previous tasks.
