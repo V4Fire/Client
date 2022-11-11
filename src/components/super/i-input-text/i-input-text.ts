@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
+
 import iWidth from 'components/traits/i-width/i-width';
 import iSize from 'components/traits/i-size/i-size';
 
@@ -27,57 +29,50 @@ import iInput, {
 
 } from 'components/super/i-input/i-input';
 
-//#if runtime has iInputText/mask
-import * as mask from 'components/super/i-input-text/modules/mask';
-//#endif
-
-import { $$ } from 'components/super/i-input-text/const';
-import type { CompiledMask, SyncMaskWithTextOptions, UnsafeIInputText } from 'components/super/i-input-text/interface';
+import Mask from 'components/super/i-input-text/mask';
+import type { UnsafeIInputText } from 'components/super/i-input-text/interface';
 
 export * from 'components/super/i-input/i-input';
-export * from 'components/super/i-input-text/const';
 export * from 'components/super/i-input-text/interface';
 
-export * from 'components/super/i-input-text/modules/validators';
-export { default as TextValidators } from 'components/super/i-input-text/modules/validators';
+export * from 'components/super/i-input-text/validators';
+export { default as TextValidators } from 'components/super/i-input-text/validators';
 
-export { $$ };
+export const
+	$$ = symbolGenerator();
 
-/**
- * Superclass to create text inputs
- */
 @component()
 export default class iInputText extends iInput implements iWidth, iSize {
 	/**
-	 * Initial text value of the input
+	 * The input text value
 	 */
 	@prop({type: String, required: false})
 	readonly textProp?: string;
 
 	/**
-	 * UI type of the input
+	 * The input UI type
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#input_types
 	 */
 	@prop(String)
 	readonly type: string = 'text';
 
 	/**
-	 * Autocomplete mode of the input
+	 * The input autocomplete mode
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefautocomplete
 	 */
 	@prop(String)
 	readonly autocomplete: string = 'off';
 
 	/**
-	 * Placeholder text of the input
+	 * The input placeholder
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefplaceholder
 	 */
 	@prop({type: String, required: false})
 	readonly placeholder?: string;
 
 	/**
-	 * The minimum text value length of the input.
-	 * The option will be ignored if provided `mask`.
+	 * The minimum length of the input text value.
+	 * The option will be ignored if the `mask` is specified.
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength
 	 */
@@ -85,8 +80,8 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly minLength?: number;
 
 	/**
-	 * The maximum text value length of the input.
-	 * The option will be ignored if provided `mask`.
+	 * The maximum length of the input text value.
+	 * The option will be ignored if the `mask` is specified.
 	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength
 	 */
@@ -94,19 +89,18 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly maxLength?: number;
 
 	/**
-	 * A value of the input's mask.
+	 * The input text value mask.
 	 *
-	 * The mask is used when you need to "decorate" some input value,
-	 * like a phone number or credit card number. The mask can contain terminal and non-terminal symbols.
-	 * The terminal symbols will be shown as they are written.
-	 * The non-terminal symbols should start with `%` and one more symbol. For instance, `%d` means that it can be
+	 * The mask is used when you need to "decorate" some input value, such as a phone number or a credit card number.
+	 * The mask may contain terminal and non-terminal symbols. The terminal symbols will be displayed as they are written.
+	 * The non-terminal symbols must start with `%` and one more character. For instance, `%d` means that it can be
 	 * replaced by a numeric character (0-9).
 	 *
 	 * Supported non-terminal symbols:
 	 *
-	 * `%d` - is equivalent RegExp' `\d`
-	 * `%w` - is equivalent RegExp' `\w`
-	 * `%s` - is equivalent RegExp' `\s`
+	 * `%d` - is equivalent RegExp `\d`
+	 * `%w` - is equivalent RegExp `\w`
+	 * `%s` - is equivalent RegExp `\s`
 	 *
 	 * @example
 	 * ```
@@ -117,14 +111,14 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly mask?: string;
 
 	/**
-	 * A value of the mask placeholder.
-	 * All non-terminal symbols from the mask without the specified value will have this placeholder.
+	 * The mask placeholder value.
+	 * All non-terminal symbols from the mask without a specified value will have this placeholder.
 	 *
 	 * @example
 	 * ```
-	 * /// A user will see an input element with a value:
+	 * /// The user will see an input element with the value:
 	 * /// +_ (___) ___-__-__
-	 * /// When it starts typing, the value will be automatically changed, like,
+	 * /// When it starts typing, the value will be automatically changed, for example,
 	 * /// +7 (49_) ___-__-__
 	 * < b-input :mask = '+%d% (%d%d%d) %d%d%d-%d%d-%d%d' | :maskPlaceholder = '_'
 	 * ```
@@ -142,15 +136,15 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly maskPlaceholder: string = '_';
 
 	/**
-	 * Number of mask repetitions.
-	 * This parameter allows you to specify how many times the mask pattern needs to apply to the input value.
-	 * The `true` value means that the pattern can be repeated infinitely.
+	 * The number of repetitions of the mask.
+	 * This option allows you to specify how many times the mask pattern should be applied to the input value.
+	 * The `true` value means that the pattern can  repeat indefinitely.
 	 *
 	 * @example
 	 * ```
-	 * /// A user will see an input element with a value:
+	 * /// The user will see an input element with the value:
 	 * /// _-_
-	 * /// When it starts typing, the value will be automatically changed, like,
+	 * /// When it starts typing, the value will be automatically changed, for example,
 	 * /// 2-3 1-_
 	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2
 	 * ```
@@ -159,14 +153,14 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	readonly maskRepetitionsProp?: number | boolean;
 
 	/**
-	 * A delimiter for a mask value. This parameter is used when you are using the `maskRepetitions` prop.
-	 * Every next chunk of the mask will have the delimiter as a prefix.
+	 * The delimiter for the mask value. This parameter is used when you use the `maskRepetitions` property.
+	 * Each subsequent mask fragment will have this delimiter as a prefix.
 	 *
 	 * @example
 	 * ```
-	 * /// A user will see an input element with a value:
+	 * /// The user will see an input element with the value:
 	 * /// _-_
-	 * /// When it starts typing, the value will be automatically changed, like,
+	 * /// When it starts typing, the value will be automatically changed, for example,
 	 * /// 2-3@1-_
 	 * < b-input :mask = '%d-%d' | :maskRepetitions = 2 | :maskDelimiter = '@'
 	 * ```
@@ -176,7 +170,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * A dictionary with RegExp-s as values.
-	 * Keys of the dictionary are interpreted as non-terminal symbols for the component mask, i.e.,
+	 * Dictionary keys are interpreted as non-terminal symbols for the component mask, i.e.
 	 * you can add new non-terminal symbols.
 	 *
 	 * @example
@@ -192,7 +186,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * Text value of the input
+	 * The input text value
 	 * @see [[iInputText.textStore]]
 	 */
 	@computed({cache: false})
@@ -201,7 +195,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 			v = this.field.get<string>('textStore') ?? '';
 
 		// If the input is empty, don't return the empty mask
-		if (this.compiledMask?.placeholder === v) {
+		if (this.maskAPI.compiledMask?.placeholder === v) {
 			return '';
 		}
 
@@ -209,12 +203,12 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * Sets a new text value of the input
+	 * Sets a new input text value
 	 * @param value
 	 */
 	set text(value: string) {
 		if (this.mask != null) {
-			void this.syncMaskWithText(value);
+			void this.maskAPI.syncWithText(value);
 			return;
 		}
 
@@ -222,7 +216,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * True, if the mask is repeated infinitely
+	 * True if the mask repeats indefinitely
 	 */
 	get isMaskInfinite(): boolean {
 		return this.maskRepetitionsProp === true;
@@ -244,30 +238,22 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	};
 
 	/**
-	 * Text value store of the input
+	 * The input text value
 	 * @see [[iInputText.textProp]]
 	 */
 	@system((o) => o.sync.link((v) => v ?? ''))
 	protected textStore!: string;
 
 	/**
-	 * Object of the compiled mask
-	 * @see [[iInputText.mask]]
+	 * API for managing the input mask
 	 */
-	@system()
-	protected compiledMask?: CompiledMask;
-
-	/**
-	 * Number of mask repetitions
-	 * @see [[iInputText.maskRepetitionsProp]]
-	 */
-	@system()
-	protected maskRepetitions: number = 1;
+	@system((o) => new Mask(o))
+	protected maskAPI!: Mask;
 
 	protected override readonly $refs!: {input: HTMLInputElement};
 
 	/**
-	 * Selects all content of the input
+	 * Selects the entire content of the input
 	 * @emits `selectText()`
 	 */
 	@wait('ready', {label: $$.selectText})
@@ -285,7 +271,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	}
 
 	/**
-	 * Clears content of the input
+	 * Clears the content of the input
 	 * @emits `clearText()`
 	 */
 	@wait('ready', {label: $$.clearText})
@@ -295,7 +281,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 		}
 
 		if (this.mask != null) {
-			void this.syncMaskWithText('');
+			void this.maskAPI.syncWithText('');
 
 		} else {
 			this.text = '';
@@ -310,34 +296,11 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 */
 	@wait('ready', {label: $$.initMask})
 	protected initMask(): CanPromise<void> {
-		return mask.init(this);
-	}
-
-	/**
-	 * Compiles the component mask.
-	 * The method saves the compiled mask object and other properties within the component.
-	 */
-	protected compileMask(): CanUndef<CompiledMask> {
 		if (this.mask == null) {
 			return;
 		}
 
-		this.compiledMask = mask.compile(this, this.mask);
-		return this.compiledMask;
-	}
-
-	/**
-	 * Synchronizes the component mask with the specified text value
-	 *
-	 * @param [text] - text to synchronize or a list of Unicode symbols
-	 * @param [opts] - additional options
-	 */
-	@wait('ready', {label: $$.syncComponentMaskWithText})
-	protected syncMaskWithText(
-		text: CanArray<string> = this.text,
-		opts?: SyncMaskWithTextOptions
-	): CanPromise<void> {
-		mask.syncWithText(this, text, opts);
+		this.maskAPI.init();
 	}
 
 	/**
@@ -379,50 +342,5 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	protected mounted(): void {
 		this.updateTextStore(this.text);
-	}
-
-	/**
-	 * Handler: the input with a mask has lost the focus
-	 */
-	protected onMaskBlur(): boolean {
-		return mask.syncInputWithField(this);
-	}
-
-	/**
-	 * Handler: value of the masked input has been changed and can be saved
-	 */
-	protected onMaskValueReady(): boolean {
-		return mask.saveSnapshot(this);
-	}
-
-	/**
-	 * Handler: there is occurred an input action on the masked input
-	 */
-	protected onMaskInput(): Promise<boolean> {
-		return mask.syncFieldWithInput(this);
-	}
-
-	/**
-	 * Handler: there is occurred a keypress action on the masked input
-	 * @param e
-	 */
-	protected onMaskKeyPress(e: KeyboardEvent): boolean {
-		return mask.onKeyPress(this, e);
-	}
-
-	/**
-	 * Handler: removing characters from the mask via `backspace/delete` buttons
-	 * @param e
-	 */
-	protected onMaskDelete(e: KeyboardEvent): boolean {
-		return mask.onDelete(this, e);
-	}
-
-	/**
-	 * Handler: "navigation" over the mask via "arrow" buttons or click events
-	 * @param e
-	 */
-	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): boolean {
-		return mask.onNavigate(this, e);
 	}
 }

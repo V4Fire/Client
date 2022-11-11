@@ -6,30 +6,31 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iInputText from 'components/super/i-input-text/i-input-text';
+import type Mask from 'components/super/i-input-text/mask/class';
 
-import {
+import { fitForText } from 'components/super/i-input-text/mask/fit';
+import { syncWithText } from 'components/super/i-input-text/mask/sync';
 
-	fitForText,
-	convertCursorPositionToRaw,
-	getNormalizedSelectionBounds
-
-} from 'components/super/i-input-text/modules/mask/helpers';
+import { getNormalizedSelectionBounds } from 'components/super/i-input-text/mask/normalizers';
+import { convertCursorPositionToRaw } from 'components/super/i-input-text/mask/helpers';
 
 /**
  * Handler: removing characters from the mask via `backspace/delete` buttons
- *
- * @param component
  * @param e
  */
-export function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): boolean {
+export function onDelete(this: Mask, e: KeyboardEvent): void {
 	const {
-		unsafe,
-		unsafe: {text, compiledMask: mask, $refs: {input}}
-	} = component;
+		ctx,
+		ctx: {
+			text,
+			$refs: {input}
+		},
+
+		compiledMask
+	} = this;
 
 	const canIgnore =
-		mask == null ||
+		compiledMask == null ||
 
 		!Object.isTruly(input) ||
 
@@ -37,17 +38,19 @@ export function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): 
 		!{Backspace: true, Delete: true}[e.key];
 
 	if (canIgnore) {
-		return false;
+		return;
 	}
 
 	e.preventDefault();
 
-	const
-		[selectionStart, selectionEnd] = getNormalizedSelectionBounds(component);
+	const [
+		selectionStart,
+		selectionEnd
+	] = getNormalizedSelectionBounds.call(this);
 
 	switch (e.key) {
 		case 'Delete': {
-			void unsafe.syncMaskWithText('', {
+			syncWithText.call(this, '', {
 				from: selectionStart,
 				to: selectionEnd - selectionStart > 1 ? selectionEnd - 1 : selectionEnd,
 				preserveCursor: true
@@ -59,10 +62,10 @@ export function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): 
 		case 'Backspace': {
 			const
 				textChunks = [...text.letters()],
-				fittedMask = fitForText(component, textChunks);
+				fittedMask = fitForText.call(this, textChunks);
 
 			if (fittedMask == null) {
-				return false;
+				return;
 			}
 
 			const
@@ -93,7 +96,7 @@ export function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): 
 
 				if (Object.isRegExp(maskEl)) {
 					cursorPos = rangeStart - (rangeStart - maskElPos);
-					fittedTextChunks[cursorPos] = unsafe.maskPlaceholder;
+					fittedTextChunks[cursorPos] = ctx.maskPlaceholder;
 				}
 			}
 
@@ -103,8 +106,8 @@ export function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): 
 				cursorPos++;
 			}
 
-			unsafe.updateTextStore(fittedTextChunks.join(''));
-			cursorPos = convertCursorPositionToRaw(component, cursorPos);
+			ctx.updateTextStore(fittedTextChunks.join(''));
+			cursorPos = convertCursorPositionToRaw.call(this, cursorPos);
 			input.setSelectionRange(cursorPos, cursorPos);
 
 			break;
@@ -113,6 +116,4 @@ export function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): 
 		default:
 			// Do nothing
 	}
-
-	return true;
 }

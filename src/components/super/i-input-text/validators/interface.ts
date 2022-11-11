@@ -8,9 +8,6 @@
 
 import type { ValidatorParams, ValidatorError } from 'components/super/i-input/i-input';
 
-/**
- * Parameters to validate inputted strings
- */
 export interface PatternValidatorParams extends ValidatorParams {
 	/***
 	 * RegExp or RegExp text to validate a string
@@ -18,12 +15,12 @@ export interface PatternValidatorParams extends ValidatorParams {
 	pattern?: RegExp | string;
 
 	/**
-	 * The minimum number of characters within a string
+	 * The minimum number of characters in the component value
 	 */
 	min?: number;
 
 	/**
-	 * The maximum number of characters within a string
+	 * The maximum number of characters in the component value
 	 */
 	max?: number;
 

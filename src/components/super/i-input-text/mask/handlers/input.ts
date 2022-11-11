@@ -6,37 +6,37 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iInputText from 'components/super/i-input-text/i-input-text';
+import type Mask from 'components/super/i-input-text/mask/class';
 
-import {
-
-	fitForText,
-	convertCursorPositionToRaw,
-	getNormalizedSelectionBounds
-
-} from 'components/super/i-input-text/modules/mask/helpers';
+import { fitForText } from 'components/super/i-input-text/mask/fit';
+import { getNormalizedSelectionBounds } from 'components/super/i-input-text/mask/normalizers';
+import { convertCursorPositionToRaw } from 'components/super/i-input-text/mask/helpers';
 
 /**
  * Handler: there is occurred a keypress action on the masked input
- *
- * @param component
  * @param e
  */
-export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent): boolean {
+export function onKeyPress(this: Mask, e: KeyboardEvent): void {
 	const {
-		unsafe,
-		unsafe: {text, compiledMask: mask, $refs: {input}}
-	} = component;
+		ctx,
+		ctx: {
+			text,
+			maskPlaceholder,
+			$refs: {input}
+		},
+
+		compiledMask
+	} = this;
 
 	if (!Object.isTruly(input)) {
-		return false;
+		return;
 	}
 
 	let
 		valToInput = e.key;
 
 	const canIgnore =
-		mask == null ||
+		compiledMask == null ||
 
 		e.altKey ||
 		e.shiftKey ||
@@ -47,13 +47,13 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		/^[A-Z][a-z0-9]/.test(valToInput);
 
 	if (canIgnore) {
-		return false;
+		return;
 	}
 
 	e.preventDefault();
 
 	const
-		[selectionStart, selectionEnd] = getNormalizedSelectionBounds(component);
+		[selectionStart, selectionEnd] = getNormalizedSelectionBounds.call(this);
 
 	const
 		selectionRange = selectionEnd - selectionStart;
@@ -66,10 +66,10 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		.splice(selectionStart, selectionRange > 0 ? selectionRange : 1, valToInput);
 
 	const
-		fittedMask = fitForText(component, splicedTextChunks);
+		fittedMask = fitForText.call(this, splicedTextChunks);
 
 	if (fittedMask == null) {
-		return false;
+		return;
 	}
 
 	const
@@ -111,7 +111,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 
 			if (needInsertInputVal) {
 				cursorPos = maskElPos + 1;
-				valToInput = unsafe.maskPlaceholder;
+				valToInput = maskPlaceholder;
 				needInsertInputVal = false;
 			}
 		}
@@ -121,9 +121,7 @@ export function onKeyPress<C extends iInputText>(component: C, e: KeyboardEvent)
 		cursorPos++;
 	}
 
-	unsafe.updateTextStore(fittedTextChunks.join(''));
-	cursorPos = convertCursorPositionToRaw(component, cursorPos);
+	ctx.updateTextStore(fittedTextChunks.join(''));
+	cursorPos = convertCursorPositionToRaw.call(this, cursorPos);
 	input.setSelectionRange(cursorPos, cursorPos);
-
-	return true;
 }

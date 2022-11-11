@@ -21,20 +21,18 @@ import type {
 	PatternValidatorParams,
 	PatternValidatorResult
 
-} from 'components/super/i-input-text/modules/validators/interface';
+} from 'components/super/i-input-text/validators/interface';
 
-export * from 'components/super/i-input-text/modules/validators/interface';
+export * from 'components/super/i-input-text/validators/interface';
 
 export default <ValidatorsDecl<iInputText>>{
-	//#if runtime has iInput/validators
-
 	/** @see [[iInput.validators.required]] */
-	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
+	async required({message, showMessage = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
 			value = await this.formValue;
 
 		if (value === undefined || value === '') {
-			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
+			this.setValidationMessage(this.getValidatorMessage(false, message, t`Required field`), showMessage);
 			return false;
 		}
 
@@ -42,22 +40,22 @@ export default <ValidatorsDecl<iInputText>>{
 	},
 
 	/**
-	 * Checks that a component value must be matched to the provided pattern
+	 * Checks that the component value must match the provided template
 	 *
-	 * @param msg
+	 * @param message
 	 * @param pattern
 	 * @param min
 	 * @param max
 	 * @param skipLength
-	 * @param showMsg
+	 * @param showMessage
 	 */
 	async pattern({
-		msg,
+		message,
 		pattern,
 		min,
 		max,
 		skipLength,
-		showMsg = true
+		showMessage = true
 	}: PatternValidatorParams): Promise<ValidatorResult> {
 		const
 			value = String(await this.formValue ?? '');
@@ -78,7 +76,7 @@ export default <ValidatorsDecl<iInputText>>{
 
 		const error = (
 			type: PatternValidatorResult['name'] = 'NOT_MATCH',
-			defMsg = t`A value must match the pattern`
+			defMsg = t`The text must match the pattern`
 		) => {
 			const err = <PatternValidatorResult>{
 				name: type,
@@ -88,7 +86,7 @@ export default <ValidatorsDecl<iInputText>>{
 				params: Object.mixin(false, {}, {pattern, min, max, skipLength})
 			};
 
-			this.setValidationMsg(this.getValidatorMsg(err, msg, defMsg), showMsg);
+			this.setValidationMessage(this.getValidatorMessage(err, message, defMsg), showMessage);
 			return <ValidatorResult<PatternValidatorResult>>err;
 		};
 
@@ -101,16 +99,14 @@ export default <ValidatorsDecl<iInputText>>{
 				{length} = [...value.letters()];
 
 			if (min != null && length < min) {
-				return error('MIN', t`Value length must be at least ${min} characters`);
+				return error('MIN', t`The text length must be at least ${min} characters`);
 			}
 
 			if (max != null && length > max) {
-				return error('MAX', t`Value length must be no more than ${max} characters`);
+				return error('MAX', t`The text length must be no more than ${max} characters`);
 			}
 		}
 
 		return true;
 	}
-
-	//#endif
 };

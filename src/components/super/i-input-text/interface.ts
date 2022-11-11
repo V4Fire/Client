@@ -9,7 +9,7 @@
 import type { UnsafeIInput } from 'components/super/i-input/i-input';
 import type iInputText from 'components/super/i-input-text/i-input-text';
 
-export * from 'components/super/i-input-text/modules/mask/interface';
+export * from 'components/super/i-input-text/mask/interface';
 
 // @ts-ignore (extend)
 export interface UnsafeIInputText<CTX extends iInputText = iInputText> extends UnsafeIInput<CTX> {

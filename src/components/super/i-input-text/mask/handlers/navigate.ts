@@ -7,20 +7,19 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import type Mask from 'components/super/i-input-text/mask/class';
 
-import type iInputText from 'components/super/i-input-text/i-input-text';
-import { convertCursorPositionToRaw, getNormalizedSelectionBounds } from 'components/super/i-input-text/modules/mask/helpers';
+import { getNormalizedSelectionBounds } from 'components/super/i-input-text/mask/normalizers';
+import { convertCursorPositionToRaw } from 'components/super/i-input-text/mask/helpers';
 
-export const
+const
 	$$ = symbolGenerator();
 
 /**
  * Handler: "navigation" over the mask via "arrow" buttons or click events
- *
- * @param component
  * @param e
  */
-export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent | MouseEvent): boolean {
+export function onNavigate(this: Mask, e: KeyboardEvent | MouseEvent): void {
 	let canIgnore =
 		e.altKey ||
 		e.shiftKey ||
@@ -28,13 +27,12 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 		e.metaKey;
 
 	if (canIgnore) {
-		return false;
+		return;
 	}
 
 	const {
-		unsafe,
-		unsafe: {$refs: {input}}
-	} = component;
+		ctx: {$refs: {input}}
+	} = this;
 
 	let
 		isKeyboardEvent = false,
@@ -50,22 +48,20 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 	}
 
 	if (canIgnore) {
-		return false;
+		return;
 	}
 
 	if (isKeyboardEvent) {
 		e.preventDefault();
-		modifySelectionPos();
+		modifySelectionPos.call(this);
 
 	} else {
-		unsafe.async.setTimeout(modifySelectionPos, 0, {label: $$.setCursor});
+		this.async.setTimeout(modifySelectionPos.bind(this), 0, {label: $$.setCursor});
 	}
 
-	return true;
-
-	function modifySelectionPos(): void {
+	function modifySelectionPos(this: Mask): void {
 		const
-			mask = unsafe.compiledMask;
+			mask = this.compiledMask;
 
 		const canIgnore =
 			mask == null ||
@@ -78,8 +74,8 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 		const
 			maskSymbols = mask.symbols;
 
-		const
-			[selectionStart, selectionEnd] = getNormalizedSelectionBounds(component);
+		const [selectionStart, selectionEnd]: ReturnType<typeof getNormalizedSelectionBounds> =
+			getNormalizedSelectionBounds.call(this);
 
 		let
 			cursorPos: number;
@@ -119,7 +115,7 @@ export function onNavigate<C extends iInputText>(component: C, e: KeyboardEvent 
 			}
 		}
 
-		cursorPos = convertCursorPositionToRaw(component, cursorPos);
+		cursorPos = convertCursorPositionToRaw.call(this, cursorPos);
 		input.setSelectionRange(cursorPos, cursorPos);
 	}
 }

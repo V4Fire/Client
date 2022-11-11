@@ -6,28 +6,36 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iInputText from 'components/super/i-input-text/i-input-text';
-import type { CompiledMask } from 'components/super/i-input-text/modules/mask/interface';
+import type Mask from 'components/super/i-input-text/mask/class';
+import type { CompiledMask } from 'components/super/i-input-text/mask/interface';
 
 /**
  * Compiles the specified component mask and returns the compiled object.
  *
  * To determine non-terminal symbols within the mask is used the symbol `%` and the symbol after it, like `%d` or `%w`.
  * The character `%` is replaced to `\`, and after, the expression will be compiled to RegExp.
- * To escape system characters, you can use a backslash, for instance, `\\%d`.
+ * To escape system characters, you can use a backslash, such as `\\%d`.
  *
- * @param component
- * @param mask
+ * @param [mask]
  */
-export function compile<C extends iInputText>(component: C, mask: string): CompiledMask {
+export function compile(this: Mask, mask: Nullable<string> = this.ctx.mask): CanNull<CompiledMask> {
+	if (mask == null) {
+		return null;
+	}
+
 	const {
-		unsafe,
-		unsafe: {maskRepetitions, maskPlaceholder, maskDelimiter}
-	} = component;
+		ctx: {
+			regExps,
+			maskPlaceholder,
+			maskDelimiter
+		},
+
+		maskRepetitions
+	} = this;
 
 	const
-		symbols = <Array<string | RegExp>>[],
-		nonTerminals = <RegExp[]>[];
+		symbols: Array<string | RegExp> = [],
+		nonTerminals: RegExp[] = [];
 
 	let
 		placeholder = '';
@@ -57,7 +65,7 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 
 		if (isNonTerminal) {
 			const
-				symbol = unsafe.regExps?.[char] ?? new RegExp(`\\${char}`);
+				symbol = regExps?.[char] ?? new RegExp(`\\${char}`);
 
 			symbols.push(symbol);
 			nonTerminals.push(symbol);
@@ -79,7 +87,7 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 		}
 	}
 
-	return {
+	const compiledMask = {
 		symbols,
 		nonTerminals,
 
@@ -89,4 +97,7 @@ export function compile<C extends iInputText>(component: C, mask: string): Compi
 		selectionStart: 0,
 		selectionEnd: 0
 	};
+
+	this.compiledMask = compiledMask;
+	return compiledMask;
 }

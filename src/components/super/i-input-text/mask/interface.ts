@@ -8,39 +8,39 @@
 
 export interface SyncMaskWithTextOptions {
 	/**
-	 * A starting position of the masked text to synchronize.
-	 * The position should be provided to a Unicode symbol, but not a UTF 16 char.
+	 * The starting position of the masked text to synchronize.
+	 * The position points to a symbol in a list of unicode graphemes, not a UTF-16 string.
 	 */
 	from?: Nullable<number>;
 
 	/**
-	 * An ending position of the masked text to synchronize.
-	 * The position should be provided to a Unicode symbol, but not a UTF 16 char.
+	 * The ending position of the masked text to synchronize.
+	 * The position points to a symbol in a list of unicode graphemes, not a UTF-16 string.
 	 */
 	to?: Nullable<number>;
 
 	/**
-	 * An original text from the input (by default it takes from the DOM node).
-	 * The parameter can be provided as a list of Unicode symbols.
+	 * The original text from the input (by default it takes from the DOM node).
+	 * The parameter can be provided as an iterable of Unicode symbols.
 	 */
-	inputText?: CanArray<string>;
+	inputText?: CanIter<string>;
 
 	/**
-	 * If false, the mask won't try to fit its size to the specified text to sync
+	 * If false, the mask will not attempt to fit its size to the specified text
 	 * @default `true`
 	 */
 	fitMask?: boolean;
 
 	/**
-	 * A starting position of the selection cursor.
-	 * The position should be provided to a Unicode symbol, but not a UTF 16 char.
+	 * The starting position of the selection cursor.
+	 * The position points to a symbol in a list of unicode graphemes, not a UTF-16 string.
 	 *
 	 * @default `from`
 	 */
 	cursorPos?: number;
 
 	/**
-	 * If true, the cursor position will be preserved to the left bound of selection to synchronize
+	 * If true, the cursor position will be preserved to the left bound of the selection
 	 * @default `false`
 	 */
 	preserveCursor?: boolean;
@@ -54,7 +54,7 @@ export interface SyncMaskWithTextOptions {
 
 export interface CompiledMask {
 	/**
-	 * List of symbols of the compiled mask
+	 * A list of the compiled mask symbols
 	 *
 	 * @example
 	 * ```
@@ -65,7 +65,7 @@ export interface CompiledMask {
 	symbols: Array<string | RegExp>;
 
 	/**
-	 * List of non-terminal symbols of the compiled mask
+	 * A list of non-terminal symbols from the compiled mask
 	 *
 	 * @example
 	 * ```
@@ -81,7 +81,7 @@ export interface CompiledMask {
 	text: string;
 
 	/**
-	 * Value of the whole mask placeholder
+	 * The placeholder value of the entire mask
 	 *
 	 * @example
 	 * ```
@@ -93,14 +93,14 @@ export interface CompiledMask {
 	placeholder: string;
 
 	/**
-	 * A starting position of the last input selection.
-	 * The position refers to a Unicode symbol, but not a UTF 16 char.
+	 * The starting position of the last input selection.
+	 * The position refers to a Unicode grapheme list, but not a UTF-16 string.
 	 */
 	selectionStart: Nullable<number>;
 
 	/**
-	 * An ending position of the last input selection.
-	 * The position refers to a Unicode symbol, but not a UTF 16 char.
+	 * The ending position of the last input selection.
+	 * The position refers to a Unicode grapheme list, but not a UTF-16 string.
 	 */
 	selectionEnd: Nullable<number>;
 }
