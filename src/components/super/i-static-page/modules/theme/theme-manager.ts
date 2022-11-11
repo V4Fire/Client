@@ -30,7 +30,7 @@ export default class ThemeManager extends Friend {
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
 
 	/**
-	 * Current theme value
+	 * The current theme value
 	 */
 	protected currentStore!: string;
 

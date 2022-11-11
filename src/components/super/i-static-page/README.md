@@ -1,12 +1,12 @@
 # components/super/i-static-page
 
-This module provides a super component for all root components.
+This module provides a super class for all root components.
 
 The root component is the top component of any application.
-It contains all other components, and all components have a property, which refers to it: `r` or `$root`.
+It contains all other components, and all components have a property that refers to it: `r` or `$root`.
 
-Also, the root component generates an initial application HTML layout.
-The layout contains including of base CSS/JS/... files and a bunch of meta tags, like `<title>`.
+In addition, the root component generates the initial HTML layout of the application.
+The layout includes basic CSS/JS/... files and a set of meta tags such as `<title>`.
 
 ## Synopsis
 
@@ -33,27 +33,27 @@ The component has a bunch of associated types to specify page interfaces that ar
 ```typescript
 export default abstract class iStaticPage extends iPage {
   /**
-   * Type: page parameters
+   * Type: the page parameters
    */
   readonly PageParams!: this['Router']['PageParams'];
 
   /**
-   * Type: page query
+   * Type: the page query
    */
   readonly PageQuery!: this['Router']['PageQuery'];
 
   /**
-   * Type: page meta
+   * Type: the page meta
    */
   readonly PageMeta!: this['Router']['PageMeta'];
 
   /**
-   * Type: router
+   * Type: the router
    */
   readonly Router!: bRouter;
 
   /**
-   * Type: current page
+   * Type: the current page
    */
   readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 }
@@ -64,7 +64,7 @@ See [[bRouter]] and [[bDynamicPage]] for more information.
 ## Hiding DOM elements when there is no Internet connection
 
 Depending on the Internet connection status, the component sets the `online` global modifier.
-In addition to this, any DOM element with the `data-hide-if-offline="true"` attribute will be hidden if there is no Internet.
+In addition to this, any DOM element with the `data-hide-if-offline="true"` attribute will be hidden if there is no internet.
 
 ```
 - namespace [%fileName%]
@@ -80,7 +80,7 @@ In addition to this, any DOM element with the `data-hide-if-offline="true"` attr
 ## Providing dynamic `webpack.publicPath`
 
 If you run your build with options `webpack.dynamicPublicPath` and `webpack.providePublicPathWithQuery`,
-you can provide the public path to load assets via a `publicPath` query parameter. To enable these options,
+you can specify a public path to load assets via the `publicPath` query parameter. To enable these options,
 edit the config file or pass CLI options or environment variables.
 
 ```
@@ -89,16 +89,16 @@ https://your-site.com?publicPath=https://static.your-site.com/sf534sad323q
 
 ## Attaching project favicons
 
-To attach favicons to the project, you should generate them first.
-Unfortunately, the project building process does not generate them because it is an expensive task and slows down the building speed.
+To attach favicons to a project, they must first be generated.
+Unfortunately, the build process of the project does not generate them, because this is an expensive task and slows down the build speed.
 
-To generate favicons, you may use the predefined gulp task.
+To generate favicons, you can use the predefined gulp task.
 
 ```bash
 gulp static:favicons
 ```
 
-The task uses [gulp-favicons](https://www.npmjs.com/package/gulp-favicons) to generate favicons based on a passed image.
+The task uses [gulp-favicons](https://www.npmjs.com/package/gulp-favicons) to generate favicons based on the specified image.
 To configure the task, you must modify the `favicons` property from the project config file.
 
 __config/default.js__
@@ -119,17 +119,17 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 ```
 
 Don't forget to commit all generated files to your version control system.
-You don't need to create favicons in each project because they can be inherited from parent layers.
+You don't need to create favicons in every project because they can be inherited from parent layers.
 
 ## Including custom files to HTML
 
-The component generates an HTML code to initialize an application.
-It contains a structure of tags `<html><head/><body/></html>` with including all necessary resources, like CSS or JS files.
+The component generates HTML code to initialize the application.
+It contains a `<html><head/><body/></html>` tag structure with all necessary resources such as CSS or JS files.
 
-You can attach static files to the layout to avoid redundant WebPack compilation and increase building speed.
-Notice, all files that are attached in this way won't be automatically minified. You should do it by yourself.
+You can attach static files to your layout to avoid redundant WebPack compilation and increase build speed.
+Please note that all files attached in this way will not be automatically minified. You must do it yourself.
 
-First, you have to create a component that extends the current one.
+First, you need to create a component that extends the current one.
 
 __components/pages/p-root/__
 
@@ -144,7 +144,7 @@ __p-root.ts__
 ```typescript
 import iStaticPage, { component } from 'components/super/i-static-page/i-static-page';
 
-// To create a component as the root, we must mark it with the `@component` decorator
+// To create a component as a root, we must mark it with the `@component` decorator
 @component({root: true})
 export default class pRoot extends iStaticPage {
 
@@ -165,7 +165,7 @@ p-root extends i-static-page
 
 __p-root.ss__
 
-This template is used within the runtime to create other components, like a router or dynamic page.
+This template is used at runtime to create other components such as a router or a dynamic page.
 
 ```
 - namespace [%fileName%]
@@ -180,31 +180,31 @@ This template is used within the runtime to create other components, like a rout
 
 __p-root.ess__
 
-This template is used during compile-time to generate an HTML layout.
-Notice, in the file name we use `.ess`, but no `.ss`.
+This template is used at compile time to create the HTML layout.
+Note that we use `.ess` in the filename, not `.ss`.
 
 ```
 - namespace [%fileName%]
 
-- include 'components/super/i-static-page/i-static-page.interface.ss'|b as placeholder
+- include 'components/super/i-static-page/i-static-page.html.ss'|b as placeholder
 
 - template index() extends ['i-static-page.interface'].index
-  /// Map of external libraries to load
+  /// A dictionary with external libraries to load
   - deps = include('src/components/pages/p-root/deps')
 ```
 
 __deps.js__
 
-This file exposes a map with dependencies to load via HTML.
+This file exposes a map with dependencies for loading via HTML.
 
 ```js
-// Require config to enable runtime API, like, `include`
+// Require config to enable the runtime API, like, `include`
 const config = require('config');
 
-// Load parent dependencies from `iStaticPage`
+// Load the parent dependencies from `iStaticPage`
 const deps = include('src/components/super/i-static-page/deps');
 
-// Add to the `<head>` a script from the project `assets/` folder.
+// Add the script from the project `assets/` folder to the `<head>` tag.
 // The script will be inlined.
 deps.headScripts.set('perfomance-counter', {
   inline: true,
@@ -214,7 +214,7 @@ deps.headScripts.set('perfomance-counter', {
 
 if (config.runtime().engine === 'vue') {
   // Load a library from the `node_modules/`.
-  // The library will be put to the end of `<body>`.
+  // The library will be placed at the end of `<body>`
   deps.scripts.set('vue', `vue/dist/vue.runtime${config.webpack.mode() === 'production' ? '.min' : ''}.js`);
 }
 
@@ -222,31 +222,31 @@ module.exports = deps;
 ```
 
 The `deps` object is a simple JS object with a predefined list of properties. Each property is a Map object.
-By default, all resources to load are taken from the project `node_modules/` folder, but you can configure it manually for each case.
-Also, you can provide additional attributes to any declaration via options.
+By default, all resources for loading are taken from the project's `node_modules/` folder, but you can configure it manually for each case.
+In addition, you can specify additional attributes for any declaration using parameters.
 
 ```js
 const deps = {
   /**
-   * Map of script libraries to require
+   * A map of script libraries to require
    * @type {Libs}
    */
   scripts: new Map(),
 
   /**
-   * Map of script libraries to require: the scripts are placed within the head tag
+   * A map of script libraries to require: the scripts are placed within the head tag
    * @type {Libs}
    */
   headScripts: new Map(),
 
   /**
-   * Map of style libraries to require
+   * A map of style libraries to require
    * @type {StyleLibs}
    */
   styles: new Map(),
 
   /**
-   * Map of links to require
+   * A map of links to require
    * @type {Links}
    */
   links: new Map()
@@ -255,25 +255,31 @@ const deps = {
 
 ```js
 /**
- * Source type of a library:
+ * Source type of library:
  *
- *   1. `lib` - external library, i.e, something from `node_modules`
- *   2. `src` - internal resource, i.e, something that builds from the `/src` folder
- *   3. `output` - output library, i.e, something that builds to the `/dist/client` folder
+ *   1. `lib` - the external library, i.e, something from `node_modules`
+ *   2. `src` - the internal resource, i.e, something that builds from the `/src` folder
+ *   3. `output` - the output library, i.e, something that builds to the `/dist/client` folder
  *
  * @typedef {('lib'|'src'|'output')}
  */
 const LibSource = 'lib';
+exports.LibSource = LibSource;
 
 /**
  * Parameters of a script library:
  *
- *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
- *   2. [source='lib'] - source type of the library, i.e. where the library is stored
+ *   1. src - a relative path to the loaded file, i.e. without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - the source type of the library, i.e. where the library is placed
  *   3. [inline=false] - if true, the library is placed as a text
  *   4. [defer=true] - if true, the library is declared with the `defer` attribute
  *   5. [load=true] - if false, the library won't be automatically loaded with a page
- *   6. [attrs] - dictionary with additional attributes
+ *   6. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
+ *     1. a simple string, as `null` (when an attribute does not have a value);
+ *     2. an array (to interpolate the value as JS);
+ *     3. an object with the predefined `toString` method
+ *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
+ *       and `interpolate: true` to enable interpolation of a value).
  *
  * @typedef {{
  *   src: string,
@@ -284,23 +290,51 @@ const LibSource = 'lib';
  * }}
  */
 const Lib = {};
+exports.Lib = Lib;
 
 /**
- * Map of script libraries to require:
+ * Parameters of an initialized script library:
+ *
+ *   1. src - a path to the loaded file
+ *   2. [js] - if true, the function returns JS code to load the library
+ *   3. [staticAttrs] - a string with additional attributes
+ *
+ * @see Lib
+ * @typedef {{
+ *   src: string,
+ *   inline?: boolean,
+ *   defer?: boolean,
+ *   load?: boolean,
+ *   js?: boolean,
+ *   attrs?: Object,
+ *   staticAttrs?: string
+ * }}
+ */
+const InitializedLib = {};
+exports.InitializedLib = InitializedLib;
+
+/**
+ * A map of script libraries to require:
  * the value can be declared as a string (relative path to a file to load) or object with parameters
  *
  * @typedef {Map<string, (string|Lib)>}
  */
 const Libs = new Map();
+exports.Libs = Libs;
 
 /**
  * Parameters of a style library:
  *
- *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
- *   2. [source='lib'] - source type of the library, i.e. where the library is stored
+ *   1. src - a relative path to the loaded file, i.e. without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - the source type of the library, i.e. where the library is stored
  *   3. [inline=false] - if true, the library is placed as text into a style tag
  *   4. [defer=true] - if true, the library is loaded only after loading of the whole page
- *   5. [attrs] - dictionary with additional attributes
+ *   5. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
+ *     1. a simple string, as `null` (when an attribute does not have a value);
+ *     2. an array (to interpolate the value as JS);
+ *     3. an object with the predefined `toString` method
+ *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
+ *       and `interpolate: true` to enable interpolation of a value).
  *
  * @typedef {{
  *   src: string,
@@ -311,22 +345,49 @@ const Libs = new Map();
  * }}
  */
 const StyleLib = {};
+exports.StyleLib = StyleLib;
 
 /**
- * Map of style libraries to require:
+ * Parameters of an initialized style library:
+ *
+ *   1. src - a path to the loaded file
+ *   2. [js] - if true, the function returns JS code to load the library
+ *   3. [staticAttrs] - a string with additional attributes
+ *
+ * @see StyleLib
+ * @typedef {{
+ *   src: string,
+ *   inline?: boolean,
+ *   defer?: boolean,
+ *   js?: boolean,
+ *   attrs?: Object,
+ *   staticAttrs?: string
+ * }}
+ */
+const InitializedStyleLib = {};
+exports.InitializedStyleLib = InitializedStyleLib;
+
+/**
+ * A map of style libraries to require:
  * the value can be declared as a string (relative path to a file to load) or object with parameters
  *
  * @typedef {Map<string, (string|StyleLib)>}
  */
 const StyleLibs = new Map();
+exports.StyleLibs = StyleLibs;
 
 /**
  * Parameters of a link:
  *
- *   1. src - relative path to a file to load, i.e. without referencing to `/node_modules`, etc.
- *   2. [source='lib'] - source type of the library, i.e. where the library is stored
- *   3. [tag='link'] - tag to create the link
- *   4. [attrs] - dictionary with additional attributes
+ *   1. src - a relative path to the loaded file, i.e. without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - the source type of the library, i.e. where the library is stored
+ *   3. [tag='link'] - a tag to create the link
+ *   4. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
+ *     1. a simple string, as `null` (when an attribute does not have a value);
+ *     2. an array (to interpolate the value as JS);
+ *     3. an object with the predefined `toString` method
+ *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
+ *       and `interpolate: true` to enable interpolation of a value).
  *
  * @typedef {{
  *   src: string,
@@ -336,26 +397,45 @@ const StyleLibs = new Map();
  * }}
  */
 const Link = {};
+exports.Link = Link;
 
 /**
- * Map of links to require:
+ * Parameters of an initialized link:
+ *
+ *   1. src - a path to the loaded file
+ *   2. [tag='link'] - a tag to create the link
+ *   3. [js] - if true, the function returns JS code to load the library
+ *   4. [staticAttrs] - a string with additional attributes
+ *
+ * @see Link
+ * @typedef {{
+ *   src: string,
+ *   tag?: string,
+ *   js?: boolean,
+ *   attrs?: Object,
+ *   staticAttrs?: string
+ * }}
+ */
+const InitializedLink = {};
+exports.InitializedLink = InitializedLink;
+
+/**
+ * A map of links to require:
  * the value can be declared as a string (relative path to a file to load) or object with parameters
  *
  * @typedef {Map<string, (string|Link)>}
  */
 const Links = new Map();
+exports.Links = Links;
 ```
 
 ## Parameters to generate HTML
 
-You can redefine Snakeskin constants to generate static HTML files.
+You can override Snakeskin constants to create static HTML files.
 
 ```
-/** Static page title */
+/** The static page title */
 - title = @@appName
-
-/** @override */
-- rootTag = 'div'
 
 /** @override */
 - rootAttrs = {}
@@ -363,10 +443,10 @@ You can redefine Snakeskin constants to generate static HTML files.
 /** Additional static page data */
 - pageData = {}
 
-/** Page charset */
+/** The page charset */
 - charset = 'utf-8'
 
-/** Map of meta viewport attributes */
+/** A dictionary with meta viewport attributes */
 - viewport = { &
   'width': 'device-width',
   'initial-scale': '1.0',
@@ -374,18 +454,18 @@ You can redefine Snakeskin constants to generate static HTML files.
   'user-scalable': 'no'
 } .
 
-/** Map with attributes of <html> tag */
+/** A dictionary with attributes of <html> tag */
 - htmlAttrs = { &
   lang: config.locale
 } .
 
-/** Should or not generate <base> tag */
+/** Should or not generate the `<base>` tag */
 - defineBase = false
 
 /** Should or not attach favicons */
 - attachFavicons = true
 
-/** Should or not do a request for assets.js */
+/** Should or not do a request for `assets.js` */
 - assetsRequest = false
 ```
 
@@ -396,7 +476,7 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
 ```
 - namespace [%fileName%]
 
-- include 'components/super/i-static-page/i-static-page.interface.ss'|b as placeholder
+- include 'components/super/i-static-page/i-static-page.html.ss'|b as placeholder
 
 - template index() extends ['i-static-page.interface'].index
   - rootTag = 'main'
@@ -424,7 +504,7 @@ See `core/net` for more information.
 
 #### activePage
 
-A name of the active route page.
+The name of the active route page.
 See [[bDynamicPage]] for more information.
 
 ### providerDataStore
@@ -464,7 +544,7 @@ See `components/super/i-static-page/modules/theme` for more information.
 
 #### locale
 
-A value of the system locale.
+The application locale.
 
 ```js
 console.log(this.r);
@@ -484,15 +564,15 @@ this.r.setPageTitle('Hello page');
 #### reset
 
 Sends a message to reset data of all components.
-The method can take a reset type:
+The method can accept a reset type:
 
-1. `'load'` - reload provider' data of all components;
-2. `'load.silence'` - reload provider' data of all components without triggering of component' state;
-3. `'router'` - reload router' data of all components;
-4. `'router.silence'` - reload router' data of all components without triggering of component' state;
-5. `'storage'` - reload storage' data of all components;
-6. `'storage.silence'` - reload storage' data of all components without triggering of component' state;
-7. `'silence'` - reload all components without triggering of component' state.
+1. `'load'` - reloads provider data of all components;
+2. `'load.silence'` - reloads provider data of all components without triggering of component state;
+3. `'router'` - reloads router data of all components;
+4. `'router.silence'` - reloads router data of all components without triggering of component state;
+5. `'storage'` - reloads storage data of all components;
+6. `'storage.silence'` - reloads storage data of all components without triggering of component state;
+7. `'silence'` - reloads all components without triggering of component state.
 
 ```js
 this.r.reset();

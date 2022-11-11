@@ -260,11 +260,11 @@ They are synchronized with `remoteState` via `sync.link`.
 
 #### :boom: Breaking Change
 
-* Renamed `head` -> `deps` `i-static-page.interface.ss`
+* Renamed `head` -> `deps` `i-static-page.html.ss`
 
 #### :rocket: New Feature
 
-* `i-static-page.interface.ss`:
+* `i-static-page.html.ss`:
   * Added `meta`
   * Added `head`
 

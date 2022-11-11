@@ -22,7 +22,7 @@ const
 exports.getFaviconsDecl = getFaviconsDecl;
 
 /**
- * Returns declaration of project favicons
+ * Returns declaration of the project favicons
  * @returns {string}
  */
 function getFaviconsDecl() {

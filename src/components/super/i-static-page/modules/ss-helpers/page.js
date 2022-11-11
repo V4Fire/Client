@@ -40,7 +40,7 @@ exports.getPageScriptDepsDecl = getPageScriptDepsDecl;
  * Returns code to load script dependencies of a page.
  *
  * The function returns JS code to load the library by using JS.
- * You need to put this declaration within a script tag or use the "wrap" option.
+ * You need to put this declaration within a script tag or use the `wrap` option.
  *
  * @param {Array<string>} dependencies - the list of dependencies to load
  * @param {!Object<string>} assets - a dictionary with static page assets
@@ -87,7 +87,7 @@ exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
  * Returns code to load style dependencies of a page.
  *
  * The function can return JS code to load the style by using `document.write` or pure CSS to inline.
- * You may use the "wrap" option to wrap the final code with a tag to load.
+ * You may use the `wrap` option to wrap the final code with a tag to load.
  *
  * @param {Array<string>} dependencies - the list of dependencies to load
  * @param {!Object<string>} assets - a dictionary with static page assets
@@ -122,7 +122,7 @@ exports.getScriptDeclByName = getScriptDeclByName;
  * The names are equal with entry points from "src/entries".
  *
  * The function returns JS code to load the library by using JS.
- * You need to put this declaration within a script tag or use the "wrap" option.
+ * You need to put this declaration within a script tag or use the `wrap` option.
  *
  * @param {string} name
  * @param {!Object<string>} assets - a dictionary with static page assets
@@ -184,7 +184,7 @@ exports.getStyleDeclByName = getStyleDeclByName;
  * The names are equal with entry points from "src/entries".
  *
  * The function can return JS code to load the style by using JS or pure CSS to inline.
- * You may use the "wrap" option to wrap the final code with a tag to load.
+ * You may use the `wrap` option to wrap the final code with a tag to load.
  *
  * @param {string} name
  * @param {!Object<string>} assets - a dictionary with static page assets

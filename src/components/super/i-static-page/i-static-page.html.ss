@@ -20,14 +20,11 @@
 - block index->inject(src)
 	- return fs.readFileSync(src).toString()
 
-/**
- * Base page template
- */
 - async template index(@params = {}) extends ['i-page'].index
 	/** Helpers to generate a template */
 	- h = include('src/components/super/i-static-page/modules/ss-helpers')
 
-	/** Static page title */
+	/** The static page title */
 	- title = @@appName
 
 	/** @override */
@@ -36,10 +33,10 @@
 	/** Additional static page data */
 	- pageData = {}
 
-	/** Page charset */
+	/** The page charset */
 	- charset = 'utf-8'
 
-	/** Map of meta viewport attributes */
+	/** A dictionary with meta viewport attributes */
 	- viewport = { &
 		'width': 'device-width',
 		'initial-scale': '1.0',
@@ -47,27 +44,27 @@
 		'user-scalable': 'no'
 	} .
 
-	/** Map with attributes of <html> tag */
+	/** A dictionary with attributes of <html> tag */
 	- htmlAttrs = { &
 		lang: config.locale
 	} .
 
-	/** Should or not generate <base> tag */
+	/** Should or not generate the `<base>` tag */
 	- defineBase = false
 
 	/** Should or not attach favicons */
 	- attachFavicons = true
 
-	/** Should or not do a request for assets.js */
+	/** Should or not do a request for `assets.js` */
 	- assetsRequest = false
 
-	/** Map of external libraries to load */
+	/** A dictionary with external libraries to load */
 	- deps = include('src/components/super/i-static-page/deps')
 
-	/** Own dependencies of the page */
+	/** The page dependencies */
 	- ownDeps = @@entryPoints[self.name()] || {}
 
-	/** Map with static page assets */
+	/** A dictionary with static page assets */
 	- assets = h.getAssets(@@entryPoints)
 
 	- block root

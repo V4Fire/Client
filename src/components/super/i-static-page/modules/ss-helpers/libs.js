@@ -221,8 +221,8 @@ function resolveAsLib(
 		resSrc;
 
 	if (Object.isArray(cwd)) {
-		for (let i = 0; i < cwd.length; i++) {
-			resSrc = path.join(...[].concat(cwd[i] || [], paths));
+		for (const el of cwd) {
+			resSrc = path.join(...[].concat(el || [], paths));
 
 			if (fs.existsSync(resSrc)) {
 				break;

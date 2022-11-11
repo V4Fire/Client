@@ -26,7 +26,7 @@ console.log(this.r.providerDataStore.get('foo')?.data);
 
 ## providerDataStore
 
-`providerDataStore` is a property from the root component that implements the [[Cache]] data structure.
+Is a property from the root component that implements the [[Cache]] data structure.
 The structure contains elements as [[ProviderDataItem]]. Each element has an additional API based on `core/object/select`
 to find a fragment from all the data for the given query. Alternatively, you can touch `data` property to access the raw data object.
 

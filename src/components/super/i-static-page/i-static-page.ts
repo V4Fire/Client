@@ -42,17 +42,17 @@ export const
 @component()
 export default abstract class iStaticPage extends iPage {
 	/**
-	 * Type: page parameters
+	 * Type: the page parameters
 	 */
 	readonly PageParams!: this['Router']['PageParams'];
 
 	/**
-	 * Type: page query
+	 * Type: the page query
 	 */
 	readonly PageQuery!: this['Router']['PageQuery'];
 
 	/**
-	 * Type: page meta information
+	 * Type: the page meta information
 	 */
 	readonly PageMeta!: this['Router']['PageMeta'];
 
@@ -67,13 +67,13 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
-	 * Module to work with data of data providers globally
+	 * A module to work with data of data providers globally
 	 */
 	@system(() => createProviderDataStore(new RestrictedCache(10)))
 	readonly providerDataStore!: ProviderDataStore;
 
 	/**
-	 * Module to manage app themes from the Design System
+	 * A module to manage app themes from the Design System
 	 */
 	@system<iStaticPage>(themeManagerFactory)
 	readonly theme: CanUndef<ThemeManager>;
@@ -97,7 +97,7 @@ export default abstract class iStaticPage extends iPage {
 	lastOnlineDate?: Date;
 
 	/**
-	 * Name of the active route page
+	 * The name of the active route page
 	 */
 	@computed({cache: true, dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
@@ -134,7 +134,6 @@ export default abstract class iStaticPage extends iPage {
 			title = div.textContent ?? '';
 
 		// Fix strange Chrome bug
-		// tslint:disable-next-line:no-irregular-whitespace
 		document.title = `${title} `;
 		document.title = title;
 
@@ -142,14 +141,14 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * System locale
+	 * The application locale
 	 */
 	get locale(): string {
 		return this.field.get<string>('localeStore')!;
 	}
 
 	/**
-	 * Sets a new system locale
+	 * Sets a new application locale
 	 */
 	set locale(value: string) {
 		this.field.set('localeStore', value);
@@ -162,14 +161,14 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Route information object store
+	 * The route information object store
 	 * @see [[iStaticPage.route]]
 	 */
 	@field({forceUpdate: false})
 	protected routeStore?: this['CurrentPage'];
 
 	/**
-	 * Link to a router instance
+	 * A link to the router instance
 	 */
 	@system()
 	protected routerStore?: this['Router'];
@@ -220,17 +219,17 @@ export default abstract class iStaticPage extends iPage {
 
 	/**
 	 * Sends a message to reset data of all components.
-	 * The method can take a reset type:
+	 * The method can accept a reset type:
 	 *
-	 * 1. `'load'` - reload provider' data of all components;
-	 * 2. `'load.silence'` - reload provider' data of all components without triggering of component' state;
-	 * 3. `'router'` - reload router' data of all components;
-	 * 4. `'router.silence'` - reload router' data of all components without triggering of component' state;
-	 * 5. `'storage'` - reload storage' data of all components;
-	 * 6. `'storage.silence'` - reload storage' data of all components without triggering of component' state;
-	 * 7. `'silence'` - reload all components without triggering of component' state.
+	 * 1. `'load'` - reloads provider data of all components;
+	 * 2. `'load.silence'` - reloads provider data of all components without triggering of component state;
+	 * 3. `'router'` - reloads router data of all components;
+	 * 4. `'router.silence'` - reloads router data of all components without triggering of component state;
+	 * 5. `'storage'` - reloads storage data of all components;
+	 * 6. `'storage.silence'` - reloads storage data of all components without triggering of component state;
+	 * 7. `'silence'` - reloads all components without triggering of component state.
 	 *
-	 * @param [type] - reset type
+	 * @param [type] - the reset type
 	 */
 	reset(type?: ComponentResetType): void {
 		this.nextTick(() => resetComponents(type), {
@@ -241,7 +240,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * @param name
 	 * @param value
-	 * @param [component] - instance of the component that wants to set a modifier
+	 * @param [component] - an instance of the component that wants to set the modifier
 	 */
 	override setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
 		const
@@ -286,7 +285,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * @param name
 	 * @param [value]
-	 * @param [component] - instance of the component that wants to remove a modifier
+	 * @param [component] - an instance of the component that wants to remove the modifier
 	 */
 	override removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
 		const
@@ -320,7 +319,7 @@ export default abstract class iStaticPage extends iPage {
 
 	/**
 	 * @param name
-	 * @param [component] - instance of the component that wants to get a modifier
+	 * @param [component] - an instance of the component that wants to get the modifier
 	 */
 	override getRootMod(name: string, component: iBlock = this): CanUndef<string> {
 		return this.rootMods[this.getRootModKey(name, component)]?.value;
@@ -329,7 +328,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * Returns a key to save the specified root element modifier
 	 *
-	 * @param name - modifier name
+	 * @param name - the modifier name
 	 * @param [component]
 	 */
 	protected getRootModKey(name: string, component: iBlock = this): string {
