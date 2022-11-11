@@ -1,6 +1,6 @@
 # components/super/i-dynamic-page
 
-This module provides a super component for all non-root page components.
+This module provides a super class for all non-root page components.
 
 ## Synopsis
 
@@ -22,8 +22,8 @@ See the [[iPage]] component.
 
 ## Basic concepts
 
-This class serves as a parent for all dynamic or virtual pages.
-To understand the differences between static and dynamic pages, see the [[iPage]].
+This class serves as the parent for all dynamic or virtual pages.
+To understand the difference between static and dynamic pages, see the [[iPage]].
 
-To create a dynamic page component, extend it from this component.
+To create a dynamic page component, derive it from this component.
 To bind a page to URL, see [[bRouter]] and [[bDynamicPage]] components.
