@@ -1,6 +1,6 @@
 # components/super/i-input-text
 
-This module provides a superclass to create text inputs. The class includes API to create a masked input.
+This module provides a superclass to create text inputs. The class includes an API for creating masked input.
 
 ## Synopsis
 
@@ -12,21 +12,31 @@ This module provides a superclass to create text inputs. The class includes API 
 
 ## Modifiers
 
-| Name       | Description                            | Values    | Default |
-|------------|----------------------------------------|-----------|---------|
-| `empty`    | A component text is empty              | `boolean` | -       |
-| `readonly` | The component is in the read-only mode | `boolean` | -       |
+| Name       | Description                        | Values    | Default |
+|------------|------------------------------------|-----------|---------|
+| `empty`    | Tee component text is empty        | `boolean` | -       |
+| `readonly` | The component is in read-only mode | `boolean` | -       |
 
 Also, you can see [[iWidth]] and [[iSize]] traits and the [[iInput]] component.
 
 ## Events
 
-| Name         | Description                                  | Payload description | Payload |
-|--------------|----------------------------------------------|---------------------|---------|
-| `selectText` | The component has selected its input content | -                   | -       |
-| `clearText`  | The component has cleared its input content  | -                   | -       |
+| Name         | Description                          | Payload description | Payload |
+|--------------|--------------------------------------|---------------------|---------|
+| `selectText` | The component has selected its input | -                   | -       |
+| `clearText`  | The component has cleared its input  | -                   | -       |
 
 Also, you can see the [[iInput]] component.
+
+## How to enable input mask support?
+
+By default, the component does not load the module for working with input masks.
+To enable support you need to add the following import to your project.
+
+```typescript
+import Mask, * as MaskAPI from 'components/super/i-input-text/mask';
+Mask.addToPrototype(MaskAPI);
+```
 
 ## API
 
@@ -36,7 +46,7 @@ Also, you can see the implemented traits or the parent component.
 
 #### [textProp]
 
-An initial text value of the input.
+The input text value.
 
 ```
 < my-text-input :text = 'my-input'
@@ -44,7 +54,7 @@ An initial text value of the input.
 
 #### [type = `'text'`]
 
-A UI type of the input.
+The input UI type.
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#input_types).
 
 ```
@@ -53,14 +63,12 @@ A UI type of the input.
 
 #### [autocomplete = `'off'`]
 
-An autocomplete mode of the input.
-
+The input autocomplete mode.
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefautocomplete).
 
 #### [placeholder]
 
-A placeholder text of the input
-
+The input placeholder.
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefplaceholder).
 
 ```
@@ -69,33 +77,30 @@ A placeholder text of the input
 
 #### [minLength]
 
-The minimum text value length of the input.
-The option will be ignored if provided `mask`.
-
+The minimum length of the input text value.
+The option will be ignored if the `mask` is specified.
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefminlength).
 
 #### [maxLength]
 
-The maximum text value length of the input.
-The option will be ignored if provided `mask`.
-
+The maximum length of the input text value.
+The option will be ignored if the `mask` is specified.
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmaxlength).
 
 #### [mask]
 
-A value of the input's mask.
+The input text value mask.
 
-The mask is used when you need to "decorate" some input value,
-like a phone number or credit card number. The mask can contain terminal and non-terminal symbols.
-The terminal symbols will be shown as they are written.
-The non-terminal symbols should start with `%` and one more symbol. For instance, `%d` means that it can be
+The mask is used when you need to "decorate" some input value, such as a phone number or a credit card number.
+The mask may contain terminal and non-terminal symbols. The terminal symbols will be displayed as they are written.
+The non-terminal symbols must start with `%` and one more character. For instance, `%d` means that it can be
 replaced by a numeric character (0-9).
 
 Supported non-terminal symbols:
 
-* `%d` - is equivalent RegExp' `\d`
-* `%w` - is equivalent RegExp' `\w`
-* `%s` - is equivalent RegExp' `\s`
+* `%d` - is equivalent RegExp `\d`
+* `%w` - is equivalent RegExp `\w`
+* `%s` - is equivalent RegExp `\s`
 
 ```
 < b-input :mask = '+%d% (%d%d%d) %d%d%d-%d%d-%d%d'
@@ -103,40 +108,40 @@ Supported non-terminal symbols:
 
 #### [maskPlaceholder = `'_'`]
 
-A value of the mask placeholder.
-All non-terminal symbols from the mask without the specified value will have this placeholder.
+The mask placeholder value.
+All non-terminal symbols from the mask without a specified value will have this placeholder.
 
 ```
-/// A user will see an input element with a value:
+/// The user will see an input element with the value:
 /// +_ (___) ___-__-__
-/// When it starts typing, the value will be automatically changed, like,
+/// When it starts typing, the value will be automatically changed, for example,
 /// +7 (49_) ___-__-__
 < b-input :mask = '+%d% (%d%d%d) %d%d%d-%d%d-%d%d' | :maskPlaceholder = '_'
 ```
 
 #### [maskRepetitionsProp]
 
-Number of mask repetitions.
-This parameter allows you to specify how many times the mask pattern needs to apply to the input value.
-The `true` value means that the pattern can be repeated infinitely.
+The number of repetitions of the mask.
+This option allows you to specify how many times the mask pattern should be applied to the input value.
+The `true` value means that the pattern can  repeat indefinitely.
 
 ```
-/// A user will see an input element with a value:
+/// The user will see an input element with the value:
 /// _-_
-/// When it starts typing, the value will be automatically changed, like,
+/// When it starts typing, the value will be automatically changed, for example,
 /// 2-3 1-_
 < b-input :mask = '%d-%d' | :maskRepetitions = 2
 ```
 
 #### [maskDelimiter =  = `' '`]
 
-Delimiter for a mask value. This parameter is used when you are using the `maskRepetitions` prop.
-Every next chunk of the mask will have the delimiter as a prefix.
+The delimiter for the mask value. This parameter is used when you use the `maskRepetitions` property.
+Each subsequent mask fragment will have this delimiter as a prefix.
 
 ```
-/// A user will see an input element with a value:
+/// The user will see an input element with the value:
 /// _-_
-/// When it starts typing, the value will be automatically changed, like,
+/// When it starts typing, the value will be automatically changed, for example,
 /// 2-3@1-_
 < b-input :mask = '%d-%d' | :maskRepetitions = 2 | :maskDelimiter = '@'
 ```
@@ -144,7 +149,7 @@ Every next chunk of the mask will have the delimiter as a prefix.
 #### [regExps]
 
 A dictionary with RegExp-s as values.
-Keys of the dictionary are interpreted as non-terminal symbols for the component mask, i.e.,
+The dictionary keys are interpreted as non-terminal symbols for the component mask, i.e.
 you can add new non-terminal symbols.
 
 ```
@@ -155,32 +160,33 @@ you can add new non-terminal symbols.
 
 #### text
 
-A text value of the input. It can be modified directly from a component.
+The input text value.
+It can be modified directly from the component.
 
 ### Getters
 
 ### isMaskInfinite
 
-True if the mask is repeated infinitely.
+True if the mask repeats indefinitely.
 
 ### Methods
 
 #### selectText
 
-Selects all content of the input.
+Selects the entire content of the input.
 
 #### clearText
 
-Clears content of the input.
+Clears the content of the input.
 
 ### Built-in validators
 
-The component provides a bunch of validators.
+The component provides a bunch of built-in validators.
 
 ##### required
 
-Checks that a component value must be filled.
+Checks that the component value must be filled.
 
 ##### pattern
 
-Checks that a component value must be matched to the provided pattern.
+Checks that the component value must match the provided template.

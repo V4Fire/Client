@@ -170,7 +170,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * A dictionary with RegExp-s as values.
-	 * Dictionary keys are interpreted as non-terminal symbols for the component mask, i.e.
+	 * The dictionary keys are interpreted as non-terminal symbols for the component mask, i.e.
 	 * you can add new non-terminal symbols.
 	 *
 	 * @example
