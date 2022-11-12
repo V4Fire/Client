@@ -42,10 +42,6 @@ const deps = {
 };
 
 switch (runtime.engine) {
-	case 'vue':
-		deps.scripts.set('vue', `vue/dist/vue.runtime${config.webpack.mode() === 'production' ? '.min' : ''}.js`);
-		break;
-
 	case 'vue3':
 		deps.scripts.set('vue', `vue/dist/vue.runtime.global${config.webpack.mode() === 'production' ? '.prod' : ''}.js`);
 		break;
