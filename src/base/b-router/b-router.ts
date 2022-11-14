@@ -452,7 +452,7 @@ export default class bRouter extends iData {
 			}
 		}
 
-		// We haven't found any routes that math to the specified ref
+		// We haven't found any routes that match to the specified ref
 		if (newRouteInfo == null) {
 			// The transition was emitted by a user, then we need to save the scroll
 			if (method !== 'event' && ref != null) {
