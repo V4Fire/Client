@@ -1,4 +1,4 @@
-# components/form/b-input-hidden
+# components/form/b-hidden-input
 
 This module provides a component to create a hidden input.
 You can use it to provide some hidden information to a form.
@@ -19,21 +19,21 @@ You can use it to provide some hidden information to a form.
 
 ```
 < form
-  < b-input-hidden :name = '_id' | :value = userId
+  < b-hidden-input :name = '_id' | :value = userId
 ```
 
 ### Loading from a data provider
 
 ```
 < form
-  < b-input-hidden :dataProvider = 'UserId'
+  < b-hidden-input :dataProvider = 'UserId'
 ```
 
 If the provider returns a dictionary, it will be mapped on the component
-(you can pass the complex property path using dots as separators).
+(you can pass a complex property path using dots as determiners).
 
-If a key from the response data is matched with a component method, this method will be invoked with a value from this key
-(if the value is an array, it will be spread to the method as arguments).
+If any key from the response matches a component method, that method will be called with the value from that key.
+(if the value is an array, it will be passed to the method as arguments).
 
 ```
 {
@@ -42,4 +42,4 @@ If a key from the response data is matched with a component method, this method 
 }
 ```
 
-In other cases, the response value is interpreted as a component value.
+In other cases, the response value is interpreted as the component value.

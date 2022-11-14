@@ -7,29 +7,21 @@
  */
 
 /**
- * [[include:components/form/b-input-hidden/README.md]]
+ * [[include:components/form/b-hidden-input/README.md]]
  * @packageDocumentation
  */
-
-//#if demo
-import 'models/demo/input';
-//#endif
 
 import iInput, { component } from 'components/super/i-input/i-input';
 
 export * from 'components/super/i-input/i-input';
 
-/**
- * Component to create a hidden input
- */
 @component({
 	functional: {
 		dataProvider: undefined
 	}
 })
 
-export default class bInputHidden extends iInput {
+export default class bHiddenInput extends iInput {
 	override readonly rootTag: string = 'span';
-
 	protected override readonly $refs!: {input: HTMLInputElement};
 }

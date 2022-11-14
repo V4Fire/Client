@@ -6,11 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "components/super/i-input/i-input.styl"
-
-$p = {
-
-}
-
-b-input-hidden extends i-input
-	display none
+package('b-hidden-input')
+	.extends('i-input');
