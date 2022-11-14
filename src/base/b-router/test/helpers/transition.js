@@ -164,11 +164,15 @@ module.exports.generateTransitionCommonSpecs = function generateTransitionCommon
 				result.initialQuery = location.search;
 				result.initialContent = ctx.route.meta.content;
 
-				router.once('onSoftChange', (route) => {
-					result.onSoftChange = [
-						Object.fastClone(ctx.route.query),
-						Object.fastClone(route.query)
-					];
+				router.on('onSoftChange', (route) => {
+					if (result.onSoftChange) {
+						result.onSoftChange.push(Object.fastClone(route.query));
+					} else {
+						result.onSoftChange = [
+							Object.fastClone(ctx.route.query),
+							Object.fastClone(route.query)
+						];
+					}
 				});
 
 				await router.push(null, {query: {foo: 1}});
@@ -186,6 +190,16 @@ module.exports.generateTransitionCommonSpecs = function generateTransitionCommon
 				result.modifiedQuery3 = location.search;
 				result.modifiedContent3 = ctx.route.meta.content;
 
+				await router.push(null, {query: {bla: [1, 2]}});
+
+				result.modifiedQuery4 = location.search;
+				result.modifiedContent4 = ctx.route.meta.content;
+
+				await router.push(null, {query: {bla: [3]}});
+
+				result.modifiedQuery5 = location.search;
+				result.modifiedContent5 = ctx.route.meta.content;
+
 				return result;
 
 			})).toEqual({
@@ -194,13 +208,27 @@ module.exports.generateTransitionCommonSpecs = function generateTransitionCommon
 
 				modifiedContent: 'Main page',
 				modifiedQuery: engineName === 'inMemoryRouterEngine' ? '' : '?foo=1',
-				onSoftChange: [{}, {foo: 1}],
 
 				modifiedContent2: 'Main page',
 				modifiedQuery2: engineName === 'inMemoryRouterEngine' ? '' : '?bar=2&foo=1',
 
 				modifiedContent3: 'Main page',
-				modifiedQuery3: engineName === 'inMemoryRouterEngine' ? '' : '?bar=2'
+				modifiedQuery3: engineName === 'inMemoryRouterEngine' ? '' : '?bar=2',
+
+				modifiedContent4: 'Main page',
+				modifiedQuery4: engineName === 'inMemoryRouterEngine' ? '' : '?bar=2&bla=1&bla=2',
+
+				modifiedContent5: 'Main page',
+				modifiedQuery5: engineName === 'inMemoryRouterEngine' ? '' : '?bar=2&bla=3',
+
+				onSoftChange: [
+					{},
+					{foo: 1},
+					{foo: 1, bar: 2},
+					{foo: null, bar: 2},
+					{foo: null, bar: 2, bla: [1, 2]},
+					{foo: null, bar: 2, bla: [3]}
+				]
 			});
 		});
 
