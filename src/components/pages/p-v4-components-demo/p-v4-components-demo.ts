@@ -11,18 +11,11 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/session';
-//#endif
-
 import iStaticPage, { component, system, field } from 'components/super/i-static-page/i-static-page';
 
 export * from 'components/super/i-static-page/i-static-page';
 
 console.time('Initializing');
-import Daemons, { init } from 'components/friends/daemons';
-
-Daemons.addToPrototype(init);
 
 /**
  * Page with component demos.
@@ -30,16 +23,6 @@ Daemons.addToPrototype(init);
  */
 @component({root: true})
 export default class pV4ComponentsDemo extends iStaticPage {
-	static daemons = {
-		logger: {
-			watch: {path: 'someField', flush: 'sync'},
-			hook: 'created',
-			fn: console.log
-		}
-	};
-
-	selfDispatching = true;
-
 	/**
 	 * Parameter to test
 	 */
@@ -50,7 +33,7 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	 * Field for tests purposes
 	 */
 	@field()
-	someField: unknown = 'https://million-wallpapers.ru/wallpapers/6/23/345459573815142/yarkaya-svetyashhaya-zvezda-na-nochnom-nebe.jpg';
+	someField: unknown = 'foo';
 
 	protected beforeCreate(): void {
 		console.time('Render');

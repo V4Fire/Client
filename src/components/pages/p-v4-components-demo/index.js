@@ -11,4 +11,5 @@ const
 
 package('p-v4-components-demo')
 	.extends('i-static-page')
-	.dependencies('b-button');
+	.dependencies('b-button', 'b-checkbox', 'b-hidden-input')
+	.libs('components/directives/icon');

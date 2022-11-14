@@ -188,7 +188,7 @@ Note that we use `.ess` in the filename, not `.ss`.
 
 - include 'components/super/i-static-page/i-static-page.html.ss'|b as placeholder
 
-- template index() extends ['i-static-page.interface'].index
+- template index() extends ['i-static-page.html'].index
   /// A dictionary with external libraries to load
   - deps = include('src/components/pages/p-root/deps')
 ```
@@ -478,7 +478,7 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
 
 - include 'components/super/i-static-page/i-static-page.html.ss'|b as placeholder
 
-- template index() extends ['i-static-page.interface'].index
+- template index() extends ['i-static-page.html'].index
   - rootTag = 'main'
   - charset = 'latin-1'
 ```

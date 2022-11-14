@@ -30,7 +30,3 @@
 							- forEach @content => el, key
 								< template #${key} = {ctx}
 									+= el
-
-		34343
-
-		< . v-icon:['foo']
