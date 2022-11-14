@@ -33,10 +33,16 @@ test.describe('<b-checkbox> form API', () => {
 	});
 
 	test('component value validation', async ({page}) => {
-		const target = await renderCheckbox(page);
+		const target = await renderCheckbox(page, {
+			validators: ['required'],
+			messageHelpers: true
+		});
 
-		test.expect(await target.evaluate((ctx) => ctx.validate()))
-			.toEqual({validator: 'required', error: false, msg: 'Required field'});
+		test.expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
+			validator: 'required',
+			message: 'Required field',
+			error: {name: 'required'}
+		});
 
 		test.expect(await target.evaluate((ctx) => ctx.unsafe.block!.element('error-box')?.textContent!.trim()))
 			.toBe('Required field');
@@ -68,7 +74,10 @@ test.describe('<b-checkbox> form API', () => {
 	});
 
 	test('getting component group value from `groupFormValue`', async ({page}) => {
-		const target = await renderCheckbox(page, {value: 'foo'});
+		const target = await renderCheckbox(page, {
+			name: 'test',
+			value: ['foo', 'bar']
+		});
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.groupFormValue)
@@ -144,18 +153,16 @@ test.describe('<b-checkbox> form API', () => {
 			{
 				attrs: {
 					'data-id': 'target',
-					name: 'checkbox',
-					validators: ['required'],
-					messageHelpers: true,
-					...attrs
+					...attrs,
+					value: Object.isArray(attrs.value) ? attrs.value[0] : attrs.value
 				}
 			},
 
 			{
 				attrs: {
 					'data-id': 'second',
-					name: 'checkbox',
-					value: 'bar'
+					name: attrs.name,
+					value: Object.isArray(attrs.value) ? attrs.value[1] : undefined
 				}
 			}
 		]);

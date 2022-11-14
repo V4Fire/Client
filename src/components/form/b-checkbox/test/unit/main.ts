@@ -127,11 +127,11 @@ test.describe('<b-checkbox>', () => {
 			});
 
 			test.expect(
-				await target.evaluate((ctx) => ctx.unsafe.block!.element('label')?.textContent?.trim())
+				await target.evaluate(({unsafe}) => unsafe.block!.element('label')?.textContent?.trim())
 			).toEqual('Foo');
 
 			const selector = await target.evaluate(
-				(ctx) => `.${ctx.unsafe.block!.element('label')?.className.split(' ').join('.')}`
+				({unsafe}) => `.${unsafe.block!.element('label')?.className.split(' ').join('.')}`
 			);
 
 			await page.click(selector);
