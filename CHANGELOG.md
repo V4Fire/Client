@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (????-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed soft navigation with array in query params `base/b-router`
+
 ## v3.30.1 (2022-10-25)
 
 #### :bug: Bug Fix

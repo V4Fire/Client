@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (????-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed soft navigation with array in query params
+
 ## v3.24.2 (2022-08-19)
 
 #### :house: Internal
