@@ -18,6 +18,7 @@ import { Option } from 'core/prelude/structures';
 
 import State, { set } from 'components/friends/state';
 import Block, { element } from 'components/friends/block';
+import DOM, { getComponent } from 'components/friends/dom';
 
 import iAccess from 'components/traits/i-access/i-access';
 import iVisible from 'components/traits/i-visible/i-visible';
@@ -64,6 +65,7 @@ export * from 'components/super/i-input/interface';
 
 State.addToPrototype(set);
 Block.addToPrototype(element);
+DOM.addToPrototype(getComponent);
 
 export const
 	$$ = symbolGenerator();
@@ -188,7 +190,11 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * A list of component value(s) that cannot be submitted via the associated form
 	 * @see [[iInput.disallowProp]]
 	 */
-	@system((o) => o.sync.link((val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	@system((o) => o.sync.link((val) => {
+		const iter = Object.isIterable(val) && !Object.isString(val) ? [...val] : val;
+		return Array.concat([], iter);
+	}))
+
 	disallow!: Array<this['Value'] | Function | RegExp>;
 
 	/**
