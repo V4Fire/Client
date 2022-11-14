@@ -286,7 +286,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * < b-input :name = 'name' | :validators = ['required', ['pattern', {pattern: /^\d+$/}]]
 	 * ```
 	 */
-	@prop(Array)
+	@prop({
+		type: Object,
+		// eslint-disable-next-line @typescript-eslint/unbound-method
+		validator: Object.isIterable,
+		required: false
+	})
+
 	readonly validatorsProp?: Iterable<Validator>;
 
 	/**
