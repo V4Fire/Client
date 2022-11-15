@@ -46,11 +46,11 @@ See the parent component and the component traits.
 < b-input :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
 ```
 
-If a provider returns a dictionary, it will be mapped on the component
-(you can pass the complex property path using dots as separators).
+If the provider returns a dictionary, it will be mapped on the component
+(you can pass a complex property path using dots as determiners).
 
-If a key from the response is matched with a component method, this method will be invoked with a value from this key
-(if the value is an array, it will be spread to the method as arguments).
+If any key from the response matches a component method, that method will be called with the value from that key.
+(if the value is an array, it will be passed to the method as arguments).
 
 ```
 {
@@ -60,47 +60,47 @@ If a key from the response is matched with a component method, this method will 
 }
 ```
 
-In other cases, the response value is interpreted as a component value.
+In other cases, the response value is interpreted as the component value.
 
 ## Slots
 
-The component supports a bunch of slots to provide:
+The component supports multiple slots to provide.
 
 1. `preIcon` and `icon` to inject icons around the value block.
 
-```
-< b-input
-  < template #preIcon
-    < img src = validate.svg
+   ```
+   < b-input
+     < template #preIcon
+       < img src = validate.svg
 
-  < template #icon
-    < img src = clear.svg
-```
+     < template #icon
+       < img src = clear.svg
+   ```
 
-Also, these icons can be provided by props.
+   Also, these icons can be provided by props.
 
-```
-< b-input :icon = 'validate'
-< b-input :preIcon = 'validate' | :iconComponent = 'b-custom-icon'
+   ```
+   < b-input :icon = 'validate'
+   < b-input :preIcon = 'validate' | :iconComponent = 'b-custom-icon'
 
-< b-input
-  < template #icon = {icon}
-    < img :src = icon
-```
+   < b-input
+     < template #icon = {icon}
+       < img :src = icon
+   ```
 
 2. `progressIcon` to inject an icon that indicates loading, by default, is used [[bProgressIcon]].
 
-```
-< b-input
-  < template #progressIcon
-    < img src = spinner.svg
-```
+    ```
+    < b-input
+      < template #progressIcon
+        < img src = spinner.svg
+    ```
 
-Also, this icon can be provided by a prop.
+    Also, this icon can be provided by a prop.
 
-```
-< b-input :progressIcon = 'bCustomLoader'
-```
+    ```
+    < b-input :progressIcon = 'bCustomLoader'
+    ```
 
 ## API
 
@@ -110,14 +110,12 @@ Also, you can see the parent component and the component traits.
 
 #### [min]
 
-The minimum value of the input (for number and date types).
-
+The minimum input value (for number and date types).
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin).
 
 #### [max]
 
-The maximum value of the input (for number and date types).
-
+The maximum input value (for number and date types).
 [See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax).
 
 #### [preIcon]
@@ -130,7 +128,7 @@ An icon to show before the input.
 
 #### [preIconComponent]
 
-A name of the used component to show `preIcon`.
+The name of the used component to show `icon`.
 
 ```
 < b-input :preIconComponent = 'b-my-icon'
@@ -138,7 +136,7 @@ A name of the used component to show `preIcon`.
 
 #### [preIconHint]
 
-A tooltip text to show during hover the cursor on `preIcon`.
+Tooltip text to show during hover the cursor on `preIcon`.
 
 ```
 < b-input :preIcon = 'dropdown' | :preIconHint = 'Show variants'
@@ -146,7 +144,7 @@ A tooltip text to show during hover the cursor on `preIcon`.
 
 #### [preIconHintPos]
 
-Tooltip position to show during hover the cursor on `preIcon`.
+The tooltip position to show when hovering over the `preIcon`.
 See [[gIcon]] for more information.
 
 ```
@@ -167,7 +165,7 @@ An icon to show after the input.
 
 #### [iconComponent]
 
-A name of the used component to show `icon`.
+The name of the used component to display `icon`.
 
 ```
 < b-input :iconComponent = 'b-my-icon'
@@ -175,7 +173,7 @@ A name of the used component to show `icon`.
 
 #### [iconHint]
 
-A tooltip text to show during hover the cursor on `icon`.
+The tooltip position to show when hovering over the `icon`.
 
 ```
 < b-input :icon = 'dropdown' | :iconHint = 'Show variants'
@@ -205,12 +203,12 @@ Boolean, if needed to show progress by slot or `b-progress-icon`.
 
 ### [textHint]
 
-An additional text hint that is shown after the non-empty input text.
+An additional text hint that is shown after non-empty input text.
 Mind, the hint value does not affect a component value.
 
 ```
 /// You will see "value in the catalog" in the input.
-/// Mind, `bInput.value` will be just "value" as provided.
+/// Mind, `bInput.value` will just be "value" as provided.
 < b-input &
   :value = 'value' |
   :textHint = ' in the catalog'
@@ -238,7 +236,7 @@ The component provides a bunch of validators.
 
 ##### required
 
-Checks that a component value must be filled.
+Checks that the component value must be filled.
 
 ```
 < b-input :validators = ['required']
@@ -247,7 +245,7 @@ Checks that a component value must be filled.
 
 ##### number
 
-Checks that a component value must be matched as a number.
+Checks that the component value can be parsed as a number.
 
 ```
 < b-input :validators = ['number']
@@ -257,7 +255,7 @@ Checks that a component value must be matched as a number.
 
 ##### date
 
-Checks that a component value must be matched as a date.
+Checks that the component value can be parsed as a date.
 
 ```
 < b-input :validators = ['date']
@@ -267,7 +265,7 @@ Checks that a component value must be matched as a date.
 
 ##### pattern
 
-Checks that a component value must be matched to the provided pattern.
+Checks that the component value can be parsed as an email string.
 
 ```
 < b-input :validators = {pattern: {pattern: '^[\\d$]+'}}
@@ -276,7 +274,7 @@ Checks that a component value must be matched to the provided pattern.
 
 ##### email
 
-Checks that a component value must be matched as an email string.
+Checks that the component value can be parsed as an email string.
 
 ```
 < b-input :validators = ['email']
@@ -285,7 +283,7 @@ Checks that a component value must be matched as an email string.
 
 ##### password
 
-Checks that a component value must be matched as a password.
+Checks that the component value matches the password format.
 
 ```
 < b-input :id = 'old-password'
