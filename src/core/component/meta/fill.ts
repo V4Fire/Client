@@ -16,7 +16,7 @@ import { isAbstractComponent, bindingRgxp } from 'core/component/reflect';
 import { isTypeCanBeFunc } from 'core/component/prop';
 import { addMethodsToMeta } from 'core/component/meta/method';
 
-import type { ComponentConstructor, ComponentMeta, ComponentField, WatchObject, Hook } from 'core/component/interface';
+import type { ComponentConstructor, ComponentMeta } from 'core/component/interface';
 
 /**
  * Fills the passed meta object with methods and properties from the specified component class constructor
@@ -59,7 +59,8 @@ export function fillMeta(
 	// Props
 
 	const
-		defaultProps = params.defaultProps !== false;
+		defaultProps = params.defaultProps !== false,
+		canWatchProps = !isRoot && !isFunctional;
 
 	Object.entries(meta.props).forEach(([name, prop]) => {
 		if (prop == null) {
@@ -102,16 +103,23 @@ export function fillMeta(
 			};
 		}
 
-		if (!isRoot && !isFunctional) {
-			if (Object.size(prop.watchers) > 0) {
-				const watcherListeners = watchers[name] ?? [];
-				watchers[name] = watcherListeners;
+		if (Object.size(prop.watchers) > 0) {
+			const watcherListeners = watchers[name] ?? [];
+			watchers[name] = watcherListeners;
 
-				prop.watchers.forEach((watcher) => {
-					watcherListeners.push(watcher);
-				});
-			}
+			prop.watchers.forEach((watcher) => {
+				if (
+					isFunctional && watcher.functional === false ||
+					!canWatchProps && !watcher.immediate
+				) {
+					return;
+				}
 
+				watcherListeners.push(watcher);
+			});
+		}
+
+		if (canWatchProps) {
 			const
 				normalizedKey = name.replace(bindingRgxp, '');
 
