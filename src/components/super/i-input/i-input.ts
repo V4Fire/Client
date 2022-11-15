@@ -88,6 +88,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@prop({required: false})
 	readonly valueProp?: this['Value'];
 
+	/** @see [[iInput.valueProp]] */
+	@prop({required: false})
+	readonly modelValue?: this['Value'];
+
 	/**
 	 * The component default value.
 	 * This value will be used if no prop value is specified or after a call to the `reset` method.
@@ -654,7 +658,14 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	protected override readonly $refs!: {input?: HTMLInputElement};
 
 	/** @see [[iInput.value]] */
-	@field<iInput>((o) => o.sync.link((val) => o.resolveValue(val)))
+	@field<iInput>((o) => {
+		const
+			modelValue = o.sync.link('modelValue', (val) => o.resolveValue(val)),
+			value = o.sync.link((val) => o.resolveValue(val));
+
+		return modelValue ?? value;
+	})
+
 	protected valueStore!: unknown;
 
 	/**
@@ -894,7 +905,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * Resolves the passed component value and returns it.
 	 * If the value argument is undefined, the method can return the default value.
 	 *
-	 * @param value
+	 * @param [value]
 	 */
 	protected resolveValue(value?: this['Value']): this['Value'] {
 		const
@@ -1023,6 +1034,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		if (value !== oldValue || value != null && typeof value === 'object') {
 			this.emit('change', this.value);
+			this.$emit('update:modelValue', this.value);
 		}
 	}
 }
