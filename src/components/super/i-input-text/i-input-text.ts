@@ -107,7 +107,16 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 * < b-input :mask = '+%d% (%d%d%d) %d%d%d-%d%d-%d%d'
 	 * ```
 	 */
-	@prop({type: String, required: false})
+	@prop({
+		type: String,
+		required: false,
+		watch: {
+			handler: 'initMask',
+			immediate: true,
+			provideArgs: false
+		}
+	})
+
 	readonly mask?: string;
 
 	/**
@@ -125,12 +134,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 */
 	@prop({
 		type: String,
-		validator: (val: string) => [...val.letters()].length === 1,
-		watch: {
-			handler: 'initMask',
-			immediate: true,
-			provideArgs: false
-		}
+		validator: (val: string) => [...val.letters()].length === 1
 	})
 
 	readonly maskPlaceholder: string = '_';

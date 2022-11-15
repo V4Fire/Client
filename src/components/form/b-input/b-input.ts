@@ -328,7 +328,12 @@ export default class bInput extends iInputText {
 	/**
 	 * Handler: the component text value has updated
 	 */
-	@watch({path: 'textStore', immediate: true})
+	@watch({
+		path: 'textStore',
+		immediate: true,
+		flush: 'sync'
+	})
+
 	@hook('beforeDataCreate')
 	protected onTextUpdate(): void {
 		this.field.set('valueStore', this.text);
