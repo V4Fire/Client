@@ -8,48 +8,45 @@
 
 import type { ValidatorParams, ValidatorError, PatternValidatorParams } from 'components/super/i-input-text/i-input-text';
 
-/**
- * Parameters to validate inputted numbers
- */
 export interface NumberValidatorParams extends ValidatorParams {
 	/**
 	 * Type of supported numbers:
 	 *
-	 * 1. `int` - integer numbers
-	 * 2. `uint` - non-negative integer numbers
-	 * 3. `float` - numbers with floating point
-	 * 4. `ufloat` - non-negative numbers with floating point
+	 * 1. `int` - integer numbers;
+	 * 2. `uint` - non-negative integer numbers;
+	 * 3. `float` - numbers with floating point;
+	 * 4. `ufloat` - non-negative numbers with floating point.
 	 */
 	type?: 'int' | 'uint' | 'float' | 'ufloat';
 
 	/**
-	 * The minimum value of a number
+	 * The minimum number value
 	 */
 	min?: number;
 
 	/**
-	 * The maximum value of a number
+	 * The maximum number value
 	 */
 	max?: number;
 
 	/**
-	 * The maximum length of numbers after a comma
+	 * The maximum length of digits after the decimal point
 	 */
 	precision?: number;
 
 	/**
-	 * If true, the length of numbers after a comma should precisely equal to the provided precision
+	 * If true, the length of numbers after the decimal point must exactly equal the provided precision
 	 */
 	strictPrecision?: boolean;
 
 	/**
-	 * Allowed symbols to represent the number floating point separator
+	 * Allowed characters to represent a floating point number separator
 	 * @default `['.', ',']`
 	 */
 	separator?: CanArray<string>;
 
 	/**
-	 * Allowed symbols to represent the stylish separator of a number integer part
+	 * Allowed characters to represent a stylish delimiter of the number integer part
 	 * @default `[' ', '_']`
 	 */
 	styleSeparator?: CanArray<string>;
@@ -63,29 +60,26 @@ export interface NumberValidatorResult extends ValidatorError<string | number> {
 		'MAX';
 }
 
-/**
- * Parameters to validate inputted dates
- */
 export interface DateValidatorParams extends ValidatorParams {
 	/**
-	 * If true, a date can refer only to the past.
-	 * If false, a date can refer only to the future/current.
+	 * If true, the date can only refer to the past.
+	 * If false, the date can only refer to the future/current.
 	 */
 	past?: boolean;
 
 	/**
-	 * If true, a date can refer only to the future.
-	 * If false, a date can refer only to the past/current.
+	 * If true, the date can only refer to the future.
+	 * If false, the date can only refer to the past/current.
 	 */
 	future?: boolean;
 
 	/**
-	 * The minimum value of a date
+	 * The minimum date value
 	 */
 	min?: Date | number | string;
 
 	/**
-	 * The maximum value of a date
+	 * The maximum date value
 	 */
 	max?: Date | number | string;
 }
@@ -101,9 +95,6 @@ export interface DateValidatorResult extends ValidatorError<Date | number> {
 		'MAX';
 }
 
-/**
- * Parameters to validate inputted passwords
- */
 export interface PasswordValidatorParams extends PatternValidatorParams {
 	/**
 	 * @inheritDoc
@@ -124,12 +115,12 @@ export interface PasswordValidatorParams extends PatternValidatorParams {
 	max?: number;
 
 	/**
-	 * Selector to a component that contains a password that should match the original
+	 * A selector to the component that contains the password, which must match the original
 	 */
 	confirmComponent?: string;
 
 	/**
-	 * Selector to a component that contains the old password
+	 * A selector to the component containing the old password
 	 */
 	oldPassComponent?: string;
 }

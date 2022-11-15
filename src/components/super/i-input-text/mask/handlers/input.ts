@@ -124,4 +124,6 @@ export function onKeyPress(this: Mask, e: KeyboardEvent): void {
 	ctx.updateTextStore(fittedTextChunks.join(''));
 	cursorPos = convertCursorPositionToRaw.call(this, cursorPos);
 	input.setSelectionRange(cursorPos, cursorPos);
+
+	ctx.localEmitter.emit('maskedText.change');
 }

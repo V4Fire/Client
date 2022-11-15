@@ -33,7 +33,7 @@ module.exports = (page) => {
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
-					.toEqual({validator: 'required', error: false, msg: 'Required field'});
+					.toEqual({validator: 'required', error: false, message: 'Required field'});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 					.toBe('Required field');
@@ -48,11 +48,11 @@ module.exports = (page) => {
 
 			it('`required` with parameters (an array form)', async () => {
 				const target = await init({
-					validators: [['required', {msg: 'REQUIRED!'}]]
+					validators: [['required', {message: 'REQUIRED!'}]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
-					.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
+					.toEqual({validator: 'required', error: false, message: 'REQUIRED!'});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 					.toBe('REQUIRED!');
@@ -60,11 +60,11 @@ module.exports = (page) => {
 
 			it('`required` with parameters (an object form)', async () => {
 				const target = await init({
-					validators: [{required: {msg: 'REQUIRED!', showMsg: false}}]
+					validators: [{required: {message: 'REQUIRED!', showMsg: false}}]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
-					.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
+					.toEqual({validator: 'required', error: false, message: 'REQUIRED!'});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 					.toBe('');
@@ -116,7 +116,7 @@ module.exports = (page) => {
 						params: defParams
 					},
 
-					msg: 'The value is not a number'
+					message: 'The value is not a number'
 				});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
@@ -152,7 +152,7 @@ module.exports = (page) => {
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
 						error: {name: 'INVALID_VALUE', value: -4, params},
-						msg: 'The value does not match with an unsigned integer type'
+						message: 'The value does not match with an unsigned integer type'
 					});
 
 					await target.evaluate((ctx) => {
@@ -162,7 +162,7 @@ module.exports = (page) => {
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
 						error: {name: 'INVALID_VALUE', value: 1.354, params},
-						msg: 'The value does not match with an unsigned integer type'
+						message: 'The value does not match with an unsigned integer type'
 					});
 				});
 
@@ -201,7 +201,7 @@ module.exports = (page) => {
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
 						error: {name: 'INVALID_VALUE', value: 1.354, params},
-						msg: 'The value does not match with an integer type'
+						message: 'The value does not match with an integer type'
 					});
 				});
 
@@ -233,7 +233,7 @@ module.exports = (page) => {
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
 						error: {name: 'INVALID_VALUE', value: -4, params},
-						msg: 'The value does not match with an unsigned float type'
+						message: 'The value does not match with an unsigned float type'
 					});
 
 					await target.evaluate((ctx) => {
@@ -243,7 +243,7 @@ module.exports = (page) => {
 					expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 						validator: 'number',
 						error: {name: 'INVALID_VALUE', value: -4.343, params},
-						msg: 'The value does not match with an unsigned float type'
+						message: 'The value does not match with an unsigned float type'
 					});
 
 					await target.evaluate((ctx) => {
@@ -329,7 +329,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
 					error: {name: 'MIN', value: -4, params},
-					msg: 'A value must be at least -1'
+					message: 'A value must be at least -1'
 				});
 
 				await target.evaluate((ctx) => {
@@ -339,7 +339,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
 					error: {name: 'MAX', value: 6, params},
-					msg: 'A value must be no more than 3'
+					message: 'A value must be no more than 3'
 				});
 			});
 
@@ -372,7 +372,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
 					error: {name: 'INVALID_VALUE', value: '6/2', params},
-					msg: 'The value is not a number'
+					message: 'The value is not a number'
 				});
 			});
 
@@ -405,7 +405,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
 					error: {name: 'DECIMAL_LENGTH', value: 1.234567, params},
-					msg: 'A decimal part should have no more than 2 digits'
+					message: 'A decimal part should have no more than 2 digits'
 				});
 			});
 
@@ -432,7 +432,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
 					error: {name: 'DECIMAL_LENGTH', value: 1.2, params},
-					msg: 'A decimal part should have 2 digits'
+					message: 'A decimal part should have 2 digits'
 				});
 
 				await target.evaluate((ctx) => {
@@ -442,7 +442,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
 					error: {name: 'DECIMAL_LENGTH', value: 1.234567, params},
-					msg: 'A decimal part should have 2 digits'
+					message: 'A decimal part should have 2 digits'
 				});
 
 				await target.evaluate((ctx) => {
@@ -452,7 +452,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'number',
 					error: {name: 'DECIMAL_LENGTH', value: 1, params},
-					msg: 'A decimal part should have 2 digits'
+					message: 'A decimal part should have 2 digits'
 				});
 			});
 
@@ -520,7 +520,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
 					error: {name: 'INVALID_VALUE', value: '1989.18.10', params: {}},
-					msg: "The value can't be parsed as a date"
+					message: "The value can't be parsed as a date"
 				});
 			});
 
@@ -559,7 +559,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
 					error: {name: 'MIN', value: new Date(1989, 2, 25), params},
-					msg: 'A date value must be at least "18.10.1989"'
+					message: 'A date value must be at least "18.10.1989"'
 				});
 
 				await target.evaluate((ctx) => {
@@ -569,7 +569,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
 					error: {name: 'MAX', value: new Date(1989, 10, 25), params},
-					msg: 'A date value must be no more than "25.10.1989"'
+					message: 'A date value must be no more than "25.10.1989"'
 				});
 			});
 
@@ -596,7 +596,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
 					error: {name: 'NOT_PAST', value: new Date(date), params},
-					msg: 'A date value must be in the past'
+					message: 'A date value must be in the past'
 				});
 			});
 
@@ -613,7 +613,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
 					error: {name: 'IS_PAST', value: new Date(1989, 9, 18), params},
-					msg: "A date value can't be in the past"
+					message: "A date value can't be in the past"
 				});
 
 				const
@@ -650,7 +650,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
 					error: {name: 'NOT_FUTURE', value: new Date(1989, 9, 18), params},
-					msg: 'A date value must be in the future'
+					message: 'A date value must be in the future'
 				});
 			});
 
@@ -670,7 +670,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'date',
 					error: {name: 'IS_FUTURE', value: new Date(date), params},
-					msg: "A date value can't be in the future"
+					message: "A date value can't be in the future"
 				});
 
 				await target.evaluate((ctx) => {
@@ -703,7 +703,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'pattern',
 					error: {name: 'NOT_MATCH', value: 'dddd', params},
-					msg: 'A value must match the pattern'
+					message: 'A value must match the pattern'
 				});
 			});
 
@@ -742,7 +742,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'pattern',
 					error: {name: 'MIN', value: '1', params},
-					msg: 'Value length must be at least 2 characters'
+					message: 'Value length must be at least 2 characters'
 				});
 
 				await target.evaluate((ctx) => {
@@ -752,7 +752,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'pattern',
 					error: {name: 'MAX', value: '3456879', params},
-					msg: 'Value length must be no more than 4 characters'
+					message: 'Value length must be no more than 4 characters'
 				});
 			});
 
@@ -812,7 +812,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'email',
 					error: false,
-					msg: 'Invalid email format'
+					message: 'Invalid email format'
 				});
 			});
 		});
@@ -862,7 +862,7 @@ module.exports = (page) => {
 						params
 					},
 
-					msg: 'Password length must be at least 6 characters'
+					message: 'Password length must be at least 6 characters'
 				});
 
 				expect(
@@ -883,7 +883,7 @@ module.exports = (page) => {
 						params
 					},
 
-					msg: "The passwords aren't match"
+					message: "The passwords aren't match"
 				});
 
 				expect(
@@ -904,7 +904,7 @@ module.exports = (page) => {
 						params
 					},
 
-					msg: 'The old and new password are the same'
+					message: 'The old and new password are the same'
 				});
 
 				expect(
@@ -961,7 +961,7 @@ module.exports = (page) => {
 						params
 					},
 
-					msg: 'Password length must be at least 2 characters'
+					message: 'Password length must be at least 2 characters'
 				});
 
 				await target.evaluate((ctx) => {
@@ -977,7 +977,7 @@ module.exports = (page) => {
 						params
 					},
 
-					msg: 'Password length must be no more than 4 characters'
+					message: 'Password length must be no more than 4 characters'
 				});
 			});
 

@@ -116,4 +116,6 @@ export function onDelete(this: Mask, e: KeyboardEvent): void {
 		default:
 			// Do nothing
 	}
+
+	ctx.localEmitter.emit('maskedText.change');
 }

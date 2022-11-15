@@ -236,6 +236,8 @@ export function syncFieldWithInput(this: Mask): Promise<void> {
 			preserveCursor: true,
 			preservePlaceholders: true
 		});
+
+		ctx.localEmitter.emit('maskedText.change');
 	});
 }
 

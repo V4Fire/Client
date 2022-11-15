@@ -11,14 +11,8 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/input';
-//#endif
-
 import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
-
-import { deprecated } from 'core/functools/deprecation';
 
 import iInputText, {
 
@@ -49,9 +43,6 @@ export { Value, FormValue };
 export const
 	$$ = symbolGenerator();
 
-/**
- * Component to create a form input
- */
 @component({
 	functional: {
 		dataProvider: undefined
@@ -70,28 +61,28 @@ export default class bInput extends iInputText {
 	override readonly defaultProp?: this['Value'];
 
 	/**
-	 * An additional text hint that is shown after the non-empty input text.
+	 * An additional text hint that is shown after non-empty input text.
 	 * Mind, the hint value does not affect a component value.
 	 */
 	@prop({type: String, required: false})
 	readonly textHint?: string;
 
 	/**
-	 * The minimum value of the input (for number and date types)
+	 * The minimum input value (for number and date types)
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin
 	 */
 	@prop({type: [Number, String, Date], required: false})
 	readonly min?: number | string | Date;
 
 	/**
-	 * The maximum value of the input (for number and date types)
+	 * The maximum input value (for number and date types)
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax
 	 */
 	@prop({type: [Number, String, Date], required: false})
 	readonly max?: number | string | Date;
 
 	/**
-	 * Icon to show before the input
+	 * An icon to show before the input
 	 *
 	 * @example
 	 * ```
@@ -102,7 +93,7 @@ export default class bInput extends iInputText {
 	readonly preIcon?: string;
 
 	/**
-	 * Name of the used component to show `preIcon`
+	 * The name of the used component to display `preIcon`
 	 *
 	 * @default `'b-icon'`
 	 * @example
@@ -125,7 +116,7 @@ export default class bInput extends iInputText {
 	readonly preIconHint?: string;
 
 	/**
-	 * Tooltip position to show during hover the cursor on `preIcon`
+	 * The tooltip position to show when hovering over the `preIcon`
 	 *
 	 * @see [[gHint]]
 	 * @example
@@ -141,7 +132,7 @@ export default class bInput extends iInputText {
 	readonly preIconHintPos?: string;
 
 	/**
-	 * Icon to show after the input
+	 * An icon to show after the input
 	 *
 	 * @example
 	 * ```
@@ -152,7 +143,7 @@ export default class bInput extends iInputText {
 	readonly icon?: string;
 
 	/**
-	 * Name of the used component to show `icon`
+	 * The name of the used component to display `icon`
 	 *
 	 * @default `'b-icon'`
 	 * @example
@@ -164,7 +155,7 @@ export default class bInput extends iInputText {
 	readonly iconComponent?: string;
 
 	/**
-	 * Tooltip text to show during hover the cursor on `icon`
+	 * The tooltip position to show when hovering over the `icon`
 	 *
 	 * @example
 	 * ```
@@ -238,11 +229,11 @@ export default class bInput extends iInputText {
 	protected override valueStore!: this['Value'];
 
 	/**
-	 * Returns a value from `text` and `textHint` joined together with a space.
+	 * Returns the combined value from `text` and `textHint`.
 	 *
-	 * A hint is shown after the input text. Technically, it’s placed under the native input and duplicates the entered
-	 * value with adding a hint message. If `value` is set to "value" and `textHint` is set to "Some hint",
-	 * the getter will return "valueSome hint".
+	 * The tooltip is displayed after the entered text. Technically, it is placed below the native input and duplicates
+	 * the entered value with the addition of a hint message. If `value` is set to "value" and `textHint` is set to
+	 * "Some hint", the getter will return "valueSome hint".
 	 */
 	protected get textHintWithIndent(): string {
 		return `${this.text}${this.textHint}`;
@@ -269,7 +260,7 @@ export default class bInput extends iInputText {
 					resolvedText = textFromValue === undefined ? text ?? o.field.get('valueStore') : textFromValue,
 					str = resolvedText !== undefined ? String(resolvedText) : '';
 
-				if (o.isNotRegular) {
+				if (o.isFunctional) {
 					void o.waitStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str);
 
 				} else if (o.hook === 'updated') {
@@ -285,10 +276,10 @@ export default class bInput extends iInputText {
 
 	@wait('ready', {label: $$.clear})
 	override clear(): Promise<boolean> {
-		const v = this.value;
+		const {value} = this;
 		void this.clearText();
 
-		if (v !== '') {
+		if (value !== '') {
 			this.async.clearAll({group: 'validation'});
 			void this.removeMod('valid');
 			this.emit('clear', this.value);
@@ -296,15 +287,6 @@ export default class bInput extends iInputText {
 		}
 
 		return SyncPromise.resolve(false);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[bInput.selectText]]
-	 */
-	@deprecated({renamedTo: 'selectText'})
-	selectAll(): Promise<boolean> {
-		return SyncPromise.resolve(this.selectText());
 	}
 
 	protected override normalizeAttrs(attrs: Dictionary = {}): Dictionary {
@@ -318,30 +300,33 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Synchronizes the typed text with a text hint, if it specified.
-	 * Returns true if synchronization has been successful.
+	 * Synchronizes the typed text with the text hint, if one is provided.
 	 */
-	protected syncTextHintValue(): boolean {
+	protected syncTextHintValue(): void {
 		if (!this.hasTextHint) {
-			return false;
+			return;
 		}
 
 		const
 			{textHint, input} = this.$refs;
 
 		if (textHint == null) {
-			return false;
+			return;
 		}
 
-		textHint.innerText = input.scrollWidth > input.clientWidth ?
-			'' :
-			this.textHintWithIndent;
+		textHint.innerText = input.scrollWidth > input.clientWidth ? '' : this.textHintWithIndent;
+	}
 
-		return true;
+	protected override initValueListeners(): void {
+		super.initValueListeners();
+
+		this.localEmitter.on('maskedText.change', () => {
+			this.emit('actionChange', this.value);
+		});
 	}
 
 	/**
-	 * Handler: updating of a component text value
+	 * Handler: the component text value has updated
 	 */
 	@watch({path: 'textStore', immediate: true})
 	@hook('beforeDataCreate')
@@ -351,11 +336,11 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Handler: manual editing of a component text value
+	 * Handler: manual editing of the component text value
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected onEdit(): void {
-		if (this.compiledMask != null) {
+		if (this.maskAPI.compiledMask != null) {
 			return;
 		}
 
@@ -365,40 +350,12 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Handler: clearing of a component value
+	 * Handler: clearing the component value
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected async onClear(): Promise<void> {
 		if (await this.clear()) {
 			this.emit('actionChange', this.value);
 		}
-	}
-
-	protected override onMaskInput(): Promise<boolean> {
-		return super.onMaskInput().then((res) => {
-			if (res) {
-				this.emit('actionChange', this.value);
-			}
-
-			return res;
-		});
-	}
-
-	protected override onMaskKeyPress(e: KeyboardEvent): boolean {
-		if (super.onMaskKeyPress(e)) {
-			this.emit('actionChange', this.value);
-			return true;
-		}
-
-		return false;
-	}
-
-	protected override onMaskDelete(e: KeyboardEvent): boolean {
-		if (super.onMaskDelete(e)) {
-			this.emit('actionChange', this.value);
-			return true;
-		}
-
-		return false;
 	}
 }
