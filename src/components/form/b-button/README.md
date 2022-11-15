@@ -244,7 +244,7 @@ An icon to show before the button text.
   Submit
 ```
 
-#### [preIconComponent = `'b-icon'`]
+#### [preIconComponent]
 
 The name of the used component to show `preIcon`.
 
@@ -262,7 +262,7 @@ An icon to show after the button text.
   Submit
 ```
 
-#### [iconComponent = `'b-icon'`]
+#### [iconComponent]
 
 The name of the used component to show `icon`.
 

@@ -45,7 +45,7 @@
 								:value = preIcon
 							.
 
-							< . v-else | v-icon:[preIcon]
+							< .g-icon v-else | v-icon:[preIcon]
 
 				- block value
 					< _.&__cell.&__value
@@ -57,7 +57,13 @@
 				- block icons
 					< _.&__cell.&__icon.&__post-icon v-if = icon || $slots['icon']
 						+= self.slot('icon', {':icon': 'icon'})
-							< .g-icon v-icon:[icon]
+							< component &
+								v-if = iconComponent |
+								:is = iconComponent |
+								:value = icon
+							.
+
+							< .g-icon v-else | v-icon:[icon]
 
 				- block progress
 					< _.&__cell.&__icon.&__progress v-if = progressIcon != null || $slots['progressIcon']
