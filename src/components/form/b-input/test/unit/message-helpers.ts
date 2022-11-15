@@ -7,18 +7,18 @@
  */
 
 import type { Page, JSHandle } from 'playwright';
-import type bHiddenInput from 'components/form/b-hidden-input/b-hidden-input';
+import type bInput from 'components/form/b-input/b-input';
 
 import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
 
-test.describe('<b-hidden-input> disallow form value', () => {
+test.describe('<b-input> disallow form value', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
 	test('without explicitly enabling the `messageHelpers` prop, the `info` and `error` props should not affect the component markup', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			info: 'Hello',
 			error: 'Error'
 		});
@@ -31,7 +31,7 @@ test.describe('<b-hidden-input> disallow form value', () => {
 	});
 
 	test('passing the `info` prop with `messageHelpers` enabled should affect the component layout', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			info: 'Hello',
 			messageHelpers: true
 		});
@@ -73,7 +73,7 @@ test.describe('<b-hidden-input> disallow form value', () => {
 	});
 
 	test('passing the `error` prop with `messageHelpers` enabled should affect the component layout', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			error: 'Error',
 			messageHelpers: true
 		});
@@ -115,7 +115,7 @@ test.describe('<b-hidden-input> disallow form value', () => {
 	});
 
 	test('passing the `info` and `error` props with `messageHelpers` enabled should affect the component layout', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			info: 'Hello',
 			error: 'Error',
 			messageHelpers: true
@@ -144,8 +144,8 @@ test.describe('<b-hidden-input> disallow form value', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderHiddenInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bHiddenInput>> {
-		await Component.createComponent(page, 'b-hidden-input', {
+	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bInput>> {
+		await Component.createComponent(page, 'b-input', {
 			attrs: {
 				'data-id': 'target',
 				...attrs
@@ -154,4 +154,5 @@ test.describe('<b-hidden-input> disallow form value', () => {
 
 		return Component.waitForComponentStatus(page, '[data-id="target"]', 'ready');
 	}
+
 });

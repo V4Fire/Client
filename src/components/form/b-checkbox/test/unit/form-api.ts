@@ -11,10 +11,10 @@ import type { JSHandle, Page } from 'playwright';
 import type * as DOM from 'components/friends/dom';
 import type * as Block from 'components/friends/block';
 
-import Component from 'tests/helpers/component';
 import type bCheckbox from 'components/form/b-checkbox/b-checkbox';
 
 import test from 'tests/config/unit/test';
+import Component from 'tests/helpers/component';
 import Utils from 'tests/helpers/utils';
 
 test.describe('<b-checkbox> form API', () => {

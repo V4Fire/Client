@@ -7,18 +7,18 @@
  */
 
 import type { Page, JSHandle } from 'playwright';
-import type bHiddenInput from 'components/form/b-hidden-input/b-hidden-input';
+import type bInput from 'components/form/b-input/b-input';
 
 import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
 
-test.describe('<b-hidden-input> message helpers', () => {
+test.describe('<b-input> message helpers', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
 	test('the passed value for the component should be disallowed', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			value: '10',
 			disallow: '10',
 			formValueConverter: (val) => parseInt(val, 10)
@@ -46,7 +46,7 @@ test.describe('<b-hidden-input> message helpers', () => {
 	});
 
 	test('the passed iterable of values for the component should be disallowed', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			value: '10',
 			disallow: ['10', '11'],
 			formValueConverter: (val) => parseInt(val, 10)
@@ -86,7 +86,7 @@ test.describe('<b-hidden-input> message helpers', () => {
 	});
 
 	test('values that match the passed RegExp for the component should be disallowed', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			value: '10',
 			disallow: /^1/,
 			formValueConverter: (val) => parseInt(val, 10)
@@ -126,7 +126,7 @@ test.describe('<b-hidden-input> message helpers', () => {
 	});
 
 	test('values that match the passed function for the component should be disallowed', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			value: '10',
 			disallow: (val) => val === '10',
 			formValueConverter: (val) => parseInt(val, 10)
@@ -157,14 +157,12 @@ test.describe('<b-hidden-input> message helpers', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderHiddenInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bHiddenInput>> {
-		await Component.createComponent(page, 'b-hidden-input', {
+	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bInput>> {
+		return Component.createComponent(page, 'b-input', {
 			attrs: {
 				'data-id': 'target',
 				...attrs
 			}
 		});
-
-		return Component.waitForComponentStatus(page, '[data-id="target"]', 'ready');
 	}
 });

@@ -7,7 +7,6 @@
  */
 
 import type { Page, JSHandle } from 'playwright';
-
 import type bHiddenInput from 'components/form/b-hidden-input/b-hidden-input';
 
 import test from 'tests/config/unit/test';

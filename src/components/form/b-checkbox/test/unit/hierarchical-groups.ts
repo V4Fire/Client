@@ -7,7 +7,6 @@
  */
 
 import type { Page } from 'playwright';
-
 import type * as DOM from 'components/friends/dom';
 
 import type { ComponentElement } from 'core/component';
