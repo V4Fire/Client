@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to disable specific link interception
+
 ## v3.30.2 (2022-11-17)
 
 #### :bug: Bug Fix
