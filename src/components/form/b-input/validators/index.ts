@@ -28,9 +28,9 @@ import type {
 	PasswordValidatorParams,
 	PasswordValidatorResult
 
-} from 'components/form/b-input/modules/validators/interface';
+} from 'components/form/b-input/validators/interface';
 
-export * from 'components/form/b-input/modules/validators/interface';
+export * from 'components/form/b-input/validators/interface';
 
 export default <ValidatorsDecl<bInput>>{
 	/**

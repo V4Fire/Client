@@ -29,14 +29,14 @@ import iInputText, {
 
 } from 'components/super/i-input-text/i-input-text';
 
-import Validators from 'components/form/b-input/modules/validators';
+import Validators from 'components/form/b-input/validators';
 import type { Value, FormValue } from 'components/form/b-input/interface';
 
 export * from 'components/super/i-input/i-input';
 export * from 'components/form/b-input/interface';
 
-export * from 'components/form/b-input/modules/validators';
-export { default as InputValidators } from 'components/form/b-input/modules/validators';
+export * from 'components/form/b-input/validators';
+export { default as InputValidators } from 'components/form/b-input/validators';
 
 export { Value, FormValue };
 
