@@ -8,5 +8,5 @@
 
 export { default } from 'components/super/i-input-text/mask/class';
 
-export * from 'components/friends/async-render/api';
+export * from 'components/super/i-input-text/mask/api';
 export * from 'components/super/i-input-text/mask/interface';

@@ -159,14 +159,17 @@ export function syncWithText(
  */
 export function syncInputWithField(this: Mask): void {
 	const {
-		ctx: {$refs: {input}}
+		ctx: {
+			text,
+			$refs: {input}
+		}
 	} = this;
 
 	if (this.compiledMask == null || !Object.isTruly(input)) {
 		return;
 	}
 
-	input.value = ctx.text;
+	input.value = text;
 }
 
 /**

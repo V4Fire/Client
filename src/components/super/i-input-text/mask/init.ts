@@ -16,6 +16,7 @@ import { syncWithText } from 'components/super/i-input-text/mask/sync';
  */
 export function init(this: Mask): void {
 	const {
+		ctx,
 		ctx: {
 			async: $a,
 			$refs: {input}
@@ -53,5 +54,5 @@ export function init(this: Mask): void {
 	$a.on(input, 'blur', h('syncInputWithField'), group);
 
 	compile.call(this);
-	syncWithText.call(this);
+	syncWithText.call(this, ctx.text);
 }
