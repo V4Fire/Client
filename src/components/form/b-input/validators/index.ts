@@ -146,7 +146,7 @@ export default <ValidatorsDecl<bInput>>{
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			} else if (chunks[1] != null && chunks[1].length > precision) {
-				return error(t`The decimal part must be no more than ${precision} digits.`, numValue, 'DECIMAL_LENGTH');
+				return error(t`The decimal part must be no more than ${precision} digits`, numValue, 'DECIMAL_LENGTH');
 			}
 		}
 

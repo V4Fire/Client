@@ -12,13 +12,13 @@ import type bHiddenInput from 'components/form/b-hidden-input/b-hidden-input';
 import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
 
-test.describe('<b-hidden-input> form API', () => {
+test.describe('<b-input> form API', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
 	test('passing component value as prop', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			value: '10'
 		});
 
@@ -26,7 +26,7 @@ test.describe('<b-hidden-input> form API', () => {
 	});
 
 	test('passing default component value as prop', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			default: '10'
 		});
 
@@ -34,7 +34,7 @@ test.describe('<b-hidden-input> form API', () => {
 	});
 
 	test('passing component value and default value as props', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			value: '5',
 			default: '10'
 		});
@@ -43,7 +43,7 @@ test.describe('<b-hidden-input> form API', () => {
 	});
 
 	test('getting component value from `formValue`', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			formValueConverter: [
 				(val) => parseInt.option()(val),
 				(val) => ((val) => Promise.resolve(val * 2)).option()(val),
@@ -53,7 +53,7 @@ test.describe('<b-hidden-input> form API', () => {
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.formValue)
-		).toBeUndefined();
+		).toBeNaN();
 
 		await target.evaluate((ctx) => {
 			ctx.value = '10';
@@ -65,7 +65,7 @@ test.describe('<b-hidden-input> form API', () => {
 	});
 
 	test('getting component group value from `groupFormValue`', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			name: 'test',
 			value: ['10', 'bar']
 		});
@@ -76,11 +76,11 @@ test.describe('<b-hidden-input> form API', () => {
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.groupFormValue)
-		).toEqual(['bar']);
+		).toEqual(['', 'bar']);
 	});
 
 	test('resetting the input with no default value', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			value: '10'
 		});
 
@@ -90,29 +90,25 @@ test.describe('<b-hidden-input> form API', () => {
 
 		test.expect(
 			await target.evaluate(async (ctx) => {
-				const
-					scan: unknown[] = [];
-
-				ctx.on('onReset', (v) => {
-					scan.push(v);
-				});
+				const scan: unknown[] = [];
+				ctx.on('onReset', (val) => scan.push(val));
 
 				scan.push(await ctx.reset());
 				scan.push(await ctx.reset());
 
 				return scan;
 			})
-		).toEqual([undefined, true, false]);
+		).toEqual(['', true, false]);
 
 		await target.evaluate((ctx) => ctx.reset());
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.value)
-		).toBeUndefined();
+		).toBe('');
 	});
 
 	test('resetting the input with the default value', async ({page}) => {
-		const target = await renderHiddenInput(page, {
+		const target = await renderInput(page, {
 			default: '10'
 		});
 
@@ -130,12 +126,8 @@ test.describe('<b-hidden-input> form API', () => {
 
 		test.expect(
 			await target.evaluate(async (ctx) => {
-				const
-					scan: unknown[] = [];
-
-				ctx.on('onReset', (v) => {
-					scan.push(v);
-				});
+				const scan: unknown[] = [];
+				ctx.on('onReset', (val) => scan.push(val));
 
 				scan.push(await ctx.reset());
 				scan.push(await ctx.reset());
@@ -150,7 +142,7 @@ test.describe('<b-hidden-input> form API', () => {
 	});
 
 	test('the `change` event should be fired when the value of the component changes', async ({page}) => {
-		const target = await renderHiddenInput(page);
+		const target = await renderInput(page);
 
 		test.expect(
 			await target.evaluate(async (ctx) => {
@@ -175,8 +167,8 @@ test.describe('<b-hidden-input> form API', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderHiddenInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bHiddenInput>> {
-		await Component.createComponent(page, 'b-hidden-input', [
+	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bHiddenInput>> {
+		await Component.createComponent(page, 'b-input', [
 			{
 				attrs: {
 					'data-id': 'target',
