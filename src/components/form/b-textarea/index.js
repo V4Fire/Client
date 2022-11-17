@@ -7,4 +7,5 @@
  */
 
 package('b-textarea')
-	.extends('i-input-text');
+	.extends('i-input-text')
+	.libs('components/directives/bind-with');

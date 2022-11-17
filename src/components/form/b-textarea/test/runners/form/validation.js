@@ -33,7 +33,7 @@ module.exports = (page) => {
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
-					.toEqual({validator: 'required', error: false, msg: 'Required field'});
+					.toEqual({validator: 'required', error: false, message: 'Required field'});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 					.toBe('Required field');
@@ -48,11 +48,11 @@ module.exports = (page) => {
 
 			it('`required` with parameters (an array form)', async () => {
 				const target = await init({
-					validators: [['required', {msg: 'REQUIRED!'}]]
+					validators: [['required', {message: 'REQUIRED!'}]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
-					.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
+					.toEqual({validator: 'required', error: false, message: 'REQUIRED!'});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 					.toBe('REQUIRED!');
@@ -60,11 +60,11 @@ module.exports = (page) => {
 
 			it('`required` with parameters (an object form)', async () => {
 				const target = await init({
-					validators: [{required: {msg: 'REQUIRED!', showMsg: false}}]
+					validators: [{required: {message: 'REQUIRED!', showMsg: false}}]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
-					.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
+					.toEqual({validator: 'required', error: false, message: 'REQUIRED!'});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 					.toBe('');
@@ -103,7 +103,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'pattern',
 					error: {name: 'NOT_MATCH', value: 'dddd', params},
-					msg: 'A value must match the pattern'
+					message: 'A value must match the pattern'
 				});
 			});
 
@@ -142,7 +142,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'pattern',
 					error: {name: 'MIN', value: '1', params},
-					msg: 'Value length must be at least 2 characters'
+					message: 'Value length must be at least 2 characters'
 				});
 
 				await target.evaluate((ctx) => {
@@ -152,7 +152,7 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 					validator: 'pattern',
 					error: {name: 'MAX', value: '3456879', params},
-					msg: 'Value length must be no more than 4 characters'
+					message: 'Value length must be no more than 4 characters'
 				});
 			});
 

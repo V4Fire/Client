@@ -29,8 +29,8 @@
 					+= self.slot('limit', {':limit': 'limit', ':maxLength': 'maxLength'})
 
 			< template v-else
-				< _.&__limit[.&_hidden_true] v-update-on = { &
-					emitter: 'limit',
-					handler: onLimitUpdate,
+				< _.&__limit[.&_hidden_true] v-bind-with = { &
+					path: 'limit',
+					then: onLimitUpdate,
 					options: {immediate: true}
 				} .

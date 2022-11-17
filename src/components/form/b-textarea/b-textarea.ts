@@ -11,12 +11,11 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/input';
-//#endif
-
 import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
+
+import DOM, { renderTemporarily } from 'components/friends/dom';
+import Block, { getElementSelector, setElementMod } from 'components/friends/block';
 
 import iInputText, {
 
@@ -41,12 +40,12 @@ export * from 'components/form/b-textarea/interface';
 
 export { Value, FormValue };
 
+DOM.addToPrototype(renderTemporarily);
+Block.addToPrototype(getElementSelector, setElementMod);
+
 export const
 	$$ = symbolGenerator();
 
-/**
- * Component to create a form textarea
- */
 @component({
 	functional: {
 		dataProvider: undefined
@@ -65,11 +64,11 @@ export default class bTextarea extends iInputText {
 	override readonly defaultProp?: this['Value'];
 
 	/**
-	 * How many rows need to add to extend the textarea height when it can't fit the entire content without
-	 * showing a scrollbar. The value of one row is equal to `line-height` of the textarea or `font-size`.
+	 * How many rows to add to expand the textarea height when it can't fit the entire content without
+	 * showing a scrollbar. The value of one row is equal to the `line-height` of the textarea, or `font-size`.
 	 */
 	@prop(Number)
-	readonly extRowCount: number = 1;
+	readonly rowsToExpand: number = 1;
 
 	override get value(): this['Value'] {
 		return this.field.get<this['Value']>('valueStore')!;
@@ -85,7 +84,7 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
-	 * Textarea height
+	 * The textarea height
 	 */
 	get height(): CanPromise<number> {
 		return this.waitStatus('ready', () => {
@@ -105,7 +104,7 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
-	 * Height of a newline.
+	 * The height of the new line.
 	 * It depends on `line-height/font-size` of the textarea.
 	 */
 	get newlineHeight(): CanPromise<number> {
@@ -119,7 +118,7 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
-	 * Number of remaining characters that the component can contain
+	 * The number of remaining characters the component can contain
 	 */
 	@computed({dependencies: ['value']})
 	get limit(): CanUndef<number> {
@@ -142,7 +141,27 @@ export default class bTextarea extends iInputText {
 	@system({
 		after: 'valueStore',
 		init: (o) => o.sync.link((text) => {
-			o.watch('valueProp', {label: $$.textStore}, () => {
+			o.watch('valueProp', {label: $$.textStoreValueProp}, watcher);
+			o.watch('modelValue', {label: $$.textStoreModelValue}, watcher);
+
+			return link(Object.cast(o.modelValue ?? o.valueProp));
+
+			function link(textFromValue: CanUndef<string>): string {
+				const
+					resolvedText = textFromValue === undefined ? text ?? o.field.get('valueStore') : textFromValue,
+					str = resolvedText !== undefined ? String(resolvedText) : '';
+
+				if (o.isFunctional) {
+					o.waitStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str).catch(stderr);
+
+				} else if (o.hook === 'updated') {
+					o.text = str;
+				}
+
+				return str;
+			}
+
+			function watcher() {
 				const label = {
 					label: $$.textStoreToValueStore
 				};
@@ -151,23 +170,6 @@ export default class bTextarea extends iInputText {
 					o.async.clearAll(label);
 					return link(v);
 				});
-			});
-
-			return link(Object.cast(o.valueProp));
-
-			function link(textFromValue: CanUndef<string>): string {
-				const
-					resolvedText = textFromValue === undefined ? text ?? o.field.get('valueStore') : textFromValue,
-					str = resolvedText !== undefined ? String(resolvedText) : '';
-
-				if (o.isNotRegular) {
-					o.waitStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str).catch(stderr);
-
-				} else if (o.hook === 'updated') {
-					o.text = str;
-				}
-
-				return str;
 			}
 		})
 	})
@@ -205,10 +207,10 @@ export default class bTextarea extends iInputText {
 	}
 
 	override clear(): Promise<boolean> {
-		const v = this.value;
+		const {value} = this;
 		void this.clearText();
 
-		if (v !== '') {
+		if (value !== '') {
 			this.async.clearAll({group: 'validation'});
 			void this.removeMod('valid');
 			this.emit('clear', this.value);
@@ -243,7 +245,7 @@ export default class bTextarea extends iInputText {
 			newlineHeight = <number>this.newlineHeight;
 
 		const
-			newHeight = height + (this.extRowCount - 1) * newlineHeight,
+			newHeight = height + (this.rowsToExpand - 1) * newlineHeight,
 			fixedNewHeight = newHeight < maxHeight ? newHeight : maxHeight;
 
 		input.style.height = fixedNewHeight.px;
@@ -256,7 +258,7 @@ export default class bTextarea extends iInputText {
 	@hook('mounted')
 	protected async initHeight(): Promise<void> {
 		await this.nextTick();
-		await this.dom.putInStream(async () => {
+		await this.dom.renderTemporarily(async () => {
 			this.minHeight = this.$refs.input.clientHeight;
 			await this.fitHeight();
 		});
@@ -291,7 +293,7 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
-	 * Returns height of textarea' text content
+	 * Returns the height of the textarea text content
 	 */
 	@wait('ready', {label: $$.getTextHeight})
 	protected getTextHeight(): CanPromise<number> {
@@ -330,9 +332,7 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
-	 * Parses the specified value as a number and returns it or `0`
-	 * (if the parsing is failed)
-	 *
+	 * Parses the specified value as a number and returns it or `0` (if parsing fails)
 	 * @param value
 	 */
 	protected parse(value: string): number {
@@ -362,28 +362,39 @@ export default class bTextarea extends iInputText {
 		}
 	}
 
+	protected override initValueListeners(): void {
+		super.initValueListeners();
+
+		this.localEmitter.on('maskedText.change', () => {
+			this.emit('actionChange', this.value);
+		});
+	}
+
 	/**
-	 * Handler: updating of a limit warning
+	 * Handler: updating of the limit warning
 	 * @param el
 	 */
 	protected onLimitUpdate(el: Element): void {
 		const {
+			maskAPI,
+
 			block,
-			compiledMask,
 			messageHelpers,
 
 			limit,
 			maxLength
 		} = this;
 
-		if (
+		const canIgnore =
 			block == null ||
-			compiledMask != null ||
-			messageHelpers !== true ||
+			!messageHelpers ||
 
 			limit == null ||
-			maxLength == null
-		) {
+			maxLength == null ||
+
+			maskAPI.compiledMask != null;
+
+		if (canIgnore) {
 			return;
 		}
 
@@ -398,7 +409,7 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
-	 * Handler: updating of a component text value
+	 * Handler: updating of the component text value
 	 */
 	@watch({path: 'textStore', immediate: true})
 	@hook('beforeDataCreate')
@@ -407,44 +418,16 @@ export default class bTextarea extends iInputText {
 	}
 
 	/**
-	 * Handler: manual editing of a component text value
+	 * Handler: manual editing of the component text value
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected onEdit(): void {
-		if (this.compiledMask != null) {
+		if (this.maskAPI.compiledMask != null) {
 			return;
 		}
 
 		this.value = this.$refs.input.value;
 		this.field.set('textStore', this.value);
 		this.emit('actionChange', this.value);
-	}
-
-	protected override onMaskInput(): Promise<boolean> {
-		return super.onMaskInput().then((res) => {
-			if (res) {
-				this.emit('actionChange', this.value);
-			}
-
-			return res;
-		});
-	}
-
-	protected override onMaskKeyPress(e: KeyboardEvent): boolean {
-		if (super.onMaskKeyPress(e)) {
-			this.emit('actionChange', this.value);
-			return true;
-		}
-
-		return false;
-	}
-
-	protected override onMaskDelete(e: KeyboardEvent): boolean {
-		if (super.onMaskDelete(e)) {
-			this.emit('actionChange', this.value);
-			return true;
-		}
-
-		return false;
 	}
 }

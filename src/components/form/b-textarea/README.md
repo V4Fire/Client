@@ -1,7 +1,7 @@
 # components/form/b-textarea
 
 This module provides a component to create a textarea.
-The component supports a feature of auto-resizing till it reaches the specified max height without a showing of a scrollbar.
+The component supports a feature of auto-resizing till it reaches the specified maximum height without a showing of a scrollbar.
 
 ## Synopsis
 
@@ -23,16 +23,16 @@ See the parent component and the component traits.
 
 See the parent component and the component traits.
 
-## How to enable auto-resizing
+## How to enable textarea auto-resizing?
 
-Provide `height` and `max-height` to the  `&__input` element via CSS.
-The `height` means the initial height or minimal of a component.
-Also, you can manage a value to expand component height via the `extRowCount` prop.
+Specify `height` and `max-height` for the `&__input` element via CSS.
+The `height` means the initial height or minimal of the component.
+Additionally, you can control the value to expand the component height via the `rowsToExpand` prop.
 
-## Enabling a warning of remaining characters that a component can contain
+## How to enable warnings about the remaining characters that a component may contain?
 
 If you switch `messageHelpers` to `true` and provide `maxLength`,
-the component will show a warning when the number of value characters comes near the `maxLength` value.
+the component will show a warning when the number of characters in the value approaches `maxLength`.
 You can define your own logic via the `limit` slot.
 
 ```
@@ -66,11 +66,11 @@ You can define your own logic via the `limit` slot.
 < b-textarea :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
 ```
 
-If a provider returns a dictionary, it will be mapped on the component
-(you can pass the complex property path using dots as separators).
+If the provider returns a dictionary, it will be mapped on the component
+(you can pass a complex property path using dots as determiners).
 
-If a key from the response is matched with a component method, this method will be invoked with a value from this key
-(if the value is an array, it will be spread to the method as arguments).
+If any key from the response matches a component method, that method will be called with the value from that key.
+(if the value is an array, it will be passed to the method as arguments).
 
 ```
 {
@@ -80,20 +80,20 @@ If a key from the response is matched with a component method, this method will 
 }
 ```
 
-In other cases, the response value is interpreted as a component value.
+In other cases, the response value is interpreted as the component value.
 
 ## Slots
 
-The component supports one slot to provide:
+The component supports multiple slots to provide.
 
-1. `limit` to provide an informer to show how many symbols a user can type.
+1. `limit` to provide an informer indicating how many characters the user can enter.
 
-```
-< b-textarea :maxLength = 20
-  < template #limit = {limit, maxLength}
-    < template v-if = limit < maxLength / 1.5
-      Characters left: {{ limit }}
-```
+   ```
+   < b-textarea :maxLength = 20
+     < template #limit = {limit, maxLength}
+       < template v-if = limit < maxLength / 1.5
+         Characters left: {{ limit }}
+   ```
 
 ## API
 
@@ -101,20 +101,20 @@ Also, you can see the parent component and the component traits.
 
 ### Props
 
-#### [extRowCount = 1]
+#### [rowsToExpand = 1]
 
-How many rows need to add to extend the textarea height when it can't fit the entire content without showing a scrollbar.
-The value of one row is equal to `line-height` of the textarea or `font-size`.
+How many rows to add to expand the textarea height when it can't fit the entire content without showing a scrollbar.
+The value of one row is equal to the `line-height` of the textarea, or `font-size`.
 
 ```
-< b-textarea :extRowCount = 5
+< b-textarea :rowsToExpand = 5
 ```
 
 ### Getters
 
 #### height
 
-Textarea height.
+The textarea height.
 
 #### maxHeight
 
@@ -122,12 +122,12 @@ The maximum textarea height.
 
 #### newlineHeight
 
-Height of a newline.
+The height of the new line.
 It depends on `line-height/font-size` of the textarea.
 
 #### limit
 
-Number of remaining characters that the component can contain.
+The number of remaining characters the component can contain.
 
 ### Methods
 
@@ -150,7 +150,7 @@ The component provides a bunch of validators.
 
 ##### required
 
-Checks that a component value must be filled.
+Checks that the component value must be filled.
 
 ```
 < b-textarea :validators = ['required']
@@ -159,7 +159,7 @@ Checks that a component value must be filled.
 
 ##### pattern
 
-Checks that a component value must be matched to the provided pattern.
+Checks that the component value must match the provided pattern.
 
 ```
 < b-textarea :validators = {pattern: {pattern: '^[\\d$]+'}}
