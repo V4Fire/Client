@@ -265,7 +265,7 @@ Checks that the component value can be parsed as a date.
 
 ##### pattern
 
-Checks that the component value can be parsed as an email string.
+Checks that the component value must match the provided pattern.
 
 ```
 < b-input :validators = {pattern: {pattern: '^[\\d$]+'}}

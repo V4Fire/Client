@@ -189,4 +189,4 @@ Checks that the component value must be filled.
 
 ##### pattern
 
-Checks that the component value must match the provided template.
+Checks that the component value must match the provided pattern.

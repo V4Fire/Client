@@ -40,7 +40,7 @@ export default <ValidatorsDecl<iInputText>>{
 	},
 
 	/**
-	 * Checks that the component value must match the provided template
+	 * Checks that the component value must match the provided pattern
 	 *
 	 * @param message
 	 * @param pattern
