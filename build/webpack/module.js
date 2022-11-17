@@ -75,8 +75,6 @@ module.exports = async function module({plugins}) {
 			}
 		},
 
-		'prelude-loader',
-
 		{
 			loader: 'monic-loader',
 			options: inherit(monic.typescript, {
@@ -104,9 +102,12 @@ module.exports = async function module({plugins}) {
 				loader: 'ts-loader',
 				options: {
 					...typescript.client,
-					getCustomTransformers: () => ({
-						after: [...Object.values(tsTransformers.before)]
-					})
+					// Ignore "something is referenced directly or indirectly in its own type annotation"
+					// Module a has no exported member b
+					ignoreDiagnostics: [2502, 2305],
+					transpileOnly: false,
+					reportFiles: ['src/**/*.ts'],
+					getCustomTransformers: tsTransformers
 				}
 			},
 
@@ -115,8 +116,6 @@ module.exports = async function module({plugins}) {
 	});
 
 	const jsHelperLoaders = [
-		'prelude-loader',
-
 		{
 			loader: 'monic-loader',
 			options: inherit(monic.javascript, {
@@ -272,8 +271,6 @@ module.exports = async function module({plugins}) {
 	loaders.rules.set('ss', {
 		test: /\.ss$/,
 		use: [
-			'prelude-loader',
-
 			{
 				loader: 'monic-loader',
 				options: inherit(monic.javascript, {

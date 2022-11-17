@@ -1112,6 +1112,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'directives/resize-observer': true,
 			'directives/update-on': true,
 
+			'standalone/prelude': true,
+
 			iData: true,
 			bRouter: true,
 

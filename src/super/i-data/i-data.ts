@@ -21,8 +21,6 @@ import { deprecate, deprecated } from 'core/functools/deprecation';
 import RequestError from 'core/request/error';
 import { providers } from 'core/data/const';
 
-//#if runtime has core/data
-
 import type Provider from 'core/data';
 import type {
 
@@ -34,8 +32,6 @@ import type {
 	ProviderOptions
 
 } from 'core/data';
-
-//#endif
 
 import type Async from 'core/async';
 import type { AsyncOptions } from 'core/async';
@@ -82,8 +78,6 @@ import type {
 
 export { RequestError };
 
-//#if runtime has core/data
-
 export {
 
 	Socket,
@@ -97,8 +91,6 @@ export {
 	ExtraProviders
 
 } from 'core/data';
-
-//#endif
 
 export * from 'super/i-block/i-block';
 export * from 'super/i-data/const';
