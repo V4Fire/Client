@@ -117,11 +117,11 @@ interface RenderContentFn {
 	(props: Dictionary): string;
 }
 
-interface RenderParams {
+interface RenderParams<A extends object = Dictionary> {
 	/**
 	 * Component attrs
 	 */
-	attrs?: Dictionary;
+	attrs?: A;
 
 	/** @see [[RenderContent]] */
 	content?: Dictionary<RenderContent | RenderContentFn | string>;
