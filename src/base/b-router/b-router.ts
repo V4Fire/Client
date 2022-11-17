@@ -452,7 +452,7 @@ export default class bRouter extends iData {
 			}
 		}
 
-		// We haven't found any routes that math to the specified ref
+		// We haven't found any routes that match to the specified ref
 		if (newRouteInfo == null) {
 			// The transition was emitted by a user, then we need to save the scroll
 			if (method !== 'event' && ref != null) {
@@ -472,8 +472,16 @@ export default class bRouter extends iData {
 		}
 
 		const
-			currentRoute = this.field.get<router.Route>('routeStore'),
-			deepMixin = (...args) => Object.mixin({deep: true, skipUndefs: false}, ...args);
+			currentRoute = this.field.get<router.Route>('routeStore');
+
+		const deepMixin = (...args) => Object.mixin(
+			{
+				deep: true,
+				skipUndefs: false,
+				extendFilter: (el) => !Object.isArray(el)
+			},
+			...args
+		);
 
 		// If a new route matches by a name with the current,
 		// we need to mix a new state with the current
