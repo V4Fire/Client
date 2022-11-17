@@ -472,15 +472,16 @@ export default class bRouter extends iData {
 		}
 
 		const
-			currentRoute = this.field.get<router.Route>('routeStore'),
-			deepMixin = (...args) => Object.mixin(
-				{
-					deep: true,
-					skipUndefs: false,
-					extendFilter: (el) => !Object.isArray(el)
-				},
-				...args
-			);
+			currentRoute = this.field.get<router.Route>('routeStore');
+
+		const deepMixin = (...args) => Object.mixin(
+			{
+				deep: true,
+				skipUndefs: false,
+				extendFilter: (el) => !Object.isArray(el)
+			},
+			...args
+		);
 
 		// If a new route matches by a name with the current,
 		// we need to mix a new state with the current

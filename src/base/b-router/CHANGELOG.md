@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed soft navigation with array in query params
+* Fixed soft transitions with array parameters
 
 ## v3.24.2 (2022-08-19)
 

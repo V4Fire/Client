@@ -167,6 +167,7 @@ module.exports.generateTransitionCommonSpecs = function generateTransitionCommon
 				router.on('onSoftChange', (route) => {
 					if (result.onSoftChange) {
 						result.onSoftChange.push(Object.fastClone(route.query));
+
 					} else {
 						result.onSoftChange = [
 							Object.fastClone(ctx.route.query),

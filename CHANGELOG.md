@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed soft navigation with array in query params `base/b-router`
+* Fixed soft transitions with array parameters `base/b-router`
 
 ## v3.30.1 (2022-10-25)
 
