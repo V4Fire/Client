@@ -20,7 +20,10 @@ export const is = {
 	iOS: match('(?:iPhone|iPad|iPod);[ \\w]+(?= \\d)'),
 	OperaMini: match('Opera Mini'),
 	WindowsMobile: match('IEMobile'),
-	Safari: match(/Version\/[\d.]+.*Safari/),
+	Safari: match((ua: string) => {
+		const res = /Version\/([\d.]+).*(Safari)/.exec(ua);
+		return res == null ? null : [res[2], res[1]];
+	}),
 
 	/**
 	 * A tuple `[browserName, browserVersion?[]]` if the current `navigator.userAgent` is a mobile browser.

@@ -11,11 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (????-??-??)
+## v3.30.2 (2022-11-17)
 
 #### :bug: Bug Fix
 
 * Fixed soft transitions with array parameters `base/b-router`
+* Fixed an issue with testing userAgent string for desktop Safari `core/browser`
 
 ## v3.30.1 (2022-10-25)
 

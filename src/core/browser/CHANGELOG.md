@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.30.2 (2022-11-17)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with testing userAgent string for desktop Safari
+
 ## v3.23.0 (2022-05-27)
 
 #### :rocket: New Feature

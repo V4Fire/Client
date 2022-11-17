@@ -16,6 +16,7 @@ import { is } from 'core/browser/const';
 
 export * from 'core/browser/const';
 export * from 'core/browser/helpers';
+export * from 'core/browser/interface';
 
 /**
  * Returns true if `navigator.userAgent` matches with the specified parameters
