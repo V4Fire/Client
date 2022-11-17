@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Pattern } from 'core/browser/interface';
+
 const
 	{userAgent} = navigator;
 
@@ -16,7 +18,7 @@ const
  * @param pattern - pattern source, regexp
  *   or function that takes userAgent string and returns array of browserName and browserVersion
  */
-export function match(pattern: RegExp | string | PatternFn): [string, number[] | null] | false {
+export function match(pattern: Pattern): [string, number[] | null] | false {
 	let
 		name: CanUndef<string>,
 		version: CanUndef<string>;
@@ -46,5 +48,3 @@ export function match(pattern: RegExp | string | PatternFn): [string, number[] |
 		return Object.isTruly(v) ? v : 0;
 	}
 }
-
-export type PatternFn = (userAgent: string) => CanUndef<[CanUndef<string>, CanUndef<string>]>;

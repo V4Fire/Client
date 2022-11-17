@@ -21,10 +21,8 @@ export const is = {
 	OperaMini: match('Opera Mini'),
 	WindowsMobile: match('IEMobile'),
 	Safari: match((ua: string) => {
-		const
-			res = /Version\/([\d.]+).*(Safari)/.exec(ua);
-
-		return res == null ? undefined : [res[2], res[1]];
+		const res = /Version\/([\d.]+).*(Safari)/.exec(ua);
+		return res == null ? null : [res[2], res[1]];
 	}),
 
 	/**
