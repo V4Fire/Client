@@ -50,7 +50,7 @@
 
 			< ${@tag || nativeInputTag}.&__${@elName || 'input'} &
 				ref = ${@ref || 'input'} |
-				v-model = ${@model || nativeInputModel} |
+				v-model = ${@model || nativeInputModel || FALSE} |
 
 				:id = ${@id || 'id'} |
 				:name = ${@name || 'name'} |

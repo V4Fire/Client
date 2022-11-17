@@ -74,7 +74,7 @@ abstract class iDataData extends iBlock {
 	 */
 	@prop({
 		type: Object,
-		validator: (val) => Object.isFunction(val) || Object.isIterable(val),
+		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
 		required: false
 	})
 
@@ -95,7 +95,7 @@ abstract class iDataData extends iBlock {
 	 */
 	@prop({
 		type: Object,
-		validator: (val) => Object.isFunction(val) || Object.isIterable(val),
+		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
 		required: false
 	})
 

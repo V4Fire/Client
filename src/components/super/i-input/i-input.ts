@@ -230,7 +230,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@prop({
 		type: Object,
-		validator: (val) => Object.isFunction(val) || Object.isIterable(val),
+		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
 		required: false
 	})
 
@@ -266,11 +266,11 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	@prop({
 		type: Object,
-		validator: (val) => Object.isFunction(val) || Object.isIterable(val),
+		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
 		required: false
 	})
 
-	readonly formConverter?: CanIter<ComponentConverter> = unpackIf;
+	readonly formConverter: CanIter<ComponentConverter> = [unpackIf];
 
 	/**
 	 * A list of converters that are used by the associated form

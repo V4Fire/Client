@@ -134,7 +134,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	 */
 	@prop({
 		type: String,
-		validator: (val: string) => [...val.letters()].length === 1
+		validator: (v: string) => [...v.letters()].length === 1
 	})
 
 	readonly maskPlaceholder: string = '_';
