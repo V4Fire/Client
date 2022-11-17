@@ -115,6 +115,17 @@ module.exports = (page, {browser, contextOpts}) => {
 
 					expect(testVal).toBeTrue();
 				});
+
+				it('`platform: Safari`, `operation: >`, `version: 13`', async () => {
+					await createContextWithOpts({
+						userAgent: UaList.safariMac
+					});
+
+					const
+						testVal = await browserApi.evaluate((ctx) => ctx.test('Safari', '>', '13'));
+
+					expect(testVal).toBeTrue();
+				});
 			});
 
 			describe('returns `false`', () => {
@@ -169,6 +180,17 @@ module.exports = (page, {browser, contextOpts}) => {
 
 					const
 						testVal = await browserApi.evaluate((ctx) => ctx.test('Chrome'));
+
+					expect(testVal).toBeFalse();
+				});
+
+				it('`platform: Safari`, `operation: <`, `version: 13`', async () => {
+					await createContextWithOpts({
+						userAgent: UaList.safariMac
+					});
+
+					const
+						testVal = await browserApi.evaluate((ctx) => ctx.test('Safari', '<', '13'));
 
 					expect(testVal).toBeFalse();
 				});
