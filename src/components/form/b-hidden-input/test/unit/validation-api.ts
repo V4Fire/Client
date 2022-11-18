@@ -100,7 +100,7 @@ test.describe('<b-hidden-input> validation API', () => {
 			.toBe('Required field');
 	});
 
-	test.describe('the `required` rule should check if the component has a value', () => {
+	test.describe('the `required` rule should check if the component value is filled', () => {
 		test('calling `validate` on successful validation should return `true`', async ({page}) => {
 			const target = await renderHiddenInput(page, {
 				value: '42',

@@ -7,7 +7,7 @@
  */
 
 import type { Page, JSHandle } from 'playwright';
-import type bHiddenInput from 'components/form/b-hidden-input/b-hidden-input';
+import type bInput from 'components/form/b-input/b-input';
 
 import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
@@ -71,7 +71,7 @@ test.describe('<b-input> form API', () => {
 		});
 
 		await target.evaluate((ctx) => {
-			ctx.value = undefined;
+			ctx.value = '';
 		});
 
 		test.expect(
@@ -167,7 +167,7 @@ test.describe('<b-input> form API', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bHiddenInput>> {
+	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bInput>> {
 		await Component.createComponent(page, 'b-input', [
 			{
 				attrs: {
