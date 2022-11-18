@@ -1,7 +1,7 @@
 # components/form/b-form
 
-This module provides a component to create a form to group other form components and submit to a data provider.
-The component is based on a native `<form>` element and realizes the same behavior as the native API does.
+This module provides a component for creating a form to group other form components and submit to a data provider.
+The component is based on the native `<form>` element and implements the same behavior as the native API.
 
 ## Synopsis
 
@@ -30,24 +30,24 @@ Also, you can see the [[iVisible]] trait and the [[iData]] component.
 | `validationStart`   | Validation of the associated components has been started                                                   | -                                        | -                                               |
 | `validationSuccess` | Validation of the associated components has been successfully finished, i.e., all components are valid     | -                                        | -                                               |
 | `validationFail`    | Validation of the associated components hasn't been successfully finished, i.e, some component isn't valid | Failed validation                        | `ValidationError<this['FormValue']>`            |
-| `validationEnd`     | Validation of the associated components has been ended                                                     | Validation result \[, Failed validation] | `boolean`, `ValidationError<this['FormValue']>` |
-| `submitStart`       | The component started to submit data                                                                       | Data to submit, Submit context           | `SubmitBody`, `SubmitCtx`                       |
-| `submitSuccess`     | Submission of the form has been successfully finished                                                      | Operation response, Submit context       | `unknown`, `ValidationError<this['FormValue']>` |
-| `submitFail`        | Submission of the form hasn't been successfully finished                                                   | Error object, Submit context             | `Error  │ RequestError`, `SubmitCtx`            |
-| `submitEnd`         | Submission of the form has been ended                                                                      | Operation result, Submit context         | `SubmitResult`, `SubmitCtx`                     |
+| `validationEnd`     | Validation of the associated components has been ended                                                     | Validation result \[, Failed validation] | `boolean`; `ValidationError<this['FormValue']>` |
+| `submitStart`       | The component started to submit data                                                                       | Data to submit; Submit context           | `SubmitBody`; `SubmitCtx`                       |
+| `submitSuccess`     | Submission of the form has been successfully finished                                                      | Operation response; Submit context       | `unknown`; `ValidationError<this['FormValue']>` |
+| `submitFail`        | Submission of the form hasn't been successfully finished                                                   | Error object; Submit context             | `Error  │ RequestError`; `SubmitCtx`            |
+| `submitEnd`         | Submission of the form has been ended                                                                      | Operation result; Submit context         | `SubmitResult`; `SubmitCtx`                     |
 
 Also, you can see the [[iVisible]] trait and the [[iData]] component.
 
 ## Why another component?
 
-* The native form API is based on simple URLs and HTTP methods, but it's a low-level approach.
-  Opposite, `bForm` uses data providers to submit data.
+* The native forms API is based on simple URLs and HTTP methods, but this is a low-level approach.
+  In contrast, `bForm` uses data providers to submit data.
 
 * `<form>` works with tags; `bForm` works with `iInput/bButton` components.
 
-* To validate data, `iInput` components don't use the native API of form validation, so the simple `<form>` element can't work with it.
+* `input` components do not use the native form validation API to validate data, so a simple `<form>` element cannot work with it.
 
-* `bForm` provides a bunch of events and modifiers to manage the submit process more efficiently.
+* `bForm` provides a set of events and modifiers to more effectively control the submission process.
 
 ## Usage
 
@@ -72,7 +72,7 @@ Also, you can see the [[iVisible]] trait and the [[iData]] component.
 
 ```
 /// This kind of API is closer to the native.
-/// The form data is provided to the common data provider by the specified URL and via the `add` method.
+/// The form data is provided to the common data provider by the specified URL and using the `add` method.
 < b-form :action = '/create-user' | :method = 'add'
   < b-input :name = 'fname' | :validators = ['required']
   < b-input :name = 'lname'
@@ -119,9 +119,9 @@ Also, you can see the implemented traits or the parent component.
 
 #### [id]
 
-A form identifier.
-You can use it to connect the form with components that lay "outside"
-from the form body (by using the `form` attribute).
+The form identifier.
+You can use it to connect a form to components that lie "outside".
+from the form body (using the `form` attribute).
 
 ```
 < b-form :id = 'bla'
@@ -131,7 +131,7 @@ from the form body (by using the `form` attribute).
 
 #### [name]
 
-A form name.
+The form name.
 You can use it to find the form element via `document.forms`.
 
 ```
@@ -144,8 +144,8 @@ console.log(document.forms['bla']);
 
 #### [action]
 
-A form action URL (the URL where the data will be sent) or a function to create action.
-If the value is not specified, the component will use the default URLs from the data provider.
+The form action URL (the URL where the data will be submitted) or a function to create the action.
+If no value is specified, the component will use the default URLs from the data provider.
 
 ```
 < b-form :action = '/create-user'
@@ -154,7 +154,7 @@ If the value is not specified, the component will use the default URLs from the 
 
 #### [method = `'post'`]
 
-A data provider method which is invoked on the form submit.
+The data provider method that is called when the form is submitted.
 
 ```
 < b-form :dataProvider = 'User' | :method = 'upd'
@@ -170,8 +170,8 @@ Additional form request parameters.
 
 #### [cache = `false`]
 
-If true, then form elements is cached.
-The caching is mean that if some component value does not change since the last sending of the form, it won't be sent again.
+If true, form elements are cached.
+Caching means that if some component value has not changed since the last time the form was submitted, it will not be resubmitted.
 
 ```
 < b-form :dataProvider = 'User' | :method = 'upd' | :cache = true
@@ -191,28 +191,28 @@ Additional form request parameters.
 
 #### elements
 
-A list of components that are associated with the form.
+A list of form related components.
 
 #### submits
 
-A list of components to submit that are associated with the form.
+A list of submit components associated with the form.
 
 ### Methods
 
 #### clear
 
-Clears all values of associated components.
+Clears the values of all related components.
 
 #### reset
 
-Resets values to defaults of all associated components.
+Resets the default values for all related components.
 
 #### validate
 
-Validates all values of associated components and returns:
+Validates the values of all related components and returns:
 
-1. `ValidationError` - if the validation is failed;
-2. List of components to send - if the validation is successful.
+1. `ValidationError` - if the validation fails;
+2. A list of components to send - if the validation was successful.
 
 #### submit
 
@@ -220,7 +220,7 @@ Submits the form.
 
 ### Validation
 
-`bForm` automatically validates all associated components before each submission.
+`bForm` automatically validates all related components before each submission.
 
 ```
 < b-form :dataProvider = 'User' | :method = 'add'
@@ -230,10 +230,10 @@ Submits the form.
   < b-button :type = 'submit'
 ```
 
-### Converting of data to submit
+### Data conversion for sending
 
-If a component associated with `bForm` provides the `formConverter` prop, it will be used by `bForm` to transform the
-associated component's group value before submission.
+If the component associated with `bForm` provides the `formConverter` prop, it will be used by `bForm` to convert the group value
+of the associated component before submitting.
 
 ```
 < b-form :dataProvider = 'User' | :method = 'add'

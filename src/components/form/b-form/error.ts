@@ -7,51 +7,29 @@
  */
 
 import BaseError from 'core/error';
-import { deprecated } from 'core/functools/deprecation';
 
 import type iInput from 'components/super/i-input/i-input';
 import type { ValidationError as InputValidationError } from 'components/super/i-input/i-input';
 
-/**
- * Class to wrap a validation error
- */
 export default class ValidationError<D = undefined> extends BaseError {
 	/**
-	 * Validation error type
+	 * The error type
 	 */
 	readonly type: string;
 
 	/**
-	 * A component on which the error occurred
+	 * The component on which the error occurred
 	 */
 	readonly component: iInput;
 
 	/**
-	 * Error details
+	 * The error details
 	 */
 	readonly details: InputValidationError<D>;
 
 	/**
-	 * @deprecated
-	 * @see [[ValidationError.component]]
-	 */
-	@deprecated({renamedTo: 'component'})
-	get el(): iInput {
-		return this.component;
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[ValidationError.details]]
-	 */
-	@deprecated({renamedTo: 'details'})
-	get validator(): InputValidationError<D> {
-		return this.details;
-	}
-
-	/**
 	 * @param component
-	 * @param details - error details
+	 * @param details - the error details
 	 */
 	constructor(component: iInput, details: InputValidationError<D>) {
 		super();
@@ -63,7 +41,7 @@ export default class ValidationError<D = undefined> extends BaseError {
 
 	protected override format(): string {
 		const
-			parts = [this.details.msg];
+			parts = [this.details.message];
 
 		const
 			head = `[${this.component.globalName ?? this.component.componentName}] [${this.type}]`,

@@ -14,13 +14,11 @@
 import symbolGenerator from 'core/symbol';
 
 import { Option } from 'core/prelude/structures';
-import { deprecated } from 'core/functools/deprecation';
-
-//#if runtime has core/data
-import 'core/data';
-//#endif
+import * as DataProvider from 'components/friends/data-provider';
 
 import iVisible from 'components/traits/i-visible/i-visible';
+
+import type iBlock from 'components/super/i-block/i-block';
 import iInput, { FormValue } from 'components/super/i-input/i-input';
 
 import type bButton from 'components/form/b-button/b-button';
@@ -33,6 +31,8 @@ import iData, {
 	wait,
 
 	ModelMethod,
+	DataProviderProp,
+
 	RequestFilter,
 	CreateRequestOptions,
 
@@ -40,7 +40,7 @@ import iData, {
 
 } from 'components/super/i-data/i-data';
 
-import ValidationError from 'components/form/b-form/modules/error';
+import ValidationError from 'components/form/b-form/error';
 import type { ActionFn, ValidateOptions } from 'components/form/b-form/interface';
 
 export * from 'components/super/i-data/i-data';
@@ -48,12 +48,11 @@ export * from 'components/form/b-form/interface';
 
 export { ValidationError };
 
+DataProvider.default.addToPrototype(DataProvider);
+
 export const
 	$$ = symbolGenerator();
 
-/**
- * Component to create a form
- */
 @component({
 	functional: {
 		dataProvider: undefined
@@ -61,17 +60,17 @@ export const
 })
 
 export default class bForm extends iData implements iVisible {
-	override readonly dataProvider: string = 'Provider';
+	override readonly dataProviderProp: DataProviderProp = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** @see [[iVisible.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
 	/**
-	 * A form identifier.
-	 * You can use it to connect the form with components that lay "outside"
-	 * from the form body (by using the `form` attribute).
+	 * The form identifier.
+	 * You can use it to connect a form to components that lie "outside".
+	 * from the form body (using the `form` attribute).
 	 *
 	 * @example
 	 * ```
@@ -83,7 +82,7 @@ export default class bForm extends iData implements iVisible {
 	readonly id?: string;
 
 	/**
-	 * A form name.
+	 * The form name.
 	 * You can use it to find the form element via `document.forms`.
 	 *
 	 * @example
@@ -99,8 +98,8 @@ export default class bForm extends iData implements iVisible {
 	readonly name?: string;
 
 	/**
-	 * A form action URL (the URL where the data will be sent) or a function to create action.
-	 * If the value is not specified, the component will use the default URLs from the data provider.
+	 * The form action URL (the URL where the data will be submitted) or a function to create the action.
+	 * If no value is specified, the component will use the default URLs from the data provider.
 	 *
 	 * @example
 	 * ```
@@ -112,7 +111,7 @@ export default class bForm extends iData implements iVisible {
 	readonly action?: string | ActionFn;
 
 	/**
-	 * Data provider method which is invoked on the form submit
+	 * The data provider method that is called when the form is submitted
 	 *
 	 * @example
 	 * ```
@@ -134,9 +133,9 @@ export default class bForm extends iData implements iVisible {
 	readonly paramsProp: CreateRequestOptions = {};
 
 	/**
-	 * If true, then form elements is cached.
-	 * The caching is mean that if some component value does not change since the last sending of the form,
-	 * it won't be sent again.
+	 * If true, form elements are cached.
+	 * Caching means that if some component value has not changed since the last time the form was submitted,
+	 * it will not be resubmitted.
 	 *
 	 * @example
 	 * ```
@@ -168,7 +167,7 @@ export default class bForm extends iData implements iVisible {
 	};
 
 	/**
-	 * List of components that are associated with the form
+	 * A list of form related components
 	 */
 	get elements(): CanPromise<readonly iInput[]> {
 		const
@@ -176,29 +175,28 @@ export default class bForm extends iData implements iVisible {
 
 		return this.waitStatus('ready', () => {
 			const
-				els = <iInput[]>[];
+				els: iInput[] = [];
 
-			for (let o = Array.from((<HTMLFormElement>this.$el).elements), i = 0; i < o.length; i++) {
+			Object.forEach((<HTMLFormElement>this.$el).elements, (el) => {
 				const
-					component = this.dom.getComponent<iInput>(o[i], '[class*="_form_true"]');
+					component = this.dom.getComponent<iBlock>(Object.cast(el), '[class*="_form_true"]');
 
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (component == null) {
-					continue;
+					return;
 				}
 
 				if (component.instance instanceof iInput && !processedComponents[component.componentId]) {
 					processedComponents[component.componentId] = true;
-					els.push(component);
+					els.push(Object.cast(component));
 				}
-			}
+			});
 
 			return Object.freeze(els);
 		});
 	}
 
 	/**
-	 * List of components to submit that are associated with the form
+	 * A list of submit components associated with the form
 	 */
 	get submits(): CanPromise<readonly bButton[]> {
 		return this.waitStatus('ready', () => {
@@ -219,28 +217,28 @@ export default class bForm extends iData implements iVisible {
 			}
 
 			const
-				els = <bButton[]>[];
+				els: bButton[] = [];
 
-			for (let i = 0; i < list.length; i++) {
+			list.forEach((el) => {
 				const
-					component = this.dom.getComponent<bButton>(list[i]);
+					component = this.dom.getComponent<bButton>(el);
 
 				if (component != null) {
 					els.push(component);
 				}
-			}
+			});
 
 			return Object.freeze(els);
 		});
 	}
 
 	/**
-	 * Clears values of all associated components
+	 * Clears the values of all related components
 	 * @emits `clear()`
 	 */
 	async clear(): Promise<boolean> {
 		const
-			tasks = <Array<Promise<boolean>>>[];
+			tasks: Array<Promise<boolean>> = [];
 
 		for (const el of await this.elements) {
 			try {
@@ -248,8 +246,8 @@ export default class bForm extends iData implements iVisible {
 			} catch {}
 		}
 
-		for (let o = await Promise.all(tasks), i = 0; i < o.length; i++) {
-			if (o[i]) {
+		for (const res of await Promise.all(tasks)) {
+			if (res) {
 				this.emit('clear');
 				return true;
 			}
@@ -259,12 +257,12 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Resets values to defaults of all associated components
+	 * Resets the default values for all related components
 	 * @emits `reset()`
 	 */
 	async reset(): Promise<boolean> {
 		const
-			tasks = <Array<Promise<boolean>>>[];
+			tasks: Array<Promise<boolean>> = [];
 
 		for (const el of await this.elements) {
 			try {
@@ -272,9 +270,9 @@ export default class bForm extends iData implements iVisible {
 			} catch {}
 		}
 
-		for (let o = await Promise.all(tasks), i = 0; i < o.length; i++) {
-			if (o[i]) {
-				this.emit('clear');
+		for (const res of await Promise.all(tasks)) {
+			if (res) {
+				this.emit('reset');
 				return true;
 			}
 		}
@@ -283,10 +281,10 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Validates values of all associated components and returns:
+	 * Validates the values of all related components and returns:
 	 *
-	 * 1. `ValidationError` - if the validation is failed;
-	 * 2. List of components to send - if the validation is successful.
+	 * 1. `ValidationError` - if the validation fails;
+	 * 2. A list of components to send - if the validation was successful.
 	 *
 	 * @param [opts] - additional validation options
 	 *
@@ -301,15 +299,14 @@ export default class bForm extends iData implements iVisible {
 
 		const
 			values = Object.createDict(),
-			toSubmit = <iInput[]>[];
+			toSubmit: iInput[] = [];
 
 		let
 			valid = true,
 			failedValidation;
 
-		for (let o = await this.elements, i = 0; i < o.length; i++) {
+		for (const el of await this.elements) {
 			const
-				el = o[i],
 				elName = el.name;
 
 			const needValidate =
@@ -318,7 +315,10 @@ export default class bForm extends iData implements iVisible {
 				!this.cache || !el.cache ||
 				!this.tmp.hasOwnProperty(elName) ||
 
-				!Object.fastCompare(this.tmp[elName], values[elName] ?? (values[elName] = await this.getElValueToSubmit(el)));
+				!Object.fastCompare(
+					this.tmp[elName],
+					values[elName] ?? (values[elName] = await this.getElementValueToSubmit(el))
+				);
 
 			if (needValidate) {
 				const
@@ -403,7 +403,7 @@ export default class bForm extends iData implements iVisible {
 					formResponse = await this.action(body, submitCtx);
 
 				} else {
-					const providerCtx = this.action != null ? this.base(this.action) : this;
+					const providerCtx = this.action != null ? this.dataProvider!.base(this.action) : this;
 					formResponse = await (<Function>providerCtx[this.method])(body, this.params);
 				}
 
@@ -434,6 +434,8 @@ export default class bForm extends iData implements iVisible {
 			}
 
 		} finally {
+			console.log(111);
+
 			let
 				status = 'success';
 
@@ -456,13 +458,13 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Returns values of the associated components grouped by names
-	 * @param [validate] - if true, the method returns values only when the data is valid
+	 * Returns values of related components, grouped by name
+	 * @param [validate] - if true, the method only returns values when the data is valid
 	 */
 	async getValues(validate?: ValidateOptions | boolean): Promise<Dictionary<CanArray<FormValue>>>;
 
 	/**
-	 * Returns values of the specified iInput components grouped by names
+	 * Returns values of the specified input components, grouped by name
 	 * @param elements
 	 */
 	async getValues(elements: iInput[]): Promise<Dictionary<CanArray<FormValue>>>;
@@ -483,9 +485,8 @@ export default class bForm extends iData implements iVisible {
 			const
 				body = {};
 
-			for (let i = 0; i < els.length; i++) {
+			for (const el of (<iInput[]>els)) {
 				const
-					el = <iInput>els[i],
 					elName = el.name ?? '';
 
 				if (elName === '' || body.hasOwnProperty(elName)) {
@@ -493,7 +494,7 @@ export default class bForm extends iData implements iVisible {
 				}
 
 				const
-					val = await this.getElValueToSubmit(el);
+					val = await this.getElementValueToSubmit(el);
 
 				if (val !== undefined) {
 					body[elName] = val;
@@ -507,19 +508,10 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * @deprecated
-	 * @see [[bForm.getValues]]
-	 */
-	@deprecated({renamedTo: 'getValues'})
-	async values(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {
-		return this.getValues(validate);
-	}
-
-	/**
-	 * Returns a value to submit from the specified element
+	 * Returns the value to send from the specified element
 	 * @param el
 	 */
-	protected async getElValueToSubmit(el: iInput): Promise<unknown> {
+	protected async getElementValueToSubmit(el: iInput): Promise<unknown> {
 		if (!Object.isTruly(el.name)) {
 			return undefined;
 		}
@@ -527,20 +519,15 @@ export default class bForm extends iData implements iVisible {
 		let
 			val: unknown = await el.groupFormValue;
 
-		if (el.formConverter != null) {
+		for (const converter of el.formConverters) {
 			const
-				converters = Array.concat([], el.formConverter);
+				newVal = converter(val, this);
 
-			for (let i = 0; i < converters.length; i++) {
-				const
-					newVal = converters[i].call(this, val, this);
+			if (newVal instanceof Option) {
+				val = await newVal.catch(() => undefined);
 
-				if (newVal instanceof Option) {
-					val = await newVal.catch(() => undefined);
-
-				} else {
-					val = await newVal;
-				}
+			} else {
+				val = await newVal;
 			}
 		}
 
@@ -548,7 +535,7 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Toggles statuses of the form controls
+	 * Toggles the statuses of form controls
 	 * @param freeze - if true, all controls are frozen
 	 */
 	protected async toggleControls(freeze: boolean): Promise<void> {
@@ -558,13 +545,13 @@ export default class bForm extends iData implements iVisible {
 		const
 			tasks = <Array<CanPromise<boolean>>>[];
 
-		for (let i = 0; i < els.length; i++) {
-			tasks.push(els[i].setMod('disabled', freeze));
-		}
+		els.forEach((el) => {
+			tasks.push(el.setMod('disabled', freeze));
+		});
 
-		for (let i = 0; i < submits.length; i++) {
-			tasks.push(submits[i].setMod('progress', freeze));
-		}
+		submits.forEach((el) => {
+			tasks.push(el.setMod('progress', freeze));
+		});
 
 		try {
 			await Promise.all(tasks);

@@ -7,27 +7,29 @@
  */
 
 import type { JSHandle, Page } from 'playwright';
+
 import type bForm from 'components/form/b-form/b-form';
 import type bCheckbox from 'components/form/b-checkbox/b-checkbox';
+
 import Component from 'tests/helpers/component';
 
 /**
- * Creates the `bForm` component with the environment to test
+ * Renders the `bForm` component with the environment to test
  *
  * @param page
  * @param attrs
  */
-export async function createFormAndEnvironment(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bForm>> {
+export async function renderFormAndEnvironment(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bForm>> {
 	await Component.removeCreatedComponents(page);
 
 	const
-		formConverter = (v) => v.reduce((res, el) => <number>res + Number(el), 0);
+		formConverter = (v) => v.reduce((res: number, el) => res + Number(el), 0);
 
 	const scheme = [
 		{
-			content: {
+			children: {
 				default: {
-					tag: 'b-form',
+					type: 'b-form',
 
 					attrs: {
 						id: 'my-form',
@@ -41,22 +43,22 @@ export async function createFormAndEnvironment(page: Page, attrs: Dictionary = {
 		},
 
 		{
-			content: {
+			children: {
 				default: {
-					tag: 'b-checkbox',
+					type: 'b-checkbox',
 					attrs: {
 						name: 'adult',
 						form: 'my-form',
-						validators: [['required', {msg: 'REQUIRED!'}]]
+						validators: [['required', {message: 'REQUIRED!'}]]
 					}
 				}
 			}
 		},
 
 		{
-			content: {
+			children: {
 				default: {
-					tag: 'b-input-hidden',
+					type: 'b-hidden-input',
 
 					attrs: {
 						name: 'user',
@@ -69,9 +71,9 @@ export async function createFormAndEnvironment(page: Page, attrs: Dictionary = {
 		},
 
 		{
-			content: {
+			children: {
 				default: {
-					tag: 'b-input-hidden',
+					type: 'b-hidden-input',
 
 					attrs: {
 						name: 'user',
@@ -84,9 +86,9 @@ export async function createFormAndEnvironment(page: Page, attrs: Dictionary = {
 		},
 
 		{
-			content: {
+			children: {
 				default: {
-					tag: 'b-input-hidden',
+					type: 'b-hidden-input',
 
 					attrs: {
 						name: 'user',
@@ -98,9 +100,9 @@ export async function createFormAndEnvironment(page: Page, attrs: Dictionary = {
 		},
 
 		{
-			content: {
+			children: {
 				default: {
-					tag: 'b-input-hidden',
+					type: 'b-hidden-input',
 
 					attrs: {
 						value: 9,
@@ -111,14 +113,13 @@ export async function createFormAndEnvironment(page: Page, attrs: Dictionary = {
 		}
 	];
 
-	await Component.createComponents(page, 'b-dummy', <RenderParams[]>scheme);
-
+	await Component.createComponents(page, 'b-dummy', scheme);
 	return Component.waitForComponentByQuery(page, '[data-id="target"]');
 }
 
 /**
- * Checks all associated with the specified form checkboxes
- * @param form - form target
+ * Checks all checkboxes associated with the specified form
+ * @param form - the form target
  */
 export async function checkCheckboxes(form: JSHandle<bForm>): Promise<void> {
 	await form.evaluate(async (ctx) => {
@@ -131,7 +132,7 @@ export async function checkCheckboxes(form: JSHandle<bForm>): Promise<void> {
 }
 
 /**
- * Intercepts `/form` requests
+ * Intercepts all `/form` requests
  * @param page
  */
 export function interceptFormRequest(page: Page): Promise<void> {
@@ -140,8 +141,8 @@ export function interceptFormRequest(page: Page): Promise<void> {
 			req = r.request();
 
 		const
-			splitted = (new URL(req.url()).pathname).split('/'),
-			normalizedUrl = (splitted.splice(0, 2), `/${splitted.join('/')}`);
+			chunks = (new URL(req.url()).pathname).split('/'),
+			normalizedUrl = (chunks.splice(0, 2), `/${chunks.join('/')}`);
 
 		if (req.method() === 'POST') {
 			return r.fulfill({

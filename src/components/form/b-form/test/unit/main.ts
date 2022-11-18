@@ -6,21 +6,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import test from 'tests/config/unit/test';
-
 import type iInput from 'components/super/i-input/i-input';
 import type bCheckbox from 'components/form/b-checkbox/b-checkbox';
-import type { ValidationError } from 'components/form/b-form/b-form';
-import { createFormAndEnvironment, checkCheckboxes } from 'components/form/b-form/test/helpers';
 
-test.describe('b-form simple usage', () => {
+import type { ValidationError } from 'components/form/b-form/b-form';
+import { renderFormAndEnvironment, checkCheckboxes } from 'components/form/b-form/test/helpers';
+
+import test from 'tests/config/unit/test';
+
+test.describe('<b-form>', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test('getting form elements', async ({page}) => {
+	test('the `elements` getter should return a list of all form related components', async ({page}) => {
 		const
-			target = await createFormAndEnvironment(page);
+			target = await renderFormAndEnvironment(page);
 
 		test.expect(
 			await target.evaluate(async (ctx) => {
@@ -31,9 +32,9 @@ test.describe('b-form simple usage', () => {
 		).toEqual(['adult', 'user', 'user', undefined]);
 	});
 
-	test('getting form values', async ({page}) => {
+	test('getting a list of form values to submit', async ({page}) => {
 		const
-			target = await createFormAndEnvironment(page);
+			target = await renderFormAndEnvironment(page);
 
 		test.expect(await target.evaluate((ctx) => ctx.getValues(false)))
 			.toEqual({user: 3});
@@ -42,43 +43,42 @@ test.describe('b-form simple usage', () => {
 			.toEqual({});
 	});
 
-	test('clearing form values', async ({page}) => {
+	test('calling the `clear` method should clear all form components', async ({page}) => {
 		const
-			target = await createFormAndEnvironment(page);
+			target = await renderFormAndEnvironment(page);
 
 		test.expect(
 			await target.evaluate(async (ctx) => {
-				const res = <any[]>[];
+				const scan: unknown[] = [];
 
-				ctx.on('clear', () => res.push('clear'));
-				res.push(await ctx.clear(), await ctx.getValues());
+				ctx.on('clear', () => scan.push('clear'));
+				scan.push(await ctx.clear(), await ctx.getValues());
 
-				return res;
+				return scan;
 			})
 
 		).toEqual(['clear', true, {user: 0}]);
 	});
 
-	test('resetting form values', async ({page}) => {
+	test('calling the `reset` method should reset all form components', async ({page}) => {
 		const
-			target = await createFormAndEnvironment(page);
+			target = await renderFormAndEnvironment(page);
 
 		test.expect(
 			await target.evaluate(async (ctx) => {
-				const res = <any[]>[];
+				const scan: unknown[] = [];
 
-				ctx.on('clear', () => res.push('reset'));
-				res.push(await ctx.reset(), await ctx.getValues());
+				ctx.on('reset', () => scan.push('reset'));
+				scan.push(await ctx.reset(), await ctx.getValues());
 
-				return res;
+				return scan;
 			})
 
 		).toEqual(['reset', true, {user: 5}]);
 	});
 
-	test('validation', async ({page}) => {
-		const
-			target = await createFormAndEnvironment(page);
+	test('calling the `validate` method should check all form components', async ({page}) => {
+		const target = await renderFormAndEnvironment(page);
 
 		test.expect(
 			await target.evaluate(async (ctx) => {
@@ -91,8 +91,8 @@ test.describe('b-form simple usage', () => {
 
 			{
 				validator: 'required',
-				error: false,
-				msg: 'REQUIRED!'
+				error: {name: 'required'},
+				message: 'REQUIRED!'
 			}
 		]);
 
@@ -107,33 +107,32 @@ test.describe('b-form simple usage', () => {
 		).toEqual(['adult', 'user', 'user']);
 	});
 
-	test('listening validation events', async ({page}) => {
-		const
-			target = await createFormAndEnvironment(page);
+	test('when validating a component, special events should be fired', async ({page}) => {
+		const target = await renderFormAndEnvironment(page);
 
 		test.expect(
 			await target.evaluate(async (ctx) => {
 				const
-					res = <any[]>[];
+					events: Array<string | [string, unknown?, unknown?]> = [];
 
 				ctx.on('validationStart', () => {
-					res.push('start');
+					events.push('start');
 				});
 
 				ctx.on('onValidationSuccess', () => {
-					res.push('success');
+					events.push('success');
 				});
 
 				ctx.on('onValidationFail', (err) => {
-					res.push(err.details);
+					events.push(err.details);
 				});
 
-				ctx.on('onValidationEnd', (status, err) => {
-					res.push([status, err.details]);
+				ctx.on('onValidationEnd', (success, err) => {
+					events.push([success, err?.details]);
 				});
 
 				await ctx.validate();
-				return res;
+				return events;
 			})
 
 		).toEqual([
@@ -141,8 +140,8 @@ test.describe('b-form simple usage', () => {
 
 			{
 				validator: 'required',
-				error: false,
-				msg: 'REQUIRED!'
+				error: {name: 'required'},
+				message: 'REQUIRED!'
 			},
 
 			[
@@ -150,8 +149,8 @@ test.describe('b-form simple usage', () => {
 
 				{
 					validator: 'required',
-					error: false,
-					msg: 'REQUIRED!'
+					error: {name: 'required'},
+					message: 'REQUIRED!'
 				}
 			]
 		]);
@@ -167,26 +166,26 @@ test.describe('b-form simple usage', () => {
 		test.expect(
 			await target.evaluate(async (ctx) => {
 				const
-					res = <any[]>[];
+					events: Array<string | [string, unknown?, unknown?]> = [];
 
 				ctx.on('validationStart', () => {
-					res.push('start');
+					events.push('start');
 				});
 
 				ctx.on('onValidationSuccess', () => {
-					res.push('success');
+					events.push('success');
 				});
 
 				ctx.on('onValidationFail', (err) => {
-					res.push(err.details);
+					events.push(err.details);
 				});
 
-				ctx.on('onValidationEnd', (status) => {
-					res.push(status);
+				ctx.on('onValidationEnd', (success) => {
+					events.push(success);
 				});
 
 				await ctx.validate();
-				return res;
+				return events;
 			})
 		).toEqual(['start', 'success', true]);
 	});
