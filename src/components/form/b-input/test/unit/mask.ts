@@ -7,14 +7,20 @@
  */
 
 import type { JSHandle, Page } from 'playwright';
+
+import type * as Mask from 'components/super/i-input-text/mask';
 import type bInput from 'components/form/b-input/b-input';
 
 import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
+import Utils from 'tests/helpers/utils';
 
 test.describe('<b-input> mask API', () => {
-	test.beforeEach(async ({demoPage}) => {
+	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
+
+		const MaskAPI = await Utils.import<typeof Mask>(page, 'components/super/i-input-text/mask');
+		await MaskAPI.evaluate((ctx) => ctx.default.addToPrototype(ctx));
 	});
 
 	test('applying a mask without providing a text value should have no effect', async ({page}) => {
