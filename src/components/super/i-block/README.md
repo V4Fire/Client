@@ -1,6 +1,6 @@
 # components/super/i-block
 
-This module provides a super class for any V4Fire components.
+This module provides a superclass for any V4Fire components.
 This class contains the most necessary APIs, such as: event API, modifiers API, state and life cycle API, property watching API, etc.
 The functionality is divided into several parts: the behavior that the class itself declares and the many friendly classes that work through composition.
 Also, this module re-exports part of the functionality and types from the `core/component` module.

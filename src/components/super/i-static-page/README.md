@@ -1,6 +1,6 @@
 # components/super/i-static-page
 
-This module provides a super class for all root components.
+This module provides a superclass for all root components.
 
 The root component is the top component of any application.
 It contains all other components, and all components have a property that refers to it: `r` or `$root`.

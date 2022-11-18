@@ -1,6 +1,6 @@
 # components/super/i-page
 
-This module provides a super class for all page components.
+This module provides a superclass for all page components.
 
 ## Synopsis
 
@@ -33,8 +33,8 @@ But there is one more case where we need a real static HTML page, which is the i
 The initialization page contains the default HTML layout, such as `head` and `body` tags. In addition, it loads the main
 CSS and JS dependencies and performs other initialization steps. That's why `iPage` has two descendants:
 
-1. [[iStaticPage]] - a super class for static pages;
-2. [[iDynamicPage]] - a super class for dynamic or virtual pages.
+1. [[iStaticPage]] - a superclass for static pages;
+2. [[iDynamicPage]] - a superclass for dynamic or virtual pages.
 
 So, when you want to create a new page, you must inherit from one of these, not `iPage`.
 

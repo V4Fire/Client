@@ -659,11 +659,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/** @see [[iInput.value]] */
 	@field<iInput>((o) => {
-		const
-			modelValue = o.sync.link('modelValue', (val) => o.resolveValue(val)),
-			value = o.sync.link((val) => o.resolveValue(val));
-
-		return modelValue ?? value;
+		o.watch('modelValue', (val) => o.value = val);
+		return o.sync.link((val) => o.resolveValue(o.modelValue ?? val));
 	})
 
 	protected valueStore!: unknown;

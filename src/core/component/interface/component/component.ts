@@ -38,7 +38,7 @@ export abstract class ComponentInterface {
 	readonly Root!: ComponentInterface;
 
 	/**
-	 * Type: the base super class for all components
+	 * Type: the base superclass for all components
 	 */
 	readonly Component!: ComponentInterface;
 

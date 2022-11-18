@@ -1,6 +1,6 @@
 # components/super/i-dynamic-page
 
-This module provides a super class for all non-root page components.
+This module provides a superclass for all non-root page components.
 
 ## Synopsis
 

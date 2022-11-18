@@ -8,9 +8,6 @@
 
 import type iBlock from 'components/super/i-block/i-block';
 
-/**
- * Superclass to create classes friendly to the main component class
- */
 export default class Friend {
 	/**
 	 * Type: the main component instance

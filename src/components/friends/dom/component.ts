@@ -20,7 +20,7 @@ import iBlock, { ComponentElement } from 'components/super/i-block/i-block';
  * console.log(this.dom.getComponent(someElement, '.b-form')?.componentName);
  * ```
  */
-export function getComponent<T extends iBlock>(el: ComponentElement<T>, selector?: string): CanNull<T>;
+export function getComponent<T extends iBlock>(el: Element | ComponentElement<T>, selector?: string): CanNull<T>;
 
 /**
  * Returns a component instance that is associated with a DOM element by the passed selector
