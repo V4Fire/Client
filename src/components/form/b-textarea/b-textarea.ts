@@ -343,7 +343,12 @@ export default class bTextarea extends iInputText {
 	/**
 	 * Synchronization for the `text` field
 	 */
-	@watch({path: 'valueStore', immediate: true})
+	@watch({
+		path: 'valueStore',
+		immediate: true,
+		flush: 'sync'
+	})
+
 	protected async syncValueStoreWatcher(): Promise<void> {
 		await this.fitHeight();
 	}
