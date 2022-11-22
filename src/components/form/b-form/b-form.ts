@@ -50,7 +50,7 @@ export { ValidationError };
 
 DataProvider.default.addToPrototype(DataProvider);
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component({

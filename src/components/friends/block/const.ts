@@ -7,7 +7,7 @@
  */
 
 export const
-	fakeCtx = document.createElement('div'),
+	fakeCtx = typeof document !== 'undefined' ? document.createElement('div') : null,
 	modRgxpCache = Object.createDict<RegExp>();
 
 export const

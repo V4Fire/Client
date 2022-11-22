@@ -40,7 +40,7 @@ import type { ComponentEvent, CallChild } from 'components/super/i-block/interfa
 
 import iBlockBase from 'components/super/i-block/base';
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component()

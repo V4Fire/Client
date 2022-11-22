@@ -25,7 +25,7 @@ import type { Item, RenderFilter } from 'components/base/b-tree/interface';
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 /**

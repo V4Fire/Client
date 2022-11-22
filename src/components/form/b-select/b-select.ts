@@ -364,12 +364,12 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		//#if runtime has iInput/validators
 		...iInputText.validators,
 
-		async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
+		async required({message, showMessage = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 			const
 				val = await this.formValue;
 
 			if (this.multiple ? Object.size(val) === 0 : val === undefined) {
-				this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
+				this.setValidationMsg(this.getValidatorMsg(false, message, t`Required field`), showMessage);
 				return false;
 			}
 

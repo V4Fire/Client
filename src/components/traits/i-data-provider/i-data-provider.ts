@@ -28,7 +28,7 @@ import type { RequestParams } from 'components/traits/i-data-provider/interface'
 
 export * from 'components/traits/i-data-provider/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 export default abstract class iDataProvider implements iProgress {

@@ -48,7 +48,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-bottom-slide/const';
 export * from 'components/base/b-bottom-slide/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 interface bBottomSlide extends
@@ -419,8 +419,8 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 
 	/** @see [[iLockPageScroll.lock]] */
 	@wait('ready', {label: $$.lock})
-	lock(): Promise<void> {
-		return iLockPageScroll.lock(this, this.$refs.view);
+	lockPageScroll(): Promise<void> {
+		return iLockPageScroll.lockPageScroll(this, this.$refs.view);
 	}
 
 	/**
@@ -885,11 +885,11 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 
 				this.async.once(win, 'transitionend', () => {
 					if (this.isFullyOpened) {
-						this.lock().catch(stderr);
+						this.lockPageScroll().catch(stderr);
 						void this.removeMod('events', false);
 
 					} else {
-						this.unlock().catch(stderr);
+						this.unlockPageScroll().catch(stderr);
 						void this.setMod('events', false);
 
 						if (this.scrollToTopOnClose) {

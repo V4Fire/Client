@@ -15,7 +15,7 @@ import type ChunkRender from 'components/base/b-virtual-scroll/modules/chunk-ren
 import { isAsyncClearError } from 'components/base/b-virtual-scroll/modules/helpers';
 import type { RemoteData, DataState, LastLoadedChunk } from 'components/base/b-virtual-scroll/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 export default class ChunkRequest extends Friend {

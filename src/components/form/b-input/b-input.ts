@@ -40,7 +40,7 @@ export { default as InputValidators } from 'components/form/b-input/validators';
 
 export { Value, FormValue };
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component({

@@ -30,7 +30,7 @@ import type { Active, Item, Items } from 'components/base/b-list/interface';
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 /**

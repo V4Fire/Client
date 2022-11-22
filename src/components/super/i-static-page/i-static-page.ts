@@ -36,7 +36,7 @@ export * from 'components/super/i-static-page/modules/provider-data-store';
 
 export * from 'components/super/i-static-page/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component()

@@ -29,7 +29,7 @@ import type {
 
 export * from 'components/traits/i-observe-dom/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 export default abstract class iObserveDOM {

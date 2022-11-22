@@ -33,7 +33,7 @@ import {
 
 export * from 'components/super/i-block/modules/activation/const';
 
-export const
+const
 	$$ = symbolGenerator();
 
 /**

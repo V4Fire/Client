@@ -43,7 +43,7 @@ export { Value, FormValue };
 DOM.addToPrototype(renderTemporarily);
 Block.addToPrototype(getElementSelector, setElementMod);
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component({

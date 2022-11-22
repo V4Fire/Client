@@ -19,7 +19,7 @@ import type ChunkRequest from 'components/base/b-virtual-scroll/modules/chunk-re
 
 import type { RenderItem } from 'components/base/b-virtual-scroll/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 export default class ChunkRender extends Friend {

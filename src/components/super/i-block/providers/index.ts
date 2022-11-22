@@ -26,7 +26,7 @@ import type { InitLoadCb, InitLoadOptions } from 'components/super/i-block/inter
 
 import iBlockState from 'components/super/i-block/state';
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component()

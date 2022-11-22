@@ -15,7 +15,7 @@ import { component, watch, wait } from 'components/super/i-block/i-block';
 import iDataData from 'components/super/i-data/data';
 import type { RequestParams, RetryRequestFn } from 'components/super/i-data/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component({functional: null})

@@ -41,7 +41,7 @@ export * from 'components/form/b-checkbox/interface';
 
 export { Value, FormValue };
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component({

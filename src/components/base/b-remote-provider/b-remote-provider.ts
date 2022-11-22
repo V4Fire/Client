@@ -20,7 +20,7 @@ import iData, { component, prop, RequestError, RetryRequestFn } from 'components
 
 export * from 'components/super/i-data/i-data';
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component()

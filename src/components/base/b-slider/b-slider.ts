@@ -45,7 +45,7 @@ import type { Mode, SlideRect, SlideDirection, AlignType } from 'components/base
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-slider/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 interface bSlider extends Trait<typeof iObserveDOM> {}

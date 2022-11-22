@@ -15,7 +15,7 @@ import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scro
 
 import type { RenderItem, DataToRender, ItemAttrs } from 'components/base/b-virtual-scroll/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 export default class ComponentRender extends Friend {

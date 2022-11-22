@@ -67,7 +67,7 @@ State.addToPrototype(set);
 Block.addToPrototype(element);
 DOM.addToPrototype(getComponent);
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component()

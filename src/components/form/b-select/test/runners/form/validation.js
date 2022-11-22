@@ -33,7 +33,7 @@ module.exports = (page) => {
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
-					.toEqual({validator: 'required', error: false, msg: 'Required field'});
+					.toEqual({validator: 'required', error: false, message: 'Required field'});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 					.toBe('Required field');
@@ -49,11 +49,11 @@ module.exports = (page) => {
 			it('`required` with parameters (an array form)', async () => {
 				const target = await init({
 					multiple: true,
-					validators: [['required', {msg: 'REQUIRED!'}]]
+					validators: [['required', {message: 'REQUIRED!'}]]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
-					.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
+					.toEqual({validator: 'required', error: false, message: 'REQUIRED!'});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 					.toBe('REQUIRED!');
@@ -61,11 +61,11 @@ module.exports = (page) => {
 
 			it('`required` with parameters (an object form)', async () => {
 				const target = await init({
-					validators: [{required: {msg: 'REQUIRED!', showMsg: false}}]
+					validators: [{required: {message: 'REQUIRED!', showMsg: false}}]
 				});
 
 				expect(await target.evaluate((ctx) => ctx.validate()))
-					.toEqual({validator: 'required', error: false, msg: 'REQUIRED!'});
+					.toEqual({validator: 'required', error: false, message: 'REQUIRED!'});
 
 				expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 					.toBe('');

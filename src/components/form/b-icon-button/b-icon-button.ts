@@ -15,8 +15,5 @@ import bButton, { component } from 'components/form/b-button/b-button';
 
 export * from 'components/form/b-button/b-button';
 
-/**
- * Component to create a button based on icon
- */
 @component()
 export default class bIconButton extends bButton {}

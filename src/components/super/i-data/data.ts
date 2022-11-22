@@ -37,7 +37,7 @@ import type {
 
 } from 'components/super/i-data/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 interface iDataData extends Trait<typeof iDataProvider> {}

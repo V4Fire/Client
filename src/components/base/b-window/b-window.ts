@@ -41,7 +41,7 @@ import type { StageTitles } from 'components/base/b-window/interface';
 export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
 
-export const
+const
 	$$ = symbolGenerator();
 
 interface bWindow extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScroll> {}
@@ -241,8 +241,8 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/** @see [[iLockPageScroll.lock]] */
 	@wait('loading', {label: $$.lock})
-	lock(): Promise<void> {
-		return iLockPageScroll.lock(this, this.$refs.window);
+	lockPageScroll(): Promise<void> {
+		return iLockPageScroll.lockPageScroll(this, this.$refs.window);
 	}
 
 	/** @see [[iOpenToggle.onOpenedChange]] */

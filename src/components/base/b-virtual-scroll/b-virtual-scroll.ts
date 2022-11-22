@@ -72,7 +72,7 @@ export * from 'components/base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component()

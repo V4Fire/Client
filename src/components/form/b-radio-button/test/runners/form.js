@@ -32,7 +32,7 @@ module.exports = (page) => {
 				target = await init();
 
 			expect(await target.evaluate((ctx) => ctx.validate()))
-				.toEqual({validator: 'required', error: false, msg: 'Required field'});
+				.toEqual({validator: 'required', error: false, message: 'Required field'});
 
 			expect(await target.evaluate((ctx) => ctx.block.element('error-box').textContent.trim()))
 				.toBe('Required field');

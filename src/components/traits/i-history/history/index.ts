@@ -22,7 +22,7 @@ import type { Page, HistoryItem, HistoryConfig } from 'components/traits/i-histo
 export * from 'components/traits/i-history/history/const';
 export * from 'components/traits/i-history/history/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 export default class History extends Friend {

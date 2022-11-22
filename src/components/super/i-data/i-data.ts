@@ -44,7 +44,7 @@ export {
 export * from 'components/super/i-block/i-block';
 export * from 'components/super/i-data/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component({functional: null})

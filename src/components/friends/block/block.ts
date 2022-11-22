@@ -140,7 +140,7 @@ export function setMod(this: Block, name: string, value: unknown, reason: ModEve
 		this.removeMod(name, undefined, 'setMod');
 	}
 
-	if (node != null && (!isInit || needSync)) {
+	if (node instanceof Element && (!isInit || needSync)) {
 		node.classList.add(this.getFullBlockName(name, normalizedValue));
 	}
 

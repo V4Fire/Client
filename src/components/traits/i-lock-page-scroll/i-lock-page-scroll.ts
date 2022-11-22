@@ -19,7 +19,7 @@ import { is } from 'core/browser';
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModEvent } from 'components/super/i-block/i-block';
 
-export const
+const
 	$$ = symbolGenerator();
 
 const

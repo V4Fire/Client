@@ -20,7 +20,7 @@ import type { TitleValue, StageTitles, ScrollOptions } from 'components/super/i-
 export * from 'components/super/i-data/i-data';
 export * from 'components/super/i-page/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component({inheritMods: false})

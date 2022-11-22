@@ -27,7 +27,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'core/router/const';
 export * from 'components/base/b-router/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 /**

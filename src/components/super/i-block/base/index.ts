@@ -29,7 +29,7 @@ import type { AsyncWatchOptions } from 'components/friends/sync';
 
 import iBlockFriends from 'components/super/i-block/friends';
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component()

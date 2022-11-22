@@ -38,7 +38,7 @@ export * from 'components/super/i-input-text/interface';
 export * from 'components/super/i-input-text/validators';
 export { default as TextValidators } from 'components/super/i-input-text/validators';
 
-export const
+const
 	$$ = symbolGenerator();
 
 @component()
