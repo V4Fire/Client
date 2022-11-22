@@ -12,7 +12,7 @@ import Async from 'core/async';
 import { shouldInvokeHandler } from 'core/dom/resize-watcher/helpers';
 import type { Watcher, WatchOptions, WatchHandler, ObservableElements } from 'core/dom/resize-watcher/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 export default class ResizeWatcher {

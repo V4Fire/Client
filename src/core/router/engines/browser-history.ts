@@ -23,7 +23,7 @@ import * as browser from 'core/browser';
 import type bRouter from 'components/base/b-router/b-router';
 import type { Router, Route, HistoryClearFilter } from 'core/router/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 const

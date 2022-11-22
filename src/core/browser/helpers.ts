@@ -6,9 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	{userAgent} = navigator;
-
 /**
  * Takes the given string pattern and returns a tuple `[browserName, browserVersion?[]]` if the pattern
  * is matched with `navigator.userAgent`. Otherwise, returns `false`.
@@ -16,9 +13,13 @@ const
  * @param pattern
  */
 export function match(pattern: RegExp | string): [string, number[] | null] | false {
+	if (typeof navigator === 'undefined') {
+		return false;
+	}
+
 	const
 		rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9._]*))?`, 'i') : pattern,
-		res = rgxp.exec(userAgent);
+		res = rgxp.exec(navigator.userAgent);
 
 	return res ?
 		[

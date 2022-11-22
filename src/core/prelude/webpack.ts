@@ -8,8 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	ctx = Function('return this')();
+try {
+	const
+		ctx = Function('return this')();
 
-__webpack_nonce__ = ctx[CSP_NONCE_STORE];
-__webpack_public_path__ = ctx.PUBLIC_PATH ?? PUBLIC_PATH;
+	__webpack_nonce__ = ctx[CSP_NONCE_STORE];
+	__webpack_public_path__ = ctx.PUBLIC_PATH ?? PUBLIC_PATH;
+} catch {}

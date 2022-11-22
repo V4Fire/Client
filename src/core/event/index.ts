@@ -20,6 +20,11 @@ export * from '@v4fire/core/core/event';
  */
 export function resolveAfterDOMLoaded(): SyncPromise<void> {
 	return new SyncPromise((resolve) => {
+		if (typeof document === 'undefined') {
+			resolve();
+			return;
+		}
+
 		if (document.readyState === 'loading') {
 			document.addEventListener('DOMContentLoaded', resolve);
 

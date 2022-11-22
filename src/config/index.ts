@@ -24,5 +24,12 @@ extend({
 		delay: 40
 	},
 
-	components: COMPONENTS
+	components: (() => {
+		try {
+			return COMPONENTS;
+
+		} catch {
+			return {};
+		}
+	})
 });

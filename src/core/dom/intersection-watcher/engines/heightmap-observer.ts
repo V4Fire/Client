@@ -18,7 +18,7 @@ import { InViewStatus, getElementPosition, isElementInView } from 'core/dom/inte
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 import type { WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 export default class MutationObserverEngine extends AbstractEngine {

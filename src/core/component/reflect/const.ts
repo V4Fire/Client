@@ -13,5 +13,11 @@ export const
 	bindingRgxp = /(?:Prop|Store)$/,
 	hasSeparator = /\./;
 
-export const
-	dsComponentsMods = DS_COMPONENTS_MODS;
+export const dsComponentsMods = (() => {
+	try {
+		return DS_COMPONENTS_MODS;
+
+	} catch {
+		return {};
+	}
+})();

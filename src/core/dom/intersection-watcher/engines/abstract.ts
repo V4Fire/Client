@@ -23,7 +23,7 @@ import type {
 
 import type { ObservableElements } from 'core/dom/intersection-watcher/engines/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
 export default abstract class AbstractEngine {
