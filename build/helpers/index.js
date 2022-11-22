@@ -11,7 +11,6 @@
 Object.assign(
 	exports,
 	include('@super/build/helpers', __dirname),
-	include('build/helpers/test'),
 	include('build/helpers/webpack'),
 	include('build/helpers/other')
 );
