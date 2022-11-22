@@ -75,7 +75,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const
 		map = new WeakMap();
 
-	meta.component.render = Object.cast((ctx, cache) => {
+	meta.component.render = Object.cast((ctx, ...args) => {
 		const
 			unsafe = getComponentContext(ctx);
 
@@ -84,7 +84,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		}
 
 		const
-			fn = meta.methods.render!.fn(unsafe, cache);
+			fn = meta.methods.render!.fn(unsafe, ...args);
 
 		map.set(ctx, fn);
 		return fn();
