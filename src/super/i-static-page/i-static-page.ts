@@ -15,7 +15,7 @@ import symbolGenerator from 'core/symbol';
 
 import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
-import { reset, ResetType, ComponentInterface } from 'core/component';
+import { reset, ResetType } from 'core/component';
 
 import type bRouter from 'base/b-router/b-router';
 import type { AppliedRoute } from 'core/router';
@@ -25,6 +25,7 @@ import iPage, { component, field, system, computed, watch } from 'super/i-page/i
 
 import createProviderDataStore, { ProviderDataStore } from 'super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'super/i-static-page/modules/theme';
+import PageMetaData from 'super/i-static-page/modules/page-meta-data';
 
 import type { RootMod } from 'super/i-static-page/interface';
 
@@ -82,6 +83,12 @@ export default abstract class iStaticPage extends iPage {
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
+	 * Module to work with metadata of page
+	 */
+	@system(() => new PageMetaData())
+	readonly PageMetaData!: PageMetaData;
+
+	/**
 	 * True if the current user is authorized
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
@@ -121,27 +128,6 @@ export default abstract class iStaticPage extends iPage {
 	override set route(value: CanUndef<this['CurrentPage']>) {
 		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
-	}
-
-	override get pageTitle(): string {
-		return this.field.get<string>('pageTitleStore')!;
-	}
-
-	override set pageTitle(value: string) {
-		if (!Object.isString(value)) {
-			return;
-		}
-
-		const
-			div = Object.assign(document.createElement('div'), {innerHTML: value}),
-			title = div.textContent ?? '';
-
-		// Fix strange Chrome bug
-		// tslint:disable-next-line:no-irregular-whitespace
-		document.title = `${title} `;
-		document.title = title;
-
-		this.field.set('pageTitleStore', title);
 	}
 
 	/**
@@ -208,18 +194,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system()
 	protected rootMods: Dictionary<RootMod> = {};
-
-	/**
-	 * Sets a new page title
-	 *
-	 * @param value
-	 * @param [component]
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	setPageTitle(value: string, component: ComponentInterface = this): CanPromise<boolean> {
-		this.pageTitle = value;
-		return this.pageTitle === value;
-	}
 
 	/**
 	 * Sends a message to reset data of all components.

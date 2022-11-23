@@ -471,16 +471,6 @@ console.log(this.r);
 this.r.locale = 'ru';
 ```
 
-### Methods
-
-#### setPageTitle
-
-Sets a new page title.
-
-```js
-this.r.setPageTitle('Hello page');
-```
-
 #### reset
 
 Sends a message to reset data of all components.

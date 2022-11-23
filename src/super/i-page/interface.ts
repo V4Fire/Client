@@ -12,6 +12,8 @@ export type TitleValue<CTX extends iPage = iPage['unsafe']> =
 	string |
 	((ctx: CTX) => string);
 
+export type DescriptionValue = string;
+
 export interface StageTitles<CTX extends iPage = iPage['unsafe']> extends Dictionary<TitleValue<CTX>> {
 	'[[DEFAULT]]': TitleValue<CTX>;
 }
