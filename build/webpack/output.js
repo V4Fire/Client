@@ -13,24 +13,36 @@ const
 	{hash, output: outputPattern} = include('build/helpers');
 
 /**
- * Returns options for `webpack.output`
+ * Returns parameters for `webpack.output`
  *
- * @param {(number|string)} buildId - build id
+ * @param {(number|string)} buildId
  * @returns {!Object}
  */
 module.exports = function output({buildId}) {
-	return {
+	const params = {
 		path: src.clientOutput(),
 		publicPath: webpack.publicPath(),
 
 		filename: `${hash(outputPattern, true)}.js`,
 		chunkFilename: `${hash(outputPattern, true)}.js`,
-		uniqueName: `v4fire-${buildId}`,
-
-		chunkLoading: 'jsonp',
-		chunkFormat: 'array-push',
-
-		hashFunction: webpack.hashFunction(),
-		crossOriginLoading: 'anonymous'
+		uniqueName: `v4fire-${buildId}`
 	};
+
+	if (webpack.ssr) {
+		Object.assign(params, {
+			libraryTarget: 'commonjs2',
+			chunkLoading: 'require',
+			chunkFormat: 'commonjs'
+		});
+
+	} else {
+		Object.assign(params, {
+			chunkLoading: 'jsonp',
+			chunkFormat: 'array-push',
+			hashFunction: webpack.hashFunction(),
+			crossOriginLoading: 'anonymous'
+		});
+	}
+
+	return params;
 };

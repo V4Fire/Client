@@ -10,45 +10,59 @@
 
 const
 	$C = require('collection.js'),
-	config = require('@config/config');
+	{webpack} = require('@config/config');
 
-const
-	{STANDALONE} = include('build/const');
+if (webpack.ssr) {
+	const
+		nodeExternals = require('webpack-node-externals');
 
-const
-	externalList = [],
-	asRgxp = /^\/(.*?)\/$/;
+	/**
+	 * Returns parameters for `webpack.externals`
+	 * @returns {!Array}
+	 */
+	module.exports = function externals() {
+		return [nodeExternals()];
+	};
 
-const externalMap = $C(config.webpack.externals).filter((el, key) => {
-	if (!asRgxp.test(key)) {
-		return true;
-	}
+} else {
+	const
+		{STANDALONE} = include('build/const');
 
 	const
-		rgxp = new RegExp(RegExp.$1);
+		externalList = [],
+		asRgxp = /^\/(.*?)\/$/;
 
-	externalList.push((ctx, req, cb) => {
-		if (rgxp.test(req)) {
-			return cb(null, `root ${Object.isDictionary(el) ? el.root : el}`);
+	const externalMap = $C(webpack.externals()).filter((el, key) => {
+		if (!asRgxp.test(key)) {
+			return true;
 		}
 
-		cb();
-	});
+		const
+			rgxp = new RegExp(RegExp.$1);
 
-	return false;
+		externalList.push((ctx, req, cb) => {
+			if (rgxp.test(req)) {
+				return cb(null, `root ${Object.isDictionary(el) ? el.root : el}`);
+			}
 
-}).map();
+			cb();
+		});
 
-/**
- * Returns options for `webpack.externals`
- *
- * @param {(number|string)} buildId - build id
- * @returns {!Array}
- */
-module.exports = function externals({buildId}) {
-	if (buildId !== STANDALONE) {
-		return [externalMap].concat(externalList);
-	}
+		return false;
 
-	return [];
-};
+	}).map();
+
+	/**
+	 * Returns parameters for `webpack.externals`
+	 *
+	 * @param {(number|string)} buildId
+	 * @returns {!Array}
+	 */
+	module.exports = function externals({buildId}) {
+		if (buildId !== STANDALONE) {
+			return [externalMap].concat(externalList);
+		}
+
+		return [];
+	};
+}

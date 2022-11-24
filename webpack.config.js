@@ -13,10 +13,10 @@ const
 	{webpack} = require('@config/config');
 
 /**
- * Returns WebPack configuration to the specified entry
+ * Returns WebPack configuration for the specified entry
  *
- * @param {!Object} entry - options for WebPack ".entry"
- * @param {(number|string)} buildId - build id
+ * @param {!Object} entry - parameters from `webpack.entry`
+ * @param {(number|string)} buildId
  * @returns {!Object}
  */
 async function buildFactory(entry, buildId) {
@@ -74,7 +74,7 @@ async function buildFactory(entry, buildId) {
 }
 
 /**
- * Array of promises with WebPack configs.
+ * A list of promises with WebPack configs
  */
 const tasks = (async () => {
 	await include('build/snakeskin');
@@ -84,7 +84,6 @@ const tasks = (async () => {
 		tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));
 
 	globalThis.WEBPACK_CONFIG = tasks;
-
 	return tasks;
 })();
 

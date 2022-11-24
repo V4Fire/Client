@@ -83,32 +83,33 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		let
 			decl = '';
 
-		try {
-			const
-				styles = await component.styles;
+		if (!webpack.ssr) {
+			try {
+				const
+					styles = await component.styles;
 
-			decl += `
-(() => {
-	if (TPLS['${dep}']) {
-		return;
-	}
+				decl += `
+	(() => {
+		if (TPLS['${dep}']) {
+			return;
+		}
 
-	requestAnimationFrame(async () => {
-		try {
-			const el = document.createElement('i');
-			el.className = '${dep}-is-style-loaded';
-			document.body.appendChild(el);
+		requestAnimationFrame(async () => {
+			try {
+				const el = document.createElement('i');
+				el.className = '${dep}-is-style-loaded';
+				document.body.appendChild(el);
 
-			const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
-			document.body.removeChild(el);
+				const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
+				document.body.removeChild(el);
 
-			if (isStylesLoaded) {
-				return;
-			}
-		} catch (err) { stderr(err); }
+				if (isStylesLoaded) {
+					return;
+				}
+			} catch (err) { stderr(err); }
 
-		try {
-			${
+			try {
+				${
 					styles
 						.map((src) => {
 							if (src == null) {
@@ -121,11 +122,13 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 
 						.join('')
 				}
-		} catch (err) { stderr(err); }
-	});
-})();`;
+			} catch (err) { stderr(err); }
+		});
+	})();`;
 
-		} catch {}
+			} catch {
+			}
+		}
 
 		const depChunks = [
 			'logic',

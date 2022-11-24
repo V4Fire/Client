@@ -9,8 +9,7 @@
  */
 
 const
-	config = require('@v4fire/core/config/default'),
-	pzlr = require('@pzlr/build-core');
+	config = require('@v4fire/core/config/default');
 
 const
 	fs = require('fs'),
@@ -26,7 +25,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	__proto__: config,
 
 	/**
-	 * Name of the used MVVM library, like Vue or React
+	 * The name of the component library to use, such as Vue or React
 	 *
 	 * @cli engine
 	 * @env ENGINE
@@ -38,37 +37,48 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return o('engine', {
 			env: true,
 			default: def,
-			validate(v) {
-				return Boolean({
-					vue: true,
-					vue3: true,
-					zero: true
-				}[v]);
-			}
+			validate: (val) => new Set(['vue3']).has(val)
 		});
 	},
 
 	/** @inheritDoc */
 	build: {
 		/**
+		 * Project build mode
+		 *
+		 * @cli build-mode
+		 * @env BUILD_MODE
+		 *
+		 * @param {string=} [def] - default value
+		 * @returns {string}
+		 */
+		mode(def = IS_PROD ? 'production' : 'development') {
+			return o('build-mode', {
+				env: true,
+				default: def
+			});
+		},
+
+		/**
 		 * True, if the build process is running within CI
 		 *
-		 * @cli build_ci
+		 * @cli build-ci
 		 * @env BUILD_CI
 		 *
 		 * @type {boolean}
 		 */
-		ci: o('build_ci', {
+		ci: o('build-ci', {
 			env: true,
+			type: 'boolean',
 			default: Boolean(process.env.CI)
 		}),
 
 		/**
-		 * List of entries to build.
+		 * A list of entries to build.
 		 * The entries are taken from the "core/entries" directory.
 		 *
-		 * You can use this parameter when you develop some particular chunk and don't want to build the whole application,
-		 * because it may slow down the build time.
+		 * You can use this option when you are developing a specific piece,
+		 * and you don't want to build the whole application because it can slow down the build time.
 		 *
 		 * @cli entries
 		 * @env ENTRIES
@@ -87,7 +97,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * The number of available CPUs that can be used with application building
+		 * The number of available CPUs that can be used to build the application
 		 *
 		 * @cli processes
 		 * @env PROCESSES
@@ -104,12 +114,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Returns a prefix for the `components-lock.json` file.
-		 * When you have different components loc files related to some execute parameters,
-		 * you need to keep them separately.
+		 * When you have different component loc files associated with some runtime options, you need to keep them separate.
 		 *
 		 * @cli component-lock-prefix
 		 * @env COMPONENT_LOCK_PREFIX
 		 *
+		 * @param {string=} [def] - default value
 		 * @returns {string}
 		 */
 		componentLockPrefix(def = this.config.webpack.fatHTML() ? 'fat-html' : '') {
@@ -120,13 +130,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Every client build starts with calculating the project graph.
-		 * The graph contains information about entry points, dependencies, and other stuff.
-		 * This information is used by WebPack to deduplicate code blocks and optimize building,
-		 * but the process of graph calculation may take time.
+		 * Each client build begins with a project graph calculation.
+		 * The graph contains information about entry points, dependencies, and more.
 		 *
-		 * This option enables that the graph can be taken from the previous build if it exists.
-		 * Mind, the invalid graph can produce to the broken build of the application.
+		 * This information is used by WebPack for code block deduplication and build optimization,
+		 * but the graph calculation process may take some time.
+		 *
+		 * This option allows to take the project graph from a previous build if it exists.
+		 * Keep in mind, an incorrect graph can break the application build.
 		 *
 		 * @cli build-graph-from-cache
 		 * @env BUILD_GRAPH_FROM_CACHE
@@ -140,178 +151,28 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Returns a list of components to build within the demo page (pages/p-v4-components-demo).
-		 * The list contains objects with default properties for each specified component.
-		 *
-		 * ```js
-		 * [
-		 *   {name: 'b-button', attrs: {':theme': "'demo'"}, content: {default: 'Hello world'}},
-		 *   {name: 'b-select', attrs: {':theme': "'demo'"}}
-		 * ]
-		 * ```
-		 *
-		 * To specify the default properties for a component demo, you should create a "demo.js" file and
-		 * place it with the component directory, for instance, "b-button/demo.js":
-		 *
-		 * ```js
-		 * module.exports = [
-		 *   {
-		 *     // Within "attrs" you can specify attributes that will be passed to the component
-		 *     attrs: {':theme': "'demo'"},
-		 *
-		 *     // Within "content" you can specify slots that will be passed to the component
-		 *     content: {default: 'Hello world'}
-		 *   }
-		 * ];
-		 * ```
-		 *
-		 * Every object from the list represents one instance of a component,
-		 * i.e. to create two or more examples of a component with different attributes just add more objects to the list.
-		 *
-		 * ```js
-		 * module.exports = [
-		 *   {
-		 *     attrs: {':theme': "'demo'"},
-		 *     content: {default: 'Hello world'}
-		 *   },
-		 *
-		 *   {
-		 *     attrs: {':theme': "'demo2'"}
-		 *   }
-		 * ];
-		 * ```
-		 *
-		 * @cli components
-		 * @env COMPONENTS
-		 *
-		 * @type {!Array<{name: string, args?: Object, content?: Object}>}
-		 *
-		 * @example
-		 * ```bash
-		 * # Build the demo page with b-button and b-select
-		 * npx webpack --env components=b-button,b-select
-		 * ```
-		 */
-		components: o('components', {
-			env: true,
-			coerce: (v) => {
-				const
-					args = require('arg')({'--suit': String}, {permissive: true});
-
-				try {
-					const
-						obj = JSON.parse(v);
-
-					if (Object.isArray(obj)) {
-						return obj;
-					}
-
-					return [Object.isDictionary(obj) ? obj : {name: obj}];
-
-				} catch {}
-
-				if (!v) {
-					return [];
-				}
-
-				return v
-					.split(',')
-					.flatMap((name) => {
-						try {
-							const
-								demo = require(pzlr.resolve.blockSync(`${name}/demo.js`)),
-								suit = (args['--suit'] || 'demo').camelize(false);
-
-							const
-								wrap = (d) => [].concat((d || []).map((p) => ({name, ...p})));
-
-							if (Object.isDictionary(demo)) {
-								return wrap(demo[suit]);
-							}
-
-							return wrap(demo);
-
-						} catch {}
-
-						return {name};
-					});
-			}
-		}),
-
-		/**
-		 * A name of the component to build demo examples or tests
+		 * The name of the component to create demos or tests
 		 *
 		 * @cli demo-page
 		 * @env DEMO_PAGE
 		 *
-		 * @returns {string}
-		 */
-		demoPage() {
-			return o('demo-page', {
-				env: true,
-				default: 'p-v4-components-demo'
-			});
-		},
-
-		/**
-		 * Port for a test server
-		 * @env TEST_PORT
-		 */
-		testPort: o('test-port', {
-			env: true,
-			default: 8000
-		}),
-
-		/**
-		 * Enables the special kind of demo page to build with
-		 * the feature of component inspection by using the "bV4ComponentDemo" component.
-		 *
-		 * The inspection mode allows us to see all component modifiers/props and dynamically change it.
-		 *
-		 * @cli inspect-components
-		 * @env INSPECT_COMPONENTS
-		 *
-		 * @type {boolean}
-		 */
-		inspectComponents: o('inspect-components', {
-			env: true,
-			type: 'boolean'
-		}),
-
-		/**
-		 * Project build mode
-		 *
-		 * @cli build-mode
-		 * @env BUILD_MODE
-		 *
 		 * @param {string=} [def] - default value
 		 * @returns {string}
 		 */
-		mode(def = IS_PROD ? 'production' : 'development') {
-			return o('build-mode', {
+		demoPage(def = 'p-v4-components-demo') {
+			return o('demo-page', {
 				env: true,
 				default: def
 			});
 		},
 
 		/**
-		 * This option is used with component test files.
-		 *
-		 * For instance, you have the "b-button/test.js" file that contains tests for the component.
-		 * You may export one function to call to run tests, or you can export an object where each key
-		 * exports a function to test the component with different attributes.
-		 * The value of "suit" refers to the key of the test function to invoke.
-		 *
-		 * See the "/test" folder for more details.
-		 *
-		 * @cli suit
-		 * @env SUIT
-		 *
-		 * @type {string}
+		 * Test server port
+		 * @env TEST_PORT
 		 */
-		suit: o('suit', {
+		testPort: o('test-port', {
 			env: true,
-			default: 'demo'
+			default: 8000
 		})
 	},
 
@@ -320,7 +181,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	webpack: {
 		/**
-		 * Returns a value of `mode`
+		 * Returns the `webpack.mode` value
 		 *
 		 * @cli mode
 		 * @env MODE
@@ -336,7 +197,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns a value of `cache.type`
+		 * Returns the `webpack.cache.type` value
 		 *
 		 * @cli cache-type
 		 * @env CACHE_TYPE
@@ -352,7 +213,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns a value of `target`
+		 * Returns the `webpack.target` value
 		 *
 		 * @cli target
 		 * @env TARGET
@@ -367,42 +228,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		) {
 			return o('target', {
 				env: true,
-				default: def
+				default: this.ssr ? 'node' : def
 			});
 		},
 
 		/**
-		 * Returns parameters to show webpack build progress
-		 *
-		 * @cli progress
-		 * @env PROGRESS
-		 *
-		 * @see https://github.com/npkgz/cli-progress
-		 * @param [def] - default value
-		 * @returns {Object}
-		 */
-		progress(def = true) {
-			const enabled = o('progress', {
-				env: true,
-				default: def,
-				type: 'boolean'
-			});
-
-			if (enabled) {
-				return {
-					opts: {
-						clearOnComplete: true,
-						stopOnComplete: true,
-						forceRedraw: true,
-						noTTYOutput: this.config.build.ci,
-						hideCursor: null
-					}
-				};
-			}
-		},
-
-		/**
-		 * Returns a value of `devtool`
+		 * Returns the `webpack.devtool` value
 		 *
 		 * @cli devtool
 		 * @env DEVTOOL
@@ -418,7 +249,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns a value of `stats`
+		 * Returns the `webpack.stats` value
 		 *
 		 * @cli stats
 		 * @env STATS
@@ -443,10 +274,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * True if the application needs to be built for SSR
+		 *
+		 * @cli ssr
+		 * @env SSR
+		 *
+		 * @type {boolean}
+		 */
+		ssr: o('ssr', {
+			env: true,
+			type: 'boolean'
+		}),
+
+		/**
 		 * Returns
-		 *   * `1` if all assets from the build have to inline within HTML files;
-		 *   * `2` if all scripts and links from the build have to inline within HTML files;
-		 *   * `0` if assets from the build shouldn't inline within HTML files.
+		 *   1. `1` if all resources from the build should be embedded in HTML files;
+		 *   2. `2` if all scripts and links from the build should be embedded in HTML files;
+		 *   3. `0` if resources from the build should not be embedded in HTML files.
 		 *
 		 * @cli fat-html
 		 * @env FAT_HTML
@@ -464,7 +308,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if all assets from the initial entry point have to inline within HTML files
+		 * Returns true if all resources from the initial entry point should be embedded in HTML files
 		 *
 		 * @cli inline-initial
 		 * @env INLINE_INITIAL
@@ -481,11 +325,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Webpack options to optimize build
+		 * Webpack options for build optimization
 		 */
 		optimize: {
 			/**
-			 * The minimum size of a chunk file in bytes that can be separated into a single file
+			 * The minimum fragment file size, in bytes, that can be split into a single file
 			 *
 			 * @cli optimize-min-chunk-size
 			 * @env OPTIMIZE_MIN_CHUNK_SIZE
@@ -507,7 +351,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			},
 
 			/**
-			 * Returns the maximum size of a file in bytes that can be inline as base64
+			 * Returns the maximum file size in bytes that can be embedded as base64
 			 *
 			 * @cli optimize-data-uri-limit
 			 * @env OPTIMIZE_DATA_URI_LIMIT
@@ -532,18 +376,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Value of `externals`
+		 * Returns the `webpack.externals` value
 		 */
-		externals: {
-			vue: 'root Vue',
-			eventemitter2: 'EventEmitter2',
-			setimmediate: 'setImmediate'
+		externals() {
+			return {
+				vue: 'root Vue',
+				eventemitter2: 'EventEmitter2',
+				setimmediate: 'setImmediate'
+			};
 		},
 
 		/**
-		 * An expression that provides a public path for assets within the runtime.
-		 * If the value is provided as a boolean, it enables runtime modifications of `publicPath`,
-		 * but takes a value from the static build parameter.
+		 * An expression that provides the public path for resources at runtime.
+		 *
+		 * If the value is provided as a boolean value, it allows modifications to `publicPath` at runtime,
+		 * otherwise it takes the value as a static string parameter.
 		 *
 		 * @cli dynamic-public-path
 		 * @env DYNAMIC_PUBLIC_PATH
@@ -566,7 +413,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * If true, a path to load assets can be defined in runtime via the `publicPath` query parameter
+		 * If true, the path to load resources can be defined at runtime using the `publicPath` URL query parameter
 		 *
 		 * @cli provide-public-path-with-query
 		 * @env PROVIDE_PUBLIC_PATH_WITH_QUERY
@@ -584,7 +431,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns a value for `output.publicPath`.
+		 * Returns the `output.publicPath` value.
 		 * The method can take arguments that will be concatenated to the base value.
 		 *
 		 * @cli public-path
@@ -641,10 +488,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns a value for `output.filename`.
-		 * The method can take an object with values to expand macros.
+		 * Returns the `output.filename` value.
+		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param params
+		 * @param vars
 		 * @returns {string}
 		 *
 		 * @example
@@ -653,14 +500,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * output({hash: 'foo', name: 'bla'}) // foo_bla
 		 * ```
 		 */
-		output(params) {
+		output(vars) {
 			const
-				res = this.mode() !== 'production' || this.fatHTML() ? '[name]' : '[hash]_[name]';
+				res = this.mode() !== 'production' || this.ssr || this.fatHTML() ? '[name]' : '[hash]_[name]';
 
-			if (params) {
+			if (vars) {
 				return res.replace(/_?\[(.*?)]/g, (str, key) => {
-					if (params[key] != null) {
-						return params[key];
+					if (vars[key] != null) {
+						return vars[key];
 					}
 
 					return '';
@@ -671,10 +518,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns a value for `DllPlugin.output.filename`.
-		 * The method can take an object with values to expand macros.
+		 * Returns the `DllPlugin.output.filename` value.
+		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param params
+		 * @param vars
 		 * @returns {string}
 		 *
 		 * @example
@@ -683,13 +530,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * dllOutput({hash: 'foo', name: 'bla'}) // foo_bla
 		 * ```
 		 */
-		dllOutput(params) {
-			return this.output(params);
+		dllOutput(vars) {
+			return this.output(vars);
 		},
 
 		/**
-		 * Returns a value for `FileLoader.output.filename`.
-		 * The method can take an object with values to expand macros.
+		 * Returns the `FileLoader.output.filename` value.
+		 * The method can take a dictionary with values to expand macros.
 		 *
 		 * @param params
 		 * @returns {string}
@@ -704,7 +551,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const
 				root = 'assets';
 
-			if (this.mode() !== 'production' || this.fatHTML()) {
+			if (this.mode() !== 'production' || this.ssr || this.fatHTML()) {
 				return this.output({
 					...params,
 					name: `${root}/[path][name].[ext]`,
@@ -720,10 +567,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns path to the generated assets.json within the output directory.
-		 * This file contains a JSON object with links to all JS/CSS files that are declared within "src/entries".
-		 * The declaration solves the problem of connection between original files and compiled files:
-		 * generated files may have different names (because of hash or other stuff) with original files.
+		 * Returns a path to the generated assets.json file in the output directory.
+		 * This file contains a JSON object with links to all JS/CSS files declared in "src/entries".
+		 * The declaration solves the connection problem between source files and compiled files:
+		 * the generated files may have different names (because of the hash or other things) with the original files.
 		 *
 		 * For instance:
 		 *
@@ -747,13 +594,43 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns a path to the generated assets.js within the output directory.
-		 * This file contains the modified version of "assets.json" to load as a JS script.
+		 * Returns a path to the generated assets.js file in the output directory.
+		 * This file contains a modified version of "assets.json" to download as a JS script.
 		 *
 		 * @returns {string}
 		 */
 		assetsJS() {
 			return path.changeExt(this.assetsJSON(), '.js');
+		},
+
+		/**
+		 * Returns options for displaying webpack build progress
+		 *
+		 * @cli progress
+		 * @env PROGRESS
+		 *
+		 * @see https://github.com/npkgz/cli-progress
+		 * @param [def] - default value
+		 * @returns {Object}
+		 */
+		progress(def = true) {
+			const enabled = o('progress', {
+				env: true,
+				default: def,
+				type: 'boolean'
+			});
+
+			if (enabled) {
+				return {
+					opts: {
+						clearOnComplete: true,
+						stopOnComplete: true,
+						forceRedraw: true,
+						noTTYOutput: this.config.build.ci,
+						hideCursor: null
+					}
+				};
+			}
 		}
 	},
 
@@ -762,16 +639,16 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	csp: {
 		/**
-		 * If true, the nonce attributes will be post-processed by a proxy, like Nginx
-		 * (this mode will insert nonce attributes into inline tags too).
+		 * If true, the nonce attributes will be processed by a proxy such as Nginx
+		 * (this mode will also insert the nonce attributes into inline tags).
 		 *
-		 * If false, nonce attributes will be inserted from the JS runtime.
-		 * Note, this mode does not support nonce attributes for inline tags.
+		 * If false, the nonce attributes will be inserted from the JS runtime.
+		 * Note that this mode does not support nonce attributes for inline tags.
 		 */
 		postProcessor: true,
 
 		/**
-		 * Return a name of the generated runtime global variable where the nonce value is stored
+		 * Returns the name of the generated global runtime variable that holds the nonce value
 		 * @returns {?string}
 		 */
 		nonceStore() {
@@ -788,7 +665,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns a value of the "nonce" hash
+		 * Returns the hash value of "nonce"
 		 * @returns {?string}
 		 */
 		nonce() {
@@ -797,10 +674,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for TypeScript:
+	 * Returns parameters for a TypeScript compiler:
 	 *
-	 * 1. server - to compile node.js modules
-	 * 2. client - to compile client modules
+	 * 1. server - options for compiling the app as a node.js library;
+	 * 2. client - options for compiling the app as a client app.
 	 *
 	 * @override
 	 * @returns {{server: !Object, client: !Object}}
@@ -816,7 +693,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const client = this.extend({}, server, {
 			configFile,
 			compilerOptions: {
-				module: this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
+				module: this.webpack.ssr || this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
 			}
 		});
 
@@ -873,7 +750,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for statoscope
+	 * Returns parameters for `Statoscope`
 	 *
 	 * @see https://github.com/statoscope/statoscope/tree/master/packages/webpack-plugin#usage
 	 * @returns {!Object}
@@ -940,7 +817,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	theme: {
 		/**
-		 * Returns a name of the default app theme to use
+		 * Returns the default application theme name to use
 		 *
 		 * @cli t
 		 * @env THEME
@@ -957,8 +834,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns an array of available themes to passing from a design system to the runtime or `true`,
-		 * if needed to pass all themes from the design system
+		 * Returns an array of available themes to pass from the design system to the runtime,
+		 * or `true` to pass all themes from the design system
 		 *
 		 * @cli include-themes
 		 * @env INCLUDE_THEMES
@@ -974,7 +851,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns an attribute name to set a value of the theme to the root element
+		 * Returns the attribute name to set the topic value to the root element
 		 *
 		 * @cli theme-attribute
 		 * @env THEME_ATTRIBUTE
@@ -990,8 +867,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	/**
 	 * Returns parameters for `snakeskin-loader`:
 	 *
-	 * 1. server - for .ess files
-	 * 2. client - for .ss files
+	 * 1. server - for .ess files;
+	 * 2. client - for .ss files.
 	 *
 	 * @returns {{server: !Object, client: !Object}}
 	 */
@@ -1002,7 +879,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			client: this.extend(super.snakeskin(), {
 				adapter: 'ss2vue3',
-				adapterOptions: {transpiler: true},
+
+				adapterOptions: {
+					ssr: this.webpack.ssr,
+					ssrCssVars: {}
+				},
+
 				tagFilter: 'tagFilter',
 				tagNameFilter: 'tagNameFilter',
 				bemFilter: 'bemFilter',
@@ -1088,10 +970,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	runtime() {
 		return {
 			...super.runtime(),
+
+			ssr: this.webpack.ssr,
 			engine: this.engine(),
 
 			debug: false,
-			noGlobals: false,
 			dynamicPublicPath: this.webpack.dynamicPublicPath(),
 
 			svgSprite: true,
@@ -1100,32 +983,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			blockNames: false,
 			passDesignSystem: false,
 
-			'core/browser': true,
-			'core/session': true,
-
-			'prelude/test-env': !isProd,
-			'component/async-render': true,
-			'component/daemons': true,
-
-			'directives/event': true,
-			'directives/image': true,
-			'directives/in-view': true,
-			'directives/resize-observer': true,
-			'directives/update-on': true,
-
-			iData: true,
-			bRouter: true,
-
-			'iInput/validators': true,
-			'bInput/validators': true,
-
-			'iInputText/mask': true
+			'prelude/test-env': !isProd
 		};
 	},
 
 	/**
-	 * Returns a map of component dependencies.
-	 * This map can be used to provide dynamic component dependencies within `index.js` files.
+	 * Returns a component dependency map.
+	 * This map can be used to provide dynamic component dependencies in `index.js` files.
 	 *
 	 * @returns {!Object}
 	 *
@@ -1148,38 +1012,34 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/** @override */
 	monic() {
-		const
-			mode = this.build.mode(),
-			runtime = this.runtime(),
-			es = this.es(),
-			demo = Boolean(this.build.components && this.build.components.length);
+		const defFlags = {
+			mode: this.build.mode(),
+			runtime: this.runtime(),
+			demo: Boolean(this.build.components && this.build.components.length)
+		};
+
+		const runtimeFlags = {
+			...defFlags,
+
+			// eslint-disable-next-line camelcase
+			node_js: this.webpack.target() === 'node',
+			es: this.es()
+		};
 
 		return {
 			stylus: {
 				flags: {
-					mode,
-					runtime,
-					'+:*': true,
-					demo
+					...defFlags,
+					'+:*': true
 				}
 			},
 
 			typescript: {
-				flags: {
-					mode,
-					runtime,
-					es,
-					demo
-				}
+				flags: runtimeFlags
 			},
 
 			javascript: {
-				flags: {
-					mode,
-					runtime,
-					es,
-					demo
-				}
+				flags: runtimeFlags
 			}
 		};
 	}

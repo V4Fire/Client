@@ -16,7 +16,7 @@ const
 	webpack = require('webpack');
 
 /**
- * Returns options for `webpack.plugins`
+ * Returns parameters for `webpack.plugins`
  * @returns {!Map}
  */
 module.exports = async function plugins({name}) {

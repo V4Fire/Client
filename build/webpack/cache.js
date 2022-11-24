@@ -13,9 +13,9 @@ const
 	{cacheDir} = include('build/helpers');
 
 /**
- * Returns options for `webpack.cache`
+ * Returns parameters for `webpack.cache`
  *
- * @param {(number|string)} buildId - build id
+ * @param {(number|string)} buildId
  * @returns {(!Object|boolean)}
  */
 module.exports = function cache({buildId}) {

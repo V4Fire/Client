@@ -26,18 +26,22 @@ const {
 
 const
 	{inherit} = include('build/helpers'),
-	{optimize} = config.webpack;
+	{ssr, optimize} = config.webpack;
 
 /**
- * Returns options for `webpack.optimization`
+ * Returns parameters for `webpack.optimization`
  *
- * @param {(number|string)} buildId - build id
- * @param {!Map} plugins - map of plugins to use
+ * @param {(number|string)} buildId
+ * @param {!Map} plugins - a map of plugins to use
  * @returns {!Object}
  */
 module.exports = function optimization({buildId, plugins}) {
 	const
-		opts = {};
+		params = {};
+
+	if (ssr) {
+		return params;
+	}
 
 	if (optimize.minChunkSize) {
 		plugins.set(
@@ -47,7 +51,7 @@ module.exports = function optimization({buildId, plugins}) {
 	}
 
 	if (buildId === RUNTIME) {
-		opts.splitChunks = inherit(optimize.splitChunks(), {
+		params.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
 				index: {
 					name: 'index-core',
@@ -80,7 +84,7 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		es = config.es();
 
-	opts.minimizer = [
+	params.minimizer = [
 		new CssMinimizerPlugin(config.cssMinimizer()),
 
 		/* eslint-disable camelcase */
@@ -107,5 +111,5 @@ module.exports = function optimization({buildId, plugins}) {
 		/* eslint-enable camelcase */
 	];
 
-	return opts;
+	return params;
 };

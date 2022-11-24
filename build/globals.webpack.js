@@ -29,8 +29,12 @@ const
  */
 module.exports = {
 	IS_PROD,
+
 	DEBUG: runtime.debug === true,
 	BUILD_MODE: s(config.build.mode),
+
+	SSR: runtime.ssr === true,
+	MODULE: s(config.typescript().client.compilerOptions.module),
 
 	APP_NAME: s(APP_NAME),
 	API_URL: s(API_URL),
@@ -38,7 +42,6 @@ module.exports = {
 	LOCALE: s(LOCALE),
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 	CSP_NONCE_STORE: s(config.csp.nonceStore()),
-	MODULE: s(config.typescript().client.compilerOptions.module),
 
 	COMPONENTS: projectGraph.then(({components}) => {
 		if (Object.isMap(components)) {

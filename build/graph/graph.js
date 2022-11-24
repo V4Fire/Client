@@ -64,7 +64,7 @@ async function buildProjectGraph() {
 	const
 		graphCacheFile = path.join(cacheDir, 'graph.json');
 
-	// Graph already exists in the cache and we can read it
+	// The graph is already in the cache, and we can read it
 	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
 		return loadFromCache();
 	}
@@ -72,7 +72,7 @@ async function buildProjectGraph() {
 	fs.mkdirpSync(cacheDir);
 	fs.writeFileSync(graphCacheFile, '');
 
-	// All others process will use this cache
+	// All other processes will use this cache
 	process.env.BUILD_GRAPH_FROM_CACHE = 1;
 
 	const
@@ -84,7 +84,7 @@ async function buildProjectGraph() {
 	let
 		entriesFilter;
 
-	// Filtering of build entries (if there are specified)
+	// Filtering the build entries (if specified)
 	if (build.entries) {
 		entriesFilter = $C(build.entries).reduce((map, el) => {
 			map[el] = true;
@@ -117,7 +117,7 @@ async function buildProjectGraph() {
 	processes[STANDALONE].name = 'standalone';
 	processes[STYLES].name = 'styles';
 
-	// Add to HTML task all other tasks as dependencies
+	// Add all other tasks as dependencies to the HTML task
 	processes[HTML].dependencies = processes
 		.map((proc) => proc.name)
 		.filter((name) => name !== 'html');
@@ -139,7 +139,7 @@ async function buildProjectGraph() {
 	return res;
 
 	/**
-	 * Reducer to create an entry point object
+	 * The reducer for creating an entry point object
 	 */
 	async function entryReducer(entry, list, name) {
 		// JS / TS
@@ -152,11 +152,24 @@ async function buildProjectGraph() {
 			webpackRuntime = "require('core/prelude/webpack');",
 			taskProcess = processes[cursor];
 
+		const tplContent = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+			const
+				component = components.get(name),
+				tpl = await component?.tpl;
+
+			if (!isParent && tpl && !componentsToIgnore.test(name)) {
+				const entry = getEntryPath(tpl);
+				str += `Object.assign(TPLS, require('./${entry}'));\n`;
+			}
+
+			return str;
+		});
+
 		{
 			const
 				entrySrc = path.join(tmpEntries, `${name}.js`);
 
-			const content = await $C(list).async.to('').reduce(async (str, {name}) => {
+			let content = await $C(list).async.to('').reduce(async (str, {name}) => {
 				const
 					component = components.get(name),
 					logic = await component?.logic;
@@ -189,6 +202,15 @@ async function buildProjectGraph() {
 				return str;
 			});
 
+			if (webpack.ssr) {
+				content = [
+					webpackRuntime,
+					'globalThis.TPLS = globalThis.TPLS || Object.create(null);',
+					tplContent,
+					content
+				].join('\n');
+			}
+
 			if (content) {
 				fs.writeFileSync(entrySrc, content);
 				entry[name] = entrySrc;
@@ -196,154 +218,143 @@ async function buildProjectGraph() {
 			}
 		}
 
-		// TEMPLATES
+		if (!webpack.ssr) {
+			// TEMPLATES
 
-		{
-			const
-				entryName = `${name}_tpl`,
-				entrySrc = path.join(tmpEntries, `${name}.ss.js`);
-
-			const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+			{
 				const
-					component = components.get(name),
-					tpl = await component?.tpl;
+					entryName = `${name}_tpl`,
+					entrySrc = path.join(tmpEntries, `${name}.ss.js`);
 
-				if (!isParent && tpl && !componentsToIgnore.test(name)) {
-					const entry = getEntryPath(tpl);
-					str += `Object.assign(TPLS, require('./${entry}'));\n`;
+				if (tplContent) {
+					fs.writeFileSync(
+						entrySrc,
+
+						[
+							webpackRuntime,
+							'window.TPLS = window.TPLS || Object.create(null);',
+							tplContent
+						].join('\n')
+					);
+
+					entry[entryName] = entrySrc;
+					taskProcess.entries[entryName] = entrySrc;
 				}
-
-				return str;
-			});
-
-			if (content) {
-				fs.writeFileSync(
-					entrySrc,
-
-					[
-						webpackRuntime,
-						'window.TPLS = window.TPLS || Object.create(null);',
-						content
-					].join('\n')
-				);
-
-				entry[entryName] = entrySrc;
-				taskProcess.entries[entryName] = entrySrc;
 			}
-		}
 
-		// CSS
+			// CSS
 
-		{
-			const
-				entryName = `${name}_style`,
-				stylSrc = path.join(tmpEntries, `${name}.styl`);
-
-			const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+			{
 				const
-					component = components.get(name),
-					styles = await component?.styles;
+					entryName = `${name}_style`,
+					stylSrc = path.join(tmpEntries, `${name}.styl`);
 
-				const needRequireAsStyles = component ?
-					!isParent && styles && styles.length && !componentsToIgnore.test(name) :
-					/^\.(?:styl|css)(?:\?|$)/.test(path.extname(name));
-
-				if (needRequireAsStyles) {
+				const content = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
 					const
-						getImport = (filePath) => `@import "${getEntryPath(filePath)}"\n`;
+						component = components.get(name),
+						styles = await component?.styles;
 
-					if (component) {
-						$C(styles).forEach((filePath) => {
-							str += getImport(filePath);
-						});
+					const needRequireAsStyles = component ?
+						!isParent && styles && styles.length && !componentsToIgnore.test(name) :
+						/^\.(?:styl|css)(?:\?|$)/.test(path.extname(name));
 
-					} else {
-						str += getImport(name);
-					}
-
-					if (!needLoadStylesAsJS) {
+					if (needRequireAsStyles) {
 						const
-							normalizedName = path.basename(name, path.extname(name));
+							getImport = (filePath) => `@import "${getEntryPath(filePath)}"\n`;
 
-						if (/^[bp]-/.test(normalizedName)) {
-							str +=
-								`
+						if (component) {
+							$C(styles).forEach((filePath) => {
+								str += getImport(filePath);
+							});
+
+						} else {
+							str += getImport(name);
+						}
+
+						if (!needLoadStylesAsJS) {
+							const
+								normalizedName = path.basename(name, path.extname(name));
+
+							if (/^[bp]-/.test(normalizedName)) {
+								str +=
+									`
 .${normalizedName}
 	extends($${normalizedName.camelize(false)})
 
 `;
+							}
 						}
 					}
+
+					return str;
+				});
+
+				if (content) {
+					let entrySrc;
+
+					if (needLoadStylesAsJS) {
+						entrySrc = path.join(tmpEntries, `${name}.styl.js`);
+
+						fs.writeFileSync(stylSrc, content);
+
+						fs.writeFileSync(
+							entrySrc,
+							[webpackRuntime, `require('${stylSrc}');`].join('\n')
+						);
+
+					} else {
+						entrySrc = stylSrc;
+
+						fs.writeFileSync(
+							entrySrc,
+							[content, 'generateImgClasses()'].join('\n')
+						);
+					}
+
+					entry[entryName] = entrySrc;
+
+					let
+						processStyleIndex = STYLES;
+
+					const canMoveBuildToNewProcess = MAX_PROCESS > processes.length &&
+						Object.keys(processes[STYLES].entries).length > MAX_TASKS_PER_ONE_PROCESS;
+
+					if (canMoveBuildToNewProcess) {
+						processes.push({entries: {}, name: `styles_${styleIndex++}`});
+						processStyleIndex = processes.length - 1;
+					}
+
+					processes[processStyleIndex].entries[entryName] = entrySrc;
 				}
-
-				return str;
-			});
-
-			if (content) {
-				let entrySrc;
-
-				if (needLoadStylesAsJS) {
-					entrySrc = path.join(tmpEntries, `${name}.styl.js`);
-
-					fs.writeFileSync(stylSrc, content);
-
-					fs.writeFileSync(
-						entrySrc,
-						[webpackRuntime, `require('${stylSrc}');`].join('\n')
-					);
-
-				} else {
-					entrySrc = stylSrc;
-
-					fs.writeFileSync(
-						entrySrc,
-						[content, 'generateImgClasses()'].join('\n')
-					);
-				}
-
-				entry[entryName] = entrySrc;
-
-				let
-					processStyleIndex = STYLES;
-
-				const canMoveBuildToNewProcess = MAX_PROCESS > processes.length &&
-					Object.keys(processes[STYLES].entries).length > MAX_TASKS_PER_ONE_PROCESS;
-
-				if (canMoveBuildToNewProcess) {
-					processes.push({entries: {}, name: `styles_${styleIndex++}`});
-					processStyleIndex = processes.length - 1;
-				}
-
-				processes[processStyleIndex].entries[entryName] = entrySrc;
 			}
-		}
 
-		// HTML
+			// HTML
 
-		{
-			const
-				entryName = `${name}_view`,
-				entrySrc = path.join(tmpEntries, `${entryName}.html.js`);
-
-			const content = await $C(list).async.to('').reduce(async (str, {name}) => {
+			{
 				const
-					component = components.get(name),
-					html = await component?.etpl;
+					entryName = `${name}_view`,
+					entrySrc = path.join(tmpEntries, `${entryName}.html.js`);
 
-				if (html && !componentsToIgnore.test(name)) {
-					str += [webpackRuntime, `require('./${getEntryPath(html)}');\n`].join('\n');
+				const content = await $C(list).async.to('').reduce(async (str, {name}) => {
+					const
+						component = components.get(name),
+						html = await component?.etpl;
+
+					if (html && !componentsToIgnore.test(name)) {
+						str += [webpackRuntime, `require('./${getEntryPath(html)}');\n`].join('\n');
+					}
+
+					return str;
+				});
+
+				if (content) {
+					fs.writeFileSync(entrySrc, content);
+
+					entry[entryName] = entrySrc;
+
+					// eslint-disable-next-line require-atomic-updates
+					processes[HTML].entries[entryName] = entrySrc;
 				}
-
-				return str;
-			});
-
-			if (content) {
-				fs.writeFileSync(entrySrc, content);
-
-				entry[entryName] = entrySrc;
-
-				// eslint-disable-next-line require-atomic-updates
-				processes[HTML].entries[entryName] = entrySrc;
 			}
 		}
 
@@ -351,7 +362,7 @@ async function buildProjectGraph() {
 	}
 
 	/**
-	 * Loads the dependency graph from a cache
+	 * Loads dependency graph from cache
 	 */
 	function loadFromCache() {
 		const
@@ -364,9 +375,9 @@ async function buildProjectGraph() {
 			const delay = 500;
 
 			const f = () => {
-				// Sometimes we can be caught in the situation when one of the multiple processes writes something
-				// to the cache file and it breaks the cache for a moment.
-				// To avoid this, we can sleep a little and try again.
+				// Sometimes we can get into a situation where one of the many processes writes something
+				// to the cache file and breaks the cache for a moment.
+				// To avoid this, we can get some sleep and try again.
 				setTimeout(async () => {
 					try {
 						const
@@ -410,7 +421,8 @@ async function buildProjectGraph() {
 	}
 
 	/**
-	 * Returns a file path relative to the entry folder
+	 * Returns the file path relative to the entry folder
+	 * @param {string} filePath
 	 */
 	function getEntryPath(filePath) {
 		if (resolve.isNodeModule(filePath)) {

@@ -16,6 +16,7 @@ declare let __webpack_nonce__: CanUndef<string>;
 declare let __webpack_public_path__: CanUndef<string>;
 declare let __webpack_require__: (moduleId: string) => any;
 
+declare const SSR: boolean;
 declare const MODULE: string;
 declare const CSP_NONCE_STORE: string;
 
@@ -105,14 +106,16 @@ interface Document {
 	};
 }
 
-type RenderComponentsScheme = RenderComponentsVnodeDescriptor[] | string;
+type RenderComponentsScheme = RenderComponentsVnodeParams[] | string;
 
-interface RenderComponentsVnodeDescriptor {
+interface RenderComponentsVnodeDescriptor extends RenderComponentsVnodeParams {
 	/**
 	 * A simple tag name or component name
 	 */
 	type: string;
+}
 
+interface RenderComponentsVnodeParams {
 	/**
 	 * A dictionary with attributes to pass to the created VNode
 	 */
