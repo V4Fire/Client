@@ -6,9 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// @ts-ignore (ss import)
-import * as defTpls from 'core/block.ss';
-
 import { componentRenderFactories } from 'core/component/const';
 import type { ComponentMeta } from 'core/component/interface';
 
@@ -30,7 +27,8 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 	// In this case, we don't automatically attach a render function
 	if (meta.params.tpl === false) {
 		// The loopback render function
-		return attachTemplatesToMeta(meta, defTpls.block);
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		return attachTemplatesToMeta(meta, require('core/block.ss').block);
 	}
 
 	if (tpls == null || !('index' in tpls) || !Object.isFunction(tpls.index)) {

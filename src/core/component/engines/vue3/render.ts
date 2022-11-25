@@ -20,6 +20,7 @@ import {
 	renderList as superRenderList,
 	renderSlot as superRenderSlot,
 
+	mergeProps as superMergeProps,
 	withDirectives as superWithDirectives,
 
 	VNode
@@ -42,6 +43,7 @@ import {
 	wrapRenderList,
 	wrapRenderSlot,
 
+	wrapMergeProps,
 	wrapWithDirectives
 
 } from 'core/component/render';
@@ -68,7 +70,6 @@ export {
 
 	normalizeClass,
 	normalizeStyle,
-	mergeProps,
 
 	resolveDirective,
 	resolveTransitionHooks,
@@ -109,6 +110,7 @@ export const
 	renderSlot = wrapRenderSlot(superRenderSlot);
 
 export const
+	mergeProps = wrapMergeProps(superMergeProps),
 	withDirectives = wrapWithDirectives(superWithDirectives);
 
 /**

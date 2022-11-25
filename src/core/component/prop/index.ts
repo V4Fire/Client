@@ -36,20 +36,15 @@ export function initProps(
 		component
 	);
 
-	const {
-		meta,
-		meta: {component: {props}}
-	} = unsafe;
-
 	const
+		{meta, meta: {component: {props}}} = unsafe,
 		{store, from} = opts;
 
 	const
-		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = meta.params.functional === true;
 
 	Object.entries(props).forEach(([name, prop]) => {
-		if (prop == null || !ssrMode && isFunctional && prop.functional === false) {
+		if (prop == null || !SSR && isFunctional && prop.functional === false) {
 			return;
 		}
 

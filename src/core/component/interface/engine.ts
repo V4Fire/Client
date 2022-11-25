@@ -61,7 +61,6 @@ import type { ComponentInterface } from 'core/component/interface';
 export interface RenderEngineFeatures {
 	regular: boolean;
 	functional: boolean;
-	ssr: boolean;
 }
 
 export interface RenderEngine<T extends object = object> {

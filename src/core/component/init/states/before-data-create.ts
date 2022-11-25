@@ -27,7 +27,7 @@ export function beforeDataCreateState(
 	initFields(meta.fields, component, $fields);
 
 	// Because in functional components,
-	// the watching of fields can be initialized in a lazy mode
+	// the watching of fields can be initialized in lazy mode
 	if (meta.params.functional === true) {
 		Object.assign(component, $fields);
 	}
@@ -35,7 +35,7 @@ export function beforeDataCreateState(
 	runHook('beforeDataCreate', component)
 		.catch(stderr);
 
-	if (!component.$renderEngine.supports.ssr) {
+	if (!SSR) {
 		implementComponentWatchAPI(component, {tieFields: opts?.tieFields});
 		bindRemoteWatchers(component);
 	}

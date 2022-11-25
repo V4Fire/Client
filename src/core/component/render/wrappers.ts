@@ -27,6 +27,7 @@ import type {
 	renderList,
 	renderSlot,
 
+	mergeProps,
 	withDirectives,
 
 	VNode,
@@ -169,9 +170,9 @@ export function wrapCreateElementBlock<T extends typeof createElementBlock>(orig
 export function wrapResolveComponent<T extends typeof resolveComponent | typeof resolveDynamicComponent>(
 	original: T
 ): T {
-	return Object.cast((name, ...args) => {
-		registerComponent(name);
-		return original(name, ...args);
+	return Object.cast(function resolveComponent(this: ComponentInterface, name: string, ...args: any[]) {
+		const component = registerComponent(name);
+		return component?.params.functional === true ? name : original(name, ...args);
 	});
 }
 
@@ -217,6 +218,18 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 		}
 
 		return original.apply(null, args);
+	});
+}
+
+/**
+ * Wrapper for the component library `mergeProps` function
+ * @param original
+ */
+export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
+	return Object.cast(function mergeProps(this: CanUndef<ComponentInterface>, ...args: Parameters<T>) {
+		const props = original.apply(null, args);
+		resolveAttrs.call(this, {props});
+		return props;
 	});
 }
 

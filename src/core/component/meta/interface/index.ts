@@ -171,6 +171,11 @@ export interface ComponentMeta {
 		/**
 		 * The component render function
 		 */
-		render: RenderFunction;
+		render?: RenderFunction;
+
+		/**
+		 * The component render function for use with SSR
+		 */
+		ssrRender?: RenderFunction;
 	};
 }

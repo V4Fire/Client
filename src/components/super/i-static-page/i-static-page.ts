@@ -129,13 +129,17 @@ export default abstract class iStaticPage extends iPage {
 			return;
 		}
 
-		const
-			div = Object.assign(document.createElement('div'), {innerHTML: value}),
+		let
+			title = value;
+
+		try {
+			const div = Object.assign(document.createElement('div'), {innerHTML: value});
 			title = div.textContent ?? '';
 
-		// Fix strange Chrome bug
-		document.title = `${title} `;
-		document.title = title;
+			// Fix strange Chrome bug
+			document.title = `${title} `;
+			document.title = title;
+		} catch {}
 
 		this.field.set('pageTitleStore', title);
 	}
@@ -243,8 +247,15 @@ export default abstract class iStaticPage extends iPage {
 	 * @param [component] - an instance of the component that wants to set the modifier
 	 */
 	override setRootMod(name: string, value: unknown, component: iBlock = this): boolean {
-		const
+		let
+			root: HTMLElement;
+
+		try {
 			root = document.documentElement;
+
+		} catch {
+			return false;
+		}
 
 		if (value === undefined || !Object.isTruly(root)) {
 			return false;
@@ -288,8 +299,15 @@ export default abstract class iStaticPage extends iPage {
 	 * @param [component] - an instance of the component that wants to remove the modifier
 	 */
 	override removeRootMod(name: string, value?: unknown, component: iBlock = this): boolean {
-		const
+		let
+			root: HTMLElement;
+
+		try {
 			root = document.documentElement;
+
+		} catch {
+			return false;
+		}
 
 		if (!Object.isTruly(root)) {
 			return false;

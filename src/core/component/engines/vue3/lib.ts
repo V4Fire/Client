@@ -10,12 +10,12 @@
 
 import makeLazy from 'core/lazy';
 
-import { createApp, Component } from 'vue';
+import { createApp, createSSRApp, Component } from 'vue';
 import type { CreateAppFunction } from 'core/component/engines/interface';
 
 const App = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
 	const
-		app = Object.create(createApp(component, rootProps));
+		app = Object.create((HYDRATION ? createSSRApp : createApp)(component, rootProps));
 
 	if (component.el != null) {
 		setImmediate(() => {

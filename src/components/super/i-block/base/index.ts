@@ -12,6 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import random from 'core/random/xor128';
 
 import log, { LogMessageOptions } from 'core/log';
 import { wrapWithSuspending, AsyncOptions, BoundFn } from 'core/async';
@@ -41,7 +42,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	@system({
 		atom: true,
 		unique: (ctx, oldCtx) => !ctx.$el?.classList.contains(oldCtx.componentId),
-		init: () => `uid-${Math.random().toString().slice(2)}`
+		init: () => `uid-${random().toString().slice(2)}`
 	})
 
 	override readonly componentId!: string;
@@ -90,7 +91,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 */
 	@computed()
 	get isSSR(): boolean {
-		return this.$renderEngine.supports.ssr;
+		return SSR;
 	}
 
 	/**

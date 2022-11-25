@@ -38,7 +38,6 @@ export function initFields(
 		{params, instance} = unsafe.meta;
 
 	const
-		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = params.functional === true;
 
 	sortFields(from).forEach(([name, field]) => {
@@ -46,12 +45,8 @@ export function initFields(
 			sourceVal = store[name];
 
 		const canSkip =
-			field == null ||
-			sourceVal !== undefined ||
-
-			// Don't initialize a property for the functional component unless explicitly required
-			!ssrMode && isFunctional && field.functional === false ||
-
+			field == null || sourceVal !== undefined ||
+			!SSR && isFunctional && field.functional === false ||
 			field.init == null && field.default === undefined && instance[name] === undefined;
 
 		if (field == null || canSkip) {

@@ -24,11 +24,10 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 	} = component.unsafe;
 
 	const
-		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = meta.params.functional === true;
 
 	Object.entries(methods).forEach(([name, method]) => {
-		if (method == null || !ssrMode && isFunctional && method.functional === false) {
+		if (method == null || !SSR && isFunctional && method.functional === false) {
 			return;
 		}
 

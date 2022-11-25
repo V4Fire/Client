@@ -132,6 +132,18 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 		renderTriggered(...args: unknown[]): void {
 			init.renderTriggeredState(getComponentContext(this), ...args);
+		},
+
+		serverPrefetch() {
+			const
+				init = this.$initializer;
+
+			try {
+				return init.unwrap();
+
+			} catch {
+				return init;
+			}
 		}
 	};
 }

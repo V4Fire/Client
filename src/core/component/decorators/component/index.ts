@@ -103,7 +103,7 @@ export function component(opts?: ComponentOptions): Function {
 			components.set(componentName, meta);
 			initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
 
-			if (componentInfo.isAbstract || meta.params.functional === true) {
+			if (componentInfo.isAbstract || !SSR && meta.params.functional === true) {
 				fillMeta(meta, target);
 
 				if (!componentInfo.isAbstract) {

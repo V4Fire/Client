@@ -8,8 +8,7 @@
 
 export const supports = {
 	regular: true,
-	functional: true,
-	ssr: false
+	functional: !SSR
 };
 
 export const proxyGetters = Object.createDict({

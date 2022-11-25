@@ -75,7 +75,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const
 		map = new WeakMap();
 
-	meta.component.render = Object.cast((ctx, ...args) => {
+	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx, ...args) => {
 		const
 			unsafe = getComponentContext(ctx);
 

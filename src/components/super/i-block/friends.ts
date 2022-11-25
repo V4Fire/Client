@@ -254,7 +254,11 @@ export default abstract class iBlockFriends extends iBlockProps {
 	@system({
 		atom: true,
 		unique: true,
-		init: () => location
+		init: () => {
+			try {
+				return location;
+			} catch {}
+		}
 	})
 
 	protected readonly location!: Location;

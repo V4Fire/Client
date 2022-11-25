@@ -136,10 +136,7 @@ export default abstract class iBlockProviders extends iBlockState {
 				tasks.push(this.moduleLoader.load(...this.dependencies));
 			}
 
-			if (
-				(this.isFunctional || this.dontWaitRemoteProviders) &&
-				!this.$renderEngine.supports.ssr
-			) {
+			if (!SSR && (this.isFunctional || this.dontWaitRemoteProviders)) {
 				if (tasks.length > 0) {
 					const res = $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
 					this.$initializer = res;

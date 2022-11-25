@@ -65,15 +65,13 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	} = component.unsafe;
 
 	const
-		ssrMode = component.$renderEngine.supports.ssr,
 		isFunctional = meta.params.functional === true;
 
 	Object.entries(meta.computedFields).forEach(([name, computed]) => {
 		const canSkip =
-			computed == null ||
-			computed.cache === 'auto' ||
 			component[name] != null ||
-			!ssrMode && isFunctional && computed.functional === false;
+			computed == null || computed.cache === 'auto' ||
+			!SSR && isFunctional && computed.functional === false;
 
 		if (canSkip) {
 			return;
@@ -81,7 +79,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
-			if (ssrMode) {
+			if (SSR) {
 				return computed.get!.call(this);
 			}
 
@@ -104,7 +102,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		const canSkip =
 			accessor == null ||
 			component[name] != null ||
-			!ssrMode && isFunctional && accessor.functional === false;
+			!SSR && isFunctional && accessor.functional === false;
 
 		if (canSkip) {
 			return;
