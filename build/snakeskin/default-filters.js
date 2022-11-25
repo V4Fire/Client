@@ -13,6 +13,7 @@ const
 	Snakeskin = require('snakeskin');
 
 const
+	{webpack} = require('@config/config'),
 	{validators} = require('@pzlr/build-core'),
 	{isV4Prop} = include('build/snakeskin/filters/const');
 
@@ -25,8 +26,8 @@ const
 	bemFilters = include('build/snakeskin/filters/bem');
 
 const
-	TYPE_OF = Symbol('A type of the component to create'),
-	SMART_PROPS = Symbol('The component smart props');
+	TYPE_OF = Symbol('Type of component to create'),
+	SMART_PROPS = Symbol('Smart component props');
 
 const bind = {
 	bind: [
@@ -77,47 +78,50 @@ function tagFilter({name, attrs = {}}) {
 	const funcDir = attrs['v-func']?.[0];
 	delete attrs['v-func'];
 
-	let
-		isFunctional = false;
+	if (!webpack.ssr) {
+		let
+			isFunctional = false;
 
-	if (component && component.functional === true) {
-		isFunctional = true;
+		if (component && component.functional === true) {
+			isFunctional = true;
 
-	} else if (!funcDir) {
-		isFunctional = $C(attrs[SMART_PROPS]).every((propVal, prop) => {
-			prop = prop.dasherize(true);
+		} else if (!funcDir) {
+			isFunctional = $C(attrs[SMART_PROPS]).every((propVal, prop) => {
+				prop = prop.dasherize(true);
 
-			if (!isV4Prop.test(prop)) {
-				prop = `:${prop}`;
+				if (!isV4Prop.test(prop)) {
+					prop = `:${prop}`;
+				}
+
+				let
+					attr = attrs[prop]?.[0];
+
+				try {
+					// eslint-disable-next-line no-new-func
+					attr = Function(`return ${attr}`)();
+
+				} catch {
+				}
+
+				if (Object.isArray(propVal)) {
+					return $C(propVal).some((propVal) => Object.fastCompare(propVal, attr));
+				}
+
+				return Object.fastCompare(propVal, attr);
+			});
+		}
+
+		const
+			isSmartFunctional = attrs[SMART_PROPS] && (isFunctional || funcDir);
+
+		if (isSmartFunctional) {
+			if (funcDir == null || funcDir === 'true') {
+				attrs['is'] = [`${attrs['is'][0]}-functional`];
+
+			} else if (funcDir !== 'false') {
+				attrs[':is'] = [`'${attrs['is'][0]}' + (${funcDir} ? '-functional' : '')`];
+				delete attrs['is'];
 			}
-
-			let
-				attr = attrs[prop]?.[0];
-
-			try {
-				// eslint-disable-next-line no-new-func
-				attr = Function(`return ${attr}`)();
-
-			} catch {}
-
-			if (Object.isArray(propVal)) {
-				return $C(propVal).some((propVal) => Object.fastCompare(propVal, attr));
-			}
-
-			return Object.fastCompare(propVal, attr);
-		});
-	}
-
-	const
-		isSmartFunctional = attrs[SMART_PROPS] && (isFunctional || funcDir);
-
-	if (isSmartFunctional) {
-		if (funcDir == null || funcDir === 'true') {
-			attrs['is'] = [`${attrs['is'][0]}-functional`];
-
-		} else if (funcDir !== 'false') {
-			attrs[':is'] = [`'${attrs['is'][0]}' + (${funcDir} ? '-functional' : '')`];
-			delete attrs['is'];
 		}
 	}
 }

@@ -13,35 +13,38 @@ const
 	config = require('@config/config');
 
 const
+	{csp, build, webpack} = config,
 	{config: pzlr} = require('@pzlr/build-core'),
 	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
 const
-	projectGraph = include('build/graph');
+	projectGraph = include('build/graph'),
+	s = JSON.stringify;
 
 const
 	runtime = config.runtime(),
-	s = JSON.stringify;
+	typescript = config.typescript();
 
 /**
- * Object to provide to `webpack.DefinePlugin`
+ * A dictionary to provide to `webpack.DefinePlugin`
  * @type {!Object}
  */
 module.exports = {
 	IS_PROD,
 
 	DEBUG: runtime.debug === true,
-	BUILD_MODE: s(config.build.mode),
+	BUILD_MODE: s(build.mode),
+	CSP_NONCE_STORE: s(csp.nonceStore()),
 
-	SSR: runtime.ssr === true,
-	MODULE: s(config.typescript().client.compilerOptions.module),
+	SSR: webpack.ssr,
+	HYDRATION: webpack.hydration(),
+	MODULE: s(typescript.client.compilerOptions.module),
 
 	APP_NAME: s(APP_NAME),
 	API_URL: s(API_URL),
 
 	LOCALE: s(LOCALE),
-	PUBLIC_PATH: s(config.webpack.publicPath()),
-	CSP_NONCE_STORE: s(config.csp.nonceStore()),
+	PUBLIC_PATH: s(webpack.publicPath()),
 
 	COMPONENTS: projectGraph.then(({components}) => {
 		if (Object.isMap(components)) {

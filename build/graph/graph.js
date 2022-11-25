@@ -152,7 +152,7 @@ async function buildProjectGraph() {
 			webpackRuntime = "require('core/prelude/webpack');",
 			taskProcess = processes[cursor];
 
-		const tplContent = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
+		let tplContent = await $C(list).async.to('').reduce(async (str, {name, isParent}) => {
 			const
 				component = components.get(name),
 				tpl = await component?.tpl;
@@ -164,6 +164,11 @@ async function buildProjectGraph() {
 
 			return str;
 		});
+
+		if (tplContent) {
+			const tplsStore = 'globalThis.TPLS = globalThis.TPLS || Object.create(null)';
+			tplContent = [webpackRuntime, tplsStore, tplContent, ''].join('\n');
+		}
 
 		{
 			const
@@ -203,12 +208,7 @@ async function buildProjectGraph() {
 			});
 
 			if (webpack.ssr) {
-				content = [
-					webpackRuntime,
-					'globalThis.TPLS = globalThis.TPLS || Object.create(null);',
-					tplContent,
-					content
-				].join('\n');
+				content = tplContent + content;
 			}
 
 			if (content) {
@@ -227,16 +227,7 @@ async function buildProjectGraph() {
 					entrySrc = path.join(tmpEntries, `${name}.ss.js`);
 
 				if (tplContent) {
-					fs.writeFileSync(
-						entrySrc,
-
-						[
-							webpackRuntime,
-							'window.TPLS = window.TPLS || Object.create(null);',
-							tplContent
-						].join('\n')
-					);
-
+					fs.writeFileSync(entrySrc, tplContent);
 					entry[entryName] = entrySrc;
 					taskProcess.entries[entryName] = entrySrc;
 				}

@@ -1,4 +1,4 @@
-/* eslint-disable no-var,camelcase */
+/* eslint-disable no-var,vars-on-top,camelcase */
 
 /*!
  * V4Fire Client Core
@@ -16,19 +16,25 @@ declare let __webpack_nonce__: CanUndef<string>;
 declare let __webpack_public_path__: CanUndef<string>;
 declare let __webpack_require__: (moduleId: string) => any;
 
-declare const SSR: boolean;
-declare const MODULE: string;
+declare const BUILD_MODE: boolean;
 declare const CSP_NONCE_STORE: string;
 
-declare var PATH: Dictionary<CanUndef<string>>;
-declare var PUBLIC_PATH: CanUndef<string>;
+declare const SSR: boolean;
+declare const HYDRATION: boolean;
+declare const MODULE: string;
+
+declare const PATH: Dictionary<CanUndef<string>>;
+declare const PUBLIC_PATH: CanUndef<string>;
 
 declare const COMPONENTS: Dictionary<{dependencies: string[]}>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
-
-declare const DS: CanUndef<DesignSystem>;
 declare const BLOCK_NAMES: CanUndef<string[]>;
 
+declare const THEME: CanUndef<string>;
+declare const THEME_ATTRIBUTE: CanUndef<string>;
+declare const AVAILABLE_THEMES: CanUndef<string[]>;
+
+declare const DS: CanUndef<DesignSystem>;
 declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
@@ -38,43 +44,9 @@ interface HTMLImageElement {
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
 }
 
-/**
- * Default app theme
- * @see config/default.js
- */
-declare const THEME: CanUndef<string>;
-
-/**
- * Attribute name to set the theme value to the root element
- * @see config/default.js
- */
-declare const THEME_ATTRIBUTE: CanUndef<string>;
-
-/**
- * A list of available app themes
- * @see config/default.js
- */
-declare const AVAILABLE_THEMES: CanUndef<string[]>;
-
 interface Event {
 	delegateTarget?: Element;
 }
-
-interface BoxSize {
-	readonly blockSize: number;
-	readonly inlineSize: number;
-}
-
-interface ResizeObserverObserveOptions {
-	box: 'content-box' | 'border-box';
-}
-
-declare let ModuleDependencies: {
-	cache: Dictionary;
-	event: {on: Function; once: Function; off: Function};
-	add(moduleName: string, dependencies: string[]): void;
-	get(module: string): Promise<string[]>;
-};
 
 interface ElementPosition {
 	top: number;
@@ -90,20 +62,9 @@ interface Node {
 	getOffset(parent?: Element | string): ElementPosition;
 }
 
-interface IntersectionObserverInit {
-	delay?: number;
-	trackVisibility?: boolean;
-}
-
 interface IntersectionObserver {
 	delay?: number;
 	trackVisibility?: boolean;
-}
-
-interface Document {
-	fonts: {
-		ready: Promise<void>;
-	};
 }
 
 type RenderComponentsScheme = RenderComponentsVnodeParams[] | string;
@@ -133,7 +94,6 @@ type VNodeChildren =
 	VNodeChild[] |
 	Dictionary<CanArray<VNodeChild> | ((...args: any[]) => CanArray<VNodeChild>)>;
 
-// eslint-disable-next-line no-var,vars-on-top
 declare var
 	/**
 	 * Renders the specified components.

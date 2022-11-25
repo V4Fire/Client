@@ -287,6 +287,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * Returns true if the app needs to be built with hydration support
+		 *
+		 * @cli hydration
+		 * @env HYDRATION
+		 *
+		 * @param {boolean=} [def] - default value
+		 * @returns {boolean}
+		 */
+		hydration(def = this.ssr) {
+			return o('hydration', {
+				env: true,
+				type: 'boolean',
+				default: def
+			});
+		},
+
+		/**
 		 * Returns
 		 *   1. `1` if all resources from the build should be embedded in HTML files;
 		 *   2. `2` if all scripts and links from the build should be embedded in HTML files;
