@@ -188,61 +188,6 @@ module.exports = async (page, params) => {
 			});
 		});
 
-		describe('`pageTitle`', () => {
-			it('simple usage', async () => {
-				expect(
-					await root.evaluate((ctx) => {
-						ctx.pageTitle = 'Foo bar';
-						return ctx.pageTitle;
-					})
-				).toBe('Foo bar');
-			});
-
-			it('should set `title` value', async () => {
-				expect(
-					await root.evaluate((ctx) => {
-						ctx.pageTitle = 'Foo bar';
-						return document.title;
-					})
-				).toBe('Foo bar');
-			});
-
-			it('`setPageTitle`', async () => {
-				expect(
-					await root.evaluate((ctx) => {
-						ctx.pageTitle = '';
-						return ctx.setPageTitle('Foo bar');
-					})
-				).toBeTrue();
-
-				expect(await root.evaluate((ctx) => ctx.pageTitle)).toBe('Foo bar');
-			});
-
-			it('watching for changes', async () => {
-				const scan = await root.evaluate(async (ctx) => {
-					const res = [];
-
-					ctx.pageTitle = '';
-					ctx.watch('pageTitle', (val, oldVal) => {
-						res.push([val, oldVal]);
-					});
-
-					ctx.pageTitle = 'Foo';
-					await ctx.nextTick();
-
-					ctx.pageTitle = 'Bar';
-					await ctx.nextTick();
-
-					return res;
-				});
-
-				expect(scan).toEqual([
-					['Foo', undefined],
-					['Bar', 'Foo']
-				]);
-			});
-		});
-
 		describe('`reset`', () => {
 			it('simple usage', async () => {
 				expect(

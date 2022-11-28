@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to disable specific link interception
+
 ## v3.24.2 (2022-08-19)
 
 #### :house: Internal

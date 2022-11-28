@@ -845,6 +845,10 @@ export default class bRouter extends iData {
 
 		e.preventDefault();
 
+		if (<boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+			return;
+		}
+
 		const
 			l = Object.assign(document.createElement('a'), {href});
 
