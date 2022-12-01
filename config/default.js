@@ -425,10 +425,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {boolean=} [def] - default value
 		 * @returns {(boolean|string|Object)}
 		 */
-		stats(def = true) {
+		stats(def = 'errors-only') {
 			return o('stats', {
 				env: true,
-				type: 'json',
 				default: def
 			});
 		},

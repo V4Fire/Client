@@ -78,7 +78,7 @@ module.exports = class ProgressView {
 			console.log('\n');
 
 			console.log(
-				chalk.blue(`Webpack build takes ${executionTimeInSeconds} seconds`)
+				chalk.green(`Webpack build takes ${executionTimeInSeconds} seconds`)
 			);
 		}
 	}

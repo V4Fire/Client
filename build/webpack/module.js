@@ -64,6 +64,12 @@ module.exports = async function module({plugins}) {
 		fatHTML = webpack.fatHTML();
 
 	const loaders = {
+		// Mute error export was not found
+		parser: {
+			javascript: {
+				importExportsPresence: false
+			}
+		},
 		rules: new Map()
 	};
 
