@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/provide/README.md]]
+ *
  * @packageDocumentation
  */
 

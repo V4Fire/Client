@@ -13,6 +13,7 @@ import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Emits destroying of the specified component
+ *
  * @param component
  */
 export function destroyComponent(component: ComponentInterface): void {

@@ -235,6 +235,7 @@ export interface Router<
 
 	/**
 	 * Returns an identifier of the route by a name or URL
+	 *
 	 * @param route
 	 */
 	id(route: string): string;
@@ -275,6 +276,7 @@ export interface Router<
 
 	/**
 	 * Clears the routes history
+	 *
 	 * @param filter - filter predicate
 	 */
 	clear(filter?: HistoryClearFilter): Promise<void>;
@@ -360,6 +362,7 @@ export interface RouteAPI<
 > extends AppliedRoute<PARAMS, QUERY, META> {
 	/**
 	 * Applies a dictionary with parameters to the route path and returns the resolved path
+	 *
 	 * @param params
 	 */
 	resolvePath(params?: Dictionary): string;

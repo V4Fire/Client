@@ -66,6 +66,7 @@ export default class InView extends Super {
 
 	/**
 	 * Creates a new IntersectionObserver instance
+	 *
 	 * @param observable
 	 */
 	protected createObserver(observable: InViewObservableElement): IntersectionObserver {

@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/event/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -28,6 +29,7 @@ export * from 'core/component/event/interface';
 
 /**
  * Sends a message to reset all components of an application
+ *
  * @param [type] - reset type
  */
 export function reset(type?: ResetType): void {

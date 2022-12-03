@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-router/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -89,6 +90,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Compiled schema of application routes
+	 *
 	 * @see [[bRouter.routesProp]]
 	 */
 	@system<bRouter>({
@@ -151,7 +153,7 @@ export default class bRouter extends iData {
 	 * * `data-router-method` - type of the used router method to emit the transition;
 	 * * `data-router-go` - value for the router `go` method;
 	 * * `data-router-params`, `data-router-query`, `data-router-meta` - additional parameters for the used router method
-	 *   (to provide an object use JSON).
+	 * (to provide an object use JSON).
 	 */
 	@prop(Boolean)
 	readonly interceptLinks: boolean = true;
@@ -194,6 +196,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Value of the active route
+	 *
 	 * @see [[bRouter.routeStore]]
 	 *
 	 * @example
@@ -774,6 +777,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Initializes the router within an application
+	 *
 	 * @emits `$root.initRouter(router:` [[bRouter]]`)`
 	 */
 	@hook('created')
@@ -784,6 +788,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Initializes the specified route
+	 *
 	 * @param [route] - route
 	 */
 	@hook('beforeDataCreate')
@@ -809,6 +814,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Compiles the specified static routes with the current base path and returns a new object
+	 *
 	 * @param [routes]
 	 */
 	protected compileStaticRoutes(routes: StaticRoutes = this.engine.routes ?? globalRoutes): router.RouteBlueprints {
@@ -827,6 +833,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Handler: click on an element with the `href` attribute
+	 *
 	 * @param e
 	 */
 	@watch({

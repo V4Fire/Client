@@ -33,6 +33,7 @@ import type {
 
 /**
  * Returns a name of the specified route
+ *
  * @param [route]
  */
 export function getRouteName(route?: AppliedRoute | Route | RouteBlueprint | InitialRoute): CanUndef<string> {

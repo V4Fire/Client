@@ -25,7 +25,8 @@ const
 
 /**
  * Object to provide to `webpack.DefinePlugin`
- * @type {!Object}
+ *
+ * @type {!object}
  */
 module.exports = {
 	IS_PROD,

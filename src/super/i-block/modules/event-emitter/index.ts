@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/event-emitter/README.md]]
+ *
  * @packageDocumentation
  */
 

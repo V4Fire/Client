@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/filters/README.md]]
+ *
  * @packageDocumentation
  */
 

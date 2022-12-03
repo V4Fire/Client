@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-static-page/modules/theme/README.md]]
+ *
  * @packageDocumentation
  */
 

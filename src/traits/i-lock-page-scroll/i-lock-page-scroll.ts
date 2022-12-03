@@ -8,6 +8,7 @@
 
 /**
  * [[include:traits/i-lock-page-scroll/README.md]]
+ *
  * @packageDocumentation
  */
 

@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-bottom-slide/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -59,6 +60,7 @@ interface bBottomSlide extends
 
 /**
  * Component to create bottom sheet behavior that is similar to native mobile UI
+ *
  * @see https://material.io/develop/android/components/bottom-sheet-behavior/
  */
 @component()
@@ -227,6 +229,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 
 	/**
 	 * Sets a new component step
+	 *
 	 * @emits `stepChange(step: number)`
 	 */
 	protected set step(v: number) {
@@ -372,6 +375,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 
 	/**
 	 * Switches the component pulling mode
+	 *
 	 * @emits `moveStateChange(value boolean)`
 	 */
 	protected set isPulling(value: boolean) {
@@ -392,6 +396,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * The minimum height value of a component visible part (in percents),
 	 * i.e. even the component is closed this part still be visible
+	 *
 	 * @see [[bBottomSlide.visible]]
 	 */
 	@p({cache: false})
@@ -768,7 +773,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	 * Moves the component to the nearest step relative to the current position
 	 *
 	 * @param respectDirection - if true, then when searching for a new step to change,
-	 *   the cursor direction will be taken into account, but not the nearest step
+	 * the cursor direction will be taken into account, but not the nearest step
 	 *
 	 * @param isThresholdPassed - if true, then the minimum threshold to change a step is passed
 	 */
@@ -936,6 +941,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 
 	/**
 	 * Handler: the component is being pulled
+	 *
 	 * @param e
 	 */
 	protected onPull(e: TouchEvent): void {

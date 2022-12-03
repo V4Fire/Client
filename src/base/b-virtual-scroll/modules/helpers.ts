@@ -18,8 +18,8 @@ import type { DataState } from 'base/b-virtual-scroll/interface';
  * @param [chunkRenderCtx]
  * @param [merge]
  *
- * @typeparam ITEM - data item to render
- * @typeparam RAW - raw provider data
+ * @typeParam ITEM - data item to render
+ * @typeParam RAW - raw provider data
  */
 export function getRequestParams<ITEM extends object = object, RAW = unknown>(
 	chunkRequestCtx?: ChunkRequest,
@@ -91,6 +91,7 @@ export function getRequestParams<ITEM extends object = object, RAW = unknown>(
 
 /**
  * True if the specified value is an `async replace` error
+ *
  * @param val
  */
 export function isAsyncReplaceError(val: unknown): boolean {
@@ -99,6 +100,7 @@ export function isAsyncReplaceError(val: unknown): boolean {
 
 /**
  * True if the specified value is an `async clear` error
+ *
  * @param val
  */
 export function isAsyncClearError(val: unknown): boolean {

@@ -13,6 +13,7 @@ const
 
 /**
  * Returns a "fake" copy of the specified (weak)map/(weak)set object
+ *
  * @param obj
  */
 export function fakeMapSetCopy<

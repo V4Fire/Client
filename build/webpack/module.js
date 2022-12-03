@@ -53,7 +53,7 @@ const isTsFile = /\.ts$/,
  * Returns options for `webpack.module`
  *
  * @param {!Map} plugins - list of plugins
- * @returns {!Promise<Object>}
+ * @returns {!Promise<object>}
  */
 module.exports = async function module({plugins}) {
 	const

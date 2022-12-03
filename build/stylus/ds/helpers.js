@@ -31,7 +31,7 @@ function getVariableName(path) {
  *
  * @param {?} value
  * @param {!Array<string>} path - path to set the value
- * @param {DesignSystemVariables} varStorage - dictionary of CSS variables
+ * @param {import("DesignSystem").DesignSystemVariables} varStorage - dictionary of CSS variables
  * @param {string=} [mapGroup] - name of a group within the `map` property of the variable storage
  *
  * @example
@@ -63,9 +63,9 @@ function saveVariable(value, path, varStorage, mapGroup) {
 /**
  * Creates a project design system from the specified raw object
  *
- * @param {DesignSystem} raw
- * @param {Object=} [stylus]
- * @returns {!BuildTimeDesignSystemParams}
+ * @param {import("DesignSystem")} raw
+ * @param {object=} [stylus]
+ * @returns {!import("DesignSystem").BuildTimeDesignSystemParams}
  */
 function createDesignSystem(raw, stylus = require('stylus')) {
 	const
@@ -86,9 +86,9 @@ function createDesignSystem(raw, stylus = require('stylus')) {
  * Converts the specified design system object to a Stylus object
  * and creates CSS variables to use within `.styl` files
  *
- * @param {DesignSystem} ds
- * @param {Object} stylus - link to a stylus package instance
- * @returns {!BuildTimeDesignSystemParams}
+ * @param {import("DesignSystem")} ds
+ * @param {object} stylus - link to a stylus package instance
+ * @returns {!import("DesignSystem").BuildTimeDesignSystemParams}
  */
 function convertDsToBuildTimeUsableObject(ds, stylus) {
 	const
@@ -129,8 +129,8 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	}
 
 	/**
-	 * @param {Object} obj
-	 * @param {(Object|Array)=} [res]
+	 * @param {object} obj
+	 * @param {(object | Array)=} [res]
 	 * @param {Array<string>=} [path]
 	 * @param {(string|boolean)=} [theme]
 	 */
@@ -235,7 +235,7 @@ function getThemedPathChunks(field, theme, isFieldThemed) {
 /**
  * Checks the specified path to a field for obsolescence at the design system
  *
- * @param {!DesignSystem} ds
+ * @param {!import("DesignSystem")} ds
  * @param {(string|!Array<string>)} path
  */
 function checkDeprecated(ds, path) {

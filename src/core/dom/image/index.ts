@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/dom/image/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -21,6 +22,7 @@ export * from 'core/dom/image/interface';
 
 /**
  * Creates an image module
+ *
  * @param [params]
  */
 export function imageLoaderFactory(params: CanUndef<DefaultParams> = defaultParams): ImageLoader {

@@ -10,6 +10,7 @@
 
 /**
  * [[include:super/i-block/modules/decorators/README.md]]
+ *
  * @packageDocumentation
  */
 

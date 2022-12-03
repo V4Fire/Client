@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/queue-emitter/README.md]]
+ *
  * @packageDocumentation
  */
 

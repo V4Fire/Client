@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/watch/README.md]]
+ *
  * @packageDocumentation
  */
 

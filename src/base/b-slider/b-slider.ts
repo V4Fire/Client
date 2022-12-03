@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-slider/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -67,7 +68,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * A slider mode:
 	 *
 	 * 1. With the `slide` mode, it is impossible to skip slides.
-	 *    That is, we can't get from the first slide directly to the third or other stuff.
+	 * That is, we can't get from the first slide directly to the third or other stuff.
 	 *
 	 * 2. With the `scroll` mode, to scroll slides is used the browser native scrolling.
 	 */
@@ -225,6 +226,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Sets a pointer of the current slide
+	 *
 	 * @emits `change(current: number)`
 	 */
 	set current(value: number) {
@@ -445,6 +447,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Moves to the next or previous slide
+	 *
 	 * @param dir - direction
 	 */
 	moveSlide(dir: SlideDirection): boolean {
@@ -621,6 +624,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Synchronizes the slider state (deferred version)
+	 *
 	 * @emits `syncState()`
 	 */
 	@watch(':DOMChange')
@@ -698,6 +702,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Handler: keeps an initial touch position on the screen
+	 *
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
@@ -764,6 +769,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Handler: sets the end position to the slider
+	 *
 	 * @emits `swipeEnd(dir:` [[SwipeDirection]]`, isChanged: boolean)`
 	 */
 	protected onRelease(): void {

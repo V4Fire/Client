@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/dom/in-view/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -35,6 +36,7 @@ const strategyByType = {
 
 /**
  * Creates a new in-view instance
+ *
  * @param [adaptee]
  */
 export function inViewFactory(adaptee?: InViewAdapteeType): InViewAdapter {

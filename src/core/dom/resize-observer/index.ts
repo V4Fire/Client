@@ -42,7 +42,7 @@ export default class ResizeWatcher {
 	/**
 	 * Async instance
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-invalid-this
+
 	protected async: Async<this> = new Async(this);
 
 	/**
@@ -111,6 +111,7 @@ export default class ResizeWatcher {
 
 	/**
 	 * Removes all resize watchers from the specified element
+	 *
 	 * @param el
 	 */
 	clear(el: Element): void {
@@ -145,6 +146,7 @@ export default class ResizeWatcher {
 
 	/**
 	 * Stores an observable to the observable element store
+	 *
 	 * @param observable
 	 */
 	saveObservableToElStore(observable: ResizeWatcherObservable): void {
@@ -153,6 +155,7 @@ export default class ResizeWatcher {
 
 	/**
 	 * Returns an observable store from the specified element
+	 *
 	 * @param el
 	 */
 	getObservableElStore(el: Element): CanUndef<ResizeWatcherObservableElStore> {
@@ -161,6 +164,7 @@ export default class ResizeWatcher {
 
 	/**
 	 * Returns an observables store from the specified element; if it does not exist, it will be created and returned
+	 *
 	 * @param el
 	 */
 	getOrCreateObservableElStore(el: Element): ResizeWatcherObservableElStore {
@@ -169,6 +173,7 @@ export default class ResizeWatcher {
 
 	/**
 	 * Returns normalized observable options
+	 *
 	 * @param options
 	 */
 	normalizeOptions(options: ResizeWatcherInitOptions): ResizeWatcherObserverOptions {
@@ -203,6 +208,7 @@ export default class ResizeWatcher {
 
 	/**
 	 * Creates an instance of ResizeObserver
+	 *
 	 * @param observable
 	 */
 	protected createResizeObserver(observable: ResizeWatcherObservable): void {

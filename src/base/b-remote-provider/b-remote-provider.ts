@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-remote-provider/README.md]]
+ *
  * @packageDocumentation
  */
 

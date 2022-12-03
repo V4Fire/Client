@@ -31,6 +31,7 @@ export interface RequestQuery {
 
 	/**
 	 * Number of requested items
+	 *
 	 * @default `12`
 	 */
 	chunkSize: number;
@@ -42,6 +43,7 @@ export interface RequestQuery {
 
 	/**
 	 * Sleep time before send response
+	 *
 	 * @default `300`
 	 */
 	sleep?: number;

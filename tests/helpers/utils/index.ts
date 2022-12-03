@@ -121,7 +121,6 @@ export default class Utils {
 	 */
 	static async setup(page: Page, context: BrowserContext, opts?: SetupOptions): Promise<void> {
 		opts = {
-			// eslint-disable-next-line quotes
 			mocks: '[\'.*\']',
 			permissions: ['geolocation'],
 			location: {latitude: 59.95, longitude: 30.31667},
@@ -186,6 +185,7 @@ export default class Utils {
 
 	/**
 	 * Prints all of intercepted page console invokes to the console
+	 *
 	 * @param page
 	 */
 	static printPageLogs(page: Page): void {

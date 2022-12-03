@@ -71,6 +71,7 @@ export default class ComponentRender extends Friend {
 
 	/**
 	 * Returns a node from the cache by the specified key
+	 *
 	 * @param key
 	 */
 	getCachedComponent(key: string): CanUndef<HTMLElement> {
@@ -107,6 +108,7 @@ export default class ComponentRender extends Friend {
 
 	/**
 	 * Renders the specified chunk of items
+	 *
 	 * @param items
 	 */
 	render(items: RenderItem[]): HTMLElement[] {
@@ -172,6 +174,7 @@ export default class ComponentRender extends Friend {
 
 	/**
 	 * Creates and renders components by the specified parameters
+	 *
 	 * @param items
 	 */
 	protected createComponents(items: RenderItem[]): HTMLElement[] {
@@ -212,7 +215,6 @@ export default class ComponentRender extends Friend {
 
 			const attrs = c.getItemAttrs(getItemEl(item.data, item.index), item.index);
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs!), index: itemIndex});
 		}
 

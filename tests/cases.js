@@ -1,4 +1,3 @@
-/* eslint-disable capitalized-comments */
 
 /*!
  * V4Fire Client Core

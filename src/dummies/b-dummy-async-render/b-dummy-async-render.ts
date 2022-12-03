@@ -8,6 +8,7 @@
 
 /**
  * [[include:dummies/b-dummy-async-render/README.md]]
+ *
  * @packageDocumentation
  */
 

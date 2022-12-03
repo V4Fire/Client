@@ -28,6 +28,7 @@ const
 
 /**
  * Returns a component declaration object from the specified meta object
+ *
  * @param meta
  */
 export function getComponent(meta: ComponentMeta): ComponentOptions<Vue> {
@@ -105,7 +106,7 @@ export async function createComponent<T>(
 		node = await render.call(fakeCtx, createElement);
 
 	// @ts-ignore (access)
-	// eslint-disable-next-line require-atomic-updates
+
 	fakeCtx['$el'] = node;
 	node.component = fakeCtx;
 

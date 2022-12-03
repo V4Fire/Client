@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-input/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -93,6 +94,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Initial component value
+	 *
 	 * @see [[iInput.value]]
 	 */
 	@prop({required: false})
@@ -132,7 +134,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * ```
 	 * < form
 	 *   < b-input :name = 'fname' | :value = 'Andrey'
-
+	 *
 	 *   /// After pressing, the form generates an object to submit with values {fname: 'Andrey'}
 	 *   < button type = submit
 	 *     Submit
@@ -173,6 +175,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Additional attributes are provided to an "internal" (native) input tag
+	 *
 	 * @see [[iInput.$refs.input]]
 	 */
 	@prop({type: Object, required: false})
@@ -341,6 +344,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Component value
+	 *
 	 * @see [[iInput.valueStore]]
 	 */
 	@p({replace: false})
@@ -350,6 +354,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Sets a new component value
+	 *
 	 * @param value
 	 */
 	set value(value: this['Value']) {
@@ -358,6 +363,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Component default value
+	 *
 	 * @see [[iInput.defaultProp]]
 	 */
 	@p({replace: false})
@@ -494,7 +500,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 					const
 						component = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
 
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (component != null && form === component.connectedForm) {
 						els.push(component);
 					}
@@ -518,6 +523,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Sets a new information message
+	 *
 	 * @param value
 	 */
 	set info(value: CanUndef<string>) {
@@ -546,6 +552,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Sets a new error message
+	 *
 	 * @param value
 	 */
 	set error(value: CanUndef<string>) {
@@ -626,6 +633,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Additional attributes that are provided to an "internal" (native) input tag
+	 *
 	 * @see [[iInput.attrsProp]]
 	 */
 	@system((o) => o.sync.link())
@@ -707,6 +715,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Clears the component value to undefined
+	 *
 	 * @emits `clear(value: this['Value'])`
 	 */
 	@p({replace: false})
@@ -734,6 +743,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Resets the component value to default
+	 *
 	 * @emits `reset(value: this['Value'])`
 	 */
 	@p({replace: false})
@@ -895,7 +905,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		//#endif
 
-		// eslint-disable-next-line no-unreachable
 		return true;
 	}
 
@@ -1028,6 +1037,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Handler: changing of a component value
+	 *
 	 * @emits `change(value: this['Value'])`
 	 */
 	@p({replace: false})

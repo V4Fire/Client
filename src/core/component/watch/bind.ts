@@ -349,7 +349,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 		}
 
 		// Add listener to a component `mounted/activate`d hook if the component isn't mounted/activates yet
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
 		if (watcherNeedMounted && (isBeforeCreate || component.$el == null)) {
 			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: exec});
 			continue;

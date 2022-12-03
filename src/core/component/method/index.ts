@@ -10,6 +10,7 @@ import type { ComponentInterface } from 'core/component';
 
 /**
  * [[include:core/component/method/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -41,6 +42,7 @@ export function callMethodFromComponent(component: ComponentInterface, method: s
 
 /**
  * Attaches methods from a meta object to the specified component instance
+ *
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {

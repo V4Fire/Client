@@ -8,6 +8,7 @@
 
 /**
  * [[include:traits/i-open/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -134,6 +135,7 @@ export default abstract class iOpen {
 
 	/**
 	 * Opens the component
+	 *
 	 * @param _args
 	 */
 	open(..._args: unknown[]): Promise<boolean> {
@@ -142,6 +144,7 @@ export default abstract class iOpen {
 
 	/**
 	 * Closes the component
+	 *
 	 * @param _args
 	 */
 	close(..._args: unknown[]): Promise<boolean> {
@@ -150,6 +153,7 @@ export default abstract class iOpen {
 
 	/**
 	 * Handler: the opened modifier has been changed
+	 *
 	 * @param _e
 	 */
 	onOpenedChange(_e: ModEvent | SetModEvent): Promise<void> {
@@ -158,6 +162,7 @@ export default abstract class iOpen {
 
 	/**
 	 * Handler: closing by a keyboard event
+	 *
 	 * @param _e
 	 */
 	onKeyClose(_e: KeyboardEvent): Promise<void> {
@@ -166,6 +171,7 @@ export default abstract class iOpen {
 
 	/**
 	 * Handler: closing by a touch event
+	 *
 	 * @param _e
 	 */
 	onTouchClose(_e: MouseEvent): Promise<void> {

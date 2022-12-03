@@ -82,6 +82,7 @@ ComponentEngine.directive('resize-observer', {
 
 /**
  * Sets a flag which indicates that the specified observable was created via the directive
+ *
  * @param observable
  */
 function setCreatedViaDirectiveFlag(observable: Nullable<ResizeWatcherObservable>): void {

@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/module-loader/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -35,6 +36,7 @@ export default class ModuleLoader extends Friend {
 
 	/**
 	 * Returns true if the specified module already exists in the cache
+	 *
 	 * @param module
 	 */
 	has(module: Module): boolean {

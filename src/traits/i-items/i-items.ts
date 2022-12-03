@@ -8,6 +8,7 @@
 
 /**
  * [[include:traits/i-items/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -78,7 +79,8 @@ export default abstract class iItems {
 
 	/**
 	 * This prop is used to provide a list of items to render by the component
-	 * @prop
+	 *
+	 * @property
 	 */
 	abstract items?: this['Items'];
 
@@ -87,7 +89,7 @@ export default abstract class iItems {
 	 * This prop allows specifying the name of a component that is used to render.
 	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
 	 *
-	 * @prop
+	 * @property
 	 */
 	abstract item?: string | CreateFromItemFn<this['Item'], string>;
 
@@ -95,7 +97,7 @@ export default abstract class iItems {
 	 * This prop allows specifying props that are passed to a component to render an item.
 	 * The prop can be provided as a function. In that case, a value is taken from the result of invoking.
 	 *
-	 * @prop
+	 * @property
 	 */
 	abstract itemProps?: Dictionary | ItemPropsFn<this['Item']>;
 
@@ -105,7 +107,7 @@ export default abstract class iItems {
 	 * you are providing the name of a property that stores the identifier.
 	 * If the function case, you should return from the function a value of the identifier.
 	 *
-	 * @prop
+	 * @property
 	 */
 	abstract itemKey?: string | CreateFromItemFn<this['Item'], IterationKey>;
 }

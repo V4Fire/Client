@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/analytics/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -23,6 +24,7 @@ import Friend from 'super/i-block/modules/friend';
 export default class Analytics extends Friend {
 	/**
 	 * Sends an analytic event with the specified details
+	 *
 	 * @param args
 	 */
 	sendEvent(...args: unknown[]): void {

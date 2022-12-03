@@ -121,6 +121,7 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Initializes render items
+	 *
 	 * @param data
 	 */
 	initItems(data: unknown[]): void {
@@ -276,6 +277,7 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Renders the specified items
+	 *
 	 * @param items
 	 */
 	protected renderItems(items: RenderItem[]): HTMLElement[] {
@@ -305,6 +307,7 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Wraps the specified item node with the `in-view` directive
+	 *
 	 * @param item
 	 * @param itemData
 	 */
@@ -353,6 +356,7 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Returns options to initialize the `in-view` directive
+	 *
 	 * @param index
 	 */
 	protected getInViewOptions(index: number): InViewInitOptions {
@@ -366,6 +370,7 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Handler: element becomes visible in the viewport
+	 *
 	 * @param index
 	 */
 	protected onNodeIntersect(index: number): void {

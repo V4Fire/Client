@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-page/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -100,6 +101,7 @@ export default abstract class iPage extends iData implements iVisible {
 
 	/**
 	 * Scrolls a page by the specified options
+	 *
 	 * @param opts
 	 */
 	scrollTo(opts: ScrollOptions): void;

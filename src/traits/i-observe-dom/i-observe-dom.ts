@@ -8,6 +8,7 @@
 
 /**
  * [[include:traits/i-observe-dom/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -89,6 +90,7 @@ export default abstract class iObserveDOM {
 
 	/**
 	 * Returns changed nodes
+	 *
 	 * @param records
 	 */
 	static getChangedNodes(records: MutationRecord[] | ObserverMutationRecord[]): ChangedNodes {
@@ -148,6 +150,7 @@ export default abstract class iObserveDOM {
 
 	/**
 	 * Returns a map of component observers
+	 *
 	 * @param component
 	 */
 	protected static getObserversMap<T extends iBlock>(component: T & iObserveDOM): Observers {

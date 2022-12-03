@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/friend/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -15,7 +16,8 @@ import iBlock from 'super/i-block/i-block';
 
 /**
  * Class that friendly to a component
- * @typeparam T - component
+ *
+ * @typeParam T - component
  */
 export default class Friend {
 	/**

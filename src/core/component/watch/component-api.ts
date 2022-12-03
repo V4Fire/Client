@@ -310,7 +310,6 @@ export function implementComponentWatchAPI(
 		fieldsWatcher = watch(fieldsInfo.value, immediateFieldWatchOpts, invalidateComputedCache());
 		$a.worker(() => fieldsWatcher.unwatch());
 
-		// eslint-disable-next-line no-lone-blocks
 		{
 			const w = watch(fieldsWatcher.proxy, fieldWatchOpts, emitAccessorEvents());
 			$a.worker(() => w.unwatch());
@@ -342,7 +341,6 @@ export function implementComponentWatchAPI(
 		const systemFieldsWatcher = watch(systemFieldsInfo.value, immediateSystemWatchOpts, invalidateComputedCache());
 		$a.worker(() => systemFieldsWatcher.unwatch());
 
-		// eslint-disable-next-line no-lone-blocks
 		{
 			const w = watch(systemFieldsWatcher.proxy, watchOpts, emitAccessorEvents());
 			$a.worker(() => w.unwatch());

@@ -320,7 +320,7 @@ export function addStaticDirectives(
 						rule = ';display: none;';
 
 					if (node != null && data.tag === 'component') {
-						// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+
 						node.setAttribute('style', (node.getAttribute('style') ?? '') + rule);
 
 					} else {

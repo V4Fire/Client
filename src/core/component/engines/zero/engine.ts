@@ -136,6 +136,7 @@ export class ComponentEngine {
 
 	/**
 	 * Renders the current component
+	 *
 	 * @param opts - component options
 	 */
 	async $render(opts: ComponentOptions<any>): Promise<CanUndef<Element>> {
@@ -146,6 +147,7 @@ export class ComponentEngine {
 
 	/**
 	 * Mounts the current component to the specified node
+	 *
 	 * @param nodeOrSelector - link to the parent node to mount or a selector
 	 */
 	$mount(nodeOrSelector: string | Node): void {

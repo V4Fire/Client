@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-input-hidden/README.md]]
+ *
  * @packageDocumentation
  */
 

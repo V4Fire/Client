@@ -10,6 +10,7 @@
 
 /**
  * [[include:core/component/directives/hook/README.md]]
+ *
  * @packageDocumentation
  */
 

@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-checkbox/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -278,6 +279,7 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/**
 	 * Returns a modifier value by the component value
+	 *
 	 * @param value
 	 */
 	protected convertValueToChecked(value: Value): boolean | string {

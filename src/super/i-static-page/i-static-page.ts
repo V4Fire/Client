@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-static-page/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -165,6 +166,7 @@ export default abstract class iStaticPage extends iPage {
 
 	/**
 	 * Route information object store
+	 *
 	 * @see [[iStaticPage.route]]
 	 */
 	@field({forceUpdate: false})
@@ -186,7 +188,6 @@ export default abstract class iStaticPage extends iPage {
 				const
 					el = document.documentElement;
 
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (lang != null) {
 					el.setAttribute('lang', lang);
 
@@ -339,6 +340,7 @@ export default abstract class iStaticPage extends iPage {
 
 	/**
 	 * Synchronization of the `localeStore` field
+	 *
 	 * @param locale
 	 */
 	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
@@ -353,6 +355,7 @@ export default abstract class iStaticPage extends iPage {
 
 	/**
 	 * Handler: the online status has been changed
+	 *
 	 * @param status
 	 */
 	@watch({path: 'isOnline', immediate: true})

@@ -8,6 +8,7 @@
 
 /**
  * This package provides a router engined based on the HTML history API with support of dynamic loading of entry points
+ *
  * @packageDescription
  */
 
@@ -32,6 +33,7 @@ const
 /**
  * This code is needed to fix a bug with the History API router engine when backing to the
  * first history item doesn’t emit a popstate event in Safari if the script is running within an iframe
+ *
  * @see https://github.com/V4Fire/Client/issues/717
  */
 if (isIFrame && (browser.is.Safari !== false || browser.is.iOS !== false)) {
@@ -40,6 +42,7 @@ if (isIFrame && (browser.is.Safari !== false || browser.is.iOS !== false)) {
 
 /**
  * This flag is needed to get rid of a redundant router transition when restoring the page from BFCache in safari
+ *
  * @see https://github.com/V4Fire/Client/issues/552
  */
 let isOpenedFromBFCache = false;
@@ -117,6 +120,7 @@ try {
 
 /**
  * Creates an engine (browser history api) for `bRouter` component
+ *
  * @param component
  */
 export default function createRouter(component: bRouter): Router {

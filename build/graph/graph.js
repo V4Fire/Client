@@ -44,6 +44,7 @@ const {
 
 /**
  * The project graph
+ *
  * @type {Promise<{entry, components, processes, dependencies}>}
  */
 module.exports = buildProjectGraph();
@@ -56,6 +57,7 @@ let
 
 /**
  * Builds a project graph
+ *
  * @returns {!Promise<{entry, components, processes, dependencies}>}
  */
 async function buildProjectGraph() {

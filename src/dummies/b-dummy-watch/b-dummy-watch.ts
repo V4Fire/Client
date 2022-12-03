@@ -8,6 +8,7 @@
 
 /**
  * [[include:dummies/b-dummy-watch/README.md]]
+ *
  * @packageDocumentation
  */
 

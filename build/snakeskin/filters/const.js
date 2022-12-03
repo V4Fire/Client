@@ -58,24 +58,28 @@ exports.isSvgRequire = /require\(.*?\.svg[\\"']+\)/;
 
 /**
  * RegExp to detect V4Fire specific attributes
+ *
  * @type {!RegExp}
  */
 exports.isV4Prop = /^(:|@|v-)/;
 
 /**
  * RegExp to detect V4Fire specific static attributes
+ *
  * @type {!RegExp}
  */
 exports.isStaticV4Prop = /^[^[]+$/;
 
 /**
  * RegExp to detect commas
+ *
  * @type {!RegExp}
  */
 exports.commaRgxp = /\s*,\s*/;
 
 /**
  * RegExp to detect Snakeskin file extensions
+ *
  * @type {!RegExp}
  */
 exports.ssExtRgxp = /\.e?ss$/;

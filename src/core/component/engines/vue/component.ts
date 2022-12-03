@@ -23,6 +23,7 @@ import type { ComponentInterface, UnsafeComponentInterface, ComponentMeta } from
 
 /**
  * Returns a component declaration object from the specified component meta object
+ *
  * @param meta
  */
 export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEngine> {

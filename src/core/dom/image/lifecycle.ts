@@ -39,6 +39,7 @@ export default class Lifecycle {
 
 	/**
 	 * Initializes lifecycle of the specified element
+	 *
 	 * @param el
 	 */
 	init(el: ImageNode): void {
@@ -59,6 +60,7 @@ export default class Lifecycle {
 
 	/**
 	 * Initializes the main image
+	 *
 	 * @param el
 	 */
 	protected initMain(el: ImageNode): void {
@@ -182,6 +184,7 @@ export default class Lifecycle {
 
 	/**
 	 * Handler: main image load complete
+	 *
 	 * @param el
 	 */
 	protected onMainImageLoad(el: ImageNode): void {
@@ -200,6 +203,7 @@ export default class Lifecycle {
 
 	/**
 	 * Handler: main image loading error
+	 *
 	 * @param el
 	 */
 	protected onMainImageLoadError(el: ImageNode): void {

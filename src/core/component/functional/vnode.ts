@@ -116,7 +116,6 @@ export function initComponentVNode(
 
 			// Merge field/system field values
 
-			// eslint-disable-next-line no-lone-blocks
 			{
 				const list = [
 					oldCtx.meta.systemFields,

@@ -12,6 +12,7 @@ import * as _ from 'core/component/engines/zero/helpers';
 
 /**
  * Clones the specified vnode
+ *
  * @param vnode
  */
 export function cloneVNode(vnode: VNode): VNode {

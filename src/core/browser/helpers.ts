@@ -16,7 +16,7 @@ const
  * is matched with `navigator.userAgent`. Otherwise, returns `false`.
  *
  * @param pattern - pattern source, regexp
- *   or function that takes userAgent string and returns array of browserName and browserVersion
+ * or function that takes userAgent string and returns array of browserName and browserVersion
  */
 export function match(pattern: Pattern): [string, number[] | null] | false {
 	let

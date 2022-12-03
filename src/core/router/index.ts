@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/router/README.md]]
+ *
  * @packageDocumentation
  */
 

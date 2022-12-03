@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/construct/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -92,7 +93,6 @@ export function beforeCreateState(
 	const
 		isFunctional = meta.params.functional === true;
 
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (parent != null && parent.componentName == null) {
 		// @ts-ignore (access)
 		unsafe['$parent'] = unsafe.$root.unsafe.$remoteParent;
@@ -244,6 +244,7 @@ export function beforeDataCreateState(
 
 /**
  * Initializes "created" state to the specified component instance
+ *
  * @param component
  */
 export function createdState(component: ComponentInterface): void {
@@ -304,6 +305,7 @@ export function createdState(component: ComponentInterface): void {
 
 /**
  * Initializes "beforeMount" state to the specified component instance
+ *
  * @param component
  */
 export function beforeMountState(component: ComponentInterface): void {
@@ -322,6 +324,7 @@ export function beforeMountState(component: ComponentInterface): void {
 
 /**
  * Initializes "mounted" state to the specified component instance
+ *
  * @param component
  */
 export function mountedState(component: ComponentInterface): void {
@@ -341,6 +344,7 @@ export function mountedState(component: ComponentInterface): void {
 
 /**
  * Initializes "beforeUpdate" state to the specified component instance
+ *
  * @param component
  */
 export function beforeUpdateState(component: ComponentInterface): void {
@@ -350,6 +354,7 @@ export function beforeUpdateState(component: ComponentInterface): void {
 
 /**
  * Initializes "updated" state to the specified component instance
+ *
  * @param component
  */
 export function updatedState(component: ComponentInterface): void {
@@ -363,6 +368,7 @@ export function updatedState(component: ComponentInterface): void {
 
 /**
  * Initializes "activated" state to the specified component instance
+ *
  * @param component
  */
 export function activatedState(component: ComponentInterface): void {
@@ -375,6 +381,7 @@ export function activatedState(component: ComponentInterface): void {
 
 /**
  * Initializes "deactivated" state to the specified component instance
+ *
  * @param component
  */
 export function deactivatedState(component: ComponentInterface): void {
@@ -384,6 +391,7 @@ export function deactivatedState(component: ComponentInterface): void {
 
 /**
  * Initializes "beforeDestroy" state to the specified component instance
+ *
  * @param component
  */
 export function beforeDestroyState(component: ComponentInterface): void {
@@ -394,6 +402,7 @@ export function beforeDestroyState(component: ComponentInterface): void {
 
 /**
  * Initializes "destroyed" state to the specified component instance
+ *
  * @param component
  */
 export function destroyedState(component: ComponentInterface): void {

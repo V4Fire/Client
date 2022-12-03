@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/reflection/README.md]]
+ *
  * @packageDocumentation
  */
 

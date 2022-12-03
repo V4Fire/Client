@@ -1,8 +1,4 @@
-/*
-eslint-disable
-@typescript-eslint/no-empty-function,
-@typescript-eslint/unified-signatures
-*/
+/* eslint-disable @typescript-eslint/no-empty-function */
 
 /*!
  * V4Fire Client Core
@@ -354,6 +350,7 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Executes the specified function on the next render tick
+	 *
 	 * @param cb
 	 */
 	$nextTick(cb: Function | BoundFn<this>): void;
@@ -366,6 +363,7 @@ export abstract class ComponentInterface {
 
 	/**
 	 * Mounts the component to a DOM element
+	 *
 	 * @param _elementOrSelector - link to an element or selector to an element
 	 */
 	protected $mount(_elementOrSelector?: Element | string): this {

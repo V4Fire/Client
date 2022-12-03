@@ -66,6 +66,7 @@ export interface ControlEvent {
 
 /**
  * Additional information for event analytics
+ *
  * @deprecated
  * @see [[ControlAnalyticsArgs]]
  */

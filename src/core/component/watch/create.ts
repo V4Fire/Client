@@ -17,6 +17,7 @@ import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
 /**
  * Creates a function to watch changes from the specified component instance and returns it
+ *
  * @param component
  */
 // eslint-disable-next-line max-lines-per-function

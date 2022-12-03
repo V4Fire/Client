@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/state/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -114,6 +115,7 @@ export default class State extends Friend {
 
 	/**
 	 * Saves a state of the current component to a local storage
+	 *
 	 * @param [data] - additional data to save
 	 */
 	async saveToStorage(data?: Dictionary): Promise<boolean> {
@@ -241,6 +243,7 @@ export default class State extends Friend {
 
 	/**
 	 * Saves a state of the current component to a router
+	 *
 	 * @param [data] - additional data to save
 	 */
 	async saveToRouter(data?: Dictionary): Promise<boolean> {

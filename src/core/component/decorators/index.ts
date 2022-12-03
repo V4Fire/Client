@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/decorators/README.md]]
+ *
  * @packageDocumentation
  */
 

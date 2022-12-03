@@ -35,6 +35,7 @@ export interface InViewObservable {
 
 	/**
 	 * Last recorded time from entry
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserverEntry/time
 	 */
 	time?: DOMHighResTimeStamp;
@@ -91,18 +92,21 @@ export interface InViewObserveOptions {
 
 	/**
 	 * Callback that is invoked after the delay
+	 *
 	 * @param observable
 	 */
 	callback?(observable: InViewObservableElement): unknown;
 
 	/**
 	 * Handler: element enters the viewport
+	 *
 	 * @param observable
 	 */
 	onEnter?(observable: InViewObservableElement): unknown;
 
 	/**
 	 * Handler: element leaves the viewport
+	 *
 	 * @param observable
 	 */
 	onLeave?(observable: InViewObservableElement): unknown;

@@ -27,6 +27,7 @@ export interface SyncMaskWithTextOptions {
 
 	/**
 	 * If false, the mask won't try to fit its size to the specified text to sync
+	 *
 	 * @default `true`
 	 */
 	fitMask?: boolean;
@@ -41,12 +42,14 @@ export interface SyncMaskWithTextOptions {
 
 	/**
 	 * If true, the cursor position will be preserved to the left bound of selection to synchronize
+	 *
 	 * @default `false`
 	 */
 	preserveCursor?: boolean;
 
 	/**
 	 * If true, all symbols from the specified text that are matched as mask placeholders won't be skipped
+	 *
 	 * @default `false`
 	 */
 	preservePlaceholders?: boolean;

@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-static-page/modules/provider-data-store/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -21,6 +22,7 @@ export { ProviderDataItem };
 
 /**
  * Creates a cache to store data of data providers based on the specified cache API
+ *
  * @param cache
  */
 export default function createProviderDataStore<T>(cache: AbstractCache<T>): ProviderDataStore<T> {

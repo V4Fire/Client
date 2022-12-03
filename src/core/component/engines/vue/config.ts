@@ -28,6 +28,7 @@ const
 
 /**
  * Returns component info to log
+ *
  * @param component
  */
 function getComponentInfo(component: Vue | ComponentInterface): Dictionary {
@@ -53,6 +54,7 @@ function getComponentInfo(component: Vue | ComponentInterface): Dictionary {
 
 /**
  * Returns a name of the specified component
+ *
  * @param component
  */
 function getComponentName(component: Vue | ComponentInterface): string {

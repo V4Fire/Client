@@ -8,6 +8,7 @@
 
 /**
  * [[include:traits/i-access/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -50,6 +51,7 @@ export default abstract class iAccess {
 
 	/**
 	 * Returns true if the component in focus
+	 *
 	 * @param component
 	 */
 	static isFocused<T extends iBlock>(component: T): boolean {
@@ -164,7 +166,7 @@ export default abstract class iAccess {
 	 * A Boolean attribute which, if present, indicates that the component should automatically
 	 * have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed)
 	 *
-	 * @prop
+	 * @property
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus
 	 */
 	abstract autofocus?: boolean;
@@ -176,7 +178,7 @@ export default abstract class iAccess {
 	 * form controls, because doing so would require the management of the focus order for all elements within
 	 * the document with the risk of harming usability and accessibility if done incorrectly.
 	 *
-	 * @prop
+	 * @property
 	 */
 	abstract tabIndex?: number;
 
@@ -187,6 +189,7 @@ export default abstract class iAccess {
 
 	/**
 	 * Enables the component
+	 *
 	 * @param _args
 	 */
 	enable(..._args: unknown[]): Promise<boolean> {
@@ -195,6 +198,7 @@ export default abstract class iAccess {
 
 	/**
 	 * Disables the component
+	 *
 	 * @param _args
 	 */
 	disable(..._args: unknown[]): Promise<boolean> {
@@ -203,6 +207,7 @@ export default abstract class iAccess {
 
 	/**
 	 * Sets the focus to the component
+	 *
 	 * @param _args
 	 */
 	focus(..._args: unknown[]): Promise<boolean> {
@@ -211,6 +216,7 @@ export default abstract class iAccess {
 
 	/**
 	 * Unsets the focus from the component
+	 *
 	 * @param _args
 	 */
 	blur(..._args: unknown[]): Promise<boolean> {

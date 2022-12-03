@@ -124,6 +124,7 @@ export function fitForText<C extends iInputText>(component: C, text: CanArray<st
 
 /**
  * Saves a snapshot of the masked input
+ *
  * @param component
  */
 export function saveSnapshot<C extends iInputText>(component: C): boolean {
@@ -165,6 +166,7 @@ export function saveSnapshot<C extends iInputText>(component: C): boolean {
 
 /**
  * Sets a position of the selection cursor at the first non-terminal symbol from the mask
+ *
  * @param component
  */
 export function setCursorPositionAtFirstNonTerminal<C extends iInputText>(component: C): boolean {
@@ -198,6 +200,7 @@ export function setCursorPositionAtFirstNonTerminal<C extends iInputText>(compon
 
 /**
  * Synchronizes the `$refs.input.text` property with the `text` field
+ *
  * @param component
  */
 export function syncInputWithField<C extends iInputText>(component: C): boolean {
@@ -216,6 +219,7 @@ export function syncInputWithField<C extends iInputText>(component: C): boolean 
 
 /**
  * Synchronizes the `text` field with the `$refs.input.text` property
+ *
  * @param component
  */
 export function syncFieldWithInput<C extends iInputText>(component: C): Promise<boolean> {
@@ -311,7 +315,6 @@ export function getNormalizedSelectionBounds<C extends iInputText>(
 		normalizedSelectionStart = selectionStart,
 		normalizedSelectionEnd = selectionEnd;
 
-	// eslint-disable-next-line no-lone-blocks
 	{
 		const
 			slicedText = text.slice(0, selectionStart),
@@ -322,7 +325,6 @@ export function getNormalizedSelectionBounds<C extends iInputText>(
 		}
 	}
 
-	// eslint-disable-next-line no-lone-blocks
 	{
 		const
 			slicedText = text.slice(0, selectionEnd),

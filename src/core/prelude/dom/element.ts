@@ -43,6 +43,7 @@ extend(Element.prototype, 'getIndex', function getIndex(this: Element): number |
 
 /**
  * Returns a position of the element relative to the parent
+ *
  * @param [parent]
  */
 extend(HTMLElement.prototype, 'getOffset', function getOffset(

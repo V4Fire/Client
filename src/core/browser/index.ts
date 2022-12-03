@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/browser/README.md]]
+ *
  * @packageDocumentation
  */
 

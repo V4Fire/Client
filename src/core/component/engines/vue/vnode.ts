@@ -13,6 +13,7 @@ import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Clones the specified vnode
+ *
  * @param vnode
  */
 export function cloneVNode(vnode: VNode): VNode {

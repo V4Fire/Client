@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-dynamic-page/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -74,6 +75,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * Active component name to load
+	 *
 	 * @see [[bDynamicPage.pageProp]]
 	 */
 	@system((o) => o.sync.link())
@@ -118,8 +120,8 @@ export default class bDynamicPage extends iDynamicPage {
 	 * 1. a component name (or a list of names);
 	 * 2. a regular expression;
 	 * 3. a function that takes a component name and returns `true` (include), `false` (does not include),
-	 *    a string key to cache (it uses instead of a component name),
-	 *    or a special object with information of the used cache strategy.
+	 * a string key to cache (it uses instead of a component name),
+	 * or a special object with information of the used cache strategy.
 	 */
 	@prop({
 		type: [String, Array, RegExp, Function],

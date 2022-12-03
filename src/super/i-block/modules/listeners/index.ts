@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/listeners/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -104,6 +105,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 /**
  * Initializes watchers from `watchProp` for the specified component
+ *
  * @param component
  */
 export function initRemoteWatchers(component: iBlock): void {

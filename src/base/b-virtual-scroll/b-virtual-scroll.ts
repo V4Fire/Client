@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-virtual-scroll/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -358,8 +359,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Returns an object with the current data state of the component
 	 *
-	 * @typeparam ITEM - data item to render
-	 * @typeparam RAW - raw provider data
+	 * @typeParam ITEM - data item to render
+	 * @typeParam RAW - raw provider data
 	 */
 	getCurrentDataState<
 		ITEM extends object = object,
@@ -453,8 +454,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @param [chunkRequest]
 	 * @param [chunkRender]
 	 *
-	 * @typeparam ITEM - data item to render
-	 * @typeparam RAW - raw provider data
+	 * @typeParam ITEM - data item to render
+	 * @typeParam RAW - raw provider data
 	 */
 	protected getDataStateSnapshot<
 		ITEM extends object = object,

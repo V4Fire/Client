@@ -10,6 +10,7 @@ import type { InViewInitOptions, InViewAdapteeInstance } from 'core/dom/in-view/
 
 /**
  * Returns the first adaptee which is acceptable
+ *
  * @param strategies
  */
 export function getAdaptee(strategies: InViewAdapteeInstance[]): CanUndef<InViewAdapteeInstance> {
@@ -27,6 +28,7 @@ export function getAdaptee(strategies: InViewAdapteeInstance[]): CanUndef<InView
 
 /**
  * Validates the specified value
+ *
  * @param value
  */
 export function valueValidator(value: CanUndef<InViewInitOptions>): boolean {

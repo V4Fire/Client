@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/browser/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -17,6 +18,7 @@ export * from 'core/cookies/interface';
 
 /**
  * Returns true, if a cookie by the specified name is defined
+ *
  * @param name
  */
 export function has(name: string): boolean {

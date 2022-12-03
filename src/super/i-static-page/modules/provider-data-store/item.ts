@@ -46,6 +46,7 @@ export default class ProviderDataItem<T = unknown> {
 
 	/**
 	 * Finds an element from the instance by the specified parameters
+	 *
 	 * @param params
 	 */
 	select<D = unknown>(params: SelectParams): CanUndef<D> {

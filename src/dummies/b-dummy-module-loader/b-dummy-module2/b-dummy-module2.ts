@@ -8,6 +8,7 @@
 
 /**
  * [[include:dummies/b-dummy-module-loader/b-dummy-module2/README.md]]
+ *
  * @packageDocumentation
  */
 

@@ -11,18 +11,21 @@ import type { ComponentInterface } from 'core/component';
 export interface ResizeWatcherObserverOptions {
 	/**
 	 * If `true`, when changing an element width, the callback will be executed
+	 *
 	 * @default `true`
 	 */
 	watchWidth?: boolean;
 
 	/**
 	 * If `true`, when changing an element height, the callback will be executed
+	 *
 	 * @default `true`
 	 */
 	watchHeight?: boolean;
 
 	/**
 	 * If `true`, then the callback is invoked immediately after the module initializing
+	 *
 	 * @default `true`
 	 */
 	initial?: boolean;
@@ -38,6 +41,7 @@ export interface ResizeWatcherObserverOptions {
 
 	/**
 	 * If true, the watcher would be automatically removed when invoked (initial call does not count)
+	 *
 	 * @default `false`
 	 */
 	once?: boolean;

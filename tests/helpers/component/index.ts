@@ -117,6 +117,7 @@ export default class Component {
 
 	/**
 	 * Removes all dynamically created components
+	 *
 	 * @param page
 	 */
 	static removeCreatedComponents(page: Page): Promise<void> {
@@ -203,7 +204,7 @@ export default class Component {
 	/**
 	 * Returns the root component
 	 *
-	 * @typeparam T - type of the root
+	 * @typeParam T - type of the root
 	 * @param ctx
 	 * @param [selector]
 	 */

@@ -15,8 +15,8 @@ const
  * Returns a browser instance by the specified parameters
  *
  * @param {string} browserType
- * @param {!Object} params
- * @param {!Object} options
+ * @param {!object} params
+ * @param {!object} options
  * @returns {!Promise<?>}
  */
 exports.getBrowserInstance = function getBrowserInstance(browserType, params, options = {}) {
@@ -51,6 +51,7 @@ exports.getBrowserInstance = function getBrowserInstance(browserType, params, op
 
 /**
  * Returns a list of selected browsers
+ *
  * @returns {!Array<string>}
  */
 exports.getSelectedBrowsers = function getSelectedBrowsers() {
@@ -86,6 +87,7 @@ exports.getBrowserArgs = getBrowserArgs;
 
 /**
  * Returns a list of arguments that will be provided to a browser
+ *
  * @returns {!Array<string>}
  */
 function getBrowserArgs() {

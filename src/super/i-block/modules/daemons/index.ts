@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/daemons/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -80,6 +81,7 @@ export default class Daemons extends Friend {
 
 	/**
 	 * Returns true if a daemon by the specified name is exists
+	 *
 	 * @param name
 	 */
 	isExists(name: string): boolean {
@@ -144,6 +146,7 @@ export default class Daemons extends Friend {
 
 	/**
 	 * Returns a daemon by the specified name
+	 *
 	 * @param name
 	 */
 	protected get(name: string): CanUndef<Daemon<this['CTX']>> {
@@ -163,6 +166,7 @@ export default class Daemons extends Friend {
 
 	/**
 	 * Creates a wrapped function for the specified daemon
+	 *
 	 * @param daemon
 	 */
 	protected wrapDaemonFn<T extends Daemon>(daemon: T): T {

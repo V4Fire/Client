@@ -13,6 +13,7 @@ import type { Items } from 'form/b-select/interface';
 
 /**
  * Initializes component values
+ *
  * @param component
  */
 export function initComponentValues<C extends bSelect>(component: C): void {
@@ -55,6 +56,7 @@ export function initComponentValues<C extends bSelect>(component: C): void {
 
 /**
  * Normalizes the specified items and returns it
+ *
  * @param items
  */
 export function normalizeItems(items: CanUndef<Items>): Items {

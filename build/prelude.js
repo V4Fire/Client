@@ -101,6 +101,7 @@ if (config.runtime().noGlobals) {
 
 	/**
 	 * Structure to find and replace all Prelude invoking to global safety form
+	 *
 	 * @type {{globalLink: string, replaceRgxp: !RegExp, tokens: Map<any, any>}}
 	 */
 	module.exports = {tokens, globalLink, replaceRgxp};

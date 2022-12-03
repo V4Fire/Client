@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/check-indentation */
 'use strict';
 
 /*!
@@ -14,7 +15,8 @@ const
 
 /**
  * Returns parameters of the design system
- * @returns {?DesignSystem}
+ *
+ * @returns {?import("DesignSystem")}
  */
 exports.getDS = function getDS() {
 	try {
@@ -39,7 +41,8 @@ exports.getDS = function getDS() {
  *
  *   * `true`, if necessary to pass all themes from the specified design system object
  *
- * @param {!DesignSystem} ds - a raw design system object (e.g. loaded from the linked in the `.pzlrrc` package)
+ * @param {!import("DesignSystem")} ds - a raw design system object
+ * (e.g. loaded from the linked in the `.pzlrrc` package)
  * @param {(!Array<string>|true)} buildThemes
  *
  * @returns {?Array<string>}
@@ -77,7 +80,8 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 
 /**
  * Returns modifier values grouped by component names from the design system package
- * @returns {Object}
+ *
+ * @returns {object}
  */
 exports.getDSComponentMods = function getDSComponentMods() {
 	try {

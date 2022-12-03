@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/flyweight/README.md]]
+ *
  * @packageDocumentation
  */
 

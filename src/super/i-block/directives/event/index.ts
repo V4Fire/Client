@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/directives/event/README.md]]
+ *
  * @packageDocumentation
  */
 

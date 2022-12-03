@@ -254,6 +254,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Port for a test server
+		 *
 		 * @env TEST_PORT
 		 */
 		testPort: o('test-port', {
@@ -378,7 +379,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @see https://github.com/npkgz/cli-progress
 		 * @param [def] - default value
-		 * @returns {Object}
+		 * @returns {object}
 		 */
 		progress(def = true) {
 			const enabled = o('progress', {
@@ -423,7 +424,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @env STATS
 		 *
 		 * @param {boolean=} [def] - default value
-		 * @returns {(boolean|string|Object)}
+		 * @returns {(boolean | string | object)}
 		 */
 		stats(def = true) {
 			return o('stats', {
@@ -435,6 +436,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Returns the default hash algorithm to use
+		 *
 		 * @returns {?string}
 		 */
 		hashFunction() {
@@ -443,9 +445,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Returns
-		 *   * `1` if all assets from the build have to inline within HTML files;
-		 *   * `2` if all scripts and links from the build have to inline within HTML files;
-		 *   * `0` if assets from the build shouldn't inline within HTML files.
+		 * `1` if all assets from the build have to inline within HTML files;
+		 * `2` if all scripts and links from the build have to inline within HTML files;
+		 * `0` if assets from the build shouldn't inline within HTML files.
 		 *
 		 * @cli fat-html
 		 * @env FAT_HTML
@@ -499,7 +501,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			/**
 			 * Returns parameters for `optimization.splitChunks`
-			 * @returns {!Object}
+			 *
+			 * @returns {!object}
 			 */
 			splitChunks() {
 				return {};
@@ -569,7 +572,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @cli provide-public-path-with-query
 		 * @env PROVIDE_PUBLIC_PATH_WITH_QUERY
-		 * @default `true`
+		 * @default
 		 *
 		 * @param {boolean=} [def] - default value
 		 * @returns {boolean}
@@ -771,6 +774,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Return a name of the generated runtime global variable where the nonce value is stored
+		 *
 		 * @returns {?string}
 		 */
 		nonceStore() {
@@ -788,6 +792,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Returns a value of the "nonce" hash
+		 *
 		 * @returns {?string}
 		 */
 		nonce() {
@@ -802,7 +807,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * 2. client - to compile client modules
 	 *
 	 * @override
-	 * @returns {{server: !Object, client: !Object}}
+	 * @returns {{server: !object, client: !object}}
 	 */
 	typescript() {
 		const
@@ -827,6 +832,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `TerserPlugin`
+	 *
 	 * @returns {{}}
 	 */
 	terser() {
@@ -835,7 +841,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `stylus-loader`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	stylus() {
 		return {
@@ -849,7 +856,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `css-loader`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	css() {
 		return {};
@@ -857,7 +865,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `CssMinimizerPlugin`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	cssMinimizer() {
 		return {};
@@ -865,7 +874,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `MiniCssExtractPlugin`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	miniCssExtractPlugin() {
 		return {};
@@ -875,7 +885,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * Returns parameters for statoscope
 	 *
 	 * @see https://github.com/statoscope/statoscope/tree/master/packages/webpack-plugin#usage
-	 * @returns {!Object}
+	 * @returns {!object}
 	 */
 	statoscope() {
 		return {
@@ -910,7 +920,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `postcss-loader`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	postcss() {
 		return {};
@@ -918,7 +929,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `postcss/autoprefixer`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	autoprefixer() {
 		return {remove: false};
@@ -926,7 +938,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `style-loader`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	style() {
 		return {
@@ -992,7 +1005,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * 1. server - for .ess files
 	 * 2. client - for .ss files
 	 *
-	 * @returns {{server: !Object, client: !Object}}
+	 * @returns {{server: !object, client: !object}}
 	 */
 	snakeskin() {
 		const
@@ -1019,7 +1032,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `html-loader`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	html() {
 		const
@@ -1040,7 +1054,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for a favicon generator
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	favicons() {
 		return {
@@ -1059,7 +1074,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `image-webpack-loader`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	imageOpts() {
 		return {
@@ -1075,7 +1091,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `typograf`
-	 * @returns {!Object}
+	 *
+	 * @returns {!object}
 	 */
 	typograf() {
 		return {
@@ -1126,7 +1143,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * Returns a map of component dependencies.
 	 * This map can be used to provide dynamic component dependencies within `index.js` files.
 	 *
-	 * @returns {!Object}
+	 * @returns {!object}
 	 *
 	 * @example
 	 * ```

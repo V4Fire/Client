@@ -107,7 +107,6 @@ module.exports = async (page, params) => {
 				return ctx.style.backgroundImage.match(/url\("(.*)"\)/)?.[1] ?? '';
 			};
 
-			// eslint-disable-next-line no-unused-expressions
 			document.getElementById('expected-picture')?.remove();
 		});
 

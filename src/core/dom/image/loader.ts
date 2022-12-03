@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-invalid-this */
 
 /*!
  * V4Fire Client Core
@@ -46,6 +45,7 @@ export default class ImageLoader {
 
 	/**
 	 * Normalizes the specified directive value
+	 *
 	 * @param value
 	 */
 	static normalizeOptions<T extends ImageOptions | ImagePlaceholderOptions = ImageOptions>(value: InitValue): T {
@@ -85,6 +85,7 @@ export default class ImageLoader {
 
 	/**
 	 * Sets the default `broken` image
+	 *
 	 * @param opts
 	 */
 	setDefaultBrokenImage(opts: string | ImagePlaceholderOptions): void {
@@ -96,6 +97,7 @@ export default class ImageLoader {
 
 	/**
 	 * Sets the default `preview` image
+	 *
 	 * @param opts
 	 */
 	setDefaultPreviewImage(opts: string | ImagePlaceholderOptions): void {
@@ -184,6 +186,7 @@ export default class ImageLoader {
 
 	/**
 	 * Returns true if the specified element is an instance of `HTMLImageElement`
+	 *
 	 * @param el
 	 */
 	isImg(el: HTMLElement): el is HTMLImageElement {
@@ -192,6 +195,7 @@ export default class ImageLoader {
 
 	/**
 	 * Clears the specified element state
+	 *
 	 * @param el
 	 */
 	clearElement(el: HTMLElement): void {
@@ -272,6 +276,7 @@ export default class ImageLoader {
 
 	/**
 	 * Resolves the given operation options
+	 *
 	 * @param opts
 	 */
 	protected resolveOptions(opts: ImageOptions): ImageOptions {
@@ -325,6 +330,7 @@ export default class ImageLoader {
 
 	/**
 	 * Clears a shadow state of the specified element
+	 *
 	 * @param el
 	 */
 	protected clearShadowState(el: HTMLElement | ImageNode): void {
@@ -391,6 +397,7 @@ export default class ImageLoader {
 
 	/**
 	 * Clears background CSS styles of the specified element
+	 *
 	 * @param el
 	 */
 	protected clearBackgroundStyles(el: HTMLElement): void {

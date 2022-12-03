@@ -10,6 +10,7 @@ import type iInputText from 'super/i-input-text/i-input-text';
 
 /**
  * Initializes the component mask
+ *
  * @param component
  */
 export function init<C extends iInputText>(component: C): CanPromise<void> {

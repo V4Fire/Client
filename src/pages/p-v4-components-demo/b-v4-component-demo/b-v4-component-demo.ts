@@ -8,6 +8,7 @@
 
 /**
  * [[include:pages/p-v4-components-demo/b-v4-component-demo/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -34,6 +35,7 @@ export default class bV4ComponentDemo extends iBlock {
 
 	/**
 	 * Starts debugging the specified component
+	 *
 	 * @param component
 	 */
 	debug(component: iBlock): void {
@@ -43,6 +45,7 @@ export default class bV4ComponentDemo extends iBlock {
 
 	/**
 	 * Returns normalized modifier value from the specified
+	 *
 	 * @param value
 	 */
 	protected getModValue(value: CanArray<unknown>): CanUndef<string> {

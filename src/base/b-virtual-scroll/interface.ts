@@ -46,8 +46,8 @@ export interface VirtualItemEl<T extends object = object> {
 export type OptionEl<T extends object = object> = VirtualItemEl<T>;
 
 /**
- * @typeparam ITEM - data item to render
- * @typeparam RAW - raw provider data
+ * @typeParam ITEM - data item to render
+ * @typeParam RAW - raw provider data
  */
 export interface DataState<ITEM extends object = object, RAW = unknown> {
 	/**
@@ -156,8 +156,8 @@ export type ItemAttrs = {
 /**
  * Last loaded data chunk
  *
- * @typeparam DATA - data to render
- * @typeparam RAW - raw provider data
+ * @typeParam DATA - data to render
+ * @typeParam RAW - raw provider data
  */
 export interface LastLoadedChunk<DATA extends object = object[], RAW = unknown> {
 	normalized: DATA;
@@ -173,17 +173,17 @@ export interface DataToRender {
 /**
  * Local state of a component:
  *
- *  * `error` - indicates the component loading error appear
- *  * `init` - indicates the component now loading the first chunk of data
- *  * `ready` - indicates the component now is ready to render data
+ * * `error` - indicates the component loading error appear
+ * * `init` - indicates the component now loading the first chunk of data
+ * * `ready` - indicates the component now is ready to render data
  */
 export type LocalState = 'init' | 'ready' | 'error';
 
 /**
  * The loading strategy:
  *
- *  * `scroll` - will prompt the client to load data every time a new element appears in the viewport
- *  * `manual` - there is only one way to load data: by using `renderNext` method (except the initial load)
+ * * `scroll` - will prompt the client to load data every time a new element appears in the viewport
+ * * `manual` - there is only one way to load data: by using `renderNext` method (except the initial load)
  */
 export type LoadStrategy = 'scroll' | 'manual';
 

@@ -10,6 +10,7 @@ import type { ComponentMeta } from 'core/component/interface';
 
 /**
  * Creates a new meta object from the specified
+ *
  * @param base
  */
 export function forkMeta(base: ComponentMeta): ComponentMeta {

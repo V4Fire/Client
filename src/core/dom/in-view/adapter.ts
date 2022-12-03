@@ -41,6 +41,7 @@ export default class InViewAdapter {
 
 	/**
 	 * Sets an adaptee
+	 *
 	 * @param instance
 	 */
 	setInstance(instance: ObserveStrategy): void {
@@ -49,6 +50,7 @@ export default class InViewAdapter {
 
 	/**
 	 * Returns true if the passed adaptee type is 'mutation'
+	 *
 	 * @param adaptee
 	 */
 	isMutation(adaptee: ObserveStrategy): adaptee is MutationObserverStrategy {
@@ -57,6 +59,7 @@ export default class InViewAdapter {
 
 	/**
 	 * Returns true if the passed adaptee type is 'observer'
+	 *
 	 * @param adaptee
 	 */
 	isIntersection(adaptee: ObserveStrategy): adaptee is IntersectionObserverStrategy {
@@ -105,6 +108,7 @@ export default class InViewAdapter {
 
 	/**
 	 * Unsuspends observing of the specified group of elements
+	 *
 	 * @param group
 	 */
 	unsuspend(group: InViewGroup): void;
@@ -122,6 +126,7 @@ export default class InViewAdapter {
 
 	/**
 	 * Re-initializes observing of the specified group
+	 *
 	 * @param group
 	 */
 	reObserve(group: InViewGroup): void;
@@ -178,6 +183,7 @@ export default class InViewAdapter {
 
 	/**
 	 * Recalculates the elements position map
+	 *
 	 * @param deffer
 	 */
 	recalculate(deffer: boolean): void {
@@ -194,6 +200,7 @@ export default class InViewAdapter {
 
 	/**
 	 * Calls an observable callback
+	 *
 	 * @param observable
 	 */
 	call(observable: InViewObservableElement): void {
@@ -206,6 +213,7 @@ export default class InViewAdapter {
 
 	/**
 	 * Returns a threshold map of the specified element
+	 *
 	 * @param el
 	 */
 	getThresholdMap(el: Element): CanUndef<InViewObservableThresholdMap> {
@@ -232,6 +240,7 @@ export default class InViewAdapter {
 
 	/**
 	 * Normalizes the specified directive options
+	 *
 	 * @param opts
 	 */
 	protected normalizeOptions(opts: InViewInitOptions): InViewInitOptions {

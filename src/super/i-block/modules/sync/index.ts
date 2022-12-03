@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/check-indentation */
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,6 +9,7 @@
 
 /**
  * [[include:super/i-block/modules/sync/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -422,7 +424,6 @@ export default class Sync extends Friend {
 			});
 		}
 
-		// eslint-disable-next-line no-lone-blocks
 		{
 			let
 				key;
@@ -834,7 +835,6 @@ export default class Sync extends Friend {
 				});
 			}
 
-			// eslint-disable-next-line no-lone-blocks
 			{
 				let
 					key;
@@ -956,7 +956,7 @@ export default class Sync extends Friend {
 	 * Synchronizes component link values with values they are linked
 	 *
 	 * @param path - path to a property/event that we are referring or
-	 *   [path to a property that contains a link, path to a property/event that we are referring]
+	 * [path to a property that contains a link, path to a property/event that we are referring]
 	 *
 	 * @param [value] - value to synchronize links
 	 */

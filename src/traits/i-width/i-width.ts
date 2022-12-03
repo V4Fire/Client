@@ -8,6 +8,7 @@
 
 /**
  * [[include:traits/i-width/README.md]]
+ *
  * @packageDocumentation
  */
 

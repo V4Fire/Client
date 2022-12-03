@@ -44,12 +44,14 @@ export interface FieldWatcher<
 
 	/**
 	 * If false, the watcher won't be registered for functional/flyweight components
+	 *
 	 * @default `true`
 	 */
 	functional?: boolean;
 
 	/**
 	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
+	 *
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
@@ -80,12 +82,14 @@ export interface WatchObject<
 
 	/**
 	 * If true, the watcher will be removed from a component after the first calling
+	 *
 	 * @default `false`
 	 */
 	single?: boolean;
 
 	/**
 	 * If false, the watcher won't be registered for functional/flyweight components
+	 *
 	 * @default `true`
 	 */
 	functional?: boolean;
@@ -108,11 +112,12 @@ export interface WatchObject<
 
 	/**
 	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
+	 *
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
 
-	/***
+	/**
 	 * Wrapper for a handler
 	 *
 	 * @example
@@ -162,12 +167,14 @@ export interface MethodWatcher<
 
 	/**
 	 * If true, the watcher will be removed from a component after the first calling
+	 *
 	 * @default `false`
 	 */
 	single?: boolean;
 
 	/**
 	 * If false, the watcher won't be registered for functional/flyweight components
+	 *
 	 * @default `true`
 	 */
 	functional?: boolean;
@@ -185,11 +192,12 @@ export interface MethodWatcher<
 
 	/**
 	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
+	 *
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
 
-	/***
+	/**
 	 * Wrapper for a handler
 	 *
 	 * @example

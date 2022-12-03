@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/directives/image/README.md]]
+ *
  * @packageDocumentation
  */
 

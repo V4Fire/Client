@@ -254,7 +254,6 @@ module.exports = function init(gulp = require('gulp')) {
 			port: args['--start-port'] || START_PORT
 		});
 
-		// eslint-disable-next-line require-atomic-updates
 		args['--page'] = args['--page'] || build.demoPage();
 
 		const
@@ -309,6 +308,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 		/**
 		 * Initializes browsers and starts tests
+		 *
 		 * @returns {!Promise<void>}
 		 */
 		async function initBrowserAndTests() {
@@ -331,7 +331,7 @@ module.exports = function init(gulp = require('gulp')) {
 		 *
 		 * @param {string} browserType
 		 * @param {number} attempt
-		 * @returns {jasmine.Env}
+		 * @returns {import("jasmine").Env}
 		 */
 		function getTestEnv(browserType, attempt) {
 			const
@@ -477,7 +477,7 @@ module.exports = function init(gulp = require('gulp')) {
 			};
 
 			while (!isTestSuccessful && attemptsFinished - 1 < retries) {
-				// eslint-disable-next-line require-atomic-updates
+
 				isTestSuccessful = await testExecutor();
 
 				if (!isTestSuccessful) {

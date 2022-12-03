@@ -138,6 +138,7 @@ export default abstract class iControlList {
 
 	/**
 	 * Calls an event handler for the specified control
+	 *
 	 * @param _opts
 	 */
 	getControlEvent(_opts: Control): string {

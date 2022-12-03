@@ -8,6 +8,7 @@
 
 /**
  * [[include:dummies/b-dummy-decorators/README.md]]
+ *
  * @packageDocumentation
  */
 

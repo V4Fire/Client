@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/mods/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -95,6 +96,7 @@ export function mergeMods(
 
 /**
  * Initializes the component modifiers
+ *
  * @param component
  */
 export function initMods(component: iBlock): ModsNTable {
@@ -192,6 +194,7 @@ export function initMods(component: iBlock): ModsNTable {
 
 /**
  * Returns a dictionary with watchable modifiers
+ *
  * @param component
  */
 export function getWatchableMods(component: iBlock): Readonly<ModsNTable> {

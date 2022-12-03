@@ -13,6 +13,7 @@ export const
 
 /**
  * Returns an icon by the specified identifier
+ *
  * @param id
  */
 export function getIcon(id?: string): CanPromise<Icon> {

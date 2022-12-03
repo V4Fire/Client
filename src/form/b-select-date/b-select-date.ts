@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-select-date/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -244,6 +245,7 @@ export default class bSelectDate extends iInput implements iWidth {
 
 	/**
 	 * Handler: changing the component value via some user actions
+	 *
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected async onActionChange(): Promise<void> {

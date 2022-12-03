@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-tree/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -195,6 +196,7 @@ export default class bTree extends iData implements iItems {
 
 	/**
 	 * Returns a dictionary with props for the specified item
+	 *
 	 * @param item
 	 */
 	protected getFoldProps(item: this['Item']): Dictionary {
@@ -205,6 +207,7 @@ export default class bTree extends iData implements iItems {
 
 	/**
 	 * Returns a value of the `folded` property from the specified item
+	 *
 	 * @param item
 	 */
 	protected getFoldedPropValue(item: this['Item']): boolean {
@@ -217,6 +220,7 @@ export default class bTree extends iData implements iItems {
 
 	/**
 	 * Returns a value of the `folded` modifier from an element by the specified identifier
+	 *
 	 * @param id
 	 */
 	protected getFoldedModById(id: string): CanUndef<string> {
@@ -232,6 +236,7 @@ export default class bTree extends iData implements iItems {
 
 	/**
 	 * Searches an HTML element by the specified identifier and returns it
+	 *
 	 * @param id
 	 */
 	protected findItemElement(id: string): CanUndef<HTMLElement> {

@@ -19,6 +19,7 @@ let
 
 /**
  * Create a webpack plugin to show a build process by the passed name
+ *
  * @param {string} processName
  */
 module.exports = function createProgressPlugin(processName) {

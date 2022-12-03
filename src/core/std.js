@@ -1,4 +1,4 @@
-/* eslint-disable prefer-arrow-callback,no-var,no-new-func,object-shorthand,vars-on-top,prefer-rest-params */
+/* eslint-disable no-var,no-new-func,object-shorthand,vars-on-top,prefer-rest-params */
 
 /*!
  * V4Fire Client Core

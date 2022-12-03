@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/activation/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -216,6 +217,7 @@ export function onActivated(component: iBlock, force?: boolean): void {
 
 /**
  * Hook handler: the component has been deactivated
+ *
  * @param component
  */
 export function onDeactivated(component: iBlock): void {

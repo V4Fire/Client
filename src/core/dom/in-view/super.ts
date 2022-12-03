@@ -51,7 +51,7 @@ export default abstract class AbstractInView {
 	/**
 	 * Async instance
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-invalid-this
+
 	protected readonly async: Async<this> = new Async(this);
 
 	/**
@@ -168,6 +168,7 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Returns a threshold map of the specified element
+	 *
 	 * @param el
 	 */
 	getThresholdMap(el: Element): CanUndef<InViewObservableThresholdMap> {
@@ -176,6 +177,7 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Calls an observer function from the specified object
+	 *
 	 * @param observable
 	 */
 	call(observable: InViewObservableElement): void {
@@ -335,6 +337,7 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Creates a threshold map
+	 *
 	 * @param observable
 	 */
 	protected createThresholdMap(observable: InViewObservableElement): InViewObservableThresholdMap {
@@ -377,6 +380,7 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Returns a map which contains the specified element
+	 *
 	 * @param el
 	 */
 	protected getElMap(el: Element): InViewObservableElementsThresholdMap {
@@ -423,6 +427,7 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Removes all async operations from the specified element
+	 *
 	 * @param el
 	 */
 	protected clearAllAsync(el: InViewObservableElement): void {
@@ -437,6 +442,7 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Initializes observing for the specified element
+	 *
 	 * @param observable
 	 */
 	protected initObserve(_observable: InViewObservableElement): CanUndef<InViewObservableElement> {

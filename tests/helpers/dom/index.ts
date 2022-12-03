@@ -54,6 +54,7 @@ export default class DOM {
 
 	/**
 	 * Returns a selector for the specified ref
+	 *
 	 * @param refName
 	 */
 	static getRefSelector(refName: string): string {
@@ -62,6 +63,7 @@ export default class DOM {
 
 	/**
 	 * Clicks to an element matched to the specified ref name
+	 *
 	 * @see https://playwright.dev/#version=v1.2.0&path=docs%2Fapi.md&q=pageclickselector-options
 	 *
 	 * @param ctx

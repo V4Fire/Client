@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/accessor/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -16,6 +17,7 @@ import { cacheStatus, ComponentInterface } from 'core/component';
 
 /**
  * Attaches accessors and computed fields from a meta object to the specified component instance
+ *
  * @param component
  */
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
@@ -98,7 +100,6 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 			configurable: true,
 			enumerable: true,
 
-			// eslint-disable-next-line @typescript-eslint/unbound-method
 			get: el.get != null ? get : undefined,
 
 			// eslint-disable-next-line @typescript-eslint/unbound-method

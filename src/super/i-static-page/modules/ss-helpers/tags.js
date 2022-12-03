@@ -30,7 +30,6 @@ const
 	nonceAttr = {toString: () => nonce, escape: false, interpolate: false};
 
 const defAttrs = {
-	// eslint-disable-next-line no-nested-ternary
 	nonce: nonce ? [`window['${csp.nonceStore()}']`] : undefined
 };
 

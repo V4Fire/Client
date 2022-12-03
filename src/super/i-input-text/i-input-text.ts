@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-input-text/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -56,6 +57,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * UI type of the input
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#input_types
 	 */
 	@prop(String)
@@ -63,6 +65,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Autocomplete mode of the input
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefautocomplete
 	 */
 	@prop(String)
@@ -70,6 +73,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Placeholder text of the input
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefplaceholder
 	 */
 	@prop({type: String, required: false})
@@ -193,6 +197,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Text value of the input
+	 *
 	 * @see [[iInputText.textStore]]
 	 */
 	@computed({cache: false})
@@ -210,6 +215,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Sets a new text value of the input
+	 *
 	 * @param value
 	 */
 	set text(value: string) {
@@ -245,6 +251,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Text value store of the input
+	 *
 	 * @see [[iInputText.textProp]]
 	 */
 	@system((o) => o.sync.link((v) => v ?? ''))
@@ -252,6 +259,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Object of the compiled mask
+	 *
 	 * @see [[iInputText.mask]]
 	 */
 	@system()
@@ -259,6 +267,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Number of mask repetitions
+	 *
 	 * @see [[iInputText.maskRepetitionsProp]]
 	 */
 	@system()
@@ -268,6 +277,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Selects all content of the input
+	 *
 	 * @emits `selectText()`
 	 */
 	@wait('ready', {label: $$.selectText})
@@ -286,6 +296,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Clears content of the input
+	 *
 	 * @emits `clearText()`
 	 */
 	@wait('ready', {label: $$.clearText})
@@ -342,6 +353,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Updates the component text store with the provided value
+	 *
 	 * @param value
 	 */
 	protected updateTextStore(value: string): void {
@@ -404,6 +416,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Handler: there is occurred a keypress action on the masked input
+	 *
 	 * @param e
 	 */
 	protected onMaskKeyPress(e: KeyboardEvent): boolean {
@@ -412,6 +425,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Handler: removing characters from the mask via `backspace/delete` buttons
+	 *
 	 * @param e
 	 */
 	protected onMaskDelete(e: KeyboardEvent): boolean {
@@ -420,6 +434,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Handler: "navigation" over the mask via "arrow" buttons or click events
+	 *
 	 * @param e
 	 */
 	protected onMaskNavigate(e: KeyboardEvent | MouseEvent): boolean {

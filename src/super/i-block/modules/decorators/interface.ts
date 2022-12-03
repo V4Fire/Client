@@ -73,6 +73,7 @@ export type WaitStatuses =
 export interface WaitDecoratorOptions extends AsyncOptions {
 	/**
 	 * If true, then the wrapped function will always return a promise
+	 *
 	 * @default `false`
 	 */
 	defer?: boolean | number;

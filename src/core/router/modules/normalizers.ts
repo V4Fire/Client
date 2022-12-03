@@ -99,6 +99,7 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 
 /**
  * Returns a common representation of the specified route
+ *
  * @param params
  */
 export function purifyRoute<T extends AnyRoute>(params: Nullable<T>): PurifiedRoute<T> {
@@ -111,6 +112,7 @@ export function purifyRoute<T extends AnyRoute>(params: Nullable<T>): PurifiedRo
 
 /**
  * Returns a blank route object from the specified
+ *
  * @param route
  */
 export function getBlankRouteFrom(route: Nullable<AnyRoute | TransitionOptions>): PurifiedRoute<AnyRoute> {
@@ -186,6 +188,7 @@ export function convertRouteToPlainObjectWithoutProto<T extends AnyRoute>(route:
 
 /**
  * Returns a plain object based on the specified route without non-comparing parameters
+ *
  * @param route
  */
 export function getComparableRouteParams<T extends AnyRoute>(route: Nullable<T>): WatchableRoute<T> {

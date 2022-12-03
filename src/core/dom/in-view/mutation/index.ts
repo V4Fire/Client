@@ -45,12 +45,14 @@ export default class InView extends Super {
 
 	/**
 	 * Deferred version of the recalculate function
+	 *
 	 * @see recalculate
 	 */
 	readonly recalculateDeffer: Function;
 
 	/**
 	 * Deferred version of the check function
+	 *
 	 * @see recalculate
 	 */
 	readonly checkDeffer: Function;
@@ -313,6 +315,7 @@ export default class InView extends Super {
 
 	/**
 	 * Handler: element becomes visible on viewport
+	 *
 	 * @param observable
 	 */
 	protected onObservableIn(observable: InViewObservableElement): void {
@@ -343,6 +346,7 @@ export default class InView extends Super {
 
 	/**
 	 * Handler: element leaves viewport
+	 *
 	 * @param observable
 	 */
 	protected onObservableOut(observable: InViewObservableElement): void {

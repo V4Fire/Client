@@ -87,6 +87,7 @@ export default class History extends Friend {
 
 	/**
 	 * Initializes the index page
+	 *
 	 * @param [item] - initial history item
 	 */
 	initIndex(item: HistoryItem = {stage: INITIAL_STAGE, options: {}}): void {
@@ -145,6 +146,7 @@ export default class History extends Friend {
 
 	/**
 	 * Navigates back through the history
+	 *
 	 * @emits `history:transition(value: Transition)`
 	 */
 	back(): CanUndef<HistoryItem> {
@@ -175,6 +177,7 @@ export default class History extends Friend {
 
 	/**
 	 * Clears the history
+	 *
 	 * @emits `history:clear`
 	 */
 	clear(): boolean {
@@ -232,6 +235,7 @@ export default class History extends Friend {
 
 	/**
 	 * Unwinds the passed history item to the initial state
+	 *
 	 * @param item
 	 */
 	protected unwindPage(item: HistoryItem): void {
@@ -406,6 +410,7 @@ export default class History extends Friend {
 
 	/**
 	 * Scrolls a content to the top
+	 *
 	 * @param [animate]
 	 */
 	protected scrollToTop(animate: boolean = false): void {
@@ -438,6 +443,7 @@ export default class History extends Friend {
 
 	/**
 	 * Handler: was changed the visibility state of the top of a content
+	 *
 	 * @param state - if true, the top is visible
 	 */
 	protected onPageTopVisibilityChange(state: boolean): void {

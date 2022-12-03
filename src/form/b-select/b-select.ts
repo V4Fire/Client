@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-select/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -331,6 +332,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * List of component items or select options
+	 *
 	 * @see [[bSelect.itemsProp]]
 	 */
 	get items(): this['Items'] {
@@ -339,6 +341,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Sets a new list of component items
+	 *
 	 * @see [[bSelect.items]]
 	 */
 	set items(value: this['Items']) {
@@ -434,6 +437,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Store of component items
+	 *
 	 * @see [[bSelect.items]]
 	 */
 	@field<bSelect>((o) => o.sync.link<Items>((val) => {
@@ -489,6 +493,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Returns true if the specified value is selected
+	 *
 	 * @param value
 	 */
 	isSelected(value: unknown): boolean {
@@ -512,7 +517,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 *
 	 * @param value
 	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
-	 *   (works only with the `multiple` mode)
+	 * (works only with the `multiple` mode)
 	 */
 	selectValue(value: this['Value'], unselectPrevious: boolean = false): boolean {
 		const
@@ -706,7 +711,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 *
 	 * @param value
 	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
-	 *   (works only with the `multiple` mode)
+	 * (works only with the `multiple` mode)
 	 */
 	toggleValue(value: this['Value'], unselectPrevious: boolean = false): this['Value'] {
 		const
@@ -789,7 +794,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/** @see [[iOpenToggle.onOpenedChange]] */
-	// eslint-disable-next-line @typescript-eslint/require-await
+
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await on.openedChange(this, e);
 	}
@@ -827,6 +832,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Normalizes the specified items and returns it
+	 *
 	 * @param items
 	 */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
@@ -904,6 +910,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Handler: clearing of a component value
+	 *
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected async onClear(): Promise<void> {
@@ -914,6 +921,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Handler: value changing of a native component `<select>`
+	 *
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected onNativeChange(): void {
@@ -976,6 +984,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Handler: "navigation" over the select via "arrow" buttons
+	 *
 	 * @param e
 	 */
 	protected onItemsNavigate(e: KeyboardEvent): void {

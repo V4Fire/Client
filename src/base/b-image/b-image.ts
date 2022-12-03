@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-image/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -170,6 +171,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 
 	/**
 	 * Updates an image height according to its ratio
+	 *
 	 * @param img
 	 */
 	protected updateHeight(img: HTMLImageElement | string): void {
@@ -198,6 +200,7 @@ export default class bImage extends iBlock implements iProgress, iVisible {
 
 	/**
 	 * Updates an image ratio according to its height and width
+	 *
 	 * @param img
 	 */
 	protected updateCalculatedImageRatio(img: HTMLImageElement): void {

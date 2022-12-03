@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/dom/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -78,7 +79,7 @@ export default class DOM extends Friend {
 	 *
 	 * 1. You provide the root element of a component, and the method returns a component's instance from this element.
 	 * 2. You provide not the root element, and the method returns a component's instance from the closest parent
-	 *    component's root element.
+	 * component's root element.
 	 *
 	 * @param el
 	 * @param [rootSelector] - additional CSS selector that the component' root element should match
@@ -97,7 +98,7 @@ export default class DOM extends Friend {
 	 *
 	 * 1. You provide the root element of a component, and the method returns a component's instance from this element.
 	 * 2. You provide not the root element, and the method returns a component's instance from the closest parent
-	 *    component's root element.
+	 * component's root element.
 	 *
 	 * @param selector
 	 * @param [rootSelector] - additional CSS selector that the component' root element should match

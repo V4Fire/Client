@@ -118,6 +118,7 @@ export async function createFormAndEnvironment(page: Page, attrs: Dictionary = {
 
 /**
  * Checks all associated with the specified form checkboxes
+ *
  * @param form - form target
  */
 export async function checkCheckboxes(form: JSHandle<bForm>): Promise<void> {
@@ -132,6 +133,7 @@ export async function checkCheckboxes(form: JSHandle<bForm>): Promise<void> {
 
 /**
  * Intercepts `/form` requests
+ *
  * @param page
  */
 export function interceptFormRequest(page: Page): Promise<void> {

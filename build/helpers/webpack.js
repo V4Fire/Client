@@ -20,42 +20,49 @@ const
 
 /**
  * RegExp for a hashing output pattern
+ *
  * @type {!RegExp}
  */
 exports.hashRgxp = hashRgxp;
 
 /**
  * Output pattern
+ *
  * @type {string}
  */
 exports.output = hash(wp.output());
 
 /**
  * Output pattern for assets
+ *
  * @type {string}
  */
 exports.assetsOutput = hash(wp.assetsOutput());
 
 /**
  * Path for `assets.json`
+ *
  * @type {string}
  */
 exports.assetsJSON = path.join(src.clientOutput(), wp.assetsJSON());
 
 /**
  * Path for `assets.js`
+ *
  * @type {string}
  */
 exports.assetsJS = path.join(src.clientOutput(), wp.assetsJS());
 
 /**
  * Path for `dll-manifest.json`
+ *
  * @type {string}
  */
 exports.dllManifest = path.join(src.clientOutput(), wp.dllOutput({name: 'dll-manifest.json', hash: null}));
 
 /**
  * Cache folder
+ *
  * @type {string}
  */
 exports.cacheDir = path.join(src.cwd(), 'app-cache', build.hash());
@@ -114,8 +121,8 @@ const requireStatsFields = [
 /**
  * Merges child compilations from a Webpack stats file into the one entity
  *
- * @param {!Object} stats
- * @returns {!Object}
+ * @param {!object} stats
+ * @returns {!object}
  */
 function mergeStats(stats) {
 	return stats.children.reduce((acc, compilation, index) => {
@@ -157,8 +164,8 @@ exports.mergeStats = mergeStats;
 /**
  * Returns a new one Webpack stats JSON by merging the specified two stats objects
  *
- * @param {!Object} statsA
- * @param {!Object} statsB
+ * @param {!object} statsA
+ * @param {!object} statsB
  * @returns {string}
  */
 function createUnifiedJSONStats(statsA, statsB) {
@@ -223,7 +230,7 @@ exports.createUnifiedJSONStats = createUnifiedJSONStats;
 /**
  * Extracts temp folder hash from the passed Webpack stats object
  *
- * @param {!Object} stats
+ * @param {!object} stats
  * @returns {string}
  */
 function getTmpHashFromStats(stats) {

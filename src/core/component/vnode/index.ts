@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/vnode/README.md]]
+ *
  * @packageDocumentation
  */
 

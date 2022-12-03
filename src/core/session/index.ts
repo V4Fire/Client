@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/session/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -87,6 +88,7 @@ export async function set(auth?: SessionKey, params?: SessionParams): Promise<bo
 
 /**
  * Clears the current session
+ *
  * @emits `clear()`
  */
 export async function clear(): Promise<boolean> {

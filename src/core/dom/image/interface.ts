@@ -48,6 +48,7 @@ export interface ImageOptions {
 
 	/**
 	 * Srcset of an image. This option helps to manage the situation with multiple resolutions of the image to load.
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 *
 	 * @example
@@ -63,12 +64,14 @@ export interface ImageOptions {
 
 	/**
 	 * Image `sizes` attribute
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images
 	 */
 	sizes?: string;
 
 	/**
 	 * Values of `source` tags within `picture`
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	sources?: ImageSource[];
@@ -147,12 +150,14 @@ export interface ImageOptions {
 
 	/**
 	 * Will be called after successful loading (`img.onload`)
+	 *
 	 * @param el
 	 */
 	load?(el: Element): unknown;
 
 	/**
 	 * Will be called if loading error appears
+	 *
 	 * @param el
 	 */
 	error?(el: Element): unknown;
@@ -223,18 +228,21 @@ export interface DefaultImagePlaceholderOptions extends ImagePlaceholderOptions 
 export interface ImageSource {
 	/**
 	 * MIME resource type
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	type?: string;
 
 	/**
 	 * `media` attribute
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	media?: string;
 
 	/**
 	 * `srcset` attribute
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 *
 	 * @example
@@ -250,6 +258,7 @@ export interface ImageSource {
 
 	/**
 	 * `sizes` attribute
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
 	 */
 	sizes?: string;
@@ -319,9 +328,9 @@ interface HTMLShadowImageElement extends HTMLImageElement {
 
 	/**
 	 * If
-	 *   - `true` – the image has been successfully loaded;
-	 *   - `false`– the image loading has been failed;
-	 *   - `undefined` – initial state, loading isn't finished
+	 * - `true` – the image has been successfully loaded;
+	 * - `false`– the image loading has been failed;
+	 * - `undefined` – initial state, loading isn't finished
 	 */
 	[IS_LOADED]?: boolean;
 

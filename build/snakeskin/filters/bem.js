@@ -20,7 +20,7 @@ module.exports = [
 	 * Integrates BEM classes to a component: attaches identifiers, provides runtime transformers, etc.
 	 *
 	 * @param {string} block
-	 * @param {!Object} attrs
+	 * @param {!object} attrs
 	 * @param {string} rootTag
 	 * @param {string} value
 	 * @returns {string}

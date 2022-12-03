@@ -10,6 +10,7 @@
 
 /**
  * [[include:super/i-data/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -191,6 +192,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Enables the suspending of all requests to the data provider till you don't manually force it.
 	 * Also, the parameter can contain a promise resolve function.
+	 *
 	 * @see [[iData.suspendRequestsProp]]
 	 */
 	@system((o) => o.sync.link())
@@ -317,6 +319,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Component data store
+	 *
 	 * @see [[iData.db]]
 	 */
 	@field()
@@ -689,6 +692,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Converts raw provider data to the component `db` format and returns it
+	 *
 	 * @param data
 	 */
 	protected convertDataToDB<O>(data: unknown): O;
@@ -726,6 +730,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Converts data from `db` to the component field format and returns it
+	 *
 	 * @param data
 	 */
 	protected convertDBToComponent<O = unknown>(data: unknown): O | this['DB'] {
@@ -843,6 +848,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Synchronization of `dataProvider` properties
+	 *
 	 * @param [initLoad] - if false, there is no need to call `initLoad`
 	 */
 	@watch([
@@ -894,6 +900,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Returns default request parameters for the specified data provider method
+	 *
 	 * @param method
 	 */
 	protected getDefaultRequestParams<T = unknown>(method: string): CanUndef<DefaultRequest<T>> {
@@ -999,6 +1006,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Patches the specified component context with the provider' CRUD methods
+	 *
 	 * @param ctx
 	 */
 	protected patchProviderContext(ctx: this): this {
@@ -1092,6 +1100,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Handler: `dataProvider.add`
+	 *
 	 * @param data
 	 */
 	protected onAddData(data: unknown): void {
@@ -1105,6 +1114,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Handler: `dataProvider.upd`
+	 *
 	 * @param data
 	 */
 	protected onUpdData(data: unknown): void {
@@ -1118,6 +1128,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Handler: `dataProvider.del`
+	 *
 	 * @param data
 	 */
 	protected onDelData(data: unknown): void {
@@ -1131,6 +1142,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Handler: `dataProvider.refresh`
+	 *
 	 * @param _data
 	 */
 	protected onRefreshData(_data: this['DB']): Promise<void> {

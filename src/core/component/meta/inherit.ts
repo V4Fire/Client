@@ -60,7 +60,6 @@ export function inheritMeta(
 
 	// Props/fields inheritance
 
-	// eslint-disable-next-line no-lone-blocks
 	{
 		const list = [
 			[meta.props, pProps],
@@ -116,7 +115,6 @@ export function inheritMeta(
 
 	// Accessors inheritance
 
-	// eslint-disable-next-line no-lone-blocks
 	{
 		const list = [
 			[meta.computedFields, pComputedFields],

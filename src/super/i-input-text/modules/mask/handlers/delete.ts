@@ -33,7 +33,6 @@ export function onDelete<C extends iInputText>(component: C, e: KeyboardEvent): 
 
 		!Object.isTruly(input) ||
 
-		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		!{Backspace: true, Delete: true}[e.key];
 
 	if (canIgnore) {

@@ -38,7 +38,7 @@ Object.assign(componentParams, {
 	 * Returns a map of component prop attributes
 	 *
 	 * @param name - component name
-	 * @returns {!Object}
+	 * @returns {!object}
 	 *
 	 * @example
 	 * ```js
@@ -134,7 +134,7 @@ $C(componentParams).forEach((el, key, data) => {
  * Returns runtime parameters of the specified component
  *
  * @param component - component object
- * @returns {!Object}
+ * @returns {!object}
  */
 function getParentParameters(component) {
 	if (!component || !component.parent) {

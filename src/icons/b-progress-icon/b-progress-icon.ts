@@ -8,6 +8,7 @@
 
 /**
  * [[include:icons/b-progress-icon/README.md]]
+ *
  * @packageDocumentation
  */
 

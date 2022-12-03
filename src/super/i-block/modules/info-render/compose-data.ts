@@ -10,6 +10,7 @@ import type { GatheringStrategyData } from 'super/i-block/modules/info-render/in
 
 /**
  * Combines multiple data object into a single one
+ *
  * @param data
  */
 export default function composeDataEngine(

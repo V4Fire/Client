@@ -311,6 +311,7 @@ export default class ChunkRequest extends Friend {
 
 	/**
 	 * Checks for the possibility of stopping data requests
+	 *
 	 * @param params
 	 */
 	shouldStopRequest(params: DataState): boolean {
@@ -334,6 +335,7 @@ export default class ChunkRequest extends Friend {
 
 	/**
 	 * Loads additional data
+	 *
 	 * @emits `chunkLoaded(lastLoadedChunk:` [[LastLoadedChunk]]`)`
 	 */
 	protected load(): Promise<CanUndef<RemoteData>> {

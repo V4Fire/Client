@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/engines/vue/README.md]]
+ *
  * @packageDocumentation
  */
 

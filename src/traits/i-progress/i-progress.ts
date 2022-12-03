@@ -10,6 +10,7 @@
 
 /**
  * [[include:traits/i-progress/README.md]]
+ *
  * @packageDocumentation
  */
 

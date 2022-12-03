@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-radio-button/README.md]]
+ *
  * @packageDocumentation
  */
 

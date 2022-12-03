@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/lfc/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -29,6 +30,7 @@ export * from 'super/i-block/modules/lfc/interface';
 export default class Lfc extends Friend {
 	/**
 	 * Returns true if the component hook is equal to one of "before create" hooks
+	 *
 	 * @param [skip] - name of a skipped hook
 	 */
 	isBeforeCreate(...skip: Hook[]): boolean {

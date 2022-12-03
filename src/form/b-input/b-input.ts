@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-input/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -78,6 +79,7 @@ export default class bInput extends iInputText {
 
 	/**
 	 * The minimum value of the input (for number and date types)
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmin
 	 */
 	@prop({type: [Number, String, Date], required: false})
@@ -85,6 +87,7 @@ export default class bInput extends iInputText {
 
 	/**
 	 * The maximum value of the input (for number and date types)
+	 *
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefmax
 	 */
 	@prop({type: [Number, String, Date], required: false})
@@ -218,6 +221,7 @@ export default class bInput extends iInputText {
 
 	/**
 	 * True, if the component has a text hint
+	 *
 	 * @see [[bInput.textHint]]
 	 */
 	get hasTextHint(): boolean {
@@ -352,6 +356,7 @@ export default class bInput extends iInputText {
 
 	/**
 	 * Handler: manual editing of a component text value
+	 *
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected onEdit(): void {
@@ -366,6 +371,7 @@ export default class bInput extends iInputText {
 
 	/**
 	 * Handler: clearing of a component value
+	 *
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected async onClear(): Promise<void> {

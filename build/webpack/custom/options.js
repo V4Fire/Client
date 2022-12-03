@@ -10,7 +10,8 @@
 
 /**
  * Returns options for other webpack options
- * @returns {!Object}
+ *
+ * @returns {!object}
  */
 module.exports = function other() {
 	return {};

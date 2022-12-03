@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/vdom/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -39,6 +40,7 @@ export * from 'super/i-block/modules/vdom/interface';
 export default class VDOM extends Friend {
 	/**
 	 * Renders the specified data
+	 *
 	 * @param data
 	 *
 	 * @example
@@ -58,6 +60,7 @@ export default class VDOM extends Friend {
 
 	/**
 	 * Returns a render object by the specified path
+	 *
 	 * @param path - path to a template
 	 *
 	 * @example
@@ -201,6 +204,7 @@ export default class VDOM extends Friend {
 
 	/**
 	 * Returns a link to the closest parent component from the current
+	 *
 	 * @param component - component name or a link to the component constructor
 	 */
 	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<any[], T> | Function): CanUndef<T> {

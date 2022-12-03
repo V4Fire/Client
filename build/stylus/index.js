@@ -33,6 +33,7 @@ const plugins = [
 
 		/**
 		 * Outputs the specified arguments to console
+		 *
 		 * @param args
 		 */
 		api.define('log', (...args) => console.log(...args));

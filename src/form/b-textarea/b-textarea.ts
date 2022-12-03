@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-textarea/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -364,6 +365,7 @@ export default class bTextarea extends iInputText {
 
 	/**
 	 * Handler: updating of a limit warning
+	 *
 	 * @param el
 	 */
 	protected onLimitUpdate(el: Element): void {
@@ -408,6 +410,7 @@ export default class bTextarea extends iInputText {
 
 	/**
 	 * Handler: manual editing of a component text value
+	 *
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	protected onEdit(): void {

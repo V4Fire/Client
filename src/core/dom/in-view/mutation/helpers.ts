@@ -32,6 +32,7 @@ export function getOffsetLeft({scrollLeft}: RootRect, {left}: DOMRect | ClientRe
 
 /**
  * Returns true if an element is visible
+ *
  * @param rect
  */
 export function isElementVisible(rect: {width: number; height: number}): boolean {

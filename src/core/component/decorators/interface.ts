@@ -47,6 +47,7 @@ export interface PropOptions<T = unknown> {
 
 	/**
 	 * If false, then the property isn't required
+	 *
 	 * @default `true`
 	 *
 	 * @example
@@ -82,6 +83,7 @@ export interface PropOptions<T = unknown> {
 
 	/**
 	 * If false, the property can't work within functional or flyweight components
+	 *
 	 * @default `true`
 	 */
 	functional?: boolean;
@@ -135,6 +137,7 @@ export interface DecoratorFieldWatcherObject<
 
 	/**
 	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
+	 *
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
@@ -153,6 +156,7 @@ export interface DecoratorProp<
 > extends PropOptions {
 	/**
 	 * If true, then the property always uses own default property when it is necessary
+	 *
 	 * @default `false`
 	 */
 	forceDefault?: boolean;
@@ -173,6 +177,7 @@ export interface DecoratorSystem<
 > extends DecoratorFunctionalOptions {
 	/**
 	 * If true, the property will be initialized before all non-atom properties
+	 *
 	 * @default `false`
 	 */
 	atom?: boolean;
@@ -185,12 +190,14 @@ export interface DecoratorSystem<
 	/**
 	 * If true, then the property is unique for a component.
 	 * Also, the parameter can take a function that returns a boolean value.
+	 *
 	 * @default `false`
 	 */
 	unique?: boolean | UniqueFieldFn<CTX>;
 
 	/**
 	 * If false, the property can't be watched within a functional component
+	 *
 	 * @default `true`
 	 */
 	functionalWatching?: boolean;
@@ -242,6 +249,7 @@ export interface DecoratorField<
 
 	/**
 	 * If false, then changes of the property don't force direct re-render
+	 *
 	 * @default `true`
 	 */
 	forceUpdate?: boolean;
@@ -250,12 +258,14 @@ export interface DecoratorField<
 export interface DecoratorFunctionalOptions {
 	/**
 	 * If false, the instance won't be borrowed from a parent when the owner component is a flyweight
+	 *
 	 * @default `true`
 	 */
 	replace?: boolean;
 
 	/**
 	 * If false, the instance can't be used with functional components
+	 *
 	 * @default `true`
 	 */
 	functional?: boolean;

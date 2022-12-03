@@ -8,6 +8,7 @@
 
 /**
  * [[include:dummies/b-dummy-lfc/README.md]]
+ *
  * @packageDocumentation
  */
 

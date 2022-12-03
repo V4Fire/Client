@@ -8,6 +8,7 @@
 
 /**
  * [[include:traits/i-history/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -22,6 +23,7 @@ export default abstract class iHistory extends iBlock {
 
 	/**
 	 * Handler: was changed the visibility state of the top of a content
+	 *
 	 * @param state - if true, the top is visible
 	 */
 	abstract onPageTopVisibilityChange(state: boolean): void;

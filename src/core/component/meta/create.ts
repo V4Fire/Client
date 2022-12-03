@@ -31,6 +31,7 @@ import type {
 
 /**
  * Creates a meta object for the specified component and returns it
+ *
  * @param component - component constructor info
  */
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {

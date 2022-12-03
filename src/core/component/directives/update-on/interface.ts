@@ -39,6 +39,7 @@ export interface DirectiveValue {
 
 	/**
 	 * If true, the listener will be removed after the first calling
+	 *
 	 * @default `false`
 	 */
 	single?: boolean;

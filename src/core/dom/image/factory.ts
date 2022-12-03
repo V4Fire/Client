@@ -192,6 +192,7 @@ export default class Factory {
 
 	/**
 	 * Creates a `type` attribute value of the `source` tag
+	 *
 	 * @param type
 	 */
 	type(type: CanUndef<string>): string {

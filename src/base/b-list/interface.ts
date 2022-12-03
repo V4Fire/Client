@@ -62,6 +62,7 @@ export interface Item extends Dictionary {
 
 	/**
 	 * Name of the used component to show `preIcon`
+	 *
 	 * @default `'b-icon'`
 	 */
 	preIconComponent?: string;
@@ -73,6 +74,7 @@ export interface Item extends Dictionary {
 
 	/**
 	 * Name of the used component to show `icon`
+	 *
 	 * @default `'b-icon'`
 	 */
 	iconComponent?: string;

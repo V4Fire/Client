@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-list/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -127,6 +128,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * Additional attributes are provided to an "internal" (native) list tag
+	 *
 	 * @see [[bList.attrsProp]]
 	 */
 	get attrs(): Dictionary {
@@ -143,6 +145,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * List of component items
+	 *
 	 * @see [[bList.itemsProp]]
 	 */
 	@computed({dependencies: ['value', 'itemsStore']})
@@ -152,6 +155,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * Sets a new list of component items
+	 *
 	 * @see [[bList.items]]
 	 */
 	set items(value: this['Items']) {
@@ -187,6 +191,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * Store of component items
+	 *
 	 * @see [[bList.items]]
 	 */
 	@field<bList>((o) => o.sync.link<Items>((val) => {
@@ -300,6 +305,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * Returns true if the specified value is active
+	 *
 	 * @param value
 	 */
 	isActive(value: unknown): boolean {
@@ -584,6 +590,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * Normalizes the specified items and returns it
+	 *
 	 * @param items
 	 */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {

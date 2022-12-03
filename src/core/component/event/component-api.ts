@@ -10,6 +10,7 @@ import { EventEmitter2 as EventEmitter, ListenerFn } from 'eventemitter2';
 
 /**
  * Implements the base event API to a component instance
+ *
  * @param component
  */
 export function implementEventAPI(component: object): void {

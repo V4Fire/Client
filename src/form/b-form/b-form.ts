@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-form/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -152,6 +153,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * Additional request parameters
+	 *
 	 * @see [[bForm.paramsProp]]
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -182,7 +184,6 @@ export default class bForm extends iData implements iVisible {
 				const
 					component = this.dom.getComponent<iInput>(o[i], '[class*="_form_true"]');
 
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (component == null) {
 					continue;
 				}
@@ -236,6 +237,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * Clears values of all associated components
+	 *
 	 * @emits `clear()`
 	 */
 	async clear(): Promise<boolean> {
@@ -260,6 +262,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * Resets values to defaults of all associated components
+	 *
 	 * @emits `reset()`
 	 */
 	async reset(): Promise<boolean> {
@@ -457,12 +460,14 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * Returns values of the associated components grouped by names
+	 *
 	 * @param [validate] - if true, the method returns values only when the data is valid
 	 */
 	async getValues(validate?: ValidateOptions | boolean): Promise<Dictionary<CanArray<FormValue>>>;
 
 	/**
 	 * Returns values of the specified iInput components grouped by names
+	 *
 	 * @param elements
 	 */
 	async getValues(elements: iInput[]): Promise<Dictionary<CanArray<FormValue>>>;
@@ -517,6 +522,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * Returns a value to submit from the specified element
+	 *
 	 * @param el
 	 */
 	protected async getElValueToSubmit(el: iInput): Promise<unknown> {
@@ -549,6 +555,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * Toggles statuses of the form controls
+	 *
 	 * @param freeze - if true, all controls are frozen
 	 */
 	protected async toggleControls(freeze: boolean): Promise<void> {

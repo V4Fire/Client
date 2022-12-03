@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/component/field/README.md]]
+ *
  * @packageDocumentation
  */
 

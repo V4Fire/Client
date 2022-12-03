@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/check-indentation */
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,6 +9,7 @@
 
 /**
  * [[include:super/i-block/modules/async-render/README.md]]
+ *
  * @packageDocumentation
  */
 

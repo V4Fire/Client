@@ -8,6 +8,7 @@
 
 /**
  * [[include:traits/i-open-toggle/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -23,6 +24,7 @@ export default abstract class iOpenToggle extends iOpen {
 
 	/**
 	 * Toggles the component to open or close
+	 *
 	 * @param _args
 	 */
 	toggle(..._args: unknown[]): Promise<boolean> {

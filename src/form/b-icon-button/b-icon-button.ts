@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-icon-button/README.md]]
+ *
  * @packageDocumentation
  */
 

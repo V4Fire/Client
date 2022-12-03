@@ -44,12 +44,14 @@ export interface NumberValidatorParams extends ValidatorParams {
 
 	/**
 	 * Allowed symbols to represent the number floating point separator
+	 *
 	 * @default `['.', ',']`
 	 */
 	separator?: CanArray<string>;
 
 	/**
 	 * Allowed symbols to represent the stylish separator of a number integer part
+	 *
 	 * @default `[' ', '_']`
 	 */
 	styleSeparator?: CanArray<string>;

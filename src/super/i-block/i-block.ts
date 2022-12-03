@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/check-indentation */
 /* eslint-disable max-lines,@typescript-eslint/unified-signatures */
 
 /*!
@@ -10,6 +11,7 @@
 
 /**
  * [[include:super/i-block/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -261,6 +263,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component stage value
+	 *
 	 * @see [[iBlock.stageProp]]
 	 */
 	@computed({replace: false})
@@ -312,6 +315,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component modifiers
+	 *
 	 * @see [[iBlock.modsProp]]
 	 */
 	@system({
@@ -370,6 +374,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * List of additional dependencies to load
+	 *
 	 * @see [[iBlock.dependenciesProp]]
 	 */
 	@system((o) => o.sync.link((val) => {
@@ -668,6 +673,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * True if the component is already activated
+	 *
 	 * @see [[iBlock.activatedProp]]
 	 */
 	@system((o) => {
@@ -984,6 +990,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Internal dictionary with additional attributes for the component' root tag
+	 *
 	 * @see [[iBlock.rootAttrsStore]]
 	 */
 	@field()
@@ -1080,6 +1087,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component stage store
+	 *
 	 * @see [[iBlock.stageProp]]
 	 */
 	@field({
@@ -1096,12 +1104,14 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component hook store
+	 *
 	 * @see [[iBlock.hook]]
 	 */
 	protected hookStore: Hook = 'beforeRuntime';
 
 	/**
 	 * Component initialize status store
+	 *
 	 * @see [[iBlock.componentStatus]]
 	 */
 	@field({
@@ -1114,6 +1124,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component initialize status store for unwatchable statuses
+	 *
 	 * @see [[iBlock.componentStatus]]
 	 */
 	@system({unique: true})
@@ -1318,7 +1329,7 @@ export default abstract class iBlock extends ComponentInterface {
 			//#endif
 
 			//#unless runtime has core/helpers
-			// eslint-disable-next-line no-unreachable
+
 			return {};
 			//#endunless
 		}
@@ -1339,7 +1350,7 @@ export default abstract class iBlock extends ComponentInterface {
 			//#endif
 
 			//#unless runtime has core/browser
-			// eslint-disable-next-line no-unreachable
+
 			return {};
 			//#endunless
 		}
@@ -1672,6 +1683,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Returns true, if the specified event can be dispatched as an own component event (`selfDispatching`)
+	 *
 	 * @param event
 	 */
 	canSelfDispatchEvent(event: string): boolean {
@@ -2142,6 +2154,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Reloads component data
+	 *
 	 * @param [opts] - additional options
 	 */
 	reload(opts?: InitLoadOptions): Promise<void> {
@@ -2366,6 +2379,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Returns a dictionary with default component properties to reset a local storage state
+	 *
 	 * @param [data] - advanced data
 	 */
 	protected convertStateToStorageReset(data?: Dictionary): Dictionary {
@@ -2406,6 +2420,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Returns a dictionary with default component properties to reset a router state
+	 *
 	 * @param [data] - advanced data
 	 */
 	protected convertStateToRouterReset(data?: Dictionary): Dictionary {
@@ -2506,6 +2521,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Initializes the global event listeners
+	 *
 	 * @param [resetListener]
 	 */
 	@hook({created: {functional: false}})
@@ -2543,6 +2559,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Factory to create listeners from internal hook events
+	 *
 	 * @param hook - hook name to listen
 	 */
 	protected createInternalHookListener(hook: string): Function {
@@ -2551,6 +2568,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Handler: `callChild` event
+	 *
 	 * @param e
 	 */
 	protected onCallChild(e: ParentMessage<this>): void {
@@ -2564,6 +2582,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Hook handler: the component has been mounted
+	 *
 	 * @emits `mounted(el: Element)`
 	 */
 	@hook('mounted')

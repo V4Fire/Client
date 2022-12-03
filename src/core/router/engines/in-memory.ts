@@ -8,6 +8,7 @@
 
 /**
  * This package provides a router engine that stores its state completely in memory
+ *
  * @packageDescription
  */
 
@@ -46,6 +47,7 @@ export function getCurrentHistoryEntryPointer(): CanUndef<number> {
 
 /**
  * Creates an in-memory engine for `bRouter` component
+ *
  * @param ctx
  */
 export default function createRouter(ctx: bRouter): Router {

@@ -8,6 +8,7 @@
 
 /**
  * [[include:core/async/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -90,6 +91,7 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	/**
 	 * Clears the specified "requestAnimationFrame" timer or a group of timers
+	 *
 	 * @param opts - options for the operation
 	 */
 	cancelAnimationFrame(opts: ClearOptionsId<number>): this;
@@ -99,12 +101,14 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	/**
 	 * Wrapper for cancelAnimationFrame
+	 *
 	 * @param [id] - operation id (if not specified, then the operation will be applied for all registered tasks)
 	 */
 	clearAnimationFrame(id?: number): this;
 
 	/**
 	 * Clears the specified "requestAnimationFrame" timer or a group of timers
+	 *
 	 * @param opts - options for the operation
 	 */
 	clearAnimationFrame(opts: ClearOptionsId<number>): this;
@@ -116,12 +120,14 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	/**
 	 * Mutes the specified "requestAnimationFrame" timer
+	 *
 	 * @param [id] - operation id (if not specified, then the operation will be applied for all registered tasks)
 	 */
 	muteAnimationFrame(id?: number): this;
 
 	/**
 	 * Mutes the specified "requestAnimationFrame" timer or a group of timers
+	 *
 	 * @param opts - options for the operation
 	 */
 	muteAnimationFrame(opts: ClearOptionsId<number>): this;
@@ -131,12 +137,14 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	/**
 	 * Unmutes the specified "requestAnimationFrame" timer
+	 *
 	 * @param [id] - operation id (if not specified, then the operation will be applied for all registered tasks)
 	 */
 	unmuteAnimationFrame(id?: number): this;
 
 	/**
 	 * Unmutes the specified "requestAnimationFrame" timer or a group of timers
+	 *
 	 * @param opts - options for the operation
 	 */
 	unmuteAnimationFrame(opts: ClearOptionsId<number>): this;
@@ -146,12 +154,14 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	/**
 	 * Suspends the specified "requestAnimationFrame" timer
+	 *
 	 * @param [id] - operation id (if not specified, then the operation will be applied for all registered tasks)
 	 */
 	suspendAnimationFrame(id?: number): this;
 
 	/**
 	 * Suspends the specified "requestAnimationFrame" timer or a group of timers
+	 *
 	 * @param opts - options for the operation
 	 */
 	suspendAnimationFrame(opts: ClearOptionsId<number>): this;
@@ -161,12 +171,14 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	/**
 	 * Unsuspends the specified "requestAnimationFrame" timer
+	 *
 	 * @param [id] - operation id (if not specified, then the operation will be applied for all registered tasks)
 	 */
 	unsuspendAnimationFrame(id?: number): this;
 
 	/**
 	 * Unsuspends the specified "requestAnimationFrame" timer or a group of timers
+	 *
 	 * @param opts - options for the operation
 	 */
 	unsuspendAnimationFrame(opts: ClearOptionsId<number>): this;
@@ -176,12 +188,14 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 
 	/**
 	 * Returns a promise that will be resolved on the next animation frame request
+	 *
 	 * @param [element] - link for the element
 	 */
 	animationFrame(element?: Element): SyncPromise<number>;
 
 	/**
 	 * Returns a promise that will be resolved on the next animation frame request
+	 *
 	 * @param opts - options for the operation
 	 */
 	animationFrame(opts: AsyncAnimationFrameOptions): SyncPromise<number>;
@@ -307,7 +321,6 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 			const
 				links: object[] = [];
 
-			// eslint-disable-next-line no-lone-blocks
 			{
 				const
 					e = ['mousemove', 'touchmove'];
@@ -339,7 +352,6 @@ export default class Async<CTX extends object = Async<any>> extends Super<CTX> {
 				}
 			};
 
-			// eslint-disable-next-line no-lone-blocks
 			{
 				const
 					e = ['mouseup', 'touchend'];

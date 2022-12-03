@@ -8,6 +8,7 @@
 
 /**
  * [[include:form/b-button/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -267,6 +268,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 	/**
 	 * The way to show dropdown if the `dropdown` slot is provided
+	 *
 	 * @see [[gHint]]
 	 *
 	 * @example
@@ -284,6 +286,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 	/**
 	 * Initial additional attributes are provided to an "internal" (native) button tag
+	 *
 	 * @see [[bButton.$refs.button]]
 	 */
 	@prop({type: Object, required: false})

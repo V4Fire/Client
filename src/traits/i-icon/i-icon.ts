@@ -8,6 +8,7 @@
 
 /**
  * [[include:traits/i-icon/README.md]]
+ *
  * @packageDocumentation
  */
 

@@ -8,6 +8,7 @@
 
 /**
  * [[include:super/i-block/modules/info-render/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -34,6 +35,7 @@ export default class InfoRender extends Friend {
 
 	/**
 	 * Sets strategies for collecting data
+	 *
 	 * @param strategies
 	 */
 	setDataGatheringStrategies(...strategies: GatheringStrategy[]): void {
@@ -42,6 +44,7 @@ export default class InfoRender extends Friend {
 
 	/**
 	 * Sets strategies for rendering data
+	 *
 	 * @param strategies
 	 */
 	setDataRenderStrategies(...strategies: RenderStrategy[]): void {
@@ -65,6 +68,7 @@ export default class InfoRender extends Friend {
 
 	/**
 	 * Starts rendering data
+	 *
 	 * @param data
 	 */
 	protected initDataRendering(data: Dictionary): Promise<void> {

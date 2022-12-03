@@ -8,6 +8,7 @@
 
 /**
  * [[include:base/b-window/README.md]]
+ *
  * @packageDocumentation
  */
 
@@ -145,6 +146,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Window title store
+	 *
 	 * @see [[bWindow.titleProp]]
 	 */
 	@field((o) => o.sync.link())
@@ -152,6 +154,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Slot name store
+	 *
 	 * @see [[bWindow.slotNameProp]]
 	 */
 	@field((o) => o.sync.link())
@@ -159,6 +162,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Name of the active third-party slot to show
+	 *
 	 * @see [[bWindow.slotNameProp]]
 	 */
 	get slotName(): CanUndef<string> {
@@ -177,6 +181,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Window title
+	 *
 	 * @see [[bWindow.titleStore]]
 	 */
 	get title(): string {
