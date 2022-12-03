@@ -1,6 +1,6 @@
 'use strict';
 
-const base = require('@v4fire/linters/jest.config');
+const base = require('@v4fire/linters/jest-eslint.config');
 
 module.exports = {
 	...base,
