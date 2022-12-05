@@ -40,7 +40,35 @@ export * from 'core/component/directives/attrs/const';
 export * from 'core/component/directives/attrs/interface';
 
 ComponentEngine.directive('attrs', {
-	beforeCreate(params: DirectiveParams, vnode: VNode) {
+	getSSRProps(params: DirectiveParams, vnode: VNode): Dictionary {
+		const props = {};
+
+		vnode ??= Object.cast({
+			props: {},
+			patchFlag: 0,
+			shapeFlag: 0
+		});
+
+		this.beforeCreate(params, vnode);
+
+		vnode.dirs?.forEach((dir) => {
+			if (dir.dir.getSSRProps != null) {
+				Object.assign(props, dir.dir.getSSRProps(dir, vnode));
+			}
+		});
+
+		if (vnode.props != null) {
+			Object.entries(vnode.props).forEach(([key, el]) => {
+				if (!Object.isFunction(el)) {
+					props[key] = el;
+				}
+			});
+		}
+
+		return props;
+	},
+
+	beforeCreate(params: DirectiveParams, vnode: VNode): void {
 		let
 			handlerStore;
 
