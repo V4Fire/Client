@@ -164,18 +164,11 @@
 		- else
 			? rootAttrs[':class'] = value
 
-	- rootAttrs = {class: 'i-block-helper'}
-	: componentClasses = 'self.provide.componentClasses("' + self.name() + '", self.mods)'
-
-	- if require('@config/config').webpack.ssr
-		? self.appendToRootClasses('componentId')
-		? self.appendToRootClasses(componentClasses)
-
-	- else
-		? Object.assign(rootAttrs, { &
-			'data-cached-class-component-id': '',
-			'data-cached-dynamic-class': componentClasses
-		}) .
+	- rootAttrs = { &
+		class: 'i-block-helper',
+		'data-cached-class-component-id': '',
+		'data-cached-dynamic-class': 'self.provide.componentClasses("' + self.name() + '", self.mods)'
+	} .
 
 	- if skeletonMarker
 		? rootAttrs['data-skeleton-marker'] = 'true'

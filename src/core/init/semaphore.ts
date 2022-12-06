@@ -12,6 +12,14 @@ import Component, { app, rootComponents, ComponentElement } from 'core/component
 import flags from 'core/init/flags';
 
 export default createsAsyncSemaphore(async () => {
+	if (SSR) {
+		return (name) => rootComponents[name]!.then((res) => {
+			// eslint-disable-next-line @typescript-eslint/no-var-requires
+			const {renderToString} = require('vue/server-renderer');
+			return String(renderToString(new Component({...res})));
+		});
+	}
+
 	const
 		el = document.querySelector<HTMLElement>('[data-root-component]');
 
@@ -47,5 +55,5 @@ export default createsAsyncSemaphore(async () => {
 		get: () => document.querySelector<ComponentElement>('#root-component')?.component ?? null
 	});
 
-	return app.context;
+	return () => el;
 }, ...flags);

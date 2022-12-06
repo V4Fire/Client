@@ -15,3 +15,5 @@ import 'core/init/dom';
 import 'core/init/state';
 import 'core/init/abt';
 import 'core/init/prefetch';
+
+export { default } from 'core/init/semaphore';

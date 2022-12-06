@@ -8,3 +8,5 @@
 
 import '@v4fire/core/core';
 import 'core/init';
+
+export { default as initApp } from 'core/init';

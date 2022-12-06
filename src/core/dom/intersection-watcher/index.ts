@@ -11,15 +11,13 @@
  * @packageDocumentation
  */
 
-import { IS_NODE } from 'core/env';
 import { unimplement } from 'core/functools/implementation';
-
 import IntersectionWatcher from 'core/dom/intersection-watcher/engines';
 
 export * from 'core/dom/intersection-watcher/interface';
 export { IntersectionWatcher as default };
 
-const intersectionWatcher = IS_NODE ?
+const intersectionWatcher = SSR ?
 	{
 		watch: () => unimplement({name: 'watch', type: 'function'}),
 		unwatch: () => unimplement({name: 'unwatch', type: 'function'})

@@ -11,15 +11,13 @@
  * @packageDocumentation
  */
 
-import { IS_NODE } from 'core/env';
 import { unimplement } from 'core/functools/implementation';
-
 import ResizeWatcher from 'core/dom/resize-watcher/class';
 
 export * from 'core/dom/resize-watcher/interface';
 export { ResizeWatcher as default };
 
-const resizeWatcher = IS_NODE ?
+const resizeWatcher = SSR ?
 	{
 		watch: () => unimplement({name: 'watch', type: 'function'}),
 		unwatch: () => unimplement({name: 'unwatch', type: 'function'})

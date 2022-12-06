@@ -201,7 +201,12 @@ async function buildProjectGraph() {
 						entry = path.resolve(tmpEntries, '../', name);
 					}
 
-					str += `require('${getEntryPath(entry)}');\n`;
+					if (webpack.ssr) {
+						str += `Object.assign(module.exports, require('${getEntryPath(entry)}'));\n`;
+
+					} else {
+						str += `require('${getEntryPath(entry)}');\n`;
+					}
 				}
 
 				return str;

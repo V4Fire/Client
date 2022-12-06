@@ -13,6 +13,7 @@
 
 import SyncPromise from 'core/promise/sync';
 
+import { setVNodePatchFlags } from 'core/component/render';
 import { ComponentEngine, VNode } from 'core/component/engines';
 
 import { getDirectiveContext } from 'core/component/directives/helpers';
@@ -26,14 +27,29 @@ import type { DirectiveParams } from 'components/directives/icon/interface';
 export * from 'components/directives/icon/interface';
 
 ComponentEngine.directive('icon', {
-	getSSRProps(params: DirectiveParams) {
-		return {
-			innerHTML: `<use href="${SyncPromise.resolve(getIconHref(params.arg)).unwrap()}">`
-		};
-	},
-
 	beforeCreate(params: DirectiveParams, vnode: VNode): void {
 		vnode.type = 'svg';
+
+		if (SSR) {
+			const
+				ctx = getDirectiveContext(params, vnode);
+
+			if (ctx == null) {
+				return;
+			}
+
+			const
+				{r} = ctx.$renderEngine;
+
+			vnode.children = [
+				r.createVNode.call(ctx, 'use', {
+					href: SyncPromise.resolve(getIconHref(params.arg)).unwrap()
+				})
+			];
+
+			vnode.dynamicChildren = Object.cast(vnode.children.slice());
+			setVNodePatchFlags(vnode, 'children');
+		}
 	},
 
 	mounted(el: Element, params: DirectiveParams, vnode: VNode): void {
