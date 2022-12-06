@@ -12,6 +12,7 @@ const
 	Snakeskin = require('snakeskin');
 
 const
+	{webpack} = require('@config/config'),
 	{Vars} = Snakeskin;
 
 module.exports = [
@@ -39,7 +40,7 @@ module.exports = [
 			}
 
 			attrs['v-tag'] = ["rootTag || 'div'"];
-			return 'div';
+			return webpack.ssr ? 'tag' : 'div';
 		}
 
 		return tag;

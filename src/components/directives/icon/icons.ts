@@ -22,7 +22,7 @@ export function getIcon(id?: string): CanPromise<Icon> {
 		const
 			icon = iconsStore[id]?.ctx(path);
 
-		if (MODULE === 'ES2020') {
+		if (!SSR && MODULE === 'ES2020') {
 			return (async () => (await icon).default)();
 		}
 
@@ -38,7 +38,7 @@ export function getIcon(id?: string): CanPromise<Icon> {
 let
 	ctx;
 
-if (MODULE === 'ES2020') {
+if (!SSR && MODULE === 'ES2020') {
 	if (IS_PROD) {
 		// @ts-ignore (require)
 		ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy');

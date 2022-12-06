@@ -52,30 +52,47 @@ import type {
 	vModelSelect,
 	vModelCheckbox,
 	vModelRadio,
-	vModelDynamic
+	vModelDynamic,
+
+	ComponentInternalInstance
 
 } from 'core/component/engines';
 
+import type * as SSR from 'core/component/engines/ssr';
 import type { ComponentInterface } from 'core/component/interface';
+
+export interface RenderEngine<T extends object = object> {
+	supports: RenderEngineFeatures;
+	proxyGetters: ProxyGetters<T>;
+	r: RenderAPI;
+	wrapSSR<T extends typeof SSR>(
+		api: T,
+		ctx: SSR.SSRContext,
+		push: (item: any) => void,
+		parent: ComponentInternalInstance,
+		attrs: Dictionary
+	): T;
+}
 
 export interface RenderEngineFeatures {
 	regular: boolean;
 	functional: boolean;
 }
 
-export interface RenderEngine<T extends object = object> {
-	supports: RenderEngineFeatures;
-	proxyGetters: ProxyGetters<T>;
-	r: RenderAPI;
-}
+export type ProxyGetters<T extends object = object> = Record<ProxyGetterType, ProxyGetter<T>>;
 
-export interface RenderFactory {
-	(ctx: ComponentInterface, cache: unknown[]): () => CanArray<VNode>;
-}
+export type ProxyGetter<T extends object = object> = (ctx: T) => {
+	key: string | null;
+	value: object;
+	watch?(path: string, handler: Function): Function;
+};
 
-export interface RenderFn {
-	(bindings?: Dictionary): CanArray<VNode>;
-}
+export type ProxyGetterType =
+	'prop' |
+	'field' |
+	'system' |
+	'attr' |
+	'mounted';
 
 export interface RenderAPI {
 	render(vnode: VNode, parent?: ComponentInterface): Node;
@@ -128,17 +145,10 @@ export interface RenderAPI {
 	vModelDynamic: typeof vModelDynamic;
 }
 
-export type ProxyGetterType =
-	'prop' |
-	'field' |
-	'system' |
-	'attr' |
-	'mounted';
+export interface RenderFactory {
+	(ctx: ComponentInterface, cache: unknown[]): () => CanArray<VNode>;
+}
 
-export type ProxyGetter<T extends object = object> = (ctx: T) => {
-	key: string | null;
-	value: object;
-	watch?(path: string, handler: Function): Function;
-};
-
-export type ProxyGetters<T extends object = object> = Record<ProxyGetterType, ProxyGetter<T>>;
+export interface RenderFn {
+	(bindings?: Dictionary): CanArray<VNode>;
+}

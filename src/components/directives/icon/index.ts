@@ -11,6 +11,8 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
+
 import { ComponentEngine, VNode } from 'core/component/engines';
 
 import { getDirectiveContext } from 'core/component/directives/helpers';
@@ -24,6 +26,12 @@ import type { DirectiveParams } from 'components/directives/icon/interface';
 export * from 'components/directives/icon/interface';
 
 ComponentEngine.directive('icon', {
+	getSSRProps(params: DirectiveParams) {
+		return {
+			innerHTML: `<use href="${SyncPromise.resolve(getIconHref(params.arg)).unwrap()}">`
+		};
+	},
+
 	beforeCreate(params: DirectiveParams, vnode: VNode): void {
 		vnode.type = 'svg';
 	},

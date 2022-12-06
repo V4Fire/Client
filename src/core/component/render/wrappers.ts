@@ -8,8 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as c from 'core/component/const';
-
+import { componentRenderFactories } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 import { createVirtualContext } from 'core/component/functional';
 
@@ -27,7 +26,6 @@ import type {
 	renderList,
 	renderSlot,
 
-	mergeProps,
 	withDirectives,
 
 	VNode,
@@ -39,7 +37,7 @@ import type {
 import { registerComponent } from 'core/component/init';
 import { resolveAttrs, normalizeComponentAttrs } from 'core/component/render/helpers';
 
-import type { ComponentInterface } from 'core/component/interface';
+import type { ComponentInterface, RenderEngine } from 'core/component/interface';
 
 /**
  * Wrapper for the component library `createVNode` function
@@ -92,7 +90,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			{supports, r} = this.$renderEngine;
 
 		if ((!supports.regular || supports.functional) && params.functional === true) {
-			if (c.componentRenderFactories[componentName] == null) {
+			if (componentRenderFactories[componentName] == null) {
 				attachTemplatesToMeta(component, TPLS[componentName]);
 			}
 
@@ -222,18 +220,6 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 }
 
 /**
- * Wrapper for the component library `mergeProps` function
- * @param original
- */
-export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
-	return Object.cast(function mergeProps(this: CanUndef<ComponentInterface>, ...args: Parameters<T>) {
-		const props = original.apply(null, args);
-		resolveAttrs.call(this, {props});
-		return props;
-	});
-}
-
-/**
  * Wrapper for the component library `withDirectives` function
  * @param _
  */
@@ -309,3 +295,51 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		return vnode;
 	});
 }
+
+/**
+ * Wrapper for the component SSR library
+ *
+ * @param api
+ * @param ctx
+ * @param push
+ * @param parent
+ */
+export const wrapSSR: RenderEngine['wrapSSR'] = (api, ctx, push, parent) => {
+	const {ssrRenderAttrs, ssrRenderComponent} = api;
+
+	api.ssrRenderComponent = (comp, props, slots) => {
+		if (Object.fastCompare(comp, 'tag') && props != null && Object.isString(props.is)) {
+			const {is} = props;
+			delete props.is;
+
+			push(`<${is}${api.ssrRenderAttrs(props)}>`);
+
+			if (slots != null && Object.isFunction(slots.default)) {
+				(<() => [VNode]>slots.default)().forEach((vnode) => {
+					api.ssrRenderVNode(push, vnode, parent);
+				});
+			}
+
+			push(`</${is}>`);
+			return Object.cast('');
+		}
+
+		return ssrRenderComponent(comp, props);
+	};
+
+	api.ssrRenderAttrs = (attrs) => {
+		const {innerHTML} = attrs;
+		delete attrs.innerHTML;
+
+		let
+			res = ssrRenderAttrs(attrs);
+
+		if (Object.isString(innerHTML)) {
+			res += `>${innerHTML.trim().replace(/>$/, '')}`;
+		}
+
+		return res;
+	};
+
+	return api;
+};
