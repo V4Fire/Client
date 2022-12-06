@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecated } from 'core/functools/deprecation';
 
 import globalRoutes from 'routes';
 import type Async from 'core/async';
@@ -206,15 +205,6 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * @deprecated
-	 * @see [[bRouter.route]]
-	 */
-	@deprecated({renamedTo: 'route'})
-	get page(): CanUndef<this['r']['CurrentPage']> {
-		return this.route;
-	}
-
-	/**
 	 * Default route value
 	 *
 	 * @example
@@ -234,6 +224,7 @@ export default class bRouter extends iData {
 	 * router.defaultRoute.name === 'notFound'
 	 * ```
 	 */
+	// eslint-disable-next-line getter-return
 	@computed({cache: true, dependencies: ['routes']})
 	get defaultRoute(): CanUndef<router.RouteBlueprint> {
 		for (let routes = Object.values(this.routes), i = 0; i < routes.length; i++) {
@@ -364,15 +355,6 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * @deprecated
-	 * @see [[bRouter.getRoute]]
-	 */
-	@deprecated({renamedTo: 'getRoute'})
-	getPageOpts(ref: string): CanUndef<router.RouteBlueprint> {
-		return this.getRoute(ref);
-	}
-
-	/**
 	 * Emits a new transition to the specified route
 	 *
 	 * @param ref - route name or URL or `null`, if the route is equal to the previous
@@ -399,7 +381,7 @@ export default class bRouter extends iData {
 			{r, engine} = this;
 
 		const
-			currentEngineRoute = engine.route ?? engine.page;
+			currentEngineRoute = engine.route;
 
 		this.emit('beforeChange', ref, opts, method);
 
@@ -430,8 +412,8 @@ export default class bRouter extends iData {
 		const scroll = {
 			meta: {
 				scroll: {
-					x: pageXOffset,
-					y: pageYOffset
+					x: typeof scrollX === 'undefined' ? 0 : scrollX,
+					y: typeof scrollY === 'undefined' ? 0 : scrollY
 				}
 			}
 		};
@@ -643,19 +625,6 @@ export default class bRouter extends iData {
 	}
 
 	/**
-	 * @deprecated
-	 * @see [[bRouter.emitTransition]]
-	 */
-	@deprecated({renamedTo: 'emitTransition'})
-	setPage(
-		ref: Nullable<string>,
-		opts?: router.TransitionOptions,
-		method?: TransitionMethod
-	): Promise<CanUndef<router.Route>> {
-		return this.emitTransition(ref, opts, method);
-	}
-
-	/**
 	 * Updates the schema of routes
 	 *
 	 * @param basePath - base route path
@@ -816,7 +785,7 @@ export default class bRouter extends iData {
 	 * @param e
 	 */
 	@watch({
-		field: 'document:click',
+		path: 'document:click',
 		wrapper: (o, cb) => o.dom.delegate('[href]', cb)
 	})
 

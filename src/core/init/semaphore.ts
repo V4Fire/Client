@@ -13,10 +13,17 @@ import flags from 'core/init/flags';
 
 export default createsAsyncSemaphore(async () => {
 	if (SSR) {
-		return (name) => rootComponents[name]!.then((res) => {
+		return (name: string, params?: Dictionary) => rootComponents[name]!.then((component) => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const {renderToString} = require('vue/server-renderer');
-			return String(renderToString(new Component({...res})));
+
+			return renderToString(new Component({
+				...component,
+
+				data() {
+					return Object.assign(component.data?.call(this), params);
+				}
+			}));
 		});
 	}
 

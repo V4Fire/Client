@@ -7,9 +7,7 @@
  */
 
 import path, { Key, RegExpOptions } from 'path-to-regexp';
-
 import { concatURLs, toQueryString, fromQueryString } from 'core/url';
-import { deprecate } from 'core/functools/deprecation';
 
 import { qsClearFixRgxp, routeNames, defaultRouteNames, isExternal } from 'core/router/const';
 
@@ -249,11 +247,6 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				pattern = Object.isFunction(resolvedRoute?.pattern) ? resolvedRoute?.pattern(routeAPI) : resolvedRoute?.pattern;
 
 			return path.compile(pattern ?? ref)(p);
-		},
-
-		toPath(params?: Dictionary): string {
-			deprecate({name: 'toPath', type: 'method', renamedTo: 'resolvePath'});
-			return this.resolvePath(params);
 		}
 	});
 

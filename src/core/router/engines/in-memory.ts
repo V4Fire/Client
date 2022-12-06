@@ -48,8 +48,10 @@ export function getCurrentHistoryEntryPointer(): CanUndef<number> {
  * @param ctx
  */
 export default function createRouter(ctx: bRouter): Router {
-	const
-		emitter = new EventEmitter({maxListeners: 1e3, newListener: false});
+	const emitter = new EventEmitter({
+		maxListeners: 1e3,
+		newListener: false
+	});
 
 	return Object.mixin<Router>({withDescriptors: 'onlyAccessors'}, Object.create(emitter), {
 		get route(): CanUndef<Route> {
