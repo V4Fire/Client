@@ -24,12 +24,6 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	name?: string;
 
 	/**
-	 * @deprecated
-	 * @see [[StaticRouteMeta.name]]
-	 */
-	page?: string;
-
-	/**
 	 * Dependencies that are loaded with this route
 	 */
 	load?(): Promise<unknown>;
@@ -67,12 +61,6 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	 * @default `false`
 	 */
 	default?: boolean;
-
-	/**
-	 * @deprecated
-	 * @see [[StaticRouteMeta.default]]
-	 */
-	index?: boolean;
 
 	/**
 	 * If the route is an alias to another route, the parameter contains the route name we refer to.
@@ -166,21 +154,9 @@ export interface Route<
 	name: string;
 
 	/**
-	 * @deprecated
-	 * @see [[Route.name]]
-	 */
-	page?: string;
-
-	/**
 	 * If true, the route can be used as default
 	 */
 	default: boolean;
-
-	/**
-	 * @deprecated
-	 * @see [[Route.default]]
-	 */
-	index?: boolean;
 
 	/**
 	 * Route parameters that can be passed to the route path
@@ -216,12 +192,6 @@ export interface Router<
 	 * Active route
 	 */
 	readonly route?: CanUndef<Route<PARAMS, QUERY, META>>;
-
-	/**
-	 * @deprecated
-	 * @see [[Router.route]]
-	 */
-	readonly page?: CanUndef<Route<PARAMS, QUERY, META>>;
 
 	/**
 	 * History of routes
@@ -296,18 +266,6 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	name: string;
 
 	/**
-	 * @deprecated
-	 * @see [[RouteBlueprint.name]]
-	 */
-	page?: string;
-
-	/**
-	 * @deprecated
-	 * @see [[RouteBlueprint.meta.default]]
-	 */
-	index?: boolean;
-
-	/**
 	 * Pattern of the route path
 	 */
 	pattern?: string | ((route: RouteAPI) => CanUndef<string>);
@@ -363,12 +321,6 @@ export interface RouteAPI<
 	 * @param params
 	 */
 	resolvePath(params?: Dictionary): string;
-
-	/**
-	 * @deprecated
-	 * @see [[Route.toPath]]
-	 */
-	toPath?(params?: Dictionary): string;
 }
 
 export type AnyRoute =
@@ -402,12 +354,6 @@ export interface RouteParams extends TransitionOptions {
 	 * Route name
 	 */
 	name: string;
-
-	/**
-	 * @deprecated
-	 * @see [[RouteParams.name]]
-	 */
-	page?: string;
 }
 
 /**

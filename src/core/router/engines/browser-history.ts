@@ -12,7 +12,6 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecate } from 'core/functools/deprecation';
 
 import { session } from 'core/kv-storage';
 import { fromQueryString, toQueryString } from 'core/url';
@@ -238,24 +237,17 @@ export default function createRouter(component: bRouter): Router {
 		newListener: false
 	});
 
-	const router = Object.mixin({withAccessors: true}, Object.create(emitter), <Router>{
+	const router = Object.mixin({withDescriptors: 'onlyAccessors'}, Object.create(emitter), {
 		get route(): CanUndef<Route> {
 			const
 				url = this.id(location.href);
 
 			return {
 				name: url,
-				/** @deprecated */
-				page: url,
 				query: fromQueryString(location.search),
 				...history.state,
 				url
 			};
-		},
-
-		get page(): CanUndef<Route> {
-			deprecate({name: 'page', type: 'accessor', renamedTo: 'route'});
-			return this.route;
 		},
 
 		get history(): Route[] {

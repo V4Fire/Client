@@ -13,7 +13,6 @@
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-import { deprecate } from 'core/functools/deprecation';
 import {
 
 	Route,
@@ -52,18 +51,13 @@ export default function createRouter(ctx: bRouter): Router {
 	const
 		emitter = new EventEmitter({maxListeners: 1e3, newListener: false});
 
-	return Object.mixin<Router>({withAccessors: true}, Object.create(emitter), <Router>{
+	return Object.mixin<Router>({withDescriptors: 'onlyAccessors'}, Object.create(emitter), {
 		get route(): CanUndef<Route> {
 			if (historyLogPointer !== undefined) {
 				return historyLog[historyLogPointer];
 			}
 
 			return undefined;
-		},
-
-		get page(): CanUndef<Route> {
-			deprecate({name: 'page', type: 'accessor', renamedTo: 'route'});
-			return this.route;
 		},
 
 		get history(): Route[] {
