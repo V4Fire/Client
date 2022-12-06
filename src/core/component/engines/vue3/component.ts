@@ -13,7 +13,6 @@ import { beforeRenderHooks } from 'core/component/const';
 
 import { fillMeta } from 'core/component/meta';
 import { getComponentContext } from 'core/component/context';
-import { wrapSSR } from 'core/component/render';
 
 import type { ComponentEngine, ComponentOptions } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/interface';
@@ -81,8 +80,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			Object.set(ctx, '$renderEngine', {
 				supports,
 				proxyGetters,
-				r,
-				wrapSSR
+				r
 			});
 
 			init.beforeCreateState(ctx, meta, {implementEventAPI: true});

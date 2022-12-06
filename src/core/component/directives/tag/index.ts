@@ -17,12 +17,6 @@ import type { DirectiveParams } from 'core/component/directives/tag/interface';
 export * from 'core/component/directives/tag/interface';
 
 ComponentEngine.directive('tag', {
-	getSSRProps(params: DirectiveParams) {
-		return {
-			is: params.value
-		};
-	},
-
 	beforeCreate(params: DirectiveParams, vnode: VNode): void {
 		vnode.type = params.value ?? vnode.type;
 	}

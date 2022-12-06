@@ -52,26 +52,16 @@ import type {
 	vModelSelect,
 	vModelCheckbox,
 	vModelRadio,
-	vModelDynamic,
-
-	ComponentInternalInstance
+	vModelDynamic
 
 } from 'core/component/engines';
 
-import type * as SSR from 'core/component/engines/ssr';
 import type { ComponentInterface } from 'core/component/interface';
 
 export interface RenderEngine<T extends object = object> {
 	supports: RenderEngineFeatures;
 	proxyGetters: ProxyGetters<T>;
 	r: RenderAPI;
-	wrapSSR<T extends typeof SSR>(
-		api: T,
-		ctx: SSR.SSRContext,
-		push: (item: any) => void,
-		parent: ComponentInternalInstance,
-		attrs: Dictionary
-	): T;
 }
 
 export interface RenderEngineFeatures {

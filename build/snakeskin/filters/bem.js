@@ -9,7 +9,6 @@
  */
 
 const
-	{webpack} = require('@config/config'),
 	{wrapAttrArray} = include('build/snakeskin/filters/helpers');
 
 module.exports = [
@@ -26,27 +25,8 @@ module.exports = [
 		const
 			elName = element.replace(/^_+/, '');
 
-		if (webpack.ssr) {
-			attrs[':class'] = attrs[':class'] || [];
-
-			const
-				classes = attrs[':class'],
-				defClasses = classes.includes('componentId') ? [] : ['componentId'],
-				newClasses = classes.concat(defClasses, `classes && classes['${elName}']`);
-
-			attrs[':class'] = wrapAttrArray(newClasses);
-
-			const
-				styles = attrs[':style'];
-
-			if (!styles || !styles.length) {
-				attrs[':style'] = [`styles && styles['${elName}']`];
-			}
-
-		} else {
-			attrs['data-cached-class-component-id'] = wrapAttrArray([true]);
-			attrs['data-cached-class-provided-classes-styles'] = wrapAttrArray([elName]);
-		}
+		attrs['data-cached-class-component-id'] = wrapAttrArray([true]);
+		attrs['data-cached-class-provided-classes-styles'] = wrapAttrArray([elName]);
 
 		return block + element;
 	}
