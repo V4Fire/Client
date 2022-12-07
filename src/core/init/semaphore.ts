@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import engine, * as router from 'core/router';
+
 import { createsAsyncSemaphore } from 'core/event';
 import Component, { app, rootComponents, ComponentElement } from 'core/component';
 
@@ -17,13 +19,20 @@ export default createsAsyncSemaphore(async () => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const {renderToString} = require('vue/server-renderer');
 
-			return renderToString(new Component({
-				...component,
+			return {
+				router: {
+					engine,
+					...router
+				},
 
-				data() {
-					return Object.assign(component.data?.call(this), params);
-				}
-			}));
+				render: () => renderToString(new Component({
+					...component,
+
+					data() {
+						return Object.assign(component.data?.call(this), params);
+					}
+				}))
+			};
 		});
 	}
 
