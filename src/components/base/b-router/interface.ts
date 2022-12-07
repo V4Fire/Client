@@ -43,14 +43,11 @@ export type AnyRoute =
 	EngineRoute |
 	RouteAPI;
 
-/**
- * Function to compute dynamic values
- */
-export type ComputeParamFn = (ctx: bRouter) => unknown;
-export type RouteOption = Dictionary<unknown | ComputeParamFn>;
-
 export type TransitionType = 'soft' | 'hard';
 export type TransitionMethod = 'push' | 'replace' | 'event';
+
+export type ComputeParamFn = (ctx: bRouter) => unknown;
+export type RouteOption = Dictionary<unknown | ComputeParamFn>;
 
 // @ts-ignore (extend)
 export interface UnsafeBRouter<CTX extends bRouter = bRouter> extends UnsafeIData<CTX> {

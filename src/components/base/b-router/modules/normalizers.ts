@@ -10,10 +10,10 @@ import type bRouter from 'components/base/b-router/b-router';
 import type { AppliedRoute } from 'components/base/b-router/interface';
 
 /**
- * Fills route parameters with the default values and other stuff
+ * Fills the route parameters with default values and more
  *
- * @param route
- * @param router - link to a router instance
+ * @param route - the route to fill
+ * @param router - the router instance
  */
 export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 	const {
@@ -28,12 +28,9 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 		[meta.meta, meta]
 	];
 
-	for (let i = 0; i < defs.length; i++) {
-		const
-			[def, original] = defs[i];
-
+	defs.forEach(([def, original]) => {
 		if (!Object.isDictionary(def)) {
-			continue;
+			return;
 		}
 
 		Object.entries(def).forEach(([key, val]) => {
@@ -46,12 +43,11 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 				original[key] = val;
 			}
 		});
-	}
+	});
 
 	if (meta.paramsFromQuery !== false && Object.isArray(route.pathParams)) {
-		for (let o = route.pathParams, i = 0; i < o.length; i++) {
+		route.pathParams.forEach((param) => {
 			const
-				param = o[i],
 				{name} = param;
 
 			if (params[name] === undefined) {
@@ -64,6 +60,6 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 			}
 
 			delete query[name];
-		}
+		});
 	}
 }

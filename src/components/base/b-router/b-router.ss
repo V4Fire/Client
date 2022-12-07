@@ -12,5 +12,5 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		/// The slot to write auto tests
+		/// The slot for tests
 		+= self.slot()
