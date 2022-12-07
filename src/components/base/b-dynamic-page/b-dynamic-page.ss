@@ -8,7 +8,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-- import $C from 'collection.js'
 - include 'components/super/i-dynamic-page'|b as placeholder
 
 - template index() extends ['i-dynamic-page'].index
