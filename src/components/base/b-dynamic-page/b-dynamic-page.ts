@@ -19,6 +19,7 @@ import { Cache, RestrictedCache, AbstractCache } from 'core/cache';
 import SyncPromise from 'core/promise/sync';
 import type { EventEmitterLike } from 'core/async';
 
+import AsyncRender, { iterate } from 'components/friends/async-render';
 import iBlock from 'components/super/i-block/i-block';
 
 import iDynamicPage, {
@@ -50,13 +51,11 @@ import type {
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-dynamic-page/interface';
 
+AsyncRender.addToPrototype(iterate);
+
 const
 	$$ = symbolGenerator();
 
-/**
- * Component to dynamically load page components.
- * Basically, it uses with a router.
- */
 @component({
 	inheritMods: false,
 	defaultProps: false
@@ -67,38 +66,38 @@ export default class bDynamicPage extends iDynamicPage {
 	override readonly selfDispatching: boolean = true;
 
 	/**
-	 * Initial component name to load
+	 * The initial name of the page to load
 	 */
 	@prop({type: String, required: false})
 	readonly pageProp?: string;
 
 	/**
-	 * Active component name to load
+	 * The name of the active page to load
 	 * @see [[bDynamicPage.pageProp]]
 	 */
 	@system((o) => o.sync.link())
 	page?: string;
 
 	/**
-	 * If true, when switching from one page to another, the old page is stored within a cache by its name.
-	 * When occur switching back to this page, it will be restored.
-	 * It helps to optimize switching between pages but grows memory using.
+	 * If true, then when moving from one page to another, the old page is saved in the cache under its own name.
+	 * When you return to this page, it will be restored. This helps to optimize switching between pages, but increases
+	 * memory consumption.
 	 *
-	 * Notice, when a page is switching, it will be deactivated by invoking `deactivate`.
-	 * When the page is restoring, it will be activated by invoking `activate`.
+	 * Note that when a page is switched, it will be deactivated by calling `deactivate`.
+	 * When the page is restored, it will be activated by calling `activate`.
 	 */
 	@prop(Boolean)
 	readonly keepAlive: boolean = false;
 
 	/**
-	 * The maximum number of pages within the global `keepAlive` cache
+	 * The maximum number of pages in the `keepAlive` global cache
 	 */
 	@prop(Number)
 	readonly keepAliveSize: number = 10;
 
 	/**
 	 * A dictionary of `keepAlive` caches.
-	 * The keys represent cache groups (by default uses `global`).
+	 * The keys represent cache groups  (the default is `global`).
 	 */
 	@system<bDynamicPage>((o) => o.sync.link('keepAliveSize', (size: number) => ({
 		...o.keepAliveCache,
@@ -112,14 +111,15 @@ export default class bDynamicPage extends iDynamicPage {
 	keepAliveCache!: Dictionary<AbstractCache<iDynamicPageEl>>;
 
 	/**
-	 * A predicate to include pages to the `keepAlive` caching: if not specified, will be cached all loaded pages.
+	 * A predicate to include pages in `keepAlive` caching: if not specified, all loaded pages will be cached.
 	 * It can be defined as:
 	 *
 	 * 1. a component name (or a list of names);
 	 * 2. a regular expression;
-	 * 3. a function that takes a component name and returns `true` (include), `false` (does not include),
-	 *    a string key to cache (it uses instead of a component name),
-	 *    or a special object with information of the used cache strategy.
+	 * 3. a function that takes a component name and returns:
+	 *    * `true` (include), `false` (does not include);
+	 *    * a string key for caching (used instead of the component name);
+	 *    * or a special object with information about the caching strategy being used.
 	 */
 	@prop({
 		type: [String, Array, RegExp, Function],
@@ -129,7 +129,7 @@ export default class bDynamicPage extends iDynamicPage {
 	readonly include?: Include;
 
 	/**
-	 * A predicate to exclude some pages from the `keepAlive` caching.
+	 * A predicate to exclude some pages from `keepAlive` caching.
 	 * It can be defined as a component name (or a list of names), regular expression,
 	 * or a function that takes a component name and returns `true` (exclude) or `false` (does not exclude).
 	 */
@@ -141,13 +141,13 @@ export default class bDynamicPage extends iDynamicPage {
 	readonly exclude?: Exclude;
 
 	/**
-	 * Link to an event emitter to listen to events of the page switching
+	 * A link to an event emitter to listen for page switch events
 	 */
 	@prop({type: Object, required: false})
 	readonly emitter?: EventEmitterLike;
 
 	/**
-	 * Event name of the page switching
+	 * Page switching event name
 	 */
 	@prop({
 		type: String,
@@ -158,18 +158,26 @@ export default class bDynamicPage extends iDynamicPage {
 	readonly event?: string = 'setRoute';
 
 	/**
-	 * Function to extract a component name to load from the caught event object
+	 * A function (or an iterable of function) to extract the name of the component to load from the captured event object
 	 */
 	@prop({
-		type: [Function, Array],
-		default: (e) => e != null ? (e.meta.component ?? e.name) : undefined,
+		type: Object,
+		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
+		default: () => (e) => e != null ? (e.meta.component ?? e.name) : undefined,
 		forceDefault: true
 	})
 
-	readonly eventConverter!: CanArray<Function>;
+	readonly eventConverter!: CanIter<Function>;
 
 	/**
-	 * Link to the loaded page component
+	 * A list of functions to extract the name of the component to load from the captured event object
+	 * @see [[bDynamicPage.eventConverter]]
+	 */
+	@system((o) => o.sync.link('eventConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
+	eventConverters!: Function[];
+
+	/**
+	 * A link to the loaded page component
 	 */
 	@computed({cache: false, dependencies: ['page']})
 	get component(): CanPromise<iDynamicPage> {
@@ -203,21 +211,25 @@ export default class bDynamicPage extends iDynamicPage {
 	};
 
 	/**
-	 * True if the current page is taken from a cache
+	 * True if the current page is taken from the cache
 	 */
 	@system()
 	protected pageTakenFromCache: boolean = false;
 
 	/**
-	 * Handler: page has been changed
+	 * Handler: the page has been changed
 	 */
 	@system()
 	protected onPageChange?: Function;
 
 	/**
-	 * Iterator of the rendering loop (it uses with `asyncRender`)
+	 * Render loop iterator (used with `asyncRender`)
 	 */
 	protected get renderIterator(): CanPromise<number> {
+		if (SSR) {
+			return 1;
+		}
+
 		return SyncPromise.resolve(Infinity);
 	}
 
@@ -234,10 +246,10 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
-	 * Filter of the rendering loop (it uses with `asyncRender`)
+	 * Render loop filter (used with `asyncRender`)
 	 */
 	protected renderFilter(): CanPromise<boolean> {
-		if (this.lfc.isBeforeCreate()) {
+		if (SSR || this.lfc.isBeforeCreate()) {
 			return true;
 		}
 
@@ -318,10 +330,10 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
-	 * Returns a `keepAlive` cache strategy for the specified page
+	 * Returns the `keepAlive` caching strategy for the specified page
 	 *
 	 * @param page
-	 * @param [route] - link to an application route object
+	 * @param [route] - the application route object
 	 */
 	protected getKeepAliveStrategy(page: CanUndef<string>, route: this['route'] = this.route): KeepAliveStrategy {
 		const loopbackStrategy = {
@@ -468,15 +480,11 @@ export default class bDynamicPage extends iDynamicPage {
 					e = component;
 				}
 
-				let
-					newPage = e;
-
-				if (Object.isTruly(this.eventConverter)) {
-					newPage = Array.concat([], this.eventConverter).reduce((res, fn) => fn.call(this, res, this.page), newPage);
-				}
+				const
+					newPage = this.eventConverters.reduce((res, fn) => fn.call(this, res, this.page), e);
 
 				if (newPage == null || Object.isString(newPage)) {
-					this.page = <string>newPage;
+					this.page = newPage;
 				}
 
 			}, group);

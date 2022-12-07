@@ -1,6 +1,6 @@
 # components/base/b-dynamic-page
 
-This module provides a component to dynamically load page components. Basically, it uses with a router.
+This module provides a component for dynamically loading page components. Mainly used with a router.
 
 ## Synopsis
 
@@ -8,11 +8,11 @@ This module provides a component to dynamically load page components. Basically,
 
 * The component is a tiny wrapper for page components.
 
-* The component provides specified props to an internal page component.
+* The component provides the passed props to the inner page component.
 
-* The component automatically dispatches all events from an internal page component.
+* The component automatically dispatches all events from the inner page component.
 
-* The component does not have the default UI.
+* The component does not have a default UI.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -22,12 +22,12 @@ See the [[iDynamicPage]] component.
 
 ## Events
 
-The component automatically dispatches all events from an internal page component.
+The component automatically dispatches all events from the inner page component.
 Also, you can see the [[iDynamicPage]] component.
 
 ## Basic concepts
 
-The shortest way to bind some components with a router is using the `route` field and the `component :is` directive.
+The shortest way to bind some components to a router is to use the route field and the component `:is` directive.
 Let's look at an example below.
 
 ```
@@ -37,8 +37,8 @@ Let's look at an example below.
   Go to
 ```
 
-The example works fine, but the problems appear when we try to organize caching of the loaded components.
-Well, how can we solve this issue? If we use Vue as an engine of our app, we can use the `keep-alive` directive.
+The example works fine, but problems arise when we try to organize the caching of loaded components.
+Well, how can we solve this problem? If we are using Vue as the engine of our application, we can use the `keep-alive` directive.
 
 ```
 < keep-alive
@@ -48,15 +48,15 @@ Well, how can we solve this issue? If we use Vue as an engine of our app, we can
   Go to
 ```
 
-It works but works only with Vue. Also, this directive has a pretty poor API: we can't manually invalidate the cache;
-we can't customize caching of different components. Yea, we can use `include/exclude/max`, but there is no way to define
-different `max` for various components. And the main problem, that this directive uses a component name as a cache key, i.e.,
-we can't cache pages with the same name but with different query parameters as separated components.
+It works but only works with Vue. Also, this directive has a rather bad API: we can't manually invalidate the cache;
+we cannot configure caching of various components. Yes, we can use `include/exclude/max`, but there is no way to define
+different `max` for different components. And the main problem is that this directive uses the component name as a cache key,
+i.e. we cannot cache pages with the same name but different query parameters as separate components.
 
-The `bDynamicPage` solves all of these problems. It's a pretty simple wrapper for the `component :is` directive with
-its own potent cache API. You can specify custom cache keys, use different cache groups for various components, and other cool stuff.
+`bDynamicPage` solves all these problems. This is a fairly simple wrapper around the `component :is` directive with
+own powerful cache API. You can specify custom cache keys, use different cache groups for different components, and other cool stuff.
 
-Let's look at several examples of using this component:
+Let's look at a few examples of using this component.
 
 ### Simple using without caching of pages
 
@@ -67,7 +67,7 @@ Let's look at several examples of using this component:
   Go to
 ```
 
-### Automatically caching all pages with the same name
+### Automatically caching of all pages with the same name
 
 ```
 < b-dynamic-page :keepAlive = true
@@ -76,7 +76,7 @@ Let's look at several examples of using this component:
   Go to
 ```
 
-### Specifying the maximum size of the cache
+### Specifying the maximum cache size
 
 ```
 < b-dynamic-page :keepAlive = true | :keepAliveSize = 5
@@ -139,21 +139,21 @@ Let's look at several examples of using this component:
   Invalidate cache
 ```
 
-## Providing props to an internal component
+## Providing props to the inner page component
 
-By default, `bDynamicPage` provides all props defined in the [[iDynamicPage]] component to the internal component.
+By default, `bDynamicPage` provides all props defined in the [[iDynamicPage]] component to the inner page component.
 
 ```
-/// `pageTitle` will be provided to an internal component
+/// `pageTitle` will be provided to the inner page component
 < b-dynamic-page :keepAlive = true | :pageTitle = 'Hello world'
 ```
 
-## Catching events of an internal component
+## Catching events of the inner page component
 
-By default, `bDynamicPage` dispatches all events from an internal page component.
+By default, `bDynamicPage` dispatches all events from the inner page component.
 
 ```
-/// `initLoad` is caught from an internal component
+/// `initLoad` is caught from the inner page component
 < b-dynamic-page :keepAlive = true | @initLoad = console.log('Caught!')
 ```
 
@@ -165,39 +165,40 @@ Also, you can see the implemented traits or the parent component.
 
 #### [pageProp]
 
-An initial component name to load.
+The initial name of the page to load.
 
 #### [keepAlive = `false`]
 
-If true, when switching from one page to another, the old page is stored within a cache by its name.
-When occur switching back to this page, it will be restored. It helps to optimize switching between pages but grows memory using.
-Notice, when a page is switching, it will be deactivated by invoking `deactivate`.
-When the page is restoring, it will be activated by invoking `activate`.
+If true, then when moving from one page to another, the old page is saved in the cache under its own name.
+When you return to this page, it will be restored. This helps to optimize switching between pages, but increases memory consumption.
+Note that when a page is switched, it will be deactivated by calling `deactivate`.
+When the page is restored, it will be activated by calling `activate`.
 
 #### [keepAliveSize = `10`]
 
-The maximum number of pages within the global `keepAlive` cache.
+The maximum number of pages in the `keepAlive` global cache.
 
 #### [include]
 
-A predicate to include pages to the `keepAlive` caching: if not specified, will be cached all loaded pages.
+A predicate to include pages in `keepAlive` caching: if not specified, all loaded pages will be cached.
 It can be defined as:
 
 1. a component name (or a list of names);
 2. a regular expression;
-3. a function that takes a component name and returns `true` (include), `false` (does not include),
-   a string key to cache (it uses instead of a component name),
-   or a special object with information of the used cache strategy.
+3. a function that takes a component name and returns:
+  * `true` (include), `false` (does not include);
+  * a string key for caching (used instead of the component name);
+  * or a special object with information about the caching strategy being used.
 
 #### [exclude]
 
-A predicate to exclude some pages from the `keepAlive` caching.
+A predicate to exclude some pages from `keepAlive` caching.
 It can be defined as a component name (or a list of names), regular expression,
 or a function that takes a component name and returns `true` (exclude) or `false` (does not exclude).
 
 #### [emitter]
 
-A link to an event emitter to listen to events of the page switching.
+A link to an event emitter to listen for page switch events.
 
 ```
 < b-dynamic-page :emitter = router | :event = 'transition'
@@ -205,7 +206,7 @@ A link to an event emitter to listen to events of the page switching.
 
 #### [event]
 
-An event name of the page switching.
+Page switching event name.
 
 ```
 < b-dynamic-page :emitter = router | :event = 'transition'
@@ -213,7 +214,7 @@ An event name of the page switching.
 
 #### [eventConverter = `(e) => e?.meta.component ?? e?.name`]
 
-A function to extract a component name to load from the caught event object.
+A function (or an iterable of function) to extract the name of the component to load from the captured event object.
 
 ```
 < b-dynamic-page :emitter = router | :event = 'transition' | :eventConverter = (e) => e.meta.pageComponent
@@ -223,12 +224,16 @@ A function to extract a component name to load from the caught event object.
 
 #### page
 
-An active component name to load.
+The name of the active page to load.
 
 #### keepAliveCache
 
 A dictionary of `keepAlive` caches.
-The keys represent cache groups (by default uses `global`).
+The keys represent cache groups  (the default is `global`).
+
+#### eventConverters
+
+A list of functions to extract the name of the component to load from the captured event object.
 
 ### Getters
 

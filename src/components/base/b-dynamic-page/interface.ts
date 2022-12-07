@@ -9,35 +9,38 @@
 import type { AbstractCache } from 'core/cache';
 
 import type bDynamicPage from 'components/base/b-dynamic-page/b-dynamic-page';
+
 import type iDynamicPage from 'components/super/i-dynamic-page/i-dynamic-page';
 import type { ComponentElement, UnsafeIData } from 'components/super/i-dynamic-page/i-dynamic-page';
 
-export type Include =
-	CanArray<string> |
-	RegExp |
-	((page: string, route: iDynamicPage['route'], ctx: bDynamicPage) => boolean | string | KeepAliveCache);
+export type Include = CanArray<string> | RegExp | IncludeFn;
 
-export type Exclude =
-	CanArray<string> |
-	RegExp |
-	((page: string, route: iDynamicPage['route'], ctx: bDynamicPage) => boolean);
+export interface IncludeFn {
+	(page: string, route: iDynamicPage['route'], ctx: bDynamicPage): boolean | string | KeepAliveCache;
+}
+
+export type Exclude = CanArray<string> | RegExp | ExcludeFn;
+
+export interface ExcludeFn {
+	(page: string, route: iDynamicPage['route'], ctx: bDynamicPage): boolean;
+}
 
 export type iDynamicPageEl = ComponentElement<iDynamicPage>;
 
 export interface KeepAliveCache {
 	/**
-	 * Key to cache a page
+	 * Key for page caching
 	 */
 	cacheKey: string;
 
 	/**
-	 * Name of the used cache group.
+	 * The name of the cache group to use.
 	 * Pages with the same group will use the same cache object.
 	 */
 	cacheGroup: string;
 
 	/**
-	 * Creates an object to cache pages
+	 * Creates an object for caching pages
 	 */
 	createCache(): AbstractCache<iDynamicPageEl>;
 }
