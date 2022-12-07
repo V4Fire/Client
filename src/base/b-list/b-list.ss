@@ -35,6 +35,7 @@
 						:aria-selected = el.href === undefined ? isActive(el.value) : undefined |
 
 						:-id = values.get(el.value) |
+						:-router-prevent-transition = el.href !== undefined |
 						:-hint = el.hint |
 
 						:class = el.classes.concat(provide.elClasses({
