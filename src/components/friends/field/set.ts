@@ -149,7 +149,7 @@ export function setField<T = unknown>(
 					}
 
 					const needSync =
-						ctx.isNotRegular &&
+						ctx.isFunctional &&
 						unwrap(ref) === ref;
 
 					// If the component has not yet initialized field watchers,
