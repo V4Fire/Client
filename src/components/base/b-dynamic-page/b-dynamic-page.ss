@@ -23,8 +23,9 @@
 			< component.&__component &
 				v-if = !pageTakenFromCache |
 				ref = component |
-				:instanceOf = iDynamicPage |
+
 				:is = page |
 				:dispatching = true |
+
 				${attrs}
 			.

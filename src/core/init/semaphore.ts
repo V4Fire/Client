@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import engine, * as router from 'core/router';
-
 import { createsAsyncSemaphore } from 'core/event';
 import Component, { app, rootComponents, ComponentElement } from 'core/component';
 
@@ -15,17 +13,12 @@ import flags from 'core/init/flags';
 
 export default createsAsyncSemaphore(async () => {
 	if (SSR) {
-		return (name: string, params?: Dictionary) => rootComponents[name]!.then((component) => {
+		return (name: string) => rootComponents[name]!.then((component) => {
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const {renderToString} = require('vue/server-renderer');
 
 			return {
-				router: {
-					engine,
-					...router
-				},
-
-				render: () => renderToString(new Component({
+				render: (params?: Dictionary) => renderToString(new Component({
 					...component,
 
 					data() {
