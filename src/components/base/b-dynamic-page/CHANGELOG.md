@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Replaced `eventConverter` with `pageGetter`
+
 ## v3.13.3 (2021-12-08)
 
 #### :bug: Bug Fix
