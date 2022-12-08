@@ -6,4 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export { default } from 'core/router/engines/in-memory';
+import BrowserHistory from 'core/router/engines/browser-history';
+import SSRHistory from 'core/router/engines/ssr';
+
+export default SSR ? SSRHistory : BrowserHistory;
