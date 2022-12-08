@@ -271,8 +271,18 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.off();
 	 * ```
 	 */
-	off(opts?: ClearOptionsId<EventId>): void {
-		this.selfEmitter.off(opts);
+	off(opts?: ClearOptionsId<EventId>): void;
+
+	/**
+	 * Detaches an event listener from the component
+	 *
+	 * @param [event] - the event to detach
+	 * @param [handler] - the event handler to detach
+	 */
+	off(event?: string, handler?: Function): void;
+
+	off(...args: any[]): void {
+		this.selfEmitter.off(...args);
 	}
 
 	/**

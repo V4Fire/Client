@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import SyncPromise from 'core/promise/sync';
 import watch, { WatchHandlerParams } from 'core/object/watch';
 
 import * as init from 'core/component/init';
@@ -134,15 +135,19 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			init.renderTriggeredState(getComponentContext(this), ...args);
 		},
 
-		serverPrefetch() {
+		serverPrefetch(): CanPromise<any> {
 			const
-				init = this.$initializer;
+				ctx = getComponentContext(this),
+				init = ctx.$initializer;
 
 			try {
-				return init.unwrap();
+				return SyncPromise.resolve(init).unwrap();
 
 			} catch {
 				return init;
+
+			} finally {
+				void Promise.resolve(init).then(() => ctx.$destroy());
 			}
 		}
 	};
