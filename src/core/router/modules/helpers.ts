@@ -30,7 +30,7 @@ import type {
 } from 'core/router/interface';
 
 /**
- * Returns a name of the specified route
+ * Returns the name of the specified route
  * @param [route]
  */
 export function getRouteName(route?: AppliedRoute | Route | RouteBlueprint | InitialRoute): CanUndef<string> {
@@ -51,10 +51,10 @@ export function getRouteName(route?: AppliedRoute | Route | RouteBlueprint | Ini
 }
 
 /**
- * Returns a route object by the specified name or path
+ * Returns a route object at the specified name or path
  *
- * @param ref - route name or path
- * @param routes - available routes to get the route object by a name or path
+ * @param ref - the route name or path
+ * @param routes - available routes to get a route object by name or path
  * @param [opts] - additional options
  *
  * @example
@@ -92,7 +92,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 
 	// eslint-disable-next-line no-constant-condition
 	while (true) {
-		// Reference to a route that passed as ID
+		// A link to a route passed as an identifier
 		if (resolvedRef in routes) {
 			if (alias == null) {
 				resolvedById = true;
@@ -116,14 +116,14 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				break;
 			}
 
-		// Reference to a route that passed as a path
+		// A link to a route that has passed as a path
 		} else {
 			if (Object.isString(basePath) && basePath !== '') {
-				// Resolve the situation when the passed path already has basePath
+				// Resolve the situation when the passed path already has a `basePath`
 				const v = basePath.replace(/(.*)?[\\/]+$/, (str, base) => `${RegExp.escape(base)}/*`);
 				resolvedRef = concatURLs(basePath, resolvedRef.replace(new RegExp(`^${v}`), ''));
 
-				// We need to normalize only a user "raw" ref
+				// We only need to normalize the user "raw" ref
 				if (refIsNormalized) {
 					ref = resolvedRef;
 					refIsNormalized = false;
@@ -138,23 +138,23 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 					continue;
 				}
 
-				// In this case, we have the full matching of a route ref by a name or pattern
+				// In this case, we have a full match of the route reference by name or pattern
 				if (getRouteName(route) === resolvedRef || route.pattern === resolvedRef) {
 					resolvedById = true;
 					resolvedRoute = route;
 					break;
 				}
 
-				// Try to test the passed ref with a route pattern
+				// Try validating the passed link with a route pattern
 				if (route.rgxp?.test(resolvedRef)) {
 					if (resolvedRoute == null) {
 						resolvedRoute = route;
 						continue;
 					}
 
-					// If we have several matches with the provided ref,
-					// like routes '/foo" and "/foo/:id" are matched with "/foo/bar",
-					// we should prefer that pattern that has more length
+					// If we have more than one match on the provided link,
+					// for example, the routes "/foo" and "/foo/:id" match "/foo/bar",
+					// we should prefer the pattern that is longer
 					if (route.pattern!.length > (resolvedRoute.pattern?.length ?? 0)) {
 						resolvedRoute = route;
 					}
@@ -169,8 +169,8 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		const
 			{meta} = resolvedRoute;
 
-		// If we haven't found a route that matches the provided ref or the founded route does not redirect or refer
-		// to another route, we can exit from the search loop. Otherwise, we need to resolve the redirect/alias.
+		// If we didn't find a route that matches the provided link, or if the route found doesn't redirect or
+		// link to another route, we can exit the search loop. Otherwise, we need to allow the redirect/alias file.
 		if (meta.redirect == null && meta.alias == null) {
 			break;
 		}
@@ -180,7 +180,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			break;
 		}
 
-		// The alias should preserve the original route name and path
+		// The alias must retain the original route name and path
 		if (meta.alias != null) {
 			if (alias == null) {
 				alias = resolvedRoute;
@@ -193,16 +193,14 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			ref = resolvedRef;
 		}
 
-		// Continue of resolving
 		resolvedRoute = undefined;
 	}
 
-	// We haven't found a route by the provided ref,
-	// that why we need to find a "default" route as loopback
+	// We didn't find the route by the provided ref, so we need to find the "default" route as loopback
 	if (!resolvedRoute) {
 		resolvedRoute = defaultRoute;
 
-	// We have found a route by the provided ref, but it contains an alias
+	// We found a route from the provided link, but it contains an alias
 	} else if (alias) {
 		resolvedRoute = {
 			...resolvedRoute,
@@ -243,8 +241,9 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				return path.compile(resolvedRoute!.meta.redirect ?? ref)(p);
 			}
 
-			const
-				pattern = Object.isFunction(resolvedRoute?.pattern) ? resolvedRoute?.pattern(routeAPI) : resolvedRoute?.pattern;
+			const pattern = Object.isFunction(resolvedRoute?.pattern) ?
+				resolvedRoute?.pattern(routeAPI) :
+				resolvedRoute?.pattern;
 
 			return path.compile(pattern ?? ref)(p);
 		}
@@ -256,7 +255,6 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		query: Object.isDictionary(initialRefQuery) ? initialRefQuery : {}
 	});
 
-	// Fill route parameters from URL
 	if (!resolvedById && resolvedRoute.rgxp != null) {
 		const
 			params = resolvedRoute.rgxp.exec(initialRef);
@@ -280,9 +278,9 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 }
 
 /**
- * Returns a path of the specified route with padding of additional parameters
+ * Returns the path of the specified route with additional parameters added
  *
- * @param ref - route name or path
+ * @param ref - the route name or path
  * @param routes - available routes to get the route object by name or path
  * @param [opts] - additional options
  *
@@ -329,7 +327,9 @@ export function getRoutePath(ref: string, routes: RouteBlueprints, opts: Transit
  */
 export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpts = {}): RouteBlueprints {
 	const
-		{basePath = ''} = opts,
+		{basePath = ''} = opts;
+
+	const
 		compiledRoutes = {};
 
 	Object.keys(routes).forEach((name) => {

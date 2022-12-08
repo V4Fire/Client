@@ -23,7 +23,7 @@ import {
 } from 'core/router';
 
 /**
- * Normalizes the specified transitions options and returns a new object
+ * Normalizes the specified transition options and returns a new object
  *
  * @param data
  *
@@ -121,7 +121,7 @@ export function getBlankRouteFrom(route: Nullable<AnyRoute | TransitionOptions>)
  * Converts the specified route object to a plain object and returns it
  *
  * @param route
- * @param [filter] - filter predicate
+ * @param [filter] - a filter predicate
  */
 export function convertRouteToPlainObject<T extends AnyRoute, FILTER extends string>(
 	route: Nullable<T>,

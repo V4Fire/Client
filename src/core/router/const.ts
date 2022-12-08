@@ -7,7 +7,7 @@
  */
 
 export const
-	isExternal = /^(?:\w+:)?\/\/(?:[^\s]*)+$/,
+	isExternal = /^(?:\w+:)?\/\/(?:\S*)+$/,
 	canParseStr = /^(?:true|false|null|undefined)$/m,
 	qsClearFixRgxp = /[#?]\s*$/;
 
