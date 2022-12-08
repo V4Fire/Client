@@ -167,6 +167,14 @@ Also, you can see the implemented traits or the parent component.
 
 The initial name of the page to load.
 
+#### [pageGetter = `(e) => e?.meta.component ?? e?.name`]
+
+A function that takes a route object and returns the name of the page component to load.
+
+```
+< b-dynamic-page :emitter = router | :event = 'transition' | :pageGetter = (e) => e.meta.pageComponent
+```
+
 #### [keepAlive = `false`]
 
 If true, then when moving from one page to another, the old page is saved in the cache under its own name.
@@ -196,7 +204,7 @@ A predicate to exclude some pages from `keepAlive` caching.
 It can be defined as a component name (or a list of names), regular expression,
 or a function that takes a component name and returns `true` (exclude) or `false` (does not exclude).
 
-#### [emitter]
+#### [emitter = `this.$root`]
 
 A link to an event emitter to listen for page switch events.
 
@@ -204,20 +212,12 @@ A link to an event emitter to listen for page switch events.
 < b-dynamic-page :emitter = router | :event = 'transition'
 ```
 
-#### [event]
+#### [event = `'setRoute'`]
 
 Page switching event name.
 
 ```
 < b-dynamic-page :emitter = router | :event = 'transition'
-```
-
-#### [eventConverter = `(e) => e?.meta.component ?? e?.name`]
-
-A function (or an iterable of function) to extract the name of the component to load from the captured event object.
-
-```
-< b-dynamic-page :emitter = router | :event = 'transition' | :eventConverter = (e) => e.meta.pageComponent
 ```
 
 ### Fields
@@ -230,10 +230,6 @@ The name of the active page to load.
 
 A dictionary of `keepAlive` caches.
 The keys represent cache groups  (the default is `global`).
-
-#### eventConverters
-
-A list of functions to extract the name of the component to load from the captured event object.
 
 ### Getters
 

@@ -15,6 +15,10 @@ import type { ComponentElement, UnsafeIData } from 'components/super/i-dynamic-p
 
 export type Include = CanArray<string> | RegExp | IncludeFn;
 
+export interface PageGetter {
+	(route: iDynamicPage['route'], ctx: bDynamicPage): CanUndef<string>;
+}
+
 export interface IncludeFn {
 	(page: string, route: iDynamicPage['route'], ctx: bDynamicPage): boolean | string | KeepAliveCache;
 }

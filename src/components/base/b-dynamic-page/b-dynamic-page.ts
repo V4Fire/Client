@@ -39,6 +39,8 @@ import iDynamicPage, {
 
 import type {
 
+	PageGetter,
+
 	Include,
 	Exclude,
 
@@ -75,8 +77,19 @@ export default class bDynamicPage extends iDynamicPage {
 	 * The name of the active page to load
 	 * @see [[bDynamicPage.pageProp]]
 	 */
-	@system((o) => o.sync.link())
+	@system<bDynamicPage>((o) => o.sync.link((val) => val ?? o.pageGetter(o.route, Object.cast(o))))
 	page?: string;
+
+	/**
+	 * A function that takes a route object and returns the name of the page component to load
+	 */
+	@prop({
+		type: Function,
+		default: (e: bDynamicPage['route']) => e?.meta.component ?? e?.name,
+		forceDefault: true
+	})
+
+	readonly pageGetter!: PageGetter;
 
 	/**
 	 * If true, then when moving from one page to another, the old page is saved in the cache under its own name.
@@ -156,25 +169,6 @@ export default class bDynamicPage extends iDynamicPage {
 	})
 
 	readonly event?: string = 'setRoute';
-
-	/**
-	 * A function (or an iterable of function) to extract the name of the component to load from the captured event object
-	 */
-	@prop({
-		type: Object,
-		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
-		default: () => (e) => e != null ? (e.meta.component ?? e.name) : undefined,
-		forceDefault: true
-	})
-
-	readonly eventConverter!: CanIter<Function>;
-
-	/**
-	 * A list of functions to extract the name of the component to load from the captured event object
-	 * @see [[bDynamicPage.eventConverter]]
-	 */
-	@system((o) => o.sync.link('eventConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
-	eventConverters!: Function[];
 
 	/**
 	 * A link to the loaded page component
@@ -481,7 +475,7 @@ export default class bDynamicPage extends iDynamicPage {
 				}
 
 				const
-					newPage = this.eventConverters.reduce((res, fn) => fn.call(this, res, this.page), e);
+					newPage = this.pageGetter(e, this) ?? e;
 
 				if (newPage == null || Object.isString(newPage)) {
 					this.page = newPage;

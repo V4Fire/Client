@@ -423,7 +423,7 @@ export default class bRouter extends iData {
 
 		// To save the scroll position before switch to a new route,
 		// we need to emit a system "replace" transition with padding information about the scroll
-		if (currentEngineRoute && method !== 'replace') {
+		if (!SSR && currentEngineRoute && method !== 'replace') {
 			const
 				currentRouteWithScroll = Object.mixin(true, undefined, currentEngineRoute, scroll);
 
@@ -545,37 +545,37 @@ export default class bRouter extends iData {
 				return;
 			}
 
-			await engine[method](newRoute.url, plainInfo);
+			await engine[method](newRoute.url, plainInfo).then(() => {
+				const isSoftTransition = Boolean(r.route && Object.fastCompare(
+					router.convertRouteToPlainObjectWithoutProto(currentRoute),
+					router.convertRouteToPlainObjectWithoutProto(newRoute)
+				));
 
-			const isSoftTransition = Boolean(r.route && Object.fastCompare(
-				router.convertRouteToPlainObjectWithoutProto(currentRoute),
-				router.convertRouteToPlainObjectWithoutProto(newRoute)
-			));
+				// Only the properties from the prototype have been changed in this transition,
+				// so it can be done as a soft transition, i.e. without forcing re-rendering of components.
+				if (isSoftTransition) {
+					this.emit('softChange', newRoute);
 
-			// Only the properties from the prototype have been changed in this transition,
-			// so it can be done as a soft transition, i.e. without forcing re-rendering of components.
-			if (isSoftTransition) {
-				this.emit('softChange', newRoute);
+					// We get a prototype by using the `__proto__` property,
+					// because `Object.getPrototypeOf` returns a non-watchable object.
 
-				// We get a prototype by using the `__proto__` property,
-				// because `Object.getPrototypeOf` returns a non-watchable object.
+					const
+						proto = r.route?.__proto__;
 
-				const
-					proto = r.route?.__proto__;
+					if (Object.isDictionary(proto)) {
+						Object.keys(nonWatchRouteValues).forEach((key) => {
+							proto[key] = nonWatchRouteValues[key];
+						});
+					}
 
-				if (Object.isDictionary(proto)) {
-					Object.keys(nonWatchRouteValues).forEach((key) => {
-						proto[key] = nonWatchRouteValues[key];
-					});
+				} else {
+					hardChange = true;
+					this.emit('hardChange', newRoute);
+					r.route = newRoute;
 				}
 
-			} else {
-				hardChange = true;
-				this.emit('hardChange', newRoute);
-				r.route = newRoute;
-			}
-
-			emitTransition();
+				emitTransition();
+			});
 
 		// This route is similar to the previous one, and we don't actually make the transition,
 		// but for the `push` request, we still need to fire the "fake" transition event
@@ -737,7 +737,7 @@ export default class bRouter extends iData {
 	 * @param [route] - the route value
 	 */
 	@hook('beforeDataCreate')
-	protected initRoute(route: Nullable<router.InitialRoute> = this.initialRoute): Promise<void> {
+	protected initRoute(route: Nullable<router.InitialRoute> = this.initialRoute ?? this.r.initialRoute): Promise<void> {
 		if (route != null) {
 			if (Object.isString(route)) {
 				return this.replace(route);
