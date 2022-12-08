@@ -17,6 +17,7 @@ import type Async from 'core/async';
 import globalRoutes from 'routes';
 import engine, * as router from 'core/router';
 
+import DOM, { delegate } from 'components/friends/dom';
 import iData, {
 
 	component,
@@ -38,6 +39,8 @@ export * from 'components/super/i-data/i-data';
 
 export * from 'core/router/const';
 export * from 'components/base/b-router/interface';
+
+DOM.addToPrototype(delegate);
 
 const
 	$$ = symbolGenerator();
