@@ -40,8 +40,12 @@ const
  */
 export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T): T {
 	const
-		{props} = vnode,
-		{r} = this.$renderEngine;
+		{props} = vnode;
+
+	const {
+		meta: {params},
+		$renderEngine: {r}
+	} = this;
 
 	if (vnode.ref != null) {
 		vnode.ref['i'] ??= r.getCurrentInstance();
@@ -100,7 +104,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			key = 'data-cached-class-component-id';
 
 		if (props[key] != null) {
-			if (this.meta.params.functional !== true) {
+			if (props[key] === 'true' && params.functional !== true) {
 				Object.assign(props, mergeProps({class: props.class}, {class: this.componentId}));
 			}
 

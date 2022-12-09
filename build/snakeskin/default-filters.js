@@ -78,47 +78,55 @@ function tagFilter({name, attrs = {}}) {
 	const funcDir = attrs['v-func']?.[0];
 	delete attrs['v-func'];
 
-	if (!webpack.ssr) {
-		let
-			isFunctional = false;
+	let
+		isFunctional = false;
 
-		if (component && component.functional === true) {
-			isFunctional = true;
+	if (component && component.functional === true) {
+		isFunctional = true;
 
-		} else if (!funcDir) {
-			isFunctional = $C(attrs[SMART_PROPS]).every((propVal, prop) => {
-				prop = prop.dasherize(true);
+	} else if (!funcDir) {
+		isFunctional = $C(attrs[SMART_PROPS]).every((propVal, prop) => {
+			prop = prop.dasherize(true);
 
-				if (!isV4Prop.test(prop)) {
-					prop = `:${prop}`;
-				}
+			if (!isV4Prop.test(prop)) {
+				prop = `:${prop}`;
+			}
 
-				let
-					attr = attrs[prop]?.[0];
+			let
+				attr = attrs[prop]?.[0];
 
-				try {
-					// eslint-disable-next-line no-new-func
-					attr = Function(`return ${attr}`)();
+			try {
+				// eslint-disable-next-line no-new-func
+				attr = Function(`return ${attr}`)();
 
-				} catch {
-				}
+			} catch {
+			}
 
-				if (Object.isArray(propVal)) {
-					return $C(propVal).some((propVal) => Object.fastCompare(propVal, attr));
-				}
+			if (Object.isArray(propVal)) {
+				return $C(propVal).some((propVal) => Object.fastCompare(propVal, attr));
+			}
 
-				return Object.fastCompare(propVal, attr);
-			});
-		}
+			return Object.fastCompare(propVal, attr);
+		});
+	}
 
-		const
-			isSmartFunctional = attrs[SMART_PROPS] && (isFunctional || funcDir);
+	const
+		isSmartFunctional = attrs[SMART_PROPS] && (isFunctional || funcDir);
 
-		if (isSmartFunctional) {
-			if (funcDir == null || funcDir === 'true') {
+	if (isSmartFunctional) {
+		if (funcDir == null || funcDir === 'true') {
+			if (webpack.ssr) {
+				attrs[':renderComponentId'] = [false];
+
+			} else {
 				attrs['is'] = [`${attrs['is'][0]}-functional`];
+			}
 
-			} else if (funcDir !== 'false') {
+		} else if (funcDir !== 'false') {
+			if (webpack.ssr) {
+				attrs[':renderComponentId'] = [!funcDir];
+
+			} else {
 				attrs[':is'] = [`'${attrs['is'][0]}' + (${funcDir} ? '-functional' : '')`];
 				delete attrs['is'];
 			}

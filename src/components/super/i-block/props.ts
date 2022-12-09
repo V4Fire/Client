@@ -263,4 +263,11 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 */
 	@prop(Function)
 	readonly i18n: typeof i18n = i18n;
+
+	/**
+	 * Whether to add classes to the component markup with its identifier
+	 * (for functional components, the value is always `false`)
+	 */
+	@prop(Boolean)
+	readonly renderComponentId: boolean = true;
 }

@@ -9,6 +9,7 @@
  */
 
 const
+	{webpack} = require('@config/config'),
 	{wrapAttrArray} = include('build/snakeskin/filters/helpers');
 
 module.exports = [
@@ -23,11 +24,17 @@ module.exports = [
 	 */
 	function bem2Component(block, attrs, rootTag, element) {
 		const
+			elId = 'data-cached-class-component-id',
 			elName = element.replace(/^_+/, '');
 
-		attrs['data-cached-class-component-id'] = wrapAttrArray([true]);
-		attrs['data-cached-class-provided-classes-styles'] = wrapAttrArray([elName]);
+		if (webpack.ssr) {
+			attrs[`:${elId}`] = wrapAttrArray(['String(renderComponentId)']);
 
+		} else {
+			attrs[elId] = wrapAttrArray([true]);
+		}
+
+		attrs['data-cached-class-provided-classes-styles'] = wrapAttrArray([elName]);
 		return block + element;
 	}
 ];

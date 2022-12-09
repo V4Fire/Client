@@ -166,9 +166,16 @@
 
 	- rootAttrs = { &
 		class: 'i-block-helper',
-		'data-cached-class-component-id': '',
 		'data-cached-dynamic-class': 'self.provide.componentClasses("' + self.name() + '", self.mods)'
 	} .
+
+	: componentId = 'data-cached-class-component-id'
+
+	- if require('@config/config').webpack.ssr
+		? rootAttrs[':' + componentId] = 'String(renderComponentId)'
+
+	- else
+		? rootAttrs[componentId] = 'true'
 
 	- if skeletonMarker
 		? rootAttrs['data-skeleton-marker'] = 'true'
