@@ -22,14 +22,14 @@
 				:class = provide.elClasses({
 					node: {
 						level,
-						folded: getFoldedPropValue(el)
+						...(hasChildren(el) && {folded: getFoldedPropValue(el)})
 					}
 				})
 			.
-				< .&__item-wrapper
+				< .&__item-wrapper :v-attrs = getItemAttrs(el)
 					< .&__marker
 						- block fold
-							< template v-if = Object.size(field.get('children.length', el)) > 0
+							< template v-if = hasChildren(el)
 								+= self.slot('fold', {':params': 'getFoldProps(el)'})
 									< .&__fold :v-attrs = getFoldProps(el)
 

@@ -98,6 +98,9 @@ export default class bTree extends iData implements iItems {
 	@prop(Boolean)
 	readonly folded: boolean = true;
 
+	@prop(Boolean)
+	readonly clickableItems: boolean = false;
+
 	/**
 	 * Link to the top level component (internal parameter)
 	 */
@@ -114,6 +117,11 @@ export default class bTree extends iData implements iItems {
 	@field((o) => o.sync.link())
 	items!: this['Items'];
 
+	/** @inheritDoc */
+	protected override readonly $refs!: {
+		children?: bTree[];
+	};
+
 	/**
 	 * Parameters for async render tasks
 	 */
@@ -128,7 +136,7 @@ export default class bTree extends iData implements iItems {
 	 */
 	protected get nestedTreeProps(): Dictionary {
 		const
-			{nestedRenderFilter} = this;
+			{nestedRenderFilter, clickableItems} = this;
 
 		const
 			isRootLvl = this.level === 0,
@@ -140,7 +148,8 @@ export default class bTree extends iData implements iItems {
 			classes: this.classes,
 			renderChunks: this.renderChunks,
 			nestedRenderFilter,
-			renderFilter
+			renderFilter,
+			clickableItems
 		};
 
 		if (this.$listeners.fold) {
@@ -168,6 +177,14 @@ export default class bTree extends iData implements iItems {
 		}
 
 		return this.items;
+	}
+
+	/**
+	 * True, if item has children
+	 * @param item
+	 */
+	protected hasChildren(item: this['Item']): boolean {
+		return Object.size(this.field.get('children.length', item)) > 0;
 	}
 
 	/**
@@ -199,8 +216,22 @@ export default class bTree extends iData implements iItems {
 	 */
 	protected getFoldProps(item: this['Item']): Dictionary {
 		return {
-			'@click': this.onFoldClick.bind(this, item)
+			'@click.stop': this.onFoldClick.bind(this, item)
 		};
+	}
+
+	/**
+	 * Returns a dictionary with attributes for item element
+	 * @param item
+	 */
+	protected getItemAttrs(item: this['Item']): Dictionary {
+		if (this.clickableItems && this.hasChildren(item)) {
+			return {
+				'@click': this.onFoldClick.bind(this, item)
+			};
+		}
+
+		return {};
 	}
 
 	/**
@@ -240,6 +271,65 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
+	 * Expands all folded items
+	 */
+	protected expandAllSiblingItems(): void {
+		this.items.forEach((item) => {
+			this.setFoldValue(item, false);
+		});
+	}
+
+	/**
+	 * Closes all folded items
+	 */
+	protected closeAllSiblingItems(): void {
+		this.items.forEach((item) => {
+			this.setFoldValue(item, true);
+		});
+	}
+
+	/**
+	 * Closes all folded items recursively in all the tree
+	 * @param ctx
+	 */
+	protected closeAllItems(ctx: bTree = this.top ?? this): void {
+		const
+			{children} = ctx.$refs;
+
+		if (children == null) {
+			return;
+		}
+
+		this.closeAllSiblingItems();
+
+		children.forEach((child) => {
+			child.closeAllItems(child);
+		});
+	}
+
+	/**
+	 * Sets folded mode value
+	 *
+	 * @param item
+	 * @param value
+	 */
+	protected setFoldValue(item: this['Item'], value: boolean): void {
+		const
+			target = this.findItemElement(item.id);
+
+		if (target == null || !this.hasChildren(item)) {
+			return;
+		}
+
+		const
+			isModSet = this.block?.setElMod(target, 'node', 'folded', value);
+
+		if (isModSet) {
+			this.emit('fold', target, item, value);
+		}
+	}
+
+	/**
 	 * Handler: fold element has been clicked
 	 *
 	 * @param item
@@ -247,12 +337,8 @@ export default class bTree extends iData implements iItems {
 	 */
 	protected onFoldClick(item: this['Item']): void {
 		const
-			target = this.findItemElement(item.id),
 			newVal = this.getFoldedModById(item.id) === 'false';
 
-		if (target) {
-			this.block?.setElMod(target, 'node', 'folded', newVal);
-			this.emit('fold', target, item, newVal);
-		}
+		this.setFoldValue(item, newVal);
 	}
 }
