@@ -76,7 +76,7 @@ export default <ValidatorsDecl<bInput>>{
 		}
 
 		const error = (
-			defMsg = t`The value is not a number`,
+			defMsg = 'The value is not a number',
 			errorValue: string | number = value,
 			errorType: NumberValidatorResult['name'] = 'INVALID_VALUE'
 		) => {
@@ -113,21 +113,21 @@ export default <ValidatorsDecl<bInput>>{
 		switch (type) {
 			case 'uint':
 				if (!Number.isNonNegative(numValue) || !Number.isInteger(numValue)) {
-					return error(t`The value does not match with an unsigned integer type`, numValue);
+					return error('The value does not match with an unsigned integer type', numValue);
 				}
 
 				break;
 
 			case 'int':
 				if (!Number.isInteger(numValue)) {
-					return error(t`The value does not match with an integer type`, numValue);
+					return error('The value does not match with an integer type', numValue);
 				}
 
 				break;
 
 			case 'ufloat':
 				if (!Number.isNonNegative(numValue)) {
-					return error(t`The value does not match with an unsigned float type`, numValue);
+					return error('The value does not match with an unsigned float type', numValue);
 				}
 
 				break;
@@ -143,21 +143,21 @@ export default <ValidatorsDecl<bInput>>{
 			if (strictPrecision) {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (chunks[1] == null || chunks[1].length !== precision) {
-					return error(t`A decimal part should have ${precision} digits`, numValue, 'DECIMAL_LENGTH');
+					return error(`A decimal part should have ${precision} digits`, numValue, 'DECIMAL_LENGTH');
 				}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			} else if (chunks[1] != null && chunks[1].length > precision) {
-				return error(t`A decimal part should have no more than ${precision} digits`, numValue, 'DECIMAL_LENGTH');
+				return error(`A decimal part should have no more than ${precision} digits`, numValue, 'DECIMAL_LENGTH');
 			}
 		}
 
 		if (min != null && numValue < min) {
-			return error(t`A value must be at least ${min}`, numValue, 'MIN');
+			return error(`A value must be at least ${min}`, numValue, 'MIN');
 		}
 
 		if (max != null && numValue > max) {
-			return error(t`A value must be no more than ${max}`, numValue, 'MAX');
+			return error(`A value must be no more than ${max}`, numValue, 'MAX');
 		}
 
 		return true;
@@ -193,7 +193,7 @@ export default <ValidatorsDecl<bInput>>{
 
 		const error = (
 			type: DateValidatorResult['name'] = 'INVALID_VALUE',
-			defMsg = t`The value can't be parsed as a date`,
+			defMsg = "The value can't be parsed as a date",
 			errorValue: Date | string = dateValue
 		) => {
 			const err = <DateValidatorResult>{
@@ -217,27 +217,27 @@ export default <ValidatorsDecl<bInput>>{
 			isFuture = dateValue.isFuture();
 
 		if (past && !isPast) {
-			return error('NOT_PAST', t`A date value must be in the past`);
+			return error('NOT_PAST', 'A date value must be in the past');
 		}
 
 		if (past === false && isPast) {
-			return error('IS_PAST', t`A date value can't be in the past`);
+			return error('IS_PAST', "A date value can't be in the past");
 		}
 
 		if (future && !isFuture) {
-			return error('NOT_FUTURE', t`A date value must be in the future`);
+			return error('NOT_FUTURE', 'A date value must be in the future');
 		}
 
 		if (future === false && isFuture) {
-			return error('IS_FUTURE', t`A date value can't be in the future`);
+			return error('IS_FUTURE', "A date value can't be in the future");
 		}
 
 		if (min != null && !dateValue.isAfter(min, 1)) {
-			return error('MIN', t`A date value must be at least "${min}"`);
+			return error('MIN', `A date value must be at least "${min}"`);
 		}
 
 		if (max != null && !dateValue.isBefore(max, 1)) {
-			return error('MAX', t`A date value must be no more than "${max}"`);
+			return error('MAX', `A date value must be no more than "${max}"`);
 		}
 
 		return true;
@@ -258,7 +258,7 @@ export default <ValidatorsDecl<bInput>>{
 		}
 
 		if (!/.+@.+/.test(value)) {
-			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Invalid email format`), showMsg);
+			this.setValidationMsg(this.getValidatorMsg(false, msg, 'Invalid email format'), showMsg);
 			return false;
 		}
 
@@ -296,7 +296,7 @@ export default <ValidatorsDecl<bInput>>{
 
 		const error = (
 			type: PasswordValidatorResult['name'] = 'NOT_MATCH',
-			defMsg = t`A password must contain only allowed characters`,
+			defMsg = 'A password must contain only allowed characters',
 			errorValue: string | number | [string, string] = value
 		) => {
 			const err = <PasswordValidatorResult>{
@@ -342,12 +342,12 @@ export default <ValidatorsDecl<bInput>>{
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (min != null && length < min) {
-				return error('MIN', t`Password length must be at least ${min} characters`);
+				return error('MIN', `Password length must be at least ${min} characters`);
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (max != null && length > max) {
-				return error('MAX', t`Password length must be no more than ${max} characters`);
+				return error('MAX', `Password length must be no more than ${max} characters`);
 			}
 		}
 
@@ -367,7 +367,7 @@ export default <ValidatorsDecl<bInput>>{
 
 			if (connectedValue !== '') {
 				if (connectedValue === value) {
-					return error('OLD_IS_NEW', t`The old and new password are the same`);
+					return error('OLD_IS_NEW', 'The old and new password are the same');
 				}
 
 				void connectedInput.setMod('valid', true);
@@ -387,7 +387,7 @@ export default <ValidatorsDecl<bInput>>{
 
 			if (connectedValue !== '') {
 				if (connectedValue !== value) {
-					return error('NOT_CONFIRM', t`The passwords aren't match`, [value, String(connectedValue)]);
+					return error('NOT_CONFIRM', "The passwords aren't match", [value, String(connectedValue)]);
 				}
 
 				void connectedInput.setMod('valid', true);

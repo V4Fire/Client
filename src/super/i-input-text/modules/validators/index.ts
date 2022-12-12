@@ -34,7 +34,7 @@ export default <ValidatorsDecl<iInputText>>{
 			value = await this.formValue;
 
 		if (value === undefined || value === '') {
-			this.setValidationMsg(this.getValidatorMsg(false, msg, t`Required field`), showMsg);
+			this.setValidationMsg(this.getValidatorMsg(false, msg, 'Required field'), showMsg);
 			return false;
 		}
 
@@ -78,7 +78,7 @@ export default <ValidatorsDecl<iInputText>>{
 
 		const error = (
 			type: PatternValidatorResult['name'] = 'NOT_MATCH',
-			defMsg = t`A value must match the pattern`
+			defMsg = 'A value must match the pattern'
 		) => {
 			const err = <PatternValidatorResult>{
 				name: type,
@@ -101,11 +101,11 @@ export default <ValidatorsDecl<iInputText>>{
 				{length} = [...value.letters()];
 
 			if (min != null && length < min) {
-				return error('MIN', t`Value length must be at least ${min} characters`);
+				return error('MIN', `Value length must be at least ${min} characters`);
 			}
 
 			if (max != null && length > max) {
-				return error('MAX', t`Value length must be no more than ${max} characters`);
+				return error('MAX', `Value length must be no more than ${max} characters`);
 			}
 		}
 
