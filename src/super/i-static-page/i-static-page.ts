@@ -147,14 +147,14 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * System locale
 	 */
-	get locale(): string {
-		return this.field.get<string>('localeStore')!;
+	get locale(): Language {
+		return this.field.get<Language>('localeStore')!;
 	}
 
 	/**
 	 * Sets a new system locale
 	 */
-	set locale(value: string) {
+	set locale(value: Language) {
 		this.field.set('localeStore', value);
 
 		try {
