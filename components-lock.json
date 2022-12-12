@@ -1,5 +1,5 @@
 {
-  "hash": "a93cd66f68370b95f02da7ffd3229946d3f6f4c303c3bc0058be2a44ca4201e7",
+  "hash": "5795e7a9374434ad530815dee37b893ab52fec966d9ae03797fe555f07c9f771",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -564,6 +564,38 @@
         }
       ],
       [
+        "b-hidden-input",
+        {
+          "index": "src/components/form/b-hidden-input/index.js",
+          "declaration": {
+            "name": "b-hidden-input",
+            "parent": "i-input",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-hidden-input",
+          "parent": "i-input",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/form/b-hidden-input/b-hidden-input.ts",
+          "styles": [
+            "src/components/form/b-hidden-input/b-hidden-input.styl"
+          ],
+          "tpl": "src/components/form/b-hidden-input/b-hidden-input.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-icon-button",
         {
           "index": "src/components/form/b-icon-button/index.js",
@@ -598,38 +630,6 @@
         }
       ],
       [
-        "b-image",
-        {
-          "index": "src/components/base/b-image/index.js",
-          "declaration": {
-            "name": "b-image",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-image",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/base/b-image/b-image.ts",
-          "styles": [
-            "src/components/base/b-image/b-image.styl"
-          ],
-          "tpl": "src/components/base/b-image/b-image.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-input",
         {
           "index": "src/components/form/b-input/index.js",
@@ -640,7 +640,7 @@
               "b-progress-icon"
             ],
             "libs": [
-              "core/component/directives/icon"
+              "components/directives/icon"
             ]
           },
           "name": "b-input",
@@ -649,18 +649,18 @@
             "b-progress-icon"
           ],
           "libs": [
-            "core/component/directives/icon"
+            "components/directives/icon"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "core/component/directives/icon"
+              "components/directives/icon"
             ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "core/component/directives/icon"
+              "components/directives/icon"
             ]
           },
           "type": "block",
@@ -670,38 +670,6 @@
             "src/components/form/b-input/b-input.styl"
           ],
           "tpl": "src/components/form/b-input/b-input.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-input-hidden",
-        {
-          "index": "src/components/form/b-input-hidden/index.js",
-          "declaration": {
-            "name": "b-input-hidden",
-            "parent": "i-input",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-input-hidden",
-          "parent": "i-input",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/form/b-input-hidden/b-input-hidden.ts",
-          "styles": [
-            "src/components/form/b-input-hidden/b-input-hidden.styl"
-          ],
-          "tpl": "src/components/form/b-input-hidden/b-input-hidden.ss",
           "etpl": null
         }
       ],
@@ -1069,19 +1037,27 @@
             "name": "b-textarea",
             "parent": "i-input-text",
             "dependencies": [],
-            "libs": []
+            "libs": [
+              "components/directives/bind-with"
+            ]
           },
           "name": "b-textarea",
           "parent": "i-input-text",
           "dependencies": [],
-          "libs": [],
+          "libs": [
+            "components/directives/bind-with"
+          ],
           "resolvedLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "components/directives/bind-with"
+            ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "components/directives/bind-with"
+            ]
           },
           "type": "block",
           "mixin": false,
@@ -1122,38 +1098,6 @@
             "src/components/base/b-tree/b-tree.styl"
           ],
           "tpl": "src/components/base/b-tree/b-tree.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-v4-component-demo",
-        {
-          "index": "src/components/pages/p-v4-components-demo/b-v4-component-demo/index.js",
-          "declaration": {
-            "name": "b-v4-component-demo",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-v4-component-demo",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/pages/p-v4-components-demo/b-v4-component-demo/b-v4-component-demo.ts",
-          "styles": [
-            "src/components/pages/p-v4-components-demo/b-v4-component-demo/b-v4-component-demo.styl"
-          ],
-          "tpl": "src/components/pages/p-v4-components-demo/b-v4-component-demo/b-v4-component-demo.ss",
           "etpl": null
         }
       ],
@@ -1222,38 +1166,6 @@
             "src/components/base/b-window/b-window.styl"
           ],
           "tpl": "src/components/base/b-window/b-window.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "g-debug",
-        {
-          "index": "src/components/global/g-debug/index.js",
-          "declaration": {
-            "name": "g-debug",
-            "parent": null,
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "g-debug",
-          "parent": null,
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "global",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/components/global/g-debug/g-debug.styl"
-          ],
-          "tpl": null,
           "etpl": null
         }
       ],
@@ -1961,30 +1873,50 @@
             "name": "p-v4-components-demo",
             "parent": "i-static-page",
             "dependencies": [
-              "b-button"
+              "b-dummy",
+              "b-router",
+              "b-dynamic-page",
+              "b-form",
+              "b-button",
+              "b-checkbox",
+              "b-hidden-input",
+              "b-input",
+              "b-textarea"
             ],
             "libs": [
+              "components/directives/image",
               "components/directives/icon"
             ]
           },
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
           "dependencies": [
-            "b-button"
+            "b-dummy",
+            "b-router",
+            "b-dynamic-page",
+            "b-form",
+            "b-button",
+            "b-checkbox",
+            "b-hidden-input",
+            "b-input",
+            "b-textarea"
           ],
           "libs": [
+            "components/directives/image",
             "components/directives/icon"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/icon"
+              "components/directives/icon",
+              "components/directives/image"
             ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "components/directives/icon"
+              "components/directives/icon",
+              "components/directives/image"
             ]
           },
           "type": "page",

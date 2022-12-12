@@ -10,7 +10,7 @@ import type { ElementHandle, JSHandle, Page } from 'playwright';
 
 import { expandedStringify } from 'core/prelude/test-env/components/json';
 
-import type iBlock from 'super/i-block/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 
 import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
 
@@ -222,7 +222,7 @@ export default class Component {
 		ctx: Page | ElementHandle,
 		componentSelector: string,
 		status: string
-	): Promise<CanUndef<JSHandle<T>>> {
+	): Promise<JSHandle<T>> {
 		const
 			component = await this.waitForComponentByQuery<T>(ctx, componentSelector);
 
@@ -235,128 +235,5 @@ export default class Component {
 		}), status);
 
 		return component;
-	}
-
-	/**
-	 * Waits until a component by the passed selector switches to the specified status, then returns it
-	 *
-	 * @param ctx
-	 * @param componentSelector
-	 * @param [options]
-	 * @deprecated
-	 * @see [[Component.waitForComponentByQuery]]
-	 */
-	async waitForComponent<T extends iBlock>(
-		ctx: Page | ElementHandle,
-		componentSelector: string
-	): Promise<JSHandle<T>> {
-		await ctx.waitForSelector(componentSelector, {state: 'attached'});
-
-		const
-			component = await this.getComponentByQuery<T>(ctx, componentSelector);
-
-		if (!component) {
-			throw new Error('There is no component by the passed selector');
-		}
-
-		return component;
-	}
-
-	/**
-	 * @param page
-	 * @param componentName
-	 * @param scheme
-	 * @param opts
-	 * @deprecated
-	 * @see [[Component.createComponent]]
-	 */
-	async createComponent<T extends iBlock>(
-		page: Page,
-		componentName: string,
-		scheme: Partial<RenderParams> = {},
-		opts?: RenderOptions
-	): Promise<JSHandle<T>> {
-		return Component.createComponent(page, componentName, scheme, opts);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[Component.waitForRoot]]
-	 *
-	 * @param ctx
-	 * @param [selector]
-	 */
-	getRoot<T extends iBlock>(ctx: Page | ElementHandle, selector: string = '#root-component'): Promise<CanUndef<JSHandle<T>>> {
-		return Component.waitForRoot(ctx, selector);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[Component.getComponentByQuery]]
-	 */
-	async getComponentById<T extends iBlock>(
-		page: Page | ElementHandle,
-		id: string
-	): Promise<CanUndef<JSHandle<T>>> {
-		return (await page.$(`#${id}`))?.getProperty('component');
-	}
-
-	/**
-	 * Returns a component by the specified query
-	 *
-	 * @param ctx
-	 * @param selector
-	 * @deprecated
-	 * @see [[Component.getComponentByQuery]]
-	 */
-	async getComponentByQuery<T extends iBlock>(
-		ctx: Page | ElementHandle,
-		selector: string
-	): Promise<CanUndef<JSHandle<T>>> {
-		return Component.getComponentByQuery(ctx, selector);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[Component.getComponents]]
-	 *
-	 * @param ctx
-	 * @param selector
-	 */
-	getComponents(ctx: Page | ElementHandle, selector: string): Promise<JSHandle[]> {
-		return Component.getComponents(ctx, selector);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[Component.setPropsToComponent]]
-	 *
-	 * @param page
-	 * @param componentSelector
-	 * @param props
-	 * @param opts
-	 */
-	async setPropsToComponent<T extends iBlock>(
-		page: Page,
-		componentSelector: string,
-		props: Dictionary,
-		opts?: WaitForIdleOptions
-	): Promise<CanUndef<JSHandle<T>>> {
-		return Component.setPropsToComponent(page, componentSelector, props, opts);
-	}
-
-	/**
-	 * @param ctx
-	 * @param componentSelector
-	 * @param status
-	 * @deprecated
-	 * @see [[Component.waitForComponentStatus]]
-	 */
-	async waitForComponentStatus<T extends iBlock>(
-		ctx: Page | ElementHandle,
-		componentSelector: string,
-		status: string
-	): Promise<CanUndef<JSHandle<T>>> {
-		return Component.waitForComponentStatus(ctx, componentSelector, status);
 	}
 }

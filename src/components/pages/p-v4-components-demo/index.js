@@ -6,10 +6,23 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	components = (require('@config/config').build.components ?? []).map(({name}) => name);
-
 package('p-v4-components-demo')
 	.extends('i-static-page')
-	.dependencies('b-button', 'b-checkbox', 'b-hidden-input')
-	.libs('components/directives/icon');
+	.dependencies(
+		'b-dummy',
+
+		'b-router',
+		'b-dynamic-page',
+
+		'b-form',
+		'b-button',
+		'b-checkbox',
+		'b-hidden-input',
+		'b-input',
+		'b-textarea'
+	)
+
+	.libs(
+		'components/directives/image',
+		'components/directives/icon'
+	);
