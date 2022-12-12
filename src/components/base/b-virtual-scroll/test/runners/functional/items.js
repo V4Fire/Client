@@ -33,8 +33,8 @@ module.exports = (page) => {
 				request: {get: {chunkSize: 10, id: Math.random()}},
 				item: 'section',
 				itemProps: ({current}) => ({'data-index': current.i}),
-				itemKey: (data) => data.i,
-				optionKey: (data) => data.i
+				itemKey: (data) => data.current.i,
+				optionKey: (data) => data.current.i
 			};
 
 			const scheme = [
@@ -79,10 +79,10 @@ module.exports = (page) => {
 				itemKey: undefined
 			});
 
-			const optionKey1 = await component.evaluate((ctx) => ctx.getItemKey({i: 0}));
+			const optionKey1 = await component.evaluate((ctx) => ctx.getItemKey({current: {i: 0}}));
 			expect(optionKey1).toBe(0);
 
-			const optionKey2 = await component.evaluate((ctx) => ctx.getItemKey({i: 1}));
+			const optionKey2 = await component.evaluate((ctx) => ctx.getItemKey({current: {i: 1}}));
 			expect(optionKey2).toBe(1);
 		});
 
@@ -91,10 +91,10 @@ module.exports = (page) => {
 				optionKey: undefined
 			});
 
-			const itemKey1 = await component.evaluate((ctx) => ctx.getItemKey({i: 0}));
+			const itemKey1 = await component.evaluate((ctx) => ctx.getItemKey({current: {i: 0}}));
 			expect(itemKey1).toBe(0);
 
-			const itemKey2 = await component.evaluate((ctx) => ctx.getItemKey({i: 1}));
+			const itemKey2 = await component.evaluate((ctx) => ctx.getItemKey({current: {i: 1}}));
 			expect(itemKey2).toBe(1);
 		});
 	});

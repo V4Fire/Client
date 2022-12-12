@@ -11,6 +11,33 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.31.0 (2022-12-06)
+
+#### :rocket: New Feature
+
+* Added possibility to disable specific link interception
+
+## v3.30.2 (2022-11-17)
+
+#### :bug: Bug Fix
+
+* Fixed soft transitions with array parameters `base/b-router`
+* Fixed an issue with testing userAgent string for desktop Safari `core/browser`
+
+## v3.30.1 (2022-10-25)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with wrong arguments was provided into `getItemKey` `base/b-virtual-scroll`
+
+## v3.30.0 (2022-10-19)
+
+#### :rocket: New Feature
+
+* `iBlock`:
+  * Added a new `InfoRender` module
+  * Added a new `initInfoRender` method
+
 ## v3.29.0 (2022-09-13)
 
 #### :boom: Breaking Change

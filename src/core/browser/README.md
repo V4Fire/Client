@@ -16,8 +16,8 @@ console.log(test('Android', '>=', '5.1'));
 
 ### is
 
-A map of the supported environments to detect. If the current `navigator.userAgent` matches one of the map keys,
-the value will contain a tuple `[browserName, browserVersion?[]]`. Otherwise, it is `false`.
+A map of supported environments to detect. If the current `navigator.userAgent` matches one of the map keys,
+the value will contain the `[browserName, browserVersion?[]]` tuple. Otherwise, it is `false`.
 
 ```js
 import { is } from 'core/browser'
@@ -33,8 +33,8 @@ console.log(is.WindowsMobile);
 
 #### is.mobile
 
-A tuple `[browserName, browserVersion?[]]` if the current `navigator.userAgent` is a mobile browser.
-Otherwise, it is `false`.
+The `[browserName, browserVersion?[]]` tuple if the current `navigator.userAgent` is a mobile browser.
+Otherwise, it is "false".
 
 ```js
 import { is } from 'core/browser'
@@ -44,7 +44,7 @@ console.log(is.mobile);
 
 ### test
 
-Returns true if `navigator.userAgent` matches with the specified parameters.
+Returns true if `navigator.userAgent` matches with the given parameters.
 
 ```js
 import { test } from 'core/browser'
@@ -55,8 +55,8 @@ console.log(test('iOS', '<', '14.0'));
 
 ### match
 
-Takes a string pattern and returns a tuple `[browserName, browserVersion?[]]` if the pattern is matched with `navigator.userAgent`.
-Otherwise, returns `false`.
+Accepts the given pattern and returns the tuple `[browserName, browserVersion?[]]` if the pattern matches
+`navigator.userAgent`. Otherwise, it returns `false`.
 
 ```js
 import { match } from 'core/browser/helpers';

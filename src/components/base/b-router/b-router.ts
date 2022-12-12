@@ -455,8 +455,16 @@ export default class bRouter extends iData {
 		}
 
 		const
-			currentRoute = this.field.get<router.Route>('routeStore'),
-			deepMixin = (...args) => Object.mixin({deep: true, skipUndefs: false}, ...args);
+			currentRoute = this.field.get<router.Route>('routeStore');
+
+		const deepMixin = (...args) => Object.mixin(
+			{
+				deep: true,
+				skipUndefs: false,
+				extendFilter: (el) => !Object.isArray(el)
+			},
+			...args
+		);
 
 		// If the new route has the same name as the current one,
 		// we need to mix the new state with the current one
@@ -805,6 +813,10 @@ export default class bRouter extends iData {
 		}
 
 		e.preventDefault();
+
+		if (<boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+			return;
+		}
 
 		const
 			l = Object.assign(document.createElement('a'), {href});

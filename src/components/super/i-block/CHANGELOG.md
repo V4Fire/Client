@@ -15,6 +15,13 @@ Changelog
 
 * Added complete documentation for the module
 
+## v3.30.0 (2022-10-19)
+
+#### :rocket: New Feature
+
+* Added a new module `InfoRender`
+* Added a new `initInfoRender` method
+
 ## v3.17.0 (2022-02-24)
 
 #### :boom: Breaking Change

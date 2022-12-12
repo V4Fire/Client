@@ -9,6 +9,10 @@ this.storage.get('foo');
 this.storage.remove('foo');
 ```
 
+## How to include this module to your component?
+
+By default, any component that inherited from [[iBlock]] has the `storage` property.
+
 ## Why not to use `core/kv-storage`?
 
 There are two reasons to use the `Storage` class instead of the pure `core/kv-storage` module.

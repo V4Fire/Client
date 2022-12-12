@@ -76,11 +76,11 @@ interface RenderComponentsVnodeDescriptor extends RenderComponentsVnodeParams {
 	type: string;
 }
 
-interface RenderComponentsVnodeParams {
+interface RenderComponentsVnodeParams<A extends object = Dictionary> {
 	/**
 	 * A dictionary with attributes to pass to the created VNode
 	 */
-	attrs?: Dictionary;
+	attrs?: A;
 
 	/**
 	 * An array of children VNode descriptors or dictionary with slot functions

@@ -6,28 +6,44 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Pattern } from 'core/browser/interface';
+
+const
+	{userAgent} = navigator;
+
 /**
- * Takes the given string pattern and returns a tuple `[browserName, browserVersion?[]]` if the pattern
- * is matched with `navigator.userAgent`. Otherwise, returns `false`.
+ * Accepts the given pattern and returns the tuple `[browserName, browserVersion?[]]` if the pattern matches
+ * `navigator.userAgent`. Otherwise, it returns `false`.
  *
- * @param pattern
+ * @param pattern - the pattern, regular expression, or a function that takes a `userAgent` string and returns
+ *   a pair of `browserName` and `browserVersion`
  */
-export function match(pattern: RegExp | string): [string, number[] | null] | false {
+export function match(pattern: Pattern): [string, number[] | null] | false {
 	if (typeof navigator === 'undefined') {
 		return false;
 	}
 
-	const
-		rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9._]*))?`, 'i') : pattern,
-		res = rgxp.exec(navigator.userAgent);
+	let
+		name: CanUndef<string>,
+		version: CanUndef<string>;
 
-	return res ?
-		[
-			res[1],
-			Object.isTruly(res[2]) ? res[2].split(/[._]/).map(map) : null
-		] :
+	if (Object.isFunction(pattern)) {
+		[name, version] = pattern(userAgent) ?? [];
 
-		false;
+	} else {
+		const rgxp = Object.isString(pattern) ? new RegExp(`(${pattern})(?:[ \\/-]([0-9._]*))?`, 'i') : pattern;
+		[, name, version] = rgxp.exec(userAgent) ?? [];
+	}
+
+	const versionParts = version != null && version.length !== 0 ?
+		version.split(/[._]/).map(map) :
+		null;
+
+	if (name != null) {
+		return [name, versionParts];
+	}
+
+	return false;
 
 	function map(el: string): number {
 		const v = parseInt(el, 10);

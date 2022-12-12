@@ -41,6 +41,7 @@ For more information on any of these properties, refer to their module documenta
 ### Public
 
 * `provide` (`components/friends/provide`) - a class with methods to provide component classes/styles to another component, etc.
+* `infoRender` (`components/friends/info-render`) - an API for collecting and rendering various component information.
 * `field` (`components/friends/field`) - a class with helper methods for safely accessing component/object properties.
 * `analytics` (`components/friends/analytics`) - a class to send component analytic events.
 * `sync` (`components/friends/sync`) - an API to synchronize fields and props of the component.

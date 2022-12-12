@@ -114,6 +114,7 @@ export async function renderFormAndEnvironment(page: Page, attrs: Dictionary = {
 	];
 
 	await Component.createComponents(page, 'b-dummy', scheme);
+
 	return Component.waitForComponentByQuery(page, '[data-id="target"]');
 }
 

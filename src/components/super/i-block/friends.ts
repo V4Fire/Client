@@ -22,6 +22,7 @@ import Sync from 'components/friends/sync';
 
 import Field from 'components/friends/field';
 import Provide from 'components/friends/provide';
+import InfoRender from 'components/friends/info-render';
 import type Block from 'components/friends/block';
 
 import Lfc from 'components/super/i-block/modules/lfc';
@@ -29,7 +30,7 @@ import State from 'components/friends/state';
 import Storage from 'components/friends/storage';
 
 import { component } from 'core/component';
-import { system } from 'components/super/i-block/decorators';
+import { system, hook } from 'components/super/i-block/decorators';
 
 import iBlockProps from 'components/super/i-block/props';
 
@@ -45,6 +46,17 @@ export default abstract class iBlockFriends extends iBlockProps {
 	})
 
 	readonly provide!: Provide;
+
+	/**
+	 * An API for collecting and rendering various component information
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: (ctx) => new InfoRender(ctx)
+	})
+
+	readonly infoRender!: InfoRender;
 
 	/**
 	 * A class with helper methods for safely accessing component/object properties
@@ -284,4 +296,12 @@ export default abstract class iBlockFriends extends iBlockProps {
 	})
 
 	protected readonly console!: Console;
+
+	/**
+	 * Initializes the collection of debugging information for the component
+	 */
+	@hook(['mounted', 'updated'])
+	protected initInfoRender(): void {
+		this.infoRender.initDataGathering();
+	}
 }

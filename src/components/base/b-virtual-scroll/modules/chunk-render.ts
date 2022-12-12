@@ -11,13 +11,14 @@ import symbolGenerator from 'core/symbol';
 
 import { InViewAdapter, InViewInitOptions, inViewFactory } from 'core/dom/in-view';
 
-import iBlock, { Friend } from 'components/super/i-block/i-block';
+import Friend from 'components/friends/friend';
+import type iBlock from 'components/super/i-block/i-block';
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
 import type ComponentRender from 'components/base/b-virtual-scroll/modules/component-render';
 import type ChunkRequest from 'components/base/b-virtual-scroll/modules/chunk-request';
 
-import type { RenderItem } from 'components/base/b-virtual-scroll/interface';
+import type { RenderItem, VirtualItemEl } from 'components/base/b-virtual-scroll/interface';
 
 const
 	$$ = symbolGenerator();
@@ -289,8 +290,14 @@ export default class ChunkRender extends Friend {
 
 			item.node = node;
 
+			const itemsData = {
+				current: item.data,
+				prev: items[i - 1]?.data,
+				next: items[i + 1]?.data
+			};
+
 			if (!Object.isFunction(node[$$.inView])) {
-				this.wrapInView(item);
+				this.wrapInView(item, itemsData);
 			}
 		}
 
@@ -299,9 +306,11 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Wraps the specified item node with the `in-view` directive
+	 *
 	 * @param item
+	 * @param itemData
 	 */
-	protected wrapInView(item: RenderItem): void {
+	protected wrapInView(item: RenderItem, itemData: VirtualItemEl): void {
 		const
 			{ctx} = this,
 			{node} = item;
@@ -311,7 +320,7 @@ export default class ChunkRender extends Friend {
 		}
 
 		const
-			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getItemKey(item.data, item.index)}`;
+			label = `${this.asyncGroup}:${this.asyncInViewPrefix}${ctx.getItemKey(itemData, item.index)}`;
 
 		if (!node) {
 			return;

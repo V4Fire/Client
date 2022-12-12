@@ -128,7 +128,13 @@ You can provide additional parameters by using data attributes.
 < a href = /some-url | data-router-method = replace | data-router-params = {"foo": 1}
 ```
 
-To disable this behavior, set the `interceptLinks` parameter to `false`.
+To disable this behavior for a specific link, add the `data-router-prevent-transition` attribute.
+
+```
+< button href = /some-url | data-router-prevent-transition = true
+```
+
+To disable this behavior globally, set the `interceptLinks` prop to `false`.
 
 ```
 - namespace [%fileName%]

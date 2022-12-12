@@ -16,13 +16,14 @@ import { is } from 'core/browser/const';
 
 export * from 'core/browser/const';
 export * from 'core/browser/helpers';
+export * from 'core/browser/interface';
 
 /**
- * Returns true if `navigator.userAgent` matches with the specified parameters
+ * Returns true if `navigator.userAgent` matches with the given parameters
  *
- * @param platform - a browser platform
- * @param [operation] - an operation type (>, >=, etc.)
- * @param [version] - a browser version
+ * @param platform - the browser platform
+ * @param [operation] - the operation type (>, >=, etc.)
+ * @param [version] - the browser version
  *
  * @example
  * ```js
