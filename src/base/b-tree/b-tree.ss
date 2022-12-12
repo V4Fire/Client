@@ -47,7 +47,8 @@
 							:items = el.children |
 							:folded = getFoldedPropValue(el) |
 							:item = item |
-							:v-attrs = nestedTreeProps
+							:v-attrs = nestedTreeProps |
+              :itemProps = itemProps
 						.
 							< template &
 								#default = o |

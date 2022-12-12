@@ -195,19 +195,21 @@ export default class bTree extends iData implements iItems {
 	 */
 	protected getItemProps(item: this['Item'], i: number): Dictionary {
 		const
-			op = this.itemProps;
+			op = this.itemProps,
+			props = Object.reject(item, ['id', 'parentId', 'children', 'folded']);
 
 		if (op == null) {
-			return Object.reject(item, ['id', 'parentId', 'children', 'folded']);
+			return props;
 		}
 
 		return Object.isFunction(op) ?
 			op(item, i, {
 				key: this.getItemKey(item, i),
-				ctx: this
+				ctx: this,
+				...props
 			}) :
 
-			op;
+			Object.assign(props, op);
 	}
 
 	/**
