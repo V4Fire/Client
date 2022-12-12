@@ -563,12 +563,6 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly styles?: Styles;
 
 	/**
-	 * Link to a `i18n` function that will be used to localize string literals
-	 */
-	@prop(Function)
-	readonly i18n: typeof i18n = ((i18n));
-
-	/**
 	 * A Link to the remote state object.
 	 *
 	 * The remote state object is a special watchable object that provides some parameters
@@ -1380,10 +1374,18 @@ export default abstract class iBlock extends ComponentInterface {
 	protected blockReadyListeners: Function[] = [];
 
 	/**
+	 * Function for internationalization of texts used in the component
+	 */
+	@computed()
+	protected get i18n(): ReturnType<typeof i18n> {
+		return i18n(this.componentName);
+	}
+
+	/**
 	 * Alias for `i18n`
 	 */
-	@computed({replace: false})
-	protected get t(): this['i18n'] {
+	@computed()
+	protected get t(): ReturnType<typeof i18n> {
 		return this.i18n;
 	}
 
