@@ -344,7 +344,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param locale
 	 */
 	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
-	protected syncLocaleWatcher(locale: string): void {
+	protected syncLocaleWatcher(locale: Language): void {
 		if (this.locale === locale) {
 			return;
 		}
