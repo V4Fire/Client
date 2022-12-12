@@ -98,6 +98,9 @@ export default class bTree extends iData implements iItems {
 	@prop(Boolean)
 	readonly folded: boolean = true;
 
+	/**
+	 * If true, then expandable items can be expanded by click
+	 */
 	@prop(Boolean)
 	readonly clickableItems: boolean = false;
 
@@ -180,7 +183,7 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * True, if item has children
+	 * True, if specified item has children
 	 * @param item
 	 */
 	protected hasChildren(item: this['Item']): boolean {
@@ -217,8 +220,11 @@ export default class bTree extends iData implements iItems {
 	 * @param item
 	 */
 	protected getFoldProps(item: this['Item']): Dictionary {
+		const
+			prop = this.clickableItems ? '@click.stop' : '@click';
+
 		return {
-			'@click.stop': this.onFoldClick.bind(this, item)
+			[prop]: this.onFoldClick.bind(this, item)
 		};
 	}
 
