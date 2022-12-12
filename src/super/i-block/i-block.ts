@@ -1390,17 +1390,6 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Link to `globalThis.l`
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true
-	})
-
-	protected readonly l: typeof l = globalThis.l;
-
-	/**
 	 * Link to the console API
 	 */
 	@system({
