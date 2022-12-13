@@ -25,7 +25,7 @@ export const months = [
 ];
 
 export const selectCache = new Cache<'months' | 'days' | 'years', readonly Item[]>([
-	t('b-select-date')('months'),
-	t('b-select-date')('days'),
-	t('b-select-date')('years')
+	'months',
+	'days',
+	'years'
 ]);
