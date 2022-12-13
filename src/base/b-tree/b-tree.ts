@@ -298,7 +298,7 @@ export default class bTree extends iData implements iItems {
 
 	/**
 	 * Closes all folded items recursively in all the tree
-	 * @param ctx
+	 * @param [ctx]
 	 */
 	protected closeAllItems(ctx: bTree = this.top ?? this): void {
 		const
