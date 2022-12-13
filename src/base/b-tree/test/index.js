@@ -312,10 +312,6 @@ module.exports = async (page, params) => {
 					foldedInitModValue = item.folded != null ? item.folded : foldedPropValue,
 					foldedClass = await getFoldedClass(target, foldedInitModValue);
 
-				await expectAsync(
-					element.getAttribute('class').then((className) => className.includes(foldedClass))
-				).toBeResolvedTo(true);
-
 				await expectAsync(element.getAttribute('data-level')).toBeResolvedTo(String(level));
 
 				if (isBranch) {
