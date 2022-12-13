@@ -1377,7 +1377,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Function for internationalization of texts used in the component
 	 */
 	@computed()
-	protected get i18n(): ReturnType<typeof i18n> {
+	get i18n(): ReturnType<typeof i18n> {
 		return i18n(this.componentName);
 	}
 
@@ -1385,7 +1385,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Alias for `i18n`
 	 */
 	@computed()
-	protected get t(): ReturnType<typeof i18n> {
+	get t(): ReturnType<typeof i18n> {
 		return this.i18n;
 	}
 
