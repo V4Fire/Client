@@ -9,4 +9,4 @@
 package('b-select')
 	.extends('i-input-text')
 	.dependencies('b-progress-icon')
-	.libs('core/component/directives/icon');
+	.libs('components/directives/icon');

@@ -383,7 +383,7 @@ We may require the router to load some modules on transition. Just add a `load` 
 export default {
   demo: {
     path: '/demo',
-    load: () => Promise.all([import('components/form/b-button'), import('core/component/directives/in-view')])
+    load: () => Promise.all([import('components/form/b-button'), import('components/directives/in-view')])
   }
 };
 ```
