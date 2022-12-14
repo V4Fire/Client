@@ -30,6 +30,8 @@ $RECYCLE.BIN
 # Icon must ends with two \r.
 Icon
 
+
+
 # Thumbnails
 ._*
 
@@ -48,6 +50,7 @@ Icon
 /.nyc_output
 /dist
 /tsconfig.json
+/*.tsconfig.json
 .env
 
 # Log
@@ -64,6 +67,6 @@ Icon
 /src/entries/tmp
 /db
 
-# NPM ignore list
-/docs
-/.github
+# Statoscope
+statoscope-*/*
+statoscope-*.config.js

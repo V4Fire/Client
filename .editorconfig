@@ -1,12 +1,17 @@
 root = true
 
-[!.gitginore]
+[*]
 charset = utf-8
 end_of_line = lf
 indent_style = space
 indent_size = 2
 trim_trailing_whitespace = true
 insert_final_newline = true
+
+[.{gitignore, npmignore}]
+end_of_line = unset
+trim_trailing_whitespace = false
+insert_final_newline = false
 
 [*.{js, jsx, ts, tsx, html, css, styl, ss, ess}]
 indent_style = tab
