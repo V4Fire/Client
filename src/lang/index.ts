@@ -12,11 +12,11 @@ const
 
 ctx.keys().forEach((path: string) => {
 	const
-		result = /\/([^/]*?)\.i18n\/(.*?)\.js$/i.exec(path);
+		parsedPath = /\/([^/]*?)\.i18n\/(.*?)\.js$/i.exec(path);
 
-	if (result != null) {
+	if (parsedPath != null) {
 		const
-			[_, keysetName, lang] = result;
+			[_, keysetName, lang] = parsedPath;
 
 		langPacs[lang] = langPacs[lang] ?? {};
 
