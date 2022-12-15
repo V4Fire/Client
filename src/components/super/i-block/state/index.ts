@@ -290,7 +290,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * @param status
 	 * @param [opts] - additional options
 	 */
-	waitStatus(status: ComponentStatus, opts?: WaitDecoratorOptions): Promise<void>;
+	waitComponentStatus(status: ComponentStatus, opts?: WaitDecoratorOptions): Promise<void>;
 
 	/**
 	 * Executes the passed callback when the component is switched to the specified component status.
@@ -302,13 +302,13 @@ export default abstract class iBlockState extends iBlockMods {
 	 * @param cb
 	 * @param [opts] - additional options
 	 */
-	waitStatus<F extends BoundFn<this>>(
+	waitComponentStatus<F extends BoundFn<this>>(
 		status: ComponentStatus,
 		cb: F,
 		opts?: WaitDecoratorOptions
 	): CanPromise<ReturnType<F>>;
 
-	waitStatus<F extends BoundFn<this>>(
+	waitComponentStatus<F extends BoundFn<this>>(
 		status: ComponentStatus,
 		cbOrOpts?: F | WaitDecoratorOptions,
 		opts?: WaitDecoratorOptions

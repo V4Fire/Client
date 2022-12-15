@@ -369,7 +369,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * A link to the form associated with the component
 	 */
 	get connectedForm(): CanPromise<CanNull<HTMLFormElement>> {
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			let
 				form;
 
@@ -505,7 +505,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			{name} = this;
 
 		if (name != null) {
-			return this.waitStatus('ready', () => {
+			return this.waitComponentStatus('ready', () => {
 				const
 					form = this.connectedForm;
 
@@ -545,7 +545,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.infoStore = value;
 
 		if (this.messageHelpers) {
-			void this.waitStatus('ready', () => {
+			void this.waitComponentStatus('ready', () => {
 				const
 					box = this.block?.element('info-box');
 
@@ -572,7 +572,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.errorStore = value;
 
 		if (this.messageHelpers) {
-			void this.waitStatus('ready', () => {
+			void this.waitComponentStatus('ready', () => {
 				const
 					box = this.block?.element('error-box');
 
@@ -967,7 +967,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			}
 		});
 
-		this.localEmitter.on('block.mod.*.disabled.*', (e: ModEvent) => this.waitStatus('ready', () => {
+		this.localEmitter.on('block.mod.*.disabled.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
 			const
 				{input} = this.$refs;
 
@@ -976,7 +976,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			}
 		}));
 
-		this.localEmitter.on('block.mod.*.focused.*', (e: ModEvent) => this.waitStatus('ready', () => {
+		this.localEmitter.on('block.mod.*.focused.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
 			const
 				{input} = this.$refs;
 

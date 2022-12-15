@@ -152,7 +152,7 @@ export default class bSelectDate extends iInput implements iWidth {
 	 * List of child selects
 	 */
 	protected get elements(): CanPromise<readonly bSelect[]> {
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			const r = this.$refs;
 			return Object.freeze([r.month, r.day, r.year]);
 		});

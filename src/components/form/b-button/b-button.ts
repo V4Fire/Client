@@ -398,12 +398,12 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
 
-		$e.on('block.mod.*.opened.*', (e: ModEvent) => this.waitStatus('ready', () => {
+		$e.on('block.mod.*.opened.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
 			const expanded = e.value !== 'false' && e.type !== 'remove';
 			this.$refs.button.setAttribute('aria-expanded', String(expanded));
 		}));
 
-		$e.on('block.mod.*.disabled.*', (e: ModEvent) => this.waitStatus('ready', () => {
+		$e.on('block.mod.*.disabled.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
 			const {
 				button,
 				file
@@ -417,7 +417,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 			}
 		}));
 
-		$e.on('block.mod.*.focused.*', (e: ModEvent) => this.waitStatus('ready', () => {
+		$e.on('block.mod.*.focused.*', (e: ModEvent) => this.waitComponentStatus('ready', () => {
 			const
 				{button} = this.$refs;
 

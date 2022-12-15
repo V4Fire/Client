@@ -87,7 +87,7 @@ export default class bTextarea extends iInputText {
 	 * The textarea height
 	 */
 	get height(): CanPromise<number> {
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			const {input} = this.$refs;
 			return input.scrollHeight + <number>this.borderHeight - <number>this.paddingHeight;
 		});
@@ -97,7 +97,7 @@ export default class bTextarea extends iInputText {
 	 * The maximum textarea height
 	 */
 	get maxHeight(): CanPromise<number> {
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			const s = getComputedStyle(this.$refs.input);
 			return this.parse(s.maxHeight) + <number>this.borderHeight - <number>this.paddingHeight;
 		});
@@ -108,7 +108,7 @@ export default class bTextarea extends iInputText {
 	 * It depends on `line-height/font-size` of the textarea.
 	 */
 	get newlineHeight(): CanPromise<number> {
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			const
 				s = getComputedStyle(this.$refs.input),
 				lineHeight = parseFloat(s.lineHeight);
@@ -190,7 +190,7 @@ export default class bTextarea extends iInputText {
 	 * Sum of the textarea `border-top-width` and `border-bottom-width`
 	 */
 	protected get borderHeight(): CanPromise<number> {
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			const s = getComputedStyle(this.$refs.input);
 			return this.parse(s.borderBottomWidth) + this.parse(s.borderTopWidth);
 		});
@@ -200,7 +200,7 @@ export default class bTextarea extends iInputText {
 	 * Sum of the textarea `padding-top` and `padding-bottom`
 	 */
 	protected get paddingHeight(): CanPromise<number> {
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			const s = getComputedStyle(this.$refs.input);
 			return this.parse(s.paddingTop) + this.parse(s.paddingBottom);
 		});

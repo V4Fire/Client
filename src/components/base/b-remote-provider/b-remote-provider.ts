@@ -39,7 +39,7 @@ export default class bRemoteProvider extends iData {
 	 * Link to component content nodes
 	 */
 	get content(): CanPromise<Element[]> {
-		return this.waitStatus('loading', () => Array.from(this.$el!.children));
+		return this.waitComponentStatus('loading', () => Array.from(this.$el!.children));
 	}
 
 	override set db(value: CanUndef<this['DB']>) {
@@ -127,12 +127,12 @@ export default class bRemoteProvider extends iData {
 	/**
 	 * @emits `updData(data: unknown)`
 	 */
-	protected override onUpdData(data: unknown): void {
+	protected override onUpdateData(data: unknown): void {
 		const
 			l = this.$listeners;
 
 		if (!l['upd-data'] && !l['on-upd-data']) {
-			return super.onUpdData(data);
+			return super.onUpdateData(data);
 		}
 
 		this.emit('updData', data);
@@ -141,12 +141,12 @@ export default class bRemoteProvider extends iData {
 	/**
 	 * @emits `delData(data: unknown)`
 	 */
-	protected override onDelData(data: unknown): void {
+	protected override onDeleteData(data: unknown): void {
 		const
 			l = this.$listeners;
 
 		if (!l['del-data'] && !l['on-del-data']) {
-			return super.onDelData(data);
+			return super.onDeleteData(data);
 		}
 
 		this.emit('delData', data);

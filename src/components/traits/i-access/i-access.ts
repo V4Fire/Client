@@ -119,7 +119,7 @@ export default abstract class iAccess {
 				component.emit('disable');
 			}
 
-			return component.waitStatus('ready', setAttrs, asyncGroup);
+			return component.waitComponentStatus('ready', setAttrs, asyncGroup);
 
 			function setAttrs(): void {
 				const
@@ -162,7 +162,7 @@ export default abstract class iAccess {
 				component.emit(focused ? 'focus' : 'blur');
 			}
 
-			return component.waitStatus('ready', setAttrs, asyncGroup);
+			return component.waitComponentStatus('ready', setAttrs, asyncGroup);
 
 			function setAttrs(): void {
 				const

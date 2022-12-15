@@ -7,7 +7,7 @@
  */
 
 import type Friend from 'components/friends/friend';
-import type { ModsDict } from 'components/super/i-block/i-block';
+import type { ModsProp } from 'components/super/i-block/i-block';
 
 import { fakeCtx } from 'components/friends/block/const';
 import { getFullBlockName } from 'components/friends/block/block';
@@ -28,7 +28,7 @@ import { getFullBlockName } from 'components/friends/block/block';
  * console.log(this.block.getBlockSelector({focused: true}));
  * ```
  */
-export function getBlockSelector(this: Friend, mods?: ModsDict): string {
+export function getBlockSelector(this: Friend, mods?: ModsProp): string {
 	let
 		res = `.${(<Function>getFullBlockName).call(this)}`;
 
@@ -95,7 +95,7 @@ export function getFullElementName(this: Friend, name: string, modName?: string,
  * console.log(this.block.getElementSelector('foo', {focused: true}));
  * ```
  */
-export function getElementSelector(this: Friend, name: string, mods?: ModsDict): string {
+export function getElementSelector(this: Friend, name: string, mods?: ModsProp): string {
 	let
 		res = `.${(<Function>getFullElementName).call(this, name)}`;
 
@@ -130,7 +130,7 @@ export function elements<E extends Element = Element>(
 	this: Friend,
 	ctx: Element,
 	name: string,
-	mods?: ModsDict
+	mods?: ModsProp
 ): ArrayLike<E>;
 
 /**
@@ -148,14 +148,14 @@ export function elements<E extends Element = Element>(
 export function elements<E extends Element = Element>(
 	this: Friend,
 	name: string,
-	mods?: ModsDict
+	mods?: ModsProp
 ): ArrayLike<E>;
 
 export function elements<E extends Element = Element>(
 	this: Friend,
 	ctxOrName: Element | string,
-	name?: string | ModsDict,
-	mods?: ModsDict
+	name?: string | ModsProp,
+	mods?: ModsProp
 ): ArrayLike<E> {
 	const
 		$el = this.node;
@@ -179,7 +179,7 @@ export function elements<E extends Element = Element>(
 	ctxToSearch ??= $el;
 
 	if (ctxToSearch == null || $el == null) {
-		return fakeCtx.querySelectorAll('.loopback');
+		return fakeCtx!.querySelectorAll('.loopback');
 	}
 
 	const
@@ -222,7 +222,7 @@ export function element<E extends Element = Element>(
 	this: Friend,
 	ctx: Element,
 	name: string,
-	mods?: ModsDict
+	mods?: ModsProp
 ): CanNull<E>;
 
 /**
@@ -240,14 +240,14 @@ export function element<E extends Element = Element>(
 export function element<E extends Element = Element>(
 	this: Friend,
 	name: string,
-	mods?: ModsDict
+	mods?: ModsProp
 ): CanNull<E>;
 
 export function element<E extends Element = Element>(
 	this: Friend,
 	ctxOrName: Element | string,
-	name?: string | ModsDict,
-	mods?: ModsDict
+	name?: string | ModsProp,
+	mods?: ModsProp
 ): CanNull<E> {
 	let
 		ctx = this.node,

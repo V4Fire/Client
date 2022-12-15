@@ -11,14 +11,10 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/list';
-//#endif
-
-import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
-
 import { isAbsURL } from 'core/url';
+
+import Block, { element, elements } from 'components/friends/block';
 
 import iVisible from 'components/traits/i-visible/i-visible';
 import iWidth from 'components/traits/i-width/i-width';
@@ -30,25 +26,16 @@ import type { Active, Item, Items } from 'components/base/b-list/interface';
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
 
-const
-	$$ = symbolGenerator();
+Block.addToPrototype(element, elements);
 
-/**
- * Component to create a list of tabs/links
- */
 @component({
 	functional: {
 		dataProvider: undefined
-	},
-
-	model: {
-		prop: 'activeProp',
-		event: 'onChange'
 	}
 })
 
 export default class bList extends iData implements iVisible, iWidth, iItems {
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** @see [[iVisible.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -272,7 +259,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		dependencies: ['active']
 	})
 
-	protected get activeElement(): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> {
+	protected get activeElement(): CanPromise<CanNull<CanArray<HTMLAnchorElement>>> {
 		const
 			{active} = this;
 
@@ -281,17 +268,15 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 				id = this.values.get(value);
 
 			if (id != null) {
-				return this.block?.element<HTMLAnchorElement>('link', {id});
+				return this.block?.element<HTMLAnchorElement>('link', {id}) ?? null;
 			}
+
+			return null;
 		};
 
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			if (this.multiple) {
-				if (!Object.isSet(active)) {
-					return [];
-				}
-
-				return [...active].flatMap((val) => getEl(val) ?? []);
+				return Object.isSet(active) ? [...active].flatMap((val) => getEl(val) ?? []) : [];
 			}
 
 			return getEl(active);
@@ -711,11 +696,11 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
-	protected override onUpdData(data: unknown): void {
+	protected override onUpdateData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
-	protected override onDelData(data: unknown): void {
+	protected override onDeleteData(data: unknown): void {
 		Object.assign(this.db, this.convertDataToDB(data));
 	}
 
@@ -726,7 +711,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * @emits `actionChange(active: this['Active'])`
 	 */
 	@watch({
-		field: '?$el:click',
+		path: '?$el:click',
 		wrapper: (o, cb) => o.dom.delegateElement('link', cb)
 	})
 

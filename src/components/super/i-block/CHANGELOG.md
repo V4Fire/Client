@@ -11,6 +11,10 @@ Changelog
 
 ## v3.??.?? (2022-??-??)
 
+#### :boom: Breaking Change
+
+* Renamed `waitStatus` to `waitComponentStatus`
+
 #### :memo: Documentation
 
 * Added complete documentation for the module

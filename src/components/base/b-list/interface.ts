@@ -7,7 +7,7 @@
  */
 
 import type { HintPosition } from 'components/global/g-hint/interface';
-import type { ModsTable } from 'components/super/i-data/i-data';
+import type { ModsDict } from 'components/super/i-data/i-data';
 
 export interface Item extends Dictionary {
 	/**
@@ -86,7 +86,7 @@ export interface Item extends Dictionary {
 	/**
 	 * Map of additional modifiers of the item
 	 */
-	mods?: ModsTable;
+	mods?: ModsDict;
 
 	/**
 	 * List of additional classes of the item

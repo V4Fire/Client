@@ -173,7 +173,7 @@ export default class bForm extends iData implements iVisible {
 		const
 			processedComponents: Dictionary<boolean> = Object.createDict();
 
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			const
 				els: iInput[] = [];
 
@@ -199,7 +199,7 @@ export default class bForm extends iData implements iVisible {
 	 * A list of submit components associated with the form
 	 */
 	get submits(): CanPromise<readonly bButton[]> {
-		return this.waitStatus('ready', () => {
+		return this.waitComponentStatus('ready', () => {
 			const
 				{$el} = this;
 

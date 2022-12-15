@@ -159,7 +159,7 @@ export function getSelectedElement<C extends bSelect>(component: C): CanPromise<
 		}
 	};
 
-	return unsafe.waitStatus('ready', () => {
+	return unsafe.waitComponentStatus('ready', () => {
 		if (unsafe.multiple) {
 			if (!Object.isSet(value)) {
 				return [];
