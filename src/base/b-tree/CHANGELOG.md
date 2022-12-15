@@ -22,6 +22,8 @@ Changelog
 * Fixed an issue with the prop `itemProps` not being added to items attributes
 * Fixed adding `folded_false` class to items without children
 
+## v3.0.0-rc.164 (2021-03-22)
+
 #### :house: Internal
 
 * Fixed a race condition with the test case that waits for timeouts
