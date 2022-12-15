@@ -21,7 +21,6 @@ import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 import iData, { component, prop, field, TaskParams, TaskI, ModsDecl } from 'super/i-data/i-data';
 import type { Item, RenderFilter } from 'base/b-tree/interface';
-import type bButton from 'form/b-button/b-button';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-tree/interface';
