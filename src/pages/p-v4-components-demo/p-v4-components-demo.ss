@@ -14,6 +14,56 @@
 	- block body
 		: config = require('@config/config').build
 
+		< b-tree &
+      	/// The specified items are rendered as `b-checkbox`-es
+      	:item = 'b-button' |
+
+      	:items = [
+      		{id: 'bar', label: 'bar'},
+      		{id: 'foo', label: 'foo', children: [
+      			{id: 'fooone', label: 'foo1',},
+      			{id: 'footwo', label: 'foo2',},
+
+      			{
+      				id: 'foothree',
+      				label: 'foo3',
+      				children: [
+      					{id: 'foothreeone', label: 'foo4'},
+      					{id: 'foothreeone2', label: 'foo44', children: [
+      						{id: 'foothreeone25', label: 'foo44', children: [{id: 'foothreeone', label: 'foo4'}]}
+      					]}
+      				]
+      			},
+
+      			{
+                				id: 'foothree4',
+                				label: 'foo3',
+                				children: [
+                					{id: 'foothreeone4', label: 'foo4'}
+                				]
+                			},
+
+      			{id: 'foosix', label: 'foo5',}
+      		]},
+
+      		{id: 'foo5', label: 'foo', children: [
+              			{id: 'fooone5', label: 'foo1',},
+              			{id: 'footwo5', label: 'foo2',},
+
+              			{
+              				id: 'foothree5',
+              				label: 'foo3',
+              				children: [
+              					{id: 'foothreeone', label: 'foo4'}
+              				]
+              			},
+
+              			{id: 'foosix5', label: 'foo5',}
+              		]}
+      	]
+      .
+
+
 		- forEach config.components => @component
 			- if config.inspectComponents
 				< b-v4-component-demo

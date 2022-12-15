@@ -19,8 +19,9 @@ import symbolGenerator from 'core/symbol';
 
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 
-import iData, { component, prop, field, TaskParams, TaskI } from 'super/i-data/i-data';
+import iData, { component, prop, field, TaskParams, TaskI, ModsDecl } from 'super/i-data/i-data';
 import type { Item, RenderFilter } from 'base/b-tree/interface';
+import type bButton from "form/b-button/b-button";
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-tree/interface';
@@ -114,6 +115,13 @@ export default class bTree extends iData implements iItems {
 	@field((o) => o.sync.link())
 	items!: this['Items'];
 
+	static override readonly mods: ModsDecl = {
+		clickableArea: [
+			['fold'],
+			'any'
+		]
+	};
+
 	/** @inheritDoc */
 	protected override readonly $refs!: {
 		children?: bTree[];
@@ -156,24 +164,65 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Recursively iterates over the whole tree and executes a provided function once for each item
-	 *
+	 * Iterates over the tree items and executes a provided function once for each item
 	 * @param cb
-	 * @param [ctx]
 	 */
-	traverse(cb: (item: this['Item']) => void, ctx: bTree = this.top ?? this): void {
-		const
-			{children} = ctx.$refs;
+	siblings(cb: (item: this['Item']) => void): void {
+		this.items.forEach(cb);
+	}
 
-		if (children == null) {
+	/**
+	 * Iterates over the children items and executes a provided function once for each item
+	 * @param cb
+	 */
+	children(cb: (item: this['Item']) => void): void {
+		this.$refs.children?.forEach((child) => {
+			child.siblings(cb);
+		});
+	}
+
+	/**
+	 * Folds current item
+	 *
+	 * @param item
+	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
+	 */
+	fold(item: this['Item']): void {
+		const
+			target = this.findItemElement(item.id);
+
+		if (target == null || !this.hasChildren(item)) {
 			return;
 		}
 
-		this.items.forEach(cb);
+		const
+			isModSet = this.block?.setElMod(target, 'node', 'folded', true);
 
-		children.forEach((child) => {
-			child.traverse(cb, child);
-		});
+		if (isModSet) {
+			this.emit('fold', target, item, true);
+		}
+	}
+
+	/**
+	 * Unfolds current item
+	 *
+	 * @param item
+	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
+	 */
+	unfold(item: this['Item']): void {
+		const
+			target = this.findItemElement(item.id);
+
+		if (target == null || !this.hasChildren(item)) {
+			return;
+		}
+
+		const
+			isModSet = this.block?.setElMod(target, 'node', 'folded', false);
+
+		if (isModSet) {
+			this.emit('fold', target, item, false);
+		}
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -273,50 +322,6 @@ export default class bTree extends iData implements iItems {
 	protected findItemElement(id: string): CanUndef<HTMLElement> {
 		const itemId = this.dom.getId(id);
 		return this.$el?.querySelector(`[data-id=${itemId}]`) ?? undefined;
-	}
-
-	/**
-	 * Folds current item
-	 *
-	 * @param item
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
-	 */
-	protected fold(item: this['Item']): void {
-		const
-			target = this.findItemElement(item.id);
-
-		if (target == null || !this.hasChildren(item)) {
-			return;
-		}
-
-		const
-			isModSet = this.block?.setElMod(target, 'node', 'folded', true);
-
-		if (isModSet) {
-			this.emit('fold', target, item, true);
-		}
-	}
-
-	/**
-	 * Unfolds current item
-	 *
-	 * @param item
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
-	 */
-	protected unfold(item: this['Item']): void {
-		const
-			target = this.findItemElement(item.id);
-
-		if (target == null || !this.hasChildren(item)) {
-			return;
-		}
-
-		const
-			isModSet = this.block?.setElMod(target, 'node', 'folded', false);
-
-		if (isModSet) {
-			this.emit('fold', target, item, false);
-		}
 	}
 
 	/**

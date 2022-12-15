@@ -18,6 +18,10 @@ This module provides a component to render a recursive list of elements.
 
 ## Modifiers
 
+| Name            | Description                                    | Values    | Default |
+|-----------------|------------------------------------------------|-----------|---------|
+| `clickableArea` | The component clickable item area              | `string`  | `fold`  |
+
 See the [[iItems]] trait and the [[iData]] component.
 
 ## Events
