@@ -19,7 +19,6 @@ module.exports = function initGulp(gulp = require('gulp')) {
 
 	include('build/gulp/static')(gulp);
 	include('build/gulp/build')(gulp);
-	include('build/gulp/test')(gulp);
 
 	globalThis.callGulp(module);
 };
