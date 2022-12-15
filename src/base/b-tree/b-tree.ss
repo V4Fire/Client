@@ -26,7 +26,7 @@
 					}
 				})
 			.
-				< .&__item-wrapper :v-attrs = getItemAttrs(el)
+				< .&__item-wrapper
 					< .&__marker
 						- block fold
 							< template v-if = hasChildren(el)

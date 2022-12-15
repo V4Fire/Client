@@ -99,12 +99,6 @@ export default class bTree extends iData implements iItems {
 	readonly folded: boolean = true;
 
 	/**
-	 * If true, then expandable items can be expanded by click
-	 */
-	@prop(Boolean)
-	readonly clickableItems: boolean = false;
-
-	/**
 	 * Link to the top level component (internal parameter)
 	 */
 	@prop({type: Object, required: false})
@@ -139,7 +133,7 @@ export default class bTree extends iData implements iItems {
 	 */
 	protected get nestedTreeProps(): Dictionary {
 		const
-			{nestedRenderFilter, clickableItems} = this;
+			{nestedRenderFilter} = this;
 
 		const
 			isRootLvl = this.level === 0,
@@ -151,8 +145,7 @@ export default class bTree extends iData implements iItems {
 			classes: this.classes,
 			renderChunks: this.renderChunks,
 			nestedRenderFilter,
-			renderFilter,
-			clickableItems
+			renderFilter
 		};
 
 		if (this.$listeners.fold) {
@@ -160,6 +153,27 @@ export default class bTree extends iData implements iItems {
 		}
 
 		return opts;
+	}
+
+	/**
+	 * Recursively iterates over the whole tree and executes a provided function once for each item
+	 *
+	 * @param cb
+	 * @param [ctx]
+	 */
+	traverse(cb: (item: this['Item']) => void, ctx: bTree = this.top ?? this): void {
+		const
+			{children} = ctx.$refs;
+
+		if (children == null) {
+			return;
+		}
+
+		this.items.forEach(cb);
+
+		children.forEach((child) => {
+			child.traverse(cb, child);
+		});
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -220,26 +234,9 @@ export default class bTree extends iData implements iItems {
 	 * @param item
 	 */
 	protected getFoldProps(item: this['Item']): Dictionary {
-		const
-			prop = this.clickableItems ? '@click.stop' : '@click';
-
 		return {
-			[prop]: this.onFoldClick.bind(this, item)
+			'@click': this.onFoldClick.bind(this, item)
 		};
-	}
-
-	/**
-	 * Returns a dictionary with attributes for item element
-	 * @param item
-	 */
-	protected getItemAttrs(item: this['Item']): Dictionary {
-		if (this.clickableItems && this.hasChildren(item)) {
-			return {
-				'@click': this.onFoldClick.bind(this, item)
-			};
-		}
-
-		return {};
 	}
 
 	/**
@@ -279,49 +276,12 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Expands all folded items
-	 */
-	protected expandAllSiblingItems(): void {
-		this.items.forEach((item) => {
-			this.setFoldValue(item, false);
-		});
-	}
-
-	/**
-	 * Closes all folded items
-	 */
-	protected closeAllSiblingItems(): void {
-		this.items.forEach((item) => {
-			this.setFoldValue(item, true);
-		});
-	}
-
-	/**
-	 * Closes all folded items recursively in all the tree
-	 * @param [ctx]
-	 */
-	protected closeAllItems(ctx: bTree = this.top ?? this): void {
-		const
-			{children} = ctx.$refs;
-
-		if (children == null) {
-			return;
-		}
-
-		this.closeAllSiblingItems();
-
-		children.forEach((child) => {
-			child.closeAllItems(child);
-		});
-	}
-
-	/**
-	 * Sets folded mode value
+	 * Folds current item
 	 *
 	 * @param item
-	 * @param value
+	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
 	 */
-	protected setFoldValue(item: this['Item'], value: boolean): void {
+	protected fold(item: this['Item']): void {
 		const
 			target = this.findItemElement(item.id);
 
@@ -330,23 +290,47 @@ export default class bTree extends iData implements iItems {
 		}
 
 		const
-			isModSet = this.block?.setElMod(target, 'node', 'folded', value);
+			isModSet = this.block?.setElMod(target, 'node', 'folded', true);
 
 		if (isModSet) {
-			this.emit('fold', target, item, value);
+			this.emit('fold', target, item, true);
+		}
+	}
+
+	/**
+	 * Unfolds current item
+	 *
+	 * @param item
+	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
+	 */
+	protected unfold(item: this['Item']): void {
+		const
+			target = this.findItemElement(item.id);
+
+		if (target == null || !this.hasChildren(item)) {
+			return;
+		}
+
+		const
+			isModSet = this.block?.setElMod(target, 'node', 'folded', false);
+
+		if (isModSet) {
+			this.emit('fold', target, item, false);
 		}
 	}
 
 	/**
 	 * Handler: fold element has been clicked
-	 *
 	 * @param item
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
 	 */
 	protected onFoldClick(item: this['Item']): void {
 		const
+			target = this.findItemElement(item.id),
 			newVal = this.getFoldedModById(item.id) === 'false';
 
-		this.setFoldValue(item, newVal);
+		if (target) {
+			this.block?.setElMod(target, 'node', 'folded', newVal);
+			this.emit('fold', target, item, newVal);
+		}
 	}
 }
