@@ -197,6 +197,24 @@ The component supports a bunch of slots to provide:
 
 ## API
 
+Component provides the bunch of public methods
+
+### siblings
+
+Iterates over the tree items and executes a provided function once for each item.
+
+### children
+
+Iterates over the children items and executes a provided function once for each item.
+
+### fold
+
+Folds a passed item.
+
+### unfold
+
+Unfolds a passed item.
+
 Also, you can see the implemented traits or the parent component.
 
 ### Props
