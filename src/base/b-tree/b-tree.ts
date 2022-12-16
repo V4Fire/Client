@@ -184,7 +184,7 @@ export default class bTree extends iData implements iItems {
 	 * Folds current item
 	 *
 	 * @param item
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
+	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
 	 */
 	fold(item: this['Item']): void {
 		const
@@ -206,7 +206,7 @@ export default class bTree extends iData implements iItems {
 	 * Unfolds current item
 	 *
 	 * @param item
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
+	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
 	 */
 	unfold(item: this['Item']): void {
 		const
@@ -327,7 +327,7 @@ export default class bTree extends iData implements iItems {
 	 * Handler: fold element has been clicked
 	 *
 	 * @param item
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
+	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
 	 */
 	protected onFoldClick(item: this['Item']): void {
 		const
