@@ -163,25 +163,53 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Iterates over the tree items and executes a provided function once for each item
-	 * @param cb
+	 * Returns an iterator to iterate the tree items
 	 */
-	siblings(cb: (item: this['Item']) => void): void {
-		this.items.forEach(cb);
+	siblings(): IterableIterator<this['Item']> {
+		const
+			{items} = this,
+			iter = createIter();
+
+		return {
+			[Symbol.iterator]() {
+				return this;
+			},
+
+			next: iter.next.bind(iter)
+		};
+
+		function* createIter() {
+			for (const item of items) {
+				yield item;
+			}
+		}
 	}
 
 	/**
-	 * Iterates over the children items and executes a provided function once for each item
-	 * @param cb
+	 * Returns an iterator to iterate the children items
 	 */
-	children(cb: (item: this['Item']) => void): void {
-		this.$refs.children?.forEach((child) => {
-			child.siblings(cb);
-		});
+	children(): IterableIterator<this['Item']> {
+		const
+			children = this.$refs.children ?? [],
+			iter = createIter();
+
+		return {
+			[Symbol.iterator]() {
+				return this;
+			},
+
+			next: iter.next.bind(iter)
+		};
+
+		function* createIter() {
+			for (const child of children) {
+				yield* child.siblings();
+			}
+		}
 	}
 
 	/**
-	 * Folds current item
+	 * Folds the specified item
 	 *
 	 * @param item
 	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
@@ -198,12 +226,12 @@ export default class bTree extends iData implements iItems {
 			isModSet = this.block?.setElMod(target, 'node', 'folded', true);
 
 		if (isModSet) {
-			this.emit('fold', target, item, true);
+			this.emit('fold', target, item);
 		}
 	}
 
 	/**
-	 * Unfolds current item
+	 * Unfolds the specified item
 	 *
 	 * @param item
 	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
@@ -220,7 +248,7 @@ export default class bTree extends iData implements iItems {
 			isModSet = this.block?.setElMod(target, 'node', 'folded', false);
 
 		if (isModSet) {
-			this.emit('fold', target, item, false);
+			this.emit('unfold', target, item);
 		}
 	}
 

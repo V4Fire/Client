@@ -26,9 +26,10 @@ See the [[iItems]] trait and the [[iData]] component.
 
 ## Events
 
-| EventName | Description                                            | Payload description                                            | Payload                          |
-|-----------|--------------------------------------------------------|----------------------------------------------------------------|----------------------------------|
-| `fold`    | One of the component items has been folded or unfolded | A link to the DOM element; The item object; The folding status | `HTMLElement`; `Item`; `boolean` |
+| EventName | Description                                  | Payload description                        | Payload               |
+|-----------|----------------------------------------------|--------------------------------------------|-----------------------|
+| `fold`    | One of the component items has been folded   | A link to the DOM element; The item object | `HTMLElement`; `Item` |
+| `unfold`  | One of the component items has been unfolded | A link to the DOM element; The item object | `HTMLElement`; `Item` |
 
 See the [[iItems]] trait and the [[iData]] component.
 
@@ -201,19 +202,31 @@ Component provides the bunch of public methods
 
 ### siblings
 
-Iterates over the tree items and executes a provided function once for each item.
+Returns an iterator to iterate the tree items
 
 ### children
 
-Iterates over the children items and executes a provided function once for each item.
+Returns an iterator to iterate the children items
 
 ### fold
 
 Folds a passed item.
 
+```js
+for (const item of this.$ref.tree.siblings()) {
+  item.fold();
+}
+```
+
 ### unfold
 
 Unfolds a passed item.
+
+```js
+for (const item of this.$ref.tree.siblings()) {
+  item.unfold();
+}
+```
 
 Also, you can see the implemented traits or the parent component.
 
