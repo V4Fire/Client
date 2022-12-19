@@ -6,17 +6,20 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { HintPosition } from 'components/global/g-hint/interface';
+import type { HintPosition } from 'components/global/g-hint';
 import type { ModsDict } from 'components/super/i-data/i-data';
+
+export type Items = Item[];
+export type Active = unknown | Set<unknown>;
 
 export interface Item extends Dictionary {
 	/**
-	 * Item label text
+	 * The item label text
 	 */
 	label?: string;
 
 	/**
-	 * Item value
+	 * The item value
 	 */
 	value?: unknown;
 
@@ -41,64 +44,60 @@ export interface Item extends Dictionary {
 	progress?: boolean;
 
 	/**
-	 * Exterior modifier of the item
+	 * The item exterior modifier
 	 */
 	exterior?: string;
 
 	/**
-	 * Tooltip text of the item
+	 * The item tooltip text
 	 */
 	hint?: string;
 
 	/**
-	 * Tooltip position to show
+	 * The item tooltip position
 	 */
 	hintPos?: HintPosition;
 
 	/**
-	 * Icon to show before a label
+	 * An icon to show before the item label
 	 */
 	preIcon?: string;
 
 	/**
-	 * Name of the used component to show `preIcon`
+	 * The name of the used component to display `preIcon`
 	 * @default `'b-icon'`
 	 */
 	preIconComponent?: string;
 
 	/**
-	 * Icon to show after a label
+	 * An icon to show after the item label
 	 */
 	icon?: string;
 
 	/**
-	 * Name of the used component to show `icon`
+	 * The name of the used component to display `icon`
 	 * @default `'b-icon'`
 	 */
 	iconComponent?: string;
 
 	/**
-	 * Component to show "in-progress" state of the item or
+	 * A component to show "in-progress" state or
 	 * Boolean, if needed to show progress by slot or `b-progress-icon`
 	 */
 	progressIcon?: string | boolean;
 
 	/**
-	 * Map of additional modifiers of the item
+	 * A dictionary with additional modifiers of the item
 	 */
 	mods?: ModsDict;
 
 	/**
-	 * List of additional classes of the item
+	 * A list of additional classes of the item
 	 */
 	classes?: string[];
 
 	/**
-	 * Map of additional attributes of the item
+	 * A dictionary with additional attributes of the item
 	 */
 	attrs?: Dictionary;
 }
-
-export type Items = Item[];
-
-export type Active = unknown | Set<unknown>;

@@ -1,10 +1,10 @@
 # components/base/b-list
 
-This module provides a standard component to create a list of tabs/links.
-You can use it "as it is" or like a superclass.
+This module provides a standard component for creating a list of tabs/links.
+You can use it "as is" or as a superclass.
 
-The component uses the `<a>` or `<button>` tags with a simple text label to render each item.
-If you need a more complex layout, provide it via a slot or by using `item/itemProps` props.
+The component uses `<a>` or `<button>` tags with a simple text label to display each element.
+If you need a more complex layout, provide it via a slot or `item/itemProps` props.
 
 ## Synopsis
 
@@ -22,36 +22,36 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 ## Features
 
-* Support of links and tabs.
+* Support for links and tabs.
 
 * Multiple active items (`multiple = true`).
 
-* Cancellation of a choice (`cancelable = true`).
+* Cancel selection (`cancelable = true`).
 
 * Dynamic data loading.
 
 ## Modifiers
 
-| Name         | Description            | Values    | Default |
-|--------------|------------------------|-----------|---------|
-| `hideLabels` | Item labels are hidden | `boolean` | `false` |
+| Name         | Description                | Values    | Default |
+|--------------|----------------------------|-----------|---------|
+| `hideLabels` | The item labels are hidden | `boolean` | `false` |
 
 Also, you can see the parent component and the component traits.
 
 ## Events
 
-| EventName         | Description                                                                                                                 | Payload description                   | Payload  |
-|-------------------|-----------------------------------------------------------------------------------------------------------------------------|---------------------------------------|----------|
-| `change`          | An active item of the component has been changed                                                                            | Active value or a set of active items | `Active` |
-| `immediateChange` | An active item of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active items | `Active` |
-| `actionChange`    | An active item of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |
-| `itemsChange`     | A list of items has been changed                                                                                            | List of items                         | `Items`  |
+| EventName         | Description                                                                                                                     | Payload description | Payload  |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------|---------------------|----------|
+| `change`          | The active element of the component has been changed                                                                            | The active item(s)  | `Active` |
+| `immediateChange` | The active element of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | The active item(s)  | `Active` |
+| `actionChange`    | The active element of the component has been changed due to some user action                                                    | The active item(s)  | `Active` |
+| `itemsChange`     | The list of items has been changed                                                                                              | The list of items   | `Items`  |
 
 Also, you can see the parent component and the component traits.
 
 ## Associated types
 
-The component has associated type to specify active component item: **Active**.
+The component has one associated type to specify the active component item: **Active**.
 
 ```typescript
 import bList, { component } from 'components/super/b-list/b-list';
@@ -65,7 +65,7 @@ export default class myList extends bList {
 }
 ```
 
-There are associated types to specify a type of component items: **Item** and **Items**.
+In addition, there are associated types to specify the item types: **Item** and **Items**.
 
 ```typescript
 import bList, { component } from 'components/super/b-list/b-list';
@@ -89,18 +89,9 @@ The component can be used with the `v-model` directive.
 < b-list :items = items | v-model = activeItem
 ```
 
-```js
-({
-  model: {
-    prop: 'activeProp',
-    event: 'onChange'
-  }
-})
-```
-
 ## Usage
 
-### Simple use of the component with a provided list of items and default active item
+### Using the component with a provided list of items and a default active item
 
 ```
 < b-list :items = [ &
@@ -109,7 +100,7 @@ The component can be used with the `v-model` directive.
 ] .
 ```
 
-### Use of the component with the providing of an active item
+### Using the component with a provided active item
 
 ```
 < b-list :active = 0 | :items = [ &
@@ -118,7 +109,7 @@ The component can be used with the `v-model` directive.
 ] .
 ```
 
-### Use of the component with the providing of links and custom attributes
+### Using the component with provided links and custom attributes
 
 ```
 < b-list :items = [ &
@@ -133,7 +124,7 @@ The component can be used with the `v-model` directive.
 < b-list :active = true | :dataProvider = 'MyProvider'
 ```
 
-### Use of the component with the creation of additional component for each item
+### Using the component with creating an additional component for each element
 
 ```
 < b-list &
@@ -146,7 +137,7 @@ The component can be used with the `v-model` directive.
 .
 ```
 
-### Providing a key to the internal `v-for` directive
+### Providing a key to an internal `v-for` directive
 
 ```
 < b-tree &
@@ -160,52 +151,52 @@ The component can be used with the `v-model` directive.
 
 ## Slots
 
-The component supports a bunch of slots to provide:
+The component supports a bunch of slots to provide.
 
 1. `default` to provide the base content of each item.
 
-```
-< b-list :items = listOfItems
-  < template #default = {item}
-    {{ item.label }}
-```
+   ```
+   < b-list :items = listOfItems
+     < template #default = {item}
+       {{ item.label }}
+   ```
 
 2. `preIcon` and `icon` to inject icons around each item.
 
-```
-< b-list :items = listOfItems
-  < template #preIcon
-    < img src = expand.svg
-```
+   ```
+   < b-list :items = listOfItems
+     < template #preIcon
+       < img src = expand.svg
+   ```
 
-Also, these icons can be provided by a prop.
+   Also, these icons can be provided by props.
 
-```
-< b-list :items = [ &
-  {label: 'Foo', preIcon: 'expand'}
-  {label: 'Bar', icon: 'expand', iconComponent: 'b-custom-icon'}
-] .
+   ```
+   < b-list :items = [ &
+     {label: 'Foo', preIcon: 'expand'}
+     {label: 'Bar', icon: 'expand', iconComponent: 'b-custom-icon'}
+   ] .
 
-< b-list :items = listOfItems
-  < template #icon = {icon, item}
-    < img :src = icon
-```
+   < b-list :items = listOfItems
+     < template #icon = {icon, item}
+       < img :src = icon
+   ```
 
 3. `progressIcon` to inject an icon that indicates loading each item, by default, is used [[bProgressIcon]].
 
-```
-< b-list :items = listOfItems
-  < template #progressIcon
-    < img src = spinner.svg
-```
+   ```
+   < b-list :items = listOfItems
+     < template #progressIcon
+       < img src = spinner.svg
+   ```
 
-Also, this icon can be provided by a prop.
+   Also, this icon can be provided by a prop.
 
-```
-< b-list :items = [ &
-  {label: 'Foo', progressIcon: 'bCustomLoader'}
-] .
-```
+   ```
+   < b-list :items = [ &
+     {label: 'Foo', progressIcon: 'bCustomLoader'}
+   ] .
+   ```
 
 ## API
 
@@ -215,16 +206,16 @@ Also, you can see the implemented traits or the parent component.
 
 #### [listTag = `'ul'`]
 
-A type of the list' root tag.
+List root tag type.
 
 #### [listElTag = `'li'`]
 
-A type of list' element tags.
+List element tag type.
 
 #### [activeProp]
 
-An initial component active item/s.
-If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
+The active element(s) of the component.
+If the component is switched to "multiple" mode, you can pass in an iterable to define multiple active elements.
 
 #### [autoHref = `false`]
 
@@ -232,22 +223,22 @@ If true, then all items without the `href` option will automatically generate a 
 
 #### [multiple = `false`]
 
-If true, the component supports a feature of multiple active items.
+If true, the component supports the multiple active items feature.
 
 #### [cancelable]
 
-If true, the active item can be unset by using another click to it.
-By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise to `false`.
+If set to true, the active item can be canceled by clicking it again.
+By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise it is set to `false`.
 
 #### [attrsProp]
 
-Initial additional attributes are provided to an "internal" (native) list tag.
+Additional attributes that are provided to the native list tag.
 
 ### Fields
 
 #### items
 
-List of component items.
+A list of the component items.
 
 ### Getters
 
@@ -258,7 +249,8 @@ If the component is switched to the `multiple` mode, the getter will return a `S
 
 #### attrs
 
-Additional attributes are provided to an "internal" (native) list tag.
+The active element(s) of the component.
+If the component is switched to "multiple" mode, the getter will return a Set.
 
 ### Methods
 
@@ -282,8 +274,8 @@ class Test extends iData {
 
 #### setActive
 
-Activates an item by the specified value.
-If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
+Activates the item(s) by the specified value(s).
+If the component is switched to the `multiple` mode, the method can take an iterable to set multiple items.
 
 ```typescript
 class Test extends iData {
@@ -300,8 +292,8 @@ class Test extends iData {
 
 #### unsetActive
 
-Deactivates an item by the specified value.
-If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
+Deactivates the item(s) by the specified value(s).
+If the component is switched to the `multiple` mode, the method can take an iterable to unset multiple items.
 
 ```typescript
 class Test extends iData {
@@ -318,8 +310,8 @@ class Test extends iData {
 
 #### toggleActive
 
-Toggles activation of an item by the specified value.
-The methods return a new active component item/s.
+Toggles activation of the item(s) by the specified value(s).
+The methods return a new active component item(s).
 
 ```typescript
 class Test extends iData {

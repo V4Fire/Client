@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Removed deprecated code
+* Renamed `listElTag` to `listElementTag`
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :boom: Breaking Change
