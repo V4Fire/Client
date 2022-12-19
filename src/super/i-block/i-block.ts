@@ -1382,14 +1382,6 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * Alias for `i18n`
-	 */
-	@computed()
-	get t(): ReturnType<typeof i18n> {
-		return this.i18n;
-	}
-
-	/**
 	 * Link to the console API
 	 */
 	@system({

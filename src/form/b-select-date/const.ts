@@ -10,18 +10,18 @@ import { Cache } from 'super/i-block/i-block';
 import type { Item } from 'form/b-select/b-select';
 
 export const months = [
-	t('b-select-date')('January'),
-	t('b-select-date')('February'),
-	t('b-select-date')('March'),
-	t('b-select-date')('April'),
-	t('b-select-date')('May'),
-	t('b-select-date')('June'),
-	t('b-select-date')('July'),
-	t('b-select-date')('August'),
-	t('b-select-date')('September'),
-	t('b-select-date')('October'),
-	t('b-select-date')('November'),
-	t('b-select-date')('December')
+	i18n('b-select-date')('January'),
+	i18n('b-select-date')('February'),
+	i18n('b-select-date')('March'),
+	i18n('b-select-date')('April'),
+	i18n('b-select-date')('May'),
+	i18n('b-select-date')('June'),
+	i18n('b-select-date')('July'),
+	i18n('b-select-date')('August'),
+	i18n('b-select-date')('September'),
+	i18n('b-select-date')('October'),
+	i18n('b-select-date')('November'),
+	i18n('b-select-date')('December')
 ];
 
 export const selectCache = new Cache<'months' | 'days' | 'years', readonly Item[]>([

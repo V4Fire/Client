@@ -76,7 +76,7 @@ export default <ValidatorsDecl<bInput>>{
 		}
 
 		const error = (
-			defMsg = this.t('The value is not a number'),
+			defMsg = this.i18n('The value is not a number'),
 			errorValue: string | number = value,
 			errorType: NumberValidatorResult['name'] = 'INVALID_VALUE'
 		) => {
@@ -113,21 +113,21 @@ export default <ValidatorsDecl<bInput>>{
 		switch (type) {
 			case 'uint':
 				if (!Number.isNonNegative(numValue) || !Number.isInteger(numValue)) {
-					return error(this.t('The value does not match with an unsigned integer type'), numValue);
+					return error(this.i18n('The value does not match with an unsigned integer type'), numValue);
 				}
 
 				break;
 
 			case 'int':
 				if (!Number.isInteger(numValue)) {
-					return error(this.t('The value does not match with an integer type'), numValue);
+					return error(this.i18n('The value does not match with an integer type'), numValue);
 				}
 
 				break;
 
 			case 'ufloat':
 				if (!Number.isNonNegative(numValue)) {
-					return error(this.t('The value does not match with an unsigned float type'), numValue);
+					return error(this.i18n('The value does not match with an unsigned float type'), numValue);
 				}
 
 				break;
@@ -143,21 +143,21 @@ export default <ValidatorsDecl<bInput>>{
 			if (strictPrecision) {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (chunks[1] == null || chunks[1].length !== precision) {
-					return error(this.t('A decimal part should have {precision} digits', {precision}), numValue, 'DECIMAL_LENGTH');
+					return error(this.i18n('A decimal part should have {precision} digits', {precision}), numValue, 'DECIMAL_LENGTH');
 				}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			} else if (chunks[1] != null && chunks[1].length > precision) {
-				return error(this.t('A decimal part should have no more than {precision} digits', {precision}), numValue, 'DECIMAL_LENGTH');
+				return error(this.i18n('A decimal part should have no more than {precision} digits', {precision}), numValue, 'DECIMAL_LENGTH');
 			}
 		}
 
 		if (min != null && numValue < min) {
-			return error(this.t('A value must be at least {min}', {min}), numValue, 'MIN');
+			return error(this.i18n('A value must be at least {min}', {min}), numValue, 'MIN');
 		}
 
 		if (max != null && numValue > max) {
-			return error(this.t('A value must be no more than {max}', {max}), numValue, 'MAX');
+			return error(this.i18n('A value must be no more than {max}', {max}), numValue, 'MAX');
 		}
 
 		return true;
@@ -193,7 +193,7 @@ export default <ValidatorsDecl<bInput>>{
 
 		const error = (
 			type: DateValidatorResult['name'] = 'INVALID_VALUE',
-			defMsg = this.t("The value can't be parsed as a date"),
+			defMsg = this.i18n("The value can't be parsed as a date"),
 			errorValue: Date | string = dateValue
 		) => {
 			const err = <DateValidatorResult>{
@@ -217,27 +217,27 @@ export default <ValidatorsDecl<bInput>>{
 			isFuture = dateValue.isFuture();
 
 		if (past && !isPast) {
-			return error('NOT_PAST', this.t('A date value must be in the past'));
+			return error('NOT_PAST', this.i18n('A date value must be in the past'));
 		}
 
 		if (past === false && isPast) {
-			return error('IS_PAST', this.t("A date value can't be in the past"));
+			return error('IS_PAST', this.i18n("A date value can't be in the past"));
 		}
 
 		if (future && !isFuture) {
-			return error('NOT_FUTURE', this.t('A date value must be in the future'));
+			return error('NOT_FUTURE', this.i18n('A date value must be in the future'));
 		}
 
 		if (future === false && isFuture) {
-			return error('IS_FUTURE', this.t("A date value can't be in the future"));
+			return error('IS_FUTURE', this.i18n("A date value can't be in the future"));
 		}
 
 		if (min != null && !dateValue.isAfter(min, 1)) {
-			return error('MIN', this.t('A date value must be at least "{date}"', {date: new Date(min).toDateString()}));
+			return error('MIN', this.i18n('A date value must be at least "{date}"', {date: new Date(min).toDateString()}));
 		}
 
 		if (max != null && !dateValue.isBefore(max, 1)) {
-			return error('MAX', this.t('A date value must be no more than "{date}"', {date: new Date(max).toDateString()}));
+			return error('MAX', this.i18n('A date value must be no more than "{date}"', {date: new Date(max).toDateString()}));
 		}
 
 		return true;
@@ -258,7 +258,7 @@ export default <ValidatorsDecl<bInput>>{
 		}
 
 		if (!/.+@.+/.test(value)) {
-			this.setValidationMsg(this.getValidatorMsg(false, msg, this.t('Invalid email format')), showMsg);
+			this.setValidationMsg(this.getValidatorMsg(false, msg, this.i18n('Invalid email format')), showMsg);
 			return false;
 		}
 
@@ -296,7 +296,7 @@ export default <ValidatorsDecl<bInput>>{
 
 		const error = (
 			type: PasswordValidatorResult['name'] = 'NOT_MATCH',
-			defMsg = this.t('A password must contain only allowed characters'),
+			defMsg = this.i18n('A password must contain only allowed characters'),
 			errorValue: string | number | [string, string] = value
 		) => {
 			const err = <PasswordValidatorResult>{
@@ -342,12 +342,12 @@ export default <ValidatorsDecl<bInput>>{
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (min != null && length < min) {
-				return error('MIN', this.t('Password length must be at least {min} characters', {min}));
+				return error('MIN', this.i18n('Password length must be at least {min} characters', {min}));
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (max != null && length > max) {
-				return error('MAX', this.t('Password length must be no more than {max} characters', {max}));
+				return error('MAX', this.i18n('Password length must be no more than {max} characters', {max}));
 			}
 		}
 
@@ -367,7 +367,7 @@ export default <ValidatorsDecl<bInput>>{
 
 			if (connectedValue !== '') {
 				if (connectedValue === value) {
-					return error('OLD_IS_NEW', this.t('The old and new password are the same'));
+					return error('OLD_IS_NEW', this.i18n('The old and new password are the same'));
 				}
 
 				void connectedInput.setMod('valid', true);
@@ -387,7 +387,7 @@ export default <ValidatorsDecl<bInput>>{
 
 			if (connectedValue !== '') {
 				if (connectedValue !== value) {
-					return error('NOT_CONFIRM', this.t("The passwords aren't match"), [value, String(connectedValue)]);
+					return error('NOT_CONFIRM', this.i18n("The passwords aren't match"), [value, String(connectedValue)]);
 				}
 
 				void connectedInput.setMod('valid', true);
