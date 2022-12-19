@@ -113,7 +113,7 @@ export default class bRemoteProvider extends iData {
 		const
 			a = this.$attrs;
 
-		if (a.onAddData == null && a.onOAddData == null) {
+		if (a.onAddData == null && a.onOnAddData == null) {
 			return super.onAddData(data);
 		}
 
