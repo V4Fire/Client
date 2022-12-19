@@ -36,7 +36,7 @@
 
 					< template v-else
 						+= self.slot()
-							< h1.&__title v-if = title || vdom.getSlot('title')
+							< h1.&__title v-if = title || $slots['title']
 								+= self.slot('title', {':title': 'title'})
 									- block title
 										{{ title }}

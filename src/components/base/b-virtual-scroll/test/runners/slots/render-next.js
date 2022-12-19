@@ -150,7 +150,7 @@ module.exports = (page) => {
 	describe('b-virtual-scroll `renderNext` slot', () => {
 		describe('not render', () => {
 			it('if it is not set', async () => {
-				expect(await components.renderNextNoSlot.evaluate((ctx) => Boolean(ctx.vdom.getSlot('empty')))).toBe(false);
+				expect(await components.renderNextNoSlot.evaluate((ctx) => Boolean(ctx.$slots['empty']))).toBe(false);
 				expect(await h.dom.getRef(nodes.renderNextNoSlot, 'empty')).toBeFalsy();
 			});
 

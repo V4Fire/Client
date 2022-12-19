@@ -99,8 +99,7 @@ function tagFilter({name, attrs = {}}) {
 				// eslint-disable-next-line no-new-func
 				attr = Function(`return ${attr}`)();
 
-			} catch {
-			}
+			} catch {}
 
 			if (Object.isArray(propVal)) {
 				return $C(propVal).some((propVal) => Object.fastCompare(propVal, attr));

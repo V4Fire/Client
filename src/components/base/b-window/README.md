@@ -56,7 +56,7 @@ Also, you can see the implemented traits or the parent component.
 
 ## Slots
 
-The component supports a bunch of slots to provide:
+The component supports a bunch of slots to provide.
 
 1. `default` to override the default component layout.
 

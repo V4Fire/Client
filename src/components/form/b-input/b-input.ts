@@ -261,7 +261,7 @@ export default class bInput extends iInputText {
 					str = resolvedText !== undefined ? String(resolvedText) : '';
 
 				if (o.isFunctional) {
-					void o.waitStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str);
+					void o.waitComponentStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str);
 
 				} else if (o.hook === 'updated') {
 					o.text = str;

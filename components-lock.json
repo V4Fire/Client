@@ -1,5 +1,5 @@
 {
-  "hash": "5795e7a9374434ad530815dee37b893ab52fec966d9ae03797fe555f07c9f771",
+  "hash": "e0a42a292c4afa7092e843baab3a4579d3fd2807add76617f417bfb31de57d6c",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -684,7 +684,7 @@
               "b-progress-icon"
             ],
             "libs": [
-              "core/component/directives/icon"
+              "components/directives/icon"
             ]
           },
           "name": "b-list",
@@ -693,18 +693,18 @@
             "b-progress-icon"
           ],
           "libs": [
-            "core/component/directives/icon"
+            "components/directives/icon"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "core/component/directives/icon"
+              "components/directives/icon"
             ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "core/component/directives/icon"
+              "components/directives/icon"
             ]
           },
           "type": "block",
@@ -856,7 +856,7 @@
               "b-progress-icon"
             ],
             "libs": [
-              "core/component/directives/icon"
+              "components/directives/icon"
             ]
           },
           "name": "b-select",
@@ -865,18 +865,18 @@
             "b-progress-icon"
           ],
           "libs": [
-            "core/component/directives/icon"
+            "components/directives/icon"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "core/component/directives/icon"
+              "components/directives/icon"
             ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "core/component/directives/icon"
+              "components/directives/icon"
             ]
           },
           "type": "block",
@@ -998,25 +998,25 @@
             "parent": "i-data",
             "dependencies": [],
             "libs": [
-              "core/component/directives/resize-observer"
+              "components/directives/on-resize"
             ]
           },
           "name": "b-slider",
           "parent": "i-data",
           "dependencies": [],
           "libs": [
-            "core/component/directives/resize-observer"
+            "components/directives/on-resize"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "core/component/directives/resize-observer"
+              "components/directives/on-resize"
             ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
-              "core/component/directives/resize-observer"
+              "components/directives/on-resize"
             ]
           },
           "type": "block",
@@ -1876,6 +1876,7 @@
               "b-dummy",
               "b-router",
               "b-dynamic-page",
+              "b-list",
               "b-form",
               "b-button",
               "b-checkbox",
@@ -1894,6 +1895,7 @@
             "b-dummy",
             "b-router",
             "b-dynamic-page",
+            "b-list",
             "b-form",
             "b-button",
             "b-checkbox",

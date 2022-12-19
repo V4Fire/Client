@@ -152,7 +152,7 @@ export default class bTextarea extends iInputText {
 					str = resolvedText !== undefined ? String(resolvedText) : '';
 
 				if (o.isFunctional) {
-					o.waitStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str).catch(stderr);
+					o.waitComponentStatus('ready', {label: $$.textStoreSync}).then(() => o.text = str).catch(stderr);
 
 				} else if (o.hook === 'updated') {
 					o.text = str;

@@ -101,7 +101,7 @@ In other cases, the response value is interpreted as a component value.
 
 ## Slots
 
-The component supports a bunch of slots to provide:
+The component supports a bunch of slots to provide.
 
 1. `default` to provide a template for a select' item (option).
 

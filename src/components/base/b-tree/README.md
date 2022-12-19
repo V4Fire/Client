@@ -172,7 +172,7 @@ Or
 
 ## Slots
 
-The component supports a bunch of slots to provide:
+The component supports a bunch of slots to provide.
 
 1. `default` to render each item (instead of providing the `item` prop).
 

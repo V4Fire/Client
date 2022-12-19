@@ -86,7 +86,7 @@ Initial loading and request will be made automatically, but after that `renderNe
 
 ## Slots
 
-The component supports a bunch of slots to provide:
+The component supports a bunch of slots to provide.
 
 1. `tombstone` This slot is displayed only during data loading, it will be duplicated `chunkSize` number of times.
 This slot is great if you want to display skeletons while the component is loading data.

@@ -49,7 +49,7 @@ Slides to show can be defined manually via slots or loaded from some data provid
 
 ## Slots
 
-The component supports a bunch of slots to provide:
+The component supports a bunch of slots to provide.
 
 1. `default` to provide the base content.
 

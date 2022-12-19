@@ -17,41 +17,41 @@
 
 			< .&__tombstones &
 				ref = tombstones |
-				v-if = vdom.getSlot('tombstone')
+				v-if = $slots['tombstone']
 			.
 				< .&__tombstone v-for = i in tombstonesSize || chunkSize
 					+= self.slot('tombstone')
 
 			< .&__loader &
 				ref = loader |
-				v-if = vdom.getSlot('loader')
+				v-if = $slots['loader']
 			.
 				+= self.slot('loader')
 
 			< .&__retry &
 				ref = retry |
-				v-if = vdom.getSlot('retry') |
+				v-if = $slots['retry'] |
 				:style = {display: 'none'}
 			.
 				+= self.slot('retry')
 
 			< .&__empty &
 				ref = empty |
-				v-if = vdom.getSlot('empty') |
+				v-if = $slots['empty'] |
 				:style = {display: 'none'}
 			.
 				+= self.slot('empty')
 
 			< .&__done &
 				ref = done |
-				v-if = vdom.getSlot('done') |
+				v-if = $slots['done'] |
 				:style = {display: 'none'}
 			.
 				+= self.slot('done')
 
 			< .&__render-next &
 				ref = renderNext |
-				v-if = vdom.getSlot('renderNext') |
+				v-if = $slots['renderNext'] |
 				:style = {display: 'none'}
 			.
 				+= self.slot('renderNext')

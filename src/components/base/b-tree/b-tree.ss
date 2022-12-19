@@ -51,12 +51,12 @@
 						.
 							< template &
 								#default = o |
-								v-if = vdom.getSlot('default')
+								v-if = $slots['default']
 							.
 								+= self.slot('default', {':item': 'o.item'})
 
 							< template &
 								#fold = o |
-								v-if = vdom.getSlot('fold')
+								v-if = $slots['fold']
 							.
 								+= self.slot('fold', {':params': 'o.params'})

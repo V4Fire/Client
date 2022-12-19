@@ -14,6 +14,8 @@ package('p-v4-components-demo')
 		'b-router',
 		'b-dynamic-page',
 
+		'b-list',
+
 		'b-form',
 		'b-button',
 		'b-checkbox',
