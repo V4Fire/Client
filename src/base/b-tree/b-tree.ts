@@ -163,30 +163,14 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Returns an iterator to iterate the tree items
+	 * Returns an iterator over all sibling items in the given tree
 	 */
 	siblings(): IterableIterator<this['Item']> {
-		const
-			{items} = this,
-			iter = createIter();
-
-		return {
-			[Symbol.iterator]() {
-				return this;
-			},
-
-			next: iter.next.bind(iter)
-		};
-
-		function* createIter() {
-			for (const item of items) {
-				yield item;
-			}
-		}
+		return this.items.values();
 	}
 
 	/**
-	 * Returns an iterator to iterate the children items
+	 * Returns an iterator over all child items of the given tree
 	 */
 	children(): IterableIterator<this['Item']> {
 		const
@@ -212,7 +196,7 @@ export default class bTree extends iData implements iItems {
 	 * Folds the specified item
 	 *
 	 * @param item
-	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
+	 * @emits `fold(item: `[[Item]]`, target: HTMLElement)`
 	 */
 	fold(item: this['Item']): void {
 		const
@@ -226,7 +210,7 @@ export default class bTree extends iData implements iItems {
 			isModSet = this.block?.setElMod(target, 'node', 'folded', true);
 
 		if (isModSet) {
-			this.emit('fold', target, item);
+			this.emit('fold', item, target);
 		}
 	}
 
@@ -234,7 +218,7 @@ export default class bTree extends iData implements iItems {
 	 * Unfolds the specified item
 	 *
 	 * @param item
-	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
+	 * @emits `unfold(item: `[[Item]]`, target: HTMLElement)`
 	 */
 	unfold(item: this['Item']): void {
 		const
@@ -248,7 +232,7 @@ export default class bTree extends iData implements iItems {
 			isModSet = this.block?.setElMod(target, 'node', 'folded', false);
 
 		if (isModSet) {
-			this.emit('unfold', target, item);
+			this.emit('unfold', item, target);
 		}
 	}
 
@@ -277,7 +261,7 @@ export default class bTree extends iData implements iItems {
 	 * @param item
 	 */
 	protected hasChildren(item: this['Item']): boolean {
-		return Object.size(this.field.get('children.length', item)) > 0;
+		return Object.size(item.children?.length) > 0;
 	}
 
 	/**

@@ -17,14 +17,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `bTree`:
   * Added new methods `siblings`, `children`, `fold`, `unfold`
-  * Added mod `clickableArea`
+  * Added a new modifier `clickableArea`
 
 #### :bug: Bug Fix
 
 * `bTree`:
   * Fixed passing props to nested trees
   * Fixed an issue with the prop `itemProps` not being added to items attributes
-  * Fixed adding `folded_false` class to items without children
+  * Fixed adding the `folded_false` class to items without children
 
 ## v3.31.0 (2022-12-06)
 

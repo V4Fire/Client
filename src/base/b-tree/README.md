@@ -198,37 +198,23 @@ The component supports a bunch of slots to provide:
 
 ## API
 
-Component provides the bunch of public methods
+Also, you can see the implemented traits or the parent component.
 
 ### siblings
 
-Returns an iterator to iterate the tree items
+Returns an iterator over all sibling items in the given tree.
 
 ### children
 
-Returns an iterator to iterate the children items
+Returns an iterator over all child items of the given tree.
 
 ### fold
 
-Folds a passed item.
-
-```js
-for (const item of this.$ref.tree.siblings()) {
-  item.fold();
-}
-```
+Folds the specified item.
 
 ### unfold
 
-Unfolds a passed item.
-
-```js
-for (const item of this.$ref.tree.siblings()) {
-  item.unfold();
-}
-```
-
-Also, you can see the implemented traits or the parent component.
+Unfolds the specified item.
 
 ### Props
 
