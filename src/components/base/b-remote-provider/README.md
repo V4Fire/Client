@@ -1,8 +1,8 @@
 # components/base/b-remote-provider
 
-This module provides a component to work with a data provider without visual rendering.
-By default, the parent component will wait until this component is resolved the process of loading.
-The component can be useful in creating a composition of data.
+This module provides a component for working with a data provider without visual rendering.
+By default, the parent component will wait for that component to resolve the loading process.
+This component can be useful when creating data composition.
 
 ## Synopsis
 
@@ -26,27 +26,27 @@ Also, you can see the parent component.
 
 ## Usage
 
-Don't use this component if you just want to join several providers into the one `db` object: to do this, you should prefer `extraProviders`.
+Don't use this component if you just want to combine multiple providers into a single `db` object: you should prefer `extraProviders` for that.
 
-The valid scenario of using this component is to send data to non-main providers, like, analytics.
+A valid use case for this component is to send data to non-primary providers such as analytics.
 
 ```
 < b-remote-provider ref = analytics | :dataProvider = 'Analytics'
 ```
 
 ```js
-// Somewhere in a parent component
+// Somewhere in the parent component
 this.$refs.analytics.post({data: [1, 2, 3]});
 ```
 
-You can also use this component on initializing: you can hook to `@change` event, or provide the `field` prop to store the component `db` into the parent field.
+You can also use this component on initialization: you can hook into the `@change` event, or provide a `field` prop to store the `db` component in the parent field.
 
 ```
 < b-remote-provider :dataProvider = 'SelectedCity' | :field = 'selectedCity'
 < b-remote-provider :dataProvider = 'SelectedCity' | @change = initSelectedCity
 ```
 
-Because this component is a child of [[iData]], you free to use all these props and events.
+Because this component inherits from [[iData]], you are free to use all of these props and events.
 
 ```
 < b-remote-provider :dataProvider = 'SelectedCity' | :request = {get: {lat, lon}}
@@ -70,4 +70,4 @@ Also, you can see the implemented traits or the parent component.
 
 #### content
 
-A link to component content nodes.
+A list of the component child nodes.

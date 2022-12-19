@@ -14,6 +14,7 @@ package('p-v4-components-demo')
 		'b-router',
 		'b-dynamic-page',
 
+		'b-remove-provider',
 		'b-list',
 
 		'b-form',

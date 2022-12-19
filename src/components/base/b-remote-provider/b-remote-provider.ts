@@ -11,10 +11,6 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/list';
-//#endif
-
 import symbolGenerator from 'core/symbol';
 import iData, { component, prop, RequestError, RetryRequestFn } from 'components/super/i-data/i-data';
 
@@ -30,13 +26,13 @@ export default class bRemoteProvider extends iData {
 	override readonly reloadOnActivation: boolean = true;
 
 	/**
-	 * Field to set to the component parent
+	 * A path to the field of the parent component where you want to store the loaded data
 	 */
 	@prop({type: String, required: false})
 	readonly fieldProp?: string;
 
 	/**
-	 * Link to component content nodes
+	 * A list of the component child nodes
 	 */
 	get content(): CanPromise<Element[]> {
 		return this.waitComponentStatus('loading', () => Array.from(this.$el!.children));
@@ -52,9 +48,9 @@ export default class bRemoteProvider extends iData {
 	 */
 	protected override onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
 		const
-			l = this.$listeners;
+			a = this.$attrs;
 
-		if (!l.error && !l['on-error']) {
+		if (a.onError == null && a.onOnError == null) {
 			super.onRequestError(err, retry);
 		}
 
@@ -115,9 +111,9 @@ export default class bRemoteProvider extends iData {
 	 */
 	protected override onAddData(data: unknown): void {
 		const
-			l = this.$listeners;
+			a = this.$attrs;
 
-		if (!l['add-data'] && !l['on-add-data']) {
+		if (a.onAddData == null && a.onOAddData == null) {
 			return super.onAddData(data);
 		}
 
@@ -125,30 +121,30 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
-	 * @emits `updData(data: unknown)`
+	 * @emits `updateData(data: unknown)`
 	 */
 	protected override onUpdateData(data: unknown): void {
 		const
-			l = this.$listeners;
+			a = this.$attrs;
 
-		if (!l['upd-data'] && !l['on-upd-data']) {
+		if (a.onUpdateData == null && a.onOnUpdateData == null) {
 			return super.onUpdateData(data);
 		}
 
-		this.emit('updData', data);
+		this.emit('updateData', data);
 	}
 
 	/**
-	 * @emits `delData(data: unknown)`
+	 * @emits `deleteData(data: unknown)`
 	 */
 	protected override onDeleteData(data: unknown): void {
 		const
-			l = this.$listeners;
+			a = this.$attrs;
 
-		if (!l['del-data'] && !l['on-del-data']) {
+		if (a.onDeleteData == null && a.onOnDeleteData == null) {
 			return super.onDeleteData(data);
 		}
 
-		this.emit('delData', data);
+		this.emit('deleteData', data);
 	}
 }
