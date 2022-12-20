@@ -11,12 +11,10 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/pagination';
-//#endif
-
 import symbolGenerator from 'core/symbol';
 import { deprecate } from 'core/functools';
+
+import DOM, { watchForIntersection } from 'components/friends/dom';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 
@@ -71,6 +69,8 @@ export * from 'components/base/b-virtual-scroll/modules/helpers';
 export * from 'components/base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
+
+DOM.addToPrototype(watchForIntersection);
 
 const
 	$$ = symbolGenerator();

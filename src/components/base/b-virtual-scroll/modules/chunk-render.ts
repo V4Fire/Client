@@ -9,7 +9,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { InViewAdapter, InViewInitOptions, inViewFactory } from 'core/dom/in-view';
+import type { WatchOptions } from 'core/dom/intersection-watcher';
 
 import Friend from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
@@ -62,11 +62,6 @@ export default class ChunkRender extends Friend {
 	 * Async in-view label prefix
 	 */
 	protected readonly asyncInViewPrefix: string = 'in-view:';
-
-	/**
-	 * Local in-view instance
-	 */
-	protected readonly InView: InViewAdapter = inViewFactory();
 
 	/**
 	 * Refs state update map
@@ -326,16 +321,13 @@ export default class ChunkRender extends Friend {
 			return;
 		}
 
-		const
-			inViewOptions = this.getInViewOptions(item.index);
-
-		this.InView
-			.observe(node, inViewOptions);
-
-		node[$$.inView] = this.async.worker(() => this.InView.remove(node, inViewOptions.threshold), {
+		const inViewOpts = {
+			...this.getInViewOptions(),
 			group: this.asyncGroup,
 			label
-		});
+		};
+
+		this.dom.watchForIntersection(node, inViewOpts, () => this.onNodeIntersect(item.index));
 	}
 
 	/**
@@ -355,14 +347,12 @@ export default class ChunkRender extends Friend {
 
 	/**
 	 * Returns options to initialize the `in-view` directive
-	 * @param index
 	 */
-	protected getInViewOptions(index: number): InViewInitOptions {
+	protected getInViewOptions(): WatchOptions {
 		return {
 			delay: 0,
 			threshold: this.randomThreshold,
-			once: !this.ctx.clearNodes,
-			onEnter: () => this.onNodeIntersect(index)
+			once: !this.ctx.clearNodes
 		};
 	}
 
