@@ -6,9 +6,11 @@ const langPacs = {
 	...Super
 };
 
+// @context: ['@translations', 'translations' in flags ? flags.translations : 'src']
+
 const
 	// @ts-ignore (require)
-	ctx = require.context('src', true, /i18n\/.*\.js$/);
+	ctx = require.context('@translations', true, /i18n\/.*\.js$/);
 
 ctx.keys().forEach((path: string) => {
 	const
@@ -23,5 +25,7 @@ ctx.keys().forEach((path: string) => {
 		langPacs[lang][keysetName] = ctx(path);
 	}
 });
+
+// @endcontext
 
 export default langPacs;
