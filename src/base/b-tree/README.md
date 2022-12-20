@@ -202,7 +202,7 @@ Also, you can see the implemented traits or the parent component.
 
 ### traverse
 
-Returns an iterator based on passed arguments.
+Returns an iterator based on passed arguments. Each element is a tuple: [`Item`, `bTree`].
 
 ```ts
 // Folds all the tree items recursively
