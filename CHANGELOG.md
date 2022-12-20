@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.32.1 (2022-12-26)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with not setting an initial value of `hidden` modifier `base/b-bottom-slide`
+
 ## v3.32.0 (2022-12-21)
 
 #### :rocket: New Feature

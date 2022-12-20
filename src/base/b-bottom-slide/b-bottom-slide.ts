@@ -635,6 +635,16 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	}
 
 	/**
+	 * Initializes initial 'hidden' modifier value
+	 */
+	@hook('created')
+	protected initHiddenState(): void {
+		if (this.visible === 0) {
+			void this.setMod('hidden', true);
+		}
+	}
+
+	/**
 	 * Sticks the component to the closest step
 	 */
 	protected stickToStep(): void {
