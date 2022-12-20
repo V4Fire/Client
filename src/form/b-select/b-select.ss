@@ -54,7 +54,7 @@
 							.
 
 						< template v-else
-							{{ t(el.label) }}
+							{{ el.label }}
 
 	- block body
 		- super
