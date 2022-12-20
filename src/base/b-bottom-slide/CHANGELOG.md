@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.32.1 (2022-12-26)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with not setting an initial value of `hidden` modifier
+
 ## v3.19.2 (2022-04-19)
 
 #### :bug: Bug Fix
