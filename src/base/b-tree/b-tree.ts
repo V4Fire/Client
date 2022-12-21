@@ -261,6 +261,30 @@ export default class bTree extends iData implements iItems {
 			return this.toggleFold(item);
 	}
 
+	/**
+	 * Toggles the passed item fold value
+	 *
+	 * @param item
+	 * @emits `fold(item: `[[Item]]`, target: HTMLElement)`
+	 * @emits `unfold(item: `[[Item]]`, target: HTMLElement)`
+	 */
+	@wait('ready')
+	toggleFold(item: this['Item']): Promise<boolean> {
+		const
+			target = this.findItemElement(item.id),
+			newVal = this.getFoldedModById(item.id) === 'false',
+			event = newVal ? 'fold' : 'unfold';
+
+		if (target != null && this.hasChildren(item)) {
+			this.block?.setElMod(target, 'node', 'folded', newVal);
+			this.emit(event, item, target);
+
+			return SyncPromise.resolve(true);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
@@ -358,30 +382,6 @@ export default class bTree extends iData implements iItems {
 	protected findItemElement(id: string): CanUndef<HTMLElement> {
 		const itemId = this.dom.getId(id);
 		return this.$el?.querySelector(`[data-id=${itemId}]`) ?? undefined;
-	}
-
-	/**
-	 * Toggles the passed item fold value.
-	 *
-	 * @param item
-	 * @emits `fold(item: `[[Item]]`, target: HTMLElement)`
-	 * @emits `unfold(item: `[[Item]]`, target: HTMLElement)`
-	 */
-	@wait('ready')
-	protected toggleFold(item: this['Item']): Promise<boolean> {
-		const
-			target = this.findItemElement(item.id),
-			newVal = this.getFoldedModById(item.id) === 'false',
-			event = newVal ? 'fold' : 'unfold';
-
-		if (target != null && this.hasChildren(item)) {
-			this.block?.setElMod(target, 'node', 'folded', newVal);
-			this.emit(event, item, target);
-
-			return SyncPromise.resolve(true);
-		}
-
-		return SyncPromise.resolve(false);
 	}
 
 	/**
