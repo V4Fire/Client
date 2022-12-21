@@ -67,7 +67,7 @@ module.exports = function requireContextReplacer(str) {
 
 		contextPaths = contextPaths.slice(1).flatMap((el) => {
 			if (el === pzlr.super) {
-				return pzlr.dependencies;
+				return contextPaths[0].startsWith('@') ? pzlr.dependencies : config.src.roots;
 			}
 
 			return el;

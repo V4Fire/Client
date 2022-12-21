@@ -6,11 +6,11 @@ const langPacs = {
 	...Super
 };
 
-// @context: ['@translations', 'translations' in flags ? flags.translations : 'src']
+// @context: ['src', '@super']
 
 const
 	// @ts-ignore (require)
-	ctx = require.context('@translations', true, /i18n\/.*\.js$/);
+	ctx = require.context('src', true, /i18n\/.*\.js$/);
 
 ctx.keys().forEach((path: string) => {
 	const

@@ -21,10 +21,7 @@ const
  */
 const aliases = {
 	'@super': resolve.rootDependencies[0],
-	[`${pzlr.projectName}/translations`]: resolve.sourceDir,
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
-		map[`${el}/translations`] = resolve.rootDependencies[i];
-
 		const
 			asset = resolve.depMap[el].config.assets;
 
