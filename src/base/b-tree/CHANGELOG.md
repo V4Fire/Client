@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.?.? (2022-12-15)
+## v3.32.0 (2022-12-21)
 
 #### :house: Internal
 
-* Added new methods `siblings`, `children`, `fold`, `unfold`
+* Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
 * Added a new modifier `clickableArea`
 
 #### :bug: Bug Fix

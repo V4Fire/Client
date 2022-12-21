@@ -11,12 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.?.? (2022-12-15)
+## v3.32.0 (2022-12-21)
 
 #### :rocket: New Feature
 
 * `bTree`:
-  * Added new methods `siblings`, `children`, `fold`, `unfold`
+  * Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
   * Added a new modifier `clickableArea`
 
 #### :bug: Bug Fix
