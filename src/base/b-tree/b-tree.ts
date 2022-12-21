@@ -204,7 +204,6 @@ export default class bTree extends iData implements iItems {
 	 * If the method is called without an element passed, all tree sibling elements will be folded.
 	 *
 	 * @param [item]
-	 * @emits `fold(item: `[[Item]]`, target: HTMLElement)`
 	 */
 	@wait('ready')
 	fold(item?: this['Item']): Promise<boolean> {
@@ -235,7 +234,6 @@ export default class bTree extends iData implements iItems {
 	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
 	 *
 	 * @param [item]
-	 * @emits `unfold(item: `[[Item]]`, target: HTMLElement)`
 	 */
 	@wait('ready')
 	unfold(item?: this['Item']): Promise<boolean> {
@@ -265,19 +263,17 @@ export default class bTree extends iData implements iItems {
 	 * Toggles the passed item fold value
 	 *
 	 * @param item
-	 * @emits `fold(item: `[[Item]]`, target: HTMLElement)`
-	 * @emits `unfold(item: `[[Item]]`, target: HTMLElement)`
+	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
 	 */
 	@wait('ready')
 	toggleFold(item: this['Item']): Promise<boolean> {
 		const
 			target = this.findItemElement(item.id),
-			newVal = this.getFoldedModById(item.id) === 'false',
-			event = newVal ? 'fold' : 'unfold';
+			newVal = this.getFoldedModById(item.id) === 'false';
 
 		if (target != null && this.hasChildren(item)) {
 			this.block?.setElMod(target, 'node', 'folded', newVal);
-			this.emit(event, item, target);
+			this.emit('fold', target, item, newVal);
 
 			return SyncPromise.resolve(true);
 		}
