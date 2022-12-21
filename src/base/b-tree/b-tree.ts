@@ -164,10 +164,11 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Returns an iterator based on passed arguments
+	 * Returns an iterator over the tree items based on the given arguments.
+	 * The iterator returns pairs of elements `[Tree item, The bTree instance associated with the element]`.
 	 *
-	 * @param [ctx] - context to start the iteration, top level tree by default
-	 * @param [opts] - dictionary with options whether the iteration should be recursive, {deep: true} by default
+	 * @param [ctx] - a context to start iteration, the top-level tree by default
+	 * @param [opts] - additional options
 	 */
 	traverse(
 		ctx: bTree = this.top ?? this,
@@ -199,7 +200,8 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Folds the specified item. If method is called without passed item, all the sibling items will be folded
+	 * Folds the specified item.
+	 * If the method is called without an element passed, all tree sibling elements will be folded.
 	 *
 	 * @param [item]
 	 * @emits `fold(item: `[[Item]]`, target: HTMLElement)`
@@ -229,7 +231,8 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Unfolds the specified item. If method is called without passed item, all the sibling items will be unfolded
+	 * Unfolds the specified item.
+	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
 	 *
 	 * @param [item]
 	 * @emits `unfold(item: `[[Item]]`, target: HTMLElement)`
@@ -358,7 +361,7 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Toggles item fold value
+	 * Toggles the passed item fold value.
 	 *
 	 * @param item
 	 * @emits `fold(item: `[[Item]]`, target: HTMLElement)`

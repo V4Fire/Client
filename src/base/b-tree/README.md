@@ -202,17 +202,18 @@ Also, you can see the implemented traits or the parent component.
 
 ### traverse
 
-Returns an iterator based on passed arguments. Each element is a tuple: [`Item`, `bTree`].
+Returns an iterator over the tree items based on the given arguments.
+The iterator returns pairs of elements `[Tree item, The bTree instance associated with the element]`.
 
-```ts
-// Folds all the tree items recursively
+```js
+// Fold all tree items recursively
 for (const [treeItem, tree] of this.$ref.tree.traverse()) {
   void tree.fold(treeItem);
 }
 ```
 
-```ts
-// Folds all sibling items of specified tree
+```js
+// Fold all sibling items of the specified tree
 const
   treeRef = this.$refs.tree;
 
@@ -223,11 +224,12 @@ for (const [treeItem, tree] of treeRef.traverse(treeRef, {deep: false})) {
 
 ### fold
 
-Folds the specified item. If method is called without passed item, all the sibling items will be folded.
+Folds the specified item.
+If the method is called without an element passed, all tree sibling elements will be folded.
 
 ```ts
 class bMyTree extends bTree {
-	// All unfolded items should be folded on item click
+  // All unfolded items should be folded on item click
   protected override onFoldClick(item: Item): void {
     for (const [treeItem, tree] of this.traverse(this)) {
       if (treeItem === item) {
@@ -243,16 +245,20 @@ class bMyTree extends bTree {
 
 ### unfold
 
-Unfolds the specified item. If method is called without passed item, all the sibling items will be unfolded.
+Unfolds the specified item.
+If the method is called without an element passed, all tree sibling elements will be unfolded.
 
 ```ts
 class AriaRole {
-	onKeydown(e: KeyboardEvent): void {
+  onKeydown(e: KeyboardEvent): void {
     switch (e.key) {
-      case '*': this.attrs.tree.unfold(); break;
-			//...//
+      case '*':
+        this.attrs.tree.unfold();
+        break;
+
+      // ...
     }
-	}
+  }
 }
 ```
 
