@@ -18,13 +18,18 @@ This module provides a component to render a recursive list of elements.
 
 ## Modifiers
 
+| Name            | Description                       | Values             | Default |
+|-----------------|-----------------------------------|--------------------|---------|
+| `clickableArea` | The component clickable item area | `ClickableAreaMod` | `fold`  |
+
 See the [[iItems]] trait and the [[iData]] component.
 
 ## Events
 
-| EventName | Description                                            | Payload description                                            | Payload                          |
-|-----------|--------------------------------------------------------|----------------------------------------------------------------|----------------------------------|
-| `fold`    | One of the component items has been folded or unfolded | A link to the DOM element; The item object; The folding status | `HTMLElement`; `Item`; `boolean` |
+| EventName | Description                                  | Payload description                        | Payload               |
+|-----------|----------------------------------------------|--------------------------------------------|-----------------------|
+| `fold`    | One of the component items has been folded   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| `unfold`  | One of the component items has been unfolded | A link to the DOM element; The item object | `Item`; `HTMLElement` |
 
 See the [[iItems]] trait and the [[iData]] component.
 
@@ -194,6 +199,68 @@ The component supports a bunch of slots to provide:
 ## API
 
 Also, you can see the implemented traits or the parent component.
+
+### traverse
+
+Returns an iterator over the tree items based on the given arguments.
+The iterator returns pairs of elements `[Tree item, The bTree instance associated with the element]`.
+
+```js
+// Fold all tree items recursively
+for (const [treeItem, tree] of this.$ref.tree.traverse()) {
+  void tree.fold(treeItem);
+}
+```
+
+```js
+// Fold all sibling items of the specified tree
+const
+  treeRef = this.$refs.tree;
+
+for (const [treeItem, tree] of treeRef.traverse(treeRef, {deep: false})) {
+  void tree.fold(treeItem);
+}
+```
+
+### fold
+
+Folds the specified item.
+If the method is called without an element passed, all tree sibling elements will be folded.
+
+```ts
+class bMyTree extends bTree {
+  // All unfolded items should be folded on item click
+  protected override onFoldClick(item: Item): void {
+    for (const [treeItem, tree] of this.traverse(this)) {
+      if (treeItem === item) {
+        void tree.toggleFold(treeItem);
+        continue;
+      }
+
+      void tree.fold(treeItem);
+    }
+  }
+}
+```
+
+### unfold
+
+Unfolds the specified item.
+If the method is called without an element passed, all tree sibling elements will be unfolded.
+
+```ts
+class AriaRole {
+  onKeydown(e: KeyboardEvent): void {
+    switch (e.key) {
+      case '*':
+        this.attrs.tree.unfold();
+        break;
+
+      // ...
+    }
+  }
+}
+```
 
 ### Props
 

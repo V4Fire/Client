@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.32.0 (2022-12-21)
+
+#### :rocket: New Feature
+
+* `bTree`:
+  * Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
+  * Added a new modifier `clickableArea`
+
+#### :bug: Bug Fix
+
+* `bTree`:
+  * Fixed passing props to nested trees
+  * Fixed an issue with the prop `itemProps` not being added to items attributes
+  * Fixed adding the `folded_false` class to items without children
+
 ## v3.31.0 (2022-12-06)
 
 #### :rocket: New Feature

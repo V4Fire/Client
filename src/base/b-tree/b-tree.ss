@@ -22,14 +22,14 @@
 				:class = provide.elClasses({
 					node: {
 						level,
-						folded: getFoldedPropValue(el)
+						...(hasChildren(el) && {folded: getFoldedPropValue(el)})
 					}
 				})
 			.
 				< .&__item-wrapper
 					< .&__marker
 						- block fold
-							< template v-if = Object.size(field.get('children.length', el)) > 0
+							< template v-if = hasChildren(el)
 								+= self.slot('fold', {':params': 'getFoldProps(el)'})
 									< .&__fold :v-attrs = getFoldProps(el)
 
@@ -42,12 +42,14 @@
 							.
 
 				- block children
-					< .&__children v-if = Object.size(field.get('children', el)) > 0
+					< .&__children v-if = hasChildren(el)
 						< b-tree.&__child &
+							ref = children |
 							:items = el.children |
 							:folded = getFoldedPropValue(el) |
 							:item = item |
-							:v-attrs = nestedTreeProps
+							:v-attrs = nestedTreeProps |
+							:itemProps = itemProps
 						.
 							< template &
 								#default = o |
