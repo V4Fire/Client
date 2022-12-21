@@ -24,6 +24,7 @@ import type {
 
 	openBlock,
 	createBlock,
+	setBlockTracking,
 	createElementBlock,
 
 	createVNode,
@@ -32,6 +33,10 @@ import type {
 	createTextVNode,
 	createCommentVNode,
 	cloneVNode,
+
+	setDevtoolsHook,
+	setTransitionHooks,
+	useTransitionState,
 
 	normalizeClass,
 	normalizeStyle,
@@ -102,6 +107,7 @@ export interface RenderAPI {
 
 	openBlock: typeof openBlock;
 	createBlock: typeof createBlock;
+	setBlockTracking: typeof setBlockTracking;
 	createElementBlock: typeof createElementBlock;
 
 	createVNode: typeof createVNode;
@@ -110,6 +116,10 @@ export interface RenderAPI {
 	createTextVNode: typeof createTextVNode;
 	createCommentVNode: typeof createCommentVNode;
 	cloneVNode: typeof cloneVNode;
+
+	setDevtoolsHook: typeof setDevtoolsHook;
+	setTransitionHooks: typeof setTransitionHooks;
+	useTransitionState: typeof useTransitionState;
 
 	normalizeClass: typeof normalizeClass;
 	normalizeStyle: typeof normalizeStyle;

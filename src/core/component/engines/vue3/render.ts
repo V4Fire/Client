@@ -60,6 +60,11 @@ export {
 	toDisplayString,
 
 	openBlock,
+	setBlockTracking,
+
+	setDevtoolsHook,
+	setTransitionHooks,
+	useTransitionState,
 
 	createStaticVNode,
 	createTextVNode,
