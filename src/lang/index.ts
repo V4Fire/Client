@@ -22,7 +22,10 @@ ctx.keys().forEach((path: string) => {
 
 		langPacs[lang] = langPacs[lang] ?? {};
 
-		langPacs[lang][keysetName] = ctx(path);
+		langPacs[lang][keysetName] = {
+			...langPacs[lang][keysetName] != null ? langPacs[lang][keysetName] : {},
+			...ctx(path)
+		};
 	}
 });
 
