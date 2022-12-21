@@ -72,7 +72,7 @@ export function renderTemporarily<T extends Friend['C']>(
 		throw new ReferenceError('The callback to invoke after rendering is not specified');
 	}
 
-	return this.ctx.waitStatus('ready').then(async () => {
+	return this.ctx.waitComponentStatus('ready').then(async () => {
 		const
 			resolvedEl = Object.isString(el) ? this.block?.element(el) : el;
 

@@ -485,7 +485,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 @component()
 class bExample extends iBlock {
   created() {
-    this.waitStatus('ready').then(console.log);
+    this.waitComponentStatus('ready').then(console.log);
   }
 }
 ```

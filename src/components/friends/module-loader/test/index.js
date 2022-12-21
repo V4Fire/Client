@@ -61,7 +61,7 @@ module.exports = async (page, params) => {
 
 			expect(
 				await target.evaluate(async (ctx) => {
-					await ctx.waitStatus('ready');
+					await ctx.waitComponentStatus('ready');
 					return ctx.block.element('result').textContent.trim();
 				})
 			).toBe('Dummy module #1     Dummy module #2');

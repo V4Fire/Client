@@ -169,7 +169,7 @@ export default abstract class iBlockProviders extends iBlockState {
 						isLoaded = false;
 
 					tasks.push(Promise.race([
-						component.waitStatus('ready').then(() => isLoaded = true),
+						component.waitComponentStatus('ready').then(() => isLoaded = true),
 
 						$a.sleep((10).seconds(), {}).then(() => {
 							if (isLoaded) {
