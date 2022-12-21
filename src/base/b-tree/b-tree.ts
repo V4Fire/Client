@@ -263,7 +263,7 @@ export default class bTree extends iData implements iItems {
 	 * Toggles the passed item fold value
 	 *
 	 * @param item
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
+	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
 	 */
 	@wait('ready')
 	toggleFold(item: this['Item']): Promise<boolean> {
