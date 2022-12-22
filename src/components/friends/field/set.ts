@@ -141,23 +141,18 @@ export function setField<T = unknown>(
 						sync = () => Object.set(ctx.$systemFields, [name], ref[name]);
 					}
 
-				} else {
-					ref = ctx.isFunctional || !isReady ? ctx.$fields : ctx;
-
-					if (!isReady) {
-						chunks[0] = info.name;
-					}
-
-					const needSync =
-						ctx.isFunctional &&
-						unwrap(ref) === ref;
+				} else if (ctx.isFunctional) {
+					ref = ctx.$fields;
 
 					// If the component has not yet initialized field watchers,
 					// we must synchronize these properties between the proxy object and the component instance
-					if (needSync) {
+					if (unwrap(ref) === ref) {
 						const name = chunks[0];
 						sync = () => Object.set(ctx, [name], ref[name]);
 					}
+
+				} else {
+					ref = isReady ? ctx : ctx.$fields;
 				}
 			}
 		}

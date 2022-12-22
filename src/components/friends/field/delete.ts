@@ -121,8 +121,10 @@ export function deleteField(
 
 		if (isSystem || isField) {
 			// If the property has not yet been watched, do not force proxy creation
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			needDeleteToWatch = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
+			needDeleteToWatch = isReady && (
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				!ctx.isFunctional || Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get)
+			);
 
 			if (isSystem) {
 				// If the component has already initialized system field watchers,
@@ -136,15 +138,18 @@ export function deleteField(
 					sync = () => Object.delete(ctx.$systemFields, [name]);
 				}
 
-			} else {
+			} else if (ctx.isFunctional) {
 				ref = ctx.$fields;
 
 				// If the component has not yet initialized field watchers,
 				// we must synchronize these properties between the proxy object and the component instance
-				if (ctx.isFunctional && unwrap(ref) === ref) {
+				if (unwrap(ref) === ref) {
 					const name = chunks[0];
 					sync = () => Object.delete(ctx, [name]);
 				}
+
+			} else {
+				ref = isReady ? ctx : ctx.$fields;
 			}
 		}
 
@@ -171,7 +176,7 @@ export function deleteField(
 			break;
 		}
 
-		ref = newRef!;
+		ref = newRef;
 	}
 
 	if (needDelete) {
