@@ -15,8 +15,6 @@ import type { SetOptions, RemoveOptions } from 'core/cookies/interface';
 
 export * from 'core/cookies/interface';
 
-export { default as Storage } from 'core/cookies/storage';
-
 /**
  * Returns true, if a cookie by the specified name is defined
  * @param name

@@ -5,17 +5,11 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-/**
- * [[include:core/cookies/storage/README.md]]
- * @packageDocumentation
- */
-
 import type { ClearFilter } from 'core/kv-storage/interface';
 
 import * as cookie from 'core/cookies';
 
-export default class CookieStorage {
+export default class CookieStorageEngine {
 	protected cookieName: string;
 
 	constructor(cookieName: string) {
