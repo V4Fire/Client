@@ -7,13 +7,15 @@
  */
 
 /**
- * [[include:core/browser/README.md]]
+ * [[include:core/cookies/README.md]]
  * @packageDocumentation
  */
 
 import type { SetOptions, RemoveOptions } from 'core/cookies/interface';
 
 export * from 'core/cookies/interface';
+
+export { default as Storage } from 'core/cookies/storage';
 
 /**
  * Returns true, if a cookie by the specified name is defined
