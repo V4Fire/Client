@@ -47,10 +47,10 @@ export default class CookieStorageEngine {
 				}
 			});
 
-			this.updateCookieRaw(state);
+			this.overwriteCookie(state);
 
 		} else {
-			this.updateCookieRaw({});
+			this.overwriteCookie({});
 		}
 	}
 
@@ -86,10 +86,14 @@ export default class CookieStorageEngine {
 			}
 		});
 
-		this.updateCookieRaw(currentState);
+		this.overwriteCookie(currentState);
 	}
 
-	protected updateCookieRaw(state: Dictionary<string>): void {
+	/**
+	 * Overwrites the cookie with the passed state
+	 * @param state - dictionary with data
+	 */
+	protected overwriteCookie(state: Dictionary<string>): void {
 		if (Object.size(state) === 0) {
 			cookie.remove(this.cookieName);
 		}
