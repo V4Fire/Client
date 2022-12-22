@@ -6,18 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface PageMetaDataStorage {
-	title?: string;
-	meta: PageMetaDataMeta[];
-	links: PageMetaDataLink[];
-}
+export type LinkAttributes = {
+	[Property in keyof HTMLLinkElement]: string;
+};
 
-export interface PageMetaDataLink {
-	rel: string;
-	href: string;
-}
-
-export interface PageMetaDataMeta {
-	name: string;
-	content: string;
-}
+export type MetaAttributes = {
+	[Property in keyof HTMLMetaElement]: string;
+};

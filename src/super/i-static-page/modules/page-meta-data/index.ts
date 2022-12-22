@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { PageMetaDataStorage, PageMetaDataLink, PageMetaDataMeta } from 'super/i-static-page/modules/page-meta-data/interface';
+import type { MetaAttributes, LinkAttributes } from 'super/i-static-page/modules/page-meta-data/interface';
 
 export * from 'super/i-static-page/modules/page-meta-data/interface';
 
@@ -14,231 +14,125 @@ export * from 'super/i-static-page/modules/page-meta-data/interface';
  * Class provides API to work with metadata of page
  */
 export default class PageMetaData {
-	protected _storage: PageMetaDataStorage = {
-		title: undefined,
-		meta: [],
-		links: []
-	};
-
 	/**
 	 * Current title of page
 	 */
 	get title(): string {
-		const {title} = this._storage;
-
-		if (title == null) {
-			this._storage.title = document.title;
-		}
-
-		return this._storage.title!;
+		return document.title;
 	}
 
 	/**
 	 * Sets a title of page
-	 *
 	 * @param value - new title value
 	 */
 	set title(value: string) {
-		if (!Object.isString(value)) {
-			return;
-		}
-
 		const
 			div = Object.assign(document.createElement('div'), {innerHTML: value}),
 			title = div.textContent ?? '';
 
 		// Fix strange Chrome bug
-		// tslint:disable-next-line:no-irregular-whitespace
 		document.title = `${title} `;
 		document.title = title;
-
-		this._storage.title = title;
 	}
 
 	/**
 	 * Current description of page
 	 */
 	get description(): string {
-		const descriptionMeta = this.getMeta('description');
+		const descriptionMeta = this.findElementsWithAttrs<HTMLMetaElement>('meta', {name: 'description'});
 
-		return descriptionMeta?.content ?? '';
+		if (descriptionMeta.length > 0) {
+			return descriptionMeta[0].content;
+		}
+
+		return '';
 	}
 
 	/**
 	 * Sets a description of page
-	 *
-	 * @param value - new description value
+	 * @param content - new description content value
 	 */
-	set description(value: string) {
-		if (!Object.isString(value)) {
-			return;
+	set description(content: string) {
+		const metaAttrs = {name: 'description'};
+		const metaDescriptionElements = this.findElementsWithAttrs<HTMLMetaElement>('meta', metaAttrs);
+
+		let metaDescriptionElement: HTMLMetaElement | undefined;
+
+		if (metaDescriptionElements.length > 0) {
+			metaDescriptionElement = metaDescriptionElements[0];
+		} else {
+			metaDescriptionElement = this.createElement<HTMLMetaElement>('meta', metaAttrs);
 		}
 
-		this.addMeta('description', value);
+		metaDescriptionElement.content = content;
 	}
 
 	/**
-	 * Return a content of specified link tag
-	 *
-	 * @param rel - rel of link
+	 * Returns specified link elements
+	 * @param atrs - attributes of searched link
 	 */
-	getLink(rel: string): PageMetaDataLink | undefined {
-		let storageLink = this._storage.links.find((link: PageMetaDataLink) => link.rel === rel);
-
-		if (!storageLink) {
-			const linkTag = this.findLinkTag(rel);
-
-			if (linkTag) {
-				storageLink = {
-					rel,
-					href: linkTag.href
-				};
-
-				this._storage.links.push(storageLink);
-			}
-		}
-
-		return storageLink;
+	getLinks(attrs: LinkAttributes): HTMLLinkElement[] {
+		return this.findElementsWithAttrs('link', attrs);
 	}
 
 	/**
 	 * Adds a new link tag on page
-	 *
-	 * @param rel - rel of link
-	 * @param href - href of link
+	 * @param attrs - rel of link
 	 */
-	addLink(rel: string, href: string): void {
-		const
-			linkTag = this.getLinkTag(rel),
-			link = this.getLink(rel);
-
-		if (link) {
-			link.href = href;
-
-		} else {
-			this._storage.links.push({
-				rel,
-				href
-			});
-		}
-
-		linkTag.href = href;
+	addLink(attrs: LinkAttributes): HTMLLinkElement {
+		return this.createElement<HTMLLinkElement, LinkAttributes>('link', attrs);
 	}
 
 	/**
-	 * Returns a content of specified meta tag
-	 *
-	 * @param name - name of meta
+	 * Returns specified meta elements
+	 * @param attrs - attributes of searched meta element
 	 */
-	getMeta(name: string): PageMetaDataMeta | undefined {
-		let storageMeta = this._storage.meta.find((item: PageMetaDataMeta) => item.name === name);
+	getMeta(attrs: MetaAttributes): HTMLMetaElement[] {
+		return this.findElementsWithAttrs<HTMLMetaElement, MetaAttributes>('meta', attrs);
+	}
 
-		if (!storageMeta) {
-			const metaTag = this.findMetaTag(name);
+	/**
+	 * Adds a new meta element on page
+	 * @param attrs - attributes of added meta element
+	 */
+	addMeta(attrs: MetaAttributes): HTMLMetaElement {
+		return this.createElement<HTMLMetaElement, MetaAttributes>('meta', attrs);
+	}
 
-			if (metaTag) {
-				storageMeta = {
-					name,
-					content: metaTag.content
-				};
+	/**
+	 * Search on page elements with specified tag and attributes
+	 *
+	 * @param tag - tag of searched elements
+	 * @param attrs - attributes of searched elements
+	*/
+	protected findElementsWithAttrs<T, A extends Dictionary<string> = Dictionary<string>>(tag: string, attrs: A): T[] {
+		const queryParams: string[] = [];
 
-				this._storage.meta.push(storageMeta);
+		for (const attrName in attrs) {
+			if (attrs.hasOwnProperty(attrName)) {
+				const attrValue = attrs[attrName];
+				queryParams.push(`[${attrName}=${attrValue}]`);
 			}
 		}
 
-		return storageMeta;
+		const queryString = `${tag}${queryParams.length > 0 ? queryParams.join('') : ''}`;
+
+		return [].map.call(document.querySelectorAll(queryString), (item) => item);
 	}
 
 	/**
-	 * Adds a new meta tag on page
+	 * Creates a new element and inserts into page head
 	 *
-	 * @param name - name of meta tag
-	 * @param content - content of meta tag
+	 * @param tag - element tag
+	 * @param attrs - element attributes
 	 */
-	addMeta(name: string, content: string): void {
-		const
-			metaTag = this.getMetaTag(name),
-			meta = this.getMeta(name);
-
-		if (meta) {
-			meta.content = content;
-
-		} else {
-			this._storage.meta.push({
-				name,
-				content
-			});
-		}
-
-		metaTag.content = content;
-	}
-
-	/**
-	 * Search on page meta tag by name,
-	 * if nothing found create it
-	 *
-	 * @param name - name of meta tag
-	 */
-	protected getMetaTag(name: string): HTMLMetaElement {
-		let metaTag = this.findMetaTag(name);
-
-		if (!metaTag) {
-			metaTag = <HTMLMetaElement>this.createTag('meta', {name});
-		}
-
-		return metaTag;
-	}
-
-	/**
-	 * Search on page link tag by rel,
-	 * if nothing found create it
-	 *
-	 * @param rel - rel of link tag
-	 */
-	protected getLinkTag(rel: string): HTMLLinkElement {
-		let linkTag = this.findLinkTag(rel);
-
-		if (!linkTag) {
-			linkTag = <HTMLLinkElement>this.createTag('link', {rel});
-		}
-
-		return linkTag;
-	}
-
-	/**
-	 * Search on page meta tag by name
-	 *
-	 * @param name - name of meta tag
-	 */
-	protected findMetaTag(name: string): HTMLMetaElement | undefined {
-		return [].find.call(
-			document.getElementsByTagName('meta'),
-			(item: HTMLMetaElement) => item.name === name
-		);
-	}
-
-	/**
-	 * Search on page link tag by rel
-	 *
-	 * @param linkRel - rel of link tag
-	 */
-	protected findLinkTag(linkRel: string): HTMLLinkElement | undefined {
-		return [].find.call(
-			document.getElementsByTagName('link'),
-			(item: HTMLLinkElement) => item.rel === linkRel
-		);
-	}
-
-	/**
-	 * Create a new tag and insert it into page head
-	 *
-	 * @param tag - tag name
-	 * @param properties - tag properties
-	 */
-	protected createTag(tag: string, properties: Dictionary<string>): HTMLElement {
+	protected createElement<
+		T extends HTMLElement,
+		A extends Dictionary<string> = Dictionary<string>
+	>(tag: string, attrs: A): T {
 		const elem = document.createElement(tag);
-		Object.assign(elem, properties);
+		Object.assign(elem, attrs);
 
-		return document.head.appendChild(elem);
+		return <T>document.head.appendChild(elem);
 	}
 }
