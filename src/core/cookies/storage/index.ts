@@ -72,7 +72,7 @@ export default class CookieStorage {
 
 		return cookieValue.split('#').reduce((acc, el) => {
 			const [key, value] = el.split('.');
-			acc[decodeURI(key)] = decodeURI(value);
+			acc[key] = value;
 			return acc;
 		}, {});
 	}
