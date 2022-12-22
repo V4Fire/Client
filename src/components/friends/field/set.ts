@@ -142,7 +142,7 @@ export function setField<T = unknown>(
 					}
 
 				} else {
-					ref = ctx.$fields;
+					ref = ctx.isFunctional || !isReady ? ctx.$fields : ctx;
 
 					if (!isReady) {
 						chunks[0] = info.name;
