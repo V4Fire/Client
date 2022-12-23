@@ -19,13 +19,14 @@
 		? delete attrs[':keepAlive']
 		? delete attrs[':dispatching']
 
-		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter})
-			< component.&__component &
-				v-if = !pageTakenFromCache |
-				ref = component |
+		< . v-async-target
+			< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter})
+				< component.&__component &
+					v-if = !pageTakenFromCache |
+					ref = component |
 
-				:is = page |
-				:dispatching = true |
+					:is = page |
+					:dispatching = true |
 
-				${attrs}
-			.
+					${attrs}
+				.

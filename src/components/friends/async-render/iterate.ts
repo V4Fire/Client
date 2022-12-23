@@ -7,7 +7,7 @@
  */
 
 import type { ComponentElement } from 'core/component';
-import type { VNode } from 'core/component/engines';
+import { Fragment, VNode } from 'core/component/engines';
 
 import type Friend from 'components/friends/friend';
 import { render } from 'components/friends/vdom';
@@ -259,15 +259,15 @@ export function iterate(
 				renderedVNodes: Node[] = [];
 
 			valsToRender.forEach((el) => {
-				const
-					vnodes = toVNode(el, iterI);
+				const vnodes = Array.concat([], toVNode(el, iterI)).flatMap((vnode) => {
+					if (vnode.type === Fragment && Object.isArray(vnode.children)) {
+						return <VNode[]>vnode.children;
+					}
 
-				if (Object.isArray(vnodes)) {
-					vnodes.forEach(renderVNode);
+					return vnode;
+				});
 
-				} else {
-					renderVNode(vnodes);
-				}
+				vnodes.forEach(renderVNode);
 			});
 
 			valsToRender = [];
