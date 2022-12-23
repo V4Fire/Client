@@ -11,7 +11,6 @@ const cookieNameForStorage = 'v4strg';
 
 /**
  * API for synchronous storage based on cookies
- * It is forbidden to use special characters (# and .) in keys and values
  *
  * @example
  * ```js

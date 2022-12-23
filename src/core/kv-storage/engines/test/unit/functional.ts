@@ -23,7 +23,7 @@ test.describe('core/cookies', () => {
 
 	const
 		cookieName = 'cookieName',
-		defaultStorage = 'key1.val1#key2.val2';
+		defaultStorage = 'key1{{.}}val1{{#}}key2{{.}}val2';
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
@@ -92,7 +92,7 @@ test.describe('core/cookies', () => {
 			const
 				cookieValue = await cookie.evaluate((ctx, [cookieName]) => ctx.get(cookieName), [cookieName]);
 
-			test.expect(cookieValue).toBe('key2.val2');
+			test.expect(cookieValue).toBe('key2{{.}}val2');
 		});
 	});
 
@@ -112,7 +112,7 @@ test.describe('core/cookies', () => {
 			const
 				cookieValue = await cookie.evaluate((ctx, [cookieName]) => ctx.get(cookieName), [cookieName]);
 
-			test.expect(cookieValue).toBe('key2.val2');
+			test.expect(cookieValue).toBe('key2{{.}}val2');
 		});
 
 		test('without clear filter', async () => {

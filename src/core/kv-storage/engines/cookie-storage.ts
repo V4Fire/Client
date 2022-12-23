@@ -64,8 +64,8 @@ export default class CookieStorageEngine {
 			return {};
 		}
 
-		return cookieValue.split('#').reduce((acc, el) => {
-			const [key, value] = el.split('.');
+		return cookieValue.split('{{#}}').reduce((acc, el) => {
+			const [key, value] = el.split('{{.}}');
 			acc[key] = value;
 			return acc;
 		}, {});
@@ -99,8 +99,8 @@ export default class CookieStorageEngine {
 		}
 
 		const rawCookie = Object.entries(state)
-			.map(([key, value]) => `${key}.${value}`)
-			.join('#');
+			.map(([key, value]) => `${key}{{.}}${value}`)
+			.join('{{#}}');
 
 		cookie.set(this.cookieName, rawCookie);
 	}
