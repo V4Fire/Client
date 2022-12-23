@@ -73,7 +73,6 @@ abstract class iDataData extends iBlock {
 	 * Functions from the iterable are called from left to right.
 	 */
 	@prop({
-		type: Object,
 		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
 		required: false
 	})
@@ -94,7 +93,6 @@ abstract class iDataData extends iBlock {
 	 * Functions from the iterable are called from left to right.
 	 */
 	@prop({
-		type: Object,
 		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
 		required: false
 	})

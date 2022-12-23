@@ -95,9 +95,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * ```
 	 */
 	@prop({
-		type: Object,
-		// eslint-disable-next-line @typescript-eslint/unbound-method
-		validator: Object.isIterable,
+		validator: (val) => val == null || Object.isIterable(val),
 		required: false
 	})
 

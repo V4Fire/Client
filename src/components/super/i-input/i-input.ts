@@ -229,7 +229,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * @see [[iInput.formValue]]
 	 */
 	@prop({
-		type: Object,
 		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
 		required: false
 	})
@@ -265,7 +264,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * ```
 	 */
 	@prop({
-		type: Object,
 		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
 		required: false
 	})
@@ -297,9 +295,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * ```
 	 */
 	@prop({
-		type: Object,
-		// eslint-disable-next-line @typescript-eslint/unbound-method
-		validator: Object.isIterable,
+		validator: (val) => val == null || Object.isIterable(val),
 		required: false
 	})
 
