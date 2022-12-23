@@ -31,7 +31,10 @@ import { getInfoFromConstructor } from 'core/component/reflect';
 import { getComponent, ComponentEngine } from 'core/component/engines';
 import { registerParentComponents } from 'core/component/init';
 
-import type { ComponentOptions } from 'core/component/interface';
+import type { ComponentConstructor, ComponentOptions } from 'core/component/interface';
+
+const
+	OVERRIDDEN = Symbol('This class is overridden');
 
 /**
  * Registers a new component based on the tied class
@@ -59,10 +62,14 @@ import type { ComponentOptions } from 'core/component/interface';
  * ```
  */
 export function component(opts?: ComponentOptions): Function {
-	return (target) => {
+	return (target: ComponentConstructor) => {
 		const
 			componentInfo = getInfoFromConstructor(target, opts),
 			componentParams = componentInfo.params;
+
+		if (componentInfo.name === componentInfo.parentParams?.name) {
+			Object.defineProperty(componentInfo.parent!, OVERRIDDEN, {value: true});
+		}
 
 		initEmitter
 			.emit('bindConstructor', componentInfo.name);
@@ -103,7 +110,12 @@ export function component(opts?: ComponentOptions): Function {
 			components.set(componentName, meta);
 			initEmitter.emit(`constructor.${componentName}`, {meta, parentMeta});
 
-			if (componentInfo.isAbstract || !SSR && meta.params.functional === true) {
+			const noNeedToRegisterAsComponent =
+				target.hasOwnProperty(OVERRIDDEN) ||
+				componentInfo.isAbstract ||
+				!SSR && meta.params.functional === true;
+
+			if (noNeedToRegisterAsComponent) {
 				fillMeta(meta, target);
 
 				if (!componentInfo.isAbstract) {
