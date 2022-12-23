@@ -26,14 +26,17 @@ import type {
 /**
  * Factory to create a component property decorator
  *
- * @param cluster - property cluster
- * @param [transformer] - transformer for parameters
+ * @param cluster - the property cluster to decorate
+ * @param [transformer] - transformer for the passed decorator parameters
  */
 export function paramsFactory<T = object>(
 	cluster: Nullable<string>,
 	transformer?: ParamsFactoryTransformer
 ): FactoryTransformer<T> {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
+		const
+			isMethodDecorator = desc != null;
+
 		initEmitter.once('bindConstructor', (componentName) => {
 			metaPointers[componentName] = metaPointers[componentName] ?? Object.createDict();
 
@@ -45,17 +48,16 @@ export function paramsFactory<T = object>(
 			}
 
 			link[key] = true;
-			initEmitter.once(`constructor.${componentName}`, reg);
+			initEmitter.once(`constructor.${componentName}`, decorate);
 		});
 
-		function reg({meta}: {meta: ComponentMeta}): void {
+		function decorate({meta}: {meta: ComponentMeta}): void {
 			delete meta.tiedFields[key];
 
 			let
 				p = params;
 
-			// Decorator for a method or accessor
-			if (desc != null) {
+			if (isMethodDecorator) {
 				delete meta.props[key];
 				delete meta.fields[key];
 				delete meta.systemFields[key];
@@ -159,8 +161,6 @@ export function paramsFactory<T = object>(
 
 				return;
 			}
-
-			// Decorator for a prop or field
 
 			delete meta.methods[key];
 			delete meta.accessors[key];

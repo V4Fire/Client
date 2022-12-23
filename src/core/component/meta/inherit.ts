@@ -25,12 +25,15 @@ export function inheritMeta(
 
 	const {
 		params: pParams,
+
 		props: pProps,
 		mods: pMods,
+
 		fields: pFields,
 		tiedFields: pTiedFields,
 		computedFields: pComputedFields,
 		systemFields: pSystemFields,
+
 		accessors: pAccessors,
 		methods: pMethods,
 		watchDependencies: pWatchDependencies
@@ -134,15 +137,11 @@ export function inheritMeta(
 			hooks = {};
 
 		if (parent.watchers != null) {
-			const {watchers} = parent;
-			Object.entries(watchers).forEach(([key, val]) => watchers[key] = {...val});
+			Object.entries(parent.watchers).forEach(([key, val]) => watchers[key] = {...val});
 		}
 
 		if (parent.hooks != null) {
-			const
-				{hooks} = parent;
-
-			Object.entries(hooks).forEach(([key, hook]) => {
+			Object.entries(parent.hooks).forEach(([key, hook]) => {
 				hooks[key] = {
 					...hook,
 					after: Object.size(hook.after) > 0 ? new Set(hook.after) : undefined
