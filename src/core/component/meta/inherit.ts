@@ -164,6 +164,7 @@ export function inheritMeta(
 
 		if (currentMods != null) {
 			const values = Object.createDict<ModDeclVal>();
+
 			currentMods.slice().forEach((val, i, mods) => {
 				if (val !== PARENT) {
 					if (Object.isArray(val) || !(<string>val in values)) {

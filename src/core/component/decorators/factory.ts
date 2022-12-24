@@ -34,9 +34,6 @@ export function paramsFactory<T = object>(
 	transformer?: ParamsFactoryTransformer
 ): FactoryTransformer<T> {
 	return (params: Dictionary<any> = {}) => (target, key, desc) => {
-		const
-			isMethodDecorator = desc != null;
-
 		initEmitter.once('bindConstructor', (componentName) => {
 			metaPointers[componentName] = metaPointers[componentName] ?? Object.createDict();
 
@@ -57,7 +54,14 @@ export function paramsFactory<T = object>(
 			let
 				p = params;
 
-			if (isMethodDecorator) {
+			if (desc != null) {
+				decorateMethod();
+
+			} else {
+				decorateProperty();
+			}
+
+			function decorateMethod() {
 				delete meta.props[key];
 				delete meta.fields[key];
 				delete meta.systemFields[key];
@@ -119,14 +123,14 @@ export function paramsFactory<T = object>(
 						Array.concat([], p.hook).forEach((hook) => {
 							if (Object.isSimpleObject(hook)) {
 								const
-									key = Object.keys(hook)[0],
-									val = hook[key];
+									hookName = Object.keys(hook)[0],
+									hookInfo = hook[hookName];
 
-								hooks[key] = wrapOpts({
-									...val,
+								hooks[hookName] = wrapOpts({
+									...hookInfo,
 									name,
-									hook: key,
-									after: val.after != null ? new Set([].concat(val.after)) : undefined
+									hook: hookName,
+									after: hookInfo.after != null ? new Set([].concat(hookInfo.after)) : undefined
 								});
 
 							} else {
@@ -158,85 +162,85 @@ export function paramsFactory<T = object>(
 				if (p.dependencies != null) {
 					meta.watchDependencies.set(key, p.dependencies);
 				}
-
-				return;
 			}
 
-			delete meta.methods[key];
-			delete meta.accessors[key];
-			delete meta.computedFields[key];
+			function decorateProperty() {
+				delete meta.methods[key];
+				delete meta.accessors[key];
+				delete meta.computedFields[key];
 
-			const accessors = meta.accessors[key] ?
-				meta.accessors :
-				meta.computedFields;
+				const accessors = meta.accessors[key] ?
+					meta.accessors :
+					meta.computedFields;
 
-			if (accessors[key]) {
-				Object.defineProperty(meta.constructor.prototype, key, defProp);
-				delete accessors[key];
-			}
+				if (accessors[key]) {
+					Object.defineProperty(meta.constructor.prototype, key, defProp);
+					delete accessors[key];
+				}
 
-			const
-				metaKey = cluster ?? (key in meta.props ? 'props' : 'fields'),
-				inverseKeys = inverseFieldMap[metaKey],
-				metaCluster = meta[metaKey];
+				const
+					metaKey = cluster ?? (key in meta.props ? 'props' : 'fields'),
+					inverseKeys = inverseFieldMap[metaKey],
+					metaCluster = meta[metaKey];
 
-			if (inverseKeys != null) {
-				for (let i = 0; i < inverseKeys.length; i++) {
-					const
-						tmp = meta[inverseKeys[i]];
+				if (inverseKeys != null) {
+					for (let i = 0; i < inverseKeys.length; i++) {
+						const
+							tmp = meta[inverseKeys[i]];
 
-					if (key in tmp) {
-						metaCluster[key] = tmp[key];
-						delete tmp[key];
-						break;
+						if (key in tmp) {
+							metaCluster[key] = tmp[key];
+							delete tmp[key];
+							break;
+						}
 					}
 				}
-			}
 
-			if (transformer) {
-				p = transformer(p, metaKey);
-			}
+				if (transformer) {
+					p = transformer(p, metaKey);
+				}
 
-			const
-				info = metaCluster[key] ?? {src: meta.componentName};
+				const
+					info = metaCluster[key] ?? {src: meta.componentName};
 
-			let {
-				watchers,
-				after
-			} = info;
+				let {
+					watchers,
+					after
+				} = info;
 
-			if (p.after != null) {
-				after = new Set([].concat(p.after));
-			}
+				if (p.after != null) {
+					after = new Set([].concat(p.after));
+				}
 
-			if (p.watch != null) {
-				Array.concat([], p.watch).forEach((watcher) => {
-					watchers ??= new Map();
+				if (p.watch != null) {
+					Array.concat([], p.watch).forEach((watcher) => {
+						watchers ??= new Map();
 
-					if (Object.isPlainObject(watcher)) {
-						watchers.set(watcher.handler ?? watcher.fn, wrapOpts({...watcher, handler: watcher.handler}));
+						if (Object.isPlainObject(watcher)) {
+							watchers.set(watcher.handler ?? watcher.fn, wrapOpts({...watcher, handler: watcher.handler}));
 
-					} else {
-						watchers.set(watcher, wrapOpts({handler: watcher}));
+						} else {
+							watchers.set(watcher, wrapOpts({handler: watcher}));
+						}
+					});
+				}
+
+				metaCluster[key] = wrapOpts({
+					...info,
+					...p,
+
+					after,
+					watchers,
+
+					meta: {
+						...info.meta,
+						...p.meta
 					}
 				});
-			}
 
-			metaCluster[key] = wrapOpts({
-				...info,
-				...p,
-
-				after,
-				watchers,
-
-				meta: {
-					...info.meta,
-					...p.meta
+				if (tiedFieldMap[metaKey] != null && RegExp.test(storeRgxp, key)) {
+					meta.tiedFields[key] = key.replace(storeRgxp, '');
 				}
-			});
-
-			if (tiedFieldMap[metaKey] != null && RegExp.test(storeRgxp, key)) {
-				meta.tiedFields[key] = key.replace(storeRgxp, '');
 			}
 
 			function wrapOpts<T extends Dictionary & DecoratorFunctionalOptions>(opts: T): T {
