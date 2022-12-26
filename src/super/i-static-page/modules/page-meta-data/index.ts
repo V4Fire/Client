@@ -71,7 +71,7 @@ export default class PageMetaData {
 	 * Returns specified link elements
 	 * @param atrs - attributes of searched link
 	 */
-	getLinks(attrs: LinkAttributes): HTMLLinkElement[] {
+	getLinks(attrs?: LinkAttributes): NodeListOf<HTMLLinkElement> {
 		return this.findElementsWithAttrs('link', attrs);
 	}
 
@@ -80,15 +80,15 @@ export default class PageMetaData {
 	 * @param attrs - rel of link
 	 */
 	addLink(attrs: LinkAttributes): HTMLLinkElement {
-		return this.createElement<HTMLLinkElement, LinkAttributes>('link', attrs);
+		return this.createElement<HTMLLinkElement>('link', attrs);
 	}
 
 	/**
 	 * Returns specified meta elements
 	 * @param attrs - attributes of searched meta element
 	 */
-	getMeta(attrs: MetaAttributes): HTMLMetaElement[] {
-		return this.findElementsWithAttrs<HTMLMetaElement, MetaAttributes>('meta', attrs);
+	getMeta(attrs?: MetaAttributes): NodeListOf<HTMLMetaElement> {
+		return this.findElementsWithAttrs<HTMLMetaElement>('meta', attrs);
 	}
 
 	/**
@@ -96,7 +96,7 @@ export default class PageMetaData {
 	 * @param attrs - attributes of added meta element
 	 */
 	addMeta(attrs: MetaAttributes): HTMLMetaElement {
-		return this.createElement<HTMLMetaElement, MetaAttributes>('meta', attrs);
+		return this.createElement<HTMLMetaElement>('meta', attrs);
 	}
 
 	/**
@@ -105,7 +105,7 @@ export default class PageMetaData {
 	 * @param tag - tag of searched elements
 	 * @param attrs - attributes of searched elements
 	*/
-	protected findElementsWithAttrs<T, A extends Dictionary<string> = Dictionary<string>>(tag: string, attrs: A): T[] {
+	protected findElementsWithAttrs<T extends Element = Element>(tag: string, attrs?: Dictionary<string>): NodeListOf<T> {
 		const queryParams: string[] = [];
 
 		for (const attrName in attrs) {
@@ -117,7 +117,7 @@ export default class PageMetaData {
 
 		const queryString = `${tag}${queryParams.length > 0 ? queryParams.join('') : ''}`;
 
-		return [].map.call(document.querySelectorAll(queryString), (item) => item);
+		return document.querySelectorAll<T>(queryString);
 	}
 
 	/**
@@ -126,10 +126,7 @@ export default class PageMetaData {
 	 * @param tag - element tag
 	 * @param attrs - element attributes
 	 */
-	protected createElement<
-		T extends HTMLElement,
-		A extends Dictionary<string> = Dictionary<string>
-	>(tag: string, attrs: A): T {
+	protected createElement<T extends HTMLElement>(tag: string, attrs?: Dictionary<string>): T {
 		const elem = document.createElement(tag);
 		Object.assign(elem, attrs);
 

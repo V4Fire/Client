@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added the ability to manipulate meta information of page
+
 ## v3.29.0 (2022-09-13)
 
 #### :boom: Breaking Change
