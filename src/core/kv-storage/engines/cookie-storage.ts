@@ -5,6 +5,7 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import type { ClearFilter } from 'core/kv-storage/interface';
 
 import * as cookie from 'core/cookies';
