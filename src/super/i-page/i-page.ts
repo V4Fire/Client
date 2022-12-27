@@ -65,7 +65,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 * @see [[iPage.pageTitleProp]]
 	 * @see [[iPage.stagePageTitles]]
 	 */
-	@computed({cache: true, dependencies: ['r.PageMetaData.title']})
+	@computed({cache: false})
 	get pageTitle(): string {
 		return this.r.PageMetaData.title;
 	}
