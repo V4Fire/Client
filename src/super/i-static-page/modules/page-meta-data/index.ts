@@ -11,18 +11,18 @@ import type { MetaAttributes, LinkAttributes } from 'super/i-static-page/modules
 export * from 'super/i-static-page/modules/page-meta-data/interface';
 
 /**
- * Class provides API to work with metadata of page
+ * Class provides API to work with the metadata of a page
  */
 export default class PageMetaData {
 	/**
-	 * Current title of page
+	 * Current title of a page
 	 */
 	get title(): string {
 		return document.title;
 	}
 
 	/**
-	 * Sets a title of page
+	 * Sets a title of a page
 	 * @param value - new title value
 	 */
 	set title(value: string) {
@@ -36,7 +36,7 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * Current description of page
+	 * Current description of a page
 	 */
 	get description(): string {
 		const descriptionMeta = this.findElementsWithAttrs<HTMLMetaElement>('meta', {name: 'description'});
@@ -49,7 +49,7 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * Sets a description of page
+	 * Sets a description of a page
 	 * @param content - new description content value
 	 */
 	set description(content: string) {
@@ -76,7 +76,7 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * Adds a new link tag on page
+	 * Adds a new link tag on a page
 	 * @param attrs - rel of link
 	 */
 	addLink(attrs: LinkAttributes): HTMLLinkElement {
@@ -92,7 +92,7 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * Adds a new meta element on page
+	 * Adds a new meta element on a page
 	 * @param attrs - attributes of added meta element
 	 */
 	addMeta(attrs: MetaAttributes): HTMLMetaElement {
@@ -100,7 +100,7 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * Search on page elements with specified tag and attributes
+	 * Search the elements with specified tag and attributes on the page
 	 *
 	 * @param tag - tag of searched elements
 	 * @param attrs - attributes of searched elements
@@ -121,7 +121,7 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * Creates a new element and inserts into page head
+	 * Creates a new element and inserts into a page head
 	 *
 	 * @param tag - element tag
 	 * @param attrs - element attributes

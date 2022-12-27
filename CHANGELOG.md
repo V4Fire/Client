@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.? (2022-??-??)
+## v3.33.0 (2022-12-27)
 
 #### :rocket: New Feature
 
-* Added the ability to manipulate meta information of page with `super/i-static-page/modules/page-meta-data`
+* Added the ability to manipulate meta information of a page with `super/i-static-page/modules/page-meta-data`
 
 ## v3.32.1 (2022-12-26)
 

@@ -1,6 +1,6 @@
 # super/i-static-page/modules/page-meta-data
 
-This module provides API for working with meta data of page.
+This module provides API for working with the metadata of a page.
 
 # What is the meta data of the page
 
@@ -16,7 +16,7 @@ Tags meta, link, title and meta tag with name description.
 This module provides a class that is friendly to `i-static-page` component.
 You can call this module from any component with `this.r.PageMetaData`.
 
-For example change the title of page:
+For example change the title of the page:
 
 ```typescript
 this.r.PageMetaData.title = 'New title of page'
