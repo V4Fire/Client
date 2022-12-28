@@ -1374,11 +1374,18 @@ export default abstract class iBlock extends ComponentInterface {
 	protected blockReadyListeners: Function[] = [];
 
 	/**
+	 * A list of keysets names used for translation
+	 * In a build time overrides with inheritance chain of component
+	 */
+	@system()
+	protected componentI18nKeysets: string[] = [this.componentName];
+
+	/**
 	 * Function for internationalization of texts used in the component
 	 */
 	@computed()
 	get i18n(): ReturnType<typeof i18n> {
-		return i18n(this.componentName);
+		return i18n(this.componentI18nKeysets);
 	}
 
 	/**
