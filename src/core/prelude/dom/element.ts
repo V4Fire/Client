@@ -17,8 +17,8 @@ if (typeof Element !== 'undefined') {
 			box = this.getBoundingClientRect();
 
 		return {
-			top: box.top + pageYOffset,
-			left: box.left + pageXOffset
+			top: box.top + scrollY,
+			left: box.left + scrollX
 		};
 	});
 
