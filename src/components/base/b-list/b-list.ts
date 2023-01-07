@@ -266,7 +266,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * Link(s) to the DOM element of the component active item.
-	 * If the component is switched to the `multiple` mode, the getter will return an list of elements.
+	 * If the component is switched to the `multiple` mode, the getter will return a list of elements.
 	 */
 	@computed({
 		cache: true,
