@@ -21,6 +21,9 @@ Due to the fact that we use cookies as a data container, we get the same restric
 Therefore, when using this engine, it is very important to monitor the data that you write to the storage and try to add new ones only when necessary.
 
 The following separators are used to serialize data
+
 `{{.}}` - key/value separtor
+
 `{{#}}` - keys separators
+
 It is forbidden to use these symbols in keys and values
