@@ -37,7 +37,7 @@ import type {
 import { registerComponent } from 'core/component/init';
 import { resolveAttrs, normalizeComponentAttrs } from 'core/component/render/helpers';
 
-import type { ComponentInterface, RenderEngine } from 'core/component/interface';
+import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Wrapper for the component library `createVNode` function
@@ -64,7 +64,7 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		const
-			[name, attrs, slots] = args;
+			[name, attrs, slots, _, dynamicAttrs] = args;
 
 		let
 			component: CanUndef<ComponentMeta>;
@@ -77,13 +77,16 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		}
 
 		const
-			vnode = resolveAttrs.call(this, original.apply(null, args));
+			createVNode = () => resolveAttrs.call(this, original.apply(null, args));
 
 		if (component == null) {
-			return vnode;
+			return createVNode();
 		}
 
-		normalizeComponentAttrs(attrs, component);
+		normalizeComponentAttrs(attrs, dynamicAttrs, component);
+
+		const
+			vnode = createVNode();
 
 		const
 			{componentName, params} = component,

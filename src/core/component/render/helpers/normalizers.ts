@@ -105,9 +105,14 @@ export function parseStringStyle(style: string): Dictionary<string> {
  * Normalizes the passed attributes using the specified component meta object
  *
  * @param attrs
+ * @param dynamicAttrs
  * @param component
  */
-export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: ComponentMeta): void {
+export function normalizeComponentAttrs(
+	attrs: Nullable<Dictionary>,
+	dynamicAttrs: Nullable<string[]>,
+	component: ComponentMeta
+): void {
 	const
 		{props, params: {deprecatedProps}} = component;
 
@@ -117,7 +122,7 @@ export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: 
 
 	Object.keys(attrs).forEach((name) => {
 		let
-			propKey = `${name}Prop`.camelize(false);
+			propName = `${name}Prop`.camelize(false);
 
 		if (name === 'ref' || name === 'ref_for') {
 			return;
@@ -125,20 +130,37 @@ export function normalizeComponentAttrs(attrs: Nullable<Dictionary>, component: 
 
 		if (deprecatedProps != null) {
 			const
-				alternativeKey = deprecatedProps[name] ?? deprecatedProps[propKey];
+				alternativeName = deprecatedProps[name] ?? deprecatedProps[propName];
 
-			if (alternativeKey != null) {
-				attrs[alternativeKey] = attrs[name];
-				delete attrs[name];
-
-				name = alternativeKey;
-				propKey = `${alternativeKey}Prop`;
+			if (alternativeName != null) {
+				updateAttrName(name, alternativeName);
+				name = alternativeName;
+				propName = `${alternativeName}Prop`;
 			}
 		}
 
-		if (propKey in props) {
-			attrs[propKey] = attrs[name];
-			delete attrs[name];
+		if (propName in props) {
+			updateAttrName(name, propName);
 		}
 	});
+
+	function updateAttrName(name: string, newName: string) {
+		if (attrs == null) {
+			return;
+		}
+
+		attrs[newName] = attrs[name];
+		delete attrs[name];
+
+		if (dynamicAttrs == null) {
+			return;
+		}
+
+		const
+			dynamicAttrPos = dynamicAttrs.indexOf(name);
+
+		if (dynamicAttrPos !== -1) {
+			dynamicAttrs[dynamicAttrPos] = newName;
+		}
+	}
 }
