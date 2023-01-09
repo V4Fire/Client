@@ -261,7 +261,7 @@ export default class bDynamicPage extends iDynamicPage {
 			return (newPage: CanUndef<string>, currentPage: CanUndef<string>) => {
 				unsafe.pageTakenFromCache = false;
 
-				const componentRef = unsafe.$refs.component;
+				const componentRef = unsafe.$refs[unsafe.$resolveRef('component')];
 				componentRef?.pop();
 
 				const
