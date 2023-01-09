@@ -6,6 +6,8 @@ This module provides engines for kv-storage.
 
 Cookie Storage Engine - uses a cookie as a container for data.
 
+When creating the engine, you will have to pass the name of the cookie. This cookie will be the source of the truth, all changes to the data will be recorded in it, and when accessing the data, they will be obtained from this cookie.
+
 ### Usage
 
 Example of creating an engine that will use the `my-cookie-name` cookie as a data source
@@ -20,10 +22,10 @@ Due to the fact that we use cookies as a data container, we get the same restric
 
 Therefore, when using this engine, it is very important to monitor the data that you write to the storage and try to add new ones only when necessary.
 
-The following separators are used to serialize data
+The following separators are used to serialize data:
 
 `{{.}}` - key/value separtor
 
 `{{#}}` - keys separators
 
-It is forbidden to use these symbols in keys and values
+It is forbidden to use these symbols in keys and values.
