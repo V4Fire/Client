@@ -47,7 +47,7 @@ function i18nInheritanceChainTransformer() {
 			console.log(file.path);
 		}
 
-		return node;
+		return file;
 	}
 
 	return (node) => ts.visitNode(node, fileVisitor);

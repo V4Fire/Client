@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { locale } from 'core/i18n';
 import * as net from 'core/net';
 
 //#if runtime has core/session
@@ -27,8 +26,6 @@ export default (async () => {
 	});
 
 	tasks.push(
-		locale.isInitialized,
-
 		//#if runtime has core/session
 		session.isExists().then((v) => state.isAuth = v)
 		//#endif
