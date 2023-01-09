@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 module.exports = {
 	'The value is not a number': 'The value is not a number',
 	'The value does not match with an unsigned integer type': 'The value does not match with an unsigned integer type',
