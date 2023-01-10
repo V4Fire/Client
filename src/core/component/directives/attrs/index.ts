@@ -13,9 +13,19 @@
  * @packageDocumentation
  */
 
+import { components } from 'core/component/const';
 import { ComponentEngine, DirectiveBinding, VNode } from 'core/component/engines';
 
-import { mergeProps, normalizeStyle, normalizeClass, setVNodePatchFlags } from 'core/component/render';
+import {
+
+	mergeProps,
+	normalizeStyle,
+	normalizeClass,
+	normalizeComponentAttrs,
+	setVNodePatchFlags
+
+} from 'core/component/render';
+
 import { getDirectiveContext } from 'core/component/directives/helpers';
 
 import {
@@ -24,7 +34,6 @@ import {
 	directiveRgxp,
 
 	handlers,
-
 	modifiers,
 	keyModifiers,
 
@@ -46,14 +55,18 @@ ComponentEngine.directive('attrs', {
 
 		const
 			ctx = getDirectiveContext(params, vnode),
-			component = vnode.virtualComponent?.unsafe,
-			isFunctional = component?.meta.params.functional === true;
+			componentCtx = vnode.virtualComponent?.unsafe,
+			componentMeta = Object.isDictionary(vnode.type) ? components.get(vnode.type['name']) : componentCtx?.meta;
+
+		const props = vnode.props ?? {};
+		vnode.props ??= props;
 
 		const
-			props = vnode.props ?? {},
 			attrs = {...params.value};
 
-		vnode.props ??= props;
+		if (componentMeta != null) {
+			normalizeComponentAttrs(attrs, vnode.dynamicProps, componentMeta);
+		}
 
 		let
 			r: CanUndef<ComponentInterface['$renderEngine']['r']>;
@@ -252,12 +265,12 @@ ComponentEngine.directive('attrs', {
 					}
 				}
 
-				if (isFunctional && !isDOMEvent && Object.isFunction(attrVal)) {
+				if (componentCtx != null && !isDOMEvent && Object.isFunction(attrVal)) {
 					if (isOnceEvent) {
-						component.$on(originalEvent, attrVal);
+						componentCtx.$on(originalEvent, attrVal);
 
 					} else {
-						component.$once(originalEvent, attrVal);
+						componentCtx.$once(originalEvent, attrVal);
 					}
 
 				} else {
@@ -302,10 +315,11 @@ ComponentEngine.directive('attrs', {
 				}
 			}
 
-			const
-				isAttr = component?.meta.props[attrName] == null;
+			const needPathVNode =
+				componentCtx == null ||
+				componentMeta?.props[attrName] == null;
 
-			if (isAttr || !isFunctional) {
+			if (needPathVNode) {
 				if (classAttrs[attrName] != null) {
 					attrName = classAttrs[attrName];
 					attrVal = normalizeClass(Object.cast(attrVal));
@@ -338,7 +352,7 @@ ComponentEngine.directive('attrs', {
 				}
 
 			} else {
-				component[attrName] = attrVal;
+				componentCtx[attrName] = attrVal;
 			}
 		}
 

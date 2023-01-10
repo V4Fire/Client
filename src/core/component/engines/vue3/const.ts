@@ -7,7 +7,6 @@
  */
 
 export const supports = {
-	regular: true,
 	functional: !SSR
 };
 

@@ -105,20 +105,24 @@ export function parseStringStyle(style: string): Dictionary<string> {
  * Normalizes the passed attributes using the specified component meta object
  *
  * @param attrs
- * @param dynamicAttrs
+ * @param dynamicProps
  * @param component
  */
 export function normalizeComponentAttrs(
 	attrs: Nullable<Dictionary>,
-	dynamicAttrs: Nullable<string[]>,
+	dynamicProps: Nullable<string[]>,
 	component: ComponentMeta
 ): void {
-	const
-		{props, params: {deprecatedProps}} = component;
+	const {
+		props,
+		params: {deprecatedProps}
+	} = component;
 
 	if (attrs == null) {
 		return;
 	}
+
+	normalizeComponentAttrs(Object.cast(attrs['v-attrs']), dynamicProps, component);
 
 	Object.keys(attrs).forEach((name) => {
 		let
@@ -152,15 +156,15 @@ export function normalizeComponentAttrs(
 		attrs[newName] = attrs[name];
 		delete attrs[name];
 
-		if (dynamicAttrs == null) {
+		if (dynamicProps == null) {
 			return;
 		}
 
 		const
-			dynamicAttrPos = dynamicAttrs.indexOf(name);
+			dynamicAttrPos = dynamicProps.indexOf(name);
 
 		if (dynamicAttrPos !== -1) {
-			dynamicAttrs[dynamicAttrPos] = newName;
+			dynamicProps[dynamicAttrPos] = newName;
 		}
 	}
 }

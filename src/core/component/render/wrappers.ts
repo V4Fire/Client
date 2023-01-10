@@ -64,7 +64,7 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		const
-			[name, attrs, slots, _, dynamicAttrs] = args;
+			[name, attrs, slots, _, dynamicProps] = args;
 
 		let
 			component: CanUndef<ComponentMeta>;
@@ -77,78 +77,77 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		}
 
 		const
-			createVNode = () => resolveAttrs.call(this, original.apply(null, args));
+			vnode = resolveAttrs.call(this, original.apply(null, args));
 
 		if (component == null) {
-			return createVNode();
+			return vnode;
 		}
 
-		normalizeComponentAttrs(attrs, dynamicAttrs, component);
-
-		const
-			vnode = createVNode();
+		normalizeComponentAttrs(attrs, dynamicProps, component);
 
 		const
 			{componentName, params} = component,
 			{supports, r} = this.$renderEngine;
 
-		if ((!supports.regular || supports.functional) && params.functional === true) {
-			if (componentRenderFactories[componentName] == null) {
-				attachTemplatesToMeta(component, TPLS[componentName]);
-			}
-
-			const virtualCtx = createVirtualContext(component, {
-				parent: this,
-				props: attrs,
-				slots
-			});
-
-			vnode.virtualComponent = virtualCtx;
-
-			const
-				functionalVNode = virtualCtx.render(virtualCtx, []);
-
-			vnode.type = functionalVNode.type;
-			vnode.props = {...vnode.props, ...functionalVNode.props};
-			vnode.children = functionalVNode.children;
-			vnode.dynamicChildren = functionalVNode.dynamicChildren;
-
-			vnode.dirs = functionalVNode.dirs ?? [];
-			vnode.dirs.push({
-				dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
-
-				modifiers: {},
-				arg: undefined,
-
-				value: {
-					created: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
-					beforeMount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
-					mounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
-					beforeUpdate: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
-					updated: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
-					beforeUnmount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
-					unmounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
-				},
-
-				oldValue: undefined,
-				instance: Object.cast(virtualCtx)
-			});
-
-			if (functionalVNode.shapeFlag > vnode.shapeFlag) {
-				// eslint-disable-next-line no-bitwise
-				vnode.shapeFlag |= functionalVNode.shapeFlag;
-			}
-
-			if (functionalVNode.patchFlag > vnode.patchFlag) {
-				// eslint-disable-next-line no-bitwise
-				vnode.patchFlag |= functionalVNode.patchFlag;
-			}
-
-			functionalVNode.props = {};
-			functionalVNode.dirs = null;
-			functionalVNode.children = [];
-			functionalVNode.dynamicChildren = [];
+		if (params.functional !== true || !supports.functional) {
+			return vnode;
 		}
+
+		if (componentRenderFactories[componentName] == null) {
+			attachTemplatesToMeta(component, TPLS[componentName]);
+		}
+
+		const virtualCtx = createVirtualContext(component, {
+			parent: this,
+			props: attrs,
+			slots
+		});
+
+		vnode.virtualComponent = virtualCtx;
+
+		const
+			functionalVNode = virtualCtx.render(virtualCtx, []);
+
+		vnode.type = functionalVNode.type;
+		vnode.props = {...vnode.props, ...functionalVNode.props};
+		vnode.children = functionalVNode.children;
+		vnode.dynamicChildren = functionalVNode.dynamicChildren;
+
+		vnode.dirs = functionalVNode.dirs ?? [];
+		vnode.dirs.push({
+			dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
+
+			modifiers: {},
+			arg: undefined,
+
+			value: {
+				created: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
+				beforeMount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
+				mounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
+				beforeUpdate: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
+				updated: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
+				beforeUnmount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
+				unmounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
+			},
+
+			oldValue: undefined,
+			instance: Object.cast(virtualCtx)
+		});
+
+		if (functionalVNode.shapeFlag > vnode.shapeFlag) {
+			// eslint-disable-next-line no-bitwise
+			vnode.shapeFlag |= functionalVNode.shapeFlag;
+		}
+
+		if (functionalVNode.patchFlag > vnode.patchFlag) {
+			// eslint-disable-next-line no-bitwise
+			vnode.patchFlag |= functionalVNode.patchFlag;
+		}
+
+		functionalVNode.props = {};
+		functionalVNode.dirs = null;
+		functionalVNode.children = [];
+		functionalVNode.dynamicChildren = [];
 
 		return vnode;
 	});

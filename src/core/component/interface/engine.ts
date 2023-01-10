@@ -70,7 +70,6 @@ export interface RenderEngine<T extends object = object> {
 }
 
 export interface RenderEngineFeatures {
-	regular: boolean;
 	functional: boolean;
 }
 
