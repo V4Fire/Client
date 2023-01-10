@@ -1378,7 +1378,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * In a build time overrides with inheritance chain of component
 	 */
 	@system()
-	protected componentI18nKeysets: string[] = [this.componentName];
+	protected readonly componentI18nKeysets: string[] = [this.componentName];
 
 	/**
 	 * Function for internationalization of texts used in the component
