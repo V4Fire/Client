@@ -27,12 +27,12 @@ import type {
 	setBlockTracking,
 	createElementBlock,
 
+	cloneVNode,
 	createVNode,
 	createStaticVNode,
 	createElementVNode,
 	createTextVNode,
 	createCommentVNode,
-	cloneVNode,
 
 	setDevtoolsHook,
 	setTransitionHooks,

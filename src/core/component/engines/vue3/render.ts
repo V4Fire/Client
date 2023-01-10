@@ -66,10 +66,11 @@ export {
 	setTransitionHooks,
 	useTransitionState,
 
+	cloneVNode,
 	createStaticVNode,
 	createTextVNode,
 	createCommentVNode,
-	cloneVNode,
+	createSlots,
 
 	normalizeClass,
 	normalizeStyle,
