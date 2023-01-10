@@ -39,7 +39,7 @@
 								< component.&__item &
 									v-if = item |
 									:is = Object.isFunction(item) ? item(el, i) : item |
-									v-attrs = getItemProps(el, i)
+									:v-attrs = getItemProps(el, i)
 								.
 
 					- block children
@@ -48,7 +48,7 @@
 								:items = el.children |
 								:folded = getFoldedPropValue(el) |
 								:item = item |
-								v-attrs = nestedTreeProps
+								:v-attrs = nestedTreeProps
 							.
 								< template &
 									#default = o |
