@@ -11,6 +11,10 @@
 - include 'components/super/i-dynamic-page'|b as placeholder
 
 - template index() extends ['i-dynamic-page'].index
+	- block rootAttrs
+		- super
+		? rootAttrs['v-async-target'] = TRUE
+
 	- block body
 		: graph = include('build/graph/component-params')
 
@@ -19,14 +23,13 @@
 		? delete attrs[':keepAlive']
 		? delete attrs[':dispatching']
 
-		< . v-async-target
-			< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter})
-				< component.&__component &
-					v-if = !pageTakenFromCache |
-					ref = component |
+		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter})
+			< component.&__component &
+				v-if = !pageTakenFromCache |
+				ref = component |
 
-					:is = page |
-					:dispatching = true |
+				:is = page |
+				:dispatching = true |
 
-					${attrs}
-				.
+				${attrs}
+			.

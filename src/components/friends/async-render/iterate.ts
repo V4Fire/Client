@@ -300,7 +300,7 @@ export function iterate(
 					renderedVNodes.push(renderedVnode);
 				}
 
-				target.el?.appendChild(renderedVnode);
+				(target.el ?? ctx.$el)!.appendChild(renderedVnode);
 			}
 
 			function destructor() {
