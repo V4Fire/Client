@@ -158,7 +158,7 @@ Or
     {
       id: 'bar',
 
-      // This branch isn't folded
+      /// This branch isn't folded
       folded: false,
 
       children: [

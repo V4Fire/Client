@@ -11,22 +11,17 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/nested-list';
-//#endif
-
-import symbolGenerator from 'core/symbol';
+import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 
-import iData, { component, prop, field, TaskParams, TaskI } from 'components/super/i-data/i-data';
+import iData, { component, prop, field } from 'components/super/i-data/i-data';
 import type { Item, RenderFilter } from 'components/base/b-tree/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
 
-const
-	$$ = symbolGenerator();
+AsyncRender.addToPrototype(iterate);
 
 /**
  * Component to render tree of any elements
@@ -65,8 +60,8 @@ export default class bTree extends iData implements iItems {
 	@prop({
 		type: Function,
 		required: false,
-		default(ctx: bTree, item: unknown, i: number, task: TaskI): CanPromise<boolean> {
-			if (ctx.level === 0 && task.i < ctx.renderChunks) {
+		default(ctx: bTree, item: unknown, i: number): CanPromise<boolean> {
+			if (ctx.level === 0 && i < ctx.renderChunks) {
 				return true;
 			}
 
@@ -117,9 +112,9 @@ export default class bTree extends iData implements iItems {
 	/**
 	 * Parameters for async render tasks
 	 */
-	protected get renderTaskParams(): TaskParams {
+	protected get renderTaskParams(): TaskOptions {
 		return {
-			filter: this.renderFilter.bind(this, this)
+			filter: this.renderFilter.bind(null, this)
 		};
 	}
 
@@ -143,8 +138,11 @@ export default class bTree extends iData implements iItems {
 			renderFilter
 		};
 
-		if (this.$listeners.fold) {
-			opts['@fold'] = this.$listeners.fold;
+		const
+			a = this.$attrs;
+
+		if (a.onFold != null) {
+			opts['@fold'] = a.onFold;
 		}
 
 		return opts;
