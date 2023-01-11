@@ -96,4 +96,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$resolveRef: CTX['$resolveRef'];
+
+	// @ts-ignore (access)
+	$withCtx: CTX['$withCtx'];
 }

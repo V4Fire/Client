@@ -432,4 +432,12 @@ export abstract class ComponentInterface {
 	protected $resolveRef(ref: unknown): CanUndef<string | Function> {
 		return Object.throw();
 	}
+
+	/**
+	 * Executes the given function in the component render context.
+	 * This function is necessary to render components asynchronously.
+	 */
+	protected $withCtx<T>(cb: (...args: any) => T): T {
+		return Object.throw();
+	}
 }

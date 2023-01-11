@@ -217,7 +217,7 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 			}
 		}
 
-		return original.apply(null, args);
+		return this.$withCtx(() => original.apply(null, args));
 	});
 }
 
