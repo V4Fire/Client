@@ -19,6 +19,11 @@ export interface Item extends Dictionary {
 	id: string;
 
 	/**
+	 * Item value
+	 */
+	value: string;
+
+	/**
 	 * Parent element identifier
 	 * (for nested items)
 	 */
@@ -33,6 +38,11 @@ export interface Item extends Dictionary {
 	 * Folding flag
 	 */
 	folded?: boolean;
+
+	/**
+	 * True if the item is active
+	 */
+	active?: boolean;
 }
 
 export interface RenderFilter {
@@ -40,3 +50,5 @@ export interface RenderFilter {
 }
 
 export type ClickableAreaMod = 'fold' | 'any';
+
+export type Active = unknown | Set<unknown>;
