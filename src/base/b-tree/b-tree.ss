@@ -26,7 +26,16 @@
 					}
 				})
 			.
-				< .&__item-wrapper
+				< div &
+					:-id = el.value |
+
+					:class = provide.elClasses({
+						'item-wrapper': {
+							id: el.value,
+							active: isActive(el.value)
+						}
+					})
+				.
 					< .&__marker
 						- block fold
 							< template v-if = hasChildren(el)

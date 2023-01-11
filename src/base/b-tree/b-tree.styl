@@ -13,12 +13,35 @@ $p = {
 }
 
 b-tree extends i-data
-	&_clickable-area_any ^[0]
-		&__item-wrapper
-			position relative
+	&__item-wrapper
+		display flex
 
-		&__fold
-			position absolute
-			zIndex(layer, 1)
+	&__fold:before
+		content "-"
+		display inline
+		text-align left
 
-			size 100%
+	&__node_folded_true &__fold:before
+		content "+"
+		display inline
+		text-align left
+
+	&__node_folded_true &__children
+		display none
+
+	&__children
+		margin-left 10px
+
+	&__marker
+		display inline
+
+
+	//&_clickable-area_any ^[0]
+	//	&__item-wrapper
+	//		position relative
+	//
+	//	&__fold
+	//		position absolute
+	//		zIndex(layer, 1)
+	//
+	//		size 100%
