@@ -191,6 +191,8 @@
 	- block root
 		< ?.${self.name()}
 			< _ v-attrs = rootAttrs | ${rootAttrs|!html}
+				{{ void(vdom.saveRenderContext()) }}
+
 				/**
 				 * Generates a slot declaration by the specified parameters
 				 *

@@ -7,8 +7,6 @@
  */
 
 import Friend, { fakeMethods } from 'components/friends/friend';
-
-import type iBlock from 'components/super/i-block/i-block';
 import type * as api from 'components/friends/vdom/api';
 
 interface VDOM {
@@ -35,30 +33,18 @@ interface VDOM {
 
 class VDOM extends Friend {
 	/**
-	 * Sets the current component instance as active.
+	 * Executes the given function in the component render context.
 	 * This function is necessary to render components asynchronously.
 	 */
-	setInstance?: Function;
+	withRenderContext<T>(cb: (...args: any) => T): T {
+		return cb();
+	}
 
-	constructor(component: iBlock) {
-		super(component);
-
-		if (this.ctx.isFunctional) {
-			Object.defineProperty(this, 'setInstance', {
-				configurable: true,
-				enumerable: true,
-				get() {
-					return this.ctx.$normalParent?.unsafe.vdom.setInstance;
-				}
-			});
-
-		} else {
-			this.meta.hooks.mounted.push({
-				fn: () => {
-					this.setInstance = this.ctx.$renderEngine.r.withAsyncContext.call(this.ctx, Promise.resolve.bind(Promise))[1];
-				}
-			});
-		}
+	/**
+	 * Saves the component active rendering context
+	 */
+	saveRenderContext(): void {
+		this.withRenderContext = Object.cast(this.ctx.$renderEngine.r.withCtx((cb) => cb()));
 	}
 }
 

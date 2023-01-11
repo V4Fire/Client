@@ -123,55 +123,55 @@ function createVNode(
 	type: string,
 	{attrs, children}: VNodeOptions = {}
 ): VNode {
-	this.setInstance?.();
+	return this.withRenderContext(() => {
+		const {
+			ctx,
+			ctx: {$renderEngine: {r}}
+		} = this;
 
-	const {
-		ctx,
-		ctx: {$renderEngine: {r}}
-	} = this;
+		let
+			resolvedChildren;
 
-	let
-		resolvedChildren;
+		const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) =>
+			Object.isDictionary(vnode) && !('patchFlag' in vnode) ? createVNode.call(this, vnode.type, vnode) : vnode;
 
-	const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) =>
-		Object.isDictionary(vnode) && !('patchFlag' in vnode) ? createVNode.call(this, vnode.type, vnode) : vnode;
+		if (children != null) {
+			if (Object.isArray(children)) {
+				resolvedChildren = new Array(children.length);
 
-	if (children != null) {
-		if (Object.isArray(children)) {
-			resolvedChildren = new Array(children.length);
+				children.forEach((child, i) => {
+					resolvedChildren[i] = factory(child);
+				});
 
-			children.forEach((child, i) => {
-				resolvedChildren[i] = factory(child);
-			});
+			} else {
+				const
+					slots = {};
+
+				Object.entries(children).forEach(([key, slot]) => {
+					slots[key] = Object.isFunction(slot) ?
+						function slotWrapper(this: unknown) {
+							// eslint-disable-next-line prefer-rest-params
+							return Array.concat([], slot.apply(this, arguments)).map(Object.cast(factory));
+						} :
+
+						() => Array.concat([], slot).map(factory);
+				});
+
+				resolvedChildren = slots;
+			}
+		}
+
+		let
+			vnode;
+
+		if (isComponent.test(type)) {
+			const resolvedType = r.resolveDynamicComponent.call(ctx, type);
+			vnode = r.createBlock.call(ctx, resolvedType, {'v-attrs': attrs}, resolvedChildren);
 
 		} else {
-			const
-				slots = {};
-
-			Object.entries(children).forEach(([key, slot]) => {
-				slots[key] = Object.isFunction(slot) ?
-					function slotWrapper(this: unknown) {
-						// eslint-disable-next-line prefer-rest-params
-						return Array.concat([], slot.apply(this, arguments)).map(Object.cast(factory));
-					} :
-
-					() => Array.concat([], slot).map(factory);
-			});
-
-			resolvedChildren = slots;
+			vnode = r.createVNode.call(ctx, type, {'v-attrs': attrs}, resolvedChildren);
 		}
-	}
 
-	let
-		vnode;
-
-	if (isComponent.test(type)) {
-		const resolvedType = r.resolveDynamicComponent.call(ctx, type);
-		vnode = r.createBlock.call(ctx, resolvedType, {'v-attrs': attrs}, resolvedChildren);
-
-	} else {
-		vnode = r.createVNode.call(ctx, type, {'v-attrs': attrs}, resolvedChildren);
-	}
-
-	return vnode;
+		return vnode;
+	});
 }

@@ -253,33 +253,33 @@ export function iterate(
 		return lastTask();
 
 		function task() {
-			ctx.vdom.setInstance?.();
-
 			const
 				renderedVNodes: Node[] = [];
 
-			valsToRender.forEach((el) => {
-				const vnodes = Array.concat([], toVNode(el, iterI)).flatMap((vnode) => {
-					if (Object.isSymbol(vnode.type) && Object.isArray(vnode.children)) {
-						return <VNode[]>vnode.children;
-					}
+			ctx.vdom.withRenderContext(() => {
+				valsToRender.forEach((el) => {
+					const vnodes = Array.concat([], toVNode(el, iterI)).flatMap((vnode) => {
+						if (Object.isSymbol(vnode.type) && Object.isArray(vnode.children)) {
+							return <VNode[]>vnode.children;
+						}
 
-					return vnode;
+						return vnode;
+					});
+
+					vnodes.forEach(renderVNode);
 				});
 
-				vnodes.forEach(renderVNode);
+				valsToRender = [];
+
+				chunkI++;
+				chunkTotal = 0;
+				awaiting--;
+
+				lastEvent = {...opts, renderGroup: group};
+				localEmitter.emit('asyncRenderChunkComplete', lastEvent);
+
+				$a.worker(destructor, {group});
 			});
-
-			valsToRender = [];
-
-			chunkI++;
-			chunkTotal = 0;
-			awaiting--;
-
-			lastEvent = {...opts, renderGroup: group};
-			localEmitter.emit('asyncRenderChunkComplete', lastEvent);
-
-			$a.worker(destructor, {group});
 
 			function renderVNode(vnode: VNode) {
 				let
