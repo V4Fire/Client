@@ -19,7 +19,9 @@ let
 
 function getFilesMap() {
 	if (filesMapCache == null) {
-		filesMapCache = [...graphPromise.unwrap().components.entries()].reduce((acc, [name, block]) => {
+		const blocks = graphPromise.unwrap().components;
+
+		filesMapCache = [...blocks.entries()].reduce((acc, [name, block]) => {
 			if (block.logic) {
 				acc[block.logic] = {
 					name,
