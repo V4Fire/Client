@@ -29,48 +29,33 @@ export function initMods(component: iBlock): ModsDict {
 		attrMods: string[][] = [],
 		modVal = (val) => val != null ? String(val) : undefined;
 
-	for (let attrs = ctx.$attrs, keys = Object.keys(attrs), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			modKey = key.camelize(false);
+	Object.entries(ctx.$props).forEach(([key, val]) => {
+		if (key in declMods) {
+			ctx.watch(key, (val) => ctx.setMod(key, modVal(val)));
 
-		if (modKey in declMods) {
-			const attrVal = attrs[key];
-			attrs[key] = undefined;
-
-			ctx.watch(`$attrs.${key}`, (val: Dictionary = {}) => {
-				ctx.$el?.removeAttribute(key);
-				void ctx.setMod(modKey, modVal(val[key]));
-			});
-
-			if (attrVal == null) {
-				continue;
+			if (val == null) {
+				return;
 			}
 
-			attrMods.push([modKey, attrVal]);
+			attrMods.push([key, String(val)]);
 		}
-	}
+	});
 
 	function link(propMods: CanUndef<ModsProp>): ModsDict {
 		const
 			mods = Object.isDictionary(ctx.mods) ? ctx.mods : {...declMods};
 
 		if (propMods != null) {
-			for (let keys = Object.keys(propMods), i = 0; i < keys.length; i++) {
-				const
-					key = keys[i],
-					val = propMods[key];
-
+			Object.entries(propMods).forEach(([key, val]) => {
 				if (val != null || mods[key] == null) {
 					mods[key] = modVal(val);
 				}
-			}
+			});
 		}
 
-		for (let i = 0; i < attrMods.length; i++) {
-			const [key, val] = attrMods[i];
+		attrMods.forEach(([key, val]) => {
 			mods[key] = val;
-		}
+		});
 
 		const
 			{experiments} = ctx.r.remoteState;

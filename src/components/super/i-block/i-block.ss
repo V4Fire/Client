@@ -196,8 +196,8 @@
 	- block slotAttrs
 
 	- block root
-		< ${teleport ? 'span' : '?'} -teleport
-			< ${teleport ? 'teleport' : '?'}.${self.name()} to = ${teleport}
+		< ${teleport ? 'span' : '?'}.i-block-helper.${self.name()} -teleport
+			< ${teleport ? 'teleport' : '?'} to = ${teleport}
 				< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 					{{ void(vdom.saveRenderContext()) }}
 

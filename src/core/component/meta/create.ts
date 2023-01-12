@@ -17,6 +17,18 @@ import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/int
  * @param component - the component constructor info
  */
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
+	const
+		mods = getComponentMods(component);
+
+	const modProps = Object.fromEntries(Object.keys(mods).map((key) => [
+		key,
+
+		{
+			type: [String, Number, Boolean],
+			required: false
+		}
+	]));
+
 	const meta: ComponentMeta = {
 		name: component.name,
 		componentName: component.componentName,
@@ -28,7 +40,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		params: component.params,
 
 		props: {},
-		mods: getComponentMods(component),
+		mods,
 
 		fields: {},
 		tiedFields: {},
@@ -62,10 +74,13 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 		component: {
 			name: component.name,
+
 			mods: {},
-			props: {},
+			props: modProps,
+
 			computed: {},
 			methods: {},
+
 			render() {
 				throw new ReferenceError(`The render function for the component "${component.componentName}" is not specified`);
 			}

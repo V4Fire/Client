@@ -86,7 +86,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	}
 
 	const {
-		props,
+		component: {props},
 		fields,
 		systemFields,
 		computedFields,
@@ -180,7 +180,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		accessor = name;
 	}
 
-	if (hasStoreField || propName != null && props[propName]) {
+	if (hasStoreField || propName != null && props[propName] != null) {
 		name = propName ?? storeName;
 
 		if (chunks != null) {
