@@ -8,9 +8,9 @@
 
 import type { JSHandle, Cookie } from 'playwright';
 
-import type * as Cookies from 'core/cookies';
-
 import { COOKIE_STORAGE_NAME } from 'core/prelude/i18n';
+
+import type * as Cookies from 'core/cookies';
 
 import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
