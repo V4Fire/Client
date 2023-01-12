@@ -9,7 +9,6 @@
 import type { SyncStorageNamespace } from 'core/kv-storage';
 
 import { cookieStorageFactory } from 'core/kv-storage';
-
 import { COOKIE_STORAGE_NAME } from 'core/prelude/i18n/const';
 
 const
