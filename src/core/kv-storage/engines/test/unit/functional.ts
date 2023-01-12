@@ -29,11 +29,9 @@ test.describe('core/cookies', () => {
 		await demoPage.goto();
 		cookie = await Utils.import(page, 'core/cookies');
 		cookieStorage = await Utils.import(page, 'core/kv-storage/engines/cookie-storage.ts');
-		await cookie.evaluate((ctx, [cookieName]) => ctx.remove(cookieName), [cookieName]);
 	});
 
-	test.afterAll(async ({page}) => {
-		cookie = await Utils.import(page, 'core/cookies');
+	test.afterEach(async () => {
 		await cookie.evaluate((ctx, [cookieName]) => ctx.remove(cookieName), [cookieName]);
 	});
 
