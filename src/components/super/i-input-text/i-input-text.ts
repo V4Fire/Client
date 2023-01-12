@@ -254,7 +254,9 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	@system((o) => new Mask(o))
 	protected maskAPI!: Mask;
 
-	protected override readonly $refs!: {input: HTMLInputElement};
+	protected override readonly $refs!: iInput['$refs'] & {
+		input: HTMLInputElement;
+	};
 
 	/**
 	 * Selects the entire content of the input

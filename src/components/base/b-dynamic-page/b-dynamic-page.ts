@@ -200,7 +200,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	protected override readonly componentStatusStore: ComponentStatus = 'ready';
 
-	protected override readonly $refs!: {
+	protected override readonly $refs!: iDynamicPage['$refs'] & {
 		component?: iDynamicPage[];
 	};
 

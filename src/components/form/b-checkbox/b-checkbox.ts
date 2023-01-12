@@ -41,9 +41,6 @@ export * from 'components/form/b-checkbox/interface';
 
 export { Value, FormValue };
 
-const
-	$$ = symbolGenerator();
-
 @component({
 	functional: {
 		dataProvider: undefined
@@ -190,7 +187,9 @@ export default class bCheckbox extends iInput implements iSize {
 	@system()
 	protected override valueStore!: this['Value'];
 
-	protected override readonly $refs!: {input: HTMLInputElement};
+	protected override readonly $refs!: iInput['$refs'] & {
+		input: HTMLInputElement;
+	};
 
 	/**
 	 * Checks the checkbox

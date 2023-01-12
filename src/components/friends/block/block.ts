@@ -160,18 +160,18 @@ export function setMod(this: Block, name: string, value: unknown, reason: ModEve
 		}
 	}
 
+	const event: SetModEvent = {
+		type: 'set',
+		event: 'block.mod.set',
+		reason,
+		name,
+		value: normalizedValue,
+		oldValue
+	};
+
+	this.localEmitter.emit(`block.mod.set.${name}.${normalizedValue}`, event);
+
 	if (!isInit) {
-		const event: SetModEvent = {
-			type: 'set',
-			event: 'block.mod.set',
-			reason,
-			name,
-			value: normalizedValue,
-			oldValue
-		};
-
-		this.localEmitter.emit(`block.mod.set.${name}.${normalizedValue}`, event);
-
 		ctx.emit(`mod:set:${name}`, event);
 		ctx.emit(`mod:set:${name}:${normalizedValue}`, event);
 	}

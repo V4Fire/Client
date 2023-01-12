@@ -51,6 +51,8 @@ import type { ComponentInterface } from 'core/component/interface';
 export {
 
 	Fragment,
+	Teleport,
+
 	Transition,
 	TransitionGroup,
 

@@ -362,7 +362,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 		]
 	};
 
-	protected override readonly $refs!: {
+	protected override readonly $refs!: iData['$refs'] & {
 		button: HTMLButtonElement;
 		file?: HTMLInputElement;
 		dropdown?: Element;

@@ -542,7 +542,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			const
 				{node} = this.block;
 
-			if (node == null || node === this.$el) {
+			if (node == null || node === this.$refs.$el) {
 				return;
 			}
 

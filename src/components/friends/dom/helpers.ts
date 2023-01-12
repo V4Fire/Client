@@ -49,7 +49,7 @@ export function renderTemporarily<T extends Friend['C']>(this: Friend, cb: ElCb<
 export function renderTemporarily<T extends Friend['C']>(
 	this: Friend,
 	cbOrEl: CanUndef<Element | string> | ElCb<T>,
-	elOrCb: CanUndef<Element | string> | ElCb<T> = this.ctx.$el
+	elOrCb: CanUndef<Element | string> | ElCb<T> = this.node
 ): Promise<void> {
 	let
 		cb,

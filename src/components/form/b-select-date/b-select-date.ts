@@ -70,7 +70,7 @@ export default class bSelectDate extends iInput implements iWidth {
 		...iWidth.mods
 	};
 
-	protected override readonly $refs!: {
+	protected override readonly $refs!: iInput['$refs'] & {
 		input: HTMLInputElement;
 		month: bSelect;
 		day: bSelect;

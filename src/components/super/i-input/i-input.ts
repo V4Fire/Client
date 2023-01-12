@@ -651,7 +651,9 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@system((o) => o.sync.link())
 	protected errorStore?: string;
 
-	protected override readonly $refs!: {input?: HTMLInputElement};
+	protected override readonly $refs!: iData['$refs'] & {
+		input?: HTMLInputElement;
+	};
 
 	/** @see [[iInput.value]] */
 	@field<iInput>((o) => {

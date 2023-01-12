@@ -29,6 +29,9 @@
 	/** Should or not the component have a skeleton marker attribute */
 	- skeletonMarker = false
 
+	/** A selector to mount component via teleport or false */
+	- teleport = false
+
 	/**
 	 * Returns the component name
 	 * @param {string=} [name] - the custom template name
@@ -189,8 +192,8 @@
 	- block slotAttrs
 
 	- block root
-		< ?.${self.name()}
-			< _ v-attrs = rootAttrs | ${rootAttrs|!html}
+		< ${teleport ? 'teleport' : '?'}.${self.name()} to = ${teleport}
+			< _ ref = $el | v-attrs = rootAttrs | ${rootAttrs|!html}
 				{{ void(vdom.saveRenderContext()) }}
 
 				/**

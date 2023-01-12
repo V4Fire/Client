@@ -9,7 +9,9 @@
 import type {
 
 	VNode,
+
 	Fragment,
+	Teleport,
 
 	Transition,
 	TransitionGroup,
@@ -95,6 +97,8 @@ export interface RenderAPI {
 	getCurrentInstance: typeof getCurrentInstance;
 
 	Fragment: typeof Fragment;
+	Teleport: typeof Teleport;
+
 	Transition: typeof Transition;
 	TransitionGroup: typeof TransitionGroup;
 

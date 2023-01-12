@@ -293,7 +293,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	@system<bVirtualScroll>((o) => new ComponentRender(o))
 	protected componentRender!: ComponentRender;
 
-	protected override $refs!: {
+	protected override readonly $refs!: iData['$refs'] & {
 		container: HTMLElement;
 		loader?: HTMLElement;
 		tombstones?: HTMLElement;

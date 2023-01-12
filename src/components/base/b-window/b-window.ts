@@ -139,7 +139,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		]
 	};
 
-	protected override readonly $refs!: {
+	protected override readonly $refs!: iData['$refs'] & {
 		window: HTMLElement;
 	};
 
@@ -255,27 +255,13 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		const
 			target = <CanUndef<Element>>e.target;
 
-		if (target == null) {
-			return;
-		}
-
-		if (this.block == null) {
+		if (target == null || this.block == null) {
 			return;
 		}
 
 		if (target.matches(this.block.getElementSelector('wrapper'))) {
 			e.preventDefault();
 			await this.close();
-		}
-	}
-
-	/**
-	 * Initializes the component placement within a document
-	 */
-	@hook('mounted')
-	protected initDocumentPlacement(): void {
-		if (this.$el != null) {
-			this.dom.appendChild(document.body, this.$el);
 		}
 	}
 
@@ -290,7 +276,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 		if (this.mods.position === 'absolute') {
 			Object.assign(el.style, {
-				top: pageYOffset.px
+				top: scrollY.px
 			});
 		}
 	}

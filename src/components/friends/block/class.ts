@@ -57,6 +57,14 @@ class Block extends Friend {
 		Object.entries(component.mods).forEach(([name, val]) => {
 			this.setMod(name, val, 'initSetMod');
 		});
+
+		Object.defineProperty(this.ctx, '$el', {
+			get: () => this.node
+		});
+
+		if (this.node != null) {
+			this.node.component = component;
+		}
 	}
 }
 

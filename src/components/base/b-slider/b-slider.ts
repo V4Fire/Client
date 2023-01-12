@@ -311,7 +311,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	protected mode!: Mode;
 
-	protected override readonly $refs!: {
+	protected override readonly $refs!: iData['$refs'] & {
 		view?: HTMLElement;
 		content?: HTMLElement;
 		contentWrapper?: HTMLElement;

@@ -201,7 +201,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		]
 	};
 
-	protected override $refs!: {
+	protected override readonly $refs!: iBlock['$refs'] & {
 		view: HTMLElement;
 		window: HTMLElement;
 		header: HTMLElement;
