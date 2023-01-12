@@ -10,6 +10,8 @@ import type { JSHandle, Cookie } from 'playwright';
 
 import type * as Cookies from 'core/cookies';
 
+import { COOKIE_STORAGE_NAME } from 'core/prelude/i18n';
+
 import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
 
@@ -20,6 +22,7 @@ test.describe('core/cookies', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 		cookie = await Utils.import(page, 'core/cookies');
+		await cookie.evaluate((ctx, COOKIE_STORAGE_NAME) => ctx.remove(COOKIE_STORAGE_NAME), COOKIE_STORAGE_NAME);
 	});
 
 	test.describe('`get`', () => {

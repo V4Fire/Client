@@ -10,32 +10,36 @@
 
 const
 	ts = require('typescript'),
-	config = require('@config/config'),
-	{build} = config,
-	{block} = require('@pzlr/build-core');
+	buildGraph = include('build/graph'),
+	SyncPromise = require('@v4fire/core/lib/core/promise/sync').default,
+	graphPromise = SyncPromise.resolve(buildGraph);
 
-const
-	componentsLockPath = block.getComponentsLockPath(build.componentLockPrefix()),
-	blocks = block.getCacheFromPath(componentsLockPath).data;
+let
+	filesMapCache;
 
-const
-	filesMap = [...blocks.entries()].reduce((acc, [name, block]) => {
-		if (block.logic) {
-			acc[block.logic] = {
-				name,
-				chain: [block.name]
-			};
+function getFilesMap() {
+	if (filesMapCache == null) {
+		filesMapCache = [...graphPromise.unwrap().components.entries()].reduce((acc, [name, block]) => {
+			if (block.logic) {
+				acc[block.logic] = {
+					name,
+					chain: [block.name]
+				};
 
-			let {parent} = block;
+				let {parent} = block;
 
-			while (parent) {
-				acc[block.logic].chain.push(parent);
-				parent = blocks.get(parent).parent;
+				while (parent) {
+					acc[block.logic].chain.push(parent);
+					parent = blocks.get(parent).parent;
+				}
 			}
-		}
 
-		return acc;
-	}, {});
+			return acc;
+		}, {});
+	}
+
+	return filesMapCache;
+}
 
 /**
  * @typedef {import('typescript').TransformationContext} Context
@@ -48,7 +52,9 @@ const
  * @param {Context} context
  * @returns {Transformer}
  */
-const i18nInheritanceChainTransformer = () => (context) => {
+const i18nInheritanceChainTransformer = (context) => {
+	const filesMap = getFilesMap();
+
 	/**
 	 * @param {Node} file
 	 * @returns {VisitResult}
@@ -103,4 +109,4 @@ function blockVisitor(block, context) {
 	};
 }
 
-module.exports = i18nInheritanceChainTransformer;
+module.exports = () => i18nInheritanceChainTransformer(context);
