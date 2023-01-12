@@ -173,7 +173,8 @@
 	} .
 
 	- if teleport
-		? rootAttrs['ref'] = '$el'
+		? rootAttrs[':ref'] = '$resolveRef("$el")'
+		? rootAttrs['v-ref'] = '"$el"'
 
 	: componentId = 'data-cached-class-component-id'
 
