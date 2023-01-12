@@ -32,6 +32,11 @@ test.describe('core/cookies', () => {
 		await cookie.evaluate((ctx, [cookieName]) => ctx.remove(cookieName), [cookieName]);
 	});
 
+	test.afterAll(async ({page}) => {
+		cookie = await Utils.import(page, 'core/cookies');
+		await cookie.evaluate((ctx, [cookieName]) => ctx.remove(cookieName), [cookieName]);
+	});
+
 	test.describe('`get`', () => {
 		test.beforeEach(async () => {
 			await cookie.evaluate(
