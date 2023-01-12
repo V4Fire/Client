@@ -109,4 +109,4 @@ function blockVisitor(block, context) {
 	};
 }
 
-module.exports = () => i18nInheritanceChainTransformer(context);
+module.exports = () => i18nInheritanceChainTransformer;
