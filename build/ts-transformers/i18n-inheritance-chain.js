@@ -17,6 +17,12 @@ const
 let
 	filesMapCache;
 
+/**
+ * Builds a file map for all components, analyzing the graph for the first time,
+ * returns the cached value in subsequent times
+ *
+ * @returns filesMap
+ */
 function getFilesMap() {
 	if (filesMapCache == null) {
 		const blocks = graphPromise.unwrap().components;
@@ -51,6 +57,8 @@ function getFilesMap() {
  */
 
 /**
+ * ts-transformer adding an inheritance chain to all components for i18n
+ *
  * @param {Context} context
  * @returns {Transformer}
  */
@@ -75,6 +83,9 @@ const i18nInheritanceChainTransformer = (context) => {
 };
 
 /**
+ * Block visitor a function that recursively passes through a component
+ * and adds the componentI18nKeysets field with an inheritance chain to it
+ *
  * @param block
  * @param {Context} context
  * @returns {Transformer}
