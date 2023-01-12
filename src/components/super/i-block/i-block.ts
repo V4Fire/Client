@@ -61,7 +61,7 @@ export default abstract class iBlock extends iBlockProviders {
 	};
 
 	protected override readonly $refs!: {
-		$el: Element;
+		$el?: Element;
 	};
 
 	/**

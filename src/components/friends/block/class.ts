@@ -58,12 +58,14 @@ class Block extends Friend {
 			this.setMod(name, val, 'initSetMod');
 		});
 
-		Object.defineProperty(this.ctx, '$el', {
-			get: () => this.node
-		});
+		if (this.ctx.$el !== this.node) {
+			Object.defineProperty(this.ctx, '$el', {
+				get: () => this.node
+			});
 
-		if (this.node != null) {
-			this.node.component = component;
+			if (this.node != null) {
+				this.node.component = component;
+			}
 		}
 	}
 }

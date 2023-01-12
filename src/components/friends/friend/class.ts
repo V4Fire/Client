@@ -56,7 +56,7 @@ export default class Friend {
 
 	/** @see [[iBlock.$el]] */
 	get node(): this['CTX']['$el'] {
-		return this.ctx.$refs.$el;
+		return this.refs.$el ?? this.ctx.$el;
 	}
 
 	/** @see [[iBlock.field]] */

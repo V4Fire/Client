@@ -172,6 +172,9 @@
 		'data-cached-dynamic-class': 'self.provide.componentClasses("' + self.name() + '", self.mods)'
 	} .
 
+	- if teleport
+		? rootAttrs['ref'] = '$el'
+
 	: componentId = 'data-cached-class-component-id'
 
 	- if require('@config/config').webpack.ssr
@@ -192,40 +195,41 @@
 	- block slotAttrs
 
 	- block root
-		< ${teleport ? 'teleport' : '?'}.${self.name()} to = ${teleport}
-			< _ ref = $el | v-attrs = rootAttrs | ${rootAttrs|!html}
-				{{ void(vdom.saveRenderContext()) }}
+		< ${teleport ? 'span' : '?'} -teleport
+			< ${teleport ? 'teleport' : '?'}.${self.name()} to = ${teleport}
+				< _ v-attrs = rootAttrs | ${rootAttrs|!html}
+					{{ void(vdom.saveRenderContext()) }}
 
-				/**
-				 * Generates a slot declaration by the specified parameters
-				 *
-				 * @param {string=} [name] - the slot name
-				 * @param {Object=} [attrs] - the scoped slot attributes
-				 * @param {string=} [content] - the slot content
-				 */
-				- block slot(name = 'default', attrs, content)
-					- switch arguments.length
-						> 1
-							- if name instanceof Unsafe
-								? content = name
-								? name = 'default'
+					/**
+					 * Generates a slot declaration by the specified parameters
+					 *
+					 * @param {string=} [name] - the slot name
+					 * @param {Object=} [attrs] - the scoped slot attributes
+					 * @param {string=} [content] - the slot content
+					 */
+					- block slot(name = 'default', attrs, content)
+						- switch arguments.length
+							> 1
+								- if name instanceof Unsafe
+									? content = name
+									? name = 'default'
 
-						> 2
-							- if attrs instanceof Unsafe
-								? content = attrs
-								? attrs = {}
+							> 2
+								- if attrs instanceof Unsafe
+									? content = attrs
+									? attrs = {}
 
-					< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
-						+= content
+						< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
+							+= content
 
-				- block headHelpers
+					- block headHelpers
 
-				- block innerRoot
-					< ${rootWrapper ? '_' : '?'}.&__root-wrapper
-						< ${overWrapper ? '_' : '?'}.&__over-wrapper
-							- block overWrapper
+					- block innerRoot
+						< ${rootWrapper ? '_' : '?'}.&__root-wrapper
+							< ${overWrapper ? '_' : '?'}.&__over-wrapper
+								- block overWrapper
 
-						- block body
+							- block body
 
-					- block helpers
-					- block providers
+						- block helpers
+						- block providers
