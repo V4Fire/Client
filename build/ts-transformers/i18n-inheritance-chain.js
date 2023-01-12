@@ -54,7 +54,7 @@ function getFilesMap() {
  * @param {Context} context
  * @returns {Transformer}
  */
-const i18nInheritanceChainTransformer = (context) => {
+const i18nInheritanceChainTransformer = () => (context) => {
 	const filesMap = getFilesMap();
 
 	/**
@@ -111,4 +111,4 @@ function blockVisitor(block, context) {
 	};
 }
 
-module.exports = () => i18nInheritanceChainTransformer;
+module.exports = i18nInheritanceChainTransformer;
