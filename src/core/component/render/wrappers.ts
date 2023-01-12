@@ -106,10 +106,16 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		vnode.virtualComponent = virtualCtx;
 
 		const
+			declaredProps = component.props,
 			functionalVNode = virtualCtx.render(virtualCtx, []);
 
+		const filteredAttrs = Object.fromEntries(
+			Object.entries({...vnode.props}).filter(([key]) => declaredProps[key.camelize(false)] == null)
+		);
+
 		vnode.type = functionalVNode.type;
-		vnode.props = {...vnode.props, ...functionalVNode.props};
+		vnode.props = {...filteredAttrs, ...functionalVNode.props};
+
 		vnode.children = functionalVNode.children;
 		vnode.dynamicChildren = functionalVNode.dynamicChildren;
 
