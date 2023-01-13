@@ -32,11 +32,7 @@ export const proxyGetters = Object.createDict({
 			return ctx.$attrs;
 		},
 
-		watch: (path, handler) => ctx.$vueWatch(path, (val, oldVal) => {
-			if (val !== oldVal) {
-				handler(val, oldVal);
-			}
-		})
+		watch: (path, handler) => ctx.$vueWatch(path, (val, oldVal) => handler(val, oldVal), {deep: true})
 	}),
 
 	field: (ctx) => ({

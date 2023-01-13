@@ -86,7 +86,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 	}
 
 	const {
-		component: {props},
+		props,
 		fields,
 		systemFields,
 		computedFields,

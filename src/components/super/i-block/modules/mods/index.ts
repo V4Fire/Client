@@ -29,15 +29,32 @@ export function initMods(component: iBlock): ModsDict {
 		attrMods: string[][] = [],
 		modVal = (val) => val != null ? String(val) : undefined;
 
-	Object.entries(ctx.$props).forEach(([key, val]) => {
-		if (key in declMods) {
-			ctx.watch(key, (val) => ctx.setMod(key, modVal(val)));
+	Object.entries(ctx.$attrs).forEach(([key, val]) => {
+		const
+			modName = key.camelize(false);
+
+		if (modName in declMods) {
+			let
+				el;
+
+			ctx.watch(`$attrs.${key}`, (attrs: Dictionary = {}) => {
+				el ??= ctx.$el;
+				el?.removeAttribute(key);
+				void ctx.setMod(modName, modVal(attrs[key]));
+			});
+
+			ctx.meta.hooks.mounted.unshift({
+				fn: () => {
+					el = ctx.$el;
+					el?.removeAttribute(key);
+				}
+			});
 
 			if (val == null) {
 				return;
 			}
 
-			attrMods.push([key, String(val)]);
+			attrMods.push([modName, String(val)]);
 		}
 	});
 

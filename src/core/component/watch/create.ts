@@ -13,7 +13,6 @@ import { cloneWatchValue } from 'core/component/watch/clone';
 import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
 import { getPropertyInfo, PropertyInfo } from 'core/component/reflect';
-import { toRaw } from 'core/component/context';
 
 import type { ComponentMeta } from 'core/component/meta';
 import type { ComponentInterface, WatchOptions, RawWatchHandler } from 'core/component/interface';
