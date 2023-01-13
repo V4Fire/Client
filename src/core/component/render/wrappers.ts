@@ -35,7 +35,7 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/init';
-import { resolveAttrs, normalizeComponentAttrs } from 'core/component/render/helpers';
+import { resolveAttrs, normalizeComponentAttrs, mergeProps } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -114,7 +114,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		);
 
 		vnode.type = functionalVNode.type;
-		vnode.props = {...filteredAttrs, ...functionalVNode.props};
+		vnode.props = mergeProps(filteredAttrs, functionalVNode.props ?? {});
 
 		vnode.children = functionalVNode.children;
 		vnode.dynamicChildren = functionalVNode.dynamicChildren;
