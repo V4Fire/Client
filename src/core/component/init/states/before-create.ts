@@ -138,7 +138,9 @@ export function beforeCreateState(
 				return [];
 			}
 
-			return Array.from($el.querySelectorAll<ComponentElement>('.i-block-helper')).map((el) => el.component);
+			return Array.from($el.querySelectorAll<ComponentElement>('.i-block-helper'))
+				.filter((el) => el.component != null)
+				.map((el) => el.component);
 		}
 	});
 
