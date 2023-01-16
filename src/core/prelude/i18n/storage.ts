@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Core/blob/master/LICENSE
  */
 
-import type { SyncStorageNamespace } from 'core/kv-storage';
+import type { LocaleKVStorage } from 'core/prelude/i18n/interface';
 
 import { cookieStorageFactory } from 'core/kv-storage';
 import { COOKIE_STORAGE_NAME } from 'core/prelude/i18n/const';
 
 const
-	storage: SyncStorageNamespace = cookieStorageFactory(COOKIE_STORAGE_NAME);
+	storage: LocaleKVStorage = cookieStorageFactory(COOKIE_STORAGE_NAME);
 
 export default storage;
