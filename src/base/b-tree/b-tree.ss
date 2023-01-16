@@ -31,8 +31,7 @@
 
 					:class = provide.elClasses({
 						'item-wrapper': {
-							id: el.value,
-							active: isActive(el.value)
+							...el.mods
 						}
 					})
 				.

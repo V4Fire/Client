@@ -8,11 +8,12 @@
 
 import type bTree from 'base/b-tree/b-tree';
 import type { TaskI } from 'base/b-tree/b-tree';
+import type { Item as Super } from 'traits/i-active-items/i-active-items';
 
 /**
  * Tree element data
  */
-export interface Item extends Dictionary {
+export interface Item extends Super {
 	/**
 	 * Element identifier
 	 */
@@ -38,17 +39,8 @@ export interface Item extends Dictionary {
 	 * Folding flag
 	 */
 	folded?: boolean;
-
-	/**
-	 * True if the item is active
-	 */
-	active?: boolean;
 }
 
 export interface RenderFilter {
 	(ctx: bTree, el: Item, i: number, task: TaskI): CanPromise<boolean>;
 }
-
-export type ClickableAreaMod = 'fold' | 'any';
-
-export type Active = unknown | Set<unknown>;

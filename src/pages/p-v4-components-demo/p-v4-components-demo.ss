@@ -12,31 +12,26 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		: config = require('@config/config').build
+					< b-tree &
+          	/// The specified items are rendered as `b-checkbox`-es
+          	:item = 'b-checkbox' |
+          	:activeProp = 'bar' |
+          	:items = [
+          		{id: '1', label: 'bar', value: 'bar'},
+          		{id: '2', label: 'foo', value: 'foo', children: [
+          			{id: '3', label: 'foo1', value: 'foo1'},
+          			{id: '4', label: 'foo2', value: 'foo2'},
 
-		- forEach config.components => @component
-			- if config.inspectComponents
-				< b-v4-component-demo
-					< ${@name} &
-						v-func = false |
-						slot-scope = {ctx} |
-						@statusReady = ctx.debug |
-						${@attrs}
-					.
-						- if Object.isString(@content)
-							+= @content
+          			{
+          				id: '5',
+          				label: 'foo3',
+          				value: 'foo3',
+          				children: [
+          					{id: '6', label: 'foo4', value: 'foo4'}
+          				]
+          			},
 
-						- else
-							- forEach @content => el, key
-								< template #${key} = {ctx}
-									+= el
-
-			- else
-				< ${@name} ${@attrs}
-					- if Object.isString(@content)
-						+= @content
-
-					- else
-						- forEach @content => el, key
-							< template #${key} = {ctx}
-								+= el
+          			{id: '7', label: 'foo5', value: 'foo5'}
+          		]}
+          	]
+          .
