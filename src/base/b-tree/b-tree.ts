@@ -18,7 +18,9 @@ import 'models/demo/nested-list';
 import symbolGenerator from 'core/symbol';
 
 import SyncPromise from 'core/promise/sync';
-import iItems, { IterationKey } from 'traits/i-items/i-items';
+import { derive } from 'core/functools/trait';
+import iActiveItems from 'traits/i-active-items/i-active-items';
+import type { Active, IterationKey } from 'traits/i-active-items/i-active-items';
 
 import iData, {
 
@@ -27,22 +29,21 @@ import iData, {
 	field,
 	TaskParams,
 	TaskI,
-	ModsDecl,
 	wait,
 	system,
-	computed,
-	watch,
-	hook
+	watch
 
 } from 'super/i-data/i-data';
 
-import type { Active, Item, RenderFilter } from 'base/b-tree/interface';
+import type { Item, RenderFilter } from 'base/b-tree/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-tree/interface';
 
 export const
 	$$ = symbolGenerator();
+
+interface bTree extends Trait<typeof iActiveItems> {}
 
 /**
  * Component to render tree of any elements
@@ -54,11 +55,10 @@ export const
 	}
 })
 
-export default class bTree extends iData implements iItems {
-	/**
-	 * Type: component active item
-	 */
-	readonly Active!: Active;
+@derive(iActiveItems)
+class bTree extends iData implements iActiveItems {
+	/** @see [[iActiveItems.Active]] */
+	readonly Active!: iActiveItems['Active'];
 
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
@@ -72,15 +72,15 @@ export default class bTree extends iData implements iItems {
 
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
-	readonly item?: iItems['item'];
+	readonly item?: iActiveItems['item'];
 
 	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly itemKey?: iItems['itemKey'];
+	readonly itemKey?: iActiveItems['itemKey'];
 
 	/** @see [[iItems.itemProps]] */
 	@prop({type: Function, required: false})
-	readonly itemProps?: iItems['itemProps'];
+	readonly itemProps?: iActiveItems['itemProps'];
 
 	/**
 	 * A common filter to render items via `asyncRender`.
@@ -137,23 +137,25 @@ export default class bTree extends iData implements iItems {
 	@prop(Number)
 	readonly level: number = 0;
 
-	/**
-	 * An initial component active item/s value.
-	 * If the component is switched to the `multiple` mode,
-	 * you can pass an array or Set to define several active items values.
-	 */
+	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly activeProp?: unknown[] | this['Active'];
+	readonly activeProp?: iActiveItems['activeProp'];
 
-	/**
-	 * If true, the component supports a feature of multiple active items
-	 */
+	/** @see [[iActiveItems.multiple]] */
 	@prop(Boolean)
 	readonly multiple: boolean = false;
+
+	/** @see [[iActiveItems.cancelable]] */
+	@prop({type: Boolean, required: false})
+	readonly cancelable?: boolean;
 
 	/** @see [[iItems.items]] */
 	@field((o) => o.sync.link())
 	items!: this['Items'];
+
+	/** @see [[iActiveItems.nodeName]] */
+	@system()
+	readonly nodeName: string = 'item-wrapper';
 
 	/** @inheritDoc */
 	protected override readonly $refs!: {
@@ -196,363 +198,28 @@ export default class bTree extends iData implements iItems {
 		return opts;
 	}
 
-	// /**
-	//  * Map of item indexes and their values
-	//  */
-	// @system()
-	// protected indexes!: Map<number, unknown>;
-	//
-	// /**
-	//  * Map of item values and their indexes
-	//  */
-	// @system()
-	// protected values!: Map<unknown, number>;
-
 	/**
-	 * An internal component active item store.
-	 * If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
-	 *
-	 * @see [[bList.activeProp]]
-	 * @emits `immediateChange(active: CanArray<unknown>)`
+	 * @see [[iActiveItems.activeProp]]
+	 * @see [[iActiveItems.initActiveStore]]
 	 */
 	@system<bTree>((o) => o.sync.link((val) => {
-		const
-			beforeDataCreate = o.hook === 'beforeDataCreate';
-
-		if (val === undefined && beforeDataCreate) {
-			if (o.multiple) {
-				if (Object.isSet(o.activeStore)) {
-					return o.activeStore;
-				}
-
-				return new Set(Array.concat([], o.activeStore));
-			}
-
-			return o.activeStore;
+		if (o.top != null) {
+			return o.top.activeStore;
 		}
 
-		let
-			newVal;
-
-		if (o.multiple) {
-			const
-				objVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
-
-			if (Object.fastCompare(objVal, o.activeStore)) {
-				return o.activeStore;
-			}
-
-			newVal = objVal;
-
-		} else {
-			newVal = val;
-		}
-
-		if (beforeDataCreate) {
-			o.emit('immediateChange', o.multiple ? new Set(newVal) : newVal);
-
-		} else {
-			o.setActive(newVal);
-		}
-
-		return newVal;
+		return iActiveItems.initActiveStore(o, val);
 	}))
 
-	protected activeStore!: this['Active'];
+	protected activeStore!: iActiveItems['activeStore'];
 
-	/**
-	 * A link to the active item element.
-	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
-	 */
-	@computed({
-		cache: true,
-		dependencies: ['active']
-	})
-
-	protected get activeElement(): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> {
-		const
-			{active} = this;
-
-		const getEl = (value) => {
-			if (value != null) {
-				return this.block?.element<HTMLAnchorElement>('item-wrapper', {id: value});
-			}
-		};
-
-		return this.waitStatus('ready', () => {
-			if (this.multiple) {
-				if (!Object.isSet(active)) {
-					return [];
-				}
-
-				return [...active].flatMap((val) => getEl(val) ?? []);
-			}
-
-			return getEl(active);
-		});
+	/** @see [[iActiveItems.activeElement]] */
+	protected get activeElement(): iActiveItems['activeElement'] {
+		return iActiveItems.getActiveElement(this);
 	}
 
-	/**
-	 * Returns true if the specified value is active
-	 * @param value
-	 */
-	isActive(value: unknown): boolean {
-		const
-			activeStore = this.field.get('activeStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(activeStore)) {
-				return false;
-			}
-
-			return activeStore.has(value);
-		}
-
-		return value === activeStore;
-	}
-
-	/**
-	 * A component active item/s.
-	 * If the component is switched to the `multiple` mode, the getter will return a `Set` object.
-	 *
-	 * @see [[bList.activeStore]]
-	 */
-	get active(): this['Active'] {
-		const
-			v = this.field.get('activeStore');
-
-		if (this.multiple) {
-			return Object.isSet(v) ? new Set(v) : new Set();
-		}
-
-		return v;
-	}
-
-	/**
-	 * Activates an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
-	 *
-	 * @param value
-	 * @param [unsetPrevious] - true, if needed to unset previous active items (works only with the `multiple` mode)
-	 *
-	 * @emits `change(active: CanArray<unknown>)`
-	 * @emits `immediateChange(active: CanArray<unknown>)`
-	 */
-	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
-		const
-			activeStore = this.field.get('activeStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(activeStore)) {
-				return false;
-			}
-
-			let
-				res = false;
-
-			const set = (value) => {
-				if (activeStore.has(value)) {
-					return;
-				}
-
-				activeStore.add(value);
-				res = true;
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, set);
-
-			} else {
-				set(value);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!res) {
-				return false;
-			}
-
-		} else if (activeStore === value) {
-			return false;
-
-		} else {
-			this.field.set('activeStore', value);
-		}
-
-		const
-			{block: $b} = this,
-			elName = 'item-wrapper';
-
-		if ($b != null) {
-			const
-				id = String(value),
-				itemEl = $b.element(elName, {id});
-
-			if (!this.multiple || unsetPrevious) {
-				const
-					previousEls = $b.elements(elName, {active: true});
-
-				previousEls.forEach((previousEl) => {
-					if (previousEl !== itemEl) {
-						$b.setElMod(previousEl, elName, 'active', false);
-
-						if (previousEl.hasAttribute('aria-selected')) {
-							previousEl.setAttribute('aria-selected', 'false');
-						}
-					}
-				});
-			}
-
-			SyncPromise.resolve(this.activeElement).then((selectedElement) => {
-				const
-					els = Array.concat([], selectedElement);
-
-				els.forEach((el) => {
-					$b.setElMod(el, elName, 'active', true);
-
-					if (el.hasAttribute('aria-selected')) {
-						el.setAttribute('aria-selected', 'true');
-					}
-				});
-			}, stderr);
-		}
-
-		this.emit('immediateChange', this.active);
-		this.emit('change', this.active);
-
-		return true;
-	}
-
-	/**
-	 * Deactivates an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
-	 *
-	 * @param value
-	 * @emits `change(active: unknown)`
-	 * @emits `immediateChange(active: unknown)`
-	 */
-	unsetActive(value: unknown): boolean {
-		const
-			activeStore = this.field.get('activeStore');
-
-		const
-			{activeElement} = this;
-
-		if (this.multiple) {
-			if (!Object.isSet(activeStore)) {
-				return false;
-			}
-
-			let
-				res = false;
-
-			const unset = (value) => {
-				if (!activeStore.has(value)) {
-					return false;
-				}
-
-				activeStore.delete(value);
-				res = true;
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, unset);
-
-			} else {
-				unset(value);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!res) {
-				return false;
-			}
-
-		} else if (activeStore !== value) {
-			return false;
-
-		} else {
-			this.field.set('activeStore', undefined);
-		}
-
-		const
-			{block: $b} = this,
-			elName = 'item-wrapper';
-
-		if ($b != null) {
-			SyncPromise.resolve(activeElement).then((activeElement) => {
-				const
-					els = Array.concat([], activeElement);
-
-				els.forEach((el) => {
-					const
-						itemValue = el.getAttribute('data-id');
-
-					const needChangeMod = this.multiple && Object.isSet(value) ?
-						value.has(itemValue) :
-						value === itemValue;
-
-					if (needChangeMod) {
-						$b.setElMod(el, elName, 'active', false);
-
-						if (el.hasAttribute('aria-selected')) {
-							el.setAttribute('aria-selected', 'false');
-						}
-					}
-				});
-			}, stderr);
-		}
-
-		this.emit('immediateChange', this.active);
-		this.emit('change', this.active);
-
-		return true;
-	}
-
-	/**
-	 * Toggles activation of an item by the specified value.
-	 * The methods return a new active component item/s.
-	 *
-	 * @param value
-	 * @param [unsetPrevious] - true, if needed to unset previous active items (works only with the `multiple` mode)
-	 */
-	toggleActive(value: this['Active'], unsetPrevious: boolean = false): this['Active'] {
-		const
-			activeStore = this.field.get('activeStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(activeStore)) {
-				return this.active;
-			}
-
-			const toggle = (value) => {
-				if (activeStore.has(value)) {
-					if (unsetPrevious) {
-						this.unsetActive(this.active);
-
-					} else {
-						this.unsetActive(value);
-					}
-
-					return;
-				}
-
-				this.setActive(value, unsetPrevious);
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, toggle);
-
-			} else {
-				toggle(value);
-			}
-
-		} else if (activeStore !== value) {
-			this.setActive(value);
-
-		} else {
-			this.unsetActive(value);
-		}
-
-		return this.active;
+	/** @see [[iActiveItems.active] */
+	get active(): iActiveItems['active'] {
+		return iActiveItems.getActive<bTree>(this);
 	}
 
 	/**
@@ -675,7 +342,7 @@ export default class bTree extends iData implements iItems {
 
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
-		return iItems.getItemKey(this, item, i);
+		return iActiveItems.getItemKey(this, item, i);
 	}
 
 	protected override initRemoteData(): CanUndef<this['items']> {
@@ -772,54 +439,15 @@ export default class bTree extends iData implements iItems {
 		return this.$el?.querySelector(`[data-id=${itemId}]`) ?? undefined;
 	}
 
-	/**
-	 * Initializes component values
-	 */
-	// @hook('mounted')
-	protected initComponentValues(): void {
-		console.log('bla')
-		const
-			activeStore = this.field.get('activeStore');
-			// values = new Map(),
-			// indexes = new Map();
-
-		// let
-		// 	i = 0;
-
-		this.items.forEach((item) => {
-			const
-				{value} = item;
-
-			if (item.active && (this.multiple ? this.activeProp === undefined : activeStore === undefined)) {
-				this.setActive(value);
-			}
-
-			// const
-			// 	el = this.$el?.querySelector(`[data-id=${item.value}]`);
-			//
-			// const classes = this.provide.elClasses({
-			// 	'item-wrapper': {
-			// 		id: item.value,
-			// 		active: this.isActive(item.value)
-			// 	}
-			// });
-			//
-			// el?.classList.add(...classes);
-
-			//
-			// values.set(value, id);
-			// indexes.set(id, value);
-			//
-			// if (item.children != null) {
-			// 	item.children.forEach((item) => {
-			// 		values.set(item.value, i);
-			// 		indexes[i++] = item.value;
-			// 	});
-			// }
-		});
-
-		// this.values = values;
-		// this.indexes = indexes;
+	/** @see [[iActiveItems.syncItemsWatcher]] */
+	/** @see [[iActiveItems.initComponentMods]] */
+	@watch({field: 'items', immediate: true})
+	@wait('ready')
+	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+		if (!Object.fastCompare(items, oldItems)) {
+			iActiveItems.initItemsMods(this);
+			this.emit('itemsChange', items);
+		}
 	}
 
 	/**
@@ -852,9 +480,11 @@ export default class bTree extends iData implements iItems {
 		target = <Element>e.delegateTarget;
 
 		const
-			id = target.getAttribute('data-id');
+			id = target.getAttribute('data-id') ?? '';
 
 		this.toggleActive(id);
 		this.emit('actionChange', this.active);
 	}
 }
+
+export default bTree;
