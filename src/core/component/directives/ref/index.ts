@@ -12,6 +12,8 @@
  */
 
 import { ComponentEngine, VNode } from 'core/component/engines';
+
+import { getComponentContext } from 'core/component/context';
 import { getDirectiveContext } from 'core/component/directives/helpers';
 
 import { REF_ID } from 'core/component/directives/ref/const';
@@ -97,7 +99,10 @@ function updateRef(el: Element, opts: DirectiveOptions, vnode: VNode): void {
 		Object.defineProperty(refs, ref, {
 			configurable: true,
 			enumerable: true,
-			get: getRefVal
+			get: () => {
+				const ref = getRefVal();
+				return ref != null && !(ref instanceof Node) ? getComponentContext(Object.cast(ref)) : ref;
+			}
 		});
 	}
 
