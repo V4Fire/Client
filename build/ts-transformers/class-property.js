@@ -56,10 +56,6 @@ const createFunctionBody = (context, oldInitializerNode) => {
 		);
 	}
 
-	if (ts.isArrowFunction(oldInitializerNode) && !oldInitializerNode.parameters.length) {
-		return oldInitializerNode.body;
-	}
-
 	if (value) {
 		return factory.createBlock(
 			[factory.createReturnStatement(value)],
@@ -158,6 +154,10 @@ const classPropertyTransformer = (program) => (context) => {
 			!isPropertyDeclarationTypePrimitive(node, typeChecker)
 		) {
 			const initializer = ts.getEffectiveInitializer(node);
+
+			if (ts.getNodeKind(initializer) === 'function') {
+				return node;
+			}
 
 			return createPropertyDeclaration(context, initializer, node);
 		}

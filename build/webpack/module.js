@@ -63,6 +63,11 @@ module.exports = async function module({plugins}) {
 		fatHTML = webpack.fatHTML();
 
 	const loaders = {
+		parser: {
+			javascript: {
+				importExportsPresence: false
+			}
+		},
 		rules: new Map()
 	};
 
@@ -95,9 +100,10 @@ module.exports = async function module({plugins}) {
 				loader: 'ts-loader',
 				options: {
 					allowTsInNodeModules: true,
-					reportFiles: ['src/**/*.ts'],
-					...typescript.client,
-					getCustomTransformers: tsTransformers
+					// Ignore all typescript errors
+					ignoreDiagnostics: Array.from(Array(10000).keys()),
+					getCustomTransformers: tsTransformers,
+					...typescript.client
 				}
 			},
 

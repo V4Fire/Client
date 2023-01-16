@@ -70,6 +70,17 @@ async function buildFactory(entry, buildId) {
 		config.dependencies = dependencies;
 	}
 
+	// if (name === 'runtime') {
+	// 	const SpeedMeasurePlugin = require('speed-measure-webpack-plugin');
+
+	// 	const smp = new SpeedMeasurePlugin({
+	// 		outputFormat: 'human',
+	// 		outputTarget: `./${name}_report.txt`
+	// 	});
+
+	// 	return smp.wrap(config);
+	// }
+
 	return config;
 }
 
