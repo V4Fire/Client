@@ -29,7 +29,7 @@ ComponentEngine.directive('ref', {
 	updated: updateRef
 });
 
-function updateRef(el: Element, opts: DirectiveOptions, vnode: VNode): void {
+function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode: VNode): void {
 	const
 		ctx = getDirectiveContext(opts, vnode);
 
@@ -39,16 +39,17 @@ function updateRef(el: Element, opts: DirectiveOptions, vnode: VNode): void {
 	} = opts;
 
 	if (
-		value == null || Object.isFunction(value) || instance == null || ctx == null) {
+		value == null ||
+		Object.isFunction(value) ||
+		instance == null ||
+		ctx == null
+	) {
 		return;
 	}
 
 	const
-		ref = String(value),
+		refName = String(value),
 		refs = ctx.$refs;
-
-	const
-		getRefVal = () => instance.$refs[ctx.$resolveRef(ref)];
 
 	if (vnode.virtualComponent != null) {
 		const
@@ -58,17 +59,17 @@ function updateRef(el: Element, opts: DirectiveOptions, vnode: VNode): void {
 			refVal[REF_ID] ??= Math.random();
 
 			let
-				virtualRefs = <CanUndef<unknown[]>>refs[ref];
+				virtualRefs = <CanUndef<unknown[]>>refs[refName];
 
 			if (virtualRefs == null || virtualRefs[REF_ID] !== refVal[REF_ID]) {
-				Object.defineProperty(refs, ref, {
+				Object.defineProperty(refs, refName, {
 					configurable: true,
 					enumerable: true,
 					writable: true,
 					value: []
 				});
 
-				virtualRefs = <unknown[]>refs[ref];
+				virtualRefs = <unknown[]>refs[refName];
 				virtualRefs[REF_ID] = refVal[REF_ID];
 			}
 
@@ -78,33 +79,62 @@ function updateRef(el: Element, opts: DirectiveOptions, vnode: VNode): void {
 			Object.defineProperty(virtualRefs, refIndex, {
 				configurable: true,
 				enumerable: true,
-				get: () => {
-					const refVal = (<ComponentElement[]>getRefVal())[refIndex];
-					return refVal.component ?? refVal;
-				}
+				get: () => resolveRefVal(refIndex)
 			});
 
 		} else {
-			Object.defineProperty(refs, ref, {
+			Object.defineProperty(refs, refName, {
 				configurable: true,
 				enumerable: true,
-				get: () => {
-					const refVal = <ComponentElement>getRefVal();
-					return refVal.component ?? refVal;
-				}
+				get: resolveRefVal
 			});
 		}
 
 	} else {
-		Object.defineProperty(refs, ref, {
+		Object.defineProperty(refs, refName, {
 			configurable: true,
 			enumerable: true,
-			get: () => {
-				const ref = getRefVal();
-				return ref != null && !(ref instanceof Node) ? getComponentContext(Object.cast(ref)) : ref;
-			}
+			get: resolveRefVal
 		});
 	}
 
-	ctx.$emit(`[[REF:${ref}]]`, refs[ref]);
+	ctx.$emit(`[[REF:${refName}]]`, refs[refName]);
+
+	function resolveRefVal(key?: PropertyKey) {
+		const
+			refVal = getRefVal();
+
+		let
+			ref;
+
+		if (Object.isArray(refVal)) {
+			if (key != null) {
+				ref = refVal[key];
+
+			} else {
+				return refVal.map(resolve);
+			}
+
+		} else {
+			ref = refVal;
+		}
+
+		return resolve(ref);
+
+		function resolve(ref: unknown) {
+			if (ref == null) {
+				return ref;
+			}
+
+			if (vnode.virtualComponent != null) {
+				return (<ComponentElement>ref).component ?? ref;
+			}
+
+			return !(ref instanceof Node) ? getComponentContext(Object.cast(ref)) : ref;
+		}
+	}
+
+	function getRefVal() {
+		return instance!.$refs[ctx!.$resolveRef(refName)];
+	}
 }

@@ -10,7 +10,7 @@ import { app } from 'core/component';
 import { render, create } from 'components/friends/vdom';
 
 import iBlock from 'components/super/i-block/i-block';
-import type { ComponentElement, ComponentInterface } from 'components/super/i-static-page/i-static-page';
+import type { ComponentElement } from 'components/super/i-static-page/i-static-page';
 
 import { expandedParse } from 'core/prelude/test-env/components/json';
 
@@ -73,7 +73,7 @@ globalThis.removeCreatedComponents = () => {
 		components = globalThis[createdComponents];
 
 	if (Object.isSet(components)) {
-		Object.cast<Set<ComponentElement<ComponentInterface>>>(components).forEach((node) => {
+		Object.cast<Set<ComponentElement>>(components).forEach((node) => {
 			node.component?.unsafe.$destroy();
 			node.remove();
 		});
