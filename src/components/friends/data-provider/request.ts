@@ -244,7 +244,10 @@ export function createRequest<D = unknown>(
 		};
 
 		req.then(then, (err) => {
-			this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
+			try {
+				this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
+			} catch {}
+
 			then();
 		});
 	}
