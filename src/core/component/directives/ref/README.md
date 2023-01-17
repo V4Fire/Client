@@ -6,9 +6,9 @@ This module provides a directive to create a ref to another component or element
 This directive is used in conjunction with the standard `ref` directive.
 
 ```
-// This code will be automatically replaced by Snakeskin
+/// This code will be automatically replaced by Snakeskin
 < b-button ref = button
 
-// To this code
+/// To this code
 < b-button :ref = $resolveRef('button') | v-ref = 'button'
 ```
