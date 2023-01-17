@@ -188,10 +188,13 @@ export function fillMeta(
 			return;
 		}
 
-		component.methods[name] = function wrapper() {
+		component.methods[name] = wrapper;
+		Object.defineProperty(wrapper, 'length', {value: method.fn.length});
+
+		function wrapper(this: object) {
 			// eslint-disable-next-line prefer-rest-params
-			return method.fn.apply(getComponentContext(this), arguments);
-		};
+			return method!.fn.apply(getComponentContext(this), arguments);
+		}
 
 		if (method.watchers != null) {
 			Object.entries(method.watchers).forEach(([key, watcher]) => {
