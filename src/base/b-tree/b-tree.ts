@@ -19,8 +19,9 @@ import symbolGenerator from 'core/symbol';
 
 import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
+import type iItems from 'traits/i-items/i-items';
 import iActiveItems from 'traits/i-active-items/i-active-items';
-import type { Active, IterationKey } from 'traits/i-active-items/i-active-items';
+import type { IterationKey } from 'traits/i-active-items/i-active-items';
 
 import iData, {
 
@@ -31,7 +32,7 @@ import iData, {
 	TaskI,
 	wait,
 	system,
-	watch
+	watch, computed
 
 } from 'super/i-data/i-data';
 
@@ -72,15 +73,15 @@ class bTree extends iData implements iActiveItems {
 
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
-	readonly item?: iActiveItems['item'];
+	readonly item?: iItems['item'];
 
 	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
-	readonly itemKey?: iActiveItems['itemKey'];
+	readonly itemKey?: iItems['itemKey'];
 
 	/** @see [[iItems.itemProps]] */
 	@prop({type: Function, required: false})
-	readonly itemProps?: iActiveItems['itemProps'];
+	readonly itemProps?: iItems['itemProps'];
 
 	/**
 	 * A common filter to render items via `asyncRender`.
@@ -157,6 +158,20 @@ class bTree extends iData implements iActiveItems {
 	@system()
 	readonly nodeName: string = 'item-wrapper';
 
+	/**
+	 * @see [[iActiveItems.activeProp]]
+	 * @see [[iActiveItems.initActiveStore]]
+	 */
+	@system<bTree>((o) => o.sync.link((val) => {
+		if (o.top != null) {
+			return o.top.activeStore;
+		}
+
+		return iActiveItems.initActiveStore(o, val);
+	}))
+
+	activeStore!: iActiveItems['activeStore'];
+
 	/** @inheritDoc */
 	protected override readonly $refs!: {
 		children?: bTree[];
@@ -198,22 +213,13 @@ class bTree extends iData implements iActiveItems {
 		return opts;
 	}
 
-	/**
-	 * @see [[iActiveItems.activeProp]]
-	 * @see [[iActiveItems.initActiveStore]]
-	 */
-	@system<bTree>((o) => o.sync.link((val) => {
-		if (o.top != null) {
-			return o.top.activeStore;
-		}
-
-		return iActiveItems.initActiveStore(o, val);
-	}))
-
-	protected activeStore!: iActiveItems['activeStore'];
-
 	/** @see [[iActiveItems.activeElement]] */
-	protected get activeElement(): iActiveItems['activeElement'] {
+	@computed({
+		cache: true,
+		dependencies: ['active']
+	})
+
+	get activeElement(): iActiveItems['activeElement'] {
 		return iActiveItems.getActiveElement(this);
 	}
 
@@ -340,6 +346,17 @@ class bTree extends iData implements iActiveItems {
 		return SyncPromise.resolve(false);
 	}
 
+	/** @see [[iActiveItems.syncItemsWatcher]] */
+	/** @see [[iActiveItems.initItemsMods]] */
+	@watch({field: 'items', immediate: true})
+	@wait('ready')
+	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+		if (!Object.fastCompare(items, oldItems)) {
+			iActiveItems.initItemsMods(this);
+			this.emit('itemsChange', items);
+		}
+	}
+
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iActiveItems.getItemKey(this, item, i);
@@ -437,17 +454,6 @@ class bTree extends iData implements iActiveItems {
 	protected findItemNodeElement(id: string): CanUndef<HTMLElement> {
 		const itemId = this.dom.getId(id);
 		return this.$el?.querySelector(`[data-id=${itemId}]`) ?? undefined;
-	}
-
-	/** @see [[iActiveItems.syncItemsWatcher]] */
-	/** @see [[iActiveItems.initComponentMods]] */
-	@watch({field: 'items', immediate: true})
-	@wait('ready')
-	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-		if (!Object.fastCompare(items, oldItems)) {
-			iActiveItems.initItemsMods(this);
-			this.emit('itemsChange', items);
-		}
 	}
 
 	/**
