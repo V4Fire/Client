@@ -14,6 +14,8 @@
 import symbolGenerator from 'core/symbol';
 import { derive } from 'core/functools/trait';
 
+import Block, { getElementSelector } from 'components/friends/block';
+
 import iVisible from 'components/traits/i-visible/i-visible';
 import iWidth from 'components/traits/i-width/i-width';
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
@@ -40,6 +42,8 @@ import type { StageTitles } from 'components/base/b-window/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
+
+Block.addToPrototype(getElementSelector);
 
 const
 	$$ = symbolGenerator();
