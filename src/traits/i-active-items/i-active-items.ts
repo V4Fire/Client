@@ -18,7 +18,7 @@ import SyncPromise from 'core/promise/sync';
 import iItems from 'traits/i-items/i-items';
 
 import type { Active, Component, Item } from 'traits/i-active-items/interface';
-import iBlock, { computed } from 'super/i-block/i-block';
+import type iBlock from 'super/i-block/i-block';
 
 export * from 'traits/i-items/i-items';
 export * from 'traits/i-active-items/interface';
@@ -36,11 +36,14 @@ export default abstract class iActiveItems extends iItems {
 	 * An initial component active item/s value.
 	 * If the component is switched to the `multiple` mode,
 	 * you can pass an array or Set to define several active items values.
+	 *
+	 * @prop
 	 */
-	abstract readonly activeProp?: Array<Item['value']> | Set<Item['value']> | Item['value'];
+	abstract readonly activeProp?: unknown[] | this['Active'];
 
 	/**
 	 * If true, the component supports a feature of multiple active items
+	 * @prop
 	 */
 	abstract readonly multiple: boolean;
 
@@ -48,6 +51,8 @@ export default abstract class iActiveItems extends iItems {
 	 * If true, the active item can be unset by using another click to it.
 	 * By default, if the component is switched to the `multiple` mode, this value is set to `true`,
 	 * otherwise to `false`.
+	 *
+	 * @prop
 	 */
 	abstract readonly cancelable?: boolean;
 
@@ -59,7 +64,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	// @system<Component>((o) => o.sync.link((val) => iActiveItems.initActiveStore(o, val)))
-	protected abstract activeStore: this['Active'];
+	abstract activeStore: this['Active'];
 
 	/**
 	 * Name of node to add active modifier
@@ -70,20 +75,14 @@ export default abstract class iActiveItems extends iItems {
 	 * A link to the active item element.
 	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
 	 */
-	@computed({
-		cache: true,
-		dependencies: ['active']
-	})
+	abstract get activeElement(): ReturnType<typeof iActiveItems.getActiveElement>;
 
-	protected get activeElement(): ReturnType<typeof iActiveItems.getActiveElement> {
-		return Object.throw();
-	}
-
-	static getActiveElement = <T extends iBlock['unsafe']>(
+	static getActiveElement = <T extends iBlock>(
 		ctx: T & iActiveItems
 	): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> => {
 		const
-			{active, multiple, nodeName, block} = ctx;
+			{active, multiple, nodeName} = ctx,
+			{block} = ctx.unsafe;
 
 		const getEl = (value) => {
 			if (value != null) {
@@ -105,7 +104,7 @@ export default abstract class iActiveItems extends iItems {
 		});
 	};
 
-	static initActiveStore(ctx: Component<iBlock['unsafe']>, value: iActiveItems['Active']): CanUndef<iActiveItems['activeStore']> {
+	static initActiveStore(ctx: Component, value: iActiveItems['Active']): CanUndef<iActiveItems['activeStore']> {
 		const
 			{multiple, activeStore} = ctx,
 			beforeDataCreate = ctx.hook === 'beforeDataCreate';
@@ -181,7 +180,7 @@ export default abstract class iActiveItems extends iItems {
 		return value === activeStore;
 	};
 
-	static setActive: AddSelf<iActiveItems['setActive'], Component<iBlock['unsafe']>> =
+	static setActive: AddSelf<iActiveItems['setActive'], Component> =
 		(ctx, value: iActiveItems['Active'], unsetPrevious: boolean = false) => {
 		const
 			{multiple} = ctx,
@@ -224,7 +223,8 @@ export default abstract class iActiveItems extends iItems {
 		}
 
 		const
-			{block: $b, nodeName, active, activeElement} = ctx,
+			{nodeName, active, activeElement} = ctx,
+			{block: $b} = ctx.unsafe,
 			modName = 'active';
 
 		if ($b != null) {
@@ -268,7 +268,7 @@ export default abstract class iActiveItems extends iItems {
 	};
 
 	/** @see [[iActiveItems.unsetActive]] */
-	static unsetActive: AddSelf<iActiveItems['setActive'], Component<iBlock['unsafe']>> =
+	static unsetActive: AddSelf<iActiveItems['setActive'], Component> =
 		(ctx, value: iActiveItems['Active']) => {
 		const
 			{activeElement, multiple, cancelable} = ctx,
@@ -311,7 +311,8 @@ export default abstract class iActiveItems extends iItems {
 		}
 
 		const
-			{block: $b, nodeName, active} = ctx;
+			{nodeName, active} = ctx,
+			{block: $b} = ctx.unsafe;
 
 		if ($b != null) {
 			SyncPromise.resolve(activeElement).then((activeElement) => {
@@ -394,7 +395,7 @@ export default abstract class iActiveItems extends iItems {
 	/**
 	 * Initializes component mods
 	 */
-	static initItemsMods(ctx: Component<iBlock['unsafe']>): void {
+	static initItemsMods(ctx: Component): void {
 		ctx.items?.forEach((item) => {
 			const
 				{active, value} = item;
@@ -462,8 +463,5 @@ export default abstract class iActiveItems extends iItems {
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	// @watch(['value', 'itemsStore'])
-	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-		Object.throw();
-	}
+	abstract syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void;
 }

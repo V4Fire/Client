@@ -19,7 +19,7 @@ export interface Item extends Dictionary {
 	/**
 	 * Item value
 	 */
-	value: string | number;
+	value?: unknown;
 
 	/**
 	 * True if the item is active
@@ -32,6 +32,6 @@ export interface Item extends Dictionary {
 	mods?: ModsTable;
 }
 
-export type Active = Item['value'] | Set<Item['value']> | undefined;
+export type Active = unknown | Set<unknown>;
 
-export type Component<T extends iBlock = iBlock> = T & iActiveItems;
+export type Component = iBlock & iActiveItems;
