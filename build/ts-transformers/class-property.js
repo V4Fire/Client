@@ -31,39 +31,11 @@ const primitiveTypes = ['boolean', 'number', 'string', 'null', 'undefined'];
  */
 const createFunctionBody = (context, oldInitializerNode) => {
 	const {factory} = context;
-	let value;
 
-	if (ts.isObjectLiteralExpression(oldInitializerNode)) {
-		value = factory.createObjectLiteralExpression(
-			oldInitializerNode.properties,
-			false
-		);
-	}
-
-	if (ts.isArrayLiteralExpression(oldInitializerNode)) {
-		value = factory.createArrayLiteralExpression(
-			oldInitializerNode.elements,
-			false
-		);
-	}
-
-	if (ts.isNewExpression(oldInitializerNode)) {
-		const invokedExpression = ts.getInvokedExpression(oldInitializerNode).escapedText;
-		value = factory.createNewExpression(
-			factory.createIdentifier(invokedExpression),
-			undefined,
-			[]
-		);
-	}
-
-	if (value) {
-		return factory.createBlock(
-			[factory.createReturnStatement(value)],
-			true
-		);
-	}
-
-	return undefined;
+	return factory.createBlock(
+		[factory.createReturnStatement(oldInitializerNode)],
+		true
+	);
 };
 
 /**
@@ -92,7 +64,7 @@ const createPropertyDeclaration = (context, oldInitializerNode, originalNode) =>
 		factory.createFunctionExpression(
 			undefined,
 			undefined,
-			undefined,
+			'__classTransformerWrapFunction__',
 			undefined,
 			[],
 			undefined,
@@ -115,7 +87,29 @@ const isPropertyDeclarationTypePrimitive = (node, checker) => {
 };
 
 /**
- * A TypeScript converter to replace class property default value initializators
+ * Check is class has given decorator
+ *
+ * @param {Node} node
+ * @param {TypeChecker} checker
+ * @returns {boolean}
+ */
+const isClassDecorated = (classNode, decoratorName) => {
+	const {decorators} = classNode;
+
+	return decorators && decorators.length > 0 && decorators.some((item) => item === decoratorName);
+};
+
+/**
+ * Check is given node belongs
+ *
+ * @param {Node} node
+ * @param {TypeChecker} checker
+ * @returns {boolean}
+ */
+const isTrait = (node) => node.getSourceFile().path.includes('/src/traits/');
+
+/**
+ * A TypeScript transformer to replace class property default value initializators
  * with function call
  *
  * @param {Context} context
@@ -150,14 +144,11 @@ const classPropertyTransformer = (program) => (context) => {
 		if (
 			ts.isPropertyDeclaration(node) &&
 			node.parent && ts.isClassDeclaration(node.parent) &&
-			ts.hasInitializer(node) &&
-			!isPropertyDeclarationTypePrimitive(node, typeChecker)
+			node.parent.decorators && node.parent.decorators.length > 0 &&
+			(isClassDecorated(node.parent, '@component()') || isTrait(node)) &&
+			ts.hasInitializer(node) && !isPropertyDeclarationTypePrimitive(node, typeChecker)
 		) {
 			const initializer = ts.getEffectiveInitializer(node);
-
-			if (ts.getNodeKind(initializer) === 'function') {
-				return node;
-			}
 
 			return createPropertyDeclaration(context, initializer, node);
 		}

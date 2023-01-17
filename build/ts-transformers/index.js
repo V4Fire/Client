@@ -10,13 +10,11 @@
 
 const
 	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags'),
-	classPropertyTransformer = include('build/ts-transformers/class-property'),
-	symbolGeneratorTransformer = include('build/ts-transformers/symbol-generator');
+	classPropertyTransformer = include('build/ts-transformers/class-property');
 
 module.exports = (program) => ({
 	before: [
 		modernRegExpFlagsTransformer(program),
-		symbolGeneratorTransformer(program),
 		classPropertyTransformer(program)
 	],
 

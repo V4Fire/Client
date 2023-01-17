@@ -20,17 +20,15 @@ const
  * Options for `webpack.alias`
  */
 const aliases = {
-	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
+	...$C(pzlr.dependencies).to({}).reduce((map, el) => {
 		const
 			asset = resolve.depMap[el].config.assets;
-
-		map[el] = path.resolve('node_modules', el, 'src');
 
 		if (asset?.sprite == null) {
 			return map;
 		}
 
-		map[`${el}/sprite`] = path.join(resolve.rootDependencies[i], asset.dir, asset.sprite);
+		map[`${el}/sprite`] = path.join(resolve.depMap[el].src, asset.dir, asset.sprite);
 		return map;
 	}),
 
