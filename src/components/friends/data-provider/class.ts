@@ -23,6 +23,7 @@ interface DataProvider {
 	get: typeof api.get;
 	peek: typeof api.peek;
 	post: typeof api.post;
+	add: typeof api.add;
 	update: typeof api.update;
 	delete: typeof api.deleteData;
 	getDefaultRequestParams: typeof api.getDefaultRequestParams;
@@ -34,6 +35,7 @@ interface DataProvider {
 	'get',
 	'peek',
 	'post',
+	'add',
 	'update',
 	'delete',
 	'getDefaultRequestParams'
