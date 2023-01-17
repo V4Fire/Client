@@ -813,10 +813,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'tsconfig.json';
 
 		const client = this.extend({}, server, {
-			configFile,
-			compilerOptions: {
-				module: this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
-			}
+			configFile
 		});
 
 		return {
