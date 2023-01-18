@@ -43,7 +43,7 @@ ComponentEngine.directive('icon', {
 
 			vnode.children = [
 				r.createVNode.call(ctx, 'use', {
-					href: SyncPromise.resolve(getIconHref(params.arg)).unwrap()
+					href: SyncPromise.resolve(getIconHref(params.value ?? params.arg)).unwrap()
 				})
 			];
 
