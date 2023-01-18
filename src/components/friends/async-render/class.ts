@@ -27,7 +27,7 @@ class AsyncRender extends Friend {
 	constructor(component: iBlock) {
 		super(component);
 
-		this.meta.hooks.renderTriggered.push({
+		this.meta.hooks.beforeUpdate.push({
 			fn: () => this.async.clearAll({
 				group: 'asyncComponents'
 			})

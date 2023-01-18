@@ -74,7 +74,19 @@ class VDOM extends Friend {
 	 * Saves the component active rendering context
 	 */
 	saveRenderContext(): void {
-		this.ctx.$withCtx = Object.cast(this.ctx.$renderEngine.r.withCtx((cb) => cb()));
+		const
+			{ctx} = this;
+
+		const
+			withCtx = ctx.$renderEngine.r.withCtx((cb) => cb());
+
+		ctx.$withCtx = (cb) => {
+			if (ctx.hook === 'mounted' || ctx.hook === 'updated') {
+				return withCtx(cb);
+			}
+
+			return cb();
+		};
 	}
 }
 

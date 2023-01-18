@@ -293,14 +293,17 @@ export function iterate(
 					renderedVnode = render.call(that, Object.cast(vnode));
 				}
 
+				const
+					nodeToMount = target.el ?? ctx.$el;
+
 				if (Object.isArray(renderedVnode)) {
 					renderedVNodes.push(...renderedVnode);
+					renderedVnode.forEach((renderedVnode) => nodeToMount!.appendChild(renderedVnode));
 
 				} else {
 					renderedVNodes.push(renderedVnode);
+					nodeToMount!.appendChild(renderedVnode);
 				}
-
-				(target.el ?? ctx.$el)!.appendChild(renderedVnode);
 			}
 
 			function destructor() {

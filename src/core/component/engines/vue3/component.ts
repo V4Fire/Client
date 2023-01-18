@@ -69,7 +69,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					shouldUpdate = meta.fields[firstPathProp]?.forceUpdate !== false;
 
 				if (shouldUpdate) {
-					ctx.$forceUpdate();
+					ctx.$async.setImmediate(() => ctx.$forceUpdate(), {group: 'forceUpdate'});
 				}
 			}
 		},
@@ -128,7 +128,9 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		},
 
 		renderTracked(...args: unknown[]): void {
-			init.renderTrackedState(getComponentContext(this), ...args);
+			const ctx = getComponentContext(this);
+			ctx.$async.clearImmediate({group: 'forceUpdate'});
+			init.renderTrackedState(ctx, ...args);
 		},
 
 		renderTriggered(...args: unknown[]): void {
