@@ -34,7 +34,7 @@ const ts = require('typescript');
  * new RegExp('\\W+', 'su');
  * ```
  */
-const modernRegExpFlagsTransformer = () => (context) => {
+const modernRegExpFlagsTransformer = (context) => {
 	const modernRegExpFlags = ['s', 'y', 'u'];
 
 	/**
@@ -67,4 +67,4 @@ const modernRegExpFlagsTransformer = () => (context) => {
 	return (node) => ts.visitNode(node, visitor);
 };
 
-module.exports = modernRegExpFlagsTransformer;
+module.exports = () => modernRegExpFlagsTransformer;

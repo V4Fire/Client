@@ -100,7 +100,7 @@ const isClassDecorated = (classNode, decoratorName) => {
 };
 
 /**
- * Check is given node belongs
+ * Check is given node belongs trait
  *
  * @param {Node} node
  * @param {TypeChecker} checker
@@ -159,4 +159,4 @@ const classPropertyTransformer = (program) => (context) => {
 	return (node) => ts.visitNode(node, visitor);
 };
 
-module.exports = classPropertyTransformer;
+module.exports = () => classPropertyTransformer;

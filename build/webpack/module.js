@@ -72,6 +72,12 @@ module.exports = async function module({plugins}) {
 	};
 
 	const tsHelperLoaders = [
+		{
+			loader: 'symbol-generator-loader',
+			options: {
+				modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
+			}
+		},
 		'prelude-loader',
 
 		{

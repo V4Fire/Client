@@ -153,7 +153,6 @@
     "husky": "7.0.4",
     "nyc": "15.1.0",
     "playwright": "1.20.0",
-    "speed-measure-webpack-plugin": "1.5.0",
     "tsconfig-paths-webpack-plugin": "4.0.0",
     "webpack": "5.70.0"
   },
