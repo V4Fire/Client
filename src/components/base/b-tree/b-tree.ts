@@ -23,10 +23,12 @@ export * from 'components/base/b-tree/interface';
 
 AsyncRender.addToPrototype(iterate);
 
-/**
- * Component to render tree of any elements
- */
-@component()
+@component({
+	functional: {
+		dataProvider: undefined
+	}
+})
+
 export default class bTree extends iData implements iItems {
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
