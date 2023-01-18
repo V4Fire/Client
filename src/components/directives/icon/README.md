@@ -8,6 +8,9 @@ By default, all icons are loaded asynchronously on demand.
 
 /// Loading an icon by dynamic name from a variable
 < . v-icon:[iconName]
+
+/// Loading an icon by dynamic name from a variable
+< . v-icon = iconName
 ```
 
 ## Where is the destination of the sprite folder?
