@@ -9,8 +9,7 @@
  */
 
 const
-	{webpack} = require('@config/config'),
-	{wrapAttrArray} = include('build/snakeskin/filters/helpers');
+	{webpack} = require('@config/config');
 
 module.exports = [
 	/**
@@ -28,13 +27,15 @@ module.exports = [
 			elName = element.replace(/^_+/, '');
 
 		if (webpack.ssr) {
-			attrs[`:${elId}`] = wrapAttrArray(['String(renderComponentId)']);
+			attrs[`:${elId}`] = ['String(renderComponentId)'];
 
 		} else {
-			attrs[elId] = wrapAttrArray([true]);
+			attrs[elId] = [true];
 		}
 
-		attrs['data-cached-class-provided-classes-styles'] = wrapAttrArray([elName]);
+		const provide = 'data-cached-class-provided-classes-styles';
+		attrs[provide] = Array.concat([], attrs[provide], elName);
+
 		return block + element;
 	}
 ];

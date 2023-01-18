@@ -115,16 +115,18 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	{
 		const
 			key = 'data-cached-class-provided-classes-styles',
-			name = props[key];
+			names = props[key];
 
-		if (name != null) {
-			if ('classes' in this && this.classes?.[name] != null) {
-				Object.assign(props, mergeProps({class: props.class}, {class: this.classes[name]}));
-			}
+		if (names != null) {
+			names.split(' ').forEach((name) => {
+				if ('classes' in this && this.classes?.[name] != null) {
+					Object.assign(props, mergeProps({class: props.class}, {class: this.classes[name]}));
+				}
 
-			if ('styles' in this && this.styles?.[name] != null) {
-				Object.assign(props, mergeProps({style: props.style}, {style: this.styles[name]}));
-			}
+				if ('styles' in this && this.styles?.[name] != null) {
+					Object.assign(props, mergeProps({style: props.style}, {style: this.styles[name]}));
+				}
+			});
 
 			delete props[key];
 		}
