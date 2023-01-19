@@ -1,5 +1,5 @@
 {
-  "hash": "e0a42a292c4afa7092e843baab3a4579d3fd2807add76617f417bfb31de57d6c",
+  "hash": "524d7a5c261c300b314a2651782207dd063a969b74fb44c67242e7a6053644be",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1876,7 +1876,10 @@
               "b-dummy",
               "b-router",
               "b-dynamic-page",
+              "b-remote-provider",
               "b-list",
+              "b-tree",
+              "b-window",
               "b-form",
               "b-button",
               "b-checkbox",
@@ -1895,7 +1898,10 @@
             "b-dummy",
             "b-router",
             "b-dynamic-page",
+            "b-remote-provider",
             "b-list",
+            "b-tree",
+            "b-window",
             "b-form",
             "b-button",
             "b-checkbox",
