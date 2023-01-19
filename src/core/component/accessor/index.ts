@@ -12,6 +12,8 @@
  */
 
 import { deprecate } from 'core/functools/deprecation';
+
+import { beforeHooks } from 'core/component/const';
 import { cacheStatus } from 'core/component/watch';
 
 import type { ComponentInterface } from 'core/component/interface';
@@ -79,7 +81,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
-			if (SSR) {
+			if (SSR || beforeHooks[this.hook] != null) {
 				return computed.get!.call(this);
 			}
 
