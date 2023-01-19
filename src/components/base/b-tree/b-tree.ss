@@ -48,6 +48,7 @@
 				- block children
 					< .&__children v-if = Object.size(field.get('children', el)) > 0
 						< b-tree.&__child &
+							v-func = isFunctional |
 							:items = el.children |
 							:folded = getFoldedPropValue(el) |
 							:item = item |

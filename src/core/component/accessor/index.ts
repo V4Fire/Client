@@ -81,15 +81,21 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
-			if (SSR || beforeHooks[this.hook] != null) {
-				return computed.get!.call(this);
-			}
+			const
+				{hook} = this;
 
 			if (cacheStatus in get) {
 				return get[cacheStatus];
 			}
 
-			return get[cacheStatus] = computed.get!.call(this);
+			const
+				value = computed.get!.call(this);
+
+			if (!SSR && beforeHooks[hook] == null && hook !== 'created') {
+				get[cacheStatus] = value;
+			}
+
+			return value;
 		};
 
 		Object.defineProperty(component, name, {

@@ -64,7 +64,7 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
 		const
-			[name, attrs, slots, _, dynamicProps] = args;
+			[name, attrs, slots, patchFlag, dynamicProps] = args;
 
 		let
 			component: CanUndef<ComponentMeta>;
@@ -76,11 +76,11 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			component = registerComponent(name.name);
 		}
 
-		const
-			vnode = resolveAttrs.call(this, original.apply(null, args));
+		const createVNode = (name, attrs, slots, patchFlag, dynamicProps) =>
+			resolveAttrs.call(this, original(name, attrs, slots, patchFlag, dynamicProps));
 
 		if (component == null) {
-			return vnode;
+			return createVNode(name, attrs, slots, patchFlag, dynamicProps);
 		}
 
 		normalizeComponentAttrs(attrs, dynamicProps, component);
@@ -89,7 +89,11 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			{componentName, params} = component,
 			{supports, r} = this.$renderEngine;
 
-		if (params.functional !== true || !supports.functional) {
+		const
+			isRegular = params.functional !== true || !supports.functional,
+			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
+
+		if (isRegular) {
 			return vnode;
 		}
 
