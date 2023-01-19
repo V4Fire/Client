@@ -31,5 +31,8 @@
 				:is = page |
 				:dispatching = true |
 
+				@componentStatus:loading = emit('componentStatus:loading') |
+				@componentStatus:ready = emit('componentStatus:ready') |
+
 				${attrs}
 			.
