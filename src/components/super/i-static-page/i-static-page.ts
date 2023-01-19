@@ -175,7 +175,7 @@ export default abstract class iStaticPage extends iPage {
 	 * The route information object store
 	 * @see [[iStaticPage.route]]
 	 */
-	@field({forceUpdate: false})
+	@field()
 	protected routeStore?: this['CurrentPage'];
 
 	/**

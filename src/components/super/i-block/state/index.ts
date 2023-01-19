@@ -218,7 +218,6 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@field({
 		unique: true,
-		forceUpdate: false,
 		functionalWatching: false
 	})
 
@@ -238,7 +237,6 @@ export default abstract class iBlockState extends iBlockMods {
 	 * @see [[iBlock.stageProp]]
 	 */
 	@field({
-		forceUpdate: false,
 		functionalWatching: false,
 		init: (o) => o.sync.link<CanUndef<Stage>>((val) => {
 			o.stage = val;
