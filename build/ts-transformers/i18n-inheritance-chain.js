@@ -61,7 +61,7 @@ function getFilesMap() {
  *
  * @param {Context} context
  * @returns {Transformer}
-* @example
+ * @example
  * ```typescript
  *
  * class myButton extends bButton {}
