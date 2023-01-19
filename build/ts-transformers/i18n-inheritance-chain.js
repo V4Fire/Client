@@ -61,6 +61,15 @@ function getFilesMap() {
  *
  * @param {Context} context
  * @returns {Transformer}
+* @example
+ * ```typescript
+ *
+ * class myButton extends bButton {}
+ *
+ * // Becomes
+ * class myButton extends bButton {
+ *   componentI18nKeysets = ['my-button', 'b-button', 'i-data', 'i-block'];
+ * }
  */
 const i18nInheritanceChainTransformer = (context) => {
 	const filesMap = getFilesMap();
@@ -72,6 +81,10 @@ const i18nInheritanceChainTransformer = (context) => {
 	function fileVisitor(file) {
 		const block = filesMap[file.path];
 
+		/**
+		 * For the correct output of types, in i-block, as in the parent class for all,
+		 * the `componentI18nKeysets` field is written by hand
+		 */
 		if (block && block.name !== 'i-block') {
 			return ts.visitEachChild(file, blockVisitor(block, context), context);
 		}

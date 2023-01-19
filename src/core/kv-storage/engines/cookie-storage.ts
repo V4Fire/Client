@@ -10,6 +10,11 @@ import type { ClearFilter } from 'core/kv-storage/interface';
 
 import * as cookie from 'core/cookies';
 
+export const cookieStorageDividers = {
+	keys: '{{#}}',
+	values: '{{.}}'
+};
+
 export default class CookieStorageEngine {
 	protected cookieName: string;
 
@@ -29,6 +34,14 @@ export default class CookieStorageEngine {
 
 	/** @see SyncStorageNamespace.set */
 	set(key: string, value: string): void {
+		const
+			dividersValues = Object.values(cookieStorageDividers),
+			isForbiddenCharacterUsed = dividersValues.some((el) => key.includes(el) || value.includes(el));
+
+		if (isForbiddenCharacterUsed) {
+			throw new Error(`Forbidden character used in cookie storage key: ${key}, value: ${value}`);
+		}
+
 		this.updateValues([{key, value}]);
 	}
 
@@ -65,8 +78,8 @@ export default class CookieStorageEngine {
 			return {};
 		}
 
-		return cookieValue.split('{{#}}').reduce((acc, el) => {
-			const [key, value] = el.split('{{.}}');
+		return cookieValue.split(cookieStorageDividers.keys).reduce((acc, el) => {
+			const [key, value] = el.split(cookieStorageDividers.values);
 			acc[key] = value;
 			return acc;
 		}, {});
@@ -100,8 +113,8 @@ export default class CookieStorageEngine {
 		}
 
 		const rawCookie = Object.entries(state)
-			.map(([key, value]) => `${key}{{.}}${value}`)
-			.join('{{#}}');
+			.map(([key, value]) => `${key}${cookieStorageDividers.values}${value}`)
+			.join(cookieStorageDividers.keys);
 
 		cookie.set(this.cookieName, rawCookie);
 	}
