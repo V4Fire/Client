@@ -12,26 +12,28 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-					< b-tree &
-          	/// The specified items are rendered as `b-checkbox`-es
-          	:item = 'b-checkbox' |
-          	:activeProp = 'bar' |
-          	:items = [
-          		{id: '1', label: 'bar', value: 'bar'},
-          		{id: '2', label: 'foo', value: 'foo', children: [
-          			{id: '3', label: 'foo1', value: 'foo1'},
-          			{id: '4', label: 'foo2', value: 'foo2'},
-
-          			{
-          				id: '5',
-          				label: 'foo3',
-          				value: 'foo3',
-          				children: [
-          					{id: '6', label: 'foo4', value: 'foo4'}
-          				]
-          			},
-
-          			{id: '7', label: 'foo5', value: 'foo5'}
-          		]}
-          	]
-          .
+///					< b-tree &
+///          	/// The specified items are rendered as `b-checkbox`-es
+///          	:item = 'b-checkbox' |
+//////          	:active = 1 |
+//////          	:multiple = true |
+///          	:cancelable = true |
+///          	:items = [
+///          		{id: '1', label: 'bar', value: 'bar'},
+///          		{id: '2', label: 'foo', value: 'foo', children: [
+///          			{id: '3', label: 'foo1', value: 'foo1'},
+///          			{id: '4', label: 'foo2', value: 'foo2'},
+///
+///          			{
+///          				id: '5',
+///          				label: 'foo3',
+///          				value: 'foo3',
+///          				children: [
+///          					{id: '6', label: 'foo4', value: 'foo4'}
+///          				]
+///          			},
+///
+///          			{id: '7', label: 'foo5', value: 'foo5'}
+///          		]}
+///          	]
+///          .

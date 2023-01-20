@@ -17,7 +17,7 @@
 			:key = getItemKey(el, i)
 		.
 			< .&__node &
-				:-id = dom.getId(el.id) |
+				:-id = dom.getId(el.value) |
 				:-level = level |
 				:class = provide.elClasses({
 					node: {
@@ -27,7 +27,7 @@
 				})
 			.
 				< div &
-					:-id = el.value |
+					:-id = values.get(el.value) |
 
 					:class = provide.elClasses({
 						'item-wrapper': {

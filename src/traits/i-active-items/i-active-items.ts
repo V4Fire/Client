@@ -63,13 +63,22 @@ export default abstract class iActiveItems extends iItems {
 	 * @see [[iActiveItems.activeProp]]
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	// @system<Component>((o) => o.sync.link((val) => iActiveItems.initActiveStore(o, val)))
 	abstract activeStore: this['Active'];
 
 	/**
 	 * Name of node to add active modifier
 	 */
 	readonly abstract nodeName: string;
+
+	/**
+	 * Map of item indexes and their values
+	 */
+	abstract indexes: unknown;
+
+	/**
+	 * Map of item values and their indexes
+	 */
+	abstract values: Map<unknown, number>;
 
 	/**
 	 * A link to the active item element.
@@ -135,11 +144,15 @@ export default abstract class iActiveItems extends iItems {
 
 		if (beforeDataCreate) {
 			void ctx.waitStatus('ready').then(() => {
-				void Promise.resolve().then(() => iActiveItems.setActive(ctx, value));
+				void Promise.resolve().then(() => ctx.setActive(newVal));
 			});
 
 		} else {
-			iActiveItems.setActive(ctx, newVal);
+			ctx.setActive(newVal);
+		}
+
+		if (multiple) {
+			return new Set();
 		}
 	}
 
@@ -147,7 +160,7 @@ export default abstract class iActiveItems extends iItems {
 	 * A component active item/s.
 	 * If the component is switched to the `multiple` mode, the getter will return a `Set` object.
 	 *
-	 * @see [[bList.activeStore]]
+	 * @see [[iActiveItems.prototype.activeStore]]
 	 */
 	get active(): this['Active'] {
 		return Object.throw();
@@ -164,7 +177,7 @@ export default abstract class iActiveItems extends iItems {
 		return v;
 	}
 
-	/** @see [[iAccess.isActive]] */
+	/** @see [[iActiveItems.isActive]] */
 	static isActive: AddSelf<iActiveItems['isActive'], Component> = (ctx, value: Item['value']) => {
 		const
 			activeStore = ctx.field.get('activeStore');
@@ -181,7 +194,171 @@ export default abstract class iActiveItems extends iItems {
 	};
 
 	static setActive: AddSelf<iActiveItems['setActive'], Component> =
+		(ctx, value: Item['value'] | Set<Item['value']>, unsetPrevious: boolean = false) => {
+			const
+				isAdded = iActiveItems.addToActiveStore(ctx, value);
+
+			if (!isAdded) {
+				return isAdded;
+			}
+
+			const
+				{nodeName, active, activeElement, multiple} = ctx,
+				{block: $b} = ctx.unsafe,
+				modName = 'active';
+
+			if ($b != null) {
+				const
+					id = String(value),
+					itemEl = $b.element(nodeName, {id});
+
+				if (!multiple || unsetPrevious) {
+					const
+						previousEls = $b.elements(nodeName, {active: true});
+
+					previousEls.forEach((previousEl) => {
+						if (previousEl !== itemEl) {
+							$b.setElMod(previousEl, nodeName, modName, false);
+
+							if (previousEl.hasAttribute('aria-selected')) {
+								previousEl.setAttribute('aria-selected', 'false');
+							}
+						}
+					});
+				}
+
+				SyncPromise.resolve(activeElement).then((selectedElement) => {
+					const
+						els = Array.concat([], selectedElement);
+
+					els.forEach((el) => {
+						$b.setElMod(el, nodeName, modName, true);
+
+						if (el.hasAttribute('aria-selected')) {
+							el.setAttribute('aria-selected', 'true');
+						}
+					});
+				}, stderr);
+			}
+
+			ctx.emit('immediateChange', active);
+			ctx.emit('change', active);
+
+			return true;
+		};
+
+	/** @see [[iActiveItems.unsetActive]] */
+	static unsetActive: AddSelf<iActiveItems['setActive'], Component> =
+		(ctx, value: iActiveItems['Active']) => {
+			const
+				isRemoved = iActiveItems.removeFromActiveStorage(ctx, value);
+
+			if (!isRemoved) {
+				return isRemoved;
+			}
+
+			const
+				{nodeName, active, activeElement, multiple} = ctx,
+				{block: $b} = ctx.unsafe;
+
+			if ($b != null) {
+				SyncPromise.resolve(activeElement).then((activeElement) => {
+					const
+						els = Array.concat([], activeElement);
+
+					els.forEach((el) => {
+						const
+							itemValue = el.getAttribute('data-id') ?? '';
+
+						const needChangeMod = multiple && Object.isSet(value) ?
+							value.has(itemValue) :
+							value === itemValue;
+
+						if (needChangeMod) {
+							$b.setElMod(el, nodeName, 'active', false);
+
+							if (el.hasAttribute('aria-selected')) {
+								el.setAttribute('aria-selected', 'false');
+							}
+						}
+					});
+				}, stderr);
+			}
+
+			ctx.emit('immediateChange', active);
+			ctx.emit('change', active);
+
+			return true;
+		};
+
+	/** @see [[iActiveItems.toggleActive]] */
+	static toggleActive: AddSelf<iActiveItems['toggleActive'], Component> =
 		(ctx, value: iActiveItems['Active'], unsetPrevious: boolean = false) => {
+			const
+				{multiple, active} = ctx,
+				activeStore = ctx.field.get('activeStore');
+
+			const
+				setActive = ctx.setActive.bind(ctx),
+				unsetActive = ctx.unsetActive.bind(ctx);
+
+			if (multiple) {
+				if (!Object.isSet(activeStore)) {
+					return active;
+				}
+
+				const toggle = (value) => {
+					if (activeStore.has(value)) {
+						if (unsetPrevious) {
+							unsetActive(active);
+
+						} else {
+							unsetActive(value);
+						}
+
+						return;
+					}
+
+					setActive(value, unsetPrevious);
+				};
+
+				if (Object.isSet(value)) {
+					Object.forEach(value, toggle);
+
+				} else {
+					toggle(value);
+				}
+
+			} else if (activeStore !== value) {
+				setActive(value);
+
+			} else {
+				unsetActive(value);
+			}
+
+			return active;
+		};
+
+	/**
+	 * Initializes component mods
+	 */
+	static initItemsMods(ctx: Component): void {
+		ctx.items?.forEach((item) => {
+			const
+				{active, value} = item;
+
+			item.mods ??= {};
+
+			item.mods.id = ctx.values.get(item.value);
+			item.mods.active = active ?? false;
+
+			if (active && (ctx.multiple ? ctx.activeProp === undefined : ctx.activeStore === undefined)) {
+				void Promise.resolve().then(() => ctx.setActive(value));
+			}
+		});
+	}
+
+	static addToActiveStore(ctx: Component, value: iActiveItems['Active']): boolean {
 		const
 			{multiple} = ctx,
 			activeStore = ctx.field.get('activeStore');
@@ -222,56 +399,12 @@ export default abstract class iActiveItems extends iItems {
 			ctx.field.set('activeStore', value);
 		}
 
-		const
-			{nodeName, active, activeElement} = ctx,
-			{block: $b} = ctx.unsafe,
-			modName = 'active';
-
-		if ($b != null) {
-			const
-				id = String(value),
-				itemEl = $b.element(nodeName, {id});
-
-			if (!multiple || unsetPrevious) {
-				const
-					previousEls = $b.elements(nodeName, {active: true});
-
-				previousEls.forEach((previousEl) => {
-					if (previousEl !== itemEl) {
-						$b.setElMod(previousEl, nodeName, modName, false);
-
-						if (previousEl.hasAttribute('aria-selected')) {
-							previousEl.setAttribute('aria-selected', 'false');
-						}
-					}
-				});
-			}
-
-			SyncPromise.resolve(activeElement).then((selectedElement) => {
-				const
-					els = Array.concat([], selectedElement);
-
-				els.forEach((el) => {
-					$b.setElMod(el, nodeName, modName, true);
-
-					if (el.hasAttribute('aria-selected')) {
-						el.setAttribute('aria-selected', 'true');
-					}
-				});
-			}, stderr);
-		}
-
-		ctx.emit('immediateChange', active);
-		ctx.emit('change', active);
-
 		return true;
-	};
+	}
 
-	/** @see [[iActiveItems.unsetActive]] */
-	static unsetActive: AddSelf<iActiveItems['setActive'], Component> =
-		(ctx, value: iActiveItems['Active']) => {
+	static removeFromActiveStorage(ctx: Component, value: iActiveItems['Active']): boolean {
 		const
-			{activeElement, multiple, cancelable} = ctx,
+			{multiple, cancelable} = ctx,
 			activeStore = ctx.field.get('activeStore');
 
 		if (multiple) {
@@ -310,105 +443,7 @@ export default abstract class iActiveItems extends iItems {
 			ctx.field.set('activeStore', undefined);
 		}
 
-		const
-			{nodeName, active} = ctx,
-			{block: $b} = ctx.unsafe;
-
-		if ($b != null) {
-			SyncPromise.resolve(activeElement).then((activeElement) => {
-				const
-					els = Array.concat([], activeElement);
-
-				els.forEach((el) => {
-					const
-						itemValue = el.getAttribute('data-id') ?? '';
-
-					const needChangeMod = multiple && Object.isSet(value) ?
-						value.has(itemValue) :
-						value === itemValue;
-
-					if (needChangeMod) {
-						$b.setElMod(el, nodeName, 'active', false);
-
-						if (el.hasAttribute('aria-selected')) {
-							el.setAttribute('aria-selected', 'false');
-						}
-					}
-				});
-			}, stderr);
-		}
-
-		ctx.emit('immediateChange', active);
-		ctx.emit('change', active);
-
 		return true;
-	};
-
-	/** @see [[iActiveItems.toggleActive]] */
-	static toggleActive: AddSelf<iActiveItems['toggleActive'], Component> =
-		(ctx, value: iActiveItems['Active'], unsetPrevious: boolean = false) => {
-		const
-			{multiple, active} = ctx,
-			activeStore = ctx.field.get('activeStore');
-
-		const
-			setActive = iActiveItems.setActive.bind(this, ctx),
-			unsetActive = iActiveItems.unsetActive.bind(this, ctx);
-
-		if (multiple) {
-			if (!Object.isSet(activeStore)) {
-				return active;
-			}
-
-			const toggle = (value) => {
-				if (activeStore.has(value)) {
-					if (unsetPrevious) {
-						unsetActive(active);
-
-					} else {
-						unsetActive(value);
-					}
-
-					return;
-				}
-
-				setActive(value, unsetPrevious);
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, toggle);
-
-			} else {
-				toggle(value);
-			}
-
-		} else if (activeStore !== value) {
-			setActive(value);
-
-		} else {
-			unsetActive(value);
-		}
-
-		return active;
-	};
-
-	/**
-	 * Initializes component mods
-	 */
-	static initItemsMods(ctx: Component): void {
-		ctx.items?.forEach((item) => {
-			const
-				{active, value} = item;
-
-			item.mods ??= {};
-
-			item.mods.id = String(value);
-			item.mods.active = active ?? false;
-
-			if (active && (ctx.multiple ? ctx.activeProp === undefined : ctx.activeStore === undefined)) {
-				void Promise.resolve().then(() => iActiveItems.setActive(ctx, value));
-			}
-		});
 	}
 
 	/**
@@ -429,7 +464,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `change(active: CanArray<unknown>)`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	setActive(value: iActiveItems['Active'], unsetPrevious: boolean = false): boolean {
+	setActive(value: Item['value'] | Set<Item['value']>, unsetPrevious: boolean = false): boolean {
 		return Object.throw();
 	}
 
@@ -441,7 +476,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
 	 */
-	unsetActive(value: iActiveItems['Active']): boolean {
+	unsetActive(value: Item['value'] | Set<Item['value']>): boolean {
 		return Object.throw();
 	}
 
@@ -464,4 +499,9 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
 	abstract syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void;
+
+	/**
+	 * Initializes component values
+	 */
+	abstract initComponentValues(): void;
 }
