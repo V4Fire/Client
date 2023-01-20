@@ -92,15 +92,32 @@ export default abstract class iBlockProviders extends iBlockState {
 
 			this.componentStatus = 'beforeReady';
 
-			void this.lfc.execCbAfterBlockReady(() => this.nextTick()
-				.then(() => {
-					this.isReadyOnce = true;
-					this.componentStatus = 'ready';
-					this.beforeReadyListeners = 0;
-					this.emit('initLoad', get(), opts);
-				})
+			const ready = () => {
+				this.isReadyOnce = true;
+				this.componentStatus = 'ready';
 
-				.catch(stderr));
+				if (this.beforeReadyListeners > 1) {
+					this.nextTick()
+						.then(() => {
+							this.beforeReadyListeners = 0;
+							this.emit('initLoad', get(), opts);
+						})
+
+						.catch(stderr);
+
+				} else {
+					this.emit('initLoad', get(), opts);
+				}
+			};
+
+			void this.lfc.execCbAfterBlockReady(() => {
+				if (this.isFunctional) {
+					this.nextTick(ready);
+
+				} else {
+					ready();
+				}
+			});
 		};
 
 		const doneOnError = (err) => {
