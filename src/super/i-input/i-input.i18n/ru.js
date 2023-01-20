@@ -7,5 +7,7 @@
  */
 
 module.exports = {
-	'Required field': 'Обязательное поле'
+	'i-input': {
+		'Required field': 'Обязательное поле'
+	}
 };
