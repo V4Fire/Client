@@ -1,3 +1,3 @@
 # tests/helpers/providers/pagination
 
-This module provides API to work request mocking.
+This module provides API to work with request mocking.

@@ -10,7 +10,10 @@ const requestStates: Dictionary<RequestState> = {
 };
 
 /**
- * Intercepts a `/pagination` request
+ * Provides an API to intercepts and mock response to the '/pagination' request.
+ * For convenient work, the interceptor processes the parameters passed to the request query -
+ * {@link RequestQuery possible parameters}.
+ *
  * @param pageOrContext
  */
 export async function interceptPaginationRequest(
