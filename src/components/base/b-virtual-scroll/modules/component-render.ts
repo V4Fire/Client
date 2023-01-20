@@ -175,18 +175,16 @@ export default class ComponentRender extends Friend {
 
 		const render = (children: DataToRender[]) => {
 			const map = ({itemAttrs, itemParams, index}) =>
-				this.ctx.$createElement(c.getItemComponentName(itemParams, index), itemAttrs);
+				this.ctx.vdom.create(c.getItemComponentName(itemParams, index), itemAttrs);
 
 			return <HTMLElement[]>c.vdom.render(children.map(map));
 		};
 
 		const getChildrenAttrs = (props: ItemAttrs) => ({
 			attrs: {
-				'v-attrs': {
-					...props,
-					class: [this.optionClass].concat(props.class ?? []),
-					style: props.style
-				}
+				...props,
+				class: [this.optionClass].concat(props.class ?? []),
+				style: props.style
 			}
 		});
 

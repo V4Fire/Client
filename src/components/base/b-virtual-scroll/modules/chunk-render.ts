@@ -195,7 +195,7 @@ export default class ChunkRender extends Friend {
 	 */
 	setRefVisibility(ref: keyof bVirtualScroll['$refs'], show: boolean, immediate: boolean = false): void {
 		const
-			refEl = this.refs[ref];
+			refEl = <CanUndef<HTMLElement>>this.refs[ref];
 
 		if (!refEl) {
 			return;
@@ -247,7 +247,7 @@ export default class ChunkRender extends Friend {
 			this.refsUpdateMap.forEach((show, ref) => {
 				const
 					state = show ? '' : 'none',
-					refEl = this.refs[ref];
+					refEl = <CanUndef<HTMLElement>>this.refs[ref];
 
 				if (!refEl) {
 					return;

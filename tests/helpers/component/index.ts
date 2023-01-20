@@ -17,6 +17,7 @@ import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
 /**
  * Class provides API to work with components on a page
  */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class Component {
 	/**
 	 * Creates components by the passed name and scheme and mounts them into the DOM tree
@@ -29,15 +30,14 @@ export default class Component {
 	 static async createComponents(
 		page: Page,
 		componentName: string,
-		scheme: RenderParams[],
-		opts?: RenderOptions
+		scheme: RenderComponentsVnodeParams[]
 	): Promise<void> {
 		const schemeAsString = expandedStringify(scheme);
 
-		await page.evaluate(([{componentName, schemeAsString, opts}]) => {
-			globalThis.renderComponents(componentName, schemeAsString, opts);
+		await page.evaluate(([{componentName, schemeAsString}]) => {
+			globalThis.renderComponents(componentName, schemeAsString);
 
-		}, [{componentName, schemeAsString, opts}]);
+		}, [{componentName, schemeAsString}]);
 	}
 
 	/**
@@ -51,8 +51,7 @@ export default class Component {
 	 static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
-		scheme?: Partial<RenderParams>,
-		opts?: RenderOptions
+		scheme?: RenderComponentsVnodeParams
 	): Promise<JSHandle<T>>;
 
 	/**
@@ -66,8 +65,7 @@ export default class Component {
 	 static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
-		scheme: RenderParams[],
-		opts?: RenderOptions
+		scheme: RenderComponentsVnodeParams[]
 	): Promise<undefined>;
 
 	/**
@@ -79,11 +77,10 @@ export default class Component {
 	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
-		scheme: Partial<RenderParams> | RenderParams[] = {},
-		opts?: RenderOptions
+		scheme: CanArray<RenderComponentsVnodeParams> = {}
 	): Promise<CanUndef<JSHandle<T>>> {
 		if (Array.isArray(scheme)) {
-			await this.createComponents(page, componentName, scheme, opts);
+			await this.createComponents(page, componentName, scheme);
 			return;
 		}
 
@@ -101,15 +98,10 @@ export default class Component {
 			}
 		]);
 
-		const normalizedOptions = {
-			...opts,
-			rootSelector: '#root-component'
-		};
+		await page.evaluate(([{componentName, schemeAsString}]) => {
+			globalThis.renderComponents(componentName, schemeAsString);
 
-		await page.evaluate(([{componentName, schemeAsString, normalizedOptions}]) => {
-			globalThis.renderComponents(componentName, schemeAsString, normalizedOptions);
-
-		}, [{componentName, schemeAsString, normalizedOptions}]);
+		}, [{componentName, schemeAsString}]);
 
 		return <Promise<JSHandle<T>>>this.getComponentByQuery(page, `[data-render-id="${renderId}"]`);
 	}

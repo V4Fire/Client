@@ -118,7 +118,7 @@ export default class ChunkRequest extends Friend {
 		this.currentAccumulatedData = undefined;
 		this.previousDataStore = undefined;
 
-		this.async.clearTimeout({label: $$.waitForInitCalls});
+		this.async.clearTimeout({label: 'chunkRequest.waitForInitCalls'});
 		this.async.cancelRequest({label: $$.request});
 	}
 
@@ -137,7 +137,7 @@ export default class ChunkRequest extends Friend {
 	 * Initializes the request module
 	 */
 	async init(): Promise<void> {
-		await this.async.sleep(15, {label: $$.waitForInitCalls});
+		await this.async.sleep(15, {label: 'chunkRequest.waitForInitCalls'});
 
 		const
 			{chunkSize, dataProvider} = this.ctx;
@@ -346,7 +346,7 @@ export default class ChunkRequest extends Friend {
 		void ctx.setMod('progress', true);
 
 		const
-			defaultRequestParams = ctx.getDefaultRequestParams('get'),
+			defaultRequestParams = ctx.dataProvider?.getDefaultRequestParams('get'),
 			params = <CanUndef<Dictionary>>(defaultRequestParams ?? [])[0];
 
 		Object.assign(params, ctx.requestQuery?.(ctx.getCurrentDataState())?.get);
