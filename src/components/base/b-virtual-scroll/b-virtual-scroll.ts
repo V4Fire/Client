@@ -42,7 +42,7 @@ import iData, {
 
 import ComponentRender from 'components/base/b-virtual-scroll/modules/component-render';
 import ChunkRender from 'components/base/b-virtual-scroll/modules/chunk-render';
-import ChunkRequest, { $$ as $$ChunkRequest } from 'components/base/b-virtual-scroll/modules/chunk-request';
+import ChunkRequest from 'components/base/b-virtual-scroll/modules/chunk-request';
 
 import { getRequestParams, isAsyncReplaceError } from 'components/base/b-virtual-scroll/modules/helpers';
 
@@ -261,18 +261,13 @@ export default class bVirtualScroll extends iData implements iItems {
 	protected localStateStore: LocalState = 'init';
 
 	// @ts-ignore (getter instead readonly)
-	protected override get requestParams(): RequestParams {
+	override get requestParams(): RequestParams {
 		return {
 			get: {
 				...this.requestQuery?.(this.getDataStateSnapshot())?.get,
 				...Object.isDictionary(this.request?.get) ? this.request?.get : undefined
 			}
 		};
-	}
-
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected override set requestParams(value: RequestParams) {
-		// Loopback
 	}
 
 	/**
@@ -305,7 +300,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	/** @emits `chunkLoading(page: number)` */
 	override initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
-		this.async.clearAll({label: $$ChunkRequest.waitForInitCalls});
+		this.async.clearAll({label: 'chunkRequest.waitForInitCalls'});
 
 		if (!this.lfc.isBeforeCreate()) {
 			this.reInit();
