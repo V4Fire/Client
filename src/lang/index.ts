@@ -22,18 +22,20 @@ const
 
 ctx.keys().forEach((path: string) => {
 	const
-		parsedPath = /\/([^/]*?)\.i18n\/(.*?)\.js$/i.exec(path);
+		parsedPath = /\/[^/]*?\.i18n\/(.*?)\.js$/i.exec(path);
 
 	if (parsedPath != null) {
 		const
-			[_, keysetName, lang] = parsedPath;
+			[_, lang] = parsedPath;
 
 		langPacs[lang] = langPacs[lang] ?? {};
 
-		langPacs[lang][keysetName] = {
-			...langPacs[lang][keysetName] != null ? langPacs[lang][keysetName] : {},
-			...ctx(path)
-		};
+		Object.keys(ctx(path)).forEach((keysetName) => {
+			langPacs[lang][keysetName] = {
+				...langPacs[lang][keysetName] != null ? langPacs[lang][keysetName] : {},
+				...ctx(path)[keysetName]
+			};
+		});
 	}
 });
 
