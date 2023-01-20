@@ -239,6 +239,10 @@ export default class bDynamicPage extends iDynamicPage {
 		return component.reload(params);
 	}
 
+	override canSelfDispatchEvent(_: string): boolean {
+		return true;
+	}
+
 	/**
 	 * Render loop filter (used with `asyncRender`)
 	 */
