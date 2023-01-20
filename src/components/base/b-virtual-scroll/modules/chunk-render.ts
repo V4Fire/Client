@@ -379,6 +379,7 @@ export default class ChunkRender extends Friend {
 				this.render();
 			}
 		}
+
 	}
 
 	/**
