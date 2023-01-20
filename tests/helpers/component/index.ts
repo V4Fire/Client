@@ -228,8 +228,4 @@ export default class Component {
 
 		return component;
 	}
-
-	private constructor() {
-		// ...
-	}
 }

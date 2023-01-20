@@ -11,7 +11,7 @@ import type { Page } from 'playwright';
 import Component from 'tests/helpers/component';
 import BOM from 'tests/helpers/bom';
 
-import type iStaticPage from 'super/i-static-page/i-static-page';
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 /**
  * Class provides API to work with an application router
