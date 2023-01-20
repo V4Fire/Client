@@ -107,7 +107,7 @@ export function beforeCreateState(
 			configurable: true,
 			enumerable: true,
 			writable: true,
-			value: root.$remoteParent ?? null
+			value: root.unsafe.$remoteParent ?? null
 		});
 	}
 
