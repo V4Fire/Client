@@ -17,7 +17,7 @@ export interface Item extends Super {
 	/**
 	 * Element identifier
 	 */
-	id: string;
+	// id: string;
 
 	/**
 	 * Item value

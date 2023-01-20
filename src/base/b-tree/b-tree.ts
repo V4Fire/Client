@@ -19,7 +19,7 @@ import symbolGenerator from 'core/symbol';
 
 import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
-import type iItems from 'traits/i-items/i-items';
+import iItems from 'traits/i-items/i-items';
 import iActiveItems from 'traits/i-active-items/i-active-items';
 import type { IterationKey } from 'traits/i-active-items/i-active-items';
 
@@ -32,7 +32,9 @@ import iData, {
 	TaskI,
 	wait,
 	system,
-	watch, computed
+	watch,
+	computed,
+	hook
 
 } from 'super/i-data/i-data';
 
@@ -44,7 +46,8 @@ export * from 'base/b-tree/interface';
 export const
 	$$ = symbolGenerator();
 
-interface bTree extends Trait<typeof iActiveItems> {}
+interface bTree extends Trait<typeof iActiveItems> {
+}
 
 /**
  * Component to render tree of any elements
@@ -162,15 +165,64 @@ class bTree extends iData implements iActiveItems {
 	 * @see [[iActiveItems.activeProp]]
 	 * @see [[iActiveItems.initActiveStore]]
 	 */
-	@system<bTree>((o) => o.sync.link((val) => {
-		if (o.top != null) {
-			return o.top.activeStore;
+	@system<bTree>((ctx) => ctx.sync.link((value) => {
+		if (ctx.top != null) {
+			return ctx.top.activeStore;
 		}
 
-		return iActiveItems.initActiveStore(o, val);
+		const
+			{multiple, activeStore} = ctx,
+			beforeDataCreate = ctx.hook === 'beforeDataCreate';
+
+		let
+			newVal;
+
+		if (value === undefined && beforeDataCreate) {
+			if (ctx.multiple) {
+				if (Object.isSet(ctx.activeStore)) {
+					return ctx.activeStore;
+				}
+
+				return new Set(Array.concat([], ctx.activeStore));
+			}
+
+			return ctx.activeStore;
+		}
+
+		if (multiple) {
+			newVal = new Set(Object.isSet(value) ? value : Array.concat([], value));
+
+			if (Object.fastCompare(newVal, activeStore)) {
+				return activeStore;
+			}
+
+		} else {
+			newVal = value;
+		}
+
+		if (beforeDataCreate) {
+			void ctx.waitStatus('ready').then(() => {
+				void Promise.resolve().then(() => ctx.setActive(newVal));
+			});
+
+		} else {
+			ctx.setActive(newVal);
+		}
+
+		if (multiple) {
+			return new Set();
+		}
 	}))
 
 	activeStore!: iActiveItems['activeStore'];
+
+	/** @see [[iActiveItems.prototype.indexes]] */
+	@system()
+	indexes: unknown[] = [];
+
+	/** @see [[iActiveItems.prototype.values]] */
+	@system()
+	values: Map<unknown, number> = new Map();
 
 	/** @inheritDoc */
 	protected override readonly $refs!: {
@@ -220,12 +272,20 @@ class bTree extends iData implements iActiveItems {
 	})
 
 	get activeElement(): iActiveItems['activeElement'] {
-		return iActiveItems.getActiveElement(this);
+		return iActiveItems.getActiveElement(this.top ?? this);
 	}
 
 	/** @see [[iActiveItems.active] */
 	get active(): iActiveItems['active'] {
-		return iActiveItems.getActive<bTree>(this);
+		return iActiveItems.getActive(this.top ?? this);
+	}
+
+	/**
+	 *  Sets an active to the active store
+	 *  @param value
+	 */
+	set active(value: this['Active']) {
+		(this.top ?? this).activeStore = value;
 	}
 
 	/**
@@ -237,7 +297,7 @@ class bTree extends iData implements iActiveItems {
 	 */
 	traverse(
 		ctx: bTree = this.top ?? this,
-		opts: {deep: boolean} = {deep: true}
+		opts: { deep: boolean } = {deep: true}
 	): IterableIterator<[this['Item'], bTree]> {
 		const
 			children = ctx.$refs.children ?? [],
@@ -285,7 +345,7 @@ class bTree extends iData implements iActiveItems {
 		}
 
 		const
-			isFolded = this.getFoldedModById(item.id) === 'true';
+			isFolded = this.getFoldedModById(item.value) === 'true';
 
 		if (isFolded) {
 			return SyncPromise.resolve(false);
@@ -314,14 +374,14 @@ class bTree extends iData implements iActiveItems {
 				.then((res) => res.some((value) => value === true));
 		}
 
-			const
-				isUnfolded = this.getFoldedModById(item.id) === 'false';
+		const
+			isUnfolded = this.getFoldedModById(item.value) === 'false';
 
-			if (isUnfolded) {
-				return SyncPromise.resolve(false);
-			}
+		if (isUnfolded) {
+			return SyncPromise.resolve(false);
+		}
 
-			return this.toggleFold(item);
+		return this.toggleFold(item);
 	}
 
 	/**
@@ -333,8 +393,8 @@ class bTree extends iData implements iActiveItems {
 	@wait('ready')
 	toggleFold(item: this['Item']): Promise<boolean> {
 		const
-			target = this.findItemNodeElement(item.id),
-			newVal = this.getFoldedModById(item.id) === 'false';
+			target = this.findItemNodeElement(item.value),
+			newVal = this.getFoldedModById(item.value) === 'false';
 
 		if (target != null && this.hasChildren(item)) {
 			this.block?.setElMod(target, 'node', 'folded', newVal);
@@ -346,8 +406,10 @@ class bTree extends iData implements iActiveItems {
 		return SyncPromise.resolve(false);
 	}
 
-	/** @see [[iActiveItems.syncItemsWatcher]] */
-	/** @see [[iActiveItems.initItemsMods]] */
+	/**
+	 *  @see [[iActiveItems.prototype.syncItemsWatcher]]
+	 *  @see [[iActiveItems.initItemsMods]]
+	 */
 	@watch({field: 'items', immediate: true})
 	@wait('ready')
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
@@ -357,9 +419,125 @@ class bTree extends iData implements iActiveItems {
 		}
 	}
 
+	/** @see [[iActiveItems.setActive]] */
+	setActive(value: Item['value'] | Set<Item['value']>, unsetPrevious: boolean = false): boolean {
+		const
+			ctx = this.top ?? this,
+			{nodeName, active, multiple} = ctx,
+			modName = 'active';
+
+		let
+			currentComponent: bTree | null = null,
+			res = false;
+
+		for (const [item, component] of ctx.traverse()) {
+			if (currentComponent !== component) {
+				currentComponent = component;
+
+				res = iActiveItems.addToActiveStore(component, value);
+			}
+
+			if (!res) {
+				continue;
+			}
+
+			const
+				{block: $b} = component.unsafe,
+				id = this.values.get(item.value),
+				itemEl = $b?.element(nodeName, {id});
+
+			const needSetActiveTrue = multiple && Object.isSet(value) ?
+				value.has(item.value) :
+				value === item.value;
+
+			const needSetActiveFalse = multiple && unsetPrevious && Object.isSet(active) ?
+				active.has(item.value) :
+				active === item.value;
+
+			if (needSetActiveTrue) {
+				$b?.setElMod(itemEl, nodeName, modName, true);
+
+				if (itemEl?.hasAttribute('aria-selected')) {
+					itemEl.setAttribute('aria-selected', 'true');
+				}
+
+			} else if (needSetActiveFalse) {
+				$b?.setElMod(itemEl, nodeName, modName, false);
+			}
+		}
+
+		ctx.emit('immediateChange', ctx.active);
+		ctx.emit('change', ctx.active);
+
+		return res;
+	}
+
+	/** @see [[iActiveItems.unsetActive]] */
+	unsetActive(value: Item['value'] | Set<Item['value']>): boolean {
+		const
+			ctx = this.top ?? this,
+			{nodeName, active, multiple} = ctx;
+
+		let
+			currentComponent: bTree | null = null,
+			res = false;
+
+		for (const [item, component] of ctx.traverse()) {
+			if (currentComponent !== component) {
+				currentComponent = component;
+
+				res = iActiveItems.removeFromActiveStorage(component, value);
+			}
+
+			if (!res) {
+				continue;
+			}
+
+			const
+				{block: $b} = component.unsafe,
+				id = this.values.get(item.value),
+				itemEl = $b?.element(nodeName, {id});
+
+			const needChangeMod = multiple && Object.isSet(value) ?
+				value.has(item.value) :
+				value === item.value;
+
+			if (needChangeMod) {
+				$b?.setElMod(itemEl, nodeName, 'active', false);
+
+				if (itemEl?.hasAttribute('aria-selected')) {
+					itemEl.setAttribute('aria-selected', 'false');
+				}
+			}
+
+			ctx.emit('immediateChange', active);
+			ctx.emit('change', active);
+		}
+
+			return res;
+	}
+
+	/** @see [[iActiveItems.prototype.initComponentValues]] */
+	@hook('beforeMount')
+	initComponentValues(): void {
+		const
+			ctx = this.top ?? this;
+
+		this.items.forEach((item) => {
+			const
+				val = item.value;
+
+			ctx.values.set(val, ctx.indexes.length);
+			ctx.indexes.push(val);
+		});
+
+		this.values = ctx.values;
+		this.indexes = ctx.indexes;
+	}
+
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
-		return iActiveItems.getItemKey(this, item, i);
+		return iItems.getItemKey(this, item, i);
 	}
 
 	protected override initRemoteData(): CanUndef<this['items']> {
@@ -470,9 +648,9 @@ class bTree extends iData implements iActiveItems {
 	 * @param e
 	 * @emits `actionChange(active: this['Active'])`
 	 */
-	@watch({
+	@watch<bTree>({
 		field: '?$el:click',
-		wrapper: (o, cb) => o.dom.delegateElement('item-wrapper', cb)
+		wrapper: (o, cb) => o.dom.delegateElement(o.nodeName, cb)
 	})
 
 	protected onItemClick(e: Event): void {
@@ -486,9 +664,9 @@ class bTree extends iData implements iActiveItems {
 		target = <Element>e.delegateTarget;
 
 		const
-			id = target.getAttribute('data-id') ?? '';
+			id = Number(target.getAttribute('data-id'));
 
-		this.toggleActive(id);
+		this.toggleActive(this.indexes[id]);
 		this.emit('actionChange', this.active);
 	}
 }
