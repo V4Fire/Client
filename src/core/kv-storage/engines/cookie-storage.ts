@@ -42,7 +42,7 @@ export default class CookieStorageEngine {
 			throw new Error(`Forbidden character used in cookie storage key: ${key}, value: ${String(value)}`);
 		}
 
-		this.updateValues([{key, value}]);
+		this.updateValues([{key, value: String(value)}]);
 	}
 
 	/** @see SyncStorageNamespace.remove */
