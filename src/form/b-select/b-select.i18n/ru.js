@@ -7,5 +7,7 @@
  */
 
 module.exports = {
-	'Required field': 'Обязательное поле'
+	'b-select': {
+		'Required field': 'Обязательное поле'
+	}
 };

@@ -7,5 +7,7 @@
  */
 
 module.exports = {
-	'Required field': 'Обязательное поле'
+	'b-checkbox': {
+		'Required field': 'Обязательное поле'
+	}
 };

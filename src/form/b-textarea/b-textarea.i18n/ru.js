@@ -7,5 +7,7 @@
  */
 
 module.exports = {
-	'Characters left: {limit}': 'Символов осталось: {limit}'
+	'b-text-area': {
+		'Characters left: {limit}': 'Символов осталось: {limit}'
+	}
 };

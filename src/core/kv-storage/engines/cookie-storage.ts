@@ -33,13 +33,13 @@ export default class CookieStorageEngine {
 	}
 
 	/** @see SyncStorageNamespace.set */
-	set(key: string, value: string): void {
+	set(key: string, value: unknown): void {
 		const
 			dividersValues = Object.values(cookieStorageDividers),
-			isForbiddenCharacterUsed = dividersValues.some((el) => key.includes(el) || value.includes(el));
+			isForbiddenCharacterUsed = dividersValues.some((el) => key.includes(el) || String(value).includes(el));
 
 		if (isForbiddenCharacterUsed) {
-			throw new Error(`Forbidden character used in cookie storage key: ${key}, value: ${value}`);
+			throw new Error(`Forbidden character used in cookie storage key: ${key}, value: ${String(value)}`);
 		}
 
 		this.updateValues([{key, value}]);
