@@ -277,6 +277,7 @@ class bTree extends iData implements iActiveItems {
 
 	/** @see [[iActiveItems.active] */
 	get active(): iActiveItems['active'] {
+		console.log(this);
 		return iActiveItems.getActive(this.top ?? this);
 	}
 
@@ -420,25 +421,25 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.setActive]] */
-	setActive(value: Item['value'] | Set<Item['value']>, unsetPrevious: boolean = false): boolean {
+	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const
 			ctx = this.top ?? this,
 			{nodeName, active, multiple} = ctx,
 			modName = 'active';
 
 		let
-			currentComponent: bTree | null = null,
-			res = false;
+			isActiveSet = false;
 
 		for (const [item, component] of ctx.traverse()) {
-			if (currentComponent !== component) {
-				currentComponent = component;
+			if (!isActiveSet) {
+				isActiveSet = true;
 
-				res = iActiveItems.addToActiveStore(component, value);
-			}
+				const
+					res = addToActiveStore();
 
-			if (!res) {
-				continue;
+				if (!res) {
+					return res;
+				}
 			}
 
 			const
@@ -469,28 +470,74 @@ class bTree extends iData implements iActiveItems {
 		ctx.emit('immediateChange', ctx.active);
 		ctx.emit('change', ctx.active);
 
-		return res;
+		return true;
+
+		function addToActiveStore(): boolean {
+			const
+				{multiple} = ctx,
+				{active} = ctx;
+
+			if (multiple) {
+				if (!Object.isSet(active)) {
+					return false;
+				}
+
+				let
+					res = false;
+
+				const set = (value) => {
+					if (active.has(value)) {
+						return;
+					}
+
+					active.add(value);
+					res = true;
+				};
+
+				if (Object.isSet(value)) {
+					Object.forEach(value, set);
+
+				} else {
+					set(value);
+				}
+
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (!res) {
+					return false;
+				}
+
+				ctx.active = active;
+
+			} else if (active === value) {
+				return false;
+
+			} else {
+				ctx.active = value;
+			}
+
+			return true;
+		}
 	}
 
 	/** @see [[iActiveItems.unsetActive]] */
-	unsetActive(value: Item['value'] | Set<Item['value']>): boolean {
+	unsetActive(value: this['Active']): boolean {
 		const
 			ctx = this.top ?? this,
 			{nodeName, active, multiple} = ctx;
 
 		let
-			currentComponent: bTree | null = null,
-			res = false;
+			isValueRemoved = false;
 
 		for (const [item, component] of ctx.traverse()) {
-			if (currentComponent !== component) {
-				currentComponent = component;
+			if (!isValueRemoved) {
+				isValueRemoved = true;
 
-				res = iActiveItems.removeFromActiveStorage(component, value);
-			}
+				const
+					res = removeFromActiveStorage();
 
-			if (!res) {
-				continue;
+				if (!res) {
+					return res;
+				}
 			}
 
 			const
@@ -514,7 +561,52 @@ class bTree extends iData implements iActiveItems {
 			ctx.emit('change', active);
 		}
 
-			return res;
+		return true;
+
+		function removeFromActiveStorage(): boolean {
+			const
+				{multiple, cancelable, active} = ctx;
+
+			if (multiple) {
+				if (!Object.isSet(active)) {
+					return false;
+				}
+
+				let
+					res = false;
+
+				const unset = (value) => {
+					if (!active.has(value) || cancelable === false) {
+						return false;
+					}
+
+					active.delete(value);
+					res = true;
+				};
+
+				if (Object.isSet(value)) {
+					Object.forEach(value, unset);
+
+				} else {
+					unset(value);
+				}
+
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (!res) {
+					return false;
+				}
+
+				ctx.active = active;
+
+			} else if (active !== value || cancelable !== true) {
+				return false;
+
+			} else {
+				ctx.active = undefined;
+			}
+
+			return true;
+		}
 	}
 
 	/** @see [[iActiveItems.prototype.initComponentValues]] */

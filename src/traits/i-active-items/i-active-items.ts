@@ -166,10 +166,11 @@ export default abstract class iActiveItems extends iItems {
 		return Object.throw();
 	}
 
-	static getActive<T extends iBlock & iActiveItems>(ctx: T): iActiveItems['Active'] {
+	static getActive(ctx: Component): iActiveItems['Active'] {
+
 		const
 			v = ctx.field.get<iActiveItems['Active']>('activeStore');
-
+		console.trace(v)
 		if (ctx.multiple) {
 			return Object.isSet(v) ? new Set(v) : new Set();
 		}
