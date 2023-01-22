@@ -17,24 +17,17 @@
 			:key = getItemKey(el, i)
 		.
 			< .&__node &
-				:-id = dom.getId(el.value) |
+				:-id = values.get(el.value) |
 				:-level = level |
 				:class = provide.elClasses({
 					node: {
 						level,
-						...(hasChildren(el) && {folded: getFoldedPropValue(el)})
+						...(hasChildren(el) && {folded: getFoldedPropValue(el)}),
+						...el.mods
 					}
 				})
 			.
-				< div &
-					:-id = values.get(el.value) |
-
-					:class = provide.elClasses({
-						'item-wrapper': {
-							...el.mods
-						}
-					})
-				.
+				< .&__item-wrapper
 					< .&__marker
 						- block fold
 							< template v-if = hasChildren(el)

@@ -41,6 +41,8 @@ export interface Item extends Super {
 	folded?: boolean;
 }
 
+export type Items = Item[];
+
 export interface RenderFilter {
 	(ctx: bTree, el: Item, i: number, task: TaskI): CanPromise<boolean>;
 }
