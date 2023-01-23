@@ -125,6 +125,11 @@ interface RenderParams<A extends object = Dictionary> {
 
 	/** @see [[RenderContent]] */
 	content?: Dictionary<RenderContent | RenderContentFn | string>;
+
+	/**
+	 * List of component events to listen to
+	 */
+	events?: string[];
 }
 
 /**
