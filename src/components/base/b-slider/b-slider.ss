@@ -19,13 +19,7 @@
 
 	- block body
 		: putIn content
-			< template v-if = item || option
-				/*
-				 * @deprecated
-				 * @see beforeItems
-				 */
-				+= self.slot('beforeOptions')
-
+			< template v-if = item
 				+= self.slot('beforeItems')
 
 				< template &
@@ -36,12 +30,6 @@
 						:is = getItemComponentName(el, i) |
 						:v-attrs = getItemAttrs(el, i)
 					.
-
-				/*
-				 * @deprecated
-				 * @see beforeItems
-				 */
-				+= self.slot('afterOptions')
 
 				+= self.slot('afterItems')
 
