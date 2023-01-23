@@ -189,7 +189,7 @@ export function fillMeta(
 		}
 
 		component.methods[name] = wrapper;
-		Object.defineProperty(wrapper, 'length', {value: method.fn.length});
+		Object.defineProperty(wrapper, 'length', {get: () => method.fn.length});
 
 		function wrapper(this: object) {
 			// eslint-disable-next-line prefer-rest-params
