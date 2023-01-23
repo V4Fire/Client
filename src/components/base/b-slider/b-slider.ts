@@ -152,7 +152,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	readonly itemKey?: iItems['itemKey'];
 
 	/** @see [[iItems.itemProps]] */
-	@prop({type: [Function, Object]})
+	@prop({type: [Function, Object], required: false})
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
