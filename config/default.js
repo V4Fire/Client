@@ -1079,7 +1079,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	typograf() {
 		return {
-			locale: this.locale
+			// Typograf dont support en locale
+			locale: this.locale === 'en' ? 'en-US' : this.locale
 		};
 	},
 
