@@ -18,7 +18,6 @@ import 'models/demo/list';
 import symbolGenerator from 'core/symbol';
 
 import { derive } from 'core/functools/trait';
-import { deprecated, deprecate } from 'core/functools';
 
 import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
@@ -204,15 +203,6 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * @deprecated
-	 * @see [[bSlider.isSlideMode]]
-	 */
-	@deprecated({renamedTo: 'isSlideMode'})
-	get isSlider(): boolean {
-		return this.isSlideMode;
-	}
-
-	/**
 	 * True if a slider mode is `slide`.
 	 */
 	get isSlideMode(): boolean {
@@ -263,20 +253,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	protected currentStore: number = 0;
 
 	/** @see [[bSlider.modeProp]] */
-	@field((o) => o.sync.link((value: Mode) => {
-		if (value === 'slider') {
-			deprecate({
-				name: 'slider',
-				type: 'property',
-				renamedTo: 'slide'
-			});
-
-			return 'slide';
-		}
-
-		return value;
-	}))
-
+	@field((o) => o.sync.link())
 	protected mode!: Mode;
 
 	protected override readonly $refs!: iData['$refs'] & {
@@ -501,15 +478,6 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	protected getItemComponentName(el: this['Item'], i: number): string {
 		const {item} = this;
 		return Object.isFunction(item) ? item(el, i) : <string>item;
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[bSlider.getItemKey]]
-	 */
-	@deprecated({renamedTo: 'getItemKey'})
-	protected getOptionKey(el: this['Item'], i: number): CanUndef<IterationKey> {
-		return this.getItemKey(el, i);
 	}
 
 	/** @see [[iItems.getItemKey]] */
