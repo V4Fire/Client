@@ -134,7 +134,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				const
 					route = routes[routeKeys[i]];
 
-				if (!route) {
+				if (route == null) {
 					continue;
 				}
 
@@ -163,7 +163,11 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		}
 
 		if (resolvedRoute == null) {
-			break;
+			resolvedRoute = defaultRoute;
+
+			if (resolvedRoute == null) {
+				break;
+			}
 		}
 
 		const
@@ -197,11 +201,11 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	}
 
 	// We didn't find the route by the provided ref, so we need to find the "default" route as loopback
-	if (!resolvedRoute) {
+	if (resolvedRoute == null) {
 		resolvedRoute = defaultRoute;
 
 	// We found a route from the provided link, but it contains an alias
-	} else if (alias) {
+	} else if (alias != null) {
 		resolvedRoute = {
 			...resolvedRoute,
 			...Object.select(alias, [
