@@ -1,10 +1,10 @@
-import { factory } from '@super/core/kv-storage';
+import { factory } from '@v4fire/core/core/kv-storage';
 
 import type { SyncStorage } from 'core/kv-storage/interface';
 
 import CookieStorageEngine from 'core/kv-storage/engines/cookie-storage';
 
-export * from '@super/core/kv-storage';
+export * from '@v4fire/core/core/kv-storage';
 
 /**
  * Factory to create storage based on cookies
