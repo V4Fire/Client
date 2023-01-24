@@ -8,9 +8,6 @@
 
 import type { Pattern } from 'core/browser/interface';
 
-const
-	{userAgent} = navigator;
-
 /**
  * Accepts the given pattern and returns the tuple `[browserName, browserVersion?[]]` if the pattern matches
  * `navigator.userAgent`. Otherwise, it returns `false`.
@@ -22,6 +19,9 @@ export function match(pattern: Pattern): [string, number[] | null] | false {
 	if (typeof navigator === 'undefined') {
 		return false;
 	}
+
+	const
+		{userAgent} = navigator;
 
 	let
 		name: CanUndef<string>,
