@@ -1377,7 +1377,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * A list of keysets names used for translation
 	 * In a build time overrides with inheritance chain of component
 	 */
-	@system()
+	@system({unique: true})
 	protected readonly componentI18nKeysets: string[] = [this.componentName];
 
 	/**
