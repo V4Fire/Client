@@ -196,20 +196,18 @@ export default abstract class iActiveItems extends iItems {
 	/**
 	 * Initializes component mods
 	 */
-	static initItemsMods(ctx: Component): void {
-		ctx.items?.forEach((item) => {
-			const
-				{active, value} = item;
+	static initItemMods(ctx: Component, item: Item): void {
+		item.mods ??= {};
 
-			item.mods ??= {};
+		const
+			{mods, active, value} = item;
 
-			item.mods.id = ctx.values.get(item.value);
-			item.mods.active = active ?? false;
+		mods.id = ctx.values.get(value);
+		mods.active = false;
 
-			if (active && (ctx.multiple ? ctx.activeProp === undefined : ctx.activeStore === undefined)) {
-				void Promise.resolve().then(() => ctx.setActive(value));
-			}
-		});
+		if (active && (ctx.multiple ? ctx.activeProp === undefined : ctx.activeStore === undefined)) {
+			void Promise.resolve().then(() => ctx.setActive(value));
+		}
 	}
 
 	static addToActiveStore(ctx: Component, value: iActiveItems['Active']): boolean {

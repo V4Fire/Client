@@ -154,13 +154,7 @@ class bTree extends iData implements iActiveItems {
 	readonly cancelable?: boolean;
 
 	/** @see [[iItems.items]] */
-	@field<bTree>((o) => o.sync.link<Items>((val) => {
-		if (o.dataProvider != null) {
-			return <CanUndef<Items>>o.items ?? [];
-		}
-
-		return o.normalizeItems(val);
-	}))
+	@field<bTree>((o) => o.sync.link<Items>((val) => o.normalizeItems(val)))
 
 	items!: this['Items'];
 
@@ -420,11 +414,11 @@ class bTree extends iData implements iActiveItems {
 	 *  @see [[iActiveItems.prototype.syncItemsWatcher]]
 	 *  @see [[iActiveItems.initItemsMods]]
 	 */
-	@watch({field: 'items', immediate: true})
+	@watch({field: 'items'})
 	@wait('ready')
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
-			iActiveItems.initItemsMods(this);
+			this.initComponentValues();
 			this.emit('itemsChange', items);
 		}
 	}
@@ -452,7 +446,7 @@ class bTree extends iData implements iActiveItems {
 			}
 
 			const
-				{block: $b} = component.unsafe,
+				{block: $b} = component,
 				id = this.values.get(item.value),
 				itemEl = $b?.element('node', {id});
 
@@ -473,11 +467,8 @@ class bTree extends iData implements iActiveItems {
 					itemEl.setAttribute('aria-selected', 'true');
 				}
 
-				break;
-
 			} else if (needSetActiveFalse || multiple && unsetPrevious) {
 				$b?.setElMod(itemEl, 'node', modName, false);
-				break;
 			}
 		}
 
@@ -619,13 +610,22 @@ class bTree extends iData implements iActiveItems {
 		const
 			ctx = this.top ?? this;
 
+		if (this.hook !== 'beforeMount') {
+			ctx.values = new Map();
+			ctx.indexes = [];
+			ctx.valuesToItems = new Map();
+		}
+
 		this.items.forEach((item) => {
 			const
-				val = item.value;
+				{value} = item,
+				{length} = ctx.indexes;
 
-			ctx.values.set(val, ctx.indexes.length);
-			ctx.indexes.push(val);
-			ctx.valuesToItems.set(val, item);
+				ctx.values.set(value, length);
+				ctx.indexes[length] = value;
+				ctx.valuesToItems.set(value, item);
+
+				iActiveItems.initItemMods(ctx, item);
 		});
 
 		this.values = ctx.values;
@@ -670,7 +670,7 @@ class bTree extends iData implements iActiveItems {
 	protected getItemProps(item: this['Item'], i: number): Dictionary {
 		const
 			op = this.itemProps,
-			props = Object.reject(item, ['id', 'parentId', 'children', 'folded']);
+			props = Object.reject(item, ['value', 'parentValue', 'children', 'folded']);
 
 		if (op == null) {
 			return props;
@@ -736,15 +736,15 @@ class bTree extends iData implements iActiveItems {
 	 * Normalizes the specified items and returns it
 	 *
 	 * @param items
-	 * @param parentId
+	 * @param parentValue
 	 */
-	protected normalizeItems(items: CanUndef<this['Items']> = this.items, parentId?: string): this['Items'] {
+	protected normalizeItems(items: CanUndef<this['Items']> = this.items, parentValue?: string): this['Items'] {
 		 const
 			 normalizedItems: this['Items'] = [];
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		items?.forEach((item, i) => {
-			item.parentId ??= parentId;
+			item.parentValue ??= parentValue;
 
 			normalizedItems[i] = {...item};
 
@@ -757,10 +757,13 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	protected unfoldAllParents(item?: this['Item']): void {
-		if (item?.parentId != null) {
-			void this.unfold(item.parentId);
+		const
+			{parentValue} = item ?? {};
 
-			this.unfoldAllParents(this.valuesToItems.get(item.parentId));
+		if (parentValue != null) {
+			void this.unfold(parentValue);
+
+			this.unfoldAllParents(this.valuesToItems.get(parentValue));
 		}
 	}
 
@@ -768,7 +771,7 @@ class bTree extends iData implements iActiveItems {
 	 * Handler: fold element has been clicked
 	 * @param item
 	 */
-	protected onFoldClick(item: Item): void {
+	protected onFoldClick(item: this['Item']): void {
 		void this.toggleFold(item.value);
 	}
 
@@ -789,7 +792,7 @@ class bTree extends iData implements iActiveItems {
 		let
 			target = <Element>e.target;
 
-		if (!target.matches(this.block?.getElSelector('item-wrapper') ?? '')) {
+		if (target.matches(this.block?.getElSelector('fold') ?? '')) {
 			return;
 		}
 
