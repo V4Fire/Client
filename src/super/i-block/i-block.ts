@@ -2415,6 +2415,20 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * A function for using translations inside traits. Due to the fact that
+	 * traits are called in the context of components. The standard i18n
+	 * is not suitable and you need to explicitly pass the name of the keyset(traitName)
+	 *
+	 * @param traitName - name of trait
+	 * @param key - key for translate
+	 * @param params - params for i18n (variables, pluralize, etc)
+	 * @returns string
+	 */
+	protected i18nForTraits(traitName: string, key: string, params: CanUndef<I18nParams>): string {
+		return i18n(traitName)(key, params);
+	}
+
+	/**
 	 * Waits until the specified reference won't be available and returns it.
 	 * The method returns a promise.
 	 *
