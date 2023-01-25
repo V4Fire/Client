@@ -159,7 +159,8 @@ class bTree extends iData implements iActiveItems {
 
 	/**
 	 * @see [[iActiveItems.activeProp]]
-	 * @see [[iActiveItems.initActiveStore]]
+	 * @see [[iActiveItems.activeStore]]
+	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	@system<bTree>((ctx) => ctx.sync.link((value) => {
 		if (ctx.top != null) {
@@ -410,10 +411,7 @@ class bTree extends iData implements iActiveItems {
 	@watch({field: 'items'})
 	@wait('ready')
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-		if (!Object.fastCompare(items, oldItems)) {
-			this.initComponentValues();
-			this.emit('itemsChange', items);
-		}
+		iActiveItems.syncItemsWatcher(this, items, oldItems);
 	}
 
 	/** @see [[iActiveItems.prototype.setActive]] */

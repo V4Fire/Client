@@ -57,12 +57,11 @@ export default abstract class iActiveItems extends iItems {
 	 * If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
 	 *
 	 * @see [[iActiveItems.activeProp]]
-	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	abstract activeStore: this['Active'];
 
 	/**
-	 * Map of item indexes and their values
+	 * Array of item indexes and their values
 	 */
 	abstract indexes: unknown;
 
@@ -135,7 +134,7 @@ export default abstract class iActiveItems extends iItems {
 		});
 	};
 
-	/** @see [[iActiveItems.isActive]] */
+	/** @see [[iActiveItems.prototype.isActive]] */
 	static isActive: AddSelf<iActiveItems['isActive'], Component> = (ctx, value: Item['value']) => {
 		const
 			activeStore = ctx.field.get('activeStore');
@@ -150,6 +149,14 @@ export default abstract class iActiveItems extends iItems {
 
 		return value === activeStore;
 	};
+
+	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
+	static syncItemsWatcher(ctx: Component, items: Item[], oldItems: Item[]): void {
+		if (!Object.fastCompare(items, oldItems)) {
+			ctx.initComponentValues();
+			ctx.emit('itemsChange', items);
+		}
+	}
 
 	/**
 	 * Initializes component mods
@@ -168,6 +175,9 @@ export default abstract class iActiveItems extends iItems {
 		}
 	}
 
+	/**
+	 * Adds the specified value to the component's active store
+	 */
 	static addToActiveStore(ctx: Component, value: iActiveItems['Active']): boolean {
 		const
 			{multiple, active} = ctx;
@@ -213,6 +223,9 @@ export default abstract class iActiveItems extends iItems {
 		return true;
 	}
 
+	/**
+	 * Removes the specified value from the component's active store
+	 */
 	static removeFromActiveStorage(ctx: Component, value: iActiveItems['Active']): boolean {
 		const
 			{multiple, cancelable, active} = ctx;
@@ -294,6 +307,8 @@ export default abstract class iActiveItems extends iItems {
 	 *
 	 * @param value
 	 * @param [unsetPrevious] - true, if needed to unset previous active items (works only with the `multiple` mode)
+	 * @emits `change(active: unknown)`
+	 * @emits `immediateChange(active: unknown)`
 	 */
 	abstract toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'];
 
