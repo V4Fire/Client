@@ -15,20 +15,15 @@ import type { Item as Super } from 'traits/i-active-items/i-active-items';
  */
 export interface Item extends Super {
 	/**
-	 * Element identifier
-	 */
-	// id: string;
-
-	/**
 	 * Item value
 	 */
 	value: string;
 
 	/**
-	 * Parent element identifier
+	 * Parent element value
 	 * (for nested items)
 	 */
-	parentId?: string;
+	parentValue?: string;
 
 	/**
 	 * Nested items
