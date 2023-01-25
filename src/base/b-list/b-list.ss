@@ -39,8 +39,6 @@
 
 						:class = el.classes.concat(provide.elClasses({
 							link: {
-								id: values.get(el.value),
-								active: isActive(el.value),
 								exterior: el.exterior,
 								hidden: el.hidden,
 								progress: el.progress,
