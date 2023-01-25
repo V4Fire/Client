@@ -57,7 +57,7 @@ module.exports = (page) => {
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false))
 				.toBeResolvedTo(true);
 
-			await page.waitForTimeout(100);
+			await waitForItemsRender(9);
 
 			const
 				promises = await Promise.all(checkOptionTree({items: defaultItems, target})),
@@ -155,12 +155,12 @@ module.exports = (page) => {
 				}
 			});
 
-			await waitForCheckboxCount(2);
-			await waitForCheckboxCount(3);
-			await waitForCheckboxCount(4);
-			await waitForCheckboxCount(5);
-			await waitForCheckboxCount(6);
-			await waitForCheckboxCount(7);
+			await waitForItemsRender(2);
+			await waitForItemsRender(3);
+			await waitForItemsRender(4);
+			await waitForItemsRender(5);
+			await waitForItemsRender(6);
+			await waitForItemsRender(7);
 		});
 
 		async function init({items, attrs, content} = {}) {
@@ -211,7 +211,7 @@ module.exports = (page) => {
 	describe('b-tree rendering data from a data provider', () => {
 		it('initialization', async () => {
 			await init();
-			await waitForCheckboxCount(14);
+			await waitForItemsRender(14);
 			await h.bom.waitForIdleCallback(page);
 
 			expect((await page.$$('.b-checkbox')).length).toBe(14);
@@ -248,7 +248,7 @@ module.exports = (page) => {
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false))
 				.toBeResolvedTo(true);
 
-			await page.waitForTimeout(100);
+			await waitForItemsRender(9, '[data-test-ref]');
 
 			const
 				promises = await Promise.all(checkOptionTree({items: defaultItems, target})),
@@ -377,9 +377,9 @@ module.exports = (page) => {
 		}
 	});
 
-	async function waitForCheckboxCount(v) {
-		await page.waitForFunction((v) => document.querySelectorAll('.b-checkbox').length === v, v);
-		await expect((await page.$$('.b-checkbox')).length).toBe(v);
+	async function waitForItemsRender(v, selector = '.b-checkbox') {
+		await page.waitForFunction(([v, selector]) => document.querySelectorAll(selector).length === v, [v, selector]);
+		await expect((await page.$$(selector)).length).toBe(v);
 	}
 
 	function getFoldedClass(target, value = true) {
