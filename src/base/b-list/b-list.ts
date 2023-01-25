@@ -141,7 +141,11 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@system()
 	values: Map<unknown, number> = new Map();
 
-	/** @see [[iActiveItems.prototype.activeStore] */
+	/**
+	 * @see [[iActiveItems.activeProp]]
+	 * @see [[iActiveItems.activeStore]]
+	 * @emits `immediateChange(active: CanArray<unknown>)`
+	 */
 	@system<bList>((o) => o.sync.link((val) => {
 		const
 			beforeDataCreate = o.hook === 'beforeDataCreate';
@@ -413,16 +417,12 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
 	@watch(['value', 'itemsStore'])
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-		if (!Object.fastCompare(items, oldItems)) {
-			this.initComponentValues();
-			this.emit('itemsChange', items);
-		}
+		iActiveItems.syncItemsWatcher(this, items, oldItems);
 	}
 
 	/** @see [[iActiveItems.prototype.initComponentValues]] */
 	@hook('beforeDataCreate')
 	initComponentValues(): void {
-		debugger
 		for (let i = 0; i < this.items.length; i++) {
 			const
 				item = this.items[i],

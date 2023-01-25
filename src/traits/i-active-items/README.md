@@ -1,95 +1,118 @@
 # traits/i-access
 
-This module provides a trait for a component that needs to implement the "accessibility" behavior, like "focusing" or "disabling".
+This module provides a trait for a component that renders a list of items and need a behavior of changing active items.
+This trait is an extension of [[iItems]].
+
+Take a look at [[bList]] to see more.
 
 ## Synopsis
 
 * This module provides an abstract class, not a component.
 
-* The trait uses `aria` attributes.
+* The trait contains TS logic.
 
-* The trait contains TS logic and default styles.
+## Associated types
 
-## Modifiers
-
-| Name       | Description                                                                                  | Values    | Default |
-|------------|----------------------------------------------------------------------------------------------|-----------|---------|
-| `disabled` | The component is disabled. All actions, like, `input` or `click`, are prevented              | `boolean` | -       |
-| `focused`  | The component in focus. Form components can force the showing of native UI, like a keyboard. | `boolean` | -       |
-
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
-
-```typescript
-import iAccess from 'traits/i-access/i-access';
-
-export default class bButton implements iAccess {
-  static override readonly mods: ModsDecl = {
-    ...iAccess.mods
-  }
-}
-```
+The trait declares associated type to specify a type of component active item: **Active**.
 
 ## Events
 
-| Name      | Description                      | Payload description | Payload |
-|-----------|----------------------------------|---------------------|---------|
-| `enable`  | The component has been enabled   | -                   | -       |
-| `disable` | The component has been disabled  | -                   | -       |
-| `focus`   | The component in focus           | -                   | -       |
-| `blur`    | The component has lost the focus | -                   | -       |
+| EventName         | Description                                                                                                                 | Payload description                   | Payload  |
+|-------------------|-----------------------------------------------------------------------------------------------------------------------------|---------------------------------------|----------|
+| `change`          | An active item of the component has been changed                                                                            | Active value or a set of active items | `Active` |
+| `immediateChange` | An active item of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active items | `Active` |
+| `actionChange`    | An active item of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |
+| `itemsChange`     | A list of items has been changed                                                                                            | List of items                         | `Items`  |
 
-To support these events, override `initModEvents` in your component and invoke a helper method from the trait.
+Component need to support `change`, `immediateChange`, `actionChange` events in methods, in description of which it is indicated.
+`itemsChange` event is supported in static `syncItemsWatcher` method.
 
 ```typescript
-import iAccess from 'traits/i-access/i-access';
+import iActiveItems from 'traits/i-active-items/i-active-items';
 
-export default class bButton implements iAccess {
-  /** @override */
-  protected initModEvents(): void {
-    super.initModEvents();
-    iAccess.initModEvents(this);
+export default class bCustomList implements iActiveItems {
+  /** @see [[iActiveItems.prototype.syncItemsWatcher]] */
+  @watch(['items'])
+  syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+    iActiveItems.syncItemsWatcher(this, items, oldItems);
   }
 }
 ```
 
 ## Props
 
-The trait specifies two optional props.
+The trait specifies a bunch of optional props.
 
-### [autofocus]
+### [active]
 
-A boolean prop which, if present, indicates that the component should automatically
-have focus when the page has finished loading (or when the `<dialog>` containing the element has been displayed).
+An initial component active item/s value.
+If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items values.
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautofocus).
+```snakeskin
+< b-tree :items = [{value: 0, label: 'Foo'}, {value: 1, label: 'Bar'}] | :active = 0
+```
 
-### [tabIndex]
+### [multiple]
 
-An integer prop indicating if the component can take input focus (is focusable),
-if it should participate to sequential keyboard navigation.
+If true, the component supports a feature of multiple active items.
 
-As all input types except for input of type hidden are focusable, this attribute should not be used on
-form controls, because doing so would require the management of the focus order for all elements within
-the document with the risk of harming usability and accessibility if done incorrectly.
+### [cancelable]
 
-[See more](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input).
+If true, the active item can be unset by using another click to it.
+By default, if the component is switched to the `multiple` mode, this value is set to `true`,
+otherwise to `false`.
+
+## Internal fields
+
+### [activeStore]
+
+An internal component active item store.
+If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
+
+### [indexes]
+
+Map of item values and their indexes
+
+### [values]
+
+An internal component active item store.
+If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
 
 ## Accessors
 
-The trait specifies a getter to determine when the component in focus or not.
+### activeElement
 
-### isFocused
-
-True if the component in focus.
-The getter has the default implementation via a static method `iAccess.isFocused`.
+A link to the active item element.
+If the component is switched to the `multiple` mode, the getter will return an array of elements.
 
 ```typescript
-import iAccess from 'traits/i-access/i-access';
+import iActiveItems from 'traits/i-active-items/i-active-items';
 
-export default class bButton implements iAccess {
-  /** @see iAccess.isFocused */
-  get isFocused(): Promise<boolean> {
-    return iAccess.isFocused(this);
+export default class bCustomList implements iActiveItems {
+  /** @see iAccess.prototype.activeElement */
+  get activeElement(): iActiveItems['activeElement'] {
+    return iActiveItems.getActiveElement(this, 'link');
+  }
+}
+```
+
+### active
+
+Getter and setter of a component active item/s.
+If the component is switched to the `multiple` mode, the getter will return a `Set` object.
+
+```typescript
+import iActiveItems from 'traits/i-active-items/i-active-items';
+
+export default class bCustomList implements iActiveItems {
+  /** @see [[iActiveItems.prototype.active] */
+  get active(): iActiveItems['active'] {
+    return iActiveItems.getActive(this.top ?? this);
+  }
+
+  /** @see [[iActiveItems.prototype.active] */
+  set active(value: this['Active']) {
+    (this.top ?? this).field.set('activeStore', value);
   }
 }
 ```
@@ -98,118 +121,162 @@ export default class bButton implements iAccess {
 
 The trait specifies a bunch of methods to implement.
 
-### enable
+### isActive
 
-Enables the component.
-The method has the default implementation.
+Returns true if the specified value is active.
 
 ```typescript
-import iAccess from 'traits/i-access/i-access';
+import iActiveItems from 'traits/i-active-items/i-active-items';
 
-export default class bButton implements iAccess {
-  /** @see iAccess.enable */
-  enable(): Promise<boolean> {
-    return iAccess.enable(this);
+export default class bCustomList implements iActiveItems {
+  /** @see iAccess.prototype.activeElement */
+  isActive(value: Item['value']): boolean {
+    return iActiveItems.isActive(this);
   }
 }
 ```
 
-### disable
+### setActive
 
-Disables the component.
-The method has the default implementation.
+Activates an item by the specified value.
+If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
+The method should emit `immediateChange` and `change` events.
+To add item to active store `iActiveItems.addToActiveStore` method could be used.
 
 ```typescript
-import iAccess from 'traits/i-access/i-access';
+import iActiveItems from 'traits/i-active-items/i-active-items';
 
-export default class bButton implements iAccess {
-  /** @see iAccess.disable */
-  disable(): Promise<boolean> {
-    return iAccess.disable(this);
+export default class bCustomList implements iActiveItems {
+  /** @see iAccess.prototype.setActive */
+  setActive(value: Item['value'] | Set<Item['value']>, unsetPrevious?: boolean): boolean {
+    iActiveItems.addToActiveStore(this);
+
+		//some logic//
+
+    this.emit('immediateChange', this.active);
+    this.emit('change', this.active);
+
+		return true;
   }
 }
 ```
 
-### focus
+### unsetActive
 
-Sets the focus to the component
-The method has the default implementation.
+Deactivates an item by the specified value.
+If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
+The method should emit `immediateChange` and `change` events.
+To remove item from active store `iActiveItems.removeFromActiveStorage` method could be used.
 
 ```typescript
-import iAccess from 'traits/i-access/i-access';
+import iActiveItems from 'traits/i-active-items/i-active-items';
 
-export default class bButton implements iAccess {
-  /** @see iAccess.focus */
-  focus(): Promise<boolean> {
-    return iAccess.focus(this);
+export default class bCustomList implements iActiveItems {
+  /** @see iAccess.prototype.unsetActive */
+  unsetActive(value: Item['value'] | Set<Item['value']>): boolean {
+    iActiveItems.removeFromActiveStorage(this);
+
+    //some logic//
+
+    this.emit('immediateChange', this.active);
+    this.emit('change', this.active);
+
+    return true;
   }
 }
 ```
 
-### blur
+### toggleActive
 
-Unsets the focus from the component.
-The method has the default implementation.
+Toggles activation of an item by the specified value.
+The methods return a new active component item/s.
+The method should emit `immediateChange` and `change` events.
 
 ```typescript
-import iAccess from 'traits/i-access/i-access';
+import iActiveItems from 'traits/i-active-items/i-active-items';
 
-export default class bButton implements iAccess {
-  /** @see iAccess.blur */
-  blur(): Promise<boolean> {
-    return iAccess.blur(this);
+export default class bCustomList implements iActiveItems {
+  /** @see iAccess.prototype.toggleActive */
+  toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+    //some logic//
+
+    this.emit('immediateChange', this.active);
+    this.emit('change', this.active);
+
+    return true;
+  }
+}
+```
+
+### syncItemsWatcher
+
+Synchronization of items.
+Should run when items change.
+
+```typescript
+import iActiveItems from 'traits/i-active-items/i-active-items';
+
+export default class bCustomList implements iActiveItems {
+  /** @see iAccess.prototype.syncItemsWatcher */
+  @watch({field: 'items'})
+  syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+    iActiveItems.syncItemsWatcher(this, items, oldItems);
+  }
+}
+```
+
+### initComponentValues
+
+Initializes component values. Fills a map and (associated) array of values and there indexes for internal use.
+Also `iActiveItems.initItemMods` should be used to add required mods to item
+
+```typescript
+import iActiveItems from 'traits/i-active-items/i-active-items';
+
+export default class bCustomList implements iActiveItems {
+  /** @see [[iActiveItems.prototype.initComponentValues]] */
+  @hook('beforeDataCreate')
+  initComponentValues(): void {
+    for (let i = 0; i < this.items.length; i++) {
+      const
+        item = this.items[i],
+        val = item.value;
+
+      this.values.set(val, i);
+      this.indexes[i] = val;
+
+      iActiveItems.initItemMods(this, item);
+    }
   }
 }
 ```
 
 ## Helpers
 
-The trait provides a bunch of helper functions to initialize event listeners.
+The trait provides a bunch of helper functions.
 
-### initModEvents
+### getActive
 
-Initialize modifier event listeners to emit trait events.
+Returns active item/s.
+See `active`.
 
-```typescript
-import iAccess from 'traits/i-access/i-access';
+### getActiveElement
 
-export default class bButton implements iAccess {
-  /** @override */
-  protected initModEvents(): void {
-    super.initModEvents();
-    iAccess.initModEvents(this);
-  }
-}
-```
+Returns active item element/s
+See `activeElement`.
 
-## Styles
+### initItemMods
 
-The trait provides a bunch of optional styles for the component.
+Initializes component mods
+See `initComponentValues`.
 
-```stylus
-$p = {
-  helpers: true
-}
+### addToActiveStore
 
-i-access
-  if $p.helpers
-    &_disabled_true
-      cursor default
-      pointer-events none
+Adds the specified value to the component's active store
+See `setActive`.
 
-    &_disabled_true &__over-wrapper
-      display block
-```
+### removeFromActiveStorage
 
-To enable these styles, import the trait within your component and call the provided mixin within your component.
+Removes the specified value from the component's active store
+See `unsetActive`.
 
-```stylus
-@import "traits/i-access/i-access.styl"
-
-$p = {
-  accessHelpers: true
-}
-
-b-button
-  i-access({helpers: $p.accessHelpers})
-```
