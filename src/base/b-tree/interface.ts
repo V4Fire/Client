@@ -17,13 +17,13 @@ export interface Item extends Super {
 	/**
 	 * Item value
 	 */
-	value: string;
+	value: unknown;
 
 	/**
 	 * Parent element value
 	 * (for nested items)
 	 */
-	parentValue?: string;
+	parentValue?: unknown;
 
 	/**
 	 * Nested items

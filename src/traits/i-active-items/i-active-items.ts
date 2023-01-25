@@ -13,12 +13,8 @@
  * @packageDocumentation
  */
 
-import SyncPromise from 'core/promise/sync';
-
 import iItems from 'traits/i-items/i-items';
-
 import type { Active, Component, Item } from 'traits/i-active-items/interface';
-import type iBlock from 'super/i-block/i-block';
 
 export * from 'traits/i-items/i-items';
 export * from 'traits/i-active-items/interface';
@@ -81,77 +77,6 @@ export default abstract class iActiveItems extends iItems {
 	 */
 	abstract get activeElement(): ReturnType<typeof iActiveItems.getActiveElement>;
 
-	static getActiveElement = <T extends iBlock>(
-		ctx: T & iActiveItems,
-		nodeName: string
-	): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> => {
-		const
-			{active, multiple} = ctx,
-			{block} = ctx.unsafe;
-
-		const getEl = (value) => {
-			if (value != null) {
-				return block?.element<HTMLAnchorElement>(nodeName, {id: value});
-			}
-		};
-
-		return ctx.waitStatus('ready', () => {
-
-			if (multiple) {
-				if (!Object.isSet(active)) {
-					return [];
-				}
-
-				return [...active].flatMap((val) => getEl(val) ?? []);
-			}
-
-			return getEl(active);
-		});
-	};
-
-	static initActiveStore(ctx: Component, value: iActiveItems['Active']): CanUndef<iActiveItems['activeStore']> {
-		const
-			{multiple, activeStore} = ctx,
-			beforeDataCreate = ctx.hook === 'beforeDataCreate';
-
-		let
-			newVal;
-
-		if (value === undefined && beforeDataCreate) {
-			newVal = activeStore;
-
-			if (multiple && Object.isArray(activeStore)) {
-				newVal = new Set(Array.concat([], activeStore));
-			}
-
-			return newVal;
-		}
-
-		if (multiple) {
-			newVal = new Set(Object.isSet(value) ? value : Array.concat([], value));
-
-			if (Object.fastCompare(newVal, activeStore)) {
-				return activeStore;
-			}
-
-		} else {
-			newVal = value;
-		}
-
-		if (beforeDataCreate) {
-			void ctx.waitStatus('ready').then(() => {
-				void Promise.resolve().then(() => ctx.setActive(newVal));
-			});
-
-		} else {
-			ctx.setActive(newVal);
-		}
-
-		if (multiple) {
-			return new Set();
-		}
-	}
-
 	/**
 	 * A component active item/s.
 	 * If the component is switched to the `multiple` mode, the getter will return a `Set` object.
@@ -166,6 +91,9 @@ export default abstract class iActiveItems extends iItems {
 	 */
 	abstract set active(value: this['Active']);
 
+	/**
+	 * Returns active item/s
+	 */
 	static getActive(ctx: Component): iActiveItems['Active'] {
 		const
 			v = ctx.field.get<iActiveItems['Active']>('activeStore');
@@ -176,6 +104,36 @@ export default abstract class iActiveItems extends iItems {
 
 		return v;
 	}
+
+	/**
+	 * Returns active item element/s
+	 */
+	static getActiveElement = (ctx: Component, nodeName: string): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> => {
+		const
+			{active, multiple} = ctx,
+			{block} = ctx.unsafe;
+
+		const getEl = (value) => {
+			const
+				id = ctx.values.get(value);
+
+			if (id != null) {
+				return block?.element<HTMLAnchorElement>(nodeName, {id});
+			}
+		};
+
+		return ctx.waitStatus('ready', () => {
+			if (multiple) {
+				if (!Object.isSet(active)) {
+					return [];
+				}
+
+				return [...active].flatMap((val) => getEl(val) ?? []);
+			}
+
+			return getEl(active);
+		});
+	};
 
 	/** @see [[iActiveItems.isActive]] */
 	static isActive: AddSelf<iActiveItems['isActive'], Component> = (ctx, value: Item['value']) => {
@@ -205,7 +163,7 @@ export default abstract class iActiveItems extends iItems {
 		mods.id = ctx.values.get(value);
 		mods.active = false;
 
-		if (active && (ctx.multiple ? ctx.activeProp === undefined : ctx.activeStore === undefined)) {
+		if (active && (ctx.multiple ? ctx.activeProp === undefined : ctx.active === undefined)) {
 			void Promise.resolve().then(() => ctx.setActive(value));
 		}
 	}
@@ -351,5 +309,5 @@ export default abstract class iActiveItems extends iItems {
 	/**
 	 * Initializes component values
 	 */
-	abstract initComponentValues(...args: unknown[]): void;
+	abstract initComponentValues(): void;
 }
