@@ -19,6 +19,7 @@ import symbolGenerator from 'core/symbol';
 
 import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
+
 import iItems from 'traits/i-items/i-items';
 import iActiveItems from 'traits/i-active-items/i-active-items';
 import type { IterationKey } from 'traits/i-active-items/i-active-items';
@@ -46,8 +47,7 @@ export * from 'base/b-tree/interface';
 export const
 	$$ = symbolGenerator();
 
-interface bTree extends Trait<typeof iActiveItems> {
-}
+interface bTree extends Trait<typeof iActiveItems> {}
 
 /**
  * Component to render tree of any elements
@@ -154,8 +154,7 @@ class bTree extends iData implements iActiveItems {
 	readonly cancelable?: boolean;
 
 	/** @see [[iItems.items]] */
-	@field<bTree>((o) => o.sync.link<Items>((val) => o.normalizeItems(val)))
-
+	@field<bTree>((ctx) => ctx.sync.link<Items>((val) => ctx.normalizeItems(val)))
 	items!: this['Items'];
 
 	/**
@@ -268,7 +267,7 @@ class bTree extends iData implements iActiveItems {
 		return opts;
 	}
 
-	/** @see [[iActiveItems.activeElement]] */
+	/** @see [[iActiveItems.prototype.activeElement] */
 	@computed({
 		cache: true,
 		dependencies: ['active']
@@ -278,17 +277,14 @@ class bTree extends iData implements iActiveItems {
 		return iActiveItems.getActiveElement(this.top ?? this, 'node');
 	}
 
-	/** @see [[iActiveItems.active] */
+	/** @see [[iActiveItems.prototype.active] */
 	get active(): iActiveItems['active'] {
 		return iActiveItems.getActive(this.top ?? this);
 	}
 
-	/**
-	 *  Sets an active to the active store
-	 *  @param value
-	 */
+	/** @see [[iActiveItems.prototype.active] */
 	set active(value: this['Active']) {
-		(this.top ?? this).activeStore = value;
+		(this.top ?? this).field.set('activeStore', value);
 	}
 
 	/**
@@ -410,10 +406,7 @@ class bTree extends iData implements iActiveItems {
 		return SyncPromise.resolve(false);
 	}
 
-	/**
-	 *  @see [[iActiveItems.prototype.syncItemsWatcher]]
-	 *  @see [[iActiveItems.initItemsMods]]
-	 */
+	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
 	@watch({field: 'items'})
 	@wait('ready')
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
@@ -423,7 +416,7 @@ class bTree extends iData implements iActiveItems {
 		}
 	}
 
-	/** @see [[iActiveItems.setActive]] */
+	/** @see [[iActiveItems.prototype.setActive]] */
 	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const
 			ctx = this.top ?? this,
@@ -478,7 +471,7 @@ class bTree extends iData implements iActiveItems {
 		return true;
 	}
 
-	/** @see [[iActiveItems.unsetActive]] */
+	/** @see [[iActiveItems.prototype.unsetActive]] */
 	unsetActive(value: this['Active']): boolean {
 		const
 			ctx = this.top ?? this,
@@ -525,6 +518,7 @@ class bTree extends iData implements iActiveItems {
 		return true;
 	}
 
+	/** @see [[iActiveItems.prototype.toggleActive]] */
 	toggleActive(value: iActiveItems['Active'], unsetPrevious: boolean = false): this['Active'] {
 		const
 			ctx = this.top ?? this,
@@ -592,7 +586,6 @@ class bTree extends iData implements iActiveItems {
 
 			if (needToAdd) {
 				itemEl?.setAttribute('aria-selected', String(needToAdd));
-
 				ctx.unfoldAllParents(item);
 
 			} else {
@@ -738,12 +731,11 @@ class bTree extends iData implements iActiveItems {
 	 * @param items
 	 * @param parentValue
 	 */
-	protected normalizeItems(items: CanUndef<this['Items']> = this.items, parentValue?: string): this['Items'] {
+	protected normalizeItems(items: this['Items'] = [], parentValue?: unknown): this['Items'] {
 		 const
 			 normalizedItems: this['Items'] = [];
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		items?.forEach((item, i) => {
+		items.forEach((item, i) => {
 			item.parentValue ??= parentValue;
 
 			normalizedItems[i] = {...item};
