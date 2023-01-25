@@ -9,19 +9,45 @@
  */
 
 const
-	$C = require('collection.js'),
-	{webpack} = require('@config/config');
+	$C = require('collection.js');
+
+const
+	{webpack} = require('@config/config'),
+	{resolve} = require('@pzlr/build-core');
 
 if (webpack.ssr) {
-	const
-		nodeExternals = require('webpack-node-externals');
-
 	/**
 	 * Returns parameters for `webpack.externals`
 	 * @returns {!Array}
 	 */
 	module.exports = function externals() {
-		return [nodeExternals()];
+		const cache = Object.createDict();
+
+		return [
+			({request}, cb) => {
+				if (cache[request] != null) {
+					return cb(...cache[request]);
+				}
+
+				if (resolve.isNodeModule(request)) {
+					try {
+						require.resolve(request);
+
+						const
+							resolvedRequest = resolve.blockSync(request);
+
+						if (resolvedRequest === request) {
+							cache[request] = [null, `commonjs ${request}`];
+							return cb(...cache[request]);
+						}
+
+					} catch {}
+				}
+
+				cache[request] = [];
+				cb();
+			}
+		];
 	};
 
 } else {
