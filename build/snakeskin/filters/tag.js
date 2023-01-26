@@ -9,6 +9,7 @@
  */
 
 const
+	{webpack} = require('@v4fire/config'),
 	{isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
 
 module.exports = [
@@ -36,6 +37,11 @@ module.exports = [
 	 * @param {!Object} attrs
 	 */
 	function normalizeV4Attrs({attrs}) {
+		if (webpack.ssr) {
+			delete attrs['v-once'];
+			delete attrs['v-memo'];
+		}
+
 		Object.forEach(attrs, (attr, key) => {
 			if (key === 'ref') {
 				const
