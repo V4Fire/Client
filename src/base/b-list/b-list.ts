@@ -135,11 +135,11 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 */
 	/** @see [[iActiveItems.prototype.indexes] */
 	@system()
-	indexes: Dictionary = {};
+	indexes!: Dictionary;
 
 	/** @see [[iActiveItems.prototype.values] */
 	@system()
-	values: Map<unknown, number> = new Map();
+	values!: Map<unknown, number>;
 
 	/**
 	 * @see [[iActiveItems.activeProp]]
@@ -211,7 +211,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 * List of component items
 	 * @see [[bList.itemsProp]]
 	 */
-	@computed({dependencies: ['value', 'itemsStore']})
+	@computed({dependencies: ['itemsStore']})
 	get items(): this['Items'] {
 		return <this['Items']>this.field.get('itemsStore');
 	}
@@ -415,7 +415,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
-	@watch(['value', 'itemsStore'])
+	@watch({field: 'itemsStore'})
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		iActiveItems.syncItemsWatcher(this, items, oldItems);
 	}
@@ -423,6 +423,9 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	/** @see [[iActiveItems.prototype.initComponentValues]] */
 	@hook('beforeDataCreate')
 	initComponentValues(): void {
+		this.values = new Map();
+		this.indexes = {};
+
 		for (let i = 0; i < this.items.length; i++) {
 			const
 				item = this.items[i],
