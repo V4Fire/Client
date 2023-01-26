@@ -66,6 +66,9 @@
 	 * ```
 	 */
 	- block loadModules(path, opts = {}, content)
+		- if require('@config/config').webpack.ssr
+			- return
+
 		- if arguments.length < 3
 			? content = opts
 			? opts = {}
