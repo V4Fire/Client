@@ -61,9 +61,6 @@ interface bTree extends Trait<typeof iActiveItems> {}
 
 @derive(iActiveItems)
 class bTree extends iData implements iActiveItems {
-	/** @see [[iActiveItems.Active]] */
-	readonly Active!: iActiveItems['Active'];
-
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
 

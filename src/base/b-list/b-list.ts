@@ -27,7 +27,7 @@ import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iActiveItems from 'traits/i-active-items/i-active-items';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
-import type { Active, Item, Items } from 'base/b-list/interface';
+import type { Item, Items } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';
@@ -56,11 +56,6 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	/** @see [[iVisible.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
-
-	/**
-	 * Type: component active item
-	 */
-	readonly Active!: Active;
 
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
