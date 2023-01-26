@@ -987,11 +987,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	runtime() {
 		return {
 			...super.runtime(),
-			engine: this.engine(),
 
+			engine: this.engine(),
 			ssr: this.webpack.ssr,
-			// eslint-disable-next-line camelcase
-			node_js: this.webpack.ssr,
 
 			debug: false,
 			dynamicPublicPath: this.webpack.dynamicPublicPath(),

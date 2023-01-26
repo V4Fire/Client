@@ -33,10 +33,11 @@ if (webpack.ssr) {
 					try {
 						require.resolve(request);
 
-						const
-							resolvedRequest = resolve.blockSync(request);
+						try {
+							require.resolve(resolve.blockSync(request));
 
-						if (resolvedRequest === request) {
+						} catch {
+							require(request);
 							cache[request] = [null, `commonjs ${request}`];
 							return cb(...cache[request]);
 						}
