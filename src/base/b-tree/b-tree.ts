@@ -491,7 +491,7 @@ class bTree extends iData implements iActiveItems {
 			}
 
 			const
-				{block: $b} = component.unsafe,
+				{block: $b} = component,
 				id = this.values.get(item.value),
 				itemEl = $b?.element('node', {id});
 
@@ -789,10 +789,11 @@ class bTree extends iData implements iActiveItems {
 		target = <Element>e.delegateTarget;
 
 		const
+			ctx = this.top ?? this,
 			id = Number(target.getAttribute('data-id'));
 
 		this.toggleActive(this.indexes[id]);
-		this.emit('actionChange', this.active);
+		ctx.emit('actionChange', this.active);
 	}
 }
 
