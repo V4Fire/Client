@@ -130,7 +130,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@computed()
 	get isReady(): boolean {
-		return Boolean(readyStatuses[this.componentStatus]);
+		return SSR || Boolean(readyStatuses[this.componentStatus]);
 	}
 
 	/** @inheritDoc */
