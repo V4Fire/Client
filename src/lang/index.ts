@@ -18,7 +18,7 @@ const langPacs = {
 
 const
 	// @ts-ignore (require)
-	ctx = require.context('src', true, /i18n\/.*\.js$/);
+	ctx = require.context('src', true, /\.i18n\/.*\.js$/);
 
 ctx.keys().forEach((path: string) => {
 	const
