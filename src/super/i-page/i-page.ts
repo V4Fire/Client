@@ -177,7 +177,7 @@ export default abstract class iPage extends iData implements iVisible {
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (v != null) {
-				return this.r.PageMetaData.title = this.t(Object.isFunction(v) ? v(this) : v);
+				return this.r.PageMetaData.title = Object.isFunction(v) ? v(this) : v;
 			}
 		}
 	}

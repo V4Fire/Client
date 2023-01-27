@@ -104,9 +104,7 @@ module.exports = async function module({plugins}) {
 				loader: 'ts-loader',
 				options: {
 					...typescript.client,
-					getCustomTransformers: () => ({
-						after: [...Object.values(tsTransformers.before)]
-					})
+					getCustomTransformers: tsTransformers
 				}
 			},
 

@@ -8,14 +8,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags');
+const
+	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags'),
+	i18nInheritanceChainTransformer = include('build/ts-transformers/i18n-inheritance-chain');
 
-module.exports = {
-	before: {
-		modernRegExpFlagsTransformer
-	},
+module.exports = (program) => ({
+	before: [
+		modernRegExpFlagsTransformer(program),
+		i18nInheritanceChainTransformer(program)
+	],
 
 	after: {},
 
 	afterDeclarations: {}
-};
+});

@@ -563,12 +563,6 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly styles?: Styles;
 
 	/**
-	 * Link to a `i18n` function that will be used to localize string literals
-	 */
-	@prop(Function)
-	readonly i18n: typeof i18n = ((i18n));
-
-	/**
 	 * A Link to the remote state object.
 	 *
 	 * The remote state object is a special watchable object that provides some parameters
@@ -1380,23 +1374,19 @@ export default abstract class iBlock extends ComponentInterface {
 	protected blockReadyListeners: Function[] = [];
 
 	/**
-	 * Alias for `i18n`
+	 * A list of keysets names used for translation
+	 * In a build time overrides with inheritance chain of component
 	 */
-	@computed({replace: false})
-	protected get t(): this['i18n'] {
-		return this.i18n;
-	}
+	@system({unique: true})
+	protected readonly componentI18nKeysets: string[] = [this.componentName];
 
 	/**
-	 * Link to `globalThis.l`
+	 * Function for internationalization of texts used in the component
 	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true
-	})
-
-	protected readonly l: typeof l = globalThis.l;
+	@computed()
+	get i18n(): ReturnType<typeof i18n> {
+		return i18n(this.componentI18nKeysets);
+	}
 
 	/**
 	 * Link to the console API
@@ -1676,6 +1666,20 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	canSelfDispatchEvent(event: string): boolean {
 		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event);
+	}
+
+	/**
+	 * A function for using translations inside traits. Due to the fact that
+	 * traits are called in the context of components. The standard i18n
+	 * is not suitable and you need to explicitly pass the name of the keyset(traitName)
+	 *
+	 * @param traitName - name of trait
+	 * @param key - key for translate
+	 * @param [params] - params for i18n (variables, pluralize, etc)
+	 * @returns string
+	 */
+	i18nForTraits(traitName: string, key: string, params?: I18nParams): string {
+		return i18n(traitName)(key, params);
 	}
 
 	/**
