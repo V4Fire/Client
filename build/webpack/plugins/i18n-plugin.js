@@ -10,6 +10,7 @@
 
 const
 	{resolve: pzlr} = require('@pzlr/build-core'),
+	fs = require('fs'),
 	fg = require('fast-glob');
 
 /**
@@ -20,15 +21,34 @@ module.exports = class I18NGeneratorPlugin {
 		compiler.hooks.done.tap('I18NGeneratorPlugin', doneHook);
 
 		function doneHook(stats) {
-			console.log(pzlr.sourceDirs);
 			const paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/*.js`);
-			const res = fg.sync(paths);
+			const result = {};
+
+			fg.sync(paths).forEach((path) => {
+				const
+					element = require(path),
+					parsedPath = /\/[^/]*?\.i18n\/(.*?)\.js$/i.exec(path);
+
+					if (parsedPath != null) {
+						const
+							lang = parsedPath[1];
+
+						result[lang] = result[lang] ?? {};
+
+						Object.keys(element).forEach((keysetName) => {
+							result[lang][keysetName] = {
+								...result[lang][keysetName] != null ? result[lang][keysetName] : {},
+								...element[keysetName]
+							};
+						});
+					}
+			});
+
+			Object.entries(result).forEach(([lang, value]) => {
+				fs.writeFileSync(`${pzlr.cwd}/dist/client/${lang}.json`, JSON.stringify(value, undefined, 2));
+			});
+
 			debugger;
-			// pzlr for all layers
-			// fg => list of files
-			// require('') || fs.readFile('path') || JSON.parse();
-			// result = {}
-			// json.stringify(result) => fs.writeFile(dist/ru.json);
 			// dist find globa('*.html')
 			// do while ru, en, pr
 			// copy => p_index_ru.html => find id='asdfads' => paste => json
