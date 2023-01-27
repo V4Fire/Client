@@ -85,7 +85,7 @@ const tasks = (async () => {
 
 	globalThis.WEBPACK_CONFIG = tasks;
 
-	return tasks;
+	return tasks[1];
 })();
 
 module.exports = tasks;

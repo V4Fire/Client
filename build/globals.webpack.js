@@ -54,6 +54,8 @@ module.exports = {
 		return {};
 	}),
 
+	I18N_STRINGS: [],
+
 	BLOCK_NAMES: runtime.blockNames ?
 		projectGraph.then(({components}) => {
 			if (Object.isMap(components)) {
