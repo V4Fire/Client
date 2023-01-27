@@ -1084,6 +1084,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		};
 	},
 
+	/**
+	 * Returns array of supported locales
+	 * @returns {!Array<string>}
+	 */
+	supportedLocales() {
+		return ['en', 'ru'];
+	},
+
 	/** @override */
 	runtime() {
 		return {

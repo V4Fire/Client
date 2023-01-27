@@ -10,19 +10,31 @@
 
 const
 	{resolve: pzlr} = require('@pzlr/build-core'),
+	{src, supportedLocales} = require('@config/config'),
 	fs = require('fs'),
 	fg = require('fast-glob');
 
 /**
- * Webpack plugin to ignore invalid warnings during building
+ * Webpack plugin to collect all translates on filesystem
+ * and include them to html
  */
 module.exports = class I18NGeneratorPlugin {
 	apply(compiler) {
 		compiler.hooks.done.tap('I18NGeneratorPlugin', doneHook);
 
-		function doneHook(stats) {
-			const paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/*.js`);
-			const result = {};
+		function doneHook(compilation) {
+			/**
+			 * Should run only at the last stage of the build
+			 * when all the files are ready and placed on the file system
+			 */
+			if (compilation.compiler.name !== 'html') {
+				return;
+			}
+
+			const
+				locales = supportedLocales().join('|'),
+				paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/(${locales}).js`),
+				result = {};
 
 			fg.sync(paths).forEach((path) => {
 				const
@@ -45,7 +57,7 @@ module.exports = class I18NGeneratorPlugin {
 			});
 
 			Object.entries(result).forEach(([lang, value]) => {
-				fs.writeFileSync(`${pzlr.cwd}/dist/client/${lang}.json`, JSON.stringify(value, undefined, 2));
+				fs.writeFileSync(`${src.clientOutput()}/${lang}.json`, JSON.stringify(value, undefined, 2));
 			});
 
 			debugger;
