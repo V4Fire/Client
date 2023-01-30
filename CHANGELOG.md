@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with building project as `fat html` with `ES20xx` module `build/webpack/plugins`
+
+#### :house: Internal
+
+* Added `test:circular-deps` npm script for analyzing circular deps
+* Fixed few circular deps
+
 ## v3.33.0 (2022-12-28)
 
 #### :rocket: New Feature

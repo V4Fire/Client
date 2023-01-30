@@ -11,16 +11,13 @@ import { getSrcSet } from 'core/html';
 
 import {
 
-	ImageOptions,
-	PictureFactoryResult,
-	ShadowElState,
-	ImageStage,
-
 	INIT_LOAD,
 	IS_LOADED,
 	IS_LOADING
 
-} from 'core/dom/image';
+} from 'core/dom/image/const';
+
+import type { ImageOptions, ImageStage, ShadowElState, PictureFactoryResult } from 'core/dom/image/interface';
 
 /**
  * Helper class that provides API to create DOM elements

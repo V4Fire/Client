@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* [Now `commonjs` module will not be installed for typescript processing into `fathtml` mode, instead module from tsconfig will be taken by default `config/default`.](https://github.com/V4Fire/Client/discussions/773)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with building project as `fat html` with `ES20xx` module `build/webpack/plugins`
+
 ## v3.27.0 (2022-08-30)
 
 #### :rocket: New Feature
