@@ -149,7 +149,9 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 				return init;
 
 			} finally {
-				void Promise.resolve(init).then(() => ctx.$destroy());
+				void Promise.resolve(init)
+					.then(() => ctx.$async.sleep(0))
+					.then(() => ctx.$destroy());
 			}
 		}
 	};

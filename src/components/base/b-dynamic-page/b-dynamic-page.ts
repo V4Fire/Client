@@ -228,6 +228,11 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	override initLoad(): Promise<void> {
+		if (SSR && this.page == null && this.event != null) {
+			this.syncEmitterWatcher();
+			this.$initializer = this.async.promisifyOnce(this.emitter ?? this.$root, this.event);
+		}
+
 		return Promise.resolve();
 	}
 
