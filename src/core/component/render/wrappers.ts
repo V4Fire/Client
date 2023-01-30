@@ -10,7 +10,9 @@
 
 import { componentRenderFactories } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
-import { createVirtualContext } from 'core/component/functional';
+
+import { isSmartComponent } from 'core/component/reflect';
+import { createVirtualContext,  } from 'core/component/functional';
 
 import type {
 
@@ -181,6 +183,10 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 	original: T
 ): T {
 	return Object.cast(function resolveComponent(this: ComponentInterface, name: string, ...args: any[]) {
+		if (!this.$renderEngine.supports.functional) {
+			name = name.replace(isSmartComponent, '');
+		}
+
 		const component = registerComponent(name);
 		return component?.params.functional === true ? name : original(name, ...args);
 	});
