@@ -138,6 +138,7 @@
 						+= await h.loadLibs(deps.headScripts, {assets, wrap: true, js: true})
 
 			< body ${rootAttrs|!html}
+				<! :: SSR
 				- block headHelpers
 
 				- block innerRoot
@@ -150,16 +151,16 @@
 					- block helpers
 					- block providers
 
-			- block deps
-				- block styles
-					+= await h.loadStyles(deps.styles, {assets, wrap: true})
-					+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
+				- block deps
+					- block styles
+						+= await h.loadStyles(deps.styles, {assets, wrap: true})
+						+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
 
-				- block scripts
-					+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
-					+= await h.loadLibs(deps.scripts, {assets, wrap: true, js: true})
+					- block scripts
+						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
+						+= await h.loadLibs(deps.scripts, {assets, wrap: true, js: true})
 
-					+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
-					+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
+						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
+						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
 
-					+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
+						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
