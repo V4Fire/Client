@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* [Now `commonjs` module will not be installed for typescript processing into `fathtml` mode, instead module from tsconfig will be taken by default `config/default`.](https://github.com/V4Fire/Client/discussions/773)
+* [Now `commonjs` module will not be installed for typescript processing into `fathtml` mode, instead `module` from tsconfig will be taken by `default`](https://github.com/V4Fire/Client/discussions/773)
 
 #### :bug: Bug Fix
 

@@ -13,9 +13,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.34.0 (2023-01-30)
 
-#### :bug: Bug Fix
+#### :boom: Breaking Change
 
-* Fixed an issue with building project as `fat html` with `ES20xx` module `build/webpack/plugins`
+* [Now `commonjs` module will not be installed for typescript processing into `fathtml` mode, instead `module` from `tsconfig` will be taken by default `config/default`](https://github.com/V4Fire/Client/discussions/773)
 
 #### :house: Internal
 
