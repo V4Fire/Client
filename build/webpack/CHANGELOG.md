@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with building project as `fat html` with `ES20xx` module `build/webpack/plugins`
+
 ## v3.27.0 (2022-08-30)
 
 #### :rocket: New Feature
