@@ -137,17 +137,17 @@ export default abstract class iActiveItems extends iItems {
 	/** @see [[iActiveItems.prototype.isActive]] */
 	static isActive: AddSelf<iActiveItems['isActive'], Component> = (ctx, value: Item['value']) => {
 		const
-			activeStore = ctx.field.get('activeStore');
+			{active} = ctx;
 
 		if (ctx.multiple) {
-			if (!Object.isSet(activeStore)) {
+			if (!Object.isSet(active)) {
 				return false;
 			}
 
-			return activeStore.has(value);
+			return active.has(value);
 		}
 
-		return value === activeStore;
+		return value === active;
 	};
 
 	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */

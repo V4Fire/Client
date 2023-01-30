@@ -209,6 +209,8 @@ class bTree extends iData implements iActiveItems {
 		if (multiple) {
 			return new Set();
 		}
+
+		return newVal;
 	}))
 
 	activeStore!: iActiveItems['activeStore'];
@@ -418,24 +420,16 @@ class bTree extends iData implements iActiveItems {
 	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const
 			ctx = this.top ?? this,
-			{active, multiple} = ctx,
-			modName = 'active';
+			{active, multiple} = ctx;
 
-		let
-			isActiveSet = false;
+		const
+			res = iActiveItems.addToActiveStore(ctx, value);
+
+		if (!res) {
+			return res;
+		}
 
 		for (const [item, component] of ctx.traverse()) {
-			if (!isActiveSet) {
-				isActiveSet = true;
-
-				const
-					res = iActiveItems.addToActiveStore(ctx, value);
-
-				if (!res) {
-					return res;
-				}
-			}
-
 			const
 				{block: $b} = component,
 				id = this.values.get(item.value),
@@ -450,7 +444,7 @@ class bTree extends iData implements iActiveItems {
 				active === item.value;
 
 			if (needSetActiveTrue) {
-				$b?.setElMod(itemEl, 'node', modName, true);
+				$b?.setElMod(itemEl, 'node', 'active', true);
 
 				ctx.unfoldAllParents(item);
 
@@ -459,7 +453,7 @@ class bTree extends iData implements iActiveItems {
 				}
 
 			} else if (needSetActiveFalse || multiple && unsetPrevious) {
-				$b?.setElMod(itemEl, 'node', modName, false);
+				$b?.setElMod(itemEl, 'node', 'active', false);
 			}
 		}
 
@@ -475,21 +469,14 @@ class bTree extends iData implements iActiveItems {
 			ctx = this.top ?? this,
 			{multiple} = ctx;
 
-		let
-			isValueRemoved = false;
+		const
+			res = iActiveItems.removeFromActiveStorage(ctx, value);
+
+		if (!res) {
+			return res;
+		}
 
 		for (const [item, component] of ctx.traverse()) {
-			if (!isValueRemoved) {
-				isValueRemoved = true;
-
-				const
-					res = iActiveItems.removeFromActiveStorage(ctx, value);
-
-				if (!res) {
-					return res;
-				}
-			}
-
 			const
 				{block: $b} = component,
 				id = this.values.get(item.value),
@@ -793,7 +780,7 @@ class bTree extends iData implements iActiveItems {
 			id = Number(target.getAttribute('data-id'));
 
 		this.toggleActive(this.indexes[id]);
-		ctx.emit('actionChange', this.active);
+		ctx.emit('actionChange', ctx.active);
 	}
 }
 
