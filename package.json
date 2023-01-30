@@ -40,6 +40,7 @@
     "test:components": "gulp test:components --test-processes 2",
     "test:components:chrome": "npm run test:components -- --browsers chrome --retries 2",
     "test:jasmine": "nyc --reporter=lcov --reporter=text npx jasmine",
+    "test:circular-deps": "dpdm --exit-code circular:1 --circular -T --warning false --no-tree src/**/**/*.ts src/**/*.ts",
     "up": "npm i"
   },
   "dependencies": {
@@ -54,6 +55,7 @@
     "@swc/helpers": "0.3.8",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
+    "dpdm": "3.10.0",
     "escaper": "3.0.6",
     "eventemitter2": "6.4.5",
     "favicons": "7.0.0-beta.4",
@@ -142,8 +144,8 @@
   },
   "devDependencies": {
     "@playwright/test": "1.20.0",
-    "@types/jasmine": "3.10.3",
     "@types/glob": "7.2.0",
+    "@types/jasmine": "3.10.3",
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
     "@v4fire/core": "3.86.2",

@@ -812,8 +812,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'client.tsconfig.json' :
 			'tsconfig.json';
 
+		const
+			{compilerOptions: {module}} = require(path.join(this.src.cwd(), configFile));
+
 		const client = this.extend({}, server, {
-			configFile
+			configFile,
+			compilerOptions: {module}
 		});
 
 		return {
