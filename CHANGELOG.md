@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.34.1 (2023-01-31)
+
+#### :house: Internal
+
+* Added the ability to specify webpack aliases from the config `build/webpack/alias`
+
 ## v3.34.0 (2023-01-30)
 
 #### :boom: Breaking Change
