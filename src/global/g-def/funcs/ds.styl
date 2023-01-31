@@ -25,22 +25,22 @@ c($kit, $id = null, $reserved = false, $base = false)
 /**
  * Returns a shadow from the design system. Shadow can be applied by filter or box-shadow
  *
- * @param {string} $kit
+ * @param {string} $name - shadow name in ds
  * @param {number|string} [$id]
  */
-sh($kit, $id = null)
-	$shadow = getDSValue("shadows", path($kit, $id))
+dsShadow($name, $id = null)
+	$shadow = getDSValue("shadows", path($name, $id))
 	$value = type($shadow) == "string" ? convert($shadow) : $shadow
 	return $value
 
 /**
  * Returns a gradient from the design system
  *
- * @param {string} $kit
+ * @param {string} $name - gradient name in ds
  * @param {number|string} [$id]
  */
-gr($kit, $id = null)
-	$gradient = getDSValue("gradients", path($kit, $id))
+dsGradient($name, $id = null)
+	$gradient = getDSValue("gradients", path($name, $id))
 	$value = type($gradient) == "string" ? convert($gradient) : $gradient
 	return $value
 
