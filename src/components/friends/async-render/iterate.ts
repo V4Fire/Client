@@ -283,7 +283,7 @@ export function iterate(
 
 			function renderVNode(vnode: VNode) {
 				let
-					renderedVnode: CanArray<Node>;
+					renderedVnode: Nullable<CanArray<Node>>;
 
 				if (vnode.el != null) {
 					vnode.el[Object.cast<string>(isCached)] = true;
@@ -301,7 +301,7 @@ export function iterate(
 						renderedVNodes.push(...renderedVnode);
 						renderedVnode.forEach((renderedVnode) => nodeToMount.appendChild(renderedVnode));
 
-					} else {
+					} else if (renderedVnode != null) {
 						renderedVNodes.push(renderedVnode);
 						nodeToMount.appendChild(renderedVnode);
 					}

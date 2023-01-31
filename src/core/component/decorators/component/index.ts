@@ -138,7 +138,7 @@ export function component(opts?: ComponentOptions): Function {
 			function loadTemplate(component: object, lazy: boolean = false): (resolve: Function) => any {
 				return promiseCb;
 
-				function promiseCb(resolve: Function) {
+				function promiseCb(resolve: unknown) {
 					if (meta.params.tpl === false) {
 						return attachTemplatesAndResolve();
 					}
@@ -162,7 +162,7 @@ export function component(opts?: ComponentOptions): Function {
 
 					function attachTemplatesAndResolve(tpls?: Dictionary) {
 						attachTemplatesToMeta(meta, tpls);
-						return resolve(component);
+						return Object.isFunction(resolve) ? resolve(component) : component;
 					}
 				}
 			}
