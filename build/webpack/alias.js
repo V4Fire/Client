@@ -13,7 +13,7 @@ const
 	path = require('path');
 
 const
-	{src} = require('@config/config'),
+	{src, webpack} = require('@config/config'),
 	{config: pzlr, resolve} = require('@pzlr/build-core');
 
 /**
@@ -31,7 +31,9 @@ const aliases = {
 
 		map[`${el}/sprite`] = path.join(resolve.rootDependencies[i], asset.dir, asset.sprite);
 		return map;
-	})
+	}),
+
+	...webpack.aliases()
 };
 
 if (pzlr.designSystem != null) {
