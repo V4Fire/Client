@@ -13,7 +13,13 @@ import flags from 'core/init/flags';
 
 export default createsAsyncSemaphore(async () => {
 	if (SSR) {
-		return (name: string) => rootComponents[name]!.then((component) => {
+		return async (name: string) => {
+			const component = await rootComponents[name];
+
+			if (component == null) {
+				throw new ReferenceError(`The specified root component "${name}" is not defined`);
+			}
+
 			// eslint-disable-next-line @typescript-eslint/no-var-requires
 			const {renderToString} = require('vue/server-renderer');
 
@@ -26,7 +32,7 @@ export default createsAsyncSemaphore(async () => {
 					}
 				}))
 			};
-		});
+		}
 	}
 
 	const
