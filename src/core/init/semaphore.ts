@@ -7,7 +7,7 @@
  */
 
 import { createsAsyncSemaphore } from 'core/event';
-import Component, { app, rootComponents, ComponentElement } from 'core/component';
+import Component, { app, rootComponents, hydrationStore, ComponentElement } from 'core/component';
 
 import flags from 'core/init/flags';
 
@@ -24,13 +24,17 @@ export default createsAsyncSemaphore(async () => {
 			const {renderToString} = require('vue/server-renderer');
 
 			return {
-				render: (params?: Dictionary) => renderToString(new Component({
-					...component,
+				render: async (params?: Dictionary) => {
+					const res = await renderToString(new Component({
+						...component,
 
-					data() {
-						return Object.assign(component.data?.call(this), params);
-					}
-				}))
+						data() {
+							return Object.assign(component.data?.call(this), params);
+						}
+					}));
+
+					return `${res}<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+				}
 			};
 		};
 	}
