@@ -71,7 +71,7 @@ export default abstract class iBlockProviders extends iBlockState {
 		this.beforeReadyListeners = 0;
 
 		const
-			hydrationMode = this.isReadyOnce && hydrationStore.has(this.componentId);
+			hydrationMode = !this.isReadyOnce && hydrationStore.has(this.componentId);
 
 		if (hydrationMode) {
 			this.state.set(hydrationStore.get(this.componentId));
