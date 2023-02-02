@@ -32,7 +32,7 @@ export default createsAsyncSemaphore(async () => {
 					}
 				}))
 			};
-		}
+		};
 	}
 
 	const
