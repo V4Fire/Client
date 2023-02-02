@@ -51,7 +51,7 @@ abstract class iDataData extends iBlock {
 	readonly DB!: object;
 
 	/** @see [[iDataProvider.dataProviderProp]] */
-	@prop({type: String, required: false})
+	@prop({type: [String, Object, Function], required: false})
 	readonly dataProviderProp?: DataProviderProp;
 
 	/** @see [[iDataProvider.dataProvider]] */

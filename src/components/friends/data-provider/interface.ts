@@ -18,7 +18,7 @@ import type {
 
 } from 'core/data';
 
-export type DataProviderProp = Provider | typeof Provider | string;
+export type DataProviderProp = string | Provider | typeof Provider | (() => Provider | typeof Provider);
 export type DataProviderOptions = ProviderOptions;
 
 export type DefaultRequest<D = unknown> = [

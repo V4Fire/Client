@@ -80,7 +80,7 @@ class DataProvider extends Friend {
 			dp = new ProviderConstructor(opts);
 
 		} else if (Object.isFunction(provider)) {
-			const ProviderConstructor = <typeof Provider>provider;
+			const ProviderConstructor = Object.cast<typeof Provider>(provider);
 			dp = new ProviderConstructor(opts);
 
 		} else {
