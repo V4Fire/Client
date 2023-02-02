@@ -17,7 +17,7 @@ import SyncPromise from 'core/promise/sync';
 import config from 'config';
 
 import type { AsyncOptions } from 'core/async';
-import { component } from 'core/component';
+import { component, hydrationStore } from 'core/component';
 
 import { statuses } from 'components/super/i-block/const';
 import { system, hook } from 'components/super/i-block/decorators';
@@ -61,6 +61,9 @@ export default abstract class iBlockProviders extends iBlockState {
 	 */
 	@hook('beforeDataCreate')
 	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
+		const
+			that = this;
+
 		if (!this.isActivated) {
 			return;
 		}
@@ -68,61 +71,20 @@ export default abstract class iBlockProviders extends iBlockState {
 		this.beforeReadyListeners = 0;
 
 		const
+			hydrationMode = this.isReadyOnce && hydrationStore.has(this.componentId);
+
+		if (hydrationMode) {
+			this.state.set(hydrationStore.get(this.componentId));
+			done();
+			return;
+		}
+
+		const
 			{async: $a} = this;
 
 		const label = <AsyncOptions>{
 			label: $$.initLoad,
 			join: 'replace'
-		};
-
-		const done = () => {
-			const get = () => {
-				if (Object.isFunction(data)) {
-					try {
-						return data.call(this);
-
-					} catch (err) {
-						stderr(err);
-						return;
-					}
-				}
-
-				return data;
-			};
-
-			this.componentStatus = 'beforeReady';
-
-			const ready = () => {
-				this.isReadyOnce = true;
-				this.componentStatus = 'ready';
-
-				if (this.beforeReadyListeners > 1) {
-					this.nextTick()
-						.then(() => {
-							this.beforeReadyListeners = 0;
-							this.emit('initLoad', get(), opts);
-						})
-
-						.catch(stderr);
-
-				} else {
-					this.emit('initLoad', get(), opts);
-				}
-			};
-
-			void this.lfc.execCbAfterBlockReady(() => {
-				if (this.isFunctional) {
-					this.nextTick(ready);
-
-				} else {
-					ready();
-				}
-			});
-		};
-
-		const doneOnError = (err) => {
-			stderr(err);
-			done();
 		};
 
 		try {
@@ -147,7 +109,7 @@ export default abstract class iBlockProviders extends iBlockState {
 
 			if (!SSR && (this.isFunctional || this.dontWaitRemoteProviders)) {
 				if (tasks.length > 0) {
-					const res = $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
+					const res = $a.promise(SyncPromise.all(tasks), label).then(done, doneWithError);
 					this.$initializer = res;
 					return res;
 				}
@@ -204,14 +166,68 @@ export default abstract class iBlockProviders extends iBlockState {
 					]));
 				});
 
-				return $a.promise(SyncPromise.all(tasks), label).then(done, doneOnError);
+				return $a.promise(SyncPromise.all(tasks), label).then(done, doneWithError);
 			}));
 
 			this.$initializer = initializing;
 			return initializing;
 
 		} catch (err) {
-			doneOnError(err);
+			doneWithError(err);
+		}
+
+		function done() {
+			that.componentStatus = 'beforeReady';
+
+			void that.lfc.execCbAfterBlockReady(() => {
+				if (hydrationMode || !that.isFunctional) {
+					ready();
+
+				} else {
+					that.nextTick(ready);
+				}
+			});
+
+			function ready() {
+				that.isReadyOnce = true;
+				that.componentStatus = 'ready';
+
+				if (hydrationMode || that.beforeReadyListeners === 0) {
+					emitInitLoad();
+
+				} else {
+					that.nextTick()
+						.then(() => {
+							that.beforeReadyListeners = 0;
+							emitInitLoad();
+						})
+
+						.catch(stderr);
+				}
+
+				function emitInitLoad() {
+					that.emit('initLoad', get(), opts);
+				}
+			}
+
+			function get() {
+				if (Object.isFunction(data)) {
+					try {
+						return data.call(that);
+
+					} catch (err) {
+						stderr(err);
+						return;
+					}
+				}
+
+				return data;
+			}
+		}
+
+		function doneWithError(err: unknown) {
+			stderr(err);
+			done();
 		}
 	}
 

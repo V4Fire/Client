@@ -23,6 +23,7 @@ import iBlock, {
 	system,
 	watch,
 
+	hydrationStore,
 	ModsDecl
 
 } from 'components/super/i-block/i-block';
@@ -168,6 +169,10 @@ abstract class iDataData extends iBlock {
 		});
 
 		this.field.set('dbStore', value);
+
+		if (SSR) {
+			hydrationStore.set(this.componentId, 'dbStore', Object.cast(value));
+		}
 
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData.bind(this), {

@@ -17,7 +17,16 @@ import RequestError from 'core/request/error';
 import type { RequestQuery } from 'core/data';
 import type { AsyncOptions } from 'core/async';
 
-import { component, InitLoadCb, InitLoadOptions, UnsafeGetter } from 'components/super/i-block/i-block';
+import {
+
+	component,
+	hydrationStore,
+
+	InitLoadCb,
+	InitLoadOptions,
+	UnsafeGetter
+
+} from 'components/super/i-block/i-block';
 
 import iDataHandlers from 'components/super/i-data/handlers';
 import type { UnsafeIData } from 'components/super/i-data/interface';
@@ -73,6 +82,10 @@ export default abstract class iData extends iDataHandlers {
 		try {
 			if (opts.emitStartEvent !== false) {
 				this.emit('initLoadStart', opts);
+			}
+
+			if (!this.isReadyOnce && hydrationStore.has(this.componentId)) {
+				return callSuper();
 			}
 
 			opts = {
