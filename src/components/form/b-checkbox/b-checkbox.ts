@@ -165,7 +165,6 @@ export default class bCheckbox extends iInput implements iSize {
 	};
 
 	static override validators: ValidatorsDecl = {
-		//#if runtime has iInput/validators
 		...iInput.validators,
 
 		async required({message, showMessage = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
@@ -179,8 +178,6 @@ export default class bCheckbox extends iInput implements iSize {
 
 			return true;
 		}
-
-		//#endif
 	};
 
 	@system()
