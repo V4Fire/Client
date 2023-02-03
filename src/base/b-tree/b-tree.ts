@@ -34,8 +34,7 @@ import iData, {
 	wait,
 	system,
 	watch,
-	computed,
-	hook
+	computed
 
 } from 'super/i-data/i-data';
 
@@ -198,19 +197,19 @@ class bTree extends iData implements iActiveItems {
 		}
 
 		if (beforeDataCreate) {
-			void ctx.waitStatus('ready').then(() => {
-				void Promise.resolve().then(() => ctx.setActive(newVal));
+			ctx.watch('localEmitter:allChildrenRendered', () => {
+				ctx.setActive(newVal);
 			});
 
 		} else {
 			ctx.setActive(newVal);
+
+			return newVal;
 		}
 
 		if (multiple) {
 			return new Set();
 		}
-
-		return newVal;
 	}))
 
 	activeStore!: iActiveItems['activeStore'];
@@ -395,13 +394,14 @@ class bTree extends iData implements iActiveItems {
 	@wait('ready')
 	toggleFold(value: this['Item']['value']): Promise<boolean> {
 		const
+			ctx = this.top ?? this,
 			target = this.findItemNodeElement(value),
 			newVal = this.getFoldedMod(value) === 'false',
 			item = this.valuesToItems.get(value);
 
 		if (target != null && item != null && this.hasChildren(item)) {
 			this.block?.setElMod(target, 'node', 'folded', newVal);
-			this.emit('fold', target, item, newVal);
+			ctx.emit('fold', target, item, newVal);
 
 			return SyncPromise.resolve(true);
 		}
@@ -410,10 +410,46 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
-	@watch({field: 'items'})
-	@wait('ready')
+	@watch({field: 'items', immediate: true})
+	@wait('beforeReady')
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		iActiveItems.syncItemsWatcher(this, items, oldItems);
+
+		listenChildrenEvents.call(this);
+
+		if (this.componentStatus !== 'beforeReady') {
+			if (this.folded) {
+				void this.fold();
+
+			} else {
+				this.localEmitter.once('allChildrenRendered', () => this.unfold());
+			}
+		}
+
+		function listenChildrenEvents(this: bTree): void {
+			if (this.top == null) {
+				let
+					amount = countChildren(this.items);
+
+				const id = this.localEmitter.on('childRendered', () => {
+					if (--amount <= 0) {
+						this.localEmitter.emit('allChildrenRendered');
+
+						this.localEmitter.off(id);
+					}
+				});
+			}
+
+			function countChildren(items: Items, amount: number = 0): number {
+				items.forEach((item) => {
+					if (Object.isArray(item.children)) {
+						amount = countChildren(item.children, ++amount);
+					}
+				});
+
+				return amount;
+			}
+		}
 	}
 
 	/** @see [[iActiveItems.prototype.setActive]] */
@@ -583,32 +619,38 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.initComponentValues]] */
-	@hook('beforeMount')
 	initComponentValues(): void {
-		const
-			ctx = this.top ?? this;
+		if (this.top != null) {
+			this.values = this.top.values;
+			this.indexes = this.top.indexes;
+			this.valuesToItems = this.top.valuesToItems;
 
-		if (this.hook !== 'beforeMount') {
-			ctx.values = new Map();
-			ctx.indexes = [];
-			ctx.valuesToItems = new Map();
+			return;
 		}
 
-		this.items.forEach((item) => {
-			const
-				{value} = item,
-				{length} = ctx.indexes;
+		this.values = new Map();
+		this.indexes = [];
+		this.valuesToItems = new Map();
 
-				ctx.values.set(value, length);
-				ctx.indexes[length] = value;
-				ctx.valuesToItems.set(value, item);
+		setValues.call(this, this.items);
 
-				iActiveItems.initItemMods(ctx, item);
-		});
+		function setValues(this: bTree, items: Items) {
+			items.forEach((item) => {
+				const
+					{value} = item,
+					{length} = this.indexes;
 
-		this.values = ctx.values;
-		this.indexes = ctx.indexes;
-		this.valuesToItems = ctx.valuesToItems;
+				this.values.set(value, length);
+				this.indexes[length] = value;
+				this.valuesToItems.set(value, item);
+
+				iActiveItems.initItemMods(this, item);
+
+				if (Object.isArray(item.children)) {
+					setValues.call(this, item.children);
+				}
+			});
+		}
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -717,8 +759,8 @@ class bTree extends iData implements iActiveItems {
 	 * @param parentValue
 	 */
 	protected normalizeItems(items: this['Items'] = [], parentValue?: unknown): this['Items'] {
-		 const
-			 normalizedItems: this['Items'] = [];
+		const
+			normalizedItems: this['Items'] = [];
 
 		items.forEach((item, i) => {
 			item.parentValue ??= parentValue;
@@ -733,6 +775,9 @@ class bTree extends iData implements iActiveItems {
 		return normalizedItems;
 	}
 
+	/**
+	 * Recursively unfolds parents
+	 */
 	protected unfoldAllParents(item?: this['Item']): void {
 		const
 			{parentValue} = item ?? {};
@@ -742,6 +787,15 @@ class bTree extends iData implements iActiveItems {
 
 			this.unfoldAllParents(this.valuesToItems.get(parentValue));
 		}
+	}
+
+	/**
+	 * Handler: child tree hasEmits `childRendered` event on top lvl component
+	 * @emits `childRendered`
+	 */
+	@watch('localEmitter:asyncRenderChunkComplete')
+	protected onChildRendered(): void {
+		this.top?.localEmitter.emit('childRendered', this);
 	}
 
 	/**
@@ -777,7 +831,7 @@ class bTree extends iData implements iActiveItems {
 
 		const
 			ctx = this.top ?? this,
-			id = Number(target.getAttribute('data-id'));
+			id = Number(this.block?.getElMod(target, 'node', 'id'));
 
 		this.toggleActive(this.indexes[id]);
 		ctx.emit('actionChange', ctx.active);
