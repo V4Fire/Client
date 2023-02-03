@@ -449,7 +449,15 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (this.dataProviderProp != null && (this.dataProviderProp !== 'Provider' || this.href != null)) {
 					let
-						dataProvider = this.dataProvider!;
+						{dataProvider} = this;
+
+					if (dataProvider == null) {
+						throw new ReferenceError('Missing data provider to send data');
+					}
+
+					if (!Object.isFunction(dataProvider[this.method])) {
+						throw new ReferenceError(`The specified request method "${this.method}" does not exist in the data provider`);
+					}
 
 					if (this.href != null) {
 						dataProvider = dataProvider.base(this.href);
