@@ -69,8 +69,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * The form identifier.
-	 * You can use it to connect a form to components that lie "outside".
-	 * from the form body (using the `form` attribute).
+	 * You can use it to connect the form to components lying "outside" from the form body (using the `form` attribute).
 	 *
 	 * @example
 	 * ```
@@ -133,7 +132,7 @@ export default class bForm extends iData implements iVisible {
 	readonly paramsProp: CreateRequestOptions = {};
 
 	/**
-	 * If true, form elements are cached.
+	 * If true, all form elements will be cached.
 	 * Caching means that if some component value has not changed since the last time the form was submitted,
 	 * it will not be resubmitted.
 	 *
@@ -257,7 +256,7 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Resets the default values for all related components
+	 * Resets the values to default for all related components
 	 * @emits `reset()`
 	 */
 	async reset(): Promise<boolean> {
@@ -478,13 +477,13 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Returns values of related components, grouped by name
+	 * Returns the values of related components, grouped by name
 	 * @param [validate] - if true, the method only returns values when the data is valid
 	 */
 	async getValues(validate?: ValidateOptions | boolean): Promise<Dictionary<CanArray<FormValue>>>;
 
 	/**
-	 * Returns values of the specified input components, grouped by name
+	 * Returns the values of the specified input components, grouped by name
 	 * @param elements
 	 */
 	async getValues(elements: iInput[]): Promise<Dictionary<CanArray<FormValue>>>;
@@ -555,27 +554,26 @@ export default class bForm extends iData implements iVisible {
 	}
 
 	/**
-	 * Toggles the statuses of form controls
-	 * @param freeze - if true, all controls are frozen
+	 * Toggles the progress/enable statuses of related form controls
+	 * @param disable
 	 */
-	protected async toggleControls(freeze: boolean): Promise<void> {
+	protected async toggleControls(disable: boolean): Promise<void> {
 		const
 			[submits, els] = await Promise.all([this.submits, this.elements]);
 
 		const
-			tasks = <Array<CanPromise<boolean>>>[];
+			tasks: Array<CanPromise<boolean>> = [];
 
 		els.forEach((el) => {
-			tasks.push(el.setMod('disabled', freeze));
+			tasks.push(el.setMod('disabled', disable));
 		});
 
 		submits.forEach((el) => {
-			tasks.push(el.setMod('progress', freeze));
+			tasks.push(el.setMod('progress', disable));
 		});
 
 		try {
 			await Promise.all(tasks);
-
 		} catch {}
 	}
 

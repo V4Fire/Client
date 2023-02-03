@@ -120,8 +120,7 @@ Also, you can see the implemented traits or the parent component.
 #### [id]
 
 The form identifier.
-You can use it to connect a form to components that lie "outside".
-from the form body (using the `form` attribute).
+You can use it to connect the form to components lying "outside" from the form body (using the `form` attribute).
 
 ```
 < b-form :id = 'bla'
@@ -205,7 +204,7 @@ Clears the values of all related components.
 
 #### reset
 
-Resets the default values for all related components.
+Resets the values to default for all related components.
 
 #### validate
 
