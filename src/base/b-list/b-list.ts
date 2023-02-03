@@ -179,13 +179,19 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		}
 
 		if (beforeDataCreate) {
-			o.emit('immediateChange', o.multiple ? new Set(newVal) : newVal);
+			void o.waitStatus('ready').then(() => {
+				o.setActive(newVal);
+			});
 
 		} else {
 			o.setActive(newVal);
+
+			return newVal;
 		}
 
-		return newVal;
+		if (o.multiple) {
+			return new Set();
+		}
 	}))
 
 	activeStore!: this['Active'];
