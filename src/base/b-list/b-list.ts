@@ -422,7 +422,9 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
 	@watch({field: 'itemsStore'})
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-		iActiveItems.syncItemsWatcher(this, items, oldItems);
+		if (!Object.fastCompare(items, oldItems)) {
+			iActiveItems.syncItemsWatcher(this, items);
+		}
 	}
 
 	/** @see [[iActiveItems.prototype.initComponentValues]] */

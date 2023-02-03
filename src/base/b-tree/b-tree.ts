@@ -34,7 +34,7 @@ import iData, {
 	wait,
 	system,
 	watch,
-	computed
+	computed, hook
 
 } from 'super/i-data/i-data';
 
@@ -410,45 +410,16 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
-	@watch({field: 'items', immediate: true})
-	@wait('beforeReady')
+	@watch({field: 'items'})
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-		iActiveItems.syncItemsWatcher(this, items, oldItems);
-
-		listenChildrenEvents.call(this);
-
-		if (this.componentStatus !== 'beforeReady') {
-			if (this.folded) {
-				void this.fold();
-
-			} else {
-				this.localEmitter.once('allChildrenRendered', () => this.unfold());
-			}
+		if (Object.fastCompare(items, oldItems)) {
+			return;
 		}
 
-		function listenChildrenEvents(this: bTree): void {
-			if (this.top == null) {
-				let
-					amount = countChildren(this.items);
+		iActiveItems.syncItemsWatcher(this, items);
 
-				const id = this.localEmitter.on('childRendered', () => {
-					if (--amount <= 0) {
-						this.localEmitter.emit('allChildrenRendered');
-
-						this.localEmitter.off(id);
-					}
-				});
-			}
-
-			function countChildren(items: Items, amount: number = 0): number {
-				items.forEach((item) => {
-					if (Object.isArray(item.children)) {
-						amount = countChildren(item.children, ++amount);
-					}
-				});
-
-				return amount;
-			}
+		if (this.top == null) {
+			this.localEmitter.once('allChildrenRendered', () => this.folded ? this.fold() : this.unfold());
 		}
 	}
 
@@ -619,37 +590,72 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.initComponentValues]] */
+	@hook('created')
 	initComponentValues(): void {
-		if (this.top != null) {
+		if (this.top == null) {
+			this.values = new Map();
+			this.indexes = [];
+			this.valuesToItems = new Map();
+
+		} else {
 			this.values = this.top.values;
 			this.indexes = this.top.indexes;
 			this.valuesToItems = this.top.valuesToItems;
+		}
 
+		const
+			ctx = this.top ?? this;
+
+		this.items.forEach((item) => {
+			const
+				{value} = item,
+				{length} = this.indexes;
+
+			ctx.values.set(value, length);
+			ctx.indexes[length] = value;
+			ctx.valuesToItems.set(value, item);
+
+			iActiveItems.initItemMods(
+				ctx,
+				item,
+				(value) => ctx.localEmitter.once('allChildrenRendered', () => this.setActive(value))
+			);
+		});
+	}
+
+	/**
+	 * Sync the rendering of all nested trees with the top
+	 * @emits `localEmitter:allChildrenRendered`
+	 */
+	@watch({field: 'items', immediate: true})
+	protected syncChildrenRender(): void {
+		if (this.top != null) {
 			return;
 		}
 
-		this.values = new Map();
-		this.indexes = [];
-		this.valuesToItems = new Map();
+		listenChildrenEvents.call(this);
 
-		setValues.call(this, this.items);
+		function listenChildrenEvents(this: bTree): void {
+			let
+				amount = countChildren(this.items);
 
-		function setValues(this: bTree, items: Items) {
-			items.forEach((item) => {
-				const
-					{value} = item,
-					{length} = this.indexes;
+			const id = this.localEmitter.on('childRendered', () => {
+				if (--amount <= 0) {
+					this.localEmitter.emit('allChildrenRendered');
 
-				this.values.set(value, length);
-				this.indexes[length] = value;
-				this.valuesToItems.set(value, item);
-
-				iActiveItems.initItemMods(this, item);
-
-				if (Object.isArray(item.children)) {
-					setValues.call(this, item.children);
+					this.localEmitter.off(id);
 				}
 			});
+
+			function countChildren(items: Items, amount: number = 0): number {
+				items.forEach((item) => {
+					if (Object.isArray(item.children)) {
+						amount = countChildren(item.children, ++amount);
+					}
+				});
+
+				return amount;
+			}
 		}
 	}
 
@@ -791,7 +797,7 @@ class bTree extends iData implements iActiveItems {
 
 	/**
 	 * Handler: child tree hasEmits `childRendered` event on top lvl component
-	 * @emits `childRendered`
+	 * @emits `localEmitter:childRendered(component: bTree)`
 	 */
 	@watch('localEmitter:asyncRenderChunkComplete')
 	protected onChildRendered(): void {

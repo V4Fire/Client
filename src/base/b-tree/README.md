@@ -6,7 +6,7 @@ This module provides a component to render a recursive list of elements.
 
 * The component extends [[iData]].
 
-* The component implements the [[iItems]] trait.
+* The component derives the [[iActiveItems]] trait.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -27,7 +27,7 @@ See the [[iItems]] trait and the [[iData]] component.
 | `fold`    | One of the component items has been folded   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
 | `unfold`  | One of the component items has been unfolded | A link to the DOM element; The item object | `Item`; `HTMLElement` |
 
-See the [[iItems]] trait and the [[iData]] component.
+See the [[iActiveItems]] trait and the [[iData]] component.
 
 ## Associated types
 

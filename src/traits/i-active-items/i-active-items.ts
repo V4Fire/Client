@@ -151,17 +151,19 @@ export default abstract class iActiveItems extends iItems {
 	};
 
 	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
-	static syncItemsWatcher(ctx: Component, items: Item[], oldItems: Item[]): void {
-		if (!Object.fastCompare(items, oldItems)) {
-			ctx.initComponentValues();
-			ctx.emit('itemsChange', items);
-		}
+	static syncItemsWatcher(ctx: Component, items: Item[]): void {
+		ctx.initComponentValues();
+		ctx.emit('itemsChange', items);
 	}
 
 	/**
 	 * Initializes component mods
+	 *
+	 * @param ctx
+	 * @param item
+	 * @param [setActive] - callback to set active element
 	 */
-	static initItemMods(ctx: Component, item: Item): void {
+	static initItemMods(ctx: Component, item: Item, setActive?: (value) => void): void {
 		item.mods ??= {};
 
 		const
@@ -171,7 +173,12 @@ export default abstract class iActiveItems extends iItems {
 		mods.active = false;
 
 		if (active && (ctx.multiple ? ctx.activeProp === undefined : ctx.active === undefined)) {
-			void Promise.resolve().then(() => ctx.setActive(value));
+			if (Object.isFunction(setActive)) {
+				setActive(value);
+				return;
+			}
+
+			ctx.setActive(value);
 		}
 	}
 
