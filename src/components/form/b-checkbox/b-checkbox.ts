@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import iSize from 'components/traits/i-size/i-size';
