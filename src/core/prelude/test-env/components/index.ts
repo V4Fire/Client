@@ -39,7 +39,7 @@ globalThis.renderComponents = (
 		throw new ReferenceError('The root context for rendering is not defined');
 	}
 
-	if ((ctx.instance instanceof ComponentInterface) || !('vdom' in ctx)) {
+	if (!(ctx.instance instanceof ComponentInterface) || !('vdom' in ctx)) {
 		throw new TypeError('The root context does not implement the iBlock interface');
 	}
 
