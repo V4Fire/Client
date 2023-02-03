@@ -34,7 +34,9 @@ export default class bCustomList implements iActiveItems {
   /** @see [[iActiveItems.prototype.syncItemsWatcher]] */
   @watch(['items'])
   syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-    iActiveItems.syncItemsWatcher(this, items, oldItems);
+    if (!Object.fastCompare(items, oldItems)) {
+      iActiveItems.syncItemsWatcher(this, items);
+    }
   }
 }
 ```
