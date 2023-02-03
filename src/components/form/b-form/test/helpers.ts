@@ -14,7 +14,7 @@ import type bCheckbox from 'components/form/b-checkbox/b-checkbox';
 import Component from 'tests/helpers/component';
 
 /**
- * Renders the `bForm` component with the environment to test
+ * Renders a `bForm` component with a test environment
  *
  * @param page
  * @param attrs
@@ -114,7 +114,6 @@ export async function renderFormAndEnvironment(page: Page, attrs: Dictionary = {
 	];
 
 	await Component.createComponents(page, 'b-dummy', scheme);
-
 	return Component.waitForComponentByQuery(page, '[data-id="target"]');
 }
 
@@ -139,17 +138,14 @@ export async function checkCheckboxes(form: JSHandle<bForm>): Promise<void> {
 export function interceptFormRequest(page: Page): Promise<void> {
 	return page.route(/\/api/, (r) => {
 		const
-			req = r.request();
+			req = r.request(),
+			path = new URL(req.url()).pathname;
 
-		const
-			chunks = (new URL(req.url()).pathname).split('/'),
-			normalizedUrl = (chunks.splice(0, 2), `/${chunks.join('/')}`);
-
-		if (req.method() === 'POST') {
+			if (req.method() === 'POST') {
 			return r.fulfill({
 				contentType: 'application/json',
 				status: 200,
-				body: JSON.stringify([normalizedUrl, 'POST', req.postDataJSON()])
+				body: JSON.stringify([path, 'POST', req.postDataJSON()])
 			});
 		}
 
@@ -157,7 +153,7 @@ export function interceptFormRequest(page: Page): Promise<void> {
 			return r.fulfill({
 				contentType: 'application/json',
 				status: 200,
-				body: JSON.stringify(['PUT', req.postDataJSON()])
+				body: JSON.stringify([path, 'PUT', req.postDataJSON()])
 			});
 		}
 

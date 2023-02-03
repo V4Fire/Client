@@ -309,7 +309,7 @@ export default class bForm extends iData implements iVisible {
 			const
 				elName = el.name;
 
-			const needValidate =
+			const needSubmit =
 				elName == null ||
 
 				!this.cache || !el.cache ||
@@ -320,26 +320,28 @@ export default class bForm extends iData implements iVisible {
 					values[elName] ?? (values[elName] = await this.getElementValueToSubmit(el))
 				);
 
-			if (needValidate) {
-				const
-					canValidate = el.mods.valid !== 'true',
-					validation = canValidate && await el.validate();
+			if (!needSubmit) {
+				continue;
+			}
 
-				if (canValidate && !Object.isBoolean(validation)) {
-					if (opts.focusOnError) {
-						try {
-							await el.focus();
-						} catch {}
-					}
+			const
+				canValidate = el.mods.valid !== 'true',
+				validation = canValidate && await el.validate();
 
-					failedValidation = new ValidationError(el, validation);
-					valid = false;
-					break;
+			if (canValidate && !Object.isBoolean(validation)) {
+				if (opts.focusOnError) {
+					try {
+						await el.focus();
+					} catch {}
 				}
 
-				if (Object.isTruly(el.name)) {
-					toSubmit.push(el);
-				}
+				failedValidation = new ValidationError(el, validation);
+				valid = false;
+				break;
+			}
+
+			if (Object.isTruly(el.name)) {
+				toSubmit.push(el);
 			}
 		}
 
@@ -372,11 +374,13 @@ export default class bForm extends iData implements iVisible {
 		const start = Date.now();
 		await this.toggleControls(true);
 
-		const
-			validation = await this.validate({focusOnError: true});
+		const validation = await this.validate({
+			focusOnError: true
+		});
 
-		const
-			toSubmit = Object.isArray(validation) ? validation : [];
+		const toSubmit = Object.isArray(validation) ?
+			validation :
+			[];
 
 		const submitCtx = {
 			elements: toSubmit,
@@ -384,14 +388,14 @@ export default class bForm extends iData implements iVisible {
 		};
 
 		let
-			operationErr,
+			submitErr,
 			formResponse;
 
 		if (toSubmit.length === 0) {
 			this.emit('submitStart', {}, submitCtx);
 
 			if (!Object.isArray(validation)) {
-				operationErr = validation;
+				submitErr = validation;
 			}
 
 		} else {
@@ -403,8 +407,26 @@ export default class bForm extends iData implements iVisible {
 					formResponse = await this.action(body, submitCtx);
 
 				} else {
-					const providerCtx = this.action != null ? this.dataProvider!.base(this.action) : this;
-					formResponse = await (<Function>providerCtx[this.method])(body, this.params);
+					let
+						{dataProvider} = this;
+
+					if (dataProvider == null) {
+						throw new ReferenceError('Missing data provider to send data');
+					}
+
+					if (!Object.isFunction(dataProvider[this.method])) {
+						throw new ReferenceError(`The specified request method "${this.method}" does not exist in the data provider`);
+					}
+
+					if (this.action != null) {
+						dataProvider = dataProvider.base(this.action);
+					}
+
+					if (!Object.isFunction(dataProvider[this.method])) {
+						throw new ReferenceError(`The specified request method "${this.method}" does not exist in the data provider`);
+					}
+
+					formResponse = await dataProvider[this.method](body, this.params);
 				}
 
 				Object.assign(this.tmp, body);
@@ -417,16 +439,16 @@ export default class bForm extends iData implements iVisible {
 				}
 
 			} catch (err) {
-				operationErr = err;
+				submitErr = err;
 			}
 		}
 
 		await this.toggleControls(false);
 
 		try {
-			if (operationErr != null) {
-				this.emitError('submitFail', operationErr, submitCtx);
-				throw operationErr;
+			if (submitErr != null) {
+				this.emitError('submitFail', submitErr, submitCtx);
+				throw submitErr;
 			}
 
 			if (toSubmit.length > 0) {
@@ -434,12 +456,10 @@ export default class bForm extends iData implements iVisible {
 			}
 
 		} finally {
-			console.log(111);
-
 			let
 				status = 'success';
 
-			if (operationErr != null) {
+			if (submitErr != null) {
 				status = 'fail';
 
 			} else if (toSubmit.length === 0) {
@@ -448,7 +468,7 @@ export default class bForm extends iData implements iVisible {
 
 			const event = {
 				status,
-				response: operationErr != null ? operationErr : formResponse
+				response: submitErr != null ? submitErr : formResponse
 			};
 
 			this.emit('submitEnd', event, submitCtx);
