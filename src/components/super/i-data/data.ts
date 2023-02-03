@@ -172,6 +172,7 @@ abstract class iDataData extends iBlock {
 
 		if (SSR) {
 			hydrationStore.set(this.componentId, 'dbStore', Object.cast(value));
+			hydrationStore.set(this.componentId, 'initRemoteData', null);
 		}
 
 		if (this.initRemoteData() !== undefined) {
