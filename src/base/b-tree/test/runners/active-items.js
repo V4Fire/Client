@@ -48,234 +48,210 @@ module.exports = (page) => {
 			expect(await target.evaluate((ctx) => [...ctx.active])).toEqual([0, 1]);
 		});
 
-		it('changing of items', async () => {
-			const
-				target = await init();
+		describe('switching of an active element ', () => {
+			it('default', async () => {
+				const
+					target = await init();
 
-			expect(
-				await target.evaluate(async (ctx) => {
-					const
-						log = [];
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.setActive(0);
+						return ctx.active;
+					})
+				).toBe(0);
 
-					ctx.on('onItemsChange', (val) => {
-						log.push(val);
-					});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.setActive(1);
+						return ctx.active;
+					})
+				).toBe(1);
 
-					ctx.items = [{label: 'Bar', value: 1}];
+				expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeFalse();
+				expect(await target.evaluate((ctx) => ctx.active)).toBe(1);
+			});
 
-					log.push(ctx.items);
+			it('with `cancelable = true`', async () => {
+				const
+					target = await init({cancelable: true});
 
-					await ctx.nextTick();
-					return log;
-				})
-			).toEqual([
-				[{label: 'Bar', value: 1, mods: {id: 0, active: false}}],
-				[{label: 'Bar', value: 1, mods: {id: 0, active: false}}]
-			]);
-		});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.setActive(1);
+						return ctx.active;
+					})
+				).toBe(1);
 
-		it('switching of an active element', async () => {
-			const
-				target = await init();
+				expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeTrue();
+				expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.setActive(0);
-					return ctx.active;
-				})
-			).toBe(0);
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.toggleActive(1);
+						return ctx.active;
+					})
+				).toBe(1);
+			});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.setActive(1);
-					return ctx.active;
-				})
-			).toBe(1);
+			it('with `multiple = true`', async () => {
+				const
+					target = await init({multiple: true});
 
-			expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeFalse();
-			expect(await target.evaluate((ctx) => ctx.active)).toBe(1);
-		});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.setActive(1);
+						ctx.setActive(0);
+						return [...ctx.active.keys()];
+					})
+				).toEqual([1, 0]);
 
-		it('switching of an active element with `cancelable = true`', async () => {
-			const
-				target = await init({cancelable: true});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.unsetActive(1);
+						ctx.unsetActive(0);
+						return [...ctx.active.values()];
+					})
+				).toEqual([]);
+			});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.setActive(1);
-					return ctx.active;
-				})
-			).toBe(1);
+			it('with `multiple = true; cancelable = false`', async () => {
+				const
+					target = await init({multiple: true, cancelable: false});
 
-			expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeTrue();
-			expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.setActive(1);
+						ctx.setActive(5);
+						return [...ctx.active.keys()];
+					})
+				).toEqual([1, 5]);
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.toggleActive(1);
-					return ctx.active;
-				})
-			).toBe(1);
-		});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.unsetActive(1);
+						ctx.unsetActive(5);
+						return [...ctx.active.values()];
+					})
+				).toEqual([1, 5]);
+			});
 
-		it('switching of an active element with `multiple = true`', async () => {
-			const
-				target = await init({multiple: true});
+			it('with `multiple = true; cancelable = true`', async () => {
+				const
+					target = await init({multiple: true, cancelable: true});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.setActive(1);
-					ctx.setActive(0);
-					return [...ctx.active.keys()];
-				})
-			).toEqual([1, 0]);
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.setActive(1);
+						ctx.setActive(0);
+						return [...ctx.active];
+					})
+				).toEqual([1, 0]);
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.unsetActive(1);
-					ctx.unsetActive(0);
-					return [...ctx.active.values()];
-				})
-			).toEqual([]);
-		});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.unsetActive(1);
+						ctx.unsetActive(0);
+						return [...ctx.active];
+					})
+				).toEqual([]);
+			});
 
-		it('switching of an active element with `multiple = true; cancelable = false`', async () => {
-			const
-				target = await init({multiple: true, cancelable: false});
+			it('and unfold parents folds', async () => {
+				const
+					target = await init();
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.setActive(1);
-					ctx.setActive(5);
-					return [...ctx.active.keys()];
-				})
-			).toEqual([1, 5]);
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.setActive(4);
+						return [
+							ctx.getFoldedMod(2),
+							ctx.getFoldedMod(3)
+						];
+					})
+				).toEqual(['false', 'false']);
+			});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.unsetActive(1);
-					ctx.unsetActive(5);
-					return [...ctx.active.values()];
-				})
-			).toEqual([1, 5]);
-		});
+			it('`toggleActive` and unfold parents folds', async () => {
+				const
+					target = await init();
 
-		it('switching of an active element with `multiple = true; cancelable = true`', async () => {
-			const
-				target = await init({multiple: true, cancelable: true});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.toggleActive(4);
+						return [
+							ctx.getFoldedMod(2),
+							ctx.getFoldedMod(3)
+						];
+					})
+				).toEqual(['false', 'false']);
+			});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.setActive(1);
-					ctx.setActive(0);
-					return [...ctx.active];
-				})
-			).toEqual([1, 0]);
+			it('with `toggleActive` with primitive value', async () => {
+				const
+					target = await init({multiple: true});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.unsetActive(1);
-					ctx.unsetActive(0);
-					return [...ctx.active];
-				})
-			).toEqual([]);
-		});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.toggleActive(1);
+						ctx.toggleActive(0);
+						ctx.toggleActive(1);
+						return [...ctx.active];
+					})
+				).toEqual([0]);
+			});
 
-		it('switching of an active element and unfold parents folds', async () => {
-			const
-				target = await init();
+			it('with `toggleActive` with set value', async () => {
+				const
+					target = await init({multiple: true});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.setActive(4);
-					return [
-						ctx.getFoldedMod(2),
-						ctx.getFoldedMod(3)
-					];
-				})
-			).toEqual(['false', 'false']);
-		});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.toggleActive(new Set([0, 1]));
+						return [...ctx.active];
+					})
+				).toEqual([0, 1]);
 
-		it('switching of an active element (toggleActive) and unfold parents folds', async () => {
-			const
-				target = await init();
+				expect(
+					await target.evaluate((ctx) => [
+						ctx.block.getElMod(ctx.block.element('node', {id: 0}), 'node', 'active'),
+						ctx.block.getElMod(ctx.block.element('node', {id: 1}), 'node', 'active')
+					])
+				).toEqual(['true', 'true']);
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.toggleActive(4);
-					return [
-						ctx.getFoldedMod(2),
-						ctx.getFoldedMod(3)
-					];
-				})
-			).toEqual(['false', 'false']);
-		});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.toggleActive(new Set([1, 3]));
+						return [...ctx.active];
+					})
+				).toEqual([0, 3]);
 
-		it('switching of an active element with `toggleActive` with primitive value', async () => {
-			const
-				target = await init({multiple: true});
+				expect(
+					await target.evaluate((ctx) => [
+						ctx.block.getElMod(ctx.block.element('node', {id: 0}), 'node', 'active'),
+						ctx.block.getElMod(ctx.block.element('node', {id: 1}), 'node', 'active'),
+						ctx.block.getElMod(ctx.$refs.children[0].block.element('node', {id: ctx.values.get(3)}), 'node', 'active')
+					])
+				).toEqual(['true', 'false', 'true']);
+			});
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.toggleActive(1);
-					ctx.toggleActive(0);
-					ctx.toggleActive(1);
-					return [...ctx.active];
-				})
-			).toEqual([0]);
-		});
+			it('with `toggleActive` with set value with unsetPrevious', async () => {
+				const
+					target = await init({multiple: true});
 
-		it('switching of an active element with `toggleActive` with set value', async () => {
-			const
-				target = await init({multiple: true});
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.toggleActive(new Set([0, 1]));
+						return [...ctx.active];
+					})
+				).toEqual([0, 1]);
 
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.toggleActive(new Set([0, 1]));
-					return [...ctx.active];
-				})
-			).toEqual([0, 1]);
-
-			expect(
-				await target.evaluate((ctx) => [
-					ctx.block.getElMod(ctx.block.element('node', {id: 0}), 'node', 'active'),
-					ctx.block.getElMod(ctx.block.element('node', {id: 1}), 'node', 'active')
-				])
-			).toEqual(['true', 'true']);
-
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.toggleActive(new Set([1, 3]));
-					return [...ctx.active];
-				})
-			).toEqual([0, 3]);
-
-			expect(
-				await target.evaluate((ctx) => [
-					ctx.block.getElMod(ctx.block.element('node', {id: 0}), 'node', 'active'),
-					ctx.block.getElMod(ctx.block.element('node', {id: 1}), 'node', 'active'),
-					ctx.block.getElMod(ctx.$refs.children[0].block.element('node', {id: ctx.values.get(3)}), 'node', 'active')
-				])
-			).toEqual(['true', 'false', 'true']);
-		});
-
-		it('switching of an active element with `toggleActive` with set value with unsetPrevious', async () => {
-			const
-				target = await init({multiple: true});
-
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.toggleActive(new Set([0, 1]));
-					return [...ctx.active];
-				})
-			).toEqual([0, 1]);
-
-			expect(
-				await target.evaluate((ctx) => {
-					ctx.toggleActive(new Set([2, 4]), true);
-					return [...ctx.active];
-				})
-			).toEqual([2, 4]);
+				expect(
+					await target.evaluate((ctx) => {
+						ctx.toggleActive(new Set([2, 4]), true);
+						return [...ctx.active];
+					})
+				).toEqual([2, 4]);
+			});
 		});
 
 		it('listening of change events', async () => {

@@ -377,6 +377,103 @@ module.exports = (page) => {
 		}
 	});
 
+	describe('items changed.', () => {
+		it('default', async () => {
+			const
+				target = await init();
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					const
+						log = [];
+
+					ctx.on('onItemsChange', (val) => {
+						log.push(val);
+					});
+
+					ctx.items = [{label: 'Bar', value: 1}];
+
+					log.push(ctx.items);
+
+					await ctx.nextTick();
+					return log;
+				})
+			).toEqual([
+				[{label: 'Bar', value: 1, mods: {id: 0, active: false}}],
+				[{label: 'Bar', value: 1, mods: {id: 0, active: false}}]
+			]);
+		});
+
+		it('folded false', async () => {
+			const
+				target = await init({folded: false});
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					ctx.items = [
+						{value: 1},
+						{
+							value: 2,
+							children: [{value: 4}]
+						},
+						{
+							value: 3,
+							children: [{value: 5}]
+						}
+					];
+
+					await ctx.nextTick();
+					return [ctx.getFoldedMod(2), ctx.getFoldedMod(3)];
+				})
+			).toEqual(['false', 'false']);
+		});
+
+		it('node is folded after change', async () => {
+			const
+				target = await init();
+
+			expect(
+				await target.evaluate(async (ctx) => {
+					await ctx.fold('foo');
+
+					ctx.items = [
+						{value: 1},
+						{
+							value: 2,
+							children: [{value: 4}]
+						},
+						{
+							value: 3,
+							children: [{value: 5}]
+						}
+					];
+
+					await ctx.nextTick();
+					return ctx.getFoldedMod(2);
+				})
+			).toBe('true');
+		});
+
+		async function init(attrs) {
+			await page.evaluate(([items, attrs]) => {
+				const scheme = [
+					{
+						attrs: {
+							items,
+							id: 'target',
+							theme: 'demo',
+							...attrs
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-tree', scheme);
+			}, [defaultItems, attrs]);
+
+			return h.component.waitForComponent(page, '#target');
+		}
+	});
+
 	async function waitForItemsRender(v, selector = '.b-checkbox') {
 		await page.waitForFunction(([v, selector]) => document.querySelectorAll(selector).length === v, [v, selector]);
 		await expect((await page.$$(selector)).length).toBe(v);
