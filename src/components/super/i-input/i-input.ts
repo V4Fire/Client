@@ -664,6 +664,20 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	protected valueStore!: unknown;
 
 	/**
+	 * The normalized value for use with the `v-model` directive
+	 */
+	protected get valueModel(): string {
+		return String(this.value ?? '');
+	}
+
+	/**
+	 * Sets the normalized value from the `v-model` directive
+	 */
+	protected set valueModel(value: string) {
+		this.value = value;
+	}
+
+	/**
 	 * Internal validation error message
 	 */
 	@system()

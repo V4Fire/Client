@@ -15,7 +15,7 @@
 
 	- nativeInputTag = 'input'
 	- nativeInputType = "'hidden'"
-	- nativeInputModel = 'valueStore'
+	- nativeInputModel = 'valueModel'
 
 	- block headHelpers
 		- super
