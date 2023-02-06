@@ -54,7 +54,7 @@
 				- block expand
 					< _.&__cell.&__icon.&__expand v-if = $slots['dropdown']
 
-				- block icons
+				- block icon
 					< _.&__cell.&__icon.&__post-icon v-if = icon || $slots['icon']
 						+= self.slot('icon', {':icon': 'icon'})
 							< component &

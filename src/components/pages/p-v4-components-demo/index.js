@@ -21,6 +21,7 @@ package('p-v4-components-demo')
 
 		'b-form',
 		'b-button',
+		'b-icon-button',
 		'b-checkbox',
 		'b-radio-button',
 		'b-hidden-input',
