@@ -34,7 +34,7 @@ export default <ValidatorsDecl<iInputText>>{
 			value = await this.formValue;
 
 		if (value === undefined || value === '') {
-			this.setValidationMsg(this.getValidatorMsg(false, msg, this.i18n('Required field')), showMsg);
+			this.setValidationMsg(this.getValidatorMsg(false, msg, this.t`Required field`), showMsg);
 			return false;
 		}
 
@@ -78,7 +78,7 @@ export default <ValidatorsDecl<iInputText>>{
 
 		const error = (
 			type: PatternValidatorResult['name'] = 'NOT_MATCH',
-			defMsg = this.i18n('A value must match the pattern')
+			defMsg = this.t`A value must match the pattern`
 		) => {
 			const err = <PatternValidatorResult>{
 				name: type,
