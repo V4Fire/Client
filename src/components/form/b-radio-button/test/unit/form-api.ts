@@ -11,13 +11,13 @@ import type { JSHandle, Page } from 'playwright';
 import type * as DOM from 'components/friends/dom';
 import type * as Block from 'components/friends/block';
 
-import type bCheckbox from 'components/form/b-checkbox/b-checkbox';
+import type bRadioButton from 'components/form/b-radio-button/b-radio-button';
 
 import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
 import Utils from 'tests/helpers/utils';
 
-test.describe('<b-checkbox> form API', () => {
+test.describe('<b-radio-button> form API', () => {
 	const
 		first = '[data-id="target"]',
 		second = '[data-id="second"]';
@@ -34,7 +34,7 @@ test.describe('<b-checkbox> form API', () => {
 	});
 
 	test('component value validation', async ({page}) => {
-		const target = await renderCheckbox(page, {
+		const target = await renderRadioButton(page, {
 			validators: ['required'],
 			messageHelpers: true
 		});
@@ -55,7 +55,7 @@ test.describe('<b-checkbox> form API', () => {
 	});
 
 	test('getting component value from `formValue`', async ({page}) => {
-		const target = await renderCheckbox(page);
+		const target = await renderRadioButton(page);
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.formValue)
@@ -71,12 +71,17 @@ test.describe('<b-checkbox> form API', () => {
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.formValue)
+		).toBe(true);
+
+		await page.click(second);
+
+		test.expect(
+			await target.evaluate((ctx) => ctx.formValue)
 		).toBeUndefined();
 	});
 
 	test('getting component group value from `groupFormValue`', async ({page}) => {
-		const target = await renderCheckbox(page, {
-			name: 'test',
+		const target = await renderRadioButton(page, {
 			value: ['foo', 'bar']
 		});
 
@@ -94,17 +99,17 @@ test.describe('<b-checkbox> form API', () => {
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.groupFormValue)
-		).toEqual(['foo', 'bar']);
+		).toEqual(['bar']);
 
-		await page.click(second);
+		await page.click(first);
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.groupFormValue)
 		).toEqual(['foo']);
 	});
 
-	test('resetting the checkbox with no default value', async ({page}) => {
-		const target = await renderCheckbox(page, {checked: true});
+	test('resetting the radio button with no default value', async ({page}) => {
+		const target = await renderRadioButton(page, {checked: true});
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.value)
@@ -117,8 +122,8 @@ test.describe('<b-checkbox> form API', () => {
 		).toBeUndefined();
 	});
 
-	test('resetting the checkbox with the default value', async ({page}) => {
-		const target = await renderCheckbox(page, {default: true});
+	test('resetting the radio button with the default value', async ({page}) => {
+		const target = await renderRadioButton(page, {default: true});
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.value)
@@ -131,8 +136,8 @@ test.describe('<b-checkbox> form API', () => {
 		).toBe(true);
 	});
 
-	test('clearing the checkbox with no default value', async ({page}) => {
-		const target = await renderCheckbox(page, {checked: true});
+	test('clearing the radio button with no default value', async ({page}) => {
+		const target = await renderRadioButton(page, {checked: true});
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.value)
@@ -149,12 +154,13 @@ test.describe('<b-checkbox> form API', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderCheckbox(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bCheckbox>> {
-		await Component.createComponent(page, 'b-checkbox', [
+	async function renderRadioButton(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bRadioButton>> {
+		await Component.createComponent(page, 'b-radio-button', [
 			{
 				attrs: {
 					'data-id': 'target',
 					...attrs,
+					name: 'radio',
 					value: Object.isArray(attrs.value) ? attrs.value[0] : attrs.value
 				}
 			},
@@ -162,7 +168,7 @@ test.describe('<b-checkbox> form API', () => {
 			{
 				attrs: {
 					'data-id': 'second',
-					name: attrs.name,
+					name: 'radio',
 					value: Object.isArray(attrs.value) ? attrs.value[1] : undefined
 				}
 			}

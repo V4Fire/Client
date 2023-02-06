@@ -14,11 +14,8 @@
 import SyncPromise from 'core/promise/sync';
 import bCheckbox, { component } from 'components/form/b-checkbox/b-checkbox';
 
-export * from 'components/super/i-input/i-input';
+export * from 'components/form/b-checkbox/b-checkbox';
 
-/**
- * Component to create a radio button
- */
 @component()
 export default class bRadioButton extends bCheckbox {
 	override readonly changeable: boolean = false;
