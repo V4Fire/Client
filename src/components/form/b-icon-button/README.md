@@ -1,15 +1,13 @@
 # components/form/b-icon-button
 
-Component to create a button based on icon.
-The component simply extends [[bButton]], but overrides layout and slots.
+This module provides a component for creating a button based on a given graphical icon.
+In fact, this is a regular [[bButton]] component, but with changed markup and styles for buttons without text.
 
 ## Synopsis
 
 * The component extends [[bButton]].
 
 * The component is used as functional if there are no provided `dataProvider` and `href` props.
-
-* The component can be used as flyweight.
 
 * By default, the root tag of the component is `<span>`.
 
@@ -36,7 +34,7 @@ The component has four base scenarios of usage:
   < img :src = require('asses/my-icon.svg')
 ```
 
-### A trigger for the tied form
+### A trigger for a form
 
 ```
 < b-form
@@ -51,7 +49,7 @@ The component has four base scenarios of usage:
 < b-icon-button :type = 'link' | :href = 'https://google.com' | :icon = 'google'
 ```
 
-### Providing a custom data provider
+### A trigger for a data provider
 
 ```
 /// Get data from a provider

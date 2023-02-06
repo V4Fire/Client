@@ -8,8 +8,6 @@ This module provides a component to create a radio button.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
-* The component can be used as flyweight.
-
 * By default, the root tag of the component is `<span>`.
 
 * The component contains an `<input>` tag within.
