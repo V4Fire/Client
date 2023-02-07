@@ -184,6 +184,9 @@ export default abstract class iActiveItems extends iItems {
 
 	/**
 	 * Adds the specified value to the component's active store
+	 *
+	 * @param ctx
+	 * @param value
 	 */
 	static addToActiveStore(ctx: Component, value: iActiveItems['Active']): boolean {
 		const
@@ -232,6 +235,9 @@ export default abstract class iActiveItems extends iItems {
 
 	/**
 	 * Removes the specified value from the component's active store
+	 *
+	 * @param ctx
+	 * @param value
 	 */
 	static removeFromActiveStorage(ctx: Component, value: iActiveItems['Active']): boolean {
 		const

@@ -1,4 +1,4 @@
-# traits/i-access
+# traits/i-active-items
 
 This module provides a trait for a component that renders a list of items and need a behavior of changing active items.
 This trait is an extension of [[iItems]].
@@ -24,7 +24,7 @@ The trait declares associated type to specify a type of component active item: *
 | `actionChange`    | An active item of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |
 | `itemsChange`     | A list of items has been changed                                                                                            | List of items                         | `Items`  |
 
-Component need to support `change`, `immediateChange`, `actionChange` events in methods, in description of which it is indicated.
+Component needs to support `change`, `immediateChange`, `actionChange` events in methods, in description of which it is indicated.
 `itemsChange` event is supported in static `syncItemsWatcher` method.
 
 ```typescript
@@ -48,7 +48,7 @@ The trait specifies a bunch of optional props.
 ### [active]
 
 An initial component active item/s value.
-If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items values.
+If the component is switched to the `multiple` mode, you can pass an array or `Set` to define several active items.
 
 ```snakeskin
 < b-tree :items = [{value: 0, label: 'Foo'}, {value: 1, label: 'Bar'}] | :active = 0
@@ -68,7 +68,7 @@ otherwise to `false`.
 
 ### [activeStore]
 
-An internal component active item store.
+A component active item/s value.
 If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
 
 ### [indexes]
@@ -229,7 +229,7 @@ export default class bCustomList implements iActiveItems {
 
 ### initComponentValues
 
-Initializes component values. Fills a map and (associated) array of values and there indexes for internal use.
+Initializes component values. Fills a `Map` and an `Array` of values and there indexes for internal use.
 Also `iActiveItems.initItemMods` should be used to add required mods to item
 
 ```typescript

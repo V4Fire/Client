@@ -134,7 +134,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 */
 	/** @see [[iActiveItems.prototype.indexes] */
 	@system()
-	indexes!: Dictionary;
+	indexes!: unknown[];
 
 	/** @see [[iActiveItems.prototype.values]] */
 	@system()
@@ -431,7 +431,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@hook('beforeDataCreate')
 	initComponentValues(): void {
 		this.values = new Map();
-		this.indexes = {};
+		this.indexes = [];
 
 		for (let i = 0; i < this.items.length; i++) {
 			const
