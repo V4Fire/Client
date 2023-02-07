@@ -159,7 +159,6 @@ class bTree extends iData implements iActiveItems {
 	/**
 	 * @see [[iActiveItems.activeProp]]
 	 * @see [[iActiveItems.activeStore]]
-	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	@system<bTree>((ctx) => ctx.sync.link((value) => {
 		if (ctx.top != null) {
