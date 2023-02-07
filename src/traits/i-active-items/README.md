@@ -1,6 +1,6 @@
 # traits/i-active-items
 
-This module provides a trait for a component that renders a list of items and need a behavior of changing active items.
+This module provides a trait for a component that renders a list of items and needs a behavior of changing active items.
 This trait is an extension of [[iItems]].
 
 Take a look at [[bList]] to see more.
