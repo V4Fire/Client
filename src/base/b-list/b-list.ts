@@ -136,7 +136,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@system()
 	indexes!: Dictionary;
 
-	/** @see [[iActiveItems.prototype.values] */
+	/** @see [[iActiveItems.prototype.values]] */
 	@system()
 	values!: Map<unknown, number>;
 

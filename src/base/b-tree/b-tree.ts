@@ -521,7 +521,7 @@ class bTree extends iData implements iActiveItems {
 				return active;
 			}
 
-			let amount = 0;
+			let count = 0;
 
 			for (const [item, component] of ctx.traverse()) {
 				if (Object.isSet(value)) {
@@ -533,7 +533,7 @@ class bTree extends iData implements iActiveItems {
 					if (value.has(item.value)) {
 						toggleActive(component, item);
 
-						if (++amount === value.size) {
+						if (++count === value.size) {
 							break;
 						}
 					}
@@ -637,24 +637,24 @@ class bTree extends iData implements iActiveItems {
 
 		function listenChildrenEvents(this: bTree): void {
 			let
-				amount = countChildren(this.items);
+				count = countChildren(this.items);
 
 			const id = this.localEmitter.on('childRendered', () => {
-				if (--amount <= 0) {
+				if (--count <= 0) {
 					this.localEmitter.emit('allChildrenRendered');
 
 					this.localEmitter.off(id);
 				}
 			});
 
-			function countChildren(items: Items, amount: number = 0): number {
+			function countChildren(items: Items, count: number = 0): number {
 				items.forEach((item) => {
 					if (Object.isArray(item.children)) {
-						amount = countChildren(item.children, ++amount);
+						count = countChildren(item.children, ++count);
 					}
 				});
 
-				return amount;
+				return count;
 			}
 		}
 	}
@@ -761,8 +761,8 @@ class bTree extends iData implements iActiveItems {
 	/**
 	 * Normalizes the specified items and returns it
 	 *
-	 * @param items
-	 * @param parentValue
+	 * @param [items]
+	 * @param [parentValue]
 	 */
 	protected normalizeItems(items: this['Items'] = [], parentValue?: unknown): this['Items'] {
 		const
@@ -783,6 +783,7 @@ class bTree extends iData implements iActiveItems {
 
 	/**
 	 * Recursively unfolds parents
+	 * @param [item]
 	 */
 	protected unfoldAllParents(item?: this['Item']): void {
 		const
