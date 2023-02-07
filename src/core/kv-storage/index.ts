@@ -1,23 +1,16 @@
 import { factory } from '@v4fire/core/core/kv-storage';
 
-import type { SyncStorage } from 'core/kv-storage/interface';
-
-import CookieStorageEngine from 'core/kv-storage/engines/cookie-storage';
+import { syncLocalStorage } from 'core/kv-storage/engines/cookie';
 
 export * from '@v4fire/core/core/kv-storage';
 
 /**
- * Factory to create storage based on cookies
- * disclaimer: The maximum cookie size is 4 kb
- *
- * @param cookieNameForStorage - The name of the cookie that will be used as the basis for the storage
+ * API for synchronous local storage based on cookies
  *
  * @example
  * ```js
- * cookieStorage.set('foo', 'bar');
- * cookieStorage.get('foo'); // 'foo'
+ * session.set('foo', 'bar');
+ * session.get('foo'); // 'foo'
  * ```
  */
-export const cookieStorageFactory = (
-	cookieNameForStorage: string
-): SyncStorage => factory(new CookieStorageEngine(cookieNameForStorage), false);
+export const cookie = factory(syncLocalStorage);

@@ -1,22 +1,16 @@
-# core/kv-storage/engines
+# core/kv-storage/engines/cookie
 
-This module provides engines for kv-storage.
+This module provides cookie engine for kv-storage.
 
 ## CookieStorageEngine
 
 Cookie Storage Engine - uses a cookie as a container for data.
 
-When creating the engine, you will have to pass the name of the cookie. This cookie will be the source of the truth, all changes to the data will be recorded in it, and when accessing the data, they will be obtained from this cookie.
-
-### Usage
-
-Example of creating an engine that will use the `my-cookie-name` cookie as a data source
-
-```typescript
-const engine = new CookieStorageEngine('my-cookie-name');
-```
+This cookie will be the source of the truth, all changes to the data will be recorded in it, and when accessing the data, they will be obtained from this cookie.
 
 ### Restrictions
+
+All data is stored in one cookie.
 
 Due to the fact that we use cookies as a data container, we get the same restrictions as cookies. Namely, the limit in the maximum size of raw data in 4 kb.
 

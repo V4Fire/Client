@@ -11,7 +11,7 @@ import type { JSHandle } from 'playwright';
 
 import type * as Cookies from 'core/cookies';
 
-import type CookieStorageEngine from 'core/kv-storage/engines/cookie-storage';
+import type CookieStorageEngine from 'core/kv-storage/engines/cookie/engine';
 
 import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';

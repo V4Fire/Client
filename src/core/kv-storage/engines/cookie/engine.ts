@@ -8,14 +8,11 @@
 
 import type { ClearFilter } from 'core/kv-storage/interface';
 
+import { cookieStorageDividers } from 'core/kv-storage/engines/cookie/const';
+
 import * as cookie from 'core/cookies';
 
-export const cookieStorageDividers = {
-	keys: '{{#}}',
-	values: '{{.}}'
-};
-
-export default class CookieStorageEngine {
+export default class CookieEngine {
 	protected cookieName: string;
 
 	constructor(cookieName: string) {
