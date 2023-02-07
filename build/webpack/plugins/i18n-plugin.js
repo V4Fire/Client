@@ -27,43 +27,45 @@ module.exports = class I18NGeneratorPlugin {
 			 * Should run only at the last stage of the build
 			 * when all the files are ready and placed on the file system
 			 */
-			if (compilation.compiler.name !== 'html') {
-				return;
-			}
-
-			const
-				locales = supportedLocales().join('|'),
-				paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/(${locales}).js`),
-				result = {};
-
-			fg.sync(paths).forEach((path) => {
+			if (true) {
 				const
-					element = require(path),
-					parsedPath = /\/[^/]*?\.i18n\/(.*?)\.js$/i.exec(path);
+					locales = supportedLocales().join('|'),
+					paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/(${locales}).js`),
+					result = {};
 
-					if (parsedPath != null) {
+				fg.sync(paths).forEach((path) => {
+					const
+						element = require(path),
+						parsedPath = /\/[^/]*?\.i18n\/(.*?)\.js$/i.exec(path);
+
+						if (parsedPath != null) {
+							const
+								lang = parsedPath[1];
+
+							result[lang] = result[lang] ?? {};
+
+							Object.keys(element).forEach((keysetName) => {
+								result[lang][keysetName] = {
+									...result[lang][keysetName] != null ? result[lang][keysetName] : {},
+									...element[keysetName]
+								};
+							});
+						}
+				});
+
+				Object.entries(result).forEach(([lang, value]) => {
+					fs.writeFileSync(`${src.clientOutput()}/${lang}.json`, JSON.stringify(value, undefined, 2));
+				});
+
+				fg.sync(`${src.clientOutput()}/*.html`, {ignore: `${src.clientOutput()}/*_(${locales}).html`}).forEach((path) => {
+					supportedLocales().forEach((locale) => {
 						const
-							lang = parsedPath[1];
+							newFile = fs.readFileSync(path, {encoding: 'utf8'}).replace('TRANSLATE_MAP = {}', `TRANSLATE_MAP = ${JSON.stringify(result[locale])}`);
 
-						result[lang] = result[lang] ?? {};
-
-						Object.keys(element).forEach((keysetName) => {
-							result[lang][keysetName] = {
-								...result[lang][keysetName] != null ? result[lang][keysetName] : {},
-								...element[keysetName]
-							};
-						});
-					}
-			});
-
-			Object.entries(result).forEach(([lang, value]) => {
-				fs.writeFileSync(`${src.clientOutput()}/${lang}.json`, JSON.stringify(value, undefined, 2));
-			});
-
-			debugger;
-			// dist find globa('*.html')
-			// do while ru, en, pr
-			// copy => p_index_ru.html => find id='asdfads' => paste => json
+						fs.writeFileSync(path.replace('.html', `_${locale}.html`), newFile);
+					});
+				});
+			}
 		}
 	}
 };

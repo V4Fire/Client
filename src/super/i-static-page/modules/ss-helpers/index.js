@@ -19,5 +19,6 @@ Object.assign(
 	include('src/super/i-static-page/modules/ss-helpers/page'),
 	include('src/super/i-static-page/modules/ss-helpers/assets'),
 	include('src/super/i-static-page/modules/ss-helpers/favicons'),
-	include('src/super/i-static-page/modules/ss-helpers/base-declarations')
+	include('src/super/i-static-page/modules/ss-helpers/base-declarations'),
+	include('src/super/i-static-page/modules/ss-helpers/i18n-declaration')
 );
