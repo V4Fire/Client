@@ -143,7 +143,6 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	/**
 	 * @see [[iActiveItems.activeProp]]
 	 * @see [[iActiveItems.activeStore]]
-	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	@system<bList>((o) => o.sync.link((val) => {
 		const
