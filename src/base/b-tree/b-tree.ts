@@ -408,14 +408,21 @@ class bTree extends iData implements iActiveItems {
 		return SyncPromise.resolve(false);
 	}
 
-	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
+	/**
+	 * Synchronization of items
+	 *
+	 * @param items
+	 * @param oldItems
+	 * @emits `itemsChange(value: this['Items'])`
+	 */
 	@watch({field: 'items'})
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		if (Object.fastCompare(items, oldItems)) {
 			return;
 		}
 
-		iActiveItems.syncItemsWatcher(this, items);
+		ctx.initComponentValues();
+		ctx.emit('itemsChange', items);
 
 		if (this.top == null) {
 			this.localEmitter.once('allChildrenRendered', () => this.folded ? this.fold() : this.unfold());
