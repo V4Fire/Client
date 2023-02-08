@@ -150,12 +150,6 @@ export default abstract class iActiveItems extends iItems {
 		return value === active;
 	};
 
-	/** @see [[iActiveItems.prototype.syncItemsWatcher]] */
-	static syncItemsWatcher(ctx: Component, items: Item[]): void {
-		ctx.initComponentValues();
-		ctx.emit('itemsChange', items);
-	}
-
 	/**
 	 * Initializes component mods
 	 *
@@ -324,15 +318,6 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `immediateChange(active: unknown)`
 	 */
 	abstract toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'];
-
-	/**
-	 * Synchronization of items
-	 *
-	 * @param items
-	 * @param oldItems
-	 * @emits `itemsChange(value: this['Items'])`
-	 */
-	abstract syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void;
 
 	/**
 	 * Initializes component values

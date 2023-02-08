@@ -22,24 +22,8 @@ The trait declares associated type to specify a type of component active item: *
 | `change`          | An active item of the component has been changed                                                                            | Active value or a set of active items | `Active` |
 | `immediateChange` | An active item of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active items | `Active` |
 | `actionChange`    | An active item of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |
-| `itemsChange`     | A list of items has been changed                                                                                            | List of items                         | `Items`  |
 
 Component needs to support `change`, `immediateChange`, `actionChange` events in methods, in description of which it is indicated.
-`itemsChange` event is supported in static `syncItemsWatcher` method.
-
-```typescript
-import iActiveItems from 'traits/i-active-items/i-active-items';
-
-export default class bCustomList implements iActiveItems {
-  /** @see [[iActiveItems.prototype.syncItemsWatcher]] */
-  @watch(['items'])
-  syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-    if (!Object.fastCompare(items, oldItems)) {
-      iActiveItems.syncItemsWatcher(this, items);
-    }
-  }
-}
-```
 
 ## Props
 
@@ -206,23 +190,6 @@ export default class bCustomList implements iActiveItems {
     this.emit('change', this.active);
 
     return true;
-  }
-}
-```
-
-### syncItemsWatcher
-
-Synchronization of items.
-Should run when items change.
-
-```typescript
-import iActiveItems from 'traits/i-active-items/i-active-items';
-
-export default class bCustomList implements iActiveItems {
-  /** @see iAccess.prototype.syncItemsWatcher */
-  @watch({field: 'items'})
-  syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-    iActiveItems.syncItemsWatcher(this, items, oldItems);
   }
 }
 ```
