@@ -49,6 +49,11 @@ Also, you can see the implemented traits or the parent component.
 The current page title.
 Basically this title is set via `document.title`.
 
+#### [pageTitleProp]
+
+The current page title.
+Basically this description is set via `<meta name="description" content="..."/>`.
+
 #### [stagePageTitles]
 
 A dictionary of page titles (basically these titles are set via `document.title`).

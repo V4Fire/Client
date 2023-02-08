@@ -483,7 +483,7 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
   - charset = 'latin-1'
 ```
 
-## Runtime API
+## API
 
 ### Getters
 
@@ -506,6 +506,17 @@ See `core/net` for more information.
 
 The name of the active route page.
 See [[bDynamicPage]] for more information.
+
+### pageMetaData
+
+A module for manipulating page metadata, such as the page title or description.
+
+```js
+this.r.pageMetaData.title = 'Example';
+console.log(this.r.pageMetaData.description);
+```
+
+See `components/super/i-static-page/modules/page-meta-data` for more information.
 
 ### providerDataStore
 
@@ -530,11 +541,10 @@ See `components/super/i-static-page/modules/provider-data-store` for more inform
 
 ### theme
 
-A module to manage app themes from the Design System.
+A module for managing application themes.
 
 ```js
 console.log(this.r.theme.current);
-
 this.r.theme.current = 'dark';
 ```
 

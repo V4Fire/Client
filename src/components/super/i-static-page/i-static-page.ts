@@ -69,6 +69,12 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
+	 * A module for manipulating page metadata, such as the page title or description
+	 */
+	@system(() => new PageMetaData())
+	readonly pageMetaData!: PageMetaData;
+
+	/**
 	 * A module to work with data of data providers globally
 	 */
 	@system(() => createProviderDataStore(new RestrictedCache(10)))
@@ -79,12 +85,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>(themeManagerFactory)
 	readonly theme: CanUndef<ThemeManager>;
-
-	/**
-	 * A module for manipulating page metadata, such as the page title or description
-	 */
-	@system(() => new PageMetaData())
-	readonly pageMetaData!: PageMetaData;
 
 	/**
 	 * True if the current user is authorized

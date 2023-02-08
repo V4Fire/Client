@@ -40,8 +40,8 @@ export default abstract class iPage extends iData implements iVisible {
 	readonly pageTitleProp: TitleValue = '';
 
 	/**
-	 * An initial page title.
-	 * Basically this title is set via `document.title`.
+	 * The current page description.
+	 * Basically this description is set via `<meta name="description" content="..."/>`.
 	 */
 	 @prop({type: [String, Function]})
 	 readonly pageDescriptionProp: DescriptionValue = '';
