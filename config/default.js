@@ -1038,14 +1038,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		return {
 			sources: false,
-
-			minimize: {
-				useShortDoctype: true,
-				conservativeCollapse: true,
-				removeAttributeQuotes: true,
-				removeComments: isProd,
-				collapseWhitespace: isProd
-			}
+			minimize: isProd
 		};
 	},
 
