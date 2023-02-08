@@ -11,11 +11,12 @@
  * @packageDocumentation
  */
 
+import SyncPromise from 'core/promise/sync';
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 
-import iData, { component, prop, field } from 'components/super/i-data/i-data';
+import iData, { component, prop, field, wait, ModsDecl } from 'components/super/i-data/i-data';
 import type { Item, RenderFilter } from 'components/base/b-tree/interface';
 
 export * from 'components/super/i-data/i-data';
@@ -111,6 +112,18 @@ export default class bTree extends iData implements iItems {
 	@field((o) => o.sync.link())
 	items!: this['Items'];
 
+	static override readonly mods: ModsDecl = {
+		clickableArea: [
+			['fold'],
+			'any'
+		]
+	};
+
+	/** @inheritDoc */
+	protected override readonly $refs!: iData['$refs'] & {
+		children?: bTree[];
+	};
+
 	/**
 	 * Parameters for async render tasks
 	 */
@@ -150,6 +163,124 @@ export default class bTree extends iData implements iItems {
 		return opts;
 	}
 
+	/**
+	 * Returns an iterator over the tree items based on the given arguments.
+	 * The iterator returns pairs of elements `[Tree item, The bTree instance associated with the element]`.
+	 *
+	 * @param [ctx] - a context to start iteration, the top-level tree by default
+	 * @param [opts] - additional options
+	 */
+	traverse(
+		ctx: bTree = this.top ?? this,
+		opts: {deep: boolean} = {deep: true}
+	): IterableIterator<[this['Item'], bTree]> {
+		const
+			children = ctx.$refs.children ?? [],
+			iter = createIter();
+
+		return {
+			[Symbol.iterator]() {
+				return this;
+			},
+
+			next: iter.next.bind(iter)
+		};
+
+		function* createIter() {
+			for (const item of ctx.items) {
+				yield [item, ctx];
+			}
+
+			if (opts.deep) {
+				for (const child of children) {
+					yield* child.traverse(child);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Folds the specified item.
+	 * If the method is called without an element passed, all tree sibling elements will be folded.
+	 *
+	 * @param [item]
+	 */
+	@wait('ready')
+	fold(item?: this['Item']): Promise<boolean> {
+		if (item == null) {
+			const
+				values: Array<Promise<boolean>> = [];
+
+			for (const [item] of this.traverse(this, {deep: false})) {
+				values.push(this.fold(item));
+			}
+
+			return SyncPromise.all(values)
+				.then((res) => res.some((value) => value === true));
+		}
+
+		const
+			isFolded = this.getFoldedModById(item.id) === 'true';
+
+		if (isFolded) {
+			return SyncPromise.resolve(false);
+		}
+
+		return this.toggleFold(item);
+	}
+
+	/**
+	 * Unfolds the specified item.
+	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
+	 *
+	 * @param [item]
+	 */
+	@wait('ready')
+	unfold(item?: this['Item']): Promise<boolean> {
+		if (item == null) {
+			const
+				values: Array<Promise<boolean>> = [];
+
+			for (const [item] of this.traverse(this, {deep: false})) {
+				values.push(this.unfold(item));
+			}
+
+			return SyncPromise.all(values)
+				.then((res) => res.some((value) => value === true));
+		}
+
+			const
+				isUnfolded = this.getFoldedModById(item.id) === 'false';
+
+			if (isUnfolded) {
+				return SyncPromise.resolve(false);
+			}
+
+			return this.toggleFold(item);
+	}
+
+	/**
+	 * Toggles the passed item fold value
+	 *
+	 * @param item
+	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
+	 */
+	@wait('ready')
+	toggleFold(item: this['Item']): Promise<boolean> {
+		const
+			target = this.findItemElement(item.id),
+			newVal = this.getFoldedModById(item.id) === 'false';
+
+		if (target != null && this.hasChildren(item)) {
+			this.block?.setElementMod(target, 'node', 'folded', newVal);
+			this.emit('fold', target, item, newVal);
+
+			return SyncPromise.resolve(true);
+		}
+
+		return SyncPromise.resolve(false);
+	}
+
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
@@ -171,6 +302,14 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
+	 * True, if specified item has children
+	 * @param item
+	 */
+	protected hasChildren(item: this['Item']): boolean {
+		return Object.size(item.children?.length) > 0;
+	}
+
+	/**
 	 * Returns a dictionary with props for the specified item
 	 *
 	 * @param item
@@ -178,19 +317,21 @@ export default class bTree extends iData implements iItems {
 	 */
 	protected getItemProps(item: this['Item'], i: number): Dictionary {
 		const
-			op = this.itemProps;
+			op = this.itemProps,
+			props = Object.reject(item, ['id', 'parentId', 'children', 'folded']);
 
 		if (op == null) {
-			return Object.reject(item, ['id', 'parentId', 'children', 'folded']);
+			return props;
 		}
 
 		return Object.isFunction(op) ?
 			op(item, i, {
 				key: this.getItemKey(item, i),
-				ctx: this
+				ctx: this,
+				...props
 			}) :
 
-			op;
+			Object.assign(props, op);
 	}
 
 	/**
@@ -241,18 +382,9 @@ export default class bTree extends iData implements iItems {
 
 	/**
 	 * Handler: fold element has been clicked
-	 *
 	 * @param item
-	 * @emits `fold(target: HTMLElement, item:` [[Item]]`, value: boolean)`
 	 */
 	protected onFoldClick(item: this['Item']): void {
-		const
-			target = this.findItemElement(item.id),
-			newVal = this.getFoldedModById(item.id) === 'false';
-
-		if (target) {
-			this.block?.setElementMod(target, 'node', 'folded', newVal);
-			this.emit('fold', target, item, newVal);
-		}
+		void this.toggleFold(item);
 	}
 }

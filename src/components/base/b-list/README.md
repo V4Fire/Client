@@ -56,8 +56,6 @@ The component has one associated type to specify the active component item: **Ac
 ```typescript
 import bList, { component } from 'components/super/b-list/b-list';
 
-export * from 'components/super/b-list/b-list';
-
 @component()
 export default class myList extends bList {
   /** @override */
@@ -69,8 +67,6 @@ In addition, there are associated types to specify the item types: **Item** and 
 
 ```typescript
 import bList, { component } from 'components/super/b-list/b-list';
-
-export * from 'components/super/b-list/b-list';
 
 @component()
 export default class myList extends bList {

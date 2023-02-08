@@ -44,8 +44,6 @@ This class provides that API, i.e. if you want your component to work as a form 
 ```typescript
 import iInput, { component } from 'components/super/i-input/i-input';
 
-export * from 'components/super/i-input/i-input';
-
 @component()
 export default class MyInput extends iInput {
   protected override readonly $refs!: {input: HTMLInputElement};
@@ -61,8 +59,6 @@ The component has two associated types to specify the original value and form va
 
 ```typescript
 import iInput, { component } from 'components/super/i-input/i-input';
-
-export * from 'components/super/i-input/i-input';
 
 @component()
 export default class MyInput extends iInput {
@@ -290,8 +286,6 @@ You can add a new validator to your component.
 
 ```typescript
 import iInput, { component } from 'components/super/i-input/i-input';
-
-export * from 'components/super/i-input/i-input';
 
 @component()
 export default class MyInput extends iInput {

@@ -286,6 +286,105 @@ module.exports = async (page, params) => {
 		}
 	});
 
+	describe('b-tree public API.', () => {
+		const
+			items = [
+				{id: 1},
+				{id: 2},
+				{
+					id: 3,
+					children: [
+						{
+							id: 4,
+							children: [{id: 6}]
+						}
+					]
+				},
+				{id: 5}
+			];
+
+		it('traverse', async () => {
+			const
+				target = await init();
+
+			let res = await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.id));
+
+			expect(res).toEqual([1, 2, 3, 5, 4, 6]);
+
+			res = await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.id));
+
+			expect(res).toEqual([1, 2, 3, 5]);
+		});
+
+		it('fold/unfold', async () => {
+			const
+				target = await init();
+
+			await target.evaluate(async (ctx) => {
+				await ctx.unfold();
+			});
+
+			let nodes = [
+				await h.dom.waitForEl(page, `[data-id$="-${3}"]`),
+				await h.dom.waitForEl(page, `[data-id$="-${4}"]`)
+			];
+
+			await expect(
+				nodes.every(async (node) => (await node.getAttribute('class')).includes('folded_false'))
+			).toBe(true);
+
+			await target.evaluate(async (ctx) => {
+				await ctx.fold();
+			});
+
+			nodes = [
+				await h.dom.waitForEl(page, `[data-id$="-${3}"]`),
+				await h.dom.waitForEl(page, `[data-id$="-${4}"]`)
+			];
+
+			expect(
+				nodes.every(async (node) => (await node.getAttribute('class')).includes('folded_true'))
+			).toBeTrue();
+
+			await target.evaluate((ctx) => {
+				ctx.unfold(ctx.items[2]);
+			});
+
+			nodes = [
+				await h.dom.waitForEl(page, `[data-id$="-${3}"]`),
+				await h.dom.waitForEl(page, `[data-id$="-${4}"]`)
+			];
+
+			const res = nodes.reduce(async (acc, cur) => {
+				if ((await cur.getAttribute('class')).includes('folded_false')) {
+					return ++acc;
+				}
+
+				return acc;
+			}, 0);
+
+			await expectAsync(res).toBeResolvedTo(1);
+		});
+
+		async function init() {
+			await page.evaluate((items) => {
+				const scheme = [
+					{
+						attrs: {
+							items,
+							id: 'target',
+							theme: 'demo'
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-tree', scheme);
+			}, items);
+
+			return h.component.waitForComponent(page, '#target');
+		}
+	});
+
 	async function waitForCheckboxCount(v) {
 		await page.waitForFunction((v) => document.querySelectorAll('.b-checkbox').length === v, v);
 		await expect((await page.$$('.b-checkbox')).length).toBe(v);
@@ -311,10 +410,6 @@ module.exports = async (page, params) => {
 					foldedPropValue = await target.evaluate((ctx) => ctx.folded),
 					foldedInitModValue = item.folded != null ? item.folded : foldedPropValue,
 					foldedClass = await getFoldedClass(target, foldedInitModValue);
-
-				await expectAsync(
-					element.getAttribute('class').then((className) => className.includes(foldedClass))
-				).toBeResolvedTo(true);
 
 				await expectAsync(element.getAttribute('data-level')).toBeResolvedTo(String(level));
 

@@ -76,6 +76,17 @@ export default class DOM {
 	}
 
 	/**
+	 * Returns a content from description meta tag
+	 */
+	static getPageDescription(): string | undefined {
+		const metaElem: HTMLMetaElement | undefined = [].find.call(document.getElementsByTagName('meta'), (item) => item.name === 'description');
+
+		if (metaElem) {
+			return metaElem.content;
+		}
+	}
+
+	/**
 	 * Returns a generator of element names for the specified block
 	 *
 	 * @example

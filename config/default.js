@@ -393,7 +393,18 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Returns the `webpack.aliases` value
+		 *
+		 * @see https://webpack.js.org/configuration/resolve/#resolvealias
+		 * @returns {!Object}
+		 */
+		aliases() {
+			return {};
+		},
+
+		/**
 		 * Returns the `webpack.externals` value
+		 * @returns {!Object}
 		 */
 		externals() {
 			return {
@@ -700,17 +711,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {{server: !Object, client: !Object}}
 	 */
 	typescript() {
-		const
-			server = super.typescript();
-
 		const configFile = fs.existsSync(path.join(this.src.cwd(), 'client.tsconfig.json')) ?
 			'client.tsconfig.json' :
 			'tsconfig.json';
 
+		const
+			server = super.typescript();
+
+		const {
+			compilerOptions: {module}
+		} = require(path.join(this.src.cwd(), configFile));
+
 		const client = this.extend({}, server, {
 			configFile,
 			compilerOptions: {
-				module: this.webpack.ssr || this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
+				module: this.webpack.ssr || this.webpack.fatHTML() ? 'commonjs' : module
 			}
 		});
 

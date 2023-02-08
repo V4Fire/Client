@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.32.0 (2022-12-21)
+
+#### :house: Internal
+
+* Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
+* Added a new modifier `clickableArea`
+
+#### :bug: Bug Fix
+
+* Fixed passing props to nested trees
+* Fixed an issue with the prop `itemProps` not being added to items attributes
+* Fixed adding the `folded_false` class to items without children
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :house: Internal

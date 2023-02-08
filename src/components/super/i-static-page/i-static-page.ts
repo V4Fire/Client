@@ -17,13 +17,14 @@ import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
-import { resetComponents, ComponentResetType, ComponentInterface } from 'core/component';
+import { resetComponents, ComponentResetType } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, watch } from 'components/super/i-page/i-page';
 
+import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
@@ -80,6 +81,12 @@ export default abstract class iStaticPage extends iPage {
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
+	 * A module for manipulating page metadata, such as the page title or description
+	 */
+	@system(() => new PageMetaData())
+	readonly pageMetaData!: PageMetaData;
+
+	/**
 	 * True if the current user is authorized
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
@@ -125,30 +132,6 @@ export default abstract class iStaticPage extends iPage {
 	override set route(value: CanUndef<this['CurrentPage']>) {
 		this.field.set('routeStore', value);
 		this.emit('setRoute', value);
-	}
-
-	override get pageTitle(): string {
-		return this.field.get<string>('pageTitleStore')!;
-	}
-
-	override set pageTitle(value: string) {
-		if (!Object.isString(value)) {
-			return;
-		}
-
-		let
-			title = value;
-
-		try {
-			const div = Object.assign(document.createElement('div'), {innerHTML: value});
-			title = div.textContent ?? '';
-
-			// Fix strange Chrome bug
-			document.title = `${title} `;
-			document.title = title;
-		} catch {}
-
-		this.field.set('pageTitleStore', title);
 	}
 
 	/**
@@ -215,18 +198,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system()
 	protected rootMods: Dictionary<RootMod> = {};
-
-	/**
-	 * Sets a new page title
-	 *
-	 * @param value
-	 * @param [component]
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	setPageTitle(value: string, component: ComponentInterface = this): CanPromise<boolean> {
-		this.pageTitle = value;
-		return this.pageTitle === value;
-	}
 
 	/**
 	 * Sends a message to reset data of all components.

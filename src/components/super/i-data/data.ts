@@ -45,7 +45,7 @@ interface iDataData extends Trait<typeof iDataProvider> {}
 
 @component({functional: null})
 @derive(iDataProvider)
-abstract class iDataData extends iBlock {
+abstract class iDataData extends iBlock implements iDataProvider {
 	/**
 	 * Type: the raw provider data
 	 */

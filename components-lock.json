@@ -1,5 +1,5 @@
 {
-  "hash": "32a2f68e6022ece2f5b353d363304b264bc958b0ec2a6a38e38da08af85bfb6c",
+  "hash": "616c42c562d59e36a0531ca09a0838c78ef5cfe70c388d0a0695753efd8a31da",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1882,6 +1882,7 @@
               "b-window",
               "b-form",
               "b-button",
+              "b-icon-button",
               "b-checkbox",
               "b-radio-button",
               "b-hidden-input",
@@ -1905,6 +1906,7 @@
             "b-window",
             "b-form",
             "b-button",
+            "b-icon-button",
             "b-checkbox",
             "b-radio-button",
             "b-hidden-input",

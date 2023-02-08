@@ -11,6 +11,50 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.34.1 (2023-01-31)
+
+#### :house: Internal
+
+* Added the ability to specify webpack aliases from the config `build/webpack/alias`
+
+## v3.34.0 (2023-01-30)
+
+#### :boom: Breaking Change
+
+* [Now `commonjs` module will not be installed for typescript processing into `fathtml` mode, instead `module` from `tsconfig` will be taken by default `config/default`](https://github.com/V4Fire/Client/discussions/773)
+
+#### :house: Internal
+
+* Added `test:circular-deps` npm script for analyzing circular deps
+* Fixed few circular deps
+
+## v3.33.0 (2022-12-28)
+
+#### :rocket: New Feature
+
+* Added the ability to manipulate meta information of a page with `super/i-static-page/modules/page-meta-data`
+
+## v3.32.1 (2022-12-26)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with not setting an initial value of `hidden` modifier `base/b-bottom-slide`
+
+## v3.32.0 (2022-12-21)
+
+#### :rocket: New Feature
+
+* `bTree`:
+  * Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
+  * Added a new modifier `clickableArea`
+
+#### :bug: Bug Fix
+
+* `bTree`:
+  * Fixed passing props to nested trees
+  * Fixed an issue with the prop `itemProps` not being added to items attributes
+  * Fixed adding the `folded_false` class to items without children
+
 ## v3.31.0 (2022-12-06)
 
 #### :rocket: New Feature

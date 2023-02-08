@@ -15,7 +15,7 @@ import symbolGenerator from 'core/symbol';
 import iVisible from 'components/traits/i-visible/i-visible';
 
 import iData, { component, prop, system, computed, watch, hook, ModsDecl } from 'components/super/i-data/i-data';
-import type { TitleValue, StageTitles, ScrollOptions } from 'components/super/i-page/interface';
+import type { TitleValue, StageTitles, ScrollOptions, DescriptionValue } from 'components/super/i-page/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/super/i-page/interface';
@@ -40,6 +40,13 @@ export default abstract class iPage extends iData implements iVisible {
 	readonly pageTitleProp: TitleValue = '';
 
 	/**
+	 * An initial page title.
+	 * Basically this title is set via `document.title`.
+	 */
+	 @prop({type: [String, Function]})
+	 readonly pageDescriptionProp: DescriptionValue = '';
+
+	/**
 	 * A dictionary of page titles (basically these titles are set via `document.title`).
 	 * The dictionary values are bound to the `stage` values.
 	 *
@@ -55,9 +62,9 @@ export default abstract class iPage extends iData implements iVisible {
 	 * @see [[iPage.pageTitleProp]]
 	 * @see [[iPage.stagePageTitles]]
 	 */
-	@computed({cache: true, dependencies: ['r.pageTitle']})
+	@computed({cache: false})
 	get pageTitle(): string {
-		return this.r.pageTitle;
+		return this.r.pageMetaData.title;
 	}
 
 	/**
@@ -66,7 +73,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
-			void this.r.setPageTitle(value, this);
+			this.r.pageMetaData.title = value;
 		}
 	}
 
@@ -94,6 +101,12 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	@system((o) => o.sync.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
+
+	/**
+	 * Page description store
+	 */
+	@system((o) => o.sync.link((v) => Object.isFunction(v) ? v(o) : v))
+	protected pageDescriptionStore!: string;
 
 	/**
 	 * Scrolls the page by the specified options
@@ -163,7 +176,7 @@ export default abstract class iPage extends iData implements iVisible {
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (v != null) {
-				return this.pageTitle = this.t(Object.isFunction(v) ? v(this) : v);
+				return this.r.pageMetaData.title = this.t(Object.isFunction(v) ? v(this) : v);
 			}
 		}
 	}
@@ -172,9 +185,13 @@ export default abstract class iPage extends iData implements iVisible {
 	 * Initializes the custom page title
 	 */
 	@hook(['created', 'activated'])
-	protected initTitle(): void {
+	protected initPageMetaData(): void {
 		if (this.syncStageTitles() == null && Object.isTruly(this.pageTitleStore)) {
-			this.pageTitle = this.pageTitleStore;
+			this.r.pageMetaData.title = this.pageTitleStore;
+		}
+
+		if (Object.isTruly(this.pageDescriptionStore)) {
+			this.r.pageMetaData.description = this.pageDescriptionStore;
 		}
 	}
 
