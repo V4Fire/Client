@@ -33,13 +33,13 @@ declare const DS_COMPONENTS_MODS: CanUndef<{
 }>;
 
 declare module '*.styl' {
-  const styles: any;
-  export default styles;
+	const styles: any;
+	export default styles;
 }
 
 declare module '*.ss' {
 	const block: any;
-  export = block;
+	export = block;
 }
 
 interface RenderOptions {

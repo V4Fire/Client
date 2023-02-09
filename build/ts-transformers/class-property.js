@@ -23,20 +23,20 @@ const ts = require('typescript');
 const primitiveTypes = ['boolean', 'number', 'string', 'null', 'undefined'];
 
 /**
- * Wrap old expression into function
+ * Wraps an old expression into function
  *
  * @param {Context} context
  * @param {Node} oldInitializerNode
  * @returns {ConciseBody}
  */
-const createFunctionBody = (context, oldInitializerNode) => {
+function createFunctionBody(context, oldInitializerNode) {
 	const {factory} = context;
 
 	return factory.createBlock(
 		[factory.createReturnStatement(oldInitializerNode)],
 		true
 	);
-};
+}
 
 /**
  * Creates AST for wrapped by function property declaration
@@ -47,9 +47,10 @@ const createFunctionBody = (context, oldInitializerNode) => {
  * @returns {PropertyDeclaration}
  */
 const createPropertyDeclaration = (context, oldInitializerNode, originalNode) => {
-	const {factory} = context;
-	const body = createFunctionBody(context, oldInitializerNode);
-	const identifierName = ts.getNameOfDeclaration(originalNode).escapedText;
+	const
+		{factory} = context,
+		body = createFunctionBody(context, oldInitializerNode),
+		identifierName = ts.getNameOfDeclaration(originalNode).escapedText;
 
 	if (!body) {
 		return originalNode;
@@ -74,7 +75,7 @@ const createPropertyDeclaration = (context, oldInitializerNode, originalNode) =>
 };
 
 /**
- * Check is property declaration type primitive
+ * Returns true if the type of the specified node is a primitive
  *
  * @param {Node} node
  * @param {TypeChecker} checker
