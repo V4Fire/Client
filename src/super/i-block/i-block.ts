@@ -1686,7 +1686,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * @param [params] - params for i18n (variables, pluralize, etc)
 	 * @returns string
 	 */
-	i18nForTraits(traitName: string, key: string, params?: I18nParams): string {
+	i18nTrait(traitName: string, key: string, params?: I18nParams): string {
 		return i18n(traitName)(key, params);
 	}
 
