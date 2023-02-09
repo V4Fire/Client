@@ -827,7 +827,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		const client = this.extend({}, server, {
 			configFile,
-			compilerOptions: {module}
+			compilerOptions: {module},
+			transpileOnly: true
 		});
 
 		return {

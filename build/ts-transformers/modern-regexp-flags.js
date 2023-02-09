@@ -34,7 +34,7 @@ const ts = require('typescript');
  * new RegExp('\\W+', 'su');
  * ```
  */
-function modernRegExpFlagsTransformer(context) {
+const modernRegExpFlagsTransformer = (context) => {
 	const modernRegExpFlags = ['s', 'y', 'u'];
 
 	/**
@@ -42,7 +42,7 @@ function modernRegExpFlagsTransformer(context) {
 	 * @returns {VisitResult}
 	 */
 	function visitor(node) {
-		if (node.kind === ts.SyntaxKind.RegularExpressionLiteral) {
+		if (ts.isRegularExpressionLiteral(node)) {
 			const
 				lastSlash = node.text.lastIndexOf('/'),
 				flags = node.text.slice(lastSlash + 1),
@@ -65,6 +65,6 @@ function modernRegExpFlagsTransformer(context) {
 	}
 
 	return (node) => ts.visitNode(node, visitor);
-}
+};
 
-module.exports = modernRegExpFlagsTransformer;
+module.exports = () => modernRegExpFlagsTransformer;

@@ -17,8 +17,7 @@ const
 	projectGraph = include('build/graph');
 
 const
-	{webpack} = config,
-	{resolve} = require('@pzlr/build-core');
+	{webpack} = config;
 
 const
 	{isExternalDep} = include('build/const'),
@@ -64,6 +63,11 @@ module.exports = async function module({plugins}) {
 		fatHTML = webpack.fatHTML();
 
 	const loaders = {
+		parser: {
+			javascript: {
+				importExportsPresence: false
+			}
+		},
 		rules: new Map()
 	};
 
@@ -74,7 +78,6 @@ module.exports = async function module({plugins}) {
 				modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 			}
 		},
-
 		'prelude-loader',
 
 		{
@@ -88,7 +91,6 @@ module.exports = async function module({plugins}) {
 					[
 						include('build/monic/require-context'),
 						include('build/monic/super-import'),
-						include('build/monic/ts-import'),
 						include('build/monic/dynamic-component-import')
 					]
 				)
@@ -103,10 +105,11 @@ module.exports = async function module({plugins}) {
 			{
 				loader: 'ts-loader',
 				options: {
-					...typescript.client,
-					getCustomTransformers: () => ({
-						after: [...Object.values(tsTransformers.before)]
-					})
+					allowTsInNodeModules: true,
+					// Ignore all typescript errors
+					ignoreDiagnostics: Array.from(Array(10000).keys()),
+					getCustomTransformers: tsTransformers,
+					...typescript.client
 				}
 			},
 
