@@ -1,25 +1,8 @@
 # core/kv-storage/engines/cookie
 
-This module provides cookie engine for kv-storage.
+This module provides an engine for cookie-based "key-value" data storage.
+Note that the engine stores all of its data in a single cookie, so the amount of information stored cannot exceed 4 kb.
 
-## CookieStorageEngine
+## How is data stored inside a cookie?
 
-Cookie Storage Engine - uses a cookie as a container for data.
-
-This cookie will be the source of the truth, all changes to the data will be recorded in it, and when accessing the data, they will be obtained from this cookie.
-
-### Restrictions
-
-All data is stored in one cookie.
-
-Due to the fact that we use cookies as a data container, we get the same restrictions as cookies. Namely, the limit in the maximum size of raw data in 4 kb.
-
-Therefore, when using this engine, it is very important to monitor the data that you write to the storage and try to add new ones only when necessary.
-
-The following separators are used to serialize data:
-
-`{{.}}` - key/value separtor
-
-`{{#}}` - keys separators
-
-It is forbidden to use these symbols in keys and values.
+When saving, the data is serialized into a string, where special separator characters are inserted between the keys and values.
