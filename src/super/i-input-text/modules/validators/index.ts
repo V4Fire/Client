@@ -101,11 +101,11 @@ export default <ValidatorsDecl<iInputText>>{
 				{length} = [...value.letters()];
 
 			if (min != null && length < min) {
-				return error('MIN', this.i18n('Value length must be at least {min} characters', {min}));
+				return error('MIN', this.t('Value length must be at least {min} characters', {min}));
 			}
 
 			if (max != null && length > max) {
-				return error('MAX', this.i18n('Value length must be no more than {max} characters', {max}));
+				return error('MAX', this.t('Value length must be no more than {max} characters', {max}));
 			}
 		}
 
