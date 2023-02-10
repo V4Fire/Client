@@ -86,6 +86,51 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
+		 * This parameter is responsible for the engine through which all translations will be collected and used.
+		 *  * `default` - All translations will be collected and combined into one object via require.context
+		 *
+		 *  * `inlineHtml` - All translations will be collected using webpack-plugins
+		 *  * * and added to the html document itself as a global variable
+		 *  * * with a multi-language build , a separate html document will be created for each language
+		 *
+		 * @cli i18n-engine
+		 * @env I18N_ENGINE
+		 *
+		 * @type {string}
+		 *
+		 * @example
+		 * ```bash
+		 * # Build only entries foo and bar
+		 * npx webpack --env i18n-engine=inlineHtml
+		 * ```
+		 */
+		i18nEngine: o('i18n-engine', {
+			env: true,
+			default: 'default'
+		}),
+
+		/**
+		 * True, if all supported languages are included in the built application
+		 * False, will leave only the language specified in config.locale in the application
+		 *
+		 * @cli multi-language
+		 * @env MULTI_LANGUAGE
+		 *
+		 * @type {boolean}
+		 * @default true
+		 *
+		 * @example
+		 * ```bash
+		 * # Build webapp with a single language support
+		 * npx webpack --env multi-language=false
+		 * ```
+		 */
+		multiLanguage: o('multi-language', {
+			env: true,
+			default: true
+		}),
+
+		/**
 		 * The number of available CPUs that can be used with application building
 		 *
 		 * @cli processes

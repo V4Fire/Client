@@ -8,37 +8,48 @@
 
 import Super from '@v4fire/core/lang';
 
+import { build, locale } from '@config/config';
+
 export * from '@v4fire/core/lang';
 
-const langPacs = {
+let langPacs = {
 	...Super
 };
 
-// @context: ['src', '@super']
+if (build.i18nEngine === 'default') {
+	// @context: ['src', '@super']
 
-const
-	// @ts-ignore (require)
-	ctx = require.context('src', true, /\.i18n\/.*\.js$/);
-
-ctx.keys().forEach((path: string) => {
 	const
-		parsedPath = /\/[^/]*?\.i18n\/(.*?)\.js$/i.exec(path);
+		regExp = build.multiLanguage === true ? /\.i18n\/.*\.js$/ : new RegExp(`.i18n/${locale}.js$`),
+		// @ts-ignore (require)
+		ctx = require.context('src', true, regExp);
 
-	if (parsedPath != null) {
+	ctx.keys().forEach((path: string) => {
 		const
-			[_, lang] = parsedPath;
+			parsedPath = /\/[^/]*?\.i18n\/(.*?)\.js$/i.exec(path);
 
-		langPacs[lang] = langPacs[lang] ?? {};
+		if (parsedPath != null) {
+			const
+				[_, lang] = parsedPath;
 
-		Object.keys(ctx(path)).forEach((keysetName) => {
-			langPacs[lang][keysetName] = {
-				...langPacs[lang][keysetName] != null ? langPacs[lang][keysetName] : {},
-				...ctx(path)[keysetName]
-			};
-		});
-	}
-});
+			langPacs[lang] = langPacs[lang] ?? {};
 
-// @endcontext
+			Object.keys(ctx(path)).forEach((keysetName) => {
+				langPacs[lang][keysetName] = {
+					...langPacs[lang][keysetName] != null ? langPacs[lang][keysetName] : {},
+					...ctx(path)[keysetName]
+				};
+			});
+		}
+	});
+
+	// @endcontext
+
+} else if (build.i18nEngine === 'inlineHtml') {
+	langPacs = {
+		...langPacs,
+		...globalThis.TRANSLATE_MAP
+	};
+}
 
 export default langPacs;

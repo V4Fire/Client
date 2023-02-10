@@ -19,7 +19,7 @@ exports.getI18nDecl = getI18nDecl;
  * @returns {string}
  */
 function getI18nDecl({wrap} = {}) {
-	const decl = 'window.TRANSLATE_MAP = {}';
+	const decl = 'globalThis.TRANSLATE_MAP = {}';
 
 	return wrap ? getScriptDecl(decl) : decl;
 }
