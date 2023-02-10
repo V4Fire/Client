@@ -8,9 +8,10 @@
 
 import type { LocaleKVStorage } from 'core/prelude/i18n/interface';
 
-import { cookie as cookieStorage } from 'core/kv-storage';
+import { factory } from 'core/kv-storage';
+import { syncLocalStorage } from 'core/kv-storage/engines/cookie';
 
 const
-	storage: LocaleKVStorage = cookieStorage;
+	storage: LocaleKVStorage = factory(syncLocalStorage);
 
 export default storage;
