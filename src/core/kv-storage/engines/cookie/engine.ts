@@ -7,50 +7,80 @@
  */
 
 import type { ClearFilter } from 'core/kv-storage/interface';
-
-import { cookieStorageDividers } from 'core/kv-storage/engines/cookie/const';
+import { cookieStorageSeparators } from 'core/kv-storage/engines/cookie/const';
 
 import * as cookie from 'core/cookies';
 
 export default class CookieEngine {
+	/**
+	 * The name of the cookie in which the data is stored
+	 */
 	protected cookieName: string;
 
-	constructor(cookieName: string) {
+	/**
+	 * Additional options for setting cookies
+	 */
+	protected setOptions: cookie.SetOptions;
+
+	/**
+	 * @param cookieName - the name of the cookie in which the data is stored
+	 * @param [setOpts] - additional options for setting cookies
+	 */
+	constructor(cookieName: string, setOpts?: cookie.SetOptions) {
 		this.cookieName = cookieName;
+		this.setOptions = setOpts ?? {};
 	}
 
-	/** @see SyncStorageNamespace.get */
-	get(key: string): CanUndef<string> {
-		return this.getCookieLikeDictionary()[key];
-	}
-
-	/** @see SyncStorageNamespace.has */
+	/**
+	 * Returns true if a value by the specified key exists in the storage
+	 * @param key
+	 */
 	has(key: string): boolean {
-		return key in this.getCookieLikeDictionary();
+		return key in this.getDataFromCookie();
 	}
 
-	/** @see SyncStorageNamespace.set */
+	/**
+	 * Returns a value from the storage by the specified key
+	 * @param key
+	 */
+	get(key: string): CanUndef<string> {
+		return this.getDataFromCookie()[key];
+	}
+
+	/**
+	 * Saves a value to the storage by the specified key
+	 *
+	 * @param key
+	 * @param value
+	 */
 	set(key: string, value: unknown): void {
 		const
-			dividersValues = Object.values(cookieStorageDividers),
+			dividersValues = Object.values(cookieStorageSeparators),
 			isForbiddenCharacterUsed = dividersValues.some((el) => key.includes(el) || String(value).includes(el));
 
 		if (isForbiddenCharacterUsed) {
-			throw new Error(`Forbidden character used in cookie storage key: ${key}, value: ${String(value)}`);
+			throw new TypeError(`Forbidden character used in the cookie storage key: ${key}, value: ${String(value)}`);
 		}
 
-		this.updateValues([{key, value: String(value)}]);
+		this.updateCookieData({[key]: String(value)});
 	}
 
-	/** @see SyncStorageNamespace.remove */
+	/**
+	 * Removes a value from the storage by the specified key
+	 * @param key
+	 */
 	remove(key: string): void {
-		this.updateValues([{key, value: undefined}]);
+		this.updateCookieData({[key]: undefined});
 	}
 
-	/** @see SyncStorageNamespace.clear */
+	/**
+	 * Clears the storage by the specified filter
+	 * @param filter
+	 */
 	clear(filter?: ClearFilter<string>): void {
 		if (filter != null) {
-			const state = this.getCookieLikeDictionary();
+			const
+				state = this.getDataFromCookie();
 
 			Object.entries(state).forEach(([key, value]) => {
 				if (filter(<string>value, key) === true) {
@@ -66,32 +96,17 @@ export default class CookieEngine {
 	}
 
 	/**
-	 * Returns the cookie value converted to dictionary format
-	 */
-	protected getCookieLikeDictionary(): Dictionary<string> {
-		const cookieValue = cookie.get(this.cookieName);
-
-		if (cookieValue == null) {
-			return {};
-		}
-
-		return cookieValue.split(cookieStorageDividers.keys).reduce((acc, el) => {
-			const [key, value] = el.split(cookieStorageDividers.values);
-			acc[key] = value;
-			return acc;
-		}, {});
-	}
-
-	/**
 	 * Updates the data stored in the cookie
-	 * @param values - values to update in the storage
+	 * @param data - values to update in the storage
 	 */
-	protected updateValues(values: Array<{key: string; value: CanUndef<string>}>): void {
-		const currentState = this.getCookieLikeDictionary();
+	protected updateCookieData(data: Dictionary<CanUndef<string>>): void {
+		const
+			currentState = this.getDataFromCookie();
 
-		values.forEach(({key, value}) => {
+		Object.entries(data).forEach(([key, value]) => {
 			if (value === undefined) {
 				delete currentState[key];
+
 			} else {
 				currentState[key] = value;
 			}
@@ -101,18 +116,36 @@ export default class CookieEngine {
 	}
 
 	/**
-	 * Overwrites the cookie with the passed state
-	 * @param state - dictionary with data
+	 * Returns data from the storage cookie
 	 */
-	protected overwriteCookie(state: Dictionary<string>): void {
-		if (Object.size(state) === 0) {
-			cookie.remove(this.cookieName);
+	protected getDataFromCookie(): Dictionary<string> {
+		const
+			cookieValue = cookie.get(this.cookieName);
+
+		if (cookieValue == null) {
+			return {};
 		}
 
-		const rawCookie = Object.entries(state)
-			.map(([key, value]) => `${key}${cookieStorageDividers.values}${value}`)
-			.join(cookieStorageDividers.keys);
+		return cookieValue.split(cookieStorageSeparators.keys).reduce((acc, el) => {
+			const [key, value] = el.split(cookieStorageSeparators.values);
+			acc[key] = value;
+			return acc;
+		}, {});
+	}
 
-		cookie.set(this.cookieName, rawCookie);
+	/**
+	 * Overwrites the storage cookie with the passed data
+	 * @param data
+	 */
+	protected overwriteCookie(data: Dictionary<string>): void {
+		if (Object.size(data) === 0) {
+			cookie.remove(this.cookieName, Object.select(this.setOptions, ['path', 'domains']));
+		}
+
+		const rawCookie = Object.entries(data)
+			.map(([key, value]) => `${key}${cookieStorageSeparators.values}${value}`)
+			.join(cookieStorageSeparators.keys);
+
+		cookie.set(this.cookieName, rawCookie, this.setOptions);
 	}
 }

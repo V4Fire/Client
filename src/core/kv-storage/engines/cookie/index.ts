@@ -8,7 +8,10 @@
 
 import CookieEngine from 'core/kv-storage/engines/cookie/engine';
 
-import { COOKIE_STORAGE_NAME } from 'core/kv-storage/engines/cookie/const';
+export const
+	syncSessionStorage = new CookieEngine('v4ss'),
+	asyncSessionStorage = syncSessionStorage;
 
 export const
-	syncLocalStorage = new CookieEngine(COOKIE_STORAGE_NAME);
+	syncLocalStorage = new CookieEngine('v4ls', {maxAge: 2 ** 31 - 1}),
+	asyncLocalStorage = syncLocalStorage;

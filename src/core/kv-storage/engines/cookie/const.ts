@@ -6,15 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * Dividers for values inside cookies
- */
-export const cookieStorageDividers = {
+export const cookieStorageSeparators = {
 	keys: '{{#}}',
 	values: '{{.}}'
 };
-
-/**
- * Name of the storage cookie
- */
-export const COOKIE_STORAGE_NAME = 'v4s';
