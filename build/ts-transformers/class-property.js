@@ -20,6 +20,8 @@ const ts = require('typescript');
  * @typedef {import('typescript').ConciseBody} ConciseBody
  */
 
+const primitiveTypes = ['boolean', 'number', 'string', 'null', 'undefined'];
+
 /**
  * Wraps an old expression into function
  *
@@ -35,6 +37,19 @@ function createFunctionBody(context, oldInitializerNode) {
 		true
 	);
 }
+
+/**
+ * Returns true if the type of the specified node is a primitive
+ *
+ * @param {Node} node
+ * @param {TypeChecker} checker
+ * @returns {boolean}
+ */
+const isPropertyDeclarationTypePrimitive = (node, checker) => {
+	const type = checker.typeToString(checker.getTypeAtLocation(node));
+
+	return primitiveTypes.includes(type);
+};
 
 /**
  * Creates AST for wrapped by function property declaration
@@ -82,7 +97,13 @@ const createPropertyDeclaration = (context, oldInitializerNode, originalNode) =>
 const isClassDecorated = (classNode, decoratorName) => {
 	const {decorators} = classNode;
 
-	return decorators && decorators.length > 0 && decorators.some((item) => item === decoratorName);
+	const getDecoratorName = (decorator) => (
+		decorator.expression &&
+		decorator.expression.expression &&
+		ts.getEscapedTextOfIdentifierOrLiteral(decorator.expression.expression)
+	);
+
+	return decorators && decorators.length > 0 && decorators.some((item) => getDecoratorName(item) === decoratorName);
 };
 
 /**
@@ -119,17 +140,23 @@ const isTrait = (node) => node.getSourceFile().path.includes('/src/traits/');
  * }
  * ```
  */
-const classPropertyTransformer = (context) => {
+const classPropertyTransformer = (program) => (context) => {
 	/**
 	 * @param {Node} node
 	 * @returns {VisitResult}
 	 */
 	function visitor(node) {
+		const typeChecker = program.getTypeChecker();
+		const ignoredFields = ['traits'];
+		const identifierName = ts.getNameOfDeclaration(node) && ts.getNameOfDeclaration(node).escapedText;
+
 		if (
 			ts.isPropertyDeclaration(node) &&
+			!ignoredFields.some((fieldName) => fieldName === identifierName) &&
 			node.parent && ts.isClassDeclaration(node.parent) &&
 			node.parent.decorators && node.parent.decorators.length > 0 &&
-			(isClassDecorated(node.parent, '@component()') || isTrait(node))
+			(isClassDecorated(node.parent, 'component') || isTrait(node)) &&
+			ts.hasInitializer(node) && !isPropertyDeclarationTypePrimitive(node, typeChecker)
 		) {
 			const initializer = ts.getEffectiveInitializer(node);
 
@@ -142,4 +169,4 @@ const classPropertyTransformer = (context) => {
 	return (node) => ts.visitNode(node, visitor);
 };
 
-module.exports = () => classPropertyTransformer;
+module.exports = classPropertyTransformer;

@@ -146,9 +146,16 @@ export function initFields(
 
 				if (val === undefined) {
 					if (store[key] === undefined) {
-						// We need to clone the default value from a constructor
-						// to prevent linking to the same object for a non-primitive value
-						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+						if (el.default !== undefined) {
+							val = el.default;
+
+						} else if (typeof instance[key] === 'function' && instance[key].name === '__classTransformerWrapFunction__') {
+								val = instance[key]();
+
+							} else {
+								val = instance[key];
+							}
+
 						store[key] = val;
 					}
 
@@ -233,9 +240,18 @@ export function initFields(
 
 				if (val === undefined) {
 					if (store[key] === undefined) {
-						// We need to clone the default value from a constructor
-						// to prevent linking to the same object for a non-primitive value
-						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+						if (store[key] === undefined) {
+							if (el.default !== undefined) {
+								val = el.default;
+
+							} else if (typeof instance[key] === 'function' && instance[key].name === '__classTransformerWrapFunction__') {
+									val = instance[key]();
+
+								} else {
+									val = instance[key];
+								}
+						}
+
 						store[key] = val;
 					}
 
@@ -318,9 +334,18 @@ export function initFields(
 
 				if (val === undefined) {
 					if (store[key] === undefined) {
-						// We need to clone the default value from a constructor
-						// to prevent linking to the same object for a non-primitive value
-						val = el.default !== undefined ? el.default : Object.fastClone(instance[key]);
+						if (store[key] === undefined) {
+							if (el.default !== undefined) {
+								val = el.default;
+
+							} else if (typeof instance[key] === 'function' && instance[key].name === '__classTransformerWrapFunction__') {
+									val = instance[key]();
+
+								} else {
+									val = instance[key];
+								}
+						}
+
 						store[key] = val;
 					}
 
