@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added the new transformer: class property `build/ts-transformers/class-property`
+* Removed warnings from a build process
+* Added `jasmine` as a direct dependency
+* Updated the `favicons` package
+
+#### :boom: Breaking Change
+
+* Removed the `ts-import` monic module
+* Now webpack resolves ts modules imported from `node_modules` natively with aliases
+* Refactored `tsconfig`
+
 ## v3.34.0 (2023-01-30)
 
 #### :bug: Bug Fix
