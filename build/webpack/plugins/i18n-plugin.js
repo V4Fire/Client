@@ -10,7 +10,7 @@
 
 const
 	{resolve: pzlr} = require('@pzlr/build-core'),
-	{src, supportedLocales, locale} = require('@config/config'),
+	{src, supportedLocales, locale, build} = require('@config/config'),
 	fs = require('fs'),
 	fg = require('fast-glob');
 
@@ -27,7 +27,7 @@ module.exports = class I18NGeneratorPlugin {
 			 * Should run only at the last stage of the build
 			 * when all the files are ready and placed on the file system
 			 */
-			if (true) {
+			if (compilation.compiler && compilation.compiler.name === 'html') {
 				const
 					configLocale = locale,
 					locales = supportedLocales().join('|'),
@@ -64,12 +64,14 @@ module.exports = class I18NGeneratorPlugin {
 						getHtmlWithTranslateMap(path, {[configLocale]: result[configLocale]})
 					);
 
-					supportedLocales().forEach((locale) => {
-						fs.writeFileSync(
-							path.replace('.html', `_${locale}.html`),
-							getHtmlWithTranslateMap(path, {[locale]: result[locale]})
-						);
-					});
+					if (build.mutliLanguage === true) {
+						supportedLocales().forEach((locale) => {
+							fs.writeFileSync(
+								path.replace('.html', `_${locale}.html`),
+								getHtmlWithTranslateMap(path, {[locale]: result[locale]})
+							);
+						});
+					}
 				});
 			}
 		}
