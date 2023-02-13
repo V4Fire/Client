@@ -1,23 +1,9 @@
-import { factory } from '@v4fire/core/core/kv-storage';
-
-import type { SyncStorage } from 'core/kv-storage/interface';
-
-import CookieStorageEngine from 'core/kv-storage/engines/cookie-storage';
+/*!
+ * V4Fire Core
+ * https://github.com/V4Fire/Core
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Core/blob/master/LICENSE
+ */
 
 export * from '@v4fire/core/core/kv-storage';
-
-/**
- * Factory to create storage based on cookies
- * disclaimer: The maximum cookie size is 4 kb
- *
- * @param cookieNameForStorage - The name of the cookie that will be used as the basis for the storage
- *
- * @example
- * ```js
- * cookieStorage.set('foo', 'bar');
- * cookieStorage.get('foo'); // 'foo'
- * ```
- */
-export const cookieStorageFactory = (
-	cookieNameForStorage: string
-): SyncStorage => factory(new CookieStorageEngine(cookieNameForStorage), false);

@@ -1360,6 +1360,20 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * A function for internationalizing texts used in the component
+	 */
+	get i18n(): ReturnType<typeof i18n> {
+		return i18n(this.componentI18nKeysets);
+	}
+
+	/**
+	 * An alias for `i18n`
+	 */
+	get t(): ReturnType<typeof i18n> {
+		return this.i18n;
+	}
+
+	/**
 	 * Number of `beforeReady` event listeners:
 	 * it's used to optimize component initializing
 	 */
@@ -1374,27 +1388,10 @@ export default abstract class iBlock extends ComponentInterface {
 	protected blockReadyListeners: Function[] = [];
 
 	/**
-	 * A list of keysets names used for translation
-	 * In a build time overrides with inheritance chain of component
+	 * A list of keyset names used to internationalize the component
 	 */
 	@system({unique: true})
 	protected readonly componentI18nKeysets: string[] = [this.componentName];
-
-	/**
-	 * Function for internationalization of texts used in the component
-	 */
-	@computed()
-	get i18n(): ReturnType<typeof i18n> {
-		return i18n(this.componentI18nKeysets);
-	}
-
-	/**
-	 * Alias for `i18n`
-	 */
-	@computed()
-	get t(): ReturnType<typeof i18n> {
-		return this.i18n;
-	}
 
 	/**
 	 * Link to the console API
@@ -1677,20 +1674,6 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * A function for using translations inside traits. Due to the fact that
-	 * traits are called in the context of components. The standard i18n
-	 * is not suitable and you need to explicitly pass the name of the keyset(traitName)
-	 *
-	 * @param traitName - name of trait
-	 * @param key - key for translate
-	 * @param [params] - params for i18n (variables, pluralize, etc)
-	 * @returns string
-	 */
-	i18nForTraits(traitName: string, key: string, params?: I18nParams): string {
-		return i18n(traitName)(key, params);
-	}
-
-	/**
 	 * Emits a component event.
 	 * Notice, this method always emits two events:
 	 *
@@ -1953,6 +1936,19 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		return this.async.promise<undefined>(promise);
+	}
+
+	/**
+	 * A function for internationalizing texts inside traits.
+	 * Due to the fact that traits are called in the context of components, the standard i18n is not suitable,
+	 * and you must explicitly pass the name of the set of keys (trait names).
+	 *
+	 * @param traitName - the trait name
+	 * @param text - text for internationalization
+	 * @param [opts] - additional internationalization options
+	 */
+	i18nTrait(traitName: string, text: string, opts?: I18nParams): string {
+		return i18n(traitName)(text, opts);
 	}
 
 	/**
