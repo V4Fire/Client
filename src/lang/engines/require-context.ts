@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { build, locale } from '@config/config';
+import config from 'config';
 
 import type { LangPacs } from 'lang/interface';
 
@@ -19,7 +19,7 @@ export function requireContextEngine(): LangPacs {
 
 	const
 		langPacs = {},
-		regExp = build.multiLanguage === true ? /\.i18n\/.*\.js$/ : new RegExp(`.i18n/${locale}.js$`),
+		regExp = new RegExp(`.i18n/${config.locale}.js$`),
 		// @ts-ignore (require)
 		ctx = require.context('src', true, regExp);
 

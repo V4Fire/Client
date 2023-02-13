@@ -19,9 +19,8 @@ const langPacs = {
 Object.entries(keysetsCollector()).forEach(([lang, keysets]) => {
 	Object.entries(keysets).forEach(([keysetName, keyset]) => {
 		langPacs[lang] = langPacs[lang] ?? {};
-		langPacs[lang][keysetName] = langPacs[lang][keysetName] ?? {};
 		langPacs[lang][keysetName] = {
-			...langPacs[lang][keysetName],
+			...langPacs[lang][keysetName] != null ? langPacs[lang][keysetName] : {},
 			...keyset
 		};
 	});
