@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import config from 'config';
-
 import type { LangPacs } from 'lang/interface';
+
+import config from 'config';
 
 /**
  * Implementation a keysets collector based on require.context
