@@ -563,12 +563,6 @@ export default abstract class iBlock extends ComponentInterface {
 	readonly styles?: Styles;
 
 	/**
-	 * Link to a `i18n` function that will be used to localize string literals
-	 */
-	@prop(Function)
-	readonly i18n: typeof i18n = ((i18n));
-
-	/**
 	 * A Link to the remote state object.
 	 *
 	 * The remote state object is a special watchable object that provides some parameters
@@ -1366,6 +1360,20 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * A function for internationalizing texts used in the component
+	 */
+	get i18n(): ReturnType<typeof i18n> {
+		return i18n(this.componentI18nKeysets);
+	}
+
+	/**
+	 * An alias for `i18n`
+	 */
+	get t(): ReturnType<typeof i18n> {
+		return this.i18n;
+	}
+
+	/**
 	 * Number of `beforeReady` event listeners:
 	 * it's used to optimize component initializing
 	 */
@@ -1378,25 +1386,6 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@system({unique: true})
 	protected blockReadyListeners: Function[] = [];
-
-	/**
-	 * Alias for `i18n`
-	 */
-	@computed({replace: false})
-	protected get t(): this['i18n'] {
-		return this.i18n;
-	}
-
-	/**
-	 * Link to `globalThis.l`
-	 */
-	@system({
-		atom: true,
-		unique: true,
-		replace: true
-	})
-
-	protected readonly l: typeof l = globalThis.l;
 
 	/**
 	 * Link to the console API
@@ -1433,6 +1422,25 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	protected readonly global!: Window;
+
+	/**
+	 * A list of keyset names used to internationalize the component
+	 */
+	@computed({cache: true})
+	protected get componentI18nKeysets(): string[] {
+		const
+			res: string[] = [];
+
+		let
+			keyset: CanUndef<string> = this.componentName;
+
+		while (keyset != null) {
+			res.push(keyset);
+			keyset = config.components[keyset]?.parent;
+		}
+
+		return res;
+	}
 
 	/**
 	 * Sets a watcher to a component/object property or event by the specified path.
@@ -1941,6 +1949,19 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		return this.async.promise<undefined>(promise);
+	}
+
+	/**
+	 * A function for internationalizing texts inside traits.
+	 * Due to the fact that traits are called in the context of components, the standard i18n is not suitable,
+	 * and you must explicitly pass the name of the set of keys (trait names).
+	 *
+	 * @param traitName - the trait name
+	 * @param text - text for internationalization
+	 * @param [opts] - additional internationalization options
+	 */
+	i18nTrait(traitName: string, text: string, opts?: I18nParams): string {
+		return i18n(traitName)(text, opts);
 	}
 
 	/**

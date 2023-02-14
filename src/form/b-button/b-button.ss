@@ -24,7 +24,7 @@
 			:class = provide.hintClasses(hintPos) |
 			:autofocus = autofocus |
 			:tabindex = tabIndex |
-			:-hint = t(hint) |
+			:-hint = hint |
 
 			@click = onClick |
 			@focus = focus |

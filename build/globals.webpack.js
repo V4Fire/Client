@@ -44,6 +44,7 @@ module.exports = {
 		if (Object.isMap(components)) {
 			return $C(components).to({}).reduce((res, el, key) => {
 				res[key] = {
+					parent: JSON.stringify(el.parent),
 					dependencies: JSON.stringify(el.dependencies)
 				};
 
