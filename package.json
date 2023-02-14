@@ -155,7 +155,7 @@
     "webpack": "5.70.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "git://github.com/v4fire/core.git#EDADEALFRONTEND-4610",
+    "@v4fire/core": "^3.90.0",
     "webpack": "^5.70.0"
   }
 }
