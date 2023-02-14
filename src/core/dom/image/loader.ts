@@ -12,27 +12,17 @@ import symbolGenerator from 'core/symbol';
 
 import {
 
-	DefaultImagePlaceholderOptions,
-	ImagePlaceholderOptions,
-	ImagePlaceholderType,
-	OptionsResolver,
-
-	InitValue,
-	ShadowElState,
-
-	ImageOptions,
-	ImageNode,
-	ImageStage,
-
 	SHADOW_BROKEN,
 	SHADOW_PREVIEW,
 	SHADOW_MAIN,
 	ID
 
-} from 'core/dom/image';
+} from 'core/dom/image/const';
 
 import Factory from 'core/dom/image/factory';
 import Lifecycle from 'core/dom/image/lifecycle';
+
+import type { ImageOptions, ImagePlaceholderOptions, InitValue, DefaultImagePlaceholderOptions, ShadowElState, OptionsResolver, ImageNode, ImageStage, ImagePlaceholderType } from 'core/dom/image/interface';
 
 export const
 	$$ = symbolGenerator();

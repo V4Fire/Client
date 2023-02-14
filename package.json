@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.33.0",
+  "version": "3.34.1",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -40,6 +40,7 @@
     "test:components": "gulp test:components --test-processes 2",
     "test:components:chrome": "npm run test:components -- --browsers chrome --retries 2",
     "test:jasmine": "nyc --reporter=lcov --reporter=text npx jasmine",
+    "test:circular-deps": "dpdm --exit-code circular:1 --circular -T --warning false --no-tree src/**/**/*.ts src/**/*.ts",
     "up": "npm i"
   },
   "dependencies": {
@@ -54,6 +55,7 @@
     "@swc/helpers": "0.3.8",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
+    "dpdm": "3.10.0",
     "escaper": "3.0.6",
     "eventemitter2": "6.4.5",
     "favicons": "7.0.0-beta.4",

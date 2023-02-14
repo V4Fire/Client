@@ -10,16 +10,15 @@ import type ImageLoader from 'core/dom/image/loader';
 
 import {
 
-	ImageNode,
-	ImagePlaceholderType,
-
 	ID,
 	INIT_LOAD,
 
 	IS_LOADED,
 	IS_LOADING
 
-} from 'core/dom/image';
+} from 'core/dom/image/const';
+
+import type { ImageNode, ImagePlaceholderType } from 'core/dom/image/interface';
 
 /**
  * Helper class that provides API to work with an image lifecycle

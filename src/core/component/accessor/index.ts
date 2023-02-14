@@ -12,7 +12,8 @@
  */
 
 import { deprecate } from 'core/functools/deprecation';
-import { cacheStatus, ComponentInterface } from 'core/component';
+import type { ComponentInterface } from 'core/component';
+import { cacheStatus } from 'core/component/watch';
 
 /**
  * Attaches accessors and computed fields from a meta object to the specified component instance
