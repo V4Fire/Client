@@ -216,17 +216,16 @@ module.exports = async function module({plugins}) {
 
 	loaders.rules.set('styl', {
 		test: /\.styl$/,
-		use: 'null-loader'
 
-		// ...webpack.dynamicPublicPath() ?
-		// 	{use: dynamicCSSFiles} :
+		...webpack.dynamicPublicPath() ?
+			{use: dynamicCSSFiles} :
 
-		// 	{
-		// 		oneOf: [
-		// 			{resourceQuery: /static/, use: staticCSSFiles},
-		// 			{use: dynamicCSSFiles}
-		// 		]
-		// 	}
+			{
+				oneOf: [
+					{resourceQuery: /static/, use: staticCSSFiles},
+					{use: dynamicCSSFiles}
+				]
+			}
 	});
 
 	loaders.rules.set('ess', {
