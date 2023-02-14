@@ -185,7 +185,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Function to request a new data chunk to render
 	 */
-	@prop({type: Function, default: (ctx, query) => ctx.get(query), required: false})
+	@prop({type: Function, default: (ctx: bVirtualScroll, query) => ctx.dataProvider?.get(query), required: false})
 	readonly getData!: GetData;
 
 	/**
@@ -537,7 +537,7 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	protected override syncDataProviderWatcher(initLoad?: boolean): void {
 		const
-			provider = this.dataProvider;
+			provider = this.dataProviderProp;
 
 		if (provider === undefined) {
 			this.reInit();

@@ -725,7 +725,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const client = this.extend({}, server, {
 			configFile,
 			compilerOptions: {
-				module: this.webpack.ssr || this.webpack.fatHTML() ? 'commonjs' : module
+				module: this.webpack.ssr ? 'commonjs' : module
 			}
 		});
 

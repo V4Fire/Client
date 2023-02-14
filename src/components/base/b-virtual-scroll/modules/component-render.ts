@@ -210,7 +210,8 @@ export default class ComponentRender extends Friend {
 		}
 
 		const
-			res = render(children);
+			// https://github.com/vuejs/core/issues/6061
+			res = render(children).filter((node) => node.nodeType !== node.TEXT_NODE);
 
 		if (res.length === 0) {
 			throw new Error('Failed to render components. Possibly an error occurred while creating the components.');

@@ -265,9 +265,8 @@ export default class ChunkRender extends Friend {
 	 * Event handlers initialization
 	 */
 	protected initEventHandlers(): void {
-		const label = {label: $$.reInit};
-		this.ctx.localEmitter.once('localState.ready', this.onReady.bind(this), label);
-		this.ctx.localEmitter.once('localState.error', this.onError.bind(this), label);
+		this.ctx.localEmitter.once('localState.ready', this.onReady.bind(this), {label: $$.reInitReady});
+		this.ctx.localEmitter.once('localState.error', this.onError.bind(this), {label: $$.reInitError});
 	}
 
 	/**
