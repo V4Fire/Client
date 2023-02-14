@@ -22,7 +22,7 @@ module.exports = class I18NGeneratorPlugin {
 	apply(compiler) {
 		compiler.hooks.done.tap('I18NGeneratorPlugin', doneHook);
 
-		function doneHook(compilation) {
+		function doneHook({compilation}) {
 			/**
 			 * Should run only at the last stage of the build
 			 * when all the files are ready and placed on the file system
@@ -30,7 +30,7 @@ module.exports = class I18NGeneratorPlugin {
 			if (compilation.compiler && compilation.compiler.name === 'html') {
 				const
 					configLocale = locale,
-					locales = i18n.supportedLocales.join('|'),
+					locales = ['en', 'ru'].join('|'),
 					paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/(${locales}).js`),
 					result = {};
 
@@ -64,7 +64,7 @@ module.exports = class I18NGeneratorPlugin {
 						getHtmlWithTranslateMap(path, {[configLocale]: result[configLocale]})
 					);
 
-					if (i18n.mutliLanguage === true) {
+					if (i18n.multiLanguage === true) {
 						i18n.supportedLocales.forEach((locale) => {
 							fs.writeFileSync(
 								path.replace('.html', `_${locale}.html`),
