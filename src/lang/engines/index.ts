@@ -10,13 +10,13 @@ import type { LangPacs } from 'lang/interface';
 
 let keysetsCollector: () => LangPacs;
 
-//#if build.i18nEngine = inlineHtml
+//#if i18nEngine = inlineHtml
 import { inlineHtmlEngine } from 'lang/engines/inline-html';
 
 keysetsCollector = inlineHtmlEngine;
 //#endif
 
-//#if build.i18nEngine = default
+//#if i18nEngine = default
 import { requireContextEngine } from 'lang/engines/require-context';
 
 keysetsCollector = requireContextEngine;
