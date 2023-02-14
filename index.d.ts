@@ -22,7 +22,7 @@ declare const CSP_NONCE_STORE: string;
 declare var PATH: Dictionary<CanUndef<string>>;
 declare var PUBLIC_PATH: CanUndef<string>;
 
-declare const COMPONENTS: Dictionary<{dependencies: string[]}>;
+declare const COMPONENTS: Dictionary<{parent: string; dependencies: string[]}>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 
 declare const DS: CanUndef<DesignSystem>;
