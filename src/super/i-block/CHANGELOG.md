@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.??.?? (2022-12-12)
+## v3.??.?? (2023-02-14)
 
 #### :boom: Breaking Change
 
-* Changed type of i18n function from prop to getter
+* Changed `i18n` function type from prop to getter
 
 ## v3.30.0 (2022-10-19)
 

@@ -11,11 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (2022-12-12)
+## v3.??.?? (2023-02-14)
 
 #### :boom: Breaking Change
 
-* `i-block` - changed type of i18n function from prop to getter
+* Changed `i18n` function type from prop to getter `iBlock`
+
+#### :rocket: New Feature
+
+* Integrating the new internationalization API
 
 ## v3.33.0 (2022-12-28)
 
