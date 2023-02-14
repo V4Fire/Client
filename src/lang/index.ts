@@ -20,19 +20,17 @@ const
 	// @ts-ignore (require)
 	ctx = require.context('src', true, /\.i18n\/.*\.js$/);
 
-ctx.keys().forEach((path: string) => {
+ctx.keys().forEach((path) => {
 	const
 		parsedPath = /\/[^/]*?\.i18n\/(.*?)\.js$/i.exec(path);
 
 	if (parsedPath != null) {
-		const
-			[_, lang] = parsedPath;
-
-		langPacs[lang] = langPacs[lang] ?? {};
+		const [_, lang] = parsedPath;
+		langPacs[lang] ??= {};
 
 		Object.keys(ctx(path)).forEach((keysetName) => {
 			langPacs[lang][keysetName] = {
-				...langPacs[lang][keysetName] != null ? langPacs[lang][keysetName] : {},
+				...langPacs[lang][keysetName],
 				...ctx(path)[keysetName]
 			};
 		});
