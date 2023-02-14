@@ -59,5 +59,6 @@ package('p-v4-components-demo')
 	)
 	.libs([
 		'core/cookies',
+		'core/kv-storage/engines/cookie',
 		'models/demo/form'
-	])
+	]);

@@ -1,5 +1,5 @@
 {
-  "hash": "581a72686ecc2eafefd8b8907245b3fbb09c1f06071deb81093e8d63b082cd61",
+  "hash": "0b4b639509074bc49f20a75dba81599ca93ab8f02c35a1b49a4de5daf754d69a",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2001,6 +2001,7 @@
             ],
             "libs": [
               "core/cookies",
+              "core/kv-storage/engines/cookie",
               "models/demo/form"
             ]
           },
@@ -2045,12 +2046,14 @@
           ],
           "libs": [
             "core/cookies",
+            "core/kv-storage/engines/cookie",
             "models/demo/form"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
               "core/cookies",
+              "core/kv-storage/engines/cookie",
               "models/demo/form"
             ]
           },
@@ -2058,6 +2061,7 @@
             "%data": "%data:Set",
             "%data:Set": [
               "core/cookies",
+              "core/kv-storage/engines/cookie",
               "models/demo/form"
             ]
           },

@@ -17,6 +17,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Replaced `fast-css-loader` with `css-loader`
 
+## v3.35.0 (2023-02-14)
+
+#### :boom: Breaking Change
+
+* Changed `i18n` function type from prop to getter `iBlock`
+
+#### :rocket: New Feature
+
+* Integrating the new internationalization API
+
 ## v3.34.1 (2023-01-31)
 
 #### :house: Internal

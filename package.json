@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.34.1",
+  "version": "3.35.0",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -144,11 +144,12 @@
   },
   "devDependencies": {
     "@playwright/test": "1.20.0",
+    "jasmine": "3.99.0",
     "@types/glob": "7.2.0",
     "@types/jasmine": "3.10.3",
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
-    "@v4fire/core": "3.86.2",
+    "@v4fire/core": "git://github.com/v4fire/core.git#EDADEALFRONTEND-4610",
     "@v4fire/linters": "1.9.0",
     "husky": "7.0.4",
     "nyc": "15.1.0",
@@ -156,7 +157,7 @@
     "webpack": "5.70.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "^3.86.2",
+    "@v4fire/core": "^3.90.0",
     "webpack": "^5.70.0"
   }
 }
