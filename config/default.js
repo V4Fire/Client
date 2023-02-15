@@ -319,6 +319,16 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	webpack: {
 		/**
+		 * Returns an object of aliases
+		 *
+		 * @see https://webpack.js.org/configuration/resolve/#resolvealias
+		 * @returns {Object}
+		 */
+		aliases() {
+			return {};
+		},
+
+		/**
 		 * Returns a value of `mode`
 		 *
 		 * @cli mode
@@ -812,11 +822,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'client.tsconfig.json' :
 			'tsconfig.json';
 
+		const
+			{compilerOptions: {module}} = require(path.join(this.src.cwd(), configFile));
+
 		const client = this.extend({}, server, {
 			configFile,
-			compilerOptions: {
-				module: this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
-			}
+			compilerOptions: {module}
 		});
 
 		return {

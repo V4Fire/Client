@@ -148,7 +148,7 @@ module.exports = async function module({plugins}) {
 
 			[
 				{
-					loader: 'fast-css-loader',
+					loader: 'css-loader',
 					options: config.css()
 				},
 

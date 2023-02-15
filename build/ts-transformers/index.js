@@ -9,16 +9,10 @@
  */
 
 const
-	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags'),
-	i18nInheritanceChainTransformer = include('build/ts-transformers/i18n-inheritance-chain');
+	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags');
 
 module.exports = (program) => ({
-	before: [
-		modernRegExpFlagsTransformer(program),
-		i18nInheritanceChainTransformer(program)
-	],
-
+	before: [modernRegExpFlagsTransformer(program)],
 	after: {},
-
 	afterDeclarations: {}
 });

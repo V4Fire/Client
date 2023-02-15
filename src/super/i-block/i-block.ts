@@ -1388,12 +1388,6 @@ export default abstract class iBlock extends ComponentInterface {
 	protected blockReadyListeners: Function[] = [];
 
 	/**
-	 * A list of keyset names used to internationalize the component
-	 */
-	@system({unique: true})
-	protected readonly componentI18nKeysets: string[] = [this.componentName];
-
-	/**
 	 * Link to the console API
 	 */
 	@system({
@@ -1428,6 +1422,25 @@ export default abstract class iBlock extends ComponentInterface {
 	})
 
 	protected readonly global!: Window;
+
+	/**
+	 * A list of keyset names used to internationalize the component
+	 */
+	@computed({cache: true})
+	protected get componentI18nKeysets(): string[] {
+		const
+			res: string[] = [];
+
+		let
+			keyset: CanUndef<string> = this.componentName;
+
+		while (keyset != null) {
+			res.push(keyset);
+			keyset = config.components[keyset]?.parent;
+		}
+
+		return res;
+	}
 
 	/**
 	 * Sets a watcher to a component/object property or event by the specified path.

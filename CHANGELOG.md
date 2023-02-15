@@ -11,11 +11,38 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (2022-12-12)
+## v3.36.0 (2023-02-14)
+
+#### :house: Internal
+
+* Replaced `fast-css-loader` with `css-loader`
+
+## v3.35.0 (2023-02-14)
 
 #### :boom: Breaking Change
 
-* `i-block` - changed type of i18n function from prop to getter
+* Changed `i18n` function type from prop to getter `iBlock`
+
+#### :rocket: New Feature
+
+* Integrating the new internationalization API
+
+## v3.34.1 (2023-01-31)
+
+#### :house: Internal
+
+* Added the ability to specify webpack aliases from the config `build/webpack/alias`
+
+## v3.34.0 (2023-01-30)
+
+#### :boom: Breaking Change
+
+* [Now `commonjs` module will not be installed for typescript processing into `fathtml` mode, instead `module` from `tsconfig` will be taken by default `config/default`](https://github.com/V4Fire/Client/discussions/773)
+
+#### :house: Internal
+
+* Added `test:circular-deps` npm script for analyzing circular deps
+* Fixed few circular deps
 
 ## v3.33.0 (2022-12-28)
 
