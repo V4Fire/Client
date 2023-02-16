@@ -39,20 +39,28 @@ const
  * ```
  */
 export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T): T {
-	const
-		{props} = vnode;
+	const {
+		ref,
+		props,
+		children,
+		dynamicChildren
+	} = vnode;
 
 	const {
 		meta: {params},
 		$renderEngine: {r}
 	} = this;
 
-	if (vnode.dynamicChildren != null && vnode.dynamicChildren.length > 0) {
-		vnode.dynamicChildren = vnode.dynamicChildren.filter((el) => !el.ignore);
+	if (ref != null) {
+		ref['i'] ??= r.getCurrentInstance();
 	}
 
-	if (vnode.ref != null) {
-		vnode.ref['i'] ??= r.getCurrentInstance();
+	if (Object.isArray(children)) {
+		children.forEach((child) => resolveAttrs.call(this, Object.cast(child)));
+	}
+
+	if (Object.isArray(dynamicChildren) && dynamicChildren.length > 0) {
+		vnode.dynamicChildren = dynamicChildren.filter((el) => !el.ignore);
 	}
 
 	if (props == null) {
@@ -148,13 +156,6 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			Object.assign(props, mergeProps({class: props.class}, {class: classVal}));
 			delete props[key];
 		}
-	}
-
-	const
-		{children} = vnode;
-
-	if (Object.isArray(children)) {
-		children.forEach((child) => resolveAttrs.call(this, Object.cast(child)));
 	}
 
 	return vnode;
