@@ -108,17 +108,23 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			slots
 		});
 
-		const
-			declaredProps = component.props,
-			vnode = virtualCtx.render(virtualCtx, []);
-
+		const vnode = virtualCtx.render(virtualCtx, []);
 		vnode.virtualComponent = virtualCtx;
 
 		const filteredAttrs = Object.fromEntries(
-			Object.entries({...vnode.props}).filter(([key]) => declaredProps[key.camelize(false)] == null)
+			Object.entries({...vnode.props}).filter(([key]) => component!.props[key.camelize(false)] == null)
 		);
 
 		vnode.props = mergeProps(filteredAttrs, vnode.props ?? {});
+
+		if (dynamicProps != null) {
+			vnode.dynamicProps = vnode.dynamicProps != null ? Array.union(vnode.dynamicProps, dynamicProps) : dynamicProps;
+		}
+
+		if (patchFlag != null && patchFlag > vnode.patchFlag) {
+			// eslint-disable-next-line no-bitwise
+			vnode.patchFlag |= patchFlag;
+		}
 
 		vnode.dirs = vnode.dirs ?? [];
 		vnode.dirs.push({
