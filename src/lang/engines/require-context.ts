@@ -13,12 +13,11 @@ import type { LangPacs } from 'lang/interface';
  * @see https://webpack.js.org/guides/dependency-management/#requirecontext
  */
 export function requireContextEngine(): LangPacs {
-	// @context: ['src', '@super']
+	const langPacs = {};
 
-	const
-		langPacs = {},
-		// @ts-ignore (require)
-		ctx = require.context('src', true, /\.i18n\/.*\.js$/);
+	// @context: ['src', '@super']
+	// @ts-ignore (require)
+	const ctx = require.context('src', true, /\.i18n\/.*\.js$/);
 
 	ctx.keys().forEach((path: string) => {
 		const
@@ -35,7 +34,6 @@ export function requireContextEngine(): LangPacs {
 			});
 		}
 	});
-
 	// @endcontext
 
 	return langPacs;
