@@ -61,9 +61,9 @@ export default abstract class iActiveItems extends iItems {
 	abstract activeStore: this['Active'];
 
 	/**
-	 * Array of item indexes and their values
+	 * Map of item indexes and their values
 	 */
-	abstract indexes: unknown;
+	abstract indexes: Dictionary;
 
 	/**
 	 * Map of item values and their indexes
@@ -85,10 +85,50 @@ export default abstract class iActiveItems extends iItems {
 	abstract get active(): this['Active'];
 
 	/**
-	 * Sets a component active item/s.
-	 * @see [[iActiveItems.prototype.activeStore]]
+	 * Syncs component activeProp and activeStore fields
+	 *
+	 * @see [[iActiveItems.prototype.activeProp]]
+	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	abstract set active(value: this['Active']);
+	static syncActiveStore(ctx: Component, value: iActiveItems['Active']): iActiveItems['Active'] {
+		const
+			beforeDataCreate = ctx.hook === 'beforeDataCreate';
+
+		if (value === undefined && beforeDataCreate) {
+			if (ctx.multiple) {
+				if (Object.isSet(ctx.activeStore)) {
+					return ctx.activeStore;
+				}
+
+				return new Set(Array.concat([], ctx.activeStore));
+			}
+
+			return ctx.activeStore;
+		}
+
+		let
+			newVal;
+
+		if (ctx.multiple) {
+			newVal = new Set(Object.isSet(value) ? value : Array.concat([], value));
+
+			if (Object.fastCompare(newVal, ctx.activeStore)) {
+				return ctx.activeStore;
+			}
+
+		} else {
+			newVal = value;
+		}
+
+		if (beforeDataCreate) {
+			ctx.emit('immediateChange', ctx.multiple ? new Set(newVal) : newVal);
+
+		} else {
+			ctx.setActive(newVal);
+		}
+
+		return newVal;
+	}
 
 	/**
 	 * Returns active item/s
@@ -151,43 +191,24 @@ export default abstract class iActiveItems extends iItems {
 	};
 
 	/**
-	 * Initializes component mods
+	 * Checks whether the item has active prop value. If true, sets it as active
 	 *
 	 * @param ctx
 	 * @param item
-	 * @param [setActive] - callback to set active element
 	 */
-	static initItemMods(ctx: Component, item: Item, setActive?: (value) => void): void {
-		item.mods ??= {};
-
-		const
-			{mods, active, value} = item;
-
-		mods.id = ctx.values.get(value);
-		mods.active = false;
-
-		if (active && (ctx.multiple ? ctx.activeProp === undefined : ctx.active === undefined)) {
-			if (Object.isFunction(setActive)) {
-				setActive(value);
-				return;
-			}
-
-			ctx.setActive(value);
+	static initItemActive(ctx: Component, item: Item): void {
+		if (item.active && (ctx.multiple ? ctx.activeProp === undefined : ctx.active === undefined)) {
+			ctx.setActive(item.value);
 		}
 	}
 
-	/**
-	 * Adds the specified value to the component's active store
-	 *
-	 * @param ctx
-	 * @param value
-	 */
-	static addToActiveStore(ctx: Component, value: iActiveItems['Active']): boolean {
+	/** @see [[iActiveItems.prototype.setActive]] */
+	static setActive(ctx: Component, value: iActiveItems['Active']): boolean {
 		const
-			{multiple, active} = ctx;
+			activeStore = ctx.field.get('activeStore');
 
-		if (multiple) {
-			if (!Object.isSet(active)) {
+		if (ctx.multiple) {
+			if (!Object.isSet(activeStore)) {
 				return false;
 			}
 
@@ -195,11 +216,11 @@ export default abstract class iActiveItems extends iItems {
 				res = false;
 
 			const set = (value) => {
-				if (active.has(value)) {
+				if (activeStore.has(value)) {
 					return;
 				}
 
-				active.add(value);
+				activeStore.add(value);
 				res = true;
 			};
 
@@ -215,30 +236,26 @@ export default abstract class iActiveItems extends iItems {
 				return false;
 			}
 
-			ctx.active = active;
-
-		} else if (active === value) {
+		} else if (activeStore === value) {
 			return false;
 
 		} else {
-			ctx.active = value;
+			ctx.field.set('activeStore', value);
 		}
+
+		ctx.emit('immediateChange', ctx.active);
+		ctx.emit('change', ctx.active);
 
 		return true;
 	}
 
-	/**
-	 * Removes the specified value from the component's active store
-	 *
-	 * @param ctx
-	 * @param value
-	 */
-	static removeFromActiveStorage(ctx: Component, value: iActiveItems['Active']): boolean {
+	/** @see [[iActiveItems.prototype.setActive]] */
+	static unsetActive(ctx: Component, value: iActiveItems['Active']): boolean {
 		const
-			{multiple, cancelable, active} = ctx;
+			activeStore = ctx.field.get('activeStore');
 
-		if (multiple) {
-			if (!Object.isSet(active)) {
+		if (ctx.multiple) {
+			if (!Object.isSet(activeStore)) {
 				return false;
 			}
 
@@ -246,11 +263,11 @@ export default abstract class iActiveItems extends iItems {
 				res = false;
 
 			const unset = (value) => {
-				if (!active.has(value) || cancelable === false) {
+				if (!activeStore.has(value) || ctx.cancelable === false) {
 					return false;
 				}
 
-				active.delete(value);
+				activeStore.delete(value);
 				res = true;
 			};
 
@@ -266,16 +283,60 @@ export default abstract class iActiveItems extends iItems {
 				return false;
 			}
 
-			ctx.active = active;
-
-		} else if (active !== value || cancelable !== true) {
+		} else if (activeStore !== value || ctx.cancelable !== true) {
 			return false;
 
 		} else {
-			ctx.active = undefined;
+			ctx.field.set('activeStore', undefined);
 		}
 
+		ctx.emit('immediateChange', ctx.active);
+		ctx.emit('change', ctx.active);
+
 		return true;
+	}
+
+	/** @see [[iActiveItems.prototype.toggleActive]] */
+	static toggleActive(ctx: Component, value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+		const
+			{active} = ctx;
+
+		if (ctx.multiple) {
+			if (!Object.isSet(active)) {
+				return ctx.active;
+			}
+
+			const toggle = (value) => {
+				debugger
+				if (active.has(value)) {
+					if (unsetPrevious) {
+						ctx.unsetActive(ctx.active);
+
+					} else {
+						ctx.unsetActive(value);
+					}
+
+					return;
+				}
+
+				ctx.setActive(value, unsetPrevious);
+			};
+
+			if (Object.isSet(value)) {
+				Object.forEach(value, toggle);
+
+			} else {
+				toggle(value);
+			}
+
+		} else if (active !== value) {
+			ctx.setActive(value);
+
+		} else {
+			ctx.unsetActive(value);
+		}
+
+		return ctx.active;
 	}
 
 	/**
@@ -296,7 +357,9 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `change(active: CanArray<unknown>)`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	abstract setActive(value: Item['value'] | Set<Item['value']>, unsetPrevious?: boolean): boolean;
+	setActive(value: Item['value'] | Set<Item['value']>, unsetPrevious?: boolean): boolean {
+		return Object.throw();
+	}
 
 	/**
 	 * Deactivates an item by the specified value.
@@ -306,7 +369,9 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
 	 */
-	abstract unsetActive(value: Item['value'] | Set<Item['value']>): boolean;
+	unsetActive(value: Item['value'] | Set<Item['value']>): boolean {
+		return Object.throw();
+	}
 
 	/**
 	 * Toggles activation of an item by the specified value.
@@ -317,7 +382,9 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
 	 */
-	abstract toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'];
+	toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+		return Object.throw();
+	}
 
 	/**
 	 * Initializes component values

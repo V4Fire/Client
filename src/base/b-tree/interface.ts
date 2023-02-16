@@ -7,7 +7,7 @@
  */
 
 import type bTree from 'base/b-tree/b-tree';
-import type { TaskI } from 'base/b-tree/b-tree';
+import type { TaskI, ModsTable } from 'base/b-tree/b-tree';
 import type { Item as Super } from 'traits/i-active-items/i-active-items';
 
 /**
@@ -23,7 +23,7 @@ export interface Item extends Super {
 	 * Parent element value
 	 * (for nested items)
 	 */
-	parentValue?: unknown;
+	parentValue?: Item['value'];
 
 	/**
 	 * Nested items
@@ -34,6 +34,11 @@ export interface Item extends Super {
 	 * Folding flag
 	 */
 	folded?: boolean;
+
+	/**
+	 * Map of additional modifiers of the item
+	 */
+	mods?: ModsTable;
 }
 
 export type Items = Item[];

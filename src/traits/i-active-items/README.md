@@ -55,14 +55,13 @@ otherwise to `false`.
 A component active item/s value.
 If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
 
-### [indexes]
+### [values]
 
 Map of item values and their indexes
 
-### [values]
+### [indexes]
 
-An internal component active item store.
-If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
+Map of item indexes and their values
 
 ## Accessors
 

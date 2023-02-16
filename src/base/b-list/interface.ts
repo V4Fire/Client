@@ -8,27 +8,13 @@
 
 import type { HintPosition } from 'global/g-hint/interface';
 import type { ModsTable } from 'super/i-data/i-data';
+import type { Item as Super } from 'traits/i-active-items/i-active-items';
 
-export interface Item extends Dictionary {
-	/**
-	 * Item label text
-	 */
-	label?: string;
-
-	/**
-	 * Item value
-	 */
-	value?: unknown;
-
+export interface Item extends Super {
 	/**
 	 * If this option is provided, the component will generate a link for this item
 	 */
 	href?: string;
-
-	/**
-	 * True if the item is active
-	 */
-	active?: boolean;
 
 	/**
 	 * True if the item is hidden

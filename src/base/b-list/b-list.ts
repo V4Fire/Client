@@ -129,70 +129,19 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;
 
-	/**
-	 * Map of item indexes and their values
-	 */
 	/** @see [[iActiveItems.prototype.indexes] */
 	@system()
-	indexes!: unknown[];
+	indexes!: Dictionary;
 
 	/** @see [[iActiveItems.prototype.values]] */
 	@system()
 	values!: Map<unknown, number>;
 
 	/**
-	 * @see [[iActiveItems.activeProp]]
 	 * @see [[iActiveItems.activeStore]]
+	 * @see [[iActiveItems.syncActiveStore]]
 	 */
-	@system<bList>((o) => o.sync.link((val) => {
-		const
-			beforeDataCreate = o.hook === 'beforeDataCreate';
-
-		if (val === undefined && beforeDataCreate) {
-			if (o.multiple) {
-				if (Object.isSet(o.activeStore)) {
-					return o.activeStore;
-				}
-
-				return new Set(Array.concat([], o.activeStore));
-			}
-
-			return o.activeStore;
-		}
-
-		let
-			newVal;
-
-		if (o.multiple) {
-			const
-				objVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
-
-			if (Object.fastCompare(objVal, o.activeStore)) {
-				return o.activeStore;
-			}
-
-			newVal = objVal;
-
-		} else {
-			newVal = val;
-		}
-
-		if (beforeDataCreate) {
-			void o.waitStatus('ready').then(() => {
-				o.setActive(newVal);
-			});
-
-		} else {
-			o.setActive(newVal);
-
-			return newVal;
-		}
-
-		if (o.multiple) {
-			return new Set();
-		}
-	}))
-
+	@field<bList>((o) => o.sync.link((val) => iActiveItems.syncActiveStore(o, val)))
 	activeStore!: this['Active'];
 
 	/**
@@ -233,11 +182,6 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		return iActiveItems.getActive(this);
 	}
 
-	/** @see [[iActiveItems.active] */
-	set active(value: this['Active']) {
-		this.field.set('activeStore', value);
-	}
-
 	static override readonly mods: ModsDecl = {
 		...iVisible.mods,
 		...iWidth.mods,
@@ -275,7 +219,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	/** @see [[iActiveItems.prototype.setActive] */
 	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const
-			res = iActiveItems.addToActiveStore(this, value);
+			res = iActiveItems.setActive(this, value);
 
 		if (!res) {
 			return res;
@@ -322,10 +266,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 			}, stderr);
 		}
 
-		this.emit('immediateChange', this.active);
-		this.emit('change', this.active);
-
-		return true;
+		return res;
 	}
 
 	/** @see [[iActiveItems.prototype.unsetActive] */
@@ -334,7 +275,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 			{activeElement, block: $b} = this;
 
 		const
-			res = iActiveItems.removeFromActiveStorage(this, value);
+			res = iActiveItems.unsetActive(this, value);
 
 		if (!res) {
 			return res;
@@ -370,10 +311,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 			}, stderr);
 		}
 
-		this.emit('immediateChange', this.active);
-		this.emit('change', this.active);
-
-		return true;
+		return res;
 	}
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
@@ -437,7 +375,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@hook('beforeDataCreate')
 	initComponentValues(): void {
 		this.values = new Map();
-		this.indexes = [];
+		this.indexes = {};
 
 		for (let i = 0; i < this.items.length; i++) {
 			const
@@ -447,7 +385,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 			this.values.set(val, i);
 			this.indexes[i] = val;
 
-			iActiveItems.initItemMods(this, item);
+			iActiveItems.initItemActive(this, item);
 		}
 	}
 
