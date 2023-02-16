@@ -25,7 +25,7 @@
 			:tabindex = tabIndex |
 			:-hint = t(hint) |
 
-			@click.stop = onClick |
+			@click = onClick |
 			@focus = focus |
 			@blur = blur |
 
