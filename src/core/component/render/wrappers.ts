@@ -22,6 +22,7 @@ import type {
 	createVNode,
 	createElementVNode,
 
+	openBlock,
 	createBlock,
 	createElementBlock,
 
@@ -56,6 +57,24 @@ export function wrapCreateVNode<T extends typeof createVNode>(original: T): T {
 export function wrapCreateElementVNode<T extends typeof createElementVNode>(original: T): T {
 	return Object.cast(function createElementVNode(this: ComponentInterface, ...args: Parameters<T>) {
 		return resolveAttrs.call(this, original.apply(null, args));
+	});
+}
+
+const
+	blockCreated = Symbol();
+
+/**
+ * Wrapper for the component library `createBlock` function
+ * @param original
+ */
+export function wrapOpenBlock<T extends typeof openBlock>(original: T): T {
+	return Object.cast(function wrapOpenBlock(this: ComponentInterface, ...args: Parameters<T>) {
+		if (this.unsafe.meta.params.functional === true && !this[blockCreated]) {
+			this[blockCreated] = true;
+			return;
+		}
+
+		return original.apply(null, args);
 	});
 }
 
