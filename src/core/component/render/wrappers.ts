@@ -12,7 +12,7 @@ import { componentRenderFactories } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
-import { createVirtualContext,  } from 'core/component/functional';
+import { createVirtualContext } from 'core/component/functional';
 
 import type {
 
