@@ -253,7 +253,7 @@ export default abstract class iActiveItems extends iItems {
 	static unsetActive(ctx: Component, value: iActiveItems['Active']): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
-
+debugger
 		if (ctx.multiple) {
 			if (!Object.isSet(activeStore)) {
 				return false;
@@ -307,7 +307,6 @@ export default abstract class iActiveItems extends iItems {
 			}
 
 			const toggle = (value) => {
-				debugger
 				if (active.has(value)) {
 					if (unsetPrevious) {
 						ctx.unsetActive(ctx.active);
