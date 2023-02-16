@@ -76,20 +76,20 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	};
 
 	const
-		map = new WeakMap();
+		cache = new WeakMap();
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx, ...args) => {
 		const
 			unsafe = getComponentContext(ctx);
 
-		if (map.has(ctx)) {
-			return map.get(ctx)();
+		if (cache.has(ctx)) {
+			return cache.get(ctx)();
 		}
 
 		const
 			fn = meta.methods.render!.fn(unsafe, ...args);
 
-		map.set(ctx, fn);
+		cache.set(ctx, fn);
 		return fn();
 	});
 
