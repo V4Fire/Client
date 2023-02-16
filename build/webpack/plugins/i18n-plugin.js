@@ -59,17 +59,17 @@ module.exports = class I18NGeneratorPlugin {
 				});
 
 				fg.sync(`${src.clientOutput()}/*.html`, {ignore: `${src.clientOutput()}/*_(${locales}).html`}).forEach((path) => {
-					fs.writeFileSync(
-						path,
-						getHtmlWithTranslateMap(path, {[configLocale]: result[configLocale]})
-					);
-
 					supportedLocales.forEach((locale) => {
 						fs.writeFileSync(
 							path.replace('.html', `_${locale}.html`),
 							getHtmlWithTranslateMap(path, {[locale]: result[locale]})
 						);
 					});
+
+					fs.writeFileSync(
+						path,
+						getHtmlWithTranslateMap(path, {[configLocale]: result[configLocale]})
+					);
 				});
 			}
 		}
