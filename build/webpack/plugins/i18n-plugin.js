@@ -30,7 +30,8 @@ module.exports = class I18NGeneratorPlugin {
 			if (compilation.compiler && compilation.compiler.name === 'html') {
 				const
 					configLocale = locale,
-					paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/(${supportedLocales.join('|')}).js`),
+					locales = supportedLocales.join('|'),
+					paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/(${locales}).js`),
 					result = {};
 
 				fg.sync(paths).forEach((path) => {
