@@ -92,11 +92,10 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			{supports, r} = this.$renderEngine;
 
 		const
-			isRegular = params.functional !== true || !supports.functional,
-			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
+			isRegular = params.functional !== true || !supports.functional;
 
 		if (isRegular) {
-			return vnode;
+			return createVNode(name, attrs, slots, patchFlag, dynamicProps);
 		}
 
 		if (componentRenderFactories[componentName] == null) {
@@ -109,23 +108,19 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			slots
 		});
 
-		vnode.virtualComponent = virtualCtx;
-
 		const
 			declaredProps = component.props,
-			functionalVNode = virtualCtx.render(virtualCtx, []);
+			vnode = virtualCtx.render(virtualCtx, []);
+
+		vnode.virtualComponent = virtualCtx;
 
 		const filteredAttrs = Object.fromEntries(
 			Object.entries({...vnode.props}).filter(([key]) => declaredProps[key.camelize(false)] == null)
 		);
 
-		vnode.type = functionalVNode.type;
-		vnode.props = mergeProps(filteredAttrs, functionalVNode.props ?? {});
+		vnode.props = mergeProps(filteredAttrs, vnode.props ?? {});
 
-		vnode.children = functionalVNode.children;
-		vnode.dynamicChildren = functionalVNode.dynamicChildren;
-
-		vnode.dirs = functionalVNode.dirs ?? [];
+		vnode.dirs = vnode.dirs ?? [];
 		vnode.dirs.push({
 			dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
 
@@ -145,21 +140,6 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			oldValue: undefined,
 			instance: Object.cast(virtualCtx)
 		});
-
-		if (functionalVNode.shapeFlag > vnode.shapeFlag) {
-			// eslint-disable-next-line no-bitwise
-			vnode.shapeFlag |= functionalVNode.shapeFlag;
-		}
-
-		if (functionalVNode.patchFlag > vnode.patchFlag) {
-			// eslint-disable-next-line no-bitwise
-			vnode.patchFlag |= functionalVNode.patchFlag;
-		}
-
-		functionalVNode.props = {};
-		functionalVNode.dirs = null;
-		functionalVNode.children = [];
-		functionalVNode.dynamicChildren = [];
 
 		return vnode;
 	});
