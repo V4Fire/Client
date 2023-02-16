@@ -8,8 +8,6 @@
 
 import type { LangPacs } from 'lang/interface';
 
-import config from 'config';
-
 /**
  * Implementation a keysets collector based on require.context
  * @see https://webpack.js.org/guides/dependency-management/#requirecontext
@@ -19,19 +17,16 @@ export function requireContextEngine(): LangPacs {
 
 	const
 		langPacs = {},
-		regExp = new RegExp(`.i18n/${config.locale}.js$`),
 		// @ts-ignore (require)
-		ctx = require.context('src', true, regExp);
+		ctx = require.context('src', true, /\.i18n\/.*\.js$/);
 
 	ctx.keys().forEach((path: string) => {
 		const
 			parsedPath = /\/[^/]*?\.i18n\/(.*?)\.js$/i.exec(path);
 
 		if (parsedPath != null) {
-			const
-				[_, lang] = parsedPath;
-
-			langPacs[lang] = langPacs[lang] ?? {};
+			const [_, lang] = parsedPath;
+			langPacs[lang] ??= {};
 
 			Object.keys(ctx(path)).forEach((keysetName) => {
 				langPacs[lang][keysetName] = {

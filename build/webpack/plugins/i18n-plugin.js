@@ -10,7 +10,7 @@
 
 const
 	{resolve: pzlr} = require('@pzlr/build-core'),
-	{src, i18n, locale} = require('@config/config'),
+	{src, supportedLocales, locale} = require('@config/config'),
 	fs = require('fs'),
 	fg = require('fast-glob');
 
@@ -30,8 +30,7 @@ module.exports = class I18NGeneratorPlugin {
 			if (compilation.compiler && compilation.compiler.name === 'html') {
 				const
 					configLocale = locale,
-					locales = ['en', 'ru'].join('|'),
-					paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/(${locales}).js`),
+					paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/(${supportedLocales.join('|')}).js`),
 					result = {};
 
 				fg.sync(paths).forEach((path) => {
@@ -47,7 +46,7 @@ module.exports = class I18NGeneratorPlugin {
 
 							Object.keys(element).forEach((keysetName) => {
 								result[lang][keysetName] = {
-									...result[lang][keysetName] != null ? result[lang][keysetName] : {},
+									...result[lang][keysetName],
 									...element[keysetName]
 								};
 							});
@@ -64,14 +63,12 @@ module.exports = class I18NGeneratorPlugin {
 						getHtmlWithTranslateMap(path, {[configLocale]: result[configLocale]})
 					);
 
-					if (i18n.multiLanguage === true) {
-						i18n.supportedLocales.forEach((locale) => {
-							fs.writeFileSync(
-								path.replace('.html', `_${locale}.html`),
-								getHtmlWithTranslateMap(path, {[locale]: result[locale]})
-							);
-						});
-					}
+					supportedLocales.forEach((locale) => {
+						fs.writeFileSync(
+							path.replace('.html', `_${locale}.html`),
+							getHtmlWithTranslateMap(path, {[locale]: result[locale]})
+						);
+					});
 				});
 			}
 		}

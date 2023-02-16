@@ -46,7 +46,7 @@ module.exports = async function plugins({name}) {
 		);
 	}
 
-	if (config.i18n.i18nEngine === 'inlineHtml') {
+	if (config.i18nEngine === 'inlineHtml') {
 		plugins.set('i18nGeneratorPlugin', new I18NGeneratorPlugin());
 	}
 
