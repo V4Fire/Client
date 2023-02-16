@@ -85,8 +85,8 @@ module.exports = (page) => {
 				})
 
 			).toEqual([
-				[{label: 'Bar', value: [], mods: {id: 0, active: false}}],
-				[{label: 'Bar', value: [], mods: {id: 0, active: false}}]
+				[{label: 'Bar', value: []}],
+				[{label: 'Bar', value: []}]
 			]);
 		});
 

@@ -22,6 +22,8 @@
 				:class = provide.elClasses({
 					node: {
 						level,
+						id: values.get(el.value),
+						active: isActive(el.value),
 						...(hasChildren(el) && {folded: getFoldedPropValue(el)}),
 						...el.mods
 					}
