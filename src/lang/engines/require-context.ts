@@ -29,6 +29,7 @@ export function requireContextEngine(): LangPacs {
 
 			Object.keys(ctx(path)).forEach((keysetName) => {
 				langPacs[lang][keysetName] = {
+					...langPacs[lang][keysetName],
 					...ctx(path)[keysetName]
 				};
 			});
