@@ -22,7 +22,6 @@ import type {
 	createVNode,
 	createElementVNode,
 
-	openBlock,
 	createBlock,
 	createElementBlock,
 
@@ -60,24 +59,6 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
 	});
 }
 
-const
-	blockCreated = Symbol();
-
-/**
- * Wrapper for the component library `createBlock` function
- * @param original
- */
-export function wrapOpenBlock<T extends typeof openBlock>(original: T): T {
-	return Object.cast(function wrapOpenBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		if (this.unsafe.meta.params.functional === true && !this[blockCreated]) {
-			this[blockCreated] = true;
-			return;
-		}
-
-		return original.apply(null, args);
-	});
-}
-
 /**
  * Wrapper for the component library `createBlock` function
  * @param original
@@ -111,10 +92,11 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			{supports, r} = this.$renderEngine;
 
 		const
-			isRegular = params.functional !== true || !supports.functional;
+			isRegular = params.functional !== true || !supports.functional,
+			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
 
 		if (isRegular) {
-			return createVNode(name, attrs, slots, patchFlag, dynamicProps);
+			return vnode;
 		}
 
 		if (componentRenderFactories[componentName] == null) {
@@ -127,25 +109,23 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			slots
 		});
 
-		const vnode = virtualCtx.render(virtualCtx, []);
 		vnode.virtualComponent = virtualCtx;
 
+		const
+			declaredProps = component.props,
+			functionalVNode = virtualCtx.render(virtualCtx, []);
+
 		const filteredAttrs = Object.fromEntries(
-			Object.entries({...vnode.props}).filter(([key]) => component!.props[key.camelize(false)] == null)
+			Object.entries({...vnode.props}).filter(([key]) => declaredProps[key.camelize(false)] == null)
 		);
 
-		vnode.props = mergeProps(filteredAttrs, vnode.props ?? {});
+		vnode.type = functionalVNode.type;
+		vnode.props = mergeProps(filteredAttrs, functionalVNode.props ?? {});
 
-		if (dynamicProps != null) {
-			vnode.dynamicProps = vnode.dynamicProps != null ? Array.union(vnode.dynamicProps, dynamicProps) : dynamicProps;
-		}
+		vnode.children = functionalVNode.children;
+		vnode.dynamicChildren = functionalVNode.dynamicChildren;
 
-		if (patchFlag != null && patchFlag > vnode.patchFlag) {
-			// eslint-disable-next-line no-bitwise
-			vnode.patchFlag |= patchFlag;
-		}
-
-		vnode.dirs = vnode.dirs ?? [];
+		vnode.dirs = functionalVNode.dirs ?? [];
 		vnode.dirs.push({
 			dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
 
@@ -165,6 +145,21 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			oldValue: undefined,
 			instance: Object.cast(virtualCtx)
 		});
+
+		if (functionalVNode.shapeFlag > vnode.shapeFlag) {
+			// eslint-disable-next-line no-bitwise
+			vnode.shapeFlag |= functionalVNode.shapeFlag;
+		}
+
+		if (functionalVNode.patchFlag > vnode.patchFlag) {
+			// eslint-disable-next-line no-bitwise
+			vnode.patchFlag |= functionalVNode.patchFlag;
+		}
+
+		functionalVNode.props = {};
+		functionalVNode.dirs = null;
+		functionalVNode.children = [];
+		functionalVNode.dynamicChildren = [];
 
 		return vnode;
 	});

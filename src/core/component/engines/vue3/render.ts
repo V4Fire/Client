@@ -14,7 +14,6 @@ import {
 	createVNode as superCreateVNode,
 	createElementVNode as superCreateElementVNode,
 
-	openBlock as superOpenBlock,
 	createBlock as superCreateBlock,
 	createElementBlock as superCreateElementBlock,
 
@@ -37,7 +36,6 @@ import {
 	wrapCreateVNode,
 	wrapCreateElementVNode,
 
-	wrapOpenBlock,
 	wrapCreateBlock,
 	wrapCreateElementBlock,
 
@@ -63,6 +61,7 @@ export {
 	toHandlers,
 	toDisplayString,
 
+	openBlock,
 	setBlockTracking,
 
 	setDevtoolsHook,
@@ -110,7 +109,6 @@ export const
 	createElementVNode = wrapCreateElementVNode(superCreateElementVNode);
 
 export const
-	openBlock = wrapOpenBlock(superOpenBlock),
 	createBlock = wrapCreateBlock(superCreateBlock),
 	createElementBlock = wrapCreateElementBlock(superCreateElementBlock);
 
