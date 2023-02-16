@@ -146,16 +146,17 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			instance: Object.cast(virtualCtx)
 		});
 
-		if (functionalVNode.shapeFlag > vnode.shapeFlag) {
+		if (vnode.shapeFlag < functionalVNode.shapeFlag) {
 			// eslint-disable-next-line no-bitwise
 			vnode.shapeFlag |= functionalVNode.shapeFlag;
 		}
 
-		if (functionalVNode.patchFlag > vnode.patchFlag) {
+		if (vnode.patchFlag < functionalVNode.patchFlag) {
 			// eslint-disable-next-line no-bitwise
 			vnode.patchFlag |= functionalVNode.patchFlag;
 		}
 
+		functionalVNode.ignore = true;
 		functionalVNode.props = {};
 		functionalVNode.dirs = null;
 		functionalVNode.children = [];

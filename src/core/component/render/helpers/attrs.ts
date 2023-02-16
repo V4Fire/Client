@@ -47,6 +47,10 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		$renderEngine: {r}
 	} = this;
 
+	if (vnode.dynamicChildren != null && vnode.dynamicChildren.length > 0) {
+		vnode.dynamicChildren = vnode.dynamicChildren.filter((el) => !el.ignore);
+	}
+
 	if (vnode.ref != null) {
 		vnode.ref['i'] ??= r.getCurrentInstance();
 	}
