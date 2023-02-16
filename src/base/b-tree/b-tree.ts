@@ -40,7 +40,6 @@ import iData, {
 } from 'super/i-data/i-data';
 
 import type { Item, Items, RenderFilter } from 'base/b-tree/interface';
-import context from 'core/component/engines/zero/context';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-tree/interface';
@@ -136,12 +135,6 @@ class bTree extends iData implements iActiveItems {
 	@prop({type: Object, required: false})
 	readonly top?: bTree;
 
-	// /**
-	//  * Link to the parent component (internal parameter)
-	//  */
-	// @prop({type: Object, required: false})
-	// readonly parent?: bTree;
-
 	/**
 	 * Component nesting level (internal parameter)
 	 */
@@ -168,7 +161,7 @@ class bTree extends iData implements iActiveItems {
 	 * @see [[iActiveItems.activeStore]]
 	 * @see [[iActiveItems.syncActiveStore]]
 	 */
-	@field<bTree>((o) => o.sync.link((val) => iActiveItems.syncActiveStore(o, val)))
+	@system<bTree>((o) => o.sync.link((val) => iActiveItems.syncActiveStore(o, val)))
 	activeStore!: iActiveItems['activeStore'];
 
 	/** @see [[iActiveItems.prototype.indexes]] */
@@ -242,11 +235,6 @@ class bTree extends iData implements iActiveItems {
 	get active(): iActiveItems['active'] {
 		return iActiveItems.getActive(this);
 	}
-
-	// /** @see [[iActiveItems.prototype.active] */
-	// isActive(value: this['Item']['value']): iActiveItems['active'] {
-	// 	return iActiveItems.isActive(this.top ?? this, value);
-	// }
 
 	/**
 	 * Returns an iterator over the tree items based on the given arguments.
@@ -361,13 +349,13 @@ class bTree extends iData implements iActiveItems {
 	toggleFold(value: this['Item']['value'], folded?: boolean): Promise<boolean> {
 		const
 			ctx = this.top ?? this,
-			element = this.findItemElement(value),
+			element = ctx.findItemElement(value),
 			newVal = folded ?? this.getFoldedMod(value) === 'false',
 			item = this.valuesToItems.get(value);
 
-		if (element != null && item != null && this.hasChildren(item) && item.folded !== newVal) {
-			// This.block?.setElMod(target, 'node', 'folded', newVal);
-			item.folded = newVal;
+		if (element != null && item != null && this.hasChildren(item)) {
+			this.block?.setElMod(element, 'node', 'folded', newVal);
+			// item.folded = newVal;
 			ctx.emit('fold', element, item, newVal);
 
 			return SyncPromise.resolve(true);
@@ -426,15 +414,168 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.setActive]] */
-	setActive(value: this['Active']): boolean {
+	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const
-			res = iActiveItems.setActive(this, value);
+			ctx = this.top ?? this,
+			{active, multiple} = ctx;
 
-		if (res) {
-			this.unfoldAllParents(value);
+		const
+			res = iActiveItems.setActive(ctx, value);
+
+		if (!res) {
+			return res;
 		}
 
-		return res;
+		for (const [item, component] of ctx.traverse()) {
+			const
+				{block: $b} = component,
+				id = this.values.get(item.value),
+				itemEl = $b?.element('node', {id});
+
+			const needSetActiveTrue = multiple && Object.isSet(value) ?
+				value.has(item.value) :
+				value === item.value;
+
+			const needSetActiveFalse = multiple && Object.isSet(active) ?
+				active.has(item.value) :
+				active === item.value;
+
+			if (needSetActiveTrue) {
+				$b?.setElMod(itemEl, 'node', 'active', true);
+
+				ctx.unfoldAllParents(item);
+
+				if (itemEl?.hasAttribute('aria-selected')) {
+					itemEl.setAttribute('aria-selected', 'true');
+				}
+
+			} else if (needSetActiveFalse || multiple && unsetPrevious) {
+				$b?.setElMod(itemEl, 'node', 'active', false);
+			}
+		}
+
+		ctx.emit('immediateChange', ctx.active);
+		ctx.emit('change', ctx.active);
+
+		return true;
+	}
+
+	unsetActive(value: this['Active']): boolean {
+		const
+			ctx = this.top ?? this,
+			{multiple} = ctx;
+
+		const
+			res = iActiveItems.unsetActive(ctx, value);
+
+		if (!res) {
+			return res;
+		}
+
+		for (const [item, component] of ctx.traverse()) {
+			const
+				{block: $b} = component,
+				id = this.values.get(item.value),
+				itemEl = $b?.element('node', {id});
+
+			const needChangeMod = multiple && Object.isSet(value) ?
+				value.has(item.value) :
+				value === item.value;
+
+			if (needChangeMod) {
+				$b?.setElMod(itemEl, 'node', 'active', false);
+
+				if (itemEl?.hasAttribute('aria-selected')) {
+					itemEl.setAttribute('aria-selected', 'false');
+				}
+
+				break;
+			}
+		}
+
+		ctx.emit('immediateChange', ctx.active);
+		ctx.emit('change', ctx.active);
+
+		return true;
+	}
+
+	/** @see [[iActiveItems.prototype.toggleActive]] */
+	toggleActive(value: iActiveItems['Active'], unsetPrevious: boolean = false): this['Active'] {
+		const
+			ctx = this.top ?? this,
+			{multiple, active} = ctx;
+
+		if (multiple) {
+			if (!Object.isSet(active)) {
+				return active;
+			}
+
+			let count = 0;
+
+			for (const [item, component] of ctx.traverse()) {
+				if (Object.isSet(value)) {
+					if (unsetPrevious && active.has(item.value)) {
+						toggleActive(component, item);
+						continue;
+					}
+
+					if (value.has(item.value)) {
+						toggleActive(component, item);
+
+						if (++count === value.size) {
+							break;
+						}
+					}
+
+				} else if (item.value === value) {
+					toggleActive(component, item);
+					break;
+				}
+			}
+
+		} else if (active !== value) {
+			ctx.setActive(value, unsetPrevious);
+
+		} else {
+			ctx.unsetActive(value);
+		}
+
+		return ctx.active;
+
+		function toggleActive(component: bTree, item: Item) {
+			const
+				{block: $b} = component,
+				id = ctx.values.get(item.value),
+				itemEl = $b?.element('node', {id});
+
+			if (!Object.isSet(ctx.active)) {
+				return;
+			}
+
+			const
+				needToAdd = !ctx.active.has(item.value);
+
+			const res = needToAdd ?
+				iActiveItems.setActive(ctx, item.value) :
+				iActiveItems.unsetActive(ctx, item.value);
+
+			if (!res) {
+				return;
+			}
+
+			$b?.setElMod(itemEl, 'node', 'active', needToAdd);
+
+			if (needToAdd) {
+				itemEl?.setAttribute('aria-selected', String(needToAdd));
+				ctx.unfoldAllParents(item);
+
+			} else {
+				itemEl?.removeAttribute('aria-selected');
+			}
+
+			ctx.emit('immediateChange', ctx.active);
+			ctx.emit('change', ctx.active);
+		}
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -532,11 +673,8 @@ class bTree extends iData implements iActiveItems {
 	 * @param value
 	 */
 	protected findItemElement(value: this['Item']['value']): CanUndef<HTMLElement> {
-		const
-			ctx = this.top ?? this,
-			itemId = this.values.get(value);
-
-		return ctx.$el?.querySelector(`[data-id="${itemId}"]`) ?? undefined;
+		const itemId = this.values.get(value);
+		return this.$el?.querySelector(`[data-id="${itemId}"]`) ?? undefined;
 	}
 
 	/**
@@ -560,7 +698,7 @@ class bTree extends iData implements iActiveItems {
 				normalizedItem.value === this.active;
 
 			if (isItemActive) {
-				this.localEmitter.on('asyncRenderChunkComplete', () => {
+				this.localEmitter.once('asyncRenderChunkComplete', () => {
 					this.unfoldAllParents(normalizedItem.value);
 				});
 			}
@@ -575,7 +713,6 @@ class bTree extends iData implements iActiveItems {
 	 */
 	protected unfoldAllParents(value: this['Item']['value']): void {
 		const
-			// ctx = this.top ?? this,
 			item = this.valuesToItems.get(value);
 
 		let
@@ -588,11 +725,6 @@ class bTree extends iData implements iActiveItems {
 			if (parent != null) {
 				void this.toggleFold(parent.value, false);
 				parentValue = parent.parentValue;
-				//
-				// const
-				// 	node = this.findItemNodeElement(parent.value);
-				//
-				// ctx.emit('fold', node, parent, false);
 			}
 		}
 	}
@@ -632,7 +764,7 @@ class bTree extends iData implements iActiveItems {
 			ctx = this.top ?? this,
 			id = Number(this.block?.getElMod(target, 'node', 'id'));
 
-		this.setActive(this.indexes[id]);
+		this.toggleActive(this.indexes[id]);
 		ctx.emit('actionChange', ctx.active);
 	}
 }

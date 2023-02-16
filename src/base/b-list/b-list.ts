@@ -141,7 +141,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 * @see [[iActiveItems.activeStore]]
 	 * @see [[iActiveItems.syncActiveStore]]
 	 */
-	@field<bList>((o) => o.sync.link((val) => iActiveItems.syncActiveStore(o, val)))
+	@system<bList>((o) => o.sync.link((val) => iActiveItems.syncActiveStore(o, val)))
 	activeStore!: this['Active'];
 
 	/**
@@ -318,7 +318,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	toggleActive(value: this['Active'], unsetPrevious: boolean = false): this['Active'] {
 		const
 			activeStore = this.field.get('activeStore');
-
+debugger
 		if (this.multiple) {
 			if (!Object.isSet(activeStore)) {
 				return this.active;
