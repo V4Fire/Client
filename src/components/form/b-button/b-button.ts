@@ -437,7 +437,7 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	 * @emits `click(e: Event)`
 	 */
 	protected async onClick(e: Event): Promise<void> {
-		if (e.type !== 'link') {
+		if (this.type !== 'link') {
 			e.stopPropagation();
 		}
 
