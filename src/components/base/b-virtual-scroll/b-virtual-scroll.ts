@@ -87,46 +87,17 @@ export default class bVirtualScroll extends iData implements iItems {
 
 	override readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see [[iItems.items]] */
-	@prop(Array)
-	readonly optionsProp?: this['Items'] = [];
-
-	/** @see [[iItems.items]] */
-	@field((o) => o.sync.link())
-	options!: this['Items'];
-
 	/** @see [[LoadStrategy]] */
 	@prop({type: String, watch: 'syncPropsWatcher'})
 	readonly loadStrategy: LoadStrategy = 'scroll';
-
-	/**
-	 * @deprecated
-	 * @see [[iItems.item]]
-	 */
-	@prop({type: [String, Function], required: false})
-	readonly option?: iItems['item'];
 
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
-	/**
-	 * @deprecated
-	 * @see [[iItems.itemKey]]
-	 */
-	@prop({type: [String, Function], required: false})
-	readonly optionKey?: iItems['itemKey'];
-
 	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
 	readonly itemKey?: iItems['itemKey'];
-
-	/**
-	 * @deprecated
-	 * @see [[iItems.itemProps]]
-	 */
-	@prop({type: Function})
-	readonly optionProps!: iItems['itemProps'];
 
 	/** @see [[iItems.itemProps]] */
 	@prop({type: [Function, Object], default: () => ({})})
@@ -201,20 +172,9 @@ export default class bVirtualScroll extends iData implements iItems {
 	readonly shouldStopRequest!: RequestFn;
 
 	/** @see [[iItems.items]] */
-	@computed({dependencies: ['itemsStore', 'options']})
+	@computed({dependencies: ['itemsStore']})
 	get items(): this['Items'] {
-		const
-			items = Object.size(this.options) > 0 ? this.options : this.itemsStore;
-
-		if (Object.size(this.options) > 0) {
-			deprecate({
-				name: 'options',
-				type: 'property',
-				renamedTo: 'items'
-			});
-		}
-
-		return items ?? [];
+		return this.itemsStore ?? [];
 	}
 
 	/** @see [[iItems.items]] */
@@ -340,9 +300,9 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	renderNext(): void {
 		const
-			{localState, chunkRequest, dataProvider, options} = this;
+			{localState, chunkRequest, dataProvider, items} = this;
 
-		if (localState !== 'ready' || dataProvider == null && options.length === 0) {
+		if (localState !== 'ready' || dataProvider == null && items.length === 0) {
 			return;
 		}
 
@@ -379,27 +339,14 @@ export default class bVirtualScroll extends iData implements iItems {
 	 */
 	getItemAttrs(el: this['Item'], i: number): CanUndef<Dictionary> {
 		const
-			{itemProps, optionProps} = this;
+			{itemProps} = this;
 
-		let
-			props = itemProps;
-
-		if (optionProps != null) {
-			deprecate({
-				name: 'optionProps',
-				type: 'property',
-				renamedTo: 'itemProps'
-			});
-
-			props = optionProps;
-		}
-
-		return Object.isFunction(props) ?
-			props(el, i, {
+		return Object.isFunction(itemProps) ?
+			itemProps(el, i, {
 				key: this.getItemKey(el, i),
 				ctx: this
 			}) :
-			props;
+			itemProps;
 	}
 
 	/**
@@ -409,34 +356,12 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @param i
 	 */
 	getItemComponentName(el: this['Item'], i: number): string {
-		const
-			{item, option} = this;
-
-		if (option != null) {
-			deprecate({
-				name: 'option',
-				type: 'property',
-				renamedTo: 'item'
-			});
-
-			return Object.isFunction(option) ? option(el, i) : option;
-		}
-
+		const {item} = this;
 		return Object.isFunction(item) ? item(el, i) : <string>item;
 	}
 
 	/** @see [[iItems.getItemKey]] */
 	getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
-		if (this.optionKey != null) {
-			deprecate({
-				name: 'optionKey',
-				type: 'property',
-				renamedTo: 'itemKey'
-			});
-
-			return Object.isFunction(this.optionKey) ? this.optionKey(el, i) : this.optionKey;
-		}
-
 		return iItems.getItemKey(this, el, i);
 	}
 
@@ -512,7 +437,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * Initializes rendering on the items passed to the component
 	 */
 	@hook('mounted')
-	@watch(['options', 'itemsStore'])
+	@watch(['itemsStore'])
 	@wait('ready', {defer: true, label: $$.initOptions})
 	protected initItems(): CanPromise<void> {
 		if (this.dataProvider !== undefined) {
@@ -523,7 +448,7 @@ export default class bVirtualScroll extends iData implements iItems {
 			this.reInit();
 		}
 
-		this.chunkRequest.lastLoadedChunk.normalized = Object.isArray(this.options) ? [...this.options] : [];
+		this.chunkRequest.lastLoadedChunk.normalized = Object.isArray(this.items) ? [...this.items] : [];
 		this.chunkRequest.init().catch(stderr);
 	}
 
