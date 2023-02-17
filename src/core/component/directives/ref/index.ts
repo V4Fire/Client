@@ -87,10 +87,6 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 	ctx.$emit(`[[REF:${refName}]]`, refs[refName]);
 
 	function defineRef(refs: object, refName: PropertyKey, getter: () => unknown) {
-		if (Object.isFrozen(refs)) {
-			return;
-		}
-
 		Object.defineProperty(refs, refName, {
 			configurable: true,
 			enumerable: true,
