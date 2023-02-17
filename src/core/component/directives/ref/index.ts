@@ -30,13 +30,13 @@ ComponentEngine.directive('ref', {
 });
 
 function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode: VNode): void {
-	const
-		ctx = getDirectiveContext(opts, vnode);
-
 	const {
 		value,
 		instance
 	} = opts;
+
+	let ctx = getDirectiveContext(opts, vnode);
+	ctx = Object.cast(ctx?.unsafe.meta.functional === true ? ctx : instance);
 
 	if (
 		value == null ||
