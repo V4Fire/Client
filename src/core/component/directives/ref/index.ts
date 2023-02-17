@@ -73,32 +73,30 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 				virtualRefs[REF_ID] = refVal[REF_ID];
 			}
 
-			const
-				refIndex = refVal.indexOf(el);
-
-			Object.defineProperty(virtualRefs, refIndex, {
-				configurable: true,
-				enumerable: true,
-				get: () => resolveRefVal(refIndex)
-			});
+			const refIndex = refVal.indexOf(el);
+			defineRef(virtualRefs, refIndex, () => resolveRefVal(refIndex));
 
 		} else {
-			Object.defineProperty(refs, refName, {
-				configurable: true,
-				enumerable: true,
-				get: resolveRefVal
-			});
+			defineRef(refs, refName, resolveRefVal);
 		}
 
 	} else {
-		Object.defineProperty(refs, refName, {
-			configurable: true,
-			enumerable: true,
-			get: resolveRefVal
-		});
+		defineRef(refs, refName, resolveRefVal);
 	}
 
 	ctx.$emit(`[[REF:${refName}]]`, refs[refName]);
+
+	function defineRef(refs: object, refName: PropertyKey, getter: () => unknown) {
+		if (Object.isFrozen(refs)) {
+			return;
+		}
+
+		Object.defineProperty(refs, refName, {
+			configurable: true,
+			enumerable: true,
+			get: getter
+		});
+	}
 
 	function resolveRefVal(key?: PropertyKey) {
 		const
