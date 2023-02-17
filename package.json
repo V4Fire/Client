@@ -51,7 +51,7 @@
     "@babel/preset-typescript": "7.16.7",
     "@swc/core": "1.2.153",
     "@swc/helpers": "0.3.8",
-    "@vue/compiler-sfc": "3.2.26",
+    "@vue/compiler-sfc": "3.2.47",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "dpdm": "3.10.0",
@@ -65,7 +65,7 @@
     "snakeskin": "7.5.1",
     "tslib": "2.3.1",
     "vinyl": "2.2.1",
-    "vue": "3.2.26"
+    "vue": "3.2.47"
   },
   "optionalDependencies": {
     "@config/config": "npm:config@1.31.0",
