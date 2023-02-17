@@ -88,6 +88,8 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 				// Need to explicitly touch all dependencies for Vue
 				if (beforeHooks[hook] == null && hook !== 'created') {
 					meta.watchDependencies.get(name)?.forEach((path) => Object.get(this, path));
+					Object.get(this, `${name}Store`);
+					Object.get(this, `${name}Prop`);
 				}
 
 				return get[cacheStatus];
