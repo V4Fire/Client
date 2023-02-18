@@ -203,13 +203,17 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/** @see [[iActiveItems.prototype.setActive]] */
-	static setActive(ctx: Component, value: iActiveItems['Active']): boolean {
+	static setActive(ctx: Component, value: iActiveItems['Active'], unsetPrevious?: boolean): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
 
 		if (ctx.multiple) {
 			if (!Object.isSet(activeStore)) {
 				return false;
+			}
+
+			if (unsetPrevious) {
+				ctx.field.set('activeStore', new Set());
 			}
 
 			let
@@ -253,7 +257,7 @@ export default abstract class iActiveItems extends iItems {
 	static unsetActive(ctx: Component, value: iActiveItems['Active']): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
-debugger
+
 		if (ctx.multiple) {
 			if (!Object.isSet(activeStore)) {
 				return false;
@@ -299,36 +303,35 @@ debugger
 	/** @see [[iActiveItems.prototype.toggleActive]] */
 	static toggleActive(ctx: Component, value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		const
-			{active} = ctx;
+			activeStore = ctx.field.get('activeStore');
 
 		if (ctx.multiple) {
-			if (!Object.isSet(active)) {
+			if (!Object.isSet(activeStore)) {
 				return ctx.active;
 			}
 
 			const toggle = (value) => {
-				if (active.has(value)) {
-					if (unsetPrevious) {
-						ctx.unsetActive(ctx.active);
-
-					} else {
-						ctx.unsetActive(value);
-					}
+				if (activeStore.has(value)) {
+					ctx.unsetActive(value);
 
 					return;
 				}
 
-				ctx.setActive(value, unsetPrevious);
+				ctx.setActive(value);
 			};
 
 			if (Object.isSet(value)) {
+				if (unsetPrevious) {
+					ctx.unsetActive(ctx.active);
+				}
+
 				Object.forEach(value, toggle);
 
 			} else {
 				toggle(value);
 			}
 
-		} else if (active !== value) {
+		} else if (activeStore !== value) {
 			ctx.setActive(value);
 
 		} else {

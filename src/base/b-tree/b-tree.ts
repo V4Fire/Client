@@ -174,9 +174,10 @@ class bTree extends iData implements iActiveItems {
 
 	/**
 	 * Map with values and items
+	 * @see [[iActiveItems.prototype.values]]
 	 */
 	@system()
-	valuesToItems: Map<unknown, Item> = new Map();
+	valuesToItems!: Map<unknown, Item>;
 
 	/** @inheritDoc */
 	protected override readonly $refs!: {
@@ -292,28 +293,22 @@ class bTree extends iData implements iActiveItems {
 				.then((res) => res.some((value) => value === true));
 		}
 
-		// const
-		// 	isFolded = this.getFoldedMod(value) === 'true';
-		//
-		// if (isFolded) {
-		// 	return SyncPromise.resolve(false);
-		// }
-
 		return this.toggleFold(value, true);
 	}
 
 	/**
 	 * Unfolds the specified item.
+	 * If method is called on nested item, all parent items will be unfolded.
 	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
 	 *
 	 * @param [value]
 	 */
 	@wait('ready')
 	unfold(value?: this['Item']['value']): Promise<boolean> {
-		if (value == null) {
-			const
-				values: Array<Promise<boolean>> = [];
+		const
+			values: Array<Promise<boolean>> = [];
 
+		if (value == null) {
 			for (const [item] of this.traverse(this, {deep: false})) {
 				if (!this.hasChildren(item)) {
 					continue;
@@ -326,16 +321,28 @@ class bTree extends iData implements iActiveItems {
 				.then((res) => res.some((value) => value === true));
 		}
 
-		// const
-		// 	isUnfolded = this.getFoldedMod(value) === 'false';
-		//
-		// if (isUnfolded) {
-		// 	return SyncPromise.resolve(false);
-		// }
+		const
+			item = this.valuesToItems.get(value);
 
-		this.unfoldAllParents(value);
+		if (item != null && this.hasChildren(item)) {
+			values.push(this.toggleFold(value, false));
+		}
 
-		return this.toggleFold(value, false);
+		let
+			{parentValue} = item ?? {};
+
+		while (parentValue != null) {
+			const
+				parent = this.valuesToItems.get(parentValue);
+
+			if (parent != null) {
+				values.push(this.toggleFold(parent.value, false));
+				parentValue = parent.parentValue;
+			}
+		}
+
+		return SyncPromise.all(values)
+			.then((res) => res.some((value) => value === true));
 	}
 
 	/**
@@ -350,12 +357,12 @@ class bTree extends iData implements iActiveItems {
 		const
 			ctx = this.top ?? this,
 			element = ctx.findItemElement(value),
-			newVal = folded ?? this.getFoldedMod(value) === 'false',
+			oldVal = this.getFoldedMod(value) === 'true',
+			newVal = folded ?? !oldVal,
 			item = this.valuesToItems.get(value);
 
-		if (element != null && item != null && this.hasChildren(item)) {
+		if (oldVal !== newVal && element != null && item != null && this.hasChildren(item)) {
 			this.block?.setElMod(element, 'node', 'folded', newVal);
-			// item.folded = newVal;
 			ctx.emit('fold', element, item, newVal);
 
 			return SyncPromise.resolve(true);
@@ -371,16 +378,16 @@ class bTree extends iData implements iActiveItems {
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	@watch({field: 'items', deep: false})
+	@watch({field: 'items'})
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
-			this.initComponentValues();
 			this.emit('itemsChange', items);
 		}
 	}
 
 	/** @see [[iActiveItems.prototype.initComponentValues]] */
 	@hook('created')
+	@hook('beforeUpdate')
 	initComponentValues(): void {
 		if (this.top == null) {
 			this.values = new Map();
@@ -393,21 +400,18 @@ class bTree extends iData implements iActiveItems {
 			this.valuesToItems = this.top.valuesToItems;
 		}
 
-		const
-			ctx = this.top ?? this;
-
 		this.items.forEach((item) => {
-			if (ctx.values.has(item.value)) {
+			if (this.values.has(item.value)) {
 				return;
 			}
 
 			const
 				{value} = item,
-				{size} = ctx.values;
+				{size} = this.values;
 
-			ctx.values.set(value, size);
-			ctx.indexes[size] = value;
-			ctx.valuesToItems.set(value, item);
+			this.values.set(value, size);
+			this.indexes[size] = value;
+			this.valuesToItems.set(value, item);
 
 			iActiveItems.initItemActive(this, item);
 		});
@@ -443,8 +447,6 @@ class bTree extends iData implements iActiveItems {
 			if (needSetActiveTrue) {
 				$b?.setElMod(itemEl, 'node', 'active', true);
 
-				ctx.unfoldAllParents(item);
-
 				if (itemEl?.hasAttribute('aria-selected')) {
 					itemEl.setAttribute('aria-selected', 'true');
 				}
@@ -454,8 +456,7 @@ class bTree extends iData implements iActiveItems {
 			}
 		}
 
-		ctx.emit('immediateChange', ctx.active);
-		ctx.emit('change', ctx.active);
+		void ctx.unfold(value);
 
 		return true;
 	}
@@ -493,9 +494,6 @@ class bTree extends iData implements iActiveItems {
 			}
 		}
 
-		ctx.emit('immediateChange', ctx.active);
-		ctx.emit('change', ctx.active);
-
 		return true;
 	}
 
@@ -515,12 +513,12 @@ class bTree extends iData implements iActiveItems {
 			for (const [item, component] of ctx.traverse()) {
 				if (Object.isSet(value)) {
 					if (unsetPrevious && active.has(item.value)) {
-						toggleActive(component, item);
+						toggleActive(component, item.value);
 						continue;
 					}
 
 					if (value.has(item.value)) {
-						toggleActive(component, item);
+						toggleActive(component, item.value);
 
 						if (++count === value.size) {
 							break;
@@ -528,7 +526,7 @@ class bTree extends iData implements iActiveItems {
 					}
 
 				} else if (item.value === value) {
-					toggleActive(component, item);
+					toggleActive(component, item.value);
 					break;
 				}
 			}
@@ -542,10 +540,10 @@ class bTree extends iData implements iActiveItems {
 
 		return ctx.active;
 
-		function toggleActive(component: bTree, item: Item) {
+		function toggleActive(component: bTree, value: Item['value']) {
 			const
 				{block: $b} = component,
-				id = ctx.values.get(item.value),
+				id = ctx.values.get(value),
 				itemEl = $b?.element('node', {id});
 
 			if (!Object.isSet(ctx.active)) {
@@ -553,11 +551,11 @@ class bTree extends iData implements iActiveItems {
 			}
 
 			const
-				needToAdd = !ctx.active.has(item.value);
+				needToAdd = !ctx.active.has(value);
 
 			const res = needToAdd ?
-				iActiveItems.setActive(ctx, item.value) :
-				iActiveItems.unsetActive(ctx, item.value);
+				iActiveItems.setActive(ctx, value) :
+				iActiveItems.unsetActive(ctx, value);
 
 			if (!res) {
 				return;
@@ -567,7 +565,7 @@ class bTree extends iData implements iActiveItems {
 
 			if (needToAdd) {
 				itemEl?.setAttribute('aria-selected', String(needToAdd));
-				ctx.unfoldAllParents(item);
+				void ctx.unfold(value);
 
 			} else {
 				itemEl?.removeAttribute('aria-selected');
@@ -681,7 +679,7 @@ class bTree extends iData implements iActiveItems {
 	 * Normalizes the specified items and returns it
 	 *
 	 * @param [items]
-	 * @param [parentValue]
+	 * @param [parentValue] - value of the parent item of nested item
 	 */
 	protected normalizeItems(items: this['Items'] = [], parentValue?: this['Item']['value']): this['Items'] {
 		return items.map((item) => {
@@ -699,34 +697,12 @@ class bTree extends iData implements iActiveItems {
 
 			if (isItemActive) {
 				this.localEmitter.once('asyncRenderChunkComplete', () => {
-					this.unfoldAllParents(normalizedItem.value);
+					void this.unfold(normalizedItem.value);
 				});
 			}
 
 			return normalizedItem;
 		});
-	}
-
-	/**
-	 * Recursively unfolds parents
-	 * @param value
-	 */
-	protected unfoldAllParents(value: this['Item']['value']): void {
-		const
-			item = this.valuesToItems.get(value);
-
-		let
-			{parentValue} = item ?? {};
-
-		while (parentValue != null) {
-			const
-				parent = this.valuesToItems.get(parentValue);
-
-			if (parent != null) {
-				void this.toggleFold(parent.value, false);
-				parentValue = parent.parentValue;
-			}
-		}
 	}
 
 	/**

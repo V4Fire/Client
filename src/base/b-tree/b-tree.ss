@@ -12,13 +12,13 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< template &
-			v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
-			:key = getItemKey(el, i)
-		.
+		< template v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams)
 			< .&__node &
 				:-id = values.get(el.value) |
 				:-level = level |
+
+				:key = getItemKey(el, i) |
+
 				:class = provide.elClasses({
 					node: {
 						level,
