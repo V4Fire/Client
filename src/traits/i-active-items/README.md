@@ -11,6 +11,21 @@ Take a look at [[bList]] to see more.
 
 * The trait contains TS logic.
 
+## Important features
+If the trait is going to be derived, need to do the following:
+* Add `id` and `active` classes to the item node in template
+
+```snakeskin
+  < .&__item &
+    :class = provide.elClasses({
+      item: {
+        id: values.get(el.value),
+        active: isActive(el.value),
+      }
+    })
+  .
+```
+
 ## Associated types
 
 The trait declares associated type to specify a type of component active item: **Active**.
@@ -223,6 +238,9 @@ export default class bCustomList implements iActiveItems {
 
 The trait provides a bunch of helper functions.
 
+### syncActiveStore
+Syncs component `activeProp` and `activeStore` fields
+
 ### getActive
 
 Returns active item/s.
@@ -233,18 +251,6 @@ See `active`.
 Returns active item element/s
 See `activeElement`.
 
-### initItemMods
-
-Initializes component mods
-See `initComponentValues`.
-
-### addToActiveStore
-
-Adds the specified value to the component's active store
-See `setActive`.
-
-### removeFromActiveStorage
-
-Removes the specified value from the component's active store
-See `unsetActive`.
-
+### initItemActive
+Checks whether the item has active prop value. If true, sets it as active.
+Recommended to use while iterate through items in `initComponentValues`.

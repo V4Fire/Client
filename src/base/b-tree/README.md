@@ -22,10 +22,11 @@ See the [[iItems]] trait and the [[iData]] component.
 
 ## Events
 
-| EventName | Description                                  | Payload description                        | Payload               |
-|-----------|----------------------------------------------|--------------------------------------------|-----------------------|
-| `fold`    | One of the component items has been folded   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
-| `unfold`  | One of the component items has been unfolded | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| EventName     | Description                                  | Payload description                        | Payload               |
+|---------------|----------------------------------------------|--------------------------------------------|-----------------------|
+| `fold`        | One of the component items has been folded   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| `unfold`      | One of the component items has been unfolded | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| `itemsChange` | Items has been changed                       | An array of items                          | `Items`               |
 
 See the [[iActiveItems]] trait and the [[iData]] component.
 
@@ -242,6 +243,7 @@ class bMyTree extends bTree {
 ### unfold
 
 Unfolds the specified item.
+If method is called on nested item, all parent items will be unfolded.
 If the method is called without an element passed, all tree sibling elements will be unfolded.
 
 ```ts
