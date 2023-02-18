@@ -314,48 +314,6 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		return res;
 	}
 
-	/** @see [[iActiveItems.prototype.toggleActive]] */
-	toggleActive(value: this['Active'], unsetPrevious: boolean = false): this['Active'] {
-		const
-			activeStore = this.field.get('activeStore');
-debugger
-		if (this.multiple) {
-			if (!Object.isSet(activeStore)) {
-				return this.active;
-			}
-
-			const toggle = (value) => {
-				if (activeStore.has(value)) {
-					if (unsetPrevious) {
-						this.unsetActive(this.active);
-
-					} else {
-						this.unsetActive(value);
-					}
-
-					return;
-				}
-
-				this.setActive(value, unsetPrevious);
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, toggle);
-
-			} else {
-				toggle(value);
-			}
-
-		} else if (activeStore !== value) {
-			this.setActive(value);
-
-		} else {
-			this.unsetActive(value);
-		}
-
-		return this.active;
-	}
-
 	/**
 	 * Synchronization of items
 	 *
@@ -366,8 +324,8 @@ debugger
 	@watch({field: 'itemsStore'})
 	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
-			ctx.initComponentValues();
-			ctx.emit('itemsChange', items);
+			this.initComponentValues();
+			this.emit('itemsChange', items);
 		}
 	}
 
