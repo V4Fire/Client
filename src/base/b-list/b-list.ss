@@ -25,8 +25,11 @@
 		 * @param {!Array<Item>} items - items to render
 		 */
 		- block list(items)
-			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
-				< tag.&__item :is = listElTag
+			< template v-for = (el, i) in ${items}
+				< tag.&__item &
+					:is = listElTag |
+					:key = getItemKey(el, i)
+				.
 					< tag &
 						:is = el.href !== undefined ? 'a' : 'button' |
 
