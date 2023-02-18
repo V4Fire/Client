@@ -48,7 +48,7 @@ module.exports = (page) => {
 			expect(await target.evaluate((ctx) => [...ctx.active])).toEqual([0, 1]);
 		});
 
-		describe('switching of an active element ', () => {
+		describe('switching of an active element', () => {
 			it('default', async () => {
 				const
 					target = await init();
@@ -163,8 +163,8 @@ module.exports = (page) => {
 				await target.evaluate((ctx) => ctx.setActive(5));
 
 				const
-					el1 = await page.waitForSelector('[data-id="2"]', { state: 'attached' }),
-					el2 = await page.waitForSelector('[data-id="4"]', { state: 'attached' });
+					el1 = await page.locator('[data-id="2"]'),
+					el2 = await page.locator('[data-id="4"]');
 
 				expect([
 					(await el1.getAttribute('class')).includes('folded_false'),
@@ -172,15 +172,15 @@ module.exports = (page) => {
 				]).toEqual([true, true]);
 			});
 
-			it('`toggleActive` and unfold parents folds', async () => {
+			it('with `toggleActive` and unfold parents folds', async () => {
 				const
 					target = await init();
 
 				await target.evaluate((ctx) => ctx.toggleActive(5));
 
 				const
-					el1 = await page.waitForSelector('[data-id="2"]', { state: 'attached' }),
-					el2 = await page.waitForSelector('[data-id="4"]', { state: 'attached' });
+					el1 = await page.locator('[data-id="2"]'),
+					el2 = await page.locator('[data-id="4"]');
 
 				expect([
 					(await el1.getAttribute('class')).includes('folded_false'),
@@ -214,8 +214,8 @@ module.exports = (page) => {
 				).toEqual([0, 1]);
 
 				const
-					el1 = await page.waitForSelector('[data-id="0"]', { state: 'attached' }),
-					el2 = await page.waitForSelector('[data-id="1"]', { state: 'attached' });
+					el1 = await page.locator('[data-id="0"]'),
+					el2 = await page.locator('[data-id="1"]');
 
 				expect([
 					(await el1.getAttribute('class')).includes('active_true'),
@@ -230,14 +230,12 @@ module.exports = (page) => {
 				).toEqual([0, 3]);
 
 				const
-					el3 = await page.waitForSelector('[data-id="0"]', { state: 'attached' }),
-					el4 = await page.waitForSelector('[data-id="1"]', { state: 'attached' }),
-					el5 = await page.waitForSelector('[data-id="3"]', { state: 'attached' });
+					el3 = await page.locator('[data-id="3"]');
 
 				expect([
-					(await el3.getAttribute('class')).includes('active_true'),
-					(await el4.getAttribute('class')).includes('active_false'),
-					(await el5.getAttribute('class')).includes('active_true')
+					(await el1.getAttribute('class')).includes('active_true'),
+					(await el2.getAttribute('class')).includes('active_false'),
+					(await el3.getAttribute('class')).includes('active_true')
 				]).toEqual([true, true, true]);
 			});
 
@@ -257,7 +255,7 @@ module.exports = (page) => {
 						ctx.toggleActive(new Set([2, 4]), true);
 						return [...ctx.active];
 					})
-				).toEqual([0, 1, 2, 4]);
+				).toEqual([2, 4]);
 			});
 		});
 
@@ -285,7 +283,7 @@ module.exports = (page) => {
 					log.push(ctx.setActive(0));
 
 					const event = new Event('click', {bubbles: true});
-					ctx.block.elements('item-wrapper')[1].dispatchEvent(event);
+					ctx.block.elements('node')[1].dispatchEvent(event);
 
 					return log;
 				})

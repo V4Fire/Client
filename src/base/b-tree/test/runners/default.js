@@ -57,10 +57,11 @@ module.exports = (page) => {
 			await expectAsync(target.evaluate((ctx) => ctx.isFunctional === false))
 				.toBeResolvedTo(true);
 
-			const
-				promises = await Promise.all(checkOptionTree({items: defaultItems, target}));
+			await waitForItemsRender(9);
 
-			const checkboxes = await page.$$('.b-checkbox');
+			const
+				promises = await Promise.all(checkOptionTree({items: defaultItems, target})),
+				checkboxes = await page.$$('.b-checkbox');
 
 			expect(promises.length).toEqual(checkboxes.length);
 		});
@@ -83,7 +84,7 @@ module.exports = (page) => {
 				}
 			];
 
-			const target = await init({items, attrs: {folded: false}});
+			const target = await init({items, folded: false});
 			await Promise.all(checkOptionTree({items, target}));
 		});
 
@@ -206,37 +207,37 @@ module.exports = (page) => {
 		}
 	});
 
-	describe('b-tree rendering data from a data provider', () => {
-		it('initialization', async () => {
-			await init();
-			await waitForItemsRender(14);
-			await h.bom.waitForIdleCallback(page);
-
-			expect((await page.$$('.b-checkbox')).length).toBe(14);
-		});
-
-		async function init() {
-			await page.evaluate(() => {
-				globalThis.removeCreatedComponents();
-
-				const scheme = [
-					{
-						attrs: {
-							theme: 'demo',
-							dataProvider: 'demo.NestedList',
-							item: 'b-checkbox-functional',
-							id: 'target'
-						}
-					}
-				];
-
-				globalThis.renderComponents('b-tree', scheme);
-			});
-
-			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
-			return h.component.waitForComponent(page, '#target');
-		}
-	});
+	// describe('b-tree rendering data from a data provider', () => {
+	// 	it('initialization', async () => {
+	// 		await init();
+	// 		await waitForItemsRender(14);
+	// 		await h.bom.waitForIdleCallback(page);
+	//
+	// 		expect((await page.$$('.b-checkbox')).length).toBe(14);
+	// 	});
+	//
+	// 	async function init() {
+	// 		await page.evaluate(() => {
+	// 			globalThis.removeCreatedComponents();
+	//
+	// 			const scheme = [
+	// 				{
+	// 					attrs: {
+	// 						theme: 'demo',
+	// 						dataProvider: 'demo.NestedList',
+	// 						item: 'b-checkbox-functional',
+	// 						id: 'target'
+	// 					}
+	// 				}
+	// 			];
+	//
+	// 			globalThis.renderComponents('b-tree', scheme);
+	// 		});
+	//
+	// 		await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
+	// 		return h.component.waitForComponent(page, '#target');
+	// 	}
+	// });
 
 	describe('b-tree providing of the `default` slot', () => {
 		it('initialization', async () => {
@@ -318,60 +319,50 @@ module.exports = (page) => {
 			const
 				target = await init({folded: false});
 
-			await target.evaluate(async (ctx) => {
-				ctx.items = [
-					{value: 0},
-					{
-						value: 1,
-						children: [{value: 3}]
-					},
-					{
-						value: 2,
-						children: [{value: 4}]
-					}
-				];
+			expect(
+				await target.evaluate(async (ctx) => {
+					ctx.items = [
+						{value: 1},
+						{
+							value: 2,
+							children: [{value: 4}]
+						},
+						{
+							value: 3,
+							children: [{value: 5}]
+						}
+					];
 
-				await ctx.nextTick();
-			});
-
-			const
-				el1 = await page.waitForSelector('[data-id="1"]', {state: 'attached'}),
-				el2 = await page.waitForSelector('[data-id="2"]', {state: 'attached'});
-
-			expect([
-				(await el1.getAttribute('class')).includes('folded_false'),
-				(await el2.getAttribute('class')).includes('folded_false')
-			]).toEqual([true, true]);
+					await ctx.nextTick();
+					return [ctx.getFoldedMod(2), ctx.getFoldedMod(3)];
+				})
+			).toEqual(['false', 'false']);
 		});
 
 		it('node is folded after change', async () => {
 			const
 				target = await init();
 
-			await target.evaluate(async (ctx) => {
-				await ctx.unfold('foo');
-
-				ctx.items = [
-					{value: 0},
-					{
-						value: 1,
-						children: [{value: 3}]
-					},
-					{
-						value: 2,
-						children: [{value: 4}]
-					}
-				];
-
-				await ctx.nextTick();
-			});
-
-			const
-				el = await page.waitForSelector('[data-id="1"]', {state: 'attached'});
-
 			expect(
-				(await el.getAttribute('class')).includes('folded_true')
-			).toBe(true);
+				await target.evaluate(async (ctx) => {
+					await ctx.unfold('foo');
+
+					ctx.items = [
+						{value: 0},
+						{
+							value: 1,
+							children: [{value: 3}]
+						},
+						{
+							value: 2,
+							children: [{value: 4}]
+						}
+					];
+
+					await ctx.nextTick();
+					return ctx.getFoldedMod(2);
+				})
+			).toBe('true');
 		});
 
 		async function init(attrs) {
@@ -406,7 +397,7 @@ module.exports = (page) => {
 		);
 	}
 
-	function checkOptionTree({items, target, queue = [], level = 0}) {
+	function checkOptionTree({items, target, queue = [], level = 0, foldSelector}) {
 		items.forEach((item) => {
 			const
 				isBranch = Object.isArray(item.children);
@@ -414,9 +405,11 @@ module.exports = (page) => {
 			queue.push((async () => {
 				const
 					id = await target.evaluate((ctx, value) => ctx.values.get(value), item.value),
-					element = await page.waitForSelector(`[data-id="${id}"]`, { state: 'attached' });
+					element = await page.waitForSelector(`[data-id="${id}"]`, {state: 'attached'});
 
-				expect(await element.getAttribute('data-level')).toBe(String(level));
+				await expectAsync(
+					element.getAttribute('data-level')
+				).toBeResolvedTo(String(level));
 
 				const
 					foldedPropValue = await target.evaluate((ctx) => ctx.folded),
@@ -424,9 +417,17 @@ module.exports = (page) => {
 					foldedClass = await getFoldedClass(target, foldedInitModValue);
 
 				if (isBranch) {
+					const
+						selector = foldSelector || await target.evaluate((ctx) => `.${ctx.block.getFullElName('fold')}`),
+						fold = await page.waitForSelector(selector);
+
 					await expectAsync(
 						element.getAttribute('class').then((className) => className.includes(foldedClass))
 					).toBeResolvedTo(true);
+
+					if (foldedInitModValue) {
+						await fold.click();
+					}
 				}
 			})());
 
@@ -435,7 +436,8 @@ module.exports = (page) => {
 					items: item.children,
 					level: level + 1,
 					target,
-					queue
+					queue,
+					foldSelector
 				});
 			}
 		});

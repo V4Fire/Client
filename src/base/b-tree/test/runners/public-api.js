@@ -66,8 +66,8 @@ module.exports = (page) => {
 			await target.evaluate((ctx) => ctx.unfold());
 
 			const
-				el1 = await page.waitForSelector('[data-id="2"]', {state: 'attached'}),
-				el2 = await page.waitForSelector('[data-id="4"]', {state: 'attached'});
+				el1 = await page.locator('[data-id="2"]'),
+				el2 = await page.locator('[data-id="4"]');
 
 			expect([
 				(await el1.getAttribute('class')).includes('folded_false'),
@@ -76,13 +76,25 @@ module.exports = (page) => {
 
 			await target.evaluate((ctx) => ctx.fold());
 
+			expect([
+				(await el1.getAttribute('class')).includes('folded_true'),
+				(await el2.getAttribute('class')).includes('folded_true')
+			]).toEqual([true, true]);
+		});
+
+		it('all parent are unfolded if unfold nested item', async () => {
 			const
-				el3 = await page.waitForSelector('[data-id="2"]', {state: 'attached'}),
-				el4 = await page.waitForSelector('[data-id="4"]', {state: 'attached'});
+				target = await init();
+
+			await target.evaluate((ctx) => ctx.unfold(5));
+
+			const
+				el1 = await page.locator('[data-id="2"]'),
+				el2 = await page.locator('[data-id="4"]');
 
 			expect([
-				(await el3.getAttribute('class')).includes('folded_true'),
-				(await el4.getAttribute('class')).includes('folded_true')
+				(await el1.getAttribute('class')).includes('folded_false'),
+				(await el2.getAttribute('class')).includes('folded_false')
 			]).toEqual([true, true]);
 		});
 
