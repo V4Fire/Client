@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Downgrade `css-loader` version for fix svg bundling
+
 ## v3.36.0 (2023-02-14)
 
 #### :house: Internal
