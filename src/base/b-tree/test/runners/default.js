@@ -207,37 +207,37 @@ module.exports = (page) => {
 		}
 	});
 
-	// describe('b-tree rendering data from a data provider', () => {
-	// 	it('initialization', async () => {
-	// 		await init();
-	// 		await waitForItemsRender(14);
-	// 		await h.bom.waitForIdleCallback(page);
-	//
-	// 		expect((await page.$$('.b-checkbox')).length).toBe(14);
-	// 	});
-	//
-	// 	async function init() {
-	// 		await page.evaluate(() => {
-	// 			globalThis.removeCreatedComponents();
-	//
-	// 			const scheme = [
-	// 				{
-	// 					attrs: {
-	// 						theme: 'demo',
-	// 						dataProvider: 'demo.NestedList',
-	// 						item: 'b-checkbox-functional',
-	// 						id: 'target'
-	// 					}
-	// 				}
-	// 			];
-	//
-	// 			globalThis.renderComponents('b-tree', scheme);
-	// 		});
-	//
-	// 		await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
-	// 		return h.component.waitForComponent(page, '#target');
-	// 	}
-	// });
+	describe('b-tree rendering data from a data provider', () => {
+		it('initialization', async () => {
+			await init();
+			await waitForItemsRender(14);
+			await h.bom.waitForIdleCallback(page);
+
+			expect((await page.$$('.b-checkbox')).length).toBe(14);
+		});
+
+		async function init() {
+			await page.evaluate(() => {
+				globalThis.removeCreatedComponents();
+
+				const scheme = [
+					{
+						attrs: {
+							theme: 'demo',
+							dataProvider: 'demo.NestedList',
+							item: 'b-checkbox-functional',
+							id: 'target'
+						}
+					}
+				];
+
+				globalThis.renderComponents('b-tree', scheme);
+			});
+
+			await h.component.waitForComponentStatus(page, '.b-tree', 'ready');
+			return h.component.waitForComponent(page, '#target');
+		}
+	});
 
 	describe('b-tree providing of the `default` slot', () => {
 		it('initialization', async () => {
