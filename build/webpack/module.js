@@ -150,6 +150,7 @@ module.exports = async function module({plugins}) {
 				{
 					loader: 'css-loader',
 					options: {
+						...config.css(),
 						importLoaders: 1
 					}
 				},
