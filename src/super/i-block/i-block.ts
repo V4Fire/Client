@@ -52,6 +52,8 @@ import type iStaticPage from 'super/i-static-page/i-static-page';
 import {
 
 	component,
+	getComponentName,
+
 	PARENT,
 
 	globalEmitter,
@@ -1426,13 +1428,13 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * A list of keyset names used to internationalize the component
 	 */
-	@computed({cache: true})
-	protected get componentI18nKeysets(): string[] {
+	@system({atom: true, unique: true})
+	protected componentI18nKeysets: string[] = (() => {
 		const
 			res: string[] = [];
 
 		let
-			keyset: CanUndef<string> = this.componentName;
+			keyset: CanUndef<string> = getComponentName(this.constructor);
 
 		while (keyset != null) {
 			res.push(keyset);
@@ -1440,7 +1442,7 @@ export default abstract class iBlock extends ComponentInterface {
 		}
 
 		return res;
-	}
+	})();
 
 	/**
 	 * Sets a watcher to a component/object property or event by the specified path.
