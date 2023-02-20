@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.38.0 (2023-02-20)
+
+#### :bug: Bug Fix
+
+* Fixed use of `i18n` function in default prop values
+
 ## v3.35.0 (2023-02-14)
 
 #### :boom: Breaking Change
