@@ -22,13 +22,13 @@ class bExample extends iBlock {}
 ### Simple watching
 
 ```
-< div v-on-in-view = console.log
+< div v-in-view = console.log
 ```
 
 ### Providing extra options
 
 ```
-< div v-on-in-view = {once: true, handler: console.log}
+< div v-in-view = {once: true, handler: console.log}
 ```
 
 ### Defining multiple watchers
