@@ -497,18 +497,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * ```
 	 */
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
-		let
-			that = <iBlock>this;
-
-		if (this.isFunctional) {
-			ref += `:${this.componentId}`;
-			that = this.$normalParent ?? that;
-		}
-
-		const
-			refVal = that.$refs[ref];
-
 		return this.async.promise<T>(() => new SyncPromise((resolve) => {
+			const
+				refVal = this.$refs[ref];
+
 			if (refVal != null && (!Object.isArray(refVal) || refVal.length > 0)) {
 				resolve(<T>refVal);
 
