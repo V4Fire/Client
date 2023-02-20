@@ -1428,10 +1428,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * A list of keyset names used to internationalize the component
 	 */
-	@system({
-		atom: true,
-		unique: true
-	})
+	@system({atom: true, unique: true})
 	protected componentI18nKeysets: string[] = (() => {
 		const
 			res: string[] = [];
