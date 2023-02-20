@@ -59,6 +59,7 @@ export {
 	getCurrentInstance,
 
 	toHandlers,
+	toHandlerKey,
 	toDisplayString,
 
 	openBlock,
