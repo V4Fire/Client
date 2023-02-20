@@ -149,8 +149,13 @@ module.exports = async function module({plugins}) {
 			[
 				{
 					loader: 'css-loader',
-					options: config.css()
+					options: {
+						...config.css(),
+						importLoaders: 1
+					}
 				},
+
+				'svg-transform-loader/encode-query',
 
 				{
 					loader: 'postcss-loader',
