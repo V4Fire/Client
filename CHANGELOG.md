@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed use of `i18n` function in default prop values `iBlock`
+
 ## v3.36.0 (2023-02-14)
 
 #### :house: Internal
