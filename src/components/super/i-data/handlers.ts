@@ -93,18 +93,18 @@ export default abstract class iDataHandlers extends iDataData {
 			}
 
 			const
-				m = key.split(':', 1)[0],
-				group = {group: `requestSync:${m}`};
+				providerMethod = key.split(':', 1)[0],
+				group = {group: `requestSync:${providerMethod}`};
 
 			$a
 				.clearAll(group);
 
-			if (m === 'get') {
+			if (providerMethod === 'get') {
 				this.componentStatus = 'loading';
 				$a.setImmediate(this.initLoad.bind(this), group);
 
 			} else {
-				$a.setImmediate(() => this[m](...this.dataProvider?.getDefaultRequestParams(key) ?? []), group);
+				$a.setImmediate(() => this[providerMethod](...this.dataProvider?.getDefaultRequestParams(key) ?? []), group);
 			}
 		});
 	}
