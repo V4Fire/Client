@@ -149,8 +149,14 @@ export function component(opts?: ComponentOptions): Function {
 					if (resolve === identity) {
 						return new Promise((r) => {
 							resolve = r;
-							requestIdleCallback(waitComponentTemplates, {timeout: 50});
+							retry();
 						});
+					}
+
+					retry();
+
+					function retry() {
+						requestIdleCallback(waitComponentTemplates, {timeout: 50});
 					}
 				}
 
