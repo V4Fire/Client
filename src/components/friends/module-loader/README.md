@@ -13,7 +13,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import ModuleLoader, { load } from 'components/friends/module-loader';
 
 // Import the `load` method
-ModuleLoader.addToPrototype(load);
+ModuleLoader.addToPrototype({load});
 
 @component()
 export default class bExample extends iBlock {}

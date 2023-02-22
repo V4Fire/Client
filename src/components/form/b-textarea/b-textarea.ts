@@ -40,8 +40,8 @@ export * from 'components/form/b-textarea/interface';
 
 export { Value, FormValue };
 
-DOM.addToPrototype(renderTemporarily);
-Block.addToPrototype(getElementSelector, setElementMod);
+DOM.addToPrototype({renderTemporarily});
+Block.addToPrototype({getElementSelector, setElementMod});
 
 const
 	$$ = symbolGenerator();

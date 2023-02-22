@@ -18,7 +18,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import Analytics, { send } from 'components/friends/analytics';
 
 // Import the `send` method
-Analytics.addToPrototype(send);
+Analytics.addToPrototype({send});
 
 @component()
 export default class bExample extends iBlock {}

@@ -43,7 +43,7 @@ import type { StageTitles } from 'components/base/b-window/interface';
 export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
 
-Block.addToPrototype(getElementSelector);
+Block.addToPrototype({getElementSelector});
 
 const
 	$$ = symbolGenerator();

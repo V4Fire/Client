@@ -14,7 +14,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import AsyncRender, { iterate, forceRender } from 'components/friends/async-render';
 
 // Import `iterate` and `forceRender` methods
-AsyncRender.addToPrototype(iterate, forceRender);
+AsyncRender.addToPrototype({iterate, forceRender});
 
 @component()
 export default class bExample extends iBlock {}

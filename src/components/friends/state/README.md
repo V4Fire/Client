@@ -21,7 +21,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import State, { initFromRouter, initFromStorage } from 'components/friends/state';
 
 // Import `initFromRouter` and `initFromStorage` methods
-VDOM.addToPrototype(initFromRouter, initFromStorage);
+VDOM.addToPrototype({initFromRouter, initFromStorage});
 
 @component()
 export default class bExample extends iBlock {}
@@ -48,7 +48,7 @@ with the component state and should return an object to store in the storage.
 import iBlock, { component, field } from 'components/super/i-block/i-block';
 import State, { initFromStorage } from 'components/friends/state';
 
-VDOM.addToPrototype(initFromStorage);
+VDOM.addToPrototype({initFromStorage});
 
 @component()
 export default class bExample extends iBlock {

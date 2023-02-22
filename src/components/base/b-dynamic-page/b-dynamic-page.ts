@@ -53,7 +53,7 @@ import type {
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-dynamic-page/interface';
 
-AsyncRender.addToPrototype(iterate);
+AsyncRender.addToPrototype({iterate});
 
 const
 	$$ = symbolGenerator();

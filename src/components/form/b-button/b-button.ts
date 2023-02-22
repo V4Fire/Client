@@ -47,7 +47,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
 export * from 'components/form/b-button/interface';
 
-DataProvider.addToPrototype(getDefaultRequestParams, base, get);
+DataProvider.addToPrototype({getDefaultRequestParams, base, get});
 
 interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 

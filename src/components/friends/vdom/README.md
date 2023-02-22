@@ -13,7 +13,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import VDOM, { create, render } from 'components/friends/vdom';
 
 // Import `create` and `render` methods
-VDOM.addToPrototype(create, render);
+VDOM.addToPrototype({create, render});
 
 @component()
 export default class bExample extends iBlock {}

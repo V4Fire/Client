@@ -63,9 +63,9 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/super/i-input/modules/helpers';
 export * from 'components/super/i-input/interface';
 
-State.addToPrototype(set);
-Block.addToPrototype(element);
-DOM.addToPrototype(getComponent);
+State.addToPrototype({set});
+Block.addToPrototype({element});
+DOM.addToPrototype({getComponent});
 
 const
 	$$ = symbolGenerator();

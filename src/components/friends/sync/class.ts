@@ -54,6 +54,6 @@ class Sync extends Friend {
 	}
 }
 
-Sync.addToPrototype(link, mod);
+Sync.addToPrototype({link, mod});
 
 export default Sync;

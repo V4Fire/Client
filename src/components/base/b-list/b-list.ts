@@ -27,8 +27,8 @@ import type { Active, Item, Items } from 'components/base/b-list/interface';
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
 
-DOM.addToPrototype(delegateElement);
-Block.addToPrototype(element, elements);
+DOM.addToPrototype({delegateElement});
+Block.addToPrototype({element, elements});
 
 @component({
 	functional: {

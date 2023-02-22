@@ -70,7 +70,7 @@ export * from 'components/base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 
-DOM.addToPrototype(watchForIntersection);
+DOM.addToPrototype({watchForIntersection});
 
 const
 	$$ = symbolGenerator();

@@ -13,7 +13,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import Sync, { object, syncLinks } from 'components/friends/sync';
 
 // Import `object` and `syncLinks` methods
-Sync.addToPrototype(object, syncLinks);
+Sync.addToPrototype({object, syncLinks});
 
 @component()
 export default class bExample extends iBlock {}
@@ -371,7 +371,7 @@ Synchronizes component reference values with the values they are linked with.
 import iBlock, { component } from 'components/super/i-block/i-block';
 import Sync, { object, syncLinks } from 'components/friends/sync';
 
-Sync.addToPrototype(syncLinks);
+Sync.addToPrototype({syncLinks});
 
 @component()
 export default class bInput extends iBlock {

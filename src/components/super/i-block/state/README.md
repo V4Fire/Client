@@ -322,7 +322,7 @@ with the component state and should return an object to store in the storage.
 import iBlock, { component, field } from 'components/super/i-block/i-block';
 import State, { initFromStorage } from 'components/friends/state';
 
-VDOM.addToPrototype(initFromStorage);
+VDOM.addToPrototype({initFromStorage});
 
 @component()
 export default class bExample extends iBlock {

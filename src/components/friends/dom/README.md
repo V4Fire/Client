@@ -13,7 +13,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import DOM, { appendChild, getComponent } from 'components/friends/dom';
 
 // Import `appendChild` and `getComponent` methods
-DOM.addToPrototype(appendChild, getComponent);
+DOM.addToPrototype({appendChild, getComponent});
 
 @component()
 export default class bExample extends iBlock {}
@@ -57,7 +57,7 @@ the selector is specified.
 import iBlock, { component, watch } from 'components/super/i-block/i-block';
 import DOM, { delegate } from 'components/friends/dom';
 
-DOM.addToPrototype(delegate);
+DOM.addToPrototype({delegate});
 
 @component()
 export default class bExample extends iBlock {
@@ -91,7 +91,7 @@ is specified.
 import iBlock, { component, watch } from 'components/super/i-block/i-block';
 import DOM, { delegateElement } from 'components/friends/dom';
 
-DOM.addToPrototype(delegateElement);
+DOM.addToPrototype({delegateElement});
 
 @component()
 export default class bExample extends iBlock {
