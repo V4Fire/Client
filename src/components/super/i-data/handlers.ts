@@ -27,7 +27,6 @@ export default abstract class iDataHandlers extends iDataData {
 	/**
 	 * Initializes data event listeners
 	 */
-	@wait('ready', {label: $$.initDataListeners})
 	protected initDataListeners(): void {
 		const
 			{dataProvider} = this;
