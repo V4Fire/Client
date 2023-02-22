@@ -16,7 +16,8 @@ const
 
 /**
  * Webpack plugin to collect all translates on filesystem
- * and include them to html
+ * and include them to html-s
+ * Clones an html document for each language
  */
 module.exports = class I18NGeneratorPlugin {
 	apply(compiler) {
@@ -54,10 +55,6 @@ module.exports = class I18NGeneratorPlugin {
 						}
 				});
 
-				Object.entries(result).forEach(([lang, value]) => {
-					fs.writeFileSync(`${src.clientOutput()}/${lang}.json`, JSON.stringify(value, undefined, 2));
-				});
-
 				fg.sync(`${src.clientOutput()}/*.html`, {ignore: `${src.clientOutput()}/*_(${locales}).html`}).forEach((path) => {
 					i18n.supportedLocales().forEach((locale) => {
 						fs.writeFileSync(
@@ -74,6 +71,13 @@ module.exports = class I18NGeneratorPlugin {
 			}
 		}
 
+		/**
+		 * The function allows you to get an html document with translations embedded inside
+		 *
+		 * @param {string} path - path to html file
+		 * @param {Object} translateMap - Dictionary with translations to be inserted into html
+		 * @returns string
+		 */
 		function getHtmlWithTranslateMap(path, translateMap) {
 			return fs
 				.readFileSync(path, {encoding: 'utf8'})
