@@ -337,7 +337,7 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 		// Add listener to a component `created` hook if the component isn't created yet
 		if (watcherNeedCreated && isBeforeCreate) {
-			hooks.created.unshift({fn: attachWatcher});
+			hooks['before:created'].push({fn: attachWatcher});
 			return;
 		}
 

@@ -142,7 +142,7 @@ export default class Lfc extends Friend {
 	execCbAfterComponentCreated<R = unknown>(cb: Cb<this['C'], R>, opts?: AsyncOptions): CanPromise<CanVoid<R>> {
 		if (this.isBeforeCreate()) {
 			return this.async.promise(new SyncPromise<R>((r) => {
-				this.meta.hooks.created.unshift({fn: () => r(cb.call(this.component))});
+				this.meta.hooks['before:created'].push({fn: () => r(cb.call(this.component))});
 			}), opts).catch(stderr);
 		}
 
