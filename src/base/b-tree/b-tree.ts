@@ -697,7 +697,7 @@ class bTree extends iData implements iActiveItems {
 
 			if (isItemActive) {
 				this.localEmitter.once('asyncRenderChunkComplete', () => {
-					void this.unfold(normalizedItem.value);
+					void (this.top ?? this).unfold(normalizedItem.value);
 				});
 			}
 
