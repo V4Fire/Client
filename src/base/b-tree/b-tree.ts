@@ -317,27 +317,26 @@ class bTree extends iData implements iActiveItems {
 				values.push(this.unfold(item.value));
 			}
 
-			return SyncPromise.all(values)
-				.then((res) => res.some((value) => value === true));
-		}
-
-		const
-			item = this.valuesToItems.get(value);
-
-		if (item != null && this.hasChildren(item)) {
-			values.push(this.toggleFold(value, false));
-		}
-
-		let
-			{parentValue} = item ?? {};
-
-		while (parentValue != null) {
+		} else {
 			const
-				parent = this.valuesToItems.get(parentValue);
+				ctx = this.top ?? this,
+				item = this.valuesToItems.get(value);
 
-			if (parent != null) {
-				values.push(this.toggleFold(parent.value, false));
-				parentValue = parent.parentValue;
+			if (item != null && this.hasChildren(item)) {
+				values.push(ctx.toggleFold(value, false));
+			}
+
+			let
+				{parentValue} = item ?? {};
+
+			while (parentValue != null) {
+				const
+					parent = this.valuesToItems.get(parentValue);
+
+				if (parent != null) {
+					values.push(ctx.toggleFold(parent.value, false));
+					parentValue = parent.parentValue;
+				}
 			}
 		}
 
@@ -697,7 +696,7 @@ class bTree extends iData implements iActiveItems {
 
 			if (isItemActive) {
 				this.localEmitter.once('asyncRenderChunkComplete', () => {
-					void (this.top ?? this).unfold(normalizedItem.value);
+					void this.unfold(normalizedItem.value);
 				});
 			}
 
