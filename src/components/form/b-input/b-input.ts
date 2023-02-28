@@ -95,7 +95,6 @@ export default class bInput extends iInputText {
 	/**
 	 * The name of the used component to display `preIcon`
 	 *
-	 * @default `'b-icon'`
 	 * @example
 	 * ```
 	 * < b-input :preIconComponent = 'b-my-icon'
@@ -145,7 +144,6 @@ export default class bInput extends iInputText {
 	/**
 	 * The name of the used component to display `icon`
 	 *
-	 * @default `'b-icon'`
 	 * @example
 	 * ```
 	 * < b-input :iconComponent = 'b-my-icon'

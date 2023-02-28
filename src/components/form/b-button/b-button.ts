@@ -187,7 +187,6 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	/**
 	 * The name of the used component to display `preIcon`
 	 *
-	 * @default `'b-icon'`
 	 * @example
 	 * ```
 	 * < b-button :preIconComponent = 'b-my-icon'
@@ -212,7 +211,6 @@ class bButton extends iData implements iOpenToggle, iVisible, iWidth, iSize {
 	/**
 	 * The name of the used component to display `icon`
 	 *
-	 * @default `'b-icon'`
 	 * @example
 	 * ```
 	 * < b-button :iconComponent = 'b-my-icon'

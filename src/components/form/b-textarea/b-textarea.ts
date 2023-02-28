@@ -206,6 +206,7 @@ export default class bTextarea extends iInputText {
 		});
 	}
 
+	@wait('ready', {label: $$.clear})
 	override clear(): Promise<boolean> {
 		const {value} = this;
 		void this.clearText();
