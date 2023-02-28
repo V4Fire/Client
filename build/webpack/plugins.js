@@ -33,7 +33,8 @@ module.exports = async function plugins({name}) {
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
 		['dependencies', new DependenciesPlugin()],
-		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()]
+		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()],
+		['i18nGeneratorPlugin', new I18NGeneratorPlugin()]
 	]);
 
 	const
@@ -44,10 +45,6 @@ module.exports = async function plugins({name}) {
 			'statoscope-webpack-plugin',
 			new StatoscopeWebpackPlugin(statoscopeConfig.webpackPluginConfig)
 		);
-	}
-
-	if (config.i18n.i18nEngine === 'inlineHtml') {
-		plugins.set('i18nGeneratorPlugin', new I18NGeneratorPlugin());
 	}
 
 	if (config.webpack.progress()) {
