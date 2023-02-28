@@ -1,6 +1,6 @@
-# build/webpack/plugins/progress-plugin
+# build/webpack/plugins/i18n-plugin
 
-This module provides a plugin to show webpack build progress.
+This module provides a plugin to embed translations in the html document.
 
 ## Options
 

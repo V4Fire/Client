@@ -32,13 +32,13 @@ module.exports = class I18NGeneratorPlugin {
 				const
 					configLocale = locale,
 					locales = i18n.supportedLocales().join('|'),
-					paths = pzlr.sourceDirs.map((el) => `${el}/**/*.i18n/(${locales}).js`),
+					paths = pzlr.sourceDirs.map((el) => `${el}/**/i18n/(${locales}).js`),
 					result = {};
 
 				fg.sync(paths).forEach((path) => {
 					const
 						element = require(path),
-						parsedPath = /\/[^/]*?\.i18n\/(.*?)\.js$/i.exec(path);
+						parsedPath = /\/[^/]*?\/i18n\/(.*?)\.js$/i.exec(path);
 
 						if (parsedPath != null) {
 							const
@@ -56,17 +56,30 @@ module.exports = class I18NGeneratorPlugin {
 				});
 
 				fg.sync(`${src.clientOutput()}/*.html`, {ignore: `${src.clientOutput()}/*_(${locales}).html`}).forEach((path) => {
-					i18n.supportedLocales().forEach((locale) => {
-						fs.writeFileSync(
-							path.replace('.html', `_${locale}.html`),
-							getHtmlWithTranslateMap(path, {[locale]: result[locale]})
-						);
-					});
+					if (i18n.i18nEngine === 'multiHTML') {
+						i18n.supportedLocales().forEach((locale) => {
+							fs.writeFileSync(
+								path.replace('.html', `_${locale}.html`),
+								getHtmlWithTranslateMap(path, {[locale]: result[locale]})
+							);
+						});
 
-					fs.writeFileSync(
-						path,
-						getHtmlWithTranslateMap(path, {[configLocale]: result[configLocale]})
-					);
+						fs.writeFileSync(
+							path,
+							getHtmlWithTranslateMap(path, {[configLocale]: result[configLocale]})
+						);
+
+					} else if (i18n.i18nEngine === 'singleHTML') {
+						fs.writeFileSync(
+							path,
+							getHtmlWithTranslateMap(path, result)
+						);
+
+					} else if (i18n.i18nEngine === 'emptyHTML') {
+						Object.entries(result).forEach(([lang, value]) => {
+							fs.writeFileSync(`${src.clientOutput()}/${lang}.json`, JSON.stringify(value, undefined, 2));
+						});
+					}
 				});
 			}
 		}
@@ -81,7 +94,7 @@ module.exports = class I18NGeneratorPlugin {
 		function getHtmlWithTranslateMap(path, translateMap) {
 			return fs
 				.readFileSync(path, {encoding: 'utf8'})
-				.replace('TRANSLATE_MAP = {}', `TRANSLATE_MAP = ${JSON.stringify(translateMap)}`);
+				.replace(`${i18n.translatesGlobalPath()} = {}`, `${i18n.translatesGlobalPath()} = ${JSON.stringify(translateMap)}`);
 		}
 	}
 };

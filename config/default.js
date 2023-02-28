@@ -1098,10 +1098,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	i18n: {
 		/**
 		 * This parameter is responsible for the engine through which all translations will be collected and used.
-		 *  * `default` - All translations will be collected and combined into one object via require.context
-		 *
-		 *  * `inlineHtml` - All translations will be collected using webpack-plugins
-		 *  * * and added to the html document itself as a global variable
+		 *  * `singleHTML` - All translations will be embedded in the main html
+		 *  * `multiHTML` - A separate html file with an embedded translation will be created for each translation
+		 *  * `emptyHTML` - Translations are saved in json files. There are no translations in the html document itself
 		 *
 		 * @cli i18n-engine
 		 * @env I18N_ENGINE
@@ -1111,18 +1110,25 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @example
 		 * ```bash
 		 * # Build htmls for every support language
-		 * npx webpack --env i18n-engine=inlineHtml
+		 * npx webpack --env i18n-engine=multiHTML
 		 * ```
 		 */
 		i18nEngine: o('i18n-engine', {
 			env: true,
-			default: 'default'
+			default: 'singleHTML'
 		}),
+
+		/**
+		 * A variable used as a storage for translations
+		 */
+		translatesGlobalPath() {
+			return 'TRANSLATE_MAP';
+		},
 
 		/**
 		 * List of languages supported by the application
 		 *
-		 * @type {Array<Language>}
+		 * @returns {Array<Language>}
 		 */
 		supportedLocales() {
 			return ['en', 'ru'];
@@ -1196,7 +1202,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		const
 			mode = this.build.mode(),
 			runtime = this.runtime(),
-			{i18nEngine} = this.i18n,
 			es = this.es(),
 			demo = Boolean(this.build.components && this.build.components.length);
 
@@ -1216,7 +1221,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					runtime,
 					es,
 					demo,
-					i18nEngine
 				}
 			},
 
@@ -1225,8 +1229,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					mode,
 					runtime,
 					es,
-					demo,
-					i18nEngine
+					demo
 				}
 			}
 		};

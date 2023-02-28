@@ -7,7 +7,8 @@
  */
 
 const
-	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags');
+	{getScriptDecl} = include('src/super/i-static-page/modules/ss-helpers/tags'),
+	{i18n} = require('@config/config');
 
 exports.getI18nDecl = getI18nDecl;
 
@@ -19,7 +20,7 @@ exports.getI18nDecl = getI18nDecl;
  * @returns {string}
  */
 function getI18nDecl({wrap} = {}) {
-	const decl = 'globalThis.TRANSLATE_MAP = {}';
+	const decl = `${i18n.translatesGlobalPath()} = {};`;
 
 	return wrap ? getScriptDecl(decl) : decl;
 }
