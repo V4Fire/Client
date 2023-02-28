@@ -32,12 +32,37 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 For each language specified in the config inside `i18n.supportedLocales`, translations are collected in the project. Aggregated into a single object and written inside an html document to a global variable
 
 Example with en and ru locales
+
+#### i18nEngine - singleHTML
+
 ```js
 // Before:
 ${webpack.clientOutput()}/main.html
 
 // After:
+${webpack.clientOutput()}/main.html // Includes all supported languages
+```
+
+#### i18nEngine - multiHTML
+
+```js
+// Before:
 ${webpack.clientOutput()}/main.html
-${webpack.clientOutput()}/main_ru.html
-${webpack.clientOutput()}/main_en.html
+
+// After:
+${webpack.clientOutput()}/main.html // Includes default language from config
+${webpack.clientOutput()}/main_ru.html // Includes ru language
+${webpack.clientOutput()}/main_en.html // Includes en language
+```
+
+#### i18nEngine - emptyHTML
+
+```js
+// Before:
+${webpack.clientOutput()}/main.html
+
+// After:
+${webpack.clientOutput()}/main.html // Dont have any languages
+${webpack.clientOutput()}/en.json // JSON with en keysets
+${webpack.clientOutput()}/ru.json // JSON with ru keysets
 ```
