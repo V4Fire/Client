@@ -13,8 +13,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
   i18n: {
     i18nEngine: o('i18n-engine', {
       env: true,
-      default: 'inlineHtml'
+      default: 'singleHTML'
     }),
+
+		translatesGlobalPath() {
+			return 'TRANSLATE_MAP';
+		},
 
     supportedLocales() {
       return ['en', 'ru'];

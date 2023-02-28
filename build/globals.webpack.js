@@ -38,6 +38,7 @@ module.exports = {
 	LOCALE: s(LOCALE),
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 	CSP_NONCE_STORE: s(config.csp.nonceStore()),
+	TRANSLATES_STORE_PATH: s(config.i18n.translatesGlobalPath()),
 	MODULE: s(config.typescript().client.compilerOptions.module),
 
 	COMPONENTS: projectGraph.then(({components}) => {

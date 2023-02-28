@@ -12,5 +12,5 @@ import type { LangPacs } from 'lang/interface';
  * Implementation a keysets collector for the build type when all translations in build time are pasted into html
  */
 export function inlineHtmlEngine(): LangPacs {
-	return globalThis.TRANSLATE_MAP;
+	return globalThis[TRANSLATES_STORE_PATH];
 }
