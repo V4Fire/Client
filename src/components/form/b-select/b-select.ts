@@ -11,14 +11,12 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/select';
-//#endif
-
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
 import { is } from 'core/browser';
+
+import Block, { setElementMod, removeElementMod } from 'components/friends/block';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iOpenToggle, { CloseHelperEvents } from 'components/traits/i-open-toggle/i-open-toggle';
@@ -48,7 +46,7 @@ import iInputText, {
 import * as on from 'components/form/b-select/modules/handlers';
 import * as h from 'components/form/b-select/modules/helpers';
 
-import { $$, openedSelect } from 'components/form/b-select/const';
+import { openedSelect } from 'components/form/b-select/const';
 
 import type {
 
@@ -64,23 +62,17 @@ import type {
 
 export * from 'components/form/b-input/b-input';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
+
 export * from 'components/form/b-select/const';
 export * from 'components/form/b-select/interface';
 
-export { $$, Value, FormValue };
+export { Value, FormValue };
+
+Block.addToPrototype({setElementMod, removeElementMod});
 
 interface bSelect extends Trait<typeof iOpenToggle> {}
 
-/**
- * Component to create a form select
- */
-@component({
-	model: {
-		prop: 'selectedProp',
-		event: 'onChange'
-	}
-})
-
+@component()
 @derive(iOpenToggle)
 class bSelect extends iInputText implements iOpenToggle, iItems {
 	override readonly Value!: Value;
@@ -129,7 +121,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly native: boolean = Object.isTruly(is.mobile);
 
 	/**
-	 * Icon to show before the input
+	 * An icon to show before the button text
 	 *
 	 * @example
 	 * ```
@@ -140,9 +132,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly preIcon?: string;
 
 	/**
-	 * Name of the used component to show `preIcon`
+	 * The name of the used component to display `preIcon`
 	 *
-	 * @default `'b-icon'`
 	 * @example
 	 * ```
 	 * < b-select :preIconComponent = 'b-my-icon' | :items = myItems
@@ -152,7 +143,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly preIconComponent?: string;
 
 	/**
-	 * Tooltip text to show during hover the cursor on `preIcon`
+	 * Tooltip text to display when hovering over `preIcon`
 	 *
 	 * @example
 	 * ```
@@ -167,7 +158,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly preIconHint?: string;
 
 	/**
-	 * Tooltip position to show during hover the cursor on `preIcon`
+	 * Tooltip position to display when hovering over `preIcon`
 	 *
 	 * @see [[gHint]]
 	 * @example
@@ -184,7 +175,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly preIconHintPos?: string;
 
 	/**
-	 * Icon to show after the input
+	 * An icon to show after the button text
 	 *
 	 * @example
 	 * ```
@@ -195,9 +186,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly icon?: string;
 
 	/**
-	 * Name of the used component to show `icon`
+	 * The name of the used component to display `icon`
 	 *
-	 * @default `'b-icon'`
 	 * @example
 	 * ```
 	 * < b-select :iconComponent = 'b-my-icon' | :items = myItems
@@ -207,7 +197,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly iconComponent?: string;
 
 	/**
-	 * Tooltip text to show during hover the cursor on `icon`
+	 * Tooltip text to display when hovering over `icon`
 	 *
 	 * @example
 	 * ```
@@ -222,7 +212,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	readonly iconHint?: string;
 
 	/**
-	 * Tooltip position to show during hover the cursor on `icon`
+	 * Tooltip position to display when hovering over `icon`
 	 *
 	 * @see [[gHint]]
 	 * @example
@@ -250,6 +240,16 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 */
 	@prop({type: [String, Boolean], required: false})
 	readonly progressIcon?: string | boolean;
+
+	/** @see [[bSelect.itemsProp]] */
+	get items(): this['Items'] {
+		return <this['Items']>this.field.get('itemsStore');
+	}
+
+	/** @see [[bSelect.items]] */
+	set items(value: this['Items']) {
+		this.field.set('itemsStore', value);
+	}
 
 	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
 		return Object.cast(this);
@@ -327,22 +327,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		})();
 	}
 
-	/**
-	 * List of component items or select options
-	 * @see [[bSelect.itemsProp]]
-	 */
-	get items(): this['Items'] {
-		return <this['Items']>this.field.get('itemsStore');
-	}
-
-	/**
-	 * Sets a new list of component items
-	 * @see [[bSelect.items]]
-	 */
-	set items(value: this['Items']) {
-		this.field.set('itemsStore', value);
-	}
-
 	static override readonly mods: ModsDecl = {
 		opened: [
 			...iOpenToggle.mods.opened!,
@@ -369,7 +353,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				val = await this.formValue;
 
 			if (this.multiple ? Object.size(val) === 0 : val === undefined) {
-				this.setValidationMsg(this.getValidatorMsg(false, message, t`Required field`), showMessage);
+				this.setValidationMessage(this.getValidatorMessage(false, message, t`Required field`), showMessage);
 				return false;
 			}
 
@@ -418,22 +402,19 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	protected override valueStore!: this['Value'];
 
 	/**
-	 * Map of item indexes and their values
+	 * A map of item indexes and their values
 	 */
 	@system()
 	// @ts-ignore (type loop)
 	protected indexes!: Dictionary<this['Item']>;
 
 	/**
-	 * Map of item values and their indexes
+	 * A map of item values and their indexes
 	 */
 	@system()
 	protected values!: Map<unknown, number>;
 
-	/**
-	 * Store of component items
-	 * @see [[bSelect.items]]
-	 */
+	/** @see [[bSelect.items]] */
 	@field<bSelect>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
 			return <CanUndef<Items>>o.itemsStore ?? [];
@@ -462,7 +443,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/**
-	 * Handler: changing text of a component helper input
+	 * Handler: changing value of the component helper input
 	 */
 	@computed({cache: true})
 	protected get onTextChange(): Function {
@@ -918,32 +899,12 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		on.nativeChange(this);
 	}
 
-	protected override onMaskInput(): Promise<boolean> {
-		return super.onMaskInput().then((res) => {
-			if (res) {
-				this.onTextChange();
-			}
+	protected override initValueListeners(): void {
+		super.initValueListeners();
 
-			return res;
+		this.localEmitter.on('maskedText.change', () => {
+			this.onTextChange();
 		});
-	}
-
-	protected override onMaskKeyPress(e: KeyboardEvent): boolean {
-		if (super.onMaskKeyPress(e)) {
-			this.onTextChange();
-			return true;
-		}
-
-		return false;
-	}
-
-	protected override onMaskDelete(e: KeyboardEvent): boolean {
-		if (super.onMaskDelete(e)) {
-			this.onTextChange();
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
@@ -963,9 +924,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 * @emits `actionChange(value: this['Value'])`
 	 */
 	@watch({
-		field: '?$el:click',
-		wrapper: (o, cb) =>
-			o.dom.delegateElement('item', (e: MouseEvent) => cb(e.delegateTarget))
+		path: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegateElement('item', (e: MouseEvent) => cb(e.delegateTarget))
 	})
 
 	protected onItemClick(itemEl: CanUndef<Element>): void {
