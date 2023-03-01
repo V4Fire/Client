@@ -27,13 +27,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 });
 ```
 
-### Principle of work
-
-For each language specified in the config inside `i18n.supportedLocales`, translations are collected in the project. Aggregated into a single object and written inside an html document to a global variable
-
-Example with en and ru locales
+### i18nEngine
 
 #### i18nEngine - singleHTML
+
+All translations are collected and added to a global variable in the main html document
 
 ```js
 // Before:
@@ -44,6 +42,9 @@ ${webpack.clientOutput()}/main.html // Includes all supported languages
 ```
 
 #### i18nEngine - multiHTML
+
+For each language, a separate html is created inside which an object with translations is inserted.
+The default language from the config is inserted into the main html file.
 
 ```js
 // Before:
@@ -57,6 +58,8 @@ ${webpack.clientOutput()}/main_en.html // Includes en language
 
 #### i18nEngine - emptyHTML
 
+A json file with keys is created for each language. Nothing is inserted into the html. Used for SSR.
+
 ```js
 // Before:
 ${webpack.clientOutput()}/main.html
@@ -66,3 +69,23 @@ ${webpack.clientOutput()}/main.html // Dont have any languages
 ${webpack.clientOutput()}/en.json // JSON with en keysets
 ${webpack.clientOutput()}/ru.json // JSON with ru keysets
 ```
+
+### translatesGlobalPath
+
+`translatesGlobalPath` - this path is used to save the translation inside an html document
+
+```html
+<html>
+  <head>
+    <!-- This script will be overwritten as a result of the plugin  -->
+    <script>
+      ${translatesGlobalPath} = {};
+    </script>
+  </head>
+  <body>...</body>
+</html>
+```
+
+### supportedLocales
+
+When building the project, only the languages listed in the `supportedLocales` array will be used. All others will be ignored, even if they exist in the project.
