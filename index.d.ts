@@ -28,6 +28,8 @@ declare const TPLS: Dictionary<Dictionary<Function>>;
 declare const DS: CanUndef<DesignSystem>;
 declare const BLOCK_NAMES: CanUndef<string[]>;
 
+declare const BUILD_MODE: CanUndef<string>;
+
 declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
