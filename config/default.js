@@ -1038,7 +1038,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		return {
 			sources: false,
-			minimize: isProd
+			minimize: isProd && {
+				caseSensitive: true,
+				collapseWhitespace: true,
+				conservativeCollapse: true,
+				keepClosingSlash: true,
+				minifyCSS: true,
+				minifyJS: true,
+				// Keep comments for SSI
+				removeComments: false,
+				removeRedundantAttributes: true,
+				removeScriptTypeAttributes: true,
+				removeStyleLinkTypeAttributes: true
+			}
 		};
 	},
 
