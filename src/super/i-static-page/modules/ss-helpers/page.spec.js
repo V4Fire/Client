@@ -45,8 +45,8 @@ describe('super/i-static-page/modules/ss-helpers/page', () => {
 			});
 
 			expect(removeHash(fs.readFileSync(file).toString())).toBe(
-				`
-TRANSLATE_MAP = {};
+				`TRANSLATE_MAP = {};
+
 Object.defineProperty(window, 'GLOBAL_NONCE', {
 \tvalue: undefined
 });
