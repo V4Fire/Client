@@ -1220,7 +1220,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					mode,
 					runtime,
 					es,
-					demo,
+					demo
 				}
 			},
 
