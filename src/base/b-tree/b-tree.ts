@@ -226,17 +226,12 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.active] */
-	@computed({cache: true, dependencies: ['top.activeStore']})
+	@computed({cache: false})
 	get active(): iActiveItems['active'] {
 		return iActiveItems.getActive(this.top ?? this);
 	}
 
 	/** @see [[iActiveItems.prototype.activeElement] */
-	@computed({
-		cache: true,
-		dependencies: ['active']
-	})
-
 	get activeElement(): iActiveItems['activeElement'] {
 		const
 			ctx = this.top ?? this;
@@ -353,6 +348,9 @@ class bTree extends iData implements iActiveItems {
 				if (parent != null) {
 					values.push(ctx.toggleFold(parent.value, false));
 					parentValue = parent.parentValue;
+
+				} else {
+					parentValue = null;
 				}
 			}
 		}
@@ -646,15 +644,19 @@ class bTree extends iData implements iActiveItems {
 	 */
 	protected normalizeItems(items: this['Items'] = []): this['Items'] {
 		items = Object.fastClone(items);
-		items.forEach(normalize);
+		items.forEach((el) => normalize(el));
 		return items;
 
-		function normalize(item: bTree['Item']) {
-			if (Object.isArray(item.children)) {
-				for (const el of item.children) {
-					if (normalize(el)) {
-						item.folded = false;
-						break;
+		function normalize(item: bTree['Item'], parentValue?: unknown) {
+			if (!('parentValue' in item)) {
+				item.parentValue = parentValue;
+
+				if (Object.isArray(item.children)) {
+					for (const el of item.children) {
+						if (normalize(el, item.value)) {
+							item.folded = false;
+							break;
+						}
 					}
 				}
 			}
