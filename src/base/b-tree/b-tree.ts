@@ -611,13 +611,13 @@ class bTree extends iData implements iActiveItems {
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
 		if (this.top == null) {
-			this.valueIndexes = new Map();
 			this.indexes = {};
+			this.valueIndexes = new Map();
 			this.valueItems = new Map();
 
 		} else {
-			this.valueIndexes = this.top.valueIndexes;
 			this.indexes = this.top.indexes;
+			this.valueIndexes = this.top.valueIndexes;
 			this.valueItems = this.top.valueItems;
 		}
 
