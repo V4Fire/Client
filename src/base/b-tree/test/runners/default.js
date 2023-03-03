@@ -404,7 +404,7 @@ module.exports = (page) => {
 
 			queue.push((async () => {
 				const
-					id = await target.evaluate((ctx, value) => ctx.values.get(value), item.value),
+					id = await target.evaluate((ctx, value) => ctx.valueItems.get(value), item.value),
 					element = await page.waitForSelector(`[data-id="${id}"]`, {state: 'attached'});
 
 				await expectAsync(

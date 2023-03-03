@@ -632,8 +632,8 @@ class bTree extends iData implements iActiveItems {
 			const
 				id = this.valueIndexes.size;
 
-			this.valueIndexes.set(value, id);
 			this.indexes[id] = value;
+			this.valueIndexes.set(value, id);
 			this.valueItems.set(value, item);
 
 			iActiveItems.initItem(this, item);
