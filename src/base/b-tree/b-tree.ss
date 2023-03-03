@@ -14,15 +14,15 @@
 	- block body
 		< template v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams)
 			< .&__node &
-				:-id = values.get(el.value) |
-				:-level = level |
-
 				:key = getItemKey(el, i) |
+
+				:-id = valueIndexes.get(el.value) |
+				:-level = level |
 
 				:class = provide.elClasses({
 					node: {
 						level,
-						id: values.get(el.value),
+						id: valueIndexes.get(el.value),
 						active: isActive(el.value),
 						...(hasChildren(el) && {folded: getFoldedPropValue(el)}),
 						...el.mods
@@ -47,12 +47,15 @@
 				- block children
 					< .&__children v-if = hasChildren(el)
 						< b-tree.&__child &
+							v-func = nestedTreeProps.dataProvider == null |
 							ref = children |
-							:items = el.children |
-							:folded = getFoldedPropValue(el) |
+
 							:item = item |
-							:v-attrs = nestedTreeProps |
-							:itemProps = itemProps
+							:items = el.children |
+							:itemProps = itemProps |
+
+							:folded = getFoldedPropValue(el) |
+							:v-attrs = nestedTreeProps
 						.
 							< template &
 								#default = o |

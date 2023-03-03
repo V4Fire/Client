@@ -6,9 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iBlock from 'super/i-block/i-block';
-import type iActiveItems from 'traits/i-active-items/i-active-items';
-
 export interface Item extends Dictionary {
 	/**
 	 * Item label text
@@ -27,5 +24,3 @@ export interface Item extends Dictionary {
 }
 
 export type Active = unknown | Set<unknown>;
-
-export type Component = iBlock & iActiveItems;

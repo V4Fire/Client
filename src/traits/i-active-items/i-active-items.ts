@@ -13,127 +13,131 @@
  * @packageDocumentation
  */
 
+import type iBlock from 'super/i-block/i-block';
+
 import iItems from 'traits/i-items/i-items';
-import type { Active, Component, Item } from 'traits/i-active-items/interface';
+import type { Active, Item } from 'traits/i-active-items/interface';
 
 export * from 'traits/i-items/i-items';
 export * from 'traits/i-active-items/interface';
+
+type TraitComponent = iBlock & iActiveItems;
 
 export default abstract class iActiveItems extends iItems {
 	/** @see [[iItems.Item]] */
 	abstract override readonly Item: Item;
 
 	/**
-	 * Type: component active item
+	 * Type: the component active item
 	 */
 	abstract readonly Active: Active;
 
 	/**
-	 * An initial component active item/s value.
-	 * If the component is switched to the `multiple` mode,
-	 * you can pass an array or Set to define several active items values.
+	 * The active item(s) of the component.
+	 * If the component is switched to "multiple" mode, you can pass in an array to define multiple active items.
 	 *
 	 * @prop
 	 */
 	abstract readonly activeProp?: unknown[] | this['Active'];
 
 	/**
-	 * If true, the component supports a feature of multiple active items
+	 * If true, the component supports the multiple active items feature
 	 * @prop
 	 */
 	abstract readonly multiple: boolean;
 
 	/**
-	 * If true, the active item can be unset by using another click to it.
+	 * If set to true, the active item can be canceled by clicking it again.
 	 * By default, if the component is switched to the `multiple` mode, this value is set to `true`,
-	 * otherwise to `false`.
+	 * otherwise it is set to `false`.
 	 *
 	 * @prop
 	 */
 	abstract readonly cancelable?: boolean;
 
 	/**
-	 * An internal component active item store.
-	 * If the component is switched to the `multiple` mode, the value is defined as a `Set` object.
-	 *
-	 * @see [[iActiveItems.activeProp]]
-	 */
-	abstract activeStore: this['Active'];
-
-	/**
-	 * Map of item indexes and their values
-	 */
-	abstract indexes: Dictionary;
-
-	/**
-	 * Map of item values and their indexes
-	 */
-	abstract values: Map<unknown, number>;
-
-	/**
-	 * A link to the active item element.
-	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
-	 */
-	abstract get activeElement(): ReturnType<typeof iActiveItems.getActiveElement>;
-
-	/**
-	 * A component active item/s.
-	 * If the component is switched to the `multiple` mode, the getter will return a `Set` object.
+	 * The active item(s) of the component.
+	 * If the component is switched to "multiple" mode, the getter will return a Set.
 	 *
 	 * @see [[iActiveItems.prototype.activeStore]]
 	 */
 	abstract get active(): this['Active'];
 
 	/**
-	 * Syncs component activeProp and activeStore fields
-	 *
-	 * @see [[iActiveItems.prototype.activeProp]]
+	 * Store for the active item(s) of the component
+	 * @see [[iActiveItems.activeProp]]
+	 */
+	abstract activeStore: this['Active'];
+
+	/**
+	 * Link(s) to the DOM element of the component active item.
+	 * If the component is switched to the `multiple` mode, the getter will return a list of elements.
+	 */
+	abstract get activeElement(): CanPromise<CanArray<Element> | null>;
+
+	/**
+	 * Returns a `sync.link` to `activeProp` for `activeStore`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	static syncActiveStore(ctx: Component, value: iActiveItems['Active']): iActiveItems['Active'] {
-		const
-			beforeDataCreate = ctx.hook === 'beforeDataCreate';
+	static linkActiveStore(ctx: TraitComponent): iActiveItems['Active'] {
+		return ctx.sync.link('activeProp', (val: iActiveItems['Active']) => {
+			const
+				beforeDataCreate = ctx.hook === 'beforeDataCreate';
 
-		if (value === undefined && beforeDataCreate) {
-			if (ctx.multiple) {
-				if (Object.isSet(ctx.activeStore)) {
-					return ctx.activeStore;
+			if (val === undefined && beforeDataCreate) {
+				if (ctx.multiple) {
+					if (Object.isSet(ctx.activeStore)) {
+						return ctx.activeStore;
+					}
+
+					return new Set(Array.concat([], ctx.activeStore));
 				}
 
-				return new Set(Array.concat([], ctx.activeStore));
-			}
-
-			return ctx.activeStore;
-		}
-
-		let
-			newVal;
-
-		if (ctx.multiple) {
-			newVal = new Set(Object.isSet(value) ? value : Array.concat([], value));
-
-			if (Object.fastCompare(newVal, ctx.activeStore)) {
 				return ctx.activeStore;
 			}
 
-		} else {
-			newVal = value;
-		}
+			let
+				newVal;
 
-		if (beforeDataCreate) {
-			ctx.emit('immediateChange', ctx.multiple ? new Set(newVal) : newVal);
+			if (ctx.multiple) {
+				newVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
 
-		} else {
-			ctx.setActive(newVal);
-		}
+				if (Object.fastCompare(newVal, ctx.activeStore)) {
+					return ctx.activeStore;
+				}
 
-		return newVal;
+			} else {
+				newVal = val;
+			}
+
+			if (beforeDataCreate) {
+				ctx.emit('immediateChange', ctx.multiple ? new Set(newVal) : newVal);
+
+			} else {
+				ctx.setActive(newVal);
+			}
+
+			return newVal;
+		});
 	}
 
 	/**
-	 * Returns active item/s
+	 * Checks if the passed item has an active property value.
+	 * If true, sets it as the component active value.
+	 *
+	 * @param ctx
+	 * @param item
 	 */
-	static getActive(ctx: Component): iActiveItems['Active'] {
+	static initItem(ctx: TraitComponent, item: Item): void {
+		if (item.active && (ctx.multiple ? ctx.activeProp === undefined : ctx.active === undefined)) {
+			ctx.setActive(item.value);
+		}
+	}
+
+	/**
+	 * Returns the active item(s) of the passed component
+	 */
+	static getActive(ctx: TraitComponent): iActiveItems['Active'] {
 		const
 			v = ctx.field.get<iActiveItems['Active']>('activeStore');
 
@@ -144,38 +148,8 @@ export default abstract class iActiveItems extends iItems {
 		return v;
 	}
 
-	/**
-	 * Returns active item element/s
-	 */
-	static getActiveElement = (ctx: Component, nodeName: string): CanPromise<CanUndef<CanArray<HTMLAnchorElement>>> => {
-		const
-			{active, multiple} = ctx,
-			{block} = ctx.unsafe;
-
-		const getEl = (value) => {
-			const
-				id = ctx.values.get(value);
-
-			if (id != null) {
-				return block?.element<HTMLAnchorElement>(nodeName, {id});
-			}
-		};
-
-		return ctx.waitStatus('ready', () => {
-			if (multiple) {
-				if (!Object.isSet(active)) {
-					return [];
-				}
-
-				return [...active].flatMap((val) => getEl(val) ?? []);
-			}
-
-			return getEl(active);
-		});
-	};
-
 	/** @see [[iActiveItems.prototype.isActive]] */
-	static isActive: AddSelf<iActiveItems['isActive'], Component> = (ctx, value: Item['value']) => {
+	static isActive: AddSelf<iActiveItems['isActive'], TraitComponent> = (ctx, value: Item['value']) => {
 		const
 			{active} = ctx;
 
@@ -190,20 +164,8 @@ export default abstract class iActiveItems extends iItems {
 		return value === active;
 	};
 
-	/**
-	 * Checks whether the item has active prop value. If true, sets it as active
-	 *
-	 * @param ctx
-	 * @param item
-	 */
-	static initItemActive(ctx: Component, item: Item): void {
-		if (item.active && (ctx.multiple ? ctx.activeProp === undefined : ctx.active === undefined)) {
-			ctx.setActive(item.value);
-		}
-	}
-
 	/** @see [[iActiveItems.prototype.setActive]] */
-	static setActive(ctx: Component, value: iActiveItems['Active'], unsetPrevious?: boolean): boolean {
+	static setActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -253,8 +215,8 @@ export default abstract class iActiveItems extends iItems {
 		return true;
 	}
 
-	/** @see [[iActiveItems.prototype.setActive]] */
-	static unsetActive(ctx: Component, value: iActiveItems['Active']): boolean {
+	/** @see [[iActiveItems.prototype.unsetActive]] */
+	static unsetActive(ctx: TraitComponent, value: iActiveItems['Active']): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -301,7 +263,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
-	static toggleActive(ctx: Component, value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+	static toggleActive(ctx: TraitComponent, value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -313,7 +275,6 @@ export default abstract class iActiveItems extends iItems {
 			const toggle = (value) => {
 				if (activeStore.has(value)) {
 					ctx.unsetActive(value);
-
 					return;
 				}
 
@@ -350,11 +311,11 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Activates an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
+	 * Activates the item(s) by the specified value(s).
+	 * If the component is switched to the `multiple` mode, the method can take a Set to set multiple items.
 	 *
 	 * @param value
-	 * @param [unsetPrevious] - true, if needed to unset previous active items (works only with the `multiple` mode)
+	 * @param [unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
 	 *
 	 * @emits `change(active: CanArray<unknown>)`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
@@ -364,9 +325,9 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Deactivates an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
-	 *
+	 * Deactivates the item(s) by the specified value(s).
+	 * If the component is switched to the `multiple` mode, the method can take a Set to unset multiple items.
+
 	 * @param value
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
@@ -376,20 +337,16 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Toggles activation of an item by the specified value.
-	 * The methods return a new active component item/s.
+	 * Toggles item activation by the specified value.
+	 * The methods return the new active component item(s).
 	 *
 	 * @param value
-	 * @param [unsetPrevious] - true, if needed to unset previous active items (works only with the `multiple` mode)
+	 * @param [unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
+	 *
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
 	 */
 	toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		return Object.throw();
 	}
-
-	/**
-	 * Initializes component values
-	 */
-	abstract initComponentValues(): void;
 }

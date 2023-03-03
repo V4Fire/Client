@@ -10,9 +10,7 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 * The component extends [[iData]].
 
-* The component derives the [[iActiveItems]] trait.
-
-* The component implements [[iVisible]], [[iWidth]] traits.
+* The component implements [[iActiveItems]], [[iVisible]], [[iWidth]] traits.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
@@ -41,6 +39,10 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 Also, you can see the parent component and the component traits.
 
 ## Events
+
+| EventName     | Description                                  | Payload description                        | Payload |
+|---------------|----------------------------------------------|--------------------------------------------|---------|
+| `itemsChange` | The component items has been changed         | An array of items                          | `Items` |
 
 Also, you can see the parent component and the component traits.
 

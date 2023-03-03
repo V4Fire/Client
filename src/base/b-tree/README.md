@@ -6,7 +6,7 @@ This module provides a component to render a recursive list of elements.
 
 * The component extends [[iData]].
 
-* The component derives the [[iActiveItems]] trait.
+* The component implements the [[iActiveItems]] trait.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -26,13 +26,27 @@ See the [[iItems]] trait and the [[iData]] component.
 |---------------|----------------------------------------------|--------------------------------------------|-----------------------|
 | `fold`        | One of the component items has been folded   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
 | `unfold`      | One of the component items has been unfolded | A link to the DOM element; The item object | `Item`; `HTMLElement` |
-| `itemsChange` | Items has been changed                       | An array of items                          | `Items`               |
+| `itemsChange` | The component items has been changed         | An array of items                          | `Items`               |
 
 See the [[iActiveItems]] trait and the [[iData]] component.
 
 ## Associated types
 
-The component has two associated types to specify a type of component items: **Item** and **Items**.
+The component has associated type to specify active component item: **Active**.
+
+```typescript
+import bTree, { component } from 'super/b-tree/b-tree';
+
+export * from 'super/b-tree/b-tree';
+
+@component()
+export default class myTree extends bTree {
+  /** @override */
+  readonly Active!: number;
+}
+```
+
+There are associated types to specify a type of component items: **Item** and **Items**.
 
 ```typescript
 import bTree, { component } from 'super/b-tree/b-tree';
@@ -46,6 +60,8 @@ export default class myTree extends bTree {
 }
 ```
 
+Also, you can see the parent component.
+
 ## Usage
 
 ### Simple use of the component with a provided list of items and components to render
@@ -56,19 +72,19 @@ export default class myTree extends bTree {
   :item = 'b-checkbox' |
 
   :items = [
-    {id: 'foo'},
-    {id: 'bar', children: [
-      {id: 'fooone'},
-      {id: 'footwo'},
+    {value: 'foo'},
+    {value: 'bar', children: [
+      {value: 'fooone'},
+      {value: 'footwo'},
 
       {
-        id: 'foothree',
+        value: 'foothree',
         children: [
-          {id: 'foothreeone'}
+          {value: 'foothreeone'}
         ]
       },
 
-      {id: 'foosix'}
+      {value: 'foosix'}
     ]}
   ]
 .
@@ -155,17 +171,17 @@ Or
 < b-tree &
   :item = 'b-checkbox' |
   :items = [
-    {id: 'foo'},
+    {value: 'foo'},
 
     {
-      id: 'bar',
+      value: 'bar',
 
       // This branch isn't folded
       folded: false,
 
       children: [
-        {id: 'fooone'},
-        {id: 'footwo'}
+        {value: 'fooone'},
+        {value: 'footwo'}
       ]
     }
   ]
@@ -262,11 +278,24 @@ class AriaRole {
 
 ### Props
 
-### folded
+#### [activeProp]
+
+An initial component active item/s.
+If the component is switched to the `multiple` mode, you can pass an array or Set to define several active items.
+
+#### [autoHref = `false`]
+
+If true, then all items without the `href` option will automatically generate a link by using `value` and other props.
+
+#### [multiple = `false`]
+
+If true, the component supports a feature of multiple active items.
+
+### [folded = `true`]
 
 If true, then all nested elements are folded by default.
 
-### renderFilter
+### [renderFilter]
 
 A common filter to render items via `asyncRender`.
 It is used to optimize the process of rendering items.
@@ -275,7 +304,7 @@ It is used to optimize the process of rendering items.
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :renderFilter = () => async.idle()
 ```
 
-### nestedRenderFilter
+### [nestedRenderFilter]
 
 A filter to render nested items via `asyncRender`.
 It is used to optimize the process of rendering child items.
@@ -284,7 +313,7 @@ It is used to optimize the process of rendering child items.
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :nestedRenderFilter = () => async.idle()
 ```
 
-### renderChunks
+### [renderChunks = `5`]
 
 Number of chunks to render per tick via `asyncRender`.
 

@@ -19,13 +19,13 @@ import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import { isAbsURL } from 'core/url';
-
 import { derive } from 'core/functools/trait';
+
 import iVisible from 'traits/i-visible/i-visible';
 import iWidth from 'traits/i-width/i-width';
+
 import iItems, { IterationKey } from 'traits/i-items/i-items';
-import iActiveItems from 'traits/i-active-items/i-active-items';
-import type { Active } from 'traits/i-active-items/i-active-items';
+import iActiveItems, { Active } from 'traits/i-active-items/i-active-items';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
 import type { Item, Items } from 'base/b-list/interface';
@@ -129,19 +129,20 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;
 
-	/** @see [[iActiveItems.prototype.indexes] */
+	/**
+	 * A map of the item indexes and their values
+	 */
 	@system()
 	indexes!: Dictionary;
 
-	/** @see [[iActiveItems.prototype.values]] */
+	/**
+	 * A map of the item values and their indexes
+	 */
 	@system()
 	values!: Map<unknown, number>;
 
-	/**
-	 * @see [[iActiveItems.activeStore]]
-	 * @see [[iActiveItems.syncActiveStore]]
-	 */
-	@system<bList>((o) => o.sync.link((val) => iActiveItems.syncActiveStore(o, val)))
+	/** @see [[iActiveItems.activeStore]] */
+	@system<bList>((o) => iActiveItems.linkActiveStore(o))
 	activeStore!: this['Active'];
 
 	/**
@@ -213,7 +214,27 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	})
 
 	get activeElement(): iActiveItems['activeElement'] {
-		return iActiveItems.getActiveElement(this, 'link');
+		const
+			{active} = this;
+
+		const getEl = (value) => {
+			const
+				id = this.values.get(value);
+
+			if (id != null) {
+				return this.block?.element<HTMLAnchorElement>('link', {id}) ?? null;
+			}
+
+			return null;
+		};
+
+		return this.waitStatus('ready', () => {
+			if (this.multiple) {
+				return Object.isSet(active) ? [...active].flatMap((val) => getEl(val) ?? []) : [];
+			}
+
+			return getEl(active);
+		});
 	}
 
 	/** @see [[iActiveItems.prototype.setActive] */
@@ -314,39 +335,6 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		return res;
 	}
 
-	/**
-	 * Synchronization of items
-	 *
-	 * @param items
-	 * @param oldItems
-	 * @emits `itemsChange(value: this['Items'])`
-	 */
-	@watch({field: 'itemsStore'})
-	syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-		if (!Object.fastCompare(items, oldItems)) {
-			this.initComponentValues();
-			this.emit('itemsChange', items);
-		}
-	}
-
-	/** @see [[iActiveItems.prototype.initComponentValues]] */
-	@hook('beforeDataCreate')
-	initComponentValues(): void {
-		this.values = new Map();
-		this.indexes = {};
-
-		for (let i = 0; i < this.items.length; i++) {
-			const
-				item = this.items[i],
-				val = item.value;
-
-			this.values.set(val, i);
-			this.indexes[i] = val;
-
-			iActiveItems.initItemActive(this, item);
-		}
-	}
-
 	protected override initRemoteData(): CanUndef<CanPromise<this['Items'] | Dictionary>> {
 		if (!this.db) {
 			return;
@@ -375,6 +363,26 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
 		this.normalizeItems = i.normalizeItems.bind(this);
+	}
+
+	/**
+	 * Initializes component values
+	 */
+	@hook('beforeDataCreate')
+	protected initComponentValues(): void {
+		this.values = new Map();
+		this.indexes = {};
+
+		for (let i = 0; i < this.items.length; i++) {
+			const
+				item = this.items[i],
+				val = item.value;
+
+			this.values.set(val, i);
+			this.indexes[i] = val;
+
+			iActiveItems.initItem(this, item);
+		}
 	}
 
 	/**
@@ -448,6 +456,21 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 			op ?? {};
 	}
 
+	/**
+	 * Synchronization of items
+	 *
+	 * @param items
+	 * @param oldItems
+	 * @emits `itemsChange(value: this['Items'])`
+	 */
+	@watch({path: 'itemsStore'})
+	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+		if (!Object.fastCompare(items, oldItems)) {
+			this.initComponentValues();
+			this.emit('itemsChange', items);
+		}
+	}
+
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
@@ -477,7 +500,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 * @emits `actionChange(active: this['Active'])`
 	 */
 	@watch({
-		field: '?$el:click',
+		path: '?$el:click',
 		wrapper: (o, cb) => o.dom.delegateElement('link', cb)
 	})
 
