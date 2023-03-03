@@ -13,6 +13,12 @@ $p = {
 }
 
 b-tree extends i-data
-	&__node_active_true
-		color red
-		background red
+	&_clickable-area_any ^[0]
+		&__item-wrapper
+			position relative
+
+		&__fold
+			position absolute
+			zIndex(layer, 1)
+
+			size 100%
