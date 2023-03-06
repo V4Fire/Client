@@ -56,29 +56,42 @@ module.exports = class I18NGeneratorPlugin {
 				});
 
 				fg.sync(`${src.clientOutput()}/*.html`, {ignore: `${src.clientOutput()}/*_(${locales}).html`}).forEach((path) => {
-					if (i18n.i18nEngine === 'multiHTML') {
-						i18n.supportedLocales().forEach((locale) => {
+					switch (i18n.i18nEngine) {
+						case 'inlineMultipleHTML': {
+							i18n.supportedLocales().forEach((locale) => {
+								fs.writeFileSync(
+									path.replace('.html', `_${locale}.html`),
+									getHtmlWithTranslateMap(path, {[locale]: result[locale]})
+								);
+							});
+
 							fs.writeFileSync(
-								path.replace('.html', `_${locale}.html`),
-								getHtmlWithTranslateMap(path, {[locale]: result[locale]})
+								path,
+								getHtmlWithTranslateMap(path, {[configLocale]: result[configLocale]})
 							);
-						});
 
-						fs.writeFileSync(
-							path,
-							getHtmlWithTranslateMap(path, {[configLocale]: result[configLocale]})
-						);
+							break;
+						}
 
-					} else if (i18n.i18nEngine === 'singleHTML') {
-						fs.writeFileSync(
-							path,
-							getHtmlWithTranslateMap(path, result)
-						);
+						case 'inlineSingleHTML': {
+							fs.writeFileSync(
+								path,
+								getHtmlWithTranslateMap(path, result)
+							);
 
-					} else if (i18n.i18nEngine === 'emptyHTML') {
-						Object.entries(result).forEach(([lang, value]) => {
-							fs.writeFileSync(`${src.clientOutput()}/${lang}.json`, JSON.stringify(value, undefined, 2));
-						});
+							break;
+						}
+
+						case 'externalJSON': {
+							Object.entries(result).forEach(([lang, value]) => {
+								fs.writeFileSync(`${src.clientOutput()}/${lang}.json`, JSON.stringify(value, undefined, 2));
+							});
+
+							break;
+						}
+
+						default:
+							// Do nothing
 					}
 				});
 			}
