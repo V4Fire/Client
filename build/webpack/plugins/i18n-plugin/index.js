@@ -107,7 +107,7 @@ module.exports = class I18NGeneratorPlugin {
 		function getHtmlWithTranslateMap(path, translateMap) {
 			return fs
 				.readFileSync(path, {encoding: 'utf8'})
-				.replace(`${i18n.translatesGlobalPath()} = {}`, `${i18n.translatesGlobalPath()} = ${JSON.stringify(translateMap)}`);
+				.replace(`${i18n.translatesGlobalPath} = {}`, `${i18n.translatesGlobalPath} = ${JSON.stringify(translateMap)}`);
 		}
 	}
 };

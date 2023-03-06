@@ -16,9 +16,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
       default: 'inlineSingleHTML'
     }),
 
-    translatesGlobalPath() {
-      return 'TRANSLATE_MAP';
-    },
+    translatesGlobalPath: 'TRANSLATE_MAP',
 
     supportedLocales() {
       return ['en', 'ru'];

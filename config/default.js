@@ -1121,9 +1121,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		/**
 		 * A variable used as a storage for translations
 		 */
-		translatesGlobalPath() {
-			return 'TRANSLATE_MAP';
-		},
+		translatesGlobalPath: 'TRANSLATE_MAP',
 
 		/**
 		 * List of languages supported by the application
