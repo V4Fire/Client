@@ -20,7 +20,7 @@ exports.getI18nDecl = getI18nDecl;
  * @returns {string}
  */
 function getI18nDecl({wrap} = {}) {
-	const decl = `${i18n.translatesGlobalPath()} = {};`;
+	const decl = `var ${i18n.translatesGlobalPath()} = {};`;
 
 	return wrap ? getScriptDecl(decl) : decl;
 }

@@ -18,7 +18,7 @@ declare let __webpack_require__: (moduleId: string) => any;
 
 declare const MODULE: string;
 declare const CSP_NONCE_STORE: string;
-declare const TRANSLATES_STORE_PATH: string;
+declare const LANG_STORE: string;
 
 declare var PATH: Dictionary<CanUndef<string>>;
 declare var PUBLIC_PATH: CanUndef<string>;

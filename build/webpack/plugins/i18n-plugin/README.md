@@ -13,12 +13,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
   i18n: {
     i18nEngine: o('i18n-engine', {
       env: true,
-      default: 'singleHTML'
+      default: 'inlineSingleHTML'
     }),
 
-		translatesGlobalPath() {
-			return 'TRANSLATE_MAP';
-		},
+    translatesGlobalPath() {
+      return 'TRANSLATE_MAP';
+    },
 
     supportedLocales() {
       return ['en', 'ru'];
@@ -29,7 +29,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 ### i18nEngine
 
-#### i18nEngine - singleHTML
+#### i18nEngine - inlineSingleHTML
 
 All translations are collected and added to a global variable in the main html document
 
@@ -41,7 +41,7 @@ ${webpack.clientOutput()}/main.html
 ${webpack.clientOutput()}/main.html // Includes all supported languages
 ```
 
-#### i18nEngine - multiHTML
+#### i18nEngine - inlineMultipleHTML
 
 For each language, a separate html is created inside which an object with translations is inserted.
 The default language from the config is inserted into the main html file.
@@ -56,7 +56,7 @@ ${webpack.clientOutput()}/main_ru.html // Includes ru language
 ${webpack.clientOutput()}/main_en.html // Includes en language
 ```
 
-#### i18nEngine - emptyHTML
+#### i18nEngine - externalJSON
 
 A json file with keys is created for each language. Nothing is inserted into the html. Used for SSR.
 

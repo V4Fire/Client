@@ -1098,9 +1098,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	i18n: {
 		/**
 		 * This parameter is responsible for the engine through which all translations will be collected and used.
-		 *  * `singleHTML` - All translations will be embedded in the main html
-		 *  * `multiHTML` - A separate html file with an embedded translation will be created for each translation
-		 *  * `emptyHTML` - Translations are saved in json files. There are no translations in the html document itself
+		 *  * `inlineSingleHTML` - All translations will be embedded in the main html
+		 *  * `inlineMultipleHTML` - A separate html file with an embedded translation will be created for each translation
+		 *  * `externalJSON` - Translations are saved in json files. There are no translations in the html document itself
 		 *
 		 * @cli i18n-engine
 		 * @env I18N_ENGINE
@@ -1110,12 +1110,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @example
 		 * ```bash
 		 * # Build htmls for every support language
-		 * npx webpack --env i18n-engine=multiHTML
+		 * npx webpack --env i18n-engine=inlineMultipleHTML
 		 * ```
 		 */
 		i18nEngine: o('i18n-engine', {
 			env: true,
-			default: 'singleHTML'
+			default: 'inlineSingleHTML'
 		}),
 
 		/**
