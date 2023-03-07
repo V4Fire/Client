@@ -45,7 +45,8 @@ describe('super/i-static-page/modules/ss-helpers/page', () => {
 			});
 
 			expect(removeHash(fs.readFileSync(file).toString())).toBe(
-				`Object.defineProperty(window, 'GLOBAL_NONCE', {
+				`
+Object.defineProperty(window, 'GLOBAL_NONCE', {
 \tvalue: undefined
 });
 
