@@ -1097,40 +1097,55 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	i18n: {
 		/**
-		 * This parameter is responsible for the engine through which all translations will be collected and used.
-		 *  * `inlineSingleHTML` - All translations will be embedded in the main html
-		 *  * `inlineMultipleHTML` - A separate html file with an embedded translation will be created for each translation
-		 *  * `externalJSON` - Translations are saved in json files. There are no translations in the html document itself
+		 * A strategy for loading localization files into the application:
 		 *
-		 * @cli i18n-engine
-		 * @env I18N_ENGINE
+		 *  1. `inlineSingleHTML` - all localization files found will be included in the application HTML files themselves;
+		 *  2. `inlineMultipleHTML` - based on the original HTML files of the application, new ones will be generated for
+		 *      each supported locale;
+		 *  3. `externalMultipleJSON` - all found localization files will be combined into several JSON files
+		 *      for each locale.
 		 *
-		 * @type {string}
+		 * @cli i18n-strategy
+		 * @env I18N_STRATEGY
+		 *
+		 * @default `inlineSingleHTML`
+		 * @returns {string}
+		 */
+		strategy(def = 'inlineSingleHTML') {
+			return o('i18n-strategy', {
+				env: true,
+				default: def
+			});
+		},
+
+		/**
+		 * A list of supported languages for application internationalization.
+		 * JS files with names that match the name of the locale and located in folders named i18n will be
+		 * loaded into the application.
+		 *
+		 * @cli supported-locales
+		 * @env SUPPORTED_LOCALES
+		 *
+		 * @param {string=} [def] - default value
+		 * @returns {!Array<Language>}
 		 *
 		 * @example
 		 * ```bash
-		 * # Build htmls for every support language
-		 * npx webpack --env i18n-engine=inlineMultipleHTML
+		 * npx webpack --env supported-locales=en,ru
 		 * ```
 		 */
-		i18nEngine: o('i18n-engine', {
-			env: true,
-			default: 'inlineSingleHTML'
-		}),
+		supportedLocales(def = this.locale) {
+			return o('supported-locales', {
+				env: true,
+				coerce: (str) => str.split(/\s*,\s*/),
+				default: def
+			});
+		},
 
 		/**
-		 * A variable used as a storage for translations
+		 * The name of the generated global variable where the language packs are stored
 		 */
-		translatesGlobalPath: 'TRANSLATE_MAP',
-
-		/**
-		 * List of languages supported by the application
-		 *
-		 * @returns {Array<Language>}
-		 */
-		supportedLocales() {
-			return ['en', 'ru'];
-		}
+		langPacksStore: 'LANG_PACKS'
 	},
 
 	/** @override */

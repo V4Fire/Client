@@ -119,9 +119,6 @@
 							content = ${content}
 						.
 
-					- block i18n
-						+= h.getI18nDecl({wrap: true})
-
 					- block varsDecl
 						+= h.getVarsDecl({wrap: true})
 

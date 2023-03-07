@@ -1,23 +1,31 @@
 # build/webpack/plugins/i18n-plugin
 
-This module provides a plugin to embed translations in the html document.
+This module provides a plugin for loading language packs to internationalize the application.
 
-## Options
+## Where are language packs stored?
 
-__config/default.js__
+Language packs should be located inside folders named `i18n` and have the same name as the locale for which the pack is declared.
+For example, __b-select/i18n/en.js__.
+
+```js
+module.exports = {
+  'b-select': {
+    'Required field': 'Required field'
+  }
+};
+```
+
+You can read more about the format of language packs in the documentation of the [[lang]] module.
+
+## Is it possible to specify for which locales language packs should be included?
+
+Yes, this requires using the `i18n.supportedLocales` setting in the global application config.
 
 ```js
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
   __proto__: config,
 
   i18n: {
-    i18nEngine: o('i18n-engine', {
-      env: true,
-      default: 'inlineSingleHTML'
-    }),
-
-    translatesGlobalPath: 'TRANSLATE_MAP',
-
     supportedLocales() {
       return ['en', 'ru'];
     }
@@ -25,65 +33,69 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 });
 ```
 
-### i18nEngine
-
-#### i18nEngine - inlineSingleHTML
-
-All translations are collected and added to a global variable in the main html document
+By default, only the locale specified in the `locale` option of the global config is loaded.
 
 ```js
-// Before:
-${webpack.clientOutput()}/main.html
+module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
+  __proto__: config,
 
-// After:
-${webpack.clientOutput()}/main.html // Includes all supported languages
+  locale: 'ru'
+});
 ```
 
-#### i18nEngine - inlineMultipleHTML
+Also, you can specify a list of supported locales using CLI parameters or environment variables.
 
-For each language, a separate html is created inside which an object with translations is inserted.
-The default language from the config is inserted into the main html file.
+```bash
+npx webpack --env supported-locales=en,ru
+```
+
+Or
+
+```bash
+export SUPPORTED_LOCALES=en,ru npx webpack
+```
+
+## How exactly are language packs added to an application?
+
+There are several strategies.
+You can choose which strategy to use via the global `i18n.strategy` config.
 
 ```js
-// Before:
-${webpack.clientOutput()}/main.html
+module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
+  __proto__: config,
 
-// After:
-${webpack.clientOutput()}/main.html // Includes default language from config
-${webpack.clientOutput()}/main_ru.html // Includes ru language
-${webpack.clientOutput()}/main_en.html // Includes en language
+  i18n: {
+    strategy() {
+      return 'inlineMultipleHTML';
+    }
+  }
+});
 ```
 
-#### i18nEngine - externalJSON
+In addition, you can specify the strategy to use using CLI options or environment variables..
 
-A json file with keys is created for each language. Nothing is inserted into the html. Used for SSR.
-
-```js
-// Before:
-${webpack.clientOutput()}/main.html
-
-// After:
-${webpack.clientOutput()}/main.html // Dont have any languages
-${webpack.clientOutput()}/en.json // JSON with en keysets
-${webpack.clientOutput()}/ru.json // JSON with ru keysets
+```bash
+npx webpack --env i18n-strategy=inlineMultipleHTML
 ```
 
-### translatesGlobalPath
+Or
 
-`translatesGlobalPath` - this path is used to save the translation inside an html document
-
-```html
-<html>
-  <head>
-    <!-- This script will be overwritten as a result of the plugin  -->
-    <script>
-      ${translatesGlobalPath} = {};
-    </script>
-  </head>
-  <body>...</body>
-</html>
+```bash
+export I18N_STRATEGY=inlineMultipleHTML npx webpack
 ```
 
-### supportedLocales
+### inlineSingleHTML
 
-When building the project, only the languages listed in the `supportedLocales` array will be used. All others will be ignored, even if they exist in the project.
+All localization files found will be included in the application HTML files themselves.
+Language packs will be added via the `LANG_PACKS` global variable, but you can customize its name using the `i18n.langPacksStore` option in the global config.
+
+### inlineMultipleHTML
+
+Based on the application original HTML files, new HTML will be generated for each supported locale.
+For example, if the original file is `p-root.html` and `i18n.supportedLocales=en,ru`, then `p-root_en.html` and `p-root_ru.html` will be generated.
+Language packs will be added via the `LANG_PACKS` global variable, but you can customize its name using the `i18n.langPacksStore` option in the global config.
+
+### externalMultipleJSON
+
+All found localization files will be combined into several JSON files for each locale.
+For example, `en.json` or `ru.json`. These packs will not be included in the final HTML files - you should do it manually.

@@ -1,3 +1,3 @@
 # lang/engines
 
-This module provides an engine for the translation collector.
+This module provides engines for loading language packs.

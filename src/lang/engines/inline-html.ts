@@ -9,8 +9,8 @@
 import type { LangPacs } from 'lang/interface';
 
 /**
- * Implementation a keysets collector for the build type when all translations in build time are pasted into html
+ * Implementation of a keyset collector for a build type when all translations at build time are inserted into html
  */
-export function inlineHtmlEngine(): LangPacs {
-	return globalThis[LANG_STORE];
+export default function inlineHtmlEngine(): LangPacs {
+	return globalThis[LANG_PACKS];
 }

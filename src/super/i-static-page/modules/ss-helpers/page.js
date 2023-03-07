@@ -24,7 +24,6 @@ const
 
 const
 	{getVarsDecl} = include('src/super/i-static-page/modules/ss-helpers/base-declarations'),
-	{getI18nDecl} = include('src/super/i-static-page/modules/ss-helpers/i18n-declaration'),
 	{needInline, addPublicPath} = include('src/super/i-static-page/modules/ss-helpers/helpers');
 
 const
@@ -285,9 +284,6 @@ async function generateInitJS(pageName, {
 	const
 		head = [],
 		body = [];
-
-	// - block i18n
-	head.push(getI18nDecl());
 
 	// - block varsDecl
 	head.push(getVarsDecl());

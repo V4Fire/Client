@@ -45,11 +45,11 @@ describe('super/i-static-page/modules/ss-helpers/page', () => {
 			});
 
 			expect(removeHash(fs.readFileSync(file).toString())).toBe(
-				`var TRANSLATE_MAP = {};
-
-Object.defineProperty(window, 'GLOBAL_NONCE', {
+				`Object.defineProperty(window, 'GLOBAL_NONCE', {
 \tvalue: undefined
 });
+
+var LANG_PACKS = {};
 
 var PATH = Object.create(null);
 var PUBLIC_PATH = undefined;

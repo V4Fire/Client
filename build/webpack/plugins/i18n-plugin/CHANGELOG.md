@@ -1,4 +1,4 @@
-Changelog
+CHANGELOG.md
 =========
 
 > **Tags:**
@@ -13,4 +13,4 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new webpack plugin for multi-language html generation
+* Initial release
