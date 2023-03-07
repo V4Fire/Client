@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.?.? (20??-??-??)
+
+#### :rocket: New Feature
+
+* Added a new plugin `i18n-plugin`
+
 ## v3.37.0 (2023-02-20)
 
 #### :bug: Bug Fix

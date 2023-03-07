@@ -1095,6 +1095,59 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		};
 	},
 
+	i18n: {
+		/**
+		 * A strategy for loading localization files into the application:
+		 *
+		 *  1. `inlineSingleHTML` - all localization files found will be included in the application HTML files themselves;
+		 *  2. `inlineMultipleHTML` - based on the original HTML files of the application, new ones will be generated for
+		 *      each supported locale;
+		 *  3. `externalMultipleJSON` - all found localization files will be combined into several JSON files
+		 *      for each locale.
+		 *
+		 * @cli i18n-strategy
+		 * @env I18N_STRATEGY
+		 *
+		 * @default `inlineSingleHTML`
+		 * @returns {string}
+		 */
+		strategy(def = 'inlineSingleHTML') {
+			return o('i18n-strategy', {
+				env: true,
+				default: def
+			});
+		},
+
+		/**
+		 * A list of supported languages for application internationalization.
+		 * JS files with names that match the name of the locale and located in folders named i18n will be
+		 * loaded into the application.
+		 *
+		 * @cli supported-locales
+		 * @env SUPPORTED_LOCALES
+		 *
+		 * @param {string=} [def] - default value
+		 * @returns {!Array<Language>}
+		 *
+		 * @example
+		 * ```bash
+		 * npx webpack --env supported-locales=en,ru
+		 * ```
+		 */
+		supportedLocales(def = this.config.locale) {
+			return o('supported-locales', {
+				env: true,
+				coerce: (str) => str.split(/\s*,\s*/),
+				default: def
+			});
+		},
+
+		/**
+		 * The name of the generated global variable where the language packs are stored
+		 */
+		langPacksStore: 'LANG_PACKS'
+	},
+
 	/** @override */
 	runtime() {
 		return {

@@ -35,10 +35,12 @@ module.exports = {
 	APP_NAME: s(APP_NAME),
 	API_URL: s(API_URL),
 
-	LOCALE: s(LOCALE),
 	PUBLIC_PATH: s(config.webpack.publicPath()),
 	CSP_NONCE_STORE: s(config.csp.nonceStore()),
 	MODULE: s(config.typescript().client.compilerOptions.module),
+
+	LOCALE: s(LOCALE),
+	LANG_PACKS: s(config.i18n.langPacksStore),
 
 	COMPONENTS: projectGraph.then(({components}) => {
 		if (Object.isMap(components)) {
