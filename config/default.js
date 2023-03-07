@@ -1134,7 +1134,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * npx webpack --env supported-locales=en,ru
 		 * ```
 		 */
-		supportedLocales(def = this.locale) {
+		supportedLocales(def = [this.locale]) {
 			return o('supported-locales', {
 				env: true,
 				coerce: (str) => str.split(/\s*,\s*/),
