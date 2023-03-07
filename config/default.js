@@ -1038,13 +1038,18 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		return {
 			sources: false,
-
-			minimize: {
-				useShortDoctype: true,
+			minimize: isProd && {
+				caseSensitive: true,
+				collapseWhitespace: true,
 				conservativeCollapse: true,
-				removeAttributeQuotes: true,
-				removeComments: isProd,
-				collapseWhitespace: isProd
+				keepClosingSlash: true,
+				minifyCSS: true,
+				minifyJS: true,
+				// Keep comments for SSI
+				removeComments: false,
+				removeRedundantAttributes: true,
+				removeScriptTypeAttributes: true,
+				removeStyleLinkTypeAttributes: true
 			}
 		};
 	},
