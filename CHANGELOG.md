@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.?.? (20??-??-??)
+
+#### :rocket: New Feature
+
+* Added new options `i18n` `config`
+* Added a new plugin `i18n-plugin` `build/webpack`
+
 ## v3.38.0 (2023-02-20)
 
 #### :bug: Bug Fix
