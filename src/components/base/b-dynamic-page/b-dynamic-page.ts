@@ -55,8 +55,8 @@ import type {
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-dynamic-page/interface';
 
-AsyncRender.addToPrototype({iterate});
 Block.addToPrototype({element});
+AsyncRender.addToPrototype({iterate});
 
 const
 	$$ = symbolGenerator();
