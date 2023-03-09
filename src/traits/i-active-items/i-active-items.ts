@@ -263,7 +263,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
-	static toggleActive(ctx: TraitComponent, value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+	static toggleActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		const
 			activeStore = ctx.field.get('activeStore');
 

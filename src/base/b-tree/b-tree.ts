@@ -397,7 +397,7 @@ class bTree extends iData implements iActiveItems {
 		const
 			ctx = this.top ?? this;
 
-		if (!iActiveItems.setActive(ctx, value)) {
+		if (!iActiveItems.setActive(ctx, value, unsetPrevious)) {
 			return false;
 		}
 
@@ -409,20 +409,14 @@ class bTree extends iData implements iActiveItems {
 		} = ctx;
 
 		if ($el != null && $b != null) {
-			const
-				id = this.valueIndexes.get(value),
-				node = id != null ? $b.element('node', {id}) : null;
-
 			if (!ctx.multiple || unsetPrevious) {
 				const
 					previousNodes = $el.querySelectorAll(`.${$b.getFullElName('node', 'active', true)}`);
 
 				previousNodes.forEach((previousNode) => {
-					if (previousNode === node) {
-						return;
+					if (!this.isActive(this.valueItems.get(previousNode.getAttribute('data-id')))) {
+						setActive(previousNode, false);
 					}
-
-					setActive(previousNode, false);
 				});
 			}
 
@@ -450,34 +444,24 @@ class bTree extends iData implements iActiveItems {
 			return false;
 		}
 
-		const
-			{block: $b} = ctx;
+		const {
+			$el,
+			block: $b
+		} = ctx;
 
-		if ($b != null) {
-			SyncPromise.resolve(this.activeElement).then((activeElement) => {
-				Array.concat([], activeElement).forEach((activeElement) => {
-					const
-						id = activeElement.getAttribute('data-id'),
-						itemValue = id != null ? this.indexes[id] : null;
+		if ($el != null && $b != null) {
+			const
+				previousNodes = $el.querySelectorAll(`.${$b.getFullElName('node', 'active', true)}`);
 
-					if (itemValue == null) {
-						return;
+			previousNodes.forEach((previousNode) => {
+				if (!this.isActive(this.valueItems.get(previousNode.getAttribute('data-id')))) {
+					$b.setElMod(previousNode, 'link', 'active', false);
+
+					if (previousNode.hasAttribute('aria-selected')) {
+						previousNode.setAttribute('aria-selected', 'false');
 					}
-
-					const needChangeMod = this.multiple && Object.isSet(value) ?
-						value.has(itemValue) :
-						value === itemValue;
-
-					// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-					if (needChangeMod) {
-						$b.setElMod(activeElement, 'link', 'active', false);
-
-						if (activeElement.hasAttribute('aria-selected')) {
-							activeElement.setAttribute('aria-selected', 'false');
-						}
-					}
-				});
-			}).catch(stderr);
+				}
+			});
 		}
 
 		return true;
@@ -643,8 +627,11 @@ class bTree extends iData implements iActiveItems {
 	 * @param [items]
 	 */
 	protected normalizeItems(items: this['Items'] = []): this['Items'] {
+		const that = this;
+
 		items = Object.fastClone(items);
 		items.forEach((el) => normalize(el));
+
 		return items;
 
 		function normalize(item: bTree['Item'], parentValue?: unknown) {
@@ -661,7 +648,7 @@ class bTree extends iData implements iActiveItems {
 				}
 			}
 
-			return item.active === true || item.folded === false;
+			return that.isActive(item.value) || item.folded === false;
 		}
 	}
 
