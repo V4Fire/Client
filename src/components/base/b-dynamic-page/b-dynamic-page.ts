@@ -19,8 +19,9 @@ import { Cache, RestrictedCache, AbstractCache } from 'core/cache';
 import SyncPromise from 'core/promise/sync';
 import type { EventEmitterLike } from 'core/async';
 
-import AsyncRender, { iterate } from 'components/friends/async-render';
 import Block, { element } from 'components/friends/block';
+import AsyncRender, { iterate } from 'components/friends/async-render';
+
 import iBlock from 'components/super/i-block/i-block';
 
 import iDynamicPage, {
@@ -55,7 +56,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-dynamic-page/interface';
 
 AsyncRender.addToPrototype({iterate});
-Block.addToPrototype(element);
+Block.addToPrototype({element});
 
 const
 	$$ = symbolGenerator();
