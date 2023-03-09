@@ -61,7 +61,7 @@ export function createImgElement(
 		sizes: imageParams.sizes,
 
 		onload: "this.setAttribute('data-img', 'loaded')",
-		onerror: "this.setAttribute('data-img', 'failed')",
+		onerror: "this.setAttribute('data-img', 'failed'); this.style.opacity = '0'",
 
 		style: {
 			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined
