@@ -19,6 +19,8 @@ export * from '@v4fire/core/config';
 export * from 'config/interface';
 
 extend({
+	image: {},
+
 	asyncRender: {
 		weightPerTick: 5,
 		delay: 40

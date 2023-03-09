@@ -283,3 +283,27 @@ The options returned by this function will be used to load the image.
   optionsResolver: (opts) => ({...opts, src: opts.src + '?size=42'})
 } .
 ```
+
+## Global configuration
+
+Some directive settings can be set globally using the `src/config` module.
+For example, you can set options for placeholder images, instead of setting them each time the directive is called.
+Of course, if the directive accepts certain parameters that conflict with the global ones,
+then the conflict will be resolved in favor of the parameters that were set when the directive was called.
+
+__src/config__
+
+```js
+import { extend } from '@v4fire/core/config';
+
+export { default } from '@v4fire/core/config';
+
+extend({
+  image: {
+    lazy: false,
+    baseSrc: 'https://static.mysite.com',
+    preview: '/preview.jpeg',
+    broken: '/broken.jpeg',
+  }
+});
+```
