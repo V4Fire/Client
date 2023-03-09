@@ -31,5 +31,5 @@ extend({
 		} catch {
 			return {};
 		}
-	})
+	})()
 });
