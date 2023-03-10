@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.? (2023-??-??)
+## v3.40.0 (2023-03-10)
 
 #### :house: Internal
 
-* Updated `html-loader@4.2.0` and `tslib@2.4.1`
+* Updated `html-loader@4.2.0`
 * Added variable `BUILD_MODE` into `index.d.ts` from webpack globals
 * Added the possibility to change the manifest href and added `use-credentials` attribute
 
