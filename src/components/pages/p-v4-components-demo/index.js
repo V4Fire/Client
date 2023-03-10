@@ -26,7 +26,8 @@ package('p-v4-components-demo')
 		'b-radio-button',
 		'b-hidden-input',
 		'b-input',
-		'b-textarea'
+		'b-textarea',
+		'b-select'
 	)
 
 	.libs(

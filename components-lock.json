@@ -1,5 +1,5 @@
 {
-  "hash": "616c42c562d59e36a0531ca09a0838c78ef5cfe70c388d0a0695753efd8a31da",
+  "hash": "839845975ad64e447d7b78643e02ee6922aa511734c5dbcb6ec3ca7fd598a00c",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1887,7 +1887,8 @@
               "b-radio-button",
               "b-hidden-input",
               "b-input",
-              "b-textarea"
+              "b-textarea",
+              "b-select"
             ],
             "libs": [
               "components/directives/image",
@@ -1911,7 +1912,8 @@
             "b-radio-button",
             "b-hidden-input",
             "b-input",
-            "b-textarea"
+            "b-textarea",
+            "b-select"
           ],
           "libs": [
             "components/directives/image",
