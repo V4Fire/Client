@@ -306,7 +306,7 @@ module.exports = (page) => {
 
 					log.push(ctx.items);
 
-					await ctx.nextTick();
+					await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
 					return log;
 				})
 			).toEqual([
@@ -333,7 +333,7 @@ module.exports = (page) => {
 						}
 					];
 
-					await ctx.nextTick();
+					await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
 					return [ctx.getFoldedMod(2), ctx.getFoldedMod(3)];
 				})
 			).toEqual(['false', 'false']);
@@ -359,7 +359,7 @@ module.exports = (page) => {
 						}
 					];
 
-					await ctx.nextTick();
+					await ctx.localEmitter.promisifyOnce('asyncRenderComplete');
 					return ctx.getFoldedMod(2);
 				})
 			).toBe('true');

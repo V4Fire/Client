@@ -28,6 +28,7 @@ import iData, {
 	component,
 
 	prop,
+	field,
 	system,
 	computed,
 
@@ -51,7 +52,9 @@ export const
 interface bTree extends Trait<typeof iActiveItems> {}
 
 @component({
-	functional: {},
+	functional: {
+		functional: true
+	},
 
 	model: {
 		prop: 'activeProp',
@@ -154,7 +157,14 @@ class bTree extends iData implements iActiveItems {
 	readonly cancelable?: boolean;
 
 	/** @see [[iItems.items]] */
-	@system<bTree>((ctx) => ctx.sync.link<Items>((val) => ctx.normalizeItems(val)))
+	@field<bTree>((o) => o.sync.link<Items>((val) => {
+		if (o.dataProvider != null) {
+			return <CanUndef<Items>>o.items ?? [];
+		}
+
+		return o.normalizeItems(val);
+	}))
+
 	items!: this['Items'];
 
 	/**
@@ -583,6 +593,7 @@ class bTree extends iData implements iActiveItems {
 	@watch({path: 'items'})
 	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
+			this.initComponentValues();
 			this.emit('itemsChange', items);
 		}
 	}
@@ -677,7 +688,7 @@ class bTree extends iData implements iActiveItems {
 		let
 			target = <Element>e.target;
 
-		if (target.matches(this.block?.getElSelector('fold') ?? '')) {
+		if (target.matches(this.block!.getElSelector('fold'))) {
 			return;
 		}
 
