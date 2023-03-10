@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:core/browser/README.md]]
+ * [[include:core/cookies/README.md]]
  * @packageDocumentation
  */
 

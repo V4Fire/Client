@@ -172,7 +172,7 @@ export default class bCheckbox extends iInput implements iSize {
 				value = await this.groupFormValue;
 
 			if (value.length === 0) {
-				this.setValidationMessage(this.getValidatorMessage(false, message, t`Required field`), showMessage);
+				this.setValidationMessage(this.getValidatorMessage(false, message, this.t`Required field`), showMessage);
 				return false;
 			}
 

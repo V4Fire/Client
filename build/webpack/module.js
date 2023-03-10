@@ -102,9 +102,7 @@ module.exports = async function module({plugins}) {
 				loader: 'ts-loader',
 				options: {
 					...typescript.client,
-					getCustomTransformers: () => ({
-						after: [...Object.values(tsTransformers.before)]
-					})
+					getCustomTransformers: tsTransformers
 				}
 			},
 
@@ -354,9 +352,14 @@ module.exports = async function module({plugins}) {
 
 			[
 				{
-					loader: 'fast-css-loader',
-					options: config.css()
+					loader: 'css-loader',
+					options: {
+						...config.css(),
+						importLoaders: 1
+					}
 				},
+
+				'svg-transform-loader/encode-query',
 
 				{
 					loader: 'postcss-loader',

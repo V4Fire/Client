@@ -353,7 +353,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 				val = await this.formValue;
 
 			if (this.multiple ? Object.size(val) === 0 : val === undefined) {
-				this.setValidationMessage(this.getValidatorMessage(false, message, t`Required field`), showMessage);
+				this.setValidationMessage(this.getValidatorMessage(false, message, this.t`Required field`), showMessage);
 				return false;
 			}
 

@@ -410,7 +410,7 @@ export default class bTextarea extends iInputText {
 		} else {
 			block.setElementMod(el, 'limit', 'hidden', false);
 			block.setElementMod(el, 'limit', 'warning', limit < maxLength / 3);
-			el.innerHTML = t`Characters left: ${limit}`;
+			el.innerHTML = this.t('Characters left: {limit}', {limit});
 		}
 	}
 

@@ -16,8 +16,10 @@ declare let __webpack_nonce__: CanUndef<string>;
 declare let __webpack_public_path__: CanUndef<string>;
 declare let __webpack_require__: (moduleId: string) => any;
 
-declare const BUILD_MODE: boolean;
+declare const BUILD_MODE: CanUndef<string>;
+
 declare const CSP_NONCE_STORE: string;
+declare const LANG_PACKS: string;
 
 declare const SSR: boolean;
 declare const HYDRATION: boolean;
@@ -26,7 +28,7 @@ declare const MODULE: string;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const PUBLIC_PATH: CanUndef<string>;
 
-declare const COMPONENTS: Dictionary<{dependencies: string[]}>;
+declare const COMPONENTS: Dictionary<{parent: string; dependencies: string[]}>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 declare const BLOCK_NAMES: CanUndef<string[]>;
 

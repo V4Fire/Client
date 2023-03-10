@@ -257,12 +257,6 @@ export default abstract class iBlockProps extends ComponentInterface {
 	override readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
 	/**
-	 * A link to the `i18n` function that will be used to localize string literals
-	 */
-	@prop(Function)
-	readonly i18n: typeof i18n = i18n;
-
-	/**
 	 * Whether to add classes to the component markup with its identifier
 	 * (for functional components, the value is always `false`)
 	 */

@@ -197,7 +197,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 			}
 
 			if (stageValue != null) {
-				stageValue = this.t(Object.isFunction(stageValue) ? stageValue(this) : stageValue);
+				stageValue = Object.isFunction(stageValue) ? stageValue(this) : stageValue;
 			}
 
 			return stageValue ?? v;

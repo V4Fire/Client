@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.39.0 (2023-03-07)
+
+#### :rocket: New Feature
+
+* Added a new plugin `i18n-plugin`
+
+## v3.37.0 (2023-02-20)
+
+#### :bug: Bug Fix
+
+* Downgrade `css-loader` version for fix svg bundling
+
+## v3.36.0 (2023-02-14)
+
+#### :house: Internal
+
+* Replaced `fast-css-loader` with `css-loader`
+
 ## v3.34.1 (2023-01-31)
 
 #### :house: Internal
