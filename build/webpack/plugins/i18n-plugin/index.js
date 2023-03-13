@@ -14,7 +14,8 @@ const
 
 const
 	fs = require('fs'),
-	fg = require('fast-glob');
+	glob = require('fast-glob'),
+	path = require('upath');
 
 /**
  * WebPack plugin for including internationalization files from the file system in HTML applications
@@ -31,67 +32,74 @@ module.exports = class I18NGeneratorPlugin {
 					locales = i18n.supportedLocales().join('|');
 
 				const
-					paths = pzlr.sourceDirs.map((el) => `${el}/**/i18n/(${locales}).js`),
+					i18nFiles = pzlr.sourceDirs.map((el) => path.join(el, `/**/i18n/(${locales}).js`)),
 					localizations = {};
 
-				fg.sync(paths).forEach((path) => {
+				glob.sync(i18nFiles).forEach((filePath) => {
 					const
-						parsedPath = /\/[^/]*?\/i18n\/(.*?)\.js$/i.exec(path);
+						p = /\/[^/]*?\/i18n\/(?<lang>.*?)\.js$/.exec(path.normalize(filePath))?.groups;
 
-						if (parsedPath != null) {
-							const
-								lang = parsedPath[1],
-								localization = require(path);
+					if (p == null) {
+						return;
+					}
 
-							localizations[lang] ??= {};
-							Object.keys(localization).forEach((keysetName) => {
-								localizations[lang][keysetName] = {
-									...localizations[lang][keysetName],
-									...localization[keysetName]
-								};
-							});
-						}
+					const localization = require(filePath);
+					localizations[p.lang] ??= {};
+
+					Object.keys(localization).forEach((keysetName) => {
+						localizations[p.lang][keysetName] = {
+							...localizations[p.lang][keysetName],
+							...localization[keysetName]
+						};
+					});
 				});
 
-				fg.sync(`${src.clientOutput()}/*.html`, {ignore: `${src.clientOutput()}/*_(${locales}).html`}).forEach((path) => {
-					switch (i18n.strategy()) {
-						case 'inlineMultipleHTML': {
+				const htmlFiles = () =>
+					glob.sync(path.normalize(src.clientOutput('*.html')), {
+						ignore: path.normalize(src.clientOutput(`*_(${locales}).html`))
+					})
+
+						.map((el) => String(el.name ?? el));
+
+				switch (i18n.strategy()) {
+					case 'inlineMultipleHTML': {
+						htmlFiles().forEach((file) => {
 							i18n.supportedLocales().forEach((locale) => {
 								fs.writeFileSync(
-									path.replace('.html', `_${locale}.html`),
-									getHTMLWithLangPacs(path, {[locale]: localizations[locale]})
+									file.replace('.html', `_${locale}.html`),
+									getHTMLWithLangPacs(file, {[locale]: localizations[locale]})
 								);
 							});
 
 							fs.writeFileSync(
-								path,
-								getHTMLWithLangPacs(path, {[configLocale]: localizations[configLocale]})
+								file,
+								getHTMLWithLangPacs(file, {[configLocale]: localizations[configLocale]})
 							);
+						});
 
-							break;
-						}
-
-						case 'inlineSingleHTML': {
-							fs.writeFileSync(
-								path,
-								getHTMLWithLangPacs(path, localizations)
-							);
-
-							break;
-						}
-
-						case 'externalMultipleJSON': {
-							Object.entries(localizations).forEach(([lang, value]) => {
-								fs.writeFileSync(`${src.clientOutput()}/${lang}.json`, JSON.stringify(value, undefined, 2));
-							});
-
-							break;
-						}
-
-						default:
-							// Do nothing
+						break;
 					}
-				});
+
+					case 'inlineSingleHTML': {
+						htmlFiles().forEach((file) => fs.writeFileSync(
+							file,
+							getHTMLWithLangPacs(file, localizations)
+						));
+
+						break;
+					}
+
+					case 'externalMultipleJSON': {
+						Object.entries(localizations).forEach(([lang, value]) => {
+							fs.writeFileSync(`${src.clientOutput()}/${lang}.json`, JSON.stringify(value, undefined, 2));
+						});
+
+						break;
+					}
+
+					default:
+						// Do nothing
+				}
 			}
 		}
 
