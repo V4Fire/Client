@@ -349,10 +349,12 @@ module.exports = (page) => {
 
 					ctx.items = [
 						{value: 0},
+
 						{
 							value: 1,
 							children: [{value: 3}]
 						},
+
 						{
 							value: 2,
 							children: [{value: 4}]
@@ -404,7 +406,7 @@ module.exports = (page) => {
 
 			queue.push((async () => {
 				const
-					id = await target.evaluate((ctx, value) => ctx.valueItems.get(value), item.value),
+					id = await target.evaluate((ctx, value) => ctx.valueIndexes.get(value), item.value),
 					element = await page.waitForSelector(`[data-id="${id}"]`, {state: 'attached'});
 
 				await expectAsync(

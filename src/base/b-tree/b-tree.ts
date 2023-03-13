@@ -565,7 +565,7 @@ class bTree extends iData implements iActiveItems {
 		const
 			target = this.findItemElement(value);
 
-		if (!target) {
+		if (target == null) {
 			return;
 		}
 
@@ -595,11 +595,14 @@ class bTree extends iData implements iActiveItems {
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	@watch({path: 'items'})
+	@watch({path: 'items', immediate: true})
 	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues();
-			this.emit('itemsChange', items);
+
+			this.async.setImmediate(() => {
+				this.emit('itemsChange', items);
+			}, {label: $$.syncItemsWatcher});
 		}
 	}
 
