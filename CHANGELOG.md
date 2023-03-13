@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.40.1 (2023-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed Windows support in localization plugin `build/webpack/plugins/i18n-plugin`
+
 ## v3.40.0 (2023-03-10)
 
 #### :house: Internal

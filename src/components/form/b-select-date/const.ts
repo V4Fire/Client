@@ -12,6 +12,9 @@ import type { Item } from 'components/form/b-select/b-select';
 const
 	t = i18n('b-select-date');
 
+const
+	t = i18n('b-select-date');
+
 export const months = [
 	t`January`,
 	t`February`,
