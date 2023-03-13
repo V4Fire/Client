@@ -477,6 +477,11 @@ class bTree extends iData implements iActiveItems {
 		return true;
 	}
 
+	/** @see [[iActiveItems.prototype.toggleActive]] */
+	toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+		return iActiveItems.toggleActive(this.top ?? this, value, unsetPrevious);
+	}
+
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
