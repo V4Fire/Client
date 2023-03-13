@@ -1030,6 +1030,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `html-loader`
+	 *
+	 * @see https://webpack.js.org/loaders/html-loader/#options
 	 * @returns {!Object}
 	 */
 	html() {
@@ -1038,19 +1040,26 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		return {
 			sources: false,
-
-			minimize: {
-				useShortDoctype: true,
+			minimize: isProd && {
+				caseSensitive: true,
+				collapseWhitespace: true,
 				conservativeCollapse: true,
-				removeAttributeQuotes: true,
-				removeComments: isProd,
-				collapseWhitespace: isProd
+				keepClosingSlash: true,
+				minifyCSS: true,
+				minifyJS: true,
+				// Keep comments for SSI
+				removeComments: false,
+				removeRedundantAttributes: true,
+				removeScriptTypeAttributes: true,
+				removeStyleLinkTypeAttributes: true
 			}
 		};
 	},
 
 	/**
 	 * Returns parameters for a favicon generator
+	 *
+	 * @see https://github.com/itgalaxy/favicons#usage
 	 * @returns {!Object}
 	 */
 	favicons() {
@@ -1064,7 +1073,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			orientation: 'portrait',
 			version: 1.0,
 			logging: false,
-			manifestName: 'manifest.json'
+			manifestName: 'manifest.json',
+			// Custom manifest URL
+			manifestHref: ''
 		};
 	},
 

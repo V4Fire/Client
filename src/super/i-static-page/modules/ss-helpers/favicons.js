@@ -85,7 +85,8 @@ function getFaviconsDecl() {
 		js: true,
 		staticAttrs: attrs1 + attrs2,
 		attrs: {
-			href: [`'${href}?from=' + location.pathname + location.search`]
+			href: [`'${params.manifestHref || href}?from=' + location.pathname + location.search`],
+			crossorigin: 'use-credentials'
 		}
 	})));
 
