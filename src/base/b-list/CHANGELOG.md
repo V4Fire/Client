@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.42.1 (2023-03-14)
+
+#### :nail_care: Polish
+
+* Changed `activeElement` getter return type
+
 ## v3.41.0 (2023-03-14)
 
 #### :nail_care: Polish

@@ -213,7 +213,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		dependencies: ['active']
 	})
 
-	get activeElement(): iActiveItems['activeElement'] {
+	get activeElement(): CanPromise<CanArray<HTMLAnchorElement> | null> {
 		const
 			{active} = this;
 
