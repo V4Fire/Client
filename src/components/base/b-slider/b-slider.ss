@@ -44,10 +44,8 @@
 		.
 			< .&__view &
 				ref = view |
-				v-resize-observer = {
-					watchHeight: false,
-					watchWidth: true,
-					callback: isSlideMode ? syncStateDefer : undefined
+				v-on-resize = {
+					handler: isSlideMode ? syncStateDefer : undefined
 				}
 			.
 				< .&__view-content ref = content
