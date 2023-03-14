@@ -166,10 +166,6 @@ export default abstract class iActiveItems extends iItems {
 
 	/** @see [[iActiveItems.prototype.setActive]] */
 	static setActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): boolean {
-		if (value == null) {
-			return false;
-		}
-
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -221,10 +217,6 @@ export default abstract class iActiveItems extends iItems {
 
 	/** @see [[iActiveItems.prototype.unsetActive]] */
 	static unsetActive(ctx: TraitComponent, value: iActiveItems['Active']): boolean {
-		if (value == null) {
-			return false;
-		}
-
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -272,10 +264,6 @@ export default abstract class iActiveItems extends iItems {
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
 	static toggleActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): iActiveItems['Active'] {
-		if (value == null) {
-			return ctx.active;
-		}
-
 		const
 			activeStore = ctx.field.get('activeStore');
 
