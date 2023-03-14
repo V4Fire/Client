@@ -45,7 +45,7 @@
 			< .&__view &
 				ref = view |
 				v-on-resize = {
-					handler: isSlideMode ? syncStateDefer : undefined
+					handler: syncStateDefer
 				}
 			.
 				< .&__view-content ref = content
