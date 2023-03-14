@@ -21,7 +21,7 @@
 		 * @param {string=} [tag] - tag to generate item
 		 */
 		- block items(tag = '_')
-			< template v-for = (el, i) in items | :key = getItemKey(el, i)
+			< template v-for = (el, i) in items
 				: itemAttrs = {}
 
 				- if tag === 'option'
@@ -33,6 +33,7 @@
 
 				< ${tag} &
 					:-id = values.get(el.value) |
+					:key = getItemKey(el, i) |
 
 					:class = Array.concat([], el.classes, provide.elClasses({
 						item: {

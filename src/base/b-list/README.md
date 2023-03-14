@@ -10,7 +10,7 @@ If you need a more complex layout, provide it via a slot or by using `item/itemP
 
 * The component extends [[iData]].
 
-* The component implements [[iVisible]], [[iWidth]], [[iItems]] traits.
+* The component implements [[iActiveItems]], [[iVisible]], [[iWidth]] traits.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
@@ -40,12 +40,9 @@ Also, you can see the parent component and the component traits.
 
 ## Events
 
-| EventName         | Description                                                                                                                 | Payload description                   | Payload  |
-|-------------------|-----------------------------------------------------------------------------------------------------------------------------|---------------------------------------|----------|
-| `change`          | An active item of the component has been changed                                                                            | Active value or a set of active items | `Active` |
-| `immediateChange` | An active item of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | Active value or a set of active items | `Active` |
-| `actionChange`    | An active item of the component has been changed due to some user action                                                    | Active value or a set of active items | `Active` |
-| `itemsChange`     | A list of items has been changed                                                                                            | List of items                         | `Items`  |
+| EventName     | Description                                  | Payload description                        | Payload |
+|---------------|----------------------------------------------|--------------------------------------------|---------|
+| `itemsChange` | The component items has been changed         | An array of items                          | `Items` |
 
 Also, you can see the parent component and the component traits.
 
@@ -259,77 +256,3 @@ If the component is switched to the `multiple` mode, the getter will return a `S
 #### attrs
 
 Additional attributes are provided to an "internal" (native) list tag.
-
-### Methods
-
-#### isActive
-
-Returns true if the specified value is active.
-
-```typescript
-class Test extends iData {
-  /** @override */
-  protected $refs!: {
-    list: bList
-  };
-
-  test(): void {
-    this.$refs.list.setActive(1);
-    console.log(this.$refs.list.isActive(1));
-  }
-}
-```
-
-#### setActive
-
-Activates an item by the specified value.
-If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
-
-```typescript
-class Test extends iData {
-  /** @override */
-  protected $refs!: {
-    list: bList
-  };
-
-  test(): void {
-    this.$refs.list.setActive(1);
-  }
-}
-```
-
-#### unsetActive
-
-Deactivates an item by the specified value.
-If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
-
-```typescript
-class Test extends iData {
-  /** @override */
-  protected $refs!: {
-    list: bList
-  };
-
-  test(): void {
-    this.$refs.list.unsetActive(1);
-  }
-}
-```
-
-#### toggleActive
-
-Toggles activation of an item by the specified value.
-The methods return a new active component item/s.
-
-```typescript
-class Test extends iData {
-  /** @override */
-  protected $refs!: {
-    list: bList
-  };
-
-  test(): void {
-    console.log(this.$refs.list.toggleActive(1) === this.$refs.list.active);
-  }
-}
-```

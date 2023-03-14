@@ -7,22 +7,23 @@
  */
 
 import type bTree from 'base/b-tree/b-tree';
-import type { TaskI } from 'base/b-tree/b-tree';
+import type { TaskI, ModsTable } from 'base/b-tree/b-tree';
+import type { Item as Super } from 'traits/i-active-items/i-active-items';
 
 /**
  * Tree element data
  */
-export interface Item extends Dictionary {
+export interface Item extends Super {
 	/**
-	 * Element identifier
+	 * Item value
 	 */
-	id: string;
+	value: unknown;
 
 	/**
-	 * Parent element identifier
+	 * Parent element value
 	 * (for nested items)
 	 */
-	parentId?: string;
+	parentValue?: Item['value'];
 
 	/**
 	 * Nested items
@@ -33,10 +34,15 @@ export interface Item extends Dictionary {
 	 * Folding flag
 	 */
 	folded?: boolean;
+
+	/**
+	 * Map of additional modifiers of the item
+	 */
+	mods?: ModsTable;
 }
+
+export type Items = Item[];
 
 export interface RenderFilter {
 	(ctx: bTree, el: Item, i: number, task: TaskI): CanPromise<boolean>;
 }
-
-export type ClickableAreaMod = 'fold' | 'any';
