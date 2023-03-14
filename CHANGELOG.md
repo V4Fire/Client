@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.42.0 (2023-03-14)
+
+#### :bug: Bug Fix
+
+* Removed some options of `html-webpack-plugin` that causes bugs
+* Fixed replace pattern for `i18n` webpack plugin
+
 ## v3.41.0 (2023-03-14)
 
 #### :boom: Breaking Change
