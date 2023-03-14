@@ -143,6 +143,11 @@ async function initLibs(libs, assets) {
 		const p = Object.isString(val) ? {src: val} : {...val};
 		p.inline = needInline(p.inline);
 
+		if (p.source === 'external') {
+			res.push(p);
+			continue;
+		}
+
 		let
 			cwd;
 
