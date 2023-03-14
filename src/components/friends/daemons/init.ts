@@ -19,7 +19,7 @@ import type { DaemonWatcher } from 'components/friends/daemons/interface';
  * @param name
  * @param args
  */
-export function run<R = unknown>(this: Daemons, name: string, ...args: unknown[]): CanUndef<R> {
+export function run<T = unknown>(this: Daemons, name: string, ...args: unknown[]): CanUndef<T> {
 	const
 		{ctx} = this;
 

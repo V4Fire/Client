@@ -10,7 +10,7 @@ import type Provider from 'core/data';
 import type { RequestQuery, RequestBody, ModelMethod } from 'core/data';
 
 import { asyncOptionsKeys } from 'core/async';
-import type { CreateRequestOptions } from 'components/super/i-data';
+import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-data-provider';
 
 import type DataProvider from 'components/friends/data-provider/class';
 import type { DefaultRequest } from 'components/friends/data-provider/interface';

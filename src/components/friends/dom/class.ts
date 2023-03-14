@@ -6,22 +6,55 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { AsyncOptions } from 'core/async';
+
+import type * as ResizeWatcher from 'core/dom/resize-watcher';
+import type * as IntersectionWatcher from 'core/dom/intersection-watcher';
+
 import Friend, { fakeMethods } from 'components/friends/friend';
 
-import type * as api from 'components/friends/dom/api';
+import type iBlock from 'components/super/i-block/i-block';
+import type { ComponentElement } from 'components/super/i-block/i-block';
+
+import type { DOMModificationOptions, ElCb } from 'components/friends/dom/interface';
 
 interface DOM {
-	delegate: typeof api.delegate;
-	delegateElement: typeof api.delegateElement;
+	delegate<T extends Function>(selector: string, fn: T): T;
+	delegateElement<T extends Function>(name: string, fn: T): T;
 
-	watchForIntersection: typeof api.watchForIntersection;
-	watchForResize: typeof api.watchForResize;
+	watchForIntersection(el: Element, handler: IntersectionWatcher.WatchHandler): Function;
+	watchForIntersection(
+		el: Element,
+		opts: IntersectionWatcher.WatchOptions & AsyncOptions,
+		handler: IntersectionWatcher.WatchHandler
+	): Function;
 
-	appendChild: typeof api.appendChild;
-	replaceWith: typeof api.replaceWith;
+	watchForResize(el: Element, handler: ResizeWatcher.WatchHandler): Function;
+	watchForResize(
+		el: Element,
+		opts: ResizeWatcher.WatchOptions & AsyncOptions,
+		handler: ResizeWatcher.WatchHandler
+	): Function;
 
-	getComponent: typeof api.getComponent;
-	renderTemporarily: typeof api.renderTemporarily;
+	appendChild(
+		parent: string | Node | DocumentFragment,
+		node: Node,
+		groupOrOptions?: string | DOMModificationOptions
+	): Function | false;
+
+	replaceWith(
+		el: string | Element,
+		newNode: Node,
+		groupOrOptions?: string | DOMModificationOptions
+	): Function | false;
+
+	getComponent<T extends iBlock>(el: Element | ComponentElement<T>, selector?: string): CanNull<T>;
+
+	// eslint-disable-next-line @typescript-eslint/unified-signatures
+	getComponent<T extends iBlock>(selector: string, rootSelector?: string): CanNull<T>;
+
+	renderTemporarily<T extends Friend['C']>(el: Element | string, cb: ElCb<T>): Promise<void>;
+	renderTemporarily<T extends Friend['C']>(cb: ElCb<T>): Promise<void>;
 }
 
 @fakeMethods(
