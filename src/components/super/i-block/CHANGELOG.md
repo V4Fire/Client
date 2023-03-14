@@ -14,6 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * Renamed `waitStatus` to `waitComponentStatus`
+* Renamed `watchTmp ` to `reactiveTmp`
 
 #### :memo: Documentation
 
