@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.41.0 (2023-03-14)
+
+#### :nail_care: Polish
+
+* Added `iActiveItems` implementation
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :boom: Breaking Change

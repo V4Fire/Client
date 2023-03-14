@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.41.0 (2023-03-14)
+
+#### :boom: Breaking Change
+
+* Renamed option `Item['id']` to `Item['value']` `bTree`
+
+#### :rocket: New Feature
+
+* Added a new trait `iActiveItems`
+* Added `iActiveItems` implementation `bTree` `bList`
+
 ## v3.40.1 (2023-03-13)
 
 #### :bug: Bug Fix
