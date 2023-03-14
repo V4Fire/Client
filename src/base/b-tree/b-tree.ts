@@ -377,7 +377,7 @@ class bTree extends iData implements iActiveItems {
 	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
 	 */
 	@wait('ready')
-	toggleFold(value: this['Item']['value'], folded?: boolean): Promise<boolean> {
+	toggleFold(value: unknown, folded?: boolean): Promise<boolean> {
 		const
 			ctx = this.top ?? this;
 
@@ -398,7 +398,7 @@ class bTree extends iData implements iActiveItems {
 		return SyncPromise.resolve(false);
 	}
 
-	isActive(value: this['Item']['value']): boolean {
+	isActive(value: unknown): boolean {
 		return iActiveItems.isActive(this.top ?? this, value);
 	}
 
@@ -478,7 +478,7 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
-	toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+	toggleActive(value: this['Active'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		return iActiveItems.toggleActive(this.top ?? this, value, unsetPrevious);
 	}
 
@@ -561,7 +561,7 @@ class bTree extends iData implements iActiveItems {
 	 * Returns a value of the `folded` modifier from an element by the specified identifier
 	 * @param value
 	 */
-	protected getFoldedMod(value: this['Item']['value']): CanUndef<string> {
+	protected getFoldedMod(value: unknown): CanUndef<string> {
 		const
 			target = this.findItemElement(value);
 
@@ -576,7 +576,7 @@ class bTree extends iData implements iActiveItems {
 	 * Searches an HTML element by the specified item value and returns it
 	 * @param value
 	 */
-	protected findItemElement(value: this['Item']['value']): HTMLElement | null {
+	protected findItemElement(value: unknown): HTMLElement | null {
 		const
 			ctx = this.top ?? this,
 			id = this.valueIndexes.get(value);
