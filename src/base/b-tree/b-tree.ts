@@ -478,7 +478,7 @@ class bTree extends iData implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
-	toggleActive(value: this['Active'], unsetPrevious?: boolean): iActiveItems['Active'] {
+	toggleActive(value: this['Active'], unsetPrevious?: boolean): this['Active'] {
 		return iActiveItems.toggleActive(this.top ?? this, value, unsetPrevious);
 	}
 
