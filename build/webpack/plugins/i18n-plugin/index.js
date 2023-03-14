@@ -114,7 +114,7 @@ module.exports = class I18NGeneratorPlugin {
 		function getHTMLWithLangPacs(path, langPacs) {
 			return fs
 				.readFileSync(path, {encoding: 'utf8'})
-				.replace(`${i18n.langPacksStore} = {}`, `${i18n.langPacksStore} = ${JSON.stringify(langPacs)}`);
+				.replace(new RegExp(`${i18n.langPacksStore}\\s*=\\s*{}`), `${i18n.langPacksStore}=${JSON.stringify(langPacs)}`);
 		}
 	}
 };
