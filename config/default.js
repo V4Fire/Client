@@ -1049,7 +1049,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				minifyJS: true,
 				// Keep comments for SSI
 				removeComments: false,
-				removeRedundantAttributes: true,
 				removeScriptTypeAttributes: true,
 				removeStyleLinkTypeAttributes: true
 			}
