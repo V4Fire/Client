@@ -6,27 +6,35 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Provider, { providers } from 'core/data';
+import Provider, { providers, ModelMethod, RequestQuery, RequestBody } from 'core/data';
 import type { ReadonlyEventEmitterWrapper } from 'core/async';
 
 import Friend, { fakeMethods } from 'components/friends/friend';
+import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-data-provider';
 
 import type iBlock from 'components/super/i-block';
 import type iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 
-import type * as api from 'components/friends/data-provider/api';
 import type { DataProviderProp, DataProviderOptions } from 'components/friends/data-provider/interface';
 
 interface DataProvider {
-	url: typeof api.url;
-	base: typeof api.base;
-	get: typeof api.get;
-	peek: typeof api.peek;
-	post: typeof api.post;
-	add: typeof api.add;
-	update: typeof api.update;
-	delete: typeof api.deleteData;
-	getDefaultRequestParams: typeof api.getDefaultRequestParams;
+	url(): CanUndef<string>;
+	url(value: string): this;
+
+	base(): CanUndef<string>;
+	base(value: string): this;
+
+	get<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
+	peek<D = unknown>(query?: RequestQuery, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
+	post<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
+	add<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
+	update<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
+	delete<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
+	getDefaultRequestParams<D = unknown>(
+		method: ModelMethod | Provider[ModelMethod],
+		body?: RequestQuery | RequestBody,
+		opts?: CreateRequestOptions<D>
+	): Promise<CanUndef<D>>;
 }
 
 @fakeMethods(

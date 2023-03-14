@@ -11,10 +11,8 @@ import Friend, { fakeMethods } from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 import type { WrappedDaemonsDict } from 'components/friends/daemons/interface';
 
-import type * as api from 'components/friends/daemons/api';
-
 interface Daemons {
-	run: typeof api.run;
+	run<T = unknown>(this: Daemons, name: string, ...args: unknown[]): CanUndef<T>;
 }
 
 @fakeMethods('run')

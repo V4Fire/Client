@@ -6,20 +6,27 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { VNode } from 'core/component/engines';
 import Friend, { fakeMethods } from 'components/friends/friend';
 
 import type iBlock from 'components/super/i-block/i-block';
-import type * as api from 'components/friends/vdom/api';
+import type { RenderFactory, RenderFn, ComponentInterface } from 'components/super/i-block/i-block';
+
+import type { VNodeDescriptor, VNodeOptions } from 'components/friends/vdom/interface';
 
 interface VDOM {
-	closest: typeof api.closest;
-	findElement: typeof api.findElement;
+	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<any[], T> | Function): CanUndef<T>;
+	findElement(name: string, where: VNode, ctx?: iBlock): CanUndef<VNode>;
 
-	create: typeof api.create;
-	render: typeof api.render;
+	create(type: string, opts?: VNodeOptions): VNode;
+	create(...descriptors: VNodeDescriptor[]): VNode[];
+	create(descriptors: VNodeDescriptor[]): VNode[];
 
-	getRenderFactory: typeof api.getRenderFactory;
-	getRenderFn: typeof api.getRenderFn;
+	render(vnode: VNode): Node;
+	render(vnodes: VNode[]): Node[];
+
+	getRenderFactory(path: string): CanUndef<RenderFactory>;
+	getRenderFn(factoryOrPath: CanUndef<RenderFactory> | string, ctx?: ComponentInterface): RenderFn;
 }
 
 @fakeMethods(
