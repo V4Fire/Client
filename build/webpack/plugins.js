@@ -27,12 +27,14 @@ module.exports = async function plugins({name}) {
 		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
 		createProgressPlugin = include('build/webpack/plugins/progress-plugin'),
 		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings'),
+		I18NGeneratorPlugin = include('build/webpack/plugins/i18n-plugin'),
 		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
 
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
 		['dependencies', new DependenciesPlugin()],
-		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()]
+		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()],
+		['i18nGeneratorPlugin', new I18NGeneratorPlugin()]
 	]);
 
 	const

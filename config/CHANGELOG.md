@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.39.0 (2023-03-07)
+
+#### :rocket: New Feature
+
+* Added new options `i18n`
+
 ## v3.26.0 (2022-08-26)
 
 #### :boom: Breaking Change

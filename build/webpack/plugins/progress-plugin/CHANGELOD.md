@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.?.? (20??-??-??)
+## v3.39.0 (2023-03-07)
 
 #### :boom: Breaking Change
 
@@ -23,7 +23,7 @@ Changelog
 
 * Now `WebpackProgressPlugin` work within the CI environment
 
-## v3.?.? (20??-??-??)
+## v3.39.0 (2023-03-07)
 
 #### :rocket: New Feature
 

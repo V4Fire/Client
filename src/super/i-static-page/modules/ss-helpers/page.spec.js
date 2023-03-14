@@ -50,6 +50,8 @@ Object.defineProperty(window, 'GLOBAL_NONCE', {
 \tvalue: undefined
 });
 
+var LANG_PACKS = {};
+
 var PATH = Object.create(null);
 var PUBLIC_PATH = undefined;
 

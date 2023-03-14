@@ -11,6 +11,27 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.40.1 (2023-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed Windows support in localization plugin `build/webpack/plugins/i18n-plugin`
+
+## v3.40.0 (2023-03-10)
+
+#### :house: Internal
+
+* Updated `html-loader@4.2.0`
+* Added variable `BUILD_MODE` into `index.d.ts` from webpack globals
+* Added the possibility to change the manifest href and added `use-credentials` attribute
+
+## v3.39.0 (2023-03-07)
+
+#### :rocket: New Feature
+
+* Added new options `i18n` `config`
+* Added a new plugin `i18n-plugin` `build/webpack`
+
 ## v3.38.0 (2023-02-20)
 
 #### :bug: Bug Fix
