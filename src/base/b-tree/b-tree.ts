@@ -303,7 +303,7 @@ class bTree extends iData implements iActiveItems {
 	 */
 	@wait('ready')
 	fold(value?: unknown): Promise<boolean> {
-		if (value == null) {
+		if (arguments.length === 0) {
 			const
 				values: Array<Promise<boolean>> = [];
 
@@ -330,7 +330,7 @@ class bTree extends iData implements iActiveItems {
 		const
 			values: Array<Promise<boolean>> = [];
 
-		if (value == null) {
+		if (arguments.length === 0) {
 			for (const [item] of this.traverse(this, {deep: false})) {
 				if (!this.hasChildren(item)) {
 					continue;
