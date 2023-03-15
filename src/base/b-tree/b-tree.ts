@@ -585,7 +585,7 @@ class bTree extends iData implements iActiveItems {
 			return null;
 		}
 
-		return ctx.$el?.querySelector(`.${this.provide.fullElName('node', 'id', id)}`) ?? null;
+		return ctx.$el?.querySelector(`[data-id="${id}"]`) ?? null;
 	}
 
 	/**
@@ -623,12 +623,12 @@ class bTree extends iData implements iActiveItems {
 		}
 
 		this.field.get<this['Items']>('items')?.forEach((item) => {
-			if (this.valueIndexes.has(item.value)) {
-				return;
-			}
-
 			const
 				{value} = item;
+
+			if (this.valueIndexes.has(value)) {
+				return;
+			}
 
 			const
 				id = this.valueIndexes.size;
@@ -646,7 +646,11 @@ class bTree extends iData implements iActiveItems {
 	 * @param [items]
 	 */
 	protected normalizeItems(items: this['Items'] = []): this['Items'] {
-		const that = this;
+		const
+			that = this;
+
+		let
+			i = -1;
 
 		items = Object.fastClone(items);
 		items.forEach((el) => normalize(el));
@@ -654,6 +658,12 @@ class bTree extends iData implements iActiveItems {
 		return items;
 
 		function normalize(item: bTree['Item'], parentValue?: unknown) {
+			i++;
+
+			if (item.value === undefined) {
+				item.value = i;
+			}
+
 			if (!('parentValue' in item)) {
 				item.parentValue = parentValue;
 
@@ -703,7 +713,7 @@ class bTree extends iData implements iActiveItems {
 		target = <Element>e.delegateTarget;
 
 		const
-			id = this.block?.getElMod(target, 'node', 'id');
+			id = target.getAttribute('data-id');
 
 		if (id != null) {
 			this.toggleActive(this.indexes[id]);

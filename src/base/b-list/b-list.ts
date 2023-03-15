@@ -405,7 +405,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 				{value, href} = item;
 
 			if (value === undefined) {
-				value = href;
+				value = href ?? i;
 			}
 
 			const needAutoHref =
@@ -421,17 +421,23 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 				}
 			}
 
-			item.classes = this.provide.hintClasses(item.hintPos)
-				.concat(item.classes ?? []);
+			const
+				classes = this.provide.hintClasses(item.hintPos).concat(item.classes ?? []),
+				attrs = {...item.attrs};
 
 			if (href === undefined) {
-				item.attrs = {
-					...item.attrs,
-					role: 'tab'
-				};
+				attrs.role = 'tab';
 			}
 
-			normalizedItems.push({...item, value, href});
+			normalizedItems.push({
+				...item,
+
+				attrs,
+				classes,
+
+				value,
+				href
+			});
 		}
 
 		return normalizedItems;
