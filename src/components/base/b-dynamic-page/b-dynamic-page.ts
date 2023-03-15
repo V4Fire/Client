@@ -502,9 +502,12 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
+		this.async.clearAll({group: /asyncComponents/});
+
 		if (this.onPageChange == null) {
-			const
-				label = {label: $$.syncPageWatcher};
+			const label = {
+				label: $$.syncPageWatcher
+			};
 
 			this.watch('onPageChange', {...label, immediate: true}, () => {
 				if (this.onPageChange == null) {
