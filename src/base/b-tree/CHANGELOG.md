@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Added automatic `item.value` generation
+* Fixed overloads for `fold`/`unfold` methods
+
 ## v3.41.0 (2023-03-14)
 
 #### :boom: Breaking Change

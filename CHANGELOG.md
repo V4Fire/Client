@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Added automatic `item.value` generation `bTree` `bList`
+* Fixed overloads for `fold`/`unfold` methods `bTree`
+
 ## v3.42.1 (2023-03-14)
 
 #### :nail_care: Polish

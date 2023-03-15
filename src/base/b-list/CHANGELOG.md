@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Added automatic `item.value` generation
+
 ## v3.42.1 (2023-03-14)
 
 #### :nail_care: Polish
