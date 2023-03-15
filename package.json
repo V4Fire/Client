@@ -159,6 +159,7 @@
   },
   "peerDependencies": {
     "@v4fire/core": "^3.90.0",
-    "webpack": "^5.70.0"
+    "webpack": "^5.70.0",
+    "terser": "5.16.5"
   }
 }
