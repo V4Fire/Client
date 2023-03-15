@@ -321,14 +321,25 @@ exports.getLinkDecl = getLinkDecl;
  * ```
  */
 function getLinkDecl(link) {
-	const tag = link.tag || 'link';
+	const
+		tag = link.tag || 'link';
 
-	const attrs = normalizeAttrs({
-		href: link.src,
-		staticAttrs: link.staticAttrs,
-		...defAttrs,
-		...link.attrs
-	}, link.js);
+	let
+		attrs = normalizeAttrs({
+			href: link.src,
+			staticAttrs: link.staticAttrs,
+			...defAttrs,
+			...link.attrs
+		}, link.js);
+
+	if (link.source === 'external') {
+		attrs = normalizeAttrs({
+			href: link.src,
+			staticAttrs: link.staticAttrs,
+			...link.attrs,
+			...defInlineAttrs
+		}, link.js);
+	}
 
 	if (link.js) {
 		return `

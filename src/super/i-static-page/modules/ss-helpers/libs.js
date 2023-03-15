@@ -112,7 +112,9 @@ async function loadLinks(libs, {assets, js, wrap} = {}) {
 	}
 
 	for (const lib of await initLibs(libs, assets)) {
-		lib.js = js;
+		if (lib.source !== 'external') {
+			lib.js = js;
+		}
 
 		decl += await getLinkDecl(lib);
 		decl += '\n';
