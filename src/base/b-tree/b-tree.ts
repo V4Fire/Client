@@ -611,10 +611,15 @@ class bTree extends iData implements iActiveItems {
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
+		const
+			that = this;
+
 		if (this.top == null) {
 			this.indexes = {};
 			this.valueIndexes = new Map();
 			this.valueItems = new Map();
+
+			traverse(this.field.get<this['Items']>('items'));
 
 		} else {
 			Object.defineProperty(this, 'indexes', {
@@ -636,23 +641,29 @@ class bTree extends iData implements iActiveItems {
 			});
 		}
 
-		this.field.get<this['Items']>('items')?.forEach((item) => {
-			const
-				{value} = item;
+		function traverse(items?: Items) {
+			items?.forEach((item) => {
+				const
+					{value} = item;
 
-			if (this.valueIndexes.has(value)) {
-				return;
-			}
+				if (that.valueIndexes.has(value)) {
+					return;
+				}
 
-			const
-				id = this.valueIndexes.size;
+				const
+					id = that.valueIndexes.size;
 
-			this.indexes[id] = value;
-			this.valueIndexes.set(value, id);
-			this.valueItems.set(value, item);
+				that.indexes[id] = value;
+				that.valueIndexes.set(value, id);
+				that.valueItems.set(value, item);
 
-			iActiveItems.initItem(this, item);
-		});
+				iActiveItems.initItem(that, item);
+
+				if (Object.isArray(item.children)) {
+					traverse(item.children);
+				}
+			});
+		}
 	}
 
 	/**
