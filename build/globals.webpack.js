@@ -33,7 +33,7 @@ module.exports = {
 	IS_PROD,
 
 	DEBUG: runtime.debug === true,
-	BUILD_MODE: s(build.mode),
+	BUILD_MODE: s(build.mode()),
 
 	PUBLIC_PATH: s(webpack.publicPath()),
 	CSP_NONCE_STORE: s(csp.nonceStore()),
