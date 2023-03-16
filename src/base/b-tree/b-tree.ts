@@ -595,14 +595,14 @@ class bTree extends iData implements iActiveItems {
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	@watch({path: 'items', immediate: true})
+	@watch('items')
 	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-		if (!Object.fastCompare(items, oldItems)) {
-			this.initComponentValues();
+		const
+			ctx = this.top ?? this;
 
-			this.async.setImmediate(() => {
-				this.emit('itemsChange', items);
-			}, {label: $$.syncItemsWatcher});
+		if (!Object.fastCompare(items, oldItems)) {
+			ctx.initComponentValues();
+			this.emit('itemsChange', items);
 		}
 	}
 
@@ -617,9 +617,23 @@ class bTree extends iData implements iActiveItems {
 			this.valueItems = new Map();
 
 		} else {
-			this.indexes = this.top.indexes;
-			this.valueIndexes = this.top.valueIndexes;
-			this.valueItems = this.top.valueItems;
+			Object.defineProperty(this, 'indexes', {
+				enumerable: true,
+				configurable: true,
+				get: () => this.top?.indexes
+			});
+
+			Object.defineProperty(this, 'valueIndexes', {
+				enumerable: true,
+				configurable: true,
+				get: () => this.top?.valueIndexes
+			});
+
+			Object.defineProperty(this, 'valueItems', {
+				enumerable: true,
+				configurable: true,
+				get: () => this.top?.valueItems
+			});
 		}
 
 		this.field.get<this['Items']>('items')?.forEach((item) => {
@@ -668,6 +682,10 @@ class bTree extends iData implements iActiveItems {
 				item.parentValue = parentValue;
 
 				if (Object.isArray(item.children)) {
+					if (that.isActive(item.value)) {
+						item.folded = false;
+					}
+
 					for (const el of item.children) {
 						if (normalize(el, item.value)) {
 							item.folded = false;
