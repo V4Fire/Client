@@ -223,11 +223,13 @@ export default class bDynamicPage extends iDynamicPage {
 	 * The page rendering counter.
 	 * Updated every time the component template is updated.
 	 */
+	@system()
 	protected renderCounter: number = 0;
 
 	/**
 	 * Registered groups of asynchronous render tasks
 	 */
+	@system()
 	protected renderingGroups: Set<string> = new Set();
 
 	/**
