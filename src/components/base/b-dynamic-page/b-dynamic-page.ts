@@ -220,6 +220,17 @@ export default class bDynamicPage extends iDynamicPage {
 	protected onPageChange?: Function;
 
 	/**
+	 * The page rendering counter.
+	 * Updated every time the component template is updated.
+	 */
+	protected renderCounter: number = 0;
+
+	/**
+	 * Registered groups of asynchronous render tasks
+	 */
+	protected renderingGroups: Set<string> = new Set();
+
+	/**
 	 * Render loop iterator (used with `asyncRender`)
 	 */
 	protected get renderIterator(): CanPromise<number> {
@@ -252,6 +263,15 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	/**
+	 * Registers a new group for asynchronous rendering and returns it
+	 */
+	protected registerRenderingGroup(): string {
+		const group = `pageRendering-${this.renderCounter++}`;
+		this.renderingGroups.add(group);
+		return group;
+	}
+
+	/**
 	 * Render loop filter (used with `asyncRender`)
 	 */
 	protected renderFilter(): CanPromise<boolean> {
@@ -262,8 +282,13 @@ export default class bDynamicPage extends iDynamicPage {
 		const
 			{unsafe, route} = this;
 
-		return new SyncPromise((r) => {
-			this.onPageChange = onPageChange(r, this.route);
+		return new SyncPromise((resolve) => {
+			[...this.renderingGroups].slice(0, this.renderingGroups.size - 2).forEach((group) => {
+				this.async.clearAll({group: new RegExp(RegExp.escape(group))});
+				this.renderingGroups.delete(group);
+			});
+
+			this.onPageChange = onPageChange(resolve, this.route);
 		});
 
 		function onPageChange(
