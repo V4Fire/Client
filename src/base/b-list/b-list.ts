@@ -179,6 +179,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	}
 
 	/** @see [[iActiveItems.active] */
+	@computed({cache: false})
 	get active(): this['Active'] {
 		return iActiveItems.getActive(this);
 	}
@@ -373,6 +374,13 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		this.values = new Map();
 		this.indexes = {};
 
+		const
+			{active} = this;
+
+		let
+			hasActive = false,
+			activeItem;
+
 		for (let i = 0; i < this.items.length; i++) {
 			const
 				item = this.items[i],
@@ -381,7 +389,23 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 			this.values.set(val, i);
 			this.indexes[i] = val;
 
-			iActiveItems.initItem(this, item);
+			if (item.value === active) {
+				hasActive = true;
+			}
+
+			if (item.active) {
+				activeItem = item;
+			}
+		}
+
+		if (!hasActive) {
+			if (active != null) {
+				this.field.set('activeStore', undefined);
+			}
+
+			if (activeItem != null) {
+				iActiveItems.initItem(this, activeItem);
+			}
 		}
 	}
 
@@ -392,7 +416,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		const
 			normalizedItems = <this['Items']>[];
-
+debugger
 		if (items == null) {
 			return normalizedItems;
 		}
@@ -469,7 +493,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	@watch({path: 'itemsStore'})
+	@watch({path: 'items'})
 	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues();

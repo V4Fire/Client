@@ -595,13 +595,10 @@ class bTree extends iData implements iActiveItems {
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	@watch('items')
+	@watch({path: 'items', immediate: true})
 	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
-		const
-			ctx = this.top ?? this;
-
 		if (!Object.fastCompare(items, oldItems)) {
-			ctx.initComponentValues();
+			this.initComponentValues();
 			this.emit('itemsChange', items);
 		}
 	}
@@ -612,7 +609,12 @@ class bTree extends iData implements iActiveItems {
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
 		const
-			that = this;
+			that = this,
+			{active} = this;
+
+		let
+			hasActive = false,
+			activeItem;
 
 		if (this.top == null) {
 			this.indexes = {};
@@ -620,6 +622,17 @@ class bTree extends iData implements iActiveItems {
 			this.valueItems = new Map();
 
 			traverse(this.field.get<this['Items']>('items'));
+
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (!hasActive) {
+				if (active != null) {
+					this.field.set('activeStore', undefined);
+				}
+
+				if (activeItem != null) {
+					iActiveItems.initItem(this, activeItem);
+				}
+			}
 
 		} else {
 			Object.defineProperty(this, 'indexes', {
@@ -657,7 +670,13 @@ class bTree extends iData implements iActiveItems {
 				that.valueIndexes.set(value, id);
 				that.valueItems.set(value, item);
 
-				iActiveItems.initItem(that, item);
+				if (item.value === active) {
+					hasActive = true;
+				}
+
+				if (item.active) {
+					activeItem = item;
+				}
 
 				if (Object.isArray(item.children)) {
 					traverse(item.children);
