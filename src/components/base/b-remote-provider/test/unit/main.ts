@@ -8,9 +8,11 @@
 
 import type { BrowserContext, JSHandle, Page } from 'playwright';
 import type bRemoteProvider from 'components/base/b-remote-provider/b-remote-provider';
+import type * as Provider from 'components/friends/data-provider';
 
 import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
+import Utils from 'tests/helpers/utils';
 
 test.describe('<b-remote-provider>', () => {
 	test.beforeEach(({demoPage}) => demoPage.goto());
@@ -32,12 +34,14 @@ test.describe('<b-remote-provider>', () => {
 
 		const attrs = await provider!.evaluate((ctx) => [
 			ctx.id,
-			ctx.dataset.val
+			ctx.dataset.val,
+			ctx.tagName
 		]);
 
-		test.expect(attrs).toEqual([id, dataVal]);
+		test.expect(attrs).toEqual([id, dataVal, 'DIV']);
 	});
 
+	// todo move to another file
 	test.describe('should emit events and recieve proper data', () => {
 		const
 			body = {data: 21};
@@ -45,6 +49,15 @@ test.describe('<b-remote-provider>', () => {
 		let provider: JSHandle<bRemoteProvider>;
 
 		test.beforeEach(async ({page, context}) => {
+			const api = await Utils.import<typeof Provider>(page, 'components/friends/data-provider');
+
+			await api.evaluate(({default: dataProvider, deleteData, ...restCtx}) => {
+				dataProvider.addToPrototype({
+					delete: deleteData,
+					...restCtx
+				});
+			});
+
 			await mockAPI(context, body);
 
 			provider = await renderProvider(page, {
@@ -62,20 +75,17 @@ test.describe('<b-remote-provider>', () => {
 		});
 
 		test('addData: new data has been added', async () => {
-			const
-				newData = {foo: 'bar'};
+			const response = await provider.evaluate((ctx) => new Promise((resolve) => {
+				ctx.once('addData', (_, val) => resolve(JSON.parse(val)));
+				ctx.dataProvider?.add();
+			}));
 
-			const response = await provider.evaluate((ctx, newData) => new Promise((resolve) => {
-				ctx.once('addData', (_, val) => resolve(val));
-				ctx.dataProvider?.add(newData);
-			}), newData);
-
-			test.expect(response).toEqual(newData);
+			test.expect(response).toEqual(body);
 		});
 
 		test('updateData: the data has been updaded', async () => {
 			const response = await provider.evaluate((ctx) => new Promise((resolve) => {
-				ctx.once('updateData', (_, val) => resolve(val));
+				ctx.once('updateData', (_, val) => resolve(JSON.parse(val)));
 				ctx.dataProvider?.update();
 			}));
 
@@ -132,8 +142,15 @@ test.describe('<b-remote-provider>', () => {
 	 * @param attrs
 	 */
 	async function renderProvider(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bRemoteProvider>> {
+		const log = (...args) => console.log(...args);
+
 		return Component.createComponent(page, 'b-remote-provider', {
-			attrs
+			attrs: {
+				'@addData': log,
+				'@updateData': log,
+				'@deleteData': log,
+				...attrs
+			}
 		});
 	}
 
