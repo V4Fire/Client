@@ -27,7 +27,7 @@ import iWidth from 'traits/i-width/i-width';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iActiveItems, { Active } from 'traits/i-active-items/i-active-items';
 
-import iData, { component, prop, field, system, computed, watch, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, computed, watch, hook, ModsDecl } from 'super/i-data/i-data';
 import type { Item, Items } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
@@ -369,6 +369,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	/**
 	 * Initializes component values
 	 */
+	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		this.values = new Map();
 		this.indexes = {};

@@ -32,6 +32,7 @@ import iData, {
 	system,
 	computed,
 
+	hook,
 	wait,
 	watch,
 
@@ -605,6 +606,7 @@ class bTree extends iData implements iActiveItems {
 	/**
 	 * Initializes component values
 	 */
+	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		const
 			that = this,
