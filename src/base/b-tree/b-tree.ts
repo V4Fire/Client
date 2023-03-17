@@ -32,7 +32,6 @@ import iData, {
 	system,
 	computed,
 
-	hook,
 	wait,
 	watch,
 
@@ -596,9 +595,9 @@ class bTree extends iData implements iActiveItems {
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
 	@watch({path: 'items', immediate: true})
-	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
-			this.initComponentValues();
+			this.initComponentValues(oldItems != null);
 			this.emit('itemsChange', items);
 		}
 	}
@@ -606,8 +605,7 @@ class bTree extends iData implements iActiveItems {
 	/**
 	 * Initializes component values
 	 */
-	@hook('beforeDataCreate')
-	protected initComponentValues(): void {
+	protected initComponentValues(itemsChanged: boolean = false): void {
 		const
 			that = this,
 			{active} = this;
@@ -625,7 +623,7 @@ class bTree extends iData implements iActiveItems {
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (!hasActive) {
-				if (active != null) {
+				if (itemsChanged && active != null) {
 					this.field.set('activeStore', undefined);
 				}
 

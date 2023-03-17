@@ -27,7 +27,7 @@ import iWidth from 'traits/i-width/i-width';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iActiveItems, { Active } from 'traits/i-active-items/i-active-items';
 
-import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, computed, watch, ModsDecl } from 'super/i-data/i-data';
 import type { Item, Items } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
@@ -369,8 +369,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	/**
 	 * Initializes component values
 	 */
-	@hook('beforeDataCreate')
-	protected initComponentValues(): void {
+	protected initComponentValues(itemsChanged: boolean = false): void {
 		this.values = new Map();
 		this.indexes = {};
 
@@ -399,7 +398,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		}
 
 		if (!hasActive) {
-			if (active != null) {
+			if (itemsChanged && active != null) {
 				this.field.set('activeStore', undefined);
 			}
 
@@ -416,7 +415,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		const
 			normalizedItems = <this['Items']>[];
-debugger
+
 		if (items == null) {
 			return normalizedItems;
 		}
@@ -493,10 +492,10 @@ debugger
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	@watch({path: 'items'})
-	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+	@watch({path: 'itemsStore', immediate: true})
+	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
-			this.initComponentValues();
+			this.initComponentValues(oldItems != null);
 			this.emit('itemsChange', items);
 		}
 	}
