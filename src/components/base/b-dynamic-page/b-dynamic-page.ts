@@ -285,7 +285,7 @@ export default class bDynamicPage extends iDynamicPage {
 			{unsafe, route} = this;
 
 		return new SyncPromise((resolve) => {
-			[...this.renderingGroups].slice(0, this.renderingGroups.size - 2).forEach((group) => {
+			[...this.renderingGroups].slice(0, -2).forEach((group) => {
 				this.async.clearAll({group: new RegExp(RegExp.escape(group))});
 				this.renderingGroups.delete(group);
 			});
