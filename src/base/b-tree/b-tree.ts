@@ -465,7 +465,7 @@ class bTree extends iData implements iActiveItems {
 
 			previousNodes.forEach((previousNode) => {
 				if (!this.isActive(this.valueItems.get(previousNode.getAttribute('data-id')))) {
-					$b.setElMod(previousNode, 'link', 'active', false);
+					$b.setElMod(previousNode, 'node', 'active', false);
 
 					if (previousNode.hasAttribute('aria-selected')) {
 						previousNode.setAttribute('aria-selected', 'false');

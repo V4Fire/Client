@@ -164,7 +164,7 @@ module.exports = (page) => {
 
 				const
 					el1 = await page.locator('[data-id="2"]'),
-					el2 = await page.locator('[data-id="4"]');
+					el2 = await page.locator('[data-id="3"]');
 
 				expect([
 					(await el1.getAttribute('class')).includes('folded_false'),
@@ -180,7 +180,7 @@ module.exports = (page) => {
 
 				const
 					el1 = await page.locator('[data-id="2"]'),
-					el2 = await page.locator('[data-id="4"]');
+					el2 = await page.locator('[data-id="3"]');
 
 				expect([
 					(await el1.getAttribute('class')).includes('folded_false'),
