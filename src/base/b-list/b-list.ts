@@ -368,6 +368,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	/**
 	 * Initializes component values
+	 * @param itemsChanged - true, if the method is invoked after items changed
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
