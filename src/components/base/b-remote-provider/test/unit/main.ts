@@ -39,7 +39,7 @@ test.describe('<b-remote-provider>', () => {
 		test.expect(attrs).toEqual([id, dataVal, 'DIV']);
 	});
 
-	test('stores loaded data to the `db` field of the parent component', async ({page, context}) => {
+	test('stores loaded data to the specified field of the parent component', async ({page, context}) => {
 		const
 			data = {foo: 'bar'},
 			field = 'foo-bar-baz';
@@ -51,9 +51,10 @@ test.describe('<b-remote-provider>', () => {
 			field
 		});
 
-		const val = await provider.evaluate((ctx, field) => ctx.$parent?.field.get(field), field);
+		const
+			str = await provider.evaluate((ctx, fieldName) => ctx.$parent?.field.get<string>(fieldName), field),
+			val = JSON.parse(str ?? 'null');
 
-		test.expect(val).toBeDefined();
-		test.expect(JSON.parse(val!)).toEqual(data);
+		test.expect(val).toEqual(data);
 	});
 });

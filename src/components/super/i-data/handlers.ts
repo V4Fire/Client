@@ -47,14 +47,12 @@ export default abstract class iDataHandlers extends iDataData {
 			}
 		}, group);
 
-		// update
 		$e.on('upd', async (data) => {
 			if (dataProvider.getDefaultRequestParams('get')) {
 				this.onUpdateData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
-		// delete
 		$e.on('del', async (data) => {
 			if (dataProvider.getDefaultRequestParams('get')) {
 				this.onDeleteData(await (Object.isFunction(data) ? data() : data));

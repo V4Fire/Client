@@ -22,16 +22,18 @@ test.describe('b-remote-provider: should emit events and recieve proper data', (
 	const
 		body = {data: 21};
 
-	let provider: JSHandle<bRemoteProvider>;
+	let
+		provider: JSHandle<bRemoteProvider>;
 
 	test.beforeEach(async ({demoPage, page, context}) => {
 		await demoPage.goto();
 
-		[provider] = await Promise.all([
-			renderProviderComponent(page),
+		await Promise.all([
 			setupBaseDataProviderAPI(page),
 			mockAPIResponse(context, body)
 		]);
+
+		provider = await renderProviderComponent(page);
 	});
 
 	test('initially loads data and emits `change` event', async () => {
@@ -75,7 +77,7 @@ test.describe('b-remote-provider: should emit events and recieve proper data', (
 
 	test('catches request error and emits `error` event', async ({context}) => {
 		const
-			errorData = {foo: 'bar'};
+			errorData = {error: 'foo'};
 
 		await mockAPIResponse(context, errorData, StatusCodes.INTERNAL_SERVER_ERROR);
 

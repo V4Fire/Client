@@ -30,16 +30,16 @@ export function renderProvider(page: Page, attrs: Dictionary = {}): Promise<JSHa
  * Intercepts any request to the /api and responds with the mock data
  *
  * @param context - playwright's context
- * @param val - body of the response (it will be converted to string using `JSON.stringify`)
+ * @param body - body of the response (it will be converted to string using `JSON.stringify`)
  * @param status - status of the response
  */
 export function mockAPIResponse(
 	context: BrowserContext,
-	val: any,
+	body: any,
 	status: StatusCodes = StatusCodes.OK
 ): Promise<void> {
 	return context.route('/api', (route) => route.fulfill({
 		status,
-		body: JSON.stringify(val)
+		body: JSON.stringify(body)
 	}));
 }
