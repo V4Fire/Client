@@ -209,7 +209,7 @@ test.describe('<b-checkbox>', () => {
 
 	/**
 	 * @param page
-	 * @param attrs
+	 * @param [attrs]
 	 */
 	async function renderCheckbox(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bCheckbox>> {
 		return Component.createComponent(page, 'b-checkbox', {

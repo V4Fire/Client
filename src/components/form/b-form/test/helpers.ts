@@ -141,7 +141,7 @@ export function interceptFormRequest(page: Page): Promise<void> {
 			req = r.request(),
 			path = new URL(req.url()).pathname;
 
-			if (req.method() === 'POST') {
+		if (req.method() === 'POST') {
 			return r.fulfill({
 				contentType: 'application/json',
 				status: 200,
