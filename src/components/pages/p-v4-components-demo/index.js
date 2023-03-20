@@ -19,6 +19,7 @@ package('p-v4-components-demo')
 		'b-tree',
 		'b-window',
 
+		'b-slider',
 		'b-form',
 		'b-button',
 		'b-icon-button',

@@ -1,5 +1,5 @@
 {
-  "hash": "839845975ad64e447d7b78643e02ee6922aa511734c5dbcb6ec3ca7fd598a00c",
+  "hash": "6f387866879352e875bf4d6be11036237aaccee39927935db73400172ccc3986",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1880,6 +1880,7 @@
               "b-list",
               "b-tree",
               "b-window",
+              "b-slider",
               "b-form",
               "b-button",
               "b-icon-button",
@@ -1905,6 +1906,7 @@
             "b-list",
             "b-tree",
             "b-window",
+            "b-slider",
             "b-form",
             "b-button",
             "b-icon-button",
