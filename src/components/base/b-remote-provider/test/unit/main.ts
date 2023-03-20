@@ -6,9 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import test from 'tests/config/unit/test';
+import type { JSHandle, Page } from 'playwright';
 
-import { renderProvider, mockAPIResponse } from 'components/base/b-remote-provider/test/helpers';
+import test from 'tests/config/unit/test';
+import Component from 'tests/helpers/component';
+
+import type bRemoteProvider from 'components/base/b-remote-provider/b-remote-provider';
+import { mockAPI } from 'components/base/b-remote-provider/test/helpers';
 
 test.describe('<b-remote-provider>', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -39,12 +43,12 @@ test.describe('<b-remote-provider>', () => {
 		test.expect(attrs).toEqual([id, dataVal, 'DIV']);
 	});
 
-	test('stores loaded data to the specified field of the parent component', async ({page, context}) => {
+	test('should store loaded data to the specified field of the parent component', async ({page, context}) => {
 		const
 			data = {foo: 'bar'},
 			field = 'foo-bar-baz';
 
-		await mockAPIResponse(context, data);
+		await mockAPI(context, data);
 
 		const provider = await renderProvider(page, {
 			dataProvider: 'Provider',
@@ -57,4 +61,14 @@ test.describe('<b-remote-provider>', () => {
 
 		test.expect(val).toEqual(data);
 	});
+
+	/**
+	 * @param page
+	 * @param [attrs]
+	 */
+	function renderProvider(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bRemoteProvider>> {
+		return Component.createComponent(page, 'b-remote-provider', {
+			attrs
+		});
+	}
 });

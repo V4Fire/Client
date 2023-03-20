@@ -8,17 +8,17 @@
 
 import type { Page, JSHandle } from 'playwright';
 
-import { StatusCodes } from '@v4fire/core/src/core/status-codes';
-
-import type bRemoteProvider from 'components/base/b-remote-provider/b-remote-provider';
+import { StatusCodes } from 'core/status-codes';
 import type * as Provider from 'components/friends/data-provider';
 
 import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
+import Component from 'tests/helpers/component';
 
-import { renderProvider, mockAPIResponse } from 'components/base/b-remote-provider/test/helpers';
+import type bRemoteProvider from 'components/base/b-remote-provider/b-remote-provider';
+import { mockAPI } from 'components/base/b-remote-provider/test/helpers';
 
-test.describe('b-remote-provider: should emit events and recieve proper data', () => {
+test.describe('<b-remote-provider> standard component events', () => {
 	const
 		body = {data: 21};
 
@@ -27,72 +27,8 @@ test.describe('b-remote-provider: should emit events and recieve proper data', (
 
 	test.beforeEach(async ({demoPage, page, context}) => {
 		await demoPage.goto();
+		await mockAPI(context, body);
 
-		await Promise.all([
-			setupBaseDataProviderAPI(page),
-			mockAPIResponse(context, body)
-		]);
-
-		provider = await renderProviderComponent(page);
-	});
-
-	test('initially loads data and emits `change` event', async () => {
-		const response = await provider.evaluate((ctx) => new Promise((resolve) => {
-			ctx.once('change', (_, val) => resolve(JSON.parse(val)));
-			void ctx.reload();
-		}));
-
-		test.expect(response).toEqual(body);
-	});
-
-	test('adds new data to the already existed one and emits `addData` event', async () => {
-		const response = await provider.evaluate((ctx) => new Promise((resolve) => {
-			ctx.once('addData', (_, val) => resolve(JSON.parse(val)));
-			ctx.dataProvider?.add();
-		}));
-
-		test.expect(response).toEqual(body);
-	});
-
-	test('notifies about data update and emits `updateData` event', async () => {
-		const response = await provider.evaluate((ctx) => new Promise((resolve) => {
-			ctx.once('updateData', (_, val) => resolve(JSON.parse(val)));
-			ctx.dataProvider?.update();
-		}));
-
-		test.expect(response).toEqual(body);
-	});
-
-	test('notifies about data deletion and emits `deleteData` event', async () => {
-		const
-			data = {deleted: true};
-
-		const response = await provider.evaluate((ctx, data) => new Promise((resolve) => {
-			ctx.once('deleteData', () => resolve(data));
-			ctx.dataProvider?.delete();
-		}), data);
-
-		test.expect(response).toEqual(data);
-	});
-
-	test('catches request error and emits `error` event', async ({context}) => {
-		const
-			errorData = {error: 'foo'};
-
-		await mockAPIResponse(context, errorData, StatusCodes.INTERNAL_SERVER_ERROR);
-
-		const response = await provider.evaluate((ctx, errorData) => new Promise((resolve) => {
-			ctx.once('error', () => resolve(errorData));
-			void ctx.reload();
-		}), errorData);
-
-		test.expect(response).toEqual(errorData);
-	});
-
-	/**
-	 * @param page
-	 */
-	async function setupBaseDataProviderAPI(page: Page): Promise<void> {
 		const api = await Utils.import<typeof Provider>(page, 'components/friends/data-provider');
 
 		await api.evaluate(({default: dataProvider, deleteData, ...restCtx}) => {
@@ -101,19 +37,78 @@ test.describe('b-remote-provider: should emit events and recieve proper data', (
 				...restCtx
 			});
 		});
-	}
+
+		provider = await renderProvider(page);
+	});
+
+	test('initially loads data and emits `change` event', async () => {
+		const res = await provider.evaluate((ctx) => new Promise((resolve) => {
+			ctx.once('change', (_, val) => resolve(JSON.parse(val)));
+			void ctx.reload();
+		}));
+
+		test.expect(res).toEqual(body);
+	});
+
+	test('calling the `add` method on the provider should emit the `addData` event', async () => {
+		const res = await provider.evaluate((ctx) => new Promise((resolve) => {
+			ctx.once('addData', (_, val) => resolve(JSON.parse(val)));
+			ctx.dataProvider?.add();
+		}));
+
+		test.expect(res).toEqual(body);
+	});
+
+	test('calling the `update` method on the provider should emit the `updateData` event', async () => {
+		const res = await provider.evaluate((ctx) => new Promise((resolve) => {
+			ctx.once('updateData', (_, val) => resolve(JSON.parse(val)));
+			ctx.dataProvider?.update();
+		}));
+
+		test.expect(res).toEqual(body);
+	});
+
+	test('calling the `delete` method on the provider should emit the `deleteData` event', async () => {
+		const
+			data = {deleted: true};
+
+		const res = await provider.evaluate((ctx, data) => new Promise((resolve) => {
+			ctx.once('deleteData', () => resolve(data));
+			ctx.dataProvider?.delete();
+		}), data);
+
+		test.expect(res).toEqual(data);
+	});
+
+	test('should catch any request errors and emit `error` events', async ({context}) => {
+		const errorData = {error: 'foo'};
+		await mockAPI(context, errorData, StatusCodes.INTERNAL_SERVER_ERROR);
+
+		const res = await provider.evaluate((ctx, errorData) => new Promise((resolve) => {
+			ctx.once('error', () => resolve(errorData));
+			void ctx.reload();
+		}), errorData);
+
+		test.expect(res).toEqual(errorData);
+	});
 
 	/**
 	 * @param page
+	 * @param [attrs]
 	 */
-	async function renderProviderComponent(page: Page): Promise<JSHandle<bRemoteProvider>> {
-		const log = (...args: unknown[]) => console.log(...args);
-
-		return renderProvider(page, {
-			dataProvider: 'Provider',
-			'@addData': log,
-			'@updateData': log,
-			'@deleteData': log
+	function renderProvider(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bRemoteProvider>> {
+		return Component.createComponent(page, 'b-remote-provider', {
+			attrs: {
+				dataProvider: 'Provider',
+				'@addData': log,
+				'@updateData': log,
+				'@deleteData': log,
+				...attrs
+			}
 		});
+
+		function log(...args: unknown[]) {
+			console.log(...args);
+		}
 	}
 });
