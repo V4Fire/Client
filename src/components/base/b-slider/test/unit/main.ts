@@ -21,8 +21,10 @@ test.describe('<b-slider>', () => {
 			dataVal = 'bar';
 
 		await renderSlider(page, {
-			id,
-			'data-val': dataVal
+			attrs: {
+				id,
+				'data-val': dataVal
+			}
 		});
 
 		const
@@ -50,10 +52,12 @@ test.describe('<b-slider>', () => {
 			}));
 
 			const slider = await renderSlider(page, {
-				dataProvider: 'Provider',
-				item: 'b-checkbox',
-				itemProps: ({id}) => ({id}),
-				componentConverter: (val) => JSON.parse(val)
+				attrs: {
+					dataProvider: 'Provider',
+					item: 'b-checkbox',
+					itemProps: ({id}) => ({id}),
+					componentConverter: (val) => JSON.parse(val)
+				}
 			});
 
 			const {length, ids} = await slider.evaluate(({$children}) => ({
@@ -68,9 +72,11 @@ test.describe('<b-slider>', () => {
 		test('slides should recieve props from the specified object', async ({page}) => {
 			const name = 'foo';
 			const slider = await renderSlider(page, {
-				items,
-				item: 'b-checkbox',
-				itemProps: {name}
+				attrs: {
+					items,
+					item: 'b-checkbox',
+					itemProps: {name}
+				}
 			});
 
 			const {length, names} = await slider.evaluate(({$children}) => ({
@@ -84,9 +90,11 @@ test.describe('<b-slider>', () => {
 
 		test('slides should recieve props from the specified function', async ({page}) => {
 			const slider = await renderSlider(page, {
-				items,
-				item: 'b-checkbox',
-				itemProps: ({id}, i) => ({id: `${id}_${i}`})
+				attrs: {
+					items,
+					item: 'b-checkbox',
+					itemProps: ({id}, i) => ({id: `${id}_${i}`})
+				}
 			});
 
 			const {length, ids} = await slider.evaluate(({$children}) => ({

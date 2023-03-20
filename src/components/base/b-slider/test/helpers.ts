@@ -13,14 +13,12 @@ import type bSlider from 'components/base/b-slider/b-slider';
 import Component from 'tests/helpers/component';
 
 /**
- * Creates b-slider component with the provided attributes
+ * Creates b-slider component with the provided parameters
  *
  * @param page - playwright's isolated page
- * @param attrs - additional component's attributes
+ * @param params - additional vnode parameters
  */
-export function renderSlider(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bSlider>> {
-	return Component.createComponent(page, 'b-slider', {
-		attrs
-	});
+export function renderSlider(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
+	return Component.createComponent(page, 'b-slider', params);
 }
 
