@@ -8,7 +8,7 @@
 
 import type { Page, JSHandle } from 'playwright';
 
-import { StatusCodes } from '@v4fire/core/src/core/status-codes';
+import { StatusCodes } from 'core/status-codes';
 
 import type bRemoteProvider from 'components/base/b-remote-provider/b-remote-provider';
 import type * as Provider from 'components/friends/data-provider';
