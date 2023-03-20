@@ -259,7 +259,10 @@ export function createRequest<D = unknown>(
  * Returns the default query options for the specified data provider method
  * @param method
  */
-export function getDefaultRequestParams<T = unknown>(this: DataProvider, method: string): CanUndef<DefaultRequest<T>> {
+export function getDefaultRequestParams<T = unknown>(
+	this: DataProvider,
+	method: ModelMethod
+): CanUndef<DefaultRequest<T>> {
 	const
 		{field} = this;
 

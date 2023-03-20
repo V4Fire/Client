@@ -15,7 +15,7 @@ import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-d
 import type iBlock from 'components/super/i-block';
 import type iDataProvider from 'components/traits/i-data-provider/i-data-provider';
 
-import type { DataProviderProp, DataProviderOptions } from 'components/friends/data-provider/interface';
+import type { DataProviderProp, DataProviderOptions, DefaultRequest } from 'components/friends/data-provider/interface';
 
 interface DataProvider {
 	url(): CanUndef<string>;
@@ -30,11 +30,8 @@ interface DataProvider {
 	add<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
 	update<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
 	delete<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
-	getDefaultRequestParams<D = unknown>(
-		method: ModelMethod | Provider[ModelMethod],
-		body?: RequestQuery | RequestBody,
-		opts?: CreateRequestOptions<D>
-	): Promise<CanUndef<D>>;
+
+	getDefaultRequestParams<T = unknown>(method: ModelMethod): CanUndef<DefaultRequest<T>>;
 }
 
 @fakeMethods(
