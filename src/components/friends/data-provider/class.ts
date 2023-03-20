@@ -31,7 +31,7 @@ interface DataProvider {
 	update<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
 	delete<D = unknown>(body?: RequestBody, opts?: CreateRequestOptions<D>): Promise<CanUndef<D>>;
 
-	getDefaultRequestParams<T = unknown>(method: ModelMethod): CanUndef<DefaultRequest<T>>;
+	getDefaultRequestParams<T = unknown>(method: ModelMethod): CanNull<DefaultRequest<T>>;
 }
 
 @fakeMethods(

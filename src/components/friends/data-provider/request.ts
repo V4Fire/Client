@@ -262,7 +262,7 @@ export function createRequest<D = unknown>(
 export function getDefaultRequestParams<T = unknown>(
 	this: DataProvider,
 	method: ModelMethod
-): CanUndef<DefaultRequest<T>> {
+): CanNull<DefaultRequest<T>> {
 	const
 		{field} = this;
 
@@ -286,7 +286,7 @@ export function getDefaultRequestParams<T = unknown>(
 
 	if (Object.isPlainObject(res[0]) && Object.isPlainObject(customData)) {
 		res[0] = Object.mixin({
-			onlyNew: true,
+			propsToCopy: 'new',
 			filter: (el) => {
 				if (isGet) {
 					return el != null;
@@ -323,7 +323,7 @@ export function getDefaultRequestParams<T = unknown>(
 	}
 
 	if (needSkip) {
-		return;
+		return null;
 	}
 
 	return res;
