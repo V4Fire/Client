@@ -39,9 +39,10 @@ test.describe('b-slider: gestures', () => {
 	test('swipes right on the first slide: should swipe to the second slide', async () => {
 		test.expect(await current(slider)).toBe(0);
 
-		const {curr} = await slider.evaluate((ctx) => {
+		const curr = await slider.evaluate((ctx) => {
 			ctx.moveSlide(1);
-			return {curr: ctx.current};
+
+			return ctx.current;
 		});
 
 		test.expect(curr).toBe(1);
