@@ -178,8 +178,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Number of DOM nodes within a content block
 	 */
 	get contentLength(): number {
-		const l = this.content;
-		return l ? l.children.length : 0;
+		return this.content?.children.length ?? 0;
 	}
 
 	/**
@@ -221,7 +220,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			{slideRects, current, align, viewRect} = this,
 			slideRect = slideRects[current];
 
-		if (current >= slideRects.length || !viewRect) {
+		if (current >= slideRects.length || viewRect == null) {
 			return 0;
 		}
 
@@ -356,7 +355,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		const
 			{length, current, content} = this;
 
-		if (current === index || !content) {
+		if (current === index || content == null) {
 			return false;
 		}
 
@@ -388,7 +387,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			{length, content} = this;
 
 		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
-			if (!content) {
+			if (content == null) {
 				return false;
 			}
 
@@ -415,7 +414,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		const
 			{content} = this;
 
-		if (content) {
+		if (content != null) {
 			iObserveDOM.observe(this, {
 				node: content,
 				childList: true
@@ -494,7 +493,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		const
 			{view, content} = this.$refs;
 
-		if (!view || !content || !this.isSlideMode) {
+		if (view == null || content == null || !this.isSlideMode) {
 			return;
 		}
 
@@ -597,7 +596,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			{clientX, clientY} = touch,
 			{content} = this;
 
-		if (!content) {
+		if (content == null) {
 			return;
 		}
 
@@ -633,7 +632,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			this.isTolerancePassed ||
 			Math.abs(diffX) > this.swipeToleranceX && Math.abs(diffY) < this.swipeToleranceY;
 
-		if (!content || !isTolerancePassed) {
+		if (content == null || !isTolerancePassed) {
 			return;
 		}
 
@@ -678,7 +677,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		let
 			isSwiped = false;
 
-		if (!content || Object.size(slideRects) === 0 || !viewRect) {
+		if (content == null || Object.size(slideRects) === 0 || viewRect == null) {
 			return;
 		}
 

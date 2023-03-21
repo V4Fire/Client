@@ -21,4 +21,3 @@ import Component from 'tests/helpers/component';
 export function renderSlider(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
 	return Component.createComponent(page, 'b-slider', params);
 }
-
