@@ -14,15 +14,6 @@ import type bSlider from 'components/base/b-slider/b-slider';
 
 import { renderSlider } from 'components/base/b-slider/test/helpers';
 
-test.use({
-	isMobile: true,
-	hasTouch: true,
-	viewport: {
-		width: 375,
-		height: 667
-	}
-});
-
 test.describe('b-slider: emits correct events', () => {
 	let
 		slider: JSHandle<bSlider>;
@@ -81,23 +72,23 @@ test.describe('b-slider: emits correct events', () => {
 				const
 					slidesArea = ctx.$el?.querySelector('.b-slider__window');
 
-				slidesArea?.dispatchEvent(createEvent('touchstart', slideWidth / 2));
-				slidesArea?.dispatchEvent(createEvent('touchmove', slideWidth + 100));
-				slidesArea?.dispatchEvent(createEvent('touchend', slideWidth + 100));
-
-				function createEvent(event: string, clientX: number): TouchEvent {
-					return new TouchEvent(event, {
-						touches: [
-							new Touch({
-								identifier: Math.random(),
-								target: slidesArea!,
-								clientX,
-								clientY: slideHeight
-							})
-						]
-					});
-				}
+				slidesArea?.dispatchEvent(createEvent(slidesArea, 'touchstart', slideWidth / 2));
+				slidesArea?.dispatchEvent(createEvent(slidesArea, 'touchmove', slideWidth + 100));
+				slidesArea?.dispatchEvent(createEvent(slidesArea, 'touchend', slideWidth + 100));
 			});
+
+			function createEvent(target: EventTarget, event: string, clientX: number): TouchEvent {
+				return new TouchEvent(event, {
+					touches: [
+						new Touch({
+							identifier: Math.random(),
+							target,
+							clientX,
+							clientY: slideHeight
+						})
+					]
+				});
+			}
 		}
 	}
 });
