@@ -1,0 +1,82 @@
+[
+  {
+    "package": "@babel/generator",
+    "version": "7.21.1"
+  },
+  {
+    "package": "@babel/plugin-transform-destructuring",
+    "version": "7.20.7"
+  },
+  {
+    "package": "@babel/plugin-transform-parameters",
+    "version": "7.20.7"
+  },
+  {
+    "package": "@babel/traverse",
+    "version": "7.21.2"
+  },
+  {
+    "package": "@babel/plugin-transform-typescript",
+    "version": "7.21.0"
+  },
+  {
+    "package": "@babel/types",
+    "version": "7.21.2"
+  },
+  {
+    "package": "@babel/parser",
+    "version": "7.21.2"
+  },
+  {
+    "package": "@types/eslint",
+    "version": "8.21.1"
+  },
+  {
+    "package": "@types/node",
+    "version": "18.14.6"
+  },
+  {
+    "package": "ws",
+    "version": "8.12.1"
+  },
+  {
+    "package": "readable-stream",
+    "version": "3.6.1"
+  },
+  {
+    "package": "caniuse-lite",
+    "version": "1.0.30001462"
+  },
+  {
+    "package": "core-js-compat",
+    "version": "3.29.0"
+  },
+  {
+    "package": "es-abstract",
+    "version": "1.21.1"
+  },
+  {
+    "package": "electron-to-chromium",
+    "version": "1.4.322"
+  },
+  {
+    "package": "graceful-fs",
+    "version": "4.2.10"
+  },
+  {
+    "package": "@types/node",
+    "version": "14.18.37"
+  },
+  {
+    "package": "core-js",
+    "version": "3.29.0"
+  },
+  {
+    "package": "regexpu-core",
+    "version": "5.3.1"
+  },
+  {
+    "package": "spdx-license-ids",
+    "version": "3.0.12"
+  }
+]
