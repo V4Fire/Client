@@ -18,6 +18,7 @@ package('p-v4-components-demo')
 		'b-list',
 		'b-tree',
 		'b-window',
+		'b-scrolly',
 
 		'b-form',
 		'b-button',

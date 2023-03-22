@@ -1,5 +1,5 @@
 {
-  "hash": "616c42c562d59e36a0531ca09a0838c78ef5cfe70c388d0a0695753efd8a31da",
+  "hash": "119d10ed0c1fea13cd3496c4968c7537a00374ccb00828b1afacfb36380ae7ba",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -842,6 +842,38 @@
             "src/components/base/b-router/b-router.styl"
           ],
           "tpl": "src/components/base/b-router/b-router.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-scrolly",
+        {
+          "index": "src/components/base/b-scrolly/index.js",
+          "declaration": {
+            "name": "b-scrolly",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-scrolly",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-scrolly/b-scrolly.ts",
+          "styles": [
+            "src/components/base/b-scrolly/b-scrolly.styl"
+          ],
+          "tpl": "src/components/base/b-scrolly/b-scrolly.ss",
           "etpl": null
         }
       ],
@@ -1880,6 +1912,7 @@
               "b-list",
               "b-tree",
               "b-window",
+              "b-scrolly",
               "b-form",
               "b-button",
               "b-icon-button",
@@ -1904,6 +1937,7 @@
             "b-list",
             "b-tree",
             "b-window",
+            "b-scrolly",
             "b-form",
             "b-button",
             "b-icon-button",
