@@ -237,10 +237,11 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 
 			const
 				{pathParams = []} = resolvedRoute ?? {},
-				dynamicParametersNames = new Set(pathParams.map(({name}) => name));
+				dynamicParamsInPath = new Set(pathParams.map(({name}) => name));
 
 			const aliases = pathParams.reduce((map, {name, aliases}) => {
 				aliases.forEach((alias) => map.set(alias, name));
+
 				return map;
 			}, new Map());
 
@@ -249,15 +250,16 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 					continue;
 				}
 
-				if (dynamicParametersNames.has(key)) {
+				if (dynamicParamsInPath.has(key)) {
 					stringifiedParameters[key] = String(param);
 				} else if (aliases.has(key)) {
-					stringifiedParameters[aliases.get(key)] = String(param);
+					const dynamicParamInPath = aliases.get(key);
+					stringifiedParameters[dynamicParamInPath] = String(param);
 				}
 			}
 
 			if (externalRedirect) {
-				return path.compile(resolvedRoute!.meta.redirect ?? ref)(stringifiedParameters);
+				return path.compile(resolvedRoute?.meta.redirect ?? ref)(stringifiedParameters);
 			}
 
 			const
@@ -363,6 +365,8 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 		if (Object.isString(route)) {
 			const
 				pattern = concatURLs(basePath, route),
+
+				// The function mutates originalPathParams
 				rgxp = path(pattern, originalPathParams);
 
 			const pathParams: PathParam[] = originalPathParams.map((param) => ({
@@ -402,6 +406,8 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 			if (Object.isString(route.path)) {
 				pattern = concatURLs(basePath, route.path);
+
+				// The function mutates originalPathParams
 				rgxp = path(pattern, originalPathParams, <RegExpOptions>route.pathOpts);
 			}
 
