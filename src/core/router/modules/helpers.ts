@@ -27,7 +27,9 @@ import type {
 	TransitionOptions,
 
 	AdditionalGetRouteOpts,
-	CompileRoutesOpts
+	CompileRoutesOpts,
+
+	PathParam
 
 } from 'core/router/interface';
 
@@ -229,30 +231,39 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			return resolvedRoute!.name;
 		},
 
-		resolvePath(params?: Dictionary): string {
+		resolvePath(params: Dictionary = {}): string {
 			const
-				p = {};
+				stringifiedParameters = {};
 
-			if (params) {
-				for (let keys = Object.keys(params), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						el = params[key];
+			const
+				{pathParams = []} = resolvedRoute ?? {},
+				dynamicParametersNames = new Set(pathParams.map(({name}) => name));
 
-					if (el !== undefined) {
-						p[key] = String(el);
-					}
+			const aliases = pathParams.reduce((map, {name, aliases}) => {
+				aliases.forEach((alias) => map.set(alias, name));
+				return map;
+			}, new Map());
+
+			for (const [key, param] of Object.entries(params)) {
+				if (param == null) {
+					continue;
+				}
+
+				if (dynamicParametersNames.has(key)) {
+					stringifiedParameters[key] = String(param);
+				} else if (aliases.has(key)) {
+					stringifiedParameters[aliases.get(key)] = String(param);
 				}
 			}
 
 			if (externalRedirect) {
-				return path.compile(resolvedRoute!.meta.redirect ?? ref)(p);
+				return path.compile(resolvedRoute!.meta.redirect ?? ref)(stringifiedParameters);
 			}
 
 			const
 				pattern = Object.isFunction(resolvedRoute?.pattern) ? resolvedRoute?.pattern(routeAPI) : resolvedRoute?.pattern;
 
-			return path.compile(pattern ?? ref)(p);
+			return path.compile(pattern ?? ref)(stringifiedParameters);
 		},
 
 		toPath(params?: Dictionary): string {
@@ -347,21 +358,23 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 		const
 			name = keys[i],
 			route = routes[name] ?? {},
-			pathParams = [];
+			originalPathParams: Key[] = [];
 
 		if (Object.isString(route)) {
 			const
-				pattern = concatURLs(basePath, route);
+				pattern = concatURLs(basePath, route),
+				rgxp = path(pattern, originalPathParams);
+
+			const pathParams: PathParam[] = originalPathParams.map((param) => ({
+				...param,
+				aliases: []
+			}));
 
 			compiledRoutes[name] = {
 				name,
-
 				pattern,
-				rgxp: path(pattern, pathParams),
-
-				get pathParams(): Key[] {
-					return pathParams;
-				},
+				rgxp,
+				pathParams,
 
 				/** @deprecated */
 				get page(): string {
@@ -384,21 +397,24 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 		} else {
 			let
-				pattern;
+				pattern: CanUndef<string>,
+				rgxp: CanUndef<RegExp>;
 
 			if (Object.isString(route.path)) {
 				pattern = concatURLs(basePath, route.path);
+				rgxp = path(pattern, originalPathParams, <RegExpOptions>route.pathOpts);
 			}
+
+			const pathParams: PathParam[] = originalPathParams.map((param) => ({
+				...param,
+				aliases: route.pathOpts?.aliases?.[param.name] ?? []
+			}));
 
 			compiledRoutes[name] = {
 				name,
-
 				pattern,
-				rgxp: pattern != null ? path(pattern, pathParams, <RegExpOptions>route.pathOpts) : undefined,
-
-				get pathParams(): Key[] {
-					return pathParams;
-				},
+				rgxp,
+				pathParams,
 
 				/** @deprecated */
 				get page(): string {
@@ -417,7 +433,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 					default: Boolean(route.default ?? route.index ?? defaultRouteNames[name]),
 
 					external: route.external ?? (
-						isExternal.test(pattern) ||
+						isExternal.test(pattern ?? '') ||
 						isExternal.test(route.redirect ?? '')
 					),
 

@@ -48,7 +48,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	/**
 	 * Additional options to parse a path of the route
 	 */
-	pathOpts?: RegExpOptions & ParseOptions;
+	pathOpts?: PathOpts;
 
 	/**
 	 * If true, then the route can take "params" values from the "query" property
@@ -127,6 +127,39 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 		y?: number;
 	};
 };
+
+/**
+ * Decorated path options
+ */
+export interface PathOpts extends RegExpOptions, ParseOptions {
+	/**
+	 * Aliases for dynamic parameters in `path`.
+	 * @see [[StaticRouteMeta.path]]
+	 *
+	 * In the example below you can specify either `bar` itself as a parameter
+	 * or any of its aliases.
+	 *
+	 * Note that aliases will be used only if the original parameter is not specified.
+	 *
+	 * The priority of aliases specified by index in the array.
+	 *
+	 * @example
+	 * {
+	 *   path: '/foo/:bar',
+	 *   pathOpts: {
+	 *     aliases: {
+	 *       bar: ['_bar', 'Bar']
+	 *     }
+	 *   }
+	 * }
+	 *
+	 * this.router.push('/foo/:bar', {params: {bar: 1}}) // "/foo/1"
+	 * this.router.push('/foo/:bar', {params: {Bar: 2}}) // "/foo/2"
+	 * this.router.push('/foo/:bar', {params: {bar: 1, Bar: 2}}) // "/foo/1"
+	 * this.router.push('/foo/:bar', {params: {Bar: 1, _bar: 2}}) // "/foo/2"
+	 */
+	aliases?: Dictionary<string[]>;
+}
 
 /**
  * Static schema of application routes
@@ -331,12 +364,22 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	 * }
 	 * ```
 	 */
-	pathParams: Key[];
+	pathParams: PathParam[];
 
 	/**
 	 * Route meta information
 	 */
 	meta: RouteMeta<META>;
+}
+
+/**
+ * The object that will be passed to the route path
+ */
+export interface PathParam extends Key {
+	/**
+	 * @see [[StaticRouteMeta.pathOpts.aliases]]
+	 */
+	aliases: string[];
 }
 
 export type RouteBlueprints = Dictionary<RouteBlueprint>;
