@@ -153,10 +153,10 @@ export interface PathOpts extends RegExpOptions, ParseOptions {
 	 *   }
 	 * }
 	 *
-	 * this.router.push('/foo/:bar', {params: {bar: 1}}) // "/foo/1"
-	 * this.router.push('/foo/:bar', {params: {Bar: 2}}) // "/foo/2"
-	 * this.router.push('/foo/:bar', {params: {bar: 1, Bar: 2}}) // "/foo/1"
-	 * this.router.push('/foo/:bar', {params: {Bar: 1, _bar: 2}}) // "/foo/2"
+	 * this.router.push('/foo/:bar', {params: {bar: 'bar'}}) // "/foo/bar"
+	 * this.router.push('/foo/:bar', {params: {Bar: 'Bar'}}) // "/foo/Bar"
+	 * this.router.push('/foo/:bar', {params: {bar: 'bar', Bar: 'Bar'}}) // "/foo/bar"
+	 * this.router.push('/foo/:bar', {params: {Bar: 'Bar', _bar: '_bar'}}) // "/foo/_bar"
 	 */
 	aliases?: Dictionary<string[]>;
 }
@@ -358,8 +358,8 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	 * {
 	 *   path: '/:foo/:bar',
 	 *   pathParams: [
-	 *     {modifier: '', name: 'foo', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: ''},
-	 *     {modifier: '', name: 'bat', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: ''}
+	 *     {modifier: '', name: 'foo', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: '', aliases: []},
+	 *     {modifier: '', name: 'bat', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: '', aliases: []}
 	 *   ]
 	 * }
 	 * ```
@@ -373,7 +373,7 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 }
 
 /**
- * The object that will be passed to the route path
+ * Decorated object after parsing the path
  */
 export interface PathParam extends Key {
 	/**
