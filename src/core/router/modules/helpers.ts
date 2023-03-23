@@ -236,14 +236,14 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				stringifiedParameters = {};
 
 			const
-				{pathParams = []} = resolvedRoute ?? {},
-				dynamicParamsInPath = new Set(pathParams.map(({name}) => name));
+				dynamicParamsInPath = new Set<string | number>(),
+				aliases = new Map<string, string | number>();
 
-			const aliases = pathParams.reduce((map, {name, aliases}) => {
-				aliases.forEach((alias) => map.set(alias, name));
+			for (const param of resolvedRoute!.pathParams) {
+				dynamicParamsInPath.add(param.name);
 
-				return map;
-			}, new Map());
+				param.aliases.forEach((alias) => aliases.set(alias, param.name));
+			}
 
 			for (const [key, param] of Object.entries(params)) {
 				if (param == null) {
@@ -252,8 +252,10 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 
 				if (dynamicParamsInPath.has(key)) {
 					stringifiedParameters[key] = String(param);
+
 				} else if (aliases.has(key)) {
-					const dynamicParamInPath = aliases.get(key);
+					const dynamicParamInPath = aliases.get(key)!;
+
 					stringifiedParameters[dynamicParamInPath] = String(param);
 				}
 			}
