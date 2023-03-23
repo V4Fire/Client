@@ -12,7 +12,7 @@ import test from 'tests/config/unit/test';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
-import { renderSlider } from 'components/base/b-slider/test/helpers';
+import { renderSlider, current, lastIndex } from 'components/base/b-slider/test/helpers';
 
 test.use({
 	isMobile: true,
@@ -96,7 +96,7 @@ test.describe('b-slider: gestures', () => {
 				curr: number;
 
 			const
-				lastIdx = await slider.evaluate((ctx) => ctx.contentLength - 1);
+				lastIdx = await lastIndex(slider);
 
 			curr = await slider.evaluate(async (ctx, lastIdx) => {
 				await ctx.slideTo(lastIdx);
@@ -120,7 +120,7 @@ test.describe('b-slider: gestures', () => {
 				curr: number;
 
 			const
-				lastIdx = await slider.evaluate((ctx) => ctx.contentLength - 1);
+				lastIdx = await lastIndex(slider);
 
 			curr = await slider.evaluate(async (ctx, lastIdx) => {
 				await ctx.slideTo(lastIdx);
@@ -140,13 +140,6 @@ test.describe('b-slider: gestures', () => {
 		});
 
 	});
-
-	/**
-	 * @param slider
-	 */
-	function current(slider: JSHandle<bSlider>): Promise<number> {
-		return slider.evaluate((ctx) => ctx.current);
-	}
 
 	/**
 	 * @param page

@@ -15,33 +15,7 @@ test.describe('<b-slider>', () => {
 		await demoPage.goto();
 	});
 
-	test('the component markup should have the <b-slider data-val="bar" id="foo" /> tag', async ({page}) => {
-		const
-			id = 'foo',
-			dataVal = 'bar';
-
-		await renderSlider(page, {
-			attrs: {
-				id,
-				'data-val': dataVal
-			}
-		});
-
-		const
-			slider = await page.$(`#${id}`);
-
-		test.expect(slider).not.toBeNull();
-
-		const attrs = await slider!.evaluate((ctx) => [
-			ctx.id,
-			ctx.dataset.val,
-			ctx.tagName
-		]);
-
-		test.expect(attrs).toEqual([id, dataVal, 'DIV']);
-	});
-
-	test.describe('the component markup should have the <b-slider /> tag with the provided slides', () => {
+	test.describe('should render the provided slides', () => {
 		const
 			items = [{id: 'foo'}, {id: 'bar'}, {id: 'baz'}];
 

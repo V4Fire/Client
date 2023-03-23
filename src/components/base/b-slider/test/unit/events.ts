@@ -9,6 +9,9 @@
 import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
+import Gestures from 'tests/helpers/gestures';
+
+import type GesturesInterface from 'core/prelude/test-env/gestures';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
@@ -16,7 +19,8 @@ import { renderSlider } from 'components/base/b-slider/test/helpers';
 
 test.describe('b-slider: emits correct events', () => {
 	let
-		slider: JSHandle<bSlider>;
+		slider: JSHandle<bSlider>,
+		gestures: JSHandle<GesturesInterface>;
 
 	const
 		slideWidth = 300,
@@ -36,6 +40,14 @@ test.describe('b-slider: emits correct events', () => {
 		}));
 
 		slider = await renderSlider(page, {children});
+
+		const
+			selector = '.b-slider__window';
+
+		gestures = await Gestures.create(page, {
+			targetEl: selector,
+			dispatchEl: selector
+		});
 	});
 
 	test('should emit `change` event when a slide is swiped', async () => {
@@ -59,36 +71,12 @@ test.describe('b-slider: emits correct events', () => {
 	 * @param event
 	 */
 	async function testSwipeEvent(event: string): Promise<void> {
-		const params = {slideWidth, slideHeight, event};
+		const isEmitted = await slider.evaluate((ctx, {gestures, event}) => new Promise((resolve) => {
+			ctx.on(event, () => resolve(true));
 
-		const isEmitted = await slider.evaluate(evaluate, params);
+			void gestures.swipe(gestures.buildSteps(2, 150, 50, 150, 0), true);
+		}), {gestures, event});
 
 		test.expect(isEmitted).toBe(true);
-
-		function evaluate(ctx: bSlider, {slideWidth, slideHeight, event}: typeof params): Promise<boolean> {
-			return new Promise<boolean>((resolve) => {
-				ctx.once(event, () => resolve(true));
-
-				const
-					slidesArea = ctx.$el?.querySelector('.b-slider__window');
-
-				slidesArea?.dispatchEvent(createEvent(slidesArea, 'touchstart', slideWidth / 2));
-				slidesArea?.dispatchEvent(createEvent(slidesArea, 'touchmove', slideWidth + 100));
-				slidesArea?.dispatchEvent(createEvent(slidesArea, 'touchend', slideWidth + 100));
-			});
-
-			function createEvent(target: EventTarget, event: string, clientX: number): TouchEvent {
-				return new TouchEvent(event, {
-					touches: [
-						new Touch({
-							identifier: Math.random(),
-							target,
-							clientX,
-							clientY: slideHeight
-						})
-					]
-				});
-			}
-		}
 	}
 });

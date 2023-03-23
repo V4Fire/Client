@@ -21,3 +21,17 @@ import Component from 'tests/helpers/component';
 export function renderSlider(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
 	return Component.createComponent(page, 'b-slider', params);
 }
+
+/**
+ * @param slider
+ */
+export function current(slider: JSHandle<bSlider>): Promise<number> {
+	return slider.evaluate((ctx) => ctx.current);
+}
+
+/**
+ * @param slider
+ */
+export function lastIndex(slider: JSHandle<bSlider>): Promise<number> {
+	return slider.evaluate((ctx) => ctx.contentLength - 1);
+}
