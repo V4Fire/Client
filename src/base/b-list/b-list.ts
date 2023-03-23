@@ -27,7 +27,7 @@ import iWidth from 'traits/i-width/i-width';
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iActiveItems, { Active } from 'traits/i-active-items/i-active-items';
 
-import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'super/i-data/i-data';
+import iData, { component, prop, field, system, computed, watch, hook, ModsDecl } from 'super/i-data/i-data';
 import type { Item, Items } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
@@ -179,6 +179,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	}
 
 	/** @see [[iActiveItems.active] */
+	@computed({cache: false})
 	get active(): this['Active'] {
 		return iActiveItems.getActive(this);
 	}
@@ -367,11 +368,19 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	/**
 	 * Initializes component values
+	 * @param itemsChanged - true, if the method is invoked after items changed
 	 */
 	@hook('beforeDataCreate')
-	protected initComponentValues(): void {
+	protected initComponentValues(itemsChanged: boolean = false): void {
 		this.values = new Map();
 		this.indexes = {};
+
+		const
+			{active} = this;
+
+		let
+			hasActive = false,
+			activeItem;
 
 		for (let i = 0; i < this.items.length; i++) {
 			const
@@ -381,7 +390,23 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 			this.values.set(val, i);
 			this.indexes[i] = val;
 
-			iActiveItems.initItem(this, item);
+			if (item.value === active) {
+				hasActive = true;
+			}
+
+			if (item.active) {
+				activeItem = item;
+			}
+		}
+
+		if (!hasActive) {
+			if (itemsChanged && active != null) {
+				this.field.set('activeStore', undefined);
+			}
+
+			if (activeItem != null) {
+				iActiveItems.initItem(this, activeItem);
+			}
 		}
 	}
 
@@ -469,10 +494,10 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	@watch({path: 'itemsStore'})
-	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+	@watch({path: 'itemsStore', immediate: true})
+	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
-			this.initComponentValues();
+			this.initComponentValues(oldItems != null);
 			this.emit('itemsChange', items);
 		}
 	}
