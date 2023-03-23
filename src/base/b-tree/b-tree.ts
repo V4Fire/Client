@@ -599,7 +599,7 @@ class bTree extends iData implements iActiveItems {
 	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues(oldItems != null);
-			this.emit('itemsChange', items);
+			this.async.setImmediate(() => this.emit('itemsChange', items), {label: $$.syncItemsWatcher});
 		}
 	}
 
