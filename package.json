@@ -157,7 +157,7 @@
     "jasmine": "3.99.0",
     "nyc": "15.1.0",
     "playwright": "1.20.0",
-    "webpack": "5.70.0"
+    "webpack": "5.76.0"
   },
   "peerDependencies": {
     "@v4fire/core": "^3.90.0",
