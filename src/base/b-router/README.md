@@ -460,6 +460,41 @@ export default {
 
 Instead of `redirect`, `alias` will save the URL and name, but other options will be taken from the route we refer to.
 
+#### Creating an alias for dynamic parameters in path
+
+You can specify string aliases bound to the dynamic parameter in the path:
+
+```js
+{
+  path: '/foo/:bar',
+  pathOpts: {
+    aliases: {
+      bar: ['_bar', 'Bar']
+    }
+  }
+}
+```
+
+Then, when you want to make a transition you can specify either the original parameter (`bar` in the example) or any of its aliases:
+
+```js
+this.router.push('/foo/:bar', {bar: 'bar'}); // "/foo/bar"
+this.router.push('/foo/:bar', {Bar: 'Bar'}); // "/foo/Bar"
+this.router.push('/foo/:bar', {_bar: '_bar'}); // "/foo/_bar"
+```
+
+Note that aliases will be used only if the original parameter is not specified:
+
+```js
+this.router.push('/foo/:bar', {bar: 'original', Bar: 'alias'}); // "/foo/original"
+```
+
+The priority of aliases specified by index in the array:
+
+```js
+this.router.push('/foo/:bar', {Bar: 'Bar', _bar: '_bar'}); // "/foo/_bar"
+```
+
 #### External routes
 
 Usually, when we emit a new transition using the router methods, the transition isn't reloaded a browser because
