@@ -30,30 +30,63 @@ module.exports = (page) => {
 				root = await initRouter(page, 'historyApiRouterEngine');
 			});
 
-			it('transition to a route with the path interpolation', async () => {
-				expect(await root.evaluate(async (ctx) => {
-					const
-						{router} = ctx;
+			describe('transition to a route with the path interpolation', () => {
+				it('providing original paramters', async () => {
+					expect(await root.evaluate(async (ctx) => {
+						const
+							{router} = ctx;
 
-					const
-						result = {},
-						s = () => location.pathname + location.search;
+						const
+							result = {},
+							s = () => location.pathname + location.search;
 
-					await router.push('template', {params: {param1: 'foo'}});
-					result.path1 = s();
+						await router.push('template', {params: {param1: 'foo'}});
+						result.path1 = s();
 
-					await router.push('template', {params: {param1: 'foo'}, query: {param2: 109}});
-					result.path2 = s();
+						await router.push('template', {params: {param1: 'foo'}, query: {param2: 109}});
+						result.path2 = s();
 
-					await router.push('/strict-tpl/:param1', {params: {param1: 'foo'}, query: {param2: 109}});
-					result.path3 = s();
+						await router.push('/strict-tpl/:param1', {params: {param1: 'foo'}, query: {param2: 109}});
+						result.path3 = s();
 
-					return result;
+						return result;
 
-				})).toEqual({
-					path1: '/tpl/foo',
-					path2: '/tpl/foo/109',
-					path3: '/strict-tpl/foo?param2=109'
+					})).toEqual({
+						path1: '/tpl/foo',
+						path2: '/tpl/foo/109',
+						path3: '/strict-tpl/foo?param2=109'
+					});
+				});
+
+				it('providing aliases', async () => {
+					expect(await root.evaluate(async (ctx) => {
+						const
+							{router} = ctx;
+
+						const
+							result = {},
+							s = () => location.pathname + location.search;
+
+						await router.push('template', {params: {param1: 'foo'}});
+						result.path1 = s();
+
+						await router.push('template', {params: {Param1: 'foo'}});
+						result.path2 = s();
+
+						await router.push('template', {params: {Param1: 'bar', _param1: 'foo'}});
+						result.path3 = s();
+
+						await router.push('template', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}});
+						result.path4 = s();
+
+						return result;
+
+					})).toEqual({
+						path1: '/tpl/foo',
+						path2: '/tpl/foo',
+						path3: '/tpl/foo',
+						path4: '/tpl/foo/bar?Param1=bla'
+					});
 				});
 			});
 		});
