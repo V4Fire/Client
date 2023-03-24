@@ -41,9 +41,9 @@ test.describe('<b-slider> slots rendering', () => {
 		});
 
 		const
-			text = await slider.evaluate((ctx) => ctx.content?.firstElementChild?.id);
+			id = await slider.evaluate((ctx) => ctx.content?.firstElementChild?.id);
 
-		test.expect(text).toBe(slotId);
+		test.expect(id).toBe(slotId);
 	});
 
 	test('`beforeItems`: the slot for content before the first slide', async ({page}) => {
