@@ -478,21 +478,35 @@ You can specify string aliases bound to the dynamic parameter in the path:
 Then, when you want to make a transition you can specify either the original parameter (`bar` in the example) or any of its aliases:
 
 ```js
-this.router.push('/foo/:bar', {bar: 'bar'}); // "/foo/bar"
-this.router.push('/foo/:bar', {Bar: 'Bar'}); // "/foo/Bar"
-this.router.push('/foo/:bar', {_bar: '_bar'}); // "/foo/_bar"
+this.router.push('/foo/:bar', {params: {bar: 'bar'}}); // "/foo/bar"
+this.router.push('/foo/:bar', {params: {Bar: 'Bar'}}); // "/foo/Bar"
+this.router.push('/foo/:bar', {params: {_bar: '_bar'}}); // "/foo/_bar"
 ```
 
 Note that aliases will be used only if the original parameter is not specified:
 
 ```js
-this.router.push('/foo/:bar', {bar: 'original', Bar: 'alias'}); // "/foo/original"
+this.router.push('/foo/:bar', {params: {bar: 'original', Bar: 'alias'}}); // "/foo/original"
 ```
 
 The priority of aliases specified by index in the array:
 
 ```js
-this.router.push('/foo/:bar', {Bar: 'Bar', _bar: '_bar'}); // "/foo/_bar"
+this.router.push('/foo/:bar', {params: {Bar: 'Bar', _bar: '_bar'}}); // "/foo/_bar"
+```
+
+The `paramsFromQuery` option also works with aliases i.e you can specify aliases within the `query` object
+
+```ts
+this.router.push('/foo/:bar', {query: {_bar: 'bar'}}); // "/foo/bar"
+```
+
+Note that fields from the `query` will be used as aliases only if the `params` object does have any.
+That means if you specify an alias in `params` and in `query` at the same time the field from `query` will become the default `?alias=val` query and the field from
+`params` will be used as the alias
+
+```js
+this.router.push('/foo/:bar', {params: {_bar: 'bar'}, query: {Bar: 'query'}}); // "/foo/bar?Bar=query"
 ```
 
 #### External routes

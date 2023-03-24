@@ -55,14 +55,26 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 	}
 
 	if (meta.paramsFromQuery !== false && Object.isArray(route.pathParams)) {
-		for (let o = route.pathParams, i = 0; i < o.length; i++) {
-			const
-				param = o[i],
+		for (const param of route.pathParams) {
+			let
 				{name} = param;
 
-			if (params[name] === undefined) {
-				const
+			const
+				noAliasesInParams = param.aliases.every((alias) => !Object.hasOwn(params, alias));
+
+			if (!Object.hasOwn(params, name) && noAliasesInParams) {
+				let
 					queryVal = query[name];
+
+				if (queryVal === undefined) {
+					const
+						alias = param.aliases.find((alias) => Object.hasOwn(query, alias));
+
+					if (alias != null) {
+						name = alias;
+						queryVal = query[alias];
+					}
+				}
 
 				if (queryVal !== undefined && new RegExp(param.pattern).test(String(queryVal))) {
 					params[name] = queryVal;
@@ -70,6 +82,7 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 			}
 
 			delete query[name];
+			delete query[param.name];
 		}
 	}
 }
