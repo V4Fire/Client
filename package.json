@@ -36,7 +36,7 @@
     "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" npx playwright test --config tests/config/unit/index.ts",
     "test:linters": "npm run test:typescript && npm run test:eslint",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
-    "test:eslint": "eslint \"./config/**/*.js\" \"./build/**/*.js\" \"./build/**/*.ts\" \"./src/**/*.js\" \"./src/**/*.ts\"",
+    "test:eslint": "eslint \"./config/**/*.js\" \"./build/**/*.js\" \"./src/**/*.js\" \"./src/**/*.ts\"",
     "test:jasmine": "nyc --reporter=lcov --reporter=text npx jasmine",
     "test:circular-deps": "dpdm --exit-code circular:1 --circular -T --warning false --no-tree src/**/**/*.ts src/**/*.ts",
     "up": "npm i"
