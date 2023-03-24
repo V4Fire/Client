@@ -82,7 +82,6 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 			}
 
 			delete query[name];
-			delete query[param.name];
 		}
 	}
 }
