@@ -239,7 +239,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				dynamicParamsInPath = new Set<string | number>(),
 				aliases = new Map<string, string | number>();
 
-			for (const param of resolvedRoute!.pathParams) {
+			for (const param of resolvedRoute?.pathParams ?? []) {
 				dynamicParamsInPath.add(param.name);
 
 				param.aliases.forEach((alias) => aliases.set(alias, param.name));

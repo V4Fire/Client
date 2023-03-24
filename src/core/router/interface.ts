@@ -48,7 +48,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	/**
 	 * Additional options to parse a path of the route
 	 */
-	pathOpts?: PathOpts;
+	pathOpts?: PathOptions;
 
 	/**
 	 * If true, then the route can take "params" values from the "query" property
@@ -131,7 +131,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 /**
  * Decorated path options
  */
-export interface PathOpts extends RegExpOptions, ParseOptions {
+export interface PathOptions extends RegExpOptions, ParseOptions {
 	/**
 	 * Aliases for dynamic parameters in `path`.
 	 * @see [[StaticRouteMeta.path]]
