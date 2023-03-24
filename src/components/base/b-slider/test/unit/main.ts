@@ -6,9 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import test from 'tests/config/unit/test';
+import type { Page, JSHandle } from 'playwright';
 
-import { renderSlider } from 'components/base/b-slider/test/helpers';
+import test from 'tests/config/unit/test';
+import Component from 'tests/helpers/component';
+
+import type bSlider from 'components/base/b-slider/b-slider';
 
 test.describe('<b-slider>', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -25,7 +28,7 @@ test.describe('<b-slider>', () => {
 				body: JSON.stringify(items)
 			}));
 
-			const slider = await renderSlider(page, {
+			const slider = await render(page, {
 				attrs: {
 					dataProvider: 'Provider',
 					item: 'b-checkbox',
@@ -45,7 +48,7 @@ test.describe('<b-slider>', () => {
 
 		test('slides should recieve props from the specified object', async ({page}) => {
 			const name = 'foo';
-			const slider = await renderSlider(page, {
+			const slider = await render(page, {
 				attrs: {
 					items,
 					item: 'b-checkbox',
@@ -63,7 +66,7 @@ test.describe('<b-slider>', () => {
 		});
 
 		test('slides should recieve props from the specified function', async ({page}) => {
-			const slider = await renderSlider(page, {
+			const slider = await render(page, {
 				attrs: {
 					items,
 					item: 'b-checkbox',
@@ -80,5 +83,13 @@ test.describe('<b-slider>', () => {
 			test.expect(ids).toEqual(items.map(({id}, i) => `${id}_${i}`));
 		});
 	});
+
+	/**
+	 * @param page
+	 * @param params
+	 */
+	function render(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
+		return Component.createComponent<bSlider>(page, 'b-slider', params);
+	}
 });
 

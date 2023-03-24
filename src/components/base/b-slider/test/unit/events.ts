@@ -10,21 +10,17 @@ import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 import Gestures from 'tests/helpers/gestures';
+import Component from 'tests/helpers/component';
+import DOM from 'tests/helpers/dom';
 
 import type GesturesInterface from 'core/prelude/test-env/gestures';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
-import { renderSlider } from 'components/base/b-slider/test/helpers';
-
-test.describe('b-slider: emits correct events', () => {
+test.describe('<b-slider> emits correct events', () => {
 	let
 		slider: JSHandle<bSlider>,
 		gestures: JSHandle<GesturesInterface>;
-
-	const
-		slideWidth = 300,
-		slideHeight = 200;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
@@ -33,16 +29,16 @@ test.describe('b-slider: emits correct events', () => {
 			type: 'img',
 			attrs: {
 				id: `slide_${i}`,
-				src: `https://fakeimg.pl/${slideWidth}x${slideHeight}`,
-				width: slideWidth,
-				height: slideHeight
+				src: 'https://fakeimg.pl/$300x$200',
+				width: 300,
+				height: 200
 			}
 		}));
 
-		slider = await renderSlider(page, {children});
+		slider = await Component.createComponent<bSlider>(page, 'b-slider', {children});
 
 		const
-			selector = '.b-slider__window';
+			selector = DOM.elNameSelectorGenerator('b-slider', 'window');
 
 		gestures = await Gestures.create(page, {
 			targetEl: selector,

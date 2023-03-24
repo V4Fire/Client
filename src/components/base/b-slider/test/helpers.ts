@@ -6,31 +6,23 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle, Page } from 'playwright';
+import type { JSHandle } from 'playwright';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
-import Component from 'tests/helpers/component';
-
 /**
- * Creates b-slider component with the provided parameters
+ * @param slider - playwright's wrapper over the `bSlider`
  *
- * @param page - playwright's isolated page
- * @param params - additional vnode parameters
- */
-export function renderSlider(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
-	return Component.createComponent(page, 'b-slider', params);
-}
-
-/**
- * @param slider
+ * @returns index of the current active slide
  */
 export function current(slider: JSHandle<bSlider>): Promise<number> {
 	return slider.evaluate((ctx) => ctx.current);
 }
 
 /**
- * @param slider
+ * @param slider - playwright's wrapper over the `bSlider`
+ *
+ * @returns the last index of DOM nodes within the `content` block
  */
 export function lastIndex(slider: JSHandle<bSlider>): Promise<number> {
 	return slider.evaluate((ctx) => ctx.contentLength - 1);

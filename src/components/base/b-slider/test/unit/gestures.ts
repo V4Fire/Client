@@ -6,24 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle, Page } from 'playwright';
+import type { Page, JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
+import Component from 'tests/helpers/component';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
-import { renderSlider, current, lastIndex } from 'components/base/b-slider/test/helpers';
+import { current, lastIndex } from 'components/base/b-slider/test/helpers';
 
 test.use({
 	isMobile: true,
+	hasTouch: true,
 	viewport: {
 		width: 375,
 		height: 667
-	},
-	hasTouch: true
+	}
 });
 
-test.describe('b-slider: gestures', () => {
+test.describe('<b-slider> gestures', () => {
 	let
 		slider: JSHandle<bSlider>;
 
@@ -138,11 +139,11 @@ test.describe('b-slider: gestures', () => {
 
 			test.expect(curr).toBe(lastIdx);
 		});
-
 	});
 
 	/**
 	 * @param page
+	 * @param params
 	 */
 	function render(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
 		const children = items.map((i) => ({
@@ -155,7 +156,7 @@ test.describe('b-slider: gestures', () => {
 			}
 		}));
 
-		return renderSlider(page, {
+		return Component.createComponent<bSlider>(page, 'b-slider', {
 			children,
 			...params
 		});

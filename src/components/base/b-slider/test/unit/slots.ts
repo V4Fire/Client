@@ -6,56 +6,56 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page, JSHandle } from 'playwright';
+
 import test from 'tests/config/unit/test';
+import Component from 'tests/helpers/component';
+import Utils from 'tests/helpers/utils';
 
-import { renderSlider } from 'components/base/b-slider/test/helpers';
+import type * as Block from 'components/friends/block';
 
-test.describe('b-slider: slots rendering', () => {
-	test.beforeEach(async ({demoPage}) => {
+import type bSlider from 'components/base/b-slider/b-slider';
+
+test.describe('<b-slider> slots rendering', () => {
+	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
+
+		const api = await Utils.import<typeof Block>(page, 'components/friends/block');
+
+		await api.evaluate(({default: block, element}) => {
+			block.addToPrototype({element});
+		});
 	});
 
-	test('renders `default` slot: the slot for slides', async ({page}) => {
+	test('`default`: the slot for slides', async ({page}) => {
 		const
-			id = 'foo';
+			slotId = 'slot';
 
-		const slider = await renderSlider(page, {
+		const slider = await render(page, {
 			children: {
 				default: {
 					type: 'div',
-					attrs: {id},
-					children: {
-						default: () => 'content'
-					}
+					attrs: {id: slotId}
 				}
 			}
 		});
 
-		const node = await slider.evaluate((ctx, id) => {
-			const node = <Nullable<HTMLDivElement>>ctx.content?.querySelector(`#${id}`);
+		const
+			text = await slider.evaluate((ctx) => ctx.content?.firstElementChild?.id);
 
-			return {
-				tagName: node?.tagName,
-				id: node?.id,
-				textContent: node?.textContent
-			};
-		}, id);
-
-		test.expect(node.textContent).toBe('content');
-		test.expect(node.tagName).toBe('DIV');
-		test.expect(node.id).toBe(id);
+		test.expect(text).toBe(slotId);
 	});
 
-	test('renders `beforeItems` slot: the slot for content before the first slide', async ({page}) => {
+	test('`beforeItems`: the slot for content before the first slide', async ({page}) => {
 		const
 			slotId = 'slot',
 			slideId = 'slide';
 
-		const slider = await renderSlider(page, {
+		const slider = await render(page, {
 			attrs: {
-				items: [{id: slideId}],
-				item: 'b-checkbox',
-				itemProps: ({id}) => ({id})
+				items: [1],
+				item: 'section',
+				itemProps: {id: slideId}
 			},
 
 			children: {
@@ -66,27 +66,28 @@ test.describe('b-slider: slots rendering', () => {
 			}
 		});
 
-		const firstItemId = await slider.evaluate((ctx, slotId) => {
+		const ids = await slider.evaluate((ctx) => {
 			const
-				slotNode = <Nullable<HTMLDivElement>>ctx.content?.querySelector(`#${slotId}`),
-				blockHelper = slotNode?.nextElementSibling;
+				slot = ctx.content?.firstElementChild,
+				slide = slot?.nextElementSibling;
 
-			return blockHelper?.firstElementChild?.id;
-		}, slotId);
+			return {slotId: slot?.id, slideId: slide?.id};
+		});
 
-		test.expect(firstItemId).toBe(slideId);
+		test.expect(ids.slotId).toBe(slotId);
+		test.expect(ids.slideId).toBe(slideId);
 	});
 
-	test('renders `afterItems` slot: the slot for content after the last slide', async ({page}) => {
+	test('`afterItems`: the slot for content after the last slide', async ({page}) => {
 		const
 			slotId = 'slot',
 			slideId = 'slide';
 
-		const slider = await renderSlider(page, {
+		const slider = await render(page, {
 			attrs: {
-				items: [{id: slideId}],
-				item: 'b-checkbox',
-				itemProps: ({id}) => ({id})
+				items: [1],
+				item: 'section',
+				itemProps: {id: slideId}
 			},
 
 			children: {
@@ -97,22 +98,23 @@ test.describe('b-slider: slots rendering', () => {
 			}
 		});
 
-		const firstItemId = await slider.evaluate((ctx, slotId) => {
+		const ids = await slider.evaluate((ctx) => {
 			const
-				slotNode = <Nullable<HTMLDivElement>>ctx.content?.querySelector(`#${slotId}`),
-				blockHelper = slotNode?.previousElementSibling;
+				slot = ctx.content?.lastElementChild,
+				slide = slot?.previousElementSibling;
 
-			return blockHelper?.firstElementChild?.id;
-		}, slotId);
+			return {slotId: slot?.id, slideId: slide?.id};
+		});
 
-		test.expect(firstItemId).toBe(slideId);
+		test.expect(ids.slotId).toBe(slotId);
+		test.expect(ids.slideId).toBe(slideId);
 	});
 
-	test('renders `before` slot: the slot for content before the slider window (area with slides)', async ({page}) => {
+	test('`before`: the slot for content before the slider window (area with slides)', async ({page}) => {
 		const
 			slotId = 'slot';
 
-		const slider = await renderSlider(page, {
+		const slider = await render(page, {
 			children: {
 				before: {
 					type: 'div',
@@ -121,24 +123,21 @@ test.describe('b-slider: slots rendering', () => {
 			}
 		});
 
-		const {nextToSlotNode, sliderWindowNode} = await slider.evaluate((ctx, slotId) => {
+		const id = await slider.evaluate((ctx) => {
 			const
-				slotNode = <Nullable<HTMLDivElement>>ctx.$el?.querySelector(`#${slotId}`);
+				{block: $b} = ctx.unsafe;
 
-			return {
-				nextToSlotNode: slotNode?.nextElementSibling,
-				sliderWindowNode: ctx.$el?.querySelector('.b-slider__window')
-			};
-		}, slotId);
+			return $b?.element('window')?.previousElementSibling?.id;
+		});
 
-		test.expect(nextToSlotNode).toEqual(sliderWindowNode);
+		test.expect(id).toEqual(slotId);
 	});
 
-	test('renders `after` slot: the slot for content after the slider window (area with slides)', async ({page}) => {
+	test('`after`: the slot for content after the slider window (area with slides)', async ({page}) => {
 		const
 			slotId = 'slot';
 
-		const slider = await renderSlider(page, {
+		const slider = await render(page, {
 			children: {
 				after: {
 					type: 'div',
@@ -147,16 +146,21 @@ test.describe('b-slider: slots rendering', () => {
 			}
 		});
 
-		const {prevToSlotNode, sliderWindowNode} = await slider.evaluate((ctx, slotId) => {
+		const id = await slider.evaluate((ctx) => {
 			const
-				slotNode = <Nullable<HTMLDivElement>>ctx.$el?.querySelector(`#${slotId}`);
+				{block: $b} = ctx.unsafe;
 
-			return {
-				prevToSlotNode: slotNode?.previousElementSibling,
-				sliderWindowNode: ctx.$el?.querySelector('.b-slider__window')
-			};
-		}, slotId);
+			return $b?.element('window')?.nextElementSibling?.id;
+		});
 
-		test.expect(prevToSlotNode).toEqual(sliderWindowNode);
+		test.expect(id).toEqual(slotId);
 	});
+
+	/**
+	 * @param page
+	 * @param params
+	 */
+	function render(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
+		return Component.createComponent<bSlider>(page, 'b-slider', params);
+	}
 });
