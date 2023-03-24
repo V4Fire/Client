@@ -34,7 +34,7 @@ test.describe('<b-slider> gestures', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		slider = await render(page);
+		slider = await renderSlider(page);
 	});
 
 	test('swipes right on the first slide: should swipe to the second slide', async () => {
@@ -51,7 +51,7 @@ test.describe('<b-slider> gestures', () => {
 
 	test.describe('swipes left on the first slide', () => {
 		test('with the `circular` prop set to `true`: should swipe to the last slide', async ({page}) => {
-			const slider = await render(page, {
+			const slider = await renderSlider(page, {
 				attrs: {
 					circular: true
 				}
@@ -87,7 +87,7 @@ test.describe('<b-slider> gestures', () => {
 
 	test.describe('swipes right on the last slide', () => {
 		test('with the `circular` prop set to `true`: should swipe to the first slide', async ({page}) => {
-			const slider = await render(page, {
+			const slider = await renderSlider(page, {
 				attrs: {
 					circular: true
 				}
@@ -143,9 +143,9 @@ test.describe('<b-slider> gestures', () => {
 
 	/**
 	 * @param page
-	 * @param params
+	 * @param [params]
 	 */
-	function render(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
+	function renderSlider(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
 		const children = items.map((i) => ({
 			type: 'img',
 			attrs: {

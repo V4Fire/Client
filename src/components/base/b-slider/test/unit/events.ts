@@ -17,7 +17,7 @@ import type GesturesInterface from 'core/prelude/test-env/gestures';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
-test.describe('<b-slider> emits correct events', () => {
+test.describe('<b-slider> standard component events', () => {
 	let
 		slider: JSHandle<bSlider>,
 		gestures: JSHandle<GesturesInterface>;
@@ -46,7 +46,7 @@ test.describe('<b-slider> emits correct events', () => {
 		});
 	});
 
-	test('should emit `change` event when a slide is swiped', async () => {
+	test('should emit a `change` event when a slide is swiped', async () => {
 		const isEmitted = await slider.evaluate((ctx) => new Promise<boolean>((resolve) => {
 			ctx.once('change', () => resolve(true));
 			ctx.moveSlide(1);
@@ -55,11 +55,11 @@ test.describe('<b-slider> emits correct events', () => {
 		test.expect(isEmitted).toBe(true);
 	});
 
-	test('should emit `swipeStart` event when a pointer started swiping the slider', async () => {
+	test('should emit a `swipeStart` event when the pointer started swiping the slider', async () => {
 		await testSwipeEvent('swipeStart');
 	});
 
-	test('should emit `swipeEnd` event when a pointer stopped swiping the slider', async () => {
+	test('should emit a `swipeEnd` event when the pointer stopped swiping the slider', async () => {
 		await testSwipeEvent('swipeEnd');
 	});
 

@@ -27,11 +27,11 @@ test.describe('<b-slider> slots rendering', () => {
 		});
 	});
 
-	test('`default`: the slot for slides', async ({page}) => {
+	test('should display the `default` slot as slides', async ({page}) => {
 		const
 			slotId = 'slot';
 
-		const slider = await render(page, {
+		const slider = await renderSlider(page, {
 			children: {
 				default: {
 					type: 'div',
@@ -46,12 +46,12 @@ test.describe('<b-slider> slots rendering', () => {
 		test.expect(id).toBe(slotId);
 	});
 
-	test('`beforeItems`: the slot for content before the first slide', async ({page}) => {
+	test('should render the `beforeItems` slot before the first slide', async ({page}) => {
 		const
 			slotId = 'slot',
 			slideId = 'slide';
 
-		const slider = await render(page, {
+		const slider = await renderSlider(page, {
 			attrs: {
 				items: [1],
 				item: 'section',
@@ -78,12 +78,12 @@ test.describe('<b-slider> slots rendering', () => {
 		test.expect(ids.slideId).toBe(slideId);
 	});
 
-	test('`afterItems`: the slot for content after the last slide', async ({page}) => {
+	test('should render the `afterItems` slot after the last slide', async ({page}) => {
 		const
 			slotId = 'slot',
 			slideId = 'slide';
 
-		const slider = await render(page, {
+		const slider = await renderSlider(page, {
 			attrs: {
 				items: [1],
 				item: 'section',
@@ -110,11 +110,11 @@ test.describe('<b-slider> slots rendering', () => {
 		test.expect(ids.slideId).toBe(slideId);
 	});
 
-	test('`before`: the slot for content before the slider window (area with slides)', async ({page}) => {
+	test('should render the `before` slot before the slider window (area with slides)', async ({page}) => {
 		const
 			slotId = 'slot';
 
-		const slider = await render(page, {
+		const slider = await renderSlider(page, {
 			children: {
 				before: {
 					type: 'div',
@@ -124,20 +124,18 @@ test.describe('<b-slider> slots rendering', () => {
 		});
 
 		const id = await slider.evaluate((ctx) => {
-			const
-				{block: $b} = ctx.unsafe;
-
+			const {block: $b} = ctx.unsafe;
 			return $b?.element('window')?.previousElementSibling?.id;
 		});
 
 		test.expect(id).toEqual(slotId);
 	});
 
-	test('`after`: the slot for content after the slider window (area with slides)', async ({page}) => {
+	test('should render the `after` slot after the slider window (area with slides)', async ({page}) => {
 		const
 			slotId = 'slot';
 
-		const slider = await render(page, {
+		const slider = await renderSlider(page, {
 			children: {
 				after: {
 					type: 'div',
@@ -147,9 +145,7 @@ test.describe('<b-slider> slots rendering', () => {
 		});
 
 		const id = await slider.evaluate((ctx) => {
-			const
-				{block: $b} = ctx.unsafe;
-
+			const {block: $b} = ctx.unsafe;
 			return $b?.element('window')?.nextElementSibling?.id;
 		});
 
@@ -158,9 +154,9 @@ test.describe('<b-slider> slots rendering', () => {
 
 	/**
 	 * @param page
-	 * @param params
+	 * @param [params]
 	 */
-	function render(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
+	function renderSlider(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
 		return Component.createComponent<bSlider>(page, 'b-slider', params);
 	}
 });

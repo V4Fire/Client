@@ -28,7 +28,7 @@ test.describe('<b-slider>', () => {
 				body: JSON.stringify(items)
 			}));
 
-			const slider = await render(page, {
+			const slider = await renderSlider(page, {
 				attrs: {
 					dataProvider: 'Provider',
 					item: 'b-checkbox',
@@ -46,9 +46,9 @@ test.describe('<b-slider>', () => {
 			test.expect(ids).toEqual(items.map(({id}) => id));
 		});
 
-		test('slides should recieve props from the specified object', async ({page}) => {
+		test('slides should receive props from the specified object', async ({page}) => {
 			const name = 'foo';
-			const slider = await render(page, {
+			const slider = await renderSlider(page, {
 				attrs: {
 					items,
 					item: 'b-checkbox',
@@ -65,8 +65,8 @@ test.describe('<b-slider>', () => {
 			test.expect(names).toEqual(Array(length).fill(name));
 		});
 
-		test('slides should recieve props from the specified function', async ({page}) => {
-			const slider = await render(page, {
+		test('slides should receive props from the specified function', async ({page}) => {
+			const slider = await renderSlider(page, {
 				attrs: {
 					items,
 					item: 'b-checkbox',
@@ -86,9 +86,9 @@ test.describe('<b-slider>', () => {
 
 	/**
 	 * @param page
-	 * @param params
+	 * @param [params]
 	 */
-	function render(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
+	function renderSlider(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
 		return Component.createComponent<bSlider>(page, 'b-slider', params);
 	}
 });

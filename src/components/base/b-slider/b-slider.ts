@@ -11,10 +11,6 @@
  * @packageDocumentation
  */
 
-//#if demo
-import 'models/demo/list';
-//#endif
-
 import symbolGenerator from 'core/symbol';
 
 import { derive } from 'core/functools/trait';
