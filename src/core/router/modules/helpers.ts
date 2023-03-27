@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import path, { Key, RegExpOptions } from 'path-to-regexp';
+import parsePattern, { parse, compile } from 'path-to-regexp';
+
+import type { Key, RegExpOptions } from 'path-to-regexp';
 
 import { concatURLs, toQueryString, fromQueryString } from 'core/url';
 import { deprecate } from 'core/functools/deprecation';
@@ -238,13 +240,13 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			resolvePathParameterAliases(resolvedRoute?.pathParams ?? [], parameters);
 
 			if (externalRedirect) {
-				return path.compile(resolvedRoute?.meta.redirect ?? ref)(parameters);
+				return compile(resolvedRoute?.meta.redirect ?? ref)(parameters);
 			}
 
 			const
 				pattern = Object.isFunction(resolvedRoute?.pattern) ? resolvedRoute?.pattern(routeAPI) : resolvedRoute?.pattern;
 
-			return path.compile(pattern ?? ref)(parameters);
+			return compile(pattern ?? ref)(parameters);
 		},
 
 		toPath(params?: Dictionary): string {
@@ -268,7 +270,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			const
 				pattern = Object.isFunction(resolvedRoute.pattern) ? resolvedRoute.pattern(routeAPI) : resolvedRoute.pattern;
 
-			for (let o = path.parse(pattern ?? ''), i = 0, j = 0; i < o.length; i++) {
+			for (let o = parse(pattern ?? ''), i = 0, j = 0; i < o.length; i++) {
 				const
 					el = o[i];
 
@@ -344,7 +346,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 		if (Object.isString(route)) {
 			const
 				pattern = concatURLs(basePath, route),
-				rgxp = getRgxpAndFillPathParams(pattern, originalPathParams);
+				rgxp = parsePattern(pattern, originalPathParams);
 
 			const pathParams: PathParam[] = originalPathParams.map((param) => ({
 				...param,
@@ -383,7 +385,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 			if (Object.isString(route.path)) {
 				pattern = concatURLs(basePath, route.path);
-				rgxp = getRgxpAndFillPathParams(pattern, originalPathParams, <RegExpOptions>route.pathOpts);
+				rgxp = parsePattern(pattern, originalPathParams, <RegExpOptions>route.pathOpts);
 			}
 
 			const pathParams: PathParam[] = originalPathParams.map((param) => ({
@@ -426,10 +428,6 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 	}
 
 	return compiledRoutes;
-
-	function getRgxpAndFillPathParams(...params: Parameters<typeof path>): RegExp {
-		return path(...params);
-	}
 }
 
 /**
@@ -442,14 +440,19 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
  *
  * @example
  * ```typescript
- * {
+ * const route = {
  *   path: '/foo/:bar',
  *   pathOpts: {
  *     aliases: {bar: ['Bar']}
  *   }
  * }
+ * const pathParams = [];
+ * fillPathParams(route.path, pathParams, route.pathOpts);
  *
- * resolvePathParameterAliases(pathParams, {Bar: 21}); // {Bar: 21, bar: 21}
+ * const parameters = {Bar: 21};
+ * resolvePathParameterAliases(pathParams, parameters);
+ *
+ * // parameters === {Bar: 21, bar: 21}
  * ```
  */
 export function resolvePathParameterAliases(pathParams: PathParam[], params: Dictionary): void {
