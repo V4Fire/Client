@@ -15,7 +15,8 @@ const
 const
 	config = require('@config/config');
 
-let tp;
+let
+	tp;
 
 if (Typograf.hasLocale(config.typograf())) {
 	tp = new Typograf(config.typograf());
