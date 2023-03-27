@@ -449,24 +449,24 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
  * resolvePathParameterAliases(pathParams, {Bar: 21}); // {Bar: 21, bar: 21}
  */
 export function resolvePathParameterAliases(pathParams: PathParam[], params: Dictionary): void {
-  const
-    dynamicParamsInPath = new Set<string | number>(),
-    aliases = new Map<string, string | number>();
+	const
+		dynamicParamsInPath = new Set<string | number>(),
+		aliases = new Map<string, string | number>();
 
-  for (const param of pathParams) {
-    dynamicParamsInPath.add(param.name);
+	for (const param of pathParams) {
+		dynamicParamsInPath.add(param.name);
 
-    param.aliases.forEach((alias) => aliases.set(alias, param.name));
-  }
+		param.aliases.forEach((alias) => aliases.set(alias, param.name));
+	}
 
-  for (const [key, param] of Object.entries(params)) {
-    if (dynamicParamsInPath.has(key)) {
-      params[key] = param;
+	for (const [key, param] of Object.entries(params)) {
+		if (dynamicParamsInPath.has(key)) {
+			params[key] = param;
 
-    } else if (aliases.has(key)) {
+		} else if (aliases.has(key)) {
 			const originalParamName = aliases.get(key)!;
 
-      params[originalParamName] = param;
-    }
-  }
+			params[originalParamName] = param;
+		}
+	}
 }
