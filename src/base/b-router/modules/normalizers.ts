@@ -9,6 +9,8 @@
 import type bRouter from 'base/b-router/b-router';
 import type { AppliedRoute } from 'base/b-router/interface';
 
+import { resolvePathParameterAliases } from 'core/router';
+
 /**
  * Fills route parameters with the default values and other stuff
  *
@@ -19,8 +21,11 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 	const {
 		meta,
 		query,
-		params
+		params,
+		pathParams
 	} = route;
+
+	resolvePathParameterAliases(pathParams, params);
 
 	const defs: Array<[CanUndef<Dictionary>, Dictionary]> = [
 		[meta.query, query],

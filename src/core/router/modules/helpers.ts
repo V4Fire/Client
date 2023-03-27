@@ -233,41 +233,18 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 
 		resolvePath(params: Dictionary = {}): string {
 			const
-				stringifiedParameters = {};
+				parameters = {...params};
 
-			const
-				dynamicParamsInPath = new Set<string | number>(),
-				aliases = new Map<string, string | number>();
-
-			for (const param of resolvedRoute?.pathParams ?? []) {
-				dynamicParamsInPath.add(param.name);
-
-				param.aliases.forEach((alias) => aliases.set(alias, param.name));
-			}
-
-			for (const [key, param] of Object.entries(params)) {
-				if (param == null) {
-					continue;
-				}
-
-				if (dynamicParamsInPath.has(key)) {
-					stringifiedParameters[key] = String(param);
-
-				} else if (aliases.has(key)) {
-					const dynamicParamInPath = aliases.get(key)!;
-
-					stringifiedParameters[dynamicParamInPath] = String(param);
-				}
-			}
+			resolvePathParameterAliases(resolvedRoute?.pathParams ?? [], parameters);
 
 			if (externalRedirect) {
-				return path.compile(resolvedRoute?.meta.redirect ?? ref)(stringifiedParameters);
+				return path.compile(resolvedRoute?.meta.redirect ?? ref)(parameters);
 			}
 
 			const
 				pattern = Object.isFunction(resolvedRoute?.pattern) ? resolvedRoute?.pattern(routeAPI) : resolvedRoute?.pattern;
 
-			return path.compile(pattern ?? ref)(stringifiedParameters);
+			return path.compile(pattern ?? ref)(parameters);
 		},
 
 		toPath(params?: Dictionary): string {
@@ -453,4 +430,43 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 	}
 
 	return compiledRoutes;
+}
+
+/**
+ * Adds original parameters to the object with possible aliases
+ *
+ * @param pathParams - parameter settings after parsing the path
+ * @param params - parameters with possible aliases
+ *
+ * @example
+ * {
+ *   path: '/foo/:bar',
+ *   pathOpts: {
+ *     aliases: {bar: ['Bar']}
+ *   }
+ * }
+ *
+ * resolvePathParameterAliases(pathParams, {Bar: 21}); // {Bar: 21, bar: 21}
+ */
+export function resolvePathParameterAliases(pathParams: PathParam[], params: Dictionary): void {
+  const
+    dynamicParamsInPath = new Set<string | number>(),
+    aliases = new Map<string, string | number>();
+
+  for (const param of pathParams) {
+    dynamicParamsInPath.add(param.name);
+
+    param.aliases.forEach((alias) => aliases.set(alias, param.name));
+  }
+
+  for (const [key, param] of Object.entries(params)) {
+    if (dynamicParamsInPath.has(key)) {
+      params[key] = param;
+
+    } else if (aliases.has(key)) {
+			const originalParamName = aliases.get(key)!;
+
+      params[originalParamName] = param;
+    }
+  }
 }
