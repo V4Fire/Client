@@ -447,7 +447,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
  *   }
  * }
  * const pathParams = [];
- * fillPathParams(route.path, pathParams, route.pathOpts);
+ * parsePattern(route.path, pathParams, route.pathOpts);
  *
  * const parameters = {Bar: 21};
  * resolvePathParameterAliases(pathParams, parameters);
