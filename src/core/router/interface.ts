@@ -144,6 +144,7 @@ export interface PathOptions extends RegExpOptions, ParseOptions {
 	 * The priority of aliases specified by index in the array.
 	 *
 	 * @example
+	 * ```typescript
 	 * {
 	 *   path: '/foo/:bar',
 	 *   pathOpts: {
@@ -157,6 +158,7 @@ export interface PathOptions extends RegExpOptions, ParseOptions {
 	 * this.router.push('/foo/:bar', {params: {Bar: 'Bar'}}) // "/foo/Bar"
 	 * this.router.push('/foo/:bar', {params: {bar: 'bar', Bar: 'Bar'}}) // "/foo/bar"
 	 * this.router.push('/foo/:bar', {params: {Bar: 'Bar', _bar: '_bar'}}) // "/foo/_bar"
+	 * ```
 	 */
 	aliases?: Dictionary<string[]>;
 }

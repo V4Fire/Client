@@ -344,9 +344,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 		if (Object.isString(route)) {
 			const
 				pattern = concatURLs(basePath, route),
-
-				// The function mutates originalPathParams
-				rgxp = path(pattern, originalPathParams);
+				rgxp = getRgxpAndFillPathParams(pattern, originalPathParams);
 
 			const pathParams: PathParam[] = originalPathParams.map((param) => ({
 				...param,
@@ -385,9 +383,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 			if (Object.isString(route.path)) {
 				pattern = concatURLs(basePath, route.path);
-
-				// The function mutates originalPathParams
-				rgxp = path(pattern, originalPathParams, <RegExpOptions>route.pathOpts);
+				rgxp = getRgxpAndFillPathParams(pattern, originalPathParams, <RegExpOptions>route.pathOpts);
 			}
 
 			const pathParams: PathParam[] = originalPathParams.map((param) => ({
@@ -430,15 +426,22 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 	}
 
 	return compiledRoutes;
+
+	function getRgxpAndFillPathParams(...params: Parameters<typeof path>): RegExp {
+		return path(...params);
+	}
 }
 
 /**
  * Adds original parameters to the object with possible aliases
  *
+ * @see [[RouteBlueprint.pathParams]]
  * @param pathParams - parameter settings after parsing the path
+ *
  * @param params - parameters with possible aliases
  *
  * @example
+ * ```typescript
  * {
  *   path: '/foo/:bar',
  *   pathOpts: {
@@ -447,6 +450,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
  * }
  *
  * resolvePathParameterAliases(pathParams, {Bar: 21}); // {Bar: 21, bar: 21}
+ * ```
  */
 export function resolvePathParameterAliases(pathParams: PathParam[], params: Dictionary): void {
 	const
