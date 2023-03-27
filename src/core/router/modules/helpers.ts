@@ -235,9 +235,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 
 		resolvePath(params: Dictionary = {}): string {
 			const
-				parameters = {...params};
-
-			resolvePathParameterAliases(resolvedRoute?.pathParams ?? [], parameters);
+				parameters = resolvePathParameters(resolvedRoute?.pathParams ?? [], params);
 
 			if (externalRedirect) {
 				return compile(resolvedRoute?.meta.redirect ?? ref)(parameters);
@@ -431,7 +429,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 }
 
 /**
- * Adds original parameters to the object with possible aliases
+ * Resolves dynamic parameters from path based on the parsed `pathParams` from the path and the user's provided settings
  *
  * @see [[RouteBlueprint.pathParams]]
  * @param pathParams - parameter settings after parsing the path
@@ -455,25 +453,24 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
  * // parameters === {Bar: 21, bar: 21}
  * ```
  */
-export function resolvePathParameterAliases(pathParams: PathParam[], params: Dictionary): void {
+export function resolvePathParameters(pathParams: PathParam[], params: Dictionary): Dictionary {
 	const
-		dynamicParamsInPath = new Set<string | number>(),
+		parameters = {...params};
+
+	const
 		aliases = new Map<string, string | number>();
 
-	for (const param of pathParams) {
-		dynamicParamsInPath.add(param.name);
-
+	pathParams.forEach((param) => {
 		param.aliases.forEach((alias) => aliases.set(alias, param.name));
-	}
+	});
 
-	for (const [key, param] of Object.entries(params)) {
-		if (dynamicParamsInPath.has(key)) {
-			params[key] = param;
-
-		} else if (aliases.has(key)) {
+	Object.entries(parameters).forEach(([key, param]) => {
+		if (aliases.has(key)) {
 			const originalParamName = aliases.get(key)!;
 
-			params[originalParamName] = param;
+			parameters[originalParamName] = param;
 		}
-	}
+	});
+
+	return parameters;
 }

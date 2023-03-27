@@ -9,7 +9,7 @@
 import type bRouter from 'base/b-router/b-router';
 import type { AppliedRoute } from 'base/b-router/interface';
 
-import { resolvePathParameterAliases } from 'core/router';
+import { resolvePathParameters } from 'core/router';
 
 /**
  * Fills route parameters with the default values and other stuff
@@ -25,7 +25,7 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 		pathParams
 	} = route;
 
-	resolvePathParameterAliases(pathParams, params);
+	Object.assign(params, resolvePathParameters(pathParams, params));
 
 	const defs: Array<[CanUndef<Dictionary>, Dictionary]> = [
 		[meta.query, query],
@@ -59,21 +59,21 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 		}
 	}
 
-	if (meta.paramsFromQuery !== false && Object.isArray(route.pathParams)) {
-		for (const param of route.pathParams) {
+	if (meta.paramsFromQuery !== false && Object.isArray(pathParams)) {
+		pathParams.forEach((param) => {
 			let
 				{name} = param;
 
 			const
-				noAliasesInParams = param.aliases.every((alias) => !Object.hasOwn(params, alias));
+				noAliasesInParams = param.aliases.every((alias) => !Object.hasOwnProperty(params, alias));
 
-			if (!Object.hasOwn(params, name) && noAliasesInParams) {
+			if (!Object.hasOwnProperty(params, name) && noAliasesInParams) {
 				let
 					queryVal = query[name];
 
 				if (queryVal === undefined) {
 					const
-						alias = param.aliases.find((alias) => Object.hasOwn(query, alias));
+						alias = param.aliases.find((alias) => Object.hasOwnProperty(query, alias));
 
 					if (alias != null) {
 						name = alias;
@@ -87,6 +87,6 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 			}
 
 			delete query[name];
-		}
+		});
 	}
 }
