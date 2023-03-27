@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.43.1 (2023-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when typograf does not support the given locale
+
 ## v3.15.0 (2021-12-16)
 
 #### :bug: Bug Fix
