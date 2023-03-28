@@ -429,7 +429,8 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 }
 
 /**
- * Resolves dynamic parameters from path based on the parsed `pathParams` from the path and the user's provided settings
+ * Resolves dynamic parameters from path based on the parsed from the pattern `pathParams`
+ * and the user-provided settings
  *
  * @see [[RouteBlueprint.pathParams]]
  * @param pathParams - parameter settings after parsing the path
@@ -448,9 +449,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
  * parsePattern(route.path, pathParams, route.pathOpts);
  *
  * const parameters = {Bar: 21};
- * resolvePathParameterAliases(pathParams, parameters);
- *
- * // parameters === {Bar: 21, bar: 21}
+ * resolvePathParameterAliases(pathParams, parameters); // {Bar: 21, bar: 21}
  * ```
  */
 export function resolvePathParameters(pathParams: PathParam[], params: Dictionary): Dictionary {
