@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { resolvePathParameters } from 'core/router';
+
 import type bRouter from 'base/b-router/b-router';
 import type { AppliedRoute } from 'base/b-router/interface';
-
-import { resolvePathParameters } from 'core/router';
 
 /**
  * Fills route parameters with the default values and other stuff
@@ -64,16 +64,18 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 			let
 				{name} = param;
 
-			const
-				noAliasesInParams = param.aliases.every((alias) => !Object.hasOwnProperty(params, alias));
+			const noAliasesInParams = param.aliases.every(
+				(alias) => !Object.hasOwnProperty(params, alias)
+			);
 
 			if (!Object.hasOwnProperty(params, name) && noAliasesInParams) {
 				let
 					queryVal = query[name];
 
 				if (queryVal === undefined) {
-					const
-						alias = param.aliases.find((alias) => Object.hasOwnProperty(query, alias));
+					const alias = param.aliases.find(
+						(alias) => Object.hasOwnProperty(query, alias)
+					);
 
 					if (alias != null) {
 						name = alias;

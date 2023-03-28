@@ -134,14 +134,11 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 export interface PathOptions extends RegExpOptions, ParseOptions {
 	/**
 	 * Aliases for dynamic parameters in `path`.
-	 * @see [[StaticRouteMeta.path]]
+	 * @see [[StaticRouteMeta.path]]Ы
 	 *
-	 * In the example below you can specify either `bar` itself as a parameter
-	 * or any of its aliases.
-	 *
+	 * In the example below you can specify either `bar` itself as a parameter or any of its aliases.
 	 * Note that aliases will be used only if the original parameter is not specified.
-	 *
-	 * The priority of aliases specified by index in the array.
+	 * The priority of aliases is determined "from left to right".
 	 *
 	 * @example
 	 * ```typescript
@@ -154,9 +151,9 @@ export interface PathOptions extends RegExpOptions, ParseOptions {
 	 *   }
 	 * }
 	 *
-	 * this.router.push('/foo/:bar', {params: {bar: 'bar'}}) // "/foo/bar"
-	 * this.router.push('/foo/:bar', {params: {Bar: 'Bar'}}) // "/foo/Bar"
-	 * this.router.push('/foo/:bar', {params: {bar: 'bar', Bar: 'Bar'}}) // "/foo/bar"
+	 * this.router.push('/foo/:bar', {params: {bar: 'bar'}})               // "/foo/bar"
+	 * this.router.push('/foo/:bar', {params: {Bar: 'Bar'}})               // "/foo/Bar"
+	 * this.router.push('/foo/:bar', {params: {bar: 'bar', Bar: 'Bar'}})   // "/foo/bar"
 	 * this.router.push('/foo/:bar', {params: {Bar: 'Bar', _bar: '_bar'}}) // "/foo/_bar"
 	 * ```
 	 */

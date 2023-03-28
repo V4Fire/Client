@@ -241,8 +241,9 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				return compile(resolvedRoute?.meta.redirect ?? ref)(parameters);
 			}
 
-			const
-				pattern = Object.isFunction(resolvedRoute?.pattern) ? resolvedRoute?.pattern(routeAPI) : resolvedRoute?.pattern;
+			const pattern = Object.isFunction(resolvedRoute?.pattern) ?
+				resolvedRoute?.pattern(routeAPI) :
+				resolvedRoute?.pattern;
 
 			return compile(pattern ?? ref)(parameters);
 		},
@@ -430,12 +431,12 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 /**
  * Resolves dynamic parameters from the path based on the parsed from the pattern `pathParams`
- * and the user-provided settings
+ * and the user-provided parameters
  *
  * @see [[RouteBlueprint.pathParams]]
- * @param pathParams - parameter settings after parsing the path
  *
- * @param params - parameters with possible aliases
+ * @param pathParams - parameters after parsing the path
+ * @param params - user-provided parameters with possible aliases
  *
  * @example
  * ```typescript
@@ -445,6 +446,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
  *     aliases: {bar: ['Bar']}
  *   }
  * }
+ *
  * const pathParams = [];
  * parsePattern(route.path, pathParams, route.pathOpts);
  *
@@ -466,7 +468,6 @@ export function resolvePathParameters(pathParams: PathParam[], params: Dictionar
 	Object.entries(parameters).forEach(([key, param]) => {
 		if (aliases.has(key)) {
 			const originalParamName = aliases.get(key)!;
-
 			parameters[originalParamName] = param;
 		}
 	});

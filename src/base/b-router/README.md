@@ -502,8 +502,8 @@ this.router.push('/foo/:bar', {query: {_bar: 'bar'}}); // "/foo/bar"
 ```
 
 Note that fields from the `query` will be used as aliases only if the `params` object does have any.
-That means if you specify an alias in `params` and in `query` at the same time the field from `query` will become the default `?alias=val` query and the field from
-`params` will be used as the alias
+That means if you specify an alias in `params` and in `query` at the same time the field from `query` will become the default `?alias=val` query
+and the field from `params` will be used as the alias.
 
 ```js
 this.router.push('/foo/:bar', {params: {_bar: 'bar'}, query: {Bar: 'query'}}); // "/foo/bar?Bar=query"
