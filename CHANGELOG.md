@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path `b-router` `core/router`
+
 ## v3.43.1 (2023-03-27)
 
 #### :bug: Bug Fix

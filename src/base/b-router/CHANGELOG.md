@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path
+
 ## v3.31.0 (2022-12-06)
 
 #### :rocket: New Feature
