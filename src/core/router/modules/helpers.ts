@@ -449,7 +449,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
  * parsePattern(route.path, pathParams, route.pathOpts);
  *
  * const parameters = {Bar: 21};
- * resolvePathParameterAliases(pathParams, parameters); // {Bar: 21, bar: 21}
+ * resolvePathParameters(pathParams, parameters); // {Bar: 21, bar: 21}
  * ```
  */
 export function resolvePathParameters(pathParams: PathParam[], params: Dictionary): Dictionary {
