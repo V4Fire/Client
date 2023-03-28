@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.44.2 (2023-03-29)
+
+#### :house: Internal
+
+* Changed `optionProps` and `itemProps` params `bSlider`
+
 ## v3.44.1 (2023-03-28)
 
 #### :rocket: New Feature

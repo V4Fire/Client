@@ -176,11 +176,11 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * @deprecated
 	 * @see [[bSlider.itemProps]]
 	 */
-	@prop({type: [Function, Object]})
+	@prop({type: [Function, Object], required: false})
 	readonly optionProps?: iItems['itemProps'];
 
 	/** @see [[iItems.itemProps]] */
-	@prop({type: [Function, Object]})
+	@prop({type: [Function, Object], required: false})
 	readonly itemProps?: iItems['itemProps'];
 
 	/** @see [[bSlider.items]] */
@@ -545,7 +545,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				ctx: this
 			}) :
 
-			props;
+			props ?? {};
 	}
 
 	/**
