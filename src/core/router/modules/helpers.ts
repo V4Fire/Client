@@ -429,7 +429,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 }
 
 /**
- * Resolves dynamic parameters from path based on the parsed from the pattern `pathParams`
+ * Resolves dynamic parameters from the path based on the parsed from the pattern `pathParams`
  * and the user-provided settings
  *
  * @see [[RouteBlueprint.pathParams]]
