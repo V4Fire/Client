@@ -241,9 +241,10 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				return compile(resolvedRoute?.meta.redirect ?? ref)(parameters);
 			}
 
-			const pattern = Object.isFunction(resolvedRoute?.pattern) ?
-				resolvedRoute?.pattern(routeAPI) :
-				resolvedRoute?.pattern;
+			const routePattern = resolvedRoute?.pattern;
+			const pattern = Object.isFunction(routePattern) ?
+				routePattern(routeAPI) :
+				routePattern;
 
 			return compile(pattern ?? ref)(parameters);
 		},
