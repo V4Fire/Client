@@ -36,12 +36,12 @@ module.exports = (page) => {
 				value: 2,
 				children: [
 					{
-						value: 4,
-						children: [{value: 5}]
+						value: 3,
+						children: [{value: 4}]
 					}
 				]
 			},
-			{value: 3}
+			{value: 5}
 		];
 
 		it('traverse', async () => {
@@ -51,12 +51,12 @@ module.exports = (page) => {
 			expect(
 				await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.value))
 
-			).toEqual([0, 1, 2, 3, 4, 5]);
+			).toEqual([0, 1, 2, 5, 3, 4]);
 
 			expect(
 				await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.value))
 
-			).toEqual([0, 1, 2, 3]);
+			).toEqual([0, 1, 2, 5]);
 		});
 
 		it('fold/unfold', async () => {
@@ -67,7 +67,7 @@ module.exports = (page) => {
 
 			const
 				el1 = await page.locator('[data-id="2"]'),
-				el2 = await page.locator('[data-id="4"]');
+				el2 = await page.locator('[data-id="3"]');
 
 			expect([
 				(await el1.getAttribute('class')).includes('folded_false'),
@@ -86,11 +86,11 @@ module.exports = (page) => {
 			const
 				target = await init();
 
-			await target.evaluate((ctx) => ctx.unfold(5));
+			await target.evaluate((ctx) => ctx.unfold(4));
 
 			const
 				el1 = await page.locator('[data-id="2"]'),
-				el2 = await page.locator('[data-id="4"]');
+				el2 = await page.locator('[data-id="3"]');
 
 			expect([
 				(await el1.getAttribute('class')).includes('folded_false'),

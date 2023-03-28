@@ -160,11 +160,11 @@ module.exports = (page) => {
 				const
 					target = await init();
 
-				await target.evaluate((ctx) => ctx.setActive(5));
+				await target.evaluate((ctx) => ctx.setActive(4));
 
 				const
 					el1 = await page.locator('[data-id="2"]'),
-					el2 = await page.locator('[data-id="4"]');
+					el2 = await page.locator('[data-id="3"]');
 
 				expect([
 					(await el1.getAttribute('class')).includes('folded_false'),
@@ -176,11 +176,11 @@ module.exports = (page) => {
 				const
 					target = await init();
 
-				await target.evaluate((ctx) => ctx.toggleActive(5));
+				await target.evaluate((ctx) => ctx.toggleActive(4));
 
 				const
 					el1 = await page.locator('[data-id="2"]'),
-					el2 = await page.locator('[data-id="4"]');
+					el2 = await page.locator('[data-id="3"]');
 
 				expect([
 					(await el1.getAttribute('class')).includes('folded_false'),
@@ -385,13 +385,13 @@ module.exports = (page) => {
 									label: 2,
 									children: [
 										{
-											value: 4,
-											label: 4,
-											children: [{value: 5, label: 5}]
+											value: 3,
+											label: 3,
+											children: [{value: 4, label: 4}]
 										}
 									]
 								},
-								{value: 3, label: 3}
+								{value: 5, label: 5}
 							],
 
 							id: 'target',

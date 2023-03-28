@@ -11,7 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (2023-??-??)
+## v3.43.1 (2023-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when typograf does not support the given locale `build/snakeskin`
+
+## v3.43.0 (2023-03-23)
 
 #### :bug: Bug Fix
 

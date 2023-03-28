@@ -15,8 +15,12 @@ const
 const
 	config = require('@config/config');
 
-const
+let
+	tp;
+
+if (Typograf.hasLocale(config.typograf())) {
 	tp = new Typograf(config.typograf());
+}
 
 Snakeskin.importFilters({
 	/**
@@ -26,6 +30,6 @@ Snakeskin.importFilters({
 	 * @returns {string}
 	 */
 	typograf(str) {
-		return tp.execute(str);
+		return tp ? tp.execute(str) : str;
 	}
 });

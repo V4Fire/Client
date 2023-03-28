@@ -465,7 +465,7 @@ class bTree extends iData implements iActiveItems {
 
 			previousNodes.forEach((previousNode) => {
 				if (!this.isActive(this.valueItems.get(previousNode.getAttribute('data-id')))) {
-					$b.setElMod(previousNode, 'link', 'active', false);
+					$b.setElMod(previousNode, 'node', 'active', false);
 
 					if (previousNode.hasAttribute('aria-selected')) {
 						previousNode.setAttribute('aria-selected', 'false');
@@ -596,49 +596,94 @@ class bTree extends iData implements iActiveItems {
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
 	@watch({path: 'items', immediate: true})
-	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
-			this.initComponentValues();
-
-			this.async.setImmediate(() => {
-				this.emit('itemsChange', items);
-			}, {label: $$.syncItemsWatcher});
+			this.initComponentValues(oldItems != null);
+			this.async.setImmediate(() => this.emit('itemsChange', items), {label: $$.syncItemsWatcher});
 		}
 	}
 
 	/**
 	 * Initializes component values
+	 * @param [itemsChanged] - true, if the method is invoked after items changed
 	 */
 	@hook('beforeDataCreate')
-	protected initComponentValues(): void {
+	protected initComponentValues(itemsChanged: boolean = false): void {
+		const
+			that = this,
+			{active} = this;
+
+		let
+			hasActive = false,
+			activeItem;
+
 		if (this.top == null) {
 			this.indexes = {};
 			this.valueIndexes = new Map();
 			this.valueItems = new Map();
 
-		} else {
-			this.indexes = this.top.indexes;
-			this.valueIndexes = this.top.valueIndexes;
-			this.valueItems = this.top.valueItems;
-		}
+			traverse(this.field.get<this['Items']>('items'));
 
-		this.field.get<this['Items']>('items')?.forEach((item) => {
-			const
-				{value} = item;
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (!hasActive) {
+				if (itemsChanged && active != null) {
+					this.field.set('activeStore', undefined);
+				}
 
-			if (this.valueIndexes.has(value)) {
-				return;
+				if (activeItem != null) {
+					iActiveItems.initItem(this, activeItem);
+				}
 			}
 
-			const
-				id = this.valueIndexes.size;
+		} else {
+			Object.defineProperty(this, 'indexes', {
+				enumerable: true,
+				configurable: true,
+				get: () => this.top?.indexes
+			});
 
-			this.indexes[id] = value;
-			this.valueIndexes.set(value, id);
-			this.valueItems.set(value, item);
+			Object.defineProperty(this, 'valueIndexes', {
+				enumerable: true,
+				configurable: true,
+				get: () => this.top?.valueIndexes
+			});
 
-			iActiveItems.initItem(this, item);
-		});
+			Object.defineProperty(this, 'valueItems', {
+				enumerable: true,
+				configurable: true,
+				get: () => this.top?.valueItems
+			});
+		}
+
+		function traverse(items?: Items) {
+			items?.forEach((item) => {
+				const
+					{value} = item;
+
+				if (that.valueIndexes.has(value)) {
+					return;
+				}
+
+				const
+					id = that.valueIndexes.size;
+
+				that.indexes[id] = value;
+				that.valueIndexes.set(value, id);
+				that.valueItems.set(value, item);
+
+				if (item.value === active) {
+					hasActive = true;
+				}
+
+				if (item.active) {
+					activeItem = item;
+				}
+
+				if (Object.isArray(item.children)) {
+					traverse(item.children);
+				}
+			});
+		}
 	}
 
 	/**
@@ -668,6 +713,10 @@ class bTree extends iData implements iActiveItems {
 				item.parentValue = parentValue;
 
 				if (Object.isArray(item.children)) {
+					if (that.isActive(item.value)) {
+						item.folded = false;
+					}
+
 					for (const el of item.children) {
 						if (normalize(el, item.value)) {
 							item.folded = false;
