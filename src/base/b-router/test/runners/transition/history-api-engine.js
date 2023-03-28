@@ -31,7 +31,7 @@ module.exports = (page) => {
 			});
 
 			describe('transition to a route with the path interpolation', () => {
-				it('providing original paramters', async () => {
+				it('providing original parameters', async () => {
 					expect(await root.evaluate(async (ctx) => {
 						const
 							{router} = ctx;
