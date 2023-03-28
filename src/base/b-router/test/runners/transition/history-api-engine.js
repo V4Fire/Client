@@ -58,7 +58,7 @@ module.exports = (page) => {
 					});
 				});
 
-				fit('providing aliases', async () => {
+				it('providing aliases', async () => {
 					expect(await root.evaluate(async (ctx) => {
 						const
 							{router} = ctx;
