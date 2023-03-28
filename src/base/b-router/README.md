@@ -489,19 +489,19 @@ Note that aliases will be used only if the original parameter is not specified:
 this.router.push('/foo/:bar', {params: {bar: 'original', Bar: 'alias'}}); // "/foo/original"
 ```
 
-The priority of aliases specified by index in the array:
+The priority of aliases is specified by index in the array:
 
 ```js
 this.router.push('/foo/:bar', {params: {Bar: 'Bar', _bar: '_bar'}}); // "/foo/_bar"
 ```
 
-The `paramsFromQuery` option also works with aliases i.e you can specify aliases within the `query` object
+The `paramsFromQuery` option also works with aliases i.e you can specify aliases within the `query` object:
 
 ```ts
 this.router.push('/foo/:bar', {query: {_bar: 'bar'}}); // "/foo/bar"
 ```
 
-Note that fields from the `query` will be used as aliases only if the `params` object does have any.
+Note that fields from the `query` will be used as aliases only if the `params` object doesn't have any.
 That means if you specify an alias in `params` and in `query` at the same time the field from `query` will become the default `?alias=val` query
 and the field from `params` will be used as the alias.
 
