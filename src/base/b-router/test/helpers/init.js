@@ -110,7 +110,13 @@ module.exports.initRouter = async function initRouter(page, engineName, initOpti
 						},
 
 						template: {
-							path: '/tpl/:param1/:param2?'
+							path: '/tpl/:param1/:param2?',
+							pathOpts: {
+								aliases: {
+									param1: ['_param1', 'Param1'],
+									param2: ['Param2']
+								}
+							}
 						},
 
 						strictTemplate: {
