@@ -70,14 +70,17 @@ module.exports = (page) => {
 						await router.push('template', {params: {param1: 'foo'}});
 						result.path1 = s();
 
-						await router.push('template', {params: {Param1: 'foo'}});
+						await router.push('template', {params: {param1: 'foo', _param1: 'bar'}});
 						result.path2 = s();
 
-						await router.push('template', {params: {Param1: 'bar', _param1: 'foo'}});
+						await router.push('template', {params: {Param1: 'foo'}});
 						result.path3 = s();
 
-						await router.push('template', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}});
+						await router.push('template', {params: {Param1: 'bar', _param1: 'foo'}});
 						result.path4 = s();
+
+						await router.push('template', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}});
+						result.path5 = s();
 
 						return result;
 
@@ -85,7 +88,8 @@ module.exports = (page) => {
 						path1: '/tpl/foo',
 						path2: '/tpl/foo',
 						path3: '/tpl/foo',
-						path4: '/tpl/foo/bar?Param1=bla'
+						path4: '/tpl/foo',
+						path5: '/tpl/foo/bar?Param1=bla'
 					});
 				});
 			});
