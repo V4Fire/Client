@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.44.2 (2023-03-30)
+
+#### :bug: [Bug Fix]
+
+* Overriding original parameter by alias in route
+
 ## v3.44.1 (2023-03-28)
 
 #### :rocket: New Feature
