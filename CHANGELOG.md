@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.44.3 (2023-03-30)
+
+#### :bug: [Bug Fix]
+
+* Overriding original parameter by alias in route `b-router` `core/router`
+
 ## v3.44.2 (2023-03-29)
 
 #### :house: Internal
