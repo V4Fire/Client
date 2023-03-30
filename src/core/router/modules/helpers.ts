@@ -469,7 +469,10 @@ export function resolvePathParameters(pathParams: PathParam[], params: Dictionar
 	Object.entries(parameters).forEach(([key, param]) => {
 		if (aliases.has(key)) {
 			const originalParamName = aliases.get(key)!;
-			parameters[originalParamName] = param;
+
+			if (!Object.hasOwnProperty(parameters, originalParamName)) {
+				parameters[originalParamName] = param;
+			}
 		}
 	});
 
