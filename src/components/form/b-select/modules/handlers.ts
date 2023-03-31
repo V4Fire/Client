@@ -221,7 +221,10 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 
 	switch (e.key) {
 		case 'Enter':
-			unsafe.onItemClick(currentItemEl);
+			if (currentItemEl != null) {
+				unsafe.onItemClick(currentItemEl);
+			}
+
 			break;
 
 		case 'ArrowUp':
