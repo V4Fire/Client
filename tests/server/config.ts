@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WebServerConfig } from '@playwright/test';
+import type { Config } from '@playwright/test';
 import { build } from '@config/config';
 
-const webServerConfig: WebServerConfig = {
+const webServerConfig: Config['webServer'] = {
 	port: build.testPort,
 	reuseExistingServer: true,
 	command: 'npm run test:server',
