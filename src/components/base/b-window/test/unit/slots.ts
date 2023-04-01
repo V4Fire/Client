@@ -9,9 +9,9 @@
 import type { Page, JSHandle } from 'playwright';
 
 import type bWindow from 'components/base/b-window/b-window';
+import { renderWindow as baseRenderWindow } from 'components/base/b-window/test/helpers';
 
 import test from 'tests/config/unit/test';
-import Component from 'tests/helpers/component';
 
 test.describe('<b-window> slots', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -93,28 +93,30 @@ test.describe('<b-window> slots', () => {
 				.toBe('<div class="b-window__bla">Hello world!</div>');
 		});
 
+		/**
+ 		 * Generates functions in the children params when needed
+		 * and renders `bWindow` component in the test page
+		 * @param page
+		 * @param params
+		 */
 		async function renderWindow(
-			page: Page, {attrs, children}: RenderComponentsVnodeParams = {}
+			page: Page, params: RenderComponentsVnodeParams = {}
 		): Promise<JSHandle<bWindow>> {
-			Object.forEach<VNodeChild, string>(children, (el, key) => {
-				if (children && Object.isString(el) && el.startsWith('return ')) {
+			Object.forEach<VNodeChild, string>(params.children, (el, key) => {
+				if (params.children && Object.isString(el) && el.startsWith('return ')) {
 					// eslint-disable-next-line no-new-func
-					children[key] = Function(el)();
+					params.children[key] = Function(el)();
 				}
 			});
 
-			// NOTE: using intermediate variable to fix the ts(2589) error
-			const bWindow = Component.createComponent(page, 'b-window', {
-				attrs: {
-					id: 'target',
-					title: 'Bla',
-					...attrs
-				},
-				children
-			});
-			return Object.cast(bWindow);
+			return baseRenderWindow(page, params);
 		}
 
+		/**
+		 * Returns innerHTML of the specified BEM element
+		 * @param ctx `bWindow` component
+		 * @param elementName
+		 */
 		function evaluateElementInnerHTML(ctx: bWindow, elementName: string): string | undefined {
 			return ctx.unsafe.block?.element(elementName)?.innerHTML;
 		}
