@@ -6,12 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, JSHandle } from 'playwright';
-
-import type bWindow from 'components/base/b-window/b-window';
+import { renderWindow } from 'components/base/b-window/test/helpers';
 
 import test from 'tests/config/unit/test';
-import Component from 'tests/helpers/component';
 
 test.describe('<b-window>', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -142,19 +139,4 @@ test.describe('<b-window>', () => {
 			test.expect(classList).not.toContain('b-window_opened_true');
 		});
 	});
-
-	async function renderWindow(
-		page: Page, {attrs, children}: RenderComponentsVnodeParams = {}
-	): Promise<JSHandle<bWindow>> {
-		const bWindow = await Component.createComponent(page, 'b-window', {
-			attrs: {
-				id: 'target',
-				title: 'Bla',
-				...attrs
-			},
-			children
-		});
-
-		return Object.cast(bWindow);
-	}
 });
