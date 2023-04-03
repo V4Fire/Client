@@ -12,7 +12,7 @@ import { build } from '@config/config';
 const webServerConfig: Config['webServer'] = {
 	port: build.testPort,
 	reuseExistingServer: true,
-	command: 'npm run test:server',
+	command: 'yarn test:server',
 	cwd: process.cwd()
 };
 
