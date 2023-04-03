@@ -6,10 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, JSHandle } from 'playwright';
-
 import type bWindow from 'components/base/b-window/b-window';
-import { renderWindow as baseRenderWindow } from 'components/base/b-window/test/helpers';
+import { renderWindow } from 'components/base/b-window/test/helpers';
 
 import test from 'tests/config/unit/test';
 
@@ -39,7 +37,7 @@ test.describe('<b-window> slots', () => {
 		test('`title` slot', async ({page}) => {
 			const target = await renderWindow(page, {
 				children: {
-					title: 'return ({title}) => title + "Foo"'
+					title: ({title}) => `${title}Foo`
 				}
 			});
 
@@ -94,26 +92,8 @@ test.describe('<b-window> slots', () => {
 		});
 
 		/**
- 		 * Generates functions in the children params when needed
-		 * and renders `bWindow` component in the test page
-		 * @param page
-		 * @param params
-		 */
-		async function renderWindow(
-			page: Page, params: RenderComponentsVnodeParams = {}
-		): Promise<JSHandle<bWindow>> {
-			Object.forEach<VNodeChild, string>(params.children, (el, key) => {
-				if (params.children && Object.isString(el) && el.startsWith('return ')) {
-					// eslint-disable-next-line no-new-func
-					params.children[key] = Function(el)();
-				}
-			});
-
-			return baseRenderWindow(page, params);
-		}
-
-		/**
 		 * Returns innerHTML of the specified BEM element
+		 *
 		 * @param ctx `bWindow` component
 		 * @param elementName
 		 */
