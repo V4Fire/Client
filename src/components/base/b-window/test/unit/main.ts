@@ -6,9 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { renderWindow } from 'components/base/b-window/test/helpers';
+import type { JSHandle } from 'playwright';
+
+import type bWindow from 'components/base/b-window/b-window';
+import { renderWindow, getComponentElementSelector } from 'components/base/b-window/test/helpers';
 
 import test from 'tests/config/unit/test';
+
+const B_WINDOW_OPENED_CLASS = 'b-window_opened_true';
 
 test.describe('<b-window>', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -30,22 +35,17 @@ test.describe('<b-window>', () => {
 			}
 		});
 
-		test
-			.expect(
-				// QUESTION: can querySelector be used in this context
-				await target.evaluate((ctx) => ctx.$el?.querySelector('#test-div')?.textContent)
-			)
-			.toEqual(
-				'Hello content'
-			);
+		const selector = await getComponentElementSelector(target, 'window');
+
+		// Check that #test-div is inside the b-window
+		test.expect(await page.locator(`${selector} #test-div`).textContent())
+			.toEqual('Hello content');
 	});
 
 	test('should be closed by default', async ({page}) => {
-		const
-			target = await renderWindow(page),
-			classList = await target.evaluate((ctx) => ctx.$el?.className.split(' '));
+		const target = await renderWindow(page);
 
-		test.expect(classList).not.toContain('b-window_opened_true');
+		test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
 	});
 
 	test.describe('`open`', () => {
@@ -62,8 +62,7 @@ test.describe('<b-window>', () => {
 			const target = await renderWindow(page);
 			await target.evaluate((ctx) => ctx.open());
 
-			const classList = await target.evaluate((ctx) => ctx.$el?.className.split(' '));
-			test.expect(classList).toContain('b-window_opened_true');
+			test.expect(await getClassList(target)).toContain(B_WINDOW_OPENED_CLASS);
 
 			test.expect(await target.evaluate((ctx) => ctx.getRootMod('opened')))
 				.toBe('true');
@@ -80,8 +79,7 @@ test.describe('<b-window>', () => {
 			const target = await renderWindow(page);
 			await target.evaluate((ctx) => ctx.toggle());
 
-			const classList = await target.evaluate((ctx) => ctx.$el?.className.split(' '));
-			test.expect(classList).toContain('b-window_opened_true');
+			test.expect(await getClassList(target)).toContain(B_WINDOW_OPENED_CLASS);
 		});
 	});
 
@@ -100,20 +98,22 @@ test.describe('<b-window>', () => {
 			const target = await renderWindow(page);
 
 			await target.evaluate((ctx) => ctx.open());
-			await page.click('.b-window__wrapper', {position: {x: 10, y: 10}});
 
-			const classList = await target.evaluate((ctx) => ctx.$el?.className.split(' '));
-			test.expect(classList).not.toContain('b-window_opened_true');
+			const selector = await getComponentElementSelector(target, 'wrapper');
+			await page.click(selector, {position: {x: 10, y: 10}});
+
+			test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
 		});
 
 		test('window should close when `escape` is pressed', async ({page}) => {
 			const target = await renderWindow(page);
 
 			await target.evaluate((ctx) => ctx.open());
-			await page.press('.b-window', 'Escape');
 
-			const classList = await target.evaluate((ctx) => ctx.$el?.className.split(' '));
-			test.expect(classList).not.toContain('b-window_opened_true');
+			const selector = await getComponentElementSelector(target, 'window');
+			await page.press(selector, 'Escape');
+
+			test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
 		});
 
 		test('window should close when `close` is invoked', async ({page}) => {
@@ -122,8 +122,7 @@ test.describe('<b-window>', () => {
 			await target.evaluate((ctx) => ctx.open());
 			await target.evaluate((ctx) => ctx.close());
 
-			const classList = await target.evaluate((ctx) => ctx.$el?.className.split(' '));
-			test.expect(classList).not.toContain('b-window_opened_true');
+			test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
 
 			test.expect(await target.evaluate((ctx) => ctx.getRootMod('opened')))
 				.toBe('false');
@@ -135,8 +134,15 @@ test.describe('<b-window>', () => {
 			await target.evaluate((ctx) => ctx.open());
 			await target.evaluate((ctx) => ctx.toggle());
 
-			const classList = await target.evaluate((ctx) => ctx.$el?.className.split(' '));
-			test.expect(classList).not.toContain('b-window_opened_true');
+			test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
 		});
 	});
+
+	/**
+	 * Returns component's class list
+	 * @param target
+	 */
+	async function getClassList(target: JSHandle<bWindow>): Promise<string[] | undefined> {
+		return target.evaluate((ctx) => ctx.$el?.className.split(' '));
+	}
 });
