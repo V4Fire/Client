@@ -13,9 +13,9 @@ import { renderWindow, getComponentElementSelector } from 'components/base/b-win
 
 import test from 'tests/config/unit/test';
 
-const B_WINDOW_OPENED_CLASS = 'b-window_opened_true';
-
 test.describe('<b-window>', () => {
+	const bWindowOpenedClass = 'b-window_opened_true';
+
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
@@ -45,7 +45,7 @@ test.describe('<b-window>', () => {
 	test('should be closed by default', async ({page}) => {
 		const target = await renderWindow(page);
 
-		test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
+		test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
 	});
 
 	test.describe('`open`', () => {
@@ -62,7 +62,7 @@ test.describe('<b-window>', () => {
 			const target = await renderWindow(page);
 			await target.evaluate((ctx) => ctx.open());
 
-			test.expect(await getClassList(target)).toContain(B_WINDOW_OPENED_CLASS);
+			test.expect(await getClassList(target)).toContain(bWindowOpenedClass);
 
 			test.expect(await target.evaluate((ctx) => ctx.getRootMod('opened')))
 				.toBe('true');
@@ -79,7 +79,7 @@ test.describe('<b-window>', () => {
 			const target = await renderWindow(page);
 			await target.evaluate((ctx) => ctx.toggle());
 
-			test.expect(await getClassList(target)).toContain(B_WINDOW_OPENED_CLASS);
+			test.expect(await getClassList(target)).toContain(bWindowOpenedClass);
 		});
 	});
 
@@ -102,7 +102,7 @@ test.describe('<b-window>', () => {
 			const selector = await getComponentElementSelector(target, 'wrapper');
 			await page.click(selector, {position: {x: 10, y: 10}});
 
-			test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
+			test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
 		});
 
 		test('window should close when `escape` is pressed', async ({page}) => {
@@ -113,7 +113,7 @@ test.describe('<b-window>', () => {
 			const selector = await getComponentElementSelector(target, 'window');
 			await page.press(selector, 'Escape');
 
-			test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
+			test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
 		});
 
 		test('window should close when `close` is invoked', async ({page}) => {
@@ -122,7 +122,7 @@ test.describe('<b-window>', () => {
 			await target.evaluate((ctx) => ctx.open());
 			await target.evaluate((ctx) => ctx.close());
 
-			test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
+			test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
 
 			test.expect(await target.evaluate((ctx) => ctx.getRootMod('opened')))
 				.toBe('false');
@@ -134,7 +134,7 @@ test.describe('<b-window>', () => {
 			await target.evaluate((ctx) => ctx.open());
 			await target.evaluate((ctx) => ctx.toggle());
 
-			test.expect(await getClassList(target)).not.toContain(B_WINDOW_OPENED_CLASS);
+			test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
 		});
 	});
 
