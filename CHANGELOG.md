@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.45.0 (2023-04-03)
+## v3.45.0 (2023-04-04)
 
 #### :house: Internal
 
@@ -23,7 +23,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * `@statoscope/webpack-plugin@5.25.1`
   * `webpack-cli@5.0.1`
   * `webpack@5.76.0`
-  * `playwright@1.23.0`
 
 ## v3.44.3 (2023-03-30)
 

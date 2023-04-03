@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Config } from '@playwright/test';
+import type { WebServerConfig } from '@playwright/test';
 import { build } from '@config/config';
 
-const webServerConfig: Config['webServer'] = {
+const webServerConfig: WebServerConfig = {
 	port: build.testPort,
 	reuseExistingServer: true,
 	command: 'yarn test:server',
