@@ -1,5 +1,3 @@
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -18,9 +16,7 @@ export async function renderBottomSlide(
 	attrs?: RenderComponentsVnodeParams['attrs'],
 	children?: RenderComponentsVnodeParams['children']
 ): Promise<JSHandle<bBottomSlide>> {
-	await Component.removeCreatedComponents(page);
-
-	await Component.createComponents(
+	await Component.createComponent(
 		page,
 		'b-bottom-slide',
 		[
