@@ -54,7 +54,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		});
 	});
 
-	test('opens via a fast swipe', async ({page}) => {
+	test('should open via a fast swipe', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full',
 			visible: 200
@@ -72,7 +72,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(openedModVal).toBe('true');
 	});
 
-	test('opens via a slow pull-up', async ({page}) => {
+	test('should open via a slow pull-up', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full',
 			visible: 200
@@ -90,7 +90,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(openedModVal).toBe('true');
 	});
 
-	test('pulls up the window with cursor moves up', async ({page}) => {
+	test('should pull up the window when the cursor moves up', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full',
 			visible: 200
@@ -107,7 +107,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(windowTopOffset).toBe(400);
 	});
 
-	test('closes via a fast swipe', async ({page}) => {
+	test('should close via a fast swipe', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full'
 		});
@@ -128,7 +128,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(openedModVal).toBe('false');
 	});
 
-	test('closes via a slow pull-down', async ({page}) => {
+	test('should close via a slow pull-down', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full'
 		});
@@ -149,7 +149,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(openedModVal).toBe('false');
 	});
 
-	test('pulls down the window with cursor moves down', async ({page}) => {
+	test('should pull down the window when the cursor moves down', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full'
 		});
@@ -189,7 +189,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(windowY).toBe(halfPageHeight);
 	});
 
-	test('sticks to the closest step on a fast pull-up', async ({page}) => {
+	test('should stick to the closest step on a fast pull-up', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full',
 			visible: 100,
@@ -208,7 +208,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(windowY).toBe(halfPageHeight);
 	});
 
-	test('skips all the steps on a full pull-up', async ({page}) => {
+	test('should skip all the steps on a full pull-up', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full',
 			visible: 100,
@@ -227,7 +227,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(windowTopOffset).toBe(maxWindowHeight);
 	});
 
-	test('does not skips any steps before a full pull-up', async ({page}) => {
+	test('should not skip any steps before a full pull-up', async ({page}) => {
 		const
 			steps = [30, 60];
 
@@ -259,7 +259,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	// FIXME: test is broken
-	test('cannot be pulled more than the maximum height', async ({page}) => {
+	test('should not be pulled more than the maximum height', async ({page}) => {
 		const
 			contentHeight = 300;
 

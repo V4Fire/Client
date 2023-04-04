@@ -50,8 +50,8 @@ test.describe('<b-bottom-slide> events', () => {
 			});
 	});
 
-	test.describe('emits `open`', () => {
-		test('invokes the `open` method', async ({page}) => {
+	test.describe('should emit `open`', () => {
+		test('when `open` method is invoked', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full'
 			});
@@ -64,7 +64,7 @@ test.describe('<b-bottom-slide> events', () => {
 			await test.expect(pr).toBeResolved();
 		});
 
-		test('opening via a swipe', async ({page}) => {
+		test('on swipe', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				visible: 160
@@ -80,8 +80,8 @@ test.describe('<b-bottom-slide> events', () => {
 		});
 	});
 
-	test.describe('`close`', () => {
-		test('invokes the `close` method', async ({page}) => {
+	test.describe('should emit `close`', () => {
+		test('when the `close` method is invoked', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full'
 			});
@@ -95,7 +95,7 @@ test.describe('<b-bottom-slide> events', () => {
 			await test.expect(pr).toBeResolved();
 		});
 
-		test('closing via a swipe', async ({page}) => {
+		test('on swipe', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full'
 			});
@@ -115,8 +115,8 @@ test.describe('<b-bottom-slide> events', () => {
 		});
 	});
 
-	test.describe('`stepChange`', () => {
-		test('invokes the `next` method', async ({page}) => {
+	test.describe('should emit `stepChange`', () => {
+		test('when the `next` method is invoked', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				steps: [20, 40]
@@ -131,7 +131,7 @@ test.describe('<b-bottom-slide> events', () => {
 			await test.expect(pr).toBeResolved();
 		});
 
-		test('invokes the `prev` method', async ({page}) => {
+		test('when the `prev` method is invoked', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				steps: [20, 40]
@@ -147,7 +147,7 @@ test.describe('<b-bottom-slide> events', () => {
 			await test.expect(pr).toBeResolved();
 		});
 
-		test('step-changing via a swipe', async ({page}) => {
+		test('on swipe', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				visible: 100,
@@ -166,7 +166,7 @@ test.describe('<b-bottom-slide> events', () => {
 		});
 	});
 
-	test('`moveStateChange`', async ({page}) => {
+	test('should emit `moveStateChange` on swipe', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full',
 			visible: 200
