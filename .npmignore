@@ -41,6 +41,7 @@ Icon
 /bower_components
 /node_modules
 /.yalc
+/.yarn
 /yalc.lock
 
 # Build && test
@@ -48,6 +49,7 @@ Icon
 /.nyc_output
 /dist
 /tsconfig.json
+/client.tsconfig.json
 .env
 
 # Log
@@ -60,6 +62,7 @@ Icon
 /Releases-js
 /tmp
 /app-cache
+/.eslintcache
 /app-std-cache
 /src/entries/tmp
 /db
@@ -67,3 +70,4 @@ Icon
 # NPM ignore list
 /docs
 /.github
+/.husky
