@@ -684,8 +684,7 @@ test.describe('<b-bottom-slide> functional cases', () => {
 	});
 
 	test.describe('`recalculateState`', () => {
-		// FIXME: test is broken
-		test('should recalculate the window geometry', async ({page}) => {
+		test('should recalculate the window geometry on DOM change', async ({page}) => {
 			const
 				contentHeight = 40;
 

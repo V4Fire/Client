@@ -850,7 +850,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * Recalculates a component state: sizes, positions, etc.
 	 */
-	@watch(['window:resize', ':DOMChange', ':history:transition'])
+	@watch(['window:resize', 'localEmitter:DOMChange', ':history:transition'])
 	@wait('ready')
 	protected async recalculateState(): Promise<void> {
 		try {
