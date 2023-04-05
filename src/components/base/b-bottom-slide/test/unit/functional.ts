@@ -44,7 +44,6 @@ test.describe('<b-bottom-slide> functional cases', () => {
 
 	test.describe('`heightMode`', () => {
 		test.describe('`content`', () => {
-			// FIXME: test is broken
 			test('should calculate height using the provided content height', async ({page}) => {
 				const
 					contentHeight = 40;
@@ -209,7 +208,6 @@ test.describe('<b-bottom-slide> functional cases', () => {
 	});
 
 	test.describe('`maxVisiblePercent`', () => {
-		// FIXME: test is broken
 		test('can be pulled up to `50%` of component height', async ({page}) => {
 			const
 				maxVisiblePercent = 50;

@@ -258,7 +258,6 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(windowTopOffset).toBe(window60PercentOfHeight);
 	});
 
-	// FIXME: test is broken
 	test('should not be pulled more than the maximum height', async ({page}) => {
 		const
 			contentHeight = 300;
