@@ -31,6 +31,7 @@ import iBlock, {
 	prop,
 	field,
 	system,
+	computed,
 
 	hook,
 	watch,
@@ -163,6 +164,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * List of possible component positions relative to the screen height (in percentages)
 	 */
+	@computed({cache: false})
 	get steps(): number[] {
 		const
 			res = [this.visibleInPercent];
