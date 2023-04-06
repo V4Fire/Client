@@ -12,9 +12,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecate } from 'core/functools';
 
-import DOM, { watchForIntersection } from 'components/friends/dom';
+import DOM, { watchForIntersection, appendChild } from 'components/friends/dom';
+import VDOM, { render, create } from 'components/friends/vdom';
+import Block, { getFullElementName } from 'components/friends/block';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 
@@ -70,7 +71,9 @@ export * from 'components/base/b-virtual-scroll/interface';
 
 export { RequestFn, RemoteData, RequestQueryFn, GetData };
 
-DOM.addToPrototype({watchForIntersection});
+DOM.addToPrototype(watchForIntersection, appendChild);
+VDOM.addToPrototype(render, create);
+Block.addToPrototype(getFullElementName);
 
 const
 	$$ = symbolGenerator();

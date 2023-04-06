@@ -19,7 +19,7 @@ const requestStates: Dictionary<RequestState> = {
 export async function interceptPaginationRequest(
 	pageOrContext: Page | BrowserContext
 ): Promise<void> {
-	return pageOrContext.route(/pagination/, async (route) => {
+	return pageOrContext.route(/api/, async (route) => {
 		const routeQuery = fromQueryString(new URL(route.request().url()).search);
 
 		const query = <RequestQuery>{

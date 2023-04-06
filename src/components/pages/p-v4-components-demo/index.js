@@ -16,6 +16,7 @@ package('p-v4-components-demo')
 
 		'b-remote-provider',
 		'b-list',
+		'b-virtual-scroll',
 		'b-tree',
 		'b-window',
 
