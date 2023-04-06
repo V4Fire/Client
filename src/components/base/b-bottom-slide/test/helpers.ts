@@ -52,7 +52,7 @@ export async function renderBottomSlide(
  *
  * @param page
  * @param component
- * @param step
+ * @param [step]
  */
 export async function open(page: Page, component: JSHandle<bBottomSlide>, step?: number): Promise<void> {
 	await component.evaluate((ctx, [step]) => ctx.open(step), [step]);
