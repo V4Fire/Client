@@ -65,3 +65,11 @@ $RECYCLE.BIN
 # Statoscope
 statoscope-*/*
 statoscope-*.config.js
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

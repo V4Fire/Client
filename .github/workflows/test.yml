@@ -18,31 +18,25 @@ jobs:
         node-version: [16.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
+          cache: 'yarn'
           node-version: ${{ matrix.node-version }}
 
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Install dependencies
-        run: npm ci
+        run: yarn
 
       - name: Build tsconfig
-        run: npm run build:tsconfig
+        run: yarn build:tsconfig
 
       - name: Build project
-        run: npx webpack
+        run: yarn webpack
 
       - name: Run components' unit tests
-        run: npm run test:unit -- --reporter github
+        run: yarn test:unit --reporter github
 
 
   # Run module tests
@@ -58,32 +52,25 @@ jobs:
         node-version: [16.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
+          cache: 'yarn'
           node-version: ${{ matrix.node-version }}
 
-      - uses: actions/cache@v2
-
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
       - name: Install dependencies
-        run: npm ci
+        run: yarn
 
       - name: Build tsconfig
-        run: npm run build:tsconfig
+        run: yarn build:tsconfig
 
       - name: Build the project
-        run: npx webpack
+        run: yarn webpack
 
       - name: Run modules' tests
-        run: npm run test:jasmine
+        run: yarn test:jasmine
 
   # Run linters
   linters:
@@ -94,18 +81,19 @@ jobs:
         node-version: [16.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
+          cache: 'yarn'
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: npm ci
+        run: yarn
 
       - name: Build tsconfig
-        run: npm run build:tsconfig
+        run: yarn build:tsconfig
 
       - name: Run tests
-        run: npm run test:linters
+        run: yarn test:linters
