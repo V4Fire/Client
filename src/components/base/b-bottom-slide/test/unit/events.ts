@@ -11,9 +11,9 @@ import test from 'tests/config/unit/test';
 
 import DOM from 'tests/helpers/dom';
 import BOM from 'tests/helpers/bom';
+import Gestures from 'tests/helpers/gestures';
 
 import type GesturesInterface from 'core/prelude/test-env/gestures';
-import Gestures from 'tests/helpers/gestures';
 
 import {
 
