@@ -42,6 +42,17 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		await demoPage.goto();
 	});
 
+	test('should be hidden by default', async ({page}) => {
+		const component = await renderBottomSlide(page, {
+			heightMode: 'content'
+		});
+
+		const
+			windowTopOffset = await getAbsoluteComponentWindowOffset(component);
+
+		test.expect(windowTopOffset).toBe(0);
+	});
+
 	test.describe('`heightMode`', () => {
 		test.describe('`content`', () => {
 			test('should calculate height using the provided content height', async ({page}) => {
