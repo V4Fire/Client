@@ -7,23 +7,23 @@
  */
 import type { JSHandle } from 'playwright';
 
-import type GesturesInterface from 'core/prelude/test-env/gestures';
-import Gestures from 'tests/helpers/gestures';
 import test from 'tests/config/unit/test';
+
+import DOM from 'tests/helpers/dom';
+import BOM from 'tests/helpers/bom';
+import Gestures from 'tests/helpers/gestures';
+
+import type GesturesInterface from 'core/prelude/test-env/gestures';
 
 import {
 
 	renderBottomSlide,
-
 	getAbsoluteComponentWindowOffset,
 	getComponentWindowYPos,
 	getAbsolutePageHeight,
-
 	open
 
 } from 'components/base/b-bottom-slide/test/helpers';
-import BOM from 'tests/helpers/bom';
-import DOM from 'tests/helpers/dom';
 
 test.use({
 	isMobile: true,

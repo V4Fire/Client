@@ -10,22 +10,21 @@
 
 import test from 'tests/config/unit/test';
 
+import BOM from 'tests/helpers/bom';
+
 import {
 
 	renderBottomSlide,
-
 	getAbsoluteComponentWindowOffset,
 	getAbsoluteComponentWindowHeight,
 	getAbsolutePageHeight,
 
 	open,
 	close,
-
 	prev,
 	next
 
 } from 'components/base/b-bottom-slide/test/helpers';
-import BOM from 'tests/helpers/bom';
 
 test.use({
 	isMobile: true,
