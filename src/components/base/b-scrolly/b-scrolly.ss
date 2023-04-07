@@ -14,5 +14,44 @@
 	- block body
 		< .&__wrapper
 			< .&__container ref = container | -test-ref = container
-				< .&__item v-for = el in list
-					+= self.slot('default', {':item': 'el'})
+
+			< .&__tombstones &
+				ref = tombstones |
+				v-if = $slots['tombstone']
+			.
+				< .&__tombstone v-for = i in tombstonesSize || chunkSize
+					+= self.slot('tombstone')
+
+			< .&__loader &
+				ref = loader |
+				v-if = $slots['loader']
+			.
+				+= self.slot('loader')
+
+			< .&__retry &
+				ref = retry |
+				v-if = $slots['retry'] |
+				:style = {display: 'none'}
+			.
+				+= self.slot('retry')
+
+			< .&__empty &
+				ref = empty |
+				v-if = $slots['empty'] |
+				:style = {display: 'none'}
+			.
+				+= self.slot('empty')
+
+			< .&__done &
+				ref = done |
+				v-if = $slots['done'] |
+				:style = {display: 'none'}
+			.
+				+= self.slot('done')
+
+			< .&__render-next &
+				ref = renderNext |
+				v-if = $slots['renderNext'] |
+				:style = {display: 'none'}
+			.
+				+= self.slot('renderNext')
