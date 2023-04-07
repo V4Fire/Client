@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { locale } from 'core/i18n';
-
 import * as net from 'core/net';
 import * as session from 'core/session';
 
@@ -26,10 +24,7 @@ export default (async () => {
 		.catch(stderr);
 
 	try {
-		await Promise.allSettled([
-			locale.isInitialized,
-			session.isExists().then((v) => state.isAuth = v)
-		]);
+		await session.isExists().then((v) => state.isAuth = v);
 
 	} catch (err) {
 		stderr(err);

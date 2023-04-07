@@ -8,7 +8,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { componentRenderFactories } from 'core/component/const';
+import { app, componentRenderFactories } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -183,13 +183,19 @@ export function wrapCreateElementBlock<T extends typeof createElementBlock>(orig
 export function wrapResolveComponent<T extends typeof resolveComponent | typeof resolveDynamicComponent>(
 	original: T
 ): T {
-	return Object.cast(function resolveComponent(this: ComponentInterface, name: string, ...args: any[]) {
+	return Object.cast(function resolveComponent(this: ComponentInterface, name: string) {
 		if (!this.$renderEngine.supports.functional) {
 			name = name.replace(isSmartComponent, '');
 		}
 
-		const component = registerComponent(name);
-		return component?.params.functional === true ? name : original(name, ...args);
+		const
+			component = registerComponent(name);
+
+		if (component?.params.functional === true) {
+			return name;
+		}
+
+		return app.context != null ? app.context.component(name) ?? original(name) : original(name);
 	});
 }
 

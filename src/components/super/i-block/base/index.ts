@@ -11,12 +11,26 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
 import random from 'core/random/xor128';
+import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
 import { wrapWithSuspending, AsyncOptions, BoundFn } from 'core/async';
-import { component, bindRemoteWatchers, customWatcherRgxp, RawWatchHandler, WatchPath } from 'core/component';
+
+import config from 'config';
+
+import {
+
+	component,
+	getComponentName,
+
+	bindRemoteWatchers,
+	customWatcherRgxp,
+
+	RawWatchHandler,
+	WatchPath
+
+} from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
@@ -116,6 +130,20 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
+	 * A function for internationalizing texts used in the component
+	 */
+	get i18n(): ReturnType<typeof i18n> {
+		return i18n(this.componentI18nKeysets);
+	}
+
+	/**
+	 * An alias for `i18n`
+	 */
+	get t(): ReturnType<typeof i18n> {
+		return this.i18n;
+	}
+
+	/**
 	 * True if the component context is based on another component via `vdom.getRenderFn`
 	 */
 	@system()
@@ -171,6 +199,25 @@ export default abstract class iBlockBase extends iBlockFriends {
 	protected rootAttrsStore: Dictionary = {};
 
 	/**
+	 * A list of keyset names used to internationalize the component
+	 */
+	@system({atom: true, unique: true})
+	protected componentI18nKeysets: string[] = (() => {
+		const
+			res: string[] = [];
+
+		let
+			keyset: CanUndef<string> = getComponentName(this.constructor);
+
+		while (keyset != null) {
+			res.push(keyset);
+			keyset = config.components[keyset]?.parent;
+		}
+
+		return res;
+	})();
+
+	/**
 	 * A link to the component itself
 	 */
 	@computed()
@@ -179,11 +226,16 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * An alias for the `i18n` prop
+	 * A function for internationalizing texts inside traits.
+	 * Due to the fact that traits are called in the context of components, the standard i18n is not suitable,
+	 * and you must explicitly pass the name of the set of keys (trait names).
+	 *
+	 * @param traitName - the trait name
+	 * @param text - text for internationalization
+	 * @param [opts] - additional internationalization options
 	 */
-	@computed()
-	protected get t(): this['i18n'] {
-		return this.i18n;
+	i18nTrait(traitName: string, text: string, opts?: I18nParams): string {
+		return i18n(traitName)(text, opts);
 	}
 
 	/**

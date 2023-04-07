@@ -69,17 +69,21 @@ test.describe('core/cookies', () => {
 			const
 				testVal = await page.evaluate(() => document.cookie);
 
-			test.expect(testVal).toBe('testCookie=testCookieVal');
+			test.expect(testVal.includes('testCookie=testCookieVal')).toBeTruthy();
 		});
 
 		test('set multiply cookies', async ({context, page}) => {
-			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
-			await cookie.evaluate((ctx) => ctx.set('testCookie2', 'testCookieVal2'));
+			const
+				cookiesNames = ['testCookie', 'testCookie2'];
+
+			await cookie.evaluate((ctx, cookiesNames) => ctx.set(cookiesNames[0], 'testCookieVal'), cookiesNames);
+			await cookie.evaluate((ctx, cookiesNames) => ctx.set(cookiesNames[1], 'testCookieVal2'), cookiesNames);
 
 			const
-				cookies = await context.cookies(page.url());
+				cookies = await context.cookies(page.url()),
+				targetCookies = cookies.filter((el) => cookiesNames.includes(el.name));
 
-			test.expect(cookies).toEqual([
+			test.expect(targetCookies).toEqual([
 				createCookie(),
 				createCookie({
 					name: 'testCookie2',
@@ -95,7 +99,7 @@ test.describe('core/cookies', () => {
 				origin = await page.evaluate(() => location.origin),
 				cookies = await context.cookies(`${origin}/test`);
 
-			test.expect(cookies).toEqual([createCookie({path: '/test'})]);
+			test.expect(cookies.filter((el) => el.name === 'testCookie')).toEqual([createCookie({path: '/test'})]);
 		});
 
 		test('with the `expires` option provided', async ({page, context}) => {
@@ -109,19 +113,26 @@ test.describe('core/cookies', () => {
 			const
 				cookies = await context.cookies(page.url());
 
-			test.expect(cookies).toEqual([createCookie({expires})]);
+			test.expect(cookies.filter((el) => el.name === 'testCookie')).toEqual([createCookie({expires})]);
 		});
 	});
 
 	test.describe('`remove`', () => {
 		test('removes a cookie', async ({context, page}) => {
 			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
-			await cookie.evaluate((ctx) => ctx.remove('testCookie'));
 
 			const
 				cookies = await context.cookies(page.url());
 
-			test.expect(cookies).toEqual([]);
+			test.expect(cookies.find((el) => el.name === 'testCookie')).toBeTruthy();
+
+			await cookie.evaluate((ctx) => ctx.remove('testCookie'));
+
+			const
+				cookiesAfterRemove = await context.cookies(page.url());
+
+			test.expect(cookiesAfterRemove.find((el) => el.name === 'testCookie')).toBeFalsy();
+			test.expect(cookiesAfterRemove.length).toBe(cookies.length - 1);
 		});
 	});
 

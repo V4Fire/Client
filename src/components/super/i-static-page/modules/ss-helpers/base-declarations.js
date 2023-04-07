@@ -7,7 +7,7 @@
  */
 
 const
-	{webpack, csp} = require('@config/config'),
+	{webpack, csp, i18n} = require('@config/config'),
 	{getScriptDecl} = include('src/components/super/i-static-page/modules/ss-helpers/tags');
 
 exports.getVarsDecl = getVarsDecl;
@@ -24,6 +24,8 @@ function getVarsDecl({wrap} = {}) {
 Object.defineProperty(window, '${csp.nonceStore()}', {
 	value: ${csp.postProcessor ? JSON.stringify(csp.nonce()) : csp.nonce()}
 });
+
+var ${i18n.langPacksStore} = {};
 
 var PATH = Object.create(null);
 var PUBLIC_PATH = ${Object.isString(webpack.dynamicPublicPath()) ? `String(${webpack.dynamicPublicPath()}).trim()` : 'undefined'};

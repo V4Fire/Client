@@ -7,14 +7,12 @@
  */
 
 import Friend, { fakeMethods } from 'components/friends/friend';
-
-import type * as api from 'components/friends/module-loader/api';
 import type { Module } from 'components/friends/module-loader/interface';
 
 interface ModuleLoader {
-	load: typeof api.load;
-	loadBucket: typeof api.loadBucket;
-	addToBucket: typeof api.addToBucket;
+	load(...modules: Module[]): CanPromise<IterableIterator<Module[]>>;
+	loadBucket(bucketName: string, ...modules: Module[]): number;
+	addToBucket(bucketName: string): CanPromise<IterableIterator<Module[]>>;
 }
 
 @fakeMethods(

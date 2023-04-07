@@ -19,6 +19,7 @@ import type {
 	getCurrentInstance,
 
 	toHandlers,
+	toHandlerKey,
 	toDisplayString,
 
 	renderList,
@@ -103,6 +104,7 @@ export interface RenderAPI {
 	TransitionGroup: typeof TransitionGroup;
 
 	toHandlers: typeof toHandlers;
+	toHandlerKey: typeof toHandlerKey;
 	toDisplayString: typeof toDisplayString;
 
 	renderList: typeof renderList;

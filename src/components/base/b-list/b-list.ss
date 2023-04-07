@@ -65,7 +65,7 @@
 										.
 
 									< template v-else
-										{{ t(el.label) }}
+										{{ el.label }}
 
 						- block icon
 							< span.&__cell.&__link-icon.&__link-post-icon v-if = el.icon || $slots['icon']

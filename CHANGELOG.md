@@ -11,6 +11,55 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.40.1 (2023-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed Windows support in localization plugin `build/webpack/plugins/i18n-plugin`
+
+## v3.40.0 (2023-03-10)
+
+#### :house: Internal
+
+* Updated `html-loader@4.2.0`
+* Added variable `BUILD_MODE` into `index.d.ts` from webpack globals
+* Added the possibility to change the manifest href and added `use-credentials` attribute
+
+## v3.39.0 (2023-03-07)
+
+#### :rocket: New Feature
+
+* Added new options `i18n` `config`
+* Added a new plugin `i18n-plugin` `build/webpack`
+
+## v3.38.0 (2023-02-20)
+
+#### :bug: Bug Fix
+
+* Fixed use of `i18n` function in default prop values `iBlock`
+
+## v3.37.0 (2023-02-20)
+
+#### :bug: Bug Fix
+
+* Downgraded `css-loader` version for fix svg bundling
+
+## v3.36.0 (2023-02-14)
+
+#### :house: Internal
+
+* Replaced `fast-css-loader` with `css-loader`
+
+## v3.35.0 (2023-02-14)
+
+#### :boom: Breaking Change
+
+* Changed `i18n` function type from prop to getter `iBlock`
+
+#### :rocket: New Feature
+
+* Integrating the new internationalization API
+
 ## v3.34.1 (2023-01-31)
 
 #### :house: Internal

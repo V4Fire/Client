@@ -16,10 +16,13 @@ package('p-v4-components-demo')
 
 		'b-remote-provider',
 		'b-list',
+		'b-virtual-scroll',
 		'b-tree',
 		'b-window',
 		'b-scrolly',
+		'b-bottom-slide',
 
+		'b-slider',
 		'b-form',
 		'b-button',
 		'b-icon-button',
@@ -27,7 +30,8 @@ package('p-v4-components-demo')
 		'b-radio-button',
 		'b-hidden-input',
 		'b-input',
-		'b-textarea'
+		'b-textarea',
+		'b-select'
 	)
 
 	.libs(

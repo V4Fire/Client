@@ -19,13 +19,13 @@ test.describe('b-virtual-scroll render', () => {
 
 	const baseAttrs = {
 		theme: 'demo',
-		option: 'section',
+		item: 'section',
 		id: 'target',
-		optionProps: ({current}) => ({'data-index': current.i})
+		itemProps: ({current}) => ({'data-index': current.i})
 	};
 
 	const providerProps = (reqParams = {}) => ({
-		dataProvider: 'demo.Pagination',
+		dataProvider: 'Provider',
 		chunkSize: 10,
 		request: {get: {chunkSize: 10, id: Math.random(), ...reqParams}}
 	});
@@ -57,7 +57,7 @@ test.describe('b-virtual-scroll render', () => {
 
 		test('renders b-button', async ({page}) => {
 			const
-				component = await Component.createComponent<bVirtualScroll>(page, 'b-virtual-scroll', attrs({...providerProps(), option: 'b-button'})),
+				component = await Component.createComponent<bVirtualScroll>(page, 'b-virtual-scroll', attrs({...providerProps(), item: 'b-button'})),
 				chunkSize = await component.evaluate((ctx) => ctx.chunkSize);
 
 			await page.waitForSelector(buttonSelector, {state: 'attached'});
@@ -107,7 +107,7 @@ test.describe('b-virtual-scroll render', () => {
 
 		test('renders the first chunk with truncated data in all loaded chunks', async ({page}) => {
 			const component = await Component.createComponent<bVirtualScroll>(page, 'b-virtual-scroll', attrs({
-				dataProvider: 'demo.Pagination',
+				dataProvider: 'Provider',
 				chunkSize: 4,
 				request: {get: {chunkSize: 8, total: 32, id: 'uniq'}},
 				dbConverter: ({data}) => ({data: data.splice(0, 1)})
@@ -123,7 +123,7 @@ test.describe('b-virtual-scroll render', () => {
 
 		test('renders all data if `shouldStopRequest` returns true', async ({page}) => {
 			const component = await Component.createComponent<bVirtualScroll>(page, 'b-virtual-scroll', attrs({
-				dataProvider: 'demo.Pagination',
+				dataProvider: 'Provider',
 				chunkSize: 10,
 				request: {get: {chunkSize: 40, total: 80, id: Math.random(), delay: 100}},
 				shouldStopRequest: ({data}) => data.length === 80

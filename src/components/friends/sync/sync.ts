@@ -22,7 +22,7 @@ import type { LinkDecl } from 'components/friends/sync/interface';
  * import iBlock, { component } from 'components/super/i-block/i-block';
  * import Sync, { object, syncLinks } from 'components/friends/sync';
  *
- * Sync.addToPrototype(syncLinks);
+ * Sync.addToPrototype({syncLinks});
  *
  * @component()
  * export default class bInput extends iBlock {

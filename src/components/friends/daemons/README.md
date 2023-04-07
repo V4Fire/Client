@@ -13,7 +13,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import Daemons, { init } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {}
@@ -39,7 +39,7 @@ import iBlock, { component, field } from 'components/super/i-block/i-block';
 import Daemons, { init, DaemonsDict } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {
@@ -78,7 +78,7 @@ import iBlock, { component, field } from 'components/super/i-block/i-block';
 import Daemons, { init, DaemonsDict } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {
@@ -111,7 +111,7 @@ import iBlock, { component, field } from 'components/super/i-block/i-block';
 import Daemons, { init, DaemonsDict } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {
@@ -149,7 +149,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import Daemons, { init, DaemonsDict } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {
@@ -179,7 +179,7 @@ import iBlock, { component, field } from 'components/super/i-block/i-block';
 import Daemons, { init, DaemonsDict } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {
@@ -216,7 +216,7 @@ import iBlock, { component, field } from 'components/super/i-block/i-block';
 import Daemons, { init, DaemonsDict } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {
@@ -249,7 +249,7 @@ import iBlock, { component, field } from 'components/super/i-block/i-block';
 import Daemons, { init, DaemonsDict } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {
@@ -284,7 +284,7 @@ import iBlock, { component, field } from 'components/super/i-block/i-block';
 import Daemons, { init, DaemonsDict } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {
@@ -320,7 +320,7 @@ import iBlock, { component, field } from 'components/super/i-block/i-block';
 import Daemons, { init, DaemonsDict } from 'components/friends/daemons';
 
 // Import the `init` method
-Daemons.addToPrototype(init);
+Daemons.addToPrototype({init});
 
 @component()
 export default class bExample extends iBlock {

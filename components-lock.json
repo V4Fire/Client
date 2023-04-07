@@ -1,5 +1,5 @@
 {
-  "hash": "119d10ed0c1fea13cd3496c4968c7537a00374ccb00828b1afacfb36380ae7ba",
+  "hash": "602ae8f1c8a667650e7ae29e0277dced707e250f1ee1ad32d61f1b01a564063f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1910,9 +1910,14 @@
               "b-dynamic-page",
               "b-remote-provider",
               "b-list",
+              "b-virtual-scroll",
               "b-tree",
               "b-window",
+<<<<<<< HEAD
               "b-scrolly",
+=======
+              "b-slider",
+>>>>>>> 93bd530a9693b37d9342d77b8d8ff73b98bc11b0
               "b-form",
               "b-button",
               "b-icon-button",
@@ -1920,7 +1925,8 @@
               "b-radio-button",
               "b-hidden-input",
               "b-input",
-              "b-textarea"
+              "b-textarea",
+              "b-select"
             ],
             "libs": [
               "components/directives/image",
@@ -1935,9 +1941,14 @@
             "b-dynamic-page",
             "b-remote-provider",
             "b-list",
+            "b-virtual-scroll",
             "b-tree",
             "b-window",
+<<<<<<< HEAD
             "b-scrolly",
+=======
+            "b-slider",
+>>>>>>> 93bd530a9693b37d9342d77b8d8ff73b98bc11b0
             "b-form",
             "b-button",
             "b-icon-button",
@@ -1945,7 +1956,8 @@
             "b-radio-button",
             "b-hidden-input",
             "b-input",
-            "b-textarea"
+            "b-textarea",
+            "b-select"
           ],
           "libs": [
             "components/directives/image",

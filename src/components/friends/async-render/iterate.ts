@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { TaskCtx } from 'core/async';
+
 import type { ComponentElement } from 'core/component';
 import type { VNode } from 'core/component/engines';
 
@@ -126,7 +128,7 @@ export function iterate(
 
 		// Using `while` instead of `for of` helps to iterate over synchronous and asynchronous iterators with a single loop
 		// eslint-disable-next-line no-constant-condition
-		while (true) {
+		rendering: while (true) {
 			if (opts.group != null) {
 				group = `asyncComponents:${opts.group}:${chunkI}`;
 			}
@@ -184,15 +186,31 @@ export function iterate(
 				iterI++;
 
 			} catch (err) {
-				if (
-					Object.get(err, 'type') === 'clearAsync' &&
-					Object.get(err, 'reason') === 'group' &&
-					Object.get(err, 'link.group') === 'group'
-				) {
-					break;
+				if (Object.get(err, 'type') === 'clearAsync') {
+					const
+						taskCtx = Object.cast<TaskCtx>(err);
+
+					switch (taskCtx.reason) {
+						case 'all':
+							break rendering;
+
+						case 'rgxp':
+						case 'group':
+							if (taskCtx.link.group === group) {
+								break rendering;
+							}
+
+							break;
+
+						default:
+							// Ignore
+					}
 				}
 
 				stderr(err);
+
+				// Avoiding infinite loop
+				await $a.sleep(0, {group});
 			}
 		}
 
@@ -218,7 +236,7 @@ export function iterate(
 				}
 			});
 		}
-	});
+	}, {group});
 
 	return iter.readEls;
 

@@ -29,7 +29,7 @@ class bExample extends iBlock {}
 ```
 < div v-bind-with = { &
   path: 'bla.bar',
-  then: (el, value, oldValue, info) => myHandler(el, value, oldValue, info),
+  then: (el, value, oldValue, info) => myHandler(el, value, oldValue, info)
 } .
 
 < div v-bind-with = { &

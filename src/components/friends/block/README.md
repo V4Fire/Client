@@ -16,7 +16,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 import Block, { getElementMod, setElementMod } from 'components/friends/block';
 
 // Import `getElementMod` and `setElementMod` methods
-Block.addToPrototype(getElementMod, setElementMod);
+Block.addToPrototype({getElementMod, setElementMod});
 
 @component()
 export default class bExample extends iBlock {}
@@ -31,7 +31,7 @@ import iBlock, { component, wait } from 'components/super/i-block/i-block';
 import Block, { getElementMod, setElementMod } from 'components/friends/block';
 
 // Import `getElementMod` and `setElementMod` methods
-Block.addToPrototype(getElementMod, setElementMod);
+Block.addToPrototype({getElementMod, setElementMod});
 
 @component()
 export default class bExample extends iBlock {

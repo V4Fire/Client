@@ -147,7 +147,7 @@ test.describe('<b-checkbox> form API', () => {
 
 	/**
 	 * @param page
-	 * @param attrs
+	 * @param [attrs]
 	 */
 	async function renderCheckbox(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bCheckbox>> {
 		await Component.createComponent(page, 'b-checkbox', [

@@ -40,7 +40,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'core/router/const';
 export * from 'components/base/b-router/interface';
 
-DOM.addToPrototype(delegate);
+DOM.addToPrototype({delegate});
 
 const
 	$$ = symbolGenerator();

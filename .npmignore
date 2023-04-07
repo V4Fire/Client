@@ -1,3 +1,6 @@
+
+ 
+
 # IDE
 .idea
 
@@ -27,6 +30,9 @@ $RECYCLE.BIN
 .LSOverride
 .vscode
 
+# Icon must ends with two \r.
+Icon
+
 # Thumbnails
 ._*
 
@@ -38,6 +44,7 @@ $RECYCLE.BIN
 /bower_components
 /node_modules
 /.yalc
+/.yarn
 /yalc.lock
 
 # Build && test
@@ -45,7 +52,7 @@ $RECYCLE.BIN
 /.nyc_output
 /dist
 /tsconfig.json
-/*.tsconfig.json
+/client.tsconfig.json
 .env
 
 # Log
@@ -58,10 +65,12 @@ $RECYCLE.BIN
 /Releases-js
 /tmp
 /app-cache
+/.eslintcache
 /app-std-cache
 /src/entries/tmp
 /db
 
-# Statoscope
-statoscope-*/*
-statoscope-*.config.js
+# NPM ignore list
+/docs
+/.github
+/.husky

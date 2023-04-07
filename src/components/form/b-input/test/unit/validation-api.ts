@@ -672,7 +672,7 @@ test.describe('<b-input> validation API', () => {
 			test.expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 				validator: 'date',
 				error: {name: 'IS_PAST', value: new Date(1989, 9, 18), params},
-				message: 'Date value cannot be in the past'
+				message: "Date value can't be in the past"
 			});
 
 			const
@@ -727,7 +727,7 @@ test.describe('<b-input> validation API', () => {
 			test.expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 				validator: 'date',
 				error: {name: 'IS_FUTURE', value: new Date(date), params},
-				message: 'Date value cannot be in the future'
+				message: "Date value can't be in the future"
 			});
 
 			await target.evaluate((ctx) => {

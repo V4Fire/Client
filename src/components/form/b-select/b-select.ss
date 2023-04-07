@@ -54,7 +54,7 @@
 							.
 
 						< template v-else
-							{{ t(el.label) }}
+							{{ el.label }}
 
 	- block body
 		- super
@@ -70,21 +70,17 @@
 						}) .
 
 					< _.&__cell.&__icon.&__pre-icon v-else-if = preIcon
-						< component &
-							v-if = preIconComponent |
-							:instanceOf = bIcon |
-							:is = preIconComponent |
-							:value = preIcon |
-							:hint = preIconHint |
-							:hintPos = preIconHintPos
+						< _.g-hint &
+							:-hint = preIconHint |
+							:class = preIconHintPos && provide.fullComponentName('g-hint', 'pos', preIconHintPos)
 						.
+							< component &
+								v-if = preIconComponent |
+								:is = preIconComponent |
+								:value = preIcon
+							.
 
-						< @b-icon &
-							v-else |
-							:value = preIcon |
-							:hint = preIconHint |
-							:hintPos = preIconHintPos
-						.
+							< .g-icon v-else | v-icon:[preIcon]
 
 				- block input
 					< _.&__cell.&__input-wrapper
@@ -104,21 +100,17 @@
 						}) .
 
 					< _.&__cell.&__icon.&__post-icon v-else-if = icon
-						< component &
-							v-if = iconComponent |
-							:instanceOf = bIcon |
-							:is = iconComponent |
-							:value = icon |
-							:hint = iconHint |
-							:hintPos = iconHintPos
+						< _.g-hint &
+							:-hint = iconHint |
+							:class = iconHintPos && provide.fullComponentName('g-hint', 'pos', iconHintPos)
 						.
+							< component &
+								v-if = iconComponent |
+								:is = iconComponent |
+								:value = icon
+							.
 
-						< @b-icon &
-							v-else |
-							:value = icon |
-							:hint = iconHint |
-							:hintPos = iconHintPos
-						.
+							< .g-icon v-else | v-icon:[icon]
 
 				- block clear
 					< _.&__cell.&__icon.&__clear @mousedown.prevent | @click = onClear
@@ -134,7 +126,7 @@
 								:is = progressIcon
 							.
 
-							< @b-progress-icon v-else
+							< b-progress-icon v-else
 
 				- block validation
 					< _.&__cell.&__icon.&__valid-status.&__valid

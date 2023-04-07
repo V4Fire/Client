@@ -43,7 +43,7 @@ export function initMods(component: iBlock): ModsDict {
 				void ctx.setMod(modName, modVal(attrs[key]));
 			});
 
-			ctx.meta.hooks.mounted.unshift({
+			ctx.meta.hooks['before:mounted'].push({
 				fn: () => {
 					el = ctx.$el;
 					el?.removeAttribute(key);

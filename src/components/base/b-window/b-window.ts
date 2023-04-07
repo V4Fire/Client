@@ -43,7 +43,7 @@ import type { StageTitles } from 'components/base/b-window/interface';
 export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
 
-Block.addToPrototype(getElementSelector);
+Block.addToPrototype({getElementSelector});
 
 const
 	$$ = symbolGenerator();
@@ -197,7 +197,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 			}
 
 			if (stageValue != null) {
-				stageValue = this.t(Object.isFunction(stageValue) ? stageValue(this) : stageValue);
+				stageValue = Object.isFunction(stageValue) ? stageValue(this) : stageValue;
 			}
 
 			return stageValue ?? v;

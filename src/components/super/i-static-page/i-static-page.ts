@@ -137,14 +137,14 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * The application locale
 	 */
-	get locale(): string {
-		return this.field.get<string>('localeStore')!;
+	get locale(): Language {
+		return this.field.get<Language>('localeStore')!;
 	}
 
 	/**
 	 * Sets a new application locale
 	 */
-	set locale(value: string) {
+	set locale(value: Language) {
 		this.field.set('localeStore', value);
 
 		try {
@@ -336,7 +336,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param locale
 	 */
 	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
-	protected syncLocaleWatcher(locale: string): void {
+	protected syncLocaleWatcher(locale: Language): void {
 		if (this.locale === locale) {
 			return;
 		}
