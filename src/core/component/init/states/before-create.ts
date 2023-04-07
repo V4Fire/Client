@@ -58,6 +58,7 @@ export function beforeCreateState(
 	unsafe.async = new Async(component);
 	unsafe.$async = new Async(component);
 
+	console.log(unsafe);
 	Object.defineProperty(unsafe, '$destroy', {
 		configurable: true,
 		enumerable: false,

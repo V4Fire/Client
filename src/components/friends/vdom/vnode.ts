@@ -166,10 +166,10 @@ function createVNode(
 
 		if (isComponent.test(type)) {
 			const resolvedType = r.resolveDynamicComponent.call(ctx, type);
-			vnode = r.createBlock.call(ctx, resolvedType, {'v-attrs': attrs}, resolvedChildren);
+			vnode = r.createBlock.call(ctx, resolvedType, {'v-attrs': attrs, 'key': attrs.key}, resolvedChildren);
 
 		} else {
-			vnode = r.createVNode.call(ctx, type, {'v-attrs': attrs}, resolvedChildren);
+			vnode = r.createVNode.call(ctx, type, {'v-attrs': attrs, 'key': attrs.key}, resolvedChildren);
 		}
 
 		return vnode;

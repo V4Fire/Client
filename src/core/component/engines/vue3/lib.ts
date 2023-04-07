@@ -10,7 +10,7 @@
 
 import makeLazy from 'core/lazy';
 
-import { createApp, createSSRApp, defineAsyncComponent, App, Component } from 'vue';
+import { createApp, createSSRApp, defineAsyncComponent, App, Component, KeepAlive } from 'vue';
 import type { CreateAppFunction } from 'core/component/engines/interface';
 
 const NewApp = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
@@ -96,6 +96,8 @@ const Vue = makeLazy(
 		}
 	}
 );
+
+Vue.component('keep-alive', KeepAlive);
 
 // eslint-disable-next-line @typescript-eslint/unbound-method
 const staticComponent = Vue.component.length > 0 ? Vue.component : null;

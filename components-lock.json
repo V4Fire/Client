@@ -1,5 +1,5 @@
 {
-  "hash": "119d10ed0c1fea13cd3496c4968c7537a00374ccb00828b1afacfb36380ae7ba",
+  "hash": "383514b5f36e4bc563f8be768d11a5c0e9d33a6bea30c6fbe2e12a2b90a840ad",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -460,6 +460,38 @@
             "src/components/dummies/b-dummy-text/b-dummy-text.styl"
           ],
           "tpl": "src/components/dummies/b-dummy-text/b-dummy-text.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-dummy-user",
+        {
+          "index": "src/components/dummies/b-dummy-user/index.js",
+          "declaration": {
+            "name": "b-dummy-user",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-dummy-user",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/dummies/b-dummy-user/b-dummy-user.ts",
+          "styles": [
+            "src/components/dummies/b-dummy-user/b-dummy-user.styl"
+          ],
+          "tpl": "src/components/dummies/b-dummy-user/b-dummy-user.ss",
           "etpl": null
         }
       ],
@@ -1906,6 +1938,7 @@
             "parent": "i-static-page",
             "dependencies": [
               "b-dummy",
+              "b-dummy-user",
               "b-router",
               "b-dynamic-page",
               "b-remote-provider",
@@ -1931,6 +1964,7 @@
           "parent": "i-static-page",
           "dependencies": [
             "b-dummy",
+            "b-dummy-user",
             "b-router",
             "b-dynamic-page",
             "b-remote-provider",
