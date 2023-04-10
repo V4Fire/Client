@@ -6,17 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page } from 'playwright';
+import type { Page, JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
 import Component from 'tests/helpers/component';
 import BOM from 'tests/helpers/bom';
 
+import type bButton from 'form/b-button/b-button';
+
 test.describe('b-button', () => {
 	let
 		buttonNode,
-		buttonCtx;
+		buttonCtx: JSHandle<bButton>;
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -52,7 +54,7 @@ test.describe('b-button', () => {
 					const
 						fileChooserPr = page.waitForEvent('filechooser');
 
-					changeEventPr = buttonCtx.evaluate((ctx) => ctx.promisifyOnce('change'));
+					changeEventPr = buttonCtx.evaluate((ctx) => ctx.promisifyOnce('change').then(() => undefined));
 
 					await buttonNode.click();
 
@@ -68,7 +70,7 @@ test.describe('b-button', () => {
 
 				test('stores the provided file', async () => {
 					const
-						filesLength = await buttonCtx.evaluate((ctx) => ctx.files.length);
+						filesLength = await buttonCtx.evaluate((ctx) => ctx.files?.length);
 
 					test.expect(filesLength).toBe(1);
 				});
@@ -81,7 +83,7 @@ test.describe('b-button', () => {
 					await buttonCtx.evaluate((ctx) => ctx.reset());
 
 					const
-						filesLength = await buttonCtx.evaluate((ctx) => ctx.files.length);
+						filesLength = await buttonCtx.evaluate((ctx) => ctx.files?.length);
 
 					test.expect(filesLength).toBe(0);
 				});
@@ -329,7 +331,7 @@ test.describe('b-button', () => {
 
 		test('fires on click', async () => {
 			const
-				pr = buttonCtx.evaluate((ctx) => ctx.promisifyOnce('click'));
+				pr = buttonCtx.evaluate((ctx) => ctx.promisifyOnce('click').then(() => undefined));
 
 			await buttonNode.click();
 
@@ -364,7 +366,7 @@ test.describe('b-button', () => {
 		});
 
 		buttonNode = await page.waitForSelector('#target');
-		buttonCtx = await Component.waitForComponentByQuery(page, '#target');
+		buttonCtx = await Component.waitForComponentByQuery<bButton>(page, '#target');
 
 		await page.evaluate(() => globalThis.buttonNode = document.querySelector('#target'));
 	}
