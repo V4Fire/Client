@@ -6,10 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WebServerConfig } from '@playwright/test';
+import type { Config } from '@playwright/test';
 import { build } from '@config/config';
 
-const webServerConfig: WebServerConfig = {
+// Playwright doesn't export type for WebServerConfig.
+// Get it from Config interface
+type NotArray<T> = T extends any[] ? never : T;
+type TestConfigServer = NonNullable<NotArray<Config['webServer']>>;
+
+const webServerConfig: TestConfigServer = {
 	port: build.testPort,
 	reuseExistingServer: true,
 	command: 'yarn test:server',

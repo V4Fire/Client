@@ -25,7 +25,7 @@ const config: PlaywrightTestConfig = {
 	use: {
 		permissions: ['geolocation'],
 		geolocation: {latitude: 59.95, longitude: 30.31667},
-		baseURL: `http://localhost:${serverConfig!.port}`
+		baseURL: `http://localhost:${serverConfig.port}`
 	},
 
 	forbidOnly: Boolean(process.env.CI),
@@ -39,4 +39,3 @@ const config: PlaywrightTestConfig = {
 };
 
 export default config;
-
