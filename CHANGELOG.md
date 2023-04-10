@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.46.0 (2023-04-10)
+
+#### :house: Internal
+
+* Updated `playwright@1.32.1`
+
 ## v3.45.0 (2023-04-04)
 
 #### :house: Internal
