@@ -224,7 +224,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 						return o.activeStore;
 					}
 
-					return createSetFrom(o.activeStore);
+					return o.activeStore !== undefined ? createSetFrom(o.activeStore) : new Set();
 				}
 
 				return o.activeStore;
