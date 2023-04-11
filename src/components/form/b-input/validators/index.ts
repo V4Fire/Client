@@ -231,11 +231,11 @@ export default <ValidatorsDecl<bInput>>{
 		}
 
 		if (min != null && !dateValue.isAfter(min, 1)) {
-			return error('MIN', this.t('Date value must be at least "{date}"', {date: new Date(min).toDateString()}));
+			return error('MIN', this.t('Date value must be at least "{date}"', {date: Date.create(min).toDateString()}));
 		}
 
 		if (max != null && !dateValue.isBefore(max, 1)) {
-			return error('MAX', this.t('Date value must be no more than "{date}"', {date: new Date(max).toDateString()}));
+			return error('MAX', this.t('Date value must be no more than "{date}"', {date: Date.create(max).toDateString()}));
 		}
 
 		return true;
