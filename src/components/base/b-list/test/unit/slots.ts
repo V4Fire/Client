@@ -6,14 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, JSHandle } from 'playwright';
-
 import test from 'tests/config/unit/test';
 
 import DOM from 'tests/helpers/dom';
-import Component from 'tests/helpers/component';
 
-import type bList from 'components/base/b-list/b-list';
+import { renderList } from 'components/base/b-list/test/helpers';
 
 test.describe('<b-list> slots', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -74,38 +71,4 @@ test.describe('<b-list> slots', () => {
 		test.expect(await page.locator(progressSelector).allTextContents())
 			.toEqual(['foo3', 'bla3']);
 	});
-
-	/**
-	 * Returns a JSHandle to the rendered b-list component
-	 *
-	 * @param page
-	 * @param attrs
-	 */
-	async function renderList(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bList>> {
-		await Component.createComponent(page, 'b-list', [
-			{
-				attrs: {
-					id: 'target',
-					items: [
-						{
-							label: 'Foo',
-							value: 0,
-							attrs: {
-								title: 'Custom attr'
-							}
-						},
-
-						{
-							label: 'Bla',
-							value: 1
-						}
-					],
-					...params.attrs
-				},
-				children: params.children
-			}
-		]);
-
-		return Component.waitForComponentByQuery(page, '#target');
-	}
 });

@@ -6,15 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, JSHandle } from 'playwright';
-
 import test from 'tests/config/unit/test';
 
-import Component from 'tests/helpers/component';
 import Utils from 'tests/helpers/utils';
 import DOM from 'tests/helpers/dom';
 
-import type bList from 'components/base/b-list/b-list';
+import { renderList } from 'components/base/b-list/test/helpers';
 
 test.describe('<b-list> simple using', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -305,37 +302,4 @@ test.describe('<b-list> simple using', () => {
 			[[0, 1], [0], 'active']
 		]);
 	});
-
-	/**
-	 * Returns a JSHandle to the rendered b-list component
-	 *
-	 * @param page
-	 * @param attrs
-	 */
-	async function renderList(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bList>> {
-		await Component.createComponent(page, 'b-list', [
-			{
-				attrs: {
-					id: 'target',
-					items: [
-						{
-							label: 'Foo',
-							value: 0,
-							attrs: {
-								title: 'Custom attr'
-							}
-						},
-
-						{
-							label: 'Bla',
-							value: 1
-						}
-					],
-					...attrs
-				}
-			}
-		]);
-
-		return Component.waitForComponentByQuery(page, '#target');
-	}
 });
