@@ -1,4 +1,8 @@
-import type { BrowserContext, Page } from 'playwright';
+import type { BrowserContext, JSHandle, Page } from 'playwright';
+
+import Component from 'tests/helpers/component';
+
+import type bList from 'components/base/b-list/b-list';
 
 /**
  * Provides an API to intercepts and mock response to the b-list request.
@@ -17,3 +21,60 @@ export async function interceptListRequest(
 	}));
 }
 
+/**
+ * Returns a JSHandle to the rendered b-list component
+ *
+ * @param page
+ * @param paramsOrAttrs
+ */
+export async function renderList(
+	page: Page,
+	paramsOrAttrs: RenderComponentsVnodeParams | RenderComponentsVnodeParams['attrs'] = {}
+): Promise<JSHandle<bList>> {
+	let
+		attrs: RenderComponentsVnodeParams['attrs'] = {},
+		children: RenderComponentsVnodeParams['children'];
+
+	if (isRenderComponentsVnodeParams(paramsOrAttrs)) {
+		attrs = paramsOrAttrs.attrs;
+		children = paramsOrAttrs.children;
+	} else {
+		attrs = paramsOrAttrs;
+	}
+
+	await Component.createComponent(page, 'b-list', [
+		{
+			attrs: {
+				id: 'target',
+				items: [
+					{
+						label: 'Foo',
+						value: 0,
+						attrs: {
+							title: 'Custom attr'
+						}
+					},
+
+					{
+						label: 'Bla',
+						value: 1
+					}
+				],
+				...attrs
+			},
+			children
+		}
+	]);
+
+	return Component.waitForComponentByQuery(page, '#target');
+}
+
+/**
+ * Checks if given value is a RenderComponentsVnodeParams
+ * @param value
+ */
+function isRenderComponentsVnodeParams(
+	value: RenderComponentsVnodeParams | RenderComponentsVnodeParams['attrs']
+): value is RenderComponentsVnodeParams {
+	return (<RenderComponentsVnodeParams>value).attrs != null || (<RenderComponentsVnodeParams>value).children != null;
+}
