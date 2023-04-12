@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.46.2 (2023-04-26)
+
+#### :house: Internal
+
+* Migrate on `node@18`
+
 ## v3.46.1 (2023-04-13)
 
 #### :bug: Bug Fix

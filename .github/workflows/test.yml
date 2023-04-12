@@ -10,12 +10,12 @@ on:
 jobs:
   # Run playwright tests
   unit-tests:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 60
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -40,12 +40,12 @@ jobs:
 
   # Run components tests
   components:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 60
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -66,12 +66,12 @@ jobs:
         run: yarn test:components:chrome
 
   components-fat-html:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 60
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -92,12 +92,12 @@ jobs:
         run: yarn test:components:chrome --fat-html --mode production
 
   components-fat-html-es5:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 60
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -127,7 +127,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -156,7 +156,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
