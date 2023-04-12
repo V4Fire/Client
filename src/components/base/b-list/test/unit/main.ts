@@ -5,233 +5,242 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
 import Utils from 'tests/helpers/utils';
 import DOM from 'tests/helpers/dom';
 
+import type bList from 'components/base/b-list/b-list';
+
 import { renderList } from 'components/base/b-list/test/helpers';
 
-test.describe('<b-list> simple using', () => {
+test.describe('<b-list>', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test('initialization', async ({page}) => {
-		const
-			target = await renderList(page);
+	test.describe('init', () => {
+		test('should have `items`', async ({page}) => {
+			const
+				target = await renderList(page),
+				linkSelector = DOM.elNameSelectorGenerator('b-list', 'link');
 
-		test.expect(
-			await target.evaluate((ctx) => {
-				const items = Array.from(ctx.unsafe.block!.elements('item'));
-				return items.map((el) => el.textContent?.trim());
-			})
+			const
+				itemsPromise = target.evaluate(
+					(ctx) => Array.from(ctx.unsafe.block!.elements('item')).map((el) => el.textContent?.trim())
+				);
 
-		).toEqual(['Foo', 'Bla']);
+			test.expect(await itemsPromise).toEqual(['Foo', 'Bla']);
 
-		test.expect(
-			await target.evaluate((ctx) => ctx.unsafe.block!.element('link')?.getAttribute('title'))
-		).toBe('Custom attr');
+			test.expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
 
-		test.expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
-	});
+			await test.expect(page.locator(linkSelector).first()).toHaveAttribute('title', 'Custom attr');
+		});
 
-	test('initialization with the predefined active element', async ({page}) => {
-		const target = await renderList(page, {active: 0});
-		test.expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
-	});
+		test('should have `active` item', async ({page}) => {
+			const target = await renderList(page, {active: 0});
+			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
+		});
 
-	test('initialization with the predefined active element (primitive) with `multiple = true`', async ({page}) => {
-		const target = await renderList(page, {active: 0, multiple: true});
-		test.expect(await target.evaluate((ctx) => [...<Set<number>>ctx.active])).toEqual([0]);
-	});
+		test.describe('with `multiple = true`', () => {
+			const evaluateActive = (target: JSHandle<bList>) => target.evaluate((ctx) => [...<Set<number>>ctx.active]);
 
-	test('initialization with the predefined active element (array) with `multiple = true`', async ({page}) => {
-		const target = await renderList(page, {active: [0, 1], multiple: true});
-		test.expect(await target.evaluate((ctx) => [...<Set<number>>ctx.active])).toEqual([0, 1]);
-	});
+			test('`active` prop should accept scalar value', async ({page}) => {
+				const target = await renderList(page, {active: 0, multiple: true});
+				test.expect(await evaluateActive(target)).toEqual([0]);
+			});
 
-	test('initialization with the predefined active element (set) with `multiple = true`', async ({page}) => {
-		const target = await renderList(page, {active: Utils.evalInBrowser(() => new Set([0, 1])), multiple: true});
-		test.expect(await target.evaluate((ctx) => [...<Set<number>>ctx.active])).toEqual([0, 1]);
-	});
+			test('`active` prop should accept `Array`', async ({page}) => {
+				const target = await renderList(page, {active: [0, 1], multiple: true});
+				test.expect(await evaluateActive(target)).toEqual([0, 1]);
+			});
 
-	test('changing of items', async ({page}) => {
-		const
-			target = await renderList(page);
-
-		test.expect(
-			await target.evaluate(async (ctx) => {
+			test('`active` prop should accept `Set`', async ({page}) => {
 				const
-					log: any = [];
+					active = Utils.evalInBrowser(() => new Set([0, 1])),
+					target = await renderList(page, {active, multiple: true});
 
-				ctx.on('onItemsChange', (val) => {
-					log.push(Object.fastClone(val));
-				});
+				test.expect(await evaluateActive(target)).toEqual([0, 1]);
+			});
+		});
+	});
 
-				ctx.items = [{label: 'Bar', value: []}];
+	test('should change items via assignment', async ({page}) => {
+		const target = await renderList(page);
 
-				log.push(Object.fastClone(ctx.items));
+		const changesLogPromise = target.evaluate(async (ctx) => {
+			const log: any = [];
 
-				await ctx.nextTick();
+			ctx.on('onItemsChange', (val) => {
+				log.push(Object.fastClone(val));
+			});
 
-				return log;
-			})
+			ctx.items = [{label: 'Bar', value: []}];
 
-		).toEqual([
+			log.push(Object.fastClone(ctx.items));
+
+			await ctx.nextTick();
+
+			return log;
+		});
+
+		test.expect(await changesLogPromise).toEqual([
 			[{label: 'Bar', value: []}],
 			[{label: 'Bar', value: []}]
 		]);
 	});
 
-	test('switching of an active element', async ({page}) => {
-		const
-			target = await renderList(page);
+	test.describe('`active`', () => {
+		test('should change', async ({page}) => {
+			const target = await renderList(page);
 
-		test.expect(
-			await target.evaluate((ctx) => {
-				ctx.setActive(0);
-				return ctx.active;
-			})
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.setActive(0);
+					return ctx.active;
+				})
 
-		).toBe(0);
+			).toBe(0);
 
-		test.expect(
-			await target.evaluate((ctx) => {
-				ctx.setActive(1);
-				return ctx.active;
-			})
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.setActive(1);
+					return ctx.active;
+				})
 
-		).toBe(1);
+			).toBe(1);
 
-		test.expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeFalsy();
-		test.expect(await target.evaluate((ctx) => ctx.active)).toBe(1);
+			test.expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeFalsy();
+			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(1);
+		});
+
+		test('should change with `cancelable = true`', async ({page}) => {
+			const
+				target = await renderList(page, {cancelable: true});
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.setActive(1);
+					return ctx.active;
+				})
+
+			).toBe(1);
+
+			test.expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeTruthy();
+			test.expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.toggleActive(1);
+					return ctx.active;
+				})
+
+			).toBe(1);
+		});
+
+		test('should change with `multiple = true`', async ({page}) => {
+			const
+				target = await renderList(page, {multiple: true});
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.setActive(1);
+					ctx.setActive(0);
+					return [...(<Set<number>>ctx.active).values()];
+				})
+
+			).toEqual([1, 0]);
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.unsetActive(1);
+					ctx.unsetActive(0);
+					return [...(<Set<number>>ctx.active).values()];
+				})
+
+			).toEqual([]);
+		});
+
+		test('should change with `multiple = true; cancelable = false`', async ({page}) => {
+			const
+				target = await renderList(page, {multiple: true, cancelable: false});
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.setActive(1);
+					ctx.setActive(0);
+					return [...(<Set<number>>ctx.active).values()];
+				})
+
+			).toEqual([1, 0]);
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.unsetActive(1);
+					ctx.unsetActive(0);
+					return [...(<Set<number>>ctx.active).values()];
+				})
+
+			).toEqual([1, 0]);
+		});
 	});
 
-	test('switching of an active element with `cancelable = true`', async ({page}) => {
-		const
-			target = await renderList(page, {cancelable: true});
+	test.describe('`activeElement`', () => {
+		test('should have one active element', async ({page}) => {
+			const target = await renderList(page, {active: 0});
+			test.expect(await target.evaluate((ctx) => (<HTMLAnchorElement>ctx.unsafe.activeElement).tagName))
+				.toBe('BUTTON');
+		});
 
-		test.expect(
-			await target.evaluate((ctx) => {
-				ctx.setActive(1);
-				return ctx.active;
-			})
+		test('should have multiple active elements with `multiple = true`', async ({page}) => {
+			const
+				target = await renderList(page, {active: [0, 1], multiple: true});
 
-		).toBe(1);
-
-		test.expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeTruthy();
-		test.expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
-
-		test.expect(
-			await target.evaluate((ctx) => {
-				ctx.toggleActive(1);
-				return ctx.active;
-			})
-
-		).toBe(1);
+			test.expect(await target.evaluate(
+				(ctx) => Array.from(<HTMLAnchorElement[]>ctx.unsafe.activeElement).map((el) => el.tagName)
+			))
+				.toEqual(['BUTTON', 'BUTTON']);
+		});
 	});
 
-	test('switching of an active element with `multiple = true`', async ({page}) => {
-		const
-			target = await renderList(page, {multiple: true});
-
-		test.expect(
-			await target.evaluate((ctx) => {
-				ctx.setActive(1);
-				ctx.setActive(0);
-				return [...(<Set<number>>ctx.active).values()];
-			})
-
-		).toEqual([1, 0]);
-
-		test.expect(
-			await target.evaluate((ctx) => {
-				ctx.unsetActive(1);
-				ctx.unsetActive(0);
-				return [...(<Set<number>>ctx.active).values()];
-			})
-
-		).toEqual([]);
-	});
-
-	test('switching of an active element with `multiple = true; cancelable = false`', async ({page}) => {
-		const
-			target = await renderList(page, {multiple: true, cancelable: false});
-
-		test.expect(
-			await target.evaluate((ctx) => {
-				ctx.setActive(1);
-				ctx.setActive(0);
-				return [...(<Set<number>>ctx.active).values()];
-			})
-
-		).toEqual([1, 0]);
-
-		test.expect(
-			await target.evaluate((ctx) => {
-				ctx.unsetActive(1);
-				ctx.unsetActive(0);
-				return [...(<Set<number>>ctx.active).values()];
-			})
-
-		).toEqual([1, 0]);
-	});
-
-	test('checking of `activeElement`', async ({page}) => {
-		const target = await renderList(page, {active: 0});
-		test.expect(await target.evaluate((ctx) => (<HTMLAnchorElement>ctx.unsafe.activeElement).tagName))
-			.toBe('BUTTON');
-	});
-
-	test('checking of `activeElement` with `multiple = true`', async ({page}) => {
-		const
-			target = await renderList(page, {active: [0, 1], multiple: true});
-
-		test.expect(await target.evaluate(
-			(ctx) => Array.from(<HTMLAnchorElement[]>ctx.unsafe.activeElement).map((el) => el.tagName)
-		))
-			.toEqual(['BUTTON', 'BUTTON']);
-	});
-
-	test('listening of change events', async ({page}) => {
+	test('should emit change events on click', async ({page}) => {
 		const
 			target = await renderList(page),
-			logPromise = target.evaluate((ctx) => new Promise((resolve) => {
-				const
-					log: any = [],
-					onEvent = () => {
-						if (log.length >= 6) {
-							resolve(log);
-						}
-					};
-
-				ctx.on('immediateChange', (component, value) => {
-					log.push(['immediateChange', value]);
-					onEvent();
-				});
-
-				ctx.on('onChange', (value) => {
-					log.push(['change', value]);
-					onEvent();
-				});
-
-				ctx.on('onActionChange', (value) => {
-					log.push(['actionChange', value]);
-					onEvent();
-				});
-
-				log.push(ctx.setActive(0));
-			}));
-
-		const
 			itemSelector = DOM.elNameSelectorGenerator('b-list', 'item'),
 			linkSelector = DOM.elNameSelectorGenerator('b-list', 'link');
 
+		const changesLogPromise = target.evaluate((ctx) => new Promise((resolve) => {
+			const
+				log: any = [],
+				onEvent = () => {
+					if (log.length >= 6) {
+						resolve(log);
+					}
+				};
+
+			ctx.on('immediateChange', (component, value) => {
+				log.push(['immediateChange', value]);
+				onEvent();
+			});
+
+			ctx.on('onChange', (value) => {
+				log.push(['change', value]);
+				onEvent();
+			});
+
+			ctx.on('onActionChange', (value) => {
+				log.push(['actionChange', value]);
+				onEvent();
+			});
+
+			log.push(ctx.setActive(0));
+		}));
+
 		await page.click(`${itemSelector}:nth-child(2) ${linkSelector}`);
 
-		test.expect(await logPromise).toEqual([
+		test.expect(await changesLogPromise).toEqual([
 			['immediateChange', 0],
 			['change', 0],
 			true,
@@ -241,7 +250,7 @@ test.describe('<b-list> simple using', () => {
 		]);
 	});
 
-	test('watching for `active`', async ({page}) => {
+	test('should watch the changes of `active`', async ({page}) => {
 		const
 			target = await renderList(page);
 
@@ -272,7 +281,7 @@ test.describe('<b-list> simple using', () => {
 		]);
 	});
 
-	test('watching for `active` with `multiple = true`', async ({page}) => {
+	test('should watch the changes of `active` with `multiple = true`', async ({page}) => {
 		const
 			target = await renderList(page, {multiple: true});
 

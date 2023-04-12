@@ -15,13 +15,12 @@ import Component from 'tests/helpers/component';
 
 import type bList from 'components/base/b-list/b-list';
 
-/** @param {Page} page */
-test.describe('<b-list> providing items with hrefs', () => {
+test.describe('<b-list> links', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test('providing a list with hrefs', async ({page}) => {
+	test('should change location after click on the item with `href`', async ({page}) => {
 		await renderList(page, {
 			items: [
 				{
@@ -46,7 +45,7 @@ test.describe('<b-list> providing items with hrefs', () => {
 		test.expect(await page.evaluate(() => location.hash)).toBe('#bla');
 	});
 
-	test('generation of hrefs', async ({page}) => {
+	test('should generate links from items values with `autoHref = true`', async ({page}) => {
 		await renderList(page, {
 			autoHref: true,
 

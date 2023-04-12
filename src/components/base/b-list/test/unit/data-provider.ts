@@ -17,13 +17,13 @@ import type bList from 'components/base/b-list/b-list';
 
 import { interceptListRequest } from 'components/base/b-list/test/helpers';
 
-test.describe('<b-list> loading from a data provider', () => {
+test.describe('<b-list> with data provider', () => {
 	test.beforeEach(async ({context, demoPage}) => {
 		await interceptListRequest(context);
 		await demoPage.goto();
 	});
 
-	test('simple loading', async ({page}) => {
+	test('should load items from the provider', async ({page}) => {
 		await renderList(page, {
 			autoHref: true,
 			dataProvider: 'Provider'
