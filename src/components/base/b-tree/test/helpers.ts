@@ -108,7 +108,7 @@ export async function waitForItem(page: Page, id: string | number): Promise<Elem
 * @param pageOrContext
 */
 export function interceptTreeRequest(
-pageOrContext: Page | BrowserContext
+	pageOrContext: Page | BrowserContext
 ): Promise<void> {
 return pageOrContext.route(/api/, async (route) => route.fulfill({
 	status: 200,
