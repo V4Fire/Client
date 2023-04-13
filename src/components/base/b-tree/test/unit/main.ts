@@ -236,8 +236,7 @@ test.describe('<b-tree>', () => {
 			await interceptTreeRequest(context);
 		});
 
-		// FIXME: vue3 render is broken @see https://github.com/V4Fire/Client/issues/822
-		test.skip('should load data from the data provider', async ({page}) => {
+		test('should load data from the data provider', async ({page}) => {
 			await renderTree(
 				page,
 				{
