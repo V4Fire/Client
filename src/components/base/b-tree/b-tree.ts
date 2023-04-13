@@ -20,7 +20,6 @@ import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 
 import iData, { component, prop, field, wait, ModsDecl } from 'components/super/i-data/i-data';
 import type { Item, RenderFilter } from 'components/base/b-tree/interface';
-import Block, { getElementMod } from 'components/friends/block';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
