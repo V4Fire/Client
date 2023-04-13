@@ -9,11 +9,11 @@
 import type { Page, JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
-
-import DOM from 'tests/helpers/dom';
 import Component from 'tests/helpers/component';
 
 import type bList from 'components/base/b-list/b-list';
+
+import { createListSelector } from 'components/base/b-list/test/helpers';
 
 test.describe('<b-list> links', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -36,8 +36,8 @@ test.describe('<b-list> links', () => {
 		});
 
 		const
-			itemSelector = DOM.elNameSelectorGenerator('b-list', 'item'),
-			linkSelector = DOM.elNameSelectorGenerator('b-list', 'link'),
+			itemSelector = createListSelector('item'),
+			linkSelector = createListSelector('link'),
 			selector = `${itemSelector}:nth-child(2) ${linkSelector}`;
 
 		await page.click(selector);
@@ -63,8 +63,8 @@ test.describe('<b-list> links', () => {
 		});
 
 		const
-			itemSelector = DOM.elNameSelectorGenerator('b-list', 'item'),
-			linkSelector = DOM.elNameSelectorGenerator('b-list', 'link'),
+			itemSelector = createListSelector('item'),
+			linkSelector = createListSelector('link'),
 			selector = `${itemSelector}:nth-child(1) ${linkSelector}`;
 
 		await page.click(selector);

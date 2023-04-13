@@ -103,7 +103,7 @@ export default class Component {
 
 		}, [{componentName, schemeAsString}]);
 
-		return <Promise<JSHandle<T>>>this.getComponentByQuery(page, `[data-render-id="${renderId}"]`);
+		return this.waitForComponentByQuery(page, `[data-render-id="${renderId}"]`);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 import type { BrowserContext, JSHandle, Page } from 'playwright';
 
+import DOM from 'tests/helpers/dom';
 import Component from 'tests/helpers/component';
 
 import type bList from 'components/base/b-list/b-list';
@@ -38,35 +39,32 @@ export async function renderList(
 	if (isRenderComponentsVnodeParams(paramsOrAttrs)) {
 		attrs = paramsOrAttrs.attrs;
 		children = paramsOrAttrs.children;
+
 	} else {
 		attrs = paramsOrAttrs;
 	}
 
-	await Component.createComponent(page, 'b-list', [
-		{
-			attrs: {
-				id: 'target',
-				items: [
-					{
-						label: 'Foo',
-						value: 0,
-						attrs: {
-							title: 'Custom attr'
-						}
-					},
-
-					{
-						label: 'Bla',
-						value: 1
+	return Component.createComponent(page, 'b-list', {
+		attrs: {
+			id: 'target',
+			items: [
+				{
+					label: 'Foo',
+					value: 0,
+					attrs: {
+						title: 'Custom attr'
 					}
-				],
-				...attrs
-			},
-			children
-		}
-	]);
+				},
 
-	return Component.waitForComponentByQuery(page, '#target');
+				{
+					label: 'Bla',
+					value: 1
+				}
+			],
+			...attrs
+		},
+		children
+	});
 }
 
 /**
@@ -78,3 +76,9 @@ function isRenderComponentsVnodeParams(
 ): value is RenderComponentsVnodeParams {
 	return (<RenderComponentsVnodeParams>value).attrs != null || (<RenderComponentsVnodeParams>value).children != null;
 }
+
+/**
+ * Returns selector for the element
+ * @param elName
+ */
+export const createListSelector = DOM.elNameSelectorGenerator('b-list');

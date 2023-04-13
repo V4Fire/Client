@@ -11,11 +11,10 @@ import type { Page, JSHandle } from 'playwright';
 import test from 'tests/config/unit/test';
 
 import Component from 'tests/helpers/component';
-import DOM from 'tests/helpers/dom';
 
 import type bList from 'components/base/b-list/b-list';
 
-import { interceptListRequest } from 'components/base/b-list/test/helpers';
+import { interceptListRequest, createListSelector } from 'components/base/b-list/test/helpers';
 
 test.describe('<b-list> with data provider', () => {
 	test.beforeEach(async ({context, demoPage}) => {
@@ -30,8 +29,8 @@ test.describe('<b-list> with data provider', () => {
 		});
 
 		const
-			itemSelector = DOM.elNameSelectorGenerator('b-list', 'item'),
-			linkSelector = DOM.elNameSelectorGenerator('b-list', 'link'),
+			itemSelector = createListSelector('item'),
+			linkSelector = createListSelector('link'),
 			selector = `${itemSelector}:nth-child(2) ${linkSelector}`;
 
 		await page.click(selector);

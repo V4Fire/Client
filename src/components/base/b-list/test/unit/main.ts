@@ -8,13 +8,11 @@
 import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
-
 import Utils from 'tests/helpers/utils';
-import DOM from 'tests/helpers/dom';
 
 import type bList from 'components/base/b-list/b-list';
 
-import { renderList } from 'components/base/b-list/test/helpers';
+import { renderList, createListSelector } from 'components/base/b-list/test/helpers';
 
 test.describe('<b-list>', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -25,7 +23,7 @@ test.describe('<b-list>', () => {
 		test('should have `items`', async ({page}) => {
 			const
 				target = await renderList(page),
-				linkSelector = DOM.elNameSelectorGenerator('b-list', 'link');
+				linkSelector = createListSelector('link');
 
 			const
 				itemsPromise = target.evaluate(
@@ -33,7 +31,6 @@ test.describe('<b-list>', () => {
 				);
 
 			test.expect(await itemsPromise).toEqual(['Foo', 'Bla']);
-
 			test.expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
 
 			await test.expect(page.locator(linkSelector).first()).toHaveAttribute('title', 'Custom attr');
@@ -71,7 +68,7 @@ test.describe('<b-list>', () => {
 		const target = await renderList(page);
 
 		const changesLogPromise = target.evaluate(async (ctx) => {
-			const log: any = [];
+			const log: any[] = [];
 
 			ctx.on('onItemsChange', (val) => {
 				log.push(Object.fastClone(val));
@@ -208,12 +205,12 @@ test.describe('<b-list>', () => {
 	test('should emit change events on click', async ({page}) => {
 		const
 			target = await renderList(page),
-			itemSelector = DOM.elNameSelectorGenerator('b-list', 'item'),
-			linkSelector = DOM.elNameSelectorGenerator('b-list', 'link');
+			itemSelector = createListSelector('item'),
+			linkSelector = createListSelector('link');
 
 		const changesLogPromise = target.evaluate((ctx) => new Promise((resolve) => {
 			const
-				log: any = [],
+				log: any[] = [],
 				onEvent = () => {
 					if (log.length >= 6) {
 						resolve(log);
@@ -257,7 +254,7 @@ test.describe('<b-list>', () => {
 		test.expect(
 			await target.evaluate(async (ctx) => {
 				const
-					log: any = [];
+					log: any[] = [];
 
 				ctx.watch('active', {immediate: true}, (val, oldVal, p) => {
 					log.push([val, oldVal, p?.path.join('.')]);
@@ -288,7 +285,7 @@ test.describe('<b-list>', () => {
 		test.expect(
 			await target.evaluate(async (ctx) => {
 				const
-					log: any = [];
+					log: any[] = [];
 
 				ctx.watch('active', {immediate: true}, (val, oldVal, p) => {
 					log.push([[...val], oldVal != null ? [...oldVal] : undefined, p?.path.join('.')]);

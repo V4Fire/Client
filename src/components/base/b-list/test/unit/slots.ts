@@ -8,9 +8,7 @@
 
 import test from 'tests/config/unit/test';
 
-import DOM from 'tests/helpers/dom';
-
-import { renderList } from 'components/base/b-list/test/helpers';
+import { renderList, createListSelector } from 'components/base/b-list/test/helpers';
 
 test.describe('<b-list> slots', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -26,7 +24,7 @@ test.describe('<b-list> slots', () => {
 				}
 			});
 
-			const selector = DOM.elNameSelectorGenerator('b-list', 'link-value');
+			const selector = createListSelector('link-value');
 
 			test.expect(await page.locator(selector).allTextContents())
 				.toEqual(['Label: Foo', 'Label: Bla']);
@@ -60,9 +58,9 @@ test.describe('<b-list> slots', () => {
 			});
 
 			const
-				postIconSelector = DOM.elNameSelectorGenerator('b-list', 'link-post-icon'),
-				preIconSelector = DOM.elNameSelectorGenerator('b-list', 'link-pre-icon'),
-				progressSelector = DOM.elNameSelectorGenerator('b-list', 'link-progress');
+				postIconSelector = createListSelector('link-post-icon'),
+				preIconSelector = createListSelector('link-pre-icon'),
+				progressSelector = createListSelector('link-progress');
 
 			test.expect(await page.locator(postIconSelector).allTextContents())
 				.toEqual(['foo', 'bla']);
