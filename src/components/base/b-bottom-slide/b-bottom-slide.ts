@@ -25,6 +25,8 @@ import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iOpen from 'components/traits/i-open/i-open';
 import iVisible from 'components/traits/i-visible/i-visible';
 
+import Block, { getFullElementName } from 'components/friends/block';
+
 import iBlock, {
 
 	component,
@@ -48,6 +50,8 @@ export * from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-bottom-slide/const';
 export * from 'components/base/b-bottom-slide/interface';
+
+Block.addToPrototype({getFullElementName});
 
 const
 	$$ = symbolGenerator();

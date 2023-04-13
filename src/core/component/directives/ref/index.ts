@@ -47,6 +47,15 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 		return;
 	}
 
+	if (!Object.isExtensible(ctx.$refs)) {
+		Object.defineProperty(ctx, '$refs', {
+			enumerable: true,
+			configurable: true,
+			writable: true,
+			value: {...ctx.$refs}
+		});
+	}
+
 	const
 		refName = String(value),
 		refs = ctx.$refs;

@@ -251,16 +251,6 @@ export default abstract class iBlockFriends extends iBlockProps {
 	protected readonly h: typeof helpers = helpers;
 
 	/**
-	 * A link to the `globalThis.l` function
-	 */
-	@system({
-		atom: true,
-		unique: true
-	})
-
-	protected readonly l: typeof l = globalThis.l;
-
-	/**
 	 * A link to the native `location` API
 	 */
 	@system({

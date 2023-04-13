@@ -12,7 +12,9 @@
  */
 
 import SyncPromise from 'core/promise/sync';
+
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
+import Block, { getElementMod } from 'components/friends/block';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 
