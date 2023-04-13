@@ -79,8 +79,13 @@ test.describe('<b-tree>', () => {
 	});
 
 	test.describe('`items`', () => {
+		const baseAttrs = {
+			item: 'b-checkbox-functional',
+			renderChunks: 2
+		};
+
 		test('should initialize with provided items', async ({page}) => {
-			const target = await renderTree(page);
+			const target = await renderTree(page, {items: defaultItems, attrs: baseAttrs});
 
 			await test.expect(target.evaluate((ctx) => ctx.isFunctional))
 				.toBeResolvedTo(false);
@@ -109,16 +114,20 @@ test.describe('<b-tree>', () => {
 				}
 			];
 
-			const target = await renderTree(page, {items, attrs: {folded: false}});
+			const target = await renderTree(page, {items, attrs: {...baseAttrs, folded: false}});
 			await Promise.all(checkOptionTree(page, items, {target}));
 		});
 
 		test.describe('`renderFilter`', () => {
 			test('should render items by one with a timeout', async ({page}) => {
-				const target = await renderTree(page, {attrs: {
-					renderChunks: 1,
-					renderFilter: () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))
-				}});
+				const target = await renderTree(page, {
+					items: defaultItems,
+					attrs: {
+						...baseAttrs,
+						renderChunks: 1,
+						renderFilter: () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))
+					}
+				});
 
 				await BOM.waitForIdleCallback(page);
 
@@ -136,7 +145,9 @@ test.describe('<b-tree>', () => {
 
 			test('should render relying on the context data', async ({page}) => {
 				await renderTree(page, {
+					items: defaultItems,
 					attrs: {
+						...baseAttrs,
 						renderFilter: (ctx) => ctx.level === 0
 					}
 				});
@@ -169,6 +180,7 @@ test.describe('<b-tree>', () => {
 				const target = await renderTree(page, {
 					items,
 					attrs: {
+						...baseAttrs,
 						renderChunks: 1,
 						nestedRenderFilter: () => new Promise((res) => setTimeout(() => res(true), 0.5.second()))
 					}
@@ -194,41 +206,6 @@ test.describe('<b-tree>', () => {
 				await waitForCheckboxCount(page, 7);
 			});
 		});
-
-		/**
-		 * Returns rendered `b-tree` component
-		 *
-		 * @param page
-		 * @param options
-		 */
-		async function renderTree(
-			page: Page,
-			options: Partial<{ items: Item[] } & RenderComponentsVnodeParams> = {}
-		): Promise<JSHandle<bTree>> {
-			const {items = defaultItems, attrs, children} = options;
-			const baseAttrs = {
-				theme: 'demo',
-				item: 'b-checkbox-functional',
-				items,
-				id: 'target',
-				renderChunks: 2
-			};
-
-			const scheme: RenderComponentsVnodeParams[] = [
-				{
-					attrs: {
-						...baseAttrs,
-						...attrs
-					},
-
-					children
-				}
-			];
-
-			await Component.createComponent(page, 'b-tree', scheme);
-
-			return Component.waitForComponentByQuery(page, '#target');
-		}
 	});
 
 	test.describe('`dataProvider`', () => {
@@ -274,11 +251,9 @@ test.describe('<b-tree>', () => {
 			const target = await renderTree(page, {items});
 
 			let res = await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.id));
-
 			test.expect(res).toEqual([1, 2, 3, 5, 4, 6].map(String));
 
 			res = await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.id));
-
 			test.expect(res).toEqual([1, 2, 3, 5].map(String));
 		});
 
@@ -324,19 +299,15 @@ test.describe('<b-tree>', () => {
 	): Promise<JSHandle<bTree>> {
 		const {items, attrs, children} = options;
 
-		await Component.createComponent(page, 'b-tree', [
-			{
-				attrs: {
-					items,
-					id: 'target',
-					theme: 'demo',
-					...attrs
-				},
-				children
-			}
-		]);
-
-		return Component.waitForComponentByQuery(page, '#target');
+		return Component.createComponent(page, 'b-tree', {
+			attrs: {
+				items,
+				id: 'target',
+				theme: 'demo',
+				...attrs
+			},
+			children
+		});
 	}
 
 	/**
