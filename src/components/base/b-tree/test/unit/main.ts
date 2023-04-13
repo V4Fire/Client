@@ -11,39 +11,63 @@ import type { ElementHandle, JSHandle, Page } from 'playwright';
 import test from 'tests/config/unit/test';
 
 import BOM from 'tests/helpers/bom';
+import DOM from 'tests/helpers/dom';
 import Component from 'tests/helpers/component';
 
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/interface';
 
-import { getDefaultBTreeItems, checkOptionTree, waitForItem, interceptTreeRequest } from 'components/base/b-tree/test/helpers';
-import DOM from 'tests/helpers/dom';
+import { checkOptionTree, waitForItem, interceptTreeRequest } from 'components/base/b-tree/test/helpers';
 
 test.describe('<b-tree>', () => {
 
 	const
 		elementSelector = '.b-checkbox',
-		defaultItems = getDefaultBTreeItems();
+		defaultItems = [
+			{id: 'bar'},
+
+			{
+				id: 'foo',
+				children: [
+					{id: 'foo_1'},
+					{id: 'foo_2'},
+
+					{
+						id: 'foo_3',
+						children: [{id: 'foo_3_1'}]
+					},
+
+					{id: 'foo_4'},
+					{id: 'foo_5'},
+					{id: 'foo_6'}
+				]
+			}
+		];
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
 	test.describe('slots', () => {
-
-		const defaultItems = getDefaultBTreeItems();
-
-		test.beforeEach(async ({demoPage}) => {
-			await demoPage.goto();
-		});
-
 		test.describe('`default`', () => {
 			test('should render items using the provided slot', async ({page}) => {
-				const
-					target = await renderTree(page);
+				const target = await renderTree(page, {
+					items: defaultItems,
+					children: {
+						default: {
+							type: 'div',
+							children: {
+								default: 'Item'
+							},
+							attrs: {
+								'data-test-ref': 'item'
+							}
+						}
+					}
+				});
 
-				await test.expect(target.evaluate((ctx) => ctx.isFunctional === false))
-					.toBeResolvedTo(true);
+				await test.expect(target.evaluate((ctx) => ctx.isFunctional))
+					.toBeResolvedTo(false);
 
 				const
 					promises = await Promise.all(checkOptionTree(page, defaultItems, {target})),
@@ -51,37 +75,6 @@ test.describe('<b-tree>', () => {
 
 				test.expect(promises.length).toEqual(refs.length);
 			});
-
-			async function renderTree(page: Page): Promise<JSHandle<bTree>> {
-
-				const defaultSlot: RenderComponentsVnodeDescriptor = {
-					type: 'div',
-					children: {
-						default: 'Item'
-					},
-					attrs: {
-						'data-test-ref': 'item'
-					}
-				};
-
-				const scheme: RenderComponentsVnodeParams[] = [
-					{
-						attrs: {
-							items: defaultItems,
-							id: 'target',
-							theme: 'demo'
-						},
-
-						children: {
-							default: defaultSlot
-						}
-					}
-				];
-
-				await Component.createComponent(page, 'b-tree', scheme);
-
-				return Component.waitForComponentByQuery(page, '#target');
-			}
 		});
 	});
 
@@ -202,6 +195,12 @@ test.describe('<b-tree>', () => {
 			});
 		});
 
+		/**
+		 * Returns rendered `b-tree` component
+		 *
+		 * @param page
+		 * @param options
+		 */
 		async function renderTree(
 			page: Page,
 			options: Partial<{ items: Item[] } & RenderComponentsVnodeParams> = {}
@@ -237,59 +236,50 @@ test.describe('<b-tree>', () => {
 			await interceptTreeRequest(context);
 		});
 
-		test.only('should load data from the data provider', async ({page}) => {
-			await renderTree(page);
+		test('should load data from the data provider', async ({page}) => {
+			await renderTree(
+				page,
+				{
+					attrs: {
+						dataProvider: 'Provider',
+						item: 'b-checkbox-functional'
+					}
+				}
+			);
+
 			await BOM.waitForIdleCallback(page);
 
 			await waitForCheckboxCount(page, 14);
 		});
-
-		async function renderTree(page: Page) {
-			const scheme = [
-				{
-					attrs: {
-						theme: 'demo',
-						dataProvider: 'Provider',
-						item: 'b-checkbox-functional',
-						id: 'target'
-					}
-				}
-			];
-
-			await Component.createComponent(page, 'b-tree', scheme);
-			await Component.waitForComponentStatus(page, elementSelector, 'ready');
-
-			return Component.waitForComponentByQuery(page, '#target');
-		}
 	});
 
 	test.describe('public API', () => {
 		const
 			items = [
-				{id: 1},
-				{id: 2},
+				{id: '1'},
+				{id: '2'},
 				{
-					id: 3,
+					id: '3',
 					children: [
 						{
-							id: 4,
-							children: [{id: 6}]
+							id: '4',
+							children: [{id: '6'}]
 						}
 					]
 				},
-				{id: 5}
+				{id: '5'}
 			];
 
 		test('traverse', async ({page}) => {
-			const target = await renderTree(page);
+			const target = await renderTree(page, {items});
 
 			let res = await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.id));
 
-			test.expect(res).toEqual([1, 2, 3, 5, 4, 6]);
+			test.expect(res).toEqual([1, 2, 3, 5, 4, 6].map(String));
 
 			res = await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.id));
 
-			test.expect(res).toEqual([1, 2, 3, 5]);
+			test.expect(res).toEqual([1, 2, 3, 5].map(String));
 		});
 
 		test('fold/unfold', async ({page}) => {
@@ -303,7 +293,7 @@ test.describe('<b-tree>', () => {
 					.toBeTruthy();
 			};
 
-			const target = await renderTree(page);
+			const target = await renderTree(page, {items});
 
 			await target.evaluate(async (ctx) => ctx.unfold());
 
@@ -320,23 +310,42 @@ test.describe('<b-tree>', () => {
 
 			await testFoldedModIs(false, [await waitForItem(page, 3)]);
 		});
-
-		async function renderTree(page: Page): Promise<JSHandle<bTree>> {
-			await Component.createComponent(page, 'b-tree', [
-				{
-					attrs: {
-						items,
-						id: 'target',
-						theme: 'demo'
-					}
-				}
-			]);
-
-			return Component.waitForComponentByQuery(page, '#target');
-		}
 	});
 
-	async function waitForCheckboxCount(page: Page, expectedLength: number) {
-		await test.expect(page.locator(elementSelector).count()).toBeResolvedTo(expectedLength);
+	/**
+	 * Returns rendered `b-tree` component
+	 *
+	 * @param page
+	 * @param options
+	 */
+	async function renderTree(
+		page: Page,
+		options: Partial<{ items: Item[] } & RenderComponentsVnodeParams> = {}
+	): Promise<JSHandle<bTree>> {
+		const {items, attrs, children} = options;
+
+		await Component.createComponent(page, 'b-tree', [
+			{
+				attrs: {
+					items,
+					id: 'target',
+					theme: 'demo',
+					...attrs
+				},
+				children
+			}
+		]);
+
+		return Component.waitForComponentByQuery(page, '#target');
+	}
+
+	/**
+	 * Checks if page has expected count of b-checkbox elements
+	 *
+	 * @param page
+	 * @param expectedCount
+	 */
+	async function waitForCheckboxCount(page: Page, expectedCount: number) {
+		await test.expect(page.locator(elementSelector)).toHaveCount(expectedCount);
 	}
 });
