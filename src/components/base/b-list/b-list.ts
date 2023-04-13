@@ -21,11 +21,15 @@ import iVisible from 'components/traits/i-visible/i-visible';
 import iWidth from 'components/traits/i-width/i-width';
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 
-import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'components/super/i-data/i-data';
+import iData, { component, prop, field, system, computed, hook, watch, ModsDecl, UnsafeGetter, UnsafeIData } from 'components/super/i-data/i-data';
 import type { Active, Item, Items } from 'components/base/b-list/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
+
+interface UnsafeBList<CTX extends iData> extends UnsafeIData<CTX> {
+	activeElement: bList['activeElement'];
+}
 
 DOM.addToPrototype({delegateElement});
 Block.addToPrototype({element, elements});
@@ -38,6 +42,10 @@ Block.addToPrototype({element, elements});
 })
 
 export default class bList extends iData implements iVisible, iWidth, iItems {
+	override get unsafe(): UnsafeGetter<UnsafeBList<this>> {
+		return Object.cast(this);
+	}
+
 	/**
 	 * Type: the active item
 	 */
@@ -224,7 +232,7 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 						return o.activeStore;
 					}
 
-					return createSetFrom(o.activeStore);
+					return o.activeStore !== undefined ? createSetFrom(o.activeStore) : new Set();
 				}
 
 				return o.activeStore;

@@ -9,6 +9,8 @@
 import delay from 'delay';
 import type { Page, JSHandle, BrowserContext, ElementHandle } from 'playwright';
 
+import { evalFn } from 'core/prelude/test-env/components/json';
+
 import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
 
 import type { SetupOptions } from 'tests/helpers/utils/interface';
@@ -182,6 +184,10 @@ export default class Utils {
 				logsArr.push(message.text());
 			});
 		}
+	}
+
+	static evalInBrowser<T extends Function>(func: T): T {
+		return evalFn(func);
 	}
 
 	/**
