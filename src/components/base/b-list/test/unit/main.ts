@@ -187,7 +187,7 @@ test.describe('<b-list>', () => {
 	test.describe('`activeElement`', () => {
 		test('should have one active element', async ({page}) => {
 			const target = await renderList(page, {active: 0});
-			test.expect(await target.evaluate((ctx) => (<HTMLAnchorElement>ctx.unsafe.activeElement).tagName))
+			test.expect(await target.evaluate((ctx) => (<HTMLAnchorElement>ctx.activeElement).tagName))
 				.toBe('BUTTON');
 		});
 
@@ -196,7 +196,7 @@ test.describe('<b-list>', () => {
 				target = await renderList(page, {active: [0, 1], multiple: true});
 
 			test.expect(await target.evaluate(
-				(ctx) => Array.from(<HTMLAnchorElement[]>ctx.unsafe.activeElement).map((el) => el.tagName)
+				(ctx) => Array.from(<HTMLAnchorElement[]>ctx.activeElement).map((el) => el.tagName)
 			))
 				.toEqual(['BUTTON', 'BUTTON']);
 		});
