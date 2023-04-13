@@ -13,6 +13,7 @@
 
 import SyncPromise from 'core/promise/sync';
 import { isAbsURL } from 'core/url';
+import { derive } from 'core/functools/trait';
 
 import DOM, { delegateElement } from 'components/friends/dom';
 import Block, { element, elements } from 'components/friends/block';
@@ -20,16 +21,15 @@ import Block, { element, elements } from 'components/friends/block';
 import iVisible from 'components/traits/i-visible/i-visible';
 import iWidth from 'components/traits/i-width/i-width';
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
+import iActiveItems, { type Active } from 'components/traits/i-active-items/i-active-items';
 
-import iData, { component, prop, field, system, computed, hook, watch, ModsDecl, UnsafeGetter, UnsafeIData } from 'components/super/i-data/i-data';
-import type { Active, Item, Items } from 'components/base/b-list/interface';
+import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'components/super/i-data/i-data';
+import type { Item, Items } from 'components/base/b-list/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
 
-interface UnsafeBList<CTX extends iData> extends UnsafeIData<CTX> {
-	activeElement: bList['activeElement'];
-}
+interface bList extends Trait<typeof iActiveItems> {}
 
 DOM.addToPrototype({delegateElement});
 Block.addToPrototype({element, elements});
@@ -41,11 +41,8 @@ Block.addToPrototype({element, elements});
 	}
 })
 
-export default class bList extends iData implements iVisible, iWidth, iItems {
-	override get unsafe(): UnsafeGetter<UnsafeBList<this>> {
-		return Object.cast(this);
-	}
-
+@derive(iActiveItems)
+class bList extends iData implements iVisible, iWidth, iActiveItems {
 	/**
 	 * Type: the active item
 	 */
@@ -89,14 +86,11 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	@prop(String)
 	readonly listElementTag: string = 'li';
 
-	/**
-	 * The active element(s) of the component.
-	 * If the component is switched to "multiple" mode, you can pass in an iterable to define multiple active elements.
-	 */
+	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly activeProp?: CanIter<unknown>;
+	readonly activeProp?: CanIter<this['Active']>;
 
-	/** @see [[iInput.activeProp]] */
+	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
 	readonly modelValue?: CanIter<unknown>;
 
@@ -107,17 +101,11 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	@prop(Boolean)
 	readonly autoHref: boolean = false;
 
-	/**
-	 * If true, the component supports the multiple active items feature
-	 */
+	/** @see [[iActiveItems.multiple]] */
 	@prop(Boolean)
 	readonly multiple: boolean = false;
 
-	/**
-	 * If set to true, the active item can be canceled by clicking it again.
-	 * By default, if the component is switched to the `multiple` mode, this value is set to `true`,
-	 * otherwise it is set to `false`.
-	 */
+	/** @see [[iActiveItems.cancelable]] */
 	@prop({type: Boolean, required: false})
 	readonly cancelable?: boolean;
 
@@ -158,21 +146,25 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	}
 
 	/**
-	 * The active element(s) of the component.
-	 * If the component is switched to "multiple" mode, the getter will return a Set.
-	 *
+	 * @see [[iActiveItems.active]]
 	 * @see [[bList.activeStore]]
 	 */
 	get active(): this['Active'] {
-		const
-			v = this.field.get('activeStore');
-
-		if (this.multiple) {
-			return Object.isSet(v) ? new Set(v) : new Set();
-		}
-
-		return v;
+		return iActiveItems.getActive(this);
 	}
+
+	/**
+	 * @see [[iActiveItems.activeStore]]
+	 * @see [[bList.activeProp]]
+	 * @emits `immediateChange(active: CanArray<unknown>)`
+	 */
+	@system<bList>((o) => {
+		o.watch('modelValue', (val) => o.setActive(val, true));
+
+		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
+	})
+
+	activeStore!: this['Active'];
 
 	static override readonly mods: ModsDecl = {
 		...iVisible.mods,
@@ -210,78 +202,13 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	@system()
 	protected values!: Map<unknown, number>;
 
-	/**
-	 * The component internal active item store.
-	 * If the component is switched to the `multiple` mode, the value is defined as a Set.
-	 *
-	 * @see [[bList.activeProp]]
-	 * @emits `immediateChange(active: CanArray<unknown>)`
-	 */
-	@system<bList>((o) => {
-		o.watch('modelValue', (val) => o.setActive(val, true));
-
-		return o.sync.link((val) => {
-			val = o.modelValue ?? val;
-
-			const
-				beforeDataCreate = o.hook === 'beforeDataCreate';
-
-			if (val === undefined && beforeDataCreate) {
-				if (o.multiple) {
-					if (Object.isSet(o.activeStore)) {
-						return o.activeStore;
-					}
-
-					return o.activeStore !== undefined ? createSetFrom(o.activeStore) : new Set();
-				}
-
-				return o.activeStore;
-			}
-
-			let
-				newVal;
-
-			if (o.multiple) {
-				const
-					activeStore = createSetFrom(val);
-
-				if (Object.fastCompare(activeStore, o.activeStore)) {
-					return o.activeStore;
-				}
-
-				newVal = activeStore;
-
-			} else {
-				newVal = val;
-			}
-
-			if (beforeDataCreate) {
-				o.emit('immediateChange', o.multiple ? createSetFrom(newVal) : newVal);
-
-			} else {
-				o.setActive(newVal);
-			}
-
-			return newVal;
-
-			function createSetFrom(value: unknown): Set<unknown> {
-				return new Set(Object.isIterable(value) ? value : [value]);
-			}
-		});
-	})
-
-	protected activeStore!: this['Active'];
-
-	/**
-	 * Link(s) to the DOM element of the component active item.
-	 * If the component is switched to the `multiple` mode, the getter will return a list of elements.
-	 */
+	/** @see [[iActiveItems.activeElement]] */
 	@computed({
 		cache: true,
 		dependencies: ['active']
 	})
 
-	protected get activeElement(): CanPromise<CanNull<CanArray<HTMLAnchorElement>>> {
+	get activeElement(): CanPromise<CanArray<HTMLAnchorElement> | null> {
 		const
 			{active} = this;
 
@@ -306,25 +233,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	}
 
 	/**
-	 * Returns true if the specified value is active
-	 * @param value
-	 */
-	isActive(value: unknown): boolean {
-		const
-			activeStore = this.field.get('activeStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(activeStore)) {
-				return false;
-			}
-
-			return activeStore.has(value);
-		}
-
-		return value === activeStore;
-	}
-
-	/**
 	 * Activates the item(s) by the specified value(s).
 	 * If the component is switched to the `multiple` mode, the method can take an iterable to set multiple items.
 	 *
@@ -336,42 +244,10 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 */
 	setActive(value: CanIter<unknown>, unsetPrevious: boolean = false): boolean {
 		const
-			activeStore = this.field.get('activeStore');
+			res = iActiveItems.setActive(this, value);
 
-		if (this.multiple) {
-			if (!Object.isSet(activeStore)) {
-				return false;
-			}
-
-			let
-				res = false;
-
-			const set = (value) => {
-				if (activeStore.has(value)) {
-					return;
-				}
-
-				activeStore.add(value);
-				res = true;
-			};
-
-			if (Object.isIterable(value)) {
-				Object.forEach(value, set);
-
-			} else {
-				set(value);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!res) {
-				return false;
-			}
-
-		} else if (activeStore === value) {
-			return false;
-
-		} else {
-			this.field.set('activeStore', value);
+		if (!res) {
+			return res;
 		}
 
 		const
@@ -415,8 +291,6 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			}, stderr);
 		}
 
-		this.emit('immediateChange', this.active);
-		this.emit('change', this.active);
 		this.$emit('update:modelValue', this.active);
 
 		return true;
@@ -431,55 +305,17 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 	 * @emits `immediateChange(active: unknown)`
 	 */
 	unsetActive(value: CanIter<unknown>): boolean {
-		const
-			activeStore = this.field.get('activeStore');
+		const res = iActiveItems.unsetActive(this, value);
 
-		const
-			{activeElement} = this;
-
-		if (this.multiple) {
-			if (!Object.isSet(activeStore)) {
-				return false;
-			}
-
-			let
-				res = false;
-
-			const unset = (value) => {
-				if (!activeStore.has(value) || this.cancelable === false) {
-					return false;
-				}
-
-				activeStore.delete(value);
-				res = true;
-			};
-
-			if (Object.isIterable(value)) {
-				Object.forEach(value, unset);
-
-			} else {
-				unset(value);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!res) {
-				return false;
-			}
-
-		} else if (activeStore !== value || this.cancelable !== true) {
-			return false;
-
-		} else {
-			this.field.set('activeStore', undefined);
+		if (!res) {
+			return res;
 		}
 
-		const
-			{block: $b} = this;
+		const {activeElement, block: $b} = this;
 
 		if ($b != null) {
 			SyncPromise.resolve(activeElement).then((activeElement) => {
-				const
-					els = Array.concat([], activeElement);
+				const els = Array.concat([], activeElement);
 
 				els.forEach((el) => {
 					const
@@ -505,59 +341,9 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 			}, stderr);
 		}
 
-		this.emit('immediateChange', this.active);
-		this.emit('change', this.active);
 		this.$emit('update:modelValue', this.active);
 
 		return true;
-	}
-
-	/**
-	 * Toggles activation of the item(s) by the specified value(s).
-	 * The methods return a new active component item(s).
-	 *
-	 * @param value
-	 * @param [unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
-	 */
-	toggleActive(value: this['Active'], unsetPrevious: boolean = false): this['Active'] {
-		const
-			activeStore = this.field.get('activeStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(activeStore)) {
-				return this.active;
-			}
-
-			const toggle = (value) => {
-				if (activeStore.has(value)) {
-					if (unsetPrevious) {
-						this.unsetActive(this.active);
-
-					} else {
-						this.unsetActive(value);
-					}
-
-					return;
-				}
-
-				this.setActive(value, unsetPrevious);
-			};
-
-			if (Object.isIterable(value)) {
-				Object.forEach(value, toggle);
-
-			} else {
-				toggle(value);
-			}
-
-		} else if (activeStore !== value) {
-			this.setActive(value);
-
-		} else {
-			this.unsetActive(value);
-		}
-
-		return this.active;
 	}
 
 	protected override initRemoteData(): CanUndef<CanPromise<this['Items'] | Dictionary>> {
@@ -650,27 +436,48 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 
 	/**
 	 * Initializes component values
+	 * @param itemsChanged - true, if the method is invoked after items changed
 	 */
 	@hook('beforeDataCreate')
-	protected initComponentValues(): void {
+	protected initComponentValues(itemsChanged: boolean = false): void {
 		const
 			values = new Map(),
 			indexes = {};
 
 		const
-			activeStore = this.field.get('activeStore');
+			{active: currentActive} = this;
+
+		let
+			hasActive = false,
+			activeItem: this['Item'] | undefined;
 
 		for (let i = 0; i < this.items.length; i++) {
 			const
 				item = this.items[i],
 				val = item.value;
 
-			if (item.active && (this.multiple ? this.activeProp === undefined : activeStore === undefined)) {
-				this.setActive(val);
+			if (item.active === currentActive) {
+				hasActive = true;
+			}
+
+			if (item.active) {
+				activeItem = item;
 			}
 
 			values.set(val, i);
 			indexes[i] = val;
+		}
+
+		if (!hasActive) {
+			const shouldResetActive = itemsChanged && currentActive != null;
+
+			if (shouldResetActive) {
+				this.field.set('activeStore', undefined);
+			}
+
+			if (activeItem != null) {
+				iActiveItems.initItem(this, activeItem);
+			}
 		}
 
 		this.values = values;
@@ -753,3 +560,5 @@ export default class bList extends iData implements iVisible, iWidth, iItems {
 		this.emit('actionChange', this.active);
 	}
 }
+
+export default bList;
