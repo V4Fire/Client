@@ -43,11 +43,14 @@ import iBlock, {
 
 import { heightMode } from 'components/base/b-bottom-slide/const';
 import type { HeightMode, Direction } from 'components/base/b-bottom-slide/interface';
+import Block, { getFullElementName } from 'components/friends/block';
 
 export * from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-bottom-slide/const';
 export * from 'components/base/b-bottom-slide/interface';
+
+Block.addToPrototype({getFullElementName});
 
 const
 	$$ = symbolGenerator();
