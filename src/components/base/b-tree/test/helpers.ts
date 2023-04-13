@@ -22,6 +22,12 @@ interface CheckOptionTreeCtx {
 	foldSelector?: string;
 }
 
+/**
+ * Returns `folded` class modifier for given value
+ *
+ * @param target
+ * @param value
+ */
 export function getFoldedClass(target: JSHandle<bTree>, value: boolean = true): Promise<string> {
 	return target.evaluate(
 		(ctx, v) => ctx.unsafe.block!.getFullElementName('node', 'folded', v),
@@ -29,6 +35,14 @@ export function getFoldedClass(target: JSHandle<bTree>, value: boolean = true): 
 	);
 }
 
+/**
+ * Iterates over all tree items depth-first and unfolds closed items by clicking them.
+ * Also it checks that all items have correct `data-level` attribute and `folded` class modifier.
+ *
+ * @param page
+ * @param items
+ * @param param2
+ */
 export function checkOptionTree(
 	page: Page,
 	items: Item[],
@@ -79,29 +93,12 @@ export function checkOptionTree(
 	return queue;
 }
 
-export function getDefaultBTreeItems(): Item[] {
-	return [
-		{id: 'bar'},
-
-		{
-			id: 'foo',
-			children: [
-				{id: 'foo_1'},
-				{id: 'foo_2'},
-
-				{
-					id: 'foo_3',
-					children: [{id: 'foo_3_1'}]
-				},
-
-				{id: 'foo_4'},
-				{id: 'foo_5'},
-				{id: 'foo_6'}
-			]
-		}
-	];
-}
-
+/**
+ * Returns tree item element handle for the id
+ *
+ * @param page
+ * @param id
+ */
 export async function waitForItem(page: Page, id: string | number): Promise<ElementHandle<HTMLElement | SVGElement>> {
 	return page.waitForSelector(`[data-id$="-${id}"]`, {state: 'attached'});
 }
