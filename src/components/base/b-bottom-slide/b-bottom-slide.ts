@@ -25,6 +25,8 @@ import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iOpen from 'components/traits/i-open/i-open';
 import iVisible from 'components/traits/i-visible/i-visible';
 
+import Block, { getFullElementName } from 'components/friends/block';
+
 import iBlock, {
 
 	component,
@@ -43,7 +45,6 @@ import iBlock, {
 
 import { heightMode } from 'components/base/b-bottom-slide/const';
 import type { HeightMode, Direction } from 'components/base/b-bottom-slide/interface';
-import Block, { getFullElementName } from 'components/friends/block';
 
 export * from 'components/super/i-data/i-data';
 
