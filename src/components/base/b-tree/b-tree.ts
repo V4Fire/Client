@@ -11,14 +11,18 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
+
 import SyncPromise from 'core/promise/sync';
+import { derive } from 'core/functools/trait';
 
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
 import Block, { getElementMod } from 'components/friends/block';
 
-import iItems, { IterationKey } from 'components/traits/i-items/i-items';
+import iItems from 'components/traits/i-items/i-items';
+import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
 
-import iData, { component, prop, field, wait, ModsDecl } from 'components/super/i-data/i-data';
+import iData, { watch, hook, component, prop, system, computed, field, wait, ModsDecl } from 'components/super/i-data/i-data';
 import type { Item, RenderFilter } from 'components/base/b-tree/interface';
 
 export * from 'components/super/i-data/i-data';
@@ -27,18 +31,27 @@ export * from 'components/base/b-tree/interface';
 AsyncRender.addToPrototype({iterate});
 Block.addToPrototype({getElementMod});
 
+const
+	$$ = symbolGenerator();
+
+interface bTree extends Trait<typeof iActiveItems> {}
+
 @component({
 	functional: {
-		dataProvider: undefined
+		functional: true
 	}
 })
 
-export default class bTree extends iData implements iItems {
+@derive(iActiveItems)
+class bTree extends iData implements iItems {
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
 
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
+
+	/** @see [[iActiveItems.Active]] */
+	readonly Active!: iActiveItems['Active'];
 
 	/** @see [[iItems.items]] */
 	@prop(Array)
@@ -111,9 +124,60 @@ export default class bTree extends iData implements iItems {
 	@prop(Number)
 	readonly level: number = 0;
 
+	/** @see [[iActiveItems.activeProp]] */
+	@prop({required: false})
+	readonly activeProp?: iActiveItems['activeProp'];
+
+	/** @see [[iActiveItems.activeProp]] */
+	@prop({required: false})
+	readonly modelValue?: CanIter<this['Item']['value']>;
+
+	/** @see [[iActiveItems.multiple]] */
+	@prop(Boolean)
+	readonly multiple: boolean = false;
+
+	/** @see [[iActiveItems.cancelable]] */
+	@prop({type: Boolean, required: false})
+	readonly cancelable?: boolean;
+
 	/** @see [[iItems.items]] */
-	@field((o) => o.sync.link())
+	@field<bTree>((o) => o.sync.link<Item[]>((val) => {
+		if (o.dataProvider != null) {
+			return <CanUndef<Item[]>>o.items ?? [];
+		}
+
+		return o.normalizeItems(val);
+	}))
 	items!: this['Items'];
+
+	/**
+	 * @see [[iActiveItems.activeStore]]
+	 * @see [[iActiveItems.syncActiveStore]]
+	 */
+	@system<bTree>((o) => {
+		o.watch('modelValue', (val) => o.setActive(val, true));
+
+		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
+	})
+	activeStore!: iActiveItems['activeStore'];
+
+	/**
+	 * A map of the item indexes and their values
+	 */
+	@system()
+	indexes!: Dictionary;
+
+	/**
+	 * A map of the item values and their indexes
+	 */
+	@system()
+	valueIndexes!: Map<this['Item']['value'], number>;
+
+	/**
+	 * A map of the item values and their descriptors
+	 */
+	@system()
+	valueItems!: Map<this['Item']['value'], this['Item']>;
 
 	static override readonly mods: ModsDecl = {
 		clickableArea: [
@@ -150,8 +214,10 @@ export default class bTree extends iData implements iItems {
 		const opts = {
 			level: this.level + 1,
 			top: isRootLvl ? this : this.top,
+			multiple: this.multiple,
 			classes: this.classes,
 			renderChunks: this.renderChunks,
+			activeProp: this.active,
 			nestedRenderFilter,
 			renderFilter
 		};
@@ -166,6 +232,30 @@ export default class bTree extends iData implements iItems {
 		return opts;
 	}
 
+	/** @see [[iActiveItems.prototype.active] */
+	@computed({cache: false})
+	get active(): this['Active'] {
+		return iActiveItems.getActive(this.top ?? this);
+	}
+
+	/** @see [[iActiveItems.prototype.activeElement] */
+	get activeElement(): iActiveItems['activeElement'] {
+		const
+			ctx = this.top ?? this;
+
+		return this.waitComponentStatus('ready', () => {
+			if (ctx.multiple) {
+				if (!Object.isSet(this.active)) {
+					return [];
+				}
+
+				return [...this.active].flatMap((val) => this.findItemElement(val) ?? []);
+			}
+
+			return this.findItemElement(this.active) ?? null;
+		});
+	}
+
 	/**
 	 * Returns an iterator over the tree items based on the given arguments.
 	 * The iterator returns pairs of elements `[Tree item, The bTree instance associated with the element]`.
@@ -175,7 +265,7 @@ export default class bTree extends iData implements iItems {
 	 */
 	traverse(
 		ctx: bTree = this.top ?? this,
-		opts: {deep: boolean} = {deep: true}
+		opts: { deep: boolean } = {deep: true}
 	): IterableIterator<[this['Item'], bTree]> {
 		const
 			children = ctx.$refs.children ?? [],
@@ -206,82 +296,192 @@ export default class bTree extends iData implements iItems {
 	 * Folds the specified item.
 	 * If the method is called without an element passed, all tree sibling elements will be folded.
 	 *
-	 * @param [item]
+	 * @param [value]
 	 */
 	@wait('ready')
-	fold(item?: this['Item']): Promise<boolean> {
-		if (item == null) {
-			const
-				values: Array<Promise<boolean>> = [];
+	fold(value?: unknown): Promise<boolean> {
+		if (arguments.length === 0) {
+			const values: Array<Promise<boolean>> = [];
 
 			for (const [item] of this.traverse(this, {deep: false})) {
-				values.push(this.fold(item));
+				values.push(this.fold(item.value));
 			}
 
 			return SyncPromise.all(values)
 				.then((res) => res.some((value) => value === true));
 		}
 
-		const
-			isFolded = this.getFoldedModById(item.id) === 'true';
+		const isFolded = this.getFoldedModByValue(value) === 'true';
 
 		if (isFolded) {
 			return SyncPromise.resolve(false);
 		}
 
-		return this.toggleFold(item);
+		return this.toggleFold(value, true);
 	}
 
 	/**
 	 * Unfolds the specified item.
+	 * If method is called on nested item, all parent items will be unfolded.
 	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
 	 *
-	 * @param [item]
+	 * @param [value]
 	 */
 	@wait('ready')
-	unfold(item?: this['Item']): Promise<boolean> {
-		if (item == null) {
-			const
-				values: Array<Promise<boolean>> = [];
+	unfold(value?: unknown): Promise<boolean> {
+		const
+			values: Array<Promise<boolean>> = [];
 
+		if (arguments.length === 0) {
 			for (const [item] of this.traverse(this, {deep: false})) {
-				values.push(this.unfold(item));
+				if (!this.hasChildren(item)) {
+					continue;
+				}
+
+				values.push(this.unfold(item.value));
 			}
 
-			return SyncPromise.all(values)
-				.then((res) => res.some((value) => value === true));
+		} else {
+			const
+				ctx = this.top ?? this,
+				item = this.valueItems.get(value);
+
+			if (item != null && this.hasChildren(item)) {
+				values.push(ctx.toggleFold(value, false));
+			}
+
+			let
+				{parentValue} = item ?? {};
+
+			while (parentValue != null) {
+				const
+					parent = this.valueItems.get(parentValue);
+
+				if (parent != null) {
+					values.push(ctx.toggleFold(parent.value, false));
+					parentValue = parent.parentValue;
+
+				} else {
+					parentValue = null;
+				}
+			}
 		}
 
-			const
-				isUnfolded = this.getFoldedModById(item.id) === 'false';
-
-			if (isUnfolded) {
-				return SyncPromise.resolve(false);
-			}
-
-			return this.toggleFold(item);
+		return SyncPromise.all(values)
+			.then((res) => res.some((value) => value === true));
 	}
 
 	/**
 	 * Toggles the passed item fold value
 	 *
-	 * @param item
+	 * @param value
+	 * @param [folded] - if value is not passed the current state will be toggled
 	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
 	 */
 	@wait('ready')
-	toggleFold(item: this['Item']): Promise<boolean> {
+	toggleFold(value: unknown, folded?: boolean): Promise<boolean> {
 		const
-			target = this.findItemElement(item.id),
-			newVal = this.getFoldedModById(item.id) === 'false';
+			ctx = this.top ?? this;
 
-		if (target != null && this.hasChildren(item)) {
-			this.block?.setElementMod(target, 'node', 'folded', newVal);
-			this.emit('fold', target, item, newVal);
+		const
+			oldVal = this.getFoldedModByValue(value) === 'true',
+			newVal = folded ?? !oldVal;
 
+		const
+			el = ctx.findItemElement(value),
+			item = this.valueItems.get(value);
+
+		if (oldVal !== newVal && el != null && item != null && this.hasChildren(item)) {
+			this.block?.setElementMod(el, 'node', 'folded', newVal);
+			ctx.emit('fold', el, item, newVal);
 			return SyncPromise.resolve(true);
 		}
 
 		return SyncPromise.resolve(false);
+	}
+
+	isActive(value: unknown): boolean {
+		return iActiveItems.isActive(this.top ?? this, value);
+	}
+
+	/** @see [[iActiveItems.prototype.setActive]] */
+	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
+		const
+			ctx = this.top ?? this;
+
+		if (!iActiveItems.setActive(ctx, value, unsetPrevious)) {
+			return false;
+		}
+
+		void ctx.unfold(value);
+
+		const {
+			$el,
+			block: $b
+		} = ctx;
+
+		if ($el != null && $b != null) {
+			if (!ctx.multiple || unsetPrevious) {
+				const
+					previousNodes = $el.querySelectorAll(`.${$b.getFullElementName('node', 'active', true)}`);
+
+				previousNodes.forEach((previousNode) => {
+					if (!this.isActive(this.valueItems.get(previousNode.getAttribute('data-id')))) {
+						setActive(previousNode, false);
+					}
+				});
+			}
+
+			SyncPromise.resolve(this.activeElement).then((activeElement) => {
+				Array.concat([], activeElement).forEach((activeElement) => setActive(activeElement, true));
+			}).catch(stderr);
+		}
+
+		return true;
+
+		function setActive(el: Element, status: boolean) {
+			$b!.setElementMod(el, 'node', 'active', status);
+
+			if (el.hasAttribute('aria-selected')) {
+				el.setAttribute('aria-selected', String(status));
+			}
+		}
+	}
+
+	unsetActive(value: this['Active']): boolean {
+		const
+			ctx = this.top ?? this;
+
+		if (!iActiveItems.unsetActive(ctx, value)) {
+			return false;
+		}
+
+		const {
+			$el,
+			block: $b
+		} = ctx;
+
+		if ($el != null && $b != null) {
+			const
+				previousNodes = $el.querySelectorAll(`.${$b.getFullElementName('node', 'active', true)}`);
+
+			previousNodes.forEach((previousNode) => {
+				if (!this.isActive(this.valueItems.get(previousNode.getAttribute('data-id')))) {
+					$b.setElementMod(previousNode, 'node', 'active', false);
+
+					if (previousNode.hasAttribute('aria-selected')) {
+						previousNode.setAttribute('aria-selected', 'false');
+					}
+				}
+			});
+		}
+
+		return true;
+	}
+
+	/** @see [[iActiveItems.prototype.toggleActive]] */
+	toggleActive(value: this['Active'], unsetPrevious?: boolean): this['Active'] {
+		return iActiveItems.toggleActive(this.top ?? this, value, unsetPrevious);
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -298,7 +498,7 @@ export default class bTree extends iData implements iItems {
 			val = this.convertDBToComponent<this['items']>(this.db);
 
 		if (Object.isArray(val)) {
-			return this.items = val;
+			return this.items = this.normalizeItems(val);
 		}
 
 		return this.items;
@@ -321,7 +521,7 @@ export default class bTree extends iData implements iItems {
 	protected getItemProps(item: this['Item'], i: number): Dictionary {
 		const
 			op = this.itemProps,
-			props = Object.reject(item, ['id', 'parentId', 'children', 'folded']);
+			props = Object.reject(item, ['value', 'parentValue', 'children', 'folded']);
 
 		if (op == null) {
 			return props;
@@ -361,13 +561,13 @@ export default class bTree extends iData implements iItems {
 
 	/**
 	 * Returns a value of the `folded` modifier from an element by the specified identifier
-	 * @param id
+	 * @param value
 	 */
-	protected getFoldedModById(id: string): CanUndef<string> {
+	protected getFoldedModByValue(value: this['Item']['value']): CanUndef<string> {
 		const
-			target = this.findItemElement(id);
+			target = this.findItemElement(value);
 
-		if (!target) {
+		if (target == null) {
 			return;
 		}
 
@@ -375,12 +575,161 @@ export default class bTree extends iData implements iItems {
 	}
 
 	/**
-	 * Searches an HTML element by the specified identifier and returns it
-	 * @param id
+	 * Searches an HTML element by the specified item value and returns it
+	 * @param value
 	 */
-	protected findItemElement(id: string): CanUndef<HTMLElement> {
-		const itemId = this.dom.getId(id);
-		return this.$el?.querySelector(`[data-id=${itemId}]`) ?? undefined;
+	protected findItemElement(value: this['Item']['value']): HTMLElement | null {
+		const
+			ctx = this.top ?? this,
+			id = this.valueIndexes.get(value);
+
+		if (id == null) {
+			return null;
+		}
+
+		return ctx.$el?.querySelector(`[data-id=${this.dom.getId(`${id}`)}]`) ?? null;
+	}
+
+	/**
+	 * Synchronization of items
+	 *
+	 * @param items
+	 * @param oldItems
+	 * @emits `itemsChange(value: this['Items'])`
+	 */
+	@watch({path: 'items', immediate: true})
+	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
+		if (!Object.fastCompare(items, oldItems)) {
+			this.initComponentValues(oldItems != null);
+			this.async.setImmediate(() => this.emit('itemsChange', items), {label: $$.syncItemsWatcher});
+		}
+	}
+
+	/**
+	 * Initializes component values
+	 * @param [itemsChanged] - true, if the method is invoked after items changed
+	 */
+	@hook('beforeDataCreate')
+	protected initComponentValues(itemsChanged: boolean = false): void {
+		const
+			that = this,
+			{active} = this;
+
+		let
+			hasActive = false,
+			activeItem;
+
+		if (this.top == null) {
+			this.indexes = {};
+			this.valueIndexes = new Map();
+			this.valueItems = new Map();
+
+			traverse(this.field.get<this['Items']>('items'));
+
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (!hasActive) {
+				if (itemsChanged && active != null) {
+					this.field.set('activeStore', undefined);
+				}
+
+				if (activeItem != null) {
+					iActiveItems.initItem(this, activeItem);
+				}
+			}
+
+		} else {
+			Object.defineProperty(this, 'indexes', {
+				enumerable: true,
+				configurable: true,
+				get: () => this.top?.indexes
+			});
+
+			Object.defineProperty(this, 'valueIndexes', {
+				enumerable: true,
+				configurable: true,
+				get: () => this.top?.valueIndexes
+			});
+
+			Object.defineProperty(this, 'valueItems', {
+				enumerable: true,
+				configurable: true,
+				get: () => this.top?.valueItems
+			});
+		}
+
+		function traverse(items?: Items) {
+			items?.forEach((item) => {
+				const
+					{value} = item;
+
+				if (that.valueIndexes.has(value)) {
+					return;
+				}
+
+				const
+					id = that.valueIndexes.size;
+
+				that.indexes[id] = value;
+				that.valueIndexes.set(value, id);
+				that.valueItems.set(value, item);
+
+				if (item.value === active) {
+					hasActive = true;
+				}
+
+				if (item.active) {
+					activeItem = item;
+				}
+
+				if (Object.isArray(item.children)) {
+					traverse(item.children);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Normalizes the specified items and returns it
+	 * @param [items]
+	 */
+	protected normalizeItems(items: this['Items'] = []): this['Items'] {
+		const
+			that = this;
+
+		let
+			i = -1;
+
+		items = Object.fastClone(items);
+		items.forEach((el) => normalize(el));
+
+		return items;
+
+		function normalize(item: bTree['Item'], parentValue?: unknown) {
+			i++;
+
+			if (item.value === undefined) {
+				item.value = i;
+			}
+
+			if (!('parentValue' in item)) {
+				item.parentValue = parentValue;
+
+				if (Object.isArray(item.children)) {
+					if (that.isActive(item.value)) {
+						item.folded = false;
+					}
+
+					for (const el of item.children) {
+						if (normalize(el, item.value)) {
+							item.folded = false;
+							break;
+						}
+					}
+				}
+			}
+
+			return that.isActive(item.value) || item.folded === false;
+		}
 	}
 
 	/**
@@ -388,6 +737,41 @@ export default class bTree extends iData implements iItems {
 	 * @param item
 	 */
 	protected onFoldClick(item: this['Item']): void {
-		void this.toggleFold(item);
+		void this.toggleFold(item.value);
+	}
+
+	/**
+	 * Handler: click to some item element
+	 *
+	 * @param e
+	 * @emits `actionChange(active: this['Active'])`
+	 */
+	@watch<bTree>({
+		path: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegateElement('node', cb)
+	})
+
+	protected onItemClick(e: Event): void {
+		e.stopPropagation();
+
+		let
+			target = <Element>e.target;
+
+		if (target.matches(this.block!.getElementSelector('fold'))) {
+			return;
+		}
+
+		target = <Element>e.delegateTarget;
+
+		const
+			id = target.getAttribute('data-id');
+
+		if (id != null) {
+			this.toggleActive(this.indexes[id]);
+		}
+
+		(this.top ?? this).emit('actionChange', this.active);
 	}
 }
+
+export default bTree;
