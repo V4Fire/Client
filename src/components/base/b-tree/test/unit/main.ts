@@ -6,20 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementHandle, JSHandle, Page } from 'playwright';
+import type { ElementHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
 import BOM from 'tests/helpers/bom';
 import DOM from 'tests/helpers/dom';
-import Component from 'tests/helpers/component';
 
-import type bTree from 'components/base/b-tree/b-tree';
-import type { Item } from 'components/base/b-tree/interface';
-
-import { checkOptionTree, waitForItem, interceptTreeRequest } from 'components/base/b-tree/test/helpers';
+import { renderTree, checkOptionTree, waitForItem, interceptTreeRequest, createTestModIs, waitForItems } from 'components/base/b-tree/test/helpers';
 
 test.describe('<b-tree>', () => {
+
+	const
+		testFoldedModIs = createTestModIs('folded');
 
 	const
 		elementSelector = '.b-checkbox',
@@ -40,9 +39,9 @@ test.describe('<b-tree>', () => {
 					{value: 'foo_4'},
 					{value: 'foo_5'},
 					{value: 'foo_6'}
-				]
+				].map((item) => ({...item, label: item.value}))
 			}
-		];
+		].map((item) => ({...item, label: item.value}));
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -85,7 +84,7 @@ test.describe('<b-tree>', () => {
 		};
 
 		test('should initialize with provided items', async ({page}) => {
-			const target = await renderTree(page, {items: defaultItems, attrs: baseAttrs});
+			const target = await renderTree(page, {items: defaultItems, attrs: baseAttrs, children: []});
 
 			await test.expect(target.evaluate((ctx) => ctx.isFunctional))
 				.toBeResolvedTo(false);
@@ -122,6 +121,7 @@ test.describe('<b-tree>', () => {
 			test('should render items by one with a timeout', async ({page}) => {
 				const target = await renderTree(page, {
 					items: defaultItems,
+					children: [],
 					attrs: {
 						...baseAttrs,
 						renderChunks: 1,
@@ -146,6 +146,7 @@ test.describe('<b-tree>', () => {
 			test('should render relying on the context data', async ({page}) => {
 				await renderTree(page, {
 					items: defaultItems,
+					children: [],
 					attrs: {
 						...baseAttrs,
 						renderFilter: (ctx) => ctx.level === 0
@@ -230,44 +231,99 @@ test.describe('<b-tree>', () => {
 		});
 	});
 
+	test.describe('on items change', () => {
+		const newItems = [
+			{value: 0},
+			{value: 1, children: [{value: 3, label: '3'}]},
+			{value: 2, children: [{value: 4, label: '4'}]}
+		].map((item) => ({...item, label: `${item.value}`}));
+
+		test('`onItemsChange` event should be emitted', async ({page}) => {
+			const
+				target = await renderTree(page),
+				changesLogPromise = target.evaluate(async (ctx) => {
+					const
+						log: any[] = [];
+
+					ctx.on('onItemsChange', (val) => {
+						log.push(Object.fastClone(val));
+					});
+
+					ctx.items = [{label: 'Bar', value: 1}];
+
+					log.push(Object.fastClone(ctx.items));
+
+					await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
+					return log;
+				});
+
+			test.expect(await changesLogPromise)
+				.toEqual([
+					[{label: 'Bar', value: 1}],
+					[{label: 'Bar', value: 1}]
+				]);
+		});
+
+		test('new items should be unfolded with `folded = false`', async ({page}) => {
+			const
+				target = await renderTree(page, {items: defaultItems, attrs: {folded: false}});
+
+			await target.evaluate(async (ctx, newItems) => {
+				ctx.items = newItems;
+
+				await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
+			}, newItems);
+
+			await testFoldedModIs(false, await waitForItems(page, target, [1, 2]));
+		});
+
+		// TODO: this test seems to be wrong
+		test('unfolded node should become folded after change', async ({page}) => {
+			const
+				target = await renderTree(page, {items: defaultItems});
+
+			await test.expect(target.evaluate(async (ctx) => ctx.unfold('foo'))).toBeResolvedTo(true);
+
+			await testFoldedModIs(false, await waitForItems(page, target, ['foo']));
+
+			await target.evaluate(async (ctx, newItems) => {
+				ctx.items = newItems;
+
+				await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
+			}, newItems);
+
+			await testFoldedModIs(true, await waitForItems(page, target, [2]));
+		});
+	});
+
 	test.describe('public API', () => {
 		const
 			items = [
-				{value: '1'},
-				{value: '2'},
+				{value: 1},
+				{value: 2},
 				{
-					value: '3',
+					value: 3,
 					children: [
 						{
-							value: '4',
-							children: [{value: '6'}]
+							value: 4,
+							children: [{value: 6}]
 						}
 					]
 				},
-				{value: '5'}
+				{value: 5}
 			];
 
 		test('traverse', async ({page}) => {
 			const target = await renderTree(page, {items});
 
 			let res = await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.value));
-			test.expect(res).toEqual([1, 2, 3, 5, 4, 6].map(String));
+			test.expect(res).toEqual([1, 2, 3, 5, 4, 6]);
 
 			res = await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.value));
-			test.expect(res).toEqual([1, 2, 3, 5].map(String));
+			test.expect(res).toEqual([1, 2, 3, 5]);
 		});
 
 		test('fold/unfold', async ({page}) => {
-			const testFoldedModIs = async (
-				flag: boolean,
-				nodes: Array<ElementHandle<HTMLElement | SVGElement>>
-			) => {
-				const classes = await Promise.all(nodes.map((node) => node.getAttribute('class')));
-
-				test.expect(classes.every((x) => x?.includes(flag ? 'folded_true' : 'folded_false')))
-					.toBeTruthy();
-			};
-
 			const target = await renderTree(page, {items});
 
 			await target.evaluate(async (ctx) => ctx.unfold());
@@ -286,29 +342,6 @@ test.describe('<b-tree>', () => {
 			await testFoldedModIs(false, [await waitForItem(page, target, 3)]);
 		});
 	});
-
-	/**
-	 * Returns rendered `b-tree` component
-	 *
-	 * @param page
-	 * @param options
-	 */
-	async function renderTree(
-		page: Page,
-		options: Partial<{ items: Item[] } & RenderComponentsVnodeParams> = {}
-	): Promise<JSHandle<bTree>> {
-		const {items, attrs, children} = options;
-
-		return Component.createComponent(page, 'b-tree', {
-			attrs: {
-				items,
-				id: 'target',
-				theme: 'demo',
-				...attrs
-			},
-			children
-		});
-	}
 
 	/**
 	 * Checks if page has expected count of b-checkbox elements
