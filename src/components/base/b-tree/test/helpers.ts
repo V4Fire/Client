@@ -11,6 +11,7 @@ import type { BrowserContext, ElementHandle, JSHandle, Page } from 'playwright';
 import test from 'tests/config/unit/test';
 
 import DOM from 'tests/helpers/dom';
+import Component from 'tests/helpers/component';
 
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/interface';
@@ -20,6 +21,29 @@ interface CheckOptionTreeCtx {
 	queue?:Array<Promise<void>>;
 	level?: number;
 	foldSelector?: string;
+}
+
+/**
+ * Returns rendered `b-tree` component
+ *
+ * @param page
+ * @param options
+ */
+export async function renderTree(
+	page: Page,
+	options: Partial<{ items: Item[] } & RenderComponentsVnodeParams> = {}
+): Promise<JSHandle<bTree>> {
+	const {items, attrs, children} = options;
+
+	return Component.createComponent(page, 'b-tree', {
+		attrs: {
+			items,
+			id: 'target',
+			theme: 'demo',
+			...attrs
+		},
+		children: children ?? {default: ({item}) => item.label}
+	});
 }
 
 /**
@@ -95,7 +119,7 @@ export function checkOptionTree(
 }
 
 /**
- * Returns tree item element handle for the id
+ * Returns tree item element handle for the value
  *
  * @param page
  * @param target
@@ -104,10 +128,26 @@ export function checkOptionTree(
 export async function waitForItem(
 	page: Page,
 	target: JSHandle<bTree>,
-	value: string | number
+	value: unknown
 ): Promise<ElementHandle<HTMLElement | SVGElement>> {
-	const id = await target.evaluate((ctx, value) => ctx.valueIndexes.get(value), value.toString());
+	const id = await target.evaluate((ctx, value) => ctx.valueIndexes.get(value), value);
 	return page.waitForSelector(`[data-id$="-${id}"]`, {state: 'attached'});
+}
+
+/**
+ * Returns tree item element handles for the values
+ *
+ * @param page
+ * @param target
+ * @param value
+ */
+export async function waitForItems(
+	page: Page,
+	target: JSHandle<bTree>,
+	values: Iterable<unknown>
+): Promise<Array<ElementHandle<HTMLElement | SVGElement>>> {
+	const ids = await target.evaluate((ctx, values) => [...values].map((value) => ctx.valueIndexes.get(value)), values);
+	return Promise.all(ids.map((id) => page.waitForSelector(`[data-id$="-${id}"]`, {state: 'attached'})));
 }
 
 /**
@@ -145,4 +185,27 @@ export function interceptTreeRequest(
 			{value: 'foo_0_6'}
 		])
 	}));
+}
+
+/**
+ * Returns selector for the element
+ * @param elName
+ */
+export const createTreeSelector = DOM.elNameSelectorGenerator('b-tree');
+
+/**
+ * Creates a function to test if nodes have given modifier classes
+ *
+ * @param modName
+ */
+export function createTestModIs(modName: string) {
+	return async (
+		status: boolean,
+		nodes: Array<ElementHandle<HTMLElement | SVGElement>>
+	): Promise<void> => {
+		const classes = await Promise.all(nodes.map((node) => node.getAttribute('class')));
+
+		test.expect(classes.every((x) => x?.includes(status ? `${modName}_true` : `${modName}_false`)))
+			.toBeTruthy();
+	};
 }
