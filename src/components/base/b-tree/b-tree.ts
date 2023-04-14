@@ -113,10 +113,10 @@ class bTree extends iData implements iItems {
 	readonly folded: boolean = true;
 
 	/**
-	 * Link to the top level component (internal parameter)
+	 * Link to the top-level component (internal parameter)
 	 */
 	@prop({type: Object, required: false})
-	readonly top?: bTree;
+	readonly root?: bTree;
 
 	/**
 	 * Component nesting level (internal parameter)
@@ -213,7 +213,7 @@ class bTree extends iData implements iItems {
 
 		const opts = {
 			level: this.level + 1,
-			top: isRootLvl ? this : this.top,
+			root: isRootLvl ? this : this.root,
 			multiple: this.multiple,
 			classes: this.classes,
 			renderChunks: this.renderChunks,
@@ -235,13 +235,13 @@ class bTree extends iData implements iItems {
 	/** @see [[iActiveItems.prototype.active] */
 	@computed({cache: false})
 	get active(): this['Active'] {
-		return iActiveItems.getActive(this.top ?? this);
+		return iActiveItems.getActive(this.root ?? this);
 	}
 
 	/** @see [[iActiveItems.prototype.activeElement] */
 	get activeElement(): iActiveItems['activeElement'] {
 		const
-			ctx = this.top ?? this;
+			ctx = this.root ?? this;
 
 		return this.waitComponentStatus('ready', () => {
 			if (ctx.multiple) {
@@ -256,6 +256,13 @@ class bTree extends iData implements iItems {
 		});
 	}
 
+	/** @see [[DOM.getId]] */
+	getDOMId(id: string): string;
+	getDOMId(id: undefined | null): undefined;
+	getDOMId(id: Nullable<string>): CanUndef<string> {
+		return (this.root ?? this).dom.getId(Object.cast(id));
+	}
+
 	/**
 	 * Returns an iterator over the tree items based on the given arguments.
 	 * The iterator returns pairs of elements `[Tree item, The bTree instance associated with the element]`.
@@ -264,7 +271,7 @@ class bTree extends iData implements iItems {
 	 * @param [opts] - additional options
 	 */
 	traverse(
-		ctx: bTree = this.top ?? this,
+		ctx: bTree = this.root ?? this,
 		opts: { deep: boolean } = {deep: true}
 	): IterableIterator<[this['Item'], bTree]> {
 		const
@@ -343,7 +350,7 @@ class bTree extends iData implements iItems {
 
 		} else {
 			const
-				ctx = this.top ?? this,
+				ctx = this.root ?? this,
 				item = this.valueItems.get(value);
 
 			if (item != null && this.hasChildren(item)) {
@@ -379,9 +386,9 @@ class bTree extends iData implements iItems {
 	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
 	 */
 	@wait('ready')
-	toggleFold(value: unknown, folded?: boolean): Promise<boolean> {
+	toggleFold(value: this['Item']['value'], folded?: boolean): Promise<boolean> {
 		const
-			ctx = this.top ?? this;
+			ctx = this.root ?? this;
 
 		const
 			oldVal = this.getFoldedModByValue(value) === 'true',
@@ -400,14 +407,14 @@ class bTree extends iData implements iItems {
 		return SyncPromise.resolve(false);
 	}
 
-	isActive(value: unknown): boolean {
-		return iActiveItems.isActive(this.top ?? this, value);
+	isActive(value: this['Item']['value']): boolean {
+		return iActiveItems.isActive(this.root ?? this, value);
 	}
 
 	/** @see [[iActiveItems.prototype.setActive]] */
-	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
+	setActive(value: this['Item']['value'], unsetPrevious: boolean = false): boolean {
 		const
-			ctx = this.top ?? this;
+			ctx = this.root ?? this;
 
 		if (!iActiveItems.setActive(ctx, value, unsetPrevious)) {
 			return false;
@@ -426,7 +433,11 @@ class bTree extends iData implements iItems {
 					previousNodes = $el.querySelectorAll(`.${$b.getFullElementName('node', 'active', true)}`);
 
 				previousNodes.forEach((previousNode) => {
-					if (!this.isActive(this.valueItems.get(previousNode.getAttribute('data-id')))) {
+					const
+						id = ctx.dom.restoreId(previousNode.getAttribute('data-id')),
+						value = this.valueItems.get(id);
+
+					if (!this.isActive(value)) {
 						setActive(previousNode, false);
 					}
 				});
@@ -448,9 +459,9 @@ class bTree extends iData implements iItems {
 		}
 	}
 
-	unsetActive(value: this['Active']): boolean {
+	unsetActive(value: this['Item']['value']): boolean {
 		const
-			ctx = this.top ?? this;
+			ctx = this.root ?? this;
 
 		if (!iActiveItems.unsetActive(ctx, value)) {
 			return false;
@@ -466,7 +477,11 @@ class bTree extends iData implements iItems {
 				previousNodes = $el.querySelectorAll(`.${$b.getFullElementName('node', 'active', true)}`);
 
 			previousNodes.forEach((previousNode) => {
-				if (!this.isActive(this.valueItems.get(previousNode.getAttribute('data-id')))) {
+				const
+					id = ctx.dom.restoreId(previousNode.getAttribute('data-id')),
+					value = this.valueItems.get(id);
+
+				if (!this.isActive(value)) {
 					$b.setElementMod(previousNode, 'node', 'active', false);
 
 					if (previousNode.hasAttribute('aria-selected')) {
@@ -481,7 +496,7 @@ class bTree extends iData implements iItems {
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
 	toggleActive(value: this['Active'], unsetPrevious?: boolean): this['Active'] {
-		return iActiveItems.toggleActive(this.top ?? this, value, unsetPrevious);
+		return iActiveItems.toggleActive(this.root ?? this, value, unsetPrevious);
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -556,7 +571,7 @@ class bTree extends iData implements iItems {
 			return item.folded;
 		}
 
-		return this.top?.folded ?? this.folded;
+		return this.root?.folded ?? this.folded;
 	}
 
 	/**
@@ -580,14 +595,14 @@ class bTree extends iData implements iItems {
 	 */
 	protected findItemElement(value: this['Item']['value']): HTMLElement | null {
 		const
-			ctx = this.top ?? this,
+			ctx = this.root ?? this,
 			id = this.valueIndexes.get(value);
 
 		if (id == null) {
 			return null;
 		}
 
-		return ctx.$el?.querySelector(`[data-id=${this.dom.getId(`${id}`)}]`) ?? null;
+		return ctx.$el?.querySelector(`[data-id=${ctx.dom.getId(`${id}`)}]`) ?? null;
 	}
 
 	/**
@@ -619,7 +634,7 @@ class bTree extends iData implements iItems {
 			hasActive = false,
 			activeItem;
 
-		if (this.top == null) {
+		if (this.root == null) {
 			this.indexes = {};
 			this.valueIndexes = new Map();
 			this.valueItems = new Map();
@@ -641,23 +656,23 @@ class bTree extends iData implements iItems {
 			Object.defineProperty(this, 'indexes', {
 				enumerable: true,
 				configurable: true,
-				get: () => this.top?.indexes
+				get: () => this.root?.indexes
 			});
 
 			Object.defineProperty(this, 'valueIndexes', {
 				enumerable: true,
 				configurable: true,
-				get: () => this.top?.valueIndexes
+				get: () => this.root?.valueIndexes
 			});
 
 			Object.defineProperty(this, 'valueItems', {
 				enumerable: true,
 				configurable: true,
-				get: () => this.top?.valueItems
+				get: () => this.root?.valueItems
 			});
 		}
 
-		function traverse(items?: Items) {
+		function traverse(items?: Array<bTree['Item']>) {
 			items?.forEach((item) => {
 				const
 					{value} = item;
@@ -754,6 +769,9 @@ class bTree extends iData implements iItems {
 	protected onItemClick(e: Event): void {
 		e.stopPropagation();
 
+		const
+			ctx = this.root ?? this;
+
 		let
 			target = <Element>e.target;
 
@@ -763,14 +781,13 @@ class bTree extends iData implements iItems {
 
 		target = <Element>e.delegateTarget;
 
-		const
-			id = target.getAttribute('data-id');
+		const id = ctx.dom.restoreId(target.getAttribute('data-id'));
 
 		if (id != null) {
 			this.toggleActive(this.indexes[id]);
 		}
 
-		(this.top ?? this).emit('actionChange', this.active);
+		ctx.emit('actionChange', this.active);
 	}
 }
 
