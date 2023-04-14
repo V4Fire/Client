@@ -88,7 +88,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly activeProp?: CanIter<this['Active']>;
+	readonly activeProp?: CanIter<unknown>;
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
