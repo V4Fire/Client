@@ -24,22 +24,22 @@ test.describe('<b-tree>', () => {
 	const
 		elementSelector = '.b-checkbox',
 		defaultItems = [
-			{id: 'bar'},
+			{value: 'bar'},
 
 			{
-				id: 'foo',
+				value: 'foo',
 				children: [
-					{id: 'foo_1'},
-					{id: 'foo_2'},
+					{value: 'foo_1'},
+					{value: 'foo_2'},
 
 					{
-						id: 'foo_3',
-						children: [{id: 'foo_3_1'}]
+						value: 'foo_3',
+						children: [{value: 'foo_3_1'}]
 					},
 
-					{id: 'foo_4'},
-					{id: 'foo_5'},
-					{id: 'foo_6'}
+					{value: 'foo_4'},
+					{value: 'foo_5'},
+					{value: 'foo_6'}
 				]
 			}
 		];
@@ -97,18 +97,18 @@ test.describe('<b-tree>', () => {
 
 		test('all items should be unfolded by default with `folded = false`', async ({page}) => {
 			const items = [
-				{id: 'bar'},
+				{value: 'bar'},
 
 				{
-					id: 'foo',
+					value: 'foo',
 					children: [
-						{id: 'foo_1'},
-						{id: 'foo_2'},
+						{value: 'foo_1'},
+						{value: 'foo_2'},
 
 						{
-							id: 'foo_3',
+							value: 'foo_3',
 							folded: false,
-							children: [{id: 'foo_3_1', children: [{id: 'foo_3_1_1'}]}]
+							children: [{value: 'foo_3_1', children: [{value: 'foo_3_1_1'}]}]
 						}
 					]
 				}
@@ -162,19 +162,19 @@ test.describe('<b-tree>', () => {
 			test('should render top-level items immediately and other items after a delay', async ({page}) => {
 				const items = [
 					{
-						id: 'foo',
+						value: 'foo',
 						children: [
-							{id: 'foo_1'},
-							{id: 'foo_2'},
+							{value: 'foo_1'},
+							{value: 'foo_2'},
 
 							{
-								id: 'foo_3',
-								children: [{id: 'foo_3_1', children: [{id: 'foo_3_1_1'}]}]
+								value: 'foo_3',
+								children: [{value: 'foo_3_1', children: [{value: 'foo_3_1_1'}]}]
 							}
 						]
 					},
 
-					{id: 'bar'}
+					{value: 'bar'}
 				];
 
 				const target = await renderTree(page, {
@@ -233,27 +233,27 @@ test.describe('<b-tree>', () => {
 	test.describe('public API', () => {
 		const
 			items = [
-				{id: '1'},
-				{id: '2'},
+				{value: '1'},
+				{value: '2'},
 				{
-					id: '3',
+					value: '3',
 					children: [
 						{
-							id: '4',
-							children: [{id: '6'}]
+							value: '4',
+							children: [{value: '6'}]
 						}
 					]
 				},
-				{id: '5'}
+				{value: '5'}
 			];
 
 		test('traverse', async ({page}) => {
 			const target = await renderTree(page, {items});
 
-			let res = await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.id));
+			let res = await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.value));
 			test.expect(res).toEqual([1, 2, 3, 5, 4, 6].map(String));
 
-			res = await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.id));
+			res = await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.value));
 			test.expect(res).toEqual([1, 2, 3, 5].map(String));
 		});
 
@@ -272,18 +272,18 @@ test.describe('<b-tree>', () => {
 
 			await target.evaluate(async (ctx) => ctx.unfold());
 
-			await testFoldedModIs(false, [await waitForItem(page, 3)]);
+			await testFoldedModIs(false, [await waitForItem(page, target, 3)]);
 
 			await target.evaluate(async (ctx) => ctx.fold());
 
 			await testFoldedModIs(true, [
-				await waitForItem(page, 3),
-				await waitForItem(page, 4)
+				await waitForItem(page, target, 3),
+				await waitForItem(page, target, 4)
 			]);
 
-			await target.evaluate((ctx) => ctx.unfold(ctx.items[2]));
+			await target.evaluate((ctx) => ctx.unfold(ctx.items[2].value));
 
-			await testFoldedModIs(false, [await waitForItem(page, 3)]);
+			await testFoldedModIs(false, [await waitForItem(page, target, 3)]);
 		});
 	});
 

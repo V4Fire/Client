@@ -53,7 +53,8 @@ export function checkOptionTree(
 
 		const promise = (async () => {
 			const
-				elementSelector = `[data-id$="-${item.id}"]`,
+				id = await target.evaluate((ctx, value) => `${ctx.valueIndexes.get(value)}`, item.value),
+				elementSelector = `[data-id$="-${id}"]`,
 				element = await page.waitForSelector(elementSelector, {state: 'attached'});
 
 			const
@@ -97,9 +98,15 @@ export function checkOptionTree(
  * Returns tree item element handle for the id
  *
  * @param page
- * @param id
+ * @param target
+ * @param value
  */
-export async function waitForItem(page: Page, id: string | number): Promise<ElementHandle<HTMLElement | SVGElement>> {
+export async function waitForItem(
+	page: Page,
+	target: JSHandle<bTree>,
+	value: string | number
+): Promise<ElementHandle<HTMLElement | SVGElement>> {
+	const id = await target.evaluate((ctx, value) => ctx.valueIndexes.get(value), value.toString());
 	return page.waitForSelector(`[data-id$="-${id}"]`, {state: 'attached'});
 }
 
@@ -114,28 +121,28 @@ export function interceptTreeRequest(
 		status: 200,
 		contentType: 'application/json',
 		body: JSON.stringify([
-			{id: 'foo_0_0'},
+			{value: 'foo_0_0'},
 			{
-				id: 'foo_0_1',
+				value: 'foo_0_1',
 				children: [
-					{id: 'foo_1_0'},
-					{id: 'foo_1_1'},
+					{value: 'foo_1_0'},
+					{value: 'foo_1_1'},
 
 					{
-						id: 'foo_1_2',
-						children: [{id: 'foo_2_0'}]
+						value: 'foo_1_2',
+						children: [{value: 'foo_2_0'}]
 					},
 
-					{id: 'foo_1_3'},
-					{id: 'foo_1_4'},
-					{id: 'foo_1_5'}
+					{value: 'foo_1_3'},
+					{value: 'foo_1_4'},
+					{value: 'foo_1_5'}
 				]
 			},
-			{id: 'foo_0_2'},
-			{id: 'foo_0_3'},
-			{id: 'foo_0_4'},
-			{id: 'foo_0_5'},
-			{id: 'foo_0_6'}
+			{value: 'foo_0_2'},
+			{value: 'foo_0_3'},
+			{value: 'foo_0_4'},
+			{value: 'foo_0_5'},
+			{value: 'foo_0_6'}
 		])
 	}));
 }
