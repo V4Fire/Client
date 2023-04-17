@@ -6,10 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { JSHandle } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
 import Utils from 'tests/helpers/utils';
 
+import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/interface';
 
 import { renderTree, createTreeSelector, createTestModIs, waitForItems } from 'components/base/b-tree/test/helpers';
@@ -40,36 +43,41 @@ test.describe('<b-tree> active items', () => {
 		await demoPage.goto();
 	});
 
-	test('initialization with the predefined active element', async ({page}) => {
+	test.describe('initialize', () => {
+		test('should have `active` item', async ({page}) => {
+			const target = await renderTree(page, {items, attrs: {active: 0}});
 
-		const target = await renderTree(page, {items, attrs: {active: 0}});
-		test.expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
+			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
+			test.expect(
+				await target.evaluate(async (ctx) => ctx.unsafe.block?.getElementMod(<Element>await ctx.activeElement, 'node', 'active'))
+			).toBe('true');
+		});
 
-		test.expect(
-			await target.evaluate(async (ctx) => ctx.unsafe.block?.getElementMod(<Element>await ctx.activeElement, 'node', 'active'))
-		).toBe('true');
+		test.describe('with `multiple = true`', () => {
+			const evaluateActive = (target: JSHandle<bTree>) => target.evaluate((ctx) => [...<Set<number>>ctx.active]);
+
+			test('`active` prop should accept scalar value', async ({page}) => {
+				const target = await renderTree(page, {items, attrs: {active: 0, multiple: true}});
+				test.expect(await evaluateActive(target)).toEqual([0]);
+			});
+
+			test('`active` prop should accept `Array`', async ({page}) => {
+				const target = await renderTree(page, {items, attrs: {active: [0, 1], multiple: true}});
+				test.expect(await evaluateActive(target)).toEqual([0, 1]);
+			});
+
+			test('`active` prop should accept `Iterable`', async ({page}) => {
+				const target = await renderTree(
+					page,
+					{items, attrs: {active: Utils.evalInBrowser(() => [0, 1].values()), multiple: true}}
+				);
+				test.expect(await evaluateActive(target)).toEqual([0, 1]);
+			});
+		});
 	});
 
-	test('initialization with the predefined active element (primitive) with `multiple = true`', async ({page}) => {
-		const target = await renderTree(page, {items, attrs: {active: 0, multiple: true}});
-		test.expect(await target.evaluate((ctx) => [...<Set<number>>ctx.active])).toEqual([0]);
-	});
-
-	test('initialization with the predefined active element (array) with `multiple = true`', async ({page}) => {
-		const target = await renderTree(page, {items, attrs: {active: [0, 1], multiple: true}});
-		test.expect(await target.evaluate((ctx) => [...<Set<number>>ctx.active])).toEqual([0, 1]);
-	});
-
-	test('initialization with the predefined active element (set) with `multiple = true`', async ({page}) => {
-		const target = await renderTree(
-			page,
-			{items, attrs: {active: Utils.evalInBrowser(() => new Set([0, 1])), multiple: true}}
-		);
-		test.expect(await target.evaluate((ctx) => [...<Set<number>>ctx.active])).toEqual([0, 1]);
-	});
-
-	test.describe('switching of an active element', () => {
-		test('default', async ({page}) => {
+	test.describe('`active`', () => {
+		test('should be changeable', async ({page}) => {
 			const
 				target = await renderTree(page, {items});
 
@@ -91,7 +99,7 @@ test.describe('<b-tree> active items', () => {
 			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(1);
 		});
 
-		test('with `cancelable = true`', async ({page}) => {
+		test('should be changeable with `cancelable = true`', async ({page}) => {
 			const
 				target = await renderTree(page, {items, attrs: {cancelable: true}});
 
@@ -113,7 +121,7 @@ test.describe('<b-tree> active items', () => {
 			).toBe(1);
 		});
 
-		test('with `multiple = true`', async ({page}) => {
+		test('should be changeable with `multiple = true`', async ({page}) => {
 			const
 				target = await renderTree(page, {items, attrs: {multiple: true}});
 
@@ -134,7 +142,7 @@ test.describe('<b-tree> active items', () => {
 			).toEqual([]);
 		});
 
-		test('with `multiple = true; cancelable = false`', async ({page}) => {
+		test('should be changeable with `multiple = true; cancelable = false`', async ({page}) => {
 			const
 				target = await renderTree(page, {items, attrs: {multiple: true, cancelable: false}});
 
@@ -155,7 +163,7 @@ test.describe('<b-tree> active items', () => {
 			).toEqual([1, 5]);
 		});
 
-		test('with `multiple = true; cancelable = true`', async ({page}) => {
+		test('should be changeable with `multiple = true; cancelable = true`', async ({page}) => {
 			const
 				target = await renderTree(page, {items, attrs: {multiple: true, cancelable: true}});
 
@@ -175,8 +183,10 @@ test.describe('<b-tree> active items', () => {
 				})
 			).toEqual([]);
 		});
+	});
 
-		test('and unfold parents folds', async ({page}) => {
+	test.describe('changing active item', () => {
+		test('should unfold parents when `setActive` is invoked', async ({page}) => {
 			const
 				target = await renderTree(page, {items});
 
@@ -187,7 +197,7 @@ test.describe('<b-tree> active items', () => {
 			await testFoldedModIs(false, nodes);
 		});
 
-		test('with `toggleActive` and unfold parents folds', async ({page}) => {
+		test('should unfold parents when `toggleActive` is invoked', async ({page}) => {
 			const
 				target = await renderTree(page, {items});
 
@@ -197,8 +207,10 @@ test.describe('<b-tree> active items', () => {
 
 			await testFoldedModIs(false, nodes);
 		});
+	});
 
-		test('with `toggleActive` with primitive value', async ({page}) => {
+	test.describe('`toggleActive`', () => {
+		test('should accept scalar value with `multiple = true`', async ({page}) => {
 			const
 				target = await renderTree(page, {items, attrs: {multiple: true}});
 
@@ -212,7 +224,7 @@ test.describe('<b-tree> active items', () => {
 			).toEqual([0]);
 		});
 
-		test('with `toggleActive` with `Set`', async ({page}) => {
+		test('should accept `Iterable` with `multiple = true`', async ({page}) => {
 			const
 				target = await renderTree(page, {items, attrs: {multiple: true}});
 
@@ -229,7 +241,7 @@ test.describe('<b-tree> active items', () => {
 
 			test.expect(
 				await target.evaluate((ctx) => {
-					ctx.toggleActive(new Set([1, 3]));
+					ctx.toggleActive([1, 3].values());
 					return [...<Set<number>>ctx.active];
 				})
 			).toEqual([0, 3]);
@@ -243,7 +255,7 @@ test.describe('<b-tree> active items', () => {
 
 		});
 
-		test('with `toggleActive` with `Set` with unsetPrevious', async ({page}) => {
+		test('should unset previous active items with `unsetPrevious = true`', async ({page}) => {
 			const
 				target = await renderTree(page, {items, attrs: {multiple: true}});
 
@@ -256,7 +268,7 @@ test.describe('<b-tree> active items', () => {
 
 			test.expect(
 				await target.evaluate((ctx) => {
-					ctx.toggleActive(new Set([2, 4]), true);
+					ctx.toggleActive([2, 4].values(), true);
 					return [...<Set<number>>ctx.active];
 				})
 			).toEqual([2, 4]);
@@ -307,7 +319,7 @@ test.describe('<b-tree> active items', () => {
 		]);
 	});
 
-	test('watching for `active`', async ({page}) => {
+	test('should watch the changes of `active`', async ({page}) => {
 		const
 			target = await renderTree(page, {items});
 
@@ -337,7 +349,7 @@ test.describe('<b-tree> active items', () => {
 		]);
 	});
 
-	test('watching for `active` with `multiple = true`', async ({page}) => {
+	test('should watch the changes of `active` with `multiple = true`', async ({page}) => {
 		const
 			target = await renderTree(page, {items, attrs: {multiple: true}});
 
@@ -367,16 +379,18 @@ test.describe('<b-tree> active items', () => {
 		]);
 	});
 
-	test('checking of `activeElement`', async ({page}) => {
-		const target = await renderTree(page, {items, attrs: {active: 0}});
-		test.expect(await target.evaluate((ctx) => (<HTMLElement>ctx.activeElement).tagName)).toBe('DIV');
-	});
+	test.describe('`activeElement`', () => {
+		test('should have one active element', async ({page}) => {
+			const target = await renderTree(page, {items, attrs: {active: 0}});
+			test.expect(await target.evaluate((ctx) => (<HTMLElement>ctx.activeElement).tagName)).toBe('DIV');
+		});
 
-	test('checking of `activeElement` with `multiple = true`', async ({page}) => {
-		const
-			target = await renderTree(page, {items, attrs: {active: [0, 1], multiple: true}});
+		test('should have multiple active elements with `multiple = true`', async ({page}) => {
+			const
+				target = await renderTree(page, {items, attrs: {active: [0, 1], multiple: true}});
 
-		test.expect(await target.evaluate((ctx) => Array.from(<HTMLElement[]>ctx.activeElement).map((el) => el.tagName)))
-			.toEqual(['DIV', 'DIV']);
+			test.expect(await target.evaluate((ctx) => Array.from(<HTMLElement[]>ctx.activeElement).map((el) => el.tagName)))
+				.toEqual(['DIV', 'DIV']);
+		});
 	});
 });
