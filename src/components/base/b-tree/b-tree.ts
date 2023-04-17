@@ -174,7 +174,7 @@ class bTree extends iData implements iItems {
 	 * A map of the item values and their indexes
 	 */
 	@system()
-	valueIndexes!: Map<this['Item']['value'], number>;
+	valueIndexes!: Map<this['Item']['value'], string>;
 
 	/**
 	 * A map of the item values and their descriptors
@@ -234,6 +234,12 @@ class bTree extends iData implements iItems {
 
 		return opts;
 	}
+
+	/**
+	 * It guarantees item id uniqueness
+	 */
+	@system()
+	protected itemsIdPrefix: number = 0;
 
 	/** @see [[iActiveItems.prototype.active] */
 	@computed({cache: false})
@@ -640,6 +646,7 @@ class bTree extends iData implements iItems {
 			activeItem;
 
 		if (this.root == null) {
+			this.itemsIdPrefix += 1;
 			this.indexes = {};
 			this.valueIndexes = new Map();
 			this.valueItems = new Map();
@@ -687,7 +694,7 @@ class bTree extends iData implements iItems {
 				}
 
 				const
-					id = that.valueIndexes.size;
+					id = `${that.itemsIdPrefix}-${that.valueIndexes.size}`;
 
 				that.indexes[id] = value;
 				that.valueIndexes.set(value, id);
