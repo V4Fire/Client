@@ -54,9 +54,9 @@ test.describe('<b-list>', () => {
 				test.expect(await evaluateActive(target)).toEqual([0, 1]);
 			});
 
-			test('`active` prop should accept `Set`', async ({page}) => {
+			test('`active` prop should accept `Iterable`', async ({page}) => {
 				const
-					active = Utils.evalInBrowser(() => new Set([0, 1])),
+					active = Utils.evalInBrowser(() => [0, 1].values()),
 					target = await renderList(page, {active, multiple: true});
 
 				test.expect(await evaluateActive(target)).toEqual([0, 1]);
@@ -90,7 +90,7 @@ test.describe('<b-list>', () => {
 	});
 
 	test.describe('`active`', () => {
-		test('should change', async ({page}) => {
+		test('should be changeable', async ({page}) => {
 			const target = await renderList(page);
 
 			test.expect(
@@ -113,7 +113,7 @@ test.describe('<b-list>', () => {
 			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(1);
 		});
 
-		test('should change with `cancelable = true`', async ({page}) => {
+		test('should be changeable with `cancelable = true`', async ({page}) => {
 			const
 				target = await renderList(page, {cancelable: true});
 
@@ -137,7 +137,7 @@ test.describe('<b-list>', () => {
 			).toBe(1);
 		});
 
-		test('should change with `multiple = true`', async ({page}) => {
+		test('should be changeable with `multiple = true`', async ({page}) => {
 			const
 				target = await renderList(page, {multiple: true});
 
@@ -160,7 +160,7 @@ test.describe('<b-list>', () => {
 			).toEqual([]);
 		});
 
-		test('should change with `multiple = true; cancelable = false`', async ({page}) => {
+		test('should be changeable with `multiple = true; cancelable = false`', async ({page}) => {
 			const
 				target = await renderList(page, {multiple: true, cancelable: false});
 
