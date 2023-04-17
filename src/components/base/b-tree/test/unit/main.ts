@@ -277,7 +277,6 @@ test.describe('<b-tree>', () => {
 			await testFoldedModIs(false, await waitForItems(page, target, [1, 2]));
 		});
 
-		// TODO: this test seems to be wrong
 		test('unfolded node should become folded after change', async ({page}) => {
 			const
 				target = await renderTree(page, {items: defaultItems});
@@ -292,7 +291,7 @@ test.describe('<b-tree>', () => {
 				await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
 			}, newItems);
 
-			await testFoldedModIs(true, await waitForItems(page, target, [2]));
+			await testFoldedModIs(true, await waitForItems(page, target, [1]));
 		});
 	});
 
