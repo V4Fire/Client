@@ -144,14 +144,27 @@ class bTree extends iData implements iItems {
 	readonly cancelable?: boolean;
 
 	/** @see [[iItems.items]] */
-	@field<bTree>((o) => o.sync.link<Item[]>((val) => {
+	get items(): this['Items'] {
+		return this.field.get<this['Items']>('itemsStore') ?? [];
+	}
+
+	/** @see [[iItems.items]] */
+	set items(value: this['Items']) {
+		this.field.set('itemsStore', this.normalizeItems(value));
+	}
+
+	/**
+	 * Stores b-tree normalized items.
+	 * This store is needed because `items` property must be accessed only via get/set.
+	 */
+	@field<bTree>((o) => o.sync.link<Item[]>('itemsProp', (val) => {
 		if (o.dataProvider != null) {
 			return <CanUndef<Item[]>>o.items ?? [];
 		}
 
 		return o.normalizeItems(val);
 	}))
-	items!: this['Items'];
+	itemsStore: this['Items'] = [];
 
 	/**
 	 * @see [[iActiveItems.activeStore]]
@@ -524,7 +537,7 @@ class bTree extends iData implements iItems {
 			val = this.convertDBToComponent<this['items']>(this.db);
 
 		if (Object.isArray(val)) {
-			return this.items = this.normalizeItems(val);
+			return this.items = val;
 		}
 
 		return this.items;
@@ -651,7 +664,7 @@ class bTree extends iData implements iItems {
 			this.valueIndexes = new Map();
 			this.valueItems = new Map();
 
-			traverse(this.field.get<this['Items']>('items'));
+			traverse(this.field.get<this['Items']>('itemsStore'));
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (!hasActive) {
