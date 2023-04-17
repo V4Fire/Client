@@ -21,7 +21,7 @@ import Block, { element, elements } from 'components/friends/block';
 import iVisible from 'components/traits/i-visible/i-visible';
 import iWidth from 'components/traits/i-width/i-width';
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
-import iActiveItems, { type Active } from 'components/traits/i-active-items/i-active-items';
+import iActiveItems from 'components/traits/i-active-items/i-active-items';
 
 import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'components/super/i-data/i-data';
 import type { Item, Items } from 'components/base/b-list/interface';
@@ -43,10 +43,11 @@ Block.addToPrototype({element, elements});
 
 @derive(iActiveItems)
 class bList extends iData implements iVisible, iWidth, iActiveItems {
-	/**
-	 * Type: the active item
-	 */
-	readonly Active!: Active;
+	/** @see [[iActiveItems.Active]] */
+	readonly Active!: iActiveItems['Active'];
+
+	/** @see [[iActiveItems.ActiveInput]] */
+	readonly ActiveInput!: iActiveItems['ActiveInput'];
 
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
@@ -88,11 +89,11 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly activeProp?: CanIter<unknown>;
+	readonly activeProp?: this['ActiveInput'];
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly modelValue?: CanIter<unknown>;
+	readonly modelValue?: this['ActiveInput'];
 
 	/**
 	 * If true, then all items without the `href` option will automatically generate a link by using `value` and
@@ -242,7 +243,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 * @emits `change(active: CanArray<unknown>)`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	setActive(value: CanIter<unknown>, unsetPrevious: boolean = false): boolean {
+	setActive(value: this['ActiveInput'], unsetPrevious: boolean = false): boolean {
 		const
 			res = iActiveItems.setActive(this, value);
 
@@ -304,7 +305,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
 	 */
-	unsetActive(value: CanIter<unknown>): boolean {
+	unsetActive(value: this['ActiveInput']): boolean {
 		const res = iActiveItems.unsetActive(this, value);
 
 		if (!res) {

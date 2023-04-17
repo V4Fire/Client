@@ -24,3 +24,5 @@ export interface Item extends Dictionary {
 }
 
 export type Active = unknown | Set<unknown>;
+
+export type ActiveInput = unknown | Iterable<unknown>;

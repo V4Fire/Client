@@ -16,7 +16,7 @@
 import type iBlock from 'components/super/i-block/i-block';
 
 import iItems from 'components/traits/i-items/i-items';
-import type { Active, Item } from 'components/traits/i-active-items/interface';
+import type { Active, ActiveInput, Item } from 'components/traits/i-active-items/interface';
 
 export * from 'components/traits/i-items/i-items';
 export * from 'components/traits/i-active-items/interface';
@@ -33,12 +33,17 @@ export default abstract class iActiveItems extends iItems {
 	abstract readonly Active: Active;
 
 	/**
+	 * Type: the component active input for `activeProp`, `setActive`, `toggleActive`, `unsetActive`
+	 */
+	abstract readonly ActiveInput: ActiveInput;
+
+	/**
 	 * The active item(s) of the component.
 	 * If the component is switched to "multiple" mode, you can pass in an iterable to define multiple active elements.
 	 *
 	 * @prop
 	 */
-	abstract readonly activeProp?: CanIter<this['Active']>;
+	abstract readonly activeProp?: this['ActiveInput'];
 
 	/**
 	 * If true, the component supports the multiple active items feature
@@ -107,7 +112,7 @@ export default abstract class iActiveItems extends iItems {
 				newVal;
 
 			if (ctx.multiple) {
-				newVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
+				newVal = new Set(Object.isIterable(val) ? val : Array.concat([], val));
 
 				if (Object.fastCompare(newVal, ctx.activeStore)) {
 					return ctx.activeStore;
@@ -172,7 +177,7 @@ export default abstract class iActiveItems extends iItems {
 	};
 
 	/** @see [[iActiveItems.prototype.setActive]] */
-	static setActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): boolean {
+	static setActive(ctx: TraitComponent, value: iActiveItems['ActiveInput'], unsetPrevious?: boolean): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -197,7 +202,7 @@ export default abstract class iActiveItems extends iItems {
 				res = true;
 			};
 
-			if (Object.isSet(value)) {
+			if (Object.isIterable(value)) {
 				Object.forEach(value, set);
 
 			} else {
@@ -223,7 +228,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/** @see [[iActiveItems.prototype.unsetActive]] */
-	static unsetActive(ctx: TraitComponent, value: iActiveItems['Active']): boolean {
+	static unsetActive(ctx: TraitComponent, value: iActiveItems['ActiveInput']): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -244,7 +249,7 @@ export default abstract class iActiveItems extends iItems {
 				res = true;
 			};
 
-			if (Object.isSet(value)) {
+			if (Object.isIterable(value)) {
 				Object.forEach(value, unset);
 
 			} else {
@@ -270,7 +275,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
-	static toggleActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): iActiveItems['Active'] {
+	static toggleActive(ctx: TraitComponent, value: iActiveItems['ActiveInput'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -288,7 +293,7 @@ export default abstract class iActiveItems extends iItems {
 				ctx.setActive(value);
 			};
 
-			if (Object.isSet(value)) {
+			if (Object.isIterable(value)) {
 				if (unsetPrevious) {
 					ctx.unsetActive(ctx.active);
 				}
@@ -327,7 +332,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `change(active: CanIter<unknown>)`
 	 * @emits `immediateChange(active: CanIter<unknown>)`
 	 */
-	setActive(value: Item['value'] | Set<Item['value']>, unsetPrevious?: boolean): boolean {
+	setActive(value: Item['value'] | Iterable<Item['value']>, unsetPrevious?: boolean): boolean {
 		return Object.throw();
 	}
 
@@ -339,7 +344,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
 	 */
-	unsetActive(value: Item['value'] | Set<Item['value']>): boolean {
+	unsetActive(value: Item['value'] | Iterable<Item['value']>): boolean {
 		return Object.throw();
 	}
 
@@ -353,7 +358,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
 	 */
-	toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+	toggleActive(value: Item['value'] | Iterable<Item['value']>, unsetPrevious?: boolean): iActiveItems['Active'] {
 		return Object.throw();
 	}
 }

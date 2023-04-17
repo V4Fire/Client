@@ -53,6 +53,9 @@ class bTree extends iData implements iItems {
 	/** @see [[iActiveItems.Active]] */
 	readonly Active!: iActiveItems['Active'];
 
+	/** @see [[iActiveItems.ActiveInput]] */
+	readonly ActiveInput!: iActiveItems['ActiveInput'];
+
 	/** @see [[iItems.items]] */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
@@ -126,11 +129,11 @@ class bTree extends iData implements iItems {
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly activeProp?: iActiveItems['activeProp'];
+	readonly activeProp?: this['ActiveInput'];
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly modelValue?: CanIter<this['Item']['value']>;
+	readonly modelValue?: this['ActiveInput'];
 
 	/** @see [[iActiveItems.multiple]] */
 	@prop(Boolean)
@@ -407,12 +410,13 @@ class bTree extends iData implements iItems {
 		return SyncPromise.resolve(false);
 	}
 
+	/** @see [[iActiveItems.prototype.isActive]] */
 	isActive(value: this['Item']['value']): boolean {
 		return iActiveItems.isActive(this.root ?? this, value);
 	}
 
 	/** @see [[iActiveItems.prototype.setActive]] */
-	setActive(value: this['Item']['value'], unsetPrevious: boolean = false): boolean {
+	setActive(value: this['ActiveInput'], unsetPrevious: boolean = false): boolean {
 		const
 			ctx = this.root ?? this;
 
@@ -459,7 +463,8 @@ class bTree extends iData implements iItems {
 		}
 	}
 
-	unsetActive(value: this['Item']['value']): boolean {
+	/** @see [[iActiveItems.prototype.unsetActive]] */
+	unsetActive(value: this['ActiveInput']): boolean {
 		const
 			ctx = this.root ?? this;
 
@@ -495,7 +500,7 @@ class bTree extends iData implements iItems {
 	}
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
-	toggleActive(value: this['Active'], unsetPrevious?: boolean): this['Active'] {
+	toggleActive(value: this['ActiveInput'], unsetPrevious?: boolean): this['Active'] {
 		return iActiveItems.toggleActive(this.root ?? this, value, unsetPrevious);
 	}
 
