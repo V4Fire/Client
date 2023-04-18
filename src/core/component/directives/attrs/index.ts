@@ -84,7 +84,17 @@ ComponentEngine.directive('attrs', {
 			// Directive
 			if (attrName.startsWith('v-')) {
 				const
-					[, name, arg = '', rawModifiers = ''] = directiveRgxp.exec(attrName)!;
+					decl = directiveRgxp.exec(attrName);
+
+				let
+					value = attrVal;
+
+				if (decl == null) {
+					throw new SyntaxError('Invalid directive declaration');
+				}
+
+				const
+					[, name, arg = '', rawModifiers = ''] = decl;
 
 				let
 					dir;
@@ -96,8 +106,8 @@ ComponentEngine.directive('attrs', {
 					}
 
 					case 'on': {
-						if (Object.isDictionary(attrVal)) {
-							Object.entries(attrVal).forEach(([name, handler]) => {
+						if (Object.isDictionary(value)) {
+							Object.entries(value).forEach(([name, handler]) => {
 								const event = `@${name}`;
 								attrs[event] = handler;
 								keys.push(event);
@@ -108,8 +118,8 @@ ComponentEngine.directive('attrs', {
 					}
 
 					case 'bind': {
-						if (Object.isDictionary(attrVal)) {
-							Object.entries(attrVal).forEach(([name, val]) => {
+						if (Object.isDictionary(value)) {
+							Object.entries(value).forEach(([name, val]) => {
 								attrs[name] = val;
 								keys.push(name);
 							});
@@ -121,7 +131,7 @@ ComponentEngine.directive('attrs', {
 					case 'model': {
 						const
 							modelProp = arg !== '' ? arg : 'modelValue',
-							modelValLink = String(attrVal);
+							modelValLink = String(value);
 
 						const
 							handlerCache = getHandlerStore(),
@@ -142,10 +152,10 @@ ComponentEngine.directive('attrs', {
 							handlerCache.set(handlerKey, handler);
 						}
 
-						attrVal = ctx?.[modelValLink];
+						value = ctx?.[modelValLink];
 
 						keys.push(modelProp);
-						attrs[modelProp] = attrVal;
+						attrs[modelProp] = value;
 
 						const attachEvent = (event) => {
 							keys.push(event);
@@ -187,21 +197,44 @@ ComponentEngine.directive('attrs', {
 					}
 				});
 
-				const dirDecl: DirectiveBinding = {
+				const bindings = vnode.dirs ?? [];
+				vnode.dirs = bindings;
+
+				const binding: DirectiveBinding = {
 					dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,
 					instance: params.instance,
 
-					value: attrVal,
+					value,
 					oldValue: undefined,
 
 					arg,
 					modifiers
 				};
 
-				const dirs = vnode.dirs ?? [];
-				vnode.dirs = dirs;
+				const
+					cantIgnoreDir = value != null || decl.length !== 2;
 
-				dirs.push(dirDecl);
+				if (Object.isDictionary(dir)) {
+					if (Object.isFunction(dir.beforeCreate)) {
+						const
+							newVnode = dir.beforeCreate(binding, vnode);
+
+						if (newVnode != null) {
+							vnode = newVnode;
+						}
+
+						if (Object.keys(dir).length > 1 && cantIgnoreDir) {
+							bindings.push(binding);
+						}
+
+					} else if (Object.keys(dir).length > 0 && cantIgnoreDir) {
+						bindings.push(binding);
+					}
+
+				} else if (cantIgnoreDir) {
+					bindings.push(binding);
+				}
+
 				continue;
 			}
 
