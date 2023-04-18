@@ -435,21 +435,6 @@ class bTree extends bTreeProps implements iActiveItems {
 	}
 
 	/**
-	 * Returns a value of the `folded` modifier from an element by the specified identifier
-	 * @param value
-	 */
-	protected getFoldedModByValue(value: this['Item']['value']): CanUndef<string> {
-		const
-			target = this.findItemElement(value);
-
-		if (target == null) {
-			return;
-		}
-
-		return this.block?.getElementMod(target, 'node', 'folded');
-	}
-
-	/**
 	 * Searches an HTML element by the specified item value and returns it
 	 * @param value
 	 */

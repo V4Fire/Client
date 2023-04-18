@@ -49,9 +49,6 @@ export interface UnsafeBTree<CTX extends bTree = bTree> extends UnsafeIData<CTX>
 	hasChildren: CTX['hasChildren'];
 
 	// @ts-ignore (access)
-	getFoldedModByValue: CTX['getFoldedModByValue'];
-
-	// @ts-ignore (access)
 	findItemElement: CTX['findItemElement'];
 }
 

@@ -35,7 +35,7 @@ export default class Foldable extends Friend {
 				.then((res) => res.some((value) => value === true));
 		}
 
-		const isFolded = ctx.getFoldedModByValue(value) === 'true';
+		const isFolded = this.getFoldedModByValue(value) === 'true';
 
 		if (isFolded) {
 			return SyncPromise.resolve(false);
@@ -109,7 +109,7 @@ export default class Foldable extends Friend {
 			{ctx: rootTree} = ctx;
 
 		const
-			oldVal = ctx.getFoldedModByValue(value) === 'true',
+			oldVal = this.getFoldedModByValue(value) === 'true',
 			newVal = folded ?? !oldVal;
 
 		const
@@ -123,5 +123,21 @@ export default class Foldable extends Friend {
 		}
 
 		return SyncPromise.resolve(false);
+	}
+
+	/**
+	 * Returns a value of the `folded` modifier from an element by the specified identifier
+	 * @param value
+	 */
+	protected getFoldedModByValue(value: unknown): CanUndef<string> {
+		const
+			{ctx} = this,
+			target = ctx.findItemElement(value);
+
+		if (target == null) {
+			return;
+		}
+
+		return ctx.block?.getElementMod(target, 'node', 'folded');
 	}
 }
