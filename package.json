@@ -3,6 +3,7 @@
   "description": "V4Fire client core library",
   "homepage": "https://github.com/V4Fire/Client#readme",
   "main": "src/core/index.js",
+  "packageManager": "yarn@3.5.0",
   "typings": "index.d.ts",
   "license": "MIT",
   "version": "4.0.0-alpha.5",
@@ -160,6 +161,5 @@
   "peerDependencies": {
     "@v4fire/core": "^4.0.0-alpha.1",
     "webpack": "^5.70.0"
-  },
-  "packageManager": "yarn@3.5.0"
+  }
 }
