@@ -1722,19 +1722,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.32.3":
-  version: 1.32.3
-  resolution: "@playwright/test@npm:1.32.3"
+"@playwright/test@npm:1.32.1":
+  version: 1.32.1
+  resolution: "@playwright/test@npm:1.32.1"
   dependencies:
     "@types/node": "*"
     fsevents: 2.3.2
-    playwright-core: 1.32.3
+    playwright-core: 1.32.1
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: f248e5851d04183954ec6f3a5f2c8e3b0ea0085a83e0e695068c5c2eb6acd4dddb16829a429829a4eb9fe0a4518f6a5594890cf9bf4259255c9e07a5964be625
+  checksum: f997f3d235cdd5fc3e42eb89d639bc4cc4ee2817ddb7b7a7494a856194fa626dd4dafd62ee7815a4a0e751ede0b55aa68811d766c1d3c07c0a4e4513c17ac1f6
   languageName: node
   linkType: hard
 
@@ -2636,7 +2636,7 @@ __metadata:
     "@babel/preset-env": 7.16.11
     "@babel/preset-typescript": 7.16.7
     "@config/config": "npm:config@1.31.0"
-    "@playwright/test": 1.32.3
+    "@playwright/test": 1.32.1
     "@pzlr/build-core": 2.13.0
     "@pzlr/stylus-inheritance": 3.1.0
     "@statoscope/webpack-plugin": 5.24.0
@@ -2705,7 +2705,7 @@ __metadata:
     nyc: 15.1.0
     path-equal: 1.1.3
     path-to-regexp: 3.2.0
-    playwright: 1.32.3
+    playwright: 1.32.1
     portfinder: 1.0.28
     postcss: 8.4.6
     postcss-loader: 6.2.1
@@ -13897,23 +13897,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.32.3":
-  version: 1.32.3
-  resolution: "playwright-core@npm:1.32.3"
+"playwright-core@npm:1.32.1":
+  version: 1.32.1
+  resolution: "playwright-core@npm:1.32.1"
   bin:
     playwright: cli.js
-  checksum: 7ea091c41a7d1bb97b445bc541a85b123ffcf167bcc00fb7e13e9079f06c92f59fd27caf9d1c1d7e0054f2b5765d1a16d198833c2be7266cebb9dbb916cd90f4
+  checksum: 796185e605df3c970885845c1fbf2de53db5d089d37946850483797c91b81ab9dc87c3440695e96a8c92613324ef3deaea698afaf2c379548a23f8ce074931de
   languageName: node
   linkType: hard
 
-"playwright@npm:1.32.3":
-  version: 1.32.3
-  resolution: "playwright@npm:1.32.3"
+"playwright@npm:1.32.1":
+  version: 1.32.1
+  resolution: "playwright@npm:1.32.1"
   dependencies:
-    playwright-core: 1.32.3
+    playwright-core: 1.32.1
   bin:
     playwright: cli.js
-  checksum: 9627771a131ab96a26d702757e89dcf09a228f0038c43a14f982cc59a2eca672cb27c9d92c324ddc2c44457b82d77c30b3562b386601969e0456b52dba5df176
+  checksum: bb2cef8812abf60cf07bbf6edb4ac480ccbf0b129e001fd4f2d499c8888918bc87dcc0f346b5954e6b67cd67528c8263593b091f3c83609a91c8a276196c8951
   languageName: node
   linkType: hard
 
