@@ -28,6 +28,7 @@ import type { Item, UnsafeBTree } from 'components/base/b-tree/interface';
 import bTreeProps from 'components/base/b-tree/props';
 import Foldable from 'components/base/b-tree/modules/foldable';
 import { normalizeItems } from 'components/base/b-tree/modules/normalizers';
+import * as dom from 'components/base/b-tree/modules/dom';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
@@ -237,6 +238,28 @@ class bTree extends bTreeProps implements iActiveItems {
 		}
 	}
 
+	*traverseActiveNodes(): Generator<[Element, {id: CanUndef<string>; value: unknown}]> {
+		const {ctx} = this;
+
+		const {
+			$el,
+			block: $b
+		} = ctx;
+
+		if ($el != null && $b != null) {
+			const nodes = $el.querySelectorAll(`.${$b.getFullElementName('node', 'active', true)}`);
+
+			for (let i = 0; i < nodes.length; i++) {
+				const
+					node = nodes[i],
+					id = ctx.dom.restoreId(node.getAttribute('data-id')),
+					value = this.valueItems.get(id);
+
+				yield [node, {id, value}];
+			}
+		}
+	}
+
 	/**
 	 * @see [[Foldable.prototype.fold]]
 	 */
@@ -281,74 +304,35 @@ class bTree extends bTreeProps implements iActiveItems {
 
 		void ctx.unfold(value);
 
-		const {
-			$el,
-			block: $b
-		} = ctx;
-
-		if ($el != null && $b != null) {
-			if (!ctx.multiple || unsetPrevious) {
-				const
-					previousNodes = $el.querySelectorAll(`.${$b.getFullElementName('node', 'active', true)}`);
-
-				previousNodes.forEach((previousNode) => {
-					const
-						id = ctx.dom.restoreId(previousNode.getAttribute('data-id')),
-						value = this.valueItems.get(id);
-
-					if (!this.isActive(value)) {
-						setActive(previousNode, false);
-					}
-				});
+		// Deactivate previous active nodes
+		if (!ctx.multiple || unsetPrevious) {
+			for (const [node, {value}] of this.traverseActiveNodes()) {
+				if (!this.isActive(value)) {
+					dom.setActive(ctx.block, node, false);
+				}
 			}
-
-			SyncPromise.resolve(this.activeElement).then((activeElement) => {
-				Array.concat([], activeElement).forEach((activeElement) => setActive(activeElement, true));
-			}).catch(stderr);
 		}
+
+		// Activate current active nodes
+		SyncPromise.resolve(this.activeElement).then((activeElement) => {
+			Array.concat([], activeElement).forEach((activeElement) => dom.setActive(ctx.block, activeElement, true));
+		}).catch(stderr);
 
 		return true;
-
-		function setActive(el: Element, status: boolean) {
-			$b!.setElementMod(el, 'node', 'active', status);
-
-			if (el.hasAttribute('aria-selected')) {
-				el.setAttribute('aria-selected', String(status));
-			}
-		}
 	}
 
 	/** @see [[iActiveItems.prototype.unsetActive]] */
 	unsetActive(value: this['ActiveInput']): boolean {
-		const
-			{ctx} = this;
+		const {ctx} = this;
 
 		if (!iActiveItems.unsetActive(ctx, value)) {
 			return false;
 		}
 
-		const {
-			$el,
-			block: $b
-		} = ctx;
-
-		if ($el != null && $b != null) {
-			const
-				previousNodes = $el.querySelectorAll(`.${$b.getFullElementName('node', 'active', true)}`);
-
-			previousNodes.forEach((previousNode) => {
-				const
-					id = ctx.dom.restoreId(previousNode.getAttribute('data-id')),
-					value = this.valueItems.get(id);
-
-				if (!this.isActive(value)) {
-					$b.setElementMod(previousNode, 'node', 'active', false);
-
-					if (previousNode.hasAttribute('aria-selected')) {
-						previousNode.setAttribute('aria-selected', 'false');
-					}
-				}
-			});
+		for (const [node, {value}] of this.traverseActiveNodes()) {
+			if (!this.isActive(value)) {
+				dom.setActive(ctx.block, node, false);
+			}
 		}
 
 		return true;
