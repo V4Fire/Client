@@ -21,6 +21,7 @@ import Block, { getElementMod } from 'components/friends/block';
 
 import iItems from 'components/traits/i-items/i-items';
 import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
+import bTreeProps from 'components/base/b-tree/props';
 
 import iData, { watch, hook, component, prop, system, computed, field, wait, ModsDecl } from 'components/super/i-data/i-data';
 import type { Item, RenderFilter } from 'components/base/b-tree/interface';
@@ -43,106 +44,7 @@ interface bTree extends Trait<typeof iActiveItems> {}
 })
 
 @derive(iActiveItems)
-class bTree extends iData implements iItems {
-	/** @see [[iItems.Item]] */
-	readonly Item!: Item;
-
-	/** @see [[iItems.Items]] */
-	readonly Items!: Array<this['Item']>;
-
-	/** @see [[iActiveItems.Active]] */
-	readonly Active!: iActiveItems['Active'];
-
-	/** @see [[iActiveItems.ActiveInput]] */
-	readonly ActiveInput!: iActiveItems['ActiveInput'];
-
-	/** @see [[iItems.items]] */
-	@prop(Array)
-	readonly itemsProp: this['Items'] = [];
-
-	/** @see [[iItems.item]] */
-	@prop({type: [String, Function], required: false})
-	readonly item?: iItems['item'];
-
-	/** @see [[iItems.itemKey]] */
-	@prop({type: [String, Function], required: false})
-	readonly itemKey?: iItems['itemKey'];
-
-	/** @see [[iItems.itemProps]] */
-	@prop({type: Function, required: false})
-	readonly itemProps?: iItems['itemProps'];
-
-	/**
-	 * A common filter to render items via `asyncRender`.
-	 * It is used to optimize the process of rendering items.
-	 *
-	 * @see [[AsyncRender.iterate]]
-	 * @see [[TaskFilter]]
-	 */
-	@prop({
-		type: Function,
-		required: false,
-		default(ctx: bTree, item: unknown, i: number): CanPromise<boolean> {
-			if (ctx.level === 0 && i < ctx.renderChunks) {
-				return true;
-			}
-
-			return ctx.async.animationFrame().then(() => true);
-		}
-	})
-
-	readonly renderFilter!: RenderFilter;
-
-	/**
-	 * A filter to render nested items via `asyncRender`.
-	 * It is used to optimize the process of rendering child items.
-	 *
-	 * @see [[AsyncRender.iterate]]
-	 * @see [[TaskFilter]]
-	 */
-	@prop({type: Function, required: false})
-	readonly nestedRenderFilter?: RenderFilter;
-
-	/**
-	 * Number of chunks to render via `asyncRender`
-	 */
-	@prop(Number)
-	readonly renderChunks: number = 5;
-
-	/**
-	 * If true, then all nested elements are folded by default
-	 */
-	@prop(Boolean)
-	readonly folded: boolean = true;
-
-	/**
-	 * Link to the top-level component (internal parameter)
-	 */
-	@prop({type: Object, required: false})
-	readonly root?: bTree;
-
-	/**
-	 * Component nesting level (internal parameter)
-	 */
-	@prop(Number)
-	readonly level: number = 0;
-
-	/** @see [[iActiveItems.activeProp]] */
-	@prop({required: false})
-	readonly activeProp?: this['ActiveInput'];
-
-	/** @see [[iActiveItems.activeProp]] */
-	@prop({required: false})
-	readonly modelValue?: this['ActiveInput'];
-
-	/** @see [[iActiveItems.multiple]] */
-	@prop(Boolean)
-	readonly multiple: boolean = false;
-
-	/** @see [[iActiveItems.cancelable]] */
-	@prop({type: Boolean, required: false})
-	readonly cancelable?: boolean;
-
+class bTree extends bTreeProps implements iActiveItems {
 	/** @see [[iItems.items]] */
 	get items(): this['Items'] {
 		return this.field.get<this['Items']>('itemsStore') ?? [];
@@ -195,6 +97,37 @@ class bTree extends iData implements iItems {
 	@system()
 	valueItems!: Map<this['Item']['value'], this['Item']>;
 
+	/** @see [[iActiveItems.prototype.active] */
+	@computed({cache: false})
+	get active(): this['Active'] {
+		return iActiveItems.getActive(this.ctx);
+	}
+
+	/** @see [[iActiveItems.prototype.activeElement] */
+	get activeElement(): iActiveItems['activeElement'] {
+		const
+			{ctx} = this;
+
+		return this.waitComponentStatus('ready', () => {
+			if (ctx.multiple) {
+				if (!Object.isSet(this.active)) {
+					return [];
+				}
+
+				return [...this.active].flatMap((val) => this.findItemElement(val) ?? []);
+			}
+
+			return this.findItemElement(this.active) ?? null;
+		});
+	}
+
+	/**
+	 * Component context - points to root b-tree
+	 */
+	get ctx(): bTree {
+		return this.top ?? this;
+	}
+
 	static override readonly mods: ModsDecl = {
 		clickableArea: [
 			['fold'],
@@ -229,7 +162,7 @@ class bTree extends iData implements iItems {
 
 		const opts = {
 			level: this.level + 1,
-			root: isRootLvl ? this : this.root,
+			top: isRootLvl ? this : this.top,
 			multiple: this.multiple,
 			classes: this.classes,
 			renderChunks: this.renderChunks,
@@ -248,35 +181,11 @@ class bTree extends iData implements iItems {
 		return opts;
 	}
 
-	/** @see [[iActiveItems.prototype.active] */
-	@computed({cache: false})
-	get active(): this['Active'] {
-		return iActiveItems.getActive(this.root ?? this);
-	}
-
-	/** @see [[iActiveItems.prototype.activeElement] */
-	get activeElement(): iActiveItems['activeElement'] {
-		const
-			ctx = this.root ?? this;
-
-		return this.waitComponentStatus('ready', () => {
-			if (ctx.multiple) {
-				if (!Object.isSet(this.active)) {
-					return [];
-				}
-
-				return [...this.active].flatMap((val) => this.findItemElement(val) ?? []);
-			}
-
-			return this.findItemElement(this.active) ?? null;
-		});
-	}
-
 	/** @see [[DOM.getId]] */
 	getDOMId(id: string): string;
 	getDOMId(id: undefined | null): undefined;
 	getDOMId(id: Nullable<string>): CanUndef<string> {
-		return (this.root ?? this).dom.getId(Object.cast(id));
+		return this.ctx.dom.getId(Object.cast(id));
 	}
 
 	/**
@@ -287,7 +196,7 @@ class bTree extends iData implements iItems {
 	 * @param [opts] - additional options
 	 */
 	traverse(
-		ctx: bTree = this.root ?? this,
+		ctx: bTree = this.top ?? this,
 		opts: { deep: boolean } = {deep: true}
 	): IterableIterator<[this['Item'], bTree]> {
 		const
@@ -425,13 +334,13 @@ class bTree extends iData implements iItems {
 
 	/** @see [[iActiveItems.prototype.isActive]] */
 	isActive(value: this['Item']['value']): boolean {
-		return iActiveItems.isActive(this.root ?? this, value);
+		return iActiveItems.isActive(this.ctx, value);
 	}
 
 	/** @see [[iActiveItems.prototype.setActive]] */
 	setActive(value: this['ActiveInput'], unsetPrevious: boolean = false): boolean {
 		const
-			ctx = this.root ?? this;
+			{ctx} = this;
 
 		if (!iActiveItems.setActive(ctx, value, unsetPrevious)) {
 			return false;
@@ -479,7 +388,7 @@ class bTree extends iData implements iItems {
 	/** @see [[iActiveItems.prototype.unsetActive]] */
 	unsetActive(value: this['ActiveInput']): boolean {
 		const
-			ctx = this.root ?? this;
+			{ctx} = this;
 
 		if (!iActiveItems.unsetActive(ctx, value)) {
 			return false;
@@ -514,7 +423,7 @@ class bTree extends iData implements iItems {
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
 	toggleActive(value: this['ActiveInput'], unsetPrevious?: boolean): this['Active'] {
-		return iActiveItems.toggleActive(this.root ?? this, value, unsetPrevious);
+		return iActiveItems.toggleActive(this.ctx, value, unsetPrevious);
 	}
 
 	/** @see [[iItems.getItemKey]] */
@@ -589,7 +498,7 @@ class bTree extends iData implements iItems {
 			return item.folded;
 		}
 
-		return this.root?.folded ?? this.folded;
+		return this.top?.folded ?? this.folded;
 	}
 
 	/**
@@ -613,7 +522,7 @@ class bTree extends iData implements iItems {
 	 */
 	protected findItemElement(value: this['Item']['value']): HTMLElement | null {
 		const
-			ctx = this.root ?? this,
+			{ctx} = this,
 			id = this.valueIndexes.get(value);
 
 		if (id == null) {
@@ -652,7 +561,7 @@ class bTree extends iData implements iItems {
 			hasActive = false,
 			activeItem;
 
-		if (this.root == null) {
+		if (this.top == null) {
 			this.indexes = {};
 			this.valueIndexes = new Map();
 			this.valueItems = new Map();
@@ -674,19 +583,19 @@ class bTree extends iData implements iItems {
 			Object.defineProperty(this, 'indexes', {
 				enumerable: true,
 				configurable: true,
-				get: () => this.root?.indexes
+				get: () => this.top?.indexes
 			});
 
 			Object.defineProperty(this, 'valueIndexes', {
 				enumerable: true,
 				configurable: true,
-				get: () => this.root?.valueIndexes
+				get: () => this.top?.valueIndexes
 			});
 
 			Object.defineProperty(this, 'valueItems', {
 				enumerable: true,
 				configurable: true,
-				get: () => this.root?.valueItems
+				get: () => this.top?.valueItems
 			});
 		}
 
@@ -788,7 +697,7 @@ class bTree extends iData implements iItems {
 		e.stopPropagation();
 
 		const
-			ctx = this.root ?? this;
+			{ctx} = this;
 
 		let
 			target = <Element>e.target;
