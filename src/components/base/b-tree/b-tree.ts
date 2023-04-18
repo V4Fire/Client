@@ -97,13 +97,19 @@ class bTree extends bTreeProps implements iActiveItems {
 	 * A map of the item values and their indexes
 	 */
 	@system()
-	valueIndexes!: Map<this['Item']['value'], string>;
+	valueIndexes!: Map<this['Item']['value'], number>;
 
 	/**
 	 * A map of the item values and their descriptors
 	 */
 	@system()
 	valueItems!: Map<this['Item']['value'], this['Item']>;
+
+	/**
+	 * This prefix guarantees component :key uniqueness after item changes
+	 */
+	@system()
+	itemKeyPrefix: number = 0;
 
 	/** @see [[iActiveItems.prototype.active] */
 	@computed({cache: false})
@@ -345,7 +351,9 @@ class bTree extends bTreeProps implements iActiveItems {
 
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
-		return iItems.getItemKey(this, item, i);
+		const key = iItems.getItemKey(this, item, i);
+
+		return key ?? `${this.itemKeyPrefix}-${this.valueIndexes.get(item.value)}`;
 	}
 
 	protected override initRemoteData(): CanUndef<this['items']> {
@@ -464,6 +472,7 @@ class bTree extends bTreeProps implements iActiveItems {
 			activeItem;
 
 		if (this.top == null) {
+			this.itemKeyPrefix++;
 			this.indexes = {};
 			this.valueIndexes = new Map();
 			this.valueItems = new Map();
@@ -501,7 +510,7 @@ class bTree extends bTreeProps implements iActiveItems {
 				}
 
 				const
-					id = `${that.$renderCounter}-${that.valueIndexes.size}`;
+					id = that.valueIndexes.size;
 
 				that.indexes[id] = value;
 				that.valueIndexes.set(value, id);
