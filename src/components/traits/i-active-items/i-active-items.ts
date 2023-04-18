@@ -38,6 +38,11 @@ export default abstract class iActiveItems extends iItems {
 	abstract readonly ActiveInput: ActiveInput;
 
 	/**
+	 * Name of the active item(s) change event
+	 */
+	abstract readonly activeChangeEvent: string;
+
+	/**
 	 * The active item(s) of the component.
 	 * If the component is switched to "multiple" mode, you can pass in an iterable to define multiple active elements.
 	 *
@@ -122,10 +127,7 @@ export default abstract class iActiveItems extends iItems {
 				newVal = val;
 			}
 
-			if (beforeDataCreate) {
-				ctx.emit('immediateChange', ctx.multiple ? new Set(newVal) : newVal);
-
-			} else {
+			if (!beforeDataCreate) {
 				ctx.setActive(newVal);
 			}
 
@@ -221,8 +223,7 @@ export default abstract class iActiveItems extends iItems {
 			ctx.field.set('activeStore', value);
 		}
 
-		ctx.emit('immediateChange', ctx.active);
-		ctx.emit('change', ctx.active);
+		ctx.emit(ctx.activeChangeEvent, ctx.active);
 
 		return true;
 	}
@@ -268,8 +269,7 @@ export default abstract class iActiveItems extends iItems {
 			ctx.field.set('activeStore', undefined);
 		}
 
-		ctx.emit('immediateChange', ctx.active);
-		ctx.emit('change', ctx.active);
+		ctx.emit(ctx.activeChangeEvent, ctx.active);
 
 		return true;
 	}
@@ -330,7 +330,6 @@ export default abstract class iActiveItems extends iItems {
 	 * @param [unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
 	 *
 	 * @emits `change(active: CanIter<unknown>)`
-	 * @emits `immediateChange(active: CanIter<unknown>)`
 	 */
 	setActive(value: Item['value'] | Iterable<Item['value']>, unsetPrevious?: boolean): boolean {
 		return Object.throw();
@@ -342,7 +341,6 @@ export default abstract class iActiveItems extends iItems {
 
 	 * @param value
 	 * @emits `change(active: unknown)`
-	 * @emits `immediateChange(active: unknown)`
 	 */
 	unsetActive(value: Item['value'] | Iterable<Item['value']>): boolean {
 		return Object.throw();
@@ -356,7 +354,6 @@ export default abstract class iActiveItems extends iItems {
 	 * @param [unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
 	 *
 	 * @emits `change(active: unknown)`
-	 * @emits `immediateChange(active: unknown)`
 	 */
 	toggleActive(value: Item['value'] | Iterable<Item['value']>, unsetPrevious?: boolean): iActiveItems['Active'] {
 		return Object.throw();

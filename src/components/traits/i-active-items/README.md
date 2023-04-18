@@ -17,8 +17,19 @@ The trait declares an associated type to specify the active item: **Active**.
 | EventName         | Description                                                                                                                     | Payload description                    | Payload  |
 |-------------------|---------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|----------|
 | `change`          | The active item of the component has been changed                                                                               | Active value or a set of active values | `Active` |
-| `immediateChange` | The active item of the component has been changed (the event can fire on component initialization if `activeProp` is specified) | Active value or a set of active values | `Active` |
 | `actionChange`    | The active item of the component has been changed due to some user action                                                       | Active value or a set of active values | `Active` |
+
+P.s. These are recommended event names. Each consumer must declare their event name by setting `activeChangeEvent` property:
+
+```typescript
+
+import iActiveItems from 'traits/i-active-items/i-active-items';
+
+export default class bCustomList implements iActiveItems {
+  readonly activeChangeEvent: string = 'change';
+}
+
+```
 
 ## Props
 

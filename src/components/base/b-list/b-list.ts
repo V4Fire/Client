@@ -146,6 +146,10 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		this.field.set('itemsStore', value);
 	}
 
+	/** @see [[iActiveItems.activeChangeEvent]] */
+	@system()
+	readonly activeChangeEvent: string = 'change';
+
 	/**
 	 * @see [[iActiveItems.active]]
 	 * @see [[bList.activeStore]]
@@ -558,7 +562,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 			id = Number(target.getAttribute('data-id'));
 
 		this.toggleActive(this.indexes[id]);
-		this.emit('actionChange', this.active);
+		this.emit(`action-${this.activeChangeEvent}`.camelize(false), this.active);
 	}
 }
 

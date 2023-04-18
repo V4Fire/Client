@@ -111,6 +111,10 @@ class bTree extends bTreeProps implements iActiveItems {
 	@system()
 	itemKeyPrefix: number = 0;
 
+	/** @see [[iActiveItems.activeChangeEvent]] */
+	@system()
+	readonly activeChangeEvent: string = 'change';
+
 	/** @see [[iActiveItems.prototype.active] */
 	@computed({cache: false})
 	get active(): this['Active'] {
@@ -589,7 +593,7 @@ class bTree extends bTreeProps implements iActiveItems {
 			this.toggleActive(this.indexes[id]);
 		}
 
-		ctx.emit('actionChange', this.active);
+		ctx.emit(`action-${this.activeChangeEvent}`.camelize(false), this.active);
 	}
 }
 
