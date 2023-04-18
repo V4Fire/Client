@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.46.4 (2023-05-05)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with negative values in design system `build/stylus/ds/helpers`
+
 ## v3.46.3 (2023-04-28)
 
 #### :bug: Bug Fix
