@@ -27,6 +27,7 @@ import type { Item, UnsafeBTree } from 'components/base/b-tree/interface';
 
 import bTreeProps from 'components/base/b-tree/props';
 import Foldable from 'components/base/b-tree/modules/foldable';
+import { normalizeItems } from 'components/base/b-tree/modules/normalizers';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
@@ -58,7 +59,7 @@ class bTree extends bTreeProps implements iActiveItems {
 
 	/** @see [[iItems.items]] */
 	set items(value: this['Items']) {
-		this.field.set('itemsStore', this.normalizeItems(value));
+		this.field.set('itemsStore', normalizeItems.call(this, value));
 	}
 
 	/**
@@ -70,7 +71,7 @@ class bTree extends bTreeProps implements iActiveItems {
 			return <CanUndef<Item[]>>o.items ?? [];
 		}
 
-		return o.normalizeItems(val);
+		return normalizeItems.call(o, val);
 	}))
 	itemsStore: this['Items'] = [];
 
@@ -512,22 +513,12 @@ class bTree extends bTreeProps implements iActiveItems {
 			}
 
 		} else {
-			Object.defineProperty(this, 'indexes', {
-				enumerable: true,
-				configurable: true,
-				get: () => this.top?.indexes
-			});
-
-			Object.defineProperty(this, 'valueIndexes', {
-				enumerable: true,
-				configurable: true,
-				get: () => this.top?.valueIndexes
-			});
-
-			Object.defineProperty(this, 'valueItems', {
-				enumerable: true,
-				configurable: true,
-				get: () => this.top?.valueItems
+			['indexes', 'valueIndexes', 'valueItems'].forEach((property) => {
+				Object.defineProperty(this, property, {
+					enumerable: true,
+					configurable: true,
+					get: () => this.top?.[property]
+				});
 			});
 		}
 
@@ -559,50 +550,6 @@ class bTree extends bTreeProps implements iActiveItems {
 					traverse(item.children);
 				}
 			});
-		}
-	}
-
-	/**
-	 * Normalizes the specified items and returns it
-	 * @param [items]
-	 */
-	protected normalizeItems(items: this['Items'] = []): this['Items'] {
-		const
-			that = this;
-
-		let
-			i = -1;
-
-		items = Object.fastClone(items);
-		items.forEach((el) => normalize(el));
-
-		return items;
-
-		function normalize(item: bTree['Item'], parentValue?: unknown) {
-			i++;
-
-			if (item.value === undefined) {
-				item.value = i;
-			}
-
-			if (!('parentValue' in item)) {
-				item.parentValue = parentValue;
-
-				if (Object.isArray(item.children)) {
-					if (that.isActive(item.value)) {
-						item.folded = false;
-					}
-
-					for (const el of item.children) {
-						if (normalize(el, item.value)) {
-							item.folded = false;
-							break;
-						}
-					}
-				}
-			}
-
-			return that.isActive(item.value) || item.folded === false;
 		}
 	}
 
