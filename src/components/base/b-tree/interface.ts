@@ -50,5 +50,8 @@ export interface UnsafeBTree<CTX extends bTree = bTree> extends UnsafeIData<CTX>
 
 	// @ts-ignore (access)
 	findItemElement: CTX['findItemElement'];
+
+	// @ts-ignore (access)
+	traverseActiveNodes: CTX['traverseActiveNodes'];
 }
 

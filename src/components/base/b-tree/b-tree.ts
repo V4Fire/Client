@@ -244,28 +244,6 @@ class bTree extends bTreeProps implements iActiveItems {
 		}
 	}
 
-	*traverseActiveNodes(): Generator<[Element, {id: CanUndef<string>; value: unknown}]> {
-		const {ctx} = this;
-
-		const {
-			$el,
-			block: $b
-		} = ctx;
-
-		if ($el != null && $b != null) {
-			const nodes = $el.querySelectorAll(`.${$b.getFullElementName('node', 'active', true)}`);
-
-			for (let i = 0; i < nodes.length; i++) {
-				const
-					node = nodes[i],
-					id = ctx.dom.restoreId(node.getAttribute('data-id')),
-					value = this.valueItems.get(id);
-
-				yield [node, {id, value}];
-			}
-		}
-	}
-
 	/**
 	 * @see [[Foldable.prototype.fold]]
 	 */
@@ -347,6 +325,46 @@ class bTree extends bTreeProps implements iActiveItems {
 	/** @see [[iActiveItems.prototype.toggleActive]] */
 	toggleActive(value: this['ActiveInput'], unsetPrevious?: boolean): this['Active'] {
 		return iActiveItems.toggleActive(this.ctx, value, unsetPrevious);
+	}
+
+	/**
+	 * Returns an iterator over the element nodes which have modifier `active = true`.
+	 * The iterator returns pairs of elements `[Element, The id and value of an item associated with the element]`.
+	 */
+	protected traverseActiveNodes(): IterableIterator<[Element, {id: CanUndef<number>; value: CanUndef<unknown>}]> {
+		const
+			{ctx, indexes} = this,
+			{$el, block: $b} = ctx;
+
+		if ($el != null && $b != null) {
+			const iter = createIter();
+
+			return {
+				[Symbol.iterator]() {
+					return this;
+				},
+
+				next: iter.next.bind(iter)
+			};
+		}
+
+		return [].values();
+
+		function* createIter() {
+			const nodes = $el!.querySelectorAll(`.${$b!.getFullElementName('node', 'active', true)}`);
+
+			for (let i = 0; i < nodes.length; i++) {
+				const
+					node = nodes[i],
+					rawId = ctx.dom.restoreId(node.getAttribute('data-id'));
+
+				const
+					id = rawId != null ? parseInt(rawId, 10) : undefined,
+					value = id != null ? indexes[id] : undefined;
+
+				yield [node, {id, value}];
+			}
+		}
 	}
 
 	/** @see [[iItems.getItemKey]] */
