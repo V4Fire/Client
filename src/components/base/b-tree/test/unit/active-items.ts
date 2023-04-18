@@ -379,6 +379,18 @@ test.describe('<b-tree> active items', () => {
 		]);
 	});
 
+	test.describe('`traverseActiveNodes`', () => {
+		test('should return id and value of items associated with active nodes', async ({page}) => {
+			const target = await renderTree(page, {items, attrs: {active: [0, 1], multiple: true}});
+			test.expect(
+				await target.evaluate((ctx) => Array.from(ctx.unsafe.traverseActiveNodes()).map(([, ctx]) => ctx))
+			).toEqual([
+				{id: 0, value: 0},
+				{id: 1, value: 1}
+			]);
+		});
+	});
+
 	test.describe('`activeElement`', () => {
 		test('should have one active element', async ({page}) => {
 			const target = await renderTree(page, {items, attrs: {active: 0}});
