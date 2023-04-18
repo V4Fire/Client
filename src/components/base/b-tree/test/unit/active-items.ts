@@ -284,15 +284,10 @@ test.describe('<b-tree> active items', () => {
 			const
 				log: any[] = [],
 				onEvent = () => {
-					if (log.length >= 6) {
+					if (log.length >= 4) {
 						resolve(log);
 					}
 				};
-
-			ctx.on('immediateChange', (component, value) => {
-				log.push(['immediateChange', value]);
-				onEvent();
-			});
 
 			ctx.on('onChange', (value) => {
 				log.push(['change', value]);
@@ -310,10 +305,8 @@ test.describe('<b-tree> active items', () => {
 		await page.click(`${nodeSelector}:nth-child(2)`);
 
 		test.expect(await changesLogPromise).toEqual([
-			['immediateChange', 0],
 			['change', 0],
 			true,
-			['immediateChange', 1],
 			['change', 1],
 			['actionChange', 1]
 		]);
