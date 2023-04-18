@@ -260,8 +260,9 @@ const deps = {
  *   1. `lib` - external library, i.e, something from `node_modules`
  *   2. `src` - internal resource, i.e, something that builds from the `/src` folder
  *   3. `output` - output library, i.e, something that builds to the `/dist/client` folder
+ *   4. `external` - external dependency, i.e. somethings that loaded from external CDN
  *
- * @typedef {('lib'|'src'|'output')}
+ * @typedef {('lib'|'src'|'output'|'external')}
  */
 const LibSource = 'lib';
 

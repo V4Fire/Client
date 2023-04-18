@@ -112,7 +112,9 @@ async function loadLinks(libs, {assets, js, wrap} = {}) {
 	}
 
 	for (const lib of await initLibs(libs, assets)) {
-		lib.js = js;
+		if (lib.source !== 'external') {
+			lib.js = js;
+		}
 
 		decl += await getLinkDecl(lib);
 		decl += '\n';
@@ -142,6 +144,11 @@ async function initLibs(libs, assets) {
 	for (const [key, val] of libs.entries()) {
 		const p = Object.isString(val) ? {src: val} : {...val};
 		p.inline = needInline(p.inline);
+
+		if (p.source === 'external') {
+			res.push(p);
+			continue;
+		}
 
 		let
 			cwd;
