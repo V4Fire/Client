@@ -6,7 +6,8 @@
   },
   "include": [
     "./node_modules/@v4fire/core/*",
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "tests/**/*.ts"
   ],
   "files": [
     "./index.d.ts"
