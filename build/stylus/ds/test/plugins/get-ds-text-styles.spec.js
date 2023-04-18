@@ -39,6 +39,7 @@ describe('build/stylus/plugins/get-ds-variables', () => {
 
 			expect(resultObj.fontSize).toEqual(mock.fontSize);
 			expect(resultObj.lineHeight).toEqual(mock.lineHeight);
+			expect(resultObj.letterSpacing).toEqual(mock.letterSpacing);
 		});
 	});
 
