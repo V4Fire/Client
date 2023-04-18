@@ -21,10 +21,12 @@ import Block, { getElementMod } from 'components/friends/block';
 
 import iItems from 'components/traits/i-items/i-items';
 import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
-import bTreeProps from 'components/base/b-tree/props';
 
-import iData, { watch, hook, component, prop, system, computed, field, wait, ModsDecl } from 'components/super/i-data/i-data';
-import type { Item, RenderFilter } from 'components/base/b-tree/interface';
+import iData, { watch, hook, component, system, computed, field, wait, ModsDecl, UnsafeGetter } from 'components/super/i-data/i-data';
+import type { Item, UnsafeBTree } from 'components/base/b-tree/interface';
+
+import bTreeProps from 'components/base/b-tree/props';
+import Foldable from 'components/base/b-tree/modules/foldable';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
@@ -45,6 +47,10 @@ interface bTree extends Trait<typeof iActiveItems> {}
 
 @derive(iActiveItems)
 class bTree extends bTreeProps implements iActiveItems {
+	override get unsafe(): UnsafeGetter<UnsafeBTree<this>> {
+		return Object.cast(this);
+	}
+
 	/** @see [[iItems.items]] */
 	get items(): this['Items'] {
 		return this.field.get<this['Items']>('itemsStore') ?? [];
@@ -134,6 +140,12 @@ class bTree extends bTreeProps implements iActiveItems {
 			'any'
 		]
 	};
+
+	/**
+	 * API for b-tree folding
+	 */
+	@system<bTree>((o) => new Foldable(o))
+	protected foldable!: Foldable;
 
 	/** @inheritDoc */
 	protected override readonly $refs!: iData['$refs'] & {
@@ -225,111 +237,31 @@ class bTree extends bTreeProps implements iActiveItems {
 	}
 
 	/**
-	 * Folds the specified item.
-	 * If the method is called without an element passed, all tree sibling elements will be folded.
-	 *
-	 * @param [value]
+	 * @see [[Foldable.prototype.fold]]
 	 */
+	fold(value?: this['Item']['value']): Promise<boolean>;
+
 	@wait('ready')
-	fold(value?: unknown): Promise<boolean> {
-		if (arguments.length === 0) {
-			const values: Array<Promise<boolean>> = [];
-
-			for (const [item] of this.traverse(this, {deep: false})) {
-				values.push(this.fold(item.value));
-			}
-
-			return SyncPromise.all(values)
-				.then((res) => res.some((value) => value === true));
-		}
-
-		const isFolded = this.getFoldedModByValue(value) === 'true';
-
-		if (isFolded) {
-			return SyncPromise.resolve(false);
-		}
-
-		return this.toggleFold(value, true);
+	fold(...args: unknown[]): Promise<boolean> {
+		return this.foldable.fold(...args);
 	}
 
 	/**
-	 * Unfolds the specified item.
-	 * If method is called on nested item, all parent items will be unfolded.
-	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
-	 *
-	 * @param [value]
+	 * @see [[Foldable.prototype.unfold]]
 	 */
+	unfold(value?: this['Item']['value']): Promise<boolean>;
+
 	@wait('ready')
-	unfold(value?: unknown): Promise<boolean> {
-		const
-			values: Array<Promise<boolean>> = [];
-
-		if (arguments.length === 0) {
-			for (const [item] of this.traverse(this, {deep: false})) {
-				if (!this.hasChildren(item)) {
-					continue;
-				}
-
-				values.push(this.unfold(item.value));
-			}
-
-		} else {
-			const
-				ctx = this.root ?? this,
-				item = this.valueItems.get(value);
-
-			if (item != null && this.hasChildren(item)) {
-				values.push(ctx.toggleFold(value, false));
-			}
-
-			let
-				{parentValue} = item ?? {};
-
-			while (parentValue != null) {
-				const
-					parent = this.valueItems.get(parentValue);
-
-				if (parent != null) {
-					values.push(ctx.toggleFold(parent.value, false));
-					parentValue = parent.parentValue;
-
-				} else {
-					parentValue = null;
-				}
-			}
-		}
-
-		return SyncPromise.all(values)
-			.then((res) => res.some((value) => value === true));
+	unfold(...args: unknown[]): Promise<boolean> {
+		return this.foldable.unfold(...args);
 	}
 
 	/**
-	 * Toggles the passed item fold value
-	 *
-	 * @param value
-	 * @param [folded] - if value is not passed the current state will be toggled
-	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
+	 * @see [[Foldable.prototype.toggleFold]]
 	 */
 	@wait('ready')
 	toggleFold(value: this['Item']['value'], folded?: boolean): Promise<boolean> {
-		const
-			ctx = this.root ?? this;
-
-		const
-			oldVal = this.getFoldedModByValue(value) === 'true',
-			newVal = folded ?? !oldVal;
-
-		const
-			el = ctx.findItemElement(value),
-			item = this.valueItems.get(value);
-
-		if (oldVal !== newVal && el != null && item != null && this.hasChildren(item)) {
-			this.block?.setElementMod(el, 'node', 'folded', newVal);
-			ctx.emit('fold', el, item, newVal);
-			return SyncPromise.resolve(true);
-		}
-
-		return SyncPromise.resolve(false);
+		return this.foldable.toggleFold(value, folded);
 	}
 
 	/** @see [[iActiveItems.prototype.isActive]] */

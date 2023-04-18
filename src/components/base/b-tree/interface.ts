@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { UnsafeIData } from 'components/super/i-data/i-data';
+
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item as Super } from 'components/traits/i-active-items/i-active-items';
 
@@ -40,3 +42,16 @@ export interface RenderFilter {
 }
 
 export type ClickableAreaMod = 'fold' | 'any';
+
+// @ts-ignore (unsafe)
+export interface UnsafeBTree<CTX extends bTree = bTree> extends UnsafeIData<CTX> {
+	// @ts-ignore (access)
+	hasChildren: CTX['hasChildren'];
+
+	// @ts-ignore (access)
+	getFoldedModByValue: CTX['getFoldedModByValue'];
+
+	// @ts-ignore (access)
+	findItemElement: CTX['findItemElement'];
+}
+
