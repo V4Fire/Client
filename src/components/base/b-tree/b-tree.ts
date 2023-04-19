@@ -22,7 +22,7 @@ import Block, { getElementMod } from 'components/friends/block';
 import iItems from 'components/traits/i-items/i-items';
 import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
 
-import iData, { watch, hook, component, system, computed, field, wait, ModsDecl, UnsafeGetter } from 'components/super/i-data/i-data';
+import iData, { watch, hook, component, system, computed, field, ModsDecl, UnsafeGetter } from 'components/super/i-data/i-data';
 import type { Item, UnsafeBTree } from 'components/base/b-tree/interface';
 
 import bTreeProps from 'components/base/b-tree/props';
@@ -39,7 +39,7 @@ Block.addToPrototype({getElementMod});
 const
 	$$ = symbolGenerator();
 
-interface bTree extends Trait<typeof iActiveItems> {}
+interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
 
 @component({
 	functional: {
@@ -48,7 +48,8 @@ interface bTree extends Trait<typeof iActiveItems> {}
 })
 
 @derive(iActiveItems)
-class bTree extends bTreeProps implements iActiveItems {
+@derive(Foldable)
+class bTree extends bTreeProps implements iActiveItems, Foldable {
 	override get unsafe(): UnsafeGetter<UnsafeBTree<this>> {
 		return Object.cast(this);
 	}
@@ -155,12 +156,6 @@ class bTree extends bTreeProps implements iActiveItems {
 
 	protected itemsStore: this['Items'] = [];
 
-	/**
-	 * API for b-tree folding
-	 */
-	@system<bTree>((o) => new Foldable(o))
-	protected foldable!: Foldable;
-
 	/** @inheritDoc */
 	protected override readonly $refs!: iData['$refs'] & {
 		children?: bTree[];
@@ -241,34 +236,6 @@ class bTree extends bTreeProps implements iActiveItems {
 				}
 			}
 		}
-	}
-
-	/**
-	 * @see [[Foldable.prototype.fold]]
-	 */
-	fold(value?: this['Item']['value']): Promise<boolean>;
-
-	@wait('ready')
-	fold(...args: unknown[]): Promise<boolean> {
-		return this.foldable.fold(...args);
-	}
-
-	/**
-	 * @see [[Foldable.prototype.unfold]]
-	 */
-	unfold(value?: this['Item']['value']): Promise<boolean>;
-
-	@wait('ready')
-	unfold(...args: unknown[]): Promise<boolean> {
-		return this.foldable.unfold(...args);
-	}
-
-	/**
-	 * @see [[Foldable.prototype.toggleFold]]
-	 */
-	@wait('ready')
-	toggleFold(value: this['Item']['value'], folded?: boolean): Promise<boolean> {
-		return this.foldable.toggleFold(value, folded);
 	}
 
 	/** @see [[iActiveItems.prototype.isActive]] */

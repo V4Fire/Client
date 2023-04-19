@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,69 +9,51 @@
 
 import SyncPromise from 'core/promise/sync';
 
-import Friend from 'components/friends/friend';
+import { wait } from 'components/super/i-data/i-data';
 import type bTree from 'components/base/b-tree/b-tree';
 
-export default class Foldable extends Friend {
-	override readonly C!: bTree;
-
-	/**
-	 * Folds the specified item.
-	 * If the method is called without an element passed, all tree sibling elements will be folded.
-	 *
-	 * @param [value]
-	 */
-	fold(value?: unknown): Promise<boolean> {
-		const {ctx} = this;
-
-		if (arguments.length === 0) {
+export default abstract class Foldable {
+	/** @see [[Foldable.prototype.fold]] */
+	static fold(ctx: bTree, value?: unknown): Promise<boolean> {
+		if (arguments.length === 1) {
 			const values: Array<Promise<boolean>> = [];
 
 			for (const [item] of ctx.traverse(ctx, {deep: false})) {
-				values.push(this.fold(item.value));
+				values.push(this.fold(ctx, item.value));
 			}
 
 			return SyncPromise.all(values)
 				.then((res) => res.some((value) => value === true));
 		}
 
-		const isFolded = this.getFoldedModByValue(value) === 'true';
+		const isFolded = this.getFoldedModByValue(ctx, value) === 'true';
 
 		if (isFolded) {
 			return SyncPromise.resolve(false);
 		}
 
-		return this.toggleFold(value, true);
+		return this.toggleFold(ctx, value, true);
 	}
 
-	/**
-	 * Unfolds the specified item.
-	 * If method is called on nested item, all parent items will be unfolded.
-	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
-	 *
-	 * @param [value]
-	 */
-	unfold(value?: unknown): Promise<boolean> {
-		const
-			values: Array<Promise<boolean>> = [],
-			{ctx} = this;
+	/** @see [[Foldable.prototype.unfold]] */
+	static unfold(ctx: bTree, value?: unknown): Promise<boolean> {
+		const values: Array<Promise<boolean>> = [];
 
-		if (arguments.length === 0) {
+		if (arguments.length === 1) {
 			for (const [item] of ctx.traverse(ctx, {deep: false})) {
-				if (!ctx.hasChildren(item)) {
+				if (!ctx.unsafe.hasChildren(item)) {
 					continue;
 				}
 
-				values.push(this.unfold(item.value));
+				values.push(this.unfold(ctx, item.value));
 			}
 
 		} else {
 			const
-				{ctx} = this,
-				{top} = ctx,
+				{top} = ctx.unsafe,
 				item = ctx.valueItems.get(value);
 
-			if (item != null && ctx.hasChildren(item)) {
+			if (item != null && ctx.unsafe.hasChildren(item)) {
 				values.push(top.toggleFold(value, false));
 			}
 
@@ -95,28 +78,21 @@ export default class Foldable extends Friend {
 			.then((res) => res.some((value) => value === true));
 	}
 
-	/**
-	 * Toggles the passed item fold value
-	 *
-	 * @param value
-	 * @param [folded] - if value is not passed the current state will be toggled
-	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
-	 */
-	toggleFold(value: unknown, folded?: boolean): Promise<boolean> {
+	/** @see [[Foldable.prototype.toggleFold]] */
+	static toggleFold(ctx: bTree, value: unknown, folded?: boolean): Promise<boolean> {
 		const
-			{ctx} = this,
-			{top} = ctx;
+			{top} = ctx.unsafe;
 
 		const
-			oldVal = this.getFoldedModByValue(value) === 'true',
+			oldVal = this.getFoldedModByValue(ctx, value) === 'true',
 			newVal = folded ?? !oldVal;
 
 		const
 			el = top.unsafe.findItemElement(value),
 			item = ctx.valueItems.get(value);
 
-		if (oldVal !== newVal && el != null && item != null && ctx.hasChildren(item)) {
-			ctx.block?.setElementMod(el, 'node', 'folded', newVal);
+		if (oldVal !== newVal && el != null && item != null && ctx.unsafe.hasChildren(item)) {
+			ctx.unsafe.block?.setElementMod(el, 'node', 'folded', newVal);
 			top.emit('fold', el, item, newVal);
 			return SyncPromise.resolve(true);
 		}
@@ -126,17 +102,52 @@ export default class Foldable extends Friend {
 
 	/**
 	 * Returns a value of the `folded` modifier from an element by the specified identifier
+	 *
+	 * @param ctx
 	 * @param value
 	 */
-	protected getFoldedModByValue(value: unknown): CanUndef<string> {
-		const
-			{ctx} = this,
-			target = ctx.findItemElement(value);
+	protected static getFoldedModByValue(ctx: bTree, value: unknown): CanUndef<string> {
+		const target = ctx.unsafe.findItemElement(value);
 
 		if (target == null) {
 			return;
 		}
 
-		return ctx.block?.getElementMod(target, 'node', 'folded');
+		return ctx.unsafe.block?.getElementMod(target, 'node', 'folded');
+	}
+
+	/**
+	 * Folds the specified item.
+	 * If the method is called without an element passed, all tree sibling elements will be folded.
+	 *
+	 * @param [value]
+	 */
+	@wait('ready')
+	fold(value?: unknown): Promise<boolean> {
+		return Object.throw();
+	}
+
+	/**
+	 * Unfolds the specified item.
+	 * If method is called on nested item, all parent items will be unfolded.
+	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
+	 *
+	 * @param [value]
+	 */
+	@wait('ready')
+	unfold(value?: unknown): Promise<boolean> {
+		return Object.throw();
+	}
+
+	/**
+	 * Toggles the passed item fold value
+	 *
+	 * @param value
+	 * @param [folded] - if value is not passed the current state will be toggled
+	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
+	 */
+	@wait('ready')
+	toggleFold(value: unknown, folded?: boolean): Promise<boolean> {
+		return Object.throw();
 	}
 }
