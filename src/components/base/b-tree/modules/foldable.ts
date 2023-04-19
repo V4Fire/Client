@@ -67,11 +67,11 @@ export default class Foldable extends Friend {
 		} else {
 			const
 				{ctx} = this,
-				{ctx: rootTree} = ctx,
+				{top} = ctx,
 				item = ctx.valueItems.get(value);
 
 			if (item != null && ctx.hasChildren(item)) {
-				values.push(rootTree.toggleFold(value, false));
+				values.push(top.toggleFold(value, false));
 			}
 
 			let
@@ -82,7 +82,7 @@ export default class Foldable extends Friend {
 					parent = ctx.valueItems.get(parentValue);
 
 				if (parent != null) {
-					values.push(rootTree.toggleFold(parent.value, false));
+					values.push(top.toggleFold(parent.value, false));
 					parentValue = parent.parentValue;
 
 				} else {
@@ -105,19 +105,19 @@ export default class Foldable extends Friend {
 	toggleFold(value: unknown, folded?: boolean): Promise<boolean> {
 		const
 			{ctx} = this,
-			{ctx: rootTree} = ctx;
+			{top} = ctx;
 
 		const
 			oldVal = this.getFoldedModByValue(value) === 'true',
 			newVal = folded ?? !oldVal;
 
 		const
-			el = rootTree.unsafe.findItemElement(value),
+			el = top.unsafe.findItemElement(value),
 			item = ctx.valueItems.get(value);
 
 		if (oldVal !== newVal && el != null && item != null && ctx.hasChildren(item)) {
 			ctx.block?.setElementMod(el, 'node', 'folded', newVal);
-			rootTree.emit('fold', el, item, newVal);
+			top.emit('fold', el, item, newVal);
 			return SyncPromise.resolve(true);
 		}
 

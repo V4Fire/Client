@@ -32,7 +32,7 @@ export default abstract class bTreeProps extends iData implements iItems {
 	 * Link to the top-level component (internal parameter)
 	 */
 	@prop({type: Object, required: false})
-	readonly top?: bTree;
+	readonly topProp?: bTree;
 
 	/** @see [[iItems.items]] */
 	@prop(Array)

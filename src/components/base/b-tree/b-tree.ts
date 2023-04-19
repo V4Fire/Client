@@ -106,16 +106,16 @@ class bTree extends bTreeProps implements iActiveItems {
 	/** @see [[iActiveItems.prototype.active] */
 	@computed({cache: false})
 	get active(): this['Active'] {
-		return iActiveItems.getActive(this.ctx);
+		return iActiveItems.getActive(this.top);
 	}
 
 	/** @see [[iActiveItems.prototype.activeElement] */
 	get activeElement(): iActiveItems['activeElement'] {
 		const
-			{ctx} = this;
+			{top} = this;
 
 		return this.waitComponentStatus('ready', () => {
-			if (ctx.multiple) {
+			if (top.multiple) {
 				if (!Object.isSet(this.active)) {
 					return [];
 				}
@@ -127,19 +127,19 @@ class bTree extends bTreeProps implements iActiveItems {
 		});
 	}
 
-	/**
-	 * Component context - points to root b-tree
-	 */
-	get ctx(): bTree {
-		return this.top ?? this;
-	}
-
 	static override readonly mods: ModsDecl = {
 		clickableArea: [
 			['fold'],
 			'any'
 		]
 	};
+
+	/**
+	 * Returns root b-tree component
+	 */
+	protected get top(): bTree {
+		return this.topProp ?? this;
+	}
 
 	/**
 	 * Stores b-tree normalized items.
@@ -188,7 +188,7 @@ class bTree extends bTreeProps implements iActiveItems {
 
 		const opts = {
 			level: this.level + 1,
-			top: isRootLvl ? this : this.top,
+			topProp: isRootLvl ? this : this.topProp,
 			multiple: this.multiple,
 			classes: this.classes,
 			renderChunks: this.renderChunks,
@@ -215,7 +215,7 @@ class bTree extends bTreeProps implements iActiveItems {
 	 * @param [opts] - additional options
 	 */
 	traverse(
-		ctx: bTree = this.top ?? this,
+		ctx: bTree = this.topProp ?? this,
 		opts: { deep: boolean } = {deep: true}
 	): IterableIterator<[this['Item'], bTree]> {
 		const
@@ -273,32 +273,32 @@ class bTree extends bTreeProps implements iActiveItems {
 
 	/** @see [[iActiveItems.prototype.isActive]] */
 	isActive(value: this['Item']['value']): boolean {
-		return iActiveItems.isActive(this.ctx, value);
+		return iActiveItems.isActive(this.top, value);
 	}
 
 	/** @see [[iActiveItems.prototype.setActive]] */
 	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		const
-			{ctx} = this;
+			{top} = this;
 
-		if (!iActiveItems.setActive(ctx, value, unsetPrevious)) {
+		if (!iActiveItems.setActive(top, value, unsetPrevious)) {
 			return false;
 		}
 
-		void ctx.unfold(value);
+		void top.unfold(value);
 
 		// Deactivate previous active nodes
-		if (!ctx.multiple || unsetPrevious) {
+		if (!top.multiple || unsetPrevious) {
 			for (const [node, {value}] of this.traverseActiveNodes()) {
 				if (!this.isActive(value)) {
-					dom.setActive(ctx.block, node, false);
+					dom.setActive(top.block, node, false);
 				}
 			}
 		}
 
 		// Activate current active nodes
 		SyncPromise.resolve(this.activeElement).then((activeElement) => {
-			Array.concat([], activeElement).forEach((activeElement) => dom.setActive(ctx.block, activeElement, true));
+			Array.concat([], activeElement).forEach((activeElement) => dom.setActive(top.block, activeElement, true));
 		}).catch(stderr);
 
 		return true;
@@ -306,15 +306,15 @@ class bTree extends bTreeProps implements iActiveItems {
 
 	/** @see [[iActiveItems.prototype.unsetActive]] */
 	unsetActive(value: this['ActiveProp']): boolean {
-		const {ctx} = this;
+		const {top} = this;
 
-		if (!iActiveItems.unsetActive(ctx, value)) {
+		if (!iActiveItems.unsetActive(top, value)) {
 			return false;
 		}
 
 		for (const [node, {value}] of this.traverseActiveNodes()) {
 			if (!this.isActive(value)) {
-				dom.setActive(ctx.block, node, false);
+				dom.setActive(top.block, node, false);
 			}
 		}
 
@@ -323,7 +323,7 @@ class bTree extends bTreeProps implements iActiveItems {
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
 	toggleActive(value: this['ActiveProp'], unsetPrevious?: boolean): this['Active'] {
-		return iActiveItems.toggleActive(this.ctx, value, unsetPrevious);
+		return iActiveItems.toggleActive(this.top, value, unsetPrevious);
 	}
 
 	/**
@@ -332,8 +332,8 @@ class bTree extends bTreeProps implements iActiveItems {
 	 */
 	protected traverseActiveNodes(): IterableIterator<[Element, {id: CanUndef<number>; value: CanUndef<unknown>}]> {
 		const
-			{ctx, indexes} = this,
-			{$el, block: $b} = ctx;
+			{top, indexes} = this,
+			{$el, block: $b} = top;
 
 		if ($el != null && $b != null) {
 			const iter = createIter();
@@ -440,7 +440,7 @@ class bTree extends bTreeProps implements iActiveItems {
 			return item.folded;
 		}
 
-		return this.top?.folded ?? this.folded;
+		return this.topProp?.folded ?? this.folded;
 	}
 
 	/**
@@ -449,14 +449,14 @@ class bTree extends bTreeProps implements iActiveItems {
 	 */
 	protected findItemElement(value: this['Item']['value']): HTMLElement | null {
 		const
-			{ctx} = this,
+			{top} = this,
 			id = this.valueIndexes.get(value);
 
 		if (id == null) {
 			return null;
 		}
 
-		return ctx.$el?.querySelector(`[data-id="${id}"]`) ?? null;
+		return top.$el?.querySelector(`[data-id="${id}"]`) ?? null;
 	}
 
 	/**
@@ -488,7 +488,7 @@ class bTree extends bTreeProps implements iActiveItems {
 			hasActive = false,
 			activeItem;
 
-		if (this.top == null) {
+		if (this.topProp == null) {
 			this.itemKeyPrefix++;
 			this.indexes = {};
 			this.valueIndexes = new Map();
@@ -512,7 +512,7 @@ class bTree extends bTreeProps implements iActiveItems {
 				Object.defineProperty(this, property, {
 					enumerable: true,
 					configurable: true,
-					get: () => this.top?.[property]
+					get: () => this.topProp?.[property]
 				});
 			});
 		}
@@ -571,7 +571,7 @@ class bTree extends bTreeProps implements iActiveItems {
 		e.stopPropagation();
 
 		const
-			{ctx} = this;
+			{top} = this;
 
 		let
 			target = <Element>e.target;
@@ -588,7 +588,7 @@ class bTree extends bTreeProps implements iActiveItems {
 			this.toggleActive(this.indexes[id]);
 		}
 
-		ctx.emit(`action-${this.activeChangeEvent}`.camelize(false), this.active);
+		top.emit(`action-${this.activeChangeEvent}`.camelize(false), this.active);
 	}
 }
 
