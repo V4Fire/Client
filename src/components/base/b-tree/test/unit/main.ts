@@ -230,7 +230,7 @@ test.describe('<b-tree>', () => {
 		});
 	});
 
-	test.describe('on items change', () => {
+	test.describe('when items change', () => {
 		const newItems = [
 			{value: 0},
 			{value: 1, children: [{value: 3, label: '3'}]},
