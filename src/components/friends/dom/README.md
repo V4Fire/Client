@@ -34,6 +34,15 @@ This method is plugged by default.
   My label
 ```
 
+## unwrapId
+
+Takes an identifier produced by `getId` and unwraps it to the original identifier.
+
+```js
+const wrappedId = this.dom.getId('bla'); // '{prefix}-bla'
+this.dom.unwrapId(wrappedId); // 'bla'
+```
+
 ## getComponent
 
 Returns a component instance that is associated with the given DOM element or selector.
