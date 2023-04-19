@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementHandle, Page } from 'playwright';
+import type { Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
@@ -18,30 +18,29 @@ import { renderTree, checkOptionTree, waitForItem, interceptTreeRequest, createT
 test.describe('<b-tree>', () => {
 
 	const
-		testFoldedModIs = createTestModIs('folded');
+		testFoldedModIs = createTestModIs('folded'),
+		elementSelector = '.b-checkbox';
 
-	const
-		elementSelector = '.b-checkbox',
-		defaultItems = [
-			{value: 'bar'},
+	const defaultItems = [
+		{value: 'bar'},
 
-			{
-				value: 'foo',
-				children: [
-					{value: 'foo_1'},
-					{value: 'foo_2'},
+		{
+			value: 'foo',
+			children: [
+				{value: 'foo_1'},
+				{value: 'foo_2'},
 
-					{
-						value: 'foo_3',
-						children: [{value: 'foo_3_1'}]
-					},
+				{
+					value: 'foo_3',
+					children: [{value: 'foo_3_1'}]
+				},
 
-					{value: 'foo_4'},
-					{value: 'foo_5'},
-					{value: 'foo_6'}
-				].map((item) => ({...item, label: item.value}))
-			}
-		].map((item) => ({...item, label: item.value}));
+				{value: 'foo_4'},
+				{value: 'foo_5'},
+				{value: 'foo_6'}
+			].map((item) => ({...item, label: item.value}))
+		}
+	].map((item) => ({...item, label: item.value}));
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -296,21 +295,20 @@ test.describe('<b-tree>', () => {
 	});
 
 	test.describe('public API', () => {
-		const
-			items = [
-				{value: 1},
-				{value: 2},
-				{
-					value: 3,
-					children: [
-						{
-							value: 4,
-							children: [{value: 6}]
-						}
-					]
-				},
-				{value: 5}
-			];
+		const items = [
+			{value: 1},
+			{value: 2},
+			{
+				value: 3,
+				children: [
+					{
+						value: 4,
+						children: [{value: 6}]
+					}
+				]
+			},
+			{value: 5}
+		];
 
 		test('traverse', async ({page}) => {
 			const target = await renderTree(page, {items});
