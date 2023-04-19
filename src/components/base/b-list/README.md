@@ -43,7 +43,6 @@ Also, you can see the parent component and the component traits.
 | EventName         | Description                                                                                                                     | Payload description | Payload  |
 |-------------------|---------------------------------------------------------------------------------------------------------------------------------|---------------------|----------|
 | `change`          | The active element of the component has been changed                                                                            | The active item(s)  | `Active` |
-| `immediateChange` | The active element of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | The active item(s)  | `Active` |
 | `actionChange`    | The active element of the component has been changed due to some user action                                                    | The active item(s)  | `Active` |
 | `itemsChange`     | The list of items has been changed                                                                                              | The list of items   | `Items`  |
 
