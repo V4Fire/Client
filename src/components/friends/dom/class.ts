@@ -100,10 +100,10 @@ class DOM extends Friend {
 	 *
 	 * @example
 	 * ```
-	 * dom.restoreId(dom.getId('bla')) // 'bla'
+	 * dom.unwrapId(dom.getId('bla')) // 'bla'
 	 * ```
 	 */
-	restoreId(componentAssociatedId: string | null | undefined): CanUndef<string> {
+	unwrapId(componentAssociatedId: string | null | undefined): CanUndef<string> {
 		if (componentAssociatedId == null) {
 			return undefined;
 		}
