@@ -6,7 +6,7 @@ This module provides a component to render a recursive list of elements.
 
 * The component extends [[iData]].
 
-* The component implements the [[iItems]] trait.
+* The component implements the [[iItems]], [[iActiveItems]] traits.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -30,6 +30,8 @@ See the [[iItems]] trait and the [[iData]] component.
 |-----------|----------------------------------------------|--------------------------------------------|-----------------------|
 | `fold`    | One of the component items has been folded   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
 | `unfold`  | One of the component items has been unfolded | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| `change`  | The active element of the component has been changed  | The active item(s)  | `Active` |
+| `actionChange`  | The active element of the component has been changed due to some user action  | The active item(s)  | `Active` |
 
 See the [[iItems]] trait and the [[iData]] component.
 
@@ -57,19 +59,38 @@ export default class myTree extends bTree {
   :item = 'b-checkbox' |
 
   :items = [
-    {id: 'foo'},
-    {id: 'bar', children: [
-      {id: 'fooone'},
-      {id: 'footwo'},
+    {value: 'foo'},
+    {value: 'bar', children: [
+      {value: 'fooone'},
+      {value: 'footwo'},
 
       {
-        id: 'foothree',
+        value: 'foothree',
         children: [
-          {id: 'foothreeone'}
+          {value: 'foothreeone'}
         ]
       },
 
-      {id: 'foosix'}
+      {value: 'foosix'}
+    ]}
+  ]
+.
+```
+
+### Providing active items
+
+```
+< b-tree &
+  /// The specified items are rendered as `b-checkbox`-es
+  :item = 'b-checkbox' |
+  :active = ['foo', 'bar']
+  :multiple = true
+  :items = [
+    {value: 'foo'},
+    {value: 'bar', children: [
+      {value: 'fooone'},
+      {value: 'footwo'},
+      {value: 'foosix'}
     ]}
   ]
 .
@@ -80,7 +101,7 @@ export default class myTree extends bTree {
 ```
 < b-tree &
   :item = 'b-checkbox' |
-  :itemProps = (el, i, params) => el.id === 'foo' ? {label: 'foo'} : {} |
+  :itemProps = (el, i, params) => el.value === 'foo' ? {label: 'foo'} : {} |
   :items = listOfItems
 .
 ```
@@ -99,7 +120,7 @@ export default class myTree extends bTree {
 
 ```
 < b-tree &
-  :item = (el, i) => el.id === 'foo' ? 'b-checkbox' : 'b-radio-button' |
+  :item = (el, i) => el.value === 'foo' ? 'b-checkbox' : 'b-radio-button' |
   :items = listOfItems
 .
 ```
@@ -109,7 +130,7 @@ export default class myTree extends bTree {
 ```
 < b-tree :items = listOfItems
   < template #default = {item}
-    < b-checkbox v-if = item.id === 'foo'
+    < b-checkbox v-if = item.value === 'foo'
     < b-radio-button v-else
 ```
 
@@ -156,17 +177,17 @@ Or
 < b-tree &
   :item = 'b-checkbox' |
   :items = [
-    {id: 'foo'},
+    {value: 'foo'},
 
     {
-      id: 'bar',
+      value: 'bar',
 
       /// This branch isn't folded
       folded: false,
 
       children: [
-        {id: 'fooone'},
-        {id: 'footwo'}
+        {value: 'fooone'},
+        {value: 'footwo'}
       ]
     }
   ]
@@ -262,11 +283,25 @@ class AriaRole {
 
 ### Props
 
-### folded
+### [folded]
 
 If true, then all nested elements are folded by default.
 
-### renderFilter
+### [activeProp]
+
+The active element(s) of the component.
+If the component is switched to "multiple" mode, you can pass in an iterable to define multiple active elements.
+
+### [multiple = `false`]
+
+If true, the component supports the multiple active items feature.
+
+### [cancelable]
+
+If set to true, the active item can be canceled by clicking it again.
+By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise it is set to `false`.
+
+### [renderFilter]
 
 A common filter to render items via `asyncRender`.
 It is used to optimize the process of rendering items.
@@ -275,7 +310,7 @@ It is used to optimize the process of rendering items.
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :renderFilter = () => async.idle()
 ```
 
-### nestedRenderFilter
+### [nestedRenderFilter]
 
 A filter to render nested items via `asyncRender`.
 It is used to optimize the process of rendering child items.
@@ -284,7 +319,7 @@ It is used to optimize the process of rendering child items.
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :nestedRenderFilter = () => async.idle()
 ```
 
-### renderChunks
+### [renderChunks]
 
 Number of chunks to render per tick via `asyncRender`.
 
