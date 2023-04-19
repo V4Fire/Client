@@ -13,6 +13,7 @@ import type GesturesInterface from 'core/prelude/test-env/gestures';
 /**
  * Class provides API to work with touch gestures
  */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class Gestures {
 	/**
 	 * Creates a gesture instance
@@ -25,15 +26,5 @@ export default class Gestures {
 			res = await page.evaluateHandle((options) => new globalThis._Gestures(options), opts);
 
 		return <JSHandle<GesturesInterface>>res;
-	}
-
-	/**
-	 * @param page
-	 * @param opts
-	 * @deprecated
-	 * @see [[Gestures.create]]
-	 */
-	async create(page: Page, opts: TouchGesturesCreateOptions): Promise<JSHandle<GesturesInterface>> {
-		return Gestures.create(page, opts);
 	}
 }

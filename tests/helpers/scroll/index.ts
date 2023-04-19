@@ -18,6 +18,7 @@ export * from 'tests/helpers/scroll/interface';
 /**
  * Class provides API to work with scroll on a page
  */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class Scroll {
 	/**
 	 * Scrolls a page by the specified parameters
@@ -113,70 +114,5 @@ export default class Scroll {
 		}
 
 		clearTimeout(timeout);
-	}
-
-	/**
-	 * @param ctx
-	 * @param selector
-	 * @param [scrollIntoViewOpts]
-	 * @deprecated
-	 * @see [[Scroll.scrollIntoViewIfNeeded]]
-	 */
-	async scrollIntoViewIfNeeded(
-		ctx: Page | ElementHandle,
-		selector: string,
-		scrollIntoViewOpts: Dictionary
-	): Promise<void> {
-		return Scroll.scrollRefIntoViewIfNeeded(ctx, selector, scrollIntoViewOpts);
-	}
-
-	/**
-	 * @param ctx
-	 * @param refName
-	 * @param [scrollIntoViewOpts]
-	 * @deprecated
-	 * @see [[Scroll.scrollRefIntoViewIfNeeded]]
-	 */
-	async scrollRefIntoViewIfNeeded(
-		ctx: Page | ElementHandle,
-		refName: string,
-		scrollIntoViewOpts: Dictionary
-	): Promise<void> {
-		return Scroll.scrollRefIntoViewIfNeeded(ctx, refName, scrollIntoViewOpts);
-	}
-
-	/**
-	 * @param page
-	 * @param opts
-	 * @deprecated
-	 * @see [[Scroll.scrollBy]]
-	 */
-	scrollBy(page: Page, opts: ScrollToOptions): Promise<void> {
-		return Scroll.scrollBy(page, opts);
-	}
-
-	/**
-	 * @param page
-	 * @param [opts]
-	 * @deprecated
-	 * @see [[Scroll.scrollToBottom]]
-	 */
-	scrollToBottom(page: Page, opts?: ScrollOptions): Promise<void> {
-		return Scroll.scrollToBottom(page, opts);
-	}
-
-	/**
-	 * @param page
-	 * @param [checkFn]
-	 * @param [opts]
-	 * @deprecated
-	 * @see [[Scroll.scrollToBottomWhile]]
-	 */
-	async scrollToBottomWhile(
-		page: Page,
-		checkFn?: () => CanPromise<boolean>,
-		opts?: ScrollToBottomWhileOptions
-	): Promise<void> {
-		return Scroll.scrollToBottomWhile(page, checkFn, opts);
 	}
 }
