@@ -143,7 +143,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 		dependencies: ['active']
 	})
 
-	get activeElement(): CanPromise<CanArray<HTMLAnchorElement> | null> {
+	get activeElement(): CanPromise<CanNull<CanArray<HTMLAnchorElement>>> {
 		const
 			{active} = this;
 

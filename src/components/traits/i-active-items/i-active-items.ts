@@ -85,7 +85,7 @@ export default abstract class iActiveItems extends iItems {
 	 * Link(s) to the DOM element of the component active item.
 	 * If the component is switched to the `multiple` mode, the getter will return a list of elements.
 	 */
-	abstract get activeElement(): CanPromise<CanArray<Element> | null>;
+	abstract get activeElement(): CanPromise<CanNull<CanArray<Element>>>;
 
 	/**
 	 * Returns a `sync.link` to `activeProp` for `activeStore`
