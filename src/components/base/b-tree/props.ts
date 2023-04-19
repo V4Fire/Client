@@ -14,9 +14,6 @@ import iData, { prop, component } from 'components/super/i-data/i-data';
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item, RenderFilter } from 'components/base/b-tree/interface';
 
-export * from 'components/super/i-data/i-data';
-export * from 'components/base/b-tree/interface';
-
 @component()
 export default abstract class bTreeProps extends iData implements iItems {
 	/** @see [[iItems.Item]] */
