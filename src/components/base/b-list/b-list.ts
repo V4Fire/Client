@@ -12,7 +12,6 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-import { isAbsURL } from 'core/url';
 import { derive } from 'core/functools/trait';
 
 import DOM, { delegateElement } from 'components/friends/dom';
@@ -23,8 +22,12 @@ import iWidth from 'components/traits/i-width/i-width';
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iActiveItems from 'components/traits/i-active-items/i-active-items';
 
-import iData, { component, prop, field, system, computed, hook, watch, ModsDecl } from 'components/super/i-data/i-data';
-import type { Item, Items } from 'components/base/b-list/interface';
+import { component, field, system, computed, hook, watch, ModsDecl } from 'components/super/i-data/i-data';
+
+import type { Items } from 'components/base/b-list/interface';
+import bListProps from 'components/base/b-list/props';
+import { normalizeItems } from 'components/base/b-list/modules/normalizers';
+import * as dom from 'components/base/b-list/modules/dom';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
@@ -42,80 +45,7 @@ Block.addToPrototype({element, elements});
 })
 
 @derive(iActiveItems)
-class bList extends iData implements iVisible, iWidth, iActiveItems {
-	/** @see [[iActiveItems.Active]] */
-	readonly Active!: iActiveItems['Active'];
-
-	/** @see [[iActiveItems.ActiveInput]] */
-	readonly ActiveInput!: iActiveItems['ActiveInput'];
-
-	/** @see [[iItems.Item]] */
-	readonly Item!: Item;
-
-	/** @see [[iItems.Items]] */
-	readonly Items!: Array<this['Item']>;
-
-	/** @see [[iItems.items]] */
-	@prop(Array)
-	readonly itemsProp: this['Items'] = [];
-
-	/** @see [[iItems.item]] */
-	@prop({type: [String, Function], required: false})
-	readonly item?: iItems['item'];
-
-	/** @see [[iItems.itemKey]] */
-	@prop({type: [String, Function], required: false})
-	readonly itemKey?: iItems['itemKey'];
-
-	/** @see [[iItems.itemProps]] */
-	@prop({type: Function, required: false})
-	readonly itemProps?: iItems['itemProps'];
-
-	/** @see [[iVisible.hideIfOffline]] */
-	@prop(Boolean)
-	readonly hideIfOffline: boolean = false;
-
-	/**
-	 * List root tag type
-	 */
-	@prop(String)
-	readonly listTag: string = 'ul';
-
-	/**
-	 * List element tag type
-	 */
-	@prop(String)
-	readonly listElementTag: string = 'li';
-
-	/** @see [[iActiveItems.activeProp]] */
-	@prop({required: false})
-	readonly activeProp?: this['ActiveInput'];
-
-	/** @see [[iActiveItems.activeProp]] */
-	@prop({required: false})
-	readonly modelValue?: this['ActiveInput'];
-
-	/**
-	 * If true, then all items without the `href` option will automatically generate a link by using `value` and
-	 * other props
-	 */
-	@prop(Boolean)
-	readonly autoHref: boolean = false;
-
-	/** @see [[iActiveItems.multiple]] */
-	@prop(Boolean)
-	readonly multiple: boolean = false;
-
-	/** @see [[iActiveItems.cancelable]] */
-	@prop({type: Boolean, required: false})
-	readonly cancelable?: boolean;
-
-	/**
-	 * Additional attributes that are provided to the native list tag
-	 */
-	@prop({type: Object, required: false})
-	readonly attrsProp?: Dictionary;
-
+class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	/** @see [[bList.attrsProp]] */
 	get attrs(): Dictionary {
 		const
@@ -248,11 +178,8 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	setActive(value: this['ActiveInput'], unsetPrevious: boolean = false): boolean {
-		const
-			res = iActiveItems.setActive(this, value);
-
-		if (!res) {
-			return res;
+		if (!iActiveItems.setActive(this, value)) {
+			return false;
 		}
 
 		const
@@ -264,35 +191,17 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 				linkEl = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple || unsetPrevious) {
-				const
-					previousLinkEls = $b.elements('link', {active: true});
+				const previousLinkEls = $b.elements('link', {active: true});
 
-				for (let i = 0; i < previousLinkEls.length; i++) {
-					const
-						previousLinkEl = previousLinkEls[i];
-
+				Object.forEach(previousLinkEls, (previousLinkEl) => {
 					if (previousLinkEl !== linkEl) {
-						$b.setElementMod(previousLinkEl, 'link', 'active', false);
-
-						if (previousLinkEl.hasAttribute('aria-selected')) {
-							previousLinkEl.setAttribute('aria-selected', 'false');
-						}
+						dom.setActive($b, previousLinkEl, false);
 					}
-				}
+				});
 			}
 
 			SyncPromise.resolve(this.activeElement).then((selectedElement) => {
-				const
-					els = Array.concat([], selectedElement);
-
-				for (let i = 0; i < els.length; i++) {
-					const el = els[i];
-					$b.setElementMod(el, 'link', 'active', true);
-
-					if (el.hasAttribute('aria-selected')) {
-						el.setAttribute('aria-selected', 'true');
-					}
-				}
+				Array.concat([], selectedElement).forEach((el) => dom.setActive($b, el, true));
 			}, stderr);
 		}
 
@@ -310,10 +219,8 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 * @emits `immediateChange(active: unknown)`
 	 */
 	unsetActive(value: this['ActiveInput']): boolean {
-		const res = iActiveItems.unsetActive(this, value);
-
-		if (!res) {
-			return res;
+		if (!iActiveItems.unsetActive(this, value)) {
+			return false;
 		}
 
 		const {activeElement, block: $b} = this;
@@ -336,11 +243,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 						value === itemValue;
 
 					if (needChangeMod) {
-						$b.setElementMod(el, 'link', 'active', false);
-
-						if (el.hasAttribute('aria-selected')) {
-							el.setAttribute('aria-selected', 'false');
-						}
+						dom.setActive($b, el, false);
 					}
 				});
 			}, stderr);
@@ -378,66 +281,12 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
-		this.normalizeItems = i.normalizeItems.bind(this);
+		this.normalizeItems = normalizeItems.bind(this);
 	}
 
-	/**
-	 * Normalizes the specified items and returns it
-	 * @param items
-	 */
-	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
-		const
-			normalizedItems = <this['Items']>[];
-
-		if (items == null) {
-			return normalizedItems;
-		}
-
-		for (let i = 0; i < items.length; i++) {
-			const
-				item = items[i];
-
-			let
-				{value, href} = item;
-
-			if (value === undefined) {
-				value = href;
-			}
-
-			const needAutoHref =
-				href === undefined &&
-				value !== undefined &&
-				this.autoHref;
-
-			if (needAutoHref) {
-				href = String(value);
-
-				if (!isAbsURL.test(href) && !href.startsWith('/') && !href.startsWith('#')) {
-					href = `#${href}`;
-				}
-			}
-
-			const
-				classes = this.provide.hintClasses(item.hintPos).concat(item.classes ?? []),
-				attrs = {...item.attrs};
-
-			if (href === undefined) {
-				attrs.role = 'tab';
-			}
-
-			normalizedItems.push({
-				...item,
-
-				attrs,
-				classes,
-
-				value,
-				href
-			});
-		}
-
-		return normalizedItems;
-	}
+	/** @see [[normalizeItems]] */
+	// eslint-disable-next-line @typescript-eslint/member-ordering
+	protected normalizeItems!: typeof normalizeItems;
 
 	/**
 	 * Initializes component values
