@@ -16,18 +16,12 @@ import type { Item } from 'components/base/b-list/interface';
  * @param [items]
  */
 export function normalizeItems(this: bList, items: CanUndef<Item[]>): Item[] {
-	const result: Item[] = [];
-
 	if (items == null) {
-		return result;
+		return [];
 	}
 
-	for (let i = 0; i < items.length; i++) {
-		const
-			item = items[i];
-
-		let
-			{value, href} = item;
+	return items.map((item) => {
+		let {value, href} = item;
 
 		if (value === undefined) {
 			value = href;
@@ -54,7 +48,7 @@ export function normalizeItems(this: bList, items: CanUndef<Item[]>): Item[] {
 			attrs.role = 'tab';
 		}
 
-		result.push({
+		return {
 			...item,
 
 			attrs,
@@ -62,8 +56,6 @@ export function normalizeItems(this: bList, items: CanUndef<Item[]>): Item[] {
 
 			value,
 			href
-		});
-	}
-
-	return result;
+		};
+	});
 }
