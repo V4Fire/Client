@@ -20,7 +20,7 @@
 			< .&__node &
 				:key = getItemKey(el, i) |
 
-				:-id = getDOMId(valueIndexes.get(el.value)) |
+				:-id = valueIndexes.get(el.value) |
 				:-level = level |
 
 				:class = provide.elementClasses({

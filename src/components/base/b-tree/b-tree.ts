@@ -205,13 +205,6 @@ class bTree extends bTreeProps implements iActiveItems {
 		return opts;
 	}
 
-	/** @see [[DOM.getId]] */
-	getDOMId(id: string): string;
-	getDOMId(id: undefined | null): undefined;
-	getDOMId(id: Nullable<string>): CanUndef<string> {
-		return this.ctx.dom.getId(Object.cast(id));
-	}
-
 	/**
 	 * Returns an iterator over the tree items based on the given arguments.
 	 * The iterator returns pairs of elements `[Tree item, The bTree instance associated with the element]`.
@@ -360,7 +353,7 @@ class bTree extends bTreeProps implements iActiveItems {
 			for (let i = 0; i < nodes.length; i++) {
 				const
 					node = nodes[i],
-					rawId = ctx.dom.restoreId(node.getAttribute('data-id'));
+					rawId = node.getAttribute('data-id');
 
 				const
 					id = rawId != null ? parseInt(rawId, 10) : undefined,
@@ -461,7 +454,7 @@ class bTree extends bTreeProps implements iActiveItems {
 			return null;
 		}
 
-		return ctx.$el?.querySelector(`[data-id=${ctx.dom.getId(`${id}`)}]`) ?? null;
+		return ctx.$el?.querySelector(`[data-id="${id}"]`) ?? null;
 	}
 
 	/**
@@ -587,7 +580,7 @@ class bTree extends bTreeProps implements iActiveItems {
 
 		target = <Element>e.delegateTarget;
 
-		const id = ctx.dom.restoreId(target.getAttribute('data-id'));
+		const id = target.getAttribute('data-id');
 
 		if (id != null) {
 			this.toggleActive(this.indexes[id]);
