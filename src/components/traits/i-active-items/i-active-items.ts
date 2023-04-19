@@ -16,7 +16,7 @@
 import type iBlock from 'components/super/i-block/i-block';
 
 import iItems from 'components/traits/i-items/i-items';
-import type { Active, ActiveInput, Item } from 'components/traits/i-active-items/interface';
+import type { Active, ActiveProp, Item } from 'components/traits/i-active-items/interface';
 
 export * from 'components/traits/i-items/i-items';
 export * from 'components/traits/i-active-items/interface';
@@ -35,7 +35,7 @@ export default abstract class iActiveItems extends iItems {
 	/**
 	 * Type: the component active input for `activeProp`, `setActive`, `toggleActive`, `unsetActive`
 	 */
-	abstract readonly ActiveInput: ActiveInput;
+	abstract readonly ActiveProp: ActiveProp;
 
 	/**
 	 * Name of the active item(s) change event
@@ -48,7 +48,7 @@ export default abstract class iActiveItems extends iItems {
 	 *
 	 * @prop
 	 */
-	abstract readonly activeProp?: this['ActiveInput'];
+	abstract readonly activeProp?: this['ActiveProp'];
 
 	/**
 	 * If true, the component supports the multiple active items feature
@@ -179,7 +179,7 @@ export default abstract class iActiveItems extends iItems {
 	};
 
 	/** @see [[iActiveItems.prototype.setActive]] */
-	static setActive(ctx: TraitComponent, value: iActiveItems['ActiveInput'], unsetPrevious?: boolean): boolean {
+	static setActive(ctx: TraitComponent, value: iActiveItems['ActiveProp'], unsetPrevious?: boolean): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -229,7 +229,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/** @see [[iActiveItems.prototype.unsetActive]] */
-	static unsetActive(ctx: TraitComponent, value: iActiveItems['ActiveInput']): boolean {
+	static unsetActive(ctx: TraitComponent, value: iActiveItems['ActiveProp']): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -275,7 +275,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
-	static toggleActive(ctx: TraitComponent, value: iActiveItems['ActiveInput'], unsetPrevious?: boolean): iActiveItems['Active'] {
+	static toggleActive(ctx: TraitComponent, value: iActiveItems['ActiveProp'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -331,7 +331,7 @@ export default abstract class iActiveItems extends iItems {
 	 *
 	 * @emits `change(active: CanIter<unknown>)`
 	 */
-	setActive(value: Item['value'] | Iterable<Item['value']>, unsetPrevious?: boolean): boolean {
+	setActive(value: this['ActiveProp'], unsetPrevious?: boolean): boolean {
 		return Object.throw();
 	}
 
@@ -342,7 +342,7 @@ export default abstract class iActiveItems extends iItems {
 	 * @param value
 	 * @emits `change(active: unknown)`
 	 */
-	unsetActive(value: Item['value'] | Iterable<Item['value']>): boolean {
+	unsetActive(value: this['ActiveProp']): boolean {
 		return Object.throw();
 	}
 
@@ -355,7 +355,7 @@ export default abstract class iActiveItems extends iItems {
 	 *
 	 * @emits `change(active: unknown)`
 	 */
-	toggleActive(value: Item['value'] | Iterable<Item['value']>, unsetPrevious?: boolean): iActiveItems['Active'] {
+	toggleActive(value: this['ActiveProp'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		return Object.throw();
 	}
 }

@@ -25,8 +25,8 @@ export default abstract class bTreeProps extends iData implements iItems {
 	/** @see [[iActiveItems.Active]] */
 	readonly Active!: iActiveItems['Active'];
 
-	/** @see [[iActiveItems.ActiveInput]] */
-	readonly ActiveInput!: iActiveItems['ActiveInput'];
+	/** @see [[iActiveItems.ActiveProp]] */
+	readonly ActiveProp!: iActiveItems['ActiveProp'];
 
 	/**
 	 * Link to the top-level component (internal parameter)
@@ -101,11 +101,11 @@ export default abstract class bTreeProps extends iData implements iItems {
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly activeProp?: this['ActiveInput'];
+	readonly activeProp?: this['ActiveProp'];
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly modelValue?: this['ActiveInput'];
+	readonly modelValue?: this['ActiveProp'];
 
 	/** @see [[iActiveItems.multiple]] */
 	@prop(Boolean)

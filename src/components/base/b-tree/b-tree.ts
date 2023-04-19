@@ -282,7 +282,7 @@ class bTree extends bTreeProps implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.setActive]] */
-	setActive(value: this['ActiveInput'], unsetPrevious: boolean = false): boolean {
+	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		const
 			{ctx} = this;
 
@@ -310,7 +310,7 @@ class bTree extends bTreeProps implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.unsetActive]] */
-	unsetActive(value: this['ActiveInput']): boolean {
+	unsetActive(value: this['ActiveProp']): boolean {
 		const {ctx} = this;
 
 		if (!iActiveItems.unsetActive(ctx, value)) {
@@ -327,7 +327,7 @@ class bTree extends bTreeProps implements iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
-	toggleActive(value: this['ActiveInput'], unsetPrevious?: boolean): this['Active'] {
+	toggleActive(value: this['ActiveProp'], unsetPrevious?: boolean): this['Active'] {
 		return iActiveItems.toggleActive(this.ctx, value, unsetPrevious);
 	}
 

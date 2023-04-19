@@ -175,9 +175,8 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	 * @param [unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
 	 *
 	 * @emits `change(active: CanArray<unknown>)`
-	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	setActive(value: this['ActiveInput'], unsetPrevious: boolean = false): boolean {
+	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		if (!iActiveItems.setActive(this, value)) {
 			return false;
 		}
@@ -216,9 +215,8 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	 *
 	 * @param value
 	 * @emits `change(active: unknown)`
-	 * @emits `immediateChange(active: unknown)`
 	 */
-	unsetActive(value: this['ActiveInput']): boolean {
+	unsetActive(value: this['ActiveProp']): boolean {
 		if (!iActiveItems.unsetActive(this, value)) {
 			return false;
 		}

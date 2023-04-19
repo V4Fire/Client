@@ -18,8 +18,8 @@ export default abstract class bListProps extends iData implements iItems {
 	/** @see [[iActiveItems.Active]] */
 	readonly Active!: iActiveItems['Active'];
 
-	/** @see [[iActiveItems.ActiveInput]] */
-	readonly ActiveInput!: iActiveItems['ActiveInput'];
+	/** @see [[iActiveItems.ActiveProp]] */
+	readonly ActiveProp!: iActiveItems['ActiveProp'];
 
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
@@ -61,11 +61,11 @@ export default abstract class bListProps extends iData implements iItems {
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly activeProp?: this['ActiveInput'];
+	readonly activeProp?: this['ActiveProp'];
 
 	/** @see [[iActiveItems.activeProp]] */
 	@prop({required: false})
-	readonly modelValue?: this['ActiveInput'];
+	readonly modelValue?: this['ActiveProp'];
 
 	/**
 	 * If true, then all items without the `href` option will automatically generate a link by using `value` and
