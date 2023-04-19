@@ -9,7 +9,6 @@
 import type { Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
-
 import { DOM } from 'tests/helpers';
 
 import { renderWindow } from 'components/base/b-window/test/helpers';
@@ -32,7 +31,7 @@ test.describe('<b-window> slots', () => {
 		});
 
 		await test.expect(getElementInnerHTML(page, 'window'))
-			.resolves.toBe('<div>Hello content</div>');
+			.toBeResolvedTo('<div>Hello content</div>');
 	});
 
 	test('`title` slot should be rendered as `window` heading', async ({page}) => {
@@ -43,7 +42,7 @@ test.describe('<b-window> slots', () => {
 		});
 
 		await test.expect(getElementInnerHTML(page, 'title'))
-			.resolves.toBe('BlaFoo');
+			.toBeResolvedTo('BlaFoo');
 	});
 
 	test('`body` slot should be rendered as `window` content', async ({page}) => {
@@ -59,10 +58,10 @@ test.describe('<b-window> slots', () => {
 		});
 
 		await test.expect(getElementInnerHTML(page, 'title'))
-			.resolves.toBe('Bla');
+			.toBeResolvedTo('Bla');
 
 		await test.expect(getElementInnerHTML(page, 'body'))
-			.resolves.toBe('<div>Hello body</div>');
+			.toBeResolvedTo('<div>Hello body</div>');
 	});
 
 	test('`controls` slot should be rendered', async ({page}) => {
@@ -78,17 +77,17 @@ test.describe('<b-window> slots', () => {
 		});
 
 		await test.expect(getElementInnerHTML(page, 'title'))
-			.resolves.toBe('Bla');
+			.toBeResolvedTo('Bla');
 
 		await test.expect(getElementInnerHTML(page, 'controls'))
-			.resolves.toBe('<button>Close</button>');
+			.toBeResolvedTo('<button>Close</button>');
 	});
 
 	test('`third-party` slots should be rendered', async ({page}) => {
 		await renderWindow(page, {attrs: {slotName: 'windowSlotTestDummy'}});
 
 		await test.expect(getElementInnerHTML(page, 'window'))
-			.resolves.toBe('<div class="b-window__bla">Hello world!</div>');
+			.toBeResolvedTo('<div class="b-window__bla">Hello world!</div>');
 	});
 
 	/**
