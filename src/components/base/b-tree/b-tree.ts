@@ -64,19 +64,6 @@ class bTree extends bTreeProps implements iActiveItems {
 	}
 
 	/**
-	 * Stores b-tree normalized items.
-	 * This store is needed because `items` property must be accessed only via get/set.
-	 */
-	@field<bTree>((o) => o.sync.link<Item[]>('itemsProp', (val) => {
-		if (o.dataProvider != null) {
-			return <CanUndef<Item[]>>o.items ?? [];
-		}
-
-		return normalizeItems.call(o, val);
-	}))
-	itemsStore: this['Items'] = [];
-
-	/**
 	 * @see [[iActiveItems.activeStore]]
 	 * @see [[iActiveItems.syncActiveStore]]
 	 */
@@ -85,6 +72,7 @@ class bTree extends bTreeProps implements iActiveItems {
 
 		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
 	})
+
 	activeStore!: iActiveItems['activeStore'];
 
 	/**
@@ -152,6 +140,20 @@ class bTree extends bTreeProps implements iActiveItems {
 			'any'
 		]
 	};
+
+	/**
+	 * Stores b-tree normalized items.
+	 * This store is needed because `items` property must be accessed only via get/set.
+	 */
+	@field<bTree>((o) => o.sync.link<Item[]>((val) => {
+		if (o.dataProvider != null) {
+			return <CanUndef<Item[]>>o.items ?? [];
+		}
+
+		return normalizeItems.call(o, val);
+	}))
+
+	protected itemsStore: this['Items'] = [];
 
 	/**
 	 * API for b-tree folding
