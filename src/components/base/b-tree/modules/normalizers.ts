@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/interface';
 

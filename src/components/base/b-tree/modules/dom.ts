@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import type Block from 'components/friends/block/class';
 
 export function setActive(block: Block | undefined, el: Element, status: boolean): void {
