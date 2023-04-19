@@ -22,7 +22,6 @@ test.describe('<div v-icon>', () => {
 			'v-icon:foo': null
 		});
 
-		await page.pause();
 		test.expect(await directive.innerHTML()).toBe('<svg><use xlink:href="#foo"></use></svg>');
 	});
 
