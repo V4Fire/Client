@@ -171,7 +171,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(windowTopOffset).toBe(400);
 	});
 
-	test('sticks to the closest step on a slow pull-up', async ({page}) => {
+	test('should stick to the closest step on a slow pull-up', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full',
 			visible: 100,

@@ -538,7 +538,7 @@ test.describe('<b-bottom-slide> functional cases', () => {
 			test.expect(testVal).toBe('false');
 		});
 
-		test('should set the `hidden` modifier', async ({page}) => {
+		test('should set the `hidden` modifier to `true`', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full'
 			});
@@ -649,7 +649,7 @@ test.describe('<b-bottom-slide> functional cases', () => {
 			test.expect(windowTopOffset).toBe(step1Absolute);
 		});
 
-		test('does nothing if the window is fully closed', async ({page}) => {
+		test('should do nothing if the window is fully closed', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				steps
