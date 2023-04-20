@@ -27,8 +27,7 @@ import type { Item, UnsafeBTree } from 'components/base/b-tree/interface';
 
 import bTreeProps from 'components/base/b-tree/props';
 import Foldable from 'components/base/b-tree/modules/foldable';
-import { normalizeItems } from 'components/base/b-tree/modules/normalizers';
-import * as dom from 'components/base/b-tree/modules/dom';
+import { setActiveMod, normalizeItems } from 'components/base/b-tree/modules/helpers';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
@@ -258,14 +257,14 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		if (!top.multiple || unsetPrevious) {
 			for (const [node, {value}] of this.traverseActiveNodes()) {
 				if (!this.isActive(value)) {
-					dom.setActive(top.block, node, false);
+					setActiveMod(top.block, node, false);
 				}
 			}
 		}
 
 		// Activate current active nodes
 		SyncPromise.resolve(this.activeElement).then((activeElement) => {
-			Array.concat([], activeElement).forEach((activeElement) => dom.setActive(top.block, activeElement, true));
+			Array.concat([], activeElement).forEach((activeElement) => setActiveMod(top.block, activeElement, true));
 		}).catch(stderr);
 
 		return true;
@@ -281,7 +280,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 		for (const [node, {value}] of this.traverseActiveNodes()) {
 			if (!this.isActive(value)) {
-				dom.setActive(top.block, node, false);
+				setActiveMod(top.block, node, false);
 			}
 		}
 

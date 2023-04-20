@@ -6,8 +6,29 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Block from 'components/friends/block/class';
+
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/interface';
+
+/**
+ * Changes element's node `active` modifier and set's `aria-selected` attribute.
+ *
+ * @param block
+ * @param el
+ * @param status
+ */
+export function setActiveMod(block: Nullable<Block>, el: Element, status: boolean): void {
+	if (block == null) {
+		return;
+	}
+
+	block.setElementMod(el, 'node', 'active', status);
+
+	if (el.hasAttribute('aria-selected')) {
+		el.setAttribute('aria-selected', String(status));
+	}
+}
 
 /**
  * Normalizes the specified items and returns them
