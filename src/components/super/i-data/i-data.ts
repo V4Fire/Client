@@ -53,7 +53,7 @@ export {
 export * from 'components/super/i-block/i-block';
 export * from 'components/super/i-data/interface';
 
-const
+export const
 	$$ = symbolGenerator();
 
 @component({functional: null})
