@@ -280,7 +280,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 		this.normalizeItems = i.normalizeItems.bind(this);
 	}
 
-	/** @see [[h.normalizeItems]] */
+	/** @see [[normalizeItems]] */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		return normalizeItems.call(this, items);
 	}
