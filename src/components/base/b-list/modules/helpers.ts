@@ -8,8 +8,29 @@
 
 import { isAbsURL } from 'core/url';
 
+import type Block from 'components/friends/block/class';
+
 import type bList from 'components/base/b-list/b-list';
 import type { Item } from 'components/base/b-list/interface';
+
+/**
+ * Changes element's link `active` modifier and set's `aria-selected` attribute.
+ *
+ * @param block
+ * @param el
+ * @param status
+ */
+export function setActiveMod(block: Block | undefined, el: Element, status: boolean): void {
+	if (block == null) {
+		return;
+	}
+
+	block.setElementMod(el, 'link', 'active', status);
+
+	if (el.hasAttribute('aria-selected')) {
+		el.setAttribute('aria-selected', String(status));
+	}
+}
 
 /**
  * Normalizes the specified items and returns them
@@ -59,3 +80,4 @@ export function normalizeItems(this: bList, items: CanUndef<Item[]>): Item[] {
 		};
 	});
 }
+

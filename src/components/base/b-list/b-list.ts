@@ -26,8 +26,7 @@ import { component, field, system, computed, hook, watch, ModsDecl } from 'compo
 
 import type { Items } from 'components/base/b-list/interface';
 import bListProps from 'components/base/b-list/props';
-import { normalizeItems } from 'components/base/b-list/modules/normalizers';
-import * as dom from 'components/base/b-list/modules/dom';
+import { setActiveMod, normalizeItems } from 'components/base/b-list/modules/helpers';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
@@ -193,13 +192,13 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 				Object.forEach(previousLinkEls, (previousLinkEl) => {
 					if (previousLinkEl !== linkEl) {
-						dom.setActive($b, previousLinkEl, false);
+						setActiveMod($b, previousLinkEl, false);
 					}
 				});
 			}
 
 			SyncPromise.resolve(this.activeElement).then((selectedElement) => {
-				Array.concat([], selectedElement).forEach((el) => dom.setActive($b, el, true));
+				Array.concat([], selectedElement).forEach((el) => setActiveMod($b, el, true));
 			}, stderr);
 		}
 
@@ -240,7 +239,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 						value === itemValue;
 
 					if (needChangeMod) {
-						dom.setActive($b, el, false);
+						setActiveMod($b, el, false);
 					}
 				});
 			}, stderr);
@@ -278,12 +277,13 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 		this.isActive = i.isActive.bind(this);
 		this.setActive = i.setActive.bind(this);
-		this.normalizeItems = normalizeItems.bind(this);
+		this.normalizeItems = i.normalizeItems.bind(this);
 	}
 
-	/** @see [[normalizeItems]] */
-	// eslint-disable-next-line @typescript-eslint/member-ordering
-	protected normalizeItems!: typeof normalizeItems;
+	/** @see [[h.normalizeItems]] */
+	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
+		return normalizeItems.call(this, items);
+	}
 
 	/**
 	 * Initializes component values
