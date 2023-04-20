@@ -14,18 +14,18 @@ import iData, { prop, component } from 'components/super/i-data/i-data';
 import type { Item } from 'components/base/b-list/b-list';
 
 @component()
-export default abstract class bListProps extends iData implements iItems {
-	/** @see [[iActiveItems.Active]] */
-	readonly Active!: iActiveItems['Active'];
-
-	/** @see [[iActiveItems.ActiveProp]] */
-	readonly ActiveProp!: iActiveItems['ActiveProp'];
-
+export default abstract class bListProps extends iData {
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
 
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
+
+	/** @see [[iActiveItems.Active]] */
+	readonly Active!: iActiveItems['Active'];
+
+	/** @see [[iActiveItems.ActiveProp]] */
+	readonly ActiveProp!: iActiveItems['ActiveProp'];
 
 	/** @see [[iItems.items]] */
 	@prop(Array)
@@ -34,6 +34,22 @@ export default abstract class bListProps extends iData implements iItems {
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
+
+	/** @see [[iActiveItems.activeProp]] */
+	@prop({required: false})
+	readonly activeProp?: this['ActiveProp'];
+
+	/** @see [[iActiveItems.activeProp]] */
+	@prop({required: false})
+	readonly modelValue?: this['ActiveProp'];
+
+	/** @see [[iActiveItems.multiple]] */
+	@prop(Boolean)
+	readonly multiple: boolean = false;
+
+	/** @see [[iActiveItems.cancelable]] */
+	@prop({type: Boolean, required: false})
+	readonly cancelable?: boolean;
 
 	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
@@ -59,28 +75,12 @@ export default abstract class bListProps extends iData implements iItems {
 	@prop(String)
 	readonly listElementTag: string = 'li';
 
-	/** @see [[iActiveItems.activeProp]] */
-	@prop({required: false})
-	readonly activeProp?: this['ActiveProp'];
-
-	/** @see [[iActiveItems.activeProp]] */
-	@prop({required: false})
-	readonly modelValue?: this['ActiveProp'];
-
 	/**
 	 * If true, then all items without the `href` option will automatically generate a link by using `value` and
 	 * other props
 	 */
 	@prop(Boolean)
 	readonly autoHref: boolean = false;
-
-	/** @see [[iActiveItems.multiple]] */
-	@prop(Boolean)
-	readonly multiple: boolean = false;
-
-	/** @see [[iActiveItems.cancelable]] */
-	@prop({type: Boolean, required: false})
-	readonly cancelable?: boolean;
 
 	/**
 	 * Additional attributes that are provided to the native list tag
