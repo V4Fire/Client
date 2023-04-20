@@ -37,6 +37,14 @@ export interface Item extends Super {
 	folded?: boolean;
 }
 
+/**
+ * Tree element meta data
+ */
+export interface ItemMeta {
+	id: CanUndef<number>;
+	value: CanUndef<unknown>;
+}
+
 export interface RenderFilter {
 	(ctx: bTree, el: Item, i: number): CanPromise<boolean>;
 }

@@ -23,7 +23,7 @@ import iItems from 'components/traits/i-items/i-items';
 import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
 
 import iData, { watch, hook, component, system, computed, field, ModsDecl, UnsafeGetter } from 'components/super/i-data/i-data';
-import type { Item, UnsafeBTree } from 'components/base/b-tree/interface';
+import type { Item, ItemMeta, UnsafeBTree } from 'components/base/b-tree/interface';
 
 import bTreeProps from 'components/base/b-tree/props';
 import Foldable from 'components/base/b-tree/modules/foldable';
@@ -296,7 +296,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	 * Returns an iterator over the element nodes which have modifier `active = true`.
 	 * The iterator returns pairs of elements `[Element, The id and value of an item associated with the element]`.
 	 */
-	protected traverseActiveNodes(): IterableIterator<[Element, {id: CanUndef<number>; value: CanUndef<unknown>}]> {
+	protected traverseActiveNodes(): IterableIterator<[Element, ItemMeta]> {
 		const
 			{top, indexes} = this,
 			{$el, block: $b} = top;
