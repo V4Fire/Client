@@ -79,11 +79,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 					content: '#test-div {height: 3000px;}'
 				});
 
-				const component = await renderBottomSlide(page,
-					{
-						heightMode: 'content',
-						maxVisiblePercent: initialMaxVisiblePercent
-					});
+				const component = await renderBottomSlide(page, {
+					heightMode: 'content',
+					maxVisiblePercent: initialMaxVisiblePercent
+				});
 
 				await open(page, component);
 
@@ -226,11 +225,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 				content: '#test-div {height: 3000px;}'
 			});
 
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'content',
-					maxVisiblePercent
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'content',
+				maxVisiblePercent
+			});
 
 			await open(page, component);
 
@@ -244,11 +242,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 
 	test.describe('`overlay`', () => {
 		test('should not have overlay if prop is `false`', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					overlay: false
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				overlay: false
+			});
 
 			await open(page, component);
 
@@ -259,11 +256,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should have overlay if prop is `true`', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					overlay: true
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				overlay: true
+			});
 
 			await open(page, component);
 
@@ -279,11 +275,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 			const
 				maxOpacity = 0.3;
 
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					maxOpacity
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				maxOpacity
+			});
 
 			await open(page, component);
 
@@ -297,11 +292,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 			const
 				maxOpacity = 1;
 
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					maxOpacity
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				maxOpacity
+			});
 
 			await open(page, component);
 
@@ -314,11 +308,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 
 	test.describe('`forceInnerRender`', () => {
 		test('should always render content when prop is `true`', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					forceInnerRender: true
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				forceInnerRender: true
+			});
 
 			const
 				hasContent = await component.evaluate(() => Boolean(document.getElementById('test-div')));
@@ -327,11 +320,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should not render content when prop is `false` and component is closed', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					forceInnerRender: false
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				forceInnerRender: false
+			});
 
 			const
 				hasContent = await component.evaluate(() => Boolean(document.getElementById('test-div')));
@@ -340,11 +332,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should render the content when prop is `false` after open is invoked', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					forceInnerRender: false
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				forceInnerRender: false
+			});
 
 			await open(page, component);
 
@@ -358,10 +349,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 	test.describe('`isFullyOpened`', () => {
 		test.describe('should be `true`', () => {
 			test('when the window is fully opened', async ({page}) => {
-				const component = await renderBottomSlide(page,
-					{
-						heightMode: 'full'
-					});
+				const component = await renderBottomSlide(page, {
+					heightMode: 'full'
+				});
 
 				await open(page, component);
 
@@ -374,10 +364,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 
 		test.describe('should be `false`', () => {
 			test('when the window is closed', async ({page}) => {
-				const component = await renderBottomSlide(page,
-					{
-						heightMode: 'full'
-					});
+				const component = await renderBottomSlide(page, {
+					heightMode: 'full'
+				});
 
 				const
 					testVal = await component.evaluate((ctx) => ctx.isFullyOpened);
@@ -386,11 +375,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 			});
 
 			test('when the window is opened at the intermediate step', async ({page}) => {
-				const component = await renderBottomSlide(page,
-					{
-						heightMode: 'full',
-						steps: [50]
-					});
+				const component = await renderBottomSlide(page, {
+					heightMode: 'full',
+					steps: [50]
+				});
 
 				await open(page, component);
 
@@ -405,10 +393,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 	test.describe('`isClosed`', () => {
 		test.describe('should be `true`', () => {
 			test('when the window is closed', async ({page}) => {
-				const component = await renderBottomSlide(page,
-					{
-						heightMode: 'full'
-					});
+				const component = await renderBottomSlide(page, {
+					heightMode: 'full'
+				});
 
 				const
 					testVal = await component.evaluate((ctx) => ctx.isClosed);
@@ -419,10 +406,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 
 		test.describe('should be `false`', () => {
 			test('when the window is opened', async ({page}) => {
-				const component = await renderBottomSlide(page,
-					{
-						heightMode: 'full'
-					});
+				const component = await renderBottomSlide(page, {
+					heightMode: 'full'
+				});
 
 				await open(page, component);
 
@@ -433,11 +419,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 			});
 
 			test('when the window is opened at the intermediate step', async ({page}) => {
-				const component = await renderBottomSlide(page,
-					{
-						heightMode: 'full',
-						steps: [20]
-					});
+				const component = await renderBottomSlide(page, {
+					heightMode: 'full',
+					steps: [20]
+				});
 
 				await open(page, component);
 
@@ -451,10 +436,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 
 	test.describe('`open`', () => {
 		test('should open fully without `steps` provided', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full'
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full'
+			});
 
 			await open(page, component);
 
@@ -469,11 +453,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 			const
 				step = 20;
 
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					steps: [step]
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				steps: [step]
+			});
 
 			await open(page, component);
 
@@ -485,10 +468,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should set the `opened` modifier', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full'
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full'
+			});
 
 			await open(page, component);
 
@@ -499,10 +481,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should remove the `hidden` modifier', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full'
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full'
+			});
 
 			await open(page, component);
 
@@ -515,10 +496,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 
 	test.describe('`close`', () => {
 		test('should close the window', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full'
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full'
+			});
 
 			await open(page, component);
 			await close(page, component);
@@ -530,11 +510,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should close the window fully with `steps` provided', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					steps: [20, 40, 60]
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				steps: [20, 40, 60]
+			});
 
 			await open(page, component, 2);
 			await close(page, component);
@@ -546,10 +525,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should set the `opened` modifier to `false`', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full'
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full'
+			});
 
 			await open(page, component);
 			await close(page, component);
@@ -561,10 +539,9 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should set the `hidden` modifier', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full'
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full'
+			});
 
 			await open(page, component);
 			await close(page, component);
@@ -581,11 +558,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 			steps = [20, 40, 60];
 
 		test('should open the window at the first step', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					steps
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				steps
+			});
 
 			await next(page, component);
 
@@ -597,11 +573,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should move the window to the next step', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					steps
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				steps
+			});
 
 			await open(page, component);
 			await next(page, component);
@@ -614,11 +589,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should do nothing if the window is fully opened', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					steps
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				steps
+			});
 
 			await open(page, component);
 
@@ -643,11 +617,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 			steps = [20, 40, 60];
 
 		test('should close the window when it\'s opened at the first step', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					steps
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				steps
+			});
 
 			await open(page, component);
 			await prev(page, component);
@@ -660,11 +633,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('should move the window to the previous step', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					steps
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				steps
+			});
 
 			await open(page, component);
 			await next(page, component);
@@ -678,11 +650,10 @@ test.describe('<b-bottom-slide> functional cases', () => {
 		});
 
 		test('does nothing if the window is fully closed', async ({page}) => {
-			const component = await renderBottomSlide(page,
-				{
-					heightMode: 'full',
-					steps
-				});
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				steps
+			});
 
 			await prev(page, component);
 

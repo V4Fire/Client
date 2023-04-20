@@ -29,6 +29,7 @@ import type {
 	renderSlot,
 
 	withDirectives,
+	resolveDirective,
 
 	VNode,
 	DirectiveArguments,
@@ -94,6 +95,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		const
 			isRegular = params.functional !== true || !supports.functional,
 			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
+
+		if (vnode.ref != null && vnode.ref.i == null) {
+			vnode.ref.i ??= {
+				refs: this.$refs,
+				setupState: {}
+			};
+		}
 
 		if (isRegular) {
 			return vnode;
@@ -196,6 +204,18 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 		}
 
 		return app.context != null ? app.context.component(name) ?? original(name) : original(name);
+	});
+}
+
+/**
+ * Wrapper for the component library `resolveDirective` function
+ * @param original
+ */
+export function wrapResolveDirective<T extends typeof resolveDirective>(
+	original: T
+): T {
+	return Object.cast(function resolveDirective(this: ComponentInterface, name: string) {
+		return app.context != null ? app.context.directive(name) ?? original(name) : original(name);
 	});
 }
 

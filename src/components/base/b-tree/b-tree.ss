@@ -16,13 +16,13 @@
 		? rootAttrs['v-async-target'] = TRUE
 
 	- block body
-		< template &
-			v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
-			:key = getItemKey(el, i)
-		.
+		< template v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams)
 			< .&__node &
+				:key = getItemKey(el, i) |
+
 				:-id = dom.getId(el.id) |
 				:-level = level |
+
 				:class = provide.elementClasses({
 					node: {
 						level,

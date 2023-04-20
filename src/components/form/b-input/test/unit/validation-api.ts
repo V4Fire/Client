@@ -19,6 +19,7 @@ import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
 import Utils from 'tests/helpers/utils';
 
+// eslint-disable-next-line max-lines-per-function
 test.describe('<b-input> validation API', () => {
 	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
@@ -619,7 +620,7 @@ test.describe('<b-input> validation API', () => {
 			test.expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 				validator: 'date',
 				error: {name: 'MIN', value: new Date(1989, 2, 25), params},
-				message: 'Date value must be at least "18.10.1989"'
+				message: `Date value must be at least "${new Date(1989, 9, 18).toDateString()}"`
 			});
 
 			await target.evaluate((ctx) => {
@@ -629,7 +630,7 @@ test.describe('<b-input> validation API', () => {
 			test.expect(await target.evaluate((ctx) => ctx.validate())).toEqual({
 				validator: 'date',
 				error: {name: 'MAX', value: new Date(1989, 10, 25), params},
-				message: 'Date value must be no more than "25.10.1989"'
+				message: `Date value must be no more than "${new Date(1989, 9, 25).toDateString()}"`
 			});
 		});
 

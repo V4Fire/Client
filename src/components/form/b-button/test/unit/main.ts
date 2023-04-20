@@ -121,7 +121,7 @@ test.describe('<b-button>', () => {
 		});
 
 		test('when clicked, the component should emit the `click` event', async () => {
-			const pr = bButton.evaluate((ctx) => ctx.promisifyOnce('click'));
+			const pr = bButton.evaluate((ctx) => ctx.promisifyOnce('click').then(() => undefined));
 			await $el.click();
 			await test.expect(pr).resolves.toBeUndefined();
 		});

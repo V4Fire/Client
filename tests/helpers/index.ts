@@ -12,36 +12,16 @@ import Utils from 'tests/helpers/utils';
 import Component from 'tests/helpers/component';
 import Scroll from 'tests/helpers/scroll';
 import Router from 'tests/helpers/router';
-import Request from 'tests/helpers/request';
 import Gestures from 'tests/helpers/gestures';
 
-/**
- * @deprecated - use static methods instead
- */
-export class Helpers {
-	/** @see [[Request]] */
-	request: Request = new Request();
+export {
 
-	/** @see [[Utils]] */
-	utils: Utils = new Utils();
+	BOM,
+	DOM,
+	Utils,
+	Component,
+	Scroll,
+	Router,
+	Gestures
 
-	/** @see [[Component]] */
-	component: Component = new Component();
-
-	/** @see [[Gestures]] */
-	gestures: Gestures = new Gestures();
-
-	/** @see [[BOM]] */
-	bom: BOM = new BOM();
-
-	/** @see [[Router]] */
-	router: Router = new Router();
-
-	/** @see [[DOM]] */
-	dom: DOM = new DOM();
-
-	/** @see [[Scroll]] */
-	scroll: Scroll = new Scroll();
-}
-
-export default new Helpers();
+};

@@ -5,6 +5,7 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
@@ -43,12 +44,12 @@ test.describe('<b-bottom-slide> events', () => {
 		gestures: JSHandle<GesturesInterface>;
 
 	test.beforeEach(async ({demoPage, page}) => {
-			await demoPage.goto();
+		await demoPage.goto();
 
-			gestures = await Gestures.create(page, {
-				dispatchEl: selector,
-				targetEl: selector
-			});
+		gestures = await Gestures.create(page, {
+			dispatchEl: selector,
+			targetEl: selector
+		});
 	});
 
 	test.describe('should emit `open`', () => {

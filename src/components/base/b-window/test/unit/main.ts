@@ -28,6 +28,7 @@ test.describe('<b-window>', () => {
 					children: {
 						default: 'Hello content'
 					},
+
 					attrs: {
 						id: 'test-div'
 					}

@@ -25,7 +25,6 @@ export default class Component {
 	 * @param page
 	 * @param componentName
 	 * @param scheme
-	 * @param [opts]
 	 */
 	 static async createComponents(
 		page: Page,
@@ -46,7 +45,6 @@ export default class Component {
 	 * @param page
 	 * @param componentName
 	 * @param [scheme]
-	 * @param [opts]
 	 */
 	 static async createComponent<T extends iBlock>(
 		page: Page,
@@ -60,7 +58,6 @@ export default class Component {
 	 * @param page
 	 * @param componentName
 	 * @param [scheme]
-	 * @param [opts]
 	 */
 	 static async createComponent<T extends iBlock>(
 		page: Page,
@@ -72,7 +69,6 @@ export default class Component {
 	 * @param page
 	 * @param componentName
 	 * @param [scheme]
-	 * @param [opts]
 	 */
 	static async createComponent<T extends iBlock>(
 		page: Page,
@@ -103,7 +99,7 @@ export default class Component {
 
 		}, [{componentName, schemeAsString}]);
 
-		return <Promise<JSHandle<T>>>this.getComponentByQuery(page, `[data-render-id="${renderId}"]`);
+		return this.waitForComponentByQuery(page, `[data-render-id="${renderId}"]`);
 	}
 
 	/**
