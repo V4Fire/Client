@@ -21,11 +21,11 @@ export default abstract class bListProps extends iData {
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
 
-	/** @see [[iActiveItems.Active]] */
-	readonly Active!: iActiveItems['Active'];
-
 	/** @see [[iActiveItems.ActiveProp]] */
 	readonly ActiveProp!: iActiveItems['ActiveProp'];
+
+	/** @see [[iActiveItems.Active]] */
+	readonly Active!: iActiveItems['Active'];
 
 	/** @see [[iItems.items]] */
 	@prop(Array)
