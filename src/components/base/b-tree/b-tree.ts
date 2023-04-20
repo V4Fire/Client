@@ -75,30 +75,6 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 	activeStore!: iActiveItems['activeStore'];
 
-	/**
-	 * A map of the item indexes and their values
-	 */
-	@system()
-	indexes!: Dictionary;
-
-	/**
-	 * A map of the item values and their indexes
-	 */
-	@system()
-	valueIndexes!: Map<this['Item']['value'], number>;
-
-	/**
-	 * A map of the item values and their descriptors
-	 */
-	@system()
-	valueItems!: Map<this['Item']['value'], this['Item']>;
-
-	/**
-	 * This prefix guarantees component :key uniqueness after item changes
-	 */
-	@system()
-	itemKeyPrefix: number = 0;
-
 	/** @see [[iActiveItems.activeChangeEvent]] */
 	@system()
 	readonly activeChangeEvent: string = 'change';
@@ -133,6 +109,30 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 			'any'
 		]
 	};
+
+	/**
+	 * A map of the item indexes and their values
+	 */
+	@system()
+	protected indexes!: Dictionary;
+
+	/**
+	 * A map of the item values and their indexes
+	 */
+	@system()
+	protected valueIndexes!: Map<Item['value'], number>;
+
+	/**
+	 * A map of the item values and their descriptors
+	 */
+	@system()
+	protected valueItems!: Map<Item['value'], Item>;
+
+	/**
+	 * This prefix guarantees component :key uniqueness after item changes
+	 */
+	@system()
+	protected itemKeyPrefix: number = 0;
 
 	/**
 	 * Returns root b-tree component
