@@ -20,7 +20,7 @@ import type { Item } from 'components/base/b-list/interface';
  * @param el
  * @param status
  */
-export function setActiveMod(block: Block | undefined, el: Element, status: boolean): void {
+export function setActiveMod(block: Nullable<Block>, el: Element, status: boolean): void {
 	if (block == null) {
 		return;
 	}
