@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import type { BrowserContext, JSHandle, Page } from 'playwright';
 
 import DOM from 'tests/helpers/dom';
