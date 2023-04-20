@@ -28,14 +28,15 @@ export default abstract class iActiveItems extends iItems {
 	abstract override readonly Item: Item;
 
 	/**
+	 * Type: the input parameter to set the component active item.
+	 * For example, to set via the `activeProp` prop or via the `setActive` method.
+	 */
+	abstract readonly ActiveProp: ActiveProp;
+
+	/**
 	 * Type: the component active item
 	 */
 	abstract readonly Active: Active;
-
-	/**
-	 * Type: the component active input for `activeProp`, `setActive`, `toggleActive`, `unsetActive`
-	 */
-	abstract readonly ActiveProp: ActiveProp;
 
 	/**
 	 * Name of the active item(s) change event
@@ -69,7 +70,7 @@ export default abstract class iActiveItems extends iItems {
 	 * The active item(s) of the component.
 	 * If the component is switched to "multiple" mode, the getter will return a Set.
 	 *
-	 * @see [[iActiveItems.prototype.activeStore]]
+	 * @see [[iActiveItems.activeStore]]
 	 */
 	abstract get active(): this['Active'];
 
@@ -88,15 +89,14 @@ export default abstract class iActiveItems extends iItems {
 	abstract get activeElement(): CanPromise<CanNull<CanArray<Element>>>;
 
 	/**
-	 * Returns a `sync.link` to `activeProp` for `activeStore`
+	 * Creates a link between `activeProp` and `activeStore` and returns the result
 	 *
 	 * @param ctx
-	 * @param [modifyVal]
-	 * @emits `immediateChange(active: CanIter<unknown>)`
+	 * @param [setter]
 	 */
-	static linkActiveStore(ctx: TraitComponent, modifyVal?: (val: iActiveItems['Active']) => iActiveItems['Active']): iActiveItems['Active'] {
+	static linkActiveStore(ctx: TraitComponent, setter?: (value: iActiveItems['Active']) => iActiveItems['Active']): iActiveItems['Active'] {
 		return ctx.sync.link('activeProp', (val: iActiveItems['Active']) => {
-			val = modifyVal?.(val) ?? val;
+			val = setter?.(val) ?? val;
 
 			const
 				beforeDataCreate = ctx.hook === 'beforeDataCreate';
@@ -136,7 +136,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Checks if the passed item has an active property value.
+	 * Checks if the passed element has an activity property.
 	 * If true, sets it as the component active value.
 	 *
 	 * @param ctx
@@ -162,7 +162,7 @@ export default abstract class iActiveItems extends iItems {
 		return v;
 	}
 
-	/** @see [[iActiveItems.prototype.isActive]] */
+	/** @see [[iActiveItems.isActive]] */
 	static isActive: AddSelf<iActiveItems['isActive'], TraitComponent> = (ctx, value: Item['value']) => {
 		const
 			{active} = ctx;
@@ -178,7 +178,7 @@ export default abstract class iActiveItems extends iItems {
 		return value === active;
 	};
 
-	/** @see [[iActiveItems.prototype.setActive]] */
+	/** @see [[iActiveItems.setActive]] */
 	static setActive(ctx: TraitComponent, value: iActiveItems['ActiveProp'], unsetPrevious?: boolean): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
@@ -228,7 +228,7 @@ export default abstract class iActiveItems extends iItems {
 		return true;
 	}
 
-	/** @see [[iActiveItems.prototype.unsetActive]] */
+	/** @see [[iActiveItems.unsetActive]] */
 	static unsetActive(ctx: TraitComponent, value: iActiveItems['ActiveProp']): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
@@ -274,7 +274,7 @@ export default abstract class iActiveItems extends iItems {
 		return true;
 	}
 
-	/** @see [[iActiveItems.prototype.toggleActive]] */
+	/** @see [[iActiveItems.toggleActive]] */
 	static toggleActive(ctx: TraitComponent, value: iActiveItems['ActiveProp'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		const
 			activeStore = ctx.field.get('activeStore');
@@ -323,7 +323,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Activates the item(s) by the specified value(s).
+	 * Activates the component item(s) by the specified value(s).
 	 * If the component is switched to the `multiple` mode, the method can take a Set to set multiple items.
 	 *
 	 * @param value
@@ -336,7 +336,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Deactivates the item(s) by the specified value(s).
+	 * Deactivates the component item(s) by the specified value(s).
 	 * If the component is switched to the `multiple` mode, the method can take a Set to unset multiple items.
 
 	 * @param value
@@ -347,7 +347,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Toggles item activation by the specified value.
+	 * Toggles component item activation by the specified value.
 	 * The methods return the new active component item(s).
 	 *
 	 * @param value

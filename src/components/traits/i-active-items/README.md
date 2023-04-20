@@ -1,6 +1,7 @@
 # traits/i-active-items
 
 This module provides a trait that extends [[iItems]] and adds the ability to set an "active" item.
+Take a look at [[bTree]] or [[bList]] to see more.
 
 ## Synopsis
 
@@ -8,37 +9,76 @@ This module provides a trait that extends [[iItems]] and adds the ability to set
 
 * The trait contains TS logic.
 
+* The trait can be partially derived.
+
+  ```typescript
+  import { derive } from 'core/functools/trait';
+
+  import iActiveItems from 'traits/i-active-items/i-active-items';
+  import iBlock, { component } from 'components/super/i-block/i-block';
+
+  interface bTree extends Trait<typeof iOpen> {}
+
+  @component()
+  @derive(iOpen)
+  class bTree extends iBlock implements iActiveItems {
+    /** @see [[iActiveItems.activeChangeEvent]] */
+    readonly activeChangeEvent: string = 'change';
+
+    /** @see [[iActiveItems.activeStore]] */
+    @system((o) => iActiveItems.linkActiveStore(o))
+    activeStore!: iActiveItems['activeStore'];
+  }
+
+  export default bTree;
+  ```
+
 ## Associated types
 
-The trait declares an associated type to specify the active item: **Active**.
+The trait declares associated types to specify the active item: **ActiveProp** and **Active**.
+
+```typescript
+import iActiveItems, { Active, ActiveProp } from 'traits/i-active-items/i-active-items';
+import iBlock, { component } from 'components/super/i-block/i-block';
+
+@component()
+export default class bTree extends iBlock implements iActiveItems {
+  /** @see [[iActiveItems.ActiveProp]] */
+  readonly ActiveProp!: ActiveProp;
+
+  /** @see [[iActiveItems.Active]] */
+  readonly Active!: Active;
+}
+```
+
+See also the [[items]] trait.
 
 ## Events
 
-| EventName         | Description                                                                                                                     | Payload description                    | Payload  |
-|-------------------|---------------------------------------------------------------------------------------------------------------------------------|----------------------------------------|----------|
-| `change`          | The active item of the component has been changed                                                                               | Active value or a set of active values | `Active` |
-| `actionChange`    | The active item of the component has been changed due to some user action                                                       | Active value or a set of active values | `Active` |
+| EventName      | Description                                                               | Payload description                    | Payload  |
+|----------------|---------------------------------------------------------------------------|----------------------------------------|----------|
+| `change`       | The active item of the component has been changed                         | Active value or a set of active values | `Active` |
+| `actionChange` | The active item of the component has been changed due to some user action | Active value or a set of active values | `Active` |
 
-P.s. These are recommended event names. Each consumer must declare their event name by setting `activeChangeEvent` property:
+Keep in mind these are recommended event names. Each consumer must declare its own event name by setting the `activeChangeEvent` property.
 
 ```typescript
-
 import iActiveItems from 'traits/i-active-items/i-active-items';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bCustomList implements iActiveItems {
+export default class bTree extends iBlock implements iActiveItems {
   readonly activeChangeEvent: string = 'change';
 }
-
 ```
 
 ## Props
 
 The trait specifies a bunch of optional props.
 
-### [active]
+### [activeProp]
 
 The active item(s) of the component.
-If the component is switched to "multiple" mode, you can pass in an array to define multiple active items.
+If the component is switched to "multiple" mode, you can pass in an iterable to define multiple active elements.
 
 ```
 < b-tree :items = [{value: 0, label: 'Foo'}, {value: 1, label: 'Bar'}] | :active = 0
@@ -46,19 +86,19 @@ If the component is switched to "multiple" mode, you can pass in an array to def
 
 ### [multiple]
 
-f true, the component supports the multiple active items feature.
+If true, the component supports the multiple active items feature.
 
 ### [cancelable]
 
 If set to true, the active item can be canceled by clicking it again.
-By default, if the component is switched to the `multiple` mode, this value is set to `true`,
-otherwise it is set to `false`.
+By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise it is set to `false`.
 
 ## Fields
 
 ### [activeStore]
 
-Store for the active item(s) of the component.
+The component internal active item store.
+If the component is switched to the `multiple` mode, the value is defined as a Set.
 
 ## Getters
 
@@ -69,14 +109,16 @@ If the component is switched to "multiple" mode, the getter will return a Set.
 
 ```typescript
 import iActiveItems from 'traits/i-active-items/i-active-items';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bCustomList implements iActiveItems {
-  /** @see [[iActiveItems.prototype.active] */
+@component()
+export default class bTree extends iBlock implements iActiveItems {
+  /** @see [[iActiveItems.active] */
   get active(): iActiveItems['active'] {
     return iActiveItems.getActive(this.top ?? this);
   }
 
-  /** @see [[iActiveItems.prototype.active] */
+  /** @see [[iActiveItems.active] */
   set active(value: this['Active']) {
     (this.top ?? this).field.set('activeStore', value);
   }
@@ -117,25 +159,20 @@ The trait provides a bunch of static helper functions.
 
 ### linkActiveStore
 
-Returns a `sync.link` to `activeProp` for `activeStore`.
+Creates a link between `activeProp` and `activeStore` and returns the result
 
 ```typescript
-import { derive } from 'core/functools/trait';
-
 import iActiveItems from 'traits/i-active-items/i-active-items';
-import iData, { component, prop, system } from 'super/i-data/i-data';
-
-import type { Item, Items, RenderFilter } from 'base/b-tree/interface';
+import iBlock, { component, prop, system } from 'super/i-block/i-block';
 
 @component()
-@derive(iActiveItems)
-class bTree extends iData implements iActiveItems {
-  /** @see [[iItems.items]] */
-  @prop(Array)
-  readonly itemsProp: this['Items'] = [];
+class bTree extends iBlock implements iActiveItems {
+  /** @see [[iActiveItems.activeProp]] */
+  @prop({required: false})
+  readonly activeProp?: this['ActiveProp'];
 
   /** @see [[iActiveItems.activeStore]] */
-  @system<bTree>((o) => iActiveItems.linkActiveStore(o))
+  @system((o) => iActiveItems.linkActiveStore(o))
   activeStore!: iActiveItems['activeStore'];
 }
 ```
@@ -145,85 +182,33 @@ class bTree extends iData implements iActiveItems {
 Returns the active item(s) of the passed component.
 
 ```typescript
-import { derive } from 'core/functools/trait';
-
 import iActiveItems from 'traits/i-active-items/i-active-items';
-import iData, { component, prop, system, computed } from 'super/i-data/i-data';
-
-import type { Item, Items, RenderFilter } from 'base/b-tree/interface';
+import iBlock, { component, computed } from 'super/i-block/i-block';
 
 @component()
-@derive(iActiveItems)
-class bTree extends iData implements iActiveItems {
-  /** @see [[iItems.items]] */
-  @prop(Array)
-  readonly itemsProp: this['Items'] = [];
-
-  /** @see [[iActiveItems.activeStore]] */
-  @system<bTree>((o) => iActiveItems.linkActiveStore(o))
-  activeStore!: iActiveItems['activeStore'];
-
-  /** @see [[iActiveItems.prototype.active] */
+class bTree extends iBlock implements iActiveItems {
+  /** @see [[iActiveItems.active] */
   @computed({cache: true, dependencies: ['top.activeStore']})
   get active(): iActiveItems['active'] {
-    return iActiveItems.getActive(this.top ?? this);
+    return iActiveItems.getActive(this);
   }
 }
 ```
 
 ### initItem
 
-Checks if the passed item has an active property value.
+Checks if the passed element has an activity property.
 If true, sets it as the component active value.
 
 ```typescript
-import { derive } from 'core/functools/trait';
-
 import iActiveItems from 'traits/i-active-items/i-active-items';
-import iData, { component, prop, system, hook } from 'super/i-data/i-data';
-
-import type { Item, Items, RenderFilter } from 'base/b-tree/interface';
+import iBlock, { component, hook } from 'super/i-block/i-block';
 
 @component()
-@derive(iActiveItems)
-class bTree extends iData implements iActiveItems {
-  /** @see [[iItems.items]] */
-  @prop(Array)
-  readonly itemsProp: this['Items'] = [];
-
-  /** @see [[iActiveItems.activeStore]] */
-  @system<bTree>((o) => iActiveItems.linkActiveStore(o))
-  activeStore!: iActiveItems['activeStore'];
-
-  /** @see [[iActiveItems.prototype.initComponentValues]] */
+class bTree extends iBlock implements iActiveItems {
   @hook('beforeDataCreate')
   initComponentValues(): void {
-    if (this.top == null) {
-      this.values = new Map();
-      this.indexes = {};
-      this.valuesToItems = new Map();
-
-    } else {
-      this.values = this.top.values;
-      this.indexes = this.top.indexes;
-      this.valuesToItems = this.top.valuesToItems;
-    }
-
     this.field.get<this['Items']>('items')?.forEach((item) => {
-      if (this.values.has(item.value)) {
-        return;
-      }
-
-      const
-        {value} = item;
-
-      const
-        id = this.values.size;
-
-      this.values.set(value, id);
-      this.indexes[id] = value;
-      this.valuesToItems.set(value, item);
-
       iActiveItems.initItem(this, item);
     });
   }

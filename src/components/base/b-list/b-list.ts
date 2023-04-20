@@ -91,7 +91,6 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	/**
 	 * @see [[iActiveItems.activeStore]]
 	 * @see [[bList.activeProp]]
-	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
 	@system<bList>((o) => {
 		o.watch('modelValue', (val) => o.setActive(val, true));
