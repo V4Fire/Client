@@ -209,8 +209,8 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	 * @param [opts] - additional options
 	 */
 	traverse(
-		ctx: bTree = this.topProp ?? this,
-		opts: { deep: boolean } = {deep: true}
+		ctx: bTree = this.top,
+		opts: {deep: boolean} = {deep: true}
 	): IterableIterator<[this['Item'], bTree]> {
 		const
 			children = ctx.$refs.children ?? [],
