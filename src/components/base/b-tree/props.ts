@@ -15,24 +15,18 @@ import type bTree from 'components/base/b-tree/b-tree';
 import type { Item, RenderFilter } from 'components/base/b-tree/interface';
 
 @component()
-export default abstract class bTreeProps extends iData implements iItems {
+export default abstract class bTreeProps extends iData {
 	/** @see [[iItems.Item]] */
 	readonly Item!: Item;
 
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
 
-	/** @see [[iActiveItems.Active]] */
-	readonly Active!: iActiveItems['Active'];
-
 	/** @see [[iActiveItems.ActiveProp]] */
 	readonly ActiveProp!: iActiveItems['ActiveProp'];
 
-	/**
-	 * Link to the top-level component (internal parameter)
-	 */
-	@prop({type: Object, required: false})
-	readonly topProp?: bTree;
+	/** @see [[iActiveItems.Active]] */
+	readonly Active!: iActiveItems['Active'];
 
 	/** @see [[iItems.items]] */
 	@prop(Array)
@@ -41,6 +35,28 @@ export default abstract class bTreeProps extends iData implements iItems {
 	/** @see [[iItems.item]] */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
+
+	/** @see [[iActiveItems.activeProp]] */
+	@prop({required: false})
+	readonly activeProp?: this['ActiveProp'];
+
+	/** @see [[iActiveItems.activeProp]] */
+	@prop({required: false})
+	readonly modelValue?: this['ActiveProp'];
+
+	/** @see [[iActiveItems.multiple]] */
+	@prop(Boolean)
+	readonly multiple: boolean = false;
+
+	/** @see [[iActiveItems.cancelable]] */
+	@prop({type: Boolean, required: false})
+	readonly cancelable?: boolean;
+
+	/**
+	 * If true, then all nested elements are folded by default
+	 */
+	@prop(Boolean)
+	readonly folded: boolean = true;
 
 	/** @see [[iItems.itemKey]] */
 	@prop({type: [String, Function], required: false})
@@ -88,30 +104,14 @@ export default abstract class bTreeProps extends iData implements iItems {
 	readonly renderChunks: number = 5;
 
 	/**
-	 * If true, then all nested elements are folded by default
+	 * Link to the top-level component (internal parameter)
 	 */
-	@prop(Boolean)
-	readonly folded: boolean = true;
+	@prop({type: Object, required: false})
+	readonly topProp?: bTree;
 
 	/**
 	 * Component nesting level (internal parameter)
 	 */
 	@prop(Number)
 	readonly level: number = 0;
-
-	/** @see [[iActiveItems.activeProp]] */
-	@prop({required: false})
-	readonly activeProp?: this['ActiveProp'];
-
-	/** @see [[iActiveItems.activeProp]] */
-	@prop({required: false})
-	readonly modelValue?: this['ActiveProp'];
-
-	/** @see [[iActiveItems.multiple]] */
-	@prop(Boolean)
-	readonly multiple: boolean = false;
-
-	/** @see [[iActiveItems.cancelable]] */
-	@prop({type: Boolean, required: false})
-	readonly cancelable?: boolean;
 }
