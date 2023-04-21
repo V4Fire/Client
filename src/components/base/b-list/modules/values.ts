@@ -7,11 +7,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { system } from 'core/component';
+
 import Friend from 'components/friends/friend';
 
 import type bList from 'components/base/b-list/b-list';
-import { system } from 'core/component';
-import type { Item } from 'components/base/b-tree/b-tree';
+import type { Item } from 'components/base/b-list/b-list';
 import iActiveItems from 'components/traits/i-active-items/i-active-items';
 
 export default class Values extends Friend {
@@ -72,7 +73,7 @@ export default class Values extends Friend {
 			}
 
 			if (item.active) {
-				activeItem = <Item>item;
+				activeItem = item;
 			}
 
 			values.set(val, i);
