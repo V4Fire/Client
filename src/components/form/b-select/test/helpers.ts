@@ -1,7 +1,7 @@
 import type { JSHandle, Page } from 'playwright';
 
 import type bSelect from 'components/form/b-select/b-select';
-import { Component } from 'tests/helpers';
+import { Component, DOM } from 'tests/helpers';
 
 /**
  * Returns rendered `b-select` component
@@ -15,3 +15,9 @@ export function renderSelect(
 ): Promise<JSHandle<bSelect>> {
 	return Component.createComponent(page, 'b-select', paramsOrAttrs);
 }
+
+/**
+ * Returns selector for the element
+ * @param elName
+ */
+export const createSelector = DOM.elNameSelectorGenerator('b-select');
