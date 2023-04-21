@@ -7,10 +7,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { system } from 'core/component';
+
 import Friend from 'components/friends/friend';
 
 import type bTree from 'components/base/b-tree/b-tree';
-import { system } from 'core/component';
 import type { Item } from 'components/base/b-tree/b-tree';
 import iActiveItems from 'components/traits/i-active-items/i-active-items';
 
