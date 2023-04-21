@@ -27,6 +27,7 @@ import type { Item, ItemMeta, UnsafeBTree } from 'components/base/b-tree/interfa
 
 import bTreeProps from 'components/base/b-tree/props';
 import Foldable from 'components/base/b-tree/modules/foldable';
+import Values from 'components/base/b-tree/modules/values';
 import { setActiveMod, normalizeItems } from 'components/base/b-tree/modules/helpers';
 
 export * from 'components/super/i-data/i-data';
@@ -111,30 +112,6 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	};
 
 	/**
-	 * A map of the item indexes and their values
-	 */
-	@system()
-	protected indexes!: Dictionary;
-
-	/**
-	 * A map of the item values and their indexes
-	 */
-	@system()
-	protected valueIndexes!: Map<Item['value'], number>;
-
-	/**
-	 * A map of the item values and their descriptors
-	 */
-	@system()
-	protected valueItems!: Map<Item['value'], Item>;
-
-	/**
-	 * This prefix guarantees component :key uniqueness after item changes
-	 */
-	@system()
-	protected itemKeyPrefix: number = 0;
-
-	/**
 	 * Returns root b-tree component
 	 */
 	protected get top(): bTree {
@@ -159,6 +136,12 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	protected override readonly $refs!: iData['$refs'] & {
 		children?: bTree[];
 	};
+
+	/**
+	 * API for b-tree values
+	 */
+	@system<bTree>((o) => new Values(o))
+	protected values!: Values;
 
 	/**
 	 * Parameters for async render tasks
@@ -298,7 +281,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	 */
 	protected traverseActiveNodes(): IterableIterator<[Element, ItemMeta]> {
 		const
-			{top, indexes} = this,
+			{top, values} = this,
 			{$el, block: $b} = top;
 
 		if ($el != null && $b != null) {
@@ -325,7 +308,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 				const
 					id = rawId != null ? parseInt(rawId, 10) : undefined,
-					value = id != null ? indexes[id] : undefined;
+					value = id != null ? values.getValue(id) : undefined;
 
 				yield [node, {id, value}];
 			}
@@ -334,9 +317,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
-		const key = iItems.getItemKey(this, item, i);
-
-		return key ?? `${this.itemKeyPrefix}-${this.valueIndexes.get(item.value)}`;
+		return iItems.getItemKey(this, item, i) ?? this.values.getItemKey(item.value);
 	}
 
 	protected override initRemoteData(): CanUndef<this['items']> {
@@ -416,7 +397,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	protected findItemElement(value: this['Item']['value']): HTMLElement | null {
 		const
 			{top} = this,
-			id = this.valueIndexes.get(value);
+			id = this.values.getIndex(value);
 
 		if (id == null) {
 			return null;
@@ -440,78 +421,10 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		}
 	}
 
-	/**
-	 * Initializes component values
-	 * @param [itemsChanged] - true, if the method is invoked after items changed
-	 */
+	/** @see [[Values.initComponentValues]] */
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
-		const
-			that = this,
-			{active} = this;
-
-		let
-			hasActive = false,
-			activeItem;
-
-		if (this.topProp == null) {
-			this.itemKeyPrefix++;
-			this.indexes = {};
-			this.valueIndexes = new Map();
-			this.valueItems = new Map();
-
-			traverse(this.field.get<this['Items']>('itemsStore'));
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!hasActive) {
-				if (itemsChanged && active != null) {
-					this.field.set('activeStore', undefined);
-				}
-
-				if (activeItem != null) {
-					iActiveItems.initItem(this, activeItem);
-				}
-			}
-
-		} else {
-			['indexes', 'valueIndexes', 'valueItems'].forEach((property) => {
-				Object.defineProperty(this, property, {
-					enumerable: true,
-					configurable: true,
-					get: () => this.topProp?.[property]
-				});
-			});
-		}
-
-		function traverse(items?: Array<bTree['Item']>) {
-			items?.forEach((item) => {
-				const
-					{value} = item;
-
-				if (that.valueIndexes.has(value)) {
-					return;
-				}
-
-				const
-					id = that.valueIndexes.size;
-
-				that.indexes[id] = value;
-				that.valueIndexes.set(value, id);
-				that.valueItems.set(value, item);
-
-				if (item.value === active) {
-					hasActive = true;
-				}
-
-				if (item.active) {
-					activeItem = item;
-				}
-
-				if (Object.isArray(item.children)) {
-					traverse(item.children);
-				}
-			});
-		}
+		this.values.initComponentValues(itemsChanged);
 	}
 
 	/**
@@ -551,7 +464,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		const id = target.getAttribute('data-id');
 
 		if (id != null) {
-			this.toggleActive(this.indexes[id]);
+			this.toggleActive(this.values.getValue(id));
 		}
 
 		top.emit(`action-${this.activeChangeEvent}`.camelize(false), this.active);

@@ -51,7 +51,7 @@ export default abstract class Foldable {
 		} else {
 			const
 				{top} = ctx.unsafe,
-				item = ctx.unsafe.valueItems.get(value);
+				item = ctx.unsafe.values.getItem(value);
 
 			if (item != null && ctx.unsafe.hasChildren(item)) {
 				values.push(top.toggleFold(value, false));
@@ -62,7 +62,7 @@ export default abstract class Foldable {
 
 			while (parentValue != null) {
 				const
-					parent = ctx.unsafe.valueItems.get(parentValue);
+					parent = ctx.unsafe.values.getItem(parentValue);
 
 				if (parent != null) {
 					values.push(top.toggleFold(parent.value, false));
@@ -89,7 +89,7 @@ export default abstract class Foldable {
 
 		const
 			el = top.unsafe.findItemElement(value),
-			item = ctx.unsafe.valueItems.get(value);
+			item = ctx.unsafe.values.getItem(value);
 
 		if (oldVal !== newVal && el != null && item != null && ctx.unsafe.hasChildren(item)) {
 			ctx.unsafe.block?.setElementMod(el, 'node', 'folded', newVal);

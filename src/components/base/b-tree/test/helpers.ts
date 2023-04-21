@@ -77,7 +77,7 @@ export function checkOptionTree(
 
 		const promise = (async () => {
 			const
-				id = await target.evaluate((ctx, value) => `${ctx.unsafe.valueIndexes.get(value)}`, item.value),
+				id = await target.evaluate((ctx, value) => `${ctx.unsafe.values.getIndex(value)}`, item.value),
 				elementSelector = `[data-id="${id}"]`,
 				element = await page.waitForSelector(elementSelector, {state: 'attached'});
 
@@ -130,7 +130,7 @@ export async function waitForItem(
 	target: JSHandle<bTree>,
 	value: unknown
 ): Promise<ElementHandle<HTMLElement | SVGElement>> {
-	const id = await target.evaluate((ctx, value) => ctx.unsafe.valueIndexes.get(value), value);
+	const id = await target.evaluate((ctx, value) => ctx.unsafe.values.getIndex(value), value);
 	return page.waitForSelector(`[data-id="${id}"]`, {state: 'attached'});
 }
 
@@ -147,7 +147,7 @@ export async function waitForItems(
 	values: Iterable<unknown>
 ): Promise<Array<ElementHandle<HTMLElement | SVGElement>>> {
 	const ids = await target.evaluate(
-		(ctx, values) => [...values].map((value) => ctx.unsafe.valueIndexes.get(value)),
+		(ctx, values) => [...values].map((value) => ctx.unsafe.values.getIndex(value)),
 		values
 	);
 	return Promise.all(ids.map((id) => page.waitForSelector(`[data-id="${id}"]`, {state: 'attached'})));

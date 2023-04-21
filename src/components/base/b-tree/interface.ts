@@ -66,12 +66,6 @@ export interface UnsafeBTree<CTX extends bTree = bTree> extends UnsafeIData<CTX>
 	top: CTX['top'];
 
 	// @ts-ignore (access)
-	indexes: CTX['indexes'];
-
-	// @ts-ignore (access)
-	valueIndexes: CTX['valueIndexes'];
-
-	// @ts-ignore (access)
-	valueItems: CTX['valueItems'];
+	values: CTX['values'];
 }
 

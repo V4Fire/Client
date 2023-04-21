@@ -20,13 +20,13 @@
 			< .&__node &
 				:key = getItemKey(el, i) |
 
-				:-id = valueIndexes.get(el.value) |
+				:-id = values.getIndex(el.value) |
 				:-level = level |
 
 				:class = provide.elementClasses({
 					node: {
 						level,
-						id: valueIndexes.get(el.value),
+						id: values.getIndex(el.value),
 						active: isActive(el.value),
 						...(hasChildren(el) && {folded: getFoldedPropValue(el)}),
 					}
