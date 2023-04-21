@@ -167,7 +167,7 @@ test.describe('<b-textarea> form API', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderTextarea(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bTextarea>> {
+	async function renderTextarea(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bTextarea>> {
 		await Component.createComponent(page, 'b-textarea', [
 			{
 				attrs: {

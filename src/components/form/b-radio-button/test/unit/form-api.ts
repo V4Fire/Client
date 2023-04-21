@@ -154,7 +154,7 @@ test.describe('<b-radio-button> form API', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderRadioButton(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bRadioButton>> {
+	async function renderRadioButton(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bRadioButton>> {
 		await Component.createComponent(page, 'b-radio-button', [
 			{
 				attrs: {
