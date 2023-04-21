@@ -42,6 +42,7 @@ import iInputText, {
 	ValidatorResult
 
 } from 'components/super/i-input-text/i-input-text';
+import Mask, * as MaskAPI from 'components/super/i-input-text/mask';
 
 import * as on from 'components/form/b-select/modules/handlers';
 import * as h from 'components/form/b-select/modules/helpers';
@@ -69,6 +70,7 @@ export * from 'components/form/b-select/interface';
 export { Value, FormValue };
 
 Block.addToPrototype({setElementMod, removeElementMod});
+Mask.addToPrototype(MaskAPI);
 
 interface bSelect extends Trait<typeof iOpenToggle> {}
 
