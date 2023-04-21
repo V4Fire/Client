@@ -26,6 +26,7 @@ import { component, field, system, computed, hook, watch, ModsDecl } from 'compo
 
 import type { Items } from 'components/base/b-list/interface';
 import bListProps from 'components/base/b-list/props';
+import Values from 'components/base/b-list/modules/values';
 import { setActiveMod, normalizeItems } from 'components/base/b-list/modules/helpers';
 
 export * from 'components/super/i-data/i-data';
@@ -124,16 +125,10 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	protected itemsStore!: this['Items'];
 
 	/**
-	 * A map of the item indexes and their values
+	 * API for b-list values
 	 */
-	@system()
-	protected indexes!: Dictionary;
-
-	/**
-	 * A map of the item values and their indexes
-	 */
-	@system()
-	protected values!: Map<unknown, number>;
+	@system<bList>((o) => new Values(o))
+	protected values!: Values;
 
 	/** @see [[iActiveItems.activeElement]] */
 	@computed({
@@ -147,7 +142,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 		const getEl = (value) => {
 			const
-				id = this.values.get(value);
+				id = this.values.getIndex(value);
 
 			if (id != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {id}) ?? null;
@@ -184,7 +179,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 		if ($b != null) {
 			const
-				id = this.values.get(value),
+				id = this.values.getIndex(value),
 				linkEl = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple || unsetPrevious) {
@@ -227,8 +222,8 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 				els.forEach((el) => {
 					const
-						id = el.getAttribute('data-id'),
-						itemValue = this.indexes[String(id)];
+						id = el.getAttribute('data-id') ?? -1,
+						itemValue = this.values.getValue(id);
 
 					if (itemValue == null) {
 						return;
@@ -285,54 +280,10 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 		return normalizeItems.call(this, items);
 	}
 
-	/**
-	 * Initializes component values
-	 * @param itemsChanged - true, if the method is invoked after items changed
-	 */
+	/** @see [[Values.initComponentValues]] */
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
-		const
-			values = new Map(),
-			indexes = {};
-
-		const
-			{active: currentActive} = this;
-
-		let
-			hasActive = false,
-			activeItem: this['Item'] | undefined;
-
-		for (let i = 0; i < this.items.length; i++) {
-			const
-				item = this.items[i],
-				val = item.value;
-
-			if (item.active === currentActive) {
-				hasActive = true;
-			}
-
-			if (item.active) {
-				activeItem = item;
-			}
-
-			values.set(val, i);
-			indexes[i] = val;
-		}
-
-		if (!hasActive) {
-			const shouldResetActive = itemsChanged && currentActive != null;
-
-			if (shouldResetActive) {
-				this.field.set('activeStore', undefined);
-			}
-
-			if (activeItem != null) {
-				iActiveItems.initItem(this, activeItem);
-			}
-		}
-
-		this.values = values;
-		this.indexes = indexes;
+		this.values.initComponentValues(itemsChanged);
 	}
 
 	/**
@@ -405,9 +356,9 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	protected onItemClick(e: Event): void {
 		const
 			target = <Element>e.delegateTarget,
-			id = Number(target.getAttribute('data-id'));
+			id = target.getAttribute('data-id') ?? -1;
 
-		this.toggleActive(this.indexes[id]);
+		this.toggleActive(this.values.getValue(id));
 		this.emit(`action-${this.activeChangeEvent}`.camelize(false), this.active);
 	}
 }
