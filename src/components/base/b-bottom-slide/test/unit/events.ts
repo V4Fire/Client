@@ -66,7 +66,7 @@ test.describe('<b-bottom-slide> events', () => {
 			await test.expect(pr).toBeResolved();
 		});
 
-		test('on swipe', async ({page}) => {
+		test('on swipe up', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				visible: 160
@@ -97,7 +97,7 @@ test.describe('<b-bottom-slide> events', () => {
 			await test.expect(pr).toBeResolved();
 		});
 
-		test('on swipe', async ({page}) => {
+		test('on swipe down', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full'
 			});
@@ -149,7 +149,7 @@ test.describe('<b-bottom-slide> events', () => {
 			await test.expect(pr).toBeResolved();
 		});
 
-		test('on swipe', async ({page}) => {
+		test('on swipe up', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				visible: 100,
@@ -168,7 +168,7 @@ test.describe('<b-bottom-slide> events', () => {
 		});
 	});
 
-	test('should emit `moveStateChange` on swipe', async ({page}) => {
+	test('should emit `moveStateChange` on swipe up', async ({page}) => {
 		const component = await renderBottomSlide(page, {
 			heightMode: 'full',
 			visible: 200

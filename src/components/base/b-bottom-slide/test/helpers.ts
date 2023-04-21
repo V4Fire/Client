@@ -7,40 +7,37 @@
  */
 import type { JSHandle, Page } from 'playwright';
 
-import Component from 'tests/helpers/component';
-import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 import BOM from 'tests/helpers/bom';
+import Component from 'tests/helpers/component';
+
+import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 
 export async function renderBottomSlide(
 	page: Page,
 	attrs?: RenderComponentsVnodeParams['attrs'],
 	children?: RenderComponentsVnodeParams['children']
 ): Promise<JSHandle<bBottomSlide>> {
-	await Component.createComponent(
+	const component = await Component.createComponent<bBottomSlide>(
 		page,
 		'b-bottom-slide',
-		[
-			{
-				attrs: {
-					...attrs,
-					id: 'target'
-				},
-				children: children ?? {
-					default: {
-						attrs: {
-							id: 'test-div'
-						},
-						type: 'div',
-						children: {
-							default: 'Hello content'
-						}
+		{
+			attrs: {
+				...attrs,
+				id: 'target'
+			},
+			children: children ?? {
+				default: {
+					attrs: {
+						id: 'test-div'
+					},
+					type: 'div',
+					children: {
+						default: 'Hello content'
 					}
 				}
 			}
-		]
+		}
 	);
-
-	const component = await Component.waitForComponentByQuery<bBottomSlide>(page, '#target');
 
 	await BOM.waitForIdleCallback(page);
 
