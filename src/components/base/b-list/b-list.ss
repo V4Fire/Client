@@ -28,12 +28,12 @@
 						:value = el.value |
 						:aria-selected = el.href === undefined ? isActive(el.value) : undefined |
 
-						:-id = values.get(el.value) |
+						:-id = values.getIndex(el.value) |
 						:-hint = el.hint |
 
 						:class = el.classes.concat(provide.elementClasses({
 							link: {
-								id: values.get(el.value),
+								id: values.getIndex(el.value),
 								active: isActive(el.value),
 								exterior: el.exterior,
 								hidden: el.hidden,

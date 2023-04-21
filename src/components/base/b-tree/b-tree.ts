@@ -11,15 +11,26 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
+
 import SyncPromise from 'core/promise/sync';
+import { derive } from 'core/functools/trait';
 
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
 import Block, { getElementMod } from 'components/friends/block';
 
-import iItems, { IterationKey } from 'components/traits/i-items/i-items';
+import iItems from 'components/traits/i-items/i-items';
+import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
 
-import iData, { component, prop, field, wait, ModsDecl } from 'components/super/i-data/i-data';
-import type { Item, RenderFilter } from 'components/base/b-tree/interface';
+import iData, { watch, hook, component, system, computed, field, ModsDecl, UnsafeGetter } from 'components/super/i-data/i-data';
+import type { Item, ItemMeta, UnsafeBTree } from 'components/base/b-tree/interface';
+
+import bTreeProps from 'components/base/b-tree/props';
+
+import Foldable from 'components/base/b-tree/modules/foldable';
+import Values from 'components/base/b-tree/modules/values';
+
+import { setActiveMod, normalizeItems } from 'components/base/b-tree/modules/helpers';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
@@ -27,93 +38,71 @@ export * from 'components/base/b-tree/interface';
 AsyncRender.addToPrototype({iterate});
 Block.addToPrototype({getElementMod});
 
+const
+	$$ = symbolGenerator();
+
+interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
+
 @component({
 	functional: {
-		dataProvider: undefined
+		functional: true
 	}
 })
 
-export default class bTree extends iData implements iItems {
-	/** @see [[iItems.Item]] */
-	readonly Item!: Item;
-
-	/** @see [[iItems.Items]] */
-	readonly Items!: Array<this['Item']>;
+@derive(iActiveItems, Foldable)
+class bTree extends bTreeProps implements iActiveItems, Foldable {
+	override get unsafe(): UnsafeGetter<UnsafeBTree<this>> {
+		return Object.cast(this);
+	}
 
 	/** @see [[iItems.items]] */
-	@prop(Array)
-	readonly itemsProp: this['Items'] = [];
+	get items(): this['Items'] {
+		return this.field.get<this['Items']>('itemsStore') ?? [];
+	}
 
-	/** @see [[iItems.item]] */
-	@prop({type: [String, Function], required: false})
-	readonly item?: iItems['item'];
-
-	/** @see [[iItems.itemKey]] */
-	@prop({type: [String, Function], required: false})
-	readonly itemKey?: iItems['itemKey'];
-
-	/** @see [[iItems.itemProps]] */
-	@prop({type: Function, required: false})
-	readonly itemProps?: iItems['itemProps'];
+	/** @see [[iItems.items]] */
+	set items(value: this['Items']) {
+		this.field.set('itemsStore', normalizeItems.call(this, value));
+	}
 
 	/**
-	 * A common filter to render items via `asyncRender`.
-	 * It is used to optimize the process of rendering items.
-	 *
-	 * @see [[AsyncRender.iterate]]
-	 * @see [[TaskFilter]]
+	 * @see [[iActiveItems.activeStore]]
+	 * @see [[iActiveItems.syncActiveStore]]
 	 */
-	@prop({
-		type: Function,
-		required: false,
-		default(ctx: bTree, item: unknown, i: number): CanPromise<boolean> {
-			if (ctx.level === 0 && i < ctx.renderChunks) {
-				return true;
-			}
-
-			return ctx.async.animationFrame().then(() => true);
-		}
+	@system<bTree>((o) => {
+		o.watch('modelValue', (val) => o.setActive(val, true));
+		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
 	})
 
-	readonly renderFilter!: RenderFilter;
+	activeStore!: iActiveItems['activeStore'];
 
-	/**
-	 * A filter to render nested items via `asyncRender`.
-	 * It is used to optimize the process of rendering child items.
-	 *
-	 * @see [[AsyncRender.iterate]]
-	 * @see [[TaskFilter]]
-	 */
-	@prop({type: Function, required: false})
-	readonly nestedRenderFilter?: RenderFilter;
+	/** @see [[iActiveItems.activeChangeEvent]] */
+	@system()
+	readonly activeChangeEvent: string = 'change';
 
-	/**
-	 * Number of chunks to render via `asyncRender`
-	 */
-	@prop(Number)
-	readonly renderChunks: number = 5;
+	/** @see [[iActiveItems.active] */
+	@computed({cache: false})
+	get active(): this['Active'] {
+		return iActiveItems.getActive(this.top);
+	}
 
-	/**
-	 * If true, then all nested elements are folded by default
-	 */
-	@prop(Boolean)
-	readonly folded: boolean = true;
+	/** @see [[iActiveItems.activeElement] */
+	get activeElement(): iActiveItems['activeElement'] {
+		const
+			{top} = this;
 
-	/**
-	 * Link to the top level component (internal parameter)
-	 */
-	@prop({type: Object, required: false})
-	readonly top?: bTree;
+		return this.waitComponentStatus('ready', () => {
+			if (top.multiple) {
+				if (!Object.isSet(this.active)) {
+					return [];
+				}
 
-	/**
-	 * Component nesting level (internal parameter)
-	 */
-	@prop(Number)
-	readonly level: number = 0;
+				return [...this.active].flatMap((val) => this.findItemElement(val) ?? []);
+			}
 
-	/** @see [[iItems.items]] */
-	@field((o) => o.sync.link())
-	items!: this['Items'];
+			return this.findItemElement(this.active) ?? null;
+		});
+	}
 
 	static override readonly mods: ModsDecl = {
 		clickableArea: [
@@ -122,10 +111,37 @@ export default class bTree extends iData implements iItems {
 		]
 	};
 
+	/**
+	 * The context of the topmost bTree component
+	 */
+	protected get top(): bTree {
+		return this.topProp ?? this;
+	}
+
+	/**
+	 * Stores bTree normalized items.
+	 * This store is needed because the `items` property should only be accessed via get/set.
+	 */
+	@field<bTree>((o) => o.sync.link<Item[]>((val) => {
+		if (o.dataProvider != null) {
+			return <CanUndef<Item[]>>o.items ?? [];
+		}
+
+		return normalizeItems.call(o, val);
+	}))
+
+	protected itemsStore: this['Items'] = [];
+
 	/** @inheritDoc */
 	protected override readonly $refs!: iData['$refs'] & {
 		children?: bTree[];
 	};
+
+	/**
+	 * Internal API for working with component values
+	 */
+	@system<bTree>((o) => new Values(o))
+	protected values!: Values;
 
 	/**
 	 * Parameters for async render tasks
@@ -149,9 +165,11 @@ export default class bTree extends iData implements iItems {
 
 		const opts = {
 			level: this.level + 1,
-			top: isRootLvl ? this : this.top,
+			topProp: isRootLvl ? this : this.topProp,
+			multiple: this.multiple,
 			classes: this.classes,
 			renderChunks: this.renderChunks,
+			activeProp: this.active,
 			nestedRenderFilter,
 			renderFilter
 		};
@@ -174,7 +192,7 @@ export default class bTree extends iData implements iItems {
 	 * @param [opts] - additional options
 	 */
 	traverse(
-		ctx: bTree = this.top ?? this,
+		ctx: bTree = this.top,
 		opts: {deep: boolean} = {deep: true}
 	): IterableIterator<[this['Item'], bTree]> {
 		const
@@ -202,91 +220,104 @@ export default class bTree extends iData implements iItems {
 		}
 	}
 
-	/**
-	 * Folds the specified item.
-	 * If the method is called without an element passed, all tree sibling elements will be folded.
-	 *
-	 * @param [item]
-	 */
-	@wait('ready')
-	fold(item?: this['Item']): Promise<boolean> {
-		if (item == null) {
-			const
-				values: Array<Promise<boolean>> = [];
+	/** @see [[iActiveItems.isActive]] */
+	isActive(value: this['Item']['value']): boolean {
+		return iActiveItems.isActive(this.top, value);
+	}
 
-			for (const [item] of this.traverse(this, {deep: false})) {
-				values.push(this.fold(item));
-			}
-
-			return SyncPromise.all(values)
-				.then((res) => res.some((value) => value === true));
-		}
-
+	/** @see [[iActiveItems.setActive]] */
+	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		const
-			isFolded = this.getFoldedModById(item.id) === 'true';
+			{top} = this;
 
-		if (isFolded) {
-			return SyncPromise.resolve(false);
+		if (!iActiveItems.setActive(top, value, unsetPrevious)) {
+			return false;
 		}
 
-		return this.toggleFold(item);
+		void top.unfold(value);
+
+		// Deactivate previous active nodes
+		if (!top.multiple || unsetPrevious) {
+			for (const [node, {value}] of this.traverseActiveNodes()) {
+				if (!this.isActive(value)) {
+					setActiveMod(top.block, node, false);
+				}
+			}
+		}
+
+		// Activate current active nodes
+		SyncPromise.resolve(this.activeElement).then((activeElement) => {
+			Array.concat([], activeElement).forEach((activeElement) => setActiveMod(top.block, activeElement, true));
+		}).catch(stderr);
+
+		return true;
+	}
+
+	/** @see [[iActiveItems.unsetActive]] */
+	unsetActive(value: this['ActiveProp']): boolean {
+		const {top} = this;
+
+		if (!iActiveItems.unsetActive(top, value)) {
+			return false;
+		}
+
+		for (const [node, {value}] of this.traverseActiveNodes()) {
+			if (!this.isActive(value)) {
+				setActiveMod(top.block, node, false);
+			}
+		}
+
+		return true;
+	}
+
+	/** @see [[iActiveItems.toggleActive]] */
+	toggleActive(value: this['ActiveProp'], unsetPrevious?: boolean): this['Active'] {
+		return iActiveItems.toggleActive(this.top, value, unsetPrevious);
 	}
 
 	/**
-	 * Unfolds the specified item.
-	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
-	 *
-	 * @param [item]
+	 * Returns an iterator over the element nodes which have modifier `active = true`.
+	 * The iterator returns pairs of elements `[Element, The id and value of an item associated with the element]`.
 	 */
-	@wait('ready')
-	unfold(item?: this['Item']): Promise<boolean> {
-		if (item == null) {
-			const
-				values: Array<Promise<boolean>> = [];
-
-			for (const [item] of this.traverse(this, {deep: false})) {
-				values.push(this.unfold(item));
-			}
-
-			return SyncPromise.all(values)
-				.then((res) => res.some((value) => value === true));
-		}
-
-			const
-				isUnfolded = this.getFoldedModById(item.id) === 'false';
-
-			if (isUnfolded) {
-				return SyncPromise.resolve(false);
-			}
-
-			return this.toggleFold(item);
-	}
-
-	/**
-	 * Toggles the passed item fold value
-	 *
-	 * @param item
-	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
-	 */
-	@wait('ready')
-	toggleFold(item: this['Item']): Promise<boolean> {
+	protected traverseActiveNodes(): IterableIterator<[Element, ItemMeta]> {
 		const
-			target = this.findItemElement(item.id),
-			newVal = this.getFoldedModById(item.id) === 'false';
+			{top, values} = this,
+			{$el, block: $b} = top;
 
-		if (target != null && this.hasChildren(item)) {
-			this.block?.setElementMod(target, 'node', 'folded', newVal);
-			this.emit('fold', target, item, newVal);
+		if ($el != null && $b != null) {
+			const iter = createIter();
 
-			return SyncPromise.resolve(true);
+			return {
+				[Symbol.iterator]() {
+					return this;
+				},
+
+				next: iter.next.bind(iter)
+			};
 		}
 
-		return SyncPromise.resolve(false);
+		return [].values();
+
+		function* createIter() {
+			const nodes = $el!.querySelectorAll(`.${$b!.getFullElementName('node', 'active', true)}`);
+
+			for (let i = 0; i < nodes.length; i++) {
+				const
+					node = nodes[i],
+					rawId = node.getAttribute('data-id');
+
+				const
+					id = rawId != null ? parseInt(rawId, 10) : undefined,
+					value = id != null ? values.getValue(id) : undefined;
+
+				yield [node, {id, value}];
+			}
+		}
 	}
 
 	/** @see [[iItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
-		return iItems.getItemKey(this, item, i);
+		return iItems.getItemKey(this, item, i) ?? this.values.getItemKey(item.value);
 	}
 
 	protected override initRemoteData(): CanUndef<this['items']> {
@@ -321,7 +352,7 @@ export default class bTree extends iData implements iItems {
 	protected getItemProps(item: this['Item'], i: number): Dictionary {
 		const
 			op = this.itemProps,
-			props = Object.reject(item, ['id', 'parentId', 'children', 'folded']);
+			props = Object.reject(item, ['value', 'parentValue', 'children', 'folded']);
 
 		if (op == null) {
 			return props;
@@ -356,31 +387,44 @@ export default class bTree extends iData implements iItems {
 			return item.folded;
 		}
 
-		return this.top?.folded ?? this.folded;
+		return this.topProp?.folded ?? this.folded;
 	}
 
 	/**
-	 * Returns a value of the `folded` modifier from an element by the specified identifier
-	 * @param id
+	 * Searches an HTML element by the specified item value and returns it
+	 * @param value
 	 */
-	protected getFoldedModById(id: string): CanUndef<string> {
+	protected findItemElement(value: this['Item']['value']): HTMLElement | null {
 		const
-			target = this.findItemElement(id);
+			{top} = this,
+			id = this.values.getIndex(value);
 
-		if (!target) {
-			return;
+		if (id == null) {
+			return null;
 		}
 
-		return this.block?.getElementMod(target, 'node', 'folded');
+		return top.$el?.querySelector(`[data-id="${id}"]`) ?? null;
 	}
 
 	/**
-	 * Searches an HTML element by the specified identifier and returns it
-	 * @param id
+	 * Synchronization of items
+	 *
+	 * @param items
+	 * @param oldItems
+	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	protected findItemElement(id: string): CanUndef<HTMLElement> {
-		const itemId = this.dom.getId(id);
-		return this.$el?.querySelector(`[data-id=${itemId}]`) ?? undefined;
+	@watch({path: 'items', immediate: true})
+	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
+		if (!Object.fastCompare(items, oldItems)) {
+			this.initComponentValues(oldItems != null);
+			this.async.setImmediate(() => this.emit('itemsChange', items), {label: $$.syncItemsWatcher});
+		}
+	}
+
+	/** @see [[Values.initComponentValues]] */
+	@hook('beforeDataCreate')
+	protected initComponentValues(itemsChanged: boolean = false): void {
+		this.values.init(itemsChanged);
 	}
 
 	/**
@@ -388,6 +432,43 @@ export default class bTree extends iData implements iItems {
 	 * @param item
 	 */
 	protected onFoldClick(item: this['Item']): void {
-		void this.toggleFold(item);
+		void this.toggleFold(item.value);
+	}
+
+	/**
+	 * Handler: click to some item element
+	 *
+	 * @param e
+	 * @emits `actionChange(active: this['Active'])`
+	 */
+	@watch<bTree>({
+		path: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegateElement('node', cb)
+	})
+
+	protected onItemClick(e: Event): void {
+		e.stopPropagation();
+
+		const
+			{top} = this;
+
+		let
+			target = <Element>e.target;
+
+		if (target.matches(this.block!.getElementSelector('fold'))) {
+			return;
+		}
+
+		target = <Element>e.delegateTarget;
+
+		const id = target.getAttribute('data-id');
+
+		if (id != null) {
+			this.toggleActive(this.values.getValue(id));
+		}
+
+		top.emit(`action-${this.activeChangeEvent}`.camelize(false), this.active);
 	}
 }
+
+export default bTree;

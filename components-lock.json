@@ -1,5 +1,5 @@
 {
-  "hash": "c8ca91a86e6eba55e2a34a465f24c71bceb93c9683d3917249ea1a03d0bce508",
+  "hash": "ed28ab49ac2a1e56c7b7549231a1dd7b3ad1b8e5cf82e7b0bc7fb75546c4ecd1",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1293,6 +1293,36 @@
           "styles": [
             "src/components/traits/i-access/i-access.styl"
           ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "i-active-items",
+        {
+          "index": "src/components/traits/i-active-items/index.js",
+          "declaration": {
+            "name": "i-active-items",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-active-items",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/components/traits/i-active-items/i-active-items.ts",
+          "styles": [],
           "tpl": null,
           "etpl": null
         }

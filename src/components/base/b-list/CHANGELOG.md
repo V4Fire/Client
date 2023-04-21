@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Removed `immediateChange` event
+
 ## v3.??.?? (2022-??-??)
 
 #### :boom: Breaking Change

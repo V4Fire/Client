@@ -6,10 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "components/super/i-data/i-data.styl"
-
-$p = {
-
-}
-
-b-tree extends i-data
+package('i-active-items');

@@ -2739,7 +2739,7 @@ __metadata:
     webpack-bundle-analyzer: 4.5.0
     webpack-cli: 4.9.2
   peerDependencies:
-    "@v4fire/core": ^4.0.0-alpha.1
+    "@v4fire/core": ^4.0.0-alpha.3
     webpack: ^5.70.0
   dependenciesMeta:
     "@config/config":
@@ -2904,7 +2904,7 @@ __metadata:
 
 "@v4fire/core@github:v4fire/core#v4":
   version: 4.0.0-alpha.3
-  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=383e29e0a0008a9dbb4eb8ee8c393338ff2252ff"
+  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=5d72fecc1adb2ca1959e4b8e00b004a734bf0ae0"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -3038,7 +3038,7 @@ __metadata:
       optional: true
     upath:
       optional: true
-  checksum: 7973b54a67d8776edcce08cb6863010db8cd9880539949c5a4658838aa51d6064c646b5139294054dc1861afe377f73de2f15bb0891a5c1991ae965df77a6379
+  checksum: 75cd3b1f8479513051a3ad8577da0367f8d3ecb23e4736b3a3b325a5757e513a7a740a47edda8cced4df136c8f9df2e2de029f4bb20bae6a7dbee80f33ca5915
   languageName: node
   linkType: hard
 

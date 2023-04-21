@@ -92,6 +92,24 @@ class DOM extends Friend {
 
 		return `${this.ctx.componentId}-${id}`;
 	}
+
+	/**
+	 * Takes an identifier associated with the component and returns the original identifier
+	 *
+	 * @param componentAssociatedId
+	 *
+	 * @example
+	 * ```
+	 * dom.unwrapId(dom.getId('bla')) // 'bla'
+	 * ```
+	 */
+	unwrapId(componentAssociatedId: string | null | undefined): CanUndef<string> {
+		if (componentAssociatedId == null) {
+			return undefined;
+		}
+
+		return componentAssociatedId.replace(`${this.ctx.componentId}-`, '');
+	}
 }
 
 export default DOM;
