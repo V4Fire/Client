@@ -16,14 +16,6 @@ This module provides a component to render a recursive tree of elements.
 
 * Folding of branches.
 
-## Modifiers
-
-| Name            | Description                       | Values             | Default |
-|-----------------|-----------------------------------|--------------------|---------|
-| `clickableArea` | The component clickable item area | `ClickableAreaMod` | `fold`  |
-
-See the [[iItems]] trait and the [[iData]] component.
-
 ## Events
 
 | EventName      | Description                                                                  | Payload description                        | Payload               |

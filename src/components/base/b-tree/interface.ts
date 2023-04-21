@@ -43,8 +43,6 @@ export interface RenderFilter {
 	(ctx: bTree, el: Item, i: number): CanPromise<boolean>;
 }
 
-export type ClickableAreaMod = 'fold' | 'any';
-
 // @ts-ignore (unsafe)
 export interface UnsafeBTree<CTX extends bTree = bTree> extends UnsafeIData<CTX> {
 	// @ts-ignore (access)
