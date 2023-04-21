@@ -104,7 +104,7 @@ export default abstract class bTreeProps extends iData {
 	readonly renderChunks: number = 5;
 
 	/**
-	 * Link to the top-level component (internal parameter)
+	 * A link to the top-level component (internal parameter)
 	 */
 	@prop({type: Object, required: false})
 	readonly topProp?: bTree;

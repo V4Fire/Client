@@ -9,6 +9,8 @@ Take a look at [[bTree]] or [[bList]] to see more.
 
 * The trait contains TS logic.
 
+* The trait extends [[iItems]] and re-exports its API.
+
 * The trait can be partially derived.
 
   ```typescript

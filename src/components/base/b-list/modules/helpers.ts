@@ -14,21 +14,21 @@ import type bList from 'components/base/b-list/b-list';
 import type { Item } from 'components/base/b-list/interface';
 
 /**
- * Changes element's link `active` modifier and set's `aria-selected` attribute.
+ * Changes the `active` modifier of the passed element and sets the `aria-selected` attribute
  *
  * @param block
  * @param el
- * @param status
+ * @param isActive
  */
-export function setActiveMod(block: Nullable<Block>, el: Element, status: boolean): void {
+export function setActiveMod(block: Nullable<Block>, el: Element, isActive: boolean): void {
 	if (block == null) {
 		return;
 	}
 
-	block.setElementMod(el, 'link', 'active', status);
+	block.setElementMod(el, 'link', 'active', isActive);
 
 	if (el.hasAttribute('aria-selected')) {
-		el.setAttribute('aria-selected', String(status));
+		el.setAttribute('aria-selected', String(isActive));
 	}
 }
 

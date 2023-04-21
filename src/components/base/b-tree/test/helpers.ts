@@ -24,16 +24,16 @@ interface CheckOptionTreeCtx {
 }
 
 /**
- * Returns rendered `b-tree` component
+ * Returns the rendered `b-tree` component
  *
  * @param page
- * @param options
+ * @param opts
  */
 export async function renderTree(
 	page: Page,
-	options: Partial<{ items: Item[] } & RenderComponentsVnodeParams> = {}
+	opts: Partial<{items: Item[]} & RenderComponentsVnodeParams> = {}
 ): Promise<JSHandle<bTree>> {
-	const {items, attrs, children} = options;
+	const {items, attrs, children} = opts;
 
 	return Component.createComponent(page, 'b-tree', {
 		attrs: {
@@ -42,12 +42,13 @@ export async function renderTree(
 			theme: 'demo',
 			...attrs
 		},
+
 		children: children ?? {default: ({item}) => item.label}
 	});
 }
 
 /**
- * Returns `folded` class modifier for given value
+ * Returns the `folded` class modifier for the given value
  *
  * @param target
  * @param value
@@ -61,7 +62,7 @@ export function getFoldedClass(target: JSHandle<bTree>, value: boolean = true): 
 
 /**
  * Iterates over all tree items depth-first and unfolds closed items by clicking them.
- * Also it checks that all items have correct `data-level` attribute and `folded` class modifier.
+ * Also, it checks that all items have correct `data-level` attribute and `folded` class modifier.
  *
  * @param page
  * @param items
@@ -119,7 +120,7 @@ export function checkOptionTree(
 }
 
 /**
- * Returns tree item element handle for the value
+ * Waits for rendering of the item with the given value
  *
  * @param page
  * @param target
@@ -135,11 +136,11 @@ export async function waitForItem(
 }
 
 /**
- * Returns tree item element handles for the values
+ * Waits for rendering of items with given values
  *
  * @param page
  * @param target
- * @param value
+ * @param values
  */
 export async function waitForItems(
 	page: Page,
@@ -150,11 +151,12 @@ export async function waitForItems(
 		(ctx, values) => [...values].map((value) => ctx.unsafe.values.getIndex(value)),
 		values
 	);
+
 	return Promise.all(ids.map((id) => page.waitForSelector(`[data-id="${id}"]`, {state: 'attached'})));
 }
 
 /**
-* Provides an API to intercept and mock response for the b-tree request.
+* Provides an API to intercept and mock response for the b-tree request
 * @param pageOrContext
 */
 export function interceptTreeRequest(
@@ -191,14 +193,13 @@ export function interceptTreeRequest(
 }
 
 /**
- * Returns selector for the element
+ * Returns a selector for the passed element
  * @param elName
  */
 export const createTreeSelector = DOM.elNameSelectorGenerator('b-tree');
 
 /**
  * Creates a function to test if nodes have given modifier classes
- *
  * @param modName
  */
 export function createTestModIs(modName: string) {

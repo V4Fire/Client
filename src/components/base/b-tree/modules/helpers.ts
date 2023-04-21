@@ -12,7 +12,7 @@ import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/interface';
 
 /**
- * Changes element's node `active` modifier and set's `aria-selected` attribute.
+ * Changes the `active` modifier of the passed element and sets the `aria-selected` attribute
  *
  * @param block
  * @param el
@@ -35,7 +35,6 @@ export function setActiveMod(block: Nullable<Block>, el: Element, status: boolea
  * @param [items]
  */
 export function normalizeItems<T extends Item[]>(this: bTree, items: T): T {
-
 	const
 		that = this;
 

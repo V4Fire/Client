@@ -26,8 +26,10 @@ import iData, { watch, hook, component, system, computed, field, ModsDecl, Unsaf
 import type { Item, ItemMeta, UnsafeBTree } from 'components/base/b-tree/interface';
 
 import bTreeProps from 'components/base/b-tree/props';
+
 import Foldable from 'components/base/b-tree/modules/foldable';
 import Values from 'components/base/b-tree/modules/values';
+
 import { setActiveMod, normalizeItems } from 'components/base/b-tree/modules/helpers';
 
 export * from 'components/super/i-data/i-data';
@@ -47,8 +49,7 @@ interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
 	}
 })
 
-@derive(iActiveItems)
-@derive(Foldable)
+@derive(iActiveItems, Foldable)
 class bTree extends bTreeProps implements iActiveItems, Foldable {
 	override get unsafe(): UnsafeGetter<UnsafeBTree<this>> {
 		return Object.cast(this);
@@ -70,7 +71,6 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	 */
 	@system<bTree>((o) => {
 		o.watch('modelValue', (val) => o.setActive(val, true));
-
 		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
 	})
 
@@ -80,13 +80,13 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	@system()
 	readonly activeChangeEvent: string = 'change';
 
-	/** @see [[iActiveItems.prototype.active] */
+	/** @see [[iActiveItems.active] */
 	@computed({cache: false})
 	get active(): this['Active'] {
 		return iActiveItems.getActive(this.top);
 	}
 
-	/** @see [[iActiveItems.prototype.activeElement] */
+	/** @see [[iActiveItems.activeElement] */
 	get activeElement(): iActiveItems['activeElement'] {
 		const
 			{top} = this;
@@ -112,15 +112,15 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	};
 
 	/**
-	 * Returns root b-tree component
+	 * The context of the topmost bTree component
 	 */
 	protected get top(): bTree {
 		return this.topProp ?? this;
 	}
 
 	/**
-	 * Stores b-tree normalized items.
-	 * This store is needed because `items` property must be accessed only via get/set.
+	 * Stores bTree normalized items.
+	 * This store is needed because the `items` property should only be accessed via get/set.
 	 */
 	@field<bTree>((o) => o.sync.link<Item[]>((val) => {
 		if (o.dataProvider != null) {
@@ -138,7 +138,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	};
 
 	/**
-	 * API for b-tree values
+	 * Internal API for working with component values
 	 */
 	@system<bTree>((o) => new Values(o))
 	protected values!: Values;
@@ -220,12 +220,12 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		}
 	}
 
-	/** @see [[iActiveItems.prototype.isActive]] */
+	/** @see [[iActiveItems.isActive]] */
 	isActive(value: this['Item']['value']): boolean {
 		return iActiveItems.isActive(this.top, value);
 	}
 
-	/** @see [[iActiveItems.prototype.setActive]] */
+	/** @see [[iActiveItems.setActive]] */
 	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		const
 			{top} = this;
@@ -253,7 +253,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return true;
 	}
 
-	/** @see [[iActiveItems.prototype.unsetActive]] */
+	/** @see [[iActiveItems.unsetActive]] */
 	unsetActive(value: this['ActiveProp']): boolean {
 		const {top} = this;
 
@@ -270,7 +270,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return true;
 	}
 
-	/** @see [[iActiveItems.prototype.toggleActive]] */
+	/** @see [[iActiveItems.toggleActive]] */
 	toggleActive(value: this['ActiveProp'], unsetPrevious?: boolean): this['Active'] {
 		return iActiveItems.toggleActive(this.top, value, unsetPrevious);
 	}
@@ -424,7 +424,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	/** @see [[Values.initComponentValues]] */
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
-		this.values.initComponentValues(itemsChanged);
+		this.values.init(itemsChanged);
 	}
 
 	/**

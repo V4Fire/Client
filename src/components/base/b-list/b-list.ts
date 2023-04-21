@@ -19,23 +19,25 @@ import Block, { element, elements } from 'components/friends/block';
 
 import iVisible from 'components/traits/i-visible/i-visible';
 import iWidth from 'components/traits/i-width/i-width';
+
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iActiveItems from 'components/traits/i-active-items/i-active-items';
 
 import { component, field, system, computed, hook, watch, ModsDecl } from 'components/super/i-data/i-data';
 
-import type { Items } from 'components/base/b-list/interface';
 import bListProps from 'components/base/b-list/props';
 import Values from 'components/base/b-list/modules/values';
+
 import { setActiveMod, normalizeItems } from 'components/base/b-list/modules/helpers';
+import type { Items } from 'components/base/b-list/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
 
-interface bList extends Trait<typeof iActiveItems> {}
-
 DOM.addToPrototype({delegateElement});
 Block.addToPrototype({element, elements});
+
+interface bList extends Trait<typeof iActiveItems> {}
 
 @component({
 	functional: {
@@ -94,7 +96,6 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	 */
 	@system<bList>((o) => {
 		o.watch('modelValue', (val) => o.setActive(val, true));
-
 		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
 	})
 
@@ -125,9 +126,9 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	protected itemsStore!: this['Items'];
 
 	/**
-	 * API for b-list values
+	 * Internal API for working with component values
 	 */
-	@system<bList>((o) => new Values(o))
+	@system((o) => new Values(o))
 	protected values!: Values;
 
 	/** @see [[iActiveItems.activeElement]] */
@@ -283,7 +284,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	/** @see [[Values.initComponentValues]] */
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
-		this.values.initComponentValues(itemsChanged);
+		this.values.init(itemsChanged);
 	}
 
 	/**
@@ -305,7 +306,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 			op ?? {};
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** @see [[iActiveItems.getItemKey]] */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
 	}

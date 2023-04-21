@@ -25,4 +25,4 @@ export interface Item extends Dictionary {
 
 export type Active = unknown | Set<unknown>;
 
-export type ActiveProp = unknown | Iterable<unknown>;
+export type ActiveProp = CanIter<unknown>;

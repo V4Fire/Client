@@ -16,7 +16,6 @@ import DOM from 'tests/helpers/dom';
 import { renderTree, checkOptionTree, waitForItem, interceptTreeRequest, createTestModIs, waitForItems } from 'components/base/b-tree/test/helpers';
 
 test.describe('<b-tree>', () => {
-
 	const
 		testFoldedModIs = createTestModIs('folded'),
 		elementSelector = '.b-checkbox';

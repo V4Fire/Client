@@ -11,9 +11,6 @@ import type { UnsafeIData } from 'components/super/i-data/i-data';
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item as Super } from 'components/traits/i-active-items/i-active-items';
 
-/**
- * Tree element data
- */
 export interface Item extends Super {
 	/**
 	 * Item value
@@ -37,9 +34,6 @@ export interface Item extends Super {
 	folded?: boolean;
 }
 
-/**
- * Tree element meta data
- */
 export interface ItemMeta {
 	id: CanUndef<number>;
 	value: CanUndef<unknown>;

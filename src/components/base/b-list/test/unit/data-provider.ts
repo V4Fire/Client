@@ -9,14 +9,12 @@
 import type { Page, JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
-
 import Component from 'tests/helpers/component';
 
 import type bList from 'components/base/b-list/b-list';
-
 import { interceptListRequest, createListSelector } from 'components/base/b-list/test/helpers';
 
-test.describe('<b-list> with data provider', () => {
+test.describe('<b-list> with a data provider', () => {
 	test.beforeEach(async ({context, demoPage}) => {
 		await interceptListRequest(context);
 		await demoPage.goto();

@@ -69,14 +69,16 @@ export async function renderList(
 					value: 1
 				}
 			],
+
 			...attrs
 		},
+
 		children
 	});
 }
 
 /**
- * Checks if given value is a RenderComponentsVnodeParams
+ * Checks if the given value is `RenderComponentsVnodeParams`
  * @param value
  */
 function isRenderComponentsVnodeParams(
@@ -86,7 +88,7 @@ function isRenderComponentsVnodeParams(
 }
 
 /**
- * Returns selector for the element
+ * Returns a selector for the element
  * @param elName
  */
 export const createListSelector = DOM.elNameSelectorGenerator('b-list');

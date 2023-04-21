@@ -43,7 +43,7 @@ export default class Values extends Friend {
 	protected itemKeyPrefix: number = 0;
 
 	/**
-	 * Returns item value for specified index
+	 * Returns the item value by the specified index
 	 * @param index
 	 */
 	getValue(index: number | string): Item['value'] {
@@ -51,7 +51,7 @@ export default class Values extends Friend {
 	}
 
 	/**
-	 * Returns index of the item for specified value
+	 * Returns the item index by the specified value
 	 * @param value
 	 */
 	getIndex(value: Item['value']): CanUndef<number> {
@@ -59,7 +59,7 @@ export default class Values extends Friend {
 	}
 
 	/**
-	 * Returns item for specified value
+	 * Returns an item by specified value
 	 * @param value
 	 */
 	getItem(value: Item['value']): CanUndef<Item> {
@@ -67,7 +67,7 @@ export default class Values extends Friend {
 	}
 
 	/**
-	 * Returns item key
+	 * Returns the render key for the passed item
 	 */
 	getItemKey(value: Item['value']): string {
 		return `${this.itemKeyPrefix}-${this.getIndex(value)}`;
@@ -77,11 +77,10 @@ export default class Values extends Friend {
 	 * Initializes component values
 	 * @param [itemsChanged] - true, if the method is invoked after items changed
 	 */
-	initComponentValues(itemsChanged: boolean = false): void {
+	init(itemsChanged: boolean = false): void {
 		const
 			that = this,
-			{ctx} = this,
-			{active} = ctx;
+			{ctx, ctx: {active}} = this;
 
 		let
 			hasActive = false,

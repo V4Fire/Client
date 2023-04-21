@@ -50,7 +50,7 @@ export default class Values extends Friend {
 	 * Initializes component values
 	 * @param [itemsChanged] - true, if the method is invoked after items changed
 	 */
-	initComponentValues(itemsChanged: boolean = false): void {
+	init(itemsChanged: boolean = false): void {
 		const
 			{ctx} = this,
 			values = new Map(),

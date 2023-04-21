@@ -1,12 +1,12 @@
 # components/base/b-tree
 
-This module provides a component to render a recursive list of elements.
+This module provides a component to render a recursive tree of elements.
 
 ## Synopsis
 
 * The component extends [[iData]].
 
-* The component implements the [[iItems]], [[iActiveItems]] traits.
+* The component implements the [[iActiveItems]] trait.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -26,24 +26,39 @@ See the [[iItems]] trait and the [[iData]] component.
 
 ## Events
 
-| EventName | Description                                  | Payload description                        | Payload               |
-|-----------|----------------------------------------------|--------------------------------------------|-----------------------|
-| `fold`    | One of the component items has been folded   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
-| `unfold`  | One of the component items has been unfolded | A link to the DOM element; The item object | `Item`; `HTMLElement` |
-| `change`  | The active element of the component has been changed  | The active item(s)  | `Active` |
-| `actionChange`  | The active element of the component has been changed due to some user action  | The active item(s)  | `Active` |
+| EventName      | Description                                                                  | Payload description                        | Payload               |
+|----------------|------------------------------------------------------------------------------|--------------------------------------------|-----------------------|
+| `fold`         | One of the component items has been folded                                   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| `unfold`       | One of the component items has been unfolded                                 | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| `change`       | The active element of the component has been changed                         | The active item(s)                         | `Active`              |
+| `actionChange` | The active element of the component has been changed due to some user action | The active item(s)                         | `Active`              |
 
 See the [[iItems]] trait and the [[iData]] component.
 
 ## Associated types
 
-The component has two associated types to specify a type of component items: **Item** and **Items**.
+The component has two associated types to specify the active component item(s): **ActiveProp** and **Active**.
 
 ```typescript
 import bTree, { component } from 'components/super/b-tree/b-tree';
 
 @component()
-export default class myTree extends bTree {
+export default class MyTree extends bList {
+  /** @override */
+  readonly ActiveProp!: CanIter<number>;
+
+  /** @override */
+  readonly Active!: number | Set<number>;
+}
+```
+
+In addition, there are associated types to specify the item types: **Item** and **Items**.
+
+```typescript
+import bTree, { component } from 'components/super/b-tree/b-tree';
+
+@component()
+export default class MyTree extends bTree {
   /** @override */
   readonly Item!: MyItem;
 }
@@ -51,7 +66,7 @@ export default class myTree extends bTree {
 
 ## Usage
 
-### Simple use of the component with a provided list of items and components to render
+### Simple use of a component with a provided list of items and components to render
 
 ```
 < b-tree &
@@ -142,8 +157,8 @@ export default class myTree extends bTree {
 
 ## Branch Folding
 
-The module supports a feature to fold child branches of each item. It is implemented by using CSS modifiers, and by default,
-elements have no styles. So you have to write some CSS rules to hide children when the item node has the `folded` modifier.
+The module supports the function of collapsing the child branches of each item. This is implemented using CSS modifiers, and by default
+elements do not have styles. Thus, you need to write some CSS rules to hide child items when the item node has the `folded` modifier.
 
 For instance:
 
@@ -200,20 +215,20 @@ The component supports a bunch of slots to provide.
 
 1. `default` to render each item (instead of providing the `item` prop).
 
-```
-< b-tree :items = listOfItems
-  < template #default = {item}
-    {{ item.label }}
-```
+   ```
+   < b-tree :items = listOfItems
+     < template #default = {item}
+       {{ item.label }}
+   ```
 
 2. `fold` to provide a template to render `fold` blocks.
 
-```
-< b-tree :item = 'b-checkbox' | :items = listOfItems
-  < template #fold = o
-    < .&__fold v-attrs = o.params
-      ➕
-```
+   ```
+   < b-tree :item = 'b-checkbox' | :items = listOfItems
+     < template #fold = o
+       < .&__fold v-attrs = o.params
+         ➕
+   ```
 
 ## API
 

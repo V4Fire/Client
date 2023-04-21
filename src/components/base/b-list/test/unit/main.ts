@@ -12,7 +12,6 @@ import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
 
 import type bList from 'components/base/b-list/b-list';
-
 import { renderList, createListSelector } from 'components/base/b-list/test/helpers';
 
 test.describe('<b-list>', () => {
@@ -20,7 +19,7 @@ test.describe('<b-list>', () => {
 		await demoPage.goto();
 	});
 
-	test.describe('init', () => {
+	test.describe('initialization', () => {
 		test('should have `items`', async ({page}) => {
 			const
 				target = await renderList(page),

@@ -8,14 +8,13 @@
 
 import type iItems from 'components/traits/i-items/i-items';
 import type iActiveItems from 'components/traits/i-active-items/i-active-items';
-
 import iData, { prop, component } from 'components/super/i-data/i-data';
 
 import type { Item } from 'components/base/b-list/b-list';
 
 @component()
 export default abstract class bListProps extends iData {
-	/** @see [[iItems.Item]] */
+	/** @see [[iActiveItems.Item]] */
 	readonly Item!: Item;
 
 	/** @see [[iItems.Items]] */
@@ -76,8 +75,8 @@ export default abstract class bListProps extends iData {
 	readonly listElementTag: string = 'li';
 
 	/**
-	 * If true, then all items without the `href` option will automatically generate a link by using `value` and
-	 * other props
+	 * If true, then all elements without the `href` option will automatically generate a link using `value`
+	 * and other props
 	 */
 	@prop(Boolean)
 	readonly autoHref: boolean = false;
