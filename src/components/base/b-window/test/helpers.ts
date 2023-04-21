@@ -30,17 +30,3 @@ export async function renderWindow(
 		children
 	});
 }
-
-/**
- * Returns element selector for the given component
- *
- * @param target
- * @param elementName
- */
-export async function getComponentElementSelector(
-	target: JSHandle<bWindow>,
-	elementName: string
-): Promise<string> {
-	return target
-		.evaluate((ctx, elementName) => ctx.unsafe.block!.getElementSelector(elementName), elementName);
-}
