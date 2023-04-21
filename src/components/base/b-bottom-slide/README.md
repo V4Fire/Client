@@ -79,8 +79,8 @@ and only after user action or calling special methods, the component is opened o
 
 It is a good practice not to render or load what a user cannot see on the screen.
 The component supports the ability not to render content until it is open.
-This can be done using the `forceInnerRender` prop.
-You need to set `forceInnerRender` to` false` to avoid immediately rendering the component's content.
+This can be done using the `forceInnerRender` prop. You need to set `forceInnerRender` to` false` to avoid immediately rendering
+the component's content.
 
 ```
 < b-bottom-slide :forceInnerRender = false

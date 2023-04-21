@@ -60,63 +60,63 @@ The component supports a bunch of slots to provide.
 
 1. `default` to override the default component layout.
 
-```
-< b-window
-  Window content
-```
+   ```
+   < b-window
+     Window content
+   ```
 
-```
-< b-window
-  < template #default = {ctx}
-    < .title
-      {{ ctx.title }}
+   ```
+   < b-window
+     < template #default = {ctx}
+       < .title
+         {{ ctx.title }}
 
-    < .content
-      Window content
-```
+       < .content
+         Window content
+   ```
 
-Please note that when using this slot,
-other slots become unavailable to you since the default slot will overwrite all other slots.
+   Please note that when using this slot,
+   other slots become unavailable to you since the default slot will overwrite all other slots.
 
 2. `title` to provide a window title.
 
-```
-< b-window
-  < template #title
-    Title
-```
+   ```
+   < b-window
+     < template #title
+       Title
+   ```
 
-```
-< b-window
-  < template #title = {title}
-    < span.title
-      {{ title }}
-```
+   ```
+   < b-window
+     < template #title = {title}
+       < span.title
+         {{ title }}
+   ```
 
 3. `body` to provide the main window content.
 
-```
-< b-window :title = 'Title'
-  < template #body
-    Main content
-```
+   ```
+   < b-window :title = 'Title'
+     < template #body
+       Main content
+   ```
 
 4. `controls` to provide additional controls like buttons to hide/show.
 
-```
-< b-window
-  < template #title
-    Title
+   ```
+   < b-window
+     < template #title
+       Title
 
-  < template #body
-    Main content
+     < template #body
+       Main content
 
-  < template #controls = {ctx}
-    < button @click = ctx.close()
-      Close the window
-```
+     < template #controls = {ctx}
+       < button @click = ctx.close()
+         Close the window
+   ```
 
-By default, the component defines a control to close the window.
+   By default, the component defines a control to close the window.
 
 ### Third-party slots
 
