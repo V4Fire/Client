@@ -6,73 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page } from 'playwright';
-
 import test from 'tests/config/unit/test';
 
 import BOM from 'tests/helpers/bom';
-import DOM from 'tests/helpers/dom';
 
-import { renderTree, checkOptionTree, waitForItem, interceptTreeRequest, createTestModIs, waitForItems } from 'components/base/b-tree/test/helpers';
+import { renderTree, checkOptionTree, waitForCheckboxCount, createTestModIs, waitForItems, getDefaultItems } from 'components/base/b-tree/test/helpers';
 
 test.describe('<b-tree>', () => {
 	const
 		testFoldedModIs = createTestModIs('folded'),
-		elementSelector = '.b-checkbox';
-
-	const defaultItems = [
-		{value: 'bar'},
-
-		{
-			value: 'foo',
-			children: [
-				{value: 'foo_1'},
-				{value: 'foo_2'},
-
-				{
-					value: 'foo_3',
-					children: [{value: 'foo_3_1'}]
-				},
-
-				{value: 'foo_4'},
-				{value: 'foo_5'},
-				{value: 'foo_6'}
-			].map((item) => ({...item, label: item.value}))
-		}
-	].map((item) => ({...item, label: item.value}));
+		defaultItems = getDefaultItems();
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
-	});
-
-	test.describe('slots', () => {
-		test.describe('`default`', () => {
-			test('should render items using the provided slot', async ({page}) => {
-				const target = await renderTree(page, {
-					items: defaultItems,
-					children: {
-						default: {
-							type: 'div',
-							children: {
-								default: 'Item'
-							},
-							attrs: {
-								'data-test-ref': 'item'
-							}
-						}
-					}
-				});
-
-				await test.expect(target.evaluate((ctx) => ctx.isFunctional))
-					.toBeResolvedTo(false);
-
-				const
-					promises = await Promise.all(checkOptionTree(page, defaultItems, {target})),
-					refs = await DOM.getRefs(page, 'item');
-
-				test.expect(promises.length).toEqual(refs.length);
-			});
-		});
 	});
 
 	test.describe('`items`', () => {
@@ -207,28 +153,6 @@ test.describe('<b-tree>', () => {
 		});
 	});
 
-	test.describe('`dataProvider`', () => {
-		test.beforeEach(async ({context}) => {
-			await interceptTreeRequest(context);
-		});
-
-		test('should load data from the data provider', async ({page}) => {
-			await renderTree(
-				page,
-				{
-					attrs: {
-						dataProvider: 'Provider',
-						item: 'b-checkbox-functional'
-					}
-				}
-			);
-
-			await BOM.waitForIdleCallback(page);
-
-			await waitForCheckboxCount(page, 14);
-		});
-	});
-
 	test.describe('when items change', () => {
 		const newItems = [
 			{value: 0},
@@ -292,60 +216,4 @@ test.describe('<b-tree>', () => {
 			await testFoldedModIs(true, await waitForItems(page, target, [1]));
 		});
 	});
-
-	test.describe('public API', () => {
-		const items = [
-			{value: 1},
-			{value: 2},
-			{
-				value: 3,
-				children: [
-					{
-						value: 4,
-						children: [{value: 6}]
-					}
-				]
-			},
-			{value: 5}
-		];
-
-		test('traverse', async ({page}) => {
-			const target = await renderTree(page, {items});
-
-			let res = await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.value));
-			test.expect(res).toEqual([1, 2, 3, 5, 4, 6]);
-
-			res = await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.value));
-			test.expect(res).toEqual([1, 2, 3, 5]);
-		});
-
-		test('fold/unfold', async ({page}) => {
-			const target = await renderTree(page, {items});
-
-			await target.evaluate(async (ctx) => ctx.unfold());
-
-			await testFoldedModIs(false, [await waitForItem(page, target, 3)]);
-
-			await target.evaluate(async (ctx) => ctx.fold());
-
-			await testFoldedModIs(true, [
-				await waitForItem(page, target, 3),
-				await waitForItem(page, target, 4)
-			]);
-
-			await target.evaluate((ctx) => ctx.unfold(ctx.items[2].value));
-
-			await testFoldedModIs(false, [await waitForItem(page, target, 3)]);
-		});
-	});
-
-	/**
-	 * Checks if page has expected count of b-checkbox elements
-	 *
-	 * @param page
-	 * @param expectedCount
-	 */
-	async function waitForCheckboxCount(page: Page, expectedCount: number) {
-		await test.expect(page.locator(elementSelector)).toHaveCount(expectedCount);
-	}
 });

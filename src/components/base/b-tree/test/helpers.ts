@@ -213,3 +213,39 @@ export function createTestModIs(modName: string) {
 			.toBeTruthy();
 	};
 }
+
+/**
+ * Checks if page has expected count of b-checkbox elements
+ *
+ * @param page
+ * @param expectedCount
+ */
+export async function waitForCheckboxCount(page: Page, expectedCount: number): Promise<void> {
+	await test.expect(page.locator('.b-checkbox')).toHaveCount(expectedCount);
+}
+
+/**
+ * Returns default items for tests
+ */
+export function getDefaultItems(): Item[] {
+	return [
+		{value: 'bar'},
+
+		{
+			value: 'foo',
+			children: [
+				{value: 'foo_1'},
+				{value: 'foo_2'},
+
+				{
+					value: 'foo_3',
+					children: [{value: 'foo_3_1'}]
+				},
+
+				{value: 'foo_4'},
+				{value: 'foo_5'},
+				{value: 'foo_6'}
+			].map((item) => ({...item, label: item.value}))
+		}
+	].map((item) => ({...item, label: item.value}));
+}
