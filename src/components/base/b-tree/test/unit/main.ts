@@ -203,7 +203,7 @@ test.describe('<b-tree>', () => {
 			const
 				target = await renderTree(page, {items: defaultItems});
 
-			await test.expect(target.evaluate(async (ctx) => ctx.unfold('foo'))).toBeResolvedTo(true);
+			await test.expect(target.evaluate((ctx) => ctx.unfold('foo'))).toBeResolvedTo(true);
 
 			await testFoldedModIs(false, await waitForItems(page, target, ['foo']));
 

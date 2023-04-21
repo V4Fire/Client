@@ -91,7 +91,7 @@ test.describe('<b-window> slots', () => {
 	});
 
 	/**
-	 * Returns innerHTML of the specified BEM element
+	 * Returns `innerHTML` of the specified BEM element
 	 *
 	 * @param page
 	 * @param elementName

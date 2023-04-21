@@ -8,18 +8,19 @@
 
 import type { JSHandle, Page } from 'playwright';
 
-import type bWindow from 'components/base/b-window/b-window';
-
 import Component from 'tests/helpers/component';
 
+import type bWindow from 'components/base/b-window/b-window';
+
 /**
- * Renders `bWindow` component in the test page
+ * Renders the `bWindow` component and returns JSHandle
  *
  * @param page
- * @param param1 Component params
+ * @param params
  */
 export async function renderWindow(
-  page: Page, {attrs, children}: RenderComponentsVnodeParams = {}
+	page: Page,
+	{attrs, children}: RenderComponentsVnodeParams = {}
 ): Promise<JSHandle<bWindow>> {
 	return Component.createComponent<bWindow>(page, 'b-window', {
 		attrs: {
@@ -27,6 +28,7 @@ export async function renderWindow(
 			title: 'Bla',
 			...attrs
 		},
+
 		children
 	});
 }

@@ -52,7 +52,7 @@ test.describe('<b-window>', () => {
 	});
 
 	test.describe('`open`', () => {
-		test('should emit event on opening', async ({page}) => {
+		test('should emit an event on opening', async ({page}) => {
 			const
 				target = await renderWindow(page),
 				subscribe = target.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
@@ -140,7 +140,7 @@ test.describe('<b-window>', () => {
 	});
 
 	/**
-	 * Returns component's class list
+	 * Returns the class list of the root node bWindow
 	 * @param target
 	 */
 	async function getClassList(target: JSHandle<bWindow>): Promise<string[] | undefined> {
