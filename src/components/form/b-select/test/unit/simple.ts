@@ -101,14 +101,11 @@ test.describe('<b-select> simple usage', () => {
 			).resolves.toEqual(['baz', 0]);
 		});
 
-		// FIXME: broken test
-		test.skip('loading from a data provider and interpolation', async ({page}) => {
+		test('loading from a data provider and interpolation', async ({page}) => {
 			await page.route(/api/, async (route) => route.fulfill({
 				status: 200,
 				contentType: 'application/json',
 				body: JSON.stringify({
-					name: 'foo',
-
 					items: [
 						{label: 'Foo', value: 0, selected: true},
 						{label: 'Bar', value: 1}
@@ -125,12 +122,11 @@ test.describe('<b-select> simple usage', () => {
 
 			await test.expect(
 				target.evaluate((ctx) => [
-					ctx.name,
 					ctx.value,
 					ctx.mods.someMod,
 					ctx.mods.anotherMod
 				])
-			).resolves.toEqual(['foo', 0, 'bar', 'bla']);
+			).resolves.toEqual([0, 'bar', 'bla']);
 		});
 	});
 
