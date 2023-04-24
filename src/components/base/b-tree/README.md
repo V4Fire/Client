@@ -1,12 +1,12 @@
 # components/base/b-tree
 
-This module provides a component to render a recursive list of elements.
+This module provides a component to render a recursive tree of elements.
 
 ## Synopsis
 
 * The component extends [[iData]].
 
-* The component implements the [[iItems]] trait.
+* The component implements the [[iActiveItems]] trait.
 
 * By default, the root tag of the component is `<div>`.
 
@@ -16,32 +16,41 @@ This module provides a component to render a recursive list of elements.
 
 * Folding of branches.
 
-## Modifiers
-
-| Name            | Description                       | Values             | Default |
-|-----------------|-----------------------------------|--------------------|---------|
-| `clickableArea` | The component clickable item area | `ClickableAreaMod` | `fold`  |
-
-See the [[iItems]] trait and the [[iData]] component.
-
 ## Events
 
-| EventName | Description                                  | Payload description                        | Payload               |
-|-----------|----------------------------------------------|--------------------------------------------|-----------------------|
-| `fold`    | One of the component items has been folded   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
-| `unfold`  | One of the component items has been unfolded | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| EventName      | Description                                                                  | Payload description                        | Payload               |
+|----------------|------------------------------------------------------------------------------|--------------------------------------------|-----------------------|
+| `fold`         | One of the component items has been folded                                   | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| `unfold`       | One of the component items has been unfolded                                 | A link to the DOM element; The item object | `Item`; `HTMLElement` |
+| `change`       | The active element of the component has been changed                         | The active item(s)                         | `Active`              |
+| `actionChange` | The active element of the component has been changed due to some user action | The active item(s)                         | `Active`              |
 
 See the [[iItems]] trait and the [[iData]] component.
 
 ## Associated types
 
-The component has two associated types to specify a type of component items: **Item** and **Items**.
+The component has two associated types to specify the active component item(s): **ActiveProp** and **Active**.
 
 ```typescript
 import bTree, { component } from 'components/super/b-tree/b-tree';
 
 @component()
-export default class myTree extends bTree {
+export default class MyTree extends bList {
+  /** @override */
+  readonly ActiveProp!: CanIter<number>;
+
+  /** @override */
+  readonly Active!: number | Set<number>;
+}
+```
+
+In addition, there are associated types to specify the item types: **Item** and **Items**.
+
+```typescript
+import bTree, { component } from 'components/super/b-tree/b-tree';
+
+@component()
+export default class MyTree extends bTree {
   /** @override */
   readonly Item!: MyItem;
 }
@@ -49,7 +58,7 @@ export default class myTree extends bTree {
 
 ## Usage
 
-### Simple use of the component with a provided list of items and components to render
+### Simple use of a component with a provided list of items and components to render
 
 ```
 < b-tree &
@@ -57,19 +66,38 @@ export default class myTree extends bTree {
   :item = 'b-checkbox' |
 
   :items = [
-    {id: 'foo'},
-    {id: 'bar', children: [
-      {id: 'fooone'},
-      {id: 'footwo'},
+    {value: 'foo'},
+    {value: 'bar', children: [
+      {value: 'fooone'},
+      {value: 'footwo'},
 
       {
-        id: 'foothree',
+        value: 'foothree',
         children: [
-          {id: 'foothreeone'}
+          {value: 'foothreeone'}
         ]
       },
 
-      {id: 'foosix'}
+      {value: 'foosix'}
+    ]}
+  ]
+.
+```
+
+### Providing active items
+
+```
+< b-tree &
+  /// The specified items are rendered as `b-checkbox`-es
+  :item = 'b-checkbox' |
+  :active = ['foo', 'bar']
+  :multiple = true
+  :items = [
+    {value: 'foo'},
+    {value: 'bar', children: [
+      {value: 'fooone'},
+      {value: 'footwo'},
+      {value: 'foosix'}
     ]}
   ]
 .
@@ -80,7 +108,7 @@ export default class myTree extends bTree {
 ```
 < b-tree &
   :item = 'b-checkbox' |
-  :itemProps = (el, i, params) => el.id === 'foo' ? {label: 'foo'} : {} |
+  :itemProps = (el, i, params) => el.value === 'foo' ? {label: 'foo'} : {} |
   :items = listOfItems
 .
 ```
@@ -99,7 +127,7 @@ export default class myTree extends bTree {
 
 ```
 < b-tree &
-  :item = (el, i) => el.id === 'foo' ? 'b-checkbox' : 'b-radio-button' |
+  :item = (el, i) => el.value === 'foo' ? 'b-checkbox' : 'b-radio-button' |
   :items = listOfItems
 .
 ```
@@ -109,7 +137,7 @@ export default class myTree extends bTree {
 ```
 < b-tree :items = listOfItems
   < template #default = {item}
-    < b-checkbox v-if = item.id === 'foo'
+    < b-checkbox v-if = item.value === 'foo'
     < b-radio-button v-else
 ```
 
@@ -121,8 +149,8 @@ export default class myTree extends bTree {
 
 ## Branch Folding
 
-The module supports a feature to fold child branches of each item. It is implemented by using CSS modifiers, and by default,
-elements have no styles. So you have to write some CSS rules to hide children when the item node has the `folded` modifier.
+The module supports the function of collapsing the child branches of each item. This is implemented using CSS modifiers, and by default
+elements do not have styles. Thus, you need to write some CSS rules to hide child items when the item node has the `folded` modifier.
 
 For instance:
 
@@ -156,17 +184,17 @@ Or
 < b-tree &
   :item = 'b-checkbox' |
   :items = [
-    {id: 'foo'},
+    {value: 'foo'},
 
     {
-      id: 'bar',
+      value: 'bar',
 
       /// This branch isn't folded
       folded: false,
 
       children: [
-        {id: 'fooone'},
-        {id: 'footwo'}
+        {value: 'fooone'},
+        {value: 'footwo'}
       ]
     }
   ]
@@ -179,20 +207,20 @@ The component supports a bunch of slots to provide.
 
 1. `default` to render each item (instead of providing the `item` prop).
 
-```
-< b-tree :items = listOfItems
-  < template #default = {item}
-    {{ item.label }}
-```
+   ```
+   < b-tree :items = listOfItems
+     < template #default = {item}
+       {{ item.label }}
+   ```
 
 2. `fold` to provide a template to render `fold` blocks.
 
-```
-< b-tree :item = 'b-checkbox' | :items = listOfItems
-  < template #fold = o
-    < .&__fold v-attrs = o.params
-      ➕
-```
+   ```
+   < b-tree :item = 'b-checkbox' | :items = listOfItems
+     < template #fold = o
+       < .&__fold v-attrs = o.params
+         ➕
+   ```
 
 ## API
 
@@ -262,11 +290,25 @@ class AriaRole {
 
 ### Props
 
-### folded
+### [folded]
 
 If true, then all nested elements are folded by default.
 
-### renderFilter
+### [activeProp]
+
+The active element(s) of the component.
+If the component is switched to "multiple" mode, you can pass in an iterable to define multiple active elements.
+
+### [multiple = `false`]
+
+If true, the component supports the multiple active items feature.
+
+### [cancelable]
+
+If set to true, the active item can be canceled by clicking it again.
+By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise it is set to `false`.
+
+### [renderFilter]
 
 A common filter to render items via `asyncRender`.
 It is used to optimize the process of rendering items.
@@ -275,7 +317,7 @@ It is used to optimize the process of rendering items.
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :renderFilter = () => async.idle()
 ```
 
-### nestedRenderFilter
+### [nestedRenderFilter]
 
 A filter to render nested items via `asyncRender`.
 It is used to optimize the process of rendering child items.
@@ -284,7 +326,7 @@ It is used to optimize the process of rendering child items.
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :nestedRenderFilter = () => async.idle()
 ```
 
-### renderChunks
+### [renderChunks]
 
 Number of chunks to render per tick via `asyncRender`.
 

@@ -196,7 +196,7 @@ test.describe('<b-textarea> standard component events', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderTextarea(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bTextarea>> {
+	async function renderTextarea(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bTextarea>> {
 		return Component.createComponent(page, 'b-textarea', {
 			attrs: {
 				'data-id': 'target',

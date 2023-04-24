@@ -6,76 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementHandle, JSHandle, Page } from 'playwright';
-
 import test from 'tests/config/unit/test';
 
 import BOM from 'tests/helpers/bom';
-import DOM from 'tests/helpers/dom';
-import Component from 'tests/helpers/component';
 
-import type bTree from 'components/base/b-tree/b-tree';
-import type { Item } from 'components/base/b-tree/interface';
-
-import { checkOptionTree, waitForItem, interceptTreeRequest } from 'components/base/b-tree/test/helpers';
+import { renderTree, checkOptionTree, waitForCheckboxCount, createTestModIs, waitForItems, getDefaultItems } from 'components/base/b-tree/test/helpers';
 
 test.describe('<b-tree>', () => {
-
 	const
-		elementSelector = '.b-checkbox',
-		defaultItems = [
-			{id: 'bar'},
-
-			{
-				id: 'foo',
-				children: [
-					{id: 'foo_1'},
-					{id: 'foo_2'},
-
-					{
-						id: 'foo_3',
-						children: [{id: 'foo_3_1'}]
-					},
-
-					{id: 'foo_4'},
-					{id: 'foo_5'},
-					{id: 'foo_6'}
-				]
-			}
-		];
+		testFoldedModIs = createTestModIs('folded'),
+		defaultItems = getDefaultItems();
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
-	});
-
-	test.describe('slots', () => {
-		test.describe('`default`', () => {
-			test('should render items using the provided slot', async ({page}) => {
-				const target = await renderTree(page, {
-					items: defaultItems,
-					children: {
-						default: {
-							type: 'div',
-							children: {
-								default: 'Item'
-							},
-							attrs: {
-								'data-test-ref': 'item'
-							}
-						}
-					}
-				});
-
-				await test.expect(target.evaluate((ctx) => ctx.isFunctional))
-					.toBeResolvedTo(false);
-
-				const
-					promises = await Promise.all(checkOptionTree(page, defaultItems, {target})),
-					refs = await DOM.getRefs(page, 'item');
-
-				test.expect(promises.length).toEqual(refs.length);
-			});
-		});
 	});
 
 	test.describe('`items`', () => {
@@ -85,7 +28,7 @@ test.describe('<b-tree>', () => {
 		};
 
 		test('should initialize with provided items', async ({page}) => {
-			const target = await renderTree(page, {items: defaultItems, attrs: baseAttrs});
+			const target = await renderTree(page, {items: defaultItems, attrs: baseAttrs, children: []});
 
 			await test.expect(target.evaluate((ctx) => ctx.isFunctional))
 				.toBeResolvedTo(false);
@@ -97,18 +40,18 @@ test.describe('<b-tree>', () => {
 
 		test('all items should be unfolded by default with `folded = false`', async ({page}) => {
 			const items = [
-				{id: 'bar'},
+				{value: 'bar'},
 
 				{
-					id: 'foo',
+					value: 'foo',
 					children: [
-						{id: 'foo_1'},
-						{id: 'foo_2'},
+						{value: 'foo_1'},
+						{value: 'foo_2'},
 
 						{
-							id: 'foo_3',
+							value: 'foo_3',
 							folded: false,
-							children: [{id: 'foo_3_1', children: [{id: 'foo_3_1_1'}]}]
+							children: [{value: 'foo_3_1', children: [{value: 'foo_3_1_1'}]}]
 						}
 					]
 				}
@@ -122,6 +65,7 @@ test.describe('<b-tree>', () => {
 			test('should render items by one with a timeout', async ({page}) => {
 				const target = await renderTree(page, {
 					items: defaultItems,
+					children: [],
 					attrs: {
 						...baseAttrs,
 						renderChunks: 1,
@@ -146,6 +90,7 @@ test.describe('<b-tree>', () => {
 			test('should render relying on the context data', async ({page}) => {
 				await renderTree(page, {
 					items: defaultItems,
+					children: [],
 					attrs: {
 						...baseAttrs,
 						renderFilter: (ctx) => ctx.level === 0
@@ -162,19 +107,19 @@ test.describe('<b-tree>', () => {
 			test('should render top-level items immediately and other items after a delay', async ({page}) => {
 				const items = [
 					{
-						id: 'foo',
+						value: 'foo',
 						children: [
-							{id: 'foo_1'},
-							{id: 'foo_2'},
+							{value: 'foo_1'},
+							{value: 'foo_2'},
 
 							{
-								id: 'foo_3',
-								children: [{id: 'foo_3_1', children: [{id: 'foo_3_1_1'}]}]
+								value: 'foo_3',
+								children: [{value: 'foo_3_1', children: [{value: 'foo_3_1_1'}]}]
 							}
 						]
 					},
 
-					{id: 'bar'}
+					{value: 'bar'}
 				];
 
 				const target = await renderTree(page, {
@@ -208,115 +153,67 @@ test.describe('<b-tree>', () => {
 		});
 	});
 
-	test.describe('`dataProvider`', () => {
-		test.beforeEach(async ({context}) => {
-			await interceptTreeRequest(context);
+	test.describe('when items change', () => {
+		const newItems = [
+			{value: 0},
+			{value: 1, children: [{value: 3, label: '3'}]},
+			{value: 2, children: [{value: 4, label: '4'}]}
+		].map((item) => ({...item, label: `${item.value}`}));
+
+		test('`onItemsChange` event should be emitted', async ({page}) => {
+			const
+				target = await renderTree(page),
+				changesLogPromise = target.evaluate(async (ctx) => {
+					const
+						log: any[] = [];
+
+					ctx.on('onItemsChange', (val) => {
+						log.push(Object.fastClone(val));
+					});
+
+					ctx.items = [{label: 'Bar', value: 1}];
+
+					log.push(Object.fastClone(ctx.items));
+
+					await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
+					return log;
+				});
+
+			test.expect(await changesLogPromise)
+				.toEqual([
+					[{label: 'Bar', value: 1}],
+					[{label: 'Bar', value: 1}]
+				]);
 		});
 
-		test('should load data from the data provider', async ({page}) => {
-			await renderTree(
-				page,
-				{
-					attrs: {
-						dataProvider: 'Provider',
-						item: 'b-checkbox-functional'
-					}
-				}
-			);
+		test('new items should be unfolded with `folded = false`', async ({page}) => {
+			const
+				target = await renderTree(page, {items: defaultItems, attrs: {folded: false}});
 
-			await BOM.waitForIdleCallback(page);
+			await target.evaluate(async (ctx, newItems) => {
+				ctx.items = newItems;
 
-			await waitForCheckboxCount(page, 14);
-		});
-	});
+				await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
+			}, newItems);
 
-	test.describe('public API', () => {
-		const
-			items = [
-				{id: '1'},
-				{id: '2'},
-				{
-					id: '3',
-					children: [
-						{
-							id: '4',
-							children: [{id: '6'}]
-						}
-					]
-				},
-				{id: '5'}
-			];
-
-		test('traverse', async ({page}) => {
-			const target = await renderTree(page, {items});
-
-			let res = await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.id));
-			test.expect(res).toEqual([1, 2, 3, 5, 4, 6].map(String));
-
-			res = await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.id));
-			test.expect(res).toEqual([1, 2, 3, 5].map(String));
+			await testFoldedModIs(false, await waitForItems(page, target, [1, 2]));
 		});
 
-		test('fold/unfold', async ({page}) => {
-			const testFoldedModIs = async (
-				flag: boolean,
-				nodes: Array<ElementHandle<HTMLElement | SVGElement>>
-			) => {
-				const classes = await Promise.all(nodes.map((node) => node.getAttribute('class')));
+		test('unfolded node should become folded after change', async ({page}) => {
+			const
+				target = await renderTree(page, {items: defaultItems});
 
-				test.expect(classes.every((x) => x?.includes(flag ? 'folded_true' : 'folded_false')))
-					.toBeTruthy();
-			};
+			await test.expect(target.evaluate((ctx) => ctx.unfold('foo'))).toBeResolvedTo(true);
 
-			const target = await renderTree(page, {items});
+			await testFoldedModIs(false, await waitForItems(page, target, ['foo']));
 
-			await target.evaluate(async (ctx) => ctx.unfold());
+			await target.evaluate(async (ctx, newItems) => {
+				ctx.items = newItems;
 
-			await testFoldedModIs(false, [await waitForItem(page, 3)]);
+				await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
+			}, newItems);
 
-			await target.evaluate(async (ctx) => ctx.fold());
-
-			await testFoldedModIs(true, [
-				await waitForItem(page, 3),
-				await waitForItem(page, 4)
-			]);
-
-			await target.evaluate((ctx) => ctx.unfold(ctx.items[2]));
-
-			await testFoldedModIs(false, [await waitForItem(page, 3)]);
+			await testFoldedModIs(true, await waitForItems(page, target, [1]));
 		});
 	});
-
-	/**
-	 * Returns rendered `b-tree` component
-	 *
-	 * @param page
-	 * @param options
-	 */
-	async function renderTree(
-		page: Page,
-		options: Partial<{ items: Item[] } & RenderComponentsVnodeParams> = {}
-	): Promise<JSHandle<bTree>> {
-		const {items, attrs, children} = options;
-
-		return Component.createComponent(page, 'b-tree', {
-			attrs: {
-				items,
-				id: 'target',
-				theme: 'demo',
-				...attrs
-			},
-			children
-		});
-	}
-
-	/**
-	 * Checks if page has expected count of b-checkbox elements
-	 *
-	 * @param page
-	 * @param expectedCount
-	 */
-	async function waitForCheckboxCount(page: Page, expectedCount: number) {
-		await test.expect(page.locator(elementSelector)).toHaveCount(expectedCount);
-	}
 });

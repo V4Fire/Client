@@ -37,7 +37,7 @@ test.describe('<div v-icon>', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderDirective(page: Page, attrs: Dictionary = {}): Promise<Locator> {
+	async function renderDirective(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<Locator> {
 		await page.evaluate((attrs) => {
 			globalThis.renderComponents('div', [
 				{

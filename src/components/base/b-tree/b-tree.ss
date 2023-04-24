@@ -20,13 +20,15 @@
 			< .&__node &
 				:key = getItemKey(el, i) |
 
-				:-id = dom.getId(el.id) |
+				:-id = values.getIndex(el.value) |
 				:-level = level |
 
 				:class = provide.elementClasses({
 					node: {
 						level,
-						...(hasChildren(el) && {folded: getFoldedPropValue(el)})
+						id: values.getIndex(el.value),
+						active: isActive(el.value),
+						...(hasChildren(el) && {folded: getFoldedPropValue(el)}),
 					}
 				})
 			.
@@ -49,7 +51,7 @@
 					< .&__children v-if = hasChildren(el)
 						< b-tree.&__child &
 							ref = children |
-							v-func = isFunctional |
+							v-func = nestedTreeProps.isFunctional |
 
 							:items = el.children |
 							:item = item |

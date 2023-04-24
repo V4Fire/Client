@@ -8,20 +8,23 @@
 
 import type { JSHandle } from 'playwright';
 
-import type bWindow from 'components/base/b-window/b-window';
-import { renderWindow, getComponentElementSelector } from 'components/base/b-window/test/helpers';
-
 import test from 'tests/config/unit/test';
+import { DOM } from 'tests/helpers';
+
+import type bWindow from 'components/base/b-window/b-window';
+import { renderWindow } from 'components/base/b-window/test/helpers';
 
 test.describe('<b-window>', () => {
-	const bWindowOpenedClass = 'b-window_opened_true';
+	const
+		createWindowSelector = DOM.elNameSelectorGenerator('b-window'),
+		bWindowOpenedClass = DOM.elModNameGenerator('b-window', 'opened', 'true');
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
 	test('should render the specified content', async ({page}) => {
-		const target = await renderWindow(page, {
+		await renderWindow(page, {
 			children: {
 				body: {
 					type: 'div',
@@ -36,21 +39,20 @@ test.describe('<b-window>', () => {
 			}
 		});
 
-		const selector = await getComponentElementSelector(target, 'window');
-
 		// Check that #test-div is inside the b-window
-		test.expect(await page.locator(`${selector} #test-div`).textContent())
-			.toEqual('Hello content');
+		const selector = `${createWindowSelector('window')} #test-div`;
+
+		await test.expect(page.locator(selector)).toHaveText('Hello content');
 	});
 
 	test('should be closed by default', async ({page}) => {
 		const target = await renderWindow(page);
 
-		test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
+		await test.expect(getClassList(target)).resolves.not.toContain(bWindowOpenedClass);
 	});
 
 	test.describe('`open`', () => {
-		test('should emit event on opening', async ({page}) => {
+		test('should emit an event on opening', async ({page}) => {
 			const
 				target = await renderWindow(page),
 				subscribe = target.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
@@ -63,24 +65,24 @@ test.describe('<b-window>', () => {
 			const target = await renderWindow(page);
 			await target.evaluate((ctx) => ctx.open());
 
-			test.expect(await getClassList(target)).toContain(bWindowOpenedClass);
+			await test.expect(getClassList(target)).resolves.toContain(bWindowOpenedClass);
 
-			test.expect(await target.evaluate((ctx) => ctx.getRootMod('opened')))
-				.toBe('true');
+			await test.expect(target.evaluate((ctx) => ctx.getRootMod('opened')))
+				.toBeResolvedTo('true');
 		});
 
 		test('should switch to a different stage via `open`', async ({page}) => {
 			const target = await renderWindow(page);
 			await target.evaluate((ctx) => ctx.open('foo'));
 
-			test.expect(await target.evaluate((ctx) => ctx.stage)).toBe('foo');
+			await test.expect(target.evaluate((ctx) => ctx.stage)).toBeResolvedTo('foo');
 		});
 
 		test('window should show when `toggle` is invoked', async ({page}) => {
 			const target = await renderWindow(page);
 			await target.evaluate((ctx) => ctx.toggle());
 
-			test.expect(await getClassList(target)).toContain(bWindowOpenedClass);
+			await test.expect(getClassList(target)).resolves.toContain(bWindowOpenedClass);
 		});
 	});
 
@@ -100,10 +102,9 @@ test.describe('<b-window>', () => {
 
 			await target.evaluate((ctx) => ctx.open());
 
-			const selector = await getComponentElementSelector(target, 'wrapper');
-			await page.click(selector, {position: {x: 10, y: 10}});
+			await page.click(createWindowSelector('wrapper'), {position: {x: 10, y: 10}});
 
-			test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
+			await test.expect(getClassList(target)).resolves.not.toContain(bWindowOpenedClass);
 		});
 
 		test('window should close when `escape` is pressed', async ({page}) => {
@@ -111,10 +112,9 @@ test.describe('<b-window>', () => {
 
 			await target.evaluate((ctx) => ctx.open());
 
-			const selector = await getComponentElementSelector(target, 'window');
-			await page.press(selector, 'Escape');
+			await page.press(createWindowSelector('window'), 'Escape');
 
-			test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
+			await test.expect(getClassList(target)).resolves.not.toContain(bWindowOpenedClass);
 		});
 
 		test('window should close when `close` is invoked', async ({page}) => {
@@ -123,10 +123,10 @@ test.describe('<b-window>', () => {
 			await target.evaluate((ctx) => ctx.open());
 			await target.evaluate((ctx) => ctx.close());
 
-			test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
+			await test.expect(getClassList(target)).resolves.not.toContain(bWindowOpenedClass);
 
-			test.expect(await target.evaluate((ctx) => ctx.getRootMod('opened')))
-				.toBe('false');
+			await test.expect(target.evaluate((ctx) => ctx.getRootMod('opened')))
+				.toBeResolvedTo('false');
 		});
 
 		test('window should close when `toggle` is invoked', async ({page}) => {
@@ -135,12 +135,12 @@ test.describe('<b-window>', () => {
 			await target.evaluate((ctx) => ctx.open());
 			await target.evaluate((ctx) => ctx.toggle());
 
-			test.expect(await getClassList(target)).not.toContain(bWindowOpenedClass);
+			await test.expect(getClassList(target)).resolves.not.toContain(bWindowOpenedClass);
 		});
 	});
 
 	/**
-	 * Returns component's class list
+	 * Returns the class list of the root node bWindow
 	 * @param target
 	 */
 	async function getClassList(target: JSHandle<bWindow>): Promise<string[] | undefined> {

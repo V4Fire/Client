@@ -96,7 +96,7 @@ test.describe('<b-remote-provider> standard component events', () => {
 	 * @param page
 	 * @param [attrs]
 	 */
-	function renderProvider(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bRemoteProvider>> {
+	function renderProvider(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bRemoteProvider>> {
 		return Component.createComponent(page, 'b-remote-provider', {
 			attrs: {
 				dataProvider: 'Provider',

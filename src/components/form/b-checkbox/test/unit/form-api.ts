@@ -149,7 +149,7 @@ test.describe('<b-checkbox> form API', () => {
 	 * @param page
 	 * @param [attrs]
 	 */
-	async function renderCheckbox(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bCheckbox>> {
+	async function renderCheckbox(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bCheckbox>> {
 		await Component.createComponent(page, 'b-checkbox', [
 			{
 				attrs: {
