@@ -14,7 +14,6 @@
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
-import { is } from 'core/browser';
 
 import Block, { setElementMod, removeElementMod } from 'components/friends/block';
 
@@ -24,7 +23,6 @@ import iOpenToggle, { CloseHelperEvents } from 'components/traits/i-open-toggle/
 import iInputText, {
 
 	component,
-	prop,
 	field,
 	system,
 	computed,
@@ -54,12 +52,12 @@ import type {
 	Value,
 	FormValue,
 
-	Item,
 	Items,
-
 	UnsafeBSelect
 
 } from 'components/form/b-select/interface';
+
+import bSelectProps from 'components/form/b-select/props';
 
 export * from 'components/form/b-input/b-input';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
@@ -76,173 +74,7 @@ interface bSelect extends Trait<typeof iOpenToggle> {}
 
 @component()
 @derive(iOpenToggle)
-class bSelect extends iInputText implements iOpenToggle, iItems {
-	override readonly Value!: Value;
-	override readonly FormValue!: FormValue;
-
-	/** @see [[iItems.Item]] */
-	readonly Item!: Item;
-
-	/** @see [[iItems.Items]] */
-	readonly Items!: Array<this['Item']>;
-
-	override readonly rootTag: string = 'span';
-
-	override readonly valueProp?: unknown[] | this['Value'];
-
-	/** @see [[iItems.items]] */
-	@prop(Array)
-	readonly itemsProp: this['Items'] = [];
-
-	/** @see [[iItems.item]] */
-	@prop({type: [String, Function], required: false})
-	readonly item?: iItems['item'];
-
-	/** @see [[iItems.itemKey]] */
-	@prop({
-		type: [String, Function],
-		default: () => (item: Item) => item.value
-	})
-
-	readonly itemKey!: iItems['itemKey'];
-
-	/** @see [[iItems.itemProps]] */
-	@prop({type: Function, required: false})
-	readonly itemProps?: iItems['itemProps'];
-
-	/**
-	 * If true, the component supports a feature of multiple selected items
-	 */
-	@prop(Boolean)
-	readonly multiple: boolean = false;
-
-	/**
-	 * If true, the component will use a native tag to show the select
-	 */
-	@prop(Boolean)
-	readonly native: boolean = Object.isTruly(is.mobile);
-
-	/**
-	 * An icon to show before the button text
-	 *
-	 * @example
-	 * ```
-	 * < b-select :preIcon = 'dropdown' | :items = myItems
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly preIcon?: string;
-
-	/**
-	 * The name of the used component to display `preIcon`
-	 *
-	 * @example
-	 * ```
-	 * < b-select :preIconComponent = 'b-my-icon' | :items = myItems
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly preIconComponent?: string;
-
-	/**
-	 * Tooltip text to display when hovering over `preIcon`
-	 *
-	 * @example
-	 * ```
-	 * < b-select &
-	 *   :preIcon = 'dropdown' |
-	 *   :preIconHint = 'Show variants' |
-	 *   :items = myItems
-	 * .
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly preIconHint?: string;
-
-	/**
-	 * Tooltip position to display when hovering over `preIcon`
-	 *
-	 * @see [[gHint]]
-	 * @example
-	 * ```
-	 * < b-select &
-	 *   :preIcon = 'dropdown' |
-	 *   :preIconHint = 'Show variants' |
-	 *   :preIconHintPos = 'bottom-right' |
-	 *   :items = myItems
-	 * .
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly preIconHintPos?: string;
-
-	/**
-	 * An icon to show after the button text
-	 *
-	 * @example
-	 * ```
-	 * < b-select :icon = 'dropdown' | :items = myItems
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly icon?: string;
-
-	/**
-	 * The name of the used component to display `icon`
-	 *
-	 * @example
-	 * ```
-	 * < b-select :iconComponent = 'b-my-icon' | :items = myItems
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly iconComponent?: string;
-
-	/**
-	 * Tooltip text to display when hovering over `icon`
-	 *
-	 * @example
-	 * ```
-	 * < b-select &
-	 *   :icon = 'dropdown' |
-	 *   :iconHint = 'Show variants' |
-	 *   :items = myItems
-	 * .
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly iconHint?: string;
-
-	/**
-	 * Tooltip position to display when hovering over `icon`
-	 *
-	 * @see [[gHint]]
-	 * @example
-	 * ```
-	 * < b-select &
-	 *   :icon = 'dropdown' |
-	 *   :iconHint = 'Show variants' | :
-	 *   :iconHintPos = 'bottom-right' |
-	 *   :items = myItems
-	 * .
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly iconHintPos?: string;
-
-	/**
-	 * A component to show "in-progress" state or
-	 * Boolean, if needed to show progress by slot or `b-progress-icon`
-	 *
-	 * @default `'b-progress-icon'`
-	 * @example
-	 * ```
-	 * < b-select :progressIcon = 'b-my-progress-icon' | :items = myItems
-	 * ```
-	 */
-	@prop({type: [String, Boolean], required: false})
-	readonly progressIcon?: string | boolean;
-
+class bSelect extends bSelectProps implements iOpenToggle, iItems {
 	/** @see [[bSelect.itemsProp]] */
 	get items(): this['Items'] {
 		return <this['Items']>this.field.get('itemsStore');
