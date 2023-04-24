@@ -159,6 +159,7 @@ test.describe('<b-select> component events', () => {
 
 					ctx.on('onClear', (val) => res.push([val, ctx.text]));
 					void ctx.clear();
+					void ctx.clear();
 
 					await ctx.nextTick();
 					return res;
@@ -183,6 +184,7 @@ test.describe('<b-select> component events', () => {
 					const res: any[] = [];
 
 					ctx.on('onReset', (val) => res.push([val, ctx.text]));
+					void ctx.reset();
 					void ctx.reset();
 
 					await ctx.nextTick();
@@ -246,30 +248,26 @@ test.describe('<b-select> component events', () => {
 					]
 				});
 
-				const scan = await target.evaluate(async (ctx) => {
-					const
-						{input} = ctx.unsafe.$refs;
-
-					const
-						res: any[] = [],
-						values = ['F', 'Ba', 'Br'];
+				const scan = target.evaluate(async (ctx) => new Promise((resolve) => {
+					const res: any[] = [];
 
 					void ctx.focus();
 
 					ctx.on('onActionChange', (val) => {
 						res.push(['actionChange', Object.isSet(val) ? [...val] : val]);
+
+						if (res.length >= 3) {
+							resolve(res);
+						}
 					});
+				}));
 
-					for (const val of values) {
-						input.value = val;
-						input.dispatchEvent(new InputEvent('input', {data: val}));
-						await ctx.unsafe.async.sleep(300);
-					}
+				for (const val of ['F', 'Ba', 'Br']) {
+					await page.locator(createSelector('input')).fill(val);
+					await page.waitForTimeout(200);
+				}
 
-					return res;
-				});
-
-				test.expect(scan).toEqual([
+				await test.expect(scan).resolves.toEqual([
 					['actionChange', [0]],
 					['actionChange', [1]],
 					['actionChange', undefined]
@@ -288,19 +286,18 @@ test.describe('<b-select> component events', () => {
 					]
 				});
 
-				test.expect(
-					await target.evaluate(async (ctx) => {
-						const
-							res: any[] = [];
+				const scan = target.evaluate(async (ctx) => {
+					const res: any[] = [];
 
-						ctx.on('onClear', (val) => res.push([val, ctx.text]));
-						void ctx.clear();
-						void ctx.clear();
+					ctx.on('onClear', (val) => res.push([val, ctx.text]));
+					void ctx.clear();
+					void ctx.clear();
 
-						await ctx.nextTick();
-						return res;
-					})
-				).toEqual([[undefined, '']]);
+					await ctx.nextTick();
+					return res;
+				});
+
+				await test.expect(scan).resolves.toEqual([[undefined, '']]);
 			});
 
 			test('listening `reset`', async ({page}) => {
@@ -316,19 +313,18 @@ test.describe('<b-select> component events', () => {
 					]
 				});
 
-				test.expect(
-					await target.evaluate(async (ctx) => {
-						const
-							res: any[] = [];
+				const scan = target.evaluate(async (ctx) => {
+					const res: any[] = [];
 
-						ctx.on('onReset', (val) => res.push([[...val], ctx.text]));
-						void ctx.reset();
-						void ctx.reset();
+					ctx.on('onReset', (val) => res.push([Object.isSet(val) ? [...val] : val, ctx.text]));
+					void ctx.reset();
+					void ctx.reset();
 
-						await ctx.nextTick();
-						return res;
-					})
-				).toEqual([[[1], '']]);
+					await ctx.nextTick();
+					return res;
+				});
+
+				await test.expect(scan).resolves.toEqual([[[1], '']]);
 			});
 		});
 	});
@@ -345,34 +341,40 @@ test.describe('<b-select> component events', () => {
 					]
 				});
 
-				await target.evaluate(async (ctx) => {
+				const scan = target.evaluate(async (ctx) => new Promise((resolve) => {
 					const res: any[] = [];
-					ctx.__res = res;
 
-					void ctx.focus();
+					const onEvent = () => {
+						if (res.length >= 5) {
+							resolve(res);
+						}
+					};
 
 					ctx.on('onChange', (val) => {
 						res.push(['change', val]);
+						onEvent();
 					});
 
 					ctx.on('onActionChange', (val) => {
 						res.push(['actionChange', val]);
+						onEvent();
 					});
+				}));
 
+				await target.evaluate((ctx) => {
 					ctx.value = 2;
-					await ctx.nextTick();
 				});
 
 				const
-					select = await page.$(`select.${await target.evaluate((ctx) => ctx.componentId)}`),
+					select = page.locator(`select.${await target.evaluate((ctx) => ctx.componentId)}`),
 					labels = ['Foo', 'Bar'];
 
-				for (let i = 0; i < labels.length; i++) {
-					void select?.selectOption({label: labels[i]});
-					await new Promise((r) => setTimeout(r, 50));
+				for (const label of labels) {
+					await select.selectOption({label});
+					await page.waitForTimeout(50);
 				}
 
-				test.expect(await target.evaluate((ctx) => ctx.__res)).toEqual([
+				await test.expect(scan).resolves.toEqual([
 					['change', 2],
 					['actionChange', 0],
 					['change', 0],
@@ -393,19 +395,18 @@ test.describe('<b-select> component events', () => {
 					]
 				});
 
-				test.expect(
-					await target.evaluate(async (ctx) => {
-						const
-							res: any[] = [];
+				const scan = target.evaluate(async (ctx) => {
+					const res: any[] = [];
 
-						ctx.on('onClear', (val) => res.push([val, ctx.text]));
-						void ctx.clear();
-						void ctx.clear();
+					ctx.on('onClear', (val) => res.push([val, ctx.text]));
+					void ctx.clear();
+					void ctx.clear();
 
-						await ctx.nextTick();
-						return res;
-					})
-				).toEqual([[undefined, '']]);
+					await ctx.nextTick();
+					return res;
+				});
+
+				await test.expect(scan).resolves.toEqual([[undefined, '']]);
 			});
 
 			test('listening `reset`', async ({page}) => {
@@ -421,19 +422,18 @@ test.describe('<b-select> component events', () => {
 					]
 				});
 
-				test.expect(
-					await target.evaluate(async (ctx) => {
-						const
-							res: any[] = [];
+				const scan = target.evaluate(async (ctx) => {
+					const res: any[] = [];
 
-						ctx.on('onReset', (val) => res.push([val, ctx.text]));
-						void ctx.reset();
-						void ctx.reset();
+					ctx.on('onReset', (val) => res.push([val, ctx.text]));
+					void ctx.reset();
+					void ctx.reset();
 
-						await ctx.nextTick();
-						return res;
-					})
-				).toEqual([[1, 'Bar']]);
+					await ctx.nextTick();
+					return res;
+				});
+
+				await test.expect(scan).resolves.toEqual([[1, 'Bar']]);
 			});
 		});
 
@@ -450,39 +450,46 @@ test.describe('<b-select> component events', () => {
 					]
 				});
 
-				await target.evaluate(async (ctx) => {
+				const scan = target.evaluate(async (ctx) => new Promise((resolve) => {
 					const res: any[] = [];
-					ctx.__res = res;
 
-					void ctx.focus();
+					const onEvent = () => {
+						if (res.length >= 7) {
+							resolve(res);
+						}
+					};
 
 					ctx.on('onChange', (val) => {
 						res.push(['change', Object.isSet(val) ? [...val] : val]);
+						onEvent();
 					});
 
 					ctx.on('onActionChange', (val) => {
 						res.push(['actionChange', Object.isSet(val) ? [...val] : val]);
+						onEvent();
 					});
+				}));
 
+				await target.evaluate((ctx) => {
 					ctx.value = 2;
-					await ctx.nextTick();
 				});
 
 				const
-					select = await page.$(`select.${await target.evaluate((ctx) => ctx.componentId)}`),
-					values = [{label: 'Foo'}, [{label: 'Bar'}, {label: 'Baz'}]];
+					select = await page.locator(`select.${await target.evaluate((ctx) => ctx.componentId)}`),
+					labels = ['Foo', 'Bar', 'Baz'];
 
-				for (let i = 0; i < values.length; i++) {
-					void select?.selectOption(values[i]);
-					await new Promise((r) => setTimeout(r, 50));
+				for (const label of labels) {
+					await select.selectOption({label});
 				}
 
-				test.expect(await target.evaluate((ctx) => ctx.__res)).toEqual([
+				await test.expect(scan).resolves.toEqual([
 					['change', [2]],
 					['actionChange', [0]],
 					['change', [0]],
-					['actionChange', [1, 2]],
-					['change', [1, 2]]
+					['actionChange', [1]],
+					['change', [1]],
+					['actionChange', [2]],
+					['change', [2]]
 				]);
 			});
 
@@ -499,19 +506,18 @@ test.describe('<b-select> component events', () => {
 					]
 				});
 
-				test.expect(
-					await target.evaluate(async (ctx) => {
-						const
-							res: any[] = [];
+				const scan = target.evaluate(async (ctx) => {
+					const res: any[] = [];
 
-						ctx.on('onClear', (val) => res.push([val, ctx.text]));
-						void ctx.clear();
-						void ctx.clear();
+					ctx.on('onClear', (val) => res.push([val, ctx.text]));
+					void ctx.clear();
+					void ctx.clear();
 
-						await ctx.nextTick();
-						return res;
-					})
-				).toEqual([[undefined, '']]);
+					await ctx.nextTick();
+					return res;
+				});
+
+				await test.expect(scan).resolves.toEqual([[undefined, '']]);
 			});
 
 			test('listening `reset`', async ({page}) => {
@@ -528,19 +534,18 @@ test.describe('<b-select> component events', () => {
 					]
 				});
 
-				test.expect(
-					await target.evaluate(async (ctx) => {
-						const
-							res: any[] = [];
+				const scan = target.evaluate(async (ctx) => {
+					const res: any[] = [];
 
-						ctx.on('onReset', (val) => res.push([[...val], ctx.text]));
-						void ctx.reset();
-						void ctx.reset();
+					ctx.on('onReset', (val) => res.push([Object.isSet(val) ? [...val] : val, ctx.text]));
+					void ctx.reset();
+					void ctx.reset();
 
-						await ctx.nextTick();
-						return res;
-					})
-				).toEqual([[[1], '']]);
+					await ctx.nextTick();
+					return res;
+				});
+
+				await test.expect(scan).resolves.toEqual([[[1], '']]);
 			});
 		});
 	});
@@ -550,18 +555,18 @@ test.describe('<b-select> component events', () => {
 			text: 'foo'
 		});
 
-		test.expect(
-			await target.evaluate((ctx) => {
-				const
-					res: any[] = [];
+		const scan = target.evaluate((ctx) => {
+			const
+				res: any[] = [];
 
-				ctx.on('selectText', () => res.push(true));
-				void ctx.selectText();
-				void ctx.selectText();
+			ctx.on('selectText', () => res.push(true));
+			void ctx.selectText();
+			void ctx.selectText();
 
-				return res;
-			})
-		).toEqual([true]);
+			return res;
+		});
+
+		await test.expect(scan).resolves.toEqual([true]);
 	});
 
 	test('listening `clearText`', async ({page}) => {
@@ -574,32 +579,31 @@ test.describe('<b-select> component events', () => {
 				{label: 'Baz', value: 2}
 			]
 		});
+		const scan = target.evaluate((ctx) => {
+			const res: any[] = [];
 
-		test.expect(
-			await target.evaluate((ctx) => {
-				const
-					res: any[] = [];
+			ctx.on('clearText', () => res.push(ctx.text));
+			void ctx.clearText();
+			void ctx.clearText();
 
-				ctx.on('clearText', () => res.push(ctx.text));
-				void ctx.clearText();
-				void ctx.clearText();
+			return res;
+		});
 
-				return res;
-			})
-		).toEqual(['']);
+		await test.expect(scan).resolves.toEqual(['']);
 	});
+
+	async function testChangeViaClickAndSetValue(page: Page, target: JSHandle<bSelect>): Promise<void> {
+		for (const id of ['0', '1']) {
+			const selector = DOM.elModSelectorGenerator(
+				DOM.elNameGenerator('b-select', 'item'), 'id', id
+			);
+			await target.evaluate(async (ctx) => ctx.focus());
+			await page.locator(selector).click();
+		}
+
+		await target.evaluate((ctx) => {
+			ctx.value = 2;
+		});
+	}
 });
 
-async function testChangeViaClickAndSetValue(page: Page, target: JSHandle<bSelect>): Promise<void> {
-	for (const id of ['0', '1']) {
-		const selector = DOM.elModSelectorGenerator(
-			DOM.elNameGenerator('b-select', 'item'), 'id', id
-		);
-		await target.evaluate(async (ctx) => ctx.focus());
-		await page.locator(selector).click();
-	}
-
-	await target.evaluate((ctx) => {
-		ctx.value = 2;
-	});
-}
