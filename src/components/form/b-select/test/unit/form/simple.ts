@@ -168,6 +168,7 @@ test.describe('<b-select> form API', () => {
 		).toBe('10');
 	});
 
+	// FIXME: broken test
 	test('listening the `change` event', async ({page}) => {
 		const target = await renderSelect(page);
 

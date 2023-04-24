@@ -58,7 +58,7 @@ export function nativeChange<C extends bSelect>(component: C): void {
 		}
 	}
 
-	if (!Object.fastCompare(value, unsafe.field.get('valueStore'))) {
+	if (!Object.fastCompare(value, unsafe.field.get('activeStore'))) {
 		unsafe.selectValue(value, true);
 		unsafe.emit('actionChange', unsafe.value);
 	}

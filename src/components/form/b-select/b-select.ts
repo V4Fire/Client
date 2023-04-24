@@ -18,6 +18,7 @@ import { derive } from 'core/functools/trait';
 import Block, { setElementMod, removeElementMod } from 'components/friends/block';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
+import iActiveItems from 'components/traits/i-active-items/i-active-items';
 import iOpenToggle, { CloseHelperEvents } from 'components/traits/i-open-toggle/i-open-toggle';
 
 import iInputText, {
@@ -71,11 +72,11 @@ export { Value, FormValue };
 Block.addToPrototype({setElementMod, removeElementMod});
 Mask.addToPrototype(MaskAPI);
 
-interface bSelect extends Trait<typeof iOpenToggle> {}
+interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems> {}
 
 @component()
-@derive(iOpenToggle)
-class bSelect extends bSelectProps implements iOpenToggle, iItems {
+@derive(iOpenToggle, iActiveItems)
+class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	/** @see [[bSelect.itemsProp]] */
 	get items(): this['Items'] {
 		return <this['Items']>this.field.get('itemsStore');
@@ -105,22 +106,45 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 		return attrs;
 	}
 
-	override get value(): this['Value'] {
-		const
-			v = this.field.get('valueStore');
+	/** @see [[iActiveItems.activeChangeEvent]] */
+	@system()
+	readonly activeChangeEvent: string = 'change';
 
-		if (this.multiple) {
-			if (Object.isSet(v) && v.size > 0) {
-				return new Set(v);
-			}
+	/** @see [[iActiveItems.active] */
+	@computed({cache: false})
+	get active(): this['Active'] {
+		return iActiveItems.getActive(this);
+	}
 
+	/** @see [[iActiveItems.activeElement] */
+	get activeElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
+		return h.getSelectedElement(this);
+	}
+
+	/**
+	 * @see [[iActiveItems.activeStore]]
+	 * @see [[iActiveItems.syncActiveStore]]
+	 */
+	@system<bSelect>((o) => {
+		o.watch('modelValue', (val) => o.setActive(val, true));
+		o.watch('valueProp', (val) => o.setActive(val, true));
+		return iActiveItems.linkActiveStore(o, (val) => o.resolveValue(o.valueProp ?? o.modelValue ?? val));
+	})
+
+	activeStore!: iActiveItems['activeStore'];
+
+	@computed({cache: false})
+	override get value(): CanUndef<this['Active']> {
+		const val = this.active;
+
+		if (this.multiple && Object.isSet(val) && val.size === 0) {
 			return undefined;
 		}
 
-		return v;
+		return val;
 	}
 
-	override set value(value: this['Value']) {
+	override set value(value: CanUndef<this['ActiveProp']>) {
 		if (value === undefined) {
 			this.unselectValue(this.value);
 
@@ -135,12 +159,12 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 		}
 	}
 
-	override get default(): this['Value'] {
+	override get default(): this['Active'] {
 		const
 			val = this.field.get('defaultProp');
 
 		if (this.multiple) {
-			return new Set(Object.isSet(val) ? val : Array.concat([], val));
+			return new Set(Object.isIterable(val) ? val : Array.concat([], val));
 		}
 
 		return val;
@@ -198,44 +222,6 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 		//#endif
 	};
 
-	@system<bSelect>((o) => o.sync.link((val) => {
-		val = o.resolveValue(val);
-
-		if (val === undefined && o.hook === 'beforeDataCreate') {
-			if (o.multiple) {
-				if (Object.isSet(o.valueStore)) {
-					return o.valueStore;
-				}
-
-				return new Set(Array.concat([], o.valueStore));
-			}
-
-			return o.valueStore;
-		}
-
-		let
-			newVal;
-
-		if (o.multiple) {
-			const
-				objVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
-
-			if (Object.fastCompare(objVal, o.valueStore)) {
-				return o.valueStore;
-			}
-
-			newVal = objVal;
-
-		} else {
-			newVal = val;
-		}
-
-		o.selectValue(newVal);
-		return newVal;
-	}))
-
-	protected override valueStore!: this['Value'];
-
 	/** @see [[bSelect.items]] */
 	@field<bSelect>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
@@ -266,8 +252,8 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 		dependencies: ['value']
 	})
 
-	protected get selectedElement(): CanPromise<CanUndef<CanArray<HTMLOptionElement>>> {
-		return h.getSelectedElement(this);
+	protected get selectedElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
+		return this.activeElement;
 	}
 
 	/**
@@ -294,75 +280,10 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 		return SyncPromise.resolve(false);
 	}
 
-	/**
-	 * Returns true if the specified value is selected
-	 * @param value
-	 */
-	isSelected(value: unknown): boolean {
-		const
-			valueStore = this.field.get('valueStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(valueStore)) {
-				return false;
-			}
-
-			return valueStore.has(value);
-		}
-
-		return value === valueStore;
-	}
-
-	/**
-	 * Selects an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
-	 *
-	 * @param value
-	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
-	 *   (works only with the `multiple` mode)
-	 */
-	selectValue(value: this['Value'], unselectPrevious: boolean = false): boolean {
-		const
-			valueStore = this.field.get('valueStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(valueStore)) {
-				return false;
-			}
-
-			if (unselectPrevious) {
-				valueStore.clear();
-			}
-
-			let
-				res = false;
-
-			const set = (value) => {
-				if (valueStore.has(value)) {
-					return false;
-				}
-
-				valueStore.add(value);
-				res = true;
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, set);
-
-			} else {
-				set(value);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!res) {
-				return false;
-			}
-
-		} else if (valueStore === value) {
+	/** @see [[iActiveItems.setActive]] */
+	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
+		if (!iActiveItems.setActive(this, value, unsetPrevious)) {
 			return false;
-
-		} else {
-			this.field.set('valueStore', value);
 		}
 
 		const
@@ -376,7 +297,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 			id = this.values.getIndex(value),
 			itemEl = id != null ? $b.element<HTMLOptionElement>('item', {id}) : null;
 
-		if (!this.multiple || unselectPrevious) {
+		if (!this.multiple || unsetPrevious) {
 			const
 				previousItemEls = $b.elements<HTMLOptionElement>('item', {selected: true});
 
@@ -384,6 +305,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 				const
 					previousItemEl = previousItemEls[i];
 
+				// TODO: create helper
 				if (previousItemEl !== itemEl) {
 					$b.setElementMod(previousItemEl, 'item', 'selected', false);
 
@@ -397,12 +319,14 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 			}
 		}
 
-		SyncPromise.resolve(this.selectedElement).then((selectedElement) => {
+		SyncPromise.resolve(this.activeElement).then((el) => {
 			const
-				els = Array.concat([], selectedElement);
+				els = Array.concat([], el);
 
 			for (let i = 0; i < els.length; i++) {
 				const el = els[i];
+
+				// TODO: create helper
 				$b.setElementMod(el, 'item', 'selected', true);
 
 				if (this.native) {
@@ -417,53 +341,10 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 		return true;
 	}
 
-	/**
-	 * Removes selection from an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
-	 *
-	 * @param value
-	 */
-	unselectValue(value: this['Value']): boolean {
-		const
-			valueStore = this.field.get('valueStore');
-
-		const
-			{selectedElement} = this;
-
-		if (this.multiple) {
-			if (!Object.isSet(valueStore)) {
-				return false;
-			}
-
-			let
-				res = false;
-
-			const unset = (value) => {
-				if (!valueStore.has(value)) {
-					return;
-				}
-
-				valueStore.delete(value);
-				res = true;
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, unset);
-
-			} else {
-				unset(value);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!res) {
-				return false;
-			}
-
-		} else if (valueStore !== value) {
+	/** @see [[iActiveItems.unsetActive]] */
+	unsetActive(value: this['ActiveProp']): boolean {
+		if (!iActiveItems.unsetActive(this, value)) {
 			return false;
-
-		} else {
-			this.field.set('valueStore', undefined);
 		}
 
 		const
@@ -473,9 +354,9 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 			return true;
 		}
 
-		SyncPromise.resolve(selectedElement).then((selectedElement) => {
+		SyncPromise.resolve(this.activeElement).then((el) => {
 			const
-				els = Array.concat([], selectedElement);
+				els = Array.concat([], el);
 
 			for (let i = 0; i < els.length; i++) {
 				const
@@ -509,6 +390,36 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 	}
 
 	/**
+	 * Returns true if the specified value is selected
+	 * @param value
+	 */
+	isSelected(value: unknown): boolean {
+		return this.isActive(value);
+	}
+
+	/**
+	 * Selects an item by the specified value.
+	 * If the component is switched to the `multiple` mode, the method can take a `Iterable` to set multiple items.
+	 *
+	 * @param value
+	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
+	 *   (works only with the `multiple` mode)
+	 */
+	selectValue(value: this['ActiveProp'], unselectPrevious: boolean = false): boolean {
+		return this.setActive(value, unselectPrevious);
+	}
+
+	/**
+	 * Removes selection from an item by the specified value.
+	 * If the component is switched to the `multiple` mode, the method can take a `Iterable` to unset multiple items.
+	 *
+	 * @param value
+	 */
+	unselectValue(value: this['ActiveProp']): boolean {
+		return this.unsetActive(value);
+	}
+
+	/**
 	 * Toggles selection of an item by the specified value.
 	 * The methods return a new selected value/s.
 	 *
@@ -516,45 +427,14 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
 	 *   (works only with the `multiple` mode)
 	 */
-	toggleValue(value: this['Value'], unselectPrevious: boolean = false): this['Value'] {
-		const
-			valueStore = this.field.get('valueStore');
+	toggleValue(value: this['ActiveProp'], unselectPrevious: boolean = false): CanUndef<this['Active']> {
+		const val = this.toggleActive(value, unselectPrevious);
 
-		if (this.multiple) {
-			if (!Object.isSet(valueStore)) {
-				return this.value;
-			}
-
-			const toggle = (value) => {
-				if (valueStore.has(value)) {
-					if (unselectPrevious) {
-						this.unselectValue(this.value);
-
-					} else {
-						this.unselectValue(value);
-					}
-
-					return;
-				}
-
-				this.selectValue(value, unselectPrevious);
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, toggle);
-
-			} else {
-				toggle(value);
-			}
-
-		} else if (valueStore !== value) {
-			this.selectValue(value);
-
-		} else {
-			this.unselectValue(value);
+		if (this.multiple && Object.isSet(val) && val.size === 0) {
+			return undefined;
 		}
 
-		return this.value;
+		return val;
 	}
 
 	/** @see [[iOpenToggle.open]] */
@@ -616,7 +496,6 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 			i = this.instance;
 
 		this.normalizeItems = i.normalizeItems.bind(this);
-		this.selectValue = i.selectValue.bind(this);
 	}
 
 	/** @see [[iOpenToggle.initCloseHelpers]] */
@@ -712,7 +591,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 
 	/**
 	 * Handler: clearing of a component value
-	 * @emits `actionChange(value: this['Value'])`
+	 * @emits `actionChange(value: this['Active'])`
 	 */
 	protected async onClear(): Promise<void> {
 		if (await this.clear()) {
@@ -722,7 +601,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 
 	/**
 	 * Handler: value changing of a native component `<select>`
-	 * @emits `actionChange(value: this['Value'])`
+	 * @emits `actionChange(value: this['Active'])`
 	 */
 	protected onNativeChange(): void {
 		on.nativeChange(this);
@@ -740,7 +619,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 	 * Handler: typing text into a helper text input to search select options
 	 *
 	 * @param e
-	 * @emits `actionChange(value: this['Value'])`
+	 * @emits `actionChange(value: this['Active'])`
 	 */
 	protected onSearchInput(e: InputEvent): void {
 		on.searchInput(this, e);
@@ -750,7 +629,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 	 * Handler: click to some item element
 	 *
 	 * @param itemEl
-	 * @emits `actionChange(value: this['Value'])`
+	 * @emits `actionChange(value: this['Active'])`
 	 */
 	@watch({
 		path: '?$el:click',

@@ -64,7 +64,7 @@ export default class Values extends Friend {
 			indexes = {};
 
 		const
-			valueStore = ctx.field.get('valueStore');
+			activeStore = ctx.field.get('activeStore');
 
 		let
 			selectedItem;
@@ -73,7 +73,7 @@ export default class Values extends Friend {
 			const
 				item = ctx.items[i];
 
-			if (item.selected && (ctx.multiple ? ctx.valueProp === undefined : valueStore === undefined)) {
+			if (item.selected && (ctx.multiple ? ctx.valueProp === undefined : activeStore === undefined)) {
 				ctx.selectValue(item.value);
 			}
 

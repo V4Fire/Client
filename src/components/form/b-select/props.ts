@@ -8,6 +8,7 @@
 
 import { is } from 'core/browser';
 import type iItems from 'components/traits/i-items/i-items';
+import type iActiveItems from 'components/traits/i-active-items/i-active-items';
 
 import iInputText, { component, prop } from 'components/super/i-input-text/i-input-text';
 import type { Value, FormValue, Item } from 'components/form/b-select/interface';
@@ -24,9 +25,19 @@ export default abstract class bSelectProps extends iInputText {
 	/** @see [[iItems.Items]] */
 	readonly Items!: Array<this['Item']>;
 
+	/** @see [[iActiveItems.ActiveProp]] */
+	readonly ActiveProp!: iActiveItems['ActiveProp'];
+
+	/** @see [[iActiveItems.Active]] */
+	readonly Active!: iActiveItems['Active'];
+
 	override readonly rootTag: string = 'span';
 
-	override readonly valueProp?: unknown[] | this['Value'];
+	override readonly valueProp?: this['ActiveProp'];
+
+	/** @see [[iActiveItems.activeProp]] */
+	@prop({required: false})
+	readonly activeProp?: this['ActiveProp'];
 
 	/** @see [[iItems.items]] */
 	@prop(Array)
@@ -53,6 +64,10 @@ export default abstract class bSelectProps extends iInputText {
 	 */
 	@prop(Boolean)
 	readonly multiple: boolean = false;
+
+	/** @see [[iActiveItems.cancelable]] */
+	@prop({type: Boolean})
+	readonly cancelable: boolean = true;
 
 	/**
 	 * If true, the component will use a native tag to show the select

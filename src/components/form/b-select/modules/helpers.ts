@@ -102,7 +102,7 @@ export async function setScrollToMarkedOrSelectedItem<C extends bSelect>(compone
  * Returns a link to the selected item element.
  * If the component is switched to the `multiple` mode, the getter will return an array of elements.
  */
-export function getSelectedElement<C extends bSelect>(component: C): CanPromise<CanUndef<CanArray<HTMLOptionElement>>> {
+export function getSelectedElement<C extends bSelect>(component: C): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
 	const {
 		value,
 		unsafe
@@ -113,7 +113,7 @@ export function getSelectedElement<C extends bSelect>(component: C): CanPromise<
 			id = unsafe.values.getIndex(value);
 
 		if (id != null) {
-			return unsafe.block?.element<HTMLOptionElement>('item', {id}) ?? undefined;
+			return unsafe.block?.element<HTMLOptionElement>('item', {id}) ?? null;
 		}
 	};
 
@@ -126,6 +126,6 @@ export function getSelectedElement<C extends bSelect>(component: C): CanPromise<
 			return [...value].flatMap((val) => getEl(val) ?? []);
 		}
 
-		return getEl(value);
+		return getEl(value) ?? null;
 	});
 }

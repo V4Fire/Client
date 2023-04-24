@@ -391,6 +391,7 @@ test.describe('<b-select> simple usage', () => {
 			test.expect(scan).toEqual([0, undefined, 0, 1]);
 		});
 
+		// FIXME: broken test
 		test('`toggleValue` with `multiple`', async ({page}) => {
 			const target = await renderSelect(page, {
 				multiple: true,

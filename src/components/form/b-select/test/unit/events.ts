@@ -55,10 +55,10 @@ test.describe('<b-select> component events', () => {
 				await testChangeViaClickAndSetValue(page, target);
 
 				await test.expect(scan).resolves.toEqual([
-					['actionChange', 0],
 					['change', 0],
-					['actionChange', 1],
+					['actionChange', 0],
 					['change', 1],
+					['actionChange', 1],
 					['change', 2]
 				]);
 			});
@@ -137,8 +137,8 @@ test.describe('<b-select> component events', () => {
 				});
 
 				await test.expect(scan).resolves.toEqual([
-					['actionChange', 0],
 					['change', 0],
+					['actionChange', 0],
 					['change', 1]
 				]);
 			});
@@ -229,10 +229,10 @@ test.describe('<b-select> component events', () => {
 				await testChangeViaClickAndSetValue(page, target);
 
 				await test.expect(scan).resolves.toEqual([
-					['actionChange', [0]],
 					['change', [0]],
-					['actionChange', [0, 1]],
+					['actionChange', [0]],
 					['change', [0, 1]],
+					['actionChange', [0, 1]],
 					['change', [2]]
 				]);
 			});
@@ -376,10 +376,10 @@ test.describe('<b-select> component events', () => {
 
 				await test.expect(scan).resolves.toEqual([
 					['change', 2],
-					['actionChange', 0],
 					['change', 0],
-					['actionChange', 1],
-					['change', 1]
+					['actionChange', 0],
+					['change', 1],
+					['actionChange', 1]
 				]);
 			});
 
@@ -484,12 +484,12 @@ test.describe('<b-select> component events', () => {
 
 				await test.expect(scan).resolves.toEqual([
 					['change', [2]],
-					['actionChange', [0]],
 					['change', [0]],
-					['actionChange', [1]],
+					['actionChange', [0]],
 					['change', [1]],
-					['actionChange', [2]],
-					['change', [2]]
+					['actionChange', [1]],
+					['change', [2]],
+					['actionChange', [2]]
 				]);
 			});
 
