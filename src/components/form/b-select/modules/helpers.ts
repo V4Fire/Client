@@ -12,48 +12,6 @@ import type bSelect from 'components/form/b-select/b-select';
 import type { Items } from 'components/form/b-select/interface';
 
 /**
- * Initializes component values
- * @param component
- */
-export function initComponentValues<C extends bSelect>(component: C): void {
-	const
-		{unsafe} = component;
-
-	const
-		values = new Map(),
-		indexes = {};
-
-	const
-		valueStore = unsafe.field.get('valueStore');
-
-	let
-		selectedItem;
-
-	for (let i = 0; i < unsafe.items.length; i++) {
-		const
-			item = unsafe.items[i];
-
-		if (item.selected && (unsafe.multiple ? unsafe.valueProp === undefined : valueStore === undefined)) {
-			unsafe.selectValue(item.value);
-		}
-
-		if (unsafe.isSelected(item.value)) {
-			selectedItem = item;
-		}
-
-		values.set(item.value, i);
-		indexes[i] = item;
-	}
-
-	unsafe.values = values;
-	unsafe.indexes = indexes;
-
-	if (!unsafe.multiple && selectedItem != null) {
-		unsafe.field.set('textStore', selectedItem.label);
-	}
-}
-
-/**
  * Normalizes the specified items and returns it
  * @param items
  */
@@ -152,10 +110,10 @@ export function getSelectedElement<C extends bSelect>(component: C): CanPromise<
 
 	const getEl = (value) => {
 		const
-			id = unsafe.values.get(value);
+			id = unsafe.values.getIndex(value);
 
 		if (id != null) {
-			return unsafe.block?.element<HTMLOptionElement>('item', {id});
+			return unsafe.block?.element<HTMLOptionElement>('item', {id}) ?? undefined;
 		}
 	};
 

@@ -58,6 +58,7 @@ import type {
 } from 'components/form/b-select/interface';
 
 import bSelectProps from 'components/form/b-select/props';
+import Values from 'components/form/b-select/modules/values';
 
 export * from 'components/form/b-input/b-input';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
@@ -129,7 +130,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 		}
 
 		if (!this.multiple) {
-			const item = this.indexes[String(this.values.get(value))];
+			const item = this.values.getItemByValue(value);
 			this.text = item?.label ?? '';
 		}
 	}
@@ -235,19 +236,6 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 
 	protected override valueStore!: this['Value'];
 
-	/**
-	 * A map of item indexes and their values
-	 */
-	@system()
-	// @ts-ignore (type loop)
-	protected indexes!: Dictionary<this['Item']>;
-
-	/**
-	 * A map of item values and their indexes
-	 */
-	@system()
-	protected values!: Map<unknown, number>;
-
 	/** @see [[bSelect.items]] */
 	@field<bSelect>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
@@ -258,6 +246,12 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 	}))
 
 	protected itemsStore!: this['Items'];
+
+	/**
+	 * Internal API for working with component values
+	 */
+	@system<bSelect>((o) => new Values(o))
+	protected values!: Values;
 
 	protected override readonly $refs!: iInputText['$refs'] & {
 		dropdown?: Element;
@@ -379,7 +373,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 		}
 
 		const
-			id = this.values.get(value),
+			id = this.values.getIndex(value),
 			itemEl = id != null ? $b.element<HTMLOptionElement>('item', {id}) : null;
 
 		if (!this.multiple || unselectPrevious) {
@@ -487,7 +481,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 				const
 					el = els[i],
 					id = el.getAttribute('data-id'),
-					item = this.indexes[String(id)];
+					item = this.values.getItem(id ?? -1);
 
 				if (item == null) {
 					continue;
@@ -497,6 +491,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 					value.has(item.value) :
 					value === item.value;
 
+				// TODO: create helper
 				if (needChangeMod) {
 					$b.setElementMod(el, 'item', 'selected', false);
 
@@ -635,7 +630,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iItems {
 	 */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
-		h.initComponentValues(this);
+		this.values.init();
 	}
 
 	/**

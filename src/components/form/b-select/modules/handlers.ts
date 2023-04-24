@@ -42,7 +42,7 @@ export function nativeChange<C extends bSelect>(component: C): void {
 		const
 			el = checkedItems[i],
 			id = el.getAttribute('data-id'),
-			item = unsafe.indexes[String(id)];
+			item = unsafe.values.getItem(id ?? -1);
 
 		if (item == null) {
 			continue;
@@ -146,7 +146,7 @@ export function itemClick<C extends bSelect>(component: C, itemEl: CanUndef<Elem
 
 	const
 		id = itemEl.getAttribute('data-id'),
-		item = component.unsafe.indexes[String(id)];
+		item = component.unsafe.values.getItem(id ?? -1);
 
 	if (item == null) {
 		return;
