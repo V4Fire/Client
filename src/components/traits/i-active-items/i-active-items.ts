@@ -180,7 +180,7 @@ export default abstract class iActiveItems extends iItems {
 
 	/** @see [[iActiveItems.setActive]] */
 	static setActive(ctx: TraitComponent, value: iActiveItems['ActiveProp'], unsetPrevious?: boolean): boolean {
-		const
+		let
 			activeStore = ctx.field.get('activeStore');
 
 		if (ctx.multiple) {
@@ -189,18 +189,19 @@ export default abstract class iActiveItems extends iItems {
 			}
 
 			if (unsetPrevious) {
-				ctx.field.set('activeStore', new Set());
+				activeStore = new Set();
+				ctx.field.set('activeStore', activeStore);
 			}
 
 			let
 				res = false;
 
 			const set = (value) => {
-				if (activeStore.has(value)) {
+				if ((<Set<unknown>>activeStore).has(value)) {
 					return;
 				}
 
-				activeStore.add(value);
+				(<Set<unknown>>activeStore).add(value);
 				res = true;
 			};
 
