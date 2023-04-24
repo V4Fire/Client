@@ -12,7 +12,7 @@ import test from 'tests/config/unit/test';
 
 import type bSelect from 'components/form/b-select/b-select';
 
-import { Component } from 'tests/helpers';
+import { Component, Utils } from 'tests/helpers';
 
 test.describe('<b-select> form API', () => {
 
@@ -45,7 +45,6 @@ test.describe('<b-select> form API', () => {
 		test.expect(await target.evaluate((ctx) => ctx.value)).toBe('10');
 	});
 
-	// FIXME: broken test
 	test('getting a form value', async ({page}) => {
 		const target = await renderSelect(page);
 
@@ -62,7 +61,6 @@ test.describe('<b-select> form API', () => {
 		).toBe(40);
 	});
 
-	// FIXME: broken test
 	test('getting a group form value', async ({page}) => {
 		const target = await renderSelect(page, {
 			value: '10'
@@ -208,11 +206,11 @@ test.describe('<b-select> form API', () => {
 						{label: 'Bar', value: '11'}
 					],
 
-					formValueConverter: [
-						parseInt.option(),
+					formValueConverter: Utils.evalInBrowser(() => [
+						((v) => parseInt(v, 10)).option(),
 						((v) => Promise.resolve(v * 2)).option(),
 						((v) => v * 2).option()
-					],
+					]),
 
 					...attrs
 				}

@@ -82,7 +82,6 @@ test.describe('<b-select> masked input simple usage', () => {
 		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('1-2//3-5');
 	});
 
-	// FIXME: broken test
 	test('applying a mask with partial finite repetitions', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: '1',
@@ -96,12 +95,12 @@ test.describe('<b-select> masked input simple usage', () => {
 		await test.expect(target.evaluate((ctx) => {
 			ctx.text = '12';
 			return ctx.unsafe.$refs.input.value;
-		})).toBe('1-2');
+		})).resolves.toBe('1-2');
 
 		await test.expect(target.evaluate((ctx) => {
 			ctx.text = '123';
 			return ctx.unsafe.$refs.input.value;
-		})).toBe('1-2 3-_');
+		})).resolves.toBe('1-2 3-_');
 	});
 
 	test('applying a mask with infinite repetitions', async ({page}) => {
@@ -125,13 +124,12 @@ test.describe('<b-select> masked input simple usage', () => {
 		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('1-2 3-5 7-9 8-_');
 	});
 
-	// FIXME: broken test
 	test('applying a mask with the custom non-terminals', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: '1235798',
 			mask: '%l-%l',
 			maskRepetitions: true,
-			regExps: 'return {l: /[1-4]/i}'
+			regExps: {l: /[1-4]/i}
 		});
 
 		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('1-2 3-_');
