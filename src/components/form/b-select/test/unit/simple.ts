@@ -81,13 +81,12 @@ test.describe('<b-select> simple usage', () => {
 		await test.expect(mainAttributes).resolves.toEqual(['INPUT', 'text', 'bla', '']);
 	});
 
-	// FIXME: broken tests
 	test.describe('`dataProvider`', () => {
-		test.skip('loading from a data provider', async ({page}) => {
+		test('loading from a data provider', async ({page}) => {
 			await page.route(/api/, async (route) => route.fulfill({
 				status: 200,
 				contentType: 'application/json',
-				body: JSON.stringify(0)
+				body: '0'
 			}));
 
 			const target = await renderSelect(page, {name: 'baz', dataProvider: 'Provider'});
@@ -99,9 +98,10 @@ test.describe('<b-select> simple usage', () => {
 					ctx.name,
 					ctx.value
 				])
-			).resolves.toEqual(['baz', '0']);
+			).resolves.toEqual(['baz', 0]);
 		});
 
+		// FIXME: broken test
 		test.skip('loading from a data provider and interpolation', async ({page}) => {
 			await page.route(/api/, async (route) => route.fulfill({
 				status: 200,
