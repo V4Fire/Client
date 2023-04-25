@@ -40,7 +40,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	 * If true, then will be blocked the document' scrolling when the component is opened
 	 */
 	@prop(Boolean)
-	readonly lockPageScroll: boolean = false;
+	readonly lockPageScrollProp: boolean = false;
 
 	/**
 	 * If false, the inner content of the component won't be rendered if the component isn't opened
@@ -93,7 +93,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
 
-		if (this.lockPageScroll) {
+		if (this.lockPageScrollProp) {
 			iLockPageScroll.initModEvents(this);
 		}
 	}
