@@ -21,15 +21,8 @@ import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iActiveItems from 'components/traits/i-active-items/i-active-items';
 import iOpenToggle, { CloseHelperEvents } from 'components/traits/i-open-toggle/i-open-toggle';
 
-import iInputText, {
-
-	component,
-	field,
-	system,
-	computed,
-
-	hook,
-	watch,
+import iInputText, { component, field, system, computed, hook, watch } from 'components/super/i-input-text/i-input-text';
+import type {
 
 	ModsDecl,
 	ModEvent,
@@ -43,23 +36,14 @@ import iInputText, {
 } from 'components/super/i-input-text/i-input-text';
 import Mask, * as MaskAPI from 'components/super/i-input-text/mask';
 
-import * as on from 'components/form/b-select/modules/handlers';
-import { normalizeItems, getSelectedElement, setScrollToMarkedOrSelectedItem } from 'components/form/b-select/modules/helpers';
-
 import { openedSelect } from 'components/form/b-select/const';
 
-import type {
-
-	Value,
-	FormValue,
-
-	Items,
-	UnsafeBSelect
-
-} from 'components/form/b-select/interface';
-
+import type { Value, FormValue, Items, UnsafeBSelect } from 'components/form/b-select/interface';
 import bSelectProps from 'components/form/b-select/props';
 import Values from 'components/form/b-select/modules/values';
+
+import * as on from 'components/form/b-select/modules/handlers';
+import * as h from 'components/form/b-select/modules/helpers';
 
 export * from 'components/form/b-input/b-input';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
@@ -103,7 +87,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 
 	/** @see [[iActiveItems.activeElement]] */
 	get activeElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
-		return getSelectedElement(this);
+		return h.getSelectedElement(this);
 	}
 
 	/**
@@ -269,8 +253,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 			return false;
 		}
 
-		const
-			{block: $b} = this;
+		const {block: $b} = this;
 
 		if ($b == null) {
 			return true;
@@ -281,44 +264,17 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 			itemEl = id != null ? $b.element<HTMLOptionElement>('item', {id}) : null;
 
 		if (!this.multiple || unsetPrevious) {
-			const
-				previousItemEls = $b.elements<HTMLOptionElement>('item', {selected: true});
-
-			for (let i = 0; i < previousItemEls.length; i++) {
-				const
-					previousItemEl = previousItemEls[i];
-
-				// TODO: create helper
-				if (previousItemEl !== itemEl) {
-					$b.setElementMod(previousItemEl, 'item', 'selected', false);
-
-					if (this.native) {
-						previousItemEl.selected = false;
-
-					} else {
-						previousItemEl.setAttribute('aria-selected', 'false');
-					}
+			Object.forEach($b.elements<HTMLOptionElement>('item', {selected: true}), (el) => {
+				if (el !== itemEl) {
+					this.setSelectedMod($b, el, false);
 				}
-			}
+			});
 		}
 
-		SyncPromise.resolve(this.activeElement).then((el) => {
-			const
-				els = Array.concat([], el);
-
-			for (let i = 0; i < els.length; i++) {
-				const el = els[i];
-
-				// TODO: create helper
-				$b.setElementMod(el, 'item', 'selected', true);
-
-				if (this.native) {
-					el.selected = true;
-
-				} else {
-					el.setAttribute('aria-selected', 'true');
-				}
-			}
+		SyncPromise.resolve(this.activeElement).then((els) => {
+			Array.concat([], els).forEach((el) => {
+				this.setSelectedMod($b, el, true);
+			});
 		}).catch(stderr);
 
 		return true;
@@ -330,16 +286,12 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 			return false;
 		}
 
-		const
-			{block: $b} = this;
-
-		if ($b == null) {
+		if (this.block == null) {
 			return true;
 		}
 
 		SyncPromise.resolve(this.activeElement).then((el) => {
-			const
-				els = Array.concat([], el);
+			const els = Array.concat([], el);
 
 			for (let i = 0; i < els.length; i++) {
 				const
@@ -355,16 +307,8 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 					value.has(item.value) :
 					value === item.value;
 
-				// TODO: create helper
 				if (needChangeMod) {
-					$b.setElementMod(el, 'item', 'selected', false);
-
-					if (this.native) {
-						el.selected = false;
-
-					} else {
-						el.setAttribute('aria-selected', 'false');
-					}
+					this.setSelectedMod(this.block, el, false);
 				}
 			}
 		}).catch(stderr);
@@ -419,15 +363,11 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		}
 
 		if (this.multiple || await iOpenToggle.close(this, ...args)) {
-			const
-				{block: $b} = this;
-
-			if ($b != null) {
-				const
-					markedEl = $b.element('item', {marked: true});
+			if (this.block != null) {
+				const markedEl = this.block.element('item', {marked: true});
 
 				if (markedEl != null) {
-					$b.removeElementMod(markedEl, 'item', 'marked');
+					this.block.removeElementMod(markedEl, 'item', 'marked');
 				}
 			}
 
@@ -443,11 +383,9 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		await on.openedChange(this, e);
 	}
 
-	/**
-	 * Sets the scroll position to the first marked or selected item
-	 */
+	/** @see [[h.setScrollToMarkedOrSelectedItem]] */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
-		return setScrollToMarkedOrSelectedItem(this);
+		return h.setScrollToMarkedOrSelectedItem(this);
 	}
 
 	protected override initBaseAPI(): void {
@@ -457,6 +395,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 			i = this.instance;
 
 		this.normalizeItems = i.normalizeItems.bind(this);
+		this.setSelectedMod = i.setSelectedMod.bind(this);
 	}
 
 	/** @see [[iOpenToggle.initCloseHelpers]] */
@@ -471,9 +410,14 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		this.values.init();
 	}
 
-	/** @see [[normalizeItems]] */
+	/** @see [[h.normalizeItems]] */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
-		return normalizeItems(items);
+		return h.normalizeItems(items);
+	}
+
+	/** @see [[h.setSelectedMod]] */
+	protected setSelectedMod(block: Nullable<Block>, el: HTMLOptionElement, selected: boolean): void {
+		return h.setSelectedMod.call(this, block, el, selected);
 	}
 
 	protected override normalizeAttrs(attrs: Dictionary = {}): Dictionary {
