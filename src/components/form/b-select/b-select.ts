@@ -322,8 +322,8 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	/** @see [[iActiveItems.setActive]] */
-	selectValue(value: this['ActiveProp'], unselectPrevious: boolean = false): boolean {
-		return this.setActive(value, unselectPrevious);
+	selectValue(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
+		return this.setActive(value, unsetPrevious);
 	}
 
 	/** @see [[iActiveItems.unsetActive]] */
@@ -332,8 +332,8 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	/** @see [[iActiveItems.toggleActive]] */
-	toggleValue(value: this['ActiveProp'], unselectPrevious: boolean = false): CanUndef<this['Active']> {
-		const val = this.toggleActive(value, unselectPrevious);
+	toggleValue(value: this['ActiveProp'], unsetPrevious: boolean = false): CanUndef<this['Active']> {
+		const val = this.toggleActive(value, unsetPrevious);
 
 		if (this.multiple && Object.isSet(val) && val.size === 0) {
 			return undefined;
