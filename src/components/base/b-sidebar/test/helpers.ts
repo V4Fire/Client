@@ -42,4 +42,11 @@ export function getClassList(target: JSHandle<bSidebar>): Promise<string[] | und
 	return target.evaluate((ctx) => ctx.$el?.className.split(' '));
 }
 
+/**
+* Returns the selector in b-sidebar block
+*
+* @param elName
+*
+* @example expect(createSidebarSelector('foo')).toBe('.b-sidebar__foo')
+*/
 export const createSidebarSelector = DOM.elNameSelectorGenerator('b-sidebar');

@@ -7,12 +7,13 @@
  */
 
 import test from 'tests/config/unit/test';
+import { DOM } from 'tests/helpers';
 
 import { renderSidebar, getClassList, createSidebarSelector } from 'components/base/b-sidebar/test/helpers';
 
 test.describe('<b-sidebar>', () => {
 	const
-		sidebarOpenedMarkerClass = 'b-sidebar_opened_true';
+		sidebarOpenedMarkerClass = DOM.elModNameGenerator('b-sidebar', 'opened', 'true');
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
