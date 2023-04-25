@@ -7,7 +7,7 @@ The select can contain multiple values.
 
 * The component extends [[iInputText]].
 
-* The component implements [[iOpenToggle]], [[iItems]] traits.
+* The component implements [[iOpenToggle]], [[iActiveItems]] traits.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
@@ -31,14 +31,16 @@ Also, you can see the parent component and the component traits.
 | EventName     | Description                      | Payload description | Payload |
 |---------------|----------------------------------|---------------------|---------|
 | `itemsChange` | A list of items has been changed | List of items       | `Items` |
+| `change`      | The active element of the component has been changed   | The active item(s) | `Active`  |
+| `actionChange`| The active element of the component has been changed due to some user action          | The active item(s)               | `Active`            |
 
 Also, you can see the parent component and the component traits.
 
 ## How to switch between the native `<select>` and custom select
 
-By default, desktop browsers are used the custom select layout based on `<input>` and some helper tags to create dropdown and other staff.
-Opposite to, all mobile browsers are used the simple native `<select>` tag. You can manage this logic by using the `native` prop.
-Also, the component has a modifier with the same name. The modifier value is automatically synchronized with this prop.
+By default, desktop browsers use the custom select layout based on the `<input>` and some helper tags to create dropdown menus and other elements.
+In contrast, all mobile browsers use the simple native `<select>` tag. You can set the mode by using the `native` prop.
+Additionally, the component has a `native` modifier. The modifier value is automatically synchronized with this prop.
 
 ```
 < b-select :items = myItems | :native = true
