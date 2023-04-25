@@ -16,24 +16,15 @@ import type { Items } from 'components/form/b-select/interface';
  * @param items
  */
 export function normalizeItems(items: CanUndef<Items>): Items {
-	const
-		res = <Items>[];
-
 	if (items == null) {
-		return res;
+		return [];
 	}
 
-	for (let i = 0; i < items.length; i++) {
-		const
-			item = items[i];
-
-		res.push({
-			...item,
-			value: item.value !== undefined ? item.value : item.label
-		});
-	}
-
-	return res;
+	return items.map((item) => ({
+		...item,
+		active: item.selected,
+		value: item.value !== undefined ? item.value : item.label
+	}));
 }
 
 /**
