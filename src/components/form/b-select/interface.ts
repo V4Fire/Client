@@ -8,9 +8,10 @@
 
 import type { ModsDict, UnsafeIInputText } from 'components/super/i-input-text/i-input-text';
 import type bSelect from 'components/form/b-select/b-select';
-import type { Item as Super } from 'components/traits/i-active-items/i-active-items';
+import type { Item as Super, Active } from 'components/traits/i-active-items/i-active-items';
 
-export type Value = unknown | Set<unknown>;
+export type Value = Active;
+
 export type FormValue = CanUndef<CanArray<unknown>>;
 
 export interface Item extends Super {
