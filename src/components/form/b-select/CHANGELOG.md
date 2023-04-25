@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* `actionChange` and `change` events order has changed: now `change` event - is first and `actionChange` - is second.
+* `toggleValue` with `unsetPrevious = true` will unset previous value and set given value as new, previously, it would just unset the value.
+
 ## v3.5.3 (2021-10-06)
 
 #### :bug: Bug Fix
