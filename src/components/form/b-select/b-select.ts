@@ -508,13 +508,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	protected override initValueListeners(): void {
-		this.watch('activeStore', (value: this['Value'], oldValue: CanUndef<this['Value']>) => {
-			this.prevValue = oldValue;
-
-			if (value !== oldValue || value != null && typeof value === 'object') {
-				this.$emit('update:modelValue', this.value);
-			}
-		});
+		super.initValueListeners();
 
 		this.localEmitter.on('maskedText.change', () => {
 			this.onTextChange();
