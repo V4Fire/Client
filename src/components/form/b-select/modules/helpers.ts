@@ -10,6 +10,7 @@ import { $$ } from 'components/form/b-select/const';
 
 import type bSelect from 'components/form/b-select/b-select';
 import type { Items } from 'components/form/b-select/interface';
+import type Block from 'components/friends/block/class';
 
 /**
  * Normalizes the specified items and returns it
@@ -119,4 +120,26 @@ export function getSelectedElement<C extends bSelect>(component: C): CanPromise<
 
 		return getEl(value) ?? null;
 	});
+}
+
+/**
+ * Changes the `selected` modifier of the passed element and sets the `aria-selected` attribute
+ *
+ * @param block
+ * @param el
+ * @param selected
+ */
+export function setSelectedMod(this: bSelect, block: Nullable<Block>, el: HTMLOptionElement, selected: boolean): void {
+	if (block == null) {
+		return;
+	}
+
+	block.setElementMod(el, 'item', 'selected', selected);
+
+	if (this.native) {
+		el.selected = false;
+
+	} else {
+		el.setAttribute('aria-selected', String(selected));
+	}
 }
