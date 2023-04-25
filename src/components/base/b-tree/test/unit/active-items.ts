@@ -280,7 +280,7 @@ test.describe('<b-tree> active items', () => {
 			target = await renderTree(page, {items}),
 			nodeSelector = createTreeSelector('node');
 
-		const changesLogPromise = target.evaluate((ctx) => new Promise((resolve) => {
+		const scan = target.evaluate((ctx) => new Promise((resolve) => {
 			const
 				log: any[] = [],
 				onEvent = () => {
@@ -304,11 +304,11 @@ test.describe('<b-tree> active items', () => {
 
 		await page.click(`${nodeSelector}:nth-child(2)`);
 
-		test.expect(await changesLogPromise).toEqual([
-			['change', 0],
+		await test.expect(scan).resolves.toEqual([
 			true,
-			['change', 1],
-			['actionChange', 1]
+			['change', 0],
+			['actionChange', 1],
+			['change', 1]
 		]);
 	});
 

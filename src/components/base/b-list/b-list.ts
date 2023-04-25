@@ -287,6 +287,12 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 		this.values.init(itemsChanged);
 	}
 
+	/** @see [[iActiveItems.initChangeListeners]] */
+	@hook('beforeDataCreate')
+	protected initChangeListeners(): void {
+		iActiveItems.initChangeListeners(this);
+	}
+
 	/**
 	 * Returns a dictionary with props for the specified item
 	 *
