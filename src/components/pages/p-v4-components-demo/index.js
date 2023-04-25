@@ -20,6 +20,7 @@ package('p-v4-components-demo')
 		'b-tree',
 		'b-window',
 		'b-bottom-slide',
+		'b-sidebar',
 
 		'b-slider',
 		'b-form',
