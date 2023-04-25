@@ -44,7 +44,7 @@ import iInputText, {
 import Mask, * as MaskAPI from 'components/super/i-input-text/mask';
 
 import * as on from 'components/form/b-select/modules/handlers';
-import * as h from 'components/form/b-select/modules/helpers';
+import { normalizeItems, getSelectedElement, setScrollToMarkedOrSelectedItem } from 'components/form/b-select/modules/helpers';
 
 import { openedSelect } from 'components/form/b-select/const';
 
@@ -77,7 +77,11 @@ interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems> 
 @component()
 @derive(iOpenToggle, iActiveItems)
 class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
-	/** @see [[bSelect.itemsProp]] */
+	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
+		return Object.cast(this);
+	}
+
+	/** @see [[bSelectProps.itemsProp]] */
 	get items(): this['Items'] {
 		return <this['Items']>this.field.get('itemsStore');
 	}
@@ -87,38 +91,19 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		this.field.set('itemsStore', value);
 	}
 
-	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
-		return Object.cast(this);
-	}
-
-	override get rootAttrs(): Dictionary {
-		const attrs = {
-			...super['rootAttrsGetter']()
-		};
-
-		if (!this.native) {
-			Object.assign(attrs, {
-				role: 'listbox',
-				'aria-multiselectable': this.multiple
-			});
-		}
-
-		return attrs;
-	}
-
 	/** @see [[iActiveItems.activeChangeEvent]] */
 	@system()
 	readonly activeChangeEvent: string = 'change';
 
-	/** @see [[iActiveItems.active] */
+	/** @see [[iActiveItems.active]] */
 	@computed({cache: false})
 	get active(): this['Active'] {
 		return iActiveItems.getActive(this);
 	}
 
-	/** @see [[iActiveItems.activeElement] */
+	/** @see [[iActiveItems.activeElement]] */
 	get activeElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
-		return h.getSelectedElement(this);
+		return getSelectedElement(this);
 	}
 
 	/**
@@ -126,8 +111,8 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	 * @see [[iActiveItems.syncActiveStore]]
 	 */
 	@system<bSelect>((o) => {
-		o.watch('modelValue', (val) => o.setActive(val, true));
 		o.watch('valueProp', (val) => o.setActive(val, true));
+		o.watch('modelValue', (val) => o.setActive(val, true));
 		return iActiveItems.linkActiveStore(o, (val) => o.resolveValue(o.valueProp ?? o.modelValue ?? val));
 	})
 
@@ -160,8 +145,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	override get default(): this['Active'] {
-		const
-			val = this.field.get('defaultProp');
+		const val = this.field.get('defaultProp');
 
 		if (this.multiple) {
 			return new Set(Object.isIterable(val) ? val : Array.concat([], val));
@@ -171,19 +155,25 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	override get formValue(): Promise<this['FormValue']> {
-		const
-			formValue = super['formValueGetter']();
+		const formValue = super['formValueGetter']();
 
-		return (async () => {
-			const
-				val = await formValue;
+		return SyncPromise.resolve(formValue)
+			.then((val) => this.multiple && Object.isSet(val) ? [...val] : val);
+	}
 
-			if (this.multiple && Object.isSet(val)) {
-				return [...val];
-			}
+	override get rootAttrs(): Dictionary {
+		const attrs = {
+			...super['rootAttrsGetter']()
+		};
 
-			return val;
-		})();
+		if (!this.native) {
+			Object.assign(attrs, {
+				role: 'listbox',
+				'aria-multiselectable': this.multiple
+			});
+		}
+
+		return attrs;
 	}
 
 	static override readonly mods: ModsDecl = {
@@ -222,6 +212,12 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		//#endif
 	};
 
+	/**
+	 * Internal API for working with component values
+	 */
+	@system<bSelect>((o) => new Values(o))
+	protected values!: Values;
+
 	/** @see [[bSelect.items]] */
 	@field<bSelect>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
@@ -233,19 +229,12 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 
 	protected itemsStore!: this['Items'];
 
-	/**
-	 * Internal API for working with component values
-	 */
-	@system<bSelect>((o) => new Values(o))
-	protected values!: Values;
-
 	protected override readonly $refs!: iInputText['$refs'] & {
 		dropdown?: Element;
 	};
 
 	/** @see [[iActiveItems.activeElement]] */
 	@computed({cache: false})
-
 	protected get selectedElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
 		return this.activeElement;
 	}
@@ -458,7 +447,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	 * Sets the scroll position to the first marked or selected item
 	 */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
-		return h.setScrollToMarkedOrSelectedItem(this);
+		return setScrollToMarkedOrSelectedItem(this);
 	}
 
 	protected override initBaseAPI(): void {
@@ -476,20 +465,15 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		iOpenToggle.initCloseHelpers(this, events);
 	}
 
-	/**
-	 * Initializes component values
-	 */
+	/** @see [[Values.init]] */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
 		this.values.init();
 	}
 
-	/**
-	 * Normalizes the specified items and returns it
-	 * @param items
-	 */
+	/** @see [[normalizeItems]] */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
-		return h.normalizeItems(items);
+		return normalizeItems(items);
 	}
 
 	protected override normalizeAttrs(attrs: Dictionary = {}): Dictionary {
@@ -580,7 +564,13 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	protected override initValueListeners(): void {
-		super.initValueListeners();
+		this.watch('activeStore', (value: this['Value'], oldValue: CanUndef<this['Value']>) => {
+			this.prevValue = oldValue;
+
+			if (value !== oldValue || value != null && typeof value === 'object') {
+				this.$emit('update:modelValue', this.value);
+			}
+		});
 
 		this.localEmitter.on('maskedText.change', () => {
 			this.onTextChange();
