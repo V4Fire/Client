@@ -143,7 +143,11 @@ export default abstract class iActiveItems extends iItems {
 	 * @param item
 	 */
 	static initItem(ctx: TraitComponent, item: Item): void {
-		if (item.active && (ctx.multiple ? ctx.activeProp === undefined : (<Set<iActiveItems['Active']>>ctx.active).size === 0)) {
+		if (item.active && (
+			ctx.multiple ?
+			ctx.activeProp === undefined :
+			(ctx.active === undefined || (Object.isSet(ctx.active) && ctx.active.size === 0)))
+		) {
 			ctx.setActive(item.value);
 		}
 	}
