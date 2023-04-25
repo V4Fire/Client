@@ -34,19 +34,22 @@ export async function renderSidebar(page: Page): Promise<JSHandle<bSidebar>> {
 }
 
 /**
-* Returns the class list of the root node bSidebar
-*
-* @param target
-*/
+	* Returns the class list of the root node bSidebar
+	*
+	* @param target
+	*/
 export function getClassList(target: JSHandle<bSidebar>): Promise<string[] | undefined> {
 	return target.evaluate((ctx) => ctx.$el?.className.split(' '));
 }
 
 /**
-* Returns the selector in b-sidebar block
-*
-* @param elName
-*
-* @example expect(createSidebarSelector('foo')).toBe('.b-sidebar__foo')
-*/
+	* Returns the selector in b-sidebar block
+	*
+	* @param elName
+	*
+	* @example
+	* ```typescript
+	* expect(createSidebarSelector('foo')).toBe('.b-sidebar__foo')
+	* ```
+	*/
 export const createSidebarSelector = DOM.elNameSelectorGenerator('b-sidebar');
