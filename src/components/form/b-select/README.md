@@ -46,10 +46,7 @@ Additionally, the component has a `native` modifier. The modifier value is autom
 < b-select :items = myItems | :native = true
 ```
 
-Why we always can't use only one mode? Well, the main problem is customizing select' items: within `<option>` we can use only plain text,
-but sometimes it will be cool to add images, or other components, like checkboxes. And there is another problem with
-customizing the view of these items via CSS. That's why `bSelect` shims the native behavior with custom tags.
-But, for mobile browsers is almost always better to use the native select because of the small display size and user experience.
+Why can't we always use just one mode? The primary issue lies in customizing the select items. Within `<option>`, we can only use plain text, but at times it would be great to incorporate images or other components, such as checkboxes. Additionally, there is a challenge in customizing the appearance of these items via CSS. This is why `bSelect` mimics native behavior using custom tags. However, for mobile browsers, it is generally preferable to use the native select due to the smaller screen size and enhanced user experience.
 
 ## Usage
 
@@ -80,11 +77,11 @@ But, for mobile browsers is almost always better to use the native select becaus
 < b-select :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
 ```
 
-If a provider returns a dictionary, it will be mapped on the component
-(you can pass the complex property path using dots as separators).
+When a provider returns a dictionary, it gets mapped onto the component. To pass a complex property path, you can use dots as separators.
 
-If a key from the response is matched with a component method, this method will be invoked with a value from this key
-(if the value is an array, it will be spread to the method as arguments).
+If a key from the response corresponds to a component method, this method will be invoked using the value from that key. If the value is an array, it will be spread to the method as separate arguments.
+
+Provider should not return any properties which are in the component props list (marked with @prop decorator), they won't be updated.
 
 ```
 {
@@ -103,9 +100,9 @@ In other cases, the response value is interpreted as a component value.
 
 ## Slots
 
-The component supports a bunch of slots to provide.
+The component supports several slots for customization:
 
-1. `default` to provide a template for a select' item (option).
+1. `default` - use this slot to provide a template for a select item (option).
 
 ```
 < b-select :items = myItems
@@ -113,7 +110,8 @@ The component supports a bunch of slots to provide.
     {{ item.label }}
 ```
 
-2. `preIcon` and `icon` to inject icons around the value block.
+2. `preIcon` and `icon` - use these slots to inject icons around the value block.
+
 
 ```
 < b-select :items = myItems
@@ -124,7 +122,7 @@ The component supports a bunch of slots to provide.
     < img src = clear.svg
 ```
 
-Also, these icons can be provided by props.
+Also, these icons can be provided via props.
 
 ```
 < b-select :items = myItems | :icon = 'validate'
@@ -140,7 +138,7 @@ Also, these icons can be provided by props.
     < img :src = icon
 ```
 
-3. `progressIcon` to inject an icon that indicates loading, by default, is used [[bProgressIcon]].
+3. `progressIcon` - use this slot to inject an icon that indicates loading. By default, [[bProgressIcon]] is used.
 
 ```
 < b-select :items = myItems
@@ -148,7 +146,7 @@ Also, these icons can be provided by props.
     < img src = spinner.svg
 ```
 
-Also, this icon can be provided by a prop.
+Also, this icon can be provided via a prop.
 
 ```
 < b-select :items = myItems | :progressIcon = 'bCustomLoader'
@@ -156,7 +154,7 @@ Also, this icon can be provided by a prop.
 
 ## API
 
-Also, you can see the parent component and the component traits.
+Check parent [[iInputText]] component and the traits.
 
 ### Props
 
