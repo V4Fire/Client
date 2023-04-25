@@ -243,14 +243,8 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		dropdown?: Element;
 	};
 
-	/**
-	 * A link to the selected item element.
-	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
-	 */
-	@computed({
-		cache: true,
-		dependencies: ['value']
-	})
+	/** @see [[iActiveItems.activeElement]] */
+	@computed({cache: false})
 
 	protected get selectedElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
 		return this.activeElement;
@@ -389,44 +383,22 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return true;
 	}
 
-	/**
-	 * Returns true if the specified value is selected
-	 * @param value
-	 */
+	/** @see [[iActiveItems.isActive]] */
 	isSelected(value: unknown): boolean {
 		return this.isActive(value);
 	}
 
-	/**
-	 * Selects an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Iterable` to set multiple items.
-	 *
-	 * @param value
-	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
-	 *   (works only with the `multiple` mode)
-	 */
+	/** @see [[iActiveItems.setActive]] */
 	selectValue(value: this['ActiveProp'], unselectPrevious: boolean = false): boolean {
 		return this.setActive(value, unselectPrevious);
 	}
 
-	/**
-	 * Removes selection from an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Iterable` to unset multiple items.
-	 *
-	 * @param value
-	 */
+	/** @see [[iActiveItems.unsetActive]] */
 	unselectValue(value: this['ActiveProp']): boolean {
 		return this.unsetActive(value);
 	}
 
-	/**
-	 * Toggles selection of an item by the specified value.
-	 * The methods return a new selected value/s.
-	 *
-	 * @param value
-	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
-	 *   (works only with the `multiple` mode)
-	 */
+	/** @see [[iActiveItems.toggleActive]] */
 	toggleValue(value: this['ActiveProp'], unselectPrevious: boolean = false): CanUndef<this['Active']> {
 		const val = this.toggleActive(value, unselectPrevious);
 
