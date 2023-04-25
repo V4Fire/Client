@@ -17,20 +17,20 @@ import { DOM } from 'tests/helpers';
  * @param page
  */
 export async function renderSidebar(page: Page): Promise<JSHandle<bSidebar>> {
-  return Component.createComponent<bSidebar>(page, 'b-sidebar', {
-    attrs: {},
-    children: {
-      default: {
-        type: 'div',
-        children: {
-          default: 'Hello content'
-        },
-        attrs: {
-          id: 'test-div'
-        }
-      }
-    }
-  });
+	return Component.createComponent<bSidebar>(page, 'b-sidebar', {
+		attrs: {},
+		children: {
+			default: {
+				type: 'div',
+				children: {
+					default: 'Hello content'
+				},
+				attrs: {
+					id: 'test-div'
+				}
+			}
+		}
+	});
 }
 
 /**
@@ -39,19 +39,7 @@ export async function renderSidebar(page: Page): Promise<JSHandle<bSidebar>> {
 * @param target
 */
 export function getClassList(target: JSHandle<bSidebar>): Promise<string[] | undefined> {
-  return target.evaluate((ctx) => ctx.$el?.className.split(' '));
+	return target.evaluate((ctx) => ctx.$el?.className.split(' '));
 }
 
-/**
-* Returns the selector in b-sidebar block
-*
-* @param elName
-*
-* @example
-* ```typescript
-* expect(createSidebarSelector('foo')).toBe('.b-sidebar__foo')
-* ```
-*/
-export function createSidebarSelector(elName: string): string {
-  return DOM.elNameSelectorGenerator('b-sidebar')(elName);
-}
+export const createSidebarSelector = DOM.elNameSelectorGenerator('b-sidebar');

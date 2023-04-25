@@ -6,74 +6,77 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { renderSidebar, getClassList, createSidebarSelector } from 'components/base/b-sidebar/test/helpers';
 import test from 'tests/config/unit/test';
 
+import { renderSidebar, getClassList, createSidebarSelector } from 'components/base/b-sidebar/test/helpers';
+
 test.describe('<b-sidebar>', () => {
-  test.beforeEach(async ({demoPage}) => {
-    await demoPage.goto();
-  });
+	const
+		sidebarOpenedMarkerClass = 'b-sidebar_opened_true';
 
-  test('should render the specified content', async ({page}) => {
-    await renderSidebar(page);
+	test.beforeEach(async ({demoPage}) => {
+		await demoPage.goto();
+	});
 
-    // Check that #test-div is inside the b-sidebar
-    const selector = `${createSidebarSelector('root-wrapper')} #test-div`;
+	test('should render the specified content', async ({page}) => {
+		await renderSidebar(page);
 
-    await test.expect(page.locator(selector)).toHaveText('Hello content');
-  });
+		// Check that #test-div is inside the b-sidebar
+		const selector = `${createSidebarSelector('root-wrapper')} #test-div`;
 
-  test('should be closed by default', async ({page}) => {
-    const sidebar = await renderSidebar(page);
+		await test.expect(page.locator(selector)).toHaveText('Hello content');
+	});
 
-    await test.expect(getClassList(sidebar)).resolves.not.toContain('b-sidebar_opened_true');
-  });
+	test('should be closed by default', async ({page}) => {
+		const sidebar = await renderSidebar(page);
 
-  test.describe('`open`', () => {
-    test('should emit an event on opening', async ({page}) => {
-      const
-        sidebar = await renderSidebar(page),
-        subscribe = sidebar.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
+		await test.expect(getClassList(sidebar)).resolves.not.toContain(sidebarOpenedMarkerClass);
+	});
 
-      await sidebar.evaluate((ctx) => ctx.open());
+	test.describe('`open`', () => {
+		test('should emit an event on opening', async ({page}) => {
+			const
+				sidebar = await renderSidebar(page),
+				subscribe = sidebar.evaluate((ctx) => new Promise((res) => ctx.once('open', res)));
 
-      test.expect(subscribe).toBeResolved();
-    });
+			await sidebar.evaluate((ctx) => ctx.open());
 
-    test('should show the sidebar when `open` is invoked', async ({page}) => {
-      const sidebar = await renderSidebar(page);
+			await test.expect(subscribe).toBeResolved();
+		});
 
-      await sidebar.evaluate((ctx) => ctx.open());
+		test('should show the sidebar when `open` is invoked', async ({page}) => {
+			const sidebar = await renderSidebar(page);
 
-      await test.expect(getClassList(sidebar)).resolves.toContain('b-sidebar_opened_true');
-    });
+			await sidebar.evaluate((ctx) => ctx.open());
 
-    test('should show the sidebar when `toggle` is invoked', async ({page}) => {
-      const sidebar = await renderSidebar(page);
+			await test.expect(getClassList(sidebar)).resolves.toContain(sidebarOpenedMarkerClass);
+		});
 
-      await sidebar.evaluate((ctx) => ctx.toggle());
+		test('should show the sidebar when `toggle` is invoked', async ({page}) => {
+			const sidebar = await renderSidebar(page);
 
-      await test.expect(getClassList(sidebar)).resolves.toContain('b-sidebar_opened_true');
-    });
-  });
+			await sidebar.evaluate((ctx) => ctx.toggle());
 
-  test.describe('`close`', () => {
-    test('should emit an event on closing', async ({page}) => {
-      const
-        sidebar = await renderSidebar(page),
-        subscribe = sidebar.evaluate((ctx) => new Promise((res) => ctx.once('close', res)));
+			await test.expect(getClassList(sidebar)).resolves.toContain(sidebarOpenedMarkerClass);
+		});
+	});
 
-      await sidebar.evaluate((ctx) => ctx.open());
-      await sidebar.evaluate((ctx) => ctx.close());
+	test.describe('`close`', () => {
+		test('should emit an event on closing', async ({page}) => {
+			const
+				sidebar = await renderSidebar(page),
+				subscribe = sidebar.evaluate((ctx) => new Promise((res) => ctx.once('close', res)));
 
-      test.expect(subscribe).toBeResolved();
-    });
+			await sidebar.evaluate((ctx) => ctx.open());
+			await sidebar.evaluate((ctx) => ctx.close());
 
-    test('should close the sidebar by a click', async ({page}) => {
-      await page.evaluate(() => {
-        const styles = document.createElement('style');
+			await test.expect(subscribe).toBeResolved();
+		});
 
-        styles.innerHTML = `
+		test('should close the sidebar by a click', async ({page}) => {
+			await page.evaluate(() => {
+				const styles = document.createElement('style');
+				styles.innerHTML = `
 						.b-sidebar__over-wrapper {
 							position: fixed;
 							left: 0;
@@ -83,47 +86,47 @@ test.describe('<b-sidebar>', () => {
 						}
 					`;
 
-        document.body.appendChild(styles);
-      });
+				document.body.appendChild(styles);
+			});
 
-      const
-        sidebar = await renderSidebar(page),
-        selector = createSidebarSelector('over-wrapper');
+			const
+				sidebar = await renderSidebar(page),
+				selector = createSidebarSelector('over-wrapper');
 
-      await sidebar.evaluate((ctx) => ctx.open());
-      await page.click(selector);
+			await sidebar.evaluate((ctx) => ctx.open());
+			await page.click(selector);
 
-      await test.expect(getClassList(sidebar)).resolves.not.toContain('b-sidebar_opened_true');
-    });
+			await test.expect(getClassList(sidebar)).resolves.not.toContain(sidebarOpenedMarkerClass);
+		});
 
-    test('should close the sidebar when `escape` is pressed', async ({page}) => {
-      const
-        sidebar = await renderSidebar(page);
+		test('should close the sidebar when `escape` is pressed', async ({page}) => {
+			const
+				sidebar = await renderSidebar(page);
 
-      await sidebar.evaluate((ctx) => ctx.open());
-      await page.press('.b-sidebar', 'Escape');
+			await sidebar.evaluate((ctx) => ctx.open());
+			await page.press('.b-sidebar', 'Escape');
 
-      await test.expect(getClassList(sidebar)).resolves.not.toContain('b-sidebar_opened_true');
-    });
+			await test.expect(getClassList(sidebar)).resolves.not.toContain(sidebarOpenedMarkerClass);
+		});
 
-    test('should close the sidebar when `close` is invoked', async ({page}) => {
-      const
-        sidebar = await renderSidebar(page);
+		test('should close the sidebar when `close` is invoked', async ({page}) => {
+			const
+				sidebar = await renderSidebar(page);
 
-      await sidebar.evaluate((ctx) => ctx.open());
-      await sidebar.evaluate((ctx) => ctx.close());
+			await sidebar.evaluate((ctx) => ctx.open());
+			await sidebar.evaluate((ctx) => ctx.close());
 
-      await test.expect(getClassList(sidebar)).resolves.not.toContain('b-sidebar_opened_true');
-    });
+			await test.expect(getClassList(sidebar)).resolves.not.toContain(sidebarOpenedMarkerClass);
+		});
 
-    test('should close the sidebar when `toggle` is invoked', async ({page}) => {
-      const
-        sidebar = await renderSidebar(page);
+		test('should close the sidebar when `toggle` is invoked', async ({page}) => {
+			const
+				sidebar = await renderSidebar(page);
 
-      await sidebar.evaluate((ctx) => ctx.open());
-      await sidebar.evaluate((ctx) => ctx.toggle());
+			await sidebar.evaluate((ctx) => ctx.open());
+			await sidebar.evaluate((ctx) => ctx.toggle());
 
-      await test.expect(getClassList(sidebar)).resolves.not.toContain('b-sidebar_opened_true');
-    });
-  });
+			await test.expect(getClassList(sidebar)).resolves.not.toContain(sidebarOpenedMarkerClass);
+		});
+	});
 });
