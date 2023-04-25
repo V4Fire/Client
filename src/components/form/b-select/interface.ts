@@ -6,23 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { UnsafeIInputText, ModsTable } from 'components/super/i-input-text/i-input-text';
+import type { ModsDict, UnsafeIInputText } from 'components/super/i-input-text/i-input-text';
 import type bSelect from 'components/form/b-select/b-select';
+import type { Item as Super } from 'components/traits/i-active-items/i-active-items';
 
 export type Value = unknown | Set<unknown>;
 export type FormValue = CanUndef<CanArray<unknown>>;
 
-export interface Item extends Dictionary {
-	/**
-	 * Item label text
-	 */
-	label?: string;
-
-	/**
-	 * Item value
-	 */
-	value?: unknown;
-
+export interface Item extends Super {
 	/**
 	 * True if the item is selected
 	 */
@@ -36,7 +27,7 @@ export interface Item extends Dictionary {
 	/**
 	 * Map of additional modifiers of the item
 	 */
-	mods?: ModsTable;
+	mods?: ModsDict;
 
 	/**
 	 * Map of additional classes of the item
