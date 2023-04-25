@@ -35,7 +35,10 @@ export default abstract class bSelectProps extends iInputText {
 
 	override readonly valueProp?: this['ActiveProp'];
 
-	/** @see [[iActiveItems.activeProp]] */
+	/**
+	 * @alias valueProp
+	 * @see [[iActiveItems.activeProp]]
+	 */
 	@prop({required: false})
 	readonly activeProp?: this['ActiveProp'];
 
