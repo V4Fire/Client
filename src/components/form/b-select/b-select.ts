@@ -542,7 +542,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		wrapper: (o, cb) => o.dom.delegateElement('item', (e: MouseEvent) => cb(e.delegateTarget))
 	})
 
-	protected onItemClick(itemEl: CanUndef<Element>): void {
+	protected onItemClick(itemEl: Nullable<Element>): void {
 		on.itemClick(this, itemEl);
 	}
 

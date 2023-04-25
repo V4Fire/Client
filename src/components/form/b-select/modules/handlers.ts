@@ -139,7 +139,7 @@ export function searchInput<C extends bSelect>(component: C, e: InputEvent): voi
  * @param itemEl
  * @emits `actionChange(value: V)`
  */
-export function itemClick<C extends bSelect>(component: C, itemEl: CanUndef<Element>): void {
+export function itemClick<C extends bSelect>(component: C, itemEl: Nullable<Element>): void {
 	void component.close();
 
 	if (itemEl == null || component.native) {
