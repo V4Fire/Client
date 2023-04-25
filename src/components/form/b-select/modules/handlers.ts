@@ -74,6 +74,7 @@ export function textChange<C extends bSelect>(component: C): void {
 	let
 		{text} = component;
 
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (component.unsafe.compiledMask != null) {
 		text = text.replace(new RegExp(RegExp.escape(component.maskPlaceholder), 'g'), '');
 	}
@@ -122,6 +123,7 @@ export function searchInput<C extends bSelect>(component: C, e: InputEvent): voi
 	const
 		target = <HTMLInputElement>e.target;
 
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	if (unsafe.compiledMask != null) {
 		return;
 	}
