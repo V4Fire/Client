@@ -80,7 +80,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	readonly activeChangeEvent: string = 'change';
 
 	/** @see [[iActiveItems.active]] */
-	@computed({cache: false})
+	@computed({cache: true})
 	get active(): this['Active'] {
 		return iActiveItems.getActive(this);
 	}
@@ -102,7 +102,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 
 	activeStore!: iActiveItems['activeStore'];
 
-	@computed({cache: false})
+	@computed({cache: true, dependencies: ['active']})
 	override get value(): CanUndef<this['Active']> {
 		const val = this.active;
 
