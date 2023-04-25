@@ -294,11 +294,11 @@ export default abstract class iActiveItems extends iItems {
 				ctx.setActive(value);
 			};
 
-			if (Object.isIterable(value)) {
-				if (unsetPrevious) {
-					ctx.unsetActive(ctx.active);
-				}
+			if (unsetPrevious) {
+				ctx.unsetActive(ctx.active);
+			}
 
+			if (Object.isIterable(value)) {
 				Object.forEach(value, toggle);
 
 			} else {
