@@ -228,8 +228,6 @@ export default abstract class iActiveItems extends iItems {
 			ctx.field.set('activeStore', value);
 		}
 
-		ctx.emit(ctx.activeChangeEvent, ctx.active);
-
 		return true;
 	}
 
@@ -274,8 +272,6 @@ export default abstract class iActiveItems extends iItems {
 			ctx.field.set('activeStore', undefined);
 		}
 
-		ctx.emit(ctx.activeChangeEvent, ctx.active);
-
 		return true;
 	}
 
@@ -317,6 +313,17 @@ export default abstract class iActiveItems extends iItems {
 		}
 
 		return ctx.active;
+	}
+
+	/**
+	 * Initializes active store change listeners
+	 *
+	 * @param ctx
+	 */
+	static initChangeListeners(ctx: TraitComponent): void {
+		ctx.watch('activeStore', {deep: ctx.multiple}, (value) => {
+			ctx.emit(ctx.activeChangeEvent, value);
+		});
 	}
 
 	/**
