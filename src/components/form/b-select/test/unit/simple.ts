@@ -391,7 +391,6 @@ test.describe('<b-select> simple usage', () => {
 			test.expect(scan).toEqual([0, undefined, 0, 1]);
 		});
 
-		// FIXME: broken test
 		test('`toggleValue` with `multiple`', async ({page}) => {
 			const target = await renderSelect(page, {
 				multiple: true,
@@ -408,7 +407,7 @@ test.describe('<b-select> simple usage', () => {
 				res.push(ctx.toggleValue(0));
 				res.push([...<number[]>ctx.toggleValue(0)]);
 				res.push([...<number[]>ctx.toggleValue(1)]);
-				res.push(ctx.toggleValue(0, true));
+				res.push([...<number[]>ctx.toggleValue(0, true)]);
 
 				return res;
 			});
@@ -418,7 +417,7 @@ test.describe('<b-select> simple usage', () => {
 				undefined,
 				[0],
 				[0, 1],
-				undefined
+				[0]
 			]);
 		});
 	});
