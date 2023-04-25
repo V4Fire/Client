@@ -205,7 +205,6 @@ test.describe('<b-select> simple usage', () => {
 				await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(1);
 			});
 
-			// FIXME: cache issue
 			test('should set a component value based on the last `selected` item', async ({page}) => {
 				const target = await renderSelect(page, {
 					items: [
@@ -217,7 +216,6 @@ test.describe('<b-select> simple usage', () => {
 				await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(1);
 			});
 
-			// FIXME: cache issue
 			test('should set a component `multiple` value based on `selected` items', async ({page}) => {
 				const target = await renderSelect(page, {
 					multiple: true,
@@ -246,7 +244,6 @@ test.describe('<b-select> simple usage', () => {
 			await test.expect(target.evaluate((ctx) => ctx.isSelected(1))).resolves.toBeFalsy();
 		});
 
-		// FIXME: cache issue
 		test('`isSelected` with `multiple`', async ({page}) => {
 			const target = await renderSelect(page, {
 				multiple: true,
@@ -345,7 +342,6 @@ test.describe('<b-select> simple usage', () => {
 			]);
 		});
 
-		// FIXME: cache issue
 		test('`unselectValue` with `multiple`', async ({page}) => {
 			const target = await renderSelect(page, {
 				multiple: true,
@@ -395,7 +391,6 @@ test.describe('<b-select> simple usage', () => {
 			test.expect(scan).toEqual([0, undefined, 0, 1]);
 		});
 
-		// FIXME: cache issue
 		test('`toggleValue` with `multiple`', async ({page}) => {
 			const target = await renderSelect(page, {
 				multiple: true,
