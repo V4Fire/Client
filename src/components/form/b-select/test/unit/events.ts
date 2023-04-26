@@ -17,14 +17,17 @@ import { DOM } from 'tests/helpers';
 import type bSelect from 'components/form/b-select/b-select';
 import { renderSelect, createSelector } from 'components/form/b-select/test/helpers';
 
-test.describe('<b-select> component events', () => {
+test.describe('<b-select> events', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test.describe('custom mode', () => {
-		test.describe('single mode', () => {
-			test('listening `change` and `actionChange` events', async ({page}) => {
+	test.describe('in the custom mode', () => {
+		test.describe('with `multiple = false`', () => {
+			test([
+				'should emit the `actionChange` event',
+				'when an item is clicked and the `change` event when the `value` has changed'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					items: [
 						{label: 'Foo', value: 0},
@@ -63,7 +66,7 @@ test.describe('<b-select> component events', () => {
 				]);
 			});
 
-			test('listening `actionChange` with typing', async ({page}) => {
+			test('should emit the `actionChange` event when the <input> is filled', async ({page}) => {
 				const target = await renderSelect(page, {
 					opened: true,
 
@@ -98,7 +101,10 @@ test.describe('<b-select> component events', () => {
 				]);
 			});
 
-			test('listening `change` and `actionChange` events with the provided `mask`', async ({page}) => {
+			test([
+				'should emit the `change` and `actionChange` events',
+				'when the `mask` is defined and user is typing into the <input>'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					mask: '%w%w',
 					opened: true,
@@ -143,7 +149,10 @@ test.describe('<b-select> component events', () => {
 				]);
 			});
 
-			test('listening `clear`', async ({page}) => {
+			test([
+				'should emit `clear` event when the `clear` method is invoked,',
+				'subsequent invocations should be ignored if the <input> is empty'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					value: 0,
 
@@ -168,7 +177,10 @@ test.describe('<b-select> component events', () => {
 				await test.expect(scan).resolves.toEqual([[undefined, '']]);
 			});
 
-			test('listening `reset`', async ({page}) => {
+			test([
+				'should emit `reset` event when the `reset` method is invoked,',
+				'subsequent invocations should be ignored if the <input> has a default value'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					value: 0,
 					default: 1,
@@ -195,8 +207,11 @@ test.describe('<b-select> component events', () => {
 			});
 		});
 
-		test.describe('multiple mode', () => {
-			test('listening `change` and `actionChange` events', async ({page}) => {
+		test.describe('with `multiple = true`', () => {
+			test([
+				'should emit the `actionChange` event',
+				'when an item is clicked and the `change` event when the `value` has changed'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					multiple: true,
 
@@ -237,7 +252,7 @@ test.describe('<b-select> component events', () => {
 				]);
 			});
 
-			test('listening `actionChange` with typing', async ({page}) => {
+			test('should emit the `actionChange` event when the <input> is filled', async ({page}) => {
 				const target = await renderSelect(page, {
 					opened: true,
 					multiple: true,
@@ -274,7 +289,10 @@ test.describe('<b-select> component events', () => {
 				]);
 			});
 
-			test('listening `clear`', async ({page}) => {
+			test([
+				'should emit `clear` event when the `clear` method is invoked,',
+				'subsequent invocations should be ignored if the <input> is empty'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					value: 0,
 					multiple: true,
@@ -300,7 +318,10 @@ test.describe('<b-select> component events', () => {
 				await test.expect(scan).resolves.toEqual([[undefined, '']]);
 			});
 
-			test('listening `reset`', async ({page}) => {
+			test([
+				'should emit `reset` event when the `reset` method is invoked,',
+				'subsequent invocations should be ignored if the <input> has a default value'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					value: 0,
 					default: 1,
@@ -329,9 +350,12 @@ test.describe('<b-select> component events', () => {
 		});
 	});
 
-	test.describe('native mode', () => {
-		test.describe('single mode', () => {
-			test('listening `change` and `actionChange` events', async ({page}) => {
+	test.describe('in native mode', () => {
+		test.describe('with `multiple = false`', () => {
+			test([
+				'should emit the `actionChange` event',
+				'when an option is selected and the `change` event when the `value` has changed'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					native: true,
 
@@ -383,7 +407,10 @@ test.describe('<b-select> component events', () => {
 				]);
 			});
 
-			test('listening `clear`', async ({page}) => {
+			test([
+				'should emit `clear` event when the `clear` method is invoked,',
+				'subsequent invocations should be ignored if the <input> is empty'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					value: 0,
 					native: true,
@@ -409,7 +436,10 @@ test.describe('<b-select> component events', () => {
 				await test.expect(scan).resolves.toEqual([[undefined, '']]);
 			});
 
-			test('listening `reset`', async ({page}) => {
+			test([
+				'should emit `reset` event when the `reset` method is invoked,',
+				'subsequent invocations should be ignored if the <input> has a default value'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					value: 0,
 					default: 1,
@@ -437,8 +467,11 @@ test.describe('<b-select> component events', () => {
 			});
 		});
 
-		test.describe('multiple mode', () => {
-			test('listening `change` and `actionChange` events', async ({page}) => {
+		test.describe('with `multiple = true`', () => {
+			test([
+				'should emit the `actionChange` event',
+				'when an option is selected and the `change` event when the `value` has changed'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					native: true,
 					multiple: true,
@@ -493,7 +526,10 @@ test.describe('<b-select> component events', () => {
 				]);
 			});
 
-			test('listening `clear`', async ({page}) => {
+			test([
+				'should emit `clear` event when the `clear` method is invoked,',
+				'subsequent invocations should be ignored if the <input> is empty'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					value: 0,
 					multiple: true,
@@ -520,7 +556,10 @@ test.describe('<b-select> component events', () => {
 				await test.expect(scan).resolves.toEqual([[undefined, '']]);
 			});
 
-			test('listening `reset`', async ({page}) => {
+			test([
+				'should emit `reset` event when the `reset` method is invoked,',
+				'subsequent invocations should be ignored if the <input> has a default value'
+			].join(' '), async ({page}) => {
 				const target = await renderSelect(page, {
 					value: 0,
 					default: 1,
@@ -550,7 +589,10 @@ test.describe('<b-select> component events', () => {
 		});
 	});
 
-	test('listening `selectText`', async ({page}) => {
+	test([
+		'should emit `selectText` event when `selectText` method is invoked,',
+		'subsequent invocations should be ignored if the text is selected'
+	].join(' '), async ({page}) => {
 		const target = await renderSelect(page, {
 			text: 'foo'
 		});
@@ -569,7 +611,10 @@ test.describe('<b-select> component events', () => {
 		await test.expect(scan).resolves.toEqual([true]);
 	});
 
-	test('listening `clearText`', async ({page}) => {
+	test([
+		'should emit `clearText` event when `clearText` method is invoked,',
+		'subsequent invocations should be ignored if the text is cleared'
+	].join(' '), async ({page}) => {
 		const target = await renderSelect(page, {
 			value: 0,
 
@@ -592,6 +637,12 @@ test.describe('<b-select> component events', () => {
 		await test.expect(scan).resolves.toEqual(['']);
 	});
 
+	/**
+	 * This function performs clicks on the specified items, and changes the value of the component
+	 *
+	 * @param page
+	 * @param target
+	 */
 	async function testChangeViaClickAndSetValue(page: Page, target: JSHandle<bSelect>): Promise<void> {
 		for (const id of ['0', '1']) {
 			const selector = DOM.elModSelectorGenerator(
