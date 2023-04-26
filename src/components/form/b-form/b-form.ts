@@ -29,11 +29,7 @@ import {
 	system,
 	wait,
 
-	DataProviderProp,
-
-	RequestFilter,
 	CreateRequestOptions,
-
 	ModsDecl
 
 } from 'components/super/i-data/i-data';
@@ -59,9 +55,6 @@ const
 })
 
 export default class bForm extends bFormProps implements iVisible {
-	override readonly dataProviderProp: DataProviderProp = 'Provider';
-	override readonly defaultRequestFilter: RequestFilter = true;
-
 	/**
 	 * Additional request parameters
 	 * @see [[bForm.paramsProp]]

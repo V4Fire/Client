@@ -33,10 +33,7 @@ import {
 	hook,
 
 	ModsDecl,
-	ModEvent,
-
-	DataProviderProp,
-	RequestFilter
+	ModEvent
 
 } from 'components/super/i-data/i-data';
 
@@ -59,10 +56,6 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 
 @derive(iAccess, iOpenToggle)
 class bButton extends bButtonProps implements iOpenToggle, iVisible, iWidth, iSize {
-	override readonly rootTag: string = 'span';
-	override readonly dataProviderProp: DataProviderProp = 'Provider';
-	override readonly defaultRequestFilter: RequestFilter = true;
-
 	/**
 	 * Additional attributes that are provided to the native button
 	 *

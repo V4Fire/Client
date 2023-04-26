@@ -7,12 +7,26 @@
  */
 
 import type { HintPosition } from 'components/global/g-hint';
-import iData, { component, prop, ModelMethod } from 'components/super/i-data/i-data';
+
+import iData, {
+
+	component,
+	prop,
+
+	ModelMethod,
+	DataProviderProp,
+	RequestFilter
+
+} from 'components/super/i-data/i-data';
 
 import type { ButtonType } from 'components/form/b-button/interface';
 
 @component()
 export default abstract class bButtonProps extends iData {
+	override readonly rootTag: string = 'span';
+	override readonly dataProviderProp: DataProviderProp = 'Provider';
+	override readonly defaultRequestFilter: RequestFilter = true;
+
 	/** @see [[iVisible.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;

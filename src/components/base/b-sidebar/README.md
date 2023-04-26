@@ -64,7 +64,7 @@ Also, you can see the implemented traits or the parent component.
 
 ### Props
 
-#### [lockPageScroll = `false`]
+#### [lockPageScrollProp = `false`]
 
 If true, then will be blocked the document' scrolling when the component is opened.
 

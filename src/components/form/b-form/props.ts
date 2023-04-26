@@ -6,11 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import iData, { component, prop, ModelMethod, CreateRequestOptions } from 'components/super/i-data/i-data';
+import iData, {
+
+	component,
+	prop,
+
+	ModelMethod,
+	DataProviderProp,
+	RequestFilter,
+	CreateRequestOptions
+
+} from 'components/super/i-data/i-data';
+
 import type { ActionFn } from 'components/form/b-form/interface';
 
 @component()
 export default class bFormProps extends iData {
+	override readonly dataProviderProp: DataProviderProp = 'Provider';
+	override readonly defaultRequestFilter: RequestFilter = true;
+
 	/** @see [[iVisible.hideIfOffline]] */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
