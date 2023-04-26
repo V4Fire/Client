@@ -6,136 +6,115 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { JSHandle, Page } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
-import { renderSelect } from 'components/form/b-select/test/helpers';
+import type bSelect from 'components/form/b-select/b-select';
+import { createSelector, renderSelect } from 'components/form/b-select/test/helpers';
 
-test.describe('<b-select> form API `info` / `error` messages', () => {
+test.describe('<b-select> form API', () => {
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test('without `messageHelpers`', async ({page}) => {
-		const target = await renderSelect(page, {
+	test('should not display `info` and `error` when `messageHelpers` prop is not set', async ({page}) => {
+		await renderSelect(page, {
 			info: 'Hello',
 			error: 'Error'
 		});
 
-		test.expect(await target.evaluate((ctx) => Boolean(ctx.unsafe.block!.element('info-box'))))
-			.toBeFalsy();
-
-		test.expect(await target.evaluate((ctx) => Boolean(ctx.unsafe.block!.element('error-box'))))
-			.toBeFalsy();
+		await test.expect(page.locator(createSelector('info-box')).isHidden()).resolves.toBeTruthy();
+		await test.expect(page.locator(createSelector('error-box')).isHidden()).resolves.toBeTruthy();
 	});
 
-	test('providing `info`', async ({page}) => {
+	test('should display `info` message', async ({page}) => {
 		const target = await renderSelect(page, {
 			info: 'Hello',
 			messageHelpers: true
 		});
 
-		test.expect(await target.evaluate((ctx) => ctx.info))
-			.toBe('Hello');
-
-		test.expect(await target.evaluate((ctx) => ctx.unsafe.block!.element('info-box').textContent.trim()))
-			.toBe('Hello');
-
-		test.expect(await target.evaluate((ctx) => ctx.mods.showInfo))
-			.toBe('true');
+		await assertComponentInfo(page, target, 'Hello');
 
 		await target.evaluate((ctx) => {
 			ctx.info = 'Bla';
 		});
 
-		test.expect(await target.evaluate((ctx) => ctx.info))
-			.toBe('Bla');
-
-		test.expect(await target.evaluate((ctx) => ctx.unsafe.block!.element('info-box').textContent.trim()))
-			.toBe('Bla');
-
-		test.expect(await target.evaluate((ctx) => ctx.mods.showInfo))
-			.toBe('true');
+		await assertComponentInfo(page, target, 'Bla');
 
 		await target.evaluate((ctx) => {
 			ctx.info = undefined;
 		});
 
-		test.expect(await target.evaluate((ctx) => ctx.info))
-			.toBeUndefined();
-
-		test.expect(await target.evaluate((ctx) => ctx.unsafe.block!.element('info-box').textContent.trim()))
-			.toBe('');
-
-		test.expect(await target.evaluate((ctx) => ctx.mods.showInfo))
-			.toBe('false');
+		await assertComponentInfo(page, target, undefined);
 	});
 
-	test('providing `error`', async ({page}) => {
+	test('should display `error` message', async ({page}) => {
 		const target = await renderSelect(page, {
 			error: 'Error',
 			messageHelpers: true
 		});
 
-		test.expect(await target.evaluate((ctx) => ctx.error))
-			.toBe('Error');
-
-		test.expect(await target.evaluate((ctx) => ctx.unsafe.block!.element('error-box').textContent.trim()))
-			.toBe('Error');
-
-		test.expect(await target.evaluate((ctx) => ctx.mods.showError))
-			.toBe('true');
+		await assertComponentError(page, target, 'Error');
 
 		await target.evaluate((ctx) => {
 			ctx.error = 'Bla';
 		});
 
-		test.expect(await target.evaluate((ctx) => ctx.error))
-			.toBe('Bla');
-
-		test.expect(await target.evaluate((ctx) => ctx.unsafe.block!.element('error-box').textContent.trim()))
-			.toBe('Bla');
-
-		test.expect(await target.evaluate((ctx) => ctx.mods.showError))
-			.toBe('true');
+		await assertComponentError(page, target, 'Bla');
 
 		await target.evaluate((ctx) => {
 			ctx.error = undefined;
 		});
 
-		test.expect(await target.evaluate((ctx) => ctx.error))
-			.toBeUndefined();
-
-		test.expect(await target.evaluate((ctx) => ctx.unsafe.block!.element('error-box').textContent.trim()))
-			.toBe('');
-
-		test.expect(await target.evaluate((ctx) => ctx.mods.showError))
-			.toBe('false');
+		await assertComponentError(page, target, undefined);
 	});
 
-	test('providing `info` and `error`', async ({page}) => {
+	test('should display `info` and `error` messages simultaneously', async ({page}) => {
 		const target = await renderSelect(page, {
 			info: 'Hello',
 			error: 'Error',
 			messageHelpers: true
 		});
 
-		test.expect(await target.evaluate((ctx) => ctx.info))
-			.toBe('Hello');
-
-		test.expect(await target.evaluate((ctx) => ctx.unsafe.block!.element('info-box').textContent.trim()))
-			.toBe('Hello');
-
-		test.expect(await target.evaluate((ctx) => ctx.mods.showInfo))
-			.toBe('true');
-
-		test.expect(await target.evaluate((ctx) => ctx.error))
-			.toBe('Error');
-
-		test.expect(await target.evaluate((ctx) => ctx.unsafe.block!.element('error-box').textContent.trim()))
-			.toBe('Error');
-
-		test.expect(await target.evaluate((ctx) => ctx.mods.showError))
-			.toBe('true');
+		await assertComponentInfo(page, target, 'Hello');
+		await assertComponentError(page, target, 'Error');
 	});
+
+	/**
+	 * Checks that component's `info` message is set correctly
+	 *
+	 * @param page
+	 * @param target
+	 * @param text
+	 */
+	async function assertComponentInfo(page: Page, target: JSHandle<bSelect>, text: CanUndef<string>): Promise<void> {
+		await test.expect(target.evaluate((ctx) => ctx.info))
+			.resolves.toBe(text);
+
+		await test.expect(page.locator(createSelector('info-box')))
+			.toHaveText(text ?? '');
+
+		await test.expect(target.evaluate((ctx) => ctx.mods.showInfo))
+			.resolves.toBe(text == null ? 'false' : 'true');
+	}
+
+	/**
+	 * Checks that component's `error` message is set correctly
+	 *
+	 * @param page
+	 * @param target
+	 * @param text
+	 */
+	async function assertComponentError(page: Page, target: JSHandle<bSelect>, text: CanUndef<string>): Promise<void> {
+		await test.expect(target.evaluate((ctx) => ctx.error))
+			.resolves.toBe(text);
+
+		await test.expect(page.locator(createSelector('error-box')))
+			.toHaveText(text ?? '');
+
+		await test.expect(target.evaluate((ctx) => ctx.mods.showError))
+			.resolves.toBe(text == null ? 'false' : 'true');
+	}
 });
