@@ -132,7 +132,7 @@ test.describe('<b-select> simple usage', () => {
 				]
 			});
 
-			await page.locator(createSelector('dropdown')).isHidden();
+			await test.expect(page.locator(createSelector('dropdown')).isHidden()).resolves.toBeTruthy();
 
 			await test.expect(
 				target.evaluate(async (ctx) => {
