@@ -10,9 +10,7 @@ import type { ElementHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
-import { BOM } from 'tests/helpers';
-
-import { renderSelect } from 'components/form/b-select/test/helpers';
+import { createSelector, renderSelect } from 'components/form/b-select/test/helpers';
 
 // eslint-disable-next-line max-lines-per-function
 test.describe('<b-select> simple usage', () => {
@@ -21,10 +19,9 @@ test.describe('<b-select> simple usage', () => {
 		await demoPage.goto();
 	});
 
-	test('providing `value` and checking `text`', async ({page}) => {
+	test('`text` should change when `value` is changed', async ({page}) => {
 		const target = await renderSelect(page, {
 			value: 0,
-
 			items: [
 				{label: 'Foo', value: 0},
 				{label: 'Bar', value: 1}
@@ -42,10 +39,9 @@ test.describe('<b-select> simple usage', () => {
 		await test.expect(textChanges).resolves.toEqual(['Foo', 'Bar']);
 	});
 
-	test('providing `text` and checking `value`', async ({page}) => {
+	test('`value` should not change when `text` is changed', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: 'Foo',
-
 			items: [
 				{label: 'Foo', value: 0},
 				{label: 'Bar', value: 1}
@@ -63,7 +59,7 @@ test.describe('<b-select> simple usage', () => {
 		await test.expect(textChanges).resolves.toEqual([undefined, undefined]);
 	});
 
-	test('providing of attributes', async ({page}) => {
+	test('html attributes of the <input> can be set via component props', async ({page}) => {
 		await renderSelect(page, {
 			id: 'foo',
 			name: 'bla',
@@ -78,11 +74,12 @@ test.describe('<b-select> simple usage', () => {
 			ctx.value
 		]);
 
+		// NOTE: value of the input is an empty string, because select doesn't have any items
 		await test.expect(mainAttributes).resolves.toEqual(['INPUT', 'text', 'bla', '']);
 	});
 
 	test.describe('`dataProvider`', () => {
-		test('loading from a data provider', async ({page}) => {
+		test('should load `value` from a data provider', async ({page}) => {
 			await page.route(/api/, async (route) => route.fulfill({
 				status: 200,
 				contentType: 'application/json',
@@ -90,8 +87,6 @@ test.describe('<b-select> simple usage', () => {
 			}));
 
 			const target = await renderSelect(page, {name: 'baz', dataProvider: 'Provider'});
-
-			await BOM.waitForIdleCallback(page, {sleepAfterIdles: 1000});
 
 			await test.expect(
 				target.evaluate((ctx) => [
@@ -101,7 +96,7 @@ test.describe('<b-select> simple usage', () => {
 			).resolves.toEqual(['baz', 0]);
 		});
 
-		test('loading from a data provider and interpolation', async ({page}) => {
+		test('should load `items` and other attributes from a data provider', async ({page}) => {
 			await page.route(/api/, async (route) => route.fulfill({
 				status: 200,
 				contentType: 'application/json',
@@ -118,8 +113,6 @@ test.describe('<b-select> simple usage', () => {
 
 			const target = await renderSelect(page, {dataProvider: 'Provider'});
 
-			await BOM.waitForIdleCallback(page);
-
 			await test.expect(
 				target.evaluate((ctx) => [
 					ctx.value,
@@ -130,8 +123,8 @@ test.describe('<b-select> simple usage', () => {
 		});
 	});
 
-	test.describe('providing `items`', () => {
-		test('shouldn\'t be rendered until the component open', async ({page}) => {
+	test.describe('`items`', () => {
+		test('should not be rendered until the dropdown is opened', async ({page}) => {
 			const target = await renderSelect(page, {
 				items: [
 					{label: 'Foo', value: 0},
@@ -139,8 +132,7 @@ test.describe('<b-select> simple usage', () => {
 				]
 			});
 
-			await test.expect(target.evaluate((ctx) => Boolean(ctx.unsafe.block!.element('dropdown'))))
-				.resolves.toBeFalsy();
+			await page.locator(createSelector('dropdown')).isHidden();
 
 			await test.expect(
 				target.evaluate(async (ctx) => {
@@ -156,7 +148,7 @@ test.describe('<b-select> simple usage', () => {
 			]);
 		});
 
-		test('should be rendered to a native <select>', async ({page}) => {
+		test('should be rendered to a native <select> with `native = true`', async ({page}) => {
 			const target = await renderSelect(page, {
 				native: true,
 
@@ -170,18 +162,12 @@ test.describe('<b-select> simple usage', () => {
 				.resolves.toBe('SELECT');
 
 			await test.expect(
-				target.evaluate((ctx) => Array.from(ctx.unsafe.block!.element('input')!.children).map((el) => [
-					el.tagName,
-					el.textContent
-				]))
-			).resolves.toEqual([
-				['OPTION', 'Foo'],
-				['OPTION', 'Bar']
-			]);
+				page.locator(createSelector('input')).getByRole('option')
+			).toHaveText(['Foo', 'Bar']);
 		});
 
-		test.describe('providing `selected`', () => {
-			test('should set a component value based on `selected` items', async ({page}) => {
+		test.describe('items with `selected` property', () => {
+			test('should set component\'s `value` based on the `selected` items', async ({page}) => {
 				const target = await renderSelect(page, {
 					items: [
 						{label: 'Foo', value: 0, selected: true},
@@ -192,7 +178,7 @@ test.describe('<b-select> simple usage', () => {
 				await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(0);
 			});
 
-			test('shouldn\'t set a component value based on `selected` items', async ({page}) => {
+			test('should ignore `selected` items when the `value` prop is provided', async ({page}) => {
 				const target = await renderSelect(page, {
 					value: 1,
 
@@ -205,7 +191,7 @@ test.describe('<b-select> simple usage', () => {
 				await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(1);
 			});
 
-			test('should set a component value based on the last `selected` item', async ({page}) => {
+			test('should set component\'s `value` based on the last `selected` item', async ({page}) => {
 				const target = await renderSelect(page, {
 					items: [
 						{label: 'Foo', value: 0, selected: true},
@@ -216,7 +202,7 @@ test.describe('<b-select> simple usage', () => {
 				await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(1);
 			});
 
-			test('should set a component `multiple` value based on `selected` items', async ({page}) => {
+			test('should set component\'s `value` based on all `selected` items with `multiple = true`', async ({page}) => {
 				const target = await renderSelect(page, {
 					multiple: true,
 
@@ -232,7 +218,7 @@ test.describe('<b-select> simple usage', () => {
 	});
 
 	test.describe('API to select values', () => {
-		test('`isSelected`', async ({page}) => {
+		test('`isSelected` should accept item\'s value and return it\'s state: selected or unselected', async ({page}) => {
 			const target = await renderSelect(page, {
 				items: [
 					{label: 'Foo', value: 0, selected: true},
@@ -244,7 +230,7 @@ test.describe('<b-select> simple usage', () => {
 			await test.expect(target.evaluate((ctx) => ctx.isSelected(1))).resolves.toBeFalsy();
 		});
 
-		test('`isSelected` with `multiple`', async ({page}) => {
+		test('`isSelected` with `multiple = true` should accept item\'s value and return it\'s state: selected or unselected', async ({page}) => {
 			const target = await renderSelect(page, {
 				multiple: true,
 
@@ -260,7 +246,10 @@ test.describe('<b-select> simple usage', () => {
 			await test.expect(target.evaluate((ctx) => ctx.isSelected(2))).resolves.toBeFalsy();
 		});
 
-		test('`selectValue`', async ({page}) => {
+		test([
+			'`selectValue` should update the `value` of a component and return `false`',
+			'if provided value is already set, otherwise it should return `true`'
+		].join(' '), async ({page}) => {
 			const target = await renderSelect(page, {
 				items: [
 					{label: 'Foo', value: 0},
@@ -286,7 +275,7 @@ test.describe('<b-select> simple usage', () => {
 			]);
 		});
 
-		test('`selectValue` with `multiple`', async ({page}) => {
+		test('`selectValue` with `multiple = true` should add provided value to the `value` of a component', async ({page}) => {
 			const target = await renderSelect(page, {
 				multiple: true,
 
@@ -318,7 +307,10 @@ test.describe('<b-select> simple usage', () => {
 			]);
 		});
 
-		test('`unselectValue`', async ({page}) => {
+		test([
+			'`unselectValue` should remove provided value from the component\'s `value` and return `false`',
+			'if provided value was not set, otherwise it should return `true`'
+		].join(' '), async ({page}) => {
 			const target = await renderSelect(page, {
 				items: [
 					{label: 'Foo', value: 0, selected: true},
@@ -342,7 +334,7 @@ test.describe('<b-select> simple usage', () => {
 			]);
 		});
 
-		test('`unselectValue` with `multiple`', async ({page}) => {
+		test('`unselectValue` with `multiple = true` should remove provided value from the `value` of a component', async ({page}) => {
 			const target = await renderSelect(page, {
 				multiple: true,
 
@@ -370,7 +362,10 @@ test.describe('<b-select> simple usage', () => {
 			]);
 		});
 
-		test('`toggleValue`', async ({page}) => {
+		test([
+			'`toggleValue` should toggle provided value in the component\'s `value`',
+			'and return current `value` of the component'
+		].join(' '), async ({page}) => {
 			const target = await renderSelect(page, {
 				items: [
 					{label: 'Foo', value: 0, selected: true},
@@ -391,7 +386,10 @@ test.describe('<b-select> simple usage', () => {
 			test.expect(scan).toEqual([0, undefined, 0, 1]);
 		});
 
-		test('`toggleValue` with `multiple`', async ({page}) => {
+		test([
+			'`toggleValue` with `multiple = true` should add or remove provided value to the component\'s `value`',
+			'and return current `value` of the component'
+		].join(' '), async ({page}) => {
 			const target = await renderSelect(page, {
 				multiple: true,
 
