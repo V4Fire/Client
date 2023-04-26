@@ -86,6 +86,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	/** @see [[iActiveItems.activeElement]] */
+	@computed({cache: true, dependencies: ['active']})
 	get activeElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
 		return h.getSelectedElement(this);
 	}
@@ -218,7 +219,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	};
 
 	/** @see [[iActiveItems.activeElement]] */
-	@computed({cache: false})
+	@computed({cache: true, dependencies: ['active']})
 	protected get selectedElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
 		return this.activeElement;
 	}
@@ -282,6 +283,8 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 
 	/** @see [[iActiveItems.unsetActive]] */
 	unsetActive(value: this['ActiveProp']): boolean {
+		const {activeElement: previousActiveElement} = this;
+
 		if (!iActiveItems.unsetActive(this, value)) {
 			return false;
 		}
@@ -290,7 +293,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 			return true;
 		}
 
-		SyncPromise.resolve(this.activeElement).then((el) => {
+		SyncPromise.resolve(previousActiveElement).then((el) => {
 			const els = Array.concat([], el);
 
 			for (let i = 0; i < els.length; i++) {
