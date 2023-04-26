@@ -77,7 +77,7 @@ test.describe('<b-tree> active items', () => {
 	});
 
 	test.describe('`active`', () => {
-		test('should be changeable', async ({page}) => {
+		test('should not be changeable by default', async ({page}) => {
 			const
 				target = await renderTree(page, {items});
 
@@ -142,7 +142,7 @@ test.describe('<b-tree> active items', () => {
 			).toEqual([]);
 		});
 
-		test('should be changeable with `multiple = true; cancelable = false`', async ({page}) => {
+		test('should not be changeable with `multiple = true; cancelable = false`', async ({page}) => {
 			const
 				target = await renderTree(page, {items, attrs: {multiple: true, cancelable: false}});
 
