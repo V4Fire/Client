@@ -8,139 +8,150 @@
 
 import test from 'tests/config/unit/test';
 
-import { renderSelect } from 'components/form/b-select/test/helpers';
+import { createSelector, renderSelect } from 'components/form/b-select/test/helpers';
 
-test.describe('<b-select> masked input simple usage', () => {
+test.describe('<b-select> masked input', () => {
+	const inputSelector = createSelector('input');
+
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test('applying a mask without providing of the text value', async ({page}) => {
-		const target = await renderSelect(page, {
+	test('should not apply the mask to an empty `text`', async ({page}) => {
+		await renderSelect(page, {
 			mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('');
+		await test.expect(page.locator(inputSelector)).toHaveValue('');
 	});
 
-	test('applying a mask to the static content', async ({page}) => {
-		const target = await renderSelect(page, {
+	test('should apply the mask to the `text`', async ({page}) => {
+		await renderSelect(page, {
 			text: '79851234567',
 			mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('+7 (985) 123-45-67');
+		await test.expect(page.locator(inputSelector)).toHaveValue('+7 (985) 123-45-67');
 	});
 
-	test('applying a mask to the partial static content', async ({page}) => {
-		const target = await renderSelect(page, {
+	test([
+		'should partially apply the mask to the `text`',
+		'when text is smaller than the mask'
+	].join(' '), async ({page}) => {
+		await renderSelect(page, {
 			text: '798512',
 			mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('+7 (985) 12_-__-__');
+		await test.expect(page.locator(inputSelector)).toHaveValue('+7 (985) 12_-__-__');
 	});
 
-	test('applying a mask to the non-normalized static content', async ({page}) => {
-		const target = await renderSelect(page, {
+	test('should apply the mask to the non-normalized `text`', async ({page}) => {
+		await renderSelect(page, {
 			text: '798_586xsd35473178x',
 			mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('+7 (985) 863-54-73');
+		await test.expect(page.locator(inputSelector)).toHaveValue('+7 (985) 863-54-73');
 	});
 
-	test('applying a mask with `maskPlaceholder`', async ({page}) => {
-		const target = await renderSelect(page, {
+	test('should apply the mask using a custom `maskPlaceholder` symbol', async ({page}) => {
+		await renderSelect(page, {
 			text: '798586',
 			mask: '+%d (%d%d%d) %d%d%d-%d%d-%d%d',
 			maskPlaceholder: '*'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('+7 (985) 86*-**-**');
+		await test.expect(page.locator(inputSelector)).toHaveValue('+7 (985) 86*-**-**');
 	});
 
-	test('applying a mask with finite repetitions', async ({page}) => {
+	test('should apply the mask and delete the text that exceeds the specified number of `maskRepetitions`', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: '12357984',
 			mask: '%d-%d',
 			maskRepetitions: 2
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('1-2 3-5');
+		await test.expect(page.locator(inputSelector)).toHaveValue('1-2 3-5');
 		await test.expect(target.evaluate((ctx) => ctx.isMaskInfinite)).resolves.toBeFalsy();
 	});
 
-	test('applying a mask with finite repetitions and `maskDelimiter`', async ({page}) => {
-		const target = await renderSelect(page, {
+	test([
+		'should apply the mask using a custom `maskDelimiter`',
+		'and delete the text that exceeds the specified number of `maskRepetitions`'
+	].join(' '), async ({page}) => {
+		await renderSelect(page, {
 			text: '12357984',
 			mask: '%d-%d',
 			maskRepetitions: 2,
 			maskDelimiter: '//'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('1-2//3-5');
+		await test.expect(page.locator(inputSelector)).toHaveValue('1-2//3-5');
 	});
 
-	test('applying a mask with partial finite repetitions', async ({page}) => {
+	test('should update <input> value when text is changed with finite `maskRepetitions`', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: '1',
 			mask: '%d-%d',
 			maskRepetitions: 2
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value))
-			.resolves.toBe('1-_');
+		const setText = (text: string) => target.evaluate((ctx, text) => {
+			ctx.text = text;
+		}, text);
 
-		await test.expect(target.evaluate((ctx) => {
-			ctx.text = '12';
-			return ctx.unsafe.$refs.input.value;
-		})).resolves.toBe('1-2');
+		const input = page.locator(inputSelector);
 
-		await test.expect(target.evaluate((ctx) => {
-			ctx.text = '123';
-			return ctx.unsafe.$refs.input.value;
-		})).resolves.toBe('1-2 3-_');
+		await test.expect(input).toHaveValue('1-_');
+
+		await setText('12');
+
+		await test.expect(input).toHaveValue('1-2');
+
+		await setText('123');
+
+		await test.expect(input).toHaveValue('1-2 3-_');
 	});
 
-	test('applying a mask with infinite repetitions', async ({page}) => {
+	test('should apply the mask with infinite repetitions', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: '12357984',
 			mask: '%d-%d',
 			maskRepetitions: true
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('1-2 3-5 7-9 8-4');
+		await test.expect(page.locator(inputSelector)).toHaveValue('1-2 3-5 7-9 8-4');
 		await test.expect(target.evaluate((ctx) => ctx.isMaskInfinite)).resolves.toBeTruthy();
 	});
 
-	test('applying a mask with partial infinite repetitions', async ({page}) => {
-		const target = await renderSelect(page, {
+	test('should partially apply the mask with infinite repetitions', async ({page}) => {
+		await renderSelect(page, {
 			text: '1235798',
 			mask: '%d-%d',
 			maskRepetitions: true
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('1-2 3-5 7-9 8-_');
+		await test.expect(page.locator(inputSelector)).toHaveValue('1-2 3-5 7-9 8-_');
 	});
 
-	test('applying a mask with the custom non-terminals', async ({page}) => {
-		const target = await renderSelect(page, {
+	test('should apply the mask to the text using the custom non-terminals', async ({page}) => {
+		await renderSelect(page, {
 			text: '1235798',
 			mask: '%l-%l',
 			maskRepetitions: true,
 			regExps: {l: /[1-4]/i}
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.unsafe.$refs.input.value)).resolves.toBe('1-2 3-_');
+		await test.expect(page.locator(inputSelector)).toHaveValue('1-2 3-_');
 	});
 
-	test('checking the `value` accessor with an empty input', async ({page}) => {
-		const target = await renderSelect(page, {});
+	test('the component\'s `text` should be empty when `value` is not provided', async ({page}) => {
+		const target = await renderSelect(page);
 		await test.expect(target.evaluate((ctx) => ctx.text)).resolves.toBe('');
 	});
 
-	test('checking the `value` accessor with a mask and empty input', async ({page}) => {
+	test('the component\'s `text` should be empty when `value` is not provided and `mask` is provided', async ({page}) => {
 		const target = await renderSelect(page, {
 			mask: '%d-%d'
 		});
@@ -148,7 +159,7 @@ test.describe('<b-select> masked input simple usage', () => {
 		await test.expect(target.evaluate((ctx) => ctx.text)).resolves.toBe('');
 	});
 
-	test('checking the `value` accessor', async ({page}) => {
+	test('the component\'s `text` should be set via the prop', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: '123'
 		});
@@ -156,7 +167,7 @@ test.describe('<b-select> masked input simple usage', () => {
 		await test.expect(target.evaluate((ctx) => ctx.text)).resolves.toBe('123');
 	});
 
-	test('setting the `value` accessor', async ({page}) => {
+	test('the component\'s `text` should be changeable', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: '123'
 		});
@@ -167,7 +178,7 @@ test.describe('<b-select> masked input simple usage', () => {
 		})).resolves.toBe('34567');
 	});
 
-	test('checking the `value` accessor with a mask', async ({page}) => {
+	test('should apply the mask to the provided `text`', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: '123',
 			mask: '%d-%d'
@@ -176,7 +187,7 @@ test.describe('<b-select> masked input simple usage', () => {
 		await test.expect(target.evaluate((ctx) => ctx.text)).resolves.toBe('1-2');
 	});
 
-	test('setting the `value` accessor with a mask', async ({page}) => {
+	test('should apply the mask to the text updated via accessor', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: '123',
 			mask: '%d-%d'
