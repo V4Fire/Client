@@ -293,17 +293,14 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 			return true;
 		}
 
-		SyncPromise.resolve(previousActiveElement).then((el) => {
-			const els = Array.concat([], el);
-
-			for (let i = 0; i < els.length; i++) {
+		SyncPromise.resolve(previousActiveElement).then((els) => {
+			Array.concat([], els).forEach((el) => {
 				const
-					el = els[i],
 					id = el.getAttribute('data-id'),
 					item = this.values.getItem(id ?? -1);
 
 				if (item == null) {
-					continue;
+					return;
 				}
 
 				const needChangeMod = this.multiple && Object.isSet(value) ?
@@ -313,7 +310,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 				if (needChangeMod) {
 					this.setSelectedMod(this.block, el, false);
 				}
-			}
+			});
 		}).catch(stderr);
 
 		return true;
