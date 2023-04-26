@@ -15,7 +15,7 @@ import test from 'tests/config/unit/test';
 import { DOM } from 'tests/helpers';
 
 import type bSelect from 'components/form/b-select/b-select';
-import { renderSelect, createSelector } from 'components/form/b-select/test/helpers';
+import { renderSelect, createSelector, setValue } from 'components/form/b-select/test/helpers';
 
 test.describe('<b-select> events', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -138,9 +138,7 @@ test.describe('<b-select> events', () => {
 
 				await page.locator(createSelector('input')).type('Fo', {delay: 300});
 
-				await target.evaluate((ctx) => {
-					ctx.value = 1;
-				});
+				await setValue(target, 1);
 
 				await test.expect(scan).resolves.toEqual([
 					['actionChange', 0],
@@ -385,9 +383,7 @@ test.describe('<b-select> events', () => {
 					});
 				}));
 
-				await target.evaluate((ctx) => {
-					ctx.value = 2;
-				});
+				await setValue(target, 2);
 
 				const
 					select = page.locator(`select.${await target.evaluate((ctx) => ctx.componentId)}`),
@@ -503,9 +499,7 @@ test.describe('<b-select> events', () => {
 					});
 				}));
 
-				await target.evaluate((ctx) => {
-					ctx.value = 2;
-				});
+				await setValue(target, 2);
 
 				const
 					select = await page.locator(`select.${await target.evaluate((ctx) => ctx.componentId)}`),
@@ -652,9 +646,7 @@ test.describe('<b-select> events', () => {
 			await page.locator(selector).click();
 		}
 
-		await target.evaluate((ctx) => {
-			ctx.value = 2;
-		});
+		await setValue(target, 2);
 	}
 });
 

@@ -10,7 +10,7 @@ import type { ElementHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
-import { createSelector, renderSelect } from 'components/form/b-select/test/helpers';
+import { assertValueIs, createSelector, renderSelect } from 'components/form/b-select/test/helpers';
 
 // eslint-disable-next-line max-lines-per-function
 test.describe('<b-select> simple usage', () => {
@@ -175,7 +175,7 @@ test.describe('<b-select> simple usage', () => {
 					]
 				});
 
-				await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(0);
+				await assertValueIs(target, 0);
 			});
 
 			test('should ignore `selected` items when the `value` prop is provided', async ({page}) => {
@@ -188,7 +188,7 @@ test.describe('<b-select> simple usage', () => {
 					]
 				});
 
-				await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(1);
+				await assertValueIs(target, 1);
 			});
 
 			test('should set component\'s `value` based on the last `selected` item', async ({page}) => {
@@ -199,7 +199,7 @@ test.describe('<b-select> simple usage', () => {
 					]
 				});
 
-				await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(1);
+				await assertValueIs(target, 1);
 			});
 
 			test('should set component\'s `value` based on all `selected` items with `multiple = true`', async ({page}) => {
@@ -212,7 +212,7 @@ test.describe('<b-select> simple usage', () => {
 					]
 				});
 
-				await test.expect(target.evaluate((ctx) => [...<number[]>ctx.value])).resolves.toEqual([0, 1]);
+				await assertValueIs(target, [0, 1]);
 			});
 		});
 	});

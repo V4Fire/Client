@@ -13,6 +13,7 @@ import test from 'tests/config/unit/test';
 import { Component } from 'tests/helpers';
 
 import type bSelect from 'components/form/b-select/b-select';
+import { setValue, assertValueIs, assertFormValueIs } from 'components/form/b-select/test/helpers';
 
 test.describe('<b-select> form API', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -29,17 +30,13 @@ test.describe('<b-select> form API', () => {
 				disallow: '10'
 			});
 
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('10');
+			await assertValueIs(target, '10');
+			await assertFormValueIs(target, undefined);
 
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBeUndefined();
+			await setValue(target, '11');
 
-			await target.evaluate((ctx) => {
-				ctx.value = '11';
-			});
-
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('11');
-
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBe(11);
+			await assertValueIs(target, '11');
+			await assertFormValueIs(target, 11);
 		});
 
 		test('as the multiple values', async ({page}) => {
@@ -48,25 +45,18 @@ test.describe('<b-select> form API', () => {
 				disallow: ['10', '11']
 			});
 
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('10');
+			await assertValueIs(target, '10');
+			await assertFormValueIs(target, undefined);
 
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBeUndefined();
+			await setValue(target, '11');
 
-			await target.evaluate((ctx) => {
-				ctx.value = '11';
-			});
+			await assertValueIs(target, '11');
+			await assertFormValueIs(target, undefined);
 
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('11');
+			await setValue(target, '12');
 
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBeUndefined();
-
-			await target.evaluate((ctx) => {
-				ctx.value = '12';
-			});
-
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('12');
-
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBe(12);
+			await assertValueIs(target, '12');
+			await assertFormValueIs(target, 12);
 		});
 
 		test('as a RegExp', async ({page}) => {
@@ -75,25 +65,18 @@ test.describe('<b-select> form API', () => {
 				disallow: /^1/
 			});
 
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('10');
+			await assertValueIs(target, '10');
+			await assertFormValueIs(target, undefined);
 
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBeUndefined();
+			await setValue(target, '11');
 
-			await target.evaluate((ctx) => {
-				ctx.value = '11';
-			});
+			await assertValueIs(target, '11');
+			await assertFormValueIs(target, undefined);
 
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('11');
+			await setValue(target, '5');
 
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBeUndefined();
-
-			await target.evaluate((ctx) => {
-				ctx.value = '5';
-			});
-
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('5');
-
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBe(5);
+			await assertValueIs(target, '5');
+			await assertFormValueIs(target, 5);
 		});
 
 		test('as a function', async ({page}) => {
@@ -102,17 +85,13 @@ test.describe('<b-select> form API', () => {
 				disallow: (v) => v === '10'
 			});
 
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('10');
+			await assertValueIs(target, '10');
+			await assertFormValueIs(target, undefined);
 
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBeUndefined();
+			await setValue(target, '11');
 
-			await target.evaluate((ctx) => {
-				ctx.value = '11';
-			});
-
-			await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toBe('11');
-
-			await test.expect(target.evaluate((ctx) => ctx.formValue)).resolves.toBe(11);
+			await assertValueIs(target, '11');
+			await assertFormValueIs(target, 11);
 		});
 	});
 
