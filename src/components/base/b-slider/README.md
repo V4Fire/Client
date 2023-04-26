@@ -53,65 +53,65 @@ The component supports a bunch of slots to provide.
 
 1. `default` to provide the base content.
 
-```
-< b-slider
-  < img src = https://fakeimg.pl/300x300
-  < img src = https://fakeimg.pl/300x300
-  < img src = https://fakeimg.pl/300x300
-```
+   ```
+   < b-slider
+     < img src = https://fakeimg.pl/300x300
+     < img src = https://fakeimg.pl/300x300
+     < img src = https://fakeimg.pl/300x300
+   ```
 
 2. `beforeItems` to provide content before all items within the slider.
 
-```
-< b-slider
-  < template #beforeItems
-    Hello there general Kenobi
-```
+   ```
+   < b-slider
+     < template #beforeItems
+       Hello there general Kenobi
+   ```
 
 3. `afterItems` to provide content after all items within the slider.
 
-```
-< b-slider
-  < template #afterItems
-    Hello there general Kenobi
-```
+   ```
+   < b-slider
+     < template #afterItems
+       Hello there general Kenobi
+   ```
 
 4. `before` to provide content before the slider.
 
-```
-< b-slider
-  < template #before
-    Hello there general Kenobi
-```
+   ```
+   < b-slider
+     < template #before
+       Hello there general Kenobi
+   ```
 
 5. `after` To provide the content after the slider.
 
-```
-< b-slider
-  < template #after
-    Hello there general Kenobi
-```
+   ```
+   < b-slider
+     < template #after
+       Hello there general Kenobi
+   ```
 
-A layout of slots within the component DOM tree:
+   A layout of slots within the component DOM tree:
 
-```
-+= self.slot('before')
+   ```
+   += self.slot('before')
 
-< .&__slider
-  += self.slot('beforeItems')
+   < .&__slider
+     += self.slot('beforeItems')
 
-  < .&__items &
-    v-if = item || option |
-    v-for = item in items
-  .
+     < .&__items &
+       v-if = item || option |
+       v-for = item in items
+     .
 
-  < template v-else
-    += self.slot('default')
+     < template v-else
+       += self.slot('default')
 
-  += self.slot('afterItems)
+     += self.slot('afterItems)
 
-+= self.slot('after')
-```
+   += self.slot('after')
+   ```
 
 ## API
 
