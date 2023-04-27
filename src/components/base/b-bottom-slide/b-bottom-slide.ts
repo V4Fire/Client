@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
@@ -42,7 +41,9 @@ import iBlock, {
 
 } from 'components/super/i-block/i-block';
 
-import type { Direction } from 'components/base/b-bottom-slide/interface';
+import { $$ } from 'components/form/b-select/const';
+import type { Direction, UnsafeBBottomSlide } from 'components/base/b-bottom-slide/interface';
+
 import bBottomSlideProps from 'components/base/b-bottom-slide/props';
 
 export * from 'components/super/i-data/i-data';
@@ -51,9 +52,6 @@ export * from 'components/base/b-bottom-slide/const';
 export * from 'components/base/b-bottom-slide/interface';
 
 Block.addToPrototype({getFullElementName});
-
-const
-	$$ = symbolGenerator();
 
 interface bBottomSlide extends
 	Trait<typeof iLockPageScroll>,
