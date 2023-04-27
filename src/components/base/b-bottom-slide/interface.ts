@@ -23,19 +23,13 @@ export interface UnsafeBBottomSlide<CTX extends bBottomSlide = bBottomSlide> ext
 	geometry: CTX['geometry'];
 
 	// @ts-ignore (access)
+	swipeControl: CTX['swipeControl'];
+
+	// @ts-ignore (access)
 	overlayAPI: CTX['overlayAPI'];
 
 	// @ts-ignore (access)
 	step: CTX['step'];
-
-	// @ts-ignore (access)
-	lastStepOffset: CTX['lastStepOffset'];
-
-	// @ts-ignore (access)
-	stepsInPixels: CTX['stepsInPixels'];
-
-	// @ts-ignore (access)
-	offset: CTX['offset'];
 
 	// @ts-ignore (access)
 	isPulling: CTX['isPulling'];
@@ -44,14 +38,8 @@ export interface UnsafeBBottomSlide<CTX extends bBottomSlide = bBottomSlide> ext
 	isViewportTopReached: CTX['isViewportTopReached'];
 
 	// @ts-ignore (access)
-	updateKeyframeValues: CTX['updateKeyframeValues'];
-
-	// @ts-ignore (access)
 	stickToStep: CTX['stickToStep'];
 
 	// @ts-ignore (access)
 	updateWindowPosition: CTX['updateWindowPosition'];
-
-	// @ts-ignore (access)
-	performOpacity: CTX['performOpacity'];
 }

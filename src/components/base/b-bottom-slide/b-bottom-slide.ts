@@ -80,7 +80,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	@computed({cache: false})
 	get isFullyOpened(): boolean {
-		return this.step === this.steps.length - 1;
+		return this.step === this.stepCount - 1;
 	}
 
 	/**
@@ -107,6 +107,15 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		}
 
 		return res.concat(this.field.get<number[]>('stepsStore')!).sort((a, b) => a - b);
+	}
+
+	/**
+	 * Returns the step count
+	 */
+	@computed({cache: true, dependencies: ['stepsStore']})
+	get stepCount(): number {
+		// The component has always at least 2 steps
+		return 2 + this.stepsStore.length;
 	}
 
 	/** @see [[iHistory.history]] */
@@ -170,55 +179,16 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * List of possible component positions relative to the screen height (in pixels)
-	 */
-	@system()
-	protected stepsInPixels: number[] = [];
-
-	/**
 	 * True if the content is already scrolled to the top
 	 */
 	@system()
 	protected isViewportTopReached: boolean = true;
 
 	/**
-	 * True if element positions are being updated now
-	 */
-	@system()
-	protected isPositionUpdating: boolean = false;
-
-	/**
 	 * True if the component is switching to another step now
 	 */
 	@system()
 	protected isStepTransitionInProgress: boolean = false;
-
-	/** @see [[bBottomSlide.offset]] */
-	@system()
-	protected offsetStore: number = 0;
-
-	/**
-	 * Current component offset
-	 */
-	@computed({cache: false})
-	protected get offset(): number {
-		return this.offsetStore;
-	}
-
-	/**
-	 * Sets a new component offset
-	 */
-	protected set offset(value: number) {
-		const
-			lastStepOffset = <CanUndef<number>>this.lastStepOffset;
-
-		if (lastStepOffset != null && value > lastStepOffset) {
-			value = lastStepOffset;
-		}
-
-		this.offsetStore = value;
-		this.swipeControl.notifyOffsetChanged(value);
-	}
 
 	/** @see [[bBottomSlide.isPulling]] */
 	@system()
@@ -259,20 +229,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	@computed({cache: false})
 	protected get visibleInPercent(): number {
 		return this.geometry.windowHeight === 0 ? 0 : this.visible / this.geometry.windowHeight * 100;
-	}
-
-	/**
-	 * Last step offset (in pixels)
-	 */
-	protected get lastStepOffset(): number {
-		return this.stepsInPixels[this.stepsInPixels.length - 1];
-	}
-
-	/**
-	 * Current step offset (in pixels)
-	 */
-	protected get currentStepOffset(): number {
-		return this.stepsInPixels[this.step];
 	}
 
 	/**
@@ -317,7 +273,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	@wait('ready')
 	async open(step?: number): Promise<boolean> {
-		if (step !== undefined && step > this.stepsInPixels.length - 1) {
+		if (step !== undefined && step > this.stepCount - 1) {
 			return false;
 		}
 
@@ -326,8 +282,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 			await iOpen.open(this);
 		}
 
-		const
-			prevStep = this.step;
+		const prevStep = this.step;
 
 		this.step = step ?? 1;
 
@@ -390,14 +345,13 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 			return false;
 		}
 
-		const
-			step = this.step - 1;
+		const step = this.step - 1;
 
 		if (step === 0) {
 			return this.close();
 		}
 
-		this.step--;
+		this.step = step;
 		return true;
 	}
 
@@ -447,16 +401,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	@wait('ready')
 	protected async initGeometry(): Promise<void> {
 		await this.geometry.init();
-
-		this.bakeSteps();
 		this.initOffset();
-	}
-
-	/**
-	 * Bakes values of steps in pixels
-	 */
-	protected bakeSteps(): void {
-		this.stepsInPixels = this.steps.map((s) => (s / 100 * this.geometry.windowHeight));
 	}
 
 	/**
@@ -464,7 +409,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	@watch('visible')
 	protected initOffset(): void {
-		this.offset = this.visible;
+		this.geometry.setOffset(this.visible);
 		void this.updateWindowPosition();
 	}
 
@@ -483,7 +428,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	protected stickToStep(): void {
 		this.isPulling = false;
-		this.offset = this.stepsInPixels[this.step];
+		this.geometry.setOffsetForStep(this.step);
 		this.animation.stopMoving();
 
 		void this.updateWindowPosition();
@@ -496,7 +441,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	@wait('ready', {label: $$.updateWindowPosition})
 	protected async updateWindowPosition(): Promise<void> {
 		const window = await this.waitRef<HTMLElement>('window');
-		window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
+		window.style.transform = `translate3d(0, ${(-this.geometry.offset).px}, 0)`;
 	}
 
 	/**

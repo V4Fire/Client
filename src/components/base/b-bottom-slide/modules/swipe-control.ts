@@ -75,6 +75,7 @@ export default class SwipeControl extends Friend {
 	onPull(e: TouchEvent): void {
 		const
 			{ctx} = this,
+			{geometry} = ctx,
 			{clientY} = e.touches[0];
 
 		const
@@ -86,7 +87,7 @@ export default class SwipeControl extends Friend {
 		const needAnimate =
 			this.byTrigger ||
 			!ctx.isFullyOpened ||
-			(ctx.isViewportTopReached && (this.direction < 0 || ctx.offset < ctx.lastStepOffset));
+			(ctx.isViewportTopReached && (this.direction < 0 || geometry.offset < geometry.lastStepOffset));
 
 		if (needAnimate) {
 			ctx.animation.startMoving(diff);
@@ -148,20 +149,17 @@ export default class SwipeControl extends Friend {
 	protected moveToClosest(respectDirection: boolean, isThresholdPassed: boolean): void {
 		const
 			{direction, ctx} = this,
-			{offset} = ctx;
+			{geometry} = ctx;
 
 		if (ctx.heightMode === 'content') {
 			if (!respectDirection && isThresholdPassed) {
-				void this[ctx.geometry.contentHeight / 2 < offset ? 'next' : 'prev']();
+				void this[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
 
 			} else if (respectDirection) {
 				void this[direction > 0 ? 'next' : 'prev']();
 			}
 
 		} else {
-			const
-				{stepsInPixels} = ctx;
-
 			let
 				step = 0;
 
@@ -169,9 +167,9 @@ export default class SwipeControl extends Friend {
 				let
 					min;
 
-				for (let i = 0; i < stepsInPixels.length; i++) {
+				for (let i = 0; i < ctx.stepCount; i++) {
 					const
-						res = Math.abs(offset - stepsInPixels[i]);
+						res = Math.abs(geometry.offset - geometry.getStepOffset(i));
 
 					if (!Object.isNumber(min) || min > res) {
 						min = res;
@@ -182,17 +180,17 @@ export default class SwipeControl extends Friend {
 			} else {
 				let i = 0;
 
-				for (; i < stepsInPixels.length; i++) {
+				for (; i < ctx.stepCount; i++) {
 					const
-						s = stepsInPixels[i];
+						s = geometry.getStepOffset(i);
 
-					if (s > offset) {
+					if (s > geometry.offset) {
 						break;
 					}
 				}
 
 				if (direction > 0) {
-					step = i > stepsInPixels.length - 1 ? i - 1 : i;
+					step = i > ctx.stepCount - 1 ? i - 1 : i;
 
 				} else {
 					step = i === 0 ? i : i - 1;

@@ -78,10 +78,10 @@ export default class Animation extends Friend {
 	protected updateKeyframeValues(): void {
 		const
 			{ctx} = this,
-			isMaxNotReached = ctx.geometry.windowHeight >= ctx.offset + this.diff;
+			isMaxNotReached = ctx.geometry.windowHeight >= ctx.geometry.offset + this.diff;
 
 		if (isMaxNotReached) {
-			ctx.offset += this.diff;
+			ctx.geometry.incrementOffset(this.diff);
 			ctx.isPulling = true;
 
 			void ctx.updateWindowPosition();

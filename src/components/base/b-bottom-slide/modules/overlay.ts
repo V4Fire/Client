@@ -36,33 +36,32 @@ export default class Overlay extends Friend {
 		return this.ctx.waitComponentStatus('ready', () => {
 			const
 				{ctx} = this,
-				{$refs: {overlay}, maxOpacity} = ctx;
+				{$refs: {overlay}, maxOpacity, geometry} = ctx;
 
 			if (!overlay || maxOpacity < 0) {
 				return;
 			}
 
 			const
-				stepLength = ctx.steps.length,
-				lastStep = ctx.stepsInPixels[stepLength - 1],
-				penultimateStep = ctx.stepsInPixels[stepLength - 2];
+				lastStep = geometry.getStepOffset(ctx.stepCount - 1),
+				penultimateStep = geometry.getStepOffset(ctx.stepCount - 2);
 
-			if (!Object.isNumber(penultimateStep) || penultimateStep > ctx.offset) {
+			if (!Object.isNumber(penultimateStep) || penultimateStep > geometry.offset) {
 				return;
 			}
 
 			const
 				p = (lastStep - penultimateStep) / 100,
-				currentP = (lastStep - ctx.offset) / p;
+				currentP = (lastStep - geometry.offset) / p;
 
 			const
 				calculatedOpacity = maxOpacity - maxOpacity / 100 * currentP,
 				nextOpacity = calculatedOpacity > maxOpacity ? maxOpacity : calculatedOpacity;
 
 			const
-				diffExceedsTreshold = Math.abs(this.opacity - nextOpacity) >= 0.025;
+				diffExceedsRenderTreshold = Math.abs(this.opacity - nextOpacity) >= 0.025;
 
-			if (diffExceedsTreshold) {
+			if (diffExceedsRenderTreshold) {
 				void this.setOpacity(nextOpacity);
 			}
 
