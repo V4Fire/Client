@@ -20,6 +20,9 @@ export interface UnsafeBBottomSlide<CTX extends bBottomSlide = bBottomSlide> ext
 	animation: CTX['animation'];
 
 	// @ts-ignore (access)
+	geometry: CTX['geometry'];
+
+	// @ts-ignore (access)
 	step: CTX['step'];
 
 	// @ts-ignore (access)
@@ -27,9 +30,6 @@ export interface UnsafeBBottomSlide<CTX extends bBottomSlide = bBottomSlide> ext
 
 	// @ts-ignore (access)
 	stepsInPixels: CTX['stepsInPixels'];
-
-	// @ts-ignore (access)
-	contentHeight: CTX['contentHeight'];
 
 	// @ts-ignore (access)
 	offset: CTX['offset'];

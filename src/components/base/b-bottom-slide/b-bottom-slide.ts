@@ -48,6 +48,7 @@ import type { UnsafeBBottomSlide } from 'components/base/b-bottom-slide/interfac
 import bBottomSlideProps from 'components/base/b-bottom-slide/props';
 import Animation from 'components/base/b-bottom-slide/modules/animation';
 import SwipeControl from 'components/base/b-bottom-slide/modules/swipe-control';
+import Geometry from 'components/base/b-bottom-slide/modules/geometry';
 
 export * from 'components/super/i-data/i-data';
 
@@ -101,7 +102,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 			res = [this.visibleInPercent];
 
 		if (this.heightMode === 'content') {
-			res.push(this.contentHeight / this.windowHeight * 100);
+			res.push(this.geometry.contentHeight / this.geometry.windowHeight * 100);
 
 		} else {
 			res.push(this.maxVisiblePercent);
@@ -189,24 +190,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	protected opacity: number = 0;
 
 	/**
-	 * Window height
-	 */
-	@system(() => document.documentElement.clientHeight)
-	protected windowHeight: number = 0;
-
-	/**
-	 * Content height (in pixels)
-	 */
-	@system()
-	protected contentHeight: number = 0;
-
-	/**
-	 * The maximum content height (in pixels)
-	 */
-	@system()
-	protected contentMaxHeight: number = 0;
-
-	/**
 	 * True if the content is already scrolled to the top
 	 */
 	@system()
@@ -289,7 +272,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	@computed({cache: false})
 	protected get visibleInPercent(): number {
-		return this.windowHeight === 0 ? 0 : this.visible / this.windowHeight * 100;
+		return this.geometry.windowHeight === 0 ? 0 : this.visible / this.geometry.windowHeight * 100;
 	}
 
 	/**
@@ -317,6 +300,12 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	@system((o) => new SwipeControl(o))
 	protected swipeControl!: SwipeControl;
+
+	/**
+	 * Component's geometry
+	 */
+	@system((o) => new Geometry(o))
+	protected geometry!: Geometry;
 
 	/** @see [[History.onPageTopVisibilityChange]] */
 	onPageTopVisibilityChange(state: boolean): void {
@@ -461,55 +450,11 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		document.body.insertAdjacentElement('afterbegin', this.$el!);
 	}
 
-	/**
-	 * Initializes geometry of elements
-	 */
+	/** @see [[Geometry.init]] */
 	@hook('mounted')
 	@wait('ready')
 	protected async initGeometry(): Promise<void> {
-		const [header, content, view, window] = await Promise.all([
-			this.waitRef<HTMLElement>('header', {label: $$.initGeometry}),
-			this.waitRef<HTMLElement>('content'),
-			this.waitRef<HTMLElement>('view'),
-			this.waitRef<HTMLElement>('window')
-		]);
-
-		const
-			{maxVisiblePercent} = this;
-
-		const
-			currentPage = this.history.current?.content;
-
-		if (this.heightMode === 'content' && currentPage?.initBoundingRect) {
-			const
-				currentContentPageHeight = currentPage.el.scrollHeight;
-
-			if (content.clientHeight !== currentContentPageHeight) {
-				content.style.height = currentContentPageHeight.px;
-			}
-		}
-
-		const
-			windowHeight = document.documentElement.clientHeight,
-			maxVisiblePx = windowHeight * (maxVisiblePercent / 100),
-			contentHeight = view.clientHeight + header.clientHeight;
-
-		this.windowHeight = windowHeight;
-		this.contentHeight = contentHeight > maxVisiblePx ? maxVisiblePx : contentHeight;
-		this.contentMaxHeight = maxVisiblePx;
-
-		if (currentPage) {
-			Object.assign((<HTMLElement>currentPage.el).style, {
-				maxHeight: (maxVisiblePx === 0 ? 0 : (maxVisiblePx - header.clientHeight)).px
-			});
-		}
-
-		Object.assign(window.style, {
-			// If documentElement height is equal to zero, maxVisiblePx is always be zero too,
-			// even after new calling of initGeometry.
-			// Also, view.clientHeight above would return zero as well, even though the real size is bigger.
-			maxHeight: maxVisiblePx === 0 ? undefined : maxVisiblePx.px
-		});
+		await this.geometry.init();
 
 		this.bakeSteps();
 		this.initOffset();
@@ -519,7 +464,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	 * Bakes values of steps in pixels
 	 */
 	protected bakeSteps(): void {
-		this.stepsInPixels = this.steps.map((s) => (s / 100 * this.windowHeight));
+		this.stepsInPixels = this.steps.map((s) => (s / 100 * this.geometry.windowHeight));
 	}
 
 	/**
@@ -583,7 +528,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	protected updateKeyframeValues(): void {
 		const
-			isMaxNotReached = this.windowHeight >= this.offset + this.diff;
+			isMaxNotReached = this.geometry.windowHeight >= this.offset + this.diff;
 
 		if (isMaxNotReached) {
 			this.offset += this.diff;
@@ -641,7 +586,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		try {
 			await this.async.sleep(50, {label: $$.syncStateDefer, join: true});
 			await this.initGeometry();
-			this.bakeSteps();
 			this.stickToStep();
 
 		} catch {}
