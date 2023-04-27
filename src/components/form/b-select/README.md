@@ -160,15 +160,15 @@ Check parent [[iInputText]] component and the traits.
 
 #### [multiple = `false`]
 
-If true, the component supports a feature of multiple selected items.
+When set to true, the component allows multiple selected items.
 
 #### [native = `browser.is.mobile`]
 
-If true, the component will use a native tag to show the select.
+When set to true, the component displays the `<select>` using a native tag, providing a better mobile experience.
 
 #### [preIcon]
 
-An icon to show before the input.
+An icon to display before the input.
 
 ```
 < b-select :preIcon = 'dropdown' | :items = myItems
@@ -176,7 +176,7 @@ An icon to show before the input.
 
 #### [preIconComponent]
 
-A name of the used component to show `preIcon`.
+The name of the component used to display the `preIcon`.
 
 ```
 < b-select :preIconComponent = 'b-my-icon' | :items = myItems
@@ -184,7 +184,7 @@ A name of the used component to show `preIcon`.
 
 #### [preIconHint]
 
-A tooltip text to show during hover the cursor on `preIcon`.
+A tooltip text that is displayed when hovering over the `preIcon`.
 
 ```
 < b-select &
@@ -196,7 +196,7 @@ A tooltip text to show during hover the cursor on `preIcon`.
 
 #### [preIconHintPos]
 
-Tooltip position to show during hover the cursor on `preIcon`.
+The position of the tooltip displayed when hovering over the `preIcon`.
 See [[gIcon]] for more information.
 
 ```
@@ -210,7 +210,7 @@ See [[gIcon]] for more information.
 
 #### [icon]
 
-An icon to show after the input.
+An icon to display after the input.
 
 ```
 < b-select :icon = 'dropdown' | :items = myItems
@@ -218,7 +218,7 @@ An icon to show after the input.
 
 #### [iconComponent]
 
-A name of the used component to show `icon`.
+The name of the component used to display the `icon`.
 
 ```
 < b-select :iconComponent = 'b-my-icon' | :items = myItems
@@ -226,7 +226,7 @@ A name of the used component to show `icon`.
 
 #### [iconHint]
 
-A tooltip text to show during hover the cursor on `icon`.
+A tooltip text that is displayed when hovering over the `icon`.
 
 ```
 < b-select &
@@ -238,7 +238,7 @@ A tooltip text to show during hover the cursor on `icon`.
 
 #### [iconHintPos]
 
-Tooltip position to show during hover the cursor on `icon`.
+The position of the tooltip displayed when hovering over the `icon`.
 See [[gIcon]] for more information.
 
 ```
@@ -252,8 +252,7 @@ See [[gIcon]] for more information.
 
 ### [progressIcon]
 
-A component to show "in-progress" state or
-Boolean, if needed to show progress by slot or `b-progress-icon`.
+A component used to display an "in-progress" state. Alternatively, use a boolean value to show progress through a slot or `b-progress-icon`.
 
 ```
 < b-select :progressIcon = 'b-my-progress-icon' | :items = myItems
@@ -267,7 +266,7 @@ List of component items.
 
 ### Methods
 
-#### isSelected
+#### `isSelected`
 
 Returns true if the specified value is selected.
 
@@ -280,15 +279,14 @@ class Test extends iData {
 
   test(): void {
     this.$refs.select.value = 1;
-    console.log(this.$refs.select.isSelected(1));
+    console.log(this.$refs.select.isSelected(1)); // true
   }
 }
 ```
 
 #### selectValue
 
-Selects an item by the specified value.
-If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
+Selects an item with the specified value. If the component is in `multiple` mode, this method can accept an `Iterable` to select multiple items.
 
 ```typescript
 class Test extends iData {
@@ -305,8 +303,7 @@ class Test extends iData {
 
 #### unselectValue
 
-Removes selection from an item by the specified value.
-If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
+Removes the selection from an item with the specified value. If the component is in `multiple` mode, this method can accept an `Iterable` to unselect multiple items.
 
 ```typescript
 class Test extends iData {
@@ -316,15 +313,13 @@ class Test extends iData {
   };
 
   test(): void {
-    this.$refs.unselectValue.unselectValue(1);
+    this.$refs.select.unselectValue(1);
   }
 }
 ```
-
 #### toggleValue
 
-Toggles selection of an item by the specified value.
-The methods return a new selected value/s.
+Toggles the selection of an item with the specified value. The method returns the new selected value(s).
 
 ```typescript
 class Test extends iData {
@@ -341,7 +336,7 @@ class Test extends iData {
 
 ### Validation
 
-Because the component extends from [[iInput]], it supports validation API.
+Since the component extends from [[iInput]], it supports the validation API.
 
 ```
 < b-select &
@@ -354,11 +349,12 @@ Because the component extends from [[iInput]], it supports validation API.
 
 #### Built-in validators
 
-The component provides a bunch of validators.
+The component includes several built-in validators.
 
 ##### required
 
-Checks that a component value must be filled.
+Ensures that the component's value is not empty and must be filled.
+
 
 ```
 < b-select :validators = ['required'] | :items = myItems
