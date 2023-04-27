@@ -30,3 +30,11 @@ test('test something', () => {
 ```typescript
 await Assert.component.itemsHaveMod('active', true, [0, 1]);
 ```
+
+### itemsHaveClass
+
+```typescript
+await Assert.component.itemsHaveClass(/marked_true/, [0, 1]);
+
+await Assert.component.not.itemsHaveClass(/marked_true/, [0, 1]);
+```
