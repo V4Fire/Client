@@ -89,8 +89,7 @@ export default class SwipeControl extends Friend {
 			(ctx.isViewportTopReached && (this.direction < 0 || ctx.offset < ctx.lastStepOffset));
 
 		if (needAnimate) {
-			ctx.animation.animateMoving();
-			ctx.diff += diff;
+			ctx.animation.startMoving(diff);
 
 			if (e.cancelable) {
 				e.preventDefault();
@@ -135,7 +134,6 @@ export default class SwipeControl extends Friend {
 		this.endY += this.startY - this.currentY;
 		this.byTrigger = false;
 
-		ctx.diff = 0;
 		this.currentY = 0;
 	}
 

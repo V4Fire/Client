@@ -178,12 +178,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	protected stepsInPixels: number[] = [];
 
 	/**
-	 * Difference in a cursor position compared to the last frame
-	 */
-	@system()
-	protected diff: number = 0;
-
-	/**
 	 * Current value of the overlay transparency
 	 */
 	@system()
@@ -521,24 +515,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		}
 
 		overlay.style.setProperty('opacity', String(this.opacity));
-	}
-
-	/**
-	 * Updates CSS values of component elements
-	 */
-	protected updateKeyframeValues(): void {
-		const
-			isMaxNotReached = this.geometry.windowHeight >= this.offset + this.diff;
-
-		if (isMaxNotReached) {
-			this.offset += this.diff;
-			this.isPulling = true;
-
-			void this.updateWindowPosition();
-		}
-
-		void this.performOpacity();
-		this.diff = 0;
 	}
 
 	/**

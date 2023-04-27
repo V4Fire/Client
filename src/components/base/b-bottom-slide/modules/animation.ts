@@ -28,33 +28,20 @@ export default class Animation extends Friend {
 	protected isPositionUpdating: boolean = false;
 
 	/**
-	 * Initializes the animation of component elements moving
+	 * Difference in a cursor position compared to the last frame
 	 */
-	animateMoving(): void {
-		if (this.isPositionUpdating && this.shouldUseRAF) {
-			return;
-		}
-
-		this.performMoving();
-	}
+	protected diff: number = 0;
 
 	/**
-	 * Performs the animation of component elements moving
+	 * Initializes the animation of component elements moving
+	 * @param diff
 	 */
-	performMoving(): void {
-		this.isPositionUpdating = true;
-
-		if (this.shouldUseRAF) {
-			this.async.requestAnimationFrame(() => {
-				if (this.isPositionUpdating) {
-					this.ctx.updateKeyframeValues();
-					this.performMoving();
-				}
-			}, {label: $$.performMovingAnimation});
-
-		} else {
-			this.ctx.updateKeyframeValues();
+	startMoving(diff: number): void {
+		if (!this.isPositionUpdating || !this.shouldUseRAF) {
+			this.performMoving();
 		}
+
+		this.diff += diff;
 	}
 
 	/**
@@ -63,6 +50,44 @@ export default class Animation extends Friend {
 	stopMoving(): void {
 		this.async.clearAnimationFrame({label: $$.performMovingAnimation});
 		this.isPositionUpdating = false;
-		this.ctx.diff = 0;
+		this.diff = 0;
+	}
+
+	/**
+	 * Performs the animation of component elements moving
+	 */
+	protected performMoving(): void {
+		this.isPositionUpdating = true;
+
+		if (this.shouldUseRAF) {
+			this.async.requestAnimationFrame(() => {
+				if (this.isPositionUpdating) {
+					this.updateKeyframeValues();
+					this.performMoving();
+				}
+			}, {label: $$.performMovingAnimation});
+
+		} else {
+			this.updateKeyframeValues();
+		}
+	}
+
+	/**
+	 * Updates CSS values of component elements
+	 */
+	protected updateKeyframeValues(): void {
+		const
+			{ctx} = this,
+			isMaxNotReached = ctx.geometry.windowHeight >= ctx.offset + this.diff;
+
+		if (isMaxNotReached) {
+			ctx.offset += this.diff;
+			ctx.isPulling = true;
+
+			void ctx.updateWindowPosition();
+		}
+
+		void ctx.performOpacity();
+		this.diff = 0;
 	}
 }

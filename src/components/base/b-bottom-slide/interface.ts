@@ -35,7 +35,7 @@ export interface UnsafeBBottomSlide<CTX extends bBottomSlide = bBottomSlide> ext
 	offset: CTX['offset'];
 
 	// @ts-ignore (access)
-	diff: CTX['diff'];
+	isPulling: CTX['isPulling'];
 
 	// @ts-ignore (access)
 	isViewportTopReached: CTX['isViewportTopReached'];
@@ -45,4 +45,10 @@ export interface UnsafeBBottomSlide<CTX extends bBottomSlide = bBottomSlide> ext
 
 	// @ts-ignore (access)
 	stickToStep: CTX['stickToStep'];
+
+	// @ts-ignore (access)
+	updateWindowPosition: CTX['updateWindowPosition'];
+
+	// @ts-ignore (access)
+	performOpacity: CTX['performOpacity'];
 }
