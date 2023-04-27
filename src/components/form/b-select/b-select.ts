@@ -34,8 +34,8 @@ import type {
 import Mask, * as MaskAPI from 'components/super/i-input-text/mask';
 
 import { openedSelect } from 'components/form/b-select/const';
-
 import type { Value, FormValue, Items, UnsafeBSelect } from 'components/form/b-select/interface';
+
 import bSelectProps from 'components/form/b-select/props';
 import Values from 'components/form/b-select/modules/values';
 import EventHandler from 'components/form/b-select/modules/event-handler';
