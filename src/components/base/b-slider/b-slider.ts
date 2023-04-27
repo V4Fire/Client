@@ -61,7 +61,7 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 	};
 
 	/**
-	 * Link to a content node
+	 * A link to the content node
 	 */
 	get content(): CanUndef<HTMLElement> {
 		return this.$refs.content;
