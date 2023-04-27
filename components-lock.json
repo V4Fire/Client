@@ -1,5 +1,5 @@
 {
-  "hash": "fea25a986801fade614aa55cbc6eab9df42ebc084482cfb80e3dd4e0e12a26ea",
+  "hash": "a1ede0c83cc33e0d3b296453eaf30320ec22b50431c9b29b6b9568c5dad1e70e",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1922,7 +1922,10 @@
               "b-hidden-input",
               "b-input",
               "b-textarea",
-              "b-select"
+              "b-select",
+              "p-v4-dynamic-page1",
+              "p-v4-dynamic-page2",
+              "p-v4-dynamic-page3"
             ],
             "libs": [
               "components/directives/image",
@@ -1951,7 +1954,10 @@
             "b-hidden-input",
             "b-input",
             "b-textarea",
-            "b-select"
+            "b-select",
+            "p-v4-dynamic-page1",
+            "p-v4-dynamic-page2",
+            "p-v4-dynamic-page3"
           ],
           "libs": [
             "components/directives/image",
