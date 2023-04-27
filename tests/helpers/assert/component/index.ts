@@ -110,7 +110,7 @@ export default class AssertComponent extends AssertBase {
 		}
 
 		if (value != null) {
-			return (itemIds: ComponentItemIds) => assert(value, itemIds);
+			return (itemIds) => assert(value, itemIds);
 		}
 
 		return assert;
@@ -155,7 +155,7 @@ export default class AssertComponent extends AssertBase {
 		className: string | RegExp,
 		itemIds?: ComponentItemIds | ComponentItemId
 	): AssertItems | Promise<void> {
-		const assert = async (itemIds: ComponentItemIds) => {
+		const assert = async (itemIds: ComponentItemIds | ComponentItemId) => {
 			for (const locator of this.iterateItems(itemIds)) {
 				const expect = test.expect(locator);
 				if (this.inverted) {
@@ -177,7 +177,7 @@ export default class AssertComponent extends AssertBase {
 	 * Returns iterable iterator of item locators
 	 * @param itemIds
 	 */
-	protected static iterateItems(itemIds: ComponentItemIds): IterableIterator<Locator> {
+	protected static iterateItems(itemIds: ComponentItemIds | ComponentItemId): IterableIterator<Locator> {
 		const iter = createIter();
 
 		return {
@@ -188,7 +188,7 @@ export default class AssertComponent extends AssertBase {
 		};
 
 		function* createIter() {
-			for (const itemId of itemIds) {
+			for (const itemId of Array.concat([], itemIds)) {
 				yield AssertComponent.page!.locator(`[data-id="${itemId}"]`);
 			}
 		}
