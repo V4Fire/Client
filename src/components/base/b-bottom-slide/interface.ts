@@ -23,6 +23,9 @@ export interface UnsafeBBottomSlide<CTX extends bBottomSlide = bBottomSlide> ext
 	geometry: CTX['geometry'];
 
 	// @ts-ignore (access)
+	overlayAPI: CTX['overlayAPI'];
+
+	// @ts-ignore (access)
 	step: CTX['step'];
 
 	// @ts-ignore (access)

@@ -49,6 +49,7 @@ import bBottomSlideProps from 'components/base/b-bottom-slide/props';
 import Animation from 'components/base/b-bottom-slide/modules/animation';
 import SwipeControl from 'components/base/b-bottom-slide/modules/swipe-control';
 import Geometry from 'components/base/b-bottom-slide/modules/geometry';
+import Overlay from 'components/base/b-bottom-slide/modules/overlay';
 
 export * from 'components/super/i-data/i-data';
 
@@ -178,12 +179,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	protected stepsInPixels: number[] = [];
 
 	/**
-	 * Current value of the overlay transparency
-	 */
-	@system()
-	protected opacity: number = 0;
-
-	/**
 	 * True if the content is already scrolled to the top
 	 */
 	@system()
@@ -284,22 +279,28 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Animation API
+	 * Animation API - handles all component's animations
 	 */
 	@system((o) => new Animation(o))
 	protected animation!: Animation;
 
 	/**
-	 * Swipe control API
+	 * Swipe API - provides control of the component via swipes
 	 */
 	@system((o) => new SwipeControl(o))
 	protected swipeControl!: SwipeControl;
 
 	/**
-	 * Component's geometry
+	 * Component's geometry - stores different heights and offsets
 	 */
 	@system((o) => new Geometry(o))
 	protected geometry!: Geometry;
+
+	/**
+	 * Overlay API - provides control of the component's overlay
+	 */
+	@system((o) => new Overlay(o))
+	protected overlayAPI!: Overlay;
 
 	/** @see [[History.onPageTopVisibilityChange]] */
 	onPageTopVisibilityChange(state: boolean): void {
@@ -486,11 +487,10 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	protected stickToStep(): void {
 		this.isPulling = false;
 		this.offset = this.stepsInPixels[this.step];
-		this.opacity = this.isFullyOpened ? this.maxOpacity : 0;
 		this.animation.stopMoving();
 
 		void this.updateWindowPosition();
-		void this.updateOpacity();
+		void this.overlayAPI.setOpacity(this.isFullyOpened ? this.maxOpacity : 0);
 	}
 
 	/**
@@ -500,57 +500,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	protected async updateWindowPosition(): Promise<void> {
 		const window = await this.waitRef<HTMLElement>('window');
 		window.style.transform = `translate3d(0, ${(-this.offset).px}, 0)`;
-	}
-
-	/**
-	 * Updates an opacity of the overlay node
-	 */
-	@wait('ready', {label: $$.updateOpacity})
-	protected updateOpacity(): CanPromise<void> {
-		const
-			{$refs: {overlay}} = this;
-
-		if (!(overlay instanceof HTMLElement)) {
-			return;
-		}
-
-		overlay.style.setProperty('opacity', String(this.opacity));
-	}
-
-	/**
-	 * Performs the animation of the component overlay opacity
-	 */
-	@wait('ready', {label: $$.performOpacity})
-	protected performOpacity(): CanPromise<void> {
-		const
-			{$refs: {overlay}, maxOpacity} = this;
-
-		if (!overlay || maxOpacity < 0) {
-			return;
-		}
-
-		const
-			stepLength = this.steps.length,
-			lastStep = this.stepsInPixels[stepLength - 1],
-			penultimateStep = this.stepsInPixels[stepLength - 2];
-
-		if (!Object.isNumber(penultimateStep) || penultimateStep > this.offset) {
-			return;
-		}
-
-		const
-			p = (lastStep - penultimateStep) / 100,
-			currentP = (lastStep - this.offset) / p,
-			calculatedOpacity = maxOpacity - maxOpacity / 100 * currentP,
-			opacity = calculatedOpacity > maxOpacity ? maxOpacity : calculatedOpacity,
-			diff = Math.abs(this.opacity - opacity) >= 0.025;
-
-		if (!diff) {
-			return;
-		}
-
-		this.opacity = opacity;
-		void this.updateOpacity();
 	}
 
 	/**

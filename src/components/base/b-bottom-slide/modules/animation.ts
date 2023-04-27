@@ -87,7 +87,7 @@ export default class Animation extends Friend {
 			void ctx.updateWindowPosition();
 		}
 
-		void ctx.performOpacity();
+		void ctx.overlayAPI.animateOpacityFrame();
 		this.diff = 0;
 	}
 }
