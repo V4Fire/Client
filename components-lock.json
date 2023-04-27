@@ -1,5 +1,5 @@
 {
-  "hash": "ed28ab49ac2a1e56c7b7549231a1dd7b3ad1b8e5cf82e7b0bc7fb75546c4ecd1",
+  "hash": "fea25a986801fade614aa55cbc6eab9df42ebc084482cfb80e3dd4e0e12a26ea",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1912,6 +1912,7 @@
               "b-tree",
               "b-window",
               "b-bottom-slide",
+              "b-sidebar",
               "b-slider",
               "b-form",
               "b-button",
@@ -1940,6 +1941,7 @@
             "b-tree",
             "b-window",
             "b-bottom-slide",
+            "b-sidebar",
             "b-slider",
             "b-form",
             "b-button",

@@ -10,8 +10,6 @@ import type { Page, Locator } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
-import { BOM } from 'tests/helpers';
-
 test.describe('<div v-icon>', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -55,7 +53,6 @@ test.describe('<div v-icon>', () => {
 			]);
 		}, attrs);
 
-		await BOM.waitForIdleCallback(page);
 		return page.getByTestId('target');
 	}
 });

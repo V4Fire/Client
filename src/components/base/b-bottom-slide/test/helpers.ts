@@ -14,7 +14,7 @@ import Component from 'tests/helpers/component';
 import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 
 /**
- * Renders the `bBottomSlide` component and returns JSHandle
+ * Renders the `bBottomSlide` component and returns `Promise<JSHandle>`
  *
  * @param page
  * @param [attrs]
