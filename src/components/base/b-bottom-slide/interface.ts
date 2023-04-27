@@ -17,8 +17,32 @@ export interface UnsafeBBottomSlide<CTX extends bBottomSlide = bBottomSlide> ext
 	browser: CTX['browser'];
 
 	// @ts-ignore (access)
+	animation: CTX['animation'];
+
+	// @ts-ignore (access)
+	step: CTX['step'];
+
+	// @ts-ignore (access)
+	lastStepOffset: CTX['lastStepOffset'];
+
+	// @ts-ignore (access)
+	stepsInPixels: CTX['stepsInPixels'];
+
+	// @ts-ignore (access)
+	contentHeight: CTX['contentHeight'];
+
+	// @ts-ignore (access)
+	offset: CTX['offset'];
+
+	// @ts-ignore (access)
 	diff: CTX['diff'];
 
 	// @ts-ignore (access)
+	isViewportTopReached: CTX['isViewportTopReached'];
+
+	// @ts-ignore (access)
 	updateKeyframeValues: CTX['updateKeyframeValues'];
+
+	// @ts-ignore (access)
+	stickToStep: CTX['stickToStep'];
 }

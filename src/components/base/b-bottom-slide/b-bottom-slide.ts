@@ -43,10 +43,11 @@ import iBlock, {
 } from 'components/super/i-block/i-block';
 
 import { $$ } from 'components/form/b-select/const';
-import type { Direction, UnsafeBBottomSlide } from 'components/base/b-bottom-slide/interface';
+import type { UnsafeBBottomSlide } from 'components/base/b-bottom-slide/interface';
 
 import bBottomSlideProps from 'components/base/b-bottom-slide/props';
 import Animation from 'components/base/b-bottom-slide/modules/animation';
+import SwipeControl from 'components/base/b-bottom-slide/modules/swipe-control';
 
 export * from 'components/super/i-data/i-data';
 
@@ -176,40 +177,10 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	protected stepsInPixels: number[] = [];
 
 	/**
-	 * Timestamp of a start touch on the component
-	 */
-	@system()
-	protected startTime: number = 0;
-
-	/**
-	 * Y position of a start touch on the component
-	 */
-	@system()
-	protected startY: number = 0;
-
-	/**
-	 * Current Y position of the touch
-	 */
-	@system()
-	protected currentY: number = 0;
-
-	/**
-	 * End Y position of the touch
-	 */
-	@system()
-	protected endY: number = 0;
-
-	/**
 	 * Difference in a cursor position compared to the last frame
 	 */
 	@system()
 	protected diff: number = 0;
-
-	/**
-	 * Current cursor direction
-	 */
-	@system()
-	protected direction: Direction = 0;
 
 	/**
 	 * Current value of the overlay transparency
@@ -253,12 +224,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	@system()
 	protected isStepTransitionInProgress: boolean = false;
 
-	/**
-	 * True if content is pulled by using the trigger
-	 */
-	@system()
-	protected byTrigger: boolean = false;
-
 	/** @see [[bBottomSlide.offset]] */
 	@system()
 	protected offsetStore: number = 0;
@@ -283,7 +248,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		}
 
 		this.offsetStore = value;
-		this.endY = value;
+		this.swipeControl.notifyOffsetChanged(value);
 	}
 
 	/** @see [[bBottomSlide.isPulling]] */
@@ -346,6 +311,12 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	@system((o) => new Animation(o))
 	protected animation!: Animation;
+
+	/**
+	 * Swipe control API
+	 */
+	@system((o) => new SwipeControl(o))
+	protected swipeControl!: SwipeControl;
 
 	/** @see [[History.onPageTopVisibilityChange]] */
 	onPageTopVisibilityChange(state: boolean): void {
@@ -662,85 +633,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Moves the component to the nearest step relative to the current position
-	 *
-	 * @param respectDirection - if true, then when searching for a new step to change,
-	 *   the cursor direction will be taken into account, but not the nearest step
-	 *
-	 * @param isThresholdPassed - if true, then the minimum threshold to change a step is passed
-	 */
-	protected moveToClosest(respectDirection: boolean, isThresholdPassed: boolean): void {
-		const
-			{offset, direction} = this;
-
-		if (this.heightMode === 'content') {
-			if (!respectDirection && isThresholdPassed) {
-				void this[this.contentHeight / 2 < offset ? 'next' : 'prev']();
-
-			} else if (respectDirection) {
-				void this[direction > 0 ? 'next' : 'prev']();
-			}
-
-		} else {
-			const
-				{stepsInPixels} = this;
-
-			let
-				step = 0;
-
-			if (!respectDirection) {
-				let
-					min;
-
-				for (let i = 0; i < stepsInPixels.length; i++) {
-					const
-						res = Math.abs(offset - stepsInPixels[i]);
-
-					if (!Object.isNumber(min) || min > res) {
-						min = res;
-						step = i;
-					}
-				}
-
-			} else {
-				let i = 0;
-
-				for (; i < stepsInPixels.length; i++) {
-					const
-						s = stepsInPixels[i];
-
-					if (s > offset) {
-						break;
-					}
-				}
-
-				if (direction > 0) {
-					step = i > stepsInPixels.length - 1 ? i - 1 : i;
-
-				} else {
-					step = i === 0 ? i : i - 1;
-				}
-			}
-
-			const
-				prevStep = this.step;
-
-			if (step === 0) {
-				this.close().catch(stderr);
-
-			} else if (prevStep === 0) {
-				this.open(step).catch(stderr);
-
-			} else {
-				this.step = step;
-			}
-
-		}
-
-		this.stickToStep();
-	}
-
-	/**
 	 * Recalculates a component state: sizes, positions, etc.
 	 */
 	@watch(['window:resize', 'localEmitter:DOMChange', ':history:transition'])
@@ -814,90 +706,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 			})
 
 			.catch(stderr);
-	}
-
-	/**
-	 * Handler: start to pull the component
-	 *
-	 * @param e
-	 * @param [isTrigger]
-	 */
-	protected onPullStart(e: TouchEvent, isTrigger: boolean = false): void {
-		const
-			touch = e.touches[0];
-
-		this.byTrigger = isTrigger;
-		this.startY = touch.clientY;
-		this.startTime = performance.now();
-	}
-
-	/**
-	 * Handler: the component is being pulled
-	 * @param e
-	 */
-	protected onPull(e: TouchEvent): void {
-		const
-			{clientY} = e.touches[0];
-
-		const
-			diff = this.currentY > 0 ? this.currentY - clientY : 0;
-
-		this.currentY = clientY;
-		this.direction = <Direction>Math.sign(diff);
-
-		const needAnimate =
-			this.byTrigger ||
-			!this.isFullyOpened ||
-			(this.isViewportTopReached && (this.direction < 0 || this.offset < this.lastStepOffset));
-
-		if (needAnimate) {
-			this.animation.animateMoving();
-			this.diff += diff;
-
-			if (e.cancelable) {
-				e.preventDefault();
-				e.stopPropagation();
-			}
-
-			return;
-		}
-
-		this.animation.stopMoving();
-	}
-
-	/**
-	 * Handler: the component has been released after pulling
-	 */
-	protected onPullEnd(): void {
-		if (this.currentY === 0) {
-			return;
-		}
-
-		const
-			startEndDiff = Math.abs(this.startY - this.endY),
-			endTime = performance.now();
-
-		const isFastSwipe =
-			endTime - this.startTime <= this.fastSwipeDelay &&
-			startEndDiff >= this.fastSwipeThreshold;
-
-		const notScroll = isFastSwipe && (
-			!this.isFullyOpened ||
-			this.isViewportTopReached ||
-			this.byTrigger
-		);
-
-		const
-			isThresholdPassed = !isFastSwipe && startEndDiff >= this.swipeThreshold;
-
-		this.animation.stopMoving();
-		this.moveToClosest(notScroll, isThresholdPassed);
-
-		this.endY += this.startY - this.currentY;
-		this.byTrigger = false;
-
-		this.diff = 0;
-		this.currentY = 0;
 	}
 }
 
