@@ -37,7 +37,8 @@ import iBlock, {
 	watch,
 	wait,
 
-	ModsDecl
+	ModsDecl,
+	UnsafeGetter
 
 } from 'components/super/i-block/i-block';
 
@@ -45,6 +46,7 @@ import { $$ } from 'components/form/b-select/const';
 import type { Direction, UnsafeBBottomSlide } from 'components/base/b-bottom-slide/interface';
 
 import bBottomSlideProps from 'components/base/b-bottom-slide/props';
+import Animation from 'components/base/b-bottom-slide/modules/animation';
 
 export * from 'components/super/i-data/i-data';
 
@@ -65,6 +67,10 @@ interface bBottomSlide extends
 @component()
 @derive(iLockPageScroll, iObserveDOM, iOpen)
 class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
+	override get unsafe(): UnsafeGetter<UnsafeBBottomSlide<this>> {
+		return Object.cast(this);
+	}
+
 	/** @see [[bBottomSlide.steps]] */
 	@field<bBottomSlide>((o) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
 	readonly stepsStore!: number[];
@@ -336,11 +342,10 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * True if all animations need to use requestAnimationFrame
+	 * Animation API
 	 */
-	protected get shouldUseRAF(): boolean {
-		return this.browser.is.iOS === false;
-	}
+	@system((o) => new Animation(o))
+	protected animation!: Animation;
 
 	/** @see [[History.onPageTopVisibilityChange]] */
 	onPageTopVisibilityChange(state: boolean): void {
@@ -572,7 +577,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		this.isPulling = false;
 		this.offset = this.stepsInPixels[this.step];
 		this.opacity = this.isFullyOpened ? this.maxOpacity : 0;
-		this.stopMovingAnimation();
+		this.animation.stopMoving();
 
 		void this.updateWindowPosition();
 		void this.updateOpacity();
@@ -617,45 +622,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		}
 
 		void this.performOpacity();
-		this.diff = 0;
-	}
-
-	/**
-	 * Initializes the animation of component elements moving
-	 */
-	protected animateMoving(): void {
-		if (this.isPositionUpdating && this.shouldUseRAF) {
-			return;
-		}
-
-		this.performMovingAnimation();
-	}
-
-	/**
-	 * Performs the animation of component elements moving
-	 */
-	protected performMovingAnimation(): void {
-		this.isPositionUpdating = true;
-
-		if (this.shouldUseRAF) {
-			this.async.requestAnimationFrame(() => {
-				if (this.isPositionUpdating) {
-					this.updateKeyframeValues();
-					this.performMovingAnimation();
-				}
-			}, {label: $$.performMovingAnimation});
-
-		} else {
-			this.updateKeyframeValues();
-		}
-	}
-
-	/**
-	 * Stops the animation of component elements moving
-	 */
-	protected stopMovingAnimation(): void {
-		this.async.clearAnimationFrame({label: $$.performMovingAnimation});
-		this.isPositionUpdating = false;
 		this.diff = 0;
 	}
 
@@ -885,7 +851,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 			(this.isViewportTopReached && (this.direction < 0 || this.offset < this.lastStepOffset));
 
 		if (needAnimate) {
-			this.animateMoving();
+			this.animation.animateMoving();
 			this.diff += diff;
 
 			if (e.cancelable) {
@@ -896,7 +862,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 			return;
 		}
 
-		this.stopMovingAnimation();
+		this.animation.stopMoving();
 	}
 
 	/**
@@ -924,7 +890,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		const
 			isThresholdPassed = !isFastSwipe && startEndDiff >= this.swipeThreshold;
 
-		this.stopMovingAnimation();
+		this.animation.stopMoving();
 		this.moveToClosest(notScroll, isThresholdPassed);
 
 		this.endY += this.startY - this.currentY;
