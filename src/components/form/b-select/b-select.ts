@@ -25,9 +25,6 @@ import iInputText, { component, field, system, computed, hook, watch } from 'com
 import type {
 
 	ModsDecl,
-	ModEvent,
-	SetModEvent,
-
 	UnsafeGetter,
 	ValidatorsDecl,
 	ValidatorParams,
@@ -41,8 +38,8 @@ import { openedSelect } from 'components/form/b-select/const';
 import type { Value, FormValue, Items, UnsafeBSelect } from 'components/form/b-select/interface';
 import bSelectProps from 'components/form/b-select/props';
 import Values from 'components/form/b-select/modules/values';
+import EventHandler from 'components/form/b-select/modules/event-handler';
 
-import * as on from 'components/form/b-select/modules/handlers';
 import * as h from 'components/form/b-select/modules/helpers';
 
 export * from 'components/form/b-input/b-input';
@@ -56,10 +53,10 @@ export { Value, FormValue };
 Block.addToPrototype({setElementMod, removeElementMod});
 Mask.addToPrototype(MaskAPI);
 
-interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems> {}
+interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof EventHandler> {}
 
 @component()
-@derive(iOpenToggle, iActiveItems)
+@derive(EventHandler, iOpenToggle, iActiveItems)
 class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
 		return Object.cast(this);
@@ -229,7 +226,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	 */
 	@computed({cache: true})
 	protected get onTextChange(): Function {
-		return this.async.debounce(on.textChange.bind(null, this), 200);
+		return this.async.debounce(EventHandler.onTextChange.bind(null, this), 200);
 	}
 
 	override reset(): Promise<boolean> {
@@ -377,12 +374,6 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return false;
 	}
 
-	/** @see [[iOpenToggle.onOpenedChange]] */
-	// eslint-disable-next-line @typescript-eslint/require-await
-	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
-		await on.openedChange(this, e);
-	}
-
 	/** @see [[h.setScrollToMarkedOrSelectedItem]] */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
 		return h.setScrollToMarkedOrSelectedItem(this);
@@ -476,6 +467,14 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		this.sync.mod('opened', 'multiple', Boolean);
 	}
 
+	protected override initValueListeners(): void {
+		super.initValueListeners();
+
+		this.localEmitter.on('maskedText.change', () => {
+			this.onTextChange();
+		});
+	}
+
 	protected override beforeDestroy(): void {
 		super.beforeDestroy();
 
@@ -489,63 +488,15 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		void this.open();
 	}
 
-	/**
-	 * Handler: clearing of a component value
-	 * @emits `actionChange(value: this['Active'])`
-	 */
-	protected async onClear(): Promise<void> {
-		if (await this.clear()) {
-			this.emit('actionChange', this.value);
-		}
-	}
-
-	/**
-	 * Handler: value changing of a native component `<select>`
-	 * @emits `actionChange(value: this['Active'])`
-	 */
-	protected onNativeChange(): void {
-		on.nativeChange(this);
-	}
-
-	protected override initValueListeners(): void {
-		super.initValueListeners();
-
-		this.localEmitter.on('maskedText.change', () => {
-			this.onTextChange();
-		});
-	}
-
-	/**
-	 * Handler: typing text into a helper text input to search select options
-	 *
-	 * @param e
-	 * @emits `actionChange(value: this['Active'])`
-	 */
-	protected onSearchInput(e: InputEvent): void {
-		on.searchInput(this, e);
-	}
-
-	/**
-	 * Handler: click to some item element
-	 *
-	 * @param itemEl
-	 * @emits `actionChange(value: this['Active'])`
-	 */
+	// TODO: move decorator to EventHandler when they will be supported in the traits
+	/** @see [[EventHandler.onItemClick]] */
 	@watch({
 		path: '?$el:click',
 		wrapper: (o, cb) => o.dom.delegateElement('item', (e: MouseEvent) => cb(e.delegateTarget))
 	})
 
 	protected onItemClick(itemEl: Nullable<Element>): void {
-		on.itemClick(this, itemEl);
-	}
-
-	/**
-	 * Handler: "navigation" over the select via "arrow" buttons
-	 * @param e
-	 */
-	protected onItemsNavigate(e: KeyboardEvent): void {
-		void on.itemsNavigate(this, e);
+		EventHandler.onItemClick(this, itemEl);
 	}
 }
 
