@@ -26,21 +26,8 @@ import iVisible from 'components/traits/i-visible/i-visible';
 
 import Block, { getFullElementName } from 'components/friends/block';
 
-import iBlock, {
-
-	component,
-	field,
-	system,
-	computed,
-
-	hook,
-	watch,
-	wait,
-
-	ModsDecl,
-	UnsafeGetter
-
-} from 'components/super/i-block/i-block';
+import iBlock, { component, field, system, computed, hook, watch, wait } from 'components/super/i-block/i-block';
+import type { ModsDecl, UnsafeGetter } from 'components/super/i-block/i-block';
 
 import { $$ } from 'components/form/b-select/const';
 import type { UnsafeBBottomSlide } from 'components/base/b-bottom-slide/interface';
