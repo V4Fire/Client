@@ -46,10 +46,7 @@ import { $$ } from 'components/form/b-select/const';
 import type { UnsafeBBottomSlide } from 'components/base/b-bottom-slide/interface';
 
 import bBottomSlideProps from 'components/base/b-bottom-slide/props';
-import Animation from 'components/base/b-bottom-slide/modules/animation';
-import SwipeControl from 'components/base/b-bottom-slide/modules/swipe-control';
-import Geometry from 'components/base/b-bottom-slide/modules/geometry';
-import Overlay from 'components/base/b-bottom-slide/modules/overlay';
+import { Animation, Overlay, Geometry, SwipeControl } from 'components/base/b-bottom-slide/modules';
 
 export * from 'components/super/i-data/i-data';
 
