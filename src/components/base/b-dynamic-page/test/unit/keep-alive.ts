@@ -146,7 +146,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` the components by a regular expression', async ({page}) => {
+		test('should `include` the components matches with a regular expression', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: /^p-v4-dynamic-page/
@@ -226,7 +226,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` components whose name matches returned from the function-matcher', async ({page}) => {
+		test('should `include` components whose  names match the return value from the function-matcher', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: (page) => page
@@ -317,7 +317,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `exclude` the components by a regular expression', async ({page}) => {
+		test('should `exclude` the components matches with a regular expression', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: /^p-v4-dynamic-page/
@@ -379,7 +379,10 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 	});
 
 	test.describe('`include` and `exclude`', () => {
-		test('should `include` components, defined as a regular expression and `exclude` string-defined component', async ({page}) => {
+		test([
+			'should include components matching the regular expression from the `include` prop',
+			'and should exclude the component matching the string from the `exclude` prop'
+		].join(' '), async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: /p-v4-dynamic-page/,
