@@ -7,10 +7,11 @@
  */
 
 import type { JSHandle, Page } from 'playwright';
-import type bDynamicPage from 'components/base/b-dynamic-page/b-dynamic-page';
-import type iDynamicPage from 'components/super/i-dynamic-page/i-dynamic-page';
 
 import { Component } from 'tests/helpers';
+
+import type iDynamicPage from 'components/super/i-dynamic-page/i-dynamic-page';
+import type bDynamicPage from 'components/base/b-dynamic-page/b-dynamic-page';
 
 export const enum Pages {
 	DYNAMIC_1 = 'p-v4-dynamic-page1',
@@ -26,7 +27,7 @@ export const enum Hooks {
 }
 
 /**
- * Create the `bRouter`, renders the `bDynamicPage` component and returns JSHandle
+ * Creates the `bRouter`, renders the `bDynamicPage` component and returns Promise<JSHandle>
  *
  * @param page
  * @param attrs
@@ -56,15 +57,6 @@ export async function renderDynamicPage(
 		}
 	});
 
-	Object.forEach(attrs, (el: unknown, key: string) => {
-		if (typeof el === 'string') {
-			// eslint-disable-next-line no-new-func
-			attrs[key] = el.includes('return ') ? Function(el)() : el;
-		} else {
-			attrs[key] = el;
-		}
-	});
-
 	return Component.createComponent(page, 'b-dynamic-page', {
 		attrs: {
 			id: 'target',
@@ -74,18 +66,19 @@ export async function renderDynamicPage(
 }
 
 /**
- * Helper that switches some pages and write temporary state(pages hooks and names) in resulting array. Returns array
+ * Helper that switches some pages and writes temporary state (pages hooks and names) in resulting array.
+ * Returns string[]
  *
  * @param ctx
  */
 export async function switcher(ctx: bDynamicPage): Promise<string[]> {
-	function prevHookDebugString(hook: string): string {
-    return `Previous component: ${hook}`;
-  }
+	const
+		res: string[] = [],
+		prevHookDebugString: (hook: string) => string = (hook) => `Previous component: ${hook}`;
 
-	const res: string[] = [];
-	let prev: iDynamicPage;
-	let cur: iDynamicPage;
+	let
+		prev: iDynamicPage,
+		cur: iDynamicPage;
 
 	await ctx.router!.push('page3');
 	await ctx.router!.push('page1');
@@ -114,7 +107,7 @@ export async function switcher(ctx: bDynamicPage): Promise<string[]> {
 }
 
 /**
- * Helper that take hook name and return template string for previous component hook
+ * Helper that takes the hook name and returns template string for previous component hook
  *
  * @param hook
  */

@@ -6,17 +6,26 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iDynamicPage from 'components/super/i-dynamic-page/i-dynamic-page';
 import test from 'tests/config/unit/test';
 
-import { renderDynamicPage, switcher, Pages, Hooks, prevHookDebugString } from 'components/base/b-dynamic-page/test/helpers';
+import type iDynamicPage from 'components/super/i-dynamic-page/i-dynamic-page';
+
+import {
+
+	renderDynamicPage,
+	switcher,
+	Pages,
+	Hooks,
+	prevHookDebugString
+
+} from 'components/base/b-dynamic-page/test/helpers';
 
 test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 	test.beforeEach(async ({demoPage}) => {
     await demoPage.goto();
   });
 
-	test('should switch pages and keep alive them', async ({page}) => {
+	test('should switch pages and keep them alive', async ({page}) => {
 		const target = await renderDynamicPage(page, {
 			keepAlive: true
 		});
@@ -41,8 +50,8 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			keepAliveSize: 1
 		});
 
-		test.expect(
-			await target.evaluate(async (ctx) => {
+		await test.expect(
+			target.evaluate(async (ctx) => {
 				const res: string[] = [];
 
 				await ctx.router!.push('page3');
@@ -61,7 +70,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 
 				return res;
 			})
-		).toEqual([
+		).resolves.toEqual([
 			Pages.DYNAMIC_3,
 			Hooks.ACTIVATED,
 
@@ -70,7 +79,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 		]);
 	});
 
-	test.describe('providing `include`. Include to `keep-alive` components list', () => {
+	test.describe('`include`', () => {
 		test('should `include` the component by a string name', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
@@ -91,8 +100,8 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` the components by an array of string names', async ({page}) => {
-			let target = await renderDynamicPage(page, {
+		test('should `include` the components from an array of string names', async ({page}) => {
+			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: [Pages.DYNAMIC_1, Pages.DYNAMIC_2]
 			});
@@ -109,8 +118,10 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				Hooks.ACTIVATED,
 				prevHookDebugString(Hooks.DEACTIVATED)
 			]);
+		});
 
-			target = await renderDynamicPage(page, {
+		test('should not `include` components not from an array of string names', async ({page}) => {
+			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: [Pages.DYNAMIC_1, Pages.DYNAMIC_3]
 			});
@@ -132,7 +143,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 		test('should `include` the components by a regular expression', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
-				include: 'return /^p-v4-dynamic-page/'
+				include: /^p-v4-dynamic-page/
 			});
 
 			test.expect(await target.evaluate(switcher)).toEqual([
@@ -149,8 +160,13 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` the components, which name defined as a function that returns `null` or `false`', async ({page}) => {
-			const res = [
+		test('should not `include` any components, because function-matcher always returns `null`', async ({page}) => {
+			const target = await renderDynamicPage(page, {
+				keepAlive: true,
+				include: () => null
+			});
+
+			test.expect(await target.evaluate(switcher)).toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.MOUNTED,
 
@@ -161,29 +177,36 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				Pages.DYNAMIC_1,
 				Hooks.MOUNTED,
 				prevHookDebugString(Hooks.DESTROYED)
-			];
-
-			{
-				const target = await renderDynamicPage(page, {
-					keepAlive: true,
-					include: 'return () => null'
-				});
-
-				test.expect(await target.evaluate(switcher)).toEqual(res);
-			}
-
-			{
-				const target = await renderDynamicPage(page, {
-					keepAlive: true,
-					include: 'return () => false'
-				});
-
-				test.expect(await target.evaluate(switcher)).toEqual(res);
-			}
+			]);
 		});
 
-		test('should `include` the components, which name defined as a function that returns `true` or a string', async ({page}) => {
-			const res = [
+		test('should not `include` any components, because function-matcher always returns `false`', async ({page}) => {
+			const target = await renderDynamicPage(page, {
+				keepAlive: true,
+				include: () => false
+			});
+
+			test.expect(await target.evaluate(switcher)).toEqual([
+				Pages.DYNAMIC_1,
+				Hooks.MOUNTED,
+
+				Pages.DYNAMIC_2,
+				Hooks.MOUNTED,
+				prevHookDebugString(Hooks.DESTROYED),
+
+				Pages.DYNAMIC_1,
+				Hooks.MOUNTED,
+				prevHookDebugString(Hooks.DESTROYED)
+			]);
+		});
+
+		test('should `include` all components, because function-matcher always returns `true`', async ({page}) => {
+			const target = await renderDynamicPage(page, {
+				keepAlive: true,
+				include: () => true
+			});
+
+			test.expect(await target.evaluate(switcher)).toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 
@@ -194,34 +217,35 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 				prevHookDebugString(Hooks.DEACTIVATED)
-			];
+			]);
+		});
 
-			{
-				const target = await renderDynamicPage(page, {
-					keepAlive: true,
-					include: 'return () => true'
-				});
+		test('should `include` components, that same as function-matcher`s returns string', async ({page}) => {
+			const target = await renderDynamicPage(page, {
+				keepAlive: true,
+				include: (page) => page
+			});
 
-				test.expect(await target.evaluate(switcher)).toEqual(res);
-			}
+			test.expect(await target.evaluate(switcher)).toEqual([
+				Pages.DYNAMIC_1,
+				Hooks.ACTIVATED,
 
-			{
-				const target = await renderDynamicPage(page, {
-					keepAlive: true,
-					include: 'return (page) => page'
-				});
+				Pages.DYNAMIC_2,
+				Hooks.ACTIVATED,
+				prevHookDebugString(Hooks.DEACTIVATED),
 
-				test.expect(await target.evaluate(switcher)).toEqual(res);
-			}
+				Pages.DYNAMIC_1,
+				Hooks.ACTIVATED,
+				prevHookDebugString(Hooks.DEACTIVATED)
+			]);
 		});
 
 		test('should `include` components, defined as a function that returns the cache strategy', async ({page}) => {
-			const include = `
-return (page, route, ctx) => ({
-cacheKey: page,
-cacheGroup: page,
-createCache: () => ctx.keepAliveCache.global
-})`;
+			const include = (page, route, ctx) => ({
+				cacheKey: page,
+				cacheGroup: page,
+				createCache: () => ctx.keepAliveCache.global
+			});
 
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
@@ -243,7 +267,7 @@ createCache: () => ctx.keepAliveCache.global
 		});
 	});
 
-	test.describe('providing `exclude`. Exclude from `keep-alive` components list', () => {
+	test.describe('`exclude`', () => {
 		test('should `exclude` the component by a string name', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
@@ -287,7 +311,7 @@ createCache: () => ctx.keepAliveCache.global
 		test('should `exclude` the components by a regular expression', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
-				exclude: 'return /^p-v4-dynamic-page/'
+				exclude: /^p-v4-dynamic-page/
 			});
 
 			test.expect(await target.evaluate(switcher)).toEqual([
@@ -304,10 +328,10 @@ createCache: () => ctx.keepAliveCache.global
 			]);
 		});
 
-		test('should `exclude` the components, which name defined as a function that returns `true`', async ({page}) => {
+		test('should `exclude` all components, because function-matcher always returns `true`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
-				exclude: 'return () => true'
+				exclude: () => true
 			});
 
 			test.expect(await target.evaluate(switcher)).toEqual([
@@ -324,10 +348,10 @@ createCache: () => ctx.keepAliveCache.global
 			]);
 		});
 
-		test('should `exclude` the components, which name defined as a function that returns `false`', async ({page}) => {
+		test('should not `exclude` any components, because function-matcher always returns `false`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
-				exclude: 'return () => false'
+				exclude: () => false
 			});
 
 			test.expect(await target.evaluate(switcher)).toEqual([
@@ -345,11 +369,11 @@ createCache: () => ctx.keepAliveCache.global
 		});
 	});
 
-	test.describe('providing support `include` and `exclude` composition', () => {
+	test.describe('`include` and `exclude`', () => {
 		test('should `include` components, defined as a regular expression and `exclude` string-defined component', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
-				include: 'return /p-v4-dynamic-page/',
+				include: /p-v4-dynamic-page/,
 				exclude: Pages.DYNAMIC_1
 			});
 

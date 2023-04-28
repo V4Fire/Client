@@ -15,66 +15,64 @@ test.describe('<b-dynamic-page>', () => {
 		await demoPage.goto();
 	});
 
-	test.describe('b-dynamic-page base functional', () => {
-		test("shouldn't cache the `component` getter", async ({page}) => {
-			const target = await renderDynamicPage(page, {
-				page: Pages.DYNAMIC_1
-			});
-
-			test.expect(
-				await target.evaluate((ctx) => {
-					const {meta} = ctx.unsafe;
-					return 'component' in meta.accessors && !('component' in meta.computedFields);
-				})
-			).toBe(true);
+	test("shouldn't cache the `component` getter", async ({page}) => {
+		const target = await renderDynamicPage(page, {
+			page: Pages.DYNAMIC_1
 		});
 
-		test('should be the same: fields `page` and `componentName`', async ({page}) => {
-			const target = await renderDynamicPage(page, {
-				page: Pages.DYNAMIC_1
-			});
+		test.expect(
+			await target.evaluate((ctx) => {
+				const {meta} = ctx.unsafe;
+				return 'component' in meta.accessors && !('component' in meta.computedFields);
+			})
+		).toBe(true);
+	});
 
-			const scan = await target.evaluate(async (ctx) => {
-				const res: string[] = [];
-
-				await ctx.nextTick();
-				let cur = await ctx.component;
-				res.push(ctx.page!, cur.componentName);
-
-				ctx.page = 'p-v4-dynamic-page2';
-
-				await ctx.nextTick();
-				cur = await ctx.component;
-				res.push(ctx.page, cur.componentName);
-
-				return res;
-			});
-
-			test.expect(scan).toEqual([
-				Pages.DYNAMIC_1,
-				Pages.DYNAMIC_1,
-
-				Pages.DYNAMIC_2,
-				Pages.DYNAMIC_2
-			]);
+	test('should be the same: fields `page` and `componentName`', async ({page}) => {
+		const target = await renderDynamicPage(page, {
+			page: Pages.DYNAMIC_1
 		});
 
-		test('should switch pages', async ({page}) => {
-			const target = await renderDynamicPage(page);
+		const scan = await target.evaluate(async (ctx) => {
+			const res: string[] = [];
 
-			test.expect(await target.evaluate(switcher)).toEqual([
-				Pages.DYNAMIC_1,
-				Hooks.MOUNTED,
+			await ctx.nextTick();
+			let cur = await ctx.component;
+			res.push(ctx.page!, cur.componentName);
 
-				Pages.DYNAMIC_2,
-				Hooks.MOUNTED,
-				prevHookDebugString(Hooks.DESTROYED),
+			ctx.page = 'p-v4-dynamic-page2';
 
-				Pages.DYNAMIC_1,
-				Hooks.MOUNTED,
-				prevHookDebugString(Hooks.DESTROYED)
-			]);
+			await ctx.nextTick();
+			cur = await ctx.component;
+			res.push(ctx.page, cur.componentName);
+
+			return res;
 		});
+
+		test.expect(scan).toEqual([
+			Pages.DYNAMIC_1,
+			Pages.DYNAMIC_1,
+
+			Pages.DYNAMIC_2,
+			Pages.DYNAMIC_2
+		]);
+	});
+
+	test('should switch pages', async ({page}) => {
+		const target = await renderDynamicPage(page);
+
+		test.expect(await target.evaluate(switcher)).toEqual([
+			Pages.DYNAMIC_1,
+			Hooks.MOUNTED,
+
+			Pages.DYNAMIC_2,
+			Hooks.MOUNTED,
+			prevHookDebugString(Hooks.DESTROYED),
+
+			Pages.DYNAMIC_1,
+			Hooks.MOUNTED,
+			prevHookDebugString(Hooks.DESTROYED)
+		]);
 	});
 
 });
