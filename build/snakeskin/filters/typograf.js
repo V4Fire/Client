@@ -18,7 +18,7 @@ const
 let
 	tp;
 
-if (Typograf.hasLocale(config.typograf())) {
+if (Typograf.hasLocale(config.typograf().locale)) {
 	tp = new Typograf(config.typograf());
 }
 
