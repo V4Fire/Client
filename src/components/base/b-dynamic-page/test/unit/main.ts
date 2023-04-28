@@ -15,7 +15,7 @@ test.describe('<b-dynamic-page>', () => {
 		await demoPage.goto();
 	});
 
-	test("shouldn't cache the `component` getter", async ({page}) => {
+	test("shouldn't cache the component's getter", async ({page}) => {
 		const target = await renderDynamicPage(page, {
 			page: Pages.DYNAMIC_1
 		});
@@ -61,7 +61,7 @@ test.describe('<b-dynamic-page>', () => {
 	test('should switch pages', async ({page}) => {
 		const target = await renderDynamicPage(page);
 
-		test.expect(await target.evaluate(switcher)).toEqual([
+		await test.expect(target.evaluate(switcher)).resolves.toEqual([
 			Pages.DYNAMIC_1,
 			Hooks.MOUNTED,
 

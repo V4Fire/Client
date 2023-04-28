@@ -67,7 +67,7 @@ export async function renderDynamicPage(
 
 /**
  * Helper that switches some pages and writes temporary state (pages hooks and names) in resulting array.
- * Returns string[]
+ * Returns this resulting array.
  *
  * @param ctx
  */

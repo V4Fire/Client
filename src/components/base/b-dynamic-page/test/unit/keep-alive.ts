@@ -30,7 +30,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			keepAlive: true
 		});
 
-		test.expect(await target.evaluate(switcher)).toEqual([
+		await test.expect(target.evaluate(switcher)).resolves.toEqual([
 			Pages.DYNAMIC_1,
 			Hooks.ACTIVATED,
 
@@ -44,7 +44,10 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 		]);
 	});
 
-	test('should switch pages, providing `keepAliveSize`', async ({page}) => {
+	test([
+		'should switch pages, providing `keepAliveSize`',
+		'it means how many last opened pages will be cached'
+	].join(' '), async ({page}) => {
 		const target = await renderDynamicPage(page, {
 			keepAlive: true,
 			keepAliveSize: 1
@@ -79,14 +82,17 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 		]);
 	});
 
-	test.describe('`include`', () => {
+	test.describe([
+		'`include`',
+		'includes specified pages in `keepAlive` caching. When props is empty all loaded pages will be cached'
+	].join(' '), () => {
 		test('should `include` the component by a string name', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: Pages.DYNAMIC_1
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 
@@ -106,7 +112,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				include: [Pages.DYNAMIC_1, Pages.DYNAMIC_2]
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 
@@ -126,7 +132,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				include: [Pages.DYNAMIC_1, Pages.DYNAMIC_3]
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 
@@ -146,7 +152,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				include: /^p-v4-dynamic-page/
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 
@@ -160,13 +166,13 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should not `include` any components, because function-matcher always returns `null`', async ({page}) => {
+		test('should not `include` components when function-matcher returns `null`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: () => null
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.MOUNTED,
 
@@ -180,13 +186,13 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should not `include` any components, because function-matcher always returns `false`', async ({page}) => {
+		test('should not `include` components when function-matcher returns `false`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: () => false
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.MOUNTED,
 
@@ -200,13 +206,13 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` all components, because function-matcher always returns `true`', async ({page}) => {
+		test('should `include` all components, when function-matcher returns `true`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: () => true
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 
@@ -220,13 +226,13 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` components, that same as function-matcher`s returns string', async ({page}) => {
+		test('should `include` components whose name matches returned from the function-matcher', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: (page) => page
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 
@@ -240,7 +246,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` components, defined as a function that returns the cache strategy', async ({page}) => {
+		test('should `include` components that match the caching strategy defined in the function', async ({page}) => {
 			const include = (page, route, ctx) => ({
 				cacheKey: page,
 				cacheGroup: page,
@@ -252,7 +258,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				include
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 
@@ -267,14 +273,17 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 		});
 	});
 
-	test.describe('`exclude`', () => {
+	test.describe([
+		'`exclude`',
+		'excludes specified pages from `keepAlive` caching'
+	].join(' '), () => {
 		test('should `exclude` the component by a string name', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: Pages.DYNAMIC_1
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.MOUNTED,
 
@@ -288,13 +297,13 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `exclude` the components by an array of string names', async ({page}) => {
+		test('should `exclude` the components from an array of string names', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: [Pages.DYNAMIC_1, Pages.DYNAMIC_2]
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.MOUNTED,
 
@@ -314,7 +323,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				exclude: /^p-v4-dynamic-page/
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.MOUNTED,
 
@@ -328,13 +337,13 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `exclude` all components, because function-matcher always returns `true`', async ({page}) => {
+		test('should `exclude` components when function-matcher returns `true`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: () => true
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.MOUNTED,
 
@@ -348,13 +357,13 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should not `exclude` any components, because function-matcher always returns `false`', async ({page}) => {
+		test('should not `exclude` components when function-matcher returns `false`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: () => false
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.ACTIVATED,
 
@@ -377,7 +386,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 				exclude: Pages.DYNAMIC_1
 			});
 
-			test.expect(await target.evaluate(switcher)).toEqual([
+			await test.expect(target.evaluate(switcher)).resolves.toEqual([
 				Pages.DYNAMIC_1,
 				Hooks.MOUNTED,
 
