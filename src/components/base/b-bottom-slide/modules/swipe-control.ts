@@ -46,7 +46,7 @@ export default class SwipeControl extends Friend {
 	protected byTrigger: boolean = false;
 
 	/**
-	 * This method should be used by bBottomSlide to notify about offset changes
+	 * This method should be used to notify about offset changes
 	 * @param offset
 	 */
 	notifyOffsetChanged(offset: number): void {
