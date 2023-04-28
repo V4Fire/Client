@@ -160,8 +160,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 
 		this.stepStore = v;
 
-		// @deprecated
-		this.emit('changeStep', v);
 		this.emit('stepChange', v);
 	}
 
@@ -203,8 +201,6 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		this[value ? 'setRootMod' : 'removeRootMod']('fullscreen-moving', true);
 		void this[value ? 'setMod' : 'removeMod']('stick', false);
 
-		// @deprecated
-		this.emit('changeMoveState', value);
 		this.emit('moveStateChange', value);
 	}
 
