@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the `typograf` filter that didn't work due to the wrong locale path.
+
 ## v3.46.2 (2023-04-26)
 
 #### :house: Internal

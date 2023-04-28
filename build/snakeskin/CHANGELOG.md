@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the snakeskin filter that didn't work due to the wrong locale path.
+
 ## v3.43.1 (2023-03-27)
 
 #### :bug: Bug Fix
