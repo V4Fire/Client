@@ -462,7 +462,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	/**
 	 * Handler: the current step was changed
 	 */
-	@watch(':changeStep')
+	@watch(':stepChange')
 	@hook('mounted')
 	@wait('ready')
 	protected onStepChange(): void {
