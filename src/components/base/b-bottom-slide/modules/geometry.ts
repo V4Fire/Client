@@ -22,12 +22,16 @@ export default class Geometry extends Friend {
 		return document.documentElement.clientHeight;
 	}
 
-	/** @see [[Geometry.contentHeightStore]] */
+	/**
+	 * The maximum content height (in pixels)
+	 */
 	get contentHeight(): number {
 		return this.contentHeightStore;
 	}
 
-	/** @see [[Geometry.contentMaxHeightStore]] */
+	/**
+	 * Content height (in pixels)
+	 */
 	get contentMaxHeight(): number {
 		return this.contentMaxHeightStore;
 	}
@@ -76,15 +80,11 @@ export default class Geometry extends Friend {
 	 */
 	protected stepsInPixels: number[] = [];
 
-	/**
-	 * The maximum content height (in pixels)
-	 */
-	protected contentMaxHeightStore: number = 0;
-
-	/**
-	 * Content height (in pixels)
-	 */
+	/** @see [[Geometry.contentHeight]] */
 	protected contentHeightStore: number = 0;
+
+	/** @see [[Geometry.contentMaxHeight]] */
+	protected contentMaxHeightStore: number = 0;
 
 	/**
 	 * Sets the new offset
@@ -150,7 +150,7 @@ export default class Geometry extends Friend {
 			maxVisiblePx = this.windowHeight * (maxVisiblePercent / 100),
 			contentHeight = view.clientHeight + header.clientHeight;
 
-		this.contentHeightStore = contentHeight > maxVisiblePx ? maxVisiblePx : contentHeight;
+		this.contentHeightStore = Math.min(contentHeight, maxVisiblePx);
 		this.contentMaxHeightStore = maxVisiblePx;
 
 		if (currentPage) {
@@ -160,9 +160,9 @@ export default class Geometry extends Friend {
 		}
 
 		Object.assign(window.style, {
-			// If documentElement height is equal to zero, maxVisiblePx is always be zero too,
-			// even after new calling of initGeometry.
-			// Also, view.clientHeight above would return zero as well, even though the real size is bigger.
+			// If the height of documentElement is zero, the maxVisiblePx value will also always be zero,
+			// even after calling init again.
+			// Furthermore, view.clientHeight will return zero too, even if the actual size is larger.
 			maxHeight: maxVisiblePx === 0 ? undefined : maxVisiblePx.px
 		});
 
