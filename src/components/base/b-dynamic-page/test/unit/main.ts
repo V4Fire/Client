@@ -20,12 +20,12 @@ test.describe('<b-dynamic-page>', () => {
 			page: Pages.DYNAMIC_1
 		});
 
-		test.expect(
-			await target.evaluate((ctx) => {
+		await test.expect(
+			target.evaluate((ctx) => {
 				const {meta} = ctx.unsafe;
 				return 'component' in meta.accessors && !('component' in meta.computedFields);
 			})
-		).toBe(true);
+		).resolves.toBe(true);
 	});
 
 	test('should be the same: fields `page` and `componentName`', async ({page}) => {

@@ -46,7 +46,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 
 	test([
 		'should switch pages, providing `keepAliveSize`',
-		'it means how many last opened pages will be cached'
+		'the number of most recently opened pages to be cached'
 	].join(' '), async ({page}) => {
 		const target = await renderDynamicPage(page, {
 			keepAlive: true,
