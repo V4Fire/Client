@@ -77,7 +77,7 @@ export default class Geometry extends Friend {
 		return this.stepsInPixels[this.ctx.step];
 	}
 
-	/** @see [[Geometry.offset]] */
+	/** {@link Geometry.offset} */
 	protected offsetStore: number = 0;
 
 	/**
@@ -85,13 +85,13 @@ export default class Geometry extends Friend {
 	 */
 	protected stepsInPixels: number[] = [];
 
-	/** @see [[Geometry.windowHeight]] */
+	/** {@link Geometry.windowHeight} */
 	protected windowHeightStore: number = 0;
 
-	/** @see [[Geometry.contentHeight]] */
+	/** {@link Geometry.contentHeight} */
 	protected contentHeightStore: number = 0;
 
-	/** @see [[Geometry.contentMaxHeight]] */
+	/** {@link Geometry.contentMaxHeight} */
 	protected contentMaxHeightStore: number = 0;
 
 	/**

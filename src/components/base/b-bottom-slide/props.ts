@@ -88,7 +88,7 @@ export default abstract class bBottomSlideProps extends iBlock {
 	@prop(Boolean)
 	readonly forceInnerRender: boolean = true;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** {@link iVisible.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 }

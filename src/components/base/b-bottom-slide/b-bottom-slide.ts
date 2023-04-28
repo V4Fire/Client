@@ -58,7 +58,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		return Object.cast(this);
 	}
 
-	/** @see [[bBottomSlide.steps]] */
+	/** {@link bBottomSlide.steps} */
 	@field<bBottomSlide>((o) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
 	readonly stepsStore!: number[];
 
@@ -105,7 +105,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		return 2 + this.stepsStore.length;
 	}
 
-	/** @see [[iHistory.history]] */
+	/** {@link iHistory.history} */
 	@system<iHistory>((ctx) => new History(ctx))
 	readonly history!: History;
 
@@ -137,7 +137,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		overlay?: HTMLElement;
 	};
 
-	/** @see [[bBottomSlide.step]] */
+	/** {@link bBottomSlide.step} */
 	@system()
 	protected stepStore: number = 0;
 
@@ -175,7 +175,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	@system()
 	protected isStepTransitionInProgress: boolean = false;
 
-	/** @see [[bBottomSlide.isPulling]] */
+	/** {@link bBottomSlide.isPulling} */
 	@system()
 	protected isPullingStore: boolean = false;
 
@@ -207,7 +207,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	/**
 	 * The minimum height value of a component visible part (in percents),
 	 * i.e. even the component is closed this part still be visible
-	 * @see [[bBottomSlide.visible]]
+	 * {@link bBottomSlide.visible}
 	 */
 	@computed({cache: false})
 	protected get visibleInPercent(): number {
@@ -238,19 +238,19 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	@system((o) => new Overlay(o))
 	protected overlayAPI!: Overlay;
 
-	/** @see [[History.onPageTopVisibilityChange]] */
+	/** {@link History.onPageTopVisibilityChange} */
 	onPageTopVisibilityChange(state: boolean): void {
 		this.isViewportTopReached = state;
 	}
 
-	/** @see [[iLockPageScroll.lock]] */
+	/** {@link iLockPageScroll.lockPageScroll} */
 	@wait('ready', {label: $$.lock})
 	lockPageScroll(): Promise<void> {
 		return iLockPageScroll.lockPageScroll(this, this.$refs.view);
 	}
 
 	/**
-	 * @see [[iOpen.open]]
+	 * {@link iOpen.open}
 	 * @param [step]
 	 * @emits `open()`
 	 */
@@ -278,7 +278,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * @see [[iOpen.close]]
+	 * {@link iOpen.close}
 	 * @emits `close()`
 	 */
 	async close(): Promise<boolean> {
@@ -338,17 +338,17 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		return true;
 	}
 
-	/** @see [[iOpen.onKeyClose]] */
+	/** {@link iOpen.onKeyClose} */
 	async onKeyClose(): Promise<void> {
 		// Loopback
 	}
 
-	/** @see [[iOpen.onTouchClose]] */
+	/** {@link iOpen.onTouchClose} */
 	async onTouchClose(): Promise<void> {
 		// Loopback
 	}
 
-	/** @see [[iObserveDOM.initObservers]] */
+	/** {@link iObserveDOM.initObservers} */
 	@watch('heightMode')
 	@hook('mounted')
 	@wait('ready')
@@ -379,7 +379,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		document.body.insertAdjacentElement('afterbegin', this.$el!);
 	}
 
-	/** @see [[Geometry.init]] */
+	/** {@link Geometry.init} */
 	@hook('mounted')
 	@wait('ready')
 	protected async initGeometry(): Promise<void> {
