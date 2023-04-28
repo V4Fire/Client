@@ -52,10 +52,10 @@ class bMyPage extends iData {
 
 ### Height mode
 
-The component supports two kinds of height modes to calculate.
+The component supports two modes for calculating height:
 
 * `full` – the height value is equal to the viewport height.
-* `content` – the height value is based on the component content, but no more than the viewport height.
+* `content` – the height value is based on the component's content, but no more than the viewport height.
 
 You can select the height mode calculation by providing the `heightMode` prop.
 
@@ -65,32 +65,25 @@ You can select the height mode calculation by providing the `heightMode` prop.
 
 ### Steps
 
-When opened, the component can have several steps stop. That is, the component can be opened halfway and only after this step to its full size.
-To do this, provide the `steps` prop.
+The component can have multiple stopping points when opened. This means the component can be partially opened first and then expanded to its full size upon user action or calling specific methods. To achieve this, provide the `steps` prop.
 
 ```
 < b-bottom-slide :steps = [50]
 ```
 
-In this example, when the component is opened, it first opens at 50% of its own size,
-and only after user action or calling special methods, the component is opened or closed completely.
+In this example, when the component is opened, it first expands to 50% of its full size. Upon further user action or calling special methods, the component can be fully opened or closed.
 
 ### Lazy rendering
 
-It is a good practice not to render or load what a user cannot see on the screen.
-The component supports the ability not to render content until it is open.
-This can be done using the `forceInnerRender` prop. You need to set `forceInnerRender` to` false` to avoid immediately rendering
-the component's content.
+A good practice is to avoid rendering or loading content that is not visible to the user. The component supports this feature by providing the option to delay rendering of the content until the component is opened. To enable this functionality, use the `forceInnerRender` prop and set it to `false`. By doing so, the component's content will not be rendered immediately.
 
 ```
 < b-bottom-slide :forceInnerRender = false
   < .&__large-inner-content-with-many-components
 ```
-
 ### Singleton
 
-It is also a good practice to use a component as [singleton](https://en.wikipedia.org/wiki/Singleton_pattern).
-This approach implementation remains entirely on clients of this component, but we will consider few options.
+It's a good practice to use this component as a [singleton](https://en.wikipedia.org/wiki/Singleton_pattern). Although the implementation of this approach depends on the users of this component, we'll discuss a few options on how to achieve this.
 
 First, let's create a wrapper component that will contain `b-bottom-slide` and provide methods to open and close `b-bottom-slide`.
 
@@ -172,11 +165,10 @@ export default class bSomeComponent extends iBlock {
 }
 ```
 
-Okay, now we can access `b-bottom-slide` from anywhere, but what's the point in the `b-modal` component?
-The point is simple. It will implement the logic of a wrapper component that will render templates inside `b-bottom-slide`.
+Alright, now we can access `b-bottom-slide` from anywhere. But, what is the purpose of the `b-modal` component? The purpose is fairly straightforward. The `b-modal` component will implement the logic of a wrapper component that renders templates inside `b-bottom-slide`.
 
-Many approaches can be used here.
-For example, the `open` method of the `b-modal `component can take an object on which to draw the content in `b-bottom-slide`.
+There are various approaches that can be used to achieve this. For instance, the `open` method of the `b-modal` component can accept an object that defines the content to be displayed within the `b-bottom-slide`.
+
 
 __b-modal.ts__
 
@@ -226,14 +218,11 @@ __b-modal.ss__
         {{ text }}
 ```
 
-Alternatively, you can use a string name to render the specific template.
-
-These are just two of the many approaches that the `V4Fire` framework gives you to use that kind of component.
-There are many more options you can think of to cover your needs.
+Alternatively, you can use a string name to render a specific template.
 
 ## Slots
 
-The component supports the default slot to provide a content.
+The component supports the `default` slot - use this slot to provide a content.
 
 ```
 < b-bottom-slide
@@ -250,16 +239,20 @@ Also, you can see the parent component and the component traits.
 
 The component height mode:
 
-1. `content` – the height value is based on a component content, but no more than the viewport height;
+1. `content` – the height value is based on the component's content, but no more than the viewport height.
 2. `full` – the height value is equal to the viewport height.
 
 #### [stepsProp = `[]`]
 
 A list of allowed component positions relative to the screen height (in percentages).
 
+```
+< b-bottom-slide :steps = [50, 75]
+```
+
 #### [visible = `0`]
 
-The minimum height value of a visible part (in pixels), i.e., even the component is closed, this part still be visible.
+The minimum height value of a visible part (in pixels), i.e., even when the component is closed, this part will still be visible.
 
 #### [maxVisiblePercent = `90`]
 
@@ -271,15 +264,15 @@ The maximum time in milliseconds after which we can assume that there was a quic
 
 #### [fastSwipeThreshold = `10`]
 
-The minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe.
+The minimum required number of pixels scrolled after which we can assume that there was a quick swipe.
 
 #### [swipeThreshold = `40`]
 
-The minimum required amount of pixels of scrolling to swipe.
+The minimum required number of pixels scrolled to trigger a swipe.
 
 #### [overlay = `true`]
 
-If true, the component will overlay background while it's opened.
+If set to true, the component will display an overlay background while it's opened.
 
 #### [maxOpacity = `0.8`]
 
@@ -287,11 +280,11 @@ The maximum value of overlay opacity.
 
 #### [scrollToTopOnClose = `true`]
 
-If true, then the content scroll will be automatically reset to the top after closing the component.
+If set to true, the content scroll will be automatically reset to the top after the component is closed.
 
 #### [forceInnerRender = `true`]
 
-If false, the inner content of the component won't be rendered if the component isn't opened.
+If set to false, the inner content of the component won't be rendered until the component is opened.
 
 ### Getters
 
