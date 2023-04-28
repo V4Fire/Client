@@ -11,13 +11,16 @@ Changelog
 
 ## v4.??.?? (2023-??-??)
 
-### :boom: Breaking Change
+#### :boom: Breaking Change
+
+* Removed deprecated events: `changeStep`, `changeMoveState`
+
+#### :house: Internal
 
 * All offsets and heights have been moved to the `Geometry` friend class
 * Methods: `onPullStart`, `onPullEnd`, `onPull` - have been moved to the `SwipeControl` friend class
 * All animation methods have been moved to the `Animation` friend class
 * Methods controlling overlay opacity have been moved to the `Overlay` friend class
-* Removed deprecated events: `changeStep`, `changeMoveState`
 
 ## v3.32.1 (2022-12-26)
 
