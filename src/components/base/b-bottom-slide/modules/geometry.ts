@@ -19,7 +19,12 @@ export default class Geometry extends Friend {
 	 * Window height
 	 */
 	get windowHeight(): number {
-		return document.documentElement.clientHeight;
+		// Cache clientHeight to prevent browser reflow
+		if (this.windowHeightStore === 0) {
+			this.windowHeightStore = document.documentElement.clientHeight;
+		}
+
+		return this.windowHeightStore;
 	}
 
 	/**
@@ -80,6 +85,9 @@ export default class Geometry extends Friend {
 	 */
 	protected stepsInPixels: number[] = [];
 
+	/** @see [[Geometry.windowHeight]] */
+	protected windowHeightStore: number = 0;
+
 	/** @see [[Geometry.contentHeight]] */
 	protected contentHeightStore: number = 0;
 
@@ -123,6 +131,8 @@ export default class Geometry extends Friend {
 	 */
 	async init(): Promise<void> {
 		const {ctx} = this;
+
+		this.windowHeightStore = document.documentElement.clientHeight;
 
 		const [header, content, view, window] = await Promise.all([
 			ctx.waitRef<HTMLElement>('header', {label: $$.initGeometry}),
