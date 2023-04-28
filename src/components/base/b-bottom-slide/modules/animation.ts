@@ -78,7 +78,8 @@ export default class Animation extends Friend {
 	protected updateKeyframeValues(): void {
 		const
 			{ctx} = this,
-			isMaxNotReached = ctx.geometry.windowHeight >= ctx.geometry.offset + this.diff;
+			{windowHeight, offset} = ctx.geometry,
+			isMaxNotReached = windowHeight >= offset + this.diff;
 
 		if (isMaxNotReached) {
 			ctx.geometry.incrementOffset(this.diff);
@@ -87,7 +88,7 @@ export default class Animation extends Friend {
 			void ctx.updateWindowPosition();
 		}
 
-		void ctx.overlayAPI.animateOpacityFrame();
+		void ctx.overlayAPI.animateOpacityKeyframe();
 		this.diff = 0;
 	}
 }
