@@ -84,9 +84,9 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 
 	test.describe([
 		'`include`',
-		'includes specified pages in `keepAlive` caching. When props is empty all loaded pages will be cached'
+		'includes specified pages in the `keepAlive` caching. When the prop is empty, all loaded pages will be cached'
 	].join(' '), () => {
-		test('should `include` the component by a string name', async ({page}) => {
+		test('should `include` the component using a string name', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: Pages.DYNAMIC_1
@@ -106,7 +106,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` the components from an array of string names', async ({page}) => {
+		test('should `include` the components using an array of string names', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: [Pages.DYNAMIC_1, Pages.DYNAMIC_2]
@@ -126,7 +126,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should not `include` components not from an array of string names', async ({page}) => {
+		test('should not `include` components that are absent from an array of string names', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: [Pages.DYNAMIC_1, Pages.DYNAMIC_3]
@@ -146,7 +146,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` the components matches with a regular expression', async ({page}) => {
+		test('should `include` components that match a given regular expression', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: /^p-v4-dynamic-page/
@@ -166,7 +166,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should not `include` components when function-matcher returns `null`', async ({page}) => {
+		test('should not `include` components when the function-matcher returns `null`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: () => null
@@ -186,7 +186,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should not `include` components when function-matcher returns `false`', async ({page}) => {
+		test('should not `include` components when the function-matcher returns `false`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: () => false
@@ -206,7 +206,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` all components, when function-matcher returns `true`', async ({page}) => {
+		test('should `include` all components when the function-matcher returns `true`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: () => true
@@ -246,7 +246,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` components that match the caching strategy defined in the function', async ({page}) => {
+		test('should `include` components whose names match the return value of the function-matcher', async ({page}) => {
 			const include = (page, route, ctx) => ({
 				cacheKey: page,
 				cacheGroup: page,
@@ -275,9 +275,9 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 
 	test.describe([
 		'`exclude`',
-		'excludes specified pages from `keepAlive` caching'
+		'excludes specified pages from the `keepAlive` caching'
 	].join(' '), () => {
-		test('should `exclude` the component by a string name', async ({page}) => {
+		test('should `exclude` the component using a string name', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: Pages.DYNAMIC_1
@@ -297,7 +297,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `exclude` the components from an array of string names', async ({page}) => {
+		test('should `exclude` the components using an array of string names', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: [Pages.DYNAMIC_1, Pages.DYNAMIC_2]
@@ -317,7 +317,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `exclude` the components matches with a regular expression', async ({page}) => {
+		test('should `exclude` the components that match a given regular expression', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: /^p-v4-dynamic-page/
@@ -337,7 +337,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `exclude` components when function-matcher returns `true`', async ({page}) => {
+		test('should `exclude` components when the function-matcher returns `true`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: () => true
@@ -357,7 +357,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should not `exclude` components when function-matcher returns `false`', async ({page}) => {
+		test('should not `exclude` components when the function-matcher returns `false`', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				exclude: () => false
@@ -380,8 +380,8 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 
 	test.describe('`include` and `exclude`', () => {
 		test([
-			'should include components matching the regular expression from the `include` prop',
-			'and should exclude the component matching the string from the `exclude` prop'
+			'should include components that match the regular expression from the `include` prop',
+			'and should exclude components that match the string from the `exclude` prop'
 		].join(' '), async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,

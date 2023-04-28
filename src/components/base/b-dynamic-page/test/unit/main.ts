@@ -15,7 +15,7 @@ test.describe('<b-dynamic-page>', () => {
 		await demoPage.goto();
 	});
 
-	test("shouldn't cache the component's getter", async ({page}) => {
+	test("shouldn't cache the `component` getter", async ({page}) => {
 		const target = await renderDynamicPage(page, {
 			page: Pages.DYNAMIC_1
 		});
@@ -28,7 +28,7 @@ test.describe('<b-dynamic-page>', () => {
 		).resolves.toBe(true);
 	});
 
-	test('should be the same: fields `page` and `componentName`', async ({page}) => {
+	test('fields `page` and `componentName` should be equal', async ({page}) => {
 		const target = await renderDynamicPage(page, {
 			page: Pages.DYNAMIC_1
 		});
