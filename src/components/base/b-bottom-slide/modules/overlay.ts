@@ -21,7 +21,7 @@ export default class Overlay extends Friend {
 	protected opacity: number = 0;
 
 	/**
-	 * This method sets new opacity of the overlay and updates it's CSS
+	 * This method sets the opacity of the overlay and updates it's CSS
 	 * @param opacity
 	 */
 	setOpacity(opacity: number): CanPromise<void> {
@@ -30,9 +30,9 @@ export default class Overlay extends Friend {
 	}
 
 	/**
-	 * Tries to set next opacity for the overlay during animation
+	 * Updates opacity for the overlay during animation
 	 */
-	animateOpacityFrame(): CanPromise<void> {
+	animateOpacityKeyframe(): CanPromise<void> {
 		return this.ctx.waitComponentStatus('ready', () => {
 			const
 				{ctx} = this,
@@ -43,20 +43,21 @@ export default class Overlay extends Friend {
 			}
 
 			const
-				lastStep = geometry.getStepOffset(ctx.stepCount - 1),
-				penultimateStep = geometry.getStepOffset(ctx.stepCount - 2);
+				lastStepOffset = geometry.getStepOffset(ctx.stepCount - 1),
+				penultimateStepOffset = geometry.getStepOffset(ctx.stepCount - 2),
+				{offset} = geometry;
 
-			if (!Object.isNumber(penultimateStep) || penultimateStep > geometry.offset) {
+			if (!Object.isNumber(penultimateStepOffset) || penultimateStepOffset > offset) {
 				return;
 			}
 
 			const
-				p = (lastStep - penultimateStep) / 100,
-				currentP = (lastStep - geometry.offset) / p;
+				p = (lastStepOffset - penultimateStepOffset) / 100,
+				currentP = (lastStepOffset - offset) / p;
 
 			const
-				calculatedOpacity = maxOpacity - maxOpacity / 100 * currentP,
-				nextOpacity = calculatedOpacity > maxOpacity ? maxOpacity : calculatedOpacity;
+				calculatedOpacity = maxOpacity - (maxOpacity / 100 * currentP),
+				nextOpacity = Math.min(calculatedOpacity, maxOpacity);
 
 			const
 				diffExceedsRenderTreshold = Math.abs(this.opacity - nextOpacity) >= 0.025;
