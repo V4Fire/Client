@@ -62,6 +62,7 @@ Icon
 /tmp
 /app-cache
 /app-std-cache
+.eslintcache
 /src/entries/tmp
 /db
 

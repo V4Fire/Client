@@ -15,9 +15,9 @@ const
 /**
  * Returns WebPack configuration to the specified entry
  *
- * @param {!Object} entry - options for WebPack ".entry"
+ * @param {!object} entry - options for WebPack ".entry"
  * @param {(number|string)} buildId - build id
- * @returns {!Object}
+ * @returns {!object}
  */
 async function buildFactory(entry, buildId) {
 	await include('build/webpack/custom/preconfig');
