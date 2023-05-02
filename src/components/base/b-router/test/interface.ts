@@ -15,7 +15,7 @@ export type EngineName = 'history' | 'in-memory';
 export type InitRouter = (page: Page, initOptions?: InitRouterOptions) => Promise<JSHandle<iPage>>;
 
 export interface InitRouterOptions {
-	initialRoute?: string;
+	initialRoute?: Nullable<string>;
 }
 
 export interface RouterTestResult {
