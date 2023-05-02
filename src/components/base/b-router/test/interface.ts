@@ -8,11 +8,11 @@
 
 import type { JSHandle, Page } from 'playwright';
 
-import type iPage from 'components/super/i-page/i-page';
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 export type EngineName = 'history' | 'in-memory';
 
-export type InitRouter = (page: Page, initOptions?: InitRouterOptions) => Promise<JSHandle<iPage>>;
+export type InitRouter = (page: Page, initOptions?: InitRouterOptions) => Promise<JSHandle<iStaticPage>>;
 
 export interface InitRouterOptions {
 	initialRoute?: Nullable<string>;

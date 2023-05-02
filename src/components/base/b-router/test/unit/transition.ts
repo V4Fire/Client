@@ -7,7 +7,7 @@
  */
 import type { JSHandle } from 'playwright';
 
-import type iPage from 'components/super/i-page/i-page';
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import test from 'tests/config/unit/test';
 
@@ -104,7 +104,7 @@ test.describe('<b-router> transition', () => {
 function generateSpecs(engineName: EngineName) {
 	const initRouter = createInitRouter(engineName);
 
-	let root: JSHandle<iPage>;
+	let root: JSHandle<iStaticPage>;
 
 	test.beforeEach(async ({page}) => {
 		root = await initRouter(page);
