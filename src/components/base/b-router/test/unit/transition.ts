@@ -11,6 +11,8 @@ import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import test from 'tests/config/unit/test';
 
+import { Component } from 'tests/helpers';
+
 import type { EngineName, RouterTestResult } from 'components/base/b-router/test/interface';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
 
@@ -24,7 +26,7 @@ test.describe('<b-router> transition', () => {
 
 		test.describe('transition to a route with the path interpolation', () => {
 			test('providing original parameters', async ({page}) => {
-				const root = await createInitRouter('history')(page);
+				const root: JSHandle<iStaticPage> = await Component.waitForRoot(page);
 
 				await test.expect(root.evaluate(async (ctx) => {
 					const
@@ -53,7 +55,7 @@ test.describe('<b-router> transition', () => {
 			});
 
 			test('providing aliases', async ({page}) => {
-				const root = await createInitRouter('history')(page);
+				const root: JSHandle<iStaticPage> = await Component.waitForRoot(page);
 
 				await test.expect(root.evaluate(async (ctx) => {
 					const
@@ -134,7 +136,7 @@ function generateSpecs(engineName: EngineName) {
 		}
 	});
 
-	test('transition to an alias', async ({page}) => {
+	test('transition to an alias', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('/second/alias');
 			return ctx.route!.meta.content;
@@ -143,7 +145,7 @@ function generateSpecs(engineName: EngineName) {
 		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('secondAlias');
 	});
 
-	test('transition to an alias with redirect', async ({page}) => {
+	test('transition to an alias with redirect', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('/second/alias-redirect');
 			return ctx.route!.meta.content;
@@ -152,7 +154,7 @@ function generateSpecs(engineName: EngineName) {
 		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('aliasToRedirect');
 	});
 
-	test('transition to chained aliases', async ({page}) => {
+	test('transition to chained aliases', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('/alias-to-alias');
 			return ctx.route!.meta.content;
@@ -161,7 +163,7 @@ function generateSpecs(engineName: EngineName) {
 		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('aliasToAlias');
 	});
 
-	test('transition with redirect', async ({page}) => {
+	test('transition with redirect', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('/second/redirect');
 			return ctx.route!.meta.content;
@@ -170,7 +172,7 @@ function generateSpecs(engineName: EngineName) {
 		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('second');
 	});
 
-	test('transition with redirect and alias', async ({page}) => {
+	test('transition with redirect and alias', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('/redirect-alias');
 			return ctx.route!.meta.content;
@@ -179,7 +181,7 @@ function generateSpecs(engineName: EngineName) {
 		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('secondAlias');
 	});
 
-	test('transition with chained redirect', async ({page}) => {
+	test('transition with chained redirect', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('/redirect-redirect');
 			return ctx.route!.meta.content;
@@ -188,7 +190,7 @@ function generateSpecs(engineName: EngineName) {
 		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('second');
 	});
 
-	test('moving back and forward from one page to another', async ({page}) => {
+	test('moving back and forward from one page to another', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('main');
 			return ctx.route!.meta.content;
@@ -210,7 +212,7 @@ function generateSpecs(engineName: EngineName) {
 		})).resolves.toBe('Second page');
 	});
 
-	test('moving back and forward from one page to another by using .go', async ({page}) => {
+	test('moving back and forward from one page to another by using .go', async () => {
 		await test.expect(root.evaluate(async ({router}) => {
 			await router!.push('main');
 			await router!.push('second');
@@ -230,7 +232,7 @@ function generateSpecs(engineName: EngineName) {
 		})).resolves.toBe('Main page');
 	});
 
-	test('soft transition', async ({page}) => {
+	test('soft transition', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			const
 				{router} = ctx;
@@ -305,7 +307,7 @@ function generateSpecs(engineName: EngineName) {
 		});
 	});
 
-	test('transition event flow', async ({page}) => {
+	test('transition event flow', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			const
 				{router} = ctx;
@@ -372,7 +374,7 @@ function generateSpecs(engineName: EngineName) {
 		});
 	});
 
-	test('transition with root parameters', async ({page}) => {
+	test('transition with root parameters', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			const
 				{router} = ctx;
