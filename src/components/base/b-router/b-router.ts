@@ -35,6 +35,8 @@ import { fillRouteParams } from 'components/base/b-router/modules/normalizers';
 import type { StaticRoutes, TransitionMethod, UnsafeBRouter } from 'components/base/b-router/interface';
 import bRouterProps from 'components/base/b-router/props';
 
+import * as on from 'components/base/b-router/modules/handlers';
+
 export * from 'components/super/i-data/i-data';
 
 export * from 'core/router/const';
@@ -680,67 +682,7 @@ export default class bRouter extends bRouterProps {
 		wrapper: (o, cb) => o.dom.delegate('[href]', cb)
 	})
 
-	protected async onLink(e: MouseEvent): Promise<void> {
-		const
-			a = <HTMLElement>e.delegateTarget,
-			href = a.getAttribute('href')?.trim();
-
-		const cantPrevent =
-			!this.interceptLinks ||
-			href == null ||
-			href === '' ||
-			href.startsWith('#') ||
-			href.startsWith('javascript:') ||
-			router.isExternal.test(href);
-
-		if (cantPrevent) {
-			return;
-		}
-
-		e.preventDefault();
-
-		if (<boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
-			return;
-		}
-
-		const
-			l = Object.assign(document.createElement('a'), {href});
-
-		if (a.getAttribute('target') === '_blank' || e.ctrlKey || e.metaKey) {
-			globalThis.open(l.href, '_blank');
-			return;
-		}
-
-		const
-			method = a.getAttribute('data-router-method');
-
-		switch (method) {
-			case 'back':
-				this.back().catch(stderr);
-				break;
-
-			case 'forward':
-				this.back().catch(stderr);
-				break;
-
-			case 'go': {
-				const go = Object.parse(a.getAttribute('data-router-go'));
-				this.go(Object.isNumber(go) ? go : -1).catch(stderr);
-				break;
-			}
-
-			default: {
-				const
-					params = Object.parse(a.getAttribute('data-router-params')),
-					query = Object.parse(a.getAttribute('data-router-query')),
-					meta = Object.parse(a.getAttribute('data-router-meta'));
-
-				await this[method === 'replace' ? 'replace' : 'push'](href, {
-					params: Object.isDictionary(params) ? params : {},
-					query: Object.isDictionary(query) ? query : {},
-					meta: Object.isDictionary(meta) ? meta : {}
-				});
-			}
-		}
+	protected onLink(e: MouseEvent): Promise<void> {
+		return on.link(this, e);
 	}
 }
