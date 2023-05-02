@@ -267,11 +267,9 @@ function generateSpecs(engineName: EngineName) {
 			.toBe('/?bla=1');
 	});
 
-	// FIXME: broken test
 	test('getting route parameters by a query', async () => {
 		const pageMeta = {
 			name: 'main',
-			page: 'main',
 			path: '/',
 			default: false,
 			external: false,
