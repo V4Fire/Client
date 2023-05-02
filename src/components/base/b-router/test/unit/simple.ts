@@ -15,124 +15,141 @@ import type { EngineName } from 'components/base/b-router/test/interface';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
 
 test.describe('<b-router> simple', () => {
-	const initRouter = createInitRouter('history');
-
-	let root: JSHandle<iPage>;
-
-	test.beforeEach(async ({demoPage, page}) => {
+	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
-		root = await initRouter(page);
 	});
 
 	test.describe('using `history` engine', () => {
-		generateSpecs('history');
-
-		test('checking the `route` property', async () => {
-			await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
+		test.describe('common', () => {
+			generateSpecs('history');
 		});
 
-		test('`replace` a page by a path', async () => {
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					historyLength = history.length,
-					res: Dictionary = {};
+		test.describe('specific', () => {
+			const initRouter = createInitRouter('history');
 
-				await ctx.router!.replace('second');
+			let root: JSHandle<iStaticPage>;
 
-				res.content = ctx.route!.meta.content;
-				res.lengthDoesntChange = historyLength === history.length;
-
-				return res;
-
-			})).resolves.toEqual({
-				content: 'Second page',
-				lengthDoesntChange: true
+			test.beforeEach(async ({page}) => {
+				root = await initRouter(page);
 			});
-		});
 
-		test('`replace` a page by null', async () => {
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					{router} = ctx;
+			test('checking the `route` property', async () => {
+				await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
+			});
 
-				await router!.replace('/');
+			test('`replace` a page by a path', async () => {
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						historyLength = history.length,
+						res: Dictionary = {};
 
-				const
-					historyLength = history.length,
-					res: Dictionary = {};
+					await ctx.router!.replace('second');
 
-				await router!.replace('second');
-				await router!.replace(null, {query: {bla: 1}});
+					res.content = ctx.route!.meta.content;
+					res.lengthDoesntChange = historyLength === history.length;
 
-				res.content = ctx.route!.meta.content;
-				res.query = location.search;
-				res.lengthDoesntChange = historyLength === history.length;
+					return res;
 
-				return res;
+				})).resolves.toEqual({
+					content: 'Second page',
+					lengthDoesntChange: true
+				});
+			});
 
-			})).resolves.toEqual({
-				query: '?bla=1',
-				content: 'Second page',
-				lengthDoesntChange: true
+			test('`replace` a page by null', async () => {
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						{router} = ctx;
+
+					await router!.replace('/');
+
+					const
+						historyLength = history.length,
+						res: Dictionary = {};
+
+					await router!.replace('second');
+					await router!.replace(null, {query: {bla: 1}});
+
+					res.content = ctx.route!.meta.content;
+					res.query = location.search;
+					res.lengthDoesntChange = historyLength === history.length;
+
+					return res;
+
+				})).resolves.toEqual({
+					query: '?bla=1',
+					content: 'Second page',
+					lengthDoesntChange: true
+				});
 			});
 		});
 	});
 
 	test.describe('using `in-memory` engine', () => {
-		generateSpecs('in-memory');
-
-		test('checking the `route` property with `initialRoute`', async () => {
-			await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
+		test.describe('common', () => {
+			generateSpecs('in-memory');
 		});
 
-		// FIXME: broken test
-		test('checking the `route` property without `initialRoute`', async ({page}) => {
-			const root = await initRouter(page, {initialRoute: null});
-			await test.expect(root.evaluate(({route}) => route == null)).resolves.toBeTruthy();
-		});
+		test.describe('specific', () => {
+			const initRouter = createInitRouter('in-memory');
 
-		test('`replace` a page by a path', async () => {
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					{router} = ctx,
-					historyLength = router!.unsafe.engine.history.length,
-					res: Dictionary = {};
-
-				await router!.replace('second');
-
-				res.content = ctx.route!.meta.content;
-				res.lengthDoesntChange = historyLength === router!.unsafe.engine.history.length;
-
-				return res;
-
-			})).resolves.toEqual({
-				content: 'Second page',
-				lengthDoesntChange: true
+			test('checking the `route` property with `initialRoute`', async ({page}) => {
+				const root = await initRouter(page);
+				await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
 			});
-		});
 
-		test('`replace` a page by null', async () => {
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					{router} = ctx;
+			test('checking the `route` property without `initialRoute`', async ({page}) => {
+				const root = await initRouter(page, {initialRoute: null});
+				await test.expect(root.evaluate(({route}) => route == null)).resolves.toBeTruthy();
+			});
 
-				await router!.replace('/');
+			test('`replace` a page by a path', async ({page}) => {
+				const root = await initRouter(page);
 
-				const
-					historyLength = router!.unsafe.engine.history.length,
-					res: Dictionary = {};
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						{router} = ctx,
+						historyLength = router!.unsafe.engine.history.length,
+						res: Dictionary = {};
 
-				await router!.replace('second');
-				await router!.replace(null, {query: {bla: 1}});
+					await router!.replace('second');
 
-				res.content = ctx.route!.meta.content;
-				res.lengthDoesntChange = historyLength === router!.unsafe.engine.history.length;
+					res.content = ctx.route!.meta.content;
+					res.lengthDoesntChange = historyLength === router!.unsafe.engine.history.length;
 
-				return res;
+					return res;
 
-			})).resolves.toEqual({
-				content: 'Second page',
-				lengthDoesntChange: true
+				})).resolves.toEqual({
+					content: 'Second page',
+					lengthDoesntChange: true
+				});
+			});
+
+			test('`replace` a page by null', async ({page}) => {
+				const root = await initRouter(page);
+
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						{router} = ctx;
+
+					await router!.replace('/');
+
+					const
+						historyLength = router!.unsafe.engine.history.length,
+						res: Dictionary = {};
+
+					await router!.replace('second');
+					await router!.replace(null, {query: {bla: 1}});
+
+					res.content = ctx.route!.meta.content;
+					res.lengthDoesntChange = historyLength === router!.unsafe.engine.history.length;
+
+					return res;
+
+				})).resolves.toEqual({
+					content: 'Second page',
+					lengthDoesntChange: true
+				});
 			});
 		});
 	});
