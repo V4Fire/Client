@@ -28,7 +28,7 @@ Object.defineProperty(window, '${csp.nonceStore()}', {
 var ${i18n.langPacksStore} = {};
 
 var PATH = Object.create(null);
-var PUBLIC_PATH = ${object.isString(webpack.dynamicPublicPath()) ? `String(${webpack.dynamicPublicPath()}).trim()` : 'undefined'};
+var PUBLIC_PATH = ${Object.isString(webpack.dynamicPublicPath()) ? `String(${webpack.dynamicPublicPath()}).trim()` : 'undefined'};
 
 if (${Boolean(webpack.providePublicPathWithQuery())}) {
 	(function () {
