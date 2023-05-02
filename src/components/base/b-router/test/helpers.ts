@@ -19,7 +19,7 @@ import type { Router } from 'components/base/b-router/interface';
 export function createInitRouter(engineName: EngineName): InitRouter {
 	return async (page, initOptions = {}) => {
 
-		if (initOptions.initialRoute == null && engineName === 'in-memory') {
+		if (initOptions.initialRoute === undefined && engineName === 'in-memory') {
 			initOptions.initialRoute = 'main';
 		}
 
