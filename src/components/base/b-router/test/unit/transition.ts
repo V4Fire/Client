@@ -246,7 +246,7 @@ function generateSpecs(engineName: EngineName) {
 			result.initialQuery = location.search;
 			result.initialContent = ctx.route!.meta.content;
 
-			router!.on('onSoftChange', (route) => {
+			router!.on('onSoftChange', (route: any) => {
 				if (result.onSoftChange != null) {
 					result.onSoftChange.push(Object.fastClone(route.query));
 
@@ -325,28 +325,28 @@ function generateSpecs(engineName: EngineName) {
 				query.bla = 1;
 			});
 
-			router!.once('onHardChange', (route) => {
+			router!.once('onHardChange', (route: any) => {
 				result.onHardChange = [
 					Object.fastClone(ctx.route!.query),
 					Object.fastClone(route.query)
 				];
 			});
 
-			router!.once('onChange', (route) => {
+			router!.once('onChange', (route: any) => {
 				result.onChange = [
 					Object.fastClone(ctx.route!.query),
 					Object.fastClone(route.query)
 				];
 			});
 
-			router!.once('onTransition', (route) => {
+			router!.once('onTransition', (route: any) => {
 				result.onTransition = [
 					Object.fastClone(ctx.route!.query),
 					Object.fastClone(route.query)
 				];
 			});
 
-			ctx.unsafe.rootEmitter.once('onTransition', (route) => {
+			ctx.unsafe.rootEmitter.once('onTransition', (route: any) => {
 				result.onRootTransition = [
 					Object.fastClone(ctx.route!.query),
 					Object.fastClone(route.query)
@@ -383,11 +383,11 @@ function generateSpecs(engineName: EngineName) {
 			await router!.push('/');
 
 			// eslint-disable-next-line require-atomic-updates
-			ctx.rootParam = 1;
+			(<any>ctx).rootParam = 1;
 			await router!.push('second');
 
 			// eslint-disable-next-line require-atomic-updates
-			ctx.rootParam = undefined;
+			(<any>ctx).rootParam = undefined;
 
 			return {
 				queryObject: ctx.route!.query,

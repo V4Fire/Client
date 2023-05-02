@@ -223,9 +223,9 @@ function generateSpecs(engineName: EngineName) {
 			res.dynamicPage = ctx.route!.meta.content;
 
 			router!.routes = oldRoutes;
-			router!.routeStore = undefined;
+			router!.unsafe.routeStore = undefined;
 
-			await router!.initRoute('main');
+			await router!.unsafe.initRoute('main');
 			res.restoredPage = ctx.route!.meta.content;
 
 			return res;
@@ -263,9 +263,9 @@ function generateSpecs(engineName: EngineName) {
 
 			router!.basePath = '/';
 			router!.routes = oldRoutes;
-			router!.routeStore = undefined;
+			router!.unsafe.routeStore = undefined;
 
-			await router!.initRoute('/');
+			await router!.unsafe.initRoute('/');
 			res.restoredPage = ctx.route!.meta.content;
 
 			return res;
