@@ -263,12 +263,12 @@ export default class Component {
 	}
 
 	/**
+	 * {@link Component.createComponent}
 	 * @param page
 	 * @param componentName
 	 * @param scheme
 	 * @param opts
 	 * @deprecated
-	 * {@link Component.createComponent}
 	 */
 	async createComponent<T extends iBlock>(
 		page: Page,
@@ -298,6 +298,7 @@ export default class Component {
 		page: Page | ElementHandle,
 		id: string
 	): Promise<CanUndef<JSHandle<T>>> {
+		// eslint-disable-next-line playwright/no-element-handle
 		return (await page.$(`#${id}`))?.getProperty('component');
 	}
 
@@ -346,11 +347,11 @@ export default class Component {
 	}
 
 	/**
+	 * @deprecated
+	 * {@link Component.waitForComponentStatus}
 	 * @param ctx
 	 * @param componentSelector
 	 * @param status
-	 * @deprecated
-	 * {@link Component.waitForComponentStatus}
 	 */
 	async waitForComponentStatus<T extends iBlock>(
 		ctx: Page | ElementHandle,

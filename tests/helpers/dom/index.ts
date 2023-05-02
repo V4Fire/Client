@@ -69,10 +69,7 @@ export default class DOM {
 	 * @param [clickOpts]
 	 */
 	static clickToRef(ctx: Page | ElementHandle, refName: string, clickOpts?: Dictionary): Promise<void> {
-		return ctx.click(this.getRefSelector(refName), {
-			force: true,
-			...clickOpts
-		});
+		return ctx.click(this.getRefSelector(refName), {...clickOpts});
 	}
 
 	/**

@@ -197,7 +197,7 @@ test.describe('b-button', () => {
 				});
 
 				await buttonCtx.evaluate((ctx) => ctx.on('click', () => globalThis._t = 1));
-				await buttonNode.click({force: true});
+				await buttonNode.click();
 				await BOM.waitForIdleCallback(page);
 
 				const
@@ -223,7 +223,7 @@ test.describe('b-button', () => {
 					return r.continue();
 				});
 
-				await buttonNode.click({force: true});
+				await buttonNode.click();
 				await BOM.waitForIdleCallback(page, {sleepAfterIdles: 300});
 
 				test.expect(hasNavRequest).toBe(false);

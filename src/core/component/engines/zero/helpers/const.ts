@@ -24,4 +24,4 @@ export const eventModifiers = Object.createDict({
 });
 
 export const
-	eventModifiersRgxp = new RegExp(`^[${object.keys(eventModifiers).join('')}]+`);
+	eventModifiersRgxp = new RegExp(`^[${Object.keys(eventModifiers).join('')}]+`);
