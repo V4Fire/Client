@@ -17,6 +17,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed a bug with negative values in design system `build/stylus/ds/helpers`
 
+## v3.44.1 (2023-03-28)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path
+
 ## v3.40.1 (2023-03-13)
 
 #### :bug: Bug Fix

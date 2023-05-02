@@ -42,7 +42,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	/**
 	 * Additional Options for path parsing
 	 */
-	pathOpts?: RegExpOptions & ParseOptions;
+	pathOpts?: PathOptions;
 
 	/**
 	 * If true, then the route can accept `params` values from the `query` property
@@ -115,6 +115,38 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 		y?: number;
 	};
 };
+
+/**
+ * Decorated path options
+ */
+export interface PathOptions extends RegExpOptions, ParseOptions {
+	/**
+	 * Aliases for dynamic parameters in `path`.
+	 * @see [[StaticRouteMeta.path]]
+	 *
+	 * In the example below you can specify either `bar` itself as a parameter or any of its aliases.
+	 * Note that aliases will be used only if the original parameter is not specified.
+	 * The priority of aliases is determined "from left to right".
+	 *
+	 * @example
+	 * ```typescript
+	 * {
+	 *   path: '/foo/:bar',
+	 *   pathOpts: {
+	 *     aliases: {
+	 *       bar: ['_bar', 'Bar']
+	 *     }
+	 *   }
+	 * }
+	 *
+	 * this.router.push('/foo/:bar', {params: {bar: 'bar'}})               // "/foo/bar"
+	 * this.router.push('/foo/:bar', {params: {Bar: 'Bar'}})               // "/foo/Bar"
+	 * this.router.push('/foo/:bar', {params: {bar: 'bar', Bar: 'Bar'}})   // "/foo/bar"
+	 * this.router.push('/foo/:bar', {params: {Bar: 'Bar', _bar: '_bar'}}) // "/foo/_bar"
+	 * ```
+	 */
+	aliases?: Dictionary<string[]>;
+}
 
 /**
  * Static application route map
@@ -283,18 +315,28 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	 * {
 	 *   path: '/:foo/:bar',
 	 *   pathParams: [
-	 *     {modifier: '', name: 'foo', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: ''},
-	 *     {modifier: '', name: 'bat', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: ''}
+	 *     {modifier: '', name: 'foo', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: '', aliases: []},
+	 *     {modifier: '', name: 'bat', pattern: '[^\\/#\\?]+?', prefix: '/', suffix: '', aliases: []}
 	 *   ]
 	 * }
 	 * ```
 	 */
-	pathParams: Key[];
+	pathParams: PathParam[];
 
 	/**
 	 * Route meta information
 	 */
 	meta: RouteMeta<META>;
+}
+
+/**
+ * Decorated object after parsing the path
+ */
+export interface PathParam extends Key {
+	/**
+	 * @see [[StaticRouteMeta.pathOpts.aliases]]
+	 */
+	aliases: string[];
 }
 
 export type RouteBlueprints = Dictionary<RouteBlueprint>;

@@ -15,6 +15,12 @@ Changelog
 
 * Added possibility to disable specific link interception
 
+## v3.44.1 (2023-03-28)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path
+
 ## v3.30.2 (2022-11-17)
 
 #### :bug: Bug Fix

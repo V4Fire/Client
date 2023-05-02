@@ -22,32 +22,71 @@ test.describe('<b-router> transition', () => {
 	test.describe('using `history` engine', () => {
 		generateSpecs('history');
 
-		test('transition to a route with the path interpolation', async ({page}) => {
-			const root = await createInitRouter('history')(page);
+		test.describe('transition to a route with the path interpolation', () => {
+			test('providing original parameters', async ({page}) => {
+				const root = await createInitRouter('history')(page);
 
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					{router} = ctx;
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						{router} = ctx;
 
-				const
-					result: Dictionary<string> = {},
-					s = () => location.pathname + location.search;
+					const
+						result: Dictionary<string> = {},
+						s = () => location.pathname + location.search;
 
-				await router!.push('template', {params: {param1: 'foo'}});
-				result.path1 = s();
+					await router!.push('template', {params: {param1: 'foo'}});
+					result.path1 = s();
 
-				await router!.push('template', {params: {param1: 'foo'}, query: {param2: 109}});
-				result.path2 = s();
+					await router!.push('template', {params: {param1: 'foo'}, query: {param2: 109}});
+					result.path2 = s();
 
-				await router!.push('/strict-tpl/:param1', {params: {param1: 'foo'}, query: {param2: 109}});
-				result.path3 = s();
+					await router!.push('/strict-tpl/:param1', {params: {param1: 'foo'}, query: {param2: 109}});
+					result.path3 = s();
 
-				return result;
+					return result;
 
-			})).resolves.toEqual({
-				path1: '/tpl/foo',
-				path2: '/tpl/foo/109',
-				path3: '/strict-tpl/foo?param2=109'
+				})).resolves.toEqual({
+					path1: '/tpl/foo',
+					path2: '/tpl/foo/109',
+					path3: '/strict-tpl/foo?param2=109'
+				});
+			});
+
+			test('providing aliases', async ({page}) => {
+				const root = await createInitRouter('history')(page);
+
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						{router} = ctx;
+
+					const
+						result: Dictionary<string> = {},
+						s = () => location.pathname + location.search;
+
+					await router!.push('template', {params: {param1: 'foo'}});
+					result.path1 = s();
+
+					await router!.push('template', {params: {param1: 'foo', _param1: 'bar'}});
+					result.path2 = s();
+
+					await router!.push('template', {params: {Param1: 'foo'}});
+					result.path3 = s();
+
+					await router!.push('template', {params: {Param1: 'bar', _param1: 'foo'}});
+					result.path4 = s();
+
+					await router!.push('template', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}});
+					result.path5 = s();
+
+					return result;
+
+				})).resolves.toEqual({
+					path1: '/tpl/foo',
+					path2: '/tpl/foo',
+					path3: '/tpl/foo',
+					path4: '/tpl/foo',
+					path5: '/tpl/foo/bar?Param1=bla'
+				});
 			});
 		});
 	});

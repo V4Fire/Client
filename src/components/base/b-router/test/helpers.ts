@@ -106,7 +106,13 @@ export function createInitRouter(engineName: EngineName): InitRouter {
 				},
 
 				template: {
-					path: '/tpl/:param1/:param2?'
+					path: '/tpl/:param1/:param2?',
+					pathOpts: {
+						aliases: {
+							param1: ['_param1', 'Param1'],
+							param2: ['Param2']
+						}
+					}
 				},
 
 				strictTemplate: {
