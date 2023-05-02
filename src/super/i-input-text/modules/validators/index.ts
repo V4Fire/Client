@@ -28,7 +28,7 @@ export * from 'super/i-input-text/modules/validators/interface';
 export default <ValidatorsDecl<iInputText>>{
 	//#if runtime has iInput/validators
 
-	/** @see [[iInput.validators.required]] */
+	/** {@link iInput.validators.required} */
 	async required({msg, showMsg = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
 			value = await this.formValue;

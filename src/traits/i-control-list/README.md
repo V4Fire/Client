@@ -52,7 +52,7 @@ class bDummyControlList extends iBlock implements iControlList {
 
   /**
    * @override
-   * @see [[iControlList.prototype.getControlEvent]]
+   * {@link iControlList.prototype.getControlEvent}
    */
   getControlEvent(opts: Control): string {
     if (opts.component === 'b-some-my-component') {

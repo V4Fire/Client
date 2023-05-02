@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -19,15 +17,15 @@ import type iBlock from 'super/i-block/i-block';
 export * from 'traits/i-open/i-open';
 
 export default abstract class iOpenToggle extends iOpen {
-	/** @see [[iOpenToggle.toggle]] */
+	/** {@link iOpenToggle.toggle} */
 	static toggle: AddSelf<iOpenToggle['toggle'], iBlock & iOpen> =
 		(component) => component.mods.opened === 'true' ? component.close() : component.open();
 
 	/**
 	 * Toggles the component to open or close
-	 * @param args
+	 * @param _args
 	 */
-	toggle(...args: unknown[]): Promise<boolean> {
+	toggle(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 }

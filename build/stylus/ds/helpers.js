@@ -8,6 +8,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * @typedef {{
+ * data: object,
+ * variables: object
+ * }} BuildTimeDesignSystemParams
+ *
+ * @typedef {import('@v4fire/design-system')} DesignSystem
+ */
+
 const
 	$C = require('collection.js');
 
@@ -31,8 +40,8 @@ function getVariableName(path) {
  *
  * @param {?} value
  * @param {!Array<string>} path - path to set the value
- * @param {DesignSystemVariables} varStorage - dictionary of CSS variables
- * @param {string=} [mapGroup] - name of a group within the `map` property of the variable storage
+ * @param {object} varStorage - dictionary of CSS variables
+ * @param {string} [mapGroup] - name of a group within the `map` property of the variable storage
  *
  * @example
  * ```
@@ -64,7 +73,7 @@ function saveVariable(value, path, varStorage, mapGroup) {
  * Creates a project design system from the specified raw object
  *
  * @param {DesignSystem} raw
- * @param {Object=} [stylus]
+ * @param {object} [stylus]
  * @returns {!BuildTimeDesignSystemParams}
  */
 function createDesignSystem(raw, stylus = require('stylus')) {
@@ -86,8 +95,8 @@ function createDesignSystem(raw, stylus = require('stylus')) {
  * Converts the specified design system object to a Stylus object
  * and creates CSS variables to use within `.styl` files
  *
- * @param {DesignSystem} ds
- * @param {Object} stylus - link to a stylus package instance
+ * @param {import('@v4fire/design-system')} ds
+ * @param {object} stylus - link to a stylus package instance
  * @returns {!BuildTimeDesignSystemParams}
  */
 function convertDsToBuildTimeUsableObject(ds, stylus) {
@@ -129,10 +138,10 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	}
 
 	/**
-	 * @param {Object} obj
-	 * @param {(Object|Array)=} [res]
-	 * @param {Array<string>=} [path]
-	 * @param {(string|boolean)=} [theme]
+	 * @param {object} obj
+	 * @param {(object|Array)} [res]
+	 * @param {Array<string>} [path]
+	 * @param {(string|boolean)} [theme]
 	 */
 	function parseRawDS(obj, res, path, theme) {
 		if (!res) {

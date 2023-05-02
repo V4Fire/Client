@@ -104,69 +104,69 @@ test.describe('b-checkbox hierarchical groups', () => {
 	 */
 	async function init(page: Page) {
 		await Component.createComponents(page, 'b-checkbox', [
-				{
-					attrs: {
-						'data-id': 'root',
-						id: 'root'
-					}
-				},
-
-				{
-					attrs: {
-						'data-id': 'foo',
-
-						id: 'foo',
-						parentId: 'root',
-
-						name: 'lvl2',
-						value: 'foo'
-					}
-				},
-
-				{
-					attrs: {
-						'data-id': 'foo2',
-
-						id: 'foo2',
-						parentId: 'root',
-
-						name: 'lvl2'
-					}
-				},
-
-				{
-					attrs: {
-						'data-id': 'bla',
-
-						id: 'bla',
-						parentId: 'foo',
-
-						name: 'lvl3-foo'
-					}
-				},
-
-				{
-					attrs: {
-						'data-id': 'bla2',
-
-						id: 'bla2',
-						parentId: 'foo',
-
-						name: 'lvl3-foo',
-						value: 'bla2'
-					}
-				},
-
-				{
-					attrs: {
-						'data-id': 'baz',
-
-						id: 'baz',
-						parentId: 'foo2',
-
-						name: 'lvl3-foo2'
-					}
+			{
+				attrs: {
+					'data-id': 'root',
+					id: 'root'
 				}
+			},
+
+			{
+				attrs: {
+					'data-id': 'foo',
+
+					id: 'foo',
+					parentId: 'root',
+
+					name: 'lvl2',
+					value: 'foo'
+				}
+			},
+
+			{
+				attrs: {
+					'data-id': 'foo2',
+
+					id: 'foo2',
+					parentId: 'root',
+
+					name: 'lvl2'
+				}
+			},
+
+			{
+				attrs: {
+					'data-id': 'bla',
+
+					id: 'bla',
+					parentId: 'foo',
+
+					name: 'lvl3-foo'
+				}
+			},
+
+			{
+				attrs: {
+					'data-id': 'bla2',
+
+					id: 'bla2',
+					parentId: 'foo',
+
+					name: 'lvl3-foo',
+					value: 'bla2'
+				}
+			},
+
+			{
+				attrs: {
+					'data-id': 'baz',
+
+					id: 'baz',
+					parentId: 'foo2',
+
+					name: 'lvl3-foo2'
+				}
+			}
 		]);
 
 		return Component.waitForComponentByQuery(page, '[data-id="root"]');

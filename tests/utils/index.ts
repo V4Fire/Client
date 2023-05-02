@@ -20,7 +20,7 @@ export * from 'tests/utils/interface';
  */
 class TestUtils {
 	/**
-	 * @param {Object=} [options]
+	 * @param [options]
 	 */
 	getCurrentTest(options?: GetCurrentTestOptions) {
 		const

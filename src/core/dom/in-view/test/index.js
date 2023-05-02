@@ -1,5 +1,3 @@
-/* eslint-disable max-lines,max-lines-per-function */
-
 // @ts-check
 
 /*!
@@ -18,7 +16,7 @@ const
  * Starts a test
  *
  * @param {Playwright.Page} page
- * @param {!Object} params
+ * @param {!object} params
  * @returns {!Promise<void>}
  */
 module.exports = async (page, params) => {

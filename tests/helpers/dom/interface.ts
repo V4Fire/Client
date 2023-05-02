@@ -22,8 +22,8 @@ export interface WaitForElOptions {
 	/**
 	 * Event to wait
 	 *
-	 *  1. `mount` – element attached to a page;
-	 *  2. `unmount` – element detached from a page.
+	 * 1. `mount` – element attached to a page;
+	 * 2. `unmount` – element detached from a page.
 	 *
 	 * @default `mount`
 	 */

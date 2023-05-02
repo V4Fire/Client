@@ -80,7 +80,7 @@ export default class ThemeManager extends Friend {
 		});
 	}
 
-	/** @see [[ThemeManager.currentStore]] */
+	/** {@link ThemeManager.currentStore} */
 	get current(): string {
 		return this.currentStore;
 	}

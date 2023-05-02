@@ -60,12 +60,12 @@ If the component is switched to "multiple" mode, the getter will return a Set.
 import iActiveItems from 'traits/i-active-items/i-active-items';
 
 export default class bCustomList implements iActiveItems {
-  /** @see [[iActiveItems.prototype.active] */
+  /** {@link iActiveItems.prototype.active} */
   get active(): iActiveItems['active'] {
     return iActiveItems.getActive(this.top ?? this);
   }
 
-  /** @see [[iActiveItems.prototype.active] */
+  /** {@link iActiveItems.prototype.active} */
   set active(value: this['Active']) {
     (this.top ?? this).field.set('activeStore', value);
   }
@@ -119,11 +119,11 @@ import type { Item, Items, RenderFilter } from 'base/b-tree/interface';
 @component()
 @derive(iActiveItems)
 class bTree extends iData implements iActiveItems {
-  /** @see [[iItems.items]] */
+  /** {@link iItems.items} */
   @prop(Array)
   readonly itemsProp: this['Items'] = [];
 
-  /** @see [[iActiveItems.activeStore]] */
+  /** {@link iActiveItems.activeStore} */
   @system<bTree>((o) => iActiveItems.linkActiveStore(o))
   activeStore!: iActiveItems['activeStore'];
 }
@@ -144,15 +144,15 @@ import type { Item, Items, RenderFilter } from 'base/b-tree/interface';
 @component()
 @derive(iActiveItems)
 class bTree extends iData implements iActiveItems {
-  /** @see [[iItems.items]] */
+  /** {@link iItems.items} */
   @prop(Array)
   readonly itemsProp: this['Items'] = [];
 
-  /** @see [[iActiveItems.activeStore]] */
+  /** {@link iActiveItems.activeStore} */
   @system<bTree>((o) => iActiveItems.linkActiveStore(o))
   activeStore!: iActiveItems['activeStore'];
 
-  /** @see [[iActiveItems.prototype.active] */
+  /** {@link iActiveItems.prototype.active} */
   @computed({cache: true, dependencies: ['top.activeStore']})
   get active(): iActiveItems['active'] {
     return iActiveItems.getActive(this.top ?? this);
@@ -176,15 +176,15 @@ import type { Item, Items, RenderFilter } from 'base/b-tree/interface';
 @component()
 @derive(iActiveItems)
 class bTree extends iData implements iActiveItems {
-  /** @see [[iItems.items]] */
+  /** {@link iItems.items} */
   @prop(Array)
   readonly itemsProp: this['Items'] = [];
 
-  /** @see [[iActiveItems.activeStore]] */
+  /** {@link iActiveItems.activeStore} */
   @system<bTree>((o) => iActiveItems.linkActiveStore(o))
   activeStore!: iActiveItems['activeStore'];
 
-  /** @see [[iActiveItems.prototype.initComponentValues]] */
+  /** {@link iActiveItems.prototype.initComponentValues} */
   @hook('beforeDataCreate')
   initComponentValues(): void {
     if (this.top == null) {

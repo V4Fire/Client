@@ -69,7 +69,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	override readonly dataProvider: string = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** {@link iVisible.prototype.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -168,11 +168,11 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	@prop({type: String, required: false})
 	readonly form?: string;
 
-	/** @see [[iAccess.autofocus]] */
+	/** {@link iAccess.autofocus} */
 	@prop({type: Boolean, required: false})
 	readonly autofocus?: boolean;
 
-	/** @see [[iAccess.tabIndex]] */
+	/** {@link iAccess.tabIndex} */
 	@prop({type: Number, required: false})
 	readonly tabIndex?: number;
 
@@ -255,7 +255,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	/**
 	 * Tooltip position to show during hover the cursor
 	 *
-	 * @see [[gHint]]
+	 * {@link gHint}
 	 * @example
 	 * ```
 	 * < b-button :hint = 'Click on me!!!' | :hintPos = 'bottom-right'
@@ -267,7 +267,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 	/**
 	 * The way to show dropdown if the `dropdown` slot is provided
-	 * @see [[gHint]]
+	 * {@link gHint}
 	 *
 	 * @example
 	 * ```
@@ -284,7 +284,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 
 	/**
 	 * Initial additional attributes are provided to an "internal" (native) button tag
-	 * @see [[bButton.$refs.button]]
+	 * {@link bButton.$refs.button}
 	 */
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;
@@ -292,8 +292,8 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 	/**
 	 * Additional attributes are provided to an "internal" (native) button tag
 	 *
-	 * @see [[bButton.attrsProp]]
-	 * @see [[bButton.$refs.button]]
+	 * {@link bButton.attrsProp}
+	 * {@link bButton.$refs.button}
 	 */
 	get attrs(): Dictionary {
 		const
@@ -315,7 +315,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 		return attrs;
 	}
 
-	/** @see [[iAccess.isFocused]] */
+	/** {@link iAccess.isFocused} */
 	@computed({dependencies: ['mods.focused']})
 	get isFocused(): boolean {
 		const
@@ -384,7 +384,7 @@ class bButton extends iData implements iAccess, iOpenToggle, iVisible, iWidth, i
 		}
 	}
 
-	/** @see [[iOpenToggle.initCloseHelpers]] */
+	/** {@link iOpenToggle.initCloseHelpers} */
 	@p({hook: 'beforeDataCreate', replace: false})
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);

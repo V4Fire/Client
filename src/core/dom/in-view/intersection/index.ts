@@ -129,7 +129,6 @@ export default class InView extends Super {
 		observable.time = entry.time;
 		observable.timeIn = entry.time;
 
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (Object.isFunction(observable.onEnter)) {
 			observable.onEnter(observable);
 		}
@@ -163,7 +162,6 @@ export default class InView extends Super {
 			join: true
 		};
 
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (Object.isFunction(observable.onLeave)) {
 			observable.onLeave(observable);
 		}

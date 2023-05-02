@@ -19,7 +19,7 @@ export default class Request {
 
 	/**
 	 * @deprecated
-	 * @see [[Request.getRandomUrl]]
+	 * {@link Request.getRandomUrl}
 	 */
 	getRandomUrl(): string {
 		return Request.getRandomUrl();

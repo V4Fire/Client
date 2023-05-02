@@ -19,7 +19,7 @@ module.exports = [
 	 * Normalizes webpack SVG require functions
 	 *
 	 * @param {string} name
-	 * @param {!Object} attrs
+	 * @param {!object} attrs
 	 */
 	function normalizeSvgRequire({name, attrs}) {
 		if (name !== 'img') {
@@ -36,7 +36,7 @@ module.exports = [
 
 	/**
 	 * Normalizes component attributes: adds memoization, expands aliases, etc.
-	 * @param {!Object} attrs
+	 * @param {!object} attrs
 	 */
 	function normalizeComponentAttrs({attrs}) {
 		$C(attrs).forEach((el, key) => {

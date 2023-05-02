@@ -113,7 +113,7 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 		this.stage = value;
 	}
 
-	/** @see [[iObserveDOM.initDOMObservers]] */
+	/** {@link iObserveDOM.initDOMObservers} */
 	@hook('mounted')
 	@wait('ready')
 	initDOMObservers(): void {

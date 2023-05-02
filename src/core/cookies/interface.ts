@@ -48,14 +48,14 @@ export interface SetOptions {
 	 * The option accepts three values:
 	 *
 	 * 1. `lax` - cookies are not sent on normal cross-site subrequests
-	 *    (for example to load images or frames into a third party site), but are sent when a user is navigating to
-	 *    the origin site (i.e. when following a link).
+	 * (for example to load images or frames into a third party site), but are sent when a user is navigating to
+	 * the origin site (i.e. when following a link).
 	 *
 	 * 2. `strict` - cookies will only be sent in a first-party context and not be sent along with
-	 *     requests initiated by third party websites.
+	 * requests initiated by third party websites.
 	 *
 	 * 3. `none` - cookies will be sent in all contexts, i.e. in responses to both first-party and cross-origin requests.
-	 *     If this value is set, the cookie `secure` option must also be set (or the cookie will be blocked).
+	 * If this value is set, the cookie `secure` option must also be set (or the cookie will be blocked).
 	 *
 	 * @default '`lax`'
 	 */

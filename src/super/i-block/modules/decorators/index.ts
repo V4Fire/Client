@@ -56,7 +56,6 @@ export * from 'super/i-block/modules/decorators/interface';
 
 /**
  * @see core/component/decorators/base.ts
- * @inheritDoc
  */
 export const p = pDecorator as <CTX = iBlock, A = unknown, B = A>(
 	params?:
@@ -66,7 +65,6 @@ export const p = pDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/base.ts
- * @inheritDoc
  */
 export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -75,7 +73,6 @@ export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/base.ts
- * @inheritDoc
  */
 export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -84,7 +81,6 @@ export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/base.ts
- * @inheritDoc
  */
 export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -93,7 +89,6 @@ export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/base.ts
- * @inheritDoc
  */
 export const watch = watchDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -155,7 +150,7 @@ export function removeMod(
 /**
  * Decorates a method to wait
  *
- * @see [[Async.wait]]
+ * {@link Async.wait}
  * @decorator
  *
  * @param opts - additional options
@@ -165,7 +160,7 @@ export function wait(opts: WaitDecoratorOptions): Function;
 /**
  * Wraps the specified function to wait a component status
  *
- * @see [[Async.wait]]
+ * {@link Async.wait}
  * @param opts - additional options
  */
 export function wait<F extends AnyFunction>(
@@ -175,7 +170,7 @@ export function wait<F extends AnyFunction>(
 /**
  * Decorates a method to wait the specified component status
  *
- * @see [[Async.wait]]
+ * {@link Async.wait}
  * @decorator
  *
  * @param status
@@ -186,7 +181,7 @@ export function wait(status: WaitStatuses, opts?: WaitDecoratorOptions): Functio
 /**
  * Wraps the specified function to wait a component status
  *
- * @see [[Async.wait]]
+ * {@link Async.wait}
  * @param status
  * @param fnOrOpts - function to wrap or additional options
  */

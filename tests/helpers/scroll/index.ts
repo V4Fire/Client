@@ -120,7 +120,7 @@ export default class Scroll {
 	 * @param selector
 	 * @param [scrollIntoViewOpts]
 	 * @deprecated
-	 * @see [[Scroll.scrollIntoViewIfNeeded]]
+	 * {@link Scroll.scrollIntoViewIfNeeded}
 	 */
 	async scrollIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
@@ -135,7 +135,7 @@ export default class Scroll {
 	 * @param refName
 	 * @param [scrollIntoViewOpts]
 	 * @deprecated
-	 * @see [[Scroll.scrollRefIntoViewIfNeeded]]
+	 * {@link Scroll.scrollRefIntoViewIfNeeded}
 	 */
 	async scrollRefIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
@@ -149,7 +149,7 @@ export default class Scroll {
 	 * @param page
 	 * @param opts
 	 * @deprecated
-	 * @see [[Scroll.scrollBy]]
+	 * {@link Scroll.scrollBy}
 	 */
 	scrollBy(page: Page, opts: ScrollToOptions): Promise<void> {
 		return Scroll.scrollBy(page, opts);
@@ -159,7 +159,7 @@ export default class Scroll {
 	 * @param page
 	 * @param [opts]
 	 * @deprecated
-	 * @see [[Scroll.scrollToBottom]]
+	 * {@link Scroll.scrollToBottom}
 	 */
 	scrollToBottom(page: Page, opts?: ScrollOptions): Promise<void> {
 		return Scroll.scrollToBottom(page, opts);
@@ -170,7 +170,7 @@ export default class Scroll {
 	 * @param [checkFn]
 	 * @param [opts]
 	 * @deprecated
-	 * @see [[Scroll.scrollToBottomWhile]]
+	 * {@link Scroll.scrollToBottomWhile}
 	 */
 	async scrollToBottomWhile(
 		page: Page,

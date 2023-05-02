@@ -78,7 +78,7 @@ export interface ImageOptions {
 	 */
 	alt?: string;
 
-	/** @see [[ImageBackgroundOptions]] */
+	/** {@link ImageBackgroundOptions} */
 	bgOptions?: ImageBackgroundOptions;
 
 	/**
@@ -319,9 +319,9 @@ interface HTMLShadowImageElement extends HTMLImageElement {
 
 	/**
 	 * If
-	 *   - `true` – the image has been successfully loaded;
-	 *   - `false`– the image loading has been failed;
-	 *   - `undefined` – initial state, loading isn't finished
+	 * - `true` – the image has been successfully loaded;
+	 * - `false`– the image loading has been failed;
+	 * - `undefined` – initial state, loading isn't finished
 	 */
 	[IS_LOADED]?: boolean;
 

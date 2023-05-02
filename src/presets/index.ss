@@ -16,7 +16,7 @@
  *
  * @param {Object=} a
  * @param {Object=} b
- * @returns {!Object}
+ * @returns {!object}
  */
 - block index->mixin(a = {}, b = {})
 	: p = Object.assign({ &

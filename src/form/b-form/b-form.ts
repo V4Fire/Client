@@ -64,7 +64,7 @@ export default class bForm extends iData implements iVisible {
 	override readonly dataProvider: string = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** {@link iVisible.prototype.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -152,7 +152,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * Additional request parameters
-	 * @see [[bForm.paramsProp]]
+	 * {@link bForm.paramsProp}
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	@system<bForm>((o) => o.sync.link((val) => Object.assign(o.params ?? {}, val)))
@@ -182,7 +182,6 @@ export default class bForm extends iData implements iVisible {
 				const
 					component = this.dom.getComponent<iInput>(o[i], '[class*="_form_true"]');
 
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (component == null) {
 					continue;
 				}
@@ -508,7 +507,7 @@ export default class bForm extends iData implements iVisible {
 
 	/**
 	 * @deprecated
-	 * @see [[bForm.getValues]]
+	 * {@link bForm.getValues}
 	 */
 	@deprecated({renamedTo: 'getValues'})
 	async values(validate?: ValidateOptions): Promise<Dictionary<CanArray<FormValue>>> {

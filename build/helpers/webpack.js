@@ -67,7 +67,7 @@ exports.hash = hash;
  * (for long-term caching)
  *
  * @param {string} output - source string
- * @param {boolean=} [chunk] - if true, then the specified output is a chunk
+ * @param {boolean} [chunk] - if true, then the specified output is a chunk
  */
 function hash(output, chunk) {
 	return output.replace(hashRgxp, chunk ? `[chunkhash:${build.hashLength}]_` : `[contenthash:${build.hashLength}]_`);
@@ -114,8 +114,8 @@ const requireStatsFields = [
 /**
  * Merges child compilations from a Webpack stats file into the one entity
  *
- * @param {!Object} stats
- * @returns {!Object}
+ * @param {!object} stats
+ * @returns {!object}
  */
 function mergeStats(stats) {
 	return stats.children.reduce((acc, compilation, index) => {
@@ -157,8 +157,8 @@ exports.mergeStats = mergeStats;
 /**
  * Returns a new one Webpack stats JSON by merging the specified two stats objects
  *
- * @param {!Object} statsA
- * @param {!Object} statsB
+ * @param {!object} statsA
+ * @param {!object} statsB
  * @returns {string}
  */
 function createUnifiedJSONStats(statsA, statsB) {
@@ -223,7 +223,7 @@ exports.createUnifiedJSONStats = createUnifiedJSONStats;
 /**
  * Extracts temp folder hash from the passed Webpack stats object
  *
- * @param {!Object} stats
+ * @param {!object} stats
  * @returns {string}
  */
 function getTmpHashFromStats(stats) {

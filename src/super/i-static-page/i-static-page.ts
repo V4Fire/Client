@@ -152,7 +152,7 @@ export default abstract class iStaticPage extends iPage {
 
 	/**
 	 * Route information object store
-	 * @see [[iStaticPage.route]]
+	 * {@link iStaticPage.route}
 	 */
 	@field({forceUpdate: false})
 	protected routeStore?: this['CurrentPage'];
@@ -163,7 +163,7 @@ export default abstract class iStaticPage extends iPage {
 	@system()
 	protected routerStore?: this['Router'];
 
-	/** @see [[iStaticPage.locale]]  */
+	/** {@link iStaticPage.locale}  */
 	@field(() => {
 		const
 			lang = locale.value;
@@ -173,7 +173,6 @@ export default abstract class iStaticPage extends iPage {
 				const
 					el = document.documentElement;
 
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (lang != null) {
 					el.setAttribute('lang', lang);
 

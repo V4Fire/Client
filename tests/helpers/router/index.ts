@@ -40,7 +40,7 @@ export default class Router {
 	 * @param method
 	 * @param args
 	 * @deprecated
-	 * @see [[Router.call]]
+	 * {@link Router.call}
 	 */
 	async call(page: Page, method: string, ...args: unknown[]): Promise<void> {
 		return Router.call(page, method, ...args);

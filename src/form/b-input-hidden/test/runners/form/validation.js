@@ -59,22 +59,22 @@ module.exports = (page) => {
 			});
 
 			expect(scan).toEqual([
-					'validationStart',
+				'validationStart',
 
-					[
-						'validationFail',
-						{validator: 'required', error: false, msg: 'Required field'}
-					],
+				[
+					'validationFail',
+					{validator: 'required', error: false, msg: 'Required field'}
+				],
 
-					[
-						'validationEnd',
-						false,
-						{validator: 'required', error: false, msg: 'Required field'}
-					],
+				[
+					'validationEnd',
+					false,
+					{validator: 'required', error: false, msg: 'Required field'}
+				],
 
-					'validationStart',
-					'validationSuccess',
-					['validationEnd', true, undefined]
+				'validationStart',
+				'validationSuccess',
+				['validationEnd', true, undefined]
 			]);
 		});
 

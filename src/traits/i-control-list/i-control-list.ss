@@ -11,7 +11,7 @@
 /**
  * Generates a layout for controls
  *
- * @param {!Object} params - additional parameters:
+ * @param {!object} params - additional parameters:
  *   *) [from] - data store
  *   *) [component] - name of the parent component (by default will used link from $parent)
  *   *) [elClasses] - classes for control elements

@@ -87,13 +87,13 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 */
 	readonly FormValue!: FormValue;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** {@link iVisible.prototype.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
 	/**
 	 * Initial component value
-	 * @see [[iInput.value]]
+	 * {@link iInput.value}
 	 */
 	@prop({required: false})
 	readonly valueProp?: this['Value'];
@@ -102,7 +102,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * An initial component default value.
 	 * This value will be used if the value prop is not specified or after invoking of `reset`.
 	 *
-	 * @see [[iInput.default]]
+	 * {@link iInput.default}
 	 */
 	@prop({required: false})
 	readonly defaultProp?: this['Value'];
@@ -132,7 +132,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * ```
 	 * < form
 	 *   < b-input :name = 'fname' | :value = 'Andrey'
-
 	 *   /// After pressing, the form generates an object to submit with values {fname: 'Andrey'}
 	 *   < button type = submit
 	 *     Submit
@@ -163,17 +162,17 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@prop({type: String, required: false})
 	readonly form?: string;
 
-	/** @see [[iAccess.autofocus]] */
+	/** {@link iAccess.autofocus} */
 	@prop({type: Boolean, required: false})
 	readonly autofocus?: boolean;
 
-	/** @see [[iAccess.tabIndex]] */
+	/** {@link iAccess.tabIndex} */
 	@prop({type: Number, required: false})
 	readonly tabIndex?: number;
 
 	/**
 	 * Additional attributes are provided to an "internal" (native) input tag
-	 * @see [[iInput.$refs.input]]
+	 * {@link iInput.$refs.input}
 	 */
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;
@@ -185,7 +184,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * The parameter can take a value or list of values to ban.
 	 * Also, the parameter can be passed as a function or regular expression.
 	 *
-	 * @see [[iInput.formValue]]
+	 * {@link iInput.formValue}
 	 * @example
 	 * ```
 	 * /// Disallow values that contain only whitespaces
@@ -223,7 +222,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * < b-input :validators = ['required'] | :formValueConverter = [toDate.option(), toUTC.toUTC()]
 	 * ```
 	 *
-	 * @see [[iInput.formValue]]
+	 * {@link iInput.formValue}
 	 */
 	@prop({type: Function, required: false})
 	readonly formValueConverter?: CanArray<ComponentConverter>;
@@ -328,7 +327,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			let
 				form;
 
-			// tslint:disable-next-line:prefer-conditional-expression
 			if (this.form != null) {
 				form = document.querySelector<HTMLFormElement>(`#${this.form}`);
 
@@ -342,7 +340,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Component value
-	 * @see [[iInput.valueStore]]
+	 * {@link iInput.valueStore}
 	 */
 	@p({replace: false})
 	get value(): this['Value'] {
@@ -359,7 +357,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Component default value
-	 * @see [[iInput.defaultProp]]
+	 * {@link iInput.defaultProp}
 	 */
 	@p({replace: false})
 	get default(): this['Value'] {
@@ -446,7 +444,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 *
 	 * The getter always returns a promise.
 	 *
-	 * @see [[iInput.formValue]]
+	 * {@link iInput.formValue}
 	 */
 	@p({replace: false})
 	get groupFormValue(): Promise<Array<this['FormValue']>> {
@@ -495,7 +493,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 					const
 						component = this.dom.getComponent<iInput>(list[i], '[class*="_form_true"]');
 
-					// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 					if (component != null && form === component.connectedForm) {
 						els.push(component);
 					}
@@ -564,7 +561,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		}
 	}
 
-	/** @see [[iAccess.isFocused]] */
+	/** {@link iAccess.isFocused} */
 	get isFocused(): boolean {
 		const
 			{input} = this.$refs;
@@ -627,12 +624,12 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Additional attributes that are provided to an "internal" (native) input tag
-	 * @see [[iInput.attrsProp]]
+	 * {@link iInput.attrsProp}
 	 */
 	@system((o) => o.sync.link())
 	protected attrs?: Dictionary;
 
-	/** @see [[iInput.info]] */
+	/** {@link iInput.info} */
 	@system({
 		replace: false,
 		init: (o) => o.sync.link()
@@ -640,7 +637,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	protected infoStore?: string;
 
-	/** @see [[iInput.error]] */
+	/** {@link iInput.error} */
 	@system({
 		replace: false,
 		init: (o) => o.sync.link()
@@ -650,7 +647,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	protected override readonly $refs!: {input?: HTMLInputElement};
 
-	/** @see [[iInput.value]] */
+	/** {@link iInput.value} */
 	@field<iInput>({
 		replace: false,
 		init: (o) => o.sync.link((val) => o.resolveValue(val))
@@ -664,19 +661,19 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@system()
 	private validationMsg?: string;
 
-	/** @see [[iAccess.enable]] */
+	/** {@link iAccess.enable} */
 	@p({replace: false})
 	enable(): Promise<boolean> {
 		return iAccess.enable(this);
 	}
 
-	/** @see [[iAccess.disable]] */
+	/** {@link iAccess.disable} */
 	@p({replace: false})
 	disable(): Promise<boolean> {
 		return iAccess.disable(this);
 	}
 
-	/** @see [[iAccess.focus]] */
+	/** {@link iAccess.focus} */
 	@p({replace: false})
 	@wait('ready', {label: $$.focus})
 	focus(): Promise<boolean> {
@@ -691,7 +688,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		return SyncPromise.resolve(false);
 	}
 
-	/** @see [[iAccess.blur]] */
+	/** {@link iAccess.blur} */
 	@p({replace: false})
 	@wait('ready', {label: $$.blur})
 	blur(): Promise<boolean> {
@@ -774,7 +771,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		}
 
 		if (Object.isPlainObject(msg)) {
-			return Object.isPlainObject(err) && msg[err.name] || defMsg;
+			return Object.isPlainObject(err) ? msg[err.name]! : defMsg;
 		}
 
 		return Object.isTruly(msg) ? String(msg) : defMsg;
@@ -896,7 +893,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		//#endif
 
-		// eslint-disable-next-line no-unreachable
 		return true;
 	}
 
@@ -921,7 +917,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	/**
 	 * Normalizes the specified additional attributes and returns it
 	 *
-	 * @see [[iInput.attrs]]
+	 * {@link iInput.attrs}
 	 * @param [attrs]
 	 */
 	protected normalizeAttrs(attrs: Dictionary = {}): Dictionary {

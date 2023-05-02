@@ -19,7 +19,7 @@ module.exports = [
 	 * Expands the `_` snippet as a `<${rootTag}>` tag
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {!object} attrs
 	 * @param {string} rootTag
 	 * @returns {string}
 	 *
@@ -92,7 +92,7 @@ module.exports = [
 	 * Expands the `a:void` snippet as a `<a href="javascript:void(0)">` tag
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {!object} attrs
 	 * @returns {string}
 	 *
 	 * @example
@@ -114,7 +114,7 @@ module.exports = [
 	 * Expands the `button:link` snippet as a `<button class="a">` tag
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {!object} attrs
 	 * @returns {string}
 	 *
 	 * @example
@@ -137,7 +137,7 @@ module.exports = [
 	 * Expands the `@component` snippet as a `<component v4-flyweight-component>` tag
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {!object} attrs
 	 * @returns {string}
 	 *
 	 * @example

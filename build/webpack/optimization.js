@@ -33,7 +33,7 @@ const
  *
  * @param {(number|string)} buildId - build id
  * @param {!Map} plugins - map of plugins to use
- * @returns {!Object}
+ * @returns {!object}
  */
 module.exports = function optimization({buildId, plugins}) {
 	const

@@ -47,7 +47,6 @@ export function wrapAsDelegateHandler(selector: string, fn?: Function): Function
 		const
 			t = <CanUndef<Element>>e.target;
 
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (t == null || !Object.isFunction(t.closest)) {
 			return false;
 		}
@@ -76,6 +75,6 @@ export function wrapAsDelegateHandler(selector: string, fn?: Function): Function
 
 /**
  * @deprecated
- * @see [[wrapAsDelegateHandler]]
+ * {@link wrapAsDelegateHandler}
  */
 export const delegate = deprecate({name: 'delegate', renamedTo: 'wrapAsDelegateHandler'}, wrapAsDelegateHandler);

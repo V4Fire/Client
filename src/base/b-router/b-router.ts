@@ -89,7 +89,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Compiled schema of application routes
-	 * @see [[bRouter.routesProp]]
+	 * {@link bRouter.routesProp}
 	 */
 	@system<bRouter>({
 		after: 'engine',
@@ -140,7 +140,7 @@ export default class bRouter extends iData {
 	@prop({watch: 'updateCurrentRoute'})
 	readonly basePathProp: string = '/';
 
-	/** @see [[bRouter.basePathProp]] */
+	/** {@link bRouter.basePathProp} */
 	@system<bRouter>((o) => o.sync.link())
 	basePath!: string;
 
@@ -151,7 +151,7 @@ export default class bRouter extends iData {
 	 * * `data-router-method` - type of the used router method to emit the transition;
 	 * * `data-router-go` - value for the router `go` method;
 	 * * `data-router-params`, `data-router-query`, `data-router-meta` - additional parameters for the used router method
-	 *   (to provide an object use JSON).
+	 * (to provide an object use JSON).
 	 */
 	@prop(Boolean)
 	readonly interceptLinks: boolean = true;
@@ -177,7 +177,7 @@ export default class bRouter extends iData {
 	 * An internal router engine.
 	 * For example, it can be the HTML5 history router or a router based on URL hash values.
 	 *
-	 * @see [[bRouter.engine]]
+	 * {@link bRouter.engine}
 	 */
 	@system((o) => o.sync.link((v) => (<(v: unknown) => router.Router>v)(o)))
 	protected engine!: router.Router;
@@ -194,7 +194,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * Value of the active route
-	 * @see [[bRouter.routeStore]]
+	 * {@link bRouter.routeStore}
 	 *
 	 * @example
 	 * ```js
@@ -207,7 +207,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * @deprecated
-	 * @see [[bRouter.route]]
+	 * {@link bRouter.route}
 	 */
 	@deprecated({renamedTo: 'route'})
 	get page(): CanUndef<this['r']['CurrentPage']> {
@@ -357,12 +357,12 @@ export default class bRouter extends iData {
 		return this.engine.clearTmp();
 	}
 
-	/** @see [[router.getRoutePath]] */
+	/** {@link router.getRoutePath} */
 	getRoutePath(ref: string, opts: router.TransitionOptions = {}): CanUndef<string> {
 		return router.getRoutePath(ref, this.routes, opts);
 	}
 
-	/** @see [[router.getRoute]] */
+	/** {@link router.getRoute} */
 	getRoute(ref: string): CanUndef<router.RouteAPI> {
 		const {routes, basePath, defaultRoute} = this;
 		return router.getRoute(ref, routes, {basePath, defaultRoute});
@@ -370,7 +370,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * @deprecated
-	 * @see [[bRouter.getRoute]]
+	 * {@link bRouter.getRoute}
 	 */
 	@deprecated({renamedTo: 'getRoute'})
 	getPageOpts(ref: string): CanUndef<router.RouteBlueprint> {
@@ -658,7 +658,7 @@ export default class bRouter extends iData {
 
 	/**
 	 * @deprecated
-	 * @see [[bRouter.emitTransition]]
+	 * {@link bRouter.emitTransition}
 	 */
 	@deprecated({renamedTo: 'emitTransition'})
 	setPage(

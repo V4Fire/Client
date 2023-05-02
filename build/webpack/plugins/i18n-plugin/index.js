@@ -108,7 +108,7 @@ module.exports = class I18NGeneratorPlugin {
 		 * and returns the result HTML
 		 *
 		 * @param {string} path
-		 * @param {!Object} langPacs
+		 * @param {!object} langPacs
 		 * @returns string
 		 */
 		function getHTMLWithLangPacs(path, langPacs) {

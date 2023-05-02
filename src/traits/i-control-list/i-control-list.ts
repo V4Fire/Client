@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -131,10 +129,10 @@ export default abstract class iControlList {
 	/**
 	 * Calls an event handler for the specified control
 	 *
-	 * @param [opts]
-	 * @param [args]
+	 * @param [_opts]
+	 * @param [_args]
 	 */
-	callControlAction<R = unknown>(opts?: ControlEvent, ...args: unknown[]): CanPromise<CanUndef<R>> {
+	callControlAction<R = unknown>(_opts?: ControlEvent, ..._args: unknown[]): CanPromise<CanUndef<R>> {
 		return Object.throw();
 	}
 
@@ -142,7 +140,7 @@ export default abstract class iControlList {
 	 * Calls an event handler for the specified control
 	 * @param opts
 	 */
-	getControlEvent(opts: Control): string {
+	getControlEvent(_opts: Control): string {
 		return Object.throw();
 	}
 }

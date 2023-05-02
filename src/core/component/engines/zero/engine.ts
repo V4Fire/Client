@@ -288,7 +288,6 @@ export class ComponentEngine {
 			if (children.length > 0) {
 				children = children.flat();
 
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				if (children.some(Object.isPromise)) {
 					return Promise.all<Node>(children).then((children) => createNode(children));
 				}

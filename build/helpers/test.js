@@ -15,8 +15,8 @@ const
  * Returns a browser instance by the specified parameters
  *
  * @param {string} browserType
- * @param {!Object} params
- * @param {!Object} options
+ * @param {!object} params
+ * @param {!object} options
  * @returns {!Promise<?>}
  */
 exports.getBrowserInstance = function getBrowserInstance(browserType, params, options = {}) {
@@ -107,8 +107,8 @@ function getBrowserArgs() {
 /**
  * Generates a `--client-name` using the specified parameters
  *
- * @param {string=} name
- * @param {string=} suit
+ * @param {string} name
+ * @param {string} suit
  * @returns {string}
  */
 exports.getTestClientName = function getTestClientName(name, suit) {

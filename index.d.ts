@@ -126,7 +126,7 @@ interface RenderParams<A extends object = Dictionary> {
 	 */
 	attrs?: A;
 
-	/** @see [[RenderContent]] */
+	/** {@link RenderContent} */
 	content?: Dictionary<RenderContent | RenderContentFn | string>;
 }
 
@@ -171,7 +171,7 @@ interface RenderContent {
 	 */
 	attrs: Dictionary;
 
-	/** @see [[RenderContent]] */
+	/** {@link RenderContent} */
 	content?: Dictionary<RenderContent | RenderContentFn | string>;
 }
 

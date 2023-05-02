@@ -303,7 +303,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 						});
 
 					} else {
-						// eslint-disable-next-line @typescript-eslint/unbound-method
 						unwatch = watch(proxy, info.path, normalizedOpts, handler).unwatch;
 					}
 
@@ -388,7 +387,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 							collapse: true
 						};
 
-						// eslint-disable-next-line @typescript-eslint/unbound-method
 						unwatch = watch(proxy, prop, topOpts, Object.cast(watchHandler)).unwatch;
 					}
 
@@ -431,7 +429,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 								}
 							};
 
-							// eslint-disable-next-line @typescript-eslint/unbound-method
 							const {unwatch} = watch(<object>propVal, info.path, normalizedOpts, watchHandler);
 							destructors.push(unwatch);
 						}
@@ -450,7 +447,6 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 					// Loopback
 			}
 
-			// eslint-disable-next-line @typescript-eslint/unbound-method
 			const {unwatch} = isDefinedPath ?
 				watch(proxy, info.path, normalizedOpts, handler) :
 				watch(proxy, normalizedOpts, handler);

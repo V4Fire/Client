@@ -135,7 +135,7 @@ export default class Provide extends Friend {
 	 * Returns a dictionary with the base component modifiers.
 	 * The base modifiers are taken from the `baseMods` getter and can be mix in with the specified additional modifiers.
 	 *
-	 * @see [[iBlock.baseMods]]
+	 * {@link iBlock.baseMods}
 	 * @param [mods] - additional modifiers (`{modifier: value}`)
 	 *
 	 * @example

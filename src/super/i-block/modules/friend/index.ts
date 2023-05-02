@@ -15,7 +15,7 @@ import iBlock from 'super/i-block/i-block';
 
 /**
  * Class that friendly to a component
- * @typeparam T - component
+ * @typeParam T - component
  */
 export default class Friend {
 	/**
@@ -38,92 +38,92 @@ export default class Friend {
 	 */
 	protected readonly ctx: this['CTX'];
 
-	/** @see [[iBlock.componentId]] */
+	/** {@link iBlock.componentId} */
 	get componentId(): string {
 		return this.ctx.componentId;
 	}
 
-	/** @see [[iBlock.componentName]] */
+	/** {@link iBlock.componentName} */
 	get componentName(): string {
 		return this.ctx.componentName;
 	}
 
-	/** @see [[iBlock.globalName]] */
+	/** {@link iBlock.globalName} */
 	get globalName(): CanUndef<string> {
 		return this.ctx.globalName;
 	}
 
-	/** @see [[iBlock.componentStatus]] */
+	/** {@link iBlock.componentStatus} */
 	get componentStatus(): this['CTX']['componentStatus'] {
 		return this.ctx.componentStatus;
 	}
 
-	/** @see [[iBlock.$asyncLabel]] */
+	/** {@link iBlock.$asyncLabel} */
 	get asyncLabel(): symbol {
 		return this.ctx.$asyncLabel;
 	}
 
-	/** @see [[iBlock.hook]] */
+	/** {@link iBlock.hook} */
 	get hook(): this['CTX']['hook'] {
 		return this.ctx.hook;
 	}
 
-	/** @see [[iBlock.$el]] */
+	/** {@link iBlock.$el} */
 	get node(): this['CTX']['$el'] {
 		return this.ctx.$el;
 	}
 
-	/** @see [[iBlock.field]] */
+	/** {@link iBlock.field} */
 	get field(): this['CTX']['field'] {
 		return this.ctx.field;
 	}
 
-	/** @see [[iBlock.provide]] */
+	/** {@link iBlock.provide} */
 	get provide(): this['CTX']['provide'] {
 		return this.ctx.provide;
 	}
 
-	/** @see [[iBlock.lfc]] */
+	/** {@link iBlock.lfc} */
 	get lfc(): this['CTX']['lfc'] {
 		return this.ctx.lfc;
 	}
 
-	/** @see [[iBlock.meta]] */
+	/** {@link iBlock.meta} */
 	protected get meta(): this['CTX']['meta'] {
 		return this.ctx.meta;
 	}
 
-	/** @see [[iBlock.$activeField]] */
+	/** {@link iBlock.$activeField} */
 	protected get activeField(): CanUndef<string> {
 		return this.ctx.$activeField;
 	}
 
-	/** @see [[iBlock.localEmitter]] */
+	/** {@link iBlock.localEmitter} */
 	protected get localEmitter(): this['CTX']['localEmitter'] {
 		return this.ctx.localEmitter;
 	}
 
-	/** @see [[iBlock.async]] */
+	/** {@link iBlock.async} */
 	protected get async(): this['CTX']['async'] {
 		return this.ctx.async;
 	}
 
-	/** @see [[iBlock.storage]] */
+	/** {@link iBlock.storage} */
 	protected get storage(): this['CTX']['storage'] {
 		return this.ctx.storage;
 	}
 
-	/** @see [[iBlock.block]] */
+	/** {@link iBlock.block} */
 	protected get block(): this['CTX']['block'] {
 		return this.ctx.block;
 	}
 
-	/** @see [[iBlock.$refs]] */
+	/** {@link iBlock.$refs} */
 	protected get refs(): this['CTX']['$refs'] {
 		return this.ctx.$refs;
 	}
 
-	/** @see [[iBlock.dom]] */
+	/** {@link iBlock.dom} */
 	protected get dom(): this['CTX']['dom'] {
 		return this.ctx.dom;
 	}

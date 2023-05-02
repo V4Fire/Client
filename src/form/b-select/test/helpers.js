@@ -19,7 +19,7 @@ const
  * Initializes a select to test
  *
  * @param {Page} page
- * @param {Object=} attrs
+ * @param {object} [attrs]
  * @returns {!Promise<CanUndef<Playwright.JSHandle>>}
  */
 async function initSelect(page, attrs = {}) {

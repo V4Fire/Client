@@ -51,7 +51,7 @@ exports.Lib = Lib;
  *   2. [js] - if true, the function returns JS code to load the library
  *   3. [staticAttrs] - string with additional attributes
  *
- * @see Lib
+ * {@link Lib}
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
@@ -106,7 +106,7 @@ exports.StyleLib = StyleLib;
  *   2. [js] - if true, the function returns JS code to load the library
  *   3. [staticAttrs] - string with additional attributes
  *
- * @see StyleLib
+ * {@link StyleLib}
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
@@ -159,7 +159,7 @@ exports.Link = Link;
  *   3. [js] - if true, the function returns JS code to load the library
  *   4. [staticAttrs] - string with additional attributes
  *
- * @see Link
+ * {@link Link}
  * @typedef {{
  *   src: string,
  *   tag?: string,

@@ -78,7 +78,7 @@ export default class DOM extends Friend {
 	 *
 	 * 1. You provide the root element of a component, and the method returns a component's instance from this element.
 	 * 2. You provide not the root element, and the method returns a component's instance from the closest parent
-	 *    component's root element.
+	 * component's root element.
 	 *
 	 * @param el
 	 * @param [rootSelector] - additional CSS selector that the component' root element should match
@@ -97,7 +97,7 @@ export default class DOM extends Friend {
 	 *
 	 * 1. You provide the root element of a component, and the method returns a component's instance from this element.
 	 * 2. You provide not the root element, and the method returns a component's instance from the closest parent
-	 *    component's root element.
+	 * component's root element.
 	 *
 	 * @param selector
 	 * @param [rootSelector] - additional CSS selector that the component' root element should match
@@ -138,7 +138,7 @@ export default class DOM extends Friend {
 	 * The event object will contain a link to the element to which we are delegating the handler
 	 * by a property `delegateTarget`.
 	 *
-	 * @see [[wrapAsDelegateHandler]]
+	 * {@link wrapAsDelegateHandler}
 	 * @param selector - selector to delegate
 	 * @param fn
 	 *
@@ -182,7 +182,7 @@ export default class DOM extends Friend {
 	 * * @example
 	 * ```js
 	 * this.dom.putInStream(this.$el.querySelector('.foo'), () => {
-	 *   console.log(this.$el.clientHeight);
+	 * console.log(this.$el.clientHeight);
 	 * })
 	 * ```
 	 */
@@ -417,7 +417,7 @@ export default class DOM extends Friend {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.watchForIntersection]]
+	 * {@link DOM.watchForIntersection}
 	 *
 	 * @param el
 	 * @param inViewOpts

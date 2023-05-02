@@ -87,25 +87,25 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	override readonly Value!: Value;
 	override readonly FormValue!: FormValue;
 
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	readonly Item!: Item;
 
-	/** @see [[iItems.Items]] */
+	/** {@link iItems.Items} */
 	readonly Items!: Array<this['Item']>;
 
 	override readonly rootTag: string = 'span';
 
 	override readonly valueProp?: unknown[] | this['Value'];
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
 
-	/** @see [[iItems.item]] */
+	/** {@link iItems.item} */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
-	/** @see [[iItems.itemKey]] */
+	/** {@link iItems.itemKey} */
 	@prop({
 		type: [String, Function],
 		default: () => (item: Item) => item.value
@@ -113,7 +113,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	readonly itemKey!: iItems['itemKey'];
 
-	/** @see [[iItems.itemProps]] */
+	/** {@link iItems.itemProps} */
 	@prop({type: Function, required: false})
 	readonly itemProps?: iItems['itemProps'];
 
@@ -131,7 +131,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Icon to show before the input
-	 *
 	 * @example
 	 * ```
 	 * < b-select :preIcon = 'dropdown' | :items = myItems
@@ -154,7 +153,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Tooltip text to show during hover the cursor on `preIcon`
-	 *
 	 * @example
 	 * ```
 	 * < b-select &
@@ -170,7 +168,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/**
 	 * Tooltip position to show during hover the cursor on `preIcon`
 	 *
-	 * @see [[gHint]]
+	 * {@link gHint}
 	 * @example
 	 * ```
 	 * < b-select &
@@ -186,7 +184,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Icon to show after the input
-	 *
 	 * @example
 	 * ```
 	 * < b-select :icon = 'dropdown' | :items = myItems
@@ -225,7 +222,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	/**
 	 * Tooltip position to show during hover the cursor on `icon`
 	 *
-	 * @see [[gHint]]
+	 * {@link gHint}
 	 * @example
 	 * ```
 	 * < b-select &
@@ -330,7 +327,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * List of component items or select options
-	 * @see [[bSelect.itemsProp]]
+	 * {@link bSelect.itemsProp}
 	 */
 	get items(): this['Items'] {
 		return <this['Items']>this.field.get('itemsStore');
@@ -338,7 +335,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Sets a new list of component items
-	 * @see [[bSelect.items]]
+	 * {@link bSelect.items}
 	 */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
@@ -433,7 +430,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 
 	/**
 	 * Store of component items
-	 * @see [[bSelect.items]]
+	 * {@link bSelect.items}
 	 */
 	@field<bSelect>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
@@ -511,7 +508,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 *
 	 * @param value
 	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
-	 *   (works only with the `multiple` mode)
+	 * (works only with the `multiple` mode)
 	 */
 	selectValue(value: this['Value'], unselectPrevious: boolean = false): boolean {
 		const
@@ -705,7 +702,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 *
 	 * @param value
 	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
-	 *   (works only with the `multiple` mode)
+	 * (works only with the `multiple` mode)
 	 */
 	toggleValue(value: this['Value'], unselectPrevious: boolean = false): this['Value'] {
 		const
@@ -748,7 +745,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return this.value;
 	}
 
-	/** @see [[iOpenToggle.open]] */
+	/** {@link iOpenToggle.open} */
 	async open(...args: unknown[]): Promise<boolean> {
 		if (this.multiple || this.native) {
 			return false;
@@ -762,7 +759,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return false;
 	}
 
-	/** @see [[iOpenToggle.open]] */
+	/** {@link iOpenToggle.open} */
 	async close(...args: unknown[]): Promise<boolean> {
 		if (this.native) {
 			return false;
@@ -787,8 +784,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return false;
 	}
 
-	/** @see [[iOpenToggle.onOpenedChange]] */
-	// eslint-disable-next-line @typescript-eslint/require-await
+	/** {@link iOpenToggle.onOpenedChange} */
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await on.openedChange(this, e);
 	}
@@ -810,7 +806,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		this.selectValue = i.selectValue.bind(this);
 	}
 
-	/** @see [[iOpenToggle.initCloseHelpers]] */
+	/** {@link iOpenToggle.initCloseHelpers} */
 	@p({hook: 'beforeDataCreate', replace: false})
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
@@ -861,7 +857,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			op ?? {};
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
 	}

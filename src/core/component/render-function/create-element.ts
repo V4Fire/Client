@@ -207,7 +207,6 @@ export function wrapCreateElement(
 			// eslint-disable-next-line prefer-rest-params
 			vnode = createElement.apply(unsafe, arguments);
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (vnode == null) {
 				return createElement();
 			}
@@ -291,7 +290,6 @@ export function wrapCreateElement(
 			if (children != null && children.length > 0) {
 				children = children.flat();
 
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				if (children.some(Object.isPromise)) {
 					return Promise.all(children).then((children) => wrappedCreateElement.call(this, tag, opts, children));
 				}

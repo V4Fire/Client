@@ -1,5 +1,3 @@
-/* eslint-disable require-atomic-updates */
-
 'use strict';
 
 /*!
@@ -109,18 +107,18 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 
 		try {
 			${
-					styles
-						.map((src) => {
-							if (src == null) {
-								return '';
-							}
+	styles
+		.map((src) => {
+			if (src == null) {
+				return '';
+			}
 
-							src = path.normalize(src);
-							return `await import('${src}');`;
-						})
+			src = path.normalize(src);
+			return `await import('${src}');`;
+		})
 
-						.join('')
-				}
+		.join('')
+}
 		} catch (err) { stderr(err); }
 	});
 })();`;

@@ -127,7 +127,7 @@ export default class bInput extends iInputText {
 	/**
 	 * Tooltip position to show during hover the cursor on `preIcon`
 	 *
-	 * @see [[gHint]]
+	 * {@link gHint}
 	 * @example
 	 * ```
 	 * < b-input &
@@ -177,7 +177,7 @@ export default class bInput extends iInputText {
 	/**
 	 * Tooltip position to show during hover the cursor on `icon`
 	 *
-	 * @see [[gHint]]
+	 * {@link gHint}
 	 * @example
 	 * ```
 	 * < b-input &
@@ -218,7 +218,7 @@ export default class bInput extends iInputText {
 
 	/**
 	 * True, if the component has a text hint
-	 * @see [[bInput.textHint]]
+	 * {@link bInput.textHint}
 	 */
 	get hasTextHint(): boolean {
 		return Object.isString(this.textHint) && this.textHint !== '';
@@ -300,7 +300,7 @@ export default class bInput extends iInputText {
 
 	/**
 	 * @deprecated
-	 * @see [[bInput.selectText]]
+	 * {@link bInput.selectText}
 	 */
 	@deprecated({renamedTo: 'selectText'})
 	selectAll(): Promise<boolean> {

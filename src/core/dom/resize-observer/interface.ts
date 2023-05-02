@@ -61,7 +61,7 @@ export interface ResizeWatcherObserverOptions {
 	 */
 	ctx?: ComponentInterface;
 
-	/** @see [[ResizeWatcherObserverCb]] */
+	/** {@link ResizeWatcherObserverCb} */
 	callback: ResizeWatcherObserverCb;
 }
 

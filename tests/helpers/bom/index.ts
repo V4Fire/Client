@@ -91,7 +91,7 @@ export default class BOM {
 
 	/**
 	 * @deprecated
-	 * @see [[BOM.waitForIdleCallback]]
+	 * {@link BOM.waitForIdleCallback}
 	 */
 	waitForIdleCallback(page: Page, idleOptions: WaitForIdleOptions = {}): Promise<void> {
 		return BOM.waitForIdleCallback(page, idleOptions);
@@ -101,7 +101,7 @@ export default class BOM {
 	 * @param page
 	 * @param [rafOptions]
 	 * @deprecated
-	 * @see [[BOM.waitForRAF]]
+	 * {@link BOM.waitForRAF}
 	 */
 	async waitForRAF(page: Page, rafOptions: WaitForRAFOptions = {}): Promise<void> {
 		return BOM.waitForRAF(page, rafOptions);

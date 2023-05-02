@@ -23,8 +23,8 @@ exports.getAssets = getAssets;
 /**
  * Returns a map of static page assets by the specified entry points
  *
- * @param {!Object<!Array<string>>} entryPoints
- * @returns {!Promise<!Object<string>>}
+ * @param {!object<!Array<string>>} entryPoints
+ * @returns {!Promise<!object<string>>}
  */
 function getAssets(entryPoints) {
 	const
@@ -55,9 +55,9 @@ exports.getAssetsDecl = getAssetsDecl;
 /**
  * Returns declaration of project assets
  *
- * @param {boolean=} [inline] - if true, the declaration is placed as a text
- * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
- * @param {boolean=} [js] - if true, the function returns JS code to load the declaration
+ * @param {boolean} [inline] - if true, the declaration is placed as a text
+ * @param {boolean} [wrap] - if true, the declaration is wrapped by a script tag
+ * @param {boolean} [js] - if true, the function returns JS code to load the declaration
  * @returns {string}
  */
 function getAssetsDecl({inline, wrap, js} = {}) {

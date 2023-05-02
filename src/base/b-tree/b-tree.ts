@@ -64,28 +64,28 @@ interface bTree extends Trait<typeof iActiveItems> {}
 
 @derive(iActiveItems)
 class bTree extends iData implements iActiveItems {
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	readonly Item!: Item;
 
-	/** @see [[iItems.Items]] */
+	/** {@link iItems.Items} */
 	readonly Items!: Items;
 
-	/** @see [[iActiveItems.Active]] */
+	/** {@link iActiveItems.Active} */
 	readonly Active!: iActiveItems['Active'];
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
 
-	/** @see [[iItems.item]] */
+	/** {@link iItems.item} */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
-	/** @see [[iItems.itemKey]] */
+	/** {@link iItems.itemKey} */
 	@prop({type: [String, Function], required: false})
 	readonly itemKey?: iItems['itemKey'];
 
-	/** @see [[iItems.itemProps]] */
+	/** {@link iItems.itemProps} */
 	@prop({type: Function, required: false})
 	readonly itemProps?: iItems['itemProps'];
 
@@ -93,8 +93,8 @@ class bTree extends iData implements iActiveItems {
 	 * A common filter to render items via `asyncRender`.
 	 * It is used to optimize the process of rendering items.
 	 *
-	 * @see [[AsyncRender.iterate]]
-	 * @see [[TaskFilter]]
+	 * {@link AsyncRender.iterate}
+	 * {@link TaskFilter}
 	 */
 	@prop({
 		type: Function,
@@ -114,8 +114,8 @@ class bTree extends iData implements iActiveItems {
 	 * A filter to render nested items via `asyncRender`.
 	 * It is used to optimize the process of rendering child items.
 	 *
-	 * @see [[AsyncRender.iterate]]
-	 * @see [[TaskFilter]]
+	 * {@link AsyncRender.iterate}
+	 * {@link TaskFilter}
 	 */
 	@prop({type: Function, required: false})
 	readonly nestedRenderFilter?: RenderFilter;
@@ -144,19 +144,19 @@ class bTree extends iData implements iActiveItems {
 	@prop(Number)
 	readonly level: number = 0;
 
-	/** @see [[iActiveItems.activeProp]] */
+	/** {@link iActiveItems.activeProp} */
 	@prop({required: false})
 	readonly activeProp?: iActiveItems['activeProp'];
 
-	/** @see [[iActiveItems.multiple]] */
+	/** {@link iActiveItems.multiple} */
 	@prop(Boolean)
 	readonly multiple: boolean = false;
 
-	/** @see [[iActiveItems.cancelable]] */
+	/** {@link iActiveItems.cancelable} */
 	@prop({type: Boolean, required: false})
 	readonly cancelable?: boolean;
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@field<bTree>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
 			return <CanUndef<Items>>o.items ?? [];
@@ -168,8 +168,8 @@ class bTree extends iData implements iActiveItems {
 	items!: this['Items'];
 
 	/**
-	 * @see [[iActiveItems.activeStore]]
-	 * @see [[iActiveItems.syncActiveStore]]
+	 * {@link iActiveItems.activeStore}
+	 * {@link iActiveItems.syncActiveStore}
 	 */
 	@system<bTree>((o) => iActiveItems.linkActiveStore(o))
 	activeStore!: iActiveItems['activeStore'];
@@ -192,7 +192,6 @@ class bTree extends iData implements iActiveItems {
 	@system()
 	valueItems!: Map<unknown, this['Item']>;
 
-	/** @inheritDoc */
 	protected override readonly $refs!: {
 		children?: bTree[];
 	};
@@ -235,13 +234,13 @@ class bTree extends iData implements iActiveItems {
 		return opts;
 	}
 
-	/** @see [[iActiveItems.prototype.active] */
+	/** {@link iActiveItems.prototype.active} */
 	@computed({cache: false})
 	get active(): iActiveItems['active'] {
 		return iActiveItems.getActive(this.top ?? this);
 	}
 
-	/** @see [[iActiveItems.prototype.activeElement] */
+	/** {@link iActiveItems.prototype.activeElement} */
 	get activeElement(): iActiveItems['activeElement'] {
 		const
 			ctx = this.top ?? this;
@@ -402,7 +401,7 @@ class bTree extends iData implements iActiveItems {
 		return iActiveItems.isActive(this.top ?? this, value);
 	}
 
-	/** @see [[iActiveItems.prototype.setActive]] */
+	/** {@link iActiveItems.prototype.setActive} */
 	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const
 			ctx = this.top ?? this;
@@ -477,12 +476,12 @@ class bTree extends iData implements iActiveItems {
 		return true;
 	}
 
-	/** @see [[iActiveItems.prototype.toggleActive]] */
+	/** {@link iActiveItems.prototype.toggleActive} */
 	toggleActive(value: this['Active'], unsetPrevious?: boolean): this['Active'] {
 		return iActiveItems.toggleActive(this.top ?? this, value, unsetPrevious);
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
 	}

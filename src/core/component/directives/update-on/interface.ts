@@ -45,7 +45,7 @@ export interface DirectiveValue {
 
 	/**
 	 * @deprecated
-	 * @see [[DirectiveValue.single]]
+	 * {@link DirectiveValue.single}
 	 */
 	once?: boolean;
 
@@ -66,7 +66,7 @@ export interface DirectiveValue {
 
 	/**
 	 * @deprecated
-	 * @see [[DirectiveValue.handler]]
+	 * {@link DirectiveValue.handler}
 	 */
 	listener?: Function;
 }

@@ -31,7 +31,7 @@ export interface DOMManipulationOptions {
 	/**
 	 * Async group
 	 *
-	 * @see [[Async]]
+	 * {@link Async}
 	 * @default `asyncComponents`
 	 */
 	group?: string;

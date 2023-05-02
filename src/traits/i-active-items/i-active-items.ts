@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -24,7 +22,7 @@ export * from 'traits/i-active-items/interface';
 type TraitComponent = iBlock & iActiveItems;
 
 export default abstract class iActiveItems extends iItems {
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	abstract override readonly Item: Item;
 
 	/**
@@ -59,13 +57,13 @@ export default abstract class iActiveItems extends iItems {
 	 * The active item(s) of the component.
 	 * If the component is switched to "multiple" mode, the getter will return a Set.
 	 *
-	 * @see [[iActiveItems.prototype.activeStore]]
+	 * {@link iActiveItems.prototype.activeStore}
 	 */
 	abstract get active(): this['Active'];
 
 	/**
 	 * Store for the active item(s) of the component
-	 * @see [[iActiveItems.activeProp]]
+	 * {@link iActiveItems.activeProp}
 	 */
 	abstract activeStore: this['Active'];
 
@@ -148,7 +146,7 @@ export default abstract class iActiveItems extends iItems {
 		return v;
 	}
 
-	/** @see [[iActiveItems.prototype.isActive]] */
+	/** {@link iActiveItems.prototype.isActive} */
 	static isActive: AddSelf<iActiveItems['isActive'], TraitComponent> = (ctx, value: Item['value']) => {
 		const
 			{active} = ctx;
@@ -164,7 +162,7 @@ export default abstract class iActiveItems extends iItems {
 		return value === active;
 	};
 
-	/** @see [[iActiveItems.prototype.setActive]] */
+	/** {@link iActiveItems.prototype.setActive} */
 	static setActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
@@ -215,7 +213,7 @@ export default abstract class iActiveItems extends iItems {
 		return true;
 	}
 
-	/** @see [[iActiveItems.prototype.unsetActive]] */
+	/** {@link iActiveItems.prototype.unsetActive} */
 	static unsetActive(ctx: TraitComponent, value: iActiveItems['Active']): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
@@ -262,7 +260,7 @@ export default abstract class iActiveItems extends iItems {
 		return true;
 	}
 
-	/** @see [[iActiveItems.prototype.toggleActive]] */
+	/** {@link iActiveItems.prototype.toggleActive} */
 	static toggleActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		const
 			activeStore = ctx.field.get('activeStore');
@@ -304,9 +302,9 @@ export default abstract class iActiveItems extends iItems {
 
 	/**
 	 * Returns true if the specified value is active
-	 * @param value
+	 * @param _value
 	 */
-	isActive(value: Item['value']): boolean {
+	isActive(_value: Item['value']): boolean {
 		return Object.throw();
 	}
 
@@ -314,25 +312,25 @@ export default abstract class iActiveItems extends iItems {
 	 * Activates the item(s) by the specified value(s).
 	 * If the component is switched to the `multiple` mode, the method can take a Set to set multiple items.
 	 *
-	 * @param value
-	 * @param [unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
+	 * @param _value
+	 * @param [_unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
 	 *
 	 * @emits `change(active: CanArray<unknown>)`
 	 * @emits `immediateChange(active: CanArray<unknown>)`
 	 */
-	setActive(value: Item['value'] | Set<Item['value']>, unsetPrevious?: boolean): boolean {
+	setActive(_value: Item['value'] | Set<Item['value']>, _unsetPrevious?: boolean): boolean {
 		return Object.throw();
 	}
 
 	/**
 	 * Deactivates the item(s) by the specified value(s).
 	 * If the component is switched to the `multiple` mode, the method can take a Set to unset multiple items.
-
-	 * @param value
+	 *
+	 * @param _value
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
 	 */
-	unsetActive(value: Item['value'] | Set<Item['value']>): boolean {
+	unsetActive(_value: Item['value'] | Set<Item['value']>): boolean {
 		return Object.throw();
 	}
 
@@ -340,13 +338,13 @@ export default abstract class iActiveItems extends iItems {
 	 * Toggles item activation by the specified value.
 	 * The methods return the new active component item(s).
 	 *
-	 * @param value
-	 * @param [unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
+	 * @param _value
+	 * @param [_unsetPrevious] - true, if needed to reset previous active items (only works in the `multiple` mode)
 	 *
 	 * @emits `change(active: unknown)`
 	 * @emits `immediateChange(active: unknown)`
 	 */
-	toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+	toggleActive(_value: Item['value'], _unsetPrevious?: boolean): iActiveItems['Active'] {
 		return Object.throw();
 	}
 }

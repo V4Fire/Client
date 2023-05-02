@@ -138,7 +138,7 @@ export default class InViewAdapter {
 	}
 
 	/**
-	 * @see [[InViewAdapter.remove]]
+	 * {@link InViewAdapter.remove}
 	 * @deprecated
 	 */
 	stopObserve(el: Element, threshold?: number): boolean {

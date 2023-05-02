@@ -263,7 +263,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component stage value
-	 * @see [[iBlock.stageProp]]
+	 * {@link iBlock.stageProp}
 	 */
 	@computed({replace: false})
 	get stage(): CanUndef<Stage> {
@@ -274,7 +274,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Sets a new component stage value.
 	 * By default, it clears all async listeners from the group of `stage.${oldGroup}`.
 	 *
-	 * @see [[iBlock.stageProp]]
+	 * {@link iBlock.stageProp}
 	 * @emits `stage:${value}(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 * @emits `stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 */
@@ -314,7 +314,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component modifiers
-	 * @see [[iBlock.modsProp]]
+	 * {@link iBlock.modsProp}
 	 */
 	@system({
 		replace: false,
@@ -372,7 +372,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * List of additional dependencies to load
-	 * @see [[iBlock.dependenciesProp]]
+	 * {@link iBlock.dependenciesProp}
 	 */
 	@system((o) => o.sync.link((val) => {
 		const componentStaticDependencies = config.componentStaticDependencies[o.componentName];
@@ -433,7 +433,7 @@ export default abstract class iBlock extends ComponentInterface {
 	@prop({type: Boolean, required: false})
 	readonly dontWaitRemoteProvidersProp?: boolean;
 
-	/** @see [[iBlock.dontWaitRemoteProvidersProp]] */
+	/** {@link iBlock.dontWaitRemoteProvidersProp} */
 	@system((o) => o.sync.link((val) => {
 		if (val == null) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -453,12 +453,12 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * A map of remote component watchers.
 	 * The usage of this mechanism is similar to the "@watch" decorator:
-	 *   *) As a key, we declare a name of a component method that we want to call;
-	 *   *) As a value, we declare a path to a property/event we want to watch/listen.
-	 *      Also, the method can take additional parameters of watching.
-	 *      Mind, the properties/events are taken from a component that contents the current.
+	 * *) As a key, we declare a name of a component method that we want to call;
+	 * *) As a value, we declare a path to a property/event we want to watch/listen.
+	 * Also, the method can take additional parameters of watching.
+	 * Mind, the properties/events are taken from a component that contents the current.
 	 *
-	 * @see [[iBlock.watch]]
+	 * {@link iBlock.watch}
 	 * @example
 	 * ```js
 	 * // We have two components: A and B.
@@ -582,24 +582,24 @@ export default abstract class iBlock extends ComponentInterface {
 	 * But, the hook represents a component status relative to its MVVM instance: created, mounted, destroyed, etc.
 	 * Opposite to "hook", "componentStatus" represents a logical component status:
 	 *
-	 *   *) unloaded - a component was just created without any initializing:
-	 *      this status can intersect with some hooks, like `beforeCreate` or `created`.
+	 * *) unloaded - a component was just created without any initializing:
+	 * this status can intersect with some hooks, like `beforeCreate` or `created`.
 	 *
-	 *   *) loading - a component starts to load data from its own providers:
-	 *      this status can intersect with some hooks, like `created` or `mounted`.
-	 *      If the component was mounted with this status, you can show by using UI that the data is loading.
+	 * *) loading - a component starts to load data from its own providers:
+	 * this status can intersect with some hooks, like `created` or `mounted`.
+	 * If the component was mounted with this status, you can show by using UI that the data is loading.
 	 *
-	 *   *) beforeReady - a component was fully loaded and started to prepare to render:
-	 *      this status can intersect with some hooks like `created` or `mounted`.
+	 * *) beforeReady - a component was fully loaded and started to prepare to render:
+	 * this status can intersect with some hooks like `created` or `mounted`.
 	 *
-	 *   *) ready - a component was fully loaded and rendered:
-	 *      this status can intersect with the `mounted` hook.
+	 * *) ready - a component was fully loaded and rendered:
+	 * this status can intersect with the `mounted` hook.
 	 *
-	 *   *) inactive - a component is frozen by keep-alive mechanism or special input property:
-	 *      this status can intersect with the `deactivated` hook.
+	 * *) inactive - a component is frozen by keep-alive mechanism or special input property:
+	 * this status can intersect with the `deactivated` hook.
 	 *
-	 *   *) destroyed - a component was destroyed:
-	 *      this status can intersect with some hooks, like `beforeDestroy` or `destroyed`.
+	 * *) destroyed - a component was destroyed:
+	 * this status can intersect with some hooks, like `beforeDestroy` or `destroyed`.
 	 */
 	@computed({replace: false})
 	get componentStatus(): ComponentStatus {
@@ -664,7 +664,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * True if the component is already activated
-	 * @see [[iBlock.activatedProp]]
+	 * {@link iBlock.activatedProp}
 	 */
 	@system((o) => {
 		void o.lfc.execCbAtTheRightTime(() => {
@@ -926,7 +926,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * A map of component shadow statuses.
 	 * These statuses don't emit re-rendering of a component.
 	 *
-	 * @see [[iBlock.componentStatus]]
+	 * {@link iBlock.componentStatus}
 	 */
 	static readonly shadowComponentStatuses: ComponentStatuses = {
 		inactive: true,
@@ -958,7 +958,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * < foo :theme = 'dark'
 	 * ```
 	 *
-	 * @see [[iBlock.modsProp]]
+	 * {@link iBlock.modsProp}
 	 */
 	static readonly mods: ModsDecl = {
 		diff: [
@@ -980,7 +980,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Internal dictionary with additional attributes for the component' root tag
-	 * @see [[iBlock.rootAttrsStore]]
+	 * {@link iBlock.rootAttrsStore}
 	 */
 	@field()
 	protected rootAttrsStore: Dictionary = {};
@@ -1076,7 +1076,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component stage store
-	 * @see [[iBlock.stageProp]]
+	 * {@link iBlock.stageProp}
 	 */
 	@field({
 		replace: false,
@@ -1092,13 +1092,13 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component hook store
-	 * @see [[iBlock.hook]]
+	 * {@link iBlock.hook}
 	 */
 	protected hookStore: Hook = 'beforeRuntime';
 
 	/**
 	 * Component initialize status store
-	 * @see [[iBlock.componentStatus]]
+	 * {@link iBlock.componentStatus}
 	 */
 	@field({
 		unique: true,
@@ -1110,7 +1110,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * Component initialize status store for unwatchable statuses
-	 * @see [[iBlock.componentStatus]]
+	 * {@link iBlock.componentStatus}
 	 */
 	@system({unique: true})
 	protected shadowComponentStatusStore?: ComponentStatus;
@@ -1229,7 +1229,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * @deprecated
-	 * @see [[iBlock.localEmitter]]
+	 * {@link iBlock.localEmitter}
 	 */
 	@deprecated({renamedTo: 'localEmitter'})
 	get localEvent(): EventEmitterWrapper<this> {
@@ -1250,7 +1250,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * @deprecated
-	 * @see [[iBlock.parentEmitter]]
+	 * {@link iBlock.parentEmitter}
 	 */
 	@deprecated({renamedTo: 'parentEmitter'})
 	get parentEvent(): ReadonlyEventEmitterWrapper<this> {
@@ -1271,7 +1271,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * @deprecated
-	 * @see [[iBlock.rootEmitter]]
+	 * {@link iBlock.rootEmitter}
 	 */
 	@deprecated({renamedTo: 'rootEmitter'})
 	get rootEvent(): ReadonlyEventEmitterWrapper<this> {
@@ -1293,7 +1293,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	/**
 	 * @deprecated
-	 * @see [[iBlock.globalEmitter]]
+	 * {@link iBlock.globalEmitter}
 	 */
 	@deprecated({renamedTo: 'globalEmitter'})
 	get globalEvent(): ReadonlyEventEmitterWrapper<this> {
@@ -1314,7 +1314,6 @@ export default abstract class iBlock extends ComponentInterface {
 			//#endif
 
 			//#unless runtime has core/helpers
-			// eslint-disable-next-line no-unreachable
 			return {};
 			//#endunless
 		}
@@ -1335,7 +1334,6 @@ export default abstract class iBlock extends ComponentInterface {
 			//#endif
 
 			//#unless runtime has core/browser
-			// eslint-disable-next-line no-unreachable
 			return {};
 			//#endunless
 		}
@@ -1355,7 +1353,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 	protected readonly presets!: typeof presets;
 
-	/** @see [[iBlock.presets]] */
+	/** {@link iBlock.presets} */
 	@deprecated({renamedTo: 'presets'})
 	get preset(): typeof presets {
 		return this.presets;
@@ -1805,7 +1803,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Attaches an event listener to the specified component event
 	 *
-	 * @see [[Async.on]]
+	 * {@link Async.on}
 	 * @param event
 	 * @param handler
 	 * @param [opts] - additional options
@@ -1825,7 +1823,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Attaches a disposable event listener to the specified component event
 	 *
-	 * @see [[Async.once]]
+	 * {@link Async.once}
 	 * @param event
 	 * @param handler
 	 * @param [opts] - additional options
@@ -1845,7 +1843,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Returns a promise that is resolved after emitting the specified component event
 	 *
-	 * @see [[Async.promisifyOnce]]
+	 * {@link Async.promisifyOnce}
 	 * @param event
 	 * @param [opts] - additional options
 	 */
@@ -1865,7 +1863,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Detaches an event listeners from the component
 	 *
-	 * @see [[Async.off]]
+	 * {@link Async.off}
 	 * @param [opts] - additional options
 	 */
 	off(opts: ClearOptionsId<EventId>): void;
@@ -1886,7 +1884,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Returns a promise that will be resolved when the component is toggled to the specified status
 	 *
-	 * @see [[Async.promise]]
+	 * {@link Async.promise}
 	 * @param status
 	 * @param [opts] - additional options
 	 */
@@ -1897,7 +1895,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * The method returns a promise resulting from invoking the function or raw result without wrapping
 	 * if the component is already in the specified status.
 	 *
-	 * @see [[Async.promise]]
+	 * {@link Async.promise}
 	 * @param status
 	 * @param cb
 	 * @param [opts] - additional options
@@ -1969,7 +1967,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Executes the specified function on the next render tick
 	 *
-	 * @see [[Async.proxy]]
+	 * {@link Async.proxy}
 	 * @param fn
 	 * @param [opts] - additional options
 	 */
@@ -1978,7 +1976,7 @@ export default abstract class iBlock extends ComponentInterface {
 	/**
 	 * Returns a promise that will be resolved on the next render tick
 	 *
-	 * @see [[Async.promise]]
+	 * {@link Async.promise}
 	 * @param [opts] - additional options
 	 */
 	nextTick(opts?: AsyncOptions): Promise<void>;
@@ -2303,14 +2301,14 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
-	 * @see [[iBlock.activatedProp]]
+	 * {@link iBlock.activatedProp}
 	 * @param [force]
 	 */
 	override activate(force?: boolean): void {
 		activate(this, force);
 	}
 
-	/** @see [[iBlock.activatedProp]] */
+	/** {@link iBlock.activatedProp} */
 	override deactivate(): void {
 		deactivate(this);
 	}
@@ -2381,10 +2379,9 @@ export default abstract class iBlock extends ComponentInterface {
 	 * is equal to `'remote'`.
 	 *
 	 * @param [data] - advanced data
-	 * @param [type] - call type
+	 * @param [_type] - call type
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+	protected syncStorageState(data?: Dictionary, _type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -2421,11 +2418,10 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Mind that the router is global for all components, i.e., a dictionary that this method passes to the router
 	 * will extend the current route data but not override (`router.push(null, {...route, ...componentData}})`).
 	 *
-	 * @param [data] - advanced data
-	 * @param [type] - call type
+	 * @param [_data] - advanced data
+	 * @param [_type] - call type
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+	protected syncRouterState(_data?: Dictionary, _type: ConverterCallType = 'component'): Dictionary {
 		return {};
 	}
 
@@ -2451,7 +2447,7 @@ export default abstract class iBlock extends ComponentInterface {
 	 * Waits until the specified reference won't be available and returns it.
 	 * The method returns a promise.
 	 *
-	 * @see [[Async.wait]]
+	 * {@link Async.wait}
 	 * @param ref - ref name
 	 * @param [opts] - additional options
 	 */

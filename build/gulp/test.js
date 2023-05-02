@@ -249,12 +249,10 @@ module.exports = function init(gulp = require('gulp')) {
 			cliParams[key] = args[`--${key}`] ? JSON.parse(args[`--${key}`]) : cliParams[key];
 		});
 
-		// eslint-disable-next-line require-atomic-updates
 		args['--port'] = args['--port'] || await portfinder.getPortPromise({
 			port: args['--start-port'] || START_PORT
 		});
 
-		// eslint-disable-next-line require-atomic-updates
 		args['--page'] = args['--page'] || build.demoPage();
 
 		const
@@ -331,7 +329,7 @@ module.exports = function init(gulp = require('gulp')) {
 		 *
 		 * @param {string} browserType
 		 * @param {number} attempt
-		 * @returns {jasmine.Env}
+		 * @returns {import('jasmine').env}
 		 */
 		function getTestEnv(browserType, attempt) {
 			const
@@ -477,7 +475,6 @@ module.exports = function init(gulp = require('gulp')) {
 			};
 
 			while (!isTestSuccessful && attemptsFinished - 1 < retries) {
-				// eslint-disable-next-line require-atomic-updates
 				isTestSuccessful = await testExecutor();
 
 				if (!isTestSuccessful) {

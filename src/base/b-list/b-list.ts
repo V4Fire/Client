@@ -54,32 +54,32 @@ interface bList extends Trait<typeof iActiveItems> {}
 
 @derive(iActiveItems)
 class bList extends iData implements iVisible, iWidth, iActiveItems {
-	/** @see [[iVisible.hideIfOffline]] */
+	/** {@link iVisible.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
-	/** @see [[iActiveItems.Active]] */
+	/** {@link iActiveItems.Active} */
 	readonly Active!: Active;
 
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	readonly Item!: Item;
 
-	/** @see [[iItems.Items]] */
+	/** {@link iItems.Items} */
 	readonly Items!: Array<this['Item']>;
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
 
-	/** @see [[iItems.item]] */
+	/** {@link iItems.item} */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
-	/** @see [[iItems.itemKey]] */
+	/** {@link iItems.itemKey} */
 	@prop({type: [String, Function], required: false})
 	readonly itemKey?: iItems['itemKey'];
 
-	/** @see [[iItems.itemProps]] */
+	/** {@link iItems.itemProps} */
 	@prop({type: Function, required: false})
 	readonly itemProps?: iItems['itemProps'];
 
@@ -141,13 +141,13 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@system()
 	values!: Map<unknown, number>;
 
-	/** @see [[iActiveItems.activeStore]] */
+	/** {@link iActiveItems.activeStore} */
 	@system<bList>((o) => iActiveItems.linkActiveStore(o))
 	activeStore!: this['Active'];
 
 	/**
 	 * Additional attributes are provided to an "internal" (native) list tag
-	 * @see [[bList.attrsProp]]
+	 * {@link bList.attrsProp}
 	 */
 	get attrs(): Dictionary {
 		const
@@ -163,7 +163,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	/**
 	 * List of component items
-	 * @see [[bList.itemsProp]]
+	 * {@link bList.itemsProp}
 	 */
 	@computed({dependencies: ['itemsStore']})
 	get items(): this['Items'] {
@@ -172,13 +172,13 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	/**
 	 * Sets a new list of component items
-	 * @see [[bList.items]]
+	 * {@link bList.items}
 	 */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
 
-	/** @see [[iActiveItems.active] */
+	/** {@link iActiveItems.active} */
 	@computed({cache: false})
 	get active(): this['Active'] {
 		return iActiveItems.getActive(this);
@@ -196,7 +196,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	/**
 	 * Store of component items
-	 * @see [[bList.items]]
+	 * {@link bList.items}
 	 */
 	@field<bList>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
@@ -208,7 +208,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	protected itemsStore!: this['Items'];
 
-	/** @see [[iActiveItems.prototype.activeElement] */
+	/** {@link iActiveItems.prototype.activeElement} */
 	@computed({
 		cache: true,
 		dependencies: ['active']
@@ -238,7 +238,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		});
 	}
 
-	/** @see [[iActiveItems.prototype.setActive] */
+	/** {@link iActiveItems.prototype.setActive} */
 	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const
 			res = iActiveItems.setActive(this, value);
@@ -291,7 +291,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		return res;
 	}
 
-	/** @see [[iActiveItems.prototype.unsetActive] */
+	/** {@link iActiveItems.prototype.unsetActive} */
 	unsetActive(value: unknown): boolean {
 		const
 			{activeElement, block: $b} = this;
@@ -502,7 +502,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		}
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
 	}

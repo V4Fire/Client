@@ -60,7 +60,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.open */
+  /** {link iOpen.open} */
   open(...args: unknown[]): Promise<boolean> {
     return iOpen.open(this, ...args);
   }
@@ -76,7 +76,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.close */
+  /** {link iOpen.close} */
   close(...args: unknown[]): Promise<boolean> {
     return iOpen.close(this, ...args);
   }
@@ -92,7 +92,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.onOpenedChange */
+  /** {link iOpen.onOpenedChange} */
   onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
     return iOpen.onOpenedChange(this, e);
   }
@@ -108,7 +108,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.onKeyClose */
+  /** {link iOpen.onKeyClose} */
   onKeyClose(e: KeyboardEvent): Promise<void> {
     return iOpen.onKeyClose(this, e);
   }
@@ -124,7 +124,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see iOpen.blur */
+  /** {link iOpen.blur} */
   onTouchClose(e: MouseEvent): Promise<void> {
     return iOpen.onTouchClose(this, e);
   }
@@ -143,7 +143,7 @@ Initialize default event listeners to close a component by a keyboard or mouse.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** @see [[iOpen.initCloseHelpers]] */
+  /** {@link iOpen.initCloseHelpers} */
   @hook('beforeDataCreate')
   protected initCloseHelpers(events?: CloseHelperEvents): void {
     iOpen.initCloseHelpers(this, events);

@@ -82,7 +82,7 @@ The method has the default implementation.
 import iIcon from 'traits/i-icon/i-icon';
 
 export default class bIcon implements iIcon {
-  /** @see [[iIcon.getIconLink]] */
+  /** {@link iIcon.getIconLink} */
   getIconLink(iconId: Nullable<string>): Promise<CanUndef<string>> {
     return iIcon.getIconLink(iconId);
   }
@@ -98,7 +98,7 @@ The method has the default implementation.
 import iIcon from 'traits/i-icon/i-icon';
 
 export default class bIcon implements iIcon {
-  /** @see [[iIcon.updateIconHref]] */
+  /** {@link iIcon.updateIconHref} */
   updateIconHref(el: SVGUseElement, href?: string): void {
     iIcon.updateIconHref(this, el, href);
   }
@@ -114,7 +114,7 @@ The method has the default implementation.
 import iIcon from 'traits/i-icon/i-icon';
 
 export default class bIcon implements iIcon {
-  /** @see [[iIcon.handleIconError]] */
+  /** {@link iIcon.handleIconError} */
   handleIconError(el: SVGUseElement, err: Error): void {
     iIcon.handleIconError(this, el, err);
   }

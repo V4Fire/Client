@@ -288,7 +288,7 @@ export default class DOM {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.getRefSelector]]
+	 * {@link DOM.getRefSelector}
 	 * @param refName
 	 */
 	getRefSelector(refName: string): string {
@@ -297,7 +297,7 @@ export default class DOM {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.getRefs]]
+	 * {@link DOM.getRefs}
 	 *
 	 * @param ctx
 	 * @param refName
@@ -308,7 +308,7 @@ export default class DOM {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.getRef]]
+	 * {@link DOM.getRef}
 	 *
 	 * @param ctx
 	 * @param refName
@@ -333,7 +333,7 @@ export default class DOM {
 	 * @param refName
 	 * @param [clickOpts] - @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
 	 * @deprecated
-	 * @see [[DOM.clickToRef]]
+	 * {@link DOM.clickToRef}
 	 */
 	clickToRef(ctx: Page | ElementHandle, refName: string, clickOptions?: Dictionary): Promise<void> {
 		return DOM.clickToRef(ctx, refName, clickOptions);
@@ -341,7 +341,7 @@ export default class DOM {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.waitForEl]]
+	 * {@link DOM.waitForEl}
 	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
 	 *
 	 * @param ctx
@@ -366,7 +366,7 @@ export default class DOM {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.elNameGenerator]]
+	 * {@link DOM.elNameGenerator}
 	 *
 	 * @param blockName
 	 * @param [elName]
@@ -381,7 +381,7 @@ export default class DOM {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.elNameSelectorGenerator]]
+	 * {@link DOM.elNameSelectorGenerator}
 	 *
 	 * @param blockName
 	 * @param [elName]
@@ -396,7 +396,7 @@ export default class DOM {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.elModNameGenerator]]
+	 * {@link DOM.elModNameGenerator}
 	 *
 	 * @param fullElName
 	 * @param [modName]
@@ -412,7 +412,7 @@ export default class DOM {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.elModSelectorGenerator]]
+	 * {@link DOM.elModSelectorGenerator}
 	 *
 	 * @param fullElName
 	 * @param [modName]
@@ -428,7 +428,7 @@ export default class DOM {
 
 	/**
 	 * @deprecated
-	 * @see [[DOM.isVisible]]
+	 * {@link DOM.isVisible}
 	 *
 	 * @param selectorOrElement
 	 * @param [ctx]

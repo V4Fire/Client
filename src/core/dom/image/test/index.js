@@ -19,7 +19,7 @@ const
  * Starts a test
  *
  * @param {Playwright.Page} page
- * @param {!Object} params
+ * @param {!object} params
  * @returns {!Promise<void>}
  */
 module.exports = async (page, params) => {
@@ -107,7 +107,6 @@ module.exports = async (page, params) => {
 				return ctx.style.backgroundImage.match(/url\("(.*)"\)/)?.[1] ?? '';
 			};
 
-			// eslint-disable-next-line no-unused-expressions
 			document.getElementById('expected-picture')?.remove();
 		});
 
@@ -492,7 +491,7 @@ module.exports = async (page, params) => {
 					await page.setViewportSize({
 						width: 580,
 						height: 480
-					 });
+					});
 
 					await imageLoader.evaluate((imageLoaderCtx, [tag, pngImage2x, pngImage]) => {
 						const target = document.getElementById(`${tag}-target`);
@@ -593,7 +592,7 @@ module.exports = async (page, params) => {
 					await page.setViewportSize({
 						width: 580,
 						height: 480
-					 });
+					});
 
 					const
 						baseSrc = 'https://fakeim.pl',
@@ -625,7 +624,7 @@ module.exports = async (page, params) => {
 					await page.setViewportSize({
 						width: 580,
 						height: 480
-					 });
+					});
 
 					const
 						baseSrc = 'https://fakeim.pl',
@@ -667,7 +666,7 @@ module.exports = async (page, params) => {
 					await page.setViewportSize({
 						width: 580,
 						height: 480
-					 });
+					});
 
 					const
 						baseSrc = 'https://fakeim.pl',
@@ -862,8 +861,8 @@ module.exports = async (page, params) => {
 
 				it('override default placeholders', async () => {
 					const
-							mainSrcUrl = getRandomImgUrl(),
-							previewSrcUrl = getRandomImgUrl();
+						mainSrcUrl = getRandomImgUrl(),
+						previewSrcUrl = getRandomImgUrl();
 
 					const requests = [
 						handleImageRequest(mainSrcUrl, 2000),

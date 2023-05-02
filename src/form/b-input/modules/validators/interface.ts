@@ -106,19 +106,16 @@ export interface DateValidatorResult extends ValidatorError<Date | number> {
  */
 export interface PasswordValidatorParams extends PatternValidatorParams {
 	/**
-	 * @inheritDoc
 	 * @default `/^\w*$/`
 	 */
 	pattern?: RegExp | string;
 
 	/**
-	 * @inheritDoc
 	 * @default `6`
 	 */
 	min?: number;
 
 	/**
-	 * @inheritDoc
 	 * @default `18`
 	 */
 	max?: number;

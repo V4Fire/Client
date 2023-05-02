@@ -224,7 +224,6 @@ export default function createRouter(component: bRouter): Router {
 			}
 
 			const
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				{load} = params.meta;
 
 			if (load == null) {

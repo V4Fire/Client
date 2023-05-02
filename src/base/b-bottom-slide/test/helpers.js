@@ -16,7 +16,7 @@ const
  *
  * @param {object} props
  * @param {object} content
- * @returns {!Promise<[!Object, !Element]>}
+ * @returns {!Promise<[!object, !Element]>}
  */
 async function initBottomSlide(props = {}, content = undefined) {
 	content = {
@@ -60,7 +60,7 @@ module.exports.initBottomSlide = initBottomSlide;
 /**
  * Invokes `open` of the specified component
  *
- * @param {!Object} component
+ * @param {!object} component
  * @param {number} [step]
  * @returns {!Promise<void>}
  */
@@ -77,10 +77,10 @@ module.exports.open = open;
 /**
  * Invokes `close` of the specified component
  *
- * @param {Object} component
+ * @param {object} component
  * @returns {!Promise<void>}
  */
- async function close(component) {
+async function close(component) {
 	const
 		{page} = globalThis._testEnv;
 
@@ -93,10 +93,10 @@ module.exports.close = close;
 /**
  * Invokes `next` of the specified component
  *
- * @param {!Object} component
+ * @param {!object} component
  * @returns {!Promise<void>}
  */
- async function next(component) {
+async function next(component) {
 	const
 		{page} = globalThis._testEnv;
 
@@ -109,7 +109,7 @@ module.exports.next = next;
 /**
  * Invokes `prev` of the specified component
  *
- * @param {!Object} component
+ * @param {!object} component
  * @returns {!Promise<void>}
  */
 async function prev(component) {
@@ -140,7 +140,7 @@ module.exports.getAbsolutePageHeight = getAbsolutePageHeight;
 /**
  * Returns an offset between the global window and component window element
  *
- * @param {Object} component
+ * @param {object} component
  * @returns {!Promise<number>}
  */
 function getAbsoluteComponentWindowOffset(component) {
@@ -152,7 +152,7 @@ module.exports.getAbsoluteComponentWindowOffset = getAbsoluteComponentWindowOffs
 /**
  * Returns `offsetHeight` of the `window` element from the specified component
  *
- * @param {!Object} component
+ * @param {!object} component
  * @returns {!Promise<number>}
  */
 function getAbsoluteComponentWindowHeight(component) {
@@ -164,7 +164,7 @@ module.exports.getAbsoluteComponentWindowHeight = getAbsoluteComponentWindowHeig
 /**
  * Returns a `y` position from the component `boundedClientRect`
  *
- * @param {!Object} component
+ * @param {!object} component
  * @returns {!Promise<number>}
  */
 function getComponentWindowYPos(component) {

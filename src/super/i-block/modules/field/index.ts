@@ -246,7 +246,6 @@ export default class Field extends Friend {
 
 				if (isSystem || isField) {
 					// If property not already watched, don't force the creation of a proxy
-					// eslint-disable-next-line @typescript-eslint/unbound-method
 					needSetToWatch = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
 
 					if (isSystem) {
@@ -409,7 +408,6 @@ export default class Field extends Friend {
 
 			} else if (isSystem || isField) {
 				// If property not already watched, don't force the creation of a proxy
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				needDeleteToWatch = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
 
 				if (isSystem) {

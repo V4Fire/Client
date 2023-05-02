@@ -52,12 +52,12 @@ export default class Sync extends Friend {
 	 */
 	readonly syncModCache!: Dictionary<Function>;
 
-	/** @see [[iBlock.$syncLinkCache]] */
+	/** {@link iBlock.$syncLinkCache} */
 	protected get syncLinkCache(): SyncLinkCache {
 		return this.ctx.$syncLinkCache;
 	}
 
-	/** @see [[iBlock.$syncLinkCache]] */
+	/** {@link iBlock.$syncLinkCache} */
 	protected set syncLinkCache(value: SyncLinkCache) {
 		Object.set(this.ctx, '$syncLinkCache', value);
 	}
@@ -139,9 +139,9 @@ export default class Sync extends Friend {
 	 * To listen an event you need to use the special delimiter ":" within a path.
 	 * Also, you can specify an event emitter to listen by writing a link before ":".
 	 *
-	 * @see [[iBlock.watch]]
+	 * {@link iBlock.watch}
 	 * @param path - path to a property/event that we are referring or
-	 *   [path to a property that contains a link, path to a property/event that we are referring]
+	 * [path to a property that contains a link, path to a property/event that we are referring]
 	 *
 	 * @param [optsOrWrapper] - additional options or a wrapper
 	 *
@@ -193,9 +193,9 @@ export default class Sync extends Friend {
 	 * To listen an event you need to use the special delimiter ":" within a path.
 	 * Also, you can specify an event emitter to listen by writing a link before ":".
 	 *
-	 * @see [[iBlock.watch]]
+	 * {@link iBlock.watch}
 	 * @param path - path to a property/event that we are referring or
-	 *   [path to a property that contains a link, path to a property/event that we are referring]
+	 * [path to a property that contains a link, path to a property/event that we are referring]
 	 *
 	 * @param opts - additional options
 	 * @param [wrapper]
@@ -496,7 +496,7 @@ export default class Sync extends Friend {
 	 *
 	 * Mind, this method can be used only within a property decorator.
 	 *
-	 * @see [[iBlock.watch]]
+	 * {@link iBlock.watch}
 	 * @param decl - declaration of object properties
 	 *
 	 * @example
@@ -535,7 +535,7 @@ export default class Sync extends Friend {
 	 *
 	 * Mind, this method can be used only within a property decorator.
 	 *
-	 * @see [[iBlock.watch]]
+	 * {@link iBlock.watch}
 	 * @param opts - additional options
 	 * @param fields - declaration of object properties
 	 *
@@ -573,9 +573,9 @@ export default class Sync extends Friend {
 	 * To listen an event you need to use the special delimiter ":" within a path.
 	 * Also, you can specify an event emitter to listen by writing a link before ":".
 	 *
-	 * @see [[iBlock.watch]]
+	 * {@link iBlock.watch}
 	 * @param path - path to a property that contains the result object
-	 *   (if the method is used within a property decorator, this value will be concatenated to an active field name)
+	 * (if the method is used within a property decorator, this value will be concatenated to an active field name)
 	 *
 	 * @param fields - declaration of object properties
 	 *
@@ -614,9 +614,9 @@ export default class Sync extends Friend {
 	 * To listen an event you need to use the special delimiter ":" within a path.
 	 * Also, you can specify an event emitter to listen by writing a link before ":".
 	 *
-	 * @see [[iBlock.watch]]
+	 * {@link iBlock.watch}
 	 * @param path - path to a property that contains the result object
-	 *   (if the method is used within a property decorator, this value will be concatenated to an active field name)
+	 * (if the method is used within a property decorator, this value will be concatenated to an active field name)
 	 *
 	 * @param opts - additional options
 	 * @param fields - declaration of object properties
@@ -954,7 +954,7 @@ export default class Sync extends Friend {
 	 * Synchronizes component link values with values they are linked
 	 *
 	 * @param path - path to a property/event that we are referring or
-	 *   [path to a property that contains a link, path to a property/event that we are referring]
+	 * [path to a property that contains a link, path to a property/event that we are referring]
 	 *
 	 * @param [value] - value to synchronize links
 	 */

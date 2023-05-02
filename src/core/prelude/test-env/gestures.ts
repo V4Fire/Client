@@ -12,10 +12,10 @@ import Async from 'core/async';
  * Class to create touch gestures
  */
 export default class Gestures {
-	/** @see [[TouchGesturesCreateOptions]] */
+	/** {@link TouchGesturesCreateOptions} */
 	readonly options: TouchGesturesCreateOptions;
 
-	/** @see [[Async]] */
+	/** {@link Async} */
 	readonly async: Async = new Async();
 
 	/**

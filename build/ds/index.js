@@ -8,6 +8,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * @typedef {import('@v4fire/design-system')} DesignSystem
+ */
+
 const
 	{config: pzlr} = require('@pzlr/build-core'),
 	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
@@ -34,12 +38,13 @@ exports.getDS = function getDS() {
  * Returns available themes from the specified design system package.
  *
  * Pass to the second argument:
- *   * An array of theme names to include them to the build.
- *     Note that names must be included in the design system object.
+ * * An array of theme names to include them to the build.
+ * Note that names must be included in the design system object.
  *
- *   * `true`, if necessary to pass all themes from the specified design system object
+ * * `true`, if necessary to pass all themes from the specified design system object
  *
- * @param {!DesignSystem} ds - a raw design system object (e.g. loaded from the linked in the `.pzlrrc` package)
+ * @param {!DesignSystem} ds - a raw design system object
+ * (e.g. loaded from the linked in the `.pzlrrc` package)
  * @param {(!Array<string>|true)} buildThemes
  *
  * @returns {?Array<string>}
@@ -77,7 +82,7 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 
 /**
  * Returns modifier values grouped by component names from the design system package
- * @returns {Object}
+ * @returns {object}
  */
 exports.getDSComponentMods = function getDSComponentMods() {
 	try {

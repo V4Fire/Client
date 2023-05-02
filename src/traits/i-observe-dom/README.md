@@ -26,7 +26,7 @@ In this method, the observer should be initialized. `iObserveDOM` provides a sta
 ```typescript
 @component()
 export default class component extends iBlock implements iObserveDOM {
-  /** @see [[iObserveDOM.prototype.initDOMObservers]] */
+  /** {@link iObserveDOM.prototype.initDOMObservers} */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
     const
@@ -50,7 +50,7 @@ The method has the default implementation.
 ```typescript
 @component()
 export default class component extends iBlock implements iObserveDOM {
-  /** @see [[iObserveDOM.prototype.initDOMObservers]] */
+  /** {@link iObserveDOM.prototype.initDOMObservers} */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
     const
@@ -63,7 +63,7 @@ export default class component extends iBlock implements iObserveDOM {
     });
   }
 
-  /** @see [[iObserveDOM.prototype.onDOMChange]] */
+  /** {@link iObserveDOM.prototype.onDOMChange} */
   onDOMChange(records: MutationRecord[]): void {
     const
       filtered = iObserveDOM.filterNodes(records, (node) => node instanceof HTMLElement),

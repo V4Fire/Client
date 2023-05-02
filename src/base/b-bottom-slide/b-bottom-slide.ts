@@ -64,7 +64,7 @@ interface bBottomSlide extends
 @component()
 @derive(iLockPageScroll, iObserveDOM, iOpen)
 class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** {@link iVisible.prototype.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -83,7 +83,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	@prop({type: Array, validator: (v: number[]) => v.every((a) => a >= 0 && a <= 100)})
 	readonly stepsProp: number[] = [];
 
-	/** @see [[bBottomSlide.steps]] */
+	/** {@link bBottomSlide.steps} */
 	@field<bBottomSlide>((o) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
 	readonly stepsStore!: number[];
 
@@ -91,7 +91,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	 * The minimum height value of a visible part (in pixels), i.e.,
 	 * even the component is closed, this part still be visible
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNonNegative})
 	readonly visible: number = 0;
 
@@ -104,21 +103,18 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * The maximum time in milliseconds after which we can assume that there was a quick swipe
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isPositive})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * The minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly fastSwipeThreshold: number = 10;
 
 	/**
 	 * The minimum required amount of pixels of scrolling to swipe
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeThreshold: number = 40;
 
@@ -131,7 +127,6 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * The maximum value of overlay opacity
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isBetweenZeroAndOne})
 	readonly maxOpacity: number = 0.8;
 
@@ -181,7 +176,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		return res.concat(this.field.get<number[]>('stepsStore')!).sort((a, b) => a - b);
 	}
 
-	/** @see [[iHistory.history]] */
+	/** {@link iHistory.history} */
 	@system<iHistory>((ctx) => new History(ctx))
 	readonly history!: History;
 
@@ -213,7 +208,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		overlay?: HTMLElement;
 	};
 
-	/** @see [[bBottomSlide.step]] */
+	/** {@link bBottomSlide.step} */
 	@system()
 	protected stepStore: number = 0;
 
@@ -331,7 +326,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	@system()
 	protected byTrigger: boolean = false;
 
-	/** @see [[bBottomSlide.offset]] */
+	/** {@link bBottomSlide.offset} */
 	@system()
 	protected offsetStore: number = 0;
 
@@ -358,7 +353,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		this.endY = value;
 	}
 
-	/** @see [[bBottomSlide.isPulling]] */
+	/** {@link bBottomSlide.isPulling} */
 	@system()
 	protected isPullingStore: boolean = false;
 
@@ -392,7 +387,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	/**
 	 * The minimum height value of a component visible part (in percents),
 	 * i.e. even the component is closed this part still be visible
-	 * @see [[bBottomSlide.visible]]
+	 * {@link bBottomSlide.visible}
 	 */
 	@p({cache: false})
 	protected get visibleInPercent(): number {
@@ -420,19 +415,19 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		return this.browser.is.iOS === false;
 	}
 
-	/** @see [[History.onPageTopVisibilityChange]] */
+	/** {@link History.onPageTopVisibilityChange} */
 	onPageTopVisibilityChange(state: boolean): void {
 		this.isViewportTopReached = state;
 	}
 
-	/** @see [[iLockPageScroll.lock]] */
+	/** {@link iLockPageScroll.lock} */
 	@wait('ready', {label: $$.lock})
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this, this.$refs.view);
 	}
 
 	/**
-	 * @see [[iOpen.open]]
+	 * {@link iOpen.open}
 	 * @param [step]
 	 * @emits `open()`
 	 */
@@ -461,7 +456,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	}
 
 	/**
-	 * @see [[iOpen.close]]
+	 * {@link iOpen.close}
 	 * @emits `close()`
 	 */
 	async close(): Promise<boolean> {
@@ -522,17 +517,17 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 		return true;
 	}
 
-	/** @see [[iOpen.onKeyClose]] */
+	/** {@link iOpen.onKeyClose} */
 	async onKeyClose(): Promise<void> {
 		// Loopback
 	}
 
-	/** @see [[iOpen.onTouchClose]] */
+	/** {@link iOpen.onTouchClose} */
 	async onTouchClose(): Promise<void> {
 		// Loopback
 	}
 
-	/** @see [[iObserveDOM.initObservers]] */
+	/** {@link iObserveDOM.initObservers} */
 	@watch('heightMode')
 	@hook('mounted')
 	@wait('ready')
@@ -778,7 +773,7 @@ class bBottomSlide extends iBlock implements iLockPageScroll, iObserveDOM, iOpen
 	 * Moves the component to the nearest step relative to the current position
 	 *
 	 * @param respectDirection - if true, then when searching for a new step to change,
-	 *   the cursor direction will be taken into account, but not the nearest step
+	 * the cursor direction will be taken into account, but not the nearest step
 	 *
 	 * @param isThresholdPassed - if true, then the minimum threshold to change a step is passed
 	 */

@@ -46,7 +46,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 			const
 				ctx = Object.cast<UnsafeComponentInterface>(this),
 
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				{$watch, $set, $delete} = this;
 
 			this['$vueWatch'] = $watch;
@@ -56,7 +55,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<ComponentEng
 			init.beforeDataCreateState(this);
 
 			const emitter = (_, handler) => {
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				const {unwatch} = watch(ctx.$fields, {deep: true, immediate: true}, handler);
 				return unwatch;
 			};

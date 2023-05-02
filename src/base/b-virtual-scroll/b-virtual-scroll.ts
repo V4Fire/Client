@@ -78,86 +78,82 @@ export const
 
 @component()
 export default class bVirtualScroll extends iData implements iItems {
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	readonly Item!: object;
 
-	/** @see [[iItems.Items]] */
+	/** {@link iItems.Items} */
 	readonly Items!: Array<this['Item']>;
 
 	override readonly DB!: RemoteData;
 
 	override readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@prop(Array)
 	readonly optionsProp?: this['Items'] = [];
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@field((o) => o.sync.link())
 	options!: this['Items'];
 
-	/** @see [[LoadStrategy]] */
+	/** {@link LoadStrategy} */
 	@prop({type: String, watch: 'syncPropsWatcher'})
 	readonly loadStrategy: LoadStrategy = 'scroll';
 
 	/**
 	 * @deprecated
-	 * @see [[iItems.item]]
+	 * {@link iItems.item}
 	 */
 	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['item'];
 
-	/** @see [[iItems.item]] */
+	/** {@link iItems.item} */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
 	/**
 	 * @deprecated
-	 * @see [[iItems.itemKey]]
+	 * {@link iItems.itemKey}
 	 */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItems['itemKey'];
 
-	/** @see [[iItems.itemKey]] */
+	/** {@link iItems.itemKey} */
 	@prop({type: [String, Function], required: false})
 	readonly itemKey?: iItems['itemKey'];
 
 	/**
 	 * @deprecated
-	 * @see [[iItems.itemProps]]
+	 * {@link iItems.itemProps}
 	 */
 	@prop({type: Function})
 	readonly optionProps!: iItems['itemProps'];
 
-	/** @see [[iItems.itemProps]] */
+	/** {@link iItems.itemProps} */
 	@prop({type: [Function, Object], default: () => ({})})
 	readonly itemProps!: iItems['itemProps'];
 
 	/**
 	 * The maximum number of elements to cache
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
 	 * Number of elements till the page bottom that should initialize a new render iteration
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly renderGap: number = 10;
 
 	/**
 	 * Number of elements per one render chunk
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly chunkSize: number = 10;
 
 	/**
 	 * Number of tombstones to render
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, required: false, validator: Number.isNatural})
 	readonly tombstonesSize?: number;
 
@@ -201,7 +197,7 @@ export default class bVirtualScroll extends iData implements iItems {
 	@prop({type: Function, default: (v) => v.isLastEmpty})
 	readonly shouldStopRequest!: RequestFn;
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@computed({dependencies: ['itemsStore', 'options']})
 	get items(): this['Items'] {
 		const
@@ -218,7 +214,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		return items ?? [];
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
@@ -227,7 +223,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		return Object.cast(this);
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@field((o) => o.sync.link())
 	protected itemsStore!: iItems['items'];
 
@@ -272,8 +268,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		};
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected override set requestParams(value: RequestParams) {
+	protected override set requestParams(_value: RequestParams) {
 		// Loopback
 	}
 
@@ -359,8 +354,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Returns an object with the current data state of the component
 	 *
-	 * @typeparam ITEM - data item to render
-	 * @typeparam RAW - raw provider data
+	 * @typeParam ITEM - data item to render
+	 * @typeParam RAW - raw provider data
 	 */
 	getCurrentDataState<
 		ITEM extends object = object,
@@ -432,7 +427,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		return Object.isFunction(item) ? item(el, i) : <string>item;
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		if (this.optionKey != null) {
 			deprecate({
@@ -454,8 +449,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @param [chunkRequest]
 	 * @param [chunkRender]
 	 *
-	 * @typeparam ITEM - data item to render
-	 * @typeparam RAW - raw provider data
+	 * @typeParam ITEM - data item to render
+	 * @typeParam RAW - raw provider data
 	 */
 	protected getDataStateSnapshot<
 		ITEM extends object = object,

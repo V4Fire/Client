@@ -105,7 +105,6 @@ export async function createComponent<T>(
 		node = await render.call(fakeCtx, createElement);
 
 	// @ts-ignore (access)
-	// eslint-disable-next-line require-atomic-updates
 	fakeCtx['$el'] = node;
 	node.component = fakeCtx;
 

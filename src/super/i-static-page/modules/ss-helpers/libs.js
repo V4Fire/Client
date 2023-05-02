@@ -31,9 +31,9 @@ exports.loadLibs = loadLibs;
  * Initializes the specified libraries and returns code to load
  *
  * @param {Libs} libs
- * @param {Object<string>=} [assets] - map with static page assets
- * @param {boolean=} [js] - if true, the function returns JS code to load the libraries
- * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
+ * @param {object<string>} [assets] - map with static page assets
+ * @param {boolean} [js] - if true, the function returns JS code to load the libraries
+ * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {!Promise<string>}
  */
 async function loadLibs(libs, {assets, js, wrap} = {}) {
@@ -64,9 +64,9 @@ exports.loadStyles = loadStyles;
  * Initializes the specified styles and returns code to load
  *
  * @param {StyleLibs} libs
- * @param {Object<string>=} [assets] - map with static page assets
- * @param {boolean=} [js] - if true, the function returns JS code to load the libraries
- * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
+ * @param {object<string>} [assets] - map with static page assets
+ * @param {boolean} [js] - if true, the function returns JS code to load the libraries
+ * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {!Promise<string>}
  */
 async function loadStyles(libs, {assets, js, wrap} = {}) {
@@ -98,9 +98,9 @@ exports.loadLinks = loadLinks;
  * Initializes the specified links  and returns code to load
  *
  * @param {Links} libs
- * @param {Object<string>=} [assets] - map with static page assets
- * @param {boolean=} [js] - if true, the function returns JS code to load the links
- * @param {boolean=} [wrap] - if true, the final code is wrapped by a script tag
+ * @param {object<string>} [assets] - map with static page assets
+ * @param {boolean} [js] - if true, the function returns JS code to load the links
+ * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {!Promise<string>}
  */
 async function loadLinks(libs, {assets, js, wrap} = {}) {
@@ -132,7 +132,7 @@ exports.initLibs = initLibs;
  * The function returns a list of initialized libraries to load.
  *
  * @param {(Libs|StyleLibs)} libs
- * @param {Object<string>=} [assets] - map with static page assets
+ * @param {object<string>} [assets] - map with static page assets
  * @returns {!Promise<!Array<(InitializedLib|InitializedStyleLib|InitializedLink)>>}
  */
 async function initLibs(libs, assets) {
@@ -192,12 +192,12 @@ exports.resolveAsLib = resolveAsLib;
  * Loads the specified file or directory as an external library to the output folder.
  * The function returns a path to the library from the output folder.
  *
- * @param {string=} [name] - name of the library
+ * @param {string} [name] - name of the library
  *   (if not specified, the name will be taken from a basename of the source file)
  *
- * @param {boolean=} [dest='lib'] - where to store the library
- * @param {boolean=} [relative=true] - if false, the function will return an absolute path
- * @param {(Array<string>|string)=} cwd - active working directory (can be defined as an array to enable layers)
+ * @param {boolean} [dest='lib'] - where to store the library
+ * @param {boolean} [relative=true] - if false, the function will return an absolute path
+ * @param {(Array<string>|string)} cwd - active working directory (can be defined as an array to enable layers)
  * @param {...string} paths - string paths to join (also, can take URL-s)
  * @returns {string}
  *

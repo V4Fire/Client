@@ -53,7 +53,7 @@ export default class Lfc extends Friend {
 	 * This method is helpful to execute a function after the component is initialized and
 	 * does not wait for its providers.
 	 *
-	 * @see [[Async.proxy]]
+	 * {@link Async.proxy}
 	 * @param cb
 	 * @param [opts] - additional options
 	 */

@@ -25,7 +25,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 
 	/**
 	 * @deprecated
-	 * @see [[StaticRouteMeta.name]]
+	 * {@link StaticRouteMeta.name}
 	 */
 	page?: string;
 
@@ -70,7 +70,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 
 	/**
 	 * @deprecated
-	 * @see [[StaticRouteMeta.default]]
+	 * {@link StaticRouteMeta.default}
 	 */
 	index?: boolean;
 
@@ -134,7 +134,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 export interface PathOptions extends RegExpOptions, ParseOptions {
 	/**
 	 * Aliases for dynamic parameters in `path`.
-	 * @see [[StaticRouteMeta.path]]Ы
+	 * {@link StaticRouteMeta.path}Ы
 	 *
 	 * In the example below you can specify either `bar` itself as a parameter or any of its aliases.
 	 * Note that aliases will be used only if the original parameter is not specified.
@@ -172,10 +172,10 @@ export type StaticRoutes<M extends object = Dictionary> = Dictionary<
  * Meta information of a route
  */
 export type RouteMeta<M extends object = Dictionary> = StaticRouteMeta<M> & {
-	/** @see [[StaticRouteMeta.name]] */
+	/** {@link StaticRouteMeta.name} */
 	name: string;
 
-	/** @see [[StaticRouteMeta.default]] */
+	/** {@link StaticRouteMeta.default} */
 	default: boolean;
 };
 
@@ -199,7 +199,7 @@ export interface Route<
 
 	/**
 	 * @deprecated
-	 * @see [[Route.name]]
+	 * {@link Route.name}
 	 */
 	page?: string;
 
@@ -210,7 +210,7 @@ export interface Route<
 
 	/**
 	 * @deprecated
-	 * @see [[Route.default]]
+	 * {@link Route.default}
 	 */
 	index?: boolean;
 
@@ -251,7 +251,7 @@ export interface Router<
 
 	/**
 	 * @deprecated
-	 * @see [[Router.route]]
+	 * {@link Router.route}
 	 */
 	readonly page?: CanUndef<Route<PARAMS, QUERY, META>>;
 
@@ -329,13 +329,13 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 
 	/**
 	 * @deprecated
-	 * @see [[RouteBlueprint.name]]
+	 * {@link RouteBlueprint.name}
 	 */
 	page?: string;
 
 	/**
 	 * @deprecated
-	 * @see [[RouteBlueprint.meta.default]]
+	 * {@link RouteBlueprint.meta.default}
 	 */
 	index?: boolean;
 
@@ -376,7 +376,7 @@ export interface RouteBlueprint<META extends object = Dictionary> {
  */
 export interface PathParam extends Key {
 	/**
-	 * @see [[StaticRouteMeta.pathOpts.aliases]]
+	 * {@link StaticRouteMeta.pathOpts.aliases}
 	 */
 	aliases: string[];
 }
@@ -408,7 +408,7 @@ export interface RouteAPI<
 
 	/**
 	 * @deprecated
-	 * @see [[Route.toPath]]
+	 * {@link Route.toPath}
 	 */
 	toPath?(params?: Dictionary): string;
 }
@@ -447,7 +447,7 @@ export interface RouteParams extends TransitionOptions {
 
 	/**
 	 * @deprecated
-	 * @see [[RouteParams.name]]
+	 * {@link RouteParams.name}
 	 */
 	page?: string;
 }

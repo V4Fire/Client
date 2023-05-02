@@ -42,7 +42,6 @@ export function fakeMapSetCopy<
 				value: obj[key].bind(obj)
 			});
 
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		} else if (Object.isFunction(desc.get)) {
 			Object.defineProperty(wrap, key, {
 				...desc,

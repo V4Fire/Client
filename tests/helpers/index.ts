@@ -19,29 +19,30 @@ import Gestures from 'tests/helpers/gestures';
  * @deprecated - use static methods instead
  */
 export class Helpers {
-	/** @see [[Request]] */
+	/** {@link Request} */
 	request: Request = new Request();
 
-	/** @see [[Utils]] */
+	/** {@link Utils} */
 	utils: Utils = new Utils();
 
-	/** @see [[Component]] */
+	/** {@link Component} */
 	component: Component = new Component();
 
-	/** @see [[Gestures]] */
+	/** {@link Gestures} */
 	gestures: Gestures = new Gestures();
 
-	/** @see [[BOM]] */
+	/** {@link BOM} */
 	bom: BOM = new BOM();
 
-	/** @see [[Router]] */
+	/** {@link Router} */
 	router: Router = new Router();
 
-	/** @see [[DOM]] */
+	/** {@link DOM} */
 	dom: DOM = new DOM();
 
-	/** @see [[Scroll]] */
+	/** {@link Scroll} */
 	scroll: Scroll = new Scroll();
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default new Helpers();

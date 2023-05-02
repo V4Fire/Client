@@ -20,7 +20,7 @@ const
  *
  * @param {Page} page
  * @param {('historyApiRouterEngine'|'inMemoryRouterEngine')} engineName
- * @param {?Object=} [initOptions] - Router initializing options
+ * @param {?Object} [initOptions] - Router initializing options
  * @param {?string} [initOptions.initialRoute] - Pass `null` to remove `initialRoute` for the in-memory engine
  * @returns {!Promise<Playwright.JSHandle>}
  */

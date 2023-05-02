@@ -110,7 +110,6 @@ export function getComponentDataFromVNode(component: string | ComponentMeta, vno
 
 	if (model != null && componentModel) {
 		const
-			// eslint-disable-next-line @typescript-eslint/unbound-method
 			{value, callback} = <ComponentModelVNodeData>model,
 			{prop, event} = componentModel;
 

@@ -16,7 +16,9 @@ export default <VueConfiguration>{
 	optionMergeStrategies: {},
 	keyCodes: {},
 	ignoredElements: [],
+	// eslint-disable-next-line no-console
 	errorHandler: console.error,
+	// eslint-disable-next-line no-console
 	warnHandler: console.warn,
 	async: false
 };

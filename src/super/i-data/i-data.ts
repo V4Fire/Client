@@ -175,7 +175,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * @deprecated
-	 * @see [[iData.defaultRequestFilter]]
+	 * {@link iData.defaultRequestFilter}
 	 */
 	@prop({type: [Boolean, Function], required: false})
 	readonly requestFilter?: RequestFilter;
@@ -191,7 +191,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Enables the suspending of all requests to the data provider till you don't manually force it.
 	 * Also, the parameter can contain a promise resolve function.
-	 * @see [[iData.suspendRequestsProp]]
+	 * {@link iData.suspendRequestsProp}
 	 */
 	@system((o) => o.sync.link())
 	suspendRequests?: boolean | Function;
@@ -271,7 +271,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * @deprecated
-	 * @see [[iData.dataEmitter]]
+	 * {@link iData.dataEmitter}
 	 */
 	@deprecated({renamedTo: 'dataEmitter'})
 	get dataEvent(): ReadonlyEventEmitterWrapper<this> {
@@ -317,7 +317,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Component data store
-	 * @see [[iData.db]]
+	 * {@link iData.db}
 	 */
 	@field()
 	// @ts-ignore (extend)
@@ -459,7 +459,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	/**
 	 * Link to `iBlock.initLoad`
 	 *
-	 * @see [[iBlock.initLoad]]
+	 * {@link iBlock.initLoad}
 	 * @param [data]
 	 * @param [opts]
 	 */
@@ -484,7 +484,7 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * @deprecated
-	 * @see [[iData.dropDataCache]]
+	 * {@link iData.dropDataCache}
 	 */
 	@deprecated({renamedTo: 'dropProviderCache'})
 	dropRequestCache(): void {
@@ -557,7 +557,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Requests the provider for data by a query.
 	 * This method is similar for a GET request.
 	 *
-	 * @see [[Provider.get]]
+	 * {@link Provider.get}
 	 * @param [query] - request query
 	 * @param [opts] - additional request options
 	 */
@@ -576,7 +576,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Checks accessibility of the provider by a query.
 	 * This method is similar for a HEAD request.
 	 *
-	 * @see [[Provider.peek]]
+	 * {@link Provider.peek}
 	 * @param [query] - request query
 	 * @param [opts] - additional request options
 	 */
@@ -595,7 +595,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Sends custom data to the provider without any logically effect.
 	 * This method is similar for a POST request.
 	 *
-	 * @see [[Provider.post]]
+	 * {@link Provider.post}
 	 * @param [body] - request body
 	 * @param [opts] - additional request options
 	 */
@@ -614,7 +614,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Adds new data to the provider.
 	 * This method is similar for a POST request.
 	 *
-	 * @see [[Provider.add]]
+	 * {@link Provider.add}
 	 * @param [body] - request body
 	 * @param [opts] - additional request options
 	 */
@@ -633,7 +633,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Updates data of the provider by a query.
 	 * This method is similar for PUT or PATCH requests.
 	 *
-	 * @see [[Provider.upd]]
+	 * {@link Provider.upd}
 	 * @param [body] - request body
 	 * @param [opts] - additional request options
 	 */
@@ -652,7 +652,7 @@ export default abstract class iData extends iBlock implements iProgress {
 	 * Deletes data of the provider by a query.
 	 * This method is similar for a DELETE request.
 	 *
-	 * @see [[Provider.del]]
+	 * {@link Provider.del}
 	 * @param [body] - request body
 	 * @param [opts] - additional request options
 	 */
@@ -1131,10 +1131,9 @@ export default abstract class iData extends iBlock implements iProgress {
 
 	/**
 	 * Handler: `dataProvider.refresh`
-	 * @param data
+	 * @param _data
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected onRefreshData(data: this['DB']): Promise<void> {
+	protected onRefreshData(_data: this['DB']): Promise<void> {
 		return this.reload();
 	}
 

@@ -121,7 +121,6 @@ export default class Utils {
 	 */
 	static async setup(page: Page, context: BrowserContext, opts?: SetupOptions): Promise<void> {
 		opts = {
-			// eslint-disable-next-line quotes
 			mocks: '[\'.*\']',
 			permissions: ['geolocation'],
 			location: {latitude: 59.95, longitude: 30.31667},
@@ -193,6 +192,7 @@ export default class Utils {
 			logs = logsMap.get(page);
 
 		if (logs) {
+			// eslint-disable-next-line no-console
 			console.log(logs.join('\n'));
 			logsMap.delete(page);
 		}
@@ -214,7 +214,7 @@ export default class Utils {
 	/**
 	 * @param page
 	 * @deprecated
-	 * @see [[Utils.collectPageLogs]]
+	 * {@link Utils.collectPageLogs}
 	 */
 	collectPageLogs(page: Page): void {
 		return Utils.collectPageLogs(page);
@@ -223,7 +223,7 @@ export default class Utils {
 	/**
 	 * @param page
 	 * @deprecated
-	 * @see [[Utils.printPageLogs]]
+	 * {@link Utils.printPageLogs}
 	 */
 	printPageLogs(page: Page): void {
 		return Utils.printPageLogs(page);
@@ -234,7 +234,7 @@ export default class Utils {
 	 * @param [idleOpts]
 	 *
 	 * @deprecated
-	 * @see [[Utils.reloadAndWaitForIdle]]
+	 * {@link Utils.reloadAndWaitForIdle}
 	 */
 	async reloadAndWaitForIdle(page: Page, idleOpts?: WaitForIdleOptions): Promise<void> {
 		return Utils.reloadAndWaitForIdle(page, idleOpts);
@@ -242,7 +242,7 @@ export default class Utils {
 
 	/**
 	 * @deprecated
-	 * @see [[Utils.waitForFunction]]
+	 * {@link Utils.waitForFunction}
 	 *
 	 * @param ctx
 	 * @param fn

@@ -98,9 +98,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			const
 				old = obj[key],
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				set = desc.set ?? old?.set,
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				get = desc.get ?? old?.get;
 
 			// For using "super" within a setter we also create a method with a name of form `${key}Setter`
@@ -135,7 +133,6 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			obj[key] = Object.assign(obj[key] ?? {replace}, {
 				src,
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				get: desc.get ?? old?.get,
 				set
 			});

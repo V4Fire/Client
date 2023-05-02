@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -32,27 +30,27 @@ export default abstract class iOpen {
 		]
 	};
 
-	/** @see [[iOpen.open]] */
+	/** {@link iOpen.open} */
 	static open: AddSelf<iOpen['open'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('opened', true));
 
-	/** @see [[iOpen.close]] */
+	/** {@link iOpen.close} */
 	static close: AddSelf<iOpen['close'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('opened', false));
 
-	/** @see [[iOpen.onOpenedChange]] */
-	static onOpenedChange: AddSelf<iOpen['onOpenedChange'], iBlock> = async (component) => {
+	/** {@link iOpen.onOpenedChange} */
+	static onOpenedChange: AddSelf<iOpen['onOpenedChange'], iBlock> = async (_component) => {
 		// Loopback
 	};
 
-	/** @see [[iOpen.onKeyClose]] */
+	/** {@link iOpen.onKeyClose} */
 	static onKeyClose: AddSelf<iOpen['onKeyClose'], iBlock & iOpen> = async (component, e) => {
 		if (e.key === 'Escape') {
 			await component.close();
 		}
 	};
 
-	/** @see [[iOpen.onTouchClose]] */
+	/** {@link iOpen.onTouchClose} */
 	static onTouchClose: AddSelf<iOpen['onTouchClose'], iBlock & iOpen> = async (component, e) => {
 		const
 			target = <CanUndef<Element>>e.target;
@@ -136,41 +134,41 @@ export default abstract class iOpen {
 
 	/**
 	 * Opens the component
-	 * @param args
+	 * @param _args
 	 */
-	open(...args: unknown[]): Promise<boolean> {
+	open(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
 	 * Closes the component
-	 * @param args
+	 * @param _args
 	 */
-	close(...args: unknown[]): Promise<boolean> {
+	close(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
 	 * Handler: the opened modifier has been changed
-	 * @param e
+	 * @param _e
 	 */
-	onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
+	onOpenedChange(_e: ModEvent | SetModEvent): Promise<void> {
 		return Object.throw();
 	}
 
 	/**
 	 * Handler: closing by a keyboard event
-	 * @param e
+	 * @param _e
 	 */
-	onKeyClose(e: KeyboardEvent): Promise<void> {
+	onKeyClose(_e: KeyboardEvent): Promise<void> {
 		return Object.throw();
 	}
 
 	/**
 	 * Handler: closing by a touch event
-	 * @param e
+	 * @param _e
 	 */
-	onTouchClose(e: MouseEvent): Promise<void> {
+	onTouchClose(_e: MouseEvent): Promise<void> {
 		return Object.throw();
 	}
 }

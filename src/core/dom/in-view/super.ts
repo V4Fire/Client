@@ -51,7 +51,6 @@ export default abstract class AbstractInView {
 	/**
 	 * Async instance
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-invalid-this
 	protected readonly async: Async<this> = new Async(this);
 
 	/**
@@ -437,10 +436,9 @@ export default abstract class AbstractInView {
 
 	/**
 	 * Initializes observing for the specified element
-	 * @param observable
+	 * @param _observable
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected initObserve(observable: InViewObservableElement): CanUndef<InViewObservableElement> {
+	protected initObserve(_observable: InViewObservableElement): CanUndef<InViewObservableElement> {
 		return undefined;
 	}
 

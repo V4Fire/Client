@@ -193,7 +193,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Text value of the input
-	 * @see [[iInputText.textStore]]
+	 * {@link iInputText.textStore}
 	 */
 	@computed({cache: false})
 	get text(): string {
@@ -245,21 +245,21 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * Text value store of the input
-	 * @see [[iInputText.textProp]]
+	 * {@link iInputText.textProp}
 	 */
 	@system((o) => o.sync.link((v) => v ?? ''))
 	protected textStore!: string;
 
 	/**
 	 * Object of the compiled mask
-	 * @see [[iInputText.mask]]
+	 * {@link iInputText.mask}
 	 */
 	@system()
 	protected compiledMask?: CompiledMask;
 
 	/**
 	 * Number of mask repetitions
-	 * @see [[iInputText.maskRepetitionsProp]]
+	 * {@link iInputText.maskRepetitionsProp}
 	 */
 	@system()
 	protected maskRepetitions: number = 1;

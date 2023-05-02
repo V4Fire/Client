@@ -68,7 +68,7 @@ export default class AsyncRender extends Friend {
 	 * without touching the parent state.
 	 *
 	 * @param elementToDrop - element to drop before resolving the promise
-	 *   (if it passed as a function, it would be executed)
+	 * (if it passed as a function, it would be executed)
 	 *
 	 * @example
 	 * ```

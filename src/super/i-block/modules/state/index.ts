@@ -35,10 +35,9 @@ export default class State extends Friend {
 		return baseSyncRouterState !== this.instance.syncRouterState;
 	}
 
-	/** @see [[iBlock.instance]] */
+	/** {@link iBlock.instance} */
 	protected get instance(): this['CTX']['instance'] {
 		// @ts-ignore (access)
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		baseSyncRouterState ??= iBlock.prototype.syncRouterState;
 		return this.ctx.instance;
 	}

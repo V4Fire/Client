@@ -16,7 +16,7 @@ exports.getVarsDecl = getVarsDecl;
  * Returns declaration of global variables to initialize the application.
  * You need to put this declaration within a script tag or use the "wrap" option.
  *
- * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
+ * @param {boolean} [wrap] - if true, the declaration is wrapped by a script tag
  * @returns {string}
  */
 function getVarsDecl({wrap} = {}) {
@@ -28,7 +28,7 @@ Object.defineProperty(window, '${csp.nonceStore()}', {
 var ${i18n.langPacksStore} = {};
 
 var PATH = Object.create(null);
-var PUBLIC_PATH = ${Object.isString(webpack.dynamicPublicPath()) ? `String(${webpack.dynamicPublicPath()}).trim()` : 'undefined'};
+var PUBLIC_PATH = ${object.isString(webpack.dynamicPublicPath()) ? `String(${webpack.dynamicPublicPath()}).trim()` : 'undefined'};
 
 if (${Boolean(webpack.providePublicPathWithQuery())}) {
 	(function () {

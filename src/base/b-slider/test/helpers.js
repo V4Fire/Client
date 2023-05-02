@@ -45,8 +45,8 @@ async function swipeOnce(page) {
  * Initializes a slider
  *
  * @param {Page} page
- * @param {Object=} [attrs]
- * @param {Object=} [content]
+ * @param {object} [attrs]
+ * @param {object} [content]
  * @returns {!Promise<Playwright.JSHandle>}
  */
 async function initSlider(page, {attrs, content} = {}) {
@@ -109,7 +109,7 @@ function defaultSlotFn() {
  * Creates a component with the default slot and a slide mode to test gestures
  *
  * @param {Page} page
- * @returns {!Object} component
+ * @returns {!object} component
  */
 function initDefaultSlider(page) {
 	return initSlider(page, {content: {default: defaultSlotFn()}, attrs: {mode: 'slide'}});
@@ -118,7 +118,7 @@ function initDefaultSlider(page) {
 /**
  * Returns an index of the current visible slide
  *
- * @param {!Object} component
+ * @param {!object} component
  * @returns {!Promise<number>}
  */
 function current(component) {
@@ -128,7 +128,7 @@ function current(component) {
 /**
  * Returns an index of the last slide
  *
- * @param {!Object} component
+ * @param {!object} component
  * @returns {!Promise<number>}
  */
 function lastIndex(component) {
@@ -138,7 +138,7 @@ function lastIndex(component) {
 /**
  * Switches to the last slide
  *
- * @param {!Object} component
+ * @param {!object} component
  * @returns {!Promise<number>}
  */
 async function toLastSlide(component) {
@@ -148,7 +148,7 @@ async function toLastSlide(component) {
 /**
  * Returns the current slider scroll position
  *
- * @param {Object} component
+ * @param {object} component
  * @returns {!Promise<number>}
  */
 function currentOffset(component) {

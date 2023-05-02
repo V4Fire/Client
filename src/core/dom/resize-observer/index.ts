@@ -42,7 +42,6 @@ export default class ResizeWatcher {
 	/**
 	 * Async instance
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-invalid-this
 	protected async: Async<this> = new Async(this);
 
 	/**

@@ -13,7 +13,7 @@ import type IntersectionObserverStrategy from 'core/dom/in-view/intersection';
 
 /**
  * @deprecated
- * @see [[InViewObservable]]
+ * {@link InViewObservable}
  */
 export type Observable = InViewObservable;
 
@@ -42,7 +42,7 @@ export interface InViewObservable {
 
 /**
  * @deprecated
- * @see [[InViewObservableElSize]]
+ * {@link InViewObservableElSize}
  */
 export type Size = InViewObservableElSize;
 
@@ -53,7 +53,7 @@ export interface InViewObservableElSize {
 
 /**
  * @deprecated
- * @see [[InViewObserveOptions]]
+ * {@link InViewObserveOptions}
  */
 export type ObserveOptions = InViewObserveOptions;
 
@@ -133,7 +133,7 @@ export interface IntersectionObserverOptions {
 
 /**
  * @deprecated
- * @see [[InViewDirectiveOptions]]
+ * {@link InViewDirectiveOptions}
  */
 export type DirectiveOptions = InViewDirectiveOptions;
 
@@ -147,7 +147,7 @@ export interface InViewDirectiveOptions extends VNodeDirective {
 
 /**
  * @deprecated
- * @see [[InViewUnobserveOptions]]
+ * {@link InViewUnobserveOptions}
  */
 export type UnobserveOptions = InViewUnobserveOptions;
 
@@ -172,7 +172,7 @@ export type InViewObservableByGroup = Map<InViewGroup, Set<InViewObservableEleme
 
 /**
  * @deprecated
- * @see [[InViewObservableByGroup]]
+ * {@link InViewObservableByGroup}
  */
 export type ObservablesByGroup = InViewObservableByGroup;
 
@@ -191,48 +191,48 @@ export type InViewObservableElement = InViewObservable & InViewInitOptions;
 
 /**
  * @deprecated
- * @see [[InViewAdapteeType]]
+ * {@link InViewAdapteeType}
  */
 export type AdapteeType = InViewAdapteeType;
 
 /**
  * @deprecated
- * @see [[InViewAdapteeInstance]]
+ * {@link InViewAdapteeInstance}
  */
 export type AdapteeInstance = InViewAdapteeInstance;
 
 /**
  * @deprecated
- * @see [[InViewInitOptions]]
+ * {@link InViewInitOptions}
  */
 export type InitOptions = InViewInitOptions;
 
 /**
  * @deprecated
- * @see [[InViewObservableElementsMap]]
+ * {@link InViewObservableElementsMap}
  */
 export type ObservableElementsMap = InViewObservableElementsMap;
 
 /**
  * @deprecated
- * @see [[InViewObservableThresholdMap]]
+ * {@link InViewObservableThresholdMap}
  */
 export type ObservableThresholdMap = InViewObservableThresholdMap;
 
 /**
  * @deprecated
- * @see [[InViewObservableElementsThresholdMap]]
+ * {@link InViewObservableElementsThresholdMap}
  */
 export type ObservableElementsThresholdMap = InViewObservableElementsThresholdMap;
 
 /**
  * @deprecated
- * @see [[InViewObservableElementRect]]
+ * {@link InViewObservableElementRect}
  */
 export type ObservableElementRect = InViewObservableElementRect;
 
 /**
  * @deprecated
- * @see [[InViewObservableElement]]
+ * {@link InViewObservableElement}
  */
 export type ObservableElement = InViewObservableElement;

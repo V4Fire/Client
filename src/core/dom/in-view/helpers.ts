@@ -30,7 +30,6 @@ export function getAdaptee(strategies: InViewAdapteeInstance[]): CanUndef<InView
  * @param value
  */
 export function valueValidator(value: CanUndef<InViewInitOptions>): boolean {
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	return Boolean(value != null && (value.callback || value.onEnter || value.onLeave));
 }
 

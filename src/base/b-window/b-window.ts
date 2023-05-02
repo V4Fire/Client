@@ -54,7 +54,7 @@ interface bWindow extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScrol
 class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 	override readonly proxyCall: boolean = true;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** {@link iVisible.prototype.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -145,21 +145,21 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Window title store
-	 * @see [[bWindow.titleProp]]
+	 * {@link bWindow.titleProp}
 	 */
 	@field((o) => o.sync.link())
 	protected titleStore?: string;
 
 	/**
 	 * Slot name store
-	 * @see [[bWindow.slotNameProp]]
+	 * {@link bWindow.slotNameProp}
 	 */
 	@field((o) => o.sync.link())
 	protected slotNameStore?: string;
 
 	/**
 	 * Name of the active third-party slot to show
-	 * @see [[bWindow.slotNameProp]]
+	 * {@link bWindow.slotNameProp}
 	 */
 	get slotName(): CanUndef<string> {
 		return this.field.get('slotNameStore');
@@ -168,7 +168,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 	/**
 	 * Sets a new third-party slot to show
 	 *
-	 * @see [[bWindow.slotNameProp]]
+	 * {@link bWindow.slotNameProp}
 	 * @param value
 	 */
 	set slotName(value: CanUndef<string>) {
@@ -177,7 +177,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Window title
-	 * @see [[bWindow.titleStore]]
+	 * {@link bWindow.titleStore}
 	 */
 	get title(): string {
 		const
@@ -210,7 +210,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 	}
 
 	/**
-	 * @see [[iOpenToggle.open]]
+	 * {@link iOpenToggle.open}
 	 * @param [stage] - component stage to open
 	 */
 	async open(stage?: Stage): Promise<boolean> {
@@ -228,7 +228,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		return false;
 	}
 
-	/** @see [[iOpenToggle.close]] */
+	/** {@link iOpenToggle.close} */
 	async close(): Promise<boolean> {
 		if (await iOpenToggle.close(this)) {
 			this.setRootMod('opened', false);
@@ -239,18 +239,18 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		return false;
 	}
 
-	/** @see [[iLockPageScroll.lock]] */
+	/** {@link iLockPageScroll.lock} */
 	@wait('loading', {label: $$.lock})
 	lock(): Promise<void> {
 		return iLockPageScroll.lock(this, this.$refs.window);
 	}
 
-	/** @see [[iOpenToggle.onOpenedChange]] */
+	/** {@link iOpenToggle.onOpenedChange} */
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');
 	}
 
-	/** @see [[iOpenToggle.onTouchClose]] */
+	/** {@link iOpenToggle.onTouchClose} */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
 			target = <CanUndef<Element>>e.target;
@@ -295,7 +295,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		}
 	}
 
-	/** @see iOpenToggle.initCloseHelpers */
+	/** {link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);

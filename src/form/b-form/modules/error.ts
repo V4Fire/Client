@@ -33,7 +33,7 @@ export default class ValidationError<D = undefined> extends BaseError {
 
 	/**
 	 * @deprecated
-	 * @see [[ValidationError.component]]
+	 * {@link ValidationError.component}
 	 */
 	@deprecated({renamedTo: 'component'})
 	get el(): iInput {
@@ -42,7 +42,7 @@ export default class ValidationError<D = undefined> extends BaseError {
 
 	/**
 	 * @deprecated
-	 * @see [[ValidationError.details]]
+	 * {@link ValidationError.details}
 	 */
 	@deprecated({renamedTo: 'details'})
 	get validator(): InputValidationError<D> {

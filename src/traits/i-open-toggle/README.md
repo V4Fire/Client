@@ -23,7 +23,7 @@ The method has the default implementation.
 import iOpenToggle from 'traits/i-open-toggle/i-open-toggle';
 
 export default class bButton implements iOpenToggle {
-  /** @see iOpenToggle.toggle */
+  /** {link iOpenToggle.toggle} */
   toggle(...args: unknown[]): Promise<boolean> {
     return iOpenToggle.toggle(this, ...args);
   }

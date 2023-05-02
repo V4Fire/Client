@@ -18,7 +18,7 @@ const
 
 /**
  * Map with aliases for custom (not external) loaders from all layers
- * @type {!Object}
+ * @type {!object}
  */
 const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, i) => {
 	$C(glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*.js'))).forEach((el) => {

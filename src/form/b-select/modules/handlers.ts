@@ -255,7 +255,7 @@ export async function itemsNavigate<C extends bSelect>(component: C, e: Keyboard
 }
 
 /**
- * @see [[iOpenToggle.onOpenedChange]]
+ * {@link iOpenToggle.onOpenedChange}
  * @param component
  * @param e
  */

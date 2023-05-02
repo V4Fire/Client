@@ -32,7 +32,7 @@ export function resolveAfterDOMLoaded(): SyncPromise<void> {
 
 /**
  * @deprecated
- * @see [[resolveAfterDOMLoaded]]
+ * {@link resolveAfterDOMLoaded}
  */
 export const afterDOMLoaded = deprecate(
 	{

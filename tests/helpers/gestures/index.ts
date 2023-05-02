@@ -31,7 +31,7 @@ export default class Gestures {
 	 * @param page
 	 * @param opts
 	 * @deprecated
-	 * @see [[Gestures.create]]
+	 * {@link Gestures.create}
 	 */
 	async create(page: Page, opts: TouchGesturesCreateOptions): Promise<JSHandle<GesturesInterface>> {
 		return Gestures.create(page, opts);

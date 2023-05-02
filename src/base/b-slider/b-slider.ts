@@ -56,17 +56,17 @@ interface bSlider extends Trait<typeof iObserveDOM> {}
 @component()
 @derive(iObserveDOM)
 class bSlider extends iData implements iObserveDOM, iItems {
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	readonly Item!: object;
 
-	/** @see [[iItems.Items]] */
+	/** {@link iItems.Items} */
 	readonly Items!: Array<this['Item']>;
 
 	/**
 	 * A slider mode:
 	 *
 	 * 1. With the `slide` mode, it is impossible to skip slides.
-	 *    That is, we can't get from the first slide directly to the third or other stuff.
+	 * That is, we can't get from the first slide directly to the third or other stuff.
 	 *
 	 * 2. With the `scroll` mode, to scroll slides is used the browser native scrolling.
 	 */
@@ -141,49 +141,49 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * @deprecated
-	 * @see [[bSlider.items]]
+	 * {@link bSlider.items}
 	 */
 	@prop(Array)
 	readonly optionsProp: iItems['items'] = [];
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@prop(Array)
 	readonly itemsProp: iItems['items'] = [];
 
 	/**
 	 * @deprecated
-	 * @see [[bSlider.item]]
+	 * {@link bSlider.item}
 	 */
 	@prop({type: [String, Function], required: false})
 	readonly option?: iItems['item'];
 
-	/** @see [[iItems.item]] */
+	/** {@link iItems.item} */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
 	/**
 	 * @deprecated
-	 * @see [[bSlider.itemKey]]
+	 * {@link bSlider.itemKey}
 	 */
 	@prop({type: [String, Function], required: false})
 	readonly optionKey?: iItems['itemKey'];
 
-	/** @see [[iItems.itemKey]] */
+	/** {@link iItems.itemKey} */
 	@prop({type: [String, Function], required: false})
 	readonly itemKey?: iItems['itemKey'];
 
 	/**
 	 * @deprecated
-	 * @see [[bSlider.itemProps]]
+	 * {@link bSlider.itemProps}
 	 */
 	@prop({type: [Function, Object], required: false})
 	readonly optionProps?: iItems['itemProps'];
 
-	/** @see [[iItems.itemProps]] */
+	/** {@link iItems.itemProps} */
 	@prop({type: [Function, Object], required: false})
 	readonly itemProps?: iItems['itemProps'];
 
-	/** @see [[bSlider.items]] */
+	/** {@link bSlider.items} */
 	@field((o) => o.sync.link())
 	options!: this['Items'];
 
@@ -237,7 +237,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * @deprecated
-	 * @see [[bSlider.isSlideMode]]
+	 * {@link bSlider.isSlideMode}
 	 */
 	@deprecated({renamedTo: 'isSlideMode'})
 	get isSlider(): boolean {
@@ -286,15 +286,15 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@field((o) => o.sync.link())
 	protected itemsStore!: iItems['items'];
 
-	/** @see [[bSlider.current]] */
+	/** {@link bSlider.current} */
 	@system()
 	protected currentStore: number = 0;
 
-	/** @see [[bSlider.modeProp]] */
+	/** {@link bSlider.modeProp} */
 	@field((o) => o.sync.link((value: Mode) => {
 		if (value === 'slider') {
 			deprecate({
@@ -338,8 +338,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Is the minimum threshold for starting slide content passed
 	 *
-	 * @see [[bSlider.swipeToleranceX]]
-	 * @see [[bSlider.swipeToleranceY]]
+	 * {@link bSlider.swipeToleranceX}
+	 * {@link bSlider.swipeToleranceY}
 	 */
 	@system()
 	protected isTolerancePassed: boolean = false;
@@ -390,7 +390,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@computed({dependencies: ['itemsStore', 'options']})
 	get items(): this['Items'] {
 		const
@@ -407,7 +407,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return items ?? [];
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
@@ -475,7 +475,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return false;
 	}
 
-	/** @see [[iObserveDOM.initDOMObservers]] */
+	/** {@link iObserveDOM.initDOMObservers} */
 	@hook('mounted')
 	initDOMObservers(): void {
 		const
@@ -573,14 +573,14 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * @deprecated
-	 * @see [[bSlider.getItemKey]]
+	 * {@link bSlider.getItemKey}
 	 */
 	@deprecated({renamedTo: 'getItemKey'})
 	protected getOptionKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return this.getItemKey(el, i);
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, el, i);
 	}

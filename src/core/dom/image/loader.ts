@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-invalid-this */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -28,10 +26,10 @@ export const
 	$$ = symbolGenerator();
 
 export default class ImageLoader {
-	/** @see [[Factory]] */
+	/** {@link Factory} */
 	readonly factory: Factory = new Factory();
 
-	/** @see [[Lifecycle]] */
+	/** {@link Lifecycle} */
 	readonly lifecycle: Lifecycle = new Lifecycle(this);
 
 	/**
@@ -71,7 +69,7 @@ export default class ImageLoader {
 	/**
 	 * Default `optionsResolver` function
 	 */
-	 defaultOptionsResolver?: OptionsResolver = (opts) => opts;
+	defaultOptionsResolver?: OptionsResolver = (opts) => opts;
 
 	/**
 	 * Sets the default `broken` image

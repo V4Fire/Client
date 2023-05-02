@@ -112,7 +112,7 @@ export interface WatchObject<
 	 */
 	provideArgs?: boolean;
 
-	/***
+	/**
 	 * Wrapper for a handler
 	 *
 	 * @example
@@ -145,7 +145,7 @@ export interface MethodWatcher<
 > extends WatchOptions {
 	/**
 	 * @deprecated
-	 * @see [[MethodWatcher.path]]
+	 * {@link MethodWatcher.path}
 	 */
 	field?: string;
 
@@ -189,7 +189,7 @@ export interface MethodWatcher<
 	 */
 	provideArgs?: boolean;
 
-	/***
+	/**
 	 * Wrapper for a handler
 	 *
 	 * @example

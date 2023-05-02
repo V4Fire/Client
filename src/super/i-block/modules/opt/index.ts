@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -23,16 +24,16 @@ export * from 'super/i-block/modules/opt/interface';
  * Class provides some methods to optimize an application
  */
 export default class Opt extends Friend {
-	/** @see [[iBlock.ifOnceStore]] */
+	/** {@link iBlock.ifOnceStore} */
 	protected get ifOnceStore(): Dictionary<number> {
 		return this.ctx.ifOnceStore;
 	}
 
 	/**
 	 * Returns a number if the specified label:
-	 *   `2` -> already exists in the cache;
-	 *   `1` -> just written in the cache;
-	 *   `0` -> does not exist in the cache.
+	 * `2` -> already exists in the cache;
+	 * `1` -> just written in the cache;
+	 * `0` -> does not exist in the cache.
 	 *
 	 * This method is used with conditions to provide a logic: if the condition was switched to true,
 	 * then further, it always returns true.

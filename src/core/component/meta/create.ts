@@ -211,7 +211,6 @@ export function fillMeta(
 			type: prop.type,
 			required: prop.required !== false && defaultProps && defValue === undefined,
 
-			// eslint-disable-next-line @typescript-eslint/unbound-method
 			validator: prop.validator,
 			functional: prop.functional,
 			default: defValue

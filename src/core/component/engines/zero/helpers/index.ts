@@ -278,11 +278,12 @@ export function appendChild(parent: Nullable<Node>, node: Nullable<CanArray<Node
 }
 
 export function warn(message: string, vm: object): void {
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	if (Object.isFunction(config.warnHandler)) {
 		config.warnHandler.call(null, message, vm);
 
+	// eslint-disable-next-line no-console
 	} else if (typeof console !== 'undefined' && Object.isFunction(console.error) && !config.silent) {
+		// eslint-disable-next-line no-console
 		console.error(`[Vue warn]: ${message}`);
 	}
 }
@@ -319,7 +320,6 @@ export function addStaticDirectives(
 						rule = ';display: none;';
 
 					if (node != null && data.tag === 'component') {
-						// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
 						node.setAttribute('style', (node.getAttribute('style') ?? '') + rule);
 
 					} else {

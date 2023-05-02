@@ -19,10 +19,10 @@ The trait declares two associated types to specify a type of component items: **
 import iItems from 'traits/i-items/i-items';
 
 export default class bTree implements iItems {
-  /** @see [[iItems.Item]] */
+  /** {@link iItems.Item} */
   readonly Item!: Item;
 
-  /** @see [[iItems.Items]] */
+  /** {@link iItems.Items} */
   readonly Items!: Array<this['Item']>;
 }
 ```
@@ -78,7 +78,7 @@ it will be compiled into a function. The method returns a value of invoking the 
 import iItems, { IterationKey } from 'traits/i-items/i-items';
 
 export default class bTree implements iItems {
-  /** @see [[iItems.getItemKey]] */
+  /** {@link iItems.getItemKey} */
   protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
     return iItems.getItemKey(this, el, i);
   }

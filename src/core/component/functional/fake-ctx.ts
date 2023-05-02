@@ -126,7 +126,6 @@ export function createFakeCtx<T extends object = FunctionalCtx>(
 	};
 
 	fakeCtx.$forceUpdate = () => {
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (!Object.isFunction(parent?.$forceUpdate)) {
 			return;
 		}

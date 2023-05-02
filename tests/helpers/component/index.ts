@@ -26,7 +26,7 @@ export default class Component {
 	 * @param scheme
 	 * @param [opts]
 	 */
-	 static async createComponents(
+	static async createComponents(
 		page: Page,
 		componentName: string,
 		scheme: RenderParams[],
@@ -48,7 +48,7 @@ export default class Component {
 	 * @param [scheme]
 	 * @param [opts]
 	 */
-	 static async createComponent<T extends iBlock>(
+	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
 		scheme?: Partial<RenderParams>,
@@ -63,7 +63,7 @@ export default class Component {
 	 * @param [scheme]
 	 * @param [opts]
 	 */
-	 static async createComponent<T extends iBlock>(
+	static async createComponent(
 		page: Page,
 		componentName: string,
 		scheme: RenderParams[],
@@ -141,7 +141,7 @@ export default class Component {
 	 * @param ctx
 	 * @param selector
 	 */
-	 static async waitForComponentByQuery<T extends iBlock>(
+	static async waitForComponentByQuery<T extends iBlock>(
 		ctx: Page | ElementHandle,
 		selector: string
 	): Promise<JSHandle<T>> {
@@ -202,7 +202,7 @@ export default class Component {
 	/**
 	 * Returns the root component
 	 *
-	 * @typeparam T - type of the root
+	 * @typeParam T - type of the root
 	 * @param ctx
 	 * @param [selector]
 	 */
@@ -244,7 +244,7 @@ export default class Component {
 	 * @param componentSelector
 	 * @param [options]
 	 * @deprecated
-	 * @see [[Component.waitForComponentByQuery]]
+	 * {@link Component.waitForComponentByQuery}
 	 */
 	async waitForComponent<T extends iBlock>(
 		ctx: Page | ElementHandle,
@@ -268,7 +268,7 @@ export default class Component {
 	 * @param scheme
 	 * @param opts
 	 * @deprecated
-	 * @see [[Component.createComponent]]
+	 * {@link Component.createComponent}
 	 */
 	async createComponent<T extends iBlock>(
 		page: Page,
@@ -281,7 +281,7 @@ export default class Component {
 
 	/**
 	 * @deprecated
-	 * @see [[Component.waitForRoot]]
+	 * {@link Component.waitForRoot}
 	 *
 	 * @param ctx
 	 * @param [selector]
@@ -292,7 +292,7 @@ export default class Component {
 
 	/**
 	 * @deprecated
-	 * @see [[Component.getComponentByQuery]]
+	 * {@link Component.getComponentByQuery}
 	 */
 	async getComponentById<T extends iBlock>(
 		page: Page | ElementHandle,
@@ -307,7 +307,7 @@ export default class Component {
 	 * @param ctx
 	 * @param selector
 	 * @deprecated
-	 * @see [[Component.getComponentByQuery]]
+	 * {@link Component.getComponentByQuery}
 	 */
 	async getComponentByQuery<T extends iBlock>(
 		ctx: Page | ElementHandle,
@@ -318,7 +318,7 @@ export default class Component {
 
 	/**
 	 * @deprecated
-	 * @see [[Component.getComponents]]
+	 * {@link Component.getComponents}
 	 *
 	 * @param ctx
 	 * @param selector
@@ -329,7 +329,7 @@ export default class Component {
 
 	/**
 	 * @deprecated
-	 * @see [[Component.setPropsToComponent]]
+	 * {@link Component.setPropsToComponent}
 	 *
 	 * @param page
 	 * @param componentSelector
@@ -350,7 +350,7 @@ export default class Component {
 	 * @param componentSelector
 	 * @param status
 	 * @deprecated
-	 * @see [[Component.waitForComponentStatus]]
+	 * {@link Component.waitForComponentStatus}
 	 */
 	async waitForComponentStatus<T extends iBlock>(
 		ctx: Page | ElementHandle,

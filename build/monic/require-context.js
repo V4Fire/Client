@@ -54,7 +54,7 @@ module.exports = function requireContextReplacer(str) {
 		// eslint-disable-next-line no-new-func
 		contextPaths = Function('flags', `return ${contextPaths}`)(this.flags);
 
-		if (!Object.isArray(contextPaths) || contextPaths.length < 2) {
+		if (!object.isArray(contextPaths) || contextPaths.length < 2) {
 			throw SyntaxError('Invalid @context format');
 		}
 

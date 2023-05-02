@@ -20,7 +20,7 @@ const
  * Starts a test
  *
  * @param {Page} page
- * @param {!Object} params
+ * @param {!object} params
  * @returns {!Promise<boolean>}
  */
 module.exports = async (page, params) => {

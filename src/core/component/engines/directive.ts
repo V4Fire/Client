@@ -41,6 +41,7 @@ ComponentEngine.directive = function directive(name: string, params?: DirectiveO
 
 		bind(_el: HTMLElement, _opts: DirectiveOptions, vnode: VNode) {
 			const
+				// eslint-disable-next-line prefer-rest-params
 				args = Array.from(arguments);
 
 			if (Object.isFunction(originalBind)) {

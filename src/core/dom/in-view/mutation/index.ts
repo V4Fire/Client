@@ -326,7 +326,6 @@ export default class InView extends Super {
 		observable.time = highResTimeStamp;
 		observable.timeIn = highResTimeStamp;
 
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (Object.isFunction(observable.onEnter)) {
 			observable.onEnter(observable);
 		}
@@ -356,7 +355,6 @@ export default class InView extends Super {
 		observable.time = highResTimeStamp;
 		observable.timeOut = highResTimeStamp;
 
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (Object.isFunction(observable.onLeave)) {
 			observable.onLeave(observable);
 		}

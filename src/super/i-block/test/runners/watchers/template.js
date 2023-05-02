@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 // @ts-check
 
 /*!

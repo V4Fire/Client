@@ -15,9 +15,9 @@ const blendModes = {
 	/**
 	 * Blend mode: color burn
 	 *
-	 * @param f {!Object} - foreground color
-	 * @param b {!Object} - background color
-	 * @returns {!Object}
+	 * @param f {!object} - foreground color
+	 * @param b {!object} - background color
+	 * @returns {!object}
 	 */
 	colorBurn(f, b) {
 		const getColor = (f, b) => {
@@ -48,9 +48,9 @@ const blendModes = {
 	/**
 	 * Normal blend mode
 	 *
-	 * @param {!Object} f - foreground color
-	 * @param {!Object} b - background color
-	 * @returns {!Object}
+	 * @param {!object} f - foreground color
+	 * @param {!object} b - background color
+	 * @returns {!object}
 	 */
 	normal(f, b) {
 		const
@@ -67,10 +67,10 @@ module.exports = function addPlugins(api) {
 	 * Returns a color mixed with the specified mode
 	 *
 	 * @see https://en.wikipedia.org/wiki/Blend_modes
-	 * @param {!Object} foreground
-	 * @param {!Object} background
-	 * @param {string=} [mode=normal]
-	 * @returns {!Object}
+	 * @param {!object} foreground
+	 * @param {!object} background
+	 * @param {string} [mode=normal]
+	 * @returns {!object}
 	 */
 	api.define('blend', (foreground, background, mode = 'normal') => {
 		utils.assertColor(foreground);

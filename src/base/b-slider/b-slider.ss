@@ -22,7 +22,7 @@
 			< template v-if = item || option
 				/*
 				 * @deprecated
-				 * @see beforeItems
+				 * {@link beforeItems}
 				 */
 				+= self.slot('beforeOptions')
 
@@ -39,7 +39,7 @@
 
 				/*
 				 * @deprecated
-				 * @see beforeItems
+				 * {@link beforeItems}
 				 */
 				+= self.slot('afterOptions')
 
