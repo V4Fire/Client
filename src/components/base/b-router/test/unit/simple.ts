@@ -14,17 +14,19 @@ import test from 'tests/config/unit/test';
 import type { EngineName } from 'components/base/b-router/test/interface';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
 
-test.describe('<b-router> simple', () => {
+test.describe('<b-router> simple use-cases', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test.describe('using `history` engine', () => {
-		test.describe('common', () => {
+	test.describe('with `history` engine', () => {
+		// Common tests
+		test.describe('-', () => {
 			generateSpecs('history');
 		});
 
-		test.describe('specific', () => {
+		// Specific tests
+		test.describe('-', () => {
 			const initRouter = createInitRouter('history');
 
 			let root: JSHandle<iStaticPage>;
@@ -33,122 +35,121 @@ test.describe('<b-router> simple', () => {
 				root = await initRouter(page);
 			});
 
-			test('checking the `route` property', async () => {
-				await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
-			});
+			test.describe('`replace`', () => {
+				test('should switch page using a non-normalized path', async () => {
+					await test.expect(root.evaluate(async (ctx) => {
+						const
+							historyLength = history.length,
+							res: Dictionary = {};
 
-			test('`replace` a page by a path', async () => {
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						historyLength = history.length,
-						res: Dictionary = {};
+						await ctx.router!.replace('second-page');
 
-					await ctx.router!.replace('second');
+						res.content = ctx.route!.meta.content;
+						res.lengthDoesntChange = historyLength === history.length;
 
-					res.content = ctx.route!.meta.content;
-					res.lengthDoesntChange = historyLength === history.length;
+						return res;
 
-					return res;
-
-				})).resolves.toEqual({
-					content: 'Second page',
-					lengthDoesntChange: true
+					})).resolves.toEqual({
+						content: 'Second page',
+						lengthDoesntChange: true
+					});
 				});
-			});
 
-			test('`replace` a page by null', async () => {
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						{router} = ctx;
+				test('should not switch page and query should be updated when `null` and opts are passed', async () => {
+					await test.expect(root.evaluate(async (ctx) => {
+						const
+							{router} = ctx;
 
-					await router!.replace('/');
+						await router!.replace('/');
 
-					const
-						historyLength = history.length,
-						res: Dictionary = {};
+						const
+							historyLength = history.length,
+							res: Dictionary = {};
 
-					await router!.replace('second');
-					await router!.replace(null, {query: {bla: 1}});
+						await router!.replace('second');
+						await router!.replace(null, {query: {bla: 1}});
 
-					res.content = ctx.route!.meta.content;
-					res.query = location.search;
-					res.lengthDoesntChange = historyLength === history.length;
+						res.content = ctx.route!.meta.content;
+						res.query = location.search;
+						res.lengthDoesntChange = historyLength === history.length;
 
-					return res;
+						return res;
 
-				})).resolves.toEqual({
-					query: '?bla=1',
-					content: 'Second page',
-					lengthDoesntChange: true
+					})).resolves.toEqual({
+						query: '?bla=1',
+						content: 'Second page',
+						lengthDoesntChange: true
+					});
 				});
 			});
 		});
 	});
 
-	test.describe('using `in-memory` engine', () => {
-		test.describe('common', () => {
+	test.describe('with `in-memory` engine', () => {
+		// Common tests
+		test.describe('-', () => {
 			generateSpecs('in-memory');
 		});
 
-		test.describe('specific', () => {
+		// Specific tests
+		test.describe('-', () => {
 			const initRouter = createInitRouter('in-memory');
 
-			test('checking the `route` property with `initialRoute`', async ({page}) => {
-				const root = await initRouter(page);
-				await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
-			});
-
-			test('checking the `route` property without `initialRoute`', async ({page}) => {
+			test('the `route` property should be `null` when `initialRoute` is not set', async ({page}) => {
 				const root = await initRouter(page, {initialRoute: null});
 				await test.expect(root.evaluate(({route}) => route == null)).resolves.toBeTruthy();
 			});
 
-			test('`replace` a page by a path', async ({page}) => {
-				const root = await initRouter(page);
+			test.describe('`replace`', () => {
+				test('should switch page using a non-normalized path', async ({page}) => {
+					const root = await initRouter(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						{router} = ctx,
-						historyLength = router!.unsafe.engine.history.length,
-						res: Dictionary = {};
+					await test.expect(root.evaluate(async (ctx) => {
+						const
+							{router} = ctx,
+							historyLength = router!.unsafe.engine.history.length,
+							res: Dictionary = {};
 
-					await router!.replace('second');
+						await router!.replace('second-page');
 
-					res.content = ctx.route!.meta.content;
-					res.lengthDoesntChange = historyLength === router!.unsafe.engine.history.length;
+						res.content = ctx.route!.meta.content;
+						res.lengthDoesntChange = historyLength === router!.unsafe.engine.history.length;
 
-					return res;
+						return res;
 
-				})).resolves.toEqual({
-					content: 'Second page',
-					lengthDoesntChange: true
+					})).resolves.toEqual({
+						content: 'Second page',
+						lengthDoesntChange: true
+					});
 				});
-			});
 
-			test('`replace` a page by null', async ({page}) => {
-				const root = await initRouter(page);
+				test('should not switch page and query should be updated when `null` and opts are passed', async ({page}) => {
+					const root = await initRouter(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						{router} = ctx;
+					await test.expect(root.evaluate(async (ctx) => {
+						const
+							{router} = ctx;
 
-					await router!.replace('/');
+						await router!.replace('/');
 
-					const
-						historyLength = router!.unsafe.engine.history.length,
-						res: Dictionary = {};
+						const
+							historyLength = router!.unsafe.engine.history.length,
+							res: Dictionary = {};
 
-					await router!.replace('second');
-					await router!.replace(null, {query: {bla: 1}});
+						await router!.replace('second');
+						await router!.replace(null, {query: {bla: 1}});
 
-					res.content = ctx.route!.meta.content;
-					res.lengthDoesntChange = historyLength === router!.unsafe.engine.history.length;
+						res.content = ctx.route!.meta.content;
+						res.query = ctx.route!.query;
+						res.lengthDoesntChange = historyLength === router!.unsafe.engine.history.length;
 
-					return res;
+						return res;
 
-				})).resolves.toEqual({
-					content: 'Second page',
-					lengthDoesntChange: true
+					})).resolves.toEqual({
+						content: 'Second page',
+						query: {bla: 1},
+						lengthDoesntChange: true
+					});
 				});
 			});
 		});
@@ -169,29 +170,35 @@ function generateSpecs(engineName: EngineName) {
 		root = await initRouter(page);
 	});
 
-	test('checking the root', async () => {
+	test('the `route` property should be set on the root component', async ({}) => {
+		await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
+	});
+
+	test('root component should have the `root` property in the meta params', async () => {
 		test.expect(await root.evaluate((ctx) => ctx.unsafe.meta.params.root)).toBe(true);
 	});
 
-	test('checking the `router` property', async () => {
+	test('root\'s component `router` should be a `b-router`', async () => {
 		test.expect(await root.evaluate(({router}) => router?.componentName)).toBe('b-router');
 	});
 
-	test('`push` a page by a route identifier', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('second');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Second page');
+	test.describe('`push`', () => {
+		test('should switch page using a route identifier', async () => {
+			await test.expect(root.evaluate(async (ctx) => {
+				await ctx.router!.push('second');
+				return ctx.route!.meta.content;
+			})).resolves.toBe('Second page');
+		});
+
+		test('should switch page using a path', async () => {
+			await test.expect(root.evaluate(async (ctx) => {
+				await ctx.router!.push('/');
+				return ctx.route!.meta.content;
+			})).resolves.toBe('Main page');
+		});
 	});
 
-	test('`push` a page by a path', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('/');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Main page');
-	});
-
-	test('checking the `activePage` property', async () => {
+	test('`activePage` property should return identifier of the active route', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('second');
 			return ctx.activePage;
@@ -203,88 +210,90 @@ function generateSpecs(engineName: EngineName) {
 		})).resolves.toBe('main');
 	});
 
-	test('updating of routes', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			const
-				{router} = ctx;
+	test.describe('`updateRoutes`', () => {
+		test('should switch page to a new default route', async () => {
+			await test.expect(root.evaluate(async (ctx) => {
+				const
+					{router} = ctx;
 
-			const
-				res: Dictionary = {},
-				oldRoutes = ctx.router!.routes;
+				const
+					res: Dictionary = {},
+					oldRoutes = ctx.router!.routes;
 
-			await router!.updateRoutes({
-				main: {
-					path: '/',
-					default: true,
-					content: 'Dynamic main page'
-				}
+				await router!.updateRoutes({
+					main: {
+						path: '/',
+						default: true,
+						content: 'Dynamic main page'
+					}
+				});
+
+				res.dynamicPage = ctx.route!.meta.content;
+
+				router!.routes = oldRoutes;
+				router!.unsafe.routeStore = undefined;
+
+				await router!.unsafe.initRoute('main');
+				res.restoredPage = ctx.route!.meta.content;
+
+				return res;
+
+			})).resolves.toEqual({
+				dynamicPage: 'Dynamic main page',
+				restoredPage: 'Main page'
 			});
+		});
 
-			res.dynamicPage = ctx.route!.meta.content;
+		test('should update `basePath` and switch page to the specified `activeRoute`', async () => {
+			await test.expect(root.evaluate(async (ctx) => {
+				const
+					{router} = ctx;
 
-			router!.routes = oldRoutes;
-			router!.unsafe.routeStore = undefined;
+				const
+					res: Dictionary = {},
+					oldRoutes = ctx.router!.routes;
 
-			await router!.unsafe.initRoute('main');
-			res.restoredPage = ctx.route!.meta.content;
+				await router!.updateRoutes('/demo', '/demo/second', {
+					main: {
+						path: '/',
+						default: true,
+						content: 'Dynamic main page'
+					},
 
-			return res;
+					second: {
+						path: '/second',
+						default: true,
+						content: 'Dynamic second page'
+					}
+				});
 
-		})).resolves.toEqual({
-			dynamicPage: 'Dynamic main page',
-			restoredPage: 'Main page'
+				res.dynamicPage = ctx.route!.meta.content;
+
+				router!.basePath = '/';
+				router!.routes = oldRoutes;
+				router!.unsafe.routeStore = undefined;
+
+				await router!.unsafe.initRoute('/');
+				res.restoredPage = ctx.route!.meta.content;
+
+				return res;
+
+			})).resolves.toEqual({
+				dynamicPage: 'Dynamic second page',
+				restoredPage: 'Main page'
+			});
 		});
 	});
 
-	test('updating of a base path', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			const
-				{router} = ctx;
-
-			const
-				res: Dictionary = {},
-				oldRoutes = ctx.router!.routes;
-
-			await router!.updateRoutes('/demo', '/demo/second', {
-				main: {
-					path: '/',
-					default: true,
-					content: 'Dynamic main page'
-				},
-
-				second: {
-					path: '/second',
-					default: true,
-					content: 'Dynamic second page'
-				}
-			});
-
-			res.dynamicPage = ctx.route!.meta.content;
-
-			router!.basePath = '/';
-			router!.routes = oldRoutes;
-			router!.unsafe.routeStore = undefined;
-
-			await router!.unsafe.initRoute('/');
-			res.restoredPage = ctx.route!.meta.content;
-
-			return res;
-
-		})).resolves.toEqual({
-			dynamicPage: 'Dynamic second page',
-			restoredPage: 'Main page'
-		});
-	});
-
-	test('getting URL by a query', async () => {
+	test('`getRoutePath` should return URL of the route with the specified `query`', async () => {
 		test.expect(await root.evaluate(({router}) => router!.getRoutePath('second', {query: {bla: 1}})))
-			.toBe('/second?bla=1');
+			.toBe('/second-page?bla=1');
 
 		test.expect(await root.evaluate(({router}) => router!.getRoutePath('/', {query: {bla: 1}})))
 			.toBe('/?bla=1');
 	});
 
-	test('getting route parameters by a query', async () => {
+	test('`getRoute` should return route descriptor using a route identifier or path', async () => {
 		const pageMeta = {
 			name: 'main',
 			path: '/',
