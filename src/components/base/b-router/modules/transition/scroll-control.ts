@@ -16,7 +16,7 @@ type ScrollSnapshot = CanUndef<{meta: {scroll: {x:number; y:number}}}>;
 
 export default class ScrollControl {
 	/**
-	 * Transition class
+	 * Transition instance
 	 */
 	protected transition: Transition;
 
