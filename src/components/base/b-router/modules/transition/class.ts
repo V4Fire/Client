@@ -88,34 +88,6 @@ export default class Transition {
 	}
 
 	/**
-	 * Initializes information about the route we are transitioning to
-	 */
-	initNewRouteInfo(): void {
-		if (this.newRouteInfoInitialized) {
-			throw new Error('New route info is already initialized');
-		}
-
-		this.newRouteInfoInitialized = true;
-
-		// Get information about the specified route
-		if (this.ref != null) {
-			this.newRouteInfoStore = this.component.getRoute(this.engine.id(this.ref));
-
-		// In this case, we don't have a ref specified,
-		// so we're trying to get the information from the current route
-		// and use it as a blueprint to the new one
-		} else if (this.currentEngineRoute) {
-			this.ref = this.getEngineRoute()!;
-
-			const route = this.component.getRoute(this.ref);
-
-			if (route) {
-				this.newRouteInfoStore = Object.mixin(true, route, router.purifyRoute(this.currentEngineRoute));
-			}
-		}
-	}
-
-	/**
 	 * Returns transition ref
 	 */
 	getRef(): TransitionContext['ref'] {
@@ -329,6 +301,34 @@ export default class Transition {
 		}
 
 		return {hardChange};
+	}
+
+	/**
+	 * Initializes information about the route we are transitioning to
+	 */
+	protected initNewRouteInfo(): void {
+		if (this.newRouteInfoInitialized) {
+			throw new Error('New route info is already initialized');
+		}
+
+		this.newRouteInfoInitialized = true;
+
+		// Get information about the specified route
+		if (this.ref != null) {
+			this.newRouteInfoStore = this.component.getRoute(this.engine.id(this.ref));
+
+		// In this case, we don't have a ref specified,
+		// so we're trying to get the information from the current route
+		// and use it as a blueprint to the new one
+		} else if (this.currentEngineRoute) {
+			this.ref = this.getEngineRoute()!;
+
+			const route = this.component.getRoute(this.ref);
+
+			if (route) {
+				this.newRouteInfoStore = Object.mixin(true, route, router.purifyRoute(this.currentEngineRoute));
+			}
+		}
 	}
 
 	/**
