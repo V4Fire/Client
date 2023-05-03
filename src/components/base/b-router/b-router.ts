@@ -53,7 +53,7 @@ export default class bRouter extends bRouterProps {
 
 	/**
 	 * Compiled application route map
-	 * @see [[bRouter.routesProp]]
+	 * {@link bRouter.routesProp}
 	 */
 	@system<bRouter>({
 		after: 'engine',
@@ -62,7 +62,7 @@ export default class bRouter extends bRouterProps {
 
 	routes!: router.RouteBlueprints;
 
-	/** @see [[bRouter.basePathProp]] */
+	/** {@link bRouter.basePathProp} */
 	@system<bRouter>((o) => o.sync.link())
 	basePath!: string;
 
@@ -70,7 +70,7 @@ export default class bRouter extends bRouterProps {
 	 * The internal engine of the router.
 	 * For example, it could be an HTML5 history router or a URL hash router.
 	 *
-	 * @see [[bRouter.engine]]
+	 * {@link bRouter.engine}
 	 */
 	@system((o) => o.sync.link((v) => (<(v: unknown) => router.Router>v)(o)))
 	protected engine!: router.Router;
@@ -87,7 +87,7 @@ export default class bRouter extends bRouterProps {
 
 	/**
 	 * The active route value
-	 * @see [[bRouter.routeStore]]
+	 * {@link bRouter.routeStore}
 	 *
 	 * @example
 	 * ```js
@@ -236,12 +236,12 @@ export default class bRouter extends bRouterProps {
 		return this.engine.clearTmp();
 	}
 
-	/** @see [[router.getRoutePath]] */
+	/** {@link router.getRoutePath} */
 	getRoutePath(ref: string, opts: router.TransitionOptions = {}): CanUndef<string> {
 		return router.getRoutePath(ref, this.routes, opts);
 	}
 
-	/** @see [[router.getRoute]] */
+	/** {@link router.getRoute} */
 	getRoute(ref: string): CanUndef<router.RouteAPI> {
 		const {routes, basePath, defaultRoute} = this;
 		return router.getRoute(ref, routes, {basePath, defaultRoute});
