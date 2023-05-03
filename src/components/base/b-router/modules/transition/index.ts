@@ -53,6 +53,11 @@ export default class Transition {
 	 */
 	protected scroll: CanUndef<{meta: {scroll: {x:number; y:number}}}>;
 
+	/**
+	 * New route info store
+	 */
+	private newRouteInfoStore: CanUndef<router.RouteAPI>;
+
 	constructor(component: bRouter, {ref, method, opts}: TransitionContext) {
 		this.component = component;
 		this.ref = ref;
@@ -94,7 +99,7 @@ export default class Transition {
 
 		component.emit('beforeChange', this.ref, opts, this.method);
 
-		const newRouteInfo = this.getNewRouteInfo();
+		const {newRouteInfo} = this;
 
 		this.createScrollSnapshot();
 
@@ -151,7 +156,7 @@ export default class Transition {
 			meta
 		};
 
-		const newRoute = Object.assign(
+		const newRoute: router.RouteAPI = Object.assign(
 			Object.create(nonWatchRouteValues),
 			Object.reject(router.convertRouteToPlainObject(newRouteInfo), Object.keys(nonWatchRouteValues))
 		);
@@ -257,39 +262,13 @@ export default class Transition {
 			emitTransition(true);
 		}
 
-		// Restoring the scroll position
-		if (!SSR && meta.autoScroll !== false) {
-			(async () => {
-				const label = {
-					label: $$.autoScroll
-				};
-
-				const setScroll = () => {
-					const
-						s = meta.scroll;
-
-					if (s != null) {
-						component.r.scrollTo(s.x, s.y);
-
-					} else if (hardChange) {
-						component.r.scrollTo(0, 0);
-					}
-				};
-
-				await component.nextTick(label);
-				setScroll();
-
-				// Restoring the scroll for dynamic height components
-				await component.async.sleep(10, label);
-				setScroll();
-			})().catch(stderr);
-		}
+		this.restoreScroll(hardChange);
 
 		return newRoute;
 	}
 
 	/**
-	 * Stores user's scroll position for specific time moment
+	 * Stores user's scroll position for the specific time moment
 	 */
 	protected createScrollSnapshot(): void {
 		if (this.scroll) {
@@ -307,41 +286,6 @@ export default class Transition {
 	}
 
 	/**
-	 * Returns current engine route URL or name
-	 */
-	protected getEngineRoute(): CanUndef<string> {
-		const {currentEngineRoute} = this;
-		return currentEngineRoute ?
-			(currentEngineRoute.url ?? router.getRouteName(currentEngineRoute)) :
-			undefined;
-	}
-
-	/**
-	 * Returns information about the route we are transitioning to.
-	 */
-	protected getNewRouteInfo(): CanUndef<router.RouteAPI> {
-		let newRouteInfo: CanUndef<router.RouteAPI>;
-
-		// Get information about the specified route
-		if (this.ref != null) {
-			newRouteInfo = this.component.getRoute(this.engine.id(this.ref));
-
-		// In this case, we don't have a ref specified,
-		// so we're trying to get the information from the current route and use it as a blueprint to the new one
-		} else if (this.currentEngineRoute) {
-			this.ref = this.getEngineRoute()!;
-
-			const route = this.component.getRoute(this.ref);
-
-			if (route) {
-				newRouteInfo = Object.mixin(true, route, router.purifyRoute(this.currentEngineRoute));
-			}
-		}
-
-		return newRouteInfo;
-	}
-
-	/**
 	 * This method updates current route's scroll position.
 	 * To save the scroll position before switching to a new route,
 	 * we need to emit a system "replace" transition with additional information about the scroll.
@@ -354,6 +298,81 @@ export default class Transition {
 				await this.engine.replace(this.getEngineRoute()!, currentRouteWithScroll);
 			}
 		}
+	}
+
+	/**
+	 * Restores scroll position after transition is completed
+	 * @param hardChange
+	 */
+	protected restoreScroll(hardChange: boolean): void {
+		const {meta} = this.newRouteInfo ?? {};
+
+		if (SSR || !meta || meta.autoScroll === false) {
+			return;
+		}
+
+		const {component} = this;
+
+		(async () => {
+			const label = {
+				label: $$.autoScroll
+			};
+
+			const setScroll = () => {
+				const
+					s = meta.scroll;
+
+				if (s != null) {
+					component.r.scrollTo(s.x, s.y);
+
+				} else if (hardChange) {
+					component.r.scrollTo(0, 0);
+				}
+			};
+
+			await component.nextTick(label);
+			setScroll();
+
+			// Restoring the scroll for dynamic height components
+			await component.async.sleep(10, label);
+			setScroll();
+		})().catch(stderr);
+	}
+
+	/**
+	 * Returns current engine route URL or name
+	 */
+	protected getEngineRoute(): CanUndef<string> {
+		const {currentEngineRoute} = this;
+		return currentEngineRoute ?
+			(currentEngineRoute.url ?? router.getRouteName(currentEngineRoute)) :
+			undefined;
+	}
+
+	/**
+	 * Returns information about the route we are transitioning to.
+	 */
+	protected get newRouteInfo(): CanUndef<router.RouteAPI> {
+		if (this.newRouteInfoStore == null) {
+			// Get information about the specified route
+			if (this.ref != null) {
+				this.newRouteInfoStore = this.component.getRoute(this.engine.id(this.ref));
+
+			// In this case, we don't have a ref specified,
+			// so we're trying to get the information from the current route
+			// and use it as a blueprint to the new one
+			} else if (this.currentEngineRoute) {
+				this.ref = this.getEngineRoute()!;
+
+				const route = this.component.getRoute(this.ref);
+
+				if (route) {
+					this.newRouteInfoStore = Object.mixin(true, route, router.purifyRoute(this.currentEngineRoute));
+				}
+			}
+		}
+
+		return this.newRouteInfoStore;
 	}
 
 	/**
