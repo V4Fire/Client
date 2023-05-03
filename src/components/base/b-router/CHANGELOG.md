@@ -9,6 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :house: Internal
+
+* Refactored the `bRouter` component:
+  * Created the `Transition` class, which encapsulates the `emitTransition` logic
+  * Created the `handlers` module to handle DOM events
+  * Extracted props to the `bRouterProps` class
+
 ## v3.??.? (2022-??-??)
 
 #### :rocket: New Feature
