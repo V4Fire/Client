@@ -37,9 +37,9 @@ export default class Transition {
 	protected method: TransitionContext['method'];
 
 	/**
-	 * Additional transition options
+	 * Normalized transition options
 	 */
-	protected opts: TransitionContext['opts'];
+	protected opts: Exclude<TransitionContext['opts'], undefined>;
 
 	/**
 	 * Scroll control
@@ -63,7 +63,7 @@ export default class Transition {
 		// Transition context
 		this.ref = ref;
 		this.method = method;
-		this.opts = opts;
+		this.opts = router.getBlankRouteFrom(router.normalizeTransitionOpts(opts));
 
 		// Additional API
 		this.scroll = new ScrollControl(this);
@@ -160,13 +160,10 @@ export default class Transition {
 	 */
 	async emit(): Promise<CanUndef<router.Route>> {
 		const
-			opts = router.getBlankRouteFrom(router.normalizeTransitionOpts(this.opts));
-
-		const
 			{component} = this,
-			{r, engine} = component.unsafe;
+			{engine} = component.unsafe;
 
-		component.emit('beforeChange', this.ref, opts, this.method);
+		component.emit('beforeChange', this.ref, this.opts, this.method);
 
 		this.initNewRouteInfo();
 
@@ -174,10 +171,8 @@ export default class Transition {
 
 		await this.scroll.updateCurrentRouteScroll();
 
-		const {newRouteInfo} = this;
-
 		// We didn't find any route matching the given ref
-		if (newRouteInfo == null) {
+		if (this.newRouteInfo == null) {
 			// The transition was user-generated, then we need to save the scroll
 			if (this.method !== 'event' && this.ref != null) {
 				await engine[this.method](this.ref, this.scroll.getSnapshot());
@@ -186,33 +181,7 @@ export default class Transition {
 			return;
 		}
 
-		this.setNameForRouteInfo(newRouteInfo);
-
-		const
-			currentRoute = component.field.get<router.Route>('routeStore');
-
-		const deepMixin = (...args) => Object.mixin(
-			{
-				deep: true,
-				skipUndefs: false,
-				extendFilter: (el) => !Object.isArray(el)
-			},
-			...args
-		);
-
-		// If the new route has the same name as the current one,
-		// we need to mix the new state with the current one
-		if (router.getRouteName(currentRoute) === newRouteInfo.name) {
-			deepMixin(newRouteInfo, router.getBlankRouteFrom(currentRoute), opts);
-
-		} else {
-			deepMixin(newRouteInfo, opts);
-		}
-
-		const {meta} = newRouteInfo;
-
-		// If the route supports padding from the root object or query parameters
-		fillRouteParams(newRouteInfo, this.component);
+		this.fillNewRouteInfo();
 
 		// We have two variants of transitions:
 		// "soft" - only query parameters or meta changed between routes
@@ -221,10 +190,12 @@ export default class Transition {
 		// Query and route meta-parameter mutations should not cause components to re-render,
 		// so we put it in a prototype object with `Object.create`
 
+		const {newRouteInfo} = this;
+
 		const nonWatchRouteValues = {
 			url: newRouteInfo.resolvePath(newRouteInfo.params),
 			query: newRouteInfo.query,
-			meta
+			meta: newRouteInfo.meta
 		};
 
 		const newRoute: router.RouteAPI = Object.assign(
@@ -232,8 +203,32 @@ export default class Transition {
 			Object.reject(router.convertRouteToPlainObject(newRouteInfo), Object.keys(nonWatchRouteValues))
 		);
 
-		let
-			hardChange = false;
+		const result = await this.performTransition(newRoute, nonWatchRouteValues);
+
+		if (result == null) {
+			return;
+		}
+
+		this.scroll.restore(result.hardChange);
+
+		return newRoute;
+	}
+
+	/**
+	 * Performs the transition and emits required events
+	 * @param newRoute
+	 * @param nonWatchRouteValues
+	 */
+	protected async performTransition(
+		newRoute: router.RouteAPI,
+		nonWatchRouteValues: Pick<router.Route, 'url' | 'query' | 'meta'>
+	): Promise<CanUndef<{hardChange:boolean}>> {
+		let hardChange = false;
+
+		const
+			{component, engine, opts, newRouteInfo} = this,
+			{r} = component.unsafe,
+			currentRoute = component.field.get<router.Route>('routeStore');
 
 		const emitTransition = (onlyOwnTransition?: boolean) => {
 			const type = hardChange ? 'hard' : 'soft';
@@ -284,8 +279,8 @@ export default class Transition {
 			}
 
 			// This transition is marked as "external", i.e. refers to another site
-			if (newRouteInfo.meta.external) {
-				const u = newRoute.url;
+			if (newRouteInfo!.meta.external) {
+				const u = <string>newRoute.url;
 				location.href = u !== '' ? u : '/';
 				return;
 			}
@@ -333,22 +328,43 @@ export default class Transition {
 			emitTransition(true);
 		}
 
-		this.scroll.restore(hardChange);
-
-		return newRoute;
+		return {hardChange};
 	}
 
 	/**
-	 * Set's the name for the route info if none is specified
-	 * @param newRouteInfo
+	 * Fills new route info with additional options
 	 */
-	protected setNameForRouteInfo(newRouteInfo: router.RouteAPI): void {
-		if ((<router.PurifiedRoute<router.RouteAPI>>newRouteInfo).name == null) {
+	protected fillNewRouteInfo(): void {
+		const currentRoute = this.component.field.get<router.Route>('routeStore');
+
+		const deepMixin = (...args) => Object.mixin(
+			{
+				deep: true,
+				skipUndefs: false,
+				extendFilter: (el) => !Object.isArray(el)
+			},
+			...args
+		);
+
+		// Set the name for the new route info if none is specified
+		if ((<router.PurifiedRoute<router.RouteAPI>>this.newRouteInfo).name == null) {
 			const name = router.getRouteName(this.currentEngineRoute);
 
 			if (name != null) {
-				newRouteInfo.name = name;
+				this.newRouteInfo!.name = name;
 			}
 		}
+
+		// If the new route has the same name as the current one,
+		// we need to mix the new state with the current one
+		if (router.getRouteName(currentRoute) === this.newRouteInfo!.name) {
+			deepMixin(this.newRouteInfo, router.getBlankRouteFrom(currentRoute), this.opts);
+
+		} else {
+			deepMixin(this.newRouteInfo, this.opts);
+		}
+
+		// If the route supports padding from the root object or query parameters
+		fillRouteParams(this.newRouteInfo!, this.component);
 	}
 }
