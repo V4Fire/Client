@@ -16,11 +16,11 @@ test.describe('<b-router> watch', () => {
 		await demoPage.goto();
 	});
 
-	test.describe('using `history` engine', () => {
+	test.describe('with `history` engine', () => {
 		generateSpecs('history');
 	});
 
-	test.describe('using `in-memory` engine', () => {
+	test.describe('with `in-memory` engine', () => {
 		generateSpecs('in-memory');
 	});
 });
@@ -33,7 +33,7 @@ test.describe('<b-router> watch', () => {
 function generateSpecs(engineName: EngineName) {
 	const initRouter = createInitRouter(engineName);
 
-	test('should watch for `route` changes', async ({page}) => {
+	test('should watch for the `route` property changes', async ({page}) => {
 		const root = await initRouter(page);
 
 		const scan = root.evaluate(async (ctx, engineName) => {
@@ -78,7 +78,7 @@ function generateSpecs(engineName: EngineName) {
 		});
 	});
 
-	test('should link to the `route` property', async ({page}) => {
+	test('should create link to the `route` property', async ({page}) => {
 		const root = await initRouter(page);
 
 		const scan = root.evaluate(async (ctx, engineName) => {
