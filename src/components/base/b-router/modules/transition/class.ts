@@ -115,7 +115,8 @@ export default class Transition {
 	}
 
 	/**
-	 * Emits a new transition to the specified route
+	 * Performs a transition to the specified route, emits transition events
+	 * and restores user's scroll position if needed.
 	 *
 	 * @param ref - the route name or URL or `null`, if the route is equal to the previous
 	 * @param [opts] - additional transition options
@@ -221,7 +222,7 @@ export default class Transition {
 			router.getComparableRouteParams(newRoute)
 		);
 
-		// Nothing changes between routes, but there is a certain meta object
+		// Main route params didn't change, but there is a meta object, which could have changed
 		if (!newRouteIsReallyNeeded && currentRoute != null && opts.meta != null) {
 			newRouteIsReallyNeeded = !Object.fastCompare(
 				Object.select(currentRoute.meta, opts.meta),
@@ -252,8 +253,8 @@ export default class Transition {
 
 			// This transition is marked as "external", i.e. refers to another site
 			if (newRouteInfo!.meta.external) {
-				const u = <string>newRoute.url;
-				location.href = u !== '' ? u : '/';
+				const {url} = newRoute;
+				location.href = url != null && url !== '' ? url : '/';
 				return;
 			}
 
