@@ -49,7 +49,8 @@ export function createInitRouter(engineName: EngineName): InitRouter {
 				},
 
 				second: {
-					path: '/second',
+					// Path should not match with the page id so that we can test non-normalized path as an argument
+					path: '/second-page',
 					content: 'Second page',
 					query: {
 						rootParam: (o) => o.r.rootParam
