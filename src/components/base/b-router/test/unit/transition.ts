@@ -21,11 +21,11 @@ test.describe('<b-router> transition', () => {
 		await demoPage.goto();
 	});
 
-	test.describe('using `history` engine', () => {
+	test.describe('with `history` engine', () => {
 		generateSpecs('history');
 
-		test.describe('transition to a route with the path interpolation', () => {
-			test('providing original parameters', async ({page}) => {
+		test.describe('should transition to a route interpolating the path', () => {
+			test('with original parameters', async ({page}) => {
 				const root: JSHandle<iStaticPage> = await Component.waitForRoot(page);
 
 				await test.expect(root.evaluate(async (ctx) => {
@@ -54,7 +54,7 @@ test.describe('<b-router> transition', () => {
 				});
 			});
 
-			test('providing aliases', async ({page}) => {
+			test('with aliases', async ({page}) => {
 				const root: JSHandle<iStaticPage> = await Component.waitForRoot(page);
 
 				await test.expect(root.evaluate(async (ctx) => {
@@ -93,7 +93,7 @@ test.describe('<b-router> transition', () => {
 		});
 	});
 
-	test.describe('using `in-memory` engine', () => {
+	test.describe('with `in-memory` engine', () => {
 		generateSpecs('in-memory');
 	});
 });
@@ -112,94 +112,79 @@ function generateSpecs(engineName: EngineName) {
 		root = await initRouter(page);
 	});
 
-	test('transition to the default page', async ({page}) => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('/some/fake/page');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('404');
-
-		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('notFound');
+	test('should switch to the default page if the specified route was not found', async ({page}) => {
+		await assertPathTransitionsTo('/some/fake/page', '404');
+		await assertRouteNameIs('notFound');
 
 		if (engineName === 'history') {
 			test.expect(new URL(await page.url()).pathname).toBe('/some/fake/page');
 		}
 	});
 
-	test('transition to an alias with parameters', async ({page}) => {
+	test([
+		'should switch to the original page using an alias path,',
+		'but the route name should match the name of the alias route'
+	].join(' '), async () => {
+		await assertPathTransitionsTo('/second/alias', 'Second page');
+		await assertActivePageIs('second');
+		await assertRouteNameIs('secondAlias');
+	});
+
+	test([
+		'should switch to the original page using an alias path with the parameters,',
+		'but the page URL should have the path of the alias route'
+	].join(' '), async ({page}) => {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('/tpl-alias/foo/bar');
 			return ctx.route!.params;
 		})).resolves.toEqual({param1: 'foo', param2: 'bar'});
+
+		await assertActivePageIs('template');
 
 		if (engineName === 'history') {
 			test.expect(new URL(await page.url()).pathname).toBe('/tpl-alias/foo/bar');
 		}
 	});
 
-	test('transition to an alias', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('/second/alias');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Second page');
-
-		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('secondAlias');
+	test([
+		'should redirect to the main page using an alias path,',
+		'which points to a redirect route that subsequently redirects to the main page'
+	].join(' '), async () => {
+		await assertPathTransitionsTo('/second/alias-redirect', 'Main page');
+		await assertActivePageIs('main');
+		await assertRouteNameIs('aliasToRedirect');
 	});
 
-	test('transition to an alias with redirect', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('/second/alias-redirect');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Main page');
-
-		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('aliasToRedirect');
+	test('should switch to the original page using the chained aliases', async () => {
+		await assertPathTransitionsTo('/alias-to-alias', 'Second page');
+		await assertActivePageIs('second');
+		await assertRouteNameIs('aliasToAlias');
 	});
 
-	test('transition to chained aliases', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('/alias-to-alias');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Second page');
-
-		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('aliasToAlias');
+	test('should redirect to the page using a redirect path', async () => {
+		await assertPathTransitionsTo('/second/redirect', 'Second page');
+		await assertActivePageIs('second');
+		await assertRouteNameIs('second');
 	});
 
-	test('transition with redirect', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('/second/redirect');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Second page');
-
-		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('second');
+	test('should redirect to the page using an alias path with the redirect', async () => {
+		await assertPathTransitionsTo('/redirect-alias', 'Second page');
+		await assertActivePageIs('second');
+		await assertRouteNameIs('secondAlias');
 	});
 
-	test('transition with redirect and alias', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('/redirect-alias');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Second page');
-
-		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('secondAlias');
+	test('should redirect to the page using the chained redirect', async () => {
+		await assertPathTransitionsTo('/redirect-redirect', 'Second page');
+		await assertActivePageIs('second');
+		await assertRouteNameIs('second');
 	});
 
-	test('transition with chained redirect', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('/redirect-redirect');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Second page');
-
-		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe('second');
-	});
-
-	test('moving back and forward from one page to another', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('main');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Main page');
-
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('second');
-			return ctx.route!.meta.content;
-		})).resolves.toBe('Second page');
+	test([
+		'`back` and `forward` methods',
+		'should navigate back and forth between one page and another'
+	].join(' '), async () => {
+		await assertPathTransitionsTo('main', 'Main page');
+		await assertPathTransitionsTo('second', 'Second page');
 
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.back();
@@ -212,7 +197,7 @@ function generateSpecs(engineName: EngineName) {
 		})).resolves.toBe('Second page');
 	});
 
-	test('moving back and forward from one page to another by using .go', async () => {
+	test('`go` method should navigate back and forth between one page and another', async () => {
 		await test.expect(root.evaluate(async ({router}) => {
 			await router!.push('main');
 			await router!.push('second');
@@ -232,7 +217,7 @@ function generateSpecs(engineName: EngineName) {
 		})).resolves.toBe('Main page');
 	});
 
-	test('soft transition', async () => {
+	test('should emit `softChange` when only the route query is changing', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			const
 				{router} = ctx;
@@ -307,7 +292,7 @@ function generateSpecs(engineName: EngineName) {
 		});
 	});
 
-	test('transition event flow', async () => {
+	test('should emit various events while transitioning to the other page', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			const
 				{router} = ctx;
@@ -374,7 +359,7 @@ function generateSpecs(engineName: EngineName) {
 		});
 	});
 
-	test('transition with root parameters', async () => {
+	test('should transition by setting arbitrary properties on the root component', async () => {
 		await test.expect(root.evaluate(async (ctx) => {
 			const
 				{router} = ctx;
@@ -398,4 +383,32 @@ function generateSpecs(engineName: EngineName) {
 			queryString: engineName === 'in-memory' ? '' : '?rootParam=1'
 		});
 	});
+
+	/**
+	 * Asserts that the given path transitions to the page with the specified content
+	 * @param path
+	 * @param content
+	 */
+	async function assertPathTransitionsTo(path: string, content: string) {
+		await test.expect(root.evaluate(async (ctx, path) => {
+			await ctx.router!.push(path);
+			return ctx.route!.meta.content;
+		}, path)).resolves.toBe(content);
+	}
+
+	/**
+	 * Asserts that the `activePage` of root component matches the specified identifier
+	 * @param routeId
+	 */
+	async function assertActivePageIs(routeId: string) {
+		await test.expect(root.evaluate(({activePage}) => activePage)).resolves.toEqual(routeId);
+	}
+
+	/**
+	 * Asserts that the `route` name of the root component matches the specified name
+	 * @param name
+	 */
+	async function assertRouteNameIs(name: string) {
+		await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe(name);
+	}
 }
