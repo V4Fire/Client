@@ -170,7 +170,7 @@ function generateSpecs(engineName: EngineName) {
 		root = await initRouter(page);
 	});
 
-	test('the `route` property should be set on the root component', async ({}) => {
+	test('the `route` property should be set on the root component', async () => {
 		await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
 	});
 
