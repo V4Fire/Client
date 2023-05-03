@@ -247,13 +247,13 @@ export default class bRouter extends bRouterProps {
 		return router.getRoute(ref, routes, {basePath, defaultRoute});
 	}
 
-	/** {@link Transition.emit} */
-	async emitTransition(
+	/** {@link Transition.execute} */
+	emitTransition(
 		ref: Nullable<string>,
 		opts?: router.TransitionOptions,
 		method: TransitionMethod = 'push'
 	): Promise<CanUndef<router.Route>> {
-		return new Transition(this, {ref, opts, method}).emit();
+		return new Transition(this, {ref, opts, method}).execute();
 	}
 
 	/**

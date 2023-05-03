@@ -158,7 +158,7 @@ export default class Transition {
 	 * @emits `transition(route:` [[Route]]`, type:` [[TransitionType]]`)`
 	 * @emits `$root.transition(route:` [[Route]]`, type:` [[TransitionType]]`)`
 	 */
-	async emit(): Promise<CanUndef<router.Route>> {
+	async execute(): Promise<CanUndef<router.Route>> {
 		const
 			{component} = this,
 			{engine} = component.unsafe;
