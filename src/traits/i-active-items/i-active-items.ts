@@ -166,7 +166,7 @@ export default abstract class iActiveItems extends iItems {
 
 	/** @see [[iActiveItems.prototype.setActive]] */
 	static setActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): boolean {
-		if (!this.canBeActive(ctx, value)) {
+		if (!this.isActivatable(ctx, value)) {
 			return false;
 		}
 
@@ -268,7 +268,7 @@ export default abstract class iActiveItems extends iItems {
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
 	static toggleActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): iActiveItems['Active'] {
-		if (!this.canBeActive(ctx, value)) {
+		if (!this.isActivatable(ctx, value)) {
 			return false;
 		}
 
@@ -316,9 +316,9 @@ export default abstract class iActiveItems extends iItems {
 	 * @param ctx
 	 * @param value
 	 */
-	protected static canBeActive(ctx: TraitComponent, value: unknown): boolean {
+	protected static isActivatable(ctx: TraitComponent, value: unknown): boolean {
 		const item = ctx.items?.find((item) => item.value === value);
-		return item?.canBeActive !== false;
+		return item?.activatable !== false;
 	}
 
 	/**
