@@ -28,7 +28,7 @@ import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iActiveItems, { Active } from 'traits/i-active-items/i-active-items';
 
 import iData, { component, prop, field, system, computed, watch, hook, ModsDecl } from 'super/i-data/i-data';
-import type { Item, Items, MapItem } from 'base/b-list/interface';
+import type { Item, Items } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';
@@ -136,10 +136,16 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	indexes!: Dictionary;
 
 	/**
-	 * A map of an item value to the item itself + its index
+	 * A map of the item values and their indexes
+	*/
+	@system()
+	values!: Map<unknown, number>;
+
+	/**
+	 * A map of the item values and their descriptors
 	 */
 	@system()
-	values!: Map<unknown, MapItem>;
+	valueItems!: Map<unknown, this['Item']>;
 
 	/** @see [[iActiveItems.activeStore]] */
 	@system<bList>((o) => iActiveItems.linkActiveStore(o))
@@ -220,7 +226,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 		const getEl = (value) => {
 			const
-				id = this.values.get(value)?.idx;
+				id = this.values.get(value);
 
 			if (id != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {id}) ?? null;
@@ -240,7 +246,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	/** @see [[iActiveItems.prototype.getItemByValue] */
 	getItemByValue(value: Item['value']): CanUndef<Item> {
-		return this.values.get(value)?.item;
+		return this.valueItems.get(value);
 	}
 
 	/** @see [[iActiveItems.prototype.setActive] */
@@ -257,7 +263,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 		if ($b != null) {
 			const
-				id = this.values.get(value)?.idx,
+				id = this.values.get(value),
 				linkEl = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple || unsetPrevious) {
@@ -378,6 +384,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		this.values = new Map();
+		this.valueItems = new Map();
 		this.indexes = {};
 
 		const
@@ -392,7 +399,8 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 				item = this.items[i],
 				val = item.value;
 
-			this.values.set(val, {item, idx: i});
+			this.values.set(val, i);
+			this.valueItems.set(val, item);
 			this.indexes[i] = val;
 
 			if (item.value === active) {
