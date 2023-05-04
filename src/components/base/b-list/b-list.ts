@@ -29,7 +29,7 @@ import bListProps from 'components/base/b-list/props';
 import Values from 'components/base/b-list/modules/values';
 
 import { setActiveMod, normalizeItems } from 'components/base/b-list/modules/helpers';
-import type { Items } from 'components/base/b-list/interface';
+import type { Items, Item } from 'components/base/b-list/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
@@ -159,6 +159,11 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 			return getEl(active);
 		});
+	}
+
+	/** @see [[iActiveItems.prototype.getItemByValue] */
+	getItemByValue(value: Item['value']): CanUndef<Item> {
+		return this.values.getItem(value);
 	}
 
 	/**

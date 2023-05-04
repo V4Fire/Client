@@ -225,6 +225,11 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return iActiveItems.isActive(this.top, value);
 	}
 
+	/** @see [[iActiveItems.prototype.getItemByValue]] */
+	getItemByValue(value: Item['value']): CanUndef<Item> {
+		return this.values.getItem(value);
+	}
+
 	/** @see [[iActiveItems.setActive]] */
 	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		const
