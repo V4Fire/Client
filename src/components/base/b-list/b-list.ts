@@ -15,7 +15,7 @@ import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
 
 import DOM, { delegateElement } from 'components/friends/dom';
-import Block, { element, elements } from 'components/friends/block';
+import Block, { element, elements, setElementMod } from 'components/friends/block';
 
 import iVisible from 'components/traits/i-visible/i-visible';
 import iWidth from 'components/traits/i-width/i-width';
@@ -35,7 +35,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
 
 DOM.addToPrototype({delegateElement});
-Block.addToPrototype({element, elements});
+Block.addToPrototype({element, elements, setElementMod});
 
 interface bList extends Trait<typeof iActiveItems> {}
 
