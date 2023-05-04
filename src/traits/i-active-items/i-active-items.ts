@@ -310,6 +310,12 @@ export default abstract class iActiveItems extends iItems {
 		return ctx.active;
 	}
 
+	/**
+	 * Checks if item can be selected by its value
+	 *
+	 * @param ctx
+	 * @param value
+	 */
 	protected static isSelectable(ctx: TraitComponent, value: unknown): boolean {
 		const item = ctx.items?.find((item) => item.value === value);
 		return item?.selectable !== false;
