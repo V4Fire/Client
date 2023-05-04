@@ -16,7 +16,7 @@ import { BOM } from 'tests/helpers';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
 import type { EngineName } from 'components/base/b-router/test/interface';
 
-test.describe.only('<b-router> scroll control', () => {
+test.describe('<b-router> scroll control', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
@@ -54,16 +54,18 @@ function generateSpecs(engineName: EngineName) {
 		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
 
 		await root.evaluate(async ({router}) => {
-			// TODO: WIP
-			// // Reset scroll before the transition ends to check scroll restoration
-			// router?.once('transition', () => {
-			// 	// @ts-ignore "instance" behavior is available according to MDN docs
-			// 	globalThis.scrollTo({top: 0, left: 0, behavior: 'instant'});
-			// });
+			// Reset scroll before the transition ends to check scroll restoration
+			router?.once('transition', () => {
+				// @ts-ignore "instance" behavior is available according to MDN docs
+				globalThis.scrollTo({top: 0, left: 0, behavior: 'instant'});
+			});
 
 			await router?.push(null, {query: {bla: 1}});
 		});
 
+		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 0]);
+
+		await root.evaluate(({router}) => router?.back());
 		await BOM.waitForIdleCallback(page);
 
 		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
@@ -75,21 +77,26 @@ function generateSpecs(engineName: EngineName) {
 		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
 
 		await root.evaluate((ctx) => ctx.router?.push('second'));
-
 		await BOM.waitForIdleCallback(page);
 
 		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 0]);
 	});
 
-	// FIXME: broken test
-	test.skip('should add scroll position to the current route meta', async ({page}) => {
+	test('should add scroll position to the current route meta', async ({page}) => {
 		await scrollBy(page, [0, 500]);
 
 		await test.expect(getScrollPosition(page)).resolves.toEqual([0, 500]);
 
-		await root.evaluate((ctx) => ctx.router?.push(null, {query: {bla: 1}}));
+		await root.evaluate(({router}) => router?.push(null, {query: {bla: 1}}));
+		await root.evaluate(({router}) => router?.back());
 
-		await test.expect(root.evaluate(({route}) => route?.meta.scroll)).resolves.toEqual({x: 0, y: 500});
+		// Check that router.engine route has scroll
+		await test.expect(root.evaluate(({router}) => router?.unsafe.engine.route?.meta.scroll))
+			.resolves.toEqual({x: 0, y: 500});
+
+		// Check that root component route has scroll
+		await test.expect(root.evaluate(({route}) => route?.meta.scroll))
+			.resolves.toEqual({x: 0, y: 500});
 	});
 
 	/**
