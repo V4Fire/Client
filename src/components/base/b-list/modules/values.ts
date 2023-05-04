@@ -40,7 +40,7 @@ export default class Values extends Friend {
 	 * Returns item value for specified index
 	 * @param index
 	 */
-	getValueByIndex(index: number | string): Item['value'] {
+	getValue(index: number | string): Item['value'] {
 		return this.indexes[index];
 	}
 
@@ -48,7 +48,7 @@ export default class Values extends Friend {
 	 * Returns index of the item for specified value
 	 * @param value
 	 */
-	getIndexByValue(value: Item['value']): CanUndef<number> {
+	getIndex(value: Item['value']): CanUndef<number> {
 		return this.values.get(value);
 	}
 
