@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.47.3 (2023-05-04)
+
+#### :rocket: New Feature
+
+* Added ability to exclude an item from being activated `i-active-items`
+
 ## v3.46.3 (2023-04-28)
 
 #### :bug: Bug Fix
