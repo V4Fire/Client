@@ -143,7 +143,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 		const getEl = (value) => {
 			const
-				id = this.values.getIndexByValue(value);
+				id = this.values.getIndex(value);
 
 			if (id != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {id}) ?? null;
@@ -163,7 +163,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 	/** @see [[iActiveItems.prototype.getItemByValue] */
 	getItemByValue(value: this['Item']['value']): CanUndef<this['Item']> {
-		return this.values.getItemByValue(value);
+		return this.values.getItem(value);
 	}
 
 	/**
@@ -185,7 +185,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 		if ($b != null) {
 			const
-				id = this.values.getIndexByValue(value),
+				id = this.values.getIndex(value),
 				linkEl = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple || unsetPrevious) {
@@ -229,7 +229,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 				els.forEach((el) => {
 					const
 						id = el.getAttribute('data-id') ?? -1,
-						itemValue = this.values.getValueByIndex(id);
+						itemValue = this.values.getValue(id);
 
 					if (itemValue == null) {
 						return;
@@ -364,7 +364,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 			target = <Element>e.delegateTarget,
 			id = target.getAttribute('data-id') ?? -1;
 
-		this.toggleActive(this.values.getValueByIndex(id));
+		this.toggleActive(this.values.getValue(id));
 		this.emit(`action-${this.activeChangeEvent}`.camelize(false), this.active);
 	}
 }

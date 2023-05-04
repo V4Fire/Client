@@ -56,7 +56,7 @@ export default class Values extends Friend {
 	 * Returns item by the specified value
 	 * @param value
 	 */
-	getItemByValue(value: Item['value']): CanUndef<Item> {
+	getItem(value: Item['value']): CanUndef<Item> {
 		return this.valueItems.get(value);
 	}
 
