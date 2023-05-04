@@ -166,6 +166,10 @@ export default abstract class iActiveItems extends iItems {
 
 	/** @see [[iActiveItems.prototype.setActive]] */
 	static setActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): boolean {
+		if (!this.isSelectable(ctx, value)) {
+			return false;
+		}
+
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -264,6 +268,10 @@ export default abstract class iActiveItems extends iItems {
 
 	/** @see [[iActiveItems.prototype.toggleActive]] */
 	static toggleActive(ctx: TraitComponent, value: iActiveItems['Active'], unsetPrevious?: boolean): iActiveItems['Active'] {
+		if (!this.isSelectable(ctx, value)) {
+			return false;
+		}
+
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -300,6 +308,11 @@ export default abstract class iActiveItems extends iItems {
 		}
 
 		return ctx.active;
+	}
+
+	protected static isSelectable(ctx: TraitComponent, value: unknown): boolean {
+		const item = ctx.items?.find((item) => item.value === value);
+		return item?.selectable !== false;
 	}
 
 	/**
