@@ -28,7 +28,7 @@ import iItems, { IterationKey } from 'traits/i-items/i-items';
 import iActiveItems, { Active } from 'traits/i-active-items/i-active-items';
 
 import iData, { component, prop, field, system, computed, watch, hook, ModsDecl } from 'super/i-data/i-data';
-import type { Item, Items } from 'base/b-list/interface';
+import type { Item, Items, MapItem } from 'base/b-list/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-list/interface';
@@ -136,10 +136,10 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	indexes!: Dictionary;
 
 	/**
-	 * A map of the item values and their indexes
+	 * A map of an item value to the item itself + its index
 	 */
 	@system()
-	values!: Map<unknown, number>;
+	values!: Map<unknown, MapItem>;
 
 	/** @see [[iActiveItems.activeStore]] */
 	@system<bList>((o) => iActiveItems.linkActiveStore(o))
@@ -220,7 +220,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 		const getEl = (value) => {
 			const
-				id = this.values.get(value);
+				id = this.values.get(value)?.idx;
 
 			if (id != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {id}) ?? null;
@@ -238,6 +238,11 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		});
 	}
 
+	/** @see [[iActiveItems.prototype.getItemByValue] */
+	getItemByValue(value: Item['value']): CanUndef<Item> {
+		return this.values.get(value)?.item;
+	}
+
 	/** @see [[iActiveItems.prototype.setActive] */
 	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const
@@ -252,7 +257,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 		if ($b != null) {
 			const
-				id = this.values.get(value),
+				id = this.values.get(value)?.idx,
 				linkEl = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple || unsetPrevious) {
@@ -387,7 +392,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 				item = this.items[i],
 				val = item.value;
 
-			this.values.set(val, i);
+			this.values.set(val, {item, idx: i});
 			this.indexes[i] = val;
 
 			if (item.value === active) {

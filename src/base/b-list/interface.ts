@@ -85,4 +85,10 @@ export interface Item extends Super {
 	attrs?: Dictionary;
 }
 
+export interface MapItem {
+	idx: number;
+	item: Item;
+}
+
 export type Items = Item[];
+

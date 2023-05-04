@@ -310,14 +310,19 @@ export default abstract class iActiveItems extends iItems {
 		return ctx.active;
 	}
 
+	/** @see [[iActiveItems.prototype.getItemByValue]] */
+	static getItemByValue(ctx: TraitComponent, value: Item['value']): CanUndef<Item> {
+		return ctx.items?.find((item) => item.value === value);
+	}
+
 	/**
 	 * Checks if item can possibly be active by its value
 	 *
 	 * @param ctx
 	 * @param value
 	 */
-	protected static isActivatable(ctx: TraitComponent, value: unknown): boolean {
-		const item = ctx.items?.find((item) => item.value === value);
+	protected static isActivatable(ctx: TraitComponent, value: Item['value']): boolean {
+		const item = ctx.getItemByValue(value);
 		return item?.activatable !== false;
 	}
 
@@ -366,6 +371,15 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `immediateChange(active: unknown)`
 	 */
 	toggleActive(value: Item['value'], unsetPrevious?: boolean): iActiveItems['Active'] {
+		return Object.throw();
+	}
+
+	/**
+	 * Returns an item by the specified value
+	 *
+	 * @param value
+	 */
+	getItemByValue(value: Item['value']): CanUndef<Item> {
 		return Object.throw();
 	}
 }
