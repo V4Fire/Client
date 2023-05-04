@@ -82,7 +82,7 @@ test.describe('<b-tree> active items', () => {
 	});
 
 	test.describe('`active`', () => {
-		test('should not be changeable with `activatable = false`', async ({page}) => {
+		test('should not be changeable with `activatable = false` on item', async ({page}) => {
 			const target = await renderTree(page, {items});
 
 			await target.evaluate((ctx) => ctx.setActive(0));

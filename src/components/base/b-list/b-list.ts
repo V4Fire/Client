@@ -29,7 +29,7 @@ import bListProps from 'components/base/b-list/props';
 import Values from 'components/base/b-list/modules/values';
 
 import { setActiveMod, normalizeItems } from 'components/base/b-list/modules/helpers';
-import type { Items, Item } from 'components/base/b-list/interface';
+import type { Items } from 'components/base/b-list/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
@@ -143,7 +143,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 		const getEl = (value) => {
 			const
-				id = this.values.getIndex(value);
+				id = this.values.getIndexByValue(value);
 
 			if (id != null) {
 				return this.block?.element<HTMLAnchorElement>('link', {id}) ?? null;
@@ -162,8 +162,8 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	}
 
 	/** @see [[iActiveItems.prototype.getItemByValue] */
-	getItemByValue(value: Item['value']): CanUndef<Item> {
-		return this.values.getItem(value);
+	getItemByValue(value: this['Item']['value']): CanUndef<this['Item']> {
+		return this.values.getItemByValue(value);
 	}
 
 	/**
@@ -185,7 +185,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 		if ($b != null) {
 			const
-				id = this.values.getIndex(value),
+				id = this.values.getIndexByValue(value),
 				linkEl = id != null ? $b.element('link', {id}) : null;
 
 			if (!this.multiple || unsetPrevious) {
@@ -229,7 +229,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 				els.forEach((el) => {
 					const
 						id = el.getAttribute('data-id') ?? -1,
-						itemValue = this.values.getValue(id);
+						itemValue = this.values.getValueByIndex(id);
 
 					if (itemValue == null) {
 						return;
@@ -364,7 +364,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 			target = <Element>e.delegateTarget,
 			id = target.getAttribute('data-id') ?? -1;
 
-		this.toggleActive(this.values.getValue(id));
+		this.toggleActive(this.values.getValueByIndex(id));
 		this.emit(`action-${this.activeChangeEvent}`.camelize(false), this.active);
 	}
 }
