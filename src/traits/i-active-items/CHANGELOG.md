@@ -13,7 +13,8 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added ability to exclude an item from being activated
+* Added ability to exclude an item from being activated by specifying `activatable` flag `i-active-items`
+* Added `getItemByValue` method `i-active-items` `b-list`
 
 ## v3.41.0 (2023-03-14)
 
