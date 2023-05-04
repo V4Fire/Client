@@ -23,9 +23,9 @@ export interface Item extends Dictionary {
 	active?: boolean;
 
 	/**
-	 * True if item can be selected
+	 * True if item can possibly be active
 	 */
-	selectable?: boolean;
+	canBeActive?: boolean;
 }
 
 export type Active = unknown | Set<unknown>;
