@@ -100,6 +100,10 @@ If the component is switched to the `multiple` mode, the method can take a Set t
 Toggles item activation by the specified value.
 The methods return the new active component item(s).
 
+### getItemByValue
+
+Returns an item by the specified value.
+
 ## Helpers
 
 The trait provides a bunch of static helper functions.
