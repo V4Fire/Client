@@ -1,0 +1,25 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+/**
+ * [[include:components/dummies/b-dummy/README.md]]
+ * @packageDocumentation
+ */
+
+import bDummy, { component, ModsDict } from 'components/dummies/b-dummy/b-dummy';
+
+export * from 'components/dummies/b-dummy/b-dummy';
+
+@component()
+class bFriendsProvideDummy extends bDummy {
+	override get sharedMods(): CanUndef<Readonly<ModsDict>> {
+		return {foo: 'bar'};
+	}
+}
+
+export default bFriendsProvideDummy;
