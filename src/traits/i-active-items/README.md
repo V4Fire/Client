@@ -77,6 +77,26 @@ export default class bCustomList implements iActiveItems {
 Link(s) to the DOM element of the component active item.
 If the component is switched to the `multiple` mode, the getter will return a list of elements.
 
+## Item properties
+
+## label
+
+Specifies the label for item.
+
+## value
+
+Specifies the value for item.
+The value of this property should be passed to the methods below.
+
+## active
+
+Specifies if item is active by default.
+
+## activatable
+
+Specifies if item can possibly be active.
+This property is checked before calling the `toggleActive` and `setActive` methods.
+
 ## Methods
 
 The trait specifies a bunch of methods to implement.
@@ -99,6 +119,10 @@ If the component is switched to the `multiple` mode, the method can take a Set t
 
 Toggles item activation by the specified value.
 The methods return the new active component item(s).
+
+### getItemByValue
+
+Returns an item by the specified value.
 
 ## Helpers
 

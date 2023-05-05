@@ -71,6 +71,15 @@ module.exports = (page) => {
 				expect(await target.evaluate((ctx) => ctx.active)).toBe(1);
 			});
 
+			it('with an item that cannot be active', async () => {
+				const target = await init();
+
+				await target.evaluate((ctx) => ctx.setActive(0));
+				await target.evaluate((ctx) => ctx.setActive(6));
+
+				expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
+			});
+
 			it('with `cancelable = true`', async () => {
 				const
 					target = await init({cancelable: true});
@@ -391,7 +400,12 @@ module.exports = (page) => {
 										}
 									]
 								},
-								{value: 5, label: 5}
+								{value: 5, label: 5},
+								{
+									value: 6,
+									label: 6,
+									activatable: false
+								}
 							],
 
 							id: 'target',

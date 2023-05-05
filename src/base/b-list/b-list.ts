@@ -141,6 +141,12 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@system()
 	values!: Map<unknown, number>;
 
+	/**
+	 * A map of the item values and their descriptors
+	 */
+	@system()
+	valueItems!: Map<unknown, this['Item']>;
+
 	/** @see [[iActiveItems.activeStore]] */
 	@system<bList>((o) => iActiveItems.linkActiveStore(o))
 	activeStore!: this['Active'];
@@ -236,6 +242,11 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 			return getEl(active);
 		});
+	}
+
+	/** @see [[iActiveItems.prototype.getItemByValue] */
+	getItemByValue(value: Item['value']): CanUndef<Item> {
+		return this.valueItems.get(value);
 	}
 
 	/** @see [[iActiveItems.prototype.setActive] */
@@ -373,6 +384,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		this.values = new Map();
+		this.valueItems = new Map();
 		this.indexes = {};
 
 		const
@@ -388,6 +400,7 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 				val = item.value;
 
 			this.values.set(val, i);
+			this.valueItems.set(val, item);
 			this.indexes[i] = val;
 
 			if (item.value === active) {

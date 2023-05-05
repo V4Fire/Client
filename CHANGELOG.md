@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.47.4 (2023-05-05)
+
+#### :rocket: New Feature
+
+* Added ability to exclude an item from being activated by specifying `activatable` flag in `i-active-items` trait
+* Added `getItemByValue` method in `i-active-items` trait, `b-list` and `b-tree`
+
 ## v3.46.4 (2023-05-05)
 
 #### :bug: Bug Fix
