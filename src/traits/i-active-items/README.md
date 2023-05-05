@@ -90,7 +90,7 @@ The value of this property should be passed to the methods below.
 
 ## active
 
-Specifies if item is active at the current time.
+Specifies if item is active by default.
 
 ## activatable
 
