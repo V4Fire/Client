@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.46.4 (2023-05-05)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with negative values in design system
+
 ## v3.12.1 (2021-11-26)
 
 #### :bug: Bug Fix
