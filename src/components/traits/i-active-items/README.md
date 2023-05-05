@@ -132,6 +132,26 @@ export default class bTree extends iBlock implements iActiveItems {
 Link(s) to the DOM element of the component active item.
 If the component is switched to the `multiple` mode, the getter will return a list of elements.
 
+## Item properties
+
+## label
+
+Specifies the label for item.
+
+## value
+
+Specifies the value for item.
+The value of this property should be passed to the methods below.
+
+## active
+
+Specifies if item is active at the current time.
+
+## activatable
+
+Specifies if item can possibly be active.
+This property is checked before calling the `toggleActive` and `setActive` methods.
+
 ## Methods
 
 The trait specifies a bunch of methods to implement.
