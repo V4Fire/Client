@@ -325,13 +325,13 @@ export default abstract class iActiveItems extends iItems {
 		return ctx.active;
 	}
 
-	/** @see [[iActiveItems.prototype.getItemByValue]] */
+	/** @see [[iActiveItems.getItemByValue]] */
 	static getItemByValue(ctx: TraitComponent, value: Item['value']): CanUndef<Item> {
 		return ctx.items?.find((item) => item.value === value);
 	}
 
 	/**
-	 * Checks if item can possibly be active by its value
+	 * Checks if an item can possibly be active by its value
 	 *
 	 * @param ctx
 	 * @param value
@@ -342,7 +342,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Returns true if the specified value is active
+	 * Returns true if the item by the specified value is active
 	 * @param value
 	 */
 	isActive(value: Item['value']): boolean {
@@ -387,7 +387,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Returns an item by the specified value
+	 * Returns an item object by the specified value.
 	 * @param value
 	 */
 	getItemByValue(value: Item['value']): CanUndef<Item> {

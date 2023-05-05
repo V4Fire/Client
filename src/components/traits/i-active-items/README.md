@@ -55,6 +55,23 @@ export default class bTree extends iBlock implements iActiveItems {
 
 See also the [[items]] trait.
 
+## Item properties
+
+The trait introduces a contract for some fields of the item object.
+
+### value
+
+Item value. The value is used to set the activity of a particular item through special methods.
+
+### active
+
+Indicates whether the item is active by default.
+
+### activatable
+
+Indicates whether the element can be active.
+This property is checked before calling the `toggleActive` and `setActive` methods.
+
 ## Events
 
 | EventName      | Description                                                               | Payload description                    | Payload  |
@@ -132,33 +149,13 @@ export default class bTree extends iBlock implements iActiveItems {
 Link(s) to the DOM element of the component active item.
 If the component is switched to the `multiple` mode, the getter will return a list of elements.
 
-## Item properties
-
-## label
-
-Specifies the label for item.
-
-## value
-
-Specifies the value for item.
-The value of this property should be passed to the methods below.
-
-## active
-
-Specifies if item is active by default.
-
-## activatable
-
-Specifies if item can possibly be active.
-This property is checked before calling the `toggleActive` and `setActive` methods.
-
 ## Methods
 
 The trait specifies a bunch of methods to implement.
 
 ### isActive
 
-Returns the active item(s) of the passed component.
+Returns true if the item by the specified value is active.
 
 ### setActive
 
@@ -177,7 +174,7 @@ The methods return the new active component item(s).
 
 ### getItemByValue
 
-Returns an item by the specified value.
+Returns an item object by the specified value.
 
 ## Helpers
 
@@ -202,6 +199,10 @@ class bTree extends iBlock implements iActiveItems {
   activeStore!: iActiveItems['activeStore'];
 }
 ```
+
+### isActivatable
+
+Checks if an item can possibly be active by its value.
 
 ### getActive
 

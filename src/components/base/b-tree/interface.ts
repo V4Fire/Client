@@ -13,9 +13,9 @@ import type { Item as Super } from 'components/traits/i-active-items/i-active-it
 
 export interface Item extends Super {
 	/**
-	 * Item value
+	 * Item label text
 	 */
-	value: unknown;
+	label?: string;
 
 	/**
 	 * Parent element value

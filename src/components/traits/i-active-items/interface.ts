@@ -8,11 +8,6 @@
 
 export interface Item extends Dictionary {
 	/**
-	 * Item label text
-	 */
-	label?: string;
-
-	/**
 	 * Item value
 	 */
 	value?: unknown;

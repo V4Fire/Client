@@ -13,8 +13,8 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added ability to exclude an item from being activated by specifying `activatable` flag
-* Added `getItemByValue` method
+* Added ability to exclude an item from being activated by specifying the `activatable` flag
+* Added a new method `getItemByValue`
 
 ## v3.41.0 (2023-03-14)
 
