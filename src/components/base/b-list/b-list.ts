@@ -161,6 +161,11 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 		});
 	}
 
+	/** @see [[iActiveItems.prototype.getItemByValue] */
+	getItemByValue(value: this['Item']['value']): CanUndef<this['Item']> {
+		return this.values.getItem(value);
+	}
+
 	/**
 	 * Activates the item(s) by the specified value(s).
 	 * If the component is switched to the `multiple` mode, the method can take an iterable to set multiple items.

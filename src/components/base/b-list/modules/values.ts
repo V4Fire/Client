@@ -31,6 +31,12 @@ export default class Values extends Friend {
 	protected values!: Map<Item['value'], number>;
 
 	/**
+	 * A map of the item values and their descriptors
+	 */
+	@system()
+	protected valueItems!: Map<unknown, Item>;
+
+	/**
 	 * Returns item value for specified index
 	 * @param index
 	 */
@@ -47,6 +53,14 @@ export default class Values extends Friend {
 	}
 
 	/**
+	 * Returns item by the specified value
+	 * @param value
+	 */
+	getItem(value: Item['value']): CanUndef<Item> {
+		return this.valueItems.get(value);
+	}
+
+	/**
 	 * Initializes component values
 	 * @param [itemsChanged] - true, if the method is invoked after items changed
 	 */
@@ -54,6 +68,7 @@ export default class Values extends Friend {
 		const
 			{ctx} = this,
 			values = new Map(),
+			valueItems = new Map(),
 			indexes = {};
 
 		const
@@ -77,6 +92,7 @@ export default class Values extends Friend {
 			}
 
 			values.set(val, i);
+			valueItems.set(val, item);
 			indexes[i] = val;
 		}
 
@@ -93,6 +109,7 @@ export default class Values extends Friend {
 		}
 
 		this.values = values;
+		this.valueItems = valueItems;
 		this.indexes = indexes;
 	}
 }
