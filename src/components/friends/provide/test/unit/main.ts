@@ -18,67 +18,84 @@ test.describe('friends/provide', () => {
 
 	let target: JSHandle<bDummyFriendsProvide>;
 
-	const
-		componentName = 'b-friends-provide-dummy',
-		prefix = (strings?: TemplateStringsArray) => `${componentName}${strings?.join(' ') ?? ''}`;
+	const componentName = 'b-friends-provide-dummy';
+
+	/**
+	 * Returns a string prefixed with "b-friends-provide-dummy"
+	 *
+	 * @example
+	 * ```typescript
+	 * prefix`__button` // b-friends-provide-dummy__button
+	 * ```
+	 */
+	const prefix = (strings?: TemplateStringsArray) => `${componentName}${strings?.join(' ') ?? ''}`;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
-		target = await Component.createComponent(page, componentName);
 		await Component.waitForComponentTemplate(page, componentName);
+		target = await Component.createComponent(page, componentName);
 	});
 
 	test.describe('`fullComponentName`', () => {
-		test('simple usage', async () => {
+		test('should return current component name', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullComponentName()))
 				.resolves.toBe(componentName);
 		});
 
-		test('providing a modifier', async () => {
+		test('should return current component name concatenated with the specified modifier and it\'s value', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullComponentName('opened', true)))
 				.resolves.toBe(prefix`_opened_true`);
 		});
 
-		test('providing a component name', async () => {
+		test('should return the specified component name', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullComponentName('b-foo')))
 				.resolves.toBe('b-foo');
 		});
 
-		test('providing a component name and modifiers', async () => {
+		test([
+			'should return the specified component name concatenated',
+			'with the specified modifier and it\'s value'
+		].join(' '), async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullComponentName('b-foo', 'opened', true)))
 				.resolves.toBe('b-foo_opened_true');
 		});
 	});
 
 	test.describe('`fullElementName`', () => {
-		test('simple usage', async () => {
+		test('should return current component name concatenated with the specified element name', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullElementName('foo')))
 				.resolves.toBe(prefix`__foo`);
 		});
 
-		test('providing a modifier', async () => {
+		test([
+			'should return current component name concatenated with the specified element name,',
+			'the specified modifier and it\'s value'
+		].join(' '), async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullElementName('foo', 'opened', true)))
 				.resolves.toBe(prefix`__foo_opened_true`);
 		});
 
-		test('providing a component name', async () => {
+		test('should return the specified component name concatenated with the specified element name', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullElementName('b-foo', 'foo')))
 				.resolves.toBe('b-foo__foo');
 		});
 
-		test('providing a component name and modifiers', async () => {
+		test([
+			'should return the specified component name concatenated with the specified element name,',
+			'the specified modifier and it\'s value'
+		].join(' '), async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullElementName('b-foo', 'foo', 'opened', true)))
 				.resolves.toBe('b-foo__foo_opened_true');
 		});
 	});
 
 	test.describe('`mods`', () => {
-		test('simple usage', async () => {
+		test('should return dictionary of active modifiers and their values', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.mods()))
 				.resolves.toEqual({foo: 'bar'});
 		});
 
-		test('providing additional modifiers', async () => {
+		test('should return dictionary of active and provided modifiers and their values', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.mods({baz: 'bla'})))
 				.resolves.toEqual({foo: 'bar', baz: 'bla'});
 		});
