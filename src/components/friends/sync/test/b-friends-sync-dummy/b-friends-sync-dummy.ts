@@ -14,7 +14,12 @@
 import watch from 'core/object/watch';
 import iData, { component, prop, field, system, computed, ModsDecl } from 'components/super/i-data/i-data';
 
+import Sync from 'components/friends/sync/class';
+import * as SyncAPI from 'components/friends/sync/api';
+
 export * from 'components/super/i-data/i-data';
+
+Sync.addToPrototype(SyncAPI);
 
 @component({
 	functional: {
@@ -25,7 +30,7 @@ export * from 'components/super/i-data/i-data';
 
 export default class bFriendsSyncDummy extends iData {
 	@prop(Object)
-	readonly dictProp: Dictionary = {
+	readonly dictProp: Dictionary<Dictionary<number>> = {
 		a: {
 			b: 2,
 			c: 3
