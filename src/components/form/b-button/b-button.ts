@@ -208,10 +208,6 @@ class bButton extends bButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	 * @emits `click(e: Event)`
 	 */
 	protected async onClick(e: Event): Promise<void> {
-		if (this.type !== 'link') {
-			e.stopPropagation();
-		}
-
 		switch (this.type) {
 			case 'link':
 				break;
