@@ -4,9 +4,7 @@ This module provides an API to synchronize fields and props of a component.
 
 ## How to include this module to your component?
 
-By default, any component that inherited from [[iBlock]] has the `sync` property.
-Some methods, such as `link` and `mod` are always available, and the rest must be included explicitly to enable
-tree-shake code optimization. Just place the necessary import declaration within your component file.
+By default, any component that inherits from [[iBlock]] has the `sync` property. Certain methods, like `link` and `mod`, are available by default, while others need to be explicitly included to facilitate tree-shaking code optimization. To do this, simply add the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -21,19 +19,17 @@ export default class bExample extends iBlock {}
 
 ## Data link field
 
-A link in V4 component terminology is a field that sets its value based on another field, prop, or event (hereinafter, the source).
-As soon as the source of the link reports a change, such as a mutation in the observable property or emitting of the listened event,
-the link will be synchronized with the source.
+In V4 component terminology, a link refers to a field that determines its value based on another field, prop, or event (collectively referred to as the source).
 
-Links are very useful when we want to create a property based on a different source, but with a different data type.
-For example, all component props cannot be changed from within the component. However, very often there is a need
-to violate this rule. For example, we have a component that implements an input field. The component has some initial value,
-as well as its own, which can be changed during the component life cycle, for instance, a user entered new text.
-Technically, this can be done with two parameters: `initialValue` and `value`, which gets its initial value
-from `initialValue`. Next, we need to set watching for the `initialValue` because if the component value changes outside,
-then the internal value must also be updated.
+As soon as the source of the link reports a change, such as a mutation in the observable property or the emission of a listened event, the link synchronizes with the source.
 
-One way to implement the above is to use the `watch` method and an initializer function for the field to be observed.
+Links are highly useful when we want to create a property based on a different source but with a distinct data type. For instance, all component props cannot be changed from within the component. However, there is often a need to circumvent this rule.
+
+For example, consider a component that implements an input field. The component possesses an initial value, as well as its own value, which can be altered during the component life cycle, such as when a user enters new text.
+
+Technically, this can be executed with two parameters: `initialValue` and `value`, with the latter receiving its initial value from `initialValue`. Subsequently, we need to establish a watch for the `initialValue` because if the component value changes externally, the internal value must also be updated.
+
+One way to implement the above scenario is to use the `watch` method and an initializer function for the observed field.
 For instance:
 
 ```typescript
@@ -53,9 +49,9 @@ export default class bInput extends iBlock {
 }
 ```
 
-This code works, however, it has a number of disadvantages:
+This code works; however, it has several disadvantages:
 
-1. If the `initialValue` value needs to be normalized or converted somehow, then this logic will have to be duplicated in two places at once.
+1. If the `initialValue` needs to be normalized or converted somehow, then this logic will have to be duplicated in two places.
 
    ```typescript
    import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -74,11 +70,10 @@ This code works, however, it has a number of disadvantages:
    }
    ```
 
-2. You must explicitly set the field value `((v) => o.value = v)` when setting up the watch function.
-3. Redundant component API: outside we pass the `initialValue`, and inside we use the `value`.
+2. You must explicitly set the field value `((v) => o.value = v)` when configuring the watch function.
+3. Redundant component API: externally, we pass the `initialValue`, and internally, we use the `value`.
 
-To solve these problems, V4 has a special `sync.link` method, which, in fact, does the mechanism described above,
-but hides it "under the hood". Let's rewrite our example using `sync.link`.
+To address these issues, V4 provides a special `sync.link` method, which essentially performs the mechanism described above but conceals it "under the hood". Let's re-write our example using `sync.link`.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -97,19 +92,11 @@ export default class bInput extends iBlock {
 }
 ```
 
-As you can see, the method takes a string with the watchable property as the first parameter
-(you can specify a complex path, like `foo.bar.bla`), and the second parameter is a getter function.
-And, the method itself returns the starting value of the watched property.
+As you can see, the method takes a string with the watchable property as the first parameter (you can specify a complex path, like `foo.bar.bla`), and the second parameter is a getter function. The method itself returns the initial value of the watched property.
 
-So, problems 1 and 2 are solved, but what about the third problem? We still have two properties, and they have different
-names that we need to keep in mind. However, V4 has a simple convention: if a prop conflicts with a field or getter that
-depends on it, then the `Prop` postfix is added to the prop name, i.e. in our case, this will be `valueProp`. If a similar
-conflict occurs between a getter and a field, then `Store` postfix is added to the field name.
+Thus, problems 1 and 2 are resolved, but what about the third issue? We still have two properties with different names that we need to remember. However, V4 has a simple convention: if a prop conflicts with a field or getter that depends on it, then the `Prop` postfix is added to the prop name, i.e., in our case, this will be `valueProp`. If a similar conflict occurs between a getter and a field, then the `Store` postfix is added to the field name.
 
-Moreover, V4 is aware of this convention, so when calling the component "outside" we can just write `:value`,
-and V4 itself will substitute `:valueProp`. Also in this case, we get rid of the need to explicitly specify the name of
-the watched property when calling `sync.link`. And finally, if we don’t need a converter function when linking a property,
-then we can simply not write it. Let's rewrite our example again.
+Moreover, V4 recognizes this convention, so when invoking the component "externally", we can simply write `:value`, and V4 itself will substitute `:valueProp`. In this case, we also eliminate the need to explicitly specify the name of the watched property when calling `sync.link`. Finally, if we don’t require a converter function when linking a property, we can just omit it. Let's re-write our example once more.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -124,13 +111,13 @@ export default class bInput extends iBlock {
 }
 ```
 
-And calling our component from another template will be like this.
+When calling our component from another template, it will be like this:
 
 ```
 < b-input :value = 'V4 is awesome!'
 ```
 
-As you can see, we got rid of unnecessary boilerplate code and the need to remember the name of the component prop.
+As you can see, we have eliminated unnecessary boilerplate code and the need to remember the name of the component prop.
 
 ## Methods
 
