@@ -70,7 +70,7 @@ export function syncLinks(this: Sync, path?: LinkDecl, value?: unknown): void {
 			return;
 		}
 
-		Object.entries(([key, el]) => {
+		Object.forEach(Object.entries(o), ([key, el]) => {
 			if (el == null) {
 				return;
 			}
