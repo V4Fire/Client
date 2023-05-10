@@ -9,7 +9,7 @@
 import type Friend from 'components/friends/friend';
 
 import type iBlock from 'components/super/i-block/i-block';
-import type { ModsDict } from 'components/super/i-block/i-block';
+import type { ModsProp } from 'components/super/i-block/i-block';
 
 import { baseClassesCache, componentClassesCache, elementClassesCache } from 'components/friends/provide/const';
 import { fullComponentName, fullElementName } from 'components/friends/provide/names';
@@ -140,7 +140,7 @@ export function classes(
  * this.provide.componentClasses({checked: true});
  * ```
  */
-export function componentClasses(this: Friend, mods?: ModsDict): readonly string[];
+export function componentClasses(this: Friend, mods?: ModsProp): readonly string[];
 
 /**
  * Returns a list of classes for the specified component
@@ -162,13 +162,13 @@ export function componentClasses(this: Friend, mods?: ModsDict): readonly string
 export function componentClasses(
 	this: Friend,
 	componentName: string,
-	mods?: ModsDict
+	mods?: ModsProp
 ): readonly string[];
 
 export function componentClasses(
 	this: Friend,
-	componentNameOrMods?: string | ModsDict,
-	mods?: ModsDict
+	componentNameOrMods?: string | ModsProp,
+	mods?: ModsProp
 ): readonly string[] {
 	let
 		{componentName} = this;
@@ -225,7 +225,7 @@ export function componentClasses(
  * this.provide.elementClasses({button: {focused: true}});
  * ```
  */
-export function elementClasses(this: Friend, els: Dictionary<ModsDict>): readonly string[];
+export function elementClasses(this: Friend, els: Dictionary<ModsProp>): readonly string[];
 
 /**
  * Returns a list of classes for the specified element of the passed component
@@ -252,13 +252,13 @@ export function elementClasses(this: Friend, els: Dictionary<ModsDict>): readonl
 export function elementClasses(
 	this: Friend,
 	componentNameOrCtx: string | iBlock,
-	els: Dictionary<ModsDict>
+	els: Dictionary<ModsProp>
 ): readonly string[];
 
 export function elementClasses(
 	this: Friend,
-	nameCtxEls: string | iBlock | Dictionary<ModsDict>,
-	els?: Dictionary<ModsDict>
+	nameCtxEls: string | iBlock | Dictionary<ModsProp>,
+	els?: Dictionary<ModsProp>
 ): readonly string[] {
 	let
 		componentId,
