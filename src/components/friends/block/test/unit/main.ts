@@ -34,72 +34,78 @@ test.describe('friends/block', () => {
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
+
+		// Render component
 		await Component.waitForComponentTemplate(page, componentName);
 		target = await Component.createComponent(page, componentName);
+
+		// Prepare const
 		componentId = await target.evaluate((ctx) => ctx.componentId);
+
+		// Prepare global this
+		await page.evaluate((componentName) => {
+			globalThis.prefix = (strings?: TemplateStringsArray) => `${componentName}${strings?.join(' ') ?? ''}`;
+		}, componentName);
 	});
 
 	test.describe('`getFullBlockName`', () => {
-		test('simple usage', async () => {
-			const
-				testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getFullBlockName());
+		test('should return the full block name', async () => {
+			const testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getFullBlockName());
 
-			test.expect(testVal).toBe('b-friends-block-dummy');
+			test.expect(testVal).toBe(componentName);
 		});
 
-		test('`providing modifiers', async () => {
-			const testVal = await target.evaluate((ctx) =>
-				ctx.unsafe.block?.getFullBlockName('focused', true));
+		test('should return the full block name concatenated with the provided modifier and its value', async () => {
+			const testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getFullBlockName('focused', true));
 
-			test.expect(testVal).toBe('b-friends-block-dummy_focused_true');
+			test.expect(testVal).toBe(prefix`_focused_true`);
 		});
 	});
 
 	test.describe('`getBlockSelector`', () => {
-		test('simple usage', async () => {
-			const
-				testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getBlockSelector());
+		test('should return a selector for the block', async () => {
+			const testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getBlockSelector());
 
-			test.expect(testVal).toBe('.b-friends-block-dummy');
+			test.expect(testVal).toBe(`.${componentName}`);
 		});
 
-		test('providing modifiers', async () => {
-			const
-				testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getBlockSelector({focused: true}));
+		test('should return a selector consisting of the full block name and the provided modifier', async () => {
+			const testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getBlockSelector({focused: true}));
 
-			test.expect(testVal).toBe('.b-friends-block-dummy.b-friends-block-dummy_focused_true');
+			test.expect(testVal).toBe(`.${componentName}.${prefix`_focused_true`}`);
 		});
 	});
 
 	test.describe('`getFullElementName`', () => {
-		test('simple usage', async () => {
-			const
-				testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getFullElementName('test'));
+		test('should return the full element name', async () => {
+			const testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getFullElementName('test'));
 
-			test.expect(testVal).toBe('b-friends-block-dummy__test');
+			test.expect(testVal).toBe(prefix`__test`);
 		});
 
-		test('providing modifiers', async () => {
+		test('should return the full element name concatenated with the provided modifier and its value', async () => {
 			const testVal = await target.evaluate((ctx) =>
 				ctx.unsafe.block?.getFullElementName('test', 'focused', true));
 
-			test.expect(testVal).toBe('b-friends-block-dummy__test_focused_true');
+			test.expect(testVal).toBe(prefix`__test_focused_true`);
 		});
 	});
 
 	test.describe('`getElementSelector`', () => {
-		test('simple usage', async () => {
-			const
-				testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getElementSelector('test'));
+		test('should return a selector consisting of the provided element name and component ID', async () => {
+			const testVal = await target.evaluate((ctx) => ctx.unsafe.block?.getElementSelector('test'));
 
-			test.expect(testVal).toBe(`.b-friends-block-dummy__test.${componentId}`);
+			test.expect(testVal).toBe(`.${prefix`__test`}.${componentId}`);
 		});
 
-		test('providing modifiers', async () => {
+		test([
+			'should return a selector consisting of the provided element name,',
+			'the component ID, and the provided modifier'
+		].join(' '), async () => {
 			const testVal = await target.evaluate((ctx) =>
 				ctx.unsafe.block?.getElementSelector('test', {focused: true}));
 
-			test.expect(testVal).toBe(`.b-friends-block-dummy__test.${componentId}.b-friends-block-dummy__test_focused_true`);
+			test.expect(testVal).toBe(`.${prefix`__test`}.${componentId}.${prefix`__test_focused_true`}`);
 		});
 	});
 
@@ -107,49 +113,46 @@ test.describe('friends/block', () => {
 		test.beforeEach(async () => {
 			await target.evaluate((ctx) => {
 				const
-					dummyElSelector = document.createElement('div'),
-					dummyElModSelector = document.createElement('div');
+					dummyEl = document.createElement('div'),
+					dummyElMod = document.createElement('div');
 
-				dummyElSelector.classList.add('b-friends-block-dummy__test', ctx.componentId);
-				dummyElModSelector.classList.add('b-friends-block-dummy__test', 'b-friends-block-dummy__test_focused_true', ctx.componentId);
+				dummyEl.classList.add(prefix`__test`, ctx.componentId);
+				dummyElMod.classList.add(prefix`__test`, prefix`__test_focused_true`, ctx.componentId);
 
-				ctx.$el!.append(dummyElSelector, dummyElModSelector);
+				ctx.$el!.append(dummyEl, dummyElMod);
 			});
 		});
 
-		test('simple usage', async () => {
-			const
-				isElFounded = await target.evaluate((ctx) => Boolean(ctx.unsafe.block?.element('test')));
+		test('should return DOM node for the specified element name', async () => {
+			const elExists = await target.evaluate((ctx) => Boolean(ctx.unsafe.block?.element('test')));
 
-			test.expect(isElFounded).toBeTruthy();
+			test.expect(elExists).toBeTruthy();
 		});
 
-		test('providing additional modifiers to search', async () => {
-			const isElFounded = await target.evaluate((ctx) =>
+		test('should return DOM node for the specified element name and modifier', async () => {
+			const elExists = await target.evaluate((ctx) =>
 				Boolean(ctx.unsafe.block?.element('test', {focused: true})));
 
-			test.expect(isElFounded).toBeTruthy();
+			test.expect(elExists).toBeTruthy();
 		});
 
-		test('finding an unreachable element', async () => {
-			const
-				isElFounded = await target.evaluate((ctx) => Boolean(ctx.unsafe.block?.element('unreachable')));
+		test('should return `null` for the non-existing element', async () => {
+			const elExists = await target.evaluate((ctx) => Boolean(ctx.unsafe.block?.element('unreachable')));
 
-			test.expect(isElFounded).toBeFalsy();
+			test.expect(elExists).toBeFalsy();
 		});
 
-		test('finding an element with an unreachable modifier', async () => {
-			const isElFounded = await target.evaluate((ctx) =>
+		test('should return `null` for the element with the non-existing modifier', async () => {
+			const elExists = await target.evaluate((ctx) =>
 				Boolean(ctx.unsafe.block?.element('test', {unreachableMod: true})));
 
-			test.expect(isElFounded).toBeFalsy();
+			test.expect(elExists).toBeFalsy();
 		});
 
-		test('providing the context to search', async () => {
-			const
-				isElFounded = await target.evaluate((ctx) => Boolean(ctx.unsafe.block?.element(ctx.$el!, 'test')));
+		test('should return DOM node for the specified context and element name', async () => {
+			const elExists = await target.evaluate((ctx) => Boolean(ctx.unsafe.block?.element(ctx.$el!, 'test')));
 
-			test.expect(isElFounded).toBeTruthy();
+			test.expect(elExists).toBeTruthy();
 		});
 	});
 
@@ -157,49 +160,46 @@ test.describe('friends/block', () => {
 		test.beforeEach(async () => {
 			await target.evaluate((ctx) => {
 				const
-					dummyElSelector = document.createElement('div'),
-					dummyElModSelector = document.createElement('div');
+					dummyEl = document.createElement('div'),
+					dummyElMod = document.createElement('div');
 
-				dummyElSelector.classList.add('b-friends-block-dummy__test', ctx.componentId);
-				dummyElModSelector.classList.add('b-friends-block-dummy__test', 'b-friends-block-dummy__test_focused_true', ctx.componentId);
+				dummyEl.classList.add(prefix`__test`, ctx.componentId);
+				dummyElMod.classList.add(prefix`__test`, prefix`__test_focused_true`, ctx.componentId);
 
-				ctx.$el!.append(dummyElSelector, dummyElModSelector);
+				ctx.$el!.append(dummyEl, dummyElMod);
 			});
 		});
 
-		test('simple usage', async () => {
-			const
-				isElsFounded = await target.evaluate((ctx) => Boolean(ctx.unsafe.block?.elements('test').length));
+		test('should return DOM nodes for the specified element name', async () => {
+			const elsExist = await target.evaluate((ctx) => Boolean(ctx.unsafe.block?.elements('test').length));
 
-			test.expect(isElsFounded).toBeTruthy();
+			test.expect(elsExist).toBeTruthy();
 		});
 
-		test('providing additional modifiers to search', async () => {
-			const isElsFounded = await target.evaluate((ctx) =>
+		test('should return DOM nodes for the specified element name and modifier', async () => {
+			const elsExist = await target.evaluate((ctx) =>
 				Boolean(ctx.unsafe.block?.elements('test', {focused: true}).length));
 
-			test.expect(isElsFounded).toBeTruthy();
+			test.expect(elsExist).toBeTruthy();
 		});
 
-		test('finding unreachable elements', async () => {
-			const
-				isElsFounded = await target.evaluate((ctx) => Boolean(ctx.unsafe.block?.elements('unreachable').length));
+		test('should return empty array for the non-existing element', async () => {
+			const elsExist = await target.evaluate((ctx) =>
+				Boolean(ctx.unsafe.block?.elements('unreachable').length));
 
-			test.expect(isElsFounded).toBeFalsy();
+			test.expect(elsExist).toBeFalsy();
 		});
 	});
 
 	test.describe('`setMod`', () => {
-		test('sets a class name to the element', async () => {
+		test('should add a modifier class to the element', async ({page}) => {
 			await target.evaluate((ctx) => ctx.setMod('focused', true));
 
-			const
-				hasClass = await target.evaluate((ctx) => ctx.$el!.classList.contains('b-friends-block-dummy_focused_true'));
-
-			test.expect(hasClass).toBeTruthy();
+			await test.expect(page.locator(`.${componentName}`))
+				.toHaveClass(new RegExp(prefix`_focused_true`));
 		});
 
-		test('emits events', async () => {
+		test('should emit `block.mod.set.*` events', async () => {
 			const blockModSetEventPr = target.evaluate((ctx) =>
 				ctx.unsafe.localEmitter.promisifyOnce('block.mod.set.focused.true'));
 
@@ -208,11 +208,10 @@ test.describe('friends/block', () => {
 			await test.expect(blockModSetEventPr).toBeResolved();
 		});
 
-		test('stores a modifier to the component state', async () => {
+		test('should update component\'s `mods` state', async () => {
 			await target.evaluate((ctx) => ctx.setMod('focused', true));
 
-			const
-				storedModVal = await target.evaluate((ctx) => ctx.mods.focused);
+			const storedModVal = await target.evaluate((ctx) => ctx.mods.focused);
 
 			test.expect(storedModVal).toBe('true');
 		});
@@ -223,47 +222,42 @@ test.describe('friends/block', () => {
 			await target.evaluate((ctx) => ctx.setMod('focused', true));
 		});
 
-		test('removes a class name from the element', async () => {
+		test('should remove a modifier class from the element', async ({page}) => {
 			await target.evaluate((ctx) => ctx.removeMod('focused'));
 
-			const
-				hasClass = await target.evaluate((ctx) => ctx.$el!.classList.contains('b-friends-block-dummy_focused_true'));
-
-			test.expect(hasClass).toBeFalsy();
+			await test.expect(page.locator(`.${componentName}`))
+				.not.toHaveClass(new RegExp(prefix`_focused_true`));
 		});
 
-		test('emits events', async () => {
+		test('should emit `block.mod.remove.*` events', async () => {
 			const blockModRemoveEventPr = target.evaluate((ctx) =>
-				ctx.localEmitter.promisifyOnce('block.mod.remove.focused.true'));
+				ctx.unsafe.localEmitter.promisifyOnce('block.mod.remove.focused.true'));
 
 			await target.evaluate((ctx) => ctx.removeMod('focused', true));
 
 			await test.expect(blockModRemoveEventPr).toBeResolved();
 		});
 
-		test('removes a modifier from the component state', async () => {
+		test('should remove modifier value from the component\'s `mods` state', async () => {
 			await target.evaluate((ctx) => ctx.removeMod('focused', true));
 
-			const
-				storedModVal = await target.evaluate((ctx) => ctx.mods.focused);
+			const storedModVal = await target.evaluate((ctx) => ctx.mods.focused);
 
 			test.expect(storedModVal).toBeUndefined();
 		});
 	});
 
 	test.describe('`getMod`', () => {
-		test('gets a modifier from the component state', async () => {
+		test('should return component\'s modifier value from it\'s state', async () => {
 			await target.evaluate((ctx) => ctx.setMod('focused', true));
 
-			const
-				modVal = await target.evaluate((ctx) => ctx.unsafe.block?.getMod('focused', false));
+			const modVal = await target.evaluate((ctx) => ctx.unsafe.block?.getMod('focused', false));
 
 			test.expect(modVal).toBe('true');
 		});
 
-		test('returns `undefined` if the modifier is not settled', async () => {
-			const
-				modVal = await target.evaluate((ctx) => ctx.unsafe.block?.getMod('focused', false));
+		test('should return `undefined` if the modifier is not set', async () => {
+			const modVal = await target.evaluate((ctx) => ctx.unsafe.block?.getMod('focused', false));
 
 			test.expect(modVal).toBeUndefined();
 		});
@@ -272,33 +266,29 @@ test.describe('friends/block', () => {
 	test.describe('`setElementMod`', () => {
 		test.beforeEach(async () => {
 			await target.evaluate((ctx) => {
-				const
-					dummyElSelector = document.createElement('div');
+				const dummyEl = document.createElement('div');
 
-				dummyElSelector.classList.add('b-friends-block-dummy__test', ctx.componentId);
+				dummyEl.classList.add(prefix`__test`, ctx.componentId);
 
-				ctx.$el!.append(dummyElSelector);
-
-				globalThis._testEl = dummyElSelector;
+				ctx.$el!.append(dummyEl);
+				globalThis._testEl = dummyEl;
 			});
 		});
 
-		test('sets a class name to the element', async ({page}) => {
+		test('should set a modifier class for the provided DOM node', async ({page}) => {
 			await target.evaluate((ctx) =>
-				ctx.unsafe.block?.setElementMod(globalThis._testEl, 'test', 'focused', 'true'));
+				ctx.unsafe.block?.setElementMod(globalThis._testEl, 'test', 'focused', true));
 
-			const hasClass = await page.evaluate(() =>
-				globalThis._testEl.classList.contains('b-friends-block-dummy__test_focused_true'));
-
-			test.expect(hasClass).toBeTruthy();
+			await test.expect(page.locator(`.${prefix`__test`}`))
+				.toHaveClass(new RegExp(prefix`__test_focused_true`));
 		});
 
-		test('emits an event', async () => {
+		test('should emit `el.mod.set.{elementName}.*` events', async () => {
 			const elModSetEvent = target.evaluate((ctx) =>
 				ctx.unsafe.localEmitter.promisifyOnce('el.mod.set.test.focused.true'));
 
 			await target.evaluate((ctx) =>
-				ctx.unsafe.block?.setElementMod(globalThis._testEl, 'test', 'focused', 'true'));
+				ctx.unsafe.block?.setElementMod(globalThis._testEl, 'test', 'focused', true));
 
 			await test.expect(elModSetEvent).toBeResolved();
 		});
@@ -307,30 +297,27 @@ test.describe('friends/block', () => {
 	test.describe('`removeElementMod`', () => {
 		test.beforeEach(async () => {
 			await target.evaluate((ctx) => {
-				const
-					dummyElSelector = document.createElement('div');
+				const dummyEl = document.createElement('div');
 
-				dummyElSelector.classList.add('b-friends-block-dummy__test', ctx.componentId);
+				dummyEl.classList.add(prefix`__test`, ctx.componentId);
 
-				ctx.$el!.append(dummyElSelector);
-				globalThis._testEl = dummyElSelector;
+				ctx.$el!.append(dummyEl);
+				globalThis._testEl = dummyEl;
 			});
 
 			await target.evaluate((ctx) =>
-				ctx.unsafe.block?.setElementMod(globalThis._testEl, 'test', 'focused', 'true'));
+				ctx.unsafe.block?.setElementMod(globalThis._testEl, 'test', 'focused', true));
 		});
 
-		test('removed a class name from the element', async ({page}) => {
+		test('should remove a modifier class from the provided DOM node', async ({page}) => {
 			await target.evaluate((ctx) =>
 				ctx.unsafe.block?.removeElementMod(globalThis._testEl, 'test', 'focused'));
 
-			const hasClass = await page.evaluate(() =>
-				globalThis._testEl.classList.contains('b-friends-block-dummy__test_focused_true'));
-
-			test.expect(hasClass).toBeFalsy();
+			await test.expect(page.locator(`.${prefix`__test`}`))
+				.not.toHaveClass(new RegExp(prefix`__test_focused_true`));
 		});
 
-		test('emits an event', async () => {
+		test('should emit `el.mod.remove.{elementName}.*` events', async () => {
 			const elModSetEvent = target.evaluate((ctx) =>
 				ctx.unsafe.localEmitter.promisifyOnce('el.mod.remove.test.focused.true'));
 
@@ -344,20 +331,19 @@ test.describe('friends/block', () => {
 	test.describe('`getElementMod`', () => {
 		test.beforeEach(async () => {
 			await target.evaluate((ctx) => {
-				const
-					dummyElSelector = document.createElement('div');
+				const dummyEl = document.createElement('div');
 
-				dummyElSelector.classList.add('b-friends-block-dummy__test', ctx.componentId);
+				dummyEl.classList.add(prefix`__test`, ctx.componentId);
 
-				ctx.$el!.append(dummyElSelector);
-				globalThis._testEl = dummyElSelector;
+				ctx.$el!.append(dummyEl);
+				globalThis._testEl = dummyEl;
 			});
 
 		});
 
-		test('gets a modifier value', async () => {
+		test('should return modifier value for the provided DOM node', async () => {
 			await target.evaluate((ctx) =>
-				ctx.unsafe.block?.setElementMod(globalThis._testEl, 'test', 'focused', 'true'));
+				ctx.unsafe.block?.setElementMod(globalThis._testEl, 'test', 'focused', true));
 
 			const modVal = await target.evaluate((ctx) =>
 				ctx.unsafe.block?.getElementMod(globalThis._testEl, 'test', 'focused'));
@@ -365,7 +351,7 @@ test.describe('friends/block', () => {
 			test.expect(modVal).toBe('true');
 		});
 
-		test('returns `undefined` if the modifier was not settled', async () => {
+		test('should return `undefined` if the modifier is not set on the provided DOM node', async () => {
 			const modVal = await target.evaluate((ctx) =>
 				ctx.unsafe.block?.getElementMod(globalThis._testEl, 'test', 'focused'));
 
