@@ -699,12 +699,11 @@ test.describe('friends/sync', () => {
 	});
 
 	test.describe('`syncLinks`', () => {
-		// FIXME: broken test
 		test('global synchronization', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [
 					Object.fastClone(ctx.dict),
-					Object.fastClone(ctx.sync.link(['bla', 'dict'], {immediate: true}))
+					Object.fastClone(ctx.sync.link(['bla', 'dict'], {flush: 'sync'}))
 				];
 
 				ctx.dict.a.b++;
@@ -728,12 +727,11 @@ test.describe('friends/sync', () => {
 			]);
 		});
 
-		// FIXME: broken test
 		test('synchronization by a main name', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [
 					Object.fastClone(ctx.dict),
-					Object.fastClone(ctx.sync.link(['bla', 'dict'], {immediate: true}))
+					Object.fastClone(ctx.sync.link(['bla', 'dict'], {flush: 'sync'}))
 				];
 
 				ctx.dict.a.b++;
@@ -757,7 +755,6 @@ test.describe('friends/sync', () => {
 			]);
 		});
 
-		// FIXME: broken test
 		test('synchronization by a link name', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [
@@ -794,7 +791,6 @@ test.describe('friends/sync', () => {
 			]);
 		});
 
-		// FIXME: broken test
 		test('providing a value', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [
