@@ -13,8 +13,8 @@
 
 import bDummy, { component } from 'components/dummies/b-dummy/b-dummy';
 
-import * as BlockAPI from 'components/friends/block';
 import Block from 'components/friends/block/class';
+import * as BlockAPI from 'components/friends/block/api';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
