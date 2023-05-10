@@ -118,6 +118,7 @@ test.describe('friends/sync', () => {
 				test.expect(scan).toEqual([3, 4, 5, NaN]);
 			});
 
+			// FIXME: broken test
 			test('immediate linking to a nested field with an initializer from @system to @field', async () => {
 				const scan = await target.evaluate((ctx) => {
 					const res = [ctx.immediateLinkToNestedFieldWithInitializerFromSystemToField];
@@ -502,6 +503,7 @@ test.describe('friends/sync', () => {
 				test.expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {foo: undefined}]);
 			});
 
+			// FIXME: broken test
 			test('immediate linking to a nested field', async () => {
 				const scan = await target.evaluate((ctx) => {
 					const res = [
@@ -699,6 +701,7 @@ test.describe('friends/sync', () => {
 	});
 
 	test.describe('`syncLinks`', () => {
+		// FIXME: broken test
 		test('global synchronization', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [
@@ -727,6 +730,7 @@ test.describe('friends/sync', () => {
 			]);
 		});
 
+		// FIXME: broken test
 		test('synchronization by a main name', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [
@@ -755,6 +759,7 @@ test.describe('friends/sync', () => {
 			]);
 		});
 
+		// FIXME: broken test
 		test('synchronization by a link name', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [
@@ -791,6 +796,7 @@ test.describe('friends/sync', () => {
 			]);
 		});
 
+		// FIXME: broken test
 		test('providing a value', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [
