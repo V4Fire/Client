@@ -12,11 +12,11 @@ import test from 'tests/config/unit/test';
 
 import { Component } from 'tests/helpers';
 
-import type bDummyFriendsProvide from 'components/friends/provide/test/b-friends-provide-dummy/b-friends-provide-dummy';
+import type bFriendsProvideDummy from 'components/friends/provide/test/b-friends-provide-dummy/b-friends-provide-dummy';
 
 test.describe('friends/provide', () => {
 
-	let target: JSHandle<bDummyFriendsProvide>;
+	let target: JSHandle<bFriendsProvideDummy>;
 
 	const componentName = 'b-friends-provide-dummy';
 
