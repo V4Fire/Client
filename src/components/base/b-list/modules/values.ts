@@ -66,10 +66,16 @@ export default class Values extends Friend {
 	 */
 	init(itemsChanged: boolean = false): void {
 		const
-			{ctx} = this,
+			{ctx} = this;
+
+		const
 			values = new Map(),
 			valueItems = new Map(),
 			indexes = {};
+
+		this.values = values;
+		this.valueItems = valueItems;
+		this.indexes = indexes;
 
 		const
 			{active: currentActive} = ctx;
@@ -107,9 +113,5 @@ export default class Values extends Friend {
 				iActiveItems.initItem(ctx, activeItem);
 			}
 		}
-
-		this.values = values;
-		this.valueItems = valueItems;
-		this.indexes = indexes;
 	}
 }
