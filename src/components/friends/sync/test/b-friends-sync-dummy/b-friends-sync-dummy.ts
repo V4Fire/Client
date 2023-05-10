@@ -54,8 +54,8 @@ export default class bFriendsSyncDummy extends iData {
 
 	linkToNestedFieldWithInitializer!: number;
 
-	@system((o) => o.sync.link('dict.a.b', {immediate: true}, (val: number) => val + 1))
-	immediateLinkToNestedFieldWithInitializerFromSystemToField!: number;
+	@system((o) => o.sync.link('dict.a.b', {flush: 'sync', immediate: true}, (val: number) => val + 1))
+	immediateWithFlushSyncLinkToNestedFieldWithInitializerFromSystemToField!: number;
 
 	@field({
 		after: 'dict',

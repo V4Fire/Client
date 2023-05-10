@@ -118,19 +118,18 @@ test.describe('friends/sync', () => {
 				test.expect(scan).toEqual([3, 4, 5, NaN]);
 			});
 
-			// FIXME: broken test
 			test('immediate linking to a nested field with an initializer from @system to @field', async () => {
 				const scan = await target.evaluate((ctx) => {
-					const res = [ctx.immediateLinkToNestedFieldWithInitializerFromSystemToField];
+					const res = [ctx.immediateWithFlushSyncLinkToNestedFieldWithInitializerFromSystemToField];
 
 					ctx.dict.a.b++;
-					res.push(ctx.immediateLinkToNestedFieldWithInitializerFromSystemToField);
+					res.push(ctx.immediateWithFlushSyncLinkToNestedFieldWithInitializerFromSystemToField);
 
 					ctx.dict.a.b++;
-					res.push(ctx.immediateLinkToNestedFieldWithInitializerFromSystemToField);
+					res.push(ctx.immediateWithFlushSyncLinkToNestedFieldWithInitializerFromSystemToField);
 
 					ctx.dict.a = {e: 1};
-					res.push(ctx.immediateLinkToNestedFieldWithInitializerFromSystemToField);
+					res.push(ctx.immediateWithFlushSyncLinkToNestedFieldWithInitializerFromSystemToField);
 
 					return res;
 				});
@@ -503,12 +502,11 @@ test.describe('friends/sync', () => {
 				test.expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {foo: undefined}]);
 			});
 
-			// FIXME: broken test
 			test('immediate linking to a nested field', async () => {
 				const scan = await target.evaluate((ctx) => {
 					const res = [
 						ctx.dict.a.b,
-						Object.fastClone(ctx.sync.object('bla', {immediate: true}, [['foo', 'dict.a.b']]))
+						Object.fastClone(ctx.sync.object('bla', {flush: 'sync'}, [['foo', 'dict.a.b']]))
 					];
 
 					ctx.dict.a.b++;
