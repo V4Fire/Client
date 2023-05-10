@@ -15,3 +15,7 @@ export { default } from 'components/friends/sync/class';
 
 export * from 'components/friends/sync/api';
 export * from 'components/friends/sync/interface';
+
+//#if runtime has prelude/test-env
+import('components/friends/sync/test/b-friends-sync-dummy');
+//#endif
