@@ -23,7 +23,7 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 
-export default class bDummySync extends iData {
+export default class bFriendsSyncDummy extends iData {
 	@prop(Object)
 	readonly dictProp: Dictionary = {
 		a: {
