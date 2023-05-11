@@ -38,7 +38,7 @@ export default class bFriendsSyncDummy extends iData {
 	};
 
 	@field((o) => o.sync.link())
-	dict!: Dictionary;
+	dict!: Dictionary<Dictionary<number>>;
 
 	@field({
 		after: 'dict',
