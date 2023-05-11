@@ -6,16 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:components/dummies/b-dummy-state/README.md]]
- * @packageDocumentation
- */
-
 import iData, { component, field, system } from 'components/super/i-data/i-data';
 
 import type { ConverterCallType } from 'components/friends/state/interface';
 
+import State from 'components/friends/state';
+import * as StateAPI from 'components/friends/state/api';
+
 export * from 'components/super/i-data/i-data';
+
+State.addToPrototype(StateAPI);
 
 @component({
 	functional: {
