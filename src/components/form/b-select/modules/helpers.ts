@@ -6,10 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 import type bSelect from 'components/form/b-select/b-select';
 
-import { $$ } from 'components/form/b-select/const';
 import type { Items } from 'components/form/b-select/interface';
+
+const $$ = symbolGenerator();
 
 /**
  * Normalizes the specified items and returns them
