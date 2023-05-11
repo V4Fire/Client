@@ -1,5 +1,5 @@
 {
-  "hash": "fea25a986801fade614aa55cbc6eab9df42ebc084482cfb80e3dd4e0e12a26ea",
+  "hash": "8efe2d8aace18bf93bd9f553371820caf37d1170164de3a67aa6e0ea980b1c93",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -560,6 +560,38 @@
             "src/components/form/b-form/b-form.styl"
           ],
           "tpl": "src/components/form/b-form/b-form.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-provide-dummy",
+        {
+          "index": "src/components/friends/provide/test/b-friends-provide-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-provide-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-provide-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/provide/test/b-friends-provide-dummy/b-friends-provide-dummy.ts",
+          "styles": [
+            "src/components/friends/provide/test/b-friends-provide-dummy/b-friends-provide-dummy.styl"
+          ],
+          "tpl": "src/components/friends/provide/test/b-friends-provide-dummy/b-friends-provide-dummy.ss",
           "etpl": null
         }
       ],

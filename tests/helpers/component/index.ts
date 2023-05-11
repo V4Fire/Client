@@ -236,4 +236,18 @@ export default class Component {
 
 		return component;
 	}
+
+	/**
+	 * Waits until the component template is loaded
+	 *
+	 * @param ctx
+	 * @param componentName
+	 */
+	static async waitForComponentTemplate(
+		ctx: Page,
+		componentName: string
+	): Promise<void> {
+		// @ts-ignore TPLS is a global storage for component templates
+		await ctx.waitForFunction((componentName) => globalThis.TPLS[componentName] != null, componentName);
+	}
 }
