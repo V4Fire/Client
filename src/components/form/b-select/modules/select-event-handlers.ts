@@ -334,7 +334,7 @@ export default abstract class SelectEventHandlers {
 
 	/**
 	 * Handler: changing text of a component helper input
-   *
+	 *
 	 * @emits `actionChange(value: V)`
 	 */
 	protected onTextChange(): void {
