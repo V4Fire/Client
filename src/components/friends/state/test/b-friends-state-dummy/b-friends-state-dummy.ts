@@ -11,7 +11,9 @@
  * @packageDocumentation
  */
 
-import iData, { component, field, system, ConverterCallType } from 'components/super/i-data/i-data';
+import iData, { component, field, system } from 'components/super/i-data/i-data';
+
+import type { ConverterCallType } from 'components/friends/state/interface';
 
 export * from 'components/super/i-data/i-data';
 
@@ -22,7 +24,7 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 
-export default class bDummyState extends iData {
+export default class bFriendsStateDummy extends iData {
 	@system()
 	systemField: string = 'foo';
 
