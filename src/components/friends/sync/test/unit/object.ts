@@ -26,299 +26,307 @@ test.describe('friends/sync `object`', () => {
 		target = await Component.createComponent(page, componentName);
 	});
 
-	test.describe('without using a decorator', () => {
-		test('linking to an event', async () => {
-			const scan = await target.evaluate((ctx) => {
-				const res: any[] = [Object.fastClone(ctx.sync.object('bla', [['foo', 'localEmitter:foo']]))];
+	test('should create a link for the event', async () => {
+		const scan = await target.evaluate((ctx) => {
+			const res: any[] = [Object.fastClone(ctx.sync.object('bla', [['foo', 'localEmitter:foo']]))];
 
-				ctx.unsafe.localEmitter.emit('foo', 1);
-				res.push(Object.fastClone(ctx.bla));
+			ctx.unsafe.localEmitter.emit('foo', 1);
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.unsafe.localEmitter.emit('foo', 2);
-				res.push(Object.fastClone(ctx.bla));
+			ctx.unsafe.localEmitter.emit('foo', 2);
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.unsafe.localEmitter.emit('foo', 3);
-				res.push(Object.fastClone(ctx.bla));
+			ctx.unsafe.localEmitter.emit('foo', 3);
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.unsafe.localEmitter.emit('foo', undefined);
-				res.push(Object.fastClone(ctx.bla));
+			ctx.unsafe.localEmitter.emit('foo', undefined);
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
-
-			test.expect(scan).toEqual([{foo: undefined}, {foo: 1}, {foo: 2}, {foo: 3}, {foo: undefined}]);
+			return res;
 		});
 
-		test('linking to an event with an initializer', async () => {
-			const scan = await target.evaluate((ctx) => {
-				const res: any[] = [Object.fastClone(ctx.sync.object('bla', [['foo', 'localEmitter:foo', (val) => <number>val + 1]]))];
+		test.expect(scan).toEqual([{foo: undefined}, {foo: 1}, {foo: 2}, {foo: 3}, {foo: undefined}]);
+	});
 
-				ctx.unsafe.localEmitter.emit('foo', 1);
-				res.push(Object.fastClone(ctx.bla));
+	test('should create a link for the event with initialization function', async () => {
+		const scan = await target.evaluate((ctx) => {
+			const res: any[] = [
+				Object.fastClone(
+					ctx.sync.object('bla', [['foo', 'localEmitter:foo', (val) => <number>val + 1]])
+				)
+			];
 
-				ctx.unsafe.localEmitter.emit('foo', 2);
-				res.push(Object.fastClone(ctx.bla));
+			ctx.unsafe.localEmitter.emit('foo', 1);
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.unsafe.localEmitter.emit('foo', 3);
-				res.push(Object.fastClone(ctx.bla));
+			ctx.unsafe.localEmitter.emit('foo', 2);
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.unsafe.localEmitter.emit('foo', undefined);
-				res.push(Object.fastClone(ctx.bla));
+			ctx.unsafe.localEmitter.emit('foo', 3);
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
+			ctx.unsafe.localEmitter.emit('foo', undefined);
+			res.push(Object.fastClone(ctx.bla));
 
-			test.expect(scan).toEqual([{foo: NaN}, {foo: 2}, {foo: 3}, {foo: 4}, {foo: NaN}]);
+			return res;
 		});
 
-		test('linking to a field', async () => {
-			const scan = await target.evaluate(async (ctx) => {
-				const res: any[] = [
-					Object.fastClone(ctx.dict),
-					Object.fastClone(ctx.sync.object('bla', ['dict']))
-				];
+		test.expect(scan).toEqual([{foo: NaN}, {foo: 2}, {foo: 3}, {foo: 4}, {foo: NaN}]);
+	});
 
-				ctx.dict.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+	test([
+		'should create a link for the field,',
+		'which by default updates on the next tick'
+	].join(' '), async () => {
+		const scan = await target.evaluate(async (ctx) => {
+			const res: any[] = [
+				Object.fastClone(ctx.dict),
+				Object.fastClone(ctx.sync.object('bla', ['dict']))
+			];
 
-				ctx.dict.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.dict.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.dict.a = {e: 1};
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.dict.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
+			ctx.dict = {a: {e: 1}};
+			res.push(Object.fastClone(ctx.bla));
 
-			test.expect(scan).toEqual([
-				{a: {b: 2, c: 3}},
-				{dict: {a: {b: 2, c: 3}}},
-				{dict: {a: {b: 3, c: 3}}},
-				{dict: {a: {b: 4, c: 3}}},
-				{dict: {a: {e: 1}}}
-			]);
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
+
+			return res;
 		});
 
-		test('linking to a nested field', async () => {
-			const scan = await target.evaluate(async (ctx) => {
-				const res: any[] = [
-					ctx.dict.a!.b,
-					Object.fastClone(ctx.sync.object('bla', [['foo', 'dict.a.b']]))
-				];
+		test.expect(scan).toEqual([
+			{a: {b: 2, c: 3}},
+			{dict: {a: {b: 2, c: 3}}},
+			{dict: {a: {b: 3, c: 3}}},
+			{dict: {a: {b: 4, c: 3}}},
+			{dict: {a: {b: 4, c: 3}}},
+			{dict: {a: {e: 1}}}
+		]);
+	});
 
-				ctx.dict.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+	test([
+		'should create a link for the nested property of the field,',
+		'which by default updates on the next tick'
+	].join(' '), async () => {
+		const scan = await target.evaluate(async (ctx) => {
+			const res: any[] = [
+				ctx.dict.a!.b,
+				Object.fastClone(ctx.sync.object('bla', [['foo', 'dict.a.b']]))
+			];
 
-				ctx.dict.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.dict.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.dict.a = {e: 1};
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.dict.a!.b!++;
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-			test.expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {foo: undefined}]);
+			ctx.dict.a = {e: 1};
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
+
+			return res;
 		});
 
-		test('immediate linking to a nested field', async () => {
-			const scan = await target.evaluate((ctx) => {
-				const res: any[] = [
-					ctx.dict.a!.b,
-					Object.fastClone(ctx.sync.object('bla', {flush: 'sync'}, [['foo', 'dict.a.b']]))
-				];
+		test.expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 3}, {foo: 4}, {foo: undefined}]);
+	});
 
-				ctx.dict.a!.b!++;
-				res.push(Object.fastClone(ctx.bla));
+	test([
+		'should create a link for the nested property of the field,',
+		'which updates immediately when the `flush = sync` option is provided'
+	].join(' '), async () => {
+		const scan = await target.evaluate((ctx) => {
+			const res: any[] = [
+				ctx.dict.a!.b,
+				Object.fastClone(ctx.sync.object('bla', {flush: 'sync'}, [['foo', 'dict.a.b']]))
+			];
 
-				ctx.dict.a!.b!++;
-				res.push(Object.fastClone(ctx.bla));
+			ctx.dict.a!.b!++;
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.dict.a = {e: 1};
-				res.push(Object.fastClone(ctx.bla));
+			ctx.dict.a!.b!++;
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
+			ctx.dict.a = {e: 1};
+			res.push(Object.fastClone(ctx.bla));
 
-			test.expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {foo: undefined}]);
+			return res;
 		});
 
-		test('linking to a nested field with an initializer', async () => {
-			const scan = await target.evaluate(async (ctx) => {
-				const res: any[] = [
-					ctx.dict.a!.b,
-					ctx.sync.object('bla.bar', [['foo', 'dict.a.b', (val) => <number>val + 1]])
-				];
+		test.expect(scan).toEqual([2, {foo: 2}, {foo: 3}, {foo: 4}, {foo: undefined}]);
+	});
 
-				ctx.dict.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+	test([
+		'should create a link for the nested property of the field',
+		'with initialization function'
+	].join(' '), async () => {
+		const scan = await target.evaluate(async (ctx) => {
+			const res: any[] = [
+				ctx.dict.a!.b,
+				ctx.sync.object('bla.bar', [['foo', 'dict.a.b', (val) => <number>val + 1]])
+			];
 
-				ctx.dict.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.dict.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.dict.a = {e: 1};
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.dict.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
+			ctx.dict.a = {e: 1};
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-			test.expect(scan).toEqual([
-				2,
-				{bar: {foo: NaN}},
-				{bar: {foo: 4}},
-				{bar: {foo: 5}},
-				{bar: {foo: NaN}}
-			]);
+			return res;
 		});
 
-		test('checking `r.isAuth`', async () => {
-			const scan = await target.evaluate(async (ctx) => {
-				const
-					res = [Object.isBoolean(ctx.r.isAuth)];
+		test.expect(scan).toEqual([
+			2,
+			{bar: {foo: NaN}},
+			{bar: {foo: 4}},
+			{bar: {foo: 5}},
+			{bar: {foo: NaN}}
+		]);
+	});
 
-				ctx.r.remoteState.isAuth = true;
-				await ctx.nextTick();
-				res.push(ctx.r.isAuth);
+	test([
+		'should create a link for the mounted watcher',
+		'when the path to this watcher is specified as the source'
+	].join(' '), async () => {
+		const scan = await target.evaluate(async (ctx) => {
+			const res: any[] = [
+				Object.fastClone(ctx.mountedWatcher),
+				Object.fastClone(ctx.sync.object('bla', [['bla', 'mountedWatcher']]))
+			];
 
-				ctx.r.remoteState.isAuth = false;
-				await ctx.nextTick();
-				res.push(ctx.r.isAuth);
+			ctx.mountedWatcher.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
+			ctx.mountedWatcher.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-			test.expect(scan).toEqual([
-				true,
-				true,
-				false
-			]);
+			ctx.mountedWatcher.a = {e: 1};
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
+
+			return res;
 		});
 
-		test('linking to a field from the mounted watcher passed by a path', async () => {
-			const scan = await target.evaluate(async (ctx) => {
-				const res: any[] = [
-					Object.fastClone(ctx.mountedWatcher),
-					Object.fastClone(ctx.sync.object('bla', [['bla', 'mountedWatcher']]))
-				];
+		test.expect(scan).toEqual([
+			{a: {b: 1}},
+			{bla: {a: {b: 1}}},
+			{bla: {a: {b: 2}}},
+			{bla: {a: {b: 3}}},
+			{bla: {a: {e: 1}}}
+		]);
+	});
 
-				ctx.mountedWatcher.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+	test([
+		'should create a link for the mounted watcher',
+		'when the JavaScript link to this watcher is specified as the source'
+	].join(' '), async () => {
+		const scan = await target.evaluate(async (ctx) => {
+			const res: any[] = [
+				Object.fastClone(ctx.mountedWatcher),
+				Object.fastClone(ctx.sync.object('bla', [['bla', ctx.mountedWatcher]]))
+			];
 
-				ctx.mountedWatcher.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.mountedWatcher.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.mountedWatcher.a = {e: 1};
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.mountedWatcher.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
+			ctx.mountedWatcher.a = {e: 1};
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-			test.expect(scan).toEqual([
-				{a: {b: 1}},
-				{bla: {a: {b: 1}}},
-				{bla: {a: {b: 2}}},
-				{bla: {a: {b: 3}}},
-				{bla: {a: {e: 1}}}
-			]);
+			return res;
 		});
 
-		test('linking to a field from the mounted watcher passed by a link', async () => {
-			const scan = await target.evaluate(async (ctx) => {
-				const res: any[] = [
-					Object.fastClone(ctx.mountedWatcher),
-					Object.fastClone(ctx.sync.object('bla', [['bla', ctx.mountedWatcher]]))
-				];
+		test.expect(scan).toEqual([
+			{a: {b: 1}},
+			{bla: {a: {b: 1}}},
+			{bla: {a: {b: 2}}},
+			{bla: {a: {b: 3}}},
+			{bla: {a: {e: 1}}}
+		]);
+	});
 
-				ctx.mountedWatcher.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+	test([
+		'should create a link for the nested property in the mounted watcher',
+		'when the path to this property is specified as the source'
+	].join(' '), async () => {
+		const scan = await target.evaluate(async (ctx) => {
+			const res: any[] = [
+				ctx.mountedWatcher.a!.b,
+				Object.fastClone(ctx.sync.object('bla', [['bla', 'mountedWatcher.a.b']]))
+			];
 
-				ctx.mountedWatcher.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.mountedWatcher.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.mountedWatcher.a = {e: 1};
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.mountedWatcher.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
+			ctx.mountedWatcher.a = {e: 1};
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-			test.expect(scan).toEqual([
-				{a: {b: 1}},
-				{bla: {a: {b: 1}}},
-				{bla: {a: {b: 2}}},
-				{bla: {a: {b: 3}}},
-				{bla: {a: {e: 1}}}
-			]);
+			return res;
 		});
 
-		test('linking to a nested field from the mounted watcher passed by a path', async () => {
-			const scan = await target.evaluate(async (ctx) => {
-				const res: any[] = [
-					ctx.mountedWatcher.a!.b,
-					Object.fastClone(ctx.sync.object('bla', [['bla', 'mountedWatcher.a.b']]))
-				];
+		test.expect(scan).toEqual([1, {bla: 1}, {bla: 2}, {bla: 3}, {bla: undefined}]);
+	});
 
-				ctx.mountedWatcher.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+	test([
+		'should create a link for the nested property in the mounted watcher',
+		'when the JavaScript link to this property is specified as the source'
+	].join(' '), async () => {
+		const scan = await target.evaluate(async (ctx) => {
+			const res: any[] = [
+				Object.fastClone(ctx.mountedWatcher.a),
+				Object.fastClone(ctx.sync.object('bla', [['bla', {ctx: ctx.mountedWatcher, path: 'a'}]]))
+			];
 
-				ctx.mountedWatcher.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.mountedWatcher.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				ctx.mountedWatcher.a = {e: 1};
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
+			ctx.mountedWatcher.a!.b!++;
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-				return res;
-			});
+			ctx.mountedWatcher.a = {e: 1};
+			await ctx.nextTick();
+			res.push(Object.fastClone(ctx.bla));
 
-			test.expect(scan).toEqual([1, {bla: 1}, {bla: 2}, {bla: 3}, {bla: undefined}]);
+			return res;
 		});
 
-		test('linking to a nested field from the mounted watcher passed by a link', async () => {
-			const scan = await target.evaluate(async (ctx) => {
-				const res: any[] = [
-					Object.fastClone(ctx.mountedWatcher.a),
-					Object.fastClone(ctx.sync.object('bla', [['bla', {ctx: ctx.mountedWatcher, path: 'a'}]]))
-				];
-
-				ctx.mountedWatcher.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
-
-				ctx.mountedWatcher.a!.b!++;
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
-
-				ctx.mountedWatcher.a = {e: 1};
-				await ctx.nextTick();
-				res.push(Object.fastClone(ctx.bla));
-
-				return res;
-			});
-
-			test.expect(scan).toEqual([
-				{b: 1},
-				{bla: {b: 1}},
-				{bla: {b: 2}},
-				{bla: {b: 3}},
-				{bla: {e: 1}}
-			]);
-		});
+		test.expect(scan).toEqual([
+			{b: 1},
+			{bla: {b: 1}},
+			{bla: {b: 2}},
+			{bla: {b: 3}},
+			{bla: {e: 1}}
+		]);
 	});
 });
