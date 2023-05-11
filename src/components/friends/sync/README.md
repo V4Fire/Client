@@ -123,16 +123,11 @@ As you can see, we have eliminated unnecessary boilerplate code and the need to 
 
 ### link
 
-Sets a link to a component/object property or event by the specified path.
-This method is plugged by default.
+The `link` method sets a reference to a component/object property or event using the specified path. **This method is included by default.**
 
-Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
-If the link is set to an event, then every time this event fires, then the value of A will change to the value of
-the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
-that will take parameters from the link and return the value to the original field.
+In simple terms, if field A refers to field B, they have the same value, and A will automatically update when B changes. If the link is set to an event, every time the event fires, the value of A will change to the value of the event object. You can refer to a value wholly or partially. To do this, pass a getter function that takes parameters from the link and returns the value to the original field.
 
-To listen an event you need to use the special delimiter ":" within a path.
-Also, you can specify an event emitter to listen by writing a link before ":".
+To listen to an event, use the special delimiter ":" within the path. Additionally, you can specify an event emitter to listen to by writing a link before ":".
 
 #### Using `link` within a property decorator
 
@@ -160,7 +155,7 @@ class bExample2 extends iBlock {
   @prop()
   fooProp: Dictionary = {a: {b: {c: 1}}};
 
-  @field((ctx) => ctx.sync.link({deep: true}, (val) => val + 1))
+  @field((ctx) => ctx.sync.link({deep: true}, (val) => val.a.b.c + 1))
   foo!: number;
 }
 
@@ -178,6 +173,8 @@ class bExample3 extends iBlock {
   @field((ctx) => ctx.sync.link('document:click', (e) => e.pageY))
   baz?: number;
 }
+
+const remoteObject = {bla: 1};
 
 @component()
 class bExample4 extends iBlock {
@@ -246,15 +243,11 @@ class bExample2 extends iBlock {
 
 ### object
 
-Creates a dictionary where all keys refer to other properties/events as links.
+The `object` method creates a dictionary where all keys refer to other properties/events as links.
 
-Simply put, if field A refers to field B, then it has the same value and will automatically update when B changes.
-If the link is set to an event, then every time this event fires, then the value of A will change to the value of
-the event object. You can refer to a value as a whole or to a part of it. Just pass a special getter function
-that will take parameters from the link and return the value to the original field.
+In simple terms, if field A refers to field B, they have the same value, and A will automatically update when B changes. If the link is set to an event, every time the event fires, the value of A will change to the value of the event object. You can refer to a value wholly or partially. To do this, pass a getter function that takes parameters from the link and returns the value to the original field.
 
-To listen an event you need to use the special delimiter ":" within a path.
-Also, you can specify an event emitter to listen by writing a link before ":".
+To listen to an event, use the special delimiter ":" within the path. Additionally, you can specify an event emitter to listen to by writing a link before ":".
 
 ```typescript
 import watch from 'core/object/watch';
@@ -263,7 +256,7 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 class bExample1 extends iBlock {
   @field()
-  foo: Dictionary = 0;
+  foo: number = 0;
 
   @field()
   bla: Dictionary = {a: {b: 1}};
@@ -272,9 +265,13 @@ class bExample1 extends iBlock {
   bar: number = 0;
 
   @field((ctx) => ctx.sync.object([
+    // Key `foo` is linked to the `foo` field
     'foo',
+    // Key `blaAlias` is linked to the nested property `bla.a.b`
     ['blaAlias', 'bla.a.b'],
+    // Key `bar` is linked to `bar` and is converted to string
     ['bar', String],
+    // Key `baz` is linked to the document click event pageY property
     ['baz', 'document:click', (e) => e.pageY]
   ]))
 
@@ -327,7 +324,7 @@ class bExample3 extends iBlock {
 ### mod
 
 Binds a modifier to a property by the specified path.
-This method is plugged by default.
+**This method is included by default.**
 
 ```typescript
 import iBlock, { component, prop } from 'components/super/i-block/i-block';
@@ -352,7 +349,7 @@ class bExample extends iBlock {
 
 ### syncLinks
 
-Synchronizes component reference values with the values they are linked with.
+Synchronizes component reference values with the values to which they are linked.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
