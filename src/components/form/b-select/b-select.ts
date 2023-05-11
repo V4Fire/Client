@@ -62,35 +62,35 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return Object.cast(this);
 	}
 
-	/** @see [[bSelectProps.itemsProp]] */
+	/** {@link bSelectProps.itemsProp} */
 	get items(): this['Items'] {
 		return <this['Items']>this.field.get('itemsStore');
 	}
 
-	/** @see [[bSelect.items]] */
+	/** {@link bSelect.items} */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
 
-	/** @see [[iActiveItems.activeChangeEvent]] */
+	/** {@link iActiveItems.activeChangeEvent} */
 	@system()
 	readonly activeChangeEvent: string = 'change';
 
-	/** @see [[iActiveItems.active]] */
+	/** {@link iActiveItems.active} */
 	@computed({cache: true})
 	get active(): this['Active'] {
 		return iActiveItems.getActive(this);
 	}
 
-	/** @see [[iActiveItems.activeElement]] */
+	/** {@link iActiveItems.activeElement} */
 	@computed({cache: true, dependencies: ['active']})
 	get activeElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
 		return h.getSelectedElement.call(this);
 	}
 
 	/**
-	 * @see [[iActiveItems.activeStore]]
-	 * @see [[iActiveItems.syncActiveStore]]
+	 * {@link iActiveItems.activeStore}
+	 * {@link iActiveItems.syncActiveStore}
 	 */
 	@system<bSelect>((o) => {
 		o.watch('valueProp', (val) => o.setActive(val, true));
@@ -200,7 +200,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	@system<bSelect>((o) => new Values(o))
 	protected values!: Values;
 
-	/** @see [[bSelect.items]] */
+	/** {@link bSelect.items} */
 	@field<bSelect>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
 			return <CanUndef<Items>>o.itemsStore ?? [];
@@ -215,7 +215,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		dropdown?: Element;
 	};
 
-	/** @see [[iActiveItems.activeElement]] */
+	/** {@link iActiveItems.activeElement} */
 	@computed({cache: true, dependencies: ['active']})
 	protected get selectedElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
 		return this.activeElement;
@@ -245,7 +245,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return SyncPromise.resolve(false);
 	}
 
-	/** @see [[iActiveItems.setActive]] */
+	/** {@link iActiveItems.setActive} */
 	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		if (!iActiveItems.setActive(this, value, unsetPrevious)) {
 			return false;
@@ -278,7 +278,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return true;
 	}
 
-	/** @see [[iActiveItems.unsetActive]] */
+	/** {@link iActiveItems.unsetActive} */
 	unsetActive(value: this['ActiveProp']): boolean {
 		const {activeElement: previousActiveElement} = this;
 
@@ -313,22 +313,22 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return true;
 	}
 
-	/** @see [[iActiveItems.isActive]] */
+	/** {@link iActiveItems.isActive} */
 	isSelected(value: unknown): boolean {
 		return this.isActive(value);
 	}
 
-	/** @see [[iActiveItems.setActive]] */
+	/** {@link iActiveItems.setActive} */
 	selectValue(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		return this.setActive(value, unsetPrevious);
 	}
 
-	/** @see [[iActiveItems.unsetActive]] */
+	/** {@link iActiveItems.unsetActive} */
 	unselectValue(value: this['ActiveProp']): boolean {
 		return this.unsetActive(value);
 	}
 
-	/** @see [[iActiveItems.toggleActive]] */
+	/** {@link iActiveItems.toggleActive} */
 	toggleValue(value: this['ActiveProp'], unsetPrevious: boolean = false): CanUndef<this['Active']> {
 		const val = this.toggleActive(value, unsetPrevious);
 
@@ -339,7 +339,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return val;
 	}
 
-	/** @see [[iOpenToggle.open]] */
+	/** {@link iOpenToggle.open} */
 	async open(...args: unknown[]): Promise<boolean> {
 		if (this.multiple || this.native) {
 			return false;
@@ -353,7 +353,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return false;
 	}
 
-	/** @see [[iOpenToggle.open]] */
+	/** {@link iOpenToggle.open} */
 	async close(...args: unknown[]): Promise<boolean> {
 		if (this.native) {
 			return false;
@@ -374,7 +374,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return false;
 	}
 
-	/** @see [[h.setScrollToMarkedOrSelectedItem]] */
+	/** {@link h.setScrollToMarkedOrSelectedItem} */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
 		return h.setScrollToMarkedOrSelectedItem.call(this);
 	}
@@ -388,19 +388,19 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		this.normalizeItems = i.normalizeItems.bind(this);
 	}
 
-	/** @see [[iOpenToggle.initCloseHelpers]] */
+	/** {@link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
 	}
 
-	/** @see [[Values.init]] */
+	/** {@link Values.init} */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
 		this.values.init();
 	}
 
-	/** @see [[h.normalizeItems]] */
+	/** {@link h.normalizeItems} */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		return h.normalizeItems(items);
 	}
@@ -434,7 +434,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 			op ?? {};
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
 	}
@@ -483,7 +483,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	/**
-	 * @see [[SelectEventHandlers.onItemClick]]
+	 * {@link SelectEventHandlers.onItemClick}
 	 * @see https://github.com/V4Fire/Client/issues/848
 	 */
 	@watch({

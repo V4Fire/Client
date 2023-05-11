@@ -19,16 +19,16 @@ export default abstract class bSelectProps extends iInputText {
 
 	override readonly FormValue!: FormValue;
 
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	readonly Item!: Item;
 
-	/** @see [[iItems.Items]] */
+	/** {@link iItems.Items} */
 	readonly Items!: Array<this['Item']>;
 
-	/** @see [[iActiveItems.ActiveProp]] */
+	/** {@link iActiveItems.ActiveProp} */
 	readonly ActiveProp!: iActiveItems['ActiveProp'];
 
-	/** @see [[iActiveItems.Active]] */
+	/** {@link iActiveItems.Active} */
 	readonly Active!: iActiveItems['Active'];
 
 	override readonly rootTag: string = 'span';
@@ -37,20 +37,20 @@ export default abstract class bSelectProps extends iInputText {
 
 	/**
 	 * @alias valueProp
-	 * @see [[iActiveItems.activeProp]]
+	 * {@link iActiveItems.activeProp}
 	 */
 	@prop({required: false})
 	readonly activeProp?: this['ActiveProp'];
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
 
-	/** @see [[iItems.item]] */
+	/** {@link iItems.item} */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
-	/** @see [[iItems.itemKey]] */
+	/** {@link iItems.itemKey} */
 	@prop({
 		type: [String, Function],
 		default: () => (item: Item) => item.value
@@ -58,7 +58,7 @@ export default abstract class bSelectProps extends iInputText {
 
 	readonly itemKey!: iItems['itemKey'];
 
-	/** @see [[iItems.itemProps]] */
+	/** {@link iItems.itemProps} */
 	@prop({type: Function, required: false})
 	readonly itemProps?: iItems['itemProps'];
 
@@ -68,7 +68,7 @@ export default abstract class bSelectProps extends iInputText {
 	@prop(Boolean)
 	readonly multiple: boolean = false;
 
-	/** @see [[iActiveItems.cancelable]] */
+	/** {@link iActiveItems.cancelable} */
 	@prop({type: Boolean})
 	readonly cancelable: boolean = true;
 
@@ -118,7 +118,7 @@ export default abstract class bSelectProps extends iInputText {
 	/**
 	 * Tooltip position to display when hovering over `preIcon`
 	 *
-	 * @see [[gHint]]
+	 * {@link gHint}
 	 * @example
 	 * ```
 	 * < b-select &
@@ -172,7 +172,7 @@ export default abstract class bSelectProps extends iInputText {
 	/**
 	 * Tooltip position to display when hovering over `icon`
 	 *
-	 * @see [[gHint]]
+	 * {@link gHint}
 	 * @example
 	 * ```
 	 * < b-select &

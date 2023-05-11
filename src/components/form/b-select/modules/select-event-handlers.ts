@@ -15,7 +15,7 @@ import { openedSelect } from 'components/form/b-select/const';
 
 export default abstract class SelectEventHandlers {
 
-	/** @see [[SelectEventHandlers.prototype.onOpenedChange]] */
+	/** {@link SelectEventHandlers.prototype.onOpenedChange} */
 	// eslint-disable-next-line @typescript-eslint/require-await
 	static async onOpenedChange(component: bSelect, e: ModEvent | SetModEvent): Promise<void> {
 		const {
@@ -59,7 +59,7 @@ export default abstract class SelectEventHandlers {
 		});
 	}
 
-	/** @see [[SelectEventHandlers.prototype.onNativeChange]] */
+	/** {@link SelectEventHandlers.prototype.onNativeChange} */
 	static onNativeChange(component: bSelect): void {
 		const {
 			unsafe,
@@ -106,7 +106,7 @@ export default abstract class SelectEventHandlers {
 		}
 	}
 
-	/** @see [[SelectEventHandlers.prototype.onSearchInput]] */
+	/** {@link SelectEventHandlers.prototype.onSearchInput} */
 	static onSearchInput(component: bSelect, e: InputEvent): void {
 		const
 			{unsafe} = component;
@@ -123,7 +123,7 @@ export default abstract class SelectEventHandlers {
 		unsafe.onTextChange();
 	}
 
-	/** @see [[SelectEventHandlers.prototype.onItemsNavigate]] */
+	/** {@link SelectEventHandlers.prototype.onItemsNavigate} */
 	static async onItemsNavigate(component: bSelect, e: KeyboardEvent): Promise<void> {
 		const
 			{unsafe} = component;
@@ -209,7 +209,7 @@ export default abstract class SelectEventHandlers {
 		}
 	}
 
-	/** @see [[SelectEventHandlers.prototype.onItemClick]] */
+	/** {@link SelectEventHandlers.prototype.onItemClick} */
 	static onItemClick(component: bSelect, itemEl: Nullable<Element>): void {
 		void component.close();
 
@@ -236,14 +236,14 @@ export default abstract class SelectEventHandlers {
 		component.emit('actionChange', component.value);
 	}
 
-	/** @see [[SelectEventHandlers.prototype.onClear]] */
+	/** {@link SelectEventHandlers.prototype.onClear} */
 	static async onClear(component: bSelect): Promise<void> {
 		if (await component.clear()) {
 			component.emit('actionChange', component.value);
 		}
 	}
 
-	/** @see [[SelectEventHandlers.prototype.onTextChange]] */
+	/** {@link SelectEventHandlers.prototype.onTextChange} */
 	static onTextChange(component: bSelect): void {
 		let
 			{text} = component;
@@ -282,7 +282,7 @@ export default abstract class SelectEventHandlers {
 		void component.close();
 	}
 
-	/** @see [[iOpenToggle.onOpenedChange]] */
+	/** {@link iOpenToggle.onOpenedChange} */
 	onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		return Object.throw();
 	}
