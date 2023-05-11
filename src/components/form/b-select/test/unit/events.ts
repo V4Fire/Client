@@ -17,7 +17,7 @@ import { DOM } from 'tests/helpers';
 import type bSelect from 'components/form/b-select/b-select';
 import { renderSelect, createSelector, setValue } from 'components/form/b-select/test/helpers';
 
-test.describe('<b-select> events', () => {
+test.describe('<b-select> standard component events', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
@@ -642,6 +642,7 @@ test.describe('<b-select> events', () => {
 			const selector = DOM.elModSelectorGenerator(
 				DOM.elNameGenerator('b-select', 'item'), 'id', id
 			);
+
 			await target.evaluate(async (ctx) => ctx.focus());
 			await page.locator(selector).click();
 		}

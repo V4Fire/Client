@@ -9,10 +9,10 @@
 import symbolGenerator from 'core/symbol';
 
 import type bSelect from 'components/form/b-select/b-select';
-
 import type { Items } from 'components/form/b-select/interface';
 
-const $$ = symbolGenerator();
+const
+	$$ = symbolGenerator();
 
 /**
  * Normalizes the specified items and returns them
@@ -125,7 +125,8 @@ export function getSelectedElement(this: bSelect): CanPromise<CanNull<CanArray<H
  * @param selected
  */
 export function setSelectedMod(this: bSelect, el: HTMLOptionElement, selected: boolean): void {
-	const {block} = this;
+	const
+		{block} = this;
 
 	if (block == null) {
 		return;
