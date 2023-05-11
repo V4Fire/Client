@@ -26,15 +26,23 @@ test.describe('friends/sync', () => {
 		target = await Component.createComponent(page, componentName);
 	});
 
-	test('checking the initial values', async () => {
-		test.expect(
-			await target.evaluate((ctx) => ({
-				dict: Object.fastClone(ctx.dict),
-				linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
-				watchableObject: Object.fastClone(ctx.watchableObject)
-			}))
-		).toEqual({
-			dict: {a: {b: 2, c: 3}},
+	test('linked field should be correctly initialized', async () => {
+		const scan = await target.evaluate(({dict}) => ({
+			dict: Object.fastClone(dict)
+		}));
+
+		test.expect(scan).toEqual({
+			dict: {a: {b: 2, c: 3}}
+		});
+	});
+
+	test('fields with `init` option should be correctly initialized', async () => {
+		const scan = await target.evaluate(({linkToNestedFieldWithInitializer, watchableObject}) => ({
+			linkToNestedFieldWithInitializer,
+			watchableObject: Object.fastClone(watchableObject)
+		}));
+
+		test.expect(scan).toEqual({
 			linkToNestedFieldWithInitializer: 3,
 			watchableObject: {
 				dict: {a: {b: 2, c: 3}},
@@ -45,20 +53,22 @@ test.describe('friends/sync', () => {
 		});
 	});
 
-	test('changing some values', async () => {
-		test.expect(
-			await target.evaluate(async (ctx) => {
-				ctx.dict.a!.b!++;
-				ctx.dict.a!.c!++;
-				await ctx.nextTick();
+	test('fields synced to `dict` field should be updated after this field has changed', async () => {
+		const scan = await target.evaluate(async (ctx) => {
+			ctx.dict.a!.b!++;
+			ctx.dict.a!.c!++;
+			await ctx.nextTick();
 
-				return {
-					dict: Object.fastClone(ctx.dict),
-					linkToNestedFieldWithInitializer: ctx.linkToNestedFieldWithInitializer,
-					watchableObject: Object.fastClone(ctx.watchableObject)
-				};
-			})
-		).toEqual({
+			const {linkToNestedFieldWithInitializer} = ctx;
+
+			return {
+				dict: Object.fastClone(ctx.dict),
+				linkToNestedFieldWithInitializer,
+				watchableObject: Object.fastClone(ctx.watchableObject)
+			};
+		});
+
+		test.expect(scan).toEqual({
 			dict: {a: {b: 3, c: 4}},
 			linkToNestedFieldWithInitializer: 4,
 			watchableObject: {
