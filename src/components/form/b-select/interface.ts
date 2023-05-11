@@ -18,6 +18,11 @@ export type FormValue = CanUndef<CanArray<unknown>>;
 
 export interface Item extends Super {
 	/**
+	 * Item label text
+	 */
+	label?: string;
+
+	/**
 	 * True if the item is selected
 	 */
 	selected?: boolean;
