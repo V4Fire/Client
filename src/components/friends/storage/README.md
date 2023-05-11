@@ -1,7 +1,6 @@
 # components/friends/storage
 
-This module provides a class for persistent storage of component data.
-The module uses the `core/kv-storage` module with the default engine. But you can specify the engine to use manually.
+This module provides a class for the persistent storage of component data. The module utilizes the `core/kv-storage` module with the default engine. However, you can also manually specify the engine to be used.
 
 ```js
 this.storage.set(1, 'foo');
@@ -9,18 +8,17 @@ this.storage.get('foo');
 this.storage.remove('foo');
 ```
 
-## How to include this module to your component?
+## How to include this module in your component?
 
-By default, any component that inherited from [[iBlock]] has the `storage` property.
+By default, any component that inherits from [[iBlock]] has the `storage` property.
 
-## Why not to use `core/kv-storage`?
+## Why not use `core/kv-storage`?
 
 There are two reasons to use the `Storage` class instead of the pure `core/kv-storage` module.
 
 1. `Storage` wraps the `core/kv-storage` module with `Async` to prevent race conditions and memory leaks.
 
-2. `Storage` uses the `globalName` prop to store values to prevent conflicts between different components that store
-   data with the same key.
+2. `Storage` utilizes the `globalName` prop to store values, which helps prevent conflicts between different components that store data using the same key.
 
    ```typescript
    import iBlock, { component } from 'components/super/i-block/i-block';
@@ -36,7 +34,7 @@ There are two reasons to use the `Storage` class instead of the pure `core/kv-st
    ```
    < b-example
 
-   /// This component overrides data from the previous, because there is no specified `globalName`
+   /// This component overrides data from the previous, because there is no `globalName` specified
    < b-example
 
    /// This component stores its data as `myComponent_${key}`,
@@ -44,9 +42,9 @@ There are two reasons to use the `Storage` class instead of the pure `core/kv-st
    < b-example :globalName = 'myComponent'
    ```
 
-## How to specify an engine to store?
+## How to specify an engine for storage?
 
-Override the `storage` system field by specifying the used engine.
+Override the `storage` system field by specifying the desired engine to be used.
 
 ```typescript
 import * as IDBEngine from 'core/kv-storage/engines/browser-indexeddb';
@@ -64,12 +62,12 @@ export default class bExample extends iBlock {
 
 ### get
 
-Returns a value from the storage by the specified key.
+Returns a value from storage based on the specified key.
 
 ### set
 
-Saves a value to the storage by the specified key.
+Saves a value to storage using the specified key.
 
 ### remove
 
-Removes a value from the storage by the specified key.
+Removes a value from storage based on the specified key.
