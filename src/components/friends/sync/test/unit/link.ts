@@ -26,8 +26,8 @@ test.describe('friends/sync `link`', () => {
 		target = await Component.createComponent(page, componentName);
 	});
 
-	test.describe('by using a decorator', () => {
-		test('linking to a nested field', async () => {
+	test.describe('via a decorator', () => {
+		test('should create a link to the nested property of the field', async () => {
 			const scan = await target.evaluate(async (ctx) => {
 				const res = [ctx.linkToNestedField];
 
@@ -49,7 +49,7 @@ test.describe('friends/sync `link`', () => {
 			test.expect(scan).toEqual([2, 3, 4, undefined]);
 		});
 
-		test('linking to a nested field with an initializer', async () => {
+		test('should create a link to the nested property of the field with initialization function', async () => {
 			const scan = await target.evaluate(async (ctx) => {
 				const res = [ctx.linkToNestedFieldWithInitializer];
 
@@ -71,7 +71,10 @@ test.describe('friends/sync `link`', () => {
 			test.expect(scan).toEqual([3, 4, 5, NaN]);
 		});
 
-		test('immediate linking to a nested field with an initializer from @system to @field', async () => {
+		test([
+			'should create a link to the nested property of the field with initialization function',
+			'using a @system decorator'
+		].join(' '), async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [ctx.immediateWithFlushSyncLinkToNestedFieldWithInitializerFromSystemToField];
 
@@ -91,8 +94,8 @@ test.describe('friends/sync `link`', () => {
 		});
 	});
 
-	test.describe('without using a decorator', () => {
-		test('linking to an event', async () => {
+	test.describe('via a direct call', () => {
+		test('should create a link for the event', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res = [ctx.sync.link(['bla', 'localEmitter:foo'])];
 
@@ -111,7 +114,7 @@ test.describe('friends/sync `link`', () => {
 			test.expect(scan).toEqual([undefined, 1, 2, 3]);
 		});
 
-		test('linking to an event with an initializer', async () => {
+		test('should create a link for the event with initialization function', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const res: any[] = [ctx.sync.link(['bla', 'localEmitter:foo'], (val: number) => val + 1)];
 
@@ -130,7 +133,7 @@ test.describe('friends/sync `link`', () => {
 			test.expect(scan).toEqual([NaN, 2, 3, 4]);
 		});
 
-		test('linking to a field', async () => {
+		test('should create a link to the field', async () => {
 			const scan = await target.evaluate(async (ctx) => {
 				const res = [
 					Object.fastClone(ctx.dict),
@@ -161,35 +164,10 @@ test.describe('friends/sync `link`', () => {
 			]);
 		});
 
-		test('immediate linking to a field', async () => {
-			const scan = await target.evaluate((ctx) => {
-				const res = [
-					Object.fastClone(ctx.dict),
-					Object.fastClone(ctx.sync.link(['bla', 'dict']))
-				];
-
-				ctx.dict.a!.b!++;
-				res.push(Object.fastClone(ctx.bla));
-
-				ctx.dict.a!.b!++;
-				res.push(Object.fastClone(ctx.bla));
-
-				ctx.dict.a = {e: 1};
-				res.push(Object.fastClone(ctx.bla));
-
-				return res;
-			});
-
-			test.expect(scan).toEqual([
-				{a: {b: 2, c: 3}},
-				{a: {b: 2, c: 3}},
-				{a: {b: 3, c: 3}},
-				{a: {b: 4, c: 3}},
-				{a: {e: 1}}
-			]);
-		});
-
-		test('linking to a nested field', async () => {
+		test([
+			'should create a link for the nested property of the field,',
+			'which by default updates on the next tick'
+		].join(' '), async () => {
 			const scan = await target.evaluate(async (ctx) => {
 				const res = [
 					ctx.dict.a!.b!,
@@ -214,7 +192,7 @@ test.describe('friends/sync `link`', () => {
 			test.expect(scan).toEqual([2, 2, 3, 4, undefined]);
 		});
 
-		test('linking to a nested field with an initializer', async () => {
+		test('should create a link to the nested property of the field with initialization function', async () => {
 			const scan = await target.evaluate(async (ctx) => {
 				const res: any[] = [
 					ctx.dict.a!.b!,
@@ -239,7 +217,35 @@ test.describe('friends/sync `link`', () => {
 			test.expect(scan).toEqual([2, 3, 4, 5, NaN]);
 		});
 
-		test('linking to a field from the mounted watcher passed by a path', async () => {
+		test([
+			'should create a link for the nested property of the field,',
+			'which updates immediately when the `flush = sync` option is provided'
+		].join(' '), async () => {
+			const scan = await target.evaluate((ctx) => {
+				const res = [
+					Object.fastClone(ctx.dict.a!.b),
+					Object.fastClone(ctx.sync.link(['bla', 'dict.a.b'], {flush: 'sync'}))
+				];
+
+				ctx.dict.a!.b!++;
+				res.push(Object.fastClone(ctx.bla));
+
+				ctx.dict.a!.b!++;
+				res.push(Object.fastClone(ctx.bla));
+
+				ctx.dict.a = {e: 1};
+				res.push(Object.fastClone(ctx.bla));
+
+				return res;
+			});
+
+			test.expect(scan).toEqual([2, 2, 3, 4, undefined]);
+		});
+
+		test([
+			'should create a link for the mounted watcher',
+			'when the path to this watcher is specified as the source'
+		].join(' '), async () => {
 			const scan = await target.evaluate(async (ctx) => {
 				const res = [
 					Object.fastClone(ctx.mountedWatcher),
@@ -270,7 +276,10 @@ test.describe('friends/sync `link`', () => {
 			]);
 		});
 
-		test('linking to a field from the mounted watcher passed by a link', async () => {
+		test([
+			'should create a link for the mounted watcher',
+			'when the JavaScript link to this watcher is specified as the source'
+		].join(' '), async () => {
 			const scan = await target.evaluate(async (ctx) => {
 				const res = [
 					Object.fastClone(ctx.mountedWatcher),
@@ -301,7 +310,10 @@ test.describe('friends/sync `link`', () => {
 			]);
 		});
 
-		test('linking to a nested field from the mounted watcher passed by a path', async () => {
+		test([
+			'should create a link for the nested property in the mounted watcher',
+			'when the path to this property is specified as the source'
+		].join(' '), async () => {
 			const scan = await target.evaluate(async (ctx) => {
 				const res: any[] = [
 					ctx.mountedWatcher.a!.b,
@@ -326,7 +338,10 @@ test.describe('friends/sync `link`', () => {
 			test.expect(scan).toEqual([1, 1, 2, 3, undefined]);
 		});
 
-		test('linking to a nested field from the mounted watcher passed by a link', async () => {
+		test([
+			'should create a link for the nested property in the mounted watcher',
+			'when the JavaScript link to this property is specified as the source'
+		].join(' '), async () => {
 			const scan = await target.evaluate(async (ctx) => {
 				const res: any[] = [
 					Object.fastClone(ctx.mountedWatcher.a),
