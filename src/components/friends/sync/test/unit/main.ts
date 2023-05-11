@@ -79,4 +79,26 @@ test.describe('friends/sync', () => {
 			}
 		});
 	});
+
+	test('`r.isAuth` should by synced to `remoteState.isAuth`', async () => {
+		const scan = await target.evaluate(async (ctx) => {
+			const res = [Object.isBoolean(ctx.r.isAuth)];
+
+			ctx.r.remoteState.isAuth = true;
+			await ctx.nextTick();
+			res.push(ctx.r.isAuth);
+
+			ctx.r.remoteState.isAuth = false;
+			await ctx.nextTick();
+			res.push(ctx.r.isAuth);
+
+			return res;
+		});
+
+		test.expect(scan).toEqual([
+			true,
+			true,
+			false
+		]);
+	});
 });
