@@ -21,6 +21,10 @@ export * from 'components/super/i-data/i-data';
 
 Sync.addToPrototype(SyncAPI);
 
+interface bFriendsSyncDummy {
+	bla: unknown;
+}
+
 @component({
 	functional: {
 		functional: true,
@@ -28,7 +32,7 @@ Sync.addToPrototype(SyncAPI);
 	}
 })
 
-export default class bFriendsSyncDummy extends iData {
+class bFriendsSyncDummy extends iData {
 	@prop(Object)
 	readonly dictProp: Dictionary<Dictionary<number>> = {
 		a: {
@@ -70,7 +74,7 @@ export default class bFriendsSyncDummy extends iData {
 	watchableObject!: Dictionary;
 
 	@computed({cache: true, watchable: true})
-	get mountedWatcher(): Dictionary {
+	get mountedWatcher(): Dictionary<Dictionary<number>> {
 		return watch({a: {b: 1}}).proxy;
 	}
 
@@ -86,3 +90,5 @@ export default class bFriendsSyncDummy extends iData {
 		this.sync.mod('foo', 'dict.a.b', (v) => v === 2 ? 'bar' : 'bla');
 	}
 }
+
+export default bFriendsSyncDummy;

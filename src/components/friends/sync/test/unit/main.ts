@@ -50,8 +50,8 @@ test.describe('friends/sync', () => {
 	test('changing some values', async () => {
 		test.expect(
 			await target.evaluate(async (ctx) => {
-				ctx.dict.a.b++;
-				ctx.dict.a.c++;
+				ctx.dict.a!.b!++;
+				ctx.dict.a!.c!++;
 				await ctx.nextTick();
 
 				return {
@@ -80,7 +80,7 @@ test.describe('friends/sync', () => {
 					Object.fastClone(ctx.sync.link(['bla', 'dict'], {flush: 'sync'}))
 				];
 
-				ctx.dict.a.b++;
+				ctx.dict.a!.b!++;
 				res.push(Object.fastClone(ctx.bla));
 
 				ctx.bla = {c: 1};
@@ -108,7 +108,7 @@ test.describe('friends/sync', () => {
 					Object.fastClone(ctx.sync.link(['bla', 'dict'], {flush: 'sync'}))
 				];
 
-				ctx.dict.a.b++;
+				ctx.dict.a!.b!++;
 				res.push(Object.fastClone(ctx.bla));
 
 				ctx.bla = {c: 1};
@@ -136,7 +136,7 @@ test.describe('friends/sync', () => {
 					Object.fastClone(ctx.sync.link(['bla', 'dict'], {immediate: true}))
 				];
 
-				ctx.dict.a.b++;
+				ctx.dict.a!.b!++;
 				res.push(Object.fastClone(ctx.bla));
 
 				ctx.bla = {c: 1};
@@ -172,7 +172,7 @@ test.describe('friends/sync', () => {
 					Object.fastClone(ctx.sync.link(['bla', 'dict'], {immediate: true}))
 				];
 
-				ctx.dict.a.b++;
+				ctx.dict.a!.b!++;
 				res.push(Object.fastClone(ctx.bla));
 
 				ctx.bla = {c: 1};
@@ -201,7 +201,7 @@ test.describe('friends/sync', () => {
 
 		test('changing the tied field', async () => {
 			test.expect(await target.evaluate(async (ctx) => {
-				ctx.dict.a.b++;
+				ctx.dict.a!.b!++;
 				await ctx.nextTick();
 				return ctx.mods.foo;
 			})).toBe('bla');

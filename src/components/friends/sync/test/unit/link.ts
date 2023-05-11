@@ -113,7 +113,7 @@ test.describe('friends/sync `link`', () => {
 
 		test('linking to an event with an initializer', async () => {
 			const scan = await target.evaluate((ctx) => {
-				const res = [ctx.sync.link(['bla', 'localEmitter:foo'], (val) => val + 1)];
+				const res: any[] = [ctx.sync.link(['bla', 'localEmitter:foo'], (val: number) => val + 1)];
 
 				ctx.unsafe.localEmitter.emit('foo', 1);
 				res.push(ctx.bla);
@@ -216,9 +216,9 @@ test.describe('friends/sync `link`', () => {
 
 		test('linking to a nested field with an initializer', async () => {
 			const scan = await target.evaluate(async (ctx) => {
-				const res = [
+				const res: any[] = [
 					ctx.dict.a!.b!,
-					ctx.sync.link(['bla', 'dict.a.b'], (val) => val + 1)
+					ctx.sync.link(['bla', 'dict.a.b'], (val: number) => val + 1)
 				];
 
 				ctx.dict.a!.b!++;
@@ -246,11 +246,11 @@ test.describe('friends/sync `link`', () => {
 					Object.fastClone(ctx.sync.link(['bla', 'mountedWatcher']))
 				];
 
-				ctx.mountedWatcher.a.b++;
+				ctx.mountedWatcher.a!.b!++;
 				await ctx.nextTick();
 				res.push(Object.fastClone(ctx.bla));
 
-				ctx.mountedWatcher.a.b++;
+				ctx.mountedWatcher.a!.b!++;
 				await ctx.nextTick();
 				res.push(Object.fastClone(ctx.bla));
 
@@ -277,11 +277,11 @@ test.describe('friends/sync `link`', () => {
 					Object.fastClone(ctx.sync.link(['bla', ctx.mountedWatcher]))
 				];
 
-				ctx.mountedWatcher.a.b++;
+				ctx.mountedWatcher.a!.b!++;
 				await ctx.nextTick();
 				res.push(Object.fastClone(ctx.bla));
 
-				ctx.mountedWatcher.a.b++;
+				ctx.mountedWatcher.a!.b!++;
 				await ctx.nextTick();
 				res.push(Object.fastClone(ctx.bla));
 
@@ -303,16 +303,16 @@ test.describe('friends/sync `link`', () => {
 
 		test('linking to a nested field from the mounted watcher passed by a path', async () => {
 			const scan = await target.evaluate(async (ctx) => {
-				const res = [
-					ctx.mountedWatcher.a.b,
+				const res: any[] = [
+					ctx.mountedWatcher.a!.b,
 					ctx.sync.link(['bla', 'mountedWatcher.a.b'])
 				];
 
-				ctx.mountedWatcher.a.b++;
+				ctx.mountedWatcher.a!.b!++;
 				await ctx.nextTick();
 				res.push(ctx.bla);
 
-				ctx.mountedWatcher.a.b++;
+				ctx.mountedWatcher.a!.b!++;
 				await ctx.nextTick();
 				res.push(ctx.bla);
 
@@ -328,16 +328,16 @@ test.describe('friends/sync `link`', () => {
 
 		test('linking to a nested field from the mounted watcher passed by a link', async () => {
 			const scan = await target.evaluate(async (ctx) => {
-				const res = [
+				const res: any[] = [
 					Object.fastClone(ctx.mountedWatcher.a),
 					Object.fastClone(ctx.sync.link(['bla', {ctx: ctx.mountedWatcher, path: 'a'}]))
 				];
 
-				ctx.mountedWatcher.a.b++;
+				ctx.mountedWatcher.a!.b!++;
 				await ctx.nextTick();
 				res.push(Object.fastClone(ctx.bla));
 
-				ctx.mountedWatcher.a.b++;
+				ctx.mountedWatcher.a!.b!++;
 				await ctx.nextTick();
 				res.push(Object.fastClone(ctx.bla));
 
