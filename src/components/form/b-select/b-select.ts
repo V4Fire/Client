@@ -99,7 +99,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 
 	/**
 	 * {@link iActiveItems.activeStore}
-	 * {@link iActiveItems.syncActiveStore}
+	 * {@link iActiveItems.linkActiveStore}
 	 */
 	@system<bSelect>((o) => {
 		o.watch('valueProp', (val) => o.setActive(val, true));
