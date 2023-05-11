@@ -38,7 +38,7 @@ import type { Value, FormValue, Items, UnsafeBSelect } from 'components/form/b-s
 
 import bSelectProps from 'components/form/b-select/props';
 import Values from 'components/form/b-select/modules/values';
-import EventHandler from 'components/form/b-select/modules/event-handler';
+import SelectEventHandlers from 'components/form/b-select/modules/select-event-handlers';
 
 import * as h from 'components/form/b-select/modules/helpers';
 
@@ -53,10 +53,10 @@ export { Value, FormValue };
 Block.addToPrototype({setElementMod, removeElementMod});
 Mask.addToPrototype(MaskAPI);
 
-interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof EventHandler> {}
+interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof SelectEventHandlers> {}
 
 @component()
-@derive(EventHandler, iOpenToggle, iActiveItems)
+@derive(SelectEventHandlers, iOpenToggle, iActiveItems)
 class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
 		return Object.cast(this);
@@ -226,7 +226,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	 */
 	@computed({cache: true})
 	protected get onTextChange(): Function {
-		return this.async.debounce(EventHandler.onTextChange.bind(null, this), 200);
+		return this.async.debounce(SelectEventHandlers.onTextChange.bind(null, this), 200);
 	}
 
 	override reset(): Promise<boolean> {
@@ -482,15 +482,17 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		void this.open();
 	}
 
-	// TODO: move decorator to EventHandler when they will be supported in the traits
-	/** @see [[EventHandler.onItemClick]] */
+	/**
+	 * @see [[SelectEventHandlers.onItemClick]]
+	 * @see https://github.com/V4Fire/Client/issues/848
+	 */
 	@watch({
 		path: '?$el:click',
 		wrapper: (o, cb) => o.dom.delegateElement('item', (e: MouseEvent) => cb(e.delegateTarget))
 	})
 
 	protected onItemClick(itemEl: Nullable<Element>): void {
-		EventHandler.onItemClick(this, itemEl);
+		SelectEventHandlers.onItemClick(this, itemEl);
 	}
 }
 

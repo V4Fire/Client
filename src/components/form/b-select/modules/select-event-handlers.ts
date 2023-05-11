@@ -13,9 +13,9 @@ import type bSelect from 'components/form/b-select/b-select';
 
 import { openedSelect } from 'components/form/b-select/const';
 
-export default abstract class EventHandler {
+export default abstract class SelectEventHandlers {
 
-	/** @see [[EventHandler.prototype.onOpenedChange]] */
+	/** @see [[SelectEventHandlers.prototype.onOpenedChange]] */
 	// eslint-disable-next-line @typescript-eslint/require-await
 	static async onOpenedChange(component: bSelect, e: ModEvent | SetModEvent): Promise<void> {
 		const {
@@ -59,7 +59,7 @@ export default abstract class EventHandler {
 		});
 	}
 
-	/** @see [[EventHandler.prototype.onNativeChange]] */
+	/** @see [[SelectEventHandlers.prototype.onNativeChange]] */
 	static onNativeChange(component: bSelect): void {
 		const {
 			unsafe,
@@ -106,7 +106,7 @@ export default abstract class EventHandler {
 		}
 	}
 
-	/** @see [[EventHandler.prototype.onSearchInput]] */
+	/** @see [[SelectEventHandlers.prototype.onSearchInput]] */
 	static onSearchInput(component: bSelect, e: InputEvent): void {
 		const
 			{unsafe} = component;
@@ -123,7 +123,7 @@ export default abstract class EventHandler {
 		unsafe.onTextChange();
 	}
 
-	/** @see [[EventHandler.prototype.onItemsNavigate]] */
+	/** @see [[SelectEventHandlers.prototype.onItemsNavigate]] */
 	static async onItemsNavigate(component: bSelect, e: KeyboardEvent): Promise<void> {
 		const
 			{unsafe} = component;
@@ -209,7 +209,7 @@ export default abstract class EventHandler {
 		}
 	}
 
-	/** @see [[EventHandler.prototype.onItemClick]] */
+	/** @see [[SelectEventHandlers.prototype.onItemClick]] */
 	static onItemClick(component: bSelect, itemEl: Nullable<Element>): void {
 		void component.close();
 
@@ -236,14 +236,14 @@ export default abstract class EventHandler {
 		component.emit('actionChange', component.value);
 	}
 
-	/** @see [[EventHandler.prototype.onClear]] */
+	/** @see [[SelectEventHandlers.prototype.onClear]] */
 	static async onClear(component: bSelect): Promise<void> {
 		if (await component.clear()) {
 			component.emit('actionChange', component.value);
 		}
 	}
 
-	/** @see [[EventHandler.prototype.onTextChange]] */
+	/** @see [[SelectEventHandlers.prototype.onTextChange]] */
 	static onTextChange(component: bSelect): void {
 		let
 			{text} = component;

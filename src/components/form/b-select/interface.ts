@@ -10,7 +10,7 @@ import type { ModsDict, UnsafeIInputText } from 'components/super/i-input-text/i
 import type { Item as Super, Active } from 'components/traits/i-active-items/i-active-items';
 
 import type bSelect from 'components/form/b-select/b-select';
-import type EventHandler from 'components/form/b-select/modules/event-handler';
+import type SelectEventHandlers from 'components/form/b-select/modules/select-event-handlers';
 
 export type Value = Active;
 
@@ -56,13 +56,13 @@ export interface UnsafeBSelect<CTX extends bSelect = bSelect> extends UnsafeIInp
 	// @ts-ignore (access)
 	setScrollToMarkedOrSelectedItem: CTX['setScrollToMarkedOrSelectedItem'];
 
-	onNativeChange: EventHandler['onNativeChange'];
+	onNativeChange: SelectEventHandlers['onNativeChange'];
 
-	onSearchInput: EventHandler['onSearchInput'];
+	onSearchInput: SelectEventHandlers['onSearchInput'];
 
-	onTextChange: EventHandler['onTextChange'];
+	onTextChange: SelectEventHandlers['onTextChange'];
 
-	onItemClick: EventHandler['onItemClick'];
+	onItemClick: SelectEventHandlers['onItemClick'];
 
-	onItemsNavigate: EventHandler['onItemsNavigate'];
+	onItemsNavigate: SelectEventHandlers['onItemsNavigate'];
 }
