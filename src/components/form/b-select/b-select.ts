@@ -85,7 +85,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	/** @see [[iActiveItems.activeElement]] */
 	@computed({cache: true, dependencies: ['active']})
 	get activeElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
-		return h.getSelectedElement(this);
+		return h.getSelectedElement.call(this);
 	}
 
 	/**
@@ -264,14 +264,14 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		if (!this.multiple || unsetPrevious) {
 			Object.forEach($b.elements<HTMLOptionElement>('item', {selected: true}), (el) => {
 				if (el !== itemEl) {
-					this.setSelectedMod($b, el, false);
+					h.setSelectedMod.call(this, el, false);
 				}
 			});
 		}
 
 		SyncPromise.resolve(this.activeElement).then((els) => {
 			Array.concat([], els).forEach((el) => {
-				this.setSelectedMod($b, el, true);
+				h.setSelectedMod.call(this, el, true);
 			});
 		}).catch(stderr);
 
@@ -305,7 +305,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 					value === item.value;
 
 				if (needChangeMod) {
-					this.setSelectedMod(this.block, el, false);
+					h.setSelectedMod.call(this, el, false);
 				}
 			});
 		}).catch(stderr);
@@ -376,7 +376,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 
 	/** @see [[h.setScrollToMarkedOrSelectedItem]] */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
-		return h.setScrollToMarkedOrSelectedItem(this);
+		return h.setScrollToMarkedOrSelectedItem.call(this);
 	}
 
 	protected override initBaseAPI(): void {
@@ -386,7 +386,6 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 			i = this.instance;
 
 		this.normalizeItems = i.normalizeItems.bind(this);
-		this.setSelectedMod = i.setSelectedMod.bind(this);
 	}
 
 	/** @see [[iOpenToggle.initCloseHelpers]] */
@@ -404,11 +403,6 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	/** @see [[h.normalizeItems]] */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		return h.normalizeItems(items);
-	}
-
-	/** @see [[h.setSelectedMod]] */
-	protected setSelectedMod(block: Nullable<Block>, el: HTMLOptionElement, selected: boolean): void {
-		return h.setSelectedMod.call(this, block, el, selected);
 	}
 
 	protected override normalizeAttrs(attrs: Dictionary = {}): Dictionary {
