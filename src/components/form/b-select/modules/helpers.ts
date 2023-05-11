@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { $$ } from 'components/form/b-select/const';
-
-import type bSelect from 'components/form/b-select/b-select';
-import type { Items } from 'components/form/b-select/interface';
 import type Block from 'components/friends/block/class';
+import type bSelect from 'components/form/b-select/b-select';
+
+import { $$ } from 'components/form/b-select/const';
+import type { Items } from 'components/form/b-select/interface';
 
 /**
- * Normalizes the specified items and returns it
+ * Normalizes the specified items and returns them
  * @param items
  */
 export function normalizeItems(items: CanUndef<Items>): Items {

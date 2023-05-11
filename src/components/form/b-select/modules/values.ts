@@ -38,7 +38,7 @@ export default class Values extends Friend {
 
 	/**
 	 * Returns item for specified value
-	 * @param index
+	 * @param value
 	 */
 	getItemByValue(value: Item['value']): CanUndef<Item> {
 		return this.getItem(this.getIndex(value) ?? -1);

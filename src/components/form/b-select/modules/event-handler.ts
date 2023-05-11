@@ -1,4 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars-experimental */
+
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import type { ModEvent, SetModEvent } from 'components/form/b-select/b-select';
 import type bSelect from 'components/form/b-select/b-select';
 
