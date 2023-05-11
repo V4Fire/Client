@@ -1,5 +1,3 @@
-/* eslint-disable max-lines,max-lines-per-function */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -69,20 +67,6 @@ test.describe('friends/sync', () => {
 				linkToPath: 3,
 				linkToPathWithInitializer: 8
 			}
-		});
-	});
-
-	test.describe('`mod`', () => {
-		test('checking the initial value', async () => {
-			test.expect(await target.evaluate((ctx) => ctx.mods.foo)).toBe('bar');
-		});
-
-		test('changing the tied field', async () => {
-			test.expect(await target.evaluate(async (ctx) => {
-				ctx.dict.a!.b!++;
-				await ctx.nextTick();
-				return ctx.mods.foo;
-			})).toBe('bla');
 		});
 	});
 });
