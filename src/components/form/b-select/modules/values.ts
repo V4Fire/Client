@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { system } from 'core/component';
-
 import Friend from 'components/friends/friend';
 
 import type bSelect from 'components/form/b-select/b-select';
@@ -19,13 +17,11 @@ export default class Values extends Friend {
 	/**
 	 * A map of the item indexes and their values
 	 */
-	@system()
 	protected indexes!: Dictionary<Item>;
 
 	/**
 	 * A map of the item values and their indexes
 	 */
-	@system()
 	protected values!: Map<Item['value'], number>;
 
 	/**
