@@ -47,7 +47,7 @@
 				v-on-resize = {
 					watchHeight: false,
 					watchWidth: true,
-					callback: isSlideMode ? syncStateDefer : undefined
+					handler: isSlideMode ? syncStateDefer : undefined
 				}
 			.
 				< .&__view-content ref = content

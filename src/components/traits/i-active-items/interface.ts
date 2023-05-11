@@ -8,11 +8,6 @@
 
 export interface Item extends Dictionary {
 	/**
-	 * Item label text
-	 */
-	label?: string;
-
-	/**
 	 * Item value
 	 */
 	value?: unknown;
@@ -21,6 +16,11 @@ export interface Item extends Dictionary {
 	 * True if the item is active
 	 */
 	active?: boolean;
+
+	/**
+	 * True if item can possibly be active
+	 */
+	activatable?: boolean;
 }
 
 export type Active = unknown | Set<unknown>;

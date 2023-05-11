@@ -17,7 +17,7 @@ import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
 
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
-import Block, { getElementMod } from 'components/friends/block';
+import Block, { getElementMod, setElementMod } from 'components/friends/block';
 
 import iItems from 'components/traits/i-items/i-items';
 import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
@@ -36,7 +36,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
 
 AsyncRender.addToPrototype({iterate});
-Block.addToPrototype({getElementMod});
+Block.addToPrototype({getElementMod, setElementMod});
 
 const
 	$$ = symbolGenerator();
@@ -223,6 +223,11 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	/** @see [[iActiveItems.isActive]] */
 	isActive(value: this['Item']['value']): boolean {
 		return iActiveItems.isActive(this.top, value);
+	}
+
+	/** @see [[iActiveItems.prototype.getItemByValue]] */
+	getItemByValue(value: Item['value']): CanUndef<Item> {
+		return this.values.getItem(value);
 	}
 
 	/** @see [[iActiveItems.setActive]] */

@@ -36,7 +36,12 @@ test.describe('<b-tree> active items', () => {
 				}
 			]
 		},
-		{value: 5, label: '5'}
+		{value: 5, label: '5'},
+		{
+			value: 6,
+			label: '6',
+			activatable: false
+		}
 	];
 
 	test.beforeEach(async ({demoPage}) => {
@@ -77,6 +82,15 @@ test.describe('<b-tree> active items', () => {
 	});
 
 	test.describe('`active`', () => {
+		test('should not be changeable with `activatable = false` on item', async ({page}) => {
+			const target = await renderTree(page, {items});
+
+			await target.evaluate((ctx) => ctx.setActive(0));
+			await target.evaluate((ctx) => ctx.setActive(6));
+
+			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
+		});
+
 		test('should not be changeable by default', async ({page}) => {
 			const
 				target = await renderTree(page, {items});
