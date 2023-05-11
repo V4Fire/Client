@@ -21,9 +21,7 @@ export * from 'components/super/i-data/i-data';
 
 Sync.addToPrototype(SyncAPI);
 
-interface bFriendsSyncDummy {
-	bla: unknown;
-}
+interface bFriendsSyncDummy extends Dictionary {}
 
 @component({
 	functional: {
