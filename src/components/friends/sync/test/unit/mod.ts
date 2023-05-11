@@ -26,15 +26,15 @@ test.describe('friends/sync `mod`', () => {
 		target = await Component.createComponent(page, componentName);
 	});
 
-	test('checking the initial value', async () => {
-		test.expect(await target.evaluate((ctx) => ctx.mods.foo)).toBe('bar');
+	test('initial value of the modifier should by synced to the source', async () => {
+		await test.expect(target.evaluate((ctx) => ctx.mods.foo)).resolves.toBe('bar');
 	});
 
-	test('changing the tied field', async () => {
-		test.expect(await target.evaluate(async (ctx) => {
+	test('modifier should be updated when the source has changed', async () => {
+		await test.expect(target.evaluate(async (ctx) => {
 			ctx.dict.a!.b!++;
 			await ctx.nextTick();
 			return ctx.mods.foo;
-		})).toBe('bla');
+		})).resolves.toBe('bla');
 	});
 });
