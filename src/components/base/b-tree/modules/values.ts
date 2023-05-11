@@ -59,7 +59,7 @@ export default class Values extends Friend {
 	}
 
 	/**
-	 * Returns an item by specified value
+	 * Returns the item by the specified value
 	 * @param value
 	 */
 	getItem(value: Item['value']): CanUndef<Item> {

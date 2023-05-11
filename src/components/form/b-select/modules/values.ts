@@ -17,19 +17,27 @@ export default class Values extends Friend {
 	override readonly C!: bSelect;
 
 	/**
-	 * A map of indexes and items
+	 * A map of the item indexes and their values
 	 */
 	@system()
 	protected indexes!: Dictionary<Item>;
 
 	/**
-	 * A map of item values and their indexes
+	 * A map of the item values and their indexes
 	 */
 	@system()
 	protected values!: Map<Item['value'], number>;
 
 	/**
-	 * Returns item for specified index
+	 * Returns the item index by the specified value
+	 * @param value
+	 */
+	getIndex(value: Item['value']): CanUndef<number> {
+		return this.values.get(value);
+	}
+
+	/**
+	 * Returns the item by the specified index
 	 * @param index
 	 */
 	getItem(index: number | string): CanUndef<Item> {
@@ -37,19 +45,11 @@ export default class Values extends Friend {
 	}
 
 	/**
-	 * Returns item for specified value
+	 * Returns the item by the specified value
 	 * @param value
 	 */
 	getItemByValue(value: Item['value']): CanUndef<Item> {
 		return this.getItem(this.getIndex(value) ?? -1);
-	}
-
-	/**
-	 * Returns index of the item for specified value
-	 * @param value
-	 */
-	getIndex(value: Item['value']): CanUndef<number> {
-		return this.values.get(value);
 	}
 
 	/**
@@ -63,16 +63,16 @@ export default class Values extends Friend {
 			values = new Map(),
 			indexes = {};
 
+		this.values = values;
+		this.indexes = indexes;
+
 		const
 			activeStore = ctx.field.get('activeStore');
 
 		let
 			selectedItem;
 
-		for (let i = 0; i < ctx.items.length; i++) {
-			const
-				item = ctx.items[i];
-
+		ctx.items.forEach((item, i) => {
 			if (item.selected && (ctx.multiple ? ctx.valueProp === undefined : activeStore === undefined)) {
 				ctx.selectValue(item.value);
 			}
@@ -83,14 +83,10 @@ export default class Values extends Friend {
 
 			values.set(item.value, i);
 			indexes[i] = item;
-		}
-
-		this.values = values;
-		this.indexes = indexes;
+		});
 
 		if (!ctx.multiple && selectedItem != null) {
 			ctx.field.set('textStore', selectedItem.label);
 		}
 	}
-
 }

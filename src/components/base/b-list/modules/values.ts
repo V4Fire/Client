@@ -31,7 +31,7 @@ export default class Values extends Friend {
 	protected values!: Map<Item['value'], number>;
 
 	/**
-	 * Returns item value for specified index
+	 * Returns the item value by the specified index
 	 * @param index
 	 */
 	getValue(index: number | string): Item['value'] {
@@ -39,7 +39,7 @@ export default class Values extends Friend {
 	}
 
 	/**
-	 * Returns index of the item for specified value
+	 * Returns the item index by the specified value
 	 * @param value
 	 */
 	getIndex(value: Item['value']): CanUndef<number> {
