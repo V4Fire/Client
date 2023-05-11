@@ -14,51 +14,33 @@
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
-import { is } from 'core/browser';
 
 import Block, { setElementMod, removeElementMod } from 'components/friends/block';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
+import iActiveItems from 'components/traits/i-active-items/i-active-items';
 import iOpenToggle, { CloseHelperEvents } from 'components/traits/i-open-toggle/i-open-toggle';
 
-import iInputText, {
-
-	component,
-	prop,
-	field,
-	system,
-	computed,
-
-	hook,
-	watch,
+import iInputText, { component, field, system, computed, hook, watch } from 'components/super/i-input-text/i-input-text';
+import type {
 
 	ModsDecl,
-	ModEvent,
-	SetModEvent,
-
 	UnsafeGetter,
 	ValidatorsDecl,
 	ValidatorParams,
 	ValidatorResult
 
 } from 'components/super/i-input-text/i-input-text';
-
-import * as on from 'components/form/b-select/modules/handlers';
-import * as h from 'components/form/b-select/modules/helpers';
+import Mask, * as MaskAPI from 'components/super/i-input-text/mask';
 
 import { openedSelect } from 'components/form/b-select/const';
+import type { Value, FormValue, Items, UnsafeBSelect } from 'components/form/b-select/interface';
 
-import type {
+import bSelectProps from 'components/form/b-select/props';
+import Values from 'components/form/b-select/modules/values';
+import SelectEventHandlers from 'components/form/b-select/modules/select-event-handlers';
 
-	Value,
-	FormValue,
-
-	Item,
-	Items,
-
-	UnsafeBSelect
-
-} from 'components/form/b-select/interface';
+import * as h from 'components/form/b-select/modules/helpers';
 
 export * from 'components/form/b-input/b-input';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
@@ -69,190 +51,96 @@ export * from 'components/form/b-select/interface';
 export { Value, FormValue };
 
 Block.addToPrototype({setElementMod, removeElementMod});
+Mask.addToPrototype(MaskAPI);
 
-interface bSelect extends Trait<typeof iOpenToggle> {}
+interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof SelectEventHandlers> {}
 
 @component()
-@derive(iOpenToggle)
-class bSelect extends iInputText implements iOpenToggle, iItems {
-	override readonly Value!: Value;
-	override readonly FormValue!: FormValue;
+@derive(SelectEventHandlers, iOpenToggle, iActiveItems)
+class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
+	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
+		return Object.cast(this);
+	}
 
-	/** @see [[iItems.Item]] */
-	readonly Item!: Item;
-
-	/** @see [[iItems.Items]] */
-	readonly Items!: Array<this['Item']>;
-
-	override readonly rootTag: string = 'span';
-
-	override readonly valueProp?: unknown[] | this['Value'];
-
-	/** @see [[iItems.items]] */
-	@prop(Array)
-	readonly itemsProp: this['Items'] = [];
-
-	/** @see [[iItems.item]] */
-	@prop({type: [String, Function], required: false})
-	readonly item?: iItems['item'];
-
-	/** @see [[iItems.itemKey]] */
-	@prop({
-		type: [String, Function],
-		default: () => (item: Item) => item.value
-	})
-
-	readonly itemKey!: iItems['itemKey'];
-
-	/** @see [[iItems.itemProps]] */
-	@prop({type: Function, required: false})
-	readonly itemProps?: iItems['itemProps'];
-
-	/**
-	 * If true, the component supports a feature of multiple selected items
-	 */
-	@prop(Boolean)
-	readonly multiple: boolean = false;
-
-	/**
-	 * If true, the component will use a native tag to show the select
-	 */
-	@prop(Boolean)
-	readonly native: boolean = Object.isTruly(is.mobile);
-
-	/**
-	 * An icon to show before the button text
-	 *
-	 * @example
-	 * ```
-	 * < b-select :preIcon = 'dropdown' | :items = myItems
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly preIcon?: string;
-
-	/**
-	 * The name of the used component to display `preIcon`
-	 *
-	 * @example
-	 * ```
-	 * < b-select :preIconComponent = 'b-my-icon' | :items = myItems
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly preIconComponent?: string;
-
-	/**
-	 * Tooltip text to display when hovering over `preIcon`
-	 *
-	 * @example
-	 * ```
-	 * < b-select &
-	 *   :preIcon = 'dropdown' |
-	 *   :preIconHint = 'Show variants' |
-	 *   :items = myItems
-	 * .
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly preIconHint?: string;
-
-	/**
-	 * Tooltip position to display when hovering over `preIcon`
-	 *
-	 * @see [[gHint]]
-	 * @example
-	 * ```
-	 * < b-select &
-	 *   :preIcon = 'dropdown' |
-	 *   :preIconHint = 'Show variants' |
-	 *   :preIconHintPos = 'bottom-right' |
-	 *   :items = myItems
-	 * .
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly preIconHintPos?: string;
-
-	/**
-	 * An icon to show after the button text
-	 *
-	 * @example
-	 * ```
-	 * < b-select :icon = 'dropdown' | :items = myItems
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly icon?: string;
-
-	/**
-	 * The name of the used component to display `icon`
-	 *
-	 * @example
-	 * ```
-	 * < b-select :iconComponent = 'b-my-icon' | :items = myItems
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly iconComponent?: string;
-
-	/**
-	 * Tooltip text to display when hovering over `icon`
-	 *
-	 * @example
-	 * ```
-	 * < b-select &
-	 *   :icon = 'dropdown' |
-	 *   :iconHint = 'Show variants' |
-	 *   :items = myItems
-	 * .
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly iconHint?: string;
-
-	/**
-	 * Tooltip position to display when hovering over `icon`
-	 *
-	 * @see [[gHint]]
-	 * @example
-	 * ```
-	 * < b-select &
-	 *   :icon = 'dropdown' |
-	 *   :iconHint = 'Show variants' | :
-	 *   :iconHintPos = 'bottom-right' |
-	 *   :items = myItems
-	 * .
-	 * ```
-	 */
-	@prop({type: String, required: false})
-	readonly iconHintPos?: string;
-
-	/**
-	 * A component to show "in-progress" state or
-	 * Boolean, if needed to show progress by slot or `b-progress-icon`
-	 *
-	 * @default `'b-progress-icon'`
-	 * @example
-	 * ```
-	 * < b-select :progressIcon = 'b-my-progress-icon' | :items = myItems
-	 * ```
-	 */
-	@prop({type: [String, Boolean], required: false})
-	readonly progressIcon?: string | boolean;
-
-	/** @see [[bSelect.itemsProp]] */
+	/** {@link bSelectProps.itemsProp} */
 	get items(): this['Items'] {
 		return <this['Items']>this.field.get('itemsStore');
 	}
 
-	/** @see [[bSelect.items]] */
+	/** {@link bSelect.items} */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
 
-	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
-		return Object.cast(this);
+	/** {@link iActiveItems.activeChangeEvent} */
+	@system()
+	readonly activeChangeEvent: string = 'change';
+
+	/** {@link iActiveItems.active} */
+	@computed({cache: true})
+	get active(): this['Active'] {
+		return iActiveItems.getActive(this);
+	}
+
+	/** {@link iActiveItems.activeElement} */
+	@computed({cache: true, dependencies: ['active']})
+	get activeElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
+		return h.getSelectedElement.call(this);
+	}
+
+	/**
+	 * {@link iActiveItems.activeStore}
+	 * {@link iActiveItems.syncActiveStore}
+	 */
+	@system<bSelect>((o) => {
+		o.watch('valueProp', (val) => o.setActive(val, true));
+		o.watch('modelValue', (val) => o.setActive(val, true));
+		return iActiveItems.linkActiveStore(o, (val) => o.resolveValue(o.valueProp ?? o.modelValue ?? val));
+	})
+
+	activeStore!: iActiveItems['activeStore'];
+
+	@computed({cache: true, dependencies: ['active']})
+	override get value(): CanUndef<this['Active']> {
+		const val = this.active;
+
+		if (this.multiple && Object.isSet(val) && val.size === 0) {
+			return undefined;
+		}
+
+		return val;
+	}
+
+	override set value(value: CanUndef<this['ActiveProp']>) {
+		if (value === undefined) {
+			this.unselectValue(this.value);
+
+		} else {
+			this.selectValue(value, true);
+			void this.setScrollToMarkedOrSelectedItem();
+		}
+
+		if (!this.multiple) {
+			const item = this.values.getItemByValue(value);
+			this.text = item?.label ?? '';
+		}
+	}
+
+	override get default(): this['Active'] {
+		const val = this.field.get('defaultProp');
+
+		if (this.multiple) {
+			return new Set(Object.isIterable(val) ? val : Array.concat([], val));
+		}
+
+		return val;
+	}
+
+	override get formValue(): Promise<this['FormValue']> {
+		const formValue = super['formValueGetter']();
+
+		return SyncPromise.resolve(formValue)
+			.then((val) => this.multiple && Object.isSet(val) ? [...val] : val);
 	}
 
 	override get rootAttrs(): Dictionary {
@@ -268,63 +156,6 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		}
 
 		return attrs;
-	}
-
-	override get value(): this['Value'] {
-		const
-			v = this.field.get('valueStore');
-
-		if (this.multiple) {
-			if (Object.isSet(v) && v.size > 0) {
-				return new Set(v);
-			}
-
-			return undefined;
-		}
-
-		return v;
-	}
-
-	override set value(value: this['Value']) {
-		if (value === undefined) {
-			this.unselectValue(this.value);
-
-		} else {
-			this.selectValue(value, true);
-			void this.setScrollToMarkedOrSelectedItem();
-		}
-
-		if (!this.multiple) {
-			const item = this.indexes[String(this.values.get(value))];
-			this.text = item?.label ?? '';
-		}
-	}
-
-	override get default(): this['Value'] {
-		const
-			val = this.field.get('defaultProp');
-
-		if (this.multiple) {
-			return new Set(Object.isSet(val) ? val : Array.concat([], val));
-		}
-
-		return val;
-	}
-
-	override get formValue(): Promise<this['FormValue']> {
-		const
-			formValue = super['formValueGetter']();
-
-		return (async () => {
-			const
-				val = await formValue;
-
-			if (this.multiple && Object.isSet(val)) {
-				return [...val];
-			}
-
-			return val;
-		})();
 	}
 
 	static override readonly mods: ModsDecl = {
@@ -363,58 +194,13 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		//#endif
 	};
 
-	@system<bSelect>((o) => o.sync.link((val) => {
-		val = o.resolveValue(val);
-
-		if (val === undefined && o.hook === 'beforeDataCreate') {
-			if (o.multiple) {
-				if (Object.isSet(o.valueStore)) {
-					return o.valueStore;
-				}
-
-				return new Set(Array.concat([], o.valueStore));
-			}
-
-			return o.valueStore;
-		}
-
-		let
-			newVal;
-
-		if (o.multiple) {
-			const
-				objVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
-
-			if (Object.fastCompare(objVal, o.valueStore)) {
-				return o.valueStore;
-			}
-
-			newVal = objVal;
-
-		} else {
-			newVal = val;
-		}
-
-		o.selectValue(newVal);
-		return newVal;
-	}))
-
-	protected override valueStore!: this['Value'];
-
 	/**
-	 * A map of item indexes and their values
+	 * Internal API for working with component values
 	 */
-	@system()
-	// @ts-ignore (type loop)
-	protected indexes!: Dictionary<this['Item']>;
+	@system<bSelect>((o) => new Values(o))
+	protected values!: Values;
 
-	/**
-	 * A map of item values and their indexes
-	 */
-	@system()
-	protected values!: Map<unknown, number>;
-
-	/** @see [[bSelect.items]] */
+	/** {@link bSelect.items} */
 	@field<bSelect>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
 			return <CanUndef<Items>>o.itemsStore ?? [];
@@ -429,17 +215,10 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		dropdown?: Element;
 	};
 
-	/**
-	 * A link to the selected item element.
-	 * If the component is switched to the `multiple` mode, the getter will return an array of elements.
-	 */
-	@computed({
-		cache: true,
-		dependencies: ['value']
-	})
-
-	protected get selectedElement(): CanPromise<CanUndef<CanArray<HTMLOptionElement>>> {
-		return h.getSelectedElement(this);
+	/** {@link iActiveItems.activeElement} */
+	@computed({cache: true, dependencies: ['active']})
+	protected get selectedElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
+		return this.activeElement;
 	}
 
 	/**
@@ -447,7 +226,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	 */
 	@computed({cache: true})
 	protected get onTextChange(): Function {
-		return this.async.debounce(on.textChange.bind(null, this), 200);
+		return this.async.debounce(SelectEventHandlers.onTextChange.bind(null, this), 200);
 	}
 
 	override reset(): Promise<boolean> {
@@ -466,197 +245,59 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return SyncPromise.resolve(false);
 	}
 
-	/**
-	 * Returns true if the specified value is selected
-	 * @param value
-	 */
-	isSelected(value: unknown): boolean {
-		const
-			valueStore = this.field.get('valueStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(valueStore)) {
-				return false;
-			}
-
-			return valueStore.has(value);
-		}
-
-		return value === valueStore;
-	}
-
-	/**
-	 * Selects an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
-	 *
-	 * @param value
-	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
-	 *   (works only with the `multiple` mode)
-	 */
-	selectValue(value: this['Value'], unselectPrevious: boolean = false): boolean {
-		const
-			valueStore = this.field.get('valueStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(valueStore)) {
-				return false;
-			}
-
-			if (unselectPrevious) {
-				valueStore.clear();
-			}
-
-			let
-				res = false;
-
-			const set = (value) => {
-				if (valueStore.has(value)) {
-					return false;
-				}
-
-				valueStore.add(value);
-				res = true;
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, set);
-
-			} else {
-				set(value);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!res) {
-				return false;
-			}
-
-		} else if (valueStore === value) {
+	/** {@link iActiveItems.setActive} */
+	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
+		if (!iActiveItems.setActive(this, value, unsetPrevious)) {
 			return false;
-
-		} else {
-			this.field.set('valueStore', value);
 		}
 
-		const
-			{block: $b} = this;
+		const {block: $b} = this;
 
 		if ($b == null) {
 			return true;
 		}
 
 		const
-			id = this.values.get(value),
+			id = this.values.getIndex(value),
 			itemEl = id != null ? $b.element<HTMLOptionElement>('item', {id}) : null;
 
-		if (!this.multiple || unselectPrevious) {
-			const
-				previousItemEls = $b.elements<HTMLOptionElement>('item', {selected: true});
-
-			for (let i = 0; i < previousItemEls.length; i++) {
-				const
-					previousItemEl = previousItemEls[i];
-
-				if (previousItemEl !== itemEl) {
-					$b.setElementMod(previousItemEl, 'item', 'selected', false);
-
-					if (this.native) {
-						previousItemEl.selected = false;
-
-					} else {
-						previousItemEl.setAttribute('aria-selected', 'false');
-					}
+		if (!this.multiple || unsetPrevious) {
+			Object.forEach($b.elements<HTMLOptionElement>('item', {selected: true}), (el) => {
+				if (el !== itemEl) {
+					h.setSelectedMod.call(this, el, false);
 				}
-			}
+			});
 		}
 
-		SyncPromise.resolve(this.selectedElement).then((selectedElement) => {
-			const
-				els = Array.concat([], selectedElement);
-
-			for (let i = 0; i < els.length; i++) {
-				const el = els[i];
-				$b.setElementMod(el, 'item', 'selected', true);
-
-				if (this.native) {
-					el.selected = true;
-
-				} else {
-					el.setAttribute('aria-selected', 'true');
-				}
-			}
+		SyncPromise.resolve(this.activeElement).then((els) => {
+			Array.concat([], els).forEach((el) => {
+				h.setSelectedMod.call(this, el, true);
+			});
 		}).catch(stderr);
 
 		return true;
 	}
 
-	/**
-	 * Removes selection from an item by the specified value.
-	 * If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
-	 *
-	 * @param value
-	 */
-	unselectValue(value: this['Value']): boolean {
-		const
-			valueStore = this.field.get('valueStore');
+	/** {@link iActiveItems.unsetActive} */
+	unsetActive(value: this['ActiveProp']): boolean {
+		const {activeElement: previousActiveElement} = this;
 
-		const
-			{selectedElement} = this;
-
-		if (this.multiple) {
-			if (!Object.isSet(valueStore)) {
-				return false;
-			}
-
-			let
-				res = false;
-
-			const unset = (value) => {
-				if (!valueStore.has(value)) {
-					return;
-				}
-
-				valueStore.delete(value);
-				res = true;
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, unset);
-
-			} else {
-				unset(value);
-			}
-
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (!res) {
-				return false;
-			}
-
-		} else if (valueStore !== value) {
+		if (!iActiveItems.unsetActive(this, value)) {
 			return false;
-
-		} else {
-			this.field.set('valueStore', undefined);
 		}
 
-		const
-			{block: $b} = this;
-
-		if ($b == null) {
+		if (this.block == null) {
 			return true;
 		}
 
-		SyncPromise.resolve(selectedElement).then((selectedElement) => {
-			const
-				els = Array.concat([], selectedElement);
-
-			for (let i = 0; i < els.length; i++) {
+		SyncPromise.resolve(previousActiveElement).then((els) => {
+			Array.concat([], els).forEach((el) => {
 				const
-					el = els[i],
 					id = el.getAttribute('data-id'),
-					item = this.indexes[String(id)];
+					item = this.values.getItem(id ?? -1);
 
 				if (item == null) {
-					continue;
+					return;
 				}
 
 				const needChangeMod = this.multiple && Object.isSet(value) ?
@@ -664,71 +305,41 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 					value === item.value;
 
 				if (needChangeMod) {
-					$b.setElementMod(el, 'item', 'selected', false);
-
-					if (this.native) {
-						el.selected = false;
-
-					} else {
-						el.setAttribute('aria-selected', 'false');
-					}
+					h.setSelectedMod.call(this, el, false);
 				}
-			}
+			});
 		}).catch(stderr);
 
 		return true;
 	}
 
-	/**
-	 * Toggles selection of an item by the specified value.
-	 * The methods return a new selected value/s.
-	 *
-	 * @param value
-	 * @param [unselectPrevious] - true, if needed to unselect previous selected items
-	 *   (works only with the `multiple` mode)
-	 */
-	toggleValue(value: this['Value'], unselectPrevious: boolean = false): this['Value'] {
-		const
-			valueStore = this.field.get('valueStore');
-
-		if (this.multiple) {
-			if (!Object.isSet(valueStore)) {
-				return this.value;
-			}
-
-			const toggle = (value) => {
-				if (valueStore.has(value)) {
-					if (unselectPrevious) {
-						this.unselectValue(this.value);
-
-					} else {
-						this.unselectValue(value);
-					}
-
-					return;
-				}
-
-				this.selectValue(value, unselectPrevious);
-			};
-
-			if (Object.isSet(value)) {
-				Object.forEach(value, toggle);
-
-			} else {
-				toggle(value);
-			}
-
-		} else if (valueStore !== value) {
-			this.selectValue(value);
-
-		} else {
-			this.unselectValue(value);
-		}
-
-		return this.value;
+	/** {@link iActiveItems.isActive} */
+	isSelected(value: unknown): boolean {
+		return this.isActive(value);
 	}
 
-	/** @see [[iOpenToggle.open]] */
+	/** {@link iActiveItems.setActive} */
+	selectValue(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
+		return this.setActive(value, unsetPrevious);
+	}
+
+	/** {@link iActiveItems.unsetActive} */
+	unselectValue(value: this['ActiveProp']): boolean {
+		return this.unsetActive(value);
+	}
+
+	/** {@link iActiveItems.toggleActive} */
+	toggleValue(value: this['ActiveProp'], unsetPrevious: boolean = false): CanUndef<this['Active']> {
+		const val = this.toggleActive(value, unsetPrevious);
+
+		if (this.multiple && Object.isSet(val) && val.size === 0) {
+			return undefined;
+		}
+
+		return val;
+	}
+
+	/** {@link iOpenToggle.open} */
 	async open(...args: unknown[]): Promise<boolean> {
 		if (this.multiple || this.native) {
 			return false;
@@ -742,22 +353,18 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return false;
 	}
 
-	/** @see [[iOpenToggle.open]] */
+	/** {@link iOpenToggle.open} */
 	async close(...args: unknown[]): Promise<boolean> {
 		if (this.native) {
 			return false;
 		}
 
 		if (this.multiple || await iOpenToggle.close(this, ...args)) {
-			const
-				{block: $b} = this;
-
-			if ($b != null) {
-				const
-					markedEl = $b.element('item', {marked: true});
+			if (this.block != null) {
+				const markedEl = this.block.element('item', {marked: true});
 
 				if (markedEl != null) {
-					$b.removeElementMod(markedEl, 'item', 'marked');
+					this.block.removeElementMod(markedEl, 'item', 'marked');
 				}
 			}
 
@@ -767,17 +374,9 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return false;
 	}
 
-	/** @see [[iOpenToggle.onOpenedChange]] */
-	// eslint-disable-next-line @typescript-eslint/require-await
-	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
-		await on.openedChange(this, e);
-	}
-
-	/**
-	 * Sets the scroll position to the first marked or selected item
-	 */
+	/** {@link h.setScrollToMarkedOrSelectedItem} */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
-		return h.setScrollToMarkedOrSelectedItem(this);
+		return h.setScrollToMarkedOrSelectedItem.call(this);
 	}
 
 	protected override initBaseAPI(): void {
@@ -787,27 +386,21 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			i = this.instance;
 
 		this.normalizeItems = i.normalizeItems.bind(this);
-		this.selectValue = i.selectValue.bind(this);
 	}
 
-	/** @see [[iOpenToggle.initCloseHelpers]] */
+	/** {@link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
 	}
 
-	/**
-	 * Initializes component values
-	 */
+	/** {@link Values.init} */
 	@hook('beforeDataCreate')
 	protected initComponentValues(): void {
-		h.initComponentValues(this);
+		this.values.init();
 	}
 
-	/**
-	 * Normalizes the specified items and returns it
-	 * @param items
-	 */
+	/** {@link h.normalizeItems} */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		return h.normalizeItems(items);
 	}
@@ -841,7 +434,7 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 			op ?? {};
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
 	}
@@ -868,6 +461,14 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		this.sync.mod('opened', 'multiple', Boolean);
 	}
 
+	protected override initValueListeners(): void {
+		super.initValueListeners();
+
+		this.localEmitter.on('maskedText.change', () => {
+			this.onTextChange();
+		});
+	}
+
 	protected override beforeDestroy(): void {
 		super.beforeDestroy();
 
@@ -882,62 +483,16 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/**
-	 * Handler: clearing of a component value
-	 * @emits `actionChange(value: this['Value'])`
-	 */
-	protected async onClear(): Promise<void> {
-		if (await this.clear()) {
-			this.emit('actionChange', this.value);
-		}
-	}
-
-	/**
-	 * Handler: value changing of a native component `<select>`
-	 * @emits `actionChange(value: this['Value'])`
-	 */
-	protected onNativeChange(): void {
-		on.nativeChange(this);
-	}
-
-	protected override initValueListeners(): void {
-		super.initValueListeners();
-
-		this.localEmitter.on('maskedText.change', () => {
-			this.onTextChange();
-		});
-	}
-
-	/**
-	 * Handler: typing text into a helper text input to search select options
-	 *
-	 * @param e
-	 * @emits `actionChange(value: this['Value'])`
-	 */
-	protected onSearchInput(e: InputEvent): void {
-		on.searchInput(this, e);
-	}
-
-	/**
-	 * Handler: click to some item element
-	 *
-	 * @param itemEl
-	 * @emits `actionChange(value: this['Value'])`
+	 * {@link SelectEventHandlers.onItemClick}
+	 * @see https://github.com/V4Fire/Client/issues/848
 	 */
 	@watch({
 		path: '?$el:click',
 		wrapper: (o, cb) => o.dom.delegateElement('item', (e: MouseEvent) => cb(e.delegateTarget))
 	})
 
-	protected onItemClick(itemEl: CanUndef<Element>): void {
-		on.itemClick(this, itemEl);
-	}
-
-	/**
-	 * Handler: "navigation" over the select via "arrow" buttons
-	 * @param e
-	 */
-	protected onItemsNavigate(e: KeyboardEvent): void {
-		void on.itemsNavigate(this, e);
+	protected onItemClick(itemEl: Nullable<Element>): void {
+		SelectEventHandlers.onItemClick(this, itemEl);
 	}
 }
 

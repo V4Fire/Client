@@ -7,8 +7,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { system } from 'core/component';
-
 import Friend from 'components/friends/friend';
 
 import type bTree from 'components/base/b-tree/b-tree';
@@ -21,25 +19,21 @@ export default class Values extends Friend {
 	/**
 	 * A map of the item indexes and their values
 	 */
-	@system()
 	protected indexes!: Dictionary;
 
 	/**
 	 * A map of the item values and their indexes
 	 */
-	@system()
 	protected valueIndexes!: Map<Item['value'], number>;
 
 	/**
 	 * A map of the item values and their descriptors
 	 */
-	@system()
 	protected valueItems!: Map<Item['value'], Item>;
 
 	/**
 	 * This prefix guarantees component :key uniqueness after item changes
 	 */
-	@system()
 	protected itemKeyPrefix: number = 0;
 
 	/**
@@ -59,7 +53,7 @@ export default class Values extends Friend {
 	}
 
 	/**
-	 * Returns an item by specified value
+	 * Returns the item by the specified value
 	 * @param value
 	 */
 	getItem(value: Item['value']): CanUndef<Item> {

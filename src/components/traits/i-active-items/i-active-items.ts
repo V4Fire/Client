@@ -136,6 +136,20 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
+	 * Returns the active item(s) of the passed component
+	 */
+	static getActive(ctx: TraitComponent): iActiveItems['Active'] {
+		const
+			v = ctx.field.get<iActiveItems['Active']>('activeStore');
+
+		if (ctx.multiple) {
+			return Object.isSet(v) ? new Set(v) : new Set();
+		}
+
+		return v;
+	}
+
+	/**
 	 * Checks if the passed element has an activity property.
 	 * If true, sets it as the component active value.
 	 *
@@ -151,17 +165,13 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Returns the active item(s) of the passed component
+	 * Initializes active store change listeners
+	 * @param ctx
 	 */
-	static getActive(ctx: TraitComponent): iActiveItems['Active'] {
-		const
-			v = ctx.field.get<iActiveItems['Active']>('activeStore');
-
-		if (ctx.multiple) {
-			return Object.isSet(v) ? new Set(v) : new Set();
-		}
-
-		return v;
+	static initActiveStoreListeners(ctx: TraitComponent): void {
+		ctx.watch('activeStore', {deep: ctx.multiple}, (value) => {
+			ctx.emit(ctx.activeChangeEvent, value);
+		});
 	}
 
 	/** @see [[iActiveItems.isActive]] */
@@ -230,8 +240,6 @@ export default abstract class iActiveItems extends iItems {
 			ctx.field.set('activeStore', value);
 		}
 
-		ctx.emit(ctx.activeChangeEvent, ctx.active);
-
 		return true;
 	}
 
@@ -276,8 +284,6 @@ export default abstract class iActiveItems extends iItems {
 			ctx.field.set('activeStore', undefined);
 		}
 
-		ctx.emit(ctx.activeChangeEvent, ctx.active);
-
 		return true;
 	}
 
@@ -304,11 +310,11 @@ export default abstract class iActiveItems extends iItems {
 				ctx.setActive(value);
 			};
 
-			if (Object.isIterable(value)) {
-				if (unsetPrevious) {
-					ctx.unsetActive(ctx.active);
-				}
+			if (unsetPrevious) {
+				ctx.unsetActive(ctx.active);
+			}
 
+			if (Object.isIterable(value)) {
 				Object.forEach(value, toggle);
 
 			} else {

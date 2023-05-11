@@ -35,7 +35,7 @@ The component has two associated types to specify the active component item(s): 
 import bTree, { component } from 'components/super/b-tree/b-tree';
 
 @component()
-export default class MyTree extends bList {
+export default class MyTree extends bTree {
   /** @override */
   readonly ActiveProp!: CanIter<number>;
 

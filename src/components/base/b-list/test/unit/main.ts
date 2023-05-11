@@ -208,7 +208,7 @@ test.describe('<b-list>', () => {
 			itemSelector = createListSelector('item'),
 			linkSelector = createListSelector('link');
 
-		const changesLogPromise = target.evaluate((ctx) => new Promise((resolve) => {
+		const scan = target.evaluate((ctx) => new Promise((resolve) => {
 			const
 				log: any[] = [],
 				onEvent = () => {
@@ -232,11 +232,11 @@ test.describe('<b-list>', () => {
 
 		await page.click(`${itemSelector}:nth-child(2) ${linkSelector}`);
 
-		test.expect(await changesLogPromise).toEqual([
-			['change', 0],
+		await test.expect(scan).resolves.toEqual([
 			true,
-			['change', 1],
-			['actionChange', 1]
+			['change', 0],
+			['actionChange', 1],
+			['change', 1]
 		]);
 	});
 

@@ -7,8 +7,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { system } from 'core/component';
-
 import Friend from 'components/friends/friend';
 
 import type bList from 'components/base/b-list/b-list';
@@ -21,23 +19,20 @@ export default class Values extends Friend {
 	/**
 	 * A map of the item indexes and their values
 	 */
-	@system()
 	protected indexes!: Dictionary;
 
 	/**
 	 * A map of the item values and their indexes
 	 */
-	@system()
 	protected values!: Map<Item['value'], number>;
 
 	/**
 	 * A map of the item values and their descriptors
 	 */
-	@system()
 	protected valueItems!: Map<unknown, Item>;
 
 	/**
-	 * Returns item value for specified index
+	 * Returns the item value by the specified index
 	 * @param index
 	 */
 	getValue(index: number | string): Item['value'] {
@@ -45,7 +40,7 @@ export default class Values extends Friend {
 	}
 
 	/**
-	 * Returns index of the item for specified value
+	 * Returns the item index by the specified value
 	 * @param value
 	 */
 	getIndex(value: Item['value']): CanUndef<number> {
@@ -53,7 +48,7 @@ export default class Values extends Friend {
 	}
 
 	/**
-	 * Returns item by the specified value
+	 * Returns the item by the specified value
 	 * @param value
 	 */
 	getItem(value: Item['value']): CanUndef<Item> {

@@ -241,3 +241,21 @@ class bTree extends iBlock implements iActiveItems {
   }
 }
 ```
+
+### initActiveStoreListeners
+
+Initializes active store change listeners.
+
+```typescript
+import iActiveItems from 'traits/i-active-items/i-active-items';
+import iBlock, { component, hook } from 'super/i-block/i-block';
+
+@component()
+class bTree extends iBlock implements iActiveItems {
+  /** @see [[iActiveItems.initActiveStoreListeners]] */
+  @hook('beforeDataCreate')
+  protected initActiveStoreListeners(): void {
+    iActiveItems.initActiveStoreListeners(this);
+  }
+}
+```

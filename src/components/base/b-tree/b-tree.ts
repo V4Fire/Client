@@ -432,6 +432,14 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		this.values.init(itemsChanged);
 	}
 
+	/** @see [[iActiveItems.initActiveStoreListeners]] */
+	@hook('beforeDataCreate')
+	protected initActiveStoreListeners(): void {
+		if (this.topProp == null) {
+			iActiveItems.initActiveStoreListeners(this.top);
+		}
+	}
+
 	/**
 	 * Handler: fold element has been clicked
 	 * @param item

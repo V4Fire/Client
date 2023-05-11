@@ -13,6 +13,7 @@ import { expandedStringify } from 'core/prelude/test-env/components/json';
 import type iBlock from 'components/super/i-block/i-block';
 
 import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
+import { isRenderComponentsVnodeParams } from 'tests/helpers/component/helpers';
 
 /**
  * Class provides API to work with components on a page
@@ -40,16 +41,16 @@ export default class Component {
 	}
 
 	/**
-	 * Creates a component by the specified name and parameters
+	 * Creates a component by the specified name and parameters/attributes
 	 *
 	 * @param page
 	 * @param componentName
-	 * @param [scheme]
+	 * @param [schemeOrAttrs]
 	 */
 	 static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
-		scheme?: RenderComponentsVnodeParams
+		schemeOrAttrs?: RenderComponentsVnodeParams | RenderComponentsVnodeParams['attrs']
 	): Promise<JSHandle<T>>;
 
 	/**
@@ -68,16 +69,28 @@ export default class Component {
 	/**
 	 * @param page
 	 * @param componentName
-	 * @param [scheme]
+	 * @param [schemeOrAttrs]
 	 */
 	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
-		scheme: CanArray<RenderComponentsVnodeParams> = {}
+		schemeOrAttrs: CanArray<RenderComponentsVnodeParams> | RenderComponentsVnodeParams['attrs'] = {}
 	): Promise<CanUndef<JSHandle<T>>> {
-		if (Array.isArray(scheme)) {
-			await this.createComponents(page, componentName, scheme);
+		if (Array.isArray(schemeOrAttrs)) {
+			await this.createComponents(page, componentName, schemeOrAttrs);
 			return;
+		}
+
+		let
+			attrs: RenderComponentsVnodeParams['attrs'] = {},
+			children: RenderComponentsVnodeParams['children'];
+
+		if (isRenderComponentsVnodeParams(schemeOrAttrs)) {
+			attrs = schemeOrAttrs.attrs;
+			children = schemeOrAttrs.children;
+
+		} else {
+			attrs = schemeOrAttrs;
 		}
 
 		const
@@ -85,12 +98,11 @@ export default class Component {
 
 		const schemeAsString = expandedStringify([
 			{
-				...scheme,
-
 				attrs: {
-					...scheme.attrs,
+					...attrs,
 					'data-render-id': renderId
-				}
+				},
+				children
 			}
 		]);
 
