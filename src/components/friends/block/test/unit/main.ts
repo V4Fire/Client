@@ -15,7 +15,6 @@ import { Component } from 'tests/helpers';
 import type bFriendsBlockDummy from 'components/friends/block/test/b-friends-block-dummy/b-friends-block-dummy';
 
 test.describe('friends/block', () => {
-
 	let
 		target: JSHandle<bFriendsBlockDummy>,
 		componentId: string;

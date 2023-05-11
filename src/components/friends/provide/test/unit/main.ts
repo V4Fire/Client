@@ -15,7 +15,6 @@ import { Component } from 'tests/helpers';
 import type bFriendsProvideDummy from 'components/friends/provide/test/b-friends-provide-dummy/b-friends-provide-dummy';
 
 test.describe('friends/provide', () => {
-
 	let target: JSHandle<bFriendsProvideDummy>;
 
 	const componentName = 'b-friends-provide-dummy';

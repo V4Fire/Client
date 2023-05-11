@@ -6,11 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:components/dummies/b-dummy/README.md]]
- * @packageDocumentation
- */
-
 import bDummy, { component, ModsDict } from 'components/dummies/b-dummy/b-dummy';
 
 export * from 'components/dummies/b-dummy/b-dummy';
