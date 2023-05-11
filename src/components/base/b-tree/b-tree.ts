@@ -245,14 +245,14 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		if (!top.multiple || unsetPrevious) {
 			for (const [node, {value}] of this.traverseActiveNodes()) {
 				if (!this.isActive(value)) {
-					setActiveMod(top.block, node, false);
+					setActiveMod.call(top, node, false);
 				}
 			}
 		}
 
 		// Activate current active nodes
 		SyncPromise.resolve(this.activeElement).then((activeElement) => {
-			Array.concat([], activeElement).forEach((activeElement) => setActiveMod(top.block, activeElement, true));
+			Array.concat([], activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
 		}).catch(stderr);
 
 		return true;
@@ -268,7 +268,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 		for (const [node, {value}] of this.traverseActiveNodes()) {
 			if (!this.isActive(value)) {
-				setActiveMod(top.block, node, false);
+				setActiveMod.call(top, node, false);
 			}
 		}
 

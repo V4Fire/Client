@@ -193,13 +193,13 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 				Object.forEach(previousLinkEls, (previousLinkEl) => {
 					if (previousLinkEl !== linkEl) {
-						setActiveMod($b, previousLinkEl, false);
+						setActiveMod.call(this, previousLinkEl, false);
 					}
 				});
 			}
 
 			SyncPromise.resolve(this.activeElement).then((selectedElement) => {
-				Array.concat([], selectedElement).forEach((el) => setActiveMod($b, el, true));
+				Array.concat([], selectedElement).forEach((el) => setActiveMod.call(this, el, true));
 			}, stderr);
 		}
 
@@ -240,7 +240,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 						value === itemValue;
 
 					if (needChangeMod) {
-						setActiveMod($b, el, false);
+						setActiveMod.call(this, el, false);
 					}
 				});
 			}, stderr);
