@@ -89,7 +89,7 @@ The component can be used with the `v-model` directive.
 
 ## Usage
 
-### Using the component with a provided list of items and a default active item
+### Using a component with a provided list of elements and a default active element
 
 ```
 < b-list :items = [ &
