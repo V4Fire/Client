@@ -8,6 +8,8 @@
 
 import type { Page, Locator } from 'playwright';
 
+import { BOM } from 'tests/helpers';
+
 import test from 'tests/config/unit/test';
 
 test.describe('<div v-icon>', () => {
@@ -53,6 +55,7 @@ test.describe('<div v-icon>', () => {
 			]);
 		}, attrs);
 
+		await BOM.waitForIdleCallback(page);
 		return page.getByTestId('target');
 	}
 });

@@ -1,5 +1,5 @@
 {
-  "hash": "8efe2d8aace18bf93bd9f553371820caf37d1170164de3a67aa6e0ea980b1c93",
+  "hash": "40c617bb0856a61a47fe35716997099c009daf51bd43a615a858fef75db9d75f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -560,6 +560,38 @@
             "src/components/form/b-form/b-form.styl"
           ],
           "tpl": "src/components/form/b-form/b-form.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-block-dummy",
+        {
+          "index": "src/components/friends/block/test/b-friends-block-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-block-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-block-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/block/test/b-friends-block-dummy/b-friends-block-dummy.ts",
+          "styles": [
+            "src/components/friends/block/test/b-friends-block-dummy/b-friends-block-dummy.styl"
+          ],
+          "tpl": "src/components/friends/block/test/b-friends-block-dummy/b-friends-block-dummy.ss",
           "etpl": null
         }
       ],
