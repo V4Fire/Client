@@ -1,4 +1,3 @@
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,10 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 import Friend from 'components/friends/friend';
 
-import { $$ } from 'components/form/b-select/const';
 import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
+
+const $$ = symbolGenerator();
 
 export default class Animation extends Friend {
 	override readonly C!: bBottomSlide;

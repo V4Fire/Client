@@ -1,4 +1,3 @@
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,10 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 import Friend from 'components/friends/friend';
 
-import { $$ } from 'components/base/b-bottom-slide/const';
 import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
+
+const $$ = symbolGenerator();
 
 export default class Geometry extends Friend {
 	override readonly C!: bBottomSlide;
@@ -147,7 +149,7 @@ export default class Geometry extends Friend {
 		const
 			currentPage = ctx.history.current?.content;
 
-		if (ctx.heightMode === 'content' && currentPage?.initBoundingRect) {
+		if (ctx.heightMode === 'content' && currentPage?.initBoundingRect != null) {
 			const
 				currentContentPageHeight = currentPage.el.scrollHeight;
 

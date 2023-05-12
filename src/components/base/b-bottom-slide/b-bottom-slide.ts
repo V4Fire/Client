@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
@@ -29,7 +30,6 @@ import Block, { getFullElementName } from 'components/friends/block';
 import iBlock, { component, field, system, computed, hook, watch, wait } from 'components/super/i-block/i-block';
 import type { ModsDecl, UnsafeGetter } from 'components/super/i-block/i-block';
 
-import { $$ } from 'components/form/b-select/const';
 import type { UnsafeBBottomSlide } from 'components/base/b-bottom-slide/interface';
 
 import bBottomSlideProps from 'components/base/b-bottom-slide/props';
@@ -39,6 +39,8 @@ export * from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-bottom-slide/const';
 export * from 'components/base/b-bottom-slide/interface';
+
+const $$ = symbolGenerator();
 
 Block.addToPrototype({getFullElementName});
 
