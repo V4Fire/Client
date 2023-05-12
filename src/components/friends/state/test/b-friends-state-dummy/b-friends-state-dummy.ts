@@ -54,4 +54,24 @@ export default class bFriendsStateDummy extends iData {
 			'mods.foo': undefined
 		};
 	}
+
+	protected override syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary<unknown> {
+		if (type === 'remote') {
+			return {
+				systemField: this.systemField,
+				regularField: this.regularField ?? 0,
+				'mods.foo': this.mods.foo
+			};
+		}
+
+		return {
+			systemField: data?.systemField ?? this.systemField,
+			regularField: data?.regularField ?? this.regularField ?? 0,
+			'mods.foo': data?.['mods.foo'] ?? this.mods.foo
+		};
+	}
+
+	protected override convertStateToRouterReset(): Dictionary {
+		return this.convertStateToStorageReset();
+	}
 }
