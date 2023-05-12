@@ -13,7 +13,7 @@
 - template index() extends ['i-data'].index
 	- block body
 		< template v-if = stage === 'loading dynamic modules from a template'
-			< .&__result
+			< .&__result v-async-target
 				+= self.loadModules('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy1')
 					< b-friends-module-loader-dummy1
 
