@@ -6,11 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:components/dummies/b-dummy-sync/README.md]]
- * @packageDocumentation
- */
-
 import watch from 'core/object/watch';
 import iData, { component, prop, field, system, computed, ModsDecl } from 'components/super/i-data/i-data';
 
