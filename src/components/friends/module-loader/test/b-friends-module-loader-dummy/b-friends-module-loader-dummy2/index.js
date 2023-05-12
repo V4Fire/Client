@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy-module2')
+package('b-friends-module-loader-dummy2')
 	.extends('i-data');

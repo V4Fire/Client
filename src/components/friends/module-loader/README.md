@@ -1,11 +1,11 @@
 # components/friends/module-loader
 
-The module provides a class to manage dynamically loaded modules.
+This module provides a class to manage dynamically loaded modules.
 
-## How to include this module to your component?
+## How to include this module in your component?
 
-By default, any component that inherited from [[iBlock]] has the `moduleLoader` property.
-But to use module methods, attach them explicitly to enable tree-shake code optimizations.
+By default, any component that inherits from [[iBlock]] has the moduleLoader property.
+However, to use the methods of the module, you need to attach them explicitly to enable tree-shake code optimizations.
 Just place the necessary import declaration within your component file.
 
 ```typescript
@@ -19,7 +19,7 @@ ModuleLoader.addToPrototype({load});
 export default class bExample extends iBlock {}
 ```
 
-Or, if you're using the module with Snakeskin helpers, all dependencies will be installed automatically.
+Alternatively, if you're using the module with Snakeskin helpers, all dependencies will be installed automatically.
 
 ```
 < .container v-async-target
@@ -30,8 +30,8 @@ Or, if you're using the module with Snakeskin helpers, all dependencies will be 
 
 ## Usage
 
-The module API is designed to use with [[AsyncRender]].
-For instance, you can dynamically require dependencies when it needed and render a fragment that uses these modules asynchronously.
+The module API is designed for use with [[AsyncRender]].
+For example, you can dynamically require dependencies when needed and render a fragment that uses these modules asynchronously.
 
 ```
 /// Don't forget to declare where to mount dynamically rendered fragments
@@ -48,8 +48,9 @@ For instance, you can dynamically require dependencies when it needed and render
 
 ### Using Snakeskin helpers
 
-Manual use of the module within templates forces you to write a lot of boilerplate code.
-To fix this, you should use the special Snakeskin helpers available to all [[iBlock]] heirs.
+Manual usage of the module within templates requires writing a lot of boilerplate code.
+To avoid this, you should use the special Snakeskin helpers available to all [[iBlock]] descendants.
+
 
 ```
 < .container v-async-target
@@ -71,9 +72,9 @@ To fix this, you should use the special Snakeskin helpers available to all [[iBl
 ### load
 
 Loads the specified modules.
-If some modules are already loaded, they won’t be loaded twice.
-If all specified modules are already loaded, the function returns a simple value, but not a promise.
-The resulting value is designed to use with [[AsyncRender]].
+If some modules are already loaded, they won't be loaded twice.
+If all specified modules are already loaded, the function returns a simple value rather than a promise.
+The resulting value is designed for use with [[AsyncRender]].
 
 ```js
 const modules = await this.moduleLoader.load(
@@ -95,8 +96,9 @@ console.log([...modules]);
 ### addToBucket
 
 Adds the specified modules to a load bucket by the specified name.
-Notice, adding modules don’t force them to load. To load the created bucket, use the `loadBucket` method.
-The function returns the number of added modules in the bucket.
+Note that adding modules does not force them to load. To load the created bucket, use the `loadBucket` method.
+The function returns the number of modules added to the bucket.
+
 
 ```js
 this.moduleLoader.addToBucket('form', {
@@ -113,9 +115,9 @@ this.moduleLoader.addToBucket('form', {
 ### loadBucket
 
 Loads a bucket of modules by the specified name.
-If some modules are already loaded, they won’t be loaded twice.
-If all specified modules are already loaded, the function returns a simple value, but not a promise.
-The resulting value is designed to use with [[AsyncRender]].
+If some modules are already loaded, they won't be loaded twice.
+If all specified modules are already loaded, the function returns a simple value rather than a promise.
+The resulting value is designed for use with [[AsyncRender]].
 
 ```js
 this.moduleLoader.addToBucket('form', {
@@ -136,7 +138,7 @@ console.log([...await this.moduleLoader.loadBucket('form')]);
 
 ### loadModules
 
-Loads modules by the specified paths and dynamically inserted the provided content when it loaded.
+Loads modules by the specified paths and dynamically inserts the provided content when they are loaded.
 
 ```
 < .container v-async-target
@@ -148,10 +150,10 @@ Loads modules by the specified paths and dynamically inserted the provided conte
     < b-input :placeholder = 'Enter your name'
 ```
 
-#### Enabling one time rendering
+#### Enabling one-time rendering
 
-Providing the `renderKey` option you declare this template fragment should be rendered once,
-i.e. it won’t be re-rendered during the component state change. Mind, the render key should be unique.
+By providing the `renderKey` option, you declare that this template fragment should be rendered once,
+meaning it won't be re-rendered during the component state change. Keep in mind that the render key should be unique.
 
 ```
 < .container v-async-target
@@ -162,8 +164,8 @@ i.e. it won’t be re-rendered during the component state change. Mind, the rend
 
 #### Conditional rendering
 
-If you want render the fragment only after some event, provide the `wait` option.
-This option expects a string expression (cause it code-generation) with a function that returns a promise.
+If you want to render the fragment only after a specific event, provide the `wait` option.
+This option expects a string expression (because it is code-generation) with a function that returns a promise.
 
 ```
 < .container v-async-target
