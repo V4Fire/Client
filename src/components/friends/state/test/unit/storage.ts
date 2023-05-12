@@ -10,6 +10,7 @@ import test from 'tests/config/unit/test';
 
 import { Component } from 'tests/helpers';
 
+import { componentData } from 'components/friends/state/test/const';
 import { renderDummy, setValues, getValues } from 'components/friends/state/test/helpers';
 
 test.describe('friends/state using a storage', () => {
@@ -66,11 +67,7 @@ test.describe('friends/state using a storage', () => {
 			globalName
 		});
 
-		await test.expect(getValues(target)).resolves.toEqual({
-			systemField: 'bar',
-			regularField: 10,
-			'mods.foo': 'bla'
-		});
+		await test.expect(getValues(target)).resolves.toEqual(componentData);
 
 		await target.evaluate((ctx) => ctx.unsafe.state.resetStorage());
 

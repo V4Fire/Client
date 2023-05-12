@@ -10,6 +10,7 @@ import type { JSHandle, Page } from 'playwright';
 
 import { Component } from 'tests/helpers';
 
+import { componentData } from 'components/friends/state/test/const';
 import type bFriendsStateDummy from 'components/friends/state/test/b-friends-state-dummy/b-friends-state-dummy';
 
 /**
@@ -28,20 +29,27 @@ export async function renderDummy(
 
 /**
  * Sets dummy component's system, field, mod values
+ *
  * @param target
+ * @param waitNextTick
  */
-export async function setValues(target: JSHandle<bFriendsStateDummy>): Promise<void> {
-	await target.evaluate(async (ctx) => {
-		ctx.systemField = 'bar';
-		await ctx.nextTick();
+export async function setValues(target: JSHandle<bFriendsStateDummy>, waitNextTick: boolean = true): Promise<void> {
+	await target.evaluate(async (ctx, {componentData, wait}) => {
+		ctx.systemField = componentData.systemField;
+		if (wait) {
+			await ctx.nextTick();
+		}
 
 		// eslint-disable-next-line require-atomic-updates
-		ctx.regularField = 10;
+		ctx.regularField = componentData.regularField;
+		if (wait) {
+			await ctx.nextTick();
+		}
+
+		void ctx.setMod('foo', componentData['mods.foo']);
 		await ctx.nextTick();
 
-		void ctx.setMod('foo', 'bla');
-		await ctx.nextTick();
-	});
+	}, {componentData, wait: waitNextTick});
 }
 
 /**
