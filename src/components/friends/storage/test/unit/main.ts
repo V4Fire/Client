@@ -15,7 +15,6 @@ import { Component } from 'tests/helpers';
 import type bDummy from 'components/dummies/b-dummy/b-dummy';
 
 test.describe('friends/storage', () => {
-
 	let target: JSHandle<bDummy>;
 
 	test.beforeEach(async ({demoPage, page}) => {

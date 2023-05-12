@@ -15,7 +15,6 @@ import { Component } from 'tests/helpers';
 import type bFriendsSyncDummy from 'components/friends/sync/test/b-friends-sync-dummy/b-friends-sync-dummy';
 
 test.describe('friends/sync `mod`', () => {
-
 	let target: JSHandle<bFriendsSyncDummy>;
 
 	const componentName = 'b-friends-sync-dummy';

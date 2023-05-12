@@ -1,6 +1,7 @@
 # components/friends/storage
 
-This module provides a class for the persistent storage of component data. The module utilizes the `core/kv-storage` module with the default engine. However, you can also manually specify the engine to be used.
+This module provides a class for the persistent storage of component data. The module utilizes the `core/kv-storage` module with the default engine.
+However, you can also manually specify the engine to be used.
 
 ```js
 this.storage.set(1, 'foo');

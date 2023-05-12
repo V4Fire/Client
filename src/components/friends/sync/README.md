@@ -2,9 +2,10 @@
 
 This module provides an API to synchronize fields and props of a component.
 
-## How to include this module to your component?
+## How to include this module in your component?
 
-By default, any component that inherits from [[iBlock]] has the `sync` property. Certain methods, like `link` and `mod`, are available by default, while others need to be explicitly included to facilitate tree-shaking code optimization. To do this, simply add the required import declaration within your component file.
+By default, any component that inherits from [[iBlock]] has the `sync` property. Certain methods, like `link` and `mod`, are available by default,
+while others need to be explicitly included to facilitate tree-shaking code optimization. To do this, simply add the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -23,11 +24,14 @@ In V4 component terminology, a link refers to a field that determines its value 
 
 As soon as the source of the link reports a change, such as a mutation in the observable property or the emission of a listened event, the link synchronizes with the source.
 
-Links are highly useful when we want to create a property based on a different source but with a distinct data type. For instance, all component props cannot be changed from within the component. However, there is often a need to circumvent this rule.
+Links are highly useful when we want to create a property based on a different source but with a distinct data type.
+For instance, all component props cannot be changed from within the component. However, there is often a need to circumvent this rule.
 
-For example, consider a component that implements an input field. The component possesses an initial value, as well as its own value, which can be altered during the component life cycle, such as when a user enters new text.
+For example, consider a component that implements an input field. The component possesses an initial value, as well as its own value,
+which can be altered during the component life cycle, such as when a user enters new text.
 
-Technically, this can be executed with two parameters: `initialValue` and `value`, with the latter receiving its initial value from `initialValue`. Subsequently, we need to establish a watch for the `initialValue` because if the component value changes externally, the internal value must also be updated.
+Technically, this can be executed with two parameters: `initialValue` and `value`, with the latter receiving its initial value from `initialValue`.
+Subsequently, we need to establish a watch for the `initialValue` because if the component value changes externally, the internal value must also be updated.
 
 One way to implement the above scenario is to use the `watch` method and an initializer function for the observed field.
 For instance:
@@ -73,7 +77,8 @@ This code works; however, it has several disadvantages:
 2. You must explicitly set the field value `((v) => o.value = v)` when configuring the watch function.
 3. Redundant component API: externally, we pass the `initialValue`, and internally, we use the `value`.
 
-To address these issues, V4 provides a special `sync.link` method, which essentially performs the mechanism described above but conceals it "under the hood". Let's re-write our example using `sync.link`.
+To address these issues, V4 provides a special `sync.link` method, which essentially performs the mechanism described above
+but conceals it "under the hood". Let's re-write our example using `sync.link`.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -92,11 +97,16 @@ export default class bInput extends iBlock {
 }
 ```
 
-As you can see, the method takes a string with the watchable property as the first parameter (you can specify a complex path, like `foo.bar.bla`), and the second parameter is a getter function. The method itself returns the initial value of the watched property.
+As you can see, the method takes a string with the watchable property as the first parameter (you can specify a complex path, like `foo.bar.bla`),
+and the second parameter is a getter function. The method itself returns the initial value of the watched property.
 
-Thus, problems 1 and 2 are resolved, but what about the third issue? We still have two properties with different names that we need to remember. However, V4 has a simple convention: if a prop conflicts with a field or getter that depends on it, then the `Prop` postfix is added to the prop name, i.e., in our case, this will be `valueProp`. If a similar conflict occurs between a getter and a field, then the `Store` postfix is added to the field name.
+Thus, problems 1 and 2 are resolved, but what about the third issue? We still have two properties with different names that we need to remember.
+However, V4 has a simple convention: if a prop conflicts with a field or getter that depends on it, then the `Prop` postfix is added to the prop name,
+i.e., in our case, this will be `valueProp`. If a similar conflict occurs between a getter and a field, then the `Store` postfix is added to the field name.
 
-Moreover, V4 recognizes this convention, so when invoking the component "externally", we can simply write `:value`, and V4 itself will substitute `:valueProp`. In this case, we also eliminate the need to explicitly specify the name of the watched property when calling `sync.link`. Finally, if we don’t require a converter function when linking a property, we can just omit it. Let's re-write our example once more.
+Moreover, V4 recognizes this convention, so when invoking the component "externally", we can simply write `:value`, and V4 itself will substitute `:valueProp`.
+In this case, we also eliminate the need to explicitly specify the name of the watched property when calling `sync.link`.
+Finally, if we don’t require a converter function when linking a property, we can just omit it. Let's re-write our example once more.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -125,9 +135,13 @@ As you can see, we have eliminated unnecessary boilerplate code and the need to 
 
 The `link` method sets a reference to a component/object property or event using the specified path. **This method is included by default.**
 
-In simple terms, if field A refers to field B, they have the same value, and A will automatically update when B changes. If the link is set to an event, every time the event fires, the value of A will change to the value of the event object. You can refer to a value wholly or partially. To do this, pass a getter function that takes parameters from the link and returns the value to the original field.
+In simple terms, if field A refers to field B, they have the same value, and A will automatically update when B changes.
+If the link is set to an event, every time the event fires, the value of A will change to the value of the event object.
+You can refer to a value wholly or partially. To do this, pass a getter function that takes parameters from the link and
+returns the value to the original field.
 
-To listen to an event, use the special delimiter ":" within the path. Additionally, you can specify an event emitter to listen to by writing a link before ":".
+To listen to an event, use the special delimiter ":" within the path. Additionally, you can specify an event emitter
+to listen to by writing a link before ":".
 
 #### Using `link` within a property decorator
 
@@ -245,9 +259,13 @@ class bExample2 extends iBlock {
 
 The `object` method creates a dictionary where all keys refer to other properties/events as links.
 
-In simple terms, if field A refers to field B, they have the same value, and A will automatically update when B changes. If the link is set to an event, every time the event fires, the value of A will change to the value of the event object. You can refer to a value wholly or partially. To do this, pass a getter function that takes parameters from the link and returns the value to the original field.
+In simple terms, if field A refers to field B, they have the same value, and A will automatically update when B changes.
+If the link is set to an event, every time the event fires, the value of A will change to the value of the event object.
+You can refer to a value wholly or partially. To do this, pass a getter function that takes parameters from the link and
+returns the value to the original field.
 
-To listen to an event, use the special delimiter ":" within the path. Additionally, you can specify an event emitter to listen to by writing a link before ":".
+To listen to an event, use the special delimiter ":" within the path. Additionally, you can specify an event emitter
+to listen to by writing a link before ":".
 
 ```typescript
 import watch from 'core/object/watch';
