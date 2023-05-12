@@ -8,7 +8,12 @@
 
 import iData, { component, prop, Module } from 'components/super/i-data/i-data';
 
+import ModuleLoader from 'components/friends/module-loader';
+import * as ModuleLoaderAPI from 'components/friends/module-loader/api';
+
 export * from 'components/super/i-data/i-data';
+
+ModuleLoader.addToPrototype(ModuleLoaderAPI);
 
 @component({
 	functional: {
