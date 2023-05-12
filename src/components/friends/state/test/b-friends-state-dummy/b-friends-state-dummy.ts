@@ -6,14 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:components/dummies/b-dummy-state/README.md]]
- * @packageDocumentation
- */
+import iData, { component, field, system } from 'components/super/i-data/i-data';
 
-import iData, { component, field, system, ConverterCallType } from 'components/super/i-data/i-data';
+import type { ConverterCallType } from 'components/friends/state/interface';
+
+import State from 'components/friends/state';
+import * as StateAPI from 'components/friends/state/api';
 
 export * from 'components/super/i-data/i-data';
+
+State.addToPrototype(StateAPI);
 
 @component({
 	functional: {
@@ -22,7 +24,7 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 
-export default class bDummyState extends iData {
+export default class bFriendsStateDummy extends iData {
 	@system()
 	systemField: string = 'foo';
 
@@ -51,5 +53,25 @@ export default class bDummyState extends iData {
 			regularField: 0,
 			'mods.foo': undefined
 		};
+	}
+
+	protected override syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary<unknown> {
+		if (type === 'remote') {
+			return {
+				systemField: this.systemField,
+				regularField: this.regularField ?? 0,
+				'mods.foo': this.mods.foo
+			};
+		}
+
+		return {
+			systemField: data?.systemField ?? this.systemField,
+			regularField: data?.regularField ?? this.regularField ?? 0,
+			'mods.foo': data?.['mods.foo'] ?? this.mods.foo
+		};
+	}
+
+	protected override convertStateToRouterReset(): Dictionary {
+		return this.convertStateToStorageReset();
 	}
 }

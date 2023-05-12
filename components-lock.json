@@ -1,5 +1,5 @@
 {
-  "hash": "40c617bb0856a61a47fe35716997099c009daf51bd43a615a858fef75db9d75f",
+  "hash": "eb211770d727c42890efc7a9b5ef7fa6a5241388138130c705539b92b714f136",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -368,38 +368,6 @@
         }
       ],
       [
-        "b-dummy-state",
-        {
-          "index": "src/components/dummies/b-dummy-state/index.js",
-          "declaration": {
-            "name": "b-dummy-state",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-state",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-state/b-dummy-state.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-state/b-dummy-state.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-state/b-dummy-state.ss",
-          "etpl": null
-        }
-      ],
-      [
         "b-dummy-sync",
         {
           "index": "src/components/dummies/b-dummy-sync/index.js",
@@ -624,6 +592,38 @@
             "src/components/friends/provide/test/b-friends-provide-dummy/b-friends-provide-dummy.styl"
           ],
           "tpl": "src/components/friends/provide/test/b-friends-provide-dummy/b-friends-provide-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-state-dummy",
+        {
+          "index": "src/components/friends/state/test/b-friends-state-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-state-dummy",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-state-dummy",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/state/test/b-friends-state-dummy/b-friends-state-dummy.ts",
+          "styles": [
+            "src/components/friends/state/test/b-friends-state-dummy/b-friends-state-dummy.styl"
+          ],
+          "tpl": "src/components/friends/state/test/b-friends-state-dummy/b-friends-state-dummy.ss",
           "etpl": null
         }
       ],

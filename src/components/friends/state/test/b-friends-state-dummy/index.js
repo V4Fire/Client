@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy-state')
+package('b-friends-state-dummy')
 	.extends('i-data');
