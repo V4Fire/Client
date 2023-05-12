@@ -96,8 +96,8 @@ test.describe('<b-select> form API', () => {
 	});
 
 	/**
- 	 * Returns rendered `b-select` component with the `formValueConverter`
-   *
+	 * Returns the rendered `b-select` component with the `formValueConverter`
+	 *
 	 * @param page
 	 * @param attrs
 	 */

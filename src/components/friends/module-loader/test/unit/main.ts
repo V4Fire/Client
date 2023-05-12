@@ -49,7 +49,7 @@ test.describe('friends/module-loader', () => {
 	});
 
 	/**
-	 * Returns rendered `b-friends-module-loader-dummy` component
+	 * Returns the rendered `b-friends-module-loader-dummy` component
 	 *
 	 * @param page
 	 * @param stage
