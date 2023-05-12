@@ -6,11 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:components/dummies/b-dummy-module-loader/README.md]]
- * @packageDocumentation
- */
-
 import iData, { component, prop, Module } from 'components/super/i-data/i-data';
 
 export * from 'components/super/i-data/i-data';
@@ -22,18 +17,18 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 
-export default class bDummyModuleLoader extends iData {
+export default class bFriendsModuleLoaderDummy extends iData {
 	@prop({
 		default: () => globalThis.loadFromProp === true ?
 			[
 				{
-					id: 'b-dummy-module1',
-					load: () => import('components/dummies/b-dummy-module-loader/b-dummy-module1')
+					id: 'b-friends-module-loader-dummy1',
+					load: () => import('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy1')
 				},
 
 				{
-					id: 'b-dummy-module2',
-					load: () => import('components/dummies/b-dummy-module-loader/b-dummy-module2')
+					id: 'b-friends-module-loader-dummy2',
+					load: () => import('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy2')
 				}
 			] :
 
