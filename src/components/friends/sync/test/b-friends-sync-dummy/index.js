@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy-sync')
+package('b-friends-sync-dummy')
 	.extends('i-data');

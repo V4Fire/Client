@@ -14,7 +14,14 @@
 import watch from 'core/object/watch';
 import iData, { component, prop, field, system, computed, ModsDecl } from 'components/super/i-data/i-data';
 
+import Sync from 'components/friends/sync/class';
+import * as SyncAPI from 'components/friends/sync/api';
+
 export * from 'components/super/i-data/i-data';
+
+Sync.addToPrototype(SyncAPI);
+
+interface bFriendsSyncDummy extends Dictionary {}
 
 @component({
 	functional: {
@@ -23,9 +30,9 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 
-export default class bDummySync extends iData {
+class bFriendsSyncDummy extends iData {
 	@prop(Object)
-	readonly dictProp: Dictionary = {
+	readonly dictProp: Dictionary<Dictionary<number>> = {
 		a: {
 			b: 2,
 			c: 3
@@ -33,7 +40,7 @@ export default class bDummySync extends iData {
 	};
 
 	@field((o) => o.sync.link())
-	dict!: Dictionary;
+	dict!: Dictionary<Dictionary<number>>;
 
 	@field({
 		after: 'dict',
@@ -49,8 +56,8 @@ export default class bDummySync extends iData {
 
 	linkToNestedFieldWithInitializer!: number;
 
-	@system((o) => o.sync.link('dict.a.b', {immediate: true}, (val: number) => val + 1))
-	immediateLinkToNestedFieldWithInitializerFromSystemToField!: number;
+	@system((o) => o.sync.link('dict.a.b', {flush: 'sync', immediate: true}, (val: number) => val + 1))
+	immediateWithFlushSyncLinkToNestedFieldWithInitializerFromSystemToField!: number;
 
 	@field({
 		after: 'dict',
@@ -65,7 +72,7 @@ export default class bDummySync extends iData {
 	watchableObject!: Dictionary;
 
 	@computed({cache: true, watchable: true})
-	get mountedWatcher(): Dictionary {
+	get mountedWatcher(): Dictionary<Dictionary<number>> {
 		return watch({a: {b: 1}}).proxy;
 	}
 
@@ -81,3 +88,5 @@ export default class bDummySync extends iData {
 		this.sync.mod('foo', 'dict.a.b', (v) => v === 2 ? 'bar' : 'bla');
 	}
 }
+
+export default bFriendsSyncDummy;
