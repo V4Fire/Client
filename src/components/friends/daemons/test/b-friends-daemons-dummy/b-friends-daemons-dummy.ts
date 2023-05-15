@@ -44,9 +44,18 @@ class bFriendsDaemonsDummy extends bDummy {
 
 		execOnFieldChange: {
 			watch: ['testField'],
-			fn: () => {
+			fn(this: bFriendsDaemonsDummy, newValue: unknown, oldValue: unknown) {
 				globalThis.daemonsTest = globalThis.daemonsTest ?? {};
 				globalThis.daemonsTest.fieldUpdate = true;
+				this.localEmitter.emit('change', [newValue, oldValue]);
+			}
+		},
+
+		execOnFieldChangeImmediate: {
+			immediate: true,
+			watch: ['testFieldImmediate'],
+			fn(this: bFriendsDaemonsDummy, newValue: unknown, oldValue: unknown) {
+				this.localEmitter.emit('change', [newValue, oldValue]);
 			}
 		},
 
