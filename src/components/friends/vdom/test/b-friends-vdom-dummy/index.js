@@ -6,10 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "components/super/i-data/i-data.styl"
-
-$p = {
-
-}
-
-b-dummy-module2 extends i-data
+package('b-friends-vdom-dummy')
+	.extends('i-data');
