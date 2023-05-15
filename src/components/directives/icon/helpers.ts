@@ -55,7 +55,7 @@ export function updateIconHref(this: iBlock, el: SVGElement, href?: string): voi
 	const group = {group: getElementId(el, idsCache)};
 	$a.clearAll(group);
 
-	Object.forEach(el.children, (child) => child.removeChild(el));
+	Object.forEach(el.children, (child) => el.removeChild(child));
 
 	if (href == null || href === '') {
 		return;
