@@ -1,12 +1,12 @@
 # components/friends/daemons
 
-This module provides a class to create daemons associated with a component.
+This module provides a class for creating daemons associated with a component.
 
-## How to include this module to your component?
+## How to include this module in your component?
 
-By default, any component that inherited from [[iBlock]] has the `daemons` property.
-But to use module methods, attach them explicitly to enable tree-shake code optimizations.
-Just place the necessary import declaration within your component file.
+By default, any component that inherits from [[iBlock]] will have the daemons property.
+However, to utilize module methods, you must attach them explicitly to enable tree-shake code optimizations.
+To do this, place the necessary import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -21,13 +21,13 @@ export default class bExample extends iBlock {}
 
 ## What is a daemon?
 
-Demons in V4Fire terminology are called modules that are associated with a component, but are not part of it.
-We can say that a demon is an aspect from [AOP](https://en.wikipedia.org/wiki/Aspect-oriented_programming).
+In V4Fire terminology, daemons are modules that are associated with a component but are not part of it.
+We can say that a daemon is an aspect from [AOP](https://en.wikipedia.org/wiki/Aspect-oriented_programming).
 Since daemons are not part of the component, we can easily add or remove them depending on the project.
 
-Daemons use the component context to which it is associated. From the daemon, you can call any non-private methods of the component or
-listen to its events. If possible, you should not try to mutate properties of the associated component: you should use this feature
-only in extreme cases and with the utmost care.
+Daemons use the component context to which they are associated. From the daemon, you can call any non-private methods of the component or
+listen to its events. If possible, you should avoid mutating properties of the associated component; this feature
+should be used only in extreme cases and with the utmost care.
 
 ## Attaching daemons to a component
 
@@ -51,8 +51,8 @@ export default class bExample extends iBlock {
       hook: ['created', 'mounted'],
       watch: ['someProperty', '?$el:click'],
 
-      // This function will be called on `created` and `mounted` hooks,
-      // as well as on `someProperty` property change and `click` event on the component root node
+      // This function will be called on the `created` and `mounted` hooks,
+      // as well as on the `someProperty` property change and the `click` event on the component's root node
       fn: console.log
     }
   };
@@ -70,8 +70,8 @@ export default class bExample extends iBlock {
 ### fn
 
 A function that is called by the daemon.
-The function context is the component that the daemon is bound to.
-The function arguments are taken from the handlers that the daemon is binding on.
+The function context is the component to which the daemon is bound.
+The function arguments are taken from the handlers that the daemon is bound to.
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -104,7 +104,7 @@ export default class bExample extends iBlock {
 
 ### [immediate = `false`]
 
-If true, the daemon function is called immediately when the listener event fires.
+If set to `true`, the daemon function is called immediately when the listener event is triggered.
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -156,11 +156,11 @@ export default class bExample extends iBlock {
   static daemons: DaemonsDict = {
     createdLogger: {
       hook: 'created',
-      fn: () => console.log("I'am created")
+      fn: () => console.log("I'm created")
     },
 
     logger: {
-      hook: ['created', 'mounded'],
+      hook: ['created', 'mounted'],
       fn(this: bExample) {
         console.log(`The component hook is ${this.hook}`);
       }
@@ -208,7 +208,7 @@ export default class bExample extends iBlock {
 
 ### [wait]
 
-Sets the `componentStatus` value for the associated component on which the daemon function can be called.
+Sets the `componentStatus` value for the associated component, determining when the daemon function can be called.
 See the `components/super/i-block/decorators` module for more information.
 
 ```typescript
@@ -242,7 +242,7 @@ export default class bExample extends iBlock {
 
 ### [group]
 
-A name of the group the daemon belongs to. The parameter is provided to [[Async]].
+A name of the group to which the daemon belongs. The parameter is provided to [[Async]].
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -313,7 +313,7 @@ export default class bExample extends iBlock {
 
 ### [join]
 
-A strategy type to join conflict tasks. The parameter is provided to [[Async]].
+A strategy type for joining conflicting tasks. The parameter is provided to [[Async]].
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
