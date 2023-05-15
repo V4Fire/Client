@@ -6,14 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bDummy, { component } from 'components/dummies/b-dummy/b-dummy';
+import bDummy, { UnsafeGetter, component } from 'components/dummies/b-dummy/b-dummy';
 
-import type { DaemonsDict } from 'components/friends/daemons/interface';
+import Daemons, { DaemonsDict } from 'components/friends/daemons';
+import * as DaemonsAPI from 'components/friends/daemons/api';
+
+import type { UnsafeBFriendsDaemonsDummy } from 'components/friends/daemons/test/b-friends-daemons-dummy/interface';
 
 export * from 'components/dummies/b-dummy/b-dummy';
 
+Daemons.addToPrototype(DaemonsAPI);
+
+interface bFriendsDaemonsDummy extends Dictionary {}
+
 @component()
 class bFriendsDaemonsDummy extends bDummy {
+	override get unsafe(): UnsafeGetter<UnsafeBFriendsDaemonsDummy<this>> {
+		return Object.cast(this);
+	}
+
 	static override readonly daemons: DaemonsDict = {
 		execOnCreated: {
 			hook: ['created'],
