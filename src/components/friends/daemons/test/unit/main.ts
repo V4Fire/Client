@@ -53,6 +53,52 @@ test.describe('friends/daemons', () => {
 		await assertDaemonFlagValue(page, 'executable', true);
 	});
 
+	test.describe('`immediate`', () => {
+		const logChanges = (count: number): Promise<any[]> => target.evaluate((ctx, count) => new Promise((resolve) => {
+			const log: any[] = [];
+			ctx.unsafe.localEmitter.on('change', (data) => {
+				log.push(data);
+
+				if (log.length >= count) {
+					resolve(log);
+				}
+			});
+		}), count);
+
+		test('should be executed immediately when the field changes with `immediate = true`', async () => {
+			const scan = logChanges(3);
+
+			await target.evaluate((ctx) => {
+				ctx.testFieldImmediate = 2;
+				(<number>ctx.testFieldImmediate)++;
+				(<number>ctx.testFieldImmediate)++;
+			});
+
+			await test.expect(scan).resolves.toEqual([
+				[2, undefined],
+				[3, 2],
+				[4, 3]
+			]);
+		});
+
+		test('should be executed on the next tick when the field changes with `immediate = false`', async () => {
+			const scan = logChanges(2);
+
+			await target.evaluate(async (ctx) => {
+				ctx.testField = 2;
+				(<number>ctx.testField)++;
+				await ctx.nextTick();
+
+				(<number>ctx.testField)++;
+			});
+
+			await test.expect(scan).resolves.toEqual([
+				[3, 2],
+				[4, 3]
+			]);
+		});
+	});
+
 	/**
 	 * Asserts that a specific daemon has set the specified value
 	 *
