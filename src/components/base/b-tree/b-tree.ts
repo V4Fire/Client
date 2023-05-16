@@ -104,13 +104,6 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		});
 	}
 
-	static override readonly mods: ModsDecl = {
-		clickableArea: [
-			['fold'],
-			'any'
-		]
-	};
-
 	/**
 	 * The context of the topmost bTree component
 	 */
