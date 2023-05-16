@@ -35,7 +35,7 @@ export function paramsFactory<T = object>(
 			initEmitter.once(`constructor.${componentName}`, reg);
 		});
 
-		function reg({meta}: {meta: ComponentMeta}): void {
+		function reg({meta, parentMeta}: {meta: ComponentMeta; parentMeta?: ComponentMeta}): void {
 			const wrapOpts = (opts) => {
 				const
 					p = meta.params;
@@ -151,6 +151,11 @@ export function paramsFactory<T = object>(
 
 				} else {
 					metaCluster[key] = wrapOpts({...info, ...p});
+				}
+
+				// Unset inherited accessor from the parent if the child has computedField for the same key
+				if (metaKey === 'computedFields' && Object.fastCompare(parentMeta?.accessors[key], meta.accessors[key])) {
+					delete meta.accessors[key];
 				}
 
 				if (p.dependencies != null) {
