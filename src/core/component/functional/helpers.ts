@@ -30,7 +30,7 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 	};
 
 	unsafe.$on('[[COMPONENT_HOOK]]', async (hook, node) => {
-		if (state.destroyed && hook !== 'destroyed') {
+		if (state.destroyed) {
 			return;
 		}
 
@@ -54,6 +54,11 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 				await unsafe.$async.promise(unsafe.$nextTick(), {
 					label: componentInitLabel
 				});
+
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (state.destroyed) {
+					break;
+				}
 
 				init.createdState(unsafe);
 
