@@ -124,17 +124,17 @@ export default class bExample extends iBlock {
       watch: 'someProperty',
 
       fn(this: bExample, newValue, oldValue) {
-        // 1 0
-        // 2 1
-        // 3 2
         console.log(newValue, oldValue);
       }
     }
   };
 
   mounted() {
+    // Will print to console: 1 0
     this.someProperty++;
+    // Will print to console: 2 1
     this.someProperty++;
+    // Will print to console: 3 2
     this.someProperty++;
   }
 }
@@ -235,6 +235,7 @@ export default class bExample extends iBlock {
   };
 
   mounted() {
+    // Nothing will be printed to the console
     this.someProperty++;
   }
 }
@@ -259,7 +260,10 @@ export default class bExample extends iBlock {
   static daemons: DaemonsDict = {
     logger: {
       group: 'logger',
-      watch: 'someProperty',
+      watch: {
+        path: 'someProperty',
+        flush: 'sync'
+      },
 
       fn(this: bExample, newValue, oldValue) {
         console.log(newValue, oldValue);
@@ -268,8 +272,11 @@ export default class bExample extends iBlock {
   };
 
   mounted() {
+    // Nothing will be printed to the console
     this.someProperty++;
+    // It will clear all pending daemons
     this.async.clearAll({group: 'logger'});
+    // Will print to the console: 2 1
     this.someProperty++;
   }
 }
@@ -295,17 +302,22 @@ export default class bExample extends iBlock {
     logger: {
       label: 'logger',
       watch: 'someProperty',
-      fn: console.log
+      fn(this: bExample, newValue) {
+        console.log('logger', newValue);
+      }
     },
 
     anotherLogger: {
       label: 'logger',
       watch: 'someProperty',
-      fn: console.log
+      fn(this: bExample, newValue) {
+        console.log('anotherLogger', newValue);
+      }
     }
   };
 
   mounted() {
+    // Will print to the console: "anotherLogger 1"
     this.someProperty++;
   }
 }
@@ -332,18 +344,23 @@ export default class bExample extends iBlock {
       label: 'logger',
       join: true,
       watch: 'someProperty',
-      fn: console.log
+      fn(this: bExample, newValue) {
+        console.log('logger', newValue);
+      }
     },
 
     anotherLogger: {
       label: 'logger',
       join: true,
       watch: 'someProperty',
-      fn: console.log
+      fn(this: bExample, newValue) {
+        console.log('anotherLogger', newValue);
+      }
     }
   };
 
   mounted() {
+    // Will print to the console: "logger 1"
     this.someProperty++;
   }
 }
