@@ -59,6 +59,31 @@ class bFriendsDaemonsDummy extends bDummy {
 			}
 		},
 
+		execOnFieldChangeWithGroup: {
+			group: 'exec',
+			watch: {path: 'testFieldWithGroup', flush: 'sync'},
+			fn(this: bFriendsDaemonsDummy, newValue: unknown, oldValue: unknown) {
+				this.localEmitter.emit('change', [newValue, oldValue]);
+			}
+		},
+
+		execOnFieldChangeWithLabel: {
+			label: 'exec',
+			watch: {path: 'testFieldWithLabel', flush: 'sync'},
+			fn(this: bFriendsDaemonsDummy, newValue: unknown, oldValue: unknown) {
+				this.localEmitter.emit('change', [newValue, oldValue]);
+			}
+		},
+
+		execOnFieldChangeWithJoin: {
+			label: 'exec',
+			join: true,
+			watch: {path: 'testFieldWithJoin', flush: 'sync'},
+			fn(this: bFriendsDaemonsDummy, newValue: unknown, oldValue: unknown) {
+				this.localEmitter.emit('change', [newValue, oldValue]);
+			}
+		},
+
 		executable: {
 			fn: () => {
 				globalThis.daemonsTest = globalThis.daemonsTest ?? {};

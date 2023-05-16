@@ -54,17 +54,6 @@ test.describe('friends/daemons', () => {
 	});
 
 	test.describe('`immediate`', () => {
-		const logChanges = (count: number): Promise<any[]> => target.evaluate((ctx, count) => new Promise((resolve) => {
-			const log: any[] = [];
-			ctx.unsafe.localEmitter.on('change', (data) => {
-				log.push(data);
-
-				if (log.length >= count) {
-					resolve(log);
-				}
-			});
-		}), count);
-
 		test('should be executed immediately when the field changes with `immediate = true`', async () => {
 			const scan = logChanges(3);
 
@@ -99,6 +88,46 @@ test.describe('friends/daemons', () => {
 		});
 	});
 
+	test.describe('async', () => {
+		test('should cancel pending daemon execution when `async.clearAll` is invoked', async () => {
+			const scan = logChanges(1);
+
+			await target.evaluate(async (ctx) => {
+				ctx.testFieldWithGroup = 2;
+				(<number>ctx.testFieldWithGroup)++;
+				await ctx.unsafe.async.clearAll({group: 'exec'});
+
+				(<number>ctx.testFieldWithGroup)++;
+			});
+
+			await test.expect(scan).resolves.toEqual([[4, 3]]);
+		});
+
+		test('should execute the daemon only on the last change of the field when a `label` is provided', async () => {
+			const scan = logChanges(1);
+
+			await target.evaluate((ctx) => {
+				ctx.testFieldWithLabel = 2;
+				(<number>ctx.testFieldWithLabel)++;
+				(<number>ctx.testFieldWithLabel)++;
+			});
+
+			await test.expect(scan).resolves.toEqual([[4, 3]]);
+		});
+
+		test('should execute the daemon only on the first change of the field with `join = true`', async () => {
+			const scan = logChanges(1);
+
+			await target.evaluate((ctx) => {
+				ctx.testFieldWithJoin = 2;
+				(<number>ctx.testFieldWithJoin)++;
+				(<number>ctx.testFieldWithJoin)++;
+			});
+
+			await test.expect(scan).resolves.toEqual([[2, undefined]]);
+		});
+	});
+
 	/**
 	 * Asserts that a specific daemon has set the specified value
 	 *
@@ -109,5 +138,22 @@ test.describe('friends/daemons', () => {
 	async function assertDaemonFlagValue(page: Page, flag: string, value: unknown) {
 		await test.expect(page.evaluate((flag) => globalThis.daemonsTest[flag], flag))
 			.resolves.toBe(value);
+	}
+
+	/**
+	 * Returns log of the component's fields changes
+	 * @param expectedCount
+	 */
+	function logChanges(expectedCount: number): Promise<any[]> {
+		return target.evaluate((ctx, expectedCount) => new Promise((resolve) => {
+			const log: any[] = [];
+			ctx.unsafe.localEmitter.on('change', (data) => {
+				log.push(data);
+
+				if (log.length >= expectedCount) {
+					resolve(log);
+				}
+			});
+		}), expectedCount);
 	}
 });
