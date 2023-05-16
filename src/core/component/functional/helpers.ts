@@ -23,14 +23,32 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 	const
 		{unsafe} = component;
 
-	unsafe.$once('[[COMPONENT_HOOK]]', async (hook, node) => {
+	const state = {
+		created: false,
+		mounted: false,
+		destroyed: false
+	};
+
+	unsafe.$on('[[COMPONENT_HOOK]]', async (hook, node) => {
+		if (state.destroyed && hook !== 'destroyed') {
+			return;
+		}
+
 		switch (hook) {
 			case 'mounted':
+				state.mounted = true;
 				unsafe.unsafe.$el = node;
 				init.mountedState(unsafe);
 				break;
 
+			case 'beforeUpdate':
+				break;
+
 			case 'updated': {
+				if (state.created || state.mounted) {
+					break;
+				}
+
 				inheritContext(unsafe, node.component);
 
 				await unsafe.$async.promise(unsafe.$nextTick(), {
@@ -45,22 +63,17 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 				break;
 			}
 
-			default:
-				// Do nothing
-		}
-	});
-
-	unsafe.$on('[[COMPONENT_HOOK]]', (hook) => {
-		switch (hook) {
-			case 'beforeUpdate':
-				break;
-
 			case 'beforeDestroy': {
+				state.destroyed = true;
 				unsafe.$destroy();
 				break;
 			}
 
 			default:
+				if (hook in state) {
+					state[hook] = true;
+				}
+
 				init[`${hook}State`](unsafe);
 		}
 	});
