@@ -239,7 +239,7 @@ export function createRequest<D = unknown>(
 
 		const then = () => {
 			if (is(opts.hideProgress)) {
-				return this.lfc.execCbAtTheRightTime(() => ctx.setMod('progress', false));
+				return ctx.setMod('progress', false);
 			}
 		};
 
