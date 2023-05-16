@@ -23,14 +23,11 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 	const
 		{unsafe} = component;
 
-	unsafe.$on('[[COMPONENT_HOOK]]', async (hook, node) => {
+	unsafe.$once('[[COMPONENT_HOOK]]', async (hook, node) => {
 		switch (hook) {
 			case 'mounted':
 				unsafe.unsafe.$el = node;
 				init.mountedState(unsafe);
-				break;
-
-			case 'beforeUpdate':
 				break;
 
 			case 'updated': {
@@ -47,6 +44,16 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 
 				break;
 			}
+
+			default:
+				// Do nothing
+		}
+	});
+
+	unsafe.$on('[[COMPONENT_HOOK]]', (hook) => {
+		switch (hook) {
+			case 'beforeUpdate':
+				break;
 
 			case 'beforeDestroy': {
 				unsafe.$destroy();
