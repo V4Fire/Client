@@ -48,7 +48,7 @@ export function paramsFactory<T = object>(
 			initEmitter.once(`constructor.${componentName}`, decorate);
 		});
 
-		function decorate({meta}: {meta: ComponentMeta}): void {
+		function decorate({meta, parentMeta}: {meta: ComponentMeta; parentMeta?: ComponentMeta}): void {
 			delete meta.tiedFields[key];
 
 			let
@@ -157,6 +157,11 @@ export function paramsFactory<T = object>(
 						...p,
 						cache: metaKey === 'computedFields' ? p.cache ?? true : false
 					});
+				}
+
+				// Unset inherited accessor from the parent if the child has computedField for the same key
+				if (metaKey === 'computedFields' && Object.fastCompare(parentMeta?.accessors[key], meta.accessors[key])) {
+					delete meta.accessors[key];
 				}
 
 				if (p.dependencies != null) {
