@@ -46,11 +46,11 @@ export function implementEventEmitterAPI(component: object): void {
 	const
 		ctx = Object.cast<UnsafeComponentInterface>(component);
 
-	const $e = new EventEmitter({
+	const $e = ctx.$async.wrapEventEmitter(new EventEmitter({
 		maxListeners: 1e3,
 		newListener: false,
 		wildcard: true
-	});
+	}));
 
 	const
 		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
