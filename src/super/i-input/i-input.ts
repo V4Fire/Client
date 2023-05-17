@@ -771,7 +771,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		}
 
 		if (Object.isPlainObject(msg)) {
-			return Object.isPlainObject(err) ? msg[err.name]! : defMsg;
+			return (Object.isPlainObject(err) && Boolean(msg[err.name])) ? msg[err.name]! : defMsg;
 		}
 
 		return Object.isTruly(msg) ? String(msg) : defMsg;

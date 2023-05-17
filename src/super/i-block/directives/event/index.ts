@@ -37,7 +37,7 @@ function bind(
 
 	const
 		isObj = Object.isPlainObject(p.value),
-		group = isObj ? p.value.group : `v-e:${p.arg}`,
+		group = (isObj && Boolean(p.value.group)) ? p.value.group : `v-e:${p.arg}`,
 		handler = isObj ? p.value.fn : p.value,
 		cacheList = oldVNode && cache.get(oldVNode);
 

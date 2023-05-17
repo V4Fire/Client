@@ -43,7 +43,7 @@ The method has the default implementation.
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
 class bWindow implements iLockPageScroll {
-  /** {link iLockPageScroll.enlockable} */
+  /** {@link iLockPageScroll.enlockable} */
   lock(scrollableNode?: Element): Promise<void> {
     return iLockPageScroll.lock(this, scrollableNode);
   }
@@ -59,7 +59,7 @@ The method has the default implementation.
 import iLockPageScroll from 'traits/i-lock-page-scroll/i-lock-page-scroll';
 
 class bWindow implements iLockPageScroll {
-  /** {link iLockPageScroll.unlock} */
+  /** {@link iLockPageScroll.unlock} */
   unlock(): Promise<void> {
     return iLockPageScroll.unlock(this);
   }

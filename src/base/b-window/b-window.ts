@@ -295,7 +295,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		}
 	}
 
-	/** {link iOpenToggle.initCloseHelpers} */
+	/** {@link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);

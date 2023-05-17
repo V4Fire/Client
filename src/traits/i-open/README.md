@@ -60,7 +60,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** {link iOpen.open} */
+  /** {@link iOpen.open} */
   open(...args: unknown[]): Promise<boolean> {
     return iOpen.open(this, ...args);
   }
@@ -76,7 +76,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** {link iOpen.close} */
+  /** {@link iOpen.close} */
   close(...args: unknown[]): Promise<boolean> {
     return iOpen.close(this, ...args);
   }
@@ -92,7 +92,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** {link iOpen.onOpenedChange} */
+  /** {@link iOpen.onOpenedChange} */
   onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
     return iOpen.onOpenedChange(this, e);
   }
@@ -108,7 +108,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** {link iOpen.onKeyClose} */
+  /** {@link iOpen.onKeyClose} */
   onKeyClose(e: KeyboardEvent): Promise<void> {
     return iOpen.onKeyClose(this, e);
   }
@@ -124,7 +124,7 @@ The method has the default implementation.
 import iOpen from 'traits/i-open/i-open';
 
 export default class bButton implements iOpen {
-  /** {link iOpen.blur} */
+  /** {@link iOpen.blur} */
   onTouchClose(e: MouseEvent): Promise<void> {
     return iOpen.onTouchClose(this, e);
   }
