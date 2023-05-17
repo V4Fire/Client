@@ -139,7 +139,12 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 
 	function getRefVal() {
 		const
-			resolvedRef = ctx!.$resolveRef(refName);
+			resolvedRef = ctx!.$resolveRef(refName),
+			instanceRef = instance!.$refs[resolvedRef];
+
+		if (instanceRef != null) {
+			return instanceRef;
+		}
 
 		if (Object.isArray(vnode.ref)) {
 			return vnode.ref.map(({i: {refs}}) => refs[resolvedRef]);
