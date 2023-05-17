@@ -9,9 +9,6 @@
 import * as init from 'core/component/init';
 import type { ComponentInterface, ComponentElement } from 'core/component/interface';
 
-const
-	componentInitLabel = Symbol('The component initialization label');
-
 /**
  * Initializes the default component dynamic lifecycle handlers for the passed functional component.
  * Also, the function adds the ability for the component to emit lifecycle events,
@@ -23,24 +20,10 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 	const
 		{unsafe} = component;
 
-	const state = {
-		created: false,
-		mounted: false,
-		destroyed: false
-	};
-
 	unsafe.$on('[[COMPONENT_HOOK]]', hookHandler);
 	return component;
 
-	async function hookHandler(hook: string, node: ComponentElement<typeof unsafe>) {
-		if (state.destroyed) {
-			return;
-		}
-
-		const {
-			$async: $a
-		} = unsafe;
-
+	function hookHandler(hook: string, node: ComponentElement<typeof unsafe>) {
 		switch (hook) {
 			case 'mounted':
 				mount();
@@ -50,49 +33,23 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 				break;
 
 			case 'updated': {
-				if (state.created || state.mounted) {
-					break;
-				}
-
-				if (node.component?.componentId != null) {
-					inheritContext(unsafe, node.component);
-				}
-
-				await $a.promise(unsafe.$nextTick(), {
-					label: componentInitLabel
-				});
-
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-				if (state.destroyed) {
-					break;
-				}
-
-				state.created = true;
+				inheritContext(unsafe, node.component);
 				init.createdState(unsafe);
-
 				mount();
-
 				break;
 			}
 
 			case 'beforeDestroy': {
-				state.destroyed = true;
 				unsafe.$destroy();
 				break;
 			}
 
 			default:
-				if (hook in state) {
-					state[hook] = true;
-				}
-
 				init[`${hook}State`](unsafe);
 		}
 
 		function mount() {
-			state.mounted = true;
-
-			$a.nextTick()
+			unsafe.$async.nextTick()
 				.then(() => {
 					unsafe.unsafe.$el = node;
 					init.mountedState(unsafe);
