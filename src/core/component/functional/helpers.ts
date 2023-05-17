@@ -54,7 +54,9 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 					break;
 				}
 
-				inheritContext(unsafe, node.component);
+				if (node.component?.componentId != null) {
+					inheritContext(unsafe, node.component);
+				}
 
 				await $a.promise(unsafe.$nextTick(), {
 					label: componentInitLabel
