@@ -15,8 +15,8 @@ import type { RenderFactory, RenderFn, ComponentInterface } from 'components/sup
 import type { VNodeDescriptor, VNodeOptions } from 'components/friends/vdom/interface';
 
 interface VDOM {
-	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<any[], T> | Function): CanUndef<T>;
-	findElement(name: string, where: VNode, ctx?: iBlock): CanUndef<VNode>;
+	closest<T extends iBlock = iBlock>(component: string | ClassConstructor<any[], T> | Function): CanNull<T>;
+	findElement(name: string, where: VNode, ctx?: iBlock): CanNull<VNode>;
 
 	create(type: string, opts?: VNodeOptions): VNode;
 	create(...descriptors: VNodeDescriptor[]): VNode[];
