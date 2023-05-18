@@ -143,13 +143,15 @@ export function paramsFactory<T = object>(
 					return;
 				}
 
+				delete meta.accessors[key];
+				delete meta.computedFields[key];
+
 				const needOverrideComputed = metaKey === 'accessors' ?
 					key in meta.computedFields :
 					!('cache' in p) && key in meta.accessors;
 
 				if (needOverrideComputed) {
 					metaCluster[key] = wrapOpts({...meta.computedFields[key], ...p, cache: false});
-					delete meta.computedFields[key];
 
 				} else {
 					metaCluster[key] = wrapOpts({
@@ -157,11 +159,6 @@ export function paramsFactory<T = object>(
 						...p,
 						cache: metaKey === 'computedFields' ? p.cache ?? true : false
 					});
-				}
-
-				// Unset inherited accessor from the parent if the child has computedField for the same key
-				if (metaKey === 'computedFields' && Object.fastCompare(parentMeta?.accessors[key], meta.accessors[key])) {
-					delete meta.accessors[key];
 				}
 
 				if (p.dependencies != null) {
