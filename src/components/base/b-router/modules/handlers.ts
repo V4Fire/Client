@@ -14,13 +14,13 @@ import type bRouter from 'components/base/b-router/b-router';
  * Handler: there was a click on an element with the `href` attribute
  * @param e
  */
-export async function link(ctx: bRouter, e: MouseEvent): Promise<void> {
+export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 	const
 		a = <HTMLElement>e.delegateTarget,
 		href = a.getAttribute('href')?.trim();
 
 	const cantPrevent =
-		!ctx.interceptLinks ||
+		!this.interceptLinks ||
 		href == null ||
 		href === '' ||
 		href.startsWith('#') ||
@@ -50,16 +50,16 @@ export async function link(ctx: bRouter, e: MouseEvent): Promise<void> {
 
 	switch (method) {
 		case 'back':
-			ctx.back().catch(stderr);
+			this.back().catch(stderr);
 			break;
 
 		case 'forward':
-			ctx.back().catch(stderr);
+			this.back().catch(stderr);
 			break;
 
 		case 'go': {
 			const go = Object.parse(a.getAttribute('data-router-go'));
-			ctx.go(Object.isNumber(go) ? go : -1).catch(stderr);
+			this.go(Object.isNumber(go) ? go : -1).catch(stderr);
 			break;
 		}
 
@@ -69,7 +69,7 @@ export async function link(ctx: bRouter, e: MouseEvent): Promise<void> {
 				query = Object.parse(a.getAttribute('data-router-query')),
 				meta = Object.parse(a.getAttribute('data-router-meta'));
 
-			await ctx[method === 'replace' ? 'replace' : 'push'](href, {
+			await this[method === 'replace' ? 'replace' : 'push'](href, {
 				params: Object.isDictionary(params) ? params : {},
 				query: Object.isDictionary(query) ? query : {},
 				meta: Object.isDictionary(meta) ? meta : {}

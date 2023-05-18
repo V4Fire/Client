@@ -422,6 +422,6 @@ export default class bRouter extends bRouterProps {
 	})
 
 	protected onLink(e: MouseEvent): Promise<void> {
-		return on.link(this, e);
+		return on.link.call(this, e);
 	}
 }
