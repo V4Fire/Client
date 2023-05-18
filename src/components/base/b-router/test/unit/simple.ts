@@ -5,6 +5,7 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import type { JSHandle } from 'playwright';
 
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
