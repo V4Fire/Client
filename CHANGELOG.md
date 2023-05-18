@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+
+## v3.??.?? (2023-05-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug in `core/component/decorators`: the overridden getter with cache had a value equal to the parent's getter value.
+
 ## v3.47.0 (2023-05-05)
 
 #### :rocket: New Feature
