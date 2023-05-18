@@ -380,7 +380,7 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 	/**
 	 * Synchronizes the slider state
 	 */
-	@hook('mounted')
+	@hook(['mounted', 'beforeUpdate'])
 	@wait('loading', {label: $$.syncState})
 	protected syncState(): void {
 		const
