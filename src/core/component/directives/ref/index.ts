@@ -138,6 +138,18 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 	}
 
 	function getRefVal() {
-		return instance!.$refs[ctx!.$resolveRef(refName)];
+		const
+			resolvedRef = ctx!.$resolveRef(refName),
+			instanceRef = instance!.$refs[resolvedRef];
+
+		if (instanceRef != null) {
+			return instanceRef;
+		}
+
+		if (Object.isArray(vnode.ref)) {
+			return vnode.ref.map(({i: {refs}}) => refs[resolvedRef]);
+		}
+
+		return vnode.ref?.i.refs[resolvedRef];
 	}
 }

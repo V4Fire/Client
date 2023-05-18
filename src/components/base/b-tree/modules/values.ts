@@ -8,10 +8,10 @@
  */
 
 import Friend from 'components/friends/friend';
+import iActiveItems from 'components/traits/i-active-items/i-active-items';
 
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/b-tree';
-import iActiveItems from 'components/traits/i-active-items/i-active-items';
 
 export default class Values extends Friend {
 	override readonly C!: bTree;

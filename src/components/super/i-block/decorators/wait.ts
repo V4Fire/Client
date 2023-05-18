@@ -199,6 +199,11 @@ export function wait(
 				init = false;
 
 			if (componentStatus < 0 && status > componentStatus) {
+				this.log({
+					context: 'watcher',
+					logLevel: 'warn'
+				}, 'Component status watcher abort', () => handler);
+
 				throw Object.assign(new Error('Component status watcher abort'), {
 					type: 'abort'
 				});

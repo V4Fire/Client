@@ -8,24 +8,21 @@
 
 import { isAbsURL } from 'core/url';
 
-import type Block from 'components/friends/block/class';
-
 import type bList from 'components/base/b-list/b-list';
 import type { Item } from 'components/base/b-list/interface';
 
 /**
  * Changes the `active` modifier of the passed element and sets the `aria-selected` attribute
  *
- * @param block
  * @param el
  * @param isActive
  */
-export function setActiveMod(block: Nullable<Block>, el: Element, isActive: boolean): void {
-	if (block == null) {
+export function setActiveMod(this: bList, el: Element, isActive: boolean): void {
+	if (this.block == null) {
 		return;
 	}
 
-	block.setElementMod(el, 'link', 'active', isActive);
+	this.block.setElementMod(el, 'link', 'active', isActive);
 
 	if (el.hasAttribute('aria-selected')) {
 		el.setAttribute('aria-selected', String(isActive));

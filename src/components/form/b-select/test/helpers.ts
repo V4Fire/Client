@@ -14,10 +14,10 @@ import type bSelect from 'components/form/b-select/b-select';
 import { Component, DOM } from 'tests/helpers';
 
 /**
- * Returns rendered `b-select` component
+ * Returns the rendered `b-select` component
  *
  * @param page
- * @param params
+ * @param paramsOrAttrs
  */
 export function renderSelect(
 	page: Page,
@@ -27,13 +27,13 @@ export function renderSelect(
 }
 
 /**
- * Returns selector for the element
+ * Returns a selector for the element
  * @param elName
  */
 export const createSelector = DOM.elNameSelectorGenerator('b-select');
 
 /**
- * Checks if the component's value is equal to the specified
+ * Checks if the component `value` is equal to the specified
  *
  * @param target
  * @param value
@@ -45,7 +45,7 @@ export async function assertValueIs(target: JSHandle<bSelect>, value: unknown): 
 }
 
 /**
- * Checks if the component's fromValue is equal to the specified
+ * Checks if the component `fromValue` is equal to the specified
  *
  * @param target
  * @param value
@@ -55,7 +55,7 @@ export async function assertFormValueIs(target: JSHandle<bSelect>, value: unknow
 }
 
 /**
- * Sets the component's value
+ * Sets the component value
  *
  * @param target
  * @param value

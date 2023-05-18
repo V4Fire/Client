@@ -9,7 +9,6 @@
 import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
-
 import { Utils, Assert } from 'tests/helpers';
 
 import type bSelect from 'components/form/b-select/b-select';
@@ -36,7 +35,7 @@ test.describe('<b-select> active items', () => {
 	});
 
 	test.describe('initialize', () => {
-		test('should have `active` item', async ({page}) => {
+		test('should have the `active` item', async ({page}) => {
 			const target = await renderSelect(page, {items, active: 0});
 
 			await page.locator(createSelector('input')).focus();
@@ -49,7 +48,7 @@ test.describe('<b-select> active items', () => {
 		test.describe('with `multiple = true`', () => {
 			const evaluateActive = (target: JSHandle<bSelect>) => target.evaluate((ctx) => [...<Set<number>>ctx.active]);
 
-			test('`active` prop should accept scalar value', async ({page}) => {
+			test('`active` prop should accept a scalar value', async ({page}) => {
 				const target = await renderSelect(page, {items, active: 0, multiple: true});
 				await test.expect(evaluateActive(target)).resolves.toEqual([0]);
 			});
@@ -64,6 +63,7 @@ test.describe('<b-select> active items', () => {
 					page,
 					{items, attrs: {active: Utils.evalInBrowser(() => [0, 1].values()), multiple: true}}
 				);
+
 				await test.expect(evaluateActive(target)).resolves.toEqual([0, 1]);
 			});
 		});
@@ -328,8 +328,7 @@ test.describe('<b-select> active items', () => {
 		});
 
 		test('should have multiple active elements with `multiple = true`', async ({page}) => {
-			const
-				target = await renderSelect(page, {items, active: [0, 1], multiple: true});
+			const target = await renderSelect(page, {items, active: [0, 1], multiple: true});
 
 			await page.locator(createSelector('input')).focus();
 

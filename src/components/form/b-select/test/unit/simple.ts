@@ -14,7 +14,6 @@ import { assertValueIs, createSelector, renderSelect } from 'components/form/b-s
 
 // eslint-disable-next-line max-lines-per-function
 test.describe('<b-select> simple usage', () => {
-
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});

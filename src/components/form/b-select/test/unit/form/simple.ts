@@ -175,8 +175,8 @@ test.describe('<b-select> form API', () => {
 	});
 
 	/**
- 	 * Returns rendered `b-select` component with the `formValueConverter` and default items
-   *
+	 * Returns the rendered `b-select` component with the `formValueConverter` and default items
+	 *
 	 * @param page
 	 * @param attrs
 	 */

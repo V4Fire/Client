@@ -21,16 +21,25 @@ import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iActiveItems from 'components/traits/i-active-items/i-active-items';
 import iOpenToggle, { CloseHelperEvents } from 'components/traits/i-open-toggle/i-open-toggle';
 
-import iInputText, { component, field, system, computed, hook, watch } from 'components/super/i-input-text/i-input-text';
-import type {
+import iInputText, {
+
+	component,
+
+	field,
+	system,
+	computed,
+	hook,
+	watch,
 
 	ModsDecl,
 	UnsafeGetter,
+
 	ValidatorsDecl,
 	ValidatorParams,
 	ValidatorResult
 
 } from 'components/super/i-input-text/i-input-text';
+
 import Mask, * as MaskAPI from 'components/super/i-input-text/mask';
 
 import { openedSelect } from 'components/form/b-select/const';
@@ -90,7 +99,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 
 	/**
 	 * {@link iActiveItems.activeStore}
-	 * {@link iActiveItems.syncActiveStore}
+	 * {@link iActiveItems.linkActiveStore}
 	 */
 	@system<bSelect>((o) => {
 		o.watch('valueProp', (val) => o.setActive(val, true));
@@ -158,6 +167,14 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return attrs;
 	}
 
+	/**
+	 * Handler: changing the text of the component helper input
+	 */
+	@computed({cache: true})
+	get onTextChange(): SelectEventHandlers['onTextChange'] {
+		return this.async.debounce(SelectEventHandlers.onTextChange.bind(null, this), 200);
+	}
+
 	static override readonly mods: ModsDecl = {
 		opened: [
 			...iOpenToggle.mods.opened!,
@@ -219,14 +236,6 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	@computed({cache: true, dependencies: ['active']})
 	protected get selectedElement(): CanPromise<CanNull<CanArray<HTMLOptionElement>>> {
 		return this.activeElement;
-	}
-
-	/**
-	 * Handler: changing value of the component helper input
-	 */
-	@computed({cache: true})
-	protected get onTextChange(): Function {
-		return this.async.debounce(SelectEventHandlers.onTextChange.bind(null, this), 200);
 	}
 
 	override reset(): Promise<boolean> {
@@ -374,6 +383,19 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return false;
 	}
 
+	/**
+	 * {@link SelectEventHandlers.onItemClick}
+	 * @see https://github.com/V4Fire/Client/issues/848
+	 */
+	@watch({
+		path: '?$el:click',
+		wrapper: (o, cb) => o.dom.delegateElement('item', (e: MouseEvent) => cb(e.delegateTarget))
+	})
+
+	onItemClick(itemEl: Nullable<Element>): void {
+		SelectEventHandlers.onItemClick(this, itemEl);
+	}
+
 	/** {@link h.setScrollToMarkedOrSelectedItem} */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
 		return h.setScrollToMarkedOrSelectedItem.call(this);
@@ -480,19 +502,6 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	protected override onFocus(): void {
 		super.onFocus();
 		void this.open();
-	}
-
-	/**
-	 * {@link SelectEventHandlers.onItemClick}
-	 * @see https://github.com/V4Fire/Client/issues/848
-	 */
-	@watch({
-		path: '?$el:click',
-		wrapper: (o, cb) => o.dom.delegateElement('item', (e: MouseEvent) => cb(e.delegateTarget))
-	})
-
-	protected onItemClick(itemEl: Nullable<Element>): void {
-		SelectEventHandlers.onItemClick(this, itemEl);
 	}
 }
 

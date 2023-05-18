@@ -28,11 +28,11 @@ Also, you can see the parent component and the component traits.
 
 ## Events
 
-| EventName     | Description                      | Payload description | Payload |
-|---------------|----------------------------------|---------------------|---------|
-| `itemsChange` | A list of items has been changed | List of items       | `Items` |
-| `change`      | The active element of the component has been changed   | The active item(s) | `Active`  |
-| `actionChange`| The active element of the component has been changed due to some user action          | The active item(s)               | `Active`            |
+| EventName      | Description                                                                     | Payload description | Payload  |
+|----------------|---------------------------------------------------------------------------------|---------------------|----------|
+| `change`       | The active element(s) of the component has been changed                         | The active item(s)  | `Active` |
+| `actionChange` | The active element(s) of the component has been changed due to some user action | The active item(s)  | `Active` |
+| `itemsChange`  | The list of component items has been changed                                    | The list of items   | `Items`  |
 
 Also, you can see the parent component and the component traits.
 
@@ -46,7 +46,10 @@ Additionally, the component has a `native` modifier. The modifier value is autom
 < b-select :items = myItems | :native = true
 ```
 
-Why can't we always use just one mode? The primary issue lies in customizing the select items. Within `<option>`, we can only use plain text, but at times it would be great to incorporate images or other components, such as checkboxes. Additionally, there is a challenge in customizing the appearance of these items via CSS. This is why `bSelect` mimics native behavior using custom tags. However, for mobile browsers, it is generally preferable to use the native select due to the smaller screen size and enhanced user experience.
+Why can't we always use just one mode? The primary issue lies in customizing the select items. Within `<option>`, we can only use plain text,
+but at times it would be great to incorporate images or other components, such as checkboxes. Additionally,
+there is a challenge in customizing the appearance of these items via CSS. This is why `bSelect` mimics native behavior using custom tags.
+However, for mobile browsers, it is generally preferable to use the native select due to the smaller screen size and enhanced user experience.
 
 ## Usage
 
@@ -79,9 +82,10 @@ Why can't we always use just one mode? The primary issue lies in customizing the
 
 When a provider returns a dictionary, it gets mapped onto the component. To pass a complex property path, you can use dots as separators.
 
-If a key from the response corresponds to a component method, this method will be invoked using the value from that key. If the value is an array, it will be spread to the method as separate arguments.
+If a key from the response corresponds to a component method, this method will be invoked using the value from that key.
+If the value is an array, it will be spread to the method as separate arguments.
 
-Provider should not return any properties which are in the component props list (marked with @prop decorator), they won't be updated.
+The provider should not return any properties which are in the component props list (marked with `@prop` decorator), they won't be updated.
 
 ```
 {
@@ -104,53 +108,52 @@ The component supports several slots for customization:
 
 1. `default` - use this slot to provide a template for a select item (option).
 
-```
-< b-select :items = myItems
-  < template #default = {item}
-    {{ item.label }}
-```
+   ```
+   < b-select :items = myItems
+     < template #default = {item}
+       {{ item.label }}
+   ```
 
 2. `preIcon` and `icon` - use these slots to inject icons around the value block.
 
+   ```
+   < b-select :items = myItems
+     < template #preIcon
+       < img src = validate.svg
 
-```
-< b-select :items = myItems
-  < template #preIcon
-    < img src = validate.svg
+     < template #icon
+       < img src = clear.svg
+   ```
 
-  < template #icon
-    < img src = clear.svg
-```
+   Also, these icons can be provided via props.
 
-Also, these icons can be provided via props.
+   ```
+   < b-select :items = myItems | :icon = 'validate'
 
-```
-< b-select :items = myItems | :icon = 'validate'
+   < b-select &
+     :items = myItems |
+     :preIcon = 'validate' |
+     :iconComponent = 'b-custom-icon'
+   .
 
-< b-select &
-  :items = myItems |
-  :preIcon = 'validate' |
-  :iconComponent = 'b-custom-icon'
-.
-
-< b-select :items = myItems
-  < template #icon = {icon}
-    < img :src = icon
-```
+   < b-select :items = myItems
+     < template #icon = {icon}
+       < img :src = icon
+   ```
 
 3. `progressIcon` - use this slot to inject an icon that indicates loading. By default, [[bProgressIcon]] is used.
 
-```
-< b-select :items = myItems
-  < template #progressIcon
-    < img src = spinner.svg
-```
+   ```
+   < b-select :items = myItems
+     < template #progressIcon
+       < img src = spinner.svg
+   ```
 
-Also, this icon can be provided via a prop.
+   Also, this icon can be provided via a prop.
 
-```
-< b-select :items = myItems | :progressIcon = 'bCustomLoader'
-```
+   ```
+   < b-select :items = myItems | :progressIcon = 'bCustomLoader'
+   ```
 
 ## API
 
@@ -262,7 +265,7 @@ A component used to display an "in-progress" state. Alternatively, use a boolean
 
 #### items
 
-List of component items.
+A list of the component items.
 
 ### Methods
 
@@ -317,6 +320,7 @@ class Test extends iData {
   }
 }
 ```
+
 #### toggleValue
 
 Toggles the selection of an item with the specified value. The method returns the new selected value(s).
@@ -355,7 +359,6 @@ The component includes several built-in validators.
 
 Ensures that the component's value is not empty and must be filled.
 
-
 ```
 < b-select :validators = ['required'] | :items = myItems
 < b-select :validators = {required: {showMsg: false}} | :items = myItems
@@ -366,17 +369,17 @@ Ensures that the component's value is not empty and must be filled.
 1. By default, the component provides a button to expand a dropdown with items.
    You can configure it via CSS by using the `&__expand` selector.
 
-```styl
-&__expand
-  size 20px
-  background-image url("assets/my-icon.svg")
-```
+   ```styl
+   &__expand
+     size 20px
+     background-image url("assets/my-icon.svg")
+   ```
 
 2. By default, the component provides a button to clear the input value.
    You can configure it via CSS by using the `&__clear` selector.
 
-```styl
-&__clear
-  size 20px
-  background-image url("assets/my-icon.svg")
-```
+   ```styl
+   &__clear
+     size 20px
+     background-image url("assets/my-icon.svg")
+   ```

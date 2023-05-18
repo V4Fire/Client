@@ -1,7 +1,6 @@
 # components/friends/field
 
-This module provides a class with helper methods for safely accessing component/object properties.
-That is, you can use a complex property path without fear of exceptions if the property does not exist.
+This module provides a class which includes helper methods for safely accessing component/object properties. This enables usage of complex property paths without the risk of encountering exceptions if the property does not exist.
 
 ```js
 this.field.set('foo.bla.bar', 1);
@@ -15,11 +14,10 @@ this.field.get('foo.bla.bar', this.r);
 this.field.delete('foo.bla.bar', this.r);
 ```
 
-## How to include this module to your component?
+## How to include this module in your component?
 
-By default, any component that inherited from [[iBlock]] has the `field` property.
-Some methods, such as `get` and `set` are always available, and the rest must be included explicitly to enable tree-shake
-code optimization. Just place the necessary import declaration within your component file.
+By default, any component that inherits from [[iBlock]] has the `field` property.
+Some methods, such as `get` and `set`, are always available, while others need to be explicitly included to enable tree-shaking code optimization. To do this, simply add the necessary import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -32,13 +30,11 @@ Field.addToPrototype({delete: deleteField});
 export default class bExample extends iBlock {}
 ```
 
-## Why not to use `Object.set/get/delete`?
+## Why not use `Object.set/get/delete`?
 
 There are three reasons to use `Field` instead of Prelude methods.
 
-1. Prelude methods are not aware of the component watchable properties, such as system or regular fields.
-   That is, if you use accessor-based watching, you run the risk of falling into the trap where the property cannot
-   be watched because it was never defined. Let's look at an example below.
+1. Prelude methods are not aware of the component's watchable properties, such as system or regular fields. This means that if you use accessor-based watching, you might face the risk of failing to watch a property because it was never defined. Let's look at an example below.
 
    ```typescript
    import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -53,12 +49,12 @@ There are three reasons to use `Field` instead of Prelude methods.
          console.log(val);
        });
 
-       // These mutations will be ignored when using watching based on assessors due to technical restrictions
+       // These mutations will be ignored when using watching based on accessors due to technical restrictions,
        // because the property was never defined before
        this.myData.foo = 1;
        Object.set(this, 'myData.foo', 2);
 
-       // This mutation will be catched
+       // This mutation will be caught
        this.field.set('myData.foo', 3);
 
        // This mutation is unobservable and removes all observables from the property.
@@ -71,8 +67,8 @@ There are three reasons to use `Field` instead of Prelude methods.
    }
    ```
 
-2. Prelude methods are unaware of component states and hooks. For example, before the component switches to the "created" hook,
-   we cannot directly set the field values, because all fields are initialized when "created". In this case,
+2. Prelude methods are not aware of component states and hooks. For example, before the component switches to the "created" hook,
+   we cannot directly set the field values because all fields are initialized during "created". In this case,
    the `Field` class can optionally set the value to the internal store.
 
    ```typescript
@@ -94,7 +90,7 @@ There are three reasons to use `Field` instead of Prelude methods.
        this.field.set('myData2.foo', 2);
 
        // The field value is not initialized yet,
-       // so when we check it we get `undefined`
+       // so when we check it, we get `undefined`
        console.log(this.myData2 === undefined);
 
        // `field.get` takes the field value from the internal store
@@ -108,7 +104,7 @@ There are three reasons to use `Field` instead of Prelude methods.
    }
    ```
 
-3. The `field` methods have additional overloads to provide a function that returns a property value or a key.
+3. The `field` methods have additional overloads that allow providing a function to return a property value or a key.
 
    ```typescript
    import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -132,8 +128,8 @@ There are three reasons to use `Field` instead of Prelude methods.
 
 ### get
 
-Returns a property by the specified path.
-This method is plugged by default.
+Returns a property based on the specified path.
+This method is plugged in by default.
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -153,19 +149,19 @@ export default class bInput extends iBlock {
     // 2
     console.log(this.field.get('foo.blaBar', (prop, obj) => Object.get(obj, prop.underscore())));
 
-    // 1
-    console.log(this.field.get('foo.bla', {foo: {bla: 1}}));
+    // 3
+    console.log(this.field.get('foo.bla', {foo: {bla: 3}}));
 
-    // 2
-    console.log(this.field.get('foo.blaBar', {foo: {bla_bar: 2}}, (prop, obj) => Object.get(obj, prop.underscore())));
+    // 4
+    console.log(this.field.get('foo.blaBar', {foo: {bla_bar: 4}}, (prop, obj) => Object.get(obj, prop.underscore())));
   }
 }
 ```
 
 ### set
 
-Sets a new property by the specified path.
-This method is plugged by default.
+Sets a new property based on the specified path.
+This method is plugged in by default.
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -195,7 +191,7 @@ export default class bInput extends iBlock {
 
 ### delete
 
-Deletes a property by the specified path.
+Deletes a property based on the specified path.
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';

@@ -8,13 +8,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ModEvent, SetModEvent } from 'components/form/b-select/b-select';
 import type bSelect from 'components/form/b-select/b-select';
+import type { ModEvent, SetModEvent } from 'components/form/b-select/b-select';
 
 import { openedSelect } from 'components/form/b-select/const';
 
 export default abstract class SelectEventHandlers {
-
 	/** {@link SelectEventHandlers.prototype.onOpenedChange} */
 	// eslint-disable-next-line @typescript-eslint/require-await
 	static async onOpenedChange(component: bSelect, e: ModEvent | SetModEvent): Promise<void> {
@@ -288,56 +287,54 @@ export default abstract class SelectEventHandlers {
 	}
 
 	/**
-	 * Handler: value changing of a native component `<select>`
-	 *
+	 * Handler: changing the value of the native component `<select>`
 	 * @emits `actionChange(value: V)`
 	 */
-	protected onNativeChange(): void {
+	onNativeChange(): void {
 		return Object.throw();
 	}
 
 	/**
-	 * Handler: typing text into a helper text input to search select options
+	 * Handler: entering text into auxiliary text input to search for choices
 	 *
 	 * @param e
 	 * @emits `actionChange(value: this['Active'])`
 	 */
-	protected onSearchInput(e: InputEvent): void {
+	onSearchInput(e: InputEvent): void {
 		return Object.throw();
 	}
 
 	/**
-	 * Handler: "navigation" over the select via "arrow" buttons
+	 * Handler: "navigate" the selection using the arrow buttons
 	 * @param e
 	 */
-	protected onItemsNavigate(e: KeyboardEvent): void {
+	onItemsNavigate(e: KeyboardEvent): void {
 		return Object.throw();
 	}
 
 	/**
-	 * Handler: click to some item element
+	 * Handler: click on any item element
 	 *
 	 * @param itemEl
 	 * @emits `actionChange(value: this['Active'])`
 	 */
-	protected onItemClick(itemEl: Nullable<Element>): void {
+	onItemClick(itemEl: Nullable<Element>): void {
 		return Object.throw();
 	}
 
 	/**
-	 * Handler: clearing of a component value
+	 * Handler: clearing the component value
 	 * @emits `actionChange(value: this['Active'])`
 	 */
-	protected onClear(): Promise<void> {
+	onClear(): Promise<void> {
 		return Object.throw();
 	}
 
 	/**
-	 * Handler: changing text of a component helper input
-	 *
+	 * Handler: changing the text of the component helper input
 	 * @emits `actionChange(value: V)`
 	 */
-	protected onTextChange(): void {
+	onTextChange(): void {
 		return Object.throw();
 	}
 }

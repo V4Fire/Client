@@ -107,7 +107,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `bTree`:
   * Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
-  * Added a new modifier `clickableArea`
 
 #### :bug: Bug Fix
 
