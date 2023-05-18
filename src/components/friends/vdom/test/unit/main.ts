@@ -7,15 +7,15 @@
  */
 
 import type { JSHandle } from 'playwright';
-import type { VNode } from 'core/component/engines';
 
 import test from 'tests/config/unit/test';
 
 import { Component } from 'tests/helpers';
 
 import type bButton from 'components/form/b-button/b-button';
-import type bFriendsVDOMDummy from 'components/friends/vdom/test/b-friends-vdom-dummy/b-friends-vdom-dummy';
+
 import type VDOM from 'components/friends/vdom';
+import type bFriendsVDOMDummy from 'components/friends/vdom/test/b-friends-vdom-dummy/b-friends-vdom-dummy';
 
 test.describe('friends/vdom', () => {
 	const BUTTON_TEXT = 'Hello ima button';
@@ -24,12 +24,14 @@ test.describe('friends/vdom', () => {
 		attrs: {
 			id: 'test-dummy'
 		},
+
 		children: {
 			default: {
 				type: 'b-button',
 				attrs: {
 					id: 'test-button'
 				},
+
 				children: {
 					default: BUTTON_TEXT
 				}
@@ -39,6 +41,7 @@ test.describe('friends/vdom', () => {
 
 	let
 		target: JSHandle<bFriendsVDOMDummy>,
+
 		button: JSHandle<bButton>,
 		vdom: JSHandle<VDOM>,
 
@@ -64,22 +67,20 @@ test.describe('friends/vdom', () => {
 	test.describe('`closest`', () => {
 		test.describe('when component name is provided', () => {
 			test('should return the closest parent component instance', async () => {
-				const result = await vdom.evaluate((ctx) => {
+				const res = await vdom.evaluate((ctx) => {
 					const instance = ctx.closest('b-friends-vdom-dummy');
-
 					return [instance!.componentName, instance!.componentId];
 				});
 
-				test.expect(result).toEqual([
+				test.expect(res).toEqual([
 					'b-friends-vdom-dummy',
 					DUMMY_COMPONENT_ID
 				]);
 			});
 
-			test('should return `undefined` if there is no such parent component', async () => {
-				const exists = await vdom.evaluate((ctx) => ctx.closest('b-unreachable-component') != null);
-
-				test.expect(exists).toBeFalsy();
+			test('should return `null` if there is no such parent component', async () => {
+				const res = await vdom.evaluate((ctx) => ctx.closest('b-unreachable-component'));
+				test.expect(res).toBeNull();
 			});
 		});
 
@@ -100,25 +101,23 @@ test.describe('friends/vdom', () => {
 				]);
 			});
 
-			test('should return `undefined` if there is no such parent component', async () => {
-				const exists = await vdom.evaluate((ctx) => {
+			test('should return `null` if there is no such parent component', async () => {
+				const res = await vdom.evaluate((ctx) => {
 					// @ts-ignore component prop exists
 					const dummy = document.getElementById('test-dummy').component;
-
-					return ctx.closest(dummy.componentConstructors.bBottomSlide) != null;
+					return ctx.closest(dummy.componentConstructors.bBottomSlide);
 				});
 
-				test.expect(exists).toBeFalsy();
+				test.expect(res).toBeNull();
 			});
 		});
 	});
 
-	// FIXME: we need to get the vnode of the rendered component somehow
-	test.describe.skip('`findElement`', () => {
+	test.describe('`findElement`', () => {
 		test('should return an element if it is a child of the provided `VNode`', async () => {
 			const hasEl = await target.evaluate((ctx) => {
 				const
-					vNode = ctx.vdom.findElement('wrapper', ctx._vnode),
+					vNode = ctx.vdom.findElement('wrapper', Object.cast(ctx.unsafe.tmp.vnode)),
 					className = 'b-friends-vdom-dummy__wrapper';
 
 				return vNode?.el?.classList.contains(className);
@@ -127,15 +126,14 @@ test.describe('friends/vdom', () => {
 			test.expect(hasEl).toBeTruthy();
 		});
 
-		test('should return `undefined` if an element is not a child of the provided `VNode`', async () => {
-			const hasEl = await target.evaluate((ctx) => ctx.vdom.findElement('unreachable', ctx._vnode));
-
-			test.expect(hasEl).toBeUndefined();
+		test('should return `null` if an element is not a child of the provided `VNode`', async () => {
+			const hasEl = await target.evaluate((ctx) => ctx.vdom.findElement('unreachable', Object.cast(ctx.unsafe.tmp.vnode)));
+			test.expect(hasEl).toBeNull();
 		});
 	});
 
 	test.describe('`render`', () => {
-		test('should render single component when a single `VNode` is provided', async ({page}) => {
+		test('should render a single component when a single `VNode` is provided', async ({page}) => {
 			await button.evaluate((ctx) => {
 				const newButton = ctx.vdom.render(ctx.vdom.create('b-button', {
 					attrs: {
@@ -198,7 +196,6 @@ test.describe('friends/vdom', () => {
 		test('should return a render function if the specified template exists', async () => {
 			const isRenderFn = await vdom.evaluate((ctx) => {
 				const renderFn = ctx.getRenderFactory('b-button.index');
-
 				return Object.isFunction(renderFn) && renderFn.length === 2;
 			});
 
@@ -214,32 +211,26 @@ test.describe('friends/vdom', () => {
 	});
 
 	test.describe('`getRenderFn`', () => {
-		test('should return a placeholder if the provided template does not exist', async () => {
-			const isPlaceholder = await vdom.evaluate((ctx) => {
-					const result = ctx.getRenderFn('bUnreachable.index')();
-					if (Array.isArray(result)) {
-						return false;
-					}
-
-					return result.children === 'loopback';
-				});
-
-			test.expect(isPlaceholder).toBeTruthy();
-		});
-
-		// FIXME: there is an error in vue `renderSlot` function
-		test.skip('should return a render function if the provided template exists', async () => {
-			const componentName = await target.evaluate((ctx) => {
-				let result: VNode;
-
-				ctx.vdom.withRenderContext(() => {
-					result = <VNode>ctx.vdom.getRenderFn('bButton.index')();
-				});
-
-				return result!.virtualComponent?.componentName;
+		test('should return a vnode if the provided template exists', async () => {
+			const res = await target.evaluate((ctx) => {
+				const vnode = ctx.unsafe.$withCtx(() => ctx.vdom.getRenderFn('bButton.index')());
+				return !Object.isArray(vnode) && vnode.type === 'div';
 			});
 
-			test.expect(componentName).toBe('b-button');
+			test.expect(res).toBe(true);
+		});
+
+		test('should return a placeholder if the provided template does not exist', async () => {
+			const isPlaceholder = await vdom.evaluate((ctx) => {
+				const result = ctx.getRenderFn('bUnreachable.index')();
+				if (Array.isArray(result)) {
+					return false;
+				}
+
+				return result.children === 'loopback';
+			});
+
+			test.expect(isPlaceholder).toBeTruthy();
 		});
 	});
 });

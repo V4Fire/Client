@@ -11,3 +11,11 @@
 - include 'components/dummies/b-dummy'|b as placeholder
 
 - template index() extends ['b-dummy'].index
+	- block rootAttrs
+		- super
+		? rootAttrs['v-hook'] = '{beforeCreate(_, vnode) { self.tmp.vnode = vnode; }}'
+
+	- block body
+		< .&__wrapper
+			+= self.slot()
+				Test
