@@ -48,7 +48,7 @@ export function paramsFactory<T = object>(
 			initEmitter.once(`constructor.${componentName}`, decorate);
 		});
 
-		function decorate({meta, parentMeta}: {meta: ComponentMeta; parentMeta?: ComponentMeta}): void {
+		function decorate({meta}: {meta: ComponentMeta}): void {
 			delete meta.tiedFields[key];
 
 			let
