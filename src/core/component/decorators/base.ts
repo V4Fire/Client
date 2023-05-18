@@ -142,20 +142,17 @@ export function paramsFactory<T = object>(
 					return;
 				}
 
+				delete meta.accessors[key];
+				delete meta.computedFields[key];
+
 				const hasCache = 'cache' in p;
 				delete p.cache;
 
 				if (metaKey === 'accessors' ? key in meta.computedFields : !hasCache && key in meta.accessors) {
 					metaCluster[key] = wrapOpts({...meta.computedFields[key], ...p});
-					delete meta.computedFields[key];
 
 				} else {
 					metaCluster[key] = wrapOpts({...info, ...p});
-				}
-
-				// Unset inherited accessor from the parent if the child has computedField for the same key
-				if (metaKey === 'computedFields' && Object.fastCompare(parentMeta?.accessors[key], meta.accessors[key])) {
-					delete meta.accessors[key];
 				}
 
 				if (p.dependencies != null) {
