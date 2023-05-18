@@ -56,6 +56,10 @@ export default class Transition {
 	 */
 	private newRouteInfoInitialized: boolean = false;
 
+	/**
+	 * @param component Instance of the `b-router` component
+	 * @param ctx Transition context
+	 */
 	constructor(component: bRouter, {ref, method, opts}: TransitionContext) {
 		this.component = component;
 		this.currentEngineRoute = this.engine.route;
@@ -117,10 +121,6 @@ export default class Transition {
 	/**
 	 * Performs a transition to the specified route, emits transition events
 	 * and restores user's scroll position if needed.
-	 *
-	 * @param ref - the route name or URL or `null`, if the route is equal to the previous
-	 * @param [opts] - additional transition options
-	 * @param [method] - the transition method
 	 *
 	 * @emits `beforeChange(route: Nullable<string>, params:` [[TransitionOptions]]`, method:` [[TransitionMethod]]`)`
 	 *
