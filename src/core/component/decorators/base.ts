@@ -35,7 +35,7 @@ export function paramsFactory<T = object>(
 			initEmitter.once(`constructor.${componentName}`, reg);
 		});
 
-		function reg({meta, parentMeta}: {meta: ComponentMeta; parentMeta?: ComponentMeta}): void {
+		function reg({meta}: {meta: ComponentMeta}): void {
 			const wrapOpts = (opts) => {
 				const
 					p = meta.params;
