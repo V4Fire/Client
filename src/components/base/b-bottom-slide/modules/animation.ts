@@ -12,13 +12,14 @@ import Friend from 'components/friends/friend';
 
 import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 
-const $$ = symbolGenerator();
+const
+	$$ = symbolGenerator();
 
 export default class Animation extends Friend {
 	override readonly C!: bBottomSlide;
 
 	/**
-	 * True if all animations need to use requestAnimationFrame
+	 * True if all animations need to use `requestAnimationFrame`
 	 */
 	protected get shouldUseRAF(): boolean {
 		return this.ctx.browser.is.iOS === false;

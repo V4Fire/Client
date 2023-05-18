@@ -12,7 +12,8 @@ import Friend from 'components/friends/friend';
 
 import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 
-const $$ = symbolGenerator();
+const
+	$$ = symbolGenerator();
 
 export default class Geometry extends Friend {
 	override readonly C!: bBottomSlide;
