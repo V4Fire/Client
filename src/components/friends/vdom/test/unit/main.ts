@@ -18,8 +18,6 @@ import type VDOM from 'components/friends/vdom';
 import type bFriendsVDOMDummy from 'components/friends/vdom/test/b-friends-vdom-dummy/b-friends-vdom-dummy';
 
 test.describe('friends/vdom', () => {
-	const BUTTON_TEXT = 'Hello ima button';
-
 	const schema = {
 		attrs: {
 			id: 'test-dummy'
@@ -33,7 +31,7 @@ test.describe('friends/vdom', () => {
 				},
 
 				children: {
-					default: BUTTON_TEXT
+					default: 'Hello ima button'
 				}
 			}
 		}
