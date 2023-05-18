@@ -26,3 +26,5 @@ export interface TransitionContext {
 	 */
 	method: TransitionMethod;
 }
+
+export type ScrollSnapshot = CanUndef<{meta: {scroll: {x:number; y:number}}}>;

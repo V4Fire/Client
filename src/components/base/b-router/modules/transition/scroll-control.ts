@@ -9,10 +9,9 @@
 import symbolGenerator from 'core/symbol';
 
 import type Transition from 'components/base/b-router/modules/transition/class';
+import type { ScrollSnapshot } from 'components/base/b-router/modules/transition/interface';
 
 const $$ = symbolGenerator();
-
-type ScrollSnapshot = CanUndef<{meta: {scroll: {x:number; y:number}}}>;
 
 export default class ScrollControl {
 	/**
