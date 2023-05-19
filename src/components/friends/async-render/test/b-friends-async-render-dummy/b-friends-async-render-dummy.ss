@@ -13,7 +13,7 @@
 - template index() extends ['i-data'].index
 	- block body
 		< template v-if = stage === 'infinite rendering'
-			< .&__result
+			< .&__result v-async-target
 				< template v-for = el in asyncRender.iterate(true, { &
 					filter: asyncRender.waitForceRender('wrapper')
 				}) .
@@ -27,7 +27,7 @@
 				Defer force render
 
 		< template v-if = stage === 'infinite rendering with providing a function'
-			< .&__result
+			< .&__result v-async-target
 				< template v-for = el in asyncRender.iterate(true, { &
 					filter: asyncRender.waitForceRender((ctx) => ctx.$el.querySelector('.wrapper'))
 				}) .
@@ -41,7 +41,7 @@
 				Defer force render
 
 		< template v-if = stage === 'deactivating/activating the parent component while rendering'
-			< .&__result
+			< .&__result v-async-target
 				< template v-for = el in asyncRender.iterate(2, { &
 					filter: async.sleep.bind(async, 200)
 				}) .
@@ -54,7 +54,7 @@
 				Activate
 
 		< template v-if = stage === 'updating the parent component state'
-			< .&__result
+			< .&__result v-async-target
 				{{ void(tmp.oldRefs = $refs.btn) }}
 
 				< template v-for = el in asyncRender.iterate(2)
@@ -62,24 +62,24 @@
 						< template #default = {ctx}
 							Element: {{ el }}; Hook: {{ ctx.hook }};
 
-			< button.&__update @click = reactiveTmp.foo=Math.random()
+			< button.&__update @click = $forceUpdate
 				Update state
 
 		< template v-if = stage === 'clearing by the specified group name'
-			< .&__result
+			< .&__result v-async-target
 				< template v-for = el in asyncRender.iterate(2, { &
 					group: 'foo'
 				}) .
 					Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
 
-			< button.&__update @click = reactiveTmp.foo=Math.random()
+			< button.&__update @click = $forceUpdate
 				Update state
 
 			< button.&__clear @click = async.clearAll({group: /foo/})
 				Clear
 
 		< template v-if = stage === 'loading dynamic modules'
-			< .&__result
+			< .&__result v-async-target
 				+= self.loadModules('components/form/b-button')
 					< b-button
 						Ok 1
@@ -108,7 +108,7 @@
 		- forEach cases => el
 			< template v-if = stage === '${el[0]}'
 				- if el[2] === 'by click'
-					< .&__result
+					< .&__result v-async-target
 						< template v-for = el in asyncRender.iterate(${el[1]}, { &
 							filter: (el, i) => tmp[stage] || promisifyOnce(stage)
 						}) .
@@ -118,6 +118,6 @@
 						{el[0]}
 
 				- else
-					< .&__result
+					< .&__result v-async-target
 						< template v-for = el in asyncRender.iterate(${el[1]})
 							Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
