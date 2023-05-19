@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.46.4 (2023-05-05)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with negative values in design system `build/stylus/ds/helpers`
+
+## v3.44.1 (2023-03-28)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path
+
 ## v3.40.1 (2023-03-13)
 
 #### :bug: Bug Fix
@@ -95,7 +107,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `bTree`:
   * Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
-  * Added a new modifier `clickableArea`
 
 #### :bug: Bug Fix
 

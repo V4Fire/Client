@@ -36,7 +36,12 @@ test.describe('<b-tree> active items', () => {
 				}
 			]
 		},
-		{value: 5, label: '5'}
+		{value: 5, label: '5'},
+		{
+			value: 6,
+			label: '6',
+			activatable: false
+		}
 	];
 
 	test.beforeEach(async ({demoPage}) => {
@@ -77,7 +82,16 @@ test.describe('<b-tree> active items', () => {
 	});
 
 	test.describe('`active`', () => {
-		test('should be changeable', async ({page}) => {
+		test('should not be changeable with `activatable = false` on item', async ({page}) => {
+			const target = await renderTree(page, {items});
+
+			await target.evaluate((ctx) => ctx.setActive(0));
+			await target.evaluate((ctx) => ctx.setActive(6));
+
+			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
+		});
+
+		test('should not be changeable by default', async ({page}) => {
 			const
 				target = await renderTree(page, {items});
 
@@ -142,7 +156,7 @@ test.describe('<b-tree> active items', () => {
 			).toEqual([]);
 		});
 
-		test('should be changeable with `multiple = true; cancelable = false`', async ({page}) => {
+		test('should not be changeable with `multiple = true; cancelable = false`', async ({page}) => {
 			const
 				target = await renderTree(page, {items, attrs: {multiple: true, cancelable: false}});
 
@@ -280,7 +294,7 @@ test.describe('<b-tree> active items', () => {
 			target = await renderTree(page, {items}),
 			nodeSelector = createTreeSelector('node');
 
-		const changesLogPromise = target.evaluate((ctx) => new Promise((resolve) => {
+		const scan = target.evaluate((ctx) => new Promise((resolve) => {
 			const
 				log: any[] = [],
 				onEvent = () => {
@@ -304,11 +318,11 @@ test.describe('<b-tree> active items', () => {
 
 		await page.click(`${nodeSelector}:nth-child(2)`);
 
-		test.expect(await changesLogPromise).toEqual([
-			['change', 0],
+		await test.expect(scan).resolves.toEqual([
 			true,
-			['change', 1],
-			['actionChange', 1]
+			['change', 0],
+			['actionChange', 1],
+			['change', 1]
 		]);
 	});
 

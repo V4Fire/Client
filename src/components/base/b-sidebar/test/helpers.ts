@@ -7,13 +7,14 @@
  */
 
 import type { Page, JSHandle } from 'playwright';
-import type bSidebar from 'components/base/b-sidebar/b-sidebar';
+
+import DOM from 'tests/helpers/dom';
 import Component from 'tests/helpers/component';
-import { DOM } from 'tests/helpers';
+
+import type bSidebar from 'components/base/b-sidebar/b-sidebar';
 
 /**
- * Renders the `bSidebar` component with test params and returns Promise<JSHandle>
- *
+ * Renders the `bSidebar` component and returns `Promise<JSHandle>`
  * @param page
  */
 export async function renderSidebar(page: Page): Promise<JSHandle<bSidebar>> {
@@ -25,6 +26,7 @@ export async function renderSidebar(page: Page): Promise<JSHandle<bSidebar>> {
 				children: {
 					default: 'Hello content'
 				},
+
 				attrs: {
 					id: 'test-div'
 				}
@@ -34,8 +36,7 @@ export async function renderSidebar(page: Page): Promise<JSHandle<bSidebar>> {
 }
 
 /**
- * Returns the class list of the root node bSidebar
- *
+ * Returns the class list of the root node `bSidebar`
  * @param target
  */
 export function getClassList(target: JSHandle<bSidebar>): Promise<string[] | undefined> {
@@ -43,13 +44,7 @@ export function getClassList(target: JSHandle<bSidebar>): Promise<string[] | und
 }
 
 /**
- * Returns the selector in b-sidebar block
- *
+ * Returns a selector for the element
  * @param elName
- *
- * @example
- * ```typescript
- * expect(createSidebarSelector('foo')).toBe('.b-sidebar__foo')
- * ```
  */
 export const createSidebarSelector = DOM.elNameSelectorGenerator('b-sidebar');

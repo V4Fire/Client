@@ -13,7 +13,7 @@ import Component from 'tests/helpers/component';
 import type bWindow from 'components/base/b-window/b-window';
 
 /**
- * Renders the `bWindow` component and returns JSHandle
+ * Renders the `bWindow` component and returns `Promise<JSHandle>`
  *
  * @param page
  * @param params

@@ -8,6 +8,7 @@
 
 import type iItems from 'components/traits/i-items/i-items';
 import type iActiveItems from 'components/traits/i-active-items/i-active-items';
+
 import iData, { prop, component } from 'components/super/i-data/i-data';
 
 import type { Item } from 'components/base/b-list/b-list';

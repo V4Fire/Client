@@ -14,7 +14,6 @@ Changelog
 #### :house: Internal
 
 * Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
-* Added a new modifier `clickableArea`
 
 #### :bug: Bug Fix
 

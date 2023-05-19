@@ -17,7 +17,7 @@ import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
 
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
-import Block, { getElementMod } from 'components/friends/block';
+import Block, { getElementMod, setElementMod } from 'components/friends/block';
 
 import iItems from 'components/traits/i-items/i-items';
 import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
@@ -36,7 +36,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
 
 AsyncRender.addToPrototype({iterate});
-Block.addToPrototype({getElementMod});
+Block.addToPrototype({getElementMod, setElementMod});
 
 const
 	$$ = symbolGenerator();
@@ -103,13 +103,6 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 			return this.findItemElement(this.active) ?? null;
 		});
 	}
-
-	static override readonly mods: ModsDecl = {
-		clickableArea: [
-			['fold'],
-			'any'
-		]
-	};
 
 	/**
 	 * The context of the topmost bTree component
@@ -225,6 +218,11 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return iActiveItems.isActive(this.top, value);
 	}
 
+	/** @see [[iActiveItems.prototype.getItemByValue]] */
+	getItemByValue(value: Item['value']): CanUndef<Item> {
+		return this.values.getItem(value);
+	}
+
 	/** @see [[iActiveItems.setActive]] */
 	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		const
@@ -240,14 +238,14 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		if (!top.multiple || unsetPrevious) {
 			for (const [node, {value}] of this.traverseActiveNodes()) {
 				if (!this.isActive(value)) {
-					setActiveMod(top.block, node, false);
+					setActiveMod.call(top, node, false);
 				}
 			}
 		}
 
 		// Activate current active nodes
 		SyncPromise.resolve(this.activeElement).then((activeElement) => {
-			Array.concat([], activeElement).forEach((activeElement) => setActiveMod(top.block, activeElement, true));
+			Array.concat([], activeElement).forEach((activeElement) => setActiveMod.call(top, activeElement, true));
 		}).catch(stderr);
 
 		return true;
@@ -263,7 +261,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 		for (const [node, {value}] of this.traverseActiveNodes()) {
 			if (!this.isActive(value)) {
-				setActiveMod(top.block, node, false);
+				setActiveMod.call(top, node, false);
 			}
 		}
 
@@ -425,6 +423,14 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		this.values.init(itemsChanged);
+	}
+
+	/** @see [[iActiveItems.initActiveStoreListeners]] */
+	@hook('beforeDataCreate')
+	protected initActiveStoreListeners(): void {
+		if (this.topProp == null) {
+			iActiveItems.initActiveStoreListeners(this.top);
+		}
 	}
 
 	/**

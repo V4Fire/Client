@@ -15,7 +15,8 @@ Changelog
 
 * The module has been moved to`components/friends/dom`
 * The module has been rewritten to a new tree-shake friendly API
-* Renamed `putInStream`, to `getFullElementName`
+* Renamed `putInStream` to `renderTemporarily`
+* Removed `createBlockCtxFromNode`
 * Removed `localInView`
 
 ## v3.0.0-rc.151 (2021-03-04)

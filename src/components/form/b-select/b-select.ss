@@ -32,11 +32,11 @@
 					? itemAttrs[':aria-selected'] = 'isSelected(el.value)'
 
 				< ${tag} &
-					:-id = values.get(el.value) |
+					:-id = values.getIndex(el.value) |
 
 					:class = Array.concat([], el.classes, provide.elementClasses({
 						item: {
-							id: values.get(el.value),
+							id: values.getIndex(el.value),
 							selected: isSelected(el.value),
 							exterior: el.exterior,
 							...el.mods

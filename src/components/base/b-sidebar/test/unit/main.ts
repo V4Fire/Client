@@ -7,7 +7,7 @@
  */
 
 import test from 'tests/config/unit/test';
-import { DOM } from 'tests/helpers';
+import DOM from 'tests/helpers/dom';
 
 import { renderSidebar, getClassList, createSidebarSelector } from 'components/base/b-sidebar/test/helpers';
 
@@ -77,15 +77,16 @@ test.describe('<b-sidebar>', () => {
 		test('should close the sidebar by a click', async ({page}) => {
 			await page.evaluate(() => {
 				const styles = document.createElement('style');
+
 				styles.innerHTML = `
-						.b-sidebar__over-wrapper {
-							position: fixed;
-							left: 0;
-							top: 0;
-							height: 100%;
-							width: 100%;
-						}
-					`;
+					.b-sidebar__over-wrapper {
+						position: fixed;
+						left: 0;
+						top: 0;
+						height: 100%;
+						width: 100%;
+					}
+				`;
 
 				document.body.appendChild(styles);
 			});

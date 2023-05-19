@@ -952,7 +952,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	}
 
 	protected override initRemoteData(): CanUndef<CanPromise<unknown | Dictionary>> {
-		if (!this.db) {
+		if (this.db == null) {
 			return;
 		}
 

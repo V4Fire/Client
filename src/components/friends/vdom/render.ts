@@ -65,7 +65,7 @@ export function getRenderFactory(this: Friend, path: string): CanUndef<RenderFac
 	const
 		chunks = path.split('.');
 
-		if (path.endsWith('/')) {
+	if (path.endsWith('/')) {
 		const l = chunks.length - 1;
 		chunks[l] = chunks[l].slice(0, -1);
 		chunks.push('index');

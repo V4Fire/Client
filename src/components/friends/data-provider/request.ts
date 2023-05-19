@@ -239,17 +239,20 @@ export function createRequest<D = unknown>(
 
 		const then = () => {
 			if (is(opts.hideProgress)) {
-				void this.lfc.execCbAtTheRightTime(() => ctx.setMod('progress', false));
+				return ctx.setMod('progress', false);
 			}
 		};
 
-		req.then(then, (err) => {
-			try {
-				this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
-			} catch {}
+		req
+			.then(then, (err) => {
+				try {
+					this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
+				} catch {}
 
-			then();
-		});
+				return then();
+			})
+
+			.catch(stderr);
 	}
 
 	return req.then((res) => res.data).then((data) => data ?? undefined);

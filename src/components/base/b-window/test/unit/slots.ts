@@ -9,7 +9,7 @@
 import type { Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
-import { DOM } from 'tests/helpers';
+import DOM from 'tests/helpers/dom';
 
 import { renderWindow } from 'components/base/b-window/test/helpers';
 
@@ -94,12 +94,12 @@ test.describe('<b-window> slots', () => {
 	 * Returns `innerHTML` of the specified BEM element
 	 *
 	 * @param page
-	 * @param elementName
+	 * @param elName
 	 */
 	async function getElementInnerHTML(
 		page: Page,
-		elementName: string
+		elName: string
 	): Promise<string | undefined> {
-		return page.locator(DOM.elNameSelectorGenerator('b-window', elementName)).innerHTML();
+		return page.locator(DOM.elNameSelectorGenerator('b-window', elName)).innerHTML();
 	}
 });

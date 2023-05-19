@@ -7,10 +7,7 @@
  */
 
 import * as init from 'core/component/init';
-import type { ComponentInterface } from 'core/component/interface';
-
-const
-	componentInitLabel = Symbol('The component initialization label');
+import type { ComponentInterface, ComponentElement } from 'core/component/interface';
 
 /**
  * Initializes the default component dynamic lifecycle handlers for the passed functional component.
@@ -23,11 +20,13 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 	const
 		{unsafe} = component;
 
-	unsafe.$on('[[COMPONENT_HOOK]]', async (hook, node) => {
+	unsafe.$on('[[COMPONENT_HOOK]]', hookHandler);
+	return component;
+
+	function hookHandler(hook: string, node: ComponentElement<typeof unsafe>) {
 		switch (hook) {
 			case 'mounted':
-				unsafe.unsafe.$el = node;
-				init.mountedState(unsafe);
+				mount();
 				break;
 
 			case 'beforeUpdate':
@@ -35,16 +34,8 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 
 			case 'updated': {
 				inheritContext(unsafe, node.component);
-
-				await unsafe.$async.promise(unsafe.$nextTick(), {
-					label: componentInitLabel
-				});
-
 				init.createdState(unsafe);
-
-				unsafe.unsafe.$el = node;
-				init.mountedState(unsafe);
-
+				mount();
 				break;
 			}
 
@@ -56,9 +47,17 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 			default:
 				init[`${hook}State`](unsafe);
 		}
-	});
 
-	return component;
+		function mount() {
+			unsafe.$async.nextTick()
+				.then(() => {
+					unsafe.unsafe.$el = node;
+					init.mountedState(unsafe);
+				})
+
+				.catch(stderr);
+		}
+	}
 }
 
 /**

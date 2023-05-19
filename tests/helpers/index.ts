@@ -9,6 +9,7 @@
 import DOM from 'tests/helpers/dom';
 import BOM from 'tests/helpers/bom';
 import Utils from 'tests/helpers/utils';
+import Assert from 'tests/helpers/assert';
 import Component from 'tests/helpers/component';
 import Scroll from 'tests/helpers/scroll';
 import Router from 'tests/helpers/router';
@@ -19,6 +20,7 @@ export {
 	BOM,
 	DOM,
 	Utils,
+	Assert,
 	Component,
 	Scroll,
 	Router,

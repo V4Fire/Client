@@ -1,12 +1,10 @@
 # components/friends/vdom
 
-This module provides a class for low-level working with a component VDOM tree.
+This module provides a class for low-level interaction with a component's VDOM tree.
 
-## How to include this module to your component?
+## How to include this module in your component?
 
-By default, any component that inherited from [[iBlock]] has the `vdom` property.
-But to use module methods, attach them explicitly to enable tree-shake code optimizations.
-Just place the necessary import declaration within your component file.
+By default, any component that inherits from [[iBlock]] has the vdom property. However, to use the module methods, you need to attach them explicitly to enable tree-shake code optimizations. Simply add the necessary import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -23,10 +21,10 @@ export default class bExample extends iBlock {}
 
 ### closest
 
-Returns a link to the closest parent component from the current.
+Returns a link to the closest parent component from the current component.
 
 ```js
-// Returns a link to the closes `b-wrapper` component or undefined
+// Returns a link to the closest `b-wrapper` component or undefined
 console.log(this.vdom.closest('b-wrapper'));
 
 // By a constructor
@@ -35,8 +33,7 @@ console.log(this.vdom.closest('bWrapper'));
 
 ### findElement
 
-Searches a VNode element by the specified element name from another VNode and context.
-The function returns the found VNode or undefined.
+Searches for a VNode element by the specified element name from another VNode and context. The function returns the found VNode or undefined.
 
 ```js
 const vnode = this.vdom.create('div', {
@@ -53,7 +50,7 @@ console.log(this.vdom.findElement('elem', vnode));
 
 ### create
 
-Creates a VNode or a list of VNodes with the specified parameters.
+Creates a VNode or a list of VNodes with specified parameters.
 
 ```js
 const vnode = this.vdom.create('b-button', {
@@ -126,8 +123,8 @@ console.log(div[1].classList.contains('bar')); // true
 
 ### getRenderFactory
 
-Returns a render function factory by the specified path.
-This function is useful when you want to decompose your component template into separated render functions.
+Returns a render function factory based on the specified path.
+This function is useful when you want to decompose your component template into separate render functions.
 
 ```js
 // Returns the main render factory of bExample
@@ -140,7 +137,7 @@ this.vdom.getRenderFactory('bExample.subTemplate');
 ### getRenderFn
 
 Returns a render function using the specified factory or path.
-This function is useful when you want to decompose your component template into separated render functions.
+This function is useful when you want to decompose your component template into separate render functions.
 
 ```
 - namespace [%fileName%]

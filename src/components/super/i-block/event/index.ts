@@ -322,6 +322,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 			eventName = eventDecl.event;
 
 		this.$emit(eventName, this, ...args);
+		this.$emit(getComponentEventName(eventName), this, ...args);
 		this.$emit(getWrappedEventName(eventName), ...args);
 
 		if (this.dispatching) {
@@ -421,6 +422,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 		while (parent != null) {
 			if (parent.selfDispatching && parent.canSelfDispatchEvent(eventName)) {
 				parent.$emit(eventName, this, ...args);
+				parent.$emit(getComponentEventName(eventName), this, ...args);
 				parent.$emit(wrappedEventName, ...args);
 				logFromParent(parent, `event:${eventName}`);
 
@@ -575,6 +577,10 @@ function normalizeEvent(event: ComponentEvent | string): ComponentEvent {
 
 function getWrappedEventName(event: string): string {
 	return normalizeEventName(`on-${event}`);
+}
+
+function getComponentEventName(event: string): string {
+	return normalizeEventName(`${event}:component`);
 }
 
 function normalizeEventName(event: string): string {

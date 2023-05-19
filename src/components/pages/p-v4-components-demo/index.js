@@ -40,5 +40,7 @@ package('p-v4-components-demo')
 
 	.libs(
 		'components/directives/image',
-		'components/directives/icon'
+		'components/directives/icon',
+		'core/router/engines/browser-history',
+		'core/router/engines/in-memory'
 	);

@@ -24,5 +24,6 @@ export function beforeDestroyState(component: ComponentInterface): void {
 
 	unsafe.async.clearAll().locked = true;
 	unsafe.$async.clearAll().locked = true;
-	unsafe.$off();
+
+	delete unsafe.$el?.component;
 }

@@ -9,7 +9,7 @@
 import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
-import { DOM } from 'tests/helpers';
+import DOM from 'tests/helpers/dom';
 
 import type bWindow from 'components/base/b-window/b-window';
 import { renderWindow } from 'components/base/b-window/test/helpers';
@@ -140,7 +140,7 @@ test.describe('<b-window>', () => {
 	});
 
 	/**
-	 * Returns the class list of the root node bWindow
+	 * Returns the class list of the root node `bWindow`
 	 * @param target
 	 */
 	async function getClassList(target: JSHandle<bWindow>): Promise<string[] | undefined> {

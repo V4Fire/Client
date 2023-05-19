@@ -72,7 +72,7 @@ test.describe('<b-list> links', () => {
 	});
 
 	/**
-	 * Returns a JSHandle to the rendered b-list component
+	 * Returns the rendered `b-list` component
 	 *
 	 * @param page
 	 * @param attrs

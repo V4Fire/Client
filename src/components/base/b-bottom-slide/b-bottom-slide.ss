@@ -30,9 +30,9 @@
 			- block header
 				< header.&__header &
 					ref = header |
-					@touchstart = onPullStart($event, true) |
-					@touchmove = onPull |
-					@touchend = onPullEnd
+					@touchstart = swipeControl.onPullStart($event, true) |
+					@touchmove = swipeControl.onPull |
+					@touchend = swipeControl.onPullEnd
 				.
 					< .&__toggler-stripe
 						< .&__toggler
@@ -40,9 +40,9 @@
 			- block view
 				< .&__view &
 					ref = view |
-					@touchstart = onPullStart |
-					@touchmove = onPull |
-					@touchend = onPullEnd
+					@touchstart = swipeControl.onPullStart |
+					@touchmove = swipeControl.onPull |
+					@touchend = swipeControl.onPullEnd
 				.
 					- block content
 						< .&__content ref = content

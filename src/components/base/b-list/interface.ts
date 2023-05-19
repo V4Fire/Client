@@ -14,6 +14,11 @@ export type Items = Item[];
 
 export interface Item extends Super {
 	/**
+	 * Item label text
+	 */
+	label?: string;
+
+	/**
 	 * If this option is provided, the component will generate a link for this item
 	 */
 	href?: string;

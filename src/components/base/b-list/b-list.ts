@@ -15,7 +15,7 @@ import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
 
 import DOM, { delegateElement } from 'components/friends/dom';
-import Block, { element, elements } from 'components/friends/block';
+import Block, { element, elements, setElementMod } from 'components/friends/block';
 
 import iVisible from 'components/traits/i-visible/i-visible';
 import iWidth from 'components/traits/i-width/i-width';
@@ -35,7 +35,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-list/interface';
 
 DOM.addToPrototype({delegateElement});
-Block.addToPrototype({element, elements});
+Block.addToPrototype({element, elements, setElementMod});
 
 interface bList extends Trait<typeof iActiveItems> {}
 
@@ -161,6 +161,11 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 		});
 	}
 
+	/** @see [[iActiveItems.prototype.getItemByValue] */
+	getItemByValue(value: this['Item']['value']): CanUndef<this['Item']> {
+		return this.values.getItem(value);
+	}
+
 	/**
 	 * Activates the item(s) by the specified value(s).
 	 * If the component is switched to the `multiple` mode, the method can take an iterable to set multiple items.
@@ -188,13 +193,13 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 				Object.forEach(previousLinkEls, (previousLinkEl) => {
 					if (previousLinkEl !== linkEl) {
-						setActiveMod($b, previousLinkEl, false);
+						setActiveMod.call(this, previousLinkEl, false);
 					}
 				});
 			}
 
 			SyncPromise.resolve(this.activeElement).then((selectedElement) => {
-				Array.concat([], selectedElement).forEach((el) => setActiveMod($b, el, true));
+				Array.concat([], selectedElement).forEach((el) => setActiveMod.call(this, el, true));
 			}, stderr);
 		}
 
@@ -235,7 +240,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 						value === itemValue;
 
 					if (needChangeMod) {
-						setActiveMod($b, el, false);
+						setActiveMod.call(this, el, false);
 					}
 				});
 			}, stderr);
@@ -285,6 +290,12 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		this.values.init(itemsChanged);
+	}
+
+	/** @see [[iActiveItems.initActiveStoreListeners]] */
+	@hook('beforeDataCreate')
+	protected initActiveStoreListeners(): void {
+		iActiveItems.initActiveStoreListeners(this);
 	}
 
 	/**

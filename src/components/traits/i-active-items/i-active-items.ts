@@ -136,19 +136,6 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Checks if the passed element has an activity property.
-	 * If true, sets it as the component active value.
-	 *
-	 * @param ctx
-	 * @param item
-	 */
-	static initItem(ctx: TraitComponent, item: Item): void {
-		if (item.active && (ctx.multiple ? ctx.activeProp === undefined : (<Set<iActiveItems['Active']>>ctx.active).size === 0)) {
-			ctx.setActive(item.value);
-		}
-	}
-
-	/**
 	 * Returns the active item(s) of the passed component
 	 */
 	static getActive(ctx: TraitComponent): iActiveItems['Active'] {
@@ -160,6 +147,31 @@ export default abstract class iActiveItems extends iItems {
 		}
 
 		return v;
+	}
+
+	/**
+	 * Checks if the passed element has an activity property.
+	 * If true, sets it as the component active value.
+	 *
+	 * @param ctx
+	 * @param item
+	 */
+	static initItem(ctx: TraitComponent, item: Item): void {
+		if (item.active && (
+			ctx.multiple ? ctx.activeProp === undefined : Object.size(ctx.active) === 0
+		)) {
+			ctx.setActive(item.value);
+		}
+	}
+
+	/**
+	 * Initializes active store change listeners
+	 * @param ctx
+	 */
+	static initActiveStoreListeners(ctx: TraitComponent): void {
+		ctx.watch('activeStore', {deep: ctx.multiple}, (value) => {
+			ctx.emit(ctx.activeChangeEvent, value);
+		});
 	}
 
 	/** @see [[iActiveItems.isActive]] */
@@ -180,7 +192,11 @@ export default abstract class iActiveItems extends iItems {
 
 	/** @see [[iActiveItems.setActive]] */
 	static setActive(ctx: TraitComponent, value: iActiveItems['ActiveProp'], unsetPrevious?: boolean): boolean {
-		const
+		if (!this.isActivatable(ctx, value)) {
+			return false;
+		}
+
+		let
 			activeStore = ctx.field.get('activeStore');
 
 		if (ctx.multiple) {
@@ -189,18 +205,19 @@ export default abstract class iActiveItems extends iItems {
 			}
 
 			if (unsetPrevious) {
-				ctx.field.set('activeStore', new Set());
+				activeStore = new Set();
+				ctx.field.set('activeStore', activeStore);
 			}
 
 			let
 				res = false;
 
 			const set = (value) => {
-				if (activeStore.has(value)) {
+				if ((<Set<unknown>>activeStore).has(value)) {
 					return;
 				}
 
-				activeStore.add(value);
+				(<Set<unknown>>activeStore).add(value);
 				res = true;
 			};
 
@@ -222,8 +239,6 @@ export default abstract class iActiveItems extends iItems {
 		} else {
 			ctx.field.set('activeStore', value);
 		}
-
-		ctx.emit(ctx.activeChangeEvent, ctx.active);
 
 		return true;
 	}
@@ -269,13 +284,15 @@ export default abstract class iActiveItems extends iItems {
 			ctx.field.set('activeStore', undefined);
 		}
 
-		ctx.emit(ctx.activeChangeEvent, ctx.active);
-
 		return true;
 	}
 
 	/** @see [[iActiveItems.toggleActive]] */
 	static toggleActive(ctx: TraitComponent, value: iActiveItems['ActiveProp'], unsetPrevious?: boolean): iActiveItems['Active'] {
+		if (!this.isActivatable(ctx, value)) {
+			return false;
+		}
+
 		const
 			activeStore = ctx.field.get('activeStore');
 
@@ -293,11 +310,11 @@ export default abstract class iActiveItems extends iItems {
 				ctx.setActive(value);
 			};
 
-			if (Object.isIterable(value)) {
-				if (unsetPrevious) {
-					ctx.unsetActive(ctx.active);
-				}
+			if (unsetPrevious) {
+				ctx.unsetActive(ctx.active);
+			}
 
+			if (Object.isIterable(value)) {
 				Object.forEach(value, toggle);
 
 			} else {
@@ -314,8 +331,24 @@ export default abstract class iActiveItems extends iItems {
 		return ctx.active;
 	}
 
+	/** @see [[iActiveItems.getItemByValue]] */
+	static getItemByValue(ctx: TraitComponent, value: Item['value']): CanUndef<Item> {
+		return ctx.items?.find((item) => item.value === value);
+	}
+
 	/**
-	 * Returns true if the specified value is active
+	 * Checks if an item can possibly be active by its value
+	 *
+	 * @param ctx
+	 * @param value
+	 */
+	protected static isActivatable(ctx: TraitComponent, value: Item['value']): boolean {
+		const item = ctx.getItemByValue(value);
+		return item?.activatable !== false;
+	}
+
+	/**
+	 * Returns true if the item by the specified value is active
 	 * @param value
 	 */
 	isActive(value: Item['value']): boolean {
@@ -356,6 +389,14 @@ export default abstract class iActiveItems extends iItems {
 	 * @emits `change(active: unknown)`
 	 */
 	toggleActive(value: this['ActiveProp'], unsetPrevious?: boolean): iActiveItems['Active'] {
+		return Object.throw();
+	}
+
+	/**
+	 * Returns an item object by the specified value.
+	 * @param value
+	 */
+	getItemByValue(value: Item['value']): CanUndef<Item> {
 		return Object.throw();
 	}
 }
