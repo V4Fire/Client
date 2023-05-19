@@ -66,7 +66,7 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		const
+		let
 			[name, attrs, slots, patchFlag, dynamicProps] = args;
 
 		let
@@ -86,7 +86,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			return createVNode(name, attrs, slots, patchFlag, dynamicProps);
 		}
 
-		normalizeComponentAttrs(attrs, dynamicProps, component);
+		attrs = normalizeComponentAttrs(attrs, dynamicProps, component);
 
 		const
 			{componentName, params} = component,

@@ -61,11 +61,11 @@ ComponentEngine.directive('attrs', {
 		const props = vnode.props ?? {};
 		vnode.props ??= props;
 
-		const
+		let
 			attrs = {...params.value};
 
 		if (componentMeta != null) {
-			normalizeComponentAttrs(attrs, vnode.dynamicProps, componentMeta);
+			attrs = normalizeComponentAttrs(attrs, vnode.dynamicProps, componentMeta)!;
 		}
 
 		let
