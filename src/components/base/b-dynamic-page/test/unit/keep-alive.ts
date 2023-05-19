@@ -22,8 +22,8 @@ import {
 
 test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 	test.beforeEach(async ({demoPage}) => {
-    await demoPage.goto();
-  });
+		await demoPage.goto();
+	});
 
 	test('should switch pages and keep them alive', async ({page}) => {
 		const target = await renderDynamicPage(page, {
@@ -226,7 +226,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 			]);
 		});
 
-		test('should `include` components whose  names match the return value from the function-matcher', async ({page}) => {
+		test('should `include` components whose names match the return value from the function-matcher', async ({page}) => {
 			const target = await renderDynamicPage(page, {
 				keepAlive: true,
 				include: (page) => page

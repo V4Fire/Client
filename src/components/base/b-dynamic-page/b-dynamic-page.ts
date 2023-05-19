@@ -113,7 +113,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * A dictionary of `keepAlive` caches.
-	 * The keys represent cache groups  (the default is `global`).
+	 * The keys represent cache groups (the default is `global`).
 	 */
 	@system<bDynamicPage>((o) => o.sync.link('keepAliveSize', (size: number) => ({
 		...o.keepAliveCache,
