@@ -21,7 +21,7 @@
 		 * @param {string=} [tag] - tag to generate item
 		 */
 		- block items(tag = '_')
-			< template v-for = (el, i) in items | :key = getItemKey(el, i)
+			< template v-for = (el, i) in items
 				: itemAttrs = {}
 
 				- if tag === 'option'
@@ -32,6 +32,7 @@
 					? itemAttrs[':aria-selected'] = 'isSelected(el.value)'
 
 				< ${tag} &
+					:key = getItemKey(el, i) |
 					:-id = values.getIndex(el.value) |
 
 					:class = Array.concat([], el.classes, provide.elementClasses({

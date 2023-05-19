@@ -414,7 +414,7 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 	 * Synchronizes the slider state (deferred version)
 	 * @emits `syncState()`
 	 */
-	@watch(':DOMChange')
+	@watch('localEmitter:DOMChange')
 	@wait('ready', {label: $$.syncStateDefer})
 	protected async syncStateDefer(): Promise<void> {
 		const
