@@ -90,19 +90,19 @@
 
 		: cases = [ &
 			['simple array rendering', '[1, 2, 3, 4]'],
-			['array rendering with specifying a chunk size', '[1, 2, 3, 4], 3'],
-			['array rendering with specifying a start position and chunk size', '[1, 2, 3, 4], [1, 2]'],
+			['array rendering with the specified chunk size', '[1, 2, 3, 4], 3'],
+			['array rendering with the specified start position and chunk size', '[1, 2, 3, 4], [1, 2]'],
 			['simple object rendering', '{a: 1, b: 2}'],
-			['object rendering with specifying a start position', '{a: 1, b: 2}, [1]'],
+			['object rendering with the specified start position', '{a: 1, b: 2}, [1]'],
 			['simple string rendering', '"1😃à🇷🇺"'],
 			['simple iterable rendering', 'new Set([1, 2]).values()'],
-			['range rendering with specifying a filter', '4, {filter: (el) => el % 2 === 0}'],
+			['range rendering with the specified filter', '4, {filter: (el) => el % 2 === 0}'],
 			['range rendering with `useRAF`', '2, {useRaf: true}'],
 			['nullish rendering', 'null'],
-			['range rendering by click', '1', 'by click'],
-			['iterable with promises rendering by click', '[async.sleep(100).then(() => 1), async.sleep(50).then(() => 2)]', 'by click'],
-			['promise with iterable rendering by click', 'async.sleep(100).then(() => [1, 2])', 'by click'],
-			['promise with nullish rendering by click', 'async.sleep(100)', 'by click']
+			['range rendering by a click', '1', 'by click'],
+			['iterable with promises rendering by a click', '[async.sleep(100).then(() => 1), async.sleep(50).then(() => 2)]', 'by click'],
+			['promise with iterable rendering by a click', 'async.sleep(100).then(() => [1, 2])', 'by click'],
+			['promise with nullish rendering by a click', 'async.sleep(100)', 'by click']
 		] .
 
 		- forEach cases => el

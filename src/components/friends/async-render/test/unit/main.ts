@@ -15,6 +15,8 @@ import { BOM, Component, DOM } from 'tests/helpers';
 import type bFriendsAsyncRenderDummy from 'components/friends/async-render/test/b-friends-async-render-dummy/b-friends-async-render-dummy';
 import type { ComponentInterface } from 'components/friends/async-render/test/b-friends-async-render-dummy/b-friends-async-render-dummy';
 
+// Disclaimer:
+// To understand the tests refer to the `b-friends-async-render-dummy` component template
 test.describe('friends/async-render', () => {
 	const
 		componentName = 'b-friends-async-render-dummy',
@@ -24,12 +26,12 @@ test.describe('friends/async-render', () => {
 		await demoPage.goto();
 	});
 
-	test('nullish rendering', async ({page}) => {
+	test('should not render anything when `null` is provided to `asyncRender.iterate`', async ({page}) => {
 		await renderDummy(page, 'nullish rendering');
 		await test.expect(page.locator(createSelector('result')).innerHTML()).resolves.toEqual('');
 	});
 
-	// FIXME: broken tests
+	// FIXME: broken tests and descriptions
 	[
 		'infinite rendering',
 		'infinite rendering with providing a function'
@@ -46,12 +48,17 @@ test.describe('friends/async-render', () => {
 		});
 	});
 
-	test('deactivating/activating the parent component while rendering', async ({page}) => {
+	test([
+		'should not render an async target content when component is deactivated,',
+		'the async target content should be rendered only after component is activated'
+	].join(' '), async ({page}) => {
 		const target = await renderDummy(page, 'deactivating/activating the parent component while rendering');
 
 		await assertResultText(page, '');
 
 		await page.locator(createSelector('deactivate')).click();
+		// There is a 200ms delay for async render in the template
+		// so we wait until page becomes idle and after that nothing should be rendered
 		await BOM.waitForIdleCallback(page);
 		await assertResultText(page, '');
 
@@ -59,7 +66,7 @@ test.describe('friends/async-render', () => {
 		await assertResultText(page, 'Element: 0; Hook: activated; Element: 1; Hook: activated;');
 	});
 
-	test('updating the parent component state', async ({page}) => {
+	test('should re-render async target when the parent component is updated', async ({page}) => {
 		const target = await renderDummy(page, 'updating the parent component state');
 		await assertResultText(page, 'Element: 0; Hook: renderTracked;  Element: 1; Hook: renderTracked;');
 
@@ -78,7 +85,8 @@ test.describe('friends/async-render', () => {
 		]);
 	});
 
-	test('clearing by the specified group name', async ({page}) => {
+	// TODO: is a test description correct?
+	test('should clear content rendered via async render when `async.clearAll` is invoked', async ({page}) => {
 		const target = await renderDummy(page, 'clearing by the specified group name');
 		await assertResultText(page, 'Element: 0; Hook: renderTracked; Element: 1; Hook: mounted;');
 
@@ -89,7 +97,7 @@ test.describe('friends/async-render', () => {
 		await assertResultText(page, 'Element: 0; Hook: beforeUpdate;');
 	});
 
-	test('loading dynamic modules', async ({page}) => {
+	test('should load and render dynamic modules using the async render', async ({page}) => {
 		const target = await renderDummy(page, 'loading dynamic modules');
 
 		await waitForRender(target);
@@ -104,13 +112,13 @@ test.describe('friends/async-render', () => {
 		],
 
 		[
-			'array rendering with specifying a chunk size',
+			'array rendering with the specified chunk size',
 			'Element: 4',
 			'Element: 1; Hook: renderTracked; Element: 2; Hook: renderTracked; Element: 3; Hook: renderTracked; Element: 4; Hook: mounted;'
 		],
 
 		[
-			'array rendering with specifying a start position and chunk size',
+			'array rendering with the specified start position and chunk size',
 			'Element: 4',
 			'Element: 2; Hook: renderTracked; Element: 3; Hook: renderTracked; Element: 4; Hook: mounted;'
 		],
@@ -122,7 +130,7 @@ test.describe('friends/async-render', () => {
 		],
 
 		[
-			'object rendering with specifying a start position',
+			'object rendering with the specified start position',
 			'Element: b,',
 			'Element: b,2; Hook: renderTracked;'
 		],
@@ -140,7 +148,7 @@ test.describe('friends/async-render', () => {
 		],
 
 		[
-			'range rendering with specifying a filter',
+			'range rendering with the specified filter',
 			'Element: 2',
 			'Element: 0; Hook: renderTracked; Element: 2; Hook: mounted;'
 		],
@@ -151,7 +159,7 @@ test.describe('friends/async-render', () => {
 			'Element: 0; Hook: renderTracked; Element: 1; Hook: mounted;'
 		]
 	].forEach(([desc, last, expected]) => {
-		test(desc, async ({page}) => {
+		test(`${desc} should work`, async ({page}) => {
 			const target = await renderDummy(page, desc);
 
 			await target.evaluate(async (ctx, last) => {
@@ -167,14 +175,14 @@ test.describe('friends/async-render', () => {
 	});
 
 	[
-		// FIXME: broken test
-		['range rendering by click', 'Element: 0; Hook: mounted;'],
-		['iterable with promises rendering by click', 'Element: 1; Hook: mounted; Element: 2; Hook: mounted;'],
-		['promise with iterable rendering by click', 'Element: 1; Hook: mounted; Element: 2; Hook: mounted;'],
-		['promise with nullish rendering by click', '']
+		// FIXME: broken test #1
+		['range rendering by a click', 'Element: 0; Hook: mounted;'],
+		['iterable with promises rendering by a click', 'Element: 1; Hook: mounted; Element: 2; Hook: mounted;'],
+		['promise with iterable rendering by a click', 'Element: 1; Hook: mounted; Element: 2; Hook: mounted;'],
+		['promise with nullish rendering by a click', '']
 
 	].forEach(([desc, expected]) => {
-		test(desc, async ({page}) => {
+		test(`${desc} should work`, async ({page}) => {
 			const target = await renderDummy(page, desc);
 
 			await test.expect(page.locator(createSelector('result')).innerHTML()).resolves.toEqual('');
@@ -212,7 +220,7 @@ test.describe('friends/async-render', () => {
 	}
 
 	/**
-	 * Performs action if needed and waits for the async render to complete
+	 * Performs arbitrary action if needed and waits for the async render to complete
 	 *
 	 * @param target
 	 * @param [action]
