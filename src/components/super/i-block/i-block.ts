@@ -19,6 +19,10 @@ import type { UnsafeIBlock } from 'components/super/i-block/interface';
 
 import iBlockProviders from 'components/super/i-block/providers';
 
+//#if runtime has prelude/test-env
+import('components/super/i-block/test/b-super-i-block-dummy');
+//#endif
+
 export * from 'core/component';
 export * from 'components/super/i-block/const';
 export * from 'components/super/i-block/interface';
