@@ -122,6 +122,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 export interface PathOptions extends RegExpOptions, ParseOptions {
 	/**
 	 * Aliases for dynamic parameters in `path`.
+	 *
 	 * @see [[StaticRouteMeta.path]]
 	 *
 	 * In the example below you can specify either `bar` itself as a parameter or any of its aliases.

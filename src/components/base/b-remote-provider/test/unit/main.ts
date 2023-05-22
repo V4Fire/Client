@@ -30,11 +30,11 @@ test.describe('<b-remote-provider>', () => {
 		});
 
 		const
-			provider = await page.$(`#${id}`);
+			provider = page.locator(`#${id}`);
 
 		test.expect(provider).not.toBeNull();
 
-		const attrs = await provider!.evaluate((ctx) => [
+		const attrs = await provider.evaluate((ctx) => [
 			ctx.id,
 			ctx.dataset.val,
 			ctx.tagName

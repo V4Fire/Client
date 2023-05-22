@@ -25,10 +25,10 @@ test.describe('<b-input>', () => {
 		});
 
 		const
-			input = await page.$('#foo');
+			input = page.locator('#foo');
 
 		test.expect(
-			await input!.evaluate((ctx: HTMLInputElement) => [
+			await input.evaluate((ctx: HTMLInputElement) => [
 				ctx.tagName,
 				ctx.type,
 				ctx.name,

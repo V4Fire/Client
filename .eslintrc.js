@@ -41,4 +41,19 @@ base.overrides.at(-1).rules['@typescript-eslint/member-ordering'] = [
 	}
 ];
 
+const disabledRules = [
+	'jsdoc/require-property',
+	'jsdoc/require-property-name',
+	'jsdoc/require-property-type',
+	'jsdoc/require-property-description',
+	'jsdoc/require-jsdoc',
+	'jsdoc/require-param'
+];
+
+base.overrides.forEach((override) => {
+	disabledRules.forEach((rule) => {
+		override.rules[rule] = 'off';
+	});
+});
+
 module.exports = base;

@@ -189,6 +189,7 @@ export default class Transition {
 
 	/**
 	 * Performs the transition and emits required events
+	 *
 	 * @param newRoute
 	 * @param nonWatchRouteValues
 	 */
