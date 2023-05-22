@@ -214,7 +214,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 	}
 
 	/**
-	 * {@link iOpenToggle.open}
+	 * {@link iOpenToggle.prototype.open}
 	 * @param [stage] - component stage to open
 	 */
 	async open(stage?: Stage): Promise<boolean> {
@@ -232,7 +232,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		return false;
 	}
 
-	/** {@link iOpenToggle.close} */
+	/** {@link iOpenToggle.prototype.close} */
 	async close(): Promise<boolean> {
 		if (await iOpenToggle.close(this)) {
 			this.setRootMod('opened', false);
@@ -243,18 +243,18 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		return false;
 	}
 
-	/** {@link iLockPageScroll.lock} */
+	/** {@link iLockPageScroll.prototype.lockPageScroll} */
 	@wait('loading', {label: $$.lock})
 	lockPageScroll(): Promise<void> {
 		return iLockPageScroll.lockPageScroll(this, this.$refs.window);
 	}
 
-	/** {@link iOpenToggle.onOpenedChange} */
+	/** {@link iOpenToggle.prototype.onOpenedChange} */
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');
 	}
 
-	/** {@link iOpenToggle.onTouchClose} */
+	/** {@link iOpenToggle.prototype.onTouchClose} */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
 			target = <CanUndef<Element>>e.target;

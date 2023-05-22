@@ -277,7 +277,7 @@ export default abstract class SelectEventHandlers {
 		void component.close();
 	}
 
-	/** {@link iOpenToggle.onOpenedChange} */
+	/** {@link iOpenToggle.prototype.onOpenedChange} */
 	onOpenedChange(_e: ModEvent | SetModEvent): Promise<void> {
 		return Object.throw();
 	}

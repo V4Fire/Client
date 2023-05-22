@@ -245,14 +245,14 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		this.isViewportTopReached = state;
 	}
 
-	/** {@link iLockPageScroll.lockPageScroll} */
+	/** {@link iLockPageScroll.prototype.lockPageScroll} */
 	@wait('ready', {label: $$.lock})
 	lockPageScroll(): Promise<void> {
 		return iLockPageScroll.lockPageScroll(this, this.$refs.view);
 	}
 
 	/**
-	 * {@link iOpen.open}
+	 * {@link iOpen.prototype.open}
 	 *
 	 * @param [step]
 	 * @emits `open()`
@@ -281,7 +281,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * {@link iOpen.close}
+	 * {@link iOpen.prototype.close}
 	 * @emits `close()`
 	 */
 	async close(): Promise<boolean> {
@@ -341,17 +341,17 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		return true;
 	}
 
-	/** {@link iOpen.onKeyClose} */
+	/** {@link iOpen.prototype.onKeyClose} */
 	async onKeyClose(): Promise<void> {
 		// Loopback
 	}
 
-	/** {@link iOpen.onTouchClose} */
+	/** {@link iOpen.prototype.onTouchClose} */
 	async onTouchClose(): Promise<void> {
 		// Loopback
 	}
 
-	/** {@link iObserveDOM.initObservers} */
+	/** {@link iObserveDOM.observe} */
 	@watch('heightMode')
 	@hook('mounted')
 	@wait('ready')

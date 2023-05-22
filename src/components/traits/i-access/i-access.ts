@@ -57,19 +57,19 @@ export default abstract class iAccess {
 		]
 	};
 
-	/** {@link iAccess.disable} */
+	/** {@link iAccess.prototype.disable} */
 	static disable: AddSelf<iAccess['disable'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('disabled', true));
 
-	/** {@link iAccess.enable} */
+	/** {@link iAccess.prototype.enable} */
 	static enable: AddSelf<iAccess['enable'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('disabled', false));
 
-	/** {@link iAccess.focus} */
+	/** {@link iAccess.prototype.focus} */
 	static focus: AddSelf<iAccess['focus'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('focused', true));
 
-	/** {@link iAccess.blur} */
+	/** {@link iAccess.prototype.blur} */
 	static blur: AddSelf<iAccess['blur'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('focused', false));
 

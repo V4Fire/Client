@@ -67,7 +67,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 	/**
 	 * {@link iActiveItems.activeStore}
-	 * {@link iActiveItems.syncActiveStore}
+	 * {@link iActiveItems.linkActiveStore}
 	 */
 	@system<bTree>((o) => {
 		o.watch('modelValue', (val) => o.setActive(val, true));
@@ -222,7 +222,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return this.values.getItem(value);
 	}
 
-	/** {@link iActiveItems.setActive} */
+	/** {@link iActiveItems.prototype.setActive} */
 	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		const
 			{top} = this;
@@ -250,7 +250,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return true;
 	}
 
-	/** {@link iActiveItems.unsetActive} */
+	/** {@link iActiveItems.prototype.unsetActive} */
 	unsetActive(value: this['ActiveProp']): boolean {
 		const {top} = this;
 
@@ -267,7 +267,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return true;
 	}
 
-	/** {@link iActiveItems.toggleActive} */
+	/** {@link iActiveItems.prototype.toggleActive} */
 	toggleActive(value: this['ActiveProp'], unsetPrevious?: boolean): this['Active'] {
 		return iActiveItems.toggleActive(this.top, value, unsetPrevious);
 	}

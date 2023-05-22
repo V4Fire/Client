@@ -109,7 +109,7 @@ export default abstract class iObserveDOM {
 		return res;
 	}
 
-	/** {@link iObserveDOM.onDOMChange} */
+	/** {@link iObserveDOM.prototype.onDOMChange} */
 	static onDOMChange: AddSelf<iObserveDOM['onDOMChange'], iBlock & iObserveDOM> = (
 		component,
 		records,

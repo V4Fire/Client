@@ -57,7 +57,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 		]
 	};
 
-	/** {@link iOpenToggle.onTouchClose} */
+	/** {@link iOpenToggle.prototype.onTouchClose} */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
 			target = <CanUndef<Element>>e.target;

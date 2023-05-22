@@ -12,7 +12,7 @@ import type { Control, ControlEvent } from 'components/traits/i-control-list/int
 export * from 'components/traits/i-control-list/interface';
 
 export default abstract class iControlList {
-	/** {@link iControlList.callControlAction} */
+	/** {@link iControlList.prototype.callControlAction} */
 	static callControlAction: AddSelf<iControlList['callControlAction'], iBlock> = (component, opts = {}, ...args) => {
 		const
 			{action, analytics} = opts;

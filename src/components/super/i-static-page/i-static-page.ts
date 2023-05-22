@@ -167,7 +167,7 @@ export default abstract class iStaticPage extends iPage {
 	@system()
 	protected routerStore?: this['Router'];
 
-	/** {@link iStaticPage.locale } */
+	/** {@link iStaticPage.locale} */
 	@field(() => {
 		const
 			lang = locale.value;
