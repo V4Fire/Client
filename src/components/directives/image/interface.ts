@@ -1,5 +1,3 @@
-/* eslint-disable @v4fire/newline-after-description */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable @v4fire/newline-after-description */
 
 import type { createVNode, VNode, DirectiveBinding } from 'core/component/engines';
 

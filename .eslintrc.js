@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,7 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const base = require('@v4fire/linters/.eslintrc');
+
+const copyrightTemplate = [
+	'!',
+	' * V4Fire Client Core',
+	' * https://github.com/V4Fire/Client',
+	' *',
+	' * Released under the MIT license',
+	' * https://github.com/V4Fire/Client/blob/master/LICENSE',
+	' '
+];
+
+base.rules['header/header'] = [2, 'block', copyrightTemplate];
 
 base.overrides.at(-1).rules['@typescript-eslint/member-ordering'] = [
 	'error', {
@@ -45,9 +57,7 @@ const disabledRules = [
 	'jsdoc/require-property',
 	'jsdoc/require-property-name',
 	'jsdoc/require-property-type',
-	'jsdoc/require-property-description',
-	'jsdoc/require-jsdoc',
-	'jsdoc/require-param'
+	'jsdoc/require-property-description'
 ];
 
 base.overrides.forEach((override) => {
