@@ -91,6 +91,7 @@ test.describe('<b-select> standard component events', () => {
 
 				for (const val of ['F', 'Ba', 'Br']) {
 					await page.locator(createSelector('input')).fill(val);
+					// eslint-disable-next-line
 					await page.waitForTimeout(200);
 				}
 
@@ -277,6 +278,7 @@ test.describe('<b-select> standard component events', () => {
 
 				for (const val of ['F', 'Ba', 'Br']) {
 					await page.locator(createSelector('input')).fill(val);
+					// eslint-disable-next-line
 					await page.waitForTimeout(200);
 				}
 
@@ -391,6 +393,7 @@ test.describe('<b-select> standard component events', () => {
 
 				for (const label of labels) {
 					await select.selectOption({label});
+					// eslint-disable-next-line
 					await page.waitForTimeout(50);
 				}
 

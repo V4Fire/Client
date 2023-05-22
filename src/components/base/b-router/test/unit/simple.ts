@@ -167,150 +167,152 @@ function generateSpecs(engineName: EngineName) {
 
 	let root: JSHandle<iStaticPage>;
 
-	test.beforeEach(async ({page}) => {
-		root = await initRouter(page);
-	});
+	test.describe('spec', () => {
+		test.beforeEach(async ({page}) => {
+			root = await initRouter(page);
+		});
 
-	test('the `route` property should be set on the root component', async () => {
-		await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
-	});
+		test('the `route` property should be set on the root component', async () => {
+			await test.expect(root.evaluate(({route}) => route != null)).resolves.toBeTruthy();
+		});
 
-	test('root component should have the `root` property in the meta params', async () => {
-		test.expect(await root.evaluate((ctx) => ctx.unsafe.meta.params.root)).toBe(true);
-	});
+		test('root component should have the `root` property in the meta params', async () => {
+			test.expect(await root.evaluate((ctx) => ctx.unsafe.meta.params.root)).toBe(true);
+		});
 
-	test('root\'s component `router` should be a `b-router`', async () => {
-		test.expect(await root.evaluate(({router}) => router?.componentName)).toBe('b-router');
-	});
+		test('root\'s component `router` should be a `b-router`', async () => {
+			test.expect(await root.evaluate(({router}) => router?.componentName)).toBe('b-router');
+		});
 
-	test.describe('`push`', () => {
-		test('should switch page using a route identifier', async () => {
+		test.describe('`push`', () => {
+			test('should switch page using a route identifier', async () => {
+				await test.expect(root.evaluate(async (ctx) => {
+					await ctx.router!.push('second');
+					return ctx.route!.meta.content;
+				})).resolves.toBe('Second page');
+			});
+
+			test('should switch page using a path', async () => {
+				await test.expect(root.evaluate(async (ctx) => {
+					await ctx.router!.push('/');
+					return ctx.route!.meta.content;
+				})).resolves.toBe('Main page');
+			});
+		});
+
+		test('`activePage` property should return identifier of the active route', async () => {
 			await test.expect(root.evaluate(async (ctx) => {
 				await ctx.router!.push('second');
-				return ctx.route!.meta.content;
-			})).resolves.toBe('Second page');
+				return ctx.activePage;
+			})).resolves.toBe('second');
+
+			await test.expect(root.evaluate(async (ctx) => {
+				await ctx.router!.push('main');
+				return ctx.activePage;
+			})).resolves.toBe('main');
 		});
 
-		test('should switch page using a path', async () => {
-			await test.expect(root.evaluate(async (ctx) => {
-				await ctx.router!.push('/');
-				return ctx.route!.meta.content;
-			})).resolves.toBe('Main page');
-		});
-	});
+		test.describe('`updateRoutes`', () => {
+			test('should switch page to a new default route', async () => {
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						{router} = ctx;
 
-	test('`activePage` property should return identifier of the active route', async () => {
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('second');
-			return ctx.activePage;
-		})).resolves.toBe('second');
+					const
+						res: Dictionary = {},
+						oldRoutes = ctx.router!.routes;
 
-		await test.expect(root.evaluate(async (ctx) => {
-			await ctx.router!.push('main');
-			return ctx.activePage;
-		})).resolves.toBe('main');
-	});
+					await router!.updateRoutes({
+						main: {
+							path: '/',
+							default: true,
+							content: 'Dynamic main page'
+						}
+					});
 
-	test.describe('`updateRoutes`', () => {
-		test('should switch page to a new default route', async () => {
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					{router} = ctx;
+					res.dynamicPage = ctx.route!.meta.content;
 
-				const
-					res: Dictionary = {},
-					oldRoutes = ctx.router!.routes;
+					router!.routes = oldRoutes;
+					router!.unsafe.routeStore = undefined;
 
-				await router!.updateRoutes({
-					main: {
-						path: '/',
-						default: true,
-						content: 'Dynamic main page'
-					}
+					await router!.unsafe.initRoute('main');
+					res.restoredPage = ctx.route!.meta.content;
+
+					return res;
+
+				})).resolves.toEqual({
+					dynamicPage: 'Dynamic main page',
+					restoredPage: 'Main page'
 				});
+			});
 
-				res.dynamicPage = ctx.route!.meta.content;
+			test('should update `basePath` and switch page to the specified `activeRoute`', async () => {
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						{router} = ctx;
 
-				router!.routes = oldRoutes;
-				router!.unsafe.routeStore = undefined;
+					const
+						res: Dictionary = {},
+						oldRoutes = ctx.router!.routes;
 
-				await router!.unsafe.initRoute('main');
-				res.restoredPage = ctx.route!.meta.content;
+					await router!.updateRoutes('/demo', '/demo/second', {
+						main: {
+							path: '/',
+							default: true,
+							content: 'Dynamic main page'
+						},
 
-				return res;
+						second: {
+							path: '/second',
+							default: true,
+							content: 'Dynamic second page'
+						}
+					});
 
-			})).resolves.toEqual({
-				dynamicPage: 'Dynamic main page',
-				restoredPage: 'Main page'
+					res.dynamicPage = ctx.route!.meta.content;
+
+					router!.basePath = '/';
+					router!.routes = oldRoutes;
+					router!.unsafe.routeStore = undefined;
+
+					await router!.unsafe.initRoute('/');
+					res.restoredPage = ctx.route!.meta.content;
+
+					return res;
+
+				})).resolves.toEqual({
+					dynamicPage: 'Dynamic second page',
+					restoredPage: 'Main page'
+				});
 			});
 		});
 
-		test('should update `basePath` and switch page to the specified `activeRoute`', async () => {
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					{router} = ctx;
+		test('`getRoutePath` should return URL of the route with the specified `query`', async () => {
+			test.expect(await root.evaluate(({router}) => router!.getRoutePath('second', {query: {bla: 1}})))
+				.toBe('/second-page?bla=1');
 
-				const
-					res: Dictionary = {},
-					oldRoutes = ctx.router!.routes;
-
-				await router!.updateRoutes('/demo', '/demo/second', {
-					main: {
-						path: '/',
-						default: true,
-						content: 'Dynamic main page'
-					},
-
-					second: {
-						path: '/second',
-						default: true,
-						content: 'Dynamic second page'
-					}
-				});
-
-				res.dynamicPage = ctx.route!.meta.content;
-
-				router!.basePath = '/';
-				router!.routes = oldRoutes;
-				router!.unsafe.routeStore = undefined;
-
-				await router!.unsafe.initRoute('/');
-				res.restoredPage = ctx.route!.meta.content;
-
-				return res;
-
-			})).resolves.toEqual({
-				dynamicPage: 'Dynamic second page',
-				restoredPage: 'Main page'
-			});
+			test.expect(await root.evaluate(({router}) => router!.getRoutePath('/', {query: {bla: 1}})))
+				.toBe('/?bla=1');
 		});
-	});
 
-	test('`getRoutePath` should return URL of the route with the specified `query`', async () => {
-		test.expect(await root.evaluate(({router}) => router!.getRoutePath('second', {query: {bla: 1}})))
-			.toBe('/second-page?bla=1');
+		test('`getRoute` should return route descriptor using a route identifier or path', async () => {
+			const pageMeta = {
+				name: 'main',
+				path: '/',
+				default: false,
+				external: false,
+				content: 'Main page'
+			};
 
-		test.expect(await root.evaluate(({router}) => router!.getRoutePath('/', {query: {bla: 1}})))
-			.toBe('/?bla=1');
-	});
+			await test.expect(root.evaluate(({router}) => {
+				const route = router!.getRoute('main');
+				return route!.meta;
+			})).resolves.toEqual(pageMeta);
 
-	test('`getRoute` should return route descriptor using a route identifier or path', async () => {
-		const pageMeta = {
-			name: 'main',
-			path: '/',
-			default: false,
-			external: false,
-			content: 'Main page'
-		};
-
-		await test.expect(root.evaluate(({router}) => {
-			const route = router!.getRoute('main');
-			return route!.meta;
-		})).resolves.toEqual(pageMeta);
-
-		await test.expect(root.evaluate(({router}) => {
-			const route = router!.getRoute('/');
-			return route!.meta;
-		})).resolves.toEqual(pageMeta);
+			await test.expect(root.evaluate(({router}) => {
+				const route = router!.getRoute('/');
+				return route!.meta;
+			})).resolves.toEqual(pageMeta);
+		});
 	});
 }

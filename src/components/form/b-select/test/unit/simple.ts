@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ElementHandle } from 'playwright';
-
 import test from 'tests/config/unit/test';
 
 import { assertValueIs, createSelector, renderSelect } from 'components/form/b-select/test/helpers';
@@ -65,8 +63,8 @@ test.describe('<b-select> simple usage', () => {
 			value: 'baz'
 		});
 
-		const input = <ElementHandle<HTMLInputElement>>(await page.$('#foo'));
-		const mainAttributes = input.evaluate((ctx) => [
+		const input = page.locator('#foo');
+		const mainAttributes = input.evaluate((ctx: HTMLInputElement) => [
 			ctx.tagName,
 			ctx.type,
 			ctx.name,
