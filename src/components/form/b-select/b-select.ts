@@ -64,7 +64,12 @@ Mask.addToPrototype(MaskAPI);
 
 interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof SelectEventHandlers> {}
 
-@component()
+@component({
+	functional: {
+		dataProvider: undefined
+	}
+})
+
 @derive(SelectEventHandlers, iOpenToggle, iActiveItems)
 class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
