@@ -60,7 +60,10 @@ export default abstract class iOpen {
 			return;
 		}
 
-		if (!target.closest(`.${component.componentId}`)) {
+		const
+			{unsafe} = component;
+
+		if (unsafe.dom.getComponent(target, `.${component.componentName}`) == null) {
 			await component.close();
 		}
 	};
@@ -101,6 +104,8 @@ export default abstract class iOpen {
 					}, opts);
 
 					$a.on(document, events.touch ?? 'click touchend', (e) => {
+
+
 						if (e != null) {
 							return component.onTouchClose(e);
 						}
@@ -108,7 +113,8 @@ export default abstract class iOpen {
 					}, opts);
 
 				} catch {}
-			}, 0, helpersGroup);
+
+			}, 50, helpersGroup);
 		};
 
 		$e.on('block.mod.set.opened.true', onOpened, modsGroup);
