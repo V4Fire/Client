@@ -1,5 +1,3 @@
-/* eslint-disable jsdoc/check-line-alignment */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable jsdoc/check-line-alignment */
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import type { UnsafeComponentInterface } from 'core/component/interface';

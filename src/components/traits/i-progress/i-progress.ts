@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-extraneous-class */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable @typescript-eslint/no-extraneous-class */
 
 /**
  * [[include:components/traits/i-progress/README.md]]

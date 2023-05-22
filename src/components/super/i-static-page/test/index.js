@@ -1,7 +1,3 @@
-/* eslint-disable require-atomic-updates */
-
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,6 +5,9 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable require-atomic-updates */
+// @ts-check
 
 /**
  * @typedef {import('playwright').Page} Page

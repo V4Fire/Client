@@ -3770,7 +3770,7 @@ __metadata:
 
 "@v4fire/linters@git+https://github.com/v4fire/linters#rework_rules":
   version: 2.4.0
-  resolution: "@v4fire/linters@https://github.com/v4fire/linters.git#commit=ec5446efd99fcf7c6b2f8a6baf3a56bfd2ba1a71"
+  resolution: "@v4fire/linters@https://github.com/v4fire/linters.git#commit=0fd0f0a86335d279e28c47332706ea42d15c2787"
   dependencies:
     "@babel/helper-validator-identifier": 7.18.6
     "@eslint/eslintrc": 1.3.0
@@ -3783,6 +3783,7 @@ __metadata:
     eslint: 8.38.0
     eslint-import-resolver-typescript: 3.5.5
     eslint-plugin-deprecation: 1.4.1
+    eslint-plugin-header: 3.1.1
     eslint-plugin-import: 2.27.5
     eslint-plugin-jsdoc: 40.1.2
     eslint-plugin-optimize-regex: 1.2.1
@@ -3793,7 +3794,7 @@ __metadata:
     jest: ^29.5.0
     jest-runner-eslint: ^2.0.0
     typescript: ^4.4.4
-  checksum: 08bb9f2e0fcdac8647c0c9c681896b27230f8e7674851fbffdd1135a7880112fc395505caf3d6a8ccf5e9a02a08595c389c9fa5eb2522b38eac97d089b6911e2
+  checksum: b89211b397bfe44f89f29843fd1ecc913f59ea3353afdae212a296b808126497494a9437796c1756057c0774c7f5756b8573bea5b27101a1fb795ceba082e518
   languageName: node
   linkType: hard
 
@@ -8511,6 +8512,15 @@ __metadata:
     eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
     typescript: ^3.7.5 || ^4.0.0 || ^5.0.0
   checksum: 75c7535d820d1749664705724cc979d706da126a2277f2937467f70156a2c220b10c66670f18226801c9555e4cd02312d353936f14d5752c2d2c648455fe5769
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-header@npm:3.1.1":
+  version: 3.1.1
+  resolution: "eslint-plugin-header@npm:3.1.1"
+  peerDependencies:
+    eslint: ">=7.7.0"
+  checksum: 2353e4ba011be81d5c27fbd79929e18dce118d7673a2f717b1ac5a0bceb33e06ec9a7c80a01dddc5804df75e2cc8eb475d268cd1abef5eab5088ede62e5ad246
   languageName: node
   linkType: hard
 
