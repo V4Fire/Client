@@ -57,12 +57,12 @@ export async function renderDynamicPage(
 		}
 	});
 
-	return Component.createComponent(page, 'b-dynamic-page', {
+	return Object.cast(Component.createComponent(page, 'b-dynamic-page', {
 		attrs: {
 			id: 'target',
 			...attrs
 		}
-	});
+	}));
 }
 
 /**
