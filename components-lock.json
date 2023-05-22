@@ -1,5 +1,5 @@
 {
-  "hash": "0fdc9debd402e010b7f72acab6adb25ea6d2a18c62b6be572e01b79f53a320b0",
+  "hash": "e9bb412d78e7a2c3f9569e3062c10bc86e920e37c8fcb2fff16f1fb1d29d5f6f",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -432,6 +432,102 @@
             "src/components/friends/block/test/b-friends-block-dummy/b-friends-block-dummy.styl"
           ],
           "tpl": "src/components/friends/block/test/b-friends-block-dummy/b-friends-block-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-daemons-dummy",
+        {
+          "index": "src/components/friends/daemons/test/b-friends-daemons-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-daemons-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-daemons-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/daemons/test/b-friends-daemons-dummy/b-friends-daemons-dummy.ts",
+          "styles": [
+            "src/components/friends/daemons/test/b-friends-daemons-dummy/b-friends-daemons-dummy.styl"
+          ],
+          "tpl": "src/components/friends/daemons/test/b-friends-daemons-dummy/b-friends-daemons-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-dom-dummy",
+        {
+          "index": "src/components/friends/dom/test/b-friends-dom-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-dom-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-dom-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/dom/test/b-friends-dom-dummy/b-friends-dom-dummy.ts",
+          "styles": [
+            "src/components/friends/dom/test/b-friends-dom-dummy/b-friends-dom-dummy.styl"
+          ],
+          "tpl": "src/components/friends/dom/test/b-friends-dom-dummy/b-friends-dom-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-field-dummy",
+        {
+          "index": "src/components/friends/field/test/b-friends-field-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-field-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-field-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/field/test/b-friends-field-dummy/b-friends-field-dummy.ts",
+          "styles": [
+            "src/components/friends/field/test/b-friends-field-dummy/b-friends-field-dummy.styl"
+          ],
+          "tpl": "src/components/friends/field/test/b-friends-field-dummy/b-friends-field-dummy.ss",
           "etpl": null
         }
       ],
@@ -2004,21 +2100,22 @@
               "b-dynamic-page",
               "b-remote-provider",
               "b-list",
-              "b-virtual-scroll",
               "b-tree",
+              "b-virtual-scroll",
               "b-window",
               "b-bottom-slide",
-              "b-sidebar",
               "b-slider",
+              "b-sidebar",
               "b-form",
               "b-button",
               "b-icon-button",
               "b-checkbox",
               "b-radio-button",
-              "b-hidden-input",
               "b-input",
+              "b-hidden-input",
               "b-textarea",
               "b-select",
+              "b-select-date",
               "p-v4-dynamic-page1",
               "p-v4-dynamic-page2",
               "p-v4-dynamic-page3"
@@ -2038,21 +2135,22 @@
             "b-dynamic-page",
             "b-remote-provider",
             "b-list",
-            "b-virtual-scroll",
             "b-tree",
+            "b-virtual-scroll",
             "b-window",
             "b-bottom-slide",
-            "b-sidebar",
             "b-slider",
+            "b-sidebar",
             "b-form",
             "b-button",
             "b-icon-button",
             "b-checkbox",
             "b-radio-button",
-            "b-hidden-input",
             "b-input",
+            "b-hidden-input",
             "b-textarea",
             "b-select",
+            "b-select-date",
             "p-v4-dynamic-page1",
             "p-v4-dynamic-page2",
             "p-v4-dynamic-page3"
