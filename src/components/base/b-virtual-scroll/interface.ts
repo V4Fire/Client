@@ -7,9 +7,7 @@
  */
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
-
 import type { UnsafeIData } from 'components/super/i-data/i-data';
-import type { ComponentVNodeData } from 'core/component/vnode';
 
 export interface RequestQueryFn<T extends object = object> {
 	(params: DataState<T>): Dictionary<Dictionary>;
@@ -149,9 +147,7 @@ export interface RenderItem<T extends object = object> {
 /**
  * Attributes of items to render
  */
-export type ItemAttrs = {
-	[prop in keyof ComponentVNodeData]?: ComponentVNodeData[prop];
-} & Dictionary;
+export type ItemAttrs = Dictionary;
 
 /**
  * Last loaded data chunk
