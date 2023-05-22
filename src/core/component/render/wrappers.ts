@@ -274,21 +274,8 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		vnode: VNode,
 		dirs: DirectiveArguments
 	) {
-		if (this == null) {
-			Object.defineProperty(vnode, 'virtualComponent', {
-				configurable: true,
-				enumerable: true,
-				get: () => vnode.el?.component
-			});
-
-		} else if (!('virtualContext' in vnode)) {
-			Object.defineProperty(vnode, 'virtualContext', {
-				configurable: true,
-				enumerable: true,
-				writable: true,
-				value: this
-			});
-		}
+		const that = this;
+		patchVnode(vnode);
 
 		const bindings = vnode.dirs ?? [];
 		vnode.dirs = bindings;
@@ -304,6 +291,9 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			const binding: DirectiveBinding = {
 				dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,
 				instance: Object.cast(instance),
+
+				virtualContext: vnode.virtualContext,
+				virtualComponent: vnode.virtualComponent,
 
 				value,
 				oldValue: undefined,
@@ -322,6 +312,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 
 					if (newVnode != null) {
 						vnode = newVnode;
+						patchVnode(vnode);
 					}
 
 					if (Object.keys(dir).length > 1 && cantIgnoreDir) {
@@ -338,5 +329,23 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		});
 
 		return vnode;
+
+		function patchVnode(vnode: VNode) {
+			if (that == null) {
+				Object.defineProperty(vnode, 'virtualComponent', {
+					configurable: true,
+					enumerable: true,
+					get: () => vnode.el?.component
+				});
+
+			} else if (!('virtualContext' in vnode)) {
+				Object.defineProperty(vnode, 'virtualContext', {
+					configurable: true,
+					enumerable: true,
+					writable: true,
+					value: that
+				});
+			}
+		}
 	});
 }
