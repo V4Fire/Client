@@ -104,8 +104,6 @@ export default abstract class iOpen {
 					}, opts);
 
 					$a.on(document, events.touch ?? 'click touchend', (e) => {
-
-
 						if (e != null) {
 							return component.onTouchClose(e);
 						}
@@ -114,7 +112,7 @@ export default abstract class iOpen {
 
 				} catch {}
 
-			}, 50, helpersGroup);
+			}, 0, helpersGroup);
 		};
 
 		$e.on('block.mod.set.opened.true', onOpened, modsGroup);
