@@ -21,8 +21,8 @@ const
  * Starts a test
  *
  * @param {Page} page
- * @param {!Object} params
- * @returns {!Promise<void>}
+ * @param {object} params
+ * @returns {Promise<void>}
  */
 module.exports = async (page, params) => {
 	await h.utils.setup(page, params.context);

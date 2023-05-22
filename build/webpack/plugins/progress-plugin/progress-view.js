@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 'use strict';
 
 /*!
@@ -24,7 +22,7 @@ module.exports = class ProgressView {
 	 * Returns a progress handler for the specified build process by a name
 	 *
 	 * @param {string} processName
-	 * @returns {!Function}
+	 * @returns {Function}
 	 */
 	getProgressHandler(processName) {
 		this.handlers[processName] = true;

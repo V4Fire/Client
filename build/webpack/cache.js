@@ -16,7 +16,7 @@ const
  * Returns parameters for `webpack.cache`
  *
  * @param {(number|string)} buildId
- * @returns {(!Object|boolean)}
+ * @returns {(object|boolean)}
  */
 module.exports = function cache({buildId}) {
 	switch (webpack.cacheType()) {

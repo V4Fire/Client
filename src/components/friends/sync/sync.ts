@@ -13,7 +13,7 @@ import type { LinkDecl } from 'components/friends/sync/interface';
  * Synchronizes component reference values with the values they are linked with
  *
  * @param [path] - a path to the property/event we are referring to, or
- *   [a path to the property containing the reference, a path to the property/event we are referring to]
+ * [a path to the property containing the reference, a path to the property/event we are referring to]
  *
  * @param [value] - the value to synchronize links
  *

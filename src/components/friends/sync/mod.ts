@@ -89,7 +89,7 @@ export function mod<D = unknown, R = unknown>(
 	let
 		opts;
 
-		if (Object.isFunction(optsOrConverter)) {
+	if (Object.isFunction(optsOrConverter)) {
 		converter = optsOrConverter;
 
 	} else {

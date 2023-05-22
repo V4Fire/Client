@@ -213,10 +213,9 @@ export default abstract class iDataHandlers extends iDataData {
 
 	/**
 	 * Handler: need to reload data from the provider
-	 * @param data
+	 * @param _data
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected onRefreshData(data: this['DB']): Promise<void> {
+	protected onRefreshData(_data: this['DB']): Promise<void> {
 		return this.reload();
 	}
 }

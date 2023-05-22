@@ -91,7 +91,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bButton extends iBlock implements iOpen {
-  /** @see [[iOpen.open]] */
+  /** {@link iOpen.open} */
   open(...args: unknown[]): Promise<boolean> {
     return iOpen.open(this, ...args);
   }
@@ -109,7 +109,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bButton extends iBlock implements iOpen {
-  /** @see [[iOpen.close]] */
+  /** {@link iOpen.close} */
   close(...args: unknown[]): Promise<boolean> {
     return iOpen.close(this, ...args);
   }
@@ -127,7 +127,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bButton extends iBlock implements iOpen {
-  /** @see [[iOpen.onOpenedChange]] */
+  /** {@link iOpen.onOpenedChange} */
   onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
     return iOpen.onOpenedChange(this, e);
   }
@@ -145,7 +145,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bButton extends iBlock implements iOpen {
-  /** @see [[iOpen.onKeyClose]] */
+  /** {@link iOpen.onKeyClose} */
   onKeyClose(e: KeyboardEvent): Promise<void> {
     return iOpen.onKeyClose(this, e);
   }
@@ -163,7 +163,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bButton extends iBlock implements iOpen {
-  /** @see [[iOpen.blur]] */
+  /** {@link iOpen.blur} */
   onTouchClose(e: MouseEvent): Promise<void> {
     return iOpen.onTouchClose(this, e);
   }
@@ -184,7 +184,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bButton extends iBlock implements iOpen {
-  /** @see [[iOpen.initCloseHelpers]] */
+  /** {@link iOpen.initCloseHelpers} */
   @hook('beforeDataCreate')
   protected initCloseHelpers(events?: CloseHelperEvents): void {
     iOpen.initCloseHelpers(this, events);

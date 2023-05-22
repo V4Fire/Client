@@ -41,13 +41,13 @@ export interface VirtualItemEl<T extends object = object> {
 
 /**
  * @deprecated
- * @see [[VirtualItemEl]]
+ * {@link VirtualItemEl}
  */
 export type OptionEl<T extends object = object> = VirtualItemEl<T>;
 
 /**
- * @typeparam ITEM - data item to render
- * @typeparam RAW - raw provider data
+ * @typeParam ITEM - data item to render
+ * @typeParam RAW - raw provider data
  */
 export interface DataState<ITEM extends object = object, RAW extends unknown = unknown> {
 	/**
@@ -102,7 +102,7 @@ export interface DataState<ITEM extends object = object, RAW extends unknown = u
 
 	/**
 	 * @deprecated
-	 * @see [[RequestMoreParams.lastLoadedChunk]]
+	 * {@link RequestMoreParams.lastLoadedChunk}
 	 */
 	lastLoadedData: ITEM[];
 
@@ -156,8 +156,8 @@ export type ItemAttrs = {
 /**
  * Last loaded data chunk
  *
- * @typeparam DATA - data to render
- * @typeparam RAW - raw provider data
+ * @typeParam DATA - data to render
+ * @typeParam RAW - raw provider data
  */
 export interface LastLoadedChunk<DATA extends object = object[], RAW extends unknown = unknown> {
 	normalized: DATA;

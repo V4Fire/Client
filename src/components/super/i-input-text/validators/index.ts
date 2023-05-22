@@ -26,7 +26,7 @@ import type {
 export * from 'components/super/i-input-text/validators/interface';
 
 export default <ValidatorsDecl<iInputText>>{
-	/** @see [[iInput.validators.required]] */
+	/** {@link iInput.validators.required} */
 	async required({message, showMessage = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
 			value = await this.formValue;

@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/check-line-alignment */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client

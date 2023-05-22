@@ -1,4 +1,4 @@
-/* eslint-disable prefer-spread, prefer-rest-params */
+/* eslint-disable prefer-spread */
 
 /*!
  * V4Fire Client Core

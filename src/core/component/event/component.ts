@@ -1,3 +1,5 @@
+/* eslint-disable jsdoc/check-line-alignment */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -16,7 +18,7 @@ import type { ComponentResetType } from 'core/component/event/interface';
  * Emits the special event for all component to reset the passed component state.
  * By default, this means a complete reload of all providers and storages bound to components.
  *
- * @param [type] - the reset type:
+ * @param [type] - the reset type
  *   1. `'load'` - reloads all data providers bound to components;
  *   2. `'load.silence'` - reloads all data providers bound to components,
  *      but without changing components statuses to `loading`;

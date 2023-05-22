@@ -10,7 +10,7 @@
 
 const path = require('upath');
 
-/** @type {!Object} */
+/** @type {object} */
 const {Vars} = require('snakeskin');
 
 module.exports = {

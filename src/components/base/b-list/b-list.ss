@@ -16,7 +16,7 @@
 
 		/**
 		 * Generates a list block
-		 * @param {!Array<Item>} items - the items to render
+		 * @param {Array<Item>} items - the items to render
 		 */
 		- block list(items)
 			< template v-for = (el, i) in ${items}

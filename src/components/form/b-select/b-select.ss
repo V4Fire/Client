@@ -18,7 +18,7 @@
 
 		/**
 		 * Generates component items
-		 * @param {string=} [tag] - tag to generate item
+		 * @param {string} [tag] - tag to generate item
 		 */
 		- block items(tag = '_')
 			< template v-for = (el, i) in items

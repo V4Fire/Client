@@ -29,7 +29,6 @@ let
  * @param [resetListener]
  */
 export function initGlobalListeners(component: iBlock, resetListener?: boolean): void {
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	baseInitLoad ??= iBlock.prototype.initLoad;
 
 	const

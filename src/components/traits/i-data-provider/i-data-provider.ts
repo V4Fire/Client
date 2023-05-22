@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -146,12 +144,12 @@ export default abstract class iDataProvider implements iProgress {
 		...iProgress.mods
 	};
 
-	/** @see [[iDataProvider.unsuspendRequests]] */
-	static unsuspendRequests: AddSelf<iDataProvider['unsuspendRequests'], iBlock & iDataProvider> = (component) => {
+	/** {@link iDataProvider.unsuspendRequests} */
+	static unsuspendRequests: AddSelf<iDataProvider['unsuspendRequests'], iBlock & iDataProvider> = (_component) => {
 		// Loopback
 	};
 
-	/** @see [[iDataProvider.waitPermissionToRequest]] */
+	/** {@link iDataProvider.waitPermissionToRequest} */
 	static waitPermissionToRequest: AddSelf<iDataProvider['waitPermissionToRequest'], iBlock & iDataProvider> = (component) => {
 		if (component.suspendedRequests === false) {
 			return SyncPromise.resolve(true);

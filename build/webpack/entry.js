@@ -17,7 +17,7 @@ const
  *
  * @param {string} name - entry point name
  * @param {string} src - entry point src
- * @returns {!Object}
+ * @returns {object}
  */
 module.exports = async function entry(name, src) {
 	const

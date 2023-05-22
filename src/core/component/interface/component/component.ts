@@ -1,9 +1,4 @@
-/*
-eslint-disable
-@typescript-eslint/no-unused-vars-experimental,
-@typescript-eslint/no-empty-function,
-@typescript-eslint/unified-signatures
-*/
+/* eslint-disable @typescript-eslint/unified-signatures */
 
 /*!
  * V4Fire Client Core
@@ -119,6 +114,7 @@ export abstract class ComponentInterface {
 	/**
 	 * A string value that indicates what lifecycle hook the component is in.
 	 * For instance, `created`, `mounted` or `destroyed`.
+	 *
 	 * @see https://vuejs.org/guide/essentials/lifecycle.html
 	 */
 	abstract hook: Hook;
@@ -274,10 +270,10 @@ export abstract class ComponentInterface {
 	/**
 	 * The component render function
 	 *
-	 * @param ctx
-	 * @param cache
+	 * @param _ctx
+	 * @param _cache
 	 */
-	render(ctx: ComponentInterface, cache: unknown[]): VNode {
+	render(_ctx: ComponentInterface, _cache: unknown[]): VNode {
 		return Object.throw();
 	}
 
@@ -312,21 +308,21 @@ export abstract class ComponentInterface {
 	/**
 	 * Sets a new reactive value to the specified property of the passed object
 	 *
-	 * @param object
-	 * @param key
-	 * @param value
+	 * @param _object
+	 * @param _key
+	 * @param _value
 	 */
-	protected $set<T = unknown>(object: object, key: unknown, value: T): T {
+	protected $set<T = unknown>(_object: object, _key: unknown, _value: T): T {
 		return Object.throw();
 	}
 
 	/**
 	 * Deletes the specified reactive property from the passed object
 	 *
-	 * @param object
-	 * @param key
+	 * @param _object
+	 * @param _key
 	 */
-	protected $delete(object: object, key: unknown): void {
+	protected $delete(_object: object, _key: unknown): void {
 		Object.throw();
 	}
 
@@ -385,59 +381,61 @@ export abstract class ComponentInterface {
 	/**
 	 * Attaches a listener to the specified component event
 	 *
-	 * @param event
-	 * @param handler
+	 * @param _event
+	 * @param _handler
 	 */
-	protected $on<E = unknown, R = unknown>(event: CanArray<string>, handler: ProxyCb<E, R, this>): this {
+	protected $on<E = unknown, R = unknown>(_event: CanArray<string>, _handler: ProxyCb<E, R, this>): this {
 		return Object.throw();
 	}
 
 	/**
 	 * Attaches a disposable listener to the specified component event
 	 *
-	 * @param event
-	 * @param handler
+	 * @param _event
+	 * @param _handler
 	 */
-	protected $once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): this {
+	protected $once<E = unknown, R = unknown>(_event: string, _handler: ProxyCb<E, R, this>): this {
 		return Object.throw();
 	}
 
 	/**
 	 * Detaches the specified event listeners from the component
 	 *
-	 * @param [event]
-	 * @param [handler]
+	 * @param [_event]
+	 * @param [_handler]
 	 */
-	protected $off(event?: CanArray<string>, handler?: Function): this {
+	protected $off(_event?: CanArray<string>, _handler?: Function): this {
 		return Object.throw();
 	}
 
 	/**
 	 * Emits the specified component event
 	 *
-	 * @param event
-	 * @param args
+	 * @param _event
+	 * @param _args
 	 */
-	protected $emit(event: string, ...args: unknown[]): this {
+	protected $emit(_event: string, ..._args: unknown[]): this {
 		return Object.throw();
 	}
 
 	/**
 	 * Resolves the specified ref attribute
-	 * @param ref
+	 * @param _ref
 	 */
-	protected $resolveRef(ref: Function): Function;
-	protected $resolveRef(ref: null | undefined): undefined;
-	protected $resolveRef(ref: unknown): string;
-	protected $resolveRef(ref: unknown): CanUndef<string | Function> {
+	protected $resolveRef(_ref: Function): Function;
+	protected $resolveRef(_ref: null | undefined): undefined;
+	protected $resolveRef(_ref: unknown): string;
+	protected $resolveRef(_ref: unknown): CanUndef<string | Function> {
 		return Object.throw();
 	}
 
 	/**
 	 * Executes the given function in the component render context.
 	 * This function is necessary to render components asynchronously.
+	 *
+	 * @param _cb
 	 */
-	protected $withCtx<T>(cb: (...args: any) => T): T {
+	protected $withCtx<T>(_cb: (...args: any) => T): T {
 		return Object.throw();
 	}
 }

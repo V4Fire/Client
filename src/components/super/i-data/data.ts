@@ -51,19 +51,19 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	 */
 	readonly DB!: object;
 
-	/** @see [[iDataProvider.dataProviderProp]] */
+	/** {@link iDataProvider.dataProviderProp} */
 	@prop({type: [String, Object, Function], required: false})
 	readonly dataProviderProp?: DataProviderProp;
 
-	/** @see [[iDataProvider.dataProvider]] */
+	/** {@link iDataProvider.dataProvider} */
 	@system()
 	dataProvider?: DataProvider;
 
-	/** @see [[iDataProvider.dataProviderOptions]] */
+	/** {@link iDataProvider.dataProviderOptions} */
 	@prop({type: Object, required: false})
 	readonly dataProviderOptions?: DataProviderOptions;
 
-	/** @see [[iDataProvider.request]] */
+	/** {@link iDataProvider.request} */
 	@prop({type: [Object, Array], required: false})
 	readonly request?: RequestParams;
 
@@ -83,7 +83,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	/**
 	 * A list of remote data converters.
 	 * These functions step by step transform the original provider data before storing it in `db`.
-	 * @see [[iDataProvider.dbConverter]]
+	 * {@link iDataProvider.dbConverter}
 	 */
 	@system((o) => o.sync.link('dbConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
 	dbConverters!: ComponentConverter[];
@@ -102,7 +102,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 
 	/**
 	 * A list of converters from the raw `db` to the component field
-	 * @see [[iDataProvider.componentConverterProp]]
+	 * {@link iDataProvider.componentConverterProp}
 	 */
 	@system((o) => o.sync.link('componentConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
 	componentConverters!: ComponentConverter[];
@@ -116,11 +116,11 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	@prop({type: [Boolean, Function], required: false})
 	readonly defaultRequestFilter?: RequestFilter;
 
-	/** @see [[iDataProvider.suspendedRequestsProp]] */
+	/** {@link iDataProvider.suspendedRequestsProp} */
 	@prop(Boolean)
 	readonly suspendedRequestsProp: boolean = false;
 
-	/** @see [[iDataProvider.suspendRequests]] */
+	/** {@link iDataProvider.suspendRequests} */
 	@system((o) => o.sync.link())
 	suspendedRequests!: boolean;
 
@@ -137,7 +137,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	@prop({type: [Boolean, Function]})
 	readonly checkDBEquality: CheckDBEquality = true;
 
-	/** @see [[iDataProvider.requestParams]] */
+	/** {@link iDataProvider.requestParams} */
 	@system({merge: true})
 	readonly requestParams: RequestParams = {get: {}};
 
@@ -191,7 +191,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 
 	/**
 	 * Component data store
-	 * @see [[iData.db]]
+	 * {@link iData.db}
 	 */
 	@field()
 	// @ts-ignore (recursive type)

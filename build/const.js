@@ -71,7 +71,7 @@ exports.MAX_TASKS_PER_ONE_PROCESS = 3;
 
 /**
  * List of critical core folders of the framework
- * @type {!Array<string>}
+ * @type {Array<string>}
  */
 exports.coreFolders = ['config', 'core', 'super', 'global'];
 

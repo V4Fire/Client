@@ -118,7 +118,6 @@ export default class bRouter extends bRouterProps {
 	 * router.defaultRoute.name === 'notFound'
 	 * ```
 	 */
-	// eslint-disable-next-line getter-return
 	@computed({cache: true, dependencies: ['routes']})
 	get defaultRoute(): CanUndef<router.RouteBlueprint> {
 		for (let routes = Object.values(this.routes), i = 0; i < routes.length; i++) {

@@ -441,7 +441,7 @@ You can also manage a type of the created tag and other options by using the pre
  *
  *   *) [attrs] - a dictionary with additional attributes
  *
- * @param {string=} [content] - the slot content
+ * @param {string} [content] - the slot content
  */
 - block nativeInput(@params = {}, content = '')
   {{ void(tmp.attrs = normalizeAttrs(attrs)) }}

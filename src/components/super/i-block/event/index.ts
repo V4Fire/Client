@@ -213,8 +213,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Attaches an event listener to the specified component event
+	 * {@link Async.on}
 	 *
-	 * @see [[Async.on]]
 	 * @param event
 	 * @param handler
 	 * @param [opts] - additional options
@@ -225,8 +225,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Attaches a disposable event listener to the specified component event
+	 * {@link Async.once}
 	 *
-	 * @see [[Async.once]]
 	 * @param event
 	 * @param handler
 	 * @param [opts] - additional options
@@ -237,8 +237,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Returns a promise that is resolved after emitting the specified component event
+	 * {@link Async.promisifyOnce}
 	 *
-	 * @see [[Async.promisifyOnce]]
 	 * @param event
 	 * @param [opts] - additional options
 	 */
@@ -252,8 +252,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
 	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
 	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+	 * {@link Async.off}
 	 *
-	 * @see [[Async.off]]
 	 * @param [opts] - additional options
 	 *
 	 * @example
@@ -461,8 +461,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * Waits until the specified template reference won't be available and returns it.
 	 * The method returns a promise.
+	 * {@link Async.wait}
 	 *
-	 * @see [[Async.wait]]
 	 * @see https://vuejs.org/guide/essentials/template-refs.html
 	 *
 	 * @param ref - the reference name

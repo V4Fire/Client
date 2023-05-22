@@ -31,7 +31,7 @@ import iBlockMods from 'components/super/i-block/mods';
 export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * A list of additional dependencies to load when the component is initializing
-	 * @see [[iBlock.dependenciesProp]]
+	 * {@link iBlock.dependenciesProp}
 	 */
 	@system((o) => o.sync.link((val: Iterable<Module>) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
 	dependencies!: Module[];
@@ -133,7 +133,6 @@ export default abstract class iBlockState extends iBlockMods {
 		return SSR || Boolean(readyStatuses[this.componentStatus]);
 	}
 
-	/** @inheritDoc */
 	get hook(): Hook {
 		return this.hookStore;
 	}
@@ -143,7 +142,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * For instance, depending on this option, the component can render different templates
 	 * by separating them with `v-if` directives.
 	 *
-	 * @see [[iBlock.stageProp]]
+	 * {@link iBlock.stageProp}
 	 */
 	@computed()
 	get stage(): CanUndef<Stage> {
@@ -154,7 +153,8 @@ export default abstract class iBlockState extends iBlockMods {
 	 * Sets a new component stage value.
 	 * By default, it clears all asynchronous listeners from the `stage.${oldGroup}` group.
 	 *
-	 * @see [[iBlock.stageProp]]
+	 * {@link iBlock.stageProp}
+	 *
 	 * @emits `stage:${value}(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 * @emits `stageChange(value: CanUndef<Stage>, oldValue: CanUndef<Stage>)`
 	 */
@@ -202,7 +202,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * A dictionary with component shadow statuses.
 	 * Switching to these states doesn't cause the component to re-render.
 	 *
-	 * @see [[iBlock.componentStatus]]
+	 * {@link iBlock.componentStatus}
 	 */
 	static readonly shadowComponentStatuses: ComponentStatuses = {
 		inactive: true,
@@ -214,7 +214,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * A string value indicating the component initialize status.
 	 * This property stores the statuses that cause the component to re-rendering.
 	 *
-	 * @see [[iBlock.componentStatus]]
+	 * {@link iBlock.componentStatus}
 	 */
 	@field({
 		unique: true,
@@ -227,14 +227,14 @@ export default abstract class iBlockState extends iBlockMods {
 	 * A string value indicating the component initialize status.
 	 * This property stores the statuses that don't cause the component to re-rendering.
 	 *
-	 * @see [[iBlock.componentStatus]]
+	 * {@link iBlock.componentStatus}
 	 */
 	@system({unique: true})
 	protected shadowComponentStatusStore?: ComponentStatus;
 
 	/**
 	 * A string value that specifies in which logical state the component should run
-	 * @see [[iBlock.stageProp]]
+	 * {@link iBlock.stageProp}
 	 */
 	@field({
 		functionalWatching: false,
@@ -250,7 +250,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * A string value that indicates what lifecycle hook the component is in
 	 *
 	 * @see https://vuejs.org/guide/essentials/lifecycle.html
-	 * @see [[iBlock.hook]]
+	 * {@link iBlock.hook}
 	 */
 	protected hookStore: Hook = 'beforeRuntime';
 
@@ -272,7 +272,6 @@ export default abstract class iBlockState extends iBlockMods {
 		}
 	}
 
-	/** @inheritDoc */
 	getComponentInfo(): Dictionary {
 		return {
 			name: this.componentName,
@@ -284,7 +283,8 @@ export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * Returns a promise that will be resolved when the component is switched to the specified component status
 	 *
-	 * @see [[Async.promise]]
+	 * {@link Async.promise}
+	 *
 	 * @param status
 	 * @param [opts] - additional options
 	 */
@@ -295,7 +295,8 @@ export default abstract class iBlockState extends iBlockMods {
 	 * The method returns a promise resulting from the function call, or the unwrapped raw result if the component is
 	 * already in the specified status.
 	 *
-	 * @see [[Async.promise]]
+	 * {@link Async.promise}
+	 *
 	 * @param status
 	 * @param cb
 	 * @param [opts] - additional options
@@ -363,10 +364,9 @@ export default abstract class iBlockState extends iBlockMods {
 	 * using this method. When the component provides the storage data, the second argument to the method is `'remote'`.
 	 *
 	 * @param [data] - advanced data
-	 * @param [type] - the call type
+	 * @param [_type] - the call type
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected syncStorageState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+	protected syncStorageState(data?: Dictionary, _type: ConverterCallType = 'component'): Dictionary {
 		return {...data};
 	}
 
@@ -405,10 +405,9 @@ export default abstract class iBlockState extends iBlockMods {
 	 * will extend the current route data, but not override  (`router.push(null, {...route, ...componentData}})`).
 	 *
 	 * @param [data] - advanced data
-	 * @param [type] - the call type
+	 * @param [_type] - the call type
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
+	protected syncRouterState(data?: Dictionary, _type: ConverterCallType = 'component'): Dictionary {
 		return {};
 	}
 

@@ -150,7 +150,6 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			fnBody = props[key];
 
 		if (fnBody != null) {
-			// eslint-disable-next-line no-new-func
 			const classVal = compileFn(fnBody)(this);
 
 			Object.assign(props, mergeProps({class: props.class}, {class: classVal}));

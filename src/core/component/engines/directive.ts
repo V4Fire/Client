@@ -9,7 +9,6 @@
 import { ComponentEngine } from 'core/component/engines/engine';
 import type { Directive, DirectiveBinding, VNode } from 'core/component/engines/interface';
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
 const staticDirective = ComponentEngine.directive.length > 0 ? ComponentEngine.directive : null;
 
 /**

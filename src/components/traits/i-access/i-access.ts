@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -59,19 +57,19 @@ export default abstract class iAccess {
 		]
 	};
 
-	/** @see [[iAccess.disable]] */
+	/** {@link iAccess.disable} */
 	static disable: AddSelf<iAccess['disable'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('disabled', true));
 
-	/** @see [[iAccess.enable]] */
+	/** {@link iAccess.enable} */
 	static enable: AddSelf<iAccess['enable'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('disabled', false));
 
-	/** @see [[iAccess.focus]] */
+	/** {@link iAccess.focus} */
 	static focus: AddSelf<iAccess['focus'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('focused', true));
 
-	/** @see [[iAccess.blur]] */
+	/** {@link iAccess.blur} */
 	static blur: AddSelf<iAccess['blur'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('focused', false));
 
@@ -189,33 +187,33 @@ export default abstract class iAccess {
 
 	/**
 	 * Enables the component
-	 * @param args
+	 * @param _args
 	 */
-	enable(...args: unknown[]): Promise<boolean> {
+	enable(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
 	 * Disables the component
-	 * @param args
+	 * @param _args
 	 */
-	disable(...args: unknown[]): Promise<boolean> {
+	disable(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
 	 * Sets focus to the component
-	 * @param args
+	 * @param _args
 	 */
-	focus(...args: unknown[]): Promise<boolean> {
+	focus(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
 	 * Unsets focus from the component
-	 * @param args
+	 * @param _args
 	 */
-	blur(...args: unknown[]): Promise<boolean> {
+	blur(..._args: unknown[]): Promise<boolean> {
 		return Object.throw();
 	}
 }

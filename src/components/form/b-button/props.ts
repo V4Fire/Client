@@ -27,7 +27,7 @@ export default abstract class bButtonProps extends iData {
 	override readonly dataProviderProp: DataProviderProp = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
-	/** @see [[iVisible.hideIfOffline]] */
+	/** {@link iVisible.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -127,11 +127,11 @@ export default abstract class bButtonProps extends iData {
 	@prop({type: String, required: false})
 	readonly form?: string;
 
-	/** @see [[iAccess.autofocus]] */
+	/** {@link iAccess.autofocus} */
 	@prop({type: Boolean, required: false})
 	readonly autofocus?: boolean;
 
-	/** @see [[iAccess.tabIndex]] */
+	/** {@link iAccess.tabIndex} */
 	@prop({type: Number, required: false})
 	readonly tabIndex?: number;
 
@@ -211,8 +211,8 @@ export default abstract class bButtonProps extends iData {
 
 	/**
 	 * Tooltip position to show on hover
+	 * {@link gHint}
 	 *
-	 * @see [[gHint]]
 	 * @example
 	 * ```
 	 * < b-button :hint = 'Click on me!!!' | :hintPos = 'bottom-right'
@@ -224,7 +224,7 @@ export default abstract class bButtonProps extends iData {
 
 	/**
 	 * A way to show a dropdown if the 'dropdown' slot is provided
-	 * @see [[gHint]]
+	 * {@link gHint}
 	 *
 	 * @example
 	 * ```
@@ -241,7 +241,7 @@ export default abstract class bButtonProps extends iData {
 
 	/**
 	 * Additional attributes that are provided to the native button
-	 * @see [[bButton.$refs.button]]
+	 * {@link bButton.$refs.button}
 	 */
 	@prop({type: Object, required: false})
 	readonly attrsProp?: Dictionary;

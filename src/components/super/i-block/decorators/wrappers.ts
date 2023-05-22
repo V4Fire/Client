@@ -32,7 +32,6 @@ import type {
 
 /**
  * @see core/component/decorators/prop
- * @inheritDoc
  */
 export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -41,7 +40,6 @@ export const prop = propDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/field
- * @inheritDoc
  */
 export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -50,7 +48,6 @@ export const field = fieldDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/system
- * @inheritDoc
  */
 export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)
@@ -59,7 +56,6 @@ export const system = systemDecorator as <CTX = iBlock, A = unknown, B = A>(
 
 /**
  * @see core/component/decorators/watch
- * @inheritDoc
  */
 export const watch = watchDecorator as <CTX = iBlock, A = unknown, B = A>(
 	// @ts-ignore (unsafe cast)

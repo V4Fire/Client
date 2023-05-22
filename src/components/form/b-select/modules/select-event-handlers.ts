@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -113,7 +111,6 @@ export default abstract class SelectEventHandlers {
 		const
 			target = <HTMLInputElement>e.target;
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (unsafe.compiledMask != null) {
 			return;
 		}
@@ -247,7 +244,6 @@ export default abstract class SelectEventHandlers {
 		let
 			{text} = component;
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (component.unsafe.compiledMask != null) {
 			text = text.replace(new RegExp(RegExp.escape(component.maskPlaceholder), 'g'), '');
 		}
@@ -282,7 +278,7 @@ export default abstract class SelectEventHandlers {
 	}
 
 	/** {@link iOpenToggle.onOpenedChange} */
-	onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
+	onOpenedChange(_e: ModEvent | SetModEvent): Promise<void> {
 		return Object.throw();
 	}
 
@@ -297,28 +293,28 @@ export default abstract class SelectEventHandlers {
 	/**
 	 * Handler: entering text into auxiliary text input to search for choices
 	 *
-	 * @param e
+	 * @param _e
 	 * @emits `actionChange(value: this['Active'])`
 	 */
-	onSearchInput(e: InputEvent): void {
+	onSearchInput(_e: InputEvent): void {
 		return Object.throw();
 	}
 
 	/**
 	 * Handler: "navigate" the selection using the arrow buttons
-	 * @param e
+	 * @param _e
 	 */
-	onItemsNavigate(e: KeyboardEvent): void {
+	onItemsNavigate(_e: KeyboardEvent): void {
 		return Object.throw();
 	}
 
 	/**
 	 * Handler: click on any item element
 	 *
-	 * @param itemEl
+	 * @param _itemEl
 	 * @emits `actionChange(value: this['Active'])`
 	 */
-	onItemClick(itemEl: Nullable<Element>): void {
+	onItemClick(_itemEl: Nullable<Element>): void {
 		return Object.throw();
 	}
 

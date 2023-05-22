@@ -10,24 +10,24 @@
 
 /**
  * The RegExp to detect V4Fire specific attributes
- * @type {!RegExp}
+ * @type {RegExp}
  */
 exports.isV4Prop = /^(:|@|v-)/;
 
 /**
  * The RegExp to detect V4Fire specific static attributes
- * @type {!RegExp}
+ * @type {RegExp}
  */
 exports.isStaticV4Prop = /^[^[]+$/;
 
 /**
  * The RegExp to detect commas
- * @type {!RegExp}
+ * @type {RegExp}
  */
 exports.commaRgxp = /\s*,\s*/;
 
 /**
  * The RegExp to detect Snakeskin file extensions
- * @type {!RegExp}
+ * @type {RegExp}
  */
 exports.ssExtRgxp = /\.e?ss$/;

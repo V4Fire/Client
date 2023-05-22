@@ -156,7 +156,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 *      Also, the method can take additional observation parameters.
 	 *      Keep in mind that properties or events are taken from the component that contains the current one.
 	 *
-	 * @see [[iBlock.watch]]
+	 * {@link iBlock.watch}
+	 *
 	 * @example
 	 * ```js
 	 * // We have two components: A and B.

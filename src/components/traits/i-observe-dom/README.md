@@ -54,7 +54,7 @@ import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock implements iObserveDOM {
-  /** @see [[iObserveDOM.initDOMObservers]] */
+  /** {@link iObserveDOM.initDOMObservers} */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
     iObserveDOM.observe(this, {
@@ -80,7 +80,7 @@ import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock implements iObserveDOM {
-  /** @see [[iObserveDOM.prototype.initDOMObservers]] */
+  /** {@link iObserveDOM.prototype.initDOMObservers} */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
     iObserveDOM.observe(this, {
@@ -90,7 +90,7 @@ export default class bExample extends iBlock implements iObserveDOM {
     });
   }
 
-  /** @see [[iObserveDOM.onDOMChange]] */
+  /** {@link iObserveDOM.onDOMChange} */
   onDOMChange(records: MutationRecord[]): void {
     const
       filtered = iObserveDOM.filterMutations(records, (node) => node instanceof HTMLElement),
@@ -116,7 +116,7 @@ import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock implements iObserveDOM {
-  /** @see [[iObserveDOM.initDOMObservers]] */
+  /** {@link iObserveDOM.initDOMObservers} */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
     iObserveDOM.observe(this, {
@@ -138,7 +138,7 @@ import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock implements iObserveDOM {
-  /** @see [[iObserveDOM.initDOMObservers]] */
+  /** {@link iObserveDOM.initDOMObservers} */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
     iObserveDOM.observe(this, {
@@ -162,7 +162,7 @@ import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock implements iObserveDOM {
-  /** @see [[iObserveDOM.prototype.initDOMObservers]] */
+  /** {@link iObserveDOM.prototype.initDOMObservers} */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
     iObserveDOM.observe(this, {
@@ -172,7 +172,7 @@ export default class bExample extends iBlock implements iObserveDOM {
     });
   }
 
-  /** @see [[iObserveDOM.onDOMChange]] */
+  /** {@link iObserveDOM.onDOMChange} */
   onDOMChange(records: MutationRecord[]): void {
     const filtered = iObserveDOM.filterMutations(records, (node) => node instanceof HTMLElement);
     console.log(filtered)
@@ -190,7 +190,7 @@ import iBlock, { component, wait } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock implements iObserveDOM {
-  /** @see [[iObserveDOM.prototype.initDOMObservers]] */
+  /** {@link iObserveDOM.prototype.initDOMObservers} */
   @wait('ready')
   initDOMObservers(): CanPromise<void> {
     iObserveDOM.observe(this, {
@@ -200,7 +200,7 @@ export default class bExample extends iBlock implements iObserveDOM {
     });
   }
 
-  /** @see [[iObserveDOM.onDOMChange]] */
+  /** {@link iObserveDOM.onDOMChange} */
   onDOMChange(records: MutationRecord[]): void {
     const
       filtered = iObserveDOM.filterMutations(records, (node) => node instanceof HTMLElement),

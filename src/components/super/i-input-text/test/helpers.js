@@ -19,8 +19,8 @@ const
  * Initializes an input to test
  *
  * @param {Page} page
- * @param {Object=} attrs
- * @returns {!Promise<CanUndef<Playwright.JSHandle>>}
+ * @param {object} [attrs]
+ * @returns {Promise<CanUndef<Playwright.JSHandle>>}
  */
 async function initInput(page, attrs = {}) {
 	await page.evaluate((attrs) => {

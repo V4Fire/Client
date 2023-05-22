@@ -71,7 +71,6 @@ ComponentEngine.directive('attrs', {
 		let
 			r: CanUndef<ComponentInterface['$renderEngine']['r']>;
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (ctx != null) {
 			r = ctx.$renderEngine.r;
 		}

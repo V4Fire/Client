@@ -24,10 +24,10 @@ Take a look at [[bTree]] or [[bList]] to see more.
   @component()
   @derive(iOpen)
   class bTree extends iBlock implements iActiveItems {
-    /** @see [[iActiveItems.activeChangeEvent]] */
+    /** {@link iActiveItems.activeChangeEvent} */
     readonly activeChangeEvent: string = 'change';
 
-    /** @see [[iActiveItems.activeStore]] */
+    /** {@link iActiveItems.activeStore} */
     @system((o) => iActiveItems.linkActiveStore(o))
     activeStore!: iActiveItems['activeStore'];
   }
@@ -45,10 +45,10 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bTree extends iBlock implements iActiveItems {
-  /** @see [[iActiveItems.ActiveProp]] */
+  /** {@link [iActiveItems.ActiveProp]]} */
   readonly ActiveProp!: ActiveProp;
 
-  /** @see [[iActiveItems.Active]] */
+  /** {@link [iActiveItems.Active]]} */
   readonly Active!: Active;
 }
 ```
@@ -132,12 +132,12 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bTree extends iBlock implements iActiveItems {
-  /** @see [[iActiveItems.active] */
+  /** {@link [iActiveItems.active]} */
   get active(): iActiveItems['active'] {
     return iActiveItems.getActive(this.top ?? this);
   }
 
-  /** @see [[iActiveItems.active] */
+  /** {@link [iActiveItems.active]} */
   set active(value: this['Active']) {
     (this.top ?? this).field.set('activeStore', value);
   }
@@ -190,11 +190,11 @@ import iBlock, { component, prop, system } from 'super/i-block/i-block';
 
 @component()
 class bTree extends iBlock implements iActiveItems {
-  /** @see [[iActiveItems.activeProp]] */
+  /** {@link [iActiveItems.activeProp]]} */
   @prop({required: false})
   readonly activeProp?: this['ActiveProp'];
 
-  /** @see [[iActiveItems.activeStore]] */
+  /** {@link [iActiveItems.activeStore]]} */
   @system((o) => iActiveItems.linkActiveStore(o))
   activeStore!: iActiveItems['activeStore'];
 }
@@ -214,7 +214,7 @@ import iBlock, { component, computed } from 'super/i-block/i-block';
 
 @component()
 class bTree extends iBlock implements iActiveItems {
-  /** @see [[iActiveItems.active] */
+  /** {@link [iActiveItems.active]} */
   @computed({cache: true, dependencies: ['top.activeStore']})
   get active(): iActiveItems['active'] {
     return iActiveItems.getActive(this);
@@ -252,7 +252,7 @@ import iBlock, { component, hook } from 'super/i-block/i-block';
 
 @component()
 class bTree extends iBlock implements iActiveItems {
-  /** @see [[iActiveItems.initActiveStoreListeners]] */
+  /** {@link iActiveItems.initActiveStoreListeners
   @hook('beforeDataCreate')
   protected initActiveStoreListeners(): void {
     iActiveItems.initActiveStoreListeners(this);

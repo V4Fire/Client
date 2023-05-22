@@ -1,4 +1,4 @@
-/* eslint-disable max-lines,max-lines-per-function,require-atomic-updates */
+/* eslint-disable max-lines-per-function, require-atomic-updates */
 
 // @ts-check
 

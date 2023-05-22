@@ -253,6 +253,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 
 	/**
 	 * {@link iOpen.open}
+	 *
 	 * @param [step]
 	 * @emits `open()`
 	 */

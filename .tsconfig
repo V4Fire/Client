@@ -7,7 +7,8 @@
   "include": [
     "./node_modules/@v4fire/core/*",
     "src/**/*.ts",
-    "tests/**/*.ts"
+    "tests/**/*.ts",
+    "ts-definitions/**/*.ts"
   ],
   "files": [
     "./index.d.ts"

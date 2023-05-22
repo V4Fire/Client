@@ -16,7 +16,7 @@ const
  * Returns parameters for `webpack.output`
  *
  * @param {(number|string)} buildId
- * @returns {!Object}
+ * @returns {object}
  */
 module.exports = function output({buildId}) {
 	const params = {

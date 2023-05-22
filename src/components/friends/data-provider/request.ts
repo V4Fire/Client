@@ -104,7 +104,7 @@ export function peek<D = unknown>(
 	const
 		args = arguments.length > 0 ? [query, opts] : getDefaultRequestParams.call(this, 'peek');
 
-		if (Object.isArray(args)) {
+	if (Object.isArray(args)) {
 		return createRequest.call(this, 'peek', ...Object.cast<[RequestQuery, CreateRequestOptions<D>]>(args));
 	}
 

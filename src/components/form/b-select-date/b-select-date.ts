@@ -86,7 +86,7 @@ export default class bSelectDate extends iInput implements iWidth {
 			cache = selectCache.create('months'),
 			val = cache[key];
 
-		if (val) {
+		if (Boolean(val)) {
 			return val;
 		}
 
@@ -102,7 +102,7 @@ export default class bSelectDate extends iInput implements iWidth {
 			cache = selectCache.create('days'),
 			val = cache[key];
 
-		if (val) {
+		if (Boolean(val)) {
 			return val;
 		}
 
@@ -128,7 +128,7 @@ export default class bSelectDate extends iInput implements iWidth {
 			cache = selectCache.create('years'),
 			val = cache[key];
 
-		if (val) {
+		if (Boolean(val)) {
 			return val;
 		}
 

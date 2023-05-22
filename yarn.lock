@@ -3753,9 +3753,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/eslint-plugin@npm:1.0.0-alpha.4":
-  version: 1.0.0-alpha.4
-  resolution: "@v4fire/eslint-plugin@npm:1.0.0-alpha.4"
+"@v4fire/eslint-plugin@npm:1.0.0-alpha.5":
+  version: 1.0.0-alpha.5
+  resolution: "@v4fire/eslint-plugin@npm:1.0.0-alpha.5"
   peerDependencies:
     "@typescript-eslint/eslint-plugin": ^5
     "@typescript-eslint/parser": ^5
@@ -3764,13 +3764,13 @@ __metadata:
     jest: ^29
     jest-runner-eslint: ^2
     typescript: ^4
-  checksum: 658bab58ed67e66cb9ff1f3ecb3aafa39ad7be0f8a3dd5bcba92c3c8307f1879956f4a19f84d945b4183355a5a10ea69b07d799215048a8d246d6dc291b20fda
+  checksum: 944e8e1baa9617864b8640be1a15fe978bb23a00c52148882493ea080b21e791a165bb18767ae00e202863df49ac57e79c4ef09657d2053fe16e60a79a683db3
   languageName: node
   linkType: hard
 
 "@v4fire/linters@git+https://github.com/v4fire/linters#rework_rules":
   version: 2.4.0
-  resolution: "@v4fire/linters@https://github.com/v4fire/linters.git#commit=35e4cbd2e35b6d3f956301a0e1b8c6757e8027ae"
+  resolution: "@v4fire/linters@https://github.com/v4fire/linters.git#commit=ec5446efd99fcf7c6b2f8a6baf3a56bfd2ba1a71"
   dependencies:
     "@babel/helper-validator-identifier": 7.18.6
     "@eslint/eslintrc": 1.3.0
@@ -3778,7 +3778,7 @@ __metadata:
     "@statoscope/stats-validator-reporter-console": 5.22.0
     "@typescript-eslint/eslint-plugin": 5.57.1
     "@typescript-eslint/parser": 5.57.1
-    "@v4fire/eslint-plugin": 1.0.0-alpha.4
+    "@v4fire/eslint-plugin": 1.0.0-alpha.5
     "@v4fire/typescript-check": 1.4.2
     eslint: 8.38.0
     eslint-import-resolver-typescript: 3.5.5
@@ -3793,7 +3793,7 @@ __metadata:
     jest: ^29.5.0
     jest-runner-eslint: ^2.0.0
     typescript: ^4.4.4
-  checksum: 91fc0f33671c3bf3c7dffdad6e46d5b5b89fb942cb73e79be8323a267a26143c7eda9591c1729212f00251267812816e76ee02cf2f193d40dc7ea5d40b8054ed
+  checksum: 08bb9f2e0fcdac8647c0c9c681896b27230f8e7674851fbffdd1135a7880112fc395505caf3d6a8ccf5e9a02a08595c389c9fa5eb2522b38eac97d089b6911e2
   languageName: node
   linkType: hard
 

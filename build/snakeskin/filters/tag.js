@@ -16,8 +16,9 @@ module.exports = [
 	/**
 	 * Normalizes Webpack SVG `require` attributes
 	 *
-	 * @param {string} name
-	 * @param {!Object} attrs
+	 * @param {object} opts
+	 * @param {string} opts.name
+	 * @param {object} opts.attrs
 	 */
 	function normalizeSvgRequire({name, attrs}) {
 		if (name !== 'img') {
@@ -34,7 +35,7 @@ module.exports = [
 
 	/**
 	 * Normalizes V4Fire tag attributes
-	 * @param {!Object} attrs
+	 * @param {object} attrs
 	 */
 	function normalizeV4Attrs({attrs}) {
 		if (webpack.ssr) {

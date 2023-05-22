@@ -18,7 +18,7 @@ const
 if (webpack.ssr) {
 	/**
 	 * Returns parameters for `webpack.externals`
-	 * @returns {!Array}
+	 * @returns {Array}
 	 */
 	module.exports = function externals() {
 		const cache = Object.createDict();
@@ -83,7 +83,7 @@ if (webpack.ssr) {
 	 * Returns parameters for `webpack.externals`
 	 *
 	 * @param {(number|string)} buildId
-	 * @returns {!Array}
+	 * @returns {Array}
 	 */
 	module.exports = function externals({buildId}) {
 		if (buildId !== STANDALONE) {

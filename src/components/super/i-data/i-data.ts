@@ -194,8 +194,8 @@ export default abstract class iData extends iDataHandlers {
 
 	/**
 	 * An alias to the original `initLoad` method
+	 * {@link iBlock.initLoad}
 	 *
-	 * @see [[iBlock.initLoad]]
 	 * @param [data]
 	 * @param [opts]
 	 */

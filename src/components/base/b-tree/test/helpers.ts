@@ -156,9 +156,9 @@ export async function waitForItems(
 }
 
 /**
-* Provides an API to intercept and mock response for the b-tree request
-* @param pageOrContext
-*/
+ * Provides an API to intercept and mock response for the b-tree request
+ * @param pageOrContext
+ */
 export function interceptTreeRequest(
 	pageOrContext: Page | BrowserContext
 ): Promise<void> {

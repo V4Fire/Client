@@ -12,7 +12,6 @@ import { Assert } from 'tests/helpers';
 
 import { createSelector, renderSelect } from 'components/form/b-select/test/helpers';
 
-// eslint-disable-next-line max-lines-per-function
 test.describe('<b-select> keyboard interaction', () => {
 	const items = [
 		{label: 'Foo', value: 0},

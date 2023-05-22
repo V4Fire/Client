@@ -1,4 +1,4 @@
-/* eslint-disable no-var,vars-on-top,camelcase */
+/* eslint-disable no-var, vars-on-top, camelcase, @typescript-eslint/triple-slash-reference */
 
 /*!
  * V4Fire Client Core

@@ -1,3 +1,5 @@
+/* eslint-disable @v4fire/newline-after-description */
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client

@@ -99,7 +99,7 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 * < foo :theme = 'dark'
 	 * ```
 	 *
-	 * @see [[iBlock.modsProp]]
+	 * {@link iBlock.modsProp}
 	 */
 	static readonly mods: ModsDecl = {};
 

@@ -78,7 +78,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * The name of the active page to load
-	 * @see [[bDynamicPage.pageProp]]
+	 * {@link bDynamicPage.pageProp}
 	 */
 	@system<bDynamicPage>((o) => o.sync.link((val) => val ?? o.pageGetter(o.route, Object.cast(o))))
 	page?: string;

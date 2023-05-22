@@ -117,8 +117,8 @@ export default abstract class bSelectProps extends iInputText {
 
 	/**
 	 * Tooltip position to display when hovering over `preIcon`
-	 *
 	 * {@link gHint}
+	 *
 	 * @example
 	 * ```
 	 * < b-select &
@@ -171,8 +171,8 @@ export default abstract class bSelectProps extends iInputText {
 
 	/**
 	 * Tooltip position to display when hovering over `icon`
-	 *
 	 * {@link gHint}
+	 *
 	 * @example
 	 * ```
 	 * < b-select &

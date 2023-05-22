@@ -27,7 +27,7 @@ export default class Component {
 	 * @param componentName
 	 * @param scheme
 	 */
-	 static async createComponents(
+	static async createComponents(
 		page: Page,
 		componentName: string,
 		scheme: RenderComponentsVnodeParams[]
@@ -47,7 +47,7 @@ export default class Component {
 	 * @param componentName
 	 * @param [schemeOrAttrs]
 	 */
-	 static async createComponent<T extends iBlock>(
+	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
 		schemeOrAttrs?: RenderComponentsVnodeParams | RenderComponentsVnodeParams['attrs']
@@ -60,7 +60,8 @@ export default class Component {
 	 * @param componentName
 	 * @param [scheme]
 	 */
-	 static async createComponent<T extends iBlock>(
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
 		scheme: RenderComponentsVnodeParams[]
@@ -141,7 +142,7 @@ export default class Component {
 	 * @param ctx
 	 * @param selector
 	 */
-	 static async waitForComponentByQuery<T extends iBlock>(
+	static async waitForComponentByQuery<T extends iBlock>(
 		ctx: Page | ElementHandle,
 		selector: string
 	): Promise<JSHandle<T>> {
@@ -202,7 +203,7 @@ export default class Component {
 	/**
 	 * Returns the root component
 	 *
-	 * @typeparam T - type of the root
+	 * @typeParam T - type of the root
 	 * @param ctx
 	 * @param [selector]
 	 */

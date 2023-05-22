@@ -115,7 +115,7 @@ import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** @see [[iAccess.isFocused]] */
+  /** {@link iAccess.isFocused
   get isFocused(): Promise<boolean> {
     return iAccess.isFocused(this);
   }
@@ -136,7 +136,7 @@ import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** @see [[iAccess.enable]] */
+  /** {@link iAccess.enable
   enable(): Promise<boolean> {
     return iAccess.enable(this);
   }
@@ -153,7 +153,7 @@ import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** @see [[iAccess.disable]] */
+  /** {@link iAccess.disable
   disable(): Promise<boolean> {
     return iAccess.disable(this);
   }
@@ -170,7 +170,7 @@ import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** @see [[iAccess.focus]] */
+  /** {@link iAccess.focus
   focus(): Promise<boolean> {
     return iAccess.focus(this);
   }
@@ -187,7 +187,7 @@ import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** @see [[iAccess.blur]] */
+  /** {@link iAccess.blur
   blur(): Promise<boolean> {
     return iAccess.blur(this);
   }

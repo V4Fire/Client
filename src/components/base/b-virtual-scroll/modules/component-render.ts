@@ -95,7 +95,7 @@ export default class ComponentRender extends Friend {
 		return node;
 	}
 
-	/** @see [[bVirtualScroll.getOptionKey]] */
+	/** {@link bVirtualScroll.getOptionKey} */
 	getItemKey(data: VirtualItemEl, index: number): string {
 		return String(this.ctx.getItemKey(data, index));
 	}
@@ -205,7 +205,6 @@ export default class ComponentRender extends Friend {
 
 			const attrs = c.getItemAttrs(getItemEl(item.data, item.index), item.index);
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs!), index: itemIndex});
 		}
 

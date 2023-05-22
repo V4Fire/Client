@@ -31,9 +31,10 @@ const
 /**
  * Returns parameters for `webpack.optimization`
  *
- * @param {(number|string)} buildId
- * @param {!Map} plugins - a map of plugins to use
- * @returns {!Object}
+ * @param {object} opts
+ * @param {(number|string)} opts.buildId
+ * @param {Map} opts.plugins - a map of plugins to use
+ * @returns {object}
  */
 module.exports = function optimization({buildId, plugins}) {
 	const

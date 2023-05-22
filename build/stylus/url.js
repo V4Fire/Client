@@ -59,7 +59,7 @@ module.exports = function addPlugins(api) {
 	 * Converts the specified object to a query string
 	 *
 	 * @see https://nodejs.org/api/querystring.html#querystring_querystring_stringify_obj_sep_eq_options
-	 * @param {Object} obj
+	 * @param {object} obj
 	 *
 	 * @returns {string}
 	 */

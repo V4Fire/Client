@@ -13,7 +13,6 @@ import AssertComponent from 'tests/helpers/assert/component';
 
 export * from 'tests/helpers/assert/interface';
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default abstract class Assert extends AssertBase {
 	static override setPage(page: Page): typeof Assert {
 		super.setPage(page);

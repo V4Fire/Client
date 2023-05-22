@@ -41,7 +41,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
      * @cli t
      * @env THEME
      *
-     * @param {string=} [def] - default value
+     * @param {string} [def] - default value
      * @returns {string}
      */
     default(def) {
@@ -59,8 +59,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
      * @cli include-themes
      * @env INCLUDE_THEMES
      *
-     * @param {string=} [def] - default value
-     * @returns {!Array<string>|boolean}
+     * @param {string} [def] - default value
+     * @returns {Array<string>|boolean}
      */
     include(def) {
       return o('include-themes', {

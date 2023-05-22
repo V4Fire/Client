@@ -25,9 +25,9 @@ module.exports = function addPlugins(api) {
 	/**
 	 * Registers a kit with the specified name
 	 *
-	 * @param {!Object} kit
+	 * @param {object} kit
 	 * @param {string} name
-	 * @param {boolean=} [theme=false]
+	 * @param {boolean} [theme=false]
 	 */
 	api.define('registerColors', (kit, name, theme = false) => {
 		if (!name || !kit) {
@@ -40,10 +40,10 @@ module.exports = function addPlugins(api) {
 	/**
 	 * Returns a global color value
 	 *
-	 * @param {!Object} hueInput - color
-	 * @param {!Object} numInput - color position in a kit
-	 * @param {(!Object|boolean)} [reservedInput=false] - is value in the reserved kit
-	 * @param {(!Object|boolean)} [baseInput=false] - prototype field name
+	 * @param {object} hueInput - color
+	 * @param {object} numInput - color position in a kit
+	 * @param {(object|boolean)} [reservedInput=false] - is value in the reserved kit
+	 * @param {(object|boolean)} [baseInput=false] - prototype field name
 	 * @returns {string}
 	 */
 	api.define('getGlobalColor', (hueInput, numInput, reservedInput = false, baseInput = false) => {
@@ -120,8 +120,8 @@ Object.assign(module.exports, {
 /**
  * Saves the specified color HEXs to the global space with kit names
  *
- * @param {!Array} colors
- * @param {!string} name
+ * @param {Array} colors
+ * @param {string} name
  */
 function saveToSpace(colors, name) {
 	$C(colors).forEach((el) => {
@@ -130,9 +130,17 @@ function saveToSpace(colors, name) {
 }
 
 /**
+ * @typedef {{
+ *   name: string,
+ *   raw: string,
+ *   string: string
+ * }} RGBA
+ */
+
+/**
  * Throws an error if the specified color already exists in the global space
  *
- * @param {!RGBA} hex - color hex value
+ * @param {RGBA} hex - color hex value
  * @returns {RGBA}
  */
 function checkInGlobalSpace(hex) {
@@ -149,9 +157,9 @@ function checkInGlobalSpace(hex) {
 /**
  * Converts Stylus collection of nodes to a JS array
  *
- * @param {!Object} nodes
+ * @param {object} nodes
  * @param {string} name
- * @returns {!Array<string>}
+ * @returns {Array<string>}
  */
 function kitFromNodes(nodes, name) {
 	const
@@ -165,7 +173,7 @@ function kitFromNodes(nodes, name) {
 /**
  * Saves subset of colors to the global color set
  *
- * @param {!Object} kit - subset
+ * @param {object} kit - subset
  * @param {string} nm - name of a subset
  * @param {boolean} [theme] - is subset a theme
  */
@@ -200,7 +208,7 @@ function saveColorsKit(kit, nm, theme) {
  * Picks RGBA color from the specified hex string
  *
  * @param {string} str - hex value
- * @param {Object=} [meta] - additional info
+ * @param {object} [meta] - additional info
  * @returns {string}
  */
 function pickColor(str, meta = {}) {

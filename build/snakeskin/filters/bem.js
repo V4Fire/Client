@@ -16,7 +16,7 @@ module.exports = [
 	 * Integrates BEM classes to components: attaches identifiers, provides runtime transformers, etc.
 	 *
 	 * @param {string} block - a name of the active BEM block
-	 * @param {!Object} attrs - a dictionary with attributes of the node to which the filter is applied
+	 * @param {object} attrs - a dictionary with attributes of the node to which the filter is applied
 	 * @param {string} rootTag - a type of the component root tag within which the directive is applied
 	 * @param {string} element - a name of the BEM element to create, with a prefix
 	 * @returns {string}

@@ -160,10 +160,10 @@ export type StaticRoutes<M extends object = Dictionary> = Dictionary<
  * Route meta information
  */
 export type RouteMeta<M extends object = Dictionary> = StaticRouteMeta<M> & {
-	/** @see [[StaticRouteMeta.name]] */
+	/** {@link StaticRouteMeta.name} */
 	name: string;
 
-	/** @see [[StaticRouteMeta.default]] */
+	/** {@link StaticRouteMeta.default} */
 	default: boolean;
 };
 

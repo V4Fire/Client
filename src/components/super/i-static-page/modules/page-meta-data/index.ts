@@ -110,7 +110,7 @@ export default class PageMetaData {
 	 *
 	 * @param tag - the tag name of the searched elements
 	 * @param [attrs] - additional attributes of the searched elements
-	*/
+	 */
 	protected findElementsWithAttrs<T extends Element = Element>(tag: string, attrs?: Dictionary<string>): NodeListOf<T> {
 		const
 			selector: string[] = [];

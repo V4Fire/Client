@@ -115,7 +115,7 @@ export interface WatchObject<
 	 */
 	provideArgs?: boolean;
 
-	/***
+	/**
 	 * A wrapper function for the registered handler
 	 *
 	 * @example
@@ -192,7 +192,7 @@ export interface MethodWatcher<
 	 */
 	provideArgs?: boolean;
 
-	/***
+	/**
 	 * A wrapper function for the registered handler
 	 *
 	 * @example

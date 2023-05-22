@@ -51,7 +51,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bButton extends iBlock implements iOpenToggle {
-  /** @see [[iOpenToggle.toggle]] */
+  /** {@link iOpenToggle.toggle} */
   toggle(...args: unknown[]): Promise<boolean> {
     return iOpenToggle.toggle(this, ...args);
   }

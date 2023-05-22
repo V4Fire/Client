@@ -108,17 +108,17 @@ test.describe('<b-select> form API', () => {
 			await assertValueIs(target, '10');
 
 			await test.expect(target.evaluate(async (ctx) => {
-					const res: any[] = [];
+				const res: any[] = [];
 
-					ctx.on('onReset', (v) => {
-						res.push([v, ctx.text]);
-					});
+				ctx.on('onReset', (v) => {
+					res.push([v, ctx.text]);
+				});
 
-					res.push(await ctx.reset());
-					res.push(await ctx.reset());
+				res.push(await ctx.reset());
+				res.push(await ctx.reset());
 
-					return res;
-				})).resolves.toEqual([[undefined, ''], true, false]);
+				return res;
+			})).resolves.toEqual([[undefined, ''], true, false]);
 
 			await target.evaluate((ctx) => ctx.reset());
 

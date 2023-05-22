@@ -141,7 +141,7 @@ export default class SwipeControl extends Friend {
 	 * Moves the component to the nearest step relative to the current position
 	 *
 	 * @param respectDirection - if true, then when searching for a new step to change,
-	 *   the cursor direction will be taken into account, but not the nearest step
+	 * the cursor direction will be taken into account, but not the nearest step
 	 *
 	 * @param isThresholdPassed - if true, then the minimum threshold to change a step is passed
 	 */

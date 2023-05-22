@@ -37,6 +37,7 @@ const isIFrame = (() => {
 /**
  * This code is required to fix a bug in the History API router engine where returning to the first element in history
  * does not fire a popstate event in Safari when the script is executed within an iframe
+ *
  * @see https://github.com/V4Fire/Client/issues/717
  */
 if (isIFrame && (browser.is.Safari !== false || browser.is.iOS !== false)) {
@@ -413,7 +414,6 @@ export default function createRouter(component: bRouter): Router {
 			}
 
 			const
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				{load} = params.meta;
 
 			if (load == null) {
