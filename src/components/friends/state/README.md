@@ -13,8 +13,8 @@ this.state.resetRouter();
 ## How to include this module in your component?
 
 By default, any component that inherits from [[iBlock]] has the `state` property.
-However, to use module methods, you need to attach them explicitly to enable tree-shaking code optimizations.
-Just place the necessary import declaration within your component file.
+However, to use the module methods, attach them explicitly to enable tree-shake code optimizations.
+Simply place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -34,7 +34,6 @@ For example, a component might store some of its properties in local storage.
 This means that when such a property changes, it should automatically synchronize with the storage,
 and on the other hand, when the component is initialized, its value must be read from the storage.
 This module does precisely that - it provides a set of APIs to synchronize external states with a component's state.
-
 
 ## How does synchronization work?
 
@@ -74,7 +73,6 @@ export default class bExample extends iBlock {
 
 By default, all components have two basic methods for synchronizing with the router: `syncRouterState` and `convertStateToRouterReset`.
 Additionally, all components have two similar methods for synchronizing with storage: `syncStorageState` and `convertStateToStorageReset`.
-
 
 ## Methods
 

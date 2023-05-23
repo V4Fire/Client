@@ -242,7 +242,6 @@ We have created four routes:
 
 * The `friends` route is dynamically associated with a set of URLs because it has the `:userId` part in its path template that takes the value from the parameters specified when the router was navigated. This allows for flexibility in generating URLs based on the provided `userId`.
 
-
   ```js
   // Navigates to https://foo.com/components/friends/109
   this.router.push('friends', {params: {userId: '109'}});
@@ -541,13 +540,11 @@ export default {
 
 In the first example, we declare a route with a path on our own site, such as `https://bla.com/google`, which redirects to Google. In the second example, we simply declare an external route.
 
-
 ## How does a router perform transitions?
 
 A router performs transitions by utilizing the `core/router` module, which serves as a strategy. This module includes essential interfaces for the router mechanism, route declarations, a route object, and more. Additionally, it offers "strategies" or "engines" to carry out transitions effectively.
 
 These engines can be found in the `engines` directory. Some of the available engines are based on the browser history API (default engine), and others use in-memory state management. You can also create a custom engine tailored to your specific requirements. The active or default engine is exported from the `engines/index.ts` file.
-
 
 ### Transition methods
 
@@ -762,7 +759,6 @@ export default class bExample extends iBlock {
 ```
 
 To reset the router state, you can either call `state.resetRouter()` from the component instance or invoke the `reset` root method. By default, all properties from `syncRouterState` will be overwritten with `undefined`.
-
 
 ## Slots
 

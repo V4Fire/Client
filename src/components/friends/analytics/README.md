@@ -7,11 +7,11 @@ The module uses `core/analytics` with the default engine.
 this.analytics.send('clicked', {user: '1'});
 ```
 
-## How to include this module to your component?
+## How to include this module in your component?
 
-By default, any component that inherited from [[iBlock]] has the `analytics` property.
-But to use module methods, attach them explicitly to enable tree-shake code optimizations.
-Just place the necessary import declaration within your component file.
+By default, any component that inherits from [[iBlock]] has the `analytics` property.
+However, to use the module methods, attach them explicitly to enable tree-shake code optimizations.
+Simply place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';

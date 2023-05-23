@@ -5,8 +5,8 @@ This module provides a class to manage dynamically loaded modules.
 ## How to include this module in your component?
 
 By default, any component that inherits from [[iBlock]] has the moduleLoader property.
-However, to use the methods of the module, you need to attach them explicitly to enable tree-shake code optimizations.
-Just place the necessary import declaration within your component file.
+However, to use the module methods, attach them explicitly to enable tree-shake code optimizations.
+Simply place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -50,7 +50,6 @@ For example, you can dynamically require dependencies when needed and render a f
 
 Manual usage of the module within templates requires writing a lot of boilerplate code.
 To avoid this, you should use the special Snakeskin helpers available to all [[iBlock]] descendants.
-
 
 ```
 < .container v-async-target
@@ -98,7 +97,6 @@ console.log([...modules]);
 Adds the specified modules to a load bucket by the specified name.
 Note that adding modules does not force them to load. To load the created bucket, use the `loadBucket` method.
 The function returns the number of modules added to the bucket.
-
 
 ```js
 this.moduleLoader.addToBucket('form', {

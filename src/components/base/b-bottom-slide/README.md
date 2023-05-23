@@ -169,7 +169,6 @@ Alright, now we can access `b-bottom-slide` from anywhere. But, what is the purp
 
 There are various approaches that can be used to achieve this. For instance, the `open` method of the `b-modal` component can accept an object that defines the content to be displayed within the `b-bottom-slide`.
 
-
 __b-modal.ts__
 
 ```typescript
