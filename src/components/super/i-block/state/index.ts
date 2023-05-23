@@ -379,15 +379,15 @@ export default abstract class iBlockState extends iBlockMods {
 	protected convertStateToStorageReset(data?: Dictionary): Dictionary {
 		const
 			stateFields = this.syncStorageState(data),
-			res = {};
+			state = {};
 
 		if (Object.isDictionary(stateFields)) {
-			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
-				res[keys[i]] = undefined;
-			}
+			Object.keys(stateFields).forEach((key) => {
+				state[key] = undefined;
+			});
 		}
 
-		return res;
+		return state;
 	}
 
 	/**
@@ -420,15 +420,15 @@ export default abstract class iBlockState extends iBlockMods {
 	protected convertStateToRouterReset(data?: Dictionary): Dictionary {
 		const
 			stateFields = this.syncRouterState(data),
-			res = {};
+			state = {};
 
 		if (Object.isDictionary(stateFields)) {
-			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
-				res[keys[i]] = undefined;
-			}
+			Object.keys(stateFields).forEach((key) => {
+				state[key] = undefined;
+			});
 		}
 
-		return res;
+		return state;
 	}
 
 	@hook({beforeRuntime: {functional: false}})
