@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy-async-render')
+package('b-friends-async-render-dummy')
 	.extends('i-data');

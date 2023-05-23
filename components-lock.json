@@ -1,5 +1,5 @@
 {
-  "hash": "e9bb412d78e7a2c3f9569e3062c10bc86e920e37c8fcb2fff16f1fb1d29d5f6f",
+  "hash": "0978a0df1fd13d49d66260a22251b4a5cc0dabf029c8e2633b2fb630b2f3fe9e",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -140,38 +140,6 @@
             "src/components/dummies/b-dummy/b-dummy.styl"
           ],
           "tpl": "src/components/dummies/b-dummy/b-dummy.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-async-render",
-        {
-          "index": "src/components/dummies/b-dummy-async-render/index.js",
-          "declaration": {
-            "name": "b-dummy-async-render",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-async-render",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-async-render/b-dummy-async-render.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-async-render/b-dummy-async-render.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-async-render/b-dummy-async-render.ss",
           "etpl": null
         }
       ],
@@ -400,6 +368,38 @@
             "src/components/form/b-form/b-form.styl"
           ],
           "tpl": "src/components/form/b-form/b-form.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-async-render-dummy",
+        {
+          "index": "src/components/friends/async-render/test/b-friends-async-render-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-async-render-dummy",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-async-render-dummy",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/async-render/test/b-friends-async-render-dummy/b-friends-async-render-dummy.ts",
+          "styles": [
+            "src/components/friends/async-render/test/b-friends-async-render-dummy/b-friends-async-render-dummy.styl"
+          ],
+          "tpl": "src/components/friends/async-render/test/b-friends-async-render-dummy/b-friends-async-render-dummy.ss",
           "etpl": null
         }
       ],
