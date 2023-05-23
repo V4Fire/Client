@@ -96,7 +96,12 @@ export function implementEventEmitterAPI(component: object): void {
 	function getMethod(method: 'on' | 'once' | 'off') {
 		return function wrapper(this: unknown, event, cb) {
 			Array.concat([], event).forEach((event) => {
-				$e[method](Object.cast(event), Object.cast(cb));
+				if (method === 'off' && cb == null) {
+					$e.removeAllListeners(event);
+
+				} else {
+					$e[method](Object.cast(event), Object.cast(cb));
+				}
 			});
 
 			return this;
