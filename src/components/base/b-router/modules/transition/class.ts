@@ -57,8 +57,8 @@ export default class Transition {
 	private newRouteInfoInitialized: boolean = false;
 
 	/**
-	 * @param component Instance of the `b-router` component
-	 * @param ctx Transition context
+	 * @param component - Instance of the `b-router` component
+	 * @param ctx - Transition context
 	 */
 	constructor(component: bRouter, {ref, method, opts}: TransitionContext) {
 		this.component = component;
