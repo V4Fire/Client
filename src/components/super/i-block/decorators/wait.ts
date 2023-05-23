@@ -20,7 +20,8 @@ const
  * Decorates the method so that when it is called, it does not execute immediately, but waits for the next tick.
  * The wrapped method returns a promise that will resolve with the result of the original method.
  *
- * @see [[Async.wait]]
+ * {@link Async.wait}
+ *
  * @decorator
  *
  * @param opts - additional options
@@ -44,7 +45,8 @@ export function wait(opts: {defer: true} & WaitDecoratorOptions): Function;
  * Decorates the function so that when it is called, it does not execute immediately, but waits for the next tick.
  * The wrapped function returns a promise that will resolve with the result of the original method.
  *
- * @see [[Async.wait]]
+ * {@link Async.wait}
+ *
  * @param opts - additional options
  *
  * @example
@@ -69,7 +71,8 @@ export function wait<F extends AnyFunction>(
  * the result. If not, then the wrapped method returns a promise that will resolve with the result of the original when
  * the component enters this state.
  *
- * @see [[Async.wait]]
+ * {@link Async.wait}
+ *
  * @decorator
  *
  * @param componentStatus
@@ -96,7 +99,8 @@ export function wait(componentStatus: WaitStatuses, opts?: WaitDecoratorOptions)
  * the result. If not, then the wrapped function returns a promise that will resolve with the result of the original
  * when the component enters this state.
  *
- * @see [[Async.wait]]
+ * {@link Async.wait}
+ *
  * @param componentStatus
  * @param fnOrOpts - function to wrap or additional options
  */

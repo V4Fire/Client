@@ -22,7 +22,7 @@ import Block, { getElementMod, setElementMod } from 'components/friends/block';
 import iItems from 'components/traits/i-items/i-items';
 import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
 
-import iData, { watch, hook, component, system, computed, field, ModsDecl, UnsafeGetter } from 'components/super/i-data/i-data';
+import iData, { watch, hook, component, system, computed, field, UnsafeGetter } from 'components/super/i-data/i-data';
 import type { Item, ItemMeta, UnsafeBTree } from 'components/base/b-tree/interface';
 
 import bTreeProps from 'components/base/b-tree/props';
@@ -55,19 +55,19 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return Object.cast(this);
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	get items(): this['Items'] {
 		return this.field.get<this['Items']>('itemsStore') ?? [];
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', normalizeItems.call(this, value));
 	}
 
 	/**
-	 * @see [[iActiveItems.activeStore]]
-	 * @see [[iActiveItems.syncActiveStore]]
+	 * {@link iActiveItems.activeStore}
+	 * {@link iActiveItems.linkActiveStore}
 	 */
 	@system<bTree>((o) => {
 		o.watch('modelValue', (val) => o.setActive(val, true));
@@ -76,17 +76,17 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 	activeStore!: iActiveItems['activeStore'];
 
-	/** @see [[iActiveItems.activeChangeEvent]] */
+	/** {@link iActiveItems.activeChangeEvent} */
 	@system()
 	readonly activeChangeEvent: string = 'change';
 
-	/** @see [[iActiveItems.active] */
+	/** {@link [[iActiveItems.active]} */
 	@computed({cache: false})
 	get active(): this['Active'] {
 		return iActiveItems.getActive(this.top);
 	}
 
-	/** @see [[iActiveItems.activeElement] */
+	/** {@link [[iActiveItems.activeElement]} */
 	get activeElement(): iActiveItems['activeElement'] {
 		const
 			{top} = this;
@@ -125,7 +125,6 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 	protected itemsStore: this['Items'] = [];
 
-	/** @inheritDoc */
 	protected override readonly $refs!: iData['$refs'] & {
 		children?: bTree[];
 	};
@@ -213,17 +212,17 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		}
 	}
 
-	/** @see [[iActiveItems.isActive]] */
+	/** {@link iActiveItems.isActive} */
 	isActive(value: this['Item']['value']): boolean {
 		return iActiveItems.isActive(this.top, value);
 	}
 
-	/** @see [[iActiveItems.prototype.getItemByValue]] */
+	/** {@link iActiveItems.prototype.getItemByValue} */
 	getItemByValue(value: Item['value']): CanUndef<Item> {
 		return this.values.getItem(value);
 	}
 
-	/** @see [[iActiveItems.setActive]] */
+	/** {@link iActiveItems.prototype.setActive} */
 	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		const
 			{top} = this;
@@ -251,7 +250,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return true;
 	}
 
-	/** @see [[iActiveItems.unsetActive]] */
+	/** {@link iActiveItems.prototype.unsetActive} */
 	unsetActive(value: this['ActiveProp']): boolean {
 		const {top} = this;
 
@@ -268,7 +267,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		return true;
 	}
 
-	/** @see [[iActiveItems.toggleActive]] */
+	/** {@link iActiveItems.prototype.toggleActive} */
 	toggleActive(value: this['ActiveProp'], unsetPrevious?: boolean): this['Active'] {
 		return iActiveItems.toggleActive(this.top, value, unsetPrevious);
 	}
@@ -313,7 +312,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		}
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i) ?? this.values.getItemKey(item.value);
 	}
@@ -419,13 +418,13 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 		}
 	}
 
-	/** @see [[Values.initComponentValues]] */
+	/** {@link Values.initComponentValues} */
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		this.values.init(itemsChanged);
 	}
 
-	/** @see [[iActiveItems.initActiveStoreListeners]] */
+	/** {@link iActiveItems.initActiveStoreListeners} */
 	@hook('beforeDataCreate')
 	protected initActiveStoreListeners(): void {
 		if (this.topProp == null) {

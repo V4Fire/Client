@@ -1,5 +1,3 @@
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+// @ts-check
 
 /**
  * @typedef {import('playwright').Page} Page
@@ -106,9 +106,9 @@ module.exports = (page) => {
 				});
 
 				await expectAsync(subscribePromise).toBeResolvedTo(getArray(0, 8));
-			 });
+			});
 
-			 it('after loading the first part of the second batch and stopping further loading because `shouldStopRequest` have returned `true`', async () => {
+			it('after loading the first part of the second batch and stopping further loading because `shouldStopRequest` have returned `true`', async () => {
 				await component.evaluate((ctx) => {
 					ctx.dataProvider = 'demo.Pagination';
 					ctx.request = {get: {chunkSize: 4, id: Math.random()}};
@@ -124,7 +124,7 @@ module.exports = (page) => {
 				await h.scroll.scrollToBottom(page);
 
 				await expectAsync(subscribePromise).toBeResolvedTo(getArray(12, 4));
-			 });
+			});
 
 		});
 

@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	$C = require('collection.js'),
 	{webpack} = require('@config/config');
@@ -15,9 +15,9 @@ const
 /**
  * Returns WebPack configuration for the specified entry
  *
- * @param {!Object} entry - parameters from `webpack.entry`
+ * @param {object} entry - parameters from `webpack.entry`
  * @param {(number|string)} buildId
- * @returns {!Object}
+ * @returns {object}
  */
 async function buildFactory(entry, buildId) {
 	await include('build/webpack/custom/preconfig');

@@ -191,7 +191,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * The input text value
-	 * @see [[iInputText.textStore]]
+	 * {@link iInputText.textStore}
 	 */
 	@computed({cache: false})
 	get text(): string {
@@ -243,7 +243,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 	/**
 	 * The input text value
-	 * @see [[iInputText.textProp]]
+	 * {@link iInputText.textProp}
 	 */
 	@system((o) => o.sync.link((v) => v ?? ''))
 	protected textStore!: string;

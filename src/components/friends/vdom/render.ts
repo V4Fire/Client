@@ -14,6 +14,7 @@ import type { RenderFactory, RenderFn } from 'components/friends/vdom/interface'
 
 /**
  * Renders the specified VNode and returns the result
+ *
  * @param vnode
  *
  * @example
@@ -28,6 +29,7 @@ export function render(this: Friend, vnode: VNode): Node;
 
 /**
  * Renders the specified list of VNodes and returns the result
+ *
  * @param vnodes
  *
  * @example

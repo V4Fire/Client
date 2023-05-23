@@ -93,7 +93,7 @@ export function syncWithText(
 							(!opts.preservePlaceholders || textChunks[0] !== maskPlaceholder) &&
 							!maskEl.test(textChunks[0])
 						)
-						) {
+					) {
 						textChunks.shift();
 					}
 

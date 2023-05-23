@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js'),
@@ -64,8 +64,8 @@ function getField(stylusObj, path) {
  * Nodes of the result object will be objects too, but not arrays like in the original convert function.
  * In the case of a "one-element array", it will be unpacked.
  *
- * @param {!Object} stylusObj
- * @returns {!Object}
+ * @param {object} stylusObj
+ * @returns {object}
  */
 function parseObject(stylusObj) {
 	return parse(stylusObj);

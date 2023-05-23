@@ -99,9 +99,10 @@ export function link<D = unknown, R = D>(
  * To listen an event you need to use the special delimiter ":" within a path.
  * Also, you can specify an event emitter to listen by writing a link before ":".
  *
- * @see [[iBlock.watch]]
+ * {@link iBlock.watch}
+ *
  * @param path - a path to the property/event we are referring to, or
- *   [a path to the property containing the reference, a path to the property/event we are referring to]
+ * [a path to the property containing the reference, a path to the property/event we are referring to]
  *
  * @param [optsOrGetter] - additional options or a getter function
  *
@@ -169,9 +170,10 @@ export function link<D = unknown, R = D>(
  * To listen an event you need to use the special delimiter ":" within a path.
  * Also, you can specify an event emitter to listen by writing a link before ":".
  *
- * @see [[iBlock.watch]]
+ * {@link iBlock.watch}
+ *
  * @param path - a path to the property/event we are referring to, or
- *   [a path to the property containing the reference, a path to the property/event we are referring to]
+ * [a path to the property containing the reference, a path to the property/event we are referring to]
  *
  * @param opts - additional options
  * @param [getter]
@@ -373,7 +375,7 @@ export function link<D = unknown, R = D>(
 			} else {
 				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
 					const
-						mutation = <[unknown, unknown]>val.at(-1);
+						mutation = <[unknown, unknown]>val[val.length - 1];
 
 					val = mutation[0];
 					oldVal = mutation[1];
@@ -395,7 +397,7 @@ export function link<D = unknown, R = D>(
 			if (!isCustomWatcher) {
 				if (args.length === 0 && Object.isArray(val) && val.length > 0) {
 					const
-						mutation = <[unknown, unknown]>val.at(-1);
+						mutation = <[unknown, unknown]>val[val.length - 1];
 
 					val = mutation[0];
 					oldVal = mutation[1];

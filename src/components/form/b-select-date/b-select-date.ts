@@ -17,13 +17,11 @@ import type bSelect from 'components/form/b-select/b-select';
 import type { Item } from 'components/form/b-select/b-select';
 
 import iWidth from 'components/traits/i-width/i-width';
-import iInput, { component, prop, ModsDecl } from 'components/super/i-input/i-input';
+import iInput, { component, prop, computed, ModsDecl } from 'components/super/i-input/i-input';
 
-import { selectCache, months } from 'components/form/b-select-date/const';
 import type { Value, FormValue } from 'components/form/b-select-date/interface';
 
 export * from 'components/super/i-input/i-input';
-export * from 'components/form/b-select-date/const';
 export * from 'components/form/b-select-date/interface';
 
 export { Value, FormValue };
@@ -80,72 +78,67 @@ export default class bSelectDate extends iInput implements iWidth {
 	/**
 	 * List of months to render
 	 */
+	@computed({cache: true})
 	protected get months(): readonly Item[] {
-		const
-			key = JSON.stringify(months),
-			cache = selectCache.create('months'),
-			val = cache[key];
+		const {t} = this;
 
-		if (val) {
-			return val;
-		}
+		const months = [
+			t`January`,
+			t`February`,
+			t`March`,
+			t`April`,
+			t`May`,
+			t`June`,
+			t`July`,
+			t`August`,
+			t`September`,
+			t`October`,
+			t`November`,
+			t`December`
+		];
 
-		return cache[key] = Object.freeze(months).map((label, value) => ({value, label}));
+		return Object.freeze(months).map((label, value) => ({value, label}));
 	}
 
 	/**
 	 * List of days to render
 	 */
+	@computed({cache: true})
 	protected get days(): readonly Item[] {
 		const
-			key = this.value.daysInMonth(),
-			cache = selectCache.create('days'),
-			val = cache[key];
+			days: Item[] = [],
+			daysInMonth = this.value.daysInMonth();
 
-		if (val) {
-			return val;
-		}
-
-		const res = <Item[]>[];
-		cache[key] = res;
-
-		for (let i = 1; i <= key; i++) {
-			res.push({
+		for (let i = 1; i <= daysInMonth; i++) {
+			days.push({
 				value: i,
 				label: String(i)
 			});
 		}
 
-		return Object.freeze(res);
+		return Object.freeze(days);
 	}
 
 	/**
 	 * List of years to render
 	 */
+	@computed({cache: true})
 	protected get years(): readonly Item[] {
 		const
-			key = new Date().getFullYear(),
-			cache = selectCache.create('years'),
-			val = cache[key];
-
-		if (val) {
-			return val;
-		}
-
-		const res = <Item[]>[];
-		cache[key] = res;
+			years: Item[] = [],
+			currentYear = new Date().getFullYear();
 
 		for (let i = 0; i < 125; i++) {
 			const
-				value = key - i;
+				value = currentYear - i;
 
-			res.push({
+			years.push({
 				value,
 				label: String(value)
 			});
 		}
 
-		return Object.freeze(res);
+		return Object.freeze(years);
 	}
 
 	/**

@@ -67,7 +67,7 @@ export default class bExample implements iControlList {
     return opts.component === 'b-button' ? 'click' : 'change';
   }
 
-  /** @see [[iOpen.iControlList]] */
+  /** {@link iOpen.iControlList} */
   callControlAction(opts: ControlEvent, ...args: unknown[]): string {
     return iControlList.callControlAction(this, opts, ...args);
   }
@@ -99,14 +99,14 @@ The trait also defines a helper to render a list of controls.
     /**
      * Generates a layout for controls
      *
-     * @param {!Object} params - additional parameters:
+     * @param {object} params - additional parameters:
      *   *) [from] - an Iterable with data to render controls
      *   *) [component] - the component name within which the controls are rendered (taken from the context by default)
      *   *) [controlClasses] - CSS classes for control elements
      *   *) [wrapper] - a tag that will wrap the control elements
      *   *) [wrapperClasses] - CSS classes for elements that wrap controls
      *
-     * @param {string=} [content] - slot content for control elements
+     * @param {string} [content] - slot content for control elements
      */
     += self.getTpl('i-control-list/')({ &
       from: 'controls',

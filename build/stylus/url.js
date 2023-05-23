@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	querystring = require('querystring'),
@@ -59,7 +59,7 @@ module.exports = function addPlugins(api) {
 	 * Converts the specified object to a query string
 	 *
 	 * @see https://nodejs.org/api/querystring.html#querystring_querystring_stringify_obj_sep_eq_options
-	 * @param {Object} obj
+	 * @param {object} obj
 	 *
 	 * @returns {string}
 	 */

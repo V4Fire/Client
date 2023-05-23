@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable @v4fire/newline-after-description */
+
 import type { createVNode, VNode, DirectiveBinding } from 'core/component/engines';
 
 export interface DirectiveParams extends DirectiveBinding<ImageOptions> {}

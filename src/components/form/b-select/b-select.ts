@@ -64,7 +64,12 @@ Mask.addToPrototype(MaskAPI);
 
 interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof SelectEventHandlers> {}
 
-@component()
+@component({
+	functional: {
+		dataProvider: undefined
+	}
+})
+
 @derive(SelectEventHandlers, iOpenToggle, iActiveItems)
 class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
@@ -254,7 +259,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return SyncPromise.resolve(false);
 	}
 
-	/** {@link iActiveItems.setActive} */
+	/** {@link iActiveItems.prototype.setActive} */
 	setActive(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		if (!iActiveItems.setActive(this, value, unsetPrevious)) {
 			return false;
@@ -287,7 +292,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return true;
 	}
 
-	/** {@link iActiveItems.unsetActive} */
+	/** {@link iActiveItems.prototype.unsetActive} */
 	unsetActive(value: this['ActiveProp']): boolean {
 		const {activeElement: previousActiveElement} = this;
 
@@ -322,22 +327,22 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return true;
 	}
 
-	/** {@link iActiveItems.isActive} */
+	/** {@link iActiveItems.prototype.isActive} */
 	isSelected(value: unknown): boolean {
 		return this.isActive(value);
 	}
 
-	/** {@link iActiveItems.setActive} */
+	/** {@link iActiveItems.prototype.setActive} */
 	selectValue(value: this['ActiveProp'], unsetPrevious: boolean = false): boolean {
 		return this.setActive(value, unsetPrevious);
 	}
 
-	/** {@link iActiveItems.unsetActive} */
+	/** {@link iActiveItems.prototype.unsetActive} */
 	unselectValue(value: this['ActiveProp']): boolean {
 		return this.unsetActive(value);
 	}
 
-	/** {@link iActiveItems.toggleActive} */
+	/** {@link iActiveItems.prototype.toggleActive} */
 	toggleValue(value: this['ActiveProp'], unsetPrevious: boolean = false): CanUndef<this['Active']> {
 		const val = this.toggleActive(value, unsetPrevious);
 
@@ -348,7 +353,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return val;
 	}
 
-	/** {@link iOpenToggle.open} */
+	/** {@link iOpenToggle.prototype.open} */
 	async open(...args: unknown[]): Promise<boolean> {
 		if (this.multiple || this.native) {
 			return false;
@@ -362,7 +367,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 		return false;
 	}
 
-	/** {@link iOpenToggle.open} */
+	/** {@link iOpenToggle.prototype.close} */
 	async close(...args: unknown[]): Promise<boolean> {
 		if (this.native) {
 			return false;
@@ -384,7 +389,7 @@ class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	/**
-	 * {@link SelectEventHandlers.onItemClick}
+	 * {@link SelectEventHandlers.prototype.onItemClick}
 	 * @see https://github.com/V4Fire/Client/issues/848
 	 */
 	@watch({

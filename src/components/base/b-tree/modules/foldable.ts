@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -13,7 +12,7 @@ import { wait } from 'components/super/i-data/i-data';
 import type bTree from 'components/base/b-tree/b-tree';
 
 export default abstract class Foldable {
-	/** @see [[Foldable.prototype.fold]] */
+	/** {@link Foldable.prototype.fold} */
 	static fold(ctx: bTree, value?: unknown): Promise<boolean> {
 		if (arguments.length === 1) {
 			const values: Array<Promise<boolean>> = [];
@@ -35,7 +34,7 @@ export default abstract class Foldable {
 		return this.toggleFold(ctx, value, true);
 	}
 
-	/** @see [[Foldable.prototype.unfold]] */
+	/** {@link Foldable.prototype.unfold} */
 	static unfold(ctx: bTree, value?: unknown): Promise<boolean> {
 		const values: Array<Promise<boolean>> = [];
 
@@ -78,7 +77,7 @@ export default abstract class Foldable {
 			.then((res) => res.some((value) => value === true));
 	}
 
-	/** @see [[Foldable.prototype.toggleFold]] */
+	/** {@link Foldable.prototype.toggleFold} */
 	static toggleFold(ctx: bTree, value: unknown, folded?: boolean): Promise<boolean> {
 		const
 			{top} = ctx.unsafe;
@@ -120,10 +119,10 @@ export default abstract class Foldable {
 	 * Folds the specified item.
 	 * If the method is called without an element passed, all tree sibling elements will be folded.
 	 *
-	 * @param [value]
+	 * @param [_value]
 	 */
 	@wait('ready')
-	fold(value?: unknown): Promise<boolean> {
+	fold(_value?: unknown): Promise<boolean> {
 		return Object.throw();
 	}
 
@@ -132,22 +131,22 @@ export default abstract class Foldable {
 	 * If method is called on nested item, all parent items will be unfolded.
 	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
 	 *
-	 * @param [value]
+	 * @param [_value]
 	 */
 	@wait('ready')
-	unfold(value?: unknown): Promise<boolean> {
+	unfold(_value?: unknown): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
 	 * Toggles the passed item fold value
 	 *
-	 * @param value
-	 * @param [folded] - if value is not passed the current state will be toggled
+	 * @param _value
+	 * @param [_folded] - if value is not passed the current state will be toggled
 	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
 	 */
 	@wait('ready')
-	toggleFold(value: unknown, folded?: boolean): Promise<boolean> {
+	toggleFold(_value: unknown, _folded?: boolean): Promise<boolean> {
 		return Object.throw();
 	}
 }

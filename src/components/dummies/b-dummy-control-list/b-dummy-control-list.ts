@@ -48,6 +48,10 @@ class bDummyControlList extends iBlock implements iControlList {
 		globalThis._tArgsMap = args;
 		return args;
 	}
+
+	getControlEvent(opts: Control): string {
+		return opts.component === 'b-file-button' ? 'change' : 'click';
+	}
 }
 
 export default bDummyControlList;

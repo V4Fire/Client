@@ -15,6 +15,7 @@ import iStaticPage, { component, system, field } from 'components/super/i-static
 
 export * from 'components/super/i-static-page/i-static-page';
 
+// eslint-disable-next-line no-console
 console.time('Initializing');
 
 /**
@@ -36,6 +37,7 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	someField: unknown = 'foo';
 
 	protected beforeCreate(): void {
+		// eslint-disable-next-line no-console
 		console.time('Render');
 	}
 }

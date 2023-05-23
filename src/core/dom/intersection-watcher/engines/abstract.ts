@@ -32,7 +32,7 @@ export default abstract class AbstractEngine {
 	 */
 	protected elements: ObservableElements = new Map();
 
-	/** @see [[Async]] */
+	/** {@link Async} */
 	protected async: Async<this> = new Async(this);
 
 	/**

@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js');
@@ -18,7 +18,7 @@ const
 if (webpack.ssr) {
 	/**
 	 * Returns parameters for `webpack.externals`
-	 * @returns {!Array}
+	 * @returns {Array}
 	 */
 	module.exports = function externals() {
 		const cache = Object.createDict();
@@ -83,7 +83,7 @@ if (webpack.ssr) {
 	 * Returns parameters for `webpack.externals`
 	 *
 	 * @param {(number|string)} buildId
-	 * @returns {!Array}
+	 * @returns {Array}
 	 */
 	module.exports = function externals({buildId}) {
 		if (buildId !== STANDALONE) {

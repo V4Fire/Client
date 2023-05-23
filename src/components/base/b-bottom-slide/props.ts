@@ -32,7 +32,6 @@ export default abstract class bBottomSlideProps extends iBlock {
 	 * The minimum height value of a visible part (in pixels), i.e.,
 	 * even the component is closed, this part still be visible
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNonNegative})
 	readonly visible: number = 0;
 
@@ -45,21 +44,18 @@ export default abstract class bBottomSlideProps extends iBlock {
 	/**
 	 * The maximum time in milliseconds after which we can assume that there was a quick swipe
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isPositive})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
 	 * The minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly fastSwipeThreshold: number = 10;
 
 	/**
 	 * The minimum required amount of pixels of scrolling to swipe
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeThreshold: number = 40;
 
@@ -72,7 +68,6 @@ export default abstract class bBottomSlideProps extends iBlock {
 	/**
 	 * The maximum value of overlay opacity
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isBetweenZeroAndOne})
 	readonly maxOpacity: number = 0.8;
 

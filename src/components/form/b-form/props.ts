@@ -25,7 +25,7 @@ export default abstract class bFormProps extends iData {
 	override readonly dataProviderProp: DataProviderProp = 'Provider';
 	override readonly defaultRequestFilter: RequestFilter = true;
 
-	/** @see [[iVisible.hideIfOffline]] */
+	/** {@link iVisible.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 

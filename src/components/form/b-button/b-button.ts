@@ -59,8 +59,8 @@ class bButton extends bButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	/**
 	 * Additional attributes that are provided to the native button
 	 *
-	 * @see [[bButton.attrsProp]]
-	 * @see [[bButton.$refs.button]]
+	 * {@link bButton.attrsProp}
+	 * {@link bButton.$refs.button}
 	 */
 	@computed({dependencies: ['type', 'form', 'href', 'hasDropdown']})
 	get attrs(): Dictionary {
@@ -83,7 +83,7 @@ class bButton extends bButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		return attrs;
 	}
 
-	/** @see [[iAccess.isFocused]] */
+	/** {@link iAccess.prototype.isFocused} */
 	@computed({dependencies: ['mods.focused']})
 	get isFocused(): boolean {
 		const
@@ -152,7 +152,7 @@ class bButton extends bButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		}
 	}
 
-	/** @see [[iOpenToggle.initCloseHelpers]] */
+	/** {@link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);

@@ -48,7 +48,7 @@ interface bList extends Trait<typeof iActiveItems> {}
 
 @derive(iActiveItems)
 class bList extends bListProps implements iVisible, iWidth, iActiveItems {
-	/** @see [[bList.attrsProp]] */
+	/** {@link bList.attrsProp} */
 	get attrs(): Dictionary {
 		const
 			attrs = {...this.attrsProp};
@@ -63,7 +63,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 	/**
 	 * A list of the component items
-	 * @see [[bList.itemsProp]]
+	 * {@link bList.itemsProp}
 	 */
 	@computed({dependencies: ['value', 'itemsStore']})
 	get items(): this['Items'] {
@@ -72,27 +72,27 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 	/**
 	 * Sets a new list of the component items
-	 * @see [[bList.items]]
+	 * {@link bList.items}
 	 */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
 
-	/** @see [[iActiveItems.activeChangeEvent]] */
+	/** {@link iActiveItems.activeChangeEvent} */
 	@system()
 	readonly activeChangeEvent: string = 'change';
 
 	/**
-	 * @see [[iActiveItems.active]]
-	 * @see [[bList.activeStore]]
+	 * {@link iActiveItems.active}
+	 * {@link bList.activeStore}
 	 */
 	get active(): this['Active'] {
 		return iActiveItems.getActive(this);
 	}
 
 	/**
-	 * @see [[iActiveItems.activeStore]]
-	 * @see [[bList.activeProp]]
+	 * {@link iActiveItems.activeStore}
+	 * {@link bList.activeProp}
 	 */
 	@system<bList>((o) => {
 		o.watch('modelValue', (val) => o.setActive(val, true));
@@ -113,7 +113,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 
 	/**
 	 * A store of the component items
-	 * @see [[bList.items]]
+	 * {@link bList.items}
 	 */
 	@field<bList>((o) => o.sync.link<Items>((val) => {
 		if (o.dataProvider != null) {
@@ -131,7 +131,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	@system((o) => new Values(o))
 	protected values!: Values;
 
-	/** @see [[iActiveItems.activeElement]] */
+	/** {@link iActiveItems.activeElement} */
 	@computed({
 		cache: true,
 		dependencies: ['active']
@@ -161,7 +161,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 		});
 	}
 
-	/** @see [[iActiveItems.prototype.getItemByValue] */
+	/** {@link iActiveItems.prototype.getItemByValue} */
 	getItemByValue(value: this['Item']['value']): CanUndef<this['Item']> {
 		return this.values.getItem(value);
 	}
@@ -281,18 +281,18 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 		this.normalizeItems = i.normalizeItems.bind(this);
 	}
 
-	/** @see [[normalizeItems]] */
+	/** {@link normalizeItems} */
 	protected normalizeItems(items: CanUndef<this['Items']>): this['Items'] {
 		return normalizeItems.call(this, items);
 	}
 
-	/** @see [[Values.initComponentValues]] */
+	/** {@link Values.initComponentValues} */
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		this.values.init(itemsChanged);
 	}
 
-	/** @see [[iActiveItems.initActiveStoreListeners]] */
+	/** {@link iActiveItems.initActiveStoreListeners} */
 	@hook('beforeDataCreate')
 	protected initActiveStoreListeners(): void {
 		iActiveItems.initActiveStoreListeners(this);
@@ -317,7 +317,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 			op ?? {};
 	}
 
-	/** @see [[iActiveItems.getItemKey]] */
+	/** {@link iActiveItems.getItemKey} */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
 	}

@@ -20,8 +20,8 @@ import type { Mods } from 'components/friends/provide/interface';
 /**
  * Returns a dictionary with the base component modifiers.
  * The base modifiers are taken from the `sharedMods` getter and can be mix in with the specified additional modifiers.
+ * {@link iBlock.sharedMods}
  *
- * @see [[iBlock.sharedMods]]
  * @param [mods] - additional modifiers to returns
  *
  * @example

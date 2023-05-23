@@ -57,7 +57,7 @@ const
 export default class bForm extends bFormProps implements iVisible {
 	/**
 	 * Additional request parameters
-	 * @see [[bForm.paramsProp]]
+	 * {@link bForm.paramsProp}
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 	@system<bForm>((o) => o.sync.link((val) => Object.assign(o.params ?? {}, val)))

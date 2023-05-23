@@ -42,12 +42,11 @@ class State extends Friend {
 	 */
 	get needRouterSync(): boolean {
 		// @ts-ignore (access)
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		baseSyncRouterState ??= iBlock.prototype.syncRouterState;
 		return baseSyncRouterState !== this.instance.syncRouterState;
 	}
 
-	/** @see [[iBlock.instance]] */
+	/** {@link iBlock.instance} */
 	protected get instance(): this['CTX']['instance'] {
 		return this.ctx.instance;
 	}

@@ -14,25 +14,25 @@ import type { Mode, AlignType } from 'components/base/b-slider/interface';
 
 @component()
 export default abstract class bSliderProps extends iData {
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	readonly Item!: object;
 
-	/** @see [[iItems.Items]] */
+	/** {@link iItems.Items} */
 	readonly Items!: Array<this['Item']>;
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@prop(Array)
 	readonly itemsProp: iItems['items'] = [];
 
-	/** @see [[iItems.item]] */
+	/** {@link iItems.item} */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
-	/** @see [[iItems.itemKey]] */
+	/** {@link iItems.itemKey} */
 	@prop({type: [String, Function], required: false})
 	readonly itemKey?: iItems['itemKey'];
 
-	/** @see [[iItems.itemProps]] */
+	/** {@link iItems.itemProps} */
 	@prop({type: [Function, Object], required: false})
 	readonly itemProps?: iItems['itemProps'];
 

@@ -56,13 +56,11 @@ export function wrapAsDelegateHandler<T extends Function>(
  * ```
  */
 export function wrapAsDelegateHandler(selector: string): Function;
-
 export function wrapAsDelegateHandler(selector: string, fn?: Function): Function {
 	function wrapper(this: unknown, e: Event): boolean {
 		const
 			t = <CanUndef<Element>>e.target;
 
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (t == null || !Object.isFunction(t.closest)) {
 			return false;
 		}
@@ -83,7 +81,7 @@ export function wrapAsDelegateHandler(selector: string, fn?: Function): Function
 		return wrapper;
 	}
 
-	return (target, key, descriptors) => {
+	return (_target, _key, descriptors) => {
 		fn = descriptors.value;
 		descriptors.value = wrapper;
 	};

@@ -9,11 +9,26 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :house: Internal
+
+* Refactored the `bRouter` component:
+  * Created the `Transition` class, which encapsulates the `emitTransition` logic
+  * Created the `handlers` module to handle DOM events
+  * Extracted props to the `bRouterProps` class
+
 ## v3.??.? (2022-??-??)
 
 #### :rocket: New Feature
 
 * Added possibility to disable specific link interception
+
+## v3.44.1 (2023-03-28)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path
 
 ## v3.30.2 (2022-11-17)
 

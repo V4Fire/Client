@@ -45,7 +45,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			init.beforeDataCreateState(ctx);
 
 			const emitter = (_, handler) => {
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				const {unwatch} = watch(ctx.$fields, {deep: true, immediate: true}, handler);
 				return unwatch;
 			};

@@ -1,5 +1,3 @@
-/* eslint-disable max-lines-per-function */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -401,7 +399,7 @@ export function implementComponentWatchAPI(
 				const
 					{path} = info;
 
-				if (path.at(-1) === '__proto__') {
+				if (path[path.length - 1] === '__proto__') {
 					return;
 				}
 
@@ -409,7 +407,7 @@ export function implementComponentWatchAPI(
 					const
 						{path: parentPath} = info.parent.info;
 
-					if (parentPath.at(-1) === '__proto__') {
+					if (parentPath[parentPath.length - 1] === '__proto__') {
 						return;
 					}
 				}

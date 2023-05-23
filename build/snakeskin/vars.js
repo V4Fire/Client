@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,9 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const path = require('upath');
 
-/** @type {!Object} */
+/** @type {object} */
 const {Vars} = require('snakeskin');
 
 module.exports = {

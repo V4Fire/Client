@@ -164,7 +164,7 @@ export function elements<E extends Element = Element>(
 		ctxToSearch = $el,
 		elName;
 
-		if (Object.isString(ctxOrName)) {
+	if (Object.isString(ctxOrName)) {
 		elName = ctxOrName;
 
 		if (Object.isPlainObject(name)) {
@@ -253,7 +253,7 @@ export function element<E extends Element = Element>(
 		ctx = this.node,
 		elName;
 
-		if (Object.isString(ctxOrName)) {
+	if (Object.isString(ctxOrName)) {
 		elName = ctxOrName;
 
 		if (Object.isPlainObject(name)) {

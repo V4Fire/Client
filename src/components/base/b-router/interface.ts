@@ -53,4 +53,10 @@ export type RouteOption = Dictionary<unknown | ComputeParamFn>;
 export interface UnsafeBRouter<CTX extends bRouter = bRouter> extends UnsafeIData<CTX> {
 	// @ts-ignore (access)
 	engine: CTX['engine'];
+
+	// @ts-ignore (access)
+	routeStore: CTX['routeStore'];
+
+	// @ts-ignore (access)
+	initRoute: CTX['initRoute'];
 }

@@ -16,13 +16,14 @@
 
 		/**
 		 * Generates a list block
-		 * @param {!Array<Item>} items - the items to render
+		 * @param {Array<Item>} items - the items to render
 		 */
 		- block list(items)
-			< template v-for = (el, i) in ${items} | :key = getItemKey(el, i)
+			< template v-for = (el, i) in ${items}
 				< .&__item v-tag = listElementTag
 					< . &
 						v-tag = el.href !== undefined ? 'a' : 'button' |
+						:key = getItemKey(el, i) |
 
 						:href = el.href |
 						:value = el.value |

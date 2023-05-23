@@ -28,7 +28,7 @@ export default abstract class iPage extends iData implements iVisible {
 	override readonly reloadOnActivation: boolean = true;
 	override readonly syncRouterStoreOnInit: boolean = true;
 
-	/** @see [[iVisible.hideIfOffline]] */
+	/** {@link iVisible.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -43,8 +43,8 @@ export default abstract class iPage extends iData implements iVisible {
 	 * The current page description.
 	 * Basically this description is set via `<meta name="description" content="..."/>`.
 	 */
-	 @prop({type: [String, Function]})
-	 readonly pageDescriptionProp: DescriptionValue = '';
+	@prop({type: [String, Function]})
+	readonly pageDescriptionProp: DescriptionValue = '';
 
 	/**
 	 * A dictionary of page titles (basically these titles are set via `document.title`).
@@ -59,8 +59,8 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * The current page title
 	 *
-	 * @see [[iPage.pageTitleProp]]
-	 * @see [[iPage.stagePageTitles]]
+	 * {@link iPage.pageTitleProp}
+	 * {@link iPage.stagePageTitles}
 	 */
 	@computed({cache: false})
 	get pageTitle(): string {
@@ -81,7 +81,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 * A wrapped version of the `scrollTo` method.
 	 * The calling cancels all previous tasks.
 	 *
-	 * @see [[iPage.scrollTo]]
+	 * {@link iPage.scrollTo}
 	 */
 	@computed({cache: true})
 	get scrollToProxy(): this['scrollTo'] {

@@ -11,14 +11,14 @@
 /**
  * Generates a layout for controls
  *
- * @param {!Object} params - additional parameters:
+ * @param {object} params - additional parameters:
  *   *) [from] - an Iterable with data to render controls
  *   *) [component] - the component name within which the controls are rendered (taken from the context by default)
  *   *) [controlClasses] - CSS classes for control elements
  *   *) [wrapper] - a tag that will wrap the control elements
  *   *) [wrapperClasses] - CSS classes for elements that wrap controls
  *
- * @param {string=} [content] - slot content for control elements
+ * @param {string} [content] - slot content for control elements
  */
 - @@ignore
 - template index(@params, content)

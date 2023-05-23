@@ -1,5 +1,3 @@
-/* eslint-disable complexity */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable complexity */
 
 /**
  * [[include:core/component/directives/attrs/README.md]]
@@ -61,17 +61,16 @@ ComponentEngine.directive('attrs', {
 		const props = vnode.props ?? {};
 		vnode.props ??= props;
 
-		const
+		let
 			attrs = {...params.value};
 
 		if (componentMeta != null) {
-			normalizeComponentAttrs(attrs, vnode.dynamicProps, componentMeta);
+			attrs = normalizeComponentAttrs(attrs, vnode.dynamicProps, componentMeta)!;
 		}
 
 		let
 			r: CanUndef<ComponentInterface['$renderEngine']['r']>;
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (ctx != null) {
 			r = ctx.$renderEngine.r;
 		}

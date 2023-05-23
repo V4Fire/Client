@@ -1,5 +1,3 @@
-/* eslint-disable prefer-spread */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable prefer-spread */
 
 import makeLazy from 'core/lazy';
 
@@ -65,7 +65,8 @@ const Vue = makeLazy(
 					return;
 				}
 
-				const ctx = contexts.at(-1);
+				const ctx = contexts[contexts.length - 1];
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				return ctx?.component.apply(ctx, Object.cast(args));
 			},
 
@@ -78,7 +79,8 @@ const Vue = makeLazy(
 					return;
 				}
 
-				const ctx = contexts.at(-1);
+				const ctx = contexts[contexts.length - 1];
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				return ctx?.directive.apply(ctx, Object.cast(args));
 			},
 
@@ -97,7 +99,6 @@ const Vue = makeLazy(
 	}
 );
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
 const staticComponent = Vue.component.length > 0 ? Vue.component : null;
 
 Vue.component = Object.cast(

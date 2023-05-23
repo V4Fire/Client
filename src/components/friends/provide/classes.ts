@@ -22,7 +22,7 @@ import type { Classes } from 'components/friends/provide/interface';
  * Use it with caution as it's a violation of component encapsulation.
  *
  * @param classes - a basemap of elements, where keys are elements in the inner component,
- *   and values are elements of the outer component
+ * and values are elements of the outer component
  *
  * @example
  * ```js
@@ -47,7 +47,7 @@ export function classes(this: Friend, classes: Classes): Readonly<Dictionary<str
  *
  * @param componentName - the base component name
  * @param classes - a basemap of elements, where keys are elements in the inner component,
- *   and values are elements of the outer component
+ * and values are elements of the outer component
  *
  * @example
  * ```js
@@ -215,7 +215,7 @@ export function componentClasses(
  * Returns a list of classes for the specified element of the current component
  *
  * @param els - a map of the elements for which you want to get classes, where the keys are the names of the elements,
- *   and the value is a dictionary of applied modifiers
+ * and the value is a dictionary of applied modifiers
  *
  * @example
  * ```js
@@ -232,7 +232,7 @@ export function elementClasses(this: Friend, els: Dictionary<ModsProp>): readonl
  *
  * @param componentNameOrCtx - the component name or a link to the component context
  * @param els - a map of the elements for which you want to get classes, where the keys are the names of the elements,
- *   and the value is a dictionary of applied modifiers
+ * and the value is a dictionary of applied modifiers
  *
  * @example
  * ```js

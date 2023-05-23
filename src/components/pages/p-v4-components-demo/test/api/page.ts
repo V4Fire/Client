@@ -19,7 +19,7 @@ import type bDummy from 'components/dummies/b-dummy/b-dummy';
  */
 export default class DemoPage {
 
-	/** @see [[Page]] */
+	/** {@link Page} */
 	readonly page: Page;
 
 	/**

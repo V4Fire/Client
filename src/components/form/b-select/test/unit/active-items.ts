@@ -93,8 +93,8 @@ test.describe('<b-select> active items', () => {
 				target = await renderSelect(page, {items, cancelable: false});
 
 			await test.expect(target.evaluate((ctx) => {
-					ctx.setActive(0);
-					return ctx.active;
+				ctx.setActive(0);
+				return ctx.active;
 			})).resolves.toBe(0);
 
 			await test.expect(target.evaluate((ctx) => {
@@ -210,8 +210,8 @@ test.describe('<b-select> active items', () => {
 			await assertItemsSelectedModIs(true, [0, 1]);
 
 			await test.expect(target.evaluate((ctx) => {
-					ctx.toggleActive([2, 4].values(), true);
-					return [...<Set<number>>ctx.active];
+				ctx.toggleActive([2, 4].values(), true);
+				return [...<Set<number>>ctx.active];
 			})).resolves.toEqual([2, 4]);
 
 			await assertItemsSelectedModIs(false, [0, 1]);

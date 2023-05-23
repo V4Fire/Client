@@ -43,7 +43,7 @@ export function deferForceRender(this: Friend): void {
  * This function is useful to re-render a functional component without touching the parent state.
  *
  * @param elementToDrop - an element to drop before resolving the promise
- *   (if the element is passed as a function, it would be invoked)
+ * (if the element is passed as a function, it would be invoked)
  *
  * @example
  * ```

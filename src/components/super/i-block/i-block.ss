@@ -34,7 +34,7 @@
 
 	/**
 	 * Returns the component name
-	 * @param {string=} [name] - the custom template name
+	 * @param {string} [name] - the custom template name
 	 */
 	- block name(name)
 		? name = name || componentName || TPL_NAME
@@ -48,9 +48,9 @@
 	/**
 	 * Loads modules by the specified paths and dynamically inserted the provided content when them are loaded
 	 *
-	 * @param {(string|!Array<string>)} path - the module path or list of paths
-	 * @param {{renderKey: string, wait: string}=} [opts] - additional options
-	 * @param {string=} [content]
+	 * @param {(string|Array<string>)} path - the module path or list of paths
+	 * @param {{renderKey: string, wait: string}} [opts] - additional options
+	 * @param {string} [content]
 	 *
 	 * @example
 	 * ```
@@ -207,9 +207,9 @@
 					/**
 					 * Generates a slot declaration by the specified parameters
 					 *
-					 * @param {string=} [name] - the slot name
-					 * @param {Object=} [attrs] - the scoped slot attributes
-					 * @param {string=} [content] - the slot content
+					 * @param {string} [name] - the slot name
+					 * @param {object} [attrs] - the scoped slot attributes
+					 * @param {string} [content] - the slot content
 					 */
 					- block slot(name = 'default', attrs, content)
 						- switch arguments.length

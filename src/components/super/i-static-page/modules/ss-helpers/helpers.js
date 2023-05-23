@@ -14,7 +14,7 @@ exports.needInline = needInline;
 /**
  * Returns true if should inline resources
  *
- * @param {boolean=} [forceInline]
+ * @param {boolean} [forceInline]
  * @returns {boolean}
  */
 function needInline(forceInline) {

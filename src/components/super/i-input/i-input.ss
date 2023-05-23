@@ -43,7 +43,7 @@
 		 *
 		 *   *) [attrs] - a dictionary with additional attributes
 		 *
-		 * @param {string=} [content] - the slot content
+		 * @param {string} [content] - the slot content
 		 */
 		- block nativeInput(@params = {}, content = '')
 			{{ void(tmp.attrs = normalizeAttrs(attrs)) }}

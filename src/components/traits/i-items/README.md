@@ -20,10 +20,10 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bTree extends iBlock implements iItems {
-  /** @see [[iItems.Item]] */
+  /** {@link iItems.Item} */
   readonly Item!: Item;
 
-  /** @see [[iItems.Items]] */
+  /** {@link iItems.Items} */
   readonly Items!: Array<this['Item']>;
 }
 ```
@@ -81,7 +81,7 @@ import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bTree extends iBlock implements iItems {
-  /** @see [[iItems.getItemKey]] */
+  /** {@link iItems.getItemKey} */
   protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
     return iItems.getItemKey(this, el, i);
   }

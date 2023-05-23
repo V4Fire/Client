@@ -1,5 +1,3 @@
-/* eslint-disable complexity */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -98,7 +96,6 @@ export function fillMeta(
 				default: defValue,
 				functional: prop.functional,
 
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				validator: prop.validator
 			};
 		}

@@ -136,15 +136,15 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 		}
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@field((o) => o.sync.link())
 	protected itemsStore!: iItems['items'];
 
-	/** @see [[bSlider.current]] */
+	/** {@link bSlider.current} */
 	@system()
 	protected currentStore: number = 0;
 
-	/** @see [[bSlider.modeProp]] */
+	/** {@link bSlider.modeProp} */
 	@field((o) => o.sync.link())
 	protected mode!: Mode;
 
@@ -175,8 +175,8 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 	/**
 	 * Is the minimum threshold for starting slide content passed
 	 *
-	 * @see [[bSlider.swipeToleranceX]]
-	 * @see [[bSlider.swipeToleranceY]]
+	 * {@link bSlider.swipeToleranceX}
+	 * {@link bSlider.swipeToleranceY}
 	 */
 	@system()
 	protected isTolerancePassed: boolean = false;
@@ -227,13 +227,13 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 		return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@computed()
 	get items(): this['Items'] {
 		return this.itemsStore ?? [];
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
@@ -301,7 +301,7 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 		return false;
 	}
 
-	/** @see [[iObserveDOM.initDOMObservers]] */
+	/** {@link iObserveDOM.initDOMObservers} */
 	@hook('mounted')
 	initDOMObservers(): void {
 		const
@@ -372,7 +372,7 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 		return Object.isFunction(item) ? item(el, i) : <string>item;
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, el, i);
 	}
@@ -380,7 +380,7 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 	/**
 	 * Synchronizes the slider state
 	 */
-	@hook('mounted')
+	@hook(['mounted', 'updated'])
 	@wait('loading', {label: $$.syncState})
 	protected syncState(): void {
 		const
@@ -414,7 +414,7 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 	 * Synchronizes the slider state (deferred version)
 	 * @emits `syncState()`
 	 */
-	@watch(':DOMChange')
+	@watch('localEmitter:DOMChange')
 	@wait('ready', {label: $$.syncStateDefer})
 	protected async syncStateDefer(): Promise<void> {
 		const

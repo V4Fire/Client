@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,26 +6,28 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 /**
  * The RegExp to detect V4Fire specific attributes
- * @type {!RegExp}
+ * @type {RegExp}
  */
 exports.isV4Prop = /^(:|@|v-)/;
 
 /**
  * The RegExp to detect V4Fire specific static attributes
- * @type {!RegExp}
+ * @type {RegExp}
  */
 exports.isStaticV4Prop = /^[^[]+$/;
 
 /**
  * The RegExp to detect commas
- * @type {!RegExp}
+ * @type {RegExp}
  */
 exports.commaRgxp = /\s*,\s*/;
 
 /**
  * The RegExp to detect Snakeskin file extensions
- * @type {!RegExp}
+ * @type {RegExp}
  */
 exports.ssExtRgxp = /\.e?ss$/;

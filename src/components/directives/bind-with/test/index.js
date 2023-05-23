@@ -1,5 +1,3 @@
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+// @ts-check
+
 const
 	h = include('tests/helpers').default;
 
@@ -15,8 +15,8 @@ const
  * Starts a test
  *
  * @param {Playwright.Page} page
- * @param {!Object} params
- * @returns {!Promise<void>}
+ * @param {object} params
+ * @returns {Promise<void>}
  */
 module.exports = async (page, params) => {
 	await h.utils.setup(page, params.context);

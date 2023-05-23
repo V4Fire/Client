@@ -35,7 +35,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
   /**
    * Returns parameters for `typograf`
-   * @returns {!Object}
+   * @returns {object}
    */
   typograf() {
     return {

@@ -31,7 +31,7 @@ const
 
 @component()
 export default abstract class iBlockProviders extends iBlockState {
-	/** @see [[iBlock.dontWaitRemoteProvidersProp]] */
+	/** {@link iBlock.dontWaitRemoteProvidersProp} */
 	@system((o) => o.sync.link((val) => {
 		if (val == null) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

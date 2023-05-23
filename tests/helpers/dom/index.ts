@@ -64,6 +64,7 @@ export default class DOM {
 
 	/**
 	 * Returns a selector for the specified ref
+	 *
 	 * @param refName
 	 *
 	 * @deprecated
@@ -75,6 +76,7 @@ export default class DOM {
 
 	/**
 	 * Clicks to an element matched to the specified ref name
+	 *
 	 * @see https://playwright.dev/#version=v1.2.0&path=docs%2Fapi.md&q=pageclickselector-options
 	 *
 	 * @param ctx
@@ -86,7 +88,6 @@ export default class DOM {
 	 */
 	static clickToRef(ctx: Page | ElementHandle, refName: string, clickOpts?: Dictionary): Promise<void> {
 		return ctx.click(this.getRefSelector(refName), {
-			force: true,
 			...clickOpts
 		});
 	}

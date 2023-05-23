@@ -22,7 +22,6 @@ import type {
 
 } from 'tests/helpers/assert/component/interface';
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class AssertComponent extends AssertBase {
 	static readonly inverted: boolean = false;
 

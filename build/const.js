@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	path = require('upath');
@@ -71,7 +71,7 @@ exports.MAX_TASKS_PER_ONE_PROCESS = 3;
 
 /**
  * List of critical core folders of the framework
- * @type {!Array<string>}
+ * @type {Array<string>}
  */
 exports.coreFolders = ['config', 'core', 'super', 'global'];
 

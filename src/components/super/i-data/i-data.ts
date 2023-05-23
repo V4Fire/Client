@@ -194,8 +194,8 @@ export default abstract class iData extends iDataHandlers {
 
 	/**
 	 * An alias to the original `initLoad` method
+	 * {@link iBlock.initLoad}
 	 *
-	 * @see [[iBlock.initLoad]]
 	 * @param [data]
 	 * @param [opts]
 	 */
@@ -228,7 +228,7 @@ export default abstract class iData extends iDataHandlers {
 
 		this.r.providerDataStore.set(key, data);
 
-		function getKey(val: CanUndef<typeof this.dataProvider>): CanUndef<string> {
+		function getKey(val: string | CanUndef<iData['dataProvider']>): CanUndef<string> {
 			if (val == null || Object.isString(val)) {
 				return val ?? undefined;
 			}

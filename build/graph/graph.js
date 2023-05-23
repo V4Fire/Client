@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js'),
@@ -56,7 +56,7 @@ let
 
 /**
  * Builds a project graph
- * @returns {!Promise<{entry, components, processes, dependencies}>}
+ * @returns {Promise<{entry, components, processes, dependencies}>}
  */
 async function buildProjectGraph() {
 	block.setObjToHash(config.componentDependencies());

@@ -16,39 +16,39 @@ import type { Item, RenderFilter } from 'components/base/b-tree/interface';
 
 @component()
 export default abstract class bTreeProps extends iData {
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	readonly Item!: Item;
 
-	/** @see [[iItems.Items]] */
+	/** {@link iItems.Items} */
 	readonly Items!: Array<this['Item']>;
 
-	/** @see [[iActiveItems.ActiveProp]] */
+	/** {@link iActiveItems.ActiveProp} */
 	readonly ActiveProp!: iActiveItems['ActiveProp'];
 
-	/** @see [[iActiveItems.Active]] */
+	/** {@link iActiveItems.Active} */
 	readonly Active!: iActiveItems['Active'];
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@prop(Array)
 	readonly itemsProp: this['Items'] = [];
 
-	/** @see [[iItems.item]] */
+	/** {@link iItems.item} */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
-	/** @see [[iActiveItems.activeProp]] */
+	/** {@link iActiveItems.activeProp} */
 	@prop({required: false})
 	readonly activeProp?: this['ActiveProp'];
 
-	/** @see [[iActiveItems.activeProp]] */
+	/** {@link iActiveItems.activeProp} */
 	@prop({required: false})
 	readonly modelValue?: this['ActiveProp'];
 
-	/** @see [[iActiveItems.multiple]] */
+	/** {@link iActiveItems.multiple} */
 	@prop(Boolean)
 	readonly multiple: boolean = false;
 
-	/** @see [[iActiveItems.cancelable]] */
+	/** {@link iActiveItems.cancelable} */
 	@prop({type: Boolean, required: false})
 	readonly cancelable?: boolean;
 
@@ -58,11 +58,11 @@ export default abstract class bTreeProps extends iData {
 	@prop(Boolean)
 	readonly folded: boolean = true;
 
-	/** @see [[iItems.itemKey]] */
+	/** {@link iItems.itemKey} */
 	@prop({type: [String, Function], required: false})
 	readonly itemKey?: iItems['itemKey'];
 
-	/** @see [[iItems.itemProps]] */
+	/** {@link iItems.itemProps} */
 	@prop({type: Function, required: false})
 	readonly itemProps?: iItems['itemProps'];
 
@@ -70,8 +70,8 @@ export default abstract class bTreeProps extends iData {
 	 * A common filter to render items via `asyncRender`.
 	 * It is used to optimize the process of rendering items.
 	 *
-	 * @see [[AsyncRender.iterate]]
-	 * @see [[TaskFilter]]
+	 * {@link AsyncRender.iterate}
+	 * {@link TaskFilter}
 	 */
 	@prop({
 		type: Function,
@@ -91,8 +91,8 @@ export default abstract class bTreeProps extends iData {
 	 * A filter to render nested items via `asyncRender`.
 	 * It is used to optimize the process of rendering child items.
 	 *
-	 * @see [[AsyncRender.iterate]]
-	 * @see [[TaskFilter]]
+	 * {@link AsyncRender.iterate}
+	 * {@link TaskFilter}
 	 */
 	@prop({type: Function, required: false})
 	readonly nestedRenderFilter?: RenderFilter;
