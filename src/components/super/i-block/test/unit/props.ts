@@ -10,16 +10,20 @@ import type { JSHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
-import { Component } from 'tests/helpers';
+import { Component, DOM } from 'tests/helpers';
 
 import type bDummy from 'components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy';
 
 test.describe('<i-block> props', () => {
-	test.beforeEach(async ({demoPage, page}) => {
+	const
+		componentName = 'b-super-i-block-dummy',
+		createSelector = DOM.elNameSelectorGenerator(componentName);
+
+	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test('`rootTag`', async ({page}) => {
+	test('`rootTag` should set a tag in which the component is rendered', async ({page}) => {
 		const target = await renderDummy(page, {
 			rootTag: 'main'
 		});
@@ -27,7 +31,7 @@ test.describe('<i-block> props', () => {
 		await test.expect(target.evaluate((ctx) => ctx.$el!.tagName)).resolves.toBe('MAIN');
 	});
 
-	test('`mods`', async({page}) => {
+	test('`mods` should set default values for the component modifiers', async ({page}) => {
 		const target = await renderDummy(page, {
 			mods: {
 				foo: 1,
@@ -51,7 +55,7 @@ test.describe('<i-block> props', () => {
 		});
 	});
 
-	test('passing modifiers as props', async({page}) => {
+	test('should accept modifiers as props', async ({page}) => {
 		const target = await renderDummy(page, {
 			exterior: 'foo',
 			diff: true
@@ -69,7 +73,7 @@ test.describe('<i-block> props', () => {
 		});
 	});
 
-	test('`stage`', async({page}) => {
+	test('`stage` should set the stage of the component', async ({page}) => {
 		const target = await renderDummy(page, {
 			stage: 'main'
 		});
@@ -77,7 +81,7 @@ test.describe('<i-block> props', () => {
 		await test.expect(target.evaluate((ctx) => ctx.stage)).resolves.toBe('main');
 	});
 
-	test('`activatedProp`', async({page}) => {
+	test('`activatedProp` should deactivate the component when `false` is passed', async ({page}) => {
 		const target = await renderDummy(page, {
 			activatedProp: false
 		});
@@ -85,48 +89,44 @@ test.describe('<i-block> props', () => {
 		await test.expect(target.evaluate((ctx) => ctx.isActivated)).resolves.toBeFalsy();
 	});
 
-	test('`classes`', async({page}) => {
-		const target = await renderDummy(page, {
+	test('`classes` should set the component element classes', async ({page}) => {
+		await renderDummy(page, {
 			classes: {
 				wrapper: 'baz'
 			}
 		});
 
-		await test.expect(
-			target.evaluate((ctx) => ctx.unsafe.block!.element('wrapper')!.classList.contains('baz'))
-		).resolves.toBeTruthy();
+		await test.expect(page.locator(createSelector('wrapper'))).toHaveClass(/baz/);
 	});
 
-	test('`styles`', async({page}) => {
-		const target = await renderDummy(page, {
+	test('`styles` should set the component element styles', async ({page}) => {
+		await renderDummy(page, {
 			styles: {
 				wrapper: 'color: red;'
 			}
 		});
 
-		await test.expect(
-			target.evaluate((ctx) => ctx.unsafe.block!.element('wrapper')!.getAttribute('style'))
-		).resolves.toBe('color: red;');
+		await test.expect(page.locator(createSelector('wrapper'))).toHaveCSS('color', 'rgb(255, 0, 0)');
 	});
 
-	test.describe('`watchProp`', () => {
-		test('simple usage', async({page}) => {
+	test.describe('`watchProp` should call `setStage` method', () => {
+		test('when the parent\'s `stage` property changes', async ({page}) => {
 			const target = await renderDummy(page, {
 				watchProp: {
 					setStage: 'stage'
 				}
 			});
 
-			await test.expect(
-				target.evaluate(async (ctx) => {
-					ctx.$parent!.stage = 'foo';
-					await ctx.nextTick();
-					return ctx.stage;
-				})
-			).resolves.toBe('foo');
+			const scan = await target.evaluate(async (ctx) => {
+				ctx.$parent!.stage = 'foo';
+				await ctx.nextTick();
+				return ctx.stage;
+			});
+
+			await test.expect(scan).toBe('foo');
 		});
 
-		test('providing additional options', async({page}) => {
+		test('when one of the specified parent\'s properties changes ', async ({page}) => {
 			const target = await renderDummy(page, {
 				watchProp: {
 					setStage: [
@@ -149,7 +149,6 @@ test.describe('<i-block> props', () => {
 
 			test.expect(scan).toBe('foo');
 
-
 			scan = await target.evaluate(async (ctx) => {
 				ctx.$parent!.unsafe.reactiveTmp.foo = 'bar';
 				await ctx.nextTick();
@@ -159,7 +158,7 @@ test.describe('<i-block> props', () => {
 			test.expect(scan).toBe('bar');
 		});
 
-		test('watching for events', async({page}) => {
+		test('when parent emits the `onNewStage` event', async ({page}) => {
 			const target = await renderDummy(page, {
 				watchProp: {
 					setStage: [':onNewStage']
@@ -178,12 +177,13 @@ test.describe('<i-block> props', () => {
 
 	/**
 	 * Returns the rendered dummy component
+	 *
 	 * @param page
 	 * @param attrs
 	 */
 	async function renderDummy(
 		page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}
 	): Promise<JSHandle<bDummy>> {
-		return Component.createComponent(page, 'b-super-i-block-dummy', attrs);
+		return Component.createComponent(page, componentName, attrs);
 	}
 });
