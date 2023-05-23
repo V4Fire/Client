@@ -12,7 +12,7 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< template v-if = stage === 'infinite rendering'
+		< template v-if = stage === 'infinite rendering with the removal of a node by the passed name when re-rendering'
 			< .&__result v-async-target
 				< template v-for = el in asyncRender.iterate(true, { &
 					filter: asyncRender.waitForceRender('wrapper')
@@ -26,7 +26,7 @@
 			< button.&__defer-force @click = asyncRender.deferForceRender()
 				Defer force render
 
-		< template v-if = stage === 'infinite rendering with providing a function'
+		< template v-if = stage === 'infinite rendering with the removal of the node returned by the function when re-rendering'
 			< .&__result v-async-target
 				< template v-for = el in asyncRender.iterate(true, { &
 					filter: asyncRender.waitForceRender((ctx) => ctx.$el.querySelector('.wrapper'))
@@ -89,6 +89,7 @@
 						Ok 2
 
 		: cases = [ &
+			['nullish rendering', 'null'],
 			['simple array rendering', '[1, 2, 3, 4]'],
 			['array rendering with the specified chunk size', '[1, 2, 3, 4], 3'],
 			['array rendering with the specified start position and chunk size', '[1, 2, 3, 4], [1, 2]'],
@@ -98,7 +99,6 @@
 			['simple iterable rendering', 'new Set([1, 2]).values()'],
 			['range rendering with the specified filter', '4, {filter: (el) => el % 2 === 0}'],
 			['range rendering with `useRAF`', '2, {useRaf: true}'],
-			['nullish rendering', 'null'],
 			['range rendering by a click', '1', 'by click'],
 			['iterable with promises rendering by a click', '[async.sleep(100).then(() => 1), async.sleep(50).then(() => 2)]', 'by click'],
 			['promise with iterable rendering by a click', 'async.sleep(100).then(() => [1, 2])', 'by click'],
@@ -108,13 +108,15 @@
 		- forEach cases => el
 			< template v-if = stage === '${el[0]}'
 				- if el[2] === 'by click'
+					{{ tmp.event = stage.dasherize() }}
+
 					< .&__result v-async-target
 						< template v-for = el in asyncRender.iterate(${el[1]}, { &
-							filter: (el, i) => tmp[stage] || promisifyOnce(stage)
+							filter: (el, i) => tmp[tmp.event] || promisifyOnce(tmp.event)
 						}) .
 							Element: {{ String(el) }}; Hook: {{ hook }}; {{ '' }}
 
-					< button.&__emit @click = tmp[stage]=true, emit(stage)
+					< button.&__emit @click = tmp[tmp.event]=true, emit(tmp.event)
 						{el[0]}
 
 				- else
