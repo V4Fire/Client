@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { beforeMountHooks } from 'core/component/const';
 import { restart, deferRestart } from 'core/component/render/daemon';
 
 import type Friend from 'components/friends/friend';
@@ -60,10 +61,7 @@ export function waitForceRender(
 	elementToDrop?: string | ((ctx: Friend['component']) => CanPromise<CanUndef<string | Element>>)
 ): () => CanPromise<boolean> {
 	return () => {
-		const
-			canImmediateRender = this.lfc.isBeforeCreate() || this.hook === 'beforeMount';
-
-		if (canImmediateRender) {
+		if (beforeMountHooks[this.hook] != null) {
 			return true;
 		}
 

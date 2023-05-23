@@ -21,7 +21,8 @@ export const beforeHooks = Object.createDict({
 export const beforeMountHooks = Object.createDict({
 	...beforeHooks,
 	created: true,
-	beforeMount: true
+	beforeMount: true,
+	renderTracked: true
 });
 
 /**
