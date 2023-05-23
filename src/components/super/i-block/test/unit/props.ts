@@ -12,7 +12,7 @@ import test from 'tests/config/unit/test';
 
 import { Component, DOM } from 'tests/helpers';
 
-import type bDummy from 'components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy';
+import type bSuperIBlockDummy from 'components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy';
 
 test.describe('<i-block> props', () => {
 	const
@@ -183,7 +183,7 @@ test.describe('<i-block> props', () => {
 	 */
 	async function renderDummy(
 		page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}
-	): Promise<JSHandle<bDummy>> {
+	): Promise<JSHandle<bSuperIBlockDummy>> {
 		return Component.createComponent(page, componentName, attrs);
 	}
 });
