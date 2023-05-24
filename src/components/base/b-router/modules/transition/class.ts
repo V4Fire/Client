@@ -17,7 +17,7 @@ import type { TransitionContext } from 'components/base/b-router/modules/transit
 
 export default class Transition {
 	/**
-	 * Instance of the b-router component
+	 * Instance of the `bRouter` component
 	 */
 	readonly component: bRouter;
 
@@ -57,8 +57,8 @@ export default class Transition {
 	private newRouteInfoInitialized: boolean = false;
 
 	/**
-	 * @param component - Instance of the `b-router` component
-	 * @param ctx - Transition context
+	 * @param component - instance of the `bRouter` component
+	 * @param ctx - transition context
 	 */
 	constructor(component: bRouter, {ref, method, opts}: TransitionContext) {
 		this.component = component;
@@ -74,7 +74,7 @@ export default class Transition {
 	}
 
 	/**
-	 * Returns engine of the b-router component
+	 * Returns the engine of the `bRouter` component
 	 */
 	get engine(): Router {
 		return this.component.unsafe.engine;
@@ -92,21 +92,21 @@ export default class Transition {
 	}
 
 	/**
-	 * Returns transition ref
+	 * Returns the transition ref
 	 */
 	getRef(): TransitionContext['ref'] {
 		return this.ref;
 	}
 
 	/**
-	 * Returns transition method
+	 * Returns the transition method
 	 */
 	getMethod(): TransitionContext['method'] {
 		return this.method;
 	}
 
 	/**
-	 * Returns current engine route URL or name
+	 * Returns the current engine route URL or its name
 	 */
 	getEngineRoute(): CanUndef<string> {
 		const {currentEngineRoute} = this;
@@ -307,6 +307,7 @@ export default class Transition {
 
 	/**
 	 * Initializes information about the route we are transitioning to
+	 * @throws an exception if the info already initialized
 	 */
 	protected initNewRouteInfo(): void {
 		if (this.newRouteInfoInitialized) {
@@ -334,7 +335,7 @@ export default class Transition {
 	}
 
 	/**
-	 * Fills new route info with additional options
+	 * Fills the new route info with additional options
 	 */
 	protected fillNewRouteInfo(): void {
 		const currentRoute = this.component.field.get<router.Route>('routeStore');

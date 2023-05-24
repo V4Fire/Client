@@ -8,11 +8,10 @@
 
 import type { JSHandle } from 'playwright';
 
-import type iStaticPage from 'components/super/i-static-page/i-static-page';
-
 import test from 'tests/config/unit/test';
-
 import { Component } from 'tests/helpers';
+
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import type { EngineName, RouterTestResult } from 'components/base/b-router/test/interface';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
@@ -101,7 +100,6 @@ test.describe('<b-router> transition', () => {
 
 /**
  * Generates common specs for all router engines of "transition" runners
- *
  * @param engineName
  */
 function generateSpecs(engineName: EngineName) {
@@ -118,6 +116,7 @@ function generateSpecs(engineName: EngineName) {
 		await assertPathTransitionsTo('/some/fake/page', '404');
 		await assertRouteNameIs('notFound');
 
+		// eslint-disable-next-line playwright/no-conditional-in-test
 		if (engineName === 'history') {
 			test.expect(new URL(await page.url()).pathname).toBe('/some/fake/page');
 		}
@@ -143,6 +142,7 @@ function generateSpecs(engineName: EngineName) {
 
 		await assertActivePageIs('template');
 
+		// eslint-disable-next-line playwright/no-conditional-in-test
 		if (engineName === 'history') {
 			test.expect(new URL(await page.url()).pathname).toBe('/tpl-alias/foo/bar');
 		}

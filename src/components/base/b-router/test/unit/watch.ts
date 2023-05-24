@@ -27,7 +27,6 @@ test.describe('<b-router> watch', () => {
 
 /**
  * Generates common specs for all router engines of "watch" runners
- *
  * @param engineName
  */
 function generateSpecs(engineName: EngineName) {

@@ -62,9 +62,9 @@ export default class Overlay extends Friend {
 				nextOpacity = Math.min(calculatedOpacity, maxOpacity);
 
 			const
-				diffExceedsRenderTreshold = Math.abs(this.opacity - nextOpacity) >= 0.025;
+				diffExceedsRenderThreshold = Math.abs(this.opacity - nextOpacity) >= 0.025;
 
-			if (diffExceedsRenderTreshold) {
+			if (diffExceedsRenderThreshold) {
 				void this.setOpacity(nextOpacity);
 			}
 
@@ -72,7 +72,7 @@ export default class Overlay extends Friend {
 	}
 
 	/**
-	 * Updates an opacity of the overlay node
+	 * Updates the opacity of the overlay node
 	 */
 	protected updateOverlayStyle(): CanPromise<void> {
 		return this.ctx.waitComponentStatus('ready', () => {

@@ -18,6 +18,7 @@ import globalRoutes from 'routes';
 import * as router from 'core/router';
 
 import DOM, { delegate } from 'components/friends/dom';
+
 import {
 
 	component,
@@ -32,6 +33,7 @@ import {
 } from 'components/super/i-data/i-data';
 
 import type { StaticRoutes, TransitionMethod, UnsafeBRouter } from 'components/base/b-router/interface';
+
 import bRouterProps from 'components/base/b-router/props';
 import Transition from 'components/base/b-router/modules/transition';
 
@@ -57,6 +59,7 @@ export default class bRouter extends bRouterProps {
 	 */
 	@system<bRouter>({
 		after: 'engine',
+		// eslint-disable-next-line @v4fire/unbound-method
 		init: (o) => o.sync.link(o.compileStaticRoutes)
 	})
 

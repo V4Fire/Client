@@ -66,9 +66,7 @@ export async function renderDynamicPage(
 }
 
 /**
- * Helper that switches some pages and writes temporary state (pages hooks and names) in resulting array.
- * Returns this resulting array.
- *
+ * Switches some pages and writes temporary state (pages hooks and names) in the resulting array and returns it
  * @param ctx
  */
 export async function switcher(ctx: bDynamicPage): Promise<string[]> {
@@ -107,8 +105,7 @@ export async function switcher(ctx: bDynamicPage): Promise<string[]> {
 }
 
 /**
- * Helper that takes the hook name and returns template string for previous component hook
- *
+ * Takes the hook name and returns a template string for the previous component hook
  * @param hook
  */
 export const prevHookDebugString = (hook: string): string => `Previous component: ${hook}`;

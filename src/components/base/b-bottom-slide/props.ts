@@ -18,69 +18,69 @@ export default abstract class bBottomSlideProps extends iBlock {
 	/**
 	 * Component height mode:
 	 *
-	 * 1. `content` – the height value is based on a component content, but no more than the viewport height
-	 * 2. `full` – the height value is equal to the viewport height
+	 * 1. `content` - the height value is based on the component content, but no larger than the viewport height;
+	 * 2. `full` - the height value is equal to the height of the viewport.
 	 */
 	@prop({type: String, validator: Object.hasOwnProperty(heightMode)})
 	readonly heightMode: HeightMode = 'full';
 
 	/**
-	 * List of allowed component positions relative to the screen height (in percentages)
+	 * A list of allowed component positions relative to screen height (percentage)
 	 */
 	@prop({type: Array, validator: (v: number[]) => v.every((a) => a >= 0 && a <= 100)})
 	readonly stepsProp: number[] = [];
 
 	/**
-	 * The minimum height value of a visible part (in pixels), i.e.,
-	 * even the component is closed, this part still be visible
+	 * The minimum value of the height of the visible part (in pixels), i.e. even if the component is closed,
+	 * this part will still be visible
 	 */
 	@prop({type: Number, validator: Number.isNonNegative})
 	readonly visible: number = 0;
 
 	/**
-	 * The maximum height value to which you can pull the component
+	 * The maximum height the component can be pulled to
 	 */
 	@prop({type: Number, validator: (v: number) => v >= 0 && v <= 100})
 	readonly maxVisiblePercent: number = 90;
 
 	/**
-	 * The maximum time in milliseconds after which we can assume that there was a quick swipe
+	 * The maximum time in milliseconds after which it can be considered that there was a fast swipe
 	 */
 	@prop({type: Number, validator: Number.isPositive})
 	readonly fastSwipeDelay: number = (0.3).seconds();
 
 	/**
-	 * The minimum required amount of pixels of scrolling after which we can assume that there was a quick swipe
+	 * The minimum required number of scroll pixels, after which it can be considered that there was a fast swipe
 	 */
 	@prop({type: Number, validator: Number.isNatural})
 	readonly fastSwipeThreshold: number = 10;
 
 	/**
-	 * The minimum required amount of pixels of scrolling to swipe
+	 * The minimum number of scroll pixels required for a swipe
 	 */
 	@prop({type: Number, validator: Number.isNatural})
 	readonly swipeThreshold: number = 40;
 
 	/**
-	 * If true, the component will overlay background while it's opened
+	 * If true, the component will overlay the background while it is open
 	 */
 	@prop(Boolean)
 	readonly overlay: boolean = true;
 
 	/**
-	 * The maximum value of overlay opacity
+	 * Maximum overlay opacity
 	 */
 	@prop({type: Number, validator: Number.isBetweenZeroAndOne})
 	readonly maxOpacity: number = 0.8;
 
 	/**
-	 * If true, then the content scroll will be automatically reset to the top after closing the component
+	 * If true, content scrolling automatically resets to the top after the component closes
 	 */
 	@prop(Boolean)
 	readonly scrollToTopOnClose: boolean = true;
 
 	/**
-	 * If false, the inner content of the component won't be rendered if the component isn't opened
+	 * If set to false, the inner content of the component won't be rendered until the component is opened.
 	 */
 	@prop(Boolean)
 	readonly forceInnerRender: boolean = true;
