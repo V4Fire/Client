@@ -381,48 +381,48 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	};
 
 	@system<bSelect>({
-    init: (o) => o.sync.link((val) => {
-      val = o.resolveValue(val);
+		init: (o) => o.sync.link((val) => {
+			val = o.resolveValue(val);
 
-      if (val === undefined && o.hook === 'beforeDataCreate') {
-        if (o.multiple) {
-          if (Object.isSet(o.valueStore)) {
-            return o.valueStore;
-          }
+			if (val === undefined && o.hook === 'beforeDataCreate') {
+				if (o.multiple) {
+					if (Object.isSet(o.valueStore)) {
+						return o.valueStore;
+					}
 
-          return new Set(Array.concat([], o.valueStore));
-        }
+					return new Set(Array.concat([], o.valueStore));
+				}
 
-        return o.valueStore;
-      }
+				return o.valueStore;
+			}
 
-      let
-        newVal;
+			let
+				newVal;
 
-      if (o.multiple) {
-        const
-          objVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
+			if (o.multiple) {
+				const
+					objVal = new Set(Object.isSet(val) ? val : Array.concat([], val));
 
-        if (Object.fastCompare(objVal, o.valueStore)) {
-          return o.valueStore;
-        }
+				if (Object.fastCompare(objVal, o.valueStore)) {
+					return o.valueStore;
+				}
 
-        newVal = objVal;
+				newVal = objVal;
 
-      } else {
-        newVal = val;
-      }
+			} else {
+				newVal = val;
+			}
 
-      o.selectValue(newVal);
-      return newVal;
-    }),
+			o.selectValue(newVal);
+			return newVal;
+		}),
 
-    watch(ctx: bSelect) {
-      if (ctx.vdom.getSlot('selectedLabel') != null) {
-        void ctx.forceUpdate();
-      }
-    }
-  })
+		watch(ctx: bSelect) {
+			if (ctx.vdom.getSlot('selectedLabel') != null) {
+				void ctx.forceUpdate();
+			}
+		}
+	})
 
 	protected override valueStore!: this['Value'];
 
@@ -476,17 +476,16 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 		return h.getSelectedElement(this);
 	}
 
-  /**
-   * Currently selected item.
-	 * If the component is switched to the `multiple` mode, the getter will return an array of items.
-   */
+	/**
+	 * Currently selected item
+	 */
 	@computed({dependencies: ['value']})
 	protected get selectedItem(): this['Value'] {
-    if (Object.isSet(this.value)) {
-      return [...this.value].map((value) => this.itemsMap.get(value));
-    }
+		if (Object.isSet(this.value)) {
+			return [...this.value].map((value) => this.itemsMap.get(value));
+		}
 
-    return this.itemsMap.get(this.value);
+		return this.itemsMap.get(this.value);
 	}
 
 	/**

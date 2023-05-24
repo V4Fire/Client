@@ -60,7 +60,7 @@ export interface UnsafeBSelect<CTX extends bSelect = bSelect> extends UnsafeIInp
 	values: CTX['values'];
 
 	// @ts-ignore (access)
-  itemsMap: CTX['itemsMap'];
+	itemsMap: CTX['itemsMap'];
 
 	// @ts-ignore (access)
 	setScrollToMarkedOrSelectedItem: CTX['setScrollToMarkedOrSelectedItem'];
