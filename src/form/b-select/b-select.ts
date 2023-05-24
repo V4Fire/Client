@@ -477,7 +477,8 @@ class bSelect extends iInputText implements iOpenToggle, iItems {
 	}
 
 	/**
-	 * Currently selected item
+	 * Currently selected item.
+	 * If the component is switched to the `multiple` mode, the getter will return an array of items.
 	 */
 	@computed({dependencies: ['value']})
 	protected get selectedItem(): this['Value'] {
