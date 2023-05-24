@@ -23,3 +23,7 @@ export * from 'core/component/decorators/hook';
 export * from 'core/component/decorators/watch';
 
 export * from 'core/component/decorators/interface';
+
+//#if runtime has prelude/test-env
+import('core/component/decorators/test/b-core-component-decorators-dummy');
+//#endif
