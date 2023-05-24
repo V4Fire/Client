@@ -7,6 +7,8 @@
  */
 
 import type { HintPosition } from 'components/global/g-hint';
+import type iVisible from 'components/traits/i-visible/i-visible';
+import type iAccess from 'components/traits/i-access/i-access';
 
 import iData, {
 
@@ -20,6 +22,7 @@ import iData, {
 } from 'components/super/i-data/i-data';
 
 import type { ButtonType } from 'components/form/b-button/interface';
+import type bButton from 'components/form/b-button/b-button';
 
 @component()
 export default abstract class bButtonProps extends iData {
@@ -211,7 +214,8 @@ export default abstract class bButtonProps extends iData {
 
 	/**
 	 * Tooltip position to show on hover
-	 * {@link gHint}
+	 *
+	 * @see {gHint}
 	 *
 	 * @example
 	 * ```
@@ -224,7 +228,8 @@ export default abstract class bButtonProps extends iData {
 
 	/**
 	 * A way to show a dropdown if the 'dropdown' slot is provided
-	 * {@link gHint}
+	 *
+	 * @see {gHint}
 	 *
 	 * @example
 	 * ```

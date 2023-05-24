@@ -7,6 +7,7 @@
  */
 
 import type iInputText from 'components/super/i-input-text/i-input-text';
+import type iInput from 'components/super/i-input/i-input';
 
 import type {
 
@@ -42,12 +43,13 @@ export default <ValidatorsDecl<iInputText>>{
 	/**
 	 * Checks that the component value must match the provided pattern
 	 *
-	 * @param message
-	 * @param pattern
-	 * @param min
-	 * @param max
-	 * @param skipLength
-	 * @param showMessage
+	 * @param opts
+	 * @param opts.message
+	 * @param opts.pattern
+	 * @param opts.min
+	 * @param opts.max
+	 * @param opts.skipLength
+	 * @param opts.showMessage
 	 */
 	async pattern({
 		message,

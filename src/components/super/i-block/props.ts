@@ -9,6 +9,7 @@
 import { component, ComponentInterface } from 'core/component';
 import type { Module } from 'components/friends/module-loader';
 
+import type iBlock from 'components/super/i-block/i-block';
 import type { ModsProp } from 'components/super/i-block/modules/mods';
 import { prop, DecoratorMethodWatcher } from 'components/super/i-block/decorators';
 

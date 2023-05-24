@@ -27,6 +27,7 @@ import {
 	UnsafeGetter
 
 } from 'components/super/i-block/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 
 import iDataHandlers from 'components/super/i-data/handlers';
 import type { UnsafeIData } from 'components/super/i-data/interface';

@@ -7,6 +7,7 @@
  */
 
 import type { ProxyCb } from 'core/async';
+import type Async from 'core/async';
 
 import type iBlock from 'components/super/i-block/i-block';
 import { statuses } from 'components/super/i-block/const';

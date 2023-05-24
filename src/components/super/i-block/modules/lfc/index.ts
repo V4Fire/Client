@@ -14,6 +14,7 @@
 import SyncPromise from 'core/promise/sync';
 
 import type { AsyncOptions } from 'core/async';
+import type Async from 'core/async';
 import Friend from 'components/friends/friend';
 
 import { statuses } from 'components/super/i-block/const';

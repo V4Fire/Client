@@ -32,6 +32,8 @@ import {
 
 } from 'core/component';
 
+import type Async from 'core/async';
+
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 

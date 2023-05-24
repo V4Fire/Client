@@ -22,6 +22,7 @@ import { component, hydrationStore } from 'core/component';
 import { statuses } from 'components/super/i-block/const';
 import { system, hook } from 'components/super/i-block/decorators';
 
+import type iBlock from 'components/super/i-block/i-block';
 import type { InitLoadCb, InitLoadOptions } from 'components/super/i-block/interface';
 
 import iBlockState from 'components/super/i-block/state';
