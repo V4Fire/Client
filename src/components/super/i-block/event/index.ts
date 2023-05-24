@@ -57,10 +57,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The default logging level is `info` (logging requires the `verbose` prop to be set to true),
 	 * but you can set the logging level explicitly.
 	 *
-	 * Note that `selfEmitter.emit` always fires two events:
+	 * Note that `selfEmitter.emit` always fires three events:
 	 *
 	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-	 * 2. `on-${event}`(...args)
+	 * 2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+	 * 3. `on-${event}`(...args)
 	 *
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
 	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
@@ -296,10 +297,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The default logging level is `info` (logging requires the `verbose` prop to be set to true),
 	 * but you can set the logging level explicitly.
 	 *
-	 * Note that this method always fires two events:
+	 * Note that this method always fires three events:
 	 *
 	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-	 * 2. `on-${event}`(...args)
+	 * 2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+	 * 3. `on-${event}`(...args)
 	 *
 	 * @param event - the event name to dispatch
 	 * @param args - the event arguments
@@ -351,10 +353,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * All events fired by this method can be listened to "outside" using the `v-on` directive.
 	 * Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
 	 *
-	 * Note that this method always fires two events:
+	 * Note that this method always fires three events:
 	 *
 	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-	 * 2. `on-${event}`(...args)
+	 * 2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+	 * 3. `on-${event}`(...args)
 	 *
 	 * @param event - the event name to dispatch
 	 * @param args - the event arguments
@@ -537,13 +540,15 @@ export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * Initializes the parent `callChild` event listener.
 	 * It is used to provide general functionality for proxy calls from the parent.
+	 *
+	 * @param enable
 	 */
 	@watch({path: 'proxyCall', immediate: true})
-	protected initCallChildListener(value: boolean): void {
+	protected initCallChildListener(enable: boolean): void {
 		const label = {label: $$.initCallChildListener};
 		this.parentEmitter.off(label);
 
-		if (!value) {
+		if (!enable) {
 			return;
 		}
 
