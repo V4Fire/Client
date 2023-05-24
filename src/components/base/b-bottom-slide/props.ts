@@ -6,11 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type iVisible from 'components/traits/i-visible/i-visible';
+
 import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 import { heightMode } from 'components/base/b-bottom-slide/const';
 import type { HeightMode } from 'components/base/b-bottom-slide/interface';
-import type iVisible from 'components/traits/i-visible/i-visible';
 
 @component()
 export default abstract class bBottomSlideProps extends iBlock {

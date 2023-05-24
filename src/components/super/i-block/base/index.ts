@@ -15,6 +15,8 @@ import random from 'core/random/xor128';
 import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
+
+import type Async from 'core/async';
 import { wrapWithSuspending, AsyncOptions, BoundFn } from 'core/async';
 
 import config from 'config';
@@ -31,8 +33,6 @@ import {
 	WatchPath
 
 } from 'core/component';
-
-import type Async from 'core/async';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';

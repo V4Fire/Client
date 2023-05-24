@@ -6,8 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iInputText from 'components/super/i-input-text/i-input-text';
 import type iInput from 'components/super/i-input/i-input';
+import type iInputText from 'components/super/i-input-text/i-input-text';
 
 import type {
 

@@ -9,8 +9,8 @@
 import { isProxy } from 'core/object/watch';
 import { customWatcherRgxp, getPropertyInfo, PropertyInfo } from 'components/super/i-block/i-block';
 
-import type Sync from 'components/friends/sync/class';
 import type iBlock from 'components/super/i-block/i-block';
+import type Sync from 'components/friends/sync/class';
 
 import { compareNewAndOldValue } from 'components/friends/sync/helpers';
 import type { Link, PropLinks, AsyncWatchOptions } from 'components/friends/sync/interface';

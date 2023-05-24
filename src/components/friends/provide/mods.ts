@@ -12,8 +12,9 @@
  */
 
 import type Friend from 'components/friends/friend';
-import type { ModsDict } from 'components/super/i-block/i-block';
+
 import type iBlock from 'components/super/i-block/i-block';
+import type { ModsDict } from 'components/super/i-block/i-block';
 
 import { modsCache } from 'components/friends/provide/const';
 import type { Mods } from 'components/friends/provide/interface';

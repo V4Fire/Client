@@ -7,6 +7,7 @@
  */
 
 import type { HintPosition } from 'components/global/g-hint';
+
 import type iVisible from 'components/traits/i-visible/i-visible';
 import type iAccess from 'components/traits/i-access/i-access';
 
@@ -21,8 +22,8 @@ import iData, {
 
 } from 'components/super/i-data/i-data';
 
-import type { ButtonType } from 'components/form/b-button/interface';
 import type bButton from 'components/form/b-button/b-button';
+import type { ButtonType } from 'components/form/b-button/interface';
 
 @component()
 export default abstract class bButtonProps extends iData {

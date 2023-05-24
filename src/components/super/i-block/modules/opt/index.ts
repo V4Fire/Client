@@ -12,8 +12,9 @@
  */
 
 import Friend from 'components/friends/friend';
-import type { IfOnceValue } from 'components/super/i-block/modules/opt/interface';
+
 import type iBlock from 'components/super/i-block/i-block';
+import type { IfOnceValue } from 'components/super/i-block/modules/opt/interface';
 
 export * from 'components/super/i-block/modules/opt/interface';
 
