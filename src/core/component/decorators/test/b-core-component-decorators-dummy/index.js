@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy-decorators')
+package('b-core-component-decorators-dummy')
 	.extends('i-data');
