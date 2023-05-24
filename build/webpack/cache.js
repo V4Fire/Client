@@ -9,16 +9,16 @@
  */
 
 const
-	{webpack} = require('@config/config'),
-	{cacheDir} = include('build/helpers');
+	path = require('path'),
+	{webpack, src} = require('@config/config');
 
 /**
  * Returns options for `webpack.cache`
  *
- * @param {(number|string)} buildId - build id
+ * @param {(string)} name - name of build
  * @returns {(!Object|boolean)}
  */
-module.exports = function cache({buildId}) {
+module.exports = function cache({name}) {
 	switch (webpack.cacheType()) {
 		case 'mem':
 		case 'memory':
@@ -27,9 +27,11 @@ module.exports = function cache({buildId}) {
 		case 'fs':
 		case 'filesystem':
 			return {
-				name: String(buildId),
+				name,
 				type: 'filesystem',
-				cacheDirectory: cacheDir
+				profile: true,
+				compression: false,
+				cacheDirectory: path.join(src.cwd(), 'app-cache', 'webpack')
 			};
 
 		default:
