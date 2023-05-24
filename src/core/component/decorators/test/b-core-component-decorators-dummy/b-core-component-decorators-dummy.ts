@@ -11,7 +11,9 @@ import iData, { component, field, hook, watch, WatchHandlerParams } from 'compon
 export * from 'components/super/i-data/i-data';
 
 @component({
-	functional: true
+	functional: {
+		functional: true
+	}
 })
 
 export default class bCoreComponentDecoratorsDummy extends iData {
