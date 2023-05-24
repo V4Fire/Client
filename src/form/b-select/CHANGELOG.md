@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.48.2 (2023-05-24)
+
+#### :rocket: New Feature
+
+* Added the `selectedLabel` slot for the currently selected item
+
 ## v3.5.3 (2021-10-06)
 
 #### :bug: Bug Fix

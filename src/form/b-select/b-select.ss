@@ -94,7 +94,8 @@
 								+= self.items('option')
 
 						< template v-else
-							+= self.nativeInput({model: 'textStore', attrs: {'@input': 'onSearchInput'}})
+              += self.slot('selectedLabel', {':item': 'selectedItem'})
+                += self.nativeInput({model: 'textStore', attrs: {'@input': 'onSearchInput'}})
 
 				- block icon
 					< _.&__cell.&__icon.&__post-icon v-if = vdom.getSlot('icon')

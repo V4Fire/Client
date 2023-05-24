@@ -152,6 +152,14 @@ Also, this icon can be provided by a prop.
 < b-select :items = myItems | :progressIcon = 'bCustomLoader'
 ```
 
+4. `selectedLabel` to provide a template for the currently selected item
+
+```
+< b-select :items = items
+  < template #selectedLabel = {item}
+    {{ item.label }} {{ item.value }]
+```
+
 ## API
 
 Also, you can see the parent component and the component traits.

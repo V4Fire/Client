@@ -21,6 +21,7 @@ export function initComponentValues<C extends bSelect>(component: C): void {
 
 	const
 		values = new Map(),
+		itemsMap = new Map(),
 		indexes = {};
 
 	const
@@ -42,10 +43,12 @@ export function initComponentValues<C extends bSelect>(component: C): void {
 		}
 
 		values.set(item.value, i);
+    itemsMap.set(item.value, item);
 		indexes[i] = item;
 	}
 
 	unsafe.values = values;
+  unsafe.itemsMap = itemsMap;
 	unsafe.indexes = indexes;
 
 	if (!unsafe.multiple && selectedItem != null) {

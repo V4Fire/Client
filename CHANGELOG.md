@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.48.2 (2023-05-24)
+
+#### :rocket: New Feature
+
+* Added the `selectedLabel` slot for the currently selected item in `b-select`
+
 ## v3.47.2 (2023-05-18)
 
 #### :bug: Bug Fix
