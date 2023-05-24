@@ -17,6 +17,8 @@ import RequestError from 'core/request/error';
 import type { RequestQuery } from 'core/data';
 import type { AsyncOptions } from 'core/async';
 
+import type iBlock from 'components/super/i-block/i-block';
+
 import {
 
 	component,

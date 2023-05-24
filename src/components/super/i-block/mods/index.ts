@@ -16,6 +16,7 @@ import { component, PARENT } from 'core/component';
 import { field, system, computed, hook } from 'components/super/i-block/decorators';
 import { initMods, mergeMods, getReactiveMods, ModsDict, ModsDecl } from 'components/super/i-block/modules/mods';
 
+import type iBlock from 'components/super/i-block/i-block';
 import iBlockEvent from 'components/super/i-block/event';
 
 @component()

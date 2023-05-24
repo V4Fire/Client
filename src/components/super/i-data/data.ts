@@ -9,6 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import { derive } from 'core/functools/trait';
 
+import type iData from 'components/super/i-data/i-data';
 import type DataProvider from 'components/friends/data-provider';
 import type { DataProviderProp, DataProviderOptions } from 'components/friends/data-provider';
 
