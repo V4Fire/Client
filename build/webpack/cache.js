@@ -26,10 +26,13 @@ module.exports = function cache({name}) {
 
 		case 'fs':
 		case 'filesystem':
+			if (name === 'html') {
+				return false;
+			}
+
 			return {
 				name,
 				type: 'filesystem',
-				profile: true,
 				compression: false,
 				cacheDirectory: path.join(src.cwd(), 'app-cache', 'webpack')
 			};
