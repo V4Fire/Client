@@ -1,5 +1,5 @@
 {
-  "hash": "0fdc9debd402e010b7f72acab6adb25ea6d2a18c62b6be572e01b79f53a320b0",
+  "hash": "c9394917bc3f9ef02e22bf835bf4fc14e0c90325ddacee94ec954a62e52d0623",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -112,6 +112,38 @@
         }
       ],
       [
+        "b-core-component-decorators-dummy",
+        {
+          "index": "src/core/component/decorators/test/b-core-component-decorators-dummy/index.js",
+          "declaration": {
+            "name": "b-core-component-decorators-dummy",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-core-component-decorators-dummy",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/decorators/test/b-core-component-decorators-dummy/b-core-component-decorators-dummy.ts",
+          "styles": [
+            "src/core/component/decorators/test/b-core-component-decorators-dummy/b-core-component-decorators-dummy.styl"
+          ],
+          "tpl": "src/core/component/decorators/test/b-core-component-decorators-dummy/b-core-component-decorators-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-dummy",
         {
           "index": "src/components/dummies/b-dummy/index.js",
@@ -204,38 +236,6 @@
             "src/components/dummies/b-dummy-control-list/b-dummy-control-list.styl"
           ],
           "tpl": "src/components/dummies/b-dummy-control-list/b-dummy-control-list.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-decorators",
-        {
-          "index": "src/components/dummies/b-dummy-decorators/index.js",
-          "declaration": {
-            "name": "b-dummy-decorators",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-decorators",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-decorators/b-dummy-decorators.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-decorators/b-dummy-decorators.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-decorators/b-dummy-decorators.ss",
           "etpl": null
         }
       ],
@@ -432,6 +432,102 @@
             "src/components/friends/block/test/b-friends-block-dummy/b-friends-block-dummy.styl"
           ],
           "tpl": "src/components/friends/block/test/b-friends-block-dummy/b-friends-block-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-daemons-dummy",
+        {
+          "index": "src/components/friends/daemons/test/b-friends-daemons-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-daemons-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-daemons-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/daemons/test/b-friends-daemons-dummy/b-friends-daemons-dummy.ts",
+          "styles": [
+            "src/components/friends/daemons/test/b-friends-daemons-dummy/b-friends-daemons-dummy.styl"
+          ],
+          "tpl": "src/components/friends/daemons/test/b-friends-daemons-dummy/b-friends-daemons-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-dom-dummy",
+        {
+          "index": "src/components/friends/dom/test/b-friends-dom-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-dom-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-dom-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/dom/test/b-friends-dom-dummy/b-friends-dom-dummy.ts",
+          "styles": [
+            "src/components/friends/dom/test/b-friends-dom-dummy/b-friends-dom-dummy.styl"
+          ],
+          "tpl": "src/components/friends/dom/test/b-friends-dom-dummy/b-friends-dom-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-friends-field-dummy",
+        {
+          "index": "src/components/friends/field/test/b-friends-field-dummy/index.js",
+          "declaration": {
+            "name": "b-friends-field-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-friends-field-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/friends/field/test/b-friends-field-dummy/b-friends-field-dummy.ts",
+          "styles": [
+            "src/components/friends/field/test/b-friends-field-dummy/b-friends-field-dummy.styl"
+          ],
+          "tpl": "src/components/friends/field/test/b-friends-field-dummy/b-friends-field-dummy.ss",
           "etpl": null
         }
       ],
@@ -1122,6 +1218,38 @@
             "src/components/base/b-slider/b-slider.styl"
           ],
           "tpl": "src/components/base/b-slider/b-slider.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.ss",
           "etpl": null
         }
       ],
