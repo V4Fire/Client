@@ -25,10 +25,6 @@ export * from 'components/super/i-input/i-input';
 export * from 'components/form/b-select-date/interface';
 
 export { Value, FormValue };
-
-/**
- * Component to create a form component to specify a date by using select-s
- */
 @component({
 	functional: {
 		dataProvider: undefined
@@ -76,7 +72,7 @@ export default class bSelectDate extends iInput implements iWidth {
 	};
 
 	/**
-	 * List of months to render
+	 * A list of months to render
 	 */
 	@computed({cache: true})
 	protected get months(): readonly Item[] {
@@ -101,7 +97,7 @@ export default class bSelectDate extends iInput implements iWidth {
 	}
 
 	/**
-	 * List of days to render
+	 * A list of days to render
 	 */
 	@computed({cache: true})
 	protected get days(): readonly Item[] {
@@ -120,7 +116,7 @@ export default class bSelectDate extends iInput implements iWidth {
 	}
 
 	/**
-	 * List of years to render
+	 * A list of years to render
 	 */
 	@computed({cache: true})
 	protected get years(): readonly Item[] {
@@ -142,7 +138,7 @@ export default class bSelectDate extends iInput implements iWidth {
 	}
 
 	/**
-	 * List of child selects
+	 * A list of child selects
 	 */
 	protected get elements(): CanPromise<readonly bSelect[]> {
 		return this.waitComponentStatus('ready', () => {
