@@ -24,6 +24,7 @@ test.describe('friends/block', () => {
 	/**
 	 * Returns a string prefixed with "b-friends-block-dummy"
 	 *
+	 * @param [strings]
 	 * @example
 	 * ```typescript
 	 * prefix`__button` // b-friends-block-dummy__button
