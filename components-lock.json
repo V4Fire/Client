@@ -1,5 +1,5 @@
 {
-  "hash": "0978a0df1fd13d49d66260a22251b4a5cc0dabf029c8e2633b2fb630b2f3fe9e",
+  "hash": "4e6403d940bf0c644b09225b9d02314d0b4143bb8c4bdfc5cdfad63d8cf69481",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -108,38 +108,6 @@
             "src/components/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/components/form/b-checkbox/b-checkbox.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-core-component-decorators-dummy",
-        {
-          "index": "src/core/component/decorators/test/b-core-component-decorators-dummy/index.js",
-          "declaration": {
-            "name": "b-core-component-decorators-dummy",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-core-component-decorators-dummy",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/core/component/decorators/test/b-core-component-decorators-dummy/b-core-component-decorators-dummy.ts",
-          "styles": [
-            "src/core/component/decorators/test/b-core-component-decorators-dummy/b-core-component-decorators-dummy.styl"
-          ],
-          "tpl": "src/core/component/decorators/test/b-core-component-decorators-dummy/b-core-component-decorators-dummy.ss",
           "etpl": null
         }
       ],
@@ -1218,6 +1186,38 @@
             "src/components/base/b-slider/b-slider.styl"
           ],
           "tpl": "src/components/base/b-slider/b-slider.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-decorators-dummy",
+        {
+          "index": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-decorators-dummy",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-decorators-dummy",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.ss",
           "etpl": null
         }
       ],
