@@ -9,6 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v?.??.? (2023-05-25)
+
+#### :rocket: [New Feature]
+
+* Added helper for collecting i18n keysets
 
 ## v3.27.0 (2022-08-30)
 

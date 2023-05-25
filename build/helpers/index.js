@@ -13,5 +13,6 @@ Object.assign(
 	include('@super/build/helpers', __dirname),
 	include('build/helpers/test'),
 	include('build/helpers/webpack'),
-	include('build/helpers/other')
+	include('build/helpers/other'),
+	include('build/helpers/i18n')
 );

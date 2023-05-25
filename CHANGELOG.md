@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v?.??.? (2023-05-25)
+
+#### :rocket: [New Feature]
+
+* Added helper in `build/helpers` for collecting i18n keysets.
+
 ## v3.47.2 (2023-05-18)
 
 #### :bug: Bug Fix
