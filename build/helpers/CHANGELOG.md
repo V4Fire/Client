@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added helper for collecting i18n keysets
+* Added a new helper for collecting i18n keysets
 
 ## v3.27.0 (2022-08-30)
 
