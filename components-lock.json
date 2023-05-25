@@ -1,5 +1,5 @@
 {
-  "hash": "4e6403d940bf0c644b09225b9d02314d0b4143bb8c4bdfc5cdfad63d8cf69481",
+  "hash": "3cbc94e3ffeb0c326f7aaa6f0d019680c7287ef08d47a40ed938eae289ec23fc",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -236,42 +236,6 @@
             "src/components/dummies/b-dummy-text/b-dummy-text.styl"
           ],
           "tpl": "src/components/dummies/b-dummy-text/b-dummy-text.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-watch",
-        {
-          "index": "src/components/dummies/b-dummy-watch/index.js",
-          "declaration": {
-            "name": "b-dummy-watch",
-            "parent": "i-data",
-            "dependencies": [
-              "b-button"
-            ],
-            "libs": []
-          },
-          "name": "b-dummy-watch",
-          "parent": "i-data",
-          "dependencies": [
-            "b-button"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-watch/b-dummy-watch.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-watch/b-dummy-watch.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-watch/b-dummy-watch.ss",
           "etpl": null
         }
       ],
@@ -1250,6 +1214,42 @@
             "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-watch-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-watch-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-watch-dummy",
+            "parent": "i-data",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "b-super-i-block-watch-dummy",
+          "parent": "i-data",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy.ss",
           "etpl": null
         }
       ],

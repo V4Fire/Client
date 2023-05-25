@@ -6,12 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { JSHandle } from 'playwright';
+import type { AsyncWatchOptions } from 'components/friends/sync';
+
 import test from 'tests/config/unit/test';
 
 import { renderWatchDummy } from 'components/super/i-block/test/helpers';
-import type { JSHandle } from 'playwright';
-import type bSuperIBlockWatchDummy from '../../b-super-i-block-watch-dummy/b-super-i-block-watch-dummy';
-import type { AsyncWatchOptions } from 'components/friends/sync';
+
+import type bSuperIBlockWatchDummy from 'components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy';
 
 test.describe('<i-block> watch - computed fields', () => {
 	test.beforeEach(async ({demoPage}) => {
