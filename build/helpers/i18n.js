@@ -14,7 +14,7 @@ const
 	path = require('upath');
 
 /**
- * Finds all files with translations and sticks them together into one object
+ * Finds all files with translations and merges them into one object
  *
  * @param {!Array<string>} locales - List of languages for collect
  * @returns {!Object}
