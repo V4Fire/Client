@@ -27,10 +27,10 @@ test.describe('<b-router> watch', () => {
 
 /**
  * Generates common specs for all router engines of "watch" runners
- *
  * @param engineName
  */
 function generateSpecs(engineName: EngineName) {
+	/* eslint-disable playwright/require-top-level-describe */
 	const initRouter = createInitRouter(engineName);
 
 	test('should watch for the `route` property changes', async ({page}) => {

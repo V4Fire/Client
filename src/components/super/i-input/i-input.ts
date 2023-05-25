@@ -577,7 +577,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		}
 	}
 
-	/** {@link iAccess.isFocused} */
+	/** {@link iAccess.prototype.isFocused} */
 	get isFocused(): boolean {
 		const
 			{input} = this.$refs;
@@ -682,17 +682,17 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@system()
 	private validationMessage?: string;
 
-	/** {@link iAccess.enable} */
+	/** {@link iAccess.prototype.enable} */
 	enable(): Promise<boolean> {
 		return iAccess.enable(this);
 	}
 
-	/** {@link iAccess.disable} */
+	/** {@link iAccess.prototype.disable} */
 	disable(): Promise<boolean> {
 		return iAccess.disable(this);
 	}
 
-	/** {@link iAccess.focus} */
+	/** {@link iAccess.prototype.focus} */
 	@wait('ready', {label: $$.focus})
 	focus(): Promise<boolean> {
 		const
@@ -706,7 +706,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		return SyncPromise.resolve(false);
 	}
 
-	/** {@link iAccess.blur} */
+	/** {@link iAccess.prototype.blur} */
 	@wait('ready', {label: $$.blur})
 	blur(): Promise<boolean> {
 		const

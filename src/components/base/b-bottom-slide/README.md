@@ -65,17 +65,21 @@ You can select the height mode calculation by providing the `heightMode` prop.
 
 ### Steps
 
-The component can have multiple stopping points when opened. This means the component can be partially opened first and then expanded to its full size upon user action or calling specific methods. To achieve this, provide the `steps` prop.
+The component can have multiple stopping points when opened. This means the component can be partially opened first and
+then expanded to its full size upon user action or calling specific methods. To achieve this, provide the `steps` prop.
 
 ```
 < b-bottom-slide :steps = [50]
 ```
 
-In this example, when the component is opened, it first expands to 50% of its full size. Upon further user action or calling special methods, the component can be fully opened or closed.
+In this example, when the component is opened, it first expands to 50% of its full size. Upon further user action or calling special methods,
+the component can be fully opened or closed.
 
 ### Lazy rendering
 
-A good practice is to avoid rendering or loading content that is not visible to the user. The component supports this feature by providing the option to delay rendering of the content until the component is opened. To enable this functionality, use the `forceInnerRender` prop and set it to `false`. By doing so, the component's content will not be rendered immediately.
+A good practice is to avoid rendering or loading content that is not visible to the user. The component supports this feature by providing
+the option to delay rendering of the content until the component is opened. To enable this functionality, use the `forceInnerRender` prop and
+set it to `false`. By doing so, the component's content will not be rendered immediately.
 
 ```
 < b-bottom-slide :forceInnerRender = false
@@ -83,7 +87,8 @@ A good practice is to avoid rendering or loading content that is not visible to 
 ```
 ### Singleton
 
-It's a good practice to use this component as a [singleton](https://en.wikipedia.org/wiki/Singleton_pattern). Although the implementation of this approach depends on the users of this component, we'll discuss a few options on how to achieve this.
+It's a good practice to use this component as a [singleton](https://en.wikipedia.org/wiki/Singleton_pattern).
+Although the implementation of this approach depends on the users of this component, we'll discuss a few options on how to achieve this.
 
 First, let's create a wrapper component that will contain `b-bottom-slide` and provide methods to open and close `b-bottom-slide`.
 
@@ -165,10 +170,12 @@ export default class bSomeComponent extends iBlock {
 }
 ```
 
-Alright, now we can access `b-bottom-slide` from anywhere. But, what is the purpose of the `b-modal` component? The purpose is fairly straightforward. The `b-modal` component will implement the logic of a wrapper component that renders templates inside `b-bottom-slide`.
+Alright, now we can access `b-bottom-slide` from anywhere. But, what is the purpose of the `b-modal` component?
+The purpose is fairly straightforward. The `b-modal` component will implement the logic of a wrapper component that renders
+templates inside `b-bottom-slide`.
 
-There are various approaches that can be used to achieve this. For instance, the `open` method of the `b-modal` component can accept an object that defines the content to be displayed within the `b-bottom-slide`.
-
+There are various approaches that can be used to achieve this. For instance, the `open` method of the `b-modal` component
+can accept an object that defines the content to be displayed within the `b-bottom-slide`.
 
 __b-modal.ts__
 
@@ -237,14 +244,14 @@ Also, you can see the parent component and the component traits.
 
 #### [heightMode = `'full'`]
 
-The component height mode:
+Component height mode:
 
-1. `content` – the height value is based on the component's content, but no more than the viewport height.
-2. `full` – the height value is equal to the viewport height.
+1. `content` - the height value is based on the component content, but no larger than the viewport height;
+2. `full` - the height value is equal to the height of the viewport.
 
 #### [stepsProp = `[]`]
 
-A list of allowed component positions relative to the screen height (in percentages).
+A list of allowed component positions relative to screen height (percentage).
 
 ```
 < b-bottom-slide :steps = [50, 75]
@@ -252,35 +259,35 @@ A list of allowed component positions relative to the screen height (in percenta
 
 #### [visible = `0`]
 
-The minimum height value of a visible part (in pixels), i.e., even when the component is closed, this part will still be visible.
+The minimum value of the height of the visible part (in pixels), i.e. even if the component is closed, this part will still be visible.
 
 #### [maxVisiblePercent = `90`]
 
-The maximum height value to which you can pull the component.
+The maximum height the component can be pulled to.
 
 #### [fastSwipeDelay = `300`]
 
-The maximum time in milliseconds after which we can assume that there was a quick swipe.
+The maximum time in milliseconds after which it can be considered that there was a fast swipe.
 
 #### [fastSwipeThreshold = `10`]
 
-The minimum required number of pixels scrolled after which we can assume that there was a quick swipe.
+The minimum required number of scroll pixels, after which it can be considered that there was a fast swipe.
 
 #### [swipeThreshold = `40`]
 
-The minimum required number of pixels scrolled to trigger a swipe.
+The minimum number of scroll pixels required for a swipe.
 
 #### [overlay = `true`]
 
-If set to true, the component will display an overlay background while it's opened.
+If set to true, the component will overlay the background while it is open.
 
 #### [maxOpacity = `0.8`]
 
-The maximum value of overlay opacity.
+Maximum overlay opacity.
 
 #### [scrollToTopOnClose = `true`]
 
-If set to true, the content scroll will be automatically reset to the top after the component is closed.
+If set to true, content scrolling automatically resets to the top after the component closes.
 
 #### [forceInnerRender = `true`]
 
@@ -294,11 +301,11 @@ True if the content is fully opened.
 
 #### isClosed
 
-True if the content is fully closed.
+True if the content is completely closed.
 
 #### steps
 
-A list of possible component positions relative to the screen height (in percentages).
+A list of possible component positions relative to screen height (percentage).
 
 ### Methods
 

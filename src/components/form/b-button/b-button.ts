@@ -83,7 +83,7 @@ class bButton extends bButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		return attrs;
 	}
 
-	/** {@link iAccess.isFocused} */
+	/** {@link iAccess.prototype.isFocused} */
 	@computed({dependencies: ['mods.focused']})
 	get isFocused(): boolean {
 		const

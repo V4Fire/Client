@@ -1,5 +1,3 @@
-/* eslint-disable jsdoc/check-line-alignment */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable jsdoc/check-line-alignment */
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import type { UnsafeComponentInterface } from 'core/component/interface';
@@ -96,7 +96,12 @@ export function implementEventEmitterAPI(component: object): void {
 	function getMethod(method: 'on' | 'once' | 'off') {
 		return function wrapper(this: unknown, event, cb) {
 			Array.concat([], event).forEach((event) => {
-				$e[method](Object.cast(event), Object.cast(cb));
+				if (method === 'off' && cb == null) {
+					$e.removeAllListeners(event);
+
+				} else {
+					$e[method](Object.cast(event), Object.cast(cb));
+				}
 			});
 
 			return this;

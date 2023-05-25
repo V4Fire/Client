@@ -31,7 +31,7 @@ export default class Animation extends Friend {
 	protected isPositionUpdating: boolean = false;
 
 	/**
-	 * Difference in a cursor position compared to the last frame
+	 * Difference in cursor position compared to the last frame
 	 */
 	protected diff: number = 0;
 

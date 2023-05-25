@@ -31,7 +31,6 @@ This module provides a trait with helpers for a component that renders a list of
   export default bExample;
   ```
 
-
 ## Methods
 
 The trait specifies a bunch of methods to implement.

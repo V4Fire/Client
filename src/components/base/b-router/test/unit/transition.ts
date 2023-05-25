@@ -8,11 +8,10 @@
 
 import type { JSHandle } from 'playwright';
 
-import type iStaticPage from 'components/super/i-static-page/i-static-page';
-
 import test from 'tests/config/unit/test';
-
 import { Component } from 'tests/helpers';
+
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import type { EngineName, RouterTestResult } from 'components/base/b-router/test/interface';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
@@ -101,10 +100,10 @@ test.describe('<b-router> transition', () => {
 
 /**
  * Generates common specs for all router engines of "transition" runners
- *
  * @param engineName
  */
 function generateSpecs(engineName: EngineName) {
+	/* eslint-disable playwright/require-top-level-describe */
 	const initRouter = createInitRouter(engineName);
 
 	let root: JSHandle<iStaticPage>;
@@ -117,6 +116,7 @@ function generateSpecs(engineName: EngineName) {
 		await assertPathTransitionsTo('/some/fake/page', '404');
 		await assertRouteNameIs('notFound');
 
+		// eslint-disable-next-line playwright/no-conditional-in-test
 		if (engineName === 'history') {
 			test.expect(new URL(await page.url()).pathname).toBe('/some/fake/page');
 		}
@@ -142,6 +142,7 @@ function generateSpecs(engineName: EngineName) {
 
 		await assertActivePageIs('template');
 
+		// eslint-disable-next-line playwright/no-conditional-in-test
 		if (engineName === 'history') {
 			test.expect(new URL(await page.url()).pathname).toBe('/tpl-alias/foo/bar');
 		}
@@ -368,11 +369,8 @@ function generateSpecs(engineName: EngineName) {
 			await router!.push('/second');
 			await router!.push('/');
 
-			// eslint-disable-next-line require-atomic-updates
 			(<any>ctx).rootParam = 1;
 			await router!.push('second');
-
-			// eslint-disable-next-line require-atomic-updates
 			(<any>ctx).rootParam = undefined;
 
 			return {
@@ -387,6 +385,7 @@ function generateSpecs(engineName: EngineName) {
 
 	/**
 	 * Asserts that the given path transitions to the page with the specified content
+	 *
 	 * @param path
 	 * @param content
 	 */

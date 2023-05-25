@@ -12,12 +12,14 @@ import type iBlock from 'components/super/i-block/i-block';
 import type { TaskOptions } from 'components/friends/async-render/api';
 
 interface AsyncRender {
+	waitForceRender(elementToDrop?: string | ((ctx: Friend['component']) => CanPromise<CanUndef<string | Element>>)): void;
 	forceRender(): void;
 	deferForceRender(): void;
 	iterate(value: unknown, sliceOrOpts?: number | [number?, number?] | TaskOptions, opts?: TaskOptions): unknown[];
 }
 
 @fakeMethods(
+	'waitForceRender',
 	'forceRender',
 	'deferForceRender',
 	'iterate'

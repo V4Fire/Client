@@ -17,6 +17,8 @@ import RequestError from 'core/request/error';
 import type { RequestQuery } from 'core/data';
 import type { AsyncOptions } from 'core/async';
 
+import type iBlock from 'components/super/i-block/i-block';
+
 import {
 
 	component,
@@ -228,7 +230,7 @@ export default abstract class iData extends iDataHandlers {
 
 		this.r.providerDataStore.set(key, data);
 
-		function getKey(val: CanUndef<typeof this.dataProvider>): CanUndef<string> {
+		function getKey(val: string | CanUndef<iData['dataProvider']>): CanUndef<string> {
 			if (val == null || Object.isString(val)) {
 				return val ?? undefined;
 			}

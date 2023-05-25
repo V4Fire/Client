@@ -172,7 +172,7 @@ export default abstract class iActiveItems extends iItems {
 		});
 	}
 
-	/** {@link iActiveItems.isActive} */
+	/** {@link iActiveItems.prototype.isActive} */
 	static isActive: AddSelf<iActiveItems['isActive'], TraitComponent> = (ctx, value: Item['value']) => {
 		const
 			{active} = ctx;
@@ -188,7 +188,7 @@ export default abstract class iActiveItems extends iItems {
 		return value === active;
 	};
 
-	/** {@link iActiveItems.setActive} */
+	/** {@link iActiveItems.prototype.setActive} */
 	static setActive(ctx: TraitComponent, value: iActiveItems['ActiveProp'], unsetPrevious?: boolean): boolean {
 		if (!this.isActivatable(ctx, value)) {
 			return false;
@@ -241,7 +241,7 @@ export default abstract class iActiveItems extends iItems {
 		return true;
 	}
 
-	/** {@link iActiveItems.unsetActive} */
+	/** {@link iActiveItems.prototype.unsetActive} */
 	static unsetActive(ctx: TraitComponent, value: iActiveItems['ActiveProp']): boolean {
 		const
 			activeStore = ctx.field.get('activeStore');
@@ -285,7 +285,7 @@ export default abstract class iActiveItems extends iItems {
 		return true;
 	}
 
-	/** {@link iActiveItems.toggleActive} */
+	/** {@link iActiveItems.prototype.toggleActive} */
 	static toggleActive(ctx: TraitComponent, value: iActiveItems['ActiveProp'], unsetPrevious?: boolean): iActiveItems['Active'] {
 		if (!this.isActivatable(ctx, value)) {
 			return false;
@@ -329,7 +329,7 @@ export default abstract class iActiveItems extends iItems {
 		return ctx.active;
 	}
 
-	/** {@link iActiveItems.getItemByValue} */
+	/** {@link iActiveItems.prototype.getItemByValue} */
 	static getItemByValue(ctx: TraitComponent, value: Item['value']): CanUndef<Item> {
 		return ctx.items?.find((item) => item.value === value);
 	}

@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type iVisible from 'components/traits/i-visible/i-visible';
+
 import iData, {
 
 	component,

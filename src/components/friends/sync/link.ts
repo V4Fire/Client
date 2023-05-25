@@ -9,9 +9,10 @@
 import { isProxy } from 'core/object/watch';
 import { bindingRgxp, customWatcherRgxp, getPropertyInfo } from 'core/component';
 
+import type iBlock from 'components/super/i-block/i-block';
 import type Sync from 'components/friends/sync/class';
-import { compareNewAndOldValue } from 'components/friends/sync/helpers';
 
+import { compareNewAndOldValue } from 'components/friends/sync/helpers';
 import type { LinkDecl, LinkGetter, AsyncWatchOptions } from 'components/friends/sync/interface';
 
 /**

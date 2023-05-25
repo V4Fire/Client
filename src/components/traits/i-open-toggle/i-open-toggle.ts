@@ -17,7 +17,7 @@ import type iBlock from 'components/super/i-block/i-block';
 export * from 'components/traits/i-open/i-open';
 
 export default abstract class iOpenToggle extends iOpen {
-	/** {@link iOpenToggle.toggle} */
+	/** {@link iOpenToggle.prototype.toggle} */
 	static toggle: AddSelf<iOpenToggle['toggle'], iBlock & iOpen> =
 		(component) => component.mods.opened === 'true' ? component.close() : component.open();
 

@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Async from 'core/async';
 import type { ProxyCb } from 'core/async';
 
 import type iBlock from 'components/super/i-block/i-block';

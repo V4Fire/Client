@@ -7,6 +7,7 @@
  */
 
 import Friend from 'components/friends/friend';
+import { mergeProps } from 'core/component/render';
 
 import type ScrollRender from 'components/base/b-virtual-scroll/modules/chunk-render';
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
@@ -181,11 +182,7 @@ export default class ComponentRender extends Friend {
 		};
 
 		const getChildrenAttrs = (props: ItemAttrs) => ({
-			attrs: {
-				...props,
-				class: [this.optionClass].concat(props.class ?? []),
-				style: props.style
-			}
+			attrs: mergeProps(props, {class: this.optionClass})
 		});
 
 		const getItemEl = (data, i: number) => ({

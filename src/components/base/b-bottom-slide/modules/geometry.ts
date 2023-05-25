@@ -53,6 +53,7 @@ export default class Geometry extends Friend {
 
 	/**
 	 * Sets a new component offset
+	 * @param value
 	 */
 	protected set offset(value: number) {
 		const
@@ -84,7 +85,7 @@ export default class Geometry extends Friend {
 	protected offsetStore: number = 0;
 
 	/**
-	 * List of possible component positions relative to the screen height (in pixels)
+	 * A list of possible component positions relative to the screen height (in pixels)
 	 */
 	protected stepsInPixels: number[] = [];
 
@@ -98,7 +99,7 @@ export default class Geometry extends Friend {
 	protected contentMaxHeightStore: number = 0;
 
 	/**
-	 * Sets the new offset
+	 * Sets a new offset
 	 * @param offset
 	 */
 	setOffset(offset: number): void {
@@ -106,7 +107,7 @@ export default class Geometry extends Friend {
 	}
 
 	/**
-	 * Increments offset by the specified delta
+	 * Increments the offset by the specified delta
 	 * @param delta
 	 */
 	incrementOffset(delta: number): void {
@@ -122,7 +123,7 @@ export default class Geometry extends Friend {
 	}
 
 	/**
-	 * Sets new offset for the provided step
+	 * Sets a new offset for the provided step
 	 * @param step
 	 */
 	setOffsetForStep(step: number): void {

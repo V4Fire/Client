@@ -33,10 +33,10 @@ test.describe('<b-router> scroll control', () => {
 
 /**
  * Generates common specs for all router engines of "watch" runners
- *
  * @param engineName
  */
 function generateSpecs(engineName: EngineName) {
+	/* eslint-disable playwright/require-top-level-describe */
 	const initRouter = createInitRouter(engineName);
 
 	let root: JSHandle<iStaticPage>;
@@ -101,7 +101,7 @@ function generateSpecs(engineName: EngineName) {
 	});
 
 	/**
-	 * Returns scroll position: [x, y]
+	 * Returns the scroll position: [x, y]
 	 * @param page
 	 */
 	function getScrollPosition(page: Page): Promise<[number, number]> {
@@ -112,7 +112,7 @@ function generateSpecs(engineName: EngineName) {
 	}
 
 	/**
-	 * Scrolls page by the specified deltas
+	 * Scrolls the page by the specified deltas
 	 *
 	 * @param page
 	 * @param deltas

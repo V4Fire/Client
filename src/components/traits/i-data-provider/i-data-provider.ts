@@ -144,12 +144,12 @@ export default abstract class iDataProvider implements iProgress {
 		...iProgress.mods
 	};
 
-	/** {@link iDataProvider.unsuspendRequests} */
+	/** {@link iDataProvider.prototype.unsuspendRequests} */
 	static unsuspendRequests: AddSelf<iDataProvider['unsuspendRequests'], iBlock & iDataProvider> = (_component) => {
 		// Loopback
 	};
 
-	/** {@link iDataProvider.waitPermissionToRequest} */
+	/** {@link iDataProvider.prototype.waitPermissionToRequest} */
 	static waitPermissionToRequest: AddSelf<iDataProvider['waitPermissionToRequest'], iBlock & iDataProvider> = (component) => {
 		if (component.suspendedRequests === false) {
 			return SyncPromise.resolve(true);

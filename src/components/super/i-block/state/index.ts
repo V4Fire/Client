@@ -13,10 +13,13 @@
 
 import SyncPromise from 'core/promise/sync';
 
+import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
+
 import { component, globalState, hook, Hook } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
+import type iBlock from 'components/super/i-block';
 
 import type { Module } from 'components/friends/module-loader';
 import type { ConverterCallType } from 'components/friends/state';
@@ -379,15 +382,15 @@ export default abstract class iBlockState extends iBlockMods {
 	protected convertStateToStorageReset(data?: Dictionary): Dictionary {
 		const
 			stateFields = this.syncStorageState(data),
-			res = {};
+			state = {};
 
 		if (Object.isDictionary(stateFields)) {
-			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
-				res[keys[i]] = undefined;
-			}
+			Object.keys(stateFields).forEach((key) => {
+				state[key] = undefined;
+			});
 		}
 
-		return res;
+		return state;
 	}
 
 	/**
@@ -420,15 +423,15 @@ export default abstract class iBlockState extends iBlockMods {
 	protected convertStateToRouterReset(data?: Dictionary): Dictionary {
 		const
 			stateFields = this.syncRouterState(data),
-			res = {};
+			state = {};
 
 		if (Object.isDictionary(stateFields)) {
-			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
-				res[keys[i]] = undefined;
-			}
+			Object.keys(stateFields).forEach((key) => {
+				state[key] = undefined;
+			});
 		}
 
-		return res;
+		return state;
 	}
 
 	@hook({beforeRuntime: {functional: false}})

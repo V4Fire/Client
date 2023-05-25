@@ -31,27 +31,27 @@ export default abstract class iOpen {
 		]
 	};
 
-	/** {@link iOpen.open} */
+	/** {@link iOpen.prototype.open} */
 	static open: AddSelf<iOpen['open'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('opened', true));
 
-	/** {@link iOpen.close} */
+	/** {@link iOpen.prototype.close} */
 	static close: AddSelf<iOpen['close'], iBlock> =
 		(component) => SyncPromise.resolve(component.setMod('opened', false));
 
-	/** {@link iOpen.onOpenedChange} */
+	/** {@link iOpen.prototype.onOpenedChange} */
 	static onOpenedChange: AddSelf<iOpen['onOpenedChange'], iBlock> = async (_component) => {
 		// Loopback
 	};
 
-	/** {@link iOpen.onKeyClose} */
+	/** {@link iOpen.prototype.onKeyClose} */
 	static onKeyClose: AddSelf<iOpen['onKeyClose'], iBlock & iOpen> = async (component, e) => {
 		if (e.key === 'Escape') {
 			await component.close();
 		}
 	};
 
-	/** {@link iOpen.onTouchClose} */
+	/** {@link iOpen.prototype.onTouchClose} */
 	static onTouchClose: AddSelf<iOpen['onTouchClose'], iBlock & iOpen> = async (component, e) => {
 		const
 			target = <CanUndef<Element>>e.target;
@@ -60,7 +60,10 @@ export default abstract class iOpen {
 			return;
 		}
 
-		if (!target.closest(`.${component.componentId}`)) {
+		const
+			{unsafe} = component;
+
+		if (unsafe.dom.getComponent(target, `.${component.componentName}`) == null) {
 			await component.close();
 		}
 	};
@@ -108,6 +111,7 @@ export default abstract class iOpen {
 					}, opts);
 
 				} catch {}
+
 			}, 0, helpersGroup);
 		};
 

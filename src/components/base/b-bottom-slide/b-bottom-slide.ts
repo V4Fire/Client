@@ -49,20 +49,12 @@ interface bBottomSlide extends
 	Trait<typeof iObserveDOM>,
 	Trait<typeof iOpen> {}
 
-/**
- * Component to create bottom sheet behavior that is similar to native mobile UI
- * @see https://material.io/develop/android/components/bottom-sheet-behavior/
- */
 @component()
 @derive(iLockPageScroll, iObserveDOM, iOpen)
 class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
 	override get unsafe(): UnsafeGetter<UnsafeBBottomSlide<this>> {
 		return Object.cast(this);
 	}
-
-	/** {@link bBottomSlide.steps} */
-	@field<bBottomSlide>((o) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
-	readonly stepsStore!: number[];
 
 	/**
 	 * True if the content is fully opened
@@ -73,7 +65,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * True if the content is fully closed
+	 * True if the content is completely closed
 	 */
 	@computed({cache: false})
 	get isClosed(): boolean {
@@ -81,7 +73,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * List of possible component positions relative to the screen height (in percentages)
+	 * A list of possible component positions relative to screen height (percentage)
 	 */
 	@computed({cache: false})
 	get steps(): number[] {
@@ -99,7 +91,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Returns the step count
+	 * Returns the number of component steps
 	 */
 	@computed({cache: true, dependencies: ['stepsStore']})
 	get stepCount(): number {
@@ -143,6 +135,10 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	@system()
 	protected stepStore: number = 0;
 
+	/** {@link bBottomSlide.steps} */
+	@field<bBottomSlide>((o) => o.sync.link('stepsProp', (v: number[]) => v.slice().sort((a, b) => a - b)))
+	protected readonly stepsStore!: number[];
+
 	/**
 	 * Current component step
 	 */
@@ -153,16 +149,17 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 
 	/**
 	 * Sets a new component step
+	 *
+	 * @param value
 	 * @emits `stepChange(step: number)`
 	 */
-	protected set step(v: number) {
-		if (v === this.step) {
+	protected set step(value: number) {
+		if (value === this.step) {
 			return;
 		}
 
-		this.stepStore = v;
-
-		this.emit('stepChange', v);
+		this.stepStore = value;
+		this.emit('stepChange', value);
 	}
 
 	/**
@@ -172,7 +169,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	protected isViewportTopReached: boolean = true;
 
 	/**
-	 * True if the component is switching to another step now
+	 * True if the component is currently switching to another step
 	 */
 	@system()
 	protected isStepTransitionInProgress: boolean = false;
@@ -182,7 +179,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	protected isPullingStore: boolean = false;
 
 	/**
-	 * True if the component is being pulled now
+	 * True if the component is currently being pulled
 	 */
 	@computed({cache: false})
 	protected get isPulling(): boolean {
@@ -191,6 +188,8 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 
 	/**
 	 * Switches the component pulling mode
+	 *
+	 * @param value
 	 * @emits `moveStateChange(value boolean)`
 	 */
 	protected set isPulling(value: boolean) {
@@ -207,8 +206,8 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * The minimum height value of a component visible part (in percents),
-	 * i.e. even the component is closed this part still be visible
+	 * The minimum value of the height of the component visible part (in percent),
+	 * i.e. even if the component is closed, this part will still be visible
 	 * {@link bBottomSlide.visible}
 	 */
 	@computed({cache: false})
@@ -245,14 +244,14 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		this.isViewportTopReached = state;
 	}
 
-	/** {@link iLockPageScroll.lockPageScroll} */
+	/** {@link iLockPageScroll.prototype.lockPageScroll} */
 	@wait('ready', {label: $$.lock})
 	lockPageScroll(): Promise<void> {
 		return iLockPageScroll.lockPageScroll(this, this.$refs.view);
 	}
 
 	/**
-	 * {@link iOpen.open}
+	 * {@link iOpen.prototype.open}
 	 *
 	 * @param [step]
 	 * @emits `open()`
@@ -281,7 +280,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * {@link iOpen.close}
+	 * {@link iOpen.prototype.close}
 	 * @emits `close()`
 	 */
 	async close(): Promise<boolean> {
@@ -341,17 +340,17 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 		return true;
 	}
 
-	/** {@link iOpen.onKeyClose} */
+	/** {@link iOpen.prototype.onKeyClose} */
 	async onKeyClose(): Promise<void> {
 		// Loopback
 	}
 
-	/** {@link iOpen.onTouchClose} */
+	/** {@link iOpen.prototype.onTouchClose} */
 	async onTouchClose(): Promise<void> {
 		// Loopback
 	}
 
-	/** {@link iObserveDOM.initObservers} */
+	/** {@link iObserveDOM.observe} */
 	@watch('heightMode')
 	@hook('mounted')
 	@wait('ready')
@@ -374,7 +373,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Puts a node of the component to the top level of a DOM tree
+	 * Puts the component node to the top level of the DOM tree
 	 */
 	@hook('mounted')
 	@wait('ready', {label: $$.initNodePosition})
@@ -391,7 +390,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Initializes offset of the component
+	 * Initializes the component offset
 	 */
 	@watch('visible')
 	protected initOffset(): void {
@@ -400,7 +399,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Initializes initial 'hidden' modifier value
+	 * Initializes the initial `hidden` modifier value
 	 */
 	@hook('created')
 	protected initHiddenState(): void {
@@ -422,7 +421,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Updates a position of the window node
+	 * Updates the position of the window node
 	 */
 	@wait('ready', {label: $$.updateWindowPosition})
 	protected async updateWindowPosition(): Promise<void> {
@@ -431,7 +430,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Recalculates a component state: sizes, positions, etc.
+	 * Recalculates the component state: sizes, positions, etc.
 	 */
 	@watch(['window:resize', 'localEmitter:DOMChange', ':history:transition'])
 	@wait('ready')
@@ -445,7 +444,7 @@ class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Removes the component element from DOM if its transition is finished
+	 * Removes the component element from the DOM if its transition is complete
 	 */
 	@hook('beforeDestroy')
 	protected removeFromDOMIfPossible(): void {

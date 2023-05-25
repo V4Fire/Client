@@ -24,7 +24,7 @@ const
 	group = 'lockHelpers';
 
 export default abstract class iLockPageScroll {
-	/** {@link iLockPageScroll.lockPageScroll} */
+	/** {@link iLockPageScroll.prototype.lockPageScroll} */
 	static lockPageScroll: AddSelf<iLockPageScroll['lockPageScroll'], iBlock> = (component, scrollableNode?) => {
 		const {
 			r,
@@ -143,7 +143,7 @@ export default abstract class iLockPageScroll {
 		return promise;
 	};
 
-	/** {@link iLockPageScroll.unlockPageScroll} */
+	/** {@link iLockPageScroll.prototype.unlockPageScroll} */
 	static unlockPageScroll: AddSelf<iLockPageScroll['unlockPageScroll'], iBlock> = (component) => {
 		const {
 			r,

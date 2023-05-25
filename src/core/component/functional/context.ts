@@ -151,6 +151,6 @@ export function createVirtualContext(
 		}
 	});
 
-	init.beforeDataCreateState(virtualCtx, {tieFields: true});
+	init.beforeDataCreateState(virtualCtx);
 	return initDynamicComponentLifeCycle(virtualCtx);
 }

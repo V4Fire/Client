@@ -1,5 +1,3 @@
-/* eslint-disable prefer-spread, prefer-rest-params */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable prefer-spread, prefer-rest-params */
 
 /**
  * [[include:core/component/directives/hook/README.md]]

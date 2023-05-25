@@ -31,10 +31,10 @@ test.describe('<b-textarea>', () => {
 		});
 
 		const
-			textarea = await page.$('#foo');
+			textarea = page.locator('#foo');
 
 		test.expect(
-			await textarea!.evaluate((ctx: HTMLInputElement) => [
+			await textarea.evaluate((ctx: HTMLInputElement) => [
 				ctx.tagName,
 				ctx.name,
 				ctx.value

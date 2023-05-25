@@ -8,9 +8,9 @@
 
 import type { JSHandle } from 'playwright';
 
-import type iStaticPage from 'components/super/i-static-page/i-static-page';
-
 import test from 'tests/config/unit/test';
+
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import type { EngineName } from 'components/base/b-router/test/interface';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
@@ -159,10 +159,10 @@ test.describe('<b-router> simple use-cases', () => {
 
 /**
  * Generates common specs for all router engines of "simple" runners
- *
  * @param engineName
  */
 function generateSpecs(engineName: EngineName) {
+	/* eslint-disable playwright/require-top-level-describe */
 	const initRouter = createInitRouter(engineName);
 
 	let root: JSHandle<iStaticPage>;

@@ -11,16 +11,18 @@ import symbolGenerator from 'core/symbol';
 import type Transition from 'components/base/b-router/modules/transition/class';
 import type { ScrollSnapshot } from 'components/base/b-router/modules/transition/interface';
 
-const $$ = symbolGenerator();
+const
+	$$ = symbolGenerator();
 
 export default class ScrollControl {
 	/**
-	 * Transition instance
+	 * The transition instance
 	 */
 	protected transition: Transition;
 
 	/**
-	 * User's scroll position. It is initialized after `beforeChange` event.
+	 * User's scroll position.
+	 * It is initialized after the `beforeChange` event.
 	 */
 	protected snapshot: ScrollSnapshot;
 
@@ -29,14 +31,14 @@ export default class ScrollControl {
 	}
 
 	/**
-	 * Returns user's scroll position snapshot
+	 * Returns the user's scroll position snapshot
 	 */
 	getSnapshot(): ScrollSnapshot {
 		return this.snapshot;
 	}
 
 	/**
-	 * Stores user's scroll position for the specific time moment
+	 * Stores the user's scroll position for the specific time moment
 	 */
 	createSnapshot(): void {
 		if (this.snapshot) {
@@ -54,9 +56,9 @@ export default class ScrollControl {
 	}
 
 	/**
-	 * This method updates current route's scroll position.
+	 * This method updates the current route's scroll position.
 	 * To save the scroll position before switching to a new route,
-	 * we need to emit a system "replace" transition with additional information about the scroll.
+	 * we need to emit a system `replace` transition with additional information about the scroll.
 	 */
 	async updateCurrentRouteScroll(): Promise<void> {
 		if (!SSR && this.transition.currentEngineRoute && this.transition.getMethod() !== 'replace') {
@@ -69,7 +71,7 @@ export default class ScrollControl {
 	}
 
 	/**
-	 * Restores scroll position
+	 * Restores the scroll position
 	 * @param reset
 	 */
 	restore(reset: boolean): void {

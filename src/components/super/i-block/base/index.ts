@@ -15,6 +15,8 @@ import random from 'core/random/xor128';
 import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
+
+import type Async from 'core/async';
 import { wrapWithSuspending, AsyncOptions, BoundFn } from 'core/async';
 
 import config from 'config';

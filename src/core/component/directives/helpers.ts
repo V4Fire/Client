@@ -37,7 +37,7 @@ export function getDirectiveContext(
 	binding: Nullable<DirectiveBinding>,
 	vnode: Nullable<VNode>
 ): CanUndef<ComponentInterface['unsafe']> {
-	return Object.cast(vnode?.virtualContext ?? binding?.instance);
+	return Object.cast(binding?.virtualContext ?? vnode?.virtualContext ?? binding?.instance);
 }
 
 /**

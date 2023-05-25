@@ -13,10 +13,12 @@ import type iDynamicPage from 'components/super/i-dynamic-page/i-dynamic-page';
 import {
 
 	renderDynamicPage,
+
 	switcher,
+	prevHookDebugString,
+
 	Pages,
-	Hooks,
-	prevHookDebugString
+	Hooks
 
 } from 'components/base/b-dynamic-page/test/helpers';
 

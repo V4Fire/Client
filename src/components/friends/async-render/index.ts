@@ -14,3 +14,7 @@
 export { default } from 'components/friends/async-render/class';
 
 export * from 'components/friends/async-render/api';
+
+//#if runtime has prelude/test-env
+import('components/friends/async-render/test/b-friends-async-render-dummy');
+//#endif

@@ -8,7 +8,17 @@
 
 import test from 'tests/config/unit/test';
 
-import { renderDynamicPage, switcher, Pages, Hooks, prevHookDebugString } from 'components/base/b-dynamic-page/test/helpers';
+import {
+
+	renderDynamicPage,
+
+	switcher,
+	prevHookDebugString,
+
+	Pages,
+	Hooks
+
+} from 'components/base/b-dynamic-page/test/helpers';
 
 test.describe('<b-dynamic-page>', () => {
 	test.beforeEach(async ({demoPage}) => {

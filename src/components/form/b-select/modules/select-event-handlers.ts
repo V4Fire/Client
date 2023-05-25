@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type iOpenToggle from 'components/traits/i-open-toggle/i-open-toggle';
+
 import type bSelect from 'components/form/b-select/b-select';
 import type { ModEvent, SetModEvent } from 'components/form/b-select/b-select';
 
@@ -277,7 +279,7 @@ export default abstract class SelectEventHandlers {
 		void component.close();
 	}
 
-	/** {@link iOpenToggle.onOpenedChange} */
+	/** {@link iOpenToggle.prototype.onOpenedChange} */
 	onOpenedChange(_e: ModEvent | SetModEvent): Promise<void> {
 		return Object.throw();
 	}

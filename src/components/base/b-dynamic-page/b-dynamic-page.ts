@@ -254,6 +254,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * Reloads the loaded page component
+	 * @param [params]
 	 */
 	override async reload(params?: InitLoadOptions): Promise<void> {
 		const component = await this.component;
@@ -526,6 +527,9 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * Synchronization for the `page` field
+	 *
+	 * @param page
+	 * @param oldPage
 	 */
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
