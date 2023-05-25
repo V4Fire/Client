@@ -6,10 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "components/super/i-data/i-data.styl"
-
-$p = {
-
-}
-
-b-core-component-decorators-dummy extends i-data
+package('b-super-i-block-decorators-dummy')
+	.extends('i-data');

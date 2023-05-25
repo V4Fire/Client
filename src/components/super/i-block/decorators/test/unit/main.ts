@@ -12,14 +12,14 @@ import test from 'tests/config/unit/test';
 
 import { Component } from 'tests/helpers';
 
-import type bCoreComponentDecoratorsDummy from 'core/component/decorators/test/b-core-component-decorators-dummy/b-core-component-decorators-dummy';
+import type bSuperIBlockDecoratorsDummy from 'components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy';
 
-test.describe('core/component/decorators', () => {
+test.describe('<i-block> decorators', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	// Refer to the `b-core-component-decorators-dummy` component
+	// Refer to the `b-super-i-block-decorators-dummy` component
 	// and check it's decorators to understand this test
 	test.describe('initial values should be correct and all their changes should be registered', () => {
 		test('when component is regular', async ({page}) => {
@@ -38,7 +38,7 @@ test.describe('core/component/decorators', () => {
 		 * Runs a decorators test for the specified target
 		 * @param target
 		 */
-		async function runTest(target: JSHandle<bCoreComponentDecoratorsDummy>) {
+		async function runTest(target: JSHandle<bSuperIBlockDecoratorsDummy>) {
 			const {i, j, tmp} = await target.evaluate((ctx) => ({
 				i: ctx.i,
 				j: ctx.j,
@@ -74,9 +74,9 @@ test.describe('core/component/decorators', () => {
 	 */
 	async function renderDummy(
 		page: Page, functional: boolean = false
-	): Promise<JSHandle<bCoreComponentDecoratorsDummy>> {
+	): Promise<JSHandle<bSuperIBlockDecoratorsDummy>> {
 		return Component.createComponent(
-			page, `b-core-component-decorators-dummy${functional ? '-functional' : ''}`
+			page, `b-super-i-block-decorators-dummy${functional ? '-functional' : ''}`
 		);
 	}
 });

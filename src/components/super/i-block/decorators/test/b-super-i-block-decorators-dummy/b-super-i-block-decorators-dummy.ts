@@ -16,7 +16,7 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 
-export default class bCoreComponentDecoratorsDummy extends iData {
+export default class bSuperIBlockDecoratorsDummy extends iData {
 	/**
 	 * Watched field
 	 */
