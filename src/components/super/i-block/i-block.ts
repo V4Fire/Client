@@ -21,6 +21,7 @@ import iBlockProviders from 'components/super/i-block/providers';
 
 //#if runtime has prelude/test-env
 import('components/super/i-block/test/b-super-i-block-dummy');
+import('components/super/i-block/test/b-super-i-block-watch-dummy');
 //#endif
 
 export * from 'core/component';
