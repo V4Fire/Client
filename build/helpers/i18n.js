@@ -10,6 +10,7 @@
 
 const
 	{resolve: pzlr} = require('@pzlr/build-core'),
+	glob = require('fast-glob'),
 	path = require('upath');
 
 /**
