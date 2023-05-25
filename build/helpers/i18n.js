@@ -16,7 +16,7 @@ const
 /**
  * Finds all files with translations and merges them into one object
  *
- * @param {!Array<string>} locales - List of languages for collect
+ * @param {!Array<string>} locales - a list of languages for collect
  * @returns {!Object}
  */
 function collectI18NKeysets(locales) {
