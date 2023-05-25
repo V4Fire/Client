@@ -149,7 +149,7 @@
     "@types/jasmine": "3.10.3",
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
-    "@v4fire/core": "github:v4fire/core#v4",
+    "@v4fire/core": "github:V4Fire/Core#v4",
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules",
     "fast-glob": "3.2.12",
     "husky": "7.0.4",
@@ -161,7 +161,7 @@
     "webpack": "5.79.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "^4.0.0-alpha.3",
+    "@v4fire/core": "^4.0.0-alpha.4",
     "webpack": "^5.70.0"
   }
 }
