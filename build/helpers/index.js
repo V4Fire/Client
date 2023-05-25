@@ -12,5 +12,6 @@ Object.assign(
 	exports,
 	include('@super/build/helpers', __dirname),
 	include('build/helpers/webpack'),
-	include('build/helpers/other')
+	include('build/helpers/other'),
+	include('build/helpers/i18n')
 );
