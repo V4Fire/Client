@@ -9,7 +9,8 @@
  */
 
 const
-	{resolve: pzlr} = require('@pzlr/build-core');
+	{resolve: pzlr} = require('@pzlr/build-core'),
+	path = require('upath');
 
 /**
  * Finds all files with translations and sticks them together into one object
