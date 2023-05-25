@@ -11,13 +11,13 @@ Changelog
 
 ## v?.??.? (2023-05-25)
 
-#### :rocket: [New Feature]
+#### :rocket: New Feature
 
 * Added helper for collecting i18n keysets
 
 ## v3.27.0 (2022-08-30)
 
-#### :rocket: [New Feature]
+#### :rocket: New Feature
 
 * Added helpers for working with favicons assets
 
