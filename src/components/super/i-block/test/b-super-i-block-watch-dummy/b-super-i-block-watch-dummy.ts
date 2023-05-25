@@ -6,11 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:components/dummies/b-dummy-watch/README.md]]
- * @packageDocumentation
- */
-
 import watch from 'core/object/watch';
 import iData, { component, field, system, computed, ModsDecl } from 'components/super/i-data/i-data';
 
@@ -23,7 +18,7 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 
-export default class bDummyWatch extends iData {
+export default class bSuperIBlockWatchDummy extends iData {
 	@field(() => new Set([]))
 	setField!: Set<string>;
 
