@@ -13,7 +13,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v?.??.? (2023-05-25)
 
-#### :rocket: [New Feature]
+#### :rocket: New Feature
 
 * Added helper in `build/helpers` for collecting i18n keysets.
 
