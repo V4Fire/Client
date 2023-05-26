@@ -12,7 +12,7 @@ import test from 'tests/config/unit/test';
 
 import { renderWatchDummy } from 'components/super/i-block/test/helpers';
 
-test.describe('<i-block> watch - fields', () => {
+test.describe('<i-block> watch', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
@@ -23,14 +23,15 @@ test.describe('<i-block> watch - fields', () => {
 				'complexObjStore' :
 				'systemComplexObjStore';
 
-			test.describe('without caching of old values', () => {
-				test('non-deep watching', async ({page}) => {
+			test.describe('should not clone old value when the handler has one argument', () => {
+				test('with non-deep watching', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
-						const
-							res: any[] = [];
+						const res: any[] = [];
 
+						// Using rest operator so that the handler function has length equal to 1.
+						// In this case the old value won't be cloned.
 						ctx.watch(field, (val, ...args) => {
 							res.push([
 								Object.fastClone(val),
@@ -60,7 +61,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('non-deep watching without collapsing', async ({page}) => {
+				test('with non-deep watching without collapsing', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
@@ -115,7 +116,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('non-deep immediate watching', async ({page}) => {
+				test('with non-deep immediate watching', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
@@ -171,7 +172,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('watching for the specified path', async ({page}) => {
+				test('with the specified path being watched', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
@@ -231,7 +232,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('immediate watching for the specified path', async ({page}) => {
+				test('with the specified path being immediate watched', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
@@ -304,7 +305,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('deep watching', async ({page}) => {
+				test('with deep watching', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
@@ -340,7 +341,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('deep watching without collapsing', async ({page}) => {
+				test('with deep watching without collapsing', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
@@ -390,7 +391,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('deep immediate watching without collapsing', async ({page}) => {
+				test('with deep immediate watching without collapsing', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
@@ -442,7 +443,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('removing watchers', async ({page}) => {
+				test('and should remove watcher when `async.terminateWorker` is invoked', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
@@ -476,12 +477,11 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('suspending watchers', async ({page}) => {
+				test('and should stop watching changes when the `async.suspendEventListener` is invoked', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
-					const scan = await target.evaluate((ctx, field) => {
+					const resultHandle = await target.evaluateHandle((ctx, field) => {
 						const res: any[] = [];
-						globalThis._res = res;
 
 						ctx.watch(field, {deep: true, immediate: true, flush: 'sync', collapse: false, group: 'foo'}, (val, ...args) => {
 							res.push([
@@ -499,24 +499,7 @@ test.describe('<i-block> watch - fields', () => {
 						return res;
 					}, field);
 
-					test.expect(scan).toEqual([
-						[
-							{a: {b: {c: 1, d: 2}}},
-							undefined,
-							undefined,
-							undefined
-						],
-
-						[2, 1, [field], [field, 'a', 'b', 'c']]
-					]);
-
-					const scan2 = await target.evaluate((ctx) => {
-						const res = globalThis._res;
-						ctx.unsafe.async.unsuspendEventListener({group: /foo/});
-						return res;
-					});
-
-					test.expect(scan2).toEqual([
+					const result = [
 						[
 							{a: {b: {c: 1, d: 2}}},
 							undefined,
@@ -526,12 +509,18 @@ test.describe('<i-block> watch - fields', () => {
 
 						[2, 1, [field], [field, 'a', 'b', 'c']],
 						[3, 2, [field], [field, 'a', 'b', 'c']]
-					]);
+					];
+
+					await test.expect(resultHandle.evaluate((ctx) => ctx)).resolves.toEqual(result.slice(0, 2));
+
+					await target.evaluate((ctx) => ctx.unsafe.async.unsuspendEventListener({group: /foo/}));
+
+					await test.expect(resultHandle.evaluate((ctx) => ctx)).resolves.toEqual(result);
 				});
 			});
 
-			test.describe('with caching of old values', () => {
-				test('non-deep watching', async ({page}) => {
+			test.describe('should clone old value when the handler has more than one argument', () => {
+				test('with non-deep watching', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
@@ -566,7 +555,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('non-deep watching without collapsing', async ({page}) => {
+				test('with non-deep watching without collapsing', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
@@ -621,13 +610,13 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('non-deep immediate watching', async ({page}) => {
+				test('with non-deep immediate watching', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 
-						ctx.watch(field, {immediate: true, immediate: true, flush: 'sync'}, (val, oldVal, i) => {
+						ctx.watch(field, {immediate: true, flush: 'sync'}, (val, oldVal, i) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(oldVal),
@@ -677,7 +666,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('watching for the specified path', async ({page}) => {
+				test('with the specified path being watched', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
@@ -740,7 +729,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('immediate watching for the specified path', async ({page}) => {
+				test('with the specified path being immediate watched', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
@@ -813,7 +802,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('deep watching', async ({page}) => {
+				test('with deep watching', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
@@ -866,7 +855,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('deep watching without collapsing', async ({page}) => {
+				test('with deep watching without collapsing', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate(async (ctx, field) => {
@@ -916,7 +905,7 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('deep immediate watching without collapsing', async ({page}) => {
+				test('with deep immediate watching without collapsing', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
@@ -968,12 +957,11 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test('suspending watchers', async ({page}) => {
+				test('and should stop watching changes when the `async.suspendEventListener` is invoked', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
-					const scan = await target.evaluate((ctx, field) => {
+					const resultHandle = await target.evaluateHandle((ctx, field) => {
 						const res: any[] = [];
-						globalThis._res = res;
 
 						ctx.watch(field, {deep: true, immediate: true, flush: 'sync', collapse: false, group: 'foo'}, (val, oldVal, i) => {
 							res.push([
@@ -991,24 +979,7 @@ test.describe('<i-block> watch - fields', () => {
 						return res;
 					}, field);
 
-					test.expect(scan).toEqual([
-						[
-							{a: {b: {c: 1, d: 2}}},
-							undefined,
-							false,
-							undefined
-						],
-
-						[2, 1, false, [field, 'a', 'b', 'c']]
-					]);
-
-					const scan2 = await target.evaluate((ctx) => {
-						const res = globalThis._res;
-						ctx.unsafe.async.unsuspendEventListener({group: /foo/});
-						return res;
-					});
-
-					test.expect(scan2).toEqual([
+					const result = [
 						[
 							{a: {b: {c: 1, d: 2}}},
 							undefined,
@@ -1018,7 +989,13 @@ test.describe('<i-block> watch - fields', () => {
 
 						[2, 1, false, [field, 'a', 'b', 'c']],
 						[3, 2, false, [field, 'a', 'b', 'c']]
-					]);
+					];
+
+					await test.expect(resultHandle.evaluate((ctx) => ctx)).resolves.toEqual(result.slice(0, 2));
+
+					await target.evaluate((ctx) => ctx.unsafe.async.unsuspendEventListener({group: /foo/}));
+
+					await test.expect(resultHandle.evaluate((ctx) => ctx)).resolves.toEqual(result);
 				});
 			});
 		});
