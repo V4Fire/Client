@@ -133,6 +133,7 @@
     "typograf": "6.14.0",
     "upath": "2.0.1",
     "url-loader": "4.1.1",
+    "webpack": "5.84.1",
     "webpack-cli": "5.0.1"
   },
   "devDependencies": {
@@ -153,7 +154,7 @@
   },
   "peerDependencies": {
     "@v4fire/core": "^4.0.0-alpha.4",
-    "webpack": "^5.70.0"
+    "webpack": "^5.84.1"
   },
   "resolutions": {
     "sharp": "0.31.3"
