@@ -9,6 +9,23 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.43.0 (2023-03-23)
+
+#### :bug: Bug Fix
+
+* Added automatic `item.value` generation
+* Fixed overloads for `fold`/`unfold` methods
+
+## v3.41.0 (2023-03-14)
+
+#### :boom: Breaking Change
+
+* Renamed option `Item['id']` to `Item['value']`
+
+#### :rocket: New Feature
+
+* Added `iActiveItems` implementation
+
 ## v3.32.0 (2022-12-21)
 
 #### :house: Internal

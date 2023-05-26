@@ -27,6 +27,12 @@ Changelog
 
 * Refactoring
 
+## v3.47.2 (2023-05-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug: the overridden getter with cache had a value equal to the parent's getter value.
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :bug: Bug Fix

@@ -948,7 +948,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				conservativeCollapse: true,
 				keepClosingSlash: true,
 				minifyCSS: true,
-				minifyJS: true,
+				minifyJS: false,
 				// Keep comments for SSI
 				removeComments: false,
 				removeScriptTypeAttributes: true,

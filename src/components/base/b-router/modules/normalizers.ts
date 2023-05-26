@@ -59,7 +59,7 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 				(alias) => !Object.hasOwnProperty(params, alias)
 			);
 
-			if (!Object.hasOwnProperty(params, name) && noAliasesInParams) {
+			if (params[name] === undefined && noAliasesInParams) {
 				let
 					queryVal = query[name];
 
