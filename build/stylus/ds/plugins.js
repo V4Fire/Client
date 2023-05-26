@@ -271,7 +271,7 @@ module.exports = function getPlugins({
 				}
 			}
 
-			path.push(name);
+			path.push(...name.split('.'));
 
 			if (id !== undefined) {
 				path.push(String(id));
