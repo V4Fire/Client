@@ -115,13 +115,13 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test.skip('non-deep immediate watching', async ({page}) => {
+				test('non-deep immediate watching', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 
-						ctx.watch(field, {immediate: true}, (val, ...args) => {
+						ctx.watch(field, {immediate: true, flush: 'sync'}, (val, ...args) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(args[0]),
@@ -231,13 +231,13 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test.skip('immediate watching for the specified path', async ({page}) => {
+				test('immediate watching for the specified path', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 
-						ctx.watch(`${field}.a.c`, {immediate: true}, (val, ...args) => {
+						ctx.watch(`${field}.a.c`, {immediate: true, flush: 'sync'}, (val, ...args) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(args[0]),
@@ -390,13 +390,13 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test.skip('deep immediate watching without collapsing', async ({page}) => {
+				test('deep immediate watching without collapsing', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 
-						ctx.watch(field, {deep: true, immediate: true, collapse: false}, (val, ...args) => {
+						ctx.watch(field, {deep: true, immediate: true, flush: 'sync', collapse: false}, (val, ...args) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(args[0]),
@@ -442,13 +442,13 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test.skip('removing watchers', async ({page}) => {
+				test('removing watchers', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 
-						ctx.watch(field, {deep: true, immediate: true, collapse: false, group: 'foo'}, (val, ...args) => {
+						ctx.watch(field, {deep: true, immediate: true, flush: 'sync', collapse: false, group: 'foo'}, (val, ...args) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(args[0]),
@@ -476,14 +476,14 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test.skip('suspending watchers', async ({page}) => {
+				test('suspending watchers', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 						globalThis._res = res;
 
-						ctx.watch(field, {deep: true, immediate: true, collapse: false, group: 'foo'}, (val, ...args) => {
+						ctx.watch(field, {deep: true, immediate: true, flush: 'sync', collapse: false, group: 'foo'}, (val, ...args) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(args[0]),
@@ -621,13 +621,13 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test.skip('non-deep immediate watching', async ({page}) => {
+				test('non-deep immediate watching', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 
-						ctx.watch(field, {immediate: true}, (val, oldVal, i) => {
+						ctx.watch(field, {immediate: true, immediate: true, flush: 'sync'}, (val, oldVal, i) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(oldVal),
@@ -740,13 +740,13 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test.skip('immediate watching for the specified path', async ({page}) => {
+				test('immediate watching for the specified path', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 
-						ctx.watch(`${field}.a.c`, {immediate: true}, (val, oldVal, i) => {
+						ctx.watch(`${field}.a.c`, {immediate: true, flush: 'sync'}, (val, oldVal, i) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(oldVal),
@@ -916,13 +916,13 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test.skip('deep immediate watching without collapsing', async ({page}) => {
+				test('deep immediate watching without collapsing', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 
-						ctx.watch(field, {deep: true, immediate: true, collapse: false}, (val, oldVal, i) => {
+						ctx.watch(field, {deep: true, immediate: true, flush: 'sync', collapse: false}, (val, oldVal, i) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(oldVal),
@@ -968,14 +968,14 @@ test.describe('<i-block> watch - fields', () => {
 					]);
 				});
 
-				test.skip('suspending watchers', async ({page}) => {
+				test('suspending watchers', async ({page}) => {
 					const target = await renderWatchDummy(page);
 
 					const scan = await target.evaluate((ctx, field) => {
 						const res: any[] = [];
 						globalThis._res = res;
 
-						ctx.watch(field, {deep: true, immediate: true, collapse: false, group: 'foo'}, (val, oldVal, i) => {
+						ctx.watch(field, {deep: true, immediate: true, flush: 'sync', collapse: false, group: 'foo'}, (val, oldVal, i) => {
 							res.push([
 								Object.fastClone(val),
 								Object.fastClone(oldVal),
