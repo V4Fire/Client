@@ -228,6 +228,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@prop({type: Function, required: false})
 	readonly formValueConverter?: CanArray<ComponentConverter>;
 
+	/** {@link iInput.formConverter} */
+	@prop({type: [Function, Array], required: false})
+	readonly formConverterProp?: CanArray<ComponentConverter> = unpackIf;
+
 	/**
 	 * Converter/s that is/are used by the associated form.
 	 * The form applies these converters to the group form value of the component.
@@ -249,8 +253,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * < b-input :validators = ['required'] | :formConverter = [toProtobuf.option(), zip.toUTC()]
 	 * ```
 	 */
-	@prop({type: [Function, Array], required: false})
-	readonly formConverter?: CanArray<ComponentConverter> = unpackIf;
+	@field((ctx) => ctx.sync.link())
+	readonly formConverter?: CanArray<ComponentConverter>;
 
 	/**
 	 * If false, then a component value isn't cached by the associated form.
@@ -260,6 +264,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@prop(Boolean)
 	readonly cache: boolean = true;
 
+	/** {@link iInput.prototype.validators} */
+	@prop(Array)
+	readonly validatorsProp: Validators = [];
+
 	/**
 	 * List of component validators to check
 	 *
@@ -268,8 +276,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * < b-input :name = 'name' | :validators = ['required', ['pattern', {pattern: /^\d+$/}]]
 	 * ```
 	 */
-	@prop(Array)
-	readonly validators: Validators = [];
+	@field((ctx) => ctx.sync.link())
+	readonly validators?: Validators;
 
 	/**
 	 * An initial information message that the component needs to show.

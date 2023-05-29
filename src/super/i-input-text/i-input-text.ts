@@ -18,6 +18,7 @@ import iInput, {
 
 	component,
 	prop,
+	field,
 	system,
 	computed,
 	wait,
@@ -68,11 +69,15 @@ export default class iInputText extends iInput implements iWidth, iSize {
 	@prop(String)
 	readonly autocomplete: string = 'off';
 
+	/** {@link iInputText.placeholder} */
+	@prop({type: String, required: false})
+	readonly placeholderProp?: string;
+
 	/**
 	 * Placeholder text of the input
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Input#htmlattrdefplaceholder
 	 */
-	@prop({type: String, required: false})
+	@field((ctx) => ctx.sync.link())
 	readonly placeholder?: string;
 
 	/**
