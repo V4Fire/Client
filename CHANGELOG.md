@@ -91,14 +91,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Changed `optionProps` and `itemProps` params `bSlider`
 
->>>>>>> origin/master
 ## v3.44.1 (2023-03-28)
 
 #### :rocket: New Feature
 
-<<<<<<< HEAD
-* Added possibility to specify aliases for dynamic parameters in path
-=======
 * Added possibility to specify aliases for dynamic parameters in path `b-router` `core/router`
 
 ## v3.43.1 (2023-03-27)
@@ -137,7 +133,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new trait `iActiveItems`
 * Added `iActiveItems` implementation `bTree` `bList`
->>>>>>> origin/master
 
 ## v3.40.1 (2023-03-13)
 
