@@ -247,7 +247,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@prop({
 		type: [Function, Array],
 		required: false,
-		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
+		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v)
 	})
 
 	readonly formConverterProp: CanIter<ComponentConverter> = [unpackIf];
