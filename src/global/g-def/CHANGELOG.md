@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added a new helpers for working with gradient and shadow from a design system `global/g-def/funcs` 
+
 ## v3.5.1 (2021-09-20)
 
 #### :bug: Bug Fix
