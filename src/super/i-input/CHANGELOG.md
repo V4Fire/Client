@@ -15,8 +15,6 @@ Changelog
 
 * Added ability to specify a custom validator function
 
-#### :boom: Breaking Change
-
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :boom: Breaking Change
