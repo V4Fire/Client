@@ -14,7 +14,8 @@ import { initEmitter } from 'core/component/event';
 import { metaPointers } from 'core/component/const';
 import { invertedFieldMap, tiedFieldMap } from 'core/component/decorators/const';
 
-import type { ComponentMeta } from 'core/component/interface';
+import type { ComponentMeta, ComponentProp, ComponentField } from 'core/component/interface';
+
 import type {
 
 	DecoratorFunctionalOptions,
@@ -182,7 +183,7 @@ export function paramsFactory<T = object>(
 
 				const
 					metaKey = cluster ?? (key in meta.props ? 'props' : 'fields'),
-					metaCluster = meta[metaKey];
+					metaCluster: ComponentProp | ComponentField = meta[metaKey];
 
 				const
 					invertedMetaKeys = invertedFieldMap[metaKey];
@@ -197,16 +198,19 @@ export function paramsFactory<T = object>(
 							const info = {...invertedMetaCluster[key]};
 							delete info.functional;
 
-							if (
-								invertedMetaKey !== 'fields' && metaKey !== 'systemFields' ||
-								invertedMetaKey !== 'systemFields' && metaKey !== 'fields'
-							) {
-								delete info.init;
-								delete info.default;
+							if (invertedMetaKey === 'prop') {
+								if (Object.isFunction(info.default)) {
+									(<ComponentField>info).init = info.default;
+									delete info.default;
+								}
+
+							} else if (metaKey === 'prop') {
+								delete (<ComponentField>info).init;
 							}
 
 							metaCluster[key] = info;
 							delete invertedMetaCluster[key];
+
 							break;
 						}
 					}
