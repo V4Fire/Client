@@ -70,7 +70,7 @@ test.describe('<i-block> events - API', () => {
 		test.expect(scan).toEqual([componentName, 1, {a: 1}, 1, {a: 1}]);
 	});
 
-	test.skip('removing listeners', async ({page}) => {
+	test('should remove all event listeners when `off` is invoked without handler', async ({page}) => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
@@ -84,9 +84,6 @@ test.describe('<i-block> events - API', () => {
 				res.push(...args);
 			});
 
-			// FIXME: iBlockEvent.off signature mismatch with EventEmitterWrapper.off
-			// FIXME: selfEmitter.off call is forwarded too the ComponentInterface.$off
-			// which is forwarded to the EventEmitter2.off, which requires handler as the 2nd argument
 			ctx.off('onFoo');
 
 			ctx.off('foo', () => {
