@@ -11,17 +11,23 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.47.4 (2023-05-29)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when observing fields that are redefined from props `core/component/decorators`
+
 ## v3.47.3 (2023-05-26)
 
 #### :rocket: New Feature
 
-* Added a new helper for collecting i18n keysets `build/helpers` 
+* Added a new helper for collecting i18n keysets `build/helpers`
 
 ## v3.47.2 (2023-05-18)
 
 #### :bug: Bug Fix
 
-* Fixed a bug in `core/component/decorators`: the overridden getter with cache had a value equal to the parent's getter value.
+* Fixed a bug when the overridden getter with cache had a value equal to the parent's getter value `core/component/decorators`
 
 ## v3.47.1 (2023-05-18)
 
