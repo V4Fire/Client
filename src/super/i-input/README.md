@@ -311,7 +311,7 @@ The first one checks that the component must be filled and the second one is use
       param2: 'bar'
     }
   }
-]
+] .
 ```
 
 The rest parameters you provide will be accepted by the validator function (`param1` and `param2` in this case).
