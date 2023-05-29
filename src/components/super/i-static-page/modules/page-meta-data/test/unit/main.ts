@@ -6,86 +6,80 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { JSHandle } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
 import Component from 'tests/helpers/component';
 
-test.describe('pageMetaData', () => {
-	let root;
+import type iStaticPage from 'components/super/i-static-page/i-static-page';
+
+test.describe('<i-static-page> page meta data', () => {
+	let root: JSHandle<iStaticPage>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 		root = await Component.waitForRoot(page);
 	});
 
-	test('should set and reset title of page', async () => {
-		const
-			newTitle = 'Cool title';
+	test('should set and reset the page\'s title', async ({page}) => {
+		const newTitle = 'Cool title';
 
-		await root.evaluate(
-			(rootCtx, newTitle) => rootCtx.pageMetaData.title = newTitle,
-			newTitle
-		);
+		await root.evaluate((ctx, newTitle) => ctx.pageMetaData.title = newTitle, newTitle);
 
-		test.expect(await root.evaluate((rootCtx) => rootCtx.pageMetaData.title)).toBe(newTitle);
-		test.expect(await root.evaluate(() => document.title)).toBe(newTitle);
+		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.title)).resolves.toBe(newTitle);
+		await test.expect(page).toHaveTitle(newTitle);
 
-		await root.evaluate((rootCtx) => rootCtx.pageMetaData.title = '');
-		test.expect(await root.evaluate((rootCtx) => rootCtx.pageMetaData.title)).toBe('');
+		await root.evaluate((ctx) => ctx.pageMetaData.title = '');
+
+		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.title)).resolves.toBe('');
+		await test.expect(page).toHaveTitle('');
 	});
 
-	test('should set and reset meta tag descripation on page', async () => {
+	test('should set and reset the page\'s description', async ({page}) => {
 		const
-			newDescription = 'Cool description';
+			newDescription = 'Cool description',
+			metaDescriptionLocator = page.locator('meta[name="description"]');
 
 		await root.evaluate(
-			(rootCtx, newDescription) => rootCtx.pageMetaData.description = newDescription,
+			(ctx, newDescription) => ctx.pageMetaData.description = newDescription,
 			newDescription
 		);
 
-		test.expect(await root.evaluate((rootCtx) => rootCtx.pageMetaData.description)).toBe(newDescription);
-		const descriptionValueFromDOM = await root.evaluate(
-			() => {
-				const metaElements = [].filter.call(document.getElementsByTagName('meta'), ((item) => item.name === 'description'));
-				return metaElements[0].content;
-			}
-		);
-		test.expect(descriptionValueFromDOM).toBe(newDescription);
+		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.description)).resolves.toBe(newDescription);
+		await test.expect(metaDescriptionLocator).toHaveAttribute('content', newDescription);
 
-		await root.evaluate(() => {
-			const metaElements = [].filter.call(document.getElementsByTagName('meta'), ((item) => item.name === 'description'));
-			metaElements[0].remove();
-		});
+		await root.evaluate((ctx) => ctx.pageMetaData.description = '');
 
-		await root.evaluate((rootCtx) => rootCtx.pageMetaData.description = '');
-		test.expect(await root.evaluate((rootCtx) => rootCtx.pageMetaData.description)).toBe('');
+		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.description)).resolves.toBe('');
+		await test.expect(metaDescriptionLocator).toHaveAttribute('content', '');
 	});
 
-	test('link', async () => {
+	test('`addLink` should add link to the head of the page', async ({page}) => {
 		const href = 'https://edadeal.ru/';
-		await root.evaluate((rootCtx, href) => rootCtx.pageMetaData.addLink({rel: 'canonical', href}), href);
+		await root.evaluate((ctx, href) => ctx.pageMetaData.addLink({rel: 'canonical', href}), href);
 
-		const linkInfo = await root.evaluate((rootCtx) => {
-			const links = rootCtx.pageMetaData.findLinks({rel: 'canonical'});
+		const linkInfo = await root.evaluate((ctx) => {
+			const links = ctx.pageMetaData.findLinks({rel: 'canonical'});
 			return {href: links[0].href, length: links.length};
 		});
 
 		test.expect(linkInfo.href).toEqual(href);
 		test.expect(linkInfo.length).toEqual(1);
+		await test.expect(page.locator('head link[rel="canonical"]')).toHaveAttribute('href', href);
 	});
 
-	test('meta', async () => {
+	test('`addMeta` should add meta tag to the head of the page', async ({page}) => {
 		const content = 'noindex';
-		await root.evaluate((rootCtx, content) => rootCtx.pageMetaData.addMeta({name: 'robots', content}), content);
+		await root.evaluate((ctx, content) => ctx.pageMetaData.addMeta({name: 'robots', content}), content);
 
-		const metaInfo = await root.evaluate((rootCtx) => {
-			const metas = rootCtx.pageMetaData.findMetas({name: 'robots'});
+		const metaInfo = await root.evaluate((ctx) => {
+			const metas = ctx.pageMetaData.findMetas({name: 'robots'});
 			return {content: metas[0].content, length: metas.length};
 		});
 
 		test.expect(metaInfo.content).toEqual(content);
 		test.expect(metaInfo.length).toEqual(1);
-
-		await root.evaluate((rootCtx, content) => rootCtx.pageMetaData.addMeta({name: 'robots', content}), content);
+		await test.expect(page.locator('head meta[name="robots"]')).toHaveAttribute('content', content);
 	});
 });
