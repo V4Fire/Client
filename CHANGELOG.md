@@ -16,8 +16,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Made `placeholder` a field and added linking to `placeholderProp` in `i-input-text`.
-* Made `validators` and `formValueConverter` fields and added linking to
-`validatorsProp` and `formValueConverterProp` respectively in `i-input`.
+* Made `validators` and `formConverter` fields and added linking to
+`validatorsProp` and `formConverterProp` respectively in `i-input`.
 
 ## v3.47.3 (2023-05-26)
 

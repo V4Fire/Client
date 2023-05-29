@@ -13,8 +13,8 @@ Changelog
 
 #### :house: Internal
 
-* Made `validators` and `formValueConverter` fields and added linking to
-`validatorsProp` and `formValueConverterProp` respectively.
+* Made `validators` and `formConverter` fields and added linking to
+`validatorsProp` and `formConverterProp` respectively.
 
 ## v3.0.0-rc.199 (2021-06-16)
 
