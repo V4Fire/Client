@@ -11,11 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.48.3 (2023-05-29)
+
+* Added ability to specify a custom validator function in `i-input`
+
 ## v3.47.3 (2023-05-26)
 
 #### :rocket: New Feature
 
-* Added a new helper for collecting i18n keysets `build/helpers` 
+* Added a new helper for collecting i18n keysets `build/helpers`
 
 ## v3.47.2 (2023-05-18)
 

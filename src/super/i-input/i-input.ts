@@ -49,7 +49,8 @@ import type {
 	ValidatorParams,
 	ValidatorResult,
 	ValidationResult,
-	ValidatorsDecl
+	ValidatorsDecl,
+	CustomValidatorParams
 
 } from 'super/i-input/interface';
 
@@ -620,6 +621,16 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			}
 
 			return true;
+		},
+
+		/**
+		 * Invokes the specified custom validator function with additional provided parameters
+		 * and current instance as the `this`
+		 *
+		 * @param validator
+		 */
+		custom({validator, ...params}: CustomValidatorParams): CanPromise<ValidatorResult> {
+			return validator.call(this, params);
 		}
 
 		//#endif
