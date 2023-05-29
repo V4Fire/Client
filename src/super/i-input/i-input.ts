@@ -277,7 +277,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * ```
 	 */
 	@field((ctx) => ctx.sync.link())
-	readonly validators?: Validators;
+	readonly validators!: Validators;
 
 	/**
 	 * An initial information message that the component needs to show.
