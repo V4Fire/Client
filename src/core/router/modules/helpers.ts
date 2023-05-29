@@ -125,7 +125,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		} else {
 			if (Object.isString(basePath) && basePath !== '') {
 				// Resolve the situation when the passed path already has a `basePath`
-				const v = basePath.replace(/(.*)?[\\/]+$/, (str, base) => `${RegExp.escape(base)}/*`);
+				const v = basePath.replace(/(.*)?[/\\]+$/, (str, base) => `${RegExp.escape(base)}/*`);
 				resolvedRef = concatURLs(basePath, resolvedRef.replace(new RegExp(`^${v}`), ''));
 
 				// We only need to normalize the user "raw" ref

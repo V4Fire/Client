@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.42.0 (2023-03-14)
+
+#### :bug: Bug Fix
+
+* Fixed replace pattern for `i18n` webpack plugin
+
 ## v3.39.0 (2023-03-07)
 
 #### :rocket: New Feature

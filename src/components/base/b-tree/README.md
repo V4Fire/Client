@@ -25,7 +25,7 @@ This module provides a component to render a recursive tree of elements.
 | `change`       | The active element of the component has been changed                         | The active item(s)                         | `Active`              |
 | `actionChange` | The active element of the component has been changed due to some user action | The active item(s)                         | `Active`              |
 
-See the [[iItems]] trait and the [[iData]] component.
+See the [[iActiveItems]] trait and the [[iData]] component.
 
 ## Associated types
 
@@ -55,6 +55,8 @@ export default class MyTree extends bTree {
   readonly Item!: MyItem;
 }
 ```
+
+Also, you can see the parent component.
 
 ## Usage
 
@@ -326,7 +328,7 @@ It is used to optimize the process of rendering child items.
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :nestedRenderFilter = () => async.idle()
 ```
 
-### [renderChunks]
+### [renderChunks = `5`]
 
 Number of chunks to render per tick via `asyncRender`.
 

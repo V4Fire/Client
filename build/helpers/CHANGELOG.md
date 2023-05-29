@@ -9,9 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.47.3 (2023-05-26)
+
+#### :rocket: New Feature
+
+* Added a new helper for collecting i18n keysets
+
 ## v3.27.0 (2022-08-30)
 
-#### :rocket: [New Feature]
+#### :rocket: New Feature
 
 * Added helpers for working with favicons assets
 

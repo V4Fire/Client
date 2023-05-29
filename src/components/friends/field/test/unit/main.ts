@@ -106,9 +106,7 @@ test.describe('friends/field', () => {
 
 		/**
 		 * Performs CRUD operations on the component and returns array of changes
-		 *
 		 * @param path
-		 * @param watchPath
 		 */
 		function performCRUD(path: string): Promise<any[]> {
 			return target.evaluate((ctx, {path}) => {

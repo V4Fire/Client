@@ -18,7 +18,7 @@ type WebServerConfig = NonNullable<NotArray<Config['webServer']>>;
 const webServerConfig: WebServerConfig = {
 	port: build.testPort,
 	reuseExistingServer: true,
-	command: 'npm run test:server',
+	command: 'yarn test:server',
 	cwd: process.cwd()
 };
 

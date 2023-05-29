@@ -61,6 +61,7 @@ export default class Values extends Friend {
 
 	/**
 	 * Returns the render key for the passed item
+	 * @param value
 	 */
 	getItemKey(value: Item['value']): string {
 		return `${this.itemKeyPrefix}-${this.getIndex(value)}`;

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.44.2 (2023-03-29)
+
+#### :house: Internal
+
+* Changed `optionProps` and `itemProps` params
+
 ## v3.16.1 (2022-02-15)
 
 #### :bug: Bug Fix

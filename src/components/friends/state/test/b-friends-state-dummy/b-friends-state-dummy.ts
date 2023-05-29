@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable jsdoc/require-jsdoc */
+
 import iData, { component, field, system } from 'components/super/i-data/i-data';
 
 import type { ConverterCallType } from 'components/friends/state/interface';

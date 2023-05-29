@@ -11,17 +11,133 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.47.3 (2023-05-26)
+
+#### :rocket: New Feature
+
+* Added a new helper for collecting i18n keysets `build/helpers`
+
+## v3.47.2 (2023-05-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug in `core/component/decorators`: the overridden getter with cache had a value equal to the parent's getter value.
+
+## v3.47.1 (2023-05-18)
+
+#### :bug: [Bug Fix]
+
+* Replace `undefined` values in `route.params` by an alias or query param, if necessary, in `b-router`
+
+## v3.47.0 (2023-05-05)
+
+#### :rocket: New Feature
+
+* Added ability to exclude an item from being activated by specifying `activatable` flag in `i-active-items` trait
+* Added `getItemByValue` method in `i-active-items` trait, `b-list` and `b-tree`
+
 ## v3.46.4 (2023-05-05)
 
 #### :bug: Bug Fix
 
 * Fixed a bug with negative values in design system `build/stylus/ds/helpers`
 
+## v3.46.3 (2023-04-28)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the `typograf` filter that didn't work due to the wrong locale path.
+
+## v3.46.2 (2023-04-26)
+
+#### :house: Internal
+
+* Migrate on `node@18`
+
+## v3.46.1 (2023-04-13)
+
+#### :bug: Bug Fix
+
+* Disabled js minify in html loader
+
+## v3.46.0 (2023-04-10)
+
+#### :house: Internal
+
+* Updated `playwright@1.32.1`
+
+## v3.45.0 (2023-04-04)
+
+#### :house: Internal
+
+* Moving to `yarn` package manager
+* Updated CI script to `yarn`
+* Removed unused dependencies
+* Updated dependencies:
+  * `favicons@7.1.0`
+  * `@statoscope/webpack-plugin@5.25.1`
+  * `webpack-cli@5.0.1`
+  * `webpack@5.76.0`
+
+## v3.44.3 (2023-03-30)
+
+#### :bug: [Bug Fix]
+
+* Overriding original parameter by alias in route `b-router` `core/router`
+
+## v3.44.2 (2023-03-29)
+
+#### :house: Internal
+
+* Changed `optionProps` and `itemProps` params `bSlider`
+
+>>>>>>> origin/master
 ## v3.44.1 (2023-03-28)
 
 #### :rocket: New Feature
 
+<<<<<<< HEAD
 * Added possibility to specify aliases for dynamic parameters in path
+=======
+* Added possibility to specify aliases for dynamic parameters in path `b-router` `core/router`
+
+## v3.43.1 (2023-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when typograf does not support the given locale `build/snakeskin`
+
+## v3.43.0 (2023-03-23)
+
+#### :bug: Bug Fix
+
+* Added automatic `item.value` generation `bTree` `bList`
+* Fixed overloads for `fold`/`unfold` methods `bTree`
+
+## v3.42.1 (2023-03-14)
+
+#### :nail_care: Polish
+
+* Changed `activeElement` getter return type `bList`
+
+## v3.42.0 (2023-03-14)
+
+#### :bug: Bug Fix
+
+* Removed some options of `html-webpack-plugin` that causes bugs
+* Fixed replace pattern for `i18n` webpack plugin
+
+## v3.41.0 (2023-03-14)
+
+#### :boom: Breaking Change
+
+* Renamed option `Item['id']` to `Item['value']` `bTree`
+
+#### :rocket: New Feature
+
+* Added a new trait `iActiveItems`
+* Added `iActiveItems` implementation `bTree` `bList`
+>>>>>>> origin/master
 
 ## v3.40.1 (2023-03-13)
 
@@ -335,8 +451,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 ## v3.19.1 (2022-04-12)
 
 #### :house: Internal
-
-* Updated dependencies: typescript@4.6.3
+5.0 typescript@4.6.3
 
 ## v3.19.0 (2022-04-06)
 

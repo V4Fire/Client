@@ -208,6 +208,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Sets a new window title
+	 * @param value
 	 */
 	set title(value: string) {
 		this.field.set('titleStore', value);

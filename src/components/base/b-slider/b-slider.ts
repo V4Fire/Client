@@ -83,6 +83,8 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 
 	/**
 	 * Sets a pointer of the current slide
+	 *
+	 * @param value
 	 * @emits `change(current: number)`
 	 */
 	set current(value: number) {

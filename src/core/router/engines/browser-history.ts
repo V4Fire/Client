@@ -414,6 +414,7 @@ export default function createRouter(component: bRouter): Router {
 			}
 
 			const
+				// eslint-disable-next-line @v4fire/unbound-method
 				{load} = params.meta;
 
 			if (load == null) {

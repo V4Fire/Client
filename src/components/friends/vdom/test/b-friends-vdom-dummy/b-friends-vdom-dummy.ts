@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable jsdoc/require-jsdoc */
+
 import bDummy, { component } from 'components/dummies/b-dummy/b-dummy';
 import bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
 

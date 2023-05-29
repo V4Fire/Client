@@ -671,6 +671,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Sets the normalized value from the `v-model` directive
+	 * @param value
 	 */
 	protected set valueModel(value: string) {
 		this.value = value;
@@ -1037,6 +1038,9 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/**
 	 * Handler: the component value has changed
+	 *
+	 * @param value
+	 * @param oldValue
 	 * @emits `change(value: this['Value'])`
 	 */
 	protected onValueChange(value: this['Value'], oldValue: CanUndef<this['Value']>): void {

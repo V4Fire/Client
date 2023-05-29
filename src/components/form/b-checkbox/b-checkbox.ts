@@ -189,6 +189,7 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/**
 	 * Checks the checkbox
+	 * @param value
 	 */
 	check(value?: CheckType): Promise<boolean> {
 		return SyncPromise.resolve(this.setMod('checked', value ?? true));

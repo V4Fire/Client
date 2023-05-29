@@ -70,6 +70,8 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * Sets a new page title.
 	 * Basically this title is set via `document.title`.
+	 *
+	 * @param value
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
