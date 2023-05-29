@@ -12,6 +12,7 @@ import type { WatchOptions } from 'core/dom/intersection-watcher';
 
 import Friend from 'components/friends/friend';
 import DOM, { watchForIntersection, appendChild } from 'components/friends/dom';
+
 import type iBlock from 'components/super/i-block/i-block';
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
