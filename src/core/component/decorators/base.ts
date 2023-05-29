@@ -182,20 +182,11 @@ export function paramsFactory<T = object>(
 			if (inverseKeys != null) {
 				for (let i = 0; i < inverseKeys.length; i++) {
 					const
-						inverseKey = inverseKeys[i],
-						inverseMetaCluster = meta[inverseKey];
+						tmp = meta[inverseKeys[i]];
 
-					if (key in inverseMetaCluster) {
-						const info = {...inverseMetaCluster[key]};
-						delete info.functional;
-
-						if (inverseKey !== 'systemFields' && metaKey !== 'fields') {
-							delete info.init;
-							delete info.default;
-						}
-
-						metaCluster[key] = info;
-						delete inverseMetaCluster[key];
+					if (key in tmp) {
+						metaCluster[key] = tmp[key];
+						delete tmp[key];
 						break;
 					}
 				}
