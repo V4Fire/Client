@@ -230,7 +230,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/** {@link iInput.formConverter} */
 	@prop({type: [Function, Array], required: false})
-	readonly formConverterProp?: CanArray<ComponentConverter> = unpackIf;
+	readonly formConverterProp: CanArray<ComponentConverter> = unpackIf;
 
 	/**
 	 * Converter/s that is/are used by the associated form.
