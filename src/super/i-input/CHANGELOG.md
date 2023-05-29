@@ -11,6 +11,8 @@ Changelog
 
 ## v3.48.3 (2023-05-29)
 
+#### :rocket: New Feature
+
 * Added ability to specify a custom validator function
 
 #### :boom: Breaking Change

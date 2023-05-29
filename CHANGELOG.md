@@ -13,6 +13,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.48.3 (2023-05-29)
 
+#### :rocket: New Feature
+
 * Added ability to specify a custom validator function in `i-input`
 
 ## v3.47.3 (2023-05-26)
