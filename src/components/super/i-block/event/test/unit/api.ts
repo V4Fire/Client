@@ -70,7 +70,7 @@ test.describe('<i-block> events - API', () => {
 		test.expect(scan).toEqual([componentName, 1, {a: 1}, 1, {a: 1}]);
 	});
 
-	test('should remove all event listeners when `off` is invoked without handler', async ({page}) => {
+	test('should remove all event listeners when `off` is invoked without a handler', async ({page}) => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
@@ -98,7 +98,7 @@ test.describe('<i-block> events - API', () => {
 		test.expect(scan).toEqual([componentName, 1, {a: 1}]);
 	});
 
-	test('removing listeners via `async`', async ({page}) => {
+	test('matching event listeners should be removed via `async.off`', async ({page}) => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
@@ -121,7 +121,7 @@ test.describe('<i-block> events - API', () => {
 		test.expect(scan).toEqual([componentName, 1, {a: 1}]);
 	});
 
-	test('`once`', async ({page}) => {
+	test('listener should be called once when it was set using `once` method', async ({page}) => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
@@ -155,7 +155,7 @@ test.describe('<i-block> events - API', () => {
 		]);
 	});
 
-	test('`promisifyOnce`', async ({page}) => {
+	test('`promisifyOnce` should return a promise which resolves when the event is emitted', async ({page}) => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
@@ -168,7 +168,7 @@ test.describe('<i-block> events - API', () => {
 		test.expect(scan).toEqual(1);
 	});
 
-	test.describe('dispatching of events', () => {
+	test.describe('event dispatching', () => {
 		// FIXME: broken test
 		test.skip('simple usage', async ({page}) => {
 			const target = await renderDummy(page, {
