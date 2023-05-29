@@ -299,8 +299,30 @@ Supported validators are placed within the static `validators` property.
 This property is an object: the keys represent validator names; the values are specified as functions that take validation parameters and
 return the `ValidatorResult` structure. Any validator can return a promise.
 
-The `iInput` class provides out of the box only one validator: `required`, which checks that a component must be filled.
-You free to add new validator to your component.
+The `iInput` class provides two validators out of the box: `required` and `custom`.
+The first one checks that the component must be filled and the second one is used to specify a custom validator function:
+
+```
+< b-input :validators = [ &
+  {
+    custom: {
+      validator: yourValidator,
+      param1: 'foo',
+      param2: 'bar'
+    }
+  }
+]
+```
+
+The rest parameters you provide will be accepted by the validator function (`param1` and `param2` in this case).
+
+Note that if you use this validator you must provide a function, i.e the following form is wrong and an error will be thrown:
+
+```
+< b-input :validators = ['custom']
+```
+
+You free to add a new validator to your component.
 
 ```typescript
 import iInput, { component } from 'super/i-input/i-input';
