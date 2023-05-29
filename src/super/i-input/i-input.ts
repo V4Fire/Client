@@ -629,13 +629,20 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		 *
 		 * @param validator
 		 */
-		custom({validator, ...params}: CustomValidatorParams): CanPromise<ValidatorResult> {
+		async custom({validator, ...params}: CustomValidatorParams): Promise<ValidatorResult> {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (validator == null) {
 				throw new Error('The `custom` validator must accept the validator function, but it was not provided');
 			}
 
-			return validator.call(this, params);
+			const
+				result = await validator.call(this, params);
+
+			if (Object.isPlainObject(result) || Object.isBoolean(result) || Object.isNull(result)) {
+				return result;
+			}
+
+			return null;
 		}
 
 		//#endif
