@@ -12,7 +12,7 @@ import { storeRgxp } from 'core/component/reflect';
 import { initEmitter } from 'core/component/event';
 
 import { metaPointers } from 'core/component/const';
-import { inverseFieldMap, tiedFieldMap } from 'core/component/decorators/const';
+import { invertedFieldMap, tiedFieldMap } from 'core/component/decorators/const';
 
 import type { ComponentMeta } from 'core/component/interface';
 import type {
@@ -182,23 +182,37 @@ export function paramsFactory<T = object>(
 
 				const
 					metaKey = cluster ?? (key in meta.props ? 'props' : 'fields'),
-					inverseKeys = inverseFieldMap[metaKey],
 					metaCluster = meta[metaKey];
 
-				if (inverseKeys != null) {
-					for (let i = 0; i < inverseKeys.length; i++) {
-						const
-							tmp = meta[inverseKeys[i]];
+				const
+					invertedMetaKeys = invertedFieldMap[metaKey];
 
-						if (key in tmp) {
-							metaCluster[key] = tmp[key];
-							delete tmp[key];
+				if (invertedMetaKeys != null) {
+					for (let i = 0; i < invertedMetaKeys.length; i++) {
+						const
+							invertedMetaKey = invertedMetaKeys[i],
+							invertedMetaCluster = meta[invertedMetaKey];
+
+						if (key in invertedMetaCluster) {
+							const info = {...invertedMetaCluster[key]};
+							delete info.functional;
+
+							if (
+								invertedMetaKey !== 'fields' && metaKey !== 'systemFields' ||
+								invertedMetaKey !== 'systemFields' && metaKey !== 'fields'
+							) {
+								delete info.init;
+								delete info.default;
+							}
+
+							metaCluster[key] = info;
+							delete invertedMetaCluster[key];
 							break;
 						}
 					}
 				}
 
-				if (transformer) {
+				if (transformer != null) {
 					p = transformer(p, metaKey);
 				}
 
