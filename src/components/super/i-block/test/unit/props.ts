@@ -6,13 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle, Page } from 'playwright';
-
 import test from 'tests/config/unit/test';
 
-import { Component, DOM } from 'tests/helpers';
+import { DOM } from 'tests/helpers';
 
-import type bSuperIBlockDummy from 'components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy';
+import { renderDummy } from 'components/super/i-block/test/helpers';
 
 test.describe('<i-block> props', () => {
 	const
@@ -174,16 +172,4 @@ test.describe('<i-block> props', () => {
 			test.expect(scan).toBe('foo');
 		});
 	});
-
-	/**
-	 * Returns the rendered dummy component
-	 *
-	 * @param page
-	 * @param attrs
-	 */
-	async function renderDummy(
-		page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}
-	): Promise<JSHandle<bSuperIBlockDummy>> {
-		return Component.createComponent(page, componentName, attrs);
-	}
 });
