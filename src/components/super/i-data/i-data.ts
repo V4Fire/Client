@@ -222,7 +222,7 @@ export default abstract class iData extends iDataHandlers {
 	 * @param [key] - the key that will be used to store the data
 	 */
 	protected saveDataToRootStore(data: unknown, key?: string): void {
-		key ??= getKey(this.globalName ?? this.dataProvider);
+		key ??= getKey(this.globalName ?? this.dataProviderProp);
 
 		if (key == null) {
 			return;
@@ -230,7 +230,7 @@ export default abstract class iData extends iDataHandlers {
 
 		this.r.providerDataStore.set(key, data);
 
-		function getKey(val: string | CanUndef<iData['dataProvider']>): CanUndef<string> {
+		function getKey(val: string | CanUndef<iData['dataProviderProp']>): CanUndef<string> {
 			if (val == null || Object.isString(val)) {
 				return val ?? undefined;
 			}
