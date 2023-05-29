@@ -8,10 +8,10 @@
 
 import { defProp } from 'core/const/props';
 import { initEmitter, metaPointers } from 'core/component/const';
-import { inverseFieldMap, tiedFieldMap } from 'core/component/decorators/const';
+import { invertedFieldMap, tiedFieldMap } from 'core/component/decorators/const';
 import { storeRgxp } from 'core/component/reflection';
 
-import type { ComponentMeta } from 'core/component/interface';
+import type { ComponentMeta, ComponentProp, ComponentField } from 'core/component/interface';
 import type { ParamsFactoryTransformer, FactoryTransformer } from 'core/component/decorators/interface';
 
 /**
@@ -176,26 +176,34 @@ export function paramsFactory<T = object>(
 
 			const
 				metaKey = cluster ?? (key in meta.props ? 'props' : 'fields'),
-				inverseKeys = inverseFieldMap[metaKey],
-				metaCluster = meta[metaKey];
+				metaCluster: ComponentProp | ComponentField = meta[metaKey];
 
-			if (inverseKeys != null) {
-				for (let i = 0; i < inverseKeys.length; i++) {
+			const
+				invertedMetaKeys = invertedFieldMap[metaKey];
+
+			if (invertedMetaKeys != null) {
+				for (let i = 0; i < invertedMetaKeys.length; i++) {
 					const
-						inverseKey = inverseKeys[i],
-						inverseMetaCluster = meta[inverseKey];
+						invertedMetaKey = invertedMetaKeys[i],
+						invertedMetaCluster = meta[invertedMetaKey];
 
-					if (key in inverseMetaCluster) {
-						const info = {...inverseMetaCluster[key]};
+					if (key in invertedMetaCluster) {
+						const info = {...invertedMetaCluster[key]};
 						delete info.functional;
 
-						if (inverseKey !== 'systemFields' && metaKey !== 'fields') {
-							delete info.init;
-							delete info.default;
+						if (invertedMetaKey === 'prop') {
+							if (Object.isFunction(info.default)) {
+								(<ComponentField>info).init = info.default;
+								delete info.default;
+							}
+
+						} else if (metaKey === 'prop') {
+							delete (<ComponentField>info).init;
 						}
 
 						metaCluster[key] = info;
-						delete inverseMetaCluster[key];
+						delete invertedMetaCluster[key];
+
 						break;
 					}
 				}
