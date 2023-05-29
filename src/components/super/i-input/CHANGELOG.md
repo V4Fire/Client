@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.47.4 (2023-05-29)
+
+#### :house: Internal
+
+* Made `formConverter` a field and added linking to `formConverterProp`
+
 ## v3.??.?? (2022-??-??)
 
 #### :boom: Breaking Change

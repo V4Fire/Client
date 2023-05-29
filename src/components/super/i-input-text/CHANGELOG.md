@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.47.4 (2023-05-29)
+
+#### :house: Internal
+
+* Made `placeholder` a field and added linking to `placeholderProp`.
+
 ## v3.??.?? (2022-??-??)
 
 #### :boom: Breaking Change

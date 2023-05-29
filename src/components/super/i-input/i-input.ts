@@ -243,6 +243,15 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	@system((o) => o.sync.link('formValueConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
 	formValueConverters!: ComponentConverter[];
 
+	/** {@link iInput.formConverter} */
+	@prop({
+		type: [Function, Array],
+		required: false,
+		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
+	})
+
+	readonly formConverterProp: CanIter<ComponentConverter> = [unpackIf];
+
 	/**
 	 * Converter(s) that is used by the associated form.
 	 * The form applies these converters to the group form value of the component.
@@ -264,12 +273,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	 * < b-input :validators = ['required'] | :formConverter = [toProtobuf.option(), zip.toUTC()]
 	 * ```
 	 */
-	@prop({
-		validator: (v) => v == null || Object.isFunction(v) || Object.isIterable(v),
-		required: false
-	})
-
-	readonly formConverter: CanIter<ComponentConverter> = [unpackIf];
+	@field((ctx) => ctx.sync.link())
+	readonly formConverter!: CanIter<ComponentConverter>;
 
 	/**
 	 * A list of converters that are used by the associated form

@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.47.4 (2023-05-29)
+
+#### :house: Internal
+
+* Made `placeholder` a field and added linking to `placeholderProp` in `i-input-text`.
+* Made `formConverter` a field and added linking to `formConverterProp` in `i-input`.
+
 ## v3.47.3 (2023-05-26)
 
 #### :rocket: New Feature
