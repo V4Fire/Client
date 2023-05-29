@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.47.4 (2023-05-29)
+
+#### :house: Internal
+
+* Made `validators` and `formValueConverter` fields and added linking to
+`validatorsProp` and `formValueConverterProp` respectively.
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :boom: Breaking Change

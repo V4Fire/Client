@@ -11,11 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.47.4 (2023-05-29)
+
+#### :house: Internal
+
+* Made `placeholder` a field and added linking to `placeholderProp` in `i-input-text`.
+* Made `validators` and `formValueConverter` fields and added linking to
+`validatorsProp` and `formValueConverterProp` respectively in `i-input`.
+
 ## v3.47.3 (2023-05-26)
 
 #### :rocket: New Feature
 
-* Added a new helper for collecting i18n keysets `build/helpers` 
+* Added a new helper for collecting i18n keysets `build/helpers`
 
 ## v3.47.2 (2023-05-18)
 
