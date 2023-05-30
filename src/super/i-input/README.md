@@ -315,7 +315,8 @@ The component provides a bunch of validators.
 
 ##### required
 
-Checks that the component must be filled:
+Checks whether a component has been filled out. If the user attempts to submit the form without entering any data in a required field,
+the validation will fail indicating that the field is required and must be filled in before the submission can proceed.
 
 ```
 < b-input :validators = ['required']
@@ -323,7 +324,8 @@ Checks that the component must be filled:
 
 #### custom
 
-This one's used to specify a custom validator function:
+This validator is used to specify a custom validation function that can be used to validate a field in a form.
+This validator allows you to define your own logic for validation.
 
 ```
 < b-input :validators = [ &
@@ -337,9 +339,11 @@ This one's used to specify a custom validator function:
 ] .
 ```
 
-The rest parameters you provide will be accepted by the validator function as an object (`param1` and `param2` in this case).
+In this example, `yourValidator` is your custom validation function, and `param1` and `param2` are
+additional parameters passed to the function as the following object `{param1: 'foo', param2: 'bar'}`.
 
-Note that if you use this validator you must provide a function, i.e. the following form is wrong and an error will be thrown:
+It is important to note that if you use the custom validator, you must provide a function as the validator parameter.
+If you specify the validator without a function, an error will be thrown:
 
 ```
 < b-input :validators = ['custom']
