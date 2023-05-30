@@ -43,5 +43,6 @@ package('p-v4-components-demo')
 		'components/directives/image',
 		'components/directives/icon',
 		'core/router/engines/browser-history',
-		'core/router/engines/in-memory'
+		'core/router/engines/in-memory',
+		'components/traits/i-control-list/i-control-list'
 	);
