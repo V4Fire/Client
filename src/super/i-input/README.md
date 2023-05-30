@@ -299,7 +299,19 @@ Supported validators are placed within the static `validators` property.
 This property is an object: the keys represent validator names; the values are specified as functions that take validation parameters and
 return the `ValidatorResult` structure. Any validator can return a promise.
 
-The `iInput` class provides the following validators out of the box:
+#### Automatic validation
+
+By default, the validation process is automatically started on the `actionChange` event.
+This event fires only when a user changes the component value manually.
+
+```
+/// Every time a user types some value into the component, the component will invoke validation
+< b-input :validators = ['required', 'email']
+```
+
+#### Built-in validators
+
+The component provides a bunch of validators.
 
 ##### required
 
@@ -327,7 +339,7 @@ This one's used to specify a custom validator function:
 
 The rest parameters you provide will be accepted by the validator function as an object (`param1` and `param2` in this case).
 
-Note that if you use this validator you must provide a function, i.e the following form is wrong and an error will be thrown:
+Note that if you use this validator you must provide a function, i.e. the following form is wrong and an error will be thrown:
 
 ```
 < b-input :validators = ['custom']
@@ -385,16 +397,6 @@ export default class MyInput extends iInput {
     }
   };
 }
-```
-
-#### Automatic validation
-
-By default, the validation process is automatically started on the `actionChange` event.
-This event fires only when a user changes the component value manually.
-
-```
-/// Every time a user types some value into the component, the component will invoke validation
-< b-input :validators = ['required', 'email']
 ```
 
 ### info/error messages
