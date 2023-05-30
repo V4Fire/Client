@@ -11,6 +11,10 @@
 const
 	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags');
 
+/**
+ * @param {import('typescript').Program} program
+ * @returns {object}
+ */
 module.exports = (program) => ({
 	before: [modernRegExpFlagsTransformer(program)],
 	after: {},

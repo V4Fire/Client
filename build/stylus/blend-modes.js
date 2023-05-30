@@ -15,8 +15,8 @@ const blendModes = {
 	/**
 	 * Blend mode: color burn
 	 *
-	 * @param f {object} - foreground color
-	 * @param b {object} - background color
+	 * @param {object} f - foreground color
+	 * @param {object} b - background color
 	 * @returns {object}
 	 */
 	colorBurn(f, b) {

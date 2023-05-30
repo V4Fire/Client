@@ -17,6 +17,9 @@ const
 
 /**
  * Returns parameters for `webpack.plugins`
+ *
+ * @param {object} opts
+ * @param {string} opts.name
  * @returns {Map}
  */
 module.exports = async function plugins({name}) {

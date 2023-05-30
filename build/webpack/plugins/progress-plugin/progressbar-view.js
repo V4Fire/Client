@@ -23,9 +23,9 @@ module.exports = class ProgressbarView extends ProgressView {
 	 * Formatter for a `cli-progress` MultiBar widget
 	 *
 	 * @see https://www.npmjs.com/package/cli-progress
-	 * @param opts
-	 * @param params
-	 * @param payload
+	 * @param {object} opts
+	 * @param {object} params
+	 * @param {object} payload
 	 * @returns {string}
 	 */
 	static formatter(opts, params, payload) {
@@ -55,10 +55,18 @@ module.exports = class ProgressbarView extends ProgressView {
 		);
 	}
 
+	/**
+	 * Create an instance of multibar for the build process
+	 * @param {string} processName
+	 */
 	_createProgressBar(processName) {
 		this.handlers[processName] = this.multibar.create(100, 0, {processName});
 	}
 
+	/**
+	 * Remave an instance of multibar for the build process
+	 * @param {string} processName
+	 */
 	_removeProgressBar(processName) {
 		this.multibar.remove(this.handlers[processName]);
 	}

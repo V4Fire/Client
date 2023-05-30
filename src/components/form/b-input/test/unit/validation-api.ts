@@ -523,7 +523,7 @@ test.describe('<b-input> validation API', () => {
 
 		/**
 		 * @param page
-		 * @param attrs
+		 * @param [attrs]
 		 */
 		async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 			await page.evaluate((attrs) => {
@@ -948,7 +948,7 @@ test.describe('<b-input> validation API', () => {
 
 		/**
 		 * @param page
-		 * @param attrs
+		 * @param [attrs]
 		 */
 		async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 			await page.evaluate((attrs) => {
@@ -983,7 +983,7 @@ test.describe('<b-input> validation API', () => {
 
 	/**
 	 * @param page
-	 * @param attrs
+	 * @param [attrs]
 	 */
 	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 		await page.evaluate((attrs) => {
