@@ -638,8 +638,16 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			const
 				result = await validator.call(this, params);
 
-			if (Object.isPlainObject(result) || Object.isBoolean(result) || Object.isNull(result)) {
+			if (Object.isBoolean(result) || Object.isNull(result)) {
 				return result;
+			}
+
+			if (Object.isPlainObject(result)) {
+				return {
+					name: result?.name ?? 'custom',
+					params: result?.params,
+					value: result?.value
+				};
 			}
 
 			return null;
