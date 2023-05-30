@@ -642,15 +642,10 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				return result;
 			}
 
-			if (Object.isPlainObject(result)) {
-				return {
-					name: result.name ?? 'custom',
-					params: result.params,
-					value: result.value
-				};
-			}
-
-			return null;
+			return {
+				name: 'custom',
+				value: result
+			};
 		}
 
 		//#endif
