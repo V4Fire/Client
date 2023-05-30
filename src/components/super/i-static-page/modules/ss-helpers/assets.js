@@ -23,8 +23,8 @@ exports.getAssets = getAssets;
 /**
  * Returns a dictionary with static page assets by the specified entry points
  *
- * @param {object<!Array<string>>} entryPoints
- * @returns {Promise<!Object<string>>}
+ * @param {Object.<Array<string>>} entryPoints
+ * @returns {Promise<Object<string>>}
  */
 function getAssets(entryPoints) {
 	const

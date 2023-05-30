@@ -32,7 +32,7 @@ exports.loadLibs = loadLibs;
  *
  * @param {Libs} libs
  * @param {object} [opts]
- * @param {object<string>} [opts.assets] - a dictionary with static page assets
+ * @param {Object.<string>} [opts.assets] - a dictionary with static page assets
  * @param {boolean} [opts.js] - if true, the function returns JS code to load the libraries
  * @param {boolean} [opts.wrap] - if true, the final code is wrapped by a script tag
  * @returns {Promise<string>}
@@ -65,7 +65,7 @@ exports.loadStyles = loadStyles;
  * Initializes the specified styles and returns code to load
  *
  * @param {StyleLibs} libs
- * @param {object<string>} [assets] - a dictionary with static page assets
+ * @param {Object.<string>} [assets] - a dictionary with static page assets
  * @param {boolean} [js] - if true, the function returns JS code to load the libraries
  * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {Promise<string>}
@@ -99,7 +99,7 @@ exports.loadLinks = loadLinks;
  * Initializes the specified links and returns code to load
  *
  * @param {Links} libs
- * @param {object<string>} [assets] - a dictionary with static page assets
+ * @param {Object.<string>} [assets] - a dictionary with static page assets
  * @param {boolean} [js] - if true, the function returns JS code to load the links
  * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {Promise<string>}
@@ -133,8 +133,8 @@ exports.initLibs = initLibs;
  * The function returns a list of initialized libraries to load.
  *
  * @param {(Libs|StyleLibs)} libs
- * @param {object<string>} [assets] - a dictionary with static page assets
- * @returns {Promise<!Array<(InitializedLib|InitializedStyleLib|InitializedLink)>>}
+ * @param {Object.<string>} [assets] - a dictionary with static page assets
+ * @returns {Promise<Array<(InitializedLib|InitializedStyleLib|InitializedLink)>>}
  */
 async function initLibs(libs, assets) {
 	const
