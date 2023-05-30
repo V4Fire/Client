@@ -138,15 +138,18 @@ export default abstract class iBlockEvent extends iBlockBase {
 		unique: true,
 		init: (o, d) => (<Async>d.async).wrapEventEmitter({
 			get on() {
-				return o.$parent?.unsafe.$on.bind(o.$parent) ?? (() => Object.throw());
+				const ee = o.$parent?.unsafe.selfEmitter;
+				return ee?.on.bind(ee) ?? (() => Object.throw());
 			},
 
 			get once() {
-				return o.$parent?.unsafe.$once.bind(o.$parent) ?? (() => Object.throw());
+				const ee = o.$parent?.unsafe.selfEmitter;
+				return ee?.once.bind(ee) ?? (() => Object.throw());
 			},
 
 			get off() {
-				return o.$parent?.unsafe.$off.bind(o.$parent) ?? (() => Object.throw());
+				const ee = o.$parent?.unsafe.selfEmitter;
+				return ee?.off.bind(ee) ?? (() => Object.throw());
 			}
 		})
 	})
@@ -171,11 +174,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => (<Async>d.async).wrapEventEmitter({
-			on: o.$root.unsafe.$on.bind(o.$root),
-			once: o.$root.unsafe.$once.bind(o.$root),
-			off: o.$root.unsafe.$off.bind(o.$root)
-		})
+		init: (o, d) => (<Async>d.async).wrapEventEmitter(o.$root.unsafe.selfEmitter)
 	})
 
 	protected readonly rootEmitter!: ReadonlyEventEmitterWrapper<this>;
