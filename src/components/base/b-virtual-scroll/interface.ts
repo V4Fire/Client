@@ -100,7 +100,7 @@ export interface DataState<ITEM extends object = object, RAW extends unknown = u
 
 	/**
 	 * @deprecated
-	 * {@link RequestMoreParams.lastLoadedChunk}
+	 * {@link DataState.lastLoadedChunk}
 	 */
 	lastLoadedData: ITEM[];
 

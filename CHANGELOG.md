@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.48.0 (2023-05-30)
+
+#### :rocket: New Feature
+
+* Added new helpers for working with gradients and shadows from the design system `global/g-def/funcs`
+
+## v3.47.4 (2023-05-29)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when observing fields that are redefined from props `core/component/decorators`
+
 ## v3.47.3 (2023-05-26)
 
 #### :rocket: New Feature
@@ -21,7 +33,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a bug in `core/component/decorators`: the overridden getter with cache had a value equal to the parent's getter value.
+* Fixed a bug when the overridden getter with cache had a value equal to the parent's getter value `core/component/decorators`
 
 ## v3.47.1 (2023-05-18)
 
@@ -91,14 +103,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Changed `optionProps` and `itemProps` params `bSlider`
 
->>>>>>> origin/master
 ## v3.44.1 (2023-03-28)
 
 #### :rocket: New Feature
 
-<<<<<<< HEAD
-* Added possibility to specify aliases for dynamic parameters in path
-=======
 * Added possibility to specify aliases for dynamic parameters in path `b-router` `core/router`
 
 ## v3.43.1 (2023-03-27)
@@ -137,7 +145,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new trait `iActiveItems`
 * Added `iActiveItems` implementation `bTree` `bList`
->>>>>>> origin/master
 
 ## v3.40.1 (2023-03-13)
 

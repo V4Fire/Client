@@ -7,9 +7,9 @@
  */
 
 export type LinkAttributes = {
-	[Property in keyof HTMLLinkElement]: string;
+	[Property in keyof Partial<HTMLLinkElement>]: string;
 };
 
 export type MetaAttributes = {
-	[Property in keyof HTMLMetaElement]: string;
+	[Property in keyof Partial<HTMLMetaElement>]: string;
 };
