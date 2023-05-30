@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy-control-list')
+package('b-traits-i-control-list-dummy')
 	.extends('i-block');
