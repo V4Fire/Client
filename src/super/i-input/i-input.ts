@@ -625,7 +625,6 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 		/**
 		 * Invokes the specified custom validator function with additional provided parameters
-		 * and current instance as the `this`
 		 *
 		 * @param validator
 		 */
@@ -636,7 +635,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			}
 
 			const
-				result = await validator.call(this, params);
+				result = await validator(params);
 
 			if (Object.isBoolean(result) || Object.isNull(result)) {
 				return result;
