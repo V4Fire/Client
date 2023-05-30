@@ -87,7 +87,7 @@ describe('build/stylus/plugins/get-ds-field-value', () => {
 			'.foo { content: join(".", keys(getDSValue(colors))) }',
 			{use: [plugins]},
 			(err, colors) => {
-				expect(colors.includes(Object.keys(plainWithAbstractColors.colors).join('.'))).toBeTrue();
+				expect(colors.includes(Object.keys(plainWithAbstractColors.colors).join('.'))).toBeTruthy();
 			}
 		);
 	});
