@@ -29,7 +29,7 @@ describe('build/stylus/plugins/included-themes', () => {
 			plugins = getPlugins({ds, cssVariables, theme, stylus, includeThemes: true});
 
 		stylus.render('.foo { content: join(".", availableThemes()) }', {use: [plugins]}, (err, value) => {
-			expect(value.includes(`content: '${ds.raw.meta.themes.join('.')}'`)).toBeTrue();
+			expect(value.includes(`content: '${ds.raw.meta.themes.join('.')}'`)).toBeTruthy();
 		});
 	});
 
@@ -43,7 +43,7 @@ describe('build/stylus/plugins/included-themes', () => {
 			plugins = getPlugins({ds, cssVariables, theme: includeThemes[0], stylus, includeThemes});
 
 		stylus.render('.foo { content: join(".", availableThemes()) }', {use: [plugins]}, (err, value) => {
-			expect(value.includes(`content: '${includeThemes.join('.')}'`)).toBeTrue();
+			expect(value.includes(`content: '${includeThemes.join('.')}'`)).toBeTruthy();
 		});
 	});
 
@@ -57,7 +57,7 @@ describe('build/stylus/plugins/included-themes', () => {
 			plugins = getPlugins({ds, cssVariables, theme, stylus});
 
 		stylus.render('.foo { content: join(".", availableThemes()) }', {use: [plugins]}, (err, value) => {
-			expect(value.includes('content: \'null\'')).toBeTrue();
+			expect(value.includes('content: \'null\'')).toBeTruthy();
 		});
 	});
 });

@@ -11,6 +11,7 @@
     "ts-definitions/**/*.ts"
   ],
   "files": [
-    "./index.d.ts"
+    "./index.d.ts",
+    "./jest.config.ts"
   ]
 }
