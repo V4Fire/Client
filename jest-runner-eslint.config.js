@@ -10,4 +10,6 @@
 
 const base = require('@v4fire/linters/jest-runner-eslint.config');
 
+base.cliOptions.quiet = false;
+
 module.exports = base;

@@ -3685,10 +3685,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/eslint-plugin@npm:1.0.0-alpha.6":
-  version: 1.0.0-alpha.6
-  resolution: "@v4fire/eslint-plugin@npm:1.0.0-alpha.6"
+"@v4fire/eslint-plugin@npm:1.0.0-alpha.9":
+  version: 1.0.0-alpha.9
+  resolution: "@v4fire/eslint-plugin@npm:1.0.0-alpha.9"
   peerDependencies:
+    "@es-joy/jsdoccomment": ^0.39
     "@typescript-eslint/eslint-plugin": ^5
     "@typescript-eslint/parser": ^5
     eslint: ^8
@@ -3696,13 +3697,13 @@ __metadata:
     jest: ^29
     jest-runner-eslint: ^2
     typescript: ^4
-  checksum: 829e878b88f20c12325c02b17cf8da25681f4d125e08156f391e36af15289080c81eff29e9b5093c90c906e85664ddcac87535aab0098b05e7466da11b083d5b
+  checksum: 2677425a81eecf85a9104564d75dea49651ce6a6db48d6e4589a5da2182d27f722c28e0bf1d9ac2299bbabb004739d6cf36690680d4e4275fd315f9755c0fcde
   languageName: node
   linkType: hard
 
 "@v4fire/linters@git+https://github.com/v4fire/linters#rework_rules":
   version: 2.4.0
-  resolution: "@v4fire/linters@https://github.com/v4fire/linters.git#commit=873cad6c1cd6c1cf10803a820d0e4235b68659eb"
+  resolution: "@v4fire/linters@https://github.com/v4fire/linters.git#commit=c0fddb8295a545915af102a53ca43871584b916c"
   dependencies:
     "@babel/helper-validator-identifier": 7.18.6
     "@eslint/eslintrc": 1.3.0
@@ -3710,7 +3711,7 @@ __metadata:
     "@statoscope/stats-validator-reporter-console": 5.22.0
     "@typescript-eslint/eslint-plugin": 5.57.1
     "@typescript-eslint/parser": 5.57.1
-    "@v4fire/eslint-plugin": 1.0.0-alpha.6
+    "@v4fire/eslint-plugin": 1.0.0-alpha.9
     "@v4fire/typescript-check": 1.4.2
     eslint: 8.38.0
     eslint-import-resolver-typescript: 3.5.5
@@ -3726,7 +3727,7 @@ __metadata:
     jest: ^29.5.0
     jest-runner-eslint: ^2.0.0
     typescript: ^4.4.4
-  checksum: 8ad4c46a1a122b63775feee12e322983441e7b5aa7342670a1c388d30af1048bcfb4c63b8a5e9f8292d5bba071a3791fd87a0e5f032b4fe8a6323dec74325253
+  checksum: b1c9839b92bfa138336a7aa38dc04d3174404c1f680e39297ffb89c195f6932194b452fa9713ffc402d0bd70eefe875a9b6a206ecbebf74c7de160ad7594cf27
   languageName: node
   linkType: hard
 
