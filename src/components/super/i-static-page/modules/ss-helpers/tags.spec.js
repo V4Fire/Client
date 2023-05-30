@@ -44,12 +44,11 @@ describe('components/super/i-static-page/modules/ss-helpers/tags', () => {
 				expect(decl).toBe('<script src="node_modules/jquery/dist/jquery.js"></script>');
 			});
 
-			// FIXME: test timeout
-			it.skip('with inlining', async () => {
+			it('with inlining', async () => {
 				const
-					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/.prettierrc.js', inline: true});
+					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/gulpfile.js', inline: true});
 
-				expect(decl).toBe("<script >include('node_modules/@v4fire/core/.prettierrc.js');</script>");
+				expect(decl).toBe("<script >include('node_modules/@v4fire/core/gulpfile.js');</script>");
 			});
 
 			it('with JS initializing', () => {
@@ -87,12 +86,11 @@ describe('components/super/i-static-page/modules/ss-helpers/tags', () => {
 				expect(decl).toBe('document.write(`<script src="node_modules/jquery/dist/jquery.js"` + \'><\' + \'/script>\');');
 			});
 
-			// FIXME: test timeout
-			it.skip('with JS initializing and inlining', async () => {
+			it('with JS initializing and inlining', async () => {
 				const
-					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/.prettierrc.js', js: true, inline: true});
+					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/gulpfile.js', js: true, inline: true});
 
-				expect(decl.trim()).toBe("include('node_modules/@v4fire/core/.prettierrc.js');");
+				expect(decl.trim()).toBe("include('node_modules/@v4fire/core/gulpfile.js');");
 			});
 
 			describe('providing additional attributes', () => {

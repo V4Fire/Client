@@ -19,14 +19,13 @@ const entryPoints = {
 	'p-v4-components-demo': ['p-v4-components-demo']
 };
 
-const removeHash = (content) => content.replace(/assets\/.*_favicons'/, 'assets/favicons');
+const removeHash = (content) => content.replace(/assets[\\/].*?_favicons/, 'assets/favicons');
 
 describe('components/super/i-static-page/modules/ss-helpers/page', () => {
 	const assets = ss.getAssets(entryPoints);
 
 	describe('`generateInitJS`', () => {
-		// FIXME: incorrect output
-		it.skip('simple usage', async () => {
+		it('simple usage', async () => {
 			const
 				name = 'p-v4-components-demo',
 				file = src.clientOutput(`${webpack.output({name})}.init.js`);
@@ -80,7 +79,7 @@ try {
 \t});
 } catch (_) {}
 PATH['std'] = 'std.js';
-PATH['favicons'] = 'assets/favicons;
+PATH['favicons'] = 'assets/favicons';
 PATH['p-v4-components-demo'] = 'p-v4-components-demo.js';
 PATH['p-v4-components-demo_tpl'] = 'p-v4-components-demo_tpl.js';
 PATH['vendor'] = 'vendor.js';
@@ -114,10 +113,8 @@ if ('std_style' in PATH) {
 function $__RENDER_ROOT() {
 \t
 (function () {
-\tvar el = document.createElement('main');
+\tvar el = document.body;
 \tel.setAttribute('data-foo', 'bla');
-\tel.setAttribute('class', 'i-static-page p-v4-components-demo');
-\tdocument.body.appendChild(el);
 })();
 
 
