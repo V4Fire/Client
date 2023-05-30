@@ -11,11 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.48.4 (2023-05-30)
+## v3.49.0 (2023-05-30)
 
 #### :rocket: New Feature
 
 * Added ability to specify a custom validator function in `i-input`
+
+## v3.48.0 (2023-05-30)
+
+#### :rocket: New Feature
+
+* Added new helpers for working with gradients and shadows from the design system `global/g-def/funcs`
 
 ## v3.47.4 (2023-05-29)
 
