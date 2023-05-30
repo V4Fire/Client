@@ -1,11 +1,15 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
  *
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+'use strict';
+
+/**
+ * @typedef {import('@v4fire/design-system')} DesignSystem
  */
 
 const
@@ -39,7 +43,7 @@ exports.getDS = function getDS() {
  *
  *   * `true`, if necessary to pass all themes from the specified design system object
  *
- * @param {!DesignSystem} ds - a raw design system object (e.g. loaded from the linked in the `.pzlrrc` package)
+ * @param {DesignSystem} ds - a raw design system object (e.g. loaded from the linked in the `.pzlrrc` package)
  * @param {(!Array<string>|true)} buildThemes
  *
  * @returns {?Array<string>}
@@ -77,7 +81,7 @@ exports.getThemes = function getThemes(ds, buildThemes) {
 
 /**
  * Returns modifier values grouped by component names from the design system package
- * @returns {Object}
+ * @returns {object}
  */
 exports.getDSComponentMods = function getDSComponentMods() {
 	try {

@@ -19,11 +19,16 @@ export * from 'core/browser/helpers';
 export * from 'core/browser/interface';
 
 /**
- * Returns true if `navigator.userAgent` matches with the specified parameters
+ * Returns true if `navigator.userAgent` matches with the given parameters
  *
- * @param platform - browser platform
- * @param [operation] - operation type (>, >=, etc.)
- * @param [version] - browser version
+ * @param platform - the browser platform
+ * @param [operation] - the operation type (>, >=, etc.)
+ * @param [version] - the browser version
+ *
+ * @example
+ * ```js
+ * console.log(test('Android', '>=', '5.1'));
+ * ```
  */
 export function test(platform: keyof typeof is, operation?: Operation, version?: string): boolean {
 	const

@@ -7,63 +7,61 @@
  */
 
 /**
- * This package provides a router engine that stores its state completely in memory
+ * This package provides a router engine that stores its state entirely in memory
  * @packageDescription
  */
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-import { deprecate } from 'core/functools/deprecation';
 import {
+
+	getRoute,
 
 	Route,
 	Router,
+
 	TransitionParams,
-	HistoryClearFilter,
-	getRoute
+	HistoryClearFilter
 
 } from 'core/router';
 
-import type bRouter from 'base/b-router/b-router';
+import type bRouter from 'components/base/b-router/b-router';
 
 let
 	historyLog: Route[] = [],
 	historyLogPointer: CanUndef<number> = undefined;
 
 /**
- * Returns complete history log
+ * Returns the complete history log
  */
 export function getHistory(): Route[] {
 	return historyLog;
 }
 
 /**
- * Returns a position of the current history entry or `undefined` if the history is empty
+ * Returns the position of the current history entry, or `undefined` if the history is empty
  */
 export function getCurrentHistoryEntryPointer(): CanUndef<number> {
 	return historyLogPointer;
 }
 
 /**
- * Creates an in-memory engine for `bRouter` component
+ * Creates an in-memory engine for the `bRouter` component
  * @param ctx
  */
 export default function createRouter(ctx: bRouter): Router {
-	const
-		emitter = new EventEmitter({maxListeners: 1e3, newListener: false});
+	const emitter = new EventEmitter({
+		maxListeners: 1e3,
+		newListener: false
+	});
 
-	return Object.mixin<Router>({withAccessors: true}, Object.create(emitter), <Router>{
+	return Object.mixin<Router>({withDescriptors: 'onlyAccessors'}, Object.create(emitter), {
 		get route(): CanUndef<Route> {
 			if (historyLogPointer !== undefined) {
 				return historyLog[historyLogPointer];
 			}
 
 			return undefined;
-		},
-
-		get page(): CanUndef<Route> {
-			deprecate({name: 'page', type: 'accessor', renamedTo: 'route'});
-			return this.route;
 		},
 
 		get history(): Route[] {
@@ -141,9 +139,11 @@ export default function createRouter(ctx: bRouter): Router {
 		},
 
 		clearTmp(): Promise<void> {
-			return clear(
-				(route) => Object.isTruly(route.params.tmp) || Object.isTruly(route.query.tmp) || Object.isTruly(route.meta.tmp)
-			);
+			return clear(filter);
+
+			function filter(route: Route) {
+				return Object.isTruly(route.params.tmp) || Object.isTruly(route.query.tmp) || Object.isTruly(route.meta.tmp);
+			}
 		}
 	});
 

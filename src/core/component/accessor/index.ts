@@ -12,124 +12,155 @@
  */
 
 import { deprecate } from 'core/functools/deprecation';
-import type { ComponentInterface } from 'core/component';
+
+import { beforeHooks } from 'core/component/const';
 import { cacheStatus } from 'core/component/watch';
 
+import type { ComponentInterface } from 'core/component/interface';
+
 /**
- * Attaches accessors and computed fields from a meta object to the specified component instance
+ * Attaches accessors and computed fields to the specified component instance from its tied meta object.
+ * The function creates cacheable wrappers for computed fields.
+ * Also, it creates accessors for deprecated component props.
+ *
  * @param component
+ *
+ * @example
+ * ```typescript
+ * import iBlock, { component, prop, computed } from 'components/super/i-block/i-block';
+ *
+ * @component({
+ *   // Will create an accessor for `name` that refers to `fName` and emits a warning
+ *   deprecatedProps: {name: 'fName'}
+ * })
+ *
+ * export default class bUser extends iBlock {
+ *   @prop()
+ *   readonly fName: string;
+ *
+ *   @prop()
+ *   readonly lName: string;
+ *
+ *   // This is a cacheable computed field with feature of watching and cache invalidation
+ *   @computed({cache: true, dependencies: ['fName', 'lName']})
+ *   get fullName() {
+ *     return `${this.fName} ${this.lName}`;
+ *   }
+ *
+ *   // This is a cacheable computed field without cache invalidation
+ *   @computed({cache: true})
+ *   get id() {
+ *     return Math.random();
+ *   }
+ *
+ *   // This is a simple accessor (a getter)
+ *   get element() {
+ *     return this.$el;
+ *   }
+ * }
+ * ```
  */
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
 		meta,
-		meta: {params: {deprecatedProps}},
-		isFlyweight
+		meta: {params: {deprecatedProps}}
 	} = component.unsafe;
 
 	const
-		ssrMode = component.$renderEngine.supports.ssr,
-		isNotRegular = meta.params.functional === true || isFlyweight;
+		isFunctional = meta.params.functional === true;
 
-	for (let o = meta.accessors, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			el = o[key];
+	Object.entries(meta.computedFields).forEach(([name, computed]) => {
+		const canSkip =
+			component[name] != null ||
+			computed == null || computed.cache === 'auto' ||
+			!SSR && isFunctional && computed.functional === false;
 
-		const canSkip = Boolean(
-			el == null ||
-			!ssrMode && isNotRegular && el.functional === false ||
-
-			(
-				isFlyweight ?
-					Object.getOwnPropertyDescriptor(component, key) && el.replace === true :
-					component[key]
-			)
-		);
-
-		if (el == null || canSkip) {
-			continue;
-		}
-
-		Object.defineProperty(component, keys[i], {
-			configurable: true,
-			enumerable: true,
-
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			get: el.get,
-
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			set: el.set
-		});
-	}
-
-	for (let o = meta.computedFields, keys = Object.keys(o), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			el = o[key];
-
-		const canSkip = Boolean(
-			el == null ||
-			!ssrMode && isNotRegular && el.functional === false ||
-
-			(
-				isFlyweight ?
-					Object.getOwnPropertyDescriptor(component, key) && el.replace === true :
-					component[key]
-			)
-		);
-
-		if (el == null || canSkip) {
-			continue;
+		if (canSkip) {
+			return;
 		}
 
 		// eslint-disable-next-line func-style
 		const get = function get(this: typeof component): unknown {
-			if (ssrMode || isFlyweight) {
-				return el.get!.call(this);
-			}
+			const
+				{hook} = this;
 
 			if (cacheStatus in get) {
-				return get[cacheStatus];
+				// Need to explicitly touch all dependencies for Vue
+				if (beforeHooks[hook] == null) {
+					if (hook !== 'created') {
+						meta.watchDependencies.get(name)?.forEach((path) => {
+							Object.get(this, path);
+						});
+
+						['Store', 'Prop'].forEach((postfix) => {
+							const
+								path = name + postfix;
+
+							if (path in this) {
+								Object.get(this, path);
+							}
+						});
+					}
+
+					return get[cacheStatus];
+				}
 			}
 
-			return get[cacheStatus] = el.get!.call(this);
+			const
+				value = computed.get!.call(this);
+
+			if (!SSR) {
+				get[cacheStatus] = value;
+			}
+
+			return value;
 		};
 
-		Object.defineProperty(component, keys[i], {
+		Object.defineProperty(component, name, {
 			configurable: true,
 			enumerable: true,
-
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			get: el.get != null ? get : undefined,
-
-			// eslint-disable-next-line @typescript-eslint/unbound-method
-			set: el.set
+			get: computed.get != null ? get : undefined,
+			set: computed.set
 		});
-	}
+	});
 
-	if (deprecatedProps) {
-		for (let keys = Object.keys(deprecatedProps), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				alternative = deprecatedProps[key];
+	Object.entries(meta.accessors).forEach(([name, accessor]) => {
+		const canSkip =
+			accessor == null ||
+			component[name] != null ||
+			!SSR && isFunctional && accessor.functional === false;
 
-			if (alternative == null) {
-				continue;
+		if (canSkip) {
+			return;
+		}
+
+		Object.defineProperty(component, name, {
+			configurable: true,
+			enumerable: true,
+			get: accessor.get,
+			set: accessor.set
+		});
+	});
+
+	if (deprecatedProps != null) {
+		Object.entries(deprecatedProps).forEach(([name, renamedTo]) => {
+			if (renamedTo == null) {
+				return;
 			}
 
-			Object.defineProperty(component, key, {
+			Object.defineProperty(component, name, {
 				configurable: true,
 				enumerable: true,
 				get: () => {
-					deprecate({type: 'property', name: key, renamedTo: alternative});
-					return component[alternative];
+					deprecate({type: 'property', name, renamedTo});
+					return component[renamedTo];
 				},
 
 				set: (val) => {
-					deprecate({type: 'property', name: key, renamedTo: alternative});
-					component[alternative] = val;
+					deprecate({type: 'property', name, renamedTo});
+					component[renamedTo] = val;
 				}
 			});
-		}
+		});
 	}
 }

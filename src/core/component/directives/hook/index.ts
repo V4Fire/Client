@@ -1,5 +1,3 @@
-/* eslint-disable prefer-spread, prefer-rest-params */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,34 +6,48 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable prefer-spread, prefer-rest-params */
+
 /**
  * [[include:core/component/directives/hook/README.md]]
  * @packageDocumentation
  */
 
 import { ComponentEngine } from 'core/component/engines';
-import type { DirectiveOptions } from 'core/component/directives/hook/interface';
+import type { DirectiveParams } from 'core/component/directives/hook/interface';
 
 export * from 'core/component/directives/hook/interface';
 
 ComponentEngine.directive('hook', {
-	bind(el: Element, opts: DirectiveOptions): void {
-		opts.value?.bind?.apply(opts.value, arguments);
+	beforeCreate(params: DirectiveParams): void {
+		params.value?.beforeCreate?.apply(params.value, Object.cast(arguments));
 	},
 
-	inserted(el: Element, opts: DirectiveOptions): void {
-		opts.value?.inserted?.apply(opts.value, arguments);
+	created(el: Element, params: DirectiveParams): void {
+		params.value?.created?.apply(params.value, Object.cast(arguments));
 	},
 
-	update(el: Element, opts: DirectiveOptions): void {
-		opts.value?.update?.apply(opts.value, arguments);
+	beforeMount(el: Element, params: DirectiveParams): void {
+		params.value?.beforeMount?.apply(params.value, Object.cast(arguments));
 	},
 
-	componentUpdated(el: Element, opts: DirectiveOptions): void {
-		opts.value?.componentUpdated?.apply(opts.value, arguments);
+	mounted(el: Element, params: DirectiveParams): void {
+		params.value?.mounted?.apply(params.value, Object.cast(arguments));
 	},
 
-	unbind(el: Element, opts: DirectiveOptions): void {
-		opts.value?.unbind?.apply(opts.value, arguments);
+	beforeUpdate(el: Element, params: DirectiveParams): void {
+		params.value?.beforeUpdate?.apply(params.value, Object.cast(arguments));
+	},
+
+	updated(el: Element, params: DirectiveParams): void {
+		params.value?.updated?.apply(params.value, Object.cast(arguments));
+	},
+
+	beforeUnmount(el: Element, params: DirectiveParams): void {
+		params.value?.beforeUnmount?.apply(params.value, Object.cast(arguments));
+	},
+
+	unmounted(el: Element, params: DirectiveParams): void {
+		params.value?.unmounted?.apply(params.value, Object.cast(arguments));
 	}
 });

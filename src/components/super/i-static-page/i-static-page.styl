@@ -1,0 +1,39 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "components/super/i-page/i-page.styl"
+@import "components/global/g-hint/g-hint.styl"
+@import "components/global/g-icon/g-icon.styl"
+@import "components/traits/i-lock-page-scroll/i-lock-page-scroll.styl"
+
+$p = {
+	lockPageHelpers: true
+	globalHintHelpers: true
+	globalIconHelpers: true
+}
+
+i-static-page extends i-page
+	i-lock-page-scroll({helpers: $p.lockPageHelpers})
+
+	if $p.globalIconHelpers
+		/.g-icon
+			extends($gIcon)
+
+	if $p.globalHintHelpers
+		/.g-hint
+			position relative
+
+			// @stlint-disable
+			extends($gHint, {
+				dataAttr: data-hint,
+				showOn: "&[data-hint]:not([data-hint='']):hover",
+			})
+			// @stlint-enable
+
+	&-online-false [data-hide-if-offline="true"]
+		display none

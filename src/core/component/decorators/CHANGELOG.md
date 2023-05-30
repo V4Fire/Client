@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Removed the `p` decorator
+
+#### :rocket: New Feature
+
+* Added a new cache type `auto` for accessors
+
+#### :memo: Documentation
+
+* Added complete documentation for the module
+
+#### :house: Internal
+
+* Refactoring
+
 ## v3.47.4 (2023-05-29)
 
 #### :bug: Bug Fix

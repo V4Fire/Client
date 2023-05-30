@@ -6,25 +6,72 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import {
+
+	EventEmitter2 as EventEmitter,
+
+	OnOptions,
+	ListenerFn
+
+} from 'eventemitter2';
+
 import log from 'core/log';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
+import { componentParams } from 'core/component/const';
 
 /**
- * Event emitter to broadcast external events to components
+ * The event emitter to broadcast external events to components
  */
-const emitter = new EventEmitter({
-	maxListeners: 1e6,
+export const globalEmitter = new EventEmitter({
+	maxListeners: 1e3,
 	newListener: false,
 	wildcard: true
 });
 
 const
-	originalEmit = emitter.emit.bind(emitter);
+	originalEmit = globalEmitter.emit.bind(globalEmitter);
 
-emitter.emit = (event: string, ...args) => {
+globalEmitter.emit = (event: string, ...args) => {
 	const res = originalEmit(event, ...args);
 	log(`global:event:${event.replace(/\./g, ':')}`, ...args);
 	return res;
 };
 
-export default emitter;
+/**
+ * The event emitter to broadcast component initialization events
+ */
+export const initEmitter = new EventEmitter({
+	maxListeners: 1e3,
+	newListener: false
+});
+
+// We need to wrap the original `once` function of the emitter
+// to attach logic of registering smart components
+((initEventOnce) => {
+	initEmitter.once = function once(
+		event: CanArray<string>,
+		listener: ListenerFn,
+		opts?: true | OnOptions
+	): EventEmitter {
+		Array.concat([], event).forEach((event) => {
+			const
+				chunks = event.split('.', 2);
+
+			if (chunks[0] === 'constructor') {
+				initEventOnce(event, listener, opts);
+
+				const
+					p = componentParams.get(chunks[1]);
+
+				if (p && Object.isPlainObject(p.functional)) {
+					initEventOnce(`${event}-functional`, listener, opts);
+				}
+
+			} else {
+				initEventOnce(event, listener, opts);
+			}
+		});
+
+		return this;
+	};
+})(initEmitter.once.bind(initEmitter));
+

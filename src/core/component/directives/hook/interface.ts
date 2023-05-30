@@ -6,14 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VNodeDirective, DirectiveFunction } from 'core/component/engines';
+import type {
 
-export interface DirectiveOptions extends VNodeDirective {
-	value?: {
-		bind?: DirectiveFunction;
-		inserted?: DirectiveFunction;
-		update?: DirectiveFunction;
-		componentUpdated?: DirectiveFunction;
-		unbind?: DirectiveFunction;
-	};
-}
+	DirectiveBinding,
+	DirectiveHook,
+	ObjectDirective,
+
+	VNode
+
+} from 'core/component/engines';
+
+export interface DirectiveParams extends DirectiveBinding<CanUndef<DirectiveValue>> {}
+
+export type DirectiveValue = Overwrite<Omit<ObjectDirective, 'deep' | 'getSSRProps'>, {
+	beforeCreate?(...args: Parameters<DirectiveHook>): CanUndef<VNode>;
+}>;

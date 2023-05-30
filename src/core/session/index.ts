@@ -20,7 +20,7 @@ export * from 'core/session/const';
 export * from 'core/session/interface';
 
 /**
- * Returns true if a session is already exists
+ * Returns true if the current session is already initialized
  */
 export async function isExists(): Promise<boolean> {
 	try {
@@ -103,7 +103,7 @@ export async function clear(): Promise<boolean> {
 }
 
 /**
- * Matches a session with the current
+ * Matches the passed session with the current
  *
  * @param [auth]
  * @param [params] - additional parameters

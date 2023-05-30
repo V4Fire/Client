@@ -7,10 +7,21 @@
  */
 
 import { canParseStr, systemRouteParams, transitionOptions } from 'core/router/const';
-import type { TransitionOptions, AnyRoute, PurifiedRoute, RouteParamsFilter, PlainRoute, WatchableRoute } from 'core/router/interface';
+
+import type {
+
+	TransitionOptions,
+	RouteParamsFilter,
+
+	AnyRoute,
+	PurifiedRoute,
+	PlainRoute,
+	WatchableRoute
+
+} from 'core/router/interface';
 
 /**
- * Normalizes the specified transitions options and returns a new object
+ * Normalizes the specified transition options and returns a new object
  *
  * @param data
  *
@@ -56,11 +67,7 @@ export function normalizeTransitionOpts(data: Nullable<TransitionOptions>): CanU
 		}
 
 		if (Object.isDictionary(data)) {
-			for (let keys = Object.keys(data), i = 0; i < keys.length; i++) {
-				const key = keys[i];
-				normalizer(data[key], key, data);
-			}
-
+			Object.entries(data).forEach(([key, val]) => normalizer(val, key, data));
 			return;
 		}
 
@@ -112,7 +119,7 @@ export function getBlankRouteFrom(route: Nullable<AnyRoute | TransitionOptions>)
  * Converts the specified route object to a plain object and returns it
  *
  * @param route
- * @param [filter] - filter predicate
+ * @param [filter] - a filter predicate
  */
 export function convertRouteToPlainObject<T extends AnyRoute, FILTER extends string>(
 	route: Nullable<T>,
@@ -153,19 +160,18 @@ export function convertRouteToPlainObjectWithoutProto<T extends AnyRoute>(route:
 		res = {};
 
 	if (route) {
-		for (let keys = Object.keys(route).sort(), i = 0; i < keys.length; i++) {
+		Object.keys(route).sort().forEach((key) => {
 			const
-				key = keys[i],
 				el = route[key];
 
 			if (key.startsWith('_')) {
-				continue;
+				return;
 			}
 
 			if (!Object.isFunction(el)) {
 				res[key] = el;
 			}
-		}
+		});
 	}
 
 	return res;

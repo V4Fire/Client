@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	{collectI18NKeysets} = include('build/helpers'),
@@ -86,7 +86,7 @@ module.exports = class I18NGeneratorPlugin {
 		 * and returns the result HTML
 		 *
 		 * @param {string} path
-		 * @param {!Object} langPacs
+		 * @param {object} langPacs
 		 * @returns string
 		 */
 		function getHTMLWithLangPacs(path, langPacs) {

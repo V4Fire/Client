@@ -12,26 +12,19 @@
  */
 
 /**
- * Returns a srcset string for an image tag by the specified resolution map
+ * Returns a value for the `srcset` attribute, based on the passed dictionary
  *
- * @param resolutions - map, where the key is a picture multiplier and value is a picture URL
+ * @param dict - map, where keys are image queries and values are image URLs
  *
  * @example
  * ```js
- * // 'http://img-hdpi.png 2x, http://img-xhdpi.png 3x'
- * getSrcSet({'2x': 'http://img-hdpi.png', '3x': 'http://img-xhdpi.png'})
+ * // '/img-hdpi.png 2x, /img-xhdpi.png 3x'
+ * console.log(getSrcSet({'2x': '/img-hdpi.png', '3x': '/img-xhdpi.png'}));
  * ```
  */
-export function getSrcSet(resolutions: Dictionary<string>): string {
-	let str = '';
-
-	for (let keys = Object.keys(resolutions), i = 0; i < keys.length; i++) {
-		const
-			ratio = keys[i],
-			url = resolutions[ratio];
-
-		str += `${url} ${ratio}${i !== keys.length - 1 ? ', ' : ''}`;
-	}
-
-	return str;
+export function getSrcSet(dict: Dictionary<string>): string {
+	return Object.entries(dict).reduce<string[]>((acc, [query, url]) => {
+		acc.push(`${url} ${query}`);
+		return acc;
+	}, []).join(', ');
 }

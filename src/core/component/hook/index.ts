@@ -20,40 +20,31 @@ const
 	resolvedPromise = SyncPromise.resolve();
 
 /**
- * Runs a component hook from the specified component instance
+ * Runs a hook on the specified component instance.
+ * The function returns a promise that is resolved when all hook handlers are executed.
  *
- * @param hook - hook name
- * @param component - component instance
- * @param args - hook arguments
+ * @param hook - the hook name to run
+ * @param component - the tied component instance
+ * @param args - the hook arguments
+ *
+ * @example
+ * ```js
+ * runHook('beforeCreate', component).then(() => console.log('Done!'));
+ * ```
  */
 export function runHook(hook: Hook, component: ComponentInterface, ...args: unknown[]): Promise<void> {
-	const {unsafe, unsafe: {meta}} = component;
+	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(
+		component
+	);
+
 	unsafe.hook = hook;
 
-	let
-		hooks = meta.hooks[hook];
+	const
+		m = component.unsafe.meta;
 
-	if (component.isFlyweight && hooks.length > 0) {
-		if (hooks.length === 1 && hooks[0].functional === false) {
-			return resolvedPromise;
-		}
-
-		const
-			functionalHooks = <ComponentHook[]>[];
-
-		for (let i = 0; i < hooks.length; i++) {
-			const
-				el = hooks[i];
-
-			if (el.functional !== false) {
-				functionalHooks.push(el);
-			}
-		}
-
-		if (functionalHooks.length !== hooks.length) {
-			hooks = functionalHooks;
-		}
-	}
+	const hooks = `before:${hook}` in m.hooks ?
+		Array.concat([], <ComponentHook[]>m.hooks[`before:${hook}`], m.hooks[hook]) :
+		m.hooks[hook];
 
 	switch (hooks.length) {
 		case 0:
@@ -78,11 +69,10 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		default: {
 			const
 				emitter = new QueueEmitter(),
-				filteredHooks = <ComponentHook[]>[];
+				filteredHooks: ComponentHook[] = [];
 
-			for (let i = 0; i < hooks.length; i++) {
+			hooks.forEach((hook) => {
 				const
-					hook = hooks[i],
 					nm = hook.name;
 
 				if (!hook.once) {
@@ -104,9 +94,9 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 						return tasks;
 					}
 				});
-			}
+			});
 
-			meta.hooks[hook] = filteredHooks;
+			m.hooks[hook] = filteredHooks;
 
 			const
 				tasks = emitter.drain();

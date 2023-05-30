@@ -1,0 +1,34 @@
+Changelog
+=========
+
+> **Tags:**
+> - :boom:       [Breaking Change]
+> - :rocket:     [New Feature]
+> - :bug:        [Bug Fix]
+> - :memo:       [Documentation]
+> - :house:      [Internal]
+> - :nail_care:  [Polish]
+
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Renamed `extRowCount` to `rowsToExpand`
+
+## v3.0.0-rc.199 (2021-06-16)
+
+#### :boom: Breaking Change
+
+* Now the component inherits `iInputText`
+
+#### :memo: Documentation
+
+* Added documentation
+
+#### :house: Internal
+
+* Fixed ESLint warnings
+
+#### :nail_care: Polish
+
+* Added tests

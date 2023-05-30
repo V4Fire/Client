@@ -9,6 +9,20 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added a new cache type `auto` for accessors
+
+#### :memo: Documentation
+
+* Added complete documentation for the module
+
+#### :house: Internal
+
+* Refactoring
+
 ## v3.11.4 (2021-11-24)
 
 #### :bug: Bug Fix

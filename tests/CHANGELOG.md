@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0 (2023-04-19)
+
+#### :boom: Breaking Change
+
+* Deprecated API was removed
+
 ## v3.0.0-rc.154 (2021-03-04)
 
 #### :bug: Bug Fix

@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :boom: Breaking Change
+
+* Removed the `getFirstTagElementName` filter
+
+#### :memo: Documentation
+
+* Added complete documentation for the module
+
 ## v3.46.3 (2023-04-28)
 
 #### :bug: Bug Fix

@@ -10,7 +10,7 @@ import { defProp } from 'core/const/props';
 import type { ComponentMeta } from 'core/component/interface';
 
 /**
- * Iterates over a prototype of a component constructor and adds methods/accessors to the specified meta object
+ * Iterates over a prototype of the passed component constructor and adds methods/accessors to the specified meta object
  *
  * @param meta
  * @param [constructor]
@@ -18,8 +18,7 @@ import type { ComponentMeta } from 'core/component/interface';
 export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = meta.constructor): void {
 	const
 		proto = constructor.prototype,
-		ownProps = Object.getOwnPropertyNames(proto),
-		replace = !meta.params.flyweight;
+		ownProps = Object.getOwnPropertyNames(proto);
 
 	const {
 		componentName: src,
@@ -31,16 +30,17 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 		methods
 	} = meta;
 
-	for (let i = 0; i < ownProps.length; i++) {
-		const
-			key = ownProps[i];
-
-		if (key === 'constructor') {
-			continue;
+	ownProps.forEach((name) => {
+		if (name === 'constructor') {
+			return;
 		}
 
 		const
-			desc = <PropertyDescriptor>Object.getOwnPropertyDescriptor(proto, key);
+			desc = Object.getOwnPropertyDescriptor(proto, name);
+
+		if (desc == null) {
+			return;
+		}
 
 		// Methods
 		if ('value' in desc) {
@@ -48,24 +48,24 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 				fn = desc.value;
 
 			if (!Object.isFunction(fn)) {
-				continue;
+				return;
 			}
 
-			methods[key] = Object.assign(methods[key] ?? {replace, watchers: {}, hooks: {}}, {src, fn});
+			methods[name] = Object.assign(methods[name] ?? {watchers: {}, hooks: {}}, {src, fn});
 
 		// Accessors
 		} else {
 			const
-				propKey = `${key}Prop`,
-				storeKey = `${key}Store`;
+				propKey = `${name}Prop`,
+				storeKey = `${name}Store`;
 
 			let
 				metaKey;
 
 			// Computed fields are cached by default
 			if (
-				key in computedFields ||
-				!(key in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
+				name in computedFields ||
+				!(name in accessors) && (props[propKey] || fields[storeKey] || systemFields[storeKey])
 			) {
 				metaKey = 'computedFields';
 
@@ -76,10 +76,10 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			let
 				field;
 
-			if (props[key] != null) {
+			if (props[name] != null) {
 				field = props;
 
-			} else if (fields[key] != null) {
+			} else if (fields[name] != null) {
 				field = fields;
 
 			} else {
@@ -89,56 +89,49 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 			const
 				obj = meta[metaKey];
 
-			// If we already have a property by this key, like a prop or a field,
+			// If we already have a property by this key, like a prop or field,
 			// we need to delete it to correct override
-			if (field[key] != null) {
-				Object.defineProperty(proto, key, defProp);
-				delete field[key];
+			if (field[name] != null) {
+				Object.defineProperty(proto, name, defProp);
+				delete field[name];
 			}
 
 			const
-				old = obj[key],
-				// eslint-disable-next-line @typescript-eslint/unbound-method
+				old = obj[name],
 				set = desc.set ?? old?.set,
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				get = desc.get ?? old?.get;
 
-			// For using "super" within a setter we also create a method with a name of form `${key}Setter`
+			// To use `super` within the setter we also create a new method with a name `${key}Setter`
 			if (set != null) {
-				const
-					k = `${key}Setter`;
+				const nm = `${name}Setter`;
+				proto[nm] = set;
 
-				proto[k] = set;
-				meta.methods[k] = {
+				meta.methods[nm] = {
 					src,
-					replace,
 					fn: set,
 					watchers: {},
 					hooks: {}
 				};
 			}
 
-			// For using "super" within a getter we also create a method with a name of form `${key}Getter`
+			// To using `super` within the getter we also create a new method with a name `${key}Getter`
 			if (get != null) {
-				const
-					k = `${key}Getter`;
+				const nm = `${name}Getter`;
+				proto[nm] = get;
 
-				proto[k] = get;
-				meta.methods[k] = {
+				meta.methods[nm] = {
 					src,
-					replace,
 					fn: get,
 					watchers: {},
 					hooks: {}
 				};
 			}
 
-			obj[key] = Object.assign(obj[key] ?? {replace}, {
+			obj[name] = Object.assign(obj[name] ?? {}, {
 				src,
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				get: desc.get ?? old?.get,
 				set
 			});
 		}
-	}
+	});
 }

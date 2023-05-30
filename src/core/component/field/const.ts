@@ -6,5 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const
-	fieldQueue = new Set();
+import type { ComponentField } from 'core/component/interface';
+import type { SortedFields } from 'core/component/field/interface';
+
+/**
+ * Cache for sorted component fields
+ */
+export const sortedFields = new WeakMap<Dictionary<ComponentField>, SortedFields>();

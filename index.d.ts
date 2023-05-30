@@ -1,5 +1,3 @@
-/* eslint-disable no-var,camelcase */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,83 +6,49 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable no-var, vars-on-top, camelcase, @typescript-eslint/triple-slash-reference */
+
 /// <reference types="@v4fire/core"/>
-/// <reference types="./build/stylus/ds"/>
 /// <reference path="./ts-definitions/playwright.d.ts"/>
+/// <reference path="./ts-definitions/stylus-ds.d.ts"/>
 
 declare let __webpack_nonce__: CanUndef<string>;
 declare let __webpack_public_path__: CanUndef<string>;
 declare let __webpack_require__: (moduleId: string) => any;
 
-declare const MODULE: string;
+declare const BUILD_MODE: CanUndef<string>;
+
 declare const CSP_NONCE_STORE: string;
 declare const LANG_PACKS: string;
 
-declare var PATH: Dictionary<CanUndef<string>>;
-declare var PUBLIC_PATH: CanUndef<string>;
+declare const SSR: boolean;
+declare const HYDRATION: boolean;
+declare const MODULE: string;
+
+declare const PATH: Dictionary<CanUndef<string>>;
+declare const PUBLIC_PATH: CanUndef<string>;
 
 declare const COMPONENTS: Dictionary<{parent: string; dependencies: string[]}>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
-
-declare const DS: CanUndef<DesignSystem>;
 declare const BLOCK_NAMES: CanUndef<string[]>;
 
-declare const BUILD_MODE: CanUndef<string>;
+declare const THEME: CanUndef<string>;
+declare const THEME_ATTRIBUTE: CanUndef<string>;
+declare const AVAILABLE_THEMES: CanUndef<string[]>;
 
+declare const DS: CanUndef<DesignSystem>;
 declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
 }>;
-
-interface RenderOptions {
-	/** @default `'rootSelector'` */
-	selectorToInject?: string;
-
-	/** @default `'#root-component'` */
-	rootSelector?: string;
-}
 
 interface HTMLImageElement {
 	readonly init: Promise<this>;
 	onInit(onSuccess: () => void, onFail?: (err?: Error) => void): void;
 }
 
-/**
- * Default app theme to use
- * @see config/default.js
- */
-declare const THEME: CanUndef<string>;
-
-/**
- * Attribute name to set a value of the theme to the root element
- * @see config/default.js
- */
-declare const THEME_ATTRIBUTE: CanUndef<string>;
-
-/**
- * Array of available themes in the runtime
- * @see config/default.js
- */
-declare const AVAILABLE_THEMES: CanUndef<string[]>;
-
 interface Event {
 	delegateTarget?: Element;
 }
-
-interface BoxSize {
-	readonly blockSize: number;
-	readonly inlineSize: number;
-}
-
-interface ResizeObserverObserveOptions {
-	box: 'content-box' | 'border-box';
-}
-
-declare let ModuleDependencies: {
-	cache: Dictionary;
-	event: {on: Function; once: Function; off: Function};
-	add(moduleName: string, dependencies: string[]): void;
-	get(module: string): Promise<string[]>;
-};
 
 interface ElementPosition {
 	top: number;
@@ -100,110 +64,68 @@ interface Node {
 	getOffset(parent?: Element | string): ElementPosition;
 }
 
-interface IntersectionObserverInit {
-	delay?: number;
-	trackVisibility?: boolean;
-}
-
 interface IntersectionObserver {
 	delay?: number;
 	trackVisibility?: boolean;
 }
 
-interface Document {
-	fonts: {
-		ready: Promise<void>;
-	};
-}
+type RenderComponentsScheme = RenderComponentsVnodeParams[] | string;
 
-interface RenderContentFn {
-	(props: Dictionary): string;
-}
-
-interface RenderParams<A extends object = Dictionary> {
+interface RenderComponentsVnodeDescriptor extends RenderComponentsVnodeParams {
 	/**
-	 * Component attrs
+	 * A simple tag name or component name
+	 */
+	type: string;
+}
+
+interface RenderComponentsVnodeParams<A extends object = Dictionary> {
+	/**
+	 * A dictionary with attributes to pass to the created VNode
 	 */
 	attrs?: A;
 
-	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | RenderContentFn | string>;
+	/**
+	 * An array of children VNode descriptors or dictionary with slot functions
+	 */
+	children?: VNodeChildren;
 }
 
-/**
- * Content to render into an element
- *
- * @example
- *
- * ```typescript
- * globalThis.renderComponents('b-button', {
- *   attrs: {
- *      testProp: 1
- *   },
- *
- *   content: {
- *     default: {
- *       tag: 'b-button',
- *       content: {
- *         default: 'Test'
- *       }
- *     }
- *   }
- * });
- * ```
- *
- * This schema is the equivalent of such a template:
- *
- * ```ss
- * < b-button :testProp = 1
- *   < b-button
- *     Test
- * ```
- */
-interface RenderContent {
-	/**
-	 * Component name or tagName
-	 */
-	tag: string;
+type VNodeChild = string | RenderComponentsVnodeDescriptor;
 
-	/**
-	 * Component attrs
-	 */
-	attrs: Dictionary;
+type VNodeChildren =
+	VNodeChild[] |
+	Dictionary<CanArray<VNodeChild> | ((...args: any[]) => CanArray<VNodeChild>)>;
 
-	/** @see [[RenderContent]] */
-	content?: Dictionary<RenderContent | RenderContentFn | string>;
-}
-
-// eslint-disable-next-line no-var,vars-on-top
 declare var
 	/**
-	 * Renders the specified components
+	 * Renders the specified components.
+	 * This function should only be used when writing tests.
 	 *
 	 * @param componentName
 	 * @param scheme
-	 * @param [opts]
 	 */
-	renderComponents: (componentName: string, scheme: RenderParams[] | string, opts?: RenderOptions) => void,
+	renderComponents: (componentName: string, scheme: RenderComponentsScheme) => void,
 
 	/**
-	 * Removes all components created via `globalThis.renderComponents`
+	 * Removes all components created via `globalThis.renderComponents`.
+	 * This function should only be used when writing tests.
 	 */
 	removeCreatedComponents: () => void,
 
 	/**
-	 * Requires a module by the specified path
+	 * Requires a module by the specified path.
+	 * This function should only be used when writing tests.
 	 */
 	importModule: (path: string) => any;
 
 interface TouchGesturesCreateOptions {
 	/**
-	 * Element to dispatch an event
+	 * An element to dispatch the event
 	 */
 	dispatchEl: Element | string;
 
 	/**
-	 * Element that will be provided as a target in the dispatched event
+	 * An element to be provided as the target in the dispatched event
 	 */
 	targetEl: Element | string;
 

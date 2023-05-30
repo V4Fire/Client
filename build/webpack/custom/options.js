@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,9 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 /**
  * Returns options for other webpack options
- * @returns {!Object}
+ * @returns {object}
  */
 module.exports = function other() {
 	return {};

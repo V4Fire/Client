@@ -3,9 +3,10 @@
   "description": "V4Fire client core library",
   "homepage": "https://github.com/V4Fire/Client#readme",
   "main": "src/core/index.js",
+  "packageManager": "yarn@3.5.0",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.48.0",
+  "version": "4.0.0-beta.3",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -28,18 +29,17 @@
     "build": "yarn build:tsconfig && webpack",
     "build:tsconfig": "node node_modules/@v4fire/core/build/build-tsconfig",
     "build:file": "gulp build:tsconfig && webpack --env public-path",
-    "build:test": "webpack --env client-output=b-dummy --env cache-type=memory --env public-path",
+    "build:test": "npx webpack --env client-output=b-dummy --env cache-type=memory --env public-path",
     "dev": "gulp build:tsconfig && webpack --watch",
     "dev:file": "gulp build:tsconfig && webpack --watch --env public-path",
-    "test": "yarn test:typescript && yarn test:eslint && yarn test:components && yarn test:jasmine",
+    "test": "yarn test:typescript && yarn test:eslint && yarn test:unit && yarn test:jest",
     "test:server": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" node tests/server",
-    "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" playwright test --config tests/config/unit/index.ts",
+    "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" npx playwright test --config tests/config/unit/index.ts",
     "test:linters": "yarn test:typescript && yarn test:eslint",
     "test:typescript": "node node_modules/@v4fire/typescript-check",
-    "test:eslint": "npx eslint \"./config/**/*.js\" \"./build/**/*.js\" \"./build/**/*.ts\" \"./src/**/*.js\" \"./src/**/*.ts\"",
-    "test:components": "gulp test:components --test-processes 2",
-    "test:components:chrome": "yarn test:components --browsers chrome --retries 2",
-    "test:jasmine": "nyc --reporter=lcov --reporter=text jasmine",
+    "test:eslint": "npx jest --config jest-eslint.config.js",
+    "test:jest": "cross-env NODE_ENV=development && jest",
+    "test:ci:jest": "cross-env NODE_ENV=development && jest --maxWorkers 4 --reporters github-actions",
     "test:circular-deps": "dpdm --exit-code circular:1 --circular -T --warning false --no-tree src/**/**/*.ts src/**/*.ts"
   },
   "dependencies": {
@@ -52,6 +52,7 @@
     "@config/config": "npm:config@1.31.0",
     "@swc/core": "1.2.153",
     "@swc/helpers": "0.3.8",
+    "@vue/compiler-sfc": "3.2.47",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "escaper": "3.0.6",
@@ -59,11 +60,11 @@
     "jsdom": "16.7.0",
     "path-to-regexp": "3.2.0",
     "requestidlecallback": "0.3.0",
+    "sharp": "0.30.6",
     "snakeskin": "7.5.1",
-    "svg-transform-loader": "2.0.13",
     "tslib": "2.4.1",
     "vinyl": "2.2.1",
-    "vue": "2.6.10"
+    "vue": "3.2.47"
   },
   "optionalDependencies": {
     "@pzlr/build-core": "2.13.0",
@@ -117,11 +118,12 @@
     "postcss-loader": "6.2.1",
     "raw-loader": "4.0.2",
     "snakeskin-loader": "8.0.1",
-    "ss2vue": "1.1.0",
+    "ss2vue3": "github:snakeskintpl/ss2vue3",
     "style-loader": "3.3.1",
     "stylus": "0.54.8",
     "stylus-loader": "6.2.0",
     "svg-sprite-loader": "6.0.11",
+    "svg-transform-loader": "2.0.13",
     "svg-url-loader": "7.1.1",
     "svgo": "2.8.0",
     "svgo-loader": "3.0.0",
@@ -132,32 +134,30 @@
     "typograf": "6.14.0",
     "upath": "2.0.1",
     "url-loader": "4.1.1",
-    "vue-template-compiler": "2.6.10",
-    "vue-template-es2015-compiler": "1.9.1",
-    "webpack": "5.76.0",
+    "webpack": "5.82.1",
     "webpack-cli": "5.0.1"
   },
   "devDependencies": {
     "@playwright/test": "1.32.1",
     "@types/glob": "7.2.0",
-    "@types/jasmine": "3.10.3",
+    "@types/jest": "29.5.1",
     "@types/semver": "7.3.10",
     "@types/webpack": "5.28.0",
-    "@v4fire/core": "3.90.0",
-    "@v4fire/linters": "1.9.0",
+    "@v4fire/core": "github:V4Fire/Core#v4",
+    "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules",
     "dpdm": "3.10.0",
     "husky": "7.0.4",
-    "jasmine": "3.99.0",
+    "jest": "29.5.0",
+    "jest-runner-eslint": "2.0.0",
     "nyc": "15.1.0",
     "playwright": "1.32.1",
-    "webpack-bundle-analyzer": "4.5.0"
+    "ts-jest": "29.1.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "^3.90.0",
-    "webpack": "^5.76.2"
+    "@v4fire/core": "^4.0.0-alpha.4",
+    "webpack": "^5.82.1"
   },
   "resolutions": {
     "sharp": "0.31.3"
-  },
-  "packageManager": "yarn@3.5.0"
+  }
 }

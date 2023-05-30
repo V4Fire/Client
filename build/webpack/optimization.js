@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	config = require('@config/config'),
@@ -26,18 +26,23 @@ const {
 
 const
 	{inherit} = include('build/helpers'),
-	{optimize} = config.webpack;
+	{ssr, optimize} = config.webpack;
 
 /**
- * Returns options for `webpack.optimization`
+ * Returns parameters for `webpack.optimization`
  *
- * @param {(number|string)} buildId - build id
- * @param {!Map} plugins - map of plugins to use
- * @returns {!Object}
+ * @param {object} opts
+ * @param {(number|string)} opts.buildId
+ * @param {Map} opts.plugins - a map of plugins to use
+ * @returns {object}
  */
 module.exports = function optimization({buildId, plugins}) {
 	const
-		opts = {};
+		params = {};
+
+	if (ssr) {
+		return params;
+	}
 
 	if (optimize.minChunkSize) {
 		plugins.set(
@@ -47,7 +52,7 @@ module.exports = function optimization({buildId, plugins}) {
 	}
 
 	if (buildId === RUNTIME) {
-		opts.splitChunks = inherit(optimize.splitChunks(), {
+		params.splitChunks = inherit(optimize.splitChunks(), {
 			cacheGroups: {
 				index: {
 					name: 'index-core',
@@ -80,7 +85,7 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		es = config.es();
 
-	opts.minimizer = [
+	params.minimizer = [
 		new CssMinimizerPlugin(config.cssMinimizer()),
 
 		/* eslint-disable camelcase */
@@ -107,5 +112,5 @@ module.exports = function optimization({buildId, plugins}) {
 		/* eslint-enable camelcase */
 	];
 
-	return opts;
+	return params;
 };

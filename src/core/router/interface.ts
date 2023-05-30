@@ -10,11 +10,11 @@ import type { RegExpOptions, ParseOptions, Key } from 'path-to-regexp';
 import type { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 /**
- * Meta information of a route that can be declared statically as a literal
+ * Route meta information that can be declared statically as a literal
  */
 export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	/**
-	 * Unique route name: can be used to direct transition
+	 * Unique route name: can be used for direct transition
 	 *
 	 * @example
 	 * ```js
@@ -24,103 +24,91 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	name?: string;
 
 	/**
-	 * @deprecated
-	 * @see [[StaticRouteMeta.name]]
-	 */
-	page?: string;
-
-	/**
 	 * Dependencies that are loaded with this route
 	 */
 	load?(): Promise<unknown>;
 
 	/**
-	 * Path to the route.
-	 * Usually, this parameter is used to tie a route with some URL.
-	 * You can use some variable binding within the path.
-	 * To organize such binding is used "path-to-regexp" library.
+	 * The path to the route.
+	 * Typically, this parameter is used to bind a route to a URL.
+	 * You can use some variable binding in the path.
+	 * To organize such a binding, the path-to-regexp library is used.
 	 *
-	 * The values to interpolate the path are taken from the "params" property of a route.
-	 * This parameter can be provided by using "push" or "replace" methods of the router.
+	 * The values for path interpolation are taken from the route params property.
+	 * This parameter can be provided using the `push` or `replace` methods of the router.
 	 */
 	path?: string;
 
 	/**
-	 * Additional options to parse a path of the route
+	 * Additional Options for path parsing
 	 */
 	pathOpts?: PathOptions;
 
 	/**
-	 * If true, then the route can take "params" values from the "query" property
+	 * If true, then the route can accept `params` values from the `query` property
 	 */
 	paramsFromQuery?: boolean;
 
 	/**
-	 * True, if this route can be used as default.
-	 * The default route is used when the router can't automatically detect the current route,
-	 * for example, you have routes for URL-s "/foo" and "/bar", but if somebody tries to enter different paths
-	 * that weren't described, it will be redirected to the default route.
+	 * True, if this route can be used by default.
+	 * The default route is used when the router cannot automatically determine the current route,
+	 * for example you have routes for urls "/foo" and "/bar" but if someone tries to enter different paths
+	 * which were not described, it will be redirected to the default route.
 	 *
-	 * There can be only one default route, but if you defined several routes with this flag,
-	 * then it will be used the last defined.
+	 * There can only be one default route, but if you have defined multiple routes with this flag,
+	 * then it will be used by the last one defined.
 	 *
 	 * @default `false`
 	 */
 	default?: boolean;
 
 	/**
-	 * @deprecated
-	 * @see [[StaticRouteMeta.default]]
-	 */
-	index?: boolean;
-
-	/**
-	 * If the route is an alias to another route, the parameter contains the route name we refer to.
-	 * The alias preserves its original name of the route (but rest parameters are taken from a referrer route).
-	 * If you want to organize some redirect logic, please see the "redirect" parameter.
+	 * If the route is an alias of another route, the parameter contains the name of the route we are referring to.
+	 * The alias retains the original route name (but the rest of the parameters are taken from the referrer route).
+	 * If you want to organize some redirect logic, see the `redirect` option.
 	 */
 	alias?: string;
 
 	/**
-	 * If you need to automatically redirect to another route whenever you switch to the current,
-	 * you can pass this parameter a name of the route to redirect.
+	 * If you need to automatically redirect to another route whenever you switch to the current one,
+	 * you can pass this parameter the name of the route to redirect to
 	 */
 	redirect?: string;
 
 	/**
-	 * Marks the route as "external", i.e. transitions to this route will be produced by using location.href
+	 * Marks the route as "external", i.e. transitions to this route will be made using `location.href`
 	 */
 	external?: boolean;
 
 	/**
-	 * Default "query" parameters.
-	 * If some parameter value is specified as a function, it will be invoked with the router instance as an argument.
+	 * Default `query` parameters.
+	 * If any parameter value is specified as a function, it will be called with the router instance as an argument.
 	 */
 	query?: Dictionary;
 
 	/**
-	 * Default "params" parameters.
-	 * If some parameter value is specified as a function, it will be invoked with the router instance as an argument.
+	 * Default "`params"` parameters.
+	 * If any parameter value is specified as a function, it will be called with the router instance as an argument.
 	 */
 	params?: Dictionary;
 
 	/**
-	 * Default "meta" parameters.
-	 * If some parameter value is specified as a function, it will be invoked with the router instance as an argument.
+	 * Default `meta` parameters.
+	 * If any parameter value is specified as a function, it will be called with the router instance as an argument.
 	 */
 	meta?: Dictionary;
 
 	/**
-	 * If false, the router does not automatically scroll a page to coordinates tied with the route.
-	 * Mind, if you switch off this parameter, the scroll position of a page won't be restored
-	 * on a back or forward tap too.
+	 * If false, the router does not automatically scroll the page to the coordinates associated with the route.
+	 * Keep in mind that if you disable this option, the page scroll position will not be restored when you
+	 * tap back or forward.
 	 *
 	 * @default `true`
 	 */
 	autoScroll?: boolean;
 
 	/**
-	 * Scroll coordinates that tied with the route
+	 * Scroll coordinates tied to the route
 	 */
 	scroll?: {
 		x?: number;
@@ -134,7 +122,8 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 export interface PathOptions extends RegExpOptions, ParseOptions {
 	/**
 	 * Aliases for dynamic parameters in `path`.
-	 * @see [[StaticRouteMeta.path]]Ы
+	 *
+	 * @see [[StaticRouteMeta.path]]
 	 *
 	 * In the example below you can specify either `bar` itself as a parameter or any of its aliases.
 	 * Note that aliases will be used only if the original parameter is not specified.
@@ -161,7 +150,7 @@ export interface PathOptions extends RegExpOptions, ParseOptions {
 }
 
 /**
- * Static schema of application routes
+ * Static application route map
  */
 export type StaticRoutes<M extends object = Dictionary> = Dictionary<
 	string |
@@ -169,13 +158,13 @@ export type StaticRoutes<M extends object = Dictionary> = Dictionary<
 >;
 
 /**
- * Meta information of a route
+ * Route meta information
  */
 export type RouteMeta<M extends object = Dictionary> = StaticRouteMeta<M> & {
-	/** @see [[StaticRouteMeta.name]] */
+	/** {@link StaticRouteMeta.name} */
 	name: string;
 
-	/** @see [[StaticRouteMeta.default]] */
+	/** {@link StaticRouteMeta.default} */
 	default: boolean;
 };
 
@@ -188,7 +177,7 @@ export interface Route<
 	META extends object = Dictionary
 > extends Dictionary {
 	/**
-	 * URL of the route
+	 * Route URL
 	 */
 	url?: string;
 
@@ -198,21 +187,9 @@ export interface Route<
 	name: string;
 
 	/**
-	 * @deprecated
-	 * @see [[Route.name]]
-	 */
-	page?: string;
-
-	/**
-	 * If true, the route can be used as default
+	 * If true, the route can be used as the default one
 	 */
 	default: boolean;
-
-	/**
-	 * @deprecated
-	 * @see [[Route.default]]
-	 */
-	index?: boolean;
 
 	/**
 	 * Route parameters that can be passed to the route path
@@ -250,23 +227,17 @@ export interface Router<
 	readonly route?: CanUndef<Route<PARAMS, QUERY, META>>;
 
 	/**
-	 * @deprecated
-	 * @see [[Router.route]]
-	 */
-	readonly page?: CanUndef<Route<PARAMS, QUERY, META>>;
-
-	/**
 	 * History of routes
 	 */
 	readonly history: Route[];
 
 	/**
-	 * Static schema of application routes
+	 * Static application route map
 	 */
 	readonly routes?: StaticRoutes<META>;
 
 	/**
-	 * Returns an identifier of the route by a name or URL
+	 * Returns the route ID by name or URL
 	 * @param route
 	 */
 	id(route: string): string;
@@ -274,22 +245,22 @@ export interface Router<
 	/**
 	 * Pushes a new route to the history stack
 	 *
-	 * @param route - route name or URL
-	 * @param params - route parameters
+	 * @param route - the route name or URL
+	 * @param params - the route parameters
 	 */
 	push(route: string, params?: TransitionParams): Promise<void>;
 
 	/**
 	 * Replaces the current route
 	 *
-	 * @param route - route name or URL
-	 * @param params - route parameters
+	 * @param route - the route name or URL
+	 * @param params - the route parameters
 	 */
 	replace(route: string, params?: TransitionParams): Promise<void>;
 
 	/**
-	 * Switches to a route from the history, identified by its relative position to the current route
-	 * (with the current route being relative index 0)
+	 * Switches to a route from the history, determined by its relative position in relation to the current route
+	 * (with the current route having a relative index of 0)
 	 *
 	 * @param pos
 	 */
@@ -307,13 +278,13 @@ export interface Router<
 
 	/**
 	 * Clears the routes history
-	 * @param filter - filter predicate
+	 * @param filter - a filter predicate
 	 */
 	clear(filter?: HistoryClearFilter): Promise<void>;
 
 	/**
 	 * Clears all temporary routes from the history.
-	 * The temporary route is a route that has "tmp" flag within its own properties, like, "params", "query" or "meta".
+	 * A temporary route is a route that has a `tmp` flag within its own properties, like, `params`, `query` or `meta`.
 	 */
 	clearTmp(): Promise<void>;
 }
@@ -328,19 +299,7 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	name: string;
 
 	/**
-	 * @deprecated
-	 * @see [[RouteBlueprint.name]]
-	 */
-	page?: string;
-
-	/**
-	 * @deprecated
-	 * @see [[RouteBlueprint.meta.default]]
-	 */
-	index?: boolean;
-
-	/**
-	 * Pattern of the route path
+	 * Route path pattern
 	 */
 	pattern?: string | ((route: RouteAPI) => CanUndef<string>);
 
@@ -350,7 +309,7 @@ export interface RouteBlueprint<META extends object = Dictionary> {
 	rgxp?: RegExp;
 
 	/**
-	 * List of parameters that passed to the route path
+	 * A list of parameters that are passed to the route path
 	 *
 	 * @example
 	 * ```js
@@ -405,12 +364,6 @@ export interface RouteAPI<
 	 * @param params
 	 */
 	resolvePath(params?: Dictionary): string;
-
-	/**
-	 * @deprecated
-	 * @see [[Route.toPath]]
-	 */
-	toPath?(params?: Dictionary): string;
 }
 
 export type AnyRoute =
@@ -431,7 +384,7 @@ export interface AdditionalGetRouteOpts {
  */
 export interface CompileRoutesOpts {
 	/**
-	 * Base route path: all route paths are concatenated with this path
+	 * Route base path: all route paths are concatenated with this path
 	 */
 	basePath?: string;
 }
@@ -444,12 +397,6 @@ export interface RouteParams extends TransitionOptions {
 	 * Route name
 	 */
 	name: string;
-
-	/**
-	 * @deprecated
-	 * @see [[RouteParams.name]]
-	 */
-	page?: string;
 }
 
 /**

@@ -230,7 +230,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `bTree`:
   * Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
-  * Added a new modifier `clickableArea`
 
 #### :bug: Bug Fix
 
@@ -1902,7 +1901,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added icons colorizing functionality by the Stylus' `i` function `global/g-def`
-* Added `stylus` plugins to generate URL-s `build/stylus/url`:
+* Added `stylus` plugins to generate URLs `build/stylus/url`:
   * `toQueryString`
   * `createURL`
 
@@ -2092,7 +2091,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Now flyweight components support life cycle hooks `core/component/flyweight`
+* Now flyweight components support lifecycle hooks `core/component/flyweight`
 * Now switching a value of the component hook emits events `iBlock`
 * `core/component/directives/update-on`:
   * Added support of watchers
@@ -2234,7 +2233,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Trim href-s before go `bRouter`
+* Trim hrefs before go `bRouter`
 
 ## v3.0.0-rc.117 (2020-12-23)
 
@@ -3197,7 +3196,7 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
 
 #### :bug: Bug Fix
 
-* Fixed `fullElName` overloads `iBlock/provide`
+* Fixed `fullElementName` overloads `iBlock/provide`
 
 #### :house: Internal
 
@@ -3211,7 +3210,7 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
   * `super/i-block/modules/async-render`
   * `super/i-block/modules/block`
   * `super/i-block/modules/daemons`
-  * `super/i-block/modules/decorators`
+  * `super/i-block/decorators`
   * `super/i-block/modules/dom`
   * `super/i-block/modules/event-emitter`
   * `super/i-block/modules/field`
@@ -3660,7 +3659,7 @@ npx gulp test:component --name b-button
 #### :rocket: New Feature
 
 * Added integration with a test library
-* Added dynamic demo-s
+* Added dynamic demos
 
 ```bash
 npx webpack --components b-button,b-select
@@ -3944,7 +3943,7 @@ export default class bExample extends iBlock {
 
 #### :bug: Bug Fix
 
-* Fixed custom base URL-s with providers
+* Fixed custom base URLs with providers
 * Fixed `messageHelpers` type
 * Fixed `State.initFromRouter`
 * [Fixed `reInit` method in `bVirtualScroll`](https://github.com/V4Fire/Client/pull/162)
@@ -4347,7 +4346,7 @@ export default class bExample extends iBlock {
 * Removed `bWindowForm`
 * Removed `bNotifier`
 * Removed `bFlagIcon`
-* Removed `@bindModTo`, `@elMod`, `@removeElMod` decorators
+* Removed `@bindModTo`, `@elMod`, `@removeElementMod` decorators
 
 #### :bug: Bug Fix
 

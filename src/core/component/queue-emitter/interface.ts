@@ -8,5 +8,5 @@
 
 export interface EventListener {
 	event: Set<string>;
-	cb: Function;
+	handler: Function;
 }

@@ -1,0 +1,19 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "components/super/i-data/i-data.styl"
+@import "components/traits/i-visible/i-visible.styl"
+
+$p = {
+	visibleHelpers: false
+}
+
+b-form extends i-data
+	// @stlint-disable
+	i-visible({helpers: $p.visibleHelpers})
+	// @stlint-enable

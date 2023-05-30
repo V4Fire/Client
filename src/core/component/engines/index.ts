@@ -14,3 +14,4 @@
 import 'core/component/engines/directive';
 
 export * from 'core/component/engines/engine';
+export * from 'core/component/engines/interface';

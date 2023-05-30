@@ -8,7 +8,7 @@
 
 import { test as base } from '@playwright/test';
 
-import DemoPage from 'pages/p-v4-components-demo/test/api/page';
+import DemoPage from 'components/pages/p-v4-components-demo/test/api/page';
 
 export interface Fixtures {
 	demoPage: DemoPage;

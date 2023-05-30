@@ -1,0 +1,34 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "components/super/i-input/i-input.styl"
+
+$p = {
+	accessHelpers: true
+	visibleHelpers: true
+}
+
+b-checkbox extends i-input
+	contain paint
+	position relative
+
+	&__wrapper
+		display flex
+		cursor pointer
+
+	&__checkbox
+		display block
+		cursor pointer
+
+	&__label
+		user-select none
+
+	&__hidden-input
+		position absolute
+		zIndex(underall)
+		opacity 0

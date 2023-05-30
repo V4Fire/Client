@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,18 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	$C = require('collection.js');
+'use strict';
 
 const
-	{isObjLiteral, isSvgRequire, isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
+	{webpack} = require('@v4fire/config'),
+	{isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
 
 module.exports = [
 	/**
-	 * Normalizes webpack SVG require functions
+	 * Normalizes Webpack SVG `require` attributes
 	 *
-	 * @param {string} name
-	 * @param {!Object} attrs
+	 * @param {object} opts
+	 * @param {string} opts.name
+	 * @param {object} opts.attrs
 	 */
 	function normalizeSvgRequire({name, attrs}) {
 		if (name !== 'img') {
@@ -29,56 +28,74 @@ module.exports = [
 		const
 			src = attrs[':src'];
 
-		if (src && isSvgRequire.test(src[0])) {
+		if (src && /require\(.*?\.svg[\\"']+\)/.test(src[0])) {
 			src[0] += '.replace(/^"|"$/g, \'\')';
 		}
 	},
 
 	/**
-	 * Normalizes component attributes: adds memoization, expands aliases, etc.
-	 * @param {!Object} attrs
+	 * Normalizes V4Fire tag attributes
+	 * @param {object} attrs
 	 */
-	function normalizeComponentAttrs({attrs}) {
-		$C(attrs).forEach((el, key) => {
-			if (!isV4Prop.test(key)) {
+	function normalizeV4Attrs({attrs}) {
+		if (webpack.ssr) {
+			delete attrs['v-once'];
+			delete attrs['v-memo'];
+		}
+
+		Object.forEach(attrs, (attr, key) => {
+			if (key === 'ref') {
+				const
+					ref = attrs[key][0];
+
+				attrs[':ref'] = [`$resolveRef('${ref}')`];
+				attrs['v-ref'] = [`'${ref}'`];
+
+				delete attrs['ref'];
 				return;
 			}
 
-			el = $C(el).map((el) => {
-				if (Object.isString(el) && isObjLiteral.test(el) && isStaticLiteral(el)) {
-					return `opt.memoizeLiteral(${el})`;
-				}
+			if (key === ':ref') {
+				const
+					ref = attrs[key];
 
-				return el;
-			});
+				attrs[':ref'] = [`$resolveRef(${ref})`];
+				attrs['v-ref'] = ref;
+
+				return;
+			}
+
+			if (
+				key === 'v-on' ||
+				key.startsWith('@') ||
+				key.startsWith('v-on:')
+			) {
+				attrs['data-has-v-on-directives'] = [];
+				return;
+			}
+
+			if (!isV4Prop.test(key)) {
+				return;
+			}
 
 			const
 				dataAttrBind = ':-';
 
 			if (key.startsWith(dataAttrBind)) {
-				attrs[`:data-${key.slice(dataAttrBind.length)}`] = el;
+				attrs[`:data-${key.slice(dataAttrBind.length)}`] = attr;
 				delete attrs[key];
+				return;
+			}
 
-			} else if (isStaticV4Prop.test(key)) {
+			if (isStaticV4Prop.test(key)) {
 				const
-					tmp = key.dasherize(key[0] === ':');
+					tmp = key.dasherize(key.startsWith(':'));
 
 				if (tmp !== key) {
 					delete attrs[key];
-					attrs[tmp] = el;
+					attrs[tmp] = attr;
 				}
 			}
 		});
 	}
 ];
-
-function isStaticLiteral(v) {
-	try {
-		// eslint-disable-next-line no-new-func
-		Function(`return ${v}`)();
-		return true;
-
-	} catch {
-		return false;
-	}
-}

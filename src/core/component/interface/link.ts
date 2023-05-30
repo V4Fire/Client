@@ -6,11 +6,25 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * A link structure
+ */
 export interface SyncLink<T = unknown> {
+	/**
+	 * The link path
+	 */
 	path: string;
+
+	/**
+	 * Synchronizes the link value with all tied objects
+	 * @param [value] - a new value to set
+	 */
 	sync(value?: T): void;
 }
 
+/**
+ * A dictionary with all registered links
+ */
 export type SyncLinkCache<T = unknown> = Map<
 	string | object,
 	Dictionary<SyncLink<T>>

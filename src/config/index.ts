@@ -13,10 +13,25 @@
 
 import { extend } from '@v4fire/core/config';
 
-export * from '@v4fire/core/config';
 export { default } from '@v4fire/core/config';
 
+export * from '@v4fire/core/config';
+export * from 'config/interface';
+
 extend({
-	components: COMPONENTS,
-	componentStaticDependencies: {}
+	image: {},
+
+	asyncRender: {
+		weightPerTick: 5,
+		delay: 40
+	},
+
+	components: (() => {
+		try {
+			return COMPONENTS;
+
+		} catch {
+			return {};
+		}
+	})()
 });

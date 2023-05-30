@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	config = require('@config/config'),
@@ -21,9 +21,9 @@ Object.assign(
 /**
  * Waits till the specified callback function returns true
  *
- * @param {!Function} cb
+ * @param {Function} cb
  * @param {number} interval
- * @returns {!Promise<void>}
+ * @returns {Promise<void>}
  */
 exports.wait = function wait(cb, interval = 15) {
 	return new Promise((res) => {

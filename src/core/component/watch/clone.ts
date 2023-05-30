@@ -12,15 +12,15 @@ import type { WatchOptions } from 'core/object/watch';
  * Clones the specified watcher value
  *
  * @param value
- * @param [opts]
+ * @param [watchOpts] - watch options
  */
-export function cloneWatchValue<T>(value: T, opts?: WatchOptions): T {
+export function cloneWatchValue<T>(value: T, watchOpts?: WatchOptions): T {
 	if (value == null || typeof value !== 'object' || Object.isFrozen(value)) {
 		return value;
 	}
 
 	const
-		isDeep = opts?.deep;
+		isDeep = watchOpts?.deep;
 
 	let
 		needClone = false;

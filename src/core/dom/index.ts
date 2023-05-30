@@ -11,43 +11,56 @@
  * @packageDocumentation
  */
 
-import { deprecate } from 'core/functools/deprecation';
-
 /**
  * Wraps the specified function as an event handler with delegation.
- * This function can be used as a decorator or as a simple function.
+ * In simple terms, the wrapped function will be executed only if the event happened on the element by the given
+ * selector or in its descendant node. Also, the function adds to the event object a reference to the element to which
+ * the selector is specified.
  *
- * The event object will contain a link to the element to which we are delegating the handler
- * by a property `delegateTarget`.
- *
- * @param selector - selector to delegate
- * @param [fn]
+ * @param selector - a selector to the elements on which you want to catch the event
+ * @param fn - the original function
  *
  * @example
  * ```js
  * // Attaches an event listener to the document,
- * // but the event will be caught only on h1 tags
- * document.addEventListener('click', wrapAsDelegateHandler('h1', () => {
+ * // but the event will only be caught on `h1` tags
+ * document.addEventListener('click', wrapAsDelegateHandler('h1', (e) => {
  *   console.log('Boom!');
+ *   console.log(e.delegateTarget);
  * }));
+ * ```
+ */
+export function wrapAsDelegateHandler<T extends Function>(
+	selector: string,
+	fn: T
+): T;
+
+/**
+ * Wraps the specified function as an event handler with delegation.
+ * In simple terms, the wrapped function will be executed only if the event happened on the element by the given
+ * selector or in its descendant node. Also, the function adds to the event object a reference to the element to which
+ * the selector is specified. This overload should be used as a decorator.
  *
+ * @param selector - a selector to the elements on which you want to catch the event
+ *
+ * @example
+ * ```js
  * class Foo {
  *   // Using the function as a decorator
  *   @wrapAsDelegateHandler('h1')
- *   onH1Click() {
+ *   onH1Click(e) {
  *     console.log('Boom!');
+ *     console.log(e.delegateTarget);
  *   }
  * }
  * ```
  */
-export function wrapAsDelegateHandler<T extends Function>(selector: string, fn: T): T;
 export function wrapAsDelegateHandler(selector: string): Function;
 export function wrapAsDelegateHandler(selector: string, fn?: Function): Function {
 	function wrapper(this: unknown, e: Event): boolean {
 		const
 			t = <CanUndef<Element>>e.target;
 
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		if (t == null || !Object.isFunction(t.closest)) {
 			return false;
 		}
@@ -68,14 +81,8 @@ export function wrapAsDelegateHandler(selector: string, fn?: Function): Function
 		return wrapper;
 	}
 
-	return (target, key, descriptors) => {
+	return (_target, _key, descriptors) => {
 		fn = descriptors.value;
 		descriptors.value = wrapper;
 	};
 }
-
-/**
- * @deprecated
- * @see [[wrapAsDelegateHandler]]
- */
-export const delegate = deprecate({name: 'delegate', renamedTo: 'wrapAsDelegateHandler'}, wrapAsDelegateHandler);

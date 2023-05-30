@@ -6,17 +6,83 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VNode, RenderContext } from 'core/component/engines';
-import type { ComponentInterface } from 'core/component/interface/component';
+import type {
+
+	VNode,
+
+	Fragment,
+	Teleport,
+
+	Transition,
+	TransitionGroup,
+
+	getCurrentInstance,
+
+	toHandlers,
+	toHandlerKey,
+	toDisplayString,
+
+	renderList,
+	renderSlot,
+
+	openBlock,
+	createBlock,
+	setBlockTracking,
+	createElementBlock,
+
+	cloneVNode,
+	createVNode,
+	createStaticVNode,
+	createElementVNode,
+	createTextVNode,
+	createCommentVNode,
+
+	setDevtoolsHook,
+	setTransitionHooks,
+	useTransitionState,
+
+	normalizeClass,
+	normalizeStyle,
+	mergeProps,
+
+	resolveComponent,
+	resolveDynamicComponent,
+	resolveTransitionHooks,
+	resolveDirective,
+
+	withCtx,
+	withKeys,
+	withModifiers,
+	withDirectives,
+
+	vShow,
+	vModelText,
+	vModelSelect,
+	vModelCheckbox,
+	vModelRadio,
+	vModelDynamic
+
+} from 'core/component/engines';
+
+import type { ComponentInterface } from 'core/component/interface';
+
+export interface RenderEngine<T extends object = object> {
+	supports: RenderEngineFeatures;
+	proxyGetters: ProxyGetters<T>;
+	r: RenderAPI;
+}
 
 export interface RenderEngineFeatures {
-	regular: boolean;
 	functional: boolean;
-	composite: boolean;
-
-	ssr: boolean;
-	boundCreateElement: boolean;
 }
+
+export type ProxyGetters<T extends object = object> = Record<ProxyGetterType, ProxyGetter<T>>;
+
+export type ProxyGetter<T extends object = object> = (ctx: T) => {
+	key: string | null;
+	value: object;
+	watch?(path: string, handler: Function): Function;
+};
 
 export type ProxyGetterType =
 	'prop' |
@@ -25,23 +91,69 @@ export type ProxyGetterType =
 	'attr' |
 	'mounted';
 
-export type ProxyGetter<T extends object = object> = (ctx: T) => {
-	key: string | null;
-	value: object;
-	watch?(path: string, handler: Function): Function;
-};
+export interface RenderAPI {
+	render(vnode: VNode, parent?: ComponentInterface): Node;
+	render(vnode: VNode[], parent?: ComponentInterface): Node[];
 
-export type ProxyGetters<T extends object = object> = Record<ProxyGetterType, ProxyGetter<T>>;
+	getCurrentInstance: typeof getCurrentInstance;
 
-export interface RenderEngine<T extends object = object> {
-	minimalCtx: object;
+	Fragment: typeof Fragment;
+	Teleport: typeof Teleport;
 
-	supports: RenderEngineFeatures;
-	proxyGetters: ProxyGetters<T>;
+	Transition: typeof Transition;
+	TransitionGroup: typeof TransitionGroup;
 
-	cloneVNode(vnode: VNode): VNode;
-	patchVNode(vnode: VNode, component: ComponentInterface, renderCtx: RenderContext): VNode;
+	toHandlers: typeof toHandlers;
+	toHandlerKey: typeof toHandlerKey;
+	toDisplayString: typeof toDisplayString;
 
-	renderVNode(vnode: VNode, parent: ComponentInterface): Node;
-	renderVNode(vnodes: VNode[], parent: ComponentInterface): Node[];
+	renderList: typeof renderList;
+	renderSlot: typeof renderSlot;
+
+	openBlock: typeof openBlock;
+	createBlock: typeof createBlock;
+	setBlockTracking: typeof setBlockTracking;
+	createElementBlock: typeof createElementBlock;
+
+	createVNode: typeof createVNode;
+	createStaticVNode: typeof createStaticVNode;
+	createElementVNode: typeof createElementVNode;
+	createTextVNode: typeof createTextVNode;
+	createCommentVNode: typeof createCommentVNode;
+	cloneVNode: typeof cloneVNode;
+
+	setDevtoolsHook: typeof setDevtoolsHook;
+	setTransitionHooks: typeof setTransitionHooks;
+	useTransitionState: typeof useTransitionState;
+
+	normalizeClass: typeof normalizeClass;
+	normalizeStyle: typeof normalizeStyle;
+	mergeProps: typeof mergeProps;
+
+	resolveComponent: typeof resolveComponent;
+	resolveDynamicComponent: typeof resolveDynamicComponent;
+	resolveTransitionHooks: typeof resolveTransitionHooks;
+	resolveDirective: typeof resolveDirective;
+
+	withCtx: typeof withCtx;
+	withAsyncContext<T extends AnyFunction>(awaitable: T): [Awaited<ReturnType<T>>, Function];
+
+	withKeys: typeof withKeys;
+	withModifiers: typeof withModifiers;
+	withDirectives: typeof withDirectives;
+
+	vShow: typeof vShow;
+	vModelText: typeof vModelText;
+	vModelSelect: typeof vModelSelect;
+	vModelCheckbox: typeof vModelCheckbox;
+	vModelRadio: typeof vModelRadio;
+	vModelDynamic: typeof vModelDynamic;
+}
+
+export interface RenderFactory {
+	(ctx: ComponentInterface, cache: unknown[]): () => CanArray<VNode>;
+}
+
+export interface RenderFn {
+	(bindings?: Dictionary): CanArray<VNode>;
 }

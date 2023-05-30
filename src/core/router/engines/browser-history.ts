@@ -7,31 +7,37 @@
  */
 
 /**
- * This package provides a router engined based on the HTML history API with support of dynamic loading of entry points
+ * This package provides a router based on the HTML history API with support for loading entry points dynamically
  * @packageDescription
  */
 
 import symbolGenerator from 'core/symbol';
-import { deprecate } from 'core/functools/deprecation';
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import { session } from 'core/kv-storage';
 import { fromQueryString, toQueryString } from 'core/url';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import * as browser from 'core/browser';
+import type bRouter from 'components/base/b-router/b-router';
 
-import type bRouter from 'base/b-router/b-router';
 import type { Router, Route, HistoryClearFilter } from 'core/router/interface';
 
-export const
+const
 	$$ = symbolGenerator();
 
-const
-	isIFrame = location !== parent.location;
+const isIFrame = (() => {
+	try {
+		return location !== parent.location;
+
+	} catch {
+		return false;
+	}
+})();
 
 /**
- * This code is needed to fix a bug with the History API router engine when backing to the
- * first history item doesn’t emit a popstate event in Safari if the script is running within an iframe
+ * This code is required to fix a bug in the History API router engine where returning to the first element in history
+ * does not fire a popstate event in Safari when the script is executed within an iframe
+ *
  * @see https://github.com/V4Fire/Client/issues/717
  */
 if (isIFrame && (browser.is.Safari !== false || browser.is.iOS !== false)) {
@@ -39,17 +45,17 @@ if (isIFrame && (browser.is.Safari !== false || browser.is.iOS !== false)) {
 }
 
 /**
- * This flag is needed to get rid of a redundant router transition when restoring the page from BFCache in safari
+ * This flag is needed to get rid of redundant router transitions when restoring a page from BFCache in safari
  * @see https://github.com/V4Fire/Client/issues/552
  */
 let isOpenedFromBFCache = false;
 
-// The code below is a shim of "clear" logic of the route history:
-// it's used the session storage API to clone native history and some hacks to clear th history.
-// The way to clear the history is base on the mechanics when we rewind to the previous route of the route we want
+// The code below is a shim of native logic of the route history:
+// it's used the session storage API to clone native history, and some hacks to clean up the history.
+// The way to clear the history is based on the mechanics of when we return to the previous route of the route we want
 // to clear and after the router emit a new transition to erase the all upcoming routes.
-// After this, we need to restore some routes, that were unnecessarily dropped from the history,
-// that why we need the history clone.
+// After that, we need to restore some routes that were unnecessarily dropped from the history,
+// so we need a history clone.
 
 let
 	historyLogPointer = 0,
@@ -65,7 +71,7 @@ const
 	historyStorage = session.namespace('[[BROWSER_HISTORY]]');
 
 /**
- * Truncates the history clone log to the real history size
+ * Truncates the history clone log to the actual history size
  */
 function truncateHistoryLog(): void {
 	if (historyLog.length <= history.length) {
@@ -82,7 +88,7 @@ function truncateHistoryLog(): void {
 }
 
 /**
- * Saves the history log to the session storage
+ * Saves the history log in session storage
  */
 function saveHistoryLog(): void {
 	try {
@@ -91,7 +97,7 @@ function saveHistoryLog(): void {
 }
 
 /**
- * Saves the active position of a history to the session storage
+ * Saves the active position of the history in the session store
  */
 function saveHistoryPos(): void {
 	try {
@@ -99,24 +105,21 @@ function saveHistoryPos(): void {
 	} catch {}
 }
 
-// Try to load history log from the session storage
+// Try loading the history log from session storage
 try {
 	historyLogPointer = historyStorage.get('pos') ?? 0;
 
-	for (let o = <HistoryLog>historyStorage.get('log'), i = 0; i < o.length; i++) {
-		const
-			el = o[i];
-
+	(<HistoryLog>historyStorage.get('log')).forEach((el) => {
 		if (Object.isPlainObject(el)) {
 			historyLog.push(el);
 		}
-	}
+	});
 
 	truncateHistoryLog();
 } catch {}
 
 /**
- * Creates an engine (browser history api) for `bRouter` component
+ * Creates an engine (browser history api) for the `bRouter` component
  * @param component
  */
 export default function createRouter(component: bRouter): Router {
@@ -132,133 +135,22 @@ export default function createRouter(component: bRouter): Router {
 	$a
 		.clearAll(engineGroup);
 
-	function load(route: string, params?: Route, method: string = 'pushState'): Promise<void> {
-		if (!Object.isTruly(route)) {
-			throw new ReferenceError('A page to load is not specified');
-		}
-
-		// Remove some redundant characters
-		route = route.replace(/[#?]\s*$/, '');
-
-		return new Promise((resolve) => {
-			let
-				syncMethod = method;
-
-			if (params == null) {
-				location.href = route;
-				return;
-			}
-
-			// The route identifier is needed to support the feature of the history clearing
-			if (params._id == null) {
-				params._id = Math.random().toString().slice(2);
-			}
-
-			if (method !== 'replaceState') {
-				isHistoryInit = true;
-
-			} else if (!isHistoryInit) {
-				isHistoryInit = true;
-
-				// Prevent pushing of one route more than one times:
-				// this situation take a place when we reload the browser page
-				if (historyLog.length > 0 && !Object.fastCompare(
-					Object.reject(historyLog[historyLog.length - 1]?.params, '_id'),
-					Object.reject(params, '_id')
-				)) {
-					syncMethod = 'pushState';
-				}
-			}
-
-			if (historyLog.length === 0 || syncMethod === 'pushState') {
-				historyLog.push({route, params});
-				historyLogPointer = historyLog.length - 1;
-				saveHistoryPos();
-
-			} else {
-				historyLog[historyLog.length - 1] = {route, params};
-			}
-
-			saveHistoryLog();
-
-			const
-				qsRgxp = /\?.*?(?=#|$)/;
-
-			/**
-			 * Parses parameters from the query string
-			 *
-			 * @param qs
-			 * @param test
-			 */
-			const parseQuery = (qs: string, test?: boolean) => {
-				if (test && !RegExp.test(qsRgxp, qs)) {
-					return {};
-				}
-
-				return fromQueryString(qs);
-			};
-
-			params.query = Object.assign(parseQuery(route, true), params.query);
-
-			let
-				qs = toQueryString(params.query);
-
-			if (qs !== '') {
-				qs = `?${qs}`;
-
-				if (RegExp.test(qsRgxp, route)) {
-					route = route.replace(qsRgxp, qs);
-
-				} else {
-					route += qs;
-				}
-			}
-
-			if (location.href !== route) {
-				params.url = route;
-
-				// "params" can contain proxy objects,
-				// to avoid DataCloneError we should clone it by using Object.mixin({deep: true})
-				const filteredParams = Object.mixin({deep: true, filter: (el) => !Object.isFunction(el)}, {}, params);
-				history[method](filteredParams, params.name, route);
-			}
-
-			const
-				// eslint-disable-next-line @typescript-eslint/unbound-method
-				{load} = params.meta;
-
-			if (load == null) {
-				resolve();
-				return;
-			}
-
-			load().then(() => resolve()).catch(stderr);
-		});
-	}
-
 	const emitter = new EventEmitter({
 		maxListeners: 1e3,
 		newListener: false
 	});
 
-	const router = Object.mixin({withAccessors: true}, Object.create(emitter), <Router>{
+	const router = Object.mixin({withDescriptors: 'onlyAccessors'}, Object.create(emitter), {
 		get route(): CanUndef<Route> {
 			const
 				url = this.id(location.href);
 
 			return {
 				name: url,
-				/** @deprecated */
-				page: url,
 				query: fromQueryString(location.search),
 				...history.state,
 				url
 			};
-		},
-
-		get page(): CanUndef<Route> {
-			deprecate({name: 'page', type: 'accessor', renamedTo: 'route'});
-			return this.route;
 		},
 
 		get history(): Route[] {
@@ -306,7 +198,7 @@ export default function createRouter(component: bRouter): Router {
 			truncateHistoryLog();
 
 			const
-				cutIntervals = <number[][]>[[]];
+				cutIntervals: number[][] = [[]];
 
 			let
 				lastEnd = 0;
@@ -447,4 +339,104 @@ export default function createRouter(component: bRouter): Router {
 	}, pageshowLabel);
 
 	return router;
+
+	function load(route: string, params?: Route, method: string = 'pushState'): Promise<void> {
+		if (!Object.isTruly(route)) {
+			throw new ReferenceError('The page to load is not specified');
+		}
+
+		const qsRgxp = /\?.*?(?=#|$)/;
+		route = route.replace(/[#?]\s*$/, '');
+
+		return new Promise((resolve) => {
+			let
+				syncMethod = method;
+
+			if (params == null) {
+				location.href = route;
+				return;
+			}
+
+			// The route ID is needed to support the history clearing feature
+			if (params._id == null) {
+				params._id = Math.random().toString().slice(2);
+			}
+
+			if (method !== 'replaceState') {
+				isHistoryInit = true;
+
+			} else if (!isHistoryInit) {
+				isHistoryInit = true;
+
+				// Prevent the same route from being sent more than once:
+				// this situation occurs when we reload the browser page
+				if (historyLog.length > 0 && !Object.fastCompare(
+					Object.reject(historyLog[historyLog.length - 1]?.params, '_id'),
+					Object.reject(params, '_id')
+				)) {
+					syncMethod = 'pushState';
+				}
+			}
+
+			if (historyLog.length === 0 || syncMethod === 'pushState') {
+				historyLog.push({route, params});
+				historyLogPointer = historyLog.length - 1;
+				saveHistoryPos();
+
+			} else {
+				historyLog[historyLog.length - 1] = {route, params};
+			}
+
+			saveHistoryLog();
+			params.query = Object.assign(parseQuery(route, true), params.query);
+
+			let
+				qs = toQueryString(params.query);
+
+			if (qs !== '') {
+				qs = `?${qs}`;
+
+				if (RegExp.test(qsRgxp, route)) {
+					route = route.replace(qsRgxp, qs);
+
+				} else {
+					route += qs;
+				}
+			}
+
+			if (location.href !== route) {
+				params.url = route;
+
+				// `params` can contain proxy objects,
+				// to avoid DataCloneError we have to clone it with `Object.mixin({deep: true})`
+				const filteredParams = Object.mixin({deep: true, filter: (el) => !Object.isFunction(el)}, {}, params);
+				history[method](filteredParams, params.name, route);
+			}
+
+			const
+				// eslint-disable-next-line @v4fire/unbound-method
+				{load} = params.meta;
+
+			if (load == null) {
+				resolve();
+				return;
+			}
+
+			Promise.resolve(load()).then(() => resolve()).catch(stderr);
+
+			/**
+			 * Parses parameters from a query string
+			 *
+			 * @param qs
+			 * @param test
+			 */
+			function parseQuery(qs: string, test?: boolean) {
+				if (test && !RegExp.test(qsRgxp, qs)) {
+					return {};
+				}
+
+				return fromQueryString(qs);
+			}
+		});
+	}
 }

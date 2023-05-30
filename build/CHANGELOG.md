@@ -168,7 +168,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added `stylus` plugins to generate URL-s `build/stylus/url`:
+* Added `stylus` plugins to generate URLs `build/stylus/url`:
   * `toQueryString`
   * `createURL`
 

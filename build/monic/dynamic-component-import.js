@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
-	{typescript, webpack} = require('@config/config'),
+	{typescript, webpack, webpack: {ssr}} = require('@config/config'),
 	{commentModuleExpr: commentExpr} = include('build/const');
 
 const importRgxp = new RegExp(
@@ -52,18 +52,24 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			let
 				decl;
 
-			if (isESImport) {
-				decl = `import(${magicComments} '${fullPath}')`;
+			if (ssr) {
+				decl = `require('${fullPath}')`;
 
 			} else {
-				decl = `new Promise(function (r) { return r(require('${fullPath}')); })`;
+				if (isESImport) {
+					decl = `import(${magicComments} '${fullPath}')`;
+
+				} else {
+					decl = `new Promise(function (r) { return r(require('${fullPath}')); })`;
+				}
+
+				decl += '.catch(function (err) { stderr(err) })';
 			}
 
-			decl += '.catch(function (err) { stderr(err) })';
 			imports.push(decl);
 		}
 
-		if (!fatHTML) {
+		if (!ssr && !fatHTML) {
 			let
 				decl;
 
@@ -85,15 +91,25 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			let
 				decl;
 
-			if (isESImport) {
-				decl = `import(${magicComments} '${fullPath}.ss').then(${regTpl})`;
+			if (ssr) {
+				decl = `(${regTpl})(require('${fullPath}.ss'))`;
 
 			} else {
-				decl = `new Promise(function (r) { return r(require('${fullPath}.ss')); }).then(${regTpl})`;
+				if (isESImport) {
+					decl = `import(${magicComments} '${fullPath}.ss').then(${regTpl})`;
+
+				} else {
+					decl = `new Promise(function (r) { return r(require('${fullPath}.ss')); }).then(${regTpl})`;
+				}
+
+				decl += '.catch(function (err) { stderr(err) })';
 			}
 
-			decl += '.catch(function (err) { stderr(err) })';
 			imports.push(decl);
+		}
+
+		if (ssr) {
+			return `[${imports.join(',')}]`;
 		}
 
 		return `Promise.all([${imports.join(',')}])`;

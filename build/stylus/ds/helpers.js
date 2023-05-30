@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,13 +6,24 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
+/**
+ * @typedef {{
+ *   data: object,
+ *   variables: object
+ * }} BuildTimeDesignSystemParams
+ *
+ * @typedef {import('@v4fire/design-system')} DesignSystem
+ */
+
 const
 	$C = require('collection.js');
 
 /**
  * Returns a name of a CSS variable, created from the specified path with a dot delimiter
  *
- * @param {!Array<string>} path
+ * @param {Array<string>} path
  * @returns {string}
  *
  * @example
@@ -30,9 +39,9 @@ function getVariableName(path) {
  * Saves the specified value as a CSS variable into a dictionary by the specified path
  *
  * @param {?} value
- * @param {!Array<string>} path - path to set the value
- * @param {DesignSystemVariables} varStorage - dictionary of CSS variables
- * @param {string=} [mapGroup] - name of a group within the `map` property of the variable storage
+ * @param {Array<string>} path - path to set the value
+ * @param {object} varStorage - dictionary of CSS variables
+ * @param {string} [mapGroup] - name of a group within the `map` property of the variable storage
  *
  * @example
  * ```
@@ -64,8 +73,8 @@ function saveVariable(value, path, varStorage, mapGroup) {
  * Creates a project design system from the specified raw object
  *
  * @param {DesignSystem} raw
- * @param {Object=} [stylus]
- * @returns {!BuildTimeDesignSystemParams}
+ * @param {object} [stylus]
+ * @returns {BuildTimeDesignSystemParams}
  */
 function createDesignSystem(raw, stylus = require('stylus')) {
 	const
@@ -87,8 +96,8 @@ function createDesignSystem(raw, stylus = require('stylus')) {
  * and creates CSS variables to use within `.styl` files
  *
  * @param {DesignSystem} ds
- * @param {Object} stylus - link to a stylus package instance
- * @returns {!BuildTimeDesignSystemParams}
+ * @param {object} stylus - link to a stylus package instance
+ * @returns {BuildTimeDesignSystemParams}
  */
 function convertDsToBuildTimeUsableObject(ds, stylus) {
 	const
@@ -105,7 +114,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	return {data, variables};
 
 	/**
-	 * @param {!Array<string>} keys
+	 * @param {Array<string>} keys
 	 * @param {string} theme
 	 */
 	function getVariablePath(keys, theme) {
@@ -115,9 +124,9 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	/**
 	 * Creates an array of key chunks from the passed head and tail
 	 *
-	 * @param {?Array} head
+	 * @param {Array} [head]
 	 * @param {string|number} tail
-	 * @returns {!Array<string>}
+	 * @returns {Array<string>}
 	 *
 	 * @example
 	 * ```js
@@ -129,10 +138,10 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	}
 
 	/**
-	 * @param {Object} obj
-	 * @param {(Object|Array)=} [res]
-	 * @param {Array<string>=} [path]
-	 * @param {(string|boolean)=} [theme]
+	 * @param {object} obj
+	 * @param {(object|Array)} [res]
+	 * @param {Array<string>} [path]
+	 * @param {(string|boolean)} [theme]
 	 */
 	function parseRawDS(obj, res, path, theme) {
 		if (!res) {
@@ -216,7 +225,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
  * @param {string} field
  * @param {string} [theme]
  * @param {boolean} [isFieldThemed] - true, if a value of the specified field depends on the theme
- * @returns {!Array<string>}
+ * @returns {Array<string>}
  *
  * @example
  * ```js
@@ -235,8 +244,8 @@ function getThemedPathChunks(field, theme, isFieldThemed) {
 /**
  * Checks the specified path to a field for obsolescence at the design system
  *
- * @param {!DesignSystem} ds
- * @param {(string|!Array<string>)} path
+ * @param {DesignSystem} ds
+ * @param {(string|Array<string>)} path
  */
 function checkDeprecated(ds, path) {
 	if (!Object.isDictionary($C(ds).get('meta.deprecated'))) {

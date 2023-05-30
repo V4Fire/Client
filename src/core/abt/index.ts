@@ -15,7 +15,7 @@ import state from 'core/component/state';
 import adapter from 'core/abt/engines';
 
 import { emitter } from 'core/abt/const';
-import type { ExperimentsSet } from 'core/abt/interface';
+import type { Experiments } from 'core/abt/interface';
 
 export * from 'core/abt/const';
 export * from 'core/abt/interface';
@@ -29,7 +29,7 @@ export * from 'core/abt/interface';
  */
 export default async function saveABT(opts: unknown): Promise<void> {
 	let
-		config = <CanPromise<CanUndef<ExperimentsSet>>>adapter(opts);
+		config = <CanPromise<CanUndef<Experiments>>>adapter(opts);
 
 	if (Object.isPromise(config)) {
 		try {

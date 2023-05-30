@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,42 +6,36 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	$C = require('collection.js'),
-	{wrapAttrArray} = include('build/snakeskin/filters/helpers');
+'use strict';
 
 const
-	elSeparatorRgxp = /^_+/;
+	{webpack} = require('@config/config');
 
 module.exports = [
 	/**
-	 * Integrates BEM classes to a component: attaches identifiers, provides runtime transformers, etc.
+	 * Integrates BEM classes to components: attaches identifiers, provides runtime transformers, etc.
 	 *
-	 * @param {string} block
-	 * @param {!Object} attrs
-	 * @param {string} rootTag
-	 * @param {string} value
+	 * @param {string} block - a name of the active BEM block
+	 * @param {object} attrs - a dictionary with attributes of the node to which the filter is applied
+	 * @param {string} rootTag - a type of the component root tag within which the directive is applied
+	 * @param {string} element - a name of the BEM element to create, with a prefix
 	 * @returns {string}
 	 */
-	function bem2Component(block, attrs, rootTag, value) {
-		attrs[':class'] = attrs[':class'] || [];
-
+	function bem2Component(block, attrs, rootTag, element) {
 		const
-			elName = value.replace(elSeparatorRgxp, ''),
-			classes = attrs[':class'],
-			styles = attrs[':style'];
+			elId = 'data-cached-class-component-id',
+			elName = element.replace(/^_+/, '');
 
-		const newClasses = classes.concat(
-			$C(classes).includes('componentId') ? [] : 'componentId',
-			`classes && classes['${elName}']`
-		);
+		if (webpack.ssr) {
+			attrs[`:${elId}`] = ['String(renderComponentId)'];
 
-		attrs[':class'] = wrapAttrArray(newClasses);
-
-		if (!styles || !styles.length) {
-			attrs[':style'] = [`styles && styles['${elName}']`];
+		} else {
+			attrs[elId] = [true];
 		}
 
-		return block + value;
+		const provide = 'data-cached-class-provided-classes-styles';
+		attrs[provide] = Array.concat([], attrs[provide], elName);
+
+		return block + element;
 	}
 ];

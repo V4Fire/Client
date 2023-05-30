@@ -6,31 +6,36 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { WatchPath as RawWatchPath, WatchOptions, WatchHandlerParams } from 'core/object/watch';
+import type {
+
+	WatchPath as RawWatchPath,
+	WatchOptions as RawWatchOptions,
+	WatchHandlerParams
+
+} from 'core/object/watch';
+
 import type { Group, Label, Join } from 'core/async';
 
-import type { PropertyInfo } from 'core/component/reflection';
-import type { ComponentInterface } from 'core/component/interface';
+import type { PropertyInfo } from 'core/component/reflect';
+import type { ComponentInterface } from 'core/component/interface/component';
 
-export { WatchOptions, WatchHandlerParams };
+export { WatchHandlerParams };
 
-export type WatchPath =
-	string |
-	PropertyInfo |
-	{ctx: object; path?: RawWatchPath};
+export type Flush = 'post' | 'pre' | 'sync';
 
-export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(a: A, b?: B, params?: WatchHandlerParams): AnyToIgnore;
-	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): AnyToIgnore;
-}
-
-export interface WatchHandler<A = unknown, B = A> {
-	(a: A, b: B, params?: WatchHandlerParams): unknown;
-	(...args: A[]): unknown;
-}
-
-export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
-	(ctx: CTX['unsafe'], handler: WatchHandler<A, B>): CanPromise<WatchHandler<A, B> | Function>;
+export interface WatchOptions extends RawWatchOptions {
+	/**
+	 * How the event handler should be called:
+	 *
+	 * 1. `'post'` - the handler will be called on the next tick after the mutation and
+	 *    guaranteed after updating all tied templates;
+	 *
+	 * 2. `'pre'` - the handler will be called on the next tick after the mutation and
+	 *    guaranteed before updating all tied templates;
+	 *
+	 * 3. `'sync'` - the handler will be invoked immediately after each mutation.
+	 */
+	flush?: Flush;
 }
 
 export interface FieldWatcher<
@@ -38,18 +43,20 @@ export interface FieldWatcher<
 	B = A
 > extends WatchOptions {
 	/**
-	 * Handler that is invoked on watcher events
+	 * A handler that is invoked on watcher events
 	 */
 	handler: WatchHandler<A, B>;
 
 	/**
-	 * If false, the watcher won't be registered for functional/flyweight components
+	 * If false, the watcher won't be registered for functional components
 	 * @default `true`
 	 */
 	functional?: boolean;
 
 	/**
-	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
+	 * If false, then the handler that is invoked on the watcher events does not take any arguments from
+	 * events it is listening for
+	 *
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
@@ -61,20 +68,20 @@ export interface WatchObject<
 	B = A
 > extends WatchOptions {
 	/**
-	 * Group name of a watcher
-	 * (for Async)
+	 * A name of the group the watcher belongs to.
+	 * The parameter is provided to [[Async]].
 	 */
 	group?: Group;
 
 	/**
-	 * Label of a watcher
-	 * (for Async)
+	 * A label associated with the watcher.
+	 * The parameter is provided to [[Async]].
 	 */
 	label?: Label;
 
 	/**
-	 * Join strategy of a watcher
-	 * (for Async)
+	 * A strategy type to join conflict tasks.
+	 * The parameter is provided to [[Async]].
 	 */
 	join?: Join;
 
@@ -85,35 +92,31 @@ export interface WatchObject<
 	single?: boolean;
 
 	/**
-	 * If false, the watcher won't be registered for functional/flyweight components
+	 * If false, the watcher won't be registered for functional components
 	 * @default `true`
 	 */
 	functional?: boolean;
 
 	/**
-	 * Additional options for an event emitter
-	 * (only if you listen an event)
+	 * Additional options for the used event emitter
 	 */
 	options?: Dictionary;
 
 	/**
-	 * A name of a component method that is registered as a handler to the watcher
-	 */
-	method?: string;
-
-	/**
-	 * Additional arguments to the operation
+	 * Additional arguments for the used event emitter
 	 */
 	args?: unknown[];
 
 	/**
-	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
+	 * If false, then the handler that is invoked on the watcher events does not take any arguments from
+	 * events it is listening for
+	 *
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
 
-	/***
-	 * Wrapper for a handler
+	/**
+	 * A wrapper function for the registered handler
 	 *
 	 * @example
 	 * ```typescript
@@ -133,7 +136,12 @@ export interface WatchObject<
 	wrapper?: WatchWrapper<CTX, A, B>;
 
 	/**
-	 * Handler (or a name of a component method) that is invoked on watcher events
+	 * A component method name that is registered as a handler to the watcher
+	 */
+	method?: string;
+
+	/**
+	 * A handler (or component method name) that is invoked on watcher events
 	 */
 	handler: string | WatchHandler<A, B>;
 }
@@ -144,19 +152,13 @@ export interface MethodWatcher<
 	B = A
 > extends WatchOptions {
 	/**
-	 * @deprecated
-	 * @see [[MethodWatcher.path]]
-	 */
-	field?: string;
-
-	/**
-	 * Path to a component property to watch or event to listen
+	 * A path to a component property to watch or event to listen
 	 */
 	path?: string;
 
 	/**
-	 * Group name of the watcher
-	 * (for Async)
+	 * A name of the group the watcher belongs to.
+	 * The parameter is provided to [[Async]].
 	 */
 	group?: Group;
 
@@ -167,30 +169,31 @@ export interface MethodWatcher<
 	single?: boolean;
 
 	/**
-	 * If false, the watcher won't be registered for functional/flyweight components
+	 * If false, the watcher won't be registered for functional components
 	 * @default `true`
 	 */
 	functional?: boolean;
 
 	/**
-	 * Additional options for an event emitter
-	 * (only if you listen an event)
+	 * Additional options for the used event emitter
 	 */
 	options?: Dictionary;
 
 	/**
-	 * Additional arguments for the operation (their provides to an event emitter when attaching listeners)
+	 * Additional arguments for the used event emitter
 	 */
 	args?: CanArray<unknown>;
 
 	/**
-	 * If false, then the handler that is invoked on watcher events does not take any arguments from an event
+	 * If false, then the handler that is invoked on the watcher events does not take any arguments from
+	 * events it is listening for
+	 *
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
 
-	/***
-	 * Wrapper for a handler
+	/**
+	 * A wrapper function for the registered handler
 	 *
 	 * @example
 	 * ```typescript
@@ -208,4 +211,23 @@ export interface MethodWatcher<
 	 * ```
 	 */
 	wrapper?: WatchWrapper<CTX, A, B>;
+}
+
+export type WatchPath =
+	string |
+	PropertyInfo |
+	{ctx: object; path?: RawWatchPath};
+
+export interface RawWatchHandler<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+	(a: A, b?: B, params?: WatchHandlerParams): void;
+	(this: CTX, a: A, b?: B, params?: WatchHandlerParams): void;
+}
+
+export interface WatchHandler<A = unknown, B = A> {
+	(a: A, b: B, params?: WatchHandlerParams): unknown;
+	(...args: A[]): unknown;
+}
+
+export interface WatchWrapper<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
+	(ctx: CTX['unsafe'], handler: WatchHandler<A, B>): CanPromise<WatchHandler<A, B> | Function>;
 }

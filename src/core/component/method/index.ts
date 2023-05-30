@@ -6,19 +6,51 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentInterface } from 'core/component';
-
 /**
  * [[include:core/component/method/README.md]]
  * @packageDocumentation
  */
 
+import type { ComponentInterface } from 'core/component/interface';
+
 /**
- * Invokes a method from the specified component instance
+ * Attaches methods to the specified component instance from its tied meta object
+ * @param component
+ */
+export function attachMethodsFromMeta(component: ComponentInterface): void {
+	const {
+		meta,
+		meta: {methods}
+	} = component.unsafe;
+
+	const
+		isFunctional = meta.params.functional === true;
+
+	Object.entries(methods).forEach(([name, method]) => {
+		if (method == null || !SSR && isFunctional && method.functional === false) {
+			return;
+		}
+
+		component[name] = method.fn.bind(component);
+	});
+
+	if (isFunctional) {
+		component.render = Object.cast(meta.component.render);
+	}
+}
+
+/**
+ * Invokes the given method from the specified component instance
  *
  * @param component
- * @param method - method name
- * @param [args] - method arguments
+ * @param method - the method name
+ * @param [args] - the method arguments to invoke
+ *
+ * @example
+ * ```js
+ * // Invoke some method from the passed component
+ * callMethodFromComponent(calculator, 'calc', 1, 2);
+ * ```
  */
 export function callMethodFromComponent(component: ComponentInterface, method: string, ...args: unknown[]): void {
 	const
@@ -36,38 +68,5 @@ export function callMethodFromComponent(component: ComponentInterface, method: s
 		} catch (err) {
 			stderr(err);
 		}
-	}
-}
-
-/**
- * Attaches methods from a meta object to the specified component instance
- * @param component
- */
-export function attachMethodsFromMeta(component: ComponentInterface): void {
-	const {
-		unsafe: {
-			meta,
-			meta: {methods}
-		}
-	} = component;
-
-	const
-		ssrMode = component.$renderEngine.supports.ssr,
-		isNotRegular = meta.params.functional === true || component.isFlyweight;
-
-	for (let keys = Object.keys(methods), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			el = methods[key];
-
-		if (!el) {
-			continue;
-		}
-
-		if (!ssrMode && isNotRegular && el.functional === false) {
-			continue;
-		}
-
-		component[key] = el.fn.bind(component);
 	}
 }

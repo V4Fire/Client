@@ -8,77 +8,79 @@
 
 import extend from 'core/prelude/extend';
 
-/**
- * Returns a position of the element relative to the document
- */
-extend(Element.prototype, 'getPosition', function getPosition(this: Element): ElementPosition {
-	const
-		box = this.getBoundingClientRect();
+if (typeof Element !== 'undefined') {
+	/**
+	 * Returns a position of the element relative to the document
+	 */
+	extend(Element.prototype, 'getPosition', function getPosition(this: Element): ElementPosition {
+		const
+			box = this.getBoundingClientRect();
 
-	return {
-		top: box.top + pageYOffset,
-		left: box.left + pageXOffset
-	};
-});
+		return {
+			top: box.top + scrollY,
+			left: box.left + scrollX
+		};
+	});
 
-/**
- * Returns an element index relative to the parent
- */
-extend(Element.prototype, 'getIndex', function getIndex(this: Element): number | null {
-	const
-		els = this.parentElement?.children;
+	/**
+	 * Returns an element index relative to the parent
+	 */
+	extend(Element.prototype, 'getIndex', function getIndex(this: Element): number | null {
+		const
+			els = this.parentElement?.children;
 
-	if (!els) {
+		if (!els) {
+			return null;
+		}
+
+		for (let i = 0; i < els.length; i++) {
+			if (els[i] === this) {
+				return i;
+			}
+		}
+
 		return null;
-	}
+	});
 
-	for (let i = 0; i < els.length; i++) {
-		if (els[i] === this) {
-			return i;
+	/**
+	 * Returns a position of the element relative to the parent
+	 * @param [parent]
+	 */
+	extend(HTMLElement.prototype, 'getOffset', function getOffset(
+		this: HTMLElement,
+		parent?: Element | string
+	): ElementPosition {
+		const res = {
+			top: this.offsetTop,
+			left: this.offsetLeft
+		};
+
+		if (parent == null) {
+			return res;
 		}
-	}
 
-	return null;
-});
+		let
+			{offsetParent} = this;
 
-/**
- * Returns a position of the element relative to the parent
- * @param [parent]
- */
-extend(HTMLElement.prototype, 'getOffset', function getOffset(
-	this: HTMLElement,
-	parent?: Element | string
-): ElementPosition {
-	const res = {
-		top: this.offsetTop,
-		left: this.offsetLeft
-	};
+		while (matcher()) {
+			if (offsetParent == null || !(offsetParent instanceof HTMLElement)) {
+				break;
+			}
 
-	if (parent == null) {
+			res.top += offsetParent.offsetTop;
+			res.left += offsetParent.offsetLeft;
+
+			({offsetParent} = offsetParent);
+		}
+
 		return res;
-	}
 
-	let
-		{offsetParent} = this;
+		function matcher(): boolean {
+			if (offsetParent === document.documentElement) {
+				return false;
+			}
 
-	while (matcher()) {
-		if (offsetParent == null || !(offsetParent instanceof HTMLElement)) {
-			break;
+			return Object.isString(parent) ? !offsetParent?.matches(parent) : offsetParent !== parent;
 		}
-
-		res.top += offsetParent.offsetTop;
-		res.left += offsetParent.offsetLeft;
-
-		({offsetParent} = offsetParent);
-	}
-
-	return res;
-
-	function matcher(): boolean {
-		if (offsetParent === document.documentElement) {
-			return false;
-		}
-
-		return Object.isString(parent) ? !offsetParent?.matches(parent) : offsetParent !== parent;
-	}
-});
+	});
+}

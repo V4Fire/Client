@@ -1,0 +1,254 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+	/**
+	 * Selector to the hint container
+	 */
+	location: '&',
+
+	/**
+	 * True if should hide the hint container
+	 */
+	hidden: false,
+
+	/**
+	 * Selector to show the hint container or `false`
+	 */
+	showOn: false,
+
+	/**
+	 * The name of the attribute that contains the data to display or `false`
+	 */
+	dataAttr: false
+
+	/**
+	 * Selector to the hint data container: used with hints based on values from attributes.
+	 * Basically, you don't need to change this value.
+	 */
+	content: "&::after"
+
+	/**
+	 * Z-index position to show the data container
+	 */
+	zIndexPos: overall
+
+	/**
+	 * A dictionary with extra styles for the data container
+	 */
+	contentStyles: {
+		color: #FEFEFE
+		background-color: #616161
+		border-radius: 0.3rem
+		padding: 0.3rem
+	}
+
+	/**
+	 * Selector of the `arrow-hint` to show.
+	 * Basically, you don't need to change this value.
+	 */
+	arrow: "&::before"
+
+	/**
+	 * Size of the `arrow-hint` to show
+	 */
+	arrowSize: 0.7rem 0.4rem
+
+	/**
+	 * A dictionary with extra styles for the `arrow-hint`
+	 */
+	arrowStyles: {
+
+	}
+
+	/**
+	 * A dictionary with styles to hide the container
+	 */
+	hideStyles: {
+		display: none
+	}
+
+	/**
+	 * A dictionary with styles to show the container
+	 */
+	showStyles: {
+		display: block
+	}
+}
+
+g-hint
+	$arrowColor = $p.arrowStyles.color || $p.arrowStyles['background-color'] || $p.contentStyles['background-color']
+	$rounding = $p.contentStyles['border-radius'] || 0
+
+	{$p.location}
+		if $p.hidden
+			{$p.hideStyles}
+
+		if $p.content
+			{$p.content}
+				position absolute
+				zIndex($p.zIndexPos)
+
+				if $p.dataAttr
+					content attr($p.dataAttr)
+
+				{$p.hideStyles}
+				{$p.contentStyles}
+
+		if $p.arrow
+			{$p.arrow}
+				position absolute
+				zIndex($p.zIndexPos, 1)
+
+				border $p.arrowSize[0] solid transparent
+				content ""
+
+				{$p.hideStyles}
+				{$p.arrowStyles}
+
+	if $p.showOn
+		for $el in $p.showOn
+			{$el}
+				if $p.hidden
+					{$p.showStyles}
+
+				if $p.content
+					{$p.content}
+						{$p.showStyles}
+
+				if $p.arrow
+					{$p.arrow}
+						{$p.showStyles}
+
+	{$p.location}_pos_top,
+	{$p.location}_pos_top-left,
+	{$p.location}_pos_top-right
+		if $p.content
+			{$p.content}
+				bottom "calc(100% + %s)" % $p.arrowSize[0]
+
+		if $p.arrow
+			{$p.arrow}
+				top "calc(-%s - %s)" % ($p.arrowSize[0] 1px)
+				border-top-color $arrowColor !important
+
+	{$p.location}_pos_bottom,
+	{$p.location}_pos_bottom-left,
+	{$p.location}_pos_bottom-right
+		if $p.content
+			{$p.content}
+				top "calc(100% + %s)" % $p.arrowSize[0]
+
+		if $p.arrow
+			{$p.arrow}
+				bottom "calc(-%s - %s)" % ($p.arrowSize[0] 1px)
+				border-bottom-color $arrowColor !important
+
+	{$p.location}_pos_top,
+	{$p.location}_pos_bottom
+		if $p.content
+			{$p.content}
+				left 50%
+				transform translateX(-50%)
+
+		if $p.arrow
+			{$p.arrow}
+				left 50%
+				transform translateX(-50%)
+
+	{$p.location}_pos_top-right,
+	{$p.location}_pos_bottom-right
+		if $p.content
+			{$p.content}
+				left 0
+
+		if $p.arrow
+			{$p.arrow}
+				left "calc(%s + %s)" % ($p.arrowSize[0] / 2 $rounding / 4 || 0px)
+
+	{$p.location}_pos_top-left,
+	{$p.location}_pos_bottom-left
+		if $p.content
+			{$p.content}
+				transform translateX(-100%)
+				left 100%
+
+		if $p.arrow
+			{$p.arrow}
+				transform translateX(-100%)
+				left "calc(100% - %s - %s)" % ($p.arrowSize[0] / 2 $rounding / 4 || 0px)
+
+	{$p.location}_pos_left,
+	{$p.location}_pos_left-top,
+	{$p.location}_pos_left-bottom,
+	{$p.location}_pos_right,
+	{$p.location}_pos_right-top,
+	{$p.location}_pos_right-bottom
+		if $p.arrow
+			{$p.arrow}
+				border-width $p.arrowSize[1] !important
+
+	{$p.location}_pos_left,
+	{$p.location}_pos_right
+		if $p.content
+			{$p.content}
+				bottom 50%
+				transform translateY(50%)
+
+		if $p.arrow
+			{$p.arrow}
+				bottom 50%
+				transform translateY(50%)
+
+	{$p.location}_pos_right,
+	{$p.location}_pos_right-top,
+	{$p.location}_pos_right-bottom
+		if $p.content
+			{$p.content}
+				left "calc(100% + %s)" % ($p.arrowSize[1] / 1.1)
+
+		if $p.arrow
+			{$p.arrow}
+				left "calc(100% - %s)" % ($p.arrowSize[1] / 1.1)
+
+				if $arrowColor
+					border-right-color $arrowColor !important
+
+	{$p.location}_pos_left,
+	{$p.location}_pos_left-top,
+	{$p.location}_pos_left-bottom
+		if $p.content
+			{$p.content}
+				right "calc(100% + %s)" % ($p.arrowSize[1] / 1.1)
+
+		if $p.arrow
+			{$p.arrow}
+				right "calc(100% - %s)" % ($p.arrowSize[1] / 1.1)
+
+				if $arrowColor
+					border-left-color $arrowColor !important
+
+	{$p.location}_pos_left-top,
+	{$p.location}_pos_right-top
+		if $p.content
+			{$p.content}
+				top 0 - $rounding
+
+		if $p.arrow
+			{$p.arrow}
+				top 0
+
+	{$p.location}_pos_left-bottom,
+	{$p.location}_pos_right-bottom
+		if $p.content
+			{$p.content}
+				bottom 0 - $rounding
+
+		if $p.arrow
+			{$p.arrow}
+				top 0

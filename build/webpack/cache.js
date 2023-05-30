@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,15 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	{webpack} = require('@config/config'),
 	{cacheDir} = include('build/helpers');
 
 /**
- * Returns options for `webpack.cache`
+ * Returns parameters for `webpack.cache`
  *
- * @param {(number|string)} buildId - build id
- * @returns {(!Object|boolean)}
+ * @param {(number|string)} buildId
+ * @returns {(object|boolean)}
  */
 module.exports = function cache({buildId}) {
 	switch (webpack.cacheType()) {

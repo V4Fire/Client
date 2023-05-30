@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,12 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const
-	Snakeskin = require('snakeskin'),
-	Typograf = require('typograf');
+'use strict';
 
 const
 	config = require('@config/config');
+
+const
+	Snakeskin = require('snakeskin'),
+	Typograf = require('typograf');
 
 let
 	tp;
@@ -24,7 +24,7 @@ if (Typograf.hasLocale(config.typograf().locale)) {
 
 Snakeskin.importFilters({
 	/**
-	 * Applies Typograf to the specified string and returns it
+	 * Applies Typograf to the specified string and returns the result
 	 *
 	 * @param {string} str
 	 * @returns {string}

@@ -11,8 +11,7 @@
  * @packageDocumentation
  */
 
-import { defProp } from 'core/const/props';
-import { defaultWrapper } from 'core/component/const';
+import { DEFAULT_WRAPPER } from 'core/component/const';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { InitPropsObjectOptions } from 'core/component/prop/interface';
@@ -20,11 +19,12 @@ import type { InitPropsObjectOptions } from 'core/component/prop/interface';
 export * from 'core/component/prop/interface';
 
 /**
- * Initializes input properties of the specified component instance.
- * The method returns an object with initialized properties.
+ * Initializes input properties (aka "props") of the passed component instance.
+ * While a component prop is being initialized, its name will be stored in the `$activeField` property.
+ * The function returns a dictionary with the initialized props.
  *
  * @param component
- * @param [opts] - additional options
+ * @param [opts] - additional options of initialization
  */
 export function initProps(
 	component: ComponentInterface,
@@ -32,97 +32,69 @@ export function initProps(
 ): Dictionary {
 	opts.store = opts.store ?? {};
 
-	const {
-		unsafe,
-		unsafe: {meta, meta: {component: {props}}},
-		isFlyweight
-	} = component;
+	const unsafe = Object.cast<Writable<ComponentInterface['unsafe']>>(
+		component
+	);
 
 	const
+		{meta, meta: {component: {props}}} = unsafe,
 		{store, from} = opts;
 
 	const
-		ssrMode = component.$renderEngine.supports.ssr,
-		isNotRegular = meta.params.functional === true || component.isFlyweight;
+		isFunctional = meta.params.functional === true;
 
-	for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
-		const
-			key = keys[i],
-			el = props[key];
-
-		let
-			needSave = Boolean(isFlyweight) || opts.saveToStore;
-
-		if (el == null) {
-			continue;
+	Object.entries(props).forEach(([name, prop]) => {
+		if (prop == null || !SSR && isFunctional && prop.functional === false) {
+			return;
 		}
 
-		// Don't initialize a property for a functional component unless explicitly required
-		if (!ssrMode && isNotRegular && el.functional === false) {
-			continue;
-		}
-
-		// @ts-ignore (access)
-		unsafe['$activeField'] = key;
+		unsafe.$activeField = name;
 
 		let
-			val = (from ?? component)[key];
+			val = (from ?? component)[name];
 
 		if (val === undefined) {
-			val = el.default !== undefined ? el.default : Object.fastClone(meta.instance[key]);
+			val = prop.default !== undefined ? prop.default : Object.fastClone(meta.instance[name]);
 		}
 
 		if (val === undefined) {
 			const
-				obj = props[key];
+				obj = props[name];
 
 			if (obj?.required) {
-				throw new TypeError(`Missing the required property "${key}" (component "${component.componentName}")`);
+				throw new TypeError(`Missing the required property "${name}" of the "${component.componentName}" component`);
 			}
 		}
+
+		let
+			needSaveToStore = opts.saveToStore;
 
 		if (Object.isFunction(val)) {
-			if (opts.saveToStore || val[defaultWrapper] !== true) {
-				val = isTypeCanBeFunc(el.type) ? val.bind(component) : val.call(component);
-				needSave = true;
+			if (opts.saveToStore || val[DEFAULT_WRAPPER] !== true) {
+				val = isTypeCanBeFunc(prop.type) ? val.bind(component) : val.call(component);
+				needSaveToStore = true;
 			}
 		}
 
-		if (needSave) {
-			if (isFlyweight) {
-				const prop = val === undefined ?
-					defProp :
-
-					{
-						configurable: true,
-						enumerable: true,
-						writable: true,
-						value: val
-					};
-
-				Object.defineProperty(store, key, prop);
-				component.$props[key] = val;
-
-			} else {
-				store[key] = val;
-			}
+		if (needSaveToStore) {
+			store[name] = val;
 		}
-	}
+	});
 
-	// @ts-ignore (access)
-	unsafe['$activeField'] = undefined;
+	unsafe.$activeField = undefined;
 	return store;
 }
 
 /**
- * Returns true if the specified type can be a function
+ * Returns true if the specified prop type can be a function
  *
  * @param type
+ *
  * @example
  * ```js
- * isTypeCanBeFunc(Boolean); // false
- * isTypeCanBeFunc(Function); // true
- * isTypeCanBeFunc([Function, Boolean]); // true
+ * console.log(isTypeCanBeFunc(Boolean));             // false
+ * console.log(isTypeCanBeFunc(Function));            // true
+ * console.log(isTypeCanBeFunc([Function, Boolean])); // true
  * ```
  */
 export function isTypeCanBeFunc(type: CanUndef<CanArray<Function | FunctionConstructor>>): boolean {

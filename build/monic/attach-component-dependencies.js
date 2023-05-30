@@ -1,7 +1,3 @@
-/* eslint-disable require-atomic-updates */
-
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js'),
@@ -26,7 +24,7 @@ const
  *
  * @param {string} str
  * @param {string} filePath
- * @returns {!Promise<string>}
+ * @returns {Promise<string>}
  */
 module.exports = async function attachComponentDependencies(str, filePath) {
 	if (webpack.fatHTML()) {
@@ -83,32 +81,34 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		let
 			decl = '';
 
-		try {
-			const
-				styles = await component.styles;
+		if (!webpack.ssr) {
+			try {
+				const
+					styles = await component.styles;
 
-			decl += `
-(() => {
-	if (TPLS['${dep}']) {
-		return;
-	}
+				/* eslint-disable indent */
+				decl += `
+	(() => {
+		if (TPLS['${dep}']) {
+			return;
+		}
 
-	requestAnimationFrame(async () => {
-		try {
-			const el = document.createElement('i');
-			el.className = '${dep}-is-style-loaded';
-			document.body.appendChild(el);
+		requestAnimationFrame(async () => {
+			try {
+				const el = document.createElement('i');
+				el.className = '${dep}-is-style-loaded';
+				document.body.appendChild(el);
 
-			const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
-			document.body.removeChild(el);
+				const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
+				document.body.removeChild(el);
 
-			if (isStylesLoaded) {
-				return;
-			}
-		} catch (err) { stderr(err); }
+				if (isStylesLoaded) {
+					return;
+				}
+			} catch (err) { stderr(err); }
 
-		try {
-			${
+			try {
+				${
 					styles
 						.map((src) => {
 							if (src == null) {
@@ -121,11 +121,14 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 
 						.join('')
 				}
-		} catch (err) { stderr(err); }
-	});
-})();`;
+			} catch (err) { stderr(err); }
+		});
+	})();`;
 
-		} catch {}
+			} catch {
+			}
+		}
+		/* eslint-enable */
 
 		const depChunks = [
 			'logic',

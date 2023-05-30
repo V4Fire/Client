@@ -27,9 +27,6 @@ $RECYCLE.BIN
 .LSOverride
 .vscode
 
-# Icon must ends with two \r.
-Icon
-
 # Thumbnails
 ._*
 
@@ -64,6 +61,7 @@ Icon
 /app-std-cache
 /src/entries/tmp
 /db
+.eslintcache
 
 # Statoscope
 statoscope-*/*

@@ -13,12 +13,16 @@ import type { WaitForElOptions } from 'tests/helpers/dom/interface';
 /**
  * Class provides API to work with DOM.
  */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class DOM {
 	/**
 	 * Returns an element matched by the specified ref name
 	 *
 	 * @param ctx
 	 * @param refName
+	 *
+	 * @deprecated
+	 * @see https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-test-id
 	 */
 	static async getRef<T extends HTMLElement>(
 		ctx: Page | ElementHandle,
@@ -33,6 +37,9 @@ export default class DOM {
 	 *
 	 * @param ctx
 	 * @param refName
+	 *
+	 * @deprecated
+	 * @see https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-test-id
 	 */
 	static async waitRef<T extends HTMLElement>(
 		ctx: Page | ElementHandle,
@@ -47,6 +54,9 @@ export default class DOM {
 	 *
 	 * @param ctx
 	 * @param refName
+	 *
+	 * @deprecated
+	 * @see https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-test-id
 	 */
 	static getRefs(ctx: Page | ElementHandle, refName: string): Promise<ElementHandle[]> {
 		return ctx.$$(this.getRefSelector(refName));
@@ -54,7 +64,11 @@ export default class DOM {
 
 	/**
 	 * Returns a selector for the specified ref
+	 *
 	 * @param refName
+	 *
+	 * @deprecated
+	 * @see https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-test-id
 	 */
 	static getRefSelector(refName: string): string {
 		return `[data-test-ref="${refName}"]`;
@@ -62,15 +76,18 @@ export default class DOM {
 
 	/**
 	 * Clicks to an element matched to the specified ref name
+	 *
 	 * @see https://playwright.dev/#version=v1.2.0&path=docs%2Fapi.md&q=pageclickselector-options
 	 *
 	 * @param ctx
 	 * @param refName
 	 * @param [clickOpts]
+	 *
+	 * @deprecated
+	 * @see https://playwright.dev/docs/api/class-framelocator#frame-locator-get-by-test-id
 	 */
 	static clickToRef(ctx: Page | ElementHandle, refName: string, clickOpts?: Dictionary): Promise<void> {
 		return ctx.click(this.getRefSelector(refName), {
-			force: true,
 			...clickOpts
 		});
 	}
@@ -161,7 +178,7 @@ export default class DOM {
 	 *   elNameWithMods = modsBase('type', 'test'); // 'p-index__page_type_test'
 	 * ```
 	 */
-	static elModNameGenerator(fullElName: string): (modName: string, modVal: string) => string;
+	static elModNameGenerator(fullElementName: string): (modName: string, modVal: string) => string;
 
 	/**
 	 * Returns an element name with modifiers for the specified block
@@ -174,14 +191,14 @@ export default class DOM {
 	 *   modsBase = elModNameGenerator(elName, 'type', 'test'); // 'p-index__page_type_test'
 	 * ```
 	 */
-	static elModNameGenerator(fullElName: string, modName: string, modVal: string): string;
+	static elModNameGenerator(fullElementName: string, modName: string, modVal: string): string;
 
-	static elModNameGenerator(fullElName: string, modName?: string, modVal?: string): any {
+	static elModNameGenerator(fullElementName: string, modName?: string, modVal?: string): any {
 		if (modName != null) {
-			return `${fullElName}_${modName}_${modVal}`;
+			return `${fullElementName}_${modName}_${modVal}`;
 		}
 
-		return (modName, modVal) => `${fullElName}_${modName}_${modVal}`;
+		return (modName, modVal) => `${fullElementName}_${modName}_${modVal}`;
 	}
 
 	/**
@@ -197,7 +214,7 @@ export default class DOM {
 	 *   elNameWithMods = modsBase('type', 'test'); // '.p-index__page_type_test'
 	 * ```
 	 */
-	static elModSelectorGenerator(fullElName: string): (modName: string, modVal: string) => string;
+	static elModSelectorGenerator(fullElementName: string): (modName: string, modVal: string) => string;
 
 	/**
 	 * Returns an element class name with modifiers for the specified block
@@ -210,14 +227,14 @@ export default class DOM {
 	 *   modsBase = elModSelectorGenerator(elName, 'type', 'test'); // '.p-index__page_type_test'
 	 * ```
 	 */
-	static elModSelectorGenerator(fullElName: string, modName: string, modVal: string): string;
+	static elModSelectorGenerator(fullElementName: string, modName: string, modVal: string): string;
 
-	static elModSelectorGenerator(fullElName: string, modName?: string, modVal?: string): any {
+	static elModSelectorGenerator(fullElementName: string, modName?: string, modVal?: string): any {
 		if (modName != null) {
-			return `.${fullElName}_${modName}_${modVal}`;
+			return `.${fullElementName}_${modName}_${modVal}`;
 		}
 
-		return (modName, modVal) => `.${fullElName}_${modName}_${modVal}`;
+		return (modName, modVal) => `.${fullElementName}_${modName}_${modVal}`;
 	}
 
 	/**
@@ -276,164 +293,5 @@ export default class DOM {
 		}
 
 		return ctx.waitForSelector(selector, {state: 'detached', timeout: normalizedOptions.timeout});
-	}
-
-	/**
-	 * @param refName
-	 * @param [opts] - @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
-	 */
-	waitForRef(ctx: Page | ElementHandle, refName: string, opts?: Dictionary): Promise<ElementHandle> {
-		return ctx.waitForSelector(this.getRefSelector(refName), {state: 'attached', ...opts});
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[DOM.getRefSelector]]
-	 * @param refName
-	 */
-	getRefSelector(refName: string): string {
-		return DOM.getRefSelector(refName);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[DOM.getRefs]]
-	 *
-	 * @param ctx
-	 * @param refName
-	 */
-	getRefs(ctx: Page | ElementHandle, refName: string): Promise<ElementHandle[]> {
-		return DOM.getRefs(ctx, refName);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[DOM.getRef]]
-	 *
-	 * @param ctx
-	 * @param refName
-	 */
-	getRef<T extends HTMLElement>(ctx: Page | ElementHandle, refName: string): Promise<Nullable<ElementHandle<T>>> {
-		return DOM.getRef(ctx, refName);
-	}
-
-	/**
-	 * Returns an attribute value of the specified ref
-	 *
-	 * @param ctx
-	 * @param refName
-	 * @param attr
-	 */
-	async getRefAttr(ctx: Page | ElementHandle, refName: string, attr: string): Promise<Nullable<string>> {
-		return (await this.getRef(ctx, refName))?.getAttribute(attr);
-	}
-
-	/**
-	 * @param ctx
-	 * @param refName
-	 * @param [clickOpts] - @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
-	 * @deprecated
-	 * @see [[DOM.clickToRef]]
-	 */
-	clickToRef(ctx: Page | ElementHandle, refName: string, clickOptions?: Dictionary): Promise<void> {
-		return DOM.clickToRef(ctx, refName, clickOptions);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[DOM.waitForEl]]
-	 * @see https://playwright.dev/docs/api/class-elementhandle#element-handle-wait-for-selector
-	 *
-	 * @param ctx
-	 * @param selector
-	 * @param [opts]
-	 */
-	waitForEl(ctx: Page | ElementHandle, selector: string, opts?: WaitForElOptions): Promise<Nullable<ElementHandle>> {
-		const normalizedOptions = <Required<WaitForElOptions>>{
-			sleep: 100,
-			timeout: 5000,
-			to: 'mount',
-			...opts
-		};
-
-		if (normalizedOptions.to === 'mount') {
-			return ctx.waitForSelector(selector, {state: 'attached', timeout: normalizedOptions.timeout});
-
-		}
-
-		return ctx.waitForSelector(selector, {state: 'detached', timeout: normalizedOptions.timeout});
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[DOM.elNameGenerator]]
-	 *
-	 * @param blockName
-	 * @param [elName]
-	 */
-	elNameGenerator(blockName: string, elName?: string): any {
-		if (elName != null) {
-			return `${blockName}__${elName}`;
-		}
-
-		return (elName) => `${blockName}__${elName}`;
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[DOM.elNameSelectorGenerator]]
-	 *
-	 * @param blockName
-	 * @param [elName]
-	 */
-	elNameSelectorGenerator(blockName: string, elName?: string): any {
-		if (elName != null) {
-			return `.${blockName}__${elName}`;
-		}
-
-		return (elName) => `.${blockName}__${elName}`;
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[DOM.elModNameGenerator]]
-	 *
-	 * @param fullElName
-	 * @param [modName]
-	 * @param [modVal]
-	 */
-	elModNameGenerator(fullElName: string, modName?: string, modVal?: string): any {
-		if (modName != null) {
-			return `${fullElName}_${modName}_${modVal}`;
-		}
-
-		return (modName, modVal) => `${fullElName}_${modName}_${modVal}`;
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[DOM.elModSelectorGenerator]]
-	 *
-	 * @param fullElName
-	 * @param [modName]
-	 * @param [modVal]
-	 */
-	elModSelectorGenerator(fullElName: string, modName?: string, modVal?: string): any {
-		if (modName != null) {
-			return `.${fullElName}_${modName}_${modVal}`;
-		}
-
-		return (modName, modVal) => `.${fullElName}_${modName}_${modVal}`;
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[DOM.isVisible]]
-	 *
-	 * @param selectorOrElement
-	 * @param [ctx]
-	 */
-	async isVisible(selectorOrElement: ElementHandle | string, ctx?: Page | ElementHandle): Promise<boolean> {
-		return DOM.isVisible(<any>selectorOrElement, ctx);
 	}
 }

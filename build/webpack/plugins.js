@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js');
@@ -16,8 +16,8 @@ const
 	webpack = require('webpack');
 
 /**
- * Returns options for `webpack.plugins`
- * @returns {!Map}
+ * Returns parameters for `webpack.plugins`
+ * @returns {Map}
  */
 module.exports = async function plugins({name}) {
 	const

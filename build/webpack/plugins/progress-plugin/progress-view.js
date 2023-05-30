@@ -1,7 +1,3 @@
-/* eslint-disable no-unused-vars */
-
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	chalk = require('chalk');
@@ -24,7 +22,7 @@ module.exports = class ProgressView {
 	 * Returns a progress handler for the specified build process by a name
 	 *
 	 * @param {string} processName
-	 * @returns {!Function}
+	 * @returns {Function}
 	 */
 	getProgressHandler(processName) {
 		this.handlers[processName] = true;

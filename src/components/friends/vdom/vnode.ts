@@ -1,0 +1,177 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+import { isComponent } from 'core/component';
+import type { VNode } from 'core/component/engines';
+
+import type VDOM from 'components/friends/vdom/class';
+import type { VNodeOptions, VNodeDescriptor } from 'components/friends/vdom/interface';
+
+/**
+ * Creates a VNode with the specified parameters
+ *
+ * @param type - a simple tag name or component name
+ * @param [opts] - additional options
+ *
+ * @example
+ * ```js
+ * const vnode = this.vdom.create('b-button', {
+ *   attrs: {
+ *     exterior: 'warning',
+ *     'v-show': true,
+ *     '@click': console.log
+ *   },
+ *
+ *   children: {default: () => 'Press on me!'}
+ * });
+ * ```
+ */
+export function create(this: VDOM, type: string, opts?: VNodeOptions): VNode;
+
+/**
+ * Creates VNodes by the specified descriptors
+ *
+ * @param descriptors
+ *
+ * @example
+ * ```js
+ * const vnodes = this.vdom.create(
+ *   {
+ *     type: 'b-button',
+ *
+ *     attrs: {
+ *       exterior: 'warning',
+ *       'v-show': true,
+ *       '@click': console.log
+ *     },
+ *
+ *     children: {default: () => 'Press on me!'}
+ *   },
+ *
+ *   {
+ *     type: 'div',
+ *     children: ['Hello div']
+ *   }
+ * );
+ * ```
+ */
+export function create(this: VDOM, ...descriptors: VNodeDescriptor[]): VNode[];
+
+/**
+ * Creates VNodes by the specified descriptors
+ *
+ * @param descriptors
+ *
+ * @example
+ * ```js
+ * const vnodes = this.vdom.create([
+ *   {
+ *     type: 'b-button',
+ *
+ *     attrs: {
+ *       exterior: 'warning',
+ *       'v-show': true,
+ *       '@click': console.log
+ *     },
+ *
+ *     children: {default: () => 'Press on me!'}
+ *   },
+ *
+ *   {
+ *     type: 'div',
+ *     children: ['Hello div']
+ *   }
+ * ]);
+ * ```
+ */
+export function create(this: VDOM, descriptors: VNodeDescriptor[]): VNode[];
+
+export function create(
+	this: VDOM,
+	typeOrDesc?: string | CanArray<VNodeDescriptor>,
+	...descriptors: [VNodeOptions?] | VNodeDescriptor[]
+): CanArray<VNode> {
+	if (Object.isString(typeOrDesc)) {
+		return createVNode.call(this, typeOrDesc, descriptors[0]);
+	}
+
+	const
+		resolvedDescriptors = Array.concat([], typeOrDesc, Object.cast(descriptors)),
+		vnodes = new Array(resolvedDescriptors.length);
+
+	resolvedDescriptors.forEach((descriptor, i) => {
+		vnodes[i] = createVNode.call(this, descriptor.type, descriptor);
+	});
+
+	return vnodes;
+}
+
+/**
+ * Creates a VNode by the specified descriptor
+ *
+ * @param type
+ * @param [attrs]
+ * @param [children]
+ */
+function createVNode(
+	this: VDOM,
+	type: string,
+	{attrs, children}: VNodeOptions = {}
+): VNode {
+	return this.withRenderContext(() => {
+		const {
+			ctx,
+			ctx: {$renderEngine: {r}}
+		} = this;
+
+		let
+			resolvedChildren;
+
+		const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) =>
+			Object.isDictionary(vnode) && !('patchFlag' in vnode) ? createVNode.call(this, vnode.type, vnode) : vnode;
+
+		if (children != null) {
+			if (Object.isArray(children)) {
+				resolvedChildren = new Array(children.length);
+
+				children.forEach((child, i) => {
+					resolvedChildren[i] = factory(child);
+				});
+
+			} else {
+				const
+					slots = {};
+
+				Object.entries(children).forEach(([key, slot]) => {
+					slots[key] = Object.isFunction(slot) ?
+						function slotWrapper(this: unknown) {
+							// eslint-disable-next-line prefer-rest-params
+							return Array.concat([], slot.apply(this, arguments)).map(Object.cast(factory));
+						} :
+
+						() => Array.concat([], slot).map(factory);
+				});
+
+				resolvedChildren = slots;
+			}
+		}
+
+		let
+			vnode;
+
+		if (isComponent.test(type)) {
+			const resolvedType = r.resolveDynamicComponent.call(ctx, type);
+			vnode = r.createBlock.call(ctx, resolvedType, {'v-attrs': attrs}, resolvedChildren);
+
+		} else {
+			vnode = r.createVNode.call(ctx, type, {'v-attrs': attrs}, resolvedChildren);
+		}
+
+		return vnode;
+	});
+}

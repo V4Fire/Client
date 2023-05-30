@@ -6,9 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const
-	asyncLabel = Symbol('Component async label'),
-	defaultWrapper = Symbol('Default wrapper');
+/**
+ * A flag to mark some function that it’s a generated default wrapper
+ */
+export const DEFAULT_WRAPPER = Symbol('This function is the generated default wrapper');
 
-export const
-	PARENT = {};
+/**
+ * A value to refer the parent instance
+ */
+export const PARENT = {};

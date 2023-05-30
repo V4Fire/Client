@@ -9,6 +9,20 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2022-??-??)
+
+#### :rocket: New Feature
+
+* Added support for cache delegation of computed fields
+
+#### :memo: Documentation
+
+* Added complete documentation for the module
+
+#### :house: Internal
+
+* Refactoring
+
 ## v3.0.0-rc.177 (2021-04-14)
 
 #### :house: Internal

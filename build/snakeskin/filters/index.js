@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 include('build/snakeskin/filters/include');
 include('build/snakeskin/filters/typograf');
-include('build/snakeskin/filters/element');

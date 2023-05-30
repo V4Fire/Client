@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	config = require('@config/config'),
@@ -50,10 +50,10 @@ const isTsFile = /\.ts$/,
 	isJsFile = /\.js$/;
 
 /**
- * Returns options for `webpack.module`
+ * Returns parameters for `webpack.module`
  *
- * @param {!Map} plugins - list of plugins
- * @returns {!Promise<Object>}
+ * @param {Map} plugins - list of plugins
+ * @returns {Promise<object>}
  */
 module.exports = async function module({plugins}) {
 	const
@@ -74,8 +74,6 @@ module.exports = async function module({plugins}) {
 				modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 			}
 		},
-
-		'prelude-loader',
 
 		{
 			loader: 'monic-loader',
@@ -113,8 +111,6 @@ module.exports = async function module({plugins}) {
 	});
 
 	const jsHelperLoaders = [
-		'prelude-loader',
-
 		{
 			loader: 'monic-loader',
 			options: inherit(monic.javascript, {
@@ -133,56 +129,12 @@ module.exports = async function module({plugins}) {
 		use: jsHelperLoaders
 	});
 
-	plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
-		filename: `${hash(output, true)}.css`,
-		chunkFilename: '[id].css'
-	})));
-
-	const styleHelperLoaders = (isStatic) => {
-		const
-			useLink = /linkTag/i.test(config.style().injectType),
-			usePureCSSFiles = isStatic || useLink;
-
-		return [].concat(
-			usePureCSSFiles ? MiniCssExtractPlugin.loader : [],
-
-			[
-				{
-					loader: 'css-loader',
-					options: {
-						...config.css(),
-						importLoaders: 1
-					}
-				},
-
-				'svg-transform-loader/encode-query',
-
-				{
-					loader: 'postcss-loader',
-					options: inherit(config.postcss(), {
-						postcssOptions: {
-							plugins: [].concat(
-								require('autoprefixer')(config.autoprefixer()),
-
-								webpack.mode() === 'production' && !usePureCSSFiles ?
-									require('cssnano')(config.cssMinimizer().minimizerOptions) :
-									[]
-							)
-						}
-					})
-				},
-
-				{
-					loader: 'stylus-loader',
-					options: inherit(config.stylus(), {
-						stylusOptions: {
-							use: include('build/stylus')
-						}
-					})
-				}
-			]
-		);
-	};
+	if (!webpack.ssr) {
+		plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
+			filename: `${hash(output, true)}.css`,
+			chunkFilename: '[id].css'
+		})));
+	}
 
 	const staticCSSFiles = [].concat(
 		styleHelperLoaders(true),
@@ -198,40 +150,48 @@ module.exports = async function module({plugins}) {
 		}
 	);
 
-	// Load via import() functions
-	const dynamicCSSFiles = [].concat(
-		{
-			loader: 'style-loader',
-			options: config.style()
-		},
+	if (webpack.ssr) {
+		loaders.rules.set('styl', {
+			test: /\.styl$/,
+			loader: 'ignore-loader'
+		});
 
-		styleHelperLoaders(),
+	} else {
+		// Load via import() functions
+		const dynamicCSSFiles = [].concat(
+			{
+				loader: 'style-loader',
+				options: config.style()
+			},
 
-		{
-			loader: 'monic-loader',
-			options: inherit(monic.stylus, {
-				replacers: [
-					require('@pzlr/stylus-inheritance')({resolveImports: true}),
-					include('build/monic/project-name'),
-					include('build/monic/apply-dynamic-component-styles')
-				]
-			})
-		}
-	);
-
-	loaders.rules.set('styl', {
-		test: /\.styl$/,
-
-		...webpack.dynamicPublicPath() ?
-			{use: dynamicCSSFiles} :
+			styleHelperLoaders(),
 
 			{
-				oneOf: [
-					{resourceQuery: /static/, use: staticCSSFiles},
-					{use: dynamicCSSFiles}
-				]
+				loader: 'monic-loader',
+				options: inherit(monic.stylus, {
+					replacers: [
+						require('@pzlr/stylus-inheritance')({resolveImports: true}),
+						include('build/monic/project-name'),
+						include('build/monic/apply-dynamic-component-styles')
+					]
+				})
 			}
-	});
+		);
+
+		loaders.rules.set('styl', {
+			test: /\.styl$/,
+
+			...webpack.dynamicPublicPath() ?
+				{use: dynamicCSSFiles} :
+
+				{
+					oneOf: [
+						{resourceQuery: /static/, use: staticCSSFiles},
+						{use: dynamicCSSFiles}
+					]
+				}
+		});
+	}
 
 	loaders.rules.set('ess', {
 		test: /\.ess$/,
@@ -275,8 +235,6 @@ module.exports = async function module({plugins}) {
 	loaders.rules.set('ss', {
 		test: /\.ss$/,
 		use: [
-			'prelude-loader',
-
 			{
 				loader: 'monic-loader',
 				options: inherit(monic.javascript, {
@@ -333,15 +291,6 @@ module.exports = async function module({plugins}) {
 		]
 	});
 
-	const webpHelperLoaders = (inline) => [
-		{
-			loader: 'url-loader',
-			options: inline ? urlLoaderInlineOpts : urlLoaderOpts
-		}
-	].concat(
-		isProd ? {loader: 'image-webpack-loader', options: imageOpts} : []
-	);
-
 	loaders.rules.set('img.webp', {
 		test: /\.webp$/,
 		oneOf: [
@@ -353,18 +302,6 @@ module.exports = async function module({plugins}) {
 			{use: webpHelperLoaders()}
 		]
 	});
-
-	const svgHelperLoaders = (inline) => [
-		{
-			loader: 'svg-url-loader',
-			options: inline ? urlLoaderInlineOpts : urlLoaderOpts
-		},
-		{
-			loader: 'svg-transform-loader'
-		}
-	].concat(
-		isProd ? {loader: 'svgo-loader', options: imageOpts.svgo} : []
-	);
 
 	loaders.rules.set('img.svg', {
 		test: /\.svg(\?.*)?$/,
@@ -379,6 +316,77 @@ module.exports = async function module({plugins}) {
 	});
 
 	return loaders;
+
+	function webpHelperLoaders(inline) {
+		return [
+			{
+				loader: 'url-loader',
+				options: inline ? urlLoaderInlineOpts : urlLoaderOpts
+			}
+		].concat(
+			isProd ? {loader: 'image-webpack-loader', options: imageOpts} : []
+		);
+	}
+
+	function svgHelperLoaders(inline) {
+		return [
+			{
+				loader: 'svg-url-loader',
+				options: inline ? urlLoaderInlineOpts : urlLoaderOpts
+			},
+			{
+				loader: 'svg-transform-loader'
+			}
+		].concat(
+			isProd ? {loader: 'svgo-loader', options: imageOpts.svgo} : []
+		);
+	}
+
+	function styleHelperLoaders(isStatic) {
+		const
+			useLink = /linkTag/i.test(config.style().injectType),
+			usePureCSSFiles = isStatic || useLink;
+
+		return [].concat(
+			usePureCSSFiles ? MiniCssExtractPlugin.loader : [],
+
+			[
+				{
+					loader: 'css-loader',
+					options: {
+						...config.css(),
+						importLoaders: 1
+					}
+				},
+
+				'svg-transform-loader/encode-query',
+
+				{
+					loader: 'postcss-loader',
+					options: inherit(config.postcss(), {
+						postcssOptions: {
+							plugins: [].concat(
+								require('autoprefixer')(config.autoprefixer()),
+
+								webpack.mode() === 'production' && !usePureCSSFiles ?
+									require('cssnano')(config.cssMinimizer().minimizerOptions) :
+									[]
+							)
+						}
+					})
+				},
+
+				{
+					loader: 'stylus-loader',
+					options: inherit(config.stylus(), {
+						stylusOptions: {
+							use: include('build/stylus')
+						}
+					})
+				}
+			]
+		);
+	}
 };
 
 Object.assign(module.exports, {

@@ -1,0 +1,25 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+@import "components/global/g-def/funcs.styl"
+@import "components/global/g-def/const.styl"
+
+$p = {
+	overWrapper: false
+}
+
+i-block
+	&-is-style-loaded
+		color alpha(#00FA9AFF, 0)
+
+	if $p.overWrapper
+		&__over-wrapper
+			absolute top 0 left 0
+			zIndex(layer, 2)
+			display none
+			size 100%

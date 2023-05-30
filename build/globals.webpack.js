@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,36 +6,44 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	$C = require('collection.js'),
 	config = require('@config/config');
 
 const
+	{csp, build, webpack} = config,
 	{config: pzlr} = require('@pzlr/build-core'),
 	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
 const
-	projectGraph = include('build/graph');
+	projectGraph = include('build/graph'),
+	s = JSON.stringify;
 
 const
 	runtime = config.runtime(),
-	s = JSON.stringify;
+	typescript = config.typescript();
 
 /**
- * Object to provide to `webpack.DefinePlugin`
- * @type {!Object}
+ * A dictionary to provide to `webpack.DefinePlugin`
+ * @type {object}
  */
 module.exports = {
 	IS_PROD,
+
 	DEBUG: runtime.debug === true,
-	BUILD_MODE: s(config.build.mode()),
+	BUILD_MODE: s(build.mode()),
+
+	PUBLIC_PATH: s(webpack.publicPath()),
+	CSP_NONCE_STORE: s(csp.nonceStore()),
+
+	SSR: webpack.ssr,
+	HYDRATION: webpack.hydration(),
+	MODULE: s(typescript.client.compilerOptions.module),
 
 	APP_NAME: s(APP_NAME),
 	API_URL: s(API_URL),
-
-	PUBLIC_PATH: s(config.webpack.publicPath()),
-	CSP_NONCE_STORE: s(config.csp.nonceStore()),
-	MODULE: s(config.typescript().client.compilerOptions.module),
 
 	LOCALE: s(LOCALE),
 	LANG_PACKS: s(config.i18n.langPacksStore),

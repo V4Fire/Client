@@ -7,5 +7,5 @@
  */
 
 import '../core';
-import '../global/g-def';
-import '../pages/p-v4-components-demo';
+import '../components/components/global/g-def';
+import '../components/pages/p-v4-components-demo';

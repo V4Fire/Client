@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	{resolve: pzlr} = require('@pzlr/build-core'),
@@ -17,7 +17,7 @@ const
  * Finds all files with translations and merges them into one object
  *
  * @param {!Array<string>} locales - a list of languages for collect
- * @returns {!Object}
+ * @returns {!object}
  */
 function collectI18NKeysets(locales) {
 	const

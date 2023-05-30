@@ -16,44 +16,44 @@ import type { EventListener } from 'core/component/queue-emitter/interface';
 export * from 'core/component/queue-emitter/interface';
 
 /**
- * The special kind of event emitter that supports queues of events
+ * The special kind of event emitter that supports queues of handlers
  */
 export default class QueueEmitter {
 	/**
-	 * Queue of event listeners that is ready to fire
+	 * A queue of event handlers that are ready to invoke
 	 */
 	protected queue: Function[] = [];
 
 	/**
-	 * Map of tied event listeners that isn't ready to fire
+	 * A dictionary with tied event listeners that aren't ready to invoke
 	 */
 	protected listeners: Dictionary<EventListener[]> = Object.createDict();
 
 	/**
-	 * Attaches a callback for the specified set of events.
-	 * The callback will be invoked only when all specified events was emitted.
+	 * Attaches a handler for the specified set of events.
+	 * The handler will be invoked only when all specified events are fired.
 	 *
-	 * @param event - set of events (can be undefined)
-	 * @param cb
+	 * @param event - a set of events (can be undefined)
+	 * @param handler
 	 */
-	on(event: Nullable<Set<string>>, cb: Function): void {
+	on(event: Nullable<Set<string>>, handler: Function): void {
 		if (event != null && event.size > 0) {
-			for (let v = event.values(), el = v.next(); !el.done; el = v.next()) {
-				const key = el.value;
-				this.listeners[key] = this.listeners[key] ?? [];
-				this.listeners[key]!.push({event, cb});
-			}
+			event.forEach((name) => {
+				const listeners = this.listeners[name] ?? [];
+				listeners.push({event, handler});
+				this.listeners[name] = listeners;
+			});
 
 			return;
 		}
 
-		this.queue.push(cb);
+		this.queue.push(handler);
 	}
 
 	/**
 	 * Emits the specified event.
-	 * If at least one of listeners returns a promise,
-	 * the method returns promise that is resolved after all internal promises are resolved.
+	 * If at least one of handlers returns a promise,
+	 * the method returns a promise that will be resolved after all internal promises are resolved.
 	 *
 	 * @param event
 	 */
@@ -61,32 +61,31 @@ export default class QueueEmitter {
 		const
 			queue = this.listeners[event];
 
-		if (!queue) {
+		if (queue == null) {
 			return;
 		}
 
 		const
-			tasks = <Array<CanPromise<unknown>>>[];
+			tasks: Array<CanPromise<unknown>> = [];
 
-		for (let i = 0; i < queue.length; i++) {
-			const
-				el = queue[i];
-
+		queue.forEach((el) => {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-			if (el != null) {
-				const ev = el.event;
-				ev.delete(event);
+			if (el == null) {
+				return;
+			}
 
-				if (ev.size === 0) {
-					const
-						task = el.cb();
+			const ev = el.event;
+			ev.delete(event);
 
-					if (Object.isPromise(task)) {
-						tasks.push(task);
-					}
+			if (ev.size === 0) {
+				const
+					task = el.handler();
+
+				if (Object.isPromise(task)) {
+					tasks.push(task);
 				}
 			}
-		}
+		});
 
 		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);
@@ -94,25 +93,25 @@ export default class QueueEmitter {
 	}
 
 	/**
-	 * Drains the queue of listeners that is ready to fire.
+	 * Drains the queue of handlers that are ready to invoke.
 	 * If at least one of listeners returns a promise,
-	 * the method returns promise that is resolved after all internal promises are resolved.
+	 * the method returns a promise that will be resolved after all internal promises are resolved.
 	 */
 	drain(): CanPromise<void> {
 		const
 			{queue} = this;
 
 		const
-			tasks = <Array<Promise<unknown>>>[];
+			tasks: Array<Promise<unknown>> = [];
 
-		for (let i = 0; i < queue.length; i++) {
+		queue.forEach((el) => {
 			const
-				task = queue[i]();
+				task = el();
 
 			if (Object.isPromise(task)) {
 				tasks.push(task);
 			}
-		}
+		});
 
 		if (tasks.length > 0) {
 			return Promise.all(tasks).then(() => undefined);

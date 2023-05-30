@@ -7,7 +7,7 @@
  */
 
 /**
- * Session identifier
+ * The session identifier
  */
 export type SessionKey = Nullable<
 	string |
@@ -19,17 +19,17 @@ export type SessionKey = Nullable<
  */
 export interface SessionParams extends Dictionary {
 	/**
-	 * Value for a CSRF token
+	 * A value for the `CSRF` token
 	 */
 	csrf?: string;
 }
 
 /**
- * Object that contains session information
+ * Session information
  */
 export interface Session {
 	/**
-	 * Session key or a simple predicate (authorized/non-authorized)
+	 * The session key or a simple predicate (authorized/non-authorized)
 	 */
 	auth: SessionKey;
 

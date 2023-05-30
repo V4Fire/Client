@@ -56,7 +56,7 @@ export default class Session extends Provider {
 		async addSession(this: Session, {opts}: MiddlewareParams): Promise<void> {
 			if (opts.api) {
 				const h = await this.getAuthParams();
-				Object.mixin({traits: true}, opts.headers, h);
+				Object.mixin({propsToCopy: 'new'}, opts.headers, h);
 			}
 		}
 	};

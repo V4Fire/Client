@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,18 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	Snakeskin = require('snakeskin');
 
 const
+	{webpack} = require('@config/config'),
 	{Vars} = Snakeskin;
 
 module.exports = [
 	/**
-	 * Expands the `_` snippet as a `<${rootTag}>` tag
+	 * Expands the `_` snippet as `<div v-tag=${rootTag}>`
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {object} attrs
 	 * @param {string} rootTag
 	 * @returns {string}
 	 *
@@ -38,8 +39,16 @@ module.exports = [
 				return rootTag;
 			}
 
-			attrs[':is'] = ["rootTag || 'div'"];
-			return 'tag';
+			const
+				tag = ["rootTag || 'div'"];
+
+			if (webpack.ssr) {
+				attrs[':is'] = tag;
+				return 'component';
+			}
+
+			attrs['v-tag'] = tag;
+			return 'div';
 		}
 
 		return tag;
@@ -47,7 +56,7 @@ module.exports = [
 
 	/**
 	 * Expands the `:section` and `:/section` snippets.
-	 * These snippets help to use semantics HTML tags, like `article` or `section` and don't care about `h` types.
+	 * These snippets help to use semantics HTML tags, like `article` or `section` and don't care about the `h` levels.
 	 *
 	 * @param {string} tag
 	 * @returns {string}
@@ -89,10 +98,10 @@ module.exports = [
 	},
 
 	/**
-	 * Expands the `a:void` snippet as a `<a href="javascript:void(0)">` tag
+	 * Expands the `a:void` snippet as `<a href="javascript:void(0)">`
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {object} attrs
 	 * @returns {string}
 	 *
 	 * @example
@@ -111,10 +120,10 @@ module.exports = [
 	},
 
 	/**
-	 * Expands the `button:link` snippet as a `<button class="a">` tag
+	 * Expands the `button:link` snippet as `<button class="a">`
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {object} attrs
 	 * @returns {string}
 	 *
 	 * @example
@@ -126,34 +135,8 @@ module.exports = [
 	function expandButtonLink(tag, attrs) {
 		if (/^button:a$/.test(tag)) {
 			attrs.type = ['button'];
-			attrs.class = (attrs.class || []).concat('a');
+			attrs.class = Array.concat([], attrs.class, 'a');
 			return 'button';
-		}
-
-		return tag;
-	},
-
-	/**
-	 * Expands the `@component` snippet as a `<component v4-flyweight-component>` tag
-	 *
-	 * @param {string} tag
-	 * @param {!Object} attrs
-	 * @returns {string}
-	 *
-	 * @example
-	 * ```
-	 * /// <span v4-flyweight-component="b-button"></span>
-	 * < @b-button
-	 * ```
-	 */
-	function expandFlyweightComponent(tag, attrs) {
-		const
-			flyweightPrfx = '@';
-
-		if (tag.startsWith(flyweightPrfx)) {
-			attrs['v4-flyweight-component'] = [tag.slice(flyweightPrfx.length)];
-			attrs[':instance-of'] = attrs['v4-flyweight-component'];
-			return 'span';
 		}
 
 		return tag;
