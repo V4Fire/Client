@@ -40,7 +40,7 @@ export default class ChunkRequest extends Friend {
 	 * Last loaded data chunk that was processed with `dbConverter`
 	 *
 	 * @deprecated
-	 * {@link ScrollRequest.lastLoadedChunk}
+	 * {@link ChunkRequest.lastLoadedChunk}
 	 */
 	lastLoadedData: unknown[] = [];
 
