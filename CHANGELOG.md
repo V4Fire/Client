@@ -11,11 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.48.3 (2023-05-29)
+## v3.48.4 (2023-05-30)
 
 #### :rocket: New Feature
 
 * Added ability to specify a custom validator function in `i-input`
+
+## v3.47.4 (2023-05-29)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when observing fields that are redefined from props `core/component/decorators`
 
 ## v3.47.3 (2023-05-26)
 
@@ -27,7 +33,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a bug in `core/component/decorators`: the overridden getter with cache had a value equal to the parent's getter value.
+* Fixed a bug when the overridden getter with cache had a value equal to the parent's getter value `core/component/decorators`
 
 ## v3.47.1 (2023-05-18)
 
