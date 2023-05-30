@@ -457,7 +457,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param event
 	 */
 	canSelfDispatchEvent(event: string): boolean {
-		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
+		return !/^(?:component-status|hook)(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
 	}
 
 	/**

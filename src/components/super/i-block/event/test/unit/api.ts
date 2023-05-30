@@ -169,8 +169,7 @@ test.describe('<i-block> events - API', () => {
 	});
 
 	test.describe('event dispatching', () => {
-		// FIXME: broken test
-		test.skip('simple usage', async ({page}) => {
+		test('simple usage', async ({page}) => {
 			const target = await renderDummy(page, {
 				dispatching: true
 			});
@@ -198,8 +197,7 @@ test.describe('<i-block> events - API', () => {
 			test.expect(scan).toEqual([1, {a: 1}, componentName, 1, {a: 1}, 1, {a: 1}]);
 		});
 
-		// FIXME: broken test
-		test.skip('providing `globalName`', async ({page}) => {
+		test('providing `globalName`', async ({page}) => {
 			const target = await renderDummy(page, {
 				dispatching: true,
 				globalName: 'baz'
@@ -253,8 +251,7 @@ test.describe('<i-block> events - API', () => {
 			]);
 		});
 
-		// FIXME: this test tries to change immutable component props
-		test.skip('providing `selfDispatching`', async ({page}) => {
+		test('providing `selfDispatching`', async ({page}) => {
 			const target = await renderDummy(page, {
 				dispatching: true
 			});
@@ -285,8 +282,7 @@ test.describe('<i-block> events - API', () => {
 			test.expect(scan).toEqual([1, {a: 1}, componentName, 1, {a: 1}, 1, {a: 1}]);
 		});
 
-		// FIXME: same issues as above
-		test.skip('shouldn\'t self dispatch hook events', async ({page}) => {
+		test('shouldn\'t self dispatch hook events', async ({page}) => {
 			const target = await renderDummy(page, {
 				dispatching: true
 			});

@@ -41,8 +41,8 @@ export function createdState(component: ComponentInterface): void {
 			p = parent.unsafe,
 			destroy = unsafe.$destroy.bind(unsafe);
 
-		p.$on('on-component-hook:before-destroy', destroy);
-		$a.worker(() => p.$off('on-component-hook:before-destroy', destroy));
+		p.$on('on-hook:before-destroy', destroy);
+		$a.worker(() => p.$off('on-hook:before-destroy', destroy));
 
 		const isRegular =
 			unsafe.meta.params.functional !== true;
@@ -73,8 +73,8 @@ export function createdState(component: ComponentInterface): void {
 				onActivation(p.hook);
 			}
 
-			p.$on('on-component-hook-change', onActivation);
-			$a.worker(() => p.$off('on-component-hook-change', onActivation));
+			p.$on('on-hook-change', onActivation);
+			$a.worker(() => p.$off('on-hook-change', onActivation));
 		}
 	}
 
