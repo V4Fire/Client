@@ -23,9 +23,10 @@ c($kit, $id = null, $reserved = false, $base = false)
 	getGlobalColor($kit, $id || null, $reserved, $base)
 
 /**
- * Returns a shadow from the design system. Shadow can be applied by filter or box-shadow
+ * Returns a shadow style from the design system by the specified name.
+ * The shadow can be applied with a filter or box-shadow.
  *
- * @param {string} $name - shadow name in a project design system package
+ * @param {string} $name - the shadow name in the project design system
  * @param {number|string} [$id]
  */
 dsShadow($name, $id = null)
@@ -34,9 +35,9 @@ dsShadow($name, $id = null)
 	return $value
 
 /**
- * Returns a gradient from a project design system package
+ * Returns a gradient style from the design system by the specified name.
  *
- * @param {string} $name - gradient name in ds
+ * @param {string} $name - the gradient name in the project design system
  * @param {number|string} [$id]
  */
 dsGradient($name, $id = null)

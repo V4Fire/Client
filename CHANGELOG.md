@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added a new helpers for working with gradient and shadow from a design system `global/g-def/funcs` 
+* Added new helpers for working with gradients and shadows from the design system `global/g-def/funcs`
 
 ## v3.47.4 (2023-05-29)
 

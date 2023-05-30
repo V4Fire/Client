@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new helpers for working with gradient and shadow from a design system `global/g-def/funcs` 
+* Added new helpers for working with gradients and shadows from the design system
 
 ## v3.5.1 (2021-09-20)
 
