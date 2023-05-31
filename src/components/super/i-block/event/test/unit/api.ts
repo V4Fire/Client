@@ -169,7 +169,7 @@ test.describe('<i-block> events - API', () => {
 	});
 
 	test.describe('event dispatching', () => {
-		test('simple usage', async ({page}) => {
+		test('should dispatch events on the `rootEmitter` prefixed with the component name', async ({page}) => {
 			const target = await renderDummy(page, {
 				dispatching: true
 			});
@@ -197,13 +197,15 @@ test.describe('<i-block> events - API', () => {
 			test.expect(scan).toEqual([1, {a: 1}, componentName, 1, {a: 1}, 1, {a: 1}]);
 		});
 
-		test('providing `globalName`', async ({page}) => {
+		test('should dispatch events on the `rootEmitter` prefixed with the specified `globalName`', async ({page}) => {
+			const globalName = 'baz';
+
 			const target = await renderDummy(page, {
 				dispatching: true,
-				globalName: 'baz'
+				globalName
 			});
 
-			const scan = await target.evaluate((ctx) => {
+			const scan = await target.evaluate((ctx, globalName) => {
 				const res: any[] = [];
 
 				ctx.on('onFoo', (...args) => {
@@ -218,18 +220,18 @@ test.describe('<i-block> events - API', () => {
 					res.push(...args);
 				});
 
-				ctx.unsafe.rootEmitter.on('baz::foo', (ctx, ...args) => {
+				ctx.unsafe.rootEmitter.on(`${globalName}::foo`, (ctx, ...args) => {
 					res.push((<bDummy>ctx).componentName, ...args);
 				});
 
-				ctx.unsafe.rootEmitter.on('baz::onFoo', (...args) => {
+				ctx.unsafe.rootEmitter.on(`${globalName}::onFoo`, (...args) => {
 					res.push(...args);
 				});
 
 				ctx.emit('foo', 1, {a: 1});
 
 				return res;
-			});
+			}, globalName);
 
 			test.expect(scan).toEqual([
 				1,
@@ -251,7 +253,10 @@ test.describe('<i-block> events - API', () => {
 			]);
 		});
 
-		test('providing `selfDispatching`', async ({page}) => {
+		test([
+			'should dispatch events on the `rootEmitter` without any prefixes',
+			'when the root component has `selfDispatching = true`'
+		].join(' '), async ({page}) => {
 			const target = await renderDummy(page, {
 				dispatching: true
 			});
@@ -282,7 +287,10 @@ test.describe('<i-block> events - API', () => {
 			test.expect(scan).toEqual([1, {a: 1}, componentName, 1, {a: 1}, 1, {a: 1}]);
 		});
 
-		test('shouldn\'t self dispatch hook events', async ({page}) => {
+		test([
+			'shouldn\'t dispatch hook events on the `rootEmitter`',
+			'when the root component has `selfDispatching = true`'
+		].join(' '), async ({page}) => {
 			const target = await renderDummy(page, {
 				dispatching: true
 			});
