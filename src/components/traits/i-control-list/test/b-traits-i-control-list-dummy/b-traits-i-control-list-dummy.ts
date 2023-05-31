@@ -6,11 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * [[include:components/dummies/b-dummy-control-list/README.md]]
- * @packageDocumentation
- */
-
 import { derive } from 'core/functools/trait';
 
 import iControlList, { Control } from 'components/traits/i-control-list/i-control-list';
