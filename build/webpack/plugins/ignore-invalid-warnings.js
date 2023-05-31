@@ -12,6 +12,9 @@
  * Webpack plugin to ignore invalid warnings during building
  */
 module.exports = class IgnoreInvalidWarningsPlugin {
+	/**
+	 * @param {import('webpack').Compiler} compiler
+	 */
 	apply(compiler) {
 		compiler.hooks.done.tap('IgnoreInvalidWarningsPlugin', doneHook);
 

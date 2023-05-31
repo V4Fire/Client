@@ -142,7 +142,7 @@ test.describe('<b-hidden-input> disallow form value', () => {
 
 	/**
 	 * @param page
-	 * @param attrs
+	 * @param [attrs]
 	 */
 	async function renderHiddenInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bHiddenInput>> {
 		await Component.createComponent(page, 'b-hidden-input', {

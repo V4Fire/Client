@@ -116,6 +116,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	/**
 	 * @param {Array<string>} keys
 	 * @param {string} theme
+	 * @returns {Array<string>}
 	 */
 	function getVariablePath(keys, theme) {
 		return keys.filter((field) => !['theme', theme].includes(field));
@@ -142,6 +143,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	 * @param {(object|Array)} [res]
 	 * @param {Array<string>} [path]
 	 * @param {(string|boolean)} [theme]
+	 * @returns {object}
 	 */
 	function parseRawDS(obj, res, path, theme) {
 		if (!res) {
@@ -246,6 +248,7 @@ function getThemedPathChunks(field, theme, isFieldThemed) {
  *
  * @param {DesignSystem} ds
  * @param {(string|Array<string>)} path
+ * @returns {boolean}
  */
 function checkDeprecated(ds, path) {
 	if (!Object.isDictionary($C(ds).get('meta.deprecated'))) {

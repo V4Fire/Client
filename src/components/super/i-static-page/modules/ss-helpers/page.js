@@ -44,7 +44,7 @@ exports.getPageScriptDepsDecl = getPageScriptDepsDecl;
  *
  * @param {Array<string>} dependencies - the list of dependencies to load
  * @param {object} opts
- * @param {object<string>} opts.assets - a dictionary with static page assets
+ * @param {Object.<string>} opts.assets - a dictionary with static page assets
  * @param {boolean} [opts.wrap] - if true, the final code is wrapped by a script tag
  * @returns {string}
  */
@@ -91,7 +91,7 @@ exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
  * You may use the `wrap` option to wrap the final code with a tag to load.
  *
  * @param {Array<string>} dependencies - the list of dependencies to load
- * @param {object<string>} assets - a dictionary with static page assets
+ * @param {Object.<string>} assets - a dictionary with static page assets
  * @param {boolean} [wrap] - if true, the final code is wrapped by a tag to load
  * @param {boolean} [js] - if true, the function will always return JS code to load the dependency
  * @returns {string}
@@ -126,7 +126,7 @@ exports.getScriptDeclByName = getScriptDeclByName;
  * You need to put this declaration within a script tag or use the `wrap` option.
  *
  * @param {string} name
- * @param {object<string>} assets - a dictionary with static page assets
+ * @param {Object.<string>} assets - a dictionary with static page assets
  * @param {boolean} [optional] - if true, the missing of this script won't throw an error
  * @param {boolean} [defer=true] - if true, the script is loaded with the "defer" attribute
  * @param {boolean} [inline] - if true, the script is placed as a text
@@ -188,7 +188,7 @@ exports.getStyleDeclByName = getStyleDeclByName;
  * You may use the `wrap` option to wrap the final code with a tag to load.
  *
  * @param {string} name
- * @param {object<string>} assets - a dictionary with static page assets
+ * @param {Object.<string>} assets - a dictionary with static page assets
  * @param {boolean} [optional] - if true, the missing of this style won't throw an error
  * @param {boolean} [defer] - if true, the style is loaded only after loading of the whole page
  * @param {boolean} [inline] - if true, the style is placed as a text

@@ -21,6 +21,9 @@ const
  * WebPack plugin for including internationalization files from the file system in HTML applications
  */
 module.exports = class I18NGeneratorPlugin {
+	/**
+	 * @param {import('webpack').Compiler} compiler
+	 */
 	apply(compiler) {
 		compiler.hooks.done.tap('I18NGeneratorPlugin', doneHook);
 

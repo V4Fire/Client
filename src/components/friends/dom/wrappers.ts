@@ -123,7 +123,6 @@ export function watchForIntersection(
  * Note, changes occurring at the same tick are merged into one.
  * You can disable this behavior by passing the `immediate: true` option.
  *
- * @param el
  * @param el - the element to watch
  * @param handler - a function that will be called when the observable element is resized
  */

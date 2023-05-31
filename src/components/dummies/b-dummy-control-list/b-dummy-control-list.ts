@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable @v4fire/require-jsdoc */
+
 /**
  * [[include:components/dummies/b-dummy-control-list/README.md]]
  * @packageDocumentation

@@ -140,6 +140,11 @@ async function buildProjectGraph() {
 
 	/**
 	 * The reducer for creating an entry point object
+	 *
+	 * @param {object} entry
+	 * @param {Array<string>} list
+	 * @param {string} name
+	 * @returns {object}
 	 */
 	async function entryReducer(entry, list, name) {
 		// JS / TS
@@ -359,6 +364,7 @@ async function buildProjectGraph() {
 
 	/**
 	 * Loads dependency graph from cache
+	 * @returns {Promise<object>}
 	 */
 	function loadFromCache() {
 		const
@@ -403,6 +409,7 @@ async function buildProjectGraph() {
 
 	/**
 	 * Returns a map of all existed components
+	 * @returns {Array<object>}
 	 */
 	async function getComponents() {
 		const components = await block.getAll(null, {
@@ -418,7 +425,9 @@ async function buildProjectGraph() {
 
 	/**
 	 * Returns the file path relative to the entry folder
+	 *
 	 * @param {string} filePath
+	 * @returns {string}
 	 */
 	function getEntryPath(filePath) {
 		if (resolve.isNodeModule(filePath)) {

@@ -27,6 +27,9 @@ const
  * Webpack plugin to generate `.dependencies.js` files and `assets.json` / `assets.js`
  */
 module.exports = class DependenciesPlugin {
+	/**
+	 * @param {import('webpack').Compiler} compiler
+	 */
 	apply(compiler) {
 		compiler.hooks.emit.tap('DependenciesPlugin', (compilation) => {
 			const

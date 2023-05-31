@@ -25,6 +25,8 @@ const {
 /**
  * Registers gulp tasks to minify/generate project static assets
  *
+ * @param {object} gulp
+ *
  * @example
  * ```bash
  * # Builds project favicons
@@ -198,6 +200,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 	/**
 	 * Generates GZ archives from project files
+	 * @returns {void}
 	 */
 	gulp.task('static:gzip', gulp.series([
 		gulp.parallel([

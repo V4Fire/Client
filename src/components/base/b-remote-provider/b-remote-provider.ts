@@ -44,6 +44,8 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
+	 * @param err
+	 * @param retry
 	 * @emits `error(err:Error |` [[RequestError]]`, retry:` [[RetryRequestFn]]`)`
 	 */
 	protected override onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
@@ -107,6 +109,7 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
+	 * @param data
 	 * @emits `addData(data: unknown)`
 	 */
 	protected override onAddData(data: unknown): void {
@@ -121,6 +124,7 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
+	 * @param data
 	 * @emits `updateData(data: unknown)`
 	 */
 	protected override onUpdateData(data: unknown): void {
@@ -135,6 +139,7 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
+	 * @param data
 	 * @emits `deleteData(data: unknown)`
 	 */
 	protected override onDeleteData(data: unknown): void {

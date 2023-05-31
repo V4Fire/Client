@@ -35,7 +35,7 @@ Snakeskin.importFilters({
 	 *
 	 * @param {string} filePath
 	 * @param {string} sourceFilePath - the original source file path
-	 * @returns {(string|!Array<string>)}
+	 * @returns {(string|Array<string>)}
 	 *
 	 * @example
 	 * ```

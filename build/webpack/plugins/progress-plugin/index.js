@@ -19,7 +19,9 @@ let
 
 /**
  * Create a webpack plugin to show a build process by the passed name
+ *
  * @param {string} processName
+ * @returns {import('webpack').ProgressPlugin}
  */
 module.exports = function createProgressPlugin(processName) {
 	if (logger == null) {
