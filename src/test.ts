@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable @typescript-eslint/unified-signatures */
-
 /**
  * An abstract class that represents Vue compatible component API
  */

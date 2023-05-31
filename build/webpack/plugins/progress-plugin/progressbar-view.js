@@ -64,7 +64,7 @@ module.exports = class ProgressbarView extends ProgressView {
 	}
 
 	/**
-	 * Remave an instance of multibar for the build process
+	 * Remove an instance of multibar
 	 * @param {string} processName
 	 */
 	_removeProgressBar(processName) {
