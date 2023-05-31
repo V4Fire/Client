@@ -93,7 +93,7 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 		defineRef(refs, refName, resolveRefVal);
 	}
 
-	ctx.$emit(`[[REF:${refName}]]`, refs[refName]);
+	ctx.$nextTick(() => ctx!.$emit(`[[REF:${refName}]]`, refs[refName]));
 
 	function defineRef(refs: object, refName: PropertyKey, getter: () => unknown) {
 		Object.defineProperty(refs, refName, {
