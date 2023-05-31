@@ -1,5 +1,5 @@
 {
-  "hash": "158115cead1ba76da881ae0869619a0b57f4c65f14f992130c220f2d2ed50eac",
+  "hash": "31042465698fe6f2f3241fd5c983ee95558a1decfb50ebd72658d5df11930b28",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1258,6 +1258,70 @@
             "src/components/traits/i-control-list/test/b-traits-i-control-list-dummy/b-traits-i-control-list-dummy.styl"
           ],
           "tpl": "src/components/traits/i-control-list/test/b-traits-i-control-list-dummy/b-traits-i-control-list-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-traits-i-lock-page-scroll-dummy",
+        {
+          "index": "src/components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy/index.js",
+          "declaration": {
+            "name": "b-traits-i-lock-page-scroll-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-traits-i-lock-page-scroll-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy/b-traits-i-lock-page-scroll-dummy.ts",
+          "styles": [
+            "src/components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy/b-traits-i-lock-page-scroll-dummy.styl"
+          ],
+          "tpl": "src/components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy/b-traits-i-lock-page-scroll-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-traits-i-observe-dom-dummy",
+        {
+          "index": "src/components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy/index.js",
+          "declaration": {
+            "name": "b-traits-i-observe-dom-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-traits-i-observe-dom-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy/b-traits-i-observe-dom-dummy.ts",
+          "styles": [
+            "src/components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy/b-traits-i-observe-dom-dummy.styl"
+          ],
+          "tpl": "src/components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy/b-traits-i-observe-dom-dummy.ss",
           "etpl": null
         }
       ],
