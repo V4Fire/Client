@@ -8,11 +8,6 @@
 
 /* eslint-disable jsdoc/require-jsdoc */
 
-/**
- * [[include:components/dummies/b-dummy-lfc/README.md]]
- * @packageDocumentation
- */
-
 import iData, { component, hook, field } from 'components/super/i-data/i-data';
 
 export * from 'components/super/i-data/i-data';
@@ -24,7 +19,7 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 
-export default class bDummyLfc extends iData {
+export default class bSuperIBlockLfcDummy extends iData {
 	@field()
 	foo: number = 1;
 
