@@ -36,14 +36,14 @@ export interface ValidatorParams extends Dictionary {
 	showMsg?: boolean;
 }
 
-export interface CustomValidatorParams<
-	P extends ValidatorParams = any
-> extends ValidatorParams {
+export interface CustomValidatorParams<P extends ValidatorParams = any> extends ValidatorParams {
 	/**
 	 * A custom validator function
 	 */
 	validator: CustomValidator<P>;
 }
+
+type CustomValidator<P> = (params: P) => unknown;
 
 export interface ValidatorError<E = unknown> extends Dictionary {
 	name: string;
@@ -77,8 +77,6 @@ export type ValidatorsDecl<CTX extends iInput = any, P extends ValidatorParams =
 >;
 
 type Validator<CTX, P> = (this: CTX, params: P) => CanPromise<ValidatorResult>;
-
-type CustomValidator<P> = (params: P) => unknown;
 
 export type Value = unknown;
 export type FormValue = Value;
