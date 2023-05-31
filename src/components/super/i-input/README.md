@@ -281,8 +281,57 @@ Supported validators are placed in the `validators` static property.
 This property is a dictionary: the keys represent the names of the validators, and the values are functions that accept
 validation parameters and must return a `ValidatorResult` type. Any validator can return a promise.
 
-The `iInput` class provides only one validator out of the box: `required`, which checks that the component must be filled.
-You can add a new validator to your component.
+#### Automatic validation
+
+By default, the validation process is automatically started on the `actionChange` event.
+This event fires only when a user changes the component value manually.
+
+```
+/// Every time a user types some value into the component, the component will invoke validation
+< b-input :validators = ['required', 'email']
+```
+
+#### Built-in validators
+
+The component provides a bunch of validators.
+
+##### required
+
+Checks whether a component has been filled out. If the user attempts to submit the form without entering any data in a required field,
+the validation will fail indicating that the field is required and must be filled in before the submission can proceed.
+
+```
+< b-input :validators = ['required']
+```
+
+#### custom
+
+This validator is used to specify a custom validation function that can be used to validate a field in a form.
+This validator allows you to define your own logic for validation.
+
+```
+< b-input :validators = [ &
+  {
+    custom: {
+      validator: yourValidator,
+      param1: 'foo',
+      param2: 'bar'
+    }
+  }
+] .
+```
+
+In this example, `yourValidator` is your custom validation function, and `param1` and `param2` are
+additional parameters passed to the function as the following object `{param1: 'foo', param2: 'bar'}`.
+
+It is important to note that if you use the custom validator, you must provide a function as the validator parameter.
+If you specify the validator without a function, an error will be thrown:
+
+```
+< b-input :validators = ['custom']
+```
+
+You're free to add a new validator to your component:
 
 ```typescript
 import iInput, { component } from 'components/super/i-input/i-input';
@@ -328,16 +377,6 @@ export default class MyInput extends iInput {
     }
   };
 }
-```
-
-#### Automatic validation
-
-By default, the validation process is automatically started on the `actionChange` event.
-This event fires only when the user manually changes the component value.
-
-```
-/// Every time the user enters some value into the component, the component calls validation.
-< b-input :validators = ['required', 'email']
 ```
 
 ### info/error messages
