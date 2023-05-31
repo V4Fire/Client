@@ -257,7 +257,12 @@ export default class bVirtualScroll extends iData implements iItems {
 		renderNext?: HTMLElement;
 	};
 
-	/** @emits `chunkLoading(page: number)` */
+	/**
+	 * @param [data]
+	 * @param [opts]
+	 *
+	 * @emits `chunkLoading(page: number)`
+	 * */
 	override initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
 		this.async.clearAll({label: 'chunkRequest.waitForInitCalls'});
 

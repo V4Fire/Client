@@ -106,6 +106,8 @@ export default class DOM {
 	/**
 	 * Returns a generator of element names for the specified block
 	 *
+	 * @param blockName
+	 *
 	 * @example
 	 * ```typescript
 	 * const
@@ -117,6 +119,9 @@ export default class DOM {
 
 	/**
 	 * Returns an element name for the specified block
+	 *
+	 * @param blockName
+	 * @param elName
 	 *
 	 * @example
 	 * ```typescript
@@ -137,6 +142,8 @@ export default class DOM {
 	/**
 	 * Returns a generator of element classes for the specified block
 	 *
+	 * @param blockName
+	 *
 	 * @example
 	 * ```typescript
 	 * const
@@ -148,6 +155,9 @@ export default class DOM {
 
 	/**
 	 * Returns an element class for the specified block
+	 *
+	 * @param blockName
+	 * @param elName
 	 *
 	 * @example
 	 * ```typescript
@@ -168,6 +178,8 @@ export default class DOM {
 	/**
 	 * Returns a generator of element names with modifiers for the specified block
 	 *
+	 * @param fullElementName
+	 *
 	 * @example
 	 * ```typescript
 	 * const
@@ -182,6 +194,10 @@ export default class DOM {
 
 	/**
 	 * Returns an element name with modifiers for the specified block
+	 *
+	 * @param fullElementName
+	 * @param modName
+	 * @param modVal
 	 *
 	 * @example
 	 * ```typescript
@@ -204,6 +220,8 @@ export default class DOM {
 	/**
 	 * Returns a generator of element classes with modifiers for the specified block
 	 *
+	 * @param fullElementName
+	 *
 	 * @example
 	 * ```typescript
 	 * const
@@ -218,6 +236,10 @@ export default class DOM {
 
 	/**
 	 * Returns an element class name with modifiers for the specified block
+	 *
+	 * @param fullElementName
+	 * @param modName
+	 * @param modVal
 	 *
 	 * @example
 	 * ```typescript

@@ -463,7 +463,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli public-path
 		 * @env PUBLIC_PATH
 		 *
-		 * @param args
+		 * @param {...Array<string>} args
 		 * @returns {string}
 		 *
 		 * @example
@@ -517,7 +517,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `output.filename` value.
 		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param vars
+		 * @param {object} vars
 		 * @returns {string}
 		 *
 		 * @example
@@ -547,7 +547,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `DllPlugin.output.filename` value.
 		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param vars
+		 * @param {object} vars
 		 * @returns {string}
 		 *
 		 * @example
@@ -564,7 +564,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `FileLoader.output.filename` value.
 		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param params
+		 * @param {object} params
 		 * @returns {string}
 		 *
 		 * @example
@@ -636,8 +636,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @env PROGRESS
 		 *
 		 * @see https://github.com/npkgz/cli-progress
-		 * @param [def] - default value
-		 * @returns {object}
+		 * @param {boolean} [def] - default value
+		 * @returns {void|object}
 		 */
 		progress(def = true) {
 			const enabled = o('progress', {
@@ -1019,6 +1019,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @cli i18n-strategy
 		 * @env I18N_STRATEGY
+		 * @param {string} [def]
 		 *
 		 * @returns {string}
 		 */

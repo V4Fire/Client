@@ -44,7 +44,7 @@ exports.getDS = function getDS() {
  *   * `true`, if necessary to pass all themes from the specified design system object
  *
  * @param {DesignSystem} ds - a raw design system object (e.g. loaded from the linked in the `.pzlrrc` package)
- * @param {(!Array<string>|true)} buildThemes
+ * @param {(Array<string>|true)} buildThemes
  *
  * @returns {?Array<string>}
  */

@@ -152,6 +152,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 	/**
 	 * Sets new component data from the data provider
 	 *
+	 * @param value
 	 * @emits `dbCanChange(value: CanUndef<this['DB']>)`
 	 * @emits `dbChange(value: CanUndef<this['DB']>)`
 	 */

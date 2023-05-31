@@ -68,6 +68,7 @@ exports.hash = hash;
  *
  * @param {string} output - source string
  * @param {boolean} [chunk] - if true, then the specified output is a chunk
+ * @returns {string}
  */
 function hash(output, chunk) {
 	return output.replace(hashRgxp, chunk ? `[chunkhash:${build.hashLength}]_` : `[contenthash:${build.hashLength}]_`);
@@ -77,6 +78,9 @@ exports.inherit = inherit;
 
 /**
  * Alias for `Object.mixin({deep, concatArray})`
+ *
+ * @param {Array} args
+ * @returns {object}
  */
 function inherit(...args) {
 	const extOpts = {

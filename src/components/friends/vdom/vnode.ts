@@ -115,8 +115,9 @@ export function create(
  * Creates a VNode by the specified descriptor
  *
  * @param type
- * @param [attrs]
- * @param [children]
+ * @param [opts]
+ * @param [opts.attrs]
+ * @param [opts.children]
  */
 function createVNode(
 	this: VDOM,
