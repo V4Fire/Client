@@ -1,5 +1,5 @@
 {
-  "hash": "3cbc94e3ffeb0c326f7aaa6f0d019680c7287ef08d47a40ed938eae289ec23fc",
+  "hash": "8b110abf91824ebcf93c550629d3696a66bb99a29d4dd98a44c5f19c283bb8b7",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -172,38 +172,6 @@
             "src/components/dummies/b-dummy-control-list/b-dummy-control-list.styl"
           ],
           "tpl": "src/components/dummies/b-dummy-control-list/b-dummy-control-list.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-lfc",
-        {
-          "index": "src/components/dummies/b-dummy-lfc/index.js",
-          "declaration": {
-            "name": "b-dummy-lfc",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-lfc",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-lfc/b-dummy-lfc.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-lfc/b-dummy-lfc.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-lfc/b-dummy-lfc.ss",
           "etpl": null
         }
       ],
@@ -1214,6 +1182,38 @@
             "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-lfc-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-lfc-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-lfc-dummy",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-lfc-dummy",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.ss",
           "etpl": null
         }
       ],
