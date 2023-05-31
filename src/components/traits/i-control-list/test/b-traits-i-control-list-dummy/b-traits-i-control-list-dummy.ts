@@ -6,13 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable @v4fire/require-jsdoc */
-
-/**
- * [[include:components/dummies/b-dummy-control-list/README.md]]
- * @packageDocumentation
- */
-
 import { derive } from 'core/functools/trait';
 
 import iControlList, { Control } from 'components/traits/i-control-list/i-control-list';
@@ -20,7 +13,7 @@ import iBlock, { component, prop } from 'components/super/i-block/i-block';
 
 export * from 'components/super/i-block/i-block';
 
-interface bDummyControlList extends
+interface bTraitsIControlListDummy extends
 	Trait<typeof iControlList> {}
 
 @component({
@@ -31,7 +24,7 @@ interface bDummyControlList extends
 })
 
 @derive(iControlList)
-class bDummyControlList extends iBlock implements iControlList {
+class bTraitsIControlListDummy extends iBlock implements iControlList {
 	@prop(Array)
 	controls!: Control[];
 
@@ -56,4 +49,4 @@ class bDummyControlList extends iBlock implements iControlList {
 	}
 }
 
-export default bDummyControlList;
+export default bTraitsIControlListDummy;

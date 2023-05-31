@@ -1,3 +1,5 @@
+- namespace [%fileName%]
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,10 +8,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "components/super/i-block/i-block.styl"
+- include 'components/dummies/b-dummy'|b as placeholder
 
-$p = {
-
-}
-
-b-dummy-control-list extends i-block
+- template index() extends ['b-dummy'].index

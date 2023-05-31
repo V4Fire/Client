@@ -25,6 +25,10 @@ import type {
 
 } from 'components/traits/i-observe-dom/interface';
 
+//#if runtime has prelude/test-env
+import('components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy');
+//#endif
+
 export * from 'components/traits/i-observe-dom/interface';
 
 const
