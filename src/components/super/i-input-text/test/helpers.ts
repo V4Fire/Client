@@ -21,6 +21,7 @@ import type bSuperIInputTextDummy from 'components/super/i-input-text/test/b-sup
 export async function renderDummyInput(
 	page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}
 ): Promise<JSHandle<bSuperIInputTextDummy>> {
+	await Component.waitForComponentTemplate(page, 'b-super-i-input-text-dummy');
 	return Component.createComponent(
 		page,
 		'b-super-i-input-text-dummy-functional',
