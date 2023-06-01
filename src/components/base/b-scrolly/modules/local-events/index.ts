@@ -35,6 +35,11 @@ export function typedLocalEmitterFactory(ctx: bScrolly) {
 		ctx.unsafe.localEmitter.on(event, <Function>handler, asyncOpts);
 	};
 
+	const promisifyOnce = <EVENT extends ComponentLocalEvents>(
+		event: EVENT,
+		asyncOpts?: AsyncOptions
+	) => ctx.unsafe.localEmitter.promisifyOnce(event, asyncOpts);
+
 	const emit = <EVENT extends ComponentLocalEvents>(
 		event: EVENT,
 		...payload: LocalEventPayload<EVENT>
@@ -45,6 +50,7 @@ export function typedLocalEmitterFactory(ctx: bScrolly) {
 	return {
 		once,
 		on,
+		promisifyOnce,
 		emit
 	};
 }

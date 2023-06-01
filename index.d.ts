@@ -116,7 +116,28 @@ declare var
 	 * Requires a module by the specified path.
 	 * This function should only be used when writing tests.
 	 */
-	importModule: (path: string) => any;
+	importModule: (path: string) => any,
+
+	/**
+	 * Jest mock API for testing env
+	 */
+	jest: {
+		/**
+		 * Wrapper for jest `spyOn` function
+		 *
+		 * {@link ModuleMocker.spyOn}
+		 * @see https://jestjs.io/docs/mock-functions
+		 */
+		spy: import('jest-mock').ModuleMocker['spyOn'];
+
+		/**
+		 * Wrapper for jest `fn` function
+		 *
+		 * {@link ModuleMocker.fn}
+		 * @see https://jestjs.io/docs/mock-functions
+		 */
+		mock: import('jest-mock').ModuleMocker['fn'];
+	};
 
 interface TouchGesturesCreateOptions {
 	/**

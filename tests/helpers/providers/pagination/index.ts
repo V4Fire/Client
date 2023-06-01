@@ -7,7 +7,7 @@
  */
 
 import { fromQueryString } from 'core/url';
-import type { BrowserContext, Page } from 'playwright';
+import type { BrowserContext, Page, Route } from 'playwright';
 
 import type { RequestState, RequestQuery } from 'tests/helpers/providers/pagination/interface';
 
@@ -27,60 +27,67 @@ const requestStates: Dictionary<RequestState> = {
 export async function interceptPaginationRequest(
 	pageOrContext: Page | BrowserContext
 ): Promise<void> {
-	return pageOrContext.route(/api/, async (route) => {
-		const routeQuery = fromQueryString(new URL(route.request().url()).search);
+	return pageOrContext.route(/api/, paginationHandler);
+}
 
-		const query = <RequestQuery>{
-			chunkSize: 12,
-			id: String(Math.random()),
-			sleep: 100,
-			...routeQuery
-		};
+/**
+ * Handler for intercepted pagination requests
+ * @param route
+ */
+export async function paginationHandler(route: Route): Promise<void> {
+	const routeQuery = fromQueryString(new URL(route.request().url()).search);
 
-		const res = {
-			status: 200
-		};
+	const query = <RequestQuery>{
+		chunkSize: 12,
+		id: String(Math.random()),
+		sleep: 100,
+		...routeQuery
+	};
 
-		await sleep(<number>query.sleep);
+	const res = {
+		status: 200
+	};
 
-		// eslint-disable-next-line no-multi-assign
-		const state = requestStates[query.id] = requestStates[query.id] ?? {
-			i: 0,
-			requestNumber: 0,
-			totalSent: 0,
-			failCount: 0,
-			...query
-		};
+	await sleep(<number>query.sleep);
 
-		const
-			isFailCountNotReached = query.failCount != null ? state.failCount <= query.failCount : true;
+	// eslint-disable-next-line no-multi-assign
+	const state = requestStates[query.id] = requestStates[query.id] ?? {
+		i: 0,
+		requestNumber: 0,
+		totalSent: 0,
+		failCount: 0,
+		...query
+	};
 
-		if (Object.isNumber(query.failOn) && query.failOn === state.requestNumber && isFailCountNotReached) {
-			state.failCount++;
-			res.status = 500;
-			return undefined;
-		}
+	const
+		isFailCountNotReached = query.failCount != null ? state.failCount <= query.failCount : true;
 
-		state.requestNumber++;
+	if (Object.isNumber(query.failOn) && query.failOn === state.requestNumber && isFailCountNotReached) {
+		state.failCount++;
+		res.status = 500;
+		return undefined;
+	}
 
-		if (state.totalSent === state.total) {
-			return {
-				...query.additionalData,
-				data: []
-			};
-		}
+	state.requestNumber++;
 
-		const dataToSend = Array.from(Array(query.chunkSize), () => ({i: state.i++}));
-		state.totalSent += dataToSend.length;
-
+	if (state.totalSent === state.total) {
 		return route.fulfill({
 			status: res.status,
 			contentType: 'application/json',
-			body: JSON.stringify({
-				...query.additionalData,
-				data: dataToSend
-			})
+			body: JSON.stringify([])
 		});
+	}
+
+	const dataToSend = Array.from(Array(query.chunkSize), () => ({i: state.i++}));
+	state.totalSent += dataToSend.length;
+
+	return route.fulfill({
+		status: res.status,
+		contentType: 'application/json',
+		body: JSON.stringify({
+			...query.additionalData,
+			data: dataToSend
+		})
 	});
 }
 

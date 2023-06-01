@@ -104,7 +104,12 @@ export const componentLocalEvents = <const>{
 	/**
 	 * Вызов конвертации данных в `DB`.
 	 */
-	convertDataToDB: 'convertDataToDB'
+	convertDataToDB: 'convertDataToDB',
+
+	/**
+	 * This event will be emitted then all of the component data is rendered and all of the component data was loaded
+	 */
+	done: 'done'
 };
 
 /**
@@ -168,7 +173,15 @@ export const defaultProps = <const>{
 	shouldStopRequestingData: (_state: ComponentState, _ctx: bScrolly): boolean => false,
 
 	/** {@link bScrolly.shouldPerformRequest} */
-	shouldPerformDataRequest: (_state: ComponentState, _ctx: bScrolly): boolean => false,
+	shouldPerformDataRequest: (state: ComponentState, _ctx: bScrolly): boolean => {
+		const isLastRequestNotEmpty = () => state.lastLoaded.length > 0;
+
+		if (state.isInitialRender) {
+			return isLastRequestNotEmpty();
+		}
+
+		return false;
+	},
 
 	/** {@link bScrolly.shouldPerformRender} */
 	shouldPerformDataRender: (_state: ComponentState, _ctx: bScrolly): boolean => false

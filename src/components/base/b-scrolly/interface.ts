@@ -7,13 +7,14 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { componentItemType, componentDataLocalEvents, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents, componentRenderStrategy, canPerformRenderRejectionReason } from 'components/base/b-scrolly/const';
+import type { componentItemType, componentDataLocalEvents, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents, componentRenderStrategy, canPerformRenderRejectionReason, componentStrategy } from 'components/base/b-scrolly/const';
 import type { CreateRequestOptions, RequestQuery } from 'components/super/i-data/i-data';
 
 /**
  * {@link componentRenderStrategy}
  */
 export type ComponentRenderStrategyKeys = keyof typeof componentRenderStrategy;
+export type ComponentStrategyKeys = keyof typeof componentStrategy;
 
 /**
  * Состояние компонента.
@@ -25,6 +26,11 @@ export interface ComponentState {
 	isLastEmpty: boolean;
 	isInitialLoading: boolean;
 	lastLoaded: object[];
+	isInitialRender: boolean;
+	isDone: boolean;
+	maxViewedIndex: CanUndef<number>;
+	itemsTillEnd: CanUndef<number>;
+	mountedItems: Readonly<MountedComponentItem[]>;
 	lastLoadedRawData: unknown;
 }
 
@@ -53,6 +59,11 @@ export interface ComponentItem {
 	props?: Dictionary<unknown>;
 	key: string;
 	children?: ComponentItem[];
+}
+
+export interface MountedComponentItem extends ComponentItem {
+	node: HTMLElement;
+	index: number;
 }
 
 export type ComponentItemType = keyof typeof componentItemType;
@@ -88,10 +99,11 @@ export interface LocalEventPayloadMap {
 	dataEmpty: [isInitialLoading: boolean];
 
 	resetState: [];
+	done: [];
 	convertDataToDB: [data: unknown];
 
-	elementEnter: [element: HTMLElement, index: number, data: unknown];
-	elementOut: [element: HTMLElement, index: number, data: unknown];
+	elementEnter: [componentItem: MountedComponentItem];
+	elementOut: [componentItem: MountedComponentItem];
 
 	renderStart: [];
 	renderDone: [];

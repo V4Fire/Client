@@ -27,7 +27,8 @@ import type {
 	ShouldRequestFn,
 	ComponentRefs,
 	ComponentItemFactory,
-	ComponentItemType
+	ComponentItemType,
+	ComponentStrategyKeys
 
 } from 'components/base/b-scrolly/interface';
 
@@ -37,12 +38,14 @@ import {
 	componentDataLocalEvents,
 	defaultProps,
 	componentLocalEvents,
-	componentItemType
+	componentItemType,
+	componentStrategy
 
 } from 'components/base/b-scrolly/const';
 
-import { Mediator } from 'components/base/b-scrolly/modules/mediator';
-import { ComponentFactory } from 'components/base/b-scrolly/modules/render';
+import { Juggler } from 'components/base/b-scrolly/modules/juggler';
+import { Observer } from 'components/base/b-scrolly/modules/observer';
+import { ComponentFactory } from 'components/base/b-scrolly/modules/factory';
 import { SlotsStateController } from 'components/base/b-scrolly/modules/slots';
 import { ComponentInternalState } from 'components/base/b-scrolly/modules/state';
 import { typedLocalEmitterFactory } from 'components/base/b-scrolly/modules/local-events';
@@ -112,6 +115,12 @@ export default class bScrolly extends iData implements iItems {
 	readonly componentRenderStrategy: ComponentRenderStrategyKeys = componentRenderStrategy.default;
 
 	/**
+	 * {@link ComponentStrategyKeys}
+	 */
+	@prop({type: String, validator: (v) => Object.isString(v) && componentStrategy.hasOwnProperty(v)})
+	readonly componentStrategy: ComponentStrategyKeys = componentStrategy.intersectionObserver;
+
+	/**
 	 * {@link bScrollyRequestQueryFn}
 	 */
 	@prop({type: Function})
@@ -144,7 +153,7 @@ export default class bScrolly extends iData implements iItems {
 		default: defaultProps.shouldPerformDataRequest
 	})
 
-	readonly shouldPerformRequest!: ShouldRequestFn;
+	readonly shouldPerformDataRequest!: ShouldRequestFn;
 
 	/**
 	 * When this function returns `true` the component will be able to render additional data.
@@ -155,7 +164,17 @@ export default class bScrolly extends iData implements iItems {
 		default: defaultProps.shouldPerformDataRender
 	})
 
-	readonly shouldPerformRender!: ShouldRequestFn;
+	readonly shouldPerformDataRender!: ShouldRequestFn;
+
+	/**
+	 * If true then the elements observer will not be initialized.
+	 * That may be useful if you wanna implement a lazy loading via client interaction
+	 */
+	@prop({
+		type: Boolean
+	})
+
+	readonly disableObserver: boolean = false;
 
 	/** {@link typedLocalEmitterFactory} */
 	@system<bScrolly>((ctx) => typedLocalEmitterFactory(ctx))
@@ -173,15 +192,12 @@ export default class bScrolly extends iData implements iItems {
 	@system<bScrolly>((ctx) => new ComponentFactory(ctx))
 	readonly componentFactory!: ComponentFactory;
 
-	/** {@link Mediator} */
-	@system<bScrolly>((ctx) => new Mediator(ctx))
-	readonly mediator!: Mediator;
+	/** {@link Juggler} */
+	@system<bScrolly>((ctx) => new Juggler(ctx))
+	readonly juggler!: Juggler;
 
-	/**
-	 * Cached result of evoking `shouldStopRequestingData`
-	 */
-	@system()
-	protected shouldStopRequestingDataValue?: boolean;
+	@system<bScrolly>((ctx) => new Observer(ctx))
+	readonly observer!: Observer;
 
 	// @ts-ignore (getter instead readonly)
 	override get requestParams(): iData['requestParams'] {
@@ -255,7 +271,7 @@ export default class bScrolly extends iData implements iItems {
 	/**
 	 * Returns an internal component state
 	 */
-	getComponentState(): ComponentState {
+	getComponentState(): Readonly<ComponentState> {
 		return this.componentInternalState.compile();
 	}
 
@@ -280,18 +296,34 @@ export default class bScrolly extends iData implements iItems {
 	}
 
 	/**
+	 * Wrapper for `shouldStopRequestingData`
+	 */
+	shouldStopRequestingDataWrapper(): boolean {
+		const
+			state = this.getComponentState();
+
+		return state.isDone || this.shouldStopRequestingData(this.getComponentState(), this);
+	}
+
+	/**
+	 * Wrapper for `shouldPerformDataRender`
+	 */
+	shouldPerformDataRenderWrapper(): boolean {
+		return this.shouldPerformDataRender(this.getComponentState(), this);
+	}
+
+	/**
+	 * Wrapper from `shouldPerformDataRequest`
+	 */
+	shouldPerformDataRequestWrapper(): boolean {
+		return this.shouldPerformDataRequest(this.getComponentState(), this);
+	}
+
+	/**
 	 * Resets a component state and the state of the component modules
 	 */
 	protected reset(): void {
 		this.typedLocalEmitter.emit(componentLocalEvents.resetState);
-		this.shouldStopRequestingDataValue = undefined;
-	}
-
-	/**
-	 * Wrapper for `shouldStopRequestingData`
-	 */
-	protected shouldStopRequestingDataWrapper(): boolean {
-		return this.shouldStopRequestingData(this.getComponentState(), this);
 	}
 
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
@@ -316,7 +348,7 @@ export default class bScrolly extends iData implements iItems {
 			isInitialLoading &&
 			Object.size(data.data) === 0
 		) {
-			if (this.shouldStopRequestingDataValue) {
+			if (this.shouldStopRequestingDataWrapper()) {
 				this.typedLocalEmitter.emit(componentDataLocalEvents.dataEmpty, isInitialLoading);
 			}
 		}

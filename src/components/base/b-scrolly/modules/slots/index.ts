@@ -12,7 +12,9 @@ import type { AsyncOptions } from 'core/async';
 import Friend from 'components/friends/friend';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { componentDataLocalEvents, componentLocalEvents } from 'components/base/b-scrolly/const';
-import type { ComponentRefs } from 'components/base/b-scrolly/b-scrolly';
+import type { SlotsStateObj } from 'components/base/b-scrolly/modules/slots/interface';
+
+export * from 'components/base/b-scrolly/modules/slots/interface';
 
 export const
 	$$ = symbolGenerator(),
@@ -49,6 +51,7 @@ export class SlotsStateController extends Friend {
 		typedLocalEmitter.on(componentDataLocalEvents.dataLoadStart, () => this.loadingProgressState());
 		typedLocalEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => this.loadingSuccessState());
 		typedLocalEmitter.on(componentDataLocalEvents.dataEmpty, () => this.emptyState());
+		typedLocalEmitter.on(componentLocalEvents.done, () => this.doneState());
 		typedLocalEmitter.on(componentLocalEvents.resetState, () => this.reset());
 	}
 
@@ -60,6 +63,18 @@ export class SlotsStateController extends Friend {
 			container: true,
 			done: true,
 			empty: true,
+			loader: false,
+			renderNext: false,
+			retry: false,
+			tombstones: false
+		});
+	}
+
+	doneState(): void {
+		this.setSlotsVisibility({
+			container: true,
+			done: true,
+			empty: false,
 			loader: false,
 			renderNext: false,
 			retry: false,
@@ -130,7 +145,7 @@ export class SlotsStateController extends Friend {
 
 		this.async.requestAnimationFrame(() => {
 			for (const [name, state] of Object.entries(stateObj)) {
-				this.setState(<keyof SlotsStateObj>name, state);
+				this.setDisplayState(<keyof SlotsStateObj>name, state);
 			}
 
 		}, this.asyncUpdateLabel);
@@ -142,7 +157,7 @@ export class SlotsStateController extends Friend {
 	 * @param name
 	 * @param state
 	 */
-	protected setState(name: keyof SlotsStateObj, state: boolean): void {
+	protected setDisplayState(name: keyof SlotsStateObj, state: boolean): void {
 		const
 			ref = this.ctx.$refs[name];
 
@@ -151,7 +166,3 @@ export class SlotsStateController extends Friend {
 		}
 	}
 }
-
-type SlotsStateObj = {
-	[key in keyof ComponentRefs]: boolean;
-};

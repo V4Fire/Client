@@ -13,8 +13,8 @@ import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import type { ComponentItem } from 'components/base/b-scrolly/interface';
 import { componentRenderLocalEvents, componentRenderStrategy } from 'components/base/b-scrolly/const';
 
-import * as forceUpdate from 'components/base/b-scrolly/modules/render/engines/force-update';
-import * as vdomRender from 'components/base/b-scrolly/modules/render/engines/vdom';
+import * as forceUpdate from 'components/base/b-scrolly/modules/factory/engines/force-update';
+import * as vdomRender from 'components/base/b-scrolly/modules/factory/engines/vdom';
 
 /**
  * Friendly to the `bScrolly` class.
@@ -29,7 +29,17 @@ export class ComponentFactory extends Friend {
 	/**
 	 * @param data
 	 */
-	produceComponents(data: object[]): HTMLElement[] {
+	produceComponentItems(data: object[]): ComponentItem[] {
+		const
+			{ctx} = this;
+
+		return ctx.itemsFactory(ctx, data);
+	}
+
+	/**
+	 * @param data
+	 */
+	produceNodes(componentItems: ComponentItem[]): HTMLElement[] {
 		const createDescriptor = (item: ComponentItem): VNodeDescriptor => ({
 			type: item.item,
 			attrs: item.props,
@@ -37,9 +47,7 @@ export class ComponentFactory extends Friend {
 		});
 
 		const
-			{ctx} = this,
-			items = ctx.itemsFactory(ctx, data),
-			descriptors = items.map(createDescriptor);
+			descriptors = componentItems.map(createDescriptor);
 
 		return this.callRenderEngine(descriptors);
 	}
