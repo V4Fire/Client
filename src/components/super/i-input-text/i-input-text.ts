@@ -325,7 +325,7 @@ export default class iInputText extends iInput implements iWidth, iSize {
 
 		// Force to set a value to the input
 		if (Object.isTruly(input)) {
-			input.value = value;
+			input.value = this.text;
 		}
 	}
 
