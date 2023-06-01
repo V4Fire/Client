@@ -8,8 +8,9 @@
 
 import test from 'tests/config/unit/test';
 
-import { renderDummyInput } from 'components/super/i-input-text/test/helpers';
 import { DOM } from 'tests/helpers';
+
+import { renderDummyInput } from 'components/super/i-input-text/test/helpers';
 
 test.describe('<i-input-text> masked input', () => {
 	const inputSelector = DOM.elNameSelectorGenerator('b-super-i-input-text-dummy', 'input');
