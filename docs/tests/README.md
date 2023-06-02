@@ -2,8 +2,8 @@
 
 - [Summary](#summary)
 - [Getting Started](#getting-started)
-- [UI unit tests](#ui-unit-tests)
-  - [Create a test](#create-a-test)
+- [UI Unit Tests](#ui-unit-tests)
+  - [Create a Test](#create-a-test)
 - [Writing tests in your project](#writing-tests-in-your-project)
   - [Set up a test environment](#set-up-a-test-environment)
   - [Prepare runtime for tests](#prepare-runtime-for-tests)
@@ -16,21 +16,21 @@
 
 ## Summary
 
-We are using [Playwright](https://playwright.dev/) framework to write unit and e2e tests for the UI and [Jest](https://jestjs.io/) to test non-UI things.
+We use the [Playwright](https://playwright.dev/) framework for writing unit and e2e tests for the UI, and [Jest](https://jestjs.io/) for testing non-UI modules.
 
 ## Getting Started
 
-1. Generate the tsconfig `npm run build:tsconfig`
-2. Build the project in the watch mode `npm run dev`
+1. Generate the tsconfig using `npm run build:tsconfig`
+2. Build the project in watch mode using `npm run dev`
 3. Open another terminal instance and run:
-    - `npm run test:unit` (UI unit tests)
-    - `npm run test:jest` (other unit tests)
+   - `npm run test:unit` (UI unit tests)
+   - `npm run test:jest` (other unit tests)
 
-## UI unit tests
+## UI Unit Tests
 
-### Create a test
+### Create a Test
 
-Let's say you want to test a component named the `b-component`. Create the test file in the `b-component/test/unit` folder.
+Suppose you want to test a component named `b-component`. Create the test file in the `b-component/test/unit` folder.
 
 ```
 .
@@ -40,28 +40,27 @@ Let's say you want to test a component named the `b-component`. Create the test 
       └── main.ts
 ```
 
-The file is named `main.ts`, because it tests main use-cases of the component.
+The file is named `main.ts` because it tests the main use-cases of the component.
 
-__test/unit/main.ts__
+**test/unit/main.ts**
 
 ```typescript
 import test from 'tests/config/unit/test';
 
 test.describe('<b-component>', () => {
-	test('opens the demo page', ({demoPage, page}) => {
-		await demoPage.goto();
+  test('should open the demo page', async ({demoPage, page}) => {
+    await demoPage.goto();
 
-		const root = await page.waitForSelector('#root-component');
+    const root = await page.waitForSelector('#root-component');
 
-		test.expect(root).toBeTruthy();
-	});
+    test.expect(root).toBeTruthy();
+  });
 });
 ```
 
-> Pay attention to the import of the `test` module, it is not imported from `@playwright/test`, but from a file prepared in advance. This is necessary to be able to expand specs with [fixture](https://playwright.dev/docs/api/class-fixtures). You also can override
-export of the `test` module and extend it with yours fixtures.
+> Pay attention to the import of the `test` module: it is not imported from `@playwright/test`, but from a file prepared in advance. This is necessary to add custom [fixtures](https://playwright.dev/docs/api/class-fixtures). You can override the export of the `test` module and extend it with your fixtures.
 
-V4Fire provides a standard `fixture` named `demoPage` which is designed to make it easier to work with the demo page, one of the methods is to navigate to this page. Under the hood, this method takes `baseURL` which provides `playwright`, the name of the demo page from the config, and then navigates to that URL.
+V4Fire provides a standard `fixture` named `demoPage`, which makes it easier to work with the demo page. It has `goto` method, which navigates the browser to the demo page. Under the hood, this method concatenates the `baseURL` which provides `playwright`, the name of the demo page from the config, and then navigates to the resulting URL.
 
 ```typescript
 import { build } from '@config/config';
@@ -70,16 +69,16 @@ class DemoPage {
   /**
    * Opens a demo page
    */
-	async goto(): Promise<DemoPage> {
-		await this.page.goto(concatURLs(this.baseUrl, `${build.demoPage()}.html`), {waitUntil: 'networkidle'});
-		await this.page.waitForSelector('#root-component', {state: 'attached'});
+  async goto(): Promise<DemoPage> {
+    await this.page.goto(concatURLs(this.baseUrl, `${build.demoPage()}.html`), {waitUntil: 'networkidle'});
+    await this.page.waitForSelector('#root-component', {state: 'attached'});
 
-		return this;
-	}
+    return this;
+  }
 }
 ```
 
-> You are free to overwrite/remove/extend this `fixture` in your project, [more about `fixture`](https://playwright.dev/docs/test-fixtures).
+> You are free to override or extend this `fixture` in your project, [more about `fixtures`](https://playwright.dev/docs/test-fixtures).
 
 
 ## Writing tests in your project
@@ -88,7 +87,7 @@ class DemoPage {
 
 Firstly, create a [configuration file](https://playwright.dev/docs/test-configuration) and inherit the base configuration from V4fire.
 
-__tests/config/unit/index.ts__
+**tests/config/unit/index.ts**
 ```typescript
 import type { PlaywrightTestConfig } from '@playwright/test';
 
@@ -102,9 +101,9 @@ const config: PlaywrightTestConfig = {
 export default config;
 ```
 
-Next, set up a test server, which will be initiated by the `Playwright`. This server will serve static files for tests. V4Fire provides a base server configuration that can be inherited:
+Next, set up a test server, which will be initiated by the `Playwright`. This server will serve static files for tests. V4Fire provides a basic server implementation that can be inherited:
 
-__tests/server/index.ts__
+**tests/server/index.ts**
 ```typescript
 import '@v4fire/client/tests/server';
 ```
@@ -112,11 +111,11 @@ import '@v4fire/client/tests/server';
 It is not necessary to use the server from V4Fire. You can create your own server. However, there are important points to keep in mind:
 
 1. The server must be capable of serving static files.
-2. By default, the `Playwright` server configuration file uses the `TEST_PORT` environment variable, based on which the [baseURL](https://playwright.dev/docs/api/class-testoptions#test-options-base-url) is generated for testing.
+2. By default, the `Playwright` server configuration file uses the `TEST_PORT` environment variable. The [baseURL](https://playwright.dev/docs/api/class-testoptions#test-options-base-url) is generated using this environment variable.
 
 The default server configuration:
 
-__@v4fire/client/tests/server/config.ts__
+**@v4fire/client/tests/server/config.ts**
 
 ```typescript
 import { build } from '@config/config';
@@ -129,7 +128,7 @@ type WebServerConfig = NonNullable<NotArray<Config['webServer']>>;
 const webServerConfig: WebServerConfig = {
 	port: build.testPort,
 	reuseExistingServer: true,
-	command: 'yarn test:server',
+	command: 'npm run test:server',
 	cwd: process.cwd()
 };
 
@@ -142,13 +141,16 @@ export default webServerConfig;
 
 In order to run the test, you need to prepare a runtime environment:
 
-1. Create a test page. In order to do that you can create demo page or reuse V4Fire demo page `@v4fire/client/components/pages/p-v4-components-demo`. Create an `entry point` in `src/entries` for that page or add it to existing `entry point`. Do not forget to cut the demo page using `monic` directives so that the demo page does not get into the production build.
+1. Create a test page. You can use V4Fire demo page `@v4fire/client/components/pages/p-v4-components-demo` or create a new one. Create an `entry point` in `src/entries` for that page or add it to existing `entry point`. Do not forget to exclude the demo page using [`monic`](https://github.com/MonicBuilder/Monic) directives so that it does not get included into the production build.
 
-2. Specify the name of the demo page in the project config `config/default#build.demoPage` (by default `p-v4-components-demo`);
+2. Specify the name of the demo page in the project config `config/default#build.demoPage` (by default `p-v4-components-demo`).
 
-3. Add your component to the demo page dependencies that you plan to test;
+3. Add your component to the demo page dependencies that you plan to test.
 
-__components/pages/p-v4-components-demo/index.js__
+4. Build the project.
+
+
+**components/pages/p-v4-components-demo/index.js**
 ```javascript
 package('p-v4-components-demo')
 	.extends('i-static-page')
@@ -159,7 +161,7 @@ package('p-v4-components-demo')
 
 ### Run a test
 
-To run `typescript` scripts in `nodejs` you need to include [`tsnode`](https://www.npmjs.com/package/ts-node). V4Fire provides a script that initializes `tsnode`. The most convenient way to execute this script is with the `NODE_OPTIONS` environment variable and the `-r` flag.
+To run `typescript` in the `nodejs` you need to include [`tsnode`](https://www.npmjs.com/package/ts-node). V4Fire provides a script that initializes `tsnode`. The most convenient way to execute this script is with the `NODE_OPTIONS` environment variable and the `-r` flag.
 
 ```
 npx cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" playwright test --config tests/config/unit/index.ts
@@ -167,7 +169,7 @@ npx cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" playwright test -
 
 Make sure you specify the path to the config in the `--config` parameter. It is recommended to create a npm `script` for this command in `package.json`:
 
-__package.json__
+**package.json**
 
 ```JSON
 "scripts": {
@@ -191,11 +193,11 @@ package('p-v4-components-demo')
 	);
 ```
 
-__`Component.createComponent`__
+**`Component.createComponent`**
 
-This function allows you to create components at runtime. Let's use it and create a new component for testing.
+This function allows you to create components at the runtime. Let's use it and create a new component for testing.
 
-__test/unit/functional.ts__
+**test/unit/functional.ts**
 ```typescript
 import type { JSHandle } from 'playwright';
 
@@ -244,9 +246,9 @@ const config: PlaywrightTestConfig = {
 };
 ```
 
-When using this configuration file when running tests - the tests will be searched in the `unit` folder, all files with the extension `.ts` will be imported when the tests are run.
+The `unit` folder will be searched and all files with the `.ts` extension will be imported to be executed.
 
-This configuration is suggested for running unit (components, modules) tests.
+This configuration should be used for running UI unit (components, modules) tests.
 
 ### Project tests (e2e)
 
@@ -263,7 +265,7 @@ const config: PlaywrightTestConfig = {
 
 ```
 
-When using this configuration file when running tests - the tests will be searched in the `project` folder, all files with the extension `.ts` will be imported when the tests are run.
+The `project` folder will be searched and all files with the `.ts` extension will be imported to be executed.
 
 This configuration is suggested for running project (e2e) tests.
 
@@ -289,7 +291,7 @@ Run tests in debug mode:
 npm run test:unit -- --debug
 ```
 
-Run tests that only has `functional` substring in path:
+Run tests that have substring `functional` in their description:
 
 ```
 npm run test:unit -- --grep functional
@@ -301,7 +303,7 @@ Run project tests:
 npx cross-env NODE_OPTIONS="-r @v4fire/core/build/tsnode.js" playwright --config tests/config/project/index.ts
 ```
 
-With npm script and `yarn`:
+With `yarn`:
 
 ```
 yarn test:unit --headed
