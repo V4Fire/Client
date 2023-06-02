@@ -112,7 +112,14 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Stores bTree normalized items.
+	 * Stores values of unfolded items
+	 */
+	@system()
+	// @ts-ignore (ts type loop)
+	protected unfoldedStore: Set<this['Item']['value']> = new Set();
+
+	/**
+	 * Stores `bTree` normalized items.
 	 * This store is needed because the `items` property should only be accessed via get/set.
 	 */
 	@field<bTree>((o) => o.sync.link<Item[]>((val) => {
@@ -333,7 +340,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * True, if specified item has children
+	 * True, if the specified item has children
 	 * @param item
 	 */
 	protected hasChildren(item: this['Item']): boolean {
@@ -380,6 +387,10 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	 * @param item
 	 */
 	protected getFoldedPropValue(item: this['Item']): boolean {
+		if (this.unfoldedStore.has(item.value)) {
+			return false;
+		}
+
 		if (item.folded != null) {
 			return item.folded;
 		}

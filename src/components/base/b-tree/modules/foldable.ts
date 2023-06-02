@@ -48,11 +48,15 @@ export default abstract class Foldable {
 			}
 
 		} else {
-			const
-				{top} = ctx.unsafe,
-				item = ctx.unsafe.values.getItem(value);
+			const {
+				unsafe,
+				unsafe: {top}
+			} = ctx;
 
-			if (item != null && ctx.unsafe.hasChildren(item)) {
+			const
+				item = unsafe.values.getItem(value);
+
+			if (item != null && unsafe.hasChildren(item)) {
 				values.push(top.toggleFold(value, false));
 			}
 
@@ -61,7 +65,7 @@ export default abstract class Foldable {
 
 			while (parentValue != null) {
 				const
-					parent = ctx.unsafe.values.getItem(parentValue);
+					parent = unsafe.values.getItem(parentValue);
 
 				if (parent != null) {
 					values.push(top.toggleFold(parent.value, false));
@@ -79,8 +83,10 @@ export default abstract class Foldable {
 
 	/** {@link Foldable.prototype.toggleFold} */
 	static toggleFold(ctx: bTree, value: unknown, folded?: boolean): Promise<boolean> {
-		const
-			{top} = ctx.unsafe;
+		const {
+			unsafe,
+			unsafe: {top}
+		} = ctx;
 
 		const
 			oldVal = this.getFoldedModByValue(ctx, value) === 'true',
@@ -88,11 +94,19 @@ export default abstract class Foldable {
 
 		const
 			el = top.unsafe.findItemElement(value),
-			item = ctx.unsafe.values.getItem(value);
+			item = unsafe.values.getItem(value);
 
-		if (oldVal !== newVal && el != null && item != null && ctx.unsafe.hasChildren(item)) {
-			ctx.unsafe.block?.setElementMod(el, 'node', 'folded', newVal);
+		if (oldVal !== newVal && el != null && item != null && unsafe.hasChildren(item)) {
+			if (newVal) {
+				unsafe.unfoldedStore.delete(value);
+
+			} else {
+				unsafe.unfoldedStore.add(value);
+			}
+
+			unsafe.block?.setElementMod(el, 'node', 'folded', newVal);
 			top.emit('fold', el, item, newVal);
+
 			return SyncPromise.resolve(true);
 		}
 
@@ -106,13 +120,17 @@ export default abstract class Foldable {
 	 * @param value
 	 */
 	protected static getFoldedModByValue(ctx: bTree, value: unknown): CanUndef<string> {
-		const target = ctx.unsafe.findItemElement(value);
+		const
+			{unsafe} = ctx;
+
+		const
+			target = unsafe.findItemElement(value);
 
 		if (target == null) {
 			return;
 		}
 
-		return ctx.unsafe.block?.getElementMod(target, 'node', 'folded');
+		return unsafe.block?.getElementMod(target, 'node', 'folded');
 	}
 
 	/**
