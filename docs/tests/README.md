@@ -18,7 +18,8 @@
 
 ## Summary
 
-We use the [Playwright](https://playwright.dev/) framework for writing unit and e2e tests for the UI, and [Jest](https://jestjs.io/) for testing non-UI modules.
+We use the [Playwright](https://playwright.dev/) framework for writing unit and e2e tests for the UI,
+and [Jest](https://jestjs.io/) for testing non-UI modules.
 
 ## Getting Started
 
@@ -32,7 +33,8 @@ We use the [Playwright](https://playwright.dev/) framework for writing unit and 
 
 ### Create a Test
 
-Suppose you want to test a component named `b-component`. Create the test file in the `b-component/test/unit` folder.
+Suppose you want to test a component named `b-component`.
+Create the test file in the `b-component/test/unit` folder.
 
 ```
 .
@@ -60,9 +62,14 @@ test.describe('<b-component>', () => {
 });
 ```
 
-> Pay attention to the import of the `test` module: it is not imported from `@playwright/test`, but from a file prepared in advance. This is necessary to add custom [fixtures](https://playwright.dev/docs/api/class-fixtures). You can override the export of the `test` module and extend it with your fixtures.
+> Pay attention to the import of the `test` module: it is not imported from `@playwright/test`,
+> but from a file prepared in advance. This is necessary to add custom [fixtures](https://playwright.dev/docs/api/class-fixtures).
+> You can override the export of the `test` module and extend it with your fixtures.
 
-V4Fire provides a standard `fixture` named `demoPage`, which makes it easier to work with the demo page. It has `goto` method, which navigates the browser to the demo page. Under the hood, this method concatenates the `baseURL` which provides `playwright`, the name of the demo page from the config, and then navigates to the resulting URL.
+V4Fire provides a standard `fixture` named `demoPage`, which makes it easier to work with the demo page.
+It has `goto` method, which navigates the browser to the demo page.
+Under the hood, this method concatenates the `baseURL` which provides `playwright`,
+the name of the demo page from the config, and then navigates to the resulting URL.
 
 ```typescript
 import { build } from '@config/config';
@@ -87,7 +94,8 @@ class DemoPage {
 
 ### Set up a test environment
 
-Firstly, create a [configuration file](https://playwright.dev/docs/test-configuration) and inherit the base configuration from V4fire.
+Firstly, create a [configuration file](https://playwright.dev/docs/test-configuration)
+and inherit the base configuration from V4fire.
 
 **tests/config/unit/index.ts**
 ```typescript
@@ -103,17 +111,22 @@ const config: PlaywrightTestConfig = {
 export default config;
 ```
 
-Next, set up a test server, which will be initiated by the `Playwright`. This server will serve static files for tests. V4Fire provides a basic server implementation that can be inherited:
+Next, set up a test server, which will be initiated by the `Playwright`.
+This server will serve static files for tests. V4Fire provides a basic server
+implementation that can be inherited:
 
 **tests/server/index.ts**
 ```typescript
 import '@v4fire/client/tests/server';
 ```
 
-It is not necessary to use the server from V4Fire. You can create your own server. However, there are important points to keep in mind:
+It is not necessary to use the server from V4Fire. You can create your own server.
+However, there are important points to keep in mind:
 
 1. The server must be capable of serving static files.
-2. By default, the `Playwright` server configuration file uses the `TEST_PORT` environment variable. The [baseURL](https://playwright.dev/docs/api/class-testoptions#test-options-base-url) is generated using this environment variable.
+2. By default, the `Playwright` server configuration file uses the `TEST_PORT` environment variable.
+The [baseURL](https://playwright.dev/docs/api/class-testoptions#test-options-base-url) is generated using this
+environment variable.
 
 The default server configuration:
 
@@ -143,7 +156,10 @@ export default webServerConfig;
 
 In order to run the test, you need to prepare a runtime environment:
 
-1. Create a test page. You can use V4Fire demo page `@v4fire/client/components/pages/p-v4-components-demo` or create a new one. Create an `entry point` in `src/entries` for that page or add it to existing `entry point`. Do not forget to exclude the demo page using [`monic`](https://github.com/MonicBuilder/Monic) directives so that it does not get included into the production build.
+1. Create a test page. You can use V4Fire demo page `@v4fire/client/components/pages/p-v4-components-demo` or create a new one.
+Create an `entry point` in `src/entries` for that page or add it to existing `entry point`.
+Do not forget to exclude the demo page using [`monic`](https://github.com/MonicBuilder/Monic) directives so that it does not
+get included into the production build.
 
 2. Specify the name of the demo page in the project config `config/default#build.demoPage` (by default `p-v4-components-demo`).
 
@@ -163,13 +179,17 @@ package('p-v4-components-demo')
 
 ### Run a test
 
-To run `typescript` in the `nodejs` you need to include [`tsnode`](https://www.npmjs.com/package/ts-node). V4Fire provides a script that initializes `tsnode`. The most convenient way to execute this script is with the `NODE_OPTIONS` environment variable and the `-r` flag.
+To run `typescript` in the `nodejs` you need to include [`tsnode`](https://www.npmjs.com/package/ts-node).
+V4Fire provides a script that initializes `tsnode`.
+
+The most convenient way to execute this script is with the `NODE_OPTIONS` environment variable and the `-r` flag.
 
 ```
 npx cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" playwright test --config tests/config/unit/index.ts
 ```
 
-Make sure you specify the path to the config in the `--config` parameter. It is recommended to create a npm `script` for this command in `package.json`:
+Make sure you specify the path to the config in the `--config` parameter.
+It is recommended to create a npm `script` for this command in `package.json`:
 
 **package.json**
 
@@ -181,11 +201,14 @@ Make sure you specify the path to the config in the `--config` parameter. It is 
 
 ### Creating components at the runtime
 
-Now we have a test file, a test page, and a command to run tests. But at the moment, when you go to the demo page, it will be empty and there will be no components on it.
+Now we have a test file, a test page, and a command to run tests. But at the moment,
+when you go to the demo page, it will be empty and there will be no components on it.
 
-In order to render a new component, V4Fire provides an API that allows you to render any component included in the bundle.
+In order to render a new component, V4Fire provides an API that allows you to render any component
+included in the bundle.
 
-Make sure you add the components you want to test to the bundle, for example by adding a dependency to the component's `index.js`.
+Make sure you add the components you want to test to the bundle, for example by adding a dependency
+to the component's `index.js`.
 
 ```javascript
 package('p-v4-components-demo')
@@ -197,7 +220,8 @@ package('p-v4-components-demo')
 
 **`Component.createComponent`**
 
-This function allows you to create components at the runtime. Let's use it and create a new component for testing.
+This function allows you to create components at the runtime.
+Let's use it and create a new component for testing.
 
 **test/unit/functional.ts**
 ```typescript
