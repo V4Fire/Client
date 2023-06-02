@@ -12,7 +12,9 @@
 - [Configuring different tests](#configuring-different-tests)
   - [Unit tests](#unit-tests)
   - [Project tests (e2e)](#project-tests-e2e)
+- [Testing helpers](#testing-helpers)
 - [CLI flags](#cli-flags)
+- [Extra](#extra)
 
 ## Summary
 
@@ -271,6 +273,11 @@ This configuration is suggested for running project (e2e) tests.
 
 More about configuration file: https://playwright.dev/docs/test-configuration.
 
+
+## Testing helpers
+
+V4Fire provides useful helpers like `Component`, `DOM`, `BOM`, `Assert`, etc. Check the `tests/helpers` directory.
+
 ## CLI flags
 
 Run tests:
@@ -312,3 +319,7 @@ yarn test:unit --headed
 More about CLI flags:
 
 https://playwright.dev/docs/test-cli
+
+## Extra
+
+- [Troubleshooting]('./troubleshooting')
