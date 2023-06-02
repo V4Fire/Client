@@ -322,4 +322,4 @@ https://playwright.dev/docs/test-cli
 
 ## Extra
 
-- [Troubleshooting]('./troubleshooting')
+- [Troubleshooting](./troubleshooting)
