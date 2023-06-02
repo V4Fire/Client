@@ -70,6 +70,12 @@ export default abstract class bTreeProps extends iData {
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
+	 * If true, then the component will be lazily rendered using `asyncRender`
+	 */
+	@prop(Boolean)
+	readonly lazyRender: boolean = false;
+
+	/**
 	 * A common filter to render items via `asyncRender`.
 	 * It is used to optimize the process of rendering items.
 	 *
