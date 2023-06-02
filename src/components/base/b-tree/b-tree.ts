@@ -76,6 +76,10 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 	activeStore!: iActiveItems['activeStore'];
 
+	/** {@link Foldable.unfoldedStore} */
+	@system()
+	unfoldedStore: Foldable['unfoldedStore'] = new Set();
+
 	/** {@link iActiveItems.activeChangeEvent} */
 	@system()
 	readonly activeChangeEvent: string = 'change';
@@ -110,13 +114,6 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	protected get top(): bTree {
 		return this.topProp ?? this;
 	}
-
-	/**
-	 * Stores values of unfolded items
-	 */
-	@system()
-	// @ts-ignore (ts type loop)
-	protected unfoldedStore: Set<this['Item']['value']> = new Set();
 
 	/**
 	 * Stores `bTree` normalized items.
@@ -432,6 +429,10 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	/** {@link Values.initComponentValues} */
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
+		if (itemsChanged) {
+			this.field.set('unfoldedStore', new Set());
+		}
+
 		this.values.init(itemsChanged);
 	}
 

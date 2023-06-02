@@ -12,6 +12,11 @@ import { wait } from 'components/super/i-data/i-data';
 import type bTree from 'components/base/b-tree/b-tree';
 
 export default abstract class Foldable {
+	/**
+	 * Stores values of unfolded items
+	 */
+	abstract unfoldedStore: Set<bTree['Item']['value']>;
+
 	/** {@link Foldable.prototype.fold} */
 	static fold(ctx: bTree, value?: unknown): Promise<boolean> {
 		if (arguments.length === 1) {
@@ -92,21 +97,20 @@ export default abstract class Foldable {
 			oldVal = this.getFoldedModByValue(ctx, value) === 'true',
 			newVal = folded ?? !oldVal;
 
+		if (newVal) {
+			ctx.unfoldedStore.delete(value);
+
+		} else {
+			ctx.unfoldedStore.add(value);
+		}
+
 		const
 			el = top.unsafe.findItemElement(value),
 			item = unsafe.values.getItem(value);
 
 		if (oldVal !== newVal && el != null && item != null && unsafe.hasChildren(item)) {
-			if (newVal) {
-				unsafe.unfoldedStore.delete(value);
-
-			} else {
-				unsafe.unfoldedStore.add(value);
-			}
-
 			unsafe.block?.setElementMod(el, 'node', 'folded', newVal);
 			top.emit('fold', el, item, newVal);
-
 			return SyncPromise.resolve(true);
 		}
 
