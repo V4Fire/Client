@@ -96,7 +96,7 @@ import type { PlaywrightTestConfig } from '@playwright/test';
 import superConfig from '@v4fire/client/tests/config/unit';
 
 const config: PlaywrightTestConfig = {
-	...superConfig,
+  ...superConfig,
   // Add your custom configuration rules
 };
 
@@ -128,10 +128,10 @@ type NotArray<T> = T extends any[] ? never : T;
 type WebServerConfig = NonNullable<NotArray<Config['webServer']>>;
 
 const webServerConfig: WebServerConfig = {
-	port: build.testPort,
-	reuseExistingServer: true,
-	command: 'npm run test:server',
-	cwd: process.cwd()
+  port: build.testPort,
+  reuseExistingServer: true,
+  command: 'npm run test:server',
+  cwd: process.cwd()
 };
 
 export default webServerConfig;
@@ -155,10 +155,10 @@ In order to run the test, you need to prepare a runtime environment:
 **components/pages/p-v4-components-demo/index.js**
 ```javascript
 package('p-v4-components-demo')
-	.extends('i-static-page')
-	.dependencies(
-		'b-component'
-	);
+  .extends('i-static-page')
+  .dependencies(
+    'b-component'
+  );
 ```
 
 ### Run a test
@@ -189,10 +189,10 @@ Make sure you add the components you want to test to the bundle, for example by 
 
 ```javascript
 package('p-v4-components-demo')
-	.extends('i-static-page')
-	.dependencies(
-		'b-component-that-you-wanna-to-create-in-runtime'
-	);
+  .extends('i-static-page')
+  .dependencies(
+    'b-component-that-you-wanna-to-create-in-runtime'
+  );
 ```
 
 **`Component.createComponent`**
