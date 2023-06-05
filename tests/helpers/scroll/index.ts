@@ -54,6 +54,9 @@ export default class Scroll {
 	 * @param ctx
 	 * @param refName
 	 * @param [scrollIntoViewOpts]
+	 *
+	 * @deprecated
+	 * {@link DOM.waitRef}
 	 */
 	static async scrollRefIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
