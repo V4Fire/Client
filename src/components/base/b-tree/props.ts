@@ -80,6 +80,7 @@ export default abstract class bTreeProps extends iData {
 	/**
 	 * A common filter to render items via `asyncRender`.
 	 * It is used to optimize the process of rendering items.
+	 * This option only works in `lazyRender` mode.
 	 *
 	 * {@link AsyncRender.iterate}
 	 * {@link TaskFilter}
@@ -101,6 +102,7 @@ export default abstract class bTreeProps extends iData {
 	/**
 	 * A filter to render nested items via `asyncRender`.
 	 * It is used to optimize the process of rendering child items.
+	 * This option only works in `lazyRender` mode.
 	 *
 	 * {@link AsyncRender.iterate}
 	 * {@link TaskFilter}
@@ -109,7 +111,8 @@ export default abstract class bTreeProps extends iData {
 	readonly nestedRenderFilter?: RenderFilter;
 
 	/**
-	 * Number of chunks to render via `asyncRender`
+	 * Number of chunks to render via `asyncRender`.
+	 * This option only works in `lazyRender` mode.
 	 */
 	@prop(Number)
 	readonly renderChunks: number = 5;
