@@ -67,6 +67,6 @@ export function normalizeItems<T extends Item[]>(this: bTree, items: T): T {
 			}
 		}
 
-		return that.isActive(item.value) || item.folded === false || that.unfoldedStore.has(item.value);
+		return that.isActive(item.value) || that.unfoldedStore.has(item.value) || item.folded === false;
 	}
 }
