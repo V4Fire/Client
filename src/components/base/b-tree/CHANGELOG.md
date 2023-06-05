@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* By default, the component is rendered synchronously
+
+#### :rocket: New Feature
+
+* Added a new prop `lazyRender`
+
 ## v3.43.0 (2023-03-23)
 
 #### :bug: Bug Fix

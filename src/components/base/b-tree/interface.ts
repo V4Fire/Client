@@ -59,5 +59,8 @@ export interface UnsafeBTree<CTX extends bTree = bTree> extends UnsafeIData<CTX>
 
 	// @ts-ignore (access)
 	values: CTX['values'];
+
+	// @ts-ignore (access)
+	unfoldedStore: CTX['unfoldedStore'];
 }
 

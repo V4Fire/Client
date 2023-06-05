@@ -310,6 +310,11 @@ If true, the component supports the multiple active items feature.
 If set to true, the active item can be canceled by clicking it again.
 By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise it is set to `false`.
 
+### [lazyRender = `false`]
+
+If set to true, the component will be lazily rendered using `asyncRender`.
+This mode allows you to optimize the rendering of large trees, but there may be "flickering" when the component is completely re-rendered.
+
 ### [renderFilter]
 
 A common filter to render items via `asyncRender`.
