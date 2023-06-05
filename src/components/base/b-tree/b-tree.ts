@@ -418,7 +418,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	@watch({path: 'items', immediate: true})
+	@watch({path: 'items', flush: 'sync'})
 	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues(oldItems != null);
