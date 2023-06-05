@@ -162,7 +162,7 @@ export default class DOM {
 	 * @example
 	 * ```typescript
 	 * const
-	 *   elName = elNameGenerator('p-index', 'page'); // '.p-index__page'
+	 *   elName = elNameSelectorGenerator('p-index', 'page'); // '.p-index__page'
 	 * ```
 	 */
 	static elNameSelectorGenerator(blockName: string, elName: string): string;
@@ -260,7 +260,7 @@ export default class DOM {
 	}
 
 	/**
-	 * Returns true if the specified elements is in the viewport
+	 * Returns true if the specified element is in the viewport
 	 *
 	 * @param selectorOrElement
 	 * @param ctx
