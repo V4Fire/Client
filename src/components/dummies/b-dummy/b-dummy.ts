@@ -15,7 +15,11 @@ import iData, { component } from 'components/super/i-data/i-data';
 
 export * from 'components/super/i-data/i-data';
 
-@component()
+@component({
+	functional: {
+		functional: true
+	}
+})
 class bDummy extends iData {
 
 }
