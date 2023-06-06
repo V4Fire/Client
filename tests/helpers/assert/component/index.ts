@@ -58,6 +58,7 @@ export default class AssertComponent extends AssertBase {
 	 * Assert function searches items by `data-id` attribute.
 	 *
 	 * @param modName
+	 * @param value
 	 *
 	 * @example
 	 * ```typescript

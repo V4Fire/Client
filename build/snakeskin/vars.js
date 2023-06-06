@@ -18,8 +18,8 @@ module.exports = {
 	 * Saves a basename of the specified dirname to the global namespace by the passed aliases.
 	 * The function should be used via the `eval` directive.
 	 *
-	 * @param dirname
-	 * @param aliases
+	 * @param {string} dirname
+	 * @param {...Array<string>} aliases
 	 *
 	 * @example
 	 * ```

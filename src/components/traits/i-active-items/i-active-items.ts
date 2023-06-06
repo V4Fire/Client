@@ -135,6 +135,7 @@ export default abstract class iActiveItems extends iItems {
 
 	/**
 	 * Returns the active item(s) of the passed component
+	 * @param ctx
 	 */
 	static getActive(ctx: TraitComponent): iActiveItems['Active'] {
 		const

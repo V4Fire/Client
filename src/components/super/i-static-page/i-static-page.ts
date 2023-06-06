@@ -143,6 +143,7 @@ export default abstract class iStaticPage extends iPage {
 
 	/**
 	 * Sets a new application locale
+	 * @param value
 	 */
 	set locale(value: Language) {
 		this.field.set('localeStore', value);

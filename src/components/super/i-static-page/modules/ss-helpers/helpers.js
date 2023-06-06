@@ -26,8 +26,8 @@ exports.addPublicPath = addPublicPath;
 /**
  * Attaches the `publicPath` property to the specified path
  *
- * @param {(string|!Array<string>)} path
- * @returns {(string|!Array<String>)}
+ * @param {(string|Array<string>)} path
+ * @returns {(string|Array<String>)}
  */
 function addPublicPath(path) {
 	const

@@ -1,5 +1,5 @@
 {
-  "hash": "8b110abf91824ebcf93c550629d3696a66bb99a29d4dd98a44c5f19c283bb8b7",
+  "hash": "f1845b7ed4727035f9dcafb4194ee281c302f793c339ca0e155ee12825648dd0",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -140,38 +140,6 @@
             "src/components/dummies/b-dummy/b-dummy.styl"
           ],
           "tpl": "src/components/dummies/b-dummy/b-dummy.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-control-list",
-        {
-          "index": "src/components/dummies/b-dummy-control-list/index.js",
-          "declaration": {
-            "name": "b-dummy-control-list",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-control-list",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-control-list/b-dummy-control-list.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-control-list/b-dummy-control-list.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-control-list/b-dummy-control-list.ss",
           "etpl": null
         }
       ],
@@ -1294,6 +1262,102 @@
         }
       ],
       [
+        "b-traits-i-control-list-dummy",
+        {
+          "index": "src/components/traits/i-control-list/test/b-traits-i-control-list-dummy/index.js",
+          "declaration": {
+            "name": "b-traits-i-control-list-dummy",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-traits-i-control-list-dummy",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/traits/i-control-list/test/b-traits-i-control-list-dummy/b-traits-i-control-list-dummy.ts",
+          "styles": [
+            "src/components/traits/i-control-list/test/b-traits-i-control-list-dummy/b-traits-i-control-list-dummy.styl"
+          ],
+          "tpl": "src/components/traits/i-control-list/test/b-traits-i-control-list-dummy/b-traits-i-control-list-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-traits-i-lock-page-scroll-dummy",
+        {
+          "index": "src/components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy/index.js",
+          "declaration": {
+            "name": "b-traits-i-lock-page-scroll-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-traits-i-lock-page-scroll-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy/b-traits-i-lock-page-scroll-dummy.ts",
+          "styles": [
+            "src/components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy/b-traits-i-lock-page-scroll-dummy.styl"
+          ],
+          "tpl": "src/components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy/b-traits-i-lock-page-scroll-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-traits-i-observe-dom-dummy",
+        {
+          "index": "src/components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy/index.js",
+          "declaration": {
+            "name": "b-traits-i-observe-dom-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-traits-i-observe-dom-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy/b-traits-i-observe-dom-dummy.ts",
+          "styles": [
+            "src/components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy/b-traits-i-observe-dom-dummy.styl"
+          ],
+          "tpl": "src/components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy/b-traits-i-observe-dom-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-tree",
         {
           "index": "src/components/base/b-tree/index.js",
@@ -2156,7 +2220,8 @@
               "components/directives/image",
               "components/directives/icon",
               "core/router/engines/browser-history",
-              "core/router/engines/in-memory"
+              "core/router/engines/in-memory",
+              "components/traits/i-control-list/i-control-list"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2191,13 +2256,15 @@
             "components/directives/image",
             "components/directives/icon",
             "core/router/engines/browser-history",
-            "core/router/engines/in-memory"
+            "core/router/engines/in-memory",
+            "components/traits/i-control-list/i-control-list"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
               "components/directives/icon",
               "components/directives/image",
+              "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
             ]
@@ -2207,6 +2274,7 @@
             "%data:Set": [
               "components/directives/icon",
               "components/directives/image",
+              "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
             ]

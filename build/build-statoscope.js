@@ -22,7 +22,7 @@ const
  * The function processes template statoscope config file and
  * generates actual statoscope config with predefined limits from config.
  *
- * @param buildName - name of build process
+ * @param {string} buildName - name of build process
  */
 function buildStatoscopeConfig(buildName) {
 	const

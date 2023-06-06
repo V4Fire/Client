@@ -53,7 +53,7 @@
 			:is = el.component |
 			:class = ${componentName} ? provide.elementClasses(${componentName}, ${controlClassesJSON}) : provide.elementClasses(${controlClassesJSON}) |
 			:v-attrs = el.attrs |
-			@[getControlEvent(el)] = callControlAction(el, ...arguments)
+			@[getControlEvent(el)] = (...args) => callControlAction(el, ...args)
 		.
 			- if content
 				+= content

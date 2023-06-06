@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable jsdoc/require-jsdoc */
+/* eslint-disable @v4fire/require-jsdoc */
 
 import watch from 'core/object/watch';
 import iData, { component, field, system, computed, ModsDecl } from 'components/super/i-data/i-data';

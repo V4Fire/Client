@@ -18,7 +18,9 @@ const test = base.extend<Fixtures>({
 	/**
 	 * Returns an instance of the demo page
 	 *
-	 * @param obj
+	 * @param opts
+	 * @param opts.page
+	 * @param opts.baseURL
 	 * @param fixture
 	 */
 	demoPage: ({page, baseURL}, fixture) => fixture(new DemoPage(page, <string>baseURL))

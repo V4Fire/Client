@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable jsdoc/require-jsdoc */
+/* eslint-disable @v4fire/require-jsdoc */
 
 import iData, { component, hook, field } from 'components/super/i-data/i-data';
 

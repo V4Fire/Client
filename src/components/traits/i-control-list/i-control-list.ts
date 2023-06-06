@@ -9,6 +9,10 @@
 import type iBlock from 'components/super/i-block/i-block';
 import type { Control, ControlEvent } from 'components/traits/i-control-list/interface';
 
+//#if runtime has prelude/test-env
+import('components/traits/i-control-list/test/b-traits-i-control-list-dummy');
+//#endif
+
 export * from 'components/traits/i-control-list/interface';
 
 export default abstract class iControlList {

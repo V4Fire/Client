@@ -53,7 +53,8 @@ import type {
 	ValidatorParams,
 	ValidatorResult,
 	ValidationResult,
-	ValidatorsDecl
+	ValidatorsDecl,
+	CustomValidatorParams
 
 } from 'components/super/i-input/interface';
 
@@ -632,6 +633,38 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 			}
 
 			return true;
+		},
+
+		/**
+		 * Invokes the specified custom validator function with additional provided parameters
+		 *
+		 * @param params - an object containing the validator function
+		 * and other validation parameters
+		 *
+		 * @param params.validator - the custom validation function that will be invoked
+		 * with the rest of the parameters
+		 *
+		 * @throws {Error} if the validator function is not provided
+		 */
+		async custom(params: CustomValidatorParams): Promise<ValidatorResult> {
+			const {validator, ...rest} = params;
+
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (validator == null) {
+				throw new Error('The `custom` validator must accept the validator function, but it was not provided');
+			}
+
+			const
+				result = await validator(rest);
+
+			if (Object.isBoolean(result) || Object.isNull(result)) {
+				return result;
+			}
+
+			return {
+				name: 'custom',
+				value: result
+			};
 		}
 	};
 

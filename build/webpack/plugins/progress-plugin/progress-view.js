@@ -34,6 +34,7 @@ module.exports = class ProgressView {
 	 *
 	 * @protected
 	 * @param {number} progress
+	 * @returns {number}
 	 */
 	_convertProgressToPercent(progress) {
 		if (progress <= 1) {

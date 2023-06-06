@@ -17,8 +17,9 @@ import type { IterOptions, IterDescriptor } from 'components/friends/async-rende
  *
  * @param value
  * @param [start]
- * @param [perChunk]
- * @param [filter]
+ * @param [opts]
+ * @param [opts.perChunk]
+ * @param [opts.filter]
  */
 export function getIterDescriptor(
 	this: Friend,

@@ -136,6 +136,7 @@ export default abstract class iBlockState extends iBlockMods {
 		return SSR || Boolean(readyStatuses[this.componentStatus]);
 	}
 
+	/** @inheritDoc */
 	get hook(): Hook {
 		return this.hookStore;
 	}
@@ -275,6 +276,7 @@ export default abstract class iBlockState extends iBlockMods {
 		}
 	}
 
+	/** @inheritDoc */
 	getComponentInfo(): Dictionary {
 		return {
 			name: this.componentName,

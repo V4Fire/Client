@@ -24,9 +24,9 @@ Object.assign(module.exports, {
 /**
  * Returns a value form the Stylus object by the specified path
  *
- * @param stylusObj
- * @param path
- * @returns {?}
+ * @param {object} stylusObj
+ * @param {string} path
+ * @returns {void|string}
  */
 function getField(stylusObj, path) {
 	const

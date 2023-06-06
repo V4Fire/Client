@@ -1,3 +1,5 @@
+- namespace [%fileName%]
+
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -6,5 +8,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy-control-list')
-	.extends('i-block');
+- include 'components/dummies/b-dummy'|b as placeholder
+
+- template index() extends ['b-dummy'].index
