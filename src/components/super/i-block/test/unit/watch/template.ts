@@ -104,14 +104,7 @@ test.describe('<i-block> watch - template', () => {
 		}
 	});
 
-	// FIXME: there is an error in Vue on `proxy.add` call, it passes as target the v4 proxy
-	// function add(value) {
-	//   value = toRaw(value);
-	//   const target = toRaw(this);
-	//   const proto = getProto(target);
-	//   const hadKey = proto.has.call(target, value);
-	//                                 ^ error here
-	test.skip('component should re-render when a value is added to the Set field', async ({page}) => {
+	test('component should re-render when a value is added to the Set field', async ({page}) => {
 		const target = await renderWatchDummy(page);
 
 		const scan = await target.evaluate(async (ctx) => {
@@ -132,7 +125,7 @@ test.describe('<i-block> watch - template', () => {
 		]);
 	});
 
-	test.skip([
+	test([
 		'child component should re-render when a value is added',
 		'to the Set field of the parent component'
 	].join(' '), async ({page}) => {
