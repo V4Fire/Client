@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable max-lines-per-function, require-atomic-updates */
-
 import test from 'tests/config/unit/test';
 
 import { renderWatchDummy } from 'components/super/i-block/test/helpers';
