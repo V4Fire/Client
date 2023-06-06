@@ -23,9 +23,7 @@ test.describe('<i-block> modules - activation', () => {
 	});
 
 	test.describe('events', () => {
-		// FIXME: event listener is muted on component deactivation
-		// @see src/components/super/i-block/modules/activation/index.ts:229
-		test.skip('should emit `hook:deactivated` event when `deactivate` is invoked', async () => {
+		test('should emit `hook:deactivated` event when `deactivate` is invoked', async () => {
 			const eventPromise = target.evaluate((ctx) => new Promise((resolve) => {
 				ctx.once('hook:deactivated', resolve);
 				ctx.deactivate();
