@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable max-lines-per-function, max-lines, require-atomic-updates */
+/* eslint-disable max-lines-per-function, require-atomic-updates */
 
 import test from 'tests/config/unit/test';
 
