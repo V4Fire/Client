@@ -1506,7 +1506,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.21.0, @babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:7.17.0":
+  version: 7.17.0
+  resolution: "@babel/runtime@npm:7.17.0"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: 1864ac3c6aa061798c706ce858af311f06f6ad6efafc20cca7029fdaa9786c58ccaf5bdb8bd133cb505f27bed7659b65f1503b8da58adbd1eb88f7333644e6ed
+  languageName: node
+  linkType: hard
+
+"@babel/runtime@npm:^7.8.4":
   version: 7.21.0
   resolution: "@babel/runtime@npm:7.21.0"
   dependencies:
@@ -3573,7 +3582,7 @@ __metadata:
 
 "@v4fire/core@github:V4Fire/Core#v4":
   version: 4.0.0-alpha.4
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=52de2550b3e8a9d9b8b944378cef0902c2acef66"
+  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=8d54d66a841421d2c1989df598615bd1ba0ea083"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -3582,7 +3591,7 @@ __metadata:
     "@babel/plugin-transform-runtime": 7.17.0
     "@babel/preset-env": 7.16.11
     "@babel/preset-typescript": 7.16.7
-    "@babel/runtime": 7.21.0
+    "@babel/runtime": 7.17.0
     "@babel/template": 7.16.7
     "@config/config": "npm:config@1.31.0"
     "@pzlr/build-core": 2.13.0
@@ -3645,11 +3654,15 @@ __metadata:
       optional: true
     "@babel/preset-typescript":
       optional: true
+    "@babel/runtime":
+      optional: true
     "@babel/template":
       optional: true
     "@config/config":
       optional: true
     "@pzlr/build-core":
+      optional: true
+    "@v4fire/config":
       optional: true
     del:
       optional: true
@@ -3689,6 +3702,8 @@ __metadata:
       optional: true
     node-blob:
       optional: true
+    node-fetch:
+      optional: true
     node-object-hash:
       optional: true
     path-equal:
@@ -3709,7 +3724,9 @@ __metadata:
       optional: true
     upath:
       optional: true
-  checksum: 85d7291c52922c5561ad93dd7cbf3c94592d4e8fd14ff75c9c1120d286c27987566a03bad0c5fbc12d1cf3b685200c76b6755ac7148cc46035f8cff92d02753b
+    xhr2:
+      optional: true
+  checksum: a8a2568922a524e5e90d7eb68e7b8609685b562aa553e1f4c8a906511bc90c70d79026732735918c48001019392624dc056264b7fb13be8320f681c70391280d
   languageName: node
   linkType: hard
 
@@ -16926,7 +16943,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.11":
+"regenerator-runtime@npm:^0.13.11, regenerator-runtime@npm:^0.13.4":
   version: 0.13.11
   resolution: "regenerator-runtime@npm:0.13.11"
   checksum: 27481628d22a1c4e3ff551096a683b424242a216fee44685467307f14d58020af1e19660bf2e26064de946bad7eff28950eae9f8209d55723e2d9351e632bbb4
