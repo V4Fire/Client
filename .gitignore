@@ -47,6 +47,7 @@ $RECYCLE.BIN
 /tsconfig.json
 /*.tsconfig.json
 .env
+/storybook-static
 
 # Log
 *.log
