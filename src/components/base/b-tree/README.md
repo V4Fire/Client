@@ -310,10 +310,16 @@ If true, the component supports the multiple active items feature.
 If set to true, the active item can be canceled by clicking it again.
 By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise it is set to `false`.
 
+### [lazyRender = `false`]
+
+If set to true, the component will be lazily rendered using `asyncRender`.
+This mode allows you to optimize the rendering of large trees, but there may be "flickering" when the component is completely re-rendered.
+
 ### [renderFilter]
 
 A common filter to render items via `asyncRender`.
 It is used to optimize the process of rendering items.
+This option only works in `lazyRender` mode.
 
 ```
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :renderFilter = () => async.idle()
@@ -323,6 +329,7 @@ It is used to optimize the process of rendering items.
 
 A filter to render nested items via `asyncRender`.
 It is used to optimize the process of rendering child items.
+This option only works in `lazyRender` mode.
 
 ```
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :nestedRenderFilter = () => async.idle()
@@ -331,6 +338,7 @@ It is used to optimize the process of rendering child items.
 ### [renderChunks = `5`]
 
 Number of chunks to render per tick via `asyncRender`.
+This option only works in `lazyRender` mode.
 
 ```
 < b-tree :item = 'b-checkbox' | :items = listOfItems | :renderChunks = 3

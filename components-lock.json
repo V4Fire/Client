@@ -1,5 +1,5 @@
 {
-  "hash": "ad7221df08ab850776980decc4e2d1a10852f5d2be6fb864eeb7b0bb856f33be",
+  "hash": "cb8efd53aa08600cd86f8b04b6e83bd8470e34f8c926bac48ebaadc6d3bd6e1e",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -140,106 +140,6 @@
             "src/components/dummies/b-dummy/b-dummy.styl"
           ],
           "tpl": "src/components/dummies/b-dummy/b-dummy.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-decorators",
-        {
-          "index": "src/components/dummies/b-dummy-decorators/index.js",
-          "declaration": {
-            "name": "b-dummy-decorators",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-decorators",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-decorators/b-dummy-decorators.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-decorators/b-dummy-decorators.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-decorators/b-dummy-decorators.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-lfc",
-        {
-          "index": "src/components/dummies/b-dummy-lfc/index.js",
-          "declaration": {
-            "name": "b-dummy-lfc",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-lfc",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-lfc/b-dummy-lfc.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-lfc/b-dummy-lfc.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-lfc/b-dummy-lfc.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-watch",
-        {
-          "index": "src/components/dummies/b-dummy-watch/index.js",
-          "declaration": {
-            "name": "b-dummy-watch",
-            "parent": "i-data",
-            "dependencies": [
-              "b-button"
-            ],
-            "libs": []
-          },
-          "name": "b-dummy-watch",
-          "parent": "i-data",
-          "dependencies": [
-            "b-button"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-watch/b-dummy-watch.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-watch/b-dummy-watch.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-watch/b-dummy-watch.ss",
           "etpl": null
         }
       ],
@@ -1154,6 +1054,138 @@
             "src/components/base/b-slider/b-slider.styl"
           ],
           "tpl": "src/components/base/b-slider/b-slider.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-decorators-dummy",
+        {
+          "index": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-decorators-dummy",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-decorators-dummy",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/decorators/test/b-super-i-block-decorators-dummy/b-super-i-block-decorators-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-dummy/b-super-i-block-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-lfc-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-lfc-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-lfc-dummy",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-block-lfc-dummy",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-lfc-dummy/b-super-i-block-lfc-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-block-watch-dummy",
+        {
+          "index": "src/components/super/i-block/test/b-super-i-block-watch-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-block-watch-dummy",
+            "parent": "i-data",
+            "dependencies": [
+              "b-button"
+            ],
+            "libs": []
+          },
+          "name": "b-super-i-block-watch-dummy",
+          "parent": "i-data",
+          "dependencies": [
+            "b-button"
+          ],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy.ts",
+          "styles": [
+            "src/components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy.ss",
           "etpl": null
         }
       ],

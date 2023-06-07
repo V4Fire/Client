@@ -24,6 +24,7 @@ test.describe('<b-tree>', () => {
 	test.describe('`items`', () => {
 		const baseAttrs = {
 			item: 'b-checkbox-functional',
+			lazyRender: true,
 			renderChunks: 2
 		};
 
@@ -162,22 +163,22 @@ test.describe('<b-tree>', () => {
 
 		test('`onItemsChange` event should be emitted', async ({page}) => {
 			const
-				target = await renderTree(page),
-				changesLogPromise = target.evaluate(async (ctx) => {
-					const
-						log: any[] = [];
+				target = await renderTree(page);
 
-					ctx.on('onItemsChange', (val) => {
-						log.push(Object.fastClone(val));
-					});
+			const changesLogPromise = target.evaluate(async (ctx) => {
+				const
+					log: any[] = [];
 
-					ctx.items = [{label: 'Bar', value: 1}];
-
-					log.push(Object.fastClone(ctx.items));
-
-					await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
-					return log;
+				ctx.on('onItemsChange', (val) => {
+					log.push(Object.fastClone(val));
 				});
+
+				ctx.items = [{label: 'Bar', value: 1}];
+				log.push(Object.fastClone(ctx.items));
+
+				await ctx.unsafe.async.nextTick();
+				return log;
+			});
 
 			test.expect(await changesLogPromise)
 				.toEqual([
@@ -190,10 +191,8 @@ test.describe('<b-tree>', () => {
 			const
 				target = await renderTree(page, {items: defaultItems, attrs: {folded: false}});
 
-			await target.evaluate(async (ctx, newItems) => {
+			await target.evaluate((ctx, newItems) => {
 				ctx.items = newItems;
-
-				await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
 			}, newItems);
 
 			await testFoldedModIs(false, await waitForItems(page, target, [1, 2]));
@@ -207,10 +206,8 @@ test.describe('<b-tree>', () => {
 
 			await testFoldedModIs(false, await waitForItems(page, target, ['foo']));
 
-			await target.evaluate(async (ctx, newItems) => {
+			await target.evaluate((ctx, newItems) => {
 				ctx.items = newItems;
-
-				await ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete');
 			}, newItems);
 
 			await testFoldedModIs(true, await waitForItems(page, target, [1]));
