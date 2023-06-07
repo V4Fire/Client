@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import '@v4fire/core/core';
 import bButton from 'components/form/b-button/b-button';
 
 // More on how to set up stories at: https://storybook.js.org/docs/html/writing-stories/introduction

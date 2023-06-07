@@ -1,6 +1,7 @@
 const
 	path = require('node:path'),
-	{inspect} = require('node:util');
+	{inspect} = require('node:util'),
+	webpack = require('webpack');
 
 const
 	root = path.resolve(__dirname, '..'),
@@ -132,6 +133,15 @@ const config = {
 			config.resolve = { modules: [], alias: {} };
 		}
 
+		config.plugins.push(
+			new webpack.DefinePlugin(
+				{
+					IS_PROD: false,
+					DEBUG: true,
+					SSR: false,
+				}
+			)
+		)
 		config.module?.rules?.unshift(snakeskinRule);
 		config.module?.rules?.forEach((rule) => {
 			if (typeof rule !== 'object') {
