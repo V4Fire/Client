@@ -15,38 +15,40 @@ import test from 'tests/config/unit/test';
 import { createData, createTestHelpers, indexDataCtor } from 'components/base/b-scrolly/test/api/helpers';
 import type { SlotsStateObj } from 'components/base/b-scrolly/modules/slots';
 
-test.skip('<b-scrolly> slots', () => {
+test.describe('<b-scrolly> slots', () => {
 	let
 		component: Awaited<ReturnType<typeof createTestHelpers>>['component'],
-		provider: Awaited<ReturnType<typeof createTestHelpers>>['provider'];
+		provider: Awaited<ReturnType<typeof createTestHelpers>>['provider'],
+		state: Awaited<ReturnType<typeof createTestHelpers>>['state'];
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		({component, provider} = await createTestHelpers(page));
+		({component, provider, state} = await createTestHelpers(page));
 		await provider.start();
-
-		await component.setChildren({
-			done: {
-				type: 'div',
-				attrs: {
-					id: 'done'
-				}
-			}
-		});
 	});
 
 	test.describe('`done`', () => {
+		test.beforeEach(async () => {
+			await component.setChildren({
+				done: {
+					type: 'div',
+					attrs: {
+						id: 'done'
+					}
+				}
+			});
+		});
+
 		test('Activates when all data has been loaded after the initial load', async () => {
 			const chunkSize = 12;
 
 			provider
-				.responseOnce(200, {data: createData(chunkSize, indexDataCtor)})
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
 			await component.setProps({
-				chunkSize,
-				shouldStopRequestingData: () => true
+				chunkSize
 			});
 
 			await component.withDefaultPaginationProviderProps({chunkSize});
@@ -71,14 +73,12 @@ test.skip('<b-scrolly> slots', () => {
 			const chunkSize = 12;
 
 			provider
-				.responseOnce(200, {data: createData(chunkSize, indexDataCtor)})
-				.responseOnce(200, {data: createData(chunkSize, indexDataCtor, chunkSize)})
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
 			await component.setProps({
 				chunkSize,
-				shouldStopRequestingData: ({lastLoadedRawData}) => lastLoadedRawData.data.length < 12,
-				shouldPerformDataRequest: ({lastLoadedRawData}) => lastLoadedRawData.data.length >= 12,
 				shouldPerformDataRender: () => true
 			});
 
@@ -110,7 +110,7 @@ test.skip('<b-scrolly> slots', () => {
 
 			await component.setProps({
 				chunkSize,
-				shouldStopRequestingData: () => true
+				shouldPerformDataRender: () => true
 			});
 
 			await component.withDefaultPaginationProviderProps({chunkSize});

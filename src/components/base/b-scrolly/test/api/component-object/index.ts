@@ -116,32 +116,29 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	 */
 	async waitForSlotState(slotName: keyof ComponentRefs, isVisible: boolean): Promise<void> {
 		const
-			root = await this.node.elementHandle();
+			slot = await this.node.locator(this.elSelector(slotName));
 
-		await root?.waitForSelector(this.elSelector(slotName), {state: isVisible ? 'visible' : 'hidden'});
+		await slot.waitFor({state: isVisible ? 'visible' : 'hidden'});
 	}
 
 	async getSlotsState(): Promise<Required<SlotsStateObj>> {
 		const
-			root = await this.node.elementHandle();
-
-		const
-			container = await root?.$(this.elSelector('container')),
-			loader = await root?.$(this.elSelector('loader')),
-			tombstones = await root?.$(this.elSelector('tombstones')),
-			empty = await root?.$(this.elSelector('empty')),
-			retry = await root?.$(this.elSelector('retry')),
-			done = await root?.$(this.elSelector('done')),
-			renderNext = await root?.$(this.elSelector('renderNext'));
+			container = await this.node.locator(this.elSelector('container')),
+			loader = await this.node.locator(this.elSelector('loader')),
+			tombstones = await this.node.locator(this.elSelector('tombstones')),
+			empty = await this.node.locator(this.elSelector('empty')),
+			retry = await this.node.locator(this.elSelector('retry')),
+			done = await this.node.locator(this.elSelector('done')),
+			renderNext = await this.node.locator(this.elSelector('renderNext'));
 
 		return {
-			container: Boolean(await container?.isVisible()),
-			loader: Boolean(await loader?.isVisible()),
-			tombstones: Boolean(await tombstones?.isVisible()),
-			empty: Boolean(await empty?.isVisible()),
-			retry: Boolean(await retry?.isVisible()),
-			done: Boolean(await done?.isVisible()),
-			renderNext: Boolean(await renderNext?.isVisible())
+			container: await container.isVisible(),
+			loader: await loader.isVisible(),
+			tombstones: await tombstones.isVisible(),
+			empty: await empty.isVisible(),
+			retry: await retry.isVisible(),
+			done: await done.isVisible(),
+			renderNext: await renderNext.isVisible()
 		};
 	}
 
