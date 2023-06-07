@@ -24,7 +24,7 @@ import type {
 	ComponentRenderStrategyKeys as ComponentRenderStrategyKeys,
 	RequestParams,
 	RequestQueryFn,
-	ShouldRequestFn,
+	ShouldFn,
 	ComponentRefs,
 	ComponentItemFactory,
 	ComponentItemType,
@@ -48,7 +48,7 @@ import { Observer } from 'components/base/b-scrolly/modules/observer';
 import { ComponentFactory } from 'components/base/b-scrolly/modules/factory';
 import { SlotsStateController } from 'components/base/b-scrolly/modules/slots';
 import { ComponentInternalState } from 'components/base/b-scrolly/modules/state';
-import { typedLocalEmitterFactory } from 'components/base/b-scrolly/modules/local-events';
+import { typedEmitterFactory } from 'components/base/b-scrolly/modules/emitter';
 
 import iData, { component, prop, system, $$ } from 'components/super/i-data/i-data';
 
@@ -142,7 +142,7 @@ export default class bScrolly extends iData implements iItems {
 		default: defaultProps.shouldStopRequestingData
 	})
 
-	readonly shouldStopRequestingData!: ShouldRequestFn;
+	readonly shouldStopRequestingData!: ShouldFn;
 
 	/**
 	 * When this function returns `true` the component will be able to request additional data.
@@ -153,7 +153,7 @@ export default class bScrolly extends iData implements iItems {
 		default: defaultProps.shouldPerformDataRequest
 	})
 
-	readonly shouldPerformDataRequest!: ShouldRequestFn;
+	readonly shouldPerformDataRequest!: ShouldFn;
 
 	/**
 	 * When this function returns `true` the component will be able to render additional data.
@@ -164,7 +164,7 @@ export default class bScrolly extends iData implements iItems {
 		default: defaultProps.shouldPerformDataRender
 	})
 
-	readonly shouldPerformDataRender!: ShouldRequestFn;
+	readonly shouldPerformDataRender!: ShouldFn;
 
 	/**
 	 * If true then the elements observer will not be initialized.
@@ -176,9 +176,9 @@ export default class bScrolly extends iData implements iItems {
 
 	readonly disableObserver: boolean = false;
 
-	/** {@link typedLocalEmitterFactory} */
-	@system<bScrolly>((ctx) => typedLocalEmitterFactory(ctx))
-	readonly typedLocalEmitter!: ReturnType<typeof typedLocalEmitterFactory>;
+	/** {@link typedEmitterFactory} */
+	@system<bScrolly>((ctx) => typedEmitterFactory(ctx))
+	readonly componentEmitter!: ReturnType<typeof typedEmitterFactory>;
 
 	/** {@link slotsStateController} */
 	@system<bScrolly>((ctx) => new SlotsStateController(ctx))
@@ -217,31 +217,43 @@ export default class bScrolly extends iData implements iItems {
 	}
 
 	override initLoad(...args: Parameters<iData['initLoad']>): ReturnType<iData['initLoad']> {
+		const
+			state = this.getComponentState();
+
+		if (state.isLoadingInProgress) {
+			return;
+		}
+
+		this.componentInternalState.setIsLoadingInProgress(true);
+
 		const callSuperAndStateReset = () => {
-			this.reset();
+			if (this.isReadyOnce) {
+				this.reset();
+			}
+
 			return super.initLoad(...args);
 		};
 
 		const
 			isInitialLoading = !this.isReady;
 
-		this.typedLocalEmitter.emit(componentDataLocalEvents.dataLoadStart, isInitialLoading);
-
 		const initLoadResult = isInitialLoading ?
 			callSuperAndStateReset() :
 			this.initLoadNext();
 
+		this.componentEmitter.emit(componentDataLocalEvents.dataLoadStart, isInitialLoading);
+
 		if (Object.isPromise(initLoadResult)) {
 			initLoadResult
 				.then((res) => {
+					this.componentInternalState.setIsLoadingInProgress(false);
 					this.onInitLoadSuccess(isInitialLoading, isInitialLoading ? this.db : this.convertDataToDB(res));
 				})
 				.catch((err) => {
+					this.componentInternalState.setIsLoadingInProgress(false);
 					this.onInitLoadError(isInitialLoading);
+
 					throw err;
-				})
-				.finally(() => {
-					this.onInitLoadFinish(isInitialLoading);
 				});
 		}
 
@@ -302,7 +314,15 @@ export default class bScrolly extends iData implements iItems {
 		const
 			state = this.getComponentState();
 
-		return state.isDone || this.shouldStopRequestingData(this.getComponentState(), this);
+		if (state.isRequestsStopped) {
+			return state.isRequestsStopped;
+		}
+
+		const
+			newVal = this.shouldStopRequestingData(state, this);
+
+		this.componentInternalState.setIsRequestsStopped(newVal);
+		return newVal;
 	}
 
 	/**
@@ -323,11 +343,11 @@ export default class bScrolly extends iData implements iItems {
 	 * Resets a component state and the state of the component modules
 	 */
 	protected reset(): void {
-		this.typedLocalEmitter.emit(componentLocalEvents.resetState);
+		this.componentEmitter.emit(componentLocalEvents.resetState);
 	}
 
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
-		this.typedLocalEmitter.emit(componentLocalEvents.convertDataToDB, data);
+		this.componentEmitter.emit(componentLocalEvents.convertDataToDB, data);
 		return super.convertDataToDB(data);
 	}
 
@@ -342,14 +362,15 @@ export default class bScrolly extends iData implements iItems {
 			throw new ReferenceError('Missing data field in the loaded data');
 		}
 
-		this.typedLocalEmitter.emit(componentDataLocalEvents.dataLoadSuccess, <object[]>data.data, isInitialLoading);
+		this.componentInternalState.updateData(<object[]>data.data, isInitialLoading);
+		this.componentEmitter.emit(componentDataLocalEvents.dataLoadSuccess, <object[]>data.data, isInitialLoading);
 
 		if (
 			isInitialLoading &&
 			Object.size(data.data) === 0
 		) {
 			if (this.shouldStopRequestingDataWrapper()) {
-				this.typedLocalEmitter.emit(componentDataLocalEvents.dataEmpty, isInitialLoading);
+				this.componentEmitter.emit(componentDataLocalEvents.dataEmpty, isInitialLoading);
 			}
 		}
 	}
@@ -360,14 +381,6 @@ export default class bScrolly extends iData implements iItems {
 	 * @param isInitialLoading - `true` if this load was an initial component loading
 	 */
 	protected onInitLoadError(isInitialLoading: boolean): void {
-		this.typedLocalEmitter.emit(componentDataLocalEvents.dataLoadError, isInitialLoading);
-	}
-
-	/**
-	 * Handler: data loading is finished
-	 * @param isInitialLoading - `true` if this load was an initial component loading
-	 */
-	protected onInitLoadFinish(isInitialLoading: boolean): void {
-		this.typedLocalEmitter.emit(componentDataLocalEvents.dataLoadFinish, isInitialLoading);
+		this.componentEmitter.emit(componentDataLocalEvents.dataLoadError, isInitialLoading);
 	}
 }

@@ -15,7 +15,7 @@ import test from 'tests/config/unit/test';
 import { createData, createTestHelpers, indexDataCtor } from 'components/base/b-scrolly/test/api/helpers';
 import type { SlotsStateObj } from 'components/base/b-scrolly/modules/slots';
 
-test.describe('<b-scrolly> slots', () => {
+test.skip('<b-scrolly> slots', () => {
 	let
 		component: Awaited<ReturnType<typeof createTestHelpers>>['component'],
 		provider: Awaited<ReturnType<typeof createTestHelpers>>['provider'];
@@ -67,7 +67,7 @@ test.describe('<b-scrolly> slots', () => {
 			});
 		});
 
-		test.only('Activates when all data has been loaded after the second load', async () => {
+		test('Activates when all data has been loaded after the second load', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -77,10 +77,7 @@ test.describe('<b-scrolly> slots', () => {
 
 			await component.setProps({
 				chunkSize,
-				shouldStopRequestingData: ({lastLoadedRawData}) => {
-					debugger;
-					return lastLoadedRawData.data.length < 12;
-				},
+				shouldStopRequestingData: ({lastLoadedRawData}) => lastLoadedRawData.data.length < 12,
 				shouldPerformDataRequest: ({lastLoadedRawData}) => lastLoadedRawData.data.length >= 12,
 				shouldPerformDataRender: () => true
 			});

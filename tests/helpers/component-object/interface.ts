@@ -16,6 +16,7 @@ export interface CompileSpyObject {
 export interface SpyObject extends CompileSpyObject {
 	get calls(): Promise<unknown[][]>;
 	get callsLength(): Promise<number>;
+	get results(): Promise<unknown[][]>;
 	get lastCall(): Promise<unknown[]>;
 }
 

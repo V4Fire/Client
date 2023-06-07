@@ -13,11 +13,16 @@ import type { ComponentState, MountedComponentItem } from 'components/base/b-scr
 import { paginationHandler } from 'tests/helpers/providers/pagination';
 import { ScrollyComponentObject } from 'components/base/b-scrolly/test/api/component-object';
 import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
+import { componentEvents } from 'components/base/b-scrolly/const';
 
 export * from 'components/base/b-scrolly/test/api/component-object';
 
 type DataItemCtor<DATA = any> = (i: number) => DATA;
 type MountedItemCtor<DATA = any> = (data: DATA, i: number) => MountedComponentItem;
+
+export function filterEmitterCalls(calls: unknown[][]): unknown[][] {
+	return calls.filter(([event]) => Object.isString(event) && Boolean(componentEvents[event]));
+}
 
 /**
  * Creates a test helpers for `b-scrolly` component
@@ -45,9 +50,12 @@ export async function createTestHelpers(page: Page) {
 }
 
 export interface DataConveyor<DATA = any> {
-	addData(count: number): this;
-	addMounted(count: number): this;
+	addData(count: number): DATA[];
+	addMounted(count: number): MountedComponentItem[];
+	getDataChunk(index: number): DATA[];
+	reset(): void;
 	get data(): DATA[];
+	get lastLoadedData(): DATA[];
 	get mounted(): MountedComponentItem[];
 }
 
@@ -55,9 +63,10 @@ export function createDataConveyor<DATA = any>(
 	itemsCtor: DataItemCtor<DATA>,
 	mountedCtor: MountedItemCtor<DATA>
 ): DataConveyor {
-	const
+	let
 		data = <DATA[]>[],
-		mounted = <MountedComponentItem[]>[];
+		mounted = <MountedComponentItem[]>[],
+		dataChunks = <DATA[][]>[];
 
 	let
 		dataI = 0,
@@ -69,9 +78,10 @@ export function createDataConveyor<DATA = any>(
 				newData = createData(count, itemsCtor, dataI);
 
 			data.push(...newData);
+			dataChunks.push(newData);
 
 			dataI = data.length;
-			return this;
+			return newData;
 		},
 
 		addMounted(count: number) {
@@ -82,7 +92,19 @@ export function createDataConveyor<DATA = any>(
 			mounted.push(...mountedData);
 
 			mountedI = mountedData.length;
-			return this;
+			return mountedData;
+		},
+
+		reset() {
+			dataI = 0;
+			mountedI = 0;
+			mounted = [];
+			data = [];
+			dataChunks = [];
+		},
+
+		getDataChunk(i: number) {
+			return dataChunks[i];
 		},
 
 		get mounted() {
@@ -91,6 +113,10 @@ export function createDataConveyor<DATA = any>(
 
 		get data() {
 			return data;
+		},
+
+		get lastLoadedData() {
+			return dataChunks[dataChunks.length - 1];
 		}
 	};
 
@@ -111,9 +137,9 @@ export function sectionMountedItemCtor<DATA = any>(data: DATA, i: number): Mount
 		props: {
 			'data-index': i
 		},
+		key: Object.cast(undefined),
 		item: 'section',
 		type: 'item',
-		key: Object.cast(undefined),
 		node: <any>test.expect.any(String)
 	};
 }
@@ -141,14 +167,25 @@ export function createState(
 	initial: Partial<ComponentState>,
 	dataConveyor: DataConveyor
 ) {
-	const state = fromInitialState(initial);
+	let
+		state = fromInitialState(initial);
 
 	return {
-		compile() {
+		setLoadPage(val: number) {
+			state.loadPage = val;
+		},
+
+		compile(override?: Partial<ComponentState>): ComponentState {
 			return {
 				...state,
-				...stateFromDataConveyor(dataConveyor)
+				...stateFromDataConveyor(dataConveyor),
+				...override
 			};
+		},
+
+		reset() {
+			state = fromInitialState(initial);
+			dataConveyor.reset();
 		},
 
 		data: dataConveyor
@@ -163,16 +200,18 @@ export function fromInitialState(state: Partial<ComponentState>): ComponentState
 		itemsTillEnd: test.expect.any(Number),
 		isInitialRender: true,
 		isInitialLoading: true,
+		isLoadingInProgress: test.expect.any(Boolean),
 		isLastEmpty: false,
+		isLifecycleDone: false,
 		...state
 	};
 }
 
-export function stateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoaded' | 'lastLoadedRawData' | 'mountedItems'> {
+export function stateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'mountedItems'> {
 	return {
 		data: conveyor.data,
-		lastLoaded: conveyor.data,
-		lastLoadedRawData: {data: conveyor.data},
+		lastLoadedData: conveyor.lastLoadedData,
+		lastLoadedRawData: {data: conveyor.lastLoadedData},
 		mountedItems: conveyor.mounted
 	};
 }

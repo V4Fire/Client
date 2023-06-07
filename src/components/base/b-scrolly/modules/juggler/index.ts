@@ -53,18 +53,12 @@ export class Juggler extends Friend {
 		super(ctx);
 
 		const
-			{typedLocalEmitter} = ctx;
+			{componentEmitter} = ctx;
 
-		typedLocalEmitter.on(componentObserverLocalEvents.elementEnter, (component) => this.onElementEnters(component));
-		typedLocalEmitter.on(componentObserverLocalEvents.elementOut, (component) => this.onElementOut(component));
-		typedLocalEmitter.on(componentLocalEvents.resetState, () => this.reset());
-		typedLocalEmitter.on(componentRenderLocalEvents.renderDone, () => this.checkIsDone());
-
-		typedLocalEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => {
-			this.onDataLoaded();
-			this.checkIsDone();
-		});
-
+		componentEmitter.on(componentObserverLocalEvents.elementEnter, (component) => this.onElementEnters(component));
+		componentEmitter.on(componentObserverLocalEvents.elementOut, (component) => this.onElementOut(component));
+		componentEmitter.on(componentLocalEvents.resetState, () => this.reset());
+		componentEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => this.onDataLoaded());
 	}
 
 	/**
@@ -87,6 +81,13 @@ export class Juggler extends Friend {
 			{chunkSize} = ctx,
 			state = this.ctx.getComponentState(),
 			dataSlice = this.getNextDataSlice();
+
+		if (dataSlice.length === 0) {
+			return {
+				result: false,
+				reason: canPerformRenderRejectionReason.noData
+			};
+		}
 
 		if (dataSlice.length < chunkSize) {
 			return {
@@ -118,7 +119,7 @@ export class Juggler extends Friend {
 			{ctx, refs} = this,
 			dataSlice = this.getNextDataSlice();
 
-		ctx.typedLocalEmitter.emit(componentRenderLocalEvents.renderStart);
+		ctx.componentEmitter.emit(componentRenderLocalEvents.renderStart);
 
 		const
 			items = ctx.componentFactory.produceComponentItems(dataSlice),
@@ -128,7 +129,7 @@ export class Juggler extends Friend {
 		ctx.componentInternalState.updateMountedComponents(mountedItems);
 		ctx.observer.observe(mountedItems);
 
-		ctx.typedLocalEmitter.emit(componentRenderLocalEvents.domInsertStart);
+		ctx.componentEmitter.emit(componentRenderLocalEvents.domInsertStart);
 
 		const
 			fragment = document.createDocumentFragment();
@@ -143,8 +144,8 @@ export class Juggler extends Friend {
 		ctx.async.requestAnimationFrame(() => {
 			refs.container.appendChild(fragment);
 
-			ctx.typedLocalEmitter.emit(componentRenderLocalEvents.domInsertDone);
-			ctx.typedLocalEmitter.emit(componentRenderLocalEvents.renderDone);
+			ctx.componentEmitter.emit(componentRenderLocalEvents.domInsertDone);
+			ctx.componentEmitter.emit(componentRenderLocalEvents.renderDone);
 
 		}, {label: $$.insertDomRaf, group: jugglerAsyncGroup});
 	}
@@ -191,6 +192,16 @@ export class Juggler extends Friend {
 			return this.performRender();
 		}
 
+		if (reason === canPerformRenderRejectionReason.noData) {
+			if (ctx.shouldStopRequestingDataWrapper()) {
+				return;
+			}
+
+			if (ctx.shouldPerformDataRequestWrapper()) {
+				void ctx.initLoad();
+			}
+		}
+
 		if (reason === canPerformRenderRejectionReason.notEnoughData) {
 			if (ctx.shouldStopRequestingDataWrapper()) {
 				this.performRender();
@@ -205,24 +216,6 @@ export class Juggler extends Friend {
 
 		if (reason === canPerformRenderRejectionReason.clientRejection) {
 			// ...
-		}
-	}
-
-	/**
-	 * Checks if all data are rendered and all requests are made
-	 */
-	protected checkIsDone(): void {
-		const
-			{ctx} = this,
-			{isDone} = ctx.getComponentState(),
-			slice = this.getNextDataSlice();
-
-		if (
-			slice.length === 0 &&
-			ctx.shouldStopRequestingDataWrapper() &&
-			!isDone
-		) {
-			ctx.typedLocalEmitter.emit(componentLocalEvents.done);
 		}
 	}
 

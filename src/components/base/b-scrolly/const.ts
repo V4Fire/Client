@@ -72,11 +72,6 @@ export const componentDataLocalEvents = <const>{
 	dataLoadStart: 'dataLoadStart',
 
 	/**
-	 * Загрузка данных завершена.
-	 */
-	dataLoadFinish: 'dataLoadFinish',
-
-	/**
 	 * Возникла ошибка при загрузки данных.
 	 */
 	dataLoadError: 'dataLoadError',
@@ -109,7 +104,7 @@ export const componentLocalEvents = <const>{
 	/**
 	 * This event will be emitted then all of the component data is rendered and all of the component data was loaded
 	 */
-	done: 'done'
+	lifecycleDone: 'lifecycleDone'
 };
 
 /**
@@ -147,8 +142,26 @@ export const componentRenderLocalEvents = <const>{
 	domInsertDone: 'domInsertDone'
 };
 
+export const componentEvents = <const>{
+	...componentDataLocalEvents,
+	...componentRenderLocalEvents,
+	...componentLocalEvents
+};
+
 export const canPerformRenderRejectionReason = <const>{
+	/**
+	 * Not enough data to perform a render (ie data.length is 5 and chunkSize is 12)
+	 */
 	notEnoughData: 'notEnoughData',
+
+	/**
+	 * No data at all to perform render (ie data.length is 0)
+	 */
+	noData: 'noData',
+
+	/**
+	 * Client returns `false` in `shouldPerformDataRender`
+	 */
 	clientRejection: 'clientRejection'
 };
 
@@ -170,17 +183,15 @@ export const componentItemType = <const>{
  */
 export const defaultProps = <const>{
 	/** {@link bScrolly.shouldStopRequestingData} */
-	shouldStopRequestingData: (_state: ComponentState, _ctx: bScrolly): boolean => false,
+	shouldStopRequestingData: (state: ComponentState, _ctx: bScrolly): boolean => {
+		const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
+		return !isLastRequestNotEmpty();
+	},
 
 	/** {@link bScrolly.shouldPerformRequest} */
 	shouldPerformDataRequest: (state: ComponentState, _ctx: bScrolly): boolean => {
-		const isLastRequestNotEmpty = () => state.lastLoaded.length > 0;
-
-		if (state.isInitialRender) {
-			return isLastRequestNotEmpty();
-		}
-
-		return false;
+		const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
+		return isLastRequestNotEmpty();
 	},
 
 	/** {@link bScrolly.shouldPerformRender} */

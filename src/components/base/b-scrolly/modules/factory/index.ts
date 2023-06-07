@@ -60,7 +60,7 @@ export class ComponentFactory extends Friend {
 			{ctx} = this;
 
 		let res;
-		ctx.typedLocalEmitter.emit(componentRenderLocalEvents.renderEngineStart);
+		ctx.componentEmitter.emit(componentRenderLocalEvents.renderEngineStart);
 
 		if (ctx.componentRenderStrategy === componentRenderStrategy.forceRenderChunk) {
 			res = forceUpdate.render(ctx, descriptors);
@@ -69,7 +69,7 @@ export class ComponentFactory extends Friend {
 			res = vdomRender.render(ctx, descriptors);
 		}
 
-		ctx.typedLocalEmitter.emit(componentRenderLocalEvents.renderEngineDone);
+		ctx.componentEmitter.emit(componentRenderLocalEvents.renderEngineDone);
 		return res;
 	}
 }

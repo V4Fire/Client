@@ -9,6 +9,7 @@
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { componentDataLocalEvents, componentLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
 import type { ComponentState, MountedComponentItem } from 'components/base/b-scrolly/interface';
+import { createInitialState } from 'components/base/b-scrolly/modules/state/helpers';
 import Friend from 'components/friends/friend';
 
 export class ComponentInternalState extends Friend {
@@ -18,35 +19,7 @@ export class ComponentInternalState extends Friend {
 	 */
 	override readonly C!: bScrolly;
 
-	protected currentLoadPage: number = 0;
-
-	protected currentRenderPage: number = 0;
-
-	protected itemsTillEnd: CanUndef<number> = undefined;
-
-	protected maxViewedIndex: CanUndef<number> = undefined;
-
-	protected data: object[] = [];
-
-	protected lastLoadedData: object[] = [];
-
-	protected lastLoadedRawData: CanUndef<unknown>;
-
-	protected isLastEmpty: boolean = false;
-
-	protected isInitialLoading: boolean = true;
-
-	protected isDone: boolean = false;
-
-	/**
-	 * Component items that was rendered
-	 */
-	protected mountedItems: MountedComponentItem[] = [];
-
-	/**
-	 * `True` if the next rendering process will be initial
-	 */
-	protected isInitialRender: boolean = true;
+	protected state: ComponentState = createInitialState();
 
 	/**
 	 * @param ctx
@@ -55,17 +28,23 @@ export class ComponentInternalState extends Friend {
 		super(ctx);
 
 		const
-			{typedLocalEmitter} = ctx;
+			{componentEmitter} = ctx;
 
-		typedLocalEmitter.on(componentDataLocalEvents.dataLoadStart, () => this.incrementLoadPage());
-		typedLocalEmitter.on(componentDataLocalEvents.dataLoadSuccess, (...args) => this.updateData(...args));
-		typedLocalEmitter.on(componentLocalEvents.convertDataToDB, (...args) => this.setRawLastLoaded(...args));
-		typedLocalEmitter.on(componentLocalEvents.resetState, (...args) => this.reset(...args));
-		typedLocalEmitter.on(componentLocalEvents.done, () => this.setIsDone(true));
+		componentEmitter.on(componentDataLocalEvents.dataLoadStart, () => this.incrementLoadPage());
+		componentEmitter.on(componentLocalEvents.convertDataToDB, (...args) => this.setRawLastLoaded(...args));
+		componentEmitter.on(componentLocalEvents.resetState, (...args) => this.reset(...args));
 
-		typedLocalEmitter.on(componentRenderLocalEvents.renderStart, () => {
+		componentEmitter.on(componentRenderLocalEvents.renderStart, () => {
 			this.setIsInitialRender(false);
 			this.incrementRenderPage();
+		});
+
+		componentEmitter.on(componentRenderLocalEvents.renderDone, () => {
+			this.updateIsRenderDone();
+		});
+
+		componentEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => {
+			this.updateIsRenderDone();
 		});
 	}
 
@@ -74,18 +53,7 @@ export class ComponentInternalState extends Friend {
 	 */
 	compile(): Readonly<ComponentState> {
 		return {
-			loadPage: this.currentLoadPage,
-			renderPage: this.currentRenderPage,
-			data: this.data,
-			isLastEmpty: this.isLastEmpty,
-			isInitialLoading: this.isInitialLoading,
-			isInitialRender: this.isInitialRender,
-			isDone: this.isDone,
-			lastLoaded: this.lastLoadedData,
-			lastLoadedRawData: this.lastLoadedRawData,
-			maxViewedIndex: this.maxViewedIndex,
-			mountedItems: this.mountedItems,
-			itemsTillEnd: this.itemsTillEnd
+			...this.state
 		};
 	}
 
@@ -93,23 +61,14 @@ export class ComponentInternalState extends Friend {
 	 * Обнуляет состояние модуля.
 	 */
 	reset(): void {
-		this.currentLoadPage = 0;
-		this.currentRenderPage = 0;
-		this.maxViewedIndex = 0;
-		this.itemsTillEnd = 0;
-		this.data = [];
-		this.mountedItems = [];
-		this.isLastEmpty = false;
-		this.isDone = false;
-		this.isInitialLoading = true;
-		this.isInitialRender = true;
+		this.state = createInitialState();
 	}
 
 	/**
 	 * Обновляет указатель последней загруженной страницы.
 	 */
 	incrementLoadPage(): this {
-		this.currentLoadPage++;
+		this.state.loadPage++;
 		return this;
 	}
 
@@ -117,12 +76,12 @@ export class ComponentInternalState extends Friend {
 	 * Обновляет указать последней отрисованной страницы.
 	 */
 	incrementRenderPage(): this {
-		this.currentRenderPage++;
+		this.state.renderPage++;
 		return this;
 	}
 
 	storeComponentItems(items: MountedComponentItem[]): this {
-		this.mountedItems.push(...items);
+		(<MountedComponentItem[]>this.state.mountedItems).push(...items);
 		return this;
 	}
 
@@ -133,25 +92,63 @@ export class ComponentInternalState extends Friend {
 	 * @param isInitialLoading
 	 */
 	updateData(data: object[], isInitialLoading: boolean): this {
-		this.data = this.data.concat(data);
-		this.isLastEmpty = data.length === 0;
-		this.isInitialLoading = isInitialLoading;
-		this.lastLoadedData = data;
+		this.state.data = this.state.data.concat(data);
+		this.state.isLastEmpty = data.length === 0;
+		this.state.isInitialLoading = isInitialLoading;
+		this.state.lastLoadedData = data;
 
 		return this;
 	}
 
 	updateMountedComponents(mountedItems: MountedComponentItem[]): this {
-		this.mountedItems.push(...mountedItems);
+		(<MountedComponentItem[]>this.state.mountedItems).push(...mountedItems);
 		return this;
 	}
 
 	updateItemsTillEnd(): this {
-		if (this.maxViewedIndex == null) {
+		if (this.state.maxViewedIndex == null) {
 			throw new Error('Missing max viewed index');
 		}
 
-		this.itemsTillEnd = this.mountedItems.length - 1 - this.maxViewedIndex;
+		this.state.itemsTillEnd = this.state.mountedItems.length - 1 - this.state.maxViewedIndex;
+		return this;
+	}
+
+	updateIsRenderDone(): this {
+		const
+			{ctx} = this,
+			state = ctx.getComponentState();
+
+		if (
+			!state.isLoadingInProgress &&
+			state.isRequestsStopped &&
+			state.data.length === state.mountedItems.length
+		) {
+			ctx.componentInternalState.setIsRenderingDone(true);
+
+		} else {
+			ctx.componentInternalState.setIsRenderingDone(false);
+		}
+
+		return this;
+	}
+
+	updateIsLifecycleDone(): this {
+		const
+			{ctx} = this,
+			state = ctx.getComponentState();
+
+		if (state.isLifecycleDone) {
+			return this;
+		}
+
+		if (
+			state.isRequestsStopped &&
+			state.isRenderingDone
+		) {
+			ctx.componentInternalState.setIsLifecycleDone(true);
+		}
+
 		return this;
 	}
 
@@ -161,12 +158,7 @@ export class ComponentInternalState extends Friend {
 	 * @param data
 	 */
 	setRawLastLoaded(data: unknown): this {
-		this.lastLoadedRawData = data;
-		return this;
-	}
-
-	setIsDone(v: boolean): this {
-		this.isDone = v;
+		this.state.lastLoadedRawData = data;
 		return this;
 	}
 
@@ -176,12 +168,45 @@ export class ComponentInternalState extends Friend {
 	 * @param state
 	 */
 	setIsInitialRender(state: boolean): this {
-		this.isInitialRender = state;
+		this.state.isInitialRender = state;
+		return this;
+	}
+
+	setIsRequestsStopped(state: boolean): this {
+		this.state.isRequestsStopped = state;
+		this.updateIsRenderDone();
+		this.updateIsLifecycleDone();
+
+		return this;
+	}
+
+	setIsRenderingDone(state: boolean): this {
+		this.state.isRenderingDone = state;
+		this.updateIsLifecycleDone();
+
+		return this;
+	}
+
+	setIsLifecycleDone(state: boolean): this {
+		const
+			{ctx} = this;
+
+		this.state.isLifecycleDone = state;
+
+		if (state) {
+			ctx.componentEmitter.emit(componentLocalEvents.lifecycleDone);
+		}
+
+		return this;
+	}
+
+	setIsLoadingInProgress(state: boolean): this {
+		this.state.isLoadingInProgress = state;
 		return this;
 	}
 
 	setMaxViewedIndex(index: number): this {
-		this.maxViewedIndex = index;
+		this.state.maxViewedIndex = index;
 		this.updateItemsTillEnd();
 
 		return this;

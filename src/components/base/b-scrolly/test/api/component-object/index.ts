@@ -8,7 +8,7 @@
 
 import type { JSHandle, Locator, Page } from 'playwright';
 
-import { ComponentObject, Scroll, Utils } from 'tests/helpers';
+import { ComponentObject, Scroll } from 'tests/helpers';
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import type { ComponentRefs, ComponentState } from 'components/base/b-scrolly/b-scrolly';
@@ -60,6 +60,13 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	}
 
 	/**
+	 * Calls a reload method of the component
+	 */
+	reload(): Promise<void> {
+		return this.component.evaluate((ctx) => ctx.reload());
+	}
+
+	/**
 	 * Returns an internal component state
 	 */
 	getComponentState(): Promise<ComponentState> {
@@ -70,29 +77,35 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	 * Returns a container child count
 	 */
 	async getContainerChildCount(): Promise<number> {
-		return this.container.evaluate((ctx) => ctx.childNodes.length);
+		return this.container.locator('*').count();
 	}
 
 	/**
 	 * Waits for container child count equals to N
 	 */
 	async waitForContainerChildCountEqualsTo(n: number): Promise<void> {
-		return Utils.waitForFunction((await this.container.elementHandle())!, (ctx, n) => ctx.childNodes.length === n, n);
-	}
-
-	/**
-	 * Waits for container child count more or equals to N
-	 */
-	async waitForContainerChildCountMoreThen(n: number): Promise<void> {
-		return Utils.waitForFunction((await this.container.elementHandle())!, (ctx, n) => ctx.childNodes.length >= n, n);
+		await this.container.locator('*').nth(n - 1).waitFor({state: 'attached'});
 	}
 
 	/**
 	 * Returns a promise that will be resolved after the component emits `domInsertDone`
 	 */
 	async waitForDomInsertDoneEvent(): Promise<this> {
-		await this.component.evaluate((ctx) => ctx.typedLocalEmitter.promisifyOnce('domInsertDone'));
+		await this.component.evaluate((ctx) => ctx.componentEmitter.promisifyOnce('domInsertDone'));
 		return this;
+	}
+
+	async waitForLifecycleDone(): Promise<void> {
+		await this.component.evaluate((ctx) => {
+			const
+				state = ctx.getComponentState();
+
+			if (state.isLifecycleDone) {
+				return;
+			}
+
+			return ctx.componentEmitter.promisifyOnce('lifecycleDone');
+		});
 	}
 
 	/**

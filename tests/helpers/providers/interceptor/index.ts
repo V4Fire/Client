@@ -6,10 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import delay from 'delay';
 import type { BrowserContext, Page, Request, Route } from 'playwright';
 import { ModuleMocker } from 'jest-mock';
 
 type ResponseHandler = (route: Route, request: Request) => CanPromise<any>;
+
+interface ResponseOptions {
+	delay?: number;
+}
 
 /**
  * API that provides simple way to intercept and response to any request
@@ -123,13 +128,18 @@ export class RequestInterceptor {
 	 *
 	 * @param status
 	 * @param payload
+	 * @param opts
 	 */
-	response(status: number, payload: object | string | number): this;
+	response(status: number, payload: object | string | number, opts?: ResponseOptions): this;
 
 	/**
 	 * @inheritdoc
 	 */
-	response(handlerOrStatus: number | ResponseHandler, payload?: object | string | number): this {
+	response(
+		handlerOrStatus: number | ResponseHandler,
+		payload?: object | string | number,
+		opts?: ResponseOptions
+	): this {
 		let fn;
 
 		if (Object.isFunction(handlerOrStatus)) {
@@ -137,7 +147,7 @@ export class RequestInterceptor {
 
 		} else {
 			const status = handlerOrStatus;
-			fn = this.cookResponseFn(status, payload);
+			fn = this.cookResponseFn(status, payload, opts);
 		}
 
 		this.mock.mockImplementation(fn);
@@ -173,8 +183,19 @@ export class RequestInterceptor {
 	 *
 	 * @param status
 	 * @param payload
+	 * @param opts
 	 */
-	protected cookResponseFn(status: number, payload?: string | object | number): ResponseHandler {
-			return (route) => route.fulfill({status, body: JSON.stringify(payload), contentType: 'application/json'});
+	protected cookResponseFn(
+		status: number,
+		payload?: string | object | number,
+		opts?: ResponseOptions
+	): ResponseHandler {
+			return async (route) => {
+				if (opts?.delay != null) {
+					await delay(opts.delay);
+				}
+
+				return route.fulfill({status, body: JSON.stringify(payload), contentType: 'application/json'});
+			};
 	}
 }

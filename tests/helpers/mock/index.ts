@@ -9,8 +9,9 @@
 import type { ModuleMocker } from 'jest-mock';
 import type { JSHandle, Page } from 'playwright';
 import type { SpyObject, SyncSpyObject } from 'tests/helpers/component-object/interface';
+import type { ExtractFromJSHandle } from 'tests/helpers/mock/interface';
 
-function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMocker['fn']> | ReturnType<ModuleMocker['spyOn']>>, obj: T): T & SpyObject {
+export function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMocker['fn']> | ReturnType<ModuleMocker['spyOn']>>, obj: T): T & SpyObject {
 	Object.defineProperties(obj, {
 		calls: {
 			get: () => agent.evaluate((ctx) => ctx.mock.calls)
@@ -22,6 +23,10 @@ function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMocker['fn
 
 		lastCall: {
 			get: () => agent.evaluate((ctx) => ctx.mock.calls[ctx.mock.calls.length - 1])
+		},
+
+		results: {
+			get: () => agent.evaluate((ctx) => ctx.mock.results)
 		},
 
 		compile: {
@@ -51,7 +56,7 @@ function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMocker['fn
 
 export async function spy<T extends JSHandle, ARGS extends any[]>(
 	ctx: T,
-	spyCtor: (ctx: T, ...args: ARGS) => ReturnType<ModuleMocker['spyOn']>,
+	spyCtor: (ctx: ExtractFromJSHandle<T>, ...args: ARGS) => ReturnType<ModuleMocker['spyOn']>,
 	...argsToCtor: ARGS
 ): Promise<SpyObject> {
 	const

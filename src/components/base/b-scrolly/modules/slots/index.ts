@@ -45,14 +45,14 @@ export class SlotsStateController extends Friend {
 		super(ctx);
 
 		const
-			{typedLocalEmitter} = ctx;
+			{componentEmitter} = ctx;
 
-		typedLocalEmitter.on(componentDataLocalEvents.dataLoadError, () => this.loadingFailedState());
-		typedLocalEmitter.on(componentDataLocalEvents.dataLoadStart, () => this.loadingProgressState());
-		typedLocalEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => this.loadingSuccessState());
-		typedLocalEmitter.on(componentDataLocalEvents.dataEmpty, () => this.emptyState());
-		typedLocalEmitter.on(componentLocalEvents.done, () => this.doneState());
-		typedLocalEmitter.on(componentLocalEvents.resetState, () => this.reset());
+		componentEmitter.on(componentDataLocalEvents.dataLoadError, () => this.loadingFailedState());
+		componentEmitter.on(componentDataLocalEvents.dataLoadStart, () => this.loadingProgressState());
+		componentEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => this.loadingSuccessState());
+		componentEmitter.on(componentDataLocalEvents.dataEmpty, () => this.emptyState());
+		componentEmitter.on(componentLocalEvents.lifecycleDone, () => this.doneState());
+		componentEmitter.on(componentLocalEvents.resetState, () => this.reset());
 	}
 
 	/**

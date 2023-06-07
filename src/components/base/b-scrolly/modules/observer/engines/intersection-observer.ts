@@ -26,7 +26,7 @@ export default class IoObserver extends Friend implements ObserverEngine {
 	constructor(ctx: bScrolly) {
 		super(ctx);
 
-		ctx.typedLocalEmitter.on(componentLocalEvents.resetState, () => this.reset());
+		ctx.componentEmitter.on(componentLocalEvents.resetState, () => this.reset());
 	}
 
 	/**
@@ -42,7 +42,7 @@ export default class IoObserver extends Friend implements ObserverEngine {
 				label: component.key,
 				once: true,
 				delay: 0
-			}, () => ctx.typedLocalEmitter.emit(componentObserverLocalEvents.elementEnter, component));
+			}, () => ctx.componentEmitter.emit(componentObserverLocalEvents.elementEnter, component));
 		}
 	}
 

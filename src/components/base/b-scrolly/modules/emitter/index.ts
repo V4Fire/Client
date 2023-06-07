@@ -18,7 +18,7 @@ import type { ComponentLocalEvents, LocalEventPayload } from 'components/base/b-
  * @param ctx
  */
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function typedLocalEmitterFactory(ctx: bScrolly) {
+export function typedEmitterFactory(ctx: bScrolly) {
 	const once = <EVENT extends ComponentLocalEvents>(
 		event: EVENT,
 		handler: (...args: LocalEventPayload<EVENT>) => void,

@@ -12,6 +12,7 @@ import type { SpyObject, SpyOptions } from 'tests/helpers/component-object/inter
 import { createAndDisposeMock, spy } from 'tests/helpers/mock';
 import { setSerializerAsMockFn } from 'core/prelude/test-env/components/json';
 import ComponentObjectInitializer from 'tests/helpers/component-object/initializer';
+import type { SpyCtor } from 'tests/helpers/mock/interface';
 
 export default class ComponentObjectMock<COMPONENT extends iBlock> extends ComponentObjectInitializer<COMPONENT> {
 
@@ -77,6 +78,10 @@ export default class ComponentObjectMock<COMPONENT extends iBlock> extends Compo
 		return instance;
 	}
 
+	async getSpy(spyFinder: SpyCtor<COMPONENT, []>): Promise<SpyObject> {
+		return spy(this.component, spyFinder);
+	}
+
 	/**
 	 * Creates a mock function
 	 * @param paths
@@ -115,11 +120,11 @@ export default class ComponentObjectMock<COMPONENT extends iBlock> extends Compo
 	 * > Notice that the implementation will be provided into browser,
 	 * this imposes some restrictions, such as not being able to use a closure
 	 */
-	async mockFn(fn?: (...args: any[]) => any): Promise<SpyObject> {
-		fn ??= () => undefined;
+	async mockFn<FN extends (...args: any[]) => any = (...args: any[]) => any>(fn?: FN): Promise<SpyObject> {
+		fn ??= Object.cast(() => undefined);
 
 		const
-			{agent, id} = await createAndDisposeMock(this.page, fn);
+			{agent, id} = await createAndDisposeMock(this.page, fn!);
 
 		return setSerializerAsMockFn(agent, id);
 	}

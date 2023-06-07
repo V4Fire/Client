@@ -39,9 +39,8 @@ test.describe('<b-scrolly>', () => {
 
 		await component.withDefaultPaginationProviderProps({chunkSize});
 		await component.build();
-		await component.waitForDomInsertDoneEvent();
 
-		await test.expect(component.getContainerChildCount()).resolves.toBe(chunkSize);
+		await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 	});
 
 	test('2', async () => {
@@ -53,9 +52,9 @@ test.describe('<b-scrolly>', () => {
 			shouldStopRequestingData = await component.mockFn(() => false),
 			shouldPerformDataRequest = await component.mockFn(defaultProps.shouldPerformDataRequest);
 
-		state.data
-			.addData(providerChunkSize)
-			.addMounted(chunkSize);
+		const data = state.data.addData(providerChunkSize);
+		state.data.addData(providerChunkSize);
+		state.data.addMounted(chunkSize);
 
 		await component.setProps({
 			chunkSize,
@@ -66,24 +65,41 @@ test.describe('<b-scrolly>', () => {
 
 		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
 		await component.build();
-		await component.waitForDomInsertDoneEvent();
+		await component.waitForContainerChildCountEqualsTo(chunkSize);
 
 		await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
 			[
-				state.compile(),
+				state.compile({
+					itemsTillEnd: undefined,
+					maxViewedIndex: undefined,
+					isRenderingDone: false,
+					isRequestsStopped: false,
+					lastLoadedData: data,
+					lastLoadedRawData: {data},
+					data,
+					loadPage: 1
+				}),
 				test.expect.any(Object)
 			]
 		]);
 
 		await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
 			[
-				state.compile(),
+				state.compile({
+					itemsTillEnd: undefined,
+					maxViewedIndex: undefined,
+					isRenderingDone: false,
+					isRequestsStopped: false,
+					lastLoadedData: data,
+					lastLoadedRawData: {data},
+					data,
+					loadPage: 1
+				}),
 				test.expect.any(Object)
 			]
 		]);
 
 		await test.expect(initLoadSpy.calls).resolves.toEqual([[], []]);
-		await test.expect(component.getContainerChildCount()).resolves.toBe(chunkSize);
 	});
 
 	test('3', async () => {
@@ -95,9 +111,9 @@ test.describe('<b-scrolly>', () => {
 			shouldStopRequestingData = await component.mockFn(() => false),
 			shouldPerformDataRequest = await component.mockFn(() => false);
 
-		state.data
-			.addData(providerChunkSize)
-			.addMounted(providerChunkSize);
+		state.setLoadPage(1);
+		state.data.addData(providerChunkSize);
+		state.data.addMounted(providerChunkSize);
 
 		await component.setProps({
 			chunkSize,
@@ -112,20 +128,29 @@ test.describe('<b-scrolly>', () => {
 
 		await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
 			[
-				state.compile(),
+				state.compile({
+					itemsTillEnd: undefined,
+					maxViewedIndex: undefined,
+					isRenderingDone: false,
+					isRequestsStopped: false
+				}),
 				test.expect.any(Object)
 			]
 		]);
 
 		await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
 			[
-				state.compile(),
+				state.compile({
+					itemsTillEnd: undefined,
+					maxViewedIndex: undefined,
+					isRenderingDone: false,
+					isRequestsStopped: false
+				}),
 				test.expect.any(Object)
 			]
 		]);
 
 		await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
-		await test.expect(component.getContainerChildCount()).resolves.toBe(providerChunkSize);
 	});
 
 	test('4', async () => {
@@ -137,9 +162,9 @@ test.describe('<b-scrolly>', () => {
 			shouldStopRequestingData = await component.mockFn(() => true),
 			shouldPerformDataRequest = await component.mockFn(() => false);
 
-		state.data
-			.addData(providerChunkSize)
-			.addMounted(providerChunkSize);
+		state.setLoadPage(1);
+		state.data.addData(providerChunkSize);
+		state.data.addMounted(providerChunkSize);
 
 		await component.setProps({
 			chunkSize,
@@ -150,17 +175,21 @@ test.describe('<b-scrolly>', () => {
 
 		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
 		await component.build();
-		await component.waitForDomInsertDoneEvent();
+		await component.waitForContainerChildCountEqualsTo(providerChunkSize);
 
 		await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
 			[
-				state.compile(),
+				state.compile({
+					itemsTillEnd: undefined,
+					maxViewedIndex: undefined,
+					isRenderingDone: false,
+					isRequestsStopped: false
+				}),
 				test.expect.any(Object)
 			]
 		]);
 
 		await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
 		await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([]);
-		await test.expect(component.getContainerChildCount()).resolves.toBe(providerChunkSize);
 	});
 });

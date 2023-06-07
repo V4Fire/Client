@@ -20,16 +20,19 @@ export type ComponentStrategyKeys = keyof typeof componentStrategy;
  * Состояние компонента.
  */
 export interface ComponentState {
-	loadPage: number;
-	renderPage: number;
-	data: object[];
-	isLastEmpty: boolean;
-	isInitialLoading: boolean;
-	lastLoaded: object[];
-	isInitialRender: boolean;
-	isDone: boolean;
 	maxViewedIndex: CanUndef<number>;
 	itemsTillEnd: CanUndef<number>;
+	loadPage: number;
+	renderPage: number;
+	isLastEmpty: boolean;
+	isInitialLoading: boolean;
+	isInitialRender: boolean;
+	isRequestsStopped: boolean;
+	isRenderingDone: boolean;
+	isLoadingInProgress: boolean;
+	isLifecycleDone: boolean;
+	lastLoadedData: Readonly<object[]>;
+	data: Readonly<object[]>;
 	mountedItems: Readonly<MountedComponentItem[]>;
 	lastLoadedRawData: unknown;
 }
@@ -78,7 +81,7 @@ export type CanPerformRenderRejectionReason = keyof typeof canPerformRenderRejec
 /**
  * Функция для опроса клиента о необходимости выполнить то или иное действие.
  */
-export interface ShouldRequestFn {
+export interface ShouldFn {
 	(params: ComponentState, ctx: bScrolly): boolean;
 }
 
@@ -92,25 +95,24 @@ export type ComponentLocalEvents =
  * Имя события: аргументы события
  */
 export interface LocalEventPayloadMap {
-	dataLoadSuccess: [data: object[], isInitialLoading: boolean];
-	dataLoadFinish: [isInitialLoading: boolean];
-	dataLoadStart: [isInitialLoading: boolean];
-	dataLoadError: [isInitialLoading: boolean];
-	dataEmpty: [isInitialLoading: boolean];
+	[componentDataLocalEvents.dataLoadSuccess]: [data: object[], isInitialLoading: boolean];
+	[componentDataLocalEvents.dataLoadStart]: [isInitialLoading: boolean];
+	[componentDataLocalEvents.dataLoadError]: [isInitialLoading: boolean];
+	[componentDataLocalEvents.dataEmpty]: [isInitialLoading: boolean];
 
-	resetState: [];
-	done: [];
-	convertDataToDB: [data: unknown];
+	[componentLocalEvents.resetState]: [];
+	[componentLocalEvents.lifecycleDone]: [];
+	[componentLocalEvents.convertDataToDB]: [data: unknown];
 
-	elementEnter: [componentItem: MountedComponentItem];
-	elementOut: [componentItem: MountedComponentItem];
+	[componentObserverLocalEvents.elementEnter]: [componentItem: MountedComponentItem];
+	[componentObserverLocalEvents.elementOut]: [componentItem: MountedComponentItem];
 
-	renderStart: [];
-	renderDone: [];
-	renderEngineStart: [];
-	renderEngineDone: [];
-	domInsertStart: [];
-	domInsertDone: [];
+	[componentRenderLocalEvents.renderStart]: [];
+	[componentRenderLocalEvents.renderDone]: [];
+	[componentRenderLocalEvents.renderEngineStart]: [];
+	[componentRenderLocalEvents.renderEngineDone]: [];
+	[componentRenderLocalEvents.domInsertStart]: [];
+	[componentRenderLocalEvents.domInsertDone]: [];
 }
 
 export interface ComponentRefs {
