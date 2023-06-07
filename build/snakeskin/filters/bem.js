@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	{webpack} = require('@config/config');
+	webpack = {ssr: false}; //{webpack} = require('@config/config');
 
 module.exports = [
 	/**

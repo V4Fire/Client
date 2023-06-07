@@ -18,15 +18,33 @@ const
 	glob = require('glob'),
 	isPathInside = require('is-path-inside');
 
-const
-	{validators, config: {dependencies, superRgxp}} = require('@pzlr/build-core');
+// const
+// 	{validators, config: {dependencies, superRgxp}} = require('@pzlr/build-core');
+
+const dependencies = ['@v4fire/core'], superRgxp = /@super/;
+const blockTypes = {
+	i: 'interface',
+	b: 'block',
+	p: 'page',
+	g: 'global',
+	v: 'virtual'
+};
 
 const
-	{resources} = include('build/graph'),
-	{ssExtRgxp} = include('build/snakeskin/filters/const');
+	blockTypeList = Object.keys(blockTypes),
+	baseBlockName = `[${blockTypeList.join('')}]-[a-z0-9][a-z0-9-_]*`,
+	blockNameRegExp = new RegExp(`^${baseBlockName}$`),
+	blockDepRegExp = new RegExp(`^(@|[a-z][a-z0-9-_]*\\/)?${baseBlockName}$`);
+
+
 
 const
-	resourcesRgxp = $C(dependencies).map((el) => new RegExp(`^${RegExp.escape(el)}`));
+	resources = [], //{resources} = include('build/graph'),
+	{ssExtRgxp} = require('./const');
+
+const
+	escapeRgxp = /([\\/'*+?|()[\]{}.^$-])/g,
+	resourcesRgxp = $C(dependencies).map((el) => new RegExp(`^${String(el).replace(escapeRgxp, '\\$1')}`));
 
 Snakeskin.importFilters({
 	/**
@@ -84,7 +102,7 @@ Snakeskin.importFilters({
 				ends.push(`${basename}.ss`);
 			}
 
-			if (!validators.blockName(basename)) {
+			if (!blockNameRegExp.test(basename)) {
 				ends.push('main.ss', 'index.ss');
 			}
 

@@ -13,17 +13,34 @@ const
 	Snakeskin = require('snakeskin');
 
 const
-	{webpack} = require('@config/config'),
-	{validators} = require('@pzlr/build-core'),
-	{isV4Prop} = include('build/snakeskin/filters/const');
+	webpack = {ssr: false}, // {webpack} = require('@config/config'),
+	// {validators} = require('@pzlr/build-core'),
+	{isV4Prop} = require('./filters/const');
+
+
+const dependencies = ['@v4fire/core'], superRgxp = /@super/;
+const blockTypes = {
+	i: 'interface',
+	b: 'block',
+	p: 'page',
+	g: 'global',
+	v: 'virtual'
+};
 
 const
-	componentParams = include('build/graph/component-params');
+	blockTypeList = Object.keys(blockTypes),
+	baseBlockName = `[${blockTypeList.join('')}]-[a-z0-9][a-z0-9-_]*`,
+	blockNameRegExp = new RegExp(`^${baseBlockName}$`),
+	blockDepRegExp = new RegExp(`^(@|[a-z][a-z0-9-_]*\\/)?${baseBlockName}$`);
+
 
 const
-	tagFilters = include('build/snakeskin/filters/tag'),
-	tagNameFilters = include('build/snakeskin/filters/tag-name'),
-	bemFilters = include('build/snakeskin/filters/bem');
+	componentParams = {}; // include('build/graph/component-params');
+
+const
+	tagFilters = require('./filters/tag'),
+	tagNameFilters = require('./filters/tag-name'),
+	bemFilters = require('./filters/bem');
 
 const
 	TYPE_OF = Symbol('Type of component to create'),
@@ -48,7 +65,7 @@ function tagFilter({name, attrs = {}}) {
 	const isSimpleTag =
 		name !== 'component' &&
 		!attrs[TYPE_OF] &&
-		!validators.blockName(name);
+		!blockNameRegExp.test(name);
 
 	if (isSimpleTag) {
 		return;

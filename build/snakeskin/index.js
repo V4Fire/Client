@@ -8,5 +8,5 @@
 
 'use strict';
 
-include('build/snakeskin/filters');
-include('build/snakeskin/default-filters');
+require('./filters');
+require('./default-filters');

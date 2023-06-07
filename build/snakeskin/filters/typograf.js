@@ -8,8 +8,8 @@
 
 'use strict';
 
-const
-	config = require('@config/config');
+// const
+// 	config = require('@config/config');
 
 const
 	Snakeskin = require('snakeskin'),
@@ -18,9 +18,9 @@ const
 let
 	tp;
 
-if (Typograf.hasLocale(config.typograf().locale)) {
-	tp = new Typograf(config.typograf());
-}
+// if (Typograf.hasLocale(config.typograf().locale)) {
+// 	tp = new Typograf(config.typograf());
+// }
 
 Snakeskin.importFilters({
 	/**

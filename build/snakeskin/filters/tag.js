@@ -9,8 +9,8 @@
 'use strict';
 
 const
-	{webpack} = require('@v4fire/config'),
-	{isV4Prop, isStaticV4Prop} = include('build/snakeskin/filters/const');
+	webpack = {ssr: false}, // {webpack} = require('@v4fire/config'),
+	{isV4Prop, isStaticV4Prop} = require('./const');
 
 module.exports = [
 	/**

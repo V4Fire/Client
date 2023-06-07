@@ -8,5 +8,5 @@
 
 'use strict';
 
-include('build/snakeskin/filters/include');
-include('build/snakeskin/filters/typograf');
+require('./include');
+require('./typograf');

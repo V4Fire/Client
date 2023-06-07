@@ -8,19 +8,21 @@
 
 'use strict';
 
-const
-	{typescript, webpack, webpack: {ssr}} = require('@config/config'),
-	{commentModuleExpr: commentExpr} = include('build/const');
+// const
+	// {typescript, webpack, webpack: {ssr}} = require('@config/config'),
+	// {commentModuleExpr: commentExpr} = include('build/const');
 
+const commentExpr = '\\s*(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*';
 const importRgxp = new RegExp(
 	`\\bimport${commentExpr}\\((${commentExpr})(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\2${commentExpr}\\)`,
 	'g'
 );
 
 const
-	hasImport = importRgxp.removeFlags('g'),
-	isESImport = typescript().client.compilerOptions.module === 'ES2020',
-	fatHTML = webpack.fatHTML();
+	hasImport = new RegExp(	`\\bimport${commentExpr}\\((${commentExpr})(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\2${commentExpr}\\)`),
+	isESImport = true, // typescript().client.compilerOptions.module === 'ES2020',
+	fatHTML = false, // webpack.fatHTML();
+	ssr = false;
 
 /**
  * Monic replacer to enable dynamic imports of components

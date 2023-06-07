@@ -12,7 +12,7 @@ const
 	Snakeskin = require('snakeskin');
 
 const
-	{webpack} = require('@config/config'),
+	{webpack} = {ssr: false}, // require('@config/config'),
 	{Vars} = Snakeskin;
 
 module.exports = [
