@@ -61,12 +61,13 @@ function registerDirectiveValue(
 		if (opts.root == null) {
 			let root = el.parentElement;
 
-			while (root != null && (root.scrollWidth > root.clientWidth || root.scrollHeight > root.clientHeight)) {
+			while (root != null && (root.scrollWidth === root.clientWidth && root.scrollHeight == root.clientHeight)) {
 				root = root.parentElement;
 			}
+
+			opts.root = root;
 		}
 
-		opts.root ??= el.parentElement;
 		IntersectionWatcher.watch(el, opts, handler);
 	});
 }
