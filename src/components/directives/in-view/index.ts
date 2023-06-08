@@ -58,6 +58,14 @@ function registerDirectiveValue(
 			opts = Object.reject(opts, 'handler');
 		}
 
+		if (opts.root == null) {
+			let root = el.parentElement;
+
+			while (root != null && (root.scrollWidth > root.clientWidth || root.scrollHeight > root.clientHeight)) {
+				root = root.parentElement;
+			}
+		}
+
 		opts.root ??= el.parentElement;
 		IntersectionWatcher.watch(el, opts, handler);
 	});
