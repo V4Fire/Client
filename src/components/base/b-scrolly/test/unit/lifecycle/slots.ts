@@ -12,8 +12,9 @@
 
 import test from 'tests/config/unit/test';
 
-import { createData, createTestHelpers, indexDataCtor } from 'components/base/b-scrolly/test/api/helpers';
+import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type { SlotsStateObj } from 'components/base/b-scrolly/modules/slots';
+import type { ShouldFn } from 'components/base/b-scrolly/b-scrolly';
 
 test.describe('<b-scrolly> slots', () => {
 	let
@@ -26,20 +27,50 @@ test.describe('<b-scrolly> slots', () => {
 
 		({component, provider, state} = await createTestHelpers(page));
 		await provider.start();
+
+		await component.setChildren({
+			done: {
+				type: 'div',
+				attrs: {
+					id: 'done'
+				}
+			},
+
+			empty: {
+				type: 'div',
+				attrs: {
+					id: 'empty'
+				}
+			},
+
+			retry: {
+				type: 'div',
+				attrs: {
+					id: 'retry'
+				}
+			},
+
+			tombstone: {
+				type: 'div',
+				attrs: {
+					id: 'tombstone'
+				}
+			},
+
+			loader: {
+				type: 'div',
+				attrs: {
+					id: 'loader'
+				}
+			}
+		});
+
+		await component.setProps({
+			tombstonesSize: 1
+		});
 	});
 
 	test.describe('`done`', () => {
-		test.beforeEach(async () => {
-			await component.setChildren({
-				done: {
-					type: 'div',
-					attrs: {
-						id: 'done'
-					}
-				}
-			});
-		});
-
 		test('Activates when all data has been loaded after the initial load', async () => {
 			const chunkSize = 12;
 
@@ -105,7 +136,7 @@ test.describe('<b-scrolly> slots', () => {
 			const chunkSize = 12;
 
 			provider
-				.responseOnce(200, {data: createData(chunkSize / 2, indexDataCtor)})
+				.responseOnce(200, {data: state.data.addData(chunkSize / 2)})
 				.response(200, {data: []});
 
 			await component.setProps({
@@ -130,17 +161,189 @@ test.describe('<b-scrolly> slots', () => {
 				tombstones: false
 			});
 		});
+
+		test('Does not activates if there is more data to download', async () => {
+			const chunkSize = 12;
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: []});
+
+			await component.setProps({
+				chunkSize,
+				shouldPerformDataRender: <ShouldFn>(({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0)
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await component.waitForContainerChildCountEqualsTo(chunkSize);
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: false,
+				empty: false,
+				loader: false,
+				renderNext: false,
+				retry: false,
+				tombstones: false
+			});
+		});
 	});
 
-	test.describe('empty', async () => {
-		// ...
+	test.describe('empty', () => {
+		test('Activates when no data has been loaded after the initial load', async () => {
+			const chunkSize = 12;
+
+			provider.response(200, {data: []});
+
+			await component.setProps({
+				chunkSize,
+				shouldPerformDataRender: () => true
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await component.waitForSlotState('empty', true);
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: true,
+				empty: true,
+				loader: false,
+				renderNext: false,
+				retry: false,
+				tombstones: false
+			});
+		});
 	});
 
-	test.describe('tombstone & loader', async () => {
-		// ...
+	test.describe('tombstone & loader', () => {
+		test('Activates while initial data loading in progress', async () => {
+			const chunkSize = 12;
+
+			provider
+				.response(200, {data: state.data.addData(chunkSize)}, {delay: (10).seconds()});
+
+			await component.setProps({
+				chunkSize
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await component.waitForSlotState('loader', true);
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: false,
+				empty: false,
+				loader: true,
+				renderNext: false,
+				retry: false,
+				tombstones: true
+			});
+		});
+
+		test('Active while initial load loads all data', async () => {
+			const
+				chunkSize = 12,
+				providerChunkSize = chunkSize / 2;
+
+			provider
+				.response(200, {data: state.data.addData(providerChunkSize)}, {delay: (3).seconds()});
+
+			await component.setProps({
+				chunkSize
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+
+			let error;
+
+			try {
+				await component.waitForSlotState('loader', false, (5).seconds());
+
+			} catch (err) {
+				error = err;
+			}
+
+			test.expect(error).not.toBe(undefined);
+		});
 	});
 
-	test.describe('retry', async () => {
+	test.describe('retry', () => {
+		test('Activates when a data load error occurred during initial loading', async () => {
+			const chunkSize = 12;
+
+			provider.response(500, {});
+
+			await component.setProps({
+				chunkSize,
+				shouldPerformDataRender: () => true
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await component.waitForSlotState('retry', true);
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: false,
+				empty: false,
+				loader: false,
+				renderNext: false,
+				retry: true,
+				tombstones: false
+			});
+		});
+
+		test('Activates when a data load error occurred during initial loading of the second data chunk', async () => {
+			const
+				chunkSize = 12,
+				providerChunkSize = chunkSize / 2;
+
+			provider
+				.responseOnce(200, {data: state.data.addData(providerChunkSize)})
+				.response(500, {});
+
+			await component.setProps({
+				chunkSize,
+				shouldPerformDataRender: () => true
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await component.waitForSlotState('retry', true);
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: false,
+				empty: false,
+				loader: false,
+				renderNext: false,
+				retry: true,
+				tombstones: false
+			});
+		});
+	});
+
+	test.describe('renderNext', async () => {
 		// ...
 	});
 });

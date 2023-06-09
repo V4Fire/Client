@@ -68,7 +68,7 @@ export class RequestInterceptor {
 	 *   .response((r: Route) => r.fulfill({status: 500}));
 	 * ```
 	 */
-	responseOnce(handler: ResponseHandler): this;
+	responseOnce(handler: ResponseHandler, opts?: ResponseOptions): this;
 
 	/**
 	 * Sets a response for one request
@@ -82,12 +82,16 @@ export class RequestInterceptor {
 	 *   .responseOnce(500)
 	 * ```
 	 */
-	responseOnce(status: number, payload: object | string | number): this;
+	responseOnce(status: number, payload: object | string | number, opts?: ResponseOptions): this;
 
 	/**
 	 * @inheritdoc
 	 */
-	responseOnce(handlerOrStatus: number | ResponseHandler, payload?: object | string | number): this {
+	responseOnce(
+		handlerOrStatus: number | ResponseHandler,
+		payload?: object | string | number,
+		opts?: ResponseOptions
+	): this {
 		let fn;
 
 		if (Object.isFunction(handlerOrStatus)) {
@@ -95,7 +99,7 @@ export class RequestInterceptor {
 
 		} else {
 			const status = handlerOrStatus;
-			fn = this.cookResponseFn(status, payload);
+			fn = this.cookResponseFn(status, payload, opts);
 		}
 
 		this.mock.mockImplementationOnce(fn);

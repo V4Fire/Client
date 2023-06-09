@@ -82,6 +82,9 @@ export default class bScrolly extends iData implements iItems {
 	@prop({type: [Function, Object], default: () => ({})})
 	readonly itemProps!: iItems['itemProps'];
 
+	@prop(Number)
+	readonly tombstonesSize?: number;
+
 	/** {@link ComponentItemFactory} */
 	@prop({
 		type: Function,

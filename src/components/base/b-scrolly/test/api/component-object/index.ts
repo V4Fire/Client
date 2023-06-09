@@ -13,6 +13,7 @@ import { ComponentObject, Scroll } from 'tests/helpers';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import type { ComponentRefs, ComponentState } from 'components/base/b-scrolly/b-scrolly';
 import type { SlotsStateObj } from 'components/base/b-scrolly/modules/slots';
+import { testStyles } from 'components/base/b-scrolly/test/api/component-object/styles';
 
 export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 
@@ -30,32 +31,7 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	}
 
 	override async build(...args: Parameters<ComponentObject<bScrolly>['build']>): Promise<JSHandle<bScrolly>> {
-		await this.page.addStyleTag({content: `
-			[data-index] {
-				width: 200px;
-				height: 200px;
-				margin: 16px;
-				background-color: red;
-			}
-
-			[data-index]:after {
-				content: attr(data-index);
-			}
-
-			#done {
-				width: 200px;
-				height: 200px;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				background-color: green;
-			}
-
-			#done:after {
-				content: "done";
-			}
-		`});
-
+		await this.page.addStyleTag({content: testStyles});
 		return super.build(...args);
 	}
 
@@ -113,12 +89,13 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	 *
 	 * @param slotName
 	 * @param isVisible
+	 * @param timeout
 	 */
-	async waitForSlotState(slotName: keyof ComponentRefs, isVisible: boolean): Promise<void> {
+	async waitForSlotState(slotName: keyof ComponentRefs, isVisible: boolean, timeout?: number): Promise<void> {
 		const
 			slot = await this.node.locator(this.elSelector(slotName));
 
-		await slot.waitFor({state: isVisible ? 'visible' : 'hidden'});
+		await slot.waitFor({state: isVisible ? 'visible' : 'hidden', timeout});
 	}
 
 	async getSlotsState(): Promise<Required<SlotsStateObj>> {
