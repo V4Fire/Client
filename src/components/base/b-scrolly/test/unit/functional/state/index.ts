@@ -134,6 +134,10 @@ test.describe('<b-scrolly> state', () => {
 		});
 	});
 
+	test.skip('State after rendering via `itemsFactory`', async () => {
+		// ...
+	});
+
 	test.skip('Events state', async () => {
 		// ...
 	});

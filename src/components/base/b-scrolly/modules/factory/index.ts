@@ -43,7 +43,7 @@ export class ComponentFactory extends Friend {
 		const createDescriptor = (item: ComponentItem): VNodeDescriptor => ({
 			type: item.item,
 			attrs: item.props,
-			children: Object.size(item.children) > 0 ? item.children?.map(createDescriptor) : []
+			children: item.children
 		});
 
 		const

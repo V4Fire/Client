@@ -175,6 +175,8 @@ test.describe('<b-scrolly> slots', () => {
 
 			await component.setProps({
 				chunkSize,
+				// eslint-disable-next-line max-len
+				shouldPerformDataRequest: <ShouldFn>(({isInitialLoading, itemsTillEnd}) => isInitialLoading || itemsTillEnd === 0),
 				shouldPerformDataRender: <ShouldFn>(({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0)
 			});
 

@@ -55,8 +55,8 @@ export interface RequestQueryFn {
 	(params: ComponentState): Dictionary<Dictionary>;
 }
 
-export interface ComponentItemFactory {
-	(ctx: bScrolly, items: unknown[]): ComponentItem[];
+export interface ComponentItemFactory<DATA extends unknown = unknown> {
+	(ctx: bScrolly, items: DATA[]): ComponentItem[];
 }
 
 export interface ComponentItem {
@@ -64,7 +64,7 @@ export interface ComponentItem {
 	item: string;
 	props?: Dictionary<unknown>;
 	key: string;
-	children?: ComponentItem[];
+	children?: VNodeChildren;
 }
 
 export interface AnyMounted extends ComponentItem {
