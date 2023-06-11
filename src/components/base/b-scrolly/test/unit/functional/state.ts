@@ -134,7 +134,7 @@ test.describe('<b-scrolly> state', () => {
 		});
 	});
 
-	test('Events state', async () => {
+	test.skip('Events state', async () => {
 		// ...
 	});
 

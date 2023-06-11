@@ -357,7 +357,7 @@ test.describe('<b-scrolly> slots', () => {
 		});
 	});
 
-	test.describe('renderNext', async () => {
+	test.skip('renderNext', async () => {
 		// ...
 	});
 });
