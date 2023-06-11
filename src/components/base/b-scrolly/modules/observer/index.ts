@@ -7,7 +7,7 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { MountedComponentItem } from 'components/base/b-scrolly/interface';
+import type { AnyMounted } from 'components/base/b-scrolly/interface';
 import ScrollObserver from 'components/base/b-scrolly/modules/observer/engines/scroll';
 import IoObserver from 'components/base/b-scrolly/modules/observer/engines/intersection-observer';
 import Friend from 'components/friends/friend';
@@ -38,9 +38,9 @@ export class Observer extends Friend {
 		}
 
 		/**
-		 * @param mountedItems
+		 * @param mounted
 		 */
-		observe(mountedItems: MountedComponentItem[]): void {
+		observe(mounted: AnyMounted[]): void {
 			const
 				{ctx} = this;
 
@@ -48,6 +48,6 @@ export class Observer extends Friend {
 				return;
 			}
 
-			this.engine.watchForIntersection(mountedItems);
+			this.engine.watchForIntersection(mounted);
 		}
 }

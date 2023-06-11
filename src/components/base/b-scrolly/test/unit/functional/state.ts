@@ -39,12 +39,14 @@ test.describe('<b-scrolly> state', () => {
 
 		const expectedState = state.compile({
 			lastLoadedRawData: undefined,
-			lastLoadedData: [],
 			itemsTillEnd: undefined,
+			childTillEnd: undefined,
+			maxViewedItem: undefined,
+			maxViewedChild: undefined,
 			isRequestsStopped: false,
 			isRenderingDone: false,
 			isLoadingInProgress: true,
-			maxViewedIndex: undefined,
+			lastLoadedData: [],
 			loadPage: 1
 		});
 

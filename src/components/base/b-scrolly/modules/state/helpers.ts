@@ -16,7 +16,11 @@ export function createInitialState(): ComponentState {
 
 			itemsTillEnd: undefined,
 
-			maxViewedIndex: undefined,
+			childTillEnd: undefined,
+
+			maxViewedItem: undefined,
+
+			maxViewedChild: undefined,
 
 			data: [],
 
@@ -32,6 +36,8 @@ export function createInitialState(): ComponentState {
 			 * Component items that was rendered
 			 */
 			items: [],
+
+			childList: [],
 
 			/**
 			 * `True` if the next rendering process will be initial

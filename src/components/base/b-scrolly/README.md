@@ -9,6 +9,7 @@
 - componentInternalState.setLoadingPage(val) -> componentInternalState.set('loadingPage', val);
 - стоит ли для state использовать builder like подход
 - негативные тест кейсы
+- улучшить имена интерфейсов (MountedItem, MountedSeparator, ревью имен в ComponentState)
 
 ## TODO:
 

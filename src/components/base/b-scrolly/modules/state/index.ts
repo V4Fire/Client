@@ -8,7 +8,7 @@
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { componentDataLocalEvents, componentLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
-import type { ComponentState, MountedComponentItem } from 'components/base/b-scrolly/interface';
+import type { AnyMounted, ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
 import { createInitialState } from 'components/base/b-scrolly/modules/state/helpers';
 import Friend from 'components/friends/friend';
 
@@ -80,8 +80,8 @@ export class ComponentInternalState extends Friend {
 		return this;
 	}
 
-	storeComponentItems(items: MountedComponentItem[]): this {
-		(<MountedComponentItem[]>this.state.items).push(...items);
+	storeComponentItems(items: MountedItem[]): this {
+		(<MountedItem[]>this.state.items).push(...items);
 		return this;
 	}
 
@@ -100,17 +100,31 @@ export class ComponentInternalState extends Friend {
 		return this;
 	}
 
-	updateMountedComponents(mountedItems: MountedComponentItem[]): this {
-		(<MountedComponentItem[]>this.state.items).push(...mountedItems);
+	updateMountedItems(mounted: MountedItem[]): this {
+		(<MountedItem[]>this.state.items).push(...mounted);
+		return this;
+	}
+
+	updateChildList(mounted: AnyMounted[]): this {
+		(<AnyMounted[]>this.state.childList).push(...mounted);
 		return this;
 	}
 
 	updateItemsTillEnd(): this {
-		if (this.state.maxViewedIndex == null) {
-			throw new Error('Missing max viewed index');
+		if (this.state.maxViewedItem == null) {
+			throw new Error('Missing max viewed item index');
 		}
 
-		this.state.itemsTillEnd = this.state.items.length - 1 - this.state.maxViewedIndex;
+		this.state.itemsTillEnd = this.state.items.length - 1 - this.state.maxViewedItem;
+		return this;
+	}
+
+	updateChildTillEnd(): this {
+		if (this.state.maxViewedChild == null) {
+			throw new Error('Missing max viewed child index');
+		}
+
+		this.state.childTillEnd = this.state.childList.length - 1 - this.state.maxViewedChild;
 		return this;
 	}
 
@@ -205,9 +219,16 @@ export class ComponentInternalState extends Friend {
 		return this;
 	}
 
-	setMaxViewedIndex(index: number): this {
-		this.state.maxViewedIndex = index;
+	setMaxViewedItemIndex(itemIndex: number): this {
+		this.state.maxViewedItem = itemIndex;
 		this.updateItemsTillEnd();
+
+		return this;
+	}
+
+	setMaxViewedChildIndex(childIndex: number): this {
+		this.state.maxViewedChild = childIndex;
+		this.updateChildTillEnd();
 
 		return this;
 	}

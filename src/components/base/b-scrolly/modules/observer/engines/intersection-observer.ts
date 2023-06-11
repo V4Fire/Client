@@ -8,7 +8,7 @@
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { componentLocalEvents, componentObserverLocalEvents } from 'components/base/b-scrolly/const';
-import type { MountedComponentItem } from 'components/base/b-scrolly/interface';
+import type { AnyMounted } from 'components/base/b-scrolly/interface';
 import { observerAsyncGroup } from 'components/base/b-scrolly/modules/observer/const';
 import type { ObserverEngine } from 'components/base/b-scrolly/modules/observer/interface';
 import Friend from 'components/friends/friend';
@@ -32,7 +32,7 @@ export default class IoObserver extends Friend implements ObserverEngine {
 	/**
 	 * @inheritdoc
 	 */
-	watchForIntersection(components: MountedComponentItem[]): void {
+	watchForIntersection(components: AnyMounted[]): void {
 		const
 			{ctx} = this;
 

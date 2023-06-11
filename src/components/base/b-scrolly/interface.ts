@@ -20,8 +20,10 @@ export type ComponentStrategyKeys = keyof typeof componentStrategy;
  * Состояние компонента.
  */
 export interface ComponentState {
-	maxViewedIndex: CanUndef<number>;
+	maxViewedItem: CanUndef<number>;
+	maxViewedChild: CanUndef<number>;
 	itemsTillEnd: CanUndef<number>;
+	childTillEnd: CanUndef<number>;
 	loadPage: number;
 	renderPage: number;
 	isLastEmpty: boolean;
@@ -33,7 +35,8 @@ export interface ComponentState {
 	isLifecycleDone: boolean;
 	lastLoadedData: Readonly<object[]>;
 	data: Readonly<object[]>;
-	items: Readonly<MountedComponentItem[]>;
+	items: Readonly<MountedItem[]>;
+	childList: Readonly<AnyMounted[]>;
 	lastLoadedRawData: unknown;
 }
 
@@ -64,9 +67,13 @@ export interface ComponentItem {
 	children?: ComponentItem[];
 }
 
-export interface MountedComponentItem extends ComponentItem {
+export interface AnyMounted extends ComponentItem {
 	node: HTMLElement;
-	index: number;
+	childIndex: number;
+}
+
+export interface MountedItem extends AnyMounted {
+	itemIndex: number;
 }
 
 export type ComponentItemType = keyof typeof componentItemType;
@@ -104,8 +111,8 @@ export interface LocalEventPayloadMap {
 	[componentLocalEvents.lifecycleDone]: [];
 	[componentLocalEvents.convertDataToDB]: [data: unknown];
 
-	[componentObserverLocalEvents.elementEnter]: [componentItem: MountedComponentItem];
-	[componentObserverLocalEvents.elementOut]: [componentItem: MountedComponentItem];
+	[componentObserverLocalEvents.elementEnter]: [componentItem: AnyMounted];
+	[componentObserverLocalEvents.elementOut]: [componentItem: AnyMounted];
 
 	[componentRenderLocalEvents.renderStart]: [];
 	[componentRenderLocalEvents.renderDone]: [];

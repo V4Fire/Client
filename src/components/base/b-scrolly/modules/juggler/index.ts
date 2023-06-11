@@ -12,8 +12,9 @@ import Friend from 'components/friends/friend';
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import type { CanPerformRenderRejectionReason, ComponentItem } from 'components/base/b-scrolly/b-scrolly';
-import { canPerformRenderRejectionReason, componentDataLocalEvents, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
-import type { MountedComponentItem } from 'components/base/b-scrolly/interface';
+import { canPerformRenderRejectionReason, componentDataLocalEvents, componentItemType, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
+import type { AnyMounted, MountedItem } from 'components/base/b-scrolly/interface';
+import { isItem } from 'components/base/b-scrolly/modules/helpers';
 
 export const
 	$$ = symbolGenerator(),
@@ -124,10 +125,12 @@ export class Juggler extends Friend {
 		const
 			items = ctx.componentFactory.produceComponentItems(dataSlice),
 			nodes = ctx.componentFactory.produceNodes(items),
-			mountedItems = this.mountedComponentItems(items, nodes);
+			anyMounted = this.produceMounted(items, nodes),
+			mountedItems = <MountedItem[]>anyMounted.filter((mounted) => mounted.type === componentItemType.item);
 
-		ctx.componentInternalState.updateMountedComponents(mountedItems);
-		ctx.observer.observe(mountedItems);
+		ctx.componentInternalState.updateMountedItems(mountedItems);
+		ctx.componentInternalState.updateChildList(anyMounted);
+		ctx.observer.observe(anyMounted);
 
 		ctx.componentEmitter.emit(componentRenderLocalEvents.domInsertStart);
 
@@ -167,16 +170,27 @@ export class Juggler extends Friend {
 	 * @param items
 	 * @param nodes
 	 */
-	protected mountedComponentItems(items: ComponentItem[], nodes: HTMLElement[]): MountedComponentItem[] {
+	protected produceMounted(items: ComponentItem[], nodes: HTMLElement[]): Array<AnyMounted | AnyMounted> {
 		const
 			{ctx} = this,
-			{items: mountedItems} = ctx.getComponentState();
+			{items: mountedItems, childList} = ctx.getComponentState();
 
-		return items.map((item, i) => ({
-			...item,
-			node: nodes[i],
-			index: mountedItems.length + i
-		}));
+		return items.map((item, i) => {
+			if (item.type === componentItemType.item) {
+				return {
+					...item,
+					node: nodes[i],
+					itemIndex: mountedItems.length + i,
+					childIndex: childList.length + i
+				};
+			}
+
+			return {
+				...item,
+				node: nodes[i],
+				childIndex: mountedItems.length + i
+			};
+		});
 	}
 
 	/**
@@ -229,14 +243,18 @@ export class Juggler extends Friend {
 	/**
 	 * Handler: element enters the viewport
 	 */
-	protected onElementEnters(component: MountedComponentItem): void {
+	protected onElementEnters(component: AnyMounted): void {
 		const
 			{ctx} = this,
 			state = ctx.getComponentState(),
-			{index} = component;
+			{childIndex} = component;
 
-		if (state.maxViewedIndex == null || state.maxViewedIndex < index) {
-			ctx.componentInternalState.setMaxViewedIndex(index);
+		if (isItem(component) && (state.maxViewedItem == null || state.maxViewedItem < component.itemIndex)) {
+			ctx.componentInternalState.setMaxViewedItemIndex(component.itemIndex);
+		}
+
+		if (state.maxViewedChild == null || state.maxViewedChild < childIndex) {
+			ctx.componentInternalState.setMaxViewedChildIndex(childIndex);
 		}
 
 		this.loadDataOrPerformRender();
@@ -245,7 +263,7 @@ export class Juggler extends Friend {
 	/**
 	 * Handler: element leaves the viewport
 	 */
-	protected onElementOut(_component: MountedComponentItem): void {
+	protected onElementOut(_component: AnyMounted): void {
 		// ...
 	}
 }

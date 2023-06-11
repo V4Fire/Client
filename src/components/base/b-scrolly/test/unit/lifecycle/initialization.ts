@@ -71,7 +71,9 @@ test.describe('<b-scrolly>', () => {
 			[
 				state.compile({
 					itemsTillEnd: undefined,
-					maxViewedIndex: undefined,
+					childTillEnd: undefined,
+					maxViewedItem: undefined,
+					maxViewedChild: undefined,
 					isRenderingDone: false,
 					isRequestsStopped: false,
 					lastLoadedData: data,
@@ -87,7 +89,9 @@ test.describe('<b-scrolly>', () => {
 			[
 				state.compile({
 					itemsTillEnd: undefined,
-					maxViewedIndex: undefined,
+					childTillEnd: undefined,
+					maxViewedItem: undefined,
+					maxViewedChild: undefined,
 					isRenderingDone: false,
 					isRequestsStopped: false,
 					lastLoadedData: data,
@@ -130,7 +134,9 @@ test.describe('<b-scrolly>', () => {
 			[
 				state.compile({
 					itemsTillEnd: undefined,
-					maxViewedIndex: undefined,
+					childTillEnd: undefined,
+					maxViewedItem: undefined,
+					maxViewedChild: undefined,
 					isRenderingDone: false,
 					isRequestsStopped: false
 				}),
@@ -142,7 +148,9 @@ test.describe('<b-scrolly>', () => {
 			[
 				state.compile({
 					itemsTillEnd: undefined,
-					maxViewedIndex: undefined,
+					childTillEnd: undefined,
+					maxViewedItem: undefined,
+					maxViewedChild: undefined,
 					isRenderingDone: false,
 					isRequestsStopped: false
 				}),
@@ -181,7 +189,9 @@ test.describe('<b-scrolly>', () => {
 			[
 				state.compile({
 					itemsTillEnd: undefined,
-					maxViewedIndex: undefined,
+					childTillEnd: undefined,
+					maxViewedItem: undefined,
+					maxViewedChild: undefined,
 					isRenderingDone: false,
 					isRequestsStopped: false
 				}),

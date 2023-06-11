@@ -6,14 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { MountedComponentItem } from 'components/base/b-scrolly/interface';
+import type { MountedItem } from 'components/base/b-scrolly/interface';
 
 export interface ObserverEngine {
 	/**
 	 * Initializes a watcher to watch component enters the viewport
 	 * @param components
 	 */
-	watchForIntersection(components: MountedComponentItem[]): void;
+	watchForIntersection(components: MountedItem[]): void;
 
 	/**
 	 * Resets the module state

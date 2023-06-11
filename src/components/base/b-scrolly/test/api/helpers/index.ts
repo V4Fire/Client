@@ -9,7 +9,7 @@
 import type { Page } from 'playwright';
 import test from 'tests/config/unit/test';
 
-import type { ComponentState, MountedComponentItem } from 'components/base/b-scrolly/interface';
+import type { ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
 import { paginationHandler } from 'tests/helpers/providers/pagination';
 import { ScrollyComponentObject } from 'components/base/b-scrolly/test/api/component-object';
 import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
@@ -18,7 +18,7 @@ import { componentEvents } from 'components/base/b-scrolly/const';
 export * from 'components/base/b-scrolly/test/api/component-object';
 
 type DataItemCtor<DATA = any> = (i: number) => DATA;
-type MountedItemCtor<DATA = any> = (data: DATA, i: number) => MountedComponentItem;
+type MountedItemCtor<DATA = any> = (data: DATA, i: number) => MountedItem;
 
 export function filterEmitterCalls(calls: unknown[][]): unknown[][] {
 	return calls.filter(([event]) => Object.isString(event) && Boolean(componentEvents[event]));
@@ -51,12 +51,12 @@ export async function createTestHelpers(page: Page) {
 
 export interface DataConveyor<DATA = any> {
 	addData(count: number): DATA[];
-	addMounted(count: number): MountedComponentItem[];
+	addMounted(count: number): MountedItem[];
 	getDataChunk(index: number): DATA[];
 	reset(): void;
 	get data(): DATA[];
 	get lastLoadedData(): DATA[];
-	get mounted(): MountedComponentItem[];
+	get mounted(): MountedItem[];
 }
 
 export function createDataConveyor<DATA = any>(
@@ -65,7 +65,7 @@ export function createDataConveyor<DATA = any>(
 ): DataConveyor {
 	let
 		data = <DATA[]>[],
-		mounted = <MountedComponentItem[]>[],
+		mounted = <MountedItem[]>[],
 		dataChunks = <DATA[][]>[];
 
 	let
@@ -127,13 +127,14 @@ export function createMountedDataFrom<DATA = any>(
 	data: DATA[],
 	ctor: MountedItemCtor<DATA>,
 	start: number = 0
-): MountedComponentItem[] {
+): MountedItem[] {
 	return data.map((item, i) => ctor(item, start + i));
 }
 
-export function sectionMountedItemCtor<DATA = any>(data: DATA, i: number): MountedComponentItem {
+export function sectionMountedItemCtor<DATA = any>(data: DATA, i: number): MountedItem {
 	return {
-		index: i,
+		itemIndex: i,
+		childIndex: i,
 		props: {
 			'data-index': i
 		},
@@ -193,25 +194,35 @@ export function createState(
 }
 
 export function fromInitialState(state: Partial<ComponentState>): ComponentState {
-	return <ComponentState>{
+	return {
 		renderPage: 0,
 		loadPage: 0,
-		maxViewedIndex: test.expect.any(Number),
-		itemsTillEnd: test.expect.any(Number),
+		maxViewedItem: Object.cast(test.expect.any(Number)),
+		maxViewedChild: Object.cast(test.expect.any(Number)),
+		itemsTillEnd: Object.cast(test.expect.any(Number)),
+		childTillEnd: Object.cast(test.expect.any(Number)),
 		isInitialRender: true,
 		isInitialLoading: true,
-		isLoadingInProgress: test.expect.any(Boolean),
+		isLoadingInProgress: Object.cast(test.expect.any(Boolean)),
 		isLastEmpty: false,
 		isLifecycleDone: false,
+		isRequestsStopped: false,
+		isRenderingDone: false,
+		lastLoadedData: [],
+		data: [],
+		items: [],
+		childList: [],
+		lastLoadedRawData: undefined,
 		...state
 	};
 }
 
-export function stateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'items'> {
+export function stateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'items' | 'childList'> {
 	return {
 		data: conveyor.data,
 		lastLoadedData: conveyor.lastLoadedData,
 		lastLoadedRawData: {data: conveyor.lastLoadedData},
-		items: conveyor.mounted
+		items: conveyor.mounted,
+		childList: conveyor.mounted
 	};
 }
