@@ -10,6 +10,8 @@
  * @file Test cases of the component lifecycle
  */
 
+import delay from 'delay';
+
 import test from 'tests/config/unit/test';
 
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
@@ -253,13 +255,13 @@ test.describe('<b-scrolly> slots', () => {
 			});
 		});
 
-		test('Active while initial load loads all data', async () => {
+		test.only('Active while initial load loads all data', async () => {
 			const
 				chunkSize = 12,
 				providerChunkSize = chunkSize / 2;
 
 			provider
-				.response(200, {data: state.data.addData(providerChunkSize)}, {delay: (3).seconds()});
+				.response(200, {data: state.data.addData(providerChunkSize)}, {delay: (4).seconds()});
 
 			await component.setProps({
 				chunkSize
@@ -268,16 +270,27 @@ test.describe('<b-scrolly> slots', () => {
 			await component.withDefaultPaginationProviderProps({chunkSize});
 			await component.build();
 
-			let error;
+			let i = 0;
 
-			try {
-				await component.waitForSlotState('loader', false, (5).seconds());
+			while (i < 4) {
+				await component.waitForSlotState('loader', true);
 
-			} catch (err) {
-				error = err;
+				const
+					slots = await component.getSlotsState();
+
+				test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+					container: true,
+					done: false,
+					empty: false,
+					loader: true,
+					renderNext: false,
+					retry: false,
+					tombstones: true
+				});
+
+				await delay(700);
+				i++;
 			}
-
-			test.expect(error).not.toBe(undefined);
 		});
 	});
 
