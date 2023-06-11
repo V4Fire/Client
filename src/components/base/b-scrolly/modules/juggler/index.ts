@@ -170,7 +170,7 @@ export class Juggler extends Friend {
 	protected mountedComponentItems(items: ComponentItem[], nodes: HTMLElement[]): MountedComponentItem[] {
 		const
 			{ctx} = this,
-			{mountedItems} = ctx.getComponentState();
+			{items: mountedItems} = ctx.getComponentState();
 
 		return items.map((item, i) => ({
 			...item,

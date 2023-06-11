@@ -33,7 +33,7 @@ export interface ComponentState {
 	isLifecycleDone: boolean;
 	lastLoadedData: Readonly<object[]>;
 	data: Readonly<object[]>;
-	mountedItems: Readonly<MountedComponentItem[]>;
+	items: Readonly<MountedComponentItem[]>;
 	lastLoadedRawData: unknown;
 }
 

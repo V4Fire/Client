@@ -170,6 +170,7 @@ test.describe('<b-scrolly> slots', () => {
 			provider
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
 			await component.setProps({
@@ -255,7 +256,7 @@ test.describe('<b-scrolly> slots', () => {
 			});
 		});
 
-		test.only('Active while initial load loads all data', async () => {
+		test('Active while initial load loads all data', async () => {
 			const
 				chunkSize = 12,
 				providerChunkSize = chunkSize / 2;

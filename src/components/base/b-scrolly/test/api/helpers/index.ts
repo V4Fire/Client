@@ -207,11 +207,11 @@ export function fromInitialState(state: Partial<ComponentState>): ComponentState
 	};
 }
 
-export function stateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'mountedItems'> {
+export function stateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'items'> {
 	return {
 		data: conveyor.data,
 		lastLoadedData: conveyor.lastLoadedData,
 		lastLoadedRawData: {data: conveyor.lastLoadedData},
-		mountedItems: conveyor.mounted
+		items: conveyor.mounted
 	};
 }

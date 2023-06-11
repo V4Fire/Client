@@ -31,7 +31,7 @@ export function createInitialState(): ComponentState {
 			/**
 			 * Component items that was rendered
 			 */
-			mountedItems: [],
+			items: [],
 
 			/**
 			 * `True` if the next rendering process will be initial

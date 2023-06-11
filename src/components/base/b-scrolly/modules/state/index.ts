@@ -81,7 +81,7 @@ export class ComponentInternalState extends Friend {
 	}
 
 	storeComponentItems(items: MountedComponentItem[]): this {
-		(<MountedComponentItem[]>this.state.mountedItems).push(...items);
+		(<MountedComponentItem[]>this.state.items).push(...items);
 		return this;
 	}
 
@@ -101,7 +101,7 @@ export class ComponentInternalState extends Friend {
 	}
 
 	updateMountedComponents(mountedItems: MountedComponentItem[]): this {
-		(<MountedComponentItem[]>this.state.mountedItems).push(...mountedItems);
+		(<MountedComponentItem[]>this.state.items).push(...mountedItems);
 		return this;
 	}
 
@@ -110,7 +110,7 @@ export class ComponentInternalState extends Friend {
 			throw new Error('Missing max viewed index');
 		}
 
-		this.state.itemsTillEnd = this.state.mountedItems.length - 1 - this.state.maxViewedIndex;
+		this.state.itemsTillEnd = this.state.items.length - 1 - this.state.maxViewedIndex;
 		return this;
 	}
 
@@ -122,7 +122,7 @@ export class ComponentInternalState extends Friend {
 		if (
 			!state.isLoadingInProgress &&
 			state.isRequestsStopped &&
-			state.data.length === state.mountedItems.length
+			state.data.length === state.items.length
 		) {
 			ctx.componentInternalState.setIsRenderingDone(true);
 
