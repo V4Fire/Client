@@ -56,7 +56,7 @@ test.describe('<b-scrolly>', () => {
 			firstDataChunk = state.data.addData(providerChunkSize),
 			secondDataChunk = state.data.addData(providerChunkSize);
 
-		state.data.addMounted(chunkSize);
+		state.data.addItems(chunkSize);
 
 		await component.setProps({
 			chunkSize,
@@ -132,7 +132,7 @@ test.describe('<b-scrolly>', () => {
 
 		state.setLoadPage(1);
 		state.data.addData(providerChunkSize);
-		state.data.addMounted(providerChunkSize);
+		state.data.addItems(providerChunkSize);
 
 		await component.setProps({
 			chunkSize,
@@ -185,7 +185,7 @@ test.describe('<b-scrolly>', () => {
 
 		state.setLoadPage(1);
 		state.data.addData(providerChunkSize);
-		state.data.addMounted(providerChunkSize);
+		state.data.addItems(providerChunkSize);
 
 		await component.setProps({
 			chunkSize,

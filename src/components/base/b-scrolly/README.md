@@ -12,6 +12,7 @@
 - улучшить имена интерфейсов (MountedItem, MountedSeparator, ревью имен в ComponentState)
 - протыкать все метода на использование (удалить неиспользуемые)
 - улучшить имена тест кейсов
+- ревью и рефакторинг src\components\base\b-scrolly\test\api\helpers\index.ts
 
 ## TODO:
 

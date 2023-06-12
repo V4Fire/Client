@@ -15,7 +15,7 @@ import test from 'tests/config/unit/test';
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { defaultProps } from 'components/base/b-scrolly/const';
-import type { ShouldFn } from 'components/base/b-scrolly/b-scrolly';
+import type { ComponentItem, ShouldFn } from 'components/base/b-scrolly/b-scrolly';
 
 test.describe('<b-scrolly> state', () => {
 	let
@@ -76,7 +76,7 @@ test.describe('<b-scrolly> state', () => {
 				.responseOnce(200, {data: state.data.addData(providerChunkSize)})
 				.responseOnce(200, {data: state.data.addData(providerChunkSize)});
 
-			state.data.addMounted(chunkSize);
+			state.data.addItems(chunkSize);
 
 			await component.setProps({
 				chunkSize,
@@ -108,7 +108,7 @@ test.describe('<b-scrolly> state', () => {
 				.responseOnce(200, {data: state.data.addData(providerChunkSize)})
 				.response(200, {data: state.data.addData(0)});
 
-			state.data.addMounted(chunkSize);
+			state.data.addItems(chunkSize);
 
 			await component.scrollToBottom();
 			await component.waitForContainerChildCountEqualsTo(chunkSize * 2);
@@ -131,8 +131,127 @@ test.describe('<b-scrolly> state', () => {
 		});
 	});
 
-	test.skip('State after rendering via `itemsFactory`', async () => {
-		// ...
+	test.describe('State after rendering via `itemsFactory`', () => {
+		test('`itemsFactory` returns items with `item` and `separator` type', async () => {
+			const chunkSize = 12;
+
+			const separator: ComponentItem = {
+				item: 'b-button',
+				key: Object.cast(undefined),
+				children: {
+					default: 'ima button'
+				},
+				props: {
+					id: 'button'
+				},
+				type: 'separator'
+			};
+
+			const itemsFactory = await component.mockFn((state, ctx, separator) => {
+				const
+					data = state.lastLoadedData;
+
+				const items = data.map((item) => ({
+					item: 'section',
+					key: Object.cast(undefined),
+					type: 'item',
+					props: {
+						'data-index': item.i
+					}
+				}));
+
+				if (data.length > 0) {
+					items.push(separator);
+				}
+
+				return items;
+			}, separator);
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: state.data.addData(0)});
+
+			state.data.addItems(chunkSize);
+			state.data.addChild([separator]);
+
+			await component.setProps({
+				itemsFactory,
+				shouldPerformDataRender: () => true,
+				chunkSize
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await component.waitForContainerChildCountEqualsTo(chunkSize + 1);
+			await component.waitForLifecycleDone();
+
+			const
+				currentState = await component.getComponentState();
+
+			test.expect(currentState).toEqual(state.compile({
+				isInitialLoading: false,
+				isInitialRender: false,
+				isRequestsStopped: true,
+				isLoadingInProgress: false,
+				isLastEmpty: true,
+				isLifecycleDone: true,
+				loadPage: 2,
+				renderPage: 1
+			}));
+		});
+
+		test('`itemsFactory` does not returns items with `item` type', async () => {
+			const chunkSize = 12;
+
+			const itemsFactory = await component.mockFn((state) => {
+				const
+					data = state.lastLoadedData;
+
+				const items = data.map((item) => ({
+					item: 'section',
+					key: Object.cast(undefined),
+					type: 'separator',
+					props: {
+						'data-index': item.i
+					}
+				}));
+
+				return items;
+			});
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: state.data.addData(0)});
+
+			state.data.addSeparators(chunkSize);
+
+			await component.setProps({
+				itemsFactory,
+				shouldPerformDataRender: () => true,
+				chunkSize
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForLifecycleDone();
+
+			const
+				currentState = await component.getComponentState();
+
+			test.expect(currentState).toEqual(state.compile({
+				isInitialLoading: false,
+				isInitialRender: false,
+				isRequestsStopped: true,
+				isLoadingInProgress: false,
+				isLastEmpty: true,
+				isLifecycleDone: true,
+				maxViewedItem: undefined,
+				itemsTillEnd: undefined,
+				loadPage: 2,
+				renderPage: 1
+			}));
+		});
 	});
 
 	test.skip('Events state', async () => {

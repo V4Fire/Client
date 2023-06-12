@@ -67,14 +67,15 @@ export async function spy<T extends JSHandle, ARGS extends any[]>(
 
 export async function createAndDisposeMock(
 	page: Page,
-	fn: (...args: any[]) => any
+	fn: (...args: any[]) => any,
+	...args: any[]
 ): Promise<{agent: SpyObject; id: string}> {
 	const
 		tmpFn = `tmp_${Math.random().toString()}`;
 
-	const agent = await page.evaluateHandle(([tmpFn, fnString]) =>
+	const agent = await page.evaluateHandle(([tmpFn, fnString, args]) =>
 		// eslint-disable-next-line no-new-func
-		globalThis[tmpFn] = jest.mock(Object.cast(new Function(`return ${fnString}`)())), <const>[tmpFn, fn.toString()]);
+		globalThis[tmpFn] = jest.mock((...fnArgs) => Object.cast(new Function(`return ${fnString}`)()(...fnArgs, ...args))), <const>[tmpFn, fn.toString(), args]);
 
 	return {agent: wrapAsSpy(agent, {}), id: tmpFn};
 }

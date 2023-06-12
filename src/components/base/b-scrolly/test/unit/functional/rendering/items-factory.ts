@@ -14,7 +14,7 @@ import test from 'tests/config/unit/test';
 
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type { ComponentItemFactory } from 'components/base/b-scrolly/b-scrolly';
-import type { ComponentItem } from 'components/base/b-scrolly/interface';
+import type { ComponentItem, ShouldFn } from 'components/base/b-scrolly/interface';
 
 test.describe('<b-scrolly> rendering via component factory', () => {
 	let
@@ -42,7 +42,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 
 			return data.map((item) => ({
 				item: 'section',
-				key: '',
+				key: Object.cast(undefined),
 				type: 'item',
 				children: [],
 				props: {
@@ -72,13 +72,25 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 			.responseOnce(200, {data: state.data.addData(chunkSize)})
 			.response(200, {data: state.data.addData(0)});
 
-		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
+		const separator = {
+			item: 'b-button',
+			key: '',
+			children: {
+				default: 'ima button'
+			},
+			props: {
+				id: 'button'
+			},
+			type: 'separator'
+		};
+
+		const itemsFactory = await component.mockFn((state, ctx, separator) => {
 			const
 				data = state.lastLoadedData;
 
-			const items = data.map<ComponentItem>((item) => ({
+			const items = data.map((item) => ({
 				item: 'section',
-				key: '',
+				key: Object.cast(undefined),
 				type: 'item',
 				children: [],
 				props: {
@@ -86,20 +98,10 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 				}
 			}));
 
-			items.push({
-				item: 'b-button',
-				key: '',
-				children: {
-					default: 'ima button'
-				},
-				props: {
-					id: 'button'
-				},
-				type: 'separator'
-			});
+			items.push(separator);
 
 			return items;
-		});
+		}, separator);
 
 		await component.setProps({
 			itemsFactory,
@@ -129,7 +131,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 
 			const items = data.map<ComponentItem>((item) => ({
 				item: 'section',
-				key: '',
+				key: Object.cast(undefined),
 				type: 'item',
 				children: [],
 				props: {
@@ -168,7 +170,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 
 			const items = data.map<ComponentItem>((item) => ({
 				item: 'section',
-				key: '',
+				key: Object.cast(undefined),
 				type: 'item',
 				children: [],
 				props: {
@@ -205,7 +207,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 
 			return data.map((item) => ({
 				item: 'section',
-				key: '',
+				key: Object.cast(undefined),
 				type: 'separator',
 				children: [],
 				props: {
@@ -225,5 +227,54 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 		await component.waitForContainerChildCountEqualsTo(chunkSize);
 
 		await test.expect(component.childList).toHaveCount(chunkSize);
+	});
+
+	test('`ItemsFactory` returns twice as much data as `chunkSize`', async () => {
+		const
+			chunkSize = 12;
+
+		provider
+			.responseOnce(200, {data: state.data.addData(chunkSize)})
+			.responseOnce(200, {data: state.data.addData(chunkSize)})
+			.responseOnce(200, {data: state.data.addData(chunkSize)})
+			.response(200, {data: state.data.addData(0)});
+
+		const shouldPerformDataRender = await component.mockFn<ShouldFn>(
+			({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0
+		);
+
+		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
+			const data = state.lastLoadedData;
+
+			const items = data.map<ComponentItem>((item) => ({
+				item: 'section',
+				key: Object.cast(undefined),
+				type: 'item',
+				children: [],
+				props: {
+					'data-index': item.i
+				}
+			}));
+
+			return [...items, ...items];
+		});
+
+		await component.setProps({
+			itemsFactory,
+			shouldPerformDataRender,
+			chunkSize
+		});
+
+		await component.withDefaultPaginationProviderProps({chunkSize});
+		await component.build();
+		await component.waitForContainerChildCountEqualsTo(chunkSize * 2);
+		await component.scrollToBottom();
+		await component.waitForContainerChildCountEqualsTo(chunkSize * 2 * 2);
+		await component.scrollToBottom();
+		await component.waitForContainerChildCountEqualsTo(chunkSize * 3 * 2);
+		await component.scrollToBottom();
+		await component.waitForContainerChildCountEqualsTo(chunkSize * 3 * 2);
+
+		await test.expect(component.childList).toHaveCount(chunkSize * 3 * 2);
 	});
 });

@@ -9,7 +9,7 @@
 import type { Page } from 'playwright';
 import test from 'tests/config/unit/test';
 
-import type { ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
+import type { AnyMounted, ComponentItem, ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
 import { paginationHandler } from 'tests/helpers/providers/pagination';
 import { ScrollyComponentObject } from 'components/base/b-scrolly/test/api/component-object';
 import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
@@ -51,12 +51,15 @@ export async function createTestHelpers(page: Page) {
 
 export interface DataConveyor<DATA = any> {
 	addData(count: number): DATA[];
-	addMounted(count: number): MountedItem[];
+	addItems(count: number): MountedItem[];
+	addSeparators(count: number): AnyMounted[];
+	addChild(child: ComponentItem[]): AnyMounted[];
 	getDataChunk(index: number): DATA[];
 	reset(): void;
 	get data(): DATA[];
+	get childList(): AnyMounted[];
 	get lastLoadedData(): DATA[];
-	get mounted(): MountedItem[];
+	get items(): MountedItem[];
 }
 
 export function createDataConveyor<DATA = any>(
@@ -65,12 +68,14 @@ export function createDataConveyor<DATA = any>(
 ): DataConveyor {
 	let
 		data = <DATA[]>[],
-		mounted = <MountedItem[]>[],
+		items = <MountedItem[]>[],
+		childList = <AnyMounted[]>[],
 		dataChunks = <DATA[][]>[];
 
 	let
 		dataI = 0,
-		mountedI = 0;
+		itemsI = 0,
+		childI = 0;
 
 	const obj: DataConveyor = {
 		addData(count: number) {
@@ -84,21 +89,62 @@ export function createDataConveyor<DATA = any>(
 			return newData;
 		},
 
-		addMounted(count: number) {
+		addItems(count: number) {
 			const
-				newData = createData(count, itemsCtor, mountedI),
-				mountedData = createMountedDataFrom(newData, mountedCtor, mountedI);
+				newData = createData(count, itemsCtor, itemsI),
+				itemsData = createMountedDataFrom(newData, mountedCtor, itemsI);
 
-			mounted.push(...mountedData);
+			items.push(...itemsData);
+			childList.push(...itemsData);
 
-			mountedI = mountedData.length;
-			return mountedData;
+			itemsI = itemsData.length;
+			childI = childList.length;
+
+			return itemsData;
+		},
+
+		addSeparators(count: number) {
+			const
+				newData = createData(count, itemsCtor, childI),
+				separatorsData = createMountedDataFrom(newData, (data, i) => {
+					const base = Object.reject(mountedCtor(data, i), 'itemIndex');
+
+					// TODO: рефактор нужны нормальные конструктор
+					return Object.cast({
+						...base,
+						type: 'separator'
+					});
+				}, childI);
+
+			childList.push(...separatorsData);
+			childI = childList.length;
+
+			return separatorsData;
+		},
+
+		addChild(list: ComponentItem[]) {
+			const newChild = <AnyMounted[]>list.map((child, i) => {
+				const v = {
+					childIndex: childI + i,
+					node: <any>test.expect.any(String),
+					...child
+				};
+
+				return v;
+			});
+
+			childList.push(...newChild);
+			childI = childList.length;
+
+			return childList;
 		},
 
 		reset() {
 			dataI = 0;
-			mountedI = 0;
-			mounted = [];
+			itemsI = 0;
+			childI = 0;
+			childList = [];
+			items = [];
 			data = [];
 			dataChunks = [];
 		},
@@ -107,8 +153,12 @@ export function createDataConveyor<DATA = any>(
 			return dataChunks[i];
 		},
 
-		get mounted() {
-			return mounted;
+		get items() {
+			return items;
+		},
+
+		get childList() {
+			return childList;
 		},
 
 		get data() {
@@ -221,7 +271,7 @@ export function stateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentSta
 		data: conveyor.data,
 		lastLoadedData: conveyor.lastLoadedData,
 		lastLoadedRawData: {data: conveyor.lastLoadedData},
-		items: conveyor.mounted,
-		childList: conveyor.mounted
+		items: conveyor.items,
+		childList: conveyor.childList
 	};
 }

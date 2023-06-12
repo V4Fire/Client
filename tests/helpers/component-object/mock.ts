@@ -120,11 +120,13 @@ export default class ComponentObjectMock<COMPONENT extends iBlock> extends Compo
 	 * > Notice that the implementation will be provided into browser,
 	 * this imposes some restrictions, such as not being able to use a closure
 	 */
-	async mockFn<FN extends (...args: any[]) => any = (...args: any[]) => any>(fn?: FN): Promise<SpyObject> {
+	async mockFn<
+		FN extends (...args: any[]) => any = (...args: any[]) => any
+	>(fn?: FN, ...args: any[]): Promise<SpyObject> {
 		fn ??= Object.cast(() => undefined);
 
 		const
-			{agent, id} = await createAndDisposeMock(this.page, fn!);
+			{agent, id} = await createAndDisposeMock(this.page, fn!, ...args);
 
 		return setSerializerAsMockFn(agent, id);
 	}
