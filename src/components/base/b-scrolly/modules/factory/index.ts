@@ -29,11 +29,11 @@ export class ComponentFactory extends Friend {
 	/**
 	 * @param data
 	 */
-	produceComponentItems(data: object[]): ComponentItem[] {
+	produceComponentItems(): ComponentItem[] {
 		const
 			{ctx} = this;
 
-		return ctx.itemsFactory(ctx, data);
+		return ctx.itemsFactory(ctx.getComponentState(), ctx);
 	}
 
 	/**

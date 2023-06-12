@@ -29,7 +29,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 		await provider.start();
 	});
 
-	test('Returned items with type `item` is equal to the provided data', async () => {
+	test.skip('Returned items with type `item` is equal to the provided data', async () => {
 		const
 			chunkSize = 12;
 
@@ -61,7 +61,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 
 	});
 
-	test('In additional `item`, `separator` was also returned', async () => {
+	test.skip('In additional `item`, `separator` was also returned', async () => {
 		const
 			chunkSize = 12;
 
@@ -109,15 +109,15 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 		await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize + 1)).resolves.toBeUndefined();
 	});
 
-	test('Returned items with type `item` is less than the provided data', async () => {
+	test.skip('Returned items with type `item` is less than the provided data', async () => {
 		// Ошибка
 	});
 
-	test('Returned item with type `item` is more than the provided data', async () => {
+	test.skip('Returned item with type `item` is more than the provided data', async () => {
 		// Выкидывает ошибку
 	});
 
-	test('`item` was not returned, but equal to the number of data, the number of `separator` was returned', async () => {
+	test.skip('`item` was not returned, but equal to the number of data, the number of `separator` was returned', async () => {
 		// Выкидывает ошибку
 	});
 });

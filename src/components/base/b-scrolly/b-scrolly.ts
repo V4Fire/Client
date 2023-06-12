@@ -28,7 +28,8 @@ import type {
 	ComponentRefs,
 	ComponentItemFactory,
 	ComponentItemType,
-	ComponentStrategyKeys
+	ComponentStrategyKeys,
+	CanPerformRenderResult
 
 } from 'components/base/b-scrolly/interface';
 
@@ -51,6 +52,7 @@ import { ComponentInternalState } from 'components/base/b-scrolly/modules/state'
 import { typedEmitterFactory } from 'components/base/b-scrolly/modules/emitter';
 
 import iData, { component, prop, system, $$ } from 'components/super/i-data/i-data';
+import { chunkSizePreset } from 'components/base/b-scrolly/modules/presets/chunk-size';
 
 export * from 'components/base/b-scrolly/interface';
 export * from 'components/base/b-scrolly/const';
@@ -88,8 +90,12 @@ export default class bScrolly extends iData implements iItems {
 	/** {@link ComponentItemFactory} */
 	@prop({
 		type: Function,
-		default: (ctx: bScrolly, items: object[]) => {
-			const descriptors = items.map((data, i) => ({
+		default: (state: ComponentState, ctx: bScrolly) => {
+			if (ctx.chunkSize == null) {
+				throw new Error('chunkSize.getNextDataSlice is used but chunkSize prop is not settled');
+			}
+
+			const descriptors = chunkSizePreset.getNextDataSlice(state, ctx.chunkSize).map((data, i) => ({
 				key: ctx.itemKey?.(data, i),
 
 				item: Object.isFunction(ctx.item) ? ctx.item(data, i) : ctx.item,
@@ -134,7 +140,7 @@ export default class bScrolly extends iData implements iItems {
 	 */
 	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
-	readonly chunkSize: number = 10;
+	readonly chunkSize?: number = 10;
 
 	/**
 	 * When this function returns `true` the component will stop to request new data.
@@ -159,15 +165,24 @@ export default class bScrolly extends iData implements iItems {
 	readonly shouldPerformDataRequest!: ShouldFn;
 
 	/**
-	 * When this function returns `true` the component will be able to render additional data.
-	 * This function will be called on each new element enters the viewport.
+	 * TODO: docs
 	 */
 	@prop({
 		type: Function,
-		default: defaultProps.shouldPerformDataRender
+		default: (state: ComponentState, ctx: bScrolly) => {
+			if (ctx.chunkSize == null) {
+				throw new Error('ChunkSize.renderGuard preset is active but chunkSize prop is not settled');
+			}
+
+			return chunkSizePreset.renderGuard(state, ctx, ctx.chunkSize);
+		}
 	})
 
-	readonly shouldPerformDataRender!: ShouldFn;
+	readonly renderGuard!: ShouldFn<CanPerformRenderResult>;
+
+	// TODO: подумать над названием
+	@prop(Function)
+	readonly shouldPerformDataRender?: ShouldFn<boolean>;
 
 	/**
 	 * If true then the elements observer will not be initialized.
@@ -331,8 +346,8 @@ export default class bScrolly extends iData implements iItems {
 	/**
 	 * Wrapper for `shouldPerformDataRender`
 	 */
-	shouldPerformDataRenderWrapper(): boolean {
-		return this.shouldPerformDataRender(this.getComponentState(), this);
+	shouldPerformDataRenderWrapper(): ReturnType<typeof this.renderGuard> {
+		return this.renderGuard(this.getComponentState(), this);
 	}
 
 	/**
@@ -366,6 +381,8 @@ export default class bScrolly extends iData implements iItems {
 		}
 
 		this.componentInternalState.updateData(<object[]>data.data, isInitialLoading);
+		this.shouldStopRequestingDataWrapper();
+
 		this.componentEmitter.emit(componentDataLocalEvents.dataLoadSuccess, <object[]>data.data, isInitialLoading);
 
 		if (

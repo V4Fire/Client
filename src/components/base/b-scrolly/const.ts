@@ -160,9 +160,14 @@ export const canPerformRenderRejectionReason = <const>{
 	noData: 'noData',
 
 	/**
+	 * All rendering are done
+	 */
+	done: 'done',
+
+	/**
 	 * Client returns `false` in `shouldPerformDataRender`
 	 */
-	clientRejection: 'clientRejection'
+	noPermission: 'noPermission'
 };
 
 /**

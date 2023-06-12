@@ -44,7 +44,6 @@ test.describe('<b-scrolly> state', () => {
 			maxViewedItem: undefined,
 			maxViewedChild: undefined,
 			isRequestsStopped: false,
-			isRenderingDone: false,
 			isLoadingInProgress: true,
 			lastLoadedData: [],
 			loadPage: 1
@@ -96,7 +95,6 @@ test.describe('<b-scrolly> state', () => {
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,
 				isInitialRender: false,
-				isRenderingDone: false,
 				isRequestsStopped: false,
 				isLoadingInProgress: false,
 				loadPage: 2,
@@ -123,7 +121,6 @@ test.describe('<b-scrolly> state', () => {
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,
 				isInitialRender: false,
-				isRenderingDone: true,
 				isRequestsStopped: true,
 				isLoadingInProgress: false,
 				isLastEmpty: true,

@@ -34,18 +34,18 @@ export class ComponentInternalState extends Friend {
 		componentEmitter.on(componentLocalEvents.convertDataToDB, (...args) => this.setRawLastLoaded(...args));
 		componentEmitter.on(componentLocalEvents.resetState, (...args) => this.reset(...args));
 
-		componentEmitter.on(componentRenderLocalEvents.renderStart, () => {
+		componentEmitter.on(componentRenderLocalEvents.domInsertStart, () => {
 			this.setIsInitialRender(false);
 			this.incrementRenderPage();
 		});
 
-		componentEmitter.on(componentRenderLocalEvents.renderDone, () => {
-			this.updateIsRenderDone();
-		});
+		// componentEmitter.on(componentRenderLocalEvents.renderDone, () => {
+		// 	this.updateIsRenderDone();
+		// });
 
-		componentEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => {
-			this.updateIsRenderDone();
-		});
+		// componentEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => {
+		// 	this.updateIsRenderDone();
+		// });
 	}
 
 	/**
@@ -128,43 +128,43 @@ export class ComponentInternalState extends Friend {
 		return this;
 	}
 
-	updateIsRenderDone(): this {
-		const
-			{ctx} = this,
-			state = ctx.getComponentState();
+	// updateIsRenderDone(): this {
+	// 	const
+	// 		{ctx} = this,
+	// 		state = ctx.getComponentState();
 
-		if (
-			!state.isLoadingInProgress &&
-			state.isRequestsStopped &&
-			state.data.length === state.items.length
-		) {
-			ctx.componentInternalState.setIsRenderingDone(true);
+	// 	if (
+	// 		!state.isLoadingInProgress &&
+	// 		state.isRequestsStopped &&
+	// 		state.data.length === state.items.length
+	// 	) {
+	// 		ctx.componentInternalState.setIsRenderingDone(true);
 
-		} else {
-			ctx.componentInternalState.setIsRenderingDone(false);
-		}
+	// 	} else {
+	// 		ctx.componentInternalState.setIsRenderingDone(false);
+	// 	}
 
-		return this;
-	}
+	// 	return this;
+	// }
 
-	updateIsLifecycleDone(): this {
-		const
-			{ctx} = this,
-			state = ctx.getComponentState();
+	// updateIsLifecycleDone(): this {
+	// 	const
+	// 		{ctx} = this,
+	// 		state = ctx.getComponentState();
 
-		if (state.isLifecycleDone) {
-			return this;
-		}
+	// 	if (state.isLifecycleDone) {
+	// 		return this;
+	// 	}
 
-		if (
-			state.isRequestsStopped &&
-			state.isRenderingDone
-		) {
-			ctx.componentInternalState.setIsLifecycleDone(true);
-		}
+	// 	if (
+	// 		state.isRequestsStopped &&
+	// 		state.isRenderingDone
+	// 	) {
+	// 		ctx.componentInternalState.setIsLifecycleDone(true);
+	// 	}
 
-		return this;
-	}
+	// 	return this;
+	// }
 
 	/**
 	 * Обновляет состояние последних сырых загруженных данных.
@@ -188,20 +188,24 @@ export class ComponentInternalState extends Friend {
 
 	setIsRequestsStopped(state: boolean): this {
 		this.state.isRequestsStopped = state;
-		this.updateIsRenderDone();
-		this.updateIsLifecycleDone();
+		// this.updateIsRenderDone();
+		// this.updateIsLifecycleDone();
 
 		return this;
 	}
 
-	setIsRenderingDone(state: boolean): this {
-		this.state.isRenderingDone = state;
-		this.updateIsLifecycleDone();
+	// setIsRenderingDone(state: boolean): this {
+	// 	this.state.isRenderingDone = state;
+	// 	// this.updateIsLifecycleDone();
 
-		return this;
-	}
+	// 	return this;
+	// }
 
 	setIsLifecycleDone(state: boolean): this {
+		if (this.state.isLifecycleDone === state) {
+			return this;
+		}
+
 		const
 			{ctx} = this;
 

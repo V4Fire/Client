@@ -207,7 +207,6 @@ export function fromInitialState(state: Partial<ComponentState>): ComponentState
 		isLastEmpty: false,
 		isLifecycleDone: false,
 		isRequestsStopped: false,
-		isRenderingDone: false,
 		lastLoadedData: [],
 		data: [],
 		items: [],

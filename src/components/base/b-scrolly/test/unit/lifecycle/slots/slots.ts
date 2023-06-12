@@ -183,6 +183,7 @@ test.describe('<b-scrolly> slots', () => {
 			await component.withDefaultPaginationProviderProps({chunkSize});
 			await component.build();
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForSlotState('loader', false);
 
 			const
 				slots = await component.getSlotsState();

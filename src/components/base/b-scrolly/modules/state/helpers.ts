@@ -46,8 +46,6 @@ export function createInitialState(): ComponentState {
 
 			isRequestsStopped: false,
 
-			isRenderingDone: false,
-
 			isLoadingInProgress: false,
 
 			isLifecycleDone: false

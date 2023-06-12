@@ -30,7 +30,6 @@ export interface ComponentState {
 	isInitialLoading: boolean;
 	isInitialRender: boolean;
 	isRequestsStopped: boolean;
-	isRenderingDone: boolean;
 	isLoadingInProgress: boolean;
 	isLifecycleDone: boolean;
 	lastLoadedData: Readonly<object[]>;
@@ -55,8 +54,8 @@ export interface RequestQueryFn {
 	(params: ComponentState): Dictionary<Dictionary>;
 }
 
-export interface ComponentItemFactory<DATA extends unknown = unknown> {
-	(ctx: bScrolly, items: DATA[]): ComponentItem[];
+export interface ComponentItemFactory {
+	(state: ComponentState, ctx: bScrolly): ComponentItem[];
 }
 
 export interface ComponentItem {
@@ -88,8 +87,8 @@ export type CanPerformRenderRejectionReason = keyof typeof canPerformRenderRejec
 /**
  * Функция для опроса клиента о необходимости выполнить то или иное действие.
  */
-export interface ShouldFn {
-	(params: ComponentState, ctx: bScrolly): boolean;
+export interface ShouldFn<RES = boolean> {
+	(params: ComponentState, ctx: bScrolly): RES;
 }
 
 export type ComponentLocalEvents =
@@ -97,6 +96,11 @@ export type ComponentLocalEvents =
 	keyof typeof componentLocalEvents |
 	keyof typeof componentRenderLocalEvents |
 	keyof typeof componentObserverLocalEvents;
+
+export interface CanPerformRenderResult {
+	result: boolean;
+	reason?: CanPerformRenderRejectionReason;
+}
 
 /**
  * Имя события: аргументы события

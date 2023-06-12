@@ -52,8 +52,10 @@ test.describe('<b-scrolly>', () => {
 			shouldStopRequestingData = await component.mockFn(() => false),
 			shouldPerformDataRequest = await component.mockFn(defaultProps.shouldPerformDataRequest);
 
-		const data = state.data.addData(providerChunkSize);
-		state.data.addData(providerChunkSize);
+		const
+			firstDataChunk = state.data.addData(providerChunkSize),
+			secondDataChunk = state.data.addData(providerChunkSize);
+
 		state.data.addMounted(chunkSize);
 
 		await component.setProps({
@@ -74,12 +76,26 @@ test.describe('<b-scrolly>', () => {
 					childTillEnd: undefined,
 					maxViewedItem: undefined,
 					maxViewedChild: undefined,
-					isRenderingDone: false,
 					isRequestsStopped: false,
-					lastLoadedData: data,
-					lastLoadedRawData: {data},
-					data,
+					lastLoadedData: firstDataChunk,
+					lastLoadedRawData: {data: firstDataChunk},
+					data: firstDataChunk,
 					loadPage: 1
+				}),
+				test.expect.any(Object)
+			],
+			[
+				state.compile({
+					itemsTillEnd: undefined,
+					childTillEnd: undefined,
+					maxViewedItem: undefined,
+					maxViewedChild: undefined,
+					isRequestsStopped: false,
+					isInitialLoading: false,
+					lastLoadedData: secondDataChunk,
+					lastLoadedRawData: {data: secondDataChunk},
+					data: state.data.data,
+					loadPage: 2
 				}),
 				test.expect.any(Object)
 			]
@@ -92,11 +108,10 @@ test.describe('<b-scrolly>', () => {
 					childTillEnd: undefined,
 					maxViewedItem: undefined,
 					maxViewedChild: undefined,
-					isRenderingDone: false,
 					isRequestsStopped: false,
-					lastLoadedData: data,
-					lastLoadedRawData: {data},
-					data,
+					lastLoadedData: firstDataChunk,
+					lastLoadedRawData: {data: firstDataChunk},
+					data: firstDataChunk,
 					loadPage: 1
 				}),
 				test.expect.any(Object)
@@ -137,7 +152,6 @@ test.describe('<b-scrolly>', () => {
 					childTillEnd: undefined,
 					maxViewedItem: undefined,
 					maxViewedChild: undefined,
-					isRenderingDone: false,
 					isRequestsStopped: false
 				}),
 				test.expect.any(Object)
@@ -151,7 +165,6 @@ test.describe('<b-scrolly>', () => {
 					childTillEnd: undefined,
 					maxViewedItem: undefined,
 					maxViewedChild: undefined,
-					isRenderingDone: false,
 					isRequestsStopped: false
 				}),
 				test.expect.any(Object)
@@ -192,7 +205,6 @@ test.describe('<b-scrolly>', () => {
 					childTillEnd: undefined,
 					maxViewedItem: undefined,
 					maxViewedChild: undefined,
-					isRenderingDone: false,
 					isRequestsStopped: false
 				}),
 				test.expect.any(Object)

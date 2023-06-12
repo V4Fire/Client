@@ -11,9 +11,9 @@ import symbolGenerator from 'core/symbol';
 import Friend from 'components/friends/friend';
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { CanPerformRenderRejectionReason, ComponentItem } from 'components/base/b-scrolly/b-scrolly';
+import type { ComponentItem } from 'components/base/b-scrolly/b-scrolly';
 import { canPerformRenderRejectionReason, componentDataLocalEvents, componentItemType, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
-import type { AnyMounted, MountedItem } from 'components/base/b-scrolly/interface';
+import type { AnyMounted, CanPerformRenderResult, MountedItem } from 'components/base/b-scrolly/interface';
 import { isItem } from 'components/base/b-scrolly/modules/helpers';
 
 export const
@@ -30,22 +30,6 @@ export class Juggler extends Friend {
 	 * {@link bScrolly}
 	 */
 	override readonly C!: bScrolly;
-
-	protected get nextDataSliceStartIndex(): number {
-		const
-			{ctx, ctx: {chunkSize}} = this,
-			{renderPage} = ctx.getComponentState();
-
-		return renderPage * chunkSize;
-	}
-
-	protected get nextDataSliceEndIndex(): number {
-		const
-			{ctx, ctx: {chunkSize}} = this,
-			{renderPage} = ctx.getComponentState();
-
-		return (renderPage + 1) * chunkSize;
-	}
 
 	/**
 	 * @param ctx
@@ -76,40 +60,11 @@ export class Juggler extends Friend {
 	 * Returns status of the possibility to render a components.
 	 * Also returns reason of the rejection if the is no possibility to render components
 	 */
-	protected canPerformRender(): {result: boolean; reason?: CanPerformRenderRejectionReason} {
+	protected canPerformRender(): CanPerformRenderResult {
 		const
-			{ctx} = this,
-			{chunkSize} = ctx,
-			state = this.ctx.getComponentState(),
-			dataSlice = this.getNextDataSlice();
+			{ctx} = this;
 
-		if (dataSlice.length === 0) {
-			return {
-				result: false,
-				reason: canPerformRenderRejectionReason.noData
-			};
-		}
-
-		if (dataSlice.length < chunkSize) {
-			return {
-				result: false,
-				reason: canPerformRenderRejectionReason.notEnoughData
-			};
-		}
-
-		if (state.isInitialRender) {
-			return {
-				result: true
-			};
-		}
-
-		const
-			clientResponse = ctx.shouldPerformDataRenderWrapper();
-
-		return {
-			result: clientResponse,
-			reason: clientResponse === false ? canPerformRenderRejectionReason.clientRejection : undefined
-		};
+		return ctx.shouldPerformDataRenderWrapper();
 	}
 
 	/**
@@ -117,13 +72,12 @@ export class Juggler extends Friend {
 	 */
 	protected performRender(): void {
 		const
-			{ctx, refs} = this,
-			dataSlice = this.getNextDataSlice();
+			{ctx, refs} = this;
 
 		ctx.componentEmitter.emit(componentRenderLocalEvents.renderStart);
 
 		const
-			items = ctx.componentFactory.produceComponentItems(dataSlice),
+			items = ctx.componentFactory.produceComponentItems(),
 			nodes = ctx.componentFactory.produceNodes(items),
 			anyMounted = this.produceMounted(items, nodes),
 			mountedItems = <MountedItem[]>anyMounted.filter((mounted) => mounted.type === componentItemType.item);
@@ -151,17 +105,6 @@ export class Juggler extends Friend {
 			ctx.componentEmitter.emit(componentRenderLocalEvents.renderDone);
 
 		}, {label: $$.insertDomRaf, group: jugglerAsyncGroup});
-	}
-
-	/**
-	 * Returns a data slice that should be rendered next
-	 */
-	protected getNextDataSlice(): object[] {
-		const
-			{ctx} = this,
-			{data} = ctx.getComponentState();
-
-		return data.slice(this.nextDataSliceStartIndex, this.nextDataSliceEndIndex);
 	}
 
 	/**
@@ -206,8 +149,13 @@ export class Juggler extends Friend {
 			return this.performRender();
 		}
 
+		if (reason === canPerformRenderRejectionReason.done) {
+			ctx.componentInternalState.setIsLifecycleDone(true);
+			return;
+		}
+
 		if (reason === canPerformRenderRejectionReason.noData) {
-			if (ctx.shouldStopRequestingDataWrapper()) {
+			if (state.isRequestsStopped) {
 				return;
 			}
 
@@ -217,7 +165,7 @@ export class Juggler extends Friend {
 		}
 
 		if (reason === canPerformRenderRejectionReason.notEnoughData) {
-			if (ctx.shouldStopRequestingDataWrapper()) {
+			if (state.isRequestsStopped) {
 				this.performRender();
 
 			} else if (ctx.shouldPerformDataRequestWrapper()) {
@@ -228,7 +176,7 @@ export class Juggler extends Friend {
 			}
 		}
 
-		if (reason === canPerformRenderRejectionReason.clientRejection) {
+		if (reason === canPerformRenderRejectionReason.noPermission) {
 			// ...
 		}
 	}

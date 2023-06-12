@@ -87,8 +87,6 @@
 			mountResult.$forceUpdate();
 		}
 
-		debugger;
-
 		this.nextTick(() => {
 			Array.from(document.querySelectorAll('.b-dummy-user')).forEach((el) => {
 				if (setNodes.has(el)) {
@@ -103,7 +101,6 @@
 					enumerable: false,
 					writable: true,
 					value: () => {
-						debugger;
 						return false;
 					}
 				});
