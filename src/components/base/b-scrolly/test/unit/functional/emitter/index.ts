@@ -61,7 +61,7 @@ test.describe('<b-scrolly> emitter', () => {
 		]);
 	});
 
-	test('All data has been loaded after the second load', async ({page}) => {
+	test('All data has been loaded after the second load', async () => {
 		const
 			chunkSize = 12,
 			providerChunkSize = chunkSize / 2;

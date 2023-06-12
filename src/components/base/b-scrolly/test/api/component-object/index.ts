@@ -22,12 +22,15 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	 */
 	readonly container: Locator;
 
+	readonly childList: Locator;
+
 	/**
 	 * @param page
 	 */
 	constructor(page: Page) {
 		super(page, 'b-scrolly');
 		this.container = this.node.locator(this.elSelector('container'));
+		this.childList = this.container.locator('> *');
 	}
 
 	override async build(...args: Parameters<ComponentObject<bScrolly>['build']>): Promise<JSHandle<bScrolly>> {
@@ -53,22 +56,18 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	 * Returns a container child count
 	 */
 	async getContainerChildCount(): Promise<number> {
-		return this.container.locator('*').count();
+		return this.childList.count();
 	}
 
 	/**
 	 * Waits for container child count equals to N
 	 */
 	async waitForContainerChildCountEqualsTo(n: number): Promise<void> {
-		await this.container.locator('*').nth(n - 1).waitFor({state: 'attached'});
-	}
+		await this.childList.nth(n - 1).waitFor({state: 'attached'});
 
-	/**
-	 * Returns a promise that will be resolved after the component emits `domInsertDone`
-	 */
-	async waitForDomInsertDoneEvent(): Promise<this> {
-		await this.component.evaluate((ctx) => ctx.componentEmitter.promisifyOnce('domInsertDone'));
-		return this;
+		if (await this.childList.count() > n) {
+			throw new Error('More than expected items');
+		}
 	}
 
 	async waitForLifecycleDone(): Promise<void> {
