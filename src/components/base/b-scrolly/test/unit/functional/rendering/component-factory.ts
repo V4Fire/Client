@@ -29,7 +29,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 		await provider.start();
 	});
 
-	test.skip('Returned items with type `item` is equal to the provided data', async () => {
+	test.only('Returned items with type `item` is equal to the provided data', async () => {
 		const
 			chunkSize = 12;
 
@@ -37,16 +37,19 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 			.responseOnce(200, {data: state.data.addData(chunkSize)})
 			.response(200, {data: state.data.addData(0)});
 
-		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((ctx, data) =>
-			data.map((value) => <ComponentItem>({
+		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
+			const data = state.lastLoadedData;
+
+			return data.map((item) => ({
 				item: 'section',
 				key: '',
 				type: 'item',
 				children: [],
 				props: {
-					'data-index': value.i
+					'data-index': item.i
 				}
-			})));
+			}));
+		});
 
 		await component.setProps({
 			itemsFactory,
@@ -56,12 +59,12 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 
 		await component.withDefaultPaginationProviderProps({chunkSize});
 		await component.build();
+		await component.waitForContainerChildCountEqualsTo(chunkSize);
 
-		await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
-
+		await test.expect(component.getContainerChildCount()).resolves.toBe(chunkSize);
 	});
 
-	test.skip('In additional `item`, `separator` was also returned', async () => {
+	test.only('In additional `item`, `separator` was also returned', async () => {
 		const
 			chunkSize = 12;
 
@@ -69,18 +72,21 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 			.responseOnce(200, {data: state.data.addData(chunkSize)})
 			.response(200, {data: state.data.addData(0)});
 
-		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((ctx, data) => {
-			const result = data.map((value) => <ComponentItem>({
+		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
+			const
+				data = state.lastLoadedData;
+
+			const items = data.map<ComponentItem>((item) => ({
 				item: 'section',
 				key: '',
 				type: 'item',
 				children: [],
 				props: {
-					'data-index': value.i
+					'data-index': item.i
 				}
 			}));
 
-			result.push({
+			items.push({
 				item: 'b-button',
 				key: '',
 				children: {
@@ -94,7 +100,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 				type: 'separator'
 			});
 
-			return result;
+			return items;
 		});
 
 		await component.setProps({

@@ -19,7 +19,7 @@ export type ComponentStrategyKeys = keyof typeof componentStrategy;
 /**
  * Состояние компонента.
  */
-export interface ComponentState {
+export interface ComponentState<DATA = object> {
 	maxViewedItem: CanUndef<number>;
 	maxViewedChild: CanUndef<number>;
 	itemsTillEnd: CanUndef<number>;
@@ -32,8 +32,8 @@ export interface ComponentState {
 	isRequestsStopped: boolean;
 	isLoadingInProgress: boolean;
 	isLifecycleDone: boolean;
-	lastLoadedData: Readonly<object[]>;
-	data: Readonly<object[]>;
+	lastLoadedData: Readonly<DATA[]>;
+	data: Readonly<DATA[]>;
 	items: Readonly<MountedItem[]>;
 	childList: Readonly<AnyMounted[]>;
 	lastLoadedRawData: unknown;
@@ -54,8 +54,8 @@ export interface RequestQueryFn {
 	(params: ComponentState): Dictionary<Dictionary>;
 }
 
-export interface ComponentItemFactory {
-	(state: ComponentState, ctx: bScrolly): ComponentItem[];
+export interface ComponentItemFactory<DATA = unknown> {
+	(state: ComponentState<DATA>, ctx: bScrolly): ComponentItem[];
 }
 
 export interface ComponentItem {
