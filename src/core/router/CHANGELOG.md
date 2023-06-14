@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Fill original route path parameters from redirected route path parameters
+* Fill original route path parameters from URL of the route that redirects on it
 
 ## v3.44.3 (2023-03-30)
 

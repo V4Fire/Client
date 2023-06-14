@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Fill original route path parameters from redirected route path parameters in `core/router`
+* Fill original route path parameters from URL of the route that redirects on it in `core/router`
 
 ## v3.49.0 (2023-05-30)
 
