@@ -7,6 +7,6 @@
  */
 
 /**
- * Group for async operations of the observer module
+ * Group for async operations of the observer module.
  */
 export const observerAsyncGroup = '[[OBSERVER]]';

@@ -9,17 +9,17 @@
 import type { AsyncOptions } from 'core/async';
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { ComponentLocalEvents, LocalEventPayload } from 'components/base/b-scrolly/interface';
+import type { ComponentEvents, LocalEventPayload } from 'components/base/b-scrolly/interface';
+import type { ComponentTypedEmitter } from 'components/base/b-scrolly/modules/emitter/interface';
+
+export * from 'components/base/b-scrolly/modules/emitter/interface';
 
 /**
- * Factory for producing typed `localEmitter` methods.
- * Provides a methods of the `localEmitter` with types
- *
+ * Provides methods for interacting with the `localEmitter` using typed events.
  * @param ctx
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function typedEmitterFactory(ctx: bScrolly) {
-	const once = <EVENT extends ComponentLocalEvents>(
+export function componentTypedEmitter(ctx: bScrolly): ComponentTypedEmitter {
+	const once = <EVENT extends ComponentEvents>(
 		event: EVENT,
 		handler: (...args: LocalEventPayload<EVENT>) => void,
 		asyncOpts?: AsyncOptions
@@ -27,7 +27,7 @@ export function typedEmitterFactory(ctx: bScrolly) {
 		ctx.unsafe.localEmitter.once(event, <Function>handler, asyncOpts);
 	};
 
-	const on = <EVENT extends ComponentLocalEvents>(
+	const on = <EVENT extends ComponentEvents>(
 		event: EVENT,
 		handler: (...args: LocalEventPayload<EVENT>) => void,
 		asyncOpts?: AsyncOptions
@@ -35,22 +35,23 @@ export function typedEmitterFactory(ctx: bScrolly) {
 		ctx.unsafe.localEmitter.on(event, <Function>handler, asyncOpts);
 	};
 
-	const promisifyOnce = <EVENT extends ComponentLocalEvents>(
+	const promisifyOnce = <EVENT extends ComponentEvents>(
 		event: EVENT,
 		asyncOpts?: AsyncOptions
 	) => ctx.unsafe.localEmitter.promisifyOnce(event, asyncOpts);
 
-	const emit = <EVENT extends ComponentLocalEvents>(
+	const emit = <EVENT extends ComponentEvents>(
 		event: EVENT,
 		...payload: LocalEventPayload<EVENT>
 	) => {
 		ctx.unsafe.localEmitter.emit(event, ...payload);
 	};
 
-	return {
+	return <ComponentTypedEmitter>{
 		once,
 		on,
 		promisifyOnce,
 		emit
 	};
 }
+

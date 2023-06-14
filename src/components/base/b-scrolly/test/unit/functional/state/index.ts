@@ -15,7 +15,7 @@ import test from 'tests/config/unit/test';
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { defaultProps } from 'components/base/b-scrolly/const';
-import type { ComponentItem, ShouldFn } from 'components/base/b-scrolly/b-scrolly';
+import type { ComponentItem, ShouldPerform } from 'components/base/b-scrolly/b-scrolly';
 
 test.describe('<b-scrolly> state', () => {
 	let
@@ -65,10 +65,10 @@ test.describe('<b-scrolly> state', () => {
 			providerChunkSize = chunkSize / 2;
 
 		const
-			shouldStopRequestingData = await component.mockFn<ShouldFn>(defaultProps.shouldStopRequestingData),
-			shouldPerformDataRequest = await component.mockFn<ShouldFn>(({isInitialLoading, itemsTillEnd, isLastEmpty}) =>
+			shouldStopRequestingData = <ShouldPerform>(defaultProps.shouldStopRequestingData),
+			shouldPerformDataRequest = <ShouldPerform>(({isInitialLoading, itemsTillEnd, isLastEmpty}) =>
 				isInitialLoading || (itemsTillEnd === 0 && !isLastEmpty)),
-			shouldPerformDataRender = await component.mockFn<ShouldFn>(({isInitialRender, itemsTillEnd}) =>
+			shouldPerformDataRender = <ShouldPerform>(({isInitialRender, itemsTillEnd}) =>
 				isInitialRender || itemsTillEnd === 0);
 
 		await test.step('After rendering first data chunk', async () => {

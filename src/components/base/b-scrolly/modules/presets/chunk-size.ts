@@ -7,10 +7,15 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import { canPerformRenderRejectionReason, CanPerformRenderResult, ComponentState } from 'components/base/b-scrolly/b-scrolly';
+
+import { canPerformRenderRejectionReason } from 'components/base/b-scrolly/const';
+import type { CanPerformRenderResult, ComponentState } from 'components/base/b-scrolly/interface';
 
 /**
- * Returns a data slice that should be rendered next
+ * Returns the next slice of data that should be rendered.
+ *
+ * @param state
+ * @param chunkSize
  */
 export function getNextDataSlice(state: ComponentState, chunkSize: number): object[] {
 	const
@@ -21,51 +26,58 @@ export function getNextDataSlice(state: ComponentState, chunkSize: number): obje
 	return data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
 }
 
+/**
+ * A preset configuration for the chunk size.
+ */
 export const chunkSizePreset = {
-		renderGuard(
-			state: ComponentState,
-			ctx: bScrolly,
-			chunkSize: number
-		): CanPerformRenderResult {
-			const
-				dataSlice = getNextDataSlice(state, chunkSize);
+	/**
+	 * A guard function that determines if the render can be performed based on the current state and chunk size.
+	 *
+	 * @param state
+	 * @param ctx
+	 * @param chunkSize
+	 */
+	renderGuard(
+		state: ComponentState,
+		ctx: bScrolly,
+		chunkSize: number
+	): CanPerformRenderResult {
+		const dataSlice = getNextDataSlice(state, chunkSize);
 
-			if (dataSlice.length === 0) {
-				if (state.isRequestsStopped) {
-					return {
-						result: false,
-						reason: canPerformRenderRejectionReason.done
-					};
-				}
-
+		if (dataSlice.length === 0) {
+			if (state.isRequestsStopped) {
 				return {
 					result: false,
-					reason: canPerformRenderRejectionReason.noData
+					reason: canPerformRenderRejectionReason.done
 				};
 			}
-
-			if (dataSlice.length < chunkSize) {
-				return {
-					result: false,
-					reason: canPerformRenderRejectionReason.notEnoughData
-				};
-			}
-
-			if (state.isInitialRender) {
-				return {
-					result: true
-				};
-			}
-
-			const
-				clientResponse = ctx.shouldPerformDataRender?.(state, ctx);
 
 			return {
-				result: clientResponse == null ? true : clientResponse,
-				reason: clientResponse === false ? canPerformRenderRejectionReason.noPermission : undefined
+				result: false,
+				reason: canPerformRenderRejectionReason.noData
 			};
-		},
+		}
 
-		getNextDataSlice
+		if (dataSlice.length < chunkSize) {
+			return {
+				result: false,
+				reason: canPerformRenderRejectionReason.notEnoughData
+			};
+		}
+
+		if (state.isInitialRender) {
+			return {
+				result: true
+			};
+		}
+
+		const clientResponse = ctx.shouldPerformDataRender?.(state, ctx);
+
+		return {
+			result: clientResponse == null ? true : clientResponse,
+			reason: clientResponse === false ? canPerformRenderRejectionReason.noPermission : undefined
+		};
+	},
+
+	getNextDataSlice
 };
-

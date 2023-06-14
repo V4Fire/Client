@@ -21,14 +21,14 @@ import type {
 
 	ComponentState,
 	ComponentDb,
-	ComponentRenderStrategyKeys as ComponentRenderStrategyKeys,
+	ComponentRenderStrategy as ComponentRenderStrategy,
 	RequestParams,
 	RequestQueryFn,
-	ShouldFn,
+	ShouldPerform,
 	ComponentRefs,
 	ComponentItemFactory,
 	ComponentItemType,
-	ComponentStrategyKeys,
+	ComponentStrategy,
 	CanPerformRenderResult
 
 } from 'components/base/b-scrolly/interface';
@@ -49,7 +49,7 @@ import { Observer } from 'components/base/b-scrolly/modules/observer';
 import { ComponentFactory } from 'components/base/b-scrolly/modules/factory';
 import { SlotsStateController } from 'components/base/b-scrolly/modules/slots';
 import { ComponentInternalState } from 'components/base/b-scrolly/modules/state';
-import { typedEmitterFactory } from 'components/base/b-scrolly/modules/emitter';
+import { componentTypedEmitter } from 'components/base/b-scrolly/modules/emitter';
 
 import iData, { component, prop, system, $$ } from 'components/super/i-data/i-data';
 import { chunkSizePreset } from 'components/base/b-scrolly/modules/presets/chunk-size';
@@ -60,6 +60,9 @@ export * from 'components/base/b-scrolly/const';
 VDOM.addToPrototype(create);
 VDOM.addToPrototype(render);
 
+/**
+ * Компонент реализующий загрузку и отрисовку больших массивов данных чанками.
+ */
 @component()
 export default class bScrolly extends iData implements iItems {
 	/** {@link iItems.item} */
@@ -78,16 +81,55 @@ export default class bScrolly extends iData implements iItems {
 
 	/** {@link ComponentItemType} */
 	@prop({type: [String, Function]})
-	readonly itemType: ComponentItemType | CreateFromItemFn<object, ComponentItemType> = componentItemType.item;
+	readonly itemType: keyof ComponentItemType | CreateFromItemFn<object, ComponentItemType> = componentItemType.item;
 
 	/** {@link iItems.itemProps} */
 	@prop({type: [Function, Object], default: () => ({})})
 	readonly itemProps!: iItems['itemProps'];
 
+	/**
+	 * Specifies the number of times the `tombstone` component will be rendered.
+	 *
+	 * This prop can be useful if you want to render multiple `tombstone` components
+	 * using a single specified element. For example, if you set `tombstonesSize` to 3,
+	 * then three `tombstone` components will be rendered on your page.
+	 */
 	@prop(Number)
 	readonly tombstonesSize?: number;
 
-	/** {@link ComponentItemFactory} */
+	/**
+	 * This factory function is used to pass information about the components that need to be rendered.
+	 * The function should return an array of arbitrary length consisting of objects that satisfy the
+	 * {@link ComponentItem} interface.
+	 *
+	 * By default, the rendering strategy is based on the `chunkSize` and `iItems` trait.
+	 * In other words, the default implementation takes a data slice of length `chunkSize`
+	 * and calls the `iItems` functions to generate a {@link ComponentItem} object.
+	 *
+	 * However, nothing prevents the client from implementing any strategy by overriding this function.
+	 *
+	 * For example, it is possible to define a function
+	 * that takes the last loaded data and draws twice as many components:
+	 *
+	 * @example
+	 * ```typescript
+	 * const itemsFactory = (state) => {
+	 *   const data = state.lastLoadedData;
+	 *
+	 *   const items = data.map<ComponentItem>((item) => ({
+	 *     item: 'section',
+	 *     key: Object.cast(undefined),
+	 *     type: 'item',
+	 *     children: [],
+	 *     props: {
+	 *       'data-index': item.i
+	 *     }
+	 *   }));
+	 *
+	 *   return [...items, ...items];
+	 * }
+	 * ```
+	 */
 	@prop({
 		type: Function,
 		default: (state: ComponentState, ctx: bScrolly) => {
@@ -118,27 +160,38 @@ export default class bScrolly extends iData implements iItems {
 	override readonly DB!: ComponentDb;
 
 	/**
-	 * {@link RenderStrategy}
+	 * The rendering strategy of components.
+	 * Determines which approach will be taken for rendering components within the rendering engine.
+	 *
+	 * * `default` - The default approach,
+	 * which creates a new instance of the rendering engine each time a new rendering is performed.
+	 *
+	 * * `reuse` - An approach
+	 * that reuses the current instance of the rendering engine whenever a new rendering is performed.
+	 *
+	 * {@link ComponentRenderStrategy}
 	 */
 	@prop({type: String, validator: (v) => Object.isString(v) && componentRenderStrategy.hasOwnProperty(v)})
-	readonly componentRenderStrategy: ComponentRenderStrategyKeys = componentRenderStrategy.default;
+	readonly componentRenderStrategy: keyof ComponentRenderStrategy = componentRenderStrategy.default;
 
 	/**
-	 * {@link ComponentStrategyKeys}
+	 * Strategies for component operation modes.
+	 * {@link ComponentStrategy}
 	 */
 	@prop({type: String, validator: (v) => Object.isString(v) && componentStrategy.hasOwnProperty(v)})
-	readonly componentStrategy: ComponentStrategyKeys = componentStrategy.intersectionObserver;
+	readonly componentStrategy: keyof ComponentStrategy = componentStrategy.intersectionObserver;
 
 	/**
-	 * {@link bScrollyRequestQueryFn}
+	 * Function that returns the GET parameters for a request.
+	 * {@link RequestQueryFn}
 	 */
 	@prop({type: Function})
 	readonly requestQuery?: RequestQueryFn;
 
 	/**
-	 * Number of elements per one render chunk
+	 * The number of elements to render at once.
+	 * This prop is used in conjunction with `renderGuard` and `chunkSize` preset.
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly chunkSize?: number = 10;
 
@@ -151,7 +204,7 @@ export default class bScrolly extends iData implements iItems {
 		default: defaultProps.shouldStopRequestingData
 	})
 
-	readonly shouldStopRequestingData!: ShouldFn;
+	readonly shouldStopRequestingData!: ShouldPerform;
 
 	/**
 	 * When this function returns `true` the component will be able to request additional data.
@@ -162,43 +215,67 @@ export default class bScrolly extends iData implements iItems {
 		default: defaultProps.shouldPerformDataRequest
 	})
 
-	readonly shouldPerformDataRequest!: ShouldFn;
+	readonly shouldPerformDataRequest!: ShouldPerform;
 
 	/**
-	 * TODO: docs
+	 * This function is called after successful data loading or when the component enters the visible area.
+	 *
+	 * This function asks the client whether rendering can be performed. The client responds with an object
+	 * indicating whether rendering is allowed or the reason for denial. The client's response should be an object
+	 * of type {@link CanPerformRenderResult}.
+	 *
+	 * Based on the result of this function, the component takes appropriate actions. For example,
+	 * it may load data if it is not sufficient for rendering, or perform rendering if all conditions are met.
+	 *
+	 * By default, the {@link chunkSizePreset.renderGuard} strategy is used,
+	 * which already implements the mechanism for communication with the component.
 	 */
 	@prop({
 		type: Function,
 		default: (state: ComponentState, ctx: bScrolly) => {
 			if (ctx.chunkSize == null) {
-				throw new Error('ChunkSize.renderGuard preset is active but chunkSize prop is not settled');
+				throw new Error('The "ChunkSize.renderGuard" preset is active, but the "chunkSize" prop is not set.');
 			}
 
 			return chunkSizePreset.renderGuard(state, ctx, ctx.chunkSize);
 		}
 	})
-
-	readonly renderGuard!: ShouldFn<CanPerformRenderResult>;
-
-	// TODO: подумать над названием
-	@prop(Function)
-	readonly shouldPerformDataRender?: ShouldFn<boolean>;
+	readonly renderGuard!: ShouldPerform<CanPerformRenderResult>;
 
 	/**
-	 * If true then the elements observer will not be initialized.
-	 * That may be useful if you wanna implement a lazy loading via client interaction
+	 * This function is called in the `renderGuard` after other checks are completed.
+	 *
+	 * This function receives the component state as input, based on which the client
+	 * should determine whether the component should render the next chunk of components.
+	 *
+	 * For example, if we want to render the next data chunk only when the client
+	 * has seen all the main components, we can implement the following function:
+	 *
+	 * ```typescript
+	 * const shouldPerformDataRender = (state) => {
+	 *   return state.isInitialRender || state.itemsTillEnd === 0;
+	 * }
+	 * ```
+	 */
+	@prop(Function)
+	readonly shouldPerformDataRender?: ShouldPerform<boolean>;
+
+	/**
+	 * If `true`, the element observation module will not be initialized.
+	 *
+	 * Setting this prop to `true` can be useful if you want to implement lazy rendering
+	 * and control it using the `renderNext` method.
 	 */
 	@prop({
 		type: Boolean
 	})
-
 	readonly disableObserver: boolean = false;
 
-	/** {@link typedEmitterFactory} */
-	@system<bScrolly>((ctx) => typedEmitterFactory(ctx))
-	readonly componentEmitter!: ReturnType<typeof typedEmitterFactory>;
+	/** {@link componentTypedEmitter} */
+	@system<bScrolly>((ctx) => componentTypedEmitter(ctx))
+	readonly componentEmitter!: ReturnType<typeof componentTypedEmitter>;
 
-	/** {@link slotsStateController} */
+	/** {@link SlotsStateController} */
 	@system<bScrolly>((ctx) => new SlotsStateController(ctx))
 	readonly slotsStateController!: SlotsStateController;
 
@@ -214,6 +291,7 @@ export default class bScrolly extends iData implements iItems {
 	@system<bScrolly>((ctx) => new Juggler(ctx))
 	readonly juggler!: Juggler;
 
+	/** {@link Observer} */
 	@system<bScrolly>((ctx) => new Observer(ctx))
 	readonly observer!: Observer;
 
@@ -277,9 +355,8 @@ export default class bScrolly extends iData implements iItems {
 
 		return <Promise<void>>initLoadResult;
 	}
-
 	/**
-	 * Initializes the load of the next data chunk
+	 * Initializes the loading of the next data chunk.
 	 * @param args
 	 */
 	initLoadNext(): Promise<unknown> {
@@ -292,22 +369,23 @@ export default class bScrolly extends iData implements iItems {
 	}
 
 	/**
-	 * Renders the next data chunk to the page (ignores `client` check for render posibility)
+	 * Renders the next data chunk to the page (ignores the `client` check for render possibility).
 	 */
 	renderNext(): void {
 		// ...
 	}
 
 	/**
-	 * Returns an internal component state
+	 * Returns the component state.
+	 * {@link ComponentState}
 	 */
 	getComponentState(): Readonly<ComponentState> {
 		return this.componentInternalState.compile();
 	}
 
 	/**
-	 * Collets all of the request params all over the component (ig `requestProp`, `requestQuery`)
-	 * {@link bScrollyRequestParams}
+	 * Gathers all request parameters from the component fields `requestProp` and `requestQuery`.
+	 * {@link RequestParams}
 	 */
 	getRequestParams(): RequestParams {
 		const label: AsyncOptions = {
@@ -315,10 +393,9 @@ export default class bScrolly extends iData implements iItems {
 			join: 'replace'
 		};
 
-		const
-			defParams = this.dataProvider?.getDefaultRequestParams('get');
+		const defParams = this.dataProvider?.getDefaultRequestParams('get');
 
-		if (Object.isArray(defParams)) {
+		if (Array.isArray(defParams)) {
 			Object.assign(defParams[1], label);
 		}
 
@@ -326,39 +403,32 @@ export default class bScrolly extends iData implements iItems {
 	}
 
 	/**
-	 * Wrapper for `shouldStopRequestingData`
+	 * Wrapper for `shouldStopRequestingData`.
+	 * {@link shouldStopRequestingDataWrapper}
 	 */
 	shouldStopRequestingDataWrapper(): boolean {
-		const
-			state = this.getComponentState();
+		const state = this.getComponentState();
 
 		if (state.isRequestsStopped) {
 			return state.isRequestsStopped;
 		}
 
-		const
-			newVal = this.shouldStopRequestingData(state, this);
+		const newVal = this.shouldStopRequestingData(state, this);
 
 		this.componentInternalState.setIsRequestsStopped(newVal);
 		return newVal;
 	}
 
 	/**
-	 * Wrapper for `shouldPerformDataRender`
-	 */
-	shouldPerformDataRenderWrapper(): ReturnType<typeof this.renderGuard> {
-		return this.renderGuard(this.getComponentState(), this);
-	}
-
-	/**
-	 * Wrapper from `shouldPerformDataRequest`
+	 * Wrapper for `shouldPerformDataRequest`.
+	 * {@link shouldPerformDataRequest}
 	 */
 	shouldPerformDataRequestWrapper(): boolean {
 		return this.shouldPerformDataRequest(this.getComponentState(), this);
 	}
 
 	/**
-	 * Resets a component state and the state of the component modules
+	 * Resets the component state and the state of the component modules.
 	 */
 	protected reset(): void {
 		this.componentEmitter.emit(componentLocalEvents.resetState);
@@ -370,14 +440,14 @@ export default class bScrolly extends iData implements iItems {
 	}
 
 	/**
-	 * Handler: data load successfully finished
+	 * Handler: data load successfully finished.
 	 *
-	 * @param isInitialLoading - `true` if this load was an initial component loading
+	 * @param isInitialLoading - `true` if this load was an initial component loading.
 	 * @param data
 	 */
 	protected onInitLoadSuccess(isInitialLoading: boolean, data: unknown): void {
-		if (!Object.isPlainObject(data) || !Object.isArray(data.data)) {
-			throw new ReferenceError('Missing data field in the loaded data');
+		if (!Object.isPlainObject(data) || !Array.isArray(data.data)) {
+			throw new ReferenceError('Missing "data" field in the loaded data');
 		}
 
 		this.componentInternalState.updateData(<object[]>data.data, isInitialLoading);
@@ -385,10 +455,7 @@ export default class bScrolly extends iData implements iItems {
 
 		this.componentEmitter.emit(componentDataLocalEvents.dataLoadSuccess, <object[]>data.data, isInitialLoading);
 
-		if (
-			isInitialLoading &&
-			Object.size(data.data) === 0
-		) {
+		if (isInitialLoading && Object.size(data.data) === 0) {
 			if (this.shouldStopRequestingDataWrapper()) {
 				this.componentEmitter.emit(componentDataLocalEvents.dataEmpty, isInitialLoading);
 			}
@@ -396,11 +463,12 @@ export default class bScrolly extends iData implements iItems {
 	}
 
 	/**
-	 * Handler: failed to load data
+	 * Handler: failed to load data.
 	 *
-	 * @param isInitialLoading - `true` if this load was an initial component loading
+	 * @param isInitialLoading - `true` if this load was an initial component loading.
 	 */
 	protected onInitLoadError(isInitialLoading: boolean): void {
 		this.componentEmitter.emit(componentDataLocalEvents.dataLoadError, isInitialLoading);
 	}
+
 }

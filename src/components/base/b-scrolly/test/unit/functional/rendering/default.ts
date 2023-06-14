@@ -13,7 +13,7 @@
 import test from 'tests/config/unit/test';
 
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
-import type { ShouldFn } from 'components/base/b-scrolly/interface';
+import type { ShouldPerform } from 'components/base/b-scrolly/interface';
 
 test.describe('<b-scrolly> rendering via component factory', () => {
 	let
@@ -38,7 +38,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 			.responseOnce(200, {data: state.data.addData(chunkSize)})
 			.response(200, {data: state.data.addData(0)});
 
-		const shouldPerformDataRender = await component.mockFn<ShouldFn>(
+		const shouldPerformDataRender = await component.mockFn<ShouldPerform>(
 			({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0
 		);
 
@@ -58,5 +58,9 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 		await component.waitForContainerChildCountEqualsTo(chunkSize * 3);
 
 		await test.expect(component.childList).toHaveCount(chunkSize * 3);
+	});
+
+	test.skip('Rendering components with children', async () => {
+		// ..
 	});
 });

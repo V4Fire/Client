@@ -15,39 +15,42 @@ import Friend from 'components/friends/friend';
 export { default as IoObserver } from 'components/base/b-scrolly/modules/observer/engines/intersection-observer';
 export { default as ScrollObserver } from 'components/base/b-scrolly/modules/observer/engines/scroll';
 
+/**
+ * Observer class for `bScrolly` component.
+ * It provides observation capabilities using different engines such as IoObserver and ScrollObserver.
+ */
 export class Observer extends Friend {
-		/**
-		 * {@link bScrolly}
-		 */
-		override readonly C!: bScrolly;
+	override readonly C!: bScrolly;
 
-		/**
-		 * Observe engine
-		 */
-		protected engine: IoObserver | ScrollObserver;
+	/**
+	 * The observation engine used by the Observer.
+	 * It can be either an {@link IoObserver} or {@link ScrollObserver} instance.
+	 */
+	protected engine: IoObserver | ScrollObserver;
 
-		/**
-		 * @param ctx
-		 */
-		constructor(ctx: bScrolly) {
-			super(ctx);
+	/**
+	 * @param ctx - The `bScrolly` component instance.
+	 */
+	constructor(ctx: bScrolly) {
+		super(ctx);
 
-			this.engine = ctx.componentStrategy === 'intersectionObserver' ?
-				new IoObserver(ctx) :
-				new ScrollObserver(ctx);
+		this.engine = ctx.componentStrategy === 'intersectionObserver' ?
+			new IoObserver(ctx) :
+			new ScrollObserver(ctx);
+	}
+
+	/**
+	 * Starts observing the specified mounted elements.
+	 * @param mounted - An array of elements to be observed.
+	 */
+	observe(mounted: AnyMounted[]): void {
+		const
+			{ctx} = this;
+
+		if (ctx.disableObserver) {
+			return;
 		}
 
-		/**
-		 * @param mounted
-		 */
-		observe(mounted: AnyMounted[]): void {
-			const
-				{ctx} = this;
-
-			if (ctx.disableObserver) {
-				return;
-			}
-
-			this.engine.watchForIntersection(mounted);
-		}
+		this.engine.watchForIntersection(mounted);
+	}
 }

@@ -14,7 +14,7 @@ import test from 'tests/config/unit/test';
 
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type { ComponentItemFactory } from 'components/base/b-scrolly/b-scrolly';
-import type { ComponentItem, ShouldFn } from 'components/base/b-scrolly/interface';
+import type { ComponentItem, ShouldPerform } from 'components/base/b-scrolly/interface';
 
 test.describe('<b-scrolly> rendering via component factory', () => {
 	let
@@ -239,7 +239,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 			.responseOnce(200, {data: state.data.addData(chunkSize)})
 			.response(200, {data: state.data.addData(0)});
 
-		const shouldPerformDataRender = await component.mockFn<ShouldFn>(
+		const shouldPerformDataRender = await component.mockFn<ShouldPerform>(
 			({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0
 		);
 

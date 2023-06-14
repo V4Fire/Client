@@ -38,14 +38,6 @@ export class ComponentInternalState extends Friend {
 			this.setIsInitialRender(false);
 			this.incrementRenderPage();
 		});
-
-		// componentEmitter.on(componentRenderLocalEvents.renderDone, () => {
-		// 	this.updateIsRenderDone();
-		// });
-
-		// componentEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => {
-		// 	this.updateIsRenderDone();
-		// });
 	}
 
 	/**
@@ -128,44 +120,6 @@ export class ComponentInternalState extends Friend {
 		return this;
 	}
 
-	// updateIsRenderDone(): this {
-	// 	const
-	// 		{ctx} = this,
-	// 		state = ctx.getComponentState();
-
-	// 	if (
-	// 		!state.isLoadingInProgress &&
-	// 		state.isRequestsStopped &&
-	// 		state.data.length === state.items.length
-	// 	) {
-	// 		ctx.componentInternalState.setIsRenderingDone(true);
-
-	// 	} else {
-	// 		ctx.componentInternalState.setIsRenderingDone(false);
-	// 	}
-
-	// 	return this;
-	// }
-
-	// updateIsLifecycleDone(): this {
-	// 	const
-	// 		{ctx} = this,
-	// 		state = ctx.getComponentState();
-
-	// 	if (state.isLifecycleDone) {
-	// 		return this;
-	// 	}
-
-	// 	if (
-	// 		state.isRequestsStopped &&
-	// 		state.isRenderingDone
-	// 	) {
-	// 		ctx.componentInternalState.setIsLifecycleDone(true);
-	// 	}
-
-	// 	return this;
-	// }
-
 	/**
 	 * Обновляет состояние последних сырых загруженных данных.
 	 *
@@ -188,18 +142,8 @@ export class ComponentInternalState extends Friend {
 
 	setIsRequestsStopped(state: boolean): this {
 		this.state.isRequestsStopped = state;
-		// this.updateIsRenderDone();
-		// this.updateIsLifecycleDone();
-
 		return this;
 	}
-
-	// setIsRenderingDone(state: boolean): this {
-	// 	this.state.isRenderingDone = state;
-	// 	// this.updateIsLifecycleDone();
-
-	// 	return this;
-	// }
 
 	setIsLifecycleDone(state: boolean): this {
 		if (this.state.isLifecycleDone === state) {

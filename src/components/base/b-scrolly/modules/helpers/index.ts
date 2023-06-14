@@ -10,9 +10,8 @@ import { componentItemType } from 'components/base/b-scrolly/const';
 import type { MountedItem } from 'components/base/b-scrolly/interface';
 
 /**
- * Возвращает `true` если переданное значение является типом `MountedItem`
- *
- * @param val
+ * Returns `true` if the value is of type `MountedItem`, otherwise `false`.
+ * @param val - The value to check.
  */
 export function isItem(val: any): val is MountedItem {
 	return Object.isPlainObject(val) && val.type === componentItemType.item;

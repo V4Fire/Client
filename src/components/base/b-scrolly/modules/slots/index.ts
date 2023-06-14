@@ -21,17 +21,14 @@ export const
 	slotsStateControllerAsyncGroup = 'slotsStateController';
 
 /**
- * Класс реализующий показ нужных слотов в нужный момент времени.
+ * A class that manages the visibility of slots based on different states.
  */
 export class SlotsStateController extends Friend {
 
-	/**
-	 * {@link bScrolly}
-	 */
 	override readonly C!: bScrolly;
 
 	/**
-	 * Опции для асинхронной функции обновление состояния отображения слотов.
+	 * Options for the asynchronous operations.
 	 */
 	protected readonly asyncUpdateLabel: AsyncOptions = {
 		label: $$.updateSlotsVisibility,
@@ -56,7 +53,7 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Отображает слоты которые должны отображаться при пустом состоянии.
+	 * Displays the slots that should be shown when the data state is empty.
 	 */
 	emptyState(): void {
 		this.setSlotsVisibility({
@@ -70,6 +67,9 @@ export class SlotsStateController extends Friend {
 		});
 	}
 
+	/**
+	 * Displays the slots that should be shown when the lifecycle is done.
+	 */
 	doneState(): void {
 		this.setSlotsVisibility({
 			container: true,
@@ -83,7 +83,7 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Отображает слоты которые должны отображаться в момент загрузки данных.
+	 * Displays the slots that should be shown during data loading progress.
 	 */
 	loadingProgressState(): void {
 		this.setSlotsVisibility({
@@ -98,7 +98,7 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Отображает слоты которые должны отображаться в момент неудачной загрузки.
+	 * Displays the slots that should be shown when data loading fails.
 	 */
 	loadingFailedState(): void {
 		this.setSlotsVisibility({
@@ -113,10 +113,9 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Отображает слоты которые должны отображаться в момент успешной загрузки данных.
+	 * Displays the slots that should be shown when data loading is successful.
 	 */
 	loadingSuccessState(): void {
-		// Здесь нужно не loadingSuccessState а какое-то другое событие так как LoadingSuccess может происходить много раз
 		this.setSlotsVisibility({
 			container: true,
 			done: false,
@@ -129,16 +128,16 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Очищает состояние модуля.
+	 * Resets the state of the module.
 	 */
 	reset(): void {
 		this.async.clearAll({group: new RegExp(slotsStateControllerAsyncGroup)});
 	}
 
 	/**
-	 * Устанавливает состояние слотов.
+	 * Sets the visibility state of the slots.
 	 *
-	 * @param stateObj
+	 * @param stateObj - An object specifying the visibility state of each slot.
 	 */
 	protected setSlotsVisibility(stateObj: Required<SlotsStateObj>): void {
 		this.async.cancelAnimationFrame(this.asyncUpdateLabel);
@@ -147,19 +146,17 @@ export class SlotsStateController extends Friend {
 			for (const [name, state] of Object.entries(stateObj)) {
 				this.setDisplayState(<keyof SlotsStateObj>name, state);
 			}
-
 		}, this.asyncUpdateLabel);
 	}
 
 	/**
-	 * Устанавливает состояние слота.
+	 * Sets the display state of a slot.
 	 *
-	 * @param name
-	 * @param state
+	 * @param name - The name of the slot.
+	 * @param state - The visibility state of the slot.
 	 */
 	protected setDisplayState(name: keyof SlotsStateObj, state: boolean): void {
-		const
-			ref = this.ctx.$refs[name];
+		const ref = this.ctx.$refs[name];
 
 		if (ref) {
 			ref.style.display = state ? '' : 'none';

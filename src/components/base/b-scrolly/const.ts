@@ -7,184 +7,137 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { ComponentState } from 'components/base/b-scrolly/interface';
+import type { ComponentDataLocalEvents, ComponentItemType, ComponentLifecycleEvents, ComponentObserverLocalEvents, ComponentRenderLocalEvents, ComponentRenderStrategy, ComponentState, ComponentStrategy } from 'components/base/b-scrolly/interface';
 
 /**
- * Render strategy for producing the components.
+ * {@link ComponentRenderStrategy}
  */
-export const componentRenderStrategy = <const>{
-	/**
-	 * Данная стратегия реализует отрисовку с помощью создания инстанса `Vue` и в дальнейшем переиспользует
-	 * его для отрисовки компонент через `forceRender`.
-	 */
-	forceRenderChunk: 'forceRenderChunk',
-
-	/**
-	 * Данная стратегия реализует отрисовку с помощью `vdom.create` и `vdom.render`.
-	 */
-	default: 'default'
+export const componentRenderStrategy: ComponentRenderStrategy = <const>{
+	default: 'default',
+	reuse: 'reuse'
 };
 
 /**
- * Стратегии возможных вариантов работы компонента.
+ * {@link ComponentStrategy}
  */
-export const componentStrategy = <const>{
-	/**
-	 * Стратегия, при которой определение вхождение элемента
-	 * в область видимости, будет происходить с помощью `intersectionObserver`.
-	 *
-	 * При это узлы из DOM дерева удаляться не будут
-	 */
+export const componentStrategy: ComponentStrategy = {
 	intersectionObserver: 'intersectionObserver',
-
-	/**
-	 * Стратегия, при которой определение вхождение элемента
-	 * в область видимости, будет происходить с помощью прослушивания события `scroll`.
-	 *
-	 * При это узлы из DOM дерева удаляться не будут
-	 */
 	scroll: 'scroll',
-
-	/**
-	 * Стратегия, при которой определение вхождение элемента
-	 * в область видимости, будет происходить с помощью прослушивания события `scroll`.
-	 *
-	 * При это узлы из DOM дерева буду удаляться и возвращаться
-	 */
 	scrollWithDropNodes: 'scrollWithDropNodes',
-
-	/**
-	 * Стратегия, при которой определение вхождение элемента
-	 * в область видимости, будет происходить с помощью прослушивания события `scroll`.
-	 *
-	 * При это узлы из DOM дерева будут переиспользоваться.
-	 */
 	scrollWithRecycleNodes: 'scrollWithRecycleNodes'
 };
 
 /**
- * События компонента связанные с данными. (эмитятся в `localEmitter`)
+ * {@link ComponentDataLocalEvents}
  */
-export const componentDataLocalEvents = <const>{
-	/**
-	 * Загрузка данных началась.
-	 */
+export const componentDataLocalEvents: ComponentDataLocalEvents = <const>{
 	dataLoadStart: 'dataLoadStart',
-
-	/**
-	 * Возникла ошибка при загрузки данных.
-	 */
 	dataLoadError: 'dataLoadError',
-
-	/**
-	 * Данные успешно загружены.
-	 */
 	dataLoadSuccess: 'dataLoadSuccess',
-
-	/**
-	 * Успешная загрузка в которых нет данных.
-	 */
 	dataEmpty: 'dataEmpty'
 };
 
 /**
- * События компонента.
+ * {@link ComponentLifecycleEvents}
  */
-export const componentLocalEvents = <const>{
-	/**
-	 * Сброс состояние компонента.
-	 */
+export const componentLocalEvents: ComponentLifecycleEvents = <const>{
 	resetState: 'resetState',
-
-	/**
-	 * Вызов конвертации данных в `DB`.
-	 */
 	convertDataToDB: 'convertDataToDB',
-
-	/**
-	 * This event will be emitted then all of the component data is rendered and all of the component data was loaded
-	 */
 	lifecycleDone: 'lifecycleDone'
 };
 
 /**
- * События отрисовки компонента.
+ * Component rendering events.
  */
-export const componentRenderLocalEvents = <const>{
+export const componentRenderLocalEvents: ComponentRenderLocalEvents = <const>{
 	/**
-	 * Начался рендеринг элементов.
+	 * Rendering of items has started.
 	 */
 	renderStart: 'renderStart',
 
 	/**
-	 * Закончился рендеринг элементов.
+	 * Rendering of items has finished.
 	 */
 	renderDone: 'renderDone',
 
 	/**
-	 * Начался рендеринг элементов движком отрисовки.
+	 * Rendering of items has started with the render engine.
 	 */
 	renderEngineStart: 'renderEngineStart',
 
 	/**
-	 * Закончился рендеринг элементов движком отрисовки.
+	 * Rendering of items has finished with the render engine.
 	 */
 	renderEngineDone: 'renderEngineDone',
 
 	/**
-	 * Началась вставка элементов `DOM`.
+	 * DOM node insertion has started.
 	 */
 	domInsertStart: 'domInsertStart',
 
 	/**
-	 * Завершилась вставка элементов в `DOM`.
+	 * DOM node insertion has finished.
 	 */
 	domInsertDone: 'domInsertDone'
+};
+
+/**
+ * Events of the element observer.
+ */
+export const componentObserverLocalEvents: ComponentObserverLocalEvents = <const>{
+	/**
+	 * The element has entered the viewport.
+	 */
+	elementEnter: 'elementEnter',
+
+	/**
+	 * The element has exited the viewport.
+	 */
+	elementOut: 'elementOut'
 };
 
 export const componentEvents = <const>{
 	...componentDataLocalEvents,
 	...componentRenderLocalEvents,
-	...componentLocalEvents
+	...componentLocalEvents,
+	...componentObserverLocalEvents
 };
 
+/**
+ * Reasons for rejecting a render operation.
+ */
 export const canPerformRenderRejectionReason = <const>{
 	/**
-	 * Not enough data to perform a render (ie data.length is 5 and chunkSize is 12)
+	 * Insufficient data to perform a render (e.g., `data.length` is 5 and `chunkSize` is 12).
 	 */
 	notEnoughData: 'notEnoughData',
 
 	/**
-	 * No data at all to perform render (ie data.length is 0)
+	 * No data available to perform a render (e.g., `data.length` is 0).
 	 */
 	noData: 'noData',
 
 	/**
-	 * All rendering are done
+	 * All rendering operations have been completed.
 	 */
 	done: 'done',
 
 	/**
-	 * Client returns `false` in `shouldPerformDataRender`
+	 * The client returns `false` in `shouldPerformDataRender`.
 	 */
 	noPermission: 'noPermission'
 };
 
 /**
- * События наблюдателя за элементами.
+ * {@link ComponentItemType}
  */
-export const componentObserverLocalEvents = <const>{
-	elementEnter: 'elementEnter',
-	elementOut: 'elementOut'
-};
-
-export const componentItemType = <const>{
+export const componentItemType: ComponentItemType = <const>{
 	item: 'item',
 	separator: 'separator'
 };
 
 /**
- * `should` свойства компонента по умолчанию.
+ * `should-like` свойства компонента по умолчанию.
  */
 export const defaultProps = <const>{
 	/** {@link bScrolly.shouldStopRequestingData} */

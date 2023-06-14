@@ -13,7 +13,7 @@ import Friend from 'components/friends/friend';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import type { ComponentItem } from 'components/base/b-scrolly/b-scrolly';
 import { canPerformRenderRejectionReason, componentDataLocalEvents, componentItemType, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
-import type { AnyMounted, CanPerformRenderResult, MountedItem } from 'components/base/b-scrolly/interface';
+import type { AnyMounted, MountedItem } from 'components/base/b-scrolly/interface';
 import { isItem } from 'components/base/b-scrolly/modules/helpers';
 
 export const
@@ -21,8 +21,8 @@ export const
 	jugglerAsyncGroup = '[[JUGGLER]]';
 
 /**
- * Friendly to the `bScrolly` class.
- * Provides an API for managing DOM insertion of the components
+ * A class that is friendly to `bScrolly`.
+ * Provides an API for initializing various component modules and inserting components into the DOM tree.
  */
 export class Juggler extends Friend {
 
@@ -47,7 +47,7 @@ export class Juggler extends Friend {
 	}
 
 	/**
-	 * Resets the module state
+	 * Resets the module's state to its initial state.
 	 */
 	protected reset(): void {
 		const
@@ -57,18 +57,8 @@ export class Juggler extends Friend {
 	}
 
 	/**
-	 * Returns status of the possibility to render a components.
-	 * Also returns reason of the rejection if the is no possibility to render components
-	 */
-	protected canPerformRender(): CanPerformRenderResult {
-		const
-			{ctx} = this;
-
-		return ctx.shouldPerformDataRenderWrapper();
-	}
-
-	/**
-	 * Renders the next chunk of the elements
+	 * Renders components using `componentFactory` and inserts them into the DOM tree.
+	 * `componentFactory`, in turn, calls `itemsFactory` to obtain the set of components to render.
 	 */
 	protected performRender(): void {
 		const
@@ -108,7 +98,7 @@ export class Juggler extends Friend {
 	}
 
 	/**
-	 * Stores the component items
+	 * Augments `ComponentItem` with various properties such as the component node, item index, and child index.
 	 *
 	 * @param items
 	 * @param nodes
@@ -137,13 +127,16 @@ export class Juggler extends Friend {
 	}
 
 	/**
-	 * Performs render if it is possible
+	 * A function that performs actions (data loading/rendering) depending on the result of the `renderGuard` method.
+	 *
+	 * This function is the "starting point" for rendering components and is called after successful data loading
+	 * or when rendered items enter the viewport.
 	 */
 	protected loadDataOrPerformRender(): void {
 		const
 			{ctx} = this,
 			state = ctx.getComponentState(),
-			{result, reason} = this.canPerformRender();
+			{result, reason} = ctx.renderGuard(state, ctx);
 
 		if (result) {
 			return this.performRender();
@@ -175,21 +168,17 @@ export class Juggler extends Friend {
 				this.performRender();
 			}
 		}
-
-		if (reason === canPerformRenderRejectionReason.noPermission) {
-			// ...
-		}
 	}
 
 	/**
-	 * Handler: data was loaded
+	 * Handler: successful data loading.
 	 */
 	protected onDataLoaded(): void {
 		this.loadDataOrPerformRender();
 	}
 
 	/**
-	 * Handler: element enters the viewport
+	 * Handler: component enters the viewport.
 	 */
 	protected onElementEnters(component: AnyMounted): void {
 		const
@@ -209,7 +198,7 @@ export class Juggler extends Friend {
 	}
 
 	/**
-	 * Handler: element leaves the viewport
+	 * Handler: component leaves the viewport.
 	 */
 	protected onElementOut(_component: AnyMounted): void {
 		// ...

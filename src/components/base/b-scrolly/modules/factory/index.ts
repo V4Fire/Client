@@ -17,17 +17,14 @@ import * as forceUpdate from 'components/base/b-scrolly/modules/factory/engines/
 import * as vdomRender from 'components/base/b-scrolly/modules/factory/engines/vdom';
 
 /**
- * Friendly to the `bScrolly` class.
- * Provides an API for component producing
+ * A friendly class that provides an API for component production, specifically tailored for the `bScrolly` class.
  */
 export class ComponentFactory extends Friend {
-	/**
-	 * {@link bScrolly}
-	 */
 	override readonly C!: bScrolly;
 
 	/**
-	 * @param data
+	 * Produces component items based on the current state and context.
+	 * Returns an array of component items.
 	 */
 	produceComponentItems(): ComponentItem[] {
 		const
@@ -37,7 +34,10 @@ export class ComponentFactory extends Friend {
 	}
 
 	/**
-	 * @param data
+	 * Produces DOM nodes from an array of component items.
+	 * Returns an array of DOM nodes representing the component items.
+	 *
+	 * @param componentItems - An array of component items.
 	 */
 	produceNodes(componentItems: ComponentItem[]): HTMLElement[] {
 		const createDescriptor = (item: ComponentItem): VNodeDescriptor => ({
@@ -46,14 +46,15 @@ export class ComponentFactory extends Friend {
 			children: item.children
 		});
 
-		const
-			descriptors = componentItems.map(createDescriptor);
-
+		const descriptors = componentItems.map(createDescriptor);
 		return this.callRenderEngine(descriptors);
 	}
 
 	/**
-	 * @param descriptors
+	 * Calls the render engine to render the components based on the provided descriptors.
+	 * Returns an array of rendered DOM nodes.
+	 *
+	 * @param descriptors - An array of VNode descriptors.
 	 */
 	protected callRenderEngine(descriptors: VNodeDescriptor[]): HTMLElement[] {
 		const
@@ -62,9 +63,8 @@ export class ComponentFactory extends Friend {
 		let res;
 		ctx.componentEmitter.emit(componentRenderLocalEvents.renderEngineStart);
 
-		if (ctx.componentRenderStrategy === componentRenderStrategy.forceRenderChunk) {
+		if (ctx.componentRenderStrategy === componentRenderStrategy.reuse) {
 			res = forceUpdate.render(ctx, descriptors);
-
 		} else {
 			res = vdomRender.render(ctx, descriptors);
 		}
