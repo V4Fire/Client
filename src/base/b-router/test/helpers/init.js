@@ -48,7 +48,7 @@ module.exports.initRouter = async function initRouter(page, engineName, initOpti
 
 					routes: {
 						main: {
-							path: '/',
+							path: '/:param?',
 							content: 'Main page'
 						},
 
@@ -76,7 +76,7 @@ module.exports.initRouter = async function initRouter(page, engineName, initOpti
 						},
 
 						indexRedirect: {
-							path: '/redirect',
+							path: '/redirect/:param?',
 							redirect: 'main'
 						},
 

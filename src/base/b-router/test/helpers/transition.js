@@ -81,13 +81,24 @@ module.exports.generateTransitionCommonSpecs = function generateTransitionCommon
 			expect(await root.evaluate(({route}) => route.name)).toBe('aliasToAlias');
 		});
 
-		it('transition with redirect', async () => {
-			expect(await root.evaluate(async (ctx) => {
-				await ctx.router.push('/second/redirect');
-				return ctx.route.meta.content;
-			})).toBe('Second page');
+		describe('transition with redirect', () => {
+			it('without parameters', async () => {
+				expect(await root.evaluate(async (ctx) => {
+					await ctx.router.push('/second/redirect');
+					return ctx.route.meta.content;
+				})).toBe('Second page');
 
-			expect(await root.evaluate(({route}) => route.name)).toBe('second');
+				expect(await root.evaluate(({route}) => route.name)).toBe('second');
+			});
+
+			it('with parameters', async () => {
+				expect(await root.evaluate(async (ctx) => {
+					await ctx.router.push('indexRedirect', {params: {param: 'value'}});
+					return ctx.route.meta.content;
+				})).toBe('Main page');
+
+				expect(location.pathname).toBe('/value');
+			});
 		});
 
 		it('transition with redirect and alias', async () => {
