@@ -97,7 +97,7 @@ module.exports.generateTransitionCommonSpecs = function generateTransitionCommon
 					return ctx.route.meta.content;
 				})).toBe('Main page');
 
-				expect(location.pathname).toBe('/value');
+				expect(await root.evaluate((ctx) => ctx.location.pathname)).toBe('/value');
 			});
 		});
 
