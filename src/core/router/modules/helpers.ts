@@ -87,7 +87,6 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		initialRefQuery = ref.includes('?') ? fromQueryString(ref) : {};
 
 	let
-		resolvedById = false,
 		resolvedRoute: Nullable<RouteBlueprint> = null,
 		initialRoute: Nullable<RouteBlueprint> = null,
 		alias: Nullable<RouteBlueprint> = null;
@@ -101,10 +100,6 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	while (true) {
 		// Reference to a route that passed as ID
 		if (resolvedRef in routes) {
-			if (alias == null) {
-				resolvedById = true;
-			}
-
 			resolvedRoute = routes[resolvedRef];
 
 			if (resolvedRoute == null) {
@@ -147,7 +142,6 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 
 				// In this case, we have the full matching of a route ref by a name or pattern
 				if (getRouteName(route) === resolvedRef || route.pattern === resolvedRef) {
-					resolvedById = true;
 					resolvedRoute = route;
 					break;
 				}
