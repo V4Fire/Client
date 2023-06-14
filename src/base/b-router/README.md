@@ -456,7 +456,7 @@ export default {
 When you navigate to the `bar` route and provide the `param` parameter, it will be substituted in the `foo`'s path.
 
 ```js
-this.router.push('bar', {params: {param: 'value'}}); // redirect to '/foo/value'
+this.router.push('/bar/baz/value'); // redirect to '/foo/value'
 ```
 
 You can create more complex cases with more than one redirect.
