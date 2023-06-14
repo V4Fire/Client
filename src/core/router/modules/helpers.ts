@@ -265,7 +265,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	});
 
 	// Fill route parameters from URL
-	const tryFillParams = (route: CanNull<RouteBlueprint<Dictionary>>): void => {
+	const tryFillParams = (route: Nullable<RouteBlueprint<Dictionary>>): void => {
 		if (route == null) {
 			return;
 		}
