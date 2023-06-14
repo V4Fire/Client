@@ -9,19 +9,21 @@
 import type { Page } from 'playwright';
 import test from 'tests/config/unit/test';
 
-import type { AnyMounted, ComponentItem, ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
+import type { MountedChild, ComponentItem, ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
 import { paginationHandler } from 'tests/helpers/providers/pagination';
 import { ScrollyComponentObject } from 'components/base/b-scrolly/test/api/component-object';
 import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
-import { componentEvents } from 'components/base/b-scrolly/const';
+import { componentEvents, componentObserverLocalEvents } from 'components/base/b-scrolly/const';
 
 export * from 'components/base/b-scrolly/test/api/component-object';
 
 type DataItemCtor<DATA = any> = (i: number) => DATA;
 type MountedItemCtor<DATA = any> = (data: DATA, i: number) => MountedItem;
 
-export function filterEmitterCalls(calls: unknown[][]): unknown[][] {
-	return calls.filter(([event]) => Object.isString(event) && Boolean(componentEvents[event]));
+export function filterEmitterCalls(calls: unknown[][], filterObserverEvents: boolean = true): unknown[][] {
+	return calls.filter(([event]) => Object.isString(event) &&
+		Boolean(componentEvents[event]) &&
+		(filterObserverEvents ? !(event in componentObserverLocalEvents) : true));
 }
 
 /**
@@ -52,12 +54,12 @@ export async function createTestHelpers(page: Page) {
 export interface DataConveyor<DATA = any> {
 	addData(count: number): DATA[];
 	addItems(count: number): MountedItem[];
-	addSeparators(count: number): AnyMounted[];
-	addChild(child: ComponentItem[]): AnyMounted[];
+	addSeparators(count: number): MountedChild[];
+	addChild(child: ComponentItem[]): MountedChild[];
 	getDataChunk(index: number): DATA[];
 	reset(): void;
 	get data(): DATA[];
-	get childList(): AnyMounted[];
+	get childList(): MountedChild[];
 	get lastLoadedData(): DATA[];
 	get items(): MountedItem[];
 }
@@ -69,7 +71,7 @@ export function createDataConveyor<DATA = any>(
 	let
 		data = <DATA[]>[],
 		items = <MountedItem[]>[],
-		childList = <AnyMounted[]>[],
+		childList = <MountedChild[]>[],
 		dataChunks = <DATA[][]>[];
 
 	let
@@ -123,7 +125,7 @@ export function createDataConveyor<DATA = any>(
 		},
 
 		addChild(list: ComponentItem[]) {
-			const newChild = <AnyMounted[]>list.map((child, i) => {
+			const newChild = <MountedChild[]>list.map((child, i) => {
 				const v = {
 					childIndex: childI + i,
 					node: <any>test.expect.any(String),

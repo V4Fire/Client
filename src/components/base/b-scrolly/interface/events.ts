@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { AnyMounted } from 'components/base/b-scrolly/interface/component';
+import type { MountedChild } from 'components/base/b-scrolly/interface/component';
 import { componentDataLocalEvents, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
 
 /**
@@ -127,8 +127,8 @@ export interface LocalEventPayloadMap {
 	[componentLocalEvents.lifecycleDone]: [];
 	[componentLocalEvents.convertDataToDB]: [data: unknown];
 
-	[componentObserverLocalEvents.elementEnter]: [componentItem: AnyMounted];
-	[componentObserverLocalEvents.elementOut]: [componentItem: AnyMounted];
+	[componentObserverLocalEvents.elementEnter]: [componentItem: MountedChild];
+	[componentObserverLocalEvents.elementOut]: [componentItem: MountedChild];
 
 	[componentRenderLocalEvents.renderStart]: [];
 	[componentRenderLocalEvents.renderDone]: [];

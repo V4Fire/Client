@@ -8,7 +8,7 @@
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { componentDataLocalEvents, componentLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
-import type { AnyMounted, ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
+import type { MountedChild, ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
 import { createInitialState } from 'components/base/b-scrolly/modules/state/helpers';
 import Friend from 'components/friends/friend';
 
@@ -97,8 +97,8 @@ export class ComponentInternalState extends Friend {
 		return this;
 	}
 
-	updateChildList(mounted: AnyMounted[]): this {
-		(<AnyMounted[]>this.state.childList).push(...mounted);
+	updateChildList(mounted: MountedChild[]): this {
+		(<MountedChild[]>this.state.childList).push(...mounted);
 		return this;
 	}
 

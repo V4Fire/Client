@@ -14,6 +14,27 @@
 - улучшить имена тест кейсов
 - ревью и рефакторинг src\components\base\b-scrolly\test\api\helpers\index.ts
 
+```mermaid
+graph TD;
+  A[loadDataOrPerformRender] -->|state, ctx| B[renderGuard]
+  B -->|result = true| C[performRender]
+  B -->|result = false| E[reason]
+  E -->|done| F[setIsLifecycleDone=true]
+  E -->|noData| G[isRequestsStopped]
+  G -->|false| H[shouldPerformDataRequestWrapper]
+  H -->|true| I[initLoad]
+  G -->|true| J[return]
+  E -->|notEnoughData| K[isRequestsStopped]
+  K -->|true| L[performRender]
+  K -->|false| M[shouldPerformDataRequestWrapper]
+  M -->|true| N[initLoad]
+  M -->|false| O[isInitialRender]
+  O -->|true| P[performRender]
+  O -->|false| Q[return]
+
+
+```
+
 ## TODO:
 
 1. Бенчмарк подходов

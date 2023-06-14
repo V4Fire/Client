@@ -13,7 +13,7 @@ import Friend from 'components/friends/friend';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import type { ComponentItem } from 'components/base/b-scrolly/b-scrolly';
 import { canPerformRenderRejectionReason, componentDataLocalEvents, componentItemType, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
-import type { AnyMounted, MountedItem } from 'components/base/b-scrolly/interface';
+import type { MountedChild, MountedItem } from 'components/base/b-scrolly/interface';
 import { isItem } from 'components/base/b-scrolly/modules/helpers';
 
 export const
@@ -103,7 +103,7 @@ export class Juggler extends Friend {
 	 * @param items
 	 * @param nodes
 	 */
-	protected produceMounted(items: ComponentItem[], nodes: HTMLElement[]): Array<AnyMounted | AnyMounted> {
+	protected produceMounted(items: ComponentItem[], nodes: HTMLElement[]): Array<MountedChild | MountedChild> {
 		const
 			{ctx} = this,
 			{items: mountedItems, childList} = ctx.getComponentState();
@@ -180,7 +180,7 @@ export class Juggler extends Friend {
 	/**
 	 * Handler: component enters the viewport.
 	 */
-	protected onElementEnters(component: AnyMounted): void {
+	protected onElementEnters(component: MountedChild): void {
 		const
 			{ctx} = this,
 			state = ctx.getComponentState(),
@@ -200,7 +200,7 @@ export class Juggler extends Friend {
 	/**
 	 * Handler: component leaves the viewport.
 	 */
-	protected onElementOut(_component: AnyMounted): void {
+	protected onElementOut(_component: MountedChild): void {
 		// ...
 	}
 }

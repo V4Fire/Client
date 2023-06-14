@@ -16,7 +16,7 @@ import test from 'tests/config/unit/test';
 
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type { SlotsStateObj } from 'components/base/b-scrolly/modules/slots';
-import type { ShouldFn } from 'components/base/b-scrolly/b-scrolly';
+import type { ShouldPerform } from 'components/base/b-scrolly/b-scrolly';
 
 test.describe('<b-scrolly> slots', () => {
 	let
@@ -173,11 +173,16 @@ test.describe('<b-scrolly> slots', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
+			const shouldPerformDataRequest =
+				<ShouldPerform>(({isInitialLoading, itemsTillEnd}) => isInitialLoading || itemsTillEnd === 0);
+
+			const shouldPerformDataRender =
+				<ShouldPerform>(({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0);
+
 			await component.setProps({
 				chunkSize,
-				// eslint-disable-next-line max-len
-				shouldPerformDataRequest: <ShouldFn>(({isInitialLoading, itemsTillEnd}) => isInitialLoading || itemsTillEnd === 0),
-				shouldPerformDataRender: <ShouldFn>(({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0)
+				shouldPerformDataRequest,
+				shouldPerformDataRender
 			});
 
 			await component.withDefaultPaginationProviderProps({chunkSize});

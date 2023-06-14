@@ -7,7 +7,7 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { AnyMounted } from 'components/base/b-scrolly/interface';
+import type { MountedChild } from 'components/base/b-scrolly/interface';
 import { observerAsyncGroup } from 'components/base/b-scrolly/modules/observer/const';
 import type { ObserverEngine } from 'components/base/b-scrolly/modules/observer/interface';
 import Friend from 'components/friends/friend';
@@ -22,7 +22,7 @@ export default class ScrollObserver extends Friend implements ObserverEngine {
 	/**
 	 * @inheritdoc
 	 */
-	watchForIntersection(_components: AnyMounted[]): void {
+	watchForIntersection(_components: MountedChild[]): void {
 		// ...
 	}
 

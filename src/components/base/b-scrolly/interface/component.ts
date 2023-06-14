@@ -136,7 +136,7 @@ export interface ComponentState<DATA = object> {
 	/**
 	 * List of all components that have been rendered.
 	 */
-	childList: Readonly<AnyMounted[]>;
+	childList: Readonly<MountedChild[]>;
 
 	/**
 	 * The last loaded raw data.
@@ -216,7 +216,7 @@ export interface ComponentItem {
 /**
  * Represents any mounted component (item or separator) within the DOM tree.
  */
-export interface AnyMounted extends ComponentItem {
+export interface MountedChild extends ComponentItem {
 	/**
 	 * The DOM node associated with the component.
 	 */
@@ -231,7 +231,7 @@ export interface AnyMounted extends ComponentItem {
 /**
  * Represents a mounted item component within the DOM tree.
  */
-export interface MountedItem extends AnyMounted {
+export interface MountedItem extends MountedChild {
 	/**
 	 * The index of the item within the list of items.
 	 */
