@@ -93,11 +93,13 @@ module.exports.generateTransitionCommonSpecs = function generateTransitionCommon
 
 			it('with parameters', async () => {
 				expect(await root.evaluate(async (ctx) => {
-					await ctx.router.push('indexRedirect', {params: {param: 'value'}});
-					return ctx.route.meta.content;
-				})).toBe('Main page');
+					await ctx.router.push('/tpl/redirect/1/2');
+					return ctx.route.params;
+				})).toEqual({param1: '1', param2: '2'});
 
-				expect(await root.evaluate((ctx) => ctx.location.pathname)).toBe('/value');
+				if (engineName === 'historyApiRouterEngine') {
+					expect(new URL(await page.url()).pathname).toBe('/tpl/1/2');
+				}
 			});
 		});
 

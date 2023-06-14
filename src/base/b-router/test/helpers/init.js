@@ -48,7 +48,7 @@ module.exports.initRouter = async function initRouter(page, engineName, initOpti
 
 					routes: {
 						main: {
-							path: '/:param?',
+							path: '/',
 							content: 'Main page'
 						},
 
@@ -76,7 +76,7 @@ module.exports.initRouter = async function initRouter(page, engineName, initOpti
 						},
 
 						indexRedirect: {
-							path: '/redirect/:param?',
+							path: '/redirect',
 							redirect: 'main'
 						},
 
@@ -127,6 +127,11 @@ module.exports.initRouter = async function initRouter(page, engineName, initOpti
 						templateAlias: {
 							path: '/tpl-alias/:param1/:param2?',
 							alias: 'template'
+						},
+
+						redirectTemplate: {
+							path: '/tpl/redirect/:param1/:param2',
+							redirect: 'template'
 						},
 
 						notFound: {
