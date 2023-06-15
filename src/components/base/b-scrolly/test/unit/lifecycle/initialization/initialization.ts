@@ -130,7 +130,6 @@ test.describe('<b-scrolly>', () => {
 			shouldStopRequestingData = await component.mockFn(() => false),
 			shouldPerformDataRequest = await component.mockFn(() => false);
 
-		state.setLoadPage(1);
 		state.data.addData(providerChunkSize);
 		state.data.addItems(providerChunkSize);
 
@@ -152,7 +151,8 @@ test.describe('<b-scrolly>', () => {
 					childTillEnd: undefined,
 					maxViewedItem: undefined,
 					maxViewedChild: undefined,
-					isRequestsStopped: false
+					isRequestsStopped: false,
+					loadPage: 1
 				}),
 				test.expect.any(Object)
 			]
@@ -165,7 +165,8 @@ test.describe('<b-scrolly>', () => {
 					childTillEnd: undefined,
 					maxViewedItem: undefined,
 					maxViewedChild: undefined,
-					isRequestsStopped: false
+					isRequestsStopped: false,
+					loadPage: 1
 				}),
 				test.expect.any(Object)
 			]
@@ -183,7 +184,6 @@ test.describe('<b-scrolly>', () => {
 			shouldStopRequestingData = await component.mockFn(() => true),
 			shouldPerformDataRequest = await component.mockFn(() => false);
 
-		state.setLoadPage(1);
 		state.data.addData(providerChunkSize);
 		state.data.addItems(providerChunkSize);
 
@@ -205,7 +205,8 @@ test.describe('<b-scrolly>', () => {
 					childTillEnd: undefined,
 					maxViewedItem: undefined,
 					maxViewedChild: undefined,
-					isRequestsStopped: false
+					isRequestsStopped: false,
+					loadPage: 1
 				}),
 				test.expect.any(Object)
 			]

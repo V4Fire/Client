@@ -14,31 +14,23 @@ import { paginationHandler } from 'tests/helpers/providers/pagination';
 import { ScrollyComponentObject } from 'components/base/b-scrolly/test/api/component-object';
 import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
 import { componentEvents, componentObserverLocalEvents } from 'components/base/b-scrolly/const';
+import type { DataConveyor, DataItemCtor, MountedItemCtor, StateApi, ScrollyTestHelpers, MountedSeparatorCtor } from 'components/base/b-scrolly/test/api/helpers/interface';
 
 export * from 'components/base/b-scrolly/test/api/component-object';
 
-type DataItemCtor<DATA = any> = (i: number) => DATA;
-type MountedItemCtor<DATA = any> = (data: DATA, i: number) => MountedItem;
-
-export function filterEmitterCalls(calls: unknown[][], filterObserverEvents: boolean = true): unknown[][] {
-	return calls.filter(([event]) => Object.isString(event) &&
-		Boolean(componentEvents[event]) &&
-		(filterObserverEvents ? !(event in componentObserverLocalEvents) : true));
-}
-
 /**
- * Creates a test helpers for `b-scrolly` component
- * @param page
+ * Creates a helper API for convenient testing of the `b-scrolly` component.
+ * @param page The page object representing the testing page.
  */
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export async function createTestHelpers(page: Page) {
+export async function createTestHelpers(page: Page): Promise<ScrollyTestHelpers> {
 	const
 		component = new ScrollyComponentObject(page),
 		initLoadSpy = await component.spyOn('initLoad', {proto: true}),
 		provider = new RequestInterceptor(page, /api/),
-		state = createState({}, createDataConveyor(
-			indexDataCtor,
-			sectionMountedItemCtor
+		state = createStateApi({}, createDataConveyor(
+			createIndexedObj,
+			createMountedSeparator,
+			createMountedItem
 		));
 
 	provider.response(paginationHandler);
@@ -51,28 +43,26 @@ export async function createTestHelpers(page: Page) {
 	};
 }
 
-export interface DataConveyor<DATA = any> {
-	addData(count: number): DATA[];
-	addItems(count: number): MountedItem[];
-	addSeparators(count: number): MountedChild[];
-	addChild(child: ComponentItem[]): MountedChild[];
-	getDataChunk(index: number): DATA[];
-	reset(): void;
-	get data(): DATA[];
-	get childList(): MountedChild[];
-	get lastLoadedData(): DATA[];
-	get items(): MountedItem[];
-}
-
-export function createDataConveyor<DATA = any>(
-	itemsCtor: DataItemCtor<DATA>,
-	mountedCtor: MountedItemCtor<DATA>
+/**
+ * Creates a data conveyor that accumulates added data and can return it.
+ *
+ * For example, the `extractStateFromDataConveyor` function can be used to generate the component's data state based on
+ * the provided data conveyor.
+ *
+ * @param itemsCtor The constructor function for data items.
+ * @param separatorCtor The constructor function for mounted separators.
+ * @param mountedCtor The constructor function for mounted items.
+ */
+export function createDataConveyor(
+	itemsCtor: DataItemCtor,
+	separatorCtor: MountedSeparatorCtor,
+	mountedCtor: MountedItemCtor
 ): DataConveyor {
 	let
-		data = <DATA[]>[],
+		data = <unknown[]>[],
 		items = <MountedItem[]>[],
 		childList = <MountedChild[]>[],
-		dataChunks = <DATA[][]>[];
+		dataChunks = <unknown[][]>[];
 
 	let
 		dataI = 0,
@@ -81,8 +71,7 @@ export function createDataConveyor<DATA = any>(
 
 	const obj: DataConveyor = {
 		addData(count: number) {
-			const
-				newData = createData(count, itemsCtor, dataI);
+			const newData = createChunk(count, itemsCtor, dataI);
 
 			data.push(...newData);
 			dataChunks.push(newData);
@@ -93,8 +82,8 @@ export function createDataConveyor<DATA = any>(
 
 		addItems(count: number) {
 			const
-				newData = createData(count, itemsCtor, itemsI),
-				itemsData = createMountedDataFrom(newData, mountedCtor, itemsI);
+				newData = createChunk(count, itemsCtor, itemsI),
+				itemsData = createFromData(newData, mountedCtor, itemsI);
 
 			items.push(...itemsData);
 			childList.push(...itemsData);
@@ -107,16 +96,8 @@ export function createDataConveyor<DATA = any>(
 
 		addSeparators(count: number) {
 			const
-				newData = createData(count, itemsCtor, childI),
-				separatorsData = createMountedDataFrom(newData, (data, i) => {
-					const base = Object.reject(mountedCtor(data, i), 'itemIndex');
-
-					// TODO: рефактор нужны нормальные конструктор
-					return Object.cast({
-						...base,
-						type: 'separator'
-					});
-				}, childI);
+				newData = createChunk(count, itemsCtor, childI),
+				separatorsData = createFromData(newData, separatorCtor, childI);
 
 			childList.push(...separatorsData);
 			childI = childList.length;
@@ -151,10 +132,6 @@ export function createDataConveyor<DATA = any>(
 			dataChunks = [];
 		},
 
-		getDataChunk(i: number) {
-			return dataChunks[i];
-		},
-
 		get items() {
 			return items;
 		},
@@ -175,69 +152,30 @@ export function createDataConveyor<DATA = any>(
 	return obj;
 }
 
-export function createMountedDataFrom<DATA = any>(
-	data: DATA[],
-	ctor: MountedItemCtor<DATA>,
-	start: number = 0
-): MountedItem[] {
-	return data.map((item, i) => ctor(item, start + i));
-}
-
-export function sectionMountedItemCtor<DATA = any>(data: DATA, i: number): MountedItem {
-	return {
-		itemIndex: i,
-		childIndex: i,
-		props: {
-			'data-index': i
-		},
-		key: Object.cast(undefined),
-		item: 'section',
-		type: 'item',
-		node: <any>test.expect.any(String)
-	};
-}
-
-export function indexDataCtor(i: number): {i: number} {
-	return {i};
-}
-
 /**
- * TODO: Docs
- * @param count
- * @param start
- * @param itemCtor
+ * Creates an API for convenient manipulation of a component's state fork.
+ *
+ * @param initial The initial partial state of the component.
+ * @param dataConveyor The data conveyor used for managing data within the component.
  */
-export function createData<DATA extends unknown = unknown>(
-	count: number,
-	itemCtor: (i: number) => DATA,
-	start: number = 0
-): DATA[] {
-	return Array.from(new Array(count), (_, i) => itemCtor(start + i));
-}
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function createState(
+export function createStateApi(
 	initial: Partial<ComponentState>,
 	dataConveyor: DataConveyor
-) {
+): StateApi {
 	let
-		state = fromInitialState(initial);
+		state = createInitialState(initial);
 
 	return {
-		setLoadPage(val: number) {
-			state.loadPage = val;
-		},
-
 		compile(override?: Partial<ComponentState>): ComponentState {
 			return {
 				...state,
-				...stateFromDataConveyor(dataConveyor),
+				...extractStateFromDataConveyor(dataConveyor),
 				...override
 			};
 		},
 
-		reset() {
-			state = fromInitialState(initial);
+		reset(): void {
+			state = createInitialState(initial);
 			dataConveyor.reset();
 		},
 
@@ -245,7 +183,13 @@ export function createState(
 	};
 }
 
-export function fromInitialState(state: Partial<ComponentState>): ComponentState {
+/**
+ * Creates the "initial" component state and returns it.
+ * Since this state is intended for comparison in tests, some fields use `expect.any` since they are not "stable".
+ *
+ * @param state The partial component state to override the default values.
+ */
+export function createInitialState(state: Partial<ComponentState>): ComponentState {
 	return {
 		renderPage: 0,
 		loadPage: 0,
@@ -268,7 +212,11 @@ export function fromInitialState(state: Partial<ComponentState>): ComponentState
 	};
 }
 
-export function stateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'items' | 'childList'> {
+/**
+ * Extracts state data from the data conveyor and returns it.
+ * @param conveyor The data conveyor to extract state data from.
+ */
+export function extractStateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'items' | 'childList'> {
 	return {
 		data: conveyor.data,
 		lastLoadedData: conveyor.lastLoadedData,
@@ -276,4 +224,91 @@ export function stateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentSta
 		items: conveyor.items,
 		childList: conveyor.childList
 	};
+}
+
+/**
+ * Calls `objCtor` on each element of the `data` array and returns a new array with the results.
+ *
+ * @param data The array of data elements.
+ * @param objCtor The constructor function to create new objects from the data elements.
+ * @param start The starting index for creating objects (default: 0).
+ */
+export function createFromData<DATA, ITEM>(
+	data: DATA[],
+	objCtor: (data: DATA, i: number) => ITEM,
+	start: number = 0
+): ITEM[] {
+	return data.map((item, i) => objCtor(item, start + i));
+}
+
+/**
+ * Creates a simple object that matches the {@link MountedItem} interface.
+ * @param i The index of the mounted item.
+ */
+export function createMountedItem(i: number): MountedItem {
+	return {
+		itemIndex: i,
+		childIndex: i,
+		props: {
+			'data-index': i
+		},
+		key: Object.cast(undefined),
+		item: 'section',
+		type: 'item',
+		node: <any>test.expect.any(String)
+	};
+}
+
+/**
+ * Creates a simple object that matches the {@link MountedChild}` interface.
+ * @param i The index of the mounted child.
+ */
+export function createMountedSeparator(i: number): MountedChild {
+	return {
+		childIndex: i,
+		props: {
+			'data-index': i
+		},
+		key: Object.cast(undefined),
+		item: 'section',
+		type: 'separator',
+		node: <any>test.expect.any(String)
+	};
+}
+
+/**
+ * Creates an array of data with the specified length and uses the `itemCtor` function to build items within the array.
+ * The `start` parameter can be used to specify the starting index that will be passed to the `itemCtor` function.
+ *
+ * @param count The number of items to create.
+ * @param itemCtor The constructor function to create items.
+ * @param start The starting index (default: 0).
+ */
+export function createChunk<DATA extends unknown = unknown>(
+	count: number,
+	itemCtor: (i: number) => DATA,
+	start: number = 0
+): DATA[] {
+	return Array.from(new Array(count), (_, i) => itemCtor(start + i));
+}
+
+/**
+ * Creates a simple indexed object.
+ * @param i The index of the object.
+ */
+export function createIndexedObj(i: number): {i: number} {
+	return {i};
+}
+
+/**
+ * Filters emitter emit calls and removes unnecessary events.
+ * It only keeps component events, excluding observer-like events.
+ *
+ * @param emitCalls The array of emit calls.
+ * @param filterObserverEvents Whether to filter out observer events (default: true).
+ */
+export function filterEmitterCalls(emitCalls: unknown[][], filterObserverEvents: boolean = true): unknown[][] {
+	return emitCalls.filter(([event]) => Object.isString(event) &&
+		Boolean(componentEvents[event]) &&
+		(filterObserverEvents ? !(event in componentObserverLocalEvents) : true));
 }
