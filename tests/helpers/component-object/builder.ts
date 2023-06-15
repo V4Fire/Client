@@ -167,7 +167,7 @@ export default class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			return el?.getProperty('component');
 		});
 
-		await this.applyProps();
+		await this.applyProps(this.props);
 
 		return this;
 	}
@@ -178,8 +178,14 @@ export default class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 *
 	 * @param props
 	 */
-	setProps(props: Dictionary): this {
-		Object.assign(this.props, props);
+	async setProps(props: Dictionary): Promise<this> {
+		if (!this.isBuilded) {
+			Object.assign(this.props, props);
+
+		} else {
+			await this.applyProps(props);
+		}
+
 		return this;
 	}
 
@@ -197,9 +203,9 @@ export default class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	/**
 	 * Applies the settled via `setProps` props to the component instance
 	 */
-	async applyProps(): Promise<this> {
+	async applyProps(props: Dictionary): Promise<this> {
 		const
-			{component, props} = this;
+			{component} = this;
 
 		await component.evaluate((ctx, [props]) => Object.assign(ctx, props), [props]);
 		return this;
