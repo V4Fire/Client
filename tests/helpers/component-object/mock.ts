@@ -5,129 +5,127 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
 import type iBlock from 'components/super/i-block/i-block';
 
-import type { SpyObject, SpyOptions } from 'tests/helpers/component-object/interface';
-import { createAndDisposeMock, spy } from 'tests/helpers/mock';
-import { setSerializerAsMockFn } from 'core/prelude/test-env/components/json';
-import ComponentObjectInitializer from 'tests/helpers/component-object/initializer';
-import type { SpyCtor } from 'tests/helpers/mock/interface';
+import ComponentObjectBuilder from 'tests/helpers/component-object/builder';
+import { createSpy, createMockFn, getSpy } from 'tests/helpers/mock';
 
-export default class ComponentObjectMock<COMPONENT extends iBlock> extends ComponentObjectInitializer<COMPONENT> {
+import type { SpyOptions } from 'tests/helpers/component-object/interface';
+import type { SpyExtractor, SpyObject } from 'tests/helpers/mock/interface';
 
+/**
+ * The `ComponentObjectMock` class extends the `ComponentObjectBuilder` class
+ * and provides additional methods for creating spies and mock functions.
+ *
+ * It is used for testing components in a mock environment.
+ */
+export default class ComponentObjectMock<COMPONENT extends iBlock> extends ComponentObjectBuilder<COMPONENT> {
 	/**
-	 * Creates a spy for the specified path
+	 * Creates a spy to observe calls to the specified method.
 	 *
-	 * @param path
-	 * @param spyOptions
+	 * @param path - The path to the method relative to the context (component).
+	 * The {@link Object.get} method is used for searching, so you can use a complex path with separators.
 	 *
-	 * Sets a spy to the `component instance`:
+	 * @param spyOptions - Options for setting up the spy.
+	 * @param spyOptions.proto - If set to `true`, the spy will be installed on the prototype of the component class.
+	 * In this case, you don't need to add `prototype` to the `path`; it will be added automatically.
+	 *
+	 * @returns A promise that resolves to the spy object.
 	 *
 	 * @example
 	 * ```typescript
-	 * const builder = new ComponentBuilder(page, 'b-component');
-	 * builder.spyOn('initLoad');
-	 * await builder.build();
-	 *
 	 * const
-	 *   calls = await builder.spies.initLoad.calls,
-	 *   lastCall = await builder.spies.initLoad.lastCall;
+	 *   component = new ComponentObject(page, 'b-scrolly'),
+	 *   spy = await component.spyOn('initLoad', {proto: true}); // Installs a spy on the prototype of the component class
+	 *
+	 * await component.build();
+	 * console.log(await spy.calls);
 	 * ```
 	 *
-	 * Sets a spy to the `prototype`:
-	 *
 	 * @example
 	 * ```typescript
-	 * const builder = new ComponentBuilder(page, 'b-component');
-	 * builder.spyOn('initLoad', {proto: true});
-	 * await builder.build();
+	 * const component = new ComponentObject(page, 'b-scrolly');
+	 * const spy = await component.spyOn('someModule.someMethod');
 	 *
-	 * const
-	 *   calls = await builder.spies.initLoad.calls,
-	 *   lastCall = await builder.spies.initLoad.lastCall;
+	 * await component.build();
+	 * console.log(await spy.calls);
 	 * ```
 	 */
 	async spyOn(path: string, spyOptions?: SpyOptions): Promise<SpyObject> {
-		const
-			evaluateArgs = <const>[path, spyOptions],
-			ctx = spyOptions?.proto ? await this.getComponentClass() : this.component;
+		const evaluateArgs = <const>[path, spyOptions];
+		const ctx = spyOptions?.proto ? await this.getComponentClass() : this.component;
 
-		const instance = await spy(ctx, (ctx, [path, spyOptions]) => {
+		const instance = await createSpy(ctx, (ctx, [path, spyOptions]) => {
 			if (spyOptions?.proto === true) {
 				path = `prototype.${path}`;
 			}
 
-			const
-				pathArray = path.split('.'),
-				method = <string>pathArray.pop();
+			const pathArray = path.split('.');
+			const method = <string>pathArray.pop();
 
-			const
-				obj = pathArray.length >= 1 ? Object.get<object>(ctx, pathArray.join('.')) : ctx;
+			const obj = pathArray.length >= 1 ? Object.get<object>(ctx, pathArray.join('.')) : ctx;
 
 			if (!obj) {
 				throw new ReferenceError(`Cannot find object by the provided path: ${path}`);
 			}
 
-			return jest.spy(
-				<any>obj,
-				method
-			);
+			return jest.spy(<any>obj, method);
 		}, evaluateArgs);
 
 		return instance;
 	}
 
-	async getSpy(spyFinder: SpyCtor<COMPONENT, []>): Promise<SpyObject> {
-		return spy(this.component, spyFinder);
+	/**
+	 * Extracts the spy using the provided function. The provided function should return a reference to the spy.
+	 *
+	 * @param spyExtractor - The function that extracts the spy.
+	 * @returns A promise that resolves to the spy object.
+	 *
+	 * @example
+	 * ```typescript
+	 * await component.setProps({
+	 *   '@hook:beforeDataCreate': (ctx) => jest.spy(ctx.localEmitter, 'emit')
+	 * });
+	 *
+	 * await component.build();
+	 *
+	 * const
+	 *   spy = await component.getSpy((ctx) => ctx.localEmitter.emit);
+	 *
+	 * console.log(await spy.calls);
+	 * ```
+	 */
+	async getSpy(spyExtractor: SpyExtractor<COMPONENT, []>): Promise<SpyObject> {
+		return getSpy(this.component, spyExtractor);
 	}
 
 	/**
-	 * Creates a mock function
-	 * @param paths
+	 * Creates a mock function.
+	 *
+	 * @param fn - The mock function.
+	 * @param args - Arguments to pass to the mock function.
+	 *
+	 * @returns A promise that resolves to the mock function object.
 	 *
 	 * @example
 	 * ```typescript
-	 * const builder = new ComponentBuilder(page, 'b-component');
-	 * builder.mock({initLoad: builder.mockFn()});
-	 * await builder.build();
-	 *
 	 * const
-	 *   calls = await builder.mocks.initLoad.calls,
-	 *   lastCall = await builder.mocks.initLoad.lastCall;
+	 *   component = new ComponentObject(page, 'b-scrolly'),
+	 *   shouldStopRequestingData = await component.mockFn(() => false);
 	 *
-	 * await builder.mocks.initLoad.implementation(() => 123);
-	 * const result = await builder.component.evaluate((ctx) => ctx.initLoad());
-	 * console.log(result) // 123;
-	 * ```
-	 *
-	 * Mock the prototype function
-	 *
-	 * @example
-	 * ```typescript
-	 * const builder = new ComponentBuilder(page, 'b-component');
-	 *
-	 * builder.mock({
-	 *   initLoad: {
-	 *     fn: builder.mockFn(),
-	 *     proto: true
-	 *   }
+	 * await component.setProps({
+	 *   shouldStopRequestingData
 	 * });
 	 *
-	 * await builder.build();
+	 * await component.build();
+	 * console.log(await shouldStopRequestingData.calls);
 	 * ```
-	 *
-	 * > Notice that the implementation will be provided into browser,
-	 * this imposes some restrictions, such as not being able to use a closure
 	 */
 	async mockFn<
 		FN extends (...args: any[]) => any = (...args: any[]) => any
 	>(fn?: FN, ...args: any[]): Promise<SpyObject> {
 		fn ??= Object.cast(() => undefined);
 
-		const
-			{agent, id} = await createAndDisposeMock(this.page, fn!, ...args);
-
-		return setSerializerAsMockFn(agent, id);
+		return createMockFn(this.page, fn!, ...args);
 	}
 }
