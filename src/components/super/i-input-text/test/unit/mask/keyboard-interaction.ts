@@ -78,8 +78,7 @@ test.describe('<i-input-text> masked input - keyboard interaction', () => {
 		await test.expect(input).toHaveValue('2-_');
 	});
 
-	// FIXME: empty value doesn't display a placeholder
-	test.skip([
+	test([
 		'should replace a text via keyboard `input` action',
 		'when the infinitive mask and Unicode placeholder are set'
 	].join(' '), async ({page}) => {
@@ -88,7 +87,7 @@ test.describe('<i-input-text> masked input - keyboard interaction', () => {
 			mask: '%d-%d',
 			maskRepetitions: true,
 			maskPlaceholder: '🧑‍🤝‍🧑',
-			testmaskDelimiter: '🧑'
+			maskDelimiter: '🧑'
 		});
 
 		const input = page.locator(inputSelector);
@@ -143,8 +142,7 @@ test.describe('<i-input-text> masked input - keyboard interaction', () => {
 		await assertInputSelectionStartIs(input, '1-5🧑6-1'.length);
 	});
 
-	// FIXME: empty value doesn't display a placeholder
-	test.skip([
+	test([
 		'with the infinite mask and Unicode placeholder',
 		'when deleting text via the `backspace` key',
 		'the value should be removed char by char until it becomes empty;',
@@ -209,8 +207,7 @@ test.describe('<i-input-text> masked input - keyboard interaction', () => {
 		await assertInputSelectionStartIs(input, '1-'.length);
 	});
 
-	// FIXME: empty value doesn't display a placeholder
-	test.skip([
+	test([
 		'with the infinite mask and Unicode placeholder',
 		'when deleting text via the `delete` key',
 		'the value should be removed char by char until it becomes empty;',
