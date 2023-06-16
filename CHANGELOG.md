@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.50.0 (2023-06-16)
+
+#### :rocket: New Feature
+
+* Fill original route path parameters from URL of the route that redirects on it in `core/router`
+
 ## v3.49.0 (2023-05-30)
 
 #### :rocket: New Feature

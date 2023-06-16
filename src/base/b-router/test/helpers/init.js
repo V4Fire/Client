@@ -129,6 +129,11 @@ module.exports.initRouter = async function initRouter(page, engineName, initOpti
 							alias: 'template'
 						},
 
+						redirectTemplate: {
+							path: '/tpl/redirect/:param1/:param2',
+							redirect: 'template'
+						},
+
 						notFound: {
 							default: true,
 							content: '404'

@@ -81,13 +81,26 @@ module.exports.generateTransitionCommonSpecs = function generateTransitionCommon
 			expect(await root.evaluate(({route}) => route.name)).toBe('aliasToAlias');
 		});
 
-		it('transition with redirect', async () => {
-			expect(await root.evaluate(async (ctx) => {
-				await ctx.router.push('/second/redirect');
-				return ctx.route.meta.content;
-			})).toBe('Second page');
+		describe('transition with redirect', () => {
+			it('without parameters', async () => {
+				expect(await root.evaluate(async (ctx) => {
+					await ctx.router.push('/second/redirect');
+					return ctx.route.meta.content;
+				})).toBe('Second page');
 
-			expect(await root.evaluate(({route}) => route.name)).toBe('second');
+				expect(await root.evaluate(({route}) => route.name)).toBe('second');
+			});
+
+			it('with parameters', async () => {
+				expect(await root.evaluate(async (ctx) => {
+					await ctx.router.push('/tpl/redirect/1/2');
+					return ctx.route.params;
+				})).toEqual({param1: '1', param2: '2'});
+
+				if (engineName === 'historyApiRouterEngine') {
+					expect(new URL(await page.url()).pathname).toBe('/tpl/1/2');
+				}
+			});
 		});
 
 		it('transition with redirect and alias', async () => {

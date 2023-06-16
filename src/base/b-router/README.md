@@ -438,6 +438,27 @@ export default {
 };
 ```
 
+If two routes contain the same parameters they will be filled respectively:
+
+```js
+export default {
+  foo: {
+    path: '/foo/:param'
+  },
+
+  bar: {
+    path: '/bar/baz/:param',
+    redirect: 'foo'
+  }
+}
+```
+
+When you navigate to the `bar` route and provide the `param` parameter, it will be substituted in the `foo`'s path.
+
+```js
+this.router.push('/bar/baz/value'); // redirect to '/foo/value'
+```
+
 You can create more complex cases with more than one redirect.
 
 #### Creating an alias for the route
