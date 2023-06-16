@@ -183,7 +183,7 @@ function generateSpecs(engineName: EngineName) {
 				test.expect(new URL(await page.url()).pathname).toBe('/tpl/1/2');
 			}
 		});
-	})
+	});
 
 	test('should redirect to the page using an alias path with the redirect', async () => {
 		await assertPathTransitionsTo('/redirect-alias', 'Second page');
