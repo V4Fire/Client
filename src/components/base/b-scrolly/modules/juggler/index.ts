@@ -12,7 +12,7 @@ import Friend from 'components/friends/friend';
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import type { ComponentItem } from 'components/base/b-scrolly/b-scrolly';
-import { canPerformRenderRejectionReason, componentDataLocalEvents, componentItemType, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
+import { renderGuardRejectionReason, componentDataLocalEvents, componentItemType, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
 import type { MountedChild, MountedItem } from 'components/base/b-scrolly/interface';
 import { isItem } from 'components/base/b-scrolly/modules/helpers';
 
@@ -142,12 +142,12 @@ export class Juggler extends Friend {
 			return this.performRender();
 		}
 
-		if (reason === canPerformRenderRejectionReason.done) {
+		if (reason === renderGuardRejectionReason.done) {
 			ctx.componentInternalState.setIsLifecycleDone(true);
 			return;
 		}
 
-		if (reason === canPerformRenderRejectionReason.noData) {
+		if (reason === renderGuardRejectionReason.noData) {
 			if (state.isRequestsStopped) {
 				return;
 			}
@@ -157,7 +157,7 @@ export class Juggler extends Friend {
 			}
 		}
 
-		if (reason === canPerformRenderRejectionReason.notEnoughData) {
+		if (reason === renderGuardRejectionReason.notEnoughData) {
 			if (state.isRequestsStopped) {
 				this.performRender();
 

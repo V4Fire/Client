@@ -13,23 +13,26 @@ import type { ComponentState } from 'components/base/b-scrolly/interface/compone
  * Interface representing the response of the client to the `renderGuard` method for rendering requests.
  *
  * To grant permission for rendering, the response object should have the following structure:
+ * 
  * ```typescript
- * const canPerform: CanPerformRenderResult = {
+ * const canPerform: RenderGuardResult = {
  *   result: true
  * }
  * ```
  *
  * To deny rendering, the response object should have the following structure:
+ *
  * ```typescript
- * const canPerform: CanPerformRenderResult = {
+ * const canPerform: RenderGuardResult = {
  *   result: false,
  *   reason: 'notEnoughData'
  * }
  * ```
  *
- * Depending on the reason, specific actions will be taken based on the implementation of the `renderGuard`.
+ * Based on the result of this function, the component takes appropriate actions. For example,
+ * it may load data if it is not sufficient for rendering, or perform rendering if all conditions are met.
  */
-export interface CanPerformRenderResult {
+export interface RenderGuardResult {
 	/**
 	 * If `true`, rendering is permitted; if `false`, rendering is denied.
 	 */
@@ -38,13 +41,13 @@ export interface CanPerformRenderResult {
 	/**
 	 * The reason for rejecting the rendering request.
 	 */
-	reason?: keyof CanPerformRenderRejectionReason;
+	reason?: keyof RenderGuardRejectionReason;
 }
 
 /**
  * Reasons for rejecting a render operation.
  */
-export interface CanPerformRenderRejectionReason {
+export interface RenderGuardRejectionReason {
 	/**
 	 * Insufficient data to perform a render (e.g., `data.length` is 5 and `chunkSize` is 12).
 	 */

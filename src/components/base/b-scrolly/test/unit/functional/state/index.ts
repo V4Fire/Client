@@ -14,7 +14,7 @@ import test from 'tests/config/unit/test';
 
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import { defaultProps } from 'components/base/b-scrolly/const';
+import { defaultShouldProps } from 'components/base/b-scrolly/const';
 import type { ComponentItem, ShouldPerform } from 'components/base/b-scrolly/b-scrolly';
 
 test.describe('<b-scrolly> state', () => {
@@ -65,7 +65,7 @@ test.describe('<b-scrolly> state', () => {
 			providerChunkSize = chunkSize / 2;
 
 		const
-			shouldStopRequestingData = <ShouldPerform>(defaultProps.shouldStopRequestingData),
+			shouldStopRequestingData = <ShouldPerform>(defaultShouldProps.shouldStopRequestingData),
 			shouldPerformDataRequest = <ShouldPerform>(({isInitialLoading, itemsTillEnd, isLastEmpty}) =>
 				isInitialLoading || (itemsTillEnd === 0 && !isLastEmpty)),
 			shouldPerformDataRender = <ShouldPerform>(({isInitialRender, itemsTillEnd}) =>

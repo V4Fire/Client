@@ -8,8 +8,8 @@
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 
-import { canPerformRenderRejectionReason } from 'components/base/b-scrolly/const';
-import type { CanPerformRenderResult, ComponentState } from 'components/base/b-scrolly/interface';
+import { renderGuardRejectionReason } from 'components/base/b-scrolly/const';
+import type { RenderGuardResult, ComponentState } from 'components/base/b-scrolly/interface';
 
 /**
  * Returns the next slice of data that should be rendered.
@@ -41,27 +41,27 @@ export const chunkSizePreset = {
 		state: ComponentState,
 		ctx: bScrolly,
 		chunkSize: number
-	): CanPerformRenderResult {
+	): RenderGuardResult {
 		const dataSlice = getNextDataSlice(state, chunkSize);
 
 		if (dataSlice.length === 0) {
 			if (state.isRequestsStopped) {
 				return {
 					result: false,
-					reason: canPerformRenderRejectionReason.done
+					reason: renderGuardRejectionReason.done
 				};
 			}
 
 			return {
 				result: false,
-				reason: canPerformRenderRejectionReason.noData
+				reason: renderGuardRejectionReason.noData
 			};
 		}
 
 		if (dataSlice.length < chunkSize) {
 			return {
 				result: false,
-				reason: canPerformRenderRejectionReason.notEnoughData
+				reason: renderGuardRejectionReason.notEnoughData
 			};
 		}
 
@@ -75,7 +75,7 @@ export const chunkSizePreset = {
 
 		return {
 			result: clientResponse == null ? true : clientResponse,
-			reason: clientResponse === false ? canPerformRenderRejectionReason.noPermission : undefined
+			reason: clientResponse === false ? renderGuardRejectionReason.noPermission : undefined
 		};
 	},
 

@@ -7,7 +7,7 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { ComponentDataLocalEvents, ComponentItemType, ComponentLifecycleEvents, ComponentObserverLocalEvents, ComponentRenderLocalEvents, ComponentRenderStrategy, ComponentState, ComponentStrategy } from 'components/base/b-scrolly/interface';
+import type { ComponentDataLocalEvents, ComponentEvents, ComponentItemType, ComponentLifecycleEvents, ComponentObserverLocalEvents, ComponentRenderLocalEvents, ComponentRenderStrategy, ComponentState, ComponentStrategy, RenderGuardRejectionReason } from 'components/base/b-scrolly/interface';
 
 /**
  * {@link ComponentRenderStrategy}
@@ -47,52 +47,22 @@ export const componentLocalEvents: ComponentLifecycleEvents = <const>{
 };
 
 /**
- * Component rendering events.
+ * {@link ComponentRenderLocalEvents}
  */
 export const componentRenderLocalEvents: ComponentRenderLocalEvents = <const>{
-	/**
-	 * Rendering of items has started.
-	 */
 	renderStart: 'renderStart',
-
-	/**
-	 * Rendering of items has finished.
-	 */
 	renderDone: 'renderDone',
-
-	/**
-	 * Rendering of items has started with the render engine.
-	 */
 	renderEngineStart: 'renderEngineStart',
-
-	/**
-	 * Rendering of items has finished with the render engine.
-	 */
 	renderEngineDone: 'renderEngineDone',
-
-	/**
-	 * DOM node insertion has started.
-	 */
 	domInsertStart: 'domInsertStart',
-
-	/**
-	 * DOM node insertion has finished.
-	 */
 	domInsertDone: 'domInsertDone'
 };
 
 /**
- * Events of the element observer.
+ * {@link ComponentObserverLocalEvents}
  */
 export const componentObserverLocalEvents: ComponentObserverLocalEvents = <const>{
-	/**
-	 * The element has entered the viewport.
-	 */
 	elementEnter: 'elementEnter',
-
-	/**
-	 * The element has exited the viewport.
-	 */
 	elementOut: 'elementOut'
 };
 
@@ -104,27 +74,12 @@ export const componentEvents = <const>{
 };
 
 /**
- * Reasons for rejecting a render operation.
+ * {@link RenderGuardRejectionReason}
  */
-export const canPerformRenderRejectionReason = <const>{
-	/**
-	 * Insufficient data to perform a render (e.g., `data.length` is 5 and `chunkSize` is 12).
-	 */
+export const renderGuardRejectionReason: RenderGuardRejectionReason = <const>{
 	notEnoughData: 'notEnoughData',
-
-	/**
-	 * No data available to perform a render (e.g., `data.length` is 0).
-	 */
 	noData: 'noData',
-
-	/**
-	 * All rendering operations have been completed.
-	 */
 	done: 'done',
-
-	/**
-	 * The client returns `false` in `shouldPerformDataRender`.
-	 */
 	noPermission: 'noPermission'
 };
 
@@ -136,23 +91,20 @@ export const componentItemType: ComponentItemType = <const>{
 	separator: 'separator'
 };
 
-/**
- * `should-like` свойства компонента по умолчанию.
- */
-export const defaultProps = <const>{
+export const defaultShouldProps = <const>{
 	/** {@link bScrolly.shouldStopRequestingData} */
 	shouldStopRequestingData: (state: ComponentState, _ctx: bScrolly): boolean => {
 		const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
 		return !isLastRequestNotEmpty();
 	},
 
-	/** {@link bScrolly.shouldPerformRequest} */
+	/** {@link bScrolly.shouldPerformDataRequest} */
 	shouldPerformDataRequest: (state: ComponentState, _ctx: bScrolly): boolean => {
 		const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
 		return isLastRequestNotEmpty();
 	},
 
-	/** {@link bScrolly.shouldPerformRender} */
+	/** {@link bScrolly.shouldPerformDataRender} */
 	shouldPerformDataRender: (_state: ComponentState, _ctx: bScrolly): boolean => false
 };
 

@@ -29,7 +29,7 @@ import type {
 	ComponentItemFactory,
 	ComponentItemType,
 	ComponentStrategy,
-	CanPerformRenderResult
+	RenderGuardResult
 
 } from 'components/base/b-scrolly/interface';
 
@@ -37,7 +37,7 @@ import {
 
 	componentRenderStrategy,
 	componentDataLocalEvents,
-	defaultProps,
+	defaultShouldProps,
 	componentLocalEvents,
 	componentItemType,
 	componentStrategy
@@ -201,7 +201,7 @@ export default class bScrolly extends iData implements iItems {
 	 */
 	@prop({
 		type: Function,
-		default: defaultProps.shouldStopRequestingData
+		default: defaultShouldProps.shouldStopRequestingData
 	})
 
 	readonly shouldStopRequestingData!: ShouldPerform;
@@ -212,7 +212,7 @@ export default class bScrolly extends iData implements iItems {
 	 */
 	@prop({
 		type: Function,
-		default: defaultProps.shouldPerformDataRequest
+		default: defaultShouldProps.shouldPerformDataRequest
 	})
 
 	readonly shouldPerformDataRequest!: ShouldPerform;
@@ -222,7 +222,7 @@ export default class bScrolly extends iData implements iItems {
 	 *
 	 * This function asks the client whether rendering can be performed. The client responds with an object
 	 * indicating whether rendering is allowed or the reason for denial. The client's response should be an object
-	 * of type {@link CanPerformRenderResult}.
+	 * of type {@link RenderGuardResult}.
 	 *
 	 * Based on the result of this function, the component takes appropriate actions. For example,
 	 * it may load data if it is not sufficient for rendering, or perform rendering if all conditions are met.
@@ -240,7 +240,7 @@ export default class bScrolly extends iData implements iItems {
 			return chunkSizePreset.renderGuard(state, ctx, ctx.chunkSize);
 		}
 	})
-	readonly renderGuard!: ShouldPerform<CanPerformRenderResult>;
+	readonly renderGuard!: ShouldPerform<RenderGuardResult>;
 
 	/**
 	 * This function is called in the `renderGuard` after other checks are completed.

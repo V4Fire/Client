@@ -12,7 +12,7 @@
 
 import test from 'tests/config/unit/test';
 
-import { defaultProps } from 'components/base/b-scrolly/const';
+import { defaultShouldProps } from 'components/base/b-scrolly/const';
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 
 test.describe('<b-scrolly>', () => {
@@ -50,7 +50,7 @@ test.describe('<b-scrolly>', () => {
 
 		const
 			shouldStopRequestingData = await component.mockFn(() => false),
-			shouldPerformDataRequest = await component.mockFn(defaultProps.shouldPerformDataRequest);
+			shouldPerformDataRequest = await component.mockFn(defaultShouldProps.shouldPerformDataRequest);
 
 		const
 			firstDataChunk = state.data.addData(providerChunkSize),
