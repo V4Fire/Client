@@ -11,10 +11,11 @@
  * @packageDocumentation
  */
 
+import * as support from 'core/const/support';
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
 
 import { ComponentEngine } from 'core/component/engines';
-import type { DirectiveValue, DirectiveParams } from 'components/directives/in-view/interface';
+import type { DirectiveValue, DirectiveParams, WatchOptions } from 'components/directives/in-view/interface';
 
 export * from 'components/directives/in-view/interface';
 
@@ -45,20 +46,32 @@ function registerDirectiveValue(
 		return;
 	}
 
-	Array.concat([], value).forEach((opts) => {
+	Array.concat([], value).forEach((rawOpts: Exclude<DirectiveValue, any[]>) => {
 		let
-			handler;
+			handler,
+			opts: WatchOptions;
 
-		if (Object.isFunction(opts)) {
-			handler = opts;
+		if (Object.isFunction(rawOpts)) {
+			handler = rawOpts;
 			opts = {};
 
 		} else {
-			handler = opts.handler;
-			opts = Object.reject(opts, 'handler');
+			handler = rawOpts.handler;
+			opts = Object.reject(rawOpts, 'handler');
 		}
 
-		opts.root ??= el.parentElement;
+		opts = {onlyRoot: false, ...opts};
+
+		if (opts.root == null && (!support.IntersectionObserver || opts.onlyRoot)) {
+			let root = el.parentElement;
+
+			while (root != null && root.scrollWidth === root.clientWidth && root.scrollHeight === root.clientHeight) {
+				root = root.parentElement;
+			}
+
+			opts.root = root ?? undefined;
+		}
+
 		IntersectionWatcher.watch(el, opts, handler);
 	});
 }

@@ -13,7 +13,14 @@ import { resolveAfterDOMLoaded } from 'core/event';
 import type { AsyncOptions } from 'core/async';
 
 import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
-import { InViewStatus, getElementPosition, isElementInView } from 'core/dom/intersection-watcher/engines/helpers';
+import {
+
+	InViewStatus,
+	isElementInView,
+	getElementPosition,
+	resolveScrollTarget
+
+} from 'core/dom/intersection-watcher/engines/helpers';
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 import type { WatcherPosition } from 'core/dom/intersection-watcher/engines/interface';
@@ -33,9 +40,9 @@ export default class MutationObserverEngine extends AbstractEngine {
 	protected watchersXPositions: WatcherPosition[] = [];
 
 	/**
-	 * A sorted array of static watchers positions that are currently in the viewport
+	 * A sorted array of watchers that are currently in the viewport
 	 */
-	protected intersectionWindow: WatcherPosition[] = [];
+	protected intersectionWindow: Watcher[] = [];
 
 	constructor() {
 		super();
@@ -45,8 +52,12 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 		void resolveAfterDOMLoaded().then(() => {
 			if (typeof MutationObserver !== 'undefined') {
+				const checkViewport = $a.throttle(this.checkViewportFromScratch.bind(this), 50, {
+					label: $$.checkViewportFromScratch
+				});
+
 				const observer = new MutationObserver(() => {
-					this.checkViewportFromScratch();
+					checkViewport();
 				});
 
 				observer.observe(document.body, {
@@ -113,7 +124,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 	protected override initWatcher(watcher: Writable<Watcher>): void {
 		if (Object.isFunction(watcher.root)) {
-			watcher.root = watcher.root();
+			watcher.root = resolveScrollTarget(watcher.root());
 		}
 
 		watcher.root ??= document.scrollingElement ?? document.documentElement;
@@ -133,6 +144,8 @@ export default class MutationObserverEngine extends AbstractEngine {
 	 * @param [scrollTarget] - the element on which the scroll change event occurred
 	 */
 	protected checkViewport(scrollTarget?: Element): void {
+		scrollTarget = resolveScrollTarget(scrollTarget);
+
 		const {
 			watchersXPositions,
 			watchersYPositions,
@@ -159,24 +172,24 @@ export default class MutationObserverEngine extends AbstractEngine {
 		}
 
 		const newIntersectionSet = new Set(seq(
-			watchersYPositions.slice(fromY, toY + 1),
-			watchersXPositions.slice(fromX, toX + 1)
+			watchersYPositions.slice(fromY, toY + 1).map(({watcher}) => watcher),
+			watchersXPositions.slice(fromX, toX + 1).map(({watcher}) => watcher)
 		));
 
 		const
 			newIntersectionWindow = [...newIntersectionSet];
 
-		intersectionWindow.forEach((pos) => {
-			if (newIntersectionSet.has(pos)) {
-				newIntersectionSet.delete(pos);
+		intersectionWindow.forEach((watcher) => {
+			if (newIntersectionSet.has(watcher)) {
+				newIntersectionSet.delete(watcher);
 
 			} else {
-				this.onObservableOut(pos.watcher, scrollTarget);
+				this.onObservableOut(watcher, scrollTarget);
 			}
 		});
 
-		newIntersectionSet.forEach((pos) => {
-			this.onObservableIn(pos.watcher, scrollTarget);
+		newIntersectionSet.forEach((watcher) => {
+			this.onObservableIn(watcher, scrollTarget);
 		});
 
 		this.intersectionWindow = newIntersectionWindow;
@@ -245,7 +258,6 @@ export default class MutationObserverEngine extends AbstractEngine {
 	 */
 	protected buildWatchersPositions(): void {
 		this.watchersYPositions = [];
-		this.intersectionWindow = [];
 
 		const
 			positions = this.watchersYPositions;

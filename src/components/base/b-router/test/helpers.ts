@@ -126,6 +126,11 @@ export function createInitRouter(engineName: EngineName): InitRouter {
 					alias: 'template'
 				},
 
+				redirectTemplate: {
+					path: '/tpl/redirect/:param1/:param2',
+					redirect: 'template'
+				},
+
 				notFound: {
 					default: true,
 					content: '404'

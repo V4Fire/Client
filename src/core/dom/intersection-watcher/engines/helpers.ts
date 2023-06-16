@@ -85,6 +85,33 @@ export enum InViewStatus {
 }
 
 /**
+ * Resolves the given target on which the scroll occurs
+ * @param target
+ */
+export function resolveScrollTarget(target: null | undefined): CanUndef<Element>;
+
+/**
+ * Resolves the given target on which the scroll occurs
+ * @param target
+ */
+export function resolveScrollTarget(target: Document | Element): Element;
+
+/**
+ * Resolves the given target on which the scroll occurs
+ * @param target
+ */
+// eslint-disable-next-line @typescript-eslint/unified-signatures
+export function resolveScrollTarget(target: Nullable<Document | Element>): CanUndef<Element>;
+
+export function resolveScrollTarget(target: Nullable<Document | Element>): CanUndef<Element> {
+	if (target == null) {
+		return undefined;
+	}
+
+	return target === document ? target.documentElement : Object.cast(target);
+}
+
+/**
  * Checks if the specified element is in view relative to the given scrollable root.
  * The function returns a special enum that can be used for binary search.
  *
@@ -93,6 +120,9 @@ export enum InViewStatus {
  * @param threshold - the percentage of element visibility at which this function will return true
  */
 export function isElementInView(el: Element, root: Element, threshold: number): InViewStatus {
+	el = resolveScrollTarget(el);
+	root = resolveScrollTarget(root);
+
 	const
 		// Old versions of Chromium don't support `isConnected`
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
