@@ -37,7 +37,7 @@ test.describe('<b-scrolly> emitter', () => {
 		await component.setProps({
 			chunkSize,
 			shouldStopRequestingData: () => true,
-			'@hook:beforeDataCreate': (ctx) => jest.spy(ctx.localEmitter, 'emit')
+			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize});
@@ -79,7 +79,7 @@ test.describe('<b-scrolly> emitter', () => {
 			chunkSize,
 			shouldPerformDataRequest: () => true,
 			shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-			'@hook:beforeDataCreate': (ctx) => jest.spy(ctx.localEmitter, 'emit')
+			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
@@ -126,7 +126,7 @@ test.describe('<b-scrolly> emitter', () => {
 			chunkSize,
 			shouldPerformDataRequest: () => true,
 			shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-			'@hook:beforeDataCreate': (ctx) => jest.spy(ctx.localEmitter, 'emit')
+			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
@@ -165,7 +165,7 @@ test.describe('<b-scrolly> emitter', () => {
 		await component.setProps({
 			chunkSize,
 			shouldStopRequestingData: () => true,
-			'@hook:beforeDataCreate': (ctx) => jest.spy(ctx.localEmitter, 'emit')
+			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize});

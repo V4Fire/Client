@@ -69,7 +69,7 @@ export default class ComponentObjectMock<COMPONENT extends iBlock> extends Compo
 				throw new ReferenceError(`Cannot find object by the provided path: ${path}`);
 			}
 
-			return jest.spy(<any>obj, method);
+			return jestMock.spy(<any>obj, method);
 		}, evaluateArgs);
 
 		return instance;
@@ -84,7 +84,7 @@ export default class ComponentObjectMock<COMPONENT extends iBlock> extends Compo
 	 * @example
 	 * ```typescript
 	 * await component.setProps({
-	 *   '@hook:beforeDataCreate': (ctx) => jest.spy(ctx.localEmitter, 'emit')
+	 *   '@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
 	 * });
 	 *
 	 * await component.build();

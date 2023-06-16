@@ -52,7 +52,7 @@ export function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMoc
  * @example
  * ```typescript
  * const ctx = ...; // JSHandle to spy on
- * const spyCtor = (ctx) => jest.spy(ctx, 'prop'); // Spy constructor function
+ * const spyCtor = (ctx) => jestMock.spy(ctx, 'prop'); // Spy constructor function
  * const spy = await createSpy(ctx, spyCtor);
  *
  * // Access spy properties
@@ -84,7 +84,7 @@ export async function createSpy<T extends JSHandle, ARGS extends any[]>(
  * ```typescript
  * const component = await Component.createComponent(page, 'b-button', {
  *   attrs: {
- *     '@hook:beforeDataCreate': (ctx) => jest.spy(ctx.localEmitter, 'emit')
+ *     '@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
  *   }
  * });
  *
@@ -171,7 +171,7 @@ export async function injectMockIntoPage(
 
 	const agent = await page.evaluateHandle(([tmpFn, fnString, args]) =>
 		// eslint-disable-next-line no-new-func
-		globalThis[tmpFn] = jest.mock((...fnArgs) => Object.cast(new Function(`return ${fnString}`)()(...fnArgs, ...args))), <const>[tmpFn, fn.toString(), args]);
+		globalThis[tmpFn] = jestMock.mock((...fnArgs) => Object.cast(new Function(`return ${fnString}`)()(...fnArgs, ...args))), <const>[tmpFn, fn.toString(), args]);
 
 	return {agent: wrapAsSpy(agent, {}), id: tmpFn};
 }

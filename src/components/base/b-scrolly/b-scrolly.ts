@@ -251,6 +251,7 @@ export default class bScrolly extends iData implements iItems {
 	 * For example, if we want to render the next data chunk only when the client
 	 * has seen all the main components, we can implement the following function:
 	 *
+	 * @example
 	 * ```typescript
 	 * const shouldPerformDataRender = (state) => {
 	 *   return state.isInitialRender || state.itemsTillEnd === 0;

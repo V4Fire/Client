@@ -119,11 +119,11 @@ declare var
 	importModule: (path: string) => any,
 
 	/**
-	 * Jest mock API for testing env
+	 * Jest mock API for test environment.
 	 */
-	jest: {
+	jestMock: {
 		/**
-		 * Wrapper for jest `spyOn` function
+		 * Wrapper for jest `spyOn` function.
 		 *
 		 * {@link ModuleMocker.spyOn}
 		 * @see https://jestjs.io/docs/mock-functions
@@ -131,7 +131,7 @@ declare var
 		spy: import('jest-mock').ModuleMocker['spyOn'];
 
 		/**
-		 * Wrapper for jest `fn` function
+		 * Wrapper for jest `fn` function.
 		 *
 		 * {@link ModuleMocker.fn}
 		 * @see https://jestjs.io/docs/mock-functions

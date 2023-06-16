@@ -15,7 +15,7 @@ import { ModuleMocker } from 'jest-mock';
 let
 	globalApi: ModuleMocker;
 
-globalThis.jest = {
+globalThis.jestMock = {
 	/**
 	 * {@link ModuleMocker.spyOn}
 	 * @see https://jestjs.io/docs/mock-functions
