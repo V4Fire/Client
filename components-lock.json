@@ -1,5 +1,5 @@
 {
-  "hash": "f1845b7ed4727035f9dcafb4194ee281c302f793c339ca0e155ee12825648dd0",
+  "hash": "cb8efd53aa08600cd86f8b04b6e83bd8470e34f8c926bac48ebaadc6d3bd6e1e",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -140,38 +140,6 @@
             "src/components/dummies/b-dummy/b-dummy.styl"
           ],
           "tpl": "src/components/dummies/b-dummy/b-dummy.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-text",
-        {
-          "index": "src/components/dummies/b-dummy-text/index.js",
-          "declaration": {
-            "name": "b-dummy-text",
-            "parent": "i-input-text",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-dummy-text",
-          "parent": "i-input-text",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/dummies/b-dummy-text/b-dummy-text.ts",
-          "styles": [
-            "src/components/dummies/b-dummy-text/b-dummy-text.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy-text/b-dummy-text.ss",
           "etpl": null
         }
       ],
@@ -1218,6 +1186,38 @@
             "src/components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy.styl"
           ],
           "tpl": "src/components/super/i-block/test/b-super-i-block-watch-dummy/b-super-i-block-watch-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-super-i-input-text-dummy",
+        {
+          "index": "src/components/super/i-input-text/test/b-super-i-input-text-dummy/index.js",
+          "declaration": {
+            "name": "b-super-i-input-text-dummy",
+            "parent": "i-input-text",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-super-i-input-text-dummy",
+          "parent": "i-input-text",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/super/i-input-text/test/b-super-i-input-text-dummy/b-super-i-input-text-dummy.ts",
+          "styles": [
+            "src/components/super/i-input-text/test/b-super-i-input-text-dummy/b-super-i-input-text-dummy.styl"
+          ],
+          "tpl": "src/components/super/i-input-text/test/b-super-i-input-text-dummy/b-super-i-input-text-dummy.ss",
           "etpl": null
         }
       ],

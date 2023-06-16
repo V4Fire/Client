@@ -6,12 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-// @ts-check
-
-module.exports = [
-	{
-		attrs: {
-			id: 'dummy-text-component'
-		}
-	}
-];
+package('b-super-i-input-text-dummy')
+	.extends('i-input-text');
