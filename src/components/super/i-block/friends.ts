@@ -6,8 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as helpers from 'core/helpers';
 import * as browser from 'core/browser';
+import * as presets from 'components/presets';
+import * as helpers from 'core/helpers';
 
 import Daemons, { DaemonsDict } from 'components/friends/daemons';
 import Analytics from 'components/friends/analytics';
@@ -238,6 +239,17 @@ export default abstract class iBlockFriends extends iBlockProps {
 	})
 
 	protected readonly browser: typeof browser = browser;
+
+	/**
+	 * A dictionary with component presets
+	 */
+	@system({
+		atom: true,
+		unique: true,
+		init: () => presets
+	})
+
+	protected readonly presets!: typeof presets;
 
 	/**
 	 * A dictionary with some helper functions.

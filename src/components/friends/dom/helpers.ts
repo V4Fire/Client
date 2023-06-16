@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable jsdoc/check-line-alignment */
+
 import type Friend from 'components/friends/friend';
 import type { ElCb } from 'components/friends/dom/interface';
 

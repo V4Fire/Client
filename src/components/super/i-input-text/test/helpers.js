@@ -1,5 +1,3 @@
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+// @ts-check
 
 /**
  * @typedef {import('playwright').Page} Page
@@ -19,8 +19,8 @@ const
  * Initializes an input to test
  *
  * @param {Page} page
- * @param {Object=} attrs
- * @returns {!Promise<CanUndef<Playwright.JSHandle>>}
+ * @param {object} [attrs]
+ * @returns {Promise<CanUndef<Playwright.JSHandle>>}
  */
 async function initInput(page, attrs = {}) {
 	await page.evaluate((attrs) => {

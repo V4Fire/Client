@@ -5,13 +5,13 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
 
 import type bList from 'components/base/b-list/b-list';
-
 import { renderList, createListSelector } from 'components/base/b-list/test/helpers';
 
 test.describe('<b-list>', () => {
@@ -19,7 +19,7 @@ test.describe('<b-list>', () => {
 		await demoPage.goto();
 	});
 
-	test.describe('init', () => {
+	test.describe('initialization', () => {
 		test('should have `items`', async ({page}) => {
 			const
 				target = await renderList(page),
@@ -54,9 +54,9 @@ test.describe('<b-list>', () => {
 				test.expect(await evaluateActive(target)).toEqual([0, 1]);
 			});
 
-			test('`active` prop should accept `Set`', async ({page}) => {
+			test('`active` prop should accept `Iterable`', async ({page}) => {
 				const
-					active = Utils.evalInBrowser(() => new Set([0, 1])),
+					active = Utils.evalInBrowser(() => [0, 1].values()),
 					target = await renderList(page, {active, multiple: true});
 
 				test.expect(await evaluateActive(target)).toEqual([0, 1]);
@@ -90,7 +90,7 @@ test.describe('<b-list>', () => {
 	});
 
 	test.describe('`active`', () => {
-		test('should change', async ({page}) => {
+		test('should be changeable', async ({page}) => {
 			const target = await renderList(page);
 
 			test.expect(
@@ -113,7 +113,7 @@ test.describe('<b-list>', () => {
 			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(1);
 		});
 
-		test('should change with `cancelable = true`', async ({page}) => {
+		test('should be changeable with `cancelable = true`', async ({page}) => {
 			const
 				target = await renderList(page, {cancelable: true});
 
@@ -137,7 +137,7 @@ test.describe('<b-list>', () => {
 			).toBe(1);
 		});
 
-		test('should change with `multiple = true`', async ({page}) => {
+		test('should be changeable with `multiple = true`', async ({page}) => {
 			const
 				target = await renderList(page, {multiple: true});
 
@@ -160,7 +160,7 @@ test.describe('<b-list>', () => {
 			).toEqual([]);
 		});
 
-		test('should change with `multiple = true; cancelable = false`', async ({page}) => {
+		test('should be changeable with `multiple = true; cancelable = false`', async ({page}) => {
 			const
 				target = await renderList(page, {multiple: true, cancelable: false});
 
@@ -187,7 +187,7 @@ test.describe('<b-list>', () => {
 	test.describe('`activeElement`', () => {
 		test('should have one active element', async ({page}) => {
 			const target = await renderList(page, {active: 0});
-			test.expect(await target.evaluate((ctx) => (<HTMLAnchorElement>ctx.unsafe.activeElement).tagName))
+			test.expect(await target.evaluate((ctx) => (<HTMLAnchorElement>ctx.activeElement).tagName))
 				.toBe('BUTTON');
 		});
 
@@ -196,7 +196,7 @@ test.describe('<b-list>', () => {
 				target = await renderList(page, {active: [0, 1], multiple: true});
 
 			test.expect(await target.evaluate(
-				(ctx) => Array.from(<HTMLAnchorElement[]>ctx.unsafe.activeElement).map((el) => el.tagName)
+				(ctx) => Array.from(<HTMLAnchorElement[]>ctx.activeElement).map((el) => el.tagName)
 			))
 				.toEqual(['BUTTON', 'BUTTON']);
 		});
@@ -208,19 +208,14 @@ test.describe('<b-list>', () => {
 			itemSelector = createListSelector('item'),
 			linkSelector = createListSelector('link');
 
-		const changesLogPromise = target.evaluate((ctx) => new Promise((resolve) => {
+		const scan = target.evaluate((ctx) => new Promise((resolve) => {
 			const
 				log: any[] = [],
 				onEvent = () => {
-					if (log.length >= 6) {
+					if (log.length >= 4) {
 						resolve(log);
 					}
 				};
-
-			ctx.on('immediateChange', (component, value) => {
-				log.push(['immediateChange', value]);
-				onEvent();
-			});
 
 			ctx.on('onChange', (value) => {
 				log.push(['change', value]);
@@ -237,13 +232,11 @@ test.describe('<b-list>', () => {
 
 		await page.click(`${itemSelector}:nth-child(2) ${linkSelector}`);
 
-		test.expect(await changesLogPromise).toEqual([
-			['immediateChange', 0],
-			['change', 0],
+		await test.expect(scan).resolves.toEqual([
 			true,
-			['immediateChange', 1],
-			['change', 1],
-			['actionChange', 1]
+			['change', 0],
+			['actionChange', 1],
+			['change', 1]
 		]);
 	});
 

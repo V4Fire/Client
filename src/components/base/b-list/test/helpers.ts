@@ -1,3 +1,11 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import type { BrowserContext, JSHandle, Page } from 'playwright';
 
 import DOM from 'tests/helpers/dom';
@@ -6,7 +14,7 @@ import Component from 'tests/helpers/component';
 import type bList from 'components/base/b-list/b-list';
 
 /**
- * Provides an API to intercept and mock response for the b-list request.
+ * Provides an API to intercept and mock response for the `b-list` request.
  * @param pageOrContext
  */
 export async function interceptListRequest(
@@ -23,7 +31,7 @@ export async function interceptListRequest(
 }
 
 /**
- * Returns a JSHandle to the rendered b-list component
+ * Returns the rendered `b-list` component
  *
  * @param page
  * @param paramsOrAttrs
@@ -61,14 +69,16 @@ export async function renderList(
 					value: 1
 				}
 			],
+
 			...attrs
 		},
+
 		children
 	});
 }
 
 /**
- * Checks if given value is a RenderComponentsVnodeParams
+ * Checks if the given value is `RenderComponentsVnodeParams`
  * @param value
  */
 function isRenderComponentsVnodeParams(
@@ -78,7 +88,7 @@ function isRenderComponentsVnodeParams(
 }
 
 /**
- * Returns selector for the element
+ * Returns a selector for the element
  * @param elName
  */
 export const createListSelector = DOM.elNameSelectorGenerator('b-list');

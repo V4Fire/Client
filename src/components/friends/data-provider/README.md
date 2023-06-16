@@ -11,8 +11,8 @@ this.dataProvider.update({newData: 10}, {query: {id: 10}});
 ## How to include this module to your component?
 
 By default, any component that inherited from [[iData]] has the `dataProvider` property.
-But to use module methods, attach them explicitly to enable tree-shake code optimizations.
-Just place the necessary import declaration within your component file.
+However, to use the module methods, attach them explicitly to enable tree-shake code optimizations.
+Simply place the required import declaration within your component file.
 
 ```typescript
 import iData, { component } from 'components/super/i-data/i-data';

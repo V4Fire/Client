@@ -9,11 +9,44 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.??.? (2022-??-??)
+## v4.??.?? (2023-??-??)
+
+#### :house: Internal
+
+* Refactored the `bRouter` component:
+  * Created the `Transition` class, which encapsulates the `emitTransition` logic
+  * Created the `handlers` module to handle DOM events
+  * Extracted props to the `bRouterProps` class
+
+## v3.47.1 (2023-05-18)
+
+#### :bug: [Bug Fix]
+
+* Replace `undefined` values in `route.params` by an alias or query param, if necessary
+
+## v3.44.3 (2023-03-30)
+
+#### :bug: [Bug Fix]
+
+* Overriding original parameter by alias in route
+
+## v3.44.1 (2023-03-28)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path
+
+## v3.31.0 (2022-12-06)
 
 #### :rocket: New Feature
 
 * Added possibility to disable specific link interception
+
+## v3.44.1 (2023-03-28)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path
 
 ## v3.30.2 (2022-11-17)
 

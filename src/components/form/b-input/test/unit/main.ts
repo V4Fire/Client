@@ -25,10 +25,10 @@ test.describe('<b-input>', () => {
 		});
 
 		const
-			input = await page.$('#foo');
+			input = page.locator('#foo');
 
 		test.expect(
-			await input!.evaluate((ctx: HTMLInputElement) => [
+			await input.evaluate((ctx: HTMLInputElement) => [
 				ctx.tagName,
 				ctx.type,
 				ctx.name,
@@ -164,7 +164,7 @@ test.describe('<b-input>', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bInput>> {
+	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 		return Component.createComponent(page, 'b-input', {
 			attrs: {
 				'data-id': 'target',

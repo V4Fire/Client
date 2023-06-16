@@ -79,6 +79,6 @@ export default class InfoRender extends Friend {
 				Promise.resolve() :
 				Promise.reject('Data was not rendered');
 		})
-		.catch(stderr);
+			.catch(stderr);
 	}
 }

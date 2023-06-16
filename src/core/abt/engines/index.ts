@@ -10,9 +10,8 @@ import type { Experiments } from 'core/abt/interface';
 
 /**
  * Provides a set of abt options
- * @param opts - experiments options
+ * @param _opts - experiments options
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-export default function abtAdapter(opts: unknown): CanPromise<Experiments> {
+export default function abtAdapter(_opts: unknown): CanPromise<Experiments> {
 	return [];
 }

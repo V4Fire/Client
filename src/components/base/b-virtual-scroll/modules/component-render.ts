@@ -7,6 +7,7 @@
  */
 
 import Friend from 'components/friends/friend';
+import { mergeProps } from 'core/component/render';
 
 import type ScrollRender from 'components/base/b-virtual-scroll/modules/chunk-render';
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
@@ -95,7 +96,7 @@ export default class ComponentRender extends Friend {
 		return node;
 	}
 
-	/** @see [[bVirtualScroll.getOptionKey]] */
+	/** {@link bVirtualScroll.getOptionKey} */
 	getItemKey(data: VirtualItemEl, index: number): string {
 		return String(this.ctx.getItemKey(data, index));
 	}
@@ -181,11 +182,7 @@ export default class ComponentRender extends Friend {
 		};
 
 		const getChildrenAttrs = (props: ItemAttrs) => ({
-			attrs: {
-				...props,
-				class: [this.optionClass].concat(props.class ?? []),
-				style: props.style
-			}
+			attrs: mergeProps(props, {class: this.optionClass})
 		});
 
 		const getItemEl = (data, i: number) => ({
@@ -205,7 +202,6 @@ export default class ComponentRender extends Friend {
 
 			const attrs = c.getItemAttrs(getItemEl(item.data, item.index), item.index);
 
-			// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 			children.push({itemParams, itemAttrs: getChildrenAttrs(attrs!), index: itemIndex});
 		}
 

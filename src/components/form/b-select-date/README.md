@@ -39,4 +39,4 @@ Also, you can see the parent component and the component traits.
 
 #### [native = `browser.is.mobile`]
 
-If true, the select components will use a native tag to show the select.
+When set to true, the component displays the `<select>` using a native tag, providing a better mobile experience.

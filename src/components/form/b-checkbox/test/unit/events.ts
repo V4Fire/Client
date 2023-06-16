@@ -145,7 +145,7 @@ test.describe('<b-checkbox> standard component events', () => {
 	 * @param page
 	 * @param [attrs]
 	 */
-	async function renderCheckbox(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bCheckbox>> {
+	async function renderCheckbox(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bCheckbox>> {
 		return Component.createComponent(page, 'b-checkbox', {
 			attrs: {
 				'data-id': 'target',

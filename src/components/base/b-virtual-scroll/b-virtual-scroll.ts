@@ -80,57 +80,53 @@ const
 
 @component()
 export default class bVirtualScroll extends iData implements iItems {
-	/** @see [[iItems.Item]] */
+	/** {@link iItems.Item} */
 	readonly Item!: object;
 
-	/** @see [[iItems.Items]] */
+	/** {@link iItems.Items} */
 	readonly Items!: Array<this['Item']>;
 
 	override readonly DB!: RemoteData;
 
 	override readonly checkDBEquality: CheckDBEquality = false;
 
-	/** @see [[LoadStrategy]] */
+	/** {@link LoadStrategy} */
 	@prop({type: String, watch: 'syncPropsWatcher'})
 	readonly loadStrategy: LoadStrategy = 'scroll';
 
-	/** @see [[iItems.item]] */
+	/** {@link iItems.item} */
 	@prop({type: [String, Function], required: false})
 	readonly item?: iItems['item'];
 
-	/** @see [[iItems.itemKey]] */
+	/** {@link iItems.itemKey} */
 	@prop({type: [String, Function], required: false})
 	readonly itemKey?: iItems['itemKey'];
 
-	/** @see [[iItems.itemProps]] */
+	/** {@link iItems.itemProps} */
 	@prop({type: [Function, Object], default: () => ({})})
 	readonly itemProps!: iItems['itemProps'];
 
 	/**
 	 * The maximum number of elements to cache
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, watch: 'syncPropsWatcher', validator: Number.isNatural})
 	readonly cacheSize: number = 400;
 
 	/**
 	 * Number of elements till the page bottom that should initialize a new render iteration
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly renderGap: number = 10;
 
 	/**
 	 * Number of elements per one render chunk
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, validator: Number.isNatural})
 	readonly chunkSize: number = 10;
 
 	/**
 	 * Number of tombstones to render
 	 */
-	// eslint-disable-next-line @typescript-eslint/unbound-method
 	@prop({type: Number, required: false, validator: Number.isNatural})
 	readonly tombstonesSize?: number;
 
@@ -174,13 +170,13 @@ export default class bVirtualScroll extends iData implements iItems {
 	@prop({type: Function, default: (v) => v.isLastEmpty})
 	readonly shouldStopRequest!: RequestFn;
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@computed({dependencies: ['itemsStore']})
 	get items(): this['Items'] {
 		return this.itemsStore ?? [];
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
@@ -189,7 +185,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		return Object.cast(this);
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@field((o) => o.sync.link())
 	protected itemsStore!: iItems['items'];
 
@@ -261,7 +257,12 @@ export default class bVirtualScroll extends iData implements iItems {
 		renderNext?: HTMLElement;
 	};
 
-	/** @emits `chunkLoading(page: number)` */
+	/**
+	 * @param [data]
+	 * @param [opts]
+	 *
+	 * @emits `chunkLoading(page: number)`
+	 * */
 	override initLoad(data?: unknown, opts?: InitLoadOptions): CanPromise<void> {
 		this.async.clearAll({label: 'chunkRequest.waitForInitCalls'});
 
@@ -315,8 +316,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	/**
 	 * Returns an object with the current data state of the component
 	 *
-	 * @typeparam ITEM - data item to render
-	 * @typeparam RAW - raw provider data
+	 * @typeParam ITEM - data item to render
+	 * @typeParam RAW - raw provider data
 	 */
 	getCurrentDataState<
 		ITEM extends object = object,
@@ -363,7 +364,7 @@ export default class bVirtualScroll extends iData implements iItems {
 		return Object.isFunction(item) ? item(el, i) : <string>item;
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, el, i);
 	}
@@ -375,8 +376,8 @@ export default class bVirtualScroll extends iData implements iItems {
 	 * @param [chunkRequest]
 	 * @param [chunkRender]
 	 *
-	 * @typeparam ITEM - data item to render
-	 * @typeparam RAW - raw provider data
+	 * @typeParam ITEM - data item to render
+	 * @typeParam RAW - raw provider data
 	 */
 	protected getDataStateSnapshot<
 		ITEM extends object = object,

@@ -40,7 +40,7 @@ export default class ChunkRequest extends Friend {
 	 * Last loaded data chunk that was processed with `dbConverter`
 	 *
 	 * @deprecated
-	 * @see [[ScrollRequest.lastLoadedChunk]]
+	 * {@link ChunkRequest.lastLoadedChunk}
 	 */
 	lastLoadedData: unknown[] = [];
 
@@ -79,14 +79,14 @@ export default class ChunkRequest extends Friend {
 	 */
 	previousDataStore: CanUndef<unknown> = undefined;
 
-	/** @see [[ChunkRequest.previousDataStore]] */
+	/** {@link ChunkRequest.previousDataStore} */
 	get previousData(): CanUndef<unknown> {
 		return this.previousDataStore;
 	}
 
 	/**
 	 * @emits dataChange(v: unknown)
-	 * @see [[ChunkRequest.previousDataStore]]
+	 * {@link ChunkRequest.previousDataStore}
 	 */
 	set previousData(v: unknown) {
 		this.previousDataStore = v;
@@ -107,7 +107,6 @@ export default class ChunkRequest extends Friend {
 		this.total = 0;
 		this.page = 1;
 
-		// tslint:disable-next-line: deprecation
 		this.lastLoadedData = [];
 		this.data = [];
 		this.lastLoadedChunk = {raw: undefined, normalized: []};

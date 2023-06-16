@@ -9,6 +9,7 @@
 import { isProxy } from 'core/object/watch';
 import { customWatcherRgxp, getPropertyInfo, PropertyInfo } from 'components/super/i-block/i-block';
 
+import type iBlock from 'components/super/i-block/i-block';
 import type Sync from 'components/friends/sync/class';
 
 import { compareNewAndOldValue } from 'components/friends/sync/helpers';
@@ -27,7 +28,8 @@ import type { Link, PropLinks, AsyncWatchOptions } from 'components/friends/sync
  *
  * Mind, this method can be used only within a property decorator.
  *
- * @see [[iBlock.watch]]
+ * {@link iBlock.watch}
+ *
  * @param decl - declaration of object properties
  *
  * @example
@@ -72,7 +74,8 @@ export function object(this: Sync, decl: PropLinks): Dictionary;
  *
  * Mind, this method can be used only within a property decorator.
  *
- * @see [[iBlock.watch]]
+ * {@link iBlock.watch}
+ *
  * @param opts - additional options
  * @param fields - declaration of object properties
  *
@@ -116,9 +119,10 @@ export function object(this: Sync, opts: AsyncWatchOptions, fields: PropLinks): 
  * To listen an event you need to use the special delimiter ":" within a path.
  * Also, you can specify an event emitter to listen by writing a link before ":".
  *
- * @see [[iBlock.watch]]
+ * {@link iBlock.watch}
+ *
  * @param path - a path to the property that contains the result object
- *   (if the method is used within a property decorator, this value will be attached to the name of the active field)
+ * (if the method is used within a property decorator, this value will be attached to the name of the active field)
  *
  * @param fields - declaration of object properties
  *
@@ -163,9 +167,10 @@ export function object(this: Sync, path: Link, fields: PropLinks): Dictionary;
  * To listen an event you need to use the special delimiter ":" within a path.
  * Also, you can specify an event emitter to listen by writing a link before ":".
  *
- * @see [[iBlock.watch]]
+ * {@link iBlock.watch}
+ *
  * @param path - a path to the property that contains the result object
- *   (if the method is used within a property decorator, this value will be attached to the name of the active field)
+ * (if the method is used within a property decorator, this value will be attached to the name of the active field)
  *
  * @param opts - additional options
  * @param fields - declaration of object properties
@@ -348,7 +353,7 @@ export function object(
 				} else {
 					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
 						const
-							mutation = <[unknown, unknown]>val.at(-1);
+							mutation = <[unknown, unknown]>val[val.length - 1];
 
 						val = mutation[0];
 						oldVal = mutation[1];
@@ -370,7 +375,7 @@ export function object(
 				if (!isCustomWatcher) {
 					if (args.length === 0 && Object.isArray(val) && val.length > 0) {
 						const
-							mutation = <[unknown, unknown]>val.at(-1);
+							mutation = <[unknown, unknown]>val[val.length - 1];
 
 						val = mutation[0];
 						oldVal = mutation[1];

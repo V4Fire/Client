@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable jsdoc/check-line-alignment */
+
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import type { UnsafeComponentInterface } from 'core/component/interface';
 
@@ -16,7 +18,7 @@ import type { ComponentResetType } from 'core/component/event/interface';
  * Emits the special event for all component to reset the passed component state.
  * By default, this means a complete reload of all providers and storages bound to components.
  *
- * @param [type] - the reset type:
+ * @param [type] - the reset type
  *   1. `'load'` - reloads all data providers bound to components;
  *   2. `'load.silence'` - reloads all data providers bound to components,
  *      but without changing components statuses to `loading`;
@@ -46,11 +48,11 @@ export function implementEventEmitterAPI(component: object): void {
 	const
 		ctx = Object.cast<UnsafeComponentInterface>(component);
 
-	const $e = new EventEmitter({
+	const $e = ctx.$async.wrapEventEmitter(new EventEmitter({
 		maxListeners: 1e3,
 		newListener: false,
 		wildcard: true
-	});
+	}));
 
 	const
 		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
@@ -94,7 +96,12 @@ export function implementEventEmitterAPI(component: object): void {
 	function getMethod(method: 'on' | 'once' | 'off') {
 		return function wrapper(this: unknown, event, cb) {
 			Array.concat([], event).forEach((event) => {
-				$e[method](Object.cast(event), Object.cast(cb));
+				if (method === 'off' && cb == null) {
+					$e.removeAllListeners(event);
+
+				} else {
+					$e[method](Object.cast(event), Object.cast(cb));
+				}
 			});
 
 			return this;

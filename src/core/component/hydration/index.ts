@@ -66,9 +66,13 @@ export class HydrationStore {
 		this.store[componentId]![path] = data;
 	}
 
+	/**
+	 * @param store
+	 */
 	protected parse(store: string): Store {
 		return JSON.parse(store) ?? Object.createDict();
 	}
 }
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default new HydrationStore();

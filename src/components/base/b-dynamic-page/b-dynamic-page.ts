@@ -78,7 +78,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * The name of the active page to load
-	 * @see [[bDynamicPage.pageProp]]
+	 * {@link bDynamicPage.pageProp}
 	 */
 	@system<bDynamicPage>((o) => o.sync.link((val) => val ?? o.pageGetter(o.route, Object.cast(o))))
 	page?: string;
@@ -113,7 +113,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * A dictionary of `keepAlive` caches.
-	 * The keys represent cache groups  (the default is `global`).
+	 * The keys represent cache groups (the default is `global`).
 	 */
 	@system<bDynamicPage>((o) => o.sync.link('keepAliveSize', (size: number) => ({
 		...o.keepAliveCache,
@@ -254,6 +254,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * Reloads the loaded page component
+	 * @param [params]
 	 */
 	override async reload(params?: InitLoadOptions): Promise<void> {
 		const component = await this.component;
@@ -526,6 +527,9 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * Synchronization for the `page` field
+	 *
+	 * @param page
+	 * @param oldPage
 	 */
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {

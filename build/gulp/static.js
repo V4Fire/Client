@@ -1,7 +1,3 @@
-/* eslint-disable camelcase */
-
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,6 +5,10 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable camelcase */
+
+'use strict';
 
 const
 	path = require('upath'),
@@ -24,6 +24,8 @@ const {
 
 /**
  * Registers gulp tasks to minify/generate project static assets
+ *
+ * @param {object} gulp
  *
  * @example
  * ```bash
@@ -198,6 +200,7 @@ module.exports = function init(gulp = require('gulp')) {
 
 	/**
 	 * Generates GZ archives from project files
+	 * @returns {void}
 	 */
 	gulp.task('static:gzip', gulp.series([
 		gulp.parallel([

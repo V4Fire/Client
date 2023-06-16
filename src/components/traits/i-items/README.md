@@ -1,9 +1,8 @@
 # components/traits/i-items
 
 This module provides a trait for a component that renders a list of items.
-
 The default scenario of a component that implements this trait: the component iterates over the specified list of items
-and renders each item as a component. Take a look at [[bTree]] to see more.
+and renders each item as a component. Take a look at [[bTree]] or [[bList]] to see more.
 
 ## Synopsis
 
@@ -17,12 +16,14 @@ The trait declares two associated types to specify a type of component items: **
 
 ```typescript
 import iItems from 'components/traits/i-items/i-items';
+import iBlock, { component } from 'components/super/i-block/i-block';
 
-export default class bTree implements iItems {
-  /** @see [[iItems.Item]] */
+@component()
+export default class bTree extends iBlock implements iItems {
+  /** {@link iItems.Item} */
   readonly Item!: Item;
 
-  /** @see [[iItems.Items]] */
+  /** {@link iItems.Items} */
   readonly Items!: Array<this['Item']>;
 }
 ```
@@ -80,7 +81,7 @@ import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bTree extends iBlock implements iItems {
-  /** @see [[iItems.getItemKey]] */
+  /** {@link iItems.getItemKey} */
   protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
     return iItems.getItemKey(this, el, i);
   }

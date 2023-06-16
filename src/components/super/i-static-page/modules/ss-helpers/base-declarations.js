@@ -16,7 +16,8 @@ exports.getVarsDecl = getVarsDecl;
  * Returns declaration of global variables to initialize the application.
  * You need to put this declaration within a script tag or use the `wrap` option.
  *
- * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
+ * @param {object} [opts]
+ * @param {boolean} [opts.wrap] - if true, the declaration is wrapped by a script tag
  * @returns {string}
  */
 function getVarsDecl({wrap} = {}) {

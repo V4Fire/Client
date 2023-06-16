@@ -9,6 +9,6 @@
 import * as support from 'core/const/support';
 
 import IntersectionObserverEngine from 'core/dom/intersection-watcher/engines/intersection-observer';
-import MutationObserverEngine from 'core/dom/intersection-watcher/engines/heightmap-observer';
+import HeightmapObserverEngine from 'core/dom/intersection-watcher/engines/heightmap-observer';
 
-export default support.IntersectionObserver ? IntersectionObserverEngine : MutationObserverEngine;
+export default support.IntersectionObserver ? IntersectionObserverEngine : HeightmapObserverEngine;

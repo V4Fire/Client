@@ -18,10 +18,9 @@ import { derive } from 'core/functools/trait';
 import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 
-import iData, {
+import {
 
 	component,
-	prop,
 	field,
 	system,
 	computed,
@@ -34,8 +33,8 @@ import iData, {
 
 } from 'components/super/i-data/i-data';
 
-import { sliderModes, alignTypes } from 'components/base/b-slider/const';
-import type { Mode, SlideRect, SlideDirection, AlignType } from 'components/base/b-slider/interface';
+import bSliderProps from 'components/base/b-slider/props';
+import type { Mode, SlideRect, SlideDirection } from 'components/base/b-slider/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-slider/interface';
@@ -45,111 +44,9 @@ const
 
 interface bSlider extends Trait<typeof iObserveDOM> {}
 
-/**
- * Component to create a content slider
- */
 @component()
 @derive(iObserveDOM)
-class bSlider extends iData implements iObserveDOM, iItems {
-	/** @see [[iItems.Item]] */
-	readonly Item!: object;
-
-	/** @see [[iItems.Items]] */
-	readonly Items!: Array<this['Item']>;
-
-	/**
-	 * A slider mode:
-	 *
-	 * 1. With the `slide` mode, it is impossible to skip slides.
-	 *    That is, we can't get from the first slide directly to the third or other stuff.
-	 *
-	 * 2. With the `scroll` mode, to scroll slides is used the browser native scrolling.
-	 */
-	@prop({type: String, validator: Object.hasOwnProperty(sliderModes)})
-	readonly modeProp: Mode = 'slide';
-
-	/**
-	 * If true, the height calculation will be based on rendered elements.
-	 * The component will create an additional element to contain the rendered elements,
-	 * while it will not be visible to the user. This may be useful if you need to hide scroll on mobile devices,
-	 * but you don't know the exact size of the elements that can be rendered into a component.
-	 */
-	@prop(Boolean)
-	readonly dynamicHeight: boolean = false;
-
-	/**
-	 * If true, a user will be automatically returned to the first slide when scrolling the last slide.
-	 * That is, the slider will work "in a circle".
-	 */
-	@prop(Boolean)
-	readonly circular: boolean = false;
-
-	/**
-	 * This prop controls how many slides will scroll.
-	 * For example, by specifying `center`, the slider will stop when the active slide is
-	 * in the slider's center when scrolling.
-	 */
-	@prop({type: String, validator: Object.hasOwnProperty(alignTypes)})
-	readonly align: AlignType = 'center';
-
-	/**
-	 * If true, the first slide will be aligned to the start position (the left bound).
-	 */
-	@prop(Boolean)
-	readonly alignFirstToStart: boolean = true;
-
-	/**
-	 * How much does the shift along the X-axis corresponds to a finger movement
-	 */
-	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
-	readonly deltaX: number = 0.9;
-
-	/**
-	 * The minimum required percentage to scroll the slider to another slide
-	 */
-	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
-	readonly threshold: number = 0.3;
-
-	/**
-	 * The minimum required percentage for the scroll slider to another slide in fast motion on the slider
-	 */
-	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
-	readonly fastSwipeThreshold: number = 0.05;
-
-	/**
-	 * Time (in milliseconds) after which we can assume that there was a quick swipe
-	 */
-	@prop({type: Number, validator: (v) => Number.isNatural(v)})
-	readonly fastSwipeDelay: number = (0.3).seconds();
-
-	/**
-	 * The minimum displacement threshold along the X-axis at which the slider will be considered to be used (in px)
-	 */
-	@prop({type: Number, validator: (v) => Number.isNatural(v)})
-	readonly swipeToleranceX: number = 10;
-
-	/**
-	 * The minimum Y-axis offset threshold at which the slider will be considered to be used (in px)
-	 */
-	@prop({type: Number, validator: (v) => Number.isNatural(v)})
-	readonly swipeToleranceY: number = 50;
-
-	/** @see [[iItems.items]] */
-	@prop(Array)
-	readonly itemsProp: iItems['items'] = [];
-
-	/** @see [[iItems.item]] */
-	@prop({type: [String, Function], required: false})
-	readonly item?: iItems['item'];
-
-	/** @see [[iItems.itemKey]] */
-	@prop({type: [String, Function], required: false})
-	readonly itemKey?: iItems['itemKey'];
-
-	/** @see [[iItems.itemProps]] */
-	@prop({type: [Function, Object], required: false})
-	readonly itemProps?: iItems['itemProps'];
-
+class bSlider extends bSliderProps implements iObserveDOM, iItems {
 	/**
 	 * The number of slides in the slider
 	 */
@@ -164,7 +61,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	};
 
 	/**
-	 * Link to a content node
+	 * A link to the content node
 	 */
 	get content(): CanUndef<HTMLElement> {
 		return this.$refs.content;
@@ -186,6 +83,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Sets a pointer of the current slide
+	 *
+	 * @param value
 	 * @emits `change(current: number)`
 	 */
 	set current(value: number) {
@@ -239,19 +138,19 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@field((o) => o.sync.link())
 	protected itemsStore!: iItems['items'];
 
-	/** @see [[bSlider.current]] */
+	/** {@link bSlider.current} */
 	@system()
 	protected currentStore: number = 0;
 
-	/** @see [[bSlider.modeProp]] */
+	/** {@link bSlider.modeProp} */
 	@field((o) => o.sync.link())
 	protected mode!: Mode;
 
-	protected override readonly $refs!: iData['$refs'] & {
+	protected override readonly $refs!: bSliderProps['$refs'] & {
 		view?: HTMLElement;
 		content?: HTMLElement;
 		contentWrapper?: HTMLElement;
@@ -278,8 +177,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Is the minimum threshold for starting slide content passed
 	 *
-	 * @see [[bSlider.swipeToleranceX]]
-	 * @see [[bSlider.swipeToleranceY]]
+	 * {@link bSlider.swipeToleranceX}
+	 * {@link bSlider.swipeToleranceY}
 	 */
 	@system()
 	protected isTolerancePassed: boolean = false;
@@ -330,13 +229,13 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return globalThis.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	@computed()
 	get items(): this['Items'] {
 		return this.itemsStore ?? [];
 	}
 
-	/** @see [[iItems.items]] */
+	/** {@link iItems.items} */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
@@ -404,7 +303,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return false;
 	}
 
-	/** @see [[iObserveDOM.initDOMObservers]] */
+	/** {@link iObserveDOM.initDOMObservers} */
 	@hook('mounted')
 	initDOMObservers(): void {
 		const
@@ -475,7 +374,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return Object.isFunction(item) ? item(el, i) : <string>item;
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/** {@link iItems.getItemKey} */
 	protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, el, i);
 	}
@@ -483,7 +382,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Synchronizes the slider state
 	 */
-	@hook('mounted')
+	@hook(['mounted', 'updated'])
 	@wait('loading', {label: $$.syncState})
 	protected syncState(): void {
 		const
@@ -517,7 +416,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Synchronizes the slider state (deferred version)
 	 * @emits `syncState()`
 	 */
-	@watch(':DOMChange')
+	@watch('localEmitter:DOMChange')
 	@wait('ready', {label: $$.syncStateDefer})
 	protected async syncStateDefer(): Promise<void> {
 		const

@@ -9,6 +9,21 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* `toggleValue` with `unsetPrevious = true` will unset previous value and set given value as new, previously, it would just unset the value.
+
+#### :rocket: New Feature
+
+* `b-select` now implements `iActiveItems` trait
+
+#### :nail_care: Polish
+
+* Decomposed and refactored the `b-select` component
+* Added more unit tests and improved their descriptions
+
 ## v3.5.3 (2021-10-06)
 
 #### :bug: Bug Fix

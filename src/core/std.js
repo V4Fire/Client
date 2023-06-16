@@ -1,5 +1,3 @@
-/* eslint-disable prefer-arrow-callback,no-var,no-new-func,object-shorthand,vars-on-top,prefer-rest-params */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable no-var, no-new-func, object-shorthand, vars-on-top */
 
 var GLOBAL = Function('return this')();
 GLOBAL.TPLS = GLOBAL.TPLS || Object.create(null);

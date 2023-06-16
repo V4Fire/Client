@@ -64,6 +64,7 @@ export default class DOM {
 
 	/**
 	 * Returns a selector for the specified ref
+	 *
 	 * @param refName
 	 *
 	 * @deprecated
@@ -75,6 +76,7 @@ export default class DOM {
 
 	/**
 	 * Clicks to an element matched to the specified ref name
+	 *
 	 * @see https://playwright.dev/#version=v1.2.0&path=docs%2Fapi.md&q=pageclickselector-options
 	 *
 	 * @param ctx
@@ -86,7 +88,6 @@ export default class DOM {
 	 */
 	static clickToRef(ctx: Page | ElementHandle, refName: string, clickOpts?: Dictionary): Promise<void> {
 		return ctx.click(this.getRefSelector(refName), {
-			force: true,
 			...clickOpts
 		});
 	}
@@ -105,6 +106,8 @@ export default class DOM {
 	/**
 	 * Returns a generator of element names for the specified block
 	 *
+	 * @param blockName
+	 *
 	 * @example
 	 * ```typescript
 	 * const
@@ -116,6 +119,9 @@ export default class DOM {
 
 	/**
 	 * Returns an element name for the specified block
+	 *
+	 * @param blockName
+	 * @param elName
 	 *
 	 * @example
 	 * ```typescript
@@ -136,6 +142,8 @@ export default class DOM {
 	/**
 	 * Returns a generator of element classes for the specified block
 	 *
+	 * @param blockName
+	 *
 	 * @example
 	 * ```typescript
 	 * const
@@ -147,6 +155,9 @@ export default class DOM {
 
 	/**
 	 * Returns an element class for the specified block
+	 *
+	 * @param blockName
+	 * @param elName
 	 *
 	 * @example
 	 * ```typescript
@@ -167,6 +178,8 @@ export default class DOM {
 	/**
 	 * Returns a generator of element names with modifiers for the specified block
 	 *
+	 * @param fullElementName
+	 *
 	 * @example
 	 * ```typescript
 	 * const
@@ -181,6 +194,10 @@ export default class DOM {
 
 	/**
 	 * Returns an element name with modifiers for the specified block
+	 *
+	 * @param fullElementName
+	 * @param modName
+	 * @param modVal
 	 *
 	 * @example
 	 * ```typescript
@@ -203,6 +220,8 @@ export default class DOM {
 	/**
 	 * Returns a generator of element classes with modifiers for the specified block
 	 *
+	 * @param fullElementName
+	 *
 	 * @example
 	 * ```typescript
 	 * const
@@ -217,6 +236,10 @@ export default class DOM {
 
 	/**
 	 * Returns an element class name with modifiers for the specified block
+	 *
+	 * @param fullElementName
+	 * @param modName
+	 * @param modVal
 	 *
 	 * @example
 	 * ```typescript

@@ -12,9 +12,10 @@ import { storeRgxp } from 'core/component/reflect';
 import { initEmitter } from 'core/component/event';
 
 import { metaPointers } from 'core/component/const';
-import { inverseFieldMap, tiedFieldMap } from 'core/component/decorators/const';
+import { invertedFieldMap, tiedFieldMap } from 'core/component/decorators/const';
 
-import type { ComponentMeta } from 'core/component/interface';
+import type { ComponentMeta, ComponentProp, ComponentField } from 'core/component/interface';
+
 import type {
 
 	DecoratorFunctionalOptions,
@@ -143,13 +144,15 @@ export function paramsFactory<T = object>(
 					return;
 				}
 
+				delete meta.accessors[key];
+				delete meta.computedFields[key];
+
 				const needOverrideComputed = metaKey === 'accessors' ?
 					key in meta.computedFields :
 					!('cache' in p) && key in meta.accessors;
 
 				if (needOverrideComputed) {
 					metaCluster[key] = wrapOpts({...meta.computedFields[key], ...p, cache: false});
-					delete meta.computedFields[key];
 
 				} else {
 					metaCluster[key] = wrapOpts({
@@ -180,23 +183,40 @@ export function paramsFactory<T = object>(
 
 				const
 					metaKey = cluster ?? (key in meta.props ? 'props' : 'fields'),
-					inverseKeys = inverseFieldMap[metaKey],
-					metaCluster = meta[metaKey];
+					metaCluster: ComponentProp | ComponentField = meta[metaKey];
 
-				if (inverseKeys != null) {
-					for (let i = 0; i < inverseKeys.length; i++) {
+				const
+					invertedMetaKeys = invertedFieldMap[metaKey];
+
+				if (invertedMetaKeys != null) {
+					for (let i = 0; i < invertedMetaKeys.length; i++) {
 						const
-							tmp = meta[inverseKeys[i]];
+							invertedMetaKey = invertedMetaKeys[i],
+							invertedMetaCluster = meta[invertedMetaKey];
 
-						if (key in tmp) {
-							metaCluster[key] = tmp[key];
-							delete tmp[key];
+						if (key in invertedMetaCluster) {
+							const info = {...invertedMetaCluster[key]};
+							delete info.functional;
+
+							if (invertedMetaKey === 'prop') {
+								if (Object.isFunction(info.default)) {
+									(<ComponentField>info).init = info.default;
+									delete info.default;
+								}
+
+							} else if (metaKey === 'prop') {
+								delete (<ComponentField>info).init;
+							}
+
+							metaCluster[key] = info;
+							delete invertedMetaCluster[key];
+
 							break;
 						}
 					}
 				}
 
-				if (transformer) {
+				if (transformer != null) {
 					p = transformer(p, metaKey);
 				}
 

@@ -12,7 +12,6 @@ import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
 
 import type bList from 'components/base/b-list/b-list';
-
 import { createListSelector } from 'components/base/b-list/test/helpers';
 
 test.describe('<b-list> links', () => {
@@ -73,7 +72,7 @@ test.describe('<b-list> links', () => {
 	});
 
 	/**
-	 * Returns a JSHandle to the rendered b-list component
+	 * Returns the rendered `b-list` component
 	 *
 	 * @param page
 	 * @param attrs

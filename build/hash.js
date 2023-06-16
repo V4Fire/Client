@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,14 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	{build} = require('@config/config');
 
 /**
  * Returns a hash value of the specified file or text (glob pattern also supported)
  *
- * @param value - path to the file or text content
- * @param [length] - hash length
+ * @param {string} value - path to the file or text content
+ * @param {number} [length] - hash length
  * @returns {string}
  */
 module.exports = function getHash(value, length = build.hashLength) {

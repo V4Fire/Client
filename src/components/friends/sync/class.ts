@@ -66,12 +66,12 @@ class Sync extends Friend {
 	 */
 	protected readonly linksCache!: Dictionary<Dictionary>;
 
-	/** @see [[iBlock.$syncLinkCache]] */
+	/** {@link iBlock.$syncLinkCache} */
 	protected get syncLinkCache(): SyncLinkCache {
 		return this.ctx.$syncLinkCache;
 	}
 
-	/** @see [[iBlock.$syncLinkCache]] */
+	/** {@link iBlock.$syncLinkCache} */
 	protected set syncLinkCache(value: SyncLinkCache) {
 		Object.set(this.ctx, '$syncLinkCache', value);
 	}

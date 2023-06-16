@@ -15,61 +15,58 @@ test.describe('<b-list> slots', () => {
 		await demoPage.goto();
 	});
 
-	test.describe('provides', () => {
-
-		test('`default` slot', async ({page}) => {
-			await renderList(page, {
-				children: {
-					default: ({item}) => `Label: ${item.label}`
-				}
-			});
-
-			const selector = createListSelector('link-value');
-
-			test.expect(await page.locator(selector).allTextContents())
-				.toEqual(['Label: Foo', 'Label: Bla']);
+	test('should render items using the `default` slot', async ({page}) => {
+		await renderList(page, {
+			children: {
+				default: ({item}) => `Label: ${item.label}`
+			}
 		});
 
-		test('`icon`, `preIcon`, `progressIcon` slots', async ({page}) => {
-			await renderList(page, {
-				children: {
-					icon: ({icon}) => icon,
-					preIcon: ({icon}) => icon,
-					progressIcon: ({icon}) => icon
-				},
+		const selector = createListSelector('link-value');
 
-				attrs: {
-					items: [
-						{
-							label: 'Foo',
-							icon: 'foo',
-							preIcon: 'foo2',
-							progressIcon: 'foo3'
-						},
+		test.expect(await page.locator(selector).allTextContents())
+			.toEqual(['Label: Foo', 'Label: Bla']);
+	});
 
-						{
-							label: 'Bla',
-							icon: 'bla',
-							preIcon: 'bla2',
-							progressIcon: 'bla3'
-						}
-					]
-				}
-			});
+	test('should render `icon`, `preIcon`, `progressIcon` slots in the item template', async ({page}) => {
+		await renderList(page, {
+			children: {
+				icon: ({icon}) => icon,
+				preIcon: ({icon}) => icon,
+				progressIcon: ({icon}) => icon
+			},
 
-			const
-				postIconSelector = createListSelector('link-post-icon'),
-				preIconSelector = createListSelector('link-pre-icon'),
-				progressSelector = createListSelector('link-progress');
+			attrs: {
+				items: [
+					{
+						label: 'Foo',
+						icon: 'foo',
+						preIcon: 'foo2',
+						progressIcon: 'foo3'
+					},
 
-			test.expect(await page.locator(postIconSelector).allTextContents())
-				.toEqual(['foo', 'bla']);
-
-			test.expect(await page.locator(preIconSelector).allTextContents())
-				.toEqual(['foo2', 'bla2']);
-
-			test.expect(await page.locator(progressSelector).allTextContents())
-				.toEqual(['foo3', 'bla3']);
+					{
+						label: 'Bla',
+						icon: 'bla',
+						preIcon: 'bla2',
+						progressIcon: 'bla3'
+					}
+				]
+			}
 		});
+
+		const
+			postIconSelector = createListSelector('link-post-icon'),
+			preIconSelector = createListSelector('link-pre-icon'),
+			progressSelector = createListSelector('link-progress');
+
+		test.expect(await page.locator(postIconSelector).allTextContents())
+			.toEqual(['foo', 'bla']);
+
+		test.expect(await page.locator(preIconSelector).allTextContents())
+			.toEqual(['foo2', 'bla2']);
+
+		test.expect(await page.locator(progressSelector).allTextContents())
+			.toEqual(['foo3', 'bla3']);
 	});
 });

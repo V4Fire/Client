@@ -1,4 +1,3 @@
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -12,6 +11,8 @@ import symbolGenerator from 'core/symbol';
 import type { WatchOptions } from 'core/dom/intersection-watcher';
 
 import Friend from 'components/friends/friend';
+import DOM, { watchForIntersection, appendChild } from 'components/friends/dom';
+
 import type iBlock from 'components/super/i-block/i-block';
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
@@ -19,6 +20,8 @@ import type ComponentRender from 'components/base/b-virtual-scroll/modules/compo
 import type ChunkRequest from 'components/base/b-virtual-scroll/modules/chunk-request';
 
 import type { RenderItem, VirtualItemEl } from 'components/base/b-virtual-scroll/interface';
+
+DOM.addToPrototype({appendChild, watchForIntersection});
 
 const
 	$$ = symbolGenerator();

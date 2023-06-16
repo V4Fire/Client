@@ -9,7 +9,7 @@
 import Friend from 'components/friends/friend';
 
 import type iBlock from 'components/super/i-block/i-block';
-import type { Classes, ModsDict } from 'components/super/i-block/i-block';
+import type { Classes, ModsDict, ModsProp } from 'components/super/i-block/i-block';
 
 import * as api from 'components/friends/provide/api';
 import { elementClassesCache } from 'components/friends/provide/const';
@@ -36,11 +36,11 @@ interface Provide {
 
 	hintClasses(pos?: string): readonly string[];
 
-	componentClasses(mods?: ModsDict): readonly string[];
-	componentClasses(componentName: string, mods?: ModsDict): readonly string[];
+	componentClasses(mods?: ModsProp): readonly string[];
+	componentClasses(componentName: string, mods?: ModsProp): readonly string[];
 
-	elementClasses(els: Dictionary<ModsDict>): readonly string[];
-	elementClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsDict>): readonly string[];
+	elementClasses(els: Dictionary<ModsProp>): readonly string[];
+	elementClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsProp>): readonly string[];
 
 	mods(mods?: Mods): CanUndef<Readonly<ModsDict>>;
 }

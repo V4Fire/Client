@@ -38,40 +38,35 @@ import type { ComponentConstructorInfo } from 'core/component/reflect/interface'
  * ```
  */
 export function getComponentMods(component: ComponentConstructorInfo): ModsDecl {
-	const
-		{constructor, componentName} = component;
+	const {
+		constructor,
+		componentName
+	} = component;
 
 	const
-		mods = {};
-
-	const
+		mods = {},
 		modsFromDS = dsComponentsMods?.[componentName],
-		modsFromConstructor = {...constructor['mods']};
+		modsFromConstructor: ModsDecl = {...constructor['mods']};
 
 	if (Object.isDictionary(modsFromDS)) {
 		Object.entries(modsFromDS).forEach(([name, dsModDecl]) => {
 			const modDecl = modsFromConstructor[name];
-			modsFromConstructor[name] = modDecl != null ? modDecl.concat(dsModDecl) : dsModDecl;
+			modsFromConstructor[name] = Object.cast(Array.concat([], modDecl, dsModDecl));
 		});
 	}
 
-	for (let o = modsFromConstructor, keys = Object.keys(o), i = 0; i < keys.length; i++) {
+	Object.entries(modsFromConstructor).forEach(([modName, modDecl]) => {
 		const
-			key = keys[i],
-			modDecl = o[key],
 			modValues: Array<string | object> = [];
 
-		if (modDecl != null) {
+		if (modDecl != null && modDecl.length > 0) {
+			const
+				cache = new Map();
+
 			let
-				cache: Nullable<Map<any, any>> = null,
 				active;
 
-			for (let i = 0; i < modDecl.length; i++) {
-				cache ??= new Map();
-
-				const
-					modVal = modDecl[i];
-
+			modDecl.forEach((modVal) => {
 				if (Object.isArray(modVal)) {
 					if (active !== undefined) {
 						cache.set(active, active);
@@ -81,22 +76,23 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 					cache.set(active, [active]);
 
 				} else {
-					const
-						normalizedModVal = Object.isPlainObject(modVal) ? modVal : String(modVal);
+					const normalizedModVal = Object.isPlainObject(modVal) ?
+						modVal :
+						String(modVal);
 
 					if (!cache.has(normalizedModVal)) {
 						cache.set(normalizedModVal, normalizedModVal);
 					}
 				}
-			}
+			});
 
-			cache?.forEach((val) => {
+			cache.forEach((val) => {
 				modValues.push(val);
 			});
 		}
 
-		mods[key.camelize(false)] = modValues;
-	}
+		mods[modName.camelize(false)] = modValues;
+	});
 
 	return mods;
 }

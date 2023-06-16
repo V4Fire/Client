@@ -93,7 +93,7 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 		defineRef(refs, refName, resolveRefVal);
 	}
 
-	ctx.$emit(`[[REF:${refName}]]`, refs[refName]);
+	ctx.$nextTick(() => ctx!.$emit(`[[REF:${refName}]]`, refs[refName]));
 
 	function defineRef(refs: object, refName: PropertyKey, getter: () => unknown) {
 		Object.defineProperty(refs, refName, {
@@ -138,6 +138,18 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 	}
 
 	function getRefVal() {
-		return instance!.$refs[ctx!.$resolveRef(refName)];
+		const
+			resolvedRefName = ctx!.$resolveRef(refName),
+			refVal = instance!.$refs[resolvedRefName];
+
+		if (refVal != null) {
+			return refVal;
+		}
+
+		if (Object.isArray(vnode.ref)) {
+			return vnode.ref.map(({i: {refs}}) => refs[resolvedRefName]);
+		}
+
+		return vnode.ref?.i.refs[resolvedRefName];
 	}
 }

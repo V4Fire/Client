@@ -32,7 +32,7 @@ interface bSidebar extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScro
 class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	override readonly rootTag: string = 'aside';
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** {@link iVisible.prototype.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -40,7 +40,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 	 * If true, then will be blocked the document' scrolling when the component is opened
 	 */
 	@prop(Boolean)
-	readonly lockPageScroll: boolean = false;
+	readonly lockPageScrollProp: boolean = false;
 
 	/**
 	 * If false, the inner content of the component won't be rendered if the component isn't opened
@@ -57,7 +57,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 		]
 	};
 
-	/** @see [[iOpenToggle.onTouchClose]] */
+	/** {@link iOpenToggle.prototype.onTouchClose} */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
 			target = <CanUndef<Element>>e.target;
@@ -81,7 +81,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 		};
 	}
 
-	/** @see [[iOpenToggle.initCloseHelpers]] */
+	/** {@link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);
@@ -93,7 +93,7 @@ class bSidebar extends iData implements iVisible, iOpenToggle, iLockPageScroll {
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);
 
-		if (this.lockPageScroll) {
+		if (this.lockPageScrollProp) {
 			iLockPageScroll.initModEvents(this);
 		}
 	}

@@ -25,6 +25,7 @@ export function has(name: string): boolean {
 
 /**
  * Returns a cookie value by the specified name
+ * @param name
  */
 export function get(name: string): CanUndef<string> {
 	const matches = new RegExp(`(?:^|; )${RegExp.escape(name)}=([^;]*)`).exec(document.cookie);

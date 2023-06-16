@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const inverseFieldMap = Object.createDict({
+export const invertedFieldMap = Object.createDict({
 	props: ['fields', 'systemFields'],
 	fields: ['props', 'systemFields'],
 	systemFields: ['props', 'fields']

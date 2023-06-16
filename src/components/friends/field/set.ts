@@ -126,7 +126,6 @@ export function setField<T = unknown>(
 
 			if (isSystem || isField) {
 				// If the property has not yet been watched, do not force proxy creation
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				needSetToWatch = isReady && Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get);
 
 				if (isSystem) {

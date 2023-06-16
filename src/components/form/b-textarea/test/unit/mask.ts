@@ -210,7 +210,7 @@ test.describe('<b-textarea> mask API', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bTextarea>> {
+	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bTextarea>> {
 		return Component.createComponent(page, 'b-textarea', {
 			attrs: {
 				'data-id': 'target',

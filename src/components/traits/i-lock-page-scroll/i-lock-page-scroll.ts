@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -19,6 +17,10 @@ import { is } from 'core/browser';
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModEvent } from 'components/super/i-block/i-block';
 
+//#if runtime has prelude/test-env
+import('components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy');
+//#endif
+
 const
 	$$ = symbolGenerator();
 
@@ -26,7 +28,7 @@ const
 	group = 'lockHelpers';
 
 export default abstract class iLockPageScroll {
-	/** @see [[iLockPageScroll.lockPageScroll]] */
+	/** {@link iLockPageScroll.prototype.lockPageScroll} */
 	static lockPageScroll: AddSelf<iLockPageScroll['lockPageScroll'], iBlock> = (component, scrollableNode?) => {
 		const {
 			r,
@@ -145,7 +147,7 @@ export default abstract class iLockPageScroll {
 		return promise;
 	};
 
-	/** @see [[iLockPageScroll.unlockPageScroll]] */
+	/** {@link iLockPageScroll.prototype.unlockPageScroll} */
 	static unlockPageScroll: AddSelf<iLockPageScroll['unlockPageScroll'], iBlock> = (component) => {
 		const {
 			r,
@@ -214,9 +216,9 @@ export default abstract class iLockPageScroll {
 	 * Locks scrolling of the document,
 	 * i.e. prevents any scrolling of the document except within the specified node.
 	 *
-	 * @param [scrollableNode] - the node within which scrolling is allowed
+	 * @param [_scrollableNode] - the node within which scrolling is allowed
 	 */
-	lockPageScroll(scrollableNode?: Element): Promise<void> {
+	lockPageScroll(_scrollableNode?: Element): Promise<void> {
 		return Object.throw();
 	}
 

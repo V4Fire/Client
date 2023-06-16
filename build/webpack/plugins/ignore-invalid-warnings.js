@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,10 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 /**
  * Webpack plugin to ignore invalid warnings during building
  */
 module.exports = class IgnoreInvalidWarningsPlugin {
+	/**
+	 * @param {import('webpack').Compiler} compiler
+	 */
 	apply(compiler) {
 		compiler.hooks.done.tap('IgnoreInvalidWarningsPlugin', doneHook);
 

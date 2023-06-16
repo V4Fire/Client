@@ -15,3 +15,7 @@ export { default } from 'components/friends/state/class';
 
 export * from 'components/friends/state/api';
 export * from 'components/friends/state/interface';
+
+//#if runtime has prelude/test-env
+import('components/friends/state/test/b-friends-state-dummy');
+//#endif

@@ -61,7 +61,6 @@ Also, you can see the [[iVisible]] trait and the [[iData]] component.
   < b-input :name = 'bd' | :type = 'date'
   < b-button :type = 'submit'
 
-
 /// Association of the form and components by id
 < b-form :dataProvider = 'User' | :method = 'upd' | :id = 'upd-user-form'
 < b-input :name = 'fname' | :form = 'upd-user-form'

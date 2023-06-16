@@ -9,8 +9,8 @@
 /**
  * Additional options for a render task
  *
- * @typeparam El - a data element to render
- * @typeparam D - a data collection to render
+ * @typeParam El - a data element to render
+ * @typeParam D - a data collection to render
  */
 export interface TaskOptions<El = unknown, D = unknown> {
 	/**

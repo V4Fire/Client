@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable max-lines */
 
 import type { Page, JSHandle } from 'playwright';
 
@@ -523,9 +523,9 @@ test.describe('<b-input> validation API', () => {
 
 		/**
 		 * @param page
-		 * @param attrs
+		 * @param [attrs]
 		 */
-		async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bInput>> {
+		async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 			await page.evaluate((attrs) => {
 				const scheme = [
 					{
@@ -948,9 +948,9 @@ test.describe('<b-input> validation API', () => {
 
 		/**
 		 * @param page
-		 * @param attrs
+		 * @param [attrs]
 		 */
-		async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bInput>> {
+		async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 			await page.evaluate((attrs) => {
 				const scheme = [
 					{
@@ -983,9 +983,9 @@ test.describe('<b-input> validation API', () => {
 
 	/**
 	 * @param page
-	 * @param attrs
+	 * @param [attrs]
 	 */
-	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bInput>> {
+	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 		await page.evaluate((attrs) => {
 			const scheme = [
 				{

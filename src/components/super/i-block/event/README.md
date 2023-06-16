@@ -501,10 +501,11 @@ In addition, all emitted events are automatically logged using the `log` method.
 The default logging level is `info` (logging requires the `verbose` prop to be set to true),
 but you can set the logging level explicitly.
 
-Note that `selfEmitter.emit` always fires two events:
+Note that `selfEmitter.emit` always fires three events:
 
 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-2. `on-${event}`(...args)
+2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+3. `on-${event}`(...args)
 
 Note that to detach a listener, you can specify not only a link to the listener, but also the name of
 the group/label to which the listener is attached. By default, all listeners have a group name equal to
@@ -726,10 +727,11 @@ In addition, all emitted events are automatically logged using the `log` method.
 The default logging level is `info` (logging requires the `verbose` prop to be set to true),
 but you can set the logging level explicitly.
 
-Note that this method always fires two events:
+Note that this method always fires three events:
 
 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-2. `on-${event}`(...args)
+2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+3. `on-${event}`(...args)
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -758,10 +760,11 @@ The event name is converted to camelCase. In simple terms, `foo-bar` and `fooBar
 All events fired by this method can be listened to "outside" using the `v-on` directive.
 Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
 
-Note that this method always fires two events:
+Note that this method always fires three events:
 
 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-2. `on-${event}`(...args)
+2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+3. `on-${event}`(...args)
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';

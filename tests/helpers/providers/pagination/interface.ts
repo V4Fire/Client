@@ -76,7 +76,7 @@ export interface RequestState extends RequestQuery {
 	 */
 	i: number;
 
-	/** @see [[RequestQuery.failCount]] */
+	/** {@link RequestQuery.failCount} */
 	failCount: number;
 
 	/**

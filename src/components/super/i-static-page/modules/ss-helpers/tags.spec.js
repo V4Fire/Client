@@ -1,5 +1,3 @@
-/* eslint-disable max-lines-per-function,no-template-curly-in-string */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable max-lines-per-function,no-template-curly-in-string */
 
 require('@config/config');
 
@@ -46,9 +46,9 @@ describe('components/super/i-static-page/modules/ss-helpers/tags', () => {
 
 			it('with inlining', async () => {
 				const
-					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/.prettierrc.js', inline: true});
+					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/gulpfile.js', inline: true});
 
-				expect(decl).toBe("<script >include('node_modules/@v4fire/core/.prettierrc.js');</script>");
+				expect(decl).toBe("<script >include('node_modules/@v4fire/core/gulpfile.js');</script>");
 			});
 
 			it('with JS initializing', () => {
@@ -88,9 +88,9 @@ describe('components/super/i-static-page/modules/ss-helpers/tags', () => {
 
 			it('with JS initializing and inlining', async () => {
 				const
-					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/.prettierrc.js', js: true, inline: true});
+					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/gulpfile.js', js: true, inline: true});
 
-				expect(decl.trim()).toBe("include('node_modules/@v4fire/core/.prettierrc.js');");
+				expect(decl.trim()).toBe("include('node_modules/@v4fire/core/gulpfile.js');");
 			});
 
 			describe('providing additional attributes', () => {

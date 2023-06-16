@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	config = require('@config/config'),
@@ -52,8 +52,8 @@ const isTsFile = /\.ts$/,
 /**
  * Returns parameters for `webpack.module`
  *
- * @param {!Map} plugins - list of plugins
- * @returns {!Promise<Object>}
+ * @param {Map} plugins - list of plugins
+ * @returns {Promise<object>}
  */
 module.exports = async function module({plugins}) {
 	const

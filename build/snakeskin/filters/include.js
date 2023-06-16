@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js'),
@@ -35,7 +35,7 @@ Snakeskin.importFilters({
 	 *
 	 * @param {string} filePath
 	 * @param {string} sourceFilePath - the original source file path
-	 * @returns {(string|!Array<string>)}
+	 * @returns {(string|Array<string>)}
 	 *
 	 * @example
 	 * ```

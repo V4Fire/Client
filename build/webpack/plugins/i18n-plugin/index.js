@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
-	{resolve: pzlr} = require('@pzlr/build-core'),
+	{collectI18NKeysets} = include('build/helpers'),
 	{src, i18n, locale} = require('@config/config');
 
 const
@@ -21,6 +21,9 @@ const
  * WebPack plugin for including internationalization files from the file system in HTML applications
  */
 module.exports = class I18NGeneratorPlugin {
+	/**
+	 * @param {import('webpack').Compiler} compiler
+	 */
 	apply(compiler) {
 		compiler.hooks.done.tap('I18NGeneratorPlugin', doneHook);
 
@@ -29,34 +32,12 @@ module.exports = class I18NGeneratorPlugin {
 			if (compilation.compiler && compilation.compiler.name === 'html') {
 				const
 					configLocale = locale,
-					locales = i18n.supportedLocales().join('|');
-
-				const
-					i18nFiles = pzlr.sourceDirs.map((el) => path.join(el, `/**/i18n/(${locales}).js`)),
-					localizations = {};
-
-				glob.sync(i18nFiles).forEach((filePath) => {
-					const
-						p = /\/[^/]*?\/i18n\/(?<lang>.*?)\.js$/.exec(path.normalize(filePath))?.groups;
-
-					if (p == null) {
-						return;
-					}
-
-					const localization = require(filePath);
-					localizations[p.lang] ??= {};
-
-					Object.keys(localization).forEach((keysetName) => {
-						localizations[p.lang][keysetName] = {
-							...localizations[p.lang][keysetName],
-							...localization[keysetName]
-						};
-					});
-				});
+					locales = i18n.supportedLocales(),
+					localizations = collectI18NKeysets(locales);
 
 				const htmlFiles = () =>
 					glob.sync(path.normalize(src.clientOutput('*.html')), {
-						ignore: path.normalize(src.clientOutput(`*_(${locales}).html`))
+						ignore: path.normalize(src.clientOutput(`*_(${locales.join('|')}).html`))
 					})
 
 						.map((el) => String(el.name ?? el));
@@ -108,7 +89,7 @@ module.exports = class I18NGeneratorPlugin {
 		 * and returns the result HTML
 		 *
 		 * @param {string} path
-		 * @param {!Object} langPacs
+		 * @param {object} langPacs
 		 * @returns string
 		 */
 		function getHTMLWithLangPacs(path, langPacs) {

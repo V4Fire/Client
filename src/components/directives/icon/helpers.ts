@@ -15,7 +15,9 @@ import { getIcon } from 'components/directives/icon/icons';
 
 /**
  * Returns a link for the specified icon
+ *
  * @param iconId
+ * @throws an exception if the icon for the given id does not exist
  */
 export function getIconHref(iconId: Nullable<string>): Promise<CanUndef<string>> {
 	if (iconId == null) {
@@ -55,7 +57,7 @@ export function updateIconHref(this: iBlock, el: SVGElement, href?: string): voi
 	const group = {group: getElementId(el, idsCache)};
 	$a.clearAll(group);
 
-	Object.forEach(el.children, (el: Node) => el.removeChild(el));
+	Object.forEach(el.children, (child) => el.removeChild(child));
 
 	if (href == null || href === '') {
 		return;

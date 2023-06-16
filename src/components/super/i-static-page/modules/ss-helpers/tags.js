@@ -30,7 +30,6 @@ const
 	nonceAttr = {toString: () => nonce, escape: false, interpolate: false};
 
 const defAttrs = {
-	// eslint-disable-next-line no-nested-ternary
 	nonce: nonce ? [`window['${csp.nonceStore()}']`] : undefined
 };
 
@@ -45,7 +44,7 @@ exports.getScriptDecl = getScriptDecl;
  * If the `inline` parameter is set to `true`, the function will return a promise.
  *
  * @param {(InitializedLib|body)} lib - the library or raw code
- * @param {string=} [body] - the library body
+ * @param {string} [body] - the library body
  * @returns {(Promise<string>|string)}
  *
  * @example
@@ -176,7 +175,7 @@ exports.getStyleDecl = getStyleDecl;
  * If the `inline` parameter is set to `true`, the function will return a promise.
  *
  * @param {(InitializedStyleLib|body)} lib - the library or raw code
- * @param {string=} [body] - the library body
+ * @param {string} [body] - the library body
  * @returns {(Promise<string>|string)}
  *
  * @example
@@ -348,15 +347,15 @@ exports.normalizeAttrs = normalizeAttrs;
 /**
  * Takes an object with tag attributes and transforms it to a list with normalized attribute declarations
  *
- * @param {Object=} [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
+ * @param {object} [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
  *   1. a simple string, as `null` (when an attribute does not have a value);
  *   2. an array (to interpolate the value as JS);
  *   3. an object with the predefined `toString` method
  *     (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
  *     and `interpolate: true` to enable interpolation of a value).
  *
- * @param {boolean=} [dynamic] - if true, the attributes are applied dynamically via `setAttribute`
- * @returns {!Array<string>}
+ * @param {boolean} [dynamic] - if true, the attributes are applied dynamically via `setAttribute`
+ * @returns {Array<string>}
  *
  * @example
  * ```js

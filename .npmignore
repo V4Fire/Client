@@ -1,6 +1,3 @@
-
- 
-
 # IDE
 .idea
 
@@ -29,9 +26,6 @@ $RECYCLE.BIN
 .AppleDouble
 .LSOverride
 .vscode
-
-# Icon must ends with two \r.
-Icon
 
 # Thumbnails
 ._*

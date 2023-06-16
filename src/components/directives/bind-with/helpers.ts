@@ -114,7 +114,6 @@ export function bindListenerToElement(
 		}
 
 		function errorHandler(err: unknown): unknown {
-			// eslint-disable-next-line @typescript-eslint/unbound-method
 			if ('catch' in listener && Object.isFunction(listener.catch)) {
 				return listener.catch(el, err);
 			}

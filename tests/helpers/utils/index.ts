@@ -21,7 +21,7 @@ export default class Utils {
 	 * Waits for the specified function returns true (`Boolean(result) === true`).
 	 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context.
 	 *
-	 * @param ctx – context that will be available as the first argument of the provided function
+	 * @param ctx - context that will be available as the first argument of the provided function
 	 * @param fn
 	 * @param args
 	 *
@@ -147,6 +147,7 @@ export default class Utils {
 			logs = logsMap.get(page);
 
 		if (logs) {
+			// eslint-disable-next-line no-console
 			console.log(logs.join('\n'));
 			logsMap.delete(page);
 		}

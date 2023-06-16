@@ -1,4 +1,4 @@
-- namespace b-window
+- namespace ['b-window']
 
 /*!
  * V4Fire Client Core

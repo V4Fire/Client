@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -49,7 +49,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
@@ -69,8 +69,8 @@ jobs:
       - name: Build the project
         run: yarn webpack
 
-      - name: Run modules' tests
-        run: yarn test:jasmine
+      - name: Run modules tests
+        run: yarn test:ci:jest
 
   # Run linters
   linters:
@@ -78,7 +78,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3

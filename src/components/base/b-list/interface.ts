@@ -8,30 +8,20 @@
 
 import type { HintPosition } from 'components/global/g-hint';
 import type { ModsDict } from 'components/super/i-data/i-data';
+import type { Item as Super } from 'components/traits/i-active-items/i-active-items';
 
 export type Items = Item[];
-export type Active = unknown | Set<unknown>;
 
-export interface Item extends Dictionary {
+export interface Item extends Super {
 	/**
-	 * The item label text
+	 * Item label text
 	 */
 	label?: string;
-
-	/**
-	 * The item value
-	 */
-	value?: unknown;
 
 	/**
 	 * If this option is provided, the component will generate a link for this item
 	 */
 	href?: string;
-
-	/**
-	 * True if the item is active
-	 */
-	active?: boolean;
 
 	/**
 	 * True if the item is hidden

@@ -9,7 +9,7 @@
 import type Friend from 'components/friends/friend';
 
 import type iBlock from 'components/super/i-block/i-block';
-import type { ModsDict } from 'components/super/i-block/i-block';
+import type { ModsProp } from 'components/super/i-block/i-block';
 
 import { baseClassesCache, componentClassesCache, elementClassesCache } from 'components/friends/provide/const';
 import { fullComponentName, fullElementName } from 'components/friends/provide/names';
@@ -22,7 +22,7 @@ import type { Classes } from 'components/friends/provide/interface';
  * Use it with caution as it's a violation of component encapsulation.
  *
  * @param classes - a basemap of elements, where keys are elements in the inner component,
- *   and values are elements of the outer component
+ * and values are elements of the outer component
  *
  * @example
  * ```js
@@ -47,7 +47,7 @@ export function classes(this: Friend, classes: Classes): Readonly<Dictionary<str
  *
  * @param componentName - the base component name
  * @param classes - a basemap of elements, where keys are elements in the inner component,
- *   and values are elements of the outer component
+ * and values are elements of the outer component
  *
  * @example
  * ```js
@@ -140,7 +140,7 @@ export function classes(
  * this.provide.componentClasses({checked: true});
  * ```
  */
-export function componentClasses(this: Friend, mods?: ModsDict): readonly string[];
+export function componentClasses(this: Friend, mods?: ModsProp): readonly string[];
 
 /**
  * Returns a list of classes for the specified component
@@ -162,13 +162,13 @@ export function componentClasses(this: Friend, mods?: ModsDict): readonly string
 export function componentClasses(
 	this: Friend,
 	componentName: string,
-	mods?: ModsDict
+	mods?: ModsProp
 ): readonly string[];
 
 export function componentClasses(
 	this: Friend,
-	componentNameOrMods?: string | ModsDict,
-	mods?: ModsDict
+	componentNameOrMods?: string | ModsProp,
+	mods?: ModsProp
 ): readonly string[] {
 	let
 		{componentName} = this;
@@ -215,7 +215,7 @@ export function componentClasses(
  * Returns a list of classes for the specified element of the current component
  *
  * @param els - a map of the elements for which you want to get classes, where the keys are the names of the elements,
- *   and the value is a dictionary of applied modifiers
+ * and the value is a dictionary of applied modifiers
  *
  * @example
  * ```js
@@ -225,14 +225,14 @@ export function componentClasses(
  * this.provide.elementClasses({button: {focused: true}});
  * ```
  */
-export function elementClasses(this: Friend, els: Dictionary<ModsDict>): readonly string[];
+export function elementClasses(this: Friend, els: Dictionary<ModsProp>): readonly string[];
 
 /**
  * Returns a list of classes for the specified element of the passed component
  *
  * @param componentNameOrCtx - the component name or a link to the component context
  * @param els - a map of the elements for which you want to get classes, where the keys are the names of the elements,
- *   and the value is a dictionary of applied modifiers
+ * and the value is a dictionary of applied modifiers
  *
  * @example
  * ```js
@@ -252,13 +252,13 @@ export function elementClasses(this: Friend, els: Dictionary<ModsDict>): readonl
 export function elementClasses(
 	this: Friend,
 	componentNameOrCtx: string | iBlock,
-	els: Dictionary<ModsDict>
+	els: Dictionary<ModsProp>
 ): readonly string[];
 
 export function elementClasses(
 	this: Friend,
-	nameCtxEls: string | iBlock | Dictionary<ModsDict>,
-	els?: Dictionary<ModsDict>
+	nameCtxEls: string | iBlock | Dictionary<ModsProp>,
+	els?: Dictionary<ModsProp>
 ): readonly string[] {
 	let
 		componentId,

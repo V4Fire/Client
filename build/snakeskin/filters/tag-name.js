@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	Snakeskin = require('snakeskin');
@@ -20,7 +20,7 @@ module.exports = [
 	 * Expands the `_` snippet as `<div v-tag=${rootTag}>`
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {object} attrs
 	 * @param {string} rootTag
 	 * @returns {string}
 	 *
@@ -101,7 +101,7 @@ module.exports = [
 	 * Expands the `a:void` snippet as `<a href="javascript:void(0)">`
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {object} attrs
 	 * @returns {string}
 	 *
 	 * @example
@@ -123,7 +123,7 @@ module.exports = [
 	 * Expands the `button:link` snippet as `<button class="a">`
 	 *
 	 * @param {string} tag
-	 * @param {!Object} attrs
+	 * @param {object} attrs
 	 * @returns {string}
 	 *
 	 * @example

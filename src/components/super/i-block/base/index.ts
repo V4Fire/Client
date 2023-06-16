@@ -15,6 +15,8 @@ import random from 'core/random/xor128';
 import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
+
+import type Async from 'core/async';
 import { wrapWithSuspending, AsyncOptions, BoundFn } from 'core/async';
 
 import config from 'config';
@@ -63,7 +65,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	/**
 	 * True if the component is already activated
-	 * @see [[iBlock.activatedProp]]
+	 * {@link iBlock.activatedProp}
 	 */
 	@system((o) => {
 		void o.lfc.execCbAtTheRightTime(() => {
@@ -193,7 +195,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	/**
 	 * A dictionary with additional attributes for the component root tag
-	 * @see [[iBlock.rootAttrsStore]]
+	 * {@link iBlock.rootAttrsStore}
 	 */
 	@field()
 	protected rootAttrsStore: Dictionary = {};
@@ -239,14 +241,14 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * @see [[iBlock.activatedProp]]
+	 * {@link iBlock.activatedProp}
 	 * @param [force]
 	 */
 	override activate(force?: boolean): void {
 		activate(Object.cast(this), force);
 	}
 
-	/** @see [[iBlock.activatedProp]] */
+	/** {@link iBlock.activatedProp} */
 	override deactivate(): void {
 		deactivate(Object.cast(this));
 	}
@@ -491,8 +493,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	/**
 	 * Executes the specified function on the next render tick
+	 * {@link Async.proxy}
 	 *
-	 * @see [[Async.proxy]]
 	 * @param fn
 	 * @param [opts] - additional options
 	 */
@@ -500,8 +502,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	/**
 	 * Returns a promise that will be resolved on the next render tick
+	 * {@link Async.promise}
 	 *
-	 * @see [[Async.promise]]
 	 * @param [opts] - additional options
 	 */
 	nextTick(opts?: AsyncOptions): Promise<void>;

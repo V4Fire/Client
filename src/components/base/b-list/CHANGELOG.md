@@ -9,12 +9,36 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Removed `immediateChange` event
+
 ## v3.??.?? (2022-??-??)
 
 #### :boom: Breaking Change
 
 * Removed deprecated code
 * Renamed `listElTag` to `listElementTag`
+
+## v3.43.0 (2023-03-23)
+
+#### :bug: Bug Fix
+
+* Added automatic `item.value` generation
+
+## v3.42.1 (2023-03-14)
+
+#### :nail_care: Polish
+
+* Changed `activeElement` getter return type
+
+## v3.41.0 (2023-03-14)
+
+#### :nail_care: Polish
+
+* Added `iActiveItems` implementation
 
 ## v3.0.0-rc.211 (2021-07-21)
 

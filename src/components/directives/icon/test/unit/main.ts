@@ -8,9 +8,9 @@
 
 import type { Page, Locator } from 'playwright';
 
-import test from 'tests/config/unit/test';
-
 import { BOM } from 'tests/helpers';
+
+import test from 'tests/config/unit/test';
 
 test.describe('<div v-icon>', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -37,7 +37,7 @@ test.describe('<div v-icon>', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderDirective(page: Page, attrs: Dictionary = {}): Promise<Locator> {
+	async function renderDirective(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<Locator> {
 		await page.evaluate((attrs) => {
 			globalThis.renderComponents('div', [
 				{

@@ -126,7 +126,7 @@ export function component(opts?: ComponentOptions): Function {
 				rootComponents[componentName] = loadTemplate(getComponent(meta));
 
 			} else {
-				const componentDeclArgs = [componentName, loadTemplate(getComponent(meta))] as const;
+				const componentDeclArgs = <const>[componentName, loadTemplate(getComponent(meta))];
 				ComponentEngine.component(...componentDeclArgs);
 
 				if (app.context != null && app.context.component(componentName) == null) {

@@ -161,7 +161,6 @@ export function iterate(
 
 					if (Object.isPromise(needRender)) {
 						await $a.promise(needRender, {group}).then(
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 							(res) => resolveTask(iterVal, res === undefined || Object.isTruly(res))
 						);
 

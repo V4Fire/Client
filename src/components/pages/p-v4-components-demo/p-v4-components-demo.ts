@@ -11,10 +11,11 @@
  * @packageDocumentation
  */
 
-import iStaticPage, { component, system, field } from 'components/super/i-static-page/i-static-page';
+import iStaticPage, { component, prop, field, system } from 'components/super/i-static-page/i-static-page';
 
 export * from 'components/super/i-static-page/i-static-page';
 
+// eslint-disable-next-line no-console
 console.time('Initializing');
 
 /**
@@ -23,6 +24,13 @@ console.time('Initializing');
  */
 @component({root: true})
 export default class pV4ComponentsDemo extends iStaticPage {
+	/** {@link iStaticPage.selfDispatching} */
+	@prop(Boolean)
+	readonly selfDispatchingProp: boolean = false;
+
+	@system((o) => o.sync.link())
+	override readonly selfDispatching!: boolean;
+
 	/**
 	 * Parameter to test
 	 */
@@ -36,6 +44,7 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	someField: unknown = 'foo';
 
 	protected beforeCreate(): void {
+		// eslint-disable-next-line no-console
 		console.time('Render');
 	}
 }

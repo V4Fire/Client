@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	config = require('@v4fire/core/config/default');
@@ -30,7 +30,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @cli engine
 	 * @env ENGINE
 	 *
-	 * @param {string=} [def] - default value
+	 * @param {string} [def] - default value
 	 * @returns {string}
 	 */
 	engine(def = 'vue3') {
@@ -41,7 +41,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
-	/** @inheritDoc */
 	build: {
 		/**
 		 * Project build mode
@@ -49,7 +48,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli build-mode
 		 * @env BUILD_MODE
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		mode(def = IS_PROD ? 'production' : 'development') {
@@ -119,7 +118,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli component-lock-prefix
 		 * @env COMPONENT_LOCK_PREFIX
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		componentLockPrefix(def = this.config.webpack.fatHTML() ? 'fat-html' : '') {
@@ -156,7 +155,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli demo-page
 		 * @env DEMO_PAGE
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		demoPage(def = 'p-v4-components-demo') {
@@ -186,7 +185,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli mode
 		 * @env MODE
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		mode(def = IS_PROD ? 'production' : 'development') {
@@ -202,7 +201,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli cache-type
 		 * @env CACHE_TYPE
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		cacheType(def = 'memory') {
@@ -218,7 +217,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli target
 		 * @env TARGET
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {?string}
 		 */
 		target(
@@ -238,7 +237,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli devtool
 		 * @env DEVTOOL
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {?string}
 		 */
 		devtool(def) {
@@ -254,8 +253,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli stats
 		 * @env STATS
 		 *
-		 * @param {boolean=} [def] - default value
-		 * @returns {(boolean|string|Object)}
+		 * @param {boolean} [def] - default value
+		 * @returns {(boolean|string|object)}
 		 */
 		stats(def = true) {
 			return o('stats', {
@@ -292,7 +291,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli hydration
 		 * @env HYDRATION
 		 *
-		 * @param {boolean=} [def] - default value
+		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
 		hydration(def = this.ssr) {
@@ -312,7 +311,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli fat-html
 		 * @env FAT_HTML
 		 *
-		 * @param {number=} [def] - default value
+		 * @param {number} [def] - default value
 		 * @returns {number}
 		 */
 		fatHTML(def = 0) {
@@ -330,7 +329,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli inline-initial
 		 * @env INLINE_INITIAL
 		 *
-		 * @param {boolean=} [def] - default value
+		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
 		inlineInitial(def = false) {
@@ -361,7 +360,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			/**
 			 * Returns parameters for `optimization.splitChunks`
-			 * @returns {!Object}
+			 * @returns {object}
 			 */
 			splitChunks() {
 				return {};
@@ -373,7 +372,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 * @cli optimize-data-uri-limit
 			 * @env OPTIMIZE_DATA_URI_LIMIT
 			 *
-			 * @param {number=} [def] - default value
+			 * @param {number} [def] - default value
 			 * @returns {(number|undefined)}
 			 */
 			dataURILimit(def = 2 * 1024) {
@@ -396,7 +395,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `webpack.aliases` value
 		 *
 		 * @see https://webpack.js.org/configuration/resolve/#resolvealias
-		 * @returns {!Object}
+		 * @returns {object}
 		 */
 		aliases() {
 			return {};
@@ -404,7 +403,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Returns the `webpack.externals` value
-		 * @returns {!Object}
+		 * @returns {object}
 		 */
 		externals() {
 			return {
@@ -423,7 +422,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli dynamic-public-path
 		 * @env DYNAMIC_PUBLIC_PATH
 		 *
-		 * @param {(boolean|string)=} [def] - default value
+		 * @param {(boolean|string)} [def] - default value
 		 * @returns {(?string|boolean)}
 		 */
 		dynamicPublicPath(def) {
@@ -445,9 +444,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @cli provide-public-path-with-query
 		 * @env PROVIDE_PUBLIC_PATH_WITH_QUERY
-		 * @default `true`
 		 *
-		 * @param {boolean=} [def] - default value
+		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
 		providePublicPathWithQuery(def = true) {
@@ -465,7 +463,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli public-path
 		 * @env PUBLIC_PATH
 		 *
-		 * @param args
+		 * @param {...Array<string>} args
 		 * @returns {string}
 		 *
 		 * @example
@@ -519,7 +517,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `output.filename` value.
 		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param vars
+		 * @param {object} vars
 		 * @returns {string}
 		 *
 		 * @example
@@ -549,7 +547,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `DllPlugin.output.filename` value.
 		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param vars
+		 * @param {object} vars
 		 * @returns {string}
 		 *
 		 * @example
@@ -566,7 +564,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `FileLoader.output.filename` value.
 		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param params
+		 * @param {object} params
 		 * @returns {string}
 		 *
 		 * @example
@@ -638,8 +636,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @env PROGRESS
 		 *
 		 * @see https://github.com/npkgz/cli-progress
-		 * @param [def] - default value
-		 * @returns {Object}
+		 * @param {boolean} [def] - default value
+		 * @returns {void|object}
 		 */
 		progress(def = true) {
 			const enabled = o('progress', {
@@ -708,7 +706,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * 2. client - options for compiling the app as a client app.
 	 *
 	 * @override
-	 * @returns {{server: !Object, client: !Object}}
+	 * @returns {{server: object, client: object}}
 	 */
 	typescript() {
 		const configFile = fs.existsSync(path.join(this.src.cwd(), 'client.tsconfig.json')) ?
@@ -745,7 +743,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `stylus-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	stylus() {
 		return {
@@ -759,7 +757,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `css-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	css() {
 		return {};
@@ -767,7 +765,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `CssMinimizerPlugin`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	cssMinimizer() {
 		return {};
@@ -775,7 +773,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `MiniCssExtractPlugin`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	miniCssExtractPlugin() {
 		return {};
@@ -785,7 +783,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * Returns parameters for `Statoscope`
 	 *
 	 * @see https://github.com/statoscope/statoscope/tree/master/packages/webpack-plugin#usage
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	statoscope() {
 		return {
@@ -820,7 +818,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `postcss-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	postcss() {
 		return {};
@@ -828,7 +826,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `postcss/autoprefixer`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	autoprefixer() {
 		return {remove: false};
@@ -836,7 +834,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `style-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	style() {
 		return {
@@ -854,7 +852,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli t
 		 * @env THEME
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		default(def) {
@@ -872,8 +870,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli include-themes
 		 * @env INCLUDE_THEMES
 		 *
-		 * @param {string=} [def] - default value
-		 * @returns {!Array<string>|boolean}
+		 * @param {string} [def] - default value
+		 * @returns {Array<string>|boolean}
 		 */
 		include(def) {
 			return o('include-themes', {
@@ -902,7 +900,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * 1. server - for .ess files;
 	 * 2. client - for .ss files.
 	 *
-	 * @returns {{server: !Object, client: !Object}}
+	 * @returns {{server: object, client: object}}
 	 */
 	snakeskin() {
 		const
@@ -936,7 +934,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * Returns parameters for `html-loader`
 	 *
 	 * @see https://webpack.js.org/loaders/html-loader/#options
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	html() {
 		const
@@ -950,7 +948,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				conservativeCollapse: true,
 				keepClosingSlash: true,
 				minifyCSS: true,
-				minifyJS: true,
+				minifyJS: false,
 				// Keep comments for SSI
 				removeComments: false,
 				removeScriptTypeAttributes: true,
@@ -963,7 +961,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * Returns parameters for a favicon generator
 	 *
 	 * @see https://github.com/itgalaxy/favicons#usage
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	favicons() {
 		return {
@@ -984,7 +982,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `image-webpack-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	imageOpts() {
 		return {
@@ -1000,7 +998,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `typograf`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	typograf() {
 		return {
@@ -1021,8 +1019,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @cli i18n-strategy
 		 * @env I18N_STRATEGY
+		 * @param {string} [def]
 		 *
-		 * @default `inlineSingleHTML`
 		 * @returns {string}
 		 */
 		strategy(def = 'inlineSingleHTML') {
@@ -1040,8 +1038,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli supported-locales
 		 * @env SUPPORTED_LOCALES
 		 *
-		 * @param {string=} [def] - default value
-		 * @returns {!Array<Language>}
+		 * @param {string} [def] - default value
+		 * @returns {Array<import('@v4fire/core').Language>}
 		 *
 		 * @example
 		 * ```bash
@@ -1087,7 +1085,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * Returns a component dependency map.
 	 * This map can be used to provide dynamic component dependencies in `index.js` files.
 	 *
-	 * @returns {!Object}
+	 * @returns {object}
 	 *
 	 * @example
 	 * ```

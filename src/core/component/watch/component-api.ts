@@ -1,5 +1,3 @@
-/* eslint-disable max-lines-per-function */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -41,18 +39,12 @@ import { createWatchFn } from 'core/component/watch/create';
 import { attachDynamicWatcher } from 'core/component/watch/helpers';
 
 import type { ComponentInterface, RawWatchHandler } from 'core/component/interface';
-import type { ImplementComponentWatchAPIOptions } from 'core/component/watch/interface';
 
 /**
  * Implements watch API to the passed component instance
- *
  * @param component
- * @param [opts] - additional options
  */
-export function implementComponentWatchAPI(
-	component: ComponentInterface,
-	opts?: ImplementComponentWatchAPIOptions
-): void {
+export function implementComponentWatchAPI(component: ComponentInterface): void {
 	const {
 		unsafe,
 		unsafe: {$async: $a, meta: {computedFields, watchDependencies, watchPropDependencies, params}},
@@ -172,16 +164,6 @@ export function implementComponentWatchAPI(
 				watchDependencies.set(path, newDeps);
 			}
 		});
-	}
-
-	let
-		fieldWatchOpts;
-
-	if (!isFunctional && opts?.tieFields) {
-		fieldWatchOpts = {...watchOpts, tiedWith: component};
-
-	} else {
-		fieldWatchOpts = watchOpts;
 	}
 
 	// Watcher of fields
@@ -331,7 +313,7 @@ export function implementComponentWatchAPI(
 
 	function initFieldsWatcher() {
 		const immediateFieldWatchOpts = {
-			...fieldWatchOpts,
+			...watchOpts,
 			immediate: true
 		};
 
@@ -346,7 +328,7 @@ export function implementComponentWatchAPI(
 		{
 			const w = watch(
 				fieldsWatcher.proxy,
-				fieldWatchOpts,
+				watchOpts,
 				createAccessorMutationEmitter()
 			);
 
@@ -401,7 +383,7 @@ export function implementComponentWatchAPI(
 				const
 					{path} = info;
 
-				if (path.at(-1) === '__proto__') {
+				if (path[path.length - 1] === '__proto__') {
 					return;
 				}
 
@@ -409,7 +391,7 @@ export function implementComponentWatchAPI(
 					const
 						{path: parentPath} = info.parent.info;
 
-					if (parentPath.at(-1) === '__proto__') {
+					if (parentPath[parentPath.length - 1] === '__proto__') {
 						return;
 					}
 				}

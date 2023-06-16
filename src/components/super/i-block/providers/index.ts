@@ -22,6 +22,7 @@ import { component, hydrationStore } from 'core/component';
 import { statuses } from 'components/super/i-block/const';
 import { system, hook } from 'components/super/i-block/decorators';
 
+import type iBlock from 'components/super/i-block/i-block';
 import type { InitLoadCb, InitLoadOptions } from 'components/super/i-block/interface';
 
 import iBlockState from 'components/super/i-block/state';
@@ -31,7 +32,7 @@ const
 
 @component()
 export default abstract class iBlockProviders extends iBlockState {
-	/** @see [[iBlock.dontWaitRemoteProvidersProp]] */
+	/** {@link iBlock.dontWaitRemoteProvidersProp} */
 	@system((o) => o.sync.link((val) => {
 		if (val == null) {
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

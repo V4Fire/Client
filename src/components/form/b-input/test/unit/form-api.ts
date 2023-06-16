@@ -167,7 +167,7 @@ test.describe('<b-input> form API', () => {
 	 * @param page
 	 * @param attrs
 	 */
-	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bInput>> {
+	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 		await Component.createComponent(page, 'b-input', [
 			{
 				attrs: {

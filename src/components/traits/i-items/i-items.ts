@@ -18,7 +18,7 @@ export * from 'components/traits/i-items/interface';
 
 export default abstract class iItems {
 	/**
-	 * Returns a unique key (to optimize re-rendering) of the specified item
+	 * Returns the unique key (to optimize re-rendering) of the specified item
 	 *
 	 * @param component
 	 * @param item

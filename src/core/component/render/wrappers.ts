@@ -1,5 +1,3 @@
-/* eslint-disable prefer-spread, prefer-rest-params */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable prefer-spread */
 
 import { app, componentRenderFactories } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
@@ -66,7 +66,7 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		const
+		let
 			[name, attrs, slots, patchFlag, dynamicProps] = args;
 
 		let
@@ -86,7 +86,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			return createVNode(name, attrs, slots, patchFlag, dynamicProps);
 		}
 
-		normalizeComponentAttrs(attrs, dynamicProps, component);
+		attrs = normalizeComponentAttrs(attrs, dynamicProps, component);
 
 		const
 			{componentName, params} = component,
@@ -274,21 +274,8 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		vnode: VNode,
 		dirs: DirectiveArguments
 	) {
-		if (this == null) {
-			Object.defineProperty(vnode, 'virtualComponent', {
-				configurable: true,
-				enumerable: true,
-				get: () => vnode.el?.component
-			});
-
-		} else if (!('virtualContext' in vnode)) {
-			Object.defineProperty(vnode, 'virtualContext', {
-				configurable: true,
-				enumerable: true,
-				writable: true,
-				value: this
-			});
-		}
+		const that = this;
+		patchVnode(vnode);
 
 		const bindings = vnode.dirs ?? [];
 		vnode.dirs = bindings;
@@ -304,6 +291,9 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			const binding: DirectiveBinding = {
 				dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,
 				instance: Object.cast(instance),
+
+				virtualContext: vnode.virtualContext,
+				virtualComponent: vnode.virtualComponent,
 
 				value,
 				oldValue: undefined,
@@ -322,6 +312,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 
 					if (newVnode != null) {
 						vnode = newVnode;
+						patchVnode(vnode);
 					}
 
 					if (Object.keys(dir).length > 1 && cantIgnoreDir) {
@@ -338,5 +329,23 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		});
 
 		return vnode;
+
+		function patchVnode(vnode: VNode) {
+			if (that == null) {
+				Object.defineProperty(vnode, 'virtualComponent', {
+					configurable: true,
+					enumerable: true,
+					get: () => vnode.el?.component
+				});
+
+			} else if (!('virtualContext' in vnode)) {
+				Object.defineProperty(vnode, 'virtualContext', {
+					configurable: true,
+					enumerable: true,
+					writable: true,
+					value: that
+				});
+			}
+		}
 	});
 }

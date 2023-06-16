@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.49.0 (2023-05-31)
+
+#### :rocket: New Feature
+
+* Added ability to specify a custom validator function
+
 ## v3.??.?? (2022-??-??)
 
 #### :boom: Breaking Change

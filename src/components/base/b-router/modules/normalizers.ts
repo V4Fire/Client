@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { resolvePathParameters } from 'core/router';
+
 import type bRouter from 'components/base/b-router/b-router';
 import type { AppliedRoute } from 'components/base/b-router/interface';
 
@@ -19,8 +21,11 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 	const {
 		meta,
 		query,
-		params
+		params,
+		pathParams
 	} = route;
+
+	Object.assign(params, resolvePathParameters(pathParams, params));
 
 	const defs: Array<[CanUndef<Dictionary>, Dictionary]> = [
 		[meta.query, query],
@@ -45,14 +50,29 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 		});
 	});
 
-	if (meta.paramsFromQuery !== false && Object.isArray(route.pathParams)) {
-		route.pathParams.forEach((param) => {
-			const
+	if (meta.paramsFromQuery !== false && Object.isArray(pathParams)) {
+		pathParams.forEach((param) => {
+			let
 				{name} = param;
 
-			if (params[name] === undefined) {
-				const
+			const noAliasesInParams = param.aliases.every(
+				(alias) => !Object.hasOwnProperty(params, alias)
+			);
+
+			if (params[name] === undefined && noAliasesInParams) {
+				let
 					queryVal = query[name];
+
+				if (queryVal === undefined) {
+					const alias = param.aliases.find(
+						(alias) => Object.hasOwnProperty(query, alias)
+					);
+
+					if (alias != null) {
+						name = alias;
+						queryVal = query[alias];
+					}
+				}
 
 				if (queryVal !== undefined && new RegExp(param.pattern).test(String(queryVal))) {
 					params[name] = queryVal;

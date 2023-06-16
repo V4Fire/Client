@@ -19,7 +19,7 @@ import Component from 'tests/helpers/component';
  * @param page
  * @param attrs
  */
-export async function renderFormAndEnvironment(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bForm>> {
+export async function renderFormAndEnvironment(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bForm>> {
 	await Component.removeCreatedComponents(page);
 
 	const
