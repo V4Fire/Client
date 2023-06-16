@@ -8,7 +8,7 @@
 
 import type { ComponentItem, ComponentState, MountedChild, MountedItem } from 'components/base/b-scrolly/interface';
 import type { ScrollyComponentObject } from 'components/base/b-scrolly/test/api/component-object';
-import type { SpyObject } from 'tests/helpers/component-object/interface';
+import type { SpyObject } from 'tests/helpers/mock/interface';
 import type { RequestInterceptor } from 'tests/helpers/providers/interceptor';
 
 /**
@@ -119,6 +119,10 @@ export interface ScrollyTestHelpers {
 	 * The state API object for convenient manipulation of the component's state fork.
 	 */
 	state: StateApi;
+}
+
+export interface IndexedObj {
+	i: number;
 }
 
 export type DataItemCtor<COMPILED = any> = (i: number) => COMPILED;

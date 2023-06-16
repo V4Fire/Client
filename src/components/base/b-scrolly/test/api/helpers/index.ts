@@ -14,7 +14,7 @@ import { paginationHandler } from 'tests/helpers/providers/pagination';
 import { ScrollyComponentObject } from 'components/base/b-scrolly/test/api/component-object';
 import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
 import { componentEvents, componentObserverLocalEvents } from 'components/base/b-scrolly/const';
-import type { DataConveyor, DataItemCtor, MountedItemCtor, StateApi, ScrollyTestHelpers, MountedSeparatorCtor } from 'components/base/b-scrolly/test/api/helpers/interface';
+import type { DataConveyor, DataItemCtor, MountedItemCtor, StateApi, ScrollyTestHelpers, MountedSeparatorCtor, IndexedObj } from 'components/base/b-scrolly/test/api/helpers/interface';
 
 export * from 'components/base/b-scrolly/test/api/component-object';
 
@@ -53,10 +53,10 @@ export async function createTestHelpers(page: Page): Promise<ScrollyTestHelpers>
  * @param separatorCtor The constructor function for mounted separators.
  * @param mountedCtor The constructor function for mounted items.
  */
-export function createDataConveyor(
-	itemsCtor: DataItemCtor,
-	separatorCtor: MountedSeparatorCtor,
-	mountedCtor: MountedItemCtor
+export function createDataConveyor<DATA>(
+	itemsCtor: DataItemCtor<DATA>,
+	separatorCtor: MountedSeparatorCtor<DATA>,
+	mountedCtor: MountedItemCtor<DATA>
 ): DataConveyor {
 	let
 		data = <unknown[]>[],
@@ -243,14 +243,14 @@ export function createFromData<DATA, ITEM>(
 
 /**
  * Creates a simple object that matches the {@link MountedItem} interface.
- * @param i The index of the mounted item.
+ * @param data The object with index of the mounted item.
  */
-export function createMountedItem(i: number): MountedItem {
+export function createMountedItem(data: IndexedObj): MountedItem {
 	return {
-		itemIndex: i,
-		childIndex: i,
+		itemIndex: data.i,
+		childIndex: data.i,
 		props: {
-			'data-index': i
+			'data-index': data.i
 		},
 		key: Object.cast(undefined),
 		item: 'section',
@@ -261,13 +261,13 @@ export function createMountedItem(i: number): MountedItem {
 
 /**
  * Creates a simple object that matches the {@link MountedChild}` interface.
- * @param i The index of the mounted child.
+ * @param data The object with index of the mounted child.
  */
-export function createMountedSeparator(i: number): MountedChild {
+export function createMountedSeparator(data: IndexedObj): MountedChild {
 	return {
-		childIndex: i,
+		childIndex: data.i,
 		props: {
-			'data-index': i
+			'data-index': data.i
 		},
 		key: Object.cast(undefined),
 		item: 'section',
@@ -296,7 +296,7 @@ export function createChunk<DATA extends unknown = unknown>(
  * Creates a simple indexed object.
  * @param i The index of the object.
  */
-export function createIndexedObj(i: number): {i: number} {
+export function createIndexedObj(i: number): IndexedObj {
 	return {i};
 }
 
