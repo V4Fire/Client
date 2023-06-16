@@ -1,6 +1,6 @@
 # tests/helpers/dom
 
-This module provides API to work with touch gestures.
+This module provides API for working with touch gestures.
 
 ## Usage
 

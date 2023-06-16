@@ -18,7 +18,7 @@ const
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class Utils {
 	/**
-	 * Waits for the specified function returns true (`Boolean(result) === true`).
+	 * Waits for the specified function to return `true` (`Boolean(result) === true`).
 	 * Similar to the `Playwright.Page.waitForFunction`, but it executes with the provided context.
 	 *
 	 * @param ctx - context that will be available as the first argument of the provided function
@@ -28,7 +28,7 @@ export default class Utils {
 	 * @example
 	 * ```typescript
 	 * // `ctx` refers to `imgNode`
-	 * h.utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
+	 * Utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
 	 * ```
 	 */
 	static waitForFunction<ARGS extends any[] = any[]>(

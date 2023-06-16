@@ -1,3 +1,11 @@
 # tests/helpers/providers/pagination
 
-This module provides API to work with request mocking.
+This module provides API for working with request mocking.
+
+## API
+
+### interceptPaginationRequest
+
+```typescript
+await interceptPaginationRequest(page);
+```
