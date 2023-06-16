@@ -70,8 +70,17 @@ export default abstract class bTreeProps extends iData {
 	readonly itemProps?: iItems['itemProps'];
 
 	/**
+	 * If true, then the component will be lazily rendered using `asyncRender`.
+	 * This mode allows you to optimize the rendering of large trees,
+	 * but there may be "flickering" when the component is completely re-rendered.
+	 */
+	@prop(Boolean)
+	readonly lazyRender: boolean = false;
+
+	/**
 	 * A common filter to render items via `asyncRender`.
 	 * It is used to optimize the process of rendering items.
+	 * This option only works in `lazyRender` mode.
 	 *
 	 * {@link AsyncRender.iterate}
 	 * {@link TaskFilter}
@@ -93,6 +102,7 @@ export default abstract class bTreeProps extends iData {
 	/**
 	 * A filter to render nested items via `asyncRender`.
 	 * It is used to optimize the process of rendering child items.
+	 * This option only works in `lazyRender` mode.
 	 *
 	 * {@link AsyncRender.iterate}
 	 * {@link TaskFilter}
@@ -101,7 +111,8 @@ export default abstract class bTreeProps extends iData {
 	readonly nestedRenderFilter?: RenderFilter;
 
 	/**
-	 * Number of chunks to render via `asyncRender`
+	 * Number of chunks to render via `asyncRender`.
+	 * This option only works in `lazyRender` mode.
 	 */
 	@prop(Number)
 	readonly renderChunks: number = 5;

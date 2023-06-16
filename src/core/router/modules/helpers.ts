@@ -86,8 +86,8 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		initialRefQuery = ref.includes('?') ? fromQueryString(ref) : {};
 
 	let
-		resolvedById = false,
 		resolvedRoute: Nullable<RouteBlueprint> = null,
+		initialRoute: Nullable<RouteBlueprint> = null,
 		alias: Nullable<RouteBlueprint> = null;
 
 	let
@@ -99,10 +99,6 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	while (true) {
 		// A link to a route passed as an identifier
 		if (resolvedRef in routes) {
-			if (alias == null) {
-				resolvedById = true;
-			}
-
 			resolvedRoute = routes[resolvedRef];
 
 			if (resolvedRoute == null) {
@@ -145,7 +141,6 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 
 				// In this case, we have a full match of the route reference by name or pattern
 				if (getRouteName(route) === resolvedRef || route.pattern === resolvedRef) {
-					resolvedById = true;
 					resolvedRoute = route;
 					break;
 				}
@@ -201,6 +196,8 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			resolvedRef = meta.redirect!;
 			ref = resolvedRef;
 		}
+
+		initialRoute = resolvedRoute;
 
 		resolvedRoute = undefined;
 	}
@@ -258,24 +255,33 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	});
 
 	// Fill route parameters from URL
-	if (!resolvedById && resolvedRoute.rgxp != null) {
+	const tryFillParams = (route: Nullable<RouteBlueprint<Dictionary>>): void => {
+		if (route == null) {
+			return;
+		}
+
 		const
-			params = resolvedRoute.rgxp.exec(initialRef);
+			params = route.rgxp?.exec(initialRef);
 
-		if (params) {
+		if (params == null) {
+			return;
+		}
+
+		const
+			pattern = Object.isFunction(route.pattern) ? route.pattern(routeAPI) : route.pattern;
+
+		for (let o = parse(pattern ?? ''), i = 0, j = 0; i < o.length; i++) {
 			const
-				pattern = Object.isFunction(resolvedRoute.pattern) ? resolvedRoute.pattern(routeAPI) : resolvedRoute.pattern;
+				el = o[i];
 
-			for (let o = parse(pattern ?? ''), i = 0, j = 0; i < o.length; i++) {
-				const
-					el = o[i];
-
-				if (Object.isSimpleObject(el)) {
-					routeAPI.params[el.name] = params[++j];
-				}
+			if (Object.isSimpleObject(el)) {
+				routeAPI.params[el.name] = params[++j];
 			}
 		}
-	}
+	};
+
+	tryFillParams(initialRoute);
+	tryFillParams(resolvedRoute);
 
 	return routeAPI;
 }

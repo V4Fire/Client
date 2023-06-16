@@ -456,6 +456,26 @@ export default {
 You can create more complex cases with chained redirects. This feature allows you to handle changes in route structure,
 making it easier to manage your application's navigation.
 
+If two routes contain the same parameters they will be filled respectively:
+
+```js
+export default {
+  foo: {
+    path: '/foo/:param'
+  },
+  bar: {
+    path: '/bar/baz/:param',
+    redirect: 'foo'
+  }
+}
+```
+
+When you navigate to the `bar` route and provide the `param` parameter, it will be substituted in the `foo`'s path:
+
+```js
+this.router.push('/bar/baz/value'); // redirect to '/foo/value'
+```
+
 #### Creating an alias for a route
 
 If we have two or more routes with the same parameters but different names or paths, we can create one "master" route and a bunch of aliases.

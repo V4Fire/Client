@@ -76,6 +76,10 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 
 	activeStore!: iActiveItems['activeStore'];
 
+	/** {@link Foldable.unfoldedStore} */
+	@system()
+	unfoldedStore: Foldable['unfoldedStore'] = new Set();
+
 	/** {@link iActiveItems.activeChangeEvent} */
 	@system()
 	readonly activeChangeEvent: string = 'change';
@@ -112,7 +116,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Stores bTree normalized items.
+	 * Stores `bTree` normalized items.
 	 * This store is needed because the `items` property should only be accessed via get/set.
 	 */
 	@field<bTree>((o) => o.sync.link<Item[]>((val) => {
@@ -160,6 +164,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 			topProp: isRootLvl ? this : this.topProp,
 			multiple: this.multiple,
 			classes: this.classes,
+			lazyRender: this.lazyRender,
 			renderChunks: this.renderChunks,
 			activeProp: this.active,
 			nestedRenderFilter,
@@ -333,7 +338,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * True, if specified item has children
+	 * True, if the specified item has children
 	 * @param item
 	 */
 	protected hasChildren(item: this['Item']): boolean {
@@ -380,6 +385,10 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	 * @param item
 	 */
 	protected getFoldedPropValue(item: this['Item']): boolean {
+		if (this.unfoldedStore.has(item.value)) {
+			return false;
+		}
+
 		if (item.folded != null) {
 			return item.folded;
 		}
@@ -410,7 +419,7 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	 * @param oldItems
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
-	@watch({path: 'items', immediate: true})
+	@watch({path: 'items', flush: 'sync'})
 	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues(oldItems != null);
@@ -421,6 +430,10 @@ class bTree extends bTreeProps implements iActiveItems, Foldable {
 	/** {@link Values.initComponentValues} */
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
+		if (itemsChanged) {
+			this.field.set('unfoldedStore', new Set());
+		}
+
 		this.values.init(itemsChanged);
 	}
 

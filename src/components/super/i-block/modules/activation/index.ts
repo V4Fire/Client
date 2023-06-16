@@ -131,9 +131,9 @@ export function deactivate(component: iBlock): void {
 	}
 
 	if (unsafe.isActivated) {
-		onDeactivated(component);
 		runHook('deactivated', component).then(() => {
 			callMethodFromComponent(component, 'deactivated');
+			onDeactivated(component);
 		}).catch(stderr);
 	}
 

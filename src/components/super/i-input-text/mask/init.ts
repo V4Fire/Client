@@ -54,5 +54,8 @@ export function init(this: Mask): void {
 	$a.on(input, 'blur', h('syncInputWithField'), group);
 
 	compile.call(this);
-	syncWithText.call(this, ctx.text);
+
+	if (ctx.text !== '' || ctx.isFocused) {
+		syncWithText.call(this, ctx.text);
+	}
 }

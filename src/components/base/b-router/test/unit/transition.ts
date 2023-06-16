@@ -163,10 +163,26 @@ function generateSpecs(engineName: EngineName) {
 		await assertRouteNameIs('aliasToAlias');
 	});
 
-	test('should redirect to the page using a redirect path', async () => {
-		await assertPathTransitionsTo('/second/redirect', 'Second page');
-		await assertActivePageIs('second');
-		await assertRouteNameIs('second');
+	test.describe('should redirect to the page using a redirect path', () => {
+		test('without parameters', async () => {
+			await assertPathTransitionsTo('/second/redirect', 'Second page');
+			await assertActivePageIs('second');
+			await assertRouteNameIs('second');
+		});
+
+		test('with parameters', async ({page}) => {
+			await test.expect(root.evaluate(async (ctx) => {
+				await ctx.router?.push('/tpl/redirect/1/2');
+				return ctx.route?.params;
+			})).resolves.toEqual({param1: '1', param2: '2'});
+
+			await assertActivePageIs('template');
+
+			// eslint-disable-next-line playwright/no-conditional-in-test
+			if (engineName === 'history') {
+				test.expect(new URL(await page.url()).pathname).toBe('/tpl/1/2');
+			}
+		});
 	});
 
 	test('should redirect to the page using an alias path with the redirect', async () => {

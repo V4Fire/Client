@@ -43,7 +43,7 @@ export function normalizeItems<T extends Item[]>(this: bTree, items: T): T {
 
 	return items;
 
-	function normalize(item: bTree['Item'], parentValue?: unknown) {
+	function normalize(item: bTree['Item'], parentValue?: unknown): boolean {
 		i++;
 
 		if (item.value === undefined) {
@@ -55,18 +55,18 @@ export function normalizeItems<T extends Item[]>(this: bTree, items: T): T {
 
 			if (Object.isArray(item.children)) {
 				if (that.isActive(item.value)) {
-					item.folded = false;
+					that.unfoldedStore.add(item.value);
 				}
 
 				for (const el of item.children) {
 					if (normalize(el, item.value)) {
-						item.folded = false;
+						that.unfoldedStore.add(item.value);
 						break;
 					}
 				}
 			}
 		}
 
-		return that.isActive(item.value) || item.folded === false;
+		return that.isActive(item.value) || that.unfoldedStore.has(item.value) || item.folded === false;
 	}
 }

@@ -9,7 +9,7 @@
 import Pool from 'core/pool';
 
 import AbstractEngine from 'core/dom/intersection-watcher/engines/abstract';
-import { isElementInView } from 'core/dom/intersection-watcher/engines/helpers';
+import { isElementInView, resolveScrollTarget } from 'core/dom/intersection-watcher/engines/helpers';
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 
@@ -42,7 +42,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 			unwatch = watcher.unwatch.bind(watcher);
 
 		const
-			root = Object.isFunction(watcher.root) ? watcher.root() : watcher.root,
+			root = resolveScrollTarget(Object.isFunction(watcher.root) ? watcher.root() : watcher.root),
 			resolvedRoot = root ?? document.documentElement;
 
 		const opts = {

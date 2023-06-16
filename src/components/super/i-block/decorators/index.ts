@@ -16,3 +16,7 @@ export { hook, computed } from 'core/component/decorators';
 export * from 'components/super/i-block/decorators/wrappers';
 export * from 'components/super/i-block/decorators/wait';
 export * from 'components/super/i-block/decorators/interface';
+
+//#if runtime has prelude/test-env
+import('components/super/i-block/decorators/test/b-super-i-block-decorators-dummy');
+//#endif

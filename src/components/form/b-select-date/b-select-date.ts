@@ -25,6 +25,7 @@ export * from 'components/super/i-input/i-input';
 export * from 'components/form/b-select-date/interface';
 
 export { Value, FormValue };
+
 @component({
 	functional: {
 		dataProvider: undefined
