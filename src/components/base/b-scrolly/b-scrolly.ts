@@ -21,7 +21,7 @@ import type {
 
 	ComponentState,
 	ComponentDb,
-	ComponentRenderStrategy as ComponentRenderStrategy,
+	ComponentRenderStrategy,
 	RequestParams,
 	RequestQueryFn,
 	ShouldPerform,
@@ -61,7 +61,11 @@ VDOM.addToPrototype(create);
 VDOM.addToPrototype(render);
 
 /**
- * Компонент реализующий загрузку и отрисовку больших массивов данных чанками.
+ * Component that implements loading and rendering of large data arrays in chunks.
+ *
+ * The `bScrolly` component extends the `iData` class and implements the `iItems` interface.
+ * It provides functionality for efficiently loading and displaying large amounts of data
+ * by dynamically rendering chunks of data as the user scrolls.
  */
 @component()
 export default class bScrolly extends iData implements iItems {
@@ -100,11 +104,11 @@ export default class bScrolly extends iData implements iItems {
 	/**
 	 * This factory function is used to pass information about the components that need to be rendered.
 	 * The function should return an array of arbitrary length consisting of objects that satisfy the
-	 * {@link ComponentItem} interface.
+	 * `ComponentItem` interface.
 	 *
 	 * By default, the rendering strategy is based on the `chunkSize` and `iItems` trait.
 	 * In other words, the default implementation takes a data slice of length `chunkSize`
-	 * and calls the `iItems` functions to generate a {@link ComponentItem} object.
+	 * and calls the `iItems` functions to generate a `ComponentItem` object.
 	 *
 	 * However, nothing prevents the client from implementing any strategy by overriding this function.
 	 *
@@ -405,7 +409,7 @@ export default class bScrolly extends iData implements iItems {
 
 	/**
 	 * Wrapper for `shouldStopRequestingData`.
-	 * {@link shouldStopRequestingDataWrapper}
+	 * {@link bScrolly.shouldStopRequestingDataWrapper}
 	 */
 	shouldStopRequestingDataWrapper(): boolean {
 		const state = this.getComponentState();
@@ -422,7 +426,7 @@ export default class bScrolly extends iData implements iItems {
 
 	/**
 	 * Wrapper for `shouldPerformDataRequest`.
-	 * {@link shouldPerformDataRequest}
+	 * {@link bScrolly.shouldPerformDataRequest}
 	 */
 	shouldPerformDataRequestWrapper(): boolean {
 		return this.shouldPerformDataRequest(this.getComponentState(), this);
@@ -445,6 +449,8 @@ export default class bScrolly extends iData implements iItems {
 	 *
 	 * @param isInitialLoading - `true` if this load was an initial component loading.
 	 * @param data
+	 *
+	 * @throws {@link ReferenceError} if there is not `data` field in the loaded data.
 	 */
 	protected onInitLoadSuccess(isInitialLoading: boolean, data: unknown): void {
 		if (!Object.isPlainObject(data) || !Array.isArray(data.data)) {

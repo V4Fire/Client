@@ -8,46 +8,29 @@
 
 import type { ComponentState } from 'components/base/b-scrolly/b-scrolly';
 
+/**
+ * Creates an initial state object for a component.
+ *
+ * @returns An object representing the initial state of a component.
+ */
 export function createInitialState(): ComponentState {
 	return {
-			loadPage: 0,
-
-			renderPage: 0,
-
-			itemsTillEnd: undefined,
-
-			childTillEnd: undefined,
-
-			maxViewedItem: undefined,
-
-			maxViewedChild: undefined,
-
-			data: [],
-
-			lastLoadedData: [],
-
-			lastLoadedRawData: undefined,
-
-			isLastEmpty: false,
-
-			isInitialLoading: true,
-
-			/**
-			 * Component items that was rendered
-			 */
-			items: [],
-
-			childList: [],
-
-			/**
-			 * `True` if the next rendering process will be initial
-			 */
-			isInitialRender: true,
-
-			isRequestsStopped: false,
-
-			isLoadingInProgress: false,
-
-			isLifecycleDone: false
+		loadPage: 0,
+		renderPage: 0,
+		itemsTillEnd: undefined,
+		childTillEnd: undefined,
+		maxViewedItem: undefined,
+		maxViewedChild: undefined,
+		data: [],
+		lastLoadedData: [],
+		lastLoadedRawData: undefined,
+		isLastEmpty: false,
+		isInitialLoading: true,
+		items: [],
+		childList: [],
+		isInitialRender: true,
+		isRequestsStopped: false,
+		isLoadingInProgress: false,
+		isLifecycleDone: false
 	};
 }

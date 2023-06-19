@@ -13,7 +13,7 @@ import type { ComponentState } from 'components/base/b-scrolly/interface/compone
  * Interface representing the response of the client to the `renderGuard` method for rendering requests.
  *
  * To grant permission for rendering, the response object should have the following structure:
- * 
+ *
  * ```typescript
  * const canPerform: RenderGuardResult = {
  *   result: true

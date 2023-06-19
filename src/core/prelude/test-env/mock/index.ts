@@ -6,18 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/**
- * @file Provides an API to Work with `jest-mock` package
- */
-
 import { ModuleMocker } from 'jest-mock';
 
 let
-	globalApi: ModuleMocker;
+	globalApi: CanUndef<ModuleMocker>;
 
 globalThis.jestMock = {
 	/**
 	 * {@link ModuleMocker.spyOn}
+	 *
 	 * @see https://jestjs.io/docs/mock-functions
 	 *
 	 * @param args
@@ -29,6 +26,7 @@ globalThis.jestMock = {
 
 	/**
 	 * {@link ModuleMocker.fn}
+	 *
 	 * @see https://jestjs.io/docs/mock-functions
 	 *
 	 * @param args

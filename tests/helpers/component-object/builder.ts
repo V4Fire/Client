@@ -126,11 +126,9 @@ export default class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			throw new Error('Missing component path');
 		}
 
-		const classModule = await Utils.import<{default: new () => COMPONENT}>(
-			this.page,
-			componentClassImportPath);
-
-		const classInstance = await classModule.evaluateHandle((ctx) => ctx.default);
+		const
+			classModule = await Utils.import<{default: new () => COMPONENT}>(this.page, componentClassImportPath),
+			classInstance = await classModule.evaluateHandle((ctx) => ctx.default);
 
 		return classInstance;
 	}
@@ -157,7 +155,7 @@ export default class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * After this operation, the `ComponentObject` will be marked as built and the `ComponentObject.component` property
 	 * will be accessible.
 	 *
-	 * @param selectorOrLocator - The selector or locator for the component node
+	 * @param selector - The selector or locator for the component node
 	 */
 	async pick(selector: string): Promise<this>;
 
@@ -172,9 +170,6 @@ export default class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 */
 	async pick(locator: Locator): Promise<this>;
 
-	/**
-	 * @inheritdoc
-	 */
 	async pick(selectorOrLocator: string | Locator): Promise<this> {
 		const locator = Object.isString(selectorOrLocator) ?
 			this.page.locator(selectorOrLocator) :

@@ -7,7 +7,20 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { ComponentDataLocalEvents, ComponentEvents, ComponentItemType, ComponentLifecycleEvents, ComponentObserverLocalEvents, ComponentRenderLocalEvents, ComponentRenderStrategy, ComponentState, ComponentStrategy, RenderGuardRejectionReason } from 'components/base/b-scrolly/interface';
+
+import type {
+
+	ComponentDataLocalEvents,
+	ComponentItemType,
+	ComponentLifecycleEvents,
+	ComponentObserverLocalEvents,
+	ComponentRenderLocalEvents,
+	ComponentRenderStrategy,
+	ComponentState,
+	ComponentStrategy,
+	RenderGuardRejectionReason
+
+} from 'components/base/b-scrolly/interface';
 
 /**
  * {@link ComponentRenderStrategy}

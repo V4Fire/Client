@@ -10,39 +10,47 @@ import delay from 'delay';
 import type { BrowserContext, Page, Request, Route } from 'playwright';
 import { ModuleMocker } from 'jest-mock';
 
+/**
+ * Type definition for the response handler function.
+ */
 type ResponseHandler = (route: Route, request: Request) => CanPromise<any>;
 
+/**
+ * Interface for response options.
+ */
 interface ResponseOptions {
 	delay?: number;
 }
 
 /**
- * API that provides simple way to intercept and response to any request
+ * API that provides a simple way to intercept and respond to any request.
  */
 export class RequestInterceptor {
 	/**
-	 * Route context
+	 * The route context.
 	 */
 	readonly routeCtx: Page | BrowserContext;
 
 	/**
-	 * Route patter
+	 * The route pattern.
 	 */
 	readonly routePattern: string | RegExp;
 
 	/**
-	 * Route listener
+	 * The route listener.
 	 */
 	readonly routeListener: ResponseHandler;
 
 	/**
-	 * Default response that will be used to response every request if there is not responses in `responseQueue`
+	 * The default response that will be used to respond to every request if there are no responses in `responseQueue`.
 	 */
 	readonly mock: ReturnType<ModuleMocker['fn']>;
 
 	/**
-	 * @param ctx
-	 * @param pattern
+	 * Creates a new instance of RequestInterceptor.
+	 *
+	 * @param ctx - The page or browser context.
+	 * @param pattern - The route pattern to match against requests.
 	 */
 	constructor(ctx: Page | BrowserContext, pattern: string | RegExp) {
 		this.routeCtx = ctx;
@@ -57,36 +65,42 @@ export class RequestInterceptor {
 	}
 
 	/**
-	 * Sets a response for one request
+	 * Sets a response for one request.
 	 *
 	 * @example
 	 * ```typescript
 	 * const interceptor = new RequestInterceptor(page, /api/);
 	 *
 	 * interceptor
-	 *   .response((r: Route) => r.fulfill({status: 200}));
-	 *   .response((r: Route) => r.fulfill({status: 500}));
+	 *   .responseOnce((r: Route) => r.fulfill({status: 200}))
+	 *   .responseOnce((r: Route) => r.fulfill({status: 500}));
 	 * ```
+	 *
+	 * @param handler - The response handler function.
+	 * @param opts - The response options.
+	 * @returns The current instance of RequestInterceptor.
 	 */
 	responseOnce(handler: ResponseHandler, opts?: ResponseOptions): this;
 
 	/**
-	 * Sets a response for one request
+	 * Sets a response for one request.
 	 *
 	 * @example
 	 * ```typescript
 	 * const interceptor = new RequestInterceptor(page, /api/);
 	 *
 	 * interceptor
-	 *   .responseOnce(200, {content: 1});
-	 *   .responseOnce(500)
+	 *   .responseOnce(200, {content: 1})
+	 *   .responseOnce(500);
 	 * ```
+	 *
+	 * @param status - The response status.
+	 * @param payload - The response payload.
+	 * @param opts - The response options.
+	 * @returns The current instance of RequestInterceptor.
 	 */
 	responseOnce(status: number, payload: object | string | number, opts?: ResponseOptions): this;
 
-	/**
-	 * @inheritdoc
-	 */
 	responseOnce(
 		handlerOrStatus: number | ResponseHandler,
 		payload?: object | string | number,
@@ -96,7 +110,6 @@ export class RequestInterceptor {
 
 		if (Object.isFunction(handlerOrStatus)) {
 			fn = handlerOrStatus;
-
 		} else {
 			const status = handlerOrStatus;
 			fn = this.cookResponseFn(status, payload, opts);
@@ -108,7 +121,7 @@ export class RequestInterceptor {
 
 	/**
 	 * Sets a response for every request.
-	 * If there is not responses settled via `responseOnce` (ie `responseQueue` is empty) that response will be used
+	 * If there are no responses set via `responseOnce` (i.e., `responseQueue` is empty), that response will be used.
 	 *
 	 * @example
 	 * ```typescript
@@ -116,13 +129,14 @@ export class RequestInterceptor {
 	 * interceptor.response((r: Route) => r.fulfill({status: 200}));
 	 * ```
 	 *
-	 * @param handler
+	 * @param handler - The response handler function.
+	 * @returns The current instance of RequestInterceptor.
 	 */
 	response(handler: ResponseHandler): this;
 
 	/**
 	 * Sets a response for every request.
-	 * If there is not responses settled via `responseOnce` (ie `responseQueue` is empty) that response will be used
+	 * If there are no responses set via `responseOnce` (i.e., `responseQueue` is empty), that response will be used.
 	 *
 	 * @example
 	 * ```typescript
@@ -130,15 +144,13 @@ export class RequestInterceptor {
 	 * interceptor.response(200, {});
 	 * ```
 	 *
-	 * @param status
-	 * @param payload
-	 * @param opts
+	 * @param status - The response status.
+	 * @param payload - The response payload.
+	 * @param opts - The response options.
+	 * @returns The current instance of RequestInterceptor.
 	 */
 	response(status: number, payload: object | string | number, opts?: ResponseOptions): this;
 
-	/**
-	 * @inheritdoc
-	 */
 	response(
 		handlerOrStatus: number | ResponseHandler,
 		payload?: object | string | number,
@@ -148,7 +160,6 @@ export class RequestInterceptor {
 
 		if (Object.isFunction(handlerOrStatus)) {
 			fn = handlerOrStatus;
-
 		} else {
 			const status = handlerOrStatus;
 			fn = this.cookResponseFn(status, payload, opts);
@@ -159,7 +170,9 @@ export class RequestInterceptor {
 	}
 
 	/**
-	 * Clears the responses that was created via `responseOnce`
+	 * Clears the responses that were created via `responseOnce`.
+	 *
+	 * @returns The current instance of RequestInterceptor.
 	 */
 	clearResponseQueue(): this {
 		this.mock.mockReset();
@@ -167,7 +180,9 @@ export class RequestInterceptor {
 	}
 
 	/**
-	 * Stops the request interception
+	 * Stops the request interception.
+	 *
+	 * @returns A promise that resolves with the current instance of RequestInterceptor.
 	 */
 	async stop(): Promise<this> {
 		await this.routeCtx.unroute(this.routePattern, this.routeListener);
@@ -175,7 +190,9 @@ export class RequestInterceptor {
 	}
 
 	/**
-	 * Starts the request interception
+	 * Starts the request interception.
+	 *
+	 * @returns A promise that resolves with the current instance of RequestInterceptor.
 	 */
 	async start(): Promise<this> {
 		await this.routeCtx.route(this.routePattern, this.routeListener);
@@ -183,23 +200,28 @@ export class RequestInterceptor {
 	}
 
 	/**
-	 * Cooks a response handler
+	 * Cooks a response handler.
 	 *
-	 * @param status
-	 * @param payload
-	 * @param opts
+	 * @param status - The response status.
+	 * @param payload - The response payload.
+	 * @param opts - The response options.
+	 * @returns The response handler function.
 	 */
 	protected cookResponseFn(
 		status: number,
 		payload?: string | object | number,
 		opts?: ResponseOptions
 	): ResponseHandler {
-			return async (route) => {
-				if (opts?.delay != null) {
-					await delay(opts.delay);
-				}
+		return async (route) => {
+			if (opts?.delay != null) {
+				await delay(opts.delay);
+			}
 
-				return route.fulfill({status, body: JSON.stringify(payload), contentType: 'application/json'});
-			};
+			return route.fulfill({
+				status,
+				body: JSON.stringify(payload),
+				contentType: 'application/json'
+			});
+		};
 	}
 }

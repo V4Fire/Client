@@ -20,9 +20,12 @@ export function evalFn<T extends Function>(func: T): T {
 }
 
 /**
- * TODO: DOCS
- * @param obj
- * @param id
+ * Overrides the `toJSON` method of the provided object to return the identifier of a mock function
+ * within the page context.
+ *
+ * @param obj - The object to override the `toJSON` method for.
+ * @param id - The identifier of the mock function.
+ * @returns The modified object with the overridden `toJSON` method.
  */
 export function setSerializerAsMockFn<T extends object>(obj: T, id: string): T {
 	Object.assign(obj, {
