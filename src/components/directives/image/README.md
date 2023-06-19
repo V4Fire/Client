@@ -9,7 +9,7 @@ Unfortunately, there are no native API to implement this feature. This directive
 API to set such stubs. Moreover, it works universally, both for `img` and `picture` tags. Which tag will be used to render
 the image depends on the passed properties. Passing `sources` will enable using the `picture` tag, otherwise `img`.
 
-## How to include a directive?
+## How to include this directive?
 
 Just add the directive import in your component code.
 

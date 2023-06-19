@@ -9,7 +9,7 @@ the element to which the directive is applied.
 This directive is convenient to use to describe the logic of point-by-point updating of template fragments without
 forcing re-rendering of the entire template. For example, you can use this directive with your functional components.
 
-## How to include a directive?
+## How to include this directive?
 
 Just add the directive import in your component code.
 

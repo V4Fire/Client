@@ -2,7 +2,7 @@
 
 This module provides a bunch of built-in directives for working with components and nodes.
 
-### How to include a directive?
+## How to include this directive?
 
 Just add the import of the required directive in your component code.
 

@@ -4,7 +4,7 @@ This module provides a directive to track elements entering or leaving the viewp
 The directive uses the `core/dom/intersection-watcher` module to watch elements.
 For more information, please refer its documentation.
 
-## How to include a directive?
+## How to include this directive?
 
 Just add the directive import in your component code.
 
