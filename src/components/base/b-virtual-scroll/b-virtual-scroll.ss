@@ -42,6 +42,13 @@
 			.
 				+= self.slot('empty')
 
+			< .&__done &
+				ref = done |
+				v-if = $slots['done'] |
+				:style = {display: 'none'}
+			.
+				+= self.slot('done')
+
 			< .&__render-next &
 				ref = renderNext |
 				v-if = $slots['renderNext'] |
