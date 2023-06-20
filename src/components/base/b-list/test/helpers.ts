@@ -41,7 +41,7 @@ export async function renderList(
 	paramsOrAttrs: RenderComponentsVnodeParams | RenderComponentsVnodeParams['attrs'] = {}
 ): Promise<JSHandle<bList>> {
 	let
-		attrs: RenderComponentsVnodeParams['attrs'] = {},
+		attrs: RenderComponentsVnodeParams['attrs'],
 		children: RenderComponentsVnodeParams['children'];
 
 	if (isRenderComponentsVnodeParams(paramsOrAttrs)) {

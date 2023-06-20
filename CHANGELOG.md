@@ -4228,7 +4228,7 @@ export default class bExample extends iBlock {
 #### :boom: Breaking Change
 
 * Removed legacy `inject` and `provide` support for components
-* Static libraries now will be saved by a key name, instead of a file basename
+* Static libraries now will be saved by a key name instead of a file basename
 * Removed `bInputNumber`
 * Removed `iDataList`
 

@@ -164,7 +164,7 @@ export default class SwipeControl extends Friend {
 
 			if (!respectDirection) {
 				let
-					min;
+					min: CanUndef<number> = undefined;
 
 				for (let i = 0; i < ctx.stepCount; i++) {
 					const

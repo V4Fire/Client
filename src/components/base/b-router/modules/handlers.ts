@@ -41,7 +41,8 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 		l = Object.assign(document.createElement('a'), {href});
 
 	if (a.getAttribute('target') === '_blank' || e.ctrlKey || e.metaKey) {
-		globalThis.open(l.href, '_blank');
+		// eslint-disable-next-line no-restricted-globals
+		window.open(l.href, '_blank');
 		return;
 	}
 

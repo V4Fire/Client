@@ -45,7 +45,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Fixed passing props to nested trees
-* Fixed an issue with the prop `itemProps` not being added to items attributes
+* Fixed an issue with the prop `itemProps` not being added to items' attributes
 * Fixed adding the `folded_false` class to items without children
 
 ## v3.0.0-rc.164 (2021-03-22)

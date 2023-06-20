@@ -77,7 +77,7 @@ export default abstract class SelectEventHandlers {
 			checkedItems = input.querySelectorAll(`${itemName}:checked`);
 
 		let
-			value;
+			value: CanUndef<Set<unknown> | unknown> = undefined;
 
 		for (let i = 0; i < checkedItems.length; i++) {
 			const
@@ -91,7 +91,7 @@ export default abstract class SelectEventHandlers {
 
 			if (unsafe.multiple) {
 				value ??= new Set();
-				value.add(item.value);
+				(<Set<unknown>>value).add(item.value);
 
 			} else {
 				value = item.value;

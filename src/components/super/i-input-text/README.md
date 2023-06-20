@@ -40,7 +40,7 @@ Mask.addToPrototype(MaskAPI);
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### Props
 

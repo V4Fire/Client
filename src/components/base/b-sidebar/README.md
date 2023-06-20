@@ -12,7 +12,7 @@ This module provides a component to create a sidebar with the feature of collaps
 
 * The component supports the `overWrapper` layout.
 
-* By default, the root tag of the component is `<aside>`.
+* By default, the component's root tag is set to `<aside>`.
 
 ## Modifiers
 
@@ -20,7 +20,7 @@ This module provides a component to create a sidebar with the feature of collaps
 |----------|-------------------------|-----------|---------|
 | `opened` | The component is opened | `boolean` | `false` |
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ## Events
 
@@ -29,7 +29,7 @@ Also, you can see the implemented traits or the parent component.
 | `open`    | The component has been opened | -                   | -       |
 | `close`   | The component has been closed | -                   | -       |
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ## Usage
 
@@ -60,7 +60,7 @@ The component supports the `default` slot to provide content.
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### Props
 

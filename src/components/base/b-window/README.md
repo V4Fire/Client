@@ -16,7 +16,7 @@ This module provides a component to create a modal window.
 
 * The component automatically places itself within the document body.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
 ## Modifiers
 
@@ -25,7 +25,7 @@ This module provides a component to create a modal window.
 | `opened`   | The component is opened                  | `boolean`               | `false`   |
 | `position` | A value of the `position` style property | `'fixed'  │ 'absolute'` | `'fixed'` |
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ## Events
 
@@ -34,7 +34,7 @@ Also, you can see the implemented traits or the parent component.
 | `open`    | The component has been opened | -                   | -       |
 | `close`   | The component has been closed | -                   | -       |
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ## Usage
 
@@ -173,7 +173,7 @@ b-window extends i-data
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### Props
 

@@ -9,7 +9,7 @@ This component can be very efficient if you need to render a good amount of elem
 
 * The component implements the [[iItems]] trait.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
 ## Events
 
