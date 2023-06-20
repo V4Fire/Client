@@ -78,8 +78,6 @@ export function createImgElement(
 
 	return {
 		toElement: () => {
-			console.log(111);
-
 			const
 				img = document.createElement('img');
 
