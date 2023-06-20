@@ -6,21 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import delay from 'delay';
 import type { BrowserContext, Page, Request, Route } from 'playwright';
+import delay from 'delay';
 import { ModuleMocker } from 'jest-mock';
 
-/**
- * Type definition for the response handler function.
- */
-type ResponseHandler = (route: Route, request: Request) => CanPromise<any>;
-
-/**
- * Interface for response options.
- */
-interface ResponseOptions {
-	delay?: number;
-}
+import type { ResponseHandler, ResponseOptions } from 'tests/helpers/providers/interceptor/interface';
 
 /**
  * API that provides a simple way to intercept and respond to any request.
@@ -42,7 +32,7 @@ export class RequestInterceptor {
 	readonly routeListener: ResponseHandler;
 
 	/**
-	 * The default response that will be used to respond to every request if there are no responses in `responseQueue`.
+	 * Экземпляр jest-mock который берет на себя логику имплементации ответов
 	 */
 	readonly mock: ReturnType<ModuleMocker['fn']>;
 
@@ -121,7 +111,7 @@ export class RequestInterceptor {
 
 	/**
 	 * Sets a response for every request.
-	 * If there are no responses set via `responseOnce` (i.e., `responseQueue` is empty), that response will be used.
+	 * If there are no responses set via {@link RequestInterceptor.responseOnce}, that response will be used.
 	 *
 	 * @example
 	 * ```typescript
@@ -136,7 +126,7 @@ export class RequestInterceptor {
 
 	/**
 	 * Sets a response for every request.
-	 * If there are no responses set via `responseOnce` (i.e., `responseQueue` is empty), that response will be used.
+	 * If there are no responses set via {@link RequestInterceptor.responseOnce}, that response will be used.
 	 *
 	 * @example
 	 * ```typescript
@@ -170,11 +160,12 @@ export class RequestInterceptor {
 	}
 
 	/**
-	 * Clears the responses that were created via `responseOnce`.
+	 * Clears the responses that were created via {@link RequestInterceptor.responseOnce} or
+	 * {@link RequestInterceptor.response}.
 	 *
 	 * @returns The current instance of RequestInterceptor.
 	 */
-	clearResponseQueue(): this {
+	clearResponseOnce(): this {
 		this.mock.mockReset();
 		return this;
 	}
