@@ -2810,7 +2810,7 @@ __metadata:
 
 "@v4fire/core@https://github.com/v4fire/core.git#kv-storage":
   version: 3.95.4
-  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=c7d646aca8bb545412d3c2a1949532cde89cfb42"
+  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=d908b8ae7e5129c202989fe83ea14b78fe25e16a"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -2942,7 +2942,7 @@ __metadata:
       optional: true
     upath:
       optional: true
-  checksum: e88f371e3c4c669a6973a3c1c2b6a3d6b71e1e9e5a63169eadd6465376240c2dc0a6b92ff70eec120e0e46283650dce7c264852956f0d6c80c8c09c98ca4e037
+  checksum: a8432beb4067bcca4e173df2c903a91d5524136c1f309c90b4d4e597de4412f7cd3e693d63999c7b84ac7853f0ad68df54fe5b85f8a2316e335993a4a53de05a
   languageName: node
   linkType: hard
 
