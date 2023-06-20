@@ -9,7 +9,7 @@
 /**
  * Renders the provided `VNodes` to the `HTMLElements` via `$forceUpdate` and single render engine instance.
  *
- * @param args
+ * @param _args
  */
 export function render(..._args: any[]): HTMLElement[] {
 	return [];

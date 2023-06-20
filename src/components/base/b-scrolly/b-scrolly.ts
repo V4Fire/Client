@@ -62,8 +62,8 @@ VDOM.addToPrototype(render);
 
 /**
  * Component that implements loading and rendering of large data arrays in chunks.
- *
  * The `bScrolly` component extends the `iData` class and implements the `iItems` interface.
+ *
  * It provides functionality for efficiently loading and displaying large amounts of data
  * by dynamically rendering chunks of data as the user scrolls.
  */
@@ -408,8 +408,7 @@ export default class bScrolly extends iData implements iItems {
 	}
 
 	/**
-	 * Wrapper for `shouldStopRequestingData`.
-	 * {@link bScrolly.shouldStopRequestingDataWrapper}
+	 * Wrapper for {@link bScrolly.shouldStopRequestingData}.
 	 */
 	shouldStopRequestingDataWrapper(): boolean {
 		const state = this.getComponentState();
@@ -425,8 +424,7 @@ export default class bScrolly extends iData implements iItems {
 	}
 
 	/**
-	 * Wrapper for `shouldPerformDataRequest`.
-	 * {@link bScrolly.shouldPerformDataRequest}
+	 * Wrapper for {@link bScrolly.shouldPerformDataRequest}.
 	 */
 	shouldPerformDataRequestWrapper(): boolean {
 		return this.shouldPerformDataRequest(this.getComponentState(), this);
@@ -457,10 +455,10 @@ export default class bScrolly extends iData implements iItems {
 			throw new ReferenceError('Missing "data" field in the loaded data');
 		}
 
-		this.componentInternalState.updateData(<object[]>data.data, isInitialLoading);
+		this.componentInternalState.updateData(data.data, isInitialLoading);
 		this.shouldStopRequestingDataWrapper();
 
-		this.componentEmitter.emit(componentDataLocalEvents.dataLoadSuccess, <object[]>data.data, isInitialLoading);
+		this.componentEmitter.emit(componentDataLocalEvents.dataLoadSuccess, data.data, isInitialLoading);
 
 		if (isInitialLoading && Object.size(data.data) === 0) {
 			if (this.shouldStopRequestingDataWrapper()) {

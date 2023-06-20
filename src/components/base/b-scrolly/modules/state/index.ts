@@ -9,16 +9,19 @@
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { componentDataLocalEvents, componentLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
 import type { MountedChild, ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
+import { isItem } from 'components/base/b-scrolly/modules/helpers';
 import { createInitialState } from 'components/base/b-scrolly/modules/state/helpers';
 import Friend from 'components/friends/friend';
 
+/**
+ * Friendly to the `bScrolly` class that represents the internal state of a component.
+ */
 export class ComponentInternalState extends Friend {
-
-	/**
-	 * {@link bScrolly}
-	 */
 	override readonly C!: bScrolly;
 
+	/**
+	 * Current state of the component.
+	 */
 	protected state: ComponentState = createInitialState();
 
 	/**
@@ -41,7 +44,9 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
-	 * Собирает состояние компонента в один объект.
+	 * Compiles and returns the current state of the component.
+	 *
+	 * @returns The current state of the component.
 	 */
 	compile(): Readonly<ComponentState> {
 		return {
@@ -50,134 +55,133 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
-	 * Обнуляет состояние модуля.
+	 * Resets the state of the component.
 	 */
 	reset(): void {
 		this.state = createInitialState();
 	}
 
 	/**
-	 * Обновляет указатель последней загруженной страницы.
+	 * Increments the load page pointer.
 	 */
-	incrementLoadPage(): this {
+	incrementLoadPage(): void {
 		this.state.loadPage++;
-		return this;
 	}
-
 	/**
-	 * Обновляет указать последней отрисованной страницы.
+	 * Increments the render page pointer.
 	 */
-	incrementRenderPage(): this {
+	incrementRenderPage(): void {
 		this.state.renderPage++;
-		return this;
-	}
-
-	storeComponentItems(items: MountedItem[]): this {
-		(<MountedItem[]>this.state.items).push(...items);
-		return this;
 	}
 
 	/**
-	 * Обновляет состояние загруженных данных.
+	 * Updates the loaded data state.
 	 *
-	 * @param data
-	 * @param isInitialLoading
+	 * @param data - The new data to update the state.
+	 * @param isInitialLoading - Indicates if it's the initial loading.
 	 */
-	updateData(data: object[], isInitialLoading: boolean): this {
+	updateData(data: object[], isInitialLoading: boolean): void {
 		this.state.data = this.state.data.concat(data);
 		this.state.isLastEmpty = data.length === 0;
 		this.state.isInitialLoading = isInitialLoading;
 		this.state.lastLoadedData = data;
-
-		return this;
-	}
-
-	updateMountedItems(mounted: MountedItem[]): this {
-		(<MountedItem[]>this.state.items).push(...mounted);
-		return this;
-	}
-
-	updateChildList(mounted: MountedChild[]): this {
-		(<MountedChild[]>this.state.childList).push(...mounted);
-		return this;
-	}
-
-	updateItemsTillEnd(): this {
-		if (this.state.maxViewedItem == null) {
-			throw new Error('Missing max viewed item index');
-		}
-
-		this.state.itemsTillEnd = this.state.items.length - 1 - this.state.maxViewedItem;
-		return this;
-	}
-
-	updateChildTillEnd(): this {
-		if (this.state.maxViewedChild == null) {
-			throw new Error('Missing max viewed child index');
-		}
-
-		this.state.childTillEnd = this.state.childList.length - 1 - this.state.maxViewedChild;
-		return this;
 	}
 
 	/**
-	 * Обновляет состояние последних сырых загруженных данных.
+	 * Updates the arrays with mounted child elements of the component.
 	 *
-	 * @param data
+	 * @param mounted - The mounted child elements.
 	 */
-	setRawLastLoaded(data: unknown): this {
+	updateMounted(mounted: MountedChild[]): void {
+		const
+			{state} = this,
+			childList = <MountedChild[]>state.childList,
+			itemsList = <MountedItem[]>state.items,
+			newItems = <MountedItem[]>mounted.filter((child) => child.type === 'item');
+
+		childList.push(...mounted);
+		itemsList.push(...newItems);
+	}
+
+	/**
+	 * Updates the state of the last raw loaded data.
+	 *
+	 * @param data - The last raw loaded data.
+	 */
+	setRawLastLoaded(data: unknown): void {
 		this.state.lastLoadedRawData = data;
-		return this;
 	}
 
 	/**
-	 * Sets an initial render state
+	 * Sets the flag indicating if it's the initial render cycle.
 	 *
-	 * @param state
+	 * @param value - The value of the flag.
 	 */
-	setIsInitialRender(state: boolean): this {
-		this.state.isInitialRender = state;
-		return this;
+	setIsInitialRender(value: boolean): void {
+		this.state.isInitialRender = value;
 	}
 
-	setIsRequestsStopped(state: boolean): this {
-		this.state.isRequestsStopped = state;
-		return this;
+	/**
+	 * Sets the flag indicating if requests are stopped and the component won't make any more requests
+	 * until the lifecycle is refreshed.
+	 *
+	 * @param value - The value of the flag.
+	 */
+	setIsRequestsStopped(value: boolean): void {
+		this.state.isRequestsStopped = value;
 	}
 
-	setIsLifecycleDone(state: boolean): this {
-		if (this.state.isLifecycleDone === state) {
-			return this;
+	/**
+	 * Sets the flag indicating if the component's lifecycle is done.
+	 *
+	 * @param value - The value of the flag.
+	 */
+	setIsLifecycleDone(value: boolean): void {
+		const
+			{state} = this;
+
+		if (state.isLifecycleDone === value) {
+			return;
 		}
 
 		const
 			{ctx} = this;
 
-		this.state.isLifecycleDone = state;
+		state.isLifecycleDone = value;
 
-		if (state) {
+		if (value) {
 			ctx.componentEmitter.emit(componentLocalEvents.lifecycleDone);
 		}
-
-		return this;
 	}
 
-	setIsLoadingInProgress(state: boolean): this {
-		this.state.isLoadingInProgress = state;
-		return this;
+	/**
+	 * Sets the flag indicating if the component is currently loading data.
+	 *
+	 * @param value - The value of the flag.
+	 */
+	setIsLoadingInProgress(value: boolean): void {
+		this.state.isLoadingInProgress = value;
 	}
 
-	setMaxViewedItemIndex(itemIndex: number): this {
-		this.state.maxViewedItem = itemIndex;
-		this.updateItemsTillEnd();
+	/**
+	 * Sets the maximum viewed index based on the passed component's index.
+	 *
+	 * @param component - The component to compare and update the maximum viewed index.
+	 */
+	setMaxViewedIndex(component: MountedChild): void {
+		const
+			{state} = this,
+			{childIndex} = component;
 
-		return this;
-	}
+		if (isItem(component) && (state.maxViewedItem == null || state.maxViewedItem < component.itemIndex)) {
+			state.maxViewedItem = component.itemIndex;
+			state.itemsTillEnd = state.items.length - 1 - state.maxViewedItem;
+		}
 
-	setMaxViewedChildIndex(childIndex: number): this {
-		this.state.maxViewedChild = childIndex;
-		this.updateChildTillEnd();
-
-		return this;
+		if (state.maxViewedChild == null || state.maxViewedChild < childIndex) {
+			state.maxViewedChild = component.childIndex;
+			state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
+		}
 	}
 }
+

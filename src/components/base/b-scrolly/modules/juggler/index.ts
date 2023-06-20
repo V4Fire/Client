@@ -14,7 +14,6 @@ import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import type { ComponentItem } from 'components/base/b-scrolly/b-scrolly';
 import { renderGuardRejectionReason, componentDataLocalEvents, componentItemType, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
 import type { MountedChild, MountedItem } from 'components/base/b-scrolly/interface';
-import { isItem } from 'components/base/b-scrolly/modules/helpers';
 
 export const
 	$$ = symbolGenerator(),
@@ -69,12 +68,10 @@ export class Juggler extends Friend {
 		const
 			items = ctx.componentFactory.produceComponentItems(),
 			nodes = ctx.componentFactory.produceNodes(items),
-			anyMounted = this.produceMounted(items, nodes),
-			mountedItems = <MountedItem[]>anyMounted.filter((mounted) => mounted.type === componentItemType.item);
+			mounted = this.produceMounted(items, nodes);
 
-		ctx.componentInternalState.updateMountedItems(mountedItems);
-		ctx.componentInternalState.updateChildList(anyMounted);
-		ctx.observer.observe(anyMounted);
+		ctx.componentInternalState.updateMounted(mounted);
+		ctx.observer.observe(mounted);
 
 		ctx.componentEmitter.emit(componentRenderLocalEvents.domInsertStart);
 
@@ -103,7 +100,7 @@ export class Juggler extends Friend {
 	 * @param items
 	 * @param nodes
 	 */
-	protected produceMounted(items: ComponentItem[], nodes: HTMLElement[]): Array<MountedChild | MountedChild> {
+	protected produceMounted(items: ComponentItem[], nodes: HTMLElement[]): Array<MountedChild | MountedItem> {
 		const
 			{ctx} = this,
 			{items: mountedItems, childList} = ctx.getComponentState();
@@ -179,26 +176,19 @@ export class Juggler extends Friend {
 
 	/**
 	 * Handler: component enters the viewport.
+	 * @param component
 	 */
 	protected onElementEnters(component: MountedChild): void {
 		const
-			{ctx} = this,
-			state = ctx.getComponentState(),
-			{childIndex} = component;
+			{ctx} = this;
 
-		if (isItem(component) && (state.maxViewedItem == null || state.maxViewedItem < component.itemIndex)) {
-			ctx.componentInternalState.setMaxViewedItemIndex(component.itemIndex);
-		}
-
-		if (state.maxViewedChild == null || state.maxViewedChild < childIndex) {
-			ctx.componentInternalState.setMaxViewedChildIndex(childIndex);
-		}
-
+		ctx.componentInternalState.setMaxViewedIndex(component);
 		this.loadDataOrPerformRender();
 	}
 
 	/**
 	 * Handler: component leaves the viewport.
+	 * @param _component
 	 */
 	protected onElementOut(_component: MountedChild): void {
 		// ...

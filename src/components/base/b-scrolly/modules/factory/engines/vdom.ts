@@ -13,7 +13,7 @@ import type bScrolly from 'components/base/b-scrolly/b-scrolly';
  * Renders the provided `VNodes` to the `HTMLElements` via `vdom.render` API.
  *
  * @param ctx
- * @param data
+ * @param items
  */
 export function render(ctx: bScrolly, items: VNodeDescriptor[]): HTMLElement[] {
 	const
