@@ -69,13 +69,23 @@ test.describe('core/kv-storage/engines/cookie', () => {
 
 	test.describe('`set`', () => {
 		test('should set cookie values by given keys', async () => {
+			let cookieValue = await cookies.evaluate((ctx, [name]) => ctx.get(name), [cookieName]);
+
+			test.expect(cookieValue).toBe(undefined);
+
 			await cookieStorage.evaluate(({syncLocalStorage}) => {
 				syncLocalStorage.set('key1', 'val1');
+			});
+
+			cookieValue = await cookies.evaluate((ctx, [name]) => ctx.get(name), [cookieName]);
+
+			test.expect(cookieValue).toBe('key1{{.}}val1');
+
+			await cookieStorage.evaluate(({syncLocalStorage}) => {
 				syncLocalStorage.set('key2', 'val2');
 			});
 
-			const
-				cookieValue = await cookies.evaluate((ctx, [name]) => ctx.get(name), [cookieName]);
+			cookieValue = await cookies.evaluate((ctx, [name]) => ctx.get(name), [cookieName]);
 
 			test.expect(cookieValue).toBe('key1{{.}}val1{{#}}key2{{.}}val2');
 		});
@@ -107,7 +117,7 @@ test.describe('core/kv-storage/engines/cookie', () => {
 			const
 				cookieValue = await cookies.evaluate((ctx, [name]) => ctx.get(name), [cookieName]);
 
-			test.expect(cookieValue).toBe('');
+			test.expect(cookieValue).toBe(undefined);
 		});
 
 		test('should clear only those values that match the predicate', async () => {
