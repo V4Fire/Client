@@ -418,15 +418,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:7.17.7":
-  version: 7.17.7
-  resolution: "@babel/parser@npm:7.17.7"
-  bin:
-    parser: ./bin/babel-parser.js
-  checksum: d2612c2597838a605bcbe921fd2c7381b3ab75603c7907020df037c22a3d27f0507285da74553cd75f403300ca76642323ca2e72ba55cc4222d4a20b87505b0c
-  languageName: node
-  linkType: hard
-
 "@babel/parser@npm:^7.16.7, @babel/parser@npm:^7.17.3, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.21.4, @babel/parser@npm:^7.7.0":
   version: 7.21.4
   resolution: "@babel/parser@npm:7.21.4"
@@ -1368,16 +1359,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.17.0":
-  version: 7.17.0
-  resolution: "@babel/runtime@npm:7.17.0"
-  dependencies:
-    regenerator-runtime: ^0.13.4
-  checksum: 1864ac3c6aa061798c706ce858af311f06f6ad6efafc20cca7029fdaa9786c58ccaf5bdb8bd133cb505f27bed7659b65f1503b8da58adbd1eb88f7333644e6ed
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:7.21.0, @babel/runtime@npm:^7.8.4":
   version: 7.21.0
   resolution: "@babel/runtime@npm:7.21.0"
   dependencies:
@@ -2216,13 +2198,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/bluebird@npm:*":
-  version: 3.5.38
-  resolution: "@types/bluebird@npm:3.5.38"
-  checksum: 8d1b04261e8e58816ec84ffa616c9e641c9416d0ab10c915ddb9cd8a0e7070af16df4f2eec243a3809cbed8ecee2fb3f45600ae43b3ab0ceea563aa18ceb6ab1
-  languageName: node
-  linkType: hard
-
 "@types/cacheable-request@npm:^6.0.1":
   version: 6.0.3
   resolution: "@types/cacheable-request@npm:6.0.3"
@@ -2276,42 +2251,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fs-extra-promise@npm:1.0.10":
-  version: 1.0.10
-  resolution: "@types/fs-extra-promise@npm:1.0.10"
-  dependencies:
-    "@types/bluebird": "*"
-    "@types/fs-extra": ^4
-    "@types/node": "*"
-  checksum: a65d59cb9335df5ed30deade86763c99771b76694b04bec15bbadaeedf4e4f8557aa7d7cbf6d08f2e92ac4e5b4be071e9a89f50d03490dd3fe8d2699029e6b74
-  languageName: node
-  linkType: hard
-
-"@types/fs-extra@npm:^4":
-  version: 4.0.12
-  resolution: "@types/fs-extra@npm:4.0.12"
-  dependencies:
-    "@types/node": "*"
-  checksum: 6a14044be355587faa176aed6553ada377b49fd49abf1bd1bef477399237614b56b8325e0a8e9e5cafc22268992bb7b763bb725ba944093edae75abd6f9e5de6
-  languageName: node
-  linkType: hard
-
 "@types/fs-extra@npm:^9.0.13":
   version: 9.0.13
   resolution: "@types/fs-extra@npm:9.0.13"
   dependencies:
     "@types/node": "*"
   checksum: add79e212acd5ac76b97b9045834e03a7996aef60a814185e0459088fd290519a3c1620865d588fa36c4498bf614210d2a703af5cf80aa1dbc125db78f6edac3
-  languageName: node
-  linkType: hard
-
-"@types/glob-stream@npm:*":
-  version: 6.1.1
-  resolution: "@types/glob-stream@npm:6.1.1"
-  dependencies:
-    "@types/glob": "*"
-    "@types/node": "*"
-  checksum: df74a95e11635bae7527e02cbd0406e0de76839c937af8285c7c8c9b008cf0718802acfaf5bc56a7eb5b00c8aff5bc81d13e9d829a5a04dc34f2351349779dda
   languageName: node
   linkType: hard
 
@@ -2332,37 +2277,6 @@ __metadata:
     "@types/minimatch": "*"
     "@types/node": "*"
   checksum: 6ae717fedfdfdad25f3d5a568323926c64f52ef35897bcac8aca8e19bc50c0bd84630bbd063e5d52078b2137d8e7d3c26eabebd1a2f03ff350fff8a91e79fc19
-  languageName: node
-  linkType: hard
-
-"@types/got@npm:9.6.12":
-  version: 9.6.12
-  resolution: "@types/got@npm:9.6.12"
-  dependencies:
-    "@types/node": "*"
-    "@types/tough-cookie": "*"
-    form-data: ^2.5.0
-  checksum: e6c17cf49107064bc0c4371efaef6855d4753b0e17b615da1a9ab7dcd10c6208c48620c7309e96861a4ea1a0d8b9e7cdda67316b4075d4ba2aff4d7400f92f53
-  languageName: node
-  linkType: hard
-
-"@types/gulp-load-plugins@npm:0.0.33":
-  version: 0.0.33
-  resolution: "@types/gulp-load-plugins@npm:0.0.33"
-  dependencies:
-    "@types/node": "*"
-  checksum: 13d526d291398a2ae29c5c11f449d5c02ae69a7441ff8421d053e78dae800f71c453b8ac37dd125443abe6a38e54e3e71b34d310b432655adca3ebd75a6adb0b
-  languageName: node
-  linkType: hard
-
-"@types/gulp@npm:4.0.9":
-  version: 4.0.9
-  resolution: "@types/gulp@npm:4.0.9"
-  dependencies:
-    "@types/undertaker": "*"
-    "@types/vinyl-fs": "*"
-    chokidar: ^3.3.1
-  checksum: d0fe14866cc2c233c4116941f7c275b1b907d5b40de8bf92899e4152979cd6c51a71d407ac752f0434a7ed95a97979f61c1dd05b82fdee73088809476f8d9f85
   languageName: node
   linkType: hard
 
@@ -2417,13 +2331,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:16.11.25":
-  version: 16.11.25
-  resolution: "@types/node@npm:16.11.25"
-  checksum: 0b6e25a81364be89256ad1a36341e27b387e646d3186e270108a8bb7b6ecdfdf5ae037aa1c75a5117b8a7509c80093b75431cd5cfcfbc4d553b52e7db2ca272e
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:^14.14.41":
   version: 14.18.42
   resolution: "@types/node@npm:14.18.42"
@@ -2461,16 +2368,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/rimraf@npm:^2.0.3":
-  version: 2.0.5
-  resolution: "@types/rimraf@npm:2.0.5"
-  dependencies:
-    "@types/glob": "*"
-    "@types/node": "*"
-  checksum: e388f546840704a240fb31536498921623bca4ec1230925013d6b6d7c7d2211c8ec07fcbbd2606151d7549cbbc28a01c18fb0df502107a9293860a5ff64bc147
-  languageName: node
-  linkType: hard
-
 "@types/semver@npm:7.3.10":
   version: 7.3.10
   resolution: "@types/semver@npm:7.3.10"
@@ -2499,53 +2396,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/through2@npm:2.0.36":
-  version: 2.0.36
-  resolution: "@types/through2@npm:2.0.36"
-  dependencies:
-    "@types/node": "*"
-  checksum: 2082dba33458dee175fce8e0a15db6d4bfa251b09c0e35a1985a444d7a2dfd23b9f0249e04b2999fcb92fad9bc9238b20fa2ea3f1f411836a3aeb2dc1e342182
-  languageName: node
-  linkType: hard
-
-"@types/tough-cookie@npm:*":
-  version: 4.0.2
-  resolution: "@types/tough-cookie@npm:4.0.2"
-  checksum: e055556ffdaa39ad85ede0af192c93f93f986f4bd9e9426efdc2948e3e2632db3a4a584d4937dbf6d7620527419bc99e6182d3daf2b08685e710f2eda5291905
-  languageName: node
-  linkType: hard
-
-"@types/undertaker-registry@npm:*":
-  version: 1.0.1
-  resolution: "@types/undertaker-registry@npm:1.0.1"
-  checksum: aa064331b4bdb91c8da44c0a0520be6fa447be482526998ffb98e2b7f9319ebdee278167729943b6f809891f1d3b2b4dea978b2e2211a4d117a44b1d3935fe9b
-  languageName: node
-  linkType: hard
-
-"@types/undertaker@npm:*":
-  version: 1.2.8
-  resolution: "@types/undertaker@npm:1.2.8"
-  dependencies:
-    "@types/node": "*"
-    "@types/undertaker-registry": "*"
-    async-done: ~1.3.2
-  checksum: c17c88b54c199bdbc115d5e50839291fd096d99db69e663ae244136b3254b57913bdf4bd3bfd02ef32c99677bd12ac945df5fd990e08282abd633e59cc5c3e94
-  languageName: node
-  linkType: hard
-
-"@types/vinyl-fs@npm:*":
-  version: 3.0.1
-  resolution: "@types/vinyl-fs@npm:3.0.1"
-  dependencies:
-    "@types/glob-stream": "*"
-    "@types/node": "*"
-    "@types/rimraf": ^2.0.3
-    "@types/vinyl": "*"
-  checksum: 3d5749caa60c18e5bcf14e24eb503548a8436e6cd316d80b21d2a792d5a8b05aae66d4cdf0ddedca7d64c2358131b89d566588a0d78437cd474fe1cf2a79750c
-  languageName: node
-  linkType: hard
-
-"@types/vinyl@npm:*, @types/vinyl@npm:^2.0.4":
+"@types/vinyl@npm:^2.0.4":
   version: 2.0.7
   resolution: "@types/vinyl@npm:2.0.7"
   dependencies:
@@ -2713,7 +2564,7 @@ __metadata:
     "@types/semver": 7.3.10
     "@types/webpack": 5.28.0
     "@v4fire/config": 1.0.0
-    "@v4fire/core": 3.90.0
+    "@v4fire/core": "https://github.com/v4fire/core.git#kv-storage"
     "@v4fire/design-system": 1.23.0
     "@v4fire/linters": 1.9.0
     arg: 5.0.1
@@ -2957,30 +2808,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/core@npm:3.90.0":
-  version: 3.90.0
-  resolution: "@v4fire/core@npm:3.90.0"
+"@v4fire/core@https://github.com/v4fire/core.git#kv-storage":
+  version: 3.95.4
+  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=c7d646aca8bb545412d3c2a1949532cde89cfb42"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
-    "@babel/helpers": 7.17.7
-    "@babel/parser": 7.17.7
     "@babel/plugin-proposal-decorators": 7.17.2
     "@babel/plugin-transform-runtime": 7.17.0
     "@babel/preset-env": 7.16.11
     "@babel/preset-typescript": 7.16.7
-    "@babel/runtime": 7.17.0
+    "@babel/runtime": 7.21.0
     "@babel/template": 7.16.7
     "@config/config": "npm:config@1.31.0"
     "@pzlr/build-core": 2.13.0
     "@swc/core": 1.2.153
     "@swc/helpers": 0.3.8
-    "@types/fs-extra-promise": 1.0.10
-    "@types/got": 9.6.12
-    "@types/gulp": 4.0.9
-    "@types/gulp-load-plugins": 0.0.33
-    "@types/node": 16.11.25
-    "@types/through2": 2.0.36
     "@v4fire/config": 1.0.0
     cross-env: 7.0.3
     del: 6.0.0
@@ -3008,6 +2851,7 @@ __metadata:
     jsdom: 18.1.1
     monic: 2.6.1
     node-blob: 0.0.2
+    node-fetch: 2.6.2
     node-object-hash: 2.3.10
     path-equal: 1.1.3
     requestidlecallback: 0.3.0
@@ -3026,10 +2870,6 @@ __metadata:
       optional: true
     "@babel/helper-module-transforms":
       optional: true
-    "@babel/helpers":
-      optional: true
-    "@babel/parser":
-      optional: true
     "@babel/plugin-proposal-decorators":
       optional: true
     "@babel/plugin-transform-runtime":
@@ -3038,25 +2878,11 @@ __metadata:
       optional: true
     "@babel/preset-typescript":
       optional: true
-    "@babel/runtime":
-      optional: true
     "@babel/template":
       optional: true
     "@config/config":
       optional: true
     "@pzlr/build-core":
-      optional: true
-    "@types/fs-extra-promise":
-      optional: true
-    "@types/gulp":
-      optional: true
-    "@types/gulp-load-plugins":
-      optional: true
-    "@types/node":
-      optional: true
-    "@types/through2":
-      optional: true
-    "@v4fire/config":
       optional: true
     del:
       optional: true
@@ -3108,13 +2934,15 @@ __metadata:
       optional: true
     tsconfig:
       optional: true
+    tsconfig-paths:
+      optional: true
     typedoc:
       optional: true
     typescript:
       optional: true
     upath:
       optional: true
-  checksum: 7e7b3ab7d9ad0e63c096842f53d3a517a1d1df8cb9754ce17efa2d691011ad3890a36b28e9b31326f0348fcbb483ea2af8cabd5505c183fdccf503ab9917a40a
+  checksum: e88f371e3c4c669a6973a3c1c2b6a3d6b71e1e9e5a63169eadd6465376240c2dc0a6b92ff70eec120e0e46283650dce7c264852956f0d6c80c8c09c98ca4e037
   languageName: node
   linkType: hard
 
@@ -3971,7 +3799,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"async-done@npm:^1.2.0, async-done@npm:^1.2.2, async-done@npm:~1.3.2":
+"async-done@npm:^1.2.0, async-done@npm:^1.2.2":
   version: 1.3.2
   resolution: "async-done@npm:1.3.2"
   dependencies:
@@ -5396,7 +5224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^3.3.1, chokidar@npm:^3.5.3":
+"chokidar@npm:^3.5.3":
   version: 3.5.3
   resolution: "chokidar@npm:3.5.3"
   dependencies:
@@ -5801,7 +5629,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"combined-stream@npm:^1.0.6, combined-stream@npm:^1.0.8":
+"combined-stream@npm:^1.0.8":
   version: 1.0.8
   resolution: "combined-stream@npm:1.0.8"
   dependencies:
@@ -8437,17 +8265,6 @@ __metadata:
     combined-stream: ^1.0.8
     mime-types: ^2.1.12
   checksum: 01135bf8675f9d5c61ff18e2e2932f719ca4de964e3be90ef4c36aacfc7b9cb2fceb5eca0b7e0190e3383fe51c5b37f4cb80b62ca06a99aaabfcfd6ac7c9328c
-  languageName: node
-  linkType: hard
-
-"form-data@npm:^2.5.0":
-  version: 2.5.1
-  resolution: "form-data@npm:2.5.1"
-  dependencies:
-    asynckit: ^0.4.0
-    combined-stream: ^1.0.6
-    mime-types: ^2.1.12
-  checksum: 5134ada56cc246b293a1ac7678dba6830000603a3979cf83ff7b2f21f2e3725202237cfb89e32bcb38a1d35727efbd3c3a22e65b42321e8ade8eec01ce755d08
   languageName: node
   linkType: hard
 
@@ -12746,6 +12563,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch@npm:2.6.2":
+  version: 2.6.2
+  resolution: "node-fetch@npm:2.6.2"
+  checksum: de367eae1dfbc0e12283c1cf92256ea7fba7eac8655e2e51ebb217727162396fc6cf24689ef9fc6accf075e3991e2ffaa061f7cfaa958215329649b2297ff06d
+  languageName: node
+  linkType: hard
+
 "node-gyp@npm:latest":
   version: 9.3.1
   resolution: "node-gyp@npm:9.3.1"
@@ -14998,7 +14822,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.11, regenerator-runtime@npm:^0.13.4":
+"regenerator-runtime@npm:^0.13.11":
   version: 0.13.11
   resolution: "regenerator-runtime@npm:0.13.11"
   checksum: 27481628d22a1c4e3ff551096a683b424242a216fee44685467307f14d58020af1e19660bf2e26064de946bad7eff28950eae9f8209d55723e2d9351e632bbb4
