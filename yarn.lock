@@ -3580,9 +3580,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@v4fire/core@https://github.com/v4fire/core.git#v4-kv-storage":
   version: 4.0.0-alpha.5
   resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=1074777751f428874037c9bef98f941562b16cd0"
+=======
+"@v4fire/core@https://github.com/v4fire/core.git#kv-storage":
+  version: 3.95.4
+  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=d908b8ae7e5129c202989fe83ea14b78fe25e16a"
+>>>>>>> b0519b89e (yarn up)
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
