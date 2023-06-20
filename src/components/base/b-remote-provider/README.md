@@ -60,7 +60,7 @@ The component also supports the provision of a `default` slot.
 
 ```
 < b-remote-provider :dataProvider = 'SelectedCity'
-  < #template = {db}
+  < template #default = {db}
     {{ db.value }}
 ```
 
