@@ -4,16 +4,21 @@ This module provides an API to initialize component fields to a component instan
 
 ## What differences between fields and system fields?
 
-The major difference between fields and system fields, that any changes of a component field can force re-rendering of its template.
-I.e., if you are totally sure that your component field doesn't need to force rendering, prefer system fields instead of regular.
-Mind, changes in any system field still can be watched using built-in API.
+The main difference between fields and system fields in V4Fire is that any changes to a regular field
+can trigger a re-render of the component template.
+In cases where a developer is confident that a field will not require rendering,
+system fields should be used instead of regular fields.
+It's important to note that changes to any system field can still be watched using the built-in API.
 
-The second difference is that system fields are initialized on the `beforeCreate` hook,
-but not on the `created` hook like the regular fields do.
+The second difference between regular fields and system fields is their initialization timing.
+Regular fields are initialized in the `created` hook, while system fields are initialized in the `beforeCreate` hook.
+By understanding the differences between regular fields and system fields,
+developers can design and optimize their components for optimal performance and behavior.
 
 ## Functions
 
 ### initFields
 
-Initializes all fields of the passed component instance.
-The function returns a dictionary with the initialized fields.
+Initializes all fields of a given component instance.
+This function returns a dictionary that contains the names of the initialized fields as keys,
+with their corresponding initialized values as values.

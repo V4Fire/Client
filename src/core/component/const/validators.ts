@@ -15,4 +15,4 @@
  * console.log(isComponent.test('button'));   // false
  * ```
  */
-export const isComponent = /^([bpg]-[^_ ]+)$/;
+export const isComponent = /^([bgp]-[^ _]+)$/;

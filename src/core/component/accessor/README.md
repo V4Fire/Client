@@ -1,26 +1,34 @@
 # core/component/accessor
 
-This module provides an API to initialize component accessors and computed fields to a component instance.
+This module provides an API to initialize component accessors and computed fields into a component instance.
 
 ## What differences between accessors and computed fields?
 
-A computed field is an accessor that value can be cached or watched.
-To enable value caching, use the `@computed` decorator when define or override your accessor.
-After that, the first time the getter value is touched, it will be cached. To support cache invalidation or
-adding change watching capabilities, provide a list of your accessor dependencies or use the `cache = 'auto'` option.
+A computed field is an accessor that can have its value cached or be watched for changes.
+To enable value caching, you can use the `@computed` decorator when defining or overriding your accessor.
+Once you add the decorator, the first time the getter value is accessed, it will be cached.
+
+To support cache invalidation or add change watching capabilities,
+you can provide a list of your accessor dependencies or use the `cache = 'auto'` option.
+By specifying dependencies, the computed field will automatically update when any of its dependencies change,
+whereas the `cache = 'auto'` option will invalidate the cache when it detects a change in any of the dependencies.
+
+In essence, computed fields provide an elegant and efficient way to derive values from a component's data and state,
+making it easier to manage and update dynamic UI states based on changes in other components or the application's data.
 
 ## Functions
 
 ### attachAccessorsFromMeta
 
-Attaches accessors and computed fields to the specified component instance from its tied metaobject.
-The function creates cacheable wrappers for computed fields. Also, it creates accessors for deprecated component props.
+Attaches accessors and computed fields from a component's tied metaobject to the specified component instance.
+This function creates wrappers that can cache computed field values
+and creates accessors for deprecated component props.
 
 ```typescript
 import iBlock, { component, prop, computed } from 'components/super/i-block/i-block';
 
 @component({
-  // Will create an accessor for `name` that refers to `fName` and emits a warning
+  // The following code will create an accessor for a property named "name" that refers to "fName" and emits a warning
   deprecatedProps: {name: 'fName'}
 })
 
@@ -31,7 +39,7 @@ export default class bUser extends iBlock {
   @prop()
   readonly lName: string;
 
-  // This is a cacheable computed field with feature of watching and cache invalidation
+  // This is a cacheable computed field with the features of change watching and cache invalidation
   @computed({cache: true, dependencies: ['fName', 'lName']})
   get fullName() {
     return `${this.fName} ${this.lName}`;
@@ -43,7 +51,7 @@ export default class bUser extends iBlock {
     return Math.random();
   }
 
-  // This is a simple accessor (a getter)
+  // This is a simple getter
   get element() {
     return this.$el;
   }

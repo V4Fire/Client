@@ -1,7 +1,9 @@
 # core/component/event
 
-This module provides the global event emitter for all components. Use this emitter to provide events of external modules to components.
-Also, this module exposes a bunch of helper functions to implement and work with the component event API.
+This module provides a global event emitter for all components
+and exposes a variety of helper functions to implement and work with the component event API.
+Developers can use the global emitter to provide events from external modules to components,
+thereby enabling components to respond to events and interact with other parts of the application.
 
 ## Usage
 
@@ -17,7 +19,9 @@ reset('storage.silence');
 
 ## Built-in events
 
-V4Fire supports out of the box integration with `core/session`, `core/net` and `core/i18n` modules.
+V4Fire provides out of the box integration with `core/session`, `core/net` and `core/i18n` modules.
+This integration enables developers to easily incorporate these modules into their applications without
+requiring additional configuration or setup.
 
 ### i18n.setLocale
 
