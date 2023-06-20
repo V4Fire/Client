@@ -53,7 +53,7 @@ export default class bRemoteProvider extends iData {
 		const
 			parent = this.$parent;
 
-		if (!parent) {
+		if (parent == null) {
 			return;
 		}
 
