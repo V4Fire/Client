@@ -1,52 +1,54 @@
 # components/base/b-remote-provider
 
-This module provides a component for working with a data provider without visual rendering.
-By default, the parent component will wait for that component to resolve the loading process.
-This component can be useful when creating data composition.
+This module offers a component designed to interact with a data provider without any visual rendering.
+By default, the parent component will wait for this component to complete the loading process.
+This component can be particularly beneficial when creating data compositions.
 
 ## Synopsis
 
 * The component extends [[iData]].
 
-* The component does not have the default UI.
+* The component lacks a default user interface.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
 ## Events
 
-| EventName    | Description                                         | Payload description                     | Payload                                   |
-|--------------|-----------------------------------------------------|-----------------------------------------|-------------------------------------------|
-| `change`     | The provider has uploaded and changed data          | Provider data                           | `DB`                                      |
-| `addData`    | There have occur adding of new data to the provider | Data                                    | `unknown`                                 |
-| `updateData` | There have occur updating of data of the provider   | Data                                    | `unknown`                                 |
-| `deleteData` | There have occur deleting of data from the provider | Data                                    | `unknown`                                 |
-| `error`      | There have occur an error with the provider         | Error object; Function to retry request | `Error  │ RequestError`; `RetryRequestFn` |
+| EventName    | Description                                    | Payload description                         | Payload                                   |
+|--------------|------------------------------------------------|---------------------------------------------|-------------------------------------------|
+| `change`     | The provider has uploaded and changed the data | Data                                        | `DB`                                      |
+| `addData`    | New data has been added to the provider        | Data                                        | `unknown`                                 |
+| `updateData` | The provider's data has been updated           | Data                                        | `unknown`                                 |
+| `deleteData` | The provider's data has been deleted           | Data                                        | `unknown`                                 |
+| `error`      | An error has occurred with the provider        | Error object; Function to retry the request | `Error  │ RequestError`; `RetryRequestFn` |
 
 Also, you can see the parent component.
 
 ## Usage
 
-Don't use this component if you just want to combine multiple providers into a single `db` object: you should prefer `extraProviders` for that.
-
-A valid use case for this component is to send data to non-primary providers such as analytics.
+Avoid using this component if your goal is to merge multiple providers into a single database object.
+Instead, opt for `extraProviders`.
+A suitable use case for this component would be transmitting data to non-primary providers, such as analytics systems.
 
 ```
 < b-remote-provider ref = analytics | :dataProvider = 'Analytics'
 ```
 
 ```js
-// Somewhere in the parent component
+// Within the parent component
 this.$refs.analytics.post({data: [1, 2, 3]});
 ```
 
-You can also use this component on initialization: you can hook into the `@change` event, or provide a `field` prop to store the `db` component in the parent field.
+You can also utilize this component during initialization: either by hooking into the `@change` event
+or by providing a `field` prop to store the `db` component within the parent field.
 
 ```
 < b-remote-provider :dataProvider = 'SelectedCity' | :field = 'selectedCity'
 < b-remote-provider :dataProvider = 'SelectedCity' | @change = initSelectedCity
 ```
 
-Because this component inherits from [[iData]], you are free to use all of these props and events.
+Since this component inherits from [[iData]],
+you have the flexibility to utilize all of its associated props and events.
 
 ```
 < b-remote-provider :dataProvider = 'SelectedCity' | :request = {get: {lat, lon}}
@@ -54,7 +56,7 @@ Because this component inherits from [[iData]], you are free to use all of these
 
 ## Slots
 
-The component supports providing the `default` slot.
+The component also supports the provision of a `default` slot.
 
 ```
 < b-remote-provider :dataProvider = 'SelectedCity'
@@ -64,10 +66,20 @@ The component supports providing the `default` slot.
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
+
+### Props
+
+#### [fieldProp]
+
+A path to the field in the parent component where you want to store the loaded data.
+
+```
+< b-remote-provider :dataProvider = 'SelectedCity' | :field = 'selectedCity'
+```
 
 ### Getters
 
 #### content
 
-A list of the component child nodes.
+A list of the component's child nodes.

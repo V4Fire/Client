@@ -19,7 +19,7 @@ test.describe('<b-remote-provider>', () => {
 		await demoPage.goto();
 	});
 
-	test('the component markup should have a <b-remote-provider /> tag with the provided attributes', async ({page}) => {
+	test('the component should render as a div element with the provided attributes', async ({page}) => {
 		const
 			id = 'foo',
 			dataVal = 'bar';
@@ -43,7 +43,7 @@ test.describe('<b-remote-provider>', () => {
 		test.expect(attrs).toEqual([id, dataVal, 'DIV']);
 	});
 
-	test('should store loaded data to the specified field of the parent component', async ({page, context}) => {
+	test('if the `field` prop is provided to the component, it should save the provider data to the parent component at the path specified in that prop', async ({page, context}) => {
 		const
 			data = {foo: 'bar'},
 			field = 'foo-bar-baz';
@@ -62,10 +62,6 @@ test.describe('<b-remote-provider>', () => {
 		test.expect(val).toEqual(data);
 	});
 
-	/**
-	 * @param page
-	 * @param [attrs]
-	 */
 	function renderProvider(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bRemoteProvider>> {
 		return Component.createComponent(page, 'b-remote-provider', {
 			attrs
