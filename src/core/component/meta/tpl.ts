@@ -10,9 +10,9 @@ import { componentRenderFactories } from 'core/component/const';
 import type { ComponentMeta } from 'core/component/interface';
 
 /**
- * Attaches templates to the specified meta object
+ * Attaches templates to the specified metaobject
  *
- * @param meta - the component meta object
+ * @param meta - the component metaobject
  * @param [tpls] - a dictionary with the registered templates
  */
 export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): void {

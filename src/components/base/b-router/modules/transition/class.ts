@@ -223,7 +223,7 @@ export default class Transition {
 			router.getComparableRouteParams(newRoute)
 		);
 
-		// Main route params didn't change, but there is a meta object, which could have changed
+		// Main route params didn't change, but there is a metaobject, which could have changed
 		if (!newRouteIsReallyNeeded && currentRoute != null && opts.meta != null) {
 			newRouteIsReallyNeeded = !Object.fastCompare(
 				Object.select(currentRoute.meta, opts.meta),

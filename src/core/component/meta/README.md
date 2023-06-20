@@ -7,25 +7,25 @@ This structure is used by component library adapters to register "real" componen
 
 ### createMeta
 
-Creates a meta object for the specified component and returns it.
+Creates a metaobject for the specified component and returns it.
 
 ### forkMeta
 
-Creates a new meta object based on the specified.
+Creates a new metaobject based on the specified.
 
 ### inheritMeta
 
-Inherits the specified meta object from other one.
+Inherits the specified metaobject from other one.
 The function modifies the original object and returns it.
 
 ### fillMeta
 
-Fills the passed meta object with methods and properties from the specified component class constructor.
+Fills the passed metaobject with methods and properties from the specified component class constructor.
 
 ### addMethodsToMeta
 
-Iterates over a prototype of the passed component constructor and adds methods/accessors to the specified meta object.
+Iterates over a prototype of the passed component constructor and adds methods/accessors to the specified metaobject.
 
 ### attachTemplatesToMeta
 
-Attaches templates to the specified meta object.
+Attaches templates to the specified metaobject.

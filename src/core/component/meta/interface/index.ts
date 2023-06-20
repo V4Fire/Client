@@ -61,7 +61,7 @@ export interface ComponentMeta {
 	params: ComponentOptions;
 
 	/**
-	 * A link to the parent component meta object
+	 * A link to the parent component metaobject
 	 */
 	parentMeta?: ComponentMeta;
 

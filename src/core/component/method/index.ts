@@ -14,7 +14,7 @@
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Attaches methods to the specified component instance from its tied meta object
+ * Attaches methods to the specified component instance from its tied metaobject
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {

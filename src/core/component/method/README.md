@@ -6,7 +6,7 @@ This module provides an API to initialize component methods to a component insta
 
 ### attachMethodsFromMeta
 
-Attaches methods to the specified component instance from its tied meta object.
+Attaches methods to the specified component instance from its tied metaobject.
 
 ### callMethodFromComponent
 

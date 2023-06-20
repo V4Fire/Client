@@ -37,7 +37,7 @@ export default <ValidatorsDecl<bInput>>{
 	 * Checks that the component value can be parsed as a number
 	 *
 	 * @param opts
-	 * @param opts.msg
+	 * @param opts.message
 	 * @param opts.type
 	 * @param opts.min
 	 * @param opts.max
@@ -166,7 +166,7 @@ export default <ValidatorsDecl<bInput>>{
 	 * Checks that the component value can be parsed as a date
 	 *
 	 * @param opts
-	 * @param opts.msg
+	 * @param opts.message
 	 * @param opts.past
 	 * @param opts.future
 	 * @param opts.min
@@ -247,7 +247,7 @@ export default <ValidatorsDecl<bInput>>{
 	 * Checks that the component value can be parsed as an email string
 	 *
 	 * @param opts
-	 * @param opts.msg
+	 * @param opts.message
 	 * @param opts.showMessage
 	 */
 	async email({message, showMessage = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
@@ -270,7 +270,7 @@ export default <ValidatorsDecl<bInput>>{
 	 * Checks that the component value matches the password format
 	 *
 	 * @param opts
-	 * @param opts.msg
+	 * @param opts.message
 	 * @param opts.pattern
 	 * @param opts.min
 	 * @param opts.max

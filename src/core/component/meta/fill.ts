@@ -17,7 +17,7 @@ import { addMethodsToMeta } from 'core/component/meta/method';
 import type { ComponentConstructor, ComponentMeta } from 'core/component/interface';
 
 /**
- * Fills the passed meta object with methods and properties from the specified component class constructor
+ * Fills the passed metaobject with methods and properties from the specified component class constructor
  *
  * @param meta
  * @param [constructor] - component constructor

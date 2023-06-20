@@ -63,7 +63,7 @@ export interface ComponentConstructorInfo {
 	parentParams?: ComponentOptions;
 
 	/**
-	 * A link to the parent component meta object
+	 * A link to the parent component metaobject
 	 */
 	parentMeta?: ComponentMeta;
 }

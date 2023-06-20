@@ -195,8 +195,10 @@ It is recommended to create a npm `script` for this command in `package.json`:
 **package.json**
 
 ```JSON
-"scripts": {
-  "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" playwright test --config tests/config/unit/index.ts"
+{
+  "scripts": {
+    "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" playwright test --config tests/config/unit/index.ts"
+  }
 }
 ```
 
@@ -236,7 +238,7 @@ import type bComponent from 'base/b-component/b-component';
 test.describe('<b-component>', () => {
   let target: JSHandle<bComponent>;
 
-  test.beforeEach(({demoPage, page}) => {
+  test.beforeEach(async ({demoPage, page}) => {
     await demoPage.goto();
 
     target = await Component.createComponent(page, 'b-component', {
@@ -247,7 +249,7 @@ test.describe('<b-component>', () => {
     });
   });
 
-  test('component has a correct name', () => {
+  test('component has a correct name', async () => {
     const name = await target.evaluate((ctx) => ctx.componentName);
 
     test.expect(name).toBe('b-component');

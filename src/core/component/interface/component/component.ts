@@ -174,7 +174,7 @@ export abstract class ComponentInterface {
 	readonly $renderEngine!: RenderEngine<any>;
 
 	/**
-	 * A link to the component meta object.
+	 * A link to the component metaobject.
 	 * This object contains all information of the component properties, methods and other stuff.
 	 * It's used to create a "real" component by the used render engine.
 	 */

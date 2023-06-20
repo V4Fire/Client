@@ -102,7 +102,7 @@ export function parseStringStyle(style: string): Dictionary<string> {
 }
 
 /**
- * Normalizes the passed attributes using the specified component meta object and returns a new object
+ * Normalizes the passed attributes using the specified component metaobject and returns a new object
  *
  * @param attrs
  * @param dynamicProps

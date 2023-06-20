@@ -19,7 +19,7 @@ import { cacheStatus } from 'core/component/watch';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Attaches accessors and computed fields to the specified component instance from its tied meta object.
+ * Attaches accessors and computed fields to the specified component instance from its tied metaobject.
  * The function creates cacheable wrappers for computed fields.
  * Also, it creates accessors for deprecated component props.
  *

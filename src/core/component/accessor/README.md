@@ -13,7 +13,7 @@ adding change watching capabilities, provide a list of your accessor dependencie
 
 ### attachAccessorsFromMeta
 
-Attaches accessors and computed fields to the specified component instance from its tied meta object.
+Attaches accessors and computed fields to the specified component instance from its tied metaobject.
 The function creates cacheable wrappers for computed fields. Also, it creates accessors for deprecated component props.
 
 ```typescript

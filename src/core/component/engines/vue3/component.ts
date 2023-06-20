@@ -23,7 +23,7 @@ import { supports, proxyGetters } from 'core/component/engines/vue3/const';
 import * as r from 'core/component/engines/vue3/render';
 
 /**
- * Returns a component declaration object from the specified meta object
+ * Returns a component declaration object from the specified metaobject
  * @param meta
  */
 export function getComponent(meta: ComponentMeta): ComponentOptions<typeof ComponentEngine> {

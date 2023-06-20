@@ -31,7 +31,7 @@ import type { InitBeforeCreateStateOptions } from 'core/component/init/interface
  * Initializes the "beforeCreate" state to the specified component instance
  *
  * @param component
- * @param meta - the component meta object
+ * @param meta - the component metaobject
  * @param [opts] - additional options
  */
 export function beforeCreateState(

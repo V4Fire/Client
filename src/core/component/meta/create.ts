@@ -13,7 +13,7 @@ import { inheritMeta } from 'core/component/meta/inherit';
 import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/interface';
 
 /**
- * Creates a meta object for the specified component and returns it
+ * Creates a metaobject for the specified component and returns it
  * @param component - the component constructor info
  */
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
