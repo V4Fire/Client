@@ -2927,7 +2927,11 @@ __metadata:
       optional: true
     postcss:
       optional: true
+    postcss-custom-properties:
+      optional: true
     postcss-loader:
+      optional: true
+    postcss-move-props-to-bg-image-query:
       optional: true
     raw-loader:
       optional: true
