@@ -19,9 +19,9 @@ import type { InitPropsObjectOptions } from 'core/component/prop/interface';
 export * from 'core/component/prop/interface';
 
 /**
- * Initializes input properties (aka "props") of the passed component instance.
- * While a component prop is being initialized, its name will be stored in the `$activeField` property.
- * The function returns a dictionary with the initialized props.
+ * Initializes the input properties (also known as "props") for the given component instance.
+ * During the initialization of a component prop, its name will be stored in the `$activeField` property.
+ * The function returns a dictionary containing the initialized props.
  *
  * @param component
  * @param [opts] - additional options of initialization
@@ -86,7 +86,7 @@ export function initProps(
 }
 
 /**
- * Returns true if the specified prop type can be a function
+ * Returns true if the given prop type can be a function.
  *
  * @param type
  *

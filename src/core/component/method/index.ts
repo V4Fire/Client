@@ -14,7 +14,7 @@
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Attaches methods to the specified component instance from its tied metaobject
+ * Attaches methods to the passed component instance, taken from its associated metaobject
  * @param component
  */
 export function attachMethodsFromMeta(component: ComponentInterface): void {
@@ -40,7 +40,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
 }
 
 /**
- * Invokes the given method from the specified component instance
+ * Invokes a specific method from the passed component instance
  *
  * @param component
  * @param method - the method name
@@ -48,7 +48,7 @@ export function attachMethodsFromMeta(component: ComponentInterface): void {
  *
  * @example
  * ```js
- * // Invoke some method from the passed component
+ * // Invoke the `calc` method from the passed component
  * callMethodFromComponent(calculator, 'calc', 1, 2);
  * ```
  */

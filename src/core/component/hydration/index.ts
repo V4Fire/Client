@@ -17,7 +17,7 @@ export * from 'core/component/hydration/interface';
 
 export class HydrationStore {
 	/**
-	 * Store for hydrated data
+	 * Hydrated data store
 	 */
 	protected store: Store;
 
@@ -30,12 +30,15 @@ export class HydrationStore {
 		}
 	}
 
+	/**
+	 * Returns a JSON string representation of the hydrated data
+	 */
 	toString(): string {
 		return JSON.stringify(this.store);
 	}
 
 	/**
-	 * Returns true if the component with the given ID has hydrated data
+	 * Returns true if the component with the provided ID contains hydrated data
 	 * @param componentId
 	 */
 	has(componentId: string): boolean {
@@ -43,7 +46,7 @@ export class HydrationStore {
 	}
 
 	/**
-	 * Returns the hydrated component data for the given ID
+	 * Returns the hydrated data for the component associated with the given ID
 	 * @param componentId
 	 */
 	get(componentId: string): CanUndef<HydratedData> {
@@ -51,7 +54,7 @@ export class HydrationStore {
 	}
 
 	/**
-	 * Sets data for hydration at the given component ID and path
+	 * Sets hydration data for the specified component ID and path
 	 *
 	 * @param componentId
 	 * @param path
@@ -67,6 +70,7 @@ export class HydrationStore {
 	}
 
 	/**
+	 * Parses the given string as JSON and stores it in the hydrated store
 	 * @param store
 	 */
 	protected parse(store: string): Store {

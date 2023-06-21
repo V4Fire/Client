@@ -1,18 +1,18 @@
 # core/component/method
 
-This module provides an API to initialize component methods to a component instance.
+This module offers an API for initializing component methods on a component instance.
 
 ## Functions
 
 ### attachMethodsFromMeta
 
-Attaches methods to the specified component instance from its tied metaobject.
+This function attaches methods to the passed component instance, taken from its associated metaobject.
 
 ### callMethodFromComponent
 
-Invokes the given method from the specified component instance.
+This function invokes a specific method from the passed component instance.
 
 ```js
-// Invoke some method from the passed component
+// Invoke the `calc` method from the passed component
 callMethodFromComponent(calculator, 'calc', 1, 2);
 ```

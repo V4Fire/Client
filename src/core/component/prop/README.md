@@ -1,18 +1,18 @@
 # core/component/prop
 
-This module provides an API to initialize component props to a component instance.
+This module offers an API to initialize component props within a component instance.
 
 ## Functions
 
 ### initProps
 
-Initializes input properties (aka "props") of the passed component instance.
-While a component prop is being initialized, its name will be stored in the `$activeField` property.
-The function returns a dictionary with the initialized props.
+Initializes the input properties (also known as "props") for the given component instance.
+During the initialization of a component prop, its name will be stored in the `$activeField` property.
+The function returns a dictionary containing the initialized props.
 
 ### isTypeCanBeFunc
 
-Returns true if the specified prop type can be a function.
+Returns true if the given prop type can be a function.
 
 ```js
 console.log(isTypeCanBeFunc(Boolean));             // false
