@@ -74,13 +74,17 @@ i($name, $params = null, $opts = null)
 	else if type($opts) == "ident"
 		$align = $opts
 
-	if type($params) == "object"
-		$imgPath = createURL({href: $imgPath, query: $params})
-
 	else if type($params) == "ident"
 		$repeat = $params
 
 	background img($imgPath, true) $repeat $align
+
+	if type($params) == "object"
+		if $params.fill
+			-svg-mixer-fill $params.fill
+
+		if $params.stroke
+			-svg-mixer-stroke $params.stroke
 
 	$chunks = split("/", $name)
 
