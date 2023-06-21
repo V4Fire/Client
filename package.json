@@ -151,6 +151,7 @@
     "jasmine": "3.99.0",
     "nyc": "15.1.0",
     "playwright": "1.32.1",
+    "postcss-custom-properties": "^13.2.0",
     "webpack-bundle-analyzer": "4.5.0"
   },
   "peerDependencies": {
