@@ -2771,6 +2771,7 @@ __metadata:
     portfinder: 1.0.28
     postcss: 8.4.6
     postcss-loader: 6.2.1
+    postcss-move-props-to-bg-image-query: ^4.0.0
     raw-loader: 4.0.2
     requestidlecallback: 0.3.0
     snakeskin: 7.5.1
@@ -14163,6 +14164,17 @@ __metadata:
   peerDependencies:
     postcss: ^8.1.0
   checksum: f7f2cdf14a575b60e919ad5ea52fed48da46fe80db2733318d71d523fc87db66c835814940d7d05b5746b0426e44661c707f09bdb83592c16aea06e859409db6
+  languageName: node
+  linkType: hard
+
+"postcss-move-props-to-bg-image-query@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "postcss-move-props-to-bg-image-query@npm:4.0.0"
+  dependencies:
+    merge-options: ^1.0.0
+    postcss: ^7.0.14
+    svg-mixer-utils: ^0.3.4
+  checksum: e6e6a943c539ef3aaf2bcb234dfeb834f6e5b6ddc04c7e9183036c37187e2a7f49c359c7fe0363566708cc1754f5740ed9fba07a1fb46ce8531d7184d74c0d1f
   languageName: node
   linkType: hard
 

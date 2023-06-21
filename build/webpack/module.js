@@ -163,6 +163,7 @@ module.exports = async function module({plugins}) {
 						postcssOptions: {
 							plugins: [].concat(
 								require('autoprefixer')(config.autoprefixer()),
+								require('postcss-move-props-to-bg-image-query')(),
 
 								webpack.mode() === 'production' && !usePureCSSFiles ?
 									require('cssnano')(config.cssMinimizer().minimizerOptions) :
