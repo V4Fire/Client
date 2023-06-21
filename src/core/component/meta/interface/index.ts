@@ -35,73 +35,84 @@ export * from 'core/component/meta/interface/types';
  */
 export interface ComponentMeta {
 	/**
-	 * Full name of the component.
-	 * If the component is smart, the name can contain a `-functional` postfix.
+	 * The full name of the component, which may include a `-functional` postfix if the component is smart
 	 */
 	name: string;
 
 	/**
-	 * Component name without special postfixes
+	 * Component name without any special postfixes
 	 */
 	componentName: string;
 
 	/**
-	 * A link to the component constructor
+	 * A link to the component's constructor
 	 */
 	constructor: ComponentConstructor;
 
 	/**
-	 * A link to a component class instance
+	 * A link to the component's class instance
 	 */
 	instance: Dictionary;
 
 	/**
-	 * A dictionary with the component parameters that were provided to the `@component` decorator
+	 * A dictionary that contains the parameters provided to the `@component` decorator for the component
 	 */
 	params: ComponentOptions;
 
 	/**
-	 * A link to the parent component metaobject
+	 * A link to the metaobject of the parent component
 	 */
 	parentMeta?: ComponentMeta;
 
 	/**
-	 * A dictionary with the component input properties, aka "props"
+	 * A dictionary that contains the input properties (props) for the component
 	 */
 	props: Dictionary<ComponentProp>;
 
 	/**
-	 * A dictionary with the available component modifiers
+	 * A dictionary that contains the available component modifiers.
+	 * Modifiers are a way to alter the behavior or appearance of a component without changing its underlying
+	 * functionality.
+	 * They can be used to customize components for specific use cases, or to extend their capabilities.
+	 * The modifiers may include options such as size, color, placement, and other configurations.
 	 */
 	mods: ModsDecl;
 
 	/**
-	 * A dictionary with the component fields that can force re-rendering
+	 * A dictionary that contains the component fields that can trigger a re-rendering of the component
 	 */
 	fields: Dictionary<ComponentField>;
 
 	/**
-	 * A dictionary with the component fields that can't force re-rendering
+	 * A dictionary that contains the component fields that do not cause a re-rendering of the component when they change.
+	 * These fields are typically used for internal bookkeeping or for caching computed values,
+	 * and do not affect the visual representation of the component.
+	 * Examples include variables used for storing data or for tracking the component's internal state,
+	 * and helper functions or methods that do not modify any reactive properties.
+	 * It's important to identify and distinguish these non-reactive fields from the reactive ones,
+	 * and to use them appropriately to optimize the performance of the component.
 	 */
 	systemFields: Dictionary<ComponentField>;
 
 	/**
-	 * A dictionary with the component fields that contains the `Store` postfix
+	 * A dictionary that contains the component fields that have a "Store" postfix in their name
 	 */
 	tiedFields: Dictionary<string>;
 
 	/**
-	 * A dictionary with the component accessors with the support of caching/watching
+	 * A dictionary that contains the accessor methods of the component that support caching or watching
 	 */
 	computedFields: Dictionary<ComponentAccessor>;
 
 	/**
-	 * A dictionary with the simple component accessors
+	 * A dictionary that contains the simple component accessors,
+	 * which are typically used for retrieving or modifying the value of a non-reactive property
+	 * that does not require caching or watching
 	 */
 	accessors: Dictionary<ComponentAccessor>;
 
 	/**
-	 * A dictionary with the component methods
+	 * A dictionary that contains the component methods
 	 */
 	methods: Dictionary<ComponentMethod>;
 
@@ -111,70 +122,69 @@ export interface ComponentMeta {
 	watchers: Dictionary<WatchObject[]>;
 
 	/**
-	 * A dictionary with the component dependencies to watch
-	 * (to invalidate the cache of computed fields)
+	 * A dictionary that contains the component dependencies to watch in order to invalidate the cache of computed fields
 	 */
 	watchDependencies: ComponentWatchDependencies;
 
 	/**
-	 * A dictionary with the component prop dependencies to watch
-	 * (to invalidate the cache of computed fields)
+	 * A dictionary that contains the component prop dependencies to watch in order
+	 * to invalidate the cache of computed fields
 	 */
 	watchPropDependencies: ComponentWatchPropDependencies;
 
 	/**
-	 * A dictionary with the component hook listeners
+	 * A dictionary that contains the component hook listeners,
+	 * which are essentially functions that are executed at specific stages in the V4Fire component's lifecycle
 	 */
 	hooks: ComponentHooks;
 
 	/**
-	 * A less abstract representation of the component.
-	 * This structure is more useful for a component library.
+	 * A less abstract representation of the component would typically include the following elements,
+	 * which are useful for building component libraries:
 	 */
 	component: {
 		/**
-		 * Full name of the component.
-		 * If the component is smart, the name can contain a `-functional` postfix.
+		 * The full name of the component, which may include a `-functional` postfix if the component is smart
 		 */
 		name: string;
 
 		/**
-		 * A dictionary with the default component modifiers
-		 */
-		mods: Dictionary<string>;
-
-		/**
-		 * A dictionary with the component input properties, aka "props"
+		 * A dictionary that contains the input properties (props) for the component
 		 */
 		props: Dictionary<PropOptions>;
 
 		/**
-		 * A dictionary with the component computed fields
+		 * A dictionary that contains the default component modifiers
+		 */
+		mods: Dictionary<string>;
+
+		/**
+		 * A dictionary that contains the accessor methods of the component that support caching or watching
 		 */
 		computed: Dictionary<Partial<WritableComputedOptions<unknown>>>;
 
 		/**
-		 * A dictionary with the component methods
+		 * A dictionary that contains the component methods
 		 */
 		methods: Dictionary<Function>;
 
 		/**
-		 * A dictionary with the available component directives
+		 * A dictionary that contains the available component directives
 		 */
 		directives?: Dictionary<ComponentDirectiveOptions>;
 
 		/**
-		 * A dictionary with the available local components
+		 * A dictionary that contains the available local components
 		 */
 		components?: Dictionary<ComponentMeta['component']>;
 
 		/**
-		 * The component render function
+		 * The component's render function
 		 */
 		render?: RenderFunction;
 
 		/**
-		 * The component render function for use with SSR
+		 * The component's render function for use with SSR
 		 */
 		ssrRender?: RenderFunction;
 	};
