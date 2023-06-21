@@ -18,7 +18,7 @@ export interface DataConveyor<DATA = any> {
 	/**
 	 * Adds a specified number of data items to the conveyor.
 	 *
-	 * @param count The number of data items to add.
+	 * @param count - The number of data items to add.
 	 * @returns An array containing the newly added data items.
 	 */
 	addData(count: number): DATA[];
@@ -26,7 +26,7 @@ export interface DataConveyor<DATA = any> {
 	/**
 	 * Adds a specified number of mounted items to the conveyor.
 	 *
-	 * @param count The number of mounted items to add.
+	 * @param count - The number of mounted items to add.
 	 * @returns An array containing the newly added mounted items.
 	 */
 	addItems(count: number): MountedItem[];
@@ -34,7 +34,7 @@ export interface DataConveyor<DATA = any> {
 	/**
 	 * Adds a specified number of mounted child items (separators) to the conveyor.
 	 *
-	 * @param count The number of mounted child items to add.
+	 * @param count - The number of mounted child items to add.
 	 * @returns An array containing the newly added mounted child items.
 	 */
 	addSeparators(count: number): MountedChild[];
@@ -42,7 +42,7 @@ export interface DataConveyor<DATA = any> {
 	/**
 	 * Adds an array of component items as mounted child items to the conveyor.
 	 *
-	 * @param child The array of component items to add as mounted child items.
+	 * @param child - The array of component items to add as mounted child items.
 	 * @returns The updated array of mounted child items.
 	 */
 	addChild(child: ComponentItem[]): MountedChild[];
@@ -56,6 +56,11 @@ export interface DataConveyor<DATA = any> {
 	 * Retrieves the array of data items in the conveyor.
 	 */
 	get data(): DATA[];
+
+	/**
+	 * Returns a data page.
+	 */
+	get page(): number;
 
 	/**
 	 * Retrieves the array of mounted child items in the conveyor.
@@ -80,7 +85,7 @@ export interface StateApi {
 	/**
 	 * Compiles and returns the assembled component state object.
 	 *
-	 * @param override An object for overriding the current fields of the component state.
+	 * @param override - An object for overriding the current fields of the component state.
 	 * @returns The compiled component state.
 	 */
 	compile(override?: Partial<ComponentState>): ComponentState;

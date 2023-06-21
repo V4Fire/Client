@@ -10,8 +10,8 @@ import Friend from 'components/friends/friend';
 import type { VNodeDescriptor } from 'components/friends/vdom';
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { ComponentItem } from 'components/base/b-scrolly/interface';
-import { componentRenderLocalEvents, componentRenderStrategy } from 'components/base/b-scrolly/const';
+import type { ComponentItem, MountedChild, MountedItem } from 'components/base/b-scrolly/interface';
+import { componentItemType, componentRenderStrategy } from 'components/base/b-scrolly/const';
 
 import * as forceUpdate from 'components/base/b-scrolly/modules/factory/engines/force-update';
 import * as vdomRender from 'components/base/b-scrolly/modules/factory/engines/vdom';
@@ -51,6 +51,35 @@ export class ComponentFactory extends Friend {
 	}
 
 	/**
+	 * Augments `ComponentItem` with various properties such as the component node, item index, and child index.
+	 *
+	 * @param items
+	 * @param nodes
+	 */
+	produceMounted(items: ComponentItem[], nodes: HTMLElement[]): Array<MountedChild | MountedItem> {
+		const
+			{ctx} = this,
+			{items: mountedItems, childList} = ctx.getComponentState();
+
+		return items.map((item, i) => {
+			if (item.type === componentItemType.item) {
+				return {
+					...item,
+					node: nodes[i],
+					itemIndex: mountedItems.length + i,
+					childIndex: childList.length + i
+				};
+			}
+
+			return {
+				...item,
+				node: nodes[i],
+				childIndex: mountedItems.length + i
+			};
+		});
+	}
+
+	/**
 	 * Calls the render engine to render the components based on the provided descriptors.
 	 * Returns an array of rendered DOM nodes.
 	 *
@@ -61,15 +90,16 @@ export class ComponentFactory extends Friend {
 			{ctx} = this;
 
 		let res;
-		ctx.componentEmitter.emit(componentRenderLocalEvents.renderEngineStart);
+		ctx.onRenderEngineStart();
 
 		if (ctx.componentRenderStrategy === componentRenderStrategy.reuse) {
 			res = forceUpdate.render(ctx, descriptors);
+
 		} else {
 			res = vdomRender.render(ctx, descriptors);
 		}
 
-		ctx.componentEmitter.emit(componentRenderLocalEvents.renderEngineDone);
+		ctx.onRenderEngineDone();
 		return res;
 	}
 }

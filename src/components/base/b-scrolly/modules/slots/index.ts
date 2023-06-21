@@ -11,7 +11,6 @@ import type { AsyncOptions } from 'core/async';
 
 import Friend from 'components/friends/friend';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import { componentDataLocalEvents, componentLocalEvents } from 'components/base/b-scrolly/const';
 import type { SlotsStateObj } from 'components/base/b-scrolly/modules/slots/interface';
 
 export * from 'components/base/b-scrolly/modules/slots/interface';
@@ -34,23 +33,6 @@ export class SlotsStateController extends Friend {
 		label: $$.updateSlotsVisibility,
 		group: slotsStateControllerAsyncGroup
 	};
-
-	/**
-	 * @param ctx
-	 */
-	constructor(ctx: bScrolly) {
-		super(ctx);
-
-		const
-			{componentEmitter} = ctx;
-
-		componentEmitter.on(componentDataLocalEvents.dataLoadError, () => this.loadingFailedState());
-		componentEmitter.on(componentDataLocalEvents.dataLoadStart, () => this.loadingProgressState());
-		componentEmitter.on(componentDataLocalEvents.dataLoadSuccess, () => this.loadingSuccessState());
-		componentEmitter.on(componentDataLocalEvents.dataEmpty, () => this.emptyState());
-		componentEmitter.on(componentLocalEvents.lifecycleDone, () => this.doneState());
-		componentEmitter.on(componentLocalEvents.resetState, () => this.reset());
-	}
 
 	/**
 	 * Displays the slots that should be shown when the data state is empty.

@@ -7,18 +7,19 @@
  */
 
 /**
- * @file Test cases of the component lifecycle
+ * @file This file contains test cases to verify the functionality of events emitter in the `b-scrolly` component.
  */
 
 import test from 'tests/config/unit/test';
 
 import { createTestHelpers, filterEmitterCalls } from 'components/base/b-scrolly/test/api/helpers';
+import type { ScrollyTestHelpers } from 'components/base/b-scrolly/test/api/helpers/interface';
 
 test.describe('<b-scrolly> emitter', () => {
 	let
-		component: Awaited<ReturnType<typeof createTestHelpers>>['component'],
-		provider:Awaited<ReturnType<typeof createTestHelpers>>['provider'],
-		state: Awaited<ReturnType<typeof createTestHelpers>>['state'];
+		component: ScrollyTestHelpers['component'],
+		provider: ScrollyTestHelpers['provider'],
+		state: ScrollyTestHelpers['state'];
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
@@ -37,14 +38,15 @@ test.describe('<b-scrolly> emitter', () => {
 		await component.setProps({
 			chunkSize,
 			shouldStopRequestingData: () => true,
-			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
+			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize});
 		await component.build();
+		await component.waitForLifecycleDone();
 
 		const
-			spy = await component.getSpy((ctx) => ctx.unsafe.localEmitter.emit),
+			spy = await component.getSpy((ctx) => ctx.emit),
 			calls = filterEmitterCalls(await spy.calls);
 
 		test.expect(calls).toEqual([
@@ -79,7 +81,7 @@ test.describe('<b-scrolly> emitter', () => {
 			chunkSize,
 			shouldPerformDataRequest: () => true,
 			shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
+			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
@@ -87,7 +89,7 @@ test.describe('<b-scrolly> emitter', () => {
 		await component.waitForContainerChildCountEqualsTo(chunkSize);
 
 		const
-			spy = await component.getSpy((ctx) => ctx.unsafe.localEmitter.emit),
+			spy = await component.getSpy((ctx) => ctx.emit),
 			calls = filterEmitterCalls(await spy.calls);
 
 		test.expect(calls).toEqual([
@@ -126,7 +128,7 @@ test.describe('<b-scrolly> emitter', () => {
 			chunkSize,
 			shouldPerformDataRequest: () => true,
 			shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
+			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
@@ -135,7 +137,7 @@ test.describe('<b-scrolly> emitter', () => {
 		await component.waitForLifecycleDone();
 
 		const
-			spy = await component.getSpy((ctx) => ctx.unsafe.localEmitter.emit),
+			spy = await component.getSpy((ctx) => ctx.emit),
 			calls = filterEmitterCalls(await spy.calls);
 
 		test.expect(calls).toEqual([
@@ -165,7 +167,7 @@ test.describe('<b-scrolly> emitter', () => {
 		await component.setProps({
 			chunkSize,
 			shouldStopRequestingData: () => true,
-			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
+			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize});
@@ -179,7 +181,7 @@ test.describe('<b-scrolly> emitter', () => {
 		await component.waitForContainerChildCountEqualsTo(chunkSize);
 
 		const
-			spy = await component.getSpy((ctx) => ctx.unsafe.localEmitter.emit),
+			spy = await component.getSpy((ctx) => ctx.emit),
 			calls = filterEmitterCalls(await spy.calls);
 
 		test.expect(calls).toEqual([

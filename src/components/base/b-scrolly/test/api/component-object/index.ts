@@ -31,7 +31,7 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	readonly childList: Locator;
 
 	/**
-	 * @param page The Playwright page instance.
+	 * @param page - The Playwright page instance.
 	 */
 	constructor(page: Page) {
 		super(page, 'b-scrolly');
@@ -43,7 +43,7 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	/**
 	 * Overrides the build method to add test styles before building the component.
 	 *
-	 * @param args The arguments for the build method.
+	 * @param args - The arguments for the build method.
 	 */
 	override async build(...args: Parameters<ComponentObject<bScrolly>['build']>): Promise<JSHandle<bScrolly>> {
 		await this.page.addStyleTag({content: testStyles});
@@ -75,7 +75,7 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	 * Waits for the container child count to be equal to N.
 	 * Throws an error if there are more items in the child list than expected.
 	 *
-	 * @param n The expected child count.
+	 * @param n - The expected child count.
 	 */
 	async waitForContainerChildCountEqualsTo(n: number): Promise<void> {
 		await this.childList.nth(n - 1).waitFor({state: 'attached'});
@@ -105,9 +105,9 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	/**
 	 * Waits for the provided slot to reach the specified visibility state.
 	 *
-	 * @param slotName The name of the slot.
-	 * @param isVisible The expected visibility state.
-	 * @param timeout The timeout for waiting (optional).
+	 * @param slotName - The name of the slot.
+	 * @param isVisible - The expected visibility state.
+	 * @param timeout - The timeout for waiting (optional).
 	 */
 	async waitForSlotState(slotName: keyof ComponentRefs, isVisible: boolean, timeout?: number): Promise<void> {
 		const slot = this.node.locator(this.elSelector(slotName));
@@ -162,7 +162,7 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	/**
 	 * Adds a `requestProp` for pagination.
 	 *
-	 * @param requestParams The request parameters.
+	 * @param requestParams - The request parameters.
 	 */
 	async withRequestPaginationProps(requestParams: Dictionary = {}): Promise<this> {
 		await this.setProps({
@@ -192,7 +192,7 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	 * - `withPaginationItemProps`
 	 * - `withRequestProp`
 	 *
-	 * @param requestParams The request parameters.
+	 * @param requestParams - The request parameters.
 	 */
 	async withDefaultPaginationProviderProps(requestParams: Dictionary = {}): Promise<this> {
 		await this.withPaginationProvider();

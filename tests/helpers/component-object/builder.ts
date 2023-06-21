@@ -194,6 +194,7 @@ export default class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	async setProps(props: Dictionary): Promise<this> {
 		if (!this.isBuilded) {
 			Object.assign(this.props, props);
+
 		} else {
 			await this.applyProps(props);
 		}

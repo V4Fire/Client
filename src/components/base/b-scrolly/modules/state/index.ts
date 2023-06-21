@@ -7,7 +7,6 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import { componentDataLocalEvents, componentLocalEvents, componentRenderLocalEvents } from 'components/base/b-scrolly/const';
 import type { MountedChild, ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
 import { isItem } from 'components/base/b-scrolly/modules/helpers';
 import { createInitialState } from 'components/base/b-scrolly/modules/state/helpers';
@@ -22,26 +21,7 @@ export class ComponentInternalState extends Friend {
 	/**
 	 * Current state of the component.
 	 */
-	protected state: ComponentState = createInitialState();
-
-	/**
-	 * @param ctx
-	 */
-	constructor(ctx: bScrolly) {
-		super(ctx);
-
-		const
-			{componentEmitter} = ctx;
-
-		componentEmitter.on(componentDataLocalEvents.dataLoadStart, () => this.incrementLoadPage());
-		componentEmitter.on(componentLocalEvents.convertDataToDB, (...args) => this.setRawLastLoaded(...args));
-		componentEmitter.on(componentLocalEvents.resetState, (...args) => this.reset(...args));
-
-		componentEmitter.on(componentRenderLocalEvents.domInsertStart, () => {
-			this.setIsInitialRender(false);
-			this.incrementRenderPage();
-		});
-	}
+	state: ComponentState = createInitialState();
 
 	/**
 	 * Compiles and returns the current state of the component.
@@ -137,21 +117,7 @@ export class ComponentInternalState extends Friend {
 	 * @param value - The value of the flag.
 	 */
 	setIsLifecycleDone(value: boolean): void {
-		const
-			{state} = this;
-
-		if (state.isLifecycleDone === value) {
-			return;
-		}
-
-		const
-			{ctx} = this;
-
-		state.isLifecycleDone = value;
-
-		if (value) {
-			ctx.componentEmitter.emit(componentLocalEvents.lifecycleDone);
-		}
+		this.state.isLifecycleDone = value;
 	}
 
 	/**

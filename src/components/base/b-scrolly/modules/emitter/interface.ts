@@ -10,7 +10,7 @@ import type { AsyncOptions } from 'core/async';
 import type { ComponentEvents, LocalEventPayload } from 'components/base/b-scrolly/interface';
 
 /**
- * An interface representing the typed `localEmitter` methods.
+ * An interface representing the typed `selfEmitter` methods.
  */
 export interface ComponentTypedEmitter {
 	/**

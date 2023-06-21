@@ -31,7 +31,7 @@ export interface SpyObject {
 	/**
 	 * The results of each call to the spy function.
 	 */
-	readonly results: Promise<unknown[][]>;
+	readonly results: Promise<JestMockResult[]>;
 }
 
 /**
@@ -41,7 +41,8 @@ export interface SpyExtractor<CTX, ARGS extends any[]> {
 	/**
 	 * Extracts or creates a spy object from a `JSHandle`.
 	 *
-	 * @param ctx The `JSHandle` containing the spy object.
+	 * @param ctx - The `JSHandle` containing the spy object.
+	 * @param args
 	 */
 	(ctx: CTX, ...args: ARGS): ReturnType<ModuleMocker['spyOn']>;
 }

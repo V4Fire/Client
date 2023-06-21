@@ -7,7 +7,6 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import { componentLocalEvents, componentObserverLocalEvents } from 'components/base/b-scrolly/const';
 import type { MountedChild } from 'components/base/b-scrolly/interface';
 import { observerAsyncGroup } from 'components/base/b-scrolly/modules/observer/const';
 import type { ObserverEngine } from 'components/base/b-scrolly/modules/observer/interface';
@@ -19,15 +18,6 @@ export default class IoObserver extends Friend implements ObserverEngine {
 	 * {@link bScrolly}
 	 */
 	override readonly C!: bScrolly;
-
-	/**
-	 * @param ctx
-	 */
-	constructor(ctx: bScrolly) {
-		super(ctx);
-
-		ctx.componentEmitter.on(componentLocalEvents.resetState, () => this.reset());
-	}
 
 	/**
 	 * @inheritdoc
@@ -42,7 +32,7 @@ export default class IoObserver extends Friend implements ObserverEngine {
 				label: component.key,
 				once: true,
 				delay: 0
-			}, () => ctx.componentEmitter.emit(componentObserverLocalEvents.elementEnter, component));
+			}, () => ctx.onElementEnters(component));
 		}
 	}
 

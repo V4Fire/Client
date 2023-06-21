@@ -11,48 +11,15 @@
  * @packageDocumentation
  */
 
-import type { AsyncOptions } from 'core/async';
-
 import VDOM, { create, render } from 'components/friends/vdom';
 import type iItems from 'components/traits/i-items/i-items';
-import type { CreateFromItemFn } from 'components/traits/i-items/i-items';
 
-import type {
+import { bScrollyDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-scrolly/const';
 
-	ComponentState,
-	ComponentDb,
-	ComponentRenderStrategy,
-	RequestParams,
-	RequestQueryFn,
-	ShouldPerform,
-	ComponentRefs,
-	ComponentItemFactory,
-	ComponentItemType,
-	ComponentStrategy,
-	RenderGuardResult
-
-} from 'components/base/b-scrolly/interface';
-
-import {
-
-	componentRenderStrategy,
-	componentDataLocalEvents,
-	defaultShouldProps,
-	componentLocalEvents,
-	componentItemType,
-	componentStrategy
-
-} from 'components/base/b-scrolly/const';
-
-import { Juggler } from 'components/base/b-scrolly/modules/juggler';
-import { Observer } from 'components/base/b-scrolly/modules/observer';
-import { ComponentFactory } from 'components/base/b-scrolly/modules/factory';
-import { SlotsStateController } from 'components/base/b-scrolly/modules/slots';
-import { ComponentInternalState } from 'components/base/b-scrolly/modules/state';
-import { componentTypedEmitter } from 'components/base/b-scrolly/modules/emitter';
-
-import iData, { component, prop, system, $$ } from 'components/super/i-data/i-data';
-import { chunkSizePreset } from 'components/base/b-scrolly/modules/presets/chunk-size';
+import iData, { $$, component, RequestParams } from 'components/super/i-data/i-data';
+import { bScrollyHandlers } from 'components/base/b-scrolly/handlers';
+import type { AsyncOptions } from 'core/async';
+import type { ComponentState } from 'components/base/b-scrolly/interface';
 
 export * from 'components/base/b-scrolly/interface';
 export * from 'components/base/b-scrolly/const';
@@ -68,238 +35,7 @@ VDOM.addToPrototype(render);
  * by dynamically rendering chunks of data as the user scrolls.
  */
 @component()
-export default class bScrolly extends iData implements iItems {
-	/** {@link iItems.item} */
-	readonly Item!: object;
-
-	/** {@link iItems.Items} */
-	readonly Items!: Array<this['Item']>;
-
-	/** {@link iItems.item} */
-	@prop({type: [String, Function]})
-	readonly item?: iItems['item'];
-
-	/** {@link iItems.itemKey} */
-	@prop({type: [String, Function]})
-	readonly itemKey?: CreateFromItemFn<object, string>;
-
-	/** {@link ComponentItemType} */
-	@prop({type: [String, Function]})
-	readonly itemType: keyof ComponentItemType | CreateFromItemFn<object, ComponentItemType> = componentItemType.item;
-
-	/** {@link iItems.itemProps} */
-	@prop({type: [Function, Object], default: () => ({})})
-	readonly itemProps!: iItems['itemProps'];
-
-	/**
-	 * Specifies the number of times the `tombstone` component will be rendered.
-	 *
-	 * This prop can be useful if you want to render multiple `tombstone` components
-	 * using a single specified element. For example, if you set `tombstonesSize` to 3,
-	 * then three `tombstone` components will be rendered on your page.
-	 */
-	@prop(Number)
-	readonly tombstonesSize?: number;
-
-	/**
-	 * This factory function is used to pass information about the components that need to be rendered.
-	 * The function should return an array of arbitrary length consisting of objects that satisfy the
-	 * `ComponentItem` interface.
-	 *
-	 * By default, the rendering strategy is based on the `chunkSize` and `iItems` trait.
-	 * In other words, the default implementation takes a data slice of length `chunkSize`
-	 * and calls the `iItems` functions to generate a `ComponentItem` object.
-	 *
-	 * However, nothing prevents the client from implementing any strategy by overriding this function.
-	 *
-	 * For example, it is possible to define a function
-	 * that takes the last loaded data and draws twice as many components:
-	 *
-	 * @example
-	 * ```typescript
-	 * const itemsFactory = (state) => {
-	 *   const data = state.lastLoadedData;
-	 *
-	 *   const items = data.map<ComponentItem>((item) => ({
-	 *     item: 'section',
-	 *     key: Object.cast(undefined),
-	 *     type: 'item',
-	 *     children: [],
-	 *     props: {
-	 *       'data-index': item.i
-	 *     }
-	 *   }));
-	 *
-	 *   return [...items, ...items];
-	 * }
-	 * ```
-	 */
-	@prop({
-		type: Function,
-		default: (state: ComponentState, ctx: bScrolly) => {
-			if (ctx.chunkSize == null) {
-				throw new Error('chunkSize.getNextDataSlice is used but chunkSize prop is not settled');
-			}
-
-			const descriptors = chunkSizePreset.getNextDataSlice(state, ctx.chunkSize).map((data, i) => ({
-				key: ctx.itemKey?.(data, i),
-
-				item: Object.isFunction(ctx.item) ? ctx.item(data, i) : ctx.item,
-				type: Object.isFunction(ctx.itemType) ? ctx.itemType(data, i) : ctx.itemType,
-
-				props: Object.isFunction(ctx.itemProps) ?
-					ctx.itemProps(data, i, {
-						key: ctx.itemKey?.(data, i),
-						ctx
-					}) :
-					ctx.itemProps
-			}));
-
-			return descriptors;
-		}
-	})
-
-	readonly itemsFactory!: ComponentItemFactory;
-
-	override readonly DB!: ComponentDb;
-
-	/**
-	 * The rendering strategy of components.
-	 * Determines which approach will be taken for rendering components within the rendering engine.
-	 *
-	 * * `default` - The default approach,
-	 * which creates a new instance of the rendering engine each time a new rendering is performed.
-	 *
-	 * * `reuse` - An approach
-	 * that reuses the current instance of the rendering engine whenever a new rendering is performed.
-	 *
-	 * {@link ComponentRenderStrategy}
-	 */
-	@prop({type: String, validator: (v) => Object.isString(v) && componentRenderStrategy.hasOwnProperty(v)})
-	readonly componentRenderStrategy: keyof ComponentRenderStrategy = componentRenderStrategy.default;
-
-	/**
-	 * Strategies for component operation modes.
-	 * {@link ComponentStrategy}
-	 */
-	@prop({type: String, validator: (v) => Object.isString(v) && componentStrategy.hasOwnProperty(v)})
-	readonly componentStrategy: keyof ComponentStrategy = componentStrategy.intersectionObserver;
-
-	/**
-	 * Function that returns the GET parameters for a request.
-	 * {@link RequestQueryFn}
-	 */
-	@prop({type: Function})
-	readonly requestQuery?: RequestQueryFn;
-
-	/**
-	 * The number of elements to render at once.
-	 * This prop is used in conjunction with `renderGuard` and `chunkSize` preset.
-	 */
-	@prop({type: Number, validator: Number.isNatural})
-	readonly chunkSize?: number = 10;
-
-	/**
-	 * When this function returns `true` the component will stop to request new data.
-	 * This function will be called on each data loading cycle.
-	 */
-	@prop({
-		type: Function,
-		default: defaultShouldProps.shouldStopRequestingData
-	})
-
-	readonly shouldStopRequestingData!: ShouldPerform;
-
-	/**
-	 * When this function returns `true` the component will be able to request additional data.
-	 * This function will be called on each new element enters the viewport.
-	 */
-	@prop({
-		type: Function,
-		default: defaultShouldProps.shouldPerformDataRequest
-	})
-
-	readonly shouldPerformDataRequest!: ShouldPerform;
-
-	/**
-	 * This function is called after successful data loading or when the component enters the visible area.
-	 *
-	 * This function asks the client whether rendering can be performed. The client responds with an object
-	 * indicating whether rendering is allowed or the reason for denial. The client's response should be an object
-	 * of type {@link RenderGuardResult}.
-	 *
-	 * Based on the result of this function, the component takes appropriate actions. For example,
-	 * it may load data if it is not sufficient for rendering, or perform rendering if all conditions are met.
-	 *
-	 * By default, the {@link chunkSizePreset.renderGuard} strategy is used,
-	 * which already implements the mechanism for communication with the component.
-	 */
-	@prop({
-		type: Function,
-		default: (state: ComponentState, ctx: bScrolly) => {
-			if (ctx.chunkSize == null) {
-				throw new Error('The "ChunkSize.renderGuard" preset is active, but the "chunkSize" prop is not set.');
-			}
-
-			return chunkSizePreset.renderGuard(state, ctx, ctx.chunkSize);
-		}
-	})
-	readonly renderGuard!: ShouldPerform<RenderGuardResult>;
-
-	/**
-	 * This function is called in the `renderGuard` after other checks are completed.
-	 *
-	 * This function receives the component state as input, based on which the client
-	 * should determine whether the component should render the next chunk of components.
-	 *
-	 * For example, if we want to render the next data chunk only when the client
-	 * has seen all the main components, we can implement the following function:
-	 *
-	 * @example
-	 * ```typescript
-	 * const shouldPerformDataRender = (state) => {
-	 *   return state.isInitialRender || state.itemsTillEnd === 0;
-	 * }
-	 * ```
-	 */
-	@prop(Function)
-	readonly shouldPerformDataRender?: ShouldPerform<boolean>;
-
-	/**
-	 * If `true`, the element observation module will not be initialized.
-	 *
-	 * Setting this prop to `true` can be useful if you want to implement lazy rendering
-	 * and control it using the `renderNext` method.
-	 */
-	@prop({
-		type: Boolean
-	})
-	readonly disableObserver: boolean = false;
-
-	/** {@link componentTypedEmitter} */
-	@system<bScrolly>((ctx) => componentTypedEmitter(ctx))
-	readonly componentEmitter!: ReturnType<typeof componentTypedEmitter>;
-
-	/** {@link SlotsStateController} */
-	@system<bScrolly>((ctx) => new SlotsStateController(ctx))
-	readonly slotsStateController!: SlotsStateController;
-
-	/** {@link ComponentInternalState} */
-	@system<bScrolly>((ctx) => new ComponentInternalState(ctx))
-	readonly componentInternalState!: ComponentInternalState;
-
-	/** {@link ComponentFactory} */
-	@system<bScrolly>((ctx) => new ComponentFactory(ctx))
-	readonly componentFactory!: ComponentFactory;
-
-	/** {@link Juggler} */
-	@system<bScrolly>((ctx) => new Juggler(ctx))
-	readonly juggler!: Juggler;
-
-	/** {@link Observer} */
-	@system<bScrolly>((ctx) => new Observer(ctx))
-	readonly observer!: Observer;
-
+export default class bScrolly extends bScrollyHandlers implements iItems {
 	// @ts-ignore (getter instead readonly)
 	override get requestParams(): iData['requestParams'] {
 		return {
@@ -309,8 +45,6 @@ export default class bScrolly extends iData implements iItems {
 			}
 		};
 	}
-
-	protected override readonly $refs!: iData['$refs'] & ComponentRefs;
 
 	override reload(...args: Parameters<iData['reload']>): ReturnType<iData['reload']> {
 		this.componentStatus = 'loading';
@@ -342,17 +76,16 @@ export default class bScrolly extends iData implements iItems {
 			callSuperAndStateReset() :
 			this.initLoadNext();
 
-		this.componentEmitter.emit(componentDataLocalEvents.dataLoadStart, isInitialLoading);
+		this.onDataLoadStart(isInitialLoading);
 
 		if (Object.isPromise(initLoadResult)) {
 			initLoadResult
 				.then((res) => {
-					this.componentInternalState.setIsLoadingInProgress(false);
-					this.onInitLoadSuccess(isInitialLoading, isInitialLoading ? this.db : this.convertDataToDB(res));
+					this.onDataLoadSuccess(isInitialLoading, isInitialLoading ? this.db : this.convertDataToDB(res));
 				})
 				.catch((err) => {
 					this.componentInternalState.setIsLoadingInProgress(false);
-					this.onInitLoadError(isInitialLoading);
+					this.onDataLoadError(isInitialLoading);
 
 					throw err;
 				});
@@ -360,9 +93,10 @@ export default class bScrolly extends iData implements iItems {
 
 		return <Promise<void>>initLoadResult;
 	}
+
 	/**
 	 * Initializes the loading of the next data chunk.
-	 * @param args
+	 * @throws {@link ReferenceError} if there is no `dataProvider` set.
 	 */
 	initLoadNext(): Promise<unknown> {
 		if (!this.dataProvider) {
@@ -371,6 +105,13 @@ export default class bScrolly extends iData implements iItems {
 
 		const params = this.getRequestParams();
 		return this.dataProvider.get(params[0], params[1]);
+	}
+
+	/**
+	 * Resets the component state to its initial state.
+	 */
+	reset(): void {
+		this.onReset();
 	}
 
 	/**
@@ -410,7 +151,7 @@ export default class bScrolly extends iData implements iItems {
 	/**
 	 * Wrapper for {@link bScrolly.shouldStopRequestingData}.
 	 */
-	shouldStopRequestingDataWrapper(): boolean {
+	shouldStopRequestingDataWrapper(this: bScrolly): boolean {
 		const state = this.getComponentState();
 
 		if (state.isRequestsStopped) {
@@ -426,54 +167,95 @@ export default class bScrolly extends iData implements iItems {
 	/**
 	 * Wrapper for {@link bScrolly.shouldPerformDataRequest}.
 	 */
-	shouldPerformDataRequestWrapper(): boolean {
+	shouldPerformDataRequestWrapper(this: bScrolly): boolean {
 		return this.shouldPerformDataRequest(this.getComponentState(), this);
 	}
 
-	/**
-	 * Resets the component state and the state of the component modules.
-	 */
-	protected reset(): void {
-		this.componentEmitter.emit(componentLocalEvents.resetState);
-	}
-
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
-		this.componentEmitter.emit(componentLocalEvents.convertDataToDB, data);
-		return super.convertDataToDB(data);
+		const result = super.convertDataToDB(data);
+		this.onConvertDataToDB(data);
+
+		return <O | this['DB']>result;
 	}
 
 	/**
-	 * Handler: data load successfully finished.
-	 *
-	 * @param isInitialLoading - `true` if this load was an initial component loading.
-	 * @param data
-	 *
-	 * @throws {@link ReferenceError} if there is not `data` field in the loaded data.
+	 * Renders components using {@link bScrolly.componentFactory} and inserts them into the DOM tree.
+	 * {@link bScrolly.componentFactory}, in turn, calls {@link bScrolly.itemsFactory} to obtain
+	 * the set of components to render.
 	 */
-	protected onInitLoadSuccess(isInitialLoading: boolean, data: unknown): void {
-		if (!Object.isPlainObject(data) || !Array.isArray(data.data)) {
-			throw new ReferenceError('Missing "data" field in the loaded data');
+	protected performRender(): void {
+		this.onRenderStart();
+
+		const
+			items = this.componentFactory.produceComponentItems(),
+			nodes = this.componentFactory.produceNodes(items),
+			mounted = this.componentFactory.produceMounted(items, nodes);
+
+		this.componentInternalState.updateMounted(mounted);
+		this.observer.observe(mounted);
+
+		this.onDomInsertStart();
+
+		const
+			fragment = document.createDocumentFragment();
+
+		for (let i = 0; i < nodes.length; i++) {
+			this.dom.appendChild(fragment, nodes[i], {
+				group: bScrollyDomInsertAsyncGroup,
+				destroyIfComponent: true
+			});
 		}
 
-		this.componentInternalState.updateData(data.data, isInitialLoading);
-		this.shouldStopRequestingDataWrapper();
+		this.async.requestAnimationFrame(() => {
+			this.$refs.container.appendChild(fragment);
 
-		this.componentEmitter.emit(componentDataLocalEvents.dataLoadSuccess, data.data, isInitialLoading);
+			this.onDomInsertDone();
+			this.onRenderDone();
 
-		if (isInitialLoading && Object.size(data.data) === 0) {
-			if (this.shouldStopRequestingDataWrapper()) {
-				this.componentEmitter.emit(componentDataLocalEvents.dataEmpty, isInitialLoading);
+		}, {label: $$.insertDomRaf, group: bScrollyDomInsertAsyncGroup});
+	}
+
+	/**
+	 * A function that performs actions (data loading/rendering) depending
+	 * on the result of the {@link bScrolly.renderGuard} method.
+	 *
+	 * This function is the "starting point" for rendering components and is called after successful data loading
+	 * or when rendered items enter the viewport.
+	 */
+	protected loadDataOrPerformRender(): void {
+		const
+			state = this.getComponentState(),
+			{result, reason} = this.renderGuard(state, this);
+
+		if (result) {
+			return this.performRender();
+		}
+
+		if (reason === renderGuardRejectionReason.done) {
+			this.onLifecycleDone();
+			return;
+		}
+
+		if (reason === renderGuardRejectionReason.noData) {
+			if (state.isRequestsStopped) {
+				return;
+			}
+
+			if (this.shouldPerformDataRequestWrapper()) {
+				void this.initLoad();
+			}
+		}
+
+		if (reason === renderGuardRejectionReason.notEnoughData) {
+			if (state.isRequestsStopped) {
+				this.performRender();
+
+			} else if (this.shouldPerformDataRequestWrapper()) {
+				void this.initLoad();
+
+			} else if (state.isInitialRender) {
+				this.performRender();
 			}
 		}
 	}
-
-	/**
-	 * Handler: failed to load data.
-	 *
-	 * @param isInitialLoading - `true` if this load was an initial component loading.
-	 */
-	protected onInitLoadError(isInitialLoading: boolean): void {
-		this.componentEmitter.emit(componentDataLocalEvents.dataLoadError, isInitialLoading);
-	}
-
 }

@@ -135,6 +135,11 @@ declare var
 		mock: import('jest-mock').ModuleMocker['fn'];
 	};
 
+interface JestMockResult<VAL = unknown> {
+	type: 'throw' | 'return';
+	value: VAL;
+}
+
 interface TouchGesturesCreateOptions {
 	/**
 	 * An element to dispatch the event

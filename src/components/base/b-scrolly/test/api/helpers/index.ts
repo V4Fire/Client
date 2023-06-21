@@ -67,7 +67,8 @@ export function createDataConveyor<DATA>(
 	let
 		dataI = 0,
 		itemsI = 0,
-		childI = 0;
+		childI = 0,
+		page = 0;
 
 	const obj: DataConveyor = {
 		addData(count: number) {
@@ -77,6 +78,8 @@ export function createDataConveyor<DATA>(
 			dataChunks.push(newData);
 
 			dataI = data.length;
+			page++;
+
 			return newData;
 		},
 
@@ -144,8 +147,12 @@ export function createDataConveyor<DATA>(
 			return data;
 		},
 
+		get page() {
+			return page;
+		},
+
 		get lastLoadedData() {
-			return dataChunks[dataChunks.length - 1];
+			return dataChunks[dataChunks.length - 1] ?? [];
 		}
 	};
 
@@ -218,11 +225,11 @@ export function createInitialState(state: Partial<ComponentState>): ComponentSta
  */
 export function extractStateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'items' | 'childList'> {
 	return {
-		data: conveyor.data,
-		lastLoadedData: conveyor.lastLoadedData,
-		lastLoadedRawData: {data: conveyor.lastLoadedData},
-		items: conveyor.items,
-		childList: conveyor.childList
+		data: [...conveyor.data],
+		lastLoadedData: [...conveyor.lastLoadedData],
+		lastLoadedRawData: conveyor.page === 0 ? undefined : {data: [...conveyor.lastLoadedData]},
+		items: [...conveyor.items],
+		childList: [...conveyor.childList]
 	};
 }
 
@@ -305,10 +312,31 @@ export function createIndexedObj(i: number): IndexedObj {
  * It only keeps component events, excluding observer-like events.
  *
  * @param emitCalls - The array of emit calls.
- * @param filterObserverEvents - Whether to filter out observer events (default: true).
+ * @param [filterObserverEvents] - Whether to filter out observer events (default: true).
  */
-export function filterEmitterCalls(emitCalls: unknown[][], filterObserverEvents: boolean = true): unknown[][] {
+export function filterEmitterCalls(
+	emitCalls: unknown[][],
+	filterObserverEvents: boolean = true
+): unknown[][] {
 	return emitCalls.filter(([event]) => Object.isString(event) &&
 		Boolean(componentEvents[event]) &&
 		(filterObserverEvents ? !(event in componentObserverLocalEvents) : true));
+}
+
+/**
+ * Filters emitter emit results and removes unnecessary events.
+ * It only keeps component events, excluding observer-like events.
+ *
+ * @param results - The array of emit results.
+ * @param [filterObserverEvents] - Whether to filter out observer events (default: true).
+ */
+export function filterEmitterResults<VAL extends [event: string, ...rest: any[]]>(
+	results: Array<JestMockResult<VAL>>,
+	filterObserverEvents: boolean = true
+): VAL[] {
+	const filtered = results.filter(({value: [event]}) => Object.isString(event) &&
+		Boolean(componentEvents[event]) &&
+		(filterObserverEvents ? !(event in componentObserverLocalEvents) : true));
+
+	return filtered.map(({value}) => value);
 }

@@ -53,4 +53,11 @@ export class Observer extends Friend {
 
 		this.engine.watchForIntersection(mounted);
 	}
+
+	/**
+	 * Resets the module state.
+	 */
+	reset(): void {
+		this.engine.reset();
+	}
 }

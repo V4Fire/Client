@@ -23,6 +23,16 @@ import type {
 } from 'components/base/b-scrolly/interface';
 
 /**
+ * Base group for performing asynchronous operations of the component.
+ */
+export const bScrollyAsyncGroup = 'b-scrolly';
+
+/**
+ * Group for asynchronous operations related to inserting nodes into the DOM tree.
+ */
+export const bScrollyDomInsertAsyncGroup = `${bScrollyAsyncGroup}:dom-insert`;
+
+/**
  * {@link ComponentRenderStrategy}
  */
 export const componentRenderStrategy: ComponentRenderStrategy = <const>{

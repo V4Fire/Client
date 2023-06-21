@@ -15,7 +15,7 @@ import type { ComponentTypedEmitter } from 'components/base/b-scrolly/modules/em
 export * from 'components/base/b-scrolly/modules/emitter/interface';
 
 /**
- * Provides methods for interacting with the `localEmitter` using typed events.
+ * Provides methods for interacting with the `selfEmitter` using typed events.
  * @param ctx
  */
 export function componentTypedEmitter(ctx: bScrolly): ComponentTypedEmitter {
@@ -24,7 +24,7 @@ export function componentTypedEmitter(ctx: bScrolly): ComponentTypedEmitter {
 		handler: (...args: LocalEventPayload<EVENT>) => void,
 		asyncOpts?: AsyncOptions
 	) => {
-		ctx.unsafe.localEmitter.once(event, <Function>handler, asyncOpts);
+		ctx.once(event, <Function>handler, asyncOpts);
 	};
 
 	const on = <EVENT extends ComponentEvents>(
@@ -32,19 +32,19 @@ export function componentTypedEmitter(ctx: bScrolly): ComponentTypedEmitter {
 		handler: (...args: LocalEventPayload<EVENT>) => void,
 		asyncOpts?: AsyncOptions
 	) => {
-		ctx.unsafe.localEmitter.on(event, <Function>handler, asyncOpts);
+		ctx.on(event, <Function>handler, asyncOpts);
 	};
 
 	const promisifyOnce = <EVENT extends ComponentEvents>(
 		event: EVENT,
 		asyncOpts?: AsyncOptions
-	) => ctx.unsafe.localEmitter.promisifyOnce(event, asyncOpts);
+	) => ctx.promisifyOnce(event, asyncOpts);
 
 	const emit = <EVENT extends ComponentEvents>(
 		event: EVENT,
 		...payload: LocalEventPayload<EVENT>
 	) => {
-		ctx.unsafe.localEmitter.emit(event, ...payload);
+		ctx.emit(event, ...payload);
 	};
 
 	return <ComponentTypedEmitter>{
