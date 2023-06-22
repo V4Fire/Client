@@ -1,7 +1,12 @@
 # core/component/state
 
-The module provides the global watchable store for all components. You could say it’s like Redux, only much simpler.
-Use this store to provide data of external modules to components.
+The module provides a global store for all components to access,
+which can be used to provide data from external modules to components.
+The store is similar to Redux, but much simpler and easier to use.
+Components can subscribe to the store to receive updates whenever the data in the store changes,
+and they can also update the store themselves if necessary.
+This allows for a centralized location for managing data that can be accessed by all components throughout
+the application.
 
 ## Usage
 
@@ -22,27 +27,27 @@ set('newProp', someValue);
 
 ## Built-in state
 
-V4Fire supports out of the box integration with `core/session`, `core/net` and `core/abt` modules.
+V4Fire supports out of the box integration with the `core/session`, `core/net`, and `core/abt` modules.
 
 ### state.isAuth
 
-The property indicates whether the session is authorized or not.
+This property signifies if the session has been authorized or not.
 
 ### state.isOnline
 
-The property indicates whether there is currently an Internet connection or not.
+This property signifies if an Internet connection is currently active or not.
 
 ### state.lastOnlineDate
 
-The property indicates the date of the last Internet connection.
+This property indicates the date of the most recent Internet connection.
 
 ### state.experiments
 
-The property refers to a list of registered AB experiments.
+This property contains a list of registered AB experiments.
 
 ## API
 
-As the default export, the module exposes a link to the store object itself.
-Besides, the module exports methods to `set`/`unset` new store properties and `watch` for them changes.
-To watch the store changes, it uses `core/watch`. Therefore, for detailed information about observing objects,
-please refer to the documentation of this module.
+By default, this module exports a link to the store object itself.
+Additionally, it provides methods for setting and unsetting new store properties, as well as watching for changes.
+To observe store modifications, the module utilizes the `core/watch` functionality.
+For a comprehensive understanding of object observation, please consult the documentation for this module.

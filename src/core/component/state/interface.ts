@@ -10,17 +10,17 @@ import type { Experiments } from 'core/abt';
 
 export interface State {
 	/**
-	 * Is session is authorized
+	 * True, if the current user session is authorized
 	 */
 	isAuth?: boolean;
 
 	/**
-	 * Is there an Internet connection
+	 * True, if the application is connected to the Internet
 	 */
 	isOnline?: boolean;
 
 	/**
-	 * Date of last Internet connection
+	 * Date of the last Internet connection
 	 */
 	lastOnlineDate?: Date;
 

@@ -14,26 +14,22 @@
 import type { EventListener } from 'core/component/queue-emitter/interface';
 
 export * from 'core/component/queue-emitter/interface';
-
-/**
- * The special kind of event emitter that supports queues of handlers
- */
 export default class QueueEmitter {
 	/**
-	 * A queue of event handlers that are ready to invoke
+	 * A queue of event handlers that are ready to be executed
 	 */
 	protected queue: Function[] = [];
 
 	/**
-	 * A dictionary with tied event listeners that aren't ready to invoke
+	 * A dictionary containing event listeners that are tied to specific events but are not yet ready to be executed
 	 */
 	protected listeners: Dictionary<EventListener[]> = Object.createDict();
 
 	/**
-	 * Attaches a handler for the specified set of events.
-	 * The handler will be invoked only when all specified events are fired.
+	 * Attaches a handler function for the specified set of events.
+	 * The handler function will only be invoked once all specified events have been fired.
 	 *
-	 * @param event - a set of events (can be undefined)
+	 * @param event - the set of events (can be undefined)
 	 * @param handler
 	 */
 	on(event: Nullable<Set<string>>, handler: Function): void {
@@ -51,9 +47,9 @@ export default class QueueEmitter {
 	}
 
 	/**
-	 * Emits the specified event.
-	 * If at least one of handlers returns a promise,
-	 * the method returns a promise that will be resolved after all internal promises are resolved.
+	 * Emits the specified event, invoking all handlers attached to the event.
+	 * If at least one of the handlers returns a promise,
+	 * the method will return a promise that will only be resolved once all internal promises are resolved.
 	 *
 	 * @param event
 	 */
@@ -93,9 +89,9 @@ export default class QueueEmitter {
 	}
 
 	/**
-	 * Drains the queue of handlers that are ready to invoke.
-	 * If at least one of listeners returns a promise,
-	 * the method returns a promise that will be resolved after all internal promises are resolved.
+	 * Drains the queue of event handlers that are ready to be executed.
+	 * If at least one of the handlers returns a promise,
+	 * the method will return a promise that will only be resolved once all internal promises are resolved.
 	 */
 	drain(): CanPromise<void> {
 		const

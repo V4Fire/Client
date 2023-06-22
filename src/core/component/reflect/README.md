@@ -1,6 +1,7 @@
 # core/component/reflect
 
-This module provides a bunch of functions to reflect component classes.
+This module provides a set of functions that allow you to retrieve information about a component or
+its properties based on its constructor and other parameters.
 
 ## Usage
 
@@ -19,7 +20,7 @@ class bButton extends iBlock {
 }
 
 // {openedWindow: ['true', ['false'], bButton.PARENT]}
-getComponentMods(getInfoFromConstructor(bButton));
+console.log(getComponentMods(getInfoFromConstructor(bButton)));
 ```
 
 ## API
@@ -28,13 +29,17 @@ getComponentMods(getInfoFromConstructor(bButton));
 
 #### isSmartComponent
 
-A RegExp to check if the component name has the "smart" postfix
+This regular expression can be used to determine whether a component is a "smart" component based on its name.
 
 #### isAbstractComponent
 
-A RegExp to check if the component name is abstract.
+This regular expression allows you to determine if a component is abstract based on its name.
 
 ### Functions
+
+#### getComponentName
+
+Returns a component's name based on the given constructor. The name is returned in a dash-separated format.
 
 #### getInfoFromConstructor
 
@@ -57,7 +62,7 @@ console.log(getInfoFromConstructor(bButton));
 
 #### getPropertyInfo
 
-Returns an information object of a component property by the specified path.
+Returns an object containing information of the component property by the specified path.
 
 ```js
 @component()
@@ -88,8 +93,9 @@ class bButton {
 
 #### getComponentMods
 
-Returns a dictionary with modifiers from the specified component.
-This function takes the raw declaration of modifiers, normalizes it, and mixes with the design system modifiers (if there are specified).
+Returns a dictionary containing normalized modifiers from the given component.
+This function takes in the raw modifiers declaration, normalizes them, and merges them with the design system modifiers
+if specified.
 
 ```js
 @component()

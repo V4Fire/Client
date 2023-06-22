@@ -24,7 +24,7 @@ import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/in
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
 /**
- * An abstract class that represents Vue compatible component API
+ * An abstract class that encapsulates the Vue-compatible component API
  */
 export abstract class ComponentInterface {
 	/**
@@ -48,41 +48,41 @@ export abstract class ComponentInterface {
 	readonly componentName!: string;
 
 	/**
-	 * A link to the component class instance.
-	 * Basically, this parameter is mainly used for `instanceof` checks and to get component default property values.
-	 * Mind, all components of the same type refer to the one shareable class instance.
+	 * A reference to the class instance of the component.
+	 * This parameter is primarily used for instance checks and to access default property values of components.
+	 * Note that all components of the same type share a single class instance.
 	 */
 	readonly instance!: this;
 
 	/**
 	 * Additional modifiers for the component.
-	 * Modifiers allow binding component state properties directly to CSS classes without
-	 * unnecessary re-rendering of a component.
+	 * Modifiers allow binding the state properties of a component directly to CSS classes,
+	 * without the need for unnecessary re-rendering.
 	 */
 	abstract readonly modsProp?: ModsProp;
 
 	/**
-	 * A dictionary with applied component modifiers
+	 * A dictionary that contains applied component modifiers
 	 */
 	abstract readonly mods: ModsDict;
 
 	/**
 	 * Shareable component modifiers.
-	 * These modifiers are automatically provided to all child components.
-	 * So, for example, you have a component that uses another component within your template,
-	 * and you specify to the outer component some theme modifier.
+	 * These modifiers are automatically propagated to child components.
+	 * For instance, suppose you have a component in your template that utilizes another component,
+	 * and you assign a theme modifier to the outer component.
 	 */
 	abstract get sharedMods(): CanUndef<Readonly<ModsDict>>;
 
 	/**
-	 * Additional classes for component elements.
-	 * This option can be useful if you need to attach some extra classes to the internal component elements.
+	 * Additional classes for the component elements.
+	 * This option can be useful if you need to attach some extra classes to the inner component elements.
 	 * Be sure you know what you are doing because this mechanism is tied to the private component markup.
 	 *
 	 * @example
 	 * ```js
 	 * // Key names are tied with the component elements
-	 * // Values contain a CSS class or a list of classes we want to add
+	 * // Values contain CSS classes we want to add
 	 *
 	 * {
 	 *   foo: 'bla',
@@ -93,14 +93,14 @@ export abstract class ComponentInterface {
 	abstract readonly classes?: Dictionary<CanArray<string>>;
 
 	/**
-	 * Additional styles for component elements.
-	 * This option can be useful if you need to attach some extra styles to the internal component elements.
+	 * Additional styles for the component elements.
+	 * This option can be useful if you need to attach some extra styles to the inner component elements.
 	 * Be sure you know what you are doing because this mechanism is tied to the private component markup.
 	 *
 	 * @example
 	 * ```js
 	 * // Key names are tied with component elements,
-	 * // Values contains a CSS style string, a style object or a list of style strings
+	 * // Values contains CSS styles we want to add
 	 *
 	 * {
 	 *   foo: 'color: red',
@@ -112,7 +112,7 @@ export abstract class ComponentInterface {
 	abstract readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
 	/**
-	 * A string value that indicates what lifecycle hook the component is in.
+	 * A string value indicating the lifecycle hook that the component is currently in.
 	 * For instance, `created`, `mounted` or `destroyed`.
 	 *
 	 * @see https://vuejs.org/guide/essentials/lifecycle.html
@@ -120,8 +120,9 @@ export abstract class ComponentInterface {
 	abstract hook: Hook;
 
 	/**
-	 * An API for unsafely invoking of some internal properties of the component.
-	 * This parameter allows to avoid TS errors while using protected properties and methods outside from the main class.
+	 * An API for safely invoking some internal properties and methods of a component.
+	 * This parameter allows you to use protected properties and methods from outside the class without
+	 * causing TypeScript errors.
 	 * Use it when you need to decompose the component class into a composition of friendly classes.
 	 */
 	get unsafe(): UnsafeGetter<UnsafeComponentInterface<this>> {
@@ -139,7 +140,7 @@ export abstract class ComponentInterface {
 	readonly $options!: ComponentOptions;
 
 	/**
-	 * A dictionary with the initialized component props
+	 * A dictionary that contains the initialized component props
 	 */
 	readonly $props!: Dictionary;
 
@@ -159,7 +160,7 @@ export abstract class ComponentInterface {
 	readonly $normalParent!: this['Component'] | null;
 
 	/**
-	 * A link to the component parent if the current component was dynamically created and mounted
+	 * A link to the parent component if the current component was dynamically created and mounted
 	 */
 	readonly $remoteParent?: this['Component'];
 

@@ -9,7 +9,7 @@
 import type { ComponentMeta } from 'core/component/meta';
 
 /**
- * Normalizes the passed CSS classes and returns the result
+ * Normalizes the provided CSS classes and returns the resulting output
  * @param classes
  */
 export function normalizeClass(classes: CanArray<string | Dictionary>): string {
@@ -41,7 +41,7 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 }
 
 /**
- * Normalizes the passed CSS styles and returns the result
+ * Normalizes the provided CSS styles and returns the resulting output
  * @param styles
  */
 export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): string | Dictionary<string> {
@@ -78,7 +78,7 @@ const
 	propertyDelimiterRE = /:(.+)/;
 
 /**
- * Parses the specified CSS style string and returns a dictionary with the parsed rules
+ * Analyzes the given CSS style string and returns a dictionary containing the parsed rules
  * @param style
  */
 export function parseStringStyle(style: string): Dictionary<string> {
@@ -102,7 +102,7 @@ export function parseStringStyle(style: string): Dictionary<string> {
 }
 
 /**
- * Normalizes the passed attributes using the specified component metaobject and returns a new object
+ * Normalizes the passed VNode's attributes using the specified component metaobject and returns a new object
  *
  * @param attrs
  * @param dynamicProps
@@ -115,6 +115,7 @@ export function normalizeComponentAttrs(
 ): CanNull<Dictionary> {
 	const {
 		props,
+		// eslint-disable-next-line deprecation/deprecation
 		params: {deprecatedProps}
 	} = component;
 

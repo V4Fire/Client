@@ -12,9 +12,9 @@ import type { ModsDecl } from 'core/component/interface';
 import type { ComponentConstructorInfo } from 'core/component/reflect/interface';
 
 /**
- * Returns a dictionary with modifiers from the specified component.
- * This function takes the raw declaration of modifiers, normalizes it, and mixes with the design system modifiers
- * (if there are specified).
+ * Returns a dictionary containing normalized modifiers from the given component.
+ * This function takes in the raw modifiers declaration, normalizes them, and merges them with
+ * the design system modifiers if specified.
  *
  * @param component - the component information object
  *

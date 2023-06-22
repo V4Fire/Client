@@ -7,11 +7,11 @@
  */
 
 /**
- * A RegExp to check if the component name has the "smart" postfix
+ * This regular expression can be used to determine whether a component is a "smart" component based on its name
  */
 export const isSmartComponent = /-functional$/;
 
 /**
- * A RegExp to check if the component name is abstract
+ * This regular expression allows you to determine if a component is abstract based on its name
  */
 export const isAbstractComponent = /^[iv]-/;

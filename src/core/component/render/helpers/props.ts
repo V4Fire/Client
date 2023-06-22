@@ -12,7 +12,7 @@ export const
 	isHandler = /^on[^a-z]/;
 
 /**
- * Merges the specified props into one and returns it
+ * Merges the specified props into one and returns a single merged prop object
  * @param args
  */
 export function mergeProps(...args: Dictionary[]): Dictionary {
