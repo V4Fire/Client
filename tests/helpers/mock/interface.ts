@@ -16,7 +16,7 @@ export interface SpyObject {
 	/**
 	 * The array of arguments passed to the spy function on each call.
 	 */
-	readonly calls: Promise<unknown[][]>;
+	readonly calls: Promise<any[][]>;
 
 	/**
 	 * The number of times the spy function has been called.
@@ -26,7 +26,7 @@ export interface SpyObject {
 	/**
 	 * The arguments of the most recent call to the spy function.
 	 */
-	readonly lastCall: Promise<unknown[]>;
+	readonly lastCall: Promise<any[]>;
 
 	/**
 	 * The results of each call to the spy function.

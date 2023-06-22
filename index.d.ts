@@ -135,7 +135,7 @@ declare var
 		mock: import('jest-mock').ModuleMocker['fn'];
 	};
 
-interface JestMockResult<VAL = unknown> {
+interface JestMockResult<VAL = any> {
 	type: 'throw' | 'return';
 	value: VAL;
 }

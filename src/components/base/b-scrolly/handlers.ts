@@ -119,7 +119,6 @@ export abstract class bScrollyHandlers extends bScrollyProps {
 	 */
 	onDataLoadStart(isInitialLoading: boolean): void {
 		this.slotsStateController.loadingProgressState();
-		this.componentInternalState.incrementLoadPage();
 
 		this.componentEmitter.emit(componentEvents.dataLoadStart, isInitialLoading);
 	}
@@ -140,6 +139,8 @@ export abstract class bScrollyHandlers extends bScrollyProps {
 		}
 
 		this.componentInternalState.updateData(data.data, isInitialLoading);
+		this.componentInternalState.incrementLoadPage();
+
 		this.shouldStopRequestingDataWrapper();
 		this.componentEmitter.emit(componentEvents.dataLoadSuccess, data.data, isInitialLoading);
 

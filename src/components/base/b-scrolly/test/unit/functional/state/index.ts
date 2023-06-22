@@ -42,7 +42,7 @@ test.describe('<b-scrolly> state', () => {
 			isRequestsStopped: false,
 			isLoadingInProgress: true,
 			lastLoadedData: [],
-			loadPage: 1
+			loadPage: 0
 		});
 
 		await component.setProps({

@@ -262,7 +262,7 @@ export function createMountedItem(data: IndexedObj): MountedItem {
 		key: Object.cast(undefined),
 		item: 'section',
 		type: 'item',
-		node: <any>test.expect.any(String)
+		node: <any>test.expect.anything()
 	};
 }
 
@@ -279,7 +279,7 @@ export function createMountedSeparator(data: IndexedObj): MountedChild {
 		key: Object.cast(undefined),
 		item: 'section',
 		type: 'separator',
-		node: <any>test.expect.any(String)
+		node: <any>test.expect.anything()
 	};
 }
 
@@ -329,13 +329,15 @@ export function filterEmitterCalls(
  *
  * @param results - The array of emit results.
  * @param [filterObserverEvents] - Whether to filter out observer events (default: true).
+ * @param [allowedEvents]
  */
 export function filterEmitterResults<VAL extends [event: string, ...rest: any[]]>(
 	results: Array<JestMockResult<VAL>>,
-	filterObserverEvents: boolean = true
+	filterObserverEvents: boolean = true,
+	allowedEvents: string[] = []
 ): VAL[] {
 	const filtered = results.filter(({value: [event]}) => Object.isString(event) &&
-		Boolean(componentEvents[event]) &&
+		(Boolean(componentEvents[event]) || allowedEvents.includes(event)) &&
 		(filterObserverEvents ? !(event in componentObserverLocalEvents) : true));
 
 	return filtered.map(({value}) => value);
