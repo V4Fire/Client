@@ -176,18 +176,18 @@ export abstract class ComponentInterface {
 
 	/**
 	 * A link to the component metaobject.
-	 * This object contains all information of the component properties, methods and other stuff.
-	 * It's used to create a "real" component by the used render engine.
+	 * This object contains all information of the component properties, methods, etc.
 	 */
 	protected readonly meta!: ComponentMeta;
 
 	/**
-	 * A dictionary with the watchable component properties that can force re-rendering
+	 * A dictionary that contains the watchable component fields that can trigger a re-rendering of the component
 	 */
 	protected readonly $fields!: Dictionary;
 
 	/**
-	 * A dictionary with the watchable component properties that can't force re-rendering
+	 * A dictionary that contains the watchable component fields that do not cause a re-rendering of
+	 * the component when they change
 	 */
 	protected readonly $systemFields!: Dictionary;
 
