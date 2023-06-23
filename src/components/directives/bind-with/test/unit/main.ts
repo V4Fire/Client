@@ -7,23 +7,23 @@
  */
 
 import test from 'tests/config/unit/test';
-import {Component} from "tests/helpers";
-import type {JSHandle, Locator, Page} from "playwright";
-import type iBlock from "components/super/i-block/i-block";
+import { Component } from 'tests/helpers';
+import type { JSHandle, Locator, Page } from 'playwright';
+import type iBlock from 'components/super/i-block/i-block';
 
 /**
  * A call to v-bind-with's .then() or .catch()
  */
-type TestBindWithCallInfo = {
-	args: any[]
+interface TestBindWithCallInfo {
+	args: any[];
 }
 
 /**
  * A history of calls to v-bind-with's .then()/.catch()
  */
-type TestBindWithInfo = {
-	calls: TestBindWithCallInfo[],
-	errorCalls: TestBindWithCallInfo[],
+interface TestBindWithInfo {
+	calls: TestBindWithCallInfo[];
+	errorCalls: TestBindWithCallInfo[];
 }
 
 test.describe('<div v-bind-with>', () => {
@@ -43,9 +43,10 @@ test.describe('<div v-bind-with>', () => {
 		const divLocator = await createDivForTest(page, {
 			on: 'testEvent'
 		});
-		await rootHandle.evaluate(root => {
+		await rootHandle.evaluate((root) => {
 			root.emit('testEvent');
 		});
+
 		const info = await getBindWithInfo(divLocator);
 		test.expect(info).toBeTruthy();
 		test.expect(info!.calls.length).toBe(1);
@@ -53,11 +54,12 @@ test.describe('<div v-bind-with>', () => {
 
 	test('handler execution on field change', async ({page}) => {
 		const divLocator = await createDivForTest(page, {
-			path: 'testField',
+			path: 'testField'
 		});
-		await rootHandle.evaluate(root => {
+		await rootHandle.evaluate((root) => {
 			root.field.set('testField', 0);
 		});
+
 		const info = await getBindWithInfo(divLocator);
 		test.expect(info).toBeTruthy();
 		test.expect(info!.calls.length).toBe(1);
@@ -79,7 +81,7 @@ test.describe('<div v-bind-with>', () => {
 			resolveFn = resolve;
 		});
 		const divLocator = await createDivForTest(page, {
-			promise,
+			promise
 		});
 		resolveFn!();
 		const info = await getBindWithInfo(divLocator);
@@ -94,7 +96,7 @@ test.describe('<div v-bind-with>', () => {
 			rejectFn = reject;
 		});
 		const divLocator = await createDivForTest(page, {
-			promise,
+			promise
 		});
 		rejectFn!();
 		const info = await getBindWithInfo(divLocator);
@@ -107,10 +109,11 @@ test.describe('<div v-bind-with>', () => {
 		const divLocator = await createDivForTest(page, {
 			once: 'testEvent'
 		});
-		await rootHandle.evaluate(root => {
+		await rootHandle.evaluate((root) => {
 			root.emit('testEvent');
 			root.emit('testEvent');
 		});
+
 		const info = await getBindWithInfo(divLocator);
 		test.expect(info).toBeTruthy();
 		test.expect(info!.calls.length).toBe(1);
@@ -120,9 +123,10 @@ test.describe('<div v-bind-with>', () => {
 		const divLocator = await createDivForTest(page, {
 			on: 'onTestEvent'
 		});
-		await rootHandle.evaluate(root => {
+		await rootHandle.evaluate((root) => {
 			root.emit('testEvent', 1, 2, 3);
 		});
+
 		const info = await getBindWithInfo(divLocator);
 		test.expect(info).toBeTruthy();
 		test.expect(info!.calls[0].args).toStrictEqual([1, 2, 3]);
@@ -130,33 +134,47 @@ test.describe('<div v-bind-with>', () => {
 
 	/**
 	 * A handler to pass as .then() in v-bind-with
-	 * @param element The target element
-	 * @param args Args provided by v-bind-with trigger (on/path/callback...)
+	 *
+	 * @param element - The target element
+	 * @param args - Args provided by v-bind-with trigger (on/path/callback...)
 	 */
 	function bindWithHandler(element: HTMLElement, ...args: any[]) {
-		const previousInfo = JSON.parse(element.getAttribute('data-test-bind-with') || '{}');
+		const previousInfo: Partial<TestBindWithInfo> =
+			JSON.parse(element.getAttribute('data-test-bind-with') ?? '{}');
 		const newInfo: TestBindWithInfo = {
 			calls: [
 				...(previousInfo.calls ?? []),
-				{args: args.map(a => !a || a.toString ? a : null)}
+				{
+					// Avoid converting circular structure to JSON
+					args: args.map(
+						(a: any) => !Boolean(a) || typeof a.toString === 'function' ? a : null
+					)
+				}
 			],
-			errorCalls: previousInfo.errorCalls ?? [],
+			errorCalls: previousInfo.errorCalls ?? []
 		};
 		element.setAttribute('data-test-bind-with', JSON.stringify(newInfo));
 	}
 
 	/**
 	 * A handler to pass as .catch() in v-bind-with
-	 * @param element The target argument
-	 * @param args Args provided by v-bind-with trigger (on/path/callback...)
+	 *
+	 * @param element - The target argument
+	 * @param args - Args provided by v-bind-with trigger (on/path/callback...)
 	 */
 	function bindWithErrorHandler(element: HTMLElement, ...args: any[]) {
-		const previousInfo = JSON.parse(element.getAttribute('data-test-bind-with') || '{}');
+		const previousInfo: Partial<TestBindWithInfo> =
+			JSON.parse(element.getAttribute('data-test-bind-with') ?? '{}');
 		const newInfo: TestBindWithInfo = {
 			calls: previousInfo.calls ?? [],
 			errorCalls: [
 				...(previousInfo.errorCalls ?? []),
-				{args: args.map(a => !a || a.toString ? a : null)}
+				{
+					// Avoid converting circular structure to JSON
+					args: args.map(
+						(a: any) => !Boolean(a) || typeof a.toString === 'function' ? a : null
+					)
+				}
 			]
 		};
 		element.setAttribute('data-test-bind-with', JSON.stringify(newInfo));
@@ -164,29 +182,34 @@ test.describe('<div v-bind-with>', () => {
 
 	/**
 	 * Create a <div> with v-bind-with set by test code.
-	 * @param page The page.
-	 * @param bindWithAttrs Attributes to pass to v-bind-with
+	 *
+	 * @param page - The page.
+	 * @param bindWithAttrs - Attributes to pass to v-bind-with
 	 */
 	async function createDivForTest(page: Page, bindWithAttrs: Record<string, any>) {
 		await Component.createComponent(page, 'div', {
 			'v-bind-with': {
 				...bindWithAttrs,
 				then: bindWithHandler,
-				catch: bindWithErrorHandler,
+				catch: bindWithErrorHandler
 			},
-			'data-testid': 'div',
+			'data-testid': 'div'
 		});
+
 		return page.getByTestId('div');
 	}
 
 	/**
 	 * Get v-bind-with calls info by given locator
-	 * @param locator The source locator
+	 * @param locator - The source locator
 	 */
 	async function getBindWithInfo(locator: Locator): Promise<TestBindWithInfo | null> {
-		return JSON.parse(
-			await locator.getAttribute('data-test-bind-with') || '0'
-		) || null;
+		const attrValue = await locator.getAttribute('data-test-bind-with');
+		if (attrValue == null) {
+			return null;
+		}
+
+		return <TestBindWithInfo>JSON.parse(attrValue);
 	}
 
 });
