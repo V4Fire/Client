@@ -1,5 +1,5 @@
 /**
- * Список схем урлов, которые не должны обрабатываться роутером
+ * URI schemes that will be hanlded by the environment not the router
  */
 export const URISchemes = [
 	/^#/,

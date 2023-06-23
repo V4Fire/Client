@@ -845,7 +845,7 @@ export default class bRouter extends iData {
 			!this.interceptLinks ||
 			href == null ||
 			href === '' ||
-			URISchemes.some((uri) => uri.test(href)) ||
+			URISchemes.some((scheme) => scheme.test(href)) ||
 			router.isExternal.test(href);
 
 		if (cantPrevent) {
