@@ -10,6 +10,7 @@ import test from 'tests/config/unit/test';
 import { Component } from 'tests/helpers';
 import type { JSHandle, Locator, Page } from 'playwright';
 import type iBlock from 'components/super/i-block/i-block';
+import type { Listener } from 'components/directives/bind-with';
 
 /**
  * A call to v-bind-with's .then() or .catch()
@@ -132,6 +133,25 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.calls[0].args).toStrictEqual([1, 2, 3]);
 	});
 
+	test('multiple handler executions when array is passed', async ({page}) => {
+		const divLocator = await createDivForTest(page, [
+			{
+				once: 'testEvent'
+			},
+			{
+				once: 'anotherTestEvent'
+			}
+		]);
+		await rootHandle.evaluate((root) => {
+			root.emit('testEvent');
+			root.emit('anotherTestEvent');
+		});
+
+		const info = await getBindWithInfo(divLocator);
+		test.expect(info).toBeTruthy();
+		test.expect(info!.calls.length).toBe(2);
+	});
+
 	/**
 	 * A handler to pass as .then() in v-bind-with
 	 *
@@ -181,18 +201,24 @@ test.describe('<div v-bind-with>', () => {
 	}
 
 	/**
+	 * Force put our handlers to given v-bind-with listener.
+	 * @param listener - A v-bind-with listener to process
+	 */
+	function processListener(listener: Partial<Listener>) {
+		return {...listener, then: bindWithHandler, catch: bindWithErrorHandler};
+	}
+
+	/**
 	 * Create a <div> with v-bind-with set by test code.
 	 *
 	 * @param page - The page.
-	 * @param bindWithAttrs - Attributes to pass to v-bind-with
+	 * @param bindWithValue - Value to pass to v-bind-with
 	 */
-	async function createDivForTest(page: Page, bindWithAttrs: Record<string, any>) {
+	async function createDivForTest(page: Page, bindWithValue: CanArray<Partial<Listener>>) {
 		await Component.createComponent(page, 'div', {
-			'v-bind-with': {
-				...bindWithAttrs,
-				then: bindWithHandler,
-				catch: bindWithErrorHandler
-			},
+			'v-bind-with': Object.isArray(bindWithValue) ?
+				bindWithValue.map(processListener) :
+				processListener(bindWithValue),
 			'data-testid': 'div'
 		});
 
