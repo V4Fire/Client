@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.51.0 (2023-05-??)
+
+#### :rocket: New Feature
+
+* Added more URI schemes to handle by the environment in `b-router`
+
 ## v3.50.0 (2023-06-16)
 
 #### :rocket: New Feature
