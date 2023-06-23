@@ -16,8 +16,8 @@ export type UnsafeGetter<U extends UnsafeComponentInterface = UnsafeComponentInt
 	Dictionary & U['CTX'] & U & {unsafe: any};
 
 /**
- * A special interface to provide access for protected properties and methods outside the main component.
- * It's used to create a "friendly classes" feature.
+ * This is a special interface that provides access to protected properties and methods outside the primary class.
+ * It is used to create friendly classes.
  */
 export interface UnsafeComponentInterface<CTX extends ComponentInterface = ComponentInterface> {
 	/**
@@ -37,7 +37,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	// @ts-ignore (access)
 	$modifiedFields: CTX['$modifiedFields'];
 
-	// Don't use referring from CTX for primitive types, because it breaks TS
+	// Avoid using references to CTX for primitive types, as doing so may cause issues with TS
 
 	$activeField: CanUndef<string>;
 

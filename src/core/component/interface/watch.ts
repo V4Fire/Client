@@ -25,15 +25,15 @@ export type Flush = 'post' | 'pre' | 'sync';
 
 export interface WatchOptions extends RawWatchOptions {
 	/**
-	 * How the event handler should be called:
+	 * Options for invoking the event handler:
 	 *
-	 * 1. `'post'` - the handler will be called on the next tick after the mutation and
-	 *    guaranteed after updating all tied templates;
+	 * 1. 'post' - the handler will be called on the next tick following the mutation, ensuring
+	 *    that all tied templates are rendered;
 	 *
-	 * 2. `'pre'` - the handler will be called on the next tick after the mutation and
-	 *    guaranteed before updating all tied templates;
+	 * 2. 'pre' - the handler will be called on the next tick following the mutation, ensuring
+	 *    that it occurs before rendering all tied templates;
 	 *
-	 * 3. `'sync'` - the handler will be invoked immediately after each mutation.
+	 * 3. 'sync' - the handler will be invoked immediately after each mutation.
 	 */
 	flush?: Flush;
 }
@@ -43,19 +43,19 @@ export interface FieldWatcher<
 	B = A
 > extends WatchOptions {
 	/**
-	 * A handler that is invoked on watcher events
+	 * This handler is called when a watcher event occurs
 	 */
 	handler: WatchHandler<A, B>;
 
 	/**
-	 * If false, the watcher won't be registered for functional components
+	 * If set to false, the watcher will not be registered for functional components
 	 * @default `true`
 	 */
 	functional?: boolean;
 
 	/**
-	 * If false, then the handler that is invoked on the watcher events does not take any arguments from
-	 * events it is listening for
+	 * If set to false, the handler triggered by watcher events will not receive any arguments
+	 * from the events it is set to listen for
 	 *
 	 * @default `true`
 	 */
@@ -68,55 +68,55 @@ export interface WatchObject<
 	B = A
 > extends WatchOptions {
 	/**
-	 * A name of the group the watcher belongs to.
-	 * The parameter is provided to [[Async]].
+	 * The name of the group to which the watcher belongs.
+	 * This parameter is passed to the [[Async]].
 	 */
 	group?: Group;
 
 	/**
-	 * A label associated with the watcher.
-	 * The parameter is provided to [[Async]].
+	 * A label that is associated with the watcher.
+	 * This parameter is passed to the [[Async]].
 	 */
 	label?: Label;
 
 	/**
-	 * A strategy type to join conflict tasks.
-	 * The parameter is provided to [[Async]].
+	 * A strategy type that determines how conflicts between tasks should be handled during a join operation.
+	 * This parameter is passed to the [[Async]].
 	 */
 	join?: Join;
 
 	/**
-	 * If true, the watcher will be removed from a component after the first calling
+	 * If set to true, the watcher will be removed from the component after the first invocation
 	 * @default `false`
 	 */
 	single?: boolean;
 
 	/**
-	 * If false, the watcher won't be registered for functional components
+	 * If set to false, the watcher will not be registered for functional components
 	 * @default `true`
 	 */
 	functional?: boolean;
 
 	/**
-	 * Additional options for the used event emitter
+	 * An object with additional settings for the event emitter
 	 */
 	options?: Dictionary;
 
 	/**
-	 * Additional arguments for the used event emitter
+	 * Additional arguments that will be passed to the event emitter when registering a handler for the specified event
 	 */
 	args?: unknown[];
 
 	/**
-	 * If false, then the handler that is invoked on the watcher events does not take any arguments from
-	 * events it is listening for
+	 * If set to false, the handler triggered by watcher events will not receive any arguments
+	 * from the events it is set to listen for
 	 *
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
 
 	/**
-	 * A wrapper function for the registered handler
+	 * A function that wraps the registered handler
 	 *
 	 * @example
 	 * ```typescript
@@ -136,12 +136,12 @@ export interface WatchObject<
 	wrapper?: WatchWrapper<CTX, A, B>;
 
 	/**
-	 * A component method name that is registered as a handler to the watcher
+	 * The name of a component method that is registered as a handler for the watcher
 	 */
 	method?: string;
 
 	/**
-	 * A handler (or component method name) that is invoked on watcher events
+	 * A handler, or the name of a component's method, that gets invoked upon watcher events
 	 */
 	handler: string | WatchHandler<A, B>;
 }
@@ -157,43 +157,43 @@ export interface MethodWatcher<
 	path?: string;
 
 	/**
-	 * A name of the group the watcher belongs to.
-	 * The parameter is provided to [[Async]].
+	 * The name of the group to which the watcher belongs.
+	 * This parameter is passed to the [[Async]].
 	 */
 	group?: Group;
 
 	/**
-	 * If true, the watcher will be removed from a component after the first calling
+	 * If set to true, the watcher will be removed from the component after the first invocation
 	 * @default `false`
 	 */
 	single?: boolean;
 
 	/**
-	 * If false, the watcher won't be registered for functional components
+	 * If set to false, the watcher will not be registered for functional components
 	 * @default `true`
 	 */
 	functional?: boolean;
 
 	/**
-	 * Additional options for the used event emitter
+	 * An object with additional settings for the event emitter
 	 */
 	options?: Dictionary;
 
 	/**
-	 * Additional arguments for the used event emitter
+	 * Additional arguments that will be passed to the event emitter when registering a handler for the specified event
 	 */
 	args?: CanArray<unknown>;
 
 	/**
-	 * If false, then the handler that is invoked on the watcher events does not take any arguments from
-	 * events it is listening for
+	 * If set to false, the handler triggered by watcher events will not receive any arguments
+	 * from the events it is set to listen for
 	 *
 	 * @default `true`
 	 */
 	provideArgs?: boolean;
 
 	/**
-	 * A wrapper function for the registered handler
+	 * A function that wraps the registered handler
 	 *
 	 * @example
 	 * ```typescript
