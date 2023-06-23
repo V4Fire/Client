@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+
+## v4.??.? (2023-??-??)
+
+#### :bug: [Bug Fix]
+
+* Handle unsuitable `pathParams` value
+
 ## v4.??.?? (2023-??-??)
 
 #### :house: Internal
