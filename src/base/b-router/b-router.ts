@@ -25,7 +25,6 @@ import { URISchemes } from 'base/b-router/modules/const';
 
 import type { StaticRoutes, RouteOption, TransitionMethod, UnsafeBRouter } from 'base/b-router/interface';
 
-
 export * from 'super/i-data/i-data';
 export * from 'core/router/const';
 export * from 'base/b-router/interface';
