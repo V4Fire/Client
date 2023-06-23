@@ -125,6 +125,10 @@ export function createDataConveyor<DATA>(
 			return childList;
 		},
 
+		getDataChunk(index: number) {
+			return dataChunks[index];
+		},
+
 		reset() {
 			dataI = 0;
 			itemsI = 0;
@@ -172,13 +176,22 @@ export function createStateApi(
 	let
 		state = createInitialState(initial);
 
-	return {
+	const obj: StateApi = {
 		compile(override?: Partial<ComponentState>): ComponentState {
 			return {
 				...state,
 				...extractStateFromDataConveyor(dataConveyor),
 				...override
 			};
+		},
+
+		set(props: Partial<ComponentState>): StateApi {
+			state = {
+				...state,
+				...props
+			};
+
+			return obj;
 		},
 
 		reset(): void {
@@ -188,6 +201,8 @@ export function createStateApi(
 
 		data: dataConveyor
 	};
+
+	return obj;
 }
 
 /**

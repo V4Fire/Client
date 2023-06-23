@@ -48,6 +48,14 @@ export interface DataConveyor<DATA = any> {
 	addChild(child: ComponentItem[]): MountedChild[];
 
 	/**
+	 * Returns an array of data for the given index added using the `addData` method.
+	 *
+	 * @param index - The index of the data chunk.
+	 * @returns An array of data.
+	 */
+	getDataChunk(index: number): DATA[];
+
+	/**
 	 * Resets the data conveyor, clearing all data and items.
 	 */
 	reset(): void;
@@ -94,6 +102,15 @@ export interface StateApi {
 	 * Resets the component state to its initial values.
 	 */
 	reset(): void;
+
+	/**
+	 * Sets the values from an object as the current state. Fields set using this method are not automatically reset,
+	 * and they can only be reset by overriding them or using the `reset` method.
+	 *
+	 * @param props - An object containing the new state values.
+	 * @returns The updated StateApi object.
+	 */
+	set(props: Partial<ComponentState>): StateApi;
 
 	/**
 	 * The data conveyor used for managing data within the component state.

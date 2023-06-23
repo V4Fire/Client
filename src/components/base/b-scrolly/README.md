@@ -15,6 +15,7 @@
 - ревью и рефакторинг src\components\base\b-scrolly\test\api\helpers\index.ts
 - dbChange
 - описать что состояние типа loadPage, renderPage обновляются постфактум (после того как загрузка данных случилась, после того как рендеринг случился)
+- лишний вызов shouldStopRequestingData в onDataLoadSuccess
 
 ```mermaid
 graph TD;

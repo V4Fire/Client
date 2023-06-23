@@ -200,7 +200,7 @@ export default abstract class bScrollyProps extends iData implements iItems {
 	readonly shouldPerformDataRequest!: ShouldPerform;
 
 	/**
-	 * This function is called after successful data loading or when the component enters the visible area.
+	 * This function is called after successful data loading or when the child components enters the visible area.
 	 *
 	 * This function asks the client whether rendering can be performed. The client responds with an object
 	 * indicating whether rendering is allowed or the reason for denial. The client's response should be an object
@@ -226,13 +226,13 @@ export default abstract class bScrollyProps extends iData implements iItems {
 	readonly renderGuard!: ShouldPerform<RenderGuardResult>;
 
 	/**
-	 * This function is called in the `renderGuard` after other checks are completed.
+	 * This function is called in the {@link bScrolly.renderGuard} after other checks are completed.
 	 *
 	 * This function receives the component state as input, based on which the client
 	 * should determine whether the component should render the next chunk of components.
 	 *
 	 * For example, if we want to render the next data chunk only when the client
-	 * has seen all the main components, we can implement the following function:
+	 * has seen all the main (type=item) components, we can implement the following function:
 	 *
 	 * @example
 	 * ```typescript

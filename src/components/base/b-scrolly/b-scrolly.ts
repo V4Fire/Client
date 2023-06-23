@@ -55,25 +55,21 @@ export default class bScrolly extends bScrollyHandlers implements iItems {
 		const
 			state = this.getComponentState();
 
+		if (!this.isReady && this.isReadyOnce) {
+			this.reset();
+		}
+
 		if (state.isLoadingInProgress) {
 			return;
 		}
 
 		this.componentInternalState.setIsLoadingInProgress(true);
 
-		const callSuperAndStateReset = () => {
-			if (this.isReadyOnce) {
-				this.reset();
-			}
-
-			return super.initLoad(...args);
-		};
-
 		const
 			isInitialLoading = !this.isReady;
 
 		const initLoadResult = isInitialLoading ?
-			callSuperAndStateReset() :
+			super.initLoad(...args) :
 			this.initLoadNext();
 
 		this.onDataLoadStart(isInitialLoading);
