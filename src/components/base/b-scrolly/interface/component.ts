@@ -145,6 +145,19 @@ export interface ComponentState<DATA = object> {
 }
 
 /**
+ * Private (not accessible to the client) component state.
+ *
+ * This state stores all the internal component state that should not be
+ * accessible to the client.
+ */
+export interface PrivateComponentState {
+	/**
+	 * Pointer to the index of the data element that was last rendered.
+	 */
+	renderCursor: number;
+}
+
+/**
  * Types of rendered components.
  */
 export interface ComponentItemType {

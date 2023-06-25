@@ -7,6 +7,7 @@
  */
 
 import type { ComponentState } from 'components/base/b-scrolly/b-scrolly';
+import type { PrivateComponentState } from 'components/base/b-scrolly/interface';
 
 /**
  * Creates an initial state object for a component.
@@ -32,5 +33,16 @@ export function createInitialState(): ComponentState {
 		isRequestsStopped: false,
 		isLoadingInProgress: false,
 		isLifecycleDone: false
+	};
+}
+
+/**
+ * Creates an initial private state object for a component.
+ *
+ * @returns An object representing the initial private state of a component.
+ */
+export function createPrivateInitialState(): PrivateComponentState {
+	return {
+		renderCursor: 0
 	};
 }

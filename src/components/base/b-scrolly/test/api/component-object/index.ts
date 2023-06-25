@@ -75,16 +75,36 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	 * Waits for the container child count to be equal to N.
 	 * Throws an error if there are more items in the child list than expected.
 	 *
-	 * @param n - The expected child count.
+	 * @param count - The expected child count.
 	 */
-	async waitForContainerChildCountEqualsTo(n: number): Promise<void> {
-		await this.childList.nth(n - 1).waitFor({state: 'attached'});
+	async waitForContainerChildCountEqualsTo(count: number): Promise<void> {
+		await this.childList.nth(count - 1).waitFor({state: 'attached'});
 
-		const count = await this.childList.count();
+		const realCount = await this.childList.count();
 
-		if (count > n) {
-			throw new Error(`Expected container to have exactly ${n} items, but got ${count}`);
+		if (realCount > count) {
+			throw new Error(`Expected container to have exactly ${count} items, but got ${realCount}`);
 		}
+	}
+
+	/**
+	 * Returns a promise that resolves when an element matching the given selector is inserted into the container.
+	 *
+	 * @param selector - The selector to match the element.
+	 * @returns A promise that resolves when the element is attached.
+	 */
+	async waitForChild(selector: string): Promise<void> {
+		await this.container.locator(selector).waitFor({state: 'attached'});
+	}
+
+	/**
+	 * Returns a promise that resolves when an element with the attribute data-index="n" is inserted into the container.
+	 *
+	 * @param index - The index value for the data-index attribute.
+	 * @returns A promise that resolves when the element is attached.
+	 */
+	async waitForDataIndexChild(index: number): Promise<void> {
+		return this.waitForChild(`[data-index="${index}"]`);
 	}
 
 	/**

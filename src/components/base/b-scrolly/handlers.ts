@@ -59,8 +59,12 @@ export abstract class bScrollyHandlers extends bScrollyProps {
 	/**
 	 * Handler: DOM insert start event.
 	 * Triggered when the insertion of rendered components into the DOM tree starts.
+	 *
+	 * @param childList
 	 */
-	onDomInsertStart(): void {
+	onDomInsertStart(this: bScrolly, childList: MountedChild[]): void {
+		this.componentInternalState.updateRenderCursor();
+		this.componentInternalState.updateMounted(childList);
 		this.componentInternalState.setIsInitialRender(false);
 		this.componentInternalState.incrementRenderPage();
 

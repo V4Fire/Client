@@ -7,9 +7,9 @@
  */
 
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
-import type { MountedChild, ComponentState, MountedItem } from 'components/base/b-scrolly/interface';
+import type { MountedChild, ComponentState, MountedItem, PrivateComponentState } from 'components/base/b-scrolly/interface';
 import { isItem } from 'components/base/b-scrolly/modules/helpers';
-import { createInitialState } from 'components/base/b-scrolly/modules/state/helpers';
+import { createInitialState, createPrivateInitialState } from 'components/base/b-scrolly/modules/state/helpers';
 import Friend from 'components/friends/friend';
 
 /**
@@ -22,6 +22,11 @@ export class ComponentInternalState extends Friend {
 	 * Current state of the component.
 	 */
 	state: ComponentState = createInitialState();
+
+	/**
+	 * Current private state of the component.
+	 */
+	protected privateState: PrivateComponentState = createPrivateInitialState();
 
 	/**
 	 * Compiles and returns the current state of the component.
@@ -39,6 +44,7 @@ export class ComponentInternalState extends Friend {
 	 */
 	reset(): void {
 		this.state = createInitialState();
+		this.privateState = createPrivateInitialState();
 	}
 
 	/**
@@ -147,6 +153,30 @@ export class ComponentInternalState extends Friend {
 		if (state.maxViewedChild == null || state.maxViewedChild < childIndex) {
 			state.maxViewedChild = component.childIndex;
 			state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
+		}
+	}
+
+	/**
+	 * Returns the cursor indicating the last index of the last rendered data element.
+	 */
+	getRenderCursor(): number {
+		return this.privateState.renderCursor;
+	}
+
+	/**
+	 * Updates the cursor indicating the last index of the last rendered data element.
+	 */
+	updateRenderCursor(): void {
+		const
+			{ctx} = this;
+
+		if (ctx.chunkSize != null) {
+			const
+				{state} = this,
+				current = this.getRenderCursor(),
+				chunkSize = ctx.getChunkSize(state);
+
+			this.privateState.renderCursor = current + chunkSize;
 		}
 	}
 }

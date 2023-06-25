@@ -19,7 +19,6 @@ import type {
 	ComponentItemFactory,
 	ComponentItemType,
 	ComponentStrategy,
-	RenderGuardResult,
 	ComponentRefs
 
 } from 'components/base/b-scrolly/interface';
@@ -34,7 +33,6 @@ import {
 } from 'components/base/b-scrolly/const';
 
 import iData, { component, prop, system } from 'components/super/i-data/i-data';
-import { chunkSizePreset } from 'components/base/b-scrolly/modules/presets/chunk-size';
 import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-scrolly/modules/emitter';
 import { SlotsStateController } from 'components/base/b-scrolly/modules/slots';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
@@ -114,12 +112,12 @@ export default abstract class bScrollyProps extends iData implements iItems {
 	 */
 	@prop({
 		type: Function,
-		default: (state: ComponentState, ctx: bScrollyProps) => {
+		default: (state: ComponentState, ctx: bScrolly) => {
 			if (ctx.chunkSize == null) {
-				throw new Error('chunkSize.getNextDataSlice is used but chunkSize prop is not settled');
+				throw new Error('"chunkSize.getNextDataSlice" is used but "chunkSize" prop is not set.');
 			}
 
-			const descriptors = chunkSizePreset.getNextDataSlice(state, ctx.chunkSize).map((data, i) => ({
+			const descriptors = ctx.getNextDataSlice(state, ctx.getChunkSize(state)).map((data, i) => ({
 				key: ctx.itemKey?.(data, i),
 
 				item: Object.isFunction(ctx.item) ? ctx.item(data, i) : ctx.item,
@@ -172,10 +170,25 @@ export default abstract class bScrollyProps extends iData implements iItems {
 
 	/**
 	 * The number of elements to render at once.
-	 * This prop is used in conjunction with `renderGuard` and `chunkSize` preset.
+	 *
+	 * This prop can also be a function that returns the chunk size to render based on certain criteria
+	 * (e.g., rendering page).
+	 *
+	 * For example, you can render 6 elements initially, then 12, and then 18 elements based on the
+	 * rendering page.
+	 *
+	 * @example
+	 * ```typescript
+	 * const chunkSize = (state: ComponentState) => {
+	 *   return [6, 12, 18][state.renderPage] ?? 18;
+	 * }
+	 * ```
+	 *
+	 * It's important to note that this prop is used by default, but it can be ignored and you can return
+	 * any amount of data to render by setting a custom {@link bScrolly.itemsFactory} for the component.
 	 */
-	@prop({type: Number, validator: Number.isNatural})
-	readonly chunkSize?: number = 10;
+	@prop({type: [Number, Function]})
+	readonly chunkSize?: number | ShouldPerform<number> = 10;
 
 	/**
 	 * When this function returns `true` the component will stop to request new data.
@@ -198,32 +211,6 @@ export default abstract class bScrollyProps extends iData implements iItems {
 	})
 
 	readonly shouldPerformDataRequest!: ShouldPerform;
-
-	/**
-	 * This function is called after successful data loading or when the child components enters the visible area.
-	 *
-	 * This function asks the client whether rendering can be performed. The client responds with an object
-	 * indicating whether rendering is allowed or the reason for denial. The client's response should be an object
-	 * of type {@link RenderGuardResult}.
-	 *
-	 * Based on the result of this function, the component takes appropriate actions. For example,
-	 * it may load data if it is not sufficient for rendering, or perform rendering if all conditions are met.
-	 *
-	 * By default, the {@link chunkSizePreset.renderGuard} strategy is used,
-	 * which already implements the mechanism for communication with the component.
-	 */
-	@prop({
-		type: Function,
-		default: (state: ComponentState, ctx: bScrolly) => {
-			if (ctx.chunkSize == null) {
-				throw new Error('The "ChunkSize.renderGuard" preset is active, but the "chunkSize" prop is not set.');
-			}
-
-			return chunkSizePreset.renderGuard(state, ctx, ctx.chunkSize);
-		}
-	})
-
-	readonly renderGuard!: ShouldPerform<RenderGuardResult>;
 
 	/**
 	 * This function is called in the {@link bScrolly.renderGuard} after other checks are completed.
