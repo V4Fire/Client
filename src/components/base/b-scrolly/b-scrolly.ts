@@ -258,41 +258,6 @@ export default class bScrolly extends bScrollyHandlers implements iItems {
 	}
 
 	/**
-	 * Renders components using {@link bScrolly.componentFactory} and inserts them into the DOM tree.
-	 * {@link bScrolly.componentFactory}, in turn, calls {@link bScrolly.itemsFactory} to obtain
-	 * the set of components to render.
-	 */
-	protected performRender(): void {
-		this.onRenderStart();
-
-		const
-			items = this.componentFactory.produceComponentItems(),
-			nodes = this.componentFactory.produceNodes(items),
-			mounted = this.componentFactory.produceMounted(items, nodes);
-
-		this.observer.observe(mounted);
-		this.onDomInsertStart(mounted);
-
-		const
-			fragment = document.createDocumentFragment();
-
-		for (let i = 0; i < nodes.length; i++) {
-			this.dom.appendChild(fragment, nodes[i], {
-				group: bScrollyDomInsertAsyncGroup,
-				destroyIfComponent: true
-			});
-		}
-
-		this.async.requestAnimationFrame(() => {
-			this.$refs.container.appendChild(fragment);
-
-			this.onDomInsertDone();
-			this.onRenderDone();
-
-		}, {label: $$.insertDomRaf, group: bScrollyDomInsertAsyncGroup});
-	}
-
-	/**
 	 * A function that performs actions (data loading/rendering) depending
 	 * on the result of the {@link bScrolly.renderGuard} method.
 	 *
@@ -334,5 +299,40 @@ export default class bScrolly extends bScrollyHandlers implements iItems {
 				this.performRender();
 			}
 		}
+	}
+
+	/**
+	 * Renders components using {@link bScrolly.componentFactory} and inserts them into the DOM tree.
+	 * {@link bScrolly.componentFactory}, in turn, calls {@link bScrolly.itemsFactory} to obtain
+	 * the set of components to render.
+	 */
+	protected performRender(): void {
+		this.onRenderStart();
+
+		const
+			items = this.componentFactory.produceComponentItems(),
+			nodes = this.componentFactory.produceNodes(items),
+			mounted = this.componentFactory.produceMounted(items, nodes);
+
+		this.observer.observe(mounted);
+		this.onDomInsertStart(mounted);
+
+		const
+			fragment = document.createDocumentFragment();
+
+		for (let i = 0; i < nodes.length; i++) {
+			this.dom.appendChild(fragment, nodes[i], {
+				group: bScrollyDomInsertAsyncGroup,
+				destroyIfComponent: true
+			});
+		}
+
+		this.async.requestAnimationFrame(() => {
+			this.$refs.container.appendChild(fragment);
+
+			this.onDomInsertDone();
+			this.onRenderDone();
+
+		}, {label: $$.insertDomRaf, group: bScrollyDomInsertAsyncGroup});
 	}
 }
