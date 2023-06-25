@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+
+## v3.??.? (???-??-??)
+
+#### :bug: [Bug Fix]
+
+* Handle unsuitable `pathParams` value in `fillRouteParams` function
+
 ## v3.50.0 (2023-06-??)
 
 #### :rocket: New Feature

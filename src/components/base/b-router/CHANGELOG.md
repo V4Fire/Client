@@ -10,11 +10,11 @@ Changelog
 > - :nail_care:  [Polish]
 
 
-## v4.??.? (2023-??-??)
+## v3.??.? (2023-??-??)
 
 #### :bug: [Bug Fix]
 
-* Handle unsuitable `pathParams` value
+* Handle unsuitable `pathParams` value in `fillRouteParams` function
 
 ## v4.??.?? (2023-??-??)
 
