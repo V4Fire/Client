@@ -121,7 +121,7 @@ export interface LocalEventPayloadMap {
 	[componentDataLocalEvents.dataLoadSuccess]: [data: object[], isInitialLoading: boolean];
 	[componentDataLocalEvents.dataLoadStart]: [isInitialLoading: boolean];
 	[componentDataLocalEvents.dataLoadError]: [isInitialLoading: boolean];
-	[componentDataLocalEvents.dataEmpty]: [isInitialLoading: boolean];
+	[componentDataLocalEvents.dataEmpty]: [];
 
 	[componentLocalEvents.resetState]: [];
 	[componentLocalEvents.lifecycleDone]: [];

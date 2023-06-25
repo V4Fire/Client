@@ -145,16 +145,23 @@ export abstract class bScrollyHandlers extends bScrollyProps {
 		this.componentInternalState.updateData(data.data, isInitialLoading);
 		this.componentInternalState.incrementLoadPage();
 
-		this.shouldStopRequestingDataWrapper();
+		const
+			isRequestsStopped = this.shouldStopRequestingDataWrapper();
+
 		this.componentEmitter.emit(componentEvents.dataLoadSuccess, data.data, isInitialLoading);
 
 		this.slotsStateController.loadingSuccessState();
-		this.loadDataOrPerformRender();
 
-		if (isInitialLoading && Object.size(data.data) === 0) {
-			if (this.shouldStopRequestingDataWrapper()) {
-				this.onDataEmpty(isInitialLoading);
-			}
+		if (
+			isInitialLoading &&
+			isRequestsStopped &&
+			Object.size(data.data) === 0
+		) {
+			this.onDataEmpty();
+			this.onLifecycleDone();
+
+		} else {
+			this.loadDataOrPerformRender();
 		}
 	}
 
@@ -173,13 +180,11 @@ export abstract class bScrollyHandlers extends bScrollyProps {
 	/**
 	 * Handler: data empty event.
 	 * Triggered when the loaded data is empty.
-	 *
-	 * @param isInitialLoading - Indicates whether it is an initial component loading.
 	 */
-	onDataEmpty(isInitialLoading: boolean): void {
+	onDataEmpty(): void {
 		this.slotsStateController.emptyState();
 
-		this.componentEmitter.emit(componentEvents.dataEmpty, isInitialLoading);
+		this.componentEmitter.emit(componentEvents.dataEmpty);
 	}
 
 	/**

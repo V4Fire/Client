@@ -35,6 +35,11 @@ export class SlotsStateController extends Friend {
 	};
 
 	/**
+	 * The last state of the slots.
+	 */
+	protected lastState?: SlotsStateObj;
+
+	/**
 	 * Displays the slots that should be shown when the data state is empty.
 	 */
 	emptyState(): void {
@@ -56,7 +61,7 @@ export class SlotsStateController extends Friend {
 		this.setSlotsVisibility({
 			container: true,
 			done: true,
-			empty: false,
+			empty: this.lastState?.empty ?? false,
 			loader: false,
 			renderNext: false,
 			retry: false,
@@ -114,6 +119,7 @@ export class SlotsStateController extends Friend {
 	 */
 	reset(): void {
 		this.async.clearAll({group: new RegExp(slotsStateControllerAsyncGroup)});
+		this.lastState = undefined;
 	}
 
 	/**
@@ -122,6 +128,8 @@ export class SlotsStateController extends Friend {
 	 * @param stateObj - An object specifying the visibility state of each slot.
 	 */
 	protected setSlotsVisibility(stateObj: Required<SlotsStateObj>): void {
+		this.lastState = stateObj;
+
 		this.async.cancelAnimationFrame(this.asyncUpdateLabel);
 
 		this.async.requestAnimationFrame(() => {
