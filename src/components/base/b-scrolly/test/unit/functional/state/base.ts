@@ -6,18 +6,23 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * @file This file contains test cases that verify the correctness of the internal component state module.
+ */
+
 import test from 'tests/config/unit/test';
 
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { defaultShouldProps } from 'components/base/b-scrolly/const';
 import type { ComponentItem, ShouldPerform } from 'components/base/b-scrolly/b-scrolly';
+import type { ScrollyTestHelpers } from 'components/base/b-scrolly/test/api/helpers/interface';
 
 test.describe('<b-scrolly> state', () => {
 	let
-		component: Awaited<ReturnType<typeof createTestHelpers>>['component'],
-		provider:Awaited<ReturnType<typeof createTestHelpers>>['provider'],
-		state: Awaited<ReturnType<typeof createTestHelpers>>['state'];
+		component: ScrollyTestHelpers['component'],
+		provider: ScrollyTestHelpers['provider'],
+		state: ScrollyTestHelpers['state'];
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
@@ -249,9 +254,4 @@ test.describe('<b-scrolly> state', () => {
 			}));
 		});
 	});
-
-	test.skip('Events state', async () => {
-		// ...
-	});
-
 });

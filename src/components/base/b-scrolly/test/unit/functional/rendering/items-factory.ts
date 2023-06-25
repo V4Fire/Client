@@ -7,7 +7,7 @@
  */
 
 /**
- * @file Test cases of the component lifecycle
+ * @file Test cases of the component `itemsFactory` prop.
  */
 
 import test from 'tests/config/unit/test';
@@ -15,12 +15,13 @@ import test from 'tests/config/unit/test';
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type { ComponentItemFactory } from 'components/base/b-scrolly/b-scrolly';
 import type { ComponentItem, ShouldPerform } from 'components/base/b-scrolly/interface';
+import type { ScrollyTestHelpers } from 'components/base/b-scrolly/test/api/helpers/interface';
 
 test.describe('<b-scrolly> rendering via component factory', () => {
 	let
-		component: Awaited<ReturnType<typeof createTestHelpers>>['component'],
-		provider:Awaited<ReturnType<typeof createTestHelpers>>['provider'],
-		state: Awaited<ReturnType<typeof createTestHelpers>>['state'];
+		component: ScrollyTestHelpers['component'],
+		provider: ScrollyTestHelpers['provider'],
+		state: ScrollyTestHelpers['state'];
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();

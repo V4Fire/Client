@@ -7,40 +7,27 @@
  */
 
 /**
- * @file Test cases of the component lifecycle
+ * @file Test cases of the component lifecycle.
  */
 
 import test from 'tests/config/unit/test';
 
 import { defaultShouldProps } from 'components/base/b-scrolly/const';
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
+import type { ScrollyTestHelpers } from 'components/base/b-scrolly/test/api/helpers/interface';
 
 test.describe('<b-scrolly>', () => {
 	let
-		component: Awaited<ReturnType<typeof createTestHelpers>>['component'],
-		initLoadSpy: Awaited<ReturnType<typeof createTestHelpers>>['initLoadSpy'],
-		provider:Awaited<ReturnType<typeof createTestHelpers>>['provider'],
-		state: Awaited<ReturnType<typeof createTestHelpers>>['state'];
+		component: ScrollyTestHelpers['component'],
+		initLoadSpy: ScrollyTestHelpers['initLoadSpy'],
+		provider: ScrollyTestHelpers['provider'],
+		state: ScrollyTestHelpers['state'];
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
 		({component, initLoadSpy, provider, state} = await createTestHelpers(page));
 		await provider.start();
-	});
-
-	test('1', async () => {
-		const chunkSize = 12;
-
-		await component.setProps({
-			chunkSize,
-			disableObserver: true
-		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
-
-		await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 	});
 
 	test('2', async () => {

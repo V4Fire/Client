@@ -18,7 +18,7 @@ import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type { SlotsStateObj } from 'components/base/b-scrolly/modules/slots';
 import type { ShouldPerform } from 'components/base/b-scrolly/b-scrolly';
 
-test.describe('<b-scrolly> slots', () => {
+test.describe('<b-scrolly>', () => {
 	let
 		component: Awaited<ReturnType<typeof createTestHelpers>>['component'],
 		provider: Awaited<ReturnType<typeof createTestHelpers>>['provider'],

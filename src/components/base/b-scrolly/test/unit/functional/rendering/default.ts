@@ -7,25 +7,28 @@
  */
 
 /**
- * @file Test cases of the component lifecycle
+ * @file Basic test cases for component rendering functionality.
  */
 
 import test from 'tests/config/unit/test';
 
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
-import type { ShouldPerform } from 'components/base/b-scrolly/interface';
+import type { ComponentState, ShouldPerform } from 'components/base/b-scrolly/interface';
+import type { ScrollyTestHelpers } from 'components/base/b-scrolly/test/api/helpers/interface';
 
-test.describe('<b-scrolly> rendering via component factory', () => {
+test.describe('<b-scrolly>', () => {
 	let
-		component: Awaited<ReturnType<typeof createTestHelpers>>['component'],
-		provider:Awaited<ReturnType<typeof createTestHelpers>>['provider'],
-		state: Awaited<ReturnType<typeof createTestHelpers>>['state'];
+		component: ScrollyTestHelpers['component'],
+		provider: ScrollyTestHelpers['provider'],
+		state: ScrollyTestHelpers['state'];
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
 		({component, provider, state} = await createTestHelpers(page));
 		await provider.start();
+
+		await page.setViewportSize({height: 640, width: 360});
 	});
 
 	test('Should render all loaded data', async () => {
@@ -60,7 +63,61 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 		await test.expect(component.childList).toHaveCount(chunkSize * 3);
 	});
 
-	test.skip('Rendering components with children', async () => {
+	test('Should render components with child', async () => {
 		// ..
+	});
+
+	test.describe('With a different chunk size for each render cycle', () => {
+		test('Should render 6 components first, then 12, then 18', async () => {
+			const chunkSize = [6, 12, 18];
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize[0])})
+				.responseOnce(200, {data: state.data.addData(chunkSize[1])})
+				.responseOnce(200, {data: state.data.addData(chunkSize[2])})
+				.response(200, {data: []});
+
+			await component.setProps({
+				chunkSize: (state: ComponentState) => [6, 12, 18][state.renderPage] ?? 18,
+				shouldPerformDataRender: ({isInitialRender, itemsTillEnd}) => <boolean>isInitialRender || itemsTillEnd === 0
+			});
+
+			await component.withDefaultPaginationProviderProps();
+			await component.build();
+
+			await test.step('First chunk', async () => {
+				const
+					expectedIndex = chunkSize[0];
+
+				await test.expect(component.waitForContainerChildCountEqualsTo(expectedIndex)).resolves.toBeUndefined();
+				await test.expect(component.waitForDataIndexChild(expectedIndex - 1)).resolves.toBeUndefined();
+			});
+
+			await test.step('Second chunk', async () => {
+				const
+					expectedIndex = chunkSize[0] + chunkSize[1];
+
+				await component.scrollToBottom();
+
+				await test.expect(component.waitForContainerChildCountEqualsTo(expectedIndex)).resolves.toBeUndefined();
+				await test.expect(component.waitForDataIndexChild(expectedIndex - 1)).resolves.toBeUndefined();
+			});
+
+			await test.step('Third chunk', async () => {
+				const
+					expectedIndex = chunkSize[0] + chunkSize[1] + chunkSize[2];
+
+				await component.scrollToBottom();
+
+				await test.expect(component.waitForContainerChildCountEqualsTo(expectedIndex)).resolves.toBeUndefined();
+				await test.expect(component.waitForDataIndexChild(expectedIndex - 1)).resolves.toBeUndefined();
+			});
+
+			await test.step('Lifecycle is done', async () => {
+				await component.scrollToBottom();
+
+				await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
+			});
+		});
 	});
 });
