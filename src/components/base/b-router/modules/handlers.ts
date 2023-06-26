@@ -8,6 +8,8 @@
 
 import * as router from 'core/router';
 
+import { environmentURISchemes } from 'components/base/b-router/modules/const';
+
 import type bRouter from 'components/base/b-router/b-router';
 
 /**
@@ -24,6 +26,7 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 		href == null ||
 		href === '' ||
 		href.startsWith('#') ||
+		environmentURISchemes.some((scheme) => scheme.test(href)) ||
 		href.startsWith('javascript:') ||
 		router.isExternal.test(href);
 

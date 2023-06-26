@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.7 (2023-05-26)
+
+#### :rocket: New Feature
+
+* Added more URI schemes to handle by the environment
+
 ## v4.??.?? (2023-??-??)
 
 #### :house: Internal
