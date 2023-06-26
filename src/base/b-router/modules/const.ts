@@ -7,7 +7,8 @@
  */
 
 /**
- * URI schemes that will be handled by the environment, rather than the router
+ * List of URI schemes that the environment should handle, rather than the router
+ * These will be ignored by the router and should be handled by the user's device or browser
  */
 export const urlsToIgnore = [
 	/^#/,
