@@ -7,10 +7,10 @@
  */
 
 import test from 'tests/config/unit/test';
-import { Component } from 'tests/helpers';
-import type { JSHandle, Locator, Page } from 'playwright';
+import {Component} from 'tests/helpers';
+import type {JSHandle, Locator, Page} from 'playwright';
 import type iBlock from 'components/super/i-block/i-block';
-import type { Listener } from 'components/directives/bind-with';
+import type {Listener} from 'components/directives/bind-with';
 
 /**
  * A call to v-bind-with's .then() or .catch()
@@ -76,30 +76,20 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.calls[0].args).toStrictEqual([1, 0, [1]]);
 	});
 
-	test.skip('handler execution on promise resolution', async ({page}) => {
-		let resolveFn: (reason?: unknown) => void;
-		const promise = new Promise((resolve) => {
-			resolveFn = resolve;
-		});
+	test('handler execution on promise resolution', async ({page}) => {
 		const divLocator = await createDivForTest(page, {
-			promise
+			promise: () => Promise.resolve()
 		});
-		resolveFn!();
 		const info = await getBindWithInfo(divLocator);
 		test.expect(info).toBeTruthy();
 		test.expect(info!.calls.length).toBe(1);
 		test.expect(info!.errorCalls.length).toBe(0);
 	});
 
-	test.skip('error handler execution on promise rejection', async ({page}) => {
-		let rejectFn: (reason?: unknown) => void;
-		const promise = new Promise((_, reject) => {
-			rejectFn = reject;
-		});
+	test('error handler execution on promise rejection', async ({page}) => {
 		const divLocator = await createDivForTest(page, {
-			promise
+			promise: () => Promise.reject()
 		});
-		rejectFn!();
 		const info = await getBindWithInfo(divLocator);
 		test.expect(info).toBeTruthy();
 		test.expect(info!.calls.length).toBe(0);
@@ -158,7 +148,7 @@ test.describe('<div v-bind-with>', () => {
 	 * @param element - The target element
 	 * @param args - Args provided by v-bind-with trigger (on/path/callback...)
 	 */
-	function bindWithHandler(element: HTMLElement, ...args: any[]) {
+	function handler(element: HTMLElement, ...args: any[]) {
 		const previousInfo: Partial<TestBindWithInfo> =
 			JSON.parse(element.getAttribute('data-test-bind-with') ?? '{}');
 		const newInfo: TestBindWithInfo = {
@@ -182,7 +172,7 @@ test.describe('<div v-bind-with>', () => {
 	 * @param element - The target argument
 	 * @param args - Args provided by v-bind-with trigger (on/path/callback...)
 	 */
-	function bindWithErrorHandler(element: HTMLElement, ...args: any[]) {
+	function errorHandler(element: HTMLElement, ...args: any[]) {
 		const previousInfo: Partial<TestBindWithInfo> =
 			JSON.parse(element.getAttribute('data-test-bind-with') ?? '{}');
 		const newInfo: TestBindWithInfo = {
@@ -205,7 +195,11 @@ test.describe('<div v-bind-with>', () => {
 	 * @param listener - A v-bind-with listener to process
 	 */
 	function processListener(listener: Partial<Listener>) {
-		return {...listener, then: bindWithHandler, catch: bindWithErrorHandler};
+		return {
+			...listener,
+			then: handler,
+			catch: errorHandler
+		};
 	}
 
 	/**
