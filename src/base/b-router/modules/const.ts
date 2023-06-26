@@ -7,10 +7,9 @@
  */
 
 /**
- * URI schemes that will be hanlded by the environment not the router
  * URI schemes that will be handled by the environment, rather than the router
  */
-export const environmentURISchemes = [
+export const urlsToIgnore = [
 	/^#/,
 	/^javascript:/,
 	/^mailto:/,

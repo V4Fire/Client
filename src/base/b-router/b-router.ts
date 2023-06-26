@@ -21,7 +21,7 @@ import iData, { component, prop, system, computed, hook, wait, watch, UnsafeGett
 import engine, * as router from 'core/router';
 
 import { fillRouteParams } from 'base/b-router/modules/normalizers';
-import { environmentURISchemes } from 'base/b-router/modules/const';
+import { urlsToIgnore } from 'base/b-router/modules/const';
 
 import type { StaticRoutes, RouteOption, TransitionMethod, UnsafeBRouter } from 'base/b-router/interface';
 
@@ -845,7 +845,7 @@ export default class bRouter extends iData {
 			!this.interceptLinks ||
 			href == null ||
 			href === '' ||
-			environmentURISchemes.some((scheme) => scheme.test(href)) ||
+			urlsToIgnore.some((scheme) => scheme.test(href)) ||
 			router.isExternal.test(href);
 
 		if (cantPrevent) {
