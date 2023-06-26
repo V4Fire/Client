@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.51.0 (2023-05-26)
+## v3.51.0 (2023-06-??)
 
 #### :rocket: New Feature
 
