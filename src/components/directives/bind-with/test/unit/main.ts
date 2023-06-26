@@ -7,10 +7,10 @@
  */
 
 import test from 'tests/config/unit/test';
-import {Component} from 'tests/helpers';
-import type {JSHandle, Locator, Page} from 'playwright';
+import { Component } from 'tests/helpers';
+import type { JSHandle, Locator, Page } from 'playwright';
 import type iBlock from 'components/super/i-block/i-block';
-import type {Listener} from 'components/directives/bind-with';
+import type { Listener } from 'components/directives/bind-with';
 
 /**
  * A call to v-bind-with's .then() or .catch()
@@ -74,6 +74,23 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info).toBeTruthy();
 		test.expect(info!.calls.length).toBe(1);
 		test.expect(info!.calls[0].args).toStrictEqual([1, 0, [1]]);
+	});
+
+	test('handler execution on external emitter event', async ({page}) => {
+		const divLocator = await createDivForTest(page, {
+			emitter: (event: string, listener: AnyFunction) => {
+				document.body.addEventListener(event, listener);
+			},
+			on: 'testEvent'
+		});
+		const bodyHandle = await page.evaluateHandle(() => document.body);
+		await bodyHandle.evaluate((body) => {
+			body.dispatchEvent(new Event('testEvent'));
+		});
+
+		const info = await getBindWithInfo(divLocator);
+		test.expect(info).toBeTruthy();
+		test.expect(info!.calls.length).toBe(1);
 	});
 
 	test('handler execution on promise resolution', async ({page}) => {
