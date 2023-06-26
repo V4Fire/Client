@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.7 (2023-05-26)
+## v4.0.0-beta.7 (2023-06-??)
 
 #### :rocket: New Feature
 
