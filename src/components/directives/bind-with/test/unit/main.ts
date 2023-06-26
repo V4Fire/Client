@@ -105,7 +105,7 @@ test.describe('<div v-bind-with>', () => {
 
 	test('error handler execution on promise rejection', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, {
-			promise: () => Promise.reject()
+			promise: () => Promise.reject(new Error('rejection'))
 		});
 		const info = await getBindWithTestInfo(divLocator);
 		test.expect(info).toBeTruthy();
@@ -160,7 +160,7 @@ test.describe('<div v-bind-with>', () => {
 	});
 
 	/**
-	 * A handler to pass as .then() in v-bind-with
+	 * A handler to pass as .then()/.catch() in v-bind-with
 	 *
 	 * @param element - The target element
 	 * @param args - Args provided by v-bind-with trigger (on/path/callback...)
@@ -169,41 +169,30 @@ test.describe('<div v-bind-with>', () => {
 		const previousInfo: Partial<BindWithTestInfo> =
 			JSON.parse(element.getAttribute('data-test-bind-with') ?? '{}');
 		const newInfo: BindWithTestInfo = {
-			calls: [
-				...(previousInfo.calls ?? []),
-				{
-					// Avoid converting circular structure to JSON
-					args: args.map(
-						(a: any) => !Boolean(a) || typeof a.toString === 'function' ? a : null
-					)
-				}
-			],
+			calls: previousInfo.calls ?? [],
 			errorCalls: previousInfo.errorCalls ?? []
 		};
-		element.setAttribute('data-test-bind-with', JSON.stringify(newInfo));
-	}
-
-	/**
-	 * A handler to pass as .catch() in v-bind-with
-	 *
-	 * @param element - The target argument
-	 * @param args - Args provided by v-bind-with trigger (on/path/callback...)
-	 */
-	function errorHandler(element: HTMLElement, ...args: any[]) {
-		const previousInfo: Partial<BindWithTestInfo> =
-			JSON.parse(element.getAttribute('data-test-bind-with') ?? '{}');
-		const newInfo: BindWithTestInfo = {
-			calls: previousInfo.calls ?? [],
-			errorCalls: [
-				...(previousInfo.errorCalls ?? []),
-				{
-					// Avoid converting circular structure to JSON
-					args: args.map(
-						(a: any) => !Boolean(a) || typeof a.toString === 'function' ? a : null
-					)
+		const preparedArgs = args.map(
+			(arg: any) => {
+				// Avoid converting circular structure to JSON
+				try {
+					JSON.stringify(arg);
+				} catch (e) {
+					return null;
 				}
-			]
-		};
+
+				return arg;
+			}
+		);
+		let callDestination: keyof BindWithTestInfo = 'calls';
+		if (args.length > 0 && args[0] instanceof Error) {
+			callDestination = 'errorCalls';
+		}
+
+		newInfo[callDestination].push({
+			args: preparedArgs
+		});
+
 		element.setAttribute('data-test-bind-with', JSON.stringify(newInfo));
 	}
 
@@ -215,7 +204,7 @@ test.describe('<div v-bind-with>', () => {
 		return {
 			...listener,
 			then: handler,
-			catch: errorHandler
+			catch: handler
 		};
 	}
 
@@ -250,3 +239,4 @@ test.describe('<div v-bind-with>', () => {
 	}
 
 });
+
