@@ -49,7 +49,7 @@ test.describe('<b-scrolly>', () => {
 		});
 	});
 
-	test.describe('Загрузился и отрисовался первый чанк данных', () => {
+	test.describe('The first chunk of data is loaded and rendered', () => {
 		const chunkSize = 12;
 
 		test.beforeEach(async () => {
@@ -66,7 +66,7 @@ test.describe('<b-scrolly>', () => {
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
 		});
 
-		test('Должен загрузить и отрисовать следующий после вызова initLoad', async () => {
+		test('Should load and render the next chunk after calling initLoad', async () => {
 			await component.node.locator('#renderNext').click();
 
 			test.expect(provider.mock.mock.calls.length).toBe(2);
@@ -74,7 +74,7 @@ test.describe('<b-scrolly>', () => {
 			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
 		});
 
-		test('Должен завершиться жизненный цикл компонента после того как все данные загружены', async () => {
+		test('Should complete the component lifecycle after all data is loaded', async () => {
 			provider.response(200, {data: []});
 
 			await component.node.locator('#renderNext').click();
@@ -85,37 +85,37 @@ test.describe('<b-scrolly>', () => {
 			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
 
-		test.describe('Произошла ошибка загрузки второго чанка данных', () => {
+		test.describe('An error occurred while loading the second chunk of data', () => {
 			test.beforeEach(async () => {
 				provider.responseOnce(500, {data: []});
 				await component.node.locator('#renderNext').click();
 			});
 
-			test('Не должен отображать renderNext слот', async () => {
+			test('Should not display the renderNext slot', async () => {
 				await test.expect(component.waitForSlotState('renderNext', false)).resolves.toBeUndefined();
 			});
 
-			test('Должен отображать retry слот', async () => {
+			test('Should display the retry slot', async () => {
 				await test.expect(component.waitForSlotState('retry', true)).resolves.toBeUndefined();
 			});
 
-			test.describe('Произошла перезагрузка данных', () => {
+			test.describe('Data reload occurred', () => {
 				test.beforeEach(async () => {
 					await component.node.locator('#retry').click();
 				});
 
-				test('Должен отобразить загруженные данные', async () => {
+				test('Should display the loaded data', async () => {
 					await test.expect(component.waitForDataIndexChild(chunkSize * 2 - 1)).resolves.toBeUndefined();
 					await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
 				});
 
-				test.describe('Закончились данные к отображению', () => {
+				test.describe('No more data to display', () => {
 					test.beforeEach(async () => {
 						provider.response(200, {data: []});
 						await component.node.locator('#renderNext').click();
 					});
 
-					test('Должен завершиться жизненный цикл компонента после того как все данные загружены', async () => {
+					test('Should complete the component lifecycle after all data is loaded', async () => {
 						await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
 						await test.expect(component.waitForSlotState('renderNext', false)).resolves.toBeUndefined();
 						await test.expect(component.waitForDataIndexChild(chunkSize * 2 - 1)).resolves.toBeUndefined();
@@ -125,5 +125,4 @@ test.describe('<b-scrolly>', () => {
 			});
 		});
 	});
-
 });

@@ -7,7 +7,7 @@
  */
 
 /**
- * @file Test cases of the component lifecycle
+ * @file This file describes test cases for checking the correctness of displaying component slots in different states.
  */
 
 import delay from 'delay';
@@ -17,7 +17,9 @@ import test from 'tests/config/unit/test';
 import { createTestHelpers } from 'components/base/b-scrolly/test/api/helpers';
 import type { SlotsStateObj } from 'components/base/b-scrolly/modules/slots';
 import type { ShouldPerform } from 'components/base/b-scrolly/b-scrolly';
+import { BOM } from 'tests/helpers';
 
+// eslint-disable-next-line max-lines-per-function
 test.describe('<b-scrolly>', () => {
 	let
 		component: Awaited<ReturnType<typeof createTestHelpers>>['component'],
@@ -365,7 +367,108 @@ test.describe('<b-scrolly>', () => {
 		});
 	});
 
-	test.skip('renderNext', async () => {
-		// ...
+	test.describe('renderNext', () => {
+		test.beforeEach(async () => {
+			await component.setChildren({
+				renderNext: {
+					type: 'div',
+					attrs: {
+						id: 'renderNext'
+					}
+				}
+			});
+		});
+
+		test('Activates when data is loaded', async () => {
+			const chunkSize = 12;
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: []});
+
+			await component.setProps({
+				chunkSize,
+				disableObserver: true,
+				shouldPerformDataRender: () => true
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await component.waitForSlotState('renderNext', true);
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: false,
+				empty: false,
+				loader: false,
+				renderNext: true,
+				retry: false,
+				tombstones: false
+			});
+		});
+
+		test('Doesn\'t activates while data is loading', async ({page}) => {
+			const chunkSize = 12;
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)}, {delay: (10).seconds()})
+				.response(200, {data: []});
+
+			await component.setProps({
+				chunkSize,
+				disableObserver: true,
+				shouldPerformDataRender: () => true
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await BOM.waitForIdleCallback(page);
+			await component.waitForSlotState('renderNext', false);
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: false,
+				empty: false,
+				loader: true,
+				renderNext: false,
+				retry: false,
+				tombstones: true
+			});
+		});
+
+		test('Doesn\'t activates if there\'s a data loading error', async () => {
+			const chunkSize = 12;
+
+			provider.response(500, {data: []});
+
+			await component.setProps({
+				chunkSize,
+				disableObserver: true,
+				shouldPerformDataRender: () => true
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
+			await component.waitForSlotState('renderNext', false);
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: false,
+				empty: false,
+				loader: false,
+				renderNext: false,
+				retry: true,
+				tombstones: false
+			});
+		});
 	});
 });
