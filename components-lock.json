@@ -1,5 +1,5 @@
 {
-  "hash": "cb8efd53aa08600cd86f8b04b6e83bd8470e34f8c926bac48ebaadc6d3bd6e1e",
+  "hash": "4a83984ed94e5cab37aaaf6e17d32cad49fb6611c81faa0f4214b37d25d5dac7",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2219,6 +2219,7 @@
             "libs": [
               "components/directives/image",
               "components/directives/icon",
+              "components/directives/in-view",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "components/traits/i-control-list/i-control-list"
@@ -2255,6 +2256,7 @@
           "libs": [
             "components/directives/image",
             "components/directives/icon",
+            "components/directives/in-view",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
             "components/traits/i-control-list/i-control-list"
@@ -2264,6 +2266,7 @@
             "%data:Set": [
               "components/directives/icon",
               "components/directives/image",
+              "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
@@ -2274,6 +2277,7 @@
             "%data:Set": [
               "components/directives/icon",
               "components/directives/image",
+              "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
