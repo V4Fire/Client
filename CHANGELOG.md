@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: [Bug Fix]
 
-* Handle unsuitable `pathParams` value in `fillRouteParams` function
+* Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
 
 ## v3.50.0 (2023-06-??)
 
