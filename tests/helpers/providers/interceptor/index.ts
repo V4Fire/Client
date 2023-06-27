@@ -100,6 +100,7 @@ export class RequestInterceptor {
 
 		if (Object.isFunction(handlerOrStatus)) {
 			fn = handlerOrStatus;
+
 		} else {
 			const status = handlerOrStatus;
 			fn = this.cookResponseFn(status, payload, opts);

@@ -18,7 +18,7 @@ import { defaultShouldProps } from 'components/base/b-scrolly/const';
 import type { ComponentItem, ShouldPerform } from 'components/base/b-scrolly/b-scrolly';
 import type { ScrollyTestHelpers } from 'components/base/b-scrolly/test/api/helpers/interface';
 
-test.describe('<b-scrolly> state', () => {
+test.describe('<b-scrolly>', () => {
 	let
 		component: ScrollyTestHelpers['component'],
 		provider: ScrollyTestHelpers['provider'],

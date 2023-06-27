@@ -15,7 +15,7 @@ import test from 'tests/config/unit/test';
 import { createTestHelpers, filterEmitterResults } from 'components/base/b-scrolly/test/api/helpers';
 import type { ScrollyTestHelpers } from 'components/base/b-scrolly/test/api/helpers/interface';
 
-test.describe('<b-scrolly> emitter state', () => {
+test.describe('<b-scrolly>', () => {
 	let
 		component: ScrollyTestHelpers['component'],
 		provider: ScrollyTestHelpers['provider'],

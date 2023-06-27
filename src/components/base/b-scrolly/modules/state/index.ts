@@ -136,6 +136,15 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
+	 * Устанавливает флаг который указывает на то, что последняя загрузка завершилась с ошибкой.
+	 *
+	 * @param value
+	 */
+	setIsLastErrored(value: boolean): void {
+		this.state.isLastErrored = value;
+	}
+
+	/**
 	 * Sets the maximum viewed index based on the passed component's index.
 	 *
 	 * @param component - The component to compare and update the maximum viewed index.

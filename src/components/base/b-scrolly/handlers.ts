@@ -172,6 +172,8 @@ export abstract class bScrollyHandlers extends bScrollyProps {
 	 * @param isInitialLoading - Indicates whether it is an initial component loading.
 	 */
 	onDataLoadError(isInitialLoading: boolean): void {
+		this.componentInternalState.setIsLoadingInProgress(false);
+		this.componentInternalState.setIsLastErrored(true);
 		this.slotsStateController.loadingFailedState();
 
 		this.componentEmitter.emit(componentEvents.dataLoadError, isInitialLoading);

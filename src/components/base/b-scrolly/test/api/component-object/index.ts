@@ -108,6 +108,16 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	}
 
 	/**
+	 * Returns a promise that resolves when the specified event occurs.
+	 *
+	 * @param eventName - The name of the event to wait for.
+	 * @returns A promise that resolves to the payload of the event, or `undefined`.
+	 */
+	async waitForEvent<PAYLOAD extends unknown>(eventName: string): Promise<CanUndef<PAYLOAD>> {
+		return this.component.evaluate((ctx, [eventName]) => ctx.promisifyOnce(eventName), <const>[eventName]);
+	}
+
+	/**
 	 * Waits for the component lifecycle to be done.
 	 */
 	async waitForLifecycleDone(): Promise<void> {

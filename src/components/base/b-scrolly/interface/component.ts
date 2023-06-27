@@ -94,6 +94,11 @@ export interface ComponentState<DATA = object> {
 	isLastEmpty: boolean;
 
 	/**
+	 * Indicates if the last data load ended with an error.
+	 */
+	isLastErrored: boolean;
+
+	/**
 	 * Indicates if the component is in the initial loading state.
 	 */
 	isInitialLoading: boolean;

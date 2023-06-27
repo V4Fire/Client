@@ -55,6 +55,8 @@ export default class bScrolly extends bScrollyHandlers implements iItems {
 		const
 			state = this.getComponentState();
 
+		this.componentInternalState.setIsLastErrored(false);
+
 		if (!this.isReady && this.isReadyOnce) {
 			this.reset();
 		}
@@ -77,30 +79,21 @@ export default class bScrolly extends bScrollyHandlers implements iItems {
 		if (Object.isPromise(initLoadResult)) {
 			initLoadResult
 				.then((res) => {
+					if (
+						(isInitialLoading && this.db == null) ||
+						(!isInitialLoading && res == null)
+					) {
+						return this.onDataLoadError(isInitialLoading);
+					}
+
 					this.onDataLoadSuccess(isInitialLoading, isInitialLoading ? this.db : this.convertDataToDB(res));
 				})
-				.catch((err) => {
-					this.componentInternalState.setIsLoadingInProgress(false);
+				.catch(() => {
 					this.onDataLoadError(isInitialLoading);
-
-					throw err;
 				});
 		}
 
 		return <Promise<void>>initLoadResult;
-	}
-
-	/**
-	 * Initializes the loading of the next data chunk.
-	 * @throws {@link ReferenceError} if there is no `dataProvider` set.
-	 */
-	initLoadNext(): Promise<unknown> {
-		if (!this.dataProvider) {
-			throw ReferenceError('Missing dataProvider');
-		}
-
-		const params = this.getRequestParams();
-		return this.dataProvider.get(params[0], params[1]);
 	}
 
 	/**
@@ -199,6 +192,19 @@ export default class bScrolly extends bScrollyHandlers implements iItems {
 		return data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
 	}
 
+	/**
+	 * Initializes the loading of the next data chunk.
+	 * @throws {@link ReferenceError} if there is no `dataProvider` set.
+	 */
+	protected initLoadNext(): Promise<unknown> {
+		if (!this.dataProvider) {
+			throw ReferenceError('Missing dataProvider');
+		}
+
+		const params = this.getRequestParams();
+		return this.dataProvider.get(params[0], params[1]);
+	}
+
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
 		const result = super.convertDataToDB(data);
 		this.onConvertDataToDB(data);
@@ -266,7 +272,13 @@ export default class bScrolly extends bScrollyHandlers implements iItems {
 	 */
 	protected loadDataOrPerformRender(): void {
 		const
-			state = this.getComponentState(),
+			state = this.getComponentState();
+
+		if (state.isLastErrored) {
+			return;
+		}
+
+		const
 			{result, reason} = this.renderGuard(state);
 
 		if (result) {

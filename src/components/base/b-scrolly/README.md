@@ -16,6 +16,9 @@
 - dbChange
 - описать что состояние типа loadPage, renderPage обновляются постфактум (после того как загрузка данных случилась, после того как рендеринг случился)
 - лишний вызов shouldStopRequestingData в onDataLoadSuccess
+- поддержка onRequestError?
+- обработка async replace error в initLoad
+- не нравится проверка .then((res) => if (res == null) {this.onDataLoadError()})
 
 ```mermaid
 graph TD;

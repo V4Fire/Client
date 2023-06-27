@@ -15,6 +15,7 @@ import { ScrollyComponentObject } from 'components/base/b-scrolly/test/api/compo
 import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
 import { componentEvents, componentObserverLocalEvents } from 'components/base/b-scrolly/const';
 import type { DataConveyor, DataItemCtor, MountedItemCtor, StateApi, ScrollyTestHelpers, MountedSeparatorCtor, IndexedObj } from 'components/base/b-scrolly/test/api/helpers/interface';
+import { createInitialState as createInitialStateObj } from 'components/base/b-scrolly/modules/state/helpers';
 
 export * from 'components/base/b-scrolly/test/api/component-object';
 
@@ -213,23 +214,12 @@ export function createStateApi(
  */
 export function createInitialState(state: Partial<ComponentState>): ComponentState {
 	return {
-		renderPage: 0,
-		loadPage: 0,
+		...createInitialStateObj(),
 		maxViewedItem: Object.cast(test.expect.any(Number)),
 		maxViewedChild: Object.cast(test.expect.any(Number)),
 		itemsTillEnd: Object.cast(test.expect.any(Number)),
 		childTillEnd: Object.cast(test.expect.any(Number)),
-		isInitialRender: true,
-		isInitialLoading: true,
 		isLoadingInProgress: Object.cast(test.expect.any(Boolean)),
-		isLastEmpty: false,
-		isLifecycleDone: false,
-		isRequestsStopped: false,
-		lastLoadedData: [],
-		data: [],
-		items: [],
-		childList: [],
-		lastLoadedRawData: undefined,
 		...state
 	};
 }

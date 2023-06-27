@@ -32,7 +32,8 @@ export function createInitialState(): ComponentState {
 		isInitialRender: true,
 		isRequestsStopped: false,
 		isLoadingInProgress: false,
-		isLifecycleDone: false
+		isLifecycleDone: false,
+		isLastErrored: false
 	};
 }
 
