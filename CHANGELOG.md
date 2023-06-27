@@ -17,6 +17,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added support for `mailto:` and `tel:` href-s `b-router`
 
+## v3.57.1 (2023-06-27)
+
+#### :bug: Bug Fix
+
+* Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
+
 ## v3.50.0 (2023-06-??)
 
 #### :rocket: New Feature
