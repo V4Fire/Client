@@ -7,8 +7,8 @@
  */
 
 /**
- * List of URI schemes that the environment should handle, rather than the router
- * These will be ignored by the router and should be handled by the user's device or browser
+ * A list of URL patterns that will not be intercepted by the router upon clicking.
+ * For instance, navigating to an external resource or using anchor-based navigation within a page.
  */
 export const urlsToIgnore = [
 	/^#/,

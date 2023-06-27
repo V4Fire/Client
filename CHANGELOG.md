@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.7 (2023-06-??)
+## v4.0.0-beta.7 (2023-06-27)
 
 #### :rocket: New Feature
 
-* Added more URI schemes to handle by the environment in `b-router`
+* Added support for `mailto:` and `tel:` href-s `b-router`
 
 ## v3.50.0 (2023-06-??)
 

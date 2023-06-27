@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.7 (2023-06-??)
+## v4.0.0-beta.7 (2023-06-27)
 
 #### :rocket: New Feature
 
-* Added more URI schemes to handle by the environment
+* Added support for `mailto:` and `tel:` href-s
 
 ## v4.??.?? (2023-??-??)
 
