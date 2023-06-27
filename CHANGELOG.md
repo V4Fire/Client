@@ -11,9 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.? (???-??-??)
+## v4.0.0-beta.7 (2023-06-27)
 
-#### :bug: [Bug Fix]
+#### :rocket: New Feature
+
+* Added support for `mailto:` and `tel:` href-s `b-router`
+
+## v3.57.1 (2023-06-27)
+
+#### :bug: Bug Fix
 
 * Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
 
