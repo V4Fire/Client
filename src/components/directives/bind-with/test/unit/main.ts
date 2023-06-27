@@ -19,16 +19,16 @@ import {
 
 } from 'components/directives/bind-with/test/helpers';
 
-test.describe('<div v-bind-with>', () => {
+test.describe('<div> v-bind-with', () => {
 
 	let rootHandle: JSHandle<iBlock>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
-		rootHandle = (await Component.getComponentByQuery(page, '#root-component'))!;
+		rootHandle = await Component.waitForRoot(page);
 	});
 
-	test('when event is emitted, handler is executed', async ({page}) => {
+	test('handler should be executed when event is emitted', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, {
 			on: 'testEvent'
 		});
@@ -41,7 +41,7 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.calls.length).toBe(1);
 	});
 
-	test('when field is changed, handler is executed', async ({page}) => {
+	test('handler should be executed when field is changed', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, {
 			path: 'testField'
 		});
@@ -54,7 +54,7 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.calls.length).toBe(1);
 	});
 
-	test('handler is executed as a callback', async ({page}) => {
+	test('handler should be executed as a callback', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, {
 			callback: (handler) => [1].forEach(handler)
 		});
@@ -64,7 +64,7 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.calls[0].args).toStrictEqual([1, 0, [1]]);
 	});
 
-	test('when event is emitted by external emitter, handler is executed', async ({page}) => {
+	test('handler should be executed when provided emitter emits an event', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, {
 			emitter: (event: string, listener: AnyFunction) => {
 				document.body.addEventListener(event, listener);
@@ -81,7 +81,7 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.calls.length).toBe(1);
 	});
 
-	test('when promise is resolved, handler is executed', async ({page}) => {
+	test('handler should be executed when promise is resolved', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, {
 			promise: () => Promise.resolve()
 		});
@@ -91,7 +91,7 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.errorCalls.length).toBe(0);
 	});
 
-	test('when promise is rejected, error handler is executed', async ({page}) => {
+	test('error handler should be executed when promise is rejected', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, {
 			promise: () => Promise.reject(new Error('rejection'))
 		});
@@ -101,7 +101,7 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.errorCalls.length).toBe(1);
 	});
 
-	test('when `once` option is set, handler is executed only once', async ({page}) => {
+	test('handler should be executed only once when `once` option is set', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, {
 			once: 'testEvent'
 		});
@@ -115,7 +115,7 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.calls.length).toBe(1);
 	});
 
-	test('handler receives correct arguments', async ({page}) => {
+	test('handler should receive correct arguments', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, {
 			on: 'onTestEvent'
 		});
@@ -128,7 +128,7 @@ test.describe('<div v-bind-with>', () => {
 		test.expect(info!.calls[0].args).toStrictEqual([1, 2, 3]);
 	});
 
-	test('when array is passed, handler is executed on every event', async ({page}) => {
+	test('handler should be executed on every event when array is passed', async ({page}) => {
 		const divLocator = await createDivForBindWithTest(page, [
 			{
 				once: 'testEvent'
