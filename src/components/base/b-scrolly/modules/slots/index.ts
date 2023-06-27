@@ -108,7 +108,7 @@ export class SlotsStateController extends Friend {
 			done: false,
 			empty: false,
 			loader: false,
-			renderNext: false,
+			renderNext: true,
 			retry: false,
 			tombstones: false
 		});

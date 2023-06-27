@@ -44,6 +44,10 @@ export const testStyles = `
 	content: "retry"
 }
 
+#renderNext:after {
+	content: "render next"
+}
+
 #loader,
 #tombstone {
 	display: block;

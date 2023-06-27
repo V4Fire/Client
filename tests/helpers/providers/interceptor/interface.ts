@@ -16,3 +16,5 @@ export type ResponseHandler = (route: Route, request: Request) => CanPromise<any
 export interface ResponseOptions {
 	delay?: number;
 }
+
+export type ResponsePayload = object | string | number;

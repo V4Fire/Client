@@ -7,7 +7,7 @@
  */
 
 /**
- * @file This file contains test cases that verify the correctness of the internal component state module.
+ * @file This file contains test cases to verify the functionality of reloading data after an error.
  */
 
 import test from 'tests/config/unit/test';

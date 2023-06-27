@@ -230,7 +230,7 @@ test.describe('<b-scrolly> rendering via component factory', () => {
 		await test.expect(component.childList).toHaveCount(chunkSize);
 	});
 
-	test('`ItemsFactory` returns twice as much data as `chunkSize`', async () => {
+	test('`itemsFactory` returns twice as much data as `chunkSize`', async () => {
 		const
 			chunkSize = 12;
 

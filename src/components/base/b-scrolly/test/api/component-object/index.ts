@@ -140,7 +140,7 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 	 * @param timeout - The timeout for waiting (optional).
 	 */
 	async waitForSlotState(slotName: keyof ComponentRefs, isVisible: boolean, timeout?: number): Promise<void> {
-		const slot = this.node.locator(this.elSelector(slotName));
+		const slot = this.node.locator(this.elSelector(slotName.dasherize()));
 		await slot.waitFor({state: isVisible ? 'visible' : 'hidden', timeout});
 	}
 
@@ -156,7 +156,7 @@ export class ScrollyComponentObject extends ComponentObject<bScrolly> {
 			empty = this.node.locator(this.elSelector('empty')),
 			retry = this.node.locator(this.elSelector('retry')),
 			done = this.node.locator(this.elSelector('done')),
-			renderNext = this.node.locator(this.elSelector('renderNext'));
+			renderNext = this.node.locator(this.elSelector('render-next'));
 
 		return {
 			container: await container.isVisible(),

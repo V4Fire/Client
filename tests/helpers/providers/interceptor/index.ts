@@ -10,7 +10,7 @@ import type { BrowserContext, Page, Request, Route } from 'playwright';
 import delay from 'delay';
 import { ModuleMocker } from 'jest-mock';
 
-import type { ResponseHandler, ResponseOptions } from 'tests/helpers/providers/interceptor/interface';
+import type { ResponseHandler, ResponseOptions, ResponsePayload } from 'tests/helpers/providers/interceptor/interface';
 
 /**
  * API that provides a simple way to intercept and respond to any request.
@@ -89,11 +89,11 @@ export class RequestInterceptor {
 	 * @param opts - The response options.
 	 * @returns The current instance of RequestInterceptor.
 	 */
-	responseOnce(status: number, payload: object | string | number, opts?: ResponseOptions): this;
+	responseOnce(status: number, payload: ResponsePayload | ResponseHandler, opts?: ResponseOptions): this;
 
 	responseOnce(
 		handlerOrStatus: number | ResponseHandler,
-		payload?: object | string | number,
+		payload?: ResponsePayload | ResponseHandler,
 		opts?: ResponseOptions
 	): this {
 		let fn;
@@ -140,17 +140,18 @@ export class RequestInterceptor {
 	 * @param opts - The response options.
 	 * @returns The current instance of RequestInterceptor.
 	 */
-	response(status: number, payload: object | string | number, opts?: ResponseOptions): this;
+	response(status: number, payload: ResponsePayload | ResponseHandler, opts?: ResponseOptions): this;
 
 	response(
 		handlerOrStatus: number | ResponseHandler,
-		payload?: object | string | number,
+		payload?: ResponsePayload | ResponseHandler,
 		opts?: ResponseOptions
 	): this {
 		let fn;
 
 		if (Object.isFunction(handlerOrStatus)) {
 			fn = handlerOrStatus;
+
 		} else {
 			const status = handlerOrStatus;
 			fn = this.cookResponseFn(status, payload, opts);
@@ -201,17 +202,17 @@ export class RequestInterceptor {
 	 */
 	protected cookResponseFn(
 		status: number,
-		payload?: string | object | number,
+		payload?: ResponsePayload | ResponseHandler,
 		opts?: ResponseOptions
 	): ResponseHandler {
-		return async (route) => {
+		return async (route, request) => {
 			if (opts?.delay != null) {
 				await delay(opts.delay);
 			}
 
 			return route.fulfill({
 				status,
-				body: JSON.stringify(payload),
+				body: JSON.stringify(Object.isFunction(payload) ? await payload(route, request) : payload),
 				contentType: 'application/json'
 			});
 		};
