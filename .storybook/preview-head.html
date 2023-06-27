@@ -1,0 +1,40 @@
+<script>
+	Object.defineProperty(window, 'GLOBAL_NONCE', {
+		value: undefined
+	});
+
+	var LANG_PACKS={"en":{"b-checkbox":{"Required field":"Required field"},"b-input":{"The value is not a number":"The value is not a number","The value does not match with an unsigned integer type":"The value does not match with an unsigned integer type","The value does not match with an integer type":"The value does not match with an integer type","The value does not match with an unsigned float type":"The value does not match with an unsigned float type","The decimal part must be {precision} digits":"The decimal part must be {precision} digits","The decimal part must be no more than {precision} digits":"The decimal part must be no more than {precision} digits","The value must be at least {min}":"The value must be at least {min}","The value must be no more than {max}}":"The value must be no more than {max}}","The value can't be parsed as a date":"The value can't be parsed as a date","Date value must be in the past":"Date value must be in the past","Date value can't be in the past":"Date value can't be in the past","Date value must be in the future":"Date value must be in the future","Date value can't be in the future":"Date value can't be in the future","Date value must be at least \"{date}\"":"Date value must be at least \"{date}\"","Date value must be no more than \"{date}\"":"Date value must be no more than \"{date}\"","Invalid email format":"Invalid email format","Password must contain only allowed characters":"Password must contain only allowed characters","Password length must be at least {min} characters":"Password length must be at least {min} characters","Password length must be no more than {max} characters":"Password length must be no more than {max} characters","The old and new passwords are the same":"The old and new passwords are the same","The passwords don't match":"The passwords don't match"},"b-select":{"Required field":"Required field"},"b-select-date":{"January":"January","February":"February","March":"March","April":"April","May":"May","June":"June","July":"July","August":"August","September":"September","October":"October","November":"November","December":"December"},"b-text-area":{"Characters left: {limit}":"Characters left: {limit}"},"i-input":{"Required field":"Required field"},"i-input-text":{"Required field":"Required field","The text must match the pattern":"The text must match the pattern","The text length must be at least {min} characters":"The text length must be at least {min} characters","The text length must be no more than {max} characters":"The text length must be no more than {max} characters"}}};
+
+	var PATH = Object.create(null);
+	var PUBLIC_PATH = undefined;
+
+	if (false) {
+		(function () {
+			var publicPath = /publicPath=([^&]+)/.exec(location.search);
+
+			if (publicPath != null) {
+				PUBLIC_PATH = decodeURIComponent(publicPath[1]);
+				PUBLIC_PATH = PUBLIC_PATH.replace(/\/+$/, '') + '/';
+			}
+		})();
+	}
+
+	try {
+		PATH = new Proxy(PATH, {
+			get: function (target, prop) {
+				if (prop in target) {
+					var v = target[prop];
+					return typeof v === 'string' ? v : v.publicPath || v.path;
+				}
+
+				throw new ReferenceError('A resource by the path "' + prop + '" is not defined');
+			}
+		});
+	} catch (_) {}
+
+	document.addEventListener('DOMContentLoaded', () => {
+		const root = document.getElementById('storybook-root');
+
+		root.dataset.rootComponent = 'p-v4-components-demo';
+	});
+</script>
