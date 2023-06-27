@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.? (2023-??-??)
+
+#### :bug: [Bug Fix]
+
+* Handle unsuitable `pathParams` values in the `fillRouteParams` function
+
 ## v4.??.?? (2023-??-??)
 
 #### :house: Internal
