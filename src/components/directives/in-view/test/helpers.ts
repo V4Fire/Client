@@ -12,7 +12,7 @@ import type { Watcher, WatchHandler, WatchOptions } from 'core/dom/intersection-
 
 import { Component } from 'tests/helpers';
 
-const TEST_DIV_MARGIN_TOP = 1000;
+import { TEST_DIV_MARGIN_TOP_PX } from 'components/directives/in-view/test/const';
 
 /**
  * A handler to pass to v-in-view
@@ -73,7 +73,7 @@ export async function createDivForInViewTest(
 			inViewValue.map(addTestHandlerToWatch) :
 			addTestHandlerToWatch(inViewValue),
 		'data-testid': 'div',
-		style: `margin-top: ${TEST_DIV_MARGIN_TOP}px; width: 20px; height: 20px`
+		style: `margin-top: ${TEST_DIV_MARGIN_TOP_PX}px; width: 20px; height: 20px`
 	});
 
 	return page.getByTestId('div');
@@ -84,10 +84,10 @@ export async function createDivForInViewTest(
  * @param page - The target page.
  */
 export async function initViewport(page: Page): Promise<void> {
-	await page.setViewportSize({width: 500, height: TEST_DIV_MARGIN_TOP / 2});
+	await page.setViewportSize({width: 500, height: TEST_DIV_MARGIN_TOP_PX / 2});
 	await page.waitForFunction(
 		(targetHeight) => globalThis.innerHeight < targetHeight,
-		TEST_DIV_MARGIN_TOP
+		TEST_DIV_MARGIN_TOP_PX
 	);
 }
 
