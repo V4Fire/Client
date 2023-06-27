@@ -39,7 +39,7 @@ export function getIconHref(iconId: Nullable<string>): Promise<CanUndef<string>>
 }
 
 /**
- * Updates the `href` attribute of the child `use` element from the given one
+ * Updates the `href` attribute of the child `use` element to the given value
  *
  * @param el
  * @param [href]
