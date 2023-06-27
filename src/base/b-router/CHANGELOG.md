@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added more URI schemes to handle by the environment
+* Added support for `mailto:` and `tel:` href-s
 
 ## v3.47.1 (2023-05-18)
 
