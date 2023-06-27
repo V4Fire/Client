@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.51.1 (2023-06-27)
+
+#### :bug: Bug Fix
+
+* Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
+
 ## v3.46.4 (2023-05-05)
 
 #### :bug: Bug Fix

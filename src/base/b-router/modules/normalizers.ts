@@ -25,7 +25,9 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 		pathParams
 	} = route;
 
-	Object.assign(params, resolvePathParameters(pathParams, params));
+	if (Object.isArray(pathParams)) {
+		Object.assign(params, resolvePathParameters(pathParams, params));
+	}
 
 	const defs: Array<[CanUndef<Dictionary>, Dictionary]> = [
 		[meta.query, query],
