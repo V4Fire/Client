@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: [Bug Fix]
 
-* Handle unsuitable `pathParams` value in `fillRouteParams` function
+* Handle unsuitable `pathParams` values in the `fillRouteParams` function
 
 ## v3.47.1 (2023-05-18)
 
