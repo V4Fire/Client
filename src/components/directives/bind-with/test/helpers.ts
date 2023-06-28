@@ -100,8 +100,8 @@ export async function getBindWithTestInfo(
 	const attrValue = await locator.getAttribute('data-test-bind-with');
 
 	if (attrValue == null) {
-
 		return null;
+
 	}
 
 	return <BindWithTestInfo>JSON.parse(attrValue);
