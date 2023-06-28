@@ -55,6 +55,9 @@
 	/** Should or not attach favicons */
 	- attachFavicons = true
 
+	/** Should or not generate init.js file */
+	- generateInitFile = true
+
 	/** Should or not do a request for `assets.js` */
 	- assetsRequest = false
 
@@ -74,15 +77,16 @@
 			- if Object.size(pageData) > 0
 				? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
-		? await h.generateInitJS(self.name(), { &
-			deps,
-			ownDeps,
+		- if generateInitFile
+			? await h.generateInitJS(self.name(), { &
+				deps,
+				ownDeps,
 
-			assets,
-			assetsRequest,
+				assets,
+				assetsRequest,
 
-			rootAttrs
-		}) .
+				rootAttrs
+			}) .
 
 		- block doctype
 			- doctype

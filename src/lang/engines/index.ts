@@ -6,4 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export { default } from 'lang/engines/inline-html';
+import inlineHTML from 'lang/engines/inline-html';
+import context from 'lang/engines/context';
+
+export default SSR ? context : inlineHTML;
