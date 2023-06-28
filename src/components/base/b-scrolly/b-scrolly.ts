@@ -12,7 +12,6 @@
  */
 
 import VDOM, { create, render } from 'components/friends/vdom';
-import type iItems from 'components/traits/i-items/i-items';
 
 import { bScrollyDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-scrolly/const';
 
@@ -35,7 +34,7 @@ VDOM.addToPrototype(render);
  * by dynamically rendering chunks of data as the user scrolls.
  */
 @component()
-export default class bScrolly extends bScrollyHandlers implements iItems {
+export default class bScrolly extends bScrollyHandlers {
 	// @ts-ignore (getter instead readonly)
 	override get requestParams(): iData['requestParams'] {
 		return {
@@ -83,14 +82,12 @@ export default class bScrolly extends bScrollyHandlers implements iItems {
 						(isInitialLoading && this.db == null) ||
 						(!isInitialLoading && res == null)
 					) {
-						return this.onDataLoadError(isInitialLoading);
+						return;
 					}
 
 					this.onDataLoadSuccess(isInitialLoading, isInitialLoading ? this.db : this.convertDataToDB(res));
 				})
-				.catch(() => {
-					this.onDataLoadError(isInitialLoading);
-				});
+				.catch(stderr);
 		}
 
 		return <Promise<void>>initLoadResult;
@@ -101,13 +98,6 @@ export default class bScrolly extends bScrollyHandlers implements iItems {
 	 */
 	reset(): void {
 		this.onReset();
-	}
-
-	/**
-	 * Renders the next data chunk to the page (ignores the `client` check for render possibility).
-	 */
-	renderNext(): void {
-		// ...
 	}
 
 	/**

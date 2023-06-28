@@ -16,3 +16,11 @@ import type { MountedItem } from 'components/base/b-scrolly/interface';
 export function isItem(val: any): val is MountedItem {
 	return Object.isPlainObject(val) && val.type === componentItemType.item;
 }
+
+/**
+ * Returns `true` if the specified value is an `async replace` error.
+ * @param val
+ */
+export function isAsyncReplaceError(val: unknown): boolean {
+	return Object.isPlainObject(val) && val.join === 'replace';
+}

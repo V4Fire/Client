@@ -53,8 +53,26 @@ test.describe('<b-scrolly>', () => {
 			await component.withDefaultPaginationProviderProps({chunkSize});
 			await component.build();
 
-			await component.waitForSlotState('retry', true);
 			await component.node.locator('#retry').click();
+
+			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+		});
+
+		test('Should reload data after invoking retry function from `onRequestError` handler', async () => {
+			const chunkSize = 12;
+
+			provider
+				.responseOnce(500, {})
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: []});
+
+			await component.setProps({
+				chunkSize,
+				'@onRequestError': (_, retryFn) => setTimeout(retryFn, 0)
+			});
+
+			await component.withDefaultPaginationProviderProps({chunkSize});
+			await component.build();
 
 			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
@@ -72,7 +90,6 @@ test.describe('<b-scrolly>', () => {
 			await component.withDefaultPaginationProviderProps({chunkSize});
 			await component.build();
 
-			await component.waitForSlotState('retry', true);
 			const event = component.waitForEvent('dataLoadError');
 			await component.node.locator('#retry').click();
 			await event;
@@ -103,7 +120,6 @@ test.describe('<b-scrolly>', () => {
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
 			await component.scrollToBottom();
 
-			await component.waitForSlotState('retry', true);
 			await component.node.locator('#retry').click();
 			await component.waitForDataIndexChild(chunkSize * 2 - 1);
 
@@ -131,7 +147,6 @@ test.describe('<b-scrolly>', () => {
 			});
 
 			await component.build();
-			await component.waitForSlotState('retry', true);
 			await component.node.locator('#retry').click();
 
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
@@ -155,7 +170,6 @@ test.describe('<b-scrolly>', () => {
 			await component.withDefaultPaginationProviderProps({chunkSize});
 			await component.build();
 
-			await component.waitForSlotState('retry', true);
 			await component.node.locator('#retry').click();
 
 			test.expect(provider.mock.mock.calls.length).toBe(3);

@@ -9,8 +9,9 @@
 import bScrollyProps from 'components/base/b-scrolly/props';
 import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import { bScrollyAsyncGroup, componentEvents } from 'components/base/b-scrolly/const';
-import { component } from 'components/super/i-data/i-data';
+import iData, { component } from 'components/super/i-data/i-data';
 import type { MountedChild } from 'components/base/b-scrolly/interface';
+import { isAsyncReplaceError } from 'components/base/b-scrolly/modules/helpers';
 
 /**
  * A class that provides an API to handle events emitted by the {@link bScrolly} component.
@@ -177,6 +178,21 @@ export abstract class bScrollyHandlers extends bScrollyProps {
 		this.slotsStateController.loadingFailedState();
 
 		this.componentEmitter.emit(componentEvents.dataLoadError, isInitialLoading);
+	}
+
+	override onRequestError(this: bScrolly, ...args: Parameters<iData['onRequestError']>): ReturnType<iData['onRequestError']> {
+		const
+			err = args[0];
+
+		if (isAsyncReplaceError(err)) {
+			return;
+		}
+
+		const
+			state = this.getComponentState();
+
+		this.onDataLoadError(state.isInitialLoading);
+		return super.onRequestError(err, this.initLoad.bind(this));
 	}
 
 	/**
