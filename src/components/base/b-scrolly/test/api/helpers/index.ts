@@ -318,13 +318,15 @@ export function createIndexedObj(i: number): IndexedObj {
  *
  * @param emitCalls - The array of emit calls.
  * @param [filterObserverEvents] - Whether to filter out observer events (default: true).
+ * @param [allowedEvents]
  */
 export function filterEmitterCalls(
 	emitCalls: unknown[][],
-	filterObserverEvents: boolean = true
+	filterObserverEvents: boolean = true,
+	allowedEvents: string[] = []
 ): unknown[][] {
 	return emitCalls.filter(([event]) => Object.isString(event) &&
-		Boolean(componentEvents[event]) &&
+		(Boolean(componentEvents[event]) || allowedEvents.includes(event)) &&
 		(filterObserverEvents ? !(event in componentObserverLocalEvents) : true));
 }
 
