@@ -71,8 +71,9 @@ export class SlotsStateController extends Friend {
 
 	/**
 	 * Displays the slots that should be shown during data loading progress.
+	 * @param [immediate] - if set to true, {@link requestAnimationFrame} will not be used to switch the state.
 	 */
-	loadingProgressState(): void {
+	loadingProgressState(immediate: boolean = false): void {
 		this.setSlotsVisibility({
 			container: true,
 			loader: true,
@@ -81,7 +82,7 @@ export class SlotsStateController extends Friend {
 			empty: false,
 			renderNext: false,
 			retry: false
-		});
+		}, immediate);
 	}
 
 	/**
@@ -126,17 +127,24 @@ export class SlotsStateController extends Friend {
 	 * Sets the visibility state of the slots.
 	 *
 	 * @param stateObj - An object specifying the visibility state of each slot.
+	 * @param [immediate] - if set to true, {@link requestAnimationFrame} will not be used to switch the state.
 	 */
-	protected setSlotsVisibility(stateObj: Required<SlotsStateObj>): void {
+	protected setSlotsVisibility(stateObj: Required<SlotsStateObj>, immediate: boolean = false): void {
 		this.lastState = stateObj;
 
 		this.async.cancelAnimationFrame(this.asyncUpdateLabel);
 
-		this.async.requestAnimationFrame(() => {
+		const update = () => {
 			for (const [name, state] of Object.entries(stateObj)) {
 				this.setDisplayState(<keyof SlotsStateObj>name, state);
 			}
-		}, this.asyncUpdateLabel);
+		};
+
+		if (immediate) {
+			return update();
+		}
+
+		this.async.requestAnimationFrame(update, this.asyncUpdateLabel);
 	}
 
 	/**
