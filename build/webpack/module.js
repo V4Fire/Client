@@ -102,6 +102,11 @@ module.exports = async function module({plugins}) {
 				loader: 'ts-loader',
 				options: {
 					...typescript.client,
+					// Ignore "something is referenced directly or indirectly in its own type annotation"
+					// Module a has no exported member b
+					ignoreDiagnostics: [2502, 2305],
+					transpileOnly: false,
+					reportFiles: ['src/**/*.ts'],
 					getCustomTransformers: tsTransformers
 				}
 			},

@@ -9,14 +9,18 @@
 'use strict';
 
 const
-	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags');
+	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags'),
+	preludeTransformer = include('build/ts-transformers/prelude');
 
 /**
  * @param {import('typescript').Program} program
  * @returns {object}
  */
 module.exports = (program) => ({
-	before: [modernRegExpFlagsTransformer(program)],
+	before: [
+		preludeTransformer(program),
+		modernRegExpFlagsTransformer(program)
+	],
 	after: {},
 	afterDeclarations: {}
 });

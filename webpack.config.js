@@ -81,10 +81,10 @@ const tasks = (async () => {
 
 	const
 		{processes} = await include('build/graph'),
-		tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));
+		tasks = await $C([processes[1]]).async.map((el, i) => buildFactory(el, i));
 
-	globalThis.WEBPACK_CONFIG = tasks;
-	return tasks;
+	globalThis.WEBPACK_CONFIG = tasks[0];
+	return tasks[0];
 })();
 
 module.exports = tasks;
