@@ -36,6 +36,7 @@ function handler(watcher: Watcher): void {
  */
 export async function getWatcherCallsCount(locator: Locator): Promise<number | null> {
 	const storedValue = await locator.getAttribute('data-test-in-view');
+
 	if (storedValue == null) {
 		return null;
 
@@ -53,6 +54,7 @@ export async function getWatcherCallsCount(locator: Locator): Promise<number | n
 function addTestHandlerToWatch(
 	watch: CanUndef<WatchHandler | Partial<WatchOptions>>
 ): WatchHandler | WatchOptions & { handler: WatchHandler } {
+
 	if (Object.isUndef(watch) || Object.isFunction(watch)) {
 		return handler;
 
@@ -70,6 +72,7 @@ function addTestHandlerToWatch(
 export async function createDivForInViewTest(
 	page: Page, inViewValue: CanUndef<CanArray<WatchHandler | Partial<WatchOptions>>>
 ): Promise<Locator> {
+
 	await Component.createComponent(page, 'div', {
 		'v-in-view': Object.isArray(inViewValue) ?
 			inViewValue.map(addTestHandlerToWatch) :
@@ -87,10 +90,12 @@ export async function createDivForInViewTest(
  */
 export async function initViewport(page: Page): Promise<void> {
 	await page.setViewportSize({width: 500, height: TEST_DIV_MARGIN_TOP_PX / 2});
+
 	await page.waitForFunction(
 		(targetHeight) => globalThis.innerHeight < targetHeight,
 		TEST_DIV_MARGIN_TOP_PX
 	);
+
 }
 
 /**
