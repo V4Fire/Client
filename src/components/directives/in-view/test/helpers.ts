@@ -20,12 +20,12 @@ import { TEST_DIV_MARGIN_TOP_PX } from 'components/directives/in-view/test/const
  */
 function handler(watcher: Watcher): void {
 	const div = watcher.target;
+
 	const previousValue = parseInt(
-		JSON.parse(
-			div.getAttribute('data-test-in-view') ?? '0'
-		),
+		div.getAttribute('data-test-in-view') ?? '0',
 		10
 	);
+
 	const nextValue = previousValue + 1;
 	watcher.target.setAttribute('data-test-in-view', nextValue.toString());
 }
@@ -38,6 +38,7 @@ export async function getWatcherCallsCount(locator: Locator): Promise<number | n
 	const storedValue = await locator.getAttribute('data-test-in-view');
 	if (storedValue == null) {
 		return null;
+
 	}
 
 	return parseInt(JSON.parse(storedValue), 10);
@@ -54,6 +55,7 @@ function addTestHandlerToWatch(
 ): WatchHandler | WatchOptions & { handler: WatchHandler } {
 	if (Object.isUndef(watch) || Object.isFunction(watch)) {
 		return handler;
+
 	}
 
 	return {...watch, handler};
