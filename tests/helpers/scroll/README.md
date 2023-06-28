@@ -44,5 +44,5 @@ await Scroll.scrollToBottomWhile(
 ### scrollToTop
 
 ```typescript
-await Scroll.scrollToBottom(page);
+await Scroll.scrollToTop(page);
 ```
