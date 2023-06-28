@@ -20,6 +20,8 @@ import type { ComponentState, RenderGuardResult } from 'components/base/b-scroll
 
 export * from 'components/base/b-scrolly/interface';
 export * from 'components/base/b-scrolly/const';
+export * from 'super/i-data/i-data';
+
 /**
  * Component that implements loading and rendering of large data arrays in chunks.
  * The `bScrolly` component extends the `iData` class and implements the `iItems` interface.

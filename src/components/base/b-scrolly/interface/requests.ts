@@ -24,4 +24,4 @@ export interface RequestQueryFn {
 /**
  * Requests parameters.
  */
-export type RequestParams = [RequestQuery, CreateRequestOptions<unknown>];
+export type VirtualScrollRequestParams = [RequestQuery, CreateRequestOptions<unknown>];
