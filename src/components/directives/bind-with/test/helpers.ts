@@ -20,12 +20,15 @@ import type { BindWithTestInfo } from 'components/directives/bind-with/test/inte
  * @param args - Args provided by v-bind-with trigger (on/path/callback...)
  */
 function handler(element: HTMLElement, ...args: any[]) {
+
 	const previousInfo: Partial<BindWithTestInfo> =
 		JSON.parse(element.getAttribute('data-test-bind-with') ?? '{}');
+
 	const newInfo: BindWithTestInfo = {
 		calls: previousInfo.calls ?? [],
 		errorCalls: previousInfo.errorCalls ?? []
 	};
+
 	const preparedArgs = args.map(
 		(arg: any) => {
 			// Avoid converting circular structure to JSON
@@ -38,9 +41,12 @@ function handler(element: HTMLElement, ...args: any[]) {
 			return arg;
 		}
 	);
+
 	let callDestination: keyof BindWithTestInfo = 'calls';
+
 	if (args.length > 0 && args[0] instanceof Error) {
 		callDestination = 'errorCalls';
+
 	}
 
 	newInfo[callDestination].push({
@@ -55,11 +61,13 @@ function handler(element: HTMLElement, ...args: any[]) {
  * @param listener - A v-bind-with listener to process
  */
 function addTestHandlersToListener(listener: Partial<Listener>) {
+
 	return {
 		...listener,
 		then: handler,
 		catch: handler
 	};
+
 }
 
 /**
@@ -71,6 +79,7 @@ function addTestHandlersToListener(listener: Partial<Listener>) {
 export async function createDivForBindWithTest(
 	page: Page, bindWithValue: CanArray<Partial<Listener>>
 ): Promise<Locator> {
+
 	await Component.createComponent(page, 'div', {
 		'v-bind-with': Object.isArray(bindWithValue) ?
 			bindWithValue.map(addTestHandlersToListener) :
@@ -89,7 +98,9 @@ export async function getBindWithTestInfo(
 	locator: Locator
 ): Promise<BindWithTestInfo | null> {
 	const attrValue = await locator.getAttribute('data-test-bind-with');
+
 	if (attrValue == null) {
+
 		return null;
 	}
 
