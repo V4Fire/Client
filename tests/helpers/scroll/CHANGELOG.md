@@ -14,3 +14,9 @@ Changelog
 #### :rocket: New Feature
 
 * Migrated to TS
+
+## v4 (2023-06-28)
+
+#### :rocket: New Feature
+
+* Added `.scrollTo()` and `.scrollToTop()` methods

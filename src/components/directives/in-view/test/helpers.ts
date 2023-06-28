@@ -41,7 +41,7 @@ export async function getWatcherCallsCount(locator: Locator): Promise<number | n
 
 	}
 
-	return parseInt(JSON.parse(storedValue), 10);
+	return parseInt(storedValue, 10);
 }
 
 /**

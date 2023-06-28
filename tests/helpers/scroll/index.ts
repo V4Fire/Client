@@ -86,14 +86,6 @@ export default class Scroll {
 	}
 
 	/**
-	 * @param page
-	 * @param options
-	 */
-	static scrollToTop(page: Page, options?: ScrollOptions): Promise<void> {
-		return this.scrollTo(page, {top: 0, left: 0, ...options});
-	}
-
-	/**
 	 * Scrolls a page until the passed function returns true, or until a time specified in` timeout` expires
 	 *
 	 * @param page
@@ -135,5 +127,13 @@ export default class Scroll {
 		}
 
 		clearTimeout(timeout);
+	}
+
+	/**
+	 * @param page
+	 * @param [options]
+	 */
+	static scrollToTop(page: Page, options?: ScrollOptions): Promise<void> {
+		return this.scrollTo(page, {top: 0, left: 0, ...options});
 	}
 }
