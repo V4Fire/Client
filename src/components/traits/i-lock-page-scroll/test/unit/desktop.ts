@@ -106,21 +106,21 @@ test.describe('components/traits/i-lock-page-scroll - desktop', () => {
 			const getScrollTop = () =>
 				page.evaluate(() => document.documentElement.scrollTop);
 
-			const scrollYPosition = 500;
+			const VirtualScrollPosition = 500;
 
 			await page.evaluate(
 				(yPos) => {
 					document.querySelector('body')!.style.setProperty('height', '5000px');
 					globalThis.scrollTo(0, yPos);
 				},
-				scrollYPosition
+				VirtualScrollPosition
 			);
 
-			await test.expect(getScrollTop()).resolves.toEqual(scrollYPosition);
+			await test.expect(getScrollTop()).resolves.toEqual(VirtualScrollPosition);
 
 			await lock();
 			await unlock();
-			await test.expect(getScrollTop()).resolves.toEqual(scrollYPosition);
+			await test.expect(getScrollTop()).resolves.toEqual(VirtualScrollPosition);
 		});
 	});
 

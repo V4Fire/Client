@@ -35,7 +35,7 @@ export default class ComponentObjectMock<COMPONENT extends iBlock> extends Compo
 	 * @example
 	 * ```typescript
 	 * const
-	 *   component = new ComponentObject(page, 'b-scrolly'),
+	 *   component = new ComponentObject(page, 'b-virtual-scroll'),
 	 *   spy = await component.spyOn('initLoad', {proto: true}); // Installs a spy on the prototype of the component class
 	 *
 	 * await component.build();
@@ -44,7 +44,7 @@ export default class ComponentObjectMock<COMPONENT extends iBlock> extends Compo
 	 *
 	 * @example
 	 * ```typescript
-	 * const component = new ComponentObject(page, 'b-scrolly');
+	 * const component = new ComponentObject(page, 'b-virtual-scroll');
 	 * const spy = await component.spyOn('someModule.someMethod');
 	 *
 	 * await component.build();
@@ -110,7 +110,7 @@ export default class ComponentObjectMock<COMPONENT extends iBlock> extends Compo
 	 * @example
 	 * ```typescript
 	 * const
-	 *   component = new ComponentObject(page, 'b-scrolly'),
+	 *   component = new ComponentObject(page, 'b-virtual-scroll'),
 	 *   shouldStopRequestingData = await component.mockFn(() => false);
 	 *
 	 * await component.setProps({

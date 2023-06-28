@@ -18,7 +18,7 @@ package('p-v4-components-demo')
 		'b-list',
 		'b-tree',
 		'b-window',
-		'b-scrolly',
+		'b-virtual-scroll',
 		'b-bottom-slide',
 		'b-slider',
 		'b-sidebar',

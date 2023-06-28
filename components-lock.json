@@ -1,5 +1,5 @@
 {
-  "hash": "98b9e76f9769986d41b4840a4a7b9627fee82101970d254040a01748361df5d9",
+  "hash": "f276ed6ff1bb9ba1d1af98bc3a06e4c12b73c653879637c37d2936ad8f3d4de9",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -902,38 +902,6 @@
             "src/components/base/b-router/b-router.styl"
           ],
           "tpl": "src/components/base/b-router/b-router.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-scrolly",
-        {
-          "index": "src/components/base/b-scrolly/index.js",
-          "declaration": {
-            "name": "b-scrolly",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-scrolly",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/base/b-scrolly/b-scrolly.ts",
-          "styles": [
-            "src/components/base/b-scrolly/b-scrolly.styl"
-          ],
-          "tpl": "src/components/base/b-scrolly/b-scrolly.ss",
           "etpl": null
         }
       ],
@@ -2229,9 +2197,8 @@
               "b-remote-provider",
               "b-list",
               "b-tree",
-              "b-virtual-scroll",
               "b-window",
-              "b-scrolly",
+              "b-virtual-scroll",
               "b-bottom-slide",
               "b-slider",
               "b-sidebar",
@@ -2266,9 +2233,8 @@
             "b-remote-provider",
             "b-list",
             "b-tree",
-            "b-virtual-scroll",
             "b-window",
-            "b-scrolly",
+            "b-virtual-scroll",
             "b-bottom-slide",
             "b-slider",
             "b-sidebar",
