@@ -208,13 +208,6 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 
 	protected itemsStore!: this['Items'];
 
-	/**
-	 * If true, then item attribute `data-router-prevent-transition` will be set to `true`.
-	 * The field can be provided as a function. In that case, a value is taken from the result of invoking.
-	 */
-	@system()
-	protected routerPreventTransition?: boolean | ((item: Item) => boolean);
-
 	/** @see [[iActiveItems.prototype.activeElement] */
 	@computed({
 		cache: true,
@@ -521,17 +514,6 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 	 */
 	protected getHref(item: Item): CanUndef<string> {
 		return item.href;
-	}
-
-	/**
-	 * Returns true if it should prevent the router transition
-	 *
-	 * @param item
-	 */
-	protected getRouterPreventTransition(item: Item): boolean {
-		return Object.isFunction(this.routerPreventTransition) ?
-			this.routerPreventTransition(item) :
-			this.routerPreventTransition ?? false;
 	}
 
 	protected override initModEvents(): void {

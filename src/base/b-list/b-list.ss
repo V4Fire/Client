@@ -40,8 +40,6 @@
 						:-id = values.get(el.value) |
 						:-hint = el.hint |
 
-						:-router-prevent-transition = getRouterPreventTransition(el) |
-
 						:class = el.classes.concat(provide.elClasses({
 							link: {
 								id: values.get(el.value),

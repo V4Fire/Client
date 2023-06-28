@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.??.?? (2023-05-??)
+## v3.??.?? (2023-??-??)
 
 #### :rocket: New Feature
 
-* Added new methods `getHref` and `getRouterPreventTransition`
+* Added new method `getHref`
 
 ## v3.43.0 (2023-03-23)
 
