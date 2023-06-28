@@ -853,7 +853,11 @@ export default class bRouter extends iData {
 
 		e.preventDefault();
 
-		if (<boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+		const linkNavigateEvent = new Event('linkNavigate', {cancelable: true});
+
+		this.emit('linkNavigate', linkNavigateEvent, href);
+
+		if (linkNavigateEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
 			return;
 		}
 

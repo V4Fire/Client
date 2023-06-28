@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added new methods `getHref`
+* Added possibility to prevent link navigate
+
 ## v3.44.3 (2023-03-30)
 
 #### :bug: [Bug Fix]

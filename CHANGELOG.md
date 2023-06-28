@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to prevent link navigate
+
 ## v3.46.3 (2023-04-28)
 
 #### :bug: Bug Fix
