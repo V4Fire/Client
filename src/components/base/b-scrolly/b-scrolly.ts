@@ -39,6 +39,10 @@ export default class bScrolly extends bScrollyHandlers {
 		};
 	}
 
+	override set requestParams(_value: RequestParams) {
+		// ...
+	}
+
 	override reload(...args: Parameters<iData['reload']>): ReturnType<iData['reload']> {
 		this.componentStatus = 'loading';
 		return super.reload(...args);
@@ -186,7 +190,7 @@ export default class bScrolly extends bScrollyHandlers {
 		}
 
 		const params = this.getRequestParams();
-		return this.dp.get(params[0], params[1]);
+		return this.dp.get(params[0], params[1]).then((res) => res.data);
 	}
 
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {

@@ -26,18 +26,7 @@ export class Observer extends Friend {
 	 * The observation engine used by the Observer.
 	 * It can be either an {@link IoObserver} or {@link ScrollObserver} instance.
 	 */
-	protected engine: IoObserver | ScrollObserver;
-
-	/**
-	 * @param ctx - The `bScrolly` component instance.
-	 */
-	constructor(ctx: bScrolly) {
-		super(ctx);
-
-		this.engine = ctx.componentStrategy === 'intersectionObserver' ?
-			new IoObserver(ctx) :
-			new ScrollObserver(ctx);
-	}
+	protected engine?: IoObserver | ScrollObserver;
 
 	/**
 	 * Starts observing the specified mounted elements.
@@ -46,6 +35,12 @@ export class Observer extends Friend {
 	observe(mounted: MountedChild[]): void {
 		const
 			{ctx} = this;
+
+		if (this.engine == null) {
+			this.engine = ctx.componentStrategy === 'intersectionObserver' ?
+				new IoObserver(ctx) :
+				new ScrollObserver(ctx);
+		}
 
 		if (ctx.disableObserver) {
 			return;
@@ -58,6 +53,6 @@ export class Observer extends Friend {
 	 * Resets the module state.
 	 */
 	reset(): void {
-		this.engine.reset();
+		this.engine?.reset();
 	}
 }

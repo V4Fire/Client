@@ -55,8 +55,11 @@ export interface ComponentStrategy {
 
 /**
  * Component state.
+ *
+ * @typeParam DATA_ITEM - Экземпляр данных
+ * @typeParam RAW - Сырые загруженные данные
  */
-export interface ComponentState<DATA = object> {
+export interface ComponentState<DATA_ITEM = object, RAW = unknown> {
 	/**
 	 * The largest component index of type `item` that appeared in the viewport.
 	 */
@@ -127,12 +130,12 @@ export interface ComponentState<DATA = object> {
 	/**
 	 * The last loaded data.
 	 */
-	lastLoadedData: Readonly<DATA[]>;
+	lastLoadedData: Readonly<DATA_ITEM[]>;
 
 	/**
 	 * The component data.
 	 */
-	data: Readonly<DATA[]>;
+	data: Readonly<DATA_ITEM[]>;
 
 	/**
 	 * List of all components of type `item` that have been rendered.
@@ -147,7 +150,7 @@ export interface ComponentState<DATA = object> {
 	/**
 	 * The last loaded raw data.
 	 */
-	lastLoadedRawData: unknown;
+	lastLoadedRawData: RAW;
 }
 
 /**
