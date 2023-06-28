@@ -25,26 +25,24 @@ test.describe('<div> v-in-view', () => {
 		await initViewport(page);
 	});
 
-	test('handler should be called when element enters viewport', async ({page}) => {
+	test('handler should be called when the element enters viewport', async ({page}) => {
 		const divLocator = await createDivForInViewTest(page, undefined);
 		await makeEnterViewport(divLocator);
-		test.expect(await getWatcherCallsCount(divLocator)).toBe(1);
+		await test.expect(getWatcherCallsCount(divLocator)).toBeResolvedTo(1);
 	});
 
 	test('handler should be called only once if `once` is set', async ({page}) => {
-		const divLocator = await createDivForInViewTest(page, {
-			once: true
-		});
+		const divLocator = await createDivForInViewTest(page, {once: true});
 		await makeEnterViewport(divLocator);
 		await restoreViewport(page);
 		await makeEnterViewport(divLocator);
-		test.expect(await getWatcherCallsCount(divLocator)).toBe(1);
+		await test.expect(getWatcherCallsCount(divLocator)).toBeResolvedTo(1);
 	});
 
 	test('all handlers should be called', async ({page}) => {
 		const divLocator = await createDivForInViewTest(page, [{once: true}, {once: true}]);
 		await makeEnterViewport(divLocator);
-		test.expect(await getWatcherCallsCount(divLocator)).toBe(2);
+		await test.expect(getWatcherCallsCount(divLocator)).toBeResolvedTo(2);
 	});
 
 });

@@ -10,7 +10,7 @@ import type { Locator, Page } from 'playwright';
 
 import type { Watcher, WatchHandler, WatchOptions } from 'core/dom/intersection-watcher';
 
-import { Component } from 'tests/helpers';
+import { Component, Scroll } from 'tests/helpers';
 
 import { TEST_DIV_MARGIN_TOP_PX } from 'components/directives/in-view/test/const';
 
@@ -31,7 +31,7 @@ function handler(watcher: Watcher): void {
 }
 
 /**
- * Returns the value of watcher call counter stored in given locator.
+ * Returns the value of the watcher call counter stored in given locator.
  * @param locator - The source locator
  */
 export async function getWatcherCallsCount(locator: Locator): Promise<number | null> {
@@ -108,5 +108,5 @@ export async function makeEnterViewport(locator: Locator): Promise<void> {
  * @param page - The target page
  */
 export async function restoreViewport(page: Page): Promise<void> {
-	await page.evaluate(() => globalThis.scrollTo({left: 0, top: 0}));
+	await Scroll.scrollToTop(page);
 }
