@@ -46,7 +46,6 @@ function handler(element: HTMLElement, ...args: any[]) {
 
 	if (args.length > 0 && args[0] instanceof Error) {
 		callDestination = 'errorCalls';
-
 	}
 
 	newInfo[callDestination].push({
@@ -61,13 +60,11 @@ function handler(element: HTMLElement, ...args: any[]) {
  * @param listener - A v-bind-with listener to process
  */
 function addTestHandlersToListener(listener: Partial<Listener>) {
-
 	return {
 		...listener,
 		then: handler,
 		catch: handler
 	};
-
 }
 
 /**
@@ -79,7 +76,6 @@ function addTestHandlersToListener(listener: Partial<Listener>) {
 export async function createDivForBindWithTest(
 	page: Page, bindWithValue: CanArray<Partial<Listener>>
 ): Promise<Locator> {
-
 	await Component.createComponent(page, 'div', {
 		'v-bind-with': Object.isArray(bindWithValue) ?
 			bindWithValue.map(addTestHandlersToListener) :
@@ -101,7 +97,6 @@ export async function getBindWithTestInfo(
 
 	if (attrValue == null) {
 		return null;
-
 	}
 
 	return <BindWithTestInfo>JSON.parse(attrValue);
