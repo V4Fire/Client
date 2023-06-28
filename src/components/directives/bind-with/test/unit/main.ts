@@ -29,6 +29,7 @@ test.describe('components/directives/bind-with', () => {
 	});
 
 	test('the handler should be executed when an event is emitted', async ({page}) => {
+
 		const divLocator = await createDivForBindWithTest(page, {
 			on: 'testEvent'
 		});
@@ -43,6 +44,7 @@ test.describe('components/directives/bind-with', () => {
 	});
 
 	test('the handler should be executed when a field is changed', async ({page}) => {
+
 		const divLocator = await createDivForBindWithTest(page, {
 			path: 'testField'
 		});
