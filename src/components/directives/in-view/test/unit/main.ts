@@ -25,7 +25,7 @@ test.describe('components/directives/in-view', () => {
 		await initViewport(page);
 	});
 
-	test('the handler should be called when the element enters viewport', async ({page}) => {
+	test('the handler should be called when the element enters the viewport', async ({page}) => {
 		const divLocator = await createDivForInViewTest(page, undefined);
 		await makeEnterViewport(divLocator);
 		await test.expect(getWatcherCallsCount(divLocator)).toBeResolvedTo(1);
@@ -39,7 +39,7 @@ test.describe('components/directives/in-view', () => {
 		await test.expect(getWatcherCallsCount(divLocator)).toBeResolvedTo(1);
 	});
 
-	test('all provided handlers should be called', async ({page}) => {
+	test('all provided handlers should be called when the element enters the viewport', async ({page}) => {
 		const divLocator = await createDivForInViewTest(page, [{once: true}, {once: true}]);
 		await makeEnterViewport(divLocator);
 		await test.expect(getWatcherCallsCount(divLocator)).toBeResolvedTo(2);
