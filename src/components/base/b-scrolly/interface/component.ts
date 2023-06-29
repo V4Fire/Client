@@ -150,7 +150,7 @@ export interface ComponentState<DATA_ITEM = object, RAW = unknown> {
 	/**
 	 * The last loaded raw data.
 	 */
-	lastLoadedRawData: RAW;
+	lastLoadedRawData: CanUndef<RAW>;
 }
 
 /**

@@ -102,9 +102,13 @@ export default class bScrolly extends bScrollyHandlers {
 
 	/**
 	 * Returns the component state.
+	 * 
+	 * @typeParam DATA_ITEM - Экземпляр данных
+	 * @typeParam RAW - Сырые загруженные данные
+	 * 
 	 * {@link ComponentState}
 	 */
-	getComponentState(): Readonly<ComponentState> {
+	getComponentState<DATA_ITEM = object, RAW = unknown>(): Readonly<ComponentState> {
 		return this.componentInternalState.compile();
 	}
 
@@ -196,8 +200,8 @@ export default class bScrolly extends bScrollyHandlers {
 	}
 
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
-		const result = super.convertDataToDB(data);
 		this.onConvertDataToDB(data);
+		const result = super.convertDataToDB(data);
 
 		return <O | this['DB']>result;
 	}
