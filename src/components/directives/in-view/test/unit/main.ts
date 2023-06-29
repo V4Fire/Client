@@ -65,7 +65,7 @@ test.describe('components/directives/in-view', () => {
 	}
 
 	/**
-	 * Returns the value of the watcher call counter stored in given locator
+	 * Returns the value of the watcher call counter stored in given `locator`
 	 * @param locator - the source locator
 	 */
 	async function getWatcherCallsCount(locator: Locator): Promise<number | null> {
@@ -80,7 +80,7 @@ test.describe('components/directives/in-view', () => {
 	}
 
 	/**
-	 * Adds test handler (which counts calls) to given watch,
+	 * Adds test handler (which counts calls) to given `watch`,
 	 * or replaces given one if a function/undefined is provided
 	 *
 	 * @param watch - a watch parameter to update
@@ -98,7 +98,7 @@ test.describe('components/directives/in-view', () => {
 	}
 
 	/**
-	 * Creates a <div> element with v-in-view set to inViewValue
+	 * Creates a `<div>` element with v-in-view set to `inViewValue`
 	 *
 	 * @param page - the target page
 	 * @param inViewValue - the value of v-in-view directive

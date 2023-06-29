@@ -16,7 +16,7 @@ import { Scroll } from 'tests/helpers';
 export const TEST_DIV_MARGIN_TOP_PX = 1000;
 
 /**
- * Initializes the viewport by making test <div> be not in it when the test is started
+ * Initializes the viewport by making the test `<div>` be not in it when the test is started
  * @param page - the target page
  */
 export async function initViewport(page: Page): Promise<void> {
@@ -30,7 +30,7 @@ export async function initViewport(page: Page): Promise<void> {
 }
 
 /**
- * Makes element pointed by locator enter the viewport
+ * Makes the element pointed by `locator` enter the viewport
  *
  * @param locator - the target locator
  * @see https://playwright.dev/docs/api/class-locator#locator-click
@@ -40,7 +40,7 @@ export async function makeEnterViewport(locator: Locator): Promise<void> {
 }
 
 /**
- * Restores viewport set in initViewport()
+ * Restores the viewport set in `initViewport()`
  * @param page - the target page
  */
 export async function restoreViewport(page: Page): Promise<void> {
