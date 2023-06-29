@@ -158,7 +158,6 @@ test.describe('components/directives/image', () => {
 			onLoad: (el: Element) => {
 				el.setAttribute('data-on-load-called', '1');
 			}
-
 		});
 
 		await waitForAttribute(page, imgLocator, 'data-on-load-called');
@@ -172,7 +171,6 @@ test.describe('components/directives/image', () => {
 			onError: (el: Element) => {
 				el.setAttribute('data-on-error-called', '1');
 			}
-
 		});
 
 		await waitForAttribute(page, imgLocator, 'data-on-error-called');
