@@ -6,18 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle } from 'playwright';
+import type { JSHandle, Locator, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
 import { Component } from 'tests/helpers';
 
 import type iBlock from 'components/super/i-block/i-block';
-import {
 
-	createDivForBindWithTest,
-	getBindWithTestInfo
-
-} from 'components/directives/bind-with/test/helpers';
+import type { Listener } from 'components/directives/bind-with';
+import type { BindWithTestInfo } from 'components/directives/bind-with/test/interface';
 
 test.describe('components/directives/bind-with', () => {
 	let rootHandle: JSHandle<iBlock>;
@@ -153,6 +150,95 @@ test.describe('components/directives/bind-with', () => {
 		test.expect(info).toBeTruthy();
 		test.expect(info!.calls.length).toBe(2);
 	});
+
+	/**
+	 * A handler to pass as .then()/.catch() in v-bind-with
+	 *
+	 * @param element - the target element
+	 * @param args - args provided by v-bind-with trigger (on/path/callback...)
+	 */
+	function handler(element: HTMLElement, ...args: any[]) {
+
+		const previousInfo: Partial<BindWithTestInfo> =
+			JSON.parse(element.getAttribute('data-test-bind-with') ?? '{}');
+
+		const newInfo: BindWithTestInfo = {
+			calls: previousInfo.calls ?? [],
+			errorCalls: previousInfo.errorCalls ?? []
+		};
+
+		const preparedArgs = args.map(
+			(arg: any) => {
+				// Avoid converting circular structure to JSON
+				try {
+					JSON.stringify(arg);
+				} catch (e) {
+					return null;
+				}
+
+				return arg;
+			}
+		);
+
+		let callDestination: keyof BindWithTestInfo = 'calls';
+
+		if (args.length > 0 && args[0] instanceof Error) {
+			callDestination = 'errorCalls';
+		}
+
+		newInfo[callDestination].push({
+			args: preparedArgs
+		});
+
+		element.setAttribute('data-test-bind-with', JSON.stringify(newInfo));
+	}
+
+	/**
+	 * Add our handlers to given v-bind-with listener.
+	 * @param listener - a v-bind-with listener to process
+	 */
+	function addTestHandlersToListener(listener: Partial<Listener>) {
+		return {
+			...listener,
+			then: handler,
+			catch: handler
+		};
+	}
+
+	/**
+	 * Create a <div> with v-bind-with set by test code.
+	 *
+	 * @param page - the page.
+	 * @param bindWithValue - value to pass to v-bind-with
+	 */
+	async function createDivForBindWithTest(
+		page: Page, bindWithValue: CanArray<Partial<Listener>>
+	): Promise<Locator> {
+		await Component.createComponent(page, 'div', {
+			'v-bind-with': Object.isArray(bindWithValue) ?
+				bindWithValue.map(addTestHandlersToListener) :
+				addTestHandlersToListener(bindWithValue),
+			'data-testid': 'div'
+		});
+
+		return page.getByTestId('div');
+	}
+
+	/**
+	 * Get v-bind-with calls info by given locator
+	 * @param locator - the source locator
+	 */
+	async function getBindWithTestInfo(
+		locator: Locator
+	): Promise<BindWithTestInfo | null> {
+		const attrValue = await locator.getAttribute('data-test-bind-with');
+
+		if (attrValue == null) {
+			return null;
+		}
+
+		return <BindWithTestInfo>JSON.parse(attrValue);
+	}
 
 });
 
