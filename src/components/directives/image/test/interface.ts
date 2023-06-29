@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Locator } from 'playwright';
+
 export interface ImageTestImgData {
 	style: Nullable<string>;
 	dataImg: Nullable<string>;
@@ -29,4 +31,10 @@ export interface ImageTestData {
 			srcset: CanArray<Nullable<string>>;
 		}>;
 	}>;
+}
+
+export interface ImageTestLocators {
+	divLocator: Locator;
+	imgLocator: Locator;
+	spanLocator: Locator;
 }

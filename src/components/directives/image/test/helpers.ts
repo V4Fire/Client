@@ -10,7 +10,7 @@ import type { ElementHandle, Locator, Page } from 'playwright';
 import type { ImageOptions } from 'components/directives/image';
 
 import { Component } from 'tests/helpers';
-import type { ImageTestData, ImageTestImgData } from 'components/directives/image/test/interface';
+import type { ImageTestData, ImageTestImgData, ImageTestLocators } from 'components/directives/image/test/interface';
 import { EXISTING_PICTURE_SRC } from 'components/directives/image/test/const';
 
 /**
@@ -22,7 +22,7 @@ import { EXISTING_PICTURE_SRC } from 'components/directives/image/test/const';
  */
 export async function createDivForTest(
 	page: Page, imageValue: Partial<ImageOptions>, divAttributes?: Partial<RenderComponentsVnodeParams['attrs']>
-): Promise<Locator> {
+): Promise<ImageTestLocators> {
 	await Component.createComponent(page, 'div', {
 		attrs: {
 			...divAttributes,
@@ -38,7 +38,13 @@ export async function createDivForTest(
 		]
 	});
 
-	return page.getByTestId('div');
+	const divLocator = page.getByTestId('div');
+
+	return {
+		divLocator,
+		imgLocator: divLocator.locator('img'),
+		spanLocator: divLocator.locator('span')
+	};
 }
 
 async function getImageTestImgData(imgLocator: Locator): Promise<ImageTestImgData> {
@@ -102,17 +108,56 @@ export function getPngBuffer(): Buffer {
 }
 
 /**
- * Waits for attribute to appear on element pointed by locator on given page.
+ * Waits for attribute to appear (and optionally equal to given value)
+ * on element pointed by locator on given page.
  *
  * @param page
  * @param locator
  * @param attribute
+ * @param [value]
  */
-export async function waitForAttribute(page: Page, locator: Locator, attribute: string): Promise<void> {
+export async function waitForAttribute(page: Page, locator: Locator, attribute: string, value?: string): Promise<void> {
 	const handle = await locator.elementHandle();
 
 	await page.waitForFunction(
-		([el, attr]) => el.getAttribute(attr),
-		<[ElementHandle<HTMLElement>, string]>[handle!, attribute]
+		([el, attr, expected]) => {
+			const actual = el.getAttribute(attr);
+
+			if (actual == null) {
+				return false;
+			}
+
+			if (expected == null) {
+				return true;
+			}
+
+			return actual === expected;
+		},
+		<[ElementHandle<HTMLElement>, string, CanUndef<string>]>[handle!, attribute, value]
 	);
+}
+
+async function waitForImageState(page: Page, locator: Locator, state: 'loaded' | 'failed'): Promise<void> {
+	const imgLocator = locator.locator('img');
+	await waitForAttribute(page, imgLocator, 'data-img', state);
+}
+
+/**
+ * Waits for image inside <div> pointed by locator to be loaded on given page.
+ *
+ * @param page
+ * @param locator
+ */
+export async function waitForImageLoad(page: Page, locator: Locator): Promise<void> {
+	return waitForImageState(page, locator, 'loaded');
+}
+
+/**
+ * Waits for image loading inside <div> pointed by locator to be failed on given page.
+ *
+ * @param page
+ * @param locator
+ */
+export async function waitForImageLoadFail(page: Page, locator: Locator): Promise<void> {
+	return waitForImageState(page, locator, 'failed');
 }

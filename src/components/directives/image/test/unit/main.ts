@@ -14,7 +14,9 @@ import {
 	createDivForTest,
 	getImageTestData,
 	getPngBuffer,
-	waitForAttribute
+	waitForAttribute,
+	waitForImageLoad,
+	waitForImageLoadFail
 
 } from 'components/directives/image/test/helpers';
 
@@ -27,7 +29,8 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('a successfully loaded image set in .src should be shown', async ({page}) => {
-		const divLocator = await createDivForTest(page, {src: EXISTING_PICTURE_SRC});
+		const {divLocator} = await createDivForTest(page, {src: EXISTING_PICTURE_SRC});
+		await waitForImageLoad(page, divLocator);
 		const {span, img} = await getImageTestData(divLocator);
 		test.expect(span.dataImage).toBe('preview');
 		test.expect(span.style).toBeNull();
@@ -37,7 +40,7 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('the value of .baseSrc should be used as prefix for src attribute', async ({page}) => {
-		const divLocator = await createDivForTest(page, {src: 'test.png', baseSrc: 'http://127.0.0.1:1234'});
+		const {divLocator} = await createDivForTest(page, {src: 'test.png', baseSrc: 'http://127.0.0.1:1234'});
 		const {img} = await getImageTestData(divLocator);
 		test.expect(img!.src).toBe('http://127.0.0.1:1234/test.png');
 	});
@@ -47,7 +50,7 @@ test.describe('components/directives/image', () => {
 			'1x': EXISTING_PICTURE_SRC,
 			'2x': BROKEN_PICTURE_SRC
 		};
-		const divLocator = await createDivForTest(page, {
+		const {divLocator} = await createDivForTest(page, {
 			srcset
 		});
 		const {img} = await getImageTestData(divLocator);
@@ -56,7 +59,7 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('the width and the height should be set to provided values', async ({page}) => {
-		const divLocator = await createDivForTest(page, {
+		const {divLocator} = await createDivForTest(page, {
 			width: 100,
 			height: 50
 		});
@@ -66,7 +69,7 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('the sizes attribute should be set to provided value', async ({page}) => {
-		const divLocator = await createDivForTest(page, {
+		const {divLocator} = await createDivForTest(page, {
 			sizes: '20px'
 		});
 		const {img} = await getImageTestData(divLocator);
@@ -74,7 +77,7 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('a picture tag should be rendered when a list of sources is provided', async ({page}) => {
-		const divLocator = await createDivForTest(page, {
+		const {divLocator} = await createDivForTest(page, {
 			sources: [
 				{width: 20, height: 20, srcset: EXISTING_PICTURE_SRC},
 				{width: 0, height: 0, srcset: BROKEN_PICTURE_SRC}
@@ -88,7 +91,7 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('the alt attribute should be set to provided value', async ({page}) => {
-		const divLocator = await createDivForTest(page, {
+		const {divLocator} = await createDivForTest(page, {
 			alt: 'Alt text'
 		});
 		const {img} = await getImageTestData(divLocator);
@@ -96,12 +99,13 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('the invisible image should be loaded when lazy is set to false', async ({page}) => {
-		const divLocator = await createDivForTest(page, {
+		const {divLocator} = await createDivForTest(page, {
 			lazy: false,
 			src: EXISTING_PICTURE_SRC
 		}, {
 			style: 'margin-top: 200px'
 		});
+		await waitForImageLoad(page, divLocator);
 		const {img} = await getImageTestData(divLocator);
 		test.expect(img!.dataImg).toBe('loaded');
 	});
@@ -115,7 +119,7 @@ test.describe('components/directives/image', () => {
 			}), 500);
 		});
 
-		const divLocator = await createDivForTest(page, {src: SLOW_LOAD_PICTURE_SRC, preview: EXISTING_PICTURE_SRC});
+		const {divLocator} = await createDivForTest(page, {src: SLOW_LOAD_PICTURE_SRC, preview: EXISTING_PICTURE_SRC});
 		const {span, img} = await getImageTestData(divLocator);
 		test.expect(span.dataImage).toBe('preview');
 		test.expect(span.style?.startsWith(`background-image: url("${EXISTING_PICTURE_SRC}");`)).toBe(true);
@@ -123,7 +127,12 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('an image set in .broken should be shown instead of broken one', async ({page}) => {
-		const divLocator = await createDivForTest(page, {src: BROKEN_PICTURE_SRC, broken: EXISTING_PICTURE_SRC});
+		const {divLocator} = await createDivForTest(page, {
+			src: BROKEN_PICTURE_SRC,
+			broken: EXISTING_PICTURE_SRC
+		});
+
+		await waitForImageLoadFail(page, divLocator);
 		const {span, img} = await getImageTestData(divLocator);
 		test.expect(span.dataImage).toBe('broken');
 		test.expect(span.style).toBe(`background-image: url("${EXISTING_PICTURE_SRC}");`);
@@ -132,33 +141,31 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('the load handler should be called on image load', async ({page}) => {
-		const divLocator = await createDivForTest(page, {
+		const {imgLocator} = await createDivForTest(page, {
 			src: EXISTING_PICTURE_SRC,
 			onLoad: (el: Element) => {
 				el.setAttribute('data-on-load-called', '1');
 			}
 		});
 
-		const imgLocator = divLocator.locator('img');
 		await waitForAttribute(page, imgLocator, 'data-on-load-called');
 		await test.expect(imgLocator.getAttribute('data-on-load-called')).toBeResolvedTo('1');
 	});
 
 	test('the error handler should be called on image load error', async ({page}) => {
-		const divLocator = await createDivForTest(page, {
+		const {imgLocator} = await createDivForTest(page, {
 			src: BROKEN_PICTURE_SRC,
 			onError: (el: Element) => {
 				el.setAttribute('data-on-error-called', '1');
 			}
 		});
 
-		const imgLocator = divLocator.locator('img');
 		await waitForAttribute(page, imgLocator, 'data-on-error-called');
 		await test.expect(imgLocator.getAttribute('data-on-error-called')).toBeResolvedTo('1');
 	});
 
 	test('the options resolver`s return value should be used for loading', async ({page}) => {
-		const divLocator = await createDivForTest(page, {
+		const {divLocator} = await createDivForTest(page, {
 			src: BROKEN_PICTURE_SRC,
 			optionsResolver: (opts) => ({...opts, src: `${opts.src}#resolver-called`})
 		});
