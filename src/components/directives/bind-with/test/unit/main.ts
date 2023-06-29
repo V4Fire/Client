@@ -152,7 +152,7 @@ test.describe('components/directives/bind-with', () => {
 	});
 
 	/**
-	 * A handler to pass as .then()/.catch() in v-bind-with
+	 * A handler to pass as `.then()`/`.catch()` in v-bind-with
 	 *
 	 * @param element - the target element
 	 * @param args - args provided by v-bind-with trigger (on/path/callback...)
@@ -206,7 +206,7 @@ test.describe('components/directives/bind-with', () => {
 	}
 
 	/**
-	 * Create a <div> with v-bind-with set by test code.
+	 * Create a `<div>` with v-bind-with set by test code.
 	 *
 	 * @param page - the page.
 	 * @param bindWithValue - value to pass to v-bind-with
