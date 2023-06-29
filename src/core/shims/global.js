@@ -6,4 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('core/shims');
+/* eslint-disable no-new-func */
+
+module.exports = Function('return this')();
