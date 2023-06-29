@@ -10,15 +10,18 @@ import type bScrolly from 'components/base/b-scrolly/b-scrolly';
 import type { ComponentItem, MountedChild, MountedItem } from 'components/base/b-scrolly/interface';
 import { componentItemType, componentRenderStrategy } from 'components/base/b-scrolly/const';
 
-import * as forceUpdate from 'components/base/b-scrolly/modules/factory/engines/force-update';
-import * as vdomRender from 'components/base/b-scrolly/modules/factory/engines/vdom';
+import { ReusableRenderEngine } from 'components/base/b-scrolly/modules/factory/engines/reusable';
+import { VdomRenderEngine } from 'components/base/b-scrolly/modules/factory/engines/vdom';
 import { Friend } from 'super/i-data/i-data';
+import type { RenderEngine } from 'components/base/b-scrolly/modules/factory/interface';
 
 /**
  * A friendly class that provides an API for component production, specifically tailored for the `bScrolly` class.
  */
 export class ComponentFactory extends Friend {
 	override readonly C!: bScrolly;
+
+	protected renderEngine?: RenderEngine;
 
 	/**
 	 * Produces component items based on the current state and context.
@@ -70,6 +73,10 @@ export class ComponentFactory extends Friend {
 		});
 	}
 
+	reset(): void {
+		this.renderEngine?.reset();
+	}
+
 	/**
 	 * Calls the render engine to render the components based on the provided descriptors.
 	 * Returns an array of rendered DOM nodes.
@@ -84,10 +91,12 @@ export class ComponentFactory extends Friend {
 		ctx.onRenderEngineStart();
 
 		if (ctx.componentRenderStrategy === componentRenderStrategy.reuse) {
-			res = forceUpdate.render(ctx, items);
+			this.renderEngine ??= new ReusableRenderEngine();
+			res = this.renderEngine.render(ctx, items);
 
 		} else {
-			res = vdomRender.render(ctx, items);
+			this.renderEngine ??= new VdomRenderEngine();
+			res = this.renderEngine.render(ctx, items);
 		}
 
 		ctx.onRenderEngineDone();
