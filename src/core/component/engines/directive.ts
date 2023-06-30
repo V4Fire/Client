@@ -17,7 +17,7 @@ const staticDirective = ComponentEngine.directive.length > 0 ? ComponentEngine.d
  *
  * @param name
  * @param [directive]
- * @throws an exception if the used component engine is not specified
+ * @throws {ReferenceError} if the used component engine is not specified
  */
 ComponentEngine.directive = function directive(name: string, directive?: Directive) {
 	const

@@ -14,7 +14,7 @@ import { heightMode } from 'components/base/b-bottom-slide/const';
 import type { HeightMode } from 'components/base/b-bottom-slide/interface';
 
 @component()
-export default abstract class bBottomSlideProps extends iBlock {
+export default abstract class iBottomSlideProps extends iBlock {
 	/**
 	 * Component height mode:
 	 *

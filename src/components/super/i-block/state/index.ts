@@ -436,6 +436,25 @@ export default abstract class iBlockState extends iBlockMods {
 		return state;
 	}
 
+	/**
+	 * Takes an object and uses its properties to extend the global object.
+	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
+	 * Using this method, polyfills for all necessary APIs can be passed through.
+	 *
+	 * @param [environment] - an object containing the environment for initialization
+	 */
+	@hook('beforeCreate')
+	protected initGlobalEnvironment(environment: Dictionary = this.r.globalEnvironment): Dictionary {
+		Object.entries(environment).forEach(([key, value]) => {
+			Object.defineProperty(globalThis, key, {
+				configurable: true,
+				value
+			});
+		});
+
+		return environment;
+	}
+
 	@hook({beforeRuntime: {functional: false}})
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
@@ -445,6 +464,7 @@ export default abstract class iBlockState extends iBlockMods {
 
 		this.syncStorageState = i.syncStorageState.bind(this);
 		this.syncRouterState = i.syncRouterState.bind(this);
+		this.initGlobalEnvironment = i.initGlobalEnvironment.bind(this);
 	}
 
 	/**

@@ -13,8 +13,8 @@ import type { ComponentInterface } from 'core/component/interface';
 import type { DirectiveValue, Listener } from 'components/directives/bind-with/interface';
 
 /**
- * Returns the unique directive identifier for the passed element
- * @param el - the element to which the directive applies
+ * Returns a unique identifier for the directive associated with the given element
+ * @param el - the element to which the directive is applied
  */
 export function getElementId(el: Element): string {
 	return getElementIdFromStore(el, idsCache);
@@ -23,7 +23,7 @@ export function getElementId(el: Element): string {
 /**
  * Clears all declared bindings for the passed element
  *
- * @param el - the element to which the directive applies
+ * @param el - the element to which the directive is applied
  * @param ctx - the directive context
  */
 export function clearElementBindings(el: Element, ctx: CanUndef<ComponentInterface>): void {
@@ -38,7 +38,7 @@ export function clearElementBindings(el: Element, ctx: CanUndef<ComponentInterfa
  * Binds the specified listener(s) to the passed element
  *
  * @param listener - the listener descriptor or a list of descriptors
- * @param el - the element to which the directive applies
+ * @param el - the element to which the directive is applied
  * @param ctx - the directive context
  */
 export function bindListenerToElement(
