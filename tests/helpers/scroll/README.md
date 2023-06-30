@@ -10,6 +10,12 @@ This module provides API for working with the scroll on a page.
 await Scroll.scrollBy(page, {left: 0, top: 500});
 ```
 
+### scrollTo
+
+```typescript
+await Scroll.scrollTo(page, {left: 0, top: 0});
+```
+
 ### scrollIntoViewIfNeeded
 
 Waits for the element by the specified selector and scrolls a page to it if needed.
@@ -33,4 +39,10 @@ await Scroll.scrollToBottomWhile(
   page,
   () => document.querySelector('.some-dynamically-loaded-component') != null
 );
+```
+
+### scrollToTop
+
+```typescript
+await Scroll.scrollToTop(page);
 ```
