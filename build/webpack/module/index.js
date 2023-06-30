@@ -10,27 +10,17 @@
 
 const
 	config = require('@config/config'),
-	MiniCssExtractPlugin = require('mini-css-extract-plugin');
+	path = require('upath');
 
 const
-	path = require('upath'),
-	projectGraph = include('build/graph');
+	{isTsFile, isJsFile} = include('build/webpack/module/const'),
+	{assetsOutput} = include('build/helpers');
+
+const
+	rules = include('build/webpack/module/rules');
 
 const
 	{webpack} = config,
-	{resolve} = require('@pzlr/build-core');
-
-const
-	{isExternalDep} = include('build/const'),
-	{hashRgxp, hash, output, assetsOutput, inherit} = include('build/helpers');
-
-const
-	typescript = config.typescript(),
-	tsTransformers = include('build/ts-transformers');
-
-const
-	snakeskin = config.snakeskin(),
-	monic = config.monic(),
 	imageOpts = config.imageOpts();
 
 const urlLoaderOpts = {
@@ -46,208 +36,30 @@ const urlLoaderInlineOpts = {
 	limit: undefined
 };
 
-const isTsFile = /\.ts$/,
-	isJsFile = /\.js$/;
+/**
+ * @typedef {object} ModuleArgs
+ * @prop {Map<string, object>} plugins - list of plugins
+ */
 
 /**
  * Returns parameters for `webpack.module`
  *
- * @param {Map} plugins - list of plugins
+ * @param {ModuleArgs} args
  * @returns {Promise<object>}
  */
-module.exports = async function module({plugins}) {
+module.exports = async function module(args) {
 	const
-		g = await projectGraph,
 		isProd = webpack.mode() === 'production';
-
-	const
-		fatHTML = webpack.fatHTML();
 
 	const loaders = {
 		rules: new Map()
 	};
 
-	const tsHelperLoaders = [
-		{
-			loader: 'symbol-generator-loader',
-			options: {
-				modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
-			}
-		},
-
-		{
-			loader: 'monic-loader',
-			options: inherit(monic.typescript, {
-				replacers: [].concat(
-					fatHTML ?
-						[] :
-						include('build/monic/attach-component-dependencies'),
-
-					[
-						include('build/monic/require-context'),
-						include('build/monic/super-import'),
-						include('build/monic/ts-import'),
-						include('build/monic/dynamic-component-import')
-					]
-				)
-			})
-		}
-	];
-
-	loaders.rules.set('ts', {
-		test: isTsFile,
-		exclude: isExternalDep,
-		use: [
-			{
-				loader: 'ts-loader',
-				options: {
-					...typescript.client,
-					getCustomTransformers: tsTransformers
-				}
-			},
-
-			...tsHelperLoaders
-		]
-	});
-
-	const jsHelperLoaders = [
-		{
-			loader: 'monic-loader',
-			options: inherit(monic.javascript, {
-				replacers: [
-					include('build/monic/require-context'),
-					include('build/monic/super-import'),
-					include('build/monic/dynamic-component-import')
-				]
-			})
-		}
-	];
-
-	loaders.rules.set('js', {
-		test: isJsFile,
-		exclude: isExternalDep,
-		use: jsHelperLoaders
-	});
-
-	if (!webpack.ssr) {
-		plugins.set('extractCSS', new MiniCssExtractPlugin(inherit(config.miniCssExtractPlugin(), {
-			filename: `${hash(output, true)}.css`,
-			chunkFilename: '[id].css'
-		})));
-	}
-
-	const staticCSSFiles = [].concat(
-		styleHelperLoaders(true),
-
-		{
-			loader: 'monic-loader',
-			options: inherit(monic.stylus, {
-				replacers: [
-					require('@pzlr/stylus-inheritance')({resolveImports: true}),
-					include('build/monic/project-name')
-				]
-			})
-		}
-	);
-
-	if (webpack.ssr) {
-		loaders.rules.set('styl', {
-			test: /\.styl$/,
-			loader: 'ignore-loader'
-		});
-
-	} else {
-		// Load via import() functions
-		const dynamicCSSFiles = [].concat(
-			{
-				loader: 'style-loader',
-				options: config.style()
-			},
-
-			styleHelperLoaders(),
-
-			{
-				loader: 'monic-loader',
-				options: inherit(monic.stylus, {
-					replacers: [
-						require('@pzlr/stylus-inheritance')({resolveImports: true}),
-						include('build/monic/project-name'),
-						include('build/monic/apply-dynamic-component-styles')
-					]
-				})
-			}
-		);
-
-		loaders.rules.set('styl', {
-			test: /\.styl$/,
-
-			...webpack.dynamicPublicPath() ?
-				{use: dynamicCSSFiles} :
-
-				{
-					oneOf: [
-						{resourceQuery: /static/, use: staticCSSFiles},
-						{use: dynamicCSSFiles}
-					]
-				}
-		});
-	}
-
-	loaders.rules.set('ess', {
-		test: /\.ess$/,
-		use: [
-			{
-				loader: 'file-loader',
-				options: {
-					name: `${output.replace(hashRgxp, '')}.html`
-				}
-			},
-
-			'extract-loader',
-
-			{
-				loader: 'html-loader',
-				options: config.html()
-			},
-
-			{
-				loader: 'monic-loader',
-				options: inherit(monic.html, {
-					replacers: [
-						include('build/monic/include'),
-						include('build/monic/dynamic-component-import')
-					]
-				})
-			},
-
-			{
-				loader: 'snakeskin-loader',
-				options: inherit(snakeskin.server, {
-					exec: true,
-					vars: {
-						entryPoints: g.dependencies
-					}
-				})
-			}
-		]
-	});
-
-	loaders.rules.set('ss', {
-		test: /\.ss$/,
-		use: [
-			{
-				loader: 'monic-loader',
-				options: inherit(monic.javascript, {
-					replacers: [include('build/monic/dynamic-component-import')]
-				})
-			},
-
-			{
-				loader: 'snakeskin-loader',
-				options: snakeskin.client
-			}
-		]
-	});
+	loaders.rules.set('ts', await rules.typescript(args));
+	loaders.rules.set('js', await rules.javascript(args));
+	loaders.rules.set('styl', await rules.stylus(args));
+	loaders.rules.set('ss', await rules.snakeskin(args));
+	loaders.rules.set('ess', await rules.executableSnakeskin(args));
 
 	const assetsHelperLoaders = (inline) => [
 		{
@@ -339,52 +151,6 @@ module.exports = async function module({plugins}) {
 			}
 		].concat(
 			isProd ? {loader: 'svgo-loader', options: imageOpts.svgo} : []
-		);
-	}
-
-	function styleHelperLoaders(isStatic) {
-		const
-			useLink = /linkTag/i.test(config.style().injectType),
-			usePureCSSFiles = isStatic || useLink;
-
-		return [].concat(
-			usePureCSSFiles ? MiniCssExtractPlugin.loader : [],
-
-			[
-				{
-					loader: 'css-loader',
-					options: {
-						...config.css(),
-						importLoaders: 1
-					}
-				},
-
-				'svg-transform-loader/encode-query',
-
-				{
-					loader: 'postcss-loader',
-					options: inherit(config.postcss(), {
-						postcssOptions: {
-							plugins: [].concat(
-								require('autoprefixer')(config.autoprefixer()),
-
-								webpack.mode() === 'production' && !usePureCSSFiles ?
-									require('cssnano')(config.cssMinimizer().minimizerOptions) :
-									[]
-							)
-						}
-					})
-				},
-
-				{
-					loader: 'stylus-loader',
-					options: inherit(config.stylus(), {
-						stylusOptions: {
-							use: include('build/stylus')
-						}
-					})
-				}
-			]
 		);
 	}
 };
