@@ -228,7 +228,7 @@ test.describe('components/directives/in-view', () => {
 				inViewValue.map(addTestHandlerToWatch) :
 				addTestHandlerToWatch(inViewValue),
 			'data-testid': 'div',
-			style: `margin-top: ${TEST_DIV_MARGIN_TOP_PX}px; width: 20px; height: 20px; background: red; position: relative`
+			style: `margin-top: ${TEST_DIV_MARGIN_TOP_PX}px; width: 20px; height: 20px; background: red;`
 		});
 
 		return page.getByTestId('div');
