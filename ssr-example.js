@@ -9,7 +9,7 @@
 'use strict';
 
 /*
- To ensure proper SS functionality, two builds are required:
+ To ensure proper SSR functionality, two builds are required:
 
  1. Server build:
 
