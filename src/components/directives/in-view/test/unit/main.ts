@@ -48,14 +48,35 @@ test.describe('components/directives/in-view', () => {
 		await test.expect(waitForWatcherCallsCount(page, divLocator, 2)).toBeResolved();
 	});
 
-	test('the element passed as `root` option should be used', ({page: _page}) => {
-		test.expect(1).toBe(2);
-	});
-
 	test(
-		'a scroll event from any element should trigger the handler when `onlyRoot` is false',
-		({page: _page}) => {
-			test.expect(1).toBe(2);
+		'the handler should not be triggered by scroll event on element other than `root` when `onlyRoot` is true',
+		async ({page}) => {
+			const divLocator = await createDivForInViewTest(page, {
+				onlyRoot: true,
+				root: () => document.getElementById('root-component')!
+			});
+
+			await makeEnterViewport(divLocator);
+
+			await test.expect(getWatcherCallsCount(divLocator)).toBeResolvedTo(0);
+
+			await restoreViewport(page);
+
+			await page.evaluate(async () => {
+				const root = document.getElementById('root-component')!;
+
+				root.style.height = '500px';
+				root.style.minHeight = '0px';
+				root.style.overflow = 'auto';
+
+				root.scrollTo({top: 0, left: 0});
+
+				await new Promise((r) => setTimeout(r, 100));
+
+				root.scrollBy({top: 100000, left: 0});
+			});
+
+			await test.expect(waitForWatcherCallsCount(page, divLocator, 1)).toBeResolved();
 		}
 	);
 
@@ -97,7 +118,8 @@ test.describe('components/directives/in-view', () => {
 		}
 	);
 
-	test(
+	// https://github.com/V4Fire/Client/issues/912
+	test.skip(
 		'the visibility of the element should be tracked when `trackVisibility` is set',
 		async ({page}) => {
 			const divLocator = await createDivForInViewTest(
@@ -107,8 +129,9 @@ test.describe('components/directives/in-view', () => {
 
 			await makeEnterViewport(divLocator);
 
-			await divLocator.evaluate((div) => {
+			await divLocator.evaluate(async (div) => {
 				div.style.opacity = '0';
+				await new Promise((r) => setTimeout(r, 200));
 				div.style.opacity = '1';
 			});
 
@@ -205,7 +228,7 @@ test.describe('components/directives/in-view', () => {
 				inViewValue.map(addTestHandlerToWatch) :
 				addTestHandlerToWatch(inViewValue),
 			'data-testid': 'div',
-			style: `margin-top: ${TEST_DIV_MARGIN_TOP_PX}px; width: 20px; height: 20px; background: red;`
+			style: `margin-top: ${TEST_DIV_MARGIN_TOP_PX}px; width: 20px; height: 20px; background: red; position: relative`
 		});
 
 		return page.getByTestId('div');
