@@ -7,6 +7,8 @@
  */
 
 import { createsAsyncSemaphore } from 'core/event';
+
+import { set } from 'core/component/state';
 import Component, { app, rootComponents, hydrationStore, ComponentElement } from 'core/component';
 
 import flags from 'core/init/flags';
@@ -24,16 +26,21 @@ export default createsAsyncSemaphore(async () => {
 			const {renderToString} = require('vue/server-renderer');
 
 			return {
-				render: async (params?: Dictionary) => {
-					const res = await renderToString(new Component({
+				render: async (params: Dictionary = {}) => {
+					Object.entries(params).forEach(([key, value]) => {
+						set(key, value);
+					});
+
+					const root = new Component({
 						...component,
 
 						data() {
-							return Object.assign(component.data?.call(this), params);
+							return component.data?.call(this) ?? {};
 						}
-					}));
+					});
 
-					return `${res}<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+					const text = await renderToString(root);
+					return `${text}<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
 				}
 			};
 		};
@@ -55,11 +62,19 @@ export default createsAsyncSemaphore(async () => {
 	}
 
 	const
-		getData = component.data,
 		params = JSON.parse(el.getAttribute('data-root-component-params') ?? '{}');
 
+	if (Object.isDictionary(params.data)) {
+		Object.entries(params.data).forEach(([key, value]) => {
+			set(key, value);
+		});
+	}
+
+	const
+		getData = component.data;
+
 	component.data = function data(this: unknown): Dictionary {
-		return Object.assign(Object.isFunction(getData) ? getData.call(this) : {}, params.data);
+		return (Object.isFunction(getData) ? getData.call(this) : null) ?? {};
 	};
 
 	app.context = new Component({
