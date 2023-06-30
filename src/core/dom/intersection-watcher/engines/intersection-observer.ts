@@ -52,6 +52,8 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 			delay: 0
 		};
 
+		watcher.root = opts.root;
+
 		if (opts.trackVisibility) {
 			opts.delay = 100;
 			watcher.delay += 100;
@@ -110,6 +112,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 			}
 
 			watchers.forEach((watcher) => {
+
 				if (this.observers.get(watcher) !== observer) {
 					return;
 				}

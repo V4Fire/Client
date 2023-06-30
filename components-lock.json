@@ -2219,6 +2219,7 @@
             "libs": [
               "components/directives/image",
               "components/directives/icon",
+              "components/directives/in-view",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "components/traits/i-control-list/i-control-list",
@@ -2256,6 +2257,7 @@
           "libs": [
             "components/directives/image",
             "components/directives/icon",
+            "components/directives/in-view",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
             "components/traits/i-control-list/i-control-list",
@@ -2267,6 +2269,7 @@
               "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
+              "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
@@ -2278,6 +2281,7 @@
               "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
+              "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
