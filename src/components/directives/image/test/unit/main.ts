@@ -6,12 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page } from 'playwright';
+
+import type { ImageOptions } from 'components/directives/image';
+
 import test from 'tests/config/unit/test';
+import { Component } from 'tests/helpers';
 
 import { BROKEN_PICTURE_SRC, EXISTING_PICTURE_SRC, SLOW_LOAD_PICTURE_SRC } from 'components/directives/image/test/const';
 import {
 
-	createDivForTest,
 	getImageTestData,
 	getPngBuffer,
 	waitForAttribute,
@@ -19,6 +23,7 @@ import {
 	waitForImageLoadFail
 
 } from 'components/directives/image/test/helpers';
+import type { ImageTestLocators } from 'components/directives/image/test/interface';
 
 test.describe('components/directives/image', () => {
 
@@ -207,5 +212,39 @@ test.describe('components/directives/image', () => {
 
 		test.expect(img!.src!.endsWith('resolver-called')).toBe(true);
 	});
+
+	/**
+	 * Creates a <div> element containing a <span> with v-image set to given imageValue
+	 *
+	 * @param page - The target page.
+	 * @param imageValue - The value of v-image directive.
+	 * @param [divAttributes] - Optional attributes for created <div>.
+	 */
+	async function createDivForTest(
+		page: Page, imageValue: Partial<ImageOptions>, divAttributes?: Partial<RenderComponentsVnodeParams['attrs']>
+	): Promise<ImageTestLocators> {
+		await Component.createComponent(page, 'div', {
+			attrs: {
+				...divAttributes,
+				'data-testid': 'div'
+			},
+			children: [
+				{
+					type: 'span',
+					attrs: {
+						'v-image': imageValue
+					}
+				}
+			]
+		});
+
+		const divLocator = page.getByTestId('div');
+
+		return {
+			divLocator,
+			imgLocator: divLocator.locator('img'),
+			spanLocator: divLocator.locator('span')
+		};
+	}
 
 });

@@ -7,45 +7,8 @@
  */
 
 import type { ElementHandle, Locator, Page } from 'playwright';
-import type { ImageOptions } from 'components/directives/image';
-
-import { Component } from 'tests/helpers';
-import type { ImageTestData, ImageTestImgData, ImageTestLocators } from 'components/directives/image/test/interface';
+import type { ImageTestData, ImageTestImgData } from 'components/directives/image/test/interface';
 import { EXISTING_PICTURE_SRC } from 'components/directives/image/test/const';
-
-/**
- * Creates a <div> element containing a <span> with v-image set to given imageValue
- *
- * @param page - The target page.
- * @param imageValue - The value of v-image directive.
- * @param [divAttributes] - Optional attributes for created <div>.
- */
-export async function createDivForTest(
-	page: Page, imageValue: Partial<ImageOptions>, divAttributes?: Partial<RenderComponentsVnodeParams['attrs']>
-): Promise<ImageTestLocators> {
-	await Component.createComponent(page, 'div', {
-		attrs: {
-			...divAttributes,
-			'data-testid': 'div'
-		},
-		children: [
-			{
-				type: 'span',
-				attrs: {
-					'v-image': imageValue
-				}
-			}
-		]
-	});
-
-	const divLocator = page.getByTestId('div');
-
-	return {
-		divLocator,
-		imgLocator: divLocator.locator('img'),
-		spanLocator: divLocator.locator('span')
-	};
-}
 
 async function getImageTestImgData(imgLocator: Locator): Promise<ImageTestImgData> {
 	const imgDataImg = await imgLocator.getAttribute('data-img');
@@ -70,8 +33,8 @@ async function getImageTestImgData(imgLocator: Locator): Promise<ImageTestImgDat
 }
 
 /**
- * Returns image test data stored by v-image in attributes from <span> and <img> inside given <div>
- * @param divLocator - A locator to source <div>
+ * Returns image test data stored by v-image in attributes from `<span>` and `<img>` inside given `<div>`
+ * @param divLocator - A locator to source `<div>`
  */
 export async function getImageTestData(divLocator: Locator): Promise<ImageTestData> {
 	const spanLocator = await divLocator.locator('span');
@@ -108,8 +71,8 @@ export function getPngBuffer(): Buffer {
 }
 
 /**
- * Waits for attribute to appear (and optionally equal to given value)
- * on element pointed by locator on given page.
+ * Waits for `attribute` to appear (and optionally equal to given `value`)
+ * on element pointed by `locator` on given `page`.
  *
  * @param page
  * @param locator
@@ -143,7 +106,7 @@ async function waitForImageState(page: Page, locator: Locator, state: 'loaded' |
 }
 
 /**
- * Waits for image inside <div> pointed by locator to be loaded on given page.
+ * Waits for image inside `<div>` pointed by `locator` to be loaded on given `page`.
  *
  * @param page
  * @param locator
@@ -153,7 +116,7 @@ export async function waitForImageLoad(page: Page, locator: Locator): Promise<vo
 }
 
 /**
- * Waits for image loading inside <div> pointed by locator to be failed on given page.
+ * Waits for image loading inside `<div>` pointed by `locator` to be failed on given `page`.
  *
  * @param page
  * @param locator
