@@ -3,22 +3,23 @@
 - [Введение](#введение)
 - [Предусловия](#предусловия)
 - [Концептуальное описание сборки](#концептуальное-описание-сборки)
+  - [Диаграмма сборки](#диаграмма-сборки)
 - [Конфигурация](#конфигурация)
 - [Граф зависимостей](#граф-зависимостей)
   - [Создание графа зависимостей](#создание-графа-зависимостей)
-  - [Параметры компонентов (`build/graph/component-params`)](#параметры-компонентов-buildgraphcomponent-params)
+  - [Параметры компонентов (build/graph/component-params)](#параметры-компонентов-buildgraphcomponent-params)
 - [PZLR](#pzlr)
-  - [Модуль `block`](#модуль-block)
+  - [Модуль block](#модуль-block)
     - [getAll](#getall)
-  - [Модуль `resolve`](#модуль-resolve)
+  - [Модуль resolve](#модуль-resolve)
     - [sourceDirs](#sourcedirs)
-  - [Модуль `entries`](#модуль-entries)
+  - [Модуль entries](#модуль-entries)
     - [getBuildConfig](#getbuildconfig)
     - [getUnionEntryPoints](#getunionentrypoints)
 - [Advanced](#advanced)
   - [Особенности сборки snakeskin](#особенности-сборки-snakeskin)
   - [Особенности сборки стилей](#особенности-сборки-стилей)
-  - [Сборка `fatHTML`](#сборка-fathtml)
+  - [Сборка fatHTML](#сборка-fathtml)
 
 ## Введение
 
@@ -44,6 +45,7 @@
 - В директории `src/entries` должны быть размещены файлы входных точек (`entry`) для `webpack`.
 
 ## Концептуальное описание сборки
+
 
 При запуске `npm run build` создается `tsconfig.json`, а затем вызывается CLI `webpack`.
 
@@ -93,6 +95,9 @@
 - Преобразовывает динамические импорты компонентов в группу импортов: стилей, шаблонов и исходного кода.
 - Подгружает зависимости компонентов: шаблоны, стили и т.д.
 
+### Диаграмма сборки
+
+![build diagram](./images/build-diagram.png)
 ## Конфигурация
 
 Конфиги проекта расположены в директории `config`.
@@ -155,7 +160,7 @@ BUILD_MODE=production npx webpack
 (см. `entryReducer` в `build/graph`) при помощи функций `getBuildConfig` и `getUnionEntryPoints`
 из модуля `entries` библиотеки `pzlr`.
 
-### Параметры компонентов (`build/graph/component-params`)
+### Параметры компонентов (build/graph/component-params)
 
 `TODO`: описать назначение
 
@@ -163,7 +168,7 @@ BUILD_MODE=production npx webpack
 
 `TODO`: описать назначение и функции
 
-### Модуль `block`
+### Модуль block
 
 #### getAll
 
@@ -174,7 +179,7 @@ BUILD_MODE=production npx webpack
 - исходного кода компонентов текущего проекта,
 - параметров конфига проекта `build.componentLockPrefix` и `componentDependencies`.
 
-### Модуль `resolve`
+### Модуль resolve
 
 #### sourceDirs
 
@@ -185,7 +190,7 @@ BUILD_MODE=production npx webpack
 ['./src', './node_modules/@v4fire/core/src/blocks']
 ```
 
-### Модуль `entries`
+### Модуль entries
 
 #### getBuildConfig
 
@@ -236,7 +241,7 @@ snakeskin loader (см. `build/webpack/module.js`).
 
 `TODO`
 
-### Сборка `fatHTML`
+### Сборка fatHTML
 
 Все ресурсы добавляются напрямую в HTML страницу - мы это называем толстым HTML.
 
