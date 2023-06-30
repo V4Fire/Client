@@ -1,5 +1,5 @@
 {
-  "hash": "4a83984ed94e5cab37aaaf6e17d32cad49fb6611c81faa0f4214b37d25d5dac7",
+  "hash": "f2a56f31997705856c9e3aed3baad8a422c790809168d8ee3fecba1b3b31cf80",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2222,7 +2222,8 @@
               "components/directives/in-view",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
-              "components/traits/i-control-list/i-control-list"
+              "components/traits/i-control-list/i-control-list",
+              "components/directives/bind-with"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2259,11 +2260,13 @@
             "components/directives/in-view",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
-            "components/traits/i-control-list/i-control-list"
+            "components/traits/i-control-list/i-control-list",
+            "components/directives/bind-with"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
+              "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",
@@ -2275,6 +2278,7 @@
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
+              "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",
