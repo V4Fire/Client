@@ -24,131 +24,140 @@ test.describe('components/directives/bind-with', () => {
 		rootHandle = await Component.waitForRoot(page);
 	});
 
-	test('the handler should be executed when an event is emitted', async ({page}) => {
-		const divLocator = await createDivForBindWithTest(page, {
-			on: 'testEvent'
+	test.describe('events', () => {
+		test('the handler should be executed when an event is emitted', async ({page}) => {
+			const divLocator = await createDivForBindWithTest(page, {
+				on: 'testEvent'
+			});
+
+			await rootHandle.evaluate((root) => {
+				root.emit('testEvent');
+			});
+
+			const info = await getBindWithTestInfo(divLocator);
+			test.expect(info).toBeTruthy();
+			test.expect(info!.calls.length).toBe(1);
 		});
 
-		await rootHandle.evaluate((root) => {
-			root.emit('testEvent');
+		test('the handler should be executed when the provided emitter emits an event', async ({page}) => {
+			const divLocator = await createDivForBindWithTest(page, {
+				emitter: (event: string, listener: AnyFunction) => {
+					document.body.addEventListener(event, listener);
+				},
+				on: 'testEvent'
+			});
+
+			await page.evaluateHandle(
+				() => document.body.dispatchEvent(new Event('testEvent'))
+			);
+
+			const info = await getBindWithTestInfo(divLocator);
+			test.expect(info).toBeTruthy();
+			test.expect(info!.calls.length).toBe(1);
 		});
 
-		const info = await getBindWithTestInfo(divLocator);
-		test.expect(info).toBeTruthy();
-		test.expect(info!.calls.length).toBe(1);
-	});
-
-	test('the handler should be executed when a field is changed', async ({page}) => {
-		const divLocator = await createDivForBindWithTest(page, {
-			path: 'testField'
-		});
-
-		await rootHandle.evaluate((root) => {
-			root.field.set('testField', 0);
-		});
-
-		const info = await getBindWithTestInfo(divLocator);
-		test.expect(info).toBeTruthy();
-		test.expect(info!.calls.length).toBe(1);
-	});
-
-	test('the handler should be executed as a callback', async ({page}) => {
-		const divLocator = await createDivForBindWithTest(page, {
-			callback: (handler) => [1].forEach(handler)
-		});
-
-		const info = await getBindWithTestInfo(divLocator);
-		test.expect(info).toBeTruthy();
-		test.expect(info!.calls.length).toBe(1);
-		test.expect(info!.calls[0].args).toStrictEqual([1, 0, [1]]);
-	});
-
-	test('the handler should be executed when the provided emitter emits an event', async ({page}) => {
-		const divLocator = await createDivForBindWithTest(page, {
-			emitter: (event: string, listener: AnyFunction) => {
-				document.body.addEventListener(event, listener);
-			},
-			on: 'testEvent'
-		});
-
-		await page.evaluateHandle(
-			() => document.body.dispatchEvent(new Event('testEvent'))
-		);
-
-		const info = await getBindWithTestInfo(divLocator);
-		test.expect(info).toBeTruthy();
-		test.expect(info!.calls.length).toBe(1);
-	});
-
-	test('the handler should be executed when a promise is resolved', async ({page}) => {
-		const divLocator = await createDivForBindWithTest(page, {
-			promise: () => Promise.resolve()
-		});
-
-		const info = await getBindWithTestInfo(divLocator);
-		test.expect(info).toBeTruthy();
-		test.expect(info!.calls.length).toBe(1);
-		test.expect(info!.errorCalls.length).toBe(0);
-	});
-
-	test('the error handler should be executed when a promise is rejected', async ({page}) => {
-		const divLocator = await createDivForBindWithTest(page, {
-			promise: () => Promise.reject(new Error('rejection'))
-		});
-
-		const info = await getBindWithTestInfo(divLocator);
-		test.expect(info).toBeTruthy();
-		test.expect(info!.calls.length).toBe(0);
-		test.expect(info!.errorCalls.length).toBe(1);
-	});
-
-	test('the handler should be executed only once when `once` option is set', async ({page}) => {
-		const divLocator = await createDivForBindWithTest(page, {
-			once: 'testEvent'
-		});
-
-		await rootHandle.evaluate((root) => {
-			root.emit('testEvent');
-			root.emit('testEvent');
-		});
-
-		const info = await getBindWithTestInfo(divLocator);
-		test.expect(info).toBeTruthy();
-		test.expect(info!.calls.length).toBe(1);
-	});
-
-	test('the handler should receive correct arguments', async ({page}) => {
-		const divLocator = await createDivForBindWithTest(page, {
-			on: 'onTestEvent'
-		});
-
-		await rootHandle.evaluate((root) => {
-			root.emit('testEvent', 1, 2, 3);
-		});
-
-		const info = await getBindWithTestInfo(divLocator);
-		test.expect(info).toBeTruthy();
-		test.expect(info!.calls[0].args).toStrictEqual([1, 2, 3]);
-	});
-
-	test('the handler should be executed on every event when an array is passed', async ({page}) => {
-		const divLocator = await createDivForBindWithTest(page, [
-			{
+		test('the handler should be executed only once when `once` option is set', async ({page}) => {
+			const divLocator = await createDivForBindWithTest(page, {
 				once: 'testEvent'
-			},
-			{
-				once: 'anotherTestEvent'
-			}
-		]);
+			});
 
-		await rootHandle.evaluate((root) => {
-			root.emit('testEvent');
-			root.emit('anotherTestEvent');
+			await rootHandle.evaluate((root) => {
+				root.emit('testEvent');
+				root.emit('testEvent');
+			});
+
+			const info = await getBindWithTestInfo(divLocator);
+			test.expect(info).toBeTruthy();
+			test.expect(info!.calls.length).toBe(1);
 		});
 
-		const info = await getBindWithTestInfo(divLocator);
-		test.expect(info).toBeTruthy();
-		test.expect(info!.calls.length).toBe(2);
+		test('the handler should receive correct arguments', async ({page}) => {
+			const divLocator = await createDivForBindWithTest(page, {
+				on: 'onTestEvent'
+			});
+
+			await rootHandle.evaluate((root) => {
+				root.emit('testEvent', 1, 2, 3);
+			});
+
+			const info = await getBindWithTestInfo(divLocator);
+			test.expect(info).toBeTruthy();
+			test.expect(info!.calls[0].args).toStrictEqual([1, 2, 3]);
+		});
+
+		test('the handler should be executed on every event when an array is passed', async ({page}) => {
+			const divLocator = await createDivForBindWithTest(page, [
+				{
+					once: 'testEvent'
+				},
+				{
+					once: 'anotherTestEvent'
+				}
+			]);
+
+			await rootHandle.evaluate((root) => {
+				root.emit('testEvent');
+				root.emit('anotherTestEvent');
+			});
+
+			const info = await getBindWithTestInfo(divLocator);
+			test.expect(info).toBeTruthy();
+			test.expect(info!.calls.length).toBe(2);
+		});
+
+	});
+
+	test.describe('fields', () => {
+		test('the handler should be executed when a field is changed', async ({page}) => {
+			const divLocator = await createDivForBindWithTest(page, {
+				path: 'testField'
+			});
+
+			await rootHandle.evaluate((root) => {
+				root.field.set('testField', 0);
+			});
+
+			const info = await getBindWithTestInfo(divLocator);
+			test.expect(info).toBeTruthy();
+			test.expect(info!.calls.length).toBe(1);
+		});
+	});
+
+	test.describe('callbacks', () => {
+		test('the handler should be executed as a callback', async ({page}) => {
+			const divLocator = await createDivForBindWithTest(page, {
+				callback: (handler) => [1].forEach(handler)
+			});
+
+			const info = await getBindWithTestInfo(divLocator);
+			test.expect(info).toBeTruthy();
+			test.expect(info!.calls.length).toBe(1);
+			test.expect(info!.calls[0].args).toStrictEqual([1, 0, [1]]);
+		});
+	});
+
+	test.describe('promises', () => {
+		test('the handler should be executed when a promise is resolved', async ({page}) => {
+			const divLocator = await createDivForBindWithTest(page, {
+				promise: () => Promise.resolve()
+			});
+
+			const info = await getBindWithTestInfo(divLocator);
+			test.expect(info).toBeTruthy();
+			test.expect(info!.calls.length).toBe(1);
+			test.expect(info!.errorCalls.length).toBe(0);
+		});
+
+		test('the error handler should be executed when a promise is rejected', async ({page}) => {
+			const divLocator = await createDivForBindWithTest(page, {
+				promise: () => Promise.reject(new Error('rejection'))
+			});
+
+			const info = await getBindWithTestInfo(divLocator);
+			test.expect(info).toBeTruthy();
+			test.expect(info!.calls.length).toBe(0);
+			test.expect(info!.errorCalls.length).toBe(1);
+		});
 	});
 
 	/**
