@@ -18,6 +18,7 @@ import {
 	initViewport,
 	makeEnterViewport,
 	restoreViewport,
+
 	TEST_DIV_MARGIN_TOP_PX
 
 } from 'components/directives/in-view/test/helpers';
@@ -29,36 +30,37 @@ test.describe('components/directives/in-view', () => {
 	});
 
 	test('the handler should be called when the element enters the viewport', async ({page}) => {
-		const divLocator = await createDivForInViewTest(page, undefined);
-		await makeEnterViewport(divLocator);
-		await test.expect(waitForWatcherCallsCount(page, divLocator, 1)).toBeResolved();
+		const observedEl = await createObservedElement(page, undefined);
+		await makeEnterViewport(observedEl);
+		await test.expect(waitForWatcherCallsCount(page, observedEl, 1)).toBeResolved();
 	});
 
-	test('the handler should be called only once if `once` is set', async ({page}) => {
-		const divLocator = await createDivForInViewTest(page, {once: true});
-		await makeEnterViewport(divLocator);
+	test('the handler should be called only once if the `once` option is set', async ({page}) => {
+		const observedEl = await createObservedElement(page, {once: true});
+		await makeEnterViewport(observedEl);
 		await restoreViewport(page);
-		await makeEnterViewport(divLocator);
-		await test.expect(waitForWatcherCallsCount(page, divLocator, 1)).toBeResolved();
+		await makeEnterViewport(observedEl);
+		await test.expect(waitForWatcherCallsCount(page, observedEl, 1)).toBeResolved();
 	});
 
 	test('all provided handlers should be called when the element enters the viewport', async ({page}) => {
-		const divLocator = await createDivForInViewTest(page, [{once: true}, {once: true, delay: 150}]);
-		await makeEnterViewport(divLocator);
-		await test.expect(waitForWatcherCallsCount(page, divLocator, 2)).toBeResolved();
+		const observedEl = await createObservedElement(page, [{once: true}, {once: true, delay: 150}]);
+		await makeEnterViewport(observedEl);
+		await test.expect(waitForWatcherCallsCount(page, observedEl, 2)).toBeResolved();
 	});
 
 	test(
-		'the handler should not be triggered by scroll event on element other than `root` when `onlyRoot` is true',
+		'the handler should not be triggered by scroll events for elements other than the root when the `onlyRoot` option is set to true',
+
 		async ({page}) => {
-			const divLocator = await createDivForInViewTest(page, {
+			const observedEl = await createObservedElement(page, {
 				onlyRoot: true,
 				root: () => document.getElementById('root-component')!
 			});
 
-			await makeEnterViewport(divLocator);
+			await makeEnterViewport(observedEl);
 
-			await test.expect(getWatcherCallsCount(divLocator)).toBeResolvedTo(0);
+			await test.expect(getWatcherCallsCount(observedEl)).toBeResolvedTo(0);
 
 			await restoreViewport(page);
 
@@ -76,78 +78,87 @@ test.describe('components/directives/in-view', () => {
 				root.scrollBy({top: 100000, left: 0});
 			});
 
-			await test.expect(waitForWatcherCallsCount(page, divLocator, 1)).toBeResolved();
+			await test.expect(waitForWatcherCallsCount(page, observedEl, 1)).toBeResolved();
 		}
 	);
 
-	test('the handler should be called after provided `delay`', async ({page}) => {
-		const divLocator = await createDivForInViewTest(page, {delay: 250});
-		await makeEnterViewport(divLocator);
+	test(
+		'the handler should be called when the element enters the viewport and remains in it for the specified `delay` in milliseconds',
 
-		await test.expect(getWatcherCallsCount(divLocator)).toBeResolvedTo(0);
+		async ({page}) => {
+			const observedEl = await createObservedElement(page, {delay: 250});
+			await makeEnterViewport(observedEl);
 
-		await test.expect(waitForWatcherCallsCount(page, divLocator, 1)).toBeResolved();
-	});
+			await test.expect(getWatcherCallsCount(observedEl)).toBeResolvedTo(0);
+			await test.expect(waitForWatcherCallsCount(page, observedEl, 1)).toBeResolved();
+		}
+	);
 
 	test(
-		'the function passed as `onEnter` should be called when the element enters the viewport',
+		'the function passed as `onEnter` should be immediately called when the element enters the viewport',
+
 		async ({page}) => {
-			const divLocator = await createDivForInViewTest(page, {
+			const observedEl = await createObservedElement(page, {
 				onEnter: (watcher) => {
 					watcher.handler(watcher);
 					return true;
 				},
+
 				once: true
 			});
-			await makeEnterViewport(divLocator);
+
+			await makeEnterViewport(observedEl);
+
 			// 2 calls: .onEnter(), then main handler
-			await test.expect(waitForWatcherCallsCount(page, divLocator, 2)).toBeResolved();
+			await test.expect(waitForWatcherCallsCount(page, observedEl, 2)).toBeResolved();
 		}
 	);
 
 	test(
-		'the function passed as `onLeave` should be called when the element leaves the viewport',
-		async ({page}) => {
-			const divLocator = await createDivForInViewTest(page, {onLeave: handler});
-			await makeEnterViewport(divLocator);
+		'the function passed as `onLeave` should be immediately called when the element leaves the viewport',
 
-			await resetWatcherCallsCount(divLocator);
+		async ({page}) => {
+			const observedEl = await createObservedElement(page, {onLeave: handler});
+			await makeEnterViewport(observedEl);
+
+			await resetWatcherCallsCount(observedEl);
 			await restoreViewport(page);
 
-			await test.expect(waitForWatcherCallsCount(page, divLocator, 1)).toBeResolved();
+			await test.expect(waitForWatcherCallsCount(page, observedEl, 1)).toBeResolved();
 		}
 	);
 
 	// https://github.com/V4Fire/Client/issues/912
 	test.skip(
 		'the visibility of the element should be tracked when `trackVisibility` is set',
+
 		async ({page}) => {
-			const divLocator = await createDivForInViewTest(
+			const observedEl = await createObservedElement(
 				page,
 				{trackVisibility: true}
 			);
 
-			await makeEnterViewport(divLocator);
+			await makeEnterViewport(observedEl);
 
-			await divLocator.evaluate(async (div) => {
+			await observedEl.evaluate(async (div) => {
 				div.style.opacity = '0';
 				await new Promise((r) => setTimeout(r, 200));
 				div.style.opacity = '1';
 			});
 
-			await test.expect(waitForWatcherCallsCount(page, divLocator, 2)).toBeResolved();
+			await test.expect(waitForWatcherCallsCount(page, observedEl, 2)).toBeResolved();
 		}
 	);
 
 	/**
-	 * A handler to pass to v-in-view
+	 * A handler to pass to the `in-view` directive
 	 * @param watcher - the parameter of the watch handler
 	 */
 	function handler(watcher: Watcher): void {
-		const div = watcher.target;
+		const observedEl = watcher.target;
 
 		const previousValue = parseInt(
-			div.getAttribute('data-test-in-view') ?? '0',
+			observedEl.getAttribute('data-test-in-view') ?? '0',
 			10
 		);
 
@@ -156,82 +167,77 @@ test.describe('components/directives/in-view', () => {
 	}
 
 	/**
-	 * Returns the value of the watcher call counter stored in given `locator`
-	 * @param locator - the source locator
+	 * Returns the value of the observer's call counter stored in the specified observed element
+	 * @param observedEl
 	 */
-	async function getWatcherCallsCount(locator: Locator): Promise<number> {
-		const storedValue = await locator.getAttribute('data-test-in-view');
+	async function getWatcherCallsCount(observedEl: Locator): Promise<number> {
+		const
+			storedValue = await observedEl.getAttribute('data-test-in-view');
 
 		if (storedValue == null) {
 			return 0;
-
 		}
 
 		return parseInt(storedValue, 10);
 	}
 
 	/**
-	 * Resets the value of the watcher call counter stored in given `locator`
-	 * @param locator - the source locator
-	 */
-	async function resetWatcherCallsCount(locator: Locator): Promise<void> {
-		await locator.evaluate((div) => div.removeAttribute('data-test-in-view'));
-	}
-
-	/**
-	 * Waits for the value of the watcher call counter to become equal to `expected`
+	 * Waits for the value of the observer's call counter to become equal to the expected value
 	 *
 	 * @param page
-	 * @param locator
+	 * @param observedEl
 	 * @param expected
 	 */
-	async function waitForWatcherCallsCount(page: Page, locator: Locator, expected: number): Promise<void> {
-		const handle = await locator.elementHandle();
+	async function waitForWatcherCallsCount(page: Page, observedEl: Locator, expected: number): Promise<void> {
+		const handle = await observedEl.elementHandle();
+
 		await page
-			.waitForFunction(([div, val]) =>
-				Boolean(
+			.waitForFunction(
+				([div, val]) => Boolean(
 					div.getAttribute('data-test-in-view') === val.toString(10)
-				), <[ElementHandle<HTMLElement>, number]>[handle, expected]);
+				),
+
+				<[ElementHandle<HTMLElement>, number]>[handle, expected]
+			);
 	}
 
 	/**
-	 * Adds test handler (which counts calls) to given `watch`,
-	 * or replaces given one if a function/undefined is provided
-	 *
-	 * @param watch - a watch parameter to update
+	 * Resets the value of the observer's call counter stored in the given observed element
+	 * @param observedEl
 	 */
-	function addTestHandlerToWatch(
-		watch: CanUndef<WatchHandler | Partial<WatchOptions>>
-	): WatchHandler | WatchOptions & { handler: WatchHandler } {
-
-		if (Object.isUndef(watch) || Object.isFunction(watch)) {
-			return handler;
-
-		}
-
-		return {...watch, handler};
+	async function resetWatcherCallsCount(observedEl: Locator): Promise<void> {
+		await observedEl.evaluate((div) => div.removeAttribute('data-test-in-view'));
 	}
 
 	/**
-	 * Creates a `<div>` element with v-in-view set to `inViewValue`
+	 * Creates an element with the applied `in-view` directive to observe its entry into the viewport
 	 *
-	 * @param page - the target page
-	 * @param inViewValue - the value of v-in-view directive
+	 * @param page
+	 * @param inViewOpts - options for the `in-view` directive
 	 */
-	async function createDivForInViewTest(
+	async function createObservedElement(
 		page: Page,
-		inViewValue: CanUndef<CanArray<WatchHandler | Partial<WatchOptions>>>
+		inViewOpts: CanUndef<CanArray<WatchHandler | Partial<WatchOptions>>>
 	): Promise<Locator> {
-
 		await Component.createComponent(page, 'div', {
-			'v-in-view': Object.isArray(inViewValue) ?
-				inViewValue.map(addTestHandlerToWatch) :
-				addTestHandlerToWatch(inViewValue),
+			'v-in-view': Object.isArray(inViewOpts) ?
+				inViewOpts.map(addHandler) :
+				addHandler(inViewOpts),
+
 			'data-testid': 'div',
 			style: `margin-top: ${TEST_DIV_MARGIN_TOP_PX}px; width: 20px; height: 20px; background: red;`
 		});
 
 		return page.getByTestId('div');
-	}
 
+		function addHandler(
+			watch: CanUndef<WatchHandler | Partial<WatchOptions>>
+		): WatchHandler | WatchOptions & {handler: WatchHandler} {
+			if (Object.isUndef(watch) || Object.isFunction(watch)) {
+				return handler;
+			}
+
+			return {...watch, handler};
+		}
+	}
 });
