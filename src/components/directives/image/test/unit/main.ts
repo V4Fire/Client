@@ -22,6 +22,7 @@ import {
 
 } from 'components/directives/image/test/helpers';
 import type { ImageTestLocators } from 'components/directives/image/test/interface';
+import { Component } from 'tests/helpers';
 
 test.describe('components/directives/image', () => {
 
@@ -215,20 +216,23 @@ test.describe('components/directives/image', () => {
 		page: Page, imageOpts: Partial<ImageOptions>, attrs?: Partial<RenderComponentsVnodeParams['attrs']>
 	): Promise<ImageTestLocators> {
 
-		await page.evaluate(
-			(attrs) => {
-				globalThis.renderComponents('div', [{attrs}]);
+		await Component.createComponent(page, 'div', {
+			attrs: {
+				'data-testid': 'div'
 			},
-			{
-				...attrs,
-				'data-testid': 'imageWrapper',
-				'v-image': imageOpts
-			}
-		);
+			children: [
+				{
+					type: 'span',
+					attrs: {
+						...attrs,
+						'v-image': imageOpts
+					}
+				}
+			]
+		});
 
-		await page.waitForSelector('span[data-testid="imageWrapper"]');
-
-		const imageWrapper = page.getByTestId('imageWrapper');
+		const div = page.getByTestId('div');
+		const imageWrapper = div.locator('span');
 
 		return {
 			imageWrapper,
