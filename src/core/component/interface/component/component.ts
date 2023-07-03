@@ -62,7 +62,7 @@ export abstract class ComponentInterface {
 	abstract readonly modsProp?: ModsProp;
 
 	/**
-	 * A dictionary that contains applied component modifiers
+	 * A dictionary containing applied component modifiers
 	 */
 	abstract readonly mods: ModsDict;
 
@@ -140,7 +140,7 @@ export abstract class ComponentInterface {
 	readonly $options!: ComponentOptions;
 
 	/**
-	 * A dictionary that contains the initialized component props
+	 * A dictionary containing the initialized component props
 	 */
 	readonly $props!: Dictionary;
 
@@ -181,90 +181,91 @@ export abstract class ComponentInterface {
 	protected readonly meta!: ComponentMeta;
 
 	/**
-	 * A dictionary that contains the watchable component fields that can trigger a re-rendering of the component
+	 * A dictionary containing component attributes that are not identified as input properties
+	 */
+	protected readonly $attrs!: Dictionary<string>;
+
+	/**
+	 * A dictionary containing the watchable component fields that can trigger a re-rendering of the component
 	 */
 	protected readonly $fields!: Dictionary;
 
 	/**
-	 * A dictionary that contains the watchable component fields that do not cause a re-rendering of
+	 * A dictionary containing the watchable component fields that do not cause a re-rendering of
 	 * the component when they change
 	 */
 	protected readonly $systemFields!: Dictionary;
 
 	/**
-	 * A dictionary with component properties that have been modified and need to be synchronized
-	 * (only for functional components)
+	 * A dictionary containing component properties that have undergone modifications and require synchronization
+	 * (applicable only to functional components)
 	 */
 	protected readonly $modifiedFields!: Dictionary;
 
 	/**
-	 * The active property name to initialize
+	 * The name of the component's field being initialized at the current moment
 	 */
 	protected readonly $activeField?: string;
 
 	/**
-	 * A number that is incremented each time the component is re-rendered
+	 * A number that increments every time the component is re-rendered
 	 */
 	protected readonly $renderCounter!: number;
 
 	/**
-	 * A dictionary with component attributes that aren't recognized as input properties
-	 */
-	protected readonly $attrs!: Dictionary<string>;
-
-	/**
-	 * A dictionary with references to component elements that have the "ref" attribute
+	 * A dictionary containing references to component elements with the "ref" attribute
 	 */
 	protected readonly $refs!: Dictionary;
 
 	/**
-	 * A dictionary with available render slots
+	 * A dictionary containing available render slots
 	 */
 	protected readonly $slots!: Slots;
 
 	/**
-	 * The cache for component links
+	 * The cache dedicated to component links
 	 */
 	protected readonly $syncLinkCache!: SyncLinkCache;
 
 	/**
-	 * An API to tie and control async operations
+	 * An API for binding and managing asynchronous operations
 	 */
 	protected readonly async!: Async<ComponentInterface>;
 
 	/**
-	 * An API to tie and control async operations.
-	 * This API is used for protected/private consumers, such as private directives or component engines.
+	 * An API for binding and managing asynchronous operations.
+	 * This property is used by restricted/private consumers, such as private directives or component engines.
 	 */
 	protected readonly $async!: Async<ComponentInterface>;
 
 	/**
-	 * A promise of the component initializing
+	 * A promise that resolves when the component is initialized.
+	 * This property is used during SSR for rendering the component.
 	 */
 	protected $initializer?: Promise<unknown>;
 
 	/**
 	 * Activates the component.
-	 * The deactivated component won't load data from its providers during initializing.
+	 * A deactivated component will not load data from its providers during initialization.
 	 *
-	 * Basically, you don't need to think about the component activation,
-	 * because it's automatically synchronized with `keep-alive` or the component prop.
+	 * Generally, you don't need to consider component activation,
+	 * as it is automatically synchronized with the `keep-alive` feature or the respective component property.
 	 *
-	 * @param [force] - if true, then the component will be forced to activate, even if it's already activated
+	 * @param [force] - If set to true, the component will undergo forced activation, even if it is already activated
 	 */
 	abstract activate(force?: boolean): void;
 
 	/**
 	 * Deactivates the component.
-	 * The deactivated component won't load data from its providers during initializing.
+	 * A deactivated component will not load data from its providers during initialization.
 	 *
-	 * Basically, you don't need to think about the component activation,
-	 * because it's automatically synchronized with `keep-alive` or the component prop.
+	 * Generally, you don't need to consider component activation,
+	 * as it is automatically synchronized with the keep-alive feature or the respective component property
 	 */
 	abstract deactivate(): void;
 
 	/**
-	 * Returns a dictionary with information for debugging or logging the component
+	 * Returns a dictionary containing information about the component, useful for debugging or logging purposes
 	 */
 	abstract getComponentInfo?(): Dictionary;
 
@@ -279,22 +280,23 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Forces the component to re-render
+	 * Initiates a forced re-render of the component
 	 */
 	$forceUpdate(): void {
 		return Object.throw();
 	}
 
 	/**
-	 * Executes the specified function on the next render tick
+	 * Runs the specified function during the next render tick
 	 * @param cb
 	 */
 	$nextTick(cb: Function | BoundFn<this>): void;
 
 	/**
-	 * Returns a promise that will be resolved on the next render tick
+	 * Returns a promise that resolves during the next render tick
 	 */
 	$nextTick(): Promise<void>;
+
 	$nextTick(): CanPromise<void> {
 		return Object.throw();
 	}
@@ -307,7 +309,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Sets a new reactive value to the specified property of the passed object
+	 * Assigns a new reactive value to the specified property of the given object
 	 *
 	 * @param _object
 	 * @param _key
@@ -318,7 +320,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Deletes the specified reactive property from the passed object
+	 * Removes the specified reactive property from the given object
 	 *
 	 * @param _object
 	 * @param _key
@@ -328,7 +330,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Sets a watcher to a component/object property by the specified path
+	 * Establishes a watcher for a component/object property using the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -341,7 +343,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to a component/object property by the specified path
+	 * Establishes a watcher for a component/object property using the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -352,7 +354,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to the specified watchable object
+	 * Establishes a watcher for a watchable object
 	 *
 	 * @param obj
 	 * @param handler
@@ -363,7 +365,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to the specified watchable object
+	 * Establishes a watcher for a watchable object
 	 *
 	 * @param obj
 	 * @param handler
@@ -380,7 +382,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Attaches a listener to the specified component event
+	 * Attaches a listener to the specified component's event
 	 *
 	 * @param _event
 	 * @param _handler
@@ -390,7 +392,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Attaches a disposable listener to the specified component event
+	 * Attaches a disposable listener to the specified component's event
 	 *
 	 * @param _event
 	 * @param _handler
@@ -420,7 +422,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Resolves the specified ref attribute
+	 * Resolves the specified `ref` attribute
 	 * @param _ref
 	 */
 	protected $resolveRef(_ref: Function): Function;
@@ -431,7 +433,7 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Executes the given function in the component render context.
+	 * Executes the given function within the component's render context.
 	 * This function is necessary to render components asynchronously.
 	 *
 	 * @param _cb

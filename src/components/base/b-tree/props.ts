@@ -18,7 +18,7 @@ import type AsyncRender from 'components/friends/async-render';
 import type { TaskFilter } from 'components/friends/async-render';
 
 @component()
-export default abstract class bTreeProps extends iData {
+export default abstract class iTreeProps extends iData {
 	/** {@link iItems.Item} */
 	readonly Item!: Item;
 
@@ -88,7 +88,7 @@ export default abstract class bTreeProps extends iData {
 	@prop({
 		type: Function,
 		required: false,
-		default(ctx: bTreeProps, item: unknown, i: number): CanPromise<boolean> {
+		default(ctx: iTreeProps, item: unknown, i: number): CanPromise<boolean> {
 			if (ctx.level === 0 && i < ctx.renderChunks) {
 				return true;
 			}

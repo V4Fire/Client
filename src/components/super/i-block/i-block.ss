@@ -203,6 +203,7 @@
 			< ${teleport ? 'teleport' : '?'} to = ${teleport}
 				< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 					{{ void(vdom.saveRenderContext()) }}
+					{{ void(r.initGlobalEnvironment()) }}
 
 					/**
 					 * Generates a slot declaration by the specified parameters

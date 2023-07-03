@@ -1,5 +1,5 @@
 {
-  "hash": "cb8efd53aa08600cd86f8b04b6e83bd8470e34f8c926bac48ebaadc6d3bd6e1e",
+  "hash": "f2a56f31997705856c9e3aed3baad8a422c790809168d8ee3fecba1b3b31cf80",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2219,9 +2219,11 @@
             "libs": [
               "components/directives/image",
               "components/directives/icon",
+              "components/directives/in-view",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
-              "components/traits/i-control-list/i-control-list"
+              "components/traits/i-control-list/i-control-list",
+              "components/directives/bind-with"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2255,15 +2257,19 @@
           "libs": [
             "components/directives/image",
             "components/directives/icon",
+            "components/directives/in-view",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
-            "components/traits/i-control-list/i-control-list"
+            "components/traits/i-control-list/i-control-list",
+            "components/directives/bind-with"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
+              "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
+              "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
@@ -2272,8 +2278,10 @@
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
+              "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
+              "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"

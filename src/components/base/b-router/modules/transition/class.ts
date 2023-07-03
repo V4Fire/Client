@@ -307,7 +307,7 @@ export default class Transition {
 
 	/**
 	 * Initializes information about the route we are transitioning to
-	 * @throws an exception if the info already initialized
+	 * @throws {Error} if the info already initialized
 	 */
 	protected initNewRouteInfo(): void {
 		if (this.newRouteInfoInitialized) {

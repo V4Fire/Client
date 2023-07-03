@@ -17,7 +17,7 @@ import { getIcon } from 'components/directives/icon/icons';
  * Returns a link for the specified icon
  *
  * @param iconId
- * @throws an exception if the icon for the given id does not exist
+ * @throws {ReferenceError} if the icon for the given id does not exist
  */
 export function getIconHref(iconId: Nullable<string>): Promise<CanUndef<string>> {
 	if (iconId == null) {
@@ -39,7 +39,7 @@ export function getIconHref(iconId: Nullable<string>): Promise<CanUndef<string>>
 }
 
 /**
- * Updates the `href` attribute of the child `use` element from the given one
+ * Updates the `href` attribute of the child `use` element to the given value
  *
  * @param el
  * @param [href]

@@ -13,7 +13,9 @@ const watcher = watchObj<State>({
 	isAuth: undefined,
 	isOnline: undefined,
 	lastOnlineDate: undefined,
-	experiments: undefined
+	experiments: undefined,
+	route: undefined,
+	globalEnvironment: {}
 });
 
 export default watcher.proxy;

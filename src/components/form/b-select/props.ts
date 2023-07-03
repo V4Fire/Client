@@ -14,7 +14,7 @@ import iInputText, { component, prop } from 'components/super/i-input-text/i-inp
 import type { Value, FormValue, Item } from 'components/form/b-select/interface';
 
 @component()
-export default abstract class bSelectProps extends iInputText {
+export default abstract class iSelectProps extends iInputText {
 	override readonly Value!: Value;
 
 	override readonly FormValue!: FormValue;

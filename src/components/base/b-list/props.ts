@@ -15,7 +15,7 @@ import iData, { prop, component } from 'components/super/i-data/i-data';
 import type { Item } from 'components/base/b-list/b-list';
 
 @component()
-export default abstract class bListProps extends iData {
+export default abstract class iListProps extends iData {
 	/** {@link iActiveItems.Item} */
 	readonly Item!: Item;
 
