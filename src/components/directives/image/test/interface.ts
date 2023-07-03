@@ -8,33 +8,8 @@
 
 import type { Locator } from 'playwright';
 
-export interface ImageTestImgData {
-	style: Nullable<string>;
-	dataImg: Nullable<string>;
-	src: Nullable<string>;
-	srcset: CanArray<Nullable<string>>;
-	width: Nullable<number>;
-	height: Nullable<number>;
-	sizes: Nullable<string>;
-	alt: Nullable<string>;
-}
-
-export interface ImageTestData {
-	span: {
-		style: Nullable<string>;
-		dataImage: Nullable<string>;
-	};
-	img: Nullable<ImageTestImgData>;
-
-	picture: Nullable<{
-		sources: Array<{
-			srcset: CanArray<Nullable<string>>;
-		}>;
-	}>;
-}
-
 export interface ImageTestLocators {
-	divLocator: Locator;
-	imgLocator: Locator;
-	spanLocator: Locator;
+	imageLocator: Locator;
+	imageWrapperLocator: Locator;
+	pictureLocator: Locator;
 }

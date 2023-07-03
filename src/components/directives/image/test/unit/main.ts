@@ -16,7 +16,6 @@ import { Component } from 'tests/helpers';
 import { BROKEN_PICTURE_SRC, EXISTING_PICTURE_SRC, SLOW_LOAD_PICTURE_SRC } from 'components/directives/image/test/const';
 import {
 
-	getImageTestData,
 	getPngBuffer,
 	waitForAttribute,
 	waitForImageLoad,
@@ -34,26 +33,22 @@ test.describe('components/directives/image', () => {
 	});
 
 	test('the provided main image should be shown when loaded successfully', async ({page}) => {
-		const {divLocator} = await createDivForTest(page, {src: EXISTING_PICTURE_SRC});
+		const {imageWrapperLocator, imageLocator} = await createImageForTest(page, {src: EXISTING_PICTURE_SRC});
 
-		await waitForImageLoad(page, divLocator);
+		await waitForImageLoad(page, imageWrapperLocator);
 
-		const {span, img} = await getImageTestData(divLocator);
+		await test.expect(imageWrapperLocator.getAttribute('data-image')).toBeResolvedTo('preview');
+		await test.expect(imageWrapperLocator.getAttribute('style')).toBeResolvedTo(null);
 
-		test.expect(span.dataImage).toBe('preview');
-		test.expect(span.style).toBeNull();
-
-		test.expect(img!.dataImg).toBe('loaded');
-		test.expect(img!.style).toBeNull();
-		test.expect(img!.src).toBe(EXISTING_PICTURE_SRC);
+		await test.expect(imageLocator.getAttribute('data-img')).toBeResolvedTo('loaded');
+		await test.expect(imageLocator.getAttribute('style')).toBeResolvedTo(null);
+		await test.expect(imageLocator.getAttribute('src')).toBeResolvedTo(EXISTING_PICTURE_SRC);
 	});
 
 	test('the provided prefix should be used as a prefix for `src` attribute', async ({page}) => {
-		const {divLocator} = await createDivForTest(page, {src: 'test.png', baseSrc: 'http://127.0.0.1:1234'});
+		const {imageLocator} = await createImageForTest(page, {src: 'test.png', baseSrc: 'http://127.0.0.1:1234'});
 
-		const {img} = await getImageTestData(divLocator);
-
-		test.expect(img!.src).toBe('http://127.0.0.1:1234/test.png');
+		await test.expect(imageLocator.getAttribute('src')).toBeResolvedTo('http://127.0.0.1:1234/test.png');
 	});
 
 	test('the `srcset` attribute should be set', async ({page}) => {
@@ -62,78 +57,69 @@ test.describe('components/directives/image', () => {
 			'2x': BROKEN_PICTURE_SRC
 		};
 
-		const {divLocator} = await createDivForTest(page, {
+		const {imageLocator} = await createImageForTest(page, {
 			srcset
 		});
 
-		const {img} = await getImageTestData(divLocator);
 		const expectedSrcset = Object.entries(srcset).map(([k, v]) => `${v} ${k}`).join(', ');
 
-		test.expect(img!.srcset).toBe(expectedSrcset);
+		await test.expect(imageLocator.getAttribute('srcset')).toBeResolvedTo(expectedSrcset);
 	});
 
 	test('the `width` and the `height` attributes should be set', async ({page}) => {
-		const {divLocator} = await createDivForTest(page, {
+		const {imageLocator} = await createImageForTest(page, {
 			width: 100,
 			height: 50
 		});
 
-		const {img} = await getImageTestData(divLocator);
-
-		test.expect(img!.width).toBe(100);
-		test.expect(img!.height).toBe(50);
+		await test.expect(imageLocator.getAttribute('width')).toBeResolvedTo('100');
+		await test.expect(imageLocator.getAttribute('height')).toBeResolvedTo('50');
 	});
 
 	test('the `sizes` attribute should be set', async ({page}) => {
-		const {divLocator} = await createDivForTest(page, {
+		const {imageLocator} = await createImageForTest(page, {
 			sizes: '20px'
 		});
 
-		const {img} = await getImageTestData(divLocator);
-
-		test.expect(img!.sizes).toBe('20px');
+		await test.expect(imageLocator.getAttribute('sizes')).toBeResolvedTo('20px');
 	});
 
 	test('a `picture` tag should be rendered when a list of sources is provided', async ({page}) => {
-		const {divLocator} = await createDivForTest(page, {
+		const {pictureLocator} = await createImageForTest(page, {
 			sources: [
 				{width: 20, height: 20, srcset: EXISTING_PICTURE_SRC},
 				{width: 0, height: 0, srcset: BROKEN_PICTURE_SRC}
 			]
 		});
 
-		const {picture} = await getImageTestData(divLocator);
-		const pictureSourcesSrcset = picture!.sources.map(({srcset}) => srcset);
+		const sourcesLocators = await pictureLocator.locator('source').all();
 
-		test.expect(pictureSourcesSrcset).toStrictEqual(
-			[EXISTING_PICTURE_SRC, BROKEN_PICTURE_SRC]
-		);
-
+		await test.expect(
+			Promise.all(
+				sourcesLocators.map((locator) => locator.getAttribute('srcset'))
+			)
+		).toBeResolvedTo([EXISTING_PICTURE_SRC, BROKEN_PICTURE_SRC]);
 	});
 
 	test('the `alt` attribute should be set', async ({page}) => {
-		const {divLocator} = await createDivForTest(page, {
+		const {imageLocator} = await createImageForTest(page, {
 			alt: 'Alt text'
 		});
 
-		const {img} = await getImageTestData(divLocator);
-
-		test.expect(img!.alt).toBe('Alt text');
+		await test.expect(imageLocator.getAttribute('alt')).toBeResolvedTo('Alt text');
 	});
 
 	test('the initially invisible image should be loaded when `lazy` is set to false', async ({page}) => {
-		const {divLocator} = await createDivForTest(page, {
+		const {imageWrapperLocator, imageLocator} = await createImageForTest(page, {
 			lazy: false,
 			src: EXISTING_PICTURE_SRC
 		}, {
 			style: 'margin-top: 200px'
 		});
 
-		await waitForImageLoad(page, divLocator);
+		await waitForImageLoad(page, imageWrapperLocator);
 
-		const {img} = await getImageTestData(divLocator);
-
-		test.expect(img!.dataImg).toBe('loaded');
+		await test.expect(imageLocator.getAttribute('data-img')).toBeResolvedTo('loaded');
 	});
 
 	test('the preview image should be shown if image is not loaded yet', async ({page, context}) => {
@@ -147,35 +133,39 @@ test.describe('components/directives/image', () => {
 
 		});
 
-		const {divLocator} = await createDivForTest(page, {src: SLOW_LOAD_PICTURE_SRC, preview: EXISTING_PICTURE_SRC});
+		const {imageWrapperLocator, imageLocator} = await createImageForTest(page, {
+			src: SLOW_LOAD_PICTURE_SRC,
+			preview: EXISTING_PICTURE_SRC
+		});
 
-		const {span, img} = await getImageTestData(divLocator);
+		const imageWrapperStyle = await imageWrapperLocator.getAttribute('style');
 
-		test.expect(span.dataImage).toBe('preview');
-		test.expect(span.style?.startsWith(`background-image: url("${EXISTING_PICTURE_SRC}");`)).toBe(true);
+		test.expect(imageWrapperStyle!.startsWith(`background-image: url("${EXISTING_PICTURE_SRC}");`))
+			.toBe(true);
 
-		test.expect(img!.style).toBe('opacity: 0;');
+		await test.expect(imageWrapperLocator.getAttribute('data-image')).toBeResolvedTo('preview');
+		await test.expect(imageLocator.getAttribute('style')).toBeResolvedTo('opacity: 0;');
 	});
 
 	test('the fallback image should be shown when main image failed loading', async ({page}) => {
-		const {divLocator} = await createDivForTest(page, {
+		const {imageWrapperLocator, imageLocator} = await createImageForTest(page, {
 			src: BROKEN_PICTURE_SRC,
 			broken: EXISTING_PICTURE_SRC
 		});
 
-		await waitForImageLoadFail(page, divLocator);
+		await waitForImageLoadFail(page, imageWrapperLocator);
 
-		const {span, img} = await getImageTestData(divLocator);
+		await test.expect(imageWrapperLocator.getAttribute('data-image')).toBeResolvedTo('broken');
 
-		test.expect(span.dataImage).toBe('broken');
-		test.expect(span.style).toBe(`background-image: url("${EXISTING_PICTURE_SRC}");`);
+		await test.expect(imageWrapperLocator.getAttribute('style'))
+			.toBeResolvedTo(`background-image: url("${EXISTING_PICTURE_SRC}");`);
 
-		test.expect(img!.dataImg).toBe('failed');
-		test.expect(img!.style).toBe('opacity: 0;');
+		await test.expect(imageLocator.getAttribute('data-img')).toBeResolvedTo('failed');
+		await test.expect(imageLocator.getAttribute('style')).toBeResolvedTo('opacity: 0;');
 	});
 
 	test('the load handler should be called on image load', async ({page}) => {
-		const {imgLocator} = await createDivForTest(page, {
+		const {imageLocator} = await createImageForTest(page, {
 			src: EXISTING_PICTURE_SRC,
 
 			onLoad: (el: Element) => {
@@ -183,13 +173,13 @@ test.describe('components/directives/image', () => {
 			}
 		});
 
-		await waitForAttribute(page, imgLocator, 'data-on-load-called');
+		await waitForAttribute(page, imageLocator, 'data-on-load-called');
 
-		await test.expect(imgLocator.getAttribute('data-on-load-called')).toBeResolvedTo('1');
+		await test.expect(imageLocator.getAttribute('data-on-load-called')).toBeResolvedTo('1');
 	});
 
 	test('the error handler should be called on image load error', async ({page}) => {
-		const {imgLocator} = await createDivForTest(page, {
+		const {imageLocator} = await createImageForTest(page, {
 			src: BROKEN_PICTURE_SRC,
 
 			onError: (el: Element) => {
@@ -197,42 +187,42 @@ test.describe('components/directives/image', () => {
 			}
 		});
 
-		await waitForAttribute(page, imgLocator, 'data-on-error-called');
+		await waitForAttribute(page, imageLocator, 'data-on-error-called');
 
-		await test.expect(imgLocator.getAttribute('data-on-error-called')).toBeResolvedTo('1');
+		await test.expect(imageLocator.getAttribute('data-on-error-called')).toBeResolvedTo('1');
 	});
 
 	test('the options resolver`s return value should be used for loading', async ({page}) => {
-		const {divLocator} = await createDivForTest(page, {
+		const {imageLocator} = await createImageForTest(page, {
 			src: BROKEN_PICTURE_SRC,
 			optionsResolver: (opts) => ({...opts, src: `${opts.src}#resolver-called`})
 		});
 
-		const {img} = await getImageTestData(divLocator);
+		const imageSrc = await imageLocator.getAttribute('src');
 
-		test.expect(img!.src!.endsWith('resolver-called')).toBe(true);
+		test.expect(imageSrc!.endsWith('resolver-called')).toBe(true);
 	});
 
 	/**
-	 * Creates a <div> element containing a <span> with v-image set to given imageValue
+	 * Creates a <div> element containing a <span> with v-image set to given imageOpts
 	 *
 	 * @param page - The target page.
-	 * @param imageValue - The value of v-image directive.
-	 * @param [divAttributes] - Optional attributes for created <div>.
+	 * @param imageOpts - The value of v-image directive.
+	 * @param [attrs] - Optional attributes for created <div>.
 	 */
-	async function createDivForTest(
-		page: Page, imageValue: Partial<ImageOptions>, divAttributes?: Partial<RenderComponentsVnodeParams['attrs']>
+	async function createImageForTest(
+		page: Page, imageOpts: Partial<ImageOptions>, attrs?: Partial<RenderComponentsVnodeParams['attrs']>
 	): Promise<ImageTestLocators> {
 		await Component.createComponent(page, 'div', {
 			attrs: {
-				...divAttributes,
 				'data-testid': 'div'
 			},
 			children: [
 				{
 					type: 'span',
 					attrs: {
-						'v-image': imageValue
+						...attrs,
+						'v-image': imageOpts
 					}
 				}
 			]
@@ -241,9 +231,9 @@ test.describe('components/directives/image', () => {
 		const divLocator = page.getByTestId('div');
 
 		return {
-			divLocator,
-			imgLocator: divLocator.locator('img'),
-			spanLocator: divLocator.locator('span')
+			imageWrapperLocator: divLocator.locator('span'),
+			imageLocator: divLocator.locator('img'),
+			pictureLocator: divLocator.locator('picture')
 		};
 	}
 
