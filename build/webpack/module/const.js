@@ -8,6 +8,31 @@
 
 'use strict';
 
+const
+	config = require('@config/config'),
+	path = require('path');
+
+const
+	{assetsOutput} = include('build/helpers');
+
+const
+	{webpack} = config;
+
+exports.isProd = webpack.mode() === 'production';
+
 exports.isTsFile = /\.ts$/;
 
 exports.isJsFile = /\.js$/;
+
+exports.urlLoaderOpts = {
+	name: path.basename(assetsOutput),
+	outputPath: path.dirname(assetsOutput),
+	limit: webpack.optimize.dataURILimit(),
+	encoding: true,
+	esModule: false
+};
+
+exports.urlLoaderInlineOpts = {
+	...exports.urlLoaderOpts,
+	limit: undefined
+};
