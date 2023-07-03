@@ -9,7 +9,7 @@
 import type { Locator } from 'playwright';
 
 export interface ImageTestLocators {
-	imageLocator: Locator;
-	imageWrapperLocator: Locator;
-	pictureLocator: Locator;
+	image: Locator;
+	imageWrapper: Locator;
+	picture: Locator;
 }
