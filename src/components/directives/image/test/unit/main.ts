@@ -11,7 +11,6 @@ import type { Page } from 'playwright';
 import type { ImageOptions } from 'components/directives/image';
 
 import test from 'tests/config/unit/test';
-import { Component } from 'tests/helpers';
 
 import { BROKEN_PICTURE_SRC, EXISTING_PICTURE_SRC, SLOW_LOAD_PICTURE_SRC } from 'components/directives/image/test/const';
 import {
@@ -164,7 +163,7 @@ test.describe('components/directives/image', () => {
 		await test.expect(imageLocator.getAttribute('style')).toBeResolvedTo('opacity: 0;');
 	});
 
-	test('the load handler should be called on image load', async ({page}) => {
+	test.only('the load handler should be called on image load', async ({page}) => {
 		const {imageLocator} = await createImageForTest(page, {
 			src: EXISTING_PICTURE_SRC,
 
@@ -213,25 +212,24 @@ test.describe('components/directives/image', () => {
 	async function createImageForTest(
 		page: Page, imageOpts: Partial<ImageOptions>, attrs?: Partial<RenderComponentsVnodeParams['attrs']>
 	): Promise<ImageTestLocators> {
-		await Component.createComponent(page, 'div', {
-			attrs: {
-				'data-testid': 'div'
-			},
-			children: [
-				{
-					type: 'span',
-					attrs: {
-						...attrs,
-						'v-image': imageOpts
-					}
-				}
-			]
-		});
 
-		const divLocator = page.getByTestId('div');
+		await page.evaluate(
+			(attrs) => {
+				globalThis.renderComponents('div', [{attrs}]);
+			},
+			{
+				...attrs,
+				'data-testid': 'imageWrapper',
+				'v-image': imageOpts
+			}
+		);
+
+		await page.waitForSelector('span[data-testid="imageWrapper"]');
+
+		const divLocator = page.getByTestId('imageWrapper');
 
 		return {
-			imageWrapperLocator: divLocator.locator('span'),
+			imageWrapperLocator: divLocator,
 			imageLocator: divLocator.locator('img'),
 			pictureLocator: divLocator.locator('picture')
 		};
