@@ -52,7 +52,7 @@ async function waitForImageState(page: Page, locator: Locator, state: 'loaded' |
 }
 
 /**
- * Waits for image inside `<div>` pointed by `locator` to be loaded on given `page`.
+ * Waits for image inside image wrapper pointed by `locator` to be loaded on given `page`.
  *
  * @param page
  * @param locator
@@ -63,7 +63,7 @@ export async function waitForImageLoad(page: Page, locator: Locator): Promise<vo
 }
 
 /**
- * Waits for image loading inside `<div>` pointed by `locator` to be failed on given `page`.
+ * Waits for image loading inside image wrapper pointed by `locator` to be failed on given `page`.
  *
  * @param page
  * @param locator
