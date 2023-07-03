@@ -36,11 +36,13 @@ test.describe('components/directives/image', () => {
 
 		await waitForImageLoad(page, imageWrapper);
 
-		await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('preview');
-		await test.expect(imageWrapper.getAttribute('style')).toBeResolvedTo(null);
+		const imageWrapperStyle = await imageWrapper.getAttribute('style');
 
+		test.expect(imageWrapperStyle).toBe(null);
+		await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('loaded');
+
+		await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 1;');
 		await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
-		await test.expect(image.getAttribute('style')).toBeResolvedTo(null);
 		await test.expect(image.getAttribute('src')).toBeResolvedTo(EXISTING_PICTURE_SRC);
 	});
 
@@ -163,7 +165,7 @@ test.describe('components/directives/image', () => {
 		await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
 	});
 
-	test.only('the load handler should be called on image load', async ({page}) => {
+	test('the load handler should be called on image load', async ({page}) => {
 		const {image} = await createImageForTest(page, {
 			src: EXISTING_PICTURE_SRC,
 

@@ -58,7 +58,8 @@ async function waitForImageState(page: Page, locator: Locator, state: 'loaded' |
  * @param locator
  */
 export async function waitForImageLoad(page: Page, locator: Locator): Promise<void> {
-	return waitForImageState(page, locator, 'loaded');
+	await waitForImageState(page, locator, 'loaded');
+	await waitForAttribute(page, locator, 'data-image', 'loaded');
 }
 
 /**
