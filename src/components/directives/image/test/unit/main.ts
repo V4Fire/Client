@@ -62,37 +62,35 @@ test.describe('components/directives/image', () => {
 			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
 		});
 
-		test(
-			[
-				'the attributes of the image and the wrapper should indicate',
-				'that the image is a preview when the main image is not loaded yet'
-			].join(' '), async ({page, context}) => {
-				await context.route(SLOW_LOAD_PICTURE_SRC, (route) => {
-					const buffer = getPngBuffer();
+		test([
+			'the attributes of the image and the wrapper should indicate',
+			'that the image is a preview when the main image is not loaded yet'
+		].join(' '), async ({page, context}) => {
+			await context.route(SLOW_LOAD_PICTURE_SRC, (route) => {
+				const buffer = getPngBuffer();
 
-					setTimeout(() => route.fulfill({
-						contentType: 'image/png',
-						body: buffer
-					}), 500);
+				setTimeout(() => route.fulfill({
+					contentType: 'image/png',
+					body: buffer
+				}), 500);
 
-				});
+			});
 
-				const {imageWrapper, image} = await createImageForTest(page, {
-					src: SLOW_LOAD_PICTURE_SRC,
-					preview: EXISTING_PICTURE_SRC
-				});
+			const {imageWrapper, image} = await createImageForTest(page, {
+				src: SLOW_LOAD_PICTURE_SRC,
+				preview: EXISTING_PICTURE_SRC
+			});
 
-				const imageWrapperStyle = await imageWrapper.getAttribute('style');
+			const imageWrapperStyle = await imageWrapper.getAttribute('style');
 
-				test.expect(imageWrapperStyle?.startsWith(`background-image: url("${EXISTING_PICTURE_SRC}");`))
-					.toBe(true);
+			test.expect(imageWrapperStyle?.startsWith(`background-image: url("${EXISTING_PICTURE_SRC}");`))
+				.toBe(true);
 
-				await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('preview');
-				await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
-			}
-		);
+			await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('preview');
+			await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
+		});
 
-		test('the attributes of the image and the wrapper should indicate that image is a fallback when the main image failed loading', async ({page}) => {
+		test('the attributes of the image and the wrapper should indicate that the image is a fallback when the main image failed loading', async ({page}) => {
 			const {imageWrapper, image} = await createImageForTest(page, {
 				src: BROKEN_PICTURE_SRC,
 				broken: EXISTING_PICTURE_SRC
