@@ -33,37 +33,35 @@ test.describe('components/directives/image', () => {
 	});
 
 	test.describe('load states', () => {
-		test('the attributes of image and wrapper should indicate successful load',
-			async ({page}) => {
-				const {imageWrapper, image} = await createImageForTest(page, {src: EXISTING_PICTURE_SRC});
+		test('the attributes of the image and the wrapper should indicate successful load', async ({page}) => {
+			const {imageWrapper, image} = await createImageForTest(page, {src: EXISTING_PICTURE_SRC});
 
-				await waitForImageLoad(page, imageWrapper);
+			await waitForImageLoad(page, imageWrapper);
 
-				const imageWrapperStyle = await imageWrapper.getAttribute('style');
+			const imageWrapperStyle = await imageWrapper.getAttribute('style');
 
-				test.expect(imageWrapperStyle).toBe(null);
-				await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('loaded');
+			test.expect(imageWrapperStyle).toBe(null);
+			await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('loaded');
 
-				await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 1;');
-				await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
-				await test.expect(image.getAttribute('src')).toBeResolvedTo(EXISTING_PICTURE_SRC);
+			await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 1;');
+			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
+			await test.expect(image.getAttribute('src')).toBeResolvedTo(EXISTING_PICTURE_SRC);
+		});
+
+		test('the initially invisible image should be instantly loaded when `lazy` is set to false', async ({page}) => {
+			const {imageWrapper, image} = await createImageForTest(page, {
+				lazy: false,
+				src: EXISTING_PICTURE_SRC
+			}, {
+				style: 'margin-top: 200px'
 			});
 
-		test('the initially invisible image should be loaded when `lazy` is set to false',
-			async ({page}) => {
-				const {imageWrapper, image} = await createImageForTest(page, {
-					lazy: false,
-					src: EXISTING_PICTURE_SRC
-				}, {
-					style: 'margin-top: 200px'
-				});
+			await waitForImageLoad(page, imageWrapper);
 
-				await waitForImageLoad(page, imageWrapper);
+			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
+		});
 
-				await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
-			});
-
-		test('the attributes of image and wrapper should indicate image preview if the image is not loaded yet',
+		test('the attributes of the image and the wrapper should indicate image preview if the image is not loaded yet',
 			async ({page, context}) => {
 				await context.route(SLOW_LOAD_PICTURE_SRC, (route) => {
 					const buffer = getPngBuffer();
@@ -89,7 +87,7 @@ test.describe('components/directives/image', () => {
 				await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
 			});
 
-		test('the attributes of image and wrapper should indicate fallback image when main image failed loading',
+		test('the attributes of the image and the wrapper should indicate fallback image when main image failed loading',
 			async ({page}) => {
 				const {imageWrapper, image} = await createImageForTest(page, {
 					src: BROKEN_PICTURE_SRC,
@@ -109,12 +107,13 @@ test.describe('components/directives/image', () => {
 
 	});
 
-	test.describe('options as attributes', () => {
-		test('the provided `baseSrc` option should be used as a prefix for the `src` attribute of the `img` element', async ({page}) => {
-			const {image} = await createImageForTest(page, {src: 'test.png', baseSrc: 'http://127.0.0.1:1234'});
+	test.describe('directive options should be set as `img` attributes', () => {
+		test('the provided `baseSrc` option should be used as a prefix for the `src` attribute of the `img` element',
+			async ({page}) => {
+				const {image} = await createImageForTest(page, {src: 'test.png', baseSrc: 'http://127.0.0.1:1234'});
 
-			await test.expect(image.getAttribute('src')).toBeResolvedTo('http://127.0.0.1:1234/test.png');
-		});
+				await test.expect(image.getAttribute('src')).toBeResolvedTo('http://127.0.0.1:1234/test.png');
+			});
 
 		test('the provided `srcset` option should be set as an attribute of the `img` element', async ({page}) => {
 			const srcset = {
@@ -234,7 +233,7 @@ test.describe('components/directives/image', () => {
 
 		await Component.createComponent(page, 'div', {
 			attrs: {
-				'data-testid': 'div'
+				'data-testid': 'container'
 			},
 			children: [
 				{
@@ -247,8 +246,7 @@ test.describe('components/directives/image', () => {
 			]
 		});
 
-		const div = page.getByTestId('div');
-		const imageWrapper = div.locator('span');
+		const imageWrapper = page.getByTestId('container').locator('span');
 
 		return {
 			imageWrapper,
