@@ -7,7 +7,7 @@
  */
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
-import type { ComponentState } from 'components/base/b-virtual-scroll/interface/component';
+import type { VirtualScrollState } from 'components/base/b-virtual-scroll/interface/component';
 
 /**
  * Interface representing the response of the client to the `renderGuard` method for rendering requests.
@@ -73,5 +73,5 @@ export interface RenderGuardRejectionReason {
  * A function used to query the client about whether to perform a specific action or not.
  */
 export interface ShouldPerform<RES = boolean> {
-	(state: ComponentState, ctx: bVirtualScroll): RES;
+	(state: VirtualScrollState, ctx: bVirtualScroll): RES;
 }

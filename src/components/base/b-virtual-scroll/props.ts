@@ -11,7 +11,7 @@ import type { CreateFromItemFn } from 'components/traits/i-items/i-items';
 
 import type {
 
-	ComponentState,
+	VirtualScrollState,
 	ComponentDb,
 	ComponentRenderStrategy,
 	RequestQueryFn,
@@ -41,10 +41,11 @@ import { Observer } from 'components/base/b-virtual-scroll/modules/observer';
 import { ComponentInternalState } from 'components/base/b-virtual-scroll/modules/state';
 
 /**
- * A class that is friendly to {@link bVirtualScroll}. It contains the properties of the {@link bVirtualScroll} component.
+ * A class that is friendly to {@link bVirtualScroll}.
+ * It contains the properties of the {@link bVirtualScroll} component.
  */
 @component()
-export default abstract class bVirtualScrollProps extends iData implements iItems {
+export default abstract class iVirtualScrollProps extends iData implements iItems {
 	/** {@link iItems.item} */
 	readonly Item!: object;
 
@@ -112,7 +113,7 @@ export default abstract class bVirtualScrollProps extends iData implements iItem
 	 */
 	@prop({
 		type: Function,
-		default: (state: ComponentState, ctx: bVirtualScroll) => {
+		default: (state: VirtualScrollState, ctx: bVirtualScroll) => {
 			if (ctx.chunkSize == null) {
 				throw new Error('"chunkSize.getNextDataSlice" is used but "chunkSize" prop is not set.');
 			}

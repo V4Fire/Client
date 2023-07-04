@@ -16,12 +16,13 @@ import VDOM, { create, render } from 'components/friends/vdom';
 import { bVirtualScrollDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-virtual-scroll/const';
 
 import iData, { $$, component, RequestParams } from 'components/super/i-data/i-data';
-import { bVirtualScrollHandlers } from 'components/base/b-virtual-scroll/handlers';
+import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll/handlers';
 import type { AsyncOptions } from 'core/async';
-import type { ComponentState, RenderGuardResult } from 'components/base/b-virtual-scroll/interface';
+import type { VirtualScrollState, RenderGuardResult } from 'components/base/b-virtual-scroll/interface';
 
 export * from 'components/base/b-virtual-scroll/interface';
 export * from 'components/base/b-virtual-scroll/const';
+export * from 'components/super/i-data/i-data';
 
 VDOM.addToPrototype(create);
 VDOM.addToPrototype(render);
@@ -34,7 +35,7 @@ VDOM.addToPrototype(render);
  * by dynamically rendering chunks of data as the user scrolls.
  */
 @component()
-export default class bVirtualScroll extends bVirtualScrollHandlers {
+export default class bVirtualScroll extends iVirtualScrollHandlers {
 	// @ts-ignore (getter instead readonly)
 	override get requestParams(): iData['requestParams'] {
 		return {
@@ -102,9 +103,9 @@ export default class bVirtualScroll extends bVirtualScrollHandlers {
 
 	/**
 	 * Returns the component state.
-	 * {@link ComponentState}
+	 * {@link VirtualScrollState}
 	 */
-	getComponentState(): Readonly<ComponentState> {
+	getComponentState(): Readonly<VirtualScrollState> {
 		return this.componentInternalState.compile();
 	}
 
@@ -157,7 +158,7 @@ export default class bVirtualScroll extends bVirtualScrollHandlers {
 	 * @returns The chunk size.
 	 * @throws Error if the `chunkSize` size is not defined.
 	 */
-	getChunkSize(state: ComponentState): number {
+	getChunkSize(state: VirtualScrollState): number {
 		if (this.chunkSize == null) {
 			throw new Error('`chunkSize` prop is not defined');
 		}
@@ -173,7 +174,7 @@ export default class bVirtualScroll extends bVirtualScrollHandlers {
 	 * @param state
 	 * @param chunkSize
 	 */
-	getNextDataSlice(state: ComponentState, chunkSize: number): object[] {
+	getNextDataSlice(state: VirtualScrollState, chunkSize: number): object[] {
 		const
 			{data} = state,
 			nextDataSliceStartIndex = this.componentInternalState.getRenderCursor(),
@@ -196,8 +197,8 @@ export default class bVirtualScroll extends bVirtualScrollHandlers {
 	}
 
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
-		const result = super.convertDataToDB(data);
 		this.onConvertDataToDB(data);
+		const result = super.convertDataToDB(data);
 
 		return <O | this['DB']>result;
 	}
@@ -212,7 +213,7 @@ export default class bVirtualScroll extends bVirtualScrollHandlers {
 	 * Based on the result of this function, the component takes appropriate actions. For example,
 	 * it may load data if it is not sufficient for rendering, or perform rendering if all conditions are met.
 	 */
-	protected renderGuard(state: ComponentState): RenderGuardResult {
+	protected renderGuard(state: VirtualScrollState): RenderGuardResult {
 		const
 			chunkSize = this.getChunkSize(state),
 			dataSlice = this.getNextDataSlice(state, chunkSize);

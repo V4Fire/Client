@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentItem, ComponentState, MountedChild, MountedItem } from 'components/base/b-virtual-scroll/interface';
+import type { ComponentItem, VirtualScrollState, MountedChild, MountedItem } from 'components/base/b-virtual-scroll/interface';
 import type { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll/test/api/component-object';
 import type { SpyObject } from 'tests/helpers/mock/interface';
 import type { RequestInterceptor } from 'tests/helpers/providers/interceptor';
@@ -96,7 +96,7 @@ export interface StateApi {
 	 * @param override - An object for overriding the current fields of the component state.
 	 * @returns The compiled component state.
 	 */
-	compile(override?: Partial<ComponentState>): ComponentState;
+	compile(override?: Partial<VirtualScrollState>): VirtualScrollState;
 
 	/**
 	 * Resets the component state to its initial values.
@@ -110,7 +110,7 @@ export interface StateApi {
 	 * @param props - An object containing the new state values.
 	 * @returns The updated StateApi object.
 	 */
-	set(props: Partial<ComponentState>): StateApi;
+	set(props: Partial<VirtualScrollState>): StateApi;
 
 	/**
 	 * The data conveyor used for managing data within the component state.

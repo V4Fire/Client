@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { ComponentState } from 'components/base/b-virtual-scroll/b-virtual-scroll';
+import type { VirtualScrollState } from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { PrivateComponentState } from 'components/base/b-virtual-scroll/interface';
 
 /**
@@ -14,7 +14,7 @@ import type { PrivateComponentState } from 'components/base/b-virtual-scroll/int
  *
  * @returns An object representing the initial state of a component.
  */
-export function createInitialState(): ComponentState {
+export function createInitialState(): VirtualScrollState {
 	return {
 		loadPage: 0,
 		renderPage: 0,

@@ -13,7 +13,7 @@
 import test from 'tests/config/unit/test';
 
 import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
-import type { ComponentState, ShouldPerform } from 'components/base/b-virtual-scroll/interface';
+import type { VirtualScrollState, ShouldPerform } from 'components/base/b-virtual-scroll/interface';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
 
 test.describe('<b-virtual-scroll>', () => {
@@ -63,7 +63,7 @@ test.describe('<b-virtual-scroll>', () => {
 		await test.expect(component.childList).toHaveCount(chunkSize * 3);
 	});
 
-	test('Should render components with child', async () => {
+	test.skip('Should render components with child', async () => {
 		// ..
 	});
 
@@ -78,7 +78,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.response(200, {data: []});
 
 			await component.setProps({
-				chunkSize: (state: ComponentState) => [6, 12, 18][state.renderPage] ?? 18,
+				chunkSize: (state: VirtualScrollState) => [6, 12, 18][state.renderPage] ?? 18,
 				shouldPerformDataRender: ({isInitialRender, itemsTillEnd}) => <boolean>isInitialRender || itemsTillEnd === 0
 			});
 

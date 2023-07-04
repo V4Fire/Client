@@ -54,8 +54,12 @@ export interface ComponentStrategy {
 
 /**
  * Component state.
+ *
+ * @typeParam DATA - Instance of the data element.
+ * @typeParam RAW_DATA - The data loaded from the server but not yet processed.
+ * This type parameter determines the type of the lastLoadedRawData property
  */
-export interface ComponentState<DATA = object> {
+export interface VirtualScrollState<DATA = object, RAW_DATA = unknown> {
 	/**
 	 * The largest component index of type `item` that appeared in the viewport.
 	 */
@@ -146,7 +150,7 @@ export interface ComponentState<DATA = object> {
 	/**
 	 * The last loaded raw data.
 	 */
-	lastLoadedRawData: unknown;
+	lastLoadedRawData: CanUndef<RAW_DATA>;
 }
 
 /**
@@ -169,17 +173,18 @@ export interface ComponentItemType {
 	/**
 	 * This type indicates that the component is the "main" component to render.
 	 *
-	 * For example, in the {@link ComponentState} interface, you can notice that
+	 * For example, in the {@link VirtualScrollState} interface, you can notice that
 	 * there are specific fields for the `item` type, such as `itemsTillEnd`.
 	 *
-	 * Components with this type are stored both in the `items` array and the `childList` array in {@link ComponentState}.
+	 * Components with this type are stored both in the `items` array and the `childList` array in
+	 * {@link VirtualScrollState}.
 	 */
 	item: 'item';
 
 	/**
 	 * This type indicates that the component is "secondary".
 	 *
-	 * Components with this type are stored in the `childList` array in {@link ComponentState}.
+	 * Components with this type are stored in the `childList` array in {@link VirtualScrollState}.
 	 */
 	separator: 'separator';
 }
@@ -315,5 +320,5 @@ export interface ComponentDb {
  * Typeof {@link bVirtualScroll.itemsFactory}.
  */
 export interface ComponentItemFactory<DATA = unknown> {
-	(state: ComponentState<DATA>, ctx: bVirtualScroll): ComponentItem[];
+	(state: VirtualScrollState<DATA>, ctx: bVirtualScroll): ComponentItem[];
 }

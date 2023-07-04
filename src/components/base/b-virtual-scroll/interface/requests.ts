@@ -7,7 +7,7 @@
  */
 
 import type { CreateRequestOptions, RequestQuery } from 'components/super/i-data/i-data';
-import type { ComponentState } from 'components/base/b-virtual-scroll/interface/component';
+import type { VirtualScrollState } from 'components/base/b-virtual-scroll/interface/component';
 
 /**
  * Function that returns the GET parameters for a request.
@@ -18,10 +18,10 @@ export interface RequestQueryFn {
 	 *
 	 * @param params - The component state.
 	 */
-	(params: ComponentState): Dictionary<Dictionary>;
+	(params: VirtualScrollState): Dictionary<Dictionary>;
 }
 
 /**
  * Requests parameters.
  */
-export type RequestParams = [RequestQuery, CreateRequestOptions<unknown>];
+export type VirtualScrollRequestParams = [RequestQuery, CreateRequestOptions<unknown>];

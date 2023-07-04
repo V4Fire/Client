@@ -16,7 +16,7 @@ import type {
 	ComponentObserverLocalEvents,
 	ComponentRenderLocalEvents,
 	ComponentRenderStrategy,
-	ComponentState,
+	VirtualScrollState,
 	ComponentStrategy,
 	RenderGuardRejectionReason
 
@@ -116,18 +116,18 @@ export const componentItemType: ComponentItemType = <const>{
 
 export const defaultShouldProps = <const>{
 	/** {@link bVirtualScroll.shouldStopRequestingData} */
-	shouldStopRequestingData: (state: ComponentState, _ctx: bVirtualScroll): boolean => {
+	shouldStopRequestingData: (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
 		const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
 		return !isLastRequestNotEmpty();
 	},
 
 	/** {@link bVirtualScroll.shouldPerformDataRequest} */
-	shouldPerformDataRequest: (state: ComponentState, _ctx: bVirtualScroll): boolean => {
+	shouldPerformDataRequest: (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
 		const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
 		return isLastRequestNotEmpty();
 	},
 
 	/** {@link bVirtualScroll.shouldPerformDataRender} */
-	shouldPerformDataRender: (_state: ComponentState, _ctx: bVirtualScroll): boolean => false
+	shouldPerformDataRender: (_state: VirtualScrollState, _ctx: bVirtualScroll): boolean => false
 };
 

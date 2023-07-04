@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import bVirtualScrollProps from 'components/base/b-virtual-scroll/props';
+import iVirtualScrollProps from 'components/base/b-virtual-scroll/props';
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import { bVirtualScrollAsyncGroup, componentEvents } from 'components/base/b-virtual-scroll/const';
 import iData, { component } from 'components/super/i-data/i-data';
@@ -18,7 +18,7 @@ import { isAsyncReplaceError } from 'components/base/b-virtual-scroll/modules/he
  * This class is designed to work in conjunction with {@link bVirtualScroll}.
  */
 @component()
-export abstract class bVirtualScrollHandlers extends bVirtualScrollProps {
+export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 
 	/**
 	 * Handler: component reset event.

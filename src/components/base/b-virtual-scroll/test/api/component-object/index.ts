@@ -11,7 +11,7 @@ import type { JSHandle, Locator, Page } from 'playwright';
 import { ComponentObject, Scroll } from 'tests/helpers';
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
-import type { ComponentRefs, ComponentState } from 'components/base/b-virtual-scroll/b-virtual-scroll';
+import type { ComponentRefs, VirtualScrollState } from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { SlotsStateObj } from 'components/base/b-virtual-scroll/modules/slots';
 
 import { testStyles } from 'components/base/b-virtual-scroll/test/api/component-object/styles';
@@ -60,7 +60,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Returns the internal component state.
 	 */
-	getComponentState(): Promise<ComponentState> {
+	getComponentState(): Promise<VirtualScrollState> {
 		return this.component.evaluate((ctx) => ctx.getComponentState());
 	}
 

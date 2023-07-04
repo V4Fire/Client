@@ -19,6 +19,11 @@
 - поддержка onRequestError?
 - обработка async replace error в initLoad
 - не нравится проверка .then((res) => if (res == null) {this.onDataLoadError()})
+- не спредить стейт компонента а возвращать ссылку
+- миграция с prev/current/next описать
+- тесты на dbConverter
+- debug модуль овверайд в edadeal/core
+- initLoad ВСЕГДА должен эмититься на nextTick чтобы сначала отрабатывал промис чейн и только потом всплывало событие (обсудить с Андреем)
 
 ```mermaid
 graph TD;

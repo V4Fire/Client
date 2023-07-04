@@ -9,7 +9,7 @@
 import type { Page } from 'playwright';
 import test from 'tests/config/unit/test';
 
-import type { MountedChild, ComponentItem, ComponentState, MountedItem } from 'components/base/b-virtual-scroll/interface';
+import type { MountedChild, ComponentItem, VirtualScrollState, MountedItem } from 'components/base/b-virtual-scroll/interface';
 import { paginationHandler } from 'tests/helpers/providers/pagination';
 import { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll/test/api/component-object';
 import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
@@ -171,14 +171,14 @@ export function createDataConveyor<DATA>(
  * @param dataConveyor - The data conveyor used for managing data within the component.
  */
 export function createStateApi(
-	initial: Partial<ComponentState>,
+	initial: Partial<VirtualScrollState>,
 	dataConveyor: DataConveyor
 ): StateApi {
 	let
 		state = createInitialState(initial);
 
 	const obj: StateApi = {
-		compile(override?: Partial<ComponentState>): ComponentState {
+		compile(override?: Partial<VirtualScrollState>): VirtualScrollState {
 			return {
 				...state,
 				...extractStateFromDataConveyor(dataConveyor),
@@ -186,7 +186,7 @@ export function createStateApi(
 			};
 		},
 
-		set(props: Partial<ComponentState>): StateApi {
+		set(props: Partial<VirtualScrollState>): StateApi {
 			state = {
 				...state,
 				...props
@@ -212,7 +212,7 @@ export function createStateApi(
  *
  * @param state - The partial component state to override the default values.
  */
-export function createInitialState(state: Partial<ComponentState>): ComponentState {
+export function createInitialState(state: Partial<VirtualScrollState>): VirtualScrollState {
 	return {
 		...createInitialStateObj(),
 		maxViewedItem: Object.cast(test.expect.any(Number)),
@@ -228,7 +228,7 @@ export function createInitialState(state: Partial<ComponentState>): ComponentSta
  * Extracts state data from the data conveyor and returns it.
  * @param conveyor - The data conveyor to extract state data from.
  */
-export function extractStateFromDataConveyor(conveyor: DataConveyor): Pick<ComponentState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'items' | 'childList'> {
+export function extractStateFromDataConveyor(conveyor: DataConveyor): Pick<VirtualScrollState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'items' | 'childList'> {
 	return {
 		data: [...conveyor.data],
 		lastLoadedData: [...conveyor.lastLoadedData],

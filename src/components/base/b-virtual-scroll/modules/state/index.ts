@@ -7,7 +7,7 @@
  */
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
-import type { MountedChild, ComponentState, MountedItem, PrivateComponentState } from 'components/base/b-virtual-scroll/interface';
+import type { MountedChild, VirtualScrollState, MountedItem, PrivateComponentState } from 'components/base/b-virtual-scroll/interface';
 import { isItem } from 'components/base/b-virtual-scroll/modules/helpers';
 import { createInitialState, createPrivateInitialState } from 'components/base/b-virtual-scroll/modules/state/helpers';
 import Friend from 'components/friends/friend';
@@ -21,7 +21,7 @@ export class ComponentInternalState extends Friend {
 	/**
 	 * Current state of the component.
 	 */
-	state: ComponentState = createInitialState();
+	state: VirtualScrollState = createInitialState();
 
 	/**
 	 * Current private state of the component.
@@ -33,7 +33,7 @@ export class ComponentInternalState extends Friend {
 	 *
 	 * @returns The current state of the component.
 	 */
-	compile(): Readonly<ComponentState> {
+	compile(): Readonly<VirtualScrollState> {
 		return {
 			...this.state
 		};
