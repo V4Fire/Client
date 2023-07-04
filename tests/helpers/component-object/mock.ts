@@ -19,7 +19,7 @@ import type { SpyExtractor, SpyObject } from 'tests/helpers/mock/interface';
  *
  * It is used for testing components in a mock environment.
  */
-export default class ComponentObjectMock<COMPONENT extends iBlock> extends ComponentObjectBuilder<COMPONENT> {
+export default abstract class ComponentObjectMock<COMPONENT extends iBlock> extends ComponentObjectBuilder<COMPONENT> {
 	/**
 	 * Creates a spy to observe calls to the specified method.
 	 *

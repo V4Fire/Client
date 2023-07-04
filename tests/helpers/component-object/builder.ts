@@ -23,7 +23,7 @@ import type iBlock from 'components/super/i-block/i-block';
  * However, the recommended usage is to inherit from this class and implement a specific `ComponentObject`
  * that encapsulates and enhances the client's interaction with component during the test.
  */
-export default class ComponentObjectBuilder<COMPONENT extends iBlock> {
+export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	/**
 	 * The name of the component to be rendered.
 	 */

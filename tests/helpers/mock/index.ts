@@ -15,8 +15,8 @@ import type { ExtractFromJSHandle, SpyExtractor, SpyObject } from 'tests/helpers
 /**
  * Wraps an object as a spy object by adding additional properties for accessing spy information.
  *
- * @param agent The JSHandle representing the spy or mock function.
- * @param obj The object to wrap as a spy object.
+ * @param agent - The JSHandle representing the spy or mock function.
+ * @param obj - The object to wrap as a spy object.
  * @returns The wrapped object with spy properties.
  */
 export function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMocker['fn']> | ReturnType<ModuleMocker['spyOn']>>, obj: T): T & SpyObject {
@@ -44,9 +44,9 @@ export function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMoc
 /**
  * Creates a spy object.
  *
- * @param ctx The `JSHandle` to spy on.
- * @param spyCtor The function that creates the spy.
- * @param argsToCtor The arguments to pass to the spy constructor function.
+ * @param ctx - The `JSHandle` to spy on.
+ * @param spyCtor - The function that creates the spy.
+ * @param argsToCtor - The arguments to pass to the spy constructor function.
  * @returns A promise that resolves to the created spy object.
  *
  * @example
@@ -76,8 +76,8 @@ export async function createSpy<T extends JSHandle, ARGS extends any[]>(
 /**
  * Retrieves an existing spy object from a `JSHandle`.
  *
- * @param ctx The `JSHandle` containing the spy object.
- * @param spyExtractor The function to extract the spy object.
+ * @param ctx - The `JSHandle` containing the spy object.
+ * @param spyExtractor - The function to extract the spy object.
  * @returns A promise that resolves to the spy object.
  *
  * @example
@@ -108,9 +108,9 @@ export async function getSpy<T extends JSHandle>(
 /**
  * Creates a mock function and injects it into a Page object.
  *
- * @param page The Page object to inject the mock function into.
- * @param fn The mock function.
- * @param args The arguments to pass to the function.
+ * @param page - The Page object to inject the mock function into.
+ * @param fn - The mock function.
+ * @param args - The arguments to pass to the function.
  * @returns A promise that resolves to the mock function as a spy object.
  *
  * @example
@@ -143,9 +143,9 @@ export async function createMockFn(
  * This function also returns the ID of the injected mock function, which is stored in `globalThis`.
  * This binding allows the function to be found during object serialization within the page context.
  *
- * @param page The Page object to inject the mock function into.
- * @param fn The mock function.
- * @param args The arguments to pass to the function.
+ * @param page - The Page object to inject the mock function into.
+ * @param fn - The mock function.
+ * @param args - The arguments to pass to the function.
  * @returns A promise that resolves to an object containing the spy object and the ID of the injected mock function.
  *
  * @example

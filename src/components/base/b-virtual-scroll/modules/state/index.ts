@@ -34,9 +34,7 @@ export class ComponentInternalState extends Friend {
 	 * @returns The current state of the component.
 	 */
 	compile(): Readonly<VirtualScrollState> {
-		return {
-			...this.state
-		};
+		return this.state;
 	}
 
 	/**

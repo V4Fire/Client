@@ -15,6 +15,7 @@ import test from 'tests/config/unit/test';
 import { defaultShouldProps } from 'components/base/b-virtual-scroll/const';
 import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
+import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
 test.describe('<b-virtual-scroll>', () => {
 	let
@@ -22,6 +23,15 @@ test.describe('<b-virtual-scroll>', () => {
 		initLoadSpy: VirtualScrollTestHelpers['initLoadSpy'],
 		provider: VirtualScrollTestHelpers['provider'],
 		state: VirtualScrollTestHelpers['state'];
+
+	const hookProp = {
+		'@hook:beforeDataCreate': (ctx: bVirtualScroll) => {
+			const
+				original = ctx.componentInternalState.compile.bind(ctx.componentInternalState);
+
+			ctx.componentInternalState.compile = () => ({...original()});
+		}
+	};
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
@@ -49,7 +59,8 @@ test.describe('<b-virtual-scroll>', () => {
 			chunkSize,
 			shouldStopRequestingData,
 			shouldPerformDataRequest,
-			disableObserver: true
+			disableObserver: true,
+			...hookProp
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
@@ -124,7 +135,8 @@ test.describe('<b-virtual-scroll>', () => {
 			chunkSize,
 			shouldStopRequestingData,
 			shouldPerformDataRequest,
-			disableObserver: true
+			disableObserver: true,
+			...hookProp
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
@@ -178,7 +190,8 @@ test.describe('<b-virtual-scroll>', () => {
 			chunkSize,
 			shouldStopRequestingData,
 			shouldPerformDataRequest,
-			disableObserver: true
+			disableObserver: true,
+			...hookProp
 		});
 
 		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
