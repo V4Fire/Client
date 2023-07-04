@@ -11,6 +11,7 @@ import type { Page } from 'playwright';
 import type { ImageOptions } from 'components/directives/image';
 
 import test from 'tests/config/unit/test';
+import { Component } from 'tests/helpers';
 
 import { BROKEN_PICTURE_SRC, EXISTING_PICTURE_SRC, SLOW_LOAD_PICTURE_SRC } from 'components/directives/image/test/const';
 import {
@@ -22,7 +23,6 @@ import {
 
 } from 'components/directives/image/test/helpers';
 import type { ImageTestLocators } from 'components/directives/image/test/interface';
-import { Component } from 'tests/helpers';
 
 test.describe('components/directives/image', () => {
 
@@ -33,7 +33,7 @@ test.describe('components/directives/image', () => {
 	});
 
 	test.describe('load states', () => {
-		test('the attributes of the image and the wrapper should indicate successful load', async ({page}) => {
+		test('the attributes of the image and the wrapper should indicate a successful load', async ({page}) => {
 			const {imageWrapper, image} = await createImageForTest(page, {src: EXISTING_PICTURE_SRC});
 
 			await waitForImageLoad(page, imageWrapper);
@@ -48,7 +48,7 @@ test.describe('components/directives/image', () => {
 			await test.expect(image.getAttribute('src')).toBeResolvedTo(EXISTING_PICTURE_SRC);
 		});
 
-		test('the initially invisible image should be instantly loaded when `lazy` is set to false', async ({page}) => {
+		test('the initially invisible image should be instantly loaded when the `lazy` option is set to false', async ({page}) => {
 			const {imageWrapper, image} = await createImageForTest(page, {
 				lazy: false,
 				src: EXISTING_PICTURE_SRC
@@ -61,33 +61,32 @@ test.describe('components/directives/image', () => {
 			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
 		});
 
-		test('the attributes of the image and the wrapper should indicate that image is a preview if the image is not loaded yet',
-			async ({page, context}) => {
-				await context.route(SLOW_LOAD_PICTURE_SRC, (route) => {
-					const buffer = getPngBuffer();
+		test('the attributes of the image and the wrapper should indicate that image is a preview when the main image is not loaded yet', async ({page, context}) => {
+			await context.route(SLOW_LOAD_PICTURE_SRC, (route) => {
+				const buffer = getPngBuffer();
 
-					setTimeout(() => route.fulfill({
-						contentType: 'image/png',
-						body: buffer
-					}), 500);
+				setTimeout(() => route.fulfill({
+					contentType: 'image/png',
+					body: buffer
+				}), 500);
 
-				});
-
-				const {imageWrapper, image} = await createImageForTest(page, {
-					src: SLOW_LOAD_PICTURE_SRC,
-					preview: EXISTING_PICTURE_SRC
-				});
-
-				const imageWrapperStyle = await imageWrapper.getAttribute('style');
-
-				test.expect(imageWrapperStyle?.startsWith(`background-image: url("${EXISTING_PICTURE_SRC}");`))
-					.toBe(true);
-
-				await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('preview');
-				await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
 			});
 
-		test('the attributes of the image and the wrapper should indicate that image is a fallback when main image failed loading',
+			const {imageWrapper, image} = await createImageForTest(page, {
+				src: SLOW_LOAD_PICTURE_SRC,
+				preview: EXISTING_PICTURE_SRC
+			});
+
+			const imageWrapperStyle = await imageWrapper.getAttribute('style');
+
+			test.expect(imageWrapperStyle?.startsWith(`background-image: url("${EXISTING_PICTURE_SRC}");`))
+				.toBe(true);
+
+			await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('preview');
+			await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
+		});
+
+		test('the attributes of the image and the wrapper should indicate that image is a fallback when the main image failed loading',
 			async ({page}) => {
 				const {imageWrapper, image} = await createImageForTest(page, {
 					src: BROKEN_PICTURE_SRC,
@@ -158,7 +157,7 @@ test.describe('components/directives/image', () => {
 	});
 
 	test.describe('options resolver', () => {
-		test('the return value of `optionsResolver` should be used instead of provided options', async ({page}) => {
+		test('the return value of `optionsResolver` should be used instead of the provided options', async ({page}) => {
 			const {image} = await createImageForTest(page, {
 				src: BROKEN_PICTURE_SRC,
 				optionsResolver: (opts) => ({...opts, src: `${opts.src}#resolver-called`})
@@ -185,7 +184,7 @@ test.describe('components/directives/image', () => {
 			await test.expect(image.getAttribute('data-on-load-called')).toBeResolvedTo('1');
 		});
 
-		test('the provided `onError` handler  should be called on image load error', async ({page}) => {
+		test('the provided `onError` handler should be called on image load error', async ({page}) => {
 			const {image} = await createImageForTest(page, {
 				src: BROKEN_PICTURE_SRC,
 
