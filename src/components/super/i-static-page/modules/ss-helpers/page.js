@@ -27,7 +27,8 @@ const
 	{needInline, addPublicPath} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
 
 const
-	canLoadStylesDeferred = !csp.nonce(),
+	externalizeInitial = webpack.externalizeInitial(),
+	canLoadStylesDeferred = !csp.nonce() && !externalizeInitial,
 	needLoadStylesAsJS = webpack.dynamicPublicPath();
 
 const defAttrs = {
@@ -75,7 +76,7 @@ function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
 		decl += `${scripts.join('\n')}\n`;
 	}
 
-	if (wrap) {
+	if (!externalizeInitial && wrap) {
 		decl = getScriptDecl(decl);
 	}
 
@@ -109,7 +110,7 @@ function getPageStyleDepsDecl(dependencies, {assets, wrap, js}) {
 		decl += '\n';
 	}
 
-	if (wrap && (js || !needInline())) {
+	if (!externalizeInitial && wrap && (js || !needInline())) {
 		decl = getScriptDecl(decl);
 	}
 
@@ -143,39 +144,39 @@ function getScriptDeclByName(name, {
 	let
 		decl;
 
-	if (needInline(inline)) {
-		if (assets[name]) {
-			const
-				filePath = src.clientOutput(assets[name].path);
-
-			if (fs.existsSync(filePath)) {
-				decl = `include('${filePath}');`;
-			}
+	if (!assets[name] && (needInline(inline) || externalizeInitial)) {
+		if (!optional) {
+			throw new ReferenceError(`A style by the name "${name}" is not defined`);
 
 		} else {
-			if (!optional) {
-				throw new ReferenceError(`A script by the name "${name}" is not defined`);
-			}
-
 			return '';
+		}
+	}
+
+	if (needInline(inline)) {
+		const
+			filePath = src.clientOutput(assets[name].path);
+
+		if (fs.existsSync(filePath)) {
+			decl = `include('${filePath}');`;
 		}
 
 	} else {
 		decl = getScriptDecl({
 			...defAttrs,
 			defer,
-			js: true,
-			src: addPublicPath([`PATH['${name}']`])
+			js: !externalizeInitial,
+			src: externalizeInitial ? assets[name].publicPath : addPublicPath([`PATH['${name}']`])
 		});
 
-		if (optional) {
+		if (optional && !externalizeInitial) {
 			decl = `if ('${name}' in PATH) {
 	${decl}
 }`;
 		}
 	}
 
-	return wrap ? getScriptDecl(decl) : decl;
+	return wrap && !externalizeInitial ? getScriptDecl(decl) : decl;
 }
 
 exports.getStyleDeclByName = getStyleDeclByName;
@@ -214,29 +215,33 @@ function getStyleDeclByName(name, {
 	let
 		decl;
 
-	if (needInline(inline)) {
-		if (assets[rname]) {
-			const
-				filePath = src.clientOutput(assets[rname].path);
-
-			if (fs.existsSync(filePath)) {
-				decl = getStyleDecl({...defAttrs, js}, `include('${filePath}');`);
-			}
-
-		} else if (!optional) {
+	if (!assets[rname] && (needInline(inline) || externalizeInitial)) {
+		if (!optional) {
 			throw new ReferenceError(`A style by the name "${name}" is not defined`);
+
+		} else {
+			return '';
+		}
+	}
+
+	if (needInline(inline)) {
+		const
+			filePath = src.clientOutput(assets[rname].path);
+
+		if (fs.existsSync(filePath)) {
+			decl = getStyleDecl({...defAttrs, js}, `include('${filePath}');`);
 		}
 
 	} else {
 		decl = getStyleDecl({
 			...defAttrs,
 			defer,
-			js: true,
+			js: !externalizeInitial,
 			rel: 'stylesheet',
-			src: addPublicPath([`PATH['${rname}']`])
+			src: externalizeInitial ? assets[rname].publicPath : addPublicPath([`PATH['${rname}']`])
 		});
 
-		if (optional) {
+		if (optional && !externalizeInitial) {
 			decl = `if ('${rname}' in PATH) {
 	${decl}
 }`;
@@ -247,7 +252,7 @@ function getStyleDeclByName(name, {
 		return '';
 	}
 
-	return wrap ? getScriptDecl(decl) : decl;
+	return js && wrap ? getScriptDecl(decl) : decl;
 }
 
 exports.generateInitJS = generateInitJS;

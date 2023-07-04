@@ -39,9 +39,9 @@ function getAssets(entryPoints) {
 		}
 	});
 
-	assetsBlueprint.forEach(() => {
-		const fileList = fs.readJSONSync(assetsJSON);
+	const fileList = fs.readJSONSync(assetsJSON);
 
+	assetsBlueprint.forEach(() => {
 		$C(fileList).forEach((el, key, rawAssets) => {
 			assets[key] = rawAssets[key];
 		});
@@ -67,6 +67,6 @@ function getAssetsDecl({inline, wrap, js} = {}) {
 		return wrap ? getScriptDecl(decl) : decl;
 	}
 
-	const decl = getScriptDecl({src: webpack.publicPath(webpack.assetsJS()), js});
+	const decl = getScriptDecl({src: webpack.publicPath(webpack.assetsJS()), js, defer: false});
 	return js && wrap ? getScriptDecl(decl) : decl;
 }

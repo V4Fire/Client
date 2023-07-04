@@ -7,7 +7,11 @@
  */
 
 const
-	{webpack} = require('@config/config');
+	{webpack, src} = require('@config/config'),
+	getHash = include('build/hash');
+
+const
+	fs = require('fs-extra');
 
 exports.needInline = needInline;
 
@@ -18,7 +22,7 @@ exports.needInline = needInline;
  * @returns {boolean}
  */
 function needInline(forceInline) {
-	return Boolean(webpack.fatHTML() || webpack.inlineInitial() || forceInline);
+	return Boolean(!webpack.externalizeInitial() && (forceInline || webpack.fatHTML() || webpack.inlineInitial()));
 }
 
 exports.addPublicPath = addPublicPath;
@@ -63,3 +67,38 @@ function addPublicPath(path) {
 		return res;
 	}
 }
+
+exports.emitFile = emitFile;
+
+/**
+ * Information about output file paths
+ *
+ *  1. outputPath - absolute path to the file
+ *  2. loadPath - path to load the file, taking into account the configured public path
+ *
+ * @typedef {{
+ *   outputPath: string,
+ *   loadPath: string
+ * }} PathData
+ */
+
+/**
+ * Creates a new file with the given content and stores it in the output directory.
+ *
+ * @param {string} content - file content
+ * @param {string} fileName - file name
+ *
+ * @returns {PathData} pathData
+ */
+function emitFile(content, fileName) {
+	fileName = webpack.output({name: fileName, hash: getHash(content)});
+
+	const
+		outputPath = src.clientOutput(fileName),
+		loadPath = webpack.publicPath(fileName);
+
+	fs.writeFileSync(outputPath, content);
+
+	return {outputPath, loadPath};
+}
+

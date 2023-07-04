@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v??? (2023-07-??)
+
+#### :rocket: New Feature
+
+* Added new config option `webpack.externalizeInitial`
+
 ## v3.39.0 (2023-03-07)
 
 #### :rocket: New Feature

@@ -17,15 +17,17 @@ const
 	buble = require('buble');
 
 const
-	{csp} = config,
+	{csp, webpack} = config,
 	{Filters} = require('snakeskin');
 
 const
+	getHash = include('build/hash'),
 	{hasInclude, escapeStringLiteralRgxp} = include('build/monic/include.js'),
 	{isFolder} = include('src/components/super/i-static-page/modules/const'),
-	{needInline} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
+	{needInline, emitFile} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
 
 const
+	externalizeInitial = webpack.externalizeInitial(),
 	nonce = csp.nonce(),
 	nonceAttr = {toString: () => nonce, escape: false, interpolate: false};
 
@@ -75,14 +77,19 @@ function getScriptDecl(lib, body) {
 	}
 
 	if (Object.isString(lib)) {
+		if (externalizeInitial) {
+			const {loadPath} = emitFile(lib, `${getHash(lib)}.js`);
+			return getScriptDecl({src: loadPath, defer: false});
+		}
+
 		return `<script ${normalizeAttrs(defInlineAttrs)}>${lib}</script>`;
 	}
 
 	body = body || '';
 
 	const
-		isInline = Boolean(needInline(lib.inline) || body),
-		createElement = lib.js && lib.defer !== false;
+		isInline = !externalizeInitial && Boolean(needInline(lib.inline) || body),
+		createElement = !externalizeInitial && lib.js && lib.defer !== false;
 
 	let
 		attrs,
@@ -99,7 +106,7 @@ function getScriptDecl(lib, body) {
 		const attrsObj = {
 			src: lib.src,
 			staticAttrs: lib.staticAttrs,
-			...defAttrs,
+			...(externalizeInitial ? defInlineAttrs : defAttrs),
 			...lib.attrs
 		};
 
@@ -138,6 +145,11 @@ function getScriptDecl(lib, body) {
 	if (body) {
 		if (lib.js) {
 			return `${body}\n`;
+		}
+
+		if (externalizeInitial) {
+			const {loadPath} = emitFile(body, `${getHash(body)}.js`);
+			return `<script src="${loadPath}" ${attrs} />`;
 		}
 
 		return `<script ${attrs}>${body}</script>`;
@@ -204,11 +216,11 @@ function getStyleDecl(lib, body) {
 
 	const
 		rel = lib.attrs?.rel ?? 'stylesheet',
-		isInline = Boolean(needInline(lib.inline) || body);
+		isInline = !externalizeInitial && Boolean(needInline(lib.inline) || body);
 
 	const attrsObj = {
 		staticAttrs: lib.staticAttrs,
-		...isInline ? defInlineAttrs : defAttrs,
+		...(isInline || externalizeInitial ? defInlineAttrs : defAttrs),
 		...lib.attrs
 	};
 
@@ -221,7 +233,7 @@ function getStyleDecl(lib, body) {
 			rel
 		});
 
-		if (lib.defer !== false) {
+		if (!externalizeInitial && lib.defer !== false) {
 			Object.assign(attrsObj, {
 				media: 'print',
 				onload: `this.media='${lib.attrs?.media ?? 'all'}'; this.onload=null;`
@@ -320,12 +332,13 @@ exports.getLinkDecl = getLinkDecl;
  * ```
  */
 function getLinkDecl(link) {
-	const tag = link.tag || 'link';
+	const
+		tag = link.tag || 'link';
 
 	const attrs = normalizeAttrs({
 		href: link.src,
 		staticAttrs: link.staticAttrs,
-		...defAttrs,
+		...(externalizeInitial ? defInlineAttrs : defAttrs),
 		...link.attrs
 	}, link.js);
 

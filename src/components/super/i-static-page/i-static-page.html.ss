@@ -52,6 +52,9 @@
 	/** Should or not generate the `<base>` tag */
 	- defineBase = false
 
+	/** {@link config.webpack.externalizeInitial} */
+	- externalizeInitial = config.webpack.externalizeInitial()
+
 	/** Should or not attach favicons */
 	- attachFavicons = true
 
@@ -115,7 +118,15 @@
 						.
 
 					- block varsDecl
-						+= h.getVarsDecl({wrap: true})
+						: inline = !externalizeInitial && h.needInline(true)
+						: varsDeclStr = h.getVarsDecl({wrap: inline})
+
+						- if inline
+							+= varsDeclStr
+
+						- else
+							: loadPath = h.emitFile(varsDeclStr, self.name() + '.vars-decl.js').loadPath
+							+= h.getScriptDecl({src: loadPath, defer: false})
 
 					- block favicons
 						- if attachFavicons
@@ -126,16 +137,20 @@
 							{title}
 
 					- block assets
-						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
+						+= h.getAssetsDecl({inline: !externalizeInitial && !assetsRequest, wrap: true})
 
 					- block links
 						+= await h.loadLinks(deps.links, {assets, wrap: true})
 
 					- block headStyles
-						+= h.getStyleDeclByName('std', {assets, optional: true, wrap: true, js: true})
+						+= h.getStyleDeclByName('std', {assets, optional: true, wrap: true, js: !externalizeInitial})
+
+						- if externalizeInitial
+							+= await h.loadStyles(deps.styles, {assets, wrap: true})
+							+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
 
 					- block headScripts
-						+= await h.loadLibs(deps.headScripts, {assets, wrap: true, js: true})
+						+= await h.loadLibs(deps.headScripts, {assets, wrap: true, js: !externalizeInitial})
 
 			< body ${rootAttrs|!html}
 				<! :: SSR
@@ -153,14 +168,15 @@
 
 				- block deps
 					- block styles
-						+= await h.loadStyles(deps.styles, {assets, wrap: true})
-						+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
+						- if !externalizeInitial
+							+= await h.loadStyles(deps.styles, {assets, wrap: true})
+							+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
 
 					- block scripts
 						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
-						+= await h.loadLibs(deps.scripts, {assets, wrap: true, js: true})
+						+= await h.loadLibs(deps.scripts, {assets, wrap: true, js: !externalizeInitial})
 
-						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
-						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
+						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true, defer: false})
+						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true, defer: false})
 
 						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})

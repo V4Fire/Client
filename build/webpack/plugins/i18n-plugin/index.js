@@ -10,7 +10,7 @@
 
 const
 	{collectI18NKeysets} = include('build/helpers'),
-	{src, i18n, locale} = require('@config/config');
+	{src, i18n, locale, webpack} = require('@config/config');
 
 const
 	fs = require('fs'),
@@ -29,7 +29,7 @@ module.exports = class I18NGeneratorPlugin {
 
 		function doneHook({compilation}) {
 			// Should only run on the last build step when all files are ready and placed in the file system
-			if (compilation.compiler && compilation.compiler.name === 'html') {
+			if (compilation.compiler?.name === 'html') {
 				const
 					configLocale = locale,
 					locales = i18n.supportedLocales(),
@@ -42,29 +42,53 @@ module.exports = class I18NGeneratorPlugin {
 
 						.map((el) => String(el.name ?? el));
 
+				const varsDeclFiles = () =>
+					glob.sync(path.normalize(src.clientOutput('*.vars-decl.js')))
+						.map((el) => String(el.name ?? el));
+
 				switch (i18n.strategy()) {
 					case 'inlineMultipleHTML': {
 						htmlFiles().forEach((file) => {
 							i18n.supportedLocales().forEach((locale) => {
 								fs.writeFileSync(
 									file.replace('.html', `_${locale}.html`),
-									getHTMLWithLangPacs(file, {[locale]: localizations[locale]})
+									webpack.externalizeInitial() ?
+										setLocalizedVarsDecl(file, locale) :
+										inlineLangPacks(file, {[locale]: localizations[locale]})
 								);
 							});
 
-							fs.writeFileSync(
-								file,
-								getHTMLWithLangPacs(file, {[configLocale]: localizations[configLocale]})
-							);
+							if (!webpack.externalizeInitial()) {
+								fs.writeFileSync(
+									file,
+									inlineLangPacks(file, {[configLocale]: localizations[configLocale]})
+								);
+							}
 						});
+
+						if (webpack.externalizeInitial()) {
+							varsDeclFiles().forEach((file) => {
+								i18n.supportedLocales().forEach((locale) => {
+									fs.writeFileSync(
+										file.replace('.js', `_${locale}.js`),
+										inlineLangPacks(file, {[locale]: localizations[locale]})
+									);
+								});
+
+								fs.writeFileSync(
+									file,
+									inlineLangPacks(file, {[configLocale]: localizations[configLocale]})
+								);
+							});
+						}
 
 						break;
 					}
 
 					case 'inlineSingleHTML': {
-						htmlFiles().forEach((file) => fs.writeFileSync(
+						(webpack.externalizeInitial() ? varsDeclFiles() : htmlFiles()).forEach((file) => fs.writeFileSync(
 							file,
-							getHTMLWithLangPacs(file, localizations)
+							inlineLangPacks(file, localizations)
 						));
 
 						break;
@@ -85,17 +109,23 @@ module.exports = class I18NGeneratorPlugin {
 		}
 
 		/**
-		 * Reads an HTML file from the given path and inserts the specified internationalization pack into it
-		 * and returns the result HTML
+		 * Reads the file from the given path and inserts the specified internationalization pack into it
+		 * and returns the new file content
 		 *
 		 * @param {string} path
 		 * @param {object} langPacs
 		 * @returns string
 		 */
-		function getHTMLWithLangPacs(path, langPacs) {
+		function inlineLangPacks(path, langPacs) {
 			return fs
 				.readFileSync(path, {encoding: 'utf8'})
 				.replace(new RegExp(`${i18n.langPacksStore}\\s*=\\s*{}`), `${i18n.langPacksStore}=${JSON.stringify(langPacs)}`);
+		}
+
+		function setLocalizedVarsDecl(path, locale) {
+			return fs
+				.readFileSync(path, {encoding: 'utf8'})
+				.replace(/\.vars-decl\.js/, `.vars-decl_${locale}.js`);
 		}
 	}
 };

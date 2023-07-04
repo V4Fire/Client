@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v??? (2023-07-??)
+
+#### :rocket: New Feature
+
+* Added the ability to build initial HTML file without any inline Javascript by configuring `webpack.externalizeInitial`
+
 ## v3.33.0 (2022-12-28)
 
 #### :rocket: New Feature

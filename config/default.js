@@ -324,7 +324,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if all resources from the initial entry point should be embedded in HTML files
+		 * Returns true if all resources from the initial entry point should be embedded in HTML files.
+		 * Otherwise, they will be loaded via tags, either dynamically inserted or inlined
 		 *
 		 * @cli inline-initial
 		 * @env INLINE_INITIAL
@@ -337,6 +338,33 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true,
 				type: 'boolean',
 				default: def
+			});
+		},
+
+		/**
+		 * Returns true if all resources from the initial entry point should be loaded via tags,
+		 * with no inline Javascript involved
+		 *
+		 * @cli externalize-initial
+		 * @env EXTERNALIZE_INITIAL
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		externalizeInitial(def = false) {
+			return o('externalize-initial', {
+				env: true,
+				type: 'boolean',
+				default: def,
+				validate: (externalizeInitial) => {
+					const {webpack} = this.config;
+
+					return !externalizeInitial || (
+						!webpack.dynamicPublicPath() &&
+						!webpack.inlineInital &&
+						!webpack.fatHTML()
+					);
+				}
 			});
 		},
 
