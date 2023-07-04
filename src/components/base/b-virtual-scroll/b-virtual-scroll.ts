@@ -294,6 +294,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers {
 		if (reason === renderGuardRejectionReason.notEnoughData) {
 			if (state.isRequestsStopped) {
 				this.performRender();
+				this.onLifecycleDone();
 
 			} else if (this.shouldPerformDataRequestWrapper()) {
 				void this.initLoad();

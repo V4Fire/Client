@@ -152,9 +152,9 @@ test.describe('<b-virtual-scroll> emitter', () => {
 			['renderEngineStart'],
 			['renderEngineDone'],
 			['domInsertStart'],
+			['lifecycleDone'],
 			['domInsertDone'],
-			['renderDone'],
-			['lifecycleDone']
+			['renderDone']
 		]);
 	});
 

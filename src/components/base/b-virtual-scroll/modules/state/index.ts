@@ -21,7 +21,7 @@ export class ComponentInternalState extends Friend {
 	/**
 	 * Current state of the component.
 	 */
-	state: VirtualScrollState = createInitialState();
+	protected state: VirtualScrollState = createInitialState();
 
 	/**
 	 * Current private state of the component.

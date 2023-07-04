@@ -40,179 +40,245 @@ test.describe('<b-virtual-scroll>', () => {
 		await provider.start();
 	});
 
-	test('2', async () => {
-		const
-			chunkSize = 12,
-			providerChunkSize = chunkSize / 2;
+	test.describe('Property `chunkSize` is set to 12', () => {
+		test.describe('Loaded data array is half length of the `chunkSize` prop', () => {
+			test.describe('`shouldPerformDataRequest` returns true after the initial loading', () => {
+				let
+					shouldStopRequestingData,
+					shouldPerformDataRequest;
 
-		const
-			shouldStopRequestingData = await component.mockFn(() => false),
-			shouldPerformDataRequest = await component.mockFn(defaultShouldProps.shouldPerformDataRequest);
+				let
+					firstDataChunk,
+					secondDataChunk;
 
-		const
-			firstDataChunk = state.data.addData(providerChunkSize),
-			secondDataChunk = state.data.addData(providerChunkSize);
+				const
+					chunkSize = 12;
 
-		state.data.addItems(chunkSize);
+				test.beforeEach(async () => {
+					const providerChunkSize = chunkSize / 2;
 
-		await component.setProps({
-			chunkSize,
-			shouldStopRequestingData,
-			shouldPerformDataRequest,
-			disableObserver: true,
-			...hookProp
+					shouldStopRequestingData = await component.mockFn(() => false);
+					shouldPerformDataRequest = await component.mockFn(defaultShouldProps.shouldPerformDataRequest);
+
+					firstDataChunk = state.data.addData(providerChunkSize);
+					secondDataChunk = state.data.addData(providerChunkSize);
+
+					state.data.addItems(chunkSize);
+
+					await component.setProps({
+						chunkSize,
+						shouldStopRequestingData,
+						shouldPerformDataRequest,
+						disableObserver: true,
+						...hookProp
+					});
+
+					await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
+					await component.build();
+					await component.waitForContainerChildCountEqualsTo(chunkSize);
+				});
+
+				test('Should render 12 items', async () => {
+					await test.expect(component.getContainerChildCount()).resolves.toBe(chunkSize);
+				});
+
+				test('Should call `shouldStopRequestingData` twice', async () => {
+					await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
+						[
+							state.compile({
+								itemsTillEnd: undefined,
+								childTillEnd: undefined,
+								maxViewedItem: undefined,
+								maxViewedChild: undefined,
+								isRequestsStopped: false,
+								lastLoadedData: firstDataChunk,
+								lastLoadedRawData: {data: firstDataChunk},
+								data: firstDataChunk,
+								loadPage: 1
+							}),
+							test.expect.any(Object)
+						],
+						[
+							state.compile({
+								itemsTillEnd: undefined,
+								childTillEnd: undefined,
+								maxViewedItem: undefined,
+								maxViewedChild: undefined,
+								isRequestsStopped: false,
+								isInitialLoading: false,
+								lastLoadedData: secondDataChunk,
+								lastLoadedRawData: {data: secondDataChunk},
+								data: state.data.data,
+								loadPage: 2
+							}),
+							test.expect.any(Object)
+						]
+					]);
+				});
+
+				test('Should call `shouldPerformDataRequest` once', async () => {
+					await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
+						[
+							state.compile({
+								itemsTillEnd: undefined,
+								childTillEnd: undefined,
+								maxViewedItem: undefined,
+								maxViewedChild: undefined,
+								isRequestsStopped: false,
+								lastLoadedData: firstDataChunk,
+								lastLoadedRawData: {data: firstDataChunk},
+								data: firstDataChunk,
+								loadPage: 1
+							}),
+							test.expect.any(Object)
+						]
+					]);
+				});
+
+				test('Should call `initLoad` twice', async () => {
+					await test.expect(initLoadSpy.calls).resolves.toEqual([[], []]);
+				});
+			});
 		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(chunkSize);
-
-		await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
-			[
-				state.compile({
-					itemsTillEnd: undefined,
-					childTillEnd: undefined,
-					maxViewedItem: undefined,
-					maxViewedChild: undefined,
-					isRequestsStopped: false,
-					lastLoadedData: firstDataChunk,
-					lastLoadedRawData: {data: firstDataChunk},
-					data: firstDataChunk,
-					loadPage: 1
-				}),
-				test.expect.any(Object)
-			],
-			[
-				state.compile({
-					itemsTillEnd: undefined,
-					childTillEnd: undefined,
-					maxViewedItem: undefined,
-					maxViewedChild: undefined,
-					isRequestsStopped: false,
-					isInitialLoading: false,
-					lastLoadedData: secondDataChunk,
-					lastLoadedRawData: {data: secondDataChunk},
-					data: state.data.data,
-					loadPage: 2
-				}),
-				test.expect.any(Object)
-			]
-		]);
-
-		await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
-			[
-				state.compile({
-					itemsTillEnd: undefined,
-					childTillEnd: undefined,
-					maxViewedItem: undefined,
-					maxViewedChild: undefined,
-					isRequestsStopped: false,
-					lastLoadedData: firstDataChunk,
-					lastLoadedRawData: {data: firstDataChunk},
-					data: firstDataChunk,
-					loadPage: 1
-				}),
-				test.expect.any(Object)
-			]
-		]);
-
-		await test.expect(initLoadSpy.calls).resolves.toEqual([[], []]);
 	});
 
-	test('3', async () => {
-		const
-			chunkSize = 12,
-			providerChunkSize = chunkSize / 2;
+	test.describe('Property `chunkSize` is set to 12', () => {
+		test.describe('Loaded data array is half length of the `chunkSize` prop', () => {
+			test.describe('`shouldPerformDataRequest` returns false after the initial loading', () => {
+				let
+					shouldStopRequestingData,
+					shouldPerformDataRequest;
 
-		const
-			shouldStopRequestingData = await component.mockFn(() => false),
-			shouldPerformDataRequest = await component.mockFn(() => false);
+				const
+					chunkSize = 12,
+					providerChunkSize = chunkSize / 2;
 
-		state.data.addData(providerChunkSize);
-		state.data.addItems(providerChunkSize);
+				test.beforeEach(async () => {
+					shouldStopRequestingData = await component.mockFn(() => false);
+					shouldPerformDataRequest = await component.mockFn(() => false);
 
-		await component.setProps({
-			chunkSize,
-			shouldStopRequestingData,
-			shouldPerformDataRequest,
-			disableObserver: true,
-			...hookProp
+					state.data.addData(providerChunkSize);
+					state.data.addItems(providerChunkSize);
+
+					await component.setProps({
+						chunkSize,
+						shouldStopRequestingData,
+						shouldPerformDataRequest,
+						disableObserver: true,
+						...hookProp
+					});
+
+					await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
+					await component.build();
+					await component.waitForContainerChildCountEqualsTo(providerChunkSize);
+				});
+
+				test('Should render 6 items', async () => {
+					await test.expect(component.getContainerChildCount()).resolves.toBe(providerChunkSize);
+				});
+
+				test('Should call `shouldStopRequestingData` once', async () => {
+					await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
+						[
+							state.compile({
+								itemsTillEnd: undefined,
+								childTillEnd: undefined,
+								maxViewedItem: undefined,
+								maxViewedChild: undefined,
+								isRequestsStopped: false,
+								loadPage: 1
+							}),
+							test.expect.any(Object)
+						]
+					]);
+				});
+
+				test('Should call `shouldPerformDataRequest` once', async () => {
+					await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
+						[
+							state.compile({
+								itemsTillEnd: undefined,
+								childTillEnd: undefined,
+								maxViewedItem: undefined,
+								maxViewedChild: undefined,
+								isRequestsStopped: false,
+								loadPage: 1
+							}),
+							test.expect.any(Object)
+						]
+					]);
+				});
+
+				test('Should call `initLoad` once', async () => {
+					await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
+				});
+			});
 		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(providerChunkSize);
-
-		await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
-			[
-				state.compile({
-					itemsTillEnd: undefined,
-					childTillEnd: undefined,
-					maxViewedItem: undefined,
-					maxViewedChild: undefined,
-					isRequestsStopped: false,
-					loadPage: 1
-				}),
-				test.expect.any(Object)
-			]
-		]);
-
-		await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
-			[
-				state.compile({
-					itemsTillEnd: undefined,
-					childTillEnd: undefined,
-					maxViewedItem: undefined,
-					maxViewedChild: undefined,
-					isRequestsStopped: false,
-					loadPage: 1
-				}),
-				test.expect.any(Object)
-			]
-		]);
-
-		await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
 	});
 
-	test('4', async () => {
-		const
-			chunkSize = 12,
-			providerChunkSize = chunkSize / 2;
+	test.describe('Property `chunkSize` is set to 12', () => {
+		test.describe('Loaded data array is half length of the `chunkSize` prop', () => {
+			test.describe('`shouldStopRequestingData` returns true after the initial loading', () => {
+				const
+					chunkSize = 12,
+					providerChunkSize = chunkSize / 2;
 
-		const
-			shouldStopRequestingData = await component.mockFn(() => true),
-			shouldPerformDataRequest = await component.mockFn(() => false);
+				let
+					shouldStopRequestingData,
+					shouldPerformDataRequest;
 
-		state.data.addData(providerChunkSize);
-		state.data.addItems(providerChunkSize);
+				test.beforeEach(async () => {
+					shouldStopRequestingData = await component.mockFn(() => true);
+					shouldPerformDataRequest = await component.mockFn(() => false);
 
-		await component.setProps({
-			chunkSize,
-			shouldStopRequestingData,
-			shouldPerformDataRequest,
-			disableObserver: true,
-			...hookProp
+					state.data.addData(providerChunkSize);
+					state.data.addItems(providerChunkSize);
+
+					await component.setProps({
+						chunkSize,
+						shouldStopRequestingData,
+						shouldPerformDataRequest,
+						disableObserver: true,
+						...hookProp
+					});
+
+					await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
+					await component.build();
+					await component.waitForContainerChildCountEqualsTo(providerChunkSize);
+				});
+
+				test('Should render 6 items', async () => {
+					await test.expect(component.getContainerChildCount()).resolves.toBe(providerChunkSize);
+				});
+
+				test('Should call `shouldStopRequestingData` once', async () => {
+					await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
+						[
+							state.compile({
+								itemsTillEnd: undefined,
+								childTillEnd: undefined,
+								maxViewedItem: undefined,
+								maxViewedChild: undefined,
+								isRequestsStopped: false,
+								loadPage: 1
+							}),
+							test.expect.any(Object)
+						]
+					]);
+				});
+
+				test('Should call `shouldPerformDataRequest` once', async () => {
+					await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([]);
+				});
+
+				test('Should call `initLoad` once', async () => {
+					await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
+				});
+
+				test('Should end the component lifecycle', async () => {
+					await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
+				});
+			});
 		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(providerChunkSize);
-
-		await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
-			[
-				state.compile({
-					itemsTillEnd: undefined,
-					childTillEnd: undefined,
-					maxViewedItem: undefined,
-					maxViewedChild: undefined,
-					isRequestsStopped: false,
-					loadPage: 1
-				}),
-				test.expect.any(Object)
-			]
-		]);
-
-		await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
-		await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([]);
 	});
 });
