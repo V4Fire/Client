@@ -61,7 +61,7 @@ test.describe('components/directives/image', () => {
 			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
 		});
 
-		test('the attributes of the image and the wrapper should indicate image preview if the image is not loaded yet',
+		test('the attributes of the image and the wrapper should indicate that image is a preview if the image is not loaded yet',
 			async ({page, context}) => {
 				await context.route(SLOW_LOAD_PICTURE_SRC, (route) => {
 					const buffer = getPngBuffer();
@@ -87,7 +87,7 @@ test.describe('components/directives/image', () => {
 				await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
 			});
 
-		test('the attributes of the image and the wrapper should indicate fallback image when main image failed loading',
+		test('the attributes of the image and the wrapper should indicate that image is a fallback when main image failed loading',
 			async ({page}) => {
 				const {imageWrapper, image} = await createImageForTest(page, {
 					src: BROKEN_PICTURE_SRC,
