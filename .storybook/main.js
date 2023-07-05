@@ -1,5 +1,3 @@
-const path = require('path');
-
 /** @type { import('@storybook/html-webpack5').StorybookConfig } */
 const config = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
