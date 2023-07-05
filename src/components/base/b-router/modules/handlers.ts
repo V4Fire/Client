@@ -15,6 +15,7 @@ import type bRouter from 'components/base/b-router/b-router';
 /**
  * Handler: there was a click on an element with the `href` attribute
  * @param e
+ * @emits `linkNavigate(event:` [[CustomEvent]]`)`
  */
 export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 	const
@@ -36,9 +37,14 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 
 	e.preventDefault();
 
-	const linkNavigateEvent = new Event('linkNavigate', {cancelable: true});
+	const linkNavigateEvent = new CustomEvent('linkNavigate', {
+		cancelable: true,
+		detail: {
+			href
+		}
+	});
 
-	this.emit('linkNavigate', linkNavigateEvent, href);
+	this.emit('linkNavigate', linkNavigateEvent);
 
 	if (linkNavigateEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
 		return;
