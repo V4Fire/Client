@@ -13,8 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added new methods `getHref`
-* Added possibility to prevent link navigate
+* Added possibility to prevent link navigate by blocking the new CustomEvent `linkNavigate`
 
 ## v4.0.0-beta.7 (2023-06-27)
 
