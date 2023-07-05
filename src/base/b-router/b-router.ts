@@ -828,6 +828,7 @@ export default class bRouter extends iData {
 	/**
 	 * Handler: click on an element with the `href` attribute
 	 * @param e
+	 * @emits `linkNavigate(event:` [[CustomEvent]]`)`
 	 */
 	@watch({
 		field: 'document:click',
@@ -853,9 +854,14 @@ export default class bRouter extends iData {
 
 		e.preventDefault();
 
-		const linkNavigateEvent = new Event('linkNavigate', {cancelable: true});
+		const linkNavigateEvent = new CustomEvent('linkNavigate', {
+			cancelable: true,
+			detail: {
+				href
+			}
+		});
 
-		this.emit('linkNavigate', linkNavigateEvent, href);
+		this.emit('linkNavigate', linkNavigateEvent);
 
 		if (linkNavigateEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
 			return;
