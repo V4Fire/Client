@@ -15,7 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added possibility to prevent link navigate
+* Added new method `getHref`
+* Added possibility to prevent link navigate by blocking the new CustomEvent `linkNavigate`
 
 ## v3.46.3 (2023-04-28)
 
