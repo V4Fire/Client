@@ -16,8 +16,9 @@ const config: Meta<bButton> = {
 	component: 'b-button',
 	tags: ['autodocs'],
 	argTypes: {
-		label: {
-			defaultValue: ''
+		type: {
+			control: 'inline-radio',
+			options: ['button', 'submit']
 		}
 	}
 };
@@ -27,8 +28,7 @@ export default config;
 // More on writing stories with args: https://storybook.js.org/docs/html/writing-stories/args
 export const Primary = {
 	args: {
-		children: {
-			default: 'Hello'
-		}
+		type: 'button',
+		'slot:default': 'Hello'
 	}
 };
