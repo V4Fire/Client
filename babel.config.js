@@ -6,10 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import '@v4fire/core/core';
+'use strict';
 
-//#unless runtime has storybook
-import 'core/init';
-
-export { default as initApp } from 'core/init';
-//#endunless
+module.exports = {
+	sourceType: 'unambiguous',
+	presets: [
+		['@babel/preset-typescript'],
+		['@babel/preset-env']
+	]
+};

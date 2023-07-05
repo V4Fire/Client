@@ -40,7 +40,9 @@
     "test:eslint": "npx jest --config jest-eslint.config.js",
     "test:jest": "cross-env NODE_ENV=development && jest",
     "test:ci:jest": "cross-env NODE_ENV=development && jest --maxWorkers 4 --reporters github-actions",
-    "test:circular-deps": "dpdm --exit-code circular:1 --circular -T --warning false --no-tree src/**/**/*.ts src/**/*.ts"
+    "test:circular-deps": "dpdm --exit-code circular:1 --circular -T --warning false --no-tree src/**/**/*.ts src/**/*.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@babel/core": "7.17.5",
@@ -139,6 +141,11 @@
   },
   "devDependencies": {
     "@playwright/test": "1.32.1",
+    "@storybook/addon-essentials": "7.0.24",
+    "@storybook/addon-interactions": "7.0.24",
+    "@storybook/addon-links": "7.0.24",
+    "@storybook/blocks": "7.0.24",
+    "@storybook/testing-library": "0.0.14-next.2",
     "@types/glob": "7.2.0",
     "@types/jest": "29.5.1",
     "@types/semver": "7.3.10",
@@ -146,12 +153,17 @@
     "@v4fire/cli": "^1.6.0",
     "@v4fire/core": "github:V4Fire/Core#v4",
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules",
+    "@v4fire/storybook": "0.1.0",
+    "@v4fire/storybook-framework-webpack5": "0.1.0",
     "dpdm": "3.10.0",
     "husky": "7.0.4",
     "jest": "29.5.0",
     "jest-runner-eslint": "2.0.0",
     "nyc": "15.1.0",
     "playwright": "1.32.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "storybook": "7.0.24",
     "ts-jest": "29.1.0"
   },
   "peerDependencies": {
@@ -159,6 +171,8 @@
     "webpack": "^5.82.1"
   },
   "resolutions": {
-    "sharp": "0.31.3"
+    "sharp": "0.31.3",
+    "@v4fire/storybook-framework-webpack5": "portal:/Users/dlartagnan/Documents/Projects/v4fire/Storybook/packages/frameworks/v4fire-webpack5",
+    "@v4fire/storybook": "portal:/Users/dlartagnan/Documents/Projects/v4fire/Storybook/packages/renderers/v4fire"
   }
 }

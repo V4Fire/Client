@@ -221,7 +221,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {?string}
 		 */
 		target(
-			def = /ES[35]$/.test(this.config.es()) ?
+			def = /ES[35]$/.test(this.config.es()) && !this.webpack.storybook() ?
 				'browserslist:ie 11' :
 				'web'
 		) {
@@ -319,6 +319,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true,
 				type: 'number',
 				coerce: (value) => value === 'script-link' ? 2 : Number(value),
+				default: def
+			});
+		},
+
+		/**
+		 * Returns true if the bundle should be built for the storybook
+		 *
+		 * @cli storybook
+		 * @env STORYBOOK
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		storybook(def = false) {
+			return o('storybook', {
+				env: true,
+				type: 'boolean',
 				default: def
 			});
 		},
@@ -489,7 +506,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			});
 
 			if (!Object.isString(pathVal)) {
-				pathVal = '';
+				pathVal = this.webpack.storybook() ? '/' : '';
 			}
 
 			if (pathVal[0] === '\\') {
@@ -1077,7 +1094,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			blockNames: false,
 			passDesignSystem: false,
 
-			'prelude/test-env': !isProd && !this.webpack.ssr
+			'prelude/test-env': !isProd && !this.webpack.ssr,
+			storybook: this.webpack.storybook()
 		};
 	},
 
