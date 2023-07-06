@@ -16,6 +16,6 @@ export { default } from 'components/friends/field/class';
 export * from 'components/friends/field/api';
 export * from 'components/friends/field/interface';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/friends/field/test/b-friends-field-dummy');
 //#endif

@@ -17,7 +17,7 @@ import { is } from 'core/browser';
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModEvent } from 'components/super/i-block/i-block';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy');
 //#endif
 

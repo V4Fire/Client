@@ -1095,7 +1095,13 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			passDesignSystem: false,
 
 			'prelude/test-env': !isProd && !this.webpack.ssr,
-			storybook: this.webpack.storybook()
+			storybook: this.webpack.storybook(),
+
+			dummyComponents: o('runtime-dummy-components', {
+				env: true,
+				type: 'boolean',
+				default: false
+			})
 		};
 	},
 

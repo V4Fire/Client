@@ -25,7 +25,7 @@ import type {
 
 } from 'components/traits/i-observe-dom/interface';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy');
 //#endif
 

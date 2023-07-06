@@ -11,6 +11,9 @@ jobs:
   # Run playwright tests
   components:
     runs-on: ubuntu-latest
+    env:
+      RUNTIME_DUMMY_COMPONENTS: true
+
     timeout-minutes: 60
 
     strategy:
