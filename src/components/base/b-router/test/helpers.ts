@@ -6,18 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type iStaticPage from 'components/super/i-static-page/i-static-page';
-
 import { Component, Utils } from 'tests/helpers';
 
-import type {
-
-	EngineName,
-	InitRouter,
-	LinkNavigateOptions,
-	RouterTestResult
-
-} from 'components/base/b-router/test/interface';
+import type { EngineName, InitRouter } from 'components/base/b-router/test/interface';
 
 import type { Router } from 'components/base/b-router/interface';
 
@@ -149,44 +140,4 @@ export function createInitRouter(engineName: EngineName): InitRouter {
 
 		return Component.waitForRoot(page);
 	};
-}
-
-/**
- * Create a router transition by clicking the link. Returns the payload from the linkNavigate event
- *
- * @param page
- * @param linkOpts - link options
- */
-export async function createLinkNavigate(page: iStaticPage, linkOpts: LinkNavigateOptions): Promise<RouterTestResult> {
-	await page.router!.push('/');
-
-	const
-		{href, preventTransition} = linkOpts,
-		link = document.createElement('a');
-
-	link.href = href;
-	link.text = 'linkWithHref';
-
-	page.$el!.appendChild(link);
-
-	const {router} = page;
-
-	const result: RouterTestResult = {};
-
-	router!.on('onLinkNavigate', (event: CustomEvent) => {
-		if (preventTransition) {
-			event.preventDefault();
-		}
-
-		if (result.onLinkNavigate != null) {
-			result.onLinkNavigate.push(event.detail?.href);
-
-		} else {
-			result.onLinkNavigate = [event.detail?.href];
-		}
-	});
-
-	link.click();
-
-	return result;
 }
