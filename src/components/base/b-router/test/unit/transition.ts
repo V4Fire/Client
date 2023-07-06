@@ -14,7 +14,7 @@ import { Component } from 'tests/helpers';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import type { EngineName, RouterTestResult } from 'components/base/b-router/test/interface';
-import { createInitRouter } from 'components/base/b-router/test/helpers';
+import { createInitRouter, createLinkNavigate } from 'components/base/b-router/test/helpers';
 
 test.describe('<b-router> transition', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -397,6 +397,26 @@ function generateSpecs(engineName: EngineName) {
 			queryObject: {rootParam: 1},
 			queryString: engineName === 'in-memory' ? '' : '?rootParam=1'
 		});
+	});
+
+	test('should emit `linkNavigate` by clicking the link', async ({page}) => {
+		await test.expect(root.evaluate(
+			createLinkNavigate, {href: '/second-page'}
+		)).resolves.toEqual('/second-page');
+
+		if (engineName === 'history') {
+			test.expect(new URL(page.url()).pathname).toBe('/second-page');
+		}
+	});
+
+	test('should prevent `linkNavigate` transition by listener on the page ', async ({page}) => {
+		await test.expect(root.evaluate(
+			createLinkNavigate, {href: '/second-page', preventTransition: true}
+		)).resolves.toEqual('/second-page');
+
+		if (engineName === 'history') {
+			test.expect(new URL(page.url()).pathname).not.toBe('/second-page');
+		}
 	});
 
 	/**

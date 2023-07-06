@@ -32,3 +32,18 @@ export interface RouterTestResult {
 	initialRouteLink?: unknown;
 	routeLink?: unknown;
 }
+
+/**
+ * Link options
+ */
+export interface LinkNavigateOptions {
+	/**
+	 * Href to navigate
+	 */
+	href: string;
+
+	/**
+	 * True if router transition should be prevented
+	 */
+	preventTransition?: boolean;
+}

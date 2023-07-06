@@ -14,6 +14,7 @@ import type bRouter from 'components/base/b-router/b-router';
 
 /**
  * Handler: there was a click on an element with the `href` attribute
+ *
  * @param e
  * @emits `linkNavigate(event:` [[CustomEvent]]`)`
  */
