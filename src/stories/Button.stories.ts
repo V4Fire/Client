@@ -29,6 +29,6 @@ export default config;
 export const Primary = {
 	args: {
 		type: 'button',
-		'slot:default': 'Hello'
+		'slot-default': 'Hello'
 	}
 };
