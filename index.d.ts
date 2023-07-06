@@ -113,6 +113,19 @@ declare var
 	removeCreatedComponents: () => void,
 
 	/**
+	 * Storybook helpers
+	 */
+	v4fireStorybook: {
+
+		/**
+		 * Inits the app for the storybook canvas
+		 *
+		 * @param canvasElement - storybook canvas element
+		 */
+		initApp(canvasElement: HTMLElement): Promise<import('./src/core/component').App>;
+	},
+
+	/**
 	 * Requires a module by the specified path.
 	 * This function should only be used when writing tests.
 	 */
