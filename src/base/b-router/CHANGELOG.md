@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added possibility to prevent link navigate by blocking the new CustomEvent `linkNavigate`
+* Added new event `linkNavigate` to provide the capability to prevent router transition upon link click
 
 ## v3.44.3 (2023-03-30)
 
