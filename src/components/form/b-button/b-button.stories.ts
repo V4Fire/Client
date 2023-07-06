@@ -26,7 +26,7 @@ const config: Meta<bButton> = {
 export default config;
 
 // More on writing stories with args: https://storybook.js.org/docs/html/writing-stories/args
-export const Primary = {
+export const Default = {
 	args: {
 		type: 'button',
 		'slot-default': 'Hello'
