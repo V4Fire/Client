@@ -4,8 +4,9 @@ This module provides a plugin for loading language packs to internationalize the
 
 ## Where are language packs stored?
 
-Language packs should be located inside folders named `i18n` and have the same name as the locale for which the pack is declared.
-For example, __b-select/i18n/en.js__.
+The language packs ought to be stored within folders labeled `i18n`,
+with their filename reflecting the locale to which they pertain.
+For instance, an English language pack should be named 'en.js' and located in the `b-select/i18n/` directory.
 
 ```js
 module.exports = {
@@ -15,7 +16,8 @@ module.exports = {
 };
 ```
 
-You can read more about the format of language packs in the documentation of the [[lang]] module.
+To gain a deeper understanding of the language pack formatting,
+you're encouraged to refer to the [[lang]] module documentation.
 
 ## Is it possible to specify for which locales language packs should be included?
 
@@ -33,7 +35,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 });
 ```
 
-By default, only the locale specified in the `locale` option of the global config is loaded.
+By default, only the language pack corresponding to the locale defined in the `locale` option of
+the global configuration settings is loaded.
 
 ```js
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
@@ -43,7 +46,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 });
 ```
 
-Also, you can specify a list of supported locales using CLI parameters or environment variables.
+Moreover, you have the option to specify a list of supported locales by leveraging CLI parameters or
+environment variables.
 
 ```bash
 npx webpack --env supported-locales=en,ru
@@ -55,10 +59,10 @@ Or
 export SUPPORTED_LOCALES=en,ru npx webpack
 ```
 
-## How exactly are language packs added to an application?
+## How are language packs precisely incorporated into an application?
 
-There are several strategies.
-You can choose which strategy to use via the global `i18n.strategy` config.
+There exist multiple strategies for this task.
+The strategy of choice can be selected through the global `i18n.strategy` configuration.
 
 ```js
 module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
@@ -72,7 +76,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 });
 ```
 
-In addition, you can specify the strategy to use using CLI options or environment variables..
+Additionally, you can also dictate the strategy to be used via CLI options or environment variables.
 
 ```bash
 npx webpack --env i18n-strategy=inlineMultipleHTML
@@ -86,16 +90,23 @@ export I18N_STRATEGY=inlineMultipleHTML npx webpack
 
 ### inlineSingleHTML
 
-All localization files found will be included in the application HTML files themselves.
-Language packs will be added via the `LANG_PACKS` global variable, but you can customize its name using the `i18n.langPacksStore` option in the global config.
+With this strategy, all detected localization files will be directly incorporated into the HTML files
+of the application itself.
+Language packs will be added via the global variable `LANG_PACKS`.
+However, you have the flexibility to modify its name by utilizing the `i18n.langPacksStore` option
+in the global configuration.
 
 ### inlineMultipleHTML
 
-Based on the application original HTML files, new HTML will be generated for each supported locale.
-For example, if the original file is `p-root.html` and `i18n.supportedLocales=en,ru`, then `p-root_en.html` and `p-root_ru.html` will be generated.
-Language packs will be added via the `LANG_PACKS` global variable, but you can customize its name using the `i18n.langPacksStore` option in the global config.
+In this approach, for each supported locale, new HTML will be generated based on the original HTML application files.
+For instance, if the original file is `p-root.html` and `i18n.supportedLocales` are English and Russian,
+then `p-root_en.html` and `p-root_ru.html` files will be created respectively.
+Like the previous methodology, language packs will be added via the `LANG_PACKS` global variable,
+which can be customized using the `i18n.langPacksStore` option in the global setup.
 
 ### externalMultipleJSON
 
-All found localization files will be combined into several JSON files for each locale.
-For example, `en.json` or `ru.json`. These packs will not be included in the final HTML files - you should do it manually.
+This strategy compiles all discovered localization files into separate JSON files for each locale,
+such as `en.json` or `ru.json`.
+Unlike the other strategies, these language packs will not be automatically incorporated into the final HTML files –
+this step must be manually carried out.

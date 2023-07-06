@@ -17,18 +17,19 @@ const
 	glob = require('fast-glob'),
 	path = require('upath');
 
-/**
- * WebPack plugin for including internationalization files from the file system in HTML applications
- */
 module.exports = class I18NGeneratorPlugin {
 	/**
+	 * This WebPack plugin allows the integration of internationalization files
+	 * from the file system into HTML applications
+	 *
 	 * @param {import('webpack').Compiler} compiler
 	 */
 	apply(compiler) {
 		compiler.hooks.done.tap('I18NGeneratorPlugin', doneHook);
 
 		function doneHook({compilation}) {
-			// Should only run on the last build step when all files are ready and placed in the file system
+			// Should be executed only in the final build step,
+			// ensuring all files are fully prepared and appropriately stored in the file system
 			if (compilation.compiler?.name === 'html') {
 				const
 					configLocale = locale,
@@ -109,8 +110,8 @@ module.exports = class I18NGeneratorPlugin {
 		}
 
 		/**
-		 * Reads the file from the given path and inserts the specified internationalization pack into it
-		 * and returns the new file content
+		 * Reads the file from the given path,
+		 * integrates the chosen internationalization pack into it, and then returns its content
 		 *
 		 * @param {string} path
 		 * @param {object} langPacs
