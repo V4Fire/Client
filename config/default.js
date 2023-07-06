@@ -500,13 +500,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const
 				{concatURLs} = require('@v4fire/core/lib/core/url');
 
+			const def = concatURLs('/', this.config.src.rel('clientOutput'));
+
 			let pathVal = o('public-path', {
 				env: true,
-				default: concatURLs('/', this.config.src.rel('clientOutput'))
+				default: def
 			});
 
 			if (!Object.isString(pathVal)) {
-				pathVal = this.webpack.storybook() ? '/' : '';
+				pathVal = '';
+			}
+
+			if (this.storybook() && pathVal === def) {
+				pathVal = '//';
 			}
 
 			if (pathVal[0] === '\\') {
