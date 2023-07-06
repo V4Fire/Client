@@ -9,6 +9,10 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+* Added `App` interface
+
 ## v3.??.?? (2022-??-??)
 
 #### :boom: Breaking Change
