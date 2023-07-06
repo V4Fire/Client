@@ -343,7 +343,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Returns true if all resources from the initial entry point should be loaded via tags,
-		 * with no inline Javascript involved
+		 * with no inline JavaScript involved
 		 *
 		 * @cli externalize-initial
 		 * @env EXTERNALIZE_INITIAL

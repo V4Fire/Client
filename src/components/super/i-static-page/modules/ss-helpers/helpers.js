@@ -83,12 +83,12 @@ exports.emitFile = emitFile;
  */
 
 /**
- * Creates a new file with the given content and stores it in the output directory.
+ * Creates a new file with the given content and stores it in the output directory
  *
  * @param {string} content - file content
  * @param {string} fileName - file name
  *
- * @returns {PathData} pathData
+ * @returns {PathData}
  */
 function emitFile(content, fileName) {
 	fileName = webpack.output({name: fileName, hash: getHash(content)});

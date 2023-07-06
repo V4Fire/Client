@@ -27,7 +27,9 @@ const
 	{needInline, emitFile} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
 
 const
-	externalizeInitial = webpack.externalizeInitial(),
+	externalizeInitial = webpack.externalizeInitial();
+
+const
 	nonce = csp.nonce(),
 	nonceAttr = {toString: () => nonce, escape: false, interpolate: false};
 
