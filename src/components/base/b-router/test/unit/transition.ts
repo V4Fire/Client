@@ -402,21 +402,29 @@ function generateSpecs(engineName: EngineName) {
 	test('should emit `linkNavigate` by clicking the link', async ({page}) => {
 		await test.expect(root.evaluate(
 			createLinkNavigate, {href: '/second-page'}
-		)).resolves.toEqual('/second-page');
+		)).resolves.toEqual({
+			onLinkNavigate: ['/second-page']
+		});
 
 		if (engineName === 'history') {
 			test.expect(new URL(page.url()).pathname).toBe('/second-page');
 		}
+
+		await assertActivePageIs('second');
 	});
 
 	test('should prevent `linkNavigate` transition by listener on the page ', async ({page}) => {
 		await test.expect(root.evaluate(
 			createLinkNavigate, {href: '/second-page', preventTransition: true}
-		)).resolves.toEqual('/second-page');
+		)).resolves.toEqual({
+			onLinkNavigate: ['/second-page']
+		});
 
 		if (engineName === 'history') {
 			test.expect(new URL(page.url()).pathname).not.toBe('/second-page');
 		}
+
+		await assertActivePageIs('main');
 	});
 
 	/**
