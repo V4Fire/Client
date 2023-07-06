@@ -41,6 +41,26 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
+	src: {
+		/**
+		 * Returns a path to the application dist directory for client scripts
+		 *
+		 * @cli client-output
+		 * @env CLIENT_OUTPUT
+		 *
+		 * @param {string[]} args
+		 * @returns {string}
+		 */
+		clientOutput(...args) {
+			const v = o('client-output', {
+				env: true,
+				default: this.config.webpack.storybook() ? 'storybook' : 'client'
+			});
+
+			return this.output(v, ...args);
+		}
+	},
+
 	build: {
 		/**
 		 * Project build mode

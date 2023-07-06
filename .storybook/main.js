@@ -7,7 +7,7 @@ const config = {
     "@storybook/addon-interactions",
   ],
 	staticDirs: [
-		'../dist/client'
+		'../dist/storybook'
 	],
   framework: {
     name: "@v4fire/storybook-framework-webpack5",
