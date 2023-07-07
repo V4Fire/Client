@@ -12,10 +12,10 @@ import Component, { app, rootComponents, ComponentElement, App } from 'core/comp
  * Inits the app for the storybook canvas
  *
  * @param canvasElement - storybook canvas element
+ * @param [rootComponent] - name of the root component
  */
-export default async function initApp(canvasElement: HTMLElement): Promise<App> {
-	// TODO: create special root component for the storybook
-	const component = await rootComponents['p-v4-components-demo'];
+export default async function initApp(canvasElement: HTMLElement, rootComponent?: string): Promise<App> {
+	const component = await rootComponents[rootComponent ?? 'p-v4-components-demo'];
 
 	if (component == null) {
 		throw new ReferenceError('The root component is not found');
