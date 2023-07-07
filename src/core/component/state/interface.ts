@@ -44,7 +44,7 @@ export interface State {
 	 * @example
 	 * ```js
 	 * ({
-	 *   globalEnvironment: {
+	 *   globalEnv: {
 	 *     location: {
 	 *       href: 'https://foo.com'
 	 *     }
@@ -52,5 +52,5 @@ export interface State {
 	 * })
 	 * ```
 	 */
-	globalEnvironment: Dictionary;
+	globalEnv: Dictionary;
 }

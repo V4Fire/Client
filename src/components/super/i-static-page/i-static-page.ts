@@ -73,7 +73,7 @@ export default abstract class iStaticPage extends iPage {
 	 * A module for manipulating page metadata, such as the page title or description
 	 */
 	@system<iStaticPage>((o) => new PageMetaData({
-		document: Object.cast(o.globalEnvironment.ssrDocument ?? document)
+		document: Object.cast(o.globalEnv.ssrDocument ?? document)
 	}))
 
 	readonly pageMetaData!: PageMetaData;
@@ -122,10 +122,10 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>({
 		atom: true,
-		init: (o) => o.initGlobalEnvironment(globalState.globalEnvironment)
+		init: (o) => o.initGlobalEnv(globalState)
 	})
 
-	globalEnvironment!: Dictionary;
+	globalEnv!: Dictionary;
 
 	/**
 	 * The name of the active route page

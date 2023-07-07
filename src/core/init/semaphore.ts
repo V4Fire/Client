@@ -15,8 +15,13 @@ import flags from 'core/init/flags';
 
 export default createsAsyncSemaphore(async () => {
 	if (SSR) {
-		return async (name: string) => {
-			const component = await rootComponents[name];
+		return async (name?: string) => {
+			if (name == null) {
+				throw new ReferenceError('The root component for rendering is not defined');
+			}
+
+			const
+				component = await rootComponents[name];
 
 			if (component == null) {
 				throw new ReferenceError(`The specified root component "${name}" is not defined`);
@@ -89,5 +94,9 @@ export default createsAsyncSemaphore(async () => {
 		get: () => document.querySelector<ComponentElement>('#root-component')?.component ?? null
 	});
 
-	return () => el;
+	return () => Promise.resolve({
+		render() {
+			return Promise.resolve(el);
+		}
+	});
 }, ...flags);
