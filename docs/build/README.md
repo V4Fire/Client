@@ -8,6 +8,7 @@
 - [Граф зависимостей](#граф-зависимостей)
   - [Создание графа зависимостей](#создание-графа-зависимостей)
   - [Параметры компонентов (build/graph/component-params)](#параметры-компонентов-buildgraphcomponent-params)
+- [Внешние зависимости в (dist/client/lib)](#внешние-зависимости-в-distclientlib)
 - [PZLR](#pzlr)
   - [Модуль block](#модуль-block)
     - [getAll](#getall)
@@ -163,6 +164,14 @@ BUILD_MODE=production npx webpack
 ### Параметры компонентов (build/graph/component-params)
 
 `TODO`: описать назначение
+
+## Внешние зависимости в (dist/client/lib)
+
+Внешние зависимости описаны в `src/components/super/i-static-page/deps.js`.
+В момент сборки они перемещаются в директорию `dist/client/lib`
+и затем подключаются на страницу как отдельные скрипты.
+
+Это сделано для оптимизации сборки за счёт `QUESTION`
 
 ## PZLR
 
