@@ -121,8 +121,9 @@ declare var
 		 * Inits the app for the storybook canvas
 		 *
 		 * @param canvasElement - storybook canvas element
+		 * @param [rootComponent] - name of the root component
 		 */
-		initApp(canvasElement: HTMLElement): Promise<import('./src/core/component').App>;
+		initApp(canvasElement: HTMLElement, rootComponent?: string): Promise<import('./src/core/component').App>;
 	},
 
 	/**
