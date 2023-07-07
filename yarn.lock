@@ -6828,7 +6828,7 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.17.5
     "@storybook/addon-actions": ^7.0.0
-    "@v4fire/client": ^4.0.0-beta.4
+    "@v4fire/client": ^4.0.0-beta.7
     webpack: ^5.82.1
   languageName: node
   linkType: soft
@@ -6844,7 +6844,7 @@ __metadata:
     "@storybook/types": 7.0.18
     type-fest: 3.11.1
   peerDependencies:
-    "@v4fire/client": ^4.0.0-beta.4
+    "@v4fire/client": ^4.0.0-beta.7
     "@v4fire/core": ^4.0.0-alpha.4
   languageName: node
   linkType: soft
