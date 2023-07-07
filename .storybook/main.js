@@ -1,4 +1,4 @@
-/** @type { import('@storybook/html-webpack5').StorybookConfig } */
+/** @type { import('@v4fire/storybook-framework-webpack5').StorybookConfig } */
 const config = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
   addons: [
@@ -11,7 +11,9 @@ const config = {
 	],
   framework: {
     name: "@v4fire/storybook-framework-webpack5",
-    options: {},
+    options: {
+			rootComponent: 'p-v4-components-demo'
+		},
   },
   docs: {
     autodocs: "tag",
