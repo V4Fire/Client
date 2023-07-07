@@ -40,12 +40,12 @@ test.describe('core/kv-storage/engines/cookie', () => {
 			await cookies.evaluate((cookies, [name, data]) => cookies.set(name, data), [cookieName, fixture]);
 		});
 
-		test('should return true if the value by key exists in the cookie', async () => {
+		test('should return true if the value associated with the key exists in the cookie', async () => {
 			const res = await cookieStorage.evaluate(({syncLocalStorage}) => syncLocalStorage.has('key1'));
 			test.expect(res).toBe(true);
 		});
 
-		test('should return false if the value by key does not exist in the cookie', async () => {
+		test('should return false if the value associated with the key does not exist in the cookie', async () => {
 			const res = await cookieStorage.evaluate(({syncLocalStorage}) => syncLocalStorage.has('foo'));
 			test.expect(res).toBe(false);
 		});
@@ -56,19 +56,19 @@ test.describe('core/kv-storage/engines/cookie', () => {
 			await cookies.evaluate((cookies, [name, data]) => cookies.set(name, data), [cookieName, fixture]);
 		});
 
-		test('should return value from cookie by key', async () => {
+		test('should retrieve and return the value from the cookie using the given key', async () => {
 			const res = await cookieStorage.evaluate(({syncLocalStorage}) => syncLocalStorage.get('key1'));
 			test.expect(res).toBe('val1');
 		});
 
-		test('should return undefined for a key that is not in the cookie', async () => {
+		test('should return `undefined` for a key that is not present in the cookie', async () => {
 			const res = await cookieStorage.evaluate(({syncLocalStorage}) => syncLocalStorage.get('foo'));
 			test.expect(res).toBeUndefined();
 		});
 	});
 
 	test.describe('`set`', () => {
-		test('should set cookie values by given keys', async () => {
+		test('should set cookie values based on the provided keys', async () => {
 			let cookieValue = await cookies.evaluate((ctx, [name]) => ctx.get(name), [cookieName]);
 
 			test.expect(cookieValue).toBe(undefined);
@@ -96,7 +96,7 @@ test.describe('core/kv-storage/engines/cookie', () => {
 			await cookies.evaluate((ctx, [name, data]) => ctx.set(name, data), [cookieName, fixture]);
 		});
 
-		test('should remove value from cookie by key', async () => {
+		test('should remove the value from the cookie based on the provided key', async () => {
 			await cookieStorage.evaluate(({syncLocalStorage}) => syncLocalStorage.remove('key1'));
 
 			const
@@ -111,7 +111,7 @@ test.describe('core/kv-storage/engines/cookie', () => {
 			await cookies.evaluate((ctx, [name, data]) => ctx.set(name, data), [cookieName, fixture]);
 		});
 
-		test('should clear all values', async () => {
+		test('should clear all values from the cookie', async () => {
 			await cookieStorage.evaluate(({syncLocalStorage}) => syncLocalStorage.clear());
 
 			const
@@ -120,7 +120,7 @@ test.describe('core/kv-storage/engines/cookie', () => {
 			test.expect(cookieValue).toBe(undefined);
 		});
 
-		test('should clear only those values that match the predicate', async () => {
+		test('should clear only those values that satisfy the given predicate', async () => {
 			await cookieStorage.evaluate(({syncLocalStorage}) => syncLocalStorage.clear((el) => el === 'val1'));
 
 			const
