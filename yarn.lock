@@ -6407,6 +6407,7 @@ __metadata:
     hash-files: 1.1.1
     hasha: 5.2.2
     html-loader: 4.2.0
+    html-webpack-plugin: 5.5.0
     husky: 7.0.4
     image-webpack-loader: 7.0.1
     imagemin-webp: 6.0.0
@@ -6842,6 +6843,7 @@ __metadata:
     "@storybook/global": ^5.0.0
     "@storybook/preview-api": 7.0.18
     "@storybook/types": 7.0.18
+    "@v4fire/storybook-framework-webpack5": "workspace:^"
     type-fest: 3.11.1
   peerDependencies:
     "@v4fire/client": ^4.0.0-beta.7
@@ -15158,6 +15160,21 @@ __metadata:
   bin:
     html-minifier: ./cli.js
   checksum: 66a86841a8b919a11a13d9b80176845cfbc5dda6e88efea2cf312ecc07427d9eab4aca70537357583e5e66ee1e62da14e035792eea000f8f3a9ca1856b2fb2b2
+  languageName: node
+  linkType: hard
+
+"html-webpack-plugin@npm:5.5.0":
+  version: 5.5.0
+  resolution: "html-webpack-plugin@npm:5.5.0"
+  dependencies:
+    "@types/html-minifier-terser": ^6.0.0
+    html-minifier-terser: ^6.0.2
+    lodash: ^4.17.21
+    pretty-error: ^4.0.0
+    tapable: ^2.0.0
+  peerDependencies:
+    webpack: ^5.20.0
+  checksum: f3d84d0df71fe2f5bac533cc74dce41ab058558cdcc6ff767d166a2abf1cf6fb8491d54d60ddbb34e95c00394e379ba52e0468e0284d1d0cc6a42987056e8219
   languageName: node
   linkType: hard
 
