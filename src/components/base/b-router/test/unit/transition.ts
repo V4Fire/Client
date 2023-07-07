@@ -13,7 +13,7 @@ import { Component } from 'tests/helpers';
 
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
-import type { EngineName, RouterTestResult, LinkNavigateOptions } from 'components/base/b-router/test/interface';
+import type { EngineName, RouterTestResult } from 'components/base/b-router/test/interface';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
 
 test.describe('<b-router> transition', () => {
@@ -400,10 +400,32 @@ function generateSpecs(engineName: EngineName) {
 	});
 
 	test.describe('should emit `linkNavigate` by clicking the link', () => {
+		const linkId = 'linkWithHref';
+
+		test.beforeEach(async ({page}) => {
+			await Component.createComponent(page, 'a', {
+				id: linkId,
+				href: '/second-page',
+				text: linkId
+			});
+
+			await root.evaluate((page) => page.router!.push('/'));
+		});
+
 		test('without prevent router transition', async ({page}) => {
-			await test.expect(root.evaluate(
-				createAndProcessLinkNavigate, {href: '/second-page'}
-			)).resolves.toEqual({
+			const linkClickResult = root.evaluate<RouterTestResult>(
+				(page) => new Promise((resolve) => {
+					page.router!.on('onLinkNavigate', (event: CustomEvent) => {
+						resolve({
+							onLinkNavigate: [event.detail?.href]
+						});
+					});
+				})
+			);
+
+			await page.locator(`#${linkId}`).click();
+
+			await test.expect(linkClickResult).resolves.toEqual({
 				onLinkNavigate: ['/second-page']
 			});
 
@@ -415,9 +437,21 @@ function generateSpecs(engineName: EngineName) {
 		});
 
 		test('with prevent router transition', async ({page}) => {
-			await test.expect(root.evaluate(
-				createAndProcessLinkNavigate, {href: '/second-page', preventTransition: true}
-			)).resolves.toEqual({
+			const linkClickResult = root.evaluate<RouterTestResult>(
+				(page) => new Promise((resolve) => {
+					page.router!.on('onLinkNavigate', (event: CustomEvent) => {
+						event.preventDefault();
+
+						resolve({
+							onLinkNavigate: [event.detail?.href]
+						});
+					});
+				})
+			);
+
+			await page.locator(`#${linkId}`).click();
+
+			await test.expect(linkClickResult).resolves.toEqual({
 				onLinkNavigate: ['/second-page']
 			});
 
@@ -427,49 +461,6 @@ function generateSpecs(engineName: EngineName) {
 
 			await assertActivePageIs('main');
 		});
-
-		/**
-		 * Create a router transition by clicking the link. Returns the payload from the linkNavigate event
-		 *
-		 * @param page
-		 * @param linkOpts - link options
-		 */
-		async function createAndProcessLinkNavigate(
-			page: iStaticPage,
-			linkOpts: LinkNavigateOptions
-		): Promise<RouterTestResult> {
-			await page.router!.push('/');
-
-			const
-				{href, preventTransition} = linkOpts,
-				link = document.createElement('a');
-
-			link.href = href;
-			link.text = 'linkWithHref';
-
-			page.$el!.appendChild(link);
-
-			const {router} = page;
-
-			const result: RouterTestResult = {};
-
-			router!.on('onLinkNavigate', (event: CustomEvent) => {
-				if (preventTransition) {
-					event.preventDefault();
-				}
-
-				if (result.onLinkNavigate != null) {
-					result.onLinkNavigate.push(event.detail?.href);
-
-				} else {
-					result.onLinkNavigate = [event.detail?.href];
-				}
-			});
-
-			link.click();
-
-			return result;
-		}
 	});
 
 	/**
