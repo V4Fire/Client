@@ -96,6 +96,9 @@ Language packs will be added via the global variable `LANG_PACKS`.
 However, you have the flexibility to modify its name by utilizing the `i18n.langPacksStore` option
 in the global configuration.
 
+Note: Setting the `externalizeInitial` option to `true` disables the inlining of assets into HTML.
+Therefore, when this option is enabled, the language packs will be inlined into the script file with vars declaration.
+
 ### inlineMultipleHTML
 
 In this approach, for each supported locale, new HTML will be generated based on the original HTML application files.
@@ -103,6 +106,10 @@ For instance, if the original file is `p-root.html` and `i18n.supportedLocales` 
 then `p-root_en.html` and `p-root_ru.html` files will be created respectively.
 Like the previous methodology, language packs will be added via the `LANG_PACKS` global variable,
 which can be customized using the `i18n.langPacksStore` option in the global setup.
+
+Note: Setting the `externalizeInitial` option to `true` disables the inlining of assets into HTML.
+Therefore, when this option is enabled, additional external scripts with vars declarations will be generated
+for each locale.
 
 ### externalMultipleJSON
 

@@ -115,7 +115,7 @@ module.exports = class I18NGeneratorPlugin {
 		 *
 		 * @param {string} path
 		 * @param {object} langPacs
-		 * @returns string
+		 * @returns {string}
 		 */
 		function inlineLangPacks(path, langPacs) {
 			return fs
@@ -123,6 +123,14 @@ module.exports = class I18NGeneratorPlugin {
 				.replace(new RegExp(`${i18n.langPacksStore}\\s*=\\s*{}`), `${i18n.langPacksStore}=${JSON.stringify(langPacs)}`);
 		}
 
+		/**
+		 * The function reads the file from the given path,
+		 * changes the path of the vars declaration file within it, and then returns its content
+		 *
+		 * @param {string} path
+		 * @param {string} locale
+		 * @returns {string}
+		 */
 		function setLocalizedVarsDecl(path, locale) {
 			return fs
 				.readFileSync(path, {encoding: 'utf8'})
