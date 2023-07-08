@@ -80,13 +80,20 @@ function getFaviconsDecl() {
 		manifestRgxp = /<link\s(.*?)\bhref="(.*?\bmanifest.json)"(.*?)\/?>/g,
 		faviconsDecl = fs.readFileSync(src.clientOutput(dest, params.html)).toString();
 
-	return faviconsDecl.replace(manifestRgxp, (str, attrs1, href, attrs2) => getLinkDecl({
-		staticAttrs: attrs1 + attrs2,
-		attrs: {
-			href: params.manifestHref || href,
-			crossorigin: 'use-credentials'
-		}
-	}));
+	return faviconsDecl.replace(manifestRgxp, (str, attrs1, href, attrs2) => {
+		const js = !webpack.externalizeInitial();
+
+		const manifestLinkDecl = getLinkDecl({
+			js,
+			staticAttrs: attrs1 + attrs2,
+			attrs: {
+				href: js ? [`'${params.manifestHref || href}?from=' + location.pathname + location.search`] : (params.manifestHref || href),
+				crossorigin: 'use-credentials'
+			}
+		});
+
+		return js ? getScriptDecl(manifestLinkDecl) : manifestLinkDecl;
+	});
 
 	function resolveFaviconPath(str) {
 		return str.replace(pathPlaceholderRgxp, `${webpack.publicPath(dest)}/`.replace(/\/+$/, '/'));

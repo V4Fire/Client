@@ -90,8 +90,8 @@ function getScriptDecl(lib, body) {
 	body = body || '';
 
 	const
-		isInline = !externalizeInitial && Boolean(needInline(lib.inline) || body),
-		createElement = !externalizeInitial && lib.js && lib.defer !== false;
+		isInline = Boolean(needInline(lib.inline) || body),
+		createElement = lib.js && lib.defer !== false;
 
 	let
 		attrs,
@@ -218,7 +218,7 @@ function getStyleDecl(lib, body) {
 
 	const
 		rel = lib.attrs?.rel ?? 'stylesheet',
-		isInline = !externalizeInitial && Boolean(needInline(lib.inline) || body);
+		isInline = Boolean(needInline(lib.inline) || body);
 
 	const attrsObj = {
 		staticAttrs: lib.staticAttrs,
