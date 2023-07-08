@@ -142,6 +142,11 @@ async function initLibs(libs, assets) {
 
 	for (const [key, val] of libs.entries()) {
 		const p = Object.isString(val) ? {src: val} : {...val};
+
+		if (webpack.externalizeInitial() && p.inline) {
+			p.defer = false;
+		}
+
 		p.inline = needInline(p.inline);
 
 		let
