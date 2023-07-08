@@ -163,7 +163,7 @@ export interface PrivateComponentState {
 	/**
 	 * Pointer to the index of the data element that was last rendered.
 	 */
-	renderCursor: number;
+	dataCursor: number;
 }
 
 /**

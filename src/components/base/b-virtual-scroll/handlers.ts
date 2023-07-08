@@ -64,7 +64,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * @param childList
 	 */
 	onDomInsertStart(this: bVirtualScroll, childList: MountedChild[]): void {
-		this.componentInternalState.updateRenderCursor();
+		this.componentInternalState.updateDataCursor();
 		this.componentInternalState.updateMounted(childList);
 		this.componentInternalState.setIsInitialRender(false);
 		this.componentInternalState.incrementRenderPage();
@@ -123,6 +123,8 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * @param isInitialLoading - Indicates whether it is an initial component loading.
 	 */
 	onDataLoadStart(isInitialLoading: boolean): void {
+		this.componentInternalState.setIsLoadingInProgress(true);
+		this.componentInternalState.setIsLastErrored(false);
 		this.slotsStateController.loadingProgressState(isInitialLoading);
 
 		this.componentEmitter.emit(componentEvents.dataLoadStart, isInitialLoading);

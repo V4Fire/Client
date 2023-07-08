@@ -30,6 +30,7 @@ test.describe('<b-virtual-scroll>', () => {
 				original = ctx.componentInternalState.compile.bind(ctx.componentInternalState);
 
 			ctx.componentInternalState.compile = () => ({...original()});
+			jestMock.spy(ctx, 'initLoadNext');
 		}
 	};
 
@@ -65,7 +66,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 					state.data.addItems(chunkSize);
 
-					await component.setProps({
+					await component.withProps({
 						chunkSize,
 						shouldStopRequestingData,
 						shouldPerformDataRequest,
@@ -135,8 +136,15 @@ test.describe('<b-virtual-scroll>', () => {
 					]);
 				});
 
-				test('Should call `initLoad` twice', async () => {
-					await test.expect(initLoadSpy.calls).resolves.toEqual([[], []]);
+				test('Should call `initLoad` once', async () => {
+					await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
+				});
+
+				test('Should call `initLoadNext` once', async () => {
+					const
+						spy = await component.getSpy((ctx) => ctx.initLoadNext);
+
+					await test.expect(spy.calls).resolves.toEqual([[]]);
 				});
 			});
 		});
@@ -160,7 +168,7 @@ test.describe('<b-virtual-scroll>', () => {
 					state.data.addData(providerChunkSize);
 					state.data.addItems(providerChunkSize);
 
-					await component.setProps({
+					await component.withProps({
 						chunkSize,
 						shouldStopRequestingData,
 						shouldPerformDataRequest,
@@ -234,7 +242,7 @@ test.describe('<b-virtual-scroll>', () => {
 					state.data.addData(providerChunkSize);
 					state.data.addItems(providerChunkSize);
 
-					await component.setProps({
+					await component.withProps({
 						chunkSize,
 						shouldStopRequestingData,
 						shouldPerformDataRequest,

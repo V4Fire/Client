@@ -44,6 +44,6 @@ export function createInitialState(): VirtualScrollState {
  */
 export function createPrivateInitialState(): PrivateComponentState {
 	return {
-		renderCursor: 0
+		dataCursor: 0
 	};
 }

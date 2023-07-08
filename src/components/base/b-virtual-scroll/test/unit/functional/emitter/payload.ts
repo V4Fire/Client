@@ -36,7 +36,7 @@ test.describe('<b-virtual-scroll> emitter', () => {
 			.responseOnce(200, {data: state.data.addData(chunkSize)})
 			.response(200, {data: []});
 
-		await component.setProps({
+		await component.withProps({
 			chunkSize,
 			shouldStopRequestingData: () => true,
 			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
@@ -78,7 +78,7 @@ test.describe('<b-virtual-scroll> emitter', () => {
 			.responseOnce(200, {data: secondDataChunk})
 			.response(200, {data: []});
 
-		await component.setProps({
+		await component.withProps({
 			chunkSize,
 			shouldPerformDataRequest: () => true,
 			shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
@@ -125,7 +125,7 @@ test.describe('<b-virtual-scroll> emitter', () => {
 			.responseOnce(200, {data: firstDataChunk})
 			.response(200, {data: []});
 
-		await component.setProps({
+		await component.withProps({
 			chunkSize,
 			shouldPerformDataRequest: () => true,
 			shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
@@ -165,7 +165,7 @@ test.describe('<b-virtual-scroll> emitter', () => {
 			.responseOnce(200, {data: state.data.addData(chunkSize)})
 			.response(200, {data: []});
 
-		await component.setProps({
+		await component.withProps({
 			chunkSize,
 			shouldStopRequestingData: () => true,
 			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')

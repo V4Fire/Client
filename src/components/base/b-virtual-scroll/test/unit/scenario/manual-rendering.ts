@@ -35,7 +35,7 @@ test.describe('<b-virtual-scroll>', () => {
 				type: 'div',
 				attrs: {
 					id: 'renderNext',
-					'@click': () => (<ComponentElement<bVirtualScroll>>document.querySelector('.b-virtual-scroll')).component?.initLoad()
+					'@click': () => (<ComponentElement<bVirtualScroll>>document.querySelector('.b-virtual-scroll')).component?.initLoadNext()
 				}
 			},
 
@@ -43,7 +43,7 @@ test.describe('<b-virtual-scroll>', () => {
 				type: 'div',
 				attrs: {
 					id: 'retry',
-					'@click': () => (<ComponentElement<bVirtualScroll>>document.querySelector('.b-virtual-scroll')).component?.initLoad()
+					'@click': () => (<ComponentElement<bVirtualScroll>>document.querySelector('.b-virtual-scroll')).component?.initLoadNext()
 				}
 			}
 		});
@@ -55,7 +55,7 @@ test.describe('<b-virtual-scroll>', () => {
 		test.beforeEach(async () => {
 			provider.response(200, () => ({data: state.data.addData(chunkSize)}));
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				disableObserver: true,
 				shouldPerformDataRender: () => true
@@ -66,7 +66,7 @@ test.describe('<b-virtual-scroll>', () => {
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
 		});
 
-		test('Should load and render the next chunk after calling initLoad', async () => {
+		test('Should load and render the next chunk after calling initLoadNext', async () => {
 			await component.node.locator('#renderNext').click();
 
 			test.expect(provider.mock.mock.calls.length).toBe(2);

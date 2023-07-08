@@ -61,7 +61,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.getDataChunk(0)})
 				.response(200, {data: []});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				shouldStopRequestingData: () => true,
 				'@hook:beforeDataCreate': (ctx) => {
@@ -142,7 +142,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.getDataChunk(1)})
 				.response(200, {data: state.data.getDataChunk(2)});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				'@hook:beforeDataCreate': (ctx) => {
 					const original = ctx.emit;

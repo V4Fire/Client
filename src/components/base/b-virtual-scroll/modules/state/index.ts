@@ -166,25 +166,20 @@ export class ComponentInternalState extends Friend {
 	/**
 	 * Returns the cursor indicating the last index of the last rendered data element.
 	 */
-	getRenderCursor(): number {
-		return this.privateState.renderCursor;
+	getDataCursor(): number {
+		return this.privateState.dataCursor;
 	}
 
 	/**
 	 * Updates the cursor indicating the last index of the last rendered data element.
 	 */
-	updateRenderCursor(): void {
+	updateDataCursor(): void {
 		const
-			{ctx} = this;
+			{ctx, state} = this,
+			current = this.getDataCursor(),
+			chunkSize = ctx.getChunkSize(state);
 
-		if (ctx.chunkSize != null) {
-			const
-				{state} = this,
-				current = this.getRenderCursor(),
-				chunkSize = ctx.getChunkSize(state);
-
-			this.privateState.renderCursor = current + chunkSize;
-		}
+		this.privateState.dataCursor = current + chunkSize;
 	}
 }
 

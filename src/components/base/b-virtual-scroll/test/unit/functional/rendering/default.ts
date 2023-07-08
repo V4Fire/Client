@@ -45,7 +45,7 @@ test.describe('<b-virtual-scroll>', () => {
 			({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0
 		);
 
-		await component.setProps({
+		await component.withProps({
 			shouldPerformDataRender,
 			chunkSize
 		});
@@ -77,9 +77,8 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize[2])})
 				.response(200, {data: []});
 
-			await component.setProps({
-				chunkSize: (state: VirtualScrollState) => [6, 12, 18][state.renderPage] ?? 18,
-				shouldPerformDataRender: ({isInitialRender, itemsTillEnd}) => <boolean>isInitialRender || itemsTillEnd === 0
+			await component.withProps({
+				chunkSize: (state: VirtualScrollState) => [6, 12, 18][state.renderPage] ?? 18
 			});
 
 			await component.withDefaultPaginationProviderProps();

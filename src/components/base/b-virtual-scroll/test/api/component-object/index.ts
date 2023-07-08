@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle, Locator, Page } from 'playwright';
+import type { Locator, Page } from 'playwright';
 
 import { ComponentObject, Scroll } from 'tests/helpers';
 
@@ -30,6 +30,10 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 */
 	readonly childList: Locator;
 
+	override get componentStyles(): string {
+		return testStyles;
+	}
+
 	/**
 	 * @param page - The Playwright page instance.
 	 */
@@ -38,16 +42,6 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 
 		this.container = this.node.locator(this.elSelector('container'));
 		this.childList = this.container.locator('> *');
-	}
-
-	/**
-	 * Overrides the build method to add test styles before building the component.
-	 *
-	 * @param args - The arguments for the build method.
-	 */
-	override async build(...args: Parameters<ComponentObject<bVirtualScroll>['build']>): Promise<JSHandle<bVirtualScroll>> {
-		await this.page.addStyleTag({content: testStyles});
-		return super.build(...args);
 	}
 
 	/**
@@ -180,8 +174,8 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Adds default `itemProps` for pagination.
 	 */
-	async withPaginationItemProps(): Promise<this> {
-		await this.setProps({
+	withPaginationItemProps(): this {
+		this.withProps({
 			item: 'section',
 			itemProps: (item) => ({'data-index': item.i})
 		});
@@ -194,8 +188,8 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 *
 	 * @param requestParams - The request parameters.
 	 */
-	async withRequestPaginationProps(requestParams: Dictionary = {}): Promise<this> {
-		await this.setProps({
+	withRequestPaginationProps(requestParams: Dictionary = {}): this {
+		this.withProps({
 			request: {
 				get: {
 					chunkSize: 10,
@@ -211,8 +205,8 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Adds a `Provider` into the provider prop for pagination.
 	 */
-	async withPaginationProvider(): Promise<this> {
-		await this.setProps({dataProvider: 'Provider'});
+	withPaginationProvider(): this {
+		this.withProps({dataProvider: 'Provider'});
 		return this;
 	}
 
@@ -224,10 +218,10 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 *
 	 * @param requestParams - The request parameters.
 	 */
-	async withDefaultPaginationProviderProps(requestParams: Dictionary = {}): Promise<this> {
-		await this.withPaginationProvider();
-		await this.withPaginationItemProps();
-		await this.withRequestPaginationProps(requestParams);
+	withDefaultPaginationProviderProps(requestParams: Dictionary = {}): this {
+		this.withPaginationProvider();
+		this.withPaginationItemProps();
+		this.withRequestPaginationProps(requestParams);
 
 		return this;
 	}

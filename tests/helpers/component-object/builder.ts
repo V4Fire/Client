@@ -11,6 +11,7 @@ import type { JSHandle, Locator, Page } from 'playwright';
 import { resolve } from '@pzlr/build-core';
 
 import { Component, DOM, Utils } from 'tests/helpers';
+import type ComponentObject from 'tests/helpers/component-object';
 
 import type iBlock from 'components/super/i-block/i-block';
 
@@ -67,6 +68,13 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * Stores a reference to the component's `JSHandle`.
 	 */
 	protected componentStore?: JSHandle<COMPONENT>;
+
+	/**
+	 * The component styles that should be inserted into the page.
+	 */
+	get componentStyles(): CanUndef<string> {
+		return undefined;
+	}
 
 	/**
 	 * A shorthand for generating selectors for component elements.
@@ -138,6 +146,10 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * using the `setProps` and `setChildren` methods.
 	 */
 	async build(): Promise<JSHandle<COMPONENT>> {
+		if (this.componentStyles != null) {
+			await this.page.addStyleTag({content: this.componentStyles});
+		}
+
 		this.componentStore = await Component.createComponent(this.page, this.componentName, {
 			attrs: {
 				...this.props
@@ -150,10 +162,10 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 
 	/**
 	 * Picks the `Node` with the provided selector and extracts the `component` property,
-	 * which will be assigned to the `component` property of the `ComponentObject`.
+	 * which will be assigned to the {@link ComponentObject.component}.
 	 *
-	 * After this operation, the `ComponentObject` will be marked as built and the `ComponentObject.component` property
-	 * will be accessible.
+	 * After this operation, the `ComponentObject` will be marked as built
+	 * and the {@link ComponentObject.component} property will be accessible.
 	 *
 	 * @param selector - The selector or locator for the component node
 	 */
@@ -161,26 +173,40 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 
 	/**
 	 * Extracts the `component` property from the provided locator,
-	 * which will be assigned to the `component` property of the `ComponentObject`.
+	 * which will be assigned to the {@link ComponentObject.component}.
 	 *
-	 * After this operation, the `ComponentObject` will be marked as built and the `ComponentObject.component` property
-	 * will be accessible.
+	 * After this operation, the `ComponentObject` will be marked as built
+	 * and the {@link ComponentObject.component} property will be accessible.
 	 *
 	 * @param locator - The locator for the component node
 	 */
 	async pick(locator: Locator): Promise<this>;
 
-	async pick(selectorOrLocator: string | Locator): Promise<this> {
+	/**
+	 * Waits for promise to resolve and extracts the `component` property from the provided locator,
+	 * which will be assigned to the {@link ComponentObject.component}.
+	 *
+	 * After this operation, the `ComponentObject` will be marked as built
+	 * and the {@link ComponentObject.component} property will be accessible.
+	 *
+	 * @param locatorPromise - The promise that resolves to locator for the component node
+	 */
+	async pick(locatorPromise: Promise<Locator>): Promise<this>;
+
+	async pick(selectorOrLocator: string | Locator | Promise<Locator>): Promise<this> {
+		if (this.componentStyles != null) {
+			await this.page.addStyleTag({content: this.componentStyles});
+		}
+
+		// eslint-disable-next-line no-nested-ternary
 		const locator = Object.isString(selectorOrLocator) ?
 			this.page.locator(selectorOrLocator) :
-			selectorOrLocator;
+			Object.isPromise(selectorOrLocator) ? await selectorOrLocator : selectorOrLocator;
 
 		this.componentStore = await locator.elementHandle().then(async (el) => {
 			await el?.evaluate((ctx, [id]) => ctx.setAttribute('data-test-id', id), [this.id]);
 			return el?.getProperty('component');
 		});
-
-		await this.applyProps(this.props);
 
 		return this;
 	}
@@ -191,12 +217,9 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 *
 	 * @param props - The props to set
 	 */
-	async setProps(props: Dictionary): Promise<this> {
+	withProps(props: Dictionary): this {
 		if (!this.isBuilded) {
 			Object.assign(this.props, props);
-
-		} else {
-			await this.applyProps(props);
 		}
 
 		return this;
@@ -210,22 +233,6 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 */
 	setChildren(children: VNodeChildren): this {
 		Object.assign(this.children, children);
-		return this;
-	}
-
-	/**
-	 * Applies the stored props to the component instance.
-	 * @param props
-	 */
-	async applyProps(props: Dictionary): Promise<this> {
-		const
-			{component} = this;
-
-		if (!this.isBuilded) {
-			return this.setProps(props);
-		}
-
-		await component.evaluate((ctx, [props]) => Object.assign(ctx, props), [props]);
 		return this;
 	}
 }

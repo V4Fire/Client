@@ -128,6 +128,7 @@ export const defaultShouldProps = <const>{
 	},
 
 	/** {@link bVirtualScroll.shouldPerformDataRender} */
-	shouldPerformDataRender: (_state: VirtualScrollState, _ctx: bVirtualScroll): boolean => false
+	shouldPerformDataRender: (state: VirtualScrollState, _ctx: bVirtualScroll): boolean =>
+		state.isInitialRender || state.itemsTillEnd === 0
 };
 

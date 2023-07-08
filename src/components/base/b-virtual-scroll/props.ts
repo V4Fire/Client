@@ -114,10 +114,6 @@ export default abstract class iVirtualScrollProps extends iData implements iItem
 	@prop({
 		type: Function,
 		default: (state: VirtualScrollState, ctx: bVirtualScroll) => {
-			if (ctx.chunkSize == null) {
-				throw new Error('"chunkSize.getNextDataSlice" is used but "chunkSize" prop is not set.');
-			}
-
 			const descriptors = ctx.getNextDataSlice(state, ctx.getChunkSize(state)).map((data, i) => ({
 				key: ctx.itemKey?.(data, i),
 
@@ -163,33 +159,41 @@ export default abstract class iVirtualScrollProps extends iData implements iItem
 	readonly componentStrategy: keyof ComponentStrategy = componentStrategy.intersectionObserver;
 
 	/**
-	 * Function that returns the GET parameters for a request.
+	 * Function that returns the GET parameters for a request. This function is called for each request. It receives the
+	 * current component state and should return the request parameters. These parameters are merged with the parameters
+	 * from the `request` prop in favor of the `request` prop.
+	 *
+	 * This function is useful when you need to pass pagination parameters or any other parameters that should not trigger
+	 * a component state reload, unlike changing the `request` prop.
+	 *
 	 * {@link RequestQueryFn}
 	 */
 	@prop({type: Function})
 	readonly requestQuery?: RequestQueryFn;
 
 	/**
-	 * The number of elements to render at once.
+	 * The amount of data required to perform one cycle of item rendering.
 	 *
-	 * This prop can also be a function that returns the chunk size to render based on certain criteria
-	 * (e.g., rendering page).
+	 * This prop is primarily used to determine whether a specific action with the data needs to be performed
+	 * ({@link bVirtualScroll.renderGuard}), and only secondarily for component rendering.
 	 *
-	 * For example, you can render 6 elements initially, then 12, and then 18 elements based on the
-	 * rendering page.
+	 * By default, this prop is used in {@link bVirtualScroll.itemsFactory} to slice the data
+	 * according to the {@link bVirtualScroll.chunkSize} and render components based on it.
+	 * However, it is possible to define a custom {@link bVirtualScroll.itemsFactory} and render as many components
+	 * as desired in one cycle of rendering. In this case, the `chunkSize` will only have significance for the data.
+	 *
+	 * This prop can also be a function that should return the amount of data required to perform one cycle of rendering.
+	 * For example, different values can be specified depending on the rendering page:
 	 *
 	 * @example
 	 * ```typescript
-	 * const chunkSize = (state: ComponentState) => {
+	 * const chunkSize = (state: VirtualScrollState) => {
 	 *   return [6, 12, 18][state.renderPage] ?? 18;
 	 * }
 	 * ```
-	 *
-	 * It's important to note that this prop is used by default, but it can be ignored and you can return
-	 * any amount of data to render by setting a custom {@link bVirtualScroll.itemsFactory} for the component.
 	 */
 	@prop({type: [Number, Function]})
-	readonly chunkSize?: number | ShouldPerform<number> = 10;
+	readonly chunkSize: number | ShouldPerform<number> = 10;
 
 	/**
 	 * When this function returns `true` the component will stop to request new data.
@@ -229,7 +233,7 @@ export default abstract class iVirtualScrollProps extends iData implements iItem
 	 * }
 	 * ```
 	 */
-	@prop(Function)
+	@prop({type: Function, default: defaultShouldProps.shouldPerformDataRender})
 	readonly shouldPerformDataRender?: ShouldPerform<boolean>;
 
 	/**

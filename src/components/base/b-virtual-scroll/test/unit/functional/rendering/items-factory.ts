@@ -52,7 +52,7 @@ test.describe('<b-virtual-scroll> rendering via component factory', () => {
 			}));
 		});
 
-		await component.setProps({
+		await component.withProps({
 			itemsFactory,
 			shouldPerformDataRender: () => true,
 			chunkSize
@@ -104,7 +104,7 @@ test.describe('<b-virtual-scroll> rendering via component factory', () => {
 			return items;
 		}, separator);
 
-		await component.setProps({
+		await component.withProps({
 			itemsFactory,
 			shouldPerformDataRender: () => true,
 			chunkSize
@@ -144,7 +144,7 @@ test.describe('<b-virtual-scroll> rendering via component factory', () => {
 			return items;
 		});
 
-		await component.setProps({
+		await component.withProps({
 			itemsFactory,
 			shouldPerformDataRender: () => true,
 			chunkSize
@@ -182,7 +182,7 @@ test.describe('<b-virtual-scroll> rendering via component factory', () => {
 			return [...items, ...items];
 		});
 
-		await component.setProps({
+		await component.withProps({
 			itemsFactory,
 			shouldPerformDataRender: () => true,
 			chunkSize
@@ -217,7 +217,7 @@ test.describe('<b-virtual-scroll> rendering via component factory', () => {
 			}));
 		});
 
-		await component.setProps({
+		await component.withProps({
 			itemsFactory,
 			shouldPerformDataRender: () => true,
 			chunkSize
@@ -260,7 +260,7 @@ test.describe('<b-virtual-scroll> rendering via component factory', () => {
 			return [...items, ...items];
 		});
 
-		await component.setProps({
+		await component.withProps({
 			itemsFactory,
 			shouldPerformDataRender,
 			chunkSize

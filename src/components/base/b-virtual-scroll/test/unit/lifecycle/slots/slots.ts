@@ -69,7 +69,7 @@ test.describe('<b-virtual-scroll>', () => {
 			}
 		});
 
-		await component.setProps({
+		await component.withProps({
 			tombstonesSize: 1
 		});
 	});
@@ -82,7 +82,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize
 			});
 
@@ -112,7 +112,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				shouldPerformDataRender: () => true
 			});
@@ -143,7 +143,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize / 2)})
 				.response(200, {data: []});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				shouldPerformDataRender: () => true
 			});
@@ -181,7 +181,7 @@ test.describe('<b-virtual-scroll>', () => {
 			const shouldPerformDataRender =
 				<ShouldPerform>(({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0);
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				shouldPerformDataRequest,
 				shouldPerformDataRender
@@ -213,7 +213,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 			provider.response(200, {data: []});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				shouldPerformDataRender: () => true
 			});
@@ -244,7 +244,7 @@ test.describe('<b-virtual-scroll>', () => {
 			provider
 				.response(200, {data: state.data.addData(chunkSize)}, {delay: (10).seconds()});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize
 			});
 
@@ -274,7 +274,7 @@ test.describe('<b-virtual-scroll>', () => {
 			provider
 				.response(200, {data: state.data.addData(providerChunkSize)}, {delay: (4).seconds()});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize
 			});
 
@@ -311,7 +311,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 			provider.response(500, {});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				shouldPerformDataRender: () => true
 			});
@@ -343,7 +343,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(providerChunkSize)})
 				.response(500, {});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				shouldPerformDataRender: () => true
 			});
@@ -386,7 +386,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				disableObserver: true,
 				shouldPerformDataRender: () => true
@@ -417,7 +417,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)}, {delay: (10).seconds()})
 				.response(200, {data: []});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				disableObserver: true,
 				shouldPerformDataRender: () => true
@@ -447,7 +447,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 			provider.response(500, {data: []});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				disableObserver: true,
 				shouldPerformDataRender: () => true

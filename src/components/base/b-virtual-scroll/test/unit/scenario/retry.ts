@@ -34,7 +34,7 @@ test.describe('<b-virtual-scroll>', () => {
 				type: 'div',
 				attrs: {
 					id: 'retry',
-					'@click': () => (<ComponentElement<bVirtualScroll>>document.querySelector('.b-virtual-scroll')).component?.initLoad()
+					'@click': () => (<ComponentElement<bVirtualScroll>>document.querySelector('.b-virtual-scroll')).component?.initLoadNext()
 				}
 			}
 		});
@@ -49,7 +49,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.setProps({chunkSize});
+			await component.withProps({chunkSize});
 			await component.withDefaultPaginationProviderProps({chunkSize});
 			await component.build();
 
@@ -66,7 +66,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				'@onRequestError': (_, retryFn) => setTimeout(retryFn, 0)
 			});
@@ -86,7 +86,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.setProps({chunkSize});
+			await component.withProps({chunkSize});
 			await component.withDefaultPaginationProviderProps({chunkSize});
 			await component.build();
 
@@ -109,12 +109,9 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-
-			await component.setProps({
-				chunkSize,
-				shouldPerformDataRender: ({isInitialRender, itemsTillEnd}) => <boolean>isInitialRender || itemsTillEnd === 0
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({chunkSize});
 
 			await component.build();
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
@@ -139,12 +136,9 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(providerChunkSize)})
 				.response(200, {data: []});
 
-			await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-
-			await component.setProps({
-				chunkSize,
-				shouldPerformDataRender: ({isInitialRender, itemsTillEnd}) => <boolean>isInitialRender || itemsTillEnd === 0
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+				.withProps({chunkSize});
 
 			await component.build();
 			await component.node.locator('#retry').click();
@@ -166,7 +160,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(500, {})
 				.response(200, {data: []});
 
-			await component.setProps({chunkSize});
+			await component.withProps({chunkSize});
 			await component.withDefaultPaginationProviderProps({chunkSize});
 			await component.build();
 

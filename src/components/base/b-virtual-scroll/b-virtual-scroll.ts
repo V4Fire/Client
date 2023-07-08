@@ -52,46 +52,70 @@ export default class bVirtualScroll extends iVirtualScrollHandlers {
 	}
 
 	override initLoad(...args: Parameters<iData['initLoad']>): ReturnType<iData['initLoad']> {
-		const
-			state = this.getComponentState();
-
-		this.componentInternalState.setIsLastErrored(false);
-
-		if (!this.isReady && this.isReadyOnce) {
+		if (!this.lfc.isBeforeCreate()) {
 			this.reset();
-		}
-
-		if (state.isLoadingInProgress) {
-			return;
 		}
 
 		this.componentInternalState.setIsLoadingInProgress(true);
 
 		const
-			isInitialLoading = !this.isReady;
+			initLoadResult = super.initLoad(...args);
 
-		const initLoadResult = isInitialLoading ?
-			super.initLoad(...args) :
-			this.initLoadNext();
-
-		this.onDataLoadStart(isInitialLoading);
+		this.onDataLoadStart(true);
 
 		if (Object.isPromise(initLoadResult)) {
 			initLoadResult
-				.then((res) => {
-					if (
-						(isInitialLoading && this.db == null) ||
-						(!isInitialLoading && res == null)
-					) {
+				.then(() => {
+					if (this.db == null) {
 						return;
 					}
 
-					this.onDataLoadSuccess(isInitialLoading, isInitialLoading ? this.db : this.convertDataToDB(res));
+					this.onDataLoadSuccess(true, this.db);
 				})
 				.catch(stderr);
+
+		} else {
+			this.onDataLoadSuccess(true, this.db);
 		}
 
-		return <Promise<void>>initLoadResult;
+		return initLoadResult;
+	}
+
+	/**
+	 * Initializes the loading of the next data chunk.
+	 * @throws {@link ReferenceError} if there is no `dataProvider` set.
+	 */
+	initLoadNext(): CanUndef<CanPromise<void>> {
+		if (!this.dataProvider) {
+			throw ReferenceError('Missing dataProvider');
+		}
+
+		const
+			state = this.getComponentState();
+
+		if (state.isLoadingInProgress) {
+			return;
+		}
+
+		if (this.db == null) {
+			return this.initLoad();
+		}
+
+		this.onDataLoadStart(false);
+
+		const
+			params = this.getRequestParams(),
+			get = this.dataProvider.get(params[0], params[1]);
+
+		return get
+			.then((res) => {
+				if (res == null) {
+					return;
+				}
+
+				this.onDataLoadSuccess(false, this.convertDataToDB(res));
+			})
+			.catch(stderr);
 	}
 
 	/**
@@ -156,13 +180,8 @@ export default class bVirtualScroll extends iVirtualScrollHandlers {
 	 *
 	 * @param state
 	 * @returns The chunk size.
-	 * @throws Error if the `chunkSize` size is not defined.
 	 */
 	getChunkSize(state: VirtualScrollState): number {
-		if (this.chunkSize == null) {
-			throw new Error('`chunkSize` prop is not defined');
-		}
-
 		return Object.isFunction(this.chunkSize) ?
 			this.chunkSize(state, this) :
 			this.chunkSize;
@@ -177,23 +196,10 @@ export default class bVirtualScroll extends iVirtualScrollHandlers {
 	getNextDataSlice(state: VirtualScrollState, chunkSize: number): object[] {
 		const
 			{data} = state,
-			nextDataSliceStartIndex = this.componentInternalState.getRenderCursor(),
+			nextDataSliceStartIndex = this.componentInternalState.getDataCursor(),
 			nextDataSliceEndIndex = nextDataSliceStartIndex + chunkSize;
 
 		return data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
-	}
-
-	/**
-	 * Initializes the loading of the next data chunk.
-	 * @throws {@link ReferenceError} if there is no `dataProvider` set.
-	 */
-	protected initLoadNext(): Promise<unknown> {
-		if (!this.dataProvider) {
-			throw ReferenceError('Missing dataProvider');
-		}
-
-		const params = this.getRequestParams();
-		return this.dataProvider.get(params[0], params[1]);
 	}
 
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
@@ -287,7 +293,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers {
 			}
 
 			if (this.shouldPerformDataRequestWrapper()) {
-				void this.initLoad();
+				void this.initLoadNext();
 			}
 		}
 
@@ -297,7 +303,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers {
 				this.onLifecycleDone();
 
 			} else if (this.shouldPerformDataRequestWrapper()) {
-				void this.initLoad();
+				void this.initLoadNext();
 
 			} else if (state.isInitialRender) {
 				this.performRender();

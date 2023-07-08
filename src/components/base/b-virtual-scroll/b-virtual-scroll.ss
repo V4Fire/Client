@@ -12,7 +12,7 @@
 
 - template index() extends ['i-data'].index
 	- block body
-		< .&__wrapper
+		< .&__wrapper :-chunk-size = chunkSize
 			< .&__container ref = container | -test-ref = container
 
 			< .&__tombstones &

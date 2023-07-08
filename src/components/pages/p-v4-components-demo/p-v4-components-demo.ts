@@ -43,6 +43,24 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	/**
+	 * Field for tests purposes
+	 */
+	@field()
+	emptyField: unknown = undefined;
+
+	/**
+	 * Name of the test component.
+	 */
+	@field()
+	testComponent?: string;
+
+	/**
+	 * Attributes for the test component.
+	 */
+	@field()
+	testComponentAttrs: Dictionary = {};
+
 	protected beforeCreate(): void {
 		// eslint-disable-next-line no-console
 		console.time('Render');

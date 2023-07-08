@@ -50,7 +50,7 @@ test.describe('<b-virtual-scroll>', () => {
 			loadPage: 0
 		});
 
-		await component.setProps({
+		await component.withProps({
 			'@hook:created': mockFn
 		});
 
@@ -79,7 +79,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 			state.data.addItems(chunkSize);
 
-			await component.setProps({
+			await component.withProps({
 				chunkSize,
 				shouldStopRequestingData,
 				shouldPerformDataRequest,
@@ -175,7 +175,7 @@ test.describe('<b-virtual-scroll>', () => {
 			state.data.addItems(chunkSize);
 			state.data.addChild([separator]);
 
-			await component.setProps({
+			await component.withProps({
 				itemsFactory,
 				shouldPerformDataRender: () => true,
 				chunkSize
@@ -226,7 +226,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 			state.data.addSeparators(chunkSize);
 
-			await component.setProps({
+			await component.withProps({
 				itemsFactory,
 				shouldPerformDataRender: () => true,
 				chunkSize

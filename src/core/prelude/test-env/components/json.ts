@@ -100,3 +100,5 @@ export function expandedParse<T = JSONLikeValue>(str: string): T {
 		return val;
 	});
 }
+
+globalThis.expandedParse = expandedParse;
