@@ -6,6 +6,22 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable no-new-func */
+/* eslint-disable no-restricted-globals */
 
-module.exports = Function('return this')();
+const _global =
+	typeof globalThis === 'object' && isGlobal(globalThis) && globalThis ||
+	typeof window === 'object' && isGlobal(window) && window ||
+	typeof global === 'object' && isGlobal(global) && global ||
+	typeof self === 'object' && isGlobal(self) && self ||
+	(function getGlobalUnstrict() {
+		return this;
+	}()) ||
+	this ||
+	// eslint-disable-next-line no-new-func
+	new Function('', 'return this')();
+
+module.exports = _global;
+
+function isGlobal(obj) {
+	return Boolean(obj) && obj.Math === Math;
+}

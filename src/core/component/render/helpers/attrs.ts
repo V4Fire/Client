@@ -13,9 +13,6 @@ import { setVNodePatchFlags } from 'core/component/render/helpers/flags';
 
 import type { ComponentInterface } from 'core/component/interface';
 
-const
-	staticAttrsCache: Dictionary<Function> = Object.createDict();
-
 /**
  * Resolves values from special attributes of the given VNode
  *
@@ -147,28 +144,13 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	{
 		const
 			key = 'data-cached-dynamic-class',
-			fnBody = props[key];
+			classValue = props[key];
 
-		if (fnBody != null) {
-			const classVal = compileFn(fnBody)(this);
-
-			Object.assign(props, mergeProps({class: props.class}, {class: classVal}));
+		if (classValue != null) {
+			Object.assign(props, mergeProps({class: props.class}, {class: classValue}));
 			delete props[key];
 		}
 	}
 
 	return vnode;
-}
-
-function compileFn(fnBody: string): Function {
-	let
-		fn = staticAttrsCache[fnBody];
-
-	if (fn == null) {
-		// eslint-disable-next-line no-new-func
-		fn = Function('self', `return ${fnBody}`);
-		staticAttrsCache[fnBody] = fn;
-	}
-
-	return fn;
 }

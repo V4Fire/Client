@@ -172,7 +172,7 @@
 
 	- rootAttrs = { &
 		class: 'i-block-helper',
-		'data-cached-dynamic-class': 'self.provide.componentClasses("' + self.name() + '", self.mods)'
+		':data-cached-dynamic-class': 'tmp["data-cached-dynamic-class"] || (tmp["data-cached-dynamic-class"] = provide.componentClasses("' + self.name() + '", mods))'
 	} .
 
 	- if teleport
