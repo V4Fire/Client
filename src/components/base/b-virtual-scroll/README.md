@@ -14,8 +14,6 @@ See the implemented modifiers or the parent component.
 
 ## Events
 
-### События компонента
-
 | EventName                       | Description                                                     | Payload description                           | Payload                     |
 | ------------------------------- | --------------------------------------------------------------- | --------------------------------------------- | --------------------------- |
 | `dataLoadSuccess`               | Data loading has succeeded.                                     | `data: object[], isInitialLoading: boolean`   | `[data, isInitialLoading]`  |
@@ -37,6 +35,18 @@ See the implemented modifiers or the parent component.
 Also, you can see the implemented traits or the parent component.
 
 ## Usage
+
+### Converting Data to the Required Format
+
+The `b-virtual-scroll` component expects data in a specific format:
+
+```typescript
+interface VirtualScrollDb {
+  data: unknown[];
+}
+```
+
+The `data` array should contain the data items used to render the components.
 
 ### Rendering Components
 
@@ -64,19 +74,7 @@ Each `b-dummy` component receives the `name` and `type` props, which are derived
       Data loading in progress
 ```
 
-### Converting Data to the Required Format
-
-The `b-virtual-scroll` component expects data in a specific format:
-
-```typescript
-interface VirtualScrollDb {
-  data: unknown[];
-}
-```
-
-The `data` array should contain the data items used to render the components.
-
-### Rendering on Click
+### Rendering on click
 
 In addition to the standard scroll-based loading, you can implement on-demand loading.
 
@@ -292,9 +290,11 @@ Pagination example:
 ```typescript
 const requestQuery = (state: VirtualScrollState): Dictionary<Dictionary> => {
   return {
-    page: state.loadPage,
-    limit: 10
-    // Other pagination parameters
+    get: {
+      page: state.loadPage,
+      limit: 10
+      // Other pagination parameters
+    }
   };
 };
 ```
@@ -417,13 +417,18 @@ The `loadDataOrPerformRender` function is the entry point for the data loading a
 The logic of `renderGuard` is as follows:
 
 ```mermaid
-graph TD
-	A[renderGuard] -->|"dataSlice.length = 0"| B["return { result: false, reason: renderGuardRejectionReason.done }"]
-	A -->|"dataSlice.length < chunkSize"| C["return { result: false, reason: renderGuardRejectionReason.notEnoughData }"]
-	A -->|"state.isInitialRender"| D["return { result: true }"]
-	A -->|"default"| E["clientResponse = this.shouldPerformDataRender?.(state, this) || true"]
-	E -->|"clientResponse = false"| F["return { result: clientResponse, reason: renderGuardRejectionReason.noPermission }"]
-	E -->|"default"| G["return { result: clientResponse }"]
+graph TB
+    A["renderGuard"] -->|Get chunk size and next data slice| B["Is the data slice length = 0?"]
+    B -- True --> C["Are requests stopped?"]
+    C -- True --> E["Return: result=false, reason=done"]
+    E --> X["Function ends"]
+    C -- False --> F["Return: result=false, reason=noData"]
+    B -- False --> G["Is the data slice smaller than chunk size?"]
+    G -- True --> H["Return: result=false, reason=notEnoughData"]
+    G -- False --> I["Is it initial render?"]
+    I -- True --> J["Return: result=true"]
+    I -- False --> K["Get client response from shouldPerformDataRender"]
+    K --> L["Return: result=clientResponse, reason=noPermission if clientResponse is false"]
 ```
 
 The logic of `loadDataOrPerformRender` is as follows:
@@ -434,24 +439,15 @@ graph TB
     B -- True --> X[return]
     B -- False ---> C[renderGuard]
     C -- If Render Guard Result is True --> D[performRender]
-    D --> X
     C -- If Render Guard Result is False --> E[Check the Render Guard Rejection Reason]
     E -- reason=done --> F[onLifecycleDone]
-    F --> X
     E -- reason=noData --> G[isRequestsStopped?]
-    G -- True --> X
     G -- False --> H[shouldPerformDataRequest?]
     H -- True --> I["call loadNext"]
-    I --> X
-    H -- False --> X
     E -- reason=notEnoughData --> J[isRequestsStopped?]
     J -- True --> K[performRender and onLifecycleDone]
-    K --> X
     J -- False --> L[shouldPerformDataRequest]
     L -- True --> M["call loadNext"]
-    M --> X
     L -- False --> N[initial render?]
     N -- True --> P[performRender]
-    N -- False --> X
-    P --> X
 ```
