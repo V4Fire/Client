@@ -64,30 +64,70 @@ Each `b-dummy` component receives the `name` and `type` props, which are derived
       Data loading in progress
 ```
 
-### Перезагрузка компонента
+### Converting Data to the Required Format
 
-Для перезагрузки компонента b-virtual-scroll можно использовать несколько вариантов:
+The `b-virtual-scroll` component expects data in a specific format:
 
-1. Вызвав `bVirtualScroll.initLoad` с аргументами `[data: any, {silent: false}]`;
-2. Вызвав `bVirtualScroll.reload`;
-3. Изменив `request` проп.
+```typescript
+interface VirtualScrollDb {
+  data: unknown[];
+}
+```
 
-Во всех этих случаях жизненный цикл компонент будет сброшен на изначальное состояние и компонент начнет отрисовку
-новых данных которые будет получать, очистив все предидущие.
+The `data` array should contain the data items used to render the components.
 
+### Rendering on Click
 
-### Should-like функции
+In addition to the standard scroll-based loading, you can implement on-demand loading.
 
-### Переопределение `itemsFactory`
+To achieve this, you need to disable the observer module, allow component rendering, and use the special `initLoadNext` method.
 
-### Отрисовка по клику
+```
+< b-virtual-scroll &
+  :disableObserver = true |
+  :shouldPerformDataRender = () => true |
+  ref = scroll
+.
+```
 
+```typescript
+class pSomePage {
+  @watch('something')
+  onSomething() {
+    this.$refs.scroll.initLoadNext();
+  }
+}
+```
+
+Additionally, for ease of implementation, when you need to load and render data on a button click, the `renderNext` slot is available. It will be displayed only when the component is not loading data, the last load did not result in an error, and the component's lifecycle is not completed. In combination with the `initLoadNext` method, this allows for easy implementation of lazy rendering on button click.
+
+```
+< b-virtual-scroll &
+  :disableObserver = true |
+  :shouldPerformDataRender = () => true |
+  ref = scroll
+.
+  < template #renderNext
+    < .&__render-next @click = $refs.scroll.initLoadNext
+      Render next
+```
+
+### Component Reload
+
+To reload the `b-virtual-scroll` component, you have several options:
+
+1. Call `bVirtualScroll.initLoad()`.
+2. Call `bVirtualScroll.reload()`.
+3. Modify the `request` prop.
+4. Trigger a global event of type `reset`.
+
+In all of these cases, the component's lifecycle will be reset to its initial state, and the component will start rendering new data, discarding any previous data.
 
 ## Slots
 
 The component supports a bunch of slots to provide.
 
-1. `loader` предоставляют возможность отображать различный контент (обычно скелетоны) пока загружаются данные.
+1. The `loader` slot allows you to display different content (usually skeletons) while the data is being loaded.
 
 ```
 < b-virtual-scroll
@@ -96,7 +136,7 @@ The component supports a bunch of slots to provide.
       Data loading in progress
 ```
 
-2. `tombstone` предоставляет возможность отображать различный контент который будет повторяться `tombstonesSize` (обычно скелетоны) количество раз пока загружаются данные.
+2. The `tombstone` slot allows you to display different content (usually skeletons) that will be repeated `tombstonesSize` times while the data is being loaded.
 
 ```
 < b-virtual-scroll :tombstonesSize = 3
@@ -105,7 +145,7 @@ The component supports a bunch of slots to provide.
       Skeleton
 ```
 
-3. `retry` предоставляет возможность отображать различный контент (обычно призыв перезагрузить данные) когда произошла ошибка загрузки данных.
+3. The `retry` slot allows you to display different content (usually a prompt to retry loading data) when there is an error in data loading.
 
 ```
 < b-virtual-scroll
@@ -114,7 +154,7 @@ The component supports a bunch of slots to provide.
       Retry last request
 ```
 
-4. `empty` предоставляет возможность отображать различный контент когда компонента получил порцию пустых данных при первоначальной загрузке.
+4. The `empty` slot allows you to display different content when the component receives an empty data set during the initial loading.
 
 ```
 < b-virtual-scroll
@@ -123,7 +163,7 @@ The component supports a bunch of slots to provide.
       No data
 ```
 
-5. `done` предоставляет возможность отображать различный контент когда компонента завершил загрузку всех данных и так же все их отрисовал.
+5. The `done` slot allows you to display different content when the component has finished loading and rendering all the data.
 
 ```
 < b-virtual-scroll
@@ -132,12 +172,12 @@ The component supports a bunch of slots to provide.
       Load and render complete
 ```
 
-6. `renderNext` предоставляет возможность отображать различный контент когда компонента не загружает данные и не перешел в состояние окончания лайфцикла.
-Данный слот может быть полезен если необходимо реализовать ленивую отрисовку контента по клику.
+6. The `renderNext` slot allows you to display different content when the component is not loading data and has not entered the lifecycle completion state.
+This slot can be useful when implementing lazy content rendering on button click.
 
 ```
 < b-virtual-scroll
-  < template #render-next
+  < template #renderNext
     < .&__render-next
       Render next
 ```
@@ -307,16 +347,111 @@ Note: The `tombstone` component is used to represent empty or unloaded component
 
 The `bVirtualScroll` class extends `iData` and includes additional properties related to slots, component state, and observers. Please refer to the documentation of `iData` for more details on those properties.
 
-## Миграция с `b-virtual-scroll` версии 3.x.x
+## Migration from `b-virtual-scroll` version 3.x.x
 
-## Deep dive into component
+### API
 
-### Жизненный цикл
+- Prop `renderGap` -> `shouldPerformDataRender`.
+- Props with `option-like` -> `iItems` props.
+- Method `getDataStateSnapshot` -> `getComponentState`.
+- Method `reloadLast` -> `initLoadNext`.
+- `VirtualItemEl` interface is removed. Now, the client receives a single data item in the `iItems` methods. To maintain logic with `current`, `prev`, `next`, you can use the following approach:
 
-### renderGuard
+```typescript
+function getProps(data: DataInterface, index: number): Dictionary {
+  const
+    state = this.$refs.scroll.getComponentState();
 
-### Модули компонента
+  const
+    current = data,
+    prev = state.data[index - 1],
+    next = state.data[index + 1];
+}
+```
 
-### Переопределение в дочерних слоях
+- Interface `DataState` -> `VirtualScrollState`:
+  - `DataState.currentPage` -> `VirtualScrollState.loadPage`;
+  - `DataState.lastLoadedChunk.raw` -> `VirtualScrollState.lastLoadedRaw`;
+  - etc.
 
-## Возможные улучшения и дальнейшие эксперименты
+## Deep dive into the component
+
+### Lifecycle
+
+The component's lifecycle consists of several events and states. When the component is initialized and starts its initial data loading, it emits two events: `initLoadStart` and `dataLoadStart`. The `initLoadStart` event is a standard event emitted by every component and occurs each time the component's data is initially loaded. The `dataLoadStart` event is emitted for every data loading.
+
+1. `initLoadStart` - The initial data loading of the component has started.
+2. `dataLoadStart` - The data loading of the component has started.
+
+After successful data loading, the following events are emitted:
+
+1. `convertDataToDB` - The data conversion has been performed.
+2. `initLoad` - The initial data loading of the component has completed.
+3. `dataLoadSuccess` - The data loading of the component has completed.
+
+When the `convertDataToDB` event is emitted, the component's state is already updated with the `lastLoadedRawData` field. The `initLoad` and `dataLoadSuccess` events are emitted after updating the component's state, including `VirtualScrollState.data`, `VirtualScrollState.loadPage`, and some other fields.
+
+After successful data loading, the component consults the `shouldStopRequestingData` method to determine whether it should stop loading further data.
+
+Next, the component invokes the `renderGuard` to determine if the data can be rendered or not. If the `renderGuard` allows rendering, the following events are emitted:
+
+1. `renderStart` - The component rendering has started.
+2. `renderEngineStart` - The component rendering using the rendering engine has started.
+3. `renderEngineDone` - The component rendering using the rendering engine has completed.
+4. `domInsertStart` - The DOM insertion has started.
+5. `domInsertDone` - The DOM insertion has completed. This event is asynchronous as it uses RAF (Request Animation Frame) for DOM insertion.
+6. `renderDone` - The component rendering has finished.
+
+Afterward, the component waits for user actions, specifically when the user sees any component on the page. The component then calls the
+
+`shouldPerformDataRequest` or `shouldPerformDataRender` functions on the client side, depending on the availability of data. This process repeats until all data has been loaded and rendered.
+
+1. `lifecycleDone` - Occurs when all data has been loaded and rendered on the page.
+
+### `renderGuard` and `loadDataOrPerformRender`
+
+The `b-virtual-scroll` component relies on the `renderGuard` and `loadDataOrPerformRender` functions to determine whether to render data, load data, or complete the component's lifecycle.
+
+The `loadDataOrPerformRender` function is the entry point for the data loading and rendering cycle. This function consults the `renderGuard`, which determines whether data can be rendered based on the data state and provides reasons for rejection.
+
+The logic of `renderGuard` is as follows:
+
+```mermaid
+graph TD
+	A[renderGuard] -->|"dataSlice.length = 0"| B["return { result: false, reason: renderGuardRejectionReason.done }"]
+	A -->|"dataSlice.length < chunkSize"| C["return { result: false, reason: renderGuardRejectionReason.notEnoughData }"]
+	A -->|"state.isInitialRender"| D["return { result: true }"]
+	A -->|"default"| E["clientResponse = this.shouldPerformDataRender?.(state, this) || true"]
+	E -->|"clientResponse = false"| F["return { result: clientResponse, reason: renderGuardRejectionReason.noPermission }"]
+	E -->|"default"| G["return { result: clientResponse }"]
+```
+
+The logic of `loadDataOrPerformRender` is as follows:
+
+```mermaid
+graph TB
+    A[loadDataOrPerformRender] -->|Get component state| B[Is the last request errored?]
+    B -- True --> X[return]
+    B -- False ---> C[renderGuard]
+    C -- If Render Guard Result is True --> D[performRender]
+    D --> X
+    C -- If Render Guard Result is False --> E[Check the Render Guard Rejection Reason]
+    E -- reason=done --> F[onLifecycleDone]
+    F --> X
+    E -- reason=noData --> G[isRequestsStopped?]
+    G -- True --> X
+    G -- False --> H[shouldPerformDataRequest?]
+    H -- True --> I["call loadNext"]
+    I --> X
+    H -- False --> X
+    E -- reason=notEnoughData --> J[isRequestsStopped?]
+    J -- True --> K[performRender and onLifecycleDone]
+    K --> X
+    J -- False --> L[shouldPerformDataRequest]
+    L -- True --> M["call loadNext"]
+    M --> X
+    L -- False --> N[initial render?]
+    N -- True --> P[performRender]
+    N -- False --> X
+    P --> X
+```
