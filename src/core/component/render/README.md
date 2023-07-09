@@ -31,8 +31,8 @@ const ctx = this;
 // {props: {class: 'id-1 b-example alias'}}
 resolveAttrs.call(ctx, {
   props: {
-    'data-cached-class-component-id': ''
-    'data-cached-class-provided-classes-styles': 'elem-name'
+    'data-cached-class-component-id': '',
+    'data-cached-class-provided-classes-styles': 'elem-name',
     'data-cached-dynamic-class': '[self.componentName]'
   }
 })

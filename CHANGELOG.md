@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* The compilation of itemKey into a function has been removed.
+  It is now only used as a property name to retrieve the key value `components/traits/i-items/i-items`
+
+#### :house: Internal
+
+* The `data-cached-dynamic-class` attribute expression is not cashed by default.
+  To cache expression result use component's `tmp` cache `core/component/render/helpers/attrs`
+
 ## v4.0.0-beta.7 (2023-06-27)
 
 #### :rocket: New Feature

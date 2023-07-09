@@ -22,6 +22,13 @@ const _global =
 
 module.exports = _global;
 
+/**
+ * Checks if the provided value is a global object by confirming the presence of Math,
+ * known to exist in any global JavaScript environment.
+ *
+ * @param obj
+ * @returns {boolean}
+ */
 function isGlobal(obj) {
 	return Boolean(obj) && obj.Math === Math;
 }

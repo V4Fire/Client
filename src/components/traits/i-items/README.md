@@ -74,7 +74,8 @@ If the case of a function, you must return the identifier value from the functio
 ## Helpers
 
 The trait provides a static helper function to resolve the value of the `itemKey` prop: if the value is passed as a string,
-it will be compiled as a function. The method returns the value of the `itemKey` function call, or undefined (if it is not specified).
+it will be used as the property name in which the key value is stored.
+The method returns the value of the `itemKey` function call, or undefined (if it is not specified).
 
 ```typescript
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';

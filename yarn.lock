@@ -3585,7 +3585,7 @@ __metadata:
 
 "@v4fire/core@github:V4Fire/Core#feat/no-unsafe-js":
   version: 4.0.0-alpha.5
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=a129e3f7b3184b212bd1e4586cd1be60294f1db1"
+  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=0640251c9975ed67eab02f701f5b54dbdebc76e1"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -3729,7 +3729,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: d1c957029b87095c4818ddfeece18b22fd3b4a36d7df04f1e305b28ca64d1c39b3366d2b0a7e2afcd75898be1ce8f9e4cfef03cc0a671d171768dd76479dc6aa
+  checksum: 9ffeb2f3c7d7924c4e1afcd2a6f233ab385240f311fdfc7bd70c1eaeff7226846dba6d53b983394333ee73937a25aade0fcbbc2ac2333ce658726aabe6368b21
   languageName: node
   linkType: hard
 
