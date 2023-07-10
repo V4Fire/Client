@@ -12,91 +12,90 @@ import { set } from 'core/component/state';
 import Component, { app, rootComponents, hydrationStore, ComponentElement } from 'core/component';
 
 import flags from 'core/init/flags';
+import type { InitAppOptions } from 'core/init/interface';
 
-export default createsAsyncSemaphore(async () => {
-	if (SSR) {
-		return async (name?: string) => {
-			if (name == null) {
-				throw new ReferenceError('The root component for rendering is not defined');
+const semaphore = createsAsyncSemaphore(createAppInitializer, ...flags);
+
+export default semaphore;
+
+if (!SSR) {
+	semaphore('')
+		.then((initApp) => {
+			const
+				targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
+				rootComponentName = targetToMount?.getAttribute('data-root-component');
+
+			return Object.cast(initApp(rootComponentName, {targetToMount}));
+		})
+
+		.catch(stderr);
+}
+
+function createAppInitializer() {
+	return async (rootComponentName: Nullable<string>, opts: InitAppOptions = {}) => {
+		const
+			state = Object.reject(opts, ['targetToMount']),
+			rootComponentParams = await getRootComponentParams(rootComponentName);
+
+		Object.entries(state).forEach(([key, value]) => {
+			set(key, value);
+		});
+
+		if (SSR) {
+			const
+				// eslint-disable-next-line @typescript-eslint/no-var-requires
+				{renderToString} = require('vue/server-renderer');
+
+			const
+				rootComponent = new Component(rootComponentParams);
+
+			return [
+				await renderToString(rootComponent),
+				`<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`
+			].join('');
+		}
+
+		const
+			{targetToMount} = opts;
+
+		if (targetToMount == null) {
+			throw new ReferenceError('Application mount node not found');
+		}
+
+		app.context = new Component({
+			...rootComponentParams,
+			el: targetToMount
+		});
+
+		Object.defineProperty(app, 'component', {
+			configurable: true,
+			enumerable: true,
+			get: () => document.querySelector<ComponentElement>('#root-component')?.component ?? null
+		});
+
+		return targetToMount;
+
+		async function getRootComponentParams(
+			rootComponentName: Nullable<string>
+		): Promise<NonNullable<typeof rootComponents['component']>> {
+			if (rootComponentName == null) {
+				throw new Error('No name has been set for the root component of the application');
 			}
 
 			const
-				component = await rootComponents[name];
+				rootComponentParams = await rootComponents[rootComponentName];
 
-			if (component == null) {
-				throw new ReferenceError(`The specified root component "${name}" is not defined`);
+			if (rootComponentParams == null) {
+				throw new ReferenceError(`The root component with the specified name "${rootComponentName}" was not found`);
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-var-requires
-			const {renderToString} = require('vue/server-renderer');
-
 			return {
-				render: async (params: Dictionary = {}) => {
-					Object.entries(params).forEach(([key, value]) => {
-						set(key, value);
-					});
+				...rootComponentParams,
 
-					const root = new Component({
-						...component,
-
-						data() {
-							return component.data?.call(this) ?? {};
-						}
-					});
-
-					const text = await renderToString(root);
-					return `${text}<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+				data() {
+					return rootComponentParams.data?.call(this) ?? {};
 				}
 			};
-		};
-	}
-
-	const
-		el = document.querySelector<HTMLElement>('[data-root-component]');
-
-	if (el == null) {
-		throw new ReferenceError('The root node is not found');
-	}
-
-	const
-		name = el.getAttribute('data-root-component') ?? '',
-		component = await rootComponents[name];
-
-	if (component == null) {
-		throw new ReferenceError('The root component is not found');
-	}
-
-	const
-		params = JSON.parse(el.getAttribute('data-root-component-params') ?? '{}');
-
-	if (Object.isDictionary(params.data)) {
-		Object.entries(params.data).forEach(([key, value]) => {
-			set(key, value);
-		});
-	}
-
-	const
-		getData = component.data;
-
-	component.data = function data(this: unknown): Dictionary {
-		return (Object.isFunction(getData) ? getData.call(this) : null) ?? {};
-	};
-
-	app.context = new Component({
-		...params,
-		...component,
-		el
-	});
-
-	Object.defineProperty(app, 'component', {
-		configurable: true,
-		enumerable: true,
-		get: () => document.querySelector<ComponentElement>('#root-component')?.component ?? null
-	});
-
-	return () => Promise.resolve({
-		render() {
-			return Promise.resolve(el);
 		}
-	});
-}, ...flags);
+	};
+}

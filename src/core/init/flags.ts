@@ -7,8 +7,8 @@
  */
 
 export default [
-	'domReady',
+	'DOMReady',
 	'ABTReady',
-	'stateReady',
-	'prefetchReady'
+	'prefetchReady',
+	'stateReady'
 ];

@@ -13,10 +13,9 @@
 
 import 'core/component/directives';
 
-import * as init from 'core/component/init';
-import globalState from 'core/component/state';
+export * as init from 'core/component/init';
 
-export { init, globalState };
+export { default as globalState, State, GlobalEnvironment } from 'core/component/state';
 export { ComponentEngine as default } from 'core/component/engines';
 
 export { runHook } from 'core/component/hook';

@@ -11,28 +11,41 @@
  * @packageDocumentation
  */
 
-import semaphore from 'core/init/semaphore';
-
 import { initGlobalEnv } from 'core/env';
+
+import semaphore from 'core/init/semaphore';
+import type { InitAppOptions } from 'core/init/interface';
 
 /**
  * Initializes the application
  *
- * @param [rootComponent]
- * @param [params]
+ * @param rootComponent - the root component name for initialization
+ * @param [opts] - additional options
  */
-export default async function initApp(rootComponent?: string, params?: Dictionary): Promise<string | HTMLElement> {
-	initGlobalEnv(params);
+export default async function initApp(
+	rootComponent: Nullable<string>,
+	opts?: InitAppOptions
+): Promise<string | Element> {
+	initGlobalEnv(opts);
 
-	void import('core/init/dom');
-	void import('core/init/state');
-	void import('core/init/abt');
-	void import('core/init/prefetch');
+	void loadModule(import('core/init/dom'));
+	void loadModule(import('core/init/state'));
+	void loadModule(import('core/init/abt'));
+	void loadModule(import('core/init/prefetch'));
 
-	const app = await semaphore('[[INIT_APP]]');
-	return (await app(rootComponent)).render(params);
-}
+	const createApp = await semaphore('');
+	return createApp(rootComponent, opts);
 
-if (!SSR) {
-	void initApp();
+	async function loadModule(promise: Promise<{default?: unknown}>) {
+		try {
+			const {default: init} = await promise;
+
+			if (Object.isFunction(init)) {
+				init(opts);
+			}
+
+		} catch (err) {
+			stderr(err);
+		}
+	}
 }
