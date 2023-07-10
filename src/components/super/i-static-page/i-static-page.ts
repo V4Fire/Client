@@ -20,7 +20,7 @@ import type { AppliedRoute, InitialRoute } from 'core/router';
 
 import {
 
-	globalState,
+	remoteState,
 	resetComponents,
 
 	GlobalEnvironment,
@@ -120,7 +120,7 @@ export default abstract class iStaticPage extends iPage {
 	 * The initial route for initializing the router.
 	 * Usually, this value is used during SSR.
 	 */
-	@system(() => globalState.route)
+	@system(() => remoteState.route)
 	initialRoute?: InitialRoute;
 
 	/**
@@ -130,7 +130,7 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>({
 		atom: true,
-		init: (o) => o.initGlobalEnv(globalState)
+		init: (o) => o.initGlobalEnv(remoteState)
 	})
 
 	globalEnv!: GlobalEnvironment;

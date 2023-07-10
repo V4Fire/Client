@@ -15,7 +15,7 @@ import 'core/component/directives';
 
 export * as init from 'core/component/init';
 
-export { default as globalState, State, GlobalEnvironment } from 'core/component/state';
+export { default as remoteState, State, GlobalEnvironment } from 'core/component/state';
 export { ComponentEngine as default } from 'core/component/engines';
 
 export { runHook } from 'core/component/hook';
