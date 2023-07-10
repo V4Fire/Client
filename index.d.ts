@@ -12,6 +12,10 @@
 /// <reference path="./ts-definitions/playwright.d.ts"/>
 /// <reference path="./ts-definitions/stylus-ds.d.ts"/>
 
+declare var ssr: Nullable<{
+	document?: Document;
+}>;
+
 declare let __webpack_nonce__: CanUndef<string>;
 declare let __webpack_public_path__: CanUndef<string>;
 declare let __webpack_require__: (moduleId: string) => any;
@@ -39,10 +43,6 @@ declare const AVAILABLE_THEMES: CanUndef<string[]>;
 declare const DS: CanUndef<DesignSystem>;
 declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
-}>;
-
-declare const ssr: Nullable<{
-	document?: Document;
 }>;
 
 interface HTMLImageElement {
