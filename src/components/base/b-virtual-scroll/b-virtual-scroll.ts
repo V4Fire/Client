@@ -15,10 +15,10 @@ import VDOM, { create, render } from 'components/friends/vdom';
 
 import { bVirtualScrollDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-virtual-scroll/const';
 
-import iData, { $$, component, RequestParams } from 'components/super/i-data/i-data';
+import iData, { $$, component, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll/handlers';
 import type { AsyncOptions } from 'core/async';
-import type { VirtualScrollState, RenderGuardResult } from 'components/base/b-virtual-scroll/interface';
+import type { VirtualScrollState, RenderGuardResult, UnsafeBVirtualScroll } from 'components/base/b-virtual-scroll/interface';
 
 export * from 'components/base/b-virtual-scroll/interface';
 export * from 'components/base/b-virtual-scroll/const';
@@ -44,6 +44,10 @@ export default class bVirtualScroll extends iVirtualScrollHandlers {
 				...Object.isDictionary(this.request?.get) ? this.request?.get : undefined
 			}
 		};
+	}
+
+	override get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
+		return Object.cast(this);
 	}
 
 	override reload(...args: Parameters<iData['reload']>): ReturnType<iData['reload']> {

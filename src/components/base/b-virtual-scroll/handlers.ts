@@ -24,7 +24,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: component reset event.
 	 * Resets the component state to its initial state.
 	 */
-	onReset(): void {
+	protected onReset(): void {
 		this.componentInternalState.reset();
 		this.observer.reset();
 
@@ -37,7 +37,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: render start event.
 	 * Triggered when the component rendering starts.
 	 */
-	onRenderStart(): void {
+	protected onRenderStart(): void {
 		this.componentEmitter.emit(componentEvents.renderStart);
 	}
 
@@ -45,7 +45,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: render engine start event.
 	 * Triggered when the component rendering using the rendering engine starts.
 	 */
-	onRenderEngineStart(): void {
+	protected onRenderEngineStart(): void {
 		this.componentEmitter.emit(componentEvents.renderEngineStart);
 	}
 
@@ -53,7 +53,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: render engine done event.
 	 * Triggered when the component rendering using the rendering engine is completed.
 	 */
-	onRenderEngineDone(): void {
+	protected onRenderEngineDone(): void {
 		this.componentEmitter.emit(componentEvents.renderEngineDone);
 	}
 
@@ -63,7 +63,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 *
 	 * @param childList
 	 */
-	onDomInsertStart(this: bVirtualScroll, childList: MountedChild[]): void {
+	protected onDomInsertStart(this: bVirtualScroll, childList: MountedChild[]): void {
 		this.componentInternalState.updateDataCursor();
 		this.componentInternalState.updateMounted(childList);
 		this.componentInternalState.setIsInitialRender(false);
@@ -76,7 +76,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: DOM insert done event.
 	 * Triggered when the insertion of rendered components into the DOM tree is completed.
 	 */
-	onDomInsertDone(): void {
+	protected onDomInsertDone(): void {
 		this.componentEmitter.emit(componentEvents.domInsertDone);
 	}
 
@@ -84,7 +84,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: render done event.
 	 * Triggered when rendering is completed.
 	 */
-	onRenderDone(): void {
+	protected onRenderDone(): void {
 		this.componentEmitter.emit(componentEvents.renderDone);
 	}
 
@@ -92,7 +92,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: lifecycle done event.
 	 * Triggered when the internal lifecycle of the component is completed.
 	 */
-	onLifecycleDone(this: bVirtualScroll): void {
+	protected onLifecycleDone(this: bVirtualScroll): void {
 		const
 			state = this.getComponentState();
 
@@ -111,7 +111,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 *
 	 * @param data - The converted data.
 	 */
-	onConvertDataToDB(data: unknown): void {
+	protected onConvertDataToDB(data: unknown): void {
 		this.componentInternalState.setRawLastLoaded(data);
 		this.componentEmitter.emit(componentEvents.convertDataToDB, data);
 	}
@@ -122,7 +122,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 *
 	 * @param isInitialLoading - Indicates whether it is an initial component loading.
 	 */
-	onDataLoadStart(isInitialLoading: boolean): void {
+	protected onDataLoadStart(isInitialLoading: boolean): void {
 		this.componentInternalState.setIsLoadingInProgress(true);
 		this.componentInternalState.setIsLastErrored(false);
 		this.slotsStateController.loadingProgressState(isInitialLoading);
@@ -138,7 +138,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * @param data - The loaded data.
 	 * @throws {@link ReferenceError} if the loaded data does not have a "data" field.
 	 */
-	onDataLoadSuccess(this: bVirtualScroll, isInitialLoading: boolean, data: unknown): void {
+	protected onDataLoadSuccess(this: bVirtualScroll, isInitialLoading: boolean, data: unknown): void {
 		this.componentInternalState.setIsLoadingInProgress(false);
 
 		if (!Object.isPlainObject(data) || !Array.isArray(data.data)) {
@@ -174,7 +174,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 *
 	 * @param isInitialLoading - Indicates whether it is an initial component loading.
 	 */
-	onDataLoadError(isInitialLoading: boolean): void {
+	protected onDataLoadError(isInitialLoading: boolean): void {
 		this.componentInternalState.setIsLoadingInProgress(false);
 		this.componentInternalState.setIsLastErrored(true);
 		this.slotsStateController.loadingFailedState();
@@ -182,7 +182,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 		this.componentEmitter.emit(componentEvents.dataLoadError, isInitialLoading);
 	}
 
-	override onRequestError(this: bVirtualScroll, ...args: Parameters<iData['onRequestError']>): ReturnType<iData['onRequestError']> {
+	protected override onRequestError(this: bVirtualScroll, ...args: Parameters<iData['onRequestError']>): ReturnType<iData['onRequestError']> {
 		const
 			err = args[0];
 
@@ -201,7 +201,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: data empty event.
 	 * Triggered when the loaded data is empty.
 	 */
-	onDataEmpty(): void {
+	protected onDataEmpty(): void {
 		this.slotsStateController.emptyState();
 
 		this.componentEmitter.emit(componentEvents.dataEmpty);
@@ -211,18 +211,10 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: component enters the viewport.
 	 * @param component - The component that enters the viewport.
 	 */
-	onElementEnters(this: bVirtualScroll, component: MountedChild): void {
+	protected onElementEnters(this: bVirtualScroll, component: MountedChild): void {
 		this.componentInternalState.setMaxViewedIndex(component);
 		this.loadDataOrPerformRender();
 
 		this.componentEmitter.emit(componentEvents.elementEnter, component);
-	}
-
-	/**
-	 * Handler: component leaves the viewport.
-	 * @param _component - The component that leaves the viewport.
-	 */
-	onElementOut(_component: MountedChild): void {
-		// ...
 	}
 }

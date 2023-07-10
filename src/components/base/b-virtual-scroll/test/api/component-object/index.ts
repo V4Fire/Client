@@ -19,7 +19,7 @@ import { testStyles } from 'components/base/b-virtual-scroll/test/api/component-
 /**
  * The component object API for testing the {@link bVirtualScroll} component.
  */
-export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll> {
+export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll['unsafe']> {
 	/**
 	 * The locator for the container ref.
 	 */
@@ -122,7 +122,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 				return;
 			}
 
-			return ctx.componentEmitter.promisifyOnce('lifecycleDone');
+			return ctx.unsafe.componentEmitter.promisifyOnce('lifecycleDone');
 		});
 	}
 

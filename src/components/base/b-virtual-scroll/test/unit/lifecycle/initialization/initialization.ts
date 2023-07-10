@@ -25,7 +25,7 @@ test.describe('<b-virtual-scroll>', () => {
 		state: VirtualScrollTestHelpers['state'];
 
 	const hookProp = {
-		'@hook:beforeDataCreate': (ctx: bVirtualScroll) => {
+		'@hook:beforeDataCreate': (ctx: bVirtualScroll['unsafe']) => {
 			const
 				original = ctx.componentInternalState.compile.bind(ctx.componentInternalState);
 

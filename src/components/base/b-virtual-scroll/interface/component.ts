@@ -301,6 +301,8 @@ export interface ComponentRefs {
 	renderNext?: HTMLElement;
 }
 
+export type $ComponentRefs = ComponentRefs & Dictionary;
+
 /**
  * The type of data stored by the component.
  */

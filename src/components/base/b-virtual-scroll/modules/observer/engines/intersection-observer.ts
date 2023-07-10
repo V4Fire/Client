@@ -20,7 +20,8 @@ export default class IoObserver extends Friend implements ObserverEngine {
 	override readonly C!: bVirtualScroll;
 
 	/**
-	 * @inheritdoc
+	 * {@link ObserverEngine.watchForIntersection}
+	 * @param components
 	 */
 	watchForIntersection(components: MountedChild[]): void {
 		const
@@ -36,9 +37,6 @@ export default class IoObserver extends Friend implements ObserverEngine {
 		}
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	reset(): void {
 		this.async.clearAll({group: new RegExp(observerAsyncGroup)});
 	}

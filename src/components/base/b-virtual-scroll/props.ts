@@ -19,7 +19,7 @@ import type {
 	ComponentItemFactory,
 	ComponentItemType,
 	ComponentStrategy,
-	ComponentRefs
+	$ComponentRefs
 
 } from 'components/base/b-virtual-scroll/interface';
 
@@ -247,24 +247,24 @@ export default abstract class iVirtualScrollProps extends iData implements iItem
 
 	/** {@link componentTypedEmitter} */
 	@system<bVirtualScroll>((ctx) => componentTypedEmitter(ctx))
-	readonly componentEmitter!: ComponentTypedEmitter;
+	protected readonly componentEmitter!: ComponentTypedEmitter;
 
 	/** {@link SlotsStateController} */
 	@system<bVirtualScroll>((ctx) => new SlotsStateController(ctx))
-	readonly slotsStateController!: SlotsStateController;
+	protected readonly slotsStateController!: SlotsStateController;
 
 	/** {@link ComponentInternalState} */
 	@system<bVirtualScroll>((ctx) => new ComponentInternalState(ctx))
-	readonly componentInternalState!: ComponentInternalState;
+	protected readonly componentInternalState!: ComponentInternalState;
 
 	/** {@link ComponentFactory} */
 	@system<bVirtualScroll>((ctx) => new ComponentFactory(ctx))
-	readonly componentFactory!: ComponentFactory;
+	protected readonly componentFactory!: ComponentFactory;
 
 	/** {@link Observer} */
 	@system<bVirtualScroll>((ctx) => new Observer(ctx))
-	readonly observer!: Observer;
+	protected readonly observer!: Observer;
 
-	protected override readonly $refs!: iData['$refs'] & ComponentRefs;
+	protected override readonly $refs!: iData['$refs'] & $ComponentRefs;
 }
 

@@ -8,6 +8,7 @@
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { VirtualScrollState } from 'components/base/b-virtual-scroll/interface/component';
+import type { UnsafeIData } from 'components/super/i-data/i-data';
 
 /**
  * Interface representing the response of the client to the `renderGuard` method for rendering requests.
@@ -74,4 +75,24 @@ export interface RenderGuardRejectionReason {
  */
 export interface ShouldPerform<RES = boolean> {
 	(state: VirtualScrollState, ctx: bVirtualScroll): RES;
+}
+
+// @ts-ignore (extend)
+export interface UnsafeBVirtualScroll<CTX extends bVirtualScroll = bVirtualScroll> extends UnsafeIData<CTX> {
+	// @ts-ignore (access)
+	onRenderEngineStart: CTX['onRenderEngineStart'];
+	// @ts-ignore (access)
+	onRenderEngineDone: CTX['onRenderEngineDone'];
+	// @ts-ignore (access)
+	onElementEnters: CTX['onElementEnters'];
+	// @ts-ignore (access)
+	componentEmitter: CTX['componentEmitter'];
+	// @ts-ignore (access)
+	slotsStateController: CTX['slotsStateController'];
+	// @ts-ignore (access)
+	componentInternalState: CTX['componentInternalState'];
+	// @ts-ignore (access)
+	componentFactory: CTX['componentFactory'];
+	// @ts-ignore (access)
+	observer: CTX['observer'];
 }
