@@ -14,7 +14,7 @@ import type { SpyOptions } from 'tests/helpers/component-object/interface';
 import type { SpyExtractor, SpyObject } from 'tests/helpers/mock/interface';
 
 /**
- * The `ComponentObjectMock` class extends the `ComponentObjectBuilder` class
+ * The {@link ComponentObjectMock} class extends the {@link ComponentObjectBuilder} class
  * and provides additional methods for creating spies and mock functions.
  *
  * It is used for testing components in a mock environment.
