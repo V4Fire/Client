@@ -173,14 +173,16 @@ initApp('p-v4-components-demo', {
   route: '/user/12345',
 
   globalEnv: {
-    ssrDocument: {
-      get cookie() {
-        return 'cookie string';
-      },
+    ssr: {
+      document: {
+        get cookie() {
+          return 'cookie string';
+        },
 
-      set coolie(cookie) {
-        // Set the passed cookie
-        // ...
+        set coolie(cookie) {
+          // Set the passed cookie
+          // ...
+        }
       }
     },
 

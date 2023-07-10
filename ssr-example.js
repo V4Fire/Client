@@ -31,8 +31,10 @@ require('./dist/ssr/p-v4-components-demo')
 		route: '/user/12345',
 
 		globalEnv: {
-			ssrDocument: {
+			ssr: {
+				document: {
 
+				}
 			},
 
 			location: {
