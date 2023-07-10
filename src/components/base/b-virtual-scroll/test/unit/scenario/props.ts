@@ -15,6 +15,8 @@ import test from 'tests/config/unit/test';
 import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
+import type { Route } from 'playwright';
+import { fromQueryString } from 'core/url';
 
 test.describe('<b-virtual-scroll>', () => {
 	let
@@ -59,19 +61,35 @@ test.describe('<b-virtual-scroll>', () => {
 		});
 	});
 
-	test.skip('`requestQuery`', () => {
-		test.describe('Prop was changed', () => {
-			test('Should not reload the entire component', async () => {
-				// ...
-			});
+	test.describe('`requestQuery`', () => {
+		test('Should pass the parameters to the GET parameters of the request', async () => {
+			const
+				chunkSize = 12;
 
-			test('Should request the second chunk with the new parameters', async () => {
-				// ...
-			});
-		});
+			provider.response(200, () => ({data: state.data.addData(chunkSize)}));
 
-		test('Передает параметры в GET параметры запроса', async () => {
-			// ...
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					requestQuery: () => ({get: {param1: 'param1'}}),
+					shouldPerformDataRequest: () => false,
+					'@hook:beforeDataCreate': (ctx: bVirtualScroll) => jestMock.spy(ctx.componentFactory, 'produceComponentItems')
+				})
+				.build();
+
+			await component.waitForContainerChildCountEqualsTo(chunkSize);
+
+			const
+				providerCalls = provider.mock.mock.calls,
+				query = fromQueryString(new URL((<Route>providerCalls[0][0]).request().url()).search);
+
+			test.expect(providerCalls).toHaveLength(1);
+			test.expect(query).toEqual({
+				param1: 'param1',
+				chunkSize: 12,
+				id: test.expect.anything()
+			});
 		});
 	});
 });

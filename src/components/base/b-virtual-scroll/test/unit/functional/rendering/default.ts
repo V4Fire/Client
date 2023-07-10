@@ -63,10 +63,6 @@ test.describe('<b-virtual-scroll>', () => {
 		await test.expect(component.childList).toHaveCount(chunkSize * 3);
 	});
 
-	test.skip('Should render components with child', async () => {
-		// ..
-	});
-
 	test.describe('With a different chunk size for each render cycle', () => {
 		test('Should render 6 components first, then 12, then 18', async () => {
 			const chunkSize = [6, 12, 18];
