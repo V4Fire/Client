@@ -135,6 +135,9 @@ declare var
 		mock: import('jest-mock').ModuleMocker['fn'];
 	};
 
+/**
+ * Результат который возвращает мок или spy функций от `jestMock` в свойстве returns
+ */
 interface JestMockResult<VAL = any> {
 	type: 'throw' | 'return';
 	value: VAL;

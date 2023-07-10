@@ -48,13 +48,24 @@ interface VirtualScrollDb {
 ```
 
 The `data` array should contain the data items used to render the components.
+The `dbConverter` prop allows you to convert data into a format suitable for `b-virtual-scroll` after data has been loaded.
+
+```
+< b-virtual-scroll &
+  ...
+  :dbConverter = (data) => ({data: data.nestedData.data})
+.
+  < template #loader
+    < .&__loader
+      Data loading in progress
+```
 
 ### Rendering Components
 
 In this example:
 
-- The `b-virtual-scroll` component is used to render a virtual scroll with 12 items loaded at a time.
-It interacts with the `Provider` data provider component to fetch the data. The `request` prop is set to `{ get: { chunkSize: 12 } }`, specifying that each request should fetch 12 items.
+- The `b-virtual-scroll` component is used to render 12 items per one render cycle.
+It interacts with the `Provider` data provider to fetch the data. The `request` prop is set to `{ get: { chunkSize: 12 } }`, specifying that each request should fetch 12 items.
 - The `requestQuery` function computes additional request parameters based on the component state, specifically the `loadPage` property. These request parameters are merged with the `request` prop.
 - The `b-virtual-scroll` component renders `b-dummy` components using the `item` prop.
 Each `b-dummy` component receives the `name` and `type` props, which are derived from the `data` object for each item using the `itemProps` function.

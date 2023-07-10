@@ -12,6 +12,8 @@ import type { JSHandle, Page } from 'playwright';
 import { setSerializerAsMockFn } from 'core/prelude/test-env/components/json';
 import type { ExtractFromJSHandle, SpyExtractor, SpyObject } from 'tests/helpers/mock/interface';
 
+export * from 'tests/helpers/mock/interface';
+
 /**
  * Wraps an object as a spy object by adding additional properties for accessing spy information.
  *

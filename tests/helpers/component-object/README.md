@@ -99,3 +99,36 @@ const
 
 console.log(await spy.calls);
 ```
+
+It is important to understand that spy and mock functions store references, not copies, in their `calls` property.
+
+```typescript
+class Component {
+  currentState: Dictionary = {};
+  onStateUpdate: (state: Dictionary) => void;
+
+  get state() {
+    this.currentState;
+  }
+
+  constructor(onStateUpdate: (state: Dictionary) => void) {
+    this.onStateUpdate = onStateUpdate;
+  }
+
+  updateState() {
+    this.currentState.val = this.currentState.val ?? 0;
+    this.currentState.val++;
+    this.onStateUpdate(this.state);
+  }
+}
+
+
+const
+  mock = jestMock.mock((state) => console.log('state update', state));
+  c = new Component(mock);
+
+c.updateState();
+c.updateState();
+
+console.log(mock.mock.calls); // [[{val: 2}, {val: 2}]]
+```

@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* `b-virtual-scroll` мажорное обновление. Посмотрите readme компонента чтобы ознакомиться с изменениями и миграционным гайдом `components/base/b-virtual-scroll`.
+
+#### :rocket: New Feature
+
+* Добавлено новое тестовое API `ComponentObject` которые позволяет более удобно организовать общение с компонентов в тестовой среде `test/helpers/component-object`;
+* Добавлено новое тестовое API для мока и реализации наблюдения за какими-либо функциями в рантайме `test/helpers/mock`
+
 ## v4.0.0-beta.8 (2023-07-07)
 
 #### :bug: Bug Fix
