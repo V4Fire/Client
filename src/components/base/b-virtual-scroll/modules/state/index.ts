@@ -6,11 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Friend from 'components/friends/friend';
+
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
-import type { MountedChild, VirtualScrollState, MountedItem, PrivateComponentState } from 'components/base/b-virtual-scroll/interface';
 import { isItem } from 'components/base/b-virtual-scroll/modules/helpers';
 import { createInitialState, createPrivateInitialState } from 'components/base/b-virtual-scroll/modules/state/helpers';
-import Friend from 'components/friends/friend';
+import type { MountedChild, VirtualScrollState, MountedItem, PrivateComponentState } from 'components/base/b-virtual-scroll/interface';
 
 /**
  * Friendly to the `bVirtualScroll` class that represents the internal state of a component.
@@ -51,6 +52,7 @@ export class ComponentInternalState extends Friend {
 	incrementLoadPage(): void {
 		this.state.loadPage++;
 	}
+
 	/**
 	 * Increments the render page pointer.
 	 */
@@ -73,7 +75,6 @@ export class ComponentInternalState extends Friend {
 
 	/**
 	 * Updates the arrays with mounted child elements of the component.
-	 *
 	 * @param mounted - The mounted child elements.
 	 */
 	updateMounted(mounted: MountedChild[]): void {
@@ -89,7 +90,6 @@ export class ComponentInternalState extends Friend {
 
 	/**
 	 * Updates the state of the last raw loaded data.
-	 *
 	 * @param data - The last raw loaded data.
 	 */
 	setRawLastLoaded(data: unknown): void {
@@ -98,7 +98,6 @@ export class ComponentInternalState extends Friend {
 
 	/**
 	 * Sets the flag indicating if it's the initial render cycle.
-	 *
 	 * @param value - The value of the flag.
 	 */
 	setIsInitialRender(value: boolean): void {
@@ -117,7 +116,6 @@ export class ComponentInternalState extends Friend {
 
 	/**
 	 * Sets the flag indicating if the component's lifecycle is done.
-	 *
 	 * @param value - The value of the flag.
 	 */
 	setIsLifecycleDone(value: boolean): void {
@@ -126,7 +124,6 @@ export class ComponentInternalState extends Friend {
 
 	/**
 	 * Sets the flag indicating if the component is currently loading data.
-	 *
 	 * @param value - The value of the flag.
 	 */
 	setIsLoadingInProgress(value: boolean): void {
@@ -134,9 +131,8 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
-	 * Устанавливает флаг который указывает на то, что последняя загрузка завершилась с ошибкой.
-	 *
-	 * @param value
+	 * Sets a flag indicating whether the last load operation ended with an error.
+	 * @param value - The value to set.
 	 */
 	setIsLastErrored(value: boolean): void {
 		this.state.isLastErrored = value;
@@ -144,7 +140,6 @@ export class ComponentInternalState extends Friend {
 
 	/**
 	 * Sets the maximum viewed index based on the passed component's index.
-	 *
 	 * @param component - The component to compare and update the maximum viewed index.
 	 */
 	setMaxViewedIndex(component: MountedChild): void {

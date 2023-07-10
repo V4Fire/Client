@@ -51,12 +51,12 @@ test.describe('<b-virtual-scroll>', () => {
 			loadPage: 0
 		});
 
-		await component.withProps({
-			'@hook:created': mockFn
-		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
+		await component
+			.withDefaultPaginationProviderProps({chunkSize})
+			.withProps({
+				'@hook:created': mockFn
+			})
+			.build();
 
 		await test.expect(mockFn.results).resolves.toEqual([{type: 'return', value: expectedState}]);
 	});
@@ -80,15 +80,16 @@ test.describe('<b-virtual-scroll>', () => {
 
 			state.data.addItems(chunkSize);
 
-			await component.withProps({
-				chunkSize,
-				shouldStopRequestingData,
-				shouldPerformDataRequest,
-				shouldPerformDataRender
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+				.withProps({
+					chunkSize,
+					shouldStopRequestingData,
+					shouldPerformDataRequest,
+					shouldPerformDataRender
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-			await component.build();
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
 
 			const
@@ -176,14 +177,15 @@ test.describe('<b-virtual-scroll>', () => {
 			state.data.addItems(chunkSize);
 			state.data.addChild([separator]);
 
-			await component.withProps({
-				itemsFactory,
-				shouldPerformDataRender: () => true,
-				chunkSize
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					itemsFactory,
+					shouldPerformDataRender: () => true,
+					chunkSize
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForContainerChildCountEqualsTo(chunkSize + 1);
 			await component.waitForLifecycleDone();
 
@@ -227,14 +229,15 @@ test.describe('<b-virtual-scroll>', () => {
 
 			state.data.addSeparators(chunkSize);
 
-			await component.withProps({
-				itemsFactory,
-				shouldPerformDataRender: () => true,
-				chunkSize
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					itemsFactory,
+					shouldPerformDataRender: () => true,
+					chunkSize
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
 			await component.waitForLifecycleDone();
 

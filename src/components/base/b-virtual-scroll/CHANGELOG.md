@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Major update. Visit [readme](./readme) to see migration guide
+* Major update. Visit [readme](./readme) to see migration guide.
 
 ## v3.30.1 (2022-10-25)
 

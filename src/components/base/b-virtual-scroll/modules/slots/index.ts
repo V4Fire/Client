@@ -10,6 +10,7 @@ import symbolGenerator from 'core/symbol';
 import type { AsyncOptions } from 'core/async';
 
 import Friend from 'components/friends/friend';
+
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { SlotsStateObj } from 'components/base/b-virtual-scroll/modules/slots/interface';
 

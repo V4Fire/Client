@@ -297,7 +297,7 @@ export function createMountedSeparator(data: IndexedObj): MountedChild {
  *
  * @param count - The number of items to create.
  * @param itemCtor - The constructor function to create items.
- * @param start - The starting index (default: 0).
+ * @param [start] - The starting index (default: 0).
  */
 export function createChunk<DATA extends unknown = unknown>(
 	count: number,
@@ -317,7 +317,7 @@ export function createIndexedObj(i: number): IndexedObj {
 
 /**
  * Filters emitter emit calls and removes unnecessary events.
- * It only keeps component events, excluding observer-like events.
+ * It only keeps component events.
  *
  * @param emitCalls - The array of emit calls.
  * @param [filterObserverEvents] - Whether to filter out observer events (default: true).
@@ -335,7 +335,7 @@ export function filterEmitterCalls(
 
 /**
  * Filters emitter emit results and removes unnecessary events.
- * It only keeps component events, excluding observer-like events.
+ * It only keeps component events.
  *
  * @param results - The array of emit results.
  * @param [filterObserverEvents] - Whether to filter out observer events (default: true).

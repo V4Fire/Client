@@ -38,7 +38,7 @@ import iData, { component, prop, system } from 'components/super/i-data/i-data';
  * It contains the properties of the {@link bVirtualScroll} component.
  */
 @component()
-export default abstract class iVirtualScrollProps extends iData implements iItems {
+export default abstract class iVirtualScrollProps extends iData {
 	/** {@link iItems.item} */
 	readonly Item!: object;
 

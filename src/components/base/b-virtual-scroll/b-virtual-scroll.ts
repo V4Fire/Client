@@ -13,6 +13,7 @@
 
 import type { AsyncOptions } from 'core/async';
 
+import type iItems from 'components/traits/i-items/i-items';
 import VDOM, { create, render } from 'components/friends/vdom';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll/handlers';
 import { bVirtualScrollDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-virtual-scroll/const';
@@ -35,7 +36,7 @@ VDOM.addToPrototype(render);
  * by dynamically rendering chunks of data as the user scrolls.
  */
 @component()
-export default class bVirtualScroll extends iVirtualScrollHandlers {
+export default class bVirtualScroll extends iVirtualScrollHandlers implements iItems {
 	// @ts-ignore (getter instead readonly)
 	override get requestParams(): iData['requestParams'] {
 		return {
@@ -181,9 +182,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers {
 
 	/**
 	 * Returns the chunk size that should be rendered.
-	 *
 	 * @param state
-	 * @returns The chunk size.
 	 */
 	getChunkSize(state: VirtualScrollState): number {
 		return Object.isFunction(this.chunkSize) ?
@@ -217,11 +216,12 @@ export default class bVirtualScroll extends iVirtualScrollHandlers {
 	 * This function is called after successful data loading or when the child components enters the visible area.
 	 *
 	 * This function asks the client whether rendering can be performed. The client responds with an object
-	 * indicating whether rendering is allowed or the reason for denial. The client's response should be an object
-	 * of type {@link RenderGuardResult}.
+	 * indicating whether rendering is allowed or the reason for denial.
 	 *
 	 * Based on the result of this function, the component takes appropriate actions. For example,
 	 * it may load data if it is not sufficient for rendering, or perform rendering if all conditions are met.
+	 *
+	 * @param state
 	 */
 	protected renderGuard(state: VirtualScrollState): RenderGuardResult {
 		const

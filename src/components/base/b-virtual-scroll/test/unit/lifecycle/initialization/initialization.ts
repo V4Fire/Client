@@ -7,7 +7,7 @@
  */
 
 /**
- * @file Test cases of the component lifecycle.
+ * @file Test cases of the component lifecycle initialization.
  */
 
 import test from 'tests/config/unit/test';
@@ -67,16 +67,17 @@ test.describe('<b-virtual-scroll>', () => {
 
 					state.data.addItems(chunkSize);
 
-					await component.withProps({
-						chunkSize,
-						shouldStopRequestingData,
-						shouldPerformDataRequest,
-						disableObserver: true,
-						...hookProp
-					});
+					await component
+						.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+						.withProps({
+							chunkSize,
+							shouldStopRequestingData,
+							shouldPerformDataRequest,
+							disableObserver: true,
+							...hookProp
+						})
+						.build();
 
-					await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-					await component.build();
 					await component.waitForContainerChildCountEqualsTo(chunkSize);
 				});
 
@@ -169,16 +170,17 @@ test.describe('<b-virtual-scroll>', () => {
 					state.data.addData(providerChunkSize);
 					state.data.addItems(providerChunkSize);
 
-					await component.withProps({
-						chunkSize,
-						shouldStopRequestingData,
-						shouldPerformDataRequest,
-						disableObserver: true,
-						...hookProp
-					});
+					await component
+						.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+						.withProps({
+							chunkSize,
+							shouldStopRequestingData,
+							shouldPerformDataRequest,
+							disableObserver: true,
+							...hookProp
+						})
+						.build();
 
-					await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-					await component.build();
 					await component.waitForContainerChildCountEqualsTo(providerChunkSize);
 				});
 
@@ -243,16 +245,17 @@ test.describe('<b-virtual-scroll>', () => {
 					state.data.addData(providerChunkSize);
 					state.data.addItems(providerChunkSize);
 
-					await component.withProps({
-						chunkSize,
-						shouldStopRequestingData,
-						shouldPerformDataRequest,
-						disableObserver: true,
-						...hookProp
-					});
+					await component
+						.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+						.withProps({
+							chunkSize,
+							shouldStopRequestingData,
+							shouldPerformDataRequest,
+							disableObserver: true,
+							...hookProp
+						})
+						.build();
 
-					await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-					await component.build();
 					await component.waitForContainerChildCountEqualsTo(providerChunkSize);
 				});
 

@@ -22,7 +22,6 @@ import iData, { component } from 'components/super/i-data/i-data';
  */
 @component()
 export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
-
 	/**
 	 * Handler: component reset event.
 	 * Resets the component state to its initial state.

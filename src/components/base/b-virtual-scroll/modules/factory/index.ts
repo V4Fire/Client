@@ -11,7 +11,7 @@ import type { VNodeDescriptor } from 'components/friends/vdom';
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { ComponentItem, MountedChild, MountedItem } from 'components/base/b-virtual-scroll/interface';
-import { componentItemType } from 'components/base/b-virtual-scroll/const';
+import { isItem } from 'components/base/b-virtual-scroll/modules/helpers';
 
 import * as vdomRender from 'components/base/b-virtual-scroll/modules/factory/engines/vdom';
 
@@ -61,7 +61,7 @@ export class ComponentFactory extends Friend {
 			{items: mountedItems, childList} = ctx.getComponentState();
 
 		return items.map((item, i) => {
-			if (item.type === componentItemType.item) {
+			if (isItem(item)) {
 				return {
 					...item,
 					node: nodes[i],

@@ -15,12 +15,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* `b-virtual-scroll` мажорное обновление. Посмотрите readme компонента чтобы ознакомиться с изменениями и миграционным гайдом `components/base/b-virtual-scroll`.
+* Major update to `b-virtual-scroll`. Please see to the component's readme for changes and migration guide `components/base/b-virtual-scroll`.
 
 #### :rocket: New Feature
 
-* Добавлено новое тестовое API `ComponentObject` которые позволяет более удобно организовать общение с компонентов в тестовой среде `test/helpers/component-object`;
-* Добавлено новое тестовое API для мока и реализации наблюдения за какими-либо функциями в рантайме `test/helpers/mock`
+* Added new testing API `ComponentObject` that allows for easier interaction with components in the testing environment `test/helpers/component-object`.
+* Added new testing API for mocking and spying on functions at runtime `test/helpers/mock`.
 
 ## v4.0.0-beta.8 (2023-07-07)
 

@@ -61,21 +61,22 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.getDataChunk(0)})
 				.response(200, {data: []});
 
-			await component.withProps({
-				chunkSize,
-				shouldStopRequestingData: () => true,
-				'@hook:beforeDataCreate': (ctx) => {
-					const original = ctx.emit;
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldStopRequestingData: () => true,
+					'@hook:beforeDataCreate': (ctx) => {
+						const original = ctx.emit;
 
-					ctx.emit = jestMock.mock((...args) => {
-						original(...args);
-						return [args[0], Object.fastClone(ctx.getComponentState())];
-					});
-				}
-			});
+						ctx.emit = jestMock.mock((...args) => {
+							original(...args);
+							return [args[0], Object.fastClone(ctx.getComponentState())];
+						});
+					}
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForLifecycleDone();
 
 			const
@@ -142,20 +143,21 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.getDataChunk(1)})
 				.response(200, {data: state.data.getDataChunk(2)});
 
-			await component.withProps({
-				chunkSize,
-				'@hook:beforeDataCreate': (ctx) => {
-					const original = ctx.emit;
+			await component
+				.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+				.withProps({
+					chunkSize,
+					'@hook:beforeDataCreate': (ctx) => {
+						const original = ctx.emit;
 
-					ctx.emit = jestMock.mock((...args) => {
-						original(...args);
-						return [args[0], Object.fastClone(ctx.getComponentState())];
-					});
-				}
-			});
+						ctx.emit = jestMock.mock((...args) => {
+							original(...args);
+							return [args[0], Object.fastClone(ctx.getComponentState())];
+						});
+					}
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-			await component.build();
 			await component.waitForLifecycleDone();
 			await component.reload();
 			await component.waitForLifecycleDone();

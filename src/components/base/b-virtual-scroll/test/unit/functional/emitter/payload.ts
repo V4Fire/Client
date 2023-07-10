@@ -7,7 +7,7 @@
  */
 
 /**
- * @file This file contains test cases to verify the functionality of events emitter.
+ * @file This file contains test cases to verify the functionality of events emitted by the component.
  */
 
 import test from 'tests/config/unit/test';
@@ -15,7 +15,7 @@ import test from 'tests/config/unit/test';
 import { createTestHelpers, filterEmitterCalls } from 'components/base/b-virtual-scroll/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
 
-test.describe('<b-virtual-scroll> emitter', () => {
+test.describe('<b-virtual-scroll>', () => {
 	let
 		component: VirtualScrollTestHelpers['component'],
 		provider: VirtualScrollTestHelpers['provider'],
@@ -35,14 +35,15 @@ test.describe('<b-virtual-scroll> emitter', () => {
 			.responseOnce(200, {data: state.data.addData(chunkSize)})
 			.response(200, {data: []});
 
-		await component.withProps({
-			chunkSize,
-			shouldStopRequestingData: () => true,
-			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
-		});
+		await component
+			.withDefaultPaginationProviderProps({chunkSize})
+			.withProps({
+				chunkSize,
+				shouldStopRequestingData: () => true,
+				'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+			})
+			.build();
 
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
 		await component.waitForLifecycleDone();
 
 		const
@@ -77,15 +78,16 @@ test.describe('<b-virtual-scroll> emitter', () => {
 			.responseOnce(200, {data: secondDataChunk})
 			.response(200, {data: []});
 
-		await component.withProps({
-			chunkSize,
-			shouldPerformDataRequest: () => true,
-			shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
-		});
+		await component
+			.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+			.withProps({
+				chunkSize,
+				shouldPerformDataRequest: () => true,
+				shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
+				'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+			})
+			.build();
 
-		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-		await component.build();
 		await component.waitForContainerChildCountEqualsTo(chunkSize);
 
 		const
@@ -124,15 +126,16 @@ test.describe('<b-virtual-scroll> emitter', () => {
 			.responseOnce(200, {data: firstDataChunk})
 			.response(200, {data: []});
 
-		await component.withProps({
-			chunkSize,
-			shouldPerformDataRequest: () => true,
-			shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
-		});
+		await component
+			.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+			.withProps({
+				chunkSize,
+				shouldPerformDataRequest: () => true,
+				shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
+				'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+			})
+			.build();
 
-		await component.withDefaultPaginationProviderProps({chunkSize: providerChunkSize});
-		await component.build();
 		await component.waitForContainerChildCountEqualsTo(providerChunkSize);
 		await component.waitForLifecycleDone();
 
@@ -164,14 +167,15 @@ test.describe('<b-virtual-scroll> emitter', () => {
 			.responseOnce(200, {data: state.data.addData(chunkSize)})
 			.response(200, {data: []});
 
-		await component.withProps({
-			chunkSize,
-			shouldStopRequestingData: () => true,
-			'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
-		});
+		await component
+			.withDefaultPaginationProviderProps({chunkSize})
+			.withProps({
+				chunkSize,
+				shouldStopRequestingData: () => true,
+				'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+			})
+			.build();
 
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
 		await component.waitForContainerChildCountEqualsTo(chunkSize);
 
 		state.reset();

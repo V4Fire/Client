@@ -31,36 +31,41 @@ test.describe('<b-virtual-scroll>', () => {
 		await page.setViewportSize({height: 640, width: 360});
 	});
 
-	test('Should render all loaded data', async () => {
-		const
-			chunkSize = 12;
+	test.describe('ChunkSize is 12', () => {
+		test.describe('Provider can provide 3 data chunks', () => {
+			test('Should render 36 items', async () => {
+				const
+					chunkSize = 12;
 
-		provider
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.response(200, {data: state.data.addData(0)});
+				provider
+					.responseOnce(200, {data: state.data.addData(chunkSize)})
+					.responseOnce(200, {data: state.data.addData(chunkSize)})
+					.responseOnce(200, {data: state.data.addData(chunkSize)})
+					.response(200, {data: state.data.addData(0)});
 
-		const shouldPerformDataRender = await component.mockFn<ShouldPerform>(
-			({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0
-		);
+				const shouldPerformDataRender = await component.mockFn<ShouldPerform>(
+					({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0
+				);
 
-		await component.withProps({
-			shouldPerformDataRender,
-			chunkSize
+				await component
+					.withDefaultPaginationProviderProps({chunkSize})
+					.withProps({
+						shouldPerformDataRender,
+						chunkSize
+					});
+
+				await component.build();
+				await component.waitForContainerChildCountEqualsTo(chunkSize);
+				await component.scrollToBottom();
+				await component.waitForContainerChildCountEqualsTo(chunkSize * 2);
+				await component.scrollToBottom();
+				await component.waitForContainerChildCountEqualsTo(chunkSize * 3);
+				await component.scrollToBottom();
+				await component.waitForContainerChildCountEqualsTo(chunkSize * 3);
+
+				await test.expect(component.childList).toHaveCount(chunkSize * 3);
+			});
 		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(chunkSize);
-		await component.scrollToBottom();
-		await component.waitForContainerChildCountEqualsTo(chunkSize * 2);
-		await component.scrollToBottom();
-		await component.waitForContainerChildCountEqualsTo(chunkSize * 3);
-		await component.scrollToBottom();
-		await component.waitForContainerChildCountEqualsTo(chunkSize * 3);
-
-		await test.expect(component.childList).toHaveCount(chunkSize * 3);
 	});
 
 	test.describe('With a different chunk size for each render cycle', () => {
@@ -73,11 +78,12 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize[2])})
 				.response(200, {data: []});
 
-			await component.withProps({
-				chunkSize: (state: VirtualScrollState) => [6, 12, 18][state.renderPage] ?? 18
-			});
+			await component
+				.withDefaultPaginationProviderProps()
+				.withProps({
+					chunkSize: (state: VirtualScrollState) => [6, 12, 18][state.renderPage] ?? 18
+				});
 
-			await component.withDefaultPaginationProviderProps();
 			await component.build();
 
 			await test.step('First chunk', async () => {

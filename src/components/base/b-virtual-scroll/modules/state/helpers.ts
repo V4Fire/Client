@@ -6,13 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { VirtualScrollState } from 'components/base/b-virtual-scroll/b-virtual-scroll';
-import type { PrivateComponentState } from 'components/base/b-virtual-scroll/interface';
+import type { VirtualScrollState, PrivateComponentState } from 'components/base/b-virtual-scroll/interface';
 
 /**
  * Creates an initial state object for a component.
- *
- * @returns An object representing the initial state of a component.
  */
 export function createInitialState(): VirtualScrollState {
 	return {
@@ -39,8 +36,6 @@ export function createInitialState(): VirtualScrollState {
 
 /**
  * Creates an initial private state object for a component.
- *
- * @returns An object representing the initial private state of a component.
  */
 export function createPrivateInitialState(): PrivateComponentState {
 	return {

@@ -56,14 +56,15 @@ test.describe('<b-virtual-scroll>', () => {
 		test.beforeEach(async () => {
 			provider.response(200, () => ({data: state.data.addData(chunkSize)}));
 
-			await component.withProps({
-				chunkSize,
-				disableObserver: true,
-				shouldPerformDataRender: () => true
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					disableObserver: true,
+					shouldPerformDataRender: () => true
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
 		});
 

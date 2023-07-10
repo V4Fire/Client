@@ -465,6 +465,17 @@ graph TB
     N -- True --> P["performRender()"]
 ```
 
+### Difference between ComponentItem with type `item` and `separator`
+
+The component allows rendering two types of components:
+
+- `item` - Main component (main content).
+- `separator` - Other components, such as dividers or separators.
+
+There is no significant difference between them, except that they are treated differently in fields like `itemsTillEnd` in the `VirtualScrollState`. As the name suggests, the `itemsTillEnd` property only considers components with the `item` type, while `childTillEnd` considers components with both `item` and `separator` types.
+
+The distinction between `item` and `separator` types is mainly used for calculating certain properties based on the type of components present in the `VirtualScrollState`, such as the number of items till the end of the scroll.
+
 ### Overriding in Child Layers
 
 The main use case for overriding in child layers is to modify the default behavior of functions or methods.

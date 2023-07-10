@@ -10,7 +10,7 @@ import type { MountedChild } from 'components/base/b-virtual-scroll/interface/co
 import { componentDataLocalEvents, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-virtual-scroll/const';
 
 /**
- * Component data-related events (emitted in `localEmitter`).
+ * Component data-related events (emitted in `selfEmitter`).
  */
 export interface ComponentDataLocalEvents {
 	/**

@@ -1,6 +1,6 @@
 # tests/helpers/component-object
 
-The `ComponentObject` is a base class for testing components. The `component object` pattern allows for a more convenient way to interact with components in a testing environment.
+The `ComponentObject` is a base class for creating a component object like components for testing. The `component object` pattern allows for a more convenient way to interact with components in a testing environment.
 
 This class can be used as a generic class for any component or can be extended to create a custom `component object` that implements methods for interacting with a specific component.
 
@@ -13,14 +13,10 @@ The class provides a universal API for generating a component and setting up moc
 #### Basic
 
 ```typescript
-import ComponentObjectBuilder from 'path/to/ComponentObjectBuilder';
+import ComponentObject from 'path/to/component-object';
 
-class MyComponentObject extends ComponentObjectBuilder {
-    // Implement specific methods and properties for interacting with the component during tests
-}
-
-// Create an instance of MyComponentObject
-const myComponent = new MyComponentObject(page, 'MyComponent');
+// Create an instance of ComponentObject
+const myComponent = new ComponentObject(page, 'MyComponent');
 
 // Build the component
 await myComponent.build();
@@ -48,6 +44,8 @@ class MyComponentObject extends ComponentObject {
 // Create an instance of MyComponentObject
 const myComponent = new MyComponentObject(page, 'MyComponent');
 
+await myComponent.build();
+
 // Create a spy
 const spy = await myComponent.spyOn('someMethod');
 
@@ -68,6 +66,37 @@ const mockFn = await myComponent.mockFn((arg) => {
 });
 ```
 
+#### Provide mock function as a prop
+
+```typescript
+import ComponentObject from 'path/to/component-object';
+
+class MyComponentObject extends ComponentObject {
+    // Implement specific methods and properties for testing the component in a mock environment
+}
+
+// Create an instance of MyComponentObject
+const
+  myComponent = new MyComponentObject(page, 'MyComponent'),
+  someProp = await myComponent.mockFn(() => true);
+
+myComponent.setProps({
+  someProp
+});
+
+await myComponent.build();
+
+// Access the component
+const component = myComponent.component;
+
+// Perform interactions with the component
+await component.evaluate((ctx) => {
+    // Perform actions on the component
+});
+
+console.log(await someProp.calls);
+```
+
 #### Spy on emitter
 
 ```typescript
@@ -84,6 +113,8 @@ const myComponent = new MyComponentObject(page, 'MyComponent');
 myComponent.setProps({
   '@hook:beforeDataCreate': (ctx) => jest.spy(ctx, 'emit')
 });
+
+await myComponent.build();
 
 // Access the component
 const component = myComponent.component;

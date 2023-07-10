@@ -6,10 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Friend from 'components/friends/friend';
+
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { MountedChild } from 'components/base/b-virtual-scroll/interface';
+
 import IoObserver from 'components/base/b-virtual-scroll/modules/observer/engines/intersection-observer';
-import Friend from 'components/friends/friend';
 
 export { default as IoObserver } from 'components/base/b-virtual-scroll/modules/observer/engines/intersection-observer';
 

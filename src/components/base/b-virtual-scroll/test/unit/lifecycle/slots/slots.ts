@@ -84,12 +84,11 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.withProps({
-				chunkSize
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({chunkSize})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForSlotState('done', true);
 
 			const
@@ -114,13 +113,14 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.withProps({
-				chunkSize,
-				shouldPerformDataRender: () => true
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRender: () => true
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.scrollToBottom();
 			await component.waitForSlotState('done', true);
 
@@ -145,13 +145,14 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize / 2)})
 				.response(200, {data: []});
 
-			await component.withProps({
-				chunkSize,
-				shouldPerformDataRender: () => true
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRender: () => true
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForSlotState('done', true);
 
 			const
@@ -183,14 +184,15 @@ test.describe('<b-virtual-scroll>', () => {
 			const shouldPerformDataRender =
 				<ShouldPerform>(({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0);
 
-			await component.withProps({
-				chunkSize,
-				shouldPerformDataRequest,
-				shouldPerformDataRender
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRequest,
+					shouldPerformDataRender
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForContainerChildCountEqualsTo(chunkSize);
 			await component.waitForSlotState('loader', false);
 
@@ -215,13 +217,14 @@ test.describe('<b-virtual-scroll>', () => {
 
 			provider.response(200, {data: []});
 
-			await component.withProps({
-				chunkSize,
-				shouldPerformDataRender: () => true
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRender: () => true
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForSlotState('empty', true);
 
 			const
@@ -246,12 +249,11 @@ test.describe('<b-virtual-scroll>', () => {
 			provider
 				.response(200, {data: state.data.addData(chunkSize)}, {delay: (10).seconds()});
 
-			await component.withProps({
-				chunkSize
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({chunkSize})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForSlotState('loader', true);
 
 			const
@@ -276,12 +278,10 @@ test.describe('<b-virtual-scroll>', () => {
 			provider
 				.response(200, {data: state.data.addData(providerChunkSize)}, {delay: (4).seconds()});
 
-			await component.withProps({
-				chunkSize
-			});
-
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({chunkSize})
+				.build();
 
 			let i = 0;
 
@@ -313,13 +313,14 @@ test.describe('<b-virtual-scroll>', () => {
 
 			provider.response(500, {});
 
-			await component.withProps({
-				chunkSize,
-				shouldPerformDataRender: () => true
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRender: () => true
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForSlotState('retry', true);
 
 			const
@@ -345,13 +346,14 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(providerChunkSize)})
 				.response(500, {});
 
-			await component.withProps({
-				chunkSize,
-				shouldPerformDataRender: () => true
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRender: () => true
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForSlotState('retry', true);
 
 			const
@@ -388,14 +390,15 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			await component.withProps({
-				chunkSize,
-				disableObserver: true,
-				shouldPerformDataRender: () => true
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					disableObserver: true,
+					shouldPerformDataRender: () => true
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForSlotState('renderNext', true);
 
 			const
@@ -419,14 +422,15 @@ test.describe('<b-virtual-scroll>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)}, {delay: (10).seconds()})
 				.response(200, {data: []});
 
-			await component.withProps({
-				chunkSize,
-				disableObserver: true,
-				shouldPerformDataRender: () => true
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					disableObserver: true,
+					shouldPerformDataRender: () => true
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await BOM.waitForIdleCallback(page);
 			await component.waitForSlotState('renderNext', false);
 
@@ -449,14 +453,15 @@ test.describe('<b-virtual-scroll>', () => {
 
 			provider.response(500, {data: []});
 
-			await component.withProps({
-				chunkSize,
-				disableObserver: true,
-				shouldPerformDataRender: () => true
-			});
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					disableObserver: true,
+					shouldPerformDataRender: () => true
+				})
+				.build();
 
-			await component.withDefaultPaginationProviderProps({chunkSize});
-			await component.build();
 			await component.waitForSlotState('renderNext', false);
 			await component.waitForSlotState('tombstones', false);
 

@@ -136,7 +136,7 @@ declare var
 	};
 
 /**
- * Результат который возвращает мок или spy функций от `jestMock` в свойстве returns
+ * The results returned by a mock or spy function from `jestMock`.
  */
 interface JestMockResult<VAL = any> {
 	type: 'throw' | 'return';

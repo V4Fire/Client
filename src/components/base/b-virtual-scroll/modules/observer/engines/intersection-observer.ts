@@ -6,11 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Friend from 'components/friends/friend';
+
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { MountedChild } from 'components/base/b-virtual-scroll/interface';
+
 import { observerAsyncGroup } from 'components/base/b-virtual-scroll/modules/observer/const';
 import type { ObserverEngine } from 'components/base/b-virtual-scroll/modules/observer/interface';
-import Friend from 'components/friends/friend';
 
 export default class IoObserver extends Friend implements ObserverEngine {
 

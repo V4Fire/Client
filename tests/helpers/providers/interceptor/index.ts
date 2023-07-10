@@ -32,7 +32,7 @@ export class RequestInterceptor {
 	readonly routeListener: ResponseHandler;
 
 	/**
-	 * Экземпляр jest-mock который берет на себя логику имплементации ответов
+	 * An instance of jest-mock that handles the implementation logic of responses.
 	 */
 	readonly mock: ReturnType<ModuleMocker['fn']>;
 

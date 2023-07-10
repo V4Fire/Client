@@ -17,7 +17,7 @@ import type { ComponentItemFactory, ComponentItem, ShouldPerform } from 'compone
 import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
 
-test.describe('<b-virtual-scroll> rendering via component factory', () => {
+test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 	let
 		component: VirtualScrollTestHelpers['component'],
 		provider: VirtualScrollTestHelpers['provider'],
@@ -30,252 +30,270 @@ test.describe('<b-virtual-scroll> rendering via component factory', () => {
 		await provider.start();
 	});
 
-	test('Returned items with type `item` is equal to the provided data', async () => {
-		const
-			chunkSize = 12;
-
-		provider
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.response(200, {data: state.data.addData(0)});
-
-		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
-			const data = state.lastLoadedData;
-
-			return data.map((item) => ({
-				item: 'section',
-				key: Object.cast(undefined),
-				type: 'item',
-				children: [],
-				props: {
-					'data-index': item.i
-				}
-			}));
-		});
-
-		await component.withProps({
-			itemsFactory,
-			shouldPerformDataRender: () => true,
-			chunkSize
-		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(chunkSize);
-
-		await test.expect(component.childList).toHaveCount(chunkSize);
-	});
-
-	test('In additional `item`, `separator` was also returned', async () => {
-		const
-			chunkSize = 12;
-
-		provider
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.response(200, {data: state.data.addData(0)});
-
-		const separator = {
-			item: 'b-button',
-			key: '',
-			children: {
-				default: 'ima button'
-			},
-			props: {
-				id: 'button'
-			},
-			type: 'separator'
-		};
-
-		const itemsFactory = await component.mockFn((state, ctx, separator) => {
+	test.describe('Returned items with type `item` is equal to the provided data', () => {
+		test('Should render all of the items that was returned from `itemsFactory`', async () => {
 			const
-				data = state.lastLoadedData;
+				chunkSize = 12;
 
-			const items = data.map((item) => ({
-				item: 'section',
-				key: Object.cast(undefined),
-				type: 'item',
-				children: [],
-				props: {
-					'data-index': item.i
-				}
-			}));
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: state.data.addData(0)});
 
-			items.push(separator);
+			const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
+				const data = state.lastLoadedData;
 
-			return items;
-		}, separator);
+				return data.map((item) => ({
+					item: 'section',
+					key: Object.cast(undefined),
+					type: 'item',
+					children: [],
+					props: {
+						'data-index': item.i
+					}
+				}));
+			});
 
-		await component.withProps({
-			itemsFactory,
-			shouldPerformDataRender: () => true,
-			chunkSize
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					itemsFactory,
+					shouldPerformDataRender: () => true,
+					chunkSize
+				})
+				.build();
+
+			await component.waitForContainerChildCountEqualsTo(chunkSize);
+
+			await test.expect(component.childList).toHaveCount(chunkSize);
 		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(chunkSize + 1);
-
-		await test.expect(component.container.locator('#button')).toBeVisible();
-		await test.expect(component.childList).toHaveCount(chunkSize + 1);
 	});
 
-	test('Returned items with type `item` is less than the provided data', async () => {
-		const
-			chunkSize = 12,
-			renderedChunkSize = chunkSize - 2;
+	test.describe('In additional `item`, `separator` was also returned', () => {
+		test('Should render both', async () => {
+			const
+				chunkSize = 12;
 
-		provider
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.response(200, {data: state.data.addData(0)});
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: state.data.addData(0)});
 
-		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
-			const data = state.lastLoadedData;
-
-			const items = data.map<ComponentItem>((item) => ({
-				item: 'section',
-				key: Object.cast(undefined),
-				type: 'item',
-				children: [],
+			const separator = {
+				item: 'b-button',
+				key: '',
+				children: {
+					default: 'ima button'
+				},
 				props: {
-					'data-index': item.i
-				}
-			}));
+					id: 'button'
+				},
+				type: 'separator'
+			};
 
-			items.length -= 2;
-			return items;
+			const itemsFactory = await component.mockFn((state, ctx, separator) => {
+				const
+					data = state.lastLoadedData;
+
+				const items = data.map((item) => ({
+					item: 'section',
+					key: Object.cast(undefined),
+					type: 'item',
+					children: [],
+					props: {
+						'data-index': item.i
+					}
+				}));
+
+				items.push(separator);
+
+				return items;
+			}, separator);
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					itemsFactory,
+					shouldPerformDataRender: () => true,
+					chunkSize
+				})
+				.build();
+
+			await component.waitForContainerChildCountEqualsTo(chunkSize + 1);
+
+			await test.expect(component.container.locator('#button')).toBeVisible();
+			await test.expect(component.childList).toHaveCount(chunkSize + 1);
 		});
-
-		await component.withProps({
-			itemsFactory,
-			shouldPerformDataRender: () => true,
-			chunkSize
-		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(renderedChunkSize);
-
-		await test.expect(component.childList).toHaveCount(renderedChunkSize);
 	});
 
-	test('Returned item with type `item` is more than the provided data', async () => {
-		const
-			chunkSize = 12,
-			renderedChunkSize = chunkSize * 2;
+	test.describe('Returned items with type `item` is less than the provided data', () => {
+		test('Should render items that was returned from `itemsFactory`', async () => {
+			const
+				chunkSize = 12,
+				renderedChunkSize = chunkSize - 2;
 
-		provider
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.response(200, {data: state.data.addData(0)});
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: state.data.addData(0)});
 
-		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
-			const data = state.lastLoadedData;
+			const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
+				const data = state.lastLoadedData;
 
-			const items = data.map<ComponentItem>((item) => ({
-				item: 'section',
-				key: Object.cast(undefined),
-				type: 'item',
-				children: [],
-				props: {
-					'data-index': item.i
-				}
-			}));
+				const items = data.map<ComponentItem>((item) => ({
+					item: 'section',
+					key: Object.cast(undefined),
+					type: 'item',
+					children: [],
+					props: {
+						'data-index': item.i
+					}
+				}));
 
-			return [...items, ...items];
+				items.length -= 2;
+				return items;
+			});
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					itemsFactory,
+					shouldPerformDataRender: () => true,
+					chunkSize
+				})
+				.build();
+
+			await component.waitForContainerChildCountEqualsTo(renderedChunkSize);
+
+			await test.expect(component.childList).toHaveCount(renderedChunkSize);
 		});
-
-		await component.withProps({
-			itemsFactory,
-			shouldPerformDataRender: () => true,
-			chunkSize
-		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(renderedChunkSize);
-
-		await test.expect(component.childList).toHaveCount(renderedChunkSize);
 	});
 
-	test('`item` was not returned, but equal to the number of data, the number of `separator` was returned', async () => {
-		const
-			chunkSize = 12;
+	test.describe('Returned item with type `item` is more than the provided data', () => {
+		test('Should render items that was returned from `itemsFactory`', async () => {
+			const
+				chunkSize = 12,
+				renderedChunkSize = chunkSize * 2;
 
-		provider
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.response(200, {data: state.data.addData(0)});
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: state.data.addData(0)});
 
-		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
-			const data = state.lastLoadedData;
+			const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
+				const data = state.lastLoadedData;
 
-			return data.map((item) => ({
-				item: 'section',
-				key: Object.cast(undefined),
-				type: 'separator',
-				children: [],
-				props: {
-					'data-index': item.i
-				}
-			}));
+				const items = data.map<ComponentItem>((item) => ({
+					item: 'section',
+					key: Object.cast(undefined),
+					type: 'item',
+					children: [],
+					props: {
+						'data-index': item.i
+					}
+				}));
+
+				return [...items, ...items];
+			});
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					itemsFactory,
+					shouldPerformDataRender: () => true,
+					chunkSize
+				})
+				.build();
+
+			await component.waitForContainerChildCountEqualsTo(renderedChunkSize);
+
+			await test.expect(component.childList).toHaveCount(renderedChunkSize);
 		});
-
-		await component.withProps({
-			itemsFactory,
-			shouldPerformDataRender: () => true,
-			chunkSize
-		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(chunkSize);
-
-		await test.expect(component.childList).toHaveCount(chunkSize);
 	});
 
-	test('`itemsFactory` returns twice as much data as `chunkSize`', async () => {
-		const
-			chunkSize = 12;
+	test.describe('`item` was not returned, but equal to the number of data, the number of `separator` was returned', () => {
+		test('Should render separators that was returned from `itemsFactory`', async () => {
+			const
+				chunkSize = 12;
 
-		provider
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.response(200, {data: state.data.addData(0)});
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: state.data.addData(0)});
 
-		const shouldPerformDataRender = await component.mockFn<ShouldPerform>(
-			({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0
-		);
+			const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
+				const data = state.lastLoadedData;
 
-		const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
-			const data = state.lastLoadedData;
+				return data.map((item) => ({
+					item: 'section',
+					key: Object.cast(undefined),
+					type: 'separator',
+					children: [],
+					props: {
+						'data-index': item.i
+					}
+				}));
+			});
 
-			const items = data.map<ComponentItem>((item) => ({
-				item: 'section',
-				key: Object.cast(undefined),
-				type: 'item',
-				children: [],
-				props: {
-					'data-index': item.i
-				}
-			}));
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					itemsFactory,
+					shouldPerformDataRender: () => true,
+					chunkSize
+				})
+				.build();
 
-			return [...items, ...items];
+			await component.waitForContainerChildCountEqualsTo(chunkSize);
+
+			await test.expect(component.childList).toHaveCount(chunkSize);
 		});
+	});
 
-		await component.withProps({
-			itemsFactory,
-			shouldPerformDataRender,
-			chunkSize
+	test.describe('`itemsFactory` returns twice as much data as `chunkSize`', () => {
+		test('Should render twice as much items as `chunkSize`', async () => {
+			const
+				chunkSize = 12;
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: state.data.addData(0)});
+
+			const shouldPerformDataRender = await component.mockFn<ShouldPerform>(
+				({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0
+			);
+
+			const itemsFactory = await component.mockFn<ComponentItemFactory<{i: number}>>((state) => {
+				const data = state.lastLoadedData;
+
+				const items = data.map<ComponentItem>((item) => ({
+					item: 'section',
+					key: Object.cast(undefined),
+					type: 'item',
+					children: [],
+					props: {
+						'data-index': item.i
+					}
+				}));
+
+				return [...items, ...items];
+			});
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					itemsFactory,
+					shouldPerformDataRender,
+					chunkSize
+				})
+				.build();
+
+			await component.waitForContainerChildCountEqualsTo(chunkSize * 2);
+			await component.scrollToBottom();
+			await component.waitForContainerChildCountEqualsTo(chunkSize * 2 * 2);
+			await component.scrollToBottom();
+			await component.waitForContainerChildCountEqualsTo(chunkSize * 3 * 2);
+			await component.scrollToBottom();
+			await component.waitForContainerChildCountEqualsTo(chunkSize * 3 * 2);
+
+			await test.expect(component.childList).toHaveCount(chunkSize * 3 * 2);
 		});
-
-		await component.withDefaultPaginationProviderProps({chunkSize});
-		await component.build();
-		await component.waitForContainerChildCountEqualsTo(chunkSize * 2);
-		await component.scrollToBottom();
-		await component.waitForContainerChildCountEqualsTo(chunkSize * 2 * 2);
-		await component.scrollToBottom();
-		await component.waitForContainerChildCountEqualsTo(chunkSize * 3 * 2);
-		await component.scrollToBottom();
-		await component.waitForContainerChildCountEqualsTo(chunkSize * 3 * 2);
-
-		await test.expect(component.childList).toHaveCount(chunkSize * 3 * 2);
 	});
 });

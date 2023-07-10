@@ -7,7 +7,7 @@
  */
 
 /**
- * @file This file contains test cases to verify the functionality of prop changes in components.
+ * @file This file contains test cases to verify the functionality of props in the component.
  */
 
 import type { Route } from 'playwright';
