@@ -13,22 +13,18 @@ import type {
 
 	VirtualScrollState,
 	ComponentDb,
-	ComponentRenderStrategy,
 	RequestQueryFn,
 	ShouldPerform,
 	ComponentItemFactory,
 	ComponentItemType,
-	ComponentStrategy,
 	$ComponentRefs
 
 } from 'components/base/b-virtual-scroll/interface';
 
 import {
 
-	componentRenderStrategy,
 	defaultShouldProps,
-	componentItemType,
-	componentStrategy
+	componentItemType
 
 } from 'components/base/b-virtual-scroll/const';
 
@@ -135,28 +131,6 @@ export default abstract class iVirtualScrollProps extends iData implements iItem
 	readonly itemsFactory!: ComponentItemFactory;
 
 	override readonly DB!: ComponentDb;
-
-	/**
-	 * The rendering strategy of components.
-	 * Determines which approach will be taken for rendering components within the rendering engine.
-	 *
-	 * * `default` - The default approach,
-	 * which creates a new instance of the rendering engine each time a new rendering is performed.
-	 *
-	 * * `reuse` - An approach
-	 * that reuses the current instance of the rendering engine whenever a new rendering is performed.
-	 *
-	 * {@link ComponentRenderStrategy}
-	 */
-	@prop({type: String, validator: (v) => Object.isString(v) && componentRenderStrategy.hasOwnProperty(v)})
-	readonly componentRenderStrategy: keyof ComponentRenderStrategy = componentRenderStrategy.default;
-
-	/**
-	 * Strategies for component operation modes.
-	 * {@link ComponentStrategy}
-	 */
-	@prop({type: String, validator: (v) => Object.isString(v) && componentStrategy.hasOwnProperty(v)})
-	readonly componentStrategy: keyof ComponentStrategy = componentStrategy.intersectionObserver;
 
 	/**
 	 * Function that returns the GET parameters for a request. This function is called for each request. It receives the

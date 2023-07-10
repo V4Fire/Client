@@ -11,9 +11,8 @@ import type { VNodeDescriptor } from 'components/friends/vdom';
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { ComponentItem, MountedChild, MountedItem } from 'components/base/b-virtual-scroll/interface';
-import { componentItemType, componentRenderStrategy } from 'components/base/b-virtual-scroll/const';
+import { componentItemType } from 'components/base/b-virtual-scroll/const';
 
-import * as forceUpdate from 'components/base/b-virtual-scroll/modules/factory/engines/force-update';
 import * as vdomRender from 'components/base/b-virtual-scroll/modules/factory/engines/vdom';
 
 /**
@@ -89,17 +88,13 @@ export class ComponentFactory extends Friend {
 		const
 			{ctx} = this;
 
-		let res;
 		ctx.onRenderEngineStart();
 
-		if (ctx.componentRenderStrategy === componentRenderStrategy.reuse) {
-			res = forceUpdate.render(ctx, descriptors);
-
-		} else {
+		const
 			res = vdomRender.render(ctx, descriptors);
-		}
 
 		ctx.onRenderEngineDone();
+
 		return res;
 	}
 }

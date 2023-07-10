@@ -8,12 +8,10 @@
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { MountedChild } from 'components/base/b-virtual-scroll/interface';
-import ScrollObserver from 'components/base/b-virtual-scroll/modules/observer/engines/scroll';
 import IoObserver from 'components/base/b-virtual-scroll/modules/observer/engines/intersection-observer';
 import Friend from 'components/friends/friend';
 
 export { default as IoObserver } from 'components/base/b-virtual-scroll/modules/observer/engines/intersection-observer';
-export { default as ScrollObserver } from 'components/base/b-virtual-scroll/modules/observer/engines/scroll';
 
 /**
  * Observer class for `bVirtualScroll` component.
@@ -24,9 +22,8 @@ export class Observer extends Friend {
 
 	/**
 	 * The observation engine used by the Observer.
-	 * It can be either an {@link IoObserver} or {@link ScrollObserver} instance.
 	 */
-	protected engine: IoObserver | ScrollObserver;
+	protected engine: IoObserver;
 
 	/**
 	 * @param ctx - The `bVirtualScroll` component instance.
@@ -34,9 +31,7 @@ export class Observer extends Friend {
 	constructor(ctx: bVirtualScroll) {
 		super(ctx);
 
-		this.engine = ctx.componentStrategy === 'intersectionObserver' ?
-			new IoObserver(ctx) :
-			new ScrollObserver(ctx);
+		this.engine = new IoObserver(ctx);
 	}
 
 	/**

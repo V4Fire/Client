@@ -9,50 +9,6 @@
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
 /**
- * Render strategy for producing the components.
- */
-export interface ComponentRenderStrategy {
-	/**
-	 * An approach that reuses the current instance of the rendering engine whenever a new rendering is performed.
-	 */
-	reuse: 'reuse';
-
-	/**
-	 * The default approach, which creates a new instance of the rendering engine each time a new rendering is performed.
-	 */
-	default: 'default';
-}
-
-/**
- * Strategies for component operation modes.
- */
-export interface ComponentStrategy {
-	/**
-	 * Strategy where element visibility is determined using `intersectionObserver`.
-	 * Nodes will not be removed from the DOM tree.
-	 */
-	intersectionObserver: 'intersectionObserver';
-
-	/**
-	 * Strategy where element visibility is determined by listening to the `scroll` event.
-	 * Nodes will not be removed from the DOM tree.
-	 */
-	scroll: 'scroll';
-
-	/**
-	 * Strategy where element visibility is determined by listening to the `scroll` event.
-	 * Nodes will be removed from and returned to the DOM tree.
-	 */
-	scrollWithDropNodes: 'scrollWithDropNodes';
-
-	/**
-	 * Strategy where element visibility is determined by listening to the `scroll` event.
-	 * Nodes from the DOM tree will be recycled.
-	 */
-	scrollWithRecycleNodes: 'scrollWithRecycleNodes';
-}
-
-/**
  * Component state.
  *
  * @typeParam DATA - Instance of the data element.

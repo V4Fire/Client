@@ -24,7 +24,6 @@ See the implemented modifiers or the parent component.
 | `lifecycleDone`                 | All component data is rendered and loaded.                      |                                               | `[]`                        |
 | `convertDataToDB`               | Trigger data conversion to the `DB`.                            | `data: unknown`                               | `[data]`                    |
 | `elementEnter`                  | The element has entered the viewport.                           | `componentItem: MountedChild`                 | `[componentItem]`           |
-| `elementOut`                    | The element has exited the viewport.                            | `componentItem: MountedChild`                 | `[componentItem]`           |
 | `renderStart`                   | Rendering of items has started.                                 |                                               | `[]`                        |
 | `renderDone`                    | Rendering of items has finished.                                |                                               | `[]`                        |
 | `renderEngineStart`             | Rendering of items has started with the render engine.          |                                               | `[]`                        |

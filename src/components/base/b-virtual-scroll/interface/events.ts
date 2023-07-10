@@ -97,11 +97,6 @@ export interface ComponentObserverLocalEvents {
 	 * The element has entered the viewport.
 	 */
 	elementEnter: 'elementEnter';
-
-	/**
-	 * The element has exited the viewport.
-	 */
-	elementOut: 'elementOut';
 }
 
 /**
@@ -128,7 +123,6 @@ export interface LocalEventPayloadMap {
 	[componentLocalEvents.convertDataToDB]: [data: unknown];
 
 	[componentObserverLocalEvents.elementEnter]: [componentItem: MountedChild];
-	[componentObserverLocalEvents.elementOut]: [componentItem: MountedChild];
 
 	[componentRenderLocalEvents.renderStart]: [];
 	[componentRenderLocalEvents.renderDone]: [];

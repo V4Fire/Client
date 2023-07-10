@@ -15,9 +15,7 @@ import type {
 	ComponentLifecycleEvents,
 	ComponentObserverLocalEvents,
 	ComponentRenderLocalEvents,
-	ComponentRenderStrategy,
 	VirtualScrollState,
-	ComponentStrategy,
 	RenderGuardRejectionReason
 
 } from 'components/base/b-virtual-scroll/interface';
@@ -31,24 +29,6 @@ export const bVirtualScrollAsyncGroup = 'b-virtual-scroll';
  * Group for asynchronous operations related to inserting nodes into the DOM tree.
  */
 export const bVirtualScrollDomInsertAsyncGroup = `${bVirtualScrollAsyncGroup}:dom-insert`;
-
-/**
- * {@link ComponentRenderStrategy}
- */
-export const componentRenderStrategy: ComponentRenderStrategy = <const>{
-	default: 'default',
-	reuse: 'reuse'
-};
-
-/**
- * {@link ComponentStrategy}
- */
-export const componentStrategy: ComponentStrategy = {
-	intersectionObserver: 'intersectionObserver',
-	scroll: 'scroll',
-	scrollWithDropNodes: 'scrollWithDropNodes',
-	scrollWithRecycleNodes: 'scrollWithRecycleNodes'
-};
 
 /**
  * {@link ComponentDataLocalEvents}
@@ -85,8 +65,7 @@ export const componentRenderLocalEvents: ComponentRenderLocalEvents = <const>{
  * {@link ComponentObserverLocalEvents}
  */
 export const componentObserverLocalEvents: ComponentObserverLocalEvents = <const>{
-	elementEnter: 'elementEnter',
-	elementOut: 'elementOut'
+	elementEnter: 'elementEnter'
 };
 
 export const componentEvents = <const>{
