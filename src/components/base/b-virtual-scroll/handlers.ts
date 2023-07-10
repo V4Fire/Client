@@ -7,11 +7,14 @@
  */
 
 import iVirtualScrollProps from 'components/base/b-virtual-scroll/props';
+
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
-import { bVirtualScrollAsyncGroup, componentEvents } from 'components/base/b-virtual-scroll/const';
-import iData, { component } from 'components/super/i-data/i-data';
 import type { MountedChild } from 'components/base/b-virtual-scroll/interface';
+
+import { bVirtualScrollAsyncGroup, componentEvents } from 'components/base/b-virtual-scroll/const';
 import { isAsyncReplaceError } from 'components/base/b-virtual-scroll/modules/helpers';
+
+import iData, { component } from 'components/super/i-data/i-data';
 
 /**
  * A class that provides an API to handle events emitted by the {@link bVirtualScroll} component.

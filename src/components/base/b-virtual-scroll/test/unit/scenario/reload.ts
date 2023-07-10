@@ -7,7 +7,7 @@
  */
 
 /**
- * @file Этот файл содержит тест кейсы для проверки функциональности изменения пропов компонентов.
+ * @file This file contains a set of test cases to verify the functionality of component reloading.
  */
 
 import test from 'tests/config/unit/test';

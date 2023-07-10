@@ -9,6 +9,8 @@
 import type iItems from 'components/traits/i-items/i-items';
 import type { CreateFromItemFn } from 'components/traits/i-items/i-items';
 
+import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
+
 import type {
 
 	VirtualScrollState,
@@ -21,20 +23,15 @@ import type {
 
 } from 'components/base/b-virtual-scroll/interface';
 
-import {
+import { defaultShouldProps, componentItemType } from 'components/base/b-virtual-scroll/const';
 
-	defaultShouldProps,
-	componentItemType
-
-} from 'components/base/b-virtual-scroll/const';
-
-import iData, { component, prop, system } from 'components/super/i-data/i-data';
 import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll/modules/emitter';
+import { ComponentInternalState } from 'components/base/b-virtual-scroll/modules/state';
 import { SlotsStateController } from 'components/base/b-virtual-scroll/modules/slots';
-import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import { ComponentFactory } from 'components/base/b-virtual-scroll/modules/factory';
 import { Observer } from 'components/base/b-virtual-scroll/modules/observer';
-import { ComponentInternalState } from 'components/base/b-virtual-scroll/modules/state';
+
+import iData, { component, prop, system } from 'components/super/i-data/i-data';
 
 /**
  * A class that is friendly to {@link bVirtualScroll}.

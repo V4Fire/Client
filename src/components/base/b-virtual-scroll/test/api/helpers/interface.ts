@@ -7,9 +7,10 @@
  */
 
 import type { ComponentItem, VirtualScrollState, MountedChild, MountedItem } from 'components/base/b-virtual-scroll/interface';
-import type { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll/test/api/component-object';
+
 import type { SpyObject } from 'tests/helpers/mock/interface';
 import type { RequestInterceptor } from 'tests/helpers/providers/interceptor';
+import type { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll/test/api/component-object';
 
 /**
  * The interface defining the data conveyor for convenient data manipulation.

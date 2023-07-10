@@ -13,10 +13,11 @@
 
 import test from 'tests/config/unit/test';
 
+import type { ComponentElement } from 'core/component';
+
+import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
-import type { ComponentElement } from 'core/component';
-import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
 test.describe('<b-virtual-scroll>', () => {
 	let

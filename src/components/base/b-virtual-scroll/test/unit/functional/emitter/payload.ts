@@ -7,8 +7,7 @@
  */
 
 /**
- * @file This file contains test cases to verify the functionality of events emitter in the
- * `b-virtual-scroll` component.
+ * @file This file contains test cases to verify the functionality of events emitter.
  */
 
 import test from 'tests/config/unit/test';

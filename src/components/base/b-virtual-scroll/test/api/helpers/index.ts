@@ -7,15 +7,18 @@
  */
 
 import type { Page } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
-import type { MountedChild, ComponentItem, VirtualScrollState, MountedItem } from 'components/base/b-virtual-scroll/interface';
-import { paginationHandler } from 'tests/helpers/providers/pagination';
-import { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll/test/api/component-object';
-import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
-import { componentEvents, componentObserverLocalEvents } from 'components/base/b-virtual-scroll/const';
-import type { DataConveyor, DataItemCtor, MountedItemCtor, StateApi, VirtualScrollTestHelpers, MountedSeparatorCtor, IndexedObj } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
 import { createInitialState as createInitialStateObj } from 'components/base/b-virtual-scroll/modules/state/helpers';
+import type { MountedChild, ComponentItem, VirtualScrollState, MountedItem } from 'components/base/b-virtual-scroll/interface';
+import { componentEvents, componentObserverLocalEvents } from 'components/base/b-virtual-scroll/const';
+
+import { paginationHandler } from 'tests/helpers/providers/pagination';
+import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
+
+import { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll/test/api/component-object';
+import type { DataConveyor, DataItemCtor, MountedItemCtor, StateApi, VirtualScrollTestHelpers, MountedSeparatorCtor, IndexedObj } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
 
 export * from 'components/base/b-virtual-scroll/test/api/component-object';
 

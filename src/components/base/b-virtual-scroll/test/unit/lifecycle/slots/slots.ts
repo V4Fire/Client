@@ -14,10 +14,12 @@ import delay from 'delay';
 
 import test from 'tests/config/unit/test';
 
-import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
-import type { SlotsStateObj } from 'components/base/b-virtual-scroll/modules/slots';
-import type { ShouldPerform } from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import { BOM } from 'tests/helpers';
+
+import type { ShouldPerform } from 'components/base/b-virtual-scroll/b-virtual-scroll';
+import type { SlotsStateObj } from 'components/base/b-virtual-scroll/modules/slots';
+
+import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
 
 // eslint-disable-next-line max-lines-per-function
 test.describe('<b-virtual-scroll>', () => {

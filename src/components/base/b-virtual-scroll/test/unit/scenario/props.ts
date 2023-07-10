@@ -10,13 +10,15 @@
  * @file This file contains test cases to verify the functionality of prop changes in components.
  */
 
+import type { Route } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
+import { fromQueryString } from 'core/url';
+
+import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
-import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
-import type { Route } from 'playwright';
-import { fromQueryString } from 'core/url';
 
 test.describe('<b-virtual-scroll>', () => {
 	let

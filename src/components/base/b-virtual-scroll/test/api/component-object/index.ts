@@ -11,7 +11,7 @@ import type { Locator, Page } from 'playwright';
 import { ComponentObject, Scroll } from 'tests/helpers';
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
-import type { ComponentRefs, VirtualScrollState } from 'components/base/b-virtual-scroll/b-virtual-scroll';
+import type { ComponentRefs, VirtualScrollState } from 'components/base/b-virtual-scroll/interface';
 import type { SlotsStateObj } from 'components/base/b-virtual-scroll/modules/slots';
 
 import { testStyles } from 'components/base/b-virtual-scroll/test/api/component-object/styles';
