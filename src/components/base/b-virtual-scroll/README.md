@@ -1,6 +1,6 @@
 # components/base/b-virtual-scroll
 
-TBD
+The `b-virtual-scroll` component is designed for rendering a larger array of various data.
 
 ## Synopsis
 
@@ -412,9 +412,10 @@ Afterward, the component waits for user actions, specifically when the user sees
 
 The `b-virtual-scroll` component relies on the `renderGuard` and `loadDataOrPerformRender` functions to determine whether to render data, load data, or complete the component's lifecycle.
 
-The `loadDataOrPerformRender` function is the entry point for the data loading and rendering cycle. This function consults the `renderGuard`, which determines whether data can be rendered based on the data state and provides reasons for rejection.
+The `loadDataOrPerformRender` function is the entry point for the data loading and rendering cycle.
+This function consults the `renderGuard`, which determines whether data can be rendered based on the data state and provides reasons for rejection only if it has not permitted the rendering.
 
-The logic of `renderGuard` is as follows:
+Understanding `renderGuard`:
 
 ```mermaid
 graph TB
@@ -431,7 +432,7 @@ graph TB
     K --> L["Return: result=clientResponse, reason=noPermission if clientResponse is false"]
 ```
 
-The logic of `loadDataOrPerformRender` is as follows:
+Understanding `loadDataOrPerformRender`:
 
 ```mermaid
 graph TB
@@ -451,3 +452,53 @@ graph TB
     L -- False --> N[initial render?]
     N -- True --> P["performRender()"]
 ```
+
+### Overriding in Child Layers
+
+The main use case for overriding in child layers is to modify the default behavior of functions or methods.
+
+For example, it may be useful to override the logic of `shouldStopRequestingData` if you want to implement a default logic that takes into account the `total` field of the response when making a decision.
+
+There may also be situations where you need to modify the `renderGuard`. Currently, the component loads data until the number of items reaches the `chunkSize` and then renders them. By overriding the `renderGuard`, you can achieve partial rendering, where the component renders the available data regardless of whether it reaches the `chunkSize`.
+
+## What's Next
+
+The component currently lacks some features that may improve its functionality and make it more suitable for different scenarios.
+
+### Streaming Data Rendering
+
+- Planned for implementation.
+
+There is a request for streaming data rendering from the server.
+This can be implemented using the standard V4 `dataProvider` API, but it requires further modifications to the component to handle streaming data events.
+
+### Alternative Approach to Component Rendering
+
+- Planned as an experiment.
+
+Currently, the component uses the `iBlock.vdom` API, which creates a new rendering engine instance for each chunk.
+It is hypothetically possible to reuse the rendering engine instead. However, there are challenges to consider.
+For example, the Vue 3 rendering engine removes previously rendered DOM nodes and destroys components when attempting to use the rendering function and `forceUpdate` with a different VNode to render.
+
+### Partial Rendering (can be achieved easily through `renderGuard`)
+
+- Not planned for implementation.
+
+Currently, the component loads data until the number of items reaches the `chunkSize` and then renders them. By overriding the `renderGuard`, you can achieve partial rendering, where the component renders the available data regardless of whether it reaches the `chunkSize`.
+
+### Updating Nodes in the DOM Tree (describe implementation challenges, component allows inserting different components)
+
+- Planned as an experiment.
+
+Currently, `b-virtual-scroll` does not remove old nodes when rendering new chunks within the same lifecycle. Implementing this feature is not a priority, but it should not be ignored either. The main reasons why this feature was not included in the initial release are:
+
+- Previous experiments showed no performance degradation after rendering and inserting 30x(5-8) components into the DOM tree.
+- The inability to reuse DOM nodes: typical components allow reusing DOM nodes, but `b-virtual-scroll` enables clients to easily render different components. It is important to note that reusing DOM nodes provides the greatest benefit, not just simple insertion/removal of entire sections from the DOM tree.
+- The need to implement two-way data rendering: Since memory is limited, storing a large number of rendered components in memory is not ideal. This requires destroying previously rendered components and then rendering them again. However, this approach can cause delays when scrolling back up.
+- Since scroll events need to be used to render data, additional heuristics or props indicating the scroll direction and the number of columns being rendered may need to be added to correctly maintain the node map.
+
+### Integration with RTX
+
+- High priority.
+
+Why have `b-virtual-scroll` without RTX?

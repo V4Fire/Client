@@ -92,4 +92,24 @@ test.describe('<b-virtual-scroll>', () => {
 			});
 		});
 	});
+
+	test.describe('`dbConverter`', () => {
+		test('Should convert data to the component', async () => {
+			const
+				chunkSize = 12;
+
+			provider.response(200, () => ({data: {nestedData: state.data.addData(chunkSize)}}));
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRequest: () => false,
+					dbConverter: ({data: {nestedData}}) => ({data: nestedData})
+				})
+				.build();
+
+			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+		});
+	});
 });
