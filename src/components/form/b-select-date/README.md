@@ -10,7 +10,7 @@ This module provides a component to create a form component to specify a date by
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
-* By default, the root tag of the component is `<span>`.
+* By default, the component's root tag is set to `<span>`.
 
 * The component contains an `<input>` tag within.
 

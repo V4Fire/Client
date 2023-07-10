@@ -17,7 +17,7 @@ const
 	staticAttrsCache: Dictionary<Function> = Object.createDict();
 
 /**
- * Resolves values from special attributes of the passed VNode
+ * Resolves values from special attributes of the given VNode
  *
  * @param vnode
  *

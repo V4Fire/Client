@@ -21,7 +21,7 @@ The function returns false if all parent components are already registered.
 #### registerComponent
 
 Register a component by the specified name.
-The function returns the meta object of the created component, or undefined if the component isn't found.
+The function returns the metaobject of the created component, or undefined if the component isn't found.
 If the component is already registered, it won't be registered twice.
 Keep in mind that you must call `registerParentComponents` before calling this function.
 

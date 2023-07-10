@@ -67,11 +67,6 @@ export default class Component {
 		scheme: RenderComponentsVnodeParams[]
 	): Promise<undefined>;
 
-	/**
-	 * @param page
-	 * @param componentName
-	 * @param [schemeOrAttrs]
-	 */
 	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
@@ -83,7 +78,7 @@ export default class Component {
 		}
 
 		let
-			attrs: RenderComponentsVnodeParams['attrs'] = {},
+			attrs: RenderComponentsVnodeParams['attrs'],
 			children: RenderComponentsVnodeParams['children'];
 
 		if (isRenderComponentsVnodeParams(schemeOrAttrs)) {

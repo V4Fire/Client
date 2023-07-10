@@ -1,6 +1,6 @@
 # V4Fire testing tools <!-- omit in toc -->
 
-- [Summary](#summary)
+- [Introduction](#introduction)
 - [Getting Started](#getting-started)
 - [UI Unit Tests](#ui-unit-tests)
   - [Create a Test](#create-a-test)
@@ -12,14 +12,15 @@
 - [Configuring different tests](#configuring-different-tests)
   - [Unit tests](#unit-tests)
   - [Project tests (e2e)](#project-tests-e2e)
-- [Testing helpers](#testing-helpers)
 - [CLI flags](#cli-flags)
 - [Extra](#extra)
 
-## Summary
+## Introduction
 
 We use the [Playwright](https://playwright.dev/) framework for writing unit and e2e tests for the UI,
 and [Jest](https://jestjs.io/) for testing non-UI modules.
+
+Also, V4Fire provides useful testing helpers like `Component`, `DOM`, `BOM`, `Assert`, etc. Check the [`tests/helpers`](/tests/helpers) directory.
 
 ## Getting Started
 
@@ -194,8 +195,10 @@ It is recommended to create a npm `script` for this command in `package.json`:
 **package.json**
 
 ```JSON
-"scripts": {
-  "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" playwright test --config tests/config/unit/index.ts"
+{
+  "scripts": {
+    "test:unit": "cross-env NODE_OPTIONS=\"-r @v4fire/core/build/tsnode.js\" playwright test --config tests/config/unit/index.ts"
+  }
 }
 ```
 
@@ -235,7 +238,7 @@ import type bComponent from 'base/b-component/b-component';
 test.describe('<b-component>', () => {
   let target: JSHandle<bComponent>;
 
-  test.beforeEach(({demoPage, page}) => {
+  test.beforeEach(async ({demoPage, page}) => {
     await demoPage.goto();
 
     target = await Component.createComponent(page, 'b-component', {
@@ -246,7 +249,7 @@ test.describe('<b-component>', () => {
     });
   });
 
-  test('component has a correct name', () => {
+  test('component has a correct name', async () => {
     const name = await target.evaluate((ctx) => ctx.componentName);
 
     test.expect(name).toBe('b-component');
@@ -296,11 +299,6 @@ The `project` folder will be searched and all files with the `.ts` extension wil
 This configuration is suggested for running project (e2e) tests.
 
 More about configuration file: https://playwright.dev/docs/test-configuration.
-
-
-## Testing helpers
-
-V4Fire provides useful helpers like `Component`, `DOM`, `BOM`, `Assert`, etc. Check the `tests/helpers` directory.
 
 ## CLI flags
 

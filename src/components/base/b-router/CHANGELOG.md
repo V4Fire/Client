@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.7 (2023-06-27)
+
+#### :rocket: New Feature
+
+* Added support for `mailto:` and `tel:` href-s
+
+## v3.57.1 (2023-06-27)
+
+#### :bug: Bug Fix
+
+* Handle unsuitable `pathParams` values in the `fillRouteParams` function
+
 ## v4.??.?? (2023-??-??)
 
 #### :house: Internal

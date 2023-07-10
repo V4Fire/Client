@@ -9,10 +9,10 @@
 'use strict';
 
 const
-	isMainComponentStyleFile = /[\\/]([bp]-[^\\/]+)[\\/]\1\.styl$/;
+	isMainComponentStyleFile = /[/\\]([bp]-[^/\\]+)[/\\]\1\.styl$/;
 
 /**
- * Monic replacer to apply component styles the were loaded via the `import` function
+ * Monic replacer to apply component styles that have been loaded via the `import` function.
  *
  * @param {string} str
  * @param {string} filePath

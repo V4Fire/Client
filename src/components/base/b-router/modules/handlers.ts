@@ -8,6 +8,8 @@
 
 import * as router from 'core/router';
 
+import { urlsToIgnore } from 'components/base/b-router/modules/const';
+
 import type bRouter from 'components/base/b-router/b-router';
 
 /**
@@ -24,6 +26,7 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 		href == null ||
 		href === '' ||
 		href.startsWith('#') ||
+		urlsToIgnore.some((scheme) => scheme.test(href)) ||
 		href.startsWith('javascript:') ||
 		router.isExternal.test(href);
 
@@ -41,7 +44,8 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 		l = Object.assign(document.createElement('a'), {href});
 
 	if (a.getAttribute('target') === '_blank' || e.ctrlKey || e.metaKey) {
-		globalThis.open(l.href, '_blank');
+		// eslint-disable-next-line no-restricted-globals
+		window.open(l.href, '_blank');
 		return;
 	}
 

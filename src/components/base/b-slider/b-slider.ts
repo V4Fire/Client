@@ -33,7 +33,7 @@ import {
 
 } from 'components/super/i-data/i-data';
 
-import bSliderProps from 'components/base/b-slider/props';
+import iSliderProps from 'components/base/b-slider/props';
 import type { Mode, SlideRect, SlideDirection } from 'components/base/b-slider/interface';
 
 export * from 'components/super/i-data/i-data';
@@ -46,7 +46,7 @@ interface bSlider extends Trait<typeof iObserveDOM> {}
 
 @component()
 @derive(iObserveDOM)
-class bSlider extends bSliderProps implements iObserveDOM, iItems {
+class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	/**
 	 * The number of slides in the slider
 	 */
@@ -150,7 +150,7 @@ class bSlider extends bSliderProps implements iObserveDOM, iItems {
 	@field((o) => o.sync.link())
 	protected mode!: Mode;
 
-	protected override readonly $refs!: bSliderProps['$refs'] & {
+	protected override readonly $refs!: iSliderProps['$refs'] & {
 		view?: HTMLElement;
 		content?: HTMLElement;
 		contentWrapper?: HTMLElement;

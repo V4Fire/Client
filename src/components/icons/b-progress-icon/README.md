@@ -8,7 +8,7 @@ This module provides a component to display loading, for example, as a spinner.
 
 * The component is functional.
 
-* By default, the root tag of the component is `<span>`.
+* By default, the component's root tag is set to `<span>`.
 
 ## Usage
 

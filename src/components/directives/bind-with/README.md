@@ -1,15 +1,40 @@
 # components/directives/bind-with
 
-This module provides a directive to bind a component template element to some property or event.
-Binding is carried out through the passed handler function, which will always take as the first parameter a link to
-the element to which the directive is applied.
+This module provides a directive that links a component's template element to a specific property or event.
+The binding process is executed using the provided handler function,
+which receives a reference to the element the directive is applied to as its first argument.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - block body
+    < input v-bind-with = { &
+      path: 'value',
+      then: (input, value) => input.value = value
+    } .
+```
 
 ## Why is this directive needed?
 
-This directive is convenient to use to describe the logic of point-by-point updating of template fragments without
-forcing re-rendering of the entire template. For example, you can use this directive with your functional components.
+When using regular components, we don't have to think about how the data used in the template is tied to
+the component's properties.
+This job is handled for us by Vue or other engines that we use.
+On the other hand, we have functional components which, by contract, render only once,
+and no property changes can cause their re-rendering.
+Typically, this doesn't pose any problems, as if a component requires reactivity,
+it should simply be used as a regular Vue component, while functional components are optimized for simpler components
+that don't need reactivity.
+However, there are situations where using regular components is too excessive,
+and the required template fragment update is simple enough to be implemented directly in the code.
+This directive comes in handy in these cases:
+it essentially allows you to bind to an event or property with a template element
+and specify a function to be called when the event fires.
+In this function, for instance, we can modify the node value or even change its descendants.
 
-## How to include a directive?
+## How to include this directive?
 
 Just add the directive import in your component code.
 
@@ -25,6 +50,10 @@ class bExample extends iBlock {}
 ## Usage
 
 ### Binding to a property
+
+We can observe changes to any component's property and bind a handler to these alterations.
+Change tracking is accomplished through the component's standard `watch` API.
+We are able to pass additional parameters when adding the handler.
 
 ```
 < div v-bind-with = { &
@@ -43,6 +72,8 @@ class bExample extends iBlock {}
 ```
 
 ### Binding to an event
+
+We can attach a handler with a specific component event or an event from a passed event emitter.
 
 #### Binding to a component event
 
@@ -87,6 +118,8 @@ class bExample extends iBlock {}
 
 #### Providing extra options to the emitter
 
+If the event emitter is capable of accepting additional parameters, we can pass them along when attaching the handler.
+
 ```
 < div v-bind-with = { &
   emitter: document,
@@ -100,6 +133,9 @@ class bExample extends iBlock {}
 ```
 
 ### Binding to a promise
+
+We can tie the execution of a handler with the resolution of a promise.
+Moreover, we can pass multiple handlers simultaneously for the fulfilled and rejected states.
 
 ```
 < div v-bind-with = { &
@@ -122,6 +158,8 @@ class bExample extends iBlock {}
 
 ### Binding to a callback
 
+Finally, we can provide the handler as a callback to another function.
+
 ```
 < div v-bind-with = { &
   callback: (handler) => document.addEventListener('click', handler),
@@ -136,6 +174,8 @@ class bExample extends iBlock {}
 ```
 
 ### Providing multiple bindings to the same element
+
+If the element is bound to more than one event, the directive can accept an array of such configurations.
 
 ```
 < div v-bind-with = [ &
@@ -154,6 +194,9 @@ class bExample extends iBlock {}
 
 ### Providing an Async group prefix
 
+All bindings are additionally proxied through a component's instance of [[Async]],
+allowing for the transmission of extra proxying parameters.
+
 ```
 < div v-bind-with = { &
   path: 'bla.bar',
@@ -166,11 +209,13 @@ class bExample extends iBlock {}
 this.async.clearAll({group: /myWatcher/});
 ```
 
-## Functions
+## Helpers
+
+The directive exports a bunch of helpers that can be utilized in other directives.
 
 ### getElementId
 
-Returns the unique directive identifier for the passed element.
+Returns a unique identifier for the directive associated with the given element.
 
 ### clearElementBindings
 

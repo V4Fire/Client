@@ -8,7 +8,7 @@ This module provides a component to render a recursive tree of elements.
 
 * The component implements the [[iActiveItems]] trait.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
 ## Features
 
@@ -226,7 +226,7 @@ The component supports a bunch of slots to provide.
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### traverse
 

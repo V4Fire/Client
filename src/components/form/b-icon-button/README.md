@@ -9,7 +9,7 @@ In fact, this is a regular [[bButton]] component, but with changed markup and st
 
 * The component is used as functional if there are no provided `dataProvider` and `href` props.
 
-* By default, the root tag of the component is `<span>`.
+* By default, the component's root tag is set to `<span>`.
 
 * The component supports tooltips.
 

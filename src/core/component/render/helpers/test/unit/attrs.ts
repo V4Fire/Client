@@ -34,12 +34,6 @@ test.describe('core/component/render/helpers/attrs', () => {
 			await assertElementHasCorrectStyles(page.locator('.b-dummy'));
 		});
 
-		/**
-		 * Returns the rendered dummy component
-		 *
-		 * @param page
-		 * @param componentName
-		 */
 		async function renderDummy(page: Page, componentName: string = 'b-dummy'): Promise<JSHandle<bDummy>> {
 			return Component.createComponent(page, componentName, {
 				style: ['background-color: red; color: blue', {'font-size': '12px'}]
@@ -47,7 +41,7 @@ test.describe('core/component/render/helpers/attrs', () => {
 		}
 
 		/**
-		 * Checks that the specified locator has required CSS
+		 * Verifies if the specified locator has the required CSS
 		 * @param locator
 		 */
 		async function assertElementHasCorrectStyles(locator: Locator): Promise<void> {

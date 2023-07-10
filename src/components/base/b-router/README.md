@@ -8,7 +8,7 @@ This module provides a component for organizing page routing.
 
 * The component does not have a default UI.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
 ## Why a component instead of a plugin?
 
@@ -455,6 +455,26 @@ export default {
 
 You can create more complex cases with chained redirects. This feature allows you to handle changes in route structure,
 making it easier to manage your application's navigation.
+
+If two routes contain the same parameters they will be filled respectively:
+
+```js
+export default {
+  foo: {
+    path: '/foo/:param'
+  },
+  bar: {
+    path: '/bar/baz/:param',
+    redirect: 'foo'
+  }
+}
+```
+
+When you navigate to the `bar` route and provide the `param` parameter, it will be substituted in the `foo`'s path:
+
+```js
+this.router.push('/bar/baz/value'); // redirect to '/foo/value'
+```
 
 #### Creating an alias for a route
 

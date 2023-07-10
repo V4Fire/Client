@@ -10,12 +10,12 @@ import { componentRenderFactories } from 'core/component/const';
 import type { ComponentMeta } from 'core/component/interface';
 
 /**
- * Attaches templates to the specified meta object
+ * Attaches templates to the specified metaobject
  *
- * @param meta - the component meta object
- * @param [tpls] - a dictionary with the registered templates
+ * @param meta - the component metaobject
+ * @param [templates] - A dictionary containing the registered templates
  */
-export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): void {
+export function attachTemplatesToMeta(meta: ComponentMeta, templates?: Dictionary): void {
 	const
 		{methods, methods: {render}} = meta;
 
@@ -31,11 +31,11 @@ export function attachTemplatesToMeta(meta: ComponentMeta, tpls?: Dictionary): v
 		return attachTemplatesToMeta(meta, require('core/block.ss').block);
 	}
 
-	if (tpls == null || !('index' in tpls) || !Object.isFunction(tpls.index)) {
+	if (templates == null || !('index' in templates) || !Object.isFunction(templates.index)) {
 		return;
 	}
 
-	const renderFactory = componentRenderFactories[meta.componentName] ?? tpls.index();
+	const renderFactory = componentRenderFactories[meta.componentName] ?? templates.index();
 	componentRenderFactories[meta.componentName] = renderFactory;
 
 	methods.render = {

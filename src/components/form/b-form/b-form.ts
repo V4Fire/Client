@@ -34,7 +34,7 @@ import {
 
 } from 'components/super/i-data/i-data';
 
-import bFormProps from 'components/form/b-form/props';
+import iFormProps from 'components/form/b-form/props';
 import ValidationError from 'components/form/b-form/error';
 import type { ValidateOptions } from 'components/form/b-form/interface';
 
@@ -54,7 +54,7 @@ const
 	}
 })
 
-export default class bForm extends bFormProps implements iVisible {
+export default class bForm extends iFormProps implements iVisible {
 	/**
 	 * Additional request parameters
 	 * {@link bForm.paramsProp}

@@ -13,7 +13,7 @@ The module also exposes some custom modules. These modules are placed within the
 ### preconfig
 
 This module provides a promise that will be awaited before run a Webpack process. You can override it with your app layer and
-place within to it some pre-config operations.
+place within it some pre-config operations.
 
 ### options
 

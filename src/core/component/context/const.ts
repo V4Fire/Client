@@ -7,9 +7,9 @@
  */
 
 /**
- * A symbol to extract the raw component object
+ * A symbol to extract the raw component context
  */
-export const toRaw = Symbol('A link to the raw component object');
+export const toRaw = Symbol('A link to the raw component context');
 
 /**
  * A cache for the wrapped component contexts

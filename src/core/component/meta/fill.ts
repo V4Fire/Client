@@ -17,10 +17,10 @@ import { addMethodsToMeta } from 'core/component/meta/method';
 import type { ComponentConstructor, ComponentMeta } from 'core/component/interface';
 
 /**
- * Fills the passed meta object with methods and properties from the specified component class constructor
+ * Populates the passed metaobject with methods and properties from the specified component class constructor
  *
  * @param meta
- * @param [constructor] - component constructor
+ * @param [constructor] - the component constructor
  */
 export function fillMeta(
 	meta: ComponentMeta,
@@ -58,7 +58,7 @@ export function fillMeta(
 
 	const
 		defaultProps = params.defaultProps !== false,
-		canWatchProps = !isRoot && !isFunctional;
+		canWatchProps = !SSR && !isRoot && !isFunctional;
 
 	Object.entries(meta.props).forEach(([name, prop]) => {
 		if (prop == null) {
@@ -96,6 +96,7 @@ export function fillMeta(
 				default: defValue,
 				functional: prop.functional,
 
+				// eslint-disable-next-line @v4fire/unbound-method
 				validator: prop.validator
 			};
 		}

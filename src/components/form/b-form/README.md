@@ -11,7 +11,7 @@ The component is based on the native `<form>` element and implements the same be
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
-* By default, the root tag of the component is `<form>`.
+* By default, the component's root tag is set to `<form>`.
 
 ## Modifiers
 
@@ -112,7 +112,7 @@ The component supports the `default` slot to provide associated components.
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### Props
 

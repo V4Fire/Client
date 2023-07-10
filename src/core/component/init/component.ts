@@ -59,7 +59,7 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
 
 /**
  * Registers a component by the specified name.
- * The function returns the meta object of the created component, or undefined if the component isn't found.
+ * The function returns the metaobject of the created component, or undefined if the component isn't found.
  * If the component is already registered, it won't be registered twice.
  *
  * This function is needed because we have lazy component registration.

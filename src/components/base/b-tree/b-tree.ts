@@ -25,7 +25,7 @@ import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-a
 import iData, { watch, hook, component, system, computed, field, UnsafeGetter } from 'components/super/i-data/i-data';
 import type { Item, ItemMeta, UnsafeBTree } from 'components/base/b-tree/interface';
 
-import bTreeProps from 'components/base/b-tree/props';
+import iTreeProps from 'components/base/b-tree/props';
 
 import Foldable from 'components/base/b-tree/modules/foldable';
 import Values from 'components/base/b-tree/modules/values';
@@ -50,7 +50,7 @@ interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
 })
 
 @derive(iActiveItems, Foldable)
-class bTree extends bTreeProps implements iActiveItems, Foldable {
+class bTree extends iTreeProps implements iActiveItems, Foldable {
 	override get unsafe(): UnsafeGetter<UnsafeBTree<this>> {
 		return Object.cast(this);
 	}

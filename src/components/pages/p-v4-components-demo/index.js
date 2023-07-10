@@ -40,9 +40,11 @@ package('p-v4-components-demo')
 	)
 
 	.libs(
+		'components/directives/bind-with',
 		'components/directives/image',
 		'components/directives/icon',
+		'components/directives/in-view',
 		'core/router/engines/browser-history',
 		'core/router/engines/in-memory',
-		'components/traits/i-control-list/i-control-list'
+		'components/traits/i-control-list/i-control-list',
 	);

@@ -41,7 +41,7 @@ test.describe('<b-remote-provider> standard component events', () => {
 		provider = await renderProvider(page);
 	});
 
-	test('initially loads data and emits `change` event', async () => {
+	test('every time the provider loads new data, it should emit a `change` event', async () => {
 		const res = await provider.evaluate((ctx) => new Promise((resolve) => {
 			ctx.once('change', (_, val) => resolve(JSON.parse(val)));
 			void ctx.reload();
@@ -50,37 +50,37 @@ test.describe('<b-remote-provider> standard component events', () => {
 		test.expect(res).toEqual(body);
 	});
 
-	test('calling the `add` method on the provider should emit the `addData` event', async () => {
+	test('when the `add` method is called on the provider, it should add the data and emit an `addData` event', async () => {
 		const res = await provider.evaluate((ctx) => new Promise((resolve) => {
 			ctx.once('addData', (_, val) => resolve(JSON.parse(val)));
-			ctx.dataProvider?.add();
+			void ctx.dataProvider?.add();
 		}));
 
 		test.expect(res).toEqual(body);
 	});
 
-	test('calling the `update` method on the provider should emit the `updateData` event', async () => {
+	test('when the `update` method is called on the provider, it should add the data and emit an `updateData` event', async () => {
 		const res = await provider.evaluate((ctx) => new Promise((resolve) => {
 			ctx.once('updateData', (_, val) => resolve(JSON.parse(val)));
-			ctx.dataProvider?.update();
+			void ctx.dataProvider?.update();
 		}));
 
 		test.expect(res).toEqual(body);
 	});
 
-	test('calling the `delete` method on the provider should emit the `deleteData` event', async () => {
+	test('when the `delete` method is called on the provider, it should add the data and emit an `deleteData` event', async () => {
 		const
 			data = {deleted: true};
 
 		const res = await provider.evaluate((ctx, data) => new Promise((resolve) => {
 			ctx.once('deleteData', () => resolve(data));
-			ctx.dataProvider?.delete();
+			void ctx.dataProvider?.delete();
 		}), data);
 
 		test.expect(res).toEqual(data);
 	});
 
-	test('should catch any request errors and emit `error` events', async ({context}) => {
+	test('the component catches any errors that occur when working with the provider and emits an `error` event', async ({context}) => {
 		const errorData = {error: 'foo'};
 		await mockAPI(context, errorData, StatusCodes.INTERNAL_SERVER_ERROR);
 
@@ -92,10 +92,6 @@ test.describe('<b-remote-provider> standard component events', () => {
 		test.expect(res).toEqual(errorData);
 	});
 
-	/**
-	 * @param page
-	 * @param [attrs]
-	 */
 	function renderProvider(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bRemoteProvider>> {
 		return Component.createComponent(page, 'b-remote-provider', {
 			attrs: {

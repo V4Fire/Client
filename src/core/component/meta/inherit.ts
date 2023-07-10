@@ -10,8 +10,8 @@ import { metaPointers, PARENT } from 'core/component/const';
 import type { ComponentMeta, ModDeclVal } from 'core/component/interface';
 
 /**
- * Inherits the specified meta object from other one.
- * The function modifies the original object and returns it.
+ * Inherits the specified metaobject from another one.
+ * This function modifies the original object and returns it.
  *
  * @param meta
  * @param parentMeta
@@ -45,6 +45,7 @@ export function inheritMeta(
 		...pParams,
 		...meta.params,
 		name: meta.params.name,
+		// eslint-disable-next-line deprecation/deprecation
 		deprecatedProps: {...pParams.deprecatedProps, ...meta.params.deprecatedProps}
 	};
 

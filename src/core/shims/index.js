@@ -6,10 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "components/super/i-input-text/i-input-text.styl"
-
-$p = {
-
-}
-
-b-dummy-text extends i-input-text
+require('core/shims/set-immediate');
+require('core/shims/ssr');

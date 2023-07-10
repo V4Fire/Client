@@ -57,7 +57,7 @@ export default class bFriendsStateDummy extends iData {
 		};
 	}
 
-	protected override syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary<unknown> {
+	protected override syncRouterState(data?: Dictionary, type: ConverterCallType = 'component'): Dictionary {
 		if (type === 'remote') {
 			return {
 				systemField: this.systemField,

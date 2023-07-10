@@ -1077,7 +1077,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			blockNames: false,
 			passDesignSystem: false,
 
-			'prelude/test-env': !isProd
+			'prelude/test-env': !isProd && !this.webpack.ssr
 		};
 	},
 

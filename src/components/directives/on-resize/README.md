@@ -1,10 +1,10 @@
 # core/component/directives/on-resize
 
-This module provides a directive to watch element resizing.
-The directive uses the `core/dom/resize-watcher` module to watch elements.
-For more information, please refer its documentation.
+This module provides a directive that allows tracking when an element to which it is added changes its size.
+The module `core/dom/resize-watcher` is used for efficient tracking of changes in the sizes of elements.
+For a better understanding of all possible settings and modes, refer to the documentation of that module.
 
-## How to include a directive?
+## How to include this directive?
 
 Just add the directive import in your component code.
 

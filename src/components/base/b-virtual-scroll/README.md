@@ -8,6 +8,8 @@ The `b-virtual-scroll` component is designed for rendering a larger array of var
 
 * The component implements [[iItems]] traits.
 
+* By default, the component's root tag is set to `<div>`.
+
 ## Modifiers
 
 See the implemented modifiers or the parent component.

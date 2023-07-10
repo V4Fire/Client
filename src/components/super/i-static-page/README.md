@@ -16,7 +16,7 @@ The layout includes basic CSS/JS/... files and a set of meta tags such as `<titl
 
 * The component extends [[iPage]].
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
 ## Modifiers
 

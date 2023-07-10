@@ -7,20 +7,21 @@
  */
 
 import type { Experiments } from 'core/abt';
+import type { InitialRoute } from 'core/router';
 
 export interface State {
 	/**
-	 * Is session is authorized
+	 * True, if the current user session is authorized
 	 */
 	isAuth?: boolean;
 
 	/**
-	 * Is there an Internet connection
+	 * True, if the application is connected to the Internet
 	 */
 	isOnline?: boolean;
 
 	/**
-	 * Date of last Internet connection
+	 * Date of the last Internet connection
 	 */
 	lastOnlineDate?: Date;
 
@@ -28,4 +29,28 @@ export interface State {
 	 * A list of registered AB experiments
 	 */
 	experiments?: Experiments;
+
+	/**
+	 * The initial route for initializing the router.
+	 * Usually, this value is used during SSR.
+	 */
+	route?: InitialRoute;
+
+	/**
+	 * An object whose properties will extend the global object.
+	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
+	 * Using this object, polyfills for all necessary APIs can be passed through.
+	 *
+	 * @example
+	 * ```js
+	 * ({
+	 *   globalEnv: {
+	 *     location: {
+	 *       href: 'https://foo.com'
+	 *     }
+	 *   }
+	 * })
+	 * ```
+	 */
+	globalEnv: Dictionary;
 }

@@ -10,7 +10,8 @@ import { defProp } from 'core/const/props';
 import type { ComponentMeta } from 'core/component/interface';
 
 /**
- * Iterates over a prototype of the passed component constructor and adds methods/accessors to the specified meta object
+ * Loops through the prototype of the passed component constructor and
+ * adds methods and accessors to the specified metaobject
  *
  * @param meta
  * @param [constructor]

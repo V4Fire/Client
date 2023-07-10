@@ -162,7 +162,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: an error occurred while loading data from the provider
+	 * Handler: an error occurred during data loading from the provider
 	 *
 	 * @param err - the caused error
 	 * @param retry - a function to repeat the request
@@ -173,7 +173,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: data has been added to the component provider
+	 * Handler: new data has successfully been added to the component provider
 	 * @param data
 	 */
 	protected onAddData(data: unknown): void {
@@ -186,7 +186,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: data has been updated for the component provider
+	 * Handler: the data in the component provider has been successfully updated
 	 * @param data
 	 */
 	protected onUpdateData(data: unknown): void {
@@ -199,7 +199,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: data has been deleted from the component provider
+	 * Handler: the data has been successfully removed from the component provider
 	 * @param data
 	 */
 	protected onDeleteData(data: unknown): void {

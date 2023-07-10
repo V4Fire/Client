@@ -275,7 +275,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		dirs: DirectiveArguments
 	) {
 		const that = this;
-		patchVnode(vnode);
+		patchVNode(vnode);
 
 		const bindings = vnode.dirs ?? [];
 		vnode.dirs = bindings;
@@ -312,7 +312,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 
 					if (newVnode != null) {
 						vnode = newVnode;
-						patchVnode(vnode);
+						patchVNode(vnode);
 					}
 
 					if (Object.keys(dir).length > 1 && cantIgnoreDir) {
@@ -330,7 +330,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 
 		return vnode;
 
-		function patchVnode(vnode: VNode) {
+		function patchVNode(vnode: VNode) {
 			if (that == null) {
 				Object.defineProperty(vnode, 'virtualComponent', {
 					configurable: true,

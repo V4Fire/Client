@@ -13,8 +13,8 @@ import type { ComponentOptions, ComponentMeta, ComponentConstructor } from 'core
 import type { ComponentConstructorInfo } from 'core/component/reflect/interface';
 
 /**
- * Returns a component name by the specified constructor.
- * The name is represented in a dash style.
+ * Returns a component's name based on the given constructor.
+ * The name is returned in a dash-separated format.
  *
  * @param constructor
  *

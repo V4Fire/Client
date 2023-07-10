@@ -19,9 +19,9 @@ import { cacheStatus } from 'core/component/watch';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Attaches accessors and computed fields to the specified component instance from its tied meta object.
- * The function creates cacheable wrappers for computed fields.
- * Also, it creates accessors for deprecated component props.
+ * Attaches accessors and computed fields from a component's tied metaobject to the specified component instance.
+ * This function creates wrappers that can cache computed field values
+ * and creates accessors for deprecated component props.
  *
  * @param component
  *
@@ -30,7 +30,8 @@ import type { ComponentInterface } from 'core/component/interface';
  * import iBlock, { component, prop, computed } from 'components/super/i-block/i-block';
  *
  * @component({
- *   // Will create an accessor for `name` that refers to `fName` and emits a warning
+ *   // The following code will create an accessor for a property named "name"
+ *   // that refers to "fName" and emits a warning
  *   deprecatedProps: {name: 'fName'}
  * })
  *
@@ -41,7 +42,7 @@ import type { ComponentInterface } from 'core/component/interface';
  *   @prop()
  *   readonly lName: string;
  *
- *   // This is a cacheable computed field with feature of watching and cache invalidation
+ *   // This is a cacheable computed field with the features of change watching and cache invalidation
  *   @computed({cache: true, dependencies: ['fName', 'lName']})
  *   get fullName() {
  *     return `${this.fName} ${this.lName}`;
@@ -53,7 +54,7 @@ import type { ComponentInterface } from 'core/component/interface';
  *     return Math.random();
  *   }
  *
- *   // This is a simple accessor (a getter)
+ *   // This is a simple getter
  *   get element() {
  *     return this.$el;
  *   }
@@ -63,6 +64,7 @@ import type { ComponentInterface } from 'core/component/interface';
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
 		meta,
+		// eslint-disable-next-line deprecation/deprecation
 		meta: {params: {deprecatedProps}}
 	} = component.unsafe;
 

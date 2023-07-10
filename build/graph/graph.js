@@ -390,7 +390,7 @@ async function buildProjectGraph() {
 							components: await getComponents()
 						});
 
-					} catch (err) {
+					} catch {
 						total += delay;
 
 						if (total > timeout) {
@@ -409,7 +409,7 @@ async function buildProjectGraph() {
 
 	/**
 	 * Returns a map of all existed components
-	 * @returns {Array<object>}
+	 * @returns {Promise<Array<object>>}
 	 */
 	async function getComponents() {
 		const components = await block.getAll(null, {

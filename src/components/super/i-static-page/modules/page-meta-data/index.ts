@@ -11,7 +11,14 @@
  * @packageDocumentation
  */
 
-import type { MetaAttributes, LinkAttributes } from 'components/super/i-static-page/modules/page-meta-data/interface';
+import type {
+
+	PageMetaDataOptions,
+
+	MetaAttributes,
+	LinkAttributes
+
+} from 'components/super/i-static-page/modules/page-meta-data/interface';
 
 export * from 'components/super/i-static-page/modules/page-meta-data/interface';
 
@@ -20,7 +27,7 @@ export default class PageMetaData {
 	 * Current page title
 	 */
 	get title(): string {
-		return document.title;
+		return this.document.title;
 	}
 
 	/**
@@ -29,12 +36,12 @@ export default class PageMetaData {
 	 */
 	set title(value: string) {
 		const
-			div = Object.assign(document.createElement('div'), {innerHTML: value}),
+			div = Object.assign(this.document.createElement('div'), {innerHTML: value}),
 			title = div.textContent ?? '';
 
 		// Fix for a strange Chrome bug
-		document.title = `${title} `;
-		document.title = title;
+		this.document.title = `${title} `;
+		this.document.title = title;
 	}
 
 	/**
@@ -71,6 +78,18 @@ export default class PageMetaData {
 		}
 
 		metaDescriptionElement.content = value;
+	}
+
+	/**
+	 * A link to the object for working with the document
+	 */
+	protected document: Document;
+
+	/**
+	 * @param [opts] - additional options
+	 */
+	constructor(opts: PageMetaDataOptions = {document}) {
+		this.document = opts.document;
 	}
 
 	/**
@@ -121,7 +140,7 @@ export default class PageMetaData {
 			});
 		}
 
-		return document.querySelectorAll<T>(tag + selector.join(''));
+		return this.document.querySelectorAll<T>(tag + selector.join(''));
 	}
 
 	/**
@@ -131,7 +150,7 @@ export default class PageMetaData {
 	 * @param [attrs] - additional attributes of the created element
 	 */
 	protected createElement<T extends HTMLElement>(tag: string, attrs?: Dictionary<string>): T {
-		const el = Object.assign(<T>document.createElement(tag), attrs);
-		return document.head.appendChild(el);
+		const el = Object.assign(<T>this.document.createElement(tag), attrs);
+		return this.document.head.appendChild(el);
 	}
 }

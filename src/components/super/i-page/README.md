@@ -12,7 +12,7 @@ This module provides a superclass for all page components.
 
 * The component implements the [[iVisible]] trait.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
 ## Modifiers
 
@@ -40,7 +40,7 @@ So, when you want to create a new page, you must inherit from one of these, not 
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### Props
 

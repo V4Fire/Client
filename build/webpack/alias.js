@@ -25,7 +25,7 @@ const aliases = {
 		const
 			asset = resolve.depMap[el].config.assets;
 
-		if (asset?.sprite == null) {
+		if (asset?.['sprite'] == null) {
 			return map;
 		}
 
@@ -40,7 +40,7 @@ if (pzlr.designSystem != null) {
 	aliases.ds = pzlr.designSystem;
 }
 
-if (pzlr.assets?.sprite != null) {
+if (pzlr.assets?.['sprite'] != null) {
 	aliases.sprite = src.assets(pzlr.assets.sprite);
 }
 

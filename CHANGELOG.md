@@ -11,6 +11,30 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.8 (2023-07-07)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect update of the `selected` parameter in the native mode of the `b-select`
+
+## v4.0.0-beta.7 (2023-06-27)
+
+#### :rocket: New Feature
+
+* Added support for `mailto:` and `tel:` href-s `b-router`
+
+## v3.57.1 (2023-06-27)
+
+#### :bug: Bug Fix
+
+* Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
+
+## v3.50.0 (2023-06-??)
+
+#### :rocket: New Feature
+
+* Fill original route path parameters from URL of the route that redirects on it in `core/router`
+
 ## v3.49.0 (2023-05-31)
 
 #### :rocket: New Feature
@@ -4222,7 +4246,7 @@ export default class bExample extends iBlock {
 #### :boom: Breaking Change
 
 * Removed legacy `inject` and `provide` support for components
-* Static libraries now will be saved by a key name, instead of a file basename
+* Static libraries now will be saved by a key name instead of a file basename
 * Removed `bInputNumber`
 * Removed `iDataList`
 
