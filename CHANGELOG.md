@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Major update to `b-virtual-scroll`. Please see to the component's readme for changes and migration guide `components/base/b-virtual-scroll`.
+* Major update to `b-virtual-scroll`. Please see the component readme for changes and migration guide `components/base/b-virtual-scroll`.
 
 #### :rocket: New Feature
 
