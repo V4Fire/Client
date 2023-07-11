@@ -6,6 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import semaphore from 'core/init/semaphore';
+import { initGlobalEnv } from 'core/env';
 
-export default (() => semaphore('ABTReady'))();
+import semaphore from 'core/init/semaphore';
+import type { InitAppOptions } from 'core/init/interface';
+
+/**
+ * Initializes the A/B experiment context
+ * @param params - additional initialization parameters
+ */
+// eslint-disable-next-line @typescript-eslint/require-await
+export default async function initABT(params: InitAppOptions): Promise<void> {
+	initGlobalEnv(params);
+	void semaphore('ABTReady');
+}

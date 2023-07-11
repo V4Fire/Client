@@ -36,6 +36,22 @@ test.describe('<b-select> simple usage', () => {
 		await test.expect(textChanges).resolves.toEqual(['Foo', 'Bar']);
 	});
 
+	test('`value` of the <select> should match with the selected option', async ({page}) => {
+		await renderSelect(page, {
+			native: true,
+
+			items: [
+				{label: 'Foo', value: 0},
+				{label: 'Bar', value: 1}
+			]
+		});
+
+		const selectLocator = page.locator(`select${createSelector('input')}`);
+
+		await selectLocator.selectOption({label: 'Bar'});
+		await test.expect(selectLocator).toHaveValue('Bar');
+	});
+
 	test('`value` should not change when `text` is changed', async ({page}) => {
 		const target = await renderSelect(page, {
 			text: 'Foo',

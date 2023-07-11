@@ -6,29 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Experiments } from 'core/abt';
 import type { InitialRoute } from 'core/router';
+import type { GlobalEnvironment } from 'core/component/state';
 
-export interface State {
+export interface InitAppOptions {
 	/**
-	 * True, if the current user session is authorized
+	 * A link to the element where the application should be mounted.
+	 * This parameter is only used when initializing the application in a browser.
 	 */
-	isAuth?: boolean;
-
-	/**
-	 * True, if the application is connected to the Internet
-	 */
-	isOnline?: boolean;
-
-	/**
-	 * Date of the last Internet connection
-	 */
-	lastOnlineDate?: Date;
-
-	/**
-	 * A list of registered AB experiments
-	 */
-	experiments?: Experiments;
+	targetToMount?: Nullable<HTMLElement>;
 
 	/**
 	 * The initial route for initializing the router.
@@ -52,22 +38,5 @@ export interface State {
 	 * })
 	 * ```
 	 */
-	globalEnv: GlobalEnvironment;
-}
-
-export interface GlobalEnvironment extends Dictionary {
-	/**
-	 * A shim for the `window.location` API
-	 */
-	location?: Location;
-
-	/**
-	 * SSR environment object
-	 */
-	ssr?: {
-		/**
-		 * A shim for the `window.document` API
-		 */
-		document?: Document;
-	};
+	globalEnv?: GlobalEnvironment;
 }

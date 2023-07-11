@@ -62,7 +62,7 @@ export interface EventListener<A extends any[]> extends Handle<A> {
 	/**
 	 * An event emitter to listen
 	 */
-	emitter?: EventEmitterLike;
+	emitter?: EventEmitterLike | EventEmitterLike['on'];
 
 	/**
 	 * The event name to listen for, or a list of such events

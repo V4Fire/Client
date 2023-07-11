@@ -1,5 +1,5 @@
 {
-  "hash": "4a83984ed94e5cab37aaaf6e17d32cad49fb6611c81faa0f4214b37d25d5dac7",
+  "hash": "17bfa44323e931383d4a43be899be3cf78ecf604c7aa870b764c3f3097aac294",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2217,6 +2217,7 @@
               "p-v4-dynamic-page3"
             ],
             "libs": [
+              "components/directives/bind-with",
               "components/directives/image",
               "components/directives/icon",
               "components/directives/in-view",
@@ -2254,6 +2255,7 @@
             "p-v4-dynamic-page3"
           ],
           "libs": [
+            "components/directives/bind-with",
             "components/directives/image",
             "components/directives/icon",
             "components/directives/in-view",
@@ -2264,6 +2266,7 @@
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
+              "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",
@@ -2275,6 +2278,7 @@
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
+              "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",

@@ -45,7 +45,7 @@ This property indicates the date of the most recent Internet connection.
 
 This property contains a list of registered AB experiments.
 
-### state.globalEnvironment
+### state.globalEnv
 
 An object whose properties will extend the global object.
 For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
@@ -54,7 +54,7 @@ Using this object, polyfills for all necessary APIs can be passed through.
 ```js
 import { set } from 'core/component/state';
 
-set('globalEnvironment', {
+set('globalEnv', {
   location: {
     href: 'https://foo.com'
   }

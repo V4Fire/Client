@@ -232,7 +232,7 @@ test.describe('components/directives/in-view', () => {
 
 		function addHandler(
 			watch: CanUndef<WatchHandler | Partial<WatchOptions>>
-		): WatchHandler | WatchOptions & {handler: WatchHandler} {
+		) {
 			if (Object.isUndef(watch) || Object.isFunction(watch)) {
 				return handler;
 			}

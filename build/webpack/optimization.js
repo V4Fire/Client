@@ -41,6 +41,7 @@ module.exports = function optimization({buildId, plugins}) {
 		params = {};
 
 	if (ssr) {
+		params.minimizer = [];
 		return params;
 	}
 
