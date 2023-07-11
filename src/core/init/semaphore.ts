@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createsAsyncSemaphore } from 'core/event';
+import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
 import { set } from 'core/component/state';
 import Component, { app, rootComponents, hydrationStore, ComponentElement } from 'core/component';
@@ -19,13 +19,14 @@ const semaphore = createsAsyncSemaphore(createAppInitializer, ...flags);
 export default semaphore;
 
 if (!SSR) {
-	semaphore('')
-		.then((initApp) => {
+	resolveAfterDOMLoaded()
+		.then(async () => {
 			const
 				targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
 				rootComponentName = targetToMount?.getAttribute('data-root-component');
 
-			return Object.cast(initApp(rootComponentName, {targetToMount}));
+			const initApp = (await import('core/init')).default;
+			return initApp(rootComponentName, {targetToMount});
 		})
 
 		.catch(stderr);
