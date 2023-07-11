@@ -19,7 +19,7 @@ const
 	{config: pzlr} = require('@pzlr/build-core');
 
 const
-	aliases = include('build/webpack/alias');
+	aliases = include('build/webpack/resolve/alias');
 
 const
 	contextRgxp = /\/\/\s*@context:\s*(.*?)\n([\s\S]*?)\/\/\s*@endcontext\n/g,
