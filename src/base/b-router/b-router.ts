@@ -846,7 +846,8 @@ export default class bRouter extends iData {
 			href === '' ||
 			href.startsWith('#') ||
 			href.startsWith('javascript:') ||
-			router.isExternal.test(href);
+			router.isExternal.test(href) ||
+			<boolean>Object.parse(a.getAttribute('data-router-prevent-transition'));
 
 		if (cantPrevent) {
 			return;
@@ -863,7 +864,7 @@ export default class bRouter extends iData {
 
 		this.emit('linkNavigate', linkNavigateEvent);
 
-		if (linkNavigateEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+		if (linkNavigateEvent.defaultPrevented) {
 			return;
 		}
 
