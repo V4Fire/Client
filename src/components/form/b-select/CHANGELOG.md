@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.8 (2023-07-07)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect update of the `selected` parameter in the native mode
+
 ## v4.??.?? (2023-??-??)
 
 #### :boom: Breaking Change

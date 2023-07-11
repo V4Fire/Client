@@ -1,5 +1,5 @@
 {
-  "hash": "f2a56f31997705856c9e3aed3baad8a422c790809168d8ee3fecba1b3b31cf80",
+  "hash": "17bfa44323e931383d4a43be899be3cf78ecf604c7aa870b764c3f3097aac294",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2217,13 +2217,13 @@
               "p-v4-dynamic-page3"
             ],
             "libs": [
+              "components/directives/bind-with",
               "components/directives/image",
               "components/directives/icon",
               "components/directives/in-view",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
-              "components/traits/i-control-list/i-control-list",
-              "components/directives/bind-with"
+              "components/traits/i-control-list/i-control-list"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2255,13 +2255,13 @@
             "p-v4-dynamic-page3"
           ],
           "libs": [
+            "components/directives/bind-with",
             "components/directives/image",
             "components/directives/icon",
             "components/directives/in-view",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
-            "components/traits/i-control-list/i-control-list",
-            "components/directives/bind-with"
+            "components/traits/i-control-list/i-control-list"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",

@@ -15,7 +15,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house:  Internal
 
-* Engine for `kv-storage` - `cookies`, now inherited from the `kv-storage` - `string` engine
+* The `kv-storage/engines/cookies` engine now inherits from `kv-storage/engines/string`
+
+## v4.0.0-beta.8 (2023-07-07)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect update of the `selected` parameter in the native mode of the `b-select`
 
 ## v4.0.0-beta.7 (2023-06-27)
 
