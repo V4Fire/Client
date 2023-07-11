@@ -179,7 +179,7 @@ initApp('p-v4-components-demo', {
           return 'cookie string';
         },
 
-        set coolie(cookie) {
+        set cookie(cookie) {
           // Set the passed cookie
           // ...
         }
