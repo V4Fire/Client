@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house:  Internal
 
-* Engine for `kv-storage` - `cookies`, now inherited from the `kv-storage` - `string` engine
+* The `kv-storage/engines/cookies` engine now inherits from `kv-storage/engines/string`
 
 ## v3.51.1 (2023-06-27)
 
