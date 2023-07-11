@@ -3580,6 +3580,155 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@v4fire/core@https://github.com/v4fire/core.git#v4-kv-storage":
+  version: 4.0.0-alpha.5
+  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=be894b516dd5e781acc9521c093d0843f4aa651e"
+  dependencies:
+    "@babel/core": 7.17.5
+    "@babel/helper-module-transforms": 7.16.7
+    "@babel/helpers": 7.17.7
+    "@babel/plugin-proposal-decorators": 7.17.2
+    "@babel/plugin-transform-runtime": 7.17.0
+    "@babel/preset-env": 7.16.11
+    "@babel/preset-typescript": 7.16.7
+    "@babel/runtime": 7.17.0
+    "@babel/template": 7.16.7
+    "@config/config": "npm:config@1.31.0"
+    "@pzlr/build-core": 2.13.0
+    "@swc/core": 1.2.153
+    "@swc/helpers": 0.3.8
+    "@v4fire/config": 1.0.0
+    cross-env: 7.0.3
+    del: 6.0.0
+    dom-storage: 2.1.0
+    dotenv: 10.0.0
+    eventemitter2: 6.4.5
+    fake-indexeddb: 3.1.7
+    find-up: 5.0.0
+    form-data: 4.0.0
+    fs-extra: 10.0.1
+    glob: 7.2.0
+    got: 11.8.3
+    gulp: 4.0.2
+    gulp-babel: 8.0.0
+    gulp-header: 2.0.9
+    gulp-if: 3.0.0
+    gulp-load-plugins: 2.0.7
+    gulp-monic: 2.0.15
+    gulp-plumber: 1.2.1
+    gulp-rename: 2.0.0
+    gulp-replace: 1.1.3
+    gulp-run: 1.7.1
+    gulp-sourcemaps: 3.0.0
+    is-path-inside: 3.0.3
+    jsdom: 18.1.1
+    monic: 2.6.1
+    node-blob: 0.0.2
+    node-fetch: 2.6.2
+    node-object-hash: 2.3.10
+    path-equal: 1.1.3
+    requestidlecallback: 0.3.0
+    through2: 4.0.2
+    ts-node: 10.7.0
+    tsc-alias: 1.6.1
+    tsconfig: 7.0.0
+    tsconfig-paths: 3.13.0
+    tslib: 2.3.1
+    typedoc: 0.22.13
+    typescript: 4.6.2
+    upath: 2.0.1
+    w3c-xmlserializer: 2.0.0
+    xhr2: ^0.2.1
+  dependenciesMeta:
+    "@babel/core":
+      optional: true
+    "@babel/helper-module-transforms":
+      optional: true
+    "@babel/helpers":
+      optional: true
+    "@babel/plugin-proposal-decorators":
+      optional: true
+    "@babel/plugin-transform-runtime":
+      optional: true
+    "@babel/preset-env":
+      optional: true
+    "@babel/preset-typescript":
+      optional: true
+    "@babel/runtime":
+      optional: true
+    "@babel/template":
+      optional: true
+    "@config/config":
+      optional: true
+    "@pzlr/build-core":
+      optional: true
+    "@v4fire/config":
+      optional: true
+    del:
+      optional: true
+    dotenv:
+      optional: true
+    fake-indexeddb:
+      optional: true
+    find-up:
+      optional: true
+    glob:
+      optional: true
+    gulp:
+      optional: true
+    gulp-babel:
+      optional: true
+    gulp-header:
+      optional: true
+    gulp-if:
+      optional: true
+    gulp-load-plugins:
+      optional: true
+    gulp-monic:
+      optional: true
+    gulp-plumber:
+      optional: true
+    gulp-rename:
+      optional: true
+    gulp-replace:
+      optional: true
+    gulp-run:
+      optional: true
+    gulp-sourcemaps:
+      optional: true
+    is-path-inside:
+      optional: true
+    monic:
+      optional: true
+    node-blob:
+      optional: true
+    node-fetch:
+      optional: true
+    node-object-hash:
+      optional: true
+    path-equal:
+      optional: true
+    requestidlecallback:
+      optional: true
+    through2:
+      optional: true
+    tsc-alias:
+      optional: true
+    tsconfig:
+      optional: true
+    tsconfig-paths:
+      optional: true
+    typedoc:
+      optional: true
+    typescript:
+      optional: true
+    upath:
+      optional: true
+    xhr2:
+      optional: true
+  checksum: 6b9e2c375bfbe6572712c0eea3470c64742788f7f5ca5b45cf8e3d4de0b055c247b8c0376e9720679a1ae612d7b66cc579cfbab8e45481a87a5eeace7d52bdb2
+  languageName: node
+  linkType: hard
 
 "@v4fire/design-system@npm:1.23.0":
   version: 1.23.0
@@ -3604,6 +3753,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@v4fire/linters@git+https://github.com/v4fire/linters#rework_rules":
+  version: 2.4.0
+  resolution: "@v4fire/linters@https://github.com/v4fire/linters.git#commit=aafd07456390f36f1268e5d6b0d65ca45546aa52"
+  dependencies:
+    "@babel/helper-validator-identifier": 7.18.6
+    "@eslint/eslintrc": 1.3.0
+    "@statoscope/stats-validator-plugin-webpack": 5.26.2
+    "@statoscope/stats-validator-reporter-console": 5.22.0
+    "@typescript-eslint/eslint-plugin": 5.57.1
+    "@typescript-eslint/parser": 5.57.1
+    "@v4fire/eslint-plugin": 1.0.0-alpha.10
+    "@v4fire/typescript-check": 1.4.2
+    eslint: 8.38.0
+    eslint-import-resolver-typescript: 3.5.5
+    eslint-plugin-deprecation: 1.4.1
+    eslint-plugin-header: 3.1.1
+    eslint-plugin-import: 2.27.5
+    eslint-plugin-jsdoc: 44.2.5
+    eslint-plugin-optimize-regex: 1.2.1
+    eslint-plugin-playwright: 0.12.0
+    stlint: 1.0.65
+    stlint-v4fire: 1.0.38
+  peerDependencies:
+    jest: ^29.5.0
+    jest-runner-eslint: ^2.0.0
+    typescript: ^4.4.4
+  checksum: 89a0c36a5434022eaf7034d6ea314f08120a8b7216940160e415bf6ecf9ad3e51120ab37801f3e401413fa336dbd66d2cb5dd6424596bc5fb3ce3261d78a4699
+  languageName: node
+  linkType: hard
 
 "@v4fire/typescript-check@npm:1.4.2":
   version: 1.4.2
@@ -17981,6 +18159,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ss2vue3@github:snakeskintpl/ss2vue3":
+  version: 1.0.0
+  resolution: "ss2vue3@https://github.com/snakeskintpl/ss2vue3.git#commit=910228b2cb5d9f5aba87d7c14cb8801c026c3c6c"
+  peerDependencies:
+    "@vue/compiler-sfc": "*"
+    snakeskin: ^7.5.1
+  checksum: fbffad5c9cf5ff75b56706464ef16a5557cfdb896ce04739aa0dc610793091d0e707fd93b30c560bc86c845f06f4d4d5acf2a6ac4aeedde705470848af1823e0
+  languageName: node
+  linkType: hard
 
 "ssri@npm:^9.0.0":
   version: 9.0.1
