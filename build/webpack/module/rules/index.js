@@ -8,20 +8,20 @@
 
 'use strict';
 
-exports.typescript = include('build/webpack/module/rules/typescript');
+exports.ts = include('build/webpack/module/rules/ts');
 
-exports.javascript = include('build/webpack/module/rules/javascript');
+exports.js = include('build/webpack/module/rules/js');
 
-exports.stylus = include('build/webpack/module/rules/stylus');
+exports.styl = include('build/webpack/module/rules/styl');
 
-exports.snakeskin = include('build/webpack/module/rules/snakeskin');
+exports.ss = include('build/webpack/module/rules/ss');
 
-exports.executableSnakeskin = include('build/webpack/module/rules/executable-snakeskin');
+exports.ess = include('build/webpack/module/rules/ess');
 
 exports.assets = include('build/webpack/module/rules/assets');
 
 exports.images = include('build/webpack/module/rules/images');
 
-exports.imagesWebp = include('build/webpack/module/rules/images-webp');
+exports.webp = include('build/webpack/module/rules/webp');
 
-exports.imagesSvg = include('build/webpack/module/rules/images-svg');
+exports.svg = include('build/webpack/module/rules/svg');
