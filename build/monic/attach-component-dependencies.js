@@ -94,7 +94,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		}
 
 		requestAnimationFrame(async () => {
-			if (globalThis.checkComponentStylesAreLoaded('${dep}')) {
+			if (globalThis.__webpack_component_styles_are_loaded__('${dep}')) {
 				return;
 			}
 

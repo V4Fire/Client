@@ -20,7 +20,7 @@ try {
  * Checks that styles for the given component are loaded
  * @param componentName
  */
-function checkComponentStylesAreLoaded(componentName: string): boolean {
+function __webpack_component_styles_are_loaded__(componentName: string): boolean {
 	try {
 		const el = document.createElement('i');
 		el.className = `${componentName}-is-style-loaded`;
@@ -37,4 +37,4 @@ function checkComponentStylesAreLoaded(componentName: string): boolean {
 	return false;
 }
 
-globalThis.checkComponentStylesAreLoaded = checkComponentStylesAreLoaded;
+globalThis.__webpack_component_styles_are_loaded__ = __webpack_component_styles_are_loaded__;
