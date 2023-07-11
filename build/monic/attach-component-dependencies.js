@@ -94,18 +94,9 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		}
 
 		requestAnimationFrame(async () => {
-			try {
-				const el = document.createElement('i');
-				el.className = '${dep}-is-style-loaded';
-				document.body.appendChild(el);
-
-				const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
-				document.body.removeChild(el);
-
-				if (isStylesLoaded) {
-					return;
-				}
-			} catch (err) { stderr(err); }
+			if (globalThis.__webpack_component_styles_are_loaded__('${dep}')) {
+				return;
+			}
 
 			try {
 				${
