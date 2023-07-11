@@ -77,4 +77,3 @@ export function normalizeItems(this: bList, items: CanUndef<Item[]>): Item[] {
 		};
 	});
 }
-

@@ -30,16 +30,16 @@ module.exports = async function module(args) {
 		rules: new Map()
 	};
 
-	loaders.rules.set('ts', await rules.typescript(args));
-	loaders.rules.set('js', await rules.javascript(args));
-	loaders.rules.set('styl', await rules.stylus(args));
-	loaders.rules.set('ess', await rules.executableSnakeskin(args));
-	loaders.rules.set('ss', await rules.snakeskin(args));
+	loaders.rules.set('ts', await rules.ts(args));
+	loaders.rules.set('js', await rules.js(args));
+	loaders.rules.set('styl', await rules.styl(args));
+	loaders.rules.set('ess', await rules.ess(args));
+	loaders.rules.set('ss', await rules.ss(args));
 
 	loaders.rules.set('assets', await rules.assets(args));
 	loaders.rules.set('img', await rules.images(args));
-	loaders.rules.set('img.webp', await rules.imagesWebp(args));
-	loaders.rules.set('img.svg', await rules.imagesSvg(args));
+	loaders.rules.set('img.webp', await rules.webp(args));
+	loaders.rules.set('img.svg', await rules.svg(args));
 
 	return loaders;
 };

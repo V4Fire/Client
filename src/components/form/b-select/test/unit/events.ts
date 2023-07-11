@@ -654,4 +654,3 @@ test.describe('<b-select> standard component events', () => {
 		await setValue(target, 2);
 	}
 });
-
