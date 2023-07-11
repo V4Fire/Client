@@ -420,7 +420,7 @@ function generateSpecs(engineName: EngineName) {
 					(page) => new Promise((resolve) => {
 						page.router!.on('onLinkNavigate', (event: CustomEvent) => {
 							resolve({
-								onLinkNavigate: [event.detail?.href]
+								onLinkNavigate: [event.detail?.target?.getAttribute('href')]
 							});
 						});
 					})
@@ -451,7 +451,7 @@ function generateSpecs(engineName: EngineName) {
 							event.preventDefault();
 
 							resolve({
-								onLinkNavigate: [event.detail?.href]
+								onLinkNavigate: [event.detail?.target?.getAttribute('href')]
 							});
 						});
 					})
