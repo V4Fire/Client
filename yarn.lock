@@ -3337,7 +3337,7 @@ __metadata:
     "@types/webpack": 5.28.0
     "@v4fire/cli": ^1.6.0
     "@v4fire/config": 1.0.0
-    "@v4fire/core": "https://github.com/v4fire/core.git#v4-kv-storage"
+    "@v4fire/core": "https://github.com/v4fire/core.git#v4"
     "@v4fire/design-system": 1.23.0
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules"
     "@vue/compiler-sfc": 3.2.47
@@ -3580,9 +3580,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/core@https://github.com/v4fire/core.git#v4-kv-storage":
+"@v4fire/core@https://github.com/v4fire/core.git#v4":
   version: 4.0.0-alpha.5
-  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=be894b516dd5e781acc9521c093d0843f4aa651e"
+  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=364f42b16da9796675360657940a480ff6b9f1c8"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -3726,7 +3726,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: 6b9e2c375bfbe6572712c0eea3470c64742788f7f5ca5b45cf8e3d4de0b055c247b8c0376e9720679a1ae612d7b66cc579cfbab8e45481a87a5eeace7d52bdb2
+  checksum: ec71046e279574d0a609b8fe4d94f55835f61b514ff7f8e85c20dac58908a1bd8c8424a99ce4344523efaea1101936c5230f4eaacf301563a27a26f90abfc3b5
   languageName: node
   linkType: hard
 
