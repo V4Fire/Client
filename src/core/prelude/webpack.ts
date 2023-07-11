@@ -16,6 +16,8 @@ try {
 	__webpack_public_path__ = ctx.PUBLIC_PATH ?? PUBLIC_PATH;
 } catch {}
 
+globalThis.__webpack_component_styles_are_loaded__ = __webpack_component_styles_are_loaded__;
+
 /**
  * Checks that styles for the given component are loaded
  * @param componentName
@@ -25,16 +27,17 @@ function __webpack_component_styles_are_loaded__(componentName: string): boolean
 		const el = document.createElement('i');
 		el.className = `${componentName}-is-style-loaded`;
 		document.body.appendChild(el);
+
 		const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
 		document.body.removeChild(el);
+
 		if (isStylesLoaded) {
 			return true;
 		}
+
 	} catch (err) {
 		stderr(err);
 	}
 
 	return false;
 }
-
-globalThis.__webpack_component_styles_are_loaded__ = __webpack_component_styles_are_loaded__;
