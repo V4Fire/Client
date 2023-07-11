@@ -120,6 +120,23 @@ creating a transition (except for `href` values containing absolute paths or pag
 < a href = /some-url
 ```
 
+If you need to disable intercepting a specific link click, you can handle the `linkNavigate` event,
+which provides the `HTMLElement` on which this `CustomEvent` was dispatched
+
+```typescript
+import iBlock, { component, watch } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  @watch('router:onLinkNavigate')
+  protected onLinkNavigate(e: CustomEvent):void {
+    if (e.detail.target.getAttribute('href') === '/foo/bar') {
+      event.preventDefault();
+    }
+  }
+}
+```
+
 You can provide additional parameters via data attributes.
 
 ```
