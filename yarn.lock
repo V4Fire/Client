@@ -5285,8 +5285,8 @@ __metadata:
     "@v4fire/core": "github:V4Fire/Core#v4"
     "@v4fire/design-system": 1.23.0
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules"
-    "@v4fire/storybook": 0.2.0
-    "@v4fire/storybook-framework-webpack5": 0.2.0
+    "@v4fire/storybook": 0.4.0
+    "@v4fire/storybook-framework-webpack5": 0.4.0
     "@vue/compiler-sfc": 3.2.47
     arg: 5.0.1
     autoprefixer: 10.4.2
@@ -5733,22 +5733,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/storybook-framework-webpack5@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@v4fire/storybook-framework-webpack5@npm:0.2.0"
+"@v4fire/storybook-framework-webpack5@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@v4fire/storybook-framework-webpack5@npm:0.4.0"
   dependencies:
     "@storybook/builder-webpack5": 7.0.23
     html-webpack-plugin: 5.5.0
   peerDependencies:
     "@babel/core": ^7.17.5
     webpack: ^5.82.1
-  checksum: 5ab632234ff41329c166dcdfb5939eb83def5ee82c887414943f45410a633e3066e027a3620167dff3f6fe857ab38402a40b42cc1679fc6b9168c9d74e50bea9
+  checksum: 24428513d0bbccbc0518f3af0c24f1a177a04acea5ba66c94503169f07f93c2ec43c02e398aa8413c3e2c1014242101f58443294b6fbba5dcdfc92acd71fe9d5
   languageName: node
   linkType: hard
 
-"@v4fire/storybook@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@v4fire/storybook@npm:0.2.0"
+"@v4fire/storybook@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@v4fire/storybook@npm:0.4.0"
   dependencies:
     "@storybook/global": ^5.0.0
     "@storybook/preview-api": 7.0.23
@@ -5758,7 +5758,7 @@ __metadata:
     "@v4fire/client": ^4.0.0-beta.7
     "@v4fire/core": ^4.0.0-alpha.4
     "@v4fire/storybook-framework-webpack5": 0.1.0
-  checksum: 8d6a3983cac71621e2b101418d49e127f98ad92890141e4139600c1663b1e4b38227c98e6d1df09e0a2905b4a16fa4dccc99355f45efbe7b33c596cd4378ea72
+  checksum: 0436cd6b75655360560f818091b0f45d22685027b3c18d89f5d78b0ec9f7ab7314354773ebda64fcfa5a570dd42dba2a560902f5a6823a3ce91946c67e41f541
   languageName: node
   linkType: hard
 
