@@ -2564,7 +2564,7 @@ __metadata:
     "@types/semver": 7.3.10
     "@types/webpack": 5.28.0
     "@v4fire/config": 1.0.0
-    "@v4fire/core": "https://github.com/v4fire/core.git#kv-storage"
+    "@v4fire/core": 3.96.0
     "@v4fire/design-system": 1.23.0
     "@v4fire/linters": 1.9.0
     arg: 5.0.1
@@ -2808,9 +2808,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/core@https://github.com/v4fire/core.git#kv-storage":
-  version: 3.95.4
-  resolution: "@v4fire/core@https://github.com/v4fire/core.git#commit=462e071505145f87b011766cde650ece38d834bb"
+"@v4fire/core@npm:3.96.0":
+  version: 3.96.0
+  resolution: "@v4fire/core@npm:3.96.0"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -2942,7 +2942,7 @@ __metadata:
       optional: true
     upath:
       optional: true
-  checksum: 6144ce5b944c45fdfee3d96a854d1d1e50fb3cbeecb0362b5a32064f6c3856b8ad0398c6438c046f564f21909dcb3b008a4b6a7d9a9c78ffc81bd0f7f9073235
+  checksum: 05acbea461104a2814499c921f4dfb84429902e3b4edf96a055a5905989b2d7f6789c21a746eea5e1048985c8d50e26839137c0b0b4359bc6178abb762e67647
   languageName: node
   linkType: hard
 
