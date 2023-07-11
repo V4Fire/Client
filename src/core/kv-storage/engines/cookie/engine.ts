@@ -15,6 +15,15 @@ export default class CookieEngine extends StringEngine {
 		return cookie.get(this.cookieName) ?? '';
 	}
 
+	protected override set serializedData(value: string) {
+		if (value.length === 0) {
+			cookie.remove(this.cookieName, Object.select(this.setOptions, ['path', 'domains']));
+
+		} else {
+			cookie.set(this.cookieName, value, this.setOptions);
+		}
+	}
+
 	/**
 	 * The name of the cookie in which the data is stored
 	 */
@@ -24,16 +33,6 @@ export default class CookieEngine extends StringEngine {
 	 * Additional options for setting cookies
 	 */
 	protected setOptions: cookie.SetOptions;
-
-	// eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
-	protected override set serializedData(value: string) {
-		if (value.length === 0) {
-			cookie.remove(this.cookieName, Object.select(this.setOptions, ['path', 'domains']));
-
-		} else {
-			cookie.set(this.cookieName, value, this.setOptions);
-		}
-	}
 
 	/**
 	 * @param cookieName - the name of the cookie in which the data is stored
