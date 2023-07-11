@@ -22,7 +22,7 @@ const
  *
  * @returns {import('webpack').RuleSetRule}
  */
-module.exports = function imagesWebpRules() {
+module.exports = function webpRules() {
 	const webpHelperLoaders = (inline) => [
 		{
 			loader: 'url-loader',

@@ -32,7 +32,7 @@ const
  *
  * @returns {import('webpack').RuleSetRule}
  */
-module.exports = function typescriptRules() {
+module.exports = function tsRules() {
 	const fatHTML = webpack.fatHTML();
 
 	return {

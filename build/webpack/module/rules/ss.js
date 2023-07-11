@@ -23,7 +23,7 @@ const
  *
  * @returns {import('webpack').RuleSetRule}
  */
-module.exports = function snakeskinRules() {
+module.exports = function ssRules() {
 	return {
 		test: /\.ss$/,
 		use: [

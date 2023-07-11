@@ -22,7 +22,7 @@ const
  *
  * @returns {import('webpack').RuleSetRule}
  */
-module.exports = function imagesSvgRules() {
+module.exports = function svgRules() {
 	const svgHelperLoaders = (inline) => [
 		{
 			loader: 'svg-url-loader',

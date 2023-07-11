@@ -24,7 +24,7 @@ const
  *
  * @returns {Promise<import('webpack').RuleSetRule>}
  */
-module.exports = async function executableSnakeskinRules() {
+module.exports = async function essRules() {
 	const g = await projectGraph;
 
 	return {

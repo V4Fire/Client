@@ -26,7 +26,7 @@ const
  *
  * @returns {import('webpack').RuleSetRule}
  */
-module.exports = function javascriptRules() {
+module.exports = function jsRules() {
 	return {
 		test: isJsFile,
 		exclude: isExternalDep,

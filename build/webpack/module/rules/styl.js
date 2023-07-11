@@ -28,7 +28,7 @@ const
  * @param {import('../index').ModuleArgs} args
  * @returns {import('webpack').RuleSetRule}
  */
-module.exports = function stylusRules({plugins}) {
+module.exports = function stylRules({plugins}) {
 	if (webpack.ssr) {
 		return {
 			test: isStylFile,
