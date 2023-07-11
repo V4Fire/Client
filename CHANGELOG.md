@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.XX.X (2023-XX-XX)
+
+#### :house:  Internal
+
+* The `kv-storage/engines/cookies` engine now inherits from `kv-storage/engines/string`
+
 ## v3.51.1 (2023-06-27)
 
 #### :bug: Bug Fix
