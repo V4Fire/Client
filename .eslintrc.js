@@ -20,6 +20,12 @@ const copyrightTemplate = [
 	' '
 ];
 
+if (!base.extends) {
+	base.extends = [];
+}
+
+base.extends.push('plugin:storybook/recommended');
+
 base.rules['header/header'] = [2, 'block', copyrightTemplate];
 
 base.overrides.at(-1).rules['@typescript-eslint/member-ordering'] = [

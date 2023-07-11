@@ -157,6 +157,7 @@
     "@v4fire/storybook": "0.4.0",
     "@v4fire/storybook-framework-webpack5": "0.4.0",
     "dpdm": "3.10.0",
+    "eslint-plugin-storybook": "0.6.12",
     "husky": "7.0.4",
     "jest": "29.5.0",
     "jest-runner-eslint": "2.0.0",
