@@ -828,7 +828,7 @@ export default class bRouter extends iData {
 	/**
 	 * Handler: click on an element with the `href` attribute
 	 * @param e
-	 * @emits `linkNavigate(event:` [[CustomEvent]]`)`
+	 * @emits `linkNavigate(event:` [[CustomEvent]]`)` - contains the `HTMLElement` onto which the event was dispatched
 	 */
 	@watch({
 		field: 'document:click',
@@ -858,7 +858,7 @@ export default class bRouter extends iData {
 		const linkNavigateEvent = new CustomEvent('linkNavigate', {
 			cancelable: true,
 			detail: {
-				href
+				target: a
 			}
 		});
 
