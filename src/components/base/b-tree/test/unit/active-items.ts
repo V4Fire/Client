@@ -76,6 +76,7 @@ test.describe('<b-tree> active items', () => {
 					page,
 					{items, attrs: {active: Utils.evalInBrowser(() => [0, 1].values()), multiple: true}}
 				);
+
 				test.expect(await evaluateActive(target)).toEqual([0, 1]);
 			});
 		});

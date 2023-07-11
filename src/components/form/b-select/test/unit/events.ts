@@ -621,6 +621,7 @@ test.describe('<b-select> standard component events', () => {
 				{label: 'Baz', value: 2}
 			]
 		});
+
 		const scan = target.evaluate((ctx) => {
 			const res: any[] = [];
 
