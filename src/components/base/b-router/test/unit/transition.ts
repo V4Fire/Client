@@ -399,7 +399,7 @@ function generateSpecs(engineName: EngineName) {
 		});
 	});
 
-	test.describe('should emit `linkNavigate` by clicking the link', () => {
+	test.describe('should emit the `linkNavigate` event when clicking a link', () => {
 		const linkId = 'linkWithHref';
 
 		test.beforeEach(async ({page}) => {
@@ -412,55 +412,65 @@ function generateSpecs(engineName: EngineName) {
 			await root.evaluate((page) => page.router!.push('/'));
 		});
 
-		test('without prevent router transition', async ({page}) => {
-			const linkClickResult = root.evaluate<RouterTestResult>(
-				(page) => new Promise((resolve) => {
-					page.router!.on('onLinkNavigate', (event: CustomEvent) => {
-						resolve({
-							onLinkNavigate: [event.detail?.href]
+		test(
+			'the event object should contain information about the link that was clicked',
+
+			async ({page}) => {
+				const linkClickResult = root.evaluate<RouterTestResult>(
+					(page) => new Promise((resolve) => {
+						page.router!.on('onLinkNavigate', (event: CustomEvent) => {
+							resolve({
+								onLinkNavigate: [event.detail?.href]
+							});
 						});
-					});
-				})
-			);
+					})
+				);
 
-			await page.locator(`#${linkId}`).click();
+				await page.locator(`#${linkId}`).click();
 
-			await test.expect(linkClickResult).resolves.toEqual({
-				onLinkNavigate: ['/second-page']
-			});
+				await test.expect(linkClickResult).resolves.toEqual({
+					onLinkNavigate: ['/second-page']
+				});
 
-			if (engineName === 'history') {
-				test.expect(new URL(page.url()).pathname).toBe('/second-page');
+				// eslint-disable-next-line playwright/no-conditional-in-test
+				if (engineName === 'history') {
+					test.expect(new URL(page.url()).pathname).toBe('/second-page');
+				}
+
+				await assertActivePageIs('second');
 			}
+		);
 
-			await assertActivePageIs('second');
-		});
+		test(
+			'calling `preventDefault` on the event object should cancel the link interception by the router',
 
-		test('with prevent router transition', async ({page}) => {
-			const linkClickResult = root.evaluate<RouterTestResult>(
-				(page) => new Promise((resolve) => {
-					page.router!.on('onLinkNavigate', (event: CustomEvent) => {
-						event.preventDefault();
+			async ({page}) => {
+				const linkClickResult = root.evaluate<RouterTestResult>(
+					(page) => new Promise((resolve) => {
+						page.router!.on('onLinkNavigate', (event: CustomEvent) => {
+							event.preventDefault();
 
-						resolve({
-							onLinkNavigate: [event.detail?.href]
+							resolve({
+								onLinkNavigate: [event.detail?.href]
+							});
 						});
-					});
-				})
-			);
+					})
+				);
 
-			await page.locator(`#${linkId}`).click();
+				await page.locator(`#${linkId}`).click();
 
-			await test.expect(linkClickResult).resolves.toEqual({
-				onLinkNavigate: ['/second-page']
-			});
+				await test.expect(linkClickResult).resolves.toEqual({
+					onLinkNavigate: ['/second-page']
+				});
 
-			if (engineName === 'history') {
-				test.expect(new URL(page.url()).pathname).not.toBe('/second-page');
+				// eslint-disable-next-line playwright/no-conditional-in-test
+				if (engineName === 'history') {
+					test.expect(new URL(page.url()).pathname).not.toBe('/second-page');
+				}
+
+				await assertActivePageIs('main');
 			}
-
-			await assertActivePageIs('main');
-		});
+		);
 	});
 
 	/**
