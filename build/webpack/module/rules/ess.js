@@ -66,4 +66,3 @@ module.exports = async function essRules() {
 		]
 	};
 };
-
