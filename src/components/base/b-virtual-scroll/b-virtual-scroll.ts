@@ -332,11 +332,13 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 		this.onDomInsertStart(mounted);
 
 		const
-			fragment = document.createDocumentFragment();
+			fragment = document.createDocumentFragment(),
+			{renderPage} = this.getComponentState(),
+			asyncGroup = `${bVirtualScrollDomInsertAsyncGroup}:${renderPage}`;
 
 		for (let i = 0; i < nodes.length; i++) {
 			this.dom.appendChild(fragment, nodes[i], {
-				group: bVirtualScrollDomInsertAsyncGroup,
+				group: asyncGroup,
 				destroyIfComponent: true
 			});
 		}
@@ -347,6 +349,6 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 			this.onDomInsertDone();
 			this.onRenderDone();
 
-		}, {label: $$.insertDomRaf, group: bVirtualScrollDomInsertAsyncGroup});
+		}, {label: $$.insertDomRaf, group: asyncGroup});
 	}
 }
