@@ -29,4 +29,3 @@ export default abstract class Assert extends AssertBase {
 		return AssertComponent;
 	}
 }
-

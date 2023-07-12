@@ -218,4 +218,3 @@ export function getIterable(
 
 	return [value];
 }
-

@@ -92,4 +92,3 @@ test.describe('<b-slider>', () => {
 		return Component.createComponent<bSlider>(page, 'b-slider', params);
 	}
 });
-

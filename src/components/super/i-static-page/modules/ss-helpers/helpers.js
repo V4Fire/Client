@@ -11,7 +11,7 @@ const
 	getHash = include('build/hash');
 
 const
-	fs = require('fs-extra');
+	fs = require('fs');
 
 exports.needInline = needInline;
 

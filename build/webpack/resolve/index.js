@@ -18,5 +18,5 @@ const
 module.exports = {
 	extensions: ['.ts', '.js', '.json'],
 	modules: [...new Set([resolve.blockSync(), resolve.sourceDir, src.cwd(), ...resolve.rootDependencies, src.lib()])],
-	alias: include('build/webpack/alias')
+	alias: include('build/webpack/resolve/alias')
 };
