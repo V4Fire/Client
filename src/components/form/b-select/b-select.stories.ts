@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Meta } from '@v4fire/storybook';
+import type { Meta, StoryObj } from '@v4fire/storybook';
 import type bSelect from 'components/form/b-select/b-select';
 
 // More on how to set up stories at: https://storybook.js.org/docs/html/writing-stories/introduction
@@ -28,7 +28,7 @@ const config: Meta<bSelect> = {
 export default config;
 
 // More on writing stories with args: https://storybook.js.org/docs/html/writing-stories/args
-export const Default: Meta<bSelect> = {
+export const Default: StoryObj<bSelect> = {
 	args: {
 		value: '1',
 		native: false,
