@@ -193,12 +193,19 @@ export class ComponentInternalState extends Friend {
 		const
 			{state} = this;
 
-		if (state.maxViewedChild == null || state.maxViewedItem == null) {
-			throw new ReferenceError('Missing state.maxViewedChild or state.maxViewedItem');
+		if (state.maxViewedChild == null) {
+			state.childTillEnd = state.childList.length - 1;
+
+		} else {
+			state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
 		}
 
-		state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
-		state.itemsTillEnd = state.items.length - 1 - state.maxViewedItem;
+		if (state.maxViewedItem == null) {
+			state.itemsTillEnd = state.items.length - 1;
+
+		} else {
+			state.itemsTillEnd = state.items.length - 1 - state.maxViewedItem;
+		}
 	}
 }
 
