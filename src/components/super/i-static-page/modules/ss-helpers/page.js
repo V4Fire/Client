@@ -146,7 +146,7 @@ function getScriptDeclByName(name, {
 
 	if (!assets[name] && (needInline(inline) || externalizeInitial)) {
 		if (!optional) {
-			throw new ReferenceError(`A style by the name "${name}" is not defined`);
+			throw new ReferenceError(`A script by the name "${name}" is not defined`);
 
 		} else {
 			return '';
