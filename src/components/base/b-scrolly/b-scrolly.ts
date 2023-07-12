@@ -108,6 +108,7 @@ export default class bScrolly extends bScrollyHandlers {
 			get = this.dp.get(params[0], params[1]);
 
 		return get
+			.then((res) => res.data)
 			.then((res) => {
 				if (res == null) {
 					return;
