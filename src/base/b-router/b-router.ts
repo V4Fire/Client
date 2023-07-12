@@ -21,7 +21,7 @@ import iData, { component, prop, system, computed, hook, wait, watch, UnsafeGett
 import engine, * as router from 'core/router';
 
 import { fillRouteParams } from 'base/b-router/modules/normalizers';
-import { LinkNavigateEvent } from 'base/b-router/modules/transition/event';
+import { HrefTransitionEvent } from 'base/b-router/modules/transition/event';
 import type { StaticRoutes, RouteOption, TransitionMethod, UnsafeBRouter } from 'base/b-router/interface';
 
 export * from 'super/i-data/i-data';
@@ -829,7 +829,8 @@ export default class bRouter extends iData {
 	/**
 	 * Handler: click on an element with the `href` attribute
 	 * @param e
-	 * @emits `linkNavigate(event:` [[CustomEvent]]`)` - contains the `HTMLElement` onto which the event was dispatched
+	 * @emits `hrefTransition(event:` [[HrefTransitionEvent]]`)` - contains the `HTMLElement` onto which the event
+	 * was dispatched and its `href` attribute value
 	 */
 	@watch({
 		field: 'document:click',
@@ -855,11 +856,11 @@ export default class bRouter extends iData {
 
 		e.preventDefault();
 
-		const linkNavigateEvent = new LinkNavigateEvent(a);
+		const hrefTransitionEvent = new HrefTransitionEvent(a);
 
-		this.emit('linkNavigate', linkNavigateEvent);
+		this.emit('linkNavigate', hrefTransitionEvent);
 
-		if (linkNavigateEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+		if (hrefTransitionEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
 			return;
 		}
 

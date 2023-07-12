@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added new method `getHref` to `b-list`
-* Added new event `linkNavigate` to `b-router` to provide the capability to prevent router transition upon link click
+* Added new event `hrefTransition` to `b-router` to provide the capability to prevent router transition upon link click
 
 ## v3.46.3 (2023-04-28)
 

@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added new event `linkNavigate` to provide the capability to prevent router transition upon link click
+* Added new event `hrefTransition` to `b-router` to provide the capability to prevent router transition upon link click
 
 ## v3.44.3 (2023-03-30)
 
