@@ -32,6 +32,8 @@ export {
 
 } from 'core/router/interface';
 
+export type { LinkNavigateEvent } from 'base/b-router/modules/transition/event';
+
 export type AppliedRoute = EngineAppliedRoute<
 	bRouter['PageParams'],
 	bRouter['PageQuery'],

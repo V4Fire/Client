@@ -125,13 +125,14 @@ which provides the `HTMLElement` on which this `CustomEvent` was dispatched
 
 ```typescript
 import iBlock, { component, watch } from 'components/super/i-block/i-block';
+import type { LinkNavigateEvent } from 'base/b-router/b-router';
 
 @component()
 export default class bExample extends iBlock {
   @watch('router:onLinkNavigate')
-  protected onLinkNavigate(e: CustomEvent):void {
-    if (e.detail.target.getAttribute('href') === '/foo/bar') {
-      event.preventDefault();
+  protected onLinkNavigate(e: LinkNavigateEvent):void {
+    if (e.detail.href === '/foo/bar') {
+      e.preventDefault();
     }
   }
 }

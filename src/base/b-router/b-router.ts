@@ -21,6 +21,7 @@ import iData, { component, prop, system, computed, hook, wait, watch, UnsafeGett
 import engine, * as router from 'core/router';
 
 import { fillRouteParams } from 'base/b-router/modules/normalizers';
+import { LinkNavigateEvent } from 'base/b-router/modules/transition/event';
 import type { StaticRoutes, RouteOption, TransitionMethod, UnsafeBRouter } from 'base/b-router/interface';
 
 export * from 'super/i-data/i-data';
@@ -855,12 +856,7 @@ export default class bRouter extends iData {
 
 		e.preventDefault();
 
-		const linkNavigateEvent = new CustomEvent('linkNavigate', {
-			cancelable: true,
-			detail: {
-				target: a
-			}
-		});
+		const linkNavigateEvent = new LinkNavigateEvent(a);
 
 		this.emit('linkNavigate', linkNavigateEvent);
 
