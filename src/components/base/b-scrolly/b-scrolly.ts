@@ -51,46 +51,71 @@ export default class bScrolly extends bScrollyHandlers {
 	}
 
 	override initLoad(...args: Parameters<iData['initLoad']>): ReturnType<iData['initLoad']> {
-		const
-			state = this.getComponentState();
-
-		this.componentInternalState.setIsLastErrored(false);
-
-		if (!this.isReady && this.isReadyOnce) {
+		if (!this.lfc.isBeforeCreate()) {
 			this.reset();
-		}
-
-		if (state.isLoadingInProgress) {
-			return;
 		}
 
 		this.componentInternalState.setIsLoadingInProgress(true);
 
 		const
-			isInitialLoading = !this.isReady;
+			initLoadResult = super.initLoad(...args);
 
-		const initLoadResult = isInitialLoading ?
-			super.initLoad(...args) :
-			this.initLoadNext();
-
-		this.onDataLoadStart(isInitialLoading);
+		this.onDataLoadStart(true);
 
 		if (Object.isPromise(initLoadResult)) {
 			initLoadResult
-				.then((res) => {
-					if (
-						(isInitialLoading && this.db == null) ||
-						(!isInitialLoading && res == null)
-					) {
+				.then(() => {
+					if (this.db == null) {
 						return;
 					}
 
-					this.onDataLoadSuccess(isInitialLoading, isInitialLoading ? this.db : this.convertDataToDB(res));
+					this.onDataLoadSuccess(true, this.db);
 				})
 				.catch(stderr);
+
+		} else {
+			this.onDataLoadSuccess(true, this.db);
 		}
 
-		return <Promise<void>>initLoadResult;
+		return initLoadResult;
+	}
+
+
+	/**
+	 * Initializes the loading of the next data chunk.
+	 * @throws {@link ReferenceError} if there is no `dataProvider` set.
+	 */
+	initLoadNext(): CanUndef<CanPromise<void>> {
+		if (!this.dp) {
+			throw ReferenceError('Missing dataProvider');
+		}
+
+		const
+			state = this.getComponentState();
+
+		if (state.isLoadingInProgress) {
+			return;
+		}
+
+		if (this.db == null) {
+			return this.initLoad();
+		}
+
+		this.onDataLoadStart(false);
+
+		const
+			params = this.getRequestParams(),
+			get = this.dp.get(params[0], params[1]);
+
+		return get
+			.then((res) => {
+				if (res == null) {
+					return;
+				}
+
+				this.onDataLoadSuccess(false, this.convertDataToDB(res));
+			})
+			.catch(stderr);
 	}
 
 	/**
@@ -186,19 +211,6 @@ export default class bScrolly extends bScrollyHandlers {
 		return data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
 	}
 
-	/**
-	 * Initializes the loading of the next data chunk.
-	 * @throws {@link ReferenceError} if there is no `dataProvider` set.
-	 */
-	protected initLoadNext(): Promise<unknown> {
-		if (!this.dp) {
-			throw ReferenceError('Missing dataProvider');
-		}
-
-		const params = this.getRequestParams();
-		return this.dp.get(params[0], params[1]).then((res) => res.data);
-	}
-
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
 		this.onConvertDataToDB(data);
 		const result = super.convertDataToDB(data);
@@ -290,16 +302,17 @@ export default class bScrolly extends bScrollyHandlers {
 			}
 
 			if (this.shouldPerformDataRequestWrapper()) {
-				void this.initLoad();
+				void this.initLoadNext();
 			}
 		}
 
 		if (reason === renderGuardRejectionReason.notEnoughData) {
 			if (state.isRequestsStopped) {
 				this.performRender();
+				this.onLifecycleDone();
 
 			} else if (this.shouldPerformDataRequestWrapper()) {
-				void this.initLoad();
+				void this.initLoadNext();
 
 			} else if (state.isInitialRender) {
 				this.performRender();
