@@ -18,10 +18,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * The compilation of itemKey into a function has been removed.
   It is now only used as a property name to retrieve the key value `components/traits/i-items/i-items`
 
-#### :house: Internal
+* The `data-cached-dynamic-class` attribute format is changed to `evalWith` reviver format `core/component/render/helpers/attrs`
 
-* The `data-cached-dynamic-class` attribute expression is not cashed by default.
-  To cache expression result use component's `tmp` cache `core/component/render/helpers/attrs`
+#### :house: Internal
 
 * The `kv-storage/engines/cookies` engine now inherits from `kv-storage/engines/string`
 

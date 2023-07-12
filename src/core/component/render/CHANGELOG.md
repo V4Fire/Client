@@ -11,10 +11,9 @@ Changelog
 
 ## v4.??.?? (2023-??-??)
 
-#### :house: Internal
+#### :boom: Breaking Change
 
-* The `data-cached-dynamic-class` attribute expression is not cashed by default.
-  To cache expression result use component's `tmp` cache
+* The `data-cached-dynamic-class` attribute format is changed to `evalWith` reviver format
 
 ## v3.0.0-rc.37 (2020-07-20)
 

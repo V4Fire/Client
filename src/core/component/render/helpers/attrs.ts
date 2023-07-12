@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { evalWith } from 'core/json';
+
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
@@ -14,7 +16,8 @@ import { setVNodePatchFlags } from 'core/component/render/helpers/flags';
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Resolves values from special attributes of the given VNode
+ * Resolves values from special attributes of the given VNode.
+ * Note: for the 'data-cached-dynamic-class' attribute value you should use `evalWith` JSON reviver format
  *
  * @param vnode
  *
@@ -30,7 +33,7 @@ import type { ComponentInterface } from 'core/component/interface';
  *   props: {
  *     'data-cached-class-component-id': ''
  *     'data-cached-class-provided-classes-styles': 'elem-name'
- *     'data-cached-dynamic-class': '[self.componentName]'
+ *     'data-cached-dynamic-class': '["get", "componentName"]'
  *   }
  * })
  * ```
@@ -144,9 +147,11 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	{
 		const
 			key = 'data-cached-dynamic-class',
-			classValue = props[key];
+			rawValue = props[key];
 
-		if (classValue != null) {
+		if (Object.isString(rawValue)) {
+			const classValue = Object.parse(rawValue, evalWith(this));
+
 			Object.assign(props, mergeProps({class: props.class}, {class: classValue}));
 			delete props[key];
 		}
