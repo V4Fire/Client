@@ -338,11 +338,13 @@ export default class bScrolly extends bScrollyHandlers {
 		this.onDomInsertStart(mounted);
 
 		const
-			fragment = document.createDocumentFragment();
+			fragment = document.createDocumentFragment(),
+			{renderPage} = this.getComponentState(),
+			asyncGroup = `${bScrollyDomInsertAsyncGroup}:${renderPage}`;
 
 		for (let i = 0; i < nodes.length; i++) {
 			this.dom.appendChild(fragment, nodes[i], {
-				group: bScrollyDomInsertAsyncGroup,
+				group: asyncGroup,
 				destroyIfComponent: true
 			});
 		}
@@ -353,6 +355,6 @@ export default class bScrolly extends bScrollyHandlers {
 			this.onDomInsertDone();
 			this.onRenderDone();
 
-		}, {label: $$.insertDomRaf, group: bScrollyDomInsertAsyncGroup});
+		}, {label: $$.insertDomRaf, group: asyncGroup});
 	}
 }
