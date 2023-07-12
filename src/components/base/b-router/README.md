@@ -121,7 +121,7 @@ creating a transition (except for `href` values containing absolute paths or pag
 ```
 
 If you need to disable intercepting a specific link click, you can handle the `hrefTransition` event,
-which provides the `HTMLElement` on which this `CustomEvent` was dispatched
+which provides the `HTMLElement` on which this event was dispatched and its `href` attribute value
 
 ```typescript
 import iBlock, { component, watch } from 'components/super/i-block/i-block';
