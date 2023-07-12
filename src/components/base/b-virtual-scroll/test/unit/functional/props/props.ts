@@ -113,5 +113,26 @@ test.describe('<b-virtual-scroll>', () => {
 
 			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
+
+		test('Should convert second data chunk to the component', async () => {
+			const
+				chunkSize = 12;
+
+			provider.response(200, () => ({data: {nestedData: state.data.addData(chunkSize)}}));
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRequest: ({itemsTillEnd}) => itemsTillEnd === 0,
+					dbConverter: ({data: {nestedData}}) => ({data: nestedData})
+				})
+				.build();
+
+			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
+
+			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
+		});
 	});
 });
