@@ -86,6 +86,8 @@ export class ComponentInternalState extends Friend {
 
 		childList.push(...mounted);
 		itemsList.push(...newItems);
+
+		this.updateChildTillEnd();
 	}
 
 	/**
@@ -156,6 +158,8 @@ export class ComponentInternalState extends Friend {
 			state.maxViewedChild = component.childIndex;
 			state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
 		}
+
+		this.updateChildTillEnd();
 	}
 
 	/**
@@ -175,6 +179,29 @@ export class ComponentInternalState extends Friend {
 			chunkSize = ctx.getChunkSize(state);
 
 		this.privateState.dataCursor = current + chunkSize;
+	}
+
+	/**
+	 * Updates the state of the tillEnd-like fields.
+	 * Calculates the remaining number of child elements until the end and the remaining number of items until the end.
+	 */
+	updateChildTillEnd(): void {
+		const
+			{state} = this;
+
+		if (state.maxViewedChild == null) {
+			state.childTillEnd = state.childList.length - 1;
+
+		} else {
+			state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
+		}
+
+		if (state.maxViewedItem == null) {
+			state.itemsTillEnd = state.items.length - 1;
+
+		} else {
+			state.itemsTillEnd = state.items.length - 1 - state.maxViewedItem;
+		}
 	}
 }
 

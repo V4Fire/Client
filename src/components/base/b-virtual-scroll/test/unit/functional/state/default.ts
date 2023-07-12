@@ -252,7 +252,6 @@ test.describe('<b-virtual-scroll>', () => {
 				isLastEmpty: true,
 				isLifecycleDone: true,
 				maxViewedItem: undefined,
-				itemsTillEnd: undefined,
 				loadPage: 2,
 				renderPage: 1
 			}));

@@ -21,9 +21,14 @@ test.describe('<b-virtual-scroll>', () => {
 		provider: VirtualScrollTestHelpers['provider'],
 		state: VirtualScrollTestHelpers['state'];
 
-	const initialStateFields = {
+	const observerInitialStateFields = {
 		itemsTillEnd: undefined,
 		childTillEnd: undefined,
+		maxViewedChild: undefined,
+		maxViewedItem: undefined
+	};
+
+	const observerLoadedStateFields = {
 		maxViewedChild: undefined,
 		maxViewedItem: undefined
 	};
@@ -40,17 +45,17 @@ test.describe('<b-virtual-scroll>', () => {
 			const chunkSize = 12;
 
 			const states = [
-				state.compile(initialStateFields),
+				state.compile(observerInitialStateFields),
 				(
 					state.data.addData(chunkSize),
-					state.set({loadPage: 1, isRequestsStopped: true}).compile(initialStateFields)
+					state.set({loadPage: 1, isRequestsStopped: true}).compile(observerInitialStateFields)
 				),
 				(
 					state.data.addItems(chunkSize),
-					state.set({isInitialRender: false, renderPage: 1}).compile(initialStateFields)
+					state.set({isInitialRender: false, renderPage: 1}).compile(observerLoadedStateFields)
 				),
 				(
-					state.compile(initialStateFields)
+					state.compile(observerLoadedStateFields)
 				),
 				(
 					state.set({isLifecycleDone: true}).compile()
@@ -107,21 +112,21 @@ test.describe('<b-virtual-scroll>', () => {
 				providerChunkSize = chunkSize / 2;
 
 			const states = [
-				state.compile(initialStateFields),
+				state.compile(observerInitialStateFields),
 				(
 					state.data.addData(providerChunkSize),
-					state.set({loadPage: 1}).compile(initialStateFields)
+					state.set({loadPage: 1}).compile(observerInitialStateFields)
 				),
 				(
 					state.data.addData(providerChunkSize),
-					state.set({loadPage: 2, isInitialLoading: false}).compile(initialStateFields)
+					state.set({loadPage: 2, isInitialLoading: false}).compile(observerInitialStateFields)
 				),
 				(
 					state.data.addItems(chunkSize),
-					state.set({renderPage: 1, isInitialRender: false}).compile(initialStateFields)
+					state.set({renderPage: 1, isInitialRender: false}).compile(observerLoadedStateFields)
 				),
 				(
-					state.compile(initialStateFields)
+					state.compile(observerLoadedStateFields)
 				),
 				(
 					state.compile()
