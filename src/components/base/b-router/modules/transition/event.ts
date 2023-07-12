@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export class LinkNavigateEvent<T extends Element = Element> extends CustomEvent<{href: string; target: T}> {
+export class HrefTransitionEvent<T extends Element = Element> extends CustomEvent<{href: string; target: T}> {
 	constructor(target: T) {
-		super('linkNavigate', {
+		super('hrefTransition', {
 			cancelable: true,
 			detail: {
 				href: target.getAttribute('href') ?? '',

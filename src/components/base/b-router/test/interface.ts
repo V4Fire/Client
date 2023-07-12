@@ -31,5 +31,5 @@ export interface RouterTestResult {
 	initialContent?: unknown;
 	initialRouteLink?: unknown;
 	routeLink?: unknown;
-	onLinkNavigate?: unknown[];
+	onHrefTransition?: unknown[];
 }

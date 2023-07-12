@@ -13,7 +13,7 @@ import { Component } from 'tests/helpers';
 
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
-import type { LinkNavigateEvent } from 'components/base/b-router/modules/transition/event';
+import type { HrefTransitionEvent } from 'components/base/b-router/modules/transition/event';
 
 import type { EngineName, RouterTestResult } from 'components/base/b-router/test/interface';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
@@ -401,7 +401,7 @@ function generateSpecs(engineName: EngineName) {
 		});
 	});
 
-	test.describe('should emit the `linkNavigate` event when clicking a link', () => {
+	test.describe('should emit the `hrefTransition` event when clicking a link', () => {
 		const linkId = 'linkWithHref';
 
 		test.beforeEach(async ({page}) => {
@@ -420,9 +420,9 @@ function generateSpecs(engineName: EngineName) {
 			async ({page}) => {
 				const linkClickResult = root.evaluate<RouterTestResult>(
 					(page) => new Promise((resolve) => {
-						page.router!.on('onLinkNavigate', (event: LinkNavigateEvent) => {
+						page.router!.on('onHrefTransition', (event: HrefTransitionEvent) => {
 							resolve({
-								onLinkNavigate: [event.detail.href]
+								onHrefTransition: [event.detail.href]
 							});
 						});
 					})
@@ -431,7 +431,7 @@ function generateSpecs(engineName: EngineName) {
 				await page.locator(`#${linkId}`).click();
 
 				await test.expect(linkClickResult).resolves.toEqual({
-					onLinkNavigate: ['/second-page']
+					onHrefTransition: ['/second-page']
 				});
 
 				// eslint-disable-next-line playwright/no-conditional-in-test
@@ -449,11 +449,11 @@ function generateSpecs(engineName: EngineName) {
 			async ({page}) => {
 				const linkClickResult = root.evaluate<RouterTestResult>(
 					(page) => new Promise((resolve) => {
-						page.router!.on('onLinkNavigate', (event: LinkNavigateEvent) => {
+						page.router!.on('onHrefTransition', (event: HrefTransitionEvent) => {
 							event.preventDefault();
 
 							resolve({
-								onLinkNavigate: [event.detail.href]
+								onHrefTransition: [event.detail.href]
 							});
 						});
 					})
@@ -462,7 +462,7 @@ function generateSpecs(engineName: EngineName) {
 				await page.locator(`#${linkId}`).click();
 
 				await test.expect(linkClickResult).resolves.toEqual({
-					onLinkNavigate: ['/second-page']
+					onHrefTransition: ['/second-page']
 				});
 
 				// eslint-disable-next-line playwright/no-conditional-in-test

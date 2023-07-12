@@ -9,7 +9,7 @@
 import * as router from 'core/router';
 
 import { urlsToIgnore } from 'components/base/b-router/modules/const';
-import { LinkNavigateEvent } from 'components/base/b-router/modules/transition/event';
+import { HrefTransitionEvent } from 'components/base/b-router/modules/transition/event';
 
 import type bRouter from 'components/base/b-router/b-router';
 
@@ -17,7 +17,8 @@ import type bRouter from 'components/base/b-router/b-router';
  * Handler: there was a click on an element with the `href` attribute
  *
  * @param e
- * @emits `linkNavigate(event:` [[CustomEvent]]`)` - contains the `HTMLElement` onto which the event was dispatched
+ * @emits `hrefTransition(event:` [[HrefTransitionEvent]]`)` - contains the `HTMLElement` onto which the event
+ * was dispatched and its `href` attribute value
  */
 export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 	const
@@ -37,11 +38,11 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 
 	e.preventDefault();
 
-	const linkNavigateEvent = new LinkNavigateEvent(a);
+	const hrefTransitionEvent = new HrefTransitionEvent(a);
 
-	this.emit('linkNavigate', linkNavigateEvent);
+	this.emit('hrefTransition', hrefTransitionEvent);
 
-	if (linkNavigateEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+	if (hrefTransitionEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
 		return;
 	}
 

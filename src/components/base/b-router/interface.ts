@@ -32,7 +32,7 @@ export {
 
 } from 'core/router/interface';
 
-export type { LinkNavigateEvent } from 'components/base/b-router/modules/transition/event';
+export type { HrefTransitionEvent } from 'components/base/b-router/modules/transition/event';
 
 export type AppliedRoute = EngineAppliedRoute<
 	bRouter['PageParams'],
