@@ -29,8 +29,7 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 		href == null ||
 		href === '' ||
 		urlsToIgnore.some((scheme) => scheme.test(href)) ||
-		router.isExternal.test(href) ||
-		Object.parse(a.getAttribute('data-router-prevent-transition'));
+		router.isExternal.test(href);
 
 	if (cantPrevent) {
 		return;
@@ -42,7 +41,7 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 
 	this.emit('linkNavigate', linkNavigateEvent);
 
-	if (linkNavigateEvent.defaultPrevented) {
+	if (linkNavigateEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
 		return;
 	}
 
