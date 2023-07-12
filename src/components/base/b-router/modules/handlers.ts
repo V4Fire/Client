@@ -9,6 +9,7 @@
 import * as router from 'core/router';
 
 import { urlsToIgnore } from 'components/base/b-router/modules/const';
+import { LinkNavigateEvent } from 'components/base/b-router/modules/transition/event';
 
 import type bRouter from 'components/base/b-router/b-router';
 
@@ -37,12 +38,7 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 
 	e.preventDefault();
 
-	const linkNavigateEvent = new CustomEvent('linkNavigate', {
-		cancelable: true,
-		detail: {
-			target: a
-		}
-	});
+	const linkNavigateEvent = new LinkNavigateEvent(a);
 
 	this.emit('linkNavigate', linkNavigateEvent);
 

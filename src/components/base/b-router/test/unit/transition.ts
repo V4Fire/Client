@@ -13,6 +13,8 @@ import { Component } from 'tests/helpers';
 
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
+import type { LinkNavigateEvent } from 'components/base/b-router/modules/transition/event';
+
 import type { EngineName, RouterTestResult } from 'components/base/b-router/test/interface';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
 
@@ -418,9 +420,9 @@ function generateSpecs(engineName: EngineName) {
 			async ({page}) => {
 				const linkClickResult = root.evaluate<RouterTestResult>(
 					(page) => new Promise((resolve) => {
-						page.router!.on('onLinkNavigate', (event: CustomEvent) => {
+						page.router!.on('onLinkNavigate', (event: LinkNavigateEvent) => {
 							resolve({
-								onLinkNavigate: [event.detail?.target?.getAttribute('href')]
+								onLinkNavigate: [event.detail.href]
 							});
 						});
 					})
@@ -447,11 +449,11 @@ function generateSpecs(engineName: EngineName) {
 			async ({page}) => {
 				const linkClickResult = root.evaluate<RouterTestResult>(
 					(page) => new Promise((resolve) => {
-						page.router!.on('onLinkNavigate', (event: CustomEvent) => {
+						page.router!.on('onLinkNavigate', (event: LinkNavigateEvent) => {
 							event.preventDefault();
 
 							resolve({
-								onLinkNavigate: [event.detail?.target?.getAttribute('href')]
+								onLinkNavigate: [event.detail.href]
 							});
 						});
 					})
