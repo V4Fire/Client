@@ -12,6 +12,8 @@
 - include 'components/traits/i-history'|b
 
 - template index() extends ['i-block'].index
+	- teleport = @@teleport
+
 	- block headHelpers
 		< .&__overlay &
 			v-if = overlay |
