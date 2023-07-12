@@ -85,6 +85,8 @@ export class ComponentInternalState extends Friend {
 
 		childList.push(...mounted);
 		itemsList.push(...newItems);
+
+		this.updateChildTillEnd();
 	}
 
 	/**
@@ -154,13 +156,13 @@ export class ComponentInternalState extends Friend {
 
 		if (isItem(component) && (state.maxViewedItem == null || state.maxViewedItem < component.itemIndex)) {
 			state.maxViewedItem = component.itemIndex;
-			state.itemsTillEnd = state.items.length - 1 - state.maxViewedItem;
 		}
 
 		if (state.maxViewedChild == null || state.maxViewedChild < childIndex) {
 			state.maxViewedChild = component.childIndex;
-			state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
 		}
+
+		this.updateChildTillEnd();
 	}
 
 	/**
@@ -185,6 +187,18 @@ export class ComponentInternalState extends Friend {
 
 			this.privateState.renderCursor = current + chunkSize;
 		}
+	}
+
+	updateChildTillEnd(): void {
+		const
+			{state} = this;
+
+		if (state.maxViewedChild == null || state.maxViewedItem == null) {
+			throw new ReferenceError('Missing state.maxViewedChild or state.maxViewedItem');
+		}
+
+		state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
+		state.itemsTillEnd = state.items.length - 1 - state.maxViewedItem;
 	}
 }
 
