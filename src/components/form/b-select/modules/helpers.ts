@@ -135,7 +135,7 @@ export function setSelectedMod(this: bSelect, el: HTMLOptionElement, selected: b
 	block.setElementMod(el, 'item', 'selected', selected);
 
 	if (this.native) {
-		el.selected = false;
+		el.selected = selected;
 
 	} else {
 		el.setAttribute('aria-selected', String(selected));

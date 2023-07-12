@@ -9,4 +9,3 @@
 export type Pattern = string | RegExp | PatternFn;
 
 export type PatternFn = (userAgent: string) => [CanUndef<string>, CanUndef<string>] | null;
-

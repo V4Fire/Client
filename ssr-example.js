@@ -26,18 +26,22 @@
 
 require('./dist/ssr/std');
 
-require('./dist/ssr/p-v4-components-demo').initApp()
-	.then((initPage) => initPage('p-v4-components-demo'))
-
-	.then((page) => page.render({
+require('./dist/ssr/p-v4-components-demo')
+	.initApp('p-v4-components-demo', {
 		route: '/user/12345',
 
-		globalEnvironment: {
+		globalEnv: {
+			ssr: {
+				document: {
+
+				}
+			},
+
 			location: {
 				href: 'https://example.com/user/12345'
 			}
 		}
-	}))
+	})
 
 	.then((res) => {
 		require('fs').writeFileSync('ssr-example.html', res);

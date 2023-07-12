@@ -30,9 +30,6 @@
 	/** @override */
 	- rootAttrs = {}
 
-	/** Additional static page data */
-	- pageData = {}
-
 	/** The page charset */
 	- charset = 'utf-8'
 
@@ -73,9 +70,6 @@
 	- block root
 		- block pageData
 			? rootAttrs['data-root-component'] = self.name()
-
-			- if Object.size(pageData) > 0
-				? rootAttrs['data-root-component-params'] = ({data: pageData}|json)
 
 		? await h.generateInitJS(self.name(), { &
 			deps,
