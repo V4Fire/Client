@@ -3182,7 +3182,7 @@ __metadata:
     "@types/webpack": 5.28.0
     "@v4fire/cli": ^1.6.0
     "@v4fire/config": 1.0.0
-    "@v4fire/core": "github:V4Fire/Core#feat/evalWith-reviver-nested"
+    "@v4fire/core": "github:V4Fire/Core#v4"
     "@v4fire/design-system": 1.23.0
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules"
     "@vue/compiler-sfc": 3.2.47
@@ -3428,9 +3428,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/core@github:V4Fire/Core#feat/evalWith-reviver-nested":
+"@v4fire/core@github:V4Fire/Core#v4":
   version: 4.0.0-alpha.6
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=4b826c2dca587dc51c191b71aa27e0d19a1a8b3a"
+  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=a8d49c3b4a31f89093eef245dc2ecd2f3f1200c2"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -3574,7 +3574,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: 7706d6ad21e71aa8898ba3368933ff0b8950ec3e6340d3a916a1e410e99edadae2b6667a07d4ce2d59f994afe8ade88893368199e1abc3a233f33989a36116a9
+  checksum: caa52f52a3357e994775908793d576fec385315e138b8a83bf7380640ede2ae5965e819ebd0e85052f50e944556652fece5f77172787e5e5ef539d54ea243af9
   languageName: node
   linkType: hard
 
