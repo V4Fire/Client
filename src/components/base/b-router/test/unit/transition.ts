@@ -407,22 +407,33 @@ function generateSpecs(engineName: EngineName) {
 		test.beforeEach(async ({page}) => {
 			await Component.createComponent(page, 'a', {
 				id: linkId,
+
 				href: '/second-page',
-				text: linkId
+				text: linkId,
+
+				'data-router-query': JSON.stringify({type: 'router'}),
+				'data-router-meta': JSON.stringify({some: 'data'})
 			});
 
 			await root.evaluate((page) => page.router!.push('/'));
 		});
 
-		test(
+		test.only(
 			'the event object should contain information about the link that was clicked',
 
 			async ({page}) => {
 				const linkClickResult = root.evaluate<RouterTestResult>(
 					(page) => new Promise((resolve) => {
 						page.router!.on('onHrefTransition', (event: HrefTransitionEvent) => {
+							const
+								{detail} = event;
+
 							resolve({
-								onHrefTransition: [event.detail.href]
+								onHrefTransition: [
+									detail.target.tagName,
+									detail.href,
+									detail.data
+								]
 							});
 						});
 					})
@@ -431,8 +442,19 @@ function generateSpecs(engineName: EngineName) {
 				await page.locator(`#${linkId}`).click();
 
 				await test.expect(linkClickResult).resolves.toEqual({
-					onHrefTransition: ['/second-page']
+					onHrefTransition: [
+						'A',
+
+						'/second-page',
+
+						{
+							query: {type: 'router'},
+							meta: {some: 'data'}
+						}
+					]
 				});
+
+				console.log(page.url());
 
 				// eslint-disable-next-line playwright/no-conditional-in-test
 				if (engineName === 'history') {
