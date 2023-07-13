@@ -11,15 +11,19 @@
  * @packageDocumentation
  */
 
+import { setVNodePatchFlags } from 'core/component/render';
 import { ComponentEngine, VNode } from 'core/component/engines';
 
-import { setVNodePatchFlags } from 'core/component/render';
+import { getDirectiveContext } from 'core/component/directives/helpers';
 import type { DirectiveParams } from 'core/component/directives/render/interface';
 
 export * from 'core/component/directives/render/interface';
 
 ComponentEngine.directive('render', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
+		const
+			ctx = getDirectiveContext(params, vnode);
+
 		const
 			newVNode = params.value,
 			originalChildren = vnode.children;
@@ -31,13 +35,24 @@ ComponentEngine.directive('render', {
 				Object.size(vnode.props) === 0;
 
 			if (canReplaceVNode) {
-				return newVNode;
+				return SSR ? renderSSRFragment(newVNode) : newVNode;
 			}
 
 			if (Object.isString(vnode.type)) {
-				vnode.children = Array.concat([], newVNode);
-				vnode.dynamicChildren = Object.cast(vnode.children.slice());
-				setVNodePatchFlags(vnode, 'children');
+				const
+					children = Array.concat([], newVNode);
+
+				if (SSR) {
+					vnode.props = {
+						...vnode.props,
+						innerHTML: getSSRInnerHTML(children)
+					};
+
+				} else {
+					vnode.children = children;
+					vnode.dynamicChildren = Object.cast(children.slice());
+					setVNodePatchFlags(vnode, 'children');
+				}
 
 			} else {
 				const slots = Object.isPlainObject(originalChildren) ?
@@ -47,28 +62,50 @@ ComponentEngine.directive('render', {
 				vnode.children = slots;
 				setVNodePatchFlags(vnode, 'slots');
 
-				if (Object.isArray(newVNode)) {
-					if (isSlot(newVNode[0])) {
-						newVNode.forEach((vnode) => {
-							const
-								slot = vnode.props?.slot;
+				if (SSR) {
+					slots.default = () => renderSSRFragment(newVNode);
 
-							if (slot != null) {
-								slots[slot] = () => vnode.children ?? getDefSlotFromChildren(slot);
-							}
-						});
+				} else {
+					if (Object.isArray(newVNode)) {
+						if (isSlot(newVNode[0])) {
+							newVNode.forEach((vnode) => {
+								const
+									slot = vnode.props?.slot;
 
+								if (slot != null) {
+									slots[slot] = () => vnode.children ?? getDefSlotFromChildren(slot);
+								}
+							});
+
+							return;
+						}
+
+					} else if (isSlot(newVNode)) {
+						const {slot} = newVNode.props!;
+						slots[slot] = () => newVNode.children ?? getDefSlotFromChildren(slot);
 						return;
 					}
 
-				} else if (isSlot(newVNode)) {
-					const {slot} = newVNode.props!;
-					slots[slot] = () => newVNode.children ?? getDefSlotFromChildren(slot);
-					return;
+					slots.default = () => newVNode;
 				}
-
-				slots.default = () => newVNode;
 			}
+		}
+
+		function getSSRInnerHTML(content: CanArray<CanPromise<VNode>>) {
+			return Promise.all(Array.concat([], content)).then((content) => content.join(''));
+		}
+
+		function renderSSRFragment(content: CanArray<CanPromise<VNode>>) {
+			if (ctx == null) {
+				return;
+			}
+
+			const
+				{r} = ctx.$renderEngine;
+
+			return r.createVNode.call(ctx, 'ssr-fragment', {
+				innerHTML: getSSRInnerHTML(content)
+			});
 		}
 
 		function isSlot(vnode: CanUndef<VNode>): boolean {

@@ -14,7 +14,7 @@ const flagValues = {
 	props: 8,
 	fullProps: 16,
 	events: 32,
-	slots: 8,
+	slots: 32,
 	children: 16
 };
 

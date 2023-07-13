@@ -47,11 +47,11 @@ function createAppInitializer() {
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
 				{renderToString} = require('vue/server-renderer');
 
-			const
-				rootComponent = new Component(rootComponentParams);
+			const rootComponent = new Component(rootComponentParams);
+			app.context = rootComponent;
 
 			return [
-				await renderToString(rootComponent),
+				(await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
 				`<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`
 			].join('');
 		}
