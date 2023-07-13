@@ -855,15 +855,15 @@ export default class bRouter extends iData {
 			return;
 		}
 
-		e.preventDefault();
-
 		const hrefTransitionEvent = new HrefTransitionEvent(a);
 
 		this.emit('linkNavigate', hrefTransitionEvent);
 
-		if (hrefTransitionEvent.defaultPrevented || <boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+		if (hrefTransitionEvent.defaultPrevented || Object.parse(a.getAttribute('data-router-prevent-transition'))) {
 			return;
 		}
+
+		e.preventDefault();
 
 		const
 			l = Object.assign(document.createElement('a'), {href});
