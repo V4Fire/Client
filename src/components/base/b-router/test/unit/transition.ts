@@ -418,7 +418,7 @@ function generateSpecs(engineName: EngineName) {
 			await root.evaluate((page) => page.router!.push('/'));
 		});
 
-		test.only(
+		test(
 			'the event object should contain information about the link that was clicked',
 
 			async ({page}) => {
@@ -453,8 +453,6 @@ function generateSpecs(engineName: EngineName) {
 						}
 					]
 				});
-
-				console.log(page.url());
 
 				// eslint-disable-next-line playwright/no-conditional-in-test
 				if (engineName === 'history') {

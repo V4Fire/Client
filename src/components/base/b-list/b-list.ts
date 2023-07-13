@@ -323,8 +323,7 @@ class bList extends bListProps implements iVisible, iWidth, iActiveItems {
 	}
 
 	/**
-	 * Returns href for item. Is used at the rendering stage
-	 *
+	 * Returns the `href` value for the specified item
 	 * @param item
 	 */
 	protected getHref(item: this['Item']): CanUndef<string> {
