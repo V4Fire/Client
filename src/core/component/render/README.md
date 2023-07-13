@@ -21,6 +21,8 @@ These wrappers are intended to be used for encapsulating the original component 
 ### resolveAttrs
 
 Resolves values from special attributes of the given VNode.
+Note: for the value of the `data-cached-dynamic-class` attribute,
+you should use the JSON `core/json#evalWith` reviver format.
 
 ```js
 // `.componentId = 'id-1'`

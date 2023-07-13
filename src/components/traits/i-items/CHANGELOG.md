@@ -13,8 +13,8 @@ Changelog
 
 #### :boom: Breaking Change
 
-* The compilation of itemKey into a function has been removed.
-  It is now only used as a property name to retrieve the key value.
+* The string value compilation in getItemKey helper was removed.
+  Now the string parameter is used as a property name to get the key value.
 
 ## v3.0.0-rc.122 (2021-01-13)
 

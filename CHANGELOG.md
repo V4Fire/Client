@@ -15,10 +15,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* The compilation of itemKey into a function has been removed.
-  It is now only used as a property name to retrieve the key value `components/traits/i-items/i-items`
+* The string value compilation in getItemKey helper was removed.
+  Now the string parameter is used as a property name to get the key value. `components/traits/i-items/i-items`
 
-* The `data-cached-dynamic-class` attribute format is changed to `evalWith` reviver format `core/component/render/helpers/attrs`
+* The `data-cached-dynamic-class` attribute format is changed to the `core/json#evalWith` reviver format `core/component/render/helpers/attrs`
 
 #### :house: Internal
 

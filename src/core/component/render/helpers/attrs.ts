@@ -17,7 +17,8 @@ import type { ComponentInterface } from 'core/component/interface';
 
 /**
  * Resolves values from special attributes of the given VNode.
- * Note: for the 'data-cached-dynamic-class' attribute value you should use `evalWith` JSON reviver format
+ * Note: for the value of the `data-cached-dynamic-class` attribute,
+ * you should use the JSON `core/json#evalWith` reviver format.
  *
  * @param vnode
  *
@@ -31,8 +32,8 @@ import type { ComponentInterface } from 'core/component/interface';
  * // {props: {class: 'id-1 b-example alias'}}
  * resolveAttrs.call(ctx, {
  *   props: {
- *     'data-cached-class-component-id': ''
- *     'data-cached-class-provided-classes-styles': 'elem-name'
+ *     'data-cached-class-component-id': '',
+ *     'data-cached-class-provided-classes-styles': 'elem-name',
  *     'data-cached-dynamic-class': '["get", "componentName"]'
  *   }
  * })
