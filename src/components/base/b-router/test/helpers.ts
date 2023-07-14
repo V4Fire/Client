@@ -8,30 +8,34 @@
 
 import { Component, Utils } from 'tests/helpers';
 
+import type { StaticRoutes } from 'core/router';
 import type { EngineName, InitRouter } from 'components/base/b-router/test/interface';
-
 import type { Router } from 'components/base/b-router/interface';
 
 /**
  * Returns a function to initialize the router on the page with the specified engine
+ *
  * @param engineName
+ * @param [routes]
  */
-export function createInitRouter(engineName: EngineName): InitRouter {
+export function createInitRouter(engineName: EngineName, routes?: StaticRoutes): InitRouter {
 	return async (page, initOptions = {}) => {
-
 		if (initOptions.initialRoute === undefined && engineName === 'in-memory') {
 			initOptions.initialRoute = 'main';
 		}
 
-		let engine: (() => Router) | undefined;
+		let
+			engine: (() => Router) | undefined;
 
 		switch (engineName) {
 			case 'history':
 				engine = Utils.evalInBrowser(() => globalThis.importModule('./src/core/router/engines/browser-history.ts').default);
 				break;
+
 			case 'in-memory':
 				engine = Utils.evalInBrowser(() => globalThis.importModule('./src/core/router/engines/in-memory.ts').default);
 				break;
+
 			default:
 				// Do nothing
 		}
@@ -134,7 +138,9 @@ export function createInitRouter(engineName: EngineName): InitRouter {
 				notFound: {
 					default: true,
 					content: '404'
-				}
+				},
+
+				...routes
 			}
 		});
 
