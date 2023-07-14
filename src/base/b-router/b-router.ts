@@ -859,11 +859,15 @@ export default class bRouter extends iData {
 
 		this.emit('linkNavigate', hrefTransitionEvent);
 
-		if (hrefTransitionEvent.defaultPrevented || Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+		if (hrefTransitionEvent.cancelBubble) {
 			return;
 		}
 
 		e.preventDefault();
+
+		if (hrefTransitionEvent.defaultPrevented || Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+			return;
+		}
 
 		const
 			l = Object.assign(document.createElement('a'), {href});
