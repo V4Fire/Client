@@ -41,11 +41,15 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 	const hrefTransitionEvent = new HrefTransitionEvent(a);
 	this.emit('hrefTransition', hrefTransitionEvent);
 
-	if (hrefTransitionEvent.defaultPrevented || Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+	if (hrefTransitionEvent.cancelBubble) {
 		return;
 	}
 
 	e.preventDefault();
+
+	if (hrefTransitionEvent.defaultPrevented || Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+		return;
+	}
 
 	const
 		l = Object.assign(document.createElement('a'), {href});
