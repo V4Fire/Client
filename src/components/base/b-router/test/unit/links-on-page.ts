@@ -198,4 +198,54 @@ test.describe('<b-router> intercepting links on a page', () => {
 			});
 		}
 	);
+
+	test(
+		'the `data-router-params` attribute should set the path parameters for the transition',
+
+		async ({page}) => {
+			await createInitRouter('history', {
+				user: {
+					path: '/user/:userId'
+				}
+			})(page);
+
+			await Component.createComponent(page, 'a', {
+				'data-testid': 'target',
+				href: 'user',
+				text: 'Go',
+				'data-router-params': JSON.stringify({userId: 42})
+			});
+
+			await page.getByTestId('target').click();
+			test.expect(new URL(await page.url()).pathname).toBe('/user/42');
+		}
+	);
+
+	test(
+		'the `data-router-meta` attribute should set the meta parameters for the transition',
+
+		async ({page}) => {
+			const root = await createInitRouter('history', {
+				second: {
+					path: '/second'
+				}
+			})(page);
+
+			await Component.createComponent(page, 'a', {
+				'data-testid': 'target',
+				href: '/second',
+				text: 'Go',
+				'data-router-meta': JSON.stringify({foo: 'bar'})
+			});
+
+			await page.getByTestId('target').click();
+			await test.expect(root.evaluate((ctx) => ctx.route?.meta)).resolves.toEqual({
+				foo: 'bar',
+				default: false,
+				external: false,
+				name: 'second',
+				path: '/second'
+			});
+		}
+	);
 });
