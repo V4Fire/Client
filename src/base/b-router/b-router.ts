@@ -26,8 +26,8 @@ import type { StaticRoutes, RouteOption, TransitionMethod, UnsafeBRouter } from 
 
 export * from 'super/i-data/i-data';
 export * from 'core/router/const';
-export * from 'base/b-router/modules/transition/event';
 export * from 'base/b-router/interface';
+export * from 'base/b-router/modules/transition/event';
 
 export const
 	$$ = symbolGenerator();
