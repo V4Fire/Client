@@ -341,6 +341,8 @@ export default function createRouter(component: bRouter): Router {
 	return router;
 
 	function load(route: string, params?: Route, method: string = 'pushState'): Promise<void> {
+		params = Object.fastClone(params, {freezable: false});
+
 		if (!Object.isTruly(route)) {
 			throw new ReferenceError('The page to load is not specified');
 		}

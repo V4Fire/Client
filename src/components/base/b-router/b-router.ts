@@ -42,8 +42,11 @@ import * as on from 'components/base/b-router/modules/handlers';
 export * from 'components/super/i-data/i-data';
 
 export * from 'core/router/const';
-export * from 'components/base/b-router/modules/transition/event';
+
 export * from 'components/base/b-router/interface';
+export * from 'components/base/b-router/modules/transition/event';
+
+export * from 'components/base/b-router/modules/transition';
 
 DOM.addToPrototype({delegate});
 

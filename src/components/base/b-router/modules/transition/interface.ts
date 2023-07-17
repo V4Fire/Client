@@ -10,6 +10,8 @@ import type { TransitionOptions } from 'core/router';
 
 import type { TransitionMethod } from 'components/base/b-router/interface';
 
+export { TransitionOptions };
+
 export interface TransitionContext {
 	/**
 	 * The route name or URL or `null`, if the route is equal to the previous
