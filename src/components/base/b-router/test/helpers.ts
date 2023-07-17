@@ -17,8 +17,9 @@ import type { Router } from 'components/base/b-router/interface';
  *
  * @param engineName
  * @param [routes]
+ * @param [props]
  */
-export function createInitRouter(engineName: EngineName, routes?: StaticRoutes): InitRouter {
+export function createInitRouter(engineName: EngineName, routes?: StaticRoutes, props?: Dictionary): InitRouter {
 	return async (page, initOptions = {}) => {
 		if (initOptions.initialRoute === undefined && engineName === 'in-memory') {
 			initOptions.initialRoute = 'main';
@@ -45,6 +46,7 @@ export function createInitRouter(engineName: EngineName, routes?: StaticRoutes):
 
 			engine,
 			initialRoute: initOptions.initialRoute ?? undefined,
+			...props,
 
 			routes: {
 				main: {
