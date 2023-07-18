@@ -21,7 +21,7 @@ import type {
 import { createInitRouter } from 'components/base/b-router/test/helpers';
 import type { RouterTestResult } from 'components/base/b-router/test/interface';
 
-test.describe('<b-router> transition events', () => {
+test.describe('<b-router> standard transition events', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
