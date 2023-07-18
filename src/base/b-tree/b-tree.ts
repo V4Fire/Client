@@ -402,6 +402,11 @@ class bTree extends iData implements iActiveItems {
 		return iActiveItems.isActive(this.top ?? this, value);
 	}
 
+	/** @see [[iActiveItems.prototype.getItemByValue]] */
+	getItemByValue(value: Item['value']): CanUndef<Item> {
+		return this.valueItems.get(value);
+	}
+
 	/** @see [[iActiveItems.prototype.setActive]] */
 	setActive(value: this['Active'], unsetPrevious: boolean = false): boolean {
 		const

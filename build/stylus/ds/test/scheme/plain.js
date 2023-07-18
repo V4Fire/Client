@@ -32,7 +32,8 @@ const plain = {
 			fontFamily: 'Roboto',
 			fontWeight: 400,
 			fontSize: '16px',
-			lineHeight: '16px'
+			lineHeight: '16px',
+			letterSpacing: '-0.02em'
 		},
 		Small: {
 			fontFamily: 'Roboto',

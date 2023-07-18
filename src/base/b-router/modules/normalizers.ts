@@ -25,7 +25,9 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 		pathParams
 	} = route;
 
-	Object.assign(params, resolvePathParameters(pathParams, params));
+	if (Object.isArray(pathParams)) {
+		Object.assign(params, resolvePathParameters(pathParams, params));
+	}
 
 	const defs: Array<[CanUndef<Dictionary>, Dictionary]> = [
 		[meta.query, query],
@@ -68,7 +70,7 @@ export function fillRouteParams(route: AppliedRoute, router: bRouter): void {
 				(alias) => !Object.hasOwnProperty(params, alias)
 			);
 
-			if (!Object.hasOwnProperty(params, name) && noAliasesInParams) {
+			if (params[name] === undefined && noAliasesInParams) {
 				let
 					queryVal = query[name];
 

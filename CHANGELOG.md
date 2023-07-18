@@ -18,6 +18,79 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added new method `getHref` to `b-list`
 * Added new event `hrefTransition` to `b-router` to provide the capability to prevent router transition upon link click
 
+## v3.51.2 (2023-07-11)
+
+#### :house:  Internal
+
+* The `kv-storage/engines/cookies` engine now inherits from `kv-storage/engines/string`
+
+## v3.51.1 (2023-06-27)
+
+#### :bug: Bug Fix
+
+* Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
+
+## v3.51.0 (2023-06-27)
+
+#### :rocket: New Feature
+
+* Added support for `mailto:` and `tel:` href-s `b-router`
+
+## v3.50.0 (2023-06-16)
+
+#### :rocket: New Feature
+
+* Fill original route path parameters from URL of the route that redirects on it in `core/router`
+
+## v3.49.0 (2023-05-30)
+
+#### :rocket: New Feature
+
+* Added ability to specify a custom validator function in `i-input`
+
+## v3.48.0 (2023-05-30)
+
+#### :rocket: New Feature
+
+* Added new helpers for working with gradients and shadows from the design system `global/g-def/funcs`
+
+## v3.47.4 (2023-05-29)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when observing fields that are redefined from props `core/component/decorators`
+
+## v3.47.3 (2023-05-26)
+
+#### :rocket: New Feature
+
+* Added a new helper for collecting i18n keysets `build/helpers`
+
+## v3.47.2 (2023-05-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the overridden getter with cache had a value equal to the parent's getter value `core/component/decorators`
+
+## v3.47.1 (2023-05-18)
+
+#### :bug: [Bug Fix]
+
+* Replace `undefined` values in `route.params` by an alias or query param, if necessary, in `b-router`
+
+## v3.47.0 (2023-05-05)
+
+#### :rocket: New Feature
+
+* Added ability to exclude an item from being activated by specifying `activatable` flag in `i-active-items` trait
+* Added `getItemByValue` method in `i-active-items` trait, `b-list` and `b-tree`
+
+## v3.46.4 (2023-05-05)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with negative values in design system `build/stylus/ds/helpers`
+
 ## v3.46.3 (2023-04-28)
 
 #### :bug: Bug Fix
