@@ -13,6 +13,9 @@ interface TransitionDetails<T> {
 }
 
 export class HrefTransitionEvent<T extends Element = Element> extends CustomEvent<TransitionDetails<T>> {
+	/**
+	 * If this parameter is true, the router will not handle the transition associated with this event
+	 */
 	transitionPrevented: boolean = false;
 
 	constructor(target: T) {
@@ -39,6 +42,10 @@ export class HrefTransitionEvent<T extends Element = Element> extends CustomEven
 		}
 	}
 
+	/**
+	 * Cancels the router's handling of the transition associated with this event.
+	 * Unlike the `preventDefault` method, this method does not cancel the browser's own transition handling.
+	 */
 	preventRouterTransition(): void {
 		this.transitionPrevented = true;
 	}
