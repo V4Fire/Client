@@ -25,7 +25,7 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 		a = <HTMLElement>e.delegateTarget,
 		href = a.getAttribute('href')?.trim();
 
-	const cantPrevent =
+	const cantIntercept =
 		!this.interceptLinks ||
 
 		href == null ||
@@ -34,7 +34,7 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 		urlsToIgnore.some((scheme) => scheme.test(href)) ||
 		router.isExternal.test(href);
 
-	if (cantPrevent) {
+	if (cantIntercept) {
 		return;
 	}
 
