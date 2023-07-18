@@ -859,7 +859,7 @@ export default class bRouter extends iData {
 
 		this.emit('linkNavigate', hrefTransitionEvent);
 
-		if (hrefTransitionEvent.cancelBubble) {
+		if (hrefTransitionEvent.transitionPrevented) {
 			return;
 		}
 
