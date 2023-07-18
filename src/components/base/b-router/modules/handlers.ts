@@ -41,7 +41,7 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 	const hrefTransitionEvent = new HrefTransitionEvent(a);
 	this.emit('hrefTransition', hrefTransitionEvent);
 
-	if (hrefTransitionEvent.cancelBubble) {
+	if (hrefTransitionEvent.transitionPrevented) {
 		return;
 	}
 

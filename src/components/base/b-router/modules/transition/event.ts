@@ -13,6 +13,8 @@ interface TransitionDetails<T> {
 }
 
 export class HrefTransitionEvent<T extends Element = Element> extends CustomEvent<TransitionDetails<T>> {
+	transitionPrevented: boolean = false;
+
 	constructor(target: T) {
 		super('hrefTransition', {
 			cancelable: true,
@@ -35,5 +37,9 @@ export class HrefTransitionEvent<T extends Element = Element> extends CustomEven
 				value: (attr: string) => Object.parse(targetAttrs[attr].value)
 			});
 		}
+	}
+
+	preventRouterTransition(): void {
+		this.transitionPrevented = true;
 	}
 }
