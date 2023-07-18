@@ -32,7 +32,7 @@ export default class bRouterProps extends iData {
 	readonly PageMeta!: RouteOption;
 
 	/**
-	 * Static application route map.
+	 * The static map of application routes.
 	 * By default, this value is taken from `routes/index.ts`.
 	 *
 	 * @example
@@ -62,8 +62,8 @@ export default class bRouterProps extends iData {
 
 	/**
 	 * The initial route value.
-	 * Usually you don't need to specify this value manually,
-	 * because it outputs automatically, but sometimes it can be useful.
+	 * Usually, you don't need to manually specify this value
+	 * because it is automatically extracted, but sometimes it can be useful.
 	 *
 	 * @example
 	 * ```
@@ -87,7 +87,7 @@ export default class bRouterProps extends iData {
 	readonly initialRoute?: router.InitialRoute;
 
 	/**
-	 * Route base path: all route paths are concatenated with this path
+	 * The base path: all route paths are combined with this path
 	 *
 	 * @example
 	 * ```
@@ -103,13 +103,17 @@ export default class bRouterProps extends iData {
 	readonly basePathProp: string = '/';
 
 	/**
-	 * If true, the router will intercept all click events on elements with a `href` attribute to create a transition.
-	 * An element with `href` can have additional attributes:
+	 * If set to true, the router will intercept all click events on elements
+	 * with a href attribute to create a transition.
+	 * An element with href can have additional attributes:
 	 *
 	 *   1. `data-router-method` - the type of router method used to send the transition;
-	 *   2. `data-router-go` - value for the router `go` method;
+	 *   2. `data-router-go` - value for the router's `go` method;
 	 *   3. `data-router-params`, `data-router-query`, `data-router-meta` - additional parameters for
-	 *       the used router method (to provide an object use JSON).
+	 *       the router method used (use `JSON.stringify` to provide an object).
+	 *
+	 *   4. `data-router-prevent-transition` - if this attribute is set,
+	 *       a click on this element will not create a transition
 	 */
 	@prop(Boolean)
 	readonly interceptLinks: boolean = true;
