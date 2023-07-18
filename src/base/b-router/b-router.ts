@@ -857,7 +857,7 @@ export default class bRouter extends iData {
 
 		const hrefTransitionEvent = new HrefTransitionEvent(a);
 
-		this.emit('linkNavigate', hrefTransitionEvent);
+		this.emit('hrefTransition', hrefTransitionEvent);
 
 		if (hrefTransitionEvent.transitionPrevented) {
 			return;
