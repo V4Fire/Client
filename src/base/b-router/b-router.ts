@@ -843,7 +843,7 @@ export default class bRouter extends iData {
 			a = <HTMLElement>e.delegateTarget,
 			href = a.getAttribute('href')?.trim();
 
-		const cantPrevent =
+		const cantIntercept =
 			!this.interceptLinks ||
 			href == null ||
 			href === '' ||
@@ -851,7 +851,7 @@ export default class bRouter extends iData {
 			href.startsWith('javascript:') ||
 			router.isExternal.test(href);
 
-		if (cantPrevent) {
+		if (cantIntercept) {
 			return;
 		}
 
