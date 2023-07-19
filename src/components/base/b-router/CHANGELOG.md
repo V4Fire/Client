@@ -9,11 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-beta.8 (2023-07-19)
 
 #### :rocket: New Feature
 
-* Added new event `hrefTransition` to `b-router` to provide the capability to prevent router transition upon link click
+* Added a new `hrefTransition` event to provide the ability to prevent router navigation when a link is clicked
+
+#### :house: Internal
+
+* Refactored the `bRouter` component:
+  * Created the `Transition` class, which encapsulates the `emitTransition` logic
+  * Created the `handlers` module to handle DOM events
+  * Extracted props to the `bRouterProps` class
 
 ## v4.0.0-beta.7 (2023-06-27)
 
@@ -26,15 +33,6 @@ Changelog
 #### :bug: Bug Fix
 
 * Handle unsuitable `pathParams` values in the `fillRouteParams` function
-
-## v4.??.?? (2023-??-??)
-
-#### :house: Internal
-
-* Refactored the `bRouter` component:
-  * Created the `Transition` class, which encapsulates the `emitTransition` logic
-  * Created the `handlers` module to handle DOM events
-  * Extracted props to the `bRouterProps` class
 
 ## v3.47.1 (2023-05-18)
 
