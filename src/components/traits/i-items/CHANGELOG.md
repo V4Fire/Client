@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-beta.9 (2023-07-19)
 
 #### :boom: Breaking Change
 
-* The string value compilation in getItemKey helper was removed.
+* The string value compilation in `getItemKey` helper was removed.
   Now the string parameter is used as a property name to get the key value.
 
 ## v3.0.0-rc.122 (2021-01-13)

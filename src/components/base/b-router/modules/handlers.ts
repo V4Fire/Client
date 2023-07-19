@@ -6,37 +6,41 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as router from 'core/router';
-
 import { urlsToIgnore } from 'components/base/b-router/modules/const';
+import { HrefTransitionEvent } from 'components/base/b-router/modules/transition/event';
 
 import type bRouter from 'components/base/b-router/b-router';
 
 /**
  * Handler: there was a click on an element with the `href` attribute
+ *
  * @param e
+ * @emits `hrefTransition(event:` [[HrefTransitionEvent]]`)`
  */
 export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 	const
 		a = <HTMLElement>e.delegateTarget,
 		href = a.getAttribute('href')?.trim();
 
-	const cantPrevent =
+	const cantIntercept =
 		!this.interceptLinks ||
 		href == null ||
-		href === '' ||
-		href.startsWith('#') ||
-		urlsToIgnore.some((scheme) => scheme.test(href)) ||
-		href.startsWith('javascript:') ||
-		router.isExternal.test(href);
+		urlsToIgnore.some((scheme) => scheme.test(href));
 
-	if (cantPrevent) {
+	if (cantIntercept) {
+		return;
+	}
+
+	const hrefTransitionEvent = new HrefTransitionEvent(a);
+	this.emit('hrefTransition', hrefTransitionEvent);
+
+	if (hrefTransitionEvent.transitionPrevented) {
 		return;
 	}
 
 	e.preventDefault();
 
-	if (<boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+	if (hrefTransitionEvent.defaultPrevented || Object.parse(a.getAttribute('data-router-prevent-transition'))) {
 		return;
 	}
 
