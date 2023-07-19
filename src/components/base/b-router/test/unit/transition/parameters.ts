@@ -17,7 +17,7 @@ test.describe('<b-router> passing transition parameters', () => {
 
 	test.describe('transition through paths that include interpolation of values from transition parameters', () => {
 		test(
-			'parameters from `params` should be passed as values into the transition path where `:paramName`constructs are located',
+			'parameters from `params` should be passed as values into the transition path where `:paramName` constructs are located',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
