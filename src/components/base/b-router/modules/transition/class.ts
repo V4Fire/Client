@@ -361,13 +361,27 @@ export default class Transition {
 		// If the new route has the same name as the current one,
 		// we need to mix the new state with the current one
 		if (router.getRouteName(currentRoute) === this.newRouteInfo!.name) {
-			deepMixin(this.newRouteInfo, router.getBlankRouteFrom(currentRoute), this.opts);
+			deepMixin(true, this.newRouteInfo, router.getBlankRouteFrom(currentRoute));
+			deepMixin(false, this.newRouteInfo, this.opts);
 
 		} else {
-			deepMixin(this.newRouteInfo, this.opts);
+			deepMixin(false, this.newRouteInfo, this.opts);
 		}
 
 		// If the route supports padding from the root object or query parameters
 		fillRouteParams(this.newRouteInfo!, this.component);
+
+		function deepMixin(onlyNew: boolean, ...args: unknown[]) {
+			return Object.mixin(
+				{
+					deep: true,
+					skipUndefs: false,
+					extendFilter: (el) => !Object.isArray(el),
+					propsToCopy: onlyNew ? 'new' : 'all'
+				},
+
+				...args
+			);
+		}
 	}
 }
