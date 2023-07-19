@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.33.1 (2023-09-05)
+
+#### :rocket: New Feature
+
+* Added new method `getHref`
+
 ## v3.0.0-rc.211 (2021-07-21)
 
 #### :boom: Breaking Change

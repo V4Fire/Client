@@ -9,7 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.??.? (2022-??-??)
+## v3.33.1 (2023-09-05)
+
+#### :rocket: New Feature
+
+* Added new event `hrefTransition` to `b-router` to provide the capability to prevent router transition upon link click
+
+## v3.31.0 (2022-12-06)
 
 #### :rocket: New Feature
 
