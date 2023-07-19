@@ -37,7 +37,7 @@ import {
 
 } from 'components/super/i-data/i-data';
 
-import bButtonProps from 'components/form/b-button/props';
+import iButtonProps from 'components/form/b-button/props';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
@@ -55,7 +55,7 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 })
 
 @derive(iAccess, iOpenToggle)
-class bButton extends bButtonProps implements iOpenToggle, iVisible, iWidth, iSize {
+class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSize {
 	/**
 	 * Additional attributes that are provided to the native button
 	 *
@@ -133,7 +133,7 @@ class bButton extends bButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		]
 	};
 
-	protected override readonly $refs!: bButtonProps['$refs'] & {
+	protected override readonly $refs!: iButtonProps['$refs'] & {
 		button: HTMLButtonElement;
 		file?: HTMLInputElement;
 		dropdown?: Element;

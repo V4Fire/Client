@@ -1,5 +1,5 @@
 {
-  "hash": "cb8efd53aa08600cd86f8b04b6e83bd8470e34f8c926bac48ebaadc6d3bd6e1e",
+  "hash": "17bfa44323e931383d4a43be899be3cf78ecf604c7aa870b764c3f3097aac294",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2217,8 +2217,10 @@
               "p-v4-dynamic-page3"
             ],
             "libs": [
+              "components/directives/bind-with",
               "components/directives/image",
               "components/directives/icon",
+              "components/directives/in-view",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "components/traits/i-control-list/i-control-list"
@@ -2253,8 +2255,10 @@
             "p-v4-dynamic-page3"
           ],
           "libs": [
+            "components/directives/bind-with",
             "components/directives/image",
             "components/directives/icon",
+            "components/directives/in-view",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
             "components/traits/i-control-list/i-control-list"
@@ -2262,8 +2266,10 @@
           "resolvedLibs": {
             "%data": "%data:Set",
             "%data:Set": [
+              "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
+              "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
@@ -2272,8 +2278,10 @@
           "resolvedOwnLibs": {
             "%data": "%data:Set",
             "%data:Set": [
+              "components/directives/bind-with",
               "components/directives/icon",
               "components/directives/image",
+              "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"

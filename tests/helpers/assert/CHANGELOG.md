@@ -8,4 +8,3 @@ Changelog
 > - :memo:       [Documentation]
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
-

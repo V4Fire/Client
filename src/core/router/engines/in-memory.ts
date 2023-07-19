@@ -20,6 +20,7 @@ import {
 	Route,
 	Router,
 
+	RouteAPI,
 	TransitionParams,
 	HistoryClearFilter
 
@@ -100,7 +101,7 @@ export default function createRouter(ctx: bRouter): Router {
 				historyLogPointer++;
 			}
 
-			return Promise.resolve();
+			return loadDeps(newRoute);
 		},
 
 		replace(route: string, params?: TransitionParams): Promise<void> {
@@ -121,7 +122,7 @@ export default function createRouter(ctx: bRouter): Router {
 				historyLog[historyLogPointer] = newRoute;
 			}
 
-			return Promise.resolve();
+			return loadDeps(newRoute);
 		},
 
 		go,
@@ -197,5 +198,21 @@ export default function createRouter(ctx: bRouter): Router {
 			ctx.field.set('routeStore', undefined);
 			ctx.r.route = undefined;
 		}
+	}
+
+	/**
+	 * Loads dependencies of a given route
+	 * @param route
+	 */
+	function loadDeps(route: RouteAPI): Promise<void> {
+		const
+			// eslint-disable-next-line @v4fire/unbound-method
+			{load} = route.meta;
+
+		if (load == null) {
+			return Promise.resolve();
+		}
+
+		return Promise.resolve(load()).then(() => undefined).catch(stderr);
 	}
 }

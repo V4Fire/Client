@@ -172,7 +172,7 @@
 
 	- rootAttrs = { &
 		class: 'i-block-helper',
-		'data-cached-dynamic-class': 'self.provide.componentClasses("' + self.name() + '", self.mods)'
+		'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'
 	} .
 
 	- if teleport
@@ -203,6 +203,7 @@
 			< ${teleport ? 'teleport' : '?'} to = ${teleport}
 				< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 					{{ void(vdom.saveRenderContext()) }}
+					{{ void(r.initGlobalEnv()) }}
 
 					/**
 					 * Generates a slot declaration by the specified parameters

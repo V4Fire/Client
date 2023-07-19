@@ -45,7 +45,7 @@ import Mask, * as MaskAPI from 'components/super/i-input-text/mask';
 import { openedSelect } from 'components/form/b-select/const';
 import type { Value, FormValue, Items, UnsafeBSelect } from 'components/form/b-select/interface';
 
-import bSelectProps from 'components/form/b-select/props';
+import iSelectProps from 'components/form/b-select/props';
 import Values from 'components/form/b-select/modules/values';
 import SelectEventHandlers from 'components/form/b-select/modules/select-event-handlers';
 
@@ -71,12 +71,12 @@ interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>,
 })
 
 @derive(SelectEventHandlers, iOpenToggle, iActiveItems)
-class bSelect extends bSelectProps implements iOpenToggle, iActiveItems {
+class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	override get unsafe(): UnsafeGetter<UnsafeBSelect<this>> {
 		return Object.cast(this);
 	}
 
-	/** {@link bSelectProps.itemsProp} */
+	/** {@link iSelectProps.itemsProp} */
 	get items(): this['Items'] {
 		return <this['Items']>this.field.get('itemsStore');
 	}

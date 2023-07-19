@@ -25,7 +25,7 @@ import iActiveItems from 'components/traits/i-active-items/i-active-items';
 
 import { component, field, system, computed, hook, watch, ModsDecl } from 'components/super/i-data/i-data';
 
-import bListProps from 'components/base/b-list/props';
+import iListProps from 'components/base/b-list/props';
 import Values from 'components/base/b-list/modules/values';
 
 import { setActiveMod, normalizeItems } from 'components/base/b-list/modules/helpers';
@@ -47,7 +47,7 @@ interface bList extends Trait<typeof iActiveItems> {}
 })
 
 @derive(iActiveItems)
-class bList extends bListProps implements iVisible, iWidth, iActiveItems {
+class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	/** {@link bList.attrsProp} */
 	get attrs(): Dictionary {
 		const

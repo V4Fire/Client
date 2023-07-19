@@ -32,7 +32,7 @@ import type { ModsDecl, UnsafeGetter } from 'components/super/i-block/i-block';
 
 import type { UnsafeBBottomSlide } from 'components/base/b-bottom-slide/interface';
 
-import bBottomSlideProps from 'components/base/b-bottom-slide/props';
+import iBottomSlideProps from 'components/base/b-bottom-slide/props';
 import { Animation, Overlay, Geometry, SwipeControl } from 'components/base/b-bottom-slide/modules';
 
 export * from 'components/super/i-data/i-data';
@@ -51,7 +51,7 @@ interface bBottomSlide extends
 
 @component()
 @derive(iLockPageScroll, iObserveDOM, iOpen)
-class bBottomSlide extends bBottomSlideProps implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
+class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserveDOM, iOpen, iVisible, iHistory {
 	override get unsafe(): UnsafeGetter<UnsafeBBottomSlide<this>> {
 		return Object.cast(this);
 	}

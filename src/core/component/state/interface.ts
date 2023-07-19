@@ -7,6 +7,7 @@
  */
 
 import type { Experiments } from 'core/abt';
+import type { InitialRoute } from 'core/router';
 
 export interface State {
 	/**
@@ -28,4 +29,45 @@ export interface State {
 	 * A list of registered AB experiments
 	 */
 	experiments?: Experiments;
+
+	/**
+	 * The initial route for initializing the router.
+	 * Usually, this value is used during SSR.
+	 */
+	route?: InitialRoute;
+
+	/**
+	 * An object whose properties will extend the global object.
+	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
+	 * Using this object, polyfills for all necessary APIs can be passed through.
+	 *
+	 * @example
+	 * ```js
+	 * ({
+	 *   globalEnv: {
+	 *     location: {
+	 *       href: 'https://foo.com'
+	 *     }
+	 *   }
+	 * })
+	 * ```
+	 */
+	globalEnv: GlobalEnvironment;
+}
+
+export interface GlobalEnvironment extends Dictionary {
+	/**
+	 * A shim for the `window.location` API
+	 */
+	location?: Location;
+
+	/**
+	 * SSR environment object
+	 */
+	ssr?: {
+		/**
+		 * A shim for the `window.document` API
+		 */
+		document?: Document;
+	};
 }

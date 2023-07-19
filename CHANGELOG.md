@@ -11,12 +11,29 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.8 (2023-07-19)
+## v4.0.0-beta.9 (2023-07-19)
+
+#### :boom: Breaking Change
+
+* The string value compilation in `getItemKey` helper was removed.
+  Now the string parameter is used as a property name to get the key value. `components/traits/i-items/i-items`
+
+* The `data-cached-dynamic-class` attribute format is changed to the `core/json#evalWith` reviver format `core/component/render/helpers/attrs`
 
 #### :rocket: New Feature
 
 * Added a new method `getHref` `b-list`
 * Added a new `hrefTransition` event to provide the ability to prevent router navigation when a link is clicked `bRouter`
+
+#### :house: Internal
+
+* The `kv-storage/engines/cookies` engine now inherits from `kv-storage/engines/string`
+
+## v4.0.0-beta.8 (2023-07-07)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect update of the `selected` parameter in the native mode of the `b-select`
 
 ## v4.0.0-beta.7 (2023-06-27)
 

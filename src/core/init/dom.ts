@@ -9,4 +9,4 @@
 import semaphore from 'core/init/semaphore';
 import { resolveAfterDOMLoaded } from 'core/event';
 
-export default resolveAfterDOMLoaded().then(() => semaphore('domReady'));
+export default resolveAfterDOMLoaded().then(() => semaphore('DOMReady'));

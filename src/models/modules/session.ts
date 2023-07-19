@@ -94,11 +94,11 @@ export default class Session extends Provider {
 		const update = async (res) => {
 			const
 				info = <Response>res.response,
-				refreshHeader = info.getHeader(this.authRefreshHeader);
+				refreshHeader = info.headers.get(this.authRefreshHeader);
 
 			try {
 				if (refreshHeader != null) {
-					await s.set(refreshHeader, {csrf: info.getHeader(this.csrfHeader)});
+					await s.set(refreshHeader, {csrf: info.headers.get(this.csrfHeader) ?? undefined});
 				}
 
 			} catch {}

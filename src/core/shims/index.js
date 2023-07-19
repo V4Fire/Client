@@ -6,7 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const cookieStorageSeparators = {
-	keys: '{{#}}',
-	values: '{{.}}'
-};
+require('core/shims/set-immediate');
+require('core/shims/ssr');
