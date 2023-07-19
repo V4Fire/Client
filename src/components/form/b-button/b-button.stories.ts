@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Meta } from '@v4fire/storybook';
+import type { Meta, StoryObj } from '@v4fire/storybook';
 import type bButton from 'components/form/b-button/b-button';
 
 // More on how to set up stories at: https://storybook.js.org/docs/html/writing-stories/introduction
@@ -26,7 +26,7 @@ const config: Meta<bButton> = {
 export default config;
 
 // More on writing stories with args: https://storybook.js.org/docs/html/writing-stories/args
-export const Default = {
+export const Default: StoryObj<bButton> = {
 	args: {
 		type: 'button',
 		'slot-default': 'Hello'

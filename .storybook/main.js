@@ -8,7 +8,7 @@
 
 /** @type { import('@v4fire/storybook-framework-webpack5').StorybookConfig } */
 const config = {
-	stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
+	stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|ts)"],
 	addons: [
 		"@storybook/addon-links",
 		"@storybook/addon-essentials",
