@@ -99,7 +99,7 @@ test.describe('<b-router> standard transition events', () => {
 	);
 
 	test(
-		'the `softChange` event should only be fired in transitions where only query parameters are changed',
+		'the `softChange` event should only be fired in transitions where only query parameters have changed',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -247,7 +247,7 @@ test.describe('<b-router> standard transition events', () => {
 	);
 
 	test(
-		'the `hardChange` event should be fired only in those transitions where route IDs are changed',
+		'the `hardChange` event should be fired only in those transitions where route IDs have changed',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
