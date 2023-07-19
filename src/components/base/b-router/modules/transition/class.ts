@@ -120,7 +120,7 @@ export default class Transition {
 
 	/**
 	 * Performs a transition to the specified route, emits transition events
-	 * and restores user's scroll position if needed.
+	 * and restores user's scroll position if needed
 	 *
 	 * @emits `beforeChange(route: Nullable<string>, params:` [[TransitionOptions]]`, method:` [[TransitionMethod]]`)`
 	 *
@@ -137,11 +137,9 @@ export default class Transition {
 			{engine} = component.unsafe;
 
 		component.emit('beforeChange', this.ref, this.opts, this.method);
-
 		this.initNewRouteInfo();
 
 		this.scroll.createSnapshot();
-
 		await this.scroll.updateCurrentRouteScroll();
 
 		// We didn't find any route matching the given ref
@@ -156,12 +154,12 @@ export default class Transition {
 
 		this.fillNewRouteInfo();
 
-		// We have two variants of transitions:
-		// "soft" - only query parameters or meta changed between routes
-		// "hard" - the first and second routes do not match in name
+		// We have two types of transitions:
+		// "soft" - only query parameters or metadata of the routes are changed
+		// "hard" - the first and second routes have different names
 
-		// Query and route meta-parameter mutations should not cause components to re-render,
-		// so we put it in a prototype object with `Object.create`
+		// Changes in query parameters and route metadata should not trigger component re-rendering,
+		// so we encapsulate it in a prototype object using `Object.create`
 
 		const {newRouteInfo} = this;
 
@@ -199,31 +197,26 @@ export default class Transition {
 	): Promise<CanUndef<{hardChange:boolean}>> {
 		let hardChange = false;
 
+		const {
+			component,
+			component: {unsafe: {r}},
+
+			engine,
+			opts,
+
+			newRouteInfo
+		} = this;
+
 		const
-			{component, engine, opts, newRouteInfo} = this,
-			{r} = component.unsafe,
 			currentRoute = component.field.get<router.Route>('routeStore');
 
-		const emitTransition = (onlyOwnTransition?: boolean) => {
-			const type = hardChange ? 'hard' : 'soft';
-
-			if (onlyOwnTransition) {
-				component.emit('transition', newRoute, type);
-
-			} else {
-				component.emit('change', newRoute);
-				component.emit('transition', newRoute, type);
-				r.emit('transition', newRoute, type);
-			}
-		};
-
-		// Checking that the new route is really needed, i.e. not equal to the previous one
+		// Checking that the new route is really needed, i.e., not equal to the previous one
 		let newRouteIsReallyNeeded = !Object.fastCompare(
 			router.getComparableRouteParams(currentRoute),
 			router.getComparableRouteParams(newRoute)
 		);
 
-		// Main route params didn't change, but there is a metaobject, which could have changed
+		// The parameters of the main route have not changed, but there is a metaobject that might have changed
 		if (!newRouteIsReallyNeeded && currentRoute != null && opts.meta != null) {
 			newRouteIsReallyNeeded = !Object.fastCompare(
 				Object.select(currentRoute.meta, opts.meta),
@@ -252,7 +245,7 @@ export default class Transition {
 				this.method = 'replace';
 			}
 
-			// This transition is marked as "external", i.e. refers to another site
+			// This transition is marked as `external`, i.e., refers to another site
 			if (newRouteInfo!.meta.external) {
 				const {url} = newRoute;
 				location.href = url != null && url !== '' ? url : '/';
@@ -266,12 +259,12 @@ export default class Transition {
 				));
 
 				// Only the properties from the prototype have been changed in this transition,
-				// so it can be done as a soft transition, i.e. without forcing re-rendering of components.
+				// so it can be done as a soft transition, i.e., without forcing re-rendering of components
 				if (isSoftTransition) {
 					component.emit('softChange', newRoute);
 
 					// We get a prototype by using the `__proto__` property,
-					// because `Object.getPrototypeOf` returns a non-watchable object.
+					// because `Object.getPrototypeOf` returns a non-watchable object
 
 					const
 						proto = r.route?.__proto__;
@@ -303,15 +296,28 @@ export default class Transition {
 		}
 
 		return {hardChange};
+
+		function emitTransition(onlyOwnTransition?: boolean) {
+			const type = hardChange ? 'hard' : 'soft';
+
+			if (onlyOwnTransition) {
+				component.emit('transition', newRoute, type);
+
+			} else {
+				component.emit('change', newRoute);
+				component.emit('transition', newRoute, type);
+				r.emit('transition', newRoute, type);
+			}
+		}
 	}
 
 	/**
 	 * Initializes information about the route we are transitioning to
-	 * @throws {Error} if the info already initialized
+	 * @throws {Error} if the information has already been initialized
 	 */
 	protected initNewRouteInfo(): void {
 		if (this.newRouteInfoInitialized) {
-			throw new Error('New route info is already initialized');
+			throw new Error('The information about the new route has already been initialized');
 		}
 
 		this.newRouteInfoInitialized = true;
@@ -326,9 +332,10 @@ export default class Transition {
 		} else if (this.currentEngineRoute) {
 			this.ref = this.getEngineRoute()!;
 
-			const route = this.component.getRoute(this.ref);
+			const
+				route = this.component.getRoute(this.ref);
 
-			if (route) {
+			if (route != null) {
 				this.newRouteInfoStore = Object.mixin(true, route, router.purifyRoute(this.currentEngineRoute));
 			}
 		}
@@ -340,15 +347,6 @@ export default class Transition {
 	protected fillNewRouteInfo(): void {
 		const currentRoute = this.component.field.get<router.Route>('routeStore');
 
-		const deepMixin = (...args) => Object.mixin(
-			{
-				deep: true,
-				skipUndefs: false,
-				extendFilter: (el) => !Object.isArray(el)
-			},
-			...args
-		);
-
 		// Set the name for the new route info if none is specified
 		if ((<router.PurifiedRoute<router.RouteAPI>>this.newRouteInfo).name == null) {
 			const name = router.getRouteName(this.currentEngineRoute);
@@ -359,7 +357,7 @@ export default class Transition {
 		}
 
 		// If the new route has the same name as the current one,
-		// we need to mix the new state with the current one
+		// we need to mix the new state with the current state
 		if (router.getRouteName(currentRoute) === this.newRouteInfo!.name) {
 			deepMixin(true, this.newRouteInfo, router.getBlankRouteFrom(currentRoute));
 			deepMixin(false, this.newRouteInfo, this.opts);

@@ -39,13 +39,10 @@ import Transition from 'components/base/b-router/modules/transition';
 
 import * as on from 'components/base/b-router/modules/handlers';
 
+export * from 'core/router/const';
 export * from 'components/super/i-data/i-data';
 
-export * from 'core/router/const';
-
 export * from 'components/base/b-router/interface';
-export * from 'components/base/b-router/modules/transition/event';
-
 export * from 'components/base/b-router/modules/transition';
 
 DOM.addToPrototype({delegate});
@@ -224,7 +221,7 @@ export default class bRouter extends bRouterProps {
 
 	/**
 	 * Clears all temporary routes from history.
-	 * A temporary route is a route that has a "tmp" flag in its own properties such as "params", "query", or "meta".
+	 * A temporary route is a route that has a "tmp" flag in its own properties such as `params`, `query`, or `meta`.
 	 * Be aware that this method may not work properly with HistoryAPI based engines.
 	 *
 	 * @example
@@ -299,11 +296,6 @@ export default class bRouter extends bRouterProps {
 		activeRoute?: Nullable<router.InitialRoute>
 	): Promise<router.RouteBlueprints>;
 
-	/**
-	 * @param basePathOrRoutes
-	 * @param [routesOrActiveRoute]
-	 * @param [activeRouteOrRoutes]
-	 */
 	@wait('beforeReady')
 	async updateRoutes(
 		basePathOrRoutes: string | StaticRoutes,
