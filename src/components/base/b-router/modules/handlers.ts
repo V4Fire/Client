@@ -15,8 +15,7 @@ import type bRouter from 'components/base/b-router/b-router';
  * Handler: there was a click on an element with the `href` attribute
  *
  * @param e
- * @emits `hrefTransition(event:` [[HrefTransitionEvent]]`)` - contains the `HTMLElement` onto which the event
- * was dispatched and its `href` attribute value
+ * @emits `hrefTransition(event:` [[HrefTransitionEvent]]`)`
  */
 export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 	const
