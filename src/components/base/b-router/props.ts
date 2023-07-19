@@ -110,10 +110,9 @@ export default class bRouterProps extends iData {
 	 *   1. `data-router-method` - the type of router method used to send the transition;
 	 *   2. `data-router-go` - value for the router's `go` method;
 	 *   3. `data-router-params`, `data-router-query`, `data-router-meta` - additional parameters for
-	 *       the router method used (use `JSON.stringify` to provide an object).
-	 *
+	 *       the router method used (use `JSON.stringify` to provide an object);
 	 *   4. `data-router-prevent-transition` - if this attribute is set,
-	 *       a click on this element will not create a transition
+	 *       a click on this element will not create a transition.
 	 */
 	@prop(Boolean)
 	readonly interceptLinks: boolean = true;

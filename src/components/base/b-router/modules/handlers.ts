@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as router from 'core/router';
-
 import { urlsToIgnore } from 'components/base/b-router/modules/const';
 import { HrefTransitionEvent } from 'components/base/b-router/modules/transition/event';
 
@@ -27,12 +25,8 @@ export async function link(this: bRouter, e: MouseEvent): Promise<void> {
 
 	const cantIntercept =
 		!this.interceptLinks ||
-
 		href == null ||
-		href === '' ||
-
-		urlsToIgnore.some((scheme) => scheme.test(href)) ||
-		router.isExternal.test(href);
+		urlsToIgnore.some((scheme) => scheme.test(href));
 
 	if (cantIntercept) {
 		return;
