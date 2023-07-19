@@ -31,11 +31,11 @@
 					:key = getItemKey(el, i)
 				.
 					< tag &
-						:is = el.href !== undefined ? 'a' : 'button' |
+						:is = getHref(el) !== undefined ? 'a' : 'button' |
 
-						:href = el.href |
+						:href = getHref(el) |
 						:value = el.value |
-						:aria-selected = el.href === undefined ? isActive(el.value) : undefined |
+						:aria-selected = getHref(el) === undefined ? isActive(el.value) : undefined |
 
 						:-id = values.get(el.value) |
 						:-hint = el.hint |

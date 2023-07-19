@@ -120,6 +120,24 @@ By default, the router will intercept all click events on elements with a `href`
 < a href = /some-url
 ```
 
+If you need to disable intercepting a specific link click, you can handle the `linkNavigate` event,
+which provides the `HTMLElement` on which this `CustomEvent` was dispatched
+
+```typescript
+import iBlock, { component, watch } from 'components/super/i-block/i-block';
+import type { LinkNavigateEvent } from 'base/b-router/b-router';
+
+@component()
+export default class bExample extends iBlock {
+  @watch('router:onLinkNavigate')
+  protected onLinkNavigate(e: LinkNavigateEvent):void {
+    if (e.detail.href === '/foo/bar') {
+      e.preventDefault();
+    }
+  }
+}
+```
+
 You can provide additional parameters by using data attributes.
 
 ```

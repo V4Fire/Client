@@ -22,12 +22,14 @@ import engine, * as router from 'core/router';
 
 import { fillRouteParams } from 'base/b-router/modules/normalizers';
 import { urlsToIgnore } from 'base/b-router/modules/const';
+import { HrefTransitionEvent } from 'base/b-router/modules/transition/event';
 
 import type { StaticRoutes, RouteOption, TransitionMethod, UnsafeBRouter } from 'base/b-router/interface';
 
 export * from 'super/i-data/i-data';
 export * from 'core/router/const';
 export * from 'base/b-router/interface';
+export * from 'base/b-router/modules/transition/event';
 
 export const
 	$$ = symbolGenerator();
@@ -830,6 +832,8 @@ export default class bRouter extends iData {
 	/**
 	 * Handler: click on an element with the `href` attribute
 	 * @param e
+	 * @emits `hrefTransition(event:` [[HrefTransitionEvent]]`)` - contains the `HTMLElement` onto which the event
+	 * was dispatched and its `href` attribute value
 	 */
 	@watch({
 		field: 'document:click',
@@ -841,20 +845,28 @@ export default class bRouter extends iData {
 			a = <HTMLElement>e.delegateTarget,
 			href = a.getAttribute('href')?.trim();
 
-		const cantPrevent =
+		const cantIntercept =
 			!this.interceptLinks ||
 			href == null ||
 			href === '' ||
 			urlsToIgnore.some((scheme) => scheme.test(href)) ||
 			router.isExternal.test(href);
 
-		if (cantPrevent) {
+		if (cantIntercept) {
+			return;
+		}
+
+		const hrefTransitionEvent = new HrefTransitionEvent(a);
+
+		this.emit('hrefTransition', hrefTransitionEvent);
+
+		if (hrefTransitionEvent.transitionPrevented) {
 			return;
 		}
 
 		e.preventDefault();
 
-		if (<boolean>Object.parse(a.getAttribute('data-router-prevent-transition'))) {
+		if (hrefTransitionEvent.defaultPrevented || Object.parse(a.getAttribute('data-router-prevent-transition'))) {
 			return;
 		}
 
