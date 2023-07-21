@@ -28,66 +28,68 @@ ComponentEngine.directive('render', {
 			newVNode = params.value,
 			originalChildren = vnode.children;
 
-		if (newVNode != null) {
-			const canReplaceVNode =
-				vnode.type === 'template' &&
-				!Object.isArray(newVNode) &&
-				Object.size(vnode.props) === 0;
+		if (newVNode == null) {
+			return;
+		}
 
-			if (canReplaceVNode) {
-				return SSR ? renderSSRFragment(newVNode) : newVNode;
-			}
+		const canReplaceOriginalVNode =
+			vnode.type === 'template' &&
+			!Object.isArray(newVNode) &&
+			Object.size(vnode.props) === 0;
 
-			if (Object.isString(vnode.type)) {
-				const
-					children = Array.concat([], newVNode);
+		if (canReplaceOriginalVNode) {
+			return SSR ? renderSSRFragment(newVNode) : newVNode;
+		}
 
-				if (SSR) {
-					vnode.props = {
-						...vnode.props,
-						innerHTML: getSSRInnerHTML(children)
-					};
+		if (Object.isString(vnode.type)) {
+			const
+				children = Array.concat([], newVNode);
 
-				} else {
-					vnode.children = children;
-					vnode.dynamicChildren = Object.cast(children.slice());
-					setVNodePatchFlags(vnode, 'children');
-				}
+			if (SSR) {
+				vnode.props = {
+					...vnode.props,
+					innerHTML: getSSRInnerHTML(children)
+				};
 
 			} else {
-				const slots = Object.isPlainObject(originalChildren) ?
-					Object.reject(originalChildren, /^_/) :
-					{};
+				vnode.children = children;
+				vnode.dynamicChildren = Object.cast(children.slice());
+				setVNodePatchFlags(vnode, 'children');
+			}
 
-				vnode.children = slots;
-				setVNodePatchFlags(vnode, 'slots');
+		} else {
+			const slots = Object.isPlainObject(originalChildren) ?
+				Object.reject(originalChildren, /^_/) :
+				{};
 
-				if (SSR) {
-					slots.default = () => renderSSRFragment(newVNode);
+			vnode.children = slots;
+			setVNodePatchFlags(vnode, 'slots');
 
-				} else {
-					if (Object.isArray(newVNode)) {
-						if (isSlot(newVNode[0])) {
-							newVNode.forEach((vnode) => {
-								const
-									slot = vnode.props?.slot;
+			if (SSR) {
+				slots.default = () => renderSSRFragment(newVNode);
 
-								if (slot != null) {
-									slots[slot] = () => vnode.children ?? getDefSlotFromChildren(slot);
-								}
-							});
+			} else {
+				if (Object.isArray(newVNode)) {
+					if (isSlot(newVNode[0])) {
+						newVNode.forEach((vnode) => {
+							const
+								slot = vnode.props?.slot;
 
-							return;
-						}
+							if (slot != null) {
+								slots[slot] = () => vnode.children ?? getDefaultSlotFromChildren(slot);
+							}
+						});
 
-					} else if (isSlot(newVNode)) {
-						const {slot} = newVNode.props!;
-						slots[slot] = () => newVNode.children ?? getDefSlotFromChildren(slot);
 						return;
 					}
 
-					slots.default = () => newVNode;
+				} else if (isSlot(newVNode)) {
+					const {slot} = newVNode.props!;
+					slots[slot] = () => newVNode.children ?? getDefaultSlotFromChildren(slot);
+					return;
 				}
+
+				slots.default = () => newVNode;
 			}
 		}
 
@@ -112,7 +114,7 @@ ComponentEngine.directive('render', {
 			return vnode?.type === 'template' && vnode.props?.slot != null;
 		}
 
-		function getDefSlotFromChildren(slotName: string): unknown {
+		function getDefaultSlotFromChildren(slotName: string): unknown {
 			if (Object.isPlainObject(originalChildren)) {
 				const
 					slot = originalChildren[slotName];
