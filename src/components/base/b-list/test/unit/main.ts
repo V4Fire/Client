@@ -25,10 +25,9 @@ test.describe('<b-list>', () => {
 				target = await renderList(page),
 				linkSelector = createListSelector('link');
 
-			const
-				itemsPromise = target.evaluate(
-					(ctx) => Array.from(ctx.unsafe.block!.elements('item')).map((el) => el.textContent?.trim())
-				);
+			const itemsPromise = target.evaluate(
+				(ctx) => Array.from(ctx.unsafe.block!.elements('item')).map((el) => el.textContent?.trim())
+			);
 
 			test.expect(await itemsPromise).toEqual(['Foo', 'Bla']);
 			test.expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
