@@ -12,6 +12,10 @@
 /// <reference path="./ts-definitions/playwright.d.ts"/>
 /// <reference path="./ts-definitions/stylus-ds.d.ts"/>
 
+declare var ssr: Nullable<{
+	document?: Document;
+}>;
+
 declare let __webpack_nonce__: CanUndef<string>;
 declare let __webpack_public_path__: CanUndef<string>;
 declare let __webpack_require__: (moduleId: string) => any;

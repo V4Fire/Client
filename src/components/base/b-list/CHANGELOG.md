@@ -9,18 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.??.?? (2023-??-??)
-
-#### :boom: Breaking Change
-
-* Removed `immediateChange` event
-
-## v3.??.?? (2022-??-??)
+## v4.0.0-beta.8 (2023-07-19)
 
 #### :boom: Breaking Change
 
 * Removed deprecated code
+* Removed `immediateChange` event
 * Renamed `listElTag` to `listElementTag`
+
+#### :rocket: New Feature
+
+* Added new method `getHref`
 
 ## v3.43.0 (2023-03-23)
 

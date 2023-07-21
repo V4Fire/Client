@@ -54,7 +54,6 @@ const
 
 Returns `true` if the specified element is in the viewport.
 
-
 ```typescript
 const isVisible = await DOM.isVisible('.b-button', page)
 ```

@@ -8,6 +8,8 @@
 
 import CookieEngine from 'core/kv-storage/engines/cookie/engine';
 
+export { CookieEngine as default };
+
 export const
 	syncSessionStorage = new CookieEngine('v4ss'),
 	asyncSessionStorage = syncSessionStorage;

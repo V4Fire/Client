@@ -58,7 +58,7 @@ export function fillMeta(
 
 	const
 		defaultProps = params.defaultProps !== false,
-		canWatchProps = !isRoot && !isFunctional;
+		canWatchProps = !SSR && !isRoot && !isFunctional;
 
 	Object.entries(meta.props).forEach(([name, prop]) => {
 		if (prop == null) {

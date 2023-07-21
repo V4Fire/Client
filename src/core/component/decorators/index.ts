@@ -23,4 +23,3 @@ export * from 'core/component/decorators/hook';
 export * from 'core/component/decorators/watch';
 
 export * from 'core/component/decorators/interface';
-

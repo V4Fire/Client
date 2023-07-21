@@ -8,4 +8,5 @@
 
 export { default } from 'components/base/b-router/modules/transition/class';
 
+export * from 'components/base/b-router/modules/transition/event';
 export * from 'components/base/b-router/modules/transition/interface';

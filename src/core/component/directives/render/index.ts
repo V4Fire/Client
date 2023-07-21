@@ -11,9 +11,10 @@
  * @packageDocumentation
  */
 
+import { setVNodePatchFlags } from 'core/component/render';
 import { ComponentEngine, VNode } from 'core/component/engines';
 
-import { setVNodePatchFlags } from 'core/component/render';
+import { getDirectiveContext } from 'core/component/directives/helpers';
 import type { DirectiveParams } from 'core/component/directives/render/interface';
 
 export * from 'core/component/directives/render/interface';
@@ -21,32 +22,53 @@ export * from 'core/component/directives/render/interface';
 ComponentEngine.directive('render', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
 		const
+			ctx = getDirectiveContext(params, vnode);
+
+		const
 			newVNode = params.value,
 			originalChildren = vnode.children;
 
-		if (newVNode != null) {
-			const canReplaceVNode =
-				vnode.type === 'template' &&
-				!Object.isArray(newVNode) &&
-				Object.size(vnode.props) === 0;
+		if (newVNode == null) {
+			return;
+		}
 
-			if (canReplaceVNode) {
-				return newVNode;
-			}
+		const canReplaceOriginalVNode =
+			vnode.type === 'template' &&
+			!Object.isArray(newVNode) &&
+			Object.size(vnode.props) === 0;
 
-			if (Object.isString(vnode.type)) {
-				vnode.children = Array.concat([], newVNode);
-				vnode.dynamicChildren = Object.cast(vnode.children.slice());
-				setVNodePatchFlags(vnode, 'children');
+		if (canReplaceOriginalVNode) {
+			return SSR ? renderSSRFragment(newVNode) : newVNode;
+		}
+
+		if (Object.isString(vnode.type)) {
+			const
+				children = Array.concat([], newVNode);
+
+			if (SSR) {
+				vnode.props = {
+					...vnode.props,
+					innerHTML: getSSRInnerHTML(children)
+				};
 
 			} else {
-				const slots = Object.isPlainObject(originalChildren) ?
-					Object.reject(originalChildren, /^_/) :
-					{};
+				vnode.children = children;
+				vnode.dynamicChildren = Object.cast(children.slice());
+				setVNodePatchFlags(vnode, 'children');
+			}
 
-				vnode.children = slots;
-				setVNodePatchFlags(vnode, 'slots');
+		} else {
+			const slots = Object.isPlainObject(originalChildren) ?
+				Object.reject(originalChildren, /^_/) :
+				{};
 
+			vnode.children = slots;
+			setVNodePatchFlags(vnode, 'slots');
+
+			if (SSR) {
+				slots.default = () => renderSSRFragment(newVNode);
+
+			} else {
 				if (Object.isArray(newVNode)) {
 					if (isSlot(newVNode[0])) {
 						newVNode.forEach((vnode) => {
@@ -54,7 +76,7 @@ ComponentEngine.directive('render', {
 								slot = vnode.props?.slot;
 
 							if (slot != null) {
-								slots[slot] = () => vnode.children ?? getDefSlotFromChildren(slot);
+								slots[slot] = () => vnode.children ?? getDefaultSlotFromChildren(slot);
 							}
 						});
 
@@ -63,7 +85,7 @@ ComponentEngine.directive('render', {
 
 				} else if (isSlot(newVNode)) {
 					const {slot} = newVNode.props!;
-					slots[slot] = () => newVNode.children ?? getDefSlotFromChildren(slot);
+					slots[slot] = () => newVNode.children ?? getDefaultSlotFromChildren(slot);
 					return;
 				}
 
@@ -71,11 +93,28 @@ ComponentEngine.directive('render', {
 			}
 		}
 
+		function getSSRInnerHTML(content: CanArray<CanPromise<VNode>>) {
+			return Promise.all(Array.concat([], content)).then((content) => content.join(''));
+		}
+
+		function renderSSRFragment(content: CanArray<CanPromise<VNode>>) {
+			if (ctx == null) {
+				return;
+			}
+
+			const
+				{r} = ctx.$renderEngine;
+
+			return r.createVNode.call(ctx, 'ssr-fragment', {
+				innerHTML: getSSRInnerHTML(content)
+			});
+		}
+
 		function isSlot(vnode: CanUndef<VNode>): boolean {
 			return vnode?.type === 'template' && vnode.props?.slot != null;
 		}
 
-		function getDefSlotFromChildren(slotName: string): unknown {
+		function getDefaultSlotFromChildren(slotName: string): unknown {
 			if (Object.isPlainObject(originalChildren)) {
 				const
 					slot = originalChildren[slotName];

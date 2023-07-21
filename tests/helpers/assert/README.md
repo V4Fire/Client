@@ -4,7 +4,6 @@ This module provides frequently needed asserts.
 
 Usage:
 
-
 ```typescript
 
 import test from 'tests/config/unit/test';

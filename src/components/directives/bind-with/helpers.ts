@@ -26,7 +26,7 @@ export function getElementId(el: Element): string {
  * @param el - the element to which the directive is applied
  * @param ctx - the directive context
  */
-export function clearElementBindings(el: Element, ctx: CanUndef<ComponentInterface>): void {
+export function clearElementBindings(el: Element, ctx: Nullable<ComponentInterface>): void {
 	if (ctx == null) {
 		return;
 	}
@@ -44,7 +44,7 @@ export function clearElementBindings(el: Element, ctx: CanUndef<ComponentInterfa
 export function bindListenerToElement(
 	listener: Nullable<DirectiveValue>,
 	el: Element,
-	ctx: CanUndef<ComponentInterface>
+	ctx: Nullable<ComponentInterface>
 ): void {
 	if (ctx == null || listener == null) {
 		return;

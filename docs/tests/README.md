@@ -90,7 +90,6 @@ class DemoPage {
 
 > You are free to override or extend this `fixture` in your project, [more about `fixtures`](https://playwright.dev/docs/test-fixtures).
 
-
 ## Writing tests in your project
 
 ### Set up a test environment
@@ -167,7 +166,6 @@ get included into the production build.
 3. Add your component to the demo page dependencies that you plan to test.
 
 4. Build the project.
-
 
 **components/pages/p-v4-components-demo/index.js**
 ```javascript

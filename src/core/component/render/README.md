@@ -21,6 +21,8 @@ These wrappers are intended to be used for encapsulating the original component 
 ### resolveAttrs
 
 Resolves values from special attributes of the given VNode.
+Note: for the value of the `data-cached-dynamic-class` attribute,
+you should use the JSON `core/json#evalWith` reviver format.
 
 ```js
 // `.componentId = 'id-1'`
@@ -31,9 +33,9 @@ const ctx = this;
 // {props: {class: 'id-1 b-example alias'}}
 resolveAttrs.call(ctx, {
   props: {
-    'data-cached-class-component-id': ''
-    'data-cached-class-provided-classes-styles': 'elem-name'
-    'data-cached-dynamic-class': '[self.componentName]'
+    'data-cached-class-component-id': '',
+    'data-cached-class-provided-classes-styles': 'elem-name',
+    'data-cached-dynamic-class': '["get", "componentName"]'
   }
 })
 ```
