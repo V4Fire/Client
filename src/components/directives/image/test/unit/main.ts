@@ -232,38 +232,13 @@ test.describe('components/directives/image', () => {
 	async function createImageForTest(
 		page: Page, imageOpts: Partial<ImageOptions>, attrs?: Partial<RenderComponentsVnodeParams['attrs']>
 	): Promise<ImageTestLocators> {
-		/**
-		 * Here we create the following:
-		 * `<div data-testid="container">
-		 *   <span {...attrs} v-image={imageOpts}></span>
-		 * </div>`
-		 *
-		 * This is because we need to pass handlers as v-image options from test code,
-		 * which is only possible through `Component.createComponent()`.
-		 * This method internally creates an attribute named `data-render-id` and waits
-		 * for an element with that attribute to appear on the page.
-		 * v-image for some reason erases the mentioned attribute during markup replacement,
-		 * putting it inside `v-attrs` attribute, so that `Component.createComponent()` is no
-		 * longer able to find the newly created element.
-		 *
-		 * @see https://github.com/V4Fire/Client/issues/916
-		 */
 		await Component.createComponent(page, 'div', {
-			attrs: {
-				'data-testid': 'container'
-			},
-			children: [
-				{
-					type: 'span',
-					attrs: {
-						...attrs,
-						'v-image': imageOpts
-					}
-				}
-			]
+			...attrs,
+			'data-testid': 'container',
+			'v-image': imageOpts
 		});
 
-		const imageWrapper = page.getByTestId('container').locator('span');
+		const imageWrapper = page.getByTestId('container');
 
 		return {
 			imageWrapper,
