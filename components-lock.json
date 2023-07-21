@@ -1,5 +1,5 @@
 {
-  "hash": "64ae0632e26e8b50fd18b2ae2be4ffc743065aec82b835c33c14ff458efc537d",
+  "hash": "17bfa44323e931383d4a43be899be3cf78ecf604c7aa870b764c3f3097aac294",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -838,38 +838,6 @@
             "src/components/base/b-remote-provider/b-remote-provider.styl"
           ],
           "tpl": "src/components/base/b-remote-provider/b-remote-provider.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-render",
-        {
-          "index": "src/components/base/b-render/index.js",
-          "declaration": {
-            "name": "b-render",
-            "parent": "i-block",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-render",
-          "parent": "i-block",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/base/b-render/b-render.ts",
-          "styles": [
-            "src/components/base/b-render/b-render.styl"
-          ],
-          "tpl": "src/components/base/b-render/b-render.ss",
           "etpl": null
         }
       ],
