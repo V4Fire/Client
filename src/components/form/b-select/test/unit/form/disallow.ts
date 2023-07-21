@@ -95,12 +95,6 @@ test.describe('<b-select> form API', () => {
 		});
 	});
 
-	/**
-	 * Returns the rendered `b-select` component with the `formValueConverter`
-	 *
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderSelect(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bSelect>> {
 		return Component.createComponent(page, 'b-select', {
 			'data-id': 'target',

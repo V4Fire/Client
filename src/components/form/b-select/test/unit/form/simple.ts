@@ -174,14 +174,7 @@ test.describe('<b-select> form API', () => {
 		).toEqual(['2', '3']);
 	});
 
-	/**
-	 * Returns the rendered `b-select` component with the `formValueConverter` and default items
-	 *
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderSelect(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bSelect>> {
-
 		await Component.createComponent(page, 'b-select', [
 			{
 				attrs: {

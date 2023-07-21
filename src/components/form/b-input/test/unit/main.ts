@@ -160,10 +160,6 @@ test.describe('<b-input>', () => {
 		});
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 		return Component.createComponent(page, 'b-input', {
 			attrs: {

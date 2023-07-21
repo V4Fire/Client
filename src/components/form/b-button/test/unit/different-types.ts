@@ -189,10 +189,6 @@ test.describe('<b-button> passing the `type` prop as', () => {
 		});
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderButton(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}) {
 		await Component.createComponent(page, 'b-button', {
 			attrs: {

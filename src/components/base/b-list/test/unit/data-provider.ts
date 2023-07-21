@@ -36,12 +36,6 @@ test.describe('<b-list> with a data provider', () => {
 		test.expect(await page.evaluate(() => location.hash)).toBe('#bar');
 	});
 
-	/**
-	 * Returns the rendered `b-list` component
-	 *
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderList(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bList>> {
 		await Component.createComponent(page, 'b-list', [
 			{
