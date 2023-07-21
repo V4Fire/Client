@@ -40,7 +40,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * ```
  */
 export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T): T {
-	const {
+	let {
 		ref,
 		props,
 		children,
@@ -88,6 +88,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 				instance: this
 			}, vnode);
 
+			props = vnode.props!;
 			delete props[key];
 		}
 	}
@@ -133,11 +134,11 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		if (names != null) {
 			names.split(' ').forEach((name) => {
 				if ('classes' in this && this.classes?.[name] != null) {
-					Object.assign(props, mergeProps({class: props.class}, {class: this.classes[name]}));
+					Object.assign(props, mergeProps({class: props?.class}, {class: this.classes[name]}));
 				}
 
 				if ('styles' in this && this.styles?.[name] != null) {
-					Object.assign(props, mergeProps({style: props.style}, {style: this.styles[name]}));
+					Object.assign(props, mergeProps({style: props?.style}, {style: this.styles[name]}));
 				}
 			});
 

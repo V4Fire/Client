@@ -79,8 +79,10 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			component = registerComponent(name.name);
 		}
 
-		const createVNode = (name, attrs, slots, patchFlag, dynamicProps) =>
-			resolveAttrs.call(this, original(name, attrs, slots, patchFlag, dynamicProps));
+		const createVNode = (name, attrs, slots, patchFlag, dynamicProps) => {
+			const vnode = original(name, attrs, slots, patchFlag, dynamicProps);
+			return resolveAttrs.call(this, vnode);
+		};
 
 		if (component == null) {
 			return createVNode(name, attrs, slots, patchFlag, dynamicProps);
