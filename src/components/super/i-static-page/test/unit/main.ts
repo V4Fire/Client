@@ -199,14 +199,9 @@ test.describe('<i-static-page>', () => {
 		});
 	});
 
-	/**
-	 * Returns the rendered `b-dummy` component
-	 *
-	 * @param page
-	 * @param attrs
-	 */
 	function renderDummy(
-		page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}
+		page: Page,
+		attrs: RenderComponentsVnodeParams['attrs'] = {}
 	): Promise<JSHandle<bDummy>> {
 		return Component.createComponent(page, 'b-dummy', attrs);
 	}

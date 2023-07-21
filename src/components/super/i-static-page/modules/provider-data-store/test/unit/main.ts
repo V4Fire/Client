@@ -51,14 +51,9 @@ test.describe('<i-static-page> provider data store', () => {
 		test.expect(data).toEqual({label: 'Foo', value: 'foo'});
 	});
 
-	/**
-	 * Returns the rendered `b-remote-provider` component
-	 *
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderRemoteProvider(
-		page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}
+		page: Page,
+		attrs: RenderComponentsVnodeParams['attrs'] = {}
 	): Promise<JSHandle<bRemoteProvider>> {
 		await Component.createComponent(
 			page,

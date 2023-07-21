@@ -206,10 +206,6 @@ test.describe('<b-textarea> mask API', () => {
 		})).toBe('6-7');
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bTextarea>> {
 		return Component.createComponent(page, 'b-textarea', {
 			attrs: {

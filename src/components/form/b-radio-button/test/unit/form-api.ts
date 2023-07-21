@@ -150,10 +150,6 @@ test.describe('<b-radio-button> form API', () => {
 		).toBeUndefined();
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderRadioButton(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bRadioButton>> {
 		await Component.createComponent(page, 'b-radio-button', [
 			{
