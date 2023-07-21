@@ -12,7 +12,7 @@ import { BOM } from 'tests/helpers';
 
 import test from 'tests/config/unit/test';
 
-test.describe('<div v-icon>', () => {
+test.describe('components/directives/icon', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
