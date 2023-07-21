@@ -75,13 +75,15 @@ export default class ScrollControl {
 	 * @param reset
 	 */
 	restore(reset: boolean): void {
-		const {meta} = this.transition.newRouteInfo ?? {};
+		const
+			{meta} = this.transition.newRouteInfo ?? {};
 
 		if (SSR || !meta || meta.autoScroll === false) {
 			return;
 		}
 
-		const {component} = this.transition;
+		const
+			{component} = this.transition;
 
 		(async () => {
 			const label = {

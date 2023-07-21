@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { evalWith } from 'core/json';
+
 import type { VNode } from 'core/component/engines';
 
 import { isHandler, mergeProps } from 'core/component/render/helpers/props';
@@ -13,11 +15,10 @@ import { setVNodePatchFlags } from 'core/component/render/helpers/flags';
 
 import type { ComponentInterface } from 'core/component/interface';
 
-const
-	staticAttrsCache: Dictionary<Function> = Object.createDict();
-
 /**
- * Resolves values from special attributes of the given VNode
+ * Resolves values from special attributes of the given VNode.
+ * Note: for the value of the `data-cached-dynamic-class` attribute,
+ * you should use the JSON `core/json#evalWith` reviver format.
  *
  * @param vnode
  *
@@ -31,9 +32,9 @@ const
  * // {props: {class: 'id-1 b-example alias'}}
  * resolveAttrs.call(ctx, {
  *   props: {
- *     'data-cached-class-component-id': ''
- *     'data-cached-class-provided-classes-styles': 'elem-name'
- *     'data-cached-dynamic-class': '[self.componentName]'
+ *     'data-cached-class-component-id': '',
+ *     'data-cached-class-provided-classes-styles': 'elem-name',
+ *     'data-cached-dynamic-class': '["get", "componentName"]'
  *   }
  * })
  * ```
@@ -147,28 +148,15 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	{
 		const
 			key = 'data-cached-dynamic-class',
-			fnBody = props[key];
+			rawValue = props[key];
 
-		if (fnBody != null) {
-			const classVal = compileFn(fnBody)(this);
+		if (Object.isString(rawValue)) {
+			const classValue = Object.parse(rawValue, evalWith(this));
 
-			Object.assign(props, mergeProps({class: props.class}, {class: classVal}));
+			Object.assign(props, mergeProps({class: props.class}, {class: classValue}));
 			delete props[key];
 		}
 	}
 
 	return vnode;
-}
-
-function compileFn(fnBody: string): Function {
-	let
-		fn = staticAttrsCache[fnBody];
-
-	if (fn == null) {
-		// eslint-disable-next-line no-new-func
-		fn = Function('self', `return ${fnBody}`);
-		staticAttrsCache[fnBody] = fn;
-	}
-
-	return fn;
 }
