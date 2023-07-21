@@ -18,7 +18,7 @@ export * from '@v4fire/core/core/env';
  * @param [env] - an object containing the environment for initialization
  */
 export function initGlobalEnv(env?: object & {globalEnv?: GlobalEnvironment}): GlobalEnvironment {
-	if (env?.globalEnv == null) {
+	if (env == null || !('globalEnv' in env) || env.globalEnv == null) {
 		return {};
 	}
 

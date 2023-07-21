@@ -10,6 +10,9 @@ import type {
 
 	VNode,
 
+	Static,
+	Comment,
+
 	Fragment,
 	Teleport,
 
@@ -96,6 +99,9 @@ export interface RenderAPI {
 	render(vnode: VNode[], parent?: ComponentInterface): Node[];
 
 	getCurrentInstance: typeof getCurrentInstance;
+
+	Static: typeof Static;
+	Comment: typeof Comment;
 
 	Fragment: typeof Fragment;
 	Teleport: typeof Teleport;

@@ -203,6 +203,10 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 			return name;
 		}
 
+		if (SSR) {
+			return original(name);
+		}
+
 		return app.context != null ? app.context.component(name) ?? original(name) : original(name);
 	});
 }

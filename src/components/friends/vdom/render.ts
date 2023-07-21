@@ -132,9 +132,13 @@ export function getRenderFn(
 	}
 
 	const
-		cache = [],
-		instanceCtx = Object.create(ctx, {isVirtualTpl: {value: true}}),
-		render = factory(instanceCtx, cache);
+		cache: unknown[] = [],
+		instanceCtx = Object.create(ctx, {isVirtualTpl: {value: true}});
+
+	const render = factory(
+		instanceCtx,
+		SSR ? cache.push.bind(cache) : cache
+	);
 
 	return (bindings) => {
 		if (bindings != null) {
@@ -153,6 +157,7 @@ export function getRenderFn(
 			});
 		}
 
-		return Object.cast(render());
+		const renderResult = render();
+		return SSR ? cache : renderResult;
 	};
 }
