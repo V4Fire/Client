@@ -9,7 +9,17 @@
 import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
 import { set } from 'core/component/state';
-import Component, { app, rootComponents, hydrationStore, ComponentElement } from 'core/component';
+import Component, {
+
+	app,
+	destroyApp,
+
+	rootComponents,
+	hydrationStore,
+
+	ComponentElement
+
+} from 'core/component';
 
 import flags from 'core/init/flags';
 import type { InitAppOptions } from 'core/init/interface';
@@ -43,17 +53,34 @@ function createAppInitializer() {
 		});
 
 		if (SSR) {
+			let appId;
+
 			const
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
 				{renderToString} = require('vue/server-renderer');
 
+			const
+				getData = rootComponentParams.data;
+
+			rootComponentParams.data = function data() {
+				appId = this.componentId;
+				return getData?.call(this) ?? {};
+			};
+
 			const rootComponent = new Component(rootComponentParams);
 			app.context = rootComponent;
 
-			return [
-				(await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
-				`<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`
-			].join('');
+			try {
+				const
+					ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
+					hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+
+				// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+				return ssrContent + hydratedData;
+
+			} finally {
+				destroyApp(appId);
+			}
 		}
 
 		const
