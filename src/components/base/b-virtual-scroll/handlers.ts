@@ -26,7 +26,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: component reset event.
 	 * Resets the component state to its initial state.
 	 */
-	protected onReset(): void {
+	protected onReset(this: bVirtualScroll): void {
 		this.componentInternalState.reset();
 		this.observer.reset();
 
@@ -39,7 +39,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: render start event.
 	 * Triggered when the component rendering starts.
 	 */
-	protected onRenderStart(): void {
+	protected onRenderStart(this: bVirtualScroll): void {
 		this.componentEmitter.emit(componentEvents.renderStart);
 	}
 
@@ -47,7 +47,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: render engine start event.
 	 * Triggered when the component rendering using the rendering engine starts.
 	 */
-	protected onRenderEngineStart(): void {
+	protected onRenderEngineStart(this: bVirtualScroll): void {
 		this.componentEmitter.emit(componentEvents.renderEngineStart);
 	}
 
@@ -55,7 +55,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: render engine done event.
 	 * Triggered when the component rendering using the rendering engine is completed.
 	 */
-	protected onRenderEngineDone(): void {
+	protected onRenderEngineDone(this: bVirtualScroll): void {
 		this.componentEmitter.emit(componentEvents.renderEngineDone);
 	}
 
@@ -78,7 +78,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: DOM insert done event.
 	 * Triggered when the insertion of rendered components into the DOM tree is completed.
 	 */
-	protected onDomInsertDone(): void {
+	protected onDomInsertDone(this: bVirtualScroll): void {
 		this.componentEmitter.emit(componentEvents.domInsertDone);
 	}
 
@@ -86,7 +86,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: render done event.
 	 * Triggered when rendering is completed.
 	 */
-	protected onRenderDone(): void {
+	protected onRenderDone(this: bVirtualScroll): void {
 		this.componentEmitter.emit(componentEvents.renderDone);
 	}
 
@@ -113,7 +113,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 *
 	 * @param data - The converted data.
 	 */
-	protected onConvertDataToDB(data: unknown): void {
+	protected onConvertDataToDB(this: bVirtualScroll, data: unknown): void {
 		this.componentInternalState.setRawLastLoaded(data);
 		this.componentEmitter.emit(componentEvents.convertDataToDB, data);
 	}
@@ -124,7 +124,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 *
 	 * @param isInitialLoading - Indicates whether it is an initial component loading.
 	 */
-	protected onDataLoadStart(isInitialLoading: boolean): void {
+	protected onDataLoadStart(this: bVirtualScroll, isInitialLoading: boolean): void {
 		this.componentInternalState.setIsLoadingInProgress(true);
 		this.componentInternalState.setIsLastErrored(false);
 		this.slotsStateController.loadingProgressState(isInitialLoading);
@@ -176,7 +176,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 *
 	 * @param isInitialLoading - Indicates whether it is an initial component loading.
 	 */
-	protected onDataLoadError(isInitialLoading: boolean): void {
+	protected onDataLoadError(this: bVirtualScroll, isInitialLoading: boolean): void {
 		this.componentInternalState.setIsLoadingInProgress(false);
 		this.componentInternalState.setIsLastErrored(true);
 		this.slotsStateController.loadingFailedState();
@@ -203,10 +203,10 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: data empty event.
 	 * Triggered when the loaded data is empty.
 	 */
-	protected onDataEmpty(): void {
+	protected onDataEmpty(this: bVirtualScroll): void {
 		this.slotsStateController.emptyState();
 
-		this.componentEmitter.emit(componentEvents.dataEmpty);
+		this.componentEmitter.emit(componentEvents.dataLoadEmpty);
 	}
 
 	/**

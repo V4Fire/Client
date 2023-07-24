@@ -31,8 +31,8 @@ test.describe('<b-virtual-scroll>', () => {
 		await page.setViewportSize({height: 640, width: 360});
 	});
 
-	test.describe('ChunkSize is 12', () => {
-		test.describe('Provider can provide 3 data chunks', () => {
+	test.describe('`chunkSize` is 12', () => {
+		test.describe('provider can provide 3 data chunks', () => {
 			test('Should render 36 items', async () => {
 				const
 					chunkSize = 12;
@@ -55,20 +55,20 @@ test.describe('<b-virtual-scroll>', () => {
 					});
 
 				await component.build();
-				await component.waitForContainerChildCountEqualsTo(chunkSize);
+				await component.waitForChildCountEqualsTo(chunkSize);
 				await component.scrollToBottom();
-				await component.waitForContainerChildCountEqualsTo(chunkSize * 2);
+				await component.waitForChildCountEqualsTo(chunkSize * 2);
 				await component.scrollToBottom();
-				await component.waitForContainerChildCountEqualsTo(chunkSize * 3);
+				await component.waitForChildCountEqualsTo(chunkSize * 3);
 				await component.scrollToBottom();
-				await component.waitForContainerChildCountEqualsTo(chunkSize * 3);
+				await component.waitForChildCountEqualsTo(chunkSize * 3);
 
 				await test.expect(component.childList).toHaveCount(chunkSize * 3);
 			});
 		});
 	});
 
-	test.describe('With a different chunk size for each render cycle', () => {
+	test.describe('with a different chunk size for each render cycle', () => {
 		test('Should render 6 components first, then 12, then 18', async () => {
 			const chunkSize = [6, 12, 18];
 
@@ -90,7 +90,7 @@ test.describe('<b-virtual-scroll>', () => {
 				const
 					expectedIndex = chunkSize[0];
 
-				await test.expect(component.waitForContainerChildCountEqualsTo(expectedIndex)).resolves.toBeUndefined();
+				await test.expect(component.waitForChildCountEqualsTo(expectedIndex)).resolves.toBeUndefined();
 				await test.expect(component.waitForDataIndexChild(expectedIndex - 1)).resolves.toBeUndefined();
 			});
 
@@ -100,7 +100,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 				await component.scrollToBottom();
 
-				await test.expect(component.waitForContainerChildCountEqualsTo(expectedIndex)).resolves.toBeUndefined();
+				await test.expect(component.waitForChildCountEqualsTo(expectedIndex)).resolves.toBeUndefined();
 				await test.expect(component.waitForDataIndexChild(expectedIndex - 1)).resolves.toBeUndefined();
 			});
 
@@ -110,7 +110,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 				await component.scrollToBottom();
 
-				await test.expect(component.waitForContainerChildCountEqualsTo(expectedIndex)).resolves.toBeUndefined();
+				await test.expect(component.waitForChildCountEqualsTo(expectedIndex)).resolves.toBeUndefined();
 				await test.expect(component.waitForDataIndexChild(expectedIndex - 1)).resolves.toBeUndefined();
 			});
 

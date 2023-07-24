@@ -30,8 +30,8 @@ test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 		await provider.start();
 	});
 
-	test.describe('Returned items with type `item` is equal to the provided data', () => {
-		test('Should render all of the items that was returned from `itemsFactory`', async () => {
+	test.describe('returned items with type `item` is equal to the provided data', () => {
+		test('should render all of the items that were returned from `itemsFactory`', async () => {
 			const
 				chunkSize = 12;
 
@@ -62,14 +62,14 @@ test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 
 			await test.expect(component.childList).toHaveCount(chunkSize);
 		});
 	});
 
 	test.describe('In additional `item`, `separator` was also returned', () => {
-		test('Should render both', async () => {
+		test('should render both', async () => {
 			const
 				chunkSize = 12;
 
@@ -117,15 +117,15 @@ test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize + 1);
+			await component.waitForChildCountEqualsTo(chunkSize + 1);
 
 			await test.expect(component.container.locator('#button')).toBeVisible();
 			await test.expect(component.childList).toHaveCount(chunkSize + 1);
 		});
 	});
 
-	test.describe('Returned items with type `item` is less than the provided data', () => {
-		test('Should render items that was returned from `itemsFactory`', async () => {
+	test.describe('returned items with type `item` is less than the provided data', () => {
+		test('should render items that were returned from `itemsFactory`', async () => {
 			const
 				chunkSize = 12,
 				renderedChunkSize = chunkSize - 2;
@@ -160,14 +160,14 @@ test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(renderedChunkSize);
+			await component.waitForChildCountEqualsTo(renderedChunkSize);
 
 			await test.expect(component.childList).toHaveCount(renderedChunkSize);
 		});
 	});
 
-	test.describe('Returned item with type `item` is more than the provided data', () => {
-		test('Should render items that was returned from `itemsFactory`', async () => {
+	test.describe('returned item with type `item` is more than the provided data', () => {
+		test('should render items that were returned from `itemsFactory`', async () => {
 			const
 				chunkSize = 12,
 				renderedChunkSize = chunkSize * 2;
@@ -201,14 +201,14 @@ test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(renderedChunkSize);
+			await component.waitForChildCountEqualsTo(renderedChunkSize);
 
 			await test.expect(component.childList).toHaveCount(renderedChunkSize);
 		});
 	});
 
-	test.describe('`item` was not returned, but equal to the number of data, the number of `separator` was returned', () => {
-		test('Should render separators that was returned from `itemsFactory`', async () => {
+	test.describe('The items of type `item` were not returned, but the items of type `separator` were returned in the same quantity as the loaded data.', () => {
+		test('should render separators that were returned from `itemsFactory`', async () => {
 			const
 				chunkSize = 12;
 
@@ -239,14 +239,14 @@ test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 
 			await test.expect(component.childList).toHaveCount(chunkSize);
 		});
 	});
 
-	test.describe('`itemsFactory` returns twice as much data as `chunkSize`', () => {
-		test('Should render twice as much items as `chunkSize`', async () => {
+	test.describe('`itemsFactory` returns twice as much data as the `chunkSize`', () => {
+		test('should render twice as much items as the `chunkSize`', async () => {
 			const
 				chunkSize = 12;
 
@@ -285,13 +285,13 @@ test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize * 2);
+			await component.waitForChildCountEqualsTo(chunkSize * 2);
 			await component.scrollToBottom();
-			await component.waitForContainerChildCountEqualsTo(chunkSize * 2 * 2);
+			await component.waitForChildCountEqualsTo(chunkSize * 2 * 2);
 			await component.scrollToBottom();
-			await component.waitForContainerChildCountEqualsTo(chunkSize * 3 * 2);
+			await component.waitForChildCountEqualsTo(chunkSize * 3 * 2);
 			await component.scrollToBottom();
-			await component.waitForContainerChildCountEqualsTo(chunkSize * 3 * 2);
+			await component.waitForChildCountEqualsTo(chunkSize * 3 * 2);
 
 			await test.expect(component.childList).toHaveCount(chunkSize * 3 * 2);
 		});

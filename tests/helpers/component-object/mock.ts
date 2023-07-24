@@ -83,7 +83,7 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 	 *
 	 * @example
 	 * ```typescript
-	 * await component.setProps({
+	 * await component.withProps({
 	 *   '@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
 	 * });
 	 *
@@ -113,7 +113,7 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 	 *   component = new ComponentObject(page, 'b-virtual-scroll'),
 	 *   shouldStopRequestingData = await component.mockFn(() => false);
 	 *
-	 * await component.setProps({
+	 * await component.withProps({
 	 *   shouldStopRequestingData
 	 * });
 	 *

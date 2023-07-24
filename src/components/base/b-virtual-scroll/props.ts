@@ -18,23 +18,18 @@ import type {
 	RequestQueryFn,
 	ShouldPerform,
 	ComponentItemFactory,
-	ComponentItemType,
-	$ComponentRefs
+	ComponentItemType
 
 } from 'components/base/b-virtual-scroll/interface';
 
 import { defaultShouldProps, componentItemType } from 'components/base/b-virtual-scroll/const';
 
-import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll/modules/emitter';
-import { ComponentInternalState } from 'components/base/b-virtual-scroll/modules/state';
-import { SlotsStateController } from 'components/base/b-virtual-scroll/modules/slots';
-import { ComponentFactory } from 'components/base/b-virtual-scroll/modules/factory';
 import { Observer } from 'components/base/b-virtual-scroll/modules/observer';
 
-import iData, { component, prop, system } from 'components/super/i-data/i-data';
+import iData, { component, prop } from 'components/super/i-data/i-data';
 
 /**
- * A class that is friendly to {@link bVirtualScroll}.
+ * A class that is a part of the {@link bVirtualScroll}.
  * It contains the properties of the {@link bVirtualScroll} component.
  */
 @component()
@@ -80,10 +75,10 @@ export default abstract class iVirtualScrollProps extends iData {
 	 * In other words, the default implementation takes a data slice of length `chunkSize`
 	 * and calls the `iItems` functions to generate a `ComponentItem` object.
 	 *
-	 * However, nothing prevents the client from implementing any strategy by overriding this function.
+	 * However, the client can implement any required strategy by overriding this function.
 	 *
 	 * For example, it is possible to define a function
-	 * that takes the last loaded data and draws twice as many components:
+	 * that takes the last loaded data and renders twice as many components:
 	 *
 	 * @example
 	 * ```typescript
@@ -135,7 +130,7 @@ export default abstract class iVirtualScrollProps extends iData {
 	 * from the `request` prop in favor of the `request` prop.
 	 *
 	 * This function is useful when you need to pass pagination parameters or any other parameters that should not trigger
-	 * a component state reload, unlike changing the `request` prop.
+	 * a component's state reload, unlike changing the `request` prop.
 	 *
 	 * {@link RequestQueryFn}
 	 */
@@ -208,34 +203,12 @@ export default abstract class iVirtualScrollProps extends iData {
 	readonly shouldPerformDataRender?: ShouldPerform<boolean>;
 
 	/**
-	 * If `true`, the element observation module will not be initialized.
+	 * If `true`, the element {@link Observer observation module} will not be initialized.
 	 *
 	 * Setting this prop to `true` can be useful if you want to implement lazy rendering
 	 * and control it using the `renderNext` method.
 	 */
 	@prop(Boolean)
 	readonly disableObserver: boolean = false;
-
-	/** {@link componentTypedEmitter} */
-	@system<bVirtualScroll>((ctx) => componentTypedEmitter(ctx))
-	protected readonly componentEmitter!: ComponentTypedEmitter;
-
-	/** {@link SlotsStateController} */
-	@system<bVirtualScroll>((ctx) => new SlotsStateController(ctx))
-	protected readonly slotsStateController!: SlotsStateController;
-
-	/** {@link ComponentInternalState} */
-	@system<bVirtualScroll>((ctx) => new ComponentInternalState(ctx))
-	protected readonly componentInternalState!: ComponentInternalState;
-
-	/** {@link ComponentFactory} */
-	@system<bVirtualScroll>((ctx) => new ComponentFactory(ctx))
-	protected readonly componentFactory!: ComponentFactory;
-
-	/** {@link Observer} */
-	@system<bVirtualScroll>((ctx) => new Observer(ctx))
-	protected readonly observer!: Observer;
-
-	protected override readonly $refs!: iData['$refs'] & $ComponentRefs;
 }
 

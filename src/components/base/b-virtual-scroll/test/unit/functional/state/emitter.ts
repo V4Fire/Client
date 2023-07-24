@@ -40,15 +40,15 @@ test.describe('<b-virtual-scroll>', () => {
 		await provider.start();
 	});
 
-	test.describe('All data has been loaded after the initial load', () => {
-		test('State at the time of emitting events must be correct', async () => {
+	test.describe('all data has been loaded after the initial load', () => {
+		test('state at the time of emitting events must be correct', async () => {
 			const chunkSize = 12;
 
 			const states = [
 				state.compile(observerInitialStateFields),
 				(
 					state.data.addData(chunkSize),
-					state.set({loadPage: 1, isRequestsStopped: true}).compile(observerInitialStateFields)
+					state.set({loadPage: 1, areRequestsStopped: true}).compile(observerInitialStateFields)
 				),
 				(
 					state.data.addItems(chunkSize),
@@ -105,8 +105,8 @@ test.describe('<b-virtual-scroll>', () => {
 		});
 	});
 
-	test.describe('All data has been loaded after the second load and reload was called', () => {
-		test('State at the time of emitting events must be correct', async () => {
+	test.describe('all data has been loaded after the second load and reload was called', () => {
+		test('state at the time of emitting events must be correct', async () => {
 			const
 				chunkSize = 12,
 				providerChunkSize = chunkSize / 2;
@@ -133,7 +133,7 @@ test.describe('<b-virtual-scroll>', () => {
 				),
 				(
 					state.data.addData(0),
-					state.set({loadPage: 3, isRequestsStopped: true, isLastEmpty: true}).compile()
+					state.set({loadPage: 3, areRequestsStopped: true, isLastEmpty: true}).compile()
 				),
 				(
 					state.set({isLifecycleDone: true}).compile()

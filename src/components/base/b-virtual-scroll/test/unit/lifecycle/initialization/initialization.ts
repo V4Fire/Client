@@ -42,8 +42,8 @@ test.describe('<b-virtual-scroll>', () => {
 		await provider.start();
 	});
 
-	test.describe('Property `chunkSize` is set to 12', () => {
-		test.describe('Loaded data array is half length of the `chunkSize` prop', () => {
+	test.describe('property `chunkSize` is set to 12', () => {
+		test.describe('loaded data array is half length of the `chunkSize` prop', () => {
 			test.describe('`shouldPerformDataRequest` returns true after the initial loading', () => {
 				let
 					shouldStopRequestingData,
@@ -78,14 +78,14 @@ test.describe('<b-virtual-scroll>', () => {
 						})
 						.build();
 
-					await component.waitForContainerChildCountEqualsTo(chunkSize);
+					await component.waitForChildCountEqualsTo(chunkSize);
 				});
 
-				test('Should render 12 items', async () => {
-					await test.expect(component.getContainerChildCount()).resolves.toBe(chunkSize);
+				test('should render 12 items', async () => {
+					await test.expect(component.getChildCount()).resolves.toBe(chunkSize);
 				});
 
-				test('Should call `shouldStopRequestingData` twice', async () => {
+				test('should call `shouldStopRequestingData` twice', async () => {
 					await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
 						[
 							state.compile({
@@ -93,7 +93,7 @@ test.describe('<b-virtual-scroll>', () => {
 								childTillEnd: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
-								isRequestsStopped: false,
+								areRequestsStopped: false,
 								lastLoadedData: firstDataChunk,
 								lastLoadedRawData: {data: firstDataChunk},
 								data: firstDataChunk,
@@ -107,7 +107,7 @@ test.describe('<b-virtual-scroll>', () => {
 								childTillEnd: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
-								isRequestsStopped: false,
+								areRequestsStopped: false,
 								isInitialLoading: false,
 								lastLoadedData: secondDataChunk,
 								lastLoadedRawData: {data: secondDataChunk},
@@ -119,7 +119,7 @@ test.describe('<b-virtual-scroll>', () => {
 					]);
 				});
 
-				test('Should call `shouldPerformDataRequest` once', async () => {
+				test('should call `shouldPerformDataRequest` once', async () => {
 					await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
 						[
 							state.compile({
@@ -127,7 +127,7 @@ test.describe('<b-virtual-scroll>', () => {
 								childTillEnd: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
-								isRequestsStopped: false,
+								areRequestsStopped: false,
 								lastLoadedData: firstDataChunk,
 								lastLoadedRawData: {data: firstDataChunk},
 								data: firstDataChunk,
@@ -138,11 +138,11 @@ test.describe('<b-virtual-scroll>', () => {
 					]);
 				});
 
-				test('Should call `initLoad` once', async () => {
+				test('should call `initLoad` once', async () => {
 					await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
 				});
 
-				test('Should call `initLoadNext` once', async () => {
+				test('should call `initLoadNext` once', async () => {
 					const
 						spy = await component.getSpy((ctx) => ctx.initLoadNext);
 
@@ -152,8 +152,8 @@ test.describe('<b-virtual-scroll>', () => {
 		});
 	});
 
-	test.describe('Property `chunkSize` is set to 12', () => {
-		test.describe('Loaded data array is half length of the `chunkSize` prop', () => {
+	test.describe('property `chunkSize` is set to 12', () => {
+		test.describe('loaded data array is half length of the `chunkSize` prop', () => {
 			test.describe('`shouldPerformDataRequest` returns false after the initial loading', () => {
 				let
 					shouldStopRequestingData,
@@ -181,14 +181,14 @@ test.describe('<b-virtual-scroll>', () => {
 						})
 						.build();
 
-					await component.waitForContainerChildCountEqualsTo(providerChunkSize);
+					await component.waitForChildCountEqualsTo(providerChunkSize);
 				});
 
-				test('Should render 6 items', async () => {
-					await test.expect(component.getContainerChildCount()).resolves.toBe(providerChunkSize);
+				test('should render 6 items', async () => {
+					await test.expect(component.getChildCount()).resolves.toBe(providerChunkSize);
 				});
 
-				test('Should call `shouldStopRequestingData` once', async () => {
+				test('should call `shouldStopRequestingData` once', async () => {
 					await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
 						[
 							state.compile({
@@ -196,7 +196,7 @@ test.describe('<b-virtual-scroll>', () => {
 								childTillEnd: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
-								isRequestsStopped: false,
+								areRequestsStopped: false,
 								loadPage: 1
 							}),
 							test.expect.any(Object)
@@ -204,7 +204,7 @@ test.describe('<b-virtual-scroll>', () => {
 					]);
 				});
 
-				test('Should call `shouldPerformDataRequest` once', async () => {
+				test('should call `shouldPerformDataRequest` once', async () => {
 					await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
 						[
 							state.compile({
@@ -212,7 +212,7 @@ test.describe('<b-virtual-scroll>', () => {
 								childTillEnd: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
-								isRequestsStopped: false,
+								areRequestsStopped: false,
 								loadPage: 1
 							}),
 							test.expect.any(Object)
@@ -220,15 +220,15 @@ test.describe('<b-virtual-scroll>', () => {
 					]);
 				});
 
-				test('Should call `initLoad` once', async () => {
+				test('should call `initLoad` once', async () => {
 					await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
 				});
 			});
 		});
 	});
 
-	test.describe('Property `chunkSize` is set to 12', () => {
-		test.describe('Loaded data array is half length of the `chunkSize` prop', () => {
+	test.describe('property `chunkSize` is set to 12', () => {
+		test.describe('loaded data array is half length of the `chunkSize` prop', () => {
 			test.describe('`shouldStopRequestingData` returns true after the initial loading', () => {
 				const
 					chunkSize = 12,
@@ -256,14 +256,14 @@ test.describe('<b-virtual-scroll>', () => {
 						})
 						.build();
 
-					await component.waitForContainerChildCountEqualsTo(providerChunkSize);
+					await component.waitForChildCountEqualsTo(providerChunkSize);
 				});
 
-				test('Should render 6 items', async () => {
-					await test.expect(component.getContainerChildCount()).resolves.toBe(providerChunkSize);
+				test('should render 6 items', async () => {
+					await test.expect(component.getChildCount()).resolves.toBe(providerChunkSize);
 				});
 
-				test('Should call `shouldStopRequestingData` once', async () => {
+				test('should call `shouldStopRequestingData` once', async () => {
 					await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
 						[
 							state.compile({
@@ -271,7 +271,7 @@ test.describe('<b-virtual-scroll>', () => {
 								childTillEnd: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
-								isRequestsStopped: false,
+								areRequestsStopped: false,
 								loadPage: 1
 							}),
 							test.expect.any(Object)
@@ -279,15 +279,15 @@ test.describe('<b-virtual-scroll>', () => {
 					]);
 				});
 
-				test('Should call `shouldPerformDataRequest` once', async () => {
+				test('should call `shouldPerformDataRequest` once', async () => {
 					await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([]);
 				});
 
-				test('Should call `initLoad` once', async () => {
+				test('should call `initLoad` once', async () => {
 					await test.expect(initLoadSpy.calls).resolves.toEqual([[]]);
 				});
 
-				test('Should end the component lifecycle', async () => {
+				test('should end the component lifecycle', async () => {
 					await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
 				});
 			});

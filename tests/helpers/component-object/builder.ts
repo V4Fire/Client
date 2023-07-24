@@ -143,7 +143,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 
 	/**
 	 * Renders the component with the previously set props and children
-	 * using the `setProps` and `setChildren` methods.
+	 * using the `withProps` and `withChildren` methods.
 	 */
 	async build(): Promise<JSHandle<COMPONENT>> {
 		if (this.componentStyles != null) {
@@ -231,7 +231,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 *
 	 * @param children - The children to set
 	 */
-	setChildren(children: VNodeChildren): this {
+	withChildren(children: VNodeChildren): this {
 		Object.assign(this.children, children);
 		return this;
 	}

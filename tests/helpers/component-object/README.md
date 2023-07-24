@@ -16,7 +16,7 @@ The class provides a universal API for generating a component and setting up moc
 import ComponentObject from 'path/to/component-object';
 
 // Create an instance of ComponentObject
-const myComponent = new ComponentObject(page, 'MyComponent');
+const myComponent = new ComponentObject(page, 'b-component');
 
 // Build the component
 await myComponent.build();
@@ -42,7 +42,7 @@ class MyComponentObject extends ComponentObject {
 }
 
 // Create an instance of MyComponentObject
-const myComponent = new MyComponentObject(page, 'MyComponent');
+const myComponent = new MyComponentObject(page, 'b-component');
 
 await myComponent.build();
 
@@ -77,10 +77,10 @@ class MyComponentObject extends ComponentObject {
 
 // Create an instance of MyComponentObject
 const
-  myComponent = new MyComponentObject(page, 'MyComponent'),
+  myComponent = new MyComponentObject(page, 'b-component'),
   someProp = await myComponent.mockFn(() => true);
 
-myComponent.setProps({
+myComponent.withProps({
   someProp
 });
 
@@ -107,10 +107,10 @@ class MyComponentObject extends ComponentObject {
 }
 
 // Create an instance of MyComponentObject
-const myComponent = new MyComponentObject(page, 'MyComponent');
+const myComponent = new MyComponentObject(page, 'b-component');
 
 // Create a spy
-myComponent.setProps({
+myComponent.withProps({
   '@hook:beforeDataCreate': (ctx) => jest.spy(ctx, 'emit')
 });
 

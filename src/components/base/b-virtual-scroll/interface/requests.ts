@@ -16,9 +16,9 @@ export interface RequestQueryFn {
 	/**
 	 * Returns the GET parameters for a request.
 	 *
-	 * @param params - The component state.
+	 * @param state - The component state.
 	 */
-	(params: VirtualScrollState): Dictionary<Dictionary>;
+	(state: VirtualScrollState): Dictionary<Dictionary>;
 }
 
 /**

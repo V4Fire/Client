@@ -1,6 +1,6 @@
 # components/base/b-virtual-scroll
 
-The `b-virtual-scroll` component is designed for rendering a larger array of various data.
+The `b-virtual-scroll` component is designed for rendering a large array of various data.
 
 ## Synopsis
 
@@ -21,7 +21,7 @@ See the implemented modifiers or the parent component.
 | `dataLoadSuccess`               | Data loading has succeeded.                                     | `data: object[], isInitialLoading: boolean`   | `[data, isInitialLoading]`  |
 | `dataLoadStart`                 | Data loading has started.                                       | `isInitialLoading: boolean`                   | `[isInitialLoading]`        |
 | `dataLoadError`                 | An error occurred while loading data.                           | `isInitialLoading: boolean`                   | `[isInitialLoading]`        |
-| `dataEmpty`                     | Successful load with no data.                                   |                                               | `[]`                        |
+| `dataLoadEmpty`                     | Successful load with no data.                                   |                                               | `[]`                        |
 | `resetState`                    | Reset component state.                                          |                                               | `[]`                        |
 | `lifecycleDone`                 | All component data is rendered and loaded.                      |                                               | `[]`                        |
 | `convertDataToDB`               | Trigger data conversion to the `DB`.                            | `data: unknown`                               | `[data]`                    |
@@ -62,16 +62,6 @@ The `dbConverter` prop allows you to convert data into a format suitable for `b-
 
 ### Rendering Components
 
-In this example:
-
-- The `b-virtual-scroll` component is used to render 12 items per one render cycle.
-It interacts with the `Provider` data provider to fetch the data. The `request` prop is set to `{ get: { chunkSize: 12 } }`, specifying that each request should fetch 12 items.
-- The `requestQuery` function computes additional request parameters based on the component state, specifically the `loadPage` property. These request parameters are merged with the `request` prop.
-- The `b-virtual-scroll` component renders `b-dummy` components using the `item` prop.
-Each `b-dummy` component receives the `name` and `type` props, which are derived from the `data` object for each item using the `itemProps` function.
-- The component includes a `loader` slot that displays the message "Data loading in progress" while the data is being fetched.
-- By default, the component stops loading data when it receives an empty response from the `dataProvider`, indicating that there are no more items to load.
-
 ```
 < b-virtual-scroll &
   :dataProvider = 'Provider' |
@@ -85,6 +75,16 @@ Each `b-dummy` component receives the `name` and `type` props, which are derived
     < .&__loader
       Data loading in progress
 ```
+
+In this example:
+
+- The `b-virtual-scroll` component is used to render 12 items per one render cycle.
+It interacts with the `Provider` data provider to fetch the data. The `request` prop is set to `{ get: { chunkSize: 12 } }`, specifying that each request should fetch 12 items.
+- The `requestQuery` function computes additional request parameters based on the component state, specifically the `loadPage` property. These request parameters are merged with the `request` prop.
+- The `b-virtual-scroll` component renders `b-dummy` components using the `item` prop.
+Each `b-dummy` component receives the `name` and `type` props, which are derived from the `data` object for each item using the `itemProps` function.
+- The component includes a `loader` slot that displays the message "Data loading in progress" while the data is being fetched.
+- By default, the component stops loading data when it receives an empty response from the `dataProvider`, indicating that there are no more items to load.
 
 ### Rendering on click
 
@@ -135,7 +135,7 @@ In all of these cases, the component's lifecycle will be reset to its initial st
 
 ## Slots
 
-The component supports a bunch of slots to provide.
+The component supports several slots for customization:
 
 1. The `loader` slot allows you to display different content (usually skeletons) while the data is being loaded.
 
@@ -150,7 +150,7 @@ The component supports a bunch of slots to provide.
 
 ```
 < b-virtual-scroll :tombstonesSize = 3
-  < template #loader
+  < template #tombstone
     < .&__skeleton
       Skeleton
 ```
@@ -173,7 +173,8 @@ The component supports a bunch of slots to provide.
       No data
 ```
 
-5. The `done` slot allows you to display different content when the component has finished loading and rendering all the data.
+5. The `done` slot allows you to display different content when the component has finished loading and rendering all the data. The `done` slot
+will be displayed after `lifecycleDone` event is fired.
 
 ```
 < b-virtual-scroll
@@ -201,7 +202,7 @@ This slot can be useful when implementing lazy content rendering on button click
 
 This function is called in the `bVirtualScroll.renderGuard` after other checks are completed.
 It receives the component state as input and determines whether the component should render the next chunk of components.
-The function should return a boolean value: `true` to allow rendering the next chunk, or `false` to prevent it.
+The function should return a boolean value: `true` to allow the rendering of the next chunk, or `false` to prevent it.
 
 Example usage:
 
@@ -214,9 +215,11 @@ const shouldPerformDataRender = (state: VirtualScrollState): boolean => {
 ### `shouldPerformDataRequest`
 
 - Type: `Function`
-- Default: `() => state.lastLoadedData.length > 0`
+- Default: `(state: VirtualScrollState) => state.lastLoadedData.length > 0`
 
 The `shouldPerformDataRequest` property of `bVirtualScroll` allows you to control whether the component should request additional data based on the component state.
+This function allows the component to understand whether the data loading lifecycle is complete or not.
+
 Here's an example of how you can use `shouldPerformDataRequest`:
 
 ```typescript

@@ -37,7 +37,7 @@ export const componentDataLocalEvents: ComponentDataLocalEvents = <const>{
 	dataLoadStart: 'dataLoadStart',
 	dataLoadError: 'dataLoadError',
 	dataLoadSuccess: 'dataLoadSuccess',
-	dataEmpty: 'dataEmpty'
+	dataLoadEmpty: 'dataLoadEmpty'
 };
 
 /**
@@ -96,8 +96,8 @@ export const componentItemType: ComponentItemType = <const>{
 export const defaultShouldProps = <const>{
 	/** {@link bVirtualScroll.shouldStopRequestingData} */
 	shouldStopRequestingData: (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
-		const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
-		return !isLastRequestNotEmpty();
+		const isLastRequestEmpty = () => state.lastLoadedData.length === 0;
+		return isLastRequestEmpty();
 	},
 
 	/** {@link bVirtualScroll.shouldPerformDataRequest} */

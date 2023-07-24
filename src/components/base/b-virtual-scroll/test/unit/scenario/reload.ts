@@ -48,7 +48,7 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.pick(demoPage.buildTestComponent(component.componentName, component.props));
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize[0]);
+			await component.waitForChildCountEqualsTo(chunkSize[0]);
 
 			await demoPage.updateTestComponent({
 				request: {
@@ -92,7 +92,7 @@ test.describe('<b-virtual-scroll>', () => {
 			]);
 
 			await test.expect(initLoadSpy.calls).resolves.toEqual([[], []]);
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize[1])).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize[1])).resolves.toBeUndefined();
 		});
 	});
 
@@ -158,7 +158,7 @@ test.describe('<b-virtual-scroll>', () => {
 				];
 
 				await test.expect(initLoadSpy.calls).resolves.toEqual(initLoadArgs[i]);
-				await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+				await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 			});
 		});
 	});

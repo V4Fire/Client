@@ -45,7 +45,7 @@ test.describe('<b-virtual-scroll>', () => {
 			childTillEnd: undefined,
 			maxViewedItem: undefined,
 			maxViewedChild: undefined,
-			isRequestsStopped: false,
+			areRequestsStopped: false,
 			isLoadingInProgress: true,
 			lastLoadedData: [],
 			loadPage: 0
@@ -90,7 +90,7 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 
 			const
 				currentState = await component.getComponentState();
@@ -98,7 +98,7 @@ test.describe('<b-virtual-scroll>', () => {
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,
 				isInitialRender: false,
-				isRequestsStopped: false,
+				areRequestsStopped: false,
 				isLoadingInProgress: false,
 				loadPage: 2,
 				renderPage: 1
@@ -114,7 +114,7 @@ test.describe('<b-virtual-scroll>', () => {
 			state.data.addItems(chunkSize);
 
 			await component.scrollToBottom();
-			await component.waitForContainerChildCountEqualsTo(chunkSize * 2);
+			await component.waitForChildCountEqualsTo(chunkSize * 2);
 			await component.scrollToBottom();
 			await component.waitForLifecycleDone();
 
@@ -124,7 +124,7 @@ test.describe('<b-virtual-scroll>', () => {
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,
 				isInitialRender: false,
-				isRequestsStopped: true,
+				areRequestsStopped: true,
 				isLoadingInProgress: false,
 				isLastEmpty: true,
 				isLifecycleDone: true,
@@ -134,7 +134,7 @@ test.describe('<b-virtual-scroll>', () => {
 		});
 	});
 
-	test.describe('State after rendering via `itemsFactory`', () => {
+	test.describe('state after rendering via `itemsFactory`', () => {
 		test('`itemsFactory` returns items with `item` and `separator` type', async () => {
 			const chunkSize = 12;
 
@@ -186,7 +186,7 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize + 1);
+			await component.waitForChildCountEqualsTo(chunkSize + 1);
 			await component.waitForLifecycleDone();
 
 			const
@@ -195,7 +195,7 @@ test.describe('<b-virtual-scroll>', () => {
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,
 				isInitialRender: false,
-				isRequestsStopped: true,
+				areRequestsStopped: true,
 				isLoadingInProgress: false,
 				isLastEmpty: true,
 				isLifecycleDone: true,
@@ -238,7 +238,7 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 			await component.waitForLifecycleDone();
 
 			const
@@ -247,7 +247,7 @@ test.describe('<b-virtual-scroll>', () => {
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,
 				isInitialRender: false,
-				isRequestsStopped: true,
+				areRequestsStopped: true,
 				isLoadingInProgress: false,
 				isLastEmpty: true,
 				isLifecycleDone: true,

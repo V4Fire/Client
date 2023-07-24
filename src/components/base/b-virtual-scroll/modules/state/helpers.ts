@@ -27,7 +27,7 @@ export function createInitialState(): VirtualScrollState {
 		items: [],
 		childList: [],
 		isInitialRender: true,
-		isRequestsStopped: false,
+		areRequestsStopped: false,
 		isLoadingInProgress: false,
 		isLifecycleDone: false,
 		isLastErrored: false

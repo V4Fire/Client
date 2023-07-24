@@ -113,7 +113,7 @@ export class ComponentInternalState extends Friend {
 	 * @param value - The value of the flag.
 	 */
 	setIsRequestsStopped(value: boolean): void {
-		this.state.isRequestsStopped = value;
+		this.state.areRequestsStopped = value;
 	}
 
 	/**

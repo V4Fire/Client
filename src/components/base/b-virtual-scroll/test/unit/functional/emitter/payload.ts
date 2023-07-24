@@ -28,188 +28,196 @@ test.describe('<b-virtual-scroll>', () => {
 		await provider.start();
 	});
 
-	test('All data has been loaded after the initial load', async () => {
-		const chunkSize = 12;
+	test.describe('all data has been loaded after the initial load', () => {
+		test('should emit the correct set of events with the correct set of arguments', async () => {
+			const chunkSize = 12;
 
-		provider
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.response(200, {data: []});
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: []});
 
-		await component
-			.withDefaultPaginationProviderProps({chunkSize})
-			.withProps({
-				chunkSize,
-				shouldStopRequestingData: () => true,
-				'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
-			})
-			.build();
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldStopRequestingData: () => true,
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+				})
+				.build();
 
-		await component.waitForLifecycleDone();
+			await component.waitForLifecycleDone();
 
-		const
-			spy = await component.getSpy((ctx) => ctx.emit),
-			calls = filterEmitterCalls(await spy.calls);
+			const
+				spy = await component.getSpy((ctx) => ctx.emit),
+				calls = filterEmitterCalls(await spy.calls);
 
-		test.expect(calls).toEqual([
-			['dataLoadStart', true],
-			['convertDataToDB', {data: state.data.data}],
-			['dataLoadSuccess', state.data.data, true],
-			['renderStart'],
-			['renderEngineStart'],
-			['renderEngineDone'],
-			['domInsertStart'],
-			['domInsertDone'],
-			['renderDone'],
-			['lifecycleDone']
-		]);
+			test.expect(calls).toEqual([
+				['dataLoadStart', true],
+				['convertDataToDB', {data: state.data.data}],
+				['dataLoadSuccess', state.data.data, true],
+				['renderStart'],
+				['renderEngineStart'],
+				['renderEngineDone'],
+				['domInsertStart'],
+				['domInsertDone'],
+				['renderDone'],
+				['lifecycleDone']
+			]);
+		});
 	});
 
-	test('All data has been loaded after the second load', async () => {
-		const
-			chunkSize = 12,
-			providerChunkSize = chunkSize / 2;
+	test.describe('all data has been loaded after the second load', () => {
+		test('should emit the correct set of events with the correct set of arguments', async () => {
+			const
+				chunkSize = 12,
+				providerChunkSize = chunkSize / 2;
 
-		const
-			firstDataChunk = state.data.addData(providerChunkSize),
-			secondDataChunk = state.data.addData(providerChunkSize);
+			const
+				firstDataChunk = state.data.addData(providerChunkSize),
+				secondDataChunk = state.data.addData(providerChunkSize);
 
-		provider
-			.responseOnce(200, {data: firstDataChunk})
-			.responseOnce(200, {data: secondDataChunk})
-			.response(200, {data: []});
+			provider
+				.responseOnce(200, {data: firstDataChunk})
+				.responseOnce(200, {data: secondDataChunk})
+				.response(200, {data: []});
 
-		await component
-			.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
-			.withProps({
-				chunkSize,
-				shouldPerformDataRequest: () => true,
-				shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-				'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
-			})
-			.build();
+			await component
+				.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRequest: () => true,
+					shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+				})
+				.build();
 
-		await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 
-		const
-			spy = await component.getSpy((ctx) => ctx.emit),
-			calls = filterEmitterCalls(await spy.calls);
+			const
+				spy = await component.getSpy((ctx) => ctx.emit),
+				calls = filterEmitterCalls(await spy.calls);
 
-		test.expect(calls).toEqual([
-			['dataLoadStart', true],
-			['convertDataToDB', {data: firstDataChunk}],
-			['dataLoadSuccess', firstDataChunk, true],
-			['dataLoadStart', false],
-			['convertDataToDB', {data: secondDataChunk}],
-			['dataLoadSuccess', secondDataChunk, false],
-			['renderStart'],
-			['renderEngineStart'],
-			['renderEngineDone'],
-			['domInsertStart'],
-			['domInsertDone'],
-			['renderDone'],
-			['dataLoadStart', false],
-			['convertDataToDB', {data: []}],
-			['dataLoadSuccess', [], false],
-			['lifecycleDone']
-		]);
+			test.expect(calls).toEqual([
+				['dataLoadStart', true],
+				['convertDataToDB', {data: firstDataChunk}],
+				['dataLoadSuccess', firstDataChunk, true],
+				['dataLoadStart', false],
+				['convertDataToDB', {data: secondDataChunk}],
+				['dataLoadSuccess', secondDataChunk, false],
+				['renderStart'],
+				['renderEngineStart'],
+				['renderEngineDone'],
+				['domInsertStart'],
+				['domInsertDone'],
+				['renderDone'],
+				['dataLoadStart', false],
+				['convertDataToDB', {data: []}],
+				['dataLoadSuccess', [], false],
+				['lifecycleDone']
+			]);
+		});
 	});
 
-	test('Data loading is completed but data is less than chunkSize', async () => {
-		const
-			chunkSize = 12,
-			providerChunkSize = chunkSize / 2;
+	test.describe('data loading is completed but data is less than chunkSize', () => {
+		test('should emit the correct set of events with the correct set of arguments', async () => {
+			const
+				chunkSize = 12,
+				providerChunkSize = chunkSize / 2;
 
-		const
-			firstDataChunk = state.data.addData(providerChunkSize);
+			const
+				firstDataChunk = state.data.addData(providerChunkSize);
 
-		provider
-			.responseOnce(200, {data: firstDataChunk})
-			.response(200, {data: []});
+			provider
+				.responseOnce(200, {data: firstDataChunk})
+				.response(200, {data: []});
 
-		await component
-			.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
-			.withProps({
-				chunkSize,
-				shouldPerformDataRequest: () => true,
-				shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
-				'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
-			})
-			.build();
+			await component
+				.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRequest: () => true,
+					shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+				})
+				.build();
 
-		await component.waitForContainerChildCountEqualsTo(providerChunkSize);
-		await component.waitForLifecycleDone();
+			await component.waitForChildCountEqualsTo(providerChunkSize);
+			await component.waitForLifecycleDone();
 
-		const
-			spy = await component.getSpy((ctx) => ctx.emit),
-			calls = filterEmitterCalls(await spy.calls);
+			const
+				spy = await component.getSpy((ctx) => ctx.emit),
+				calls = filterEmitterCalls(await spy.calls);
 
-		test.expect(calls).toEqual([
-			['dataLoadStart', true],
-			['convertDataToDB', {data: firstDataChunk}],
-			['dataLoadSuccess', firstDataChunk, true],
-			['dataLoadStart', false],
-			['convertDataToDB', {data: []}],
-			['dataLoadSuccess', [], false],
-			['renderStart'],
-			['renderEngineStart'],
-			['renderEngineDone'],
-			['domInsertStart'],
-			['lifecycleDone'],
-			['domInsertDone'],
-			['renderDone']
-		]);
+			test.expect(calls).toEqual([
+				['dataLoadStart', true],
+				['convertDataToDB', {data: firstDataChunk}],
+				['dataLoadSuccess', firstDataChunk, true],
+				['dataLoadStart', false],
+				['convertDataToDB', {data: []}],
+				['dataLoadSuccess', [], false],
+				['renderStart'],
+				['renderEngineStart'],
+				['renderEngineDone'],
+				['domInsertStart'],
+				['lifecycleDone'],
+				['domInsertDone'],
+				['renderDone']
+			]);
+		});
 	});
 
-	test('Reload was called after data was rendered', async () => {
-		const chunkSize = 12;
+	test.describe('reload was called after data was rendered', () => {
+		test('should emit the correct set of events with the correct set of arguments', async () => {
+			const chunkSize = 12;
 
-		provider
-			.responseOnce(200, {data: state.data.addData(chunkSize)})
-			.response(200, {data: []});
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: []});
 
-		await component
-			.withDefaultPaginationProviderProps({chunkSize})
-			.withProps({
-				chunkSize,
-				shouldStopRequestingData: () => true,
-				'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
-			})
-			.build();
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldStopRequestingData: () => true,
+					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
+				})
+				.build();
 
-		await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 
-		state.reset();
-		provider.responseOnce(200, {data: state.data.addData(chunkSize)});
+			state.reset();
+			provider.responseOnce(200, {data: state.data.addData(chunkSize)});
 
-		await component.reload();
-		await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.reload();
+			await component.waitForChildCountEqualsTo(chunkSize);
 
-		const
-			spy = await component.getSpy((ctx) => ctx.emit),
-			calls = filterEmitterCalls(await spy.calls);
+			const
+				spy = await component.getSpy((ctx) => ctx.emit),
+				calls = filterEmitterCalls(await spy.calls);
 
-		test.expect(calls).toEqual([
-			['dataLoadStart', true],
-			['convertDataToDB', {data: state.data.data}],
-			['dataLoadSuccess', state.data.data, true],
-			['renderStart'],
-			['renderEngineStart'],
-			['renderEngineDone'],
-			['domInsertStart'],
-			['domInsertDone'],
-			['renderDone'],
-			['lifecycleDone'],
-			['resetState'],
-			['dataLoadStart', true],
-			['convertDataToDB', {data: state.data.data}],
-			['dataLoadSuccess', state.data.data, true],
-			['renderStart'],
-			['renderEngineStart'],
-			['renderEngineDone'],
-			['domInsertStart'],
-			['domInsertDone'],
-			['renderDone'],
-			['lifecycleDone']
-		]);
+			test.expect(calls).toEqual([
+				['dataLoadStart', true],
+				['convertDataToDB', {data: state.data.data}],
+				['dataLoadSuccess', state.data.data, true],
+				['renderStart'],
+				['renderEngineStart'],
+				['renderEngineDone'],
+				['domInsertStart'],
+				['domInsertDone'],
+				['renderDone'],
+				['lifecycleDone'],
+				['resetState'],
+				['dataLoadStart', true],
+				['convertDataToDB', {data: state.data.data}],
+				['dataLoadSuccess', state.data.data, true],
+				['renderStart'],
+				['renderEngineStart'],
+				['renderEngineDone'],
+				['domInsertStart'],
+				['domInsertDone'],
+				['renderDone'],
+				['lifecycleDone']
+			]);
+		});
 	});
 });

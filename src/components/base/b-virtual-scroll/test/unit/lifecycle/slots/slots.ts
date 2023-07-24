@@ -34,7 +34,7 @@ test.describe('<b-virtual-scroll>', () => {
 		({component, provider, state} = await createTestHelpers(page));
 		await provider.start();
 
-		await component.setChildren({
+		await component.withChildren({
 			done: {
 				type: 'div',
 				attrs: {
@@ -77,7 +77,7 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 	test.describe('`done`', () => {
-		test('Activates when all data has been loaded after the initial load', async () => {
+		test('activates when all data has been loaded after the initial load', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -105,7 +105,7 @@ test.describe('<b-virtual-scroll>', () => {
 			});
 		});
 
-		test('Activates when all data has been loaded after the second load', async () => {
+		test('activates when all data has been loaded after the second load', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -138,7 +138,7 @@ test.describe('<b-virtual-scroll>', () => {
 			});
 		});
 
-		test('Activates when data loading is completed but data is less than chunkSize', async () => {
+		test('activates when data loading is completed but data is less than chunkSize', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -169,7 +169,7 @@ test.describe('<b-virtual-scroll>', () => {
 			});
 		});
 
-		test('Does not activates if there is more data to download', async () => {
+		test('does not activates if there is more data to download', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -193,7 +193,7 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 			await component.waitForSlotState('loader', false);
 
 			const
@@ -212,7 +212,7 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 	test.describe('empty', () => {
-		test('Activates when no data has been loaded after the initial load', async () => {
+		test('activates when no data has been loaded after the initial load', async () => {
 			const chunkSize = 12;
 
 			provider.response(200, {data: []});
@@ -243,7 +243,7 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 	test.describe('tombstone & loader', () => {
-		test('Activates while initial data loading in progress', async () => {
+		test('activates while initial data loading in progress', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -270,7 +270,7 @@ test.describe('<b-virtual-scroll>', () => {
 			});
 		});
 
-		test('Active while initial load loads all data', async () => {
+		test('active while initial load loads all data', async () => {
 			const
 				chunkSize = 12,
 				providerChunkSize = chunkSize / 2;
@@ -308,7 +308,7 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 	test.describe('retry', () => {
-		test('Activates when a data load error occurred during initial loading', async () => {
+		test('activates when a data load error occurred during initial loading', async () => {
 			const chunkSize = 12;
 
 			provider.response(500, {});
@@ -337,7 +337,7 @@ test.describe('<b-virtual-scroll>', () => {
 			});
 		});
 
-		test('Activates when a data load error occurred during initial loading of the second data chunk', async () => {
+		test('activates when a data load error occurred during initial loading of the second data chunk', async () => {
 			const
 				chunkSize = 12,
 				providerChunkSize = chunkSize / 2;
@@ -373,7 +373,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 	test.describe('renderNext', () => {
 		test.beforeEach(async () => {
-			await component.setChildren({
+			await component.withChildren({
 				renderNext: {
 					type: 'div',
 					attrs: {
@@ -383,7 +383,7 @@ test.describe('<b-virtual-scroll>', () => {
 			});
 		});
 
-		test('Activates when data is loaded', async () => {
+		test('activates when data is loaded', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -415,7 +415,7 @@ test.describe('<b-virtual-scroll>', () => {
 			});
 		});
 
-		test('Doesn\'t activates while data is loading', async ({page}) => {
+		test('doesn\'t activates while data is loading', async ({page}) => {
 			const chunkSize = 12;
 
 			provider
@@ -448,7 +448,7 @@ test.describe('<b-virtual-scroll>', () => {
 			});
 		});
 
-		test('Doesn\'t activates if there\'s a data loading error', async () => {
+		test('doesn\'t activates if there\'s a data loading error', async () => {
 			const chunkSize = 12;
 
 			provider.response(500, {data: []});

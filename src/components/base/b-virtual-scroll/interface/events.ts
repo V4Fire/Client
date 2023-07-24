@@ -7,7 +7,15 @@
  */
 
 import type { MountedChild } from 'components/base/b-virtual-scroll/interface/component';
-import { componentDataLocalEvents, componentLocalEvents, componentObserverLocalEvents, componentRenderLocalEvents } from 'components/base/b-virtual-scroll/const';
+
+import {
+
+	componentDataLocalEvents,
+	componentLocalEvents,
+	componentObserverLocalEvents,
+	componentRenderLocalEvents
+
+} from 'components/base/b-virtual-scroll/const';
 
 /**
  * Component data-related events (emitted in `selfEmitter`).
@@ -31,7 +39,7 @@ export interface ComponentDataLocalEvents {
 	/**
 	 * Successful load with no data.
 	 */
-	dataEmpty: 'dataEmpty';
+	dataLoadEmpty: 'dataLoadEmpty';
 }
 
 /**
@@ -116,7 +124,7 @@ export interface LocalEventPayloadMap {
 	[componentDataLocalEvents.dataLoadSuccess]: [data: object[], isInitialLoading: boolean];
 	[componentDataLocalEvents.dataLoadStart]: [isInitialLoading: boolean];
 	[componentDataLocalEvents.dataLoadError]: [isInitialLoading: boolean];
-	[componentDataLocalEvents.dataEmpty]: [];
+	[componentDataLocalEvents.dataLoadEmpty]: [];
 
 	[componentLocalEvents.resetState]: [];
 	[componentLocalEvents.lifecycleDone]: [];

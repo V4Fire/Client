@@ -30,7 +30,7 @@ test.describe('<b-virtual-scroll>', () => {
 		({component, provider, state} = await createTestHelpers(page));
 		await provider.start();
 
-		await component.setChildren({
+		await component.withChildren({
 			retry: {
 				type: 'div',
 				attrs: {
@@ -41,8 +41,8 @@ test.describe('<b-virtual-scroll>', () => {
 		});
 	});
 
-	test.describe('Data loading error ocurred on initial loading', () => {
-		test('Should reload data after initLoad call', async () => {
+	test.describe('data loading error ocurred on initial loading', () => {
+		test('should reload data after initLoad call', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -57,10 +57,10 @@ test.describe('<b-virtual-scroll>', () => {
 
 			await component.node.locator('#retry').click();
 
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
 
-		test('Should reload data after invoking retry function from `onRequestError` handler', async () => {
+		test('should reload data after invoking retry function from `onRequestError` handler', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -76,10 +76,10 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
 
-		test('Should goes to retry state after failing to load data twice', async () => {
+		test('should goes to retry state after failing to load data twice', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -98,12 +98,12 @@ test.describe('<b-virtual-scroll>', () => {
 			await event;
 			await component.node.locator('#retry').click();
 
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
 	});
 
-	test.describe('Data loading error ocurred on second data chunk loading', () => {
-		test('Should reload second data chunk after initLoad call', async () => {
+	test.describe('data loading error ocurred on second data chunk loading', () => {
+		test('should reload second data chunk after initLoad call', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -117,18 +117,18 @@ test.describe('<b-virtual-scroll>', () => {
 				.withProps({chunkSize})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 			await component.scrollToBottom();
 
 			await component.node.locator('#retry').click();
 			await component.waitForDataIndexChild(chunkSize * 2 - 1);
 
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
 		});
 	});
 
-	test.describe('An error occurred while loading the second chunk of data for rendering the first chunk of elements', () => {
-		test('Should reload second data chunk and perform a render', async () => {
+	test.describe('an error occurred while loading the second chunk of data for rendering the first chunk of elements', () => {
+		test('should reload second data chunk and perform a render', async () => {
 			const
 				chunkSize = 12,
 				providerChunkSize = chunkSize / 2;
@@ -146,16 +146,16 @@ test.describe('<b-virtual-scroll>', () => {
 
 			await component.node.locator('#retry').click();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 			await component.waitForDataIndexChild(chunkSize - 1);
 			await component.waitForLifecycleDone();
 
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
 	});
 
-	test.describe('An error occurred while loading the last chunk of data', () => {
-		test('After a successful load, the component lifecycle should complete', async () => {
+	test.describe('an error occurred while loading the last chunk of data', () => {
+		test('after a successful load, the component lifecycle should complete', async () => {
 			const chunkSize = 12;
 
 			provider
@@ -172,7 +172,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 			test.expect(provider.mock.mock.calls.length).toBe(3);
 			await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
 	});
 });

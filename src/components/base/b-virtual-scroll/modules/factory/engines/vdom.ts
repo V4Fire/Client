@@ -18,8 +18,17 @@ import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scro
 export function render(ctx: bVirtualScroll, items: VNodeDescriptor[]): HTMLElement[] {
 	const
 		vnodes = ctx.vdom.create(...items),
-		// https://github.com/vuejs/core/issues/6061
-		nodes = ctx.vdom.render(vnodes).filter((node) => node.nodeType !== node.TEXT_NODE);
+		nodes = ctx.vdom.render(vnodes);
+
+	// https://github.com/vuejs/core/issues/6061
+	if (nodes[0].nodeType === Node.TEXT_NODE) {
+		nodes.shift();
+	}
+
+	// https://github.com/vuejs/core/issues/6061
+	if (nodes[nodes.length - 1].nodeType === Node.TEXT_NODE) {
+		nodes.pop();
+	}
 
 	return <HTMLElement[]>nodes;
 }

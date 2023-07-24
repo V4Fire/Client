@@ -61,7 +61,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Returns the count of children in the container.
 	 */
-	async getContainerChildCount(): Promise<number> {
+	async getChildCount(): Promise<number> {
 		return this.childList.count();
 	}
 
@@ -71,7 +71,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 *
 	 * @param count - The expected child count.
 	 */
-	async waitForContainerChildCountEqualsTo(count: number): Promise<void> {
+	async waitForChildCountEqualsTo(count: number): Promise<void> {
 		await this.childList.nth(count - 1).waitFor({state: 'attached'});
 
 		const realCount = await this.childList.count();

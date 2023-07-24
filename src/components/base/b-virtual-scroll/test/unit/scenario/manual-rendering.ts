@@ -31,7 +31,7 @@ test.describe('<b-virtual-scroll>', () => {
 		({component, provider, state} = await createTestHelpers(page));
 		await provider.start();
 
-		await component.setChildren({
+		await component.withChildren({
 			renderNext: {
 				type: 'div',
 				attrs: {
@@ -50,7 +50,7 @@ test.describe('<b-virtual-scroll>', () => {
 		});
 	});
 
-	test.describe('The first chunk of data is loaded and rendered', () => {
+	test.describe('the first chunk of data is loaded and rendered', () => {
 		const chunkSize = 12;
 
 		test.beforeEach(async () => {
@@ -65,18 +65,18 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 		});
 
-		test('Should load and render the next chunk after calling initLoadNext', async () => {
+		test('should load and render the next chunk after calling initLoadNext', async () => {
 			await component.node.locator('#renderNext').click();
 
 			test.expect(provider.mock.mock.calls.length).toBe(2);
 			await test.expect(component.waitForDataIndexChild(chunkSize * 2 - 1)).resolves.toBeUndefined();
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
 		});
 
-		test('Should complete the component lifecycle after all data is loaded', async () => {
+		test('should complete the component lifecycle after all data is loaded', async () => {
 			provider.response(200, {data: []});
 
 			await component.node.locator('#renderNext').click();
@@ -84,44 +84,44 @@ test.describe('<b-virtual-scroll>', () => {
 			await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
 			await test.expect(component.waitForSlotState('renderNext', false)).resolves.toBeUndefined();
 			await test.expect(component.waitForDataIndexChild(chunkSize - 1)).resolves.toBeUndefined();
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
 
-		test.describe('An error occurred while loading the second chunk of data', () => {
+		test.describe('an error occurred while loading the second chunk of data', () => {
 			test.beforeEach(async () => {
 				provider.responseOnce(500, {data: []});
 				await component.node.locator('#renderNext').click();
 			});
 
-			test('Should not display the renderNext slot', async () => {
+			test('should not display the renderNext slot', async () => {
 				await test.expect(component.waitForSlotState('renderNext', false)).resolves.toBeUndefined();
 			});
 
-			test('Should display the retry slot', async () => {
+			test('should display the retry slot', async () => {
 				await test.expect(component.waitForSlotState('retry', true)).resolves.toBeUndefined();
 			});
 
-			test.describe('Data reload occurred', () => {
+			test.describe('data reload occurred', () => {
 				test.beforeEach(async () => {
 					await component.node.locator('#retry').click();
 				});
 
-				test('Should display the loaded data', async () => {
+				test('should display the loaded data', async () => {
 					await test.expect(component.waitForDataIndexChild(chunkSize * 2 - 1)).resolves.toBeUndefined();
-					await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
+					await test.expect(component.waitForChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
 				});
 
-				test.describe('No more data to display', () => {
+				test.describe('no more data to display', () => {
 					test.beforeEach(async () => {
 						provider.response(200, {data: []});
 						await component.node.locator('#renderNext').click();
 					});
 
-					test('Should complete the component lifecycle after all data is loaded', async () => {
+					test('should complete the component lifecycle after all data is loaded', async () => {
 						await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
 						await test.expect(component.waitForSlotState('renderNext', false)).resolves.toBeUndefined();
 						await test.expect(component.waitForDataIndexChild(chunkSize * 2 - 1)).resolves.toBeUndefined();
-						await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
+						await test.expect(component.waitForChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
 					});
 				});
 			});

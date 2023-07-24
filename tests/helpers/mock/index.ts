@@ -76,7 +76,7 @@ export async function createSpy<T extends JSHandle, ARGS extends any[]>(
 }
 
 /**
- * Retrieves an existing spy object from a `JSHandle`.
+ * Retrieves an existing {@link SpyObject} from a `JSHandle`.
  *
  * @param ctx - The `JSHandle` containing the spy object.
  * @param spyExtractor - The function to extract the spy object.
@@ -113,7 +113,7 @@ export async function getSpy<T extends JSHandle>(
  * @param page - The Page object to inject the mock function into.
  * @param fn - The mock function.
  * @param args - The arguments to pass to the function.
- * @returns A promise that resolves to the mock function as a spy object.
+ * @returns A promise that resolves to the mock function as a {@link SpyObject}.
  *
  * @example
  * ```typescript
@@ -140,7 +140,7 @@ export async function createMockFn(
 }
 
 /**
- * Injects a mock function into a Page object and returns the spy object.
+ * Injects a mock function into a Page object and returns the {@link SpyObject}.
  *
  * This function also returns the ID of the injected mock function, which is stored in `globalThis`.
  * This binding allows the function to be found during object serialization within the page context.

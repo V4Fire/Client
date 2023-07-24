@@ -48,17 +48,17 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.pick(demoPage.buildTestComponent(component.componentName, component.props));
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 			await demoPage.updateTestComponent({chunkSize: chunkSize * 2});
 			await component.scrollToBottom();
-			await component.waitForContainerChildCountEqualsTo(chunkSize * 3);
+			await component.waitForChildCountEqualsTo(chunkSize * 3);
 
 			const
 				produceSpy = await component.getSpy((ctx) => ctx.componentFactory.produceComponentItems);
 
 			test.expect(provider.mock.mock.calls.length).toBe(3);
 			await test.expect(produceSpy.calls).resolves.toHaveLength(2);
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize * 3)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize * 3)).resolves.toBeUndefined();
 			await test.expect(component.waitForDataIndexChild(chunkSize * 3 - 1)).resolves.toBeUndefined();
 		});
 	});
@@ -80,7 +80,7 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 
 			const
 				providerCalls = provider.mock.mock.calls,
@@ -111,7 +111,7 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
 
 		test('Should convert second data chunk to the component', async () => {
@@ -129,10 +129,10 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await component.waitForContainerChildCountEqualsTo(chunkSize);
+			await component.waitForChildCountEqualsTo(chunkSize);
 			await component.scrollToBottom();
 
-			await test.expect(component.waitForContainerChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
 		});
 	});
 });

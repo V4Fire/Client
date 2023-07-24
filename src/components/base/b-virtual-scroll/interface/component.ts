@@ -71,7 +71,7 @@ export interface VirtualScrollState<DATA = object, RAW_DATA = unknown> {
 	/**
 	 * Indicates if the component has stopped making requests.
 	 */
-	isRequestsStopped: boolean;
+	areRequestsStopped: boolean;
 
 	/**
 	 * Indicates if there is an ongoing loading process.

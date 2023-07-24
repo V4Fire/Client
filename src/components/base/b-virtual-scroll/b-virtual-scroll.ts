@@ -17,16 +17,21 @@ import type iItems from 'components/traits/i-items/i-items';
 import VDOM, { create, render } from 'components/friends/vdom';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll/handlers';
 import { bVirtualScrollDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-virtual-scroll/const';
-import type { VirtualScrollState, RenderGuardResult, UnsafeBVirtualScroll } from 'components/base/b-virtual-scroll/interface';
+import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll } from 'components/base/b-virtual-scroll/interface';
 
-import iData, { $$, component, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
+import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll/modules/emitter';
+import { ComponentInternalState } from 'components/base/b-virtual-scroll/modules/state';
+import { SlotsStateController } from 'components/base/b-virtual-scroll/modules/slots';
+import { ComponentFactory } from 'components/base/b-virtual-scroll/modules/factory';
+import { Observer } from 'components/base/b-virtual-scroll/modules/observer';
+
+import iData, { $$, component, system, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-virtual-scroll/interface';
 export * from 'components/base/b-virtual-scroll/const';
 export * from 'components/super/i-data/i-data';
 
-VDOM.addToPrototype(create);
-VDOM.addToPrototype(render);
+VDOM.addToPrototype({create, render});
 
 /**
  * Component that implements loading and rendering of large data arrays in chunks.
@@ -37,6 +42,29 @@ VDOM.addToPrototype(render);
  */
 @component()
 export default class bVirtualScroll extends iVirtualScrollHandlers implements iItems {
+
+	/** {@link componentTypedEmitter} */
+	@system<bVirtualScroll>((ctx) => componentTypedEmitter(ctx))
+	protected readonly componentEmitter!: ComponentTypedEmitter;
+
+	/** {@link SlotsStateController} */
+	@system<bVirtualScroll>((ctx) => new SlotsStateController(ctx))
+	protected readonly slotsStateController!: SlotsStateController;
+
+	/** {@link ComponentInternalState} */
+	@system<bVirtualScroll>((ctx) => new ComponentInternalState(ctx))
+	protected readonly componentInternalState!: ComponentInternalState;
+
+	/** {@link ComponentFactory} */
+	@system<bVirtualScroll>((ctx) => new ComponentFactory(ctx))
+	protected readonly componentFactory!: ComponentFactory;
+
+	/** {@link Observer} */
+	@system<bVirtualScroll>((ctx) => new Observer(ctx))
+	protected readonly observer!: Observer;
+
+	protected override readonly $refs!: iData['$refs'] & $ComponentRefs;
+
 	// @ts-ignore (getter instead readonly)
 	override get requestParams(): iData['requestParams'] {
 		return {
@@ -163,8 +191,8 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	shouldStopRequestingDataWrapper(this: bVirtualScroll): boolean {
 		const state = this.getComponentState();
 
-		if (state.isRequestsStopped) {
-			return state.isRequestsStopped;
+		if (state.areRequestsStopped) {
+			return state.areRequestsStopped;
 		}
 
 		const newVal = this.shouldStopRequestingData(state, this);
@@ -229,7 +257,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 			dataSlice = this.getNextDataSlice(state, chunkSize);
 
 		if (dataSlice.length === 0) {
-			if (state.isRequestsStopped) {
+			if (state.areRequestsStopped) {
 				return {
 					result: false,
 					reason: renderGuardRejectionReason.done
@@ -292,7 +320,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 		}
 
 		if (reason === renderGuardRejectionReason.noData) {
-			if (state.isRequestsStopped) {
+			if (state.areRequestsStopped) {
 				return;
 			}
 
@@ -302,7 +330,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 		}
 
 		if (reason === renderGuardRejectionReason.notEnoughData) {
-			if (state.isRequestsStopped) {
+			if (state.areRequestsStopped) {
 				this.performRender();
 				this.onLifecycleDone();
 
