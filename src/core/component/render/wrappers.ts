@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import { app, componentRenderFactories } from 'core/component/const';
+import { app, isComponent, componentRenderFactories } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -205,11 +205,11 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 			return name;
 		}
 
-		if (SSR) {
-			return original(name);
+		if (isComponent.test(name) && app.context != null) {
+			return app.context.component(name) ?? original(name);
 		}
 
-		return app.context != null ? app.context.component(name) ?? original(name) : original(name);
+		return original(name);
 	});
 }
 
