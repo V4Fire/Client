@@ -8,21 +8,21 @@
 
 export interface SetOptions {
 	/**
-	 * A path where the cookie is defined
+	 * The path where the cookie is defined
 	 * @default `'/'`
 	 */
 	path?: string;
 
 	/**
-	 * A domain where the cookie is defined.
+	 * The domain in which the cookie file is defined.
 	 * By default, cookies can only be used with the current domain.
-	 * To allow cookies for all subdomains, set this option to the root domain.
+	 * To allow the use of cookies for all subdomains, set this parameter to the value of the root domain.
 	 */
 	domain?: string;
 
 	/**
-	 * A date when the cookie is expired.
-	 * Also, the option can take string or numeric parameters to create a date.
+	 * The date when the cookie file expires.
+	 * Additionally, this option can be defined a string or number.
 	 *
 	 * @example
 	 * ```js
@@ -32,13 +32,13 @@ export interface SetOptions {
 	expires?: Date | string | number;
 
 	/**
-	 * The maximum lifetime of the created cookie in seconds.
+	 * The maximum lifespan of the created cookie file in seconds.
 	 * This option is an alternative to `expires`.
 	 */
 	maxAge?: number;
 
 	/**
-	 * True if the cookie can only be transmitted over a secure HTTPS connection
+	 * If set to true, the cookie file can only be transmitted through a secure HTTPS connection.
 	 * @default `false`
 	 */
 	secure?: boolean;
@@ -47,14 +47,14 @@ export interface SetOptions {
 	 * This option specifies whether the cookie should be restricted to a first-party/same-site context.
 	 * The option accepts three values:
 	 *
-	 * 1. `lax` - cookies are not sent on normal cross-site subrequests
-	 *    (for example to load images or frames into a third party site), but are sent when a user is navigating to
-	 *    the origin site (i.e. when following a link).
+	 * 1. `lax` - cookies are not sent on normal cross-site sub-requests
+	 *    (for example, to load images or frames into a third party site), but are sent when a user is navigating to
+	 *    the origin site (i.e., when following a link).
 	 *
 	 * 2. `strict` - cookies will only be sent in a first-party context and not be sent along with
 	 *     requests initiated by third party websites.
 	 *
-	 * 3. `none` - cookies will be sent in all contexts, i.e. in responses to both first-party and cross-origin requests.
+	 * 3. `none` - cookies will be sent in all contexts, i.e., in responses to both first-party and cross-origin requests.
 	 *     If this value is set, the cookie `secure` option must also be set (or the cookie will be blocked).
 	 *
 	 * @default '`lax`'
@@ -64,13 +64,13 @@ export interface SetOptions {
 
 export interface RemoveOptions {
 	/**
-	 * A path where the cookie is defined
+	 * The path where the cookie is defined
 	 * @default `'/'`
 	 */
 	path?: string;
 
 	/**
-	 * A domain where the cookie is defined
+	 * The domain in which the cookie file is defined
 	 */
 	domain?: string;
 }

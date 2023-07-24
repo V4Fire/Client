@@ -171,10 +171,6 @@ test.describe('<b-hidden-input> form API', () => {
 		).toEqual(['2', '3']);
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderHiddenInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bHiddenInput>> {
 		await Component.createComponent(page, 'b-hidden-input', [
 			{

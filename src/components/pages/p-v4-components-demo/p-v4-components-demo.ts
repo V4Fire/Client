@@ -12,8 +12,11 @@
  */
 
 import iStaticPage, { component, prop, field, system } from 'components/super/i-static-page/i-static-page';
+import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
 export * from 'components/super/i-static-page/i-static-page';
+
+VDOM.addToPrototype(VDOMAPI);
 
 // eslint-disable-next-line no-console
 console.time('Initializing');

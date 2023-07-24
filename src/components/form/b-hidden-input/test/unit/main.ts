@@ -96,15 +96,11 @@ test.describe('<b-hidden-input>', () => {
 		});
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderHiddenInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bHiddenInput>> {
 		await Component.createComponent(page, 'b-hidden-input', {
 			attrs: {
-				'data-id': 'target',
 				id: 'target',
+				'data-id': 'target',
 				...attrs
 			}
 		});

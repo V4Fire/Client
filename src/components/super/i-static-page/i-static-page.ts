@@ -18,7 +18,15 @@ import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
 
-import { globalState, resetComponents, ComponentResetType } from 'core/component';
+import {
+
+	remoteState,
+	resetComponents,
+
+	GlobalEnvironment,
+	ComponentResetType
+
+} from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -73,7 +81,7 @@ export default abstract class iStaticPage extends iPage {
 	 * A module for manipulating page metadata, such as the page title or description
 	 */
 	@system<iStaticPage>((o) => new PageMetaData({
-		document: Object.cast(o.globalEnv.ssrDocument ?? document)
+		document: o.globalEnv.ssr?.document ?? document
 	}))
 
 	readonly pageMetaData!: PageMetaData;
@@ -112,7 +120,7 @@ export default abstract class iStaticPage extends iPage {
 	 * The initial route for initializing the router.
 	 * Usually, this value is used during SSR.
 	 */
-	@system(() => globalState.route)
+	@system(() => remoteState.route)
 	initialRoute?: InitialRoute;
 
 	/**
@@ -122,10 +130,10 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>({
 		atom: true,
-		init: (o) => o.initGlobalEnv(globalState)
+		init: (o) => o.initGlobalEnv(remoteState)
 	})
 
-	globalEnv!: Dictionary;
+	globalEnv!: GlobalEnvironment;
 
 	/**
 	 * The name of the active route page

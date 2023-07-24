@@ -194,4 +194,3 @@ export default class bButton implements iProgress {
   }
 }
 ```
-

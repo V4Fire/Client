@@ -141,10 +141,6 @@ test.describe('<b-radio-button> standard component events', () => {
 		).toEqual([undefined, 'foo']);
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderRadioButton(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bRadioButton>> {
 		return Component.createComponent(page, 'b-radio-button', {
 			attrs: {

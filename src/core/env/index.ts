@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { GlobalEnvironment } from 'core/component/state';
+
 export * from '@v4fire/core/core/env';
 
 /**
@@ -15,8 +17,8 @@ export * from '@v4fire/core/core/env';
  *
  * @param [env] - an object containing the environment for initialization
  */
-export function initGlobalEnv(env?: object & {globalEnv?: Dictionary}): Dictionary {
-	if (env?.globalEnv == null) {
+export function initGlobalEnv(env?: object & {globalEnv?: GlobalEnvironment}): GlobalEnvironment {
+	if (env == null || !('globalEnv' in env) || env.globalEnv == null) {
 		return {};
 	}
 

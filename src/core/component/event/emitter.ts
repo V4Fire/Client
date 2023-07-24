@@ -74,4 +74,3 @@ export const initEmitter = new EventEmitter({
 		return this;
 	};
 })(initEmitter.once.bind(initEmitter));
-

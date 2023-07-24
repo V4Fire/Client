@@ -22,12 +22,12 @@
 			< template v-for = (el, i) in ${items}
 				< .&__item v-tag = listElementTag
 					< . &
-						v-tag = el.href !== undefined ? 'a' : 'button' |
+						v-tag = getHref(el) !== undefined ? 'a' : 'button' |
 						:key = getItemKey(el, i) |
 
-						:href = el.href |
+						:href = getHref(el) |
 						:value = el.value |
-						:aria-selected = el.href === undefined ? isActive(el.value) : undefined |
+						:aria-selected = getHref(el) === undefined ? isActive(el.value) : undefined |
 
 						:-id = values.getIndex(el.value) |
 						:-hint = el.hint |

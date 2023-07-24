@@ -280,4 +280,3 @@ test.describe('components/directives/bind-with', () => {
 		return <BindWithTestInfo>JSON.parse(attrValue);
 	}
 });
-

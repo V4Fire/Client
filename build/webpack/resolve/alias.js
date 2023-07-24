@@ -17,7 +17,7 @@ const
 	{config: pzlr, resolve} = require('@pzlr/build-core');
 
 /**
- * Options for `webpack.alias`
+ * Options for `webpack.resolve.alias`
  */
 const aliases = {
 	'@super': resolve.rootDependencies[0],

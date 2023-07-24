@@ -52,5 +52,22 @@ export interface State {
 	 * })
 	 * ```
 	 */
-	globalEnv: Dictionary;
+	globalEnv: GlobalEnvironment;
+}
+
+export interface GlobalEnvironment extends Dictionary {
+	/**
+	 * A shim for the `window.location` API
+	 */
+	location?: Location;
+
+	/**
+	 * SSR environment object
+	 */
+	ssr?: {
+		/**
+		 * A shim for the `window.document` API
+		 */
+		document?: Document;
+	};
 }
