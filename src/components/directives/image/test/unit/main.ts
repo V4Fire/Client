@@ -14,11 +14,18 @@ import { Component } from 'tests/helpers';
 import type { ImageOptions } from 'components/directives/image';
 
 import type { ImageTestLocators } from 'components/directives/image/test/interface';
-import { BROKEN_PICTURE_SRC, EXISTING_PICTURE_SRC, SLOW_LOAD_PICTURE_SRC } from 'components/directives/image/test/const';
+import {
+
+	BROKEN_PICTURE_SRC,
+	EXISTING_PICTURE_SRC,
+	SLOW_LOAD_PICTURE_SRC
+
+} from 'components/directives/image/test/const';
 
 import {
 
 	getPngBuffer,
+
 	waitForAttribute,
 	waitForImageLoad,
 	waitForImageLoadFail
@@ -26,23 +33,94 @@ import {
 } from 'components/directives/image/test/helpers';
 
 test.describe('components/directives/image', () => {
-
 	test.use({viewport: {width: 100, height: 100}});
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
+	test(
+		'the directive should be rendered as markup `<span data-image="..."><img data-img="..." src="..."></span>`',
+
+		async ({page}) => {
+			const {wrapper, container} = await renderDirective(page, {src: EXISTING_PICTURE_SRC});
+			await waitForImageLoad(page, container);
+
+			test.expect(await wrapper.innerHTML()).toBe(
+				'<span data-image="loaded"><img data-img="loaded" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAACtJREFUOE9jfCuj8p+BioBx1ECKQ3M0DCkOQobRMBwNQzJCYDTZkBFoaFoAMcorhYzB4yEAAAAASUVORK5CYII=" loading="lazy" style="opacity: 1;"></span>'
+			);
+		}
+	);
+
+	test(
+		'by default, the created `<img>` tag should have the attribute `loading="lazy"`',
+
+		async ({page}) => {
+			const {image} = await renderDirective(page, {src: EXISTING_PICTURE_SRC});
+			await test.expect(image.getAttribute('loading')).toBeResolvedTo('lazy');
+		}
+	);
+
+	test.only(
+		'if the `lazy` parameter is set to false, the loading attribute should not be added',
+
+		async ({page}) => {
+			const {image} = await renderDirective(page, {src: EXISTING_PICTURE_SRC, lazy: false});
+			await test.expect(image.getAttribute('loading')).toBeResolvedTo(undefined);
+		}
+	);
+
+	test(
+		'the directive should preserve the attributes of the node to which it is applied',
+
+		async ({page}) => {
+			const {container} = await renderDirective(page, {src: EXISTING_PICTURE_SRC}, {
+				id: 'demo',
+				class: 'example',
+				'data-some': 'foo'
+			});
+
+			await test.expect(container.getAttribute('id')).toBeResolvedTo('demo');
+			await test.expect(container.getAttribute('class')).toBeResolvedTo('example');
+			await test.expect(container.getAttribute('data-some')).toBeResolvedTo('foo');
+		}
+	);
+
+	test(
+		[
+			'if the `sources` parameter is specified, ' +
+			'the directive should be rendered using the `<picture>` tag instead of `<img>`'
+		].join(''),
+
+		async ({page}) => {
+			const {picture} = await renderDirective(page, {
+				sources: [
+					{width: 20, height: 20, srcset: EXISTING_PICTURE_SRC},
+					{width: 0, height: 0, srcset: BROKEN_PICTURE_SRC}
+				]
+			});
+
+			const sources = await picture.locator('source').all();
+
+			await test.expect(
+				Promise.all(
+					sources.map((locator) => locator.getAttribute('srcset'))
+				)
+
+			).toBeResolvedTo([EXISTING_PICTURE_SRC, BROKEN_PICTURE_SRC]);
+		}
+	);
+
 	test.describe('load states', () => {
 		test('the attributes of the image and the wrapper should indicate a successful load', async ({page}) => {
-			const {imageWrapper, image} = await createImageForTest(page, {src: EXISTING_PICTURE_SRC});
+			const {container, image} = await renderDirective(page, {src: EXISTING_PICTURE_SRC});
 
-			await waitForImageLoad(page, imageWrapper);
+			await waitForImageLoad(page, container);
 
-			const imageWrapperStyle = await imageWrapper.getAttribute('style');
+			const imageWrapperStyle = await container.getAttribute('style');
 
 			test.expect(imageWrapperStyle).toBe(null);
-			await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('loaded');
+			await test.expect(container.getAttribute('data-image')).toBeResolvedTo('loaded');
 
 			await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 1;');
 			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
@@ -50,14 +128,14 @@ test.describe('components/directives/image', () => {
 		});
 
 		test('the initially invisible image should be instantly loaded when the `lazy` option is set to false', async ({page}) => {
-			const {imageWrapper, image} = await createImageForTest(page, {
+			const {container, image} = await renderDirective(page, {
 				lazy: false,
 				src: EXISTING_PICTURE_SRC
 			}, {
 				style: 'margin-top: 200px'
 			});
 
-			await waitForImageLoad(page, imageWrapper);
+			await waitForImageLoad(page, container);
 
 			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
 		});
@@ -76,31 +154,31 @@ test.describe('components/directives/image', () => {
 
 			});
 
-			const {imageWrapper, image} = await createImageForTest(page, {
+			const {container, image} = await renderDirective(page, {
 				src: SLOW_LOAD_PICTURE_SRC,
 				preview: EXISTING_PICTURE_SRC
 			});
 
-			const imageWrapperStyle = await imageWrapper.getAttribute('style');
+			const imageWrapperStyle = await container.getAttribute('style');
 
 			test.expect(imageWrapperStyle?.startsWith(`background-image: url("${EXISTING_PICTURE_SRC}");`))
 				.toBe(true);
 
-			await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('preview');
+			await test.expect(container.getAttribute('data-image')).toBeResolvedTo('preview');
 			await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
 		});
 
 		test('the attributes of the image and the wrapper should indicate that the image is a fallback when the main image failed loading', async ({page}) => {
-			const {imageWrapper, image} = await createImageForTest(page, {
+			const {container, image} = await renderDirective(page, {
 				src: BROKEN_PICTURE_SRC,
 				broken: EXISTING_PICTURE_SRC
 			});
 
-			await waitForImageLoadFail(page, imageWrapper);
+			await waitForImageLoadFail(page, container);
 
-			await test.expect(imageWrapper.getAttribute('data-image')).toBeResolvedTo('broken');
+			await test.expect(container.getAttribute('data-image')).toBeResolvedTo('broken');
 
-			await test.expect(imageWrapper.getAttribute('style'))
+			await test.expect(container.getAttribute('style'))
 				.toBeResolvedTo(`background-image: url("${EXISTING_PICTURE_SRC}");`);
 
 			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('failed');
@@ -112,7 +190,7 @@ test.describe('components/directives/image', () => {
 	test.describe('directive options should be set as `img` attributes', () => {
 		test('the provided `baseSrc` option should be used as a prefix for the `src` attribute of the `img` element',
 			async ({page}) => {
-				const {image} = await createImageForTest(page, {src: 'test.png', baseSrc: 'http://127.0.0.1:1234'});
+				const {image} = await renderDirective(page, {src: 'test.png', baseSrc: 'http://127.0.0.1:1234'});
 
 				await test.expect(image.getAttribute('src')).toBeResolvedTo('http://127.0.0.1:1234/test.png');
 			});
@@ -123,7 +201,7 @@ test.describe('components/directives/image', () => {
 				'2x': BROKEN_PICTURE_SRC
 			};
 
-			const {image} = await createImageForTest(page, {
+			const {image} = await renderDirective(page, {
 				srcset
 			});
 
@@ -133,7 +211,7 @@ test.describe('components/directives/image', () => {
 		});
 
 		test('the provided `width` and `height` options should be set as attributes of the `img` element', async ({page}) => {
-			const {image} = await createImageForTest(page, {
+			const {image} = await renderDirective(page, {
 				width: 100,
 				height: 50
 			});
@@ -143,7 +221,7 @@ test.describe('components/directives/image', () => {
 		});
 
 		test('the provided `sizes` option should be set as an attribute of the `img` element', async ({page}) => {
-			const {image} = await createImageForTest(page, {
+			const {image} = await renderDirective(page, {
 				sizes: '20px'
 			});
 
@@ -151,7 +229,7 @@ test.describe('components/directives/image', () => {
 		});
 
 		test('the provided `alt` option should be set as an attribute of the `img` element', async ({page}) => {
-			const {image} = await createImageForTest(page, {
+			const {image} = await renderDirective(page, {
 				alt: 'Alt text'
 			});
 
@@ -161,7 +239,7 @@ test.describe('components/directives/image', () => {
 
 	test.describe('options resolver', () => {
 		test('the return value of `optionsResolver` should be used instead of the provided options', async ({page}) => {
-			const {image} = await createImageForTest(page, {
+			const {image} = await renderDirective(page, {
 				src: BROKEN_PICTURE_SRC,
 				optionsResolver: (opts) => ({...opts, src: `${opts.src}#resolver-called`})
 			});
@@ -174,7 +252,7 @@ test.describe('components/directives/image', () => {
 
 	test.describe('handlers', () => {
 		test('the provided `onLoad` handler should be called on successful image load', async ({page}) => {
-			const {image} = await createImageForTest(page, {
+			const {image} = await renderDirective(page, {
 				src: EXISTING_PICTURE_SRC,
 
 				onLoad: (el: Element) => {
@@ -188,7 +266,7 @@ test.describe('components/directives/image', () => {
 		});
 
 		test('the provided `onError` handler should be called on image load error', async ({page}) => {
-			const {image} = await createImageForTest(page, {
+			const {image} = await renderDirective(page, {
 				src: BROKEN_PICTURE_SRC,
 
 				onError: (el: Element) => {
@@ -202,49 +280,35 @@ test.describe('components/directives/image', () => {
 		});
 	});
 
-	test.describe('tags', () => {
-		test('a `picture` tag should be rendered when a list of sources is provided', async ({page}) => {
-			const {picture} = await createImageForTest(page, {
-				sources: [
-					{width: 20, height: 20, srcset: EXISTING_PICTURE_SRC},
-					{width: 0, height: 0, srcset: BROKEN_PICTURE_SRC}
-				]
-			});
-
-			const sourcesLocators = await picture.locator('source').all();
-
-			await test.expect(
-				Promise.all(
-					sourcesLocators.map((locator) => locator.getAttribute('srcset'))
-				)
-			).toBeResolvedTo([EXISTING_PICTURE_SRC, BROKEN_PICTURE_SRC]);
-		});
-
-	});
-
-	/**
-	 * Creates an element with `image` directive
-	 *
-	 * @param page
-	 * @param imageOpts - options for the `image` directive
-	 * @param [attrs] - additional attributes for the element to which the directive is applied
-	 */
-	async function createImageForTest(
-		page: Page, imageOpts: Partial<ImageOptions>, attrs?: Partial<RenderComponentsVnodeParams['attrs']>
+	async function renderDirective(
+		page: Page,
+		imageOpts: Partial<ImageOptions>,
+		attrs?: Partial<RenderComponentsVnodeParams['attrs']>
 	): Promise<ImageTestLocators> {
 		await Component.createComponent(page, 'div', {
-			...attrs,
-			'data-testid': 'container',
-			'v-image': imageOpts
+			attrs: {
+				'data-testid': 'target'
+			},
+
+			children: [
+				{
+					type: 'div',
+
+					attrs: {
+						...attrs,
+						'v-image': imageOpts
+					}
+				}
+			]
 		});
 
-		const imageWrapper = page.getByTestId('container');
+		const wrapper = page.getByTestId('target');
 
 		return {
-			imageWrapper,
-			image: imageWrapper.locator('img'),
-			picture: imageWrapper.locator('picture')
+			wrapper,
+			container: wrapper.locator('span'),
+			image: wrapper.locator('img'),
+			picture: wrapper.locator('picture')
 		};
 	}
-
 });
