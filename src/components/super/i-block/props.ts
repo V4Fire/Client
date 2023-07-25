@@ -265,10 +265,6 @@ export default abstract class iBlockProps extends ComponentInterface {
 	@prop(Boolean)
 	readonly renderComponentId: boolean = true;
 
-	/**
-	 * The getter is used to retrieve the root component.
-	 * It is commonly used for dynamically mounting components.
-	 */
 	@prop({type: Function, required: false})
-	readonly getRoot?: () => this['Root'];
+	override readonly getRoot?: () => this['Root'];
 }
