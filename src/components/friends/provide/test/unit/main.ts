@@ -38,17 +38,17 @@ test.describe('friends/provide', () => {
 	test.describe('`fullComponentName`', () => {
 		test('should return the current component name', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullComponentName()))
-				.resolves.toBe(componentName);
+				.toBeResolvedTo(componentName);
 		});
 
 		test('should return the current component name concatenated with the specified modifier and its value', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullComponentName('opened', true)))
-				.resolves.toBe(prefix`_opened_true`);
+				.toBeResolvedTo(prefix`_opened_true`);
 		});
 
 		test('should return the specified component name', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullComponentName('b-foo')))
-				.resolves.toBe('b-foo');
+				.toBeResolvedTo('b-foo');
 		});
 
 		test([
@@ -56,14 +56,14 @@ test.describe('friends/provide', () => {
 			'with the specified modifier and its value'
 		].join(' '), async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullComponentName('b-foo', 'opened', true)))
-				.resolves.toBe('b-foo_opened_true');
+				.toBeResolvedTo('b-foo_opened_true');
 		});
 	});
 
 	test.describe('`fullElementName`', () => {
 		test('should return the current component name concatenated with the specified element name', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullElementName('foo')))
-				.resolves.toBe(prefix`__foo`);
+				.toBeResolvedTo(prefix`__foo`);
 		});
 
 		test([
@@ -71,12 +71,12 @@ test.describe('friends/provide', () => {
 			'the specified modifier and its value'
 		].join(' '), async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullElementName('foo', 'opened', true)))
-				.resolves.toBe(prefix`__foo_opened_true`);
+				.toBeResolvedTo(prefix`__foo_opened_true`);
 		});
 
 		test('should return the specified component name concatenated with the specified element name', async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullElementName('b-foo', 'foo')))
-				.resolves.toBe('b-foo__foo');
+				.toBeResolvedTo('b-foo__foo');
 		});
 
 		test([
@@ -84,7 +84,7 @@ test.describe('friends/provide', () => {
 			'the specified modifier and its value'
 		].join(' '), async () => {
 			await test.expect(target.evaluate(({provide}) => provide.fullElementName('b-foo', 'foo', 'opened', true)))
-				.resolves.toBe('b-foo__foo_opened_true');
+				.toBeResolvedTo('b-foo__foo_opened_true');
 		});
 	});
 

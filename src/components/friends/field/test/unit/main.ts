@@ -30,7 +30,7 @@ test.describe('friends/field', () => {
 
 	test.describe('`get`', () => {
 		test('should get a prop value', async () => {
-			await test.expect(target.evaluate((ctx) => ctx.field.get('p.fooBar'))).resolves.toBe(1);
+			await test.expect(target.evaluate((ctx) => ctx.field.get('p.fooBar'))).toBeResolvedTo(1);
 		});
 	});
 

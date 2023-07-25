@@ -78,7 +78,7 @@ test.describe('friends/dom', () => {
 
 			await page.locator('#emptyDiv').click();
 
-			await test.expect(clickResult).resolves.toBe(1);
+			await test.expect(clickResult).toBeResolvedTo(1);
 		});
 
 		test('the callback should not be fired when a click is performed outside of the specified element', async ({page}) => {

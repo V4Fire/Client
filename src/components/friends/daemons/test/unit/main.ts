@@ -137,7 +137,7 @@ test.describe('friends/daemons', () => {
 	 */
 	async function assertDaemonFlagValue(page: Page, flag: string, value: unknown) {
 		await test.expect(page.evaluate((flag) => globalThis.daemonsTest[flag], flag))
-			.resolves.toBe(value);
+			.toBeResolvedTo(value);
 	}
 
 	/**
