@@ -31,6 +31,8 @@ export default class Transition {
 	 */
 	protected ref: TransitionContext['ref'];
 
+	protected originRef: TransitionContext['ref'];
+
 	/**
 	 * The transition method
 	 */
@@ -66,6 +68,7 @@ export default class Transition {
 
 		// Transition context
 		this.ref = ref;
+		this.originRef = ref;
 		this.method = method;
 		this.opts = router.getBlankRouteFrom(router.normalizeTransitionOpts(opts));
 
@@ -196,7 +199,7 @@ export default class Transition {
 		nonWatchRouteValues: Pick<router.Route, 'url' | 'query' | 'meta'>
 	): Promise<CanUndef<{hardChange:boolean}>> {
 		// If target ref is not null we perform a hard transition
-		const hardChange = this.ref != null;
+		const hardChange = this.originRef != null;
 
 		const {
 			component,
@@ -353,7 +356,7 @@ export default class Transition {
 
 		// If the target ref is null it means we're navigating to the current route,
 		// so we need to mix the new state with the current state
-		if (this.ref == null) {
+		if (this.originRef == null) {
 			deepMixin(true, this.newRouteInfo, router.getBlankRouteFrom(currentRoute));
 			deepMixin(false, this.newRouteInfo, this.opts);
 
