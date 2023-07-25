@@ -363,7 +363,7 @@ export default class bRouter extends bRouterProps {
 	 */
 	@hook('created')
 	protected init(): void {
-		this.field.set('routerStore', this, this.$root);
+		this.field.set('routerStore', this, this.r);
 		this.r.emit('initRouter', this);
 	}
 

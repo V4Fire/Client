@@ -246,7 +246,7 @@ export default class bDynamicPage extends iDynamicPage {
 	override initLoad(): Promise<void> {
 		if (SSR && this.page == null && this.event != null) {
 			this.syncEmitterWatcher();
-			this.$initializer = this.async.promisifyOnce(this.emitter ?? this.$root, this.event);
+			this.$initializer = this.async.promisifyOnce(this.emitter ?? this.r, this.event);
 		}
 
 		return Promise.resolve();
@@ -509,7 +509,7 @@ export default class bDynamicPage extends iDynamicPage {
 			.clearAll(group);
 
 		if (this.event != null) {
-			$a.on(this.emitter ?? this.$root, this.event, (component, e) => {
+			$a.on(this.emitter ?? this.r, this.event, (component, e) => {
 				if (component != null && !((<Dictionary>component).instance instanceof iBlock)) {
 					e = component;
 				}

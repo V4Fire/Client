@@ -184,7 +184,7 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 * ```
 	 */
 	setRootMod(name: string, value: unknown): boolean {
-		return this.$root.setRootMod(name, value, Object.cast(this));
+		return this.r.setRootMod(name, value, Object.cast(this));
 	}
 
 	/**
