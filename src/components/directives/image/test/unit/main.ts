@@ -53,24 +53,6 @@ test.describe('components/directives/image', () => {
 	);
 
 	test(
-		'by default, the created `<img>` tag should have the attribute `loading="lazy"`',
-
-		async ({page}) => {
-			const {image} = await renderDirective(page, {src: EXISTING_PICTURE_SRC});
-			await test.expect(image.getAttribute('loading')).toBeResolvedTo('lazy');
-		}
-	);
-
-	test.only(
-		'if the `lazy` parameter is set to false, the loading attribute should not be added',
-
-		async ({page}) => {
-			const {image} = await renderDirective(page, {src: EXISTING_PICTURE_SRC, lazy: false});
-			await test.expect(image.getAttribute('loading')).toBeResolvedTo(undefined);
-		}
-	);
-
-	test(
 		'the directive should preserve the attributes of the node to which it is applied',
 
 		async ({page}) => {
@@ -80,9 +62,18 @@ test.describe('components/directives/image', () => {
 				'data-some': 'foo'
 			});
 
-			await test.expect(container.getAttribute('id')).toBeResolvedTo('demo');
-			await test.expect(container.getAttribute('class')).toBeResolvedTo('example');
-			await test.expect(container.getAttribute('data-some')).toBeResolvedTo('foo');
+			await test.expect(container.getAttribute('id')).resolves.toBe('demo');
+			await test.expect(container.getAttribute('class')).resolves.toBe('example');
+			await test.expect(container.getAttribute('data-some')).resolves.toBe('foo');
+		}
+	);
+
+	test(
+		'by default, the created `<img>` tag should have the attribute `loading="lazy"`',
+
+		async ({page}) => {
+			const {image} = await renderDirective(page, {src: EXISTING_PICTURE_SRC});
+			await test.expect(image.getAttribute('loading')).resolves.toBe('lazy');
 		}
 	);
 
@@ -107,9 +98,65 @@ test.describe('components/directives/image', () => {
 					sources.map((locator) => locator.getAttribute('srcset'))
 				)
 
-			).toBeResolvedTo([EXISTING_PICTURE_SRC, BROKEN_PICTURE_SRC]);
+			).resolves.toBe([EXISTING_PICTURE_SRC, BROKEN_PICTURE_SRC]);
 		}
 	);
+
+	test.describe('passing attributes to the nested `img` tag', () => {
+		test(
+			'if the `lazy` parameter is set to false, the loading attribute should not be added',
+
+			async ({page}) => {
+				const {image} = await renderDirective(page, {
+					src: EXISTING_PICTURE_SRC,
+					lazy: false
+				});
+
+				await test.expect(image.getAttribute('loading')).resolves.toBe(null);
+			}
+		);
+
+		test(
+			'the `alt` parameter should set the same attribute',
+
+			async ({page}) => {
+				const {image} = await renderDirective(page, {
+					src: EXISTING_PICTURE_SRC,
+					alt: 'Some text'
+				});
+
+				await test.expect(image.getAttribute('alt')).resolves.toBe('Some text');
+			}
+		);
+
+		test(
+			'the `alt` parameter should set the same attribute',
+
+			async ({page}) => {
+				const {image} = await renderDirective(page, {
+					src: EXISTING_PICTURE_SRC,
+					alt: 'Some text'
+				});
+
+				await test.expect(image.getAttribute('alt')).resolves.toBe('Some text');
+			}
+		);
+
+		test(
+			'the `width` and `height` parameters should set the same attributes',
+
+			async ({page}) => {
+				const {image} = await renderDirective(page, {
+					src: EXISTING_PICTURE_SRC,
+					width: 20,
+					height: 50
+				});
+
+				await test.expect(image.getAttribute('width')).resolves.toBe('20');
+				await test.expect(image.getAttribute('width')).resolves.toBe('50');
+			}
+		);
+	});
 
 	test.describe('load states', () => {
 		test('the attributes of the image and the wrapper should indicate a successful load', async ({page}) => {
@@ -120,11 +167,11 @@ test.describe('components/directives/image', () => {
 			const imageWrapperStyle = await container.getAttribute('style');
 
 			test.expect(imageWrapperStyle).toBe(null);
-			await test.expect(container.getAttribute('data-image')).toBeResolvedTo('loaded');
+			await test.expect(container.getAttribute('data-image')).resolves.toBe('loaded');
 
-			await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 1;');
-			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
-			await test.expect(image.getAttribute('src')).toBeResolvedTo(EXISTING_PICTURE_SRC);
+			await test.expect(image.getAttribute('style')).resolves.toBe('opacity: 1;');
+			await test.expect(image.getAttribute('data-img')).resolves.toBe('loaded');
+			await test.expect(image.getAttribute('src')).resolves.toBe(EXISTING_PICTURE_SRC);
 		});
 
 		test('the initially invisible image should be instantly loaded when the `lazy` option is set to false', async ({page}) => {
@@ -137,7 +184,7 @@ test.describe('components/directives/image', () => {
 
 			await waitForImageLoad(page, container);
 
-			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('loaded');
+			await test.expect(image.getAttribute('data-img')).resolves.toBe('loaded');
 		});
 
 		test([
@@ -164,8 +211,8 @@ test.describe('components/directives/image', () => {
 			test.expect(imageWrapperStyle?.startsWith(`background-image: url("${EXISTING_PICTURE_SRC}");`))
 				.toBe(true);
 
-			await test.expect(container.getAttribute('data-image')).toBeResolvedTo('preview');
-			await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
+			await test.expect(container.getAttribute('data-image')).resolves.toBe('preview');
+			await test.expect(image.getAttribute('style')).resolves.toBe('opacity: 0;');
 		});
 
 		test('the attributes of the image and the wrapper should indicate that the image is a fallback when the main image failed loading', async ({page}) => {
@@ -176,13 +223,13 @@ test.describe('components/directives/image', () => {
 
 			await waitForImageLoadFail(page, container);
 
-			await test.expect(container.getAttribute('data-image')).toBeResolvedTo('broken');
+			await test.expect(container.getAttribute('data-image')).resolves.toBe('broken');
 
 			await test.expect(container.getAttribute('style'))
-				.toBeResolvedTo(`background-image: url("${EXISTING_PICTURE_SRC}");`);
+				.resolves.toBe(`background-image: url("${EXISTING_PICTURE_SRC}");`);
 
-			await test.expect(image.getAttribute('data-img')).toBeResolvedTo('failed');
-			await test.expect(image.getAttribute('style')).toBeResolvedTo('opacity: 0;');
+			await test.expect(image.getAttribute('data-img')).resolves.toBe('failed');
+			await test.expect(image.getAttribute('style')).resolves.toBe('opacity: 0;');
 		});
 
 	});
@@ -192,7 +239,7 @@ test.describe('components/directives/image', () => {
 			async ({page}) => {
 				const {image} = await renderDirective(page, {src: 'test.png', baseSrc: 'http://127.0.0.1:1234'});
 
-				await test.expect(image.getAttribute('src')).toBeResolvedTo('http://127.0.0.1:1234/test.png');
+				await test.expect(image.getAttribute('src')).resolves.toBe('http://127.0.0.1:1234/test.png');
 			});
 
 		test('the provided `srcset` option should be set as an attribute of the `img` element', async ({page}) => {
@@ -207,7 +254,7 @@ test.describe('components/directives/image', () => {
 
 			const expectedSrcset = Object.entries(srcset).map(([k, v]) => `${v} ${k}`).join(', ');
 
-			await test.expect(image.getAttribute('srcset')).toBeResolvedTo(expectedSrcset);
+			await test.expect(image.getAttribute('srcset')).resolves.toBe(expectedSrcset);
 		});
 
 		test('the provided `width` and `height` options should be set as attributes of the `img` element', async ({page}) => {
@@ -216,8 +263,8 @@ test.describe('components/directives/image', () => {
 				height: 50
 			});
 
-			await test.expect(image.getAttribute('width')).toBeResolvedTo('100');
-			await test.expect(image.getAttribute('height')).toBeResolvedTo('50');
+			await test.expect(image.getAttribute('width')).resolves.toBe('100');
+			await test.expect(image.getAttribute('height')).resolves.toBe('50');
 		});
 
 		test('the provided `sizes` option should be set as an attribute of the `img` element', async ({page}) => {
@@ -225,7 +272,7 @@ test.describe('components/directives/image', () => {
 				sizes: '20px'
 			});
 
-			await test.expect(image.getAttribute('sizes')).toBeResolvedTo('20px');
+			await test.expect(image.getAttribute('sizes')).resolves.toBe('20px');
 		});
 
 		test('the provided `alt` option should be set as an attribute of the `img` element', async ({page}) => {
@@ -233,7 +280,7 @@ test.describe('components/directives/image', () => {
 				alt: 'Alt text'
 			});
 
-			await test.expect(image.getAttribute('alt')).toBeResolvedTo('Alt text');
+			await test.expect(image.getAttribute('alt')).resolves.toBe('Alt text');
 		});
 	});
 
@@ -262,7 +309,7 @@ test.describe('components/directives/image', () => {
 
 			await waitForAttribute(page, image, 'data-on-load-called');
 
-			await test.expect(image.getAttribute('data-on-load-called')).toBeResolvedTo('1');
+			await test.expect(image.getAttribute('data-on-load-called')).resolves.toBe('1');
 		});
 
 		test('the provided `onError` handler should be called on image load error', async ({page}) => {
@@ -276,7 +323,7 @@ test.describe('components/directives/image', () => {
 
 			await waitForAttribute(page, image, 'data-on-error-called');
 
-			await test.expect(image.getAttribute('data-on-error-called')).toBeResolvedTo('1');
+			await test.expect(image.getAttribute('data-on-error-called')).resolves.toBe('1');
 		});
 	});
 
