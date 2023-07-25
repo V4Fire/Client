@@ -235,7 +235,6 @@ export default class Transition {
 			const canRouteTransformToReplace =
 				currentRoute &&
 				this.method !== 'replace' &&
-				!hardChange &&
 				Object.fastCompare(router.convertRouteToPlainObject(currentRoute), plainInfo);
 
 			if (canRouteTransformToReplace) {
