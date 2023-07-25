@@ -147,11 +147,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 			} catch {
 				return init;
-
-			} finally {
-				void Promise.resolve(init)
-					.then(() => ctx.$async.sleep(0))
-					.then(() => ctx.$destroy());
 			}
 		}
 	};

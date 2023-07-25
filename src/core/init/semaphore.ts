@@ -9,7 +9,17 @@
 import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
 import { set } from 'core/component/state';
-import Component, { app, rootComponents, hydrationStore, ComponentElement } from 'core/component';
+import Component, {
+
+	app,
+	destroyApp,
+
+	rootComponents,
+	hydrationStore,
+
+	ComponentElement
+
+} from 'core/component';
 
 import flags from 'core/init/flags';
 import type { InitAppOptions } from 'core/init/interface';
@@ -34,6 +44,9 @@ if (!SSR) {
 
 function createAppInitializer() {
 	return async (rootComponentName: Nullable<string>, opts: InitAppOptions = {}) => {
+		let
+			appId: CanUndef<string>;
+
 		const
 			state = Object.reject(opts, ['targetToMount']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
@@ -50,10 +63,19 @@ function createAppInitializer() {
 			const rootComponent = new Component(rootComponentParams);
 			app.context = rootComponent;
 
-			return [
-				(await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
-				`<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`
-			].join('');
+			try {
+				const
+					ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
+					hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+
+				// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+				return ssrContent + hydratedData;
+
+			} finally {
+				if (appId != null) {
+					destroyApp(appId);
+				}
+			}
 		}
 
 		const
@@ -94,6 +116,7 @@ function createAppInitializer() {
 				...rootComponentParams,
 
 				data() {
+					appId = this.componentId;
 					return rootComponentParams.data?.call(this) ?? {};
 				}
 			};

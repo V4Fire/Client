@@ -41,7 +41,9 @@ export {
 	initEmitter,
 	globalEmitter,
 
+	destroyApp,
 	resetComponents,
+
 	ComponentResetType
 
 } from 'core/component/event';

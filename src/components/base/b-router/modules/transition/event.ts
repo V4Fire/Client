@@ -12,7 +12,12 @@ interface TransitionDetails<T> {
 	data: Dictionary<string>;
 }
 
-export class HrefTransitionEvent<T extends Element = Element> extends CustomEvent<TransitionDetails<T>> {
+const SuperEvent = typeof CustomEvent === 'undefined' ?
+	// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+	Object.cast<typeof CustomEvent>(class LoopbackEvent {}) :
+	CustomEvent;
+
+export class HrefTransitionEvent<T extends Element = Element> extends SuperEvent<TransitionDetails<T>> {
 	/**
 	 * If this parameter is true, the router will not handle the transition associated with this event
 	 */
