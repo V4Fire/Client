@@ -115,7 +115,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 */
 	get r(): this['$root'] {
 		const
-			r = this.$root;
+			r = this.getRoot?.() ?? this.$root;
 
 		if ('$remoteParent' in r.unsafe) {
 			return r.unsafe.$remoteParent!.$root;
