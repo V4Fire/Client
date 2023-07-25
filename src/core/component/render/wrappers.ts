@@ -99,7 +99,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			!supports.functional;
 
 		const vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
-		vnode.props.getRoot = () => 'getRoot' in this ? this.getRoot?.() ?? this.$root : this.$root;
+		vnode.props.getRoot = () => ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
 
 		if (vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
