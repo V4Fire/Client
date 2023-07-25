@@ -15,7 +15,9 @@ import Component, {
 	destroyApp,
 
 	rootComponents,
-	hydrationStore
+	hydrationStore,
+
+	ComponentElement
 
 } from 'core/component';
 
@@ -53,12 +55,6 @@ function createAppInitializer() {
 			set(key, value);
 		});
 
-		Object.defineProperty(app, 'component', {
-			configurable: true,
-			enumerable: true,
-			get: () => appId
-		});
-
 		if (SSR) {
 			const
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -92,6 +88,12 @@ function createAppInitializer() {
 		app.context = new Component({
 			...rootComponentParams,
 			el: targetToMount
+		});
+
+		Object.defineProperty(app, 'component', {
+			configurable: true,
+			enumerable: true,
+			get: () => document.querySelector<ComponentElement>('#root-component')?.component ?? null
 		});
 
 		return targetToMount;
