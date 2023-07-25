@@ -15,9 +15,7 @@ import Component, {
 	destroyApp,
 
 	rootComponents,
-	hydrationStore,
-
-	ComponentElement
+	hydrationStore
 
 } from 'core/component';
 
@@ -44,6 +42,9 @@ if (!SSR) {
 
 function createAppInitializer() {
 	return async (rootComponentName: Nullable<string>, opts: InitAppOptions = {}) => {
+		let
+			appId: CanUndef<string>;
+
 		const
 			state = Object.reject(opts, ['targetToMount']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
@@ -52,20 +53,16 @@ function createAppInitializer() {
 			set(key, value);
 		});
 
-		if (SSR) {
-			let appId;
+		Object.defineProperty(app, 'component', {
+			configurable: true,
+			enumerable: true,
+			get: () => appId
+		});
 
+		if (SSR) {
 			const
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
 				{renderToString} = require('vue/server-renderer');
-
-			const
-				getData = rootComponentParams.data;
-
-			rootComponentParams.data = function data() {
-				appId = this.componentId;
-				return getData?.call(this) ?? {};
-			};
 
 			const rootComponent = new Component(rootComponentParams);
 			app.context = rootComponent;
@@ -79,7 +76,9 @@ function createAppInitializer() {
 				return ssrContent + hydratedData;
 
 			} finally {
-				destroyApp(appId);
+				if (appId != null) {
+					destroyApp(appId);
+				}
 			}
 		}
 
@@ -93,12 +92,6 @@ function createAppInitializer() {
 		app.context = new Component({
 			...rootComponentParams,
 			el: targetToMount
-		});
-
-		Object.defineProperty(app, 'component', {
-			configurable: true,
-			enumerable: true,
-			get: () => document.querySelector<ComponentElement>('#root-component')?.component ?? null
 		});
 
 		return targetToMount;
@@ -121,6 +114,7 @@ function createAppInitializer() {
 				...rootComponentParams,
 
 				data() {
+					appId = this.componentId;
 					return rootComponentParams.data?.call(this) ?? {};
 				}
 			};
