@@ -195,7 +195,7 @@ export default class Transition {
 		newRoute: router.RouteAPI,
 		nonWatchRouteValues: Pick<router.Route, 'url' | 'query' | 'meta'>
 	): Promise<CanUndef<{hardChange:boolean}>> {
-		let hardChange = false;
+		let hardChange = this.ref != null;
 
 		const {
 			component,
@@ -211,7 +211,7 @@ export default class Transition {
 			currentRoute = component.field.get<router.Route>('routeStore');
 
 		// Checking that the new route is really needed, i.e., not equal to the previous one
-		let newRouteIsReallyNeeded = !Object.fastCompare(
+		let newRouteIsReallyNeeded = hardChange || !Object.fastCompare(
 			router.getComparableRouteParams(currentRoute),
 			router.getComparableRouteParams(newRoute)
 		);
@@ -234,6 +234,7 @@ export default class Transition {
 			const canRouteTransformToReplace =
 				currentRoute &&
 				this.method !== 'replace' &&
+				!hardChange &&
 				Object.fastCompare(router.convertRouteToPlainObject(currentRoute), plainInfo);
 
 			if (canRouteTransformToReplace) {
@@ -253,14 +254,13 @@ export default class Transition {
 			}
 
 			await engine[this.method](newRoute.url, plainInfo).then(() => {
-				const isSoftTransition = Boolean(r.route && Object.fastCompare(
-					router.convertRouteToPlainObjectWithoutProto(currentRoute),
-					router.convertRouteToPlainObjectWithoutProto(newRoute)
-				));
+				if (hardChange) {
+					component.emit('hardChange', newRoute);
+					r.route = newRoute;
 
-				// Only the properties from the prototype have been changed in this transition,
-				// so it can be done as a soft transition, i.e., without forcing re-rendering of components
-				if (isSoftTransition) {
+				} else {
+					// Only the properties from the prototype have been changed in this transition,
+					// so it can be done as a soft transition, i.e., without forcing re-rendering of components
 					component.emit('softChange', newRoute);
 
 					// We get a prototype by using the `__proto__` property,
@@ -274,11 +274,6 @@ export default class Transition {
 							proto[key] = nonWatchRouteValues[key];
 						});
 					}
-
-				} else {
-					hardChange = true;
-					component.emit('hardChange', newRoute);
-					r.route = newRoute;
 				}
 
 				emitTransition();
@@ -358,7 +353,7 @@ export default class Transition {
 
 		// If the new route has the same name as the current one,
 		// we need to mix the new state with the current state
-		if (router.getRouteName(currentRoute) === this.newRouteInfo!.name) {
+		if (router.getRouteName(currentRoute) === this.newRouteInfo!.name && this.ref == null) {
 			deepMixin(true, this.newRouteInfo, router.getBlankRouteFrom(currentRoute));
 			deepMixin(false, this.newRouteInfo, this.opts);
 
