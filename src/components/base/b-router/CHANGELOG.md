@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.?.? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Removed params merging when navigation to the route with the same name that current route
+
 ## v4.0.0-beta.8 (2023-07-19)
 
 #### :rocket: New Feature
