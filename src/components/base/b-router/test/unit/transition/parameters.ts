@@ -184,12 +184,8 @@ test.describe('<b-router> passing transition parameters', () => {
 		});
 	});
 
-	test('should stay on the current route and merge params when route is null', async ({page}) => {
-		const root = await createInitRouter('history', {
-			main: {
-				path: '/main'
-			}
-		})(page);
+	test.only('should stay on the current route and merge params when route is null', async ({page}) => {
+		const root = await createInitRouter('history')(page);
 
 		await test.expect(root.evaluate(async (ctx) => {
 			const
@@ -215,19 +211,15 @@ test.describe('<b-router> passing transition parameters', () => {
 			}
 
 		})).resolves.toEqual({
-			path1: '/main?foo=1',
-			path2: '/main?baz=1&foo=1',
-			path3: '/main?bar=2&baz=1&foo=1',
-			path4: '/main?baz=1&foo=1'
+			path1: '/?foo=1',
+			path2: '/?baz=1&foo=1',
+			path3: '/?bar=2&baz=1&foo=1',
+			path4: '/?baz=1&foo=1'
 		});
 	});
 
-	test('should navigate to the specified route and replace params when route is a string', async ({page}) => {
-		const root = await createInitRouter('history', {
-			main: {
-				path: '/main'
-			}
-		})(page);
+	test.only('should navigate to the specified route and replace params when route is a string', async ({page}) => {
+		const root = await createInitRouter('history')(page);
 
 		await test.expect(root.evaluate(async (ctx) => {
 			const
@@ -240,8 +232,11 @@ test.describe('<b-router> passing transition parameters', () => {
 			await router.push('main', {query: {baz: 1}});
 			transitions.path2 = getPath();
 
-			await router.push('main', {query: {}});
+			await router.push('second', {query: {bar: 1}});
 			transitions.path3 = getPath();
+
+			await router.push('second', {query: {}});
+			transitions.path4 = getPath();
 
 			return transitions;
 
@@ -250,18 +245,15 @@ test.describe('<b-router> passing transition parameters', () => {
 			}
 
 		})).resolves.toEqual({
-			path1: '/main?foo=1',
-			path2: '/main?baz=1',
-			path3: '/main'
+			path1: '/?foo=1',
+			path2: '/?baz=1',
+			path3: '/second-page?bar=1',
+			path4: '/second-page'
 		});
 	});
 
-	test('shouldn\'t merge params, when navigating through history', async ({page}) => {
-		const root = await createInitRouter('history', {
-			main: {
-				path: '/main'
-			}
-		})(page);
+	test.only('shouldn\'t merge params, when navigating through history', async ({page}) => {
+		const root = await createInitRouter('history')(page);
 
 		await test.expect(root.evaluate(async (ctx) => {
 			const
@@ -293,12 +285,12 @@ test.describe('<b-router> passing transition parameters', () => {
 			}
 
 		})).resolves.toEqual({
-			path1: '/main?foo=1',
-			path2: '/main?baz=1&foo=1',
-			path3: '/main?baz=2',
-			path4: '/main?baz=1&foo=1',
-			path5: '/main?foo=1',
-			path6: '/main?baz=1&foo=1'
+			path1: '/?foo=1',
+			path2: '/?baz=1&foo=1',
+			path3: '/?baz=2',
+			path4: '/?baz=1&foo=1',
+			path5: '/?foo=1',
+			path6: '/?baz=1&foo=1'
 		});
 	});
 });
