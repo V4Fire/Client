@@ -34,7 +34,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 			});
 
 			await page.getByTestId('target').click();
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.toBe('second');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('second');
 		}
 	);
 
@@ -80,7 +80,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 			await test.expect(
 				root.evaluate((ctx) => ctx.route?.name).catch((err) => err.message)
-			).resolves.toBe('jsHandle.evaluate: Execution context was destroyed, most likely because of a navigation');
+			).toBeResolvedTo('jsHandle.evaluate: Execution context was destroyed, most likely because of a navigation');
 		}
 	);
 
@@ -122,7 +122,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 			await root.evaluate((ctx) => ctx.router?.push('main'));
 			await page.getByTestId('target').click();
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.toBe('main');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 			test.expect(new URL(await page.url()).hash).toBe('#foo');
 		});
 
@@ -146,8 +146,8 @@ test.describe('<b-router> intercepting links on a page', () => {
 			await root.evaluate((ctx) => ctx.router?.push('main'));
 			await page.getByTestId('target').click();
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.toBe('main');
-			await test.expect(root.evaluate(() => globalThis.foo)).resolves.toBe('bar');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
+			await test.expect(root.evaluate(() => globalThis.foo)).toBeResolvedTo('bar');
 		});
 
 		test('`mailto:` links', async ({page}) => {
@@ -170,7 +170,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 			await root.evaluate((ctx) => ctx.router?.push('main'));
 			await page.getByTestId('target').click();
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.toBe('main');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 		});
 
 		test('`tel:` links', async ({page}) => {
@@ -193,7 +193,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 			await root.evaluate((ctx) => ctx.router?.push('main'));
 			await page.getByTestId('target').click();
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.toBe('main');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 		});
 	});
 
@@ -246,10 +246,10 @@ test.describe('<b-router> intercepting links on a page', () => {
 			await root.evaluate((ctx) => ctx.router?.push('main'));
 
 			await page.getByTestId('target').click();
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.toBe('second');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('second');
 
 			await root.evaluate((ctx) => ctx.router?.back());
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.toBe('notFound');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('notFound');
 		}
 	);
 
@@ -281,7 +281,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 			});
 
 			await page.getByTestId('target').click();
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.toBe('main');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 		}
 	);
 
@@ -491,7 +491,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 				await test.expect(
 					root.evaluate((ctx) => ctx.route?.name).catch((err) => err.message)
-				).resolves.toBe('jsHandle.evaluate: Execution context was destroyed, most likely because of a navigation');
+				).toBeResolvedTo('jsHandle.evaluate: Execution context was destroyed, most likely because of a navigation');
 			}
 		);
 	});

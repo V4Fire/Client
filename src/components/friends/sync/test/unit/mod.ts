@@ -26,7 +26,7 @@ test.describe('friends/sync `mod`', () => {
 	});
 
 	test('initial value of the modifier should by synced to the source', async () => {
-		await test.expect(target.evaluate((ctx) => ctx.mods.foo)).resolves.toBe('bar');
+		await test.expect(target.evaluate((ctx) => ctx.mods.foo)).toBeResolvedTo('bar');
 	});
 
 	test('modifier should be updated when the source has changed', async () => {
@@ -34,6 +34,6 @@ test.describe('friends/sync `mod`', () => {
 			ctx.dict.a!.b!++;
 			await ctx.nextTick();
 			return ctx.mods.foo;
-		})).resolves.toBe('bla');
+		})).toBeResolvedTo('bla');
 	});
 });

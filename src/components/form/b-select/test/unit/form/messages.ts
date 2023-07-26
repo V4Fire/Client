@@ -91,13 +91,13 @@ test.describe('<b-select> form API', () => {
 	 */
 	async function assertComponentInfo(page: Page, target: JSHandle<bSelect>, text: CanUndef<string>): Promise<void> {
 		await test.expect(target.evaluate((ctx) => ctx.info))
-			.resolves.toBe(text);
+			.toBeResolvedTo(text);
 
 		await test.expect(page.locator(createSelector('info-box')))
 			.toHaveText(text ?? '');
 
 		await test.expect(target.evaluate((ctx) => ctx.mods.showInfo))
-			.resolves.toBe(text == null ? 'false' : 'true');
+			.toBeResolvedTo(text == null ? 'false' : 'true');
 	}
 
 	/**
@@ -109,12 +109,12 @@ test.describe('<b-select> form API', () => {
 	 */
 	async function assertComponentError(page: Page, target: JSHandle<bSelect>, text: CanUndef<string>): Promise<void> {
 		await test.expect(target.evaluate((ctx) => ctx.error))
-			.resolves.toBe(text);
+			.toBeResolvedTo(text);
 
 		await test.expect(page.locator(createSelector('error-box')))
 			.toHaveText(text ?? '');
 
 		await test.expect(target.evaluate((ctx) => ctx.mods.showError))
-			.resolves.toBe(text == null ? 'false' : 'true');
+			.toBeResolvedTo(text == null ? 'false' : 'true');
 	}
 });

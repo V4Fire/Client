@@ -188,14 +188,14 @@ function generateSpecs(engineName: EngineName) {
 			await test.expect(root.evaluate(async (ctx) => {
 				await ctx.router!.push('second');
 				return ctx.route!.meta.content;
-			})).resolves.toBe('Second page');
+			})).toBeResolvedTo('Second page');
 		});
 
 		test('should switch page using a path', async () => {
 			await test.expect(root.evaluate(async (ctx) => {
 				await ctx.router!.push('/');
 				return ctx.route!.meta.content;
-			})).resolves.toBe('Main page');
+			})).toBeResolvedTo('Main page');
 		});
 	});
 
@@ -203,12 +203,12 @@ function generateSpecs(engineName: EngineName) {
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('second');
 			return ctx.activePage;
-		})).resolves.toBe('second');
+		})).toBeResolvedTo('second');
 
 		await test.expect(root.evaluate(async (ctx) => {
 			await ctx.router!.push('main');
 			return ctx.activePage;
-		})).resolves.toBe('main');
+		})).toBeResolvedTo('main');
 	});
 
 	test.describe('`updateRoutes`', () => {

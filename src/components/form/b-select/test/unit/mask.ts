@@ -148,7 +148,7 @@ test.describe('<b-select> masked input', () => {
 
 	test('the component\'s `text` should be empty when `value` is not provided', async ({page}) => {
 		const target = await renderSelect(page);
-		await test.expect(target.evaluate((ctx) => ctx.text)).resolves.toBe('');
+		await test.expect(target.evaluate((ctx) => ctx.text)).toBeResolvedTo('');
 	});
 
 	test('the component\'s `text` should be empty when `value` is not provided and `mask` is provided', async ({page}) => {
@@ -156,7 +156,7 @@ test.describe('<b-select> masked input', () => {
 			mask: '%d-%d'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.text)).resolves.toBe('');
+		await test.expect(target.evaluate((ctx) => ctx.text)).toBeResolvedTo('');
 	});
 
 	test('the component\'s `text` should be set via the prop', async ({page}) => {
@@ -164,7 +164,7 @@ test.describe('<b-select> masked input', () => {
 			text: '123'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.text)).resolves.toBe('123');
+		await test.expect(target.evaluate((ctx) => ctx.text)).toBeResolvedTo('123');
 	});
 
 	test('the component\'s `text` should be changeable', async ({page}) => {
@@ -175,7 +175,7 @@ test.describe('<b-select> masked input', () => {
 		await test.expect(target.evaluate((ctx) => {
 			ctx.text = '34567';
 			return ctx.text;
-		})).resolves.toBe('34567');
+		})).toBeResolvedTo('34567');
 	});
 
 	test('should apply the mask to the provided `text`', async ({page}) => {
@@ -184,7 +184,7 @@ test.describe('<b-select> masked input', () => {
 			mask: '%d-%d'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.text)).resolves.toBe('1-2');
+		await test.expect(target.evaluate((ctx) => ctx.text)).toBeResolvedTo('1-2');
 	});
 
 	test('should apply the mask to the text updated via accessor', async ({page}) => {
@@ -196,11 +196,11 @@ test.describe('<b-select> masked input', () => {
 		await test.expect(target.evaluate((ctx) => {
 			ctx.text = '34567';
 			return ctx.text;
-		})).resolves.toBe('3-4');
+		})).toBeResolvedTo('3-4');
 
 		await test.expect(target.evaluate((ctx) => {
 			ctx.text = '67';
 			return ctx.text;
-		})).resolves.toBe('6-7');
+		})).toBeResolvedTo('6-7');
 	});
 });
