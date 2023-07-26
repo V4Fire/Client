@@ -446,7 +446,7 @@ export function resolvePathParameters(pathParams: PathParam[], params: Dictionar
 		}
 
 		const
-			alias = param.aliases.find((k) => parameters.hasOwnProperty(k));
+			alias = param.aliases.find((e) => parameters.hasOwnProperty(e));
 
 		if (alias != null) {
 			parameters[param.name] = parameters[alias];
