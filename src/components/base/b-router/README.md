@@ -760,12 +760,17 @@ router.back().then(() => {
 ### Transition to the current route
 
 If you want to generate a transition to a route that is identical to the current one,
-you can pass `null` as the route name.
+you can pass `null` as the route name. Here, the parameters (query, params or meta) passed in the options object
+will merge with any existing parameters on the current route.
+
+But sometimes you want to replace parameters on the current route.
+For this case you must provide route that is not `null`. If route matches the current route and is not `null`,
+the current parameters will be replaced - not merged - with the ones you pass in the options object.
 
 ```js
-// These two variants are equivalent
-router.push(null, {query: {foo: 1}});
-router.push(route?.name, {query: {foo: 1}});
+// Assume you are on route '/foo' with query params {bla:1} - '/foo?bla=1'.
+router.push(null, {query: {bar: 1}}); // merge params - '/foo?bla=1&bar=1'
+router.push(route?.name, {query: {bar: 1}}); // replace params - '/foo?bar=1'
 ```
 
 ### Transition event flow
