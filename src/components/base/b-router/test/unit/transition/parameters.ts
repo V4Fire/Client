@@ -183,4 +183,122 @@ test.describe('<b-router> passing transition parameters', () => {
 			});
 		});
 	});
+
+	test('should stay on the current route and merge params when route is null', async ({page}) => {
+		const root = await createInitRouter('history', {
+			main: {
+				path: '/main'
+			}
+		})(page);
+
+		await test.expect(root.evaluate(async (ctx) => {
+			const
+				router = ctx.router!,
+				transitions: Dictionary = {};
+
+			await router.push('main', {query: {foo: 1}});
+			transitions.path1 = getPath();
+
+			await router.push(null, {query: {baz: 1}});
+			transitions.path2 = getPath();
+
+			await router.push(null, {query: {bar: 2}});
+			transitions.path3 = getPath();
+
+			await router.push(null, {query: {bar: null}});
+			transitions.path4 = getPath();
+
+			return transitions;
+
+			function getPath() {
+				return location.pathname + location.search;
+			}
+
+		})).resolves.toEqual({
+			path1: '/main?foo=1',
+			path2: '/main?baz=1&foo=1',
+			path3: '/main?bar=2&baz=1&foo=1',
+			path4: '/main?baz=1&foo=1'
+		});
+	});
+
+	test('should navigate to the specified route and replace params when route is a string', async ({page}) => {
+		const root = await createInitRouter('history', {
+			main: {
+				path: '/main'
+			}
+		})(page);
+
+		await test.expect(root.evaluate(async (ctx) => {
+			const
+				router = ctx.router!,
+				transitions: Dictionary = {};
+
+			await router.push('main', {query: {foo: 1}});
+			transitions.path1 = getPath();
+
+			await router.push('main', {query: {baz: 1}});
+			transitions.path2 = getPath();
+
+			await router.push('main', {query: {}});
+			transitions.path3 = getPath();
+
+			return transitions;
+
+			function getPath() {
+				return location.pathname + location.search;
+			}
+
+		})).resolves.toEqual({
+			path1: '/main?foo=1',
+			path2: '/main?baz=1',
+			path3: '/main'
+		});
+	});
+
+	test('shouldn\'t merge params, when navigating through history', async ({page}) => {
+		const root = await createInitRouter('history', {
+			main: {
+				path: '/main'
+			}
+		})(page);
+
+		await test.expect(root.evaluate(async (ctx) => {
+			const
+				router = ctx.router!,
+				transitions: Dictionary = {};
+
+			await router.push('main', {query: {foo: 1}});
+			transitions.path1 = getPath();
+
+			await router.push(null, {query: {baz: 1}});
+			transitions.path2 = getPath();
+
+			await router.push('main', {query: {baz: 2}});
+			transitions.path3 = getPath();
+
+			await router.back();
+			transitions.path4 = getPath();
+
+			await router.back();
+			transitions.path5 = getPath();
+
+			await router.forward();
+			transitions.path6 = getPath();
+
+			return transitions;
+
+			function getPath() {
+				return location.pathname + location.search;
+			}
+
+		})).resolves.toEqual({
+			path1: '/main?foo=1',
+			path2: '/main?baz=1&foo=1',
+			path3: '/main?baz=2',
+			path4: '/main?baz=1&foo=1',
+			path5: '/main?foo=1',
+			path6: '/main?baz=1&foo=1'
+		});
+	});
 });
