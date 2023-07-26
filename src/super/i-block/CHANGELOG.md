@@ -14,7 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added possibility to change method that will be used for transitions when router
-synchronizes its state with the component's state by using syncRouterState
+  synchronizes its state with the component's state by using syncRouterState
 
 ## v3.38.0 (2023-02-20)
 
