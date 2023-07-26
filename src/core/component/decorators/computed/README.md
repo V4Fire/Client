@@ -1,6 +1,6 @@
 # core/component/decorators/computed
 
-The decorator attaches meta information to a component computed field or accessor.
+The decorator assigns meta-information to a computed field or an accessor within a component.
 
 ```typescript
 import iBlock, {component, prop, computed} from 'components/super/i-block/i-block';
@@ -42,19 +42,26 @@ export default class bUser extends iBlock {
 
 ## What differences between accessors and computed fields?
 
-A computed field is an accessor that value can be cached or watched.
-To enable value caching, use the `@computed` decorator when define or override your accessor.
-After that, the first time the getter value is touched, it will be cached. To support cache invalidation or
-adding change watching capabilities, provide a list of your accessor dependencies or use the `cache = 'auto'` option.
+A computed field is an accessor that can have its value cached or be watched for changes.
+To enable value caching, you can use the `@computed` decorator when defining or overriding your accessor.
+Once you add the decorator, the first time the getter value is accessed, it will be cached.
+
+To support cache invalidation or add change watching capabilities,
+you can provide a list of your accessor dependencies or use the `cache = 'auto'` option.
+By specifying dependencies, the computed field will automatically update when any of its dependencies change,
+whereas the `cache = 'auto'` option will invalidate the cache when it detects a change in any of the dependencies.
+
+In essence, computed fields provide an elegant and efficient way to derive values from a component's data and state,
+making it easier to manage and update dynamic UI states based on changes in other components or the application's data.
 
 ## Additional options
 
 ### [cache]
 
 If true, the accessor value will be cached after the first touch.
-The option is set to true by default if also provided `dependencies` or the bound accessor matches
-by the name with another prop or field. If the option value is passed as `auto`, caching will be delegated to
-the used component library.
+The option is set to true by default if it also provided `dependencies` or the bound accessor matches
+by the name with another prop or field.
+If the option value is passed as `auto` caching will be delegated to the used component library.
 
 ```typescript
 import iBlock, { component, field, computed } from 'components/super/i-block/i-block';

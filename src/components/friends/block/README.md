@@ -232,7 +232,7 @@ class bExample extends iBlock {}
 ### How to get component modifier value?
 
 All active component modifiers are stored in the readonly `mods` property. Therefore, to get the value of any modifier,
-just refer to the key you need. Please note that the key must be in a dash style, i.e. normalized.
+just refer to the key you need. Please note that the key must be in a dash style, i.e., normalized.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -274,7 +274,7 @@ class bExample extends iBlock {
 }
 ```
 
-Note that the `mods` field is created as a "system" field, i.e. no changes to its properties will cause the component to
+Note that the `mods` field is created as a "system" field, i.e., no changes to its properties will cause the component to
 be re-rendered. However, the associated CSS class will still be assigned to the component root element. This is especially
 useful when we are working in the context of a functional component, which in principle never updates its template after the first render.
 
@@ -355,7 +355,7 @@ class bExample extends iBlock {
 
 ##### Local events
 
-All setting or removing modifiers also fire local component events, i.e. which cannot be handled externally.
+All setting or removing modifiers also fire local component events, i.e., which cannot be handled externally.
 Since all the component local events can be listened to using wildcards, this can be more convenient than handling each event individually.
 
 | EventName                       | Description                                                             | Payload description  | Payload              |

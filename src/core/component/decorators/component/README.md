@@ -17,8 +17,9 @@ export default class bUser extends iBlock {
 
 ## How to create a component?
 
-To register a new component, you need to create a simple JS class and add the `@component` decorator to it.
-Also, you can pass additional parameters to this decorator. For example, in order for a component to be created as functional.
+To register a new component, generate a simple JS/TS class and apply the `@component` decorator to it.
+You also have the option to pass additional parameters to this decorator.
+For instance, a component can be established as functional.
 
 ```typescript
 import iBlock, { component, prop } from 'components/super/i-block/i-block';
@@ -35,17 +36,18 @@ export default class bUser extends iBlock {
 
 ### How does it work?
 
-The `@component` decorator aggregates information of the class received from other nested decorators and
-with the help of reflection and forms a special structure of the [[ComponentMeta]] type.
-Next, the created structure will be passed to the used component library adapter, which will create a "real" component.
+The `@component` decorator gathers information from other nested decorators within the class.
+Through the use of reflection, this decorator then constructs a unique structure of the [[ComponentMeta]] type.
+Following this, the formed structure is transferred to the utilized component library adapter,
+leading to the creation of an actual component.
 
 ## Additional options
 
 ### [name]
 
-The name of the component we are registering.
-If the name isn't specified, it will be taken from the tied class name by using reflection.
-This parameter can't be inherited from the parent component.
+The name of the component.
+If not specified, the name is obtained from the class name via reflection.
+This parameter cannot be inherited from the parent component.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -65,11 +67,10 @@ class bExample extends iBlock {
 
 ### [root = `false`]
 
-If true, then the component is registered as the root component.
-The root component is the top of components hierarchy, i.e. it contains all components in our application.
-
-All components, even the root component, have a link to the root component.
-This parameter can be inherited from the parent component.
+If set to true, the component is registered as the root component.
+The root component sits at the top of the component hierarchy and contains all components in the application.
+By default, all components have a link to the root component.
+This parameter may be inherited from the parent component.
 
 ```typescript
 import iStaticPage, { component } from 'components/super/i-static-page/i-static-page';
@@ -82,39 +83,46 @@ class pRoot extends iStaticPage {
 
 ### [tpl = `true`]
 
-If false, then the component will use the default loopback render function, instead of loading the own template.
-This parameter is useful for components without templates, and it can be inherited from the parent component.
+If set to false, the component uses the default loopback render function instead of loading its own template.
+This is useful for components without templates and can be inherited from the parent component.
 
 ### [functional = `false`]
 
-The component functional mode.
-This parameter can be inherited from the parent component, but the `null` value isn’t inherited.
+The component functional mode determines whether the component should be created as a functional component.
+This parameter can be inherited from the parent component, but the null value is not inherited.
 
-1. If true, the component will be created as a functional component.
-2. If a dictionary, the component can be created as a functional component or regular component, depending on
-   values of its props:
-   1. If passed an empty dictionary is passed, the component will always be created as a functional one.
-      But you still have the option to create it like regular using the `v-func` directive.
+There are several options available for this parameter:
 
-   2. If passed a dictionary with values, the dictionary properties represent component props.
-      If the component invocation takes these props with the values that declared within the `functional`
-      dictionary, it will be created as a functional one. The values themselves can be represented as any value that
-      can be encoded in JSON.
+1. If set to true, the component will be created as a functional component.
+2. If set to a dictionary, the component can be created as a functional component or a regular component,
+   depending on the values of its props:
 
-      In addition, you can specify multiple values for the same prop using a list of values
-      Keep in mind that component type inference is a compile-time operation, meaning you cannot depend on values
-      from the runtime. If you need this feature, then use the `v-for` directive.
+   1. If an empty dictionary is passed, the component will always be created as a functional one.
+      However, you still have the option to create it like a regular component using the `v-func` directive.
 
-3. If null, all components watchers and listeners that directly specified in the component class
-   won't be attached in the case of a functional component kind. It is useful to create superclass behavior
-   depending on a component type.
+      ```
+      < b-button v-func = false
+      ```
+
+   2. If a dictionary with values is passed, the dictionary properties represent component props.
+      If the component invocation takes these props with the values that were declared within
+      the functional dictionary, it will be created as a functional one.
+      The values themselves can be represented as any value that can be encoded in JSON.
+      Note that you can specify multiple values for the same prop using a list of values.
+      Keep in mind that component type inference is a compile-time operation,
+      meaning you cannot depend on values from the runtime.
+      If you need this feature, use the `v-for` directive.
+
+   3. If set to null, all components' watchers and listeners that are directly specified in the component class
+     won't be attached in the case of a functional component kind.
+     This is useful to create superclass behavior depending on a component type.
 
 A functional component is a component that can only be rendered once from input properties.
 Components of this type have state and lifecycle hooks, but changing the state does not cause re-render.
 
-Usually functional components are lighter than regular components on first render,
-but avoid them if you have long animations inside a component or if you need to frequently redraw some deep ones
-structure of nested components.
+Usually, functional components are lighter than regular components on the first render,
+but avoid them if you have long animations inside a component
+or if you need to frequently redraw some deep structure of nested components.
 
 ```typescript
 import iData, { component } from 'components/super/i-data/i-data';
@@ -140,20 +148,20 @@ class bLink extends iData {
 // Within `v-func` we can use values from the runtime
 < b-button v-func = foo !== bar
 
-// The direct invoking of a functional version of `bButton`
+// Explicit creation of a functional component by name
 < b-button-functional
 ```
 
 ### [defaultProps = `true`]
 
-If false, then all default values of the component input properties are ignored.
-This parameter can be inherited from the parent component.
+If set to false, all default values for the input properties of the component will be disregarded.
+This parameter may be inherited from the parent component.
 
 ### [deprecatedProps]
 
-A dictionary with the deprecated component props with the specified alternatives.
-The keys represent deprecated props; the values represent alternatives.
-This parameter can be inherited from the parent component.
+A dictionary that specifies deprecated component props along with their recommended alternatives.
+The keys in the dictionary represent the deprecated props,
+while the values represent their replacements or alternatives.
 
 ```typescript
 import iData, { component, prop } from 'components/super/i-data/i-data';
@@ -174,9 +182,10 @@ class bList extends iData {
 
 ### [inheritAttrs = `true`]
 
-If true, then the component input properties that aren't registered as props
-will be attached to a component node as attributes.
-This parameter can be inherited from the parent component.
+If set to true, any component input properties not registered as props will be attached to
+the component node as attributes.
+
+This parameter may be inherited from the parent component.
 
 ```typescript
 import iData, { component, prop } from 'components/super/i-data/i-data';
@@ -198,5 +207,5 @@ class bInput extends iData {
 
 ### [inheritMods = `true`]
 
-If true, then the component is automatically inherited base modifiers from its parent.
-This parameter can be inherited from the parent component.
+If set to true, the component will automatically inherit base modifiers from its parent component.
+This parameter may be inherited from the parent component.

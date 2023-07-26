@@ -20,7 +20,7 @@ export interface DecoratorSystem<
 	 * Also, the parameter can take a function that returns a boolean value.
 	 * If this value is true, then the parameter is considered unique.
 	 *
-	 * Please note that the uniqueness guarantee must be provided by the "external" code,
+	 * Please note that the "external" code must provide the uniqueness guarantee
 	 * because V4Fire does not perform special checks for uniqueness.
 	 *
 	 * @default `false`

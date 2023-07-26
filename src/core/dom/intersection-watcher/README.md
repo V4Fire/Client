@@ -154,7 +154,7 @@ functionality is truly insufficient.
 
 Handler: the observable element has entered the viewport.
 If the handler returns false, then the main watcher handler won't be called.
-Note that this handler is always called immediately, i.e. ignores the `delay` option.
+Note that this handler is always called immediately, i.e., ignores the `delay` option.
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -171,7 +171,7 @@ function onEnter(watcher) {
 ##### [onLeave]
 
 Handler: the observable element has leaved the viewport.
-Note that this handler is always called immediately, i.e. ignores the `delay` option.
+Note that this handler is always called immediately, i.e., ignores the `delay` option.
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';

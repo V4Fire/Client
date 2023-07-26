@@ -1,7 +1,7 @@
 # components/friends/friend
 
 This module provides a superclass to create classes friendly to the main component class,
-i.e. it can use private or protected methods and properties.
+i.e., it can use private or protected methods and properties.
 
 __b-example/theme.ts__
 

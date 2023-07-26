@@ -336,7 +336,7 @@ export default class bExample extends iBlock {
 ## Call proxy protocol
 
 Often, when creating an application, we need to organize the management of a group of child components by their parent,
-i.e. use the "mediator" pattern. To simplify and standardize this approach, V4Fire implements a special call proxy protocol.
+i.e., use the "mediator" pattern. To simplify and standardize this approach, V4Fire implements a special call proxy protocol.
 Any component has a special `proxyCall` prop. When set to true, the component starts listening to the `callChild` event from its parent.
 The event handler expects an object of the following type as an argument.
 

@@ -174,7 +174,7 @@ class bExample extends iBlock {
 }
 ```
 
-It is also allowed to use `defer` without specifying a status to wait. This will make your method deferred, i.e. it won't start right away.
+It is also allowed to use `defer` without specifying a status to wait. This will make your method deferred, i.e., it won't start right away.
 And if you pass additional [[Async]] parameters, then you can make logic so that adjacent calls to such a method collapse.
 This is very handy when you have expensive methods and want to minimize their calls.
 
