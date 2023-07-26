@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Removed params merging when navigation to the route with the same name that current route in `b-router`
+
+#### :bug: Bug Fix
+
+* Fixed alias priority, when resolve path parameters in `core/router`
+
 ## v4.0.0-beta.9 (2023-07-19)
 
 #### :boom: Breaking Change
