@@ -136,7 +136,7 @@ test.describe('<b-router> route handling', () => {
 
 			// eslint-disable-next-line playwright/no-conditional-in-test
 			if (engineName === 'history') {
-				test.expect(new URL(await page.url()).pathname).toBe('/some/fake/page');
+				test.expect(new URL(page.url()).pathname).toBe('/some/fake/page');
 			}
 		});
 
@@ -169,7 +169,7 @@ test.describe('<b-router> route handling', () => {
 
 				// eslint-disable-next-line playwright/no-conditional-in-test
 				if (engineName === 'history') {
-					test.expect(new URL(await page.url()).pathname).toBe('/tpl-alias/foo/bar');
+					test.expect(new URL(page.url()).pathname).toBe('/tpl-alias/foo/bar');
 				}
 			}
 		);
@@ -210,7 +210,7 @@ test.describe('<b-router> route handling', () => {
 
 				// eslint-disable-next-line playwright/no-conditional-in-test
 				if (engineName === 'history') {
-					test.expect(new URL(await page.url()).pathname).toBe('/tpl/1/2');
+					test.expect(new URL(page.url()).pathname).toBe('/tpl/1/2');
 				}
 			});
 		});

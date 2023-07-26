@@ -123,7 +123,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 			await page.getByTestId('target').click();
 
 			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
-			test.expect(new URL(await page.url()).hash).toBe('#foo');
+			test.expect(new URL(page.url()).hash).toBe('#foo');
 		});
 
 		test('`javascript:` links', async ({page}) => {
@@ -353,7 +353,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 			});
 
 			await page.getByTestId('target').click();
-			test.expect(new URL(await page.url()).pathname).toBe('/user/42');
+			test.expect(new URL(page.url()).pathname).toBe('/user/42');
 		}
 	);
 
