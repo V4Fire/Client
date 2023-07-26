@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to change method that will be used for transitions when router
+synchronizes its state with the component's state by using syncRouterState
+
 ## v3.38.0 (2023-02-20)
 
 #### :bug: Bug Fix

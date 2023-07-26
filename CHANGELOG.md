@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to change method that will be used for transitions when router
+  synchronizes its state with the component's state by using syncRouterState to `i-block`
+
 ## v3.52.0 (2023-07-19)
 
 #### :rocket: New Feature
