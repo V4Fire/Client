@@ -198,7 +198,6 @@ export default class Transition {
 		newRoute: router.RouteAPI,
 		nonWatchRouteValues: Pick<router.Route, 'url' | 'query' | 'meta'>
 	): Promise<CanUndef<{hardChange:boolean}>> {
-		// If target ref is not null we perform a hard transition
 		let hardChange = false;
 
 		const {
