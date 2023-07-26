@@ -31,6 +31,10 @@ export default class Transition {
 	 */
 	protected ref: TransitionContext['ref'];
 
+	/**
+	 * Preserves the original {@link Transition.ref} as provided by the client
+	 * before any changes. Useful for tracking the initial route in case of modifications.
+	 */
 	protected originRef: TransitionContext['ref'];
 
 	/**
