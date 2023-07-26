@@ -61,11 +61,11 @@ function generateSpecs(engineName: EngineName) {
 			});
 
 			await router!.push('second', {query: {foo: 1}});
-			await router!.push('second', {query: {foo: 2}});
+			await router!.push(null, {query: {foo: 2}});
 
 			ctx.unsafe.async.terminateWorker(group);
 
-			await router!.push('second', {query: {foo: 3}});
+			await router!.push(null, {query: {foo: 3}});
 			return result;
 
 		}, engineName);
