@@ -441,7 +441,7 @@ export function resolvePathParameters(pathParams: PathParam[], params: Dictionar
 		parameters = {...params};
 
 	pathParams.forEach((param) => {
-		if (Object.hasOwnProperty(parameters, param.name)) {
+		if (parameters.hasOwnProperty(param.name)) {
 			return;
 		}
 
