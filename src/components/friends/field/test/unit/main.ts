@@ -72,12 +72,12 @@ test.describe('friends/field', () => {
 			});
 
 			test('of the component using custom getter', async () => {
-				await test.expect(performCRUDusingCustomGetter('tmp.foo_bla.bar', 'tmp.fooBla.bar'))
+				await test.expect(performCRUDUsingCustomGetter('tmp.foo_bla.bar', 'tmp.fooBla.bar'))
 					.resolves.toEqual(testResults);
 			});
 
 			test('of the third-party object using custom getter', async () => {
-				await test.expect(perform3rdPartyCRUDusingCustomGetter('tmp.foo_bla.bar', 'r.tmp.fooBla.bar'))
+				await test.expect(perform3rdPartyCRUDUsingCustomGetter('tmp.foo_bla.bar', 'r.tmp.fooBla.bar'))
 					.resolves.toEqual(testResults);
 			});
 		});
@@ -94,12 +94,12 @@ test.describe('friends/field', () => {
 			});
 
 			test('of the component using custom getter', async () => {
-				await test.expect(performCRUDusingCustomGetter('reactiveTmp.foo_bla.bar', 'reactiveTmp.fooBla.bar'))
+				await test.expect(performCRUDUsingCustomGetter('reactiveTmp.foo_bla.bar', 'reactiveTmp.fooBla.bar'))
 					.resolves.toEqual(testResults);
 			});
 
 			test('of the third-party object using custom getter', async () => {
-				await test.expect(perform3rdPartyCRUDusingCustomGetter('reactiveTmp.foo_bla.bar', 'r.reactiveTmp.fooBla.bar'))
+				await test.expect(perform3rdPartyCRUDUsingCustomGetter('reactiveTmp.foo_bla.bar', 'r.reactiveTmp.fooBla.bar'))
 					.resolves.toEqual(testResults);
 			});
 		});
@@ -110,7 +110,7 @@ test.describe('friends/field', () => {
 		 */
 		function performCRUD(path: string): Promise<any[]> {
 			return target.evaluate((ctx, {path}) => {
-				const res: any[] = [ctx.field.get(path)];
+				const res = [ctx.field.get(path)];
 
 				ctx.watch(path, watchOptions, (val) => {
 					res.push(val);
@@ -135,7 +135,7 @@ test.describe('friends/field', () => {
 		 */
 		function perform3rdPartyCRUD(path: string, watchPath: string): Promise<any[]> {
 			return target.evaluate((ctx, {path, watchPath}) => {
-				const res: any[] = [ctx.field.get(path, ctx.r)];
+				const res = [ctx.field.get(path, ctx.r)];
 
 				ctx.watch(watchPath, watchOptions, (val) => {
 					res.push(val);
@@ -152,18 +152,19 @@ test.describe('friends/field', () => {
 		}
 
 		/**
-		 * Performs CRUD operations on the component using custom getter and returns array of changes
+		 * Performs CRUD operations on the component using a custom getter and returns an array of changes
 		 *
 		 * @param path
 		 * @param watchPath
 		 */
-		function performCRUDusingCustomGetter(path: string, watchPath: string): Promise<any[]> {
+		function performCRUDUsingCustomGetter(path: string, watchPath: string): Promise<any[]> {
 			return target.evaluate((ctx, {path, watchPath}) => {
 				const
 					valueGetter = (prop, obj) => Object.get(obj, prop.camelize(false)),
 					keyGetter = String.camelize(false);
 
-				const res: any[] = [ctx.field.get(path, valueGetter)];
+				const
+					res = [ctx.field.get(path, valueGetter)];
 
 				ctx.watch(watchPath, watchOptions, (val) => {
 					res.push(val);
@@ -180,18 +181,19 @@ test.describe('friends/field', () => {
 		}
 
 		/**
-		 * Performs CRUD operations on the 3rd-party object using custom getter and returns array of changes
+		 * Performs CRUD operations on the 3rd-party object using a custom getter and returns an array of changes
 		 *
 		 * @param path
 		 * @param watchPath
 		 */
-		function perform3rdPartyCRUDusingCustomGetter(path: string, watchPath: string): Promise<any[]> {
+		function perform3rdPartyCRUDUsingCustomGetter(path: string, watchPath: string): Promise<any[]> {
 			return target.evaluate((ctx, {path, watchPath}) => {
 				const
 					valueGetter = (prop, obj) => Object.get(obj, prop.camelize(false)),
 					keyGetter = <KeyGetter<string>>String.camelize(false);
 
-				const res: any[] = [ctx.field.get(path, ctx.r, valueGetter)];
+				const
+					res = [ctx.field.get(path, ctx.r, valueGetter)];
 
 				ctx.watch(watchPath, watchOptions, (val) => {
 					res.push(val);
