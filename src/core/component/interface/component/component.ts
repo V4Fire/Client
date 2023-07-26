@@ -86,7 +86,7 @@ export abstract class ComponentInterface {
 	 *
 	 * const classes = {
 	 *   foo: 'bla',
-	 *   bar: ['bla,' 'baz']
+	 *   bar: ['bla', 'baz']
 	 * };
 	 * ```
 	 */
