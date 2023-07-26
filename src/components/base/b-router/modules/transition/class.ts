@@ -199,7 +199,7 @@ export default class Transition {
 		nonWatchRouteValues: Pick<router.Route, 'url' | 'query' | 'meta'>
 	): Promise<CanUndef<{hardChange:boolean}>> {
 		// If target ref is not null we perform a hard transition
-		const hardChange = this.originRef != null;
+		let hardChange = false;
 
 		const {
 			component,
@@ -215,7 +215,7 @@ export default class Transition {
 			currentRoute = component.field.get<router.Route>('routeStore');
 
 		// Checking that the new route is really needed, i.e., not equal to the previous one
-		let newRouteIsReallyNeeded = hardChange || !Object.fastCompare(
+		let newRouteIsReallyNeeded = !Object.fastCompare(
 			router.getComparableRouteParams(currentRoute),
 			router.getComparableRouteParams(newRoute)
 		);
@@ -257,13 +257,14 @@ export default class Transition {
 			}
 
 			await engine[this.method](newRoute.url, plainInfo).then(() => {
-				if (hardChange || r.route == null) {
-					component.emit('hardChange', newRoute);
-					r.route = newRoute;
+				const isSoftTransition = r.route != null && Object.fastCompare(
+					router.convertRouteToPlainObjectWithoutProto(currentRoute),
+					router.convertRouteToPlainObjectWithoutProto(newRoute)
+				);
 
-				} else {
-					// Only the properties from the prototype have been changed in this transition,
-					// so it can be done as a soft transition, i.e., without forcing re-rendering of components
+				// Only the properties from the prototype have been changed in this transition,
+				// so it can be done as a soft transition, i.e., without forcing re-rendering of components
+				if (isSoftTransition) {
 					component.emit('softChange', newRoute);
 
 					// We get a prototype by using the `__proto__` property,
@@ -277,6 +278,11 @@ export default class Transition {
 							proto[key] = nonWatchRouteValues[key];
 						});
 					}
+
+				} else {
+					hardChange = true;
+					component.emit('hardChange', newRoute);
+					r.route = newRoute;
 				}
 
 				emitTransition();
@@ -363,8 +369,6 @@ export default class Transition {
 		} else {
 			deepMixin(false, this.newRouteInfo, this.opts);
 		}
-
-		console.log(this.newRouteInfo);
 
 		// If the route supports padding from the root object or query parameters
 		fillRouteParams(this.newRouteInfo!, this.component);
