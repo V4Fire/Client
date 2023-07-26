@@ -257,7 +257,7 @@ export default class Transition {
 			}
 
 			await engine[this.method](newRoute.url, plainInfo).then(() => {
-				if (hardChange) {
+				if (hardChange || r.route == null) {
 					component.emit('hardChange', newRoute);
 					r.route = newRoute;
 
@@ -363,6 +363,8 @@ export default class Transition {
 		} else {
 			deepMixin(false, this.newRouteInfo, this.opts);
 		}
+
+		console.log(this.newRouteInfo);
 
 		// If the route supports padding from the root object or query parameters
 		fillRouteParams(this.newRouteInfo!, this.component);
