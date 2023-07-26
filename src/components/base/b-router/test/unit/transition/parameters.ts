@@ -184,7 +184,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		});
 	});
 
-	test.only('should stay on the current route and merge params when route is null', async ({page}) => {
+	test('should stay on the current route and merge params when route is null', async ({page}) => {
 		const root = await createInitRouter('history')(page);
 
 		await test.expect(root.evaluate(async (ctx) => {
@@ -218,7 +218,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		});
 	});
 
-	test.only('should navigate to the specified route and replace params when route is a string', async ({page}) => {
+	test('should navigate to the specified route and replace params when route is a string', async ({page}) => {
 		const root = await createInitRouter('history')(page);
 
 		await test.expect(root.evaluate(async (ctx) => {
@@ -252,7 +252,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		});
 	});
 
-	test.only('shouldn\'t merge params, when navigating through history', async ({page}) => {
+	test('shouldn\'t merge params, when navigating through history', async ({page}) => {
 		const root = await createInitRouter('history')(page);
 
 		await test.expect(root.evaluate(async (ctx) => {
