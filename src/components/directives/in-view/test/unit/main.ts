@@ -30,13 +30,13 @@ test.describe('components/directives/in-view', () => {
 	});
 
 	test('the handler should be called when the element enters the viewport', async ({page}) => {
-		const observedEl = await createObservedElement(page, undefined);
+		const observedEl = await renderDirective(page, undefined);
 		await makeEnterViewport(observedEl);
 		await test.expect(waitForWatcherCallsCount(page, observedEl, 1)).toBeResolved();
 	});
 
 	test('the handler should be called only once if the `once` option is set', async ({page}) => {
-		const observedEl = await createObservedElement(page, {once: true});
+		const observedEl = await renderDirective(page, {once: true});
 		await makeEnterViewport(observedEl);
 		await restoreViewport(page);
 		await makeEnterViewport(observedEl);
@@ -44,7 +44,7 @@ test.describe('components/directives/in-view', () => {
 	});
 
 	test('all provided handlers should be called when the element enters the viewport', async ({page}) => {
-		const observedEl = await createObservedElement(page, [{once: true}, {once: true, delay: 150}]);
+		const observedEl = await renderDirective(page, [{once: true}, {once: true, delay: 150}]);
 		await makeEnterViewport(observedEl);
 		await test.expect(waitForWatcherCallsCount(page, observedEl, 2)).toBeResolved();
 	});
@@ -53,7 +53,7 @@ test.describe('components/directives/in-view', () => {
 		'the handler should not be triggered by scroll events for elements other than the root when the `onlyRoot` option is set to true',
 
 		async ({page}) => {
-			const observedEl = await createObservedElement(page, {
+			const observedEl = await renderDirective(page, {
 				onlyRoot: true,
 				root: () => document.getElementById('root-component')!
 			});
@@ -86,7 +86,7 @@ test.describe('components/directives/in-view', () => {
 		'the handler should be called when the element enters the viewport and remains in it for the specified `delay` in milliseconds',
 
 		async ({page}) => {
-			const observedEl = await createObservedElement(page, {delay: 250});
+			const observedEl = await renderDirective(page, {delay: 250});
 			await makeEnterViewport(observedEl);
 
 			await test.expect(getWatcherCallsCount(observedEl)).toBeResolvedTo(0);
@@ -98,7 +98,7 @@ test.describe('components/directives/in-view', () => {
 		'the function passed as `onEnter` should be immediately called when the element enters the viewport',
 
 		async ({page}) => {
-			const observedEl = await createObservedElement(page, {
+			const observedEl = await renderDirective(page, {
 				onEnter: (watcher) => {
 					watcher.handler(watcher);
 					return true;
@@ -118,7 +118,7 @@ test.describe('components/directives/in-view', () => {
 		'the function passed as `onLeave` should be immediately called when the element leaves the viewport',
 
 		async ({page}) => {
-			const observedEl = await createObservedElement(page, {onLeave: handler});
+			const observedEl = await renderDirective(page, {onLeave: handler});
 			await makeEnterViewport(observedEl);
 
 			await resetWatcherCallsCount(observedEl);
@@ -133,7 +133,7 @@ test.describe('components/directives/in-view', () => {
 		'the visibility of the element should be tracked when `trackVisibility` is set',
 
 		async ({page}) => {
-			const observedEl = await createObservedElement(
+			const observedEl = await renderDirective(
 				page,
 				{trackVisibility: true}
 			);
@@ -209,13 +209,7 @@ test.describe('components/directives/in-view', () => {
 		await observedEl.evaluate((div) => div.removeAttribute('data-test-in-view'));
 	}
 
-	/**
-	 * Creates an element with the applied `in-view` directive to observe its entry into the viewport
-	 *
-	 * @param page
-	 * @param inViewOpts - options for the `in-view` directive
-	 */
-	async function createObservedElement(
+	async function renderDirective(
 		page: Page,
 		inViewOpts: CanUndef<CanArray<WatchHandler | Partial<WatchOptions>>>
 	): Promise<Locator> {

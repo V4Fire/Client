@@ -39,7 +39,7 @@ Also, you can see [[iVisible]] and [[iAccess]] traits and the [[iData]] componen
 ## Basic concepts
 
 Like native form tags (input, checkbox, etc.), every form component has an API with a similar set of properties and methods.
-This class provides that API, i.e. if you want your component to work as a form component, you should inherit it from this.
+This class provides that API, i.e., if you want your component to work as a form component, you should inherit it from this.
 
 ```typescript
 import iInput, { component } from 'components/super/i-input/i-input';

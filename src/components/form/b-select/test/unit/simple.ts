@@ -172,7 +172,7 @@ test.describe('<b-select> simple usage', () => {
 			});
 
 			await test.expect(target.evaluate((ctx) => ctx.unsafe.block!.element('input')!.tagName))
-				.resolves.toBe('SELECT');
+				.toBeResolvedTo('SELECT');
 
 			await test.expect(
 				page.locator(createSelector('input')).getByRole('option')

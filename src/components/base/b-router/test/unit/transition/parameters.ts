@@ -64,7 +64,7 @@ test.describe('<b-router> passing transition parameters', () => {
 					(ctx) => ctx.router!.push('user').catch((err) => err.toString())
 				);
 
-				await test.expect(transition).resolves.toBe('TypeError: Expected "userId" to be a string');
+				await test.expect(transition).toBeResolvedTo('TypeError: Expected "userId" to be a string');
 			}
 		);
 
@@ -112,7 +112,7 @@ test.describe('<b-router> passing transition parameters', () => {
 					await ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}});
 					return location.pathname + location.search;
 
-				})).resolves.toBe('/user/42/direct/15?utm=portal');
+				})).toBeResolvedTo('/user/42/direct/15?utm=portal');
 			}
 		);
 
@@ -131,7 +131,7 @@ test.describe('<b-router> passing transition parameters', () => {
 					await ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}});
 					return location.pathname + location.search;
 
-				})).resolves.toBe('/user/42/direct?conversationId=15&utm=portal');
+				})).toBeResolvedTo('/user/42/direct?conversationId=15&utm=portal');
 			}
 		);
 

@@ -26,7 +26,7 @@ test.describe('<i-block> props', () => {
 			rootTag: 'main'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.$el!.tagName)).resolves.toBe('MAIN');
+		await test.expect(target.evaluate((ctx) => ctx.$el!.tagName)).toBeResolvedTo('MAIN');
 	});
 
 	test('`mods` should set default values for the component modifiers', async ({page}) => {
@@ -76,7 +76,7 @@ test.describe('<i-block> props', () => {
 			stage: 'main'
 		});
 
-		await test.expect(target.evaluate((ctx) => ctx.stage)).resolves.toBe('main');
+		await test.expect(target.evaluate((ctx) => ctx.stage)).toBeResolvedTo('main');
 	});
 
 	test('`activatedProp` should deactivate the component when `false` is passed', async ({page}) => {

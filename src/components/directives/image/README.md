@@ -1,13 +1,23 @@
 # core/component/directives/image
 
-This module provides a directive to load and display images using `img` and/or `picture` tags.
+This module provides a directive for loading and displaying images using `img` and/or `picture` tags.
+
+```
+< .my-image v-image = { &
+  src: '/my-image.jpeg',
+  preview: '/preview.jpeg',
+  broken: '/broken.jpeg'
+} .
+```
 
 ## Why is this directive needed?
 
-A common case when working with images is showing a special stub when loading or in case of an error.
-Unfortunately, there are no native API to implement this feature. This directive does just that - it provides a convenient
-API to set such stubs. Moreover, it works universally, both for `img` and `picture` tags. Which tag will be used to render
-the image depends on the passed properties. Passing `sources` will enable using the `picture` tag, otherwise `img`.
+When working with images, it is common to display a placeholder or an error message during the loading process.
+However, there is no native API to implement this feature.
+This directive solves that problem by providing a convenient API to set these placeholders.
+Additionally, it works universally for both img and picture tags.
+The choice between using img or picture tags for rendering the image depends on the properties passed.
+When sources are provided, the picture tag is used; otherwise, the img tag is used.
 
 ## How to include this directive?
 
@@ -24,9 +34,11 @@ class bExample extends iBlock {}
 
 ## How does the directive work?
 
-The directive inserts `img` and/or `picture` elements inside the container to which it is applied.
-The container type itself then becomes the usual `span`. The container is also given background images with stubs depending
-on the state. You can apply any available CSS styles for more customization. For example, `object-fit` or `aspect-ratio`.
+The directive places `img` and/or `picture` elements within the container it's applied to,
+transforming the container type into a typical `span`.
+The container also receives background images with placeholders, which vary according to states.
+You have the flexibility to add any applicable CSS styles for further customization,
+such as `object-fit` or `aspect-ratio`.
 
 ```
 < .my-image v-image = { &
@@ -38,7 +50,7 @@ on the state. You can apply any available CSS styles for more customization. For
 Will render as
 
 ```html
-<span class="my-image" style="display: inline-block; background-image: url(/preview.jpeg)" data-image="preview">
+<span class="my-image" style="display: inline-block; background-image: url(/preview.jpeg);" data-image="preview">
   <img src="/my-image.jpeg" data-img="..." />
 </span>
 ```
@@ -87,21 +99,25 @@ Will render as
 
 ## Special attributes
 
-A container to which the directive is applied sets the special `data-image` attribute.
-The attribute value can be one of three: `preview`, `loaded` and `broken`, depending on the current state of the image.
-Also, the `img` tag itself, which is added inside a container to which the directive is applied, has the special `data-img` attribute.
-These attributes are useful for setting CSS styles.
+The container to which the directive is applied receives a special `data-image` attribute.
+The value of this attribute can be one of three options: `preview`, ``loaded`, or brok`en,
+changing in accordance with the current state of the image.
+Additionally, the `img` tag, inserted within the applied container, also incorporates a `data-img` attribute.
+Both of these attributes are highly beneficial in customizing CSS styles.
 
 ## Directive options
 
 ### [src]
 
-The image URL. On browsers supporting `srcset`, `src` is treated like a candidate image with a pixel density descriptor 1x,
-unless an image with this pixel density descriptor is already defined in `srcset`, or unless `srcset` contains `w` descriptors.
+The image URL.
+On browsers supporting `srcset`, `src` is treated like a candidate image with a pixel density descriptor 1x,
+unless an image with this pixel density descriptor is already defined in `srcset`,
+or unless `srcset` contains `w` descriptors.
 
 ### [baseSrc]
 
-The base image URL. If given, it will be used as a prefix for all values in the `src` and `srcset` parameters.
+The base image URL.
+If given, it will be used as a prefix for all values in the `src` and `srcset` parameters.
 
 ```
 < .my-image v-image = { &
@@ -117,21 +133,24 @@ The base image URL. If given, it will be used as a prefix for all values in the 
 
 ### [srcset]
 
-A value of the `srcset` image attribute. This option helps to create responsive images.
+Value of the `srcset` image attribute.
+This option helps to create responsive images.
 See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-srcset) and [this](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images)
 for more information.
 
 ### [width]
 
-The image width. If the option is given as a number, then it is treated as pixels.
+The image width.
+If the option is given as a number, then it is treated as pixels.
 
 ### [height]
 
-The image width. If the option is given as a number, then it is treated as pixels.
+The image height.
+If the option is given as a number, then it is treated as pixels.
 
 ### [sizes]
 
-A value of the `sizes` image attribute.
+Value of the `sizes` image attribute.
 See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-sizes) and [this](https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images)
 for more information.
 
@@ -143,12 +162,12 @@ If this option is given, then `picture` will be used to load the image, not `img
 See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture) and [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source)
 for more information.
 
-The attributes object has the following interface.
+The attribute's object has the following interface.
 
 ```typescript
 interface ImageSource {
   /**
-   * A value of the `srcset` source attribute.
+   * Value of the `srcset` source attribute.
    * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-srcset
    *
    * This option helps to create responsive images.
@@ -181,7 +200,7 @@ interface ImageSource {
   height?: string | number;
 
   /**
-   * A value of the `sizes` source attribute.
+   * Value of the `sizes` source attribute.
    * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-sizes
    *
    * This option helps to create responsive images.
@@ -202,7 +221,8 @@ If false, then the image will start loading immediately, but not when it appears
 
 ### [preview]
 
-An image URL to use as a placeholder while the main one is loading. The option can also accept an object with additional image settings.
+An image URL to use as a placeholder while the main one is loading.
+The option can also accept an object with additional image settings.
 
 ```
 < .my-image v-image = { &
@@ -222,8 +242,8 @@ An image URL to use as a placeholder while the main one is loading. The option c
 
 ### [broken]
 
-An image URL to use as a placeholder if the main one cannot be loaded due to an error. The option can also accept an
-object with additional image settings.
+An image URL to use as a placeholder if the main one cannot be loaded due to an error.
+The option can also accept an object with additional image settings.
 
 ```
 < .my-image v-image = { &
@@ -286,10 +306,11 @@ The options returned by this function will be used to load the image.
 
 ## Global configuration
 
-Some directive settings can be set globally using the `src/config` module.
-For example, you can set options for placeholder images, instead of setting them each time the directive is called.
-Of course, if the directive accepts certain parameters that conflict with the global ones,
-then the conflict will be resolved in favor of the parameters that were set when the directive was called.
+You can set some of the directive's parameters globally using the `src/config` module.
+For example, you can establish placeholder image parameters once instead of setting them every time
+the directive is called.
+Naturally, if the directive takes specific parameters that conflict with the global ones,
+the conflict will be resolved in favor of the parameters set during the directive's invocation.
 
 __src/config__
 

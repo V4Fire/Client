@@ -15,7 +15,7 @@ import { paramsFactory } from 'core/component/decorators/factory';
 import type { DecoratorComponentAccessor } from 'core/component/decorators/interface';
 
 /**
- * Attaches meta information to a component computed field or accessor
+ * Assigns meta-information to a computed field or an accessor within a component
  *
  * @decorator
  *

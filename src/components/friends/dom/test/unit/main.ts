@@ -78,7 +78,7 @@ test.describe('friends/dom', () => {
 
 			await page.locator('#emptyDiv').click();
 
-			await test.expect(clickResult).resolves.toBe(1);
+			await test.expect(clickResult).toBeResolvedTo(1);
 		});
 
 		test('the callback should not be fired when a click is performed outside of the specified element', async ({page}) => {
@@ -122,43 +122,51 @@ test.describe('friends/dom', () => {
 			test.expect(isIn).toBeTruthy();
 		});
 
-		test([
-			'the appended node should be removed from the parent node',
-			'when `async.clearAll` is invoked'
-		].join(' '), async ({page}) => {
-			await target.evaluate((ctx) => {
-				ctx.unsafe.dom.appendChild(ctx.$el!, globalThis.emptyDiv, 'test-group');
-			});
+		test(
+			[
+				'the appended node should be removed from the parent node',
+				'when `async.clearAll` is invoked'
+			].join(' '),
 
-			await test.expect(page.evaluate(() => globalThis.emptyDiv.isConnected))
-				.resolves.toBeTruthy();
+			async ({page}) => {
+				await target.evaluate((ctx) => {
+					ctx.unsafe.dom.appendChild(ctx.$el!, globalThis.emptyDiv, 'test-group');
+				});
 
-			await target.evaluate((ctx) => ctx.unsafe.async.clearAll({group: 'test-group'}));
+				await test.expect(page.evaluate(() => globalThis.emptyDiv.isConnected))
+					.resolves.toBeTruthy();
 
-			await test.expect(page.evaluate(() => globalThis.emptyDiv.isConnected))
-				.resolves.toBeFalsy();
-		});
+				await target.evaluate((ctx) => ctx.unsafe.async.clearAll({group: 'test-group'}));
 
-		test([
-			'if the appended node has a component and `destroyIfComponent` option is provided,',
-			'the associated component should be destroyed when `async.clearAll` is invoked'
-		].join(' '), async ({page}) => {
-			await renderComponent(page);
+				await test.expect(page.evaluate(() => globalThis.emptyDiv.isConnected))
+					.resolves.toBeFalsy();
+			}
+		);
 
-			await target.evaluate((ctx) => {
-				ctx.unsafe.dom.appendChild(ctx.$el!, globalThis.testComponent, {group: 'test-group', destroyIfComponent: true});
-			});
+		test(
+			[
+				'if the appended node has a component and `destroyIfComponent` option is provided,',
+				'the associated component should be destroyed when `async.clearAll` is invoked'
+			].join(' '),
 
-			await target.evaluate((ctx) => ctx.unsafe.async.clearAll({group: 'test-group'}));
+			async ({page}) => {
+				await renderComponent(page);
 
-			const [isConnected, componentIsDestroyed] = await page.evaluate(() => [
-				globalThis.testComponent.isConnected,
-				globalThis.testComponent.component === undefined
-			]);
+				await target.evaluate((ctx) => {
+					ctx.unsafe.dom.appendChild(ctx.$el!, globalThis.testComponent, {group: 'test-group', destroyIfComponent: true});
+				});
 
-			test.expect(isConnected).toBeFalsy();
-			test.expect(componentIsDestroyed).toBeTruthy();
-		});
+				await target.evaluate((ctx) => ctx.unsafe.async.clearAll({group: 'test-group'}));
+
+				const [isConnected, componentIsDestroyed] = await page.evaluate(() => [
+					globalThis.testComponent.isConnected,
+					globalThis.testComponent.component === undefined
+				]);
+
+				test.expect(isConnected).toBeFalsy();
+				test.expect(componentIsDestroyed).toBeTruthy();
+			}
+		);
 	});
 
 	test.describe('`replaceWith`', () => {
@@ -202,26 +210,30 @@ test.describe('friends/dom', () => {
 			test.expect(bIsConnected).toBeFalsy();
 		});
 
-		test([
-			'if the new node has a component and `destroyIfComponent` option is provided,',
-			'the associated component should be destroyed when `async.clearAll` is invoked'
-		].join(' '), async ({page}) => {
-			await renderComponent(page);
+		test(
+			[
+				'if the new node has a component and `destroyIfComponent` option is provided,',
+				'the associated component should be destroyed when `async.clearAll` is invoked'
+			].join(' '),
 
-			await target.evaluate((ctx) => {
-				ctx.unsafe.dom.replaceWith(globalThis.emptyDiv2, globalThis.testComponent, {group: 'test-group', destroyIfComponent: true});
-			});
+			async ({page}) => {
+				await renderComponent(page);
 
-			await target.evaluate((ctx) => ctx.unsafe.async.clearAll({group: 'test-group'}));
+				await target.evaluate((ctx) => {
+					ctx.unsafe.dom.replaceWith(globalThis.emptyDiv2, globalThis.testComponent, {group: 'test-group', destroyIfComponent: true});
+				});
 
-			const [isConnected, componentIsDestroyed] = await page.evaluate(() => [
-				globalThis.testComponent.isConnected,
-				globalThis.testComponent.component === undefined
-			]);
+				await target.evaluate((ctx) => ctx.unsafe.async.clearAll({group: 'test-group'}));
 
-			test.expect(isConnected).toBeFalsy();
-			test.expect(componentIsDestroyed).toBeTruthy();
-		});
+				const [isConnected, componentIsDestroyed] = await page.evaluate(() => [
+					globalThis.testComponent.isConnected,
+					globalThis.testComponent.component === undefined
+				]);
+
+				test.expect(isConnected).toBeFalsy();
+				test.expect(componentIsDestroyed).toBeTruthy();
+			}
+		);
 	});
 
 	test.describe('`getComponent`', () => {
@@ -321,15 +333,12 @@ test.describe('friends/dom', () => {
 		});
 	});
 
-	/**
-	 * Renders the component and creates a global link to the node
-	 * @param page
-	 */
 	async function renderComponent(page: Page): Promise<void> {
 		await Component.createComponent(page, 'b-button', {
 			attrs: {
 				id: 'testComponent'
 			},
+
 			children: {
 				default: () => 'Hello there, General Kenobi!'
 			}

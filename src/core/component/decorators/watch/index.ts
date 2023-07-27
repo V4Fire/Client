@@ -17,9 +17,10 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
 /**
  * Attaches a watcher of a component property/event to a component method or property.
  *
- * When you watch some property change, the handler function can take a second argument that refers to
- * the old value of the property. If the object being watched is non-primitive, the old value will be cloned from
- * the original old value to avoid the problem when we have two references to the one object.
+ * When you observe a property's alteration,
+ * the handler function can accept a second argument that refers to the property's old value.
+ * If the object being watched isn't primitive, the old value will be cloned from the original old value.
+ * This helps avoid issues that may arise from having two references to the same object.
  *
  * ```typescript
  * import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
@@ -36,8 +37,8 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  *     console.log(value[0] !== oldValue[0]);
  *   }
  *
- *   // When you don't declare a second argument in a watcher,
- *   // the property's old value won't be cloned
+ *   // If you don't specify a second argument in a watcher,
+ *   // the property's old value won't be cloned.
  *   @watch('list')
  *   onListChangeWithoutCloning(value: Dictionary[]): void {
  *     // true
@@ -45,8 +46,8 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  *     console.log(value[0] === oldValue[0]);
  *   }
  *
- *   // When you deep-watch a property and declare a second argument in a watcher,
- *   // the property's old value will be deep-cloned
+ *   // If you're deep-watching a property and declare a second argument in a watcher,
+ *   // the old value of the property will be deep-cloned.
  *   @watch({path: 'list', deep: true})
  *   onListChangeWithDeepCloning(value: Dictionary[], oldValue: Dictionary[]): void {
  *     // true
@@ -61,29 +62,26 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  * }
  * ```
  *
- * To listen an event you need to use the special delimiter ":" within a watch path.
- * Also, you can specify an event emitter to listen by writing a link before ":".
- * For instance:
+ * In order to listen to an event, you should use the special delimiter `:` within a watch path.
+ * You can also specify an event emitter to listen to by writing a link before `:`.
+ * Here are some examples:
  *
- * 1. `':onChange'` - the component will listen its own event `onChange`;
- * 2. `'localEmitter:onChange'` - the component will listen an event `onChange` from `localEmitter`;
- * 3. `'$parent.localEmitter:onChange'` - the component will listen an event `onChange` from `$parent.localEmitter`;
- * 4. `'document:scroll'` - the component will listen an event `scroll` from `window.document`.
+ * 1. `:onChange` - the component will listen to its own event `onChange`.
+ * 2. `localEmitter:onChange` - the component will listen to an `onChange` event from `localEmitter`.
+ * 3. `$parent.localEmitter:onChange` - the component will listen to an `onChange` event from `$parent.localEmitter`.
+ * 4. `document:scroll` - the component will listen to a `scroll` event from `window.document`.
  *
- * A link to the event emitter is taken from component properties or from the global object.
- * The empty link '' is a link to a component itself.
+ * A link to the event emitter is taken either from the component properties or from the global object.
+ * An empty link `''` refers to the component itself.
  *
- * Also, if you listen an event, you can manage when start to listen the event by using special characters at the
- * beginning of a watch path:
+ * If you are listening to an event, you can manage when to start listening to the event by using special characters at
+ * the beginning of a watch path:
  *
- * 1. `'!'` - start to listen an event on the "beforeCreate" hook, for example: `'!rootEmitter:reset'`;
- * 2. `'?'` - start to listen an event on the "mounted" hook, for example: `'?$el:click'`.
+ * 1. `'!'` - start to listen to an event on the `beforeCreate` hook, e.g., `!rootEmitter:reset`.
+ * 2. `'?'` - start to listen to an event on the `mounted` hook, e.g., `?$el:click`.
  *
- * By default, all events start to listen on the "created" hook.
+ * By default, all events start being listened to on the `created` hook.
  *
- * @decorator
- *
- * @example
  * ```typescript
  * import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
  *
@@ -92,31 +90,31 @@ import type { DecoratorFieldWatcher, DecoratorMethodWatcher } from 'core/compone
  *   @field()
  *   foo: Dictionary = {bla: 0};
  *
- *   // Watch for changes of "foo"
+ *   // Watch "foo" for any changes
  *   @watch('foo')
  *   watcher1() {
  *
  *   }
  *
- *   // Deep watch for changes of "foo"
+ *   // Deeply watch "foo" for any changes
  *   @watch({path: 'foo', deep: true})
  *   watcher2() {
  *
  *   }
  *
- *   // Watch for changes of "foo.bla"
+ *   // Watch "foo.bla" for any changes
  *   @watch('foo.bla')
  *   watcher3() {
  *
  *   }
  *
- *   // Listen "onChange" event of a component
+ *   // Listen to the component's "onChange" event
  *   @watch(':onChange')
  *   watcher3() {
  *
  *   }
  *
- *   // Listen "onChange" event of a component `parentEmitter`
+ *   // Listen to "onChange" event from the parentEmitter component
  *   @watch('parentEmitter:onChange')
  *   watcher4() {
  *

@@ -6,15 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { concatURLs } from 'core/url';
 import { getSrcSet } from 'core/html';
+import { concatURLs } from 'core/url';
+
 import { setVNodePatchFlags } from 'core/component/render';
 
 import type { VNode } from 'core/component/engines';
 import type { ImageOptions, ImageSource, VirtualElement } from 'components/directives/image/interface';
 
 /**
- * Returns a value of the `currentSrc` property from the passed image element
+ * Returns the value of the `currentSrc` property from the passed image element
  * @param image
  */
 export function getCurrentSrc(image: HTMLImageElement | HTMLPictureElement): CanUndef<string> {
@@ -22,8 +23,8 @@ export function getCurrentSrc(image: HTMLImageElement | HTMLPictureElement): Can
 }
 
 /**
- * Creates an image element by the passed parameters.
- * The function returns a special structure, with methods to create the element as a DOM or VDOM node.
+ * Creates an image element based on the passed parameters.
+ * The function returns a special structure with methods for creating the element as either a DOM node or a VDOM node.
  *
  * @param imageParams - the requested image parameters
  * @param [commonParams] - common parameters
@@ -37,8 +38,8 @@ export function createImageElement(
 }
 
 /**
- * Creates an `img` element by the passed parameters.
- * The function returns a special structure, with methods to create the element as a DOM or VDOM node.
+ * Creates an `img` element based on the passed parameters.
+ * The function returns a special structure with methods for creating the element as either a DOM node or a VDOM node.
  *
  * @param imageParams - the requested image parameters
  * @param [commonParams] - common parameters
@@ -118,8 +119,8 @@ export function createImgElement(
 }
 
 /**
- * Creates a `picture` element with resources by the passed parameters.
- * The function returns a special structure, with methods to create the element as a DOM or VDOM node.
+ * Creates a `picture` element with resources based on the passed parameters.
+ * The function returns a special structure with methods for creating the element as either a DOM node or a VDOM node.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/picture
  * @param imageParams - the requested image parameters
@@ -159,8 +160,8 @@ export function createPictureElement(
 }
 
 /**
- * Creates `source` elements by the passed parameters.
- * The function returns a special structure, with methods to create the elements as a DOM or VDOM nodes.
+ * Creates `source` elements based on the passed parameters.
+ * The function returns a special structure with methods for creating the element as either a DOM node or a VDOM node.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source
  * @param imageParams - the requested image parameters
@@ -245,7 +246,7 @@ export function createSourceElements(
 }
 
 /**
- * Resolves a value of the `srcset` attribute for the given image by the passed parameters and returns it
+ * Resolves the value of the `srcset` attribute for the given image by the passed parameters and returns it
  *
  * @param srcset - the original image src set
  * @param imageParams - the requested image parameters
@@ -277,7 +278,7 @@ export function resolveSrcSet(
 }
 
 /**
- * Resolves a value of the `src` attribute for the given image by the passed parameters and returns it
+ * Resolves the value of the `src` attribute for the given image by the passed parameters and returns it
  *
  * @param src - the original image src
  * @param imageParams - the requested image parameters

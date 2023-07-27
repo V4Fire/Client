@@ -63,9 +63,6 @@ test.describe('<b-slider> standard component events', () => {
 		await testSwipeEvent('swipeEnd');
 	});
 
-	/**
-	 * @param event
-	 */
 	async function testSwipeEvent(event: string): Promise<void> {
 		const isEmitted = await slider.evaluate((ctx, {gestures, event}) => new Promise((resolve) => {
 			ctx.on(event, () => resolve(true));
