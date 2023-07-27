@@ -192,7 +192,36 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		testPort: o('test-port', {
 			env: true,
 			default: 8000
-		})
+		}),
+
+		/**
+		 * Returns true if it is a test env
+		 * @returns {boolean}
+		 */
+		isTestEnv() {
+			return !isProd && !this.config.webpack.ssr;
+		},
+
+		/**
+		 * Returns true if the dummy components should be imported dynamically.
+		 * Dummy components specified as dependencies of any component will always be imported
+		 * regardless of this option.
+		 *
+		 * @cli load-dummy-components
+		 * @env LOAD_DUMMY_COMPONENTS
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		loadDummyComponents(def) {
+			def ??= this.isTestEnv() && !this.config.webpack.storybook();
+
+			return o('load-dummy-components', {
+				env: true,
+				type: 'boolean',
+				default: def
+			});
+		}
 	},
 
 	/**
@@ -1122,19 +1151,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			blockNames: false,
 			passDesignSystem: false,
 
-			'prelude/test-env': this.isTestEnv(),
+			'prelude/test-env': this.build.isTestEnv(),
 			storybook: this.webpack.storybook(),
 
-			dummyComponents: this.dummyComponents()
+			dummyComponents: this.build.loadDummyComponents()
 		};
-	},
-
-	/**
-	 * Returns true if it is a test env
-	 * @returns {boolean}
-	 */
-	isTestEnv() {
-		return !isProd && !this.webpack.ssr;
 	},
 
 	/**
@@ -1158,27 +1179,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	componentDependencies() {
 		return {};
-	},
-
-	/**
-	 * Returns true if the dummy components should be imported dynamically.
-	 * Dummy components specified as dependencies of any component will always be imported
-	 * regardless of this option.
-	 *
-	 * @cli dummy-components
-	 * @env DUMMY_COMPONENTS
-	 *
-	 * @param {boolean} [def] - default value
-	 * @returns {boolean}
-	 */
-	dummyComponents(def = true) {
-		def ??= this.isTestEnv() && !this.storybook();
-
-		return o('dummy-components', {
-			env: true,
-			type: 'boolean',
-			default: def
-		});
 	},
 
 	/** @override */
