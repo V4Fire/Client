@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* The `data-cached-dynamic-class` attribute format is changed to the `core/json#evalWith` reviver format
+
 ## v3.0.0-rc.37 (2020-07-20)
 
 #### :house: Internal

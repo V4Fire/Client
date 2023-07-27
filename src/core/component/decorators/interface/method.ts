@@ -11,9 +11,9 @@ import type { DecoratorHook } from 'core/component/decorators/interface/hook';
 
 export interface DecoratorMethod<CTX extends ComponentInterface = ComponentInterface, A = unknown, B = A> {
 	/**
-	 * A path to a property to watch or a list of such paths.
-	 * Each time at least one of the specified properties is mutated, this method will be called.
-	 * In addition to specifying the watching paths, you can also set other watching parameters.
+	 * A path specifies the property to watch, or you can provide a list of such paths.
+	 * Whenever a mutation occurs in any one of the specified properties, this method will be invoked.
+	 * You can also set additional parameters for watching.
 	 *
 	 * The `core/watch` module is used to make objects watchable.
 	 * Therefore, for more information, please refer to its documentation.

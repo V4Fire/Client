@@ -1,6 +1,7 @@
 # components/friends/field
 
-This module provides a class which includes helper methods for safely accessing component/object properties. This enables usage of complex property paths without the risk of encountering exceptions if the property does not exist.
+This module provides a class which includes helper methods for safely accessing component/object properties.
+This enables usage of complex property paths without the risk of encountering exceptions if the property does not exist.
 
 ```js
 this.field.set('foo.bla.bar', 1);
@@ -17,7 +18,9 @@ this.field.delete('foo.bla.bar', this.r);
 ## How to include this module in your component?
 
 By default, any component that inherits from [[iBlock]] has the `field` property.
-Some methods, such as `get` and `set`, are always available, while others need to be explicitly included to enable tree-shaking code optimization. To do this, simply add the necessary import declaration within your component file.
+Some methods, such as `get` and `set`, are always available,
+while others need to be explicitly included to enable tree-shaking code optimization.
+To do this, simply add the necessary import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -34,7 +37,10 @@ export default class bExample extends iBlock {}
 
 There are three reasons to use `Field` instead of Prelude methods.
 
-1. Prelude methods are not aware of the component's watchable properties, such as system or regular fields. This means that if you use accessor-based watching, you might face the risk of failing to watch a property because it was never defined. Let's look at an example below.
+1. Prelude methods are not aware of the component's watchable properties, such as a system or regular fields.
+   This means that if you use accessor-based watching,
+   you might face the risk of failing to watch a property because it was never defined.
+   Let's look at an example below.
 
    ```typescript
    import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -67,9 +73,10 @@ There are three reasons to use `Field` instead of Prelude methods.
    }
    ```
 
-2. Prelude methods are not aware of component states and hooks. For example, before the component switches to the "created" hook,
-   we cannot directly set the field values because all fields are initialized during "created". In this case,
-   the `Field` class can optionally set the value to the internal store.
+2. Prelude methods are not aware of component states and hooks.
+   For example, before the component switches to the "created" hook,
+   we cannot directly set the field values because all fields are initialized during `created`.
+   In this case, the `Field` class can optionally set the value to the internal store.
 
    ```typescript
    import iBlock, { component, prop, field } from 'components/super/i-block/i-block';

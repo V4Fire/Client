@@ -192,10 +192,6 @@ test.describe('<b-textarea> standard component events', () => {
 		).toEqual(['foo', 'bar']);
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderTextarea(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bTextarea>> {
 		return Component.createComponent(page, 'b-textarea', {
 			attrs: {

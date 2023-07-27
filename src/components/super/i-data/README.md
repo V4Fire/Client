@@ -68,7 +68,7 @@ After loading, the data is stored in the `db` field.
   {{ db.someValue }}
 ```
 
-Each child instance of `iData` can have at most one data provider, i.e. you must decompose the data logic between different components,
+Each child instance of `iData` can have at most one data provider, i.e., you must decompose the data logic between different components,
 but not combine everything in one component. This approach produces a stricter code structure that is easy to maintain and debug.
 Also, all pending requests with the same hash are merged and the final result is distributed among the consumers.
 Don't be afraid of performance degradation.

@@ -23,12 +23,13 @@ let
 	baseInitLoad;
 
 /**
- * Initializes the global event listeners for the specified component
+ * Initializes the listening of global application events for the component
  *
  * @param component
  * @param [resetListener]
  */
 export function initGlobalListeners(component: iBlock, resetListener?: boolean): void {
+	// eslint-disable-next-line @v4fire/unbound-method
 	baseInitLoad ??= iBlock.prototype.initLoad;
 
 	const
@@ -50,18 +51,8 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		return;
 	}
 
-	const waitNextTick = (fn) => async () => {
-		try {
-			await ctx.nextTick({label: $$.reset});
-			await fn();
-
-		} catch (err) {
-			stderr(err);
-		}
-	};
-
-	$e.on('reset.load', waitNextTick(ctx.initLoad.bind(ctx)));
-	$e.on('reset.load.silence', waitNextTick(ctx.reload.bind(ctx)));
+	$e.on('reset.load', waitNextTickForReset(ctx.initLoad.bind(ctx)));
+	$e.on('reset.load.silence', waitNextTickForReset(ctx.reload.bind(ctx)));
 
 	if (needRouterSync) {
 		$e.on('reset.router', $s.resetRouter.bind($s));
@@ -71,7 +62,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		$e.on('reset.storage', $s.resetStorage.bind($s));
 	}
 
-	$e.on('reset', waitNextTick(async () => {
+	$e.on('reset', waitNextTickForReset(async () => {
 		ctx.componentStatus = 'loading';
 
 		if (needRouterSync || globalName != null) {
@@ -87,7 +78,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		await ctx.initLoad();
 	}));
 
-	$e.on('reset.silence', waitNextTick(async () => {
+	$e.on('reset.silence', waitNextTickForReset(async () => {
 		if (needRouterSync || globalName != null) {
 			const tasks = Array.concat(
 				[],
@@ -100,10 +91,22 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 
 		await ctx.reload();
 	}));
+
+	function waitNextTickForReset(fn: Function) {
+		return async () => {
+			try {
+				await ctx.nextTick({label: $$.reset});
+				await fn();
+
+			} catch (err) {
+				stderr(err);
+			}
+		};
+	}
 }
 
 /**
- * Initializes watchers from the `watchProp` prop for the specified component
+ * Initializes watchers from the `watchProp` prop for the component
  * @param component
  */
 export function initRemoteWatchers(component: iBlock): void {

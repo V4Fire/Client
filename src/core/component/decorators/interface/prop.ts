@@ -108,7 +108,7 @@ export interface PropOptions<T = unknown> {
 	validator?(value: T): boolean;
 
 	/**
-	 * If false, the prop can't be passed to a functional component
+	 * If set to false, the prop can't be passed to a functional component
 	 * @default `true`
 	 */
 	functional?: boolean;
@@ -120,7 +120,7 @@ export interface DecoratorProp<
 	B = A
 > extends PropOptions {
 	/**
-	 * If true, the prop always uses its own default value when needed.
+	 * If set to true, the prop always uses its own default value when needed.
 	 * This option is actually used when the `defaultProps` property is set to false for the described component
 	 * (via the `@component` decorator) and we want to override this behavior for a particular prop.
 	 *
@@ -149,7 +149,7 @@ export interface DecoratorProp<
 	 *
 	 *     // Also, see core/object/watch
 	 *     {
-	 *       // If false, then a handler that is invoked on the watcher event does not take any arguments from the event
+	 *       // If set to false, then a handler that is invoked on the watcher event does not take any arguments from the event
 	 *       provideArgs: false,
 	 *
 	 *       // How the event handler should be called:

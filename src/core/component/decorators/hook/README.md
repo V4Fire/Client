@@ -32,7 +32,9 @@ class bExample extends iBlock {
 ## Component life cycle
 
 V4Fire components have a standard life cycle: the component is created, the component is mounted to the DOM,
-the component is unmounted from the DOM, and so on. V4Fire implements an extended version of the [Vue component life cycle](https://vuejs.org/api/options-lifecycle.html#options-lifecycle).
+the component is unmounted from the DOM, and so on.
+
+V4Fire implements an extended version of the [Vue component life cycle](https://vuejs.org/api/options-lifecycle.html#options-lifecycle).
 That is, the V4 component supports all the lifecycle states (hereinafter referred to as hooks) of the Vue component and
 adds two of its own.
 
@@ -77,7 +79,7 @@ because once created, any change to such fields can cause re-rendering and can b
 We have links, initializers, and API to control the order of initialization, but what if we need to get the entire
 watchable store and modify it in a complex way. It is to solve this problem that the `beforeDataCreate` hook exists:
 it will be called exactly when all observable properties have been created, but not yet linked to the component,
-i.e. we can safely change them and not expect consequences.
+i.e., we can safely change them and not expect consequences.
 
 ```typescript
 import iBlock, { component, field, hook } from 'components/super/i-block/i-block';
@@ -109,7 +111,8 @@ but nevertheless, `beforeDataCreate` can be quite useful.
 
 ## Hook change events
 
-Every time a component hook value changes, the component emits a series of events that can be listened to both inside and outside the component.
+Whenever a component hook value changes,
+the component emits a series of events that can be listened to both inside and outside the component.
 
 | EventName    | Description                                  | Payload description                         | Payload            |
 |--------------|----------------------------------------------|---------------------------------------------|--------------------|
@@ -226,8 +229,10 @@ export default class bExample extends iBlock {
 
 ### Asynchronous handlers
 
-Some hooks support asynchronous handlers: `mounted`, `updated`, `destroyed`, `renderTracked`, `renderTriggered` and `errorCaptured`.
-That is, if one of the hook handlers returns a Promise, then the rest will wait for its resolving to preserve the initialization order.
+Some hooks support asynchronous handlers: `mounted`, `updated`, `destroyed`, `renderTracked`,
+`renderTriggered` and `errorCaptured`.
+That is, if one of the hook handlers returns a Promise,
+then the rest will wait for its resolving to preserve the initialization order.
 
 ## Additional options
 
@@ -259,4 +264,4 @@ class bExample extends iBlock {
 
 ### [functional = `true`]
 
-If false, the registered hook handler won't work inside a functional component.
+If set to false, the registered hook handler won't work inside a functional component.

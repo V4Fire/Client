@@ -66,7 +66,7 @@ The trait specifies a bunch of methods to implement.
 
 ### lockPageScroll
 
-Blocks scrolling of the document, i.e. prevents any scrolling of the document except within the specified node.
+Blocks scrolling of the document, i.e., prevents any scrolling of the document except within the specified node.
 The method has a default implementation.
 
 ```typescript

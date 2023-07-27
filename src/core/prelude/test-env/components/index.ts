@@ -30,7 +30,7 @@ globalThis.renderComponents = (
 	}
 
 	const
-		ID_ATTR = 'data-test-id';
+		ID_ATTR = 'data-dynamic-component-id';
 
 	const
 		ctx = <Nullable<iBlock['unsafe']>>app.component;
@@ -46,7 +46,7 @@ globalThis.renderComponents = (
 	const
 		ids = scheme.map(() => Math.random().toString(16).slice(2));
 
-	const vNodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
+	const vnodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
 		type: componentName,
 
 		attrs: {
@@ -57,7 +57,7 @@ globalThis.renderComponents = (
 		children
 	})));
 
-	const nodes = render.call(ctx.vdom, vNodes);
+	const nodes = render.call(ctx.vdom, vnodes);
 	ctx.$el?.append(...nodes);
 
 	const components = globalThis[createdComponents] ?? new Set();

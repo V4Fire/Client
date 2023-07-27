@@ -27,12 +27,12 @@ test.describe('<i-static-page> page meta data', () => {
 
 		await root.evaluate((ctx, newTitle) => ctx.pageMetaData.title = newTitle, newTitle);
 
-		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.title)).resolves.toBe(newTitle);
+		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.title)).toBeResolvedTo(newTitle);
 		await test.expect(page).toHaveTitle(newTitle);
 
 		await root.evaluate((ctx) => ctx.pageMetaData.title = '');
 
-		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.title)).resolves.toBe('');
+		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.title)).toBeResolvedTo('');
 		await test.expect(page).toHaveTitle('');
 	});
 
@@ -46,12 +46,12 @@ test.describe('<i-static-page> page meta data', () => {
 			newDescription
 		);
 
-		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.description)).resolves.toBe(newDescription);
+		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.description)).toBeResolvedTo(newDescription);
 		await test.expect(metaDescriptionLocator).toHaveAttribute('content', newDescription);
 
 		await root.evaluate((ctx) => ctx.pageMetaData.description = '');
 
-		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.description)).resolves.toBe('');
+		await test.expect(root.evaluate((ctx) => ctx.pageMetaData.description)).toBeResolvedTo('');
 		await test.expect(metaDescriptionLocator).toHaveAttribute('content', '');
 	});
 

@@ -259,7 +259,7 @@ A list of allowed component positions relative to screen height (percentage).
 
 #### [visible = `0`]
 
-The minimum value of the height of the visible part (in pixels), i.e. even if the component is closed, this part will still be visible.
+The minimum value of the height of the visible part (in pixels), i.e., even if the component is closed, this part will still be visible.
 
 #### [maxVisiblePercent = `90`]
 

@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import { app, componentRenderFactories } from 'core/component/const';
+import { app, isComponent, componentRenderFactories } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -79,8 +79,10 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			component = registerComponent(name.name);
 		}
 
-		const createVNode = (name, attrs, slots, patchFlag, dynamicProps) =>
-			resolveAttrs.call(this, original(name, attrs, slots, patchFlag, dynamicProps));
+		const createVNode = (name, attrs, slots, patchFlag, dynamicProps) => {
+			const vnode = original(name, attrs, slots, patchFlag, dynamicProps);
+			return resolveAttrs.call(this, vnode);
+		};
 
 		if (component == null) {
 			return createVNode(name, attrs, slots, patchFlag, dynamicProps);
@@ -92,9 +94,12 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			{componentName, params} = component,
 			{supports, r} = this.$renderEngine;
 
-		const
-			isRegular = params.functional !== true || !supports.functional,
-			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
+		const isRegular =
+			params.functional !== true ||
+			!supports.functional;
+
+		const vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
+		vnode.props.getRoot = () => ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
 
 		if (vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
@@ -203,7 +208,11 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 			return name;
 		}
 
-		return app.context != null ? app.context.component(name) ?? original(name) : original(name);
+		if (isComponent.test(name) && app.context != null) {
+			return app.context.component(name) ?? original(name);
+		}
+
+		return original(name);
 	});
 }
 

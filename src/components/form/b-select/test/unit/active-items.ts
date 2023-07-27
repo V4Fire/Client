@@ -40,9 +40,9 @@ test.describe('<b-select> active items', () => {
 
 			await page.locator(createSelector('input')).focus();
 
-			await test.expect(target.evaluate((ctx) => ctx.active)).resolves.toBe(0);
+			await test.expect(target.evaluate((ctx) => ctx.active)).toBeResolvedTo(0);
 			await test.expect(target.evaluate(async (ctx) => ctx.unsafe.block?.getElementMod(<Element>await ctx.activeElement, 'item', 'selected')))
-				.resolves.toBe('true');
+				.toBeResolvedTo('true');
 		});
 
 		test.describe('with `multiple = true`', () => {
@@ -77,7 +77,7 @@ test.describe('<b-select> active items', () => {
 			await test.expect(target.evaluate((ctx) => {
 				ctx.setActive(1);
 				return ctx.active;
-			})).resolves.toBe(1);
+			})).toBeResolvedTo(1);
 
 			await test.expect(target.evaluate((ctx) => ctx.unsetActive(1))).resolves.toBeTruthy();
 			await test.expect(target.evaluate((ctx) => ctx.active)).resolves.toBeUndefined();
@@ -85,7 +85,7 @@ test.describe('<b-select> active items', () => {
 			await test.expect(target.evaluate((ctx) => {
 				ctx.toggleActive(1);
 				return ctx.active;
-			})).resolves.toBe(1);
+			})).toBeResolvedTo(1);
 		});
 
 		test('should not be changeable with `cancelable = false`', async ({page}) => {
@@ -95,15 +95,15 @@ test.describe('<b-select> active items', () => {
 			await test.expect(target.evaluate((ctx) => {
 				ctx.setActive(0);
 				return ctx.active;
-			})).resolves.toBe(0);
+			})).toBeResolvedTo(0);
 
 			await test.expect(target.evaluate((ctx) => {
 				ctx.setActive(1);
 				return ctx.active;
-			})).resolves.toBe(1);
+			})).toBeResolvedTo(1);
 
 			await test.expect(target.evaluate((ctx) => ctx.unsetActive(1))).resolves.toBeFalsy();
-			await test.expect(target.evaluate((ctx) => ctx.active)).resolves.toBe(1);
+			await test.expect(target.evaluate((ctx) => ctx.active)).toBeResolvedTo(1);
 		});
 
 		test('should be changeable with `multiple = true`', async ({page}) => {

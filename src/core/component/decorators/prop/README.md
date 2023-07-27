@@ -25,7 +25,8 @@ class bExample extends iBlock {
 }
 ```
 
-Keep in mind that any component prop is a readonly value, i.e. you cannot change it or any of its properties from within the component.
+Keep in mind that any component prop is a readonly value, i.e.,
+you cannot change it or any of its properties from within the component.
 To emphasize this, it is recommended to use the readonly modifier in TypeScript along with prop declarations.
 
 ```typescript
@@ -40,11 +41,14 @@ class bExample extends iBlock {
 
 ## Naming conventions and linking fields with props
 
-As mentioned earlier, component props cannot be changed from within the component. However, very often there is a need
-to violate this rule. For example, we have a component that implements an input field. The component has some initial value,
-as well as its own, which can be changed during the component life cycle, for instance, a user entered new text.
+As mentioned earlier, component props cannot be changed from within the component.
+However, very often there is a need to violate this rule.
+For example, we have a component that implements an input field.
+The component has some initial value, as well as its own, which can be changed during the component life cycle.
+For instance, a user entered a new text.
 Technically, this can be done with two parameters: `initialValue` and `value`, which gets its initial value
-from `initialValue`. Next, we need to set watching for the `initialValue` because if the component value changes outside,
+from `initialValue`.
+Next, we need to set watching for the `initialValue` because if the component value changes outside,
 then the internal value must also be updated.
 
 One way to implement the above is to use the `watch` method and an initializer function for the field to be observed.
@@ -67,9 +71,10 @@ export default class bInput extends iBlock {
 }
 ```
 
-This code works, however, it has a number of disadvantages:
+This code works. However, it has a number of disadvantages:
 
-1. If the `initialValue` value needs to be normalized or converted somehow, then this logic will have to be duplicated in two places at once.
+1. If the `initialValue` value needs to be normalized or converted somehow,
+   then this logic will have to be duplicated in two places at once.
 
    ```typescript
    import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -115,15 +120,18 @@ As you can see, the method takes a string with the watchable property as the fir
 (you can specify a complex path, like `foo.bar.bla`), and the second parameter is a getter function.
 And, the method itself returns the starting value of the watched property.
 
-So, problems 1 and 2 are solved, but what about the third problem? We still have two properties, and they have different
-names that we need to keep in mind. However, V4 has a simple convention: if a prop conflicts with a field or getter that
-depends on it, then the `Prop` postfix is added to the prop name, i.e. in our case, this will be `valueProp`. If a similar
-conflict occurs between a getter and a field, then `Store` postfix is added to the field name.
+So, problems 1 and 2 are solved, but what about the third problem?
+We still have two properties, and they have different names that we need to keep in mind.
+However, V4 has a simple convention: if a prop conflicts with a field or getter that
+depends on it, then the `Prop` postfix is added to the prop name, i.e., in our case, this will be `valueProp`.
+If a similar conflict occurs between a getter and a field, then `Store` postfix is added to the field name.
 
 Moreover, V4 is aware of this convention, so when calling the component "outside" we can just write `:value`,
-and V4 itself will substitute `:valueProp`. Also in this case, we get rid of the need to explicitly specify the name of
-the watched property when calling `sync.link`. And finally, if we don’t need a converter function when linking a property,
-then we can simply not write it. Let's rewrite our example again.
+and V4 itself will substitute `:valueProp`.
+Also in this case, we get rid of the need to explicitly specify the name of
+the watched property when calling `sync.link`.
+And finally, if we don’t need a converter function when linking a property, then we can simply not write it.
+Let's rewrite our example again.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -274,7 +282,7 @@ class bExample extends iBlock {
 
     // Also, see core/object/watch
     {
-      // If false, then a handler that is invoked on the watcher event does not take any arguments from the event
+      // If set to false, then a handler that is invoked on the watcher event does not take any arguments from the event
       provideArgs: false,
 
       // How the event handler should be called:
@@ -303,10 +311,10 @@ class bExample extends iBlock {
 
 ### [functional = `true`]
 
-If false, the prop can't be passed to a functional component.
+If set to false, the prop can't be passed to a functional component.
 
 ### [forceDefault = `false`]
 
-If true, the prop always uses its own default value when needed.
+If set to true, the prop always uses its own default value when needed.
 This option is actually used when the `defaultProps` property is set to false for the described component
 (via the `@component` decorator) and we want to override this behavior for a particular prop.

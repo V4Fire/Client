@@ -21,7 +21,9 @@ export interface InitRouterOptions {
 export interface RouterTestResult {
 	routeChanges?: unknown[];
 	queryChanges?: unknown[];
+	pathChanges?: unknown[];
 	contentChanges?: unknown[];
+	onBeforeChange?: unknown[];
 	onSoftChange?: unknown[];
 	onHardChange?: unknown[];
 	onChange?: unknown[];
@@ -31,4 +33,5 @@ export interface RouterTestResult {
 	initialContent?: unknown;
 	initialRouteLink?: unknown;
 	routeLink?: unknown;
+	onHrefTransition?: unknown[];
 }

@@ -8,7 +8,7 @@
 
 export interface DecoratorFunctionalOptions {
 	/**
-	 * If false, this value can't be used with a functional component
+	 * If set to false, this value can't be used with a functional component
 	 * @default `true`
 	 */
 	functional?: boolean;

@@ -24,20 +24,25 @@ class bExample extends iBlock {
 
 ## What differences between fields and system fields?
 
-The major difference between fields and system fields, that any changes of a component field can force re-rendering of its template.
-I.e., if you are totally sure that your component field doesn't need to force rendering, prefer system fields instead of regular.
-Mind, changes in any system field still can be watched using built-in API.
+The main difference between fields and system fields in V4Fire is that any changes to a regular field
+can trigger a re-render of the component template.
+In cases where a developer is confident that a field will not require rendering,
+system fields should be used instead of regular fields.
+It's important to note that changes to any system field can still be watched using the built-in API.
 
-The second difference is that system fields are initialized on the `beforeCreate` hook, but not on the `created` hook
-like the regular fields do.
+The second difference between regular fields and system fields is their initialization timing.
+Regular fields are initialized in the `created` hook, while system fields are initialized in the `beforeCreate` hook.
+By understanding the differences between regular fields and system fields,
+developers can design and optimize their components for optimal performance and behavior.
 
 ## Field initialization order
 
-Because the `init` function takes a reference to the fields store as the second argument, then we can generate field
-values from other fields. But, if we just write something like this.
+Because the `init` function takes a reference to the field's store as the second argument, then we can generate field
+values from other fields.
+But, if we just write something like this:
 
 ```typescript
-import iBlock, { component, system } from 'components/super/i-block/i-block';
+import iBlock, { component, field } from 'components/super/i-block/i-block';
 
 @component()
 export default class bExample extends iBlock {
@@ -49,10 +54,14 @@ export default class bExample extends iBlock {
 }
 ```
 
-There is no guarantee that this code will work as expected. The fact is that property values can be initialized in a random order,
-and it may turn out that the property we need is not yet initialized. To solve this problem, we must declare the
-dependencies explicitly. We must pass the `@system` decorator the `after` parameter, which can be the expected
-property name or a list of names.
+There is no guarantee that the code will work as expected.
+Property values can be initialized in a random order,
+and it may happen that the property `a` is not yet initialized when the value of `b` is being calculated.
+
+To ensure the correct initialization order, it is necessary to specify the dependencies explicitly.
+This can be done by using the `after` parameter of the `@system` decorator.
+
+By modifying the code as follows:
 
 ```typescript
 import iBlock, { component, system } from 'components/super/i-block/i-block';
@@ -71,31 +80,18 @@ export default class bExample extends iBlock {
 }
 ```
 
-Now everything will work as expected. Note that `after` only specifies the names of other `@system` properties.
-That is, you cannot specify `@prop` or `@field` properties, but you can refer to them using `sync.link`
-
-```typescript
-import iBlock, { component, prop, system } from 'components/super/i-block/i-block';
-
-@component()
-export default class bInput extends iBlock {
-  @prop(String)
-  valueProp: string = '';
-
-  @system({
-    type: String,
-    init: (o) => o.sync.link()
-  })
-
-  value!: string;
-}
-```
+Now, the code will work as expected.
+The `after` parameter specifies that property `a` should be initialized before property `b`,
+ensuring that the value of `a` is available when calculating the value of `b`.
 
 ### Atomic properties
 
-There are properties that are required for most other properties. It would be very tedious to write `after` in each place,
-especially since there can be many such properties. Therefore, there is another way, you need to mark such a property
-with the `atom` parameter, and it will always be guaranteed to be initialized before non-atoms.
+When there are properties that are required for most other properties,
+it can become quite tedious to manually write the after parameter in each place.
+To simplify this process, you can use the atom parameter to mark such properties.
+
+By marking a property as an atom, it guarantees that it will always be initialized before non-atoms.
+Here's an example code snippet:
 
 ```typescript
 import iBlock, { component, system } from 'components/super/i-block/i-block';
@@ -113,19 +109,31 @@ export default class bExample extends iBlock {
 }
 ```
 
-An atom can also use `after`, however, only other atoms can be used as dependencies (because otherwise it results in a deadlock).
+In this code, the basis property is marked as an atom using the `atom: true` parameter.
+This ensures that it will always be initialized before `a` and `b`.
+
+It's worth mentioning that an atom can still use the `after` parameter, but it can only depend on other atoms.
+Dependency on non-atoms can result in a deadlock.
+
+Using the atom parameter is a convenient way to guarantee the initialization order for properties that
+are required by most other properties, reducing the need for explicit after declarations.
 
 ## Initialization loop and asynchronous operations
 
-All component properties are initialized synchronously. That is, you cannot return a Promise from the property initializer
-and expect the component to not be initialized until it resolves. This behavior can be disastrous for performance.
-However, technically, any initializer can return both a promise and return nothing, and later change the value of its field.
+It is important to note that all component properties are initialized synchronously,
+meaning you cannot return a Promise from a property initializer and expect the component to wait for it to resolve
+before continuing the initialization process.
+Using Promises in property initializers can have disastrous effects on performance.
 
-While the data is being loaded, the component can show a loading indicator or somehow play around with this situation.
-This approach may well be considered idiomatic, since there are no unpredictable consequences. For example,
-the `db` property is implemented in iData heirs in approximately the same way. However, it should be noted that
-all asynchronous "permutations" of the property must be written using the `field.set` method or directly to
-the component instance (the first argument of the `init` function).
+However, there is a way to work with asynchronous operations during initialization.
+Technically, a property initializer can return both a Promise and not return anything.
+In such cases, you can later change the value of the property.
+
+While the data is being loaded asynchronously,
+the component can display a loading indicator or handle the situation in a suitable manner.
+This approach is considered idiomatic and does not have any unpredictable consequences.
+
+Here's an example code snippet that demonstrates this behavior:
 
 ```typescript
 import iBlock, { component, system } from 'components/super/i-block/i-block';
@@ -140,15 +148,26 @@ export default class bExample extends iBlock {
 }
 ```
 
+In this code, the property `a` is initialized asynchronously using a timeout of 100 milliseconds.
+The `setTimeout` function is called within the property initializer,
+which sets the value of `a` to 1 after the timeout completes.
+
+It is important to note that when working with asynchronous operations during initialization,
+it is recommended to use the `field.set` method or directly modify the component instance
+(the first argument of the initializer function) to update the value of the property.
+
+By utilizing this approach, you can handle asynchronous data loading and modify property values once
+the data is available without negatively impacting the performance of the component.
+
 #### Additional options
 
-##### [unique = `false`]
+### [unique = `false`]
 
 Marks the field as unique for each component instance.
 Also, the parameter can take a function that returns a boolean value.
 If this value is true, then the parameter is considered unique.
 
-Please note that the uniqueness guarantee must be provided by the "external" code,
+Please note that the "external" code must provide the uniqueness guarantee
 because V4Fire does not perform special checks for uniqueness.
 
 ```typescript
@@ -248,9 +267,10 @@ class bExample extends iBlock {
 
 ### [atom = `false`]
 
-Indicates that property should be initialized before all non-atom properties.
-This option is needed when you have a field that must be guaranteed to be initialized before other fields,
-and you don't want to use `after` everywhere. But you can still use `after` along with other atomic fields.
+This option indicates that property should be initialized before all non-atom properties.
+It is needed when you have a field that must be guaranteed to be initialized before other fields,
+and you don't want to use `after` everywhere.
+But you can still use `after` along with other atomic fields.
 
 ```typescript
 import Async from 'core/async';
@@ -275,11 +295,11 @@ The `core/watch` module is used to make objects watchable.
 Therefore, for more information, please refer to its documentation.
 
 ```typescript
-import iBlock, { component, field } from 'components/super/i-block/i-block';
+import iBlock, { component, system } from 'components/super/i-block/i-block';
 
 @component()
 class bExample extends iBlock {
-  @field({watch: [
+  @system({watch: [
     'onIncrement',
 
     (ctx, val, oldVal, info) =>
@@ -287,7 +307,7 @@ class bExample extends iBlock {
 
     // Also, see core/object/watch
     {
-      // If false, then a handler that is invoked on the watcher event does not take any arguments from the event
+      // If set to false, then a handler that is invoked on the watcher event does not take any arguments from the event
       provideArgs: false,
 
       // How the event handler should be called:
@@ -316,8 +336,9 @@ class bExample extends iBlock {
 
 ### [functionalWatching = `false`]
 
-If false, the field can't be watched if created inside a functional component.
-This option is useful when you are writing a superclass or a smart component that can be created as regular or functional.
+If set to false, the field can't be watched if created inside a functional component.
+This option is useful when you are writing a superclass or a smart component that can be created
+as regular or functional.
 
 ### [merge = `false`]
 

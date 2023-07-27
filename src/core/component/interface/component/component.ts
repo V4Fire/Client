@@ -84,10 +84,10 @@ export abstract class ComponentInterface {
 	 * // Key names are tied with the component elements
 	 * // Values contain CSS classes we want to add
 	 *
-	 * {
+	 * const classes = {
 	 *   foo: 'bla',
 	 *   bar: ['bla', 'baz']
-	 * }
+	 * };
 	 * ```
 	 */
 	abstract readonly classes?: Dictionary<CanArray<string>>;
@@ -102,14 +102,20 @@ export abstract class ComponentInterface {
 	 * // Key names are tied with component elements,
 	 * // Values contains CSS styles we want to add
 	 *
-	 * {
+	 * const styles = {
 	 *   foo: 'color: red',
 	 *   bar: {color: 'blue'},
 	 *   baz: ['color: red', 'background: green']
-	 * }
+	 * };
 	 * ```
 	 */
 	abstract readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
+
+	/**
+	 * The getter is used to retrieve the root component.
+	 * It is commonly used for dynamically mounting components.
+	 */
+	abstract readonly getRoot?: () => this['Root'];
 
 	/**
 	 * A string value indicating the lifecycle hook that the component is currently in.

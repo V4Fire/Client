@@ -5,8 +5,9 @@ This module provides a class for low-level operations with a component's DOM tre
 ## How to include this module in your component?
 
 By default, any component that inherits from [[iBlock]] has the `dom` property.
-Some methods, such as `getId` and `unwrapId`, are always available, while the rest must be included explicitly to enable tree-shake code
-optimization. Simply place the required import declaration within your component file.
+Some methods, such as `getId` and `unwrapId`, are always available,
+while the rest must be included explicitly to enable tree-shake code optimization.
+Simply place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -65,7 +66,8 @@ console.log(this.dom.getComponent('.foo__bar', '.b-form')?.componentName);
 
 This method wraps the specified function as an event handler with delegation.
 In simpler terms, the wrapped function will only be executed if the event occurs on the element specified by the given
-selector or on its descendant node. Additionally, the method adds a reference to the element to which the selector is specified within the event object.
+selector or on its descendant node.
+Additionally, the method adds a reference to the element to which the selector is specified within the event object.
 
 ```typescript
 import iBlock, { component, watch } from 'components/super/i-block/i-block';
@@ -98,7 +100,8 @@ export default class bExample extends iBlock {
 
 This method wraps the specified function as an event handler with component element delegation.
 In simpler terms, the wrapped function will only be executed if the event occurs on the element with the given name or
-on its descendant node. Additionally, the method adds a reference to the element to which the selector is specified within the event object.
+on its descendant node.
+Additionally, the method adds a reference to the element to which the selector is specified within the event object.
 
 ```
 < b-example
@@ -178,7 +181,8 @@ removeFromDOM();
 
 ### watchForIntersection
 
-This method tracks the intersection of the given element with the viewport using the `core/dom/intersection-watcher` module and invokes the specified handler each time the element enters the viewport.
+This method tracks the intersection of the given element with the viewport using the `core/dom/intersection-watcher`
+module and invokes the specified handler each time the element enters the viewport.
 The function returns a destructor to cancel the watching.
 
 ```js
@@ -193,7 +197,8 @@ unsubscribe();
 
 ### watchForResize
 
-This method watches for the size of the given element using the `core/dom/resize-observer` module and invokes the specified handler when it changes.
+This method watches for the size of the given element using the `core/dom/resize-observer` module and invokes
+the specified handler when it changes.
 The function returns a destructor to cancel the watching.
 
 Note that changes occurring in the same tick are merged into one.

@@ -264,4 +264,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 */
 	@prop(Boolean)
 	readonly renderComponentId: boolean = true;
+
+	@prop({type: Function, required: false})
+	override readonly getRoot?: () => this['Root'];
 }

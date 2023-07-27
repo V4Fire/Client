@@ -63,6 +63,7 @@ $RECYCLE.BIN
 /src/entries/tmp
 /db
 .eslintcache
+ssr-example.html
 
 # Statoscope
 statoscope-*/*

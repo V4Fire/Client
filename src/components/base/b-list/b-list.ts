@@ -322,6 +322,14 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 		return iItems.getItemKey(this, item, i);
 	}
 
+	/**
+	 * Returns the `href` value for the specified item
+	 * @param item
+	 */
+	protected getHref(item: this['Item']): CanUndef<string> {
+		return item.href;
+	}
+
 	protected override initModEvents(): void {
 		super.initModEvents();
 		iVisible.initModEvents(this);

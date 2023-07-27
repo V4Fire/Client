@@ -112,130 +112,133 @@ export function iterate(
 		lastTask,
 		lastEvent;
 
-	$a.setImmediate(async () => {
-		ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
-		ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
+	if (!SSR) {
+		$a.setImmediate(async () => {
+			ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
+			ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
 
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (target == null) {
-			throw new ReferenceError('There is no host node to append asynchronously render elements');
-		}
-
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-		if (toVNode == null) {
-			return;
-		}
-
-		// Using `while` instead of `for of` helps to iterate over synchronous and asynchronous iterators with a single loop
-		// eslint-disable-next-line no-constant-condition
-		rendering: while (true) {
-			if (opts.group != null) {
-				group = `asyncComponents:${opts.group}:${chunkI}`;
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (target == null) {
+				throw new ReferenceError('There is no host node to append asynchronously render elements');
 			}
 
-			let
-				el: CanPromise<IteratorResult<unknown>> = iter.iterator.next();
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			if (toVNode == null) {
+				return;
+			}
 
-			try {
-				el = Object.isPromise(el) ? await $a.promise(el, {group}) : el;
+			// Using `while` instead of `for of` helps to iterate over synchronous and asynchronous iterators
+			// with a single loop
+			// eslint-disable-next-line no-constant-condition
+			rendering: while (true) {
+				if (opts.group != null) {
+					group = `asyncComponents:${opts.group}:${chunkI}`;
+				}
 
-				if (el.done) {
+				let
+					el: CanPromise<IteratorResult<unknown>> = iter.iterator.next();
+
+				try {
+					el = Object.isPromise(el) ? await $a.promise(el, {group}) : el;
+
+					if (el.done) {
+						break;
+					}
+
+				} catch (err) {
+					stderr(err);
 					break;
 				}
 
-			} catch (err) {
-				stderr(err);
-				break;
-			}
+				try {
+					const
+						iterVal = Object.isPromise(el.value) ? await $a.promise(el.value, {group}) : el.value;
 
-			try {
-				const
-					iterVal = Object.isPromise(el.value) ? await $a.promise(el.value, {group}) : el.value;
+					if (filter != null) {
+						const needRender = filter.call(this.ctx, iterVal, iterI, {
+							total,
+							chunk: chunkI,
+							iterable: iter.iterable
+						});
 
-				if (filter != null) {
-					const needRender = filter.call(this.ctx, iterVal, iterI, {
-						total,
-						chunk: chunkI,
-						iterable: iter.iterable
-					});
+						if (Object.isPromise(needRender)) {
+							await $a.promise(needRender, {group}).then(
+								(res) => resolveTask(iterVal, res === undefined || Object.isTruly(res))
+							);
 
-					if (Object.isPromise(needRender)) {
-						await $a.promise(needRender, {group}).then(
-							(res) => resolveTask(iterVal, res === undefined || Object.isTruly(res))
-						);
+						} else {
+							const
+								res = resolveTask(iterVal, Object.isTruly(needRender));
+
+							if (res != null) {
+								await res;
+							}
+						}
 
 					} else {
 						const
-							res = resolveTask(iterVal, Object.isTruly(needRender));
+							res = resolveTask(iterVal);
 
 						if (res != null) {
 							await res;
 						}
 					}
 
-				} else {
-					const
-						res = resolveTask(iterVal);
+					iterI++;
 
-					if (res != null) {
-						await res;
-					}
-				}
+				} catch (err) {
+					if (Object.get(err, 'type') === 'clearAsync') {
+						const
+							taskCtx = Object.cast<TaskCtx>(err);
 
-				iterI++;
-
-			} catch (err) {
-				if (Object.get(err, 'type') === 'clearAsync') {
-					const
-						taskCtx = Object.cast<TaskCtx>(err);
-
-					switch (taskCtx.reason) {
-						case 'all':
-							break rendering;
-
-						case 'rgxp':
-						case 'group':
-							if (taskCtx.link.group === group) {
+						switch (taskCtx.reason) {
+							case 'all':
 								break rendering;
-							}
 
-							break;
+							case 'rgxp':
+							case 'group':
+								if (taskCtx.link.group === group) {
+									break rendering;
+								}
 
-						default:
+								break;
+
+							default:
 							// Ignore
+						}
 					}
+
+					stderr(err);
+
+					// Avoiding infinite loop
+					await $a.sleep(0, {group});
 				}
-
-				stderr(err);
-
-				// Avoiding infinite loop
-				await $a.sleep(0, {group});
 			}
-		}
 
-		if (lastTask != null) {
-			awaiting++;
+			if (lastTask != null) {
+				awaiting++;
 
-			const
-				res = lastTask();
+				const
+					res = lastTask();
 
-			if (res != null) {
-				await res;
-			}
-		}
-
-		if (awaiting <= 0) {
-			localEmitter.emit('asyncRenderComplete', lastEvent);
-
-		} else {
-			const id = localEmitter.on('asyncRenderChunkComplete', () => {
-				if (awaiting <= 0) {
-					localEmitter.emit('asyncRenderComplete', lastEvent);
-					localEmitter.off(id);
+				if (res != null) {
+					await res;
 				}
-			});
-		}
-	}, {group});
+			}
+
+			if (awaiting <= 0) {
+				localEmitter.emit('asyncRenderComplete', lastEvent);
+
+			} else {
+				const id = localEmitter.on('asyncRenderChunkComplete', () => {
+					if (awaiting <= 0) {
+						localEmitter.emit('asyncRenderComplete', lastEvent);
+						localEmitter.off(id);
+					}
+				});
+			}
+		}, {group});
+	}
 
 	return iter.readEls;
 

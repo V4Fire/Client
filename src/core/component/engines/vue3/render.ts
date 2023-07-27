@@ -52,6 +52,9 @@ import type { ComponentInterface } from 'core/component/interface';
 
 export {
 
+	Static,
+	Comment,
+
 	Fragment,
 	Teleport,
 

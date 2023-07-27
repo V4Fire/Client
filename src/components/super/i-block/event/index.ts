@@ -167,14 +167,14 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @example
 	 * ```js
 	 * this.rootEmitter.on('example', console.log, {group: 'myEvent'});
-	 * this.$root.emit('example', 1);
+	 * this.r.emit('example', 1);
 	 * this.parentEmitter.off({group: 'myEvent'});
 	 * ```
 	 */
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => (<Async>d.async).wrapEventEmitter(o.$root.unsafe.selfEmitter)
+		init: (o, d) => (<Async>d.async).wrapEventEmitter(o.r.unsafe.selfEmitter)
 	})
 
 	protected readonly rootEmitter!: ReadonlyEventEmitterWrapper<this>;

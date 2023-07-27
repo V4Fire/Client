@@ -35,7 +35,7 @@ test.describe('<b-dynamic-page>', () => {
 				const {meta} = ctx.unsafe;
 				return 'component' in meta.accessors && !('component' in meta.computedFields);
 			})
-		).resolves.toBe(true);
+		).toBeResolvedTo(true);
 	});
 
 	test('fields `page` and `componentName` should be equal', async ({page}) => {

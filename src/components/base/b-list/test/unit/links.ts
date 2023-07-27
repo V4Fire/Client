@@ -71,12 +71,6 @@ test.describe('<b-list> links', () => {
 		test.expect(await page.evaluate(() => location.hash)).toBe('#foo');
 	});
 
-	/**
-	 * Returns the rendered `b-list` component
-	 *
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderList(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bList>> {
 		await Component.createComponent(page, 'b-list', [
 			{

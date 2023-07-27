@@ -166,10 +166,6 @@ test.describe('<b-hidden-input> validation API', () => {
 		});
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
 	async function renderHiddenInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bHiddenInput>> {
 		await page.evaluate((attrs) => {
 			const scheme = [

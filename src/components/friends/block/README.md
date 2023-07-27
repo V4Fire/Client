@@ -9,7 +9,8 @@ you should not use this API directly, but prefer more convenient wrappers that a
 
 By default, any component that inherited from [[iBlock]] has the `block` property.
 Some methods, such as `getFullBlockName`, `getMod`, `setMod`, `removeMod` are always available, and the rest must be
-included explicitly to enable tree-shake code optimization. Simply place the required import declaration within your component file.
+included explicitly to enable tree-shake code optimization.
+Simply place the required import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -50,18 +51,23 @@ export default class bExample extends iBlock {
 ## Basic concepts
 
 The BEM methodology describes how to apply the component-based approach to CSS when declaring a widget.
-The methodology defines 3 basic entities: block, element and modifier. Looking at it from a component UI programming perspective,
-a block is the component root node, which have a special CSS class; elements are regular child nodes of a component that
-have specially styled CSS classes; block modifiers are its inputs that have a contract that they also place the necessary CSS classes.
-In addition, elements can also have their own modifiers, which are convenient to apply at the micro-level of component markup.
+The methodology defines 3 basic entities: block, element and modifier.
+Looking at it from a component UI programming perspective,
+a block is the component root node, which has a special CSS class; elements are regular child nodes of a component that
+have specially styled CSS classes; block modifiers are its inputs that have a contract that they also place
+the necessary CSS classes.
+In addition, elements can also have their own modifiers,
+which are convenient to apply at the micro-level of component markup.
 
 ### How to declare component props as modifiers?
 
-To declare modifiers for a component, you must use the `mods` static property. Just pass it a dictionary where keys are
-modifier names and values are lists of them values. Modifier values are always converted to a string. However,
-when describing them, it is allowed to use numbers and boolean values. Also, all modifier names and them values are
-forced to normalize to the dash style, so you can use whatever style you feel comfortable with. To assign any of the values
-as the default, just wrap it in another array.
+To declare modifiers for a component, you must use the `mods` static property.
+Just pass it a dictionary where keys are modifier names and values are lists of them values.
+Modifier values are always converted to a string.
+However, when describing them, it is allowed to use numbers and boolean values.
+Also, all modifier names and them values are forced to normalize to the dash style,
+so you can use whatever style you feel comfortable with.
+To assign any of the values as the default, just wrap it in another array.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -84,8 +90,8 @@ class bExample extends iBlock {
 }
 ```
 
-When one component inherits from another, its modifiers are also inherited. And if you add new modifiers,
-then the parent modifiers will still be inherited.
+When one component inherits from another, its modifiers are also inherited.
+And if you add new modifiers, then the parent modifiers will still be inherited.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -193,10 +199,12 @@ Of course, you can combine both methods.
 
 #### Automatically inherited modifiers
 
-All V4Fire components have the `sharedMods` getter that returns a dictionary of modifiers that can be passed to any child components.
-If you don't explicitly pass the `mods` prop when creating a component, then the `sharedMods` getter will automatically be passed to it.
-This is very useful when some modifiers need to be propagated to all nested components. By default, the getter returns
-a dictionary only with the `theme` modifier or undefined if it is not specified.
+All V4Fire components have the `sharedMods` getter that returns a dictionary of modifiers that can be
+passed to any child components.
+If you don't explicitly pass the `mods` prop when creating a component,
+then the `sharedMods` getter will automatically be passed to it.
+This is very useful when some modifiers need to be propagated to all nested components.
+By default, the getter returns a dictionary only with the `theme` modifier or undefined if it is not specified.
 
 ```
 /// This
@@ -231,8 +239,9 @@ class bExample extends iBlock {}
 
 ### How to get component modifier value?
 
-All active component modifiers are stored in the readonly `mods` property. Therefore, to get the value of any modifier,
-just refer to the key you need. Please note that the key must be in a dash style, i.e. normalized.
+All active component modifiers are stored in the readonly `mods` property.
+Therefore, to get the value of any modifier, just refer to the key you need.
+Please note that the key must be in a dash style, i.e., normalized.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -274,9 +283,11 @@ class bExample extends iBlock {
 }
 ```
 
-Note that the `mods` field is created as a "system" field, i.e. no changes to its properties will cause the component to
-be re-rendered. However, the associated CSS class will still be assigned to the component root element. This is especially
-useful when we are working in the context of a functional component, which in principle never updates its template after the first render.
+Note that the `mods` field is created as a `system` field,
+i.e., no changes to its properties will cause the component to be re-rendered.
+However, the associated CSS class will still be assigned to the component root element.
+This is especially useful when we are working in the context of a functional component,
+which in principle never updates its template after the first render.
 
 ```
 /// Changing the `opened` modifier won't re-render the template
@@ -355,8 +366,9 @@ class bExample extends iBlock {
 
 ##### Local events
 
-All setting or removing modifiers also fire local component events, i.e. which cannot be handled externally.
-Since all the component local events can be listened to using wildcards, this can be more convenient than handling each event individually.
+All setting/removing modifiers also fire local component events, i.e., which cannot be handled externally.
+Since all the component local events can be listened to using wildcards,
+this can be more convenient than handling each event individually.
 
 | EventName                       | Description                                                             | Payload description  | Payload              |
 |---------------------------------|-------------------------------------------------------------------------|----------------------|----------------------|
@@ -391,8 +403,9 @@ class bExample extends iBlock {
 
 ### Element modifiers
 
-As mentioned earlier, any element can have its own modifiers. From a component point of view, these modifiers are
-simply custom CSS classes for elements. However, this module provides a set of methods for convenient work with them.
+As mentioned earlier, any element can have its own modifiers.
+From a component point of view, these modifiers are simply custom CSS classes for elements.
+However, this module provides a set of methods for convenient work with them.
 
 __b-example.ss__
 
