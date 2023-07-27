@@ -16,6 +16,6 @@ export { default } from 'components/friends/dom/class';
 export * from 'components/friends/dom/api';
 export * from 'components/friends/dom/interface';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/friends/dom/test/b-friends-dom-dummy');
 //#endif

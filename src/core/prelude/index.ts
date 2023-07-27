@@ -13,3 +13,7 @@ import 'core/prelude/dom';
 //#if runtime has prelude/test-env
 import 'core/prelude/test-env';
 //#endif
+
+//#if runtime has storybook
+import 'core/prelude/storybook';
+//#endif

@@ -32,7 +32,7 @@ import iInput, {
 import Mask from 'components/super/i-input-text/mask';
 import type { UnsafeIInputText } from 'components/super/i-input-text/interface';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/super/i-input-text/test/b-super-i-input-text-dummy');
 //#endif
 

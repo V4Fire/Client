@@ -16,6 +16,6 @@ export { default } from 'components/friends/sync/class';
 export * from 'components/friends/sync/api';
 export * from 'components/friends/sync/interface';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/friends/sync/test/b-friends-sync-dummy');
 //#endif

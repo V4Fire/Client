@@ -372,15 +372,6 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 		this.sync.mod('opened', 'visible', Boolean);
 	}
 
-	/**
-	 * Puts the component node to the top level of the DOM tree
-	 */
-	@hook('mounted')
-	@wait('ready', {label: $$.initNodePosition})
-	protected initNodePosition(): CanPromise<void> {
-		document.body.insertAdjacentElement('afterbegin', this.$el!);
-	}
-
 	/** {@link Geometry.init} */
 	@hook('mounted')
 	@wait('ready')

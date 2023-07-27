@@ -16,6 +16,6 @@ export { default } from 'components/friends/module-loader/class';
 export * from 'components/friends/module-loader/api';
 export * from 'components/friends/module-loader/interface';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/friends/module-loader/test/b-friends-module-loader-dummy');
 //#endif

@@ -12,7 +12,7 @@
 - include '**/*.window.ss'|b
 
 - template index() extends ['i-data'].index
-	- teleport = 'body'
+	- teleport = @@teleport
 
 	- block body
 		- super

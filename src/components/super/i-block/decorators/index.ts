@@ -17,6 +17,6 @@ export * from 'components/super/i-block/decorators/wrappers';
 export * from 'components/super/i-block/decorators/wait';
 export * from 'components/super/i-block/decorators/interface';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/super/i-block/decorators/test/b-super-i-block-decorators-dummy');
 //#endif

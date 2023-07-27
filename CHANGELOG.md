@@ -11,7 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.??.?? (2023-??-??)
+## v4.??.?? (2023-07-27)
+
+#### :rocket: New Feature
+
+* Added possibility to change method that will be used for transitions when router
+  synchronizes its state with the component's state by using syncRouterState to `i-block`
+
+## v4.0.0-beta.10 (2023-07-27)
 
 #### :boom: Breaking Change
 
@@ -19,8 +26,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added possibility to change method that will be used for transitions when router
-  synchronizes its state with the component's state by using syncRouterState to `i-block`
+* Added storybook support
 
 #### :bug: Bug Fix
 
