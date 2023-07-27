@@ -512,33 +512,9 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Initializes auto slide moves
-	 */
-	@hook('mounted')
-	initAutoMoves(): void {
-		this.resumeAutoMoves();
-	}
-
-	/**
-	 * Destroys auto slide moves
-	 */
-	@hook('beforeDestroy')
-	destroyAutoMoves(): void {
-		this.pauseAutoMoves();
-	}
-
-	/**
-	 * Pauses auto slide moves by clearing the corresponding interval.
-	 */
-	protected pauseAutoMoves(): void {
-		if (!Object.isNull(this.autoMovesTimerId)) {
-			this.async.clearInterval(this.autoMovesTimerId);
-		}
-	}
-
-	/**
 	 * Resumes auto slide moves by setting the corresponding interval.
 	 */
+	@hook('mounted')
 	protected resumeAutoMoves(): void {
 		if (this.isSlideMode && Number.isPositive(this.autoMovesInterval)) {
 			this.autoMovesTimerId = this.async.setInterval(
@@ -548,6 +524,16 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				},
 				this.autoMovesInterval
 			);
+		}
+	}
+
+	/**
+	 * Pauses auto slide moves by clearing the corresponding interval.
+	 */
+	@hook('beforeDestroy')
+	protected pauseAutoMoves(): void {
+		if (!Object.isNull(this.autoMovesTimerId)) {
+			this.async.clearInterval(this.autoMovesTimerId);
 		}
 	}
 
