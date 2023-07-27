@@ -104,6 +104,12 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	readonly alignFirstToStart: boolean = true;
 
 	/**
+	 * If true, the last slide will be aligned to the end position (the right bound).
+	 */
+	@prop(Boolean)
+	readonly alignLastToEnd: boolean = true;
+
+	/**
 	 * How much does the shift along the X-axis corresponds to a finger movement
 	 */
 	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
@@ -271,6 +277,10 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			return 0;
 		}
 
+		if (current === slideRects.length - 1 && this.alignLastToEnd) {
+			return slideRect.offsetLeft + slideRect.width - viewRect.width;
+		}
+
 		switch (align) {
 			case 'center':
 				return slideRect.offsetLeft - (viewRect.width - slideRect.width) / 2;
@@ -279,7 +289,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				return slideRect.offsetLeft;
 
 			case 'end':
-				return slideRect.offsetLeft + slideRect.width;
+				return slideRect.offsetLeft + slideRect.width - viewRect.width;
 
 			default:
 				return 0;
