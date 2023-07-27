@@ -31,6 +31,7 @@ const config: PlaywrightTestConfig = {
 	forbidOnly: Boolean(process.env.CI),
 
 	retries: 2,
+	fullyParallel: true,
 
 	reportSlowTests: {
 		max: 0,
