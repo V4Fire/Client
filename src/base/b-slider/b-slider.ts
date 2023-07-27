@@ -521,6 +521,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				() => {
 					void this.removeMod('swipe');
 					this.moveSlide(1);
+					this.syncState();
+					void this.removeMod('swipe');
 				},
 				this.autoMovesInterval
 			);
