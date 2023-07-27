@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Merging of parameters when navigating to a route with the same name as the current one has been removed `b-router`
+* Merging of parameters when navigating to a route with the same name as the current one has been removed `bRouter`
 
 #### :bug: Bug Fix
 
