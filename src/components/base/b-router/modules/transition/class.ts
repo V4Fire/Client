@@ -32,6 +32,12 @@ export default class Transition {
 	protected ref: TransitionContext['ref'];
 
 	/**
+	 * Preserves the original {@link Transition.ref} as provided by the client
+	 * before any changes. Useful for tracking the initial route in case of modifications.
+	 */
+	protected originRef: TransitionContext['ref'];
+
+	/**
 	 * The transition method
 	 */
 	protected method: TransitionContext['method'];
@@ -66,6 +72,7 @@ export default class Transition {
 
 		// Transition context
 		this.ref = ref;
+		this.originRef = ref;
 		this.method = method;
 		this.opts = router.getBlankRouteFrom(router.normalizeTransitionOpts(opts));
 
@@ -253,10 +260,10 @@ export default class Transition {
 			}
 
 			await engine[this.method](newRoute.url, plainInfo).then(() => {
-				const isSoftTransition = Boolean(r.route && Object.fastCompare(
+				const isSoftTransition = r.route != null && Object.fastCompare(
 					router.convertRouteToPlainObjectWithoutProto(currentRoute),
 					router.convertRouteToPlainObjectWithoutProto(newRoute)
-				));
+				);
 
 				// Only the properties from the prototype have been changed in this transition,
 				// so it can be done as a soft transition, i.e., without forcing re-rendering of components
@@ -356,9 +363,9 @@ export default class Transition {
 			}
 		}
 
-		// If the new route has the same name as the current one,
-		// we need to mix the new state with the current state
-		if (router.getRouteName(currentRoute) === this.newRouteInfo!.name) {
+		// If the target ref is null, it means we're navigating to the current route,
+		// so we need to mix the new state with the current state
+		if (this.originRef == null) {
 			deepMixin(true, this.newRouteInfo, router.getBlankRouteFrom(currentRoute));
 			deepMixin(false, this.newRouteInfo, this.opts);
 

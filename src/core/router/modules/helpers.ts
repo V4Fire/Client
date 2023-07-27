@@ -440,20 +440,16 @@ export function resolvePathParameters(pathParams: PathParam[], params: Dictionar
 	const
 		parameters = {...params};
 
-	const
-		aliases = new Map<string, string | number>();
-
 	pathParams.forEach((param) => {
-		param.aliases.forEach((alias) => aliases.set(alias, param.name));
-	});
+		if (parameters.hasOwnProperty(param.name)) {
+			return;
+		}
 
-	Object.entries(parameters).forEach(([key, param]) => {
-		if (aliases.has(key)) {
-			const originalParamName = aliases.get(key)!;
+		const
+			alias = param.aliases.find((e) => parameters.hasOwnProperty(e));
 
-			if (!Object.hasOwnProperty(parameters, originalParamName)) {
-				parameters[originalParamName] = param;
-			}
+		if (alias != null) {
+			parameters[param.name] = parameters[alias];
 		}
 	});
 
