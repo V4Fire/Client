@@ -14,7 +14,7 @@ export interface DecoratorFieldWatcherObject<
 	B = A
 > extends WatchOptions {
 	/**
-	 * A handler (or a name of the component method) that is invoked on watcher events
+	 * A function (or the name of a component method) that gets triggered on watcher events
 	 *
 	 * @example
 	 * ```typescript
@@ -35,7 +35,7 @@ export interface DecoratorFieldWatcherObject<
 	handler: string | DecoratorWatchHandler<CTX, A, B>;
 
 	/**
-	 * If false, then a handler that is invoked on the watcher event does not take any arguments from the event
+	 * If set to false, a handler that gets invoked due to a watcher event won't take any arguments from the event
 	 *
 	 * @default `true`
 	 *

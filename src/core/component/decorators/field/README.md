@@ -245,7 +245,7 @@ class bExample extends iBlock {
 
 ### [forceUpdate = `false`]
 
-If true, property changes will cause the template to be guaranteed to be re-rendered.
+If set to true, property changes will cause the template to be guaranteed to be re-rendered.
 Be aware that enabling this property may result in redundant redraws.
 
 ### [after]
@@ -312,7 +312,7 @@ class bExample extends iBlock {
 
     // Also, see core/object/watch
     {
-      // If false, then a handler that is invoked on the watcher event does not take any arguments from the event
+      // If set to false, then a handler that is invoked on the watcher event does not take any arguments from the event
       provideArgs: false,
 
       // How the event handler should be called:
@@ -341,7 +341,7 @@ class bExample extends iBlock {
 
 ### [functionalWatching = `false`]
 
-If false, the field can't be watched if created inside a functional component.
+If set to false, the field can't be watched if created inside a functional component.
 This option is useful when you are writing a superclass or a smart component that can be created
 as regular or functional.
 

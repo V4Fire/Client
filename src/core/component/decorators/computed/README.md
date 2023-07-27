@@ -58,7 +58,7 @@ making it easier to manage and update dynamic UI states based on changes in othe
 
 ### [cache]
 
-If true, the accessor value will be cached after the first touch.
+If set to true, the accessor value will be cached after the first touch.
 The option is set to true by default if it also provided `dependencies` or the bound accessor matches
 by the name with another prop or field.
 If the option value is passed as `auto` caching will be delegated to the used component library.
@@ -113,7 +113,7 @@ class bExample extends iBlock {
 
 ### [watchable]
 
-If true, the accessor returns a link to another watchable object.
+If set to true, the accessor returns a link to another watchable object.
 This option allows you to mount external watchable objects to the component.
 
 ```typescript

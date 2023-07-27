@@ -264,4 +264,4 @@ class bExample extends iBlock {
 
 ### [functional = `true`]
 
-If false, the registered hook handler won't work inside a functional component.
+If set to false, the registered hook handler won't work inside a functional component.

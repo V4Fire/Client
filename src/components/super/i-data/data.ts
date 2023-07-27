@@ -103,7 +103,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 
 	/**
 	 * A list of converters from the raw `db` to the component field
-	 * {@link iDataProvider.componentConverterProp}
+	 * {@link iDataProvider.componentConverter}
 	 */
 	@system((o) => o.sync.link('componentConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
 	componentConverters!: ComponentConverter[];
