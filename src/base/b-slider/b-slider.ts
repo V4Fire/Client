@@ -516,9 +516,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	@hook('mounted')
 	initAutoMoves(): void {
-		if(this.isSlideMode && Number.isPositive(this.autoMovesInterval)) {
-			this.resumeAutoMoves();
-		}
+		this.resumeAutoMoves();
 	}
 
 	/**
@@ -542,13 +540,15 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Resumes auto slide moves by setting the corresponding interval.
 	 */
 	protected resumeAutoMoves(): void {
-		this.autoMovesTimerId = this.async.setInterval(
-			() => {
-				void this.removeMod('swipe');
-				this.moveSlide(1);
-			},
-			this.autoMovesInterval
-		);
+		if (this.isSlideMode && Number.isPositive(this.autoMovesInterval)) {
+			this.autoMovesTimerId = this.async.setInterval(
+				() => {
+					void this.removeMod('swipe');
+					this.moveSlide(1);
+				},
+				this.autoMovesInterval
+			);
+		}
 	}
 
 	/**
