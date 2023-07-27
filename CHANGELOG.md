@@ -15,11 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Removed params merging when navigation to the route with the same name that current route in `b-router`
+* Merging of parameters when navigating to a route with the same name as the current one has been removed `b-router`
 
 #### :bug: Bug Fix
 
-* Fixed alias priority, when resolve path parameters in `core/router`
+* Fixed alias priority when resolve path parameters `core/router`
 
 ## v4.0.0-beta.9 (2023-07-19)
 

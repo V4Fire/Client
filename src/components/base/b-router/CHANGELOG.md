@@ -13,7 +13,11 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Removed params merging when navigation to the route with the same name that current route
+* Merging of parameters when navigating to a route with the same name as the current one has been removed
+
+#### :bug: Bug Fix
+
+* Fixed alias priority when resolve path parameters
 
 ## v4.0.0-beta.8 (2023-07-19)
 
