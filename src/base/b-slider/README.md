@@ -177,6 +177,11 @@ The minimum displacement threshold along the X-axis at which the slider will be 
 
 The minimum Y-axis offset threshold at which the slider will be considered to be used (in px).
 
+#### [autoMovesInterval = `0`]
+
+The interval (in ms) between auto slide moves. 0 means no auto moves.
+Auto moves are only enabled in `slide` mode and paused during user interactions.
+
 ## Fields
 
 #### current
