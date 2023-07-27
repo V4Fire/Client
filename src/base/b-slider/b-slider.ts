@@ -17,7 +17,6 @@ import 'models/demo/list';
 
 import symbolGenerator from 'core/symbol';
 
-import type { TimerId } from 'core/async';
 import { derive } from 'core/functools/trait';
 import { deprecated, deprecate } from 'core/functools';
 
@@ -205,11 +204,6 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	@system()
 	length: number = 0;
-
-	/**
-	 * The identifier of auto slide move timer
-	 */
-	autoMovesTimerId: Nullable<TimerId>;
 
 	static override readonly mods: ModsDecl = {
 		swipe: [
@@ -517,14 +511,15 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	@hook('mounted')
 	protected resumeAutoSlide(): void {
 		if (this.isSlideMode && Number.isPositive(this.autoSlideInterval)) {
-			this.autoMovesTimerId = this.async.setInterval(
+			this.async.setInterval(
 				() => {
 					void this.removeMod('swipe');
 					this.moveSlide(1);
 					this.syncState();
 					void this.removeMod('swipe');
 				},
-				this.autoSlideInterval
+				this.autoSlideInterval,
+				{label: 'autoSlide'}
 			);
 		}
 	}
@@ -534,9 +529,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	@hook('beforeDestroy')
 	protected pauseAutoSlide(): void {
-		if (!Object.isNull(this.autoMovesTimerId)) {
-			this.async.clearInterval(this.autoMovesTimerId);
-		}
+		this.async.clearInterval({label: 'autoSlide'});
 	}
 
 	/**
