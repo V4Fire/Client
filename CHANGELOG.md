@@ -17,6 +17,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Merging of parameters when navigating to a route with the same name as the current one has been removed `bRouter`
 
+#### :rocket: New Feature
+
+* Added possibility to change method that will be used for transitions when router
+  synchronizes its state with the component's state by using syncRouterState to `i-block`
+
 #### :bug: Bug Fix
 
 * Fixed alias priority when resolve path parameters `core/router`

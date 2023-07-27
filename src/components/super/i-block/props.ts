@@ -14,6 +14,7 @@ import type { Stage } from 'components/super/i-block/interface';
 
 import type { ModsProp } from 'components/super/i-block/modules/mods';
 import { prop, DecoratorMethodWatcher } from 'components/super/i-block/decorators';
+import type { TransitionMethod } from 'components/base/b-router/interface';
 
 @component()
 export default abstract class iBlockProps extends ComponentInterface {
@@ -148,6 +149,13 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 */
 	@prop(Boolean)
 	readonly syncRouterStoreOnInit: boolean = false;
+
+	/**
+	 * Method that will be used for transitions when router synchronizes its state with the component's state
+	 * by using syncRouterState
+	 */
+	@prop(String)
+	readonly routerStateUpdateMethod: Exclude<TransitionMethod, 'event'> = 'push';
 
 	/**
 	 * A dictionary with remote component watchers.
