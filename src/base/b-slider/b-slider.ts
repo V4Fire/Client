@@ -150,7 +150,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * The interval (in ms) between auto slide moves. 0 means no auto slide moves.
 	 */
 	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
-	readonly autoMovesInterval: number = 0;
+	readonly autoSlideInterval: number = 0;
 
 	/**
 	 * @deprecated
@@ -515,8 +515,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Resumes auto slide moves by setting the corresponding interval.
 	 */
 	@hook('mounted')
-	protected resumeAutoMoves(): void {
-		if (this.isSlideMode && Number.isPositive(this.autoMovesInterval)) {
+	protected resumeAutoSlide(): void {
+		if (this.isSlideMode && Number.isPositive(this.autoSlideInterval)) {
 			this.autoMovesTimerId = this.async.setInterval(
 				() => {
 					void this.removeMod('swipe');
@@ -524,7 +524,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 					this.syncState();
 					void this.removeMod('swipe');
 				},
-				this.autoMovesInterval
+				this.autoSlideInterval
 			);
 		}
 	}
@@ -533,7 +533,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Pauses auto slide moves by clearing the corresponding interval.
 	 */
 	@hook('beforeDestroy')
-	protected pauseAutoMoves(): void {
+	protected pauseAutoSlide(): void {
 		if (!Object.isNull(this.autoMovesTimerId)) {
 			this.async.clearInterval(this.autoMovesTimerId);
 		}
@@ -750,7 +750,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
-		this.pauseAutoMoves();
+		this.pauseAutoSlide();
 		this.scrolling = false;
 
 		const
@@ -860,7 +860,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
-		this.resumeAutoMoves();
+		this.resumeAutoSlide();
 	}
 }
 

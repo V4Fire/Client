@@ -14,7 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added new prop `alignLastToEnd` which is similar to existing `alignFirstToStart` and is also `true` by default.
-* Added new prop `autoMovesInterval`
+* Added new prop `autoSlideInterval`
 
 
 #### :bug: Bug Fix
