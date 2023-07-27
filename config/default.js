@@ -1122,15 +1122,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			blockNames: false,
 			passDesignSystem: false,
 
-			'prelude/test-env': !isProd && !this.webpack.ssr,
+			'prelude/test-env': this.isTestEnv(),
 			storybook: this.webpack.storybook(),
 
-			dummyComponents: o('runtime-dummy-components', {
-				env: true,
-				type: 'boolean',
-				default: false
-			})
+			dummyComponents: this.dummyComponents()
 		};
+	},
+
+	/**
+	 * Returns true if it is a test env
+	 * @returns {boolean}
+	 */
+	isTestEnv() {
+		return !isProd && !this.webpack.ssr;
 	},
 
 	/**
@@ -1154,6 +1158,27 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 */
 	componentDependencies() {
 		return {};
+	},
+
+	/**
+	 * Returns true if the dummy components should be imported dynamically.
+	 * Dummy components specified as dependencies of any component will always be imported
+	 * regardless of this option.
+	 *
+	 * @cli dummy-components
+	 * @env DUMMY_COMPONENTS
+	 *
+	 * @param {boolean} [def] - default value
+	 * @returns {boolean}
+	 */
+	dummyComponents(def = true) {
+		def ??= this.isTestEnv() && !this.storybook();
+
+		return o('dummy-components', {
+			env: true,
+			type: 'boolean',
+			default: def
+		});
 	},
 
 	/** @override */
