@@ -363,7 +363,7 @@ export default class Transition {
 			}
 		}
 
-		// If the target ref is null it means we're navigating to the current route,
+		// If the target ref is null, it means we're navigating to the current route,
 		// so we need to mix the new state with the current state
 		if (this.originRef == null) {
 			deepMixin(true, this.newRouteInfo, router.getBlankRouteFrom(currentRoute));

@@ -690,7 +690,7 @@ export default {
 };
 ```
 
-In the first example, we declare a route with a path on our own website, for example https://bla.com/google,
+In the first example, we declare a route with a path on our own website, for example, https://bla.com/google,
 which redirects to Google.
 In the second example, we simply declare an external route.
 
@@ -759,18 +759,34 @@ router.back().then(() => {
 
 ### Transition to the current route
 
-If you want to generate a transition to a route that is identical to the current one,
-you can pass `null` as the route name. Here, the parameters (query, params or meta) passed in the options object
-will merge with any existing parameters on the current route.
-
-But sometimes you want to replace parameters on the current route.
-For this case you must provide route that is not `null`. If route matches the current route and is not `null`,
-the current parameters will be replaced - not merged - with the ones you pass in the options object.
+If you want to generate a transition to a route with the same name as the current route,
+you can simply use the reference to `route.name`.
+However, it is necessary to make sure beforehand that such a route actually exists.
 
 ```js
-// Assume you are on route '/foo' with query params {bla:1} - '/foo?bla=1'.
-router.push(null, {query: {bar: 1}}); // merge params - '/foo?bla=1&bar=1'
-router.push(route?.name, {query: {bar: 1}}); // replace params - '/foo?bar=1'
+if (route != null) {
+  router.push(route.name, {query: {bar: 1}});
+}
+```
+
+Another alternative option is to simply pass `null` as the route name.
+However, there is one peculiarity with this approach:
+the query parameters passed along with the transition will not fully replace the existing ones, but will extend them.
+This can be extremely useful when we need to add a new query parameter without removing the existing ones.
+If you do need to remove any of these parameters, simply pass it as `null`.
+
+```js
+// Assume you are on the route /foo?bla=1
+
+router.push(null, {query: {bar: 1}});    // The route is /foo?bla=1&bar=1
+
+router.push(null, {query: {bar: null}}); // The route is /foo?bla=1
+```
+
+You can use `null` as the route name not only with the `push` method, but also with the `replace` method.
+
+```js
+router.replace(null, {query: {bar: 1}});
 ```
 
 ### Transition event flow
