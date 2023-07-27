@@ -405,7 +405,8 @@ export default class bRouter extends iData {
 		opts = router.getBlankRouteFrom(router.normalizeTransitionOpts(opts));
 
 		const
-			{r, engine} = this;
+			{r, engine} = this,
+			originRef = ref;
 
 		const
 			currentEngineRoute = engine.route ?? engine.page;
@@ -487,9 +488,9 @@ export default class bRouter extends iData {
 			...args
 		);
 
-		// If a new route matches by a name with the current,
-		// we need to mix a new state with the current
-		if (router.getRouteName(currentRoute) === newRouteInfo.name) {
+		// If the target ref is null it means we're navigating to the current route,
+		// so we need to mix the new state with the current state
+		if (originRef == null) {
 			deepMixin(newRouteInfo, router.getBlankRouteFrom(currentRoute), opts);
 
 		// Simple normalizing of a route state

@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.53.0 (2023-07-27)
+
+#### :boom: Breaking Change
+
+* Merging of parameters when navigating to a route with the same name as the current one has been removed
+
+#### :bug: Bug Fix
+
+* Fixed alias priority when resolve path parameters
+
 ## v3.52.0 (2023-07-19)
 
 #### :rocket: New Feature

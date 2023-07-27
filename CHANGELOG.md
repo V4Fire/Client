@@ -18,6 +18,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added possibility to change method that will be used for transitions when router
   synchronizes its state with the component's state by using syncRouterState to `i-block`
 
+## v3.53.0 (2023-07-27)
+
+#### :boom: Breaking Change
+
+* Merging of parameters when navigating to a route with the same name as the current one has been removed `bRouter`
+
+#### :bug: Bug Fix
+
+* Fixed alias priority when resolve path parameters `core/router`
+
 ## v3.52.0 (2023-07-19)
 
 #### :rocket: New Feature

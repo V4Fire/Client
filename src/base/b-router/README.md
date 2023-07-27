@@ -655,12 +655,34 @@ router.back().then(() => {
 
 ### Transition to the current route
 
-If you want to emit a transition to a route that is equal to the current, you can pass `null` as a route name to transition methods.
+If you want to generate a transition to a route with the same name as the current route,
+you can simply use the reference to `route.name`.
+However, it is necessary to make sure beforehand that such a route actually exists.
 
 ```js
-// These two variants are equivalent
-router.push(null, {query: {foo: 1}});
-router.push(route?.name, {query: {foo: 1}});
+if (route != null) {
+  router.push(route.name, {query: {bar: 1}});
+}
+```
+
+Another alternative option is to simply pass `null` as the route name.
+However, there is one peculiarity with this approach:
+the query parameters passed along with the transition will not fully replace the existing ones, but will extend them.
+This can be extremely useful when we need to add a new query parameter without removing the existing ones.
+If you do need to remove any of these parameters, simply pass it as `null`.
+
+```js
+// Assume you are on the route /foo?bla=1
+
+router.push(null, {query: {bar: 1}});    // The route is /foo?bla=1&bar=1
+
+router.push(null, {query: {bar: null}}); // The route is /foo?bla=1
+```
+
+You can use `null` as the route name not only with the `push` method, but also with the `replace` method.
+
+```js
+router.replace(null, {query: {bar: 1}});
 ```
 
 ### Event flow of transitions

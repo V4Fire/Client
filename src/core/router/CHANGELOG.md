@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.53.0 (2023-07-27)
+
+#### :bug: Bug Fix
+
+* Fixed alias priority when resolve path parameters
+
 ## v3.50.0 (2023-06-16)
 
 #### :rocket: New Feature
