@@ -54,7 +54,7 @@ module.exports = async function plugins({name}) {
 		plugins.set('progress-plugin', createProgressPlugin(name));
 	}
 
-	if (config.webpack.fatHTML()) {
+	if (config.webpack.fatHTML() || config.webpack.storybook()) {
 		plugins.set('limit-chunk-count-plugin', new webpack.optimize.LimitChunkCountPlugin({
 			maxChunks: 1
 		}));

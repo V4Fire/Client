@@ -6,10 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import '@v4fire/core/core';
+import initApp from 'core/prelude/storybook/init-app';
 
-//#unless runtime has storybook
-import 'core/init';
-
-export { default as initApp } from 'core/init';
-//#endunless
+globalThis.V4Storybook = {
+	initApp
+};

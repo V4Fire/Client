@@ -41,6 +41,26 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
+	src: {
+		/**
+		 * Returns a path to the application dist directory for client scripts
+		 *
+		 * @cli client-output
+		 * @env CLIENT_OUTPUT
+		 *
+		 * @param {string[]} args
+		 * @returns {string}
+		 */
+		clientOutput(...args) {
+			const v = o('client-output', {
+				env: true,
+				default: this.config.webpack.storybook() ? 'storybook' : 'client'
+			});
+
+			return this.output(v, ...args);
+		}
+	},
+
 	build: {
 		/**
 		 * Project build mode
@@ -172,7 +192,36 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		testPort: o('test-port', {
 			env: true,
 			default: 8000
-		})
+		}),
+
+		/**
+		 * Returns true if it is a test env
+		 * @returns {boolean}
+		 */
+		isTestEnv() {
+			return !isProd && !this.config.webpack.ssr;
+		},
+
+		/**
+		 * Returns true if the dummy components should be imported dynamically.
+		 * Dummy components specified as dependencies of any component will always be imported
+		 * regardless of this option.
+		 *
+		 * @cli load-dummy-components
+		 * @env LOAD_DUMMY_COMPONENTS
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		loadDummyComponents(def) {
+			def ??= this.isTestEnv() && !this.config.webpack.storybook();
+
+			return o('load-dummy-components', {
+				env: true,
+				type: 'boolean',
+				default: def
+			});
+		}
 	},
 
 	/**
@@ -221,7 +270,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {?string}
 		 */
 		target(
-			def = /ES[35]$/.test(this.config.es()) ?
+			def = /ES[35]$/.test(this.config.es()) && !this.webpack.storybook() ?
 				'browserslist:ie 11' :
 				'web'
 		) {
@@ -319,6 +368,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true,
 				type: 'number',
 				coerce: (value) => value === 'script-link' ? 2 : Number(value),
+				default: def
+			});
+		},
+
+		/**
+		 * Returns true if the bundle should be built for the storybook
+		 *
+		 * @cli storybook
+		 * @env STORYBOOK
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		storybook(def = false) {
+			return o('storybook', {
+				env: true,
+				type: 'boolean',
 				default: def
 			});
 		},
@@ -483,13 +549,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const
 				{concatURLs} = require('@v4fire/core/lib/core/url');
 
+			const def = concatURLs('/', this.config.src.rel('clientOutput'));
+
 			let pathVal = o('public-path', {
 				env: true,
-				default: concatURLs('/', this.config.src.rel('clientOutput'))
+				default: def
 			});
 
 			if (!Object.isString(pathVal)) {
 				pathVal = '';
+			}
+
+			if (this.storybook() && pathVal === def) {
+				pathVal = '//';
 			}
 
 			if (pathVal[0] === '\\') {
@@ -903,8 +975,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {{server: object, client: object}}
 	 */
 	snakeskin() {
-		const
-			snakeskinVars = include('build/snakeskin/vars');
+		const snakeskinVars = {
+			...include('build/snakeskin/vars'),
+			teleport: this.webpack.storybook() ? '#storybook-root' : 'body'
+		};
 
 		return {
 			client: this.extend(super.snakeskin(), {
@@ -1077,7 +1151,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			blockNames: false,
 			passDesignSystem: false,
 
-			'prelude/test-env': !isProd && !this.webpack.ssr
+			'prelude/test-env': this.build.isTestEnv(),
+			storybook: this.webpack.storybook(),
+
+			dummyComponents: this.build.loadDummyComponents()
 		};
 	},
 

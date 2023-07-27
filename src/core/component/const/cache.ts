@@ -9,17 +9,16 @@
 import type {
 
 	ComponentEngine,
-	ComponentOptions as ComponentEngineOptions,
-	CreateAppFunction
+	ComponentOptions as ComponentEngineOptions
 
 } from 'core/component/engines';
 
 import type {
 
 	ComponentMeta,
-	ComponentInterface,
 	ComponentOptions,
-	RenderFactory
+	RenderFactory,
+	App
 
 } from 'core/component/interface';
 
@@ -32,11 +31,6 @@ export const componentParams = new Map<Function | string, ComponentOptions>();
  * A dictionary with the registered root components
  */
 export const rootComponents = Object.createDict<CanPromise<ComponentEngineOptions<typeof ComponentEngine>>>();
-
-interface App {
-	context: Nullable<ReturnType<CreateAppFunction>>;
-	component: Nullable<ComponentInterface>;
-}
 
 /**
  * A link to the application context and the root component
