@@ -149,6 +149,10 @@ For example, by specifying `center`, the slider will stop when the active slide 
 
 If true, the first slide will be aligned to the start position (the left bound).
 
+#### [alignLastToEnd = `true`]
+
+If true, the last slide will be aligned to the end position (the right bound).
+
 #### [deltaX = `0.9`]
 
 This prop controls how much does the shift along the X-axis corresponds to a finger movement.

@@ -9,6 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v?.?.? (????-??-??)
+
+#### :boom: Breaking Change
+
+* Added new prop `alignLastToEnd` which is similar to existing `alignFirstToStart` and is also `true` by default.
+
+#### :bug: Bug Fix
+
+* Fixed incorrect `align="end"` behaviour
+
+
 ## v3.44.2 (2023-03-29)
 
 #### :house: Internal
