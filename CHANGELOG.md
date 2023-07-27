@@ -19,7 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed alias priority when resolve path parameters `bRouter`
+* Fixed alias priority when resolve path parameters `core/router`
 
 ## v3.52.0 (2023-07-19)
 
