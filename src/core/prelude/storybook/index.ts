@@ -8,6 +8,6 @@
 
 import initApp from 'core/prelude/storybook/init-app';
 
-globalThis.v4fireStorybook = {
+globalThis.V4Storybook = {
 	initApp
 };

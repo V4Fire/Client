@@ -119,7 +119,7 @@ declare var
 	/**
 	 * Storybook helpers
 	 */
-	v4fireStorybook: {
+	V4Storybook: {
 
 		/**
 		 * Inits the app for the storybook canvas
