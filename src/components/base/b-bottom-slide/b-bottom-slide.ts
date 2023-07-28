@@ -435,16 +435,6 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Removes the component element from the DOM if its transition is complete
-	 */
-	@hook('beforeDestroy')
-	protected removeFromDOMIfPossible(): void {
-		if (!this.isStepTransitionInProgress) {
-			this.$el?.remove();
-		}
-	}
-
-	/**
 	 * Handler: the component history was cleared
 	 */
 	@watch(':history:clear')
