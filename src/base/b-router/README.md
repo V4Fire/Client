@@ -829,7 +829,7 @@ export default class bExample extends iBlock {
 The router is global for all components, i.e., a dictionary that this method passes to the router will
 extend the current route data but not override.
 
-### Synchronizing with the router after initializing a component
+#### Synchronizing with the router after initializing a component
 
 When a component uses `syncRouterState`, it asks the router data on initializing, but sometimes,
 the router does not have requested properties, and we provide default values for these.
@@ -839,19 +839,19 @@ from the default state won't be restored. Sometimes, this behavior does not matc
 and that why every component has the `syncRouterStoreOnInit` prop. If we toggle `syncRouterStoreOnInit` to `true`,
 the component will forcibly map its state to the router after initializing.
 
-### Updating router state
+#### Updating router state
 
-By default, when one of properties from `syncRouterState` is changed,
-data will be sent to the router and the router will produce a new transition by using `push`.
-This means the properties returned by the `syncRouterState` method will get added as query parameters,
-creating a new entry in the browser's history.
+By default, when any property from `syncRouterState` is changed,
+the data will be sent to the router and the router will create a new transition using the `push` method.
+This means that the properties returned by the `syncRouterState` method will be added as query parameters,
+resulting in a new entry in the browser's history.
 
-You can specify method that will be used to perform transition when component state updates.
-For this purpose you can use parameter `routerStateUpdateMethod`.
-This parameter dictates the method by which the router performs a new transition
-when certain component properties change.
-It allows for finer control over your application's routing behaviour and its impact on the browser's history stack.
-It can be adjusted according to specific requirements of two-way binding between the component and the router.
+To have more control over the routing behavior and its impact on the browser's history stack,
+you can specify the `routerStateUpdateMethod` parameter.
+This parameter determines the method used by the router to perform a new transition when certain component
+properties change.
+It allows for fine-tuning the routing behavior according to the specific requirements of
+the two-way binding between the component and the router.
 
 ```typescript
 import iBlock, { component, system } from 'super/i-block/i-block';
@@ -869,7 +869,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-### Resetting the router state
+#### Resetting the router state
 
 You can additionally specify a method that serves the situation when you want to reset the state synchronized with the router.
 
