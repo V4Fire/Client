@@ -338,6 +338,8 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 				this.autoSlideInterval,
 				{label: $$.autoSlide}
 			);
+		} else {
+			this.pauseAutoSlide();
 		}
 	}
 
