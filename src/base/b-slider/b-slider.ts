@@ -509,6 +509,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Resumes auto slide moves by setting the corresponding interval.
 	 */
 	@hook('mounted')
+	@watch('autoSlideInterval')
 	protected resumeAutoSlide(): void {
 		if (this.isSlideMode && Number.isPositive(this.autoSlideInterval)) {
 			this.async.setInterval(
