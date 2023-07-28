@@ -6,10 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, JSHandle } from 'playwright';
+import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
-import Component from 'tests/helpers/component';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
