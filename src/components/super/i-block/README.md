@@ -1,9 +1,13 @@
 # components/super/i-block
 
-This module provides a superclass for any V4Fire components.
-This class contains the most necessary APIs, such as: event API, modifiers API, state and life cycle API, property watching API, etc.
-The functionality is divided into several parts: the behavior that the class itself declares and the many friendly classes that work through composition.
-Also, this module re-exports part of the functionality and types from the `core/component` module.
+This module serves as a superclass for all V4Fire components and provides essential APIs.
+These APIs include event handling, modifier management, state management, lifecycle management, property watching,
+and more.
+
+The functionality of this superclass is divided into different parts.
+It includes the behaviors declared by the class itself and various auxiliary classes that work through composition.
+
+Additionally, this module re-exports some functionality and types from the `core/component` module.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -23,62 +27,81 @@ export default class bExample extends iBlock {
 
 ## Related docs
 
-Please read the submodule documents of this.
+Please refer to the following submodule documents for more information:
 
-* `components/super/i-block/base` - the module provides a common API to work with components.
-* `components/super/i-block/event` - the module provides an event emitter API to work with components.
-* `components/super/i-block/mods` - the module provides an API to work with a component in terms of [BEM](https://en.bem.info/methodology/quick-start/).
-* `components/super/i-block/state` - the module provides an API for convenient work with component states.
-* `components/super/i-block/providers` - the module provides an API for initializing and loading external data to a component.
-* `components/super/i-block/decorators` - the module re-exports the base decorators from `core/component/decorators` and also provides additional decorators.
+* `components/super/i-block/base` - this module provides a common API for working with components.
+* `components/super/i-block/event` - this module provides an event emitter API for working with components.
+* `components/super/i-block/mods` - this module provides an API for working with a component
+  in terms of [BEM](https://en.bem.info/methodology/quick-start/).
 
-## Friendly classes
+* `components/super/i-block/state` - this module provides an API for convenient management of component states.
+* `components/super/i-block/providers` - this module provides an API for initializing and
+  loading external data into a component.
 
-The `iBlock` class has many properties that delegate functionality to other modules.
-Some of these properties can be used anywhere, and some only within the class or its descendants.
-For more information on any of these properties, refer to their module documentation.
+* `components/super/i-block/decorators` - this module re-exports the base decorators
+  from `core/component/decorators` and also provides additional decorators.
+
+## Friendly Classes
+
+The `iBlock` class has various properties that delegate functionality to other modules.
+Some of these properties can be used anywhere, while others are only accessible within the class or its descendants.
+Refer to their respective module documentation for more details on each property.
 
 ### Public
 
-* `provide` (`components/friends/provide`) - a class with methods to provide component classes/styles to another component, etc.
-* `infoRender` (`components/friends/info-render`) - an API for collecting and rendering various component information.
-* `field` (`components/friends/field`) - a class with helper methods for safely accessing component/object properties.
-* `analytics` (`components/friends/analytics`) - a class to send component analytic events.
-* `sync` (`components/friends/sync`) - an API to synchronize fields and props of the component.
-* `asyncRender` (`components/friends/async-render`) - a class to render component fragments asynchronously.
-* `vdom` (`components/friends/vdom`) - a class for low-level working with a component VDOM tree.
-* `lfc` (`components/super/i-block/modules/lfc`) - a class with helper methods to work with the component life cycle.
+* `provide` (`components/friends/provide`) - this class provides methods for providing component
+  classes/styles to other components.
+
+* `infoRender` (`components/friends/info-render`) - this API allows for collecting and
+  rendering various component information.
+
+* `field` (`components/friends/field`) - this class provides helper methods for
+  safely accessing component/object properties.
+
+* `analytics` (`components/friends/analytics`) - this class is used to send component analytic events.
+* `sync` (`components/friends/sync`) - this API facilitates the synchronization of fields and props of the component.
+* `asyncRender` (`components/friends/async-render`) - this class enables the asynchronous rendering of
+  component fragments.
+
+* `vdom` (`components/friends/vdom`) - this class is used for low-level operations on the component's VDOM tree.
+* `lfc` (`components/super/i-block/modules/lfc`) - this class provides helper methods for
+  working with the component life cycle.
 
 ### Protected
 
-* `daemons` (`components/friends/daemons`) - a class to create daemons associated with a component.
-* `block` (`components/friends/block`) - an API to work with a component in terms of [BEM](https://en.bem.info/methodology/quick-start/).
-* `dom` (`components/friends/dom`) - a class for low-level working with a component DOM tree.
+* `daemons` (`components/friends/daemons`) - this class allows for the creation of daemons associated with a component.
+* `block` (`components/friends/block`) - this API provides methods for working with a component
+  in terms of [BEM](https://en.bem.info/methodology/quick-start/).
 
-* `async` (`core/async`) - an API to tie and control async operations.
-* `$async` (`core/async`) - an API to tie and control async operations (this API is used for protected/private consumers,
-   such as private directives or component engines).
+* `dom` (`components/friends/dom`) - this class facilitates low-level operations on the component's DOM tree.
 
-* `storage` (`components/friends/storage`) - a class for persistent storage of component data.
-* `state` (`components/friends/state`) - a class with methods to initialize a component state from various related sources.
+* `async` (`core/async`) - this API provides functionality for controlling and managing asynchronous operations.
+* `$async` (`core/async`) - this API is used for protected/private consumers
+  (e.g., private directives or component engines) to control and manage asynchronous operations.
 
-* `moduleLoader` (`components/friends/module-loader`) - a class to manage dynamically loaded modules.
-* `opt` (`components/super/i-block/modules/opt`) - a class with helper methods to optimize component rendering.
-* `browser` (`core/helpers`) - an API to determine the current browser name/version.
+* `storage` (`components/friends/storage`) - this class provides a means for persistent storage of component data.
+* `state` (`components/friends/state`) - this class provides methods for initializing a component state from
+  various related sources.
 
-* `h` (`core/helpers`) - a dictionary with some helper functions.
-* `l` - a link to the `globalThis.l` function.
+* `moduleLoader` (`components/friends/module-loader`) - this class manages dynamically loaded modules.
+* `opt` (`components/super/i-block/modules/opt`) - this class provides helper methods for
+  optimizing component rendering.
 
-* `location` - a link to the native `location` API.
-* `global` - a link to the global object.
-* `console` - a link to the native `console` API.
+* `browser` (`core/helpers`) - this API allows for determining the current browser's name and version.
+
+* `h` (`core/helpers`) - this dictionary contains some helper functions.
+* `l` - this is a link to the global function l.
+
+* `location` - this is a link to the native location API.
+* `global` - this is a link to the global object.
+* `console` - this is a link to the native console API.
 
 ## Props
 
 ### [globalName]
 
 The unique or global name of the component.
-Used to synchronize component data with different external storages.
+Used to synchronize component data with various external storages.
 
 ### [rootTag = `'div'`]
 
@@ -86,51 +109,55 @@ The component root tag type.
 
 ### [verbose = `false`]
 
-If true, the component will log informational messages, not just errors and warnings.
-This option affects the messages output by the `log` method.
+If set to true, the component will log informational messages in addition to errors and warnings.
+This option determines the type of messages that are output by the log method.
 
 ### [stageProp]
 
-A string value that specifies in which logical state the component should run.
+A string value that specifies the logical state in which the component should operate.
 
-This property can be used to indicate different states of a component.
-For instance, we have a component that implements an image upload form. And, we have two options for this form:
-upload from a link or upload from a computer.
+This property can be used to indicate different stages of a component.
+For example, let's say we have a component that implements an image upload form.
+And we have two options for this form: uploading from a link or uploading from a computer.
 
-Therefore, we can create two stage values: "link" and "file", in order to separate the component template into two
-markup options depending on the stage value.
+In order to differentiate between these two options and render different markups accordingly,
+we can create two stage values: "link" and "file".
+This way, we can modify the component's template based on the current stage value.
 
 ### [modsProp]
 
 Additional modifiers for the component.
-Modifiers allow binding component state properties directly to CSS classes without
-unnecessary re-rendering of a component.
+Modifiers allow binding the state properties of a component directly to CSS classes,
+without the need for unnecessary re-rendering.
 
 ### [activatedProp = `true`]
 
-If true, the component is activated by default.
-A deactivated component won't load data from providers on initialization.
+If set to true, the component will be activated by default.
+A deactivated component will not retrieve data from providers during initialization.
 
 ### [forceActivation = `false`]
 
-If true, forced activation of handlers is enabled (only for functional components).
-By default, functional components do not execute activation handlers: router/storage synchronization, etc.
+If set to true, forced activation of handlers is enabled for functional components.
+By default, functional components do not execute activation handlers such as router/storage synchronization.
 
 ### [reloadOnActivation = `false`]
 
-If true, then the component will try to reload provider data on reactivation.
-This parameter can be useful if you are using the `keep-alive` directive in your template.
-For example, you have a page in keep-alive, and after returning to this page, the component will be
-force-rendered from the keep-alive cache, but after that, the page will silently try to reload its data.
+If set to true, the component will attempt to reload provider data upon reactivation.
+This parameter can be useful in scenarios where you are using the keep-alive directive in your template.
+For example, if you have a page that is cached using keep-alive, and you return to this page,
+the component will be rendered from the keep-alive cache.
+However, with this parameter enabled, the page will silently attempt to reload its data after rendering.
 
 ### [renderOnActivation = `false`]
 
-If true, the component is forced to re-render on reactivation.
-This parameter can be useful if you are using the keep-alive directive in your template.
+If set to true, the component will be forced to re-render upon reactivation.
+This parameter can be helpful when using the keep-alive directive in your template.
+In such cases, even if the component is rendered from the keep-alive cache,
+enabling this parameter will force it to re-render its template.
 
 ### [dependenciesProp]
 
-An iterable with additional dependencies to load when the component is initializing.
+An iterable object with additional component dependencies for initialization.
 
 ```typescript
 import iBlock, { component, Module } from 'components/super/i-block/i-block';
@@ -147,19 +174,19 @@ class bExample extends iBlock {
 
 ### [remoteProvider = `false`]
 
-If true, the component is marked as a removed provider.
-This means that the parent component will wait for the current component to load.
+If set to true, the component is marked as a removed provider.
+This signifies that the parent component will wait for the current component to finish loading before proceeding.
 
 ### [dontWaitRemoteProvidersProp]
 
-If true, the component will skip waiting for remote providers to avoid redundant re-rendering.
-This prop can help optimize your non-functional component when it does not contain any remote providers.
-By default, this prop is automatically calculated based on component dependencies.
+If set to true, the component will skip waiting for remote providers to avoid redundant re-rendering.
+This property can be useful to optimize non-functional components that do not have any remote providers.
+By default, the value of this property is automatically calculated based on the component dependencies.
 
 ### [syncRouterStoreOnInit = `false`]
 
-If true, the component state will be synchronized with the router after initializing.
-For example, you have a component that uses the `syncRouterState` method to create two-way binding with the router.
+If set to true, the component state will be synchronized with the router after initialization.
+For example, you have a component that uses the `syncRouterState` method to create two-way binding with the router:
 
 ```typescript
 import iBlock, { component, field } from 'components/super/i-block/i-block';
@@ -170,68 +197,80 @@ class bExample extends iBlock {
   stage: string = 'defaultStage';
 
   syncRouterState(data?: Dictionary) {
-    // This notation means that if there is a value within `route.query`
-    // it will be mapped to the component as `stage`.
-    // If the route has been changed, the mapping is repeated.
-    // Also, if the `stage` field of the component has been changed,
-    // it will be mapped to the router query parameters as `stage` by using `router.push`.
+    // This notation signifies that if there is a value within the `route.query`,
+    // it will be mapped to the component as stage.
+    // This mapping will also be repeated if the route has been changed.
+    // Additionally, if the stage field of the component has been modified,
+    // it will be mapped to the router query parameters as stage using `router.push`.
     return {stage: data?.stage || this.stage};
   }
 }
 ```
 
-But, if in some cases we don't have `stage` in `route.query`, and the component has a default value,
-we trap in a situation where there is a route that has not been synchronized with the component.
-This can affect the "back" navigation logic. Sometimes this behavior does not meet our expectations.
-But if we switch `syncRouterStoreOnInit` to true, the component will force its state to be synchronized with
-the router after initialization.
+However, in certain cases where the stage value is not present in the `route.query`,
+and the component has a default value for stage,
+we may encounter a situation where there is a route that has not been synchronized with the component.
+This can impact the logic for "back" navigation as it may not meet our expectations.
+
+To address this, if you set `syncRouterStateOnInit` to true,
+the component will force its state to be synchronized with the router after initialization.
+This ensures that the component's state is always in sync with the router,
+even if the route does not have the stage value initially.
+This can provide a more consistent navigation experience, especially when using "back" navigation.
+
+### [routerStateUpdateMethod = `'push'`]
+
+The method that will be used for transitions when the router synchronizes
+its state with the component's state using `syncRouterState`.
 
 ### [watchProp]
 
-A dictionary with remote component watchers. The use of this mechanism is similar to the `@watch` decorator:
+A dictionary with remote component watchers.
+Using this prop is very similar to using the `@watch` decorator:
 
-1. As a key, we declare the component method name we want to call;
-2. As a value, we declare the property path or event that we want to watch or listen to.
-   Also, the method can take additional observation parameters.
-   Keep in mind that properties or events are taken from the component that contains the current one.
+1. As a key, we specify the name of the current component method we want to call.
+2. As a value, we specify the property path or event that we want to watch or listen to.
+   We can also include additional observation parameters in the method.
+   It is important to note that the properties or events are taken from the component
+   that contains the current one.
 
 ```js
 // We have two components: A and B.
-// We want to declare that component B must call its own `reload` method on an event from component A.
+// We want to specify that component B should call its own reload method when an event occurs in component A.
 
-{
-  // If we want to listen for events, we should use the ":" syntax.
-  // Also, we can provide a different event emitter as `link:`,
-  // for instance, `document:scroll`
+const watchProp = {
+  // To listen for events, we should use the ":" syntax.
+  // Additionally, we can specify a different event emitter using the "link:" syntax.
+  // For example, "document:scroll" will listen to the "scroll" event on the document.
   reload: ':foo'
-}
+};
 ```
 
 ```js
 // We can attach multiple watchers for one method
 
-{
+const watchProp = {
   reload: [
-    // Listens the `foo` event from `A`
+    // Listens to the `foo` event from `A`
     ':foo',
 
     // Watches for changes to the `A.bla` property
     'bla',
 
-    // Listens the `window.document` `scroll` event,
-    // does not provide event arguments to `reload`
+    // Listens to the "scroll" event on the window.document object
+    // and does not provide event arguments to the reload method
     {
       path: 'document:scroll',
       provideArgs: false
     }
   ]
-}
+};
 ```
 
 ### [proxyCall = `false`]
 
-If true, the component will listen to the `callChild` special event on its parent.
-The event handler will receive as a payload an object that implements the `CallChild` interface.
+If set to true, the component will listen for the `callChild` special event on its parent.
+The event handler will receive an object as the payload, which should implement the `CallChild` interface.
 
 ```typescript
 interface CallChild<CTX extends iBlock = iBlock> {
@@ -240,81 +279,88 @@ interface CallChild<CTX extends iBlock = iBlock> {
 }
 ```
 
-The `if` function allows you to specify which components should handle this event.
-If the check is successful, then the `then` method will be called with the handler component context as an argument.
+The `if` function allows you to specify which components should handle a particular event.
+If the check is successful,
+then the then method will be called with the handler component's context as an argument.
 
-```typescript
-import iBlock, { component } from 'components/super/i-block/i-block';
-import type { Module } from 'components/friends/module-loader';
+Here's an example:
 
-@component()
-class bExample extends iBlock {
-  mounted() {
-    // Reload all child iData components
-    this.emit('callChild', {
-      if: (ctx) => ctx.instance instanceof iData,
-      then: (ctx) => ctx.reload()
-    });
-  }
-}
+```js
+// Reload all children iData components
+this.emit('callChild', {
+  if: (ctx) => ctx.instance instanceof iData,
+  then: (ctx) => ctx.reload()
+});
 ```
 
 ### [dispatching = `false`]
 
-If true, then the component event dispatching mode is enabled.
+If set to true, the component event dispatching mode is enabled.
+This means that all component events will bubble up to the parent component.
 
-This means that all component events will bubble up to the parent component:
-if the parent also has this property set to true, then events will bubble up to the next (from the hierarchy) parent component.
+If the parent component also has this property set to true,
+then the events will continue to bubble up to the next parent component in the hierarchy.
 
-All dispatched events have special prefixes to avoid collisions with events from other components.
-For example: bButton `click` will bubble up as `b-button::click`.
-Or if the component has the `globalName` prop, it will additionally bubble up as `${globalName}::click`.
+To avoid collisions with events from other components,
+all dispatched events will have special prefixes.
+For example, if a component named `bButton` emits a `click` event, it will bubble up as `b-button::click`.
+
+If the component has the `globalName` property, it will additionally bubble up as `${globalName}::click`.
 
 ### [selfDispatching = `false`]
 
-If true, then all events that are bubbled up by child components will be fired as the component own events without any prefixes.
+If set to true, all events that are bubbled up by child components will be fired as the component's own events,
+without any prefixes.
 
 ### [p]
 
 Additional component parameters.
-This parameter can be useful if you need to provide some unstructured additional parameters to a component.
+This parameter can be useful when you need to pass custom or specific data to a component in a flexible and
+unstructured way.
+You can include any additional parameters you need, according to your component's requirements.
 
 ### [classes]
 
-Additional classes for component elements.
-This option can be useful if you need to attach some extra classes to the internal component elements.
+Additional classes for the component elements.
+This option can be useful if you need to attach some extra classes to the inner component elements.
 Be sure you know what you are doing because this mechanism is tied to the private component markup.
 
-```
+```js
 // Key names are tied with the component elements
-// Values contain a CSS class or a list of classes we want to add
+// Values contain CSS classes we want to add
 
-{
+const classes = {
   foo: 'bla',
   bar: ['bla', 'baz']
-}
+};
 ```
 
 ### [styles]
 
-Additional styles for component elements.
-This option can be useful if you need to attach some extra styles to the internal component elements.
+Additional styles for the component elements.
+This option can be useful if you need to attach some extra styles to the inner component elements.
 Be sure you know what you are doing because this mechanism is tied to the private component markup.
 
-```
+```js
 // Key names are tied with component elements,
-// Values contains a CSS style string, a style object or a list of style strings
+// Values contains CSS styles we want to add
 
-{
+const styles = {
   foo: 'color: red',
   bar: {color: 'blue'},
   baz: ['color: red', 'background: green']
-}
+};
 ```
 
-### [i18n]
+### [renderComponentId = `true`]
 
-A link to the `i18n` function that will be used to localize string literals.
+Whether to add classes to the component markup with its unique identifier.
+For functional components, the value of this parameter can only be false.
+
+### [getRoot]
+
+The getter is used to retrieve the root component.
+It is commonly used for dynamically mounting components.
 
 ## Template helpers
 
@@ -322,7 +368,8 @@ A link to the `i18n` function that will be used to localize string literals.
 
 #### [componentName]
 
-The hardcoded name of the component. If not set, a name based on the template file name will be used.
+The hardcoded name of the component.
+If a name is not explicitly set, it will be based on the template file name.
 
 ```
 - namespace [%fileName%]
@@ -335,7 +382,7 @@ The hardcoded name of the component. If not set, a name based on the template fi
 
 #### [rootTag]
 
-The root tag type. If not specified, will be taken from the component `rootTag` prop.
+The root tag type. If not specified, it will be taken from the component `rootTag` prop.
 
 ```
 - namespace [%fileName%]
