@@ -15,8 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added possibility to change method that will be used for transitions when router
-  synchronizes its state with the component's state by using syncRouterState to `i-block`
+* Added possibility to change the method that will be used for transitions when the router
+  synchronizes its state with the component's state by using `syncRouterState` `iBlock`
 
 ## v4.0.0-beta.10 (2023-07-27)
 
