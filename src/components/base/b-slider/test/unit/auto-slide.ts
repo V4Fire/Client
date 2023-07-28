@@ -13,7 +13,7 @@ import Component from 'tests/helpers/component';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
-import { current, dispatchTouchEvent } from 'components/base/b-slider/test/helpers';
+import { renderSlider, current, dispatchTouchEvent } from 'components/base/b-slider/test/helpers';
 
 test.use({
 	isMobile: true,
@@ -32,13 +32,10 @@ test.describe('<b-slider> auto slide', () => {
 	let
 		slider: JSHandle<bSlider>;
 
-	const
-		items = [1, 2, 3, 4];
-
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		slider = await renderSlider(page);
+		slider = await renderSlider(page, {childrenIds: [1, 2, 3, 4], attrs: {autoSlideInterval}});
 	});
 
 	test('should automatically move to the next slide when `autoSlideInterval` is positive', async () => {
@@ -77,23 +74,4 @@ test.describe('<b-slider> auto slide', () => {
 
 		test.expect(await current(slider)).toBe(1);
 	});
-
-	function renderSlider(page: Page): Promise<JSHandle<bSlider>> {
-		const children = items.map((i) => ({
-			type: 'img',
-			attrs: {
-				id: i,
-				src: 'https://fakeimg.pl/300x200',
-				width: 300,
-				height: 200
-			}
-		}));
-
-		return Component.createComponent<bSlider>(page, 'b-slider', {
-			children,
-			attrs: {
-				autoSlideInterval
-			}
-		});
-	}
 });
