@@ -123,6 +123,10 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 			return 0;
 		}
 
+		if (current === slideRects.length - 1 && this.alignLastToEnd) {
+			return slideRect.offsetLeft + slideRect.width - viewRect.width;
+		}
+
 		switch (align) {
 			case 'center':
 				return slideRect.offsetLeft - (viewRect.width - slideRect.width) / 2;
@@ -131,7 +135,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 				return slideRect.offsetLeft;
 
 			case 'end':
-				return slideRect.offsetLeft + slideRect.width;
+				return slideRect.offsetLeft + slideRect.width - viewRect.width;
 
 			default:
 				return 0;
@@ -318,6 +322,33 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	}
 
 	/**
+	 * Resumes auto slide moves by setting the corresponding interval.
+	 */
+	@hook('mounted')
+	protected resumeAutoSlide(): void {
+		if (this.isSlideMode && Number.isPositive(this.autoSlideInterval)) {
+			this.async.setInterval(
+				() => {
+					void this.removeMod('swipe');
+					this.moveSlide(1);
+					this.syncState();
+					void this.removeMod('swipe');
+				},
+				this.autoSlideInterval,
+				{label: $$.autoSlide}
+			);
+		}
+	}
+
+	/**
+	 * Pauses auto slide moves by clearing the corresponding interval.
+	 */
+	@hook('beforeDestroy')
+	protected pauseAutoSlide(): void {
+		this.async.clearInterval({label: $$.autoSlide});
+	}
+
+	/**
 	 * Performs the slider animation
 	 */
 	protected updateSlidePosition(): void {
@@ -484,6 +515,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
+		this.pauseAutoSlide();
 		this.scrolling = false;
 
 		const
@@ -593,6 +625,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
+		this.resumeAutoSlide();
 	}
 }
 

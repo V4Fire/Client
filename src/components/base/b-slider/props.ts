@@ -78,6 +78,12 @@ export default abstract class iSliderProps extends iData {
 	readonly alignFirstToStart: boolean = true;
 
 	/**
+	 * If true, the last slide will be aligned to the end position (the right bound).
+	 */
+	@prop(Boolean)
+	readonly alignLastToEnd: boolean = true;
+
+	/**
 	 * How much does the shift along the X-axis corresponds to a finger movement
 	 */
 	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
@@ -112,4 +118,10 @@ export default abstract class iSliderProps extends iData {
 	 */
 	@prop({type: Number, validator: (v) => Number.isNatural(v)})
 	readonly swipeToleranceY: number = 50;
+
+	/**
+	 * The interval (in ms) between auto slide moves. 0 means no auto slide moves.
+	 */
+	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
+	readonly autoSlideInterval: number = 0;
 }
