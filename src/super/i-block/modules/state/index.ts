@@ -252,7 +252,8 @@ export default class State extends Friend {
 
 		const
 			{ctx} = this,
-			{router} = ctx.r;
+			{router} = ctx.r,
+			{routerStateUpdateMethod} = ctx;
 
 		data = ctx.syncRouterState(data, 'remote');
 		this.set(ctx.syncRouterState(data));
@@ -261,7 +262,7 @@ export default class State extends Friend {
 			return false;
 		}
 
-		await router.push(null, {
+		await router[routerStateUpdateMethod](null, {
 			query: data
 		});
 
@@ -393,7 +394,8 @@ export default class State extends Friend {
 
 		const
 			{ctx} = this,
-			{router} = ctx.r;
+			{router} = ctx.r,
+			{routerStateUpdateMethod} = ctx;
 
 		const
 			stateFields = ctx.convertStateToRouterReset();
@@ -406,7 +408,7 @@ export default class State extends Friend {
 			return false;
 		}
 
-		await router.push(null);
+		await router[routerStateUpdateMethod](null);
 		ctx.log('state:reset:router', this, stateFields);
 		return true;
 
