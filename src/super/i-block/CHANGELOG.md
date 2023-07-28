@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed default convertStateToRouterReset method
+
 ## v3.38.0 (2023-02-20)
 
 #### :bug: Bug Fix

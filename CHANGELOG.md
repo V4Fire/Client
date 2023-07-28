@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed default convertStateToRouterReset method `super/i-block`
+* Fixed resetting router state `friends/state`
+
 ## v3.53.0 (2023-07-27)
 
 #### :boom: Breaking Change

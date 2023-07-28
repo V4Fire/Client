@@ -388,7 +388,7 @@ export default class State extends Friend {
 	/**
 	 * Resets a router state of the current component
 	 */
-	async resetRouter(): Promise<boolean> {
+	resetRouter(): boolean {
 		//#if runtime has bRouter
 
 		const
@@ -406,7 +406,6 @@ export default class State extends Friend {
 			return false;
 		}
 
-		await router.push(null);
 		ctx.log('state:reset:router', this, stateFields);
 		return true;
 

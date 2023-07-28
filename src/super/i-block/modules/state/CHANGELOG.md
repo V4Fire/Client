@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed resetting router state
+
 ## v3.0.0 (2021-07-27)
 
 #### :bug: Bug Fix
