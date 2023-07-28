@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue where the default behavior of the `convertStateToRouterReset` did not affect the router
+
 ## v3.54.0 (2023-07-28)
 
 #### :rocket: New Feature

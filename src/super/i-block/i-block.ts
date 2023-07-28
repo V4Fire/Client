@@ -2448,7 +2448,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 		if (Object.isDictionary(stateFields)) {
 			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
-				res[keys[i]] = undefined;
+				res[keys[i]] = null;
 			}
 		}
 

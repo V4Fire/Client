@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue where the default behavior of the `convertStateToRouterReset` did not affect the router `iBlock`
+* Fixed resetting router state `friends/state`
+
 ## v3.54.0 (2023-07-28)
 
 #### :rocket: New Feature

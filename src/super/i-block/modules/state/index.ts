@@ -389,13 +389,12 @@ export default class State extends Friend {
 	/**
 	 * Resets a router state of the current component
 	 */
-	async resetRouter(): Promise<boolean> {
+	resetRouter(): boolean {
 		//#if runtime has bRouter
 
 		const
 			{ctx} = this,
-			{router} = ctx.r,
-			{routerStateUpdateMethod} = ctx;
+			{router} = ctx.r;
 
 		const
 			stateFields = ctx.convertStateToRouterReset();
@@ -408,7 +407,6 @@ export default class State extends Friend {
 			return false;
 		}
 
-		await router[routerStateUpdateMethod](null);
 		ctx.log('state:reset:router', this, stateFields);
 		return true;
 
