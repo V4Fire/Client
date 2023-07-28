@@ -522,6 +522,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				this.autoSlideInterval,
 				{label: $$.autoSlide}
 			);
+		} else {
+			this.pauseAutoSlide();
 		}
 	}
 
