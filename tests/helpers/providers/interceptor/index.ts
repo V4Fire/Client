@@ -84,6 +84,17 @@ export class RequestInterceptor {
 	 *   .responseOnce(500);
 	 * ```
 	 *
+	 * Sets the response that will occur with a delay to simulate network latency.
+	 *
+	 * @example
+	 * ```typescript
+	 * const interceptor = new RequestInterceptor(page, /api/);
+	 *
+	 * interceptor
+	 *   .responseOnce(200, {content: 1}, {delay: 200})
+	 *   .responseOnce(500, {}, {delay: 300});
+	 * ```
+	 *
 	 * @param status - The response status.
 	 * @param payload - The response payload.
 	 * @param opts - The response options.
@@ -96,17 +107,7 @@ export class RequestInterceptor {
 		payload?: ResponsePayload | ResponseHandler,
 		opts?: ResponseOptions
 	): this {
-		let fn;
-
-		if (Object.isFunction(handlerOrStatus)) {
-			fn = handlerOrStatus;
-
-		} else {
-			const status = handlerOrStatus;
-			fn = this.cookResponseFn(status, payload, opts);
-		}
-
-		this.mock.mockImplementationOnce(fn);
+		this.mock.mockImplementationOnce(this.createMockFn(handlerOrStatus, payload, opts));
 		return this;
 	}
 
@@ -118,6 +119,17 @@ export class RequestInterceptor {
 	 * ```typescript
 	 * const interceptor = new RequestInterceptor(page, /api/);
 	 * interceptor.response((r: Route) => r.fulfill({status: 200}));
+	 * ```
+	 *
+	 * Sets the response that will occur with a delay to simulate network latency.
+	 *
+	 * @example
+	 * ```typescript
+	 * const interceptor = new RequestInterceptor(page, /api/);
+	 *
+	 * interceptor
+	 *   .response(200, {content: 1}, {delay: 200})
+	 *   .response(500, {}, {delay: 300});
 	 * ```
 	 *
 	 * @param handler - The response handler function.
@@ -147,17 +159,7 @@ export class RequestInterceptor {
 		payload?: ResponsePayload | ResponseHandler,
 		opts?: ResponseOptions
 	): this {
-		let fn;
-
-		if (Object.isFunction(handlerOrStatus)) {
-			fn = handlerOrStatus;
-
-		} else {
-			const status = handlerOrStatus;
-			fn = this.cookResponseFn(status, payload, opts);
-		}
-
-		this.mock.mockImplementation(fn);
+		this.mock.mockImplementation(this.createMockFn(handlerOrStatus, payload, opts));
 		return this;
 	}
 
@@ -190,6 +192,31 @@ export class RequestInterceptor {
 	async start(): Promise<this> {
 		await this.routeCtx.route(this.routePattern, this.routeListener);
 		return this;
+	}
+
+	/**
+	 * Creates a mock response function.
+	 *
+	 * @param handlerOrStatus
+	 * @param payload
+	 * @param opts
+	 */
+	protected createMockFn(
+		handlerOrStatus: number | ResponseHandler,
+		payload?: ResponsePayload | ResponseHandler,
+		opts?: ResponseOptions
+	): ResponseHandler {
+		let fn;
+
+		if (Object.isFunction(handlerOrStatus)) {
+			fn = handlerOrStatus;
+
+		} else {
+			const status = handlerOrStatus;
+			fn = this.cookResponseFn(status, payload, opts);
+		}
+
+		return fn;
 	}
 
 	/**
