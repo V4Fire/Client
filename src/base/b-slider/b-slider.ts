@@ -279,11 +279,11 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			return 0;
 		}
 
-		if (current === 0 && this.alignFirstToStart) {
+		if (this.alignFirstToStart && current === 0) {
 			return 0;
 		}
 
-		if (current === slideRects.length - 1 && this.alignLastToEnd) {
+		if (this.alignLastToEnd && current === slideRects.length - 1) {
 			return slideRect.offsetLeft + slideRect.width - viewRect.width;
 		}
 
