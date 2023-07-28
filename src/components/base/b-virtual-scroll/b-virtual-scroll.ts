@@ -11,12 +11,13 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
 import type { AsyncOptions } from 'core/async';
 
 import type iItems from 'components/traits/i-items/i-items';
 import VDOM, { create, render } from 'components/friends/vdom';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll/handlers';
-import { bVirtualScrollDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-virtual-scroll/const';
+import { bVirtualScrollAsyncGroup, bVirtualScrollDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-virtual-scroll/const';
 import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll } from 'components/base/b-virtual-scroll/interface';
 
 import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll/modules/emitter';
@@ -25,11 +26,13 @@ import { SlotsStateController } from 'components/base/b-virtual-scroll/modules/s
 import { ComponentFactory } from 'components/base/b-virtual-scroll/modules/factory';
 import { Observer } from 'components/base/b-virtual-scroll/modules/observer';
 
-import iData, { $$, component, system, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
+import iData, { component, system, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-virtual-scroll/interface';
 export * from 'components/base/b-virtual-scroll/const';
 export * from 'components/super/i-data/i-data';
+
+const $$ = symbolGenerator();
 
 VDOM.addToPrototype({create, render});
 
@@ -172,7 +175,8 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	 */
 	getRequestParams(): RequestParams {
 		const label: AsyncOptions = {
-			label: $$.initLoad,
+			label: $$.initLoadNext,
+			group: bVirtualScrollAsyncGroup,
 			join: 'replace'
 		};
 

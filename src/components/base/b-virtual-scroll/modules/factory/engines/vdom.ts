@@ -20,15 +20,5 @@ export function render(ctx: bVirtualScroll, items: VNodeDescriptor[]): HTMLEleme
 		vnodes = ctx.vdom.create(...items),
 		nodes = ctx.vdom.render(vnodes);
 
-	// https://github.com/vuejs/core/issues/6061
-	if (nodes[0].nodeType === Node.TEXT_NODE) {
-		nodes.shift();
-	}
-
-	// https://github.com/vuejs/core/issues/6061
-	if (nodes[nodes.length - 1].nodeType === Node.TEXT_NODE) {
-		nodes.pop();
-	}
-
-	return <HTMLElement[]>nodes;
+	return <HTMLElement[]>nodes.slice(1, nodes.length - 1);
 }

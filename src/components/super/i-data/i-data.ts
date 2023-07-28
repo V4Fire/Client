@@ -55,8 +55,7 @@ export {
 export * from 'components/super/i-block/i-block';
 export * from 'components/super/i-data/interface';
 
-export const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 @component({functional: null})
 export default abstract class iData extends iDataHandlers {
