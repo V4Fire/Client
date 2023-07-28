@@ -16,7 +16,7 @@ import type bSlider from 'components/base/b-slider/b-slider';
  * Renders the slider using given options
  *
  * @param page
- * @param options - options for rendering, may contain `params`, `attrs`, `childrenIds`
+ * @param options - options for rendering, may contain `params`, `attrs`, `children`, `childrenIds`
  * (in ascending order by priority). The last one option is used to construct images
  * with given ids and use them as slides.
  */
