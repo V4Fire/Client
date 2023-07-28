@@ -430,7 +430,7 @@ export default abstract class iBlockState extends iBlockMods {
 
 		if (Object.isDictionary(stateFields)) {
 			Object.keys(stateFields).forEach((key) => {
-				state[key] = undefined;
+				state[key] = null;
 			});
 		}
 

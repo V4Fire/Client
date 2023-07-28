@@ -11,12 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.??.?? (2023-07-27)
+## v4.??.?? (2023-??-??)
 
 #### :rocket: New Feature
 
 * Added possibility to change the method that will be used for transitions when the router
   synchronizes its state with the component's state by using `syncRouterState` `iBlock`
+
+#### :bug: Bug Fix
+
+* Fixed an issue where the default behavior of the `convertStateToRouterReset` did not affect the router `iBlock`
+* Fixed resetting router state `friends/state`
 
 ## v4.0.0-beta.10 (2023-07-27)
 

@@ -21,6 +21,10 @@ Changelog
 * Added possibility to change the method that will be used for transitions when the router
   synchronizes its state with the component's state by using `syncRouterState`
 
+#### :bug: Bug Fix
+
+* Fixed resetting router state
+
 #### :memo: Documentation
 
 * Added complete documentation for the module
