@@ -26,6 +26,7 @@ test.use({
 test.describe('<b-slider> auto slide', () => {
 	const
 		autoSlideInterval = (1).second();
+
 	let
 		slider: JSHandle<bSlider>;
 

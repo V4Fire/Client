@@ -97,6 +97,7 @@ export async function dispatchTouchEvent(
 				target: document.documentElement
 			}))
 		});
+
 		const {x, y} = touchPoints[0];
 		document.elementFromPoint(x, y)?.dispatchEvent(event);
 	}, <[string, CanArray<{ x: number; y: number }>]>[eventType, touchPoints]);
