@@ -21,7 +21,7 @@ const config: PlaywrightTestConfig = {
 
 	reporter: isCI ? 'github' : undefined,
 
-  workers: isCI ? 1 : undefined,
+	workers: isCI ? 1 : undefined,
 
 	globalSetup: require.resolve('tests/config/unit/setup')
 };
