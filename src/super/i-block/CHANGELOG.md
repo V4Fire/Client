@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed default convertStateToRouterReset method
+* Fixed an issue where the default behavior of the `convertStateToRouterReset` did not affect the router
 
 ## v3.38.0 (2023-02-20)
 

@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed default convertStateToRouterReset method `super/i-block`
+* Fixed an issue where the default behavior of the `convertStateToRouterReset` did not affect the router `iBlock`
 * Fixed resetting router state `friends/state`
 
 ## v3.53.0 (2023-07-27)
