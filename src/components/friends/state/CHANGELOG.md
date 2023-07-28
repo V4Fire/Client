@@ -11,16 +11,19 @@ Changelog
 
 ## v4.??.?? (2023-??-??)
 
-#### :bug: Bug Fix
-
-* Fixed resetting router state
-
-## v3.??.?? (2022-??-??)
-
 #### :boom: Breaking Change
 
 * The module has been moved to`components/friends/state`
 * The module has been rewritten to a new tree-shake friendly API
+
+#### :rocket: New Feature
+
+* Added possibility to change the method that will be used for transitions when the router
+  synchronizes its state with the component's state by using `syncRouterState`
+
+#### :bug: Bug Fix
+
+* Fixed resetting router state
 
 #### :memo: Documentation
 

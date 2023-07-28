@@ -14,10 +14,10 @@
  * The base component template
  */
 - template index()
-	/** The hardcoded name of the component. If not set, a name based on the template file name will be used. */
+	/** The hardcoded name of the component. If a name is not explicitly set, it will be based on the template file name. */
 	- componentName = ''
 
-	/** The root tag type. If not specified, will be taken from the component `rootTag` prop. */
+	/** The root tag type. If not specified, it will be taken from the component `rootTag` prop. */
 	- rootTag = null
 
 	/** Should or not to create an extra wrapper inside the root tag */

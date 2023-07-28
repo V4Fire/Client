@@ -957,6 +957,36 @@ To address this issue, each component has a `syncRouterStoreOnInit` prop.
 If you set the `syncRouterStoreOnInit` prop to true,
 the component will forcefully synchronize its state with the router upon initialization.
 
+### Updating router state
+
+By default, when any property from `syncRouterState` is changed,
+the data will be sent to the router and the router will create a new transition using the `push` method.
+This means that the properties returned by the `syncRouterState` method will be added as query parameters,
+resulting in a new entry in the browser's history.
+
+To have more control over the routing behavior and its impact on the browser's history stack,
+you can specify the `routerStateUpdateMethod` parameter.
+This parameter determines the method used by the router to perform a new transition when certain component
+properties change.
+It allows for fine-tuning the routing behavior according to the specific requirements of
+the two-way binding between the component and the router.
+
+```typescript
+import iBlock, { component, system } from 'super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  routerStateUpdateMethod: 'push' | 'replace' = 'replace';
+
+  @system()
+  bla: number = 0;
+
+  syncRouterState(data: CanUndef<Dictionary>, type: ConverterCallType) {
+    return {bla: data?.bla || this.bla};
+  }
+}
+```
+
 ### Resetting the router state
 
 You can optionally specify a method that handles situations where you need to
