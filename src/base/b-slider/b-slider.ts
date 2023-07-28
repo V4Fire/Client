@@ -519,7 +519,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 					void this.removeMod('swipe');
 				},
 				this.autoSlideInterval,
-				{label: 'autoSlide'}
+				{label: $$.autoSlide}
 			);
 		}
 	}
@@ -529,7 +529,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	@hook('beforeDestroy')
 	protected pauseAutoSlide(): void {
-		this.async.clearInterval({label: 'autoSlide'});
+		this.async.clearInterval({label: $$.autoSlide});
 	}
 
 	/**

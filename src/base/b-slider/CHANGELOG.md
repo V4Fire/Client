@@ -16,11 +16,9 @@ Changelog
 * Added new prop `alignLastToEnd` which is similar to existing `alignFirstToStart` and is also `true` by default.
 * Added new prop `autoSlideInterval`
 
-
 #### :bug: Bug Fix
 
 * Fixed incorrect `align="end"` behaviour
-
 
 ## v3.44.2 (2023-03-29)
 
