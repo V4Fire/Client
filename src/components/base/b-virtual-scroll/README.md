@@ -198,7 +198,7 @@ This slot can be useful when implementing lazy content rendering on button click
 ### `shouldPerformDataRender`
 
 - Type: `Function`
-- Default: `(state: VirtualScrollState) => state.isInitialRender || state.itemsTillEnd === 0`
+- Default: `(state: VirtualScrollState) => state.isInitialRender || state.remainingItems === 0`
 
 This function is called in the `bVirtualScroll.renderGuard` after other checks are completed.
 It receives the component state as input and determines whether the component should render the next chunk of components.
@@ -208,7 +208,7 @@ Example usage:
 
 ```typescript
 const shouldPerformDataRender = (state: VirtualScrollState): boolean => {
-  return state.isInitialRender || state.itemsTillEnd === 0;
+  return state.isInitialRender || state.remainingItems === 0;
 };
 ```
 
@@ -225,11 +225,11 @@ Here's an example of how you can use `shouldPerformDataRequest`:
 ```typescript
 const shouldPerformDataRequest = (state: VirtualScrollState): boolean => {
   // Example: Request data if the remaining items till the end is less than or equal to 10
-  return state.itemsTillEnd <= 10;
+  return state.remainingItems <= 10;
 };
 ```
 
-In this example, the function checks the `itemsTillEnd` property of the component state.
+In this example, the function checks the `remainingItems` property of the component state.
 If the remaining number of items till the end is less than or equal to 10, it returns `true` to indicate that the component should perform a data request.
 You can adjust the condition based on your specific requirements.
 
@@ -475,7 +475,7 @@ The component allows rendering two types of components:
 - `item` - Main component (main content).
 - `separator` - Other components, such as dividers or separators.
 
-There is no significant difference between them, except that they are treated differently in fields like `itemsTillEnd` in the `VirtualScrollState`. As the name suggests, the `itemsTillEnd` property only considers components with the `item` type, while `childTillEnd` considers components with both `item` and `separator` types.
+There is no significant difference between them, except that they are treated differently in fields like `remainingItems` in the `VirtualScrollState`. As the name suggests, the `remainingItems` property only considers components with the `item` type, while `remainingChildren` considers components with both `item` and `separator` types.
 
 The distinction between `item` and `separator` types is mainly used for calculating certain properties based on the type of components present in the `VirtualScrollState`, such as the number of items till the end of the scroll.
 

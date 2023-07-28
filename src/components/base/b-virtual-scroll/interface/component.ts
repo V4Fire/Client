@@ -29,12 +29,12 @@ export interface VirtualScrollState<DATA = object, RAW_DATA = unknown> {
 	/**
 	 * The number of components of type `item` that have not yet been visible to the user.
 	 */
-	itemsTillEnd: CanUndef<number>;
+	remainingItems: CanUndef<number>;
 
 	/**
 	 * The number of components of any type that have not yet been visible to the user.
 	 */
-	childTillEnd: CanUndef<number>;
+	remainingChildren: CanUndef<number>;
 
 	/**
 	 * The current page number for loading data.
@@ -119,7 +119,7 @@ export interface PrivateComponentState {
 	/**
 	 * Pointer to the index of the data element that was last rendered.
 	 */
-	dataCursor: number;
+	dataOffset: number;
 }
 
 /**
@@ -130,7 +130,7 @@ export interface ComponentItemType {
 	 * This type indicates that the component is the "main" component to render.
 	 *
 	 * For example, in the {@link VirtualScrollState} interface, you can notice that
-	 * there are specific fields for the `item` type, such as `itemsTillEnd`.
+	 * there are specific fields for the `item` type, such as `remainingItems`.
 	 *
 	 * Components with this type are stored both in the `items` array and the `childList` array in
 	 * {@link VirtualScrollState}.

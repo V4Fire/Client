@@ -124,7 +124,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.withDefaultPaginationProviderProps({chunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest: ({itemsTillEnd}) => itemsTillEnd === 0,
+					shouldPerformDataRequest: ({remainingItems}) => remainingItems === 0,
 					dbConverter: ({data: {nestedData}}) => ({data: nestedData})
 				})
 				.build();

@@ -43,7 +43,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.withDefaultPaginationProviderProps({chunkSize: chunkSize[0]})
 				.withProps({
 					chunkSize: chunkSize[0],
-					shouldPerformDataRequest: ({itemsTillEnd}) => itemsTillEnd === 0,
+					shouldPerformDataRequest: ({remainingItems}) => remainingItems === 0,
 					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
 				})
 				.pick(demoPage.buildTestComponent(component.componentName, component.props));
@@ -111,7 +111,7 @@ test.describe('<b-virtual-scroll>', () => {
 					.withDefaultPaginationProviderProps({chunkSize})
 					.withProps({
 						chunkSize,
-						shouldPerformDataRequest: ({itemsTillEnd}) => itemsTillEnd === 0,
+						shouldPerformDataRequest: ({remainingItems}) => remainingItems === 0,
 						'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
 					})
 					.build();

@@ -22,8 +22,8 @@ test.describe('<b-virtual-scroll>', () => {
 		state: VirtualScrollTestHelpers['state'];
 
 	const observerInitialStateFields = {
-		itemsTillEnd: undefined,
-		childTillEnd: undefined,
+		remainingItems: undefined,
+		remainingChildren: undefined,
 		maxViewedChild: undefined,
 		maxViewedItem: undefined
 	};

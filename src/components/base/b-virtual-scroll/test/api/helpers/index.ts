@@ -220,8 +220,8 @@ export function createInitialState(state: Partial<VirtualScrollState>): VirtualS
 		...createInitialStateObj(),
 		maxViewedItem: Object.cast(test.expect.any(Number)),
 		maxViewedChild: Object.cast(test.expect.any(Number)),
-		itemsTillEnd: Object.cast(test.expect.any(Number)),
-		childTillEnd: Object.cast(test.expect.any(Number)),
+		remainingItems: Object.cast(test.expect.any(Number)),
+		remainingChildren: Object.cast(test.expect.any(Number)),
 		isLoadingInProgress: Object.cast(test.expect.any(Boolean)),
 		...state
 	};

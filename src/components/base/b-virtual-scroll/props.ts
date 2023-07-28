@@ -174,7 +174,7 @@ export default abstract class iVirtualScrollProps extends iData {
 
 	/**
 	 * When this function returns `true` the component will be able to request additional data.
-	 * This function will be called on each new element enters the viewport.
+	 * This function will be called each time a new element enters the viewport.
 	 */
 	@prop({
 		type: Function,
@@ -195,7 +195,7 @@ export default abstract class iVirtualScrollProps extends iData {
 	 * @example
 	 * ```typescript
 	 * const shouldPerformDataRender = (state) => {
-	 *   return state.isInitialRender || state.itemsTillEnd === 0;
+	 *   return state.isInitialRender || state.remainingItems === 0;
 	 * }
 	 * ```
 	 */

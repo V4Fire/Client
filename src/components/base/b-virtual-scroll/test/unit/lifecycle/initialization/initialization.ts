@@ -89,8 +89,8 @@ test.describe('<b-virtual-scroll>', () => {
 					await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
 						[
 							state.compile({
-								itemsTillEnd: undefined,
-								childTillEnd: undefined,
+								remainingItems: undefined,
+								remainingChildren: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
 								areRequestsStopped: false,
@@ -103,8 +103,8 @@ test.describe('<b-virtual-scroll>', () => {
 						],
 						[
 							state.compile({
-								itemsTillEnd: undefined,
-								childTillEnd: undefined,
+								remainingItems: undefined,
+								remainingChildren: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
 								areRequestsStopped: false,
@@ -123,8 +123,8 @@ test.describe('<b-virtual-scroll>', () => {
 					await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
 						[
 							state.compile({
-								itemsTillEnd: undefined,
-								childTillEnd: undefined,
+								remainingItems: undefined,
+								remainingChildren: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
 								areRequestsStopped: false,
@@ -192,8 +192,8 @@ test.describe('<b-virtual-scroll>', () => {
 					await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
 						[
 							state.compile({
-								itemsTillEnd: undefined,
-								childTillEnd: undefined,
+								remainingItems: undefined,
+								remainingChildren: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
 								areRequestsStopped: false,
@@ -208,8 +208,8 @@ test.describe('<b-virtual-scroll>', () => {
 					await test.expect(shouldPerformDataRequest.calls).resolves.toEqual([
 						[
 							state.compile({
-								itemsTillEnd: undefined,
-								childTillEnd: undefined,
+								remainingItems: undefined,
+								remainingChildren: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
 								areRequestsStopped: false,
@@ -267,8 +267,8 @@ test.describe('<b-virtual-scroll>', () => {
 					await test.expect(shouldStopRequestingData.calls).resolves.toEqual([
 						[
 							state.compile({
-								itemsTillEnd: undefined,
-								childTillEnd: undefined,
+								remainingItems: undefined,
+								remainingChildren: undefined,
 								maxViewedItem: undefined,
 								maxViewedChild: undefined,
 								areRequestsStopped: false,

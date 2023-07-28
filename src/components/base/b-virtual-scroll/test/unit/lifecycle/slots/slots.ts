@@ -179,10 +179,10 @@ test.describe('<b-virtual-scroll>', () => {
 				.response(200, {data: []});
 
 			const shouldPerformDataRequest =
-				<ShouldPerform>(({isInitialLoading, itemsTillEnd}) => isInitialLoading || itemsTillEnd === 0);
+				<ShouldPerform>(({isInitialLoading, remainingItems}) => isInitialLoading || remainingItems === 0);
 
 			const shouldPerformDataRender =
-				<ShouldPerform>(({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0);
+				<ShouldPerform>(({isInitialRender, remainingItems}) => isInitialRender || remainingItems === 0);
 
 			await component
 				.withDefaultPaginationProviderProps({chunkSize})

@@ -15,8 +15,8 @@ export function createInitialState(): VirtualScrollState {
 	return {
 		loadPage: 0,
 		renderPage: 0,
-		itemsTillEnd: undefined,
-		childTillEnd: undefined,
+		remainingItems: undefined,
+		remainingChildren: undefined,
 		maxViewedItem: undefined,
 		maxViewedChild: undefined,
 		data: [],
@@ -39,6 +39,6 @@ export function createInitialState(): VirtualScrollState {
  */
 export function createPrivateInitialState(): PrivateComponentState {
 	return {
-		dataCursor: 0
+		dataOffset: 0
 	};
 }

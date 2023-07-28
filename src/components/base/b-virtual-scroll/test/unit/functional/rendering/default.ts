@@ -44,7 +44,7 @@ test.describe('<b-virtual-scroll>', () => {
 					.response(200, {data: state.data.addData(0)});
 
 				const shouldPerformDataRender = await component.mockFn<ShouldPerform>(
-					({isInitialRender, itemsTillEnd}) => isInitialRender || itemsTillEnd === 0
+					({isInitialRender, remainingItems: remainingItems}) => isInitialRender || remainingItems === 0
 				);
 
 				await component

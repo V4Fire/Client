@@ -87,7 +87,7 @@ export class ComponentInternalState extends Friend {
 		childList.push(...mounted);
 		itemsList.push(...newItems);
 
-		this.updateChildTillEnd();
+		this.updateRemainingChild();
 	}
 
 	/**
@@ -151,22 +151,22 @@ export class ComponentInternalState extends Friend {
 
 		if (isItem(component) && (state.maxViewedItem == null || state.maxViewedItem < component.itemIndex)) {
 			state.maxViewedItem = component.itemIndex;
-			state.itemsTillEnd = state.items.length - 1 - state.maxViewedItem;
+			state.remainingItems = state.items.length - 1 - state.maxViewedItem;
 		}
 
 		if (state.maxViewedChild == null || state.maxViewedChild < childIndex) {
 			state.maxViewedChild = component.childIndex;
-			state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
+			state.remainingChildren = state.childList.length - 1 - state.maxViewedChild;
 		}
 
-		this.updateChildTillEnd();
+		this.updateRemainingChild();
 	}
 
 	/**
 	 * Returns the cursor indicating the last index of the last rendered data element.
 	 */
 	getDataCursor(): number {
-		return this.privateState.dataCursor;
+		return this.privateState.dataOffset;
 	}
 
 	/**
@@ -178,29 +178,29 @@ export class ComponentInternalState extends Friend {
 			current = this.getDataCursor(),
 			chunkSize = ctx.getChunkSize(state);
 
-		this.privateState.dataCursor = current + chunkSize;
+		this.privateState.dataOffset = current + chunkSize;
 	}
 
 	/**
 	 * Updates the state of the tillEnd-like fields.
 	 * Calculates the remaining number of child elements until the end and the remaining number of items until the end.
 	 */
-	updateChildTillEnd(): void {
+	updateRemainingChild(): void {
 		const
 			{state} = this;
 
 		if (state.maxViewedChild == null) {
-			state.childTillEnd = state.childList.length - 1;
+			state.remainingChildren = state.childList.length - 1;
 
 		} else {
-			state.childTillEnd = state.childList.length - 1 - state.maxViewedChild;
+			state.remainingChildren = state.childList.length - 1 - state.maxViewedChild;
 		}
 
 		if (state.maxViewedItem == null) {
-			state.itemsTillEnd = state.items.length - 1;
+			state.remainingItems = state.items.length - 1;
 
 		} else {
-			state.itemsTillEnd = state.items.length - 1 - state.maxViewedItem;
+			state.remainingItems = state.items.length - 1 - state.maxViewedItem;
 		}
 	}
 }

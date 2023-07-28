@@ -41,8 +41,8 @@ test.describe('<b-virtual-scroll>', () => {
 
 		const expectedState = state.compile({
 			lastLoadedRawData: undefined,
-			itemsTillEnd: undefined,
-			childTillEnd: undefined,
+			remainingItems: undefined,
+			remainingChildren: undefined,
 			maxViewedItem: undefined,
 			maxViewedChild: undefined,
 			areRequestsStopped: false,
@@ -68,10 +68,10 @@ test.describe('<b-virtual-scroll>', () => {
 
 		const
 			shouldStopRequestingData = <ShouldPerform>(defaultShouldProps.shouldStopRequestingData),
-			shouldPerformDataRequest = <ShouldPerform>(({isInitialLoading, itemsTillEnd, isLastEmpty}) =>
-				isInitialLoading || (itemsTillEnd === 0 && !isLastEmpty)),
-			shouldPerformDataRender = <ShouldPerform>(({isInitialRender, itemsTillEnd}) =>
-				isInitialRender || itemsTillEnd === 0);
+			shouldPerformDataRequest = <ShouldPerform>(({isInitialLoading, remainingItems: remainingItems, isLastEmpty}) =>
+				isInitialLoading || (remainingItems === 0 && !isLastEmpty)),
+			shouldPerformDataRender = <ShouldPerform>(({isInitialRender, remainingItems: remainingItems}) =>
+				isInitialRender || remainingItems === 0);
 
 		await test.step('After rendering first data chunk', async () => {
 			provider
