@@ -8,11 +8,17 @@
 
 import type { Meta, StoryObj } from '@v4fire/storybook';
 import type bBottomSlide from 'components/base/b-bottom-slide/b-bottom-slide';
+import readme from './README.md?raw';
 
 const config: Meta<bBottomSlide> = {
 	title: 'Base/bBottomSlide',
 	component: 'b-bottom-slide',
 	tags: ['autodocs'],
+	parameters: {
+		docs: {
+			readme
+		}
+	},
 	argTypes: {
 		heightMode: {control: 'inline-radio', options: ['full', 'content']}
 	}
