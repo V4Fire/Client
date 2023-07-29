@@ -12,6 +12,11 @@
 /// <reference path="./ts-definitions/playwright.d.ts"/>
 /// <reference path="./ts-definitions/stylus-ds.d.ts"/>
 
+declare module '*?raw' {
+	const content: string;
+	export default content;
+}
+
 declare var ssr: Nullable<{
 	document?: Document;
 }>;
