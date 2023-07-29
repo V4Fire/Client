@@ -5349,8 +5349,8 @@ __metadata:
     "@v4fire/core": "github:V4Fire/Core#v4"
     "@v4fire/design-system": 1.23.0
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules"
-    "@v4fire/storybook": 0.7.0
-    "@v4fire/storybook-framework-webpack5": 0.7.0
+    "@v4fire/storybook": 0.8.0
+    "@v4fire/storybook-framework-webpack5": 0.8.0
     "@vue/compiler-sfc": 3.2.47
     arg: 5.0.1
     autoprefixer: 10.4.2
@@ -5801,23 +5801,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/storybook-framework-webpack5@npm:0.7.0":
-  version: 0.7.0
-  resolution: "@v4fire/storybook-framework-webpack5@npm:0.7.0"
+"@v4fire/storybook-framework-webpack5@npm:0.8.0":
+  version: 0.8.0
+  resolution: "@v4fire/storybook-framework-webpack5@npm:0.8.0"
   dependencies:
     "@storybook/builder-webpack5": 7.0.23
     html-webpack-plugin: 5.5.0
   peerDependencies:
     "@babel/core": ^7.17.5
     webpack: ^5.82.1
-  checksum: ee3fee3ad07d5c58c7cde3770555425d695b7f4f04bce09345230ed0490e2ef67f1f403d8afb517cbb821074b0f6fffa6347c3720616c0025e4d9492ee1beb25
+  checksum: 6fb33a8babfe1081abf559e331a66303aa1fd477d97786aa32b27e2db278d98b325885c03d1dd1e222f06ff39ab382136b691e069d5dbfd87af63b5d7e7da74a
   languageName: node
   linkType: hard
 
-"@v4fire/storybook@npm:0.7.0":
-  version: 0.7.0
-  resolution: "@v4fire/storybook@npm:0.7.0"
+"@v4fire/storybook@npm:0.8.0":
+  version: 0.8.0
+  resolution: "@v4fire/storybook@npm:0.8.0"
   dependencies:
+    "@storybook/blocks": 7.0.23
     "@storybook/global": ^5.0.0
     "@storybook/preview-api": 7.0.23
     "@storybook/types": 7.0.23
@@ -5826,7 +5827,7 @@ __metadata:
     "@v4fire/client": ^4.0.0-beta.7
     "@v4fire/core": ^4.0.0-alpha.4
     "@v4fire/storybook-framework-webpack5": 0.1.0
-  checksum: e949b480ba9108b09f14cac3766ae59f4b520252048e1edc61a4d5876c055012585f55b099c7d16eac8c7cbdfbe917c995b0718982d9f5da550f9708c63ee762
+  checksum: 20d24d5170593bc2836399f12ece6b42dbf70893eacffea639413f92ea831a34c79e1c9e4515c19d49dc163a67c2ec7ab74195158b0ae456bcf4f91f78042242
   languageName: node
   linkType: hard
 
