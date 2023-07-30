@@ -578,7 +578,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}
 
 			if (pathVal) {
-				return concatURLs(pathVal, '/').replace(/^[/]+/, '/');
+				return concatURLs(pathVal, '/').replace(/^\/+/, '/');
 			}
 
 			return pathVal;

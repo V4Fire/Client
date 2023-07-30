@@ -207,10 +207,6 @@ test.describe('<b-checkbox>', () => {
 		});
 	});
 
-	/**
-	 * @param page
-	 * @param [attrs]
-	 */
 	async function renderCheckbox(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bCheckbox>> {
 		return Component.createComponent(page, 'b-checkbox', {
 			attrs: {
