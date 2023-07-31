@@ -1,5 +1,5 @@
 {
-  "hash": "1106e753e255a35ffbdc39618da588a328f824e9565d7d4cd0bf5b5e2050e57e",
+  "hash": "03854e082d49ae27fc8bbdb4569eb9f8f157ca205c1124b6f6216df47bcb05bc",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2225,7 +2225,8 @@
               "core/router/engines/in-memory",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
-              "core/cookies"
+              "core/cookies",
+              "core/html"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2265,7 +2266,8 @@
             "core/router/engines/in-memory",
             "components/traits/i-control-list/i-control-list",
             "core/browser",
-            "core/cookies"
+            "core/cookies",
+            "core/html"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -2277,6 +2279,7 @@
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
+              "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
             ]
@@ -2291,6 +2294,7 @@
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
+              "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
             ]

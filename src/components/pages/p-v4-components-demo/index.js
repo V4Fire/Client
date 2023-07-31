@@ -52,4 +52,5 @@ package('p-v4-components-demo')
 
 		'core/browser',
 		'core/cookies',
+		'core/html'
 	);
