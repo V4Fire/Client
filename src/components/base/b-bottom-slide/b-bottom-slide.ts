@@ -95,7 +95,7 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	@computed({cache: true, dependencies: ['stepsStore']})
 	get stepCount(): number {
-		// The component has always at least 2 steps
+		// The component always has at least 2 steps
 		return 2 + this.stepsStore.length;
 	}
 
@@ -472,10 +472,6 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 					}
 
 					this.isStepTransitionInProgress = false;
-
-					if (this.componentStatus === 'destroyed') {
-						this.removeFromDOMIfPossible();
-					}
 
 				}, {group: ':zombie', label: $$.waitAnimationToFinish});
 
