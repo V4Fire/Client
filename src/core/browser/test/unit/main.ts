@@ -36,7 +36,7 @@ test.describe('core/browser', () => {
 		safariMac: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Safari/605.1.15'
 	};
 
-	test.describe('the `test` method', () => {
+	test.describe('`test`', () => {
 		test.describe('should return `true`', () => {
 			test('for the Android platform', async ({browser}) => {
 				await createPageWithUserAgent(browser, UaList.android10);
