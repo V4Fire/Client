@@ -1,57 +1,65 @@
 # core/component/functional
 
-This module provides an API to create functional components.
-Please note that V4Fire has its own cross-platform implementation of functional components.
+This module provides an API for creating functional components.
+It should be noted that V4Fire has its own implementation of cross-platform functional components available as well.
 
 ## What differences between regular and functional components?
 
-The main difference between functional components and regular components is that the template of a functional component
-is never automatically updated when the state of this component changes. In fact, such components are rendered once and
-can only be re-rendered if any of their non-functional parent components update the state.
+The main difference between regular and functional components is how they handle template updates.
+In regular components, the template is automatically updated whenever the component's state changes.
+However, in functional components, the template is rendered only once and will not automatically update when
+the component's state changes.
+Instead, a functional component will be re-rendered only when one of its non-functional parent components updates.
 
-Another difference is that we can optionally disable watching for some component properties or events
-if this component is created as a functional one. Typically, this is done by passing the `functional: false` option to
-one of the component property or method decorators.
+Additionally, functional components provide the option to disable watching for certain component properties or events.
+This can be done by using the `functional: false` option when applying property or method decorators to the component.
+By disabling watching for specific properties or events, the performance of functional components can be optimized.
 
 ### Why are functional components called like that?
 
-Technically, such components are represented as ordinary functions that accept input parameters (component props, etc.),
-have their own context (a state), but are executed only once during rendering.
+Functional components are called like that because they are essentially represented as ordinary functions.
+These functions accept input parameters, such as component props, and have their own context or state.
+However, what sets them apart from regular components is that they are executed only once during rendering.
 
 ## Why are functional components needed?
 
-Such components are faster to initialize and render than regular ones.
-If there are many such components on the page, then the performance gain can be quite noticeable.
+They are faster to initialize and render compared to regular components.
+As a result, if there are many functional components on a page, the performance gain can be quite noticeable.
 
 ## When should functional components be used?
 
-When a component template does not physically change its markup depending on the state of the component.
-However, you can still use component modifiers to affect how the template is shown.
-For example, you can hide it or show only a certain part. This works because modifiers are always set as
-regular CSS classes to the root component node.
+When a component template remains unchanged regardless of the component's state.
+Mind, you can still use component modifiers to alter the appearance of the template.
+For instance, you can hide or display specific portions of the template.
+This is possible because modifiers are always assigned as regular CSS classes to the root component element.
 
 ## When should you not use functional components?
 
-There is a simple rule: if your component changes its markup depending on the state, for example,
-it receives data from the network and displays it, then a functional component is not suitable for you.
+There is a fundamental rule to keep in mind: if your component's markup is dependent on the state,
+such as retrieving and displaying data from the network, then a functional component may not be the best option for you.
 
-Also, functional components don't play well with long CSS animations.
-The problem is that if any of the non-functional parents of such a component changes the state,
-then all of its child functional components will be re-created, and animations in progress will be reset.
+Additionally, functional components may not work seamlessly with lengthy CSS animations.
+The issue arises when any non-functional parent of such a component undergoes a state change,
+causing all child functional components to be recreated.
+Consequently, any ongoing animations will be reset.
 
-## How is a component updated if its non-functional parent is updated?
+## How is a functional component update when its non-functional parent component updates?
 
-In such situations, a simple strategy is used - the component is destroyed and re-created.
-When creating a new component, it usually reuses the state of the past.
-In simple terms, if you change any property in the old component, then it will be the same in the new one.
-But we can decorate this behavior using the special options of decorators.
+In scenarios where a component's non-functional parent undergoes an update,
+a common strategy is employed: the component is first destroyed and then recreated.
+During the creation of the new component, it typically retains the state from the previous instance.
+
+In simple terms, if any properties were modified in the previous component,
+these modifications will carry over to the new component.
+Nonetheless, we can enhance this behavior by utilizing the special options available in decorators.
 
 ## How to create a functional component?
 
 There are two ways to declare a functional component.
 
-1. Pass the `functional: true` option to the `@component` decorator when registering the component.
-   Note that this option is inherited from parent component to child component, unless you explicitly override it.
+1. By including the `functional: true` option when registering the component using the `@component` decorator.
+   It is important to note that this option is inherited from the parent component to the child component,
+   unless explicitly overridden.
 
    ```typescript
    import iData, { component } from 'components/super/i-data/i-data';
@@ -75,11 +83,12 @@ There are two ways to declare a functional component.
    }
    ```
 
-   If you pass the `functional: null` option, then all property and event observers of the component,
-   as well as its input parameters, will not work if declared inside a functional component.
-   But you can override this rule for a specific property or observer by explicitly passing `functional: true` in
-   the associated decorator. Keep in mind that we are talking about those entities that are declared within a particular class.
-   This option cannot be inherited.
+   If you pass the `functional: null` option, it means that all property and event observers,
+   as well as input parameters, will not work within the functional component.
+   However, you can override this rule for a specific property or observer by explicitly
+   passing `functional: true` in the associated decorator.
+   It's important to note that this option is specific to entities declared within a particular class and
+   cannot be inherited.
 
    ```typescript
    import iBlock, { component, prop, watch, hook } from 'components/super/i-block/i-block';
@@ -109,9 +118,11 @@ There are two ways to declare a functional component.
    }
    ```
 
-2. If you pass the `functional` option as an object, then you can specify under which output parameters a functional
-   component should be used, and under which a regular one. This kind of components is called "smart".
-   Note that this option is inherited from parent component to child component, unless you explicitly override it.
+2. If you pass the `functional` option as an object, you have the ability to specify under which output parameters a
+   functional component should be used, and under which a regular component should be used.
+   This type of component is commonly referred to as a "smart" component.
+   It's worth noting that this option is inherited from the parent component to the child component,
+   unless it is explicitly overridden.
 
    ```typescript
    import iData, { component } from 'components/super/i-data/i-data';
@@ -123,8 +134,9 @@ There are two ways to declare a functional component.
    }
    ```
 
-   If you pass a dictionary with no values, then such a component will be created as a functional one by default.
-   But you can still explicitly specify that a component should be non-functional at a particular place with the `v-func` directive.
+   If you pass a dictionary with no values, the component will be created as a functional component by default.
+   However, you can still explicitly specify that a component should be non-functional at a specific location
+   using the `v-func` directive.
 
    ```typescript
    import iData, { component } from 'components/super/i-data/i-data';
@@ -139,16 +151,20 @@ There are two ways to declare a functional component.
    < bLink v-func = false
    ```
 
-## How to update a functional component template?
+## How to update the template of a functional component?
 
-It is better to avoid such situations, because if you need to update a template, then you need a regular component.
-However, you can do this using one of the suggested techniques.
+Ideally, it is necessary to avoid such situations.
+After all, if you want to update the template of a component when its state changes,
+it means you need a regular component instead of a functional one.
+However, if you do need to update the template of a functional component,
+there are several standard ways to accomplish this.
 
 ### Using modifiers
 
-This technique will not allow you to physically change the template, but only add or remove one or
-another CSS class that is associated with the component root node. However, this is an extremely powerful API,
-which is enough for 80% of the cases.
+This approach allows you to manipulate the template by adding or
+removing CSS classes associated with the root node of the component.
+While it doesn't enable direct modification of the template itself,
+it is an incredibly powerful API that covers 80% of use cases.
 
 __b-link/b-link.ts__
 
@@ -177,8 +193,8 @@ __b-link/b-link.ss__
 
 ### Using node references and the DOM API
 
-Using this technique, you can simply add or remove attributes for DOM nodes, as well as change their properties.
-But be extremely careful when adding new DOM nodes to the component tree.
+By utilizing this approach, you can delete or add attributes to a specific DOM node or even modify its structure.
+However, exercise extreme caution when adding new nodes.
 
 __b-link/b-link.ts__
 
@@ -207,13 +223,15 @@ __b-link/b-link.ss__
 
 ### Using the `v-update-on` directive
 
-This directive, together with the modifiers API and the DOM API, gives you more flexibility in updating nodes.
-See the directive documentation for more information.
+This directive, in conjunction with the modifiers API and the DOM API,
+provides you with greater flexibility in updating nodes.
+Please refer to the directive documentation for further details.
 
 ### Using the `AsyncRender` API
 
-This is the most powerful technique that allows you to manually cause parts of a component template to be re-rendered.
-See the [[AsyncRender]] module documentation for more information.
+This technique is incredibly powerful as it allows you to manually trigger the re-rendering of
+specific parts of a component template.
+For more information on this, please refer to the documentation of the [[AsyncRender]] module.
 
 __b-link/b-link.ts__
 
