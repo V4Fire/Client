@@ -27,14 +27,14 @@ test.describe('core/cookies', () => {
 			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
 		});
 
-		test('returns a cookie value', async () => {
+		test('should return the value of a cookie by its name', async () => {
 			const
 				testVal = await cookie.evaluate((ctx) => ctx.get('testCookie'));
 
 			test.expect(testVal).toBe('testCookieVal');
 		});
 
-		test('returns `undefined` when trying to get a value of the non-existent cookie', async () => {
+		test('should return `undefined` when trying to get the value of a non-existent cookie', async () => {
 			const
 				testVal = await cookie.evaluate((ctx) => ctx.get('unreachableCookie'));
 
@@ -47,14 +47,14 @@ test.describe('core/cookies', () => {
 			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
 		});
 
-		test('returns `true` if the cookie exists', async () => {
+		test('should return true if the cookie exists', async () => {
 			const
 				testVal = await cookie.evaluate((ctx) => ctx.has('testCookie'));
 
 			test.expect(testVal).toBe(true);
 		});
 
-		test('returns `false` if the cookie does not exist', async () => {
+		test('should return false if the cookie does not exist', async () => {
 			const
 				testVal = await cookie.evaluate((ctx) => ctx.has('unreachableCookie'));
 
@@ -72,7 +72,7 @@ test.describe('core/cookies', () => {
 			test.expect(testVal.includes('testCookie=testCookieVal')).toBeTruthy();
 		});
 
-		test('set multiply cookies', async ({context, page}) => {
+		test('should set multiply cookies', async ({context, page}) => {
 			const
 				cookieNames = ['testCookie', 'testCookie2'];
 
@@ -118,7 +118,7 @@ test.describe('core/cookies', () => {
 	});
 
 	test.describe('`remove`', () => {
-		test('removes a cookie', async ({context, page}) => {
+		test('should remove a cookie', async ({context, page}) => {
 			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
 
 			const
