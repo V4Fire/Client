@@ -59,7 +59,7 @@ export function initFields(
 		unsafe.$activeField = name;
 
 		let
-			val;
+			val: unknown;
 
 		if (field.init != null) {
 			val = field.init(component.unsafe, store);

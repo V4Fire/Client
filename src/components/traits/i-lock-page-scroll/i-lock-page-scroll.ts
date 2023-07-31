@@ -214,7 +214,7 @@ export default abstract class iLockPageScroll {
 
 	/**
 	 * Locks scrolling of the document,
-	 * i.e. prevents any scrolling of the document except within the specified node.
+	 * i.e., prevents any scrolling of the document except within the specified node.
 	 *
 	 * @param [_scrollableNode] - the node within which scrolling is allowed
 	 */

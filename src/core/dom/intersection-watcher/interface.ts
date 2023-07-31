@@ -39,7 +39,7 @@ export interface WatchOptions {
 
 	/**
 	 * The minimum delay in milliseconds before calling the intersection handler.
-	 * If after this delay the observable element leaves the viewport, then the intersection handler won't be called.
+	 * If after this delay, the observable element leaves the viewport, then the intersection handler won't be called.
 	 *
 	 * @default `0`
 	 */
@@ -68,7 +68,7 @@ export interface WatchOptions {
 	/**
 	 * Handler: the observable element has entered the viewport.
 	 * If the handler returns false, then the main watcher handler won't be called.
-	 * Note that this handler is always called immediately, i.e. ignores the `delay` option.
+	 * Note that this handler is always called immediately, i.e., ignores the `delay` option.
 	 *
 	 * @param watcher
 	 */
@@ -76,7 +76,7 @@ export interface WatchOptions {
 
 	/**
 	 * Handler: the observable element has leaved the viewport.
-	 * Note that this handler is always called immediately, i.e. ignores the `delay` option.
+	 * Note that this handler is always called immediately, i.e., ignores the `delay` option.
 	 *
 	 * @param watcher
 	 */

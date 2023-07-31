@@ -269,8 +269,8 @@ exports.LibSource = LibSource;
 /**
  * Parameters of a script library:
  *
- *   1. src - a relative path to the loaded file, i.e. without referencing to `/node_modules`, etc.
- *   2. [source='lib'] - the source type of the library, i.e. where the library is placed
+ *   1. src - a relative path to the loaded file, i.e., without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - the source type of the library, i.e., where the library is placed
  *   3. [inline=false] - if true, the library is placed as a text
  *   4. [defer=true] - if true, the library is declared with the `defer` attribute
  *   5. [load=true] - if false, the library won't be automatically loaded with a page
@@ -325,8 +325,8 @@ exports.Libs = Libs;
 /**
  * Parameters of a style library:
  *
- *   1. src - a relative path to the loaded file, i.e. without referencing to `/node_modules`, etc.
- *   2. [source='lib'] - the source type of the library, i.e. where the library is stored
+ *   1. src - a relative path to the loaded file, i.e., without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - the source type of the library, i.e., where the library is stored
  *   3. [inline=false] - if true, the library is placed as text into a style tag
  *   4. [defer=true] - if true, the library is loaded only after loading of the whole page
  *   5. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
@@ -379,8 +379,8 @@ exports.StyleLibs = StyleLibs;
 /**
  * Parameters of a link:
  *
- *   1. src - a relative path to the loaded file, i.e. without referencing to `/node_modules`, etc.
- *   2. [source='lib'] - the source type of the library, i.e. where the library is stored
+ *   1. src - a relative path to the loaded file, i.e., without referencing to `/node_modules`, etc.
+ *   2. [source='lib'] - the source type of the library, i.e., where the library is stored
  *   3. [tag='link'] - a tag to create the link
  *   4. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
  *     1. a simple string, as `null` (when an attribute does not have a value);

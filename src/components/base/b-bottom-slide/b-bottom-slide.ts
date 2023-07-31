@@ -207,7 +207,7 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 
 	/**
 	 * The minimum value of the height of the component visible part (in percent),
-	 * i.e. even if the component is closed, this part will still be visible
+	 * i.e., even if the component is closed, this part will still be visible
 	 * {@link bBottomSlide.visible}
 	 */
 	@computed({cache: false})
