@@ -11,32 +11,32 @@ import type { JSHandle, Cookie } from 'playwright';
 import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
 
-import type * as Cookies from 'core/cookies';
+import type * as CookiesAPI from 'core/cookies';
 
 test.describe('core/cookies', () => {
 	let
-		cookie: JSHandle<typeof Cookies>;
+		cookiesAPI: JSHandle<typeof CookiesAPI>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
-		cookie = await Utils.import(page, 'core/cookies');
+		cookiesAPI = await Utils.import(page, 'core/cookies');
 	});
 
 	test.describe('`get`', () => {
 		test.beforeEach(async () => {
-			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
+			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal'));
 		});
 
 		test('should return the value of a cookie by its name', async () => {
 			const
-				testVal = await cookie.evaluate((ctx) => ctx.get('testCookie'));
+				testVal = await cookiesAPI.evaluate((cookies) => cookies.get('testCookie'));
 
 			test.expect(testVal).toBe('testCookieVal');
 		});
 
 		test('should return `undefined` when trying to get the value of a non-existent cookie', async () => {
 			const
-				testVal = await cookie.evaluate((ctx) => ctx.get('unreachableCookie'));
+				testVal = await cookiesAPI.evaluate((cookies) => cookies.get('unreachableCookie'));
 
 			test.expect(testVal).toBeUndefined();
 		});
@@ -44,19 +44,19 @@ test.describe('core/cookies', () => {
 
 	test.describe('`has`', () => {
 		test.beforeEach(async () => {
-			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
+			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal'));
 		});
 
 		test('should return true if the cookie exists', async () => {
 			const
-				testVal = await cookie.evaluate((ctx) => ctx.has('testCookie'));
+				testVal = await cookiesAPI.evaluate((cookies) => cookies.has('testCookie'));
 
 			test.expect(testVal).toBe(true);
 		});
 
 		test('should return false if the cookie does not exist', async () => {
 			const
-				testVal = await cookie.evaluate((ctx) => ctx.has('unreachableCookie'));
+				testVal = await cookiesAPI.evaluate((cookies) => cookies.has('unreachableCookie'));
 
 			test.expect(testVal).toBe(false);
 		});
@@ -64,7 +64,7 @@ test.describe('core/cookies', () => {
 
 	test.describe('`set`', () => {
 		test('simple usage', async ({page}) => {
-			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
+			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal'));
 
 			const
 				testVal = await page.evaluate(() => document.cookie);
@@ -76,8 +76,8 @@ test.describe('core/cookies', () => {
 			const
 				cookieNames = ['testCookie', 'testCookie2'];
 
-			await cookie.evaluate((ctx, cookieNames) => ctx.set(cookieNames[0], 'testCookieVal'), cookieNames);
-			await cookie.evaluate((ctx, cookieNames) => ctx.set(cookieNames[1], 'testCookieVal2'), cookieNames);
+			await cookiesAPI.evaluate((cookies, cookieNames) => cookies.set(cookieNames[0], 'testCookieVal'), cookieNames);
+			await cookiesAPI.evaluate((cookies, cookieNames) => cookies.set(cookieNames[1], 'testCookieVal2'), cookieNames);
 
 			const
 				cookies = await context.cookies(page.url()),
@@ -93,7 +93,7 @@ test.describe('core/cookies', () => {
 		});
 
 		test('with the `path` option provided', async ({page, context}) => {
-			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal', {path: '/test'}));
+			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal', {path: '/test'}));
 
 			const
 				origin = await page.evaluate(() => location.origin),
@@ -108,7 +108,7 @@ test.describe('core/cookies', () => {
 				return Math.floor(globalThis._expDate.getTime() / 1000);
 			});
 
-			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal', {expires: globalThis._expDate}));
+			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal', {expires: globalThis._expDate}));
 
 			const
 				cookies = await context.cookies(page.url());
@@ -119,14 +119,14 @@ test.describe('core/cookies', () => {
 
 	test.describe('`remove`', () => {
 		test('should remove a cookie', async ({context, page}) => {
-			await cookie.evaluate((ctx) => ctx.set('testCookie', 'testCookieVal'));
+			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal'));
 
 			const
 				cookies = await context.cookies(page.url());
 
 			test.expect(cookies.find((el) => el.name === 'testCookie')).toBeTruthy();
 
-			await cookie.evaluate((ctx) => ctx.remove('testCookie'));
+			await cookiesAPI.evaluate((cookies) => cookies.remove('testCookie'));
 
 			const
 				cookiesAfterRemove = await context.cookies(page.url());

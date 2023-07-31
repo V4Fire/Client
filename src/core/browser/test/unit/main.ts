@@ -42,7 +42,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.android10);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Android'));
+					res = await browserApi.evaluate((browser) => browser.test('Android'));
 
 				test.expect(res).toBe(true);
 			});
@@ -51,7 +51,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.iphone14);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('iOS'));
+					res = await browserApi.evaluate((browser) => browser.test('iOS'));
 
 				test.expect(res).toBe(true);
 			});
@@ -60,7 +60,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.chrome);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Chrome'));
+					res = await browserApi.evaluate((browser) => browser.test('Chrome'));
 
 				test.expect(res).toBe(true);
 			});
@@ -69,7 +69,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.chromeMac);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Chrome'));
+					res = await browserApi.evaluate((browser) => browser.test('Chrome'));
 
 				test.expect(res).toBe(true);
 			});
@@ -78,7 +78,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.safariMac);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Safari'));
+					res = await browserApi.evaluate((browser) => browser.test('Safari'));
 
 				test.expect(res).toBe(true);
 			});
@@ -87,7 +87,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.android10);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Android', '>', '8.0.0'));
+					res = await browserApi.evaluate((browser) => browser.test('Android', '>', '8.0.0'));
 
 				test.expect(res).toBe(true);
 			});
@@ -96,7 +96,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.android10);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Android', '>', '9.0.0'));
+					res = await browserApi.evaluate((browser) => browser.test('Android', '>', '9.0.0'));
 
 				test.expect(res).toBe(true);
 			});
@@ -105,7 +105,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.safariMac);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Safari', '>', '13'));
+					res = await browserApi.evaluate((browser) => browser.test('Safari', '>', '13'));
 
 				test.expect(res).toBe(true);
 			});
@@ -116,7 +116,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.iphone14);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Android'));
+					res = await browserApi.evaluate((browser) => browser.test('Android'));
 
 				test.expect(res).toBe(false);
 			});
@@ -125,7 +125,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.chrome);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('iOS'));
+					res = await browserApi.evaluate((browser) => browser.test('iOS'));
 
 				test.expect(res).toBe(false);
 			});
@@ -134,7 +134,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.iphone14);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Chrome'));
+					res = await browserApi.evaluate((browser) => browser.test('Chrome'));
 
 				test.expect(res).toBe(false);
 			});
@@ -143,7 +143,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.chromeMac);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Safari'));
+					res = await browserApi.evaluate((browser) => browser.test('Safari'));
 
 				test.expect(res).toBe(false);
 			});
@@ -152,7 +152,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.safariMac);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Chrome'));
+					res = await browserApi.evaluate((browser) => browser.test('Chrome'));
 
 				test.expect(res).toBe(false);
 			});
@@ -161,7 +161,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.safariMac);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Safari', '<', '13'));
+					res = await browserApi.evaluate((browser) => browser.test('Safari', '<', '13'));
 
 				test.expect(res).toBe(false);
 			});
@@ -170,7 +170,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.android10);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Android', '<', '8.0.0'));
+					res = await browserApi.evaluate((browser) => browser.test('Android', '<', '8.0.0'));
 
 				test.expect(res).toBe(false);
 			});
@@ -179,7 +179,7 @@ test.describe('core/browser', () => {
 				await createPageWithUserAgent(browser, UaList.android10);
 
 				const
-					res = await browserApi.evaluate((ctx) => ctx.test('Android', '>', '12.0.0'));
+					res = await browserApi.evaluate((browser) => browser.test('Android', '>', '12.0.0'));
 
 				test.expect(res).toBe(false);
 			});
