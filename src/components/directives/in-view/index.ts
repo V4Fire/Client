@@ -15,7 +15,16 @@ import * as support from 'core/const/support';
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
 
 import { ComponentEngine } from 'core/component/engines';
-import type { DirectiveValue, DirectiveParams, WatchOptions } from 'components/directives/in-view/interface';
+
+import type {
+
+	DirectiveValue,
+	DirectiveParams,
+
+	WatchHandler,
+	WatchOptions
+
+} from 'components/directives/in-view/interface';
 
 export * from 'components/directives/in-view/interface';
 
@@ -46,33 +55,33 @@ function registerDirectiveValue(
 		return;
 	}
 
-	Array.concat([], value).forEach((rawOpts: Exclude<DirectiveValue, any[]>) => {
+	Array.concat([], value).forEach((dirOpts: Exclude<DirectiveValue, any[]>) => {
 		let
-			handler,
-			opts: WatchOptions;
+			watchOpts: WatchOptions,
+			handler: WatchHandler;
 
-		if (Object.isFunction(rawOpts)) {
-			handler = rawOpts;
-			opts = {};
+		if (Object.isFunction(dirOpts)) {
+			handler = dirOpts;
+			watchOpts = {};
 
 		} else {
-			handler = rawOpts.handler;
-			opts = Object.reject(rawOpts, 'handler');
+			handler = dirOpts.handler;
+			watchOpts = Object.reject(dirOpts, 'handler');
 		}
 
-		opts = {onlyRoot: false, ...opts};
+		watchOpts = {onlyRoot: false, ...watchOpts};
 
-		if (opts.root == null && (!support.IntersectionObserver || opts.onlyRoot)) {
+		if (watchOpts.root == null && (!support.IntersectionObserver || watchOpts.onlyRoot)) {
 			let root = el.parentElement;
 
 			while (root != null && root.scrollWidth === root.clientWidth && root.scrollHeight === root.clientHeight) {
 				root = root.parentElement;
 			}
 
-			opts.root = root ?? undefined;
+			watchOpts.root = root ?? undefined;
 		}
 
-		IntersectionWatcher.watch(el, opts, handler);
+		IntersectionWatcher.watch(el, watchOpts, handler);
 	});
 }
 
@@ -81,7 +90,7 @@ function unregisterDirectiveValue(el: Element, value: Nullable<DirectiveValue>) 
 		return;
 	}
 
-	Array.concat([], value).forEach((opts) => {
+	Array.concat([], value).forEach((opts: Exclude<DirectiveValue, any[]>) => {
 		IntersectionWatcher.unwatch(el, Object.isFunction(opts) ? opts : opts.handler);
 	});
 }
