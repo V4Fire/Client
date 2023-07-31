@@ -74,14 +74,14 @@ test.describe('core/cookies', () => {
 
 		test('set multiply cookies', async ({context, page}) => {
 			const
-				cookiesNames = ['testCookie', 'testCookie2'];
+				cookieNames = ['testCookie', 'testCookie2'];
 
-			await cookie.evaluate((ctx, cookiesNames) => ctx.set(cookiesNames[0], 'testCookieVal'), cookiesNames);
-			await cookie.evaluate((ctx, cookiesNames) => ctx.set(cookiesNames[1], 'testCookieVal2'), cookiesNames);
+			await cookie.evaluate((ctx, cookieNames) => ctx.set(cookieNames[0], 'testCookieVal'), cookieNames);
+			await cookie.evaluate((ctx, cookieNames) => ctx.set(cookieNames[1], 'testCookieVal2'), cookieNames);
 
 			const
 				cookies = await context.cookies(page.url()),
-				targetCookies = cookies.filter((el) => cookiesNames.includes(el.name));
+				targetCookies = cookies.filter((el) => cookieNames.includes(el.name));
 
 			test.expect(targetCookies).toEqual([
 				createCookie(),
