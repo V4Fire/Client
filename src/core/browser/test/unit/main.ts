@@ -37,7 +37,7 @@ test.describe('core/browser', () => {
 	};
 
 	test.describe('`test`', () => {
-		test.describe('should return `true`', () => {
+		test.describe('should return true', () => {
 			test('for the Android platform', async ({browser}) => {
 				await createPageWithUserAgent(browser, UaList.android10);
 
@@ -111,7 +111,7 @@ test.describe('core/browser', () => {
 			});
 		});
 
-		test.describe('should return `false`', () => {
+		test.describe('should return false', () => {
 			test('for the Android platform', async ({browser}) => {
 				await createPageWithUserAgent(browser, UaList.iphone14);
 
