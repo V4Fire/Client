@@ -255,6 +255,17 @@ test.describe('<b-component>', () => {
 });
 ```
 
+### Page object and Component object patterns
+
+The Page Object pattern is a popular test design technique in UI automation testing. The basic idea of this pattern is to create an object for each web page that encapsulates data and behaviors associated with the page,
+providing a convenient interface for manipulating and interacting with the page in tests.
+
+From an OOP perspective, each web page or its component is modeled as a class. This class contains instance variables that correspond to elements on the web page - buttons, text fields, dropdown lists, etc. The class may also contain methods that perform operations on these elements - clicks, text input, property checks, and so on.
+
+V4Fire provides a base class for creating a `ComponentObject` class of components.
+
+Read more about the usage of Page Object with Playwright: https://playwright.dev/docs/pom
+
 ## Configuring different tests
 
 V4fire provides two configuration files by default.

@@ -7,8 +7,25 @@
  */
 
 /**
- * Checks if given value is a RenderComponentsVnodeParams
- * @param value
+ * Checks if the given value is a valid `RenderComponentsVnodeParams` object.
+ *
+ * @param value - The value to be checked.
+ * @returns - Returns `true` if the value is a valid `RenderComponentsVnodeParams` object, otherwise returns `false`.
+ *
+ * @example
+ * ```typescript
+ * const vnode = {
+ *   attrs: { class: 'header' },
+ *   children: ['Header Content']
+ * };
+ * const isValidVnode = isRenderComponentsVnodeParams(vnode); // true
+ *
+ * const attrs = { class: 'header' };
+ * const isValidAttrs = isRenderComponentsVnodeParams(attrs); // true
+ *
+ * const invalidValue = 'Not a vnode or attrs object';
+ * const isValidInvalidValue = isRenderComponentsVnodeParams(invalidValue); // false
+ * ```
  */
 export function isRenderComponentsVnodeParams(
 	value: RenderComponentsVnodeParams | RenderComponentsVnodeParams['attrs']

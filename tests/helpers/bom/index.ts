@@ -10,7 +10,7 @@ import delay from 'delay';
 
 import type { Page } from 'playwright';
 
-import type { WaitForIdleOptions, WaitForRAFOptions } from 'tests/helpers/bom/interface';
+import type { WaitForIdleOptions } from 'tests/helpers/bom/interface';
 
 export * from 'tests/helpers/bom/interface';
 
@@ -20,10 +20,41 @@ export * from 'tests/helpers/bom/interface';
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class BOM {
 	/**
-	 * Returns a promise that will be resolved when the passed page process is switched to idle
+	 * Waits until the passed page process shift to an idle state, then it resolves a promise.
 	 *
 	 * @param page
-	 * @param [idleOpts]
+	 * @param [idleOpts] - Optional parameter containing the configurations for the idle state.
+	 * @param [idleOpts.waitForIdleTimes] - The number of times the page should wait for idleness. The default value is 1.
+	 * @param [idleOpts.sleepAfterIdles] - The time in millisecond the page should sleep after idle. Default is 100ms.
+	 *
+	 * @returns - A promise that gets resolved when the page process switches to idle.
+	 *
+	 * @example
+	 * ```typescript
+	 * // Waits for the page to become idle once and sleeps for 100ms after that.
+	 * await BOM.waitForIdleCallback(page);
+	 * ```
+	 *
+	 * @example
+	 * ```typescript
+	 * // Waits for the page to become idle three times with a 500ms sleep after idle state.
+	 * const customIdleOpts = {
+	 *   waitForIdleTimes: 3,
+	 *   sleepAfterIdles: 500
+	 * };
+	 *
+	 * await BOM.waitForIdleCallback(page, customIdleOpts);
+	 * ```
+	 *
+	 * @example
+	 * ```typescript
+	 * // Waits for the page to become idle two times with the default 100ms sleep after idle state.
+	 * const idleOptsWithWaitTimes = {
+	 *   waitForIdleTimes: 2
+	 * };
+	 *
+	 * await BOM.waitForIdleCallback(page, idleOptsWithWaitTimes);
+	 * ```
 	 */
 	static async waitForIdleCallback(page: Page, idleOpts: WaitForIdleOptions = {}): Promise<void> {
 		const normalizedIdleOptions = <Required<WaitForIdleOptions>>{
@@ -52,41 +83,8 @@ export default class BOM {
 
 			}), normalizedIdleOptions);
 
-		} catch {}
+		} catch { }
 
 		await delay(normalizedIdleOptions.sleepAfterIdles);
-	}
-
-	/**
-	 * Waits until `requestAnimationFrame` fires on the page
-	 *
-	 * @param page
-	 * @param [rafOpts]
-	 */
-	static async waitForRAF(page: Page, rafOpts: WaitForRAFOptions = {}): Promise<void> {
-		const normalizedRafOptions = <Required<WaitForRAFOptions>>{
-			waitForRafTimes: 1,
-			sleepAfterRAF: 100,
-			...rafOpts
-		};
-
-		try {
-			await page.evaluate((normalizedRafOptions) => new Promise<void>(async (res) => {
-				const waitForRAF = () => new Promise((res) => {
-					requestAnimationFrame(res);
-				});
-
-				while (normalizedRafOptions.waitForRafTimes > 0) {
-					await waitForRAF();
-					normalizedRafOptions.waitForRafTimes--;
-				}
-
-				res();
-
-			}), normalizedRafOptions);
-
-		} catch {}
-
-		await delay(normalizedRafOptions.sleepAfterRAF);
 	}
 }

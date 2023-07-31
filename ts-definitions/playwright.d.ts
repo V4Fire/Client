@@ -11,15 +11,25 @@ export {};
 declare global {
 	namespace PlaywrightTest {
 		interface Matchers<R> {
-			/** @deprecated */
+			/**
+			 * @deprecated
+			 */
 			toBeResolved(): R;
-			/** @deprecated */
+			/**
+			 * @deprecated
+			 */
 			toBeResolvedTo(val: any): R;
-			/** @deprecated */
+			/**
+			 * @deprecated
+			 */
 			toBeRejected(): R;
-			/** @deprecated */
+			/**
+			 * @deprecated
+			 */
 			toBeRejectedWith(val: any): R;
-			/** @deprecated */
+			/**
+			 * @deprecated
+			 */
 			toBePending(): R;
 		}
 	}

@@ -172,7 +172,7 @@ export class ComponentInternalState extends Friend {
 	/**
 	 * Updates the cursor indicating the last index of the last rendered data element.
 	 */
-	updateDataCursor(): void {
+	updateDataOffset(): void {
 		const
 			{ctx, state} = this,
 			current = this.getDataCursor(),

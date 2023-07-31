@@ -19,17 +19,3 @@ export interface WaitForIdleOptions {
 	 */
 	sleepAfterIdles?: number;
 }
-
-export interface WaitForRAFOptions {
-	/**
-	 * Indicates the number of `requestAnimationFrame` that should occur
-	 * @default `1`
-	 */
-	waitForRafTimes?: number;
-
-	/**
-	 * Delay before resolving the function promise
-	 * @default `100`
-	 */
-	sleepAfterRAF?: number;
-}

@@ -161,6 +161,18 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	}
 
 	/**
+	 * Destroys the component using the `$destroy` method and removes the DOM node.
+	 */
+	async destroy(): Promise<void> {
+		await this.component.evaluate((ctx) => {
+			ctx.unsafe.$destroy();
+			ctx.$el?.remove();
+		});
+
+		this.componentStore = undefined;
+	}
+
+	/**
 	 * Picks the `Node` with the provided selector and extracts the `component` property,
 	 * which will be assigned to the {@link ComponentObject.component}.
 	 *

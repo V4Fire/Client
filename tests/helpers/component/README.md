@@ -4,6 +4,9 @@ This module provides API for working with the components.
 
 ## API
 
+Note that some methods that create components use the parameter serialization function to implement the transfer of functions and regular expressions into the page context.
+This serialization will not work if you use a closure, as functions are simply converted into a string.
+
 ### createComponents
 
 Creates multiple instances of the specified component on the page.
