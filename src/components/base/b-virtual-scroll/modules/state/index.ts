@@ -87,7 +87,7 @@ export class ComponentInternalState extends Friend {
 		childList.push(...mounted);
 		itemsList.push(...newItems);
 
-		this.updateRemainingChild();
+		this.updateRemainingChildren();
 	}
 
 	/**
@@ -159,7 +159,7 @@ export class ComponentInternalState extends Friend {
 			state.remainingChildren = state.childList.length - 1 - state.maxViewedChild;
 		}
 
-		this.updateRemainingChild();
+		this.updateRemainingChildren();
 	}
 
 	/**
@@ -172,7 +172,7 @@ export class ComponentInternalState extends Friend {
 	/**
 	 * Updates the cursor indicating the last index of the last rendered data element.
 	 */
-	updateDataCursor(): void {
+	updateDataOffset(): void {
 		const
 			{ctx, state} = this,
 			current = this.getDataCursor(),
@@ -185,7 +185,7 @@ export class ComponentInternalState extends Friend {
 	 * Updates the state of the tillEnd-like fields.
 	 * Calculates the remaining number of child elements until the end and the remaining number of items until the end.
 	 */
-	updateRemainingChild(): void {
+	updateRemainingChildren(): void {
 		const
 			{state} = this;
 

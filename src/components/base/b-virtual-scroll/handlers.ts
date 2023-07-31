@@ -66,7 +66,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * @param childList
 	 */
 	protected onDomInsertStart(this: bVirtualScroll, childList: MountedChild[]): void {
-		this.componentInternalState.updateDataCursor();
+		this.componentInternalState.updateDataOffset();
 		this.componentInternalState.updateMounted(childList);
 		this.componentInternalState.setIsInitialRender(false);
 		this.componentInternalState.incrementRenderPage();
