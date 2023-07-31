@@ -62,7 +62,7 @@ ComponentEngine.directive('attrs', {
 
 		let
 			r: CanUndef<ComponentInterface['$renderEngine']['r']>,
-			handlerStore;
+			handlerStore: CanUndef<Map<unknown, Function>>;
 
 		if (ctx != null) {
 			r = ctx.$renderEngine.r;
@@ -179,7 +179,7 @@ ComponentEngine.directive('attrs', {
 				[, name, arg = '', rawModifiers = ''] = decl;
 
 			let
-				dir;
+				dir: CanUndef<object>;
 
 			switch (name) {
 				case 'show': {
@@ -223,7 +223,7 @@ ComponentEngine.directive('attrs', {
 						handler = handlerCache.get(handlerKey);
 
 					if (handler == null) {
-						handler = (newVal) => {
+						handler = (newVal: unknown) => {
 							if (ctx == null) {
 								throw new Error('No context found for the directive being created');
 							}
@@ -239,7 +239,7 @@ ComponentEngine.directive('attrs', {
 					attrsKeys.push(modelProp);
 					attrs[modelProp] = value;
 
-					const attachEvent = (event) => {
+					const attachEvent = (event: string) => {
 						attrsKeys.push(event);
 						attrs[event] = handler;
 					};
