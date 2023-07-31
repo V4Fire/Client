@@ -8,10 +8,10 @@
 
 import type { JSHandle, Cookie } from 'playwright';
 
-import type * as Cookies from 'core/cookies';
-
 import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
+
+import type * as Cookies from 'core/cookies';
 
 test.describe('core/cookies', () => {
 	let
