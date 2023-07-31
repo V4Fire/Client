@@ -92,7 +92,7 @@ test.describe('core/browser', () => {
 				test.expect(res).toBe(true);
 			});
 
-			test('`for the Android platform with a version greater than 9.0.0', async ({browser}) => {
+			test('for the Android platform with a version greater than 9.0.0', async ({browser}) => {
 				await createPageWithUserAgent(browser, UaList.android10);
 
 				const
@@ -101,7 +101,7 @@ test.describe('core/browser', () => {
 				test.expect(res).toBe(true);
 			});
 
-			test('`for the Safari platform with a version greater than 13', async ({browser}) => {
+			test('for the Safari platform with a version greater than 13', async ({browser}) => {
 				await createPageWithUserAgent(browser, UaList.safariMac);
 
 				const
@@ -157,7 +157,7 @@ test.describe('core/browser', () => {
 				test.expect(res).toBe(false);
 			});
 
-			test('`for the Safari platform with a version less than 13', async ({browser}) => {
+			test('for the Safari platform with a version less than 13', async ({browser}) => {
 				await createPageWithUserAgent(browser, UaList.safariMac);
 
 				const
@@ -166,7 +166,7 @@ test.describe('core/browser', () => {
 				test.expect(res).toBe(false);
 			});
 
-			test('`for the Android platform a version less than 8.0.0', async ({browser}) => {
+			test('for the Android platform a version less than 8.0.0', async ({browser}) => {
 				await createPageWithUserAgent(browser, UaList.android10);
 
 				const
@@ -175,7 +175,7 @@ test.describe('core/browser', () => {
 				test.expect(res).toBe(false);
 			});
 
-			test('`for the Android platform with a version greater than 12.0.0', async ({browser}) => {
+			test('for the Android platform with a version greater than 12.0.0', async ({browser}) => {
 				await createPageWithUserAgent(browser, UaList.android10);
 
 				const
