@@ -9,6 +9,22 @@
 import Async from 'core/async';
 
 export default class Gestures {
+	/** {@link globalThis.TouchGesturesCreateOptions} */
+	readonly options: Required<TouchGesturesCreateOptions>;
+
+	/** {@link Async} */
+	readonly async: Async = new Async();
+
+	/**
+	 * A styled element that represents the touch position
+	 */
+	readonly cursor: HTMLDivElement = document.createElement('div');
+
+	/**
+	 * Steps to perform
+	 */
+	steps: Array<Required<TouchGesturePoint>> = [];
+
 	/**
 	 * Dispatches a touch event
 	 *
@@ -50,22 +66,6 @@ export default class Gestures {
 
 		dispatchEl!.dispatchEvent(event);
 	}
-
-	/** {@link globalThis.TouchGesturesCreateOptions} */
-	readonly options: Required<TouchGesturesCreateOptions>;
-
-	/** {@link Async} */
-	readonly async: Async = new Async();
-
-	/**
-	 * A styled element that represents the touch position
-	 */
-	readonly cursor: HTMLDivElement = document.createElement('div');
-
-	/**
-	 * Steps to perform
-	 */
-	steps: Array<Required<TouchGesturePoint>> = [];
 
 	/**
 	 * @param opts
