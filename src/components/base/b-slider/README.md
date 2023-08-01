@@ -182,6 +182,12 @@ The minimum Y-axis offset threshold at which the slider will be considered to be
 The interval (in ms) between auto slide moves. 0 means no auto moves.
 Auto moves are only enabled in `slide` mode and paused during user interactions.
 
+#### [autoSlidePostGestureDelay = `0`]
+
+The delay (in ms) between last user gesture and first auto slide move.
+A maximum of `autoSlideInterval` and `autoSlidePostGestureDelay` will be used
+as a timeout for the first auto slide move after user gesture.
+
 ## Fields
 
 #### current

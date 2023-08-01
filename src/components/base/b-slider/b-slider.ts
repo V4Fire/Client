@@ -119,11 +119,11 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 			return 0;
 		}
 
-		if (current === 0 && this.alignFirstToStart) {
+		if (this.alignFirstToStart && current === 0) {
 			return 0;
 		}
 
-		if (current === slideRects.length - 1 && this.alignLastToEnd) {
+		if (this.alignLastToEnd && current === slideRects.length - 1) {
 			return slideRect.offsetLeft + slideRect.width - viewRect.width;
 		}
 
@@ -322,22 +322,50 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	}
 
 	/**
+	 * Performs auto slide change.
+	 */
+	protected performAutoSlide(): void {
+		void this.removeMod('swipe');
+		this.moveSlide(1);
+		this.syncState();
+		void this.removeMod('swipe');
+	}
+
+	/**
+	 * Plays auto slide changes at a given interval.
+	 */
+	protected playAutoSlide(): void {
+		this.async.setInterval(
+			() => this.performAutoSlide(),
+			this.autoSlideInterval,
+			{label: $$.autoSlide}
+		);
+	}
+
+	/**
 	 * Resumes auto slide moves by setting the corresponding interval.
+	 * @param [firstInterval] - an interval (in ms) before first auto slide change, defaults to `this.autoSlideInterval`
 	 */
 	@hook('mounted')
-	protected resumeAutoSlide(): void {
-		if (this.isSlideMode && Number.isPositive(this.autoSlideInterval)) {
-			this.async.setInterval(
-				() => {
-					void this.removeMod('swipe');
-					this.moveSlide(1);
-					this.syncState();
-					void this.removeMod('swipe');
-				},
-				this.autoSlideInterval,
-				{label: $$.autoSlide}
-			);
+	@wait('ready')
+	@watch(['db', 'autoSlideInterval', 'autoSlidePostGestureDelay'])
+	protected resumeAutoSlide(firstInterval: number = this.autoSlideInterval): void {
+		this.pauseAutoSlide();
+
+		if (!this.isSlideMode || !Number.isPositive(this.autoSlideInterval)) {
+			return;
 		}
+
+		firstInterval = Math.max(this.autoSlideInterval, firstInterval);
+
+		this.async.setTimeout(
+			() => {
+				this.performAutoSlide();
+				this.playAutoSlide();
+			},
+			firstInterval,
+			{label: $$.autoSlideFirst}
+		);
 	}
 
 	/**
@@ -345,6 +373,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 */
 	@hook('beforeDestroy')
 	protected pauseAutoSlide(): void {
+		this.async.clearTimeout({label: $$.autoSlideFirst});
 		this.async.clearInterval({label: $$.autoSlide});
 	}
 
@@ -625,7 +654,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
-		this.resumeAutoSlide();
+		this.resumeAutoSlide(this.autoSlidePostGestureDelay);
 	}
 }
 

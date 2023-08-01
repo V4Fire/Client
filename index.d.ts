@@ -139,13 +139,15 @@ declare var
 interface TouchGesturesCreateOptions {
 	/**
 	 * An element to dispatch the event
+	 * @default `null`
 	 */
-	dispatchEl: Element | string;
+	dispatchEl?: Element | string | null;
 
 	/**
 	 * An element to be provided as the target in the dispatched event
+	 * @default `null`
 	 */
-	targetEl: Element | string;
+	targetEl?: Element | string | null;
 
 	/**
 	 * Delay between steps

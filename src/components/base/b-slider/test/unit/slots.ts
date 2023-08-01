@@ -5,16 +5,12 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-
-import type { Page, JSHandle } from 'playwright';
-
 import test from 'tests/config/unit/test';
-import Component from 'tests/helpers/component';
 import Utils from 'tests/helpers/utils';
 
 import type * as Block from 'components/friends/block';
 
-import type bSlider from 'components/base/b-slider/b-slider';
+import { renderSlider } from 'components/base/b-slider/test/helpers';
 
 test.describe('<b-slider> slots rendering', () => {
 	test.beforeEach(async ({page, demoPage}) => {
@@ -152,11 +148,4 @@ test.describe('<b-slider> slots rendering', () => {
 		test.expect(id).toEqual(slotId);
 	});
 
-	/**
-	 * @param page
-	 * @param [params]
-	 */
-	function renderSlider(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
-		return Component.createComponent<bSlider>(page, 'b-slider', params);
-	}
 });
