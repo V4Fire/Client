@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type {JSHandle} from 'playwright';
+import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 import Gestures from 'tests/helpers/gestures';
@@ -15,7 +15,7 @@ import type GesturesInterface from 'core/prelude/test-env/gestures';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
-import {renderSlider, current} from 'components/base/b-slider/test/helpers';
+import { renderSlider, current } from 'components/base/b-slider/test/helpers';
 
 test.use({
 	isMobile: true,
@@ -28,8 +28,10 @@ test.use({
 
 test.describe('<b-slider> auto slide', () => {
 	const
+		autoSlideInterval = (1).second(),
+		autoSlidePostGestureDelay = (2).seconds(),
 		pollOptions = {
-			intervals: [200]
+			intervals: [autoSlideInterval / 10]
 		};
 
 	let
@@ -44,10 +46,6 @@ test.describe('<b-slider> auto slide', () => {
 	});
 
 	test.describe('enabled', () => {
-		const
-			autoSlideInterval = (1).second(),
-			autoSlidePostGestureDelay = (2).seconds();
-
 		test.describe('slides are static', () => {
 			test.beforeEach(async ({page}) => {
 				slider = await renderSlider(page, {
@@ -107,13 +105,15 @@ test.describe('<b-slider> auto slide', () => {
 
 		test.describe('slides are loaded via provider', () => {
 			const
-				providerDelay = (3).seconds(),
+				providerDelay = (10).seconds(),
 				providerItems = [{id: 'first'}, {id: 'second'}, {id: 'third'}, {id: 'forth'}, {id: 'fifth'}];
 
 			let
 				timeStart: number;
 
 			test.beforeEach(async ({context, page}) => {
+				timeStart = new Date().getTime();
+
 				await context.route('/api', async (route) => {
 					await new Promise((resolve) => setTimeout(resolve, providerDelay));
 					await route.fulfill({
@@ -121,8 +121,6 @@ test.describe('<b-slider> auto slide', () => {
 						body: JSON.stringify(providerItems)
 					});
 				});
-
-				timeStart = new Date().getTime();
 
 				slider = await renderSlider(page, {
 					attrs: {
@@ -138,7 +136,11 @@ test.describe('<b-slider> auto slide', () => {
 			test('automatic moves should not be started before slides are loaded', async () => {
 				test.expect(await current(slider)).toBe(0);
 
-				await test.expect.poll(() => new Date().getTime() - timeStart, pollOptions)
+				await test.expect
+					.poll(() => new Date().getTime() - timeStart, {
+						...pollOptions,
+						timeout: (12).seconds()
+					})
 					.toBeGreaterThan(providerDelay + autoSlideInterval);
 
 				test.expect(await current(slider)).toBe(1);
@@ -150,7 +152,6 @@ test.describe('<b-slider> auto slide', () => {
 	});
 
 	test.describe('disabled', () => {
-
 		test('should not auto slide if `autoSlideInterval` is not set', async ({page}) => {
 			slider = await renderSlider(page, {});
 
@@ -170,7 +171,8 @@ test.describe('<b-slider> auto slide', () => {
 		test('should not auto slide if `mode` is not `slide`', async ({page}) => {
 			slider = await renderSlider(page, {
 				attrs: {
-					mode: 'scroll'
+					mode: 'scroll',
+					autoSlideInterval
 				}
 			});
 
