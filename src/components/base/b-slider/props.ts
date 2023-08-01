@@ -124,4 +124,12 @@ export default abstract class iSliderProps extends iData {
 	 */
 	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
 	readonly autoSlideInterval: number = 0;
+
+	/**
+	 * The delay (in ms) between last user gesture and first auto slide move.
+	 * A maximum of `autoSlideInterval` and `autoSlidePostGestureDelay` will be used
+	 * as a timeout for the first auto slide move after user gesture.
+	 */
+	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
+	readonly autoSlidePostGestureDelay: number = 0;
 }

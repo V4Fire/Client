@@ -15,6 +15,7 @@ Changelog
 
 * Added new prop `alignLastToEnd` which is similar to existing `alignFirstToStart` and is also `true` by default.
 * Added new prop `autoSlideInterval`
+* Added new prop `autoSlidePostGestureDelay`
 
 #### :bug: Bug Fix
 
