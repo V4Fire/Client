@@ -29,7 +29,10 @@ test.use({
 test.describe('<b-slider> auto slide', () => {
 	const
 		autoSlideInterval = (1).second(),
-		autoSlidePostGestureDelay = (2).seconds();
+		autoSlidePostGestureDelay = (2).seconds(),
+		pollOptions = {
+			intervals: [autoSlideInterval / 5]
+		};
 
 	let
 		slider: JSHandle<bSlider>,
@@ -38,60 +41,108 @@ test.describe('<b-slider> auto slide', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		slider = await renderSlider(page, {
-			childrenIds: [1, 2, 3, 4],
-			attrs: {
-				autoSlideInterval,
-				autoSlidePostGestureDelay
-			}
-		});
-
 		gestures = await Gestures.create(page);
 
 	});
 
-	test('should automatically move to the next slide when `autoSlideInterval` is positive', async () => {
-		test.expect(await current(slider)).toBe(0);
-
-		const timeStart = new Date().getTime();
-		await test.expect.poll(async () => current(slider)).toBe(1);
-		const timeEnd = new Date().getTime();
-
-		const timeDiff = timeEnd - timeStart;
-
-		test.expect(timeDiff).toBeGreaterThan(autoSlideInterval);
-		test.expect(timeDiff).toBeLessThanOrEqual(2 * autoSlideInterval);
-	});
-
-	test('automatic moves should be paused on touch start', async () => {
-		test.expect(await current(slider)).toBe(0);
-		const timeStart = new Date().getTime();
-
-		await gestures.evaluate((ctx) => {
-			ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
-			ctx.dispatchTouchEvent('touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
+	test.describe('slides are static', () => {
+		test.beforeEach(async ({page}) => {
+			slider = await renderSlider(page, {
+				childrenIds: [1, 2, 3, 4],
+				attrs: {
+					autoSlideInterval,
+					autoSlidePostGestureDelay
+				}
+			});
 		});
 
-		await test.expect.poll(() => new Date().getTime() - timeStart)
-			.toBeGreaterThan(2 * autoSlideInterval);
+		test('should automatically move to the next slide when `autoSlideInterval` is positive', async () => {
+			test.expect(await current(slider)).toBe(0);
 
-		test.expect(await current(slider)).toBe(0);
-	});
+			const timeStart = new Date().getTime();
+			await test.expect.poll(async () => current(slider), pollOptions).toBe(1);
+			const timeEnd = new Date().getTime();
 
-	test('automatic moves should be resumed on touch end', async () => {
-		test.expect(await current(slider)).toBe(0);
+			const timeDiff = timeEnd - timeStart;
 
-		await gestures.evaluate((ctx) => {
-			ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
-			ctx.dispatchTouchEvent('touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
-			ctx.dispatchTouchEvent('touchend', {x: 0, y: 0});
+			test.expect(timeDiff).toBeGreaterThan(autoSlideInterval);
+			test.expect(timeDiff).toBeLessThanOrEqual(2 * autoSlideInterval);
 		});
 
-		const timeStart = new Date().getTime();
-		await test.expect.poll(() => new Date().getTime() - timeStart)
-			.toBeGreaterThan(autoSlidePostGestureDelay);
+		test('automatic moves should be paused on touch start', async () => {
+			test.expect(await current(slider)).toBe(0);
+			const timeStart = new Date().getTime();
 
-		test.expect(await current(slider)).toBe(1);
+			await gestures.evaluate((ctx) => {
+				ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
+				ctx.dispatchTouchEvent('touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
+			});
+
+			await test.expect.poll(() => new Date().getTime() - timeStart, pollOptions)
+				.toBeGreaterThan(2 * autoSlideInterval);
+
+			test.expect(await current(slider)).toBe(0);
+		});
+
+		test('automatic moves should be resumed on touch end', async () => {
+			test.expect(await current(slider)).toBe(0);
+
+			await gestures.evaluate((ctx) => {
+				ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
+				ctx.dispatchTouchEvent('touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
+				ctx.dispatchTouchEvent('touchend', {x: 0, y: 0});
+			});
+
+			const timeStart = new Date().getTime();
+			await test.expect.poll(() => new Date().getTime() - timeStart, pollOptions)
+				.toBeGreaterThan(autoSlidePostGestureDelay);
+
+			test.expect(await current(slider)).toBe(1);
+		});
+
+	});
+
+	test.describe('slides are loaded via provider', () => {
+		const
+			providerDelay = (3).seconds(),
+			providerItems = [{id: 'first'}, {id: 'second'}, {id: 'third'}, {id: 'forth'}, {id: 'fifth'}];
+
+		let
+			timeStart: number;
+
+		test.beforeEach(async ({context, page}) => {
+			await context.route('/api', async (route) => {
+				await new Promise((resolve) => setTimeout(resolve, providerDelay));
+				await route.fulfill({
+					status: 200,
+					body: JSON.stringify(providerItems)
+				});
+			});
+
+			timeStart = new Date().getTime();
+
+			slider = await renderSlider(page, {
+				attrs: {
+					autoSlideInterval,
+					dataProvider: 'Provider',
+					item: 'b-checkbox',
+					itemProps: ({id}) => ({id}),
+					componentConverter: (val) => JSON.parse(val)
+				}
+			});
+		});
+
+		test('automatic moves should not be started before slides are loaded', async () => {
+
+			test.expect(await current(slider)).toBe(0);
+
+			await test.expect.poll(() => new Date().getTime() - timeStart, pollOptions)
+				.toBeGreaterThan(providerDelay + autoSlideInterval);
+
+			test.expect(await current(slider)).toBe(1);
+
+		});
+
 	});
 
 });
