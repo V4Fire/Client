@@ -513,6 +513,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		}
 	}
 
+
 	/**
 	 * Performs auto slide change.
 	 */
@@ -535,21 +536,15 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Resumes auto slide moves by setting the corresponding interval.
-	 * @param [firstInterval] - an interval (in ms) before first auto slide change, defaults to `this.autoSlideInterval`
+	 * Resets auto slide moves
+	 * @param firstInterval - an interval (in ms) before first auto slide change.
 	 */
-	@hook('mounted')
-	@wait('ready')
-	@watch(['db', 'autoSlideInterval', 'autoSlidePostGestureDelay'])
-	protected resumeAutoSlide(firstInterval: number = this.autoSlideInterval): void {
-		this.pauseAutoSlide();
+	protected resetAutoSlide(firstInterval: number): void {
+		this.clearAutoSlide();
 
-		if (!this.isSlideMode || !Number.isPositive(this.autoSlideInterval)) {
-			this.pauseAutoSlide();
+		if (!this.isSlideMode || !Number.isPositive(firstInterval)) {
 			return;
 		}
-
-		firstInterval = Math.max(this.autoSlideInterval, firstInterval);
 
 		this.async.setTimeout(
 			() => {
@@ -562,10 +557,31 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Pauses auto slide moves by clearing the corresponding interval.
+	 * Synchronizes auto slide moves by (re-)setting the corresponding interval.
+	 */
+	@hook('mounted')
+	@wait('ready')
+	@watch(['db', 'autoSlideInterval', 'mode'])
+	protected syncAutoSlide(): void {
+		this.resetAutoSlide(this.autoSlideInterval);
+	}
+
+	/**
+	 * Resumes auto slide moves. First auto slide move will occur in
+	 * `Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay)`
+	 */
+	protected resumeAutoSlide(): void {
+		this.resetAutoSlide(
+			Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay)
+		);
+	}
+
+	/**
+	 * Clears auto slide moves.
 	 */
 	@hook('beforeDestroy')
-	protected pauseAutoSlide(): void {
+	protected clearAutoSlide(): void {
+		this.async.clearTimeout({label: $$.autoSlideFirst});
 		this.async.clearInterval({label: $$.autoSlide});
 	}
 
@@ -780,7 +796,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
-		this.pauseAutoSlide();
+		this.clearAutoSlide();
 		this.scrolling = false;
 
 		const
@@ -890,7 +906,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
-		this.resumeAutoSlide(this.autoSlidePostGestureDelay);
+		this.resumeAutoSlide();
 	}
 }
 
