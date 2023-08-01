@@ -347,10 +347,12 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * @param firstInterval - an interval (in ms) before first auto slide change.
 	 */
 	@hook('mounted')
-	@watch('autoSlideInterval')
+	@wait('ready')
+	@watch(['db', 'autoSlideInterval', 'autoSlidePostGestureDelay'])
 	protected resumeAutoSlide(firstInterval: number = this.autoSlideInterval): void {
+		this.pauseAutoSlide();
+
 		if (!this.isSlideMode || !Number.isPositive(this.autoSlideInterval)) {
-			this.pauseAutoSlide();
 			return;
 		}
 
