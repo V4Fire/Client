@@ -61,7 +61,7 @@ test.describe('<b-slider> auto slide', () => {
 				test.expect(await current(slider)).toBe(0);
 
 				const timeStart = new Date().getTime();
-				await test.expect.poll(async () => current(slider), pollOptions).toBe(1);
+				await test.expect.poll(() => current(slider), pollOptions).toBe(1);
 				const timeEnd = new Date().getTime();
 
 				const timeDiff = timeEnd - timeStart;
@@ -76,7 +76,6 @@ test.describe('<b-slider> auto slide', () => {
 
 				await gestures.evaluate((ctx) => {
 					ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
-					ctx.dispatchTouchEvent('touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
 				});
 
 				await test.expect.poll(() => new Date().getTime() - timeStart, pollOptions)
@@ -90,7 +89,6 @@ test.describe('<b-slider> auto slide', () => {
 
 				await gestures.evaluate((ctx) => {
 					ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
-					ctx.dispatchTouchEvent('touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
 					ctx.dispatchTouchEvent('touchend', {x: 0, y: 0});
 				});
 
@@ -105,7 +103,7 @@ test.describe('<b-slider> auto slide', () => {
 
 		test.describe('slides are loaded via provider', () => {
 			const
-				providerDelay = (10).seconds(),
+				providerDelay = (3).seconds(),
 				providerItems = [{id: 'first'}, {id: 'second'}, {id: 'third'}, {id: 'forth'}, {id: 'fifth'}];
 
 			let
@@ -137,10 +135,7 @@ test.describe('<b-slider> auto slide', () => {
 				test.expect(await current(slider)).toBe(0);
 
 				await test.expect
-					.poll(() => new Date().getTime() - timeStart, {
-						...pollOptions,
-						timeout: (12).seconds()
-					})
+					.poll(() => new Date().getTime() - timeStart, pollOptions)
 					.toBeGreaterThan(providerDelay + autoSlideInterval);
 
 				test.expect(await current(slider)).toBe(1);
