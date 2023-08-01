@@ -536,6 +536,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Resumes auto slide moves by setting the corresponding interval.
+	 * @param [firstInterval] - an interval (in ms) before first auto slide change, defaults to `this.autoSlideInterval`
 	 */
 	@hook('mounted')
 	@wait('ready')
