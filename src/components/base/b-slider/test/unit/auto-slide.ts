@@ -11,8 +11,6 @@ import type { JSHandle } from 'playwright';
 import test from 'tests/config/unit/test';
 import Gestures from 'tests/helpers/gestures';
 
-import type GesturesInterface from 'core/prelude/test-env/gestures';
-
 import type bSlider from 'components/base/b-slider/b-slider';
 
 import { renderSlider, current } from 'components/base/b-slider/test/helpers';
@@ -35,8 +33,7 @@ test.describe('<b-slider> auto slide', () => {
 		};
 
 	let
-		slider: JSHandle<bSlider>,
-		gestures: JSHandle<GesturesInterface>;
+		slider: JSHandle<bSlider>;
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
