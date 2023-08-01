@@ -135,10 +135,13 @@ test.describe('<b-slider> auto slide', () => {
 				test.expect(await current(slider)).toBe(0);
 
 				await test.expect
-					.poll(() => new Date().getTime() - timeStart, pollOptions)
-					.toBeGreaterThan(providerDelay + autoSlideInterval);
+					.poll(() => current(slider), pollOptions)
+					.toBe(1);
 
-				test.expect(await current(slider)).toBe(1);
+				const timeDiff = new Date().getTime() - timeStart;
+
+				test.expect(timeDiff).toBeGreaterThan(providerDelay + autoSlideInterval);
+				test.expect(timeDiff).toBeLessThanOrEqual(providerDelay + 2 * autoSlideInterval);
 
 			});
 
