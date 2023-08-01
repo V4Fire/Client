@@ -10,7 +10,7 @@ import Async from 'core/async';
 
 export default class Gestures {
 	/** {@link globalThis.TouchGesturesCreateOptions} */
-	readonly options: TouchGesturesCreateOptions;
+	readonly options: Required<TouchGesturesCreateOptions>;
 
 	/** {@link Async} */
 	readonly async: Async = new Async();
@@ -28,8 +28,13 @@ export default class Gestures {
 	/**
 	 * @param opts
 	 */
-	constructor(opts: TouchGesturesCreateOptions) {
-		this.options = opts;
+	constructor(opts?: TouchGesturesCreateOptions) {
+		this.options = {
+			pause: 5,
+			targetEl: null,
+			dispatchEl: null,
+			...opts
+		};
 
 		Object.assign(this.cursor.style, {
 			height: '20px',
@@ -125,6 +130,48 @@ export default class Gestures {
 	}
 
 	/**
+	 * Dispatches a touch event
+	 *
+	 * @param eventType - the type of the event
+	 * @param touchPoints - a point or an array of points for touches
+	 * @param [targetEl] - the target element, defaults to `document.documentElement`
+	 * @param [dispatchEl] - the dispatch element, defaults to `document.elementFromPoint(<first point>)`
+	 */
+	dispatchTouchEvent(
+		eventType: 'touchstart' | 'touchmove' | 'touchend',
+		touchPoints: CanArray<{ x: number; y: number }>,
+		targetEl: CanNull<Element> = null,
+		dispatchEl: CanNull<Element> = null
+	): void {
+		if (!Object.isArray(touchPoints)) {
+			touchPoints = [touchPoints];
+		}
+
+		if (targetEl == null) {
+			targetEl = document.documentElement;
+		}
+
+		if (dispatchEl == null) {
+			const {x, y} = touchPoints[0];
+			dispatchEl = document.elementFromPoint(x, y);
+		}
+
+		const event = new TouchEvent(eventType, {
+			bubbles: true,
+			cancelable: true,
+			composed: true,
+			touches: touchPoints.map<Touch>(({x: clientX, y: clientY}, identifier) => new Touch({
+				identifier,
+				clientX,
+				clientY,
+				target: targetEl!
+			}))
+		});
+
+		dispatchEl!.dispatchEvent(event);
+	}
+
+	/**
 	 * Emits the specified touch event
 	 *
 	 * @param step
@@ -135,26 +182,15 @@ export default class Gestures {
 			{dispatchEl, targetEl, x, y} = step;
 
 		const
-			resolvedDispatchEl = dispatchEl instanceof Element ? dispatchEl : document.querySelector(dispatchEl),
-			resolvedTargetEl = targetEl instanceof Element ? targetEl : document.querySelector(targetEl);
-
-		const touchEvent = new TouchEvent(type, {
-			touches: [
-				new Touch({
-					identifier: Math.random(),
-					target: resolvedTargetEl!,
-					clientX: x,
-					clientY: y
-				})
-			]
-		});
+			resolvedDispatchEl = this.resolveEl(dispatchEl),
+			resolvedTargetEl = this.resolveEl(targetEl);
 
 		Object.assign(this.cursor.style, {
 			left: x.px,
 			top: y.px
 		});
 
-		resolvedDispatchEl?.dispatchEvent(touchEvent);
+		this.dispatchTouchEvent(type, {x, y}, resolvedTargetEl, resolvedDispatchEl);
 	}
 
 	/**
@@ -174,7 +210,6 @@ export default class Gestures {
 			}
 
 			const newPoint = {
-				pause: 5,
 				...options,
 				...point
 			};
@@ -182,6 +217,19 @@ export default class Gestures {
 			this.steps.push(newPoint);
 		});
 	}
+
+	/**
+	 * Resolves provided element
+	 * @param el - an element to resolve
+	 */
+	protected resolveEl(el: Required<TouchGesturesCreateOptions>['targetEl']): CanNull<Element> {
+		if (el == null || el instanceof Element) {
+			return el;
+		}
+
+		return document.querySelector(el);
+	}
+
 }
 
 globalThis._Gestures = Gestures;

@@ -9,10 +9,13 @@
 import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
+import Gestures from 'tests/helpers/gestures';
+
+import type GesturesInterface from 'core/prelude/test-env/gestures';
 
 import type bSlider from 'components/base/b-slider/b-slider';
 
-import { renderSlider, current, dispatchTouchEvent } from 'components/base/b-slider/test/helpers';
+import { renderSlider, current } from 'components/base/b-slider/test/helpers';
 
 test.use({
 	isMobile: true,
@@ -28,12 +31,16 @@ test.describe('<b-slider> auto slide', () => {
 		autoSlideInterval = (1).second();
 
 	let
-		slider: JSHandle<bSlider>;
+		slider: JSHandle<bSlider>,
+		gestures: JSHandle<GesturesInterface>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		slider = await renderSlider(page, {childrenIds: [1, 2, 3, 4], attrs: {autoSlideInterval}});
+		slider = await renderSlider(page, {childrenIds: [1, 2, 3, 4], attrs: {autoSlideInterval, id: 'slider'}});
+
+		gestures = await Gestures.create(page);
+
 	});
 
 	test('should automatically move to the next slide when `autoSlideInterval` is positive', async () => {
@@ -49,12 +56,14 @@ test.describe('<b-slider> auto slide', () => {
 		test.expect(timeDiff).toBeLessThanOrEqual(2 * autoSlideInterval);
 	});
 
-	test('automatic moves should be paused on touch start', async ({page}) => {
+	test('automatic moves should be paused on touch start', async () => {
 		test.expect(await current(slider)).toBe(0);
 		const timeStart = new Date().getTime();
 
-		await dispatchTouchEvent(page, 'touchstart', {x: 0, y: 0});
-		await dispatchTouchEvent(page, 'touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
+		await gestures.evaluate((ctx) => {
+			ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
+			ctx.dispatchTouchEvent('touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
+		});
 
 		await test.expect.poll(() => new Date().getTime() - timeStart)
 			.toBeGreaterThan(2 * autoSlideInterval);
@@ -62,12 +71,14 @@ test.describe('<b-slider> auto slide', () => {
 		test.expect(await current(slider)).toBe(0);
 	});
 
-	test('automatic moves should be resumed on touch end', async ({page}) => {
+	test('automatic moves should be resumed on touch end', async () => {
 		test.expect(await current(slider)).toBe(0);
 
-		await dispatchTouchEvent(page, 'touchstart', {x: 0, y: 0});
-		await dispatchTouchEvent(page, 'touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
-		await dispatchTouchEvent(page, 'touchend', {x: 0, y: 0});
+		await gestures.evaluate((ctx) => {
+			ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
+			ctx.dispatchTouchEvent('touchmove', [{x: 0, y: 0}, {x: 0, y: 0}]);
+			ctx.dispatchTouchEvent('touchend', {x: 0, y: 0});
+		});
 
 		const timeStart = new Date().getTime();
 		await test.expect.poll(() => new Date().getTime() - timeStart)

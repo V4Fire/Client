@@ -371,6 +371,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 */
 	@hook('beforeDestroy')
 	protected pauseAutoSlide(): void {
+		this.async.clearTimeout({label: $$.autoSlideFirst});
 		this.async.clearInterval({label: $$.autoSlide});
 	}
 
