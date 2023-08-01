@@ -10,7 +10,7 @@ import Async from 'core/async';
 
 export default class Gestures {
 	/** {@link globalThis.TouchGesturesCreateOptions} */
-	readonly options: Required<TouchGesturesCreateOptions>;
+	readonly options: TouchGesturesCreateOptions;
 
 	/** {@link Async} */
 	readonly async: Async = new Async();
@@ -70,13 +70,8 @@ export default class Gestures {
 	/**
 	 * @param opts
 	 */
-	constructor(opts?: TouchGesturesCreateOptions) {
-		this.options = {
-			pause: 5,
-			targetEl: null,
-			dispatchEl: null,
-			...opts
-		};
+	constructor(opts: TouchGesturesCreateOptions) {
+		this.options = opts;
 
 		Object.assign(this.cursor.style, {
 			height: '20px',
@@ -210,6 +205,7 @@ export default class Gestures {
 			}
 
 			const newPoint = {
+				pause: 5,
 				...options,
 				...point
 			};
@@ -223,7 +219,7 @@ export default class Gestures {
 	 * @param el - an element to resolve
 	 */
 	protected resolveEl(el: Required<TouchGesturesCreateOptions>['targetEl']): CanNull<Element> {
-		if (el == null || el instanceof Element) {
+		if (el instanceof Element) {
 			return el;
 		}
 
