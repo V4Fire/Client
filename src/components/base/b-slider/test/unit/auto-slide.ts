@@ -28,7 +28,8 @@ test.use({
 
 test.describe('<b-slider> auto slide', () => {
 	const
-		autoSlideInterval = (1).second();
+		autoSlideInterval = (1).second(),
+		autoSlidePostGestureDelay = (2).seconds();
 
 	let
 		slider: JSHandle<bSlider>,
@@ -37,7 +38,13 @@ test.describe('<b-slider> auto slide', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		slider = await renderSlider(page, {childrenIds: [1, 2, 3, 4], attrs: {autoSlideInterval, id: 'slider'}});
+		slider = await renderSlider(page, {
+			childrenIds: [1, 2, 3, 4],
+			attrs: {
+				autoSlideInterval,
+				autoSlidePostGestureDelay
+			}
+		});
 
 		gestures = await Gestures.create(page);
 
@@ -82,8 +89,9 @@ test.describe('<b-slider> auto slide', () => {
 
 		const timeStart = new Date().getTime();
 		await test.expect.poll(() => new Date().getTime() - timeStart)
-			.toBeGreaterThan(autoSlideInterval);
+			.toBeGreaterThan(autoSlidePostGestureDelay);
 
 		test.expect(await current(slider)).toBe(1);
 	});
+
 });
