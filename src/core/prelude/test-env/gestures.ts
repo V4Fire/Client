@@ -9,6 +9,48 @@
 import Async from 'core/async';
 
 export default class Gestures {
+	/**
+	 * Dispatches a touch event
+	 *
+	 * @param eventType - the type of the event
+	 * @param touchPoints - a point or an array of points for touches
+	 * @param [targetEl] - the target element, defaults to `document.documentElement`
+	 * @param [dispatchEl] - the dispatch element, defaults to `document.elementFromPoint(<first point>)`
+	 */
+	static dispatchTouchEvent(
+		eventType: 'touchstart' | 'touchmove' | 'touchend',
+		touchPoints: CanArray<{ x: number; y: number }>,
+		targetEl: CanNull<Element> = null,
+		dispatchEl: CanNull<Element> = null
+	): void {
+		if (!Object.isArray(touchPoints)) {
+			touchPoints = [touchPoints];
+		}
+
+		if (targetEl == null) {
+			targetEl = document.documentElement;
+		}
+
+		if (dispatchEl == null) {
+			const {x, y} = touchPoints[0];
+			dispatchEl = document.elementFromPoint(x, y);
+		}
+
+		const event = new TouchEvent(eventType, {
+			bubbles: true,
+			cancelable: true,
+			composed: true,
+			touches: touchPoints.map<Touch>(({x: clientX, y: clientY}, identifier) => new Touch({
+				identifier,
+				clientX,
+				clientY,
+				target: targetEl!
+			}))
+		});
+
+		dispatchEl!.dispatchEvent(event);
+	}
+
 	/** {@link globalThis.TouchGesturesCreateOptions} */
 	readonly options: Required<TouchGesturesCreateOptions>;
 
@@ -130,48 +172,6 @@ export default class Gestures {
 	}
 
 	/**
-	 * Dispatches a touch event
-	 *
-	 * @param eventType - the type of the event
-	 * @param touchPoints - a point or an array of points for touches
-	 * @param [targetEl] - the target element, defaults to `document.documentElement`
-	 * @param [dispatchEl] - the dispatch element, defaults to `document.elementFromPoint(<first point>)`
-	 */
-	dispatchTouchEvent(
-		eventType: 'touchstart' | 'touchmove' | 'touchend',
-		touchPoints: CanArray<{ x: number; y: number }>,
-		targetEl: CanNull<Element> = null,
-		dispatchEl: CanNull<Element> = null
-	): void {
-		if (!Object.isArray(touchPoints)) {
-			touchPoints = [touchPoints];
-		}
-
-		if (targetEl == null) {
-			targetEl = document.documentElement;
-		}
-
-		if (dispatchEl == null) {
-			const {x, y} = touchPoints[0];
-			dispatchEl = document.elementFromPoint(x, y);
-		}
-
-		const event = new TouchEvent(eventType, {
-			bubbles: true,
-			cancelable: true,
-			composed: true,
-			touches: touchPoints.map<Touch>(({x: clientX, y: clientY}, identifier) => new Touch({
-				identifier,
-				clientX,
-				clientY,
-				target: targetEl!
-			}))
-		});
-
-		dispatchEl!.dispatchEvent(event);
-	}
-
-	/**
 	 * Emits the specified touch event
 	 *
 	 * @param step
@@ -190,7 +190,7 @@ export default class Gestures {
 			top: y.px
 		});
 
-		this.dispatchTouchEvent(type, {x, y}, resolvedTargetEl, resolvedDispatchEl);
+		globalThis._Gestures.dispatchTouchEvent(type, {x, y}, resolvedTargetEl, resolvedDispatchEl);
 	}
 
 	/**

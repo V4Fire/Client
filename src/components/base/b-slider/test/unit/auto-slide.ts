@@ -38,11 +38,8 @@ test.describe('<b-slider> auto slide', () => {
 		slider: JSHandle<bSlider>,
 		gestures: JSHandle<GesturesInterface>;
 
-	test.beforeEach(async ({demoPage, page}) => {
+	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
-
-		gestures = await Gestures.create(page);
-
 	});
 
 	test.describe('enabled', () => {
@@ -70,13 +67,11 @@ test.describe('<b-slider> auto slide', () => {
 				test.expect(timeDiff).toBeLessThanOrEqual(2 * autoSlideInterval);
 			});
 
-			test('automatic moves should be paused on touch start', async () => {
+			test('automatic moves should be paused on touch start', async ({page}) => {
 				test.expect(await current(slider)).toBe(0);
 				const timeStart = new Date().getTime();
 
-				await gestures.evaluate((ctx) => {
-					ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
-				});
+				await Gestures.dispatchTouchEvent(page, 'touchstart', {x: 0, y: 0});
 
 				await test.expect.poll(() => new Date().getTime() - timeStart, pollOptions)
 					.toBeGreaterThan(2 * autoSlideInterval);
@@ -84,13 +79,11 @@ test.describe('<b-slider> auto slide', () => {
 				test.expect(await current(slider)).toBe(0);
 			});
 
-			test('automatic moves should be resumed on touch end', async () => {
+			test('automatic moves should be resumed on touch end', async ({page}) => {
 				test.expect(await current(slider)).toBe(0);
 
-				await gestures.evaluate((ctx) => {
-					ctx.dispatchTouchEvent('touchstart', {x: 0, y: 0});
-					ctx.dispatchTouchEvent('touchend', {x: 0, y: 0});
-				});
+				await Gestures.dispatchTouchEvent(page, 'touchstart', {x: 0, y: 0});
+				await Gestures.dispatchTouchEvent(page, 'touchend', {x: 0, y: 0});
 
 				const timeStart = new Date().getTime();
 				await test.expect.poll(() => new Date().getTime() - timeStart, pollOptions)

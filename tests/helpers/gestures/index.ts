@@ -27,4 +27,23 @@ export default class Gestures {
 
 		return <JSHandle<GesturesInterface>>res;
 	}
+
+	/**
+	 * Dispatches a touch event
+	 *
+	 * @param page
+	 * @param eventType
+	 * @param touchPoints
+	 */
+	static async dispatchTouchEvent(
+		page: Page,
+		eventType: 'touchstart' | 'touchmove' | 'touchend',
+		touchPoints: CanArray<{ x: number; y: number }>
+	): Promise<void> {
+		await page.evaluate(
+			({eventType, touchPoints}) =>
+				globalThis._Gestures.dispatchTouchEvent(eventType, touchPoints),
+			{eventType, touchPoints}
+		);
+	}
 }
