@@ -152,6 +152,14 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	readonly autoSlideInterval: number = 0;
 
 	/**
+	 * The delay (in ms) between last user gesture and first auto slide move.
+	 * A maximum of `autoSlideInterval` and `autoSlidePostGestureDelay` will be used
+	 * as a timeout for the first auto slide move after user gesture.
+	 */
+	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
+	readonly autoSlidePostGestureDelay: number = 0;
+
+	/**
 	 * @deprecated
 	 * @see [[bSlider.items]]
 	 */
@@ -506,25 +514,47 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
+	 * Performs auto slide change.
+	 */
+	protected performAutoSlide(): void {
+		void this.removeMod('swipe');
+		this.moveSlide(1);
+		this.syncState();
+		void this.removeMod('swipe');
+	}
+
+	/**
+	 * Plays auto slide changes at a given interval.
+	 */
+	protected playAutoSlide(): void {
+		this.async.setInterval(
+			() => this.performAutoSlide(),
+			this.autoSlideInterval,
+			{label: $$.autoSlide}
+		);
+	}
+
+	/**
 	 * Resumes auto slide moves by setting the corresponding interval.
 	 */
 	@hook('mounted')
 	@watch('autoSlideInterval')
-	protected resumeAutoSlide(): void {
-		if (this.isSlideMode && Number.isPositive(this.autoSlideInterval)) {
-			this.async.setInterval(
-				() => {
-					void this.removeMod('swipe');
-					this.moveSlide(1);
-					this.syncState();
-					void this.removeMod('swipe');
-				},
-				this.autoSlideInterval,
-				{label: $$.autoSlide}
-			);
-		} else {
+	protected resumeAutoSlide(firstInterval: number = this.autoSlideInterval): void {
+		if (!this.isSlideMode || !Number.isPositive(this.autoSlideInterval)) {
 			this.pauseAutoSlide();
+			return;
 		}
+
+		firstInterval = Math.max(this.autoSlideInterval, firstInterval);
+
+		this.async.setTimeout(
+			() => {
+				this.performAutoSlide();
+				this.playAutoSlide();
+			},
+			firstInterval,
+			{label: $$.autoSlideFirst}
+		);
 	}
 
 	/**
@@ -856,7 +886,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
-		this.resumeAutoSlide();
+		this.resumeAutoSlide(this.autoSlidePostGestureDelay);
 	}
 }
 
