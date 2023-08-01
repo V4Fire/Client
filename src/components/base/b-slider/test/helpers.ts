@@ -66,39 +66,3 @@ export function current(slider: JSHandle<bSlider>): Promise<number> {
 export function lastIndex(slider: JSHandle<bSlider>): Promise<number> {
 	return slider.evaluate((ctx) => ctx.contentLength - 1);
 }
-
-/**
- * Dispatches a touch event with given name (e. g. touchstart), using
- * given touch points for touches
- *
- * @param page
- * @param eventType - the type of the event
- * @param touchPoints - a point or an array of points for touches
- */
-export async function dispatchTouchEvent(
-	page: Page,
-	eventType: string,
-	touchPoints: CanArray<{ x: number; y: number }>
-): Promise<void> {
-	await page.evaluate(([eventType, touchPoints]) => {
-
-		if (!Object.isArray(touchPoints)) {
-			touchPoints = [touchPoints];
-		}
-
-		const event = new TouchEvent(eventType, {
-			bubbles: true,
-			cancelable: true,
-			composed: true,
-			touches: touchPoints.map<Touch>(({x: clientX, y: clientY}, identifier) => new Touch({
-				identifier,
-				clientX,
-				clientY,
-				target: document.documentElement
-			}))
-		});
-
-		const {x, y} = touchPoints[0];
-		document.elementFromPoint(x, y)?.dispatchEvent(event);
-	}, <[string, CanArray<{ x: number; y: number }>]>[eventType, touchPoints]);
-}
