@@ -332,7 +332,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Plays auto slide changes at a given interval.
+	 * Repeats auto slide changes at a given interval.
 	 */
 	protected repeatAutoSlide(): void {
 		this.async.setInterval(
