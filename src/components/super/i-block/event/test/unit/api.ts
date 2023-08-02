@@ -12,7 +12,7 @@ import { renderDummy } from 'components/super/i-block/event/test/helpers';
 
 import type bDummy from 'components/dummies/b-dummy/b-dummy';
 
-test.describe('<i-block> events - API', () => {
+test.describe('<i-block> event API', () => {
 	const componentName = 'b-dummy';
 
 	test.beforeEach(async ({demoPage, page}) => {
@@ -22,7 +22,7 @@ test.describe('<i-block> events - API', () => {
 		}, componentName);
 	});
 
-	test('should normalize an event name', async ({page}) => {
+	test('the event passed to `emit` should be normalized to camelCase', async ({page}) => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
@@ -48,13 +48,17 @@ test.describe('<i-block> events - API', () => {
 		test.expect(scan).toEqual([1, 1, 1]);
 	});
 
-	test('should emit double events', async ({page}) => {
+	test('the `emit` method should fire 3 events', async ({page}) => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
 			const res: any[] = [];
 
 			ctx.on('foo', (ctx, ...args) => {
+				res.push((<bDummy>ctx).componentName, ...args);
+			});
+
+			ctx.on('foo:component', (ctx, ...args) => {
 				res.push((<bDummy>ctx).componentName, ...args);
 			});
 
@@ -121,7 +125,7 @@ test.describe('<i-block> events - API', () => {
 		test.expect(scan).toEqual([componentName, 1, {a: 1}]);
 	});
 
-	test('listener should be called once when it was set using `once` method', async ({page}) => {
+	test('the listener should be called once when it was set using `once` method', async ({page}) => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
@@ -287,42 +291,46 @@ test.describe('<i-block> events - API', () => {
 			test.expect(scan).toEqual([1, {a: 1}, componentName, 1, {a: 1}, 1, {a: 1}]);
 		});
 
-		test([
-			'shouldn\'t dispatch hook events on the `rootEmitter`',
-			'when the root component has `selfDispatching = true`'
-		].join(' '), async ({page}) => {
-			const target = await renderDummy(page, {
-				dispatching: true
-			});
+		test(
+			[
+				'shouldn\'t dispatch hook events on the `rootEmitter`',
+				'when the root component has `selfDispatching = true`'
+			].join(' '),
 
-			const scan = await target.evaluate((ctx) => {
-				const res: any[] = [];
-
-				Object.set(ctx.r, 'selfDispatching', true);
-
-				ctx.on('onHook:beforeDestroy', (...args) => {
-					res.push(...args);
+			async ({page}) => {
+				const target = await renderDummy(page, {
+					dispatching: true
 				});
 
-				ctx.on('onComponentStatus:destroyed', (...args) => {
-					res.push(...args);
+				const scan = await target.evaluate((ctx) => {
+					const res: any[] = [];
+
+					Object.set(ctx.r, 'selfDispatching', true);
+
+					ctx.on('onHook:beforeDestroy', (...args) => {
+						res.push(...args);
+					});
+
+					ctx.on('onComponentStatus:destroyed', (...args) => {
+						res.push(...args);
+					});
+
+					ctx.unsafe.rootEmitter.on('onHook:beforeDestroy', (ctx, ...args) => {
+						res.push((<bDummy>ctx).componentName, ...args);
+					});
+
+					ctx.unsafe.rootEmitter.on('onComponentStatus:destroyed', (ctx, ...args) => {
+						res.push((<bDummy>ctx).componentName, ...args);
+					});
+
+					ctx.unsafe.$destroy();
+					Object.set(ctx.r, 'selfDispatching', false);
+
+					return res;
 				});
 
-				ctx.unsafe.rootEmitter.on('onHook:beforeDestroy', (ctx, ...args) => {
-					res.push((<bDummy>ctx).componentName, ...args);
-				});
-
-				ctx.unsafe.rootEmitter.on('onComponentStatus:destroyed', (ctx, ...args) => {
-					res.push((<bDummy>ctx).componentName, ...args);
-				});
-
-				ctx.unsafe.$destroy();
-				Object.set(ctx.r, 'selfDispatching', false);
-
-				return res;
-			});
-
-			test.expect(scan).toEqual(['beforeDestroy', 'mounted', 'destroyed', 'ready']);
-		});
+				test.expect(scan).toEqual(['beforeDestroy', 'mounted', 'destroyed', 'ready']);
+			}
+		);
 	});
 });
