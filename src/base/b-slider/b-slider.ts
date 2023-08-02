@@ -525,9 +525,9 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Plays auto slide changes at a given interval.
+	 * Repeats auto slide changes at a given interval.
 	 */
-	protected playAutoSlide(): void {
+	protected repeatAutoSlide(): void {
 		this.async.setInterval(
 			() => this.performAutoSlide(),
 			this.autoSlideInterval,
@@ -549,7 +549,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.async.setTimeout(
 			() => {
 				this.performAutoSlide();
-				this.playAutoSlide();
+				this.repeatAutoSlide();
 			},
 			firstInterval,
 			{label: $$.autoSlideFirst}
