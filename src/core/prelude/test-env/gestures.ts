@@ -193,7 +193,7 @@ export default class Gestures {
 			top: y.px
 		});
 
-		globalThis._Gestures.dispatchTouchEvent(type, {x, y}, resolvedTargetEl, resolvedDispatchEl);
+		Gestures.dispatchTouchEvent(type, {x, y}, resolvedTargetEl, resolvedDispatchEl);
 	}
 
 	/**
