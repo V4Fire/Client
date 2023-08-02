@@ -67,12 +67,14 @@ export abstract class ComponentInterface {
 	abstract readonly mods: ModsDict;
 
 	/**
-	 * Shareable component modifiers.
-	 * These modifiers are automatically propagated to child components.
-	 * For instance, suppose you have a component in your template that utilizes another component,
-	 * and you assign a theme modifier to the outer component.
+	 * The base component modifiers that can be shared with other components.
+	 * These modifiers are automatically provided to child components.
+	 *
+	 * So, for example, you have a component that uses another component in your template,
+	 * and you give the outer component some theme modifier. This modifier will be recursively provided to
+	 * all child components.
 	 */
-	abstract get sharedMods(): CanUndef<Readonly<ModsDict>>;
+	abstract get sharedMods(): CanNull<Readonly<ModsDict>>;
 
 	/**
 	 * Additional classes for the component elements.

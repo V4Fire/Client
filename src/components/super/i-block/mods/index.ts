@@ -24,27 +24,19 @@ export default abstract class iBlockMods extends iBlockEvent {
 	@system({merge: mergeMods, init: initMods})
 	override readonly mods!: ModsDict;
 
-	/**
-	 * The base component modifiers that can be shared with other components.
-	 * These modifiers are automatically provided to child components.
-	 *
-	 * So, for example, you have a component that uses another component in your template,
-	 * and you give the outer component some theme modifier. This modifier will be recursively provided to
-	 * all child components.
-	 */
 	@computed({cache: 'auto'})
-	get sharedMods(): CanUndef<Readonly<ModsDict>> {
+	override get sharedMods(): CanNull<Readonly<ModsDict>> {
 		const
 			m = this.mods;
 
 		let
-			res;
+			res: CanUndef<ModsDict>;
 
 		if (m.theme != null) {
 			res = {theme: m.theme};
 		}
 
-		return res != null ? Object.freeze(res) : undefined;
+		return res != null ? Object.freeze(res) : null;
 	}
 
 	/**
