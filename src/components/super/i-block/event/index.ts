@@ -300,8 +300,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 *
 	 * Note that this method always fires three events:
 	 *
-	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-	 * 2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event.
+	 * 2. `${event}:component`(self, ...args) - the event to avoid collisions between component events and
+	 *    native DOM events.
+	 *
 	 * 3. `on-${event}`(...args)
 	 *
 	 * @param event - the event name to dispatch
@@ -356,8 +358,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 *
 	 * Note that this method always fires three events:
 	 *
-	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-	 * 2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event.
+	 * 2. `${event}:component`(self, ...args) - the event to avoid collisions between component events and
+	 *    native DOM events.
+	 *
 	 * 3. `on-${event}`(...args)
 	 *
 	 * @param event - the event name to dispatch
