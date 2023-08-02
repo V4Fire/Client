@@ -35,7 +35,7 @@ import { component, globalEmitter } from 'core/component';
 import { system, hook, watch } from 'components/super/i-block/decorators';
 import { initGlobalListeners } from 'components/super/i-block/modules/listeners';
 
-import type iBlock from 'components/super/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 import type { ComponentEvent, CallChild } from 'components/super/i-block/interface';
 
 import iBlockBase from 'components/super/i-block/base';
@@ -47,20 +47,22 @@ const
 export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * The component event emitter.
-	 * In fact, component methods such as `on` or `off` are just aliases to the methods of the given emitter.
+	 * In fact, the component methods such as `on` or `off` are just aliases to the methods of the given emitter.
 	 *
 	 * All events fired by this emitter can be listened to "outside" using the `v-on` directive.
-	 * Also, if the component is in `dispatching` mode, then the emitted events will start bubbling up to
+	 * Also, if the component is in the `dispatching` mode, then the emitted events will start bubbling up to
 	 * the parent component.
 	 *
 	 * In addition, all emitted events are automatically logged using the `log` method.
 	 * The default logging level is `info` (logging requires the `verbose` prop to be set to true),
 	 * but you can set the logging level explicitly.
 	 *
-	 * Note that `selfEmitter.emit` always fires three events:
+	 * Mind that `selfEmitter.emit` always fires three events:
 	 *
-	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-	 * 2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event.
+	 * 2. `${event}:component`(self, ...args) - the event to avoid collisions between component events and
+	 *    native DOM events.
+	 *
 	 * 3. `on-${event}`(...args)
 	 *
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
@@ -79,8 +81,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 		atom: true,
 		unique: true,
 		init: (o, d) => (<Async>d.async).wrapEventEmitter({
-			on: (event, handler) => o.$on(normalizeEventName(event), handler),
-			once: (event, handler) => o.$once(normalizeEventName(event), handler),
+			on: (event: string, handler: Function) => o.$on(normalizeEventName(event), handler),
+			once: (event: string, handler: Function) => o.$once(normalizeEventName(event), handler),
 			off: o.$off.bind(o),
 			emit: o.emit.bind(o)
 		})
@@ -91,8 +93,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * The component local event emitter.
 	 *
-	 * Unlike `selfEmitter`, events that are fired by this emitter cannot be caught "outside" with the `v-on` directive,
-	 * and these events do not bubble up. Also, such events can be listened to by a wildcard mask.
+	 * Unlike `selfEmitter`, events fired by this emitter cannot be caught "outside" with the `v-on` directive,
+	 * and do not bubble up. Also, such events can be listened to by a wildcard mask.
 	 *
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
 	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
@@ -109,7 +111,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => (<Async>d.async).wrapEventEmitter(new EventEmitter({
+		init: (_, d) => (<Async>d.async).wrapEventEmitter(new EventEmitter({
 			maxListeners: 1e3,
 			newListener: false,
 			wildcard: true
@@ -206,7 +208,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => (<Async>d.async).wrapEventEmitter(globalEmitter)
+		init: (_, d) => (<Async>d.async).wrapEventEmitter(globalEmitter)
 	})
 
 	protected readonly globalEmitter!: EventEmitterWrapper<this>;
