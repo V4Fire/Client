@@ -47,18 +47,18 @@ interface bSlider extends Trait<typeof iObserveDOM> {}
 @component()
 @derive(iObserveDOM)
 class bSlider extends iSliderProps implements iObserveDOM, iItems {
-	/**
-	 * The number of slides in the slider
-	 */
-	@system()
-	length: number = 0;
-
 	static override readonly mods: ModsDecl = {
 		swipe: [
 			'true',
 			'false'
 		]
 	};
+
+	/**
+	 * The number of slides in the slider
+	 */
+	@system()
+	length: number = 0;
 
 	/**
 	 * A link to the content node
