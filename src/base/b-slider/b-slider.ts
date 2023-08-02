@@ -576,6 +576,10 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Synchronizes auto slide moves by (re-)setting the corresponding interval.
+	 *
+	 * Waiting for `ready` state because slides may be loaded via data provider.
+	 * Watching `db` for possible slide changes and `mode` because
+	 * auto slide only works in `slide` mode.
 	 */
 	@hook('mounted')
 	@wait('ready')
