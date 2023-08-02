@@ -261,12 +261,13 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		if (length - 1 >= index) {
 			this.current = index;
 
-			if (!animate) {
+			if (animate) {
+				await this.removeMod('swipe');
+			} else {
 				await this.setMod('swipe', true);
 			}
 
 			this.syncState();
-			this.performSliderMove();
 
 			return true;
 		}
@@ -279,32 +280,19 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * @param dir - direction
 	 */
 	moveSlide(dir: SlideDirection): boolean {
-		let
-			{current} = this;
-
-		const
-			{length, content} = this;
-
-		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
-			if (content == null) {
-				return false;
-			}
-
-			current += dir;
-
-			if (dir < 0 && current < 0) {
-				current = length - 1;
-
-			} else if (dir > 0 && current > length - 1) {
-				current = 0;
-			}
-
-			this.current = current;
-			this.performSliderMove();
-			return true;
+		if (!this.content) {
+			return false;
 		}
 
-		return false;
+		const newSlide = this.getNewSlide(dir);
+
+		if (newSlide == null) {
+			return false;
+		}
+
+		this.current = newSlide;
+		this.performSliderMove();
+		return true;
 	}
 
 	/** {@link iObserveDOM.initDOMObservers} */
@@ -322,13 +310,45 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	}
 
 	/**
+	 * Returns index of a new slide, if moving in given direction `dir`
+	 * @param dir - direction
+	 */
+	protected getNewSlide(dir: SlideDirection): number | null {
+		let
+			{current} = this;
+
+		const {
+			length
+		} = this;
+
+		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
+
+			current += dir;
+
+			if (dir < 0 && current < 0) {
+				current = length - 1;
+
+			} else if (dir > 0 && current > length - 1) {
+				current = 0;
+			}
+
+			return current;
+		}
+
+		return null;
+	}
+
+	/**
 	 * Performs auto slide change.
 	 */
-	protected performAutoSlide(): void {
-		void this.removeMod('swipe');
-		this.moveSlide(1);
-		this.syncState();
-		void this.removeMod('swipe');
+	protected async performAutoSlide(): Promise<void> {
+		const newSlide = this.getNewSlide(1);
+
+		if (newSlide == null) {
+			return;
+		}
+
+		await this.slideTo(newSlide, true);
 	}
 
 	/**
@@ -354,8 +374,8 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		}
 
 		this.async.setTimeout(
-			() => {
-				this.performAutoSlide();
+			async () => {
+				await this.performAutoSlide();
 				this.repeatAutoSlide();
 			},
 			firstInterval,
@@ -483,7 +503,6 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 			});
 		}
 
-		void this.setMod('swipe', true);
 		this.performSliderMove();
 	}
 
