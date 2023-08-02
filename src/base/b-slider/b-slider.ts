@@ -537,11 +537,9 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	protected async performAutoSlide(): Promise<void> {
 		const newSlide = this.getNewSlide(1);
 
-		if (newSlide == null) {
-			return;
+		if (newSlide != null) {
+			await this.slideTo(newSlide, true);
 		}
-
-		await this.slideTo(newSlide, true);
 	}
 
 	/**
