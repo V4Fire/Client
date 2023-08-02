@@ -26,7 +26,15 @@ export default class Gestures {
 	steps: Array<Required<TouchGesturePoint>> = [];
 
 	/**
-	 * Dispatches a touch event
+	 * Dispatches a touch event.
+	 * This method is intended for use in cases where the standard functionality of
+	 * Gestures is not suitable for solving your problem, for example:
+	 * - if you need to pass several points in one event, then pass an array of coordinates as the second parameter;
+	 * - if only the emission of a certain event (touchstart, touchmove, touchend) is required, for example,
+	 * to check the reaction of the tested component to it, then fill the last two parameters with the corresponding
+	 * elements or selectors;
+	 * - if you want to emit a touch event over the entire document, and not over a specific element, then the last
+	 * two parameters are omitted.
 	 *
 	 * @param eventType - the type of the event
 	 * @param touchPoints - a point or an array of points for touches
@@ -177,8 +185,8 @@ export default class Gestures {
 			{dispatchEl, targetEl, x, y} = step;
 
 		const
-			resolvedDispatchEl = this.resolveEl(dispatchEl),
-			resolvedTargetEl = this.resolveEl(targetEl);
+			resolvedDispatchEl = this.resolveElement(dispatchEl),
+			resolvedTargetEl = this.resolveElement(targetEl);
 
 		Object.assign(this.cursor.style, {
 			left: x.px,
@@ -215,15 +223,17 @@ export default class Gestures {
 	}
 
 	/**
-	 * Resolves provided element
-	 * @param el - an element to resolve
+	 * Returns a DOM node if the passed element is a DOM node or
+	 * performs a querySelector to find a DOM node based on the passed string.
+	 *
+	 * @param element - an element to resolve
 	 */
-	protected resolveEl(el: Required<TouchGesturesCreateOptions>['targetEl']): CanNull<Element> {
-		if (el instanceof Element) {
-			return el;
+	protected resolveElement(element: Required<TouchGesturesCreateOptions>['targetEl']): CanNull<Element> {
+		if (element instanceof Element) {
+			return element;
 		}
 
-		return document.querySelector(el);
+		return document.querySelector(element);
 	}
 
 }

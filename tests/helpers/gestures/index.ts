@@ -29,7 +29,11 @@ export default class Gestures {
 	}
 
 	/**
-	 * Dispatches a touch event
+	 * Dispatches a touch event.
+	 * This method is intended for use in cases where the standard functionality of
+	 * Gestures.create() is not suitable for solving your problem:
+	 * - if you want to emit a touch event over the entire document, and not over a specific element;
+	 * - if you need to pass several points in one event, then pass an array of coordinates as the third parameter.
 	 *
 	 * @param page
 	 * @param eventType
