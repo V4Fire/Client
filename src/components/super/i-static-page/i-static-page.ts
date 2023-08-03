@@ -13,6 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 
+import { Xor128 } from 'core/random/xor128';
 import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
 
@@ -134,6 +135,13 @@ export default abstract class iStaticPage extends iPage {
 	})
 
 	globalEnv!: GlobalEnvironment;
+
+	/**
+	 * An iterator for generating pseudo-random numbers.
+	 * It is used for generating identical component IDs during SSR and hydration.
+	 */
+	@system({atom: true})
+	random: IterableIterator<number> = new Xor128(19881989);
 
 	/**
 	 * The name of the active route page

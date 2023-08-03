@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import random from 'core/random/xor128';
 import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
@@ -58,7 +57,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	@system({
 		atom: true,
 		unique: (ctx, oldCtx) => !ctx.$el?.classList.contains(oldCtx.componentId),
-		init: () => `uid-${random().toString().slice(2)}`
+		init: (o) => `uid-${o.r.random.next().toString().slice(2)}`
 	})
 
 	override readonly componentId!: string;
