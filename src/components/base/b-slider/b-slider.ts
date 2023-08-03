@@ -35,6 +35,7 @@ import {
 
 import iSliderProps from 'components/base/b-slider/props';
 import type { Mode, SlideRect, SlideDirection } from 'components/base/b-slider/interface';
+import { autoSlidingAsyncGroup } from 'components/base/b-slider/const';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-slider/interface';
@@ -355,11 +356,11 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 				this.async.setInterval(
 					() => this.performAutoSlide(),
 					this.autoSlideInterval,
-					{label: $$.autoSlide}
+					{label: $$.autoSlide, group: autoSlidingAsyncGroup, join: false}
 				);
 			},
 			firstInterval,
-			{label: $$.autoSlideFirst}
+			{label: $$.autoSlideFirst, group: autoSlidingAsyncGroup, join: false}
 		);
 	}
 
@@ -367,8 +368,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * Clears auto slide moves.
 	 */
 	protected stopAutoSliding(): void {
-		this.async.clearTimeout({label: $$.autoSlideFirst});
-		this.async.clearInterval({label: $$.autoSlide});
+		this.async.clearAll({group: new RegExp(autoSlidingAsyncGroup)})
 	}
 
 	/**
