@@ -140,8 +140,11 @@ export default abstract class iStaticPage extends iPage {
 	 * An iterator for generating pseudo-random numbers.
 	 * It is used for generating identical component IDs during SSR and hydration.
 	 */
-	@system({atom: true})
-	random: IterableIterator<number> = new Xor128(19881989);
+	@system({atom: true, init: () => new Xor128(19881989)})
+	random!: IterableIterator<number>;
+
+	@system({after: 'random'})
+	override readonly componentId!: string;
 
 	/**
 	 * The name of the active route page

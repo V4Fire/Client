@@ -56,8 +56,11 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	@system({
 		atom: true,
-		unique: (ctx, oldCtx) => !ctx.$el?.classList.contains(oldCtx.componentId),
-		init: (o) => `uid-${o.r.random.next().toString().slice(2)}`
+		unique: (ctx, oldCtx) =>
+			!ctx.$el?.classList.contains(oldCtx.componentId),
+
+		init: (o, d) =>
+			`uid-${(Object.cast<CanUndef<typeof o.r.random>>(d['random']) ?? o.r.random).next().value.toString().slice(2)}`
 	})
 
 	override readonly componentId!: string;
