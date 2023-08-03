@@ -269,6 +269,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 			}
 
 			this.syncState();
+			this.performSliderMove();
 
 			return true;
 		}
@@ -476,6 +477,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 			});
 		}
 
+		void this.setMod('swipe', true);
 		this.performSliderMove();
 	}
 
