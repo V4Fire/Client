@@ -558,7 +558,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * @param firstInterval - an interval (in ms) before first auto slide change.
 	 */
 	protected resetAutoSlide(firstInterval: number): void {
-		this.clearAutoSlide();
+		this.stopAutoSlide();
 
 		if (!this.isSlideMode || !Number.isPositive(firstInterval)) {
 			return;
@@ -601,7 +601,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	/**
 	 * Clears auto slide moves.
 	 */
-	protected clearAutoSlide(): void {
+	protected stopAutoSlide(): void {
 		this.async.clearAll({group: /autoSlide/});
 	}
 
@@ -815,7 +815,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
-		this.clearAutoSlide();
+		this.stopAutoSlide();
 		this.scrolling = false;
 
 		const
