@@ -549,7 +549,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.async.setInterval(
 			() => this.performAutoSlide(),
 			this.autoSlideInterval,
-			{label: $$.autoSlide}
+			{label: $$.autoSlide, group: 'autoSlide'}
 		);
 	}
 
@@ -570,7 +570,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				this.playAutoSlide();
 			},
 			firstInterval,
-			{label: $$.autoSlideFirst}
+			{label: $$.autoSlideFirst, group: 'autoSlide'}
 		);
 	}
 
@@ -602,8 +602,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * Clears auto slide moves.
 	 */
 	protected clearAutoSlide(): void {
-		this.async.clearTimeout({label: $$.autoSlideFirst});
-		this.async.clearInterval({label: $$.autoSlide});
+		this.async.clearAll({group: /autoSlide/});
 	}
 
 	/**
