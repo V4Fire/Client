@@ -66,9 +66,6 @@
 	 * ```
 	 */
 	- block loadModules(path, opts = {}, content)
-		- if require('@config/config').webpack.ssr
-			- return
-
 		- if arguments.length < 3
 			? content = opts
 			? opts = {}
@@ -103,7 +100,8 @@
 			{{
 				void(moduleLoader.addToBucket('global', {
 					id: ${interpolatedId},
-					load: () => import('${path}')
+					load: () => import('${path}'),
+					ssr: false
 				}))
 			}}
 
