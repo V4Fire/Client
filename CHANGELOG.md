@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.55.0 (2023-08-04)
+
+#### :rocket: New Feature
+
+* Added auto-scrolling functionality to the slider `base/b-slider`
+
 ## v3.54.1 (2023-07-28)
 
 #### :bug: Bug Fix
