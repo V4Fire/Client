@@ -39,7 +39,7 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { sliderModes, alignTypes } from 'base/b-slider/const';
+import { sliderModes, alignTypes, autoSlidingAsyncGroup } from 'base/b-slider/const';
 import type { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
 
 export * from 'super/i-data/i-data';
@@ -244,6 +244,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Sets a pointer of the current slide
+	 *
+	 * @param value
 	 * @emits `change(current: number)`
 	 */
 	set current(value: number) {
@@ -431,7 +433,10 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return items ?? [];
 	}
 
-	/** @see [[iItems.items]] */
+	/**
+	 * @param value
+	 * @see [[iItems.items]]
+	 */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
@@ -469,23 +474,35 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Moves to the next or previous slide
-	 *
 	 * @param dir - direction
 	 */
 	moveSlide(dir: SlideDirection): boolean {
-		if (!this.content) {
-			return false;
+		let
+			{current} = this;
+
+		const
+			{length, content} = this;
+
+		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
+			if (content == null) {
+				return false;
+			}
+
+			current += dir;
+
+			if (dir < 0 && current < 0) {
+				current = length - 1;
+
+			} else if (dir > 0 && current > length - 1) {
+				current = 0;
+			}
+
+			this.current = current;
+			this.performSliderMove();
+			return true;
 		}
 
-		const newSlide = this.getNewSlide(dir);
-
-		if (newSlide == null) {
-			return false;
-		}
-
-		this.current = newSlide;
-		this.performSliderMove();
-		return true;
+		return false;
 	}
 
 	/** @see [[iObserveDOM.initDOMObservers]] */
@@ -503,62 +520,26 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Returns index of a new slide, if moving in given direction `dir`
-	 * @param dir - direction
-	 */
-	protected getNewSlide(dir: SlideDirection): number | null {
-		let
-			{current} = this;
-
-		const {
-			length
-		} = this;
-
-		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
-
-			current += dir;
-
-			if (dir < 0 && current < 0) {
-				current = length - 1;
-
-			} else if (dir > 0 && current > length - 1) {
-				current = 0;
-			}
-
-			return current;
-		}
-
-		return null;
-	}
-
-	/**
 	 * Performs auto slide change.
 	 */
 	protected async performAutoSlide(): Promise<void> {
-		const newSlide = this.getNewSlide(1);
+		const
+			{current, length} = this;
 
-		if (newSlide != null) {
-			await this.slideTo(newSlide, true);
+		if (current === length - 1) {
+			await this.slideTo(0, true);
+
+		} else {
+			await this.slideTo(current + 1, true);
 		}
-	}
-
-	/**
-	 * Plays auto slide changes at a given interval.
-	 */
-	protected playAutoSlide(): void {
-		this.async.setInterval(
-			() => this.performAutoSlide(),
-			this.autoSlideInterval,
-			{label: $$.autoSlide, group: 'autoSlide'}
-		);
 	}
 
 	/**
 	 * Resets auto slide moves
 	 * @param firstInterval - an interval (in ms) before first auto slide change.
 	 */
-	protected resetAutoSlide(firstInterval: number): void {
-		this.stopAutoSlide();
+	protected initAutoSliding(firstInterval: number = this.autoSlideInterval): void {
+		this.stopAutoSliding();
 
 		if (!this.isSlideMode || !Number.isPositive(firstInterval)) {
 			return;
@@ -567,11 +548,23 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.async.setTimeout(
 			async () => {
 				await this.performAutoSlide();
-				this.playAutoSlide();
+
+				this.async.setInterval(
+					() => this.performAutoSlide(),
+					this.autoSlideInterval,
+					{label: $$.autoSlide, group: autoSlidingAsyncGroup, join: false}
+				);
 			},
 			firstInterval,
-			{label: $$.autoSlideFirst, group: 'autoSlide'}
+			{label: $$.autoSlideFirst, group: autoSlidingAsyncGroup, join: false}
 		);
+	}
+
+	/**
+	 * Clears auto slide moves.
+	 */
+	protected stopAutoSliding(): void {
+		this.async.clearAll({group: new RegExp(autoSlidingAsyncGroup)});
 	}
 
 	/**
@@ -585,24 +578,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	@wait('ready')
 	@watch(['db', 'autoSlideInterval', 'mode'])
 	protected syncAutoSlide(): void {
-		this.resetAutoSlide(this.autoSlideInterval);
-	}
-
-	/**
-	 * Resumes auto slide moves. First auto slide move will occur in
-	 * `Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay)`
-	 */
-	protected resumeAutoSlide(): void {
-		this.resetAutoSlide(
-			Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay)
-		);
-	}
-
-	/**
-	 * Clears auto slide moves.
-	 */
-	protected stopAutoSlide(): void {
-		this.async.clearAll({group: /autoSlide/});
+		this.initAutoSliding(this.autoSlideInterval);
 	}
 
 	/**
@@ -688,6 +664,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
+	 * @param el
+	 * @param i
 	 * @deprecated
 	 * @see [[bSlider.getItemKey]]
 	 */
@@ -696,7 +674,11 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return this.getItemKey(el, i);
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/**
+	 * @param el
+	 * @param i
+	 * @see [[iItems.getItemKey]]
+	 */
 	protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, el, i);
 	}
@@ -815,7 +797,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
-		this.stopAutoSlide();
+		this.stopAutoSliding();
 		this.scrolling = false;
 
 		const
@@ -925,7 +907,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
-		this.resumeAutoSlide();
+		this.initAutoSliding(Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay));
 	}
 }
 
