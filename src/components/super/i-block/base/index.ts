@@ -13,7 +13,6 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { Xor128 } from 'core/random/xor128';
 import log, { LogMessageOptions } from 'core/log';
 
 import type Async from 'core/async';
@@ -152,9 +151,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * An iterator for generating pseudo-random numbers.
 	 * It is used for generating identical component IDs during SSR and hydration.
 	 */
-	@computed({cache: true})
 	get randomGenerator(): IterableIterator<number> {
-		return this.meta.params.root ? new Xor128(19881989) : this.r.randomGenerator;
+		return this.r.randomGenerator;
 	}
 
 	/**

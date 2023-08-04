@@ -13,6 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 
+import { Xor128 } from 'core/random/xor128';
 import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
 
@@ -178,6 +179,11 @@ export default abstract class iStaticPage extends iPage {
 		} catch {}
 
 		setLocale(value);
+	}
+
+	override get randomGenerator(): IterableIterator<number> {
+		this[$$.randomGenerator] ??= new Xor128(19881989);
+		return this[$$.randomGenerator];
 	}
 
 	/**
