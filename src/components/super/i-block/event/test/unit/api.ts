@@ -55,15 +55,15 @@ test.describe('<i-block> event API', () => {
 			const res: any[] = [];
 
 			ctx.on('foo', (ctx, ...args) => {
-				res.push((<bDummy>ctx).componentName, ...args);
+				res.push(['foo', (<bDummy>ctx).componentName, ...args]);
 			});
 
 			ctx.on('foo:component', (ctx, ...args) => {
-				res.push((<bDummy>ctx).componentName, ...args);
+				res.push(['foo:component', (<bDummy>ctx).componentName, ...args]);
 			});
 
 			ctx.on('onFoo', (...args) => {
-				res.push(...args);
+				res.push(['onFoo', ...args]);
 			});
 
 			ctx.emit('foo', 1, {a: 1});
@@ -71,7 +71,27 @@ test.describe('<i-block> event API', () => {
 			return res;
 		});
 
-		test.expect(scan).toEqual([componentName, 1, {a: 1}, 1, {a: 1}]);
+		test.expect(scan).toEqual([
+			[
+				'foo',
+				componentName,
+				1,
+				{a: 1}
+			],
+
+			[
+				'foo:component',
+				componentName,
+				1,
+				{a: 1}
+			],
+
+			[
+				'onFoo',
+				1,
+				{a: 1}
+			]
+		]);
 	});
 
 	test('should remove all event listeners when `off` is invoked without a handler', async ({page}) => {
