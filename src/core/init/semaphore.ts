@@ -60,18 +60,6 @@ function createAppInitializer() {
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
 				{renderToString} = require('vue/server-renderer');
 
-			let
-				{inject} = rootComponentParams;
-
-			if (Object.isArray(inject)) {
-				inject = Object.fromArray(inject, {value: (key) => key});
-			}
-
-			rootComponentParams.inject = {
-				...inject,
-				hydrationStore: 'hydrationStore'
-			};
-
 			const
 				hydrationStore = new HydrationStore(),
 				rootComponent = new Component(rootComponentParams);
