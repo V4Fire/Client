@@ -47,6 +47,7 @@ import * as browser from 'core/browser';
 import * as presets from 'presets';
 
 import type bRouter from 'base/b-router/b-router';
+import type { TransitionMethod } from 'base/b-router/b-router';
 import type iStaticPage from 'super/i-static-page/i-static-page';
 
 import {
@@ -424,6 +425,13 @@ export default abstract class iBlock extends ComponentInterface {
 	 */
 	@prop(Boolean)
 	readonly syncRouterStoreOnInit: boolean = false;
+
+	/**
+	 * Method that will be used for transitions when router synchronizes its state with the component's state
+	 * by using syncRouterState
+	 */
+	@prop(String)
+	readonly routerStateUpdateMethod: Exclude<TransitionMethod, 'event'> = 'push';
 
 	/**
 	 * If true, the component will skip waiting of remote providers to avoid redundant re-renders.
@@ -2440,7 +2448,7 @@ export default abstract class iBlock extends ComponentInterface {
 
 		if (Object.isDictionary(stateFields)) {
 			for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
-				res[keys[i]] = undefined;
+				res[keys[i]] = null;
 			}
 		}
 

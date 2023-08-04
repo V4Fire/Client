@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.54.1 (2023-07-28)
+
+#### :bug: Bug Fix
+
+* Fixed resetting router state
+
+## v3.54.0 (2023-07-28)
+
+#### :rocket: New Feature
+
+* Added possibility to change the method that will be used for transitions when the router
+  synchronizes its state with the component's state by using `syncRouterState`
+
 ## v3.0.0 (2021-07-27)
 
 #### :bug: Bug Fix
