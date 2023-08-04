@@ -15,7 +15,7 @@ import Component, {
 	destroyApp,
 
 	rootComponents,
-	hydrationStore,
+	HydrationStore,
 
 	ComponentElement
 
@@ -60,7 +60,23 @@ function createAppInitializer() {
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
 				{renderToString} = require('vue/server-renderer');
 
-			const rootComponent = new Component(rootComponentParams);
+			let
+				{inject} = rootComponentParams;
+
+			if (Object.isArray(inject)) {
+				inject = Object.fromArray(inject, {value: (key) => key});
+			}
+
+			rootComponentParams.inject = {
+				...inject,
+				hydrationStore: 'hydrationStore'
+			};
+
+			const
+				hydrationStore = new HydrationStore(),
+				rootComponent = new Component(rootComponentParams);
+
+			rootComponent.provide('hydrationStore', hydrationStore);
 			app.context = rootComponent;
 
 			try {

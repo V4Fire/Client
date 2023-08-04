@@ -23,7 +23,7 @@ export { bindRemoteWatchers, customWatcherRgxp } from 'core/component/watch';
 
 export { callMethodFromComponent } from 'core/component/method';
 export { normalizeClass, normalizeStyle } from 'core/component/render';
-export { default as hydrationStore } from 'core/component/hydration';
+export { default as hydrationStore, HydrationStore } from 'core/component/hydration';
 
 export {
 
