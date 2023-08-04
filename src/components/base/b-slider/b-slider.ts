@@ -368,7 +368,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * Clears auto slide moves.
 	 */
 	protected stopAutoSliding(): void {
-		this.async.clearAll({group: new RegExp(autoSlidingAsyncGroup)})
+		this.async.clearAll({group: new RegExp(autoSlidingAsyncGroup)});
 	}
 
 	/**
