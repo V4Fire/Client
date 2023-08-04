@@ -71,7 +71,7 @@ function tagFilter({name, attrs = {}}) {
 		return;
 	}
 
-	attrs[':get-root'] = ["() => 'getRoot' in self && getRoot != null ? getRoot() : $root"];
+	attrs[':get-root'] = ["() => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];
 
 	if (component.inheritMods !== false && !attrs[':mods-prop']) {
 		attrs[':mods-prop'] = ['sharedMods'];
