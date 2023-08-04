@@ -39,7 +39,7 @@ import iData, {
 
 } from 'super/i-data/i-data';
 
-import { sliderModes, alignTypes } from 'base/b-slider/const';
+import { sliderModes, alignTypes, autoSlidingAsyncGroup } from 'base/b-slider/const';
 import type { Mode, SlideRect, SlideDirection, AlignType } from 'base/b-slider/interface';
 
 export * from 'super/i-data/i-data';
@@ -104,6 +104,12 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	readonly alignFirstToStart: boolean = true;
 
 	/**
+	 * If true, the last slide will be aligned to the end position (the right bound).
+	 */
+	@prop(Boolean)
+	readonly alignLastToEnd: boolean = true;
+
+	/**
 	 * How much does the shift along the X-axis corresponds to a finger movement
 	 */
 	@prop({type: Number, validator: (v) => Number.isPositiveBetweenZeroAndOne(v)})
@@ -138,6 +144,20 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 */
 	@prop({type: Number, validator: (v) => Number.isNatural(v)})
 	readonly swipeToleranceY: number = 50;
+
+	/**
+	 * The interval (in ms) between auto slide moves. 0 means no auto slide moves.
+	 */
+	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
+	readonly autoSlideInterval: number = 0;
+
+	/**
+	 * The delay (in ms) between last user gesture and first auto slide move.
+	 * A maximum of `autoSlideInterval` and `autoSlidePostGestureDelay` will be used
+	 * as a timeout for the first auto slide move after user gesture.
+	 */
+	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
+	readonly autoSlidePostGestureDelay: number = 0;
 
 	/**
 	 * @deprecated
@@ -224,6 +244,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 	/**
 	 * Sets a pointer of the current slide
+	 *
+	 * @param value
 	 * @emits `change(current: number)`
 	 */
 	set current(value: number) {
@@ -267,8 +289,12 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			return 0;
 		}
 
-		if (current === 0 && this.alignFirstToStart) {
+		if (this.alignFirstToStart && current === 0) {
 			return 0;
+		}
+
+		if (this.alignLastToEnd && current === slideRects.length - 1) {
+			return slideRect.offsetLeft + slideRect.width - viewRect.width;
 		}
 
 		switch (align) {
@@ -279,7 +305,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				return slideRect.offsetLeft;
 
 			case 'end':
-				return slideRect.offsetLeft + slideRect.width;
+				return slideRect.offsetLeft + slideRect.width - viewRect.width;
 
 			default:
 				return 0;
@@ -407,7 +433,10 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return items ?? [];
 	}
 
-	/** @see [[iItems.items]] */
+	/**
+	 * @param value
+	 * @see [[iItems.items]]
+	 */
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
@@ -429,12 +458,13 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		if (length - 1 >= index) {
 			this.current = index;
 
-			if (!animate) {
+			if (animate) {
+				await this.removeMod('swipe');
+			} else {
 				await this.setMod('swipe', true);
 			}
 
 			this.syncState();
-			this.performSliderMove();
 
 			return true;
 		}
@@ -454,7 +484,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			{length, content} = this;
 
 		if (dir < 0 && current > 0 || dir > 0 && current < length - 1 || this.circular) {
-			if (!content) {
+			if (content == null) {
 				return false;
 			}
 
@@ -487,6 +517,68 @@ class bSlider extends iData implements iObserveDOM, iItems {
 				childList: true
 			});
 		}
+	}
+
+	/**
+	 * Performs auto slide change.
+	 */
+	protected async performAutoSlide(): Promise<void> {
+		const
+			{current, length} = this;
+
+		if (current === length - 1) {
+			await this.slideTo(0, true);
+
+		} else {
+			await this.slideTo(current + 1, true);
+		}
+	}
+
+	/**
+	 * Resets auto slide moves
+	 * @param firstInterval - an interval (in ms) before first auto slide change.
+	 */
+	protected initAutoSliding(firstInterval: number = this.autoSlideInterval): void {
+		this.stopAutoSliding();
+
+		if (!this.isSlideMode || !Number.isPositive(firstInterval)) {
+			return;
+		}
+
+		this.async.setTimeout(
+			async () => {
+				await this.performAutoSlide();
+
+				this.async.setInterval(
+					() => this.performAutoSlide(),
+					this.autoSlideInterval,
+					{label: $$.autoSlide, group: autoSlidingAsyncGroup, join: false}
+				);
+			},
+			firstInterval,
+			{label: $$.autoSlideFirst, group: autoSlidingAsyncGroup, join: false}
+		);
+	}
+
+	/**
+	 * Clears auto slide moves.
+	 */
+	protected stopAutoSliding(): void {
+		this.async.clearAll({group: new RegExp(autoSlidingAsyncGroup)});
+	}
+
+	/**
+	 * Synchronizes auto slide moves by (re-)setting the corresponding interval.
+	 *
+	 * Waiting for `ready` state because slides may be loaded via data provider.
+	 * Watching `db` for possible slide changes and `mode` because
+	 * auto slide only works in `slide` mode.
+	 */
+	@hook('mounted')
+	@wait('ready')
+	@watch(['db', 'autoSlideInterval', 'mode'])
+	protected syncAutoSlide(): void {
+		this.initAutoSliding(this.autoSlideInterval);
 	}
 
 	/**
@@ -572,6 +664,8 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	}
 
 	/**
+	 * @param el
+	 * @param i
 	 * @deprecated
 	 * @see [[bSlider.getItemKey]]
 	 */
@@ -580,7 +674,11 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		return this.getItemKey(el, i);
 	}
 
-	/** @see [[iItems.getItemKey]] */
+	/**
+	 * @param el
+	 * @param i
+	 * @see [[iItems.getItemKey]]
+	 */
 	protected getItemKey(el: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, el, i);
 	}
@@ -614,7 +712,6 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			});
 		}
 
-		void this.setMod('swipe', true);
 		this.performSliderMove();
 	}
 
@@ -700,6 +797,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
+		this.stopAutoSliding();
 		this.scrolling = false;
 
 		const
@@ -809,6 +907,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
+		this.initAutoSliding(Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay));
 	}
 }
 

@@ -6,6 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+export const
+	sliderAsyncGroup = 'b-slider',
+	autoSlidingAsyncGroup = `${sliderAsyncGroup}:autoSliding`;
+
 export const alignTypes = {
 	start: true,
 	center: true,

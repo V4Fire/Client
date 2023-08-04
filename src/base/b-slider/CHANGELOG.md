@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.55.0 (2023-08-04)
+
+#### :rocket: New Feature
+
+* Added new prop `alignLastToEnd` which is similar to existing `alignFirstToStart` and is also `true` by default.
+* Added new prop `autoSlideInterval`
+* Added new prop `autoSlidePostGestureDelay`
+
+#### :bug: Bug Fix
+
+* Fixed incorrect `align="end"` behaviour
+
 ## v3.44.2 (2023-03-29)
 
 #### :house: Internal

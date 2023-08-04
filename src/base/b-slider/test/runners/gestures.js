@@ -30,7 +30,7 @@ module.exports = (page, {browser, contextOpts}) => {
 		context,
 		gesture;
 
-	const slidesOffset = [0, -262, -562, -862];
+	const slidesOffset = [0, -262, -562, -825];
 
 	const
 		idle = () => h.bom.waitForIdleCallback(page);
