@@ -79,7 +79,7 @@
 		.
 
 		- if SSR
-			- if paths.length > 1 || wait
+			- if paths.length > 0 || wait
 				? wait = '() => { const {Promise} = global; return new Promise(() => {}); }'
 
 		: &

@@ -13,9 +13,12 @@ import makeLazy from 'core/lazy';
 import { createApp, createSSRApp, defineAsyncComponent, App, Component } from 'vue';
 import type { CreateAppFunction } from 'core/component/engines/interface';
 
+let
+	needHydrate = HYDRATION;
+
 const NewApp = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
-	const
-		app = Object.create((HYDRATION ? createSSRApp : createApp)(component, rootProps));
+	const app = Object.create((needHydrate ? createSSRApp : createApp)(component, rootProps));
+	needHydrate = false;
 
 	if (component.el != null) {
 		setImmediate(() => {
