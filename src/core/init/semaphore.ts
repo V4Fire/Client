@@ -28,7 +28,10 @@ const semaphore = createsAsyncSemaphore(createAppInitializer, ...flags);
 
 export default semaphore;
 
-if (!SSR) {
+if (SSR) {
+	process.on('unhandledRejection', stderr);
+
+} else {
 	resolveAfterDOMLoaded()
 		.then(async () => {
 			const

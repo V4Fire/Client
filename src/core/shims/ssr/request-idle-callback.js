@@ -15,7 +15,7 @@ if (typeof process === 'object' && typeof GLOBAL['requestIdleCallback'] === 'und
 		GLOBAL['requestIdleCallback'] = function requestIdleCallback(cb, options) {
 			var timeout = options != null && options.timeout != null ?
 				options.timeout :
-				Math.floor(Math.random() * 30);
+				Math.floor(Math.random() * 30) + 1;
 
 			return setTimeout(handler, timeout);
 
