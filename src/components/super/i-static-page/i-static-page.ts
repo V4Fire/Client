@@ -137,6 +137,13 @@ export default abstract class iStaticPage extends iPage {
 	globalEnv!: GlobalEnvironment;
 
 	/**
+	 * If set to true, the randomGenerator will produce dynamic values, meaning values that are different each time.
+	 * This mode is necessary for integrating asynchronous rendering and server-side rendering (SSR).
+	 */
+	@system()
+	generateDynamicIds: boolean = false;
+
+	/**
 	 * The name of the active route page
 	 */
 	@computed({cache: true, dependencies: ['route.meta.name']})
@@ -182,6 +189,18 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	override get randomGenerator(): IterableIterator<number> {
+		if (this.generateDynamicIds) {
+			return {
+				[Symbol.iterator]() {
+					return this;
+				},
+
+				next() {
+					return {done: false, value: Math.random()};
+				}
+			};
+		}
+
 		this[$$.randomGenerator] ??= new Xor128(19881989);
 		return this[$$.randomGenerator];
 	}
