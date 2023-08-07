@@ -66,8 +66,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * 3. `on-${event}`(...args)
 	 *
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
-	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+	 * the group/label to which the listener is attached.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @example
 	 * ```js
@@ -97,8 +98,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * and do not bubble up. Also, such events can be listened to by a wildcard mask.
 	 *
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
-	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+	 * the group/label to which the listener is attached.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @example
 	 * ```js
@@ -163,8 +165,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * To avoid memory leaks, only this emitter is used to listen for root events.
 	 *
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
-	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+	 * the group/label to which the listener is attached.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @example
 	 * ```js
@@ -185,11 +188,12 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The global event emitter located in `core/component/event`.
 	 *
 	 * This emitter should be used to listen for external events, such as events coming over a WebSocket connection, etc.
-	 * Also, such events can be listened to by a wildcard mask. To avoid memory leaks, only this emitter is used to listen
-	 * for global events.
+	 * Also, such events can be listened to by a wildcard mask.
+	 * To avoid memory leaks, only this emitter is used to listen for global events.
 	 *
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
+	 * the group/label to which the listener is attached.
+	 * By default, all listeners have a group name equal to
 	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
 	 *
 	 * @see `core/component/event`
@@ -252,8 +256,9 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * Detaches an event listener from the component.
 	 *
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
-	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+	 * the group/label to which the listener is attached.
+	 * By default, all listeners have a group name equal to the event name being listened to.
+	 * If nothing is specified, then all component event listeners will be detached.
 	 * {@link Async.off}
 	 *
 	 * @param [opts] - additional options
@@ -384,12 +389,12 @@ export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * Emits a component event to the parent component.
 	 *
-	 * This means that all component events will bubble up to the parent component:
-	 * if the parent also has the `dispatching` property set to true, then events will bubble up to the next
+	 * This means that all component events will bubble up to the parent component.
+	 * If the parent also has the `dispatching` property set to true, then events will bubble up to the next
 	 * (from the hierarchy) parent component.
 	 *
 	 * All dispatched events have special prefixes to avoid collisions with events from other components.
-	 * For example: bButton `click` will bubble up as `b-button::click`.
+	 * For example, bButton `click` will bubble up as `b-button::click`.
 	 * Or if the component has the `globalName` prop, it will additionally bubble up as `${globalName}::click`.
 	 *
 	 * In addition, all emitted events are automatically logged using the `log` method.

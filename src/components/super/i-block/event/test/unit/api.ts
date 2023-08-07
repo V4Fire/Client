@@ -28,15 +28,15 @@ test.describe('<i-block> event API', () => {
 		const scan = await target.evaluate((ctx) => {
 			const res: any[] = [];
 
-			ctx.on('onFoo_bar', (...args) => {
+			ctx.on('onFoo_bar', (...args: any[]) => {
 				res.push(...args);
 			});
 
-			ctx.on('onFoo-bar', (...args) => {
+			ctx.on('onFoo-bar', (...args: any[]) => {
 				res.push(...args);
 			});
 
-			ctx.on('onFooBar', (...args) => {
+			ctx.on('onFooBar', (...args: any[]) => {
 				res.push(...args);
 			});
 
@@ -52,18 +52,18 @@ test.describe('<i-block> event API', () => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
-			const res: any[] = [];
+			const res: Array<Dictionary<any[]>> = [];
 
-			ctx.on('foo', (ctx, ...args) => {
-				res.push(['foo', (<bDummy>ctx).componentName, ...args]);
+			ctx.on('foo', (ctx: bDummy, ...args: any[]) => {
+				res.push({foo: [ctx.componentName, ...args]});
 			});
 
-			ctx.on('foo:component', (ctx, ...args) => {
-				res.push(['foo:component', (<bDummy>ctx).componentName, ...args]);
+			ctx.on('foo:component', (ctx: bDummy, ...args: any[]) => {
+				res.push({'foo:component': [ctx.componentName, ...args]});
 			});
 
-			ctx.on('onFoo', (...args) => {
-				res.push(['onFoo', ...args]);
+			ctx.on('onFoo', (...args: any[]) => {
+				res.push({onFoo: args});
 			});
 
 			ctx.emit('foo', 1, {a: 1});
@@ -72,25 +72,9 @@ test.describe('<i-block> event API', () => {
 		});
 
 		test.expect(scan).toEqual([
-			[
-				'foo',
-				componentName,
-				1,
-				{a: 1}
-			],
-
-			[
-				'foo:component',
-				componentName,
-				1,
-				{a: 1}
-			],
-
-			[
-				'onFoo',
-				1,
-				{a: 1}
-			]
+			{foo: [componentName, 1, {a: 1}]},
+			{'foo:component': [componentName, 1, {a: 1}]},
+			{onFoo: [1, {a: 1}]}
 		]);
 	});
 
@@ -100,11 +84,11 @@ test.describe('<i-block> event API', () => {
 		const scan = await target.evaluate((ctx) => {
 			const res: any[] = [];
 
-			ctx.on('foo', (ctx, ...args) => {
-				res.push((<bDummy>ctx).componentName, ...args);
+			ctx.on('foo', (ctx: bDummy, ...args: any[]) => {
+				res.push(ctx.componentName, ...args);
 			});
 
-			ctx.on('onFoo', (...args) => {
+			ctx.on('onFoo', (...args: any[]) => {
 				res.push(...args);
 			});
 
@@ -122,41 +106,45 @@ test.describe('<i-block> event API', () => {
 		test.expect(scan).toEqual([componentName, 1, {a: 1}]);
 	});
 
-	test('matching event listeners should be removed via `async.off`', async ({page}) => {
-		const target = await renderDummy(page);
+	test(
+		'when passing a group to the off method, only the handlers that are in the specified group should be removed',
 
-		const scan = await target.evaluate((ctx) => {
-			const res: any[] = [];
+		async ({page}) => {
+			const target = await renderDummy(page);
 
-			ctx.on('foo', (ctx, ...args) => {
-				res.push((<bDummy>ctx).componentName, ...args);
+			const scan = await target.evaluate((ctx) => {
+				const res: any[] = [];
+
+				ctx.on('foo', (ctx: bDummy, ...args: any[]) => {
+					res.push(ctx.componentName, ...args);
+				});
+
+				ctx.on('onFoo', (...args: any[]) => {
+					res.push(...args);
+				}, {group: 'bar'});
+
+				ctx.off({group: 'bar'});
+				ctx.emit('foo', 1, {a: 1});
+
+				return res;
 			});
 
-			ctx.on('onFoo', (...args) => {
-				res.push(...args);
-			}, {group: 'bar'});
-
-			ctx.unsafe.async.off({group: 'bar'});
-			ctx.emit('foo', 1, {a: 1});
-
-			return res;
-		});
-
-		test.expect(scan).toEqual([componentName, 1, {a: 1}]);
-	});
+			test.expect(scan).toEqual([componentName, 1, {a: 1}]);
+		}
+	);
 
 	test('the listener should be called once when it was set using `once` method', async ({page}) => {
 		const target = await renderDummy(page);
 
 		const scan = await target.evaluate((ctx) => {
-			const res: any[] = [];
+			const res: Array<Dictionary<any[]>> = [];
 
-			ctx.on('foo', (ctx, ...args) => {
-				res.push((<bDummy>ctx).componentName, ...args);
+			ctx.on('onFoo', (...args: any[]) => {
+				res.push({on: args});
 			});
 
-			ctx.once('onFoo', (...args) => {
-				res.push(...args);
+			ctx.once('onFoo', (...args: any[]) => {
+				res.push({once: args});
 			});
 
 			ctx.emit('foo', 1, {a: 1});
@@ -166,16 +154,9 @@ test.describe('<i-block> event API', () => {
 		});
 
 		test.expect(scan).toEqual([
-			componentName,
-			1,
-			{a: 1},
-
-			1,
-			{a: 1},
-
-			componentName,
-			2,
-			{a: 2}
+			{on: [1, {a: 1}]},
+			{once: [1, {a: 1}]},
+			{on: [2, {a: 2}]}
 		]);
 	});
 
@@ -185,137 +166,130 @@ test.describe('<i-block> event API', () => {
 		const scan = await target.evaluate((ctx) => {
 			const res = ctx.promisifyOnce('onFoo');
 			ctx.emit('foo', 1, {a: 1});
-
 			return res;
 		});
 
 		test.expect(scan).toEqual(1);
 	});
 
-	test.describe('event dispatching', () => {
-		test('should dispatch events on the `rootEmitter` prefixed with the component name', async ({page}) => {
-			const target = await renderDummy(page, {
-				dispatching: true
-			});
+	test.describe('if the dispatching prop is set to true, then events start to bubble up to the parent component', () => {
+		test(
+			'the emitted events by the parent component should have a special prefix `$componentName::`',
 
-			const scan = await target.evaluate((ctx) => {
-				const res: any[] = [];
-
-				ctx.on('onFoo', (...args) => {
-					res.push(...args);
+			async ({page}) => {
+				const target = await renderDummy(page, {
+					dispatching: true
 				});
 
-				ctx.unsafe.rootEmitter.on(`${componentName}::foo`, (ctx, ...args) => {
-					res.push((<bDummy>ctx).componentName, ...args);
+				const scan = await target.evaluate((ctx) => {
+					const res: Array<Dictionary<any[]>> = [];
+
+					ctx.unsafe.parentEmitter.on(`${componentName}::foo`, (ctx: bDummy, ...args: any[]) => {
+						res.push({[`${componentName}::foo`]: [ctx.componentName, ...args]});
+					});
+
+					ctx.unsafe.parentEmitter.on(`${componentName}::onFoo`, (...args: any[]) => {
+						res.push({[`${componentName}::onFoo`]: args});
+					});
+
+					ctx.emit('foo', 1, {a: 1});
+
+					return res;
 				});
 
-				ctx.unsafe.rootEmitter.on(`${componentName}::onFoo`, (...args) => {
-					res.push(...args);
-				});
-
-				ctx.emit('foo', 1, {a: 1});
-
-				return res;
-			});
-
-			test.expect(scan).toEqual([1, {a: 1}, componentName, 1, {a: 1}, 1, {a: 1}]);
-		});
-
-		test('should dispatch events on the `rootEmitter` prefixed with the specified `globalName`', async ({page}) => {
-			const globalName = 'baz';
-
-			const target = await renderDummy(page, {
-				dispatching: true,
-				globalName
-			});
-
-			const scan = await target.evaluate((ctx, globalName) => {
-				const res: any[] = [];
-
-				ctx.on('onFoo', (...args) => {
-					res.push(...args);
-				});
-
-				ctx.unsafe.rootEmitter.on(`${componentName}::foo`, (ctx, ...args) => {
-					res.push((<bDummy>ctx).componentName, ...args);
-				});
-
-				ctx.unsafe.rootEmitter.on(`${componentName}::onFoo`, (...args) => {
-					res.push(...args);
-				});
-
-				ctx.unsafe.rootEmitter.on(`${globalName}::foo`, (ctx, ...args) => {
-					res.push((<bDummy>ctx).componentName, ...args);
-				});
-
-				ctx.unsafe.rootEmitter.on(`${globalName}::onFoo`, (...args) => {
-					res.push(...args);
-				});
-
-				ctx.emit('foo', 1, {a: 1});
-
-				return res;
-			}, globalName);
-
-			test.expect(scan).toEqual([
-				1,
-				{a: 1},
-
-				componentName,
-				1,
-				{a: 1},
-
-				1,
-				{a: 1},
-
-				componentName,
-				1,
-				{a: 1},
-
-				1,
-				{a: 1}
-			]);
-		});
-
-		test([
-			'should dispatch events on the `rootEmitter` without any prefixes',
-			'when the root component has `selfDispatching = true`'
-		].join(' '), async ({page}) => {
-			const target = await renderDummy(page, {
-				dispatching: true
-			});
-
-			const scan = await target.evaluate((ctx) => {
-				const res: any[] = [];
-
-				Object.set(ctx.r, 'selfDispatching', true);
-
-				ctx.on('onFoo', (...args) => {
-					res.push(...args);
-				});
-
-				ctx.unsafe.rootEmitter.on('foo', (ctx, ...args) => {
-					res.push((<bDummy>ctx).componentName, ...args);
-				});
-
-				ctx.unsafe.rootEmitter.on('onFoo', (...args) => {
-					res.push(...args);
-				});
-
-				ctx.emit('foo', 1, {a: 1});
-				Object.set(ctx.r, 'selfDispatching', false);
-
-				return res;
-			});
-
-			test.expect(scan).toEqual([1, {a: 1}, componentName, 1, {a: 1}, 1, {a: 1}]);
-		});
+				test.expect(scan).toEqual([
+					{[`${componentName}::foo`]: [componentName, 1, {a: 1}]},
+					{[`${componentName}::onFoo`]: [1, {a: 1}]}
+				]);
+			}
+		);
 
 		test(
 			[
-				'shouldn\'t dispatch hook events on the `rootEmitter`',
-				'when the root component has `selfDispatching = true`'
-			].join(' '),
+				'if the `globalName` prop is specified, ',
+				'the parent component should additionally emit events with the prefix `$globalName::`'
+			].join(''),
+
+			async ({page}) => {
+				const globalName = 'baz';
+
+				const target = await renderDummy(page, {
+					dispatching: true,
+					globalName
+				});
+
+				const scan = await target.evaluate((ctx, globalName) => {
+					const res: Array<Dictionary<any[]>> = [];
+
+					ctx.unsafe.parentEmitter.on(`${componentName}::foo`, (ctx: bDummy, ...args: any[]) => {
+						res.push({[`${componentName}::foo`]: [ctx.componentName, ...args]});
+					});
+
+					ctx.unsafe.parentEmitter.on(`${componentName}::onFoo`, (...args: any[]) => {
+						res.push({[`${componentName}::onFoo`]: args});
+					});
+
+					ctx.unsafe.parentEmitter.on(`${globalName}::foo`, (ctx: bDummy, ...args: any[]) => {
+						res.push({[`${globalName}::foo`]: [ctx.componentName, ...args]});
+					});
+
+					ctx.unsafe.parentEmitter.on(`${globalName}::onFoo`, (...args: any[]) => {
+						res.push({[`${globalName}::onFoo`]: args});
+					});
+
+					ctx.emit('foo', 1, {a: 1});
+
+					return res;
+				}, globalName);
+
+				test.expect(scan).toEqual([
+					{[`${componentName}::foo`]: [componentName, 1, {a: 1}]},
+					{[`${componentName}::onFoo`]: [1, {a: 1}]},
+					{[`${globalName}::foo`]: [componentName, 1, {a: 1}]},
+					{[`${globalName}::onFoo`]: [1, {a: 1}]}
+				]);
+			}
+		);
+
+		test(
+			[
+				'if the `selfDispatching` prop of the parent component is set to true, ',
+				'it should emit events without any prefixes'
+			].join(''),
+
+			async ({page}) => {
+				const target = await renderDummy(page, {
+					dispatching: true
+				});
+
+				const scan = await target.evaluate((ctx) => {
+					const res: Array<Dictionary<any[]>> = [];
+
+					Object.set(ctx.$parent, 'selfDispatching', true);
+
+					ctx.unsafe.parentEmitter.on('foo', (ctx: bDummy, ...args: any[]) => {
+						res.push({foo: [ctx.componentName, ...args]});
+					});
+
+					ctx.unsafe.parentEmitter.on('onFoo', (...args: any[]) => {
+						res.push({onFoo: args});
+					});
+
+					ctx.emit('foo', 1, {a: 1});
+					Object.set(ctx.$parent, 'selfDispatching', false);
+
+					return res;
+				});
+
+				test.expect(scan).toEqual([
+					{foo: [componentName, 1, {a: 1}]},
+					{onFoo: [1, {a: 1}]}
+				]);
+			}
+		);
+
+		test(
+			'lifecycle events should not bubble up to components with the `selfDispatching` prop set to true',
 
 			async ({page}) => {
 				const target = await renderDummy(page, {
@@ -325,31 +299,23 @@ test.describe('<i-block> event API', () => {
 				const scan = await target.evaluate((ctx) => {
 					const res: any[] = [];
 
-					Object.set(ctx.r, 'selfDispatching', true);
+					Object.set(ctx.$parent, 'selfDispatching', true);
 
-					ctx.on('onHook:beforeDestroy', (...args) => {
-						res.push(...args);
+					ctx.unsafe.parentEmitter.on('onHook:beforeDestroy', (ctx: bDummy, ...args: any[]) => {
+						res.push(ctx.componentName, ...args);
 					});
 
-					ctx.on('onComponentStatus:destroyed', (...args) => {
-						res.push(...args);
-					});
-
-					ctx.unsafe.rootEmitter.on('onHook:beforeDestroy', (ctx, ...args) => {
-						res.push((<bDummy>ctx).componentName, ...args);
-					});
-
-					ctx.unsafe.rootEmitter.on('onComponentStatus:destroyed', (ctx, ...args) => {
-						res.push((<bDummy>ctx).componentName, ...args);
+					ctx.unsafe.parentEmitter.on('onComponentStatus:destroyed', (ctx: bDummy, ...args: any[]) => {
+						res.push(ctx.componentName, ...args);
 					});
 
 					ctx.unsafe.$destroy();
-					Object.set(ctx.r, 'selfDispatching', false);
+					Object.set(ctx.$parent, 'selfDispatching', false);
 
 					return res;
 				});
 
-				test.expect(scan).toEqual(['beforeDestroy', 'mounted', 'destroyed', 'ready']);
+				test.expect(scan).toEqual([]);
 			}
 		);
 	});

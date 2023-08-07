@@ -29,11 +29,11 @@ test.describe('<i-block> standard events', () => {
 		const scan = await target.evaluate((ctx) => {
 			const res: any[] = [];
 
-			ctx.on('onHook:beforeDestroy', (...args) => {
+			ctx.on('onHook:beforeDestroy', (...args: any[]) => {
 				res.push(Array.concat(args, 'specific'));
 			});
 
-			ctx.on('onHookChange', (...args) => {
+			ctx.on('onHookChange', (...args: any[]) => {
 				res.push(Array.concat(args, 'change'));
 			});
 
@@ -63,11 +63,11 @@ test.describe('<i-block> standard events', () => {
 			const scan = await target.evaluate((ctx) => {
 				const res: any[] = [];
 
-				ctx.on('onComponentStatus:destroyed', (...args) => {
+				ctx.on('onComponentStatus:destroyed', (...args: any) => {
 					res.push(args);
 				});
 
-				ctx.on('onComponentStatusChange', (...args) => {
+				ctx.on('onComponentStatusChange', (...args: any) => {
 					res.push(args);
 				});
 
@@ -100,6 +100,7 @@ test.describe('<i-block> standard events', () => {
 					if(ctx: bDummy) {
 						return ctx.componentName === componentName;
 					},
+
 					then() {
 						res.push(1);
 					}
@@ -109,6 +110,7 @@ test.describe('<i-block> standard events', () => {
 					if(ctx: bDummy) {
 						return ctx.instance instanceof ctx.instance.constructor;
 					},
+
 					then() {
 						res.push(2);
 					}
@@ -118,6 +120,7 @@ test.describe('<i-block> standard events', () => {
 					if(ctx: bDummy) {
 						return ctx.globalName === 'foo';
 					},
+
 					then() {
 						res.push(3);
 					}
