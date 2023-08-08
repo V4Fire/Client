@@ -342,7 +342,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
-		hydration(def = this.ssr) {
+		hydration(def = false) {
 			return o('hydration', {
 				env: true,
 				type: 'boolean',

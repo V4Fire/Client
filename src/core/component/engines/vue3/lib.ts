@@ -14,11 +14,15 @@ import { createApp, createSSRApp, defineAsyncComponent, App, Component } from 'v
 import type { CreateAppFunction } from 'core/component/engines/interface';
 
 let
-	needHydrate = HYDRATION;
+	ssrContext = SSR || HYDRATION;
 
 const NewApp = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
-	const app = Object.create((needHydrate ? createSSRApp : createApp)(component, rootProps));
-	needHydrate = false;
+	const app = Object.create((ssrContext ? createSSRApp : createApp)(component, rootProps));
+
+	// Application hydration is done only once during initialization
+	if (HYDRATION) {
+		ssrContext = false;
+	}
 
 	if (component.el != null) {
 		setImmediate(() => {
