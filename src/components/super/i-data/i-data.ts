@@ -86,7 +86,7 @@ export default abstract class iData extends iDataHandlers {
 				this.emit('initLoadStart', opts);
 			}
 
-			if (!this.isReadyOnce && hydrationStore.has(this.componentId)) {
+			if (HYDRATION && !this.isReadyOnce && hydrationStore.has(this.componentId)) {
 				return callSuper();
 			}
 
