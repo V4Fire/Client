@@ -370,7 +370,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 * @param [route] - the application route object
 	 */
 	protected getKeepAliveStrategy(page: CanUndef<string>, route: this['route'] = this.route): KeepAliveStrategy {
-		const loopbackStrategy = {
+		const loopbackStrategy: KeepAliveStrategy = {
 			isLoopback: true,
 			has: () => false,
 			get: () => undefined,
@@ -402,7 +402,7 @@ export default class bDynamicPage extends iDynamicPage {
 		const
 			globalCache = this.keepAliveCache.global!;
 
-		const globalStrategy = {
+		const globalStrategy: KeepAliveStrategy = {
 			isLoopback: false,
 			has: () => globalCache.has(cacheKey),
 			get: () => globalCache.get(cacheKey),
