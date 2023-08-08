@@ -638,5 +638,16 @@ export default abstract class iBlockBase extends iBlockFriends {
 	@hook({beforeRuntime: {functional: false}})
 	protected initBaseAPI(): void {
 		this.watch = this.instance.watch.bind(this);
+
+		if (!this.meta.params.root) {
+			Object.defineProperty(this, 'hydrationStore', {
+				enumerable: true,
+				configurable: true,
+
+				get() {
+					return this.r.hydrationStore;
+				}
+			});
+		}
 	}
 }

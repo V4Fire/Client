@@ -151,19 +151,5 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 		}
 	};
 
-	if (SSR) {
-		let
-			{inject} = vueComponent;
-
-		if (Object.isArray(inject)) {
-			inject = Object.fromArray(inject, {value: (key) => key});
-		}
-
-		vueComponent.inject = {
-			...inject,
-			hydrationStore: 'hydrationStore'
-		};
-	}
-
 	return vueComponent;
 }
