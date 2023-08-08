@@ -37,7 +37,7 @@ import {
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
-import { field, system, computed, hook, wait } from 'components/super/i-block/decorators';
+import { field, system, prop, computed, hook, wait } from 'components/super/i-block/decorators';
 import { activate, deactivate } from 'components/super/i-block/modules/activation';
 import { initRemoteWatchers } from 'components/super/i-block/modules/listeners';
 
@@ -55,39 +55,19 @@ export default abstract class iBlockBase extends iBlockFriends {
 	override readonly Root!: iStaticPage;
 	override readonly $root!: this['Root'];
 
+	/**
+	 * Component id prop
+	 */
+	@prop({type: Number, required: false})
+	componentIdProp?: number;
+
 	@system({
 		atom: true,
 		unique: (ctx, oldCtx) =>
 			!ctx.$el?.classList.contains(oldCtx.componentId),
 
-		init: (o) => {
-			let
-				id: CanUndef<string>;
-
-			if (o.$parent != null) {
-				const
-					parentId = o.$parent.componentId;
-
-				const idsStore = Object.cast<string[]>(
-					(SSR ? o.hydrationStore! : hydrationStore).get('componentIds')?.[parentId] ?? []
-				);
-
-				if (HYDRATION) {
-					id = idsStore.shift();
-
-				} else if (SSR) {
-					id = getId();
-					idsStore.push(id);
-					o.hydrationStore!.set('componentIds', parentId, idsStore);
-				}
-			}
-
-			return id ?? getId();
-
-			function getId() {
-				return `uid-${o.randomGenerator.next().value.toString().slice(2)}`;
-			}
-		}
+		init: (o) =>
+			`uid-${(o.componentIdProp ?? o.randomGenerator.next().value).toString().slice(2)}`
 	})
 
 	override readonly componentId!: string;

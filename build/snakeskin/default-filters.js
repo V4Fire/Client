@@ -14,6 +14,9 @@ const
 
 const
 	{webpack} = require('@config/config'),
+	{Xor128} = require('@v4fire/core/lib/core/random/xor128');
+
+const
 	{validators} = require('@pzlr/build-core'),
 	{isV4Prop} = include('build/snakeskin/filters/const');
 
@@ -28,6 +31,9 @@ const
 const
 	TYPE_OF = Symbol('Type of component to create'),
 	SMART_PROPS = Symbol('Smart component props');
+
+const randomGenerator = new Xor128(19881989);
+randomGenerator.next();
 
 const bind = {
 	bind: [
@@ -71,6 +77,7 @@ function tagFilter({name, attrs = {}}) {
 		return;
 	}
 
+	attrs[':component-id-prop'] = [JSON.stringify(randomGenerator.next().value)];
 	attrs[':get-root'] = ["() => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];
 
 	if (component.inheritMods !== false && !attrs[':mods-prop']) {
