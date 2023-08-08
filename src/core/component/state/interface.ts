@@ -7,7 +7,7 @@
  */
 
 import type { Experiments } from 'core/abt';
-import type { InitialRoute } from 'core/router';
+import type { InitialRoute, AppliedRoute } from 'core/router';
 
 export interface State {
 	/**
@@ -31,10 +31,10 @@ export interface State {
 	experiments?: Experiments;
 
 	/**
-	 * The initial route for initializing the router.
-	 * Usually, this value is used during SSR.
+	 * Initial value for the active route.
+	 * This field is typically used in cases of SSR and hydration.
 	 */
-	route?: InitialRoute;
+	route?: InitialRoute | AppliedRoute;
 
 	/**
 	 * An object whose properties will extend the global object.

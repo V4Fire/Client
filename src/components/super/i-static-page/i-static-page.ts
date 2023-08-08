@@ -118,11 +118,11 @@ export default abstract class iStaticPage extends iPage {
 	lastOnlineDate?: Date;
 
 	/**
-	 * The initial route for initializing the router.
-	 * Usually, this value is used during SSR.
+	 * Initial value for the active route.
+	 * This field is typically used in cases of SSR and hydration.
 	 */
 	@system(() => remoteState.route)
-	initialRoute?: InitialRoute;
+	initialRoute?: InitialRoute | this['CurrentPage'];
 
 	/**
 	 * An object whose properties will extend the global object.
@@ -209,7 +209,7 @@ export default abstract class iStaticPage extends iPage {
 	 * The route information object store
 	 * {@link iStaticPage.route}
 	 */
-	@field()
+	@field<iStaticPage>((o) => SSR ? undefined : o.initialRoute)
 	protected routeStore?: this['CurrentPage'];
 
 	/**
