@@ -270,6 +270,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
+	 * @inheritDoc
 	 * @param name
 	 * @param value
 	 * @param [component] - an instance of the component that wants to set the modifier
@@ -322,6 +323,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
+	 * @inheritDoc
 	 * @param name
 	 * @param [value]
 	 * @param [component] - an instance of the component that wants to remove the modifier
@@ -364,6 +366,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
+	 * @inheritDoc
 	 * @param name
 	 * @param [component] - an instance of the component that wants to get the modifier
 	 */
