@@ -27,6 +27,7 @@ import {
 
 	bindRemoteWatchers,
 	customWatcherRgxp,
+	hydrationStore,
 
 	RawWatchHandler,
 	WatchPath
@@ -59,8 +60,34 @@ export default abstract class iBlockBase extends iBlockFriends {
 		unique: (ctx, oldCtx) =>
 			!ctx.$el?.classList.contains(oldCtx.componentId),
 
-		init: (o) =>
-			`uid-${o.randomGenerator.next().value.toString().slice(2)}`
+		init: (o) => {
+			let
+				id: CanUndef<string>;
+
+			if (o.$parent != null) {
+				const
+					parentId = o.$parent.componentId;
+
+				const idsStore = Object.cast<string[]>(
+					(SSR ? o.hydrationStore! : hydrationStore).get('componentIds')?.[parentId] ?? []
+				);
+
+				if (HYDRATION) {
+					id = idsStore.shift();
+
+				} else if (SSR) {
+					id = getId();
+					idsStore.push(id);
+					o.hydrationStore!.set('componentIds', parentId, idsStore);
+				}
+			}
+
+			return id ?? getId();
+
+			function getId() {
+				return `uid-${o.randomGenerator.next().value.toString().slice(2)}`;
+			}
+		}
 	})
 
 	override readonly componentId!: string;
