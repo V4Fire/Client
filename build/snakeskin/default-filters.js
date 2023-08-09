@@ -86,7 +86,7 @@ function tagFilter({name, attrs = {}}, tplName) {
 			'data-cached-class-component-id',
 			':data-cached-class-component-id'
 		])
-	]));
+	])).slice(0, 10);
 
 	attrs[':component-id-prop'] = [JSON.stringify(id)];
 	attrs[':get-root'] = ["() => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];

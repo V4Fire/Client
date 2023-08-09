@@ -27,7 +27,6 @@ import {
 
 	bindRemoteWatchers,
 	customWatcherRgxp,
-	hydrationStore,
 
 	RawWatchHandler,
 	WatchPath
@@ -49,8 +48,6 @@ import iBlockFriends from 'components/super/i-block/friends';
 const
 	$$ = symbolGenerator();
 
-const propIds = Object.createDict<number>();
-
 @component()
 export default abstract class iBlockBase extends iBlockFriends {
 	override readonly Component!: iBlock;
@@ -69,12 +66,23 @@ export default abstract class iBlockBase extends iBlockFriends {
 			!ctx.$el?.classList.contains(oldCtx.componentId),
 
 		init: (o) => {
+			const {r} = o;
+
 			let
 				id = o.componentIdProp;
 
 			if (id != null) {
-				propIds[id] ??= 0;
-				id += `-${propIds[id]}`;
+				r[$$.propIds] ??= Object.createDict();
+
+				const
+					propId = id,
+					propIds = r[$$.propIds];
+
+				if (propIds[propId] != null) {
+					id += `-${propIds[propId]++}`;
+				}
+
+				propIds[propId] ??= 0;
 			}
 
 			id ??= o.randomGenerator.next().value.toString().slice(2);
