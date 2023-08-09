@@ -92,14 +92,14 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 		const
 			{componentName, params} = component,
-			{supports, r} = this.$renderEngine;
+			{r} = this.$renderEngine;
 
-		const isRegular =
-			params.functional !== true ||
-			!supports.functional;
+		const
+			isRegular = params.functional !== true,
+			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
 
-		const vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
-		vnode.props.getRoot ??= () => ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
+		vnode.props.getRoot ??= () =>
+			('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
 
 		if (vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
@@ -197,7 +197,7 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 	original: T
 ): T {
 	return Object.cast(function resolveComponent(this: ComponentInterface, name: string) {
-		if (!this.$renderEngine.supports.functional) {
+		if (SSR) {
 			name = name.replace(isSmartComponent, '');
 		}
 

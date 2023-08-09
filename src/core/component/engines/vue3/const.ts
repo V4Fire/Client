@@ -7,7 +7,7 @@
  */
 
 export const supports = {
-	functional: !SSR
+
 };
 
 export const proxyGetters = Object.createDict({

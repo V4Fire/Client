@@ -76,7 +76,7 @@ export interface RenderEngine<T extends object = object> {
 }
 
 export interface RenderEngineFeatures {
-	functional: boolean;
+
 }
 
 export type ProxyGetters<T extends object = object> = Record<ProxyGetterType, ProxyGetter<T>>;
