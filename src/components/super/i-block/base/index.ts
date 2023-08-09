@@ -72,7 +72,9 @@ export default abstract class iBlockBase extends iBlockFriends {
 				id = o.componentIdProp;
 
 			if (id != null) {
-				r[$$.propIds] ??= Object.createDict();
+				if (!($$.propIds in r)) {
+					r[$$.propIds] = Object.createDict();
+				}
 
 				const
 					propId = id,
