@@ -72,27 +72,30 @@ function tagFilter({name, attrs = {}}, tplName) {
 		return;
 	}
 
-	const id = hasha(JSON.stringify([
-		componentName,
-		tplName.replace(/\d{4,}$/, '_'),
-		Object.reject(attrs, [
-			'v-ref',
-			'v-once',
-			'v-memo',
+	if (!attrs[':componentIdProp']) {
+		const id = hasha(JSON.stringify([
+			componentName,
+			tplName.replace(/\d{4,}$/, '_'),
+			Object.reject(attrs, [
+				'v-ref',
+				'v-once',
+				'v-memo',
 
-			':is',
-			'v-tag',
+				':is',
+				'v-tag',
 
-			'data-cached-class-component-id',
-			':data-cached-class-component-id'
-		])
-	])).slice(0, 10);
+				'data-cached-class-component-id',
+				':data-cached-class-component-id'
+			])
+		])).slice(0, 10);
 
-	attrs[':component-id-prop'] = [JSON.stringify(id)];
-	attrs[':get-root'] = ["() => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];
+		attrs[':componentIdProp'] = [JSON.stringify(id)];
+	}
 
-	if (component.inheritMods !== false && !attrs[':mods-prop']) {
-		attrs[':mods-prop'] = ['sharedMods'];
+	attrs[':getRoot'] = ["() => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];
+
+	if (component.inheritMods !== false && !attrs[':modsProp']) {
+		attrs[':modsProp'] = ['sharedMods'];
 	}
 
 	const funcDir = attrs['v-func']?.[0];
