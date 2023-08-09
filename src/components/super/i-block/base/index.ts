@@ -49,6 +49,8 @@ import iBlockFriends from 'components/super/i-block/friends';
 const
 	$$ = symbolGenerator();
 
+const propIds = Object.createDict<number>();
+
 @component()
 export default abstract class iBlockBase extends iBlockFriends {
 	override readonly Component!: iBlock;
@@ -58,16 +60,26 @@ export default abstract class iBlockBase extends iBlockFriends {
 	/**
 	 * Component id prop
 	 */
-	@prop({type: Number, required: false})
-	componentIdProp?: number;
+	@prop({type: String, required: false})
+	componentIdProp?: string;
 
 	@system({
 		atom: true,
 		unique: (ctx, oldCtx) =>
 			!ctx.$el?.classList.contains(oldCtx.componentId),
 
-		init: (o) =>
-			`uid-${(o.componentIdProp ?? o.randomGenerator.next().value).toString().slice(2)}`
+		init: (o) => {
+			let
+				id = o.componentIdProp;
+
+			if (id != null) {
+				propIds[id] ??= 0;
+				id += `-${propIds[id]}`;
+			}
+
+			id ??= o.randomGenerator.next().value.toString().slice(2);
+			return `uid-${id}`;
+		}
 	})
 
 	override readonly componentId!: string;

@@ -10,13 +10,11 @@
 
 const
 	$C = require('collection.js'),
-	Snakeskin = require('snakeskin');
+	Snakeskin = require('snakeskin'),
+	hasha = require('hasha');
 
 const
 	{webpack} = require('@config/config'),
-	{Xor128} = require('@v4fire/core/lib/core/random/xor128');
-
-const
 	{validators} = require('@pzlr/build-core'),
 	{isV4Prop} = include('build/snakeskin/filters/const');
 
@@ -32,9 +30,6 @@ const
 	TYPE_OF = Symbol('Type of component to create'),
 	SMART_PROPS = Symbol('Smart component props');
 
-const randomGenerator = new Xor128(19881989);
-randomGenerator.next();
-
 const bind = {
 	bind: [
 		(o) => o.getVar('$attrs'),
@@ -43,12 +38,12 @@ const bind = {
 };
 
 Snakeskin.importFilters({
-	tagFilter,
+	tagFilter: Snakeskin.setFilterParams(tagFilter, {bind: ['TPL_NAME']}),
 	tagNameFilter: Snakeskin.setFilterParams(tagNameFilter, bind),
 	bemFilter: Snakeskin.setFilterParams(bemFilter, bind)
 });
 
-function tagFilter({name, attrs = {}}) {
+function tagFilter({name, attrs = {}}, tplName) {
 	Object.forEach(tagFilters, (filter) => filter({name, attrs}));
 
 	const isSimpleTag =
@@ -77,7 +72,23 @@ function tagFilter({name, attrs = {}}) {
 		return;
 	}
 
-	attrs[':component-id-prop'] = [JSON.stringify(randomGenerator.next().value)];
+	const id = hasha(JSON.stringify([
+		componentName,
+		tplName.replace(/\d{4,}$/, '_'),
+		Object.reject(attrs, [
+			'v-ref',
+			'v-once',
+			'v-memo',
+
+			':is',
+			'v-tag',
+
+			'data-cached-class-component-id',
+			':data-cached-class-component-id'
+		])
+	]));
+
+	attrs[':component-id-prop'] = [JSON.stringify(id)];
 	attrs[':get-root'] = ["() => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];
 
 	if (component.inheritMods !== false && !attrs[':mods-prop']) {
