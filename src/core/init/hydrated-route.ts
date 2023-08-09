@@ -15,7 +15,6 @@ import semaphore from 'core/init/semaphore';
 /**
  * Initializes the initial route of the application
  */
-// eslint-disable-next-line @typescript-eslint/require-await
 export default async function init(): Promise<void> {
 	try {
 		if (HYDRATION) {
