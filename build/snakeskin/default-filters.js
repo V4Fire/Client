@@ -72,6 +72,11 @@ function tagFilter({name, attrs = {}}, tplName) {
 		return;
 	}
 
+	if (attrs['v-tag']) {
+		delete attrs['v-tag'];
+		return;
+	}
+
 	if (!attrs[':componentIdProp']) {
 		const id = hasha(JSON.stringify([
 			componentName,
