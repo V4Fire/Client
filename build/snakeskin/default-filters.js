@@ -140,6 +140,10 @@ function tagFilter({name, attrs = {}}, tplName) {
 	const
 		isSmartFunctional = attrs[SMART_PROPS] && (isFunctional || funcDir);
 
+	if (isFunctional && webpack.ssr) {
+		attrs[':renderComponentId'] = [false];
+	}
+
 	if (isSmartFunctional) {
 		if (funcDir == null || funcDir === 'true') {
 			if (webpack.ssr) {
