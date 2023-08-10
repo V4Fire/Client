@@ -36,7 +36,7 @@ import {
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
-import { field, system, prop, computed, hook, wait } from 'components/super/i-block/decorators';
+import { field, system, computed, hook, wait } from 'components/super/i-block/decorators';
 import { activate, deactivate } from 'components/super/i-block/modules/activation';
 import { initRemoteWatchers } from 'components/super/i-block/modules/listeners';
 
@@ -53,12 +53,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	override readonly Component!: iBlock;
 	override readonly Root!: iStaticPage;
 	override readonly $root!: this['Root'];
-
-	/**
-	 * Component id prop
-	 */
-	@prop({type: String, required: false})
-	componentIdProp?: string;
 
 	@system({
 		atom: true,
