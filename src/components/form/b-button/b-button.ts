@@ -48,7 +48,10 @@ DataProvider.addToPrototype({getDefaultRequestParams, base, get});
 interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 
 @component({
-	functional: true
+	functional: {
+		dataProvider: undefined,
+		href: undefined
+	}
 })
 
 @derive(iAccess, iOpenToggle)
