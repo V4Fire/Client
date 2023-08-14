@@ -242,13 +242,13 @@ export function wrapResolveDirective<T extends typeof resolveDirective>(
 export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
 	return Object.cast(function mergeProps(this: ComponentInterface, ...args: Parameters<T>) {
 		const
-			mergedProps = original.apply(null, args);
+			props = original.apply(null, args);
 
 		if (SSR) {
-			return normalizeComponentAttrs(mergedProps, [], this.meta);
+			return resolveAttrs.call(this, {props}).props;
 		}
 
-		return mergedProps;
+		return props;
 	});
 }
 

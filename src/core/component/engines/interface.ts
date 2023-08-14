@@ -34,7 +34,7 @@ export type VNode<
 	dynamicChildren?: VNode[];
 	virtualContext?: ComponentInterface;
 	virtualComponent?: ComponentInterface;
-	ref?: SuperVNode['ref'] & {i?: {refs: Dictionary; setupState: Dictionary}};
+	ref?: SuperVNode['ref'] & {i?: Nullable<{refs: Dictionary; setupState?: Dictionary}>};
 }>;
 
 export interface ResolveDirective<E = Element> {

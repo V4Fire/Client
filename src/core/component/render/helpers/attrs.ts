@@ -53,7 +53,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	} = this;
 
 	if (ref != null) {
-		ref['i'] ??= r.getCurrentInstance();
+		ref.i ??= r.getCurrentInstance();
 	}
 
 	if (Object.isArray(children)) {
