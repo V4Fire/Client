@@ -292,7 +292,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * Whether to add classes to the component markup with its unique identifier.
 	 * For functional components, the value of this parameter can only be false.
 	 */
-	@prop(Boolean)
+	@prop({type: Boolean, forceDefault: true})
 	readonly renderComponentId: boolean = true;
 
 	@prop({type: Function, required: false})

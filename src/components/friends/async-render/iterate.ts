@@ -277,8 +277,6 @@ export function iterate(
 				renderedVNodes: Node[] = [];
 
 			ctx.vdom.withRenderContext(() => {
-				ctx.r.generateDynamicIds = true;
-
 				valsToRender.forEach((el) => {
 					const vnodes = Array.concat([], toVNode(el, iterI)).flatMap((vnode) => {
 						if (Object.isSymbol(vnode.type) && Object.isArray(vnode.children)) {
@@ -291,7 +289,6 @@ export function iterate(
 					vnodes.forEach(renderVNode);
 				});
 
-				ctx.r.generateDynamicIds = false;
 				valsToRender = [];
 
 				chunkI++;

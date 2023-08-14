@@ -240,7 +240,28 @@ export default class bDynamicPage extends iDynamicPage {
 			return 1;
 		}
 
+		if (HYDRATION) {
+			return 99999;
+		}
+
 		return SyncPromise.resolve(Infinity);
+	}
+
+	/**
+	 * True if the current page is successfully hydrated
+	 */
+	protected get hydrated(): boolean {
+		return HYDRATION && $$.hydrated in this;
+	}
+
+	/**
+	 * Sets the page hydration status
+	 * @param complete
+	 */
+	protected set hydrated(complete: boolean) {
+		if (HYDRATION) {
+			this[$$.hydrated] = complete;
+		}
 	}
 
 	override initLoad(): Promise<void> {
@@ -278,7 +299,14 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Render loop filter (used with `asyncRender`)
 	 */
 	protected renderFilter(): CanPromise<boolean> {
-		if (SSR || this.lfc.isBeforeCreate()) {
+		const canPass =
+			SSR ||
+			HYDRATION && !this.hydrated ||
+			this.lfc.isBeforeCreate();
+
+		this.hydrated = true;
+
+		if (canPass) {
 			return true;
 		}
 
@@ -533,6 +561,10 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
+		if (this.hydrated) {
+			return;
+		}
+
 		if (this.onPageChange == null) {
 			const label = {
 				label: $$.syncPageWatcher
