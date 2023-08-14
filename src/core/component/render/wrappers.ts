@@ -79,8 +79,14 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			component = registerComponent(name.name);
 		}
 
-		const createVNode = (name, attrs, slots, patchFlag, dynamicProps) => {
-			const vnode = original(name, attrs, slots, patchFlag, dynamicProps);
+		const createVNode: (...args: Parameters<typeof createBlock>) => VNode = (
+			type,
+			props,
+			children,
+			patchFlag,
+			dynamicProps
+		) => {
+			const vnode = original(type, props, children, patchFlag, dynamicProps);
 			return resolveAttrs.call(this, vnode);
 		};
 
@@ -98,8 +104,8 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			isRegular = params.functional !== true,
 			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
 
-		vnode.props.getRoot ??= () =>
-			('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
+		vnode.props ??= {};
+		vnode.props.getRoot ??= () => ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
 
 		if (vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
@@ -146,13 +152,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			arg: undefined,
 
 			value: {
-				created: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
-				beforeMount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
-				mounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
-				beforeUpdate: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
-				updated: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
-				beforeUnmount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
-				unmounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
+				created: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
+				beforeMount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
+				mounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
+				beforeUpdate: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
+				updated: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
+				beforeUnmount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
+				unmounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
 			},
 
 			oldValue: undefined,

@@ -24,17 +24,18 @@ import type { ComponentInterface } from 'core/component/interface';
 export * from '@vue/runtime-dom';
 //#endif
 
-export interface VNode<
+export type VNode<
 	HostNode = RendererNode,
 	HostElement = RendererElement,
 	ExtraProps = {[key: string]: any}
-> extends SuperVNode<HostNode, HostElement, ExtraProps> {
+> = Overwrite<SuperVNode<HostNode, HostElement, ExtraProps>, {
 	ignore?: boolean;
 	dynamicProps?: string[];
 	dynamicChildren?: VNode[];
 	virtualContext?: ComponentInterface;
 	virtualComponent?: ComponentInterface;
-}
+	ref?: SuperVNode['ref'] & {i?: {refs: Dictionary; setupState: Dictionary}};
+}>;
 
 export interface ResolveDirective<E = Element> {
 	directive(name: string): CanUndef<Directive>;
