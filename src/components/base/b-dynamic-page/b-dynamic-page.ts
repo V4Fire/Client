@@ -561,7 +561,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
-		if (this.hydrated) {
+		if (HYDRATION && !this.hydrated) {
 			return;
 		}
 
