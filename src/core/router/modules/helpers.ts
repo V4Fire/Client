@@ -145,8 +145,15 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 					break;
 				}
 
+				const
+					routeRgxp = route.rgxp;
+
+				if (routeRgxp == null) {
+					continue;
+				}
+
 				// Try validating the passed link with a route pattern
-				if (route.rgxp?.test(resolvedRef)) {
+				if (routeRgxp.test(resolvedRef) || routeRgxp.test(resolvedRef.replace(/\?.*/, ''))) {
 					if (resolvedRoute == null) {
 						resolvedRoute = route;
 						continue;
