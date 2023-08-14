@@ -25,6 +25,7 @@ import type {
 	createBlock,
 	createElementBlock,
 
+	mergeProps,
 	renderList,
 	renderSlot,
 
@@ -38,7 +39,7 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/init';
-import { resolveAttrs, normalizeComponentAttrs, mergeProps } from 'core/component/render/helpers';
+import { resolveAttrs, normalizeComponentAttrs, mergeProps as merge } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -139,7 +140,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		);
 
 		vnode.type = functionalVNode.type;
-		vnode.props = mergeProps(filteredAttrs, functionalVNode.props ?? {});
+		vnode.props = merge(filteredAttrs, functionalVNode.props ?? {});
 
 		vnode.children = functionalVNode.children;
 		vnode.dynamicChildren = functionalVNode.dynamicChildren;
@@ -231,6 +232,23 @@ export function wrapResolveDirective<T extends typeof resolveDirective>(
 ): T {
 	return Object.cast(function resolveDirective(this: ComponentInterface, name: string) {
 		return app.context != null ? app.context.directive(name) ?? original(name) : original(name);
+	});
+}
+
+/**
+ * Wrapper for the component library `mergeProps` function
+ * @param original
+ */
+export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
+	return Object.cast(function mergeProps(this: ComponentInterface, ...args: Parameters<T>) {
+		const
+			mergedProps = original.apply(null, args);
+
+		if (SSR) {
+			return normalizeComponentAttrs(mergedProps, [], this.meta);
+		}
+
+		return mergedProps;
 	});
 }
 

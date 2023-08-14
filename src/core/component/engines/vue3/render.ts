@@ -17,6 +17,7 @@ import {
 	createBlock as superCreateBlock,
 	createElementBlock as superCreateElementBlock,
 
+	mergeProps as superMergeProps,
 	renderList as superRenderList,
 	renderSlot as superRenderSlot,
 
@@ -44,7 +45,7 @@ import {
 	wrapRenderSlot,
 
 	wrapWithDirectives,
-	wrapResolveDirective
+	wrapResolveDirective, wrapMergeProps
 
 } from 'core/component/render';
 
@@ -82,7 +83,6 @@ export {
 
 	normalizeClass,
 	normalizeStyle,
-	mergeProps,
 
 	resolveTransitionHooks,
 
@@ -118,6 +118,7 @@ export const
 	createElementBlock = wrapCreateElementBlock(superCreateElementBlock);
 
 export const
+	mergeProps = wrapMergeProps(superMergeProps),
 	renderList = wrapRenderList(superRenderList),
 	renderSlot = wrapRenderSlot(superRenderSlot);
 
