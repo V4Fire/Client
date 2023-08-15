@@ -463,7 +463,7 @@ Generates a slot declaration by the specified parameters.
         :value = el.preIcon
       .
 
-      < @b-icon v-else | :value = el.preIcon
+      < b-icon v-else | :value = el.preIcon
 ```
 
 #### appendToRootClasses
