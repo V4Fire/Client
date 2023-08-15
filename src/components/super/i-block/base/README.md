@@ -52,6 +52,7 @@ Mutation of this object can cause the component to re-render.
 #### componentId
 
 The unique component identifier.
+The value is formed based on the passed prop or dynamically.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';

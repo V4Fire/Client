@@ -39,7 +39,16 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
-	 * The unique component identifier
+	 * The unique component identifier.
+	 * The value for this prop is automatically generated during the build process,
+	 * but it can also be manually specified.
+	 * If the prop is not provided, the ID will be generated at runtime.
+	 */
+	readonly componentIdProp?: string;
+
+	/**
+	 * The unique component identifier.
+	 * The value is formed based on the passed prop or dynamically.
 	 */
 	readonly componentId!: string;
 
