@@ -1,12 +1,14 @@
 # core/dom/intersection-watcher
 
 This module provides an API to track elements entering or leaving the viewport.
-The module supports several element tracking strategies. The default is IntersectionObserver, but if the environment does not support it,
+The module supports several element tracking strategies.
+The default is [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API),
+but if the environment does not support it,
 then a strategy based on the elements heightmap and MutationObserver will be used.
 
 ## Why is this module needed?
 
-Often when working with Intersection we just want to register some kind of handler on an element.
+Often when working with `IntersectionObserver` we just want to register some kind of handler on an element.
 However, the native API is based on classes, so we first have to create an instance of the class,
 pass the handler to it, and then register the element.
 

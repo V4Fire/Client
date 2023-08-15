@@ -207,10 +207,10 @@ export default class ResizeWatcher {
 	 * // Cancel only `handler2` from `document.body`
 	 * ResizeWatcher.unwatch(document.body, handler2);
 	 *
-	 * // Cancel the all registered handlers from `document.body`
+	 * // Cancel all registered handlers from `document.body`
 	 * ResizeWatcher.unwatch(document.body);
 	 *
-	 * // Cancel the all registered handlers
+	 * // Cancel all registered handlers
 	 * ResizeWatcher.unwatch();
 	 * ```
 	 */
@@ -249,7 +249,7 @@ export default class ResizeWatcher {
 	 * resizeWatcher.watch(document.getElementById('my-elem'), {once: true, box: 'border-box'}, handler1);
 	 * resizeWatcher.watch(document.getElementById('my-elem'), handler2);
 	 *
-	 * // Cancel the all registered handlers and prevent new ones
+	 * // Cancel all registered handlers and prevent new ones
 	 * resizeWatcher.destroy();
 	 * ```
 	 */
