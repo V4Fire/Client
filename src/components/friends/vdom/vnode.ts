@@ -135,7 +135,7 @@ function createVNode(
 
 		const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) => {
 			if (Object.isDictionary(vnode) && !('patchFlag' in vnode)) {
-				return createVNode.call(this, vnode.type, vnode);
+				return createVNode.call(this, (Object.cast<VNode>(vnode)).type, vnode);
 			}
 
 			return vnode;

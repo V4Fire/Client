@@ -30,7 +30,6 @@ export type VNode<
 	ExtraProps = {[key: string]: any}
 > = Overwrite<SuperVNode<HostNode, HostElement, ExtraProps>, {
 	ignore?: boolean;
-	patchFlag?: number;
 	dynamicProps?: string[];
 	dynamicChildren?: VNode[];
 	virtualContext?: ComponentInterface;
