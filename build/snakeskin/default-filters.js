@@ -112,7 +112,7 @@ function tagFilter({name, attrs = {}}, tplName) {
 	if (component && component.functional === true) {
 		isFunctional = true;
 
-	} else if (!funcDir) {
+	} else if (!funcDir && attrs[SMART_PROPS] != null) {
 		isFunctional = $C(attrs[SMART_PROPS]).every((propVal, prop) => {
 			prop = prop.dasherize(true);
 
