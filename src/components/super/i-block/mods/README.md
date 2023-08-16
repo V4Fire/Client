@@ -1,23 +1,28 @@
 # components/super/i-block/mods
 
-This module provides an API to work with a component in terms of [BEM](https://en.bem.info/methodology/quick-start/).
-This module delegates the implementation to the [[Block]] friendly class.
+This module provides an API for working with components using
+the [BEM](https://en.bem.info/methodology/quick-start/) methodology.
+The implementation is delegated to the [[Block]] friendly class.
 
 ## Basic concepts
 
-The BEM methodology describes how to apply the component-based approach to CSS when declaring a widget.
-The methodology defines 3 basic entities: block, element and modifier. Looking at it from a component UI programming perspective,
-a block is the component root node, which have a special CSS class; elements are regular child nodes of a component that
-have specially styled CSS classes; block modifiers are its inputs that have a contract that they also place the necessary CSS classes.
-In addition, elements can also have their own modifiers, which are convenient to apply at the micro-level of component markup.
+The BEM methodology describes how to apply a component-based approach to CSS when defining a widget.
+The methodology defines three main entities: block, element, and modifier.
+From the perspective of component-based UI programming, the block is the root node of the component,
+having a special CSS class; elements are regular child nodes of the component, having specifically styled CSS classes;
+block modifiers are its inputs, which also have a convention for adding necessary CSS classes.
+Additionally, elements can also have their own modifiers,
+which are conveniently applied at a micro level in the component's markup.
 
 ### How to declare component props as modifiers?
 
-To declare modifiers for a component, you must use the `mods` static property. Just pass it a dictionary where keys are
-modifier names and values are lists of them values. Modifier values are always converted to a string. However,
-when describing them, it is allowed to use numbers and boolean values. Also, all modifier names and them values are
-forced to normalize to the dash style, so you can use whatever style you feel comfortable with. To assign any of the values
-as the default, just wrap it in another array.
+To declare modifiers for a component, you need to use the static property `mods`.
+Simply pass it a dictionary where the keys are the modifier names and the values are lists representing their values.
+The modifier values are always converted to strings.
+However, when describing them, you can use numbers and boolean values.
+Additionally, all modifier names and values are forcibly normalized to kebab case,
+so you can use any style that suits you.
+To assign any of the default values, simply wrap it in another array.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -40,8 +45,8 @@ class bExample extends iBlock {
 }
 ```
 
-When one component inherits from another, its modifiers are also inherited. And if you add new modifiers,
-then the parent modifiers will still be inherited.
+When one component inherits from another, its modifiers are also inherited.
+And if you add new modifiers, the parent modifiers will still be inherited.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -95,7 +100,7 @@ class Children extends Parent {
 }
 ```
 
-It is allowed to refer to modifier values that are inherited from the parent component.
+It is allowed to access the values of a modifier that are inherited from the parent component.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -149,10 +154,12 @@ Of course, you can combine both methods.
 
 #### Automatically inherited modifiers
 
-All V4Fire components have the `sharedMods` getter that returns a dictionary of modifiers that can be passed to any child components.
-If you don't explicitly pass the `mods` prop when creating a component, then the `sharedMods` getter will automatically be passed to it.
-This is very useful when some modifiers need to be propagated to all nested components. By default, the getter returns
-a dictionary only with the `theme` modifier or undefined if it is not specified.
+All V4Fire components have a getter called `sharedMods`,
+which returns a dictionary of modifiers that can be passed to any child components.
+If you don't explicitly pass the `mods` prop when creating a component,
+the `sharedMods` getter will be automatically passed to it.
+This is very useful when you need to propagate certain modifiers to all nested components.
+By default, the getter returns a dictionary with only the `theme` modifier or undefined if it's not specified.
 
 ```
 /// This
@@ -187,8 +194,9 @@ class bExample extends iBlock {}
 
 ### How to get component modifier value?
 
-All active component modifiers are stored in the readonly `mods` property. Therefore, to get the value of any modifier,
-just refer to the key you need. Please note that the key must be in a dash style, i.e., normalized.
+All component's applied modifiers are stored in the `mods` read-only property.
+Therefore, to get the value of any modifier, simply access the desired key.
+Note that the key should be in kebab case, i.e., normalized.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -230,12 +238,14 @@ class bExample extends iBlock {
 }
 ```
 
-Note that the `mods` field is created as a "system" field, i.e., no changes to its properties will cause the component to
-be re-rendered. However, the associated CSS class will still be assigned to the component root element. This is especially
-useful when we are working in the context of a functional component, which in principle never updates its template after the first render.
+Please note that the `mods` field is created as "system",
+meaning that any changes to its properties will not cause the component to be re-rendered.
+However, the associated CSS class will still be assigned to the root element of the component.
+This is especially useful when working in the context of a functional component that,
+in principle, never updates its template after the initial render.
 
 ```
-/// Changing the `opened` modifier won't re-render the template
+/// Changing the `opened` modifier won't cause the template to be re-rendered
 < template v-if = mods.opened === 'true'
   ...
 ```
@@ -243,14 +253,14 @@ useful when we are working in the context of a functional component, which in pr
 If you want to use modifiers within a component template, then use the `m` getter.
 
 ```
-/// Changing the `opened` modifier will re-render the template
+/// Changing the `opened` modifier will cause the template to be re-rendered
 < template v-if = m.opened === 'true'
   ...
 ```
 
-### How to set a new component modifier value?
+### How to set a new component's modifier value?
 
-To set a new modifier value or remove an old one, you must use the `setMod` and `removeMod` methods.
+To set a new modifier value or remove an existing one, you can use the `setMod` and `removeMod` methods.
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -276,14 +286,15 @@ class bExample extends iBlock {
 
 #### Modifier change events
 
-Every time the value of any modifier changes, the component will emit a series of events that can be listened to both
-inside and outside the component.
+Whenever the value of any modifier changes,
+the component will emit a series of events that can be listened to both inside and outside the component.
+These events provide a way to react to changes in modifiers and perform any necessary actions or updates.
 
-| EventName                 | Description                                                     | Payload description  | Payload       |
-|---------------------------|-----------------------------------------------------------------|----------------------|---------------|
-| `mod:set:$name`           | The modifier named $name has been set                           | Operation parameters | `SetModEvent` |
-| `mod:set:$name:$value`    | The modifier named $name has been set to $value                 | Operation parameters | `SetModEvent` |
-| `mod:remove:$name`        | The modifier under $name has been removed                       | Operation parameters | `ModEvent`    |
+| EventName                 | Description                                                     | Payload description      | Payload       |
+|---------------------------|-----------------------------------------------------------------|--------------------------|---------------|
+| `mod:set:$name`           | The modifier named $name has been set                           | The operation parameters | `SetModEvent` |
+| `mod:set:$name:$value`    | The modifier named $name has been set to $value                 | The operation parameters | `SetModEvent` |
+| `mod:remove:$name`        | The modifier under $name has been removed                       | The operation parameters | `ModEvent`    |
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -311,15 +322,16 @@ class bExample extends iBlock {
 
 ##### Local events
 
-All setting or removing modifiers also fire local component events, i.e., which cannot be handled externally.
-Since all the component local events can be listened to using wildcards, this can be more convenient than handling each event individually.
+All set and remove operations for modifiers also trigger local component events that cannot be handled from the outside.
+Since all local component events can be listened to using placeholders,
+it can be more convenient than handling each event separately.
 
-| EventName                       | Description                                                             | Payload description  | Payload              |
-|---------------------------------|-------------------------------------------------------------------------|----------------------|----------------------|
-| `block.mod.set.$name.$value`    | The modifier named $name has been set to $value                         | Operation parameters | `SetModEvent`        |
-| `el.mod.set.$name.$value`       | The element modifier named $name has been set to $value                 | Operation parameters | `SetModEvent`        |
-| `block.mod.remove.$name.$value` | The modifier named $name has been removed with the value $value         | Operation parameters | `SetElementModEvent` |
-| `el.mod.remove.$name.$value`    | The element modifier named $name has been removed with the value $value | Operation parameters | `ElementModEvent`    |
+| EventName                       | Description                                                             | Payload description      | Payload              |
+|---------------------------------|-------------------------------------------------------------------------|--------------------------|----------------------|
+| `block.mod.set.$name.$value`    | The modifier named $name has been set to $value                         | The operation parameters | `SetModEvent`        |
+| `el.mod.set.$name.$value`       | The element modifier named $name has been set to $value                 | The operation parameters | `SetModEvent`        |
+| `block.mod.remove.$name.$value` | The modifier named $name has been removed with the value $value         | The operation parameters | `SetElementModEvent` |
+| `el.mod.remove.$name.$value`    | The element modifier named $name has been removed with the value $value | The operation parameters | `ElementModEvent`    |
 
 ```typescript
 import iBlock, { component, ModsDecl } from 'components/super/i-block/i-block';
@@ -352,27 +364,32 @@ class bExample extends iBlock {
 #### [modsProp]
 
 Additional modifiers for the component.
-Modifiers allow binding component state properties directly to CSS classes without unnecessary re-rendering of a component.
+Modifiers allow binding the state properties of a component directly to CSS classes,
+without the need for unnecessary re-rendering.
 
 ### Getters
 
 #### mods
 
-A dictionary with applied component modifiers.
+A dictionary containing applied component modifiers.
 
 #### sharedMods
 
 The base component modifiers that can be shared with other components.
 These modifiers are automatically provided to child components.
 
-So, for example, you have a component that uses another component in your template, and you give the outer component some theme modifier.
+So, for example, you have a component that uses another component in your template,
+and you give the outer component some theme modifier.
 This modifier will be recursively provided to all child components.
 
 #### m
 
-A special getter for component modifiers: the first time a property from this object is touched,
-a modifier by property name will be registered, which can cause the component to re-render.
-Don't use this getter outside the component template.
+A special getter for applied modifiers.
+When accessing any modifier using this getter,
+a reactive binding will be created between its value and the template.
+
+It is not recommended to use this getter outside the component's template,
+as it may lead to unexpected behavior or unnecessary re-renders.
 
 ### Methods
 
@@ -386,9 +403,9 @@ Removes a component modifier by the specified name.
 
 #### getRootMod
 
-Returns a value of the specified root application element modifier.
-The method uses the component `globalName` prop if it's provided. Otherwise, the `componentName` property.
-Notice that the method returns a normalized value.
+Returns the value of the specified modifier for the root element of the application.
+The method uses the component's `globalName` prop if provided, otherwise it uses the `componentName` property.
+Note that the method returns the normalized value of the modifier.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -404,12 +421,12 @@ class bExample extends iBlock {
 
 #### setRootMod
 
-Sets a modifier to the root application element by the specified name.
+Sets a modifier for the root element of the application based on the specified name.
 
 This method is useful when you need to attach a class that can affect the entire application.
-For example, you want to block page scrolling, meaning you need to add a class to the root HTML tag.
+For example, if you want to disable page scrolling, you would need to add a class to the root HTML element.
 
-The method uses the component `globalName` prop if it's provided. Otherwise, the `componentName` property.
+The method uses the component's `globalName` prop if provided, otherwise it uses the `componentName` property.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -430,7 +447,7 @@ class bExample extends iBlock {
 
 #### removeRootMod
 
-Removes a modifier from the root application element by the specified name.
+Removes a modifier from the root element of the application based on the specified name.
 The method uses the component `globalName` prop if it's provided. Otherwise, the `componentName` property.
 
 ```typescript
