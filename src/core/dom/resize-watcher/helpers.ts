@@ -18,6 +18,8 @@ import type { Watcher } from 'core/dom/resize-watcher/interface';
 export function shouldInvokeHandler(
 	newRect: DOMRectReadOnly,
 	oldRect: DOMRectReadOnly,
+	newBoxSize: CanUndef<readonly ResizeObserverSize[]>,
+	oldBoxSize: CanUndef<readonly ResizeObserverSize[]>,
 	watcher: Watcher
 ): boolean {
 	const {
@@ -44,6 +46,16 @@ export function shouldInvokeHandler(
 
 	if (watchHeight && !res) {
 		res = oldHeight !== newHeight;
+	}
+
+	if(!res && watcher.box === 'border-box' && newBoxSize?.length !== undefined && oldBoxSize?.length !== undefined) {
+		if(watchWidth) {
+			res = newBoxSize[0].inlineSize !== oldBoxSize[0].inlineSize;
+		}
+
+		if (watchHeight && !res) {
+			res = newBoxSize[0].blockSize !== oldBoxSize[0].blockSize;
+		}
 	}
 
 	return res;
