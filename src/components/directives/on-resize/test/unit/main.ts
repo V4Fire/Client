@@ -25,12 +25,12 @@ test.describe('components/directives/on-resize', () => {
 	});
 
 	test('handler should be called on element init by default', async ({page}) => {
-		const component = await renderDirective(page, undefined);
+		const component = await renderDirective(page);
 		await test.expect(waitForWatcherCallsCount(page, component, 1)).toBeResolved();
 	});
 
 	test('handler should be called on element width or height resize', async ({page}) => {
-		const component = await renderDirective(page, undefined);
+		const component = await renderDirective(page);
 		await component.evaluate(async (div) => {
 			div.style.width = '50px';
 			await new Promise((resolve) => setTimeout(resolve, 300));
@@ -40,7 +40,7 @@ test.describe('components/directives/on-resize', () => {
 		await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
 	});
 
-	test('handler should be called only on element height resize when `watchWidth` set to false', async ({page}) => {
+	test('handler should be called only on element height resize when `watchWidth` is set to false', async ({page}) => {
 		const component = await renderDirective(page, {
 			watchWidth: false
 		});
@@ -54,7 +54,7 @@ test.describe('components/directives/on-resize', () => {
 		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
 	});
 
-	test('handler should be called only on element width resize when `watchHeight` set to false', async ({page}) => {
+	test('handler should be called only on element width resize when `watchHeight` is set to false', async ({page}) => {
 		const component = await renderDirective(page, {
 			watchHeight: false
 		});
@@ -68,7 +68,7 @@ test.describe('components/directives/on-resize', () => {
 		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
 	});
 
-	test('handler should be called on init and only once on resize when `once` prop set to true', async ({page}) => {
+	test('handler should be called on init and only once on resize when `once` is set to true', async ({page}) => {
 		const component = await renderDirective(page, {
 			once: true
 		});
@@ -82,7 +82,7 @@ test.describe('components/directives/on-resize', () => {
 		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
 	});
 
-	test('handler should not be called on element init when `watchInit` prop set to false', async ({page}) => {
+	test('handler should not be called on element init when `watchInit` is set to false', async ({page}) => {
 		const component = await renderDirective(page, {
 			watchInit: false
 		});
@@ -91,7 +91,7 @@ test.describe('components/directives/on-resize', () => {
 	});
 
 	test('handler should not be called on padding or border change when `box`: content-box and element has box-sizing: content-box', async ({page}) => {
-		const component = await renderDirective(page, undefined);
+		const component = await renderDirective(page);
 
 		await component.evaluate(async (div) => {
 			div.style.padding = '20px';
@@ -182,7 +182,7 @@ test.describe('components/directives/on-resize', () => {
 	}
 
 	/**
-	 * A handler to pass to the `in-view` directive
+	 * A handler to pass to the `on-resize` directive
 	 *
 	 * @param newRect - new DOMRect value
 	 * @param oldRect - previous DOMRect value
@@ -201,18 +201,25 @@ test.describe('components/directives/on-resize', () => {
 		watcher.target.setAttribute('data-test-resize', nextValue.toString());
 	}
 
+	/**
+	 * Renders an element with the `v-on-resize` directive with the specified parameters
+	 *
+	 * @param page - test page environment
+	 * @param directiveProps - directive input parameters
+	 * @param elementBoxSizing - element CSS box-sizing property value
+	 */
 	async function renderDirective(
 		page: Page,
-		directiveProps: CanUndef<CanArray<WatchHandler | Partial<WatchOptions>>>,
+		directiveProps?: CanArray<WatchHandler | Partial<WatchOptions>>,
 		elementBoxSizing: WatchOptions['box'] = 'content-box'
 	): Promise<Locator> {
-		const COMPONENT_TEST_ID = 'target';
+		const componentTestId = 'target';
 		await Component.createComponent(page, 'div', {
 			'v-on-resize': Object.isArray(directiveProps) ?
 				directiveProps.map(addHandler) :
 				addHandler(directiveProps),
 
-			'data-testid': COMPONENT_TEST_ID,
+			'data-testid': componentTestId,
 			'data-test-resize': '0',
 			style: `
 				width: 100px; 
@@ -222,9 +229,13 @@ test.describe('components/directives/on-resize', () => {
 				box-sizing: ${elementBoxSizing};`
 		});
 
-		return page.getByTestId(COMPONENT_TEST_ID);
+		return page.getByTestId(componentTestId);
 	}
 
+	/**
+	 * Bind a handler function to all possible input parameter variations of a directive.
+	 * @param watch - handler to bind to directive params
+	 */
 	function addHandler(
 		watch: CanUndef<WatchHandler | Partial<WatchOptions>>
 	) {
