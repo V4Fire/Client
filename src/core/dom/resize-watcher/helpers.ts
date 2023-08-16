@@ -43,7 +43,12 @@ export function shouldInvokeHandler(
 		res = false;
 
 	// If the environment supports the boxSize property, use it. Otherwise, use DOMRect.
-	if (newBoxSize !== undefined && oldBoxSize !== undefined && newBoxSize.length > 0 && oldBoxSize.length > 0) {
+	const isBoxSizeSupported = newBoxSize !== undefined &&
+		oldBoxSize !== undefined &&
+		newBoxSize.length > 0 &&
+		oldBoxSize.length > 0;
+
+	if (isBoxSizeSupported) {
 		if (watchWidth) {
 			res = newBoxSize[0].inlineSize !== oldBoxSize[0].inlineSize;
 		}
