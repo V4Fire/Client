@@ -1,16 +1,16 @@
 # components/super/i-block/base
 
-This module provides a common API to work with components.
+This module offers a unified API for working with components
 
 ## API
 
 ### Associated types
 
-The class declares two associated types to specify a type of components: **Root** and **Component**.
+The class declares two associated types, **Root** and **Component**, which are used to specify the types of components.
 
 #### Root
 
-The root component type.
+The type of the root component, which can be accessed through the getter `r`.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -24,7 +24,7 @@ export default class bExample extends iBlock {
 
 #### Component
 
-The base type for all components.
+The type of the superclass for all components.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -103,8 +103,9 @@ A link to the component itself.
 
 #### unsafe
 
-An API for unsafely invoking of some internal properties of the component.
-This parameter allows to avoid TS errors while using protected properties and methods outside from the main class.
+An API for safely invoking some internal properties and methods of a component.
+This parameter allows you to use protected properties and methods from outside the class without
+causing TypeScript errors.
 Use it when you need to decompose the component class into a composition of friendly classes.
 
 ```typescript
@@ -121,8 +122,7 @@ export default class bExample extends iBlock {
 #### meta
 
 A link to the component metaobject.
-This object contains all information of the component properties, methods and other stuff.
-It's used to create a "real" component by the used render engine.
+This object contains all information of the component properties, methods, etc.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -141,7 +141,7 @@ A link to the root component.
 
 #### rootAttrs
 
-A dictionary with additional attributes for the component root tag.
+A dictionary with additional attributes for the component's root element.
 
 #### t
 
@@ -149,11 +149,7 @@ An alias for the `i18n` prop.
 
 #### isFunctional
 
-True if the component is a functional.
-
-#### isSSR
-
-True if the component is rendered by using server-side rendering.
+True if the component is a functional component.
 
 #### isVirtualTpl
 
@@ -161,7 +157,7 @@ True if the component context is based on another component via `vdom.getRenderF
 
 #### $el
 
-A link to the component root element.
+A link to the component's root element.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -283,9 +279,10 @@ because it's automatically synchronized with `keep-alive` or the component prop.
 
 Sets a watcher to the component/object property or event by the specified path.
 
-When you watch some properties change, the handler function can take a second argument that refers to
-the property old value. If the watched value is not a primitive, the old value will be cloned from
-the original old value to avoid two references to the same object.
+When you observe changes to certain properties,
+the event handler function can accept a second argument that references the old value of the property.
+If the observed value is not a primitive type, the old value will be cloned from the original old value to
+avoid having two references to the same object.
 
 ```typescript
 import iBlock, { component, field, watch } from 'components/super/i-block/i-block';
@@ -311,8 +308,8 @@ class bExample extends iBlock {
     console.log(value[0] === oldValue[0]);
   }
 
-  // When you watch a property in a deep and declare a second argument
-  // in the watcher, the previous value is cloned deeply
+  // When you watch a property deeply and declare a second argument in the watcher,
+  // the previous value is deeply cloned
   @watch({path: 'list', deep: true})
   onListChangeWithDeepCloning(value: Dictionary[], oldValue: Dictionary[]): void {
     // true
@@ -327,8 +324,8 @@ class bExample extends iBlock {
 }
 ```
 
-You need to use the special ":" delimiter within a path to listen for an event.
-Also, you can specify an event emitter to listen for by writing a link before the ":" character.
+You need to use the special ":" delimiter within a path to listen to an event.
+Also, you can specify an event emitter to listen for by writing a reference before the ":" character.
 For instance:
 
 1. `':onChange'` - will listen to the component `onChange` event;
@@ -342,8 +339,8 @@ An empty reference '' is a reference to the component itself.
 Also, if you are listening to an event, you can control when to start listening to the event by using special
 characters at the beginning of the path string:
 
-1. `'!'` - start listening to an event on the "beforeCreate" hook, eg: `'!rootEmitter:reset'`;
-2. `'?'` - start listening to an event on the "mounted" hook, eg: `'?$el:click'`.
+1. `'!'` - start listening to an event on the "beforeCreate" hook, e.g.: `'!rootEmitter:reset'`;
+2. `'?'` - start listening to an event on the "mounted" hook, e.g.: `'?$el:click'`.
 
 By default, all events start listening on the "created" hook.
 
