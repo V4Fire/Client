@@ -52,6 +52,7 @@ export default class ResizeWatcher {
 
 					if (shouldInvokeHandler(contentRect, oldRect, newBoxSize, oldBoxSize, watcher)) {
 						watcher.rect = contentRect;
+						watcher.boxSize = newBoxSize;
 
 						const cb = () => {
 							watcher.handler(contentRect, oldRect, watcher);
