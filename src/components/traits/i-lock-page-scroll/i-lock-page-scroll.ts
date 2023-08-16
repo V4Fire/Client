@@ -44,6 +44,7 @@ export default abstract class iLockPageScroll {
 		}
 
 		const lockLabel = {
+			join: true,
 			group,
 			label: $$.lock
 		};
@@ -122,7 +123,7 @@ export default abstract class iLockPageScroll {
 					res();
 
 				}, lockLabel);
-			}), {join: true, ...lockLabel});
+			}), lockLabel);
 
 		} else {
 			promise = $a.promise(new Promise((res) => {
@@ -141,7 +142,7 @@ export default abstract class iLockPageScroll {
 					res();
 
 				}, lockLabel);
-			}), {join: true, ...lockLabel});
+			}), lockLabel);
 		}
 
 		return promise;
