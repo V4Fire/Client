@@ -56,6 +56,7 @@ export {
 	Static,
 	Comment,
 
+	Suspense,
 	Fragment,
 	Teleport,
 
