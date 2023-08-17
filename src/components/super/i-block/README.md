@@ -179,6 +179,17 @@ class bExample extends iBlock {
 }
 ```
 
+### [wait]
+
+A promise that will block the rendering of the component until it is resolved.
+This should be used together with [Suspense](https://vuejs.org/guide/built-ins/suspense.html#async-components) and
+non-functional components.
+
+```
+< suspense
+  < b-popup :wait = promisifyOnce('showPopup')
+```
+
 ### [remoteProvider = `false`]
 
 If set to true, the component is marked as a removed provider.

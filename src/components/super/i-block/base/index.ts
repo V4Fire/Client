@@ -38,7 +38,9 @@ import {
 	customWatcherRgxp,
 
 	RawWatchHandler,
-	WatchPath
+	WatchPath,
+
+	SetupContext
 
 } from 'core/component';
 
@@ -626,6 +628,12 @@ export default abstract class iBlockBase extends iBlockFriends {
 			...details,
 			this
 		);
+	}
+
+	protected override setup(props: Dictionary, _ctx: SetupContext): CanPromise<CanUndef<Dictionary>> {
+		if (props.wait != null) {
+			return Promise.resolve(props.wait).then(() => undefined);
+		}
 	}
 
 	/**

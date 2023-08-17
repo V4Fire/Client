@@ -49,6 +49,7 @@ interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
 
 @component({
 	functional: {
+		wait: undefined,
 		dataProvider: undefined,
 		href: undefined
 	}
