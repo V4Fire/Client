@@ -8,7 +8,9 @@
 
 'use strict';
 
-const {createWriteStream} = require('fs');
+const
+	{createWriteStream} = require('fs'),
+	path = require('upath');
 
 /** @type {import('../../../helpers/tracer')} */
 const {tracer} = include('build/helpers/tracer');
@@ -59,7 +61,9 @@ module.exports = class MeasurePlugin {
 				return cb();
 			}
 
-			const ws = createWriteStream(`${process.cwd()}/measure.json`);
+			tracer.trace.instantEvent({name: 'Build finished'});
+
+			const ws = createWriteStream(path.resolve(process.cwd(), 'measure.json'));
 
 			ws.on('error', (error) => {
 				logger.error(`Measure write failed, reason: ${error.message}`);
