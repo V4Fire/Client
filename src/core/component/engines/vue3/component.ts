@@ -15,7 +15,7 @@ import { beforeRenderHooks } from 'core/component/const';
 import { fillMeta } from 'core/component/meta';
 import { getComponentContext } from 'core/component/context';
 
-import type { ComponentEngine, ComponentOptions } from 'core/component/engines';
+import type { ComponentEngine, ComponentOptions, SetupContext } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/interface';
 
 import { supports, proxyGetters } from 'core/component/engines/vue3/const';
@@ -72,6 +72,10 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					ctx.$async.setImmediate(() => ctx.$forceUpdate(), {label: 'forceUpdate'});
 				}
 			}
+		},
+
+		setup(props: Dictionary, ctx: SetupContext) {
+			return meta.methods.setup?.fn(props, ctx);
 		},
 
 		beforeCreate(): void {
