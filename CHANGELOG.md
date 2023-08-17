@@ -16,11 +16,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Improved display of warnings about deprecated design system fields `build/stylus/ds`
-
-## v4.??.?? (2023-??-??)
-
-#### :rocket: New Feature
-
 * Added possibility to change the method that will be used for transitions when the router
   synchronizes its state with the component's state by using `syncRouterState` `iBlock`
 
