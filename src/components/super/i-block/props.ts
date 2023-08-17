@@ -122,7 +122,11 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 *   < b-popup :wait = promisifyOnce('showPopup')
 	 * ```
 	 */
-	@prop({type: Promise, required: false})
+	@prop({
+		validator: Object.isPromiseLike,
+		required: false
+	})
+
 	readonly wait?: Promise<unknown>;
 
 	/**
