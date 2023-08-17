@@ -12,6 +12,9 @@ const
 	$C = require('collection.js'),
 	{webpack} = require('@config/config');
 
+const
+	{tracer} = include('build/helpers/tracer');
+
 /**
  * Returns WebPack configuration for the specified entry
  *
@@ -37,6 +40,7 @@ async function buildFactory(entry, buildId) {
 		modules = await include('build/webpack/module')({buildId, plugins}),
 		target = await include('build/webpack/target');
 
+	/** @type {import('webpack').Configuration} */
 	const config = {
 		name,
 
@@ -79,9 +83,13 @@ async function buildFactory(entry, buildId) {
 const tasks = (async () => {
 	await include('build/snakeskin');
 
-	const
-		{processes} = await include('build/graph'),
-		tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));
+	const {processes} = await include('build/graph');
+
+	const done = tracer.measure('Generate webpack config', {cat: ['config']});
+
+	const tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));
+
+	done();
 
 	globalThis.WEBPACK_CONFIG = tasks;
 	return tasks;
