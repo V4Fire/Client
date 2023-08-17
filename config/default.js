@@ -220,6 +220,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				type: 'boolean',
 				default: def
 			});
+		},
+
+		/**
+		 * Returns true if the application build times should be measured.
+		 * It will measure graph build, webpack config generation and webpack build times.
+		 *
+		 * @cli measure-build-time
+		 * @env MEASURE_BUILD_TIME
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		measureBuildTime(def = false) {
+			return o('measure-build-time', {
+				env: true,
+				type: 'boolean',
+				default: def
+			});
 		}
 	},
 
@@ -728,6 +746,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					}
 				};
 			}
+		},
+
+		/**
+		 * Returns number of modules to build in parallel
+		 *
+		 * @cli module-parallelism
+		 * @env MODULE_PARALLELISM
+		 *
+		 * @see https://webpack.js.org/configuration/other-options/#parallelism
+		 * @param {number} [def] - default value
+		 * @returns {number}
+		 */
+		moduleParallelism(def = 100) {
+			return o('module-parallelism', {
+				env: true,
+				default: def,
+				type: 'number'
+			});
 		}
 	},
 
