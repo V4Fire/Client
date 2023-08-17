@@ -89,7 +89,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		}
 
 		const
-			render = meta.methods.render!.fn(unsafe, ...args);
+			render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
 
 		if (!Object.isFunction(render)) {
 			return render;
