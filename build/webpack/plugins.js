@@ -29,6 +29,7 @@ module.exports = async function plugins({name}) {
 	const
 		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
 		createProgressPlugin = include('build/webpack/plugins/progress-plugin'),
+		MeasurePlugin = include('build/webpack/plugins/measure-plugin'),
 		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings'),
 		I18NGeneratorPlugin = include('build/webpack/plugins/i18n-plugin'),
 		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
@@ -39,6 +40,12 @@ module.exports = async function plugins({name}) {
 		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()],
 		['i18nGeneratorPlugin', new I18NGeneratorPlugin()]
 	]);
+
+	if (config.build.measureBuildTime()) {
+		plugins.set('measurePlugin', new MeasurePlugin({
+			output: 'measure.json'
+		}));
+	}
 
 	const
 		statoscopeConfig = config.statoscope();
