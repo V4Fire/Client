@@ -20,6 +20,16 @@ module.exports = class MeasurePlugin {
 
 	eventCallbacks = new Map();
 
+	output = '';
+
+	/**
+	 * @param {*} [param0]
+	 * @param {string} [param0.output] - output filename relative to `process.cwd()`
+	 */
+	constructor({output = 'measure.json'} = {}) {
+		this.output = output;
+	}
+
 	/**
 	 * Applies measurements to webpack build
 	 * @param {import('webpack').Compiler} compiler
@@ -63,7 +73,7 @@ module.exports = class MeasurePlugin {
 
 			tracer.trace.instantEvent({name: 'Build finished'});
 
-			const ws = createWriteStream(path.resolve(process.cwd(), 'measure.json'));
+			const ws = createWriteStream(path.resolve(process.cwd(), this.output));
 
 			ws.on('error', (error) => {
 				logger.error(`Measure write failed, reason: ${error.message}`);
