@@ -41,9 +41,10 @@ module.exports = async function plugins({name}) {
 		['i18nGeneratorPlugin', new I18NGeneratorPlugin()]
 	]);
 
-	if (config.build.measureBuildTime()) {
+	if (config.webpack.mode() !== 'production' || config.build.traceBuildTimes()) {
 		plugins.set('measurePlugin', new MeasurePlugin({
-			output: 'measure.json'
+			output: 'trace.json',
+			writeToFile: config.build.traceBuildTimes()
 		}));
 	}
 
