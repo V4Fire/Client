@@ -85,7 +85,6 @@ const plainWithDeepColorObjects = {
 		'white-alpha': {
 			White: 'rgba(255,255,255,1)'
 		},
-		WhiteAlpha: {},
 		blue: ['rgb(0,123,255)', 'rgba(23,162,184,1)', 'rgba(128,189,255,1)'],
 		blackAlpha: {
 			black: 'rgba(0,0,0,1)'
