@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Added possibility to specify a complicated color tokens `build/stylus/ds`
 * Added possibility to change the method that will be used for transitions when the router
   synchronizes its state with the component's state by using `syncRouterState` `iBlock`
 
