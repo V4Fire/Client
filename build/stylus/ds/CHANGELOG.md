@@ -14,6 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Improved display of warnings about deprecated design system fields
+* Added possibility to specify a complicated color tokens
 
 ## v3.46.4 (2023-05-05)
 
