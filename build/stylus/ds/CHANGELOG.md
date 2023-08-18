@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.56.0 (2023-08-18)
+
+#### :rocket: New Feature
+
+* Added possibility to specify a complicated color tokens
+* Improved display of warnings about deprecated design system fields
+
 ## v3.46.4 (2023-05-05)
 
 #### :bug: Bug Fix

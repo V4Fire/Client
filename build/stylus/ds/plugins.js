@@ -260,6 +260,10 @@ module.exports = function getPlugins({
 				return;
 			}
 
+			name = name.includes('/') ?
+				name.split('/').map((s) => s.includes(' ') ? s.camelize(false) : s) :
+				name.split('.');
+
 			const
 				path = isOneTheme ? getThemedPathChunks('colors', theme, isFieldThemed('colors')) : ['colors'];
 
@@ -271,7 +275,7 @@ module.exports = function getPlugins({
 				}
 			}
 
-			path.push(...name.split('.'));
+			path.push(...name);
 
 			if (id !== undefined) {
 				path.push(String(id));
