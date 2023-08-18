@@ -76,7 +76,33 @@ const plainWithHueInColorsName = {
 	}
 };
 
+const plainWithDeepColorObjects = {
+	...plain,
+	colors: {
+		whiteAlpha: {
+			white: 'rgba(255,255,255,1)'
+		},
+		'white-alpha': {
+			White: 'rgba(255,255,255,1)'
+		},
+		blue: ['rgb(0,123,255)', 'rgba(23,162,184,1)', 'rgba(128,189,255,1)'],
+		blackAlpha: {
+			black: 'rgba(0,0,0,1)'
+		},
+		decor: {
+			primary: {
+				red: 'rgba(220,53,69,1)'
+			}
+		},
+		Black: {
+			Black: 'rgba(0,0,0,1)'
+		},
+		White: 'rgba(255,255,255,1)'
+	}
+};
+
 module.exports = {
 	plainWithAbstractColors,
-	plainDesignSystem: plainWithHueInColorsName
+	plainDesignSystem: plainWithHueInColorsName,
+	plainWithDeepColorObjects
 };

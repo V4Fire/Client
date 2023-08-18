@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to specify a complicated color tokens `build/stylus/ds`
+* Improved display of warnings about deprecated design system fields `build/stylus/ds`
+
 ## v3.55.0 (2023-08-04)
 
 #### :rocket: New Feature

@@ -244,7 +244,8 @@ function checkDeprecated(ds, path) {
 	}
 
 	const
-		strPath = Object.isString(path) ? path : path.join('.'),
+		[field] = Object.isString(path) ? path.match(/[^.]+/) : path,
+		strPath = Object.isString(path) ? path.replace(/.*?\./, '') : path.slice(1).join('.'),
 		deprecated = ds.meta.deprecated[strPath];
 
 	if (deprecated == null) {
@@ -257,13 +258,13 @@ function checkDeprecated(ds, path) {
 	if (Object.isDictionary(deprecated)) {
 		if (deprecated.renamedTo != null) {
 			message.push(
-				`[stylus] Warning: design system field by path "${strPath}" was renamed to "${deprecated.renamedTo}".`,
+				`[stylus] Warning: design system field "${field}" by path "${strPath}" was renamed to "${deprecated.renamedTo}".`,
 				'Please use the renamed version instead of the current, because it will be removed from the next major release.'
 			);
 
 		} else if (deprecated.alternative != null) {
 			message.push(
-				`[stylus] Warning: design system field by path "${strPath}" was deprecated and will be removed from the next major release.`
+				`[stylus] Warning: design system field "${field}" by path "${strPath}" was deprecated and will be removed from the next major release.`
 			);
 
 			message.push(`Please use "${deprecated.alternative}" instead.`);
@@ -275,7 +276,7 @@ function checkDeprecated(ds, path) {
 
 	} else {
 		message.push(
-			`[stylus] Warning: design system field by path "${strPath}" was deprecated and will be removed from the next major release.`
+			`[stylus] Warning: design system field "${field}" by path "${strPath}" was deprecated and will be removed from the next major release.`
 		);
 	}
 
