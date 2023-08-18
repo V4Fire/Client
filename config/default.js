@@ -223,17 +223,17 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if the application build times should be measured.
-		 * It will measure graph build, webpack config generation and webpack build times.
+		 * Returns `true` if the application build times should be traced.
+		 * Trace file will be created in the project's root.
 		 *
-		 * @cli measure-build-time
-		 * @env MEASURE_BUILD_TIME
+		 * @cli trace-build-times
+		 * @env TRACE_BUILD_TIMES
 		 *
 		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
-		measureBuildTime(def = false) {
-			return o('measure-build-time', {
+		traceBuildTimes(def = false) {
+			return o('trace-build-times', {
 				env: true,
 				type: 'boolean',
 				default: def
