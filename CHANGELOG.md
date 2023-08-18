@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-beta.11 (2023-08-18)
 
 #### :rocket: New Feature
 
@@ -24,6 +24,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue where the default behavior of the `convertStateToRouterReset` did not affect the router `iBlock`
 * Fixed resetting router state `friends/state`
+* Fixed a bug with resolving a promise returned by the `iLockPageScroll.lock` `traits/i-lock-page-scroll`
 
 ## v4.0.0-beta.10 (2023-07-27)
 
@@ -75,7 +76,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
 
-## v3.50.0 (2023-06-??)
+## v3.50.0 (2023-06-16)
 
 #### :rocket: New Feature
 
@@ -313,6 +314,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Fixed passing props to nested trees
   * Fixed an issue with the prop `itemProps` not being added to items attributes
   * Fixed adding the `folded_false` class to items without children
+
+## v4.0.0-alpha.1 (2022-12-14)
+
+#### :boom: Breaking Change
+
+* The first public release of the 4th version
 
 ## v3.31.0 (2022-12-06)
 
