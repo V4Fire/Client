@@ -9,12 +9,13 @@
 'use strict';
 
 const
-	{createWriteStream} = require('fs'),
-	path = require('upath');
+	{tracer} = include('build/helpers/tracer'),
+	{writeToStdout, writeToFile} = include('build/webpack/plugins/measure-plugin/helpers');
 
-/** @type {import('../../../helpers/tracer')} */
-const {tracer} = include('build/helpers/tracer');
-
+/**
+ * This plugin measures build times and outputs them to stdout,
+ * it also can create detailed trace file if `writeToFile = true`
+ */
 module.exports = class MeasurePlugin {
 	static activeCompilers = 0;
 
@@ -22,12 +23,16 @@ module.exports = class MeasurePlugin {
 
 	output = '';
 
+	writeToFile = false;
+
 	/**
 	 * @param {*} [param0]
 	 * @param {string} [param0.output] - output filename relative to `process.cwd()`
+	 * @param {boolean} [param0.writeToFile] - output trace to file
 	 */
-	constructor({output = 'measure.json'} = {}) {
+	constructor({output = 'trace.json', writeToFile = false} = {}) {
 		this.output = output;
+		this.writeToFile = writeToFile;
 	}
 
 	/**
@@ -71,19 +76,14 @@ module.exports = class MeasurePlugin {
 				return cb();
 			}
 
-			tracer.trace.instantEvent({name: 'Build finished'});
+			tracer.trace.instantEvent({name: 'Total time'});
 
-			const ws = createWriteStream(path.resolve(process.cwd(), this.output));
+			if (this.writeToFile) {
+				writeToFile(cb, {logger, filename: this.output});
 
-			ws.on('error', (error) => {
-				logger.error(`Measure write failed, reason: ${error.message}`);
-			});
-
-			ws.on('close', cb);
-
-			tracer.trace.pipe(ws);
-			tracer.trace.flush();
-
+			} else {
+				writeToStdout(cb);
+			}
 		});
 	}
 };
