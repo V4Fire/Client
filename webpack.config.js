@@ -10,10 +10,11 @@
 
 const
 	$C = require('collection.js'),
-	{webpack} = require('@config/config');
+	{webpack, build} = require('@config/config');
 
 const
-	{tracer} = include('build/helpers/tracer');
+	{tracer} = include('build/helpers/tracer'),
+	{wrapLoaders} = include('build/webpack/loaders/measure-loader');
 
 /**
  * Returns WebPack configuration for the specified entry
@@ -65,6 +66,10 @@ async function buildFactory(entry, buildId) {
 
 		...await include('build/webpack/custom/options')({buildId})
 	};
+
+	if (build.traceBuildTimes()) {
+		wrapLoaders(config.module.rules);
+	}
 
 	if (target != null) {
 		config.target = target;
