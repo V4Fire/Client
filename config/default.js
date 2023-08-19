@@ -225,6 +225,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		/**
 		 * Returns `true` if the application build times should be traced.
 		 * Trace file will be created in the project's root.
+		 * It's highly recommended to use this option with `module-parallelism=1`.
 		 *
 		 * @cli trace-build-times
 		 * @env TRACE_BUILD_TIMES
