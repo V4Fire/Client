@@ -10,7 +10,7 @@
 
 const
 	{tracer} = include('build/helpers/tracer'),
-	{writeToStdout, writeToFile} = include('build/webpack/plugins/measure-plugin/helpers');
+	{writeToStdout, writeToFile, traceLoaders, timestamp} = include('build/webpack/plugins/measure-plugin/helpers');
 
 /**
  * This plugin measures build times and outputs them to stdout,
@@ -19,20 +19,20 @@ const
 module.exports = class MeasurePlugin {
 	static activeCompilers = 0;
 
-	eventCallbacks = new Map();
+	events = new Map();
 
 	output = '';
 
-	writeToFile = false;
+	trace = false;
 
 	/**
 	 * @param {*} [param0]
 	 * @param {string} [param0.output] - output filename relative to `process.cwd()`
-	 * @param {boolean} [param0.writeToFile] - output trace to file
+	 * @param {boolean} [param0.trace] - perform detailed trace of the build
 	 */
-	constructor({output = 'trace.json', writeToFile = false} = {}) {
+	constructor({output = 'trace.json', trace = false} = {}) {
 		this.output = output;
-		this.writeToFile = writeToFile;
+		this.trace = trace;
 	}
 
 	/**
@@ -40,6 +40,10 @@ module.exports = class MeasurePlugin {
 	 * @param {import('webpack').Compiler} compiler
 	 */
 	apply(compiler) {
+		if (compiler.watchMode) {
+			return;
+		}
+
 		const logger = compiler.getInfrastructureLogger(this.constructor.name);
 
 		compiler.hooks.compilation.tap(this.constructor.name, (compilation) => {
@@ -49,11 +53,12 @@ module.exports = class MeasurePlugin {
 			const event = {
 				name: `Compilation '${name}'`,
 				id: ++tracer.counter,
-				cat: [`compilation.${name}`]
+				cat: [`compilation.${name}`],
+				ts: timestamp()
 			};
 
 			tracer.trace.begin(event);
-			this.eventCallbacks.set(`compilation.${name}`, () => tracer.trace.end(event));
+			this.events.set(`compilation.${name}`, event);
 		});
 
 		compiler.hooks.done.tap(this.constructor.name, (stats) => {
@@ -62,13 +67,17 @@ module.exports = class MeasurePlugin {
 				key = `compilation.${name}`;
 
 			const
-				done = this.eventCallbacks.get(key);
+				event = this.events.get(key);
 
-			if (typeof done === 'function') {
-				done();
+			if (this.trace) {
+				traceLoaders(name, event);
 			}
 
-			this.eventCallbacks.delete(key);
+			if (event != null) {
+				tracer.trace.end({...event, ts: timestamp()});
+			}
+
+			this.events.delete(key);
 		});
 
 		compiler.hooks.shutdown.tapAsync(this.constructor.name, (cb) => {
@@ -78,7 +87,7 @@ module.exports = class MeasurePlugin {
 
 			tracer.trace.instantEvent({name: 'Total time'});
 
-			if (this.writeToFile) {
+			if (this.trace) {
 				writeToFile(cb, {logger, filename: this.output});
 
 			} else {
