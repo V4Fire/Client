@@ -44,7 +44,7 @@ module.exports = async function plugins({name}) {
 	if (config.webpack.mode() !== 'production' || config.build.traceBuildTimes()) {
 		plugins.set('measurePlugin', new MeasurePlugin({
 			output: 'trace.json',
-			writeToFile: config.build.traceBuildTimes()
+			trace: config.build.traceBuildTimes()
 		}));
 	}
 
