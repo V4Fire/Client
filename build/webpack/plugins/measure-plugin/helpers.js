@@ -12,7 +12,9 @@ const
 	{createWriteStream} = require('fs'),
 	path = require('upath');
 
-const {tracer} = include('build/helpers/tracer');
+const
+	{tracer} = include('build/helpers/tracer'),
+	{getLoadersMetrics} = include('build/webpack/loaders/measure-loader');
 
 /**
  * Writes some trace information to stdout
@@ -75,11 +77,47 @@ exports.writeToFile = function writeToFile(done, {logger, filename}) {
 	const ws = createWriteStream(path.resolve(process.cwd(), filename));
 
 	ws.on('error', (error) => {
-		logger.error(`Measure write failed, reason: ${error.message}`);
+		logger.error(`Trace write failed, reason: ${error.message}`);
 	});
 
 	ws.on('close', done);
 
 	tracer.trace.pipe(ws);
 	tracer.trace.flush();
+};
+
+/**
+ * Returns current timestamp in ms
+ * @returns {number}
+ */
+exports.timestamp = () => Number(process.hrtime.bigint() / 1000n);
+
+/**
+ * Creates trace events for loaders
+ *
+ * @param {string} name
+ * @param {object} compilationStartEvent
+ */
+exports.traceLoaders = function traceLoaders(name, compilationStartEvent) {
+	const metrics = getLoadersMetrics(name);
+
+	const
+		sums = [...metrics.sums.entries()].sort(([_k1, a], [_k2, b]) => a < b ? 1 : -1),
+		total = sums.reduce((acc, [_, value]) => acc + Number(value), 0);
+
+	for (const [loader, value] of sums) {
+		const duration = Number(value);
+
+		const loaderEvent = {
+			...compilationStartEvent,
+			name: loader,
+			args: {
+				description: 'This is a generalizing event. It summarizes the execution time of individual events.',
+				percent: (duration / total * 100).toFixed(3)
+			}
+		};
+
+		tracer.trace.begin(loaderEvent);
+		tracer.trace.end({...loaderEvent, ts: loaderEvent.ts + duration});
+	}
 };
