@@ -103,6 +103,76 @@ function isStandalone(entryPoint) {
 	return entryPoint === 'std' || /\.(worker|standalone)\b/.test(entryPoint);
 }
 
+exports.getManagedPath = getManagedPath;
+
+/**
+ * Returns managed path (starting with node_modules) for webpack `snapshot.managedPaths` option
+ *
+ * @param {string|string[]} exclude
+ * @returns {RegExp}
+ * @example
+ * ```js
+ * getManagedPaths(['@v4fire/client', '@v4fire/core'])
+ * // or
+ * getManagedPaths('@v4fire[\\\\/]client|@v4fire[\\\\/]core')
+ * ```
+ */
+function getManagedPath(exclude) {
+	const excludeStr = Array.isArray(exclude) ? prepareLibsForRegExp(exclude) : exclude;
+	return new RegExp(`^(.+?[\\\\/]node_modules[\\\\/](?!(${excludeStr}))(@.+?[\\\\/])?.+?)[\\\\/]`);
+}
+
+exports.prepareLibsForRegExp = prepareLibsForRegExp;
+
+/**
+ * Prepares lib list for regexp
+ *
+ * @param {string[]} libs
+ * @returns {string}
+ * @example
+ * ```js
+ * prepareLibListForRegexp(['@v4fire/client', '@v4fire/core']) // '@v4fire[\\\\/]client|@v4fire[\\\\/]core'
+ * ```
+ */
+function prepareLibsForRegExp(libs) {
+	return libs.map((el) => {
+		const src = Object.isString(el) ? el : el.src;
+		return src.split(/[/\\]/).map(RegExp.escape).join('[\\\\/]');
+	})
+		.join('|');
+}
+
+exports.createDepRegExp = createDepRegExp;
+
+/**
+ * Returns regexp which matches all dependencies except the excluded.
+ * It can be used to detect external dependencies.
+ *
+ * @param {string|string[]} exclude
+ * @returns {RegExp}
+ * @example
+ * ```
+ * const isExternalDep = createDepRegExp(['@v4fire/client', '@v4fire/core'])
+ * // or
+ * const isExternalDep = createDepRegExp('@v4fire[\\\\/]client|@v4fire[\\\\/]core')
+ *
+ * isExternalDep.test('./node_modules/@v4fire/client/bla')              // false
+ * isExternalDep.test('./node_modules/@v4fire/client/node_modules/bla') // false
+ * isExternalDep.test('./node_modules/bla')                             // true
+ * ```
+ */
+function createDepRegExp(exclude) {
+	const excludeStr = Array.isArray(exclude) ? prepareLibsForRegExp(exclude) : exclude;
+
+	return new RegExp(
+		'' +
+
+		'^(?:(?!(?:^|[\\\\/])node_modules[\\\\/]).)*' +
+
+		`[\\\\/]?node_modules[\\\\/](?:(?!${excludeStr}).)*$`
+	);
+}
+
 /**
  * Webpack stats fields that need to be merged
  */
