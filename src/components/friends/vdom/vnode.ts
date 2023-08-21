@@ -141,6 +141,11 @@ function createVNode(
 			return vnode;
 		};
 
+		if (isComponent.test(type) && children != null && !Object.isDictionary(children)) {
+			const slot = children;
+			children = {default: () => slot};
+		}
+
 		if (children != null) {
 			if (Object.isArray(children)) {
 				resolvedChildren = new Array(children.length);
