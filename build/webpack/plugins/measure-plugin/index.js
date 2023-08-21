@@ -79,14 +79,16 @@ module.exports = class MeasurePlugin {
 				key = `compilation.${name}`;
 
 			const
-				event = this.events.get(key);
+				startEvent = this.events.get(key);
 
-			if (this.trace) {
-				traceLoaders(name, event);
-			}
+			if (startEvent != null) {
+				const endEvent = {...startEvent, ts: timestamp()};
 
-			if (event != null) {
-				tracer.trace.end({...event, ts: timestamp()});
+				if (this.trace) {
+					traceLoaders(name, startEvent, endEvent);
+				}
+
+				tracer.trace.end(endEvent);
 			}
 
 			this.events.delete(key);

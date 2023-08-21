@@ -97,13 +97,14 @@ exports.timestamp = () => Number(process.hrtime.bigint() / 1000n);
  *
  * @param {string} name
  * @param {object} compilationStartEvent
+ * @param {object} compilationEndEvent
  */
-exports.traceLoaders = function traceLoaders(name, compilationStartEvent) {
+exports.traceLoaders = function traceLoaders(name, compilationStartEvent, compilationEndEvent) {
 	const metrics = getLoadersMetrics(name);
 
 	const
 		sums = [...metrics.sums.entries()].sort(([_k1, a], [_k2, b]) => a < b ? 1 : -1),
-		total = sums.reduce((acc, [_, value]) => acc + Number(value), 0);
+		compilationTime = compilationEndEvent.ts - compilationStartEvent.ts;
 
 	for (const [loader, value] of sums) {
 		const duration = Number(value);
@@ -112,8 +113,12 @@ exports.traceLoaders = function traceLoaders(name, compilationStartEvent) {
 			...compilationStartEvent,
 			name: loader,
 			args: {
-				description: 'This is a generalizing event. It summarizes the execution time of individual events.',
-				percent: (duration / total * 100).toFixed(3)
+				description: [
+					'This is a generalizing event.',
+					'It summarizes the execution time of individual events.',
+					'With webpack module parallelism greater than 1, loader\'s total execution time can be greater than compilation time.'
+				].join(' '),
+				'percentage of compilation time': (duration / compilationTime * 100).toFixed(3)
 			}
 		};
 
