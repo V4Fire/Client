@@ -48,13 +48,17 @@ import type {
 	FormValue,
 	UnsafeIInput,
 
+	ValidatorsDecl,
+
 	Validator,
 	ValidatorMessage,
-	ValidatorParams,
 	ValidatorResult,
-	ValidationResult,
-	ValidatorsDecl,
-	CustomValidatorParams
+
+	ValidatorParams,
+	CustomValidatorParams,
+
+	ValidationError,
+	ValidationResult
 
 } from 'components/super/i-input/interface';
 
@@ -368,7 +372,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 	get connectedForm(): CanPromise<CanNull<HTMLFormElement>> {
 		return this.waitComponentStatus('ready', () => {
 			let
-				form;
+				form: Nullable<HTMLFormElement>;
 
 			if (this.form != null) {
 				form = document.querySelector<HTMLFormElement>(`#${this.form}`);
@@ -426,7 +430,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				test = Array.concat([], this.disallow),
 				value = await this.value;
 
-			const match = (el): boolean => {
+			const match = (el: unknown): boolean => {
 				if (Object.isFunction(el)) {
 					return el.call(this, value);
 				}
@@ -689,7 +693,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 	/** {@link iInput.value} */
 	@field<iInput>((o) => {
-		o.watch('modelValue', (val) => o.value = val);
+		o.watch('modelValue', (val: unknown) => o.value = val);
 		return o.sync.link((val) => o.resolveValue(o.modelValue ?? val));
 	})
 
@@ -863,8 +867,8 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.emit('validationStart');
 
 		let
-			valid,
-			failedValidation;
+			valid: CanUndef<ValidationResult<this['FormValue']>>,
+			failedValidation: CanUndef<ValidationError>;
 
 		for (const decl of this.validators) {
 			const
@@ -872,7 +876,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 				isPlainObject = !isArray && Object.isPlainObject(decl);
 
 			let
-				validatorName;
+				validatorName: string;
 
 			if (isPlainObject) {
 				validatorName = Object.keys(decl)[0];
@@ -915,7 +919,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 
 					error: {
 						name: validatorName,
-						...Object.isDictionary(valid) ? valid : {}
+						...Object.isPlainObject(valid) ? valid : {}
 					}
 				};
 
@@ -942,7 +946,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		this.validationMessage = undefined;
 		this.emit('validationEnd', valid === true, failedValidation);
 
-		return valid === true ? valid : failedValidation;
+		return valid === true ? valid : failedValidation!;
 	}
 
 	/**
@@ -1042,7 +1046,7 @@ export default abstract class iInput extends iData implements iVisible, iAccess 
 		const
 			messageInitMap = Object.createDict();
 
-		const createMessageHandler = (type) => (val) => {
+		const createMessageHandler = (type: string) => (val: unknown) => {
 			if (messageInitMap[type] == null && this.modsProp != null && String(this.modsProp[type]) === 'false') {
 				return false;
 			}
