@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :rocker: New Feature
+
+* Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
+them in webpack watch mode
+
 ## v3.39.0 (2023-03-07)
 
 #### :rocket: New Feature
