@@ -9,6 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :rocker: New Feature
+
+* Added `module-parallelism` option, which sets the
+[`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
+* Added `trace-build-times` option, which enables build time tracing
+
 ## v3.39.0 (2023-03-07)
 
 #### :rocket: New Feature
