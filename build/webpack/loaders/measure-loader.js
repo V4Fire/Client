@@ -27,7 +27,7 @@ const metrics = {};
  * @returns {string}
  */
 exports.default = function measureLoader(str) {
-	// FIXME: `.styl` loaders are executed non-sequentially
+	// NOTE: `style-loader` is executed in batch before all loaders, currently there is no fix
 	const {next, prev} = this.getOptions();
 
 	const
