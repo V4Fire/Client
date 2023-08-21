@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.12 (2023-08-21)
+
+#### :bug: Bug Fix
+
+* If the element was in focus, it needs to be restored after validating
+
 ## v3.49.0 (2023-05-31)
 
 #### :rocket: New Feature

@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.12 (2023-08-21)
+
+#### :bug: Bug Fix
+
+* If the element was in focus, it needs to be restored after validating `iInput`
+
 ## v4.0.0-beta.11 (2023-08-18)
 
 #### :rocket: New Feature
