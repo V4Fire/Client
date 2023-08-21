@@ -13,6 +13,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.??.?? (2023-??-??)
 
+#### :rocker: New Feature
+
+* Config
+  * Added `module-parallelism` option, which sets the
+  [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
+  * Added `trace-build-times` option, which enables build time tracing
+
+* Added build time tracing, which can be visualized using the [Perfetto UI](https://ui.perfetto.dev)
+
+## v4.??.?? (2023-??-??)
+
 #### :rocket: New Feature
 
 * Added possibility to change the method that will be used for transitions when the router
