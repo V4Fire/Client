@@ -14,15 +14,27 @@ const
 
 /**
  * This plugin measures build times and outputs them to stdout,
- * it also can create detailed trace file if `writeToFile = true`
+ * it also can create detailed trace file when `trace = true`
  */
 module.exports = class MeasurePlugin {
+	/**
+	 * Active compiler count. It is static because plugin is applied to multiple configurations.
+	 */
 	static activeCompilers = 0;
 
+	/**
+	 * Store for pending events
+	 */
 	events = new Map();
 
+	/**
+	 * Output filename
+	 */
 	output = '';
 
+	/**
+	 * Enable detailed trace
+	 */
 	trace = false;
 
 	/**
