@@ -1,11 +1,15 @@
 # components/friends/provide
 
-This module provides a class with methods to provide component classes/styles to another component, etc.
+This module provides a class that offers methods for supplying component classes or styles to other components and more.
 
 ```js
 // {button: 'b-foo__bla'}
 this.provide.classes('b-foo', {button: 'bla'});
 ```
+
+## How to include this module in your component?
+
+By default, any component that inherits from [[iBlock]] has the `provide` property.
 
 ## Methods
 
@@ -51,8 +55,9 @@ console.log(this.provide.fullElementName('b-foo', 'foo', 'opened', true));
 
 ### mods
 
-Returns a dictionary with the base component modifiers.
-The base modifiers are taken from the `sharedMods` getter and can be mix in with the specified additional modifiers.
+Returns a dictionary containing the base component modifiers.
+These base modifiers are retrieved from the `sharedMods` getter and
+can be combined with any additional modifiers specified.
 
 ```js
 this.provide.sharedMods === {theme: 'foo'};
@@ -66,9 +71,9 @@ console.log(this.provide.mods({size: 'x'}));
 
 ### classes
 
-Returns a map with classes for the elements of another component.
-This function is used to assign element classes of the outer component to the elements of the inner component.
-Use it with caution as it's a violation of component encapsulation.
+Returns a dictionary that maps classes from one component to the elements of another component.
+This is typically used to assign element classes of the outer component to the elements of the inner component.
+However, it should be used with caution as it violates component encapsulation.
 
 ```js
 this.componentName === 'b-example';
@@ -114,7 +119,7 @@ this.provide.componentClasses('b-foo', {checked: true});
 
 ### elementClasses
 
-Returns a list of classes for the specified element of the current component.
+Returns a list of classes for a specified element of the current component.
 
 ```js
 this.componentName === 'b-example';

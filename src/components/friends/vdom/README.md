@@ -4,7 +4,7 @@ This module provides a class for low-level interaction with a component's VDOM t
 
 ## How to include this module in your component?
 
-By default, any component that inherits from [[iBlock]] has the vdom property.
+By default, any component that inherits from [[iBlock]] has the `vdom` property.
 However, to use the module methods, you need to attach them explicitly to enable tree-shake code optimizations.
 Simply add the necessary import declaration within your component file.
 

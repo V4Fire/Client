@@ -4,7 +4,7 @@ This module provides a class for creating daemons associated with a component.
 
 ## How to include this module in your component?
 
-By default, any component that inherits from [[iBlock]] will have the daemons property.
+By default, any component that inherits from [[iBlock]] will have the `daemons` property.
 However, to utilize module methods, you must attach them explicitly to enable tree-shake code optimizations.
 To do this, place the necessary import declaration within your component file.
 
