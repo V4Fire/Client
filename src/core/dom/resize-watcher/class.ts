@@ -33,7 +33,10 @@ export default class ResizeWatcher {
 		this.observer = new ResizeObserver((entries) => {
 			entries.forEach(({target, contentRect, contentBoxSize, borderBoxSize}) => {
 				this.elements.get(target)?.forEach((watcher) => {
-					const newBoxSize = watcher.box === 'border-box' ? borderBoxSize : contentBoxSize;
+					const newBoxSize = watcher.box === 'border-box' ?
+						borderBoxSize :
+						contentBoxSize;
+
 					if (watcher.rect == null) {
 						watcher.rect = contentRect;
 						watcher.boxSize = newBoxSize;
@@ -46,9 +49,8 @@ export default class ResizeWatcher {
 					}
 
 					const
-						oldRect = watcher.rect;
-
-					const oldBoxSize = watcher.boxSize;
+						oldRect = watcher.rect,
+						oldBoxSize = watcher.boxSize;
 
 					if (shouldInvokeHandler(contentRect, oldRect, newBoxSize, oldBoxSize, watcher)) {
 						watcher.rect = contentRect;
