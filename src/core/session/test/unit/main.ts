@@ -14,7 +14,7 @@ import Utils from 'tests/helpers/utils';
 
 import type * as SessionAPI from 'core/session';
 
-test.describe('core/cookies', () => {
+test.describe('core/session', () => {
 	let sessionAPI: JSHandle<typeof SessionAPI>;
 
 	test.beforeEach(async ({demoPage, page}) => {
@@ -22,8 +22,8 @@ test.describe('core/cookies', () => {
 		sessionAPI = await Utils.import(page, 'core/session');
 	});
 
-	test.describe('set', () => {
-		test('should store session with specified parameters', async () => {
+	test.describe('`set`', () => {
+		test('should store session with the specified parameters', async () => {
 			await sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1}));
 
 			const testVal = await sessionAPI.evaluate((ctx) => ctx.get());
@@ -41,7 +41,7 @@ test.describe('core/cookies', () => {
 		});
 	});
 
-	test.describe('get', () => {
+	test.describe('`get`', () => {
 		test('should return session data if the session was initialized', async () => {
 			await sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1}));
 
@@ -59,7 +59,7 @@ test.describe('core/cookies', () => {
 		});
 	});
 
-	test.describe('clear', () => {
+	test.describe('`clear`', () => {
 		test('should clear the stored session', async () => {
 			await sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1}));
 			await sessionAPI.evaluate((ctx) => ctx.clear());
@@ -81,7 +81,7 @@ test.describe('core/cookies', () => {
 		});
 	});
 
-	test.describe('match', () => {
+	test.describe('`match`', () => {
 		test.beforeEach(() => sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1})));
 
 		test('should return `true` if the current session and the provided session are the same', async () => {
@@ -99,7 +99,7 @@ test.describe('core/cookies', () => {
 		});
 	});
 
-	test.describe('isExists', () => {
+	test.describe('`isExists`', () => {
 		test('should return `true` if the session exists', async () => {
 			await sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1}));
 
