@@ -8,6 +8,9 @@
 
 import type { ElementHandle, Locator, Page } from 'playwright';
 
+import test from 'tests/config/unit/test';
+import { Component } from 'tests/helpers';
+
 import type {
 
 	WatchHandler,
@@ -16,150 +19,197 @@ import type {
 
 } from 'components/directives/on-resize/interface';
 
-import test from 'tests/config/unit/test';
-import { Component } from 'tests/helpers';
-
 test.describe('components/directives/on-resize', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
-	test('handler should be called on element init by default', async ({page}) => {
-		const component = await renderDirective(page);
-		await test.expect(waitForWatcherCallsCount(page, component, 1)).toBeResolved();
-	});
-
-	test('handler should be called on element width or height resize', async ({page}) => {
-		const component = await renderDirective(page);
-		await component.evaluate(async (div) => {
-			div.style.width = '50px';
-			await new Promise((resolve) => setTimeout(resolve, 300));
-			div.style.height = '50px';
+	describe('the handler should be called', () => {
+		test('upon initialization of the default element', async ({page}) => {
+			const component = await renderDirective(page);
+			await test.expect(waitForWatcherCallsCount(page, component, 1)).toBeResolved();
 		});
 
-		await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
-	});
+		test(
+			'upon initialization and only once on resize when the value of `once` is set to true',
 
-	test('handler should be called only on element height resize when `watchWidth` is set to false', async ({page}) => {
-		const component = await renderDirective(page, {
-			watchWidth: false
-		});
+			async ({page}) => {
+				const component = await renderDirective(page, {
+					once: true
+				});
 
-		await component.evaluate(async (div) => {
-			div.style.width = '50px';
-			await new Promise((resolve) => setTimeout(resolve, 300));
-			div.style.height = '50px';
-		});
+				await component.evaluate(async (div) => {
+					div.style.width = '50px';
+					await new Promise((resolve) => setTimeout(resolve, 300));
+					div.style.height = '50px';
+				});
 
-		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
-	});
-
-	test('handler should be called only on element width resize when `watchHeight` is set to false', async ({page}) => {
-		const component = await renderDirective(page, {
-			watchHeight: false
-		});
-
-		await component.evaluate(async (div) => {
-			div.style.width = '50px';
-			await new Promise((resolve) => setTimeout(resolve, 300));
-			div.style.height = '50px';
-		});
-
-		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
-	});
-
-	test('handler should be called on init and only once on resize when `once` is set to true', async ({page}) => {
-		const component = await renderDirective(page, {
-			once: true
-		});
-
-		await component.evaluate(async (div) => {
-			div.style.width = '50px';
-			await new Promise((resolve) => setTimeout(resolve, 300));
-			div.style.height = '50px';
-		});
-
-		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
-	});
-
-	test('handler should not be called on element init when `watchInit` is set to false', async ({page}) => {
-		const component = await renderDirective(page, {
-			watchInit: false
-		});
-
-		await test.expect(waitForWatcherCallsCount(page, component, 0)).toBeResolved();
-	});
-
-	test('handler should not be called on padding or border change when `box`: content-box and element has box-sizing: content-box', async ({page}) => {
-		const component = await renderDirective(page);
-
-		await component.evaluate(async (div) => {
-			div.style.padding = '20px';
-			await new Promise((resolve) => setTimeout(resolve, 300));
-			div.style.border = '2px solid black';
-		});
-
-		await test.expect(waitForWatcherCallsCount(page, component, 1)).toBeResolved();
-	});
-
-	test('handler should be called on padding or border change when `box`: border-box and element has box-sizing: content-box', async ({page}) => {
-		const component = await renderDirective(page, {
-			box: 'border-box'
-		});
-
-		await component.evaluate(async (div) => {
-			div.style.padding = '20px';
-			await new Promise((resolve) => setTimeout(resolve, 300));
-			div.style.border = '2px solid black';
-		});
-
-		await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
-	});
-
-	test('handler should be called on padding or border change when `box`: content-box and element has box-sizing: border-box', async ({page}) => {
-		const component = await renderDirective(page, undefined, 'border-box');
-
-		await component.evaluate(async (div) => {
-			div.style.padding = '20px';
-			await new Promise((resolve) => setTimeout(resolve, 300));
-			div.style.border = '2px solid black';
-		});
-
-		await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
-	});
-
-	test('handler should not be called on padding or border change when `box`: border-box and element has box-sizing: border-box', async ({page}) => {
-		const component = await renderDirective(page, {
-			box: 'border-box'
-		}, 'border-box');
-
-		await component.evaluate(async (div) => {
-			div.style.padding = '20px';
-			await new Promise((resolve) => setTimeout(resolve, 300));
-			div.style.border = '2px solid black';
-		});
-
-		await test.expect(waitForWatcherCallsCount(page, component, 1)).toBeResolved();
-	});
-
-	test('all provided handlers should be called on element resize', async ({page}) => {
-		const component = await renderDirective(page, [
-			{
-				once: true,
-				watchInit: false
-			},
-			{
-				once: true,
-				watchInit: false
+				await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
 			}
-		]);
+		);
 
-		await component.evaluate((div) => {
-			div.style.width = '50px';
+		test('when the width or height of the element is resized.', async ({page}) => {
+			const component = await renderDirective(page);
+
+			await component.evaluate(async (div) => {
+				div.style.width = '50px';
+				await new Promise((resolve) => setTimeout(resolve, 300));
+				div.style.height = '50px';
+			});
+
+			await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
 		});
 
-		await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
+		test(
+			'only when the height of the element is changed when the `watchWidth` is set to false',
+
+			async ({page}) => {
+				const component = await renderDirective(page, {
+					watchWidth: false
+				});
+
+				await component.evaluate(async (div) => {
+					div.style.width = '50px';
+					await new Promise((resolve) => setTimeout(resolve, 300));
+					div.style.height = '50px';
+				});
+
+				await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
+			}
+		);
+
+		test(
+			'only when the width of the element is changed when the `watchHeight` is set to false',
+
+			async ({page}) => {
+				const component = await renderDirective(page, {
+					watchHeight: false
+				});
+
+				await component.evaluate(async (div) => {
+					div.style.width = '50px';
+					await new Promise((resolve) => setTimeout(resolve, 300));
+					div.style.height = '50px';
+				});
+
+				await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
+			}
+		);
+
+		test(
+			[
+				'when there is a change in padding or border of the element, ',
+				'provided that the box model is set to "border-box" and the element has a box-sizing value of "content-box"'
+			].join(''),
+
+			async ({page}) => {
+				const component = await renderDirective(page, {
+					box: 'border-box'
+				});
+
+				await component.evaluate(async (div) => {
+					div.style.padding = '20px';
+					await new Promise((resolve) => setTimeout(resolve, 300));
+					div.style.border = '2px solid black';
+				});
+
+				await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
+			}
+		);
+
+		test(
+			[
+				'when there is a change in padding or border of the element, ',
+				'regardless of whether the element has a box-sizing value of "content-box" or "border-box'
+			].join(''),
+
+			async ({page}) => {
+				const component = await renderDirective(page, undefined, 'border-box');
+
+				await component.evaluate(async (div) => {
+					div.style.padding = '20px';
+					await new Promise((resolve) => setTimeout(resolve, 300));
+					div.style.border = '2px solid black';
+				});
+
+				await test.expect(waitForWatcherCallsCount(page, component, 3)).toBeResolved();
+			}
+		);
 	});
+
+	describe('the handler should not be called', () => {
+		test('upon initialization of the element when the value of `watchInit` is set to false', async ({page}) => {
+			const component = await renderDirective(page, {
+				watchInit: false
+			});
+
+			await test.expect(waitForWatcherCallsCount(page, component, 0)).toBeResolved();
+		});
+
+		test(
+			[
+				'when there is a change in padding or border of the element when the box model is set to "content-box" and ',
+				'the element has a box-sizing value of "content-box"'
+			].join(''),
+
+			async ({page}) => {
+				const component = await renderDirective(page);
+
+				await component.evaluate(async (div) => {
+					div.style.padding = '20px';
+					await new Promise((resolve) => setTimeout(resolve, 300));
+					div.style.border = '2px solid black';
+				});
+
+				await test.expect(waitForWatcherCallsCount(page, component, 1)).toBeResolved();
+			}
+		);
+
+		test(
+			[
+				'when there is a change in padding or border of the element when the box model is set to "border-box" and ',
+				'the element has a box-sizing value of "border-box"'
+			].join(''),
+
+			async ({page}) => {
+				const component = await renderDirective(page, {
+					box: 'border-box'
+				}, 'border-box');
+
+				await component.evaluate(async (div) => {
+					div.style.padding = '20px';
+					await new Promise((resolve) => setTimeout(resolve, 300));
+					div.style.border = '2px solid black';
+				});
+
+				await test.expect(waitForWatcherCallsCount(page, component, 1)).toBeResolved();
+			}
+		);
+	});
+
+	test(
+		'all provided handlers should be called when the size of the element changes',
+
+		async ({page}) => {
+			const component = await renderDirective(page, [
+				{
+					once: true,
+					watchInit: false
+				},
+
+				{
+					once: true,
+					watchInit: false
+				}
+			]);
+
+			await component.evaluate((div) => {
+				div.style.width = '50px';
+			});
+
+			await test.expect(waitForWatcherCallsCount(page, component, 2)).toBeResolved();
+		}
+	);
 
 	/**
 	 * Waits for the value of the observer's call counter to become equal to the expected value
@@ -184,8 +234,8 @@ test.describe('components/directives/on-resize', () => {
 	/**
 	 * A handler to pass to the `on-resize` directive
 	 *
-	 * @param newRect - new DOMRect value
-	 * @param oldRect - previous DOMRect value
+	 * @param newRect - the new DOMRect value
+	 * @param oldRect - the previous DOMRect value
 	 * @param watcher - the parameter of the watch handler
 	 */
 	function handler(newRect: DOMRectReadOnly, oldRect: CanUndef<DOMRectReadOnly>, watcher: Watcher): void {
@@ -201,13 +251,6 @@ test.describe('components/directives/on-resize', () => {
 		watcher.target.setAttribute('data-test-resize', nextValue.toString());
 	}
 
-	/**
-	 * Renders an element with the `v-on-resize` directive with the specified parameters
-	 *
-	 * @param page - test page environment
-	 * @param directiveProps - directive input parameters
-	 * @param elementBoxSizing - element CSS box-sizing property value
-	 */
 	async function renderDirective(
 		page: Page,
 		directiveProps?: CanArray<WatchHandler | Partial<WatchOptions>>,
@@ -221,28 +264,23 @@ test.describe('components/directives/on-resize', () => {
 
 			'data-testid': componentTestId,
 			'data-test-resize': '0',
+
 			style: `
-				width: 100px; 
-				height: 100px; 
+				width: 100px;
+				height: 100px;
 				padding: 10px;
 				border: 1px solid black;
 				box-sizing: ${elementBoxSizing};`
 		});
 
 		return page.getByTestId(componentTestId);
-	}
 
-	/**
-	 * Bind a handler function to all possible input parameter variations of a directive.
-	 * @param watch - handler to bind to directive params
-	 */
-	function addHandler(
-		watch: CanUndef<WatchHandler | Partial<WatchOptions>>
-	) {
-		if (Object.isUndef(watch) || Object.isFunction(watch)) {
-			return handler;
+		function addHandler(watch: CanUndef<WatchHandler | Partial<WatchOptions>>) {
+			if (Object.isUndef(watch) || Object.isFunction(watch)) {
+				return handler;
+			}
+
+			return {...watch, handler};
 		}
-
-		return {...watch, handler};
 	}
 });
