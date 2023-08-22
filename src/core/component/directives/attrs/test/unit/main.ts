@@ -14,22 +14,21 @@ import test from 'tests/config/unit/test';
 
 import { Component } from 'tests/helpers';
 
-test.describe('core/component/render/helpers/attrs', () => {
+test.describe('core/component/directives/attrs', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
 	});
 
 	test('the directive allows setting the value of another directive', async ({page}) => {
-
-		const component = await renderComponent(page, 'b-dummy', {
+		const component = await renderDirective(page, 'b-dummy', {
 			'v-show': false
 		});
 
 		await test.expect(component).toHaveCSS('display', 'none');
 	});
 
-	test('the directive allows setting regular props or attributes.', async ({page}) => {
-		const component = await renderComponent(page, 'b-dummy', {
+	test('the directive allows setting regular props or attributes', async ({page}) => {
+		const component = await renderDirective(page, 'b-dummy', {
 			style: 'margin-top: 10px;',
 			class: 'croatoan'
 		});
@@ -38,8 +37,8 @@ test.describe('core/component/render/helpers/attrs', () => {
 		await test.expect(component).toHaveCSS('margin-top', '10px');
 	});
 
-	test('the directive allows setting event listener with support of Vue modifiers', async ({page}) => {
-		const component = await renderComponent(page, 'b-dummy', {
+	test('the directive allows setting event listeners with support of Vue modifiers', async ({page}) => {
+		const component = await renderDirective(page, 'b-dummy', {
 			'@click.once': clickHandler
 		});
 
@@ -52,7 +51,7 @@ test.describe('core/component/render/helpers/attrs', () => {
 	});
 
 	test('the directive allows setting custom directives', async ({page}) => {
-		const component = await renderComponent(page, 'b-dummy', {
+		const component = await renderDirective(page, 'b-dummy', {
 			'v-on-resize': resizeHandler
 		});
 
@@ -64,7 +63,7 @@ test.describe('core/component/render/helpers/attrs', () => {
 	});
 
 	test('the directive allows specifying directives, events, and attributes simultaneously', async ({page}) => {
-		const component = await renderComponent(page, 'b-dummy', {
+		const component = await renderDirective(page, 'b-dummy', {
 			style: 'margin-top: 10px;',
 			'@click.once': clickHandler,
 			'v-on-resize': resizeHandler
@@ -84,7 +83,7 @@ test.describe('core/component/render/helpers/attrs', () => {
 	});
 
 	test('the directive works correctly when used on functional components', async ({page}) => {
-		const component = await renderComponent(page, 'b-dummy-functional', {
+		const component = await renderDirective(page, 'b-dummy-functional', {
 			style: 'margin-top: 10px;',
 			'@click.once': clickHandler,
 			'v-on-resize': resizeHandler
@@ -102,6 +101,22 @@ test.describe('core/component/render/helpers/attrs', () => {
 		await test.expect(component).toHaveAttribute('data-counter', '3');
 	});
 
+	async function renderDirective(
+		page: Page,
+		componentName: string,
+		attrs: RenderComponentsVnodeParams['attrs']
+	): Promise<Locator> {
+		const componentTestId = 'target';
+		await Component.createComponent(page, componentName, {
+			'data-testid': componentTestId,
+			'data-counter': 0,
+			'v-attrs': {...attrs},
+			style: 'width: 100px; height: 100px'
+		});
+
+		return page.getByTestId(componentTestId);
+	}
+
 	async function waitForWatcherCallsCount(page: Page, observedEl: Locator, expected: number): Promise<void> {
 		const handle = await observedEl.elementHandle();
 
@@ -115,13 +130,6 @@ test.describe('core/component/render/helpers/attrs', () => {
 			);
 	}
 
-	/**
-	 * A handler to pass to the `on-resize` directive
-	 *
-	 * @param newRect - new DOMRect value
-	 * @param oldRect - previous DOMRect value
-	 * @param watcher - the parameter of the watch handler
-	 */
 	function resizeHandler(newRect: DOMRect, oldRect: DOMRect, watcher: Watcher): void {
 		const {target} = watcher;
 
@@ -134,10 +142,6 @@ test.describe('core/component/render/helpers/attrs', () => {
 		target.setAttribute('data-counter', nextValue.toString());
 	}
 
-	/**
-	 * A handler for click event listener
-	 * @param event - click event object
-	 */
 	function clickHandler(event: MouseEvent): void {
 		const target = <Element>event.target;
 
@@ -148,30 +152,5 @@ test.describe('core/component/render/helpers/attrs', () => {
 
 		const nextValue = previousValue + 1;
 		target.setAttribute('data-counter', nextValue.toString());
-	}
-
-	/**
-	 * Renders a component with the specified name and input parameters using the `v-attrs` directive.
-	 *
-	 * @param page - test page environment
-	 * @param componentName - component name to render
-	 * @param attrs - input parameters to pass through `v-attrs` directive
-	 */
-	async function renderComponent(
-		page: Page,
-		componentName: string,
-		attrs: RenderComponentsVnodeParams['attrs']
-	): Promise<Locator> {
-		const componentTestId = 'target';
-		await Component.createComponent(page, componentName, {
-			'data-testid': componentTestId,
-			'data-counter': 0,
-			'v-attrs': {
-				...attrs
-			},
-			style: 'width: 100px; height: 100px'
-		});
-
-		return page.getByTestId(componentTestId);
 	}
 });
