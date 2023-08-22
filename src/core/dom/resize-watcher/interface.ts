@@ -80,6 +80,11 @@ export interface Watcher extends Readonly<
 	readonly rect?: DOMRectReadOnly;
 
 	/**
+	 * The observable element boxSize. Less browser support than DOMRectReadOnly.
+	 */
+	readonly boxSize?: readonly ResizeObserverSize[];
+
+	/**
 	 * Cancels watching for the element geometry
 	 */
 	unwatch(): void;
