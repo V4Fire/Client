@@ -71,6 +71,8 @@ class VDOM extends Friend {
 	/**
 	 * Executes the given function in the component render context.
 	 * This function is necessary to render components asynchronously.
+	 *
+	 * @param cb
 	 */
 	withRenderContext<T>(cb: (...args: any) => T): T {
 		this.setInstance?.();

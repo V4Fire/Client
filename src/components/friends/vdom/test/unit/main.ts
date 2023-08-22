@@ -48,14 +48,14 @@ test.describe('friends/vdom', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
-		// Wait until component is loaded
+		// Wait until the component is loaded
 		await Component.waitForComponentTemplate(page, 'b-friends-vdom-dummy');
 
 		// Get handles for the rendered components
 		target = await Component.createComponent(page, 'b-friends-vdom-dummy', schema);
 		button = await Component.waitForComponentByQuery(page, '#test-button');
 
-		// Get handle for VDOM friend class
+		// Get a handle for the VDOM friend class
 		vdom = await button.evaluateHandle((ctx) => ctx.vdom);
 
 		// Extra info
@@ -63,7 +63,7 @@ test.describe('friends/vdom', () => {
 	});
 
 	test.describe('`closest`', () => {
-		test.describe('when component name is provided', () => {
+		test.describe('when the component name is provided', () => {
 			test('should return the closest parent component instance', async () => {
 				const res = await vdom.evaluate((ctx) => {
 					const instance = ctx.closest('b-friends-vdom-dummy');
@@ -82,7 +82,7 @@ test.describe('friends/vdom', () => {
 			});
 		});
 
-		test.describe('when component constructor is provided', () => {
+		test.describe('when the component constructor is provided', () => {
 			test('should return the closest parent component instance', async () => {
 				const result = await vdom.evaluate((ctx) => {
 					const
