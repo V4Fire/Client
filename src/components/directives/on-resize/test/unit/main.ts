@@ -24,7 +24,7 @@ test.describe('components/directives/on-resize', () => {
 		await demoPage.goto();
 	});
 
-	describe('the handler should be called', () => {
+	test.describe('the handler should be called', () => {
 		test('upon initialization of the default element', async ({page}) => {
 			const component = await renderDirective(page);
 			await test.expect(waitForWatcherCallsCount(page, component, 1)).toBeResolved();
@@ -137,7 +137,7 @@ test.describe('components/directives/on-resize', () => {
 		);
 	});
 
-	describe('the handler should not be called', () => {
+	test.describe('the handler should not be called', () => {
 		test('upon initialization of the element when the value of `watchInit` is set to false', async ({page}) => {
 			const component = await renderDirective(page, {
 				watchInit: false
