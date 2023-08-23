@@ -9,7 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.??.?? (2023-??-??)
+## v4.?.? (2023-??-??)
+
+#### :bug: [Bug Fix]
+
+* A default 'endsWith: "?"' parameter has been added to the route configuration to correctly parse route parameters when there are query parameters in the path.
+
+## v4.0.0-beta.9 (2023-07-23)
 
 #### :bug: Bug Fix
 
