@@ -20,7 +20,8 @@ export interface WatchOptions {
 
 	/**
 	 * This option only affects the heightmap-based watching strategy and when the `root` option is passed.
-	 * If false, then registered handlers will be called for any scroll event, not just root events.
+	 * If set to false, registered event handlers will be called for every scroll event,
+	 * including those not related to the root element.
 	 *
 	 * @default `true`
 	 */
@@ -38,15 +39,16 @@ export interface WatchOptions {
 	threshold?: number;
 
 	/**
-	 * The minimum delay in milliseconds before calling the intersection handler.
-	 * If after this delay, the observable element leaves the viewport, then the intersection handler won't be called.
+	 * The minimum delay, in milliseconds, before calling the intersection handler.
+	 * If the observable element leaves the viewport before this delay elapses,
+	 * the intersection handler will not be called.
 	 *
 	 * @default `0`
 	 */
 	delay?: number;
 
 	/**
-	 * If true, then after the first intersection handler firing, the observation will be canceled
+	 * If set to true, then after the first intersection handler is called, the observation will be canceled
 	 * @default `false`
 	 */
 	once?: boolean;
@@ -67,16 +69,18 @@ export interface WatchOptions {
 
 	/**
 	 * Handler: the observable element has entered the viewport.
-	 * If the handler returns false, then the main watcher handler won't be called.
-	 * Note that this handler is always called immediately, i.e., ignores the `delay` option.
+	 * If the handler function returns false, the main watcher handler will not be called.
+	 * It's important to note that this handler is always called immediately,
+	 * meaning it ignores the delay option specified.
 	 *
 	 * @param watcher
 	 */
 	onEnter?(watcher: Watcher): AnyToBoolean;
 
 	/**
-	 * Handler: the observable element has leaved the viewport.
-	 * Note that this handler is always called immediately, i.e., ignores the `delay` option.
+	 * Handler: the observable element has left the viewport.
+	 * It's important to note that this handler is always called immediately,
+	 * meaning it ignores the delay option specified.
 	 *
 	 * @param watcher
 	 */

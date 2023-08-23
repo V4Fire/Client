@@ -54,7 +54,7 @@ export default class bExample implements iControlList {
 ### callControlAction
 
 Calls an event handler for the specified control.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iControlList, { Control, ControlEvent } from 'components/traits/i-control-list/i-control-list';

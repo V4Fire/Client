@@ -98,7 +98,7 @@ export default abstract class iData extends iDataHandlers {
 			$a
 				.clearAll({group: 'requestSync:get'});
 
-			if (this.isFunctional && !this.isSSR) {
+			if (this.isFunctional && !SSR) {
 				const res = super.initLoad(() => {
 					if (data !== undefined) {
 						this.db = this.convertDataToDB<this['DB']>(data);

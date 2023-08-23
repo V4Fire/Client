@@ -16,7 +16,16 @@ import symbolGenerator from 'core/symbol';
 import log, { LogMessageOptions } from 'core/log';
 
 import type Async from 'core/async';
-import { wrapWithSuspending, AsyncOptions, BoundFn } from 'core/async';
+
+import {
+
+	wrapWithSuspending,
+
+	IdObject,
+	AsyncOptions,
+	BoundFn
+
+} from 'core/async';
 
 import config from 'config';
 
@@ -29,7 +38,9 @@ import {
 	customWatcherRgxp,
 
 	RawWatchHandler,
-	WatchPath
+	WatchPath,
+
+	SetupContext
 
 } from 'core/component';
 
@@ -89,7 +100,9 @@ export default abstract class iBlockBase extends iBlockFriends {
 	override readonly componentId!: string;
 
 	/**
-	 * True if the component is already activated
+	 * True if the component is already activated.
+	 * A deactivated component will not retrieve data from providers during initialization.
+	 *
 	 * {@link iBlock.activatedProp}
 	 */
 	@system((o) => {
@@ -120,19 +133,11 @@ export default abstract class iBlockBase extends iBlockFriends {
 	isActivated!: boolean;
 
 	/**
-	 * True if the component is a functional
+	 * True if the component is a functional component
 	 */
 	@computed()
 	get isFunctional(): boolean {
 		return this.meta.params.functional === true;
-	}
-
-	/**
-	 * True if the component is rendered by using server-side rendering
-	 */
-	@computed()
-	get isSSR(): boolean {
-		return SSR;
 	}
 
 	/**
@@ -150,7 +155,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * A dictionary with additional attributes for the component root tag
+	 * A dictionary with additional attributes for the component's root element
 	 */
 	get rootAttrs(): Dictionary {
 		return this.field.get<Dictionary>('rootAttrsStore')!;
@@ -227,7 +232,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	protected watchCache!: Dictionary;
 
 	/**
-	 * A dictionary with additional attributes for the component root tag
+	 * A dictionary with additional attributes for the component's root element
 	 * {@link iBlock.rootAttrsStore}
 	 */
 	@field()
@@ -262,11 +267,11 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	/**
 	 * A function for internationalizing texts inside traits.
-	 * Due to the fact that traits are called in the context of components, the standard i18n is not suitable,
-	 * and you must explicitly pass the name of the set of keys (trait names).
+	 * Because traits are called within the context of components, standard `i18n` does not work,
+	 * and you need to explicitly pass the key set name (trait names).
 	 *
 	 * @param traitName - the trait name
-	 * @param text - text for internationalization
+	 * @param text - the text for internationalization
 	 * @param [opts] - additional internationalization options
 	 */
 	i18nTrait(traitName: string, text: string, opts?: I18nParams): string {
@@ -289,9 +294,10 @@ export default abstract class iBlockBase extends iBlockFriends {
 	/**
 	 * Sets a watcher to the component/object property or event by the specified path.
 	 *
-	 * When you watch some properties change, the handler function can take a second argument that refers to
-	 * the property old value. If the watched value is not a primitive, the old value will be cloned from
-	 * the original old value to avoid two references to the same object.
+	 * When you observe changes to certain properties,
+	 * the event handler function can accept a second argument that references the old value of the property.
+	 * If the observed value is not a primitive type, the old value will be cloned from the original old value to
+	 * avoid having two references to the same object.
 	 *
 	 * ```typescript
 	 * @component()
@@ -318,8 +324,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 *     console.log(value[0] === oldValue[0]);
 	 *   }
 	 *
-	 *   // When you watch a property in a deep and declare a second argument
-	 *   // in the watcher, the previous value is cloned deeply
+	 *   // When you watch a property deeply and declare a second argument in the watcher,
+	 *   // the previous value is deeply cloned
 	 *   @watch({path: 'list', deep: true})
 	 *   onListChangeWithDeepCloning(value: Dictionary[], oldValue: Dictionary[]): void {
 	 *     // true
@@ -334,8 +340,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * }
 	 * ```
 	 *
-	 * You need to use the special ":" delimiter within a path to listen for an event.
-	 * Also, you can specify an event emitter to listen for by writing a link before the ":" character.
+	 * You need to use the special ":" delimiter within a path to listen to an event.
+	 * Also, you can specify an event emitter to listen for by writing a reference before the ":" character.
 	 * For instance:
 	 *
 	 * 1. `':onChange'` - will listen to the component `onChange` event;
@@ -349,8 +355,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * Also, if you are listening to an event, you can control when to start listening to the event by using special
 	 * characters at the beginning of the path string:
 	 *
-	 * 1. `'!'` - start listening to an event on the "beforeCreate" hook, eg: `'!rootEmitter:reset'`;
-	 * 2. `'?'` - start listening to an event on the "mounted" hook, eg: `'?$el:click'`.
+	 * 1. `'!'` - start listening to an event on the "beforeCreate" hook, e.g.: `'!rootEmitter:reset'`;
+	 * 2. `'?'` - start listening to an event on the "mounted" hook, e.g.: `'?$el:click'`.
 	 *
 	 * By default, all events start listening on the "created" hook.
 	 *
@@ -434,6 +440,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * ```
 	 */
 	watch<T = unknown>(
+		// eslint-disable-next-line @typescript-eslint/unified-signatures
 		obj: object,
 		opts: AsyncWatchOptions,
 		handler: RawWatchHandler<this, T>
@@ -454,6 +461,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	 * ```
 	 */
 	watch<T = unknown>(
+		// eslint-disable-next-line @typescript-eslint/unified-signatures
 		obj: object,
 		handler: RawWatchHandler<this, T>,
 		opts?: AsyncWatchOptions
@@ -467,24 +475,22 @@ export default abstract class iBlockBase extends iBlockFriends {
 		const
 			{async: $a} = this;
 
-		if (this.isSSR) {
+		if (SSR) {
 			return;
 		}
 
 		let
-			handler,
-			opts;
+			handler: RawWatchHandler<this, T>,
+			opts: AsyncWatchOptions;
 
 		if (Object.isFunction(optsOrHandler)) {
 			handler = optsOrHandler;
-			opts = handlerOrOpts;
+			opts = Object.isDictionary(handlerOrOpts) ? handlerOrOpts : {};
 
 		} else {
-			handler = handlerOrOpts;
-			opts = optsOrHandler;
+			handler = Object.cast(handlerOrOpts);
+			opts = Object.isDictionary(optsOrHandler) ? optsOrHandler : {};
 		}
-
-		opts ??= {};
 
 		if (Object.isString(path) && RegExp.test(customWatcherRgxp, path)) {
 			bindRemoteWatchers(this, {
@@ -492,7 +498,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 				watchers: {
 					[path]: [
 						{
-							handler: (ctx, ...args: unknown[]) => handler.call(this, ...args),
+							handler: (_: unknown, ...args: unknown[]) => handler.call(this, ...args),
 							...opts
 						}
 					]
@@ -503,10 +509,14 @@ export default abstract class iBlockBase extends iBlockFriends {
 		}
 
 		void this.lfc.execCbAfterComponentCreated(() => {
-			// eslint-disable-next-line prefer-const
-			let link, unwatch;
+			let
+				// eslint-disable-next-line prefer-const
+				link: Nullable<CanArray<IdObject>>,
 
-			const emitter = (_, wrappedHandler: Function) => {
+				// eslint-disable-next-line prefer-const
+				unwatch: Nullable<Function>;
+
+			const emitter: Function = (_: any, wrappedHandler: RawWatchHandler<this, T>) => {
 				wrappedHandler['originalLength'] = handler['originalLength'] ?? handler.length;
 				handler = wrappedHandler;
 
@@ -588,7 +598,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	log(ctxOrOpts: string | LogMessageOptions, ...details: unknown[]): void {
 		let
 			context = ctxOrOpts,
-			logLevel;
+			logLevel: CanUndef<LogMessageOptions['logLevel']>;
 
 		if (!Object.isString(ctxOrOpts)) {
 			logLevel = ctxOrOpts.logLevel;
@@ -600,7 +610,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 		}
 
 		let
-			resolvedContext;
+			resolvedContext: Array<string | LogMessageOptions>;
 
 		if (this.globalName != null) {
 			resolvedContext = ['component:global', this.globalName, context, this.componentName];
@@ -618,6 +628,12 @@ export default abstract class iBlockBase extends iBlockFriends {
 			...details,
 			this
 		);
+	}
+
+	protected override setup(props: Dictionary, _ctx: SetupContext): CanPromise<CanUndef<Dictionary>> {
+		if (props.wait != null) {
+			return Promise.resolve(props.wait).then(() => undefined);
+		}
 	}
 
 	/**

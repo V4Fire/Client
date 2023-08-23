@@ -50,6 +50,7 @@ const
 
 @component({
 	functional: {
+		wait: undefined,
 		dataProvider: undefined
 	}
 })

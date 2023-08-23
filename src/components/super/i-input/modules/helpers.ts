@@ -7,8 +7,8 @@
  */
 
 /**
- * If the specified value is an array and if its length no more than 1,
- * then returns the first array element, otherwise returns the whole passed object
+ * If the specified value is an array and if its length no greater than 1,
+ * then it returns the first element of the array, otherwise it returns the entire object passed
  *
  * @param value
  */

@@ -111,6 +111,25 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly dependenciesProp?: Iterable<Module>;
 
 	/**
+	 * A promise that will block the rendering of the component until it is resolved.
+	 * This should be used together with Suspense and non-functional components.
+	 *
+	 * @see https://vuejs.org/guide/built-ins/suspense.html#async-components
+	 *
+	 * @example
+	 * ```
+	 * < suspense
+	 *   < b-popup :wait = promisifyOnce('showPopup')
+	 * ```
+	 */
+	@prop({
+		validator: Object.isPromiseLike,
+		required: false
+	})
+
+	readonly wait?: Promise<unknown>;
+
+	/**
 	 * If set to true, the component is marked as a removed provider.
 	 * This signifies that the parent component will wait for the current component to finish loading before proceeding.
 	 */

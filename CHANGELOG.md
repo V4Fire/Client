@@ -11,7 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-beta.12 (2023-08-21)
+
+#### :bug: Bug Fix
+
+* If the element was in focus, it needs to be restored after validating `iInput`
+
+## v4.0.0-beta.11 (2023-08-18)
 
 #### :rocker: New Feature
 
@@ -26,6 +32,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Improved display of warnings about deprecated design system fields `build/stylus/ds`
+* Added possibility to specify a complicated color tokens `build/stylus/ds`
 * Added possibility to change the method that will be used for transitions when the router
   synchronizes its state with the component's state by using `syncRouterState` `iBlock`
 
@@ -33,6 +41,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue where the default behavior of the `convertStateToRouterReset` did not affect the router `iBlock`
 * Fixed resetting router state `friends/state`
+* Fixed a bug with resolving a promise returned by the `iLockPageScroll.lock` `traits/i-lock-page-scroll`
 
 ## v4.0.0-beta.10 (2023-07-27)
 
@@ -84,7 +93,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
 
-## v3.50.0 (2023-06-??)
+## v3.50.0 (2023-06-16)
 
 #### :rocket: New Feature
 
@@ -322,6 +331,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Fixed passing props to nested trees
   * Fixed an issue with the prop `itemProps` not being added to items attributes
   * Fixed adding the `folded_false` class to items without children
+
+## v4.0.0-alpha.1 (2022-12-14)
+
+#### :boom: Breaking Change
+
+* The first public release of the 4th version
 
 ## v3.31.0 (2022-12-06)
 

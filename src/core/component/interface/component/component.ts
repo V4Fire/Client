@@ -12,7 +12,7 @@ import type Async from 'core/async';
 import type { BoundFn, ProxyCb } from 'core/async';
 
 import type { HydrationStore } from 'core/component/hydration';
-import type { VNode, Slots, ComponentOptions } from 'core/component/engines';
+import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/meta';
 
 import type { Hook } from 'core/component/interface/lc';
@@ -324,6 +324,18 @@ export abstract class ComponentInterface {
 	$nextTick(): CanPromise<void> {
 		return Object.throw();
 	}
+
+	/**
+	 * Initializes the component.
+	 * This method accepts input parameters and an initialization context,
+	 * and can return an object containing additional fields and methods for the component.
+	 * If the method returns a Promise, the component will not be rendered until it is resolved.
+	 * This method only works for non-functional components.
+	 *
+	 * @param props
+	 * @param ctx
+	 */
+	protected abstract setup(props: Dictionary, ctx: SetupContext): CanPromise<CanUndef<Dictionary>>;
 
 	/**
 	 * Destroys the component

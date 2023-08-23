@@ -62,7 +62,7 @@ export default class bRemoteProvider extends iData {
 
 		let
 			needUpdate = fieldToUpdate == null,
-			action;
+			action: Function;
 
 		if (fieldToUpdate != null) {
 			const

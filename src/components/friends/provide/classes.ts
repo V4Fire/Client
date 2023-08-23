@@ -17,12 +17,12 @@ import { fullComponentName, fullElementName } from 'components/friends/provide/n
 import type { Classes } from 'components/friends/provide/interface';
 
 /**
- * Returns a map with classes for the elements of another component.
- * This function is used to assign element classes of the outer component to the elements of the inner component.
- * Use it with caution as it's a violation of component encapsulation.
+ * Returns a dictionary that maps classes from one component to the elements of another component.
+ * This is typically used to assign element classes of the outer component to the elements of the inner component.
+ * However, it should be used with caution as it violates component encapsulation.
  *
- * @param classes - a basemap of elements, where keys are elements in the inner component,
- * and values are elements of the outer component
+ * @param classes - a basemap of elements where keys are elements in the inner component and values are elements of
+ *   the outer component
  *
  * @example
  * ```js
@@ -41,13 +41,13 @@ import type { Classes } from 'components/friends/provide/interface';
 export function classes(this: Friend, classes: Classes): Readonly<Dictionary<string>>;
 
 /**
- * Returns a map with classes for the elements of another component.
- * This function is used to assign element classes of the outer component to the elements of the inner component.
- * Use it with caution as it's a violation of component encapsulation.
+ * Returns a dictionary that maps classes from one component to the elements of another component.
+ * This is typically used to assign element classes of the outer component to the elements of the inner component.
+ * However, it should be used with caution as it violates component encapsulation.
  *
  * @param componentName - the base component name
- * @param classes - a basemap of elements, where keys are elements in the inner component,
- * and values are elements of the outer component
+ * @param classes - a basemap of elements where keys are elements in the inner component and values are elements of
+ *   the outer component
  *
  * @example
  * ```js
@@ -212,10 +212,10 @@ export function componentClasses(
 }
 
 /**
- * Returns a list of classes for the specified element of the current component
+ * Returns a list of classes for a specified element of the current component
  *
- * @param els - a map of the elements for which you want to get classes, where the keys are the names of the elements,
- * and the value is a dictionary of applied modifiers
+ * @param els - a map of elements where the keys represent the names of the elements and
+ *   the values are dictionaries of applied modifiers
  *
  * @example
  * ```js
@@ -228,11 +228,11 @@ export function componentClasses(
 export function elementClasses(this: Friend, els: Dictionary<ModsProp>): readonly string[];
 
 /**
- * Returns a list of classes for the specified element of the passed component
+ * Returns a list of classes for a specified element of the current component
  *
  * @param componentNameOrCtx - the component name or a link to the component context
- * @param els - a map of the elements for which you want to get classes, where the keys are the names of the elements,
- * and the value is a dictionary of applied modifiers
+ * @param els - a map of elements where the keys represent the names of the elements and
+ *   the values are dictionaries of applied modifiers
  *
  * @example
  * ```js
@@ -261,7 +261,9 @@ export function elementClasses(
 	els?: Dictionary<ModsProp>
 ): readonly string[] {
 	let
-		componentId,
+		componentId: CanUndef<string>;
+
+	let
 		{componentName} = this;
 
 	if (arguments.length === 1) {

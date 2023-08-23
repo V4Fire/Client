@@ -1,7 +1,9 @@
 # core/dom/resize-watcher
 
-This module provides an API for more convenient work with [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver).
-Keep in mind that this module does not contain any polyfills and relies on the native support of the ResizeObserver API.
+This module provides an API that makes it more convenient
+to work with the [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver).
+It's important to note that this module does not include any polyfills for older browsers and
+relies on the native support of the ResizeObserver API.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -13,8 +15,8 @@ ResizeWatcher.watch(document.getElementById('my-elem'), (newGeometry, oldGeometr
 
 ## Why is this module needed?
 
-Often when working with `ResizeObserver` we just want to register some kind of handler on an element.
-However, the native API is based on classes, so we first have to create an instance of the class,
+Often when working with ResizeObserver, we simply want to register a handler on an element.
+However, the native API is based on classes, so we first need to create an instance of the class,
 pass the handler to it, and then register the element.
 
 ```js
@@ -25,7 +27,7 @@ const observer2 = new ResizeObserver(handler2);
 observer2.observe(document.getElementById('my-elem'));
 ```
 
-This module allows you to do it more gracefully.
+This module provides a more elegant way to achieve that.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -34,9 +36,10 @@ ResizeWatcher.watch(document.getElementById('my-elem'), handler1);
 ResizeWatcher.watch(document.getElementById('my-elem'), handler2);
 ```
 
-All registered handlers share the same ResizeObserver instance, which helps improve performance.
-In addition, this module provides a number of useful options. And all adjacent resize events are collapsed into one by default,
-which helps avoid application performance issues.
+All registered handlers share the same ResizeObserver instance, which can help improve performance.
+Additionally, this module provides a variety of useful options.
+By default, all adjacent resize events are collapsed into one event.
+This collapsing helps prevent potential performance issues in your application.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -44,9 +47,11 @@ import * as ResizeWatcher from 'core/dom/resize-watcher';
 ResizeWatcher.watch(document.getElementById('my-elem'), {once: true, box: 'border-box'}, handler);
 ```
 
-However, you can use this module just like the original ResizeObserver by creating your own watcher instance.
-This approach allows you to cancel all registered handlers at once within a single instance.
-Keep in mind, each instance has its own ResizeObserver instance.
+Alternatively, you can use this module in a similar way to the original ResizeObserver
+by creating your own watcher instance.
+With this approach, you can cancel all registered handlers at once within a single instance.
+It's important to note that each instance has its own ResizeObserver instances,
+providing more flexibility in managing the handlers.
 
 ```js
 import ResizeWatcher from 'core/dom/resize-watcher';
@@ -68,7 +73,8 @@ resizeWatcher.destroy();
 ### watch
 
 Watches for the size of the given element and invokes the specified handler when it changes.
-Note, changes occurring at the same tick are merged into one. You can disable this behavior by passing the `immediate: true` option.
+Note, changes occurring at the same tick are merged into one.
+You can disable this behavior by passing the `immediate: true` option.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -94,13 +100,14 @@ watcher.unwatch();
 
 ##### [box = `'content-box'`]
 
-This property allows you to change which box model is used to determine size changes.
+This property allows you to specify the box model that is used to determine size changes:
 
-1. The `content-box` option only includes the actual content of the element.
-2. The `border-box` option takes into account things like border and padding changes.
-3. The `device-pixel-content-box` option is similar to the `content-box` option, but it takes into account the
-   actual pixel size of the device it is rendering too. This means that the `device-pixel-content-box` will change
-   at a different rate than the `content-box` depending on the pixel density of the device.
+1. The `content-box` option includes only the actual content of the element.
+2. The `border-box` option takes into account changes in `border` and `padding`.
+3. The `device-pixel-content-box` option is similar to `content-box`,
+   but it also considers the actual pixel size of the device it is rendering to.
+   This means that `device-pixel-content-box` will change at a different rate than content-box depending on
+   the pixel density of the device.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -110,7 +117,7 @@ ResizeWatcher.watch(document.getElementById('my-elem'), {box: 'border-box'}, con
 
 ##### [watchWidth = `true`]
 
-If false, then the handler won't be called when only the width of the observed element changes.
+If set to false, then the handler won't be called when only the width of the observed element changes.
 
 ```js
 import * as resizeWatcher from 'core/dom/resize-watcher';
@@ -122,7 +129,7 @@ resizeWatcher.watch(document.getElementById('my-elem'), {watchWidth: false}, (ne
 
 ##### [watchHeight = `true`]
 
-If false, then the handler won't be called when only the height of the observed element changes.
+If set to false, then the handler won't be called when only the height of the observed element changes.
 
 ```js
 import * as resizeWatcher from 'core/dom/resize-watcher';
@@ -134,7 +141,7 @@ resizeWatcher.watch(document.getElementById('my-elem'), {watchHeight: false}, (n
 
 ##### [watchInit = `true`]
 
-If true, then the handler will be called after the first resizing.
+If set to true, then the handler will be called after the first resizing.
 
 ```js
 import * as resizeWatcher from 'core/dom/resize-watcher';
@@ -144,8 +151,9 @@ resizeWatcher.watch(document.getElementById('my-elem'), {watchInit: false}, cons
 
 ##### [immediate = `false`]
 
-If true, then the handler will be called immediately when the size of the observed element changes.
-Be careful using this option as it can degrade application performance.
+If set to true, the handler will be called immediately when the size of the observed element changes.
+However, it's important to exercise caution when using this option,
+as it can potentially degrade the performance of your application.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -155,8 +163,8 @@ ResizeWatcher.watch(document.getElementById('my-elem'), {immediate: true}, conso
 
 ##### [once = `false`]
 
-If true, then after the first handler invoking, the observation of the element will be canceled.
-Note that the handler firing caused by the `watchInit` option is ignored.
+If set to true, after the first handler is invoked, the observation of the element will be canceled.
+It's important to note that the handler firing caused by the `watchInit` option will be ignored in this case.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
@@ -224,7 +232,7 @@ ResizeWatcher.unwatch();
 
 ## destroy
 
-Cancels watching for the all registered elements and destroys the instance.
+Cancels watching for all registered elements and destroys the instance.
 This method is available only when you explicitly instantiate ResizeWatcher.
 
 ```js

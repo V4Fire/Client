@@ -19,12 +19,12 @@ export interface VNodeDescriptor extends VNodeOptions {
 
 export interface VNodeOptions {
 	/**
-	 * A dictionary with attributes to pass to the created VNode
+	 * A dictionary with properties or attributes to pass to the created VNode
 	 */
 	attrs?: Dictionary;
 
 	/**
-	 * An array of children VNode descriptors or dictionary with slot functions
+	 * An array of children VNode descriptors or a dictionary with slot functions
 	 */
 	children?: VNodeChildren;
 }

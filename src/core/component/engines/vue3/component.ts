@@ -7,7 +7,7 @@
  */
 
 import SyncPromise from 'core/promise/sync';
-import watch, { WatchHandlerParams } from 'core/object/watch';
+import watch, { WatchHandler, WatchHandlerParams } from 'core/object/watch';
 
 import * as init from 'core/component/init';
 import { beforeRenderHooks } from 'core/component/const';
@@ -15,7 +15,7 @@ import { beforeRenderHooks } from 'core/component/const';
 import { fillMeta } from 'core/component/meta';
 import { getComponentContext } from 'core/component/context';
 
-import type { ComponentEngine, ComponentOptions } from 'core/component/engines';
+import type { ComponentEngine, ComponentOptions, SetupContext } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/interface';
 
 import { supports, proxyGetters } from 'core/component/engines/vue3/const';
@@ -33,7 +33,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 	const
 		p = meta.params;
 
-	const vueComponent: ReturnType<typeof getComponent> = {
+	return {
 		...Object.cast(component),
 		inheritAttrs: p.inheritAttrs,
 
@@ -44,7 +44,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			ctx.$vueWatch = this.$watch.bind(this);
 			init.beforeDataCreateState(ctx);
 
-			const emitter = (_, handler) => {
+			const emitter: Function = (_: unknown, handler: WatchHandler) => {
 				// eslint-disable-next-line @v4fire/unbound-method
 				const {unwatch} = watch(ctx.$fields, {deep: true, immediate: true}, handler);
 				return unwatch;
@@ -72,6 +72,10 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					ctx.$async.setImmediate(() => ctx.$forceUpdate(), {label: 'forceUpdate'});
 				}
 			}
+		},
+
+		setup(props: Dictionary, ctx: SetupContext) {
+			return meta.methods.setup?.fn(props, ctx);
 		},
 
 		beforeCreate(): void {
@@ -150,6 +154,4 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			}
 		}
 	};
-
-	return vueComponent;
 }
