@@ -17,7 +17,7 @@ const exclude = [
 	depsRgxpStr,
 	prepareLibsForRegExp(webpack.managedLibs())
 ]
-	.filter((str) => str !== '')
+	.filter(Boolean)
 	.join('|');
 
 /**
