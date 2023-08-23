@@ -161,7 +161,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 			await component.waitForChildCountEqualsTo(chunkSize + 1);
 
-			await test.expect(component.container.locator('.b-dummy').waitFor({state: 'attached'})).resolves.toBeUndefined();
+			await test.expect(component.container.locator('.b-dummy')).toHaveCount(1);
 		});
 	});
 });
