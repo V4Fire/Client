@@ -457,6 +457,29 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * This option should be used to specify managed libs, which will
+		 * be excluded from `snapshot.managedPaths` and from `watchOptions.ignore`
+		 *
+		 * @cli managed-libs
+		 * @env MANAGED_LIBS
+		 *
+		 * @example
+		 * ```bash
+		 * npx webpack --env managed-libs="@scope/helpers,@scope/core"
+		 * ```
+		 *
+		 * @returns {string[]}
+		 */
+		managedLibs() {
+			return o('managed-libs', {
+				env: true,
+				default: ''
+			})
+				.split(',')
+				.map((str) => str.trim());
+		},
+
+		/**
 		 * Returns the `webpack.aliases` value
 		 *
 		 * @see https://webpack.js.org/configuration/resolve/#resolvealias
