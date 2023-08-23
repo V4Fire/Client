@@ -7,10 +7,12 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import type RequestError from 'core/request/error';
+import type { ModelMethod } from 'core/data';
 
 import DataProvider from 'components/friends/data-provider';
-import { component, watch, wait } from 'components/super/i-block/i-block';
+import { component, watch } from 'components/super/i-block/i-block';
 
 import iDataData from 'components/super/i-data/data';
 import type { RequestParams, RetryRequestFn } from 'components/super/i-data/interface';
@@ -27,7 +29,6 @@ export default abstract class iDataHandlers extends iDataData {
 	/**
 	 * Initializes data event listeners
 	 */
-	@wait('ready', {label: $$.initDataListeners})
 	protected initDataListeners(): void {
 		const
 			{dataProvider} = this;
@@ -43,19 +44,19 @@ export default abstract class iDataHandlers extends iDataData {
 		$e.off(group);
 
 		$e.on('add', async (data) => {
-			if (dataProvider.getDefaultRequestParams('get')) {
+			if (dataProvider.getDefaultRequestParams('add') != null) {
 				this.onAddData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
 		$e.on('update', async (data) => {
-			if (dataProvider.getDefaultRequestParams('get')) {
+			if (dataProvider.getDefaultRequestParams('update') != null) {
 				this.onUpdateData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
 
 		$e.on('delete', async (data) => {
-			if (dataProvider.getDefaultRequestParams('get')) {
+			if (dataProvider.getDefaultRequestParams('delete') != null) {
 				this.onDeleteData(await (Object.isFunction(data) ? data() : data));
 			}
 		}, group);
@@ -64,7 +65,16 @@ export default abstract class iDataHandlers extends iDataData {
 			await this.onRefreshData(await (Object.isFunction(data) ? data() : data));
 		}, group);
 
-		$e.on('error', this.onRequestError.bind(this), group);
+		$e.on('error', (err, retry) => {
+			const
+				errType = err?.type;
+
+			if (errType === 'clearAsync' || errType === 'abort') {
+				return;
+			}
+
+			this.onRequestError(err, retry);
+		}, group);
 	}
 
 	/**
@@ -93,19 +103,20 @@ export default abstract class iDataHandlers extends iDataData {
 				return;
 			}
 
-			const
-				m = key.split(':', 1)[0],
-				group = {group: `requestSync:${m}`};
+			const providerMethod = Object.cast<ModelMethod>(
+				key.split(':', 1)[0]
+			);
 
-			$a
-				.clearAll(group);
+			const group = {group: `requestSync:${providerMethod}`};
+			$a.clearAll(group);
 
-			if (m === 'get') {
+			if (providerMethod === 'get') {
 				this.componentStatus = 'loading';
 				$a.setImmediate(this.initLoad.bind(this), group);
 
 			} else {
-				$a.setImmediate(() => this[m](...this.dataProvider?.getDefaultRequestParams(key) ?? []), group);
+				const handler = () => this[providerMethod](...this.dataProvider?.getDefaultRequestParams(providerMethod) ?? []);
+				$a.setImmediate(handler, group);
 			}
 		});
 	}
@@ -151,7 +162,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: an error occurred while loading data from the provider
+	 * Handler: an error occurred during data loading from the provider
 	 *
 	 * @param err - the caused error
 	 * @param retry - a function to repeat the request
@@ -162,7 +173,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: data has been added to the component provider
+	 * Handler: new data has successfully been added to the component provider
 	 * @param data
 	 */
 	protected onAddData(data: unknown): void {
@@ -175,7 +186,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: data has been updated for the component provider
+	 * Handler: the data in the component provider has been successfully updated
 	 * @param data
 	 */
 	protected onUpdateData(data: unknown): void {
@@ -188,7 +199,7 @@ export default abstract class iDataHandlers extends iDataData {
 	}
 
 	/**
-	 * Handler: data has been deleted from the component provider
+	 * Handler: the data has been successfully removed from the component provider
 	 * @param data
 	 */
 	protected onDeleteData(data: unknown): void {
@@ -202,10 +213,9 @@ export default abstract class iDataHandlers extends iDataData {
 
 	/**
 	 * Handler: need to reload data from the provider
-	 * @param data
+	 * @param _data
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected onRefreshData(data: this['DB']): Promise<void> {
+	protected onRefreshData(_data: this['DB']): Promise<void> {
 		return this.reload();
 	}
 }

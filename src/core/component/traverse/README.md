@@ -1,9 +1,9 @@
 # core/component/traverse
 
-This module provides a bunch of functions to iterate over a component vnode tree.
+This module offers a bunch of functions for traversing a component's VNode tree.
 
 ## Functions
 
 ### getNormalParent
 
-Returns a link to a "normal" (non-functional) parent component for the passed one.
+Returns a link to the non-functional parent component of the given one.

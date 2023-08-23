@@ -1,7 +1,3 @@
-/* eslint-disable max-lines,max-lines-per-function */
-
-// @ts-check
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+// @ts-check
 
 const
 	delay = require('delay'),
@@ -18,8 +16,8 @@ const
  * Starts a test
  *
  * @param {Playwright.Page} page
- * @param {!Object} params
- * @returns {!Promise<void>}
+ * @param {object} params
+ * @returns {Promise<void>}
  */
 module.exports = async (page, params) => {
 	await h.utils.setup(page, params.context);

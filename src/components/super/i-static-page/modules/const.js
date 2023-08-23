@@ -8,7 +8,7 @@
 
 /**
  * Cache of files
- * @type {!Object}
+ * @type {object}
  */
 exports.files = Object.create(null);
 

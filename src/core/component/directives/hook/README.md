@@ -1,12 +1,7 @@
 # core/component/directives/hook
 
-This module provides a directive with which you can listen to any directive lifecycle hooks from a component.
-
-## Why is this directive needed?
-
-This directive is used by default with functional components, as they don't have their own life cycle API.
-
-## Usage
+This module provides a directive that allows you to listen for any lifecycle handlers of the directive
+from the component.
 
 ```
 < div v-hook = { &
@@ -20,3 +15,10 @@ This directive is used by default with functional components, as they don't have
   unmounted: onUnmounted
 } .
 ```
+
+## Why is this directive needed?
+
+This directive is typically used with functional components as they do not initially possess their own lifecycle API and
+can easily be supplemented with it using this directive.
+However, feel free to utilize this directive in any other scenarios if you find it beneficial.
+

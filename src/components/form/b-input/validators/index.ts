@@ -36,15 +36,16 @@ export default <ValidatorsDecl<bInput>>{
 	/**
 	 * Checks that the component value can be parsed as a number
 	 *
-	 * @param msg
-	 * @param type
-	 * @param min
-	 * @param max
-	 * @param precision
-	 * @param strictPrecision
-	 * @param separator
-	 * @param styleSeparator
-	 * @param showMessage
+	 * @param opts
+	 * @param opts.message
+	 * @param opts.type
+	 * @param opts.min
+	 * @param opts.max
+	 * @param opts.precision
+	 * @param opts.strictPrecision
+	 * @param opts.separator
+	 * @param opts.styleSeparator
+	 * @param opts.showMessage
 	 */
 	async number({
 		message,
@@ -74,7 +75,7 @@ export default <ValidatorsDecl<bInput>>{
 		}
 
 		const error = (
-			defMsg = t`The value is not a number`,
+			defMsg = this.t`The value is not a number`,
 			errorValue: string | number = value,
 			errorType: NumberValidatorResult['name'] = 'INVALID_VALUE'
 		) => {
@@ -111,21 +112,21 @@ export default <ValidatorsDecl<bInput>>{
 		switch (type) {
 			case 'uint':
 				if (!Number.isNonNegative(numValue) || !Number.isInteger(numValue)) {
-					return error(t`The value does not match an unsigned integer type`, numValue);
+					return error(this.t`The value does not match an unsigned integer type`, numValue);
 				}
 
 				break;
 
 			case 'int':
 				if (!Number.isInteger(numValue)) {
-					return error(t`The value does not match integer type`, numValue);
+					return error(this.t`The value does not match integer type`, numValue);
 				}
 
 				break;
 
 			case 'ufloat':
 				if (!Number.isNonNegative(numValue)) {
-					return error(t`The value does not match an unsigned float type`, numValue);
+					return error(this.t`The value does not match an unsigned float type`, numValue);
 				}
 
 				break;
@@ -141,21 +142,21 @@ export default <ValidatorsDecl<bInput>>{
 			if (strictPrecision) {
 				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (chunks[1] == null || chunks[1].length !== precision) {
-					return error(t`The decimal part must be ${precision} digits`, numValue, 'DECIMAL_LENGTH');
+					return error(this.t('The decimal part must be {precision} digits', {precision}), numValue, 'DECIMAL_LENGTH');
 				}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			} else if (chunks[1] != null && chunks[1].length > precision) {
-				return error(t`The decimal part must be no more than ${precision} digits`, numValue, 'DECIMAL_LENGTH');
+				return error(this.t('The decimal part must be no more than {precision} digits', {precision}), numValue, 'DECIMAL_LENGTH');
 			}
 		}
 
 		if (min != null && numValue < min) {
-			return error(t`The value must be at least ${min}`, numValue, 'MIN');
+			return error(this.t('The value must be at least {min}', {min}), numValue, 'MIN');
 		}
 
 		if (max != null && numValue > max) {
-			return error(t`The value must be no more than ${max}`, numValue, 'MAX');
+			return error(this.t('The value must be no more than {max}', {max}), numValue, 'MAX');
 		}
 
 		return true;
@@ -164,12 +165,13 @@ export default <ValidatorsDecl<bInput>>{
 	/**
 	 * Checks that the component value can be parsed as a date
 	 *
-	 * @param msg
-	 * @param past
-	 * @param future
-	 * @param min
-	 * @param max
-	 * @param showMessage
+	 * @param opts
+	 * @param opts.message
+	 * @param opts.past
+	 * @param opts.future
+	 * @param opts.min
+	 * @param opts.max
+	 * @param opts.showMessage
 	 */
 	async date({
 		message,
@@ -191,7 +193,7 @@ export default <ValidatorsDecl<bInput>>{
 
 		const error = (
 			type: DateValidatorResult['name'] = 'INVALID_VALUE',
-			defMsg = t`The value can't be parsed as a date`,
+			defMsg = this.t`The value can't be parsed as a date`,
 			errorValue: Date | string = dateValue
 		) => {
 			const err = <DateValidatorResult>{
@@ -215,27 +217,27 @@ export default <ValidatorsDecl<bInput>>{
 			isFuture = dateValue.isFuture();
 
 		if (past && !isPast) {
-			return error('NOT_PAST', t`Date value must be in the past`);
+			return error('NOT_PAST', this.t`Date value must be in the past`);
 		}
 
 		if (past === false && isPast) {
-			return error('IS_PAST', t`Date value cannot be in the past`);
+			return error('IS_PAST', this.t`Date value can't be in the past`);
 		}
 
 		if (future && !isFuture) {
-			return error('NOT_FUTURE', t`Date value must be in the future`);
+			return error('NOT_FUTURE', this.t`Date value must be in the future`);
 		}
 
 		if (future === false && isFuture) {
-			return error('IS_FUTURE', t`Date value cannot be in the future`);
+			return error('IS_FUTURE', this.t`Date value can't be in the future`);
 		}
 
 		if (min != null && !dateValue.isAfter(min, 1)) {
-			return error('MIN', t`Date value must be at least "${min}"`);
+			return error('MIN', this.t('Date value must be at least "{date}"', {date: Date.create(min).toDateString()}));
 		}
 
 		if (max != null && !dateValue.isBefore(max, 1)) {
-			return error('MAX', t`Date value must be no more than "${max}"`);
+			return error('MAX', this.t('Date value must be no more than "{date}"', {date: Date.create(max).toDateString()}));
 		}
 
 		return true;
@@ -244,8 +246,9 @@ export default <ValidatorsDecl<bInput>>{
 	/**
 	 * Checks that the component value can be parsed as an email string
 	 *
-	 * @param msg
-	 * @param showMessage
+	 * @param opts
+	 * @param opts.message
+	 * @param opts.showMessage
 	 */
 	async email({message, showMessage = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
 		const
@@ -256,7 +259,7 @@ export default <ValidatorsDecl<bInput>>{
 		}
 
 		if (!/.+@.+/.test(value)) {
-			this.setValidationMessage(this.getValidatorMessage(false, message, t`Invalid email format`), showMessage);
+			this.setValidationMessage(this.getValidatorMessage(false, message, this.t`Invalid email format`), showMessage);
 			return false;
 		}
 
@@ -266,14 +269,15 @@ export default <ValidatorsDecl<bInput>>{
 	/**
 	 * Checks that the component value matches the password format
 	 *
-	 * @param msg
-	 * @param pattern
-	 * @param min
-	 * @param max
-	 * @param confirmComponent
-	 * @param oldPassComponent
-	 * @param skipLength
-	 * @param showMessage
+	 * @param opts
+	 * @param opts.message
+	 * @param opts.pattern
+	 * @param opts.min
+	 * @param opts.max
+	 * @param opts.confirmComponent
+	 * @param opts.oldPassComponent
+	 * @param opts.skipLength
+	 * @param opts.showMessage
 	 */
 	async password({
 		message,
@@ -294,7 +298,7 @@ export default <ValidatorsDecl<bInput>>{
 
 		const error = (
 			type: PasswordValidatorResult['name'] = 'NOT_MATCH',
-			defMsg = t`Password must contain only allowed characters`,
+			defMsg = this.t`Password must contain only allowed characters`,
 			errorValue: string | number | [string, string] = value
 		) => {
 			const err = <PasswordValidatorResult>{
@@ -340,12 +344,12 @@ export default <ValidatorsDecl<bInput>>{
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (min != null && length < min) {
-				return error('MIN', t`Password length must be at least ${min} characters`);
+				return error('MIN', this.t('Password length must be at least {min} characters', {min}));
 			}
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (max != null && length > max) {
-				return error('MAX', t`Password length must be no more than ${max} characters`);
+				return error('MAX', this.t('Password length must be no more than {max} characters', {max}));
 			}
 		}
 
@@ -365,7 +369,7 @@ export default <ValidatorsDecl<bInput>>{
 
 			if (connectedValue !== '') {
 				if (connectedValue === value) {
-					return error('OLD_IS_NEW', t`The old and new passwords are the same`);
+					return error('OLD_IS_NEW', this.t`The old and new passwords are the same`);
 				}
 
 				void connectedInput.setMod('valid', true);
@@ -385,7 +389,7 @@ export default <ValidatorsDecl<bInput>>{
 
 			if (connectedValue !== '') {
 				if (connectedValue !== value) {
-					return error('NOT_CONFIRM', t`The passwords don't match`, [value, String(connectedValue)]);
+					return error('NOT_CONFIRM', this.t`The passwords don't match`, [value, String(connectedValue)]);
 				}
 
 				void connectedInput.setMod('valid', true);

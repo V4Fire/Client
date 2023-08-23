@@ -61,7 +61,17 @@ $RECYCLE.BIN
 /app-std-cache
 /src/entries/tmp
 /db
+.eslintcache
+ssr-example.html
 
 # Statoscope
 statoscope-*/*
 statoscope-*.config.js
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

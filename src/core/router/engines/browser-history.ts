@@ -37,6 +37,7 @@ const isIFrame = (() => {
 /**
  * This code is required to fix a bug in the History API router engine where returning to the first element in history
  * does not fire a popstate event in Safari when the script is executed within an iframe
+ *
  * @see https://github.com/V4Fire/Client/issues/717
  */
 if (isIFrame && (browser.is.Safari !== false || browser.is.iOS !== false)) {
@@ -138,6 +139,9 @@ export default function createRouter(component: bRouter): Router {
 		maxListeners: 1e3,
 		newListener: false
 	});
+
+	let currentLocation;
+	saveLocation();
 
 	const router = Object.mixin({withDescriptors: 'onlyAccessors'}, Object.create(emitter), {
 		get route(): CanUndef<Route> {
@@ -303,8 +307,15 @@ export default function createRouter(component: bRouter): Router {
 	});
 
 	$a.on(globalThis, 'popstate', async () => {
+		const prevLocation = currentLocation;
+		saveLocation();
+
 		if (browser.is.iOS !== false && isOpenedFromBFCache) {
 			isOpenedFromBFCache = false;
+			return;
+		}
+
+		if (onlyHashChange(prevLocation, currentLocation)) {
 			return;
 		}
 
@@ -339,7 +350,26 @@ export default function createRouter(component: bRouter): Router {
 
 	return router;
 
+	function saveLocation() {
+		currentLocation = new URL(location.href);
+	}
+
+	function onlyHashChange(location1: URL, location2: URL) {
+		if (location1.hash !== '' || location2.hash !== '') {
+			const
+				hashRgxp = /#.*/;
+
+			if (location1.href.replace(hashRgxp, '') === location2.href.replace(hashRgxp, '')) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	function load(route: string, params?: Route, method: string = 'pushState'): Promise<void> {
+		params = Object.fastClone(params, {freezable: false});
+
 		if (!Object.isTruly(route)) {
 			throw new ReferenceError('The page to load is not specified');
 		}
@@ -410,10 +440,11 @@ export default function createRouter(component: bRouter): Router {
 				// to avoid DataCloneError we have to clone it with `Object.mixin({deep: true})`
 				const filteredParams = Object.mixin({deep: true, filter: (el) => !Object.isFunction(el)}, {}, params);
 				history[method](filteredParams, params.name, route);
+				saveLocation();
 			}
 
 			const
-				// eslint-disable-next-line @typescript-eslint/unbound-method
+				// eslint-disable-next-line @v4fire/unbound-method
 				{load} = params.meta;
 
 			if (load == null) {

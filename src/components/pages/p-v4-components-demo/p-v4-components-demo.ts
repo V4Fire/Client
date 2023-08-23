@@ -11,10 +11,14 @@
  * @packageDocumentation
  */
 
-import iStaticPage, { component, system, field } from 'components/super/i-static-page/i-static-page';
+import iStaticPage, { component, prop, field, system } from 'components/super/i-static-page/i-static-page';
+import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
 export * from 'components/super/i-static-page/i-static-page';
 
+VDOM.addToPrototype(VDOMAPI);
+
+// eslint-disable-next-line no-console
 console.time('Initializing');
 
 /**
@@ -23,6 +27,13 @@ console.time('Initializing');
  */
 @component({root: true})
 export default class pV4ComponentsDemo extends iStaticPage {
+	/** {@link iStaticPage.selfDispatching} */
+	@prop(Boolean)
+	readonly selfDispatchingProp: boolean = false;
+
+	@system((o) => o.sync.link())
+	override readonly selfDispatching!: boolean;
+
 	/**
 	 * Parameter to test
 	 */
@@ -35,7 +46,26 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	/**
+	 * Field for tests purposes
+	 */
+	@field()
+	emptyField: unknown = undefined;
+
+	/**
+	 * Name of the test component.
+	 */
+	@field()
+	testComponent?: string;
+
+	/**
+	 * Attributes for the test component.
+	 */
+	@field()
+	testComponentAttrs: Dictionary = {};
+
 	protected beforeCreate(): void {
+		// eslint-disable-next-line no-console
 		console.time('Render');
 	}
 }

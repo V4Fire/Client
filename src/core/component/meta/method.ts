@@ -10,7 +10,8 @@ import { defProp } from 'core/const/props';
 import type { ComponentMeta } from 'core/component/interface';
 
 /**
- * Iterates over a prototype of the passed component constructor and adds methods/accessors to the specified meta object
+ * Loops through the prototype of the passed component constructor and
+ * adds methods and accessors to the specified metaobject
  *
  * @param meta
  * @param [constructor]
@@ -98,9 +99,7 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			const
 				old = obj[name],
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				set = desc.set ?? old?.set,
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				get = desc.get ?? old?.get;
 
 			// To use `super` within the setter we also create a new method with a name `${key}Setter`
@@ -131,7 +130,6 @@ export function addMethodsToMeta(meta: ComponentMeta, constructor: Function = me
 
 			obj[name] = Object.assign(obj[name] ?? {}, {
 				src,
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				get: desc.get ?? old?.get,
 				set
 			});

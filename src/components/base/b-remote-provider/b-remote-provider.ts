@@ -26,13 +26,13 @@ export default class bRemoteProvider extends iData {
 	override readonly reloadOnActivation: boolean = true;
 
 	/**
-	 * A path to the field of the parent component where you want to store the loaded data
+	 * A path to the field in the parent component where you want to store the loaded data
 	 */
 	@prop({type: String, required: false})
 	readonly fieldProp?: string;
 
 	/**
-	 * A list of the component child nodes
+	 * A list of the component's child nodes
 	 */
 	get content(): CanPromise<Element[]> {
 		return this.waitComponentStatus('loading', () => Array.from(this.$el!.children));
@@ -44,21 +44,7 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
-	 * @emits `error(err:Error |` [[RequestError]]`, retry:` [[RetryRequestFn]]`)`
-	 */
-	protected override onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
-		const
-			a = this.$attrs;
-
-		if (a.onError == null && a.onOnError == null) {
-			super.onRequestError(err, retry);
-		}
-
-		this.emitError('error', err, retry);
-	}
-
-	/**
-	 * Synchronization for the `db` field
+	 * Synchronization of the `db` field
 	 *
 	 * @param [value]
 	 * @emits `change(db: CanUndef<T>)`
@@ -67,7 +53,7 @@ export default class bRemoteProvider extends iData {
 		const
 			parent = this.$parent;
 
-		if (!parent) {
+		if (parent == null) {
 			return;
 		}
 
@@ -107,6 +93,27 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
+	 * Handler: an error occurred during data loading from the provider
+	 *
+	 * @param err
+	 * @param retry
+	 * @emits `error(err:Error |` [[RequestError]]`, retry:` [[RetryRequestFn]]`)`
+	 */
+	protected override onRequestError(err: Error | RequestError, retry: RetryRequestFn): void {
+		const
+			a = this.$attrs;
+
+		if (a.onError == null && a.onOnError == null) {
+			super.onRequestError(err, retry);
+		}
+
+		this.emitError('error', err, retry);
+	}
+
+	/**
+	 * Handler: new data has successfully been added to the component provider
+	 *
+	 * @param data
 	 * @emits `addData(data: unknown)`
 	 */
 	protected override onAddData(data: unknown): void {
@@ -121,6 +128,9 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
+	 * Handler: the data in the component provider has been successfully updated
+	 *
+	 * @param data
 	 * @emits `updateData(data: unknown)`
 	 */
 	protected override onUpdateData(data: unknown): void {
@@ -135,6 +145,9 @@ export default class bRemoteProvider extends iData {
 	}
 
 	/**
+	 * Handler: the data has been successfully removed from the component provider
+	 *
+	 * @param data
 	 * @emits `deleteData(data: unknown)`
 	 */
 	protected override onDeleteData(data: unknown): void {

@@ -9,6 +9,46 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.42.0 (2023-03-14)
+
+#### :bug: Bug Fix
+
+* Fixed replace pattern for `i18n` webpack plugin
+
+## v3.39.0 (2023-03-07)
+
+#### :rocket: New Feature
+
+* Added a new plugin `i18n-plugin`
+
+## v3.37.0 (2023-02-20)
+
+#### :bug: Bug Fix
+
+* Downgrade `css-loader` version for fix svg bundling
+
+## v3.36.0 (2023-02-14)
+
+#### :house: Internal
+
+* Replaced `fast-css-loader` with `css-loader`
+
+## v3.34.1 (2023-01-31)
+
+#### :house: Internal
+
+* Added the ability to specify webpack aliases from the config
+
+## v3.34.0 (2023-01-30)
+
+#### :boom: Breaking Change
+
+* [Now `commonjs` module will not be installed for typescript processing into `fathtml` mode, instead `module` from tsconfig will be taken by `default`](https://github.com/V4Fire/Client/discussions/773)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with building project as `fat html` with `ES20xx` module `build/webpack/plugins`
+
 ## v3.27.0 (2022-08-30)
 
 #### :rocket: New Feature

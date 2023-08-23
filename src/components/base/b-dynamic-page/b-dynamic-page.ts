@@ -19,7 +19,9 @@ import { Cache, RestrictedCache, AbstractCache } from 'core/cache';
 import SyncPromise from 'core/promise/sync';
 import type { EventEmitterLike } from 'core/async';
 
+import Block, { element } from 'components/friends/block';
 import AsyncRender, { iterate } from 'components/friends/async-render';
+
 import iBlock from 'components/super/i-block/i-block';
 
 import iDynamicPage, {
@@ -53,7 +55,8 @@ import type {
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-dynamic-page/interface';
 
-AsyncRender.addToPrototype(iterate);
+Block.addToPrototype({element});
+AsyncRender.addToPrototype({iterate});
 
 const
 	$$ = symbolGenerator();
@@ -75,7 +78,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * The name of the active page to load
-	 * @see [[bDynamicPage.pageProp]]
+	 * {@link bDynamicPage.pageProp}
 	 */
 	@system<bDynamicPage>((o) => o.sync.link((val) => val ?? o.pageGetter(o.route, Object.cast(o))))
 	page?: string;
@@ -110,7 +113,7 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * A dictionary of `keepAlive` caches.
-	 * The keys represent cache groups  (the default is `global`).
+	 * The keys represent cache groups (the default is `global`).
 	 */
 	@system<bDynamicPage>((o) => o.sync.link('keepAliveSize', (size: number) => ({
 		...o.keepAliveCache,
@@ -217,6 +220,19 @@ export default class bDynamicPage extends iDynamicPage {
 	protected onPageChange?: Function;
 
 	/**
+	 * The page rendering counter.
+	 * Updated every time the component template is updated.
+	 */
+	@system()
+	protected renderCounter: number = 0;
+
+	/**
+	 * Registered groups of asynchronous render tasks
+	 */
+	@system()
+	protected renderingGroups: Set<string> = new Set();
+
+	/**
 	 * Render loop iterator (used with `asyncRender`)
 	 */
 	protected get renderIterator(): CanPromise<number> {
@@ -228,15 +244,34 @@ export default class bDynamicPage extends iDynamicPage {
 	}
 
 	override initLoad(): Promise<void> {
+		if (SSR && this.page == null && this.event != null) {
+			this.syncEmitterWatcher();
+			this.$initializer = this.async.promisifyOnce(this.emitter ?? this.$root, this.event);
+		}
+
 		return Promise.resolve();
 	}
 
 	/**
 	 * Reloads the loaded page component
+	 * @param [params]
 	 */
 	override async reload(params?: InitLoadOptions): Promise<void> {
 		const component = await this.component;
 		return component.reload(params);
+	}
+
+	override canSelfDispatchEvent(_: string): boolean {
+		return true;
+	}
+
+	/**
+	 * Registers a new group for asynchronous rendering and returns it
+	 */
+	protected registerRenderingGroup(): string {
+		const group = `pageRendering-${this.renderCounter++}`;
+		this.renderingGroups.add(group);
+		return group;
 	}
 
 	/**
@@ -250,8 +285,13 @@ export default class bDynamicPage extends iDynamicPage {
 		const
 			{unsafe, route} = this;
 
-		return new SyncPromise((r) => {
-			this.onPageChange = onPageChange(r, this.route);
+		return new SyncPromise((resolve) => {
+			[...this.renderingGroups].slice(0, -2).forEach((group) => {
+				this.async.clearAll({group: new RegExp(RegExp.escape(group))});
+				this.renderingGroups.delete(group);
+			});
+
+			this.onPageChange = onPageChange(resolve, this.route);
 		});
 
 		function onPageChange(
@@ -487,12 +527,16 @@ export default class bDynamicPage extends iDynamicPage {
 
 	/**
 	 * Synchronization for the `page` field
+	 *
+	 * @param page
+	 * @param oldPage
 	 */
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
 		if (this.onPageChange == null) {
-			const
-				label = {label: $$.syncPageWatcher};
+			const label = {
+				label: $$.syncPageWatcher
+			};
 
 			this.watch('onPageChange', {...label, immediate: true}, () => {
 				if (this.onPageChange == null) {

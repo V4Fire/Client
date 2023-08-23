@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	webpack = require('webpack');
@@ -19,7 +19,9 @@ let
 
 /**
  * Create a webpack plugin to show a build process by the passed name
+ *
  * @param {string} processName
+ * @returns {import('webpack').ProgressPlugin}
  */
 module.exports = function createProgressPlugin(processName) {
 	if (logger == null) {

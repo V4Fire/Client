@@ -9,10 +9,10 @@
 import Async from 'core/async';
 
 export default class Gestures {
-	/** @see [[TouchGesturesCreateOptions]] */
+	/** {@link globalThis.TouchGesturesCreateOptions} */
 	readonly options: TouchGesturesCreateOptions;
 
-	/** @see [[Async]] */
+	/** {@link Async} */
 	readonly async: Async = new Async();
 
 	/**

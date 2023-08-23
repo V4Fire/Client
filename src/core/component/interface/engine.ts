@@ -10,6 +10,9 @@ import type {
 
 	VNode,
 
+	Static,
+	Comment,
+
 	Fragment,
 	Teleport,
 
@@ -19,6 +22,7 @@ import type {
 	getCurrentInstance,
 
 	toHandlers,
+	toHandlerKey,
 	toDisplayString,
 
 	renderList,
@@ -96,6 +100,9 @@ export interface RenderAPI {
 
 	getCurrentInstance: typeof getCurrentInstance;
 
+	Static: typeof Static;
+	Comment: typeof Comment;
+
 	Fragment: typeof Fragment;
 	Teleport: typeof Teleport;
 
@@ -103,6 +110,7 @@ export interface RenderAPI {
 	TransitionGroup: typeof TransitionGroup;
 
 	toHandlers: typeof toHandlers;
+	toHandlerKey: typeof toHandlerKey;
 	toDisplayString: typeof toDisplayString;
 
 	renderList: typeof renderList;

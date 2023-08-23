@@ -14,10 +14,23 @@ Changelog
 #### :boom: Breaking Change
 
 * Renamed `waitStatus` to `waitComponentStatus`
+* Renamed `watchTmp ` to `reactiveTmp`
 
 #### :memo: Documentation
 
 * Added complete documentation for the module
+
+## v3.38.0 (2023-02-20)
+
+#### :bug: Bug Fix
+
+* Fixed use of `i18n` function in default prop values
+
+## v3.35.0 (2023-02-14)
+
+#### :boom: Breaking Change
+
+* Changed `i18n` function type from prop to getter
 
 ## v3.30.0 (2022-10-19)
 

@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	config = require('@config/config'),
@@ -31,15 +31,17 @@ const
 /**
  * Returns parameters for `webpack.optimization`
  *
- * @param {(number|string)} buildId
- * @param {!Map} plugins - a map of plugins to use
- * @returns {!Object}
+ * @param {object} opts
+ * @param {(number|string)} opts.buildId
+ * @param {Map} opts.plugins - a map of plugins to use
+ * @returns {object}
  */
 module.exports = function optimization({buildId, plugins}) {
 	const
 		params = {};
 
 	if (ssr) {
+		params.minimizer = [];
 		return params;
 	}
 

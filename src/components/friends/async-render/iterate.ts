@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { TaskCtx } from 'core/async';
+
 import type { ComponentElement } from 'core/component';
 import type { VNode } from 'core/component/engines';
 
@@ -126,7 +128,7 @@ export function iterate(
 
 		// Using `while` instead of `for of` helps to iterate over synchronous and asynchronous iterators with a single loop
 		// eslint-disable-next-line no-constant-condition
-		while (true) {
+		rendering: while (true) {
 			if (opts.group != null) {
 				group = `asyncComponents:${opts.group}:${chunkI}`;
 			}
@@ -159,7 +161,6 @@ export function iterate(
 
 					if (Object.isPromise(needRender)) {
 						await $a.promise(needRender, {group}).then(
-							// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 							(res) => resolveTask(iterVal, res === undefined || Object.isTruly(res))
 						);
 
@@ -184,15 +185,31 @@ export function iterate(
 				iterI++;
 
 			} catch (err) {
-				if (
-					Object.get(err, 'type') === 'clearAsync' &&
-					Object.get(err, 'reason') === 'group' &&
-					Object.get(err, 'link.group') === 'group'
-				) {
-					break;
+				if (Object.get(err, 'type') === 'clearAsync') {
+					const
+						taskCtx = Object.cast<TaskCtx>(err);
+
+					switch (taskCtx.reason) {
+						case 'all':
+							break rendering;
+
+						case 'rgxp':
+						case 'group':
+							if (taskCtx.link.group === group) {
+								break rendering;
+							}
+
+							break;
+
+						default:
+							// Ignore
+					}
 				}
 
 				stderr(err);
+
+				// Avoiding infinite loop
+				await $a.sleep(0, {group});
 			}
 		}
 
@@ -218,7 +235,7 @@ export function iterate(
 				}
 			});
 		}
-	});
+	}, {group});
 
 	return iter.readEls;
 
@@ -283,7 +300,7 @@ export function iterate(
 
 			function renderVNode(vnode: VNode) {
 				let
-					renderedVnode: CanArray<Node>;
+					renderedVnode: Nullable<CanArray<Node>>;
 
 				if (vnode.el != null) {
 					vnode.el[Object.cast<string>(isCached)] = true;
@@ -296,13 +313,15 @@ export function iterate(
 				const
 					nodeToMount = target.el ?? ctx.$el;
 
-				if (Object.isArray(renderedVnode)) {
-					renderedVNodes.push(...renderedVnode);
-					renderedVnode.forEach((renderedVnode) => nodeToMount!.appendChild(renderedVnode));
+				if (nodeToMount != null) {
+					if (Object.isArray(renderedVnode)) {
+						renderedVNodes.push(...renderedVnode);
+						renderedVnode.forEach((renderedVnode) => nodeToMount.appendChild(renderedVnode));
 
-				} else {
-					renderedVNodes.push(renderedVnode);
-					nodeToMount!.appendChild(renderedVnode);
+					} else if (renderedVnode != null) {
+						renderedVNodes.push(renderedVnode);
+						nodeToMount.appendChild(renderedVnode);
+					}
 				}
 			}
 

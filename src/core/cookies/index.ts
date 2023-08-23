@@ -7,7 +7,7 @@
  */
 
 /**
- * [[include:core/browser/README.md]]
+ * [[include:core/cookies/README.md]]
  * @packageDocumentation
  */
 
@@ -25,9 +25,10 @@ export function has(name: string): boolean {
 
 /**
  * Returns a cookie value by the specified name
+ * @param name
  */
 export function get(name: string): CanUndef<string> {
-	const matches = new RegExp(`(?:^|; )${RegExp.escape(name)}=([^;]*)`).exec(document.cookie);
+	const matches = new RegExp(`(?:^|; )${RegExp.escape(name)}=([^;]*)`).exec(getDocument().cookie);
 	return matches != null ? decodeURIComponent(matches[1]) : undefined;
 }
 
@@ -71,7 +72,7 @@ export function set(name: string, value: string, opts?: SetOptions): string {
 		}
 	});
 
-	document.cookie = cookie;
+	getDocument().cookie = cookie;
 	return value;
 }
 
@@ -89,4 +90,8 @@ export function remove(name: string, opts?: RemoveOptions): boolean {
 
 	set(name, '', {path: '/', ...opts, expires: -1});
 	return true;
+}
+
+function getDocument() {
+	return globalThis.ssr?.document ?? document;
 }

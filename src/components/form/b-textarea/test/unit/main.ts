@@ -9,7 +9,7 @@
 import type { JSHandle, Page } from 'playwright';
 
 import type * as Block from 'components/friends/block';
-import type bInput from 'components/form/b-textarea/b-textarea';
+import type bTextarea from 'components/form/b-textarea/b-textarea';
 
 import test from 'tests/config/unit/test';
 import Component from 'tests/helpers/component';
@@ -31,10 +31,10 @@ test.describe('<b-textarea>', () => {
 		});
 
 		const
-			textarea = await page.$('#foo');
+			textarea = page.locator('#foo');
 
 		test.expect(
-			await textarea!.evaluate((ctx: HTMLInputElement) => [
+			await textarea.evaluate((ctx: HTMLInputElement) => [
 				ctx.tagName,
 				ctx.name,
 				ctx.value
@@ -245,14 +245,14 @@ test.describe('<b-textarea>', () => {
 
 	/**
 	 * @param page
-	 * @param attrs
-	 * @param children
+	 * @param [attrs]
+	 * @param [children]
 	 */
 	async function renderTextarea(
 		page: Page,
-		attrs: Dictionary = {},
-		children: Dictionary = {}
-	): Promise<JSHandle<bInput>> {
+		attrs?: RenderComponentsVnodeParams['attrs'],
+		children?: RenderComponentsVnodeParams['children']
+	): Promise<JSHandle<bTextarea>> {
 		return Component.createComponent(page, 'b-textarea', {
 			attrs: {
 				'data-id': 'target',

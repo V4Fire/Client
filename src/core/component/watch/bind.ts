@@ -337,12 +337,11 @@ export function bindRemoteWatchers(component: ComponentInterface, params?: BindR
 
 		// Add listener to a component `created` hook if the component isn't created yet
 		if (watcherNeedCreated && isBeforeCreate) {
-			hooks.created.unshift({fn: attachWatcher});
+			hooks['before:created'].push({fn: attachWatcher});
 			return;
 		}
 
 		// Add listener to a component `mounted/activate`d hook if the component isn't mounted/activates yet
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (watcherNeedMounted && (isBeforeCreate || component.$el == null)) {
 			hooks[isDeactivated ? 'activated' : 'mounted'].unshift({fn: attachWatcher});
 			return;

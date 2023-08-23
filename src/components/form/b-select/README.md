@@ -7,11 +7,11 @@ The select can contain multiple values.
 
 * The component extends [[iInputText]].
 
-* The component implements [[iOpenToggle]], [[iItems]] traits.
+* The component implements [[iOpenToggle]], [[iActiveItems]] traits.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
-* By default, the root tag of the component is `<span>`.
+* By default, the component's root tag is set to `<span>`.
 
 * The component contains an `<input>` or `<select>` (it uses by default with mobile browsers) tag within.
 
@@ -28,26 +28,28 @@ Also, you can see the parent component and the component traits.
 
 ## Events
 
-| EventName     | Description                      | Payload description | Payload |
-|---------------|----------------------------------|---------------------|---------|
-| `itemsChange` | A list of items has been changed | List of items       | `Items` |
+| EventName      | Description                                                                     | Payload description | Payload  |
+|----------------|---------------------------------------------------------------------------------|---------------------|----------|
+| `change`       | The active element(s) of the component has been changed                         | The active item(s)  | `Active` |
+| `actionChange` | The active element(s) of the component has been changed due to some user action | The active item(s)  | `Active` |
+| `itemsChange`  | The list of component items has been changed                                    | The list of items   | `Items`  |
 
 Also, you can see the parent component and the component traits.
 
 ## How to switch between the native `<select>` and custom select
 
-By default, desktop browsers are used the custom select layout based on `<input>` and some helper tags to create dropdown and other staff.
-Opposite to, all mobile browsers are used the simple native `<select>` tag. You can manage this logic by using the `native` prop.
-Also, the component has a modifier with the same name. The modifier value is automatically synchronized with this prop.
+By default, desktop browsers use the custom select layout based on the `<input>` and some helper tags to create dropdown menus and other elements.
+In contrast, all mobile browsers use the simple native `<select>` tag. You can set the mode by using the `native` prop.
+Additionally, the component has a `native` modifier. The modifier value is automatically synchronized with this prop.
 
 ```
 < b-select :items = myItems | :native = true
 ```
 
-Why we always can't use only one mode? Well, the main problem is customizing select' items: within `<option>` we can use only plain text,
-but sometimes it will be cool to add images, or other components, like checkboxes. And there is another problem with
-customizing the view of these items via CSS. That's why `bSelect` shims the native behavior with custom tags.
-But, for mobile browsers is almost always better to use the native select because of the small display size and user experience.
+Why can't we always use just one mode? The primary issue lies in customizing the select items. Within `<option>`, we can only use plain text,
+but at times it would be great to incorporate images or other components, such as checkboxes. Additionally,
+there is a challenge in customizing the appearance of these items via CSS. This is why `bSelect` mimics native behavior using custom tags.
+However, for mobile browsers, it is generally preferable to use the native select due to the smaller screen size and enhanced user experience.
 
 ## Usage
 
@@ -78,11 +80,12 @@ But, for mobile browsers is almost always better to use the native select becaus
 < b-select :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
 ```
 
-If a provider returns a dictionary, it will be mapped on the component
-(you can pass the complex property path using dots as separators).
+When a provider returns a dictionary, it gets mapped onto the component. To pass a complex property path, you can use dots as separators.
 
-If a key from the response is matched with a component method, this method will be invoked with a value from this key
-(if the value is an array, it will be spread to the method as arguments).
+If a key from the response corresponds to a component method, this method will be invoked using the value from that key.
+If the value is an array, it will be spread to the method as separate arguments.
+
+The provider should not return any properties which are in the component props list (marked with `@prop` decorator), they won't be updated.
 
 ```
 {
@@ -101,74 +104,74 @@ In other cases, the response value is interpreted as a component value.
 
 ## Slots
 
-The component supports a bunch of slots to provide.
+The component supports several slots for customization:
 
-1. `default` to provide a template for a select' item (option).
+1. `default` - use this slot to provide a template for a select item (option).
 
-```
-< b-select :items = myItems
-  < template #default = {item}
-    {{ item.label }}
-```
+   ```
+   < b-select :items = myItems
+     < template #default = {item}
+       {{ item.label }}
+   ```
 
-2. `preIcon` and `icon` to inject icons around the value block.
+2. `preIcon` and `icon` - use these slots to inject icons around the value block.
 
-```
-< b-select :items = myItems
-  < template #preIcon
-    < img src = validate.svg
+   ```
+   < b-select :items = myItems
+     < template #preIcon
+       < img src = validate.svg
 
-  < template #icon
-    < img src = clear.svg
-```
+     < template #icon
+       < img src = clear.svg
+   ```
 
-Also, these icons can be provided by props.
+   Also, these icons can be provided via props.
 
-```
-< b-select :items = myItems | :icon = 'validate'
+   ```
+   < b-select :items = myItems | :icon = 'validate'
 
-< b-select &
-  :items = myItems |
-  :preIcon = 'validate' |
-  :iconComponent = 'b-custom-icon'
-.
+   < b-select &
+     :items = myItems |
+     :preIcon = 'validate' |
+     :iconComponent = 'b-custom-icon'
+   .
 
-< b-select :items = myItems
-  < template #icon = {icon}
-    < img :src = icon
-```
+   < b-select :items = myItems
+     < template #icon = {icon}
+       < img :src = icon
+   ```
 
-3. `progressIcon` to inject an icon that indicates loading, by default, is used [[bProgressIcon]].
+3. `progressIcon` - use this slot to inject an icon that indicates loading. By default, [[bProgressIcon]] is used.
 
-```
-< b-select :items = myItems
-  < template #progressIcon
-    < img src = spinner.svg
-```
+   ```
+   < b-select :items = myItems
+     < template #progressIcon
+       < img src = spinner.svg
+   ```
 
-Also, this icon can be provided by a prop.
+   Also, this icon can be provided via a prop.
 
-```
-< b-select :items = myItems | :progressIcon = 'bCustomLoader'
-```
+   ```
+   < b-select :items = myItems | :progressIcon = 'bCustomLoader'
+   ```
 
 ## API
 
-Also, you can see the parent component and the component traits.
+Check parent [[iInputText]] component and the traits.
 
 ### Props
 
 #### [multiple = `false`]
 
-If true, the component supports a feature of multiple selected items.
+When set to true, the component allows multiple selected items.
 
 #### [native = `browser.is.mobile`]
 
-If true, the component will use a native tag to show the select.
+When set to true, the component displays the `<select>` using a native tag, providing a better mobile experience.
 
 #### [preIcon]
 
-An icon to show before the input.
+An icon to display before the input.
 
 ```
 < b-select :preIcon = 'dropdown' | :items = myItems
@@ -176,7 +179,7 @@ An icon to show before the input.
 
 #### [preIconComponent]
 
-A name of the used component to show `preIcon`.
+The name of the component used to display the `preIcon`.
 
 ```
 < b-select :preIconComponent = 'b-my-icon' | :items = myItems
@@ -184,7 +187,7 @@ A name of the used component to show `preIcon`.
 
 #### [preIconHint]
 
-A tooltip text to show during hover the cursor on `preIcon`.
+A tooltip text that is displayed when hovering over the `preIcon`.
 
 ```
 < b-select &
@@ -196,7 +199,7 @@ A tooltip text to show during hover the cursor on `preIcon`.
 
 #### [preIconHintPos]
 
-Tooltip position to show during hover the cursor on `preIcon`.
+The position of the tooltip displayed when hovering over the `preIcon`.
 See [[gIcon]] for more information.
 
 ```
@@ -210,7 +213,7 @@ See [[gIcon]] for more information.
 
 #### [icon]
 
-An icon to show after the input.
+An icon to display after the input.
 
 ```
 < b-select :icon = 'dropdown' | :items = myItems
@@ -218,7 +221,7 @@ An icon to show after the input.
 
 #### [iconComponent]
 
-A name of the used component to show `icon`.
+The name of the component used to display the `icon`.
 
 ```
 < b-select :iconComponent = 'b-my-icon' | :items = myItems
@@ -226,7 +229,7 @@ A name of the used component to show `icon`.
 
 #### [iconHint]
 
-A tooltip text to show during hover the cursor on `icon`.
+A tooltip text that is displayed when hovering over the `icon`.
 
 ```
 < b-select &
@@ -238,7 +241,7 @@ A tooltip text to show during hover the cursor on `icon`.
 
 #### [iconHintPos]
 
-Tooltip position to show during hover the cursor on `icon`.
+The position of the tooltip displayed when hovering over the `icon`.
 See [[gIcon]] for more information.
 
 ```
@@ -252,8 +255,7 @@ See [[gIcon]] for more information.
 
 ### [progressIcon]
 
-A component to show "in-progress" state or
-Boolean, if needed to show progress by slot or `b-progress-icon`.
+A component used to display an "in-progress" state. Alternatively, use a boolean value to show progress through a slot or `b-progress-icon`.
 
 ```
 < b-select :progressIcon = 'b-my-progress-icon' | :items = myItems
@@ -263,11 +265,11 @@ Boolean, if needed to show progress by slot or `b-progress-icon`.
 
 #### items
 
-List of component items.
+A list of the component items.
 
 ### Methods
 
-#### isSelected
+#### `isSelected`
 
 Returns true if the specified value is selected.
 
@@ -280,15 +282,14 @@ class Test extends iData {
 
   test(): void {
     this.$refs.select.value = 1;
-    console.log(this.$refs.select.isSelected(1));
+    console.log(this.$refs.select.isSelected(1)); // true
   }
 }
 ```
 
 #### selectValue
 
-Selects an item by the specified value.
-If the component is switched to the `multiple` mode, the method can take a `Set` object to set multiple items.
+Selects an item with the specified value. If the component is in `multiple` mode, this method can accept an `Iterable` to select multiple items.
 
 ```typescript
 class Test extends iData {
@@ -305,8 +306,7 @@ class Test extends iData {
 
 #### unselectValue
 
-Removes selection from an item by the specified value.
-If the component is switched to the `multiple` mode, the method can take a `Set` object to unset multiple items.
+Removes the selection from an item with the specified value. If the component is in `multiple` mode, this method can accept an `Iterable` to unselect multiple items.
 
 ```typescript
 class Test extends iData {
@@ -316,15 +316,14 @@ class Test extends iData {
   };
 
   test(): void {
-    this.$refs.unselectValue.unselectValue(1);
+    this.$refs.select.unselectValue(1);
   }
 }
 ```
 
 #### toggleValue
 
-Toggles selection of an item by the specified value.
-The methods return a new selected value/s.
+Toggles the selection of an item with the specified value. The method returns the new selected value(s).
 
 ```typescript
 class Test extends iData {
@@ -341,7 +340,7 @@ class Test extends iData {
 
 ### Validation
 
-Because the component extends from [[iInput]], it supports validation API.
+Since the component extends from [[iInput]], it supports the validation API.
 
 ```
 < b-select &
@@ -354,11 +353,11 @@ Because the component extends from [[iInput]], it supports validation API.
 
 #### Built-in validators
 
-The component provides a bunch of validators.
+The component includes several built-in validators.
 
 ##### required
 
-Checks that a component value must be filled.
+Ensures that the component's value is not empty and must be filled.
 
 ```
 < b-select :validators = ['required'] | :items = myItems
@@ -370,17 +369,17 @@ Checks that a component value must be filled.
 1. By default, the component provides a button to expand a dropdown with items.
    You can configure it via CSS by using the `&__expand` selector.
 
-```styl
-&__expand
-  size 20px
-  background-image url("assets/my-icon.svg")
-```
+   ```styl
+   &__expand
+     size 20px
+     background-image url("assets/my-icon.svg")
+   ```
 
 2. By default, the component provides a button to clear the input value.
    You can configure it via CSS by using the `&__clear` selector.
 
-```styl
-&__clear
-  size 20px
-  background-image url("assets/my-icon.svg")
-```
+   ```styl
+   &__clear
+     size 20px
+     background-image url("assets/my-icon.svg")
+   ```

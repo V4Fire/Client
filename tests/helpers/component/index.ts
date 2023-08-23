@@ -13,10 +13,12 @@ import { expandedStringify } from 'core/prelude/test-env/components/json';
 import type iBlock from 'components/super/i-block/i-block';
 
 import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
+import { isRenderComponentsVnodeParams } from 'tests/helpers/component/helpers';
 
 /**
  * Class provides API to work with components on a page
  */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class Component {
 	/**
 	 * Creates components by the passed name and scheme and mounts them into the DOM tree
@@ -24,35 +26,31 @@ export default class Component {
 	 * @param page
 	 * @param componentName
 	 * @param scheme
-	 * @param [opts]
 	 */
-	 static async createComponents(
+	static async createComponents(
 		page: Page,
 		componentName: string,
-		scheme: RenderParams[],
-		opts?: RenderOptions
+		scheme: RenderComponentsVnodeParams[]
 	): Promise<void> {
 		const schemeAsString = expandedStringify(scheme);
 
-		await page.evaluate(([{componentName, schemeAsString, opts}]) => {
-			globalThis.renderComponents(componentName, schemeAsString, opts);
+		await page.evaluate(([{componentName, schemeAsString}]) => {
+			globalThis.renderComponents(componentName, schemeAsString);
 
-		}, [{componentName, schemeAsString, opts}]);
+		}, [{componentName, schemeAsString}]);
 	}
 
 	/**
-	 * Creates a component by the specified name and parameters
+	 * Creates a component by the specified name and parameters/attributes
 	 *
 	 * @param page
 	 * @param componentName
-	 * @param [scheme]
-	 * @param [opts]
+	 * @param [schemeOrAttrs]
 	 */
-	 static async createComponent<T extends iBlock>(
+	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
-		scheme?: Partial<RenderParams>,
-		opts?: RenderOptions
+		schemeOrAttrs?: RenderComponentsVnodeParams | RenderComponentsVnodeParams['attrs']
 	): Promise<JSHandle<T>>;
 
 	/**
@@ -61,30 +59,34 @@ export default class Component {
 	 * @param page
 	 * @param componentName
 	 * @param [scheme]
-	 * @param [opts]
 	 */
-	 static async createComponent<T extends iBlock>(
-		page: Page,
-		componentName: string,
-		scheme: RenderParams[],
-		opts?: RenderOptions
-	): Promise<undefined>;
-
-	/**
-	 * @param page
-	 * @param componentName
-	 * @param [scheme]
-	 * @param [opts]
-	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	static async createComponent<T extends iBlock>(
 		page: Page,
 		componentName: string,
-		scheme: Partial<RenderParams> | RenderParams[] = {},
-		opts?: RenderOptions
+		scheme: RenderComponentsVnodeParams[]
+	): Promise<undefined>;
+
+	static async createComponent<T extends iBlock>(
+		page: Page,
+		componentName: string,
+		schemeOrAttrs: CanArray<RenderComponentsVnodeParams> | RenderComponentsVnodeParams['attrs'] = {}
 	): Promise<CanUndef<JSHandle<T>>> {
-		if (Array.isArray(scheme)) {
-			await this.createComponents(page, componentName, scheme, opts);
+		if (Array.isArray(schemeOrAttrs)) {
+			await this.createComponents(page, componentName, schemeOrAttrs);
 			return;
+		}
+
+		let
+			attrs: RenderComponentsVnodeParams['attrs'],
+			children: RenderComponentsVnodeParams['children'];
+
+		if (isRenderComponentsVnodeParams(schemeOrAttrs)) {
+			attrs = schemeOrAttrs.attrs;
+			children = schemeOrAttrs.children;
+
+		} else {
+			attrs = schemeOrAttrs;
 		}
 
 		const
@@ -92,26 +94,20 @@ export default class Component {
 
 		const schemeAsString = expandedStringify([
 			{
-				...scheme,
-
 				attrs: {
-					...scheme.attrs,
+					...attrs,
 					'data-render-id': renderId
-				}
+				},
+				children
 			}
 		]);
 
-		const normalizedOptions = {
-			...opts,
-			rootSelector: '#root-component'
-		};
+		await page.evaluate(([{componentName, schemeAsString}]) => {
+			globalThis.renderComponents(componentName, schemeAsString);
 
-		await page.evaluate(([{componentName, schemeAsString, normalizedOptions}]) => {
-			globalThis.renderComponents(componentName, schemeAsString, normalizedOptions);
+		}, [{componentName, schemeAsString}]);
 
-		}, [{componentName, schemeAsString, normalizedOptions}]);
-
-		return <Promise<JSHandle<T>>>this.getComponentByQuery(page, `[data-render-id="${renderId}"]`);
+		return this.waitForComponentByQuery(page, `[data-render-id="${renderId}"]`);
 	}
 
 	/**
@@ -141,7 +137,7 @@ export default class Component {
 	 * @param ctx
 	 * @param selector
 	 */
-	 static async waitForComponentByQuery<T extends iBlock>(
+	static async waitForComponentByQuery<T extends iBlock>(
 		ctx: Page | ElementHandle,
 		selector: string
 	): Promise<JSHandle<T>> {
@@ -202,7 +198,7 @@ export default class Component {
 	/**
 	 * Returns the root component
 	 *
-	 * @typeparam T - type of the root
+	 * @typeParam T - type of the root
 	 * @param ctx
 	 * @param [selector]
 	 */
@@ -235,5 +231,19 @@ export default class Component {
 		}), status);
 
 		return component;
+	}
+
+	/**
+	 * Waits until the component template is loaded
+	 *
+	 * @param ctx
+	 * @param componentName
+	 */
+	static async waitForComponentTemplate(
+		ctx: Page,
+		componentName: string
+	): Promise<void> {
+		// @ts-ignore TPLS is a global storage for component templates
+		await ctx.waitForFunction((componentName) => globalThis.TPLS[componentName] != null, componentName);
 	}
 }

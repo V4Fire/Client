@@ -2,7 +2,7 @@
 
 This module provides a plugin to show webpack build progress.
 
-## Options
+## Configuration
 
 The plugin can be customized via an App config.
 

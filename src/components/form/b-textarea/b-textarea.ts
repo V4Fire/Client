@@ -40,8 +40,8 @@ export * from 'components/form/b-textarea/interface';
 
 export { Value, FormValue };
 
-DOM.addToPrototype(renderTemporarily);
-Block.addToPrototype(getElementSelector, setElementMod);
+DOM.addToPrototype({renderTemporarily});
+Block.addToPrototype({getElementSelector, setElementMod});
 
 const
 	$$ = symbolGenerator();
@@ -206,6 +206,7 @@ export default class bTextarea extends iInputText {
 		});
 	}
 
+	@wait('ready', {label: $$.clear})
 	override clear(): Promise<boolean> {
 		const {value} = this;
 		void this.clearText();
@@ -409,7 +410,7 @@ export default class bTextarea extends iInputText {
 		} else {
 			block.setElementMod(el, 'limit', 'hidden', false);
 			block.setElementMod(el, 'limit', 'warning', limit < maxLength / 3);
-			el.innerHTML = t`Characters left: ${limit}`;
+			el.innerHTML = this.t('Characters left: {limit}', {limit});
 		}
 	}
 

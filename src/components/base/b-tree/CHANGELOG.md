@@ -9,6 +9,45 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* By default, the component is rendered synchronously
+
+#### :rocket: New Feature
+
+* Added a new prop `lazyRender`
+
+## v3.43.0 (2023-03-23)
+
+#### :bug: Bug Fix
+
+* Added automatic `item.value` generation
+* Fixed overloads for `fold`/`unfold` methods
+
+## v3.41.0 (2023-03-14)
+
+#### :boom: Breaking Change
+
+* Renamed option `Item['id']` to `Item['value']`
+
+#### :rocket: New Feature
+
+* Added `iActiveItems` implementation
+
+## v3.32.0 (2022-12-21)
+
+#### :house: Internal
+
+* Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
+
+#### :bug: Bug Fix
+
+* Fixed passing props to nested trees
+* Fixed an issue with the prop `itemProps` not being added to items' attributes
+* Fixed adding the `folded_false` class to items without children
+
 ## v3.0.0-rc.164 (2021-03-22)
 
 #### :house: Internal

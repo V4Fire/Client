@@ -19,7 +19,7 @@ import log from 'core/log';
 import { componentParams } from 'core/component/const';
 
 /**
- * The event emitter to broadcast external events to components
+ * This event emitter is used to broadcast various external events from modules to a unified event bus for components
  */
 export const globalEmitter = new EventEmitter({
 	maxListeners: 1e3,
@@ -37,7 +37,7 @@ globalEmitter.emit = (event: string, ...args) => {
 };
 
 /**
- * The event emitter to broadcast component initialization events
+ * This event emitter is used to broadcast components' initialization events
  */
 export const initEmitter = new EventEmitter({
 	maxListeners: 1e3,
@@ -74,4 +74,3 @@ export const initEmitter = new EventEmitter({
 		return this;
 	};
 })(initEmitter.once.bind(initEmitter));
-

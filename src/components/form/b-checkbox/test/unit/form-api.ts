@@ -19,7 +19,8 @@ import Utils from 'tests/helpers/utils';
 
 test.describe('<b-checkbox> form API', () => {
 	const
-		q = '[data-id="target"]';
+		first = '[data-id="target"]',
+		second = '[data-id="second"]';
 
 	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
@@ -60,13 +61,13 @@ test.describe('<b-checkbox> form API', () => {
 			await target.evaluate((ctx) => ctx.formValue)
 		).toBeUndefined();
 
-		await page.click(q);
+		await page.click(first);
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.formValue)
 		).toBe(true);
 
-		await page.click(q);
+		await page.click(first);
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.formValue)
@@ -83,19 +84,19 @@ test.describe('<b-checkbox> form API', () => {
 			await target.evaluate((ctx) => ctx.groupFormValue)
 		).toEqual([]);
 
-		await page.click(q);
+		await page.click(first);
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.groupFormValue)
 		).toEqual(['foo']);
 
-		await page.click('[data-id="second"]');
+		await page.click(second);
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.groupFormValue)
 		).toEqual(['foo', 'bar']);
 
-		await page.click('[data-id="second"]');
+		await page.click(second);
 
 		test.expect(
 			await target.evaluate((ctx) => ctx.groupFormValue)
@@ -146,9 +147,9 @@ test.describe('<b-checkbox> form API', () => {
 
 	/**
 	 * @param page
-	 * @param attrs
+	 * @param [attrs]
 	 */
-	async function renderCheckbox(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bCheckbox>> {
+	async function renderCheckbox(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bCheckbox>> {
 		await Component.createComponent(page, 'b-checkbox', [
 			{
 				attrs: {
@@ -167,6 +168,6 @@ test.describe('<b-checkbox> form API', () => {
 			}
 		]);
 
-		return Component.waitForComponentByQuery(page, q);
+		return Component.waitForComponentByQuery(page, first);
 	}
 });

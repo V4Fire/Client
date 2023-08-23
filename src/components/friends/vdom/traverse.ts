@@ -29,7 +29,7 @@ import type iBlock from 'components/super/i-block/i-block';
 export function closest<T extends iBlock = iBlock>(
 	this: Friend,
 	component: string | ClassConstructor<any[], T> | Function
-): CanUndef<T> {
+): CanNull<T> {
 	const
 		nm = Object.isString(component) ? component.dasherize() : undefined;
 
@@ -44,7 +44,7 @@ export function closest<T extends iBlock = iBlock>(
 		el = el.$parent;
 	}
 
-	return undefined;
+	return null;
 }
 
 /**
@@ -74,7 +74,7 @@ export function findElement(
 	name: string,
 	where: VNode,
 	ctx: iBlock = this.component
-): CanUndef<VNode> {
+): CanNull<VNode> {
 	const selector = ctx.provide.fullElementName(name);
 	return search(where);
 
@@ -112,6 +112,6 @@ export function findElement(
 			}
 		}
 
-		return undefined;
+		return null;
 	}
 }

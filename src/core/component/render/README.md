@@ -1,15 +1,69 @@
 # core/component/render
 
-This module provides a bunch of functions to create and work with VNodes.
+This module offers a bunch of functions for creating and manipulating VNodes.
 
 ## Wrappers
 
-These wrappers should be used to wrap the original component library functions.
+These wrappers are intended to be used for encapsulating the original component library functions:
 
-* `wrapCreateVNode` - a wrapper for the component library `createVNode` function;
-* `wrapCreateElementVNode` - a wrapper for the component library `createElementVNode` function;
-* `wrapCreateBlock` - a wrapper for the component library `createBlock` function;
-* `wrapCreateElementBlock` - a wrapper for the component library `createElementBlock` function;
-* `wrapResolveComponent` - a wrapper for the component library `resolveComponent` or `resolveDynamicComponent` functions;
-* `wrapRenderList` - a wrapper for the component library `renderList` function;
-* `wrapWithDirectives` - a wrapper for the component library `withDirectives` function.
+* `wrapCreateVNode` – a wrapper for the `createVNode` function of the component library;
+* `wrapCreateElementVNode` – a wrapper for the `createElementVNode` function of the component library;
+* `wrapCreateBlock` – a wrapper for the `createBlock` function of the component library;
+* `wrapCreateElementBlock` – a wrapper for the `createElementBlock` function of the component library;
+* `wrapResolveComponent` – a wrapper for the `resolveComponent` or `resolveDynamicComponent` functions of the component library;
+* `wrapResolveDirective` – a wrapper for the `resolveDirective` function of the component library;
+* `wrapRenderList` – a wrapper for the `renderList` function of the component library;
+* `wrapRenderSlot` – a wrapper for the `renderSlot` function of the component library;
+* `wrapWithDirectives` – a wrapper for the `withDirectives` function of the component library.
+
+## Helpers
+
+### resolveAttrs
+
+Resolves values from special attributes of the given VNode.
+Note: for the value of the `data-cached-dynamic-class` attribute,
+you should use the JSON `core/json#evalWith` reviver format.
+
+```js
+// `.componentId = 'id-1'`
+// `.componentName = 'b-example'`
+// `.classes = {'elem-name': 'alias'}`
+const ctx = this;
+
+// {props: {class: 'id-1 b-example alias'}}
+resolveAttrs.call(ctx, {
+  props: {
+    'data-cached-class-component-id': '',
+    'data-cached-class-provided-classes-styles': 'elem-name',
+    'data-cached-dynamic-class': '["get", "componentName"]'
+  }
+})
+```
+
+### setVNodePatchFlags
+
+Assigns the specified values to the `patchFlag` and `shapeFlag` properties of the provided VNode.
+
+```js
+setVNodePatchFlags(vnode, 'props', 'styles', 'children');
+```
+
+### normalizeClass
+
+Normalizes the provided CSS classes and returns the resulting output.
+
+### normalizeStyle
+
+Normalizes the provided CSS styles and returns the resulting output.
+
+### parseStringStyle
+
+Analyzes the given CSS style string and returns a dictionary containing the parsed rules.
+
+### normalizeComponentAttrs
+
+Normalizes the passed VNode's attributes using the specified component metaobject and returns a new object.
+
+### mergeProps
+
+Merges the specified props into one and returns a single merged prop object.

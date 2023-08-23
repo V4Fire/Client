@@ -14,7 +14,7 @@ const flagValues = {
 	props: 8,
 	fullProps: 16,
 	events: 32,
-	slots: 8,
+	slots: 32,
 	children: 16
 };
 
@@ -29,10 +29,15 @@ const flagDest = {
 };
 
 /**
- * Sets the given values for the `patchFlag` and `shapeFlag` properties of the passed virtual node
+ * Assigns the specified values to the `patchFlag` and `shapeFlag` properties of the provided VNode
  *
  * @param vnode
- * @param flags - flags to set
+ * @param flags - the flags to set
+ *
+ * @example
+ * ```js
+ * setVNodePatchFlags(vnode, 'props', 'styles', 'children');
+ * ```
  */
 export function setVNodePatchFlags(vnode: VNode, ...flags: Array<keyof typeof flagValues>): void {
 	flags.forEach((flag) => {

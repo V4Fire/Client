@@ -1,5 +1,3 @@
-/* eslint-disable prefer-spread */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,12 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable prefer-spread */
+
 import makeLazy from 'core/lazy';
 
-import { createApp, createSSRApp, Component } from 'vue';
+import { createApp, createSSRApp, defineAsyncComponent, App, Component } from 'vue';
 import type { CreateAppFunction } from 'core/component/engines/interface';
 
-const App = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
+const NewApp = <CreateAppFunction>function App(component: Component & {el?: Element}, rootProps: Nullable<Dictionary>) {
 	const
 		app = Object.create((HYDRATION ? createSSRApp : createApp)(component, rootProps));
 
@@ -27,7 +27,7 @@ const App = <CreateAppFunction>function App(component: Component & {el?: Element
 };
 
 const Vue = makeLazy(
-	App,
+	NewApp,
 
 	{
 		use: Function,
@@ -65,7 +65,8 @@ const Vue = makeLazy(
 					return;
 				}
 
-				const ctx = contexts.at(-1);
+				const ctx = contexts[contexts.length - 1];
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				return ctx?.component.apply(ctx, Object.cast(args));
 			},
 
@@ -78,7 +79,8 @@ const Vue = makeLazy(
 					return;
 				}
 
-				const ctx = contexts.at(-1);
+				const ctx = contexts[contexts.length - 1];
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				return ctx?.directive.apply(ctx, Object.cast(args));
 			},
 
@@ -94,6 +96,31 @@ const Vue = makeLazy(
 				});
 			}
 		}
+	}
+);
+
+const staticComponent = Vue.component.length > 0 ? Vue.component : null;
+
+Vue.component = Object.cast(
+	function component(this: App, name: string, component?: Component): CanUndef<Component> | App {
+		const
+			ctx = Object.getPrototypeOf(this),
+			originalComponent = staticComponent ?? ctx.component;
+
+		if (originalComponent == null) {
+			throw new ReferenceError("The function to register components isn't found");
+		}
+
+		if (component == null) {
+			return originalComponent.call(ctx, name);
+		}
+
+		if (Object.isPromise(component)) {
+			const promise = component;
+			component = defineAsyncComponent(Object.cast(() => promise));
+		}
+
+		return originalComponent.call(ctx, name, component);
 	}
 );
 

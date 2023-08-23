@@ -6,7 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import path, { Key, RegExpOptions } from 'path-to-regexp';
+import parsePattern, { parse, compile } from 'path-to-regexp';
+
+import type { Key, RegExpOptions } from 'path-to-regexp';
+
 import { concatURLs, toQueryString, fromQueryString } from 'core/url';
 
 import { qsClearFixRgxp, routeNames, defaultRouteNames, isExternal } from 'core/router/const';
@@ -25,7 +28,9 @@ import type {
 	TransitionOptions,
 
 	AdditionalGetRouteOpts,
-	CompileRoutesOpts
+	CompileRoutesOpts,
+
+	PathParam
 
 } from 'core/router/interface';
 
@@ -81,8 +86,8 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		initialRefQuery = ref.includes('?') ? fromQueryString(ref) : {};
 
 	let
-		resolvedById = false,
 		resolvedRoute: Nullable<RouteBlueprint> = null,
+		initialRoute: Nullable<RouteBlueprint> = null,
 		alias: Nullable<RouteBlueprint> = null;
 
 	let
@@ -94,10 +99,6 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 	while (true) {
 		// A link to a route passed as an identifier
 		if (resolvedRef in routes) {
-			if (alias == null) {
-				resolvedById = true;
-			}
-
 			resolvedRoute = routes[resolvedRef];
 
 			if (resolvedRoute == null) {
@@ -120,7 +121,7 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		} else {
 			if (Object.isString(basePath) && basePath !== '') {
 				// Resolve the situation when the passed path already has a `basePath`
-				const v = basePath.replace(/(.*)?[\\/]+$/, (str, base) => `${RegExp.escape(base)}/*`);
+				const v = basePath.replace(/(.*)?[/\\]+$/, (str, base) => `${RegExp.escape(base)}/*`);
 				resolvedRef = concatURLs(basePath, resolvedRef.replace(new RegExp(`^${v}`), ''));
 
 				// We only need to normalize the user "raw" ref
@@ -134,13 +135,12 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 				const
 					route = routes[routeKeys[i]];
 
-				if (!route) {
+				if (route == null) {
 					continue;
 				}
 
 				// In this case, we have a full match of the route reference by name or pattern
 				if (getRouteName(route) === resolvedRef || route.pattern === resolvedRef) {
-					resolvedById = true;
 					resolvedRoute = route;
 					break;
 				}
@@ -163,7 +163,11 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		}
 
 		if (resolvedRoute == null) {
-			break;
+			resolvedRoute = defaultRoute;
+
+			if (resolvedRoute == null) {
+				break;
+			}
 		}
 
 		const
@@ -193,15 +197,17 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			ref = resolvedRef;
 		}
 
+		initialRoute = resolvedRoute;
+
 		resolvedRoute = undefined;
 	}
 
 	// We didn't find the route by the provided ref, so we need to find the "default" route as loopback
-	if (!resolvedRoute) {
+	if (resolvedRoute == null) {
 		resolvedRoute = defaultRoute;
 
 	// We found a route from the provided link, but it contains an alias
-	} else if (alias) {
+	} else if (alias != null) {
 		resolvedRoute = {
 			...resolvedRoute,
 			...Object.select(alias, [
@@ -225,27 +231,20 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 			return resolvedRoute!.name;
 		},
 
-		resolvePath(params?: Dictionary): string {
+		resolvePath(params: Dictionary = {}): string {
 			const
-				p = {};
-
-			if (params != null) {
-				Object.entries(params).forEach(([key, el]) => {
-					if (el !== undefined) {
-						p[key] = String(el);
-					}
-				});
-			}
+				parameters = resolvePathParameters(resolvedRoute?.pathParams ?? [], params);
 
 			if (externalRedirect) {
-				return path.compile(resolvedRoute!.meta.redirect ?? ref)(p);
+				return compile(resolvedRoute?.meta.redirect ?? ref)(parameters);
 			}
 
-			const pattern = Object.isFunction(resolvedRoute?.pattern) ?
-				resolvedRoute?.pattern(routeAPI) :
-				resolvedRoute?.pattern;
+			const routePattern = resolvedRoute?.pattern;
+			const pattern = Object.isFunction(routePattern) ?
+				routePattern(routeAPI) :
+				routePattern;
 
-			return path.compile(pattern ?? ref)(p);
+			return compile(pattern ?? ref)(parameters);
 		}
 	});
 
@@ -255,24 +254,34 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 		query: Object.isDictionary(initialRefQuery) ? initialRefQuery : {}
 	});
 
-	if (!resolvedById && resolvedRoute.rgxp != null) {
+	// Fill route parameters from URL
+	const tryFillParams = (route: Nullable<RouteBlueprint>): void => {
+		if (route == null) {
+			return;
+		}
+
 		const
-			params = resolvedRoute.rgxp.exec(initialRef);
+			params = route.rgxp?.exec(initialRef);
 
-		if (params) {
+		if (params == null) {
+			return;
+		}
+
+		const
+			pattern = Object.isFunction(route.pattern) ? route.pattern(routeAPI) : route.pattern;
+
+		for (let o = parse(pattern ?? ''), i = 0, j = 0; i < o.length; i++) {
 			const
-				pattern = Object.isFunction(resolvedRoute.pattern) ? resolvedRoute.pattern(routeAPI) : resolvedRoute.pattern;
+				el = o[i];
 
-			for (let o = path.parse(pattern ?? ''), i = 0, j = 0; i < o.length; i++) {
-				const
-					el = o[i];
-
-				if (Object.isSimpleObject(el)) {
-					routeAPI.params[el.name] = params[++j];
-				}
+			if (Object.isSimpleObject(el)) {
+				routeAPI.params[el.name] = params[++j];
 			}
 		}
-	}
+	};
+
+	tryFillParams(initialRoute);
+	tryFillParams(resolvedRoute);
 
 	return routeAPI;
 }
@@ -327,25 +336,28 @@ export function getRoutePath(ref: string, routes: RouteBlueprints, opts: Transit
  */
 export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpts = {}): RouteBlueprints {
 	const
-		{basePath = ''} = opts;
-
-	const
+		{basePath = ''} = opts,
 		compiledRoutes = {};
 
 	Object.keys(routes).forEach((name) => {
 		const
 			route = routes[name] ?? {},
-			pathParams = [];
+			originalPathParams: Key[] = [];
 
 		if (Object.isString(route)) {
 			const
-				pattern = concatURLs(basePath, route);
+				pattern = concatURLs(basePath, route),
+				rgxp = parsePattern(pattern, originalPathParams);
+
+			const pathParams: PathParam[] = originalPathParams.map((param) => ({
+				...param,
+				aliases: []
+			}));
 
 			compiledRoutes[name] = {
 				name,
-
 				pattern,
-				rgxp: path(pattern, pathParams),
+				rgxp,
 
 				get pathParams(): Key[] {
 					return pathParams;
@@ -359,17 +371,23 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 		} else {
 			let
-				pattern;
+				pattern: CanUndef<string>,
+				rgxp: CanUndef<RegExp>;
 
 			if (Object.isString(route.path)) {
 				pattern = concatURLs(basePath, route.path);
+				rgxp = parsePattern(pattern, originalPathParams, <RegExpOptions>route.pathOpts);
 			}
+
+			const pathParams: PathParam[] = originalPathParams.map((param) => ({
+				...param,
+				aliases: route.pathOpts?.aliases?.[param.name] ?? []
+			}));
 
 			compiledRoutes[name] = {
 				name,
-
 				pattern,
-				rgxp: pattern != null ? path(pattern, pathParams, <RegExpOptions>route.pathOpts) : undefined,
+				rgxp,
 
 				get pathParams(): Key[] {
 					return pathParams;
@@ -382,7 +400,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 					default: Boolean(route.default ?? route.index ?? defaultRouteNames[name]),
 
 					external: route.external ?? (
-						isExternal.test(pattern) ||
+						isExternal.test(pattern ?? '') ||
 						isExternal.test(route.redirect ?? '')
 					)
 				}
@@ -391,4 +409,53 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 	});
 
 	return compiledRoutes;
+}
+
+/**
+ * Resolves dynamic parameters from the path based on the parsed from the pattern `pathParams`
+ * and the user-provided parameters
+ *
+ * @see [[RouteBlueprint.pathParams]]
+ *
+ * @param pathParams - parameters after parsing the path
+ * @param params - user-provided parameters with possible aliases
+ *
+ * @example
+ * ```typescript
+ * const route = {
+ *   path: '/foo/:bar',
+ *   pathOpts: {
+ *     aliases: {bar: ['Bar']}
+ *   }
+ * }
+ *
+ * const pathParams = [];
+ * parsePattern(route.path, pathParams, route.pathOpts);
+ *
+ * const parameters = {Bar: 21};
+ * resolvePathParameters(pathParams, parameters); // {Bar: 21, bar: 21}
+ * ```
+ */
+export function resolvePathParameters(pathParams: PathParam[], params: Dictionary): Dictionary {
+	const
+		parameters = {...params};
+
+	const
+		aliases = new Map<string, string | number>();
+
+	pathParams.forEach((param) => {
+		param.aliases.forEach((alias) => aliases.set(alias, param.name));
+	});
+
+	Object.entries(parameters).forEach(([key, param]) => {
+		if (aliases.has(key)) {
+			const originalParamName = aliases.get(key)!;
+
+			if (!Object.hasOwnProperty(parameters, originalParamName)) {
+				parameters[originalParamName] = param;
+			}
+		}
+	});
+
+	return parameters;
 }

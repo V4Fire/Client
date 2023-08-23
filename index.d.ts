@@ -1,5 +1,3 @@
-/* eslint-disable no-var,vars-on-top,camelcase */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,16 +6,24 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable no-var, vars-on-top, camelcase, @typescript-eslint/triple-slash-reference */
+
 /// <reference types="@v4fire/core"/>
 /// <reference path="./ts-definitions/playwright.d.ts"/>
 /// <reference path="./ts-definitions/stylus-ds.d.ts"/>
+
+declare var ssr: Nullable<{
+	document?: Document;
+}>;
 
 declare let __webpack_nonce__: CanUndef<string>;
 declare let __webpack_public_path__: CanUndef<string>;
 declare let __webpack_require__: (moduleId: string) => any;
 
-declare const BUILD_MODE: boolean;
+declare const BUILD_MODE: CanUndef<string>;
+
 declare const CSP_NONCE_STORE: string;
+declare const LANG_PACKS: string;
 
 declare const SSR: boolean;
 declare const HYDRATION: boolean;
@@ -26,7 +32,7 @@ declare const MODULE: string;
 declare const PATH: Dictionary<CanUndef<string>>;
 declare const PUBLIC_PATH: CanUndef<string>;
 
-declare const COMPONENTS: Dictionary<{dependencies: string[]}>;
+declare const COMPONENTS: Dictionary<{parent: string; dependencies: string[]}>;
 declare const TPLS: Dictionary<Dictionary<Function>>;
 declare const BLOCK_NAMES: CanUndef<string[]>;
 
@@ -114,7 +120,32 @@ declare var
 	 * Requires a module by the specified path.
 	 * This function should only be used when writing tests.
 	 */
-	importModule: (path: string) => any;
+	importModule: (path: string) => any,
+
+	/**
+	 * Jest mock API for test environment.
+	 */
+	jestMock: {
+		/**
+		 * Wrapper for jest `spyOn` function.
+		 * @see https://jestjs.io/docs/mock-functions
+		 */
+		spy: import('jest-mock').ModuleMocker['spyOn'];
+
+		/**
+		 * Wrapper for jest `fn` function.
+		 * @see https://jestjs.io/docs/mock-functions
+		 */
+		mock: import('jest-mock').ModuleMocker['fn'];
+	};
+
+/**
+ * The results returned by a mock or spy function from `jestMock`.
+ */
+interface JestMockResult<VAL = any> {
+	type: 'throw' | 'return';
+	value: VAL;
+}
 
 interface TouchGesturesCreateOptions {
 	/**

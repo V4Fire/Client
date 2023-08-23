@@ -119,51 +119,50 @@ export function component(opts?: ComponentOptions): Function {
 				fillMeta(meta, target);
 
 				if (!componentInfo.isAbstract) {
-					loadTemplate(meta.component)(identity);
+					Promise.resolve(loadTemplate(meta.component)).catch(stderr);
 				}
 
 			} else if (meta.params.root) {
-				rootComponents[componentName] = new Promise(loadTemplate(getComponent(meta)));
+				rootComponents[componentName] = loadTemplate(getComponent(meta));
 
 			} else {
-				const args = [componentName, loadTemplate(getComponent(meta), true)(identity)] as const;
-				ComponentEngine.component(...args);
+				const componentDeclArgs = <const>[componentName, loadTemplate(getComponent(meta))];
+				ComponentEngine.component(...componentDeclArgs);
 
 				if (app.context != null && app.context.component(componentName) == null) {
-					app.context.component(...args);
+					app.context.component(...componentDeclArgs);
 				}
 			}
 
-			// Function that waits till a component template is loaded
-			function loadTemplate(component: object, lazy: boolean = false): (resolve: Function) => any {
-				return promiseCb;
+			function loadTemplate(component: object): CanPromise<ComponentOptions> {
+				let resolve: Function = identity;
+				return meta.params.tpl === false ? attachTemplatesAndResolve() : waitComponentTemplates();
 
-				function promiseCb(resolve: Function) {
-					if (meta.params.tpl === false) {
-						return attachTemplatesAndResolve();
+				function waitComponentTemplates() {
+					const
+						fns = TPLS[meta.componentName];
+
+					if (fns != null) {
+						return attachTemplatesAndResolve(fns);
 					}
 
-					return waitComponentTemplates();
+					if (resolve === identity) {
+						return new Promise((r) => {
+							resolve = r;
+							retry();
+						});
+					}
 
-					function waitComponentTemplates() {
-						const
-							fns = TPLS[meta.componentName];
+					retry();
 
-						if (fns) {
-							return attachTemplatesAndResolve(fns);
-						}
-
-						if (lazy) {
-							return promiseCb;
-						}
-
+					function retry() {
 						requestIdleCallback(waitComponentTemplates, {timeout: 50});
 					}
+				}
 
-					function attachTemplatesAndResolve(tpls?: Dictionary) {
-						attachTemplatesToMeta(meta, tpls);
-						return resolve(component);
-					}
+				function attachTemplatesAndResolve(tpls?: Dictionary) {
+					attachTemplatesToMeta(meta, tpls);
+					return resolve(component);
 				}
 			}
 		}

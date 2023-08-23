@@ -1,6 +1,6 @@
 # components/base/b-slider
 
-This module provides a component to create a slider. These can be images, videos, text blocks, links.
+This module provides a component to create a slider. Slider elements can be images, videos, text blocks, links.
 Slides to show can be defined manually via slots or loaded from some data provider.
 
 ## Synopsis
@@ -17,13 +17,13 @@ Slides to show can be defined manually via slots or loaded from some data provid
 
 ## Events
 
-| EventName     | Description                                                    | Payload description                                                                          | Payload  |
-|---------------|----------------------------------------------------------------|----------------------------------------------------------------------------------------------|----------|
-| `change`      | The active slide of the component has been changed             | An index of the current slide                                                                | `number` |
-| `swipeStart`  | A user has started scrolling the slider                        | –                                                                                            | –        |
-| `swipeEnd`    | A user has finished scrolling the slider                       | The scrolling direction, An indicator showing whether the position of the slider has changed | `-1      | 0 | 1`, `boolean` |
-| `updateState` | Content of the component content block has been updated        | –                                                                                            | –        |
-| `syncState`   | The component state has been updated, sent after `updateState` | –                                                                                            | –        |
+| EventName     | Description                                                    | Payload description                                                                          | Payload                   |
+|---------------|----------------------------------------------------------------|----------------------------------------------------------------------------------------------|---------------------------|
+| `change`      | The active slide of the component has been changed             | Current slide index                                                                          | `number`                  |
+| `swipeStart`  | The user started scrolling the slider                          | –                                                                                            | –                         |
+| `swipeEnd`    | The user started scrolling the slider                          | The scrolling direction, An indicator showing whether the position of the slider has changed | `-1 \| 0 \| 1 \| boolean` |
+| `updateState` | Content of the component block has been updated                | –                                                                                            | –                         |
+| `syncState`   | The component state has been updated, sent after `updateState` | –                                                                                            | –                         |
 
 ## Usage
 
@@ -38,7 +38,7 @@ Slides to show can be defined manually via slots or loaded from some data provid
 .
 ```
 
-### Provide data into the `default` slot
+### Providing slides into the `default` slot
 
 ```
 < b-slider &
@@ -51,71 +51,71 @@ Slides to show can be defined manually via slots or loaded from some data provid
 
 The component supports a bunch of slots to provide.
 
-1. `default` to provide the base content.
+1. `default` to provide the component items (slides).
 
-```
-< b-slider
-  < img src = https://fakeimg.pl/300x300
-  < img src = https://fakeimg.pl/300x300
-  < img src = https://fakeimg.pl/300x300
-```
+   ```
+   < b-slider
+     < img src = https://fakeimg.pl/300x300
+     < img src = https://fakeimg.pl/300x300
+     < img src = https://fakeimg.pl/300x300
+   ```
 
 2. `beforeItems` to provide content before all items within the slider.
 
-```
-< b-slider
-  < template #beforeItems
-    Hello there general Kenobi
-```
+   ```
+   < b-slider
+     < template #beforeItems
+       Hello there general Kenobi
+   ```
 
 3. `afterItems` to provide content after all items within the slider.
 
-```
-< b-slider
-  < template #afterItems
-    Hello there general Kenobi
-```
+   ```
+   < b-slider
+     < template #afterItems
+       Hello there general Kenobi
+   ```
 
 4. `before` to provide content before the slider.
 
-```
-< b-slider
-  < template #before
-    Hello there general Kenobi
-```
+   ```
+   < b-slider
+     < template #before
+       Hello there general Kenobi
+   ```
 
-5. `after` To provide the content after the slider.
+5. `after` to provide the content after the slider.
 
-```
-< b-slider
-  < template #after
-    Hello there general Kenobi
-```
+   ```
+   < b-slider
+     < template #after
+       Hello there general Kenobi
+   ```
 
-A layout of slots within the component DOM tree:
+### Placement of slots in the component DOM tree:
 
 ```
 += self.slot('before')
 
 < .&__slider
-  += self.slot('beforeItems')
+ += self.slot('beforeItems')
 
-  < .&__items &
-    v-if = item || option |
-    v-for = item in items
-  .
+ < .&__items &
+   v-if = item || option |
+   v-for = item in items
+ .
 
-  < template v-else
-    += self.slot('default')
+ < template v-else
+   += self.slot('default')
 
-  += self.slot('afterItems)
+ += self.slot('afterItems)
 
 += self.slot('after')
 ```
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### Props
 

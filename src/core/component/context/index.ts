@@ -18,8 +18,9 @@ export * from 'core/component/context/const';
 
 /**
  * Returns a wrapped component context object based on the passed one.
- * This function is used to allow overwriting component properties and methods without hacking the original object.
- * Basically, this function returns a new object that contains the original object as a prototype.
+ * This function allows developers to override component properties and methods without altering the original object.
+ * Essentially, override creates a new object that contains the original object as its prototype,
+ * allowing for the addition, modification, or removal of properties and methods without affecting the original object.
  *
  * @param component
  */

@@ -20,6 +20,11 @@ export default class ThemeManager extends Friend {
 	availableThemes!: Set<string>;
 
 	/**
+	 * Current theme value
+	 */
+	protected currentStore!: string;
+
+	/**
 	 * Initial theme value
 	 */
 	protected readonly initialValue!: string;
@@ -28,11 +33,6 @@ export default class ThemeManager extends Friend {
 	 * An attribute to set the theme value to the root element
 	 */
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
-
-	/**
-	 * The current theme value
-	 */
-	protected currentStore!: string;
 
 	constructor(component: iBlock) {
 		super(component);
@@ -52,6 +52,13 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
+	 * Current theme value
+	 */
+	get current(): string {
+		return this.currentStore;
+	}
+
+	/**
 	 * Sets a new value to the current theme
 	 *
 	 * @param value
@@ -66,8 +73,7 @@ export default class ThemeManager extends Friend {
 			return;
 		}
 
-		const
-			oldValue = this.currentStore;
+		const oldValue = this.currentStore;
 
 		this.currentStore = value;
 		document.documentElement.setAttribute(this.themeAttribute, value);
@@ -75,10 +81,5 @@ export default class ThemeManager extends Friend {
 		void this.component.lfc.execCbAtTheRightTime(() => {
 			this.component.emit('theme:change', value, oldValue);
 		});
-	}
-
-	/** @see [[ThemeManager.currentStore]] */
-	get current(): string {
-		return this.currentStore;
 	}
 }

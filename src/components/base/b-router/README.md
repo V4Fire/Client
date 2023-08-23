@@ -8,19 +8,21 @@ This module provides a component for organizing page routing.
 
 * The component does not have a default UI.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
-## Why a component and not a plugin?
+## Why a component instead of a plugin?
 
-There are several reasons why this API is implemented as a component:
+There are several reasons why this API is implemented as a component rather than a plugin:
 
-1. It's easier to organize the logic of sub-routes or alternate routes: we can put two or more routers in a template and
-   dynamically switch from one to the other using the `v-if` directive.
+1. It simplifies the organization of sub-routes or alternate routes: you can place two or more routers in a template and
+   dynamically switch between them using the `v-if` directive.
 
-2. The router extends from the `iData` component, i.e., it can load routes to be managed from a server or other data source.
-   In addition, the router can apply modifiers and perform other actions like a normal component.
+2. The router extends from the `iData` component, meaning it can load and manage routes from a server or
+   other data sources.
+   Additionally, the router can apply modifiers and perform other actions like a regular component.
 
-3. The router is automatically compatible with all supported rendering engines.
+3. The router is automatically compatible with all supported rendering engines,
+   ensuring consistent performance across different environments.
 
 ## How to use?
 
@@ -36,8 +38,9 @@ Just place the component in the root component template as shown below.
     < b-router
 ```
 
-We don't need to create a component reference or anything. The component is automatically initialized itself to the root component.
-The routes to the component will be taken from `src/routes/index.ts`.
+We don't need to create a component reference or perform any additional setup.
+The component automatically initializes itself to the root component.
+The routes for the component are taken from `src/routes/index.ts`.
 
 ```js
 export default {
@@ -54,7 +57,7 @@ export default {
 };
 ```
 
-Of course, you can provide additional props. Keep in mind that there can only be one router instance at a time.
+Of course, you can provide additional props. Keep in mind that there can be only one router instance at a time.
 
 ```
 - namespace [%fileName%]
@@ -66,8 +69,8 @@ Of course, you can provide additional props. Keep in mind that there can only be
     < b-router :routes = linkToRoutes | :initialRoute = 'foo'
 ```
 
-If you want to switch some pages on router transitions, see [[bDynamicPage]].
-This component contains all the necessary logic, such as page caching and more.
+If you wish to switch between pages on router transitions, refer to [[bDynamicPage]].
+This component contains all the essential logic, such as page caching and more.
 
 ```
 - namespace [%fileName%]
@@ -84,9 +87,9 @@ This component contains all the necessary logic, such as page caching and more.
 
 ### Connection API between router and other components
 
-All components have two accessors for working with the router:
+All components have two accessors for interacting with the router:
 
-* `router` - the router instance;
+* `router` - the router instance.
 * `route` - the active route object.
 
 ```
@@ -102,7 +105,7 @@ All components have two accessors for working with the router:
     {{ route.name }}
 ```
 
-To emit a transition to another route, it is enough to call one of the router methods.
+To initiate a transition to another route, simply call one of the router methods.
 
 ```
 < button click = router.push('userProfile', {query: {id: userId}})
@@ -111,46 +114,122 @@ To emit a transition to another route, it is enough to call one of the router me
   ...
 ```
 
-By default, the router will intercept all click events on elements with a `href` attribute to create a transition
-(except `href` values containing absolute paths or page anchors).
+#### Handling of links on a page
+
+By default, the router intercepts any clicks on elements on the page that have a `href` attribute.
+If the URL in href meets certain conditions,
+the router will cancel the default behavior of the browser and perform a transition.
 
 ```
-/// The click on the element will be intercepted by the router
+/// Click on this element will be intercepted by the router
 < a href = /some-url
+
+/// Of course, you can pass any query parameters with such a link
+< a href = /another/url?utm=partner
 ```
 
-You can provide additional parameters by using data attributes.
+The following links will not be intercepted, whose href value:
+
+* has a scheme in its URL, for example, `https://google.com`, `mailto:example@example.com` or `javascript:void(0)`;
+* is an anchor link, i.e., starts with a `#` symbol.
+
+Also, clicks made while holding down the `ctrl` or `cmd` key are not intercepted.
+
+##### Additional link attributes
+
+It's allowed to pass additional parameters for the transition along with the link.
+For example, you can instruct the router to replace the current history item, rather than creating a new one.
 
 ```
-< button href = /some-url | data-router-method = back
-< button href = /some-url | data-router-method = go | data-router-go = -5
-< a href = /some-url | data-router-method = replace | data-router-query = {"foo": 1}
-< a href = /some-url | data-router-method = replace | data-router-params = {"foo": 1}
+< a href = /some-url | data-router-method = replace
 ```
 
-To disable this behavior for a specific link, add the `data-router-prevent-transition` attribute.
+The following attributes are supported:
 
-```
-< button href = /some-url | data-router-prevent-transition = true
-```
+* `data-router-method` - the type of router method used to send the transition.
 
-To disable this behavior globally, set the `interceptLinks` prop to `false`.
+  ```
+  < a href = /some-url | data-router-method = replace
+  < button href = /loopback-url | data-router-method = back
+  < button href = /loopback-url | data-router-method = forward
+  ```
 
-```
-- namespace [%fileName%]
+* `data-router-go` - value for the router's `go` method;
 
-- include 'components/super/i-static-page/i-static-page.component.ss'|b as placeholder
+  ```
+  < button href = /loopback-url | data-router-method = go | data-router-go = -5
+  ```
 
-- template index() extends ['i-static-page.component'].index
-  - block headHelpers
-    < b-router :interceptLinks = false
-```
+* `data-router-params`, `data-router-query`, `data-router-meta` - additional parameters for
+   the router method used (use `JSON.stringify` to provide an object).
 
-## How to provide routes?
+  ```
+  /// /user/42
+  < a href = /user/:id | data-router-params = {"id": 42}
+
+  /// /some-url?utm=portal
+  < a href = /some-url | data-router-query = {"utm": "portal"}
+
+  /// console.log(route.meta.data.param1)
+  < a href = /some-url | data-router-meta = {"data": {"param1": 1, "param2": 2}}
+  ```
+
+* `data-router-prevent-transition` - if this attribute is set, a click on this element will not create a transition.
+  Note that the browser's click handling is also canceled.
+
+  ```
+  < a href = /some-url | data-router-prevent-transition = true | @click = router.push('my-route')
+  ```
+
+##### How to cancel the router's link interception?
+
+There are several ways:
+
+1. Initializing the router with the `interceptLinks` prop set to false cancel the router's interception of any links.
+
+   ```
+   - namespace [%fileName%]
+
+   - include 'components/super/i-static-page/i-static-page.component.ss'|b as placeholder
+
+   - template index() extends ['i-static-page.component'].index
+     - block headHelpers
+       < b-router :interceptLinks = false
+   ```
+
+2. Setting the data-router-prevent-transition attribute for a link cancels the router's and
+   the browser's interception of the click.
+
+   ```
+   < a href = /some-url | data-router-prevent-transition = true | @click = router.push('my-route')
+   ```
+
+3. When clicking on a link, the router emits a special `hrefTransition` event.
+   An instance of the same-named class with two methods, `preventDefault` and `preventRouterTransition`,
+   is passed as a parameter of this event.
+   Calling `preventDefault` cancels the interception of the link by the router and the browser,
+   and calling preventRouterTransition cancels the interception of the link by the router only.
+
+   ```typescript
+   import iBlock, { component, watch } from 'components/super/i-block/i-block';
+   import type { HrefTransitionEvent } from 'components/base/b-router/b-router';
+
+   @component()
+   export default class bExample extends iBlock {
+     @watch('router:onHrefTransition')
+     protected onHrefTransition(e: HrefTransitionEvent):void {
+       if (e.detail.href === '/foo/bar') {
+         e.preventDefault();
+       }
+     }
+   }
+   ```
+
+## How to provide routes to the router?
 
 There are three ways to do this:
 
-1. Specify your routes in the `src/routes/index.ts` file and export it as a default property.
+1. Define your routes in the `src/routes/index.ts` file and export them as a default property.
 
    ```js
    export default {
@@ -164,7 +243,7 @@ There are three ways to do this:
    };
    ```
 
-2. Provide a route map as a component prop.
+2. Provide your routes as the component prop.
 
    ```
    < b-router :routes = { &
@@ -178,7 +257,7 @@ There are three ways to do this:
    } .
    ```
 
-3. Loading routes from a data provider.
+3. Load your routes from a data provider.
 
    ```
    < b-router :dataProvider = 'AppRoutes'
@@ -194,11 +273,11 @@ There are three ways to do this:
    * `[basePath, activeRoute]`
    * `[basePath, activeRoute, routes]`
 
-   Or, if the provider returns a dictionary, it will be mapped on the component
+   Alternatively, if the provider returns a dictionary, it will be mapped to the component
    (you can pass a complex property path using dots as delimiters).
 
    If any key from the response matches a component method, that method will be called with the value from that key.
-   (if the value is an array, it will be passed to the method as arguments).
+   (If the value is an array, it will be passed to the method as arguments).
 
    ```
    {
@@ -208,15 +287,21 @@ There are three ways to do this:
    }
    ```
 
-### What exactly can we specify as route parameters?
+   In this case, `updateRoutes` will be called with the `routes` as an argument, `someProp` will be set to `propValue`,
+   and `mods.someMod` will be set to `modValue`.
 
-When we declare routes, we can specify additional options for each route. Some parameters are related to how we
-make transitions; other parameters may provide some meta-information about the route. Also, we can add more options to our needs.
+### What exactly can you specify as route parameters?
+
+When declaring routes, you can specify additional options for each route.
+Some parameters are related to how the router performs transitions;
+others can provide some metadata about the route.
+Additionally, you can add more options depending on your needs.
 
 #### Specifying paths to routes
 
-When using an engine that associates routes with some URLs, as the History API does, we need to provide a special path
-that works as a blueprint for generating the route URL. Just look at the example below.
+When using a router engine that associates routes with specific URLs, such as the History API,
+we need to specify a special path that acts as a blueprint for creating the route's URL.
+Let's consider the example below.
 
 ```js
 export default {
@@ -240,35 +325,40 @@ export default {
 
 We have created four routes:
 
-* The route `main` is associated with `/`, which means that if we have our site at a URL like `https://foo.com`,
+* The `main` route is associated with `/`, which means that if our site is at a URL like `https://foo.com`,
   the route is associated with URLs `https://foo.com` and `https://foo.com/`.
 
-* The route `help` is associated with `https://foo.com/help`.
+* The `help` route is associated with `https://foo.com/help`.
 
-* The route `friends` is dynamically associated with a set of URLs because it has the `:userId` part in its path template
-  that takes the value from the parameters specified when the router was navigated.
+* The `friends` route is dynamically associated with a set of URLs because it has the `:userId` part in
+  its path template that takes the value from the parameters specified when the router was navigated.
+  This allows for flexibility in generating URLs based on the provided `userId`.
 
   ```js
-  // https://foo.com/components/friends/109
+  // Navigates to https://foo.com/components/friends/109
   this.router.push('friends', {params: {userId: '109'}});
   ```
 
-  Also, if the route has a `paramsFromQuery` option (enabled by default), we can provide those options with the query option.
+  Also, if the route has the `paramsFromQuery` option (enabled by default),
+  you can provide those options with the `query` option.
 
   ```js
-  // https://foo.com/components/friends/109?showInfo=true
+  // Navigates to https://foo.com/components/friends/109?showInfo=true
   this.router.push('friends', {query: {userId: '109', showInfo: true}});
 
-  // If we switch `paramsFromQuery` to false, then will be
+  // If we switch `paramsFromQuery` to false, then it navigates to
   // https://foo.com/friends?userId=109&showInfo=true
   this.router.push('friends', {query: {userId: '109', showInfo: true}});
   ```
 
-  You can create more complex paths using a combination of parameters, such as `foo/:param1/:param2`.
-  [path-to-regexp](https://github.com/pillarjs/path-to-regexp) is used to parse these patterns, you can check it
-  documentation for more information.
+  In the examples above, we demonstrate how to navigate to different routes using route parameters and query options.
+  By setting the `paramsFromQuery` option, you can control how the parameters are incorporated into the generated URLs.
 
-  We can pass options to the parsing library using `pathOpts`.
+  You can create more complex paths using a combination of parameters, such as `foo/:param1/:param2`.
+  The library [path-to-regexp](https://github.com/pillarjs/path-to-regexp) is used to parse these patterns.
+  You can check its documentation for more information.
+
+  Additionally, you can pass options to the parsing library using `pathOpts`.
 
   ```js
   export default {
@@ -281,14 +371,20 @@ We have created four routes:
   };
   ```
 
+  In the example above, we demonstrate how to define a route with a complex path using parameters and pass options to
+  the parsing library using `pathOpts`. The `sensitive` option ensures that the route is case-sensitive,
+  allowing for more precise control over routing behavior.
+
 * The `notFound` route is not directly associated with any URLs (because it doesn't have a `path` property),
-  but it does have a `default` property of `true`, i.e. each time a URL cannot be matched directly, `notFound` will be used.
-  For example, https://foo.com/bro or https://foo.com/bla/bar. You can also name the default route as `index` instead of
-  setting the `default` property.
+  but it does have a `default` property set to true.
+  This means that every time a URL cannot be directly matched, the `notFound` route will be used.
+  For example, https://foo.com/bro or https://foo.com/bla/bar.
+  You can also name the default route as `index` instead of setting the `default` property.
 
-#### Providing a base path to routes
+#### Providing the base path to routes
 
-The router component can take an optional parameter that specifies a path prefix that is concatenated with all paths in the route.
+The router component can take an optional parameter that specifies a path prefix which is concatenated with all paths
+in the route configuration.
 
 ```
 < b-router :basePath = '/demo'
@@ -297,7 +393,7 @@ The router component can take an optional parameter that specifies a path prefix
 ```js
 export default {
   friends: {
-    // With `:basePath = '/demo'` it will be `'/demo/components/friends/:userId'`
+    // With `:basePath = '/demo'`, it will be `'/demo/components/friends/:userId'`
     path: '/components/friends/:userId',
     pathOpts: {
       sensitive: true
@@ -308,22 +404,23 @@ export default {
 
 #### Using a path with the router transition methods
 
-When we use router transition methods such as `push` or `replace`, we specify the route to go by name,
-but we can also use the path of the route. Code below:
+When using router transition methods like push or replace, you usually specify the route to navigate by its name.
+However, you can also use the route's path.
+See the code below:
 
 ```js
 this.router.push('/help');
 this.router.push('/components/friends/:userId', {params: {userId: '109'}});
 ```
 
-Is similar to:
+This is similar to:
 
 ```js
 this.router.push('help');
 this.router.push('friends', {params: {userId: '109'}});
 ```
 
-You can also pass routes with absolute URLs, even if they are not specified in the routing scheme.
+You can also pass routes with absolute URLs even if they are not defined in the route schema.
 
 ```js
 this.router.push('https://google.com');
@@ -331,8 +428,8 @@ this.router.push('https://google.com');
 
 #### Default route parameters
 
-When we call the router transition methods, we can attach additional parameters to the transition, such as query parameters or a URL.
-However, we can also specify default options for any route, which will be automatically attached to each transition.
+When calling the router's transition methods, you can attach additional parameters such as query parameters or a URL.
+However, you can also specify default parameters for any route, which will automatically be appended to each transition.
 
 ```js
 export default {
@@ -340,10 +437,10 @@ export default {
     path: '/demo',
 
     query: {
-      // We can use static values
+      // You can use static values
       showHeader: true,
 
-      // We can use functions
+      // Or, use functions
       selectedCity: (router) => router.r.selectedCity
     },
 
@@ -360,7 +457,7 @@ export default {
 
 #### Providing extra parameters to a route
 
-We can attach any custom options to any route, just add a property to the declaration.
+You can attach custom parameters to any route by adding properties to its declaration.
 
 ```js
 export default {
@@ -371,27 +468,33 @@ export default {
 };
 ```
 
-All additional properties are stored in the `meta` parameter. We can now access this parameter using `route.meta.showWelcomeBoard`.
-Be careful not to end up overriding predefined properties.
+All additional properties are stored in the `meta` parameter.
+You can access this parameter using `route.meta.showWelcomeBoard`.
+Be careful not to accidentally override predefined properties.
 
 #### Loading dynamic modules on transition
 
-We usually split our scripts and styles into different parts to improve loading speed.
-We may require the router to load some modules on transition. Just add a `load` function to your route.
+Usually, we separate our scripts and styles into different parts to improve loading speed.
+You can require the router to load certain modules upon transition.
+To do this, simply add a `load` function to the route.
 
 ```js
 export default {
   demo: {
     path: '/demo',
-    load: () => Promise.all([import('components/form/b-button'), import('components/directives/in-view')])
+    load: () => Promise.all([
+      import('components/form/b-button'),
+      import('components/directives/in-view')
+    ])
   }
 };
 ```
 
 #### Scrolling to the specified coordinates after transition
 
-If we want to create logic when the router automatically scrolls the page to the given coordinates after switching to a new route,
-we can use the `autoScroll` property (it's enabled by default). To set default coordinates for a route, use the `scroll` option.
+If you want to create logic where the router automatically scrolls the page to specific coordinates after
+navigating to a new route, you can use the `autoScroll` property (it is enabled by default).
+To set the default coordinates for a route, use the `scroll` option.
 
 ```js
 export default {
@@ -418,11 +521,12 @@ this.router.push('user', {
 });
 ```
 
-The router saves the scroll coordinates each time it changes to a different route to re-establish its position with `back/forward` options.
+The router saves the scroll coordinates every time it switches to another route in order to restore its position
+when using the "back/forward" navigation.
 
 #### Redirecting to another route
 
-We can specify logic when one route will be automatically redirected to another.
+You can define behavior where one route automatically redirects to another.
 
 ```js
 export default {
@@ -437,11 +541,35 @@ export default {
 };
 ```
 
-You can create more complex cases with more than one redirect.
+You can create more complex scenarios with chains of redirects.
+This feature allows you to handle changes in the route structure,
+making it easier to manage your application's navigation.
+
+```js
+export default {
+  foo: {
+    path: '/foo/:param'
+  },
+
+  bar: {
+    path: '/bar/baz/:param',
+    redirect: 'foo'
+  }
+}
+```
+
+When you navigate to the `bar` route and provide the `param` parameter, it will be substituted in the `foo`'s path:
+
+```js
+this.router.push('/bar/baz/value'); // redirect to '/foo/value'
+```
 
 #### Creating an alias for a route
 
-If we have two or more routes with the same parameters but different names or paths, we can create one "master" route and a bunch of aliases.
+If you have two or more routes with the same parameters but different names or paths,
+you can create one "master" route and multiple aliases for it.
+This allows you to handle the same parameters in different routes using a single master route configuration.
+Here's an example:
 
 ```js
 export default {
@@ -456,14 +584,72 @@ export default {
 };
 ```
 
-Instead of `redirect` `alias` will store the URL and name, but the other parameters will be taken from the route we are referring to.
+If in case of a `redirect` we receive a completely new route,
+then the `alias` only retains its name and path, and takes all other parameters from the associated route.
+
+#### Creating aliases for path parameters
+
+Sometimes it is necessary to create multiple aliases for route path parameters.
+This allows for easier migration from one path scheme to another without significant changes to the code.
+To declare such aliases, simply pass them to the `pathOpts.aliases` property.
+
+```js
+export default {
+  user: {
+    path: '/user/:id',
+    pathOpts: {
+      aliases: {
+        id: ['userId', 'user-id']
+      }
+    }
+  }
+};
+```
+
+Then, when you want to perform a transition, you can specify either the original parameter or any of its aliases.
+
+```js
+this.router.push('user', {params: {id: 42}});        // /user/42
+this.router.push('user', {params: {userId: 42}});    // /user/42
+this.router.push('user', {params: {'user-id': 42}}); // /user/42
+```
+
+Please note that aliases will only be used if the original parameter is not specified.
+
+```js
+this.router.push('user', {params: {id: 42, userId: 10}}); // /user/42
+```
+
+The priority of aliases is determined by their index in the array.
+
+```js
+this.router.push('user', {params: {userId: 42, 'user-id': 10}}); // /user/42
+```
+
+The `paramsFromQuery` option also works with aliases.
+This means that you can provide aliases within the query object when using this option.
+
+```ts
+this.router.push('user', {query: {userId: 42}}); // /user/42
+```
+
+Please note that fields from the `query` will only be used as aliases if they are not present in the `params` object.
+This means that if you specify an alias in both params and query simultaneously,
+the field from the query will take precedence as the default `?alias=value` query,
+and the field from params will be used as the alias.
+
+```js
+this.router.push('user', {params: {userId: 42}, query: {'user-id': 10}}); // /user/42?user-id=10
+```
 
 #### External routes
 
-Usually when we create a new transition using router methods, the transition is not reloaded in the browser because
-it uses `HistoryAPI` or similar methods. This is the way to create Single Page Applications (SPA), but sometimes we need to
-force a browser reload. For example, we go to another site or a subdomain of the current one. To do this,
-you must specify the route path as absolute, i.e. with protocol, host address, port, etc., or add a special `external` flag.
+Usually, when we create a new route using router methods, the page does not usually reload in the browser.
+This is because it uses the History API or similar methods, which is how single-page applications (SPAs) work.
+However, there may be cases where we need to force a browser reload,
+such as when navigating to another website or subdomain of the current site.
+To achieve this, we need to specify the route path as an absolute path, including the protocol, host address, port,
+etc., or add a special `external` flag to indicate that a browser reload is required.
 
 ```js
 export default {
@@ -478,10 +664,12 @@ export default {
 };
 ```
 
-##### External redirect
+##### External redirects
 
-Usually we have to specify the name of the route in the `redirect` property, but we can pass the URL of the entire route - in this case,
-the redirect will work as "external", i.e. the browser switches to this URL using `location. href`.
+Typically, we need to specify the route name in the redirect property.
+However, we can also pass a full URL of the route.
+In this case, the redirect will act as `external`, meaning the browser will navigate to that URL using `location.href`.
+This is useful for redirecting to an external website or a different subdomain.
 
 ```js
 export default {
@@ -502,35 +690,41 @@ export default {
 };
 ```
 
-In the first example, we declare a route with a path on our own site, such as `https://bla.com/google`, which redirects to google.
+In the first example, we declare a route with a path on our own website, for example https://bla.com/google,
+which redirects to Google.
 In the second example, we simply declare an external route.
 
-## How does a router make transitions?
+## How does the router perform transitions?
 
-It uses the `core/router` module as a strategy. This module contains interfaces for the router mechanism, route declarations,
-a route object, etc., and also provides "strategies" or "engines" for performing transitions. Engines are listed in the `engines` directory.
-We have engines based on the browser history API (which is the default engine) and in-memory state, but you can create an engine
-that meets your own needs by yourself. The active or default engine is exported from the `engines/index.ts` file.
+The router handles transitions using the `core/router` module, which serves as the strategy.
+This module includes key interfaces for the router mechanism, route declaration, route object, and more.
+Additionally, it offers "strategies" or "engines" for efficient transition execution.
+
+These engines can be found in the `engines` directory.
+Some of the available engines are based on the browser history API (default engine),
+while others utilize in-memory state management.
+You can also create your own engine customized to your specific requirements.
+The active or default engine is exported from the `engines/index.ts` file.
 
 ### Transition methods
 
-The router has several transition control methods:
+The router offers several methods for managing transitions:
 
-* `push` - emits a new transition with history added to the stack;
-* `replace` - emits a new transition that replaces the current route;
-* `back` - goes back one step from the history stack;
-* `forward` - goes forward one step from the history stack;
-* `go` - switches to a route from the history stack, identified by its relative position relative to the current route.
+* `push` - creates a new transition with added it to the history stack.
+* `replace` - creates a new transition that replaces the current route.
+* `back` - moves one step back in the history stack.
+* `forward` - moves one step forward in the history stack.
+* `go` - navigates to a route in the history stack, determined by its relative position to the current route.
 
-The `push` and `replace` methods can take additional parameters:
+The `push` and `replace` methods can accept additional parameters:
 
-* `query` - additional request parameters for the route. They are attached to the URL `/foo?bla=1`.
+* `query` - query parameters for the route, appended to the URL as `/foo?bla=1`.
 
   ```js
   router.push('foo', {query: {bla: 1}});
   ```
 
-* `params` - parameters that pass path interpolation values.
+* `params` - parameters that provide path interpolation values.
 
   ```js
   router.push('/components/friends/:userId', {params: {userId: 1}});
@@ -542,8 +736,8 @@ The `push` and `replace` methods can take additional parameters:
   router.push('/components/friends/:userId', {meta: {scroll: {x: 0, y: 100}}});
   ```
 
-Keep in mind that all `query` and `params` parameters will be normalized to `'true'/'false'/'null'/'undefined'` and
-string numbers will be cast to their JS equivalents.
+Note that all `query` and `params` parameters will be normalized to `'true'/'false'/'null'/'undefined'`,
+and string-based numbers will be cast to their JavaScript equivalents.
 
 ```js
 // These two transitions are equal
@@ -555,7 +749,7 @@ router.push('/components/friends/:userId', {params: {userId: 1}});
 router.push('/components/friends/:userId', {params: {userId: '1'}});
 ```
 
-All transition methods return promises that will be resolved when their transitions are complete.
+All transition methods return promises that will be resolved once the associated transitions have completed.
 
 ```js
 router.back().then(() => {
@@ -565,7 +759,8 @@ router.back().then(() => {
 
 ### Transition to the current route
 
-If you want to generate a transition to a route that is equal to the current one, you can pass `null` as the route name for the transition methods.
+If you want to generate a transition to a route that is identical to the current one,
+you can pass `null` as the route name.
 
 ```js
 // These two variants are equivalent
@@ -575,33 +770,36 @@ router.push(route?.name, {query: {foo: 1}});
 
 ### Transition event flow
 
-When we call one of the router transition methods, such as `push` or `replace`, the router generates a lot of special events.
+When you invoke one of the router's transition methods, such as `push` or `replace`,
+the router emits several specialized events.
 
-1. `beforeChange(route: Nullable<string>, params: TransitionOptions, method: TransitionMethod)` - this event fires before any transition.
-   Handlers that listen for this event take arguments:
+1. `beforeChange(route: Nullable<string>, params: TransitionOptions, method: TransitionMethod)` - this event is emitted
+   before any transition occurs.
+   Handlers listening to this event receive the following arguments:
 
-   1. `route`  - ref to the route to go to.
-   2. `params` - the route parameters. Handlers can modify this object to attach more parameters.
-   3. `method` - the type of transition methods used: `push`, `replace` or `event` (for native history navigation).
+   1. `route` - a reference to the target route.
+   2. `params` - the route parameters that handlers can modify to add more parameters.
+   3. `method` - the type of transition method being used: `push`, `replace`, or `event`
+      (for native history navigation).
 
-2. `softChange(route: Route)` or `hardChange(route: Route)` - fires one of these events before the route object changes.
-   The difference between these events is that "soft" means that the route still has the same name as the previous route.
-   However, there have been some changes to the query parameters; opposite "hard" means that the route has been changed or
-   one of the parameters has been changed, which can change the URL path.
+2. `softChange(route: Route)` or `hardChange(route: Route)` - one of these events is emitted before the route object
+   is modified.
+   The difference between these events lies in the level of changes:
 
-3. `change(route: Route)` - fires every time the route changes. Keep in mind that sometimes the transition can be prevented
-   and this event will not fire, for example if we try to `replace` the same route with the same parameters.
+   1. `softChange` - the route retains the same name as the previous route but the query parameters have changed.
+   2. `hardChange` - either the route has changed or one of the parameters has been modified,
+      potentially affecting the URL path.
 
-4. `transition(route: Route)` - fires after the transition methods are called. If the transition takes place,
-   the event fires after the `change` event.
+3. `change(route: Route)` - this event is emitted whenever the route changes.
+   Note that in certain cases, the transition may be prevented and this event won't be triggered.
+   For example, if we attempt to replace the same route with the same parameters.
 
-The router also fires the `change` event on the root component as `transition`, just for ease of use.
+4. `transition(route: Route)` - this event is triggered after the transition methods have executed.
+   If the transition occurs, the event will be triggered after the change event.
+
+For added convenience, the router also emits the `transition` event on the root component.
 
 ```js
-router.on('change', () => {
-  // ...
-});
-
 rootEmitter.on('transition', () => {
   // ...
 });
@@ -609,22 +807,25 @@ rootEmitter.on('transition', () => {
 
 ## How to dynamically bind a component property to the router?
 
-Each time we use `router.push` or `router.replace`, the router may change the value of the `route` property,
-but there are some details you should be aware of:
+When using `router.push` or `router.replace`, the router can modify the value of the `route` property.
+However, there are some nuances to keep in mind:
 
-* If you create a transition without changing the route path, i.e. without changing the URL path name,
-  mutations to the `route` object do not cause components to be rendered. Technically, this means that if you just add or
-  change some query parameters, there will be no re-rendering. You should bind the component properties manually.
-  This behavior helps improve application performance when the route changes, because usually when you just change query
-  parameters, you don't want to change the page or cause significant UI mutations. This behavior is called "soft".
+* When you perform a transition without changing the route name or URL, such as only modifying query parameters,
+  the route object mutations do not trigger a re-rendering of components.
+  This means you need to manually bind component properties for these cases.
+  This behavior improves the performance of the application when changing routes
+  since you typically don't need to refresh the page or initiate significant UI updates when query parameters change.
+  This type of behavior is referred to as "soft".
 
-* When you emit a soft transition, you are changing the query parameters, but not rewriting them, i.e. if you have a URL like `/foo?bla=1` and
-  you do `router.push(null, {query: {baz: 2}})`, finally you will see `/foo?bla=1&baz=2`. If you want to remove some parameters,
-  set them to null, `router.push(null, {query: {bla: null}})`.
+* When you perform a soft transition, you can modify query parameters without overwriting existing ones.
+  For example, if you have a URL like `/foo?bla=1` and you perform `router.push(null, {query: {baz: 2}})`,
+  the resulting URL would be `/foo?bla=1&baz=2`.
+  If you need to remove specific parameters, set their value to `null`,
+  as shown in this example: `router.push(null, {query: {bla: null}})`.
 
 ### Watching for a route
 
-Because not every transition causes a rerender, sometimes you can't write something like:
+Since not every transition causes a re-render, sometimes you can't simply write something like:
 
 ```
 {{ route.query.bla }}
@@ -646,8 +847,9 @@ export default class bExample extends iBlock {
 {{ bla }}
 ```
 
-Notice we are creating a link with two flags: `deep` and `withProto`.
-You can use `@system` instead of the `@field` decorator, and of course you can use the `watch` method, the `@watch` decorator, etc.
+Note that we are creating a link with two flags: `deep` and `withProto`.
+You can use ``@system`` instead of the `@field` decorator, and you can also use the `watch` method,
+the `@watch` decorator, and so on.
 
 ```typescript
 import iBlock, { component, watch } from 'components/super/i-block/i-block';
@@ -663,9 +865,9 @@ export default class bExample extends iBlock {
 
 ### Two-way binding to the router
 
-Suppose we need to create logic when the mutation of some properties should push a new transition to the same route by
-adding these properties as query parameters. In this case, we can use the API to organize a two-way binding between the component
-and the router.
+Let's say you need to create a logic where changes to certain properties should trigger a new transition
+to the same route, adding those properties as query parameters.
+In this case, you can use an API to establish a two-way binding between the component and the router.
 
 ```typescript
 import iBlock, { component, system } from 'components/super/i-block/i-block';
@@ -681,12 +883,17 @@ export default class bExample extends iBlock {
 }
 ```
 
-Let's take a look at the `syncRouterState` method. This method works like a two-way connector between the router and the component.
-When a component is initialized, it requests data from the router. The router provides data using this method.
-The method then returns a dictionary that will be mapped to the component (you can specify a complex path with dots,
-like `'foo.bla.bar'` or `'mods.hidden'`). Also, the component will watch for changes to every property that was in that dictionary.
-If at least one of these properties is changed the entire data packet will be sent to the router using this method (the router
-will create a new transition using `push`). When the component provides router information, the second argument is `remote`.
+Let's talk about the `syncRouterState` method.
+This method acts as a two-way connector between the router and the component.
+
+1. When the component is initialized, it requests data from the router.
+2. The router provides the data using this method.
+3. Then, the method returns a dictionary that will be mapped to the component
+   (you can specify a complex path with dots, for example `foo.bla.bar` or `mods.hidden`).
+4. Additionally, the component will observe changes to each property in this dictionary.
+5. If any of these properties are modified, the entire data package will be sent to the router using this method
+   (the router will create a new transition using `push`).
+6. When the component provides information to the router, the second argument is `remote`.
 
 ```typescript
 import iBlock, { component, system } from 'components/super/i-block/i-block';
@@ -712,20 +919,27 @@ export default class bExample extends iBlock {
 }
 ```
 
-The router is global to all components, i.e. the dictionary that this method passes to the router will expand the current
-route data, but not override it.
+It's important to note that the router is global for all components;
+in other words, the dictionary passed to this method will extend the current route data in the router,
+rather than overwrite it.
 
-### Synchronization with the router after component initialization
+### Synchronization with the router after a component initialization
 
-When a component uses `syncRouterState` it asks for router information on initialization, but sometimes the router doesn't
-have the requested properties, and we provide default values for them. There is a caveat: the default values are not synchronized
-with the router, i.e. when we navigate from one page to another with `push` and return with `back/forward` the properties take values
-from the default state will not be restored. Sometimes this behavior is not what we expect, so each component has a `syncRouterStoreOnInit`
-property. If we switch `syncRouterStoreOnInit` to `true`, the component will force its state to map to the router upon initialization.
+When a component uses `syncRouterState`, it requests route information upon initialization.
+However, sometimes the router may not have the requested properties, and you provide default values for them.
+One issue with this approach is that the default values are not synchronized with the router.
+In other words, when navigating from one page to another using the `push` method and then returning using
+the `back` or `forward` method, the properties with values from the default state will not be restored.
+This behavior might not always align with your expectations.
+
+To address this issue, each component has a `syncRouterStoreOnInit` prop.
+If you set the `syncRouterStoreOnInit` prop to true,
+the component will forcefully synchronize its state with the router upon initialization.
 
 ### Resetting the router state
 
-You can optionally specify a method that handles the situation where you want to reset the state synchronized with the router.
+You can optionally specify a method that handles situations where you need to
+reset the state synchronized with the router.
 
 ```typescript
 import iBlock, { component, system } from 'components/super/i-block/i-block';
@@ -745,8 +959,9 @@ export default class bExample extends iBlock {
 }
 ```
 
-To reset the state of the router, you must call `state.resetRouter()` from the component instance, or call the `reset` root method.
-By default, all properties from `syncRouterState` will be overwritten to `undefined`.
+To reset the router state, you can either call `state.resetRouter()` from the component instance,
+or invoke the root `reset` method.
+By default, all properties from `syncRouterState` will be overwritten with `undefined`.
 
 ## Slots
 

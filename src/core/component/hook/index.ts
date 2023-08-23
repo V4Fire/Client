@@ -40,8 +40,11 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 	unsafe.hook = hook;
 
 	const
-		m = component.unsafe.meta,
-		hooks = m.hooks[hook];
+		m = component.unsafe.meta;
+
+	const hooks = `before:${hook}` in m.hooks ?
+		Array.concat([], <ComponentHook[]>m.hooks[`before:${hook}`], m.hooks[hook]) :
+		m.hooks[hook];
 
 	switch (hooks.length) {
 		case 0:

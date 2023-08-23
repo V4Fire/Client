@@ -121,8 +121,8 @@ export interface DecoratorProp<
 > extends PropOptions {
 	/**
 	 * If true, the prop always uses its own default value when needed.
-	 * In fact, this option is used when the `defaultProps` property is set to false on the class being described,
-	 * and we want to cancel this behaviour for a particular prop.
+	 * This option is actually used when the `defaultProps` property is set to false for the described component
+	 * (via the `@component` decorator) and we want to override this behavior for a particular prop.
 	 *
 	 * @default `false`
 	 */

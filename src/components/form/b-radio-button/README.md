@@ -8,9 +8,7 @@ This module provides a component to create a radio button.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
-* The component can be used as flyweight.
-
-* By default, the root tag of the component is `<span>`.
+* By default, the component's root tag is set to `<span>`.
 
 * The component contains an `<input>` tag within.
 
@@ -36,7 +34,7 @@ See the parent component and the component traits.
 
 ### Providing a label
 
-You free to use any ways to define a label.
+You can use any label definition method.
 
 ```
 < b-radio-button :name = 'adult' | :label = 'Are you over 18?'
@@ -66,11 +64,12 @@ To group radio buttons, use the same name.
 < b-radio-button :dataProvider = 'AdultProvider'
 ```
 
-If a provider returns a dictionary, it will be mapped on the component
-(you can pass the complex property path using dots as separators).
+When a provider returns a dictionary, it gets mapped onto the component. To pass a complex property path, you can use dots as separators.
 
-If a key from the response is matched with a component method, this method will be invoked with a value from this key
-(if the value is an array, it will be spread to the method as arguments).
+If a key from the response corresponds to a component method, this method will be invoked using the value from that key.
+If the value is an array, it will be spread to the method as separate arguments.
+
+The provider should not return any properties which are in the component props list (marked with `@prop` decorator), they won't be updated.
 
 ```
 {
@@ -88,31 +87,21 @@ The component supports a few of slots to provide:
 
 1. `check` to provide radio button UI.
 
-```
-< b-radio-button
-  < template #check = {ctx}
-    < .check-ui :data-status = ctx.mods.checked
-```
+   ```
+   < b-radio-button
+     < template #check = {ctx}
+       < .check-ui :data-status = ctx.mods.checked
+   ```
 
 2. `label` to provide label UI.
 
-```
-< b-radio-button
-  < template #label = {label}
-    < .label
-      {{ label }}
-```
+   ```
+   < b-radio-button
+     < template #label = {label}
+       < .label
+         {{ label }}
+   ```
 
 ## API
 
 Also, you can see the parent component and the component traits.
-
-### Props
-
-#### [changeable = `false`]
-
-If true, the checkbox can be unchecked directly after the first check.
-
-```
-< b-radio-button :name = 'bar' | :changeable = true | :checked = true
-```

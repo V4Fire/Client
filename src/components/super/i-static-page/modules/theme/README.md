@@ -1,20 +1,124 @@
 # components/super/i-static-page/modules/theme
 
-This module provides a class and factory to manage the app themes.
+This module provides an API for managing application themes.
 
-## Synopsis
+## How to use?
 
-* The module uses several global variables from the config:
-  * `THEME` - a name of the initial theme. If not specified, theme managing won't be available;
-  * `THEME_ATTRIBUTE` - an attribute name to set a theme value to the root element;
-  * `AVAILABLE_THEMES` - a list of available app themes.
+By default, any component that inherited from [[iStaticPage]] has the `theme` property.
+To access this API from an arbitrary component, use it via the root component.
 
-* To set a new theme, use the `current` property.
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
 
-* To get a set of available themes, use the `availableThemes` property.
+@component()
+export default class bExample extends iBlock {
+  created() {
+    console.log(this.r.theme.current);
+  }
+}
+```
+
+## Configuration
+
+The module takes values for initialization from the global build config.
+
+__config/default.js__
+
+```js
+const
+  config = require('@v4fire/client/config/default');
+
+module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
+  __proto__: config,
+
+  /**
+   * Options to manage app themes
+   */
+  theme: {
+    /**
+     * Returns the default application theme name to use
+     *
+     * @cli t
+     * @env THEME
+     *
+     * @param {string} [def] - default value
+     * @returns {string}
+     */
+    default(def) {
+      return o('theme', {
+        short: 't',
+        env: true,
+        default: def
+      });
+    },
+
+    /**
+     * Returns an array of available themes to pass from the design system to the runtime,
+     * or `true` to pass all themes from the design system
+     *
+     * @cli include-themes
+     * @env INCLUDE_THEMES
+     *
+     * @param {string} [def] - default value
+     * @returns {Array<string>|boolean}
+     */
+    include(def) {
+      return o('include-themes', {
+        env: true,
+        default: def
+      });
+    },
+
+    /**
+     * Returns the attribute name to set the topic value to the root element
+     *
+     * @cli theme-attribute
+     * @env THEME_ATTRIBUTE
+     *
+     * @default `data-theme`
+     */
+    attribute: o('theme-attribute', {
+      env: true,
+      default: 'data-theme'
+    })
+  }
+});
+```
 
 ## Events
 
 | EventName      | Description                  | Payload description   | Payload                      |
 |----------------|------------------------------|-----------------------|------------------------------|
 | `theme:change` | Theme value has been changed | The new and old value | `string`; `CanUndef<string>` |
+
+## Accessors
+
+## current
+
+Current theme value.
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    console.log(this.r.theme.current);
+  }
+}
+```
+
+## availableThemes
+
+A set of available app themes.
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    console.log(this.r.theme.availableThemes);
+  }
+}
+```

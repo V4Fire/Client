@@ -1,5 +1,3 @@
-/* eslint-disable max-lines */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -276,11 +274,7 @@ test.describe('<b-textarea> validation API', () => {
 		});
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
-	async function renderTextarea(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bTextarea>> {
+	async function renderTextarea(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bTextarea>> {
 		await page.evaluate((attrs) => {
 			const scheme = [
 				{

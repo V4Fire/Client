@@ -115,8 +115,9 @@ export function create(
  * Creates a VNode by the specified descriptor
  *
  * @param type
- * @param [attrs]
- * @param [children]
+ * @param [opts]
+ * @param [opts.attrs]
+ * @param [opts.children]
  */
 function createVNode(
 	this: VDOM,
@@ -132,8 +133,13 @@ function createVNode(
 		let
 			resolvedChildren;
 
-		const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) =>
-			Object.isDictionary(vnode) && !('patchFlag' in vnode) ? createVNode.call(this, vnode.type, vnode) : vnode;
+		const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) => {
+			if (Object.isDictionary(vnode) && !('patchFlag' in vnode)) {
+				return createVNode.call(this, vnode.type, vnode);
+			}
+
+			return vnode;
+		};
 
 		if (children != null) {
 			if (Object.isArray(children)) {

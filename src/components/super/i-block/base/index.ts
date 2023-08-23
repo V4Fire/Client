@@ -11,12 +11,28 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
 import random from 'core/random/xor128';
+import symbolGenerator from 'core/symbol';
 
 import log, { LogMessageOptions } from 'core/log';
+
+import type Async from 'core/async';
 import { wrapWithSuspending, AsyncOptions, BoundFn } from 'core/async';
-import { component, bindRemoteWatchers, customWatcherRgxp, RawWatchHandler, WatchPath } from 'core/component';
+
+import config from 'config';
+
+import {
+
+	component,
+	getComponentName,
+
+	bindRemoteWatchers,
+	customWatcherRgxp,
+
+	RawWatchHandler,
+	WatchPath
+
+} from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
@@ -49,7 +65,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	/**
 	 * True if the component is already activated
-	 * @see [[iBlock.activatedProp]]
+	 * {@link iBlock.activatedProp}
 	 */
 	@system((o) => {
 		void o.lfc.execCbAtTheRightTime(() => {
@@ -116,6 +132,20 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
+	 * A function for internationalizing texts used in the component
+	 */
+	get i18n(): ReturnType<typeof i18n> {
+		return i18n(this.componentI18nKeysets);
+	}
+
+	/**
+	 * An alias for `i18n`
+	 */
+	get t(): ReturnType<typeof i18n> {
+		return this.i18n;
+	}
+
+	/**
 	 * True if the component context is based on another component via `vdom.getRenderFn`
 	 */
 	@system()
@@ -165,10 +195,29 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	/**
 	 * A dictionary with additional attributes for the component root tag
-	 * @see [[iBlock.rootAttrsStore]]
+	 * {@link iBlock.rootAttrsStore}
 	 */
 	@field()
 	protected rootAttrsStore: Dictionary = {};
+
+	/**
+	 * A list of keyset names used to internationalize the component
+	 */
+	@system({atom: true, unique: true})
+	protected componentI18nKeysets: string[] = (() => {
+		const
+			res: string[] = [];
+
+		let
+			keyset: CanUndef<string> = getComponentName(this.constructor);
+
+		while (keyset != null) {
+			res.push(keyset);
+			keyset = config.components[keyset]?.parent;
+		}
+
+		return res;
+	})();
 
 	/**
 	 * A link to the component itself
@@ -179,22 +228,27 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * An alias for the `i18n` prop
+	 * A function for internationalizing texts inside traits.
+	 * Due to the fact that traits are called in the context of components, the standard i18n is not suitable,
+	 * and you must explicitly pass the name of the set of keys (trait names).
+	 *
+	 * @param traitName - the trait name
+	 * @param text - text for internationalization
+	 * @param [opts] - additional internationalization options
 	 */
-	@computed()
-	protected get t(): this['i18n'] {
-		return this.i18n;
+	i18nTrait(traitName: string, text: string, opts?: I18nParams): string {
+		return i18n(traitName)(text, opts);
 	}
 
 	/**
-	 * @see [[iBlock.activatedProp]]
+	 * {@link iBlock.activatedProp}
 	 * @param [force]
 	 */
 	override activate(force?: boolean): void {
 		activate(Object.cast(this), force);
 	}
 
-	/** @see [[iBlock.activatedProp]] */
+	/** {@link iBlock.activatedProp} */
 	override deactivate(): void {
 		deactivate(Object.cast(this));
 	}
@@ -439,8 +493,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	/**
 	 * Executes the specified function on the next render tick
+	 * {@link Async.proxy}
 	 *
-	 * @see [[Async.proxy]]
 	 * @param fn
 	 * @param [opts] - additional options
 	 */
@@ -448,8 +502,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 	/**
 	 * Returns a promise that will be resolved on the next render tick
+	 * {@link Async.promise}
 	 *
-	 * @see [[Async.promise]]
 	 * @param [opts] - additional options
 	 */
 	nextTick(opts?: AsyncOptions): Promise<void>;

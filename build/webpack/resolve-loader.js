@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js'),
@@ -18,7 +18,7 @@ const
 
 /**
  * Map with aliases for custom (not external) loaders from all layers
- * @type {!Object}
+ * @type {object}
  */
 const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, i) => {
 	$C(glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*.js'))).forEach((el) => {
@@ -35,7 +35,7 @@ const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, 
 
 /**
  * Array with paths to resolve nested loaders from `node_modules`
- * @type {!Array}
+ * @type {Array}
  */
 const modules = ['node_modules', ...resolve.rootDependencies.map((el) => `${path.parse(el).dir}/node_modules`)];
 

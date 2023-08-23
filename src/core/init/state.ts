@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { locale } from 'core/i18n';
+import { initGlobalEnv } from 'core/env';
 
 import * as net from 'core/net';
 import * as session from 'core/session';
@@ -14,7 +14,14 @@ import * as session from 'core/session';
 import state from 'core/component/state';
 import semaphore from 'core/init/semaphore';
 
-export default (async () => {
+import type { InitAppOptions } from 'core/init/interface';
+
+/**
+ * Initializes the global state of the application (user session initialization, online status loading, etc.)
+ * @param params - additional initialization parameters
+ */
+export default async function initState(params: InitAppOptions): Promise<void> {
+	initGlobalEnv(params);
 	state.isOnline = true;
 
 	net.isOnline()
@@ -26,14 +33,11 @@ export default (async () => {
 		.catch(stderr);
 
 	try {
-		await Promise.allSettled([
-			locale.isInitialized,
-			session.isExists().then((v) => state.isAuth = v)
-		]);
+		await session.isExists().then((v) => state.isAuth = v);
 
 	} catch (err) {
 		stderr(err);
 	}
 
 	void semaphore('stateReady');
-})();
+}

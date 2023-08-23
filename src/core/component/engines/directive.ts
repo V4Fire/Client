@@ -9,7 +9,7 @@
 import { ComponentEngine } from 'core/component/engines/engine';
 import type { Directive, DirectiveBinding, VNode } from 'core/component/engines/interface';
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
+// eslint-disable-next-line @v4fire/unbound-method
 const staticDirective = ComponentEngine.directive.length > 0 ? ComponentEngine.directive : null;
 
 /**
@@ -17,6 +17,7 @@ const staticDirective = ComponentEngine.directive.length > 0 ? ComponentEngine.d
  *
  * @param name
  * @param [directive]
+ * @throws {ReferenceError} if the used component engine is not specified
  */
 ComponentEngine.directive = function directive(name: string, directive?: Directive) {
 	const
@@ -62,7 +63,7 @@ ComponentEngine.directive = function directive(name: string, directive?: Directi
 			}
 
 			if (vnode.virtualContext != null) {
-				vnode.virtualContext.unsafe.$on('component-hook:before-destroy', () => {
+				vnode.virtualContext.unsafe.$on('hook:before-destroy', () => {
 					originalUnmounted.apply(this, args);
 				});
 			}

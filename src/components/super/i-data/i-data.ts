@@ -17,7 +17,18 @@ import RequestError from 'core/request/error';
 import type { RequestQuery } from 'core/data';
 import type { AsyncOptions } from 'core/async';
 
-import { component, InitLoadCb, InitLoadOptions, UnsafeGetter } from 'components/super/i-block/i-block';
+import type iBlock from 'components/super/i-block/i-block';
+
+import {
+
+	component,
+	hydrationStore,
+
+	InitLoadCb,
+	InitLoadOptions,
+	UnsafeGetter
+
+} from 'components/super/i-block/i-block';
 
 import iDataHandlers from 'components/super/i-data/handlers';
 import type { UnsafeIData } from 'components/super/i-data/interface';
@@ -44,8 +55,7 @@ export {
 export * from 'components/super/i-block/i-block';
 export * from 'components/super/i-data/interface';
 
-const
-	$$ = symbolGenerator();
+const $$ = symbolGenerator();
 
 @component({functional: null})
 export default abstract class iData extends iDataHandlers {
@@ -73,6 +83,10 @@ export default abstract class iData extends iDataHandlers {
 		try {
 			if (opts.emitStartEvent !== false) {
 				this.emit('initLoadStart', opts);
+			}
+
+			if (!this.isReadyOnce && hydrationStore.has(this.componentId)) {
+				return callSuper();
 			}
 
 			opts = {
@@ -181,8 +195,8 @@ export default abstract class iData extends iDataHandlers {
 
 	/**
 	 * An alias to the original `initLoad` method
+	 * {@link iBlock.initLoad}
 	 *
-	 * @see [[iBlock.initLoad]]
 	 * @param [data]
 	 * @param [opts]
 	 */
@@ -207,7 +221,7 @@ export default abstract class iData extends iDataHandlers {
 	 * @param [key] - the key that will be used to store the data
 	 */
 	protected saveDataToRootStore(data: unknown, key?: string): void {
-		key ??= getKey(this.globalName ?? this.dataProvider);
+		key ??= getKey(this.globalName ?? this.dataProviderProp);
 
 		if (key == null) {
 			return;
@@ -215,7 +229,7 @@ export default abstract class iData extends iDataHandlers {
 
 		this.r.providerDataStore.set(key, data);
 
-		function getKey(val: CanUndef<typeof this.dataProvider>): CanUndef<string> {
+		function getKey(val: string | CanUndef<iData['dataProviderProp']>): CanUndef<string> {
 			if (val == null || Object.isString(val)) {
 				return val ?? undefined;
 			}

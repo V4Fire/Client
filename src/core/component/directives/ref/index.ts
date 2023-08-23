@@ -30,13 +30,13 @@ ComponentEngine.directive('ref', {
 });
 
 function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode: VNode): void {
-	const
-		ctx = getDirectiveContext(opts, vnode);
-
 	const {
 		value,
 		instance
 	} = opts;
+
+	let ctx = getDirectiveContext(opts, vnode);
+	ctx = Object.cast(ctx?.unsafe.meta.params.functional === true ? ctx : instance);
 
 	if (
 		value == null ||
@@ -45,6 +45,15 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 		ctx == null
 	) {
 		return;
+	}
+
+	if (!Object.isExtensible(ctx.$refs)) {
+		Object.defineProperty(ctx, '$refs', {
+			enumerable: true,
+			configurable: true,
+			writable: true,
+			value: {...ctx.$refs}
+		});
 	}
 
 	const
@@ -73,32 +82,26 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 				virtualRefs[REF_ID] = refVal[REF_ID];
 			}
 
-			const
-				refIndex = refVal.indexOf(el);
-
-			Object.defineProperty(virtualRefs, refIndex, {
-				configurable: true,
-				enumerable: true,
-				get: () => resolveRefVal(refIndex)
-			});
+			const refIndex = refVal.indexOf(el);
+			defineRef(virtualRefs, refIndex, () => resolveRefVal(refIndex));
 
 		} else {
-			Object.defineProperty(refs, refName, {
-				configurable: true,
-				enumerable: true,
-				get: resolveRefVal
-			});
+			defineRef(refs, refName, resolveRefVal);
 		}
 
 	} else {
+		defineRef(refs, refName, resolveRefVal);
+	}
+
+	ctx.$nextTick(() => ctx!.$emit(`[[REF:${refName}]]`, refs[refName]));
+
+	function defineRef(refs: object, refName: PropertyKey, getter: () => unknown) {
 		Object.defineProperty(refs, refName, {
 			configurable: true,
 			enumerable: true,
-			get: resolveRefVal
+			get: getter
 		});
 	}
-
-	ctx.$emit(`[[REF:${refName}]]`, refs[refName]);
 
 	function resolveRefVal(key?: PropertyKey) {
 		const
@@ -135,6 +138,18 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 	}
 
 	function getRefVal() {
-		return instance!.$refs[ctx!.$resolveRef(refName)];
+		const
+			resolvedRefName = ctx!.$resolveRef(refName),
+			refVal = instance!.$refs[resolvedRefName];
+
+		if (refVal != null) {
+			return refVal;
+		}
+
+		if (Object.isArray(vnode.ref)) {
+			return vnode.ref.map(({i: {refs}}) => refs[resolvedRefName]);
+		}
+
+		return vnode.ref?.i.refs[resolvedRefName];
 	}
 }

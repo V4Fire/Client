@@ -11,8 +11,8 @@
  *
  * @param {string} $kit
  * @param {number|string} [$id]
- * @param {boolean=} [$reserved]
- * @param {boolean=} [$base]
+ * @param {boolean} [$reserved]
+ * @param {boolean} [$base]
  */
 c($kit, $id = null, $reserved = false, $base = false)
 	if getDSValue("colors")
@@ -23,11 +23,34 @@ c($kit, $id = null, $reserved = false, $base = false)
 	getGlobalColor($kit, $id || null, $reserved, $base)
 
 /**
+ * Returns a shadow style from the design system by the specified name.
+ * The shadow can be applied with a filter or box-shadow.
+ *
+ * @param {string} $name - the shadow name in the project design system
+ * @param {number|string} [$id]
+ */
+dsShadow($name, $id = null)
+	$shadow = getDSValue("shadows", path($name, $id))
+	$value = type($shadow) == "string" ? convert($shadow) : $shadow
+	return $value
+
+/**
+ * Returns a gradient style from the design system by the specified name.
+ *
+ * @param {string} $name - the gradient name in the project design system
+ * @param {number|string} [$id]
+ */
+dsGradient($name, $id = null)
+	$gradient = getDSValue("gradients", path($name, $id))
+	$value = type($gradient) == "string" ? convert($gradient) : $gradient
+	return $value
+
+/**
  * Returns a set of rules by the specified icon name
  *
  * @param {string} $name
- * @param {object|ident=} [$params] - transform parameters object or a background repeating rule
- * @param {object|ident=} [$opts] - background options object or a background alignment rule
+ * @param {object|ident} [$params] - transform parameters object or a background repeating rule
+ * @param {object|ident} [$opts] - background options object or a background alignment rule
  *
  * @see https://github.com/JetBrains/svg-mixer/tree/master/packages/svg-transform-loader#how-to-pass-transform-parameters
  *

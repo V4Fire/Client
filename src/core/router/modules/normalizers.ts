@@ -6,21 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import {
+import { canParseStr, systemRouteParams, transitionOptions } from 'core/router/const';
 
-	canParseStr,
-	systemRouteParams,
-	transitionOptions,
-
-	AnyRoute,
-	PlainRoute,
-	PurifiedRoute,
-	WatchableRoute,
+import type {
 
 	TransitionOptions,
-	RouteParamsFilter
+	RouteParamsFilter,
 
-} from 'core/router';
+	AnyRoute,
+	PurifiedRoute,
+	PlainRoute,
+	WatchableRoute
+
+} from 'core/router/interface';
 
 /**
  * Normalizes the specified transition options and returns a new object

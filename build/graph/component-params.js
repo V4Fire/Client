@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js'),
@@ -19,6 +19,7 @@ const {
 	componentRgxp,
 	componentClassRgxp,
 
+	propRgxp,
 	genericRgxp,
 	extendsRgxp,
 
@@ -36,8 +37,8 @@ Object.assign(componentParams, {
 	/**
 	 * Returns a map of component prop attributes
 	 *
-	 * @param name - component name
-	 * @returns {!Object}
+	 * @param {string} name - component name
+	 * @returns {object}
 	 *
 	 * @example
 	 * ```js
@@ -104,6 +105,13 @@ $C(componentFiles).forEach((el) => {
 	if (p.inheritMods != null) {
 		obj.inheritMods = p.inheritMods;
 	}
+
+	let s;
+
+	// eslint-disable-next-line no-cond-assign
+	while (s = propRgxp.exec(file)) {
+		obj.props[s[2].split(' ').slice(-1)[0]] = true;
+	}
 });
 
 /**
@@ -124,8 +132,8 @@ $C(componentParams).forEach((el, key, data) => {
 /**
  * Returns runtime parameters of the specified component
  *
- * @param component - component object
- * @returns {!Object}
+ * @param {object} component - component object
+ * @returns {object}
  */
 function getParentParameters(component) {
 	if (!component || !component.parent) {

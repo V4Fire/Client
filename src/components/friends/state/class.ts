@@ -9,21 +9,19 @@
 import Friend, { fakeMethods } from 'components/friends/friend';
 import iBlock from 'components/super/i-block/i-block';
 
-import type * as api from 'components/friends/state/api';
-
 let
 	baseSyncRouterState;
 
 interface State {
-	saveToRouter: typeof api.saveToRouter;
-	initFromRouter: typeof api.initFromRouter;
-	resetRouter: typeof api.resetRouter;
+	saveToRouter(data?: Dictionary): Promise<boolean>;
+	initFromRouter(): boolean;
+	resetRouter(): Promise<boolean>;
 
-	saveToStorage: typeof api.saveToStorage;
-	initFromStorage: typeof api.initFromStorage;
-	resetStorage: typeof api.resetStorage;
+	saveToStorage(data?: Dictionary): Promise<boolean>;
+	initFromStorage(): CanPromise<boolean>;
+	resetStorage(): Promise<boolean>;
 
-	set: typeof api.set;
+	set(data: Nullable<Dictionary>): Array<Promise<unknown>>;
 }
 
 @fakeMethods(
@@ -44,12 +42,11 @@ class State extends Friend {
 	 */
 	get needRouterSync(): boolean {
 		// @ts-ignore (access)
-		// eslint-disable-next-line @typescript-eslint/unbound-method
 		baseSyncRouterState ??= iBlock.prototype.syncRouterState;
 		return baseSyncRouterState !== this.instance.syncRouterState;
 	}
 
-	/** @see [[iBlock.instance]] */
+	/** {@link iBlock.instance} */
 	protected get instance(): this['CTX']['instance'] {
 		return this.ctx.instance;
 	}

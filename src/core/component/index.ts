@@ -13,10 +13,9 @@
 
 import 'core/component/directives';
 
-import * as init from 'core/component/init';
-import globalState from 'core/component/state';
+export * as init from 'core/component/init';
 
-export { init, globalState };
+export { default as remoteState, State, GlobalEnvironment } from 'core/component/state';
 export { ComponentEngine as default } from 'core/component/engines';
 
 export { runHook } from 'core/component/hook';
@@ -24,6 +23,7 @@ export { bindRemoteWatchers, customWatcherRgxp } from 'core/component/watch';
 
 export { callMethodFromComponent } from 'core/component/method';
 export { normalizeClass, normalizeStyle } from 'core/component/render';
+export { default as hydrationStore } from 'core/component/hydration';
 
 export {
 

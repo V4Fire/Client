@@ -34,7 +34,6 @@ export function onDelete(this: Mask, e: KeyboardEvent): void {
 
 		!Object.isTruly(input) ||
 
-		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		!{Backspace: true, Delete: true}[e.key];
 
 	if (canIgnore) {

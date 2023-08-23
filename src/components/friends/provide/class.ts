@@ -7,22 +7,42 @@
  */
 
 import Friend from 'components/friends/friend';
+
 import type iBlock from 'components/super/i-block/i-block';
+import type { Classes, ModsDict, ModsProp } from 'components/super/i-block/i-block';
 
 import * as api from 'components/friends/provide/api';
 import { elementClassesCache } from 'components/friends/provide/const';
 
+import type { Mods } from 'components/friends/provide/interface';
+
 interface Provide {
-	fullComponentName: typeof api.fullComponentName;
-	fullElementName: typeof api.fullElementName;
+	fullComponentName(): string;
+	// eslint-disable-next-line @typescript-eslint/unified-signatures
+	fullComponentName(modName: string, modValue: unknown): string;
+	// eslint-disable-next-line @typescript-eslint/unified-signatures
+	fullComponentName(componentName: string): string;
+	fullComponentName(componentName: string, modName: string, modValue: unknown): string;
 
-	classes: typeof api.classes;
-	hintClasses: typeof api.hintClasses;
+	fullElementName(elName: string): string;
+	// eslint-disable-next-line @typescript-eslint/unified-signatures
+	fullElementName(elName: string, modName: string, modValue: unknown): string;
+	// eslint-disable-next-line @typescript-eslint/unified-signatures
+	fullElementName(componentName: string, elName: string): string;
+	fullElementName(componentName: string, elName: string, modName: string, modValue: unknown): string;
 
-	componentClasses: typeof api.componentClasses;
-	elementClasses: typeof api.elementClasses;
+	classes(classes: Classes): Readonly<Dictionary<string>>;
+	classes(componentName: string, classes: Classes): Readonly<Dictionary<string>>;
 
-	mods: typeof api.mods;
+	hintClasses(pos?: string): readonly string[];
+
+	componentClasses(mods?: ModsProp): readonly string[];
+	componentClasses(componentName: string, mods?: ModsProp): readonly string[];
+
+	elementClasses(els: Dictionary<ModsProp>): readonly string[];
+	elementClasses(componentNameOrCtx: string | iBlock, els: Dictionary<ModsProp>): readonly string[];
+
+	mods(mods?: Mods): CanUndef<Readonly<ModsDict>>;
 }
 
 class Provide extends Friend {

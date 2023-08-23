@@ -60,8 +60,16 @@ export function createImgElement(
 		height: normalizeSizeAttr(imageParams.height),
 		sizes: imageParams.sizes,
 
-		onload: "this.setAttribute('data-img', 'loaded')",
-		onerror: "this.setAttribute('data-img', 'failed')",
+		onload(e: Event) {
+			const img = (<HTMLImageElement>e.target);
+			img.setAttribute('data-img', 'loaded');
+		},
+
+		onerror(e: Event) {
+			const img = (<HTMLImageElement>e.target);
+			img.setAttribute('data-img', 'failed');
+			img.style.opacity = '0';
+		},
 
 		style: {
 			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined

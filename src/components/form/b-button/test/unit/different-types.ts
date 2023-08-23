@@ -75,7 +75,7 @@ test.describe('<b-button> passing the `type` prop as', () => {
 
 			test.beforeEach(async ({page}) => {
 				const fileChooserPr = page.waitForEvent('filechooser');
-				changeEventPr = bButton.evaluate((ctx) => ctx.promisifyOnce('change'));
+				changeEventPr = bButton.evaluate((ctx) => ctx.promisifyOnce('change').then(() => undefined));
 
 				await $el.click();
 
@@ -189,11 +189,7 @@ test.describe('<b-button> passing the `type` prop as', () => {
 		});
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
-	async function renderButton(page: Page, attrs: Dictionary = {}) {
+	async function renderButton(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}) {
 		await Component.createComponent(page, 'b-button', {
 			attrs: {
 				id: 'target',

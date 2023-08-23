@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js');
@@ -27,6 +27,9 @@ const
  * Webpack plugin to generate `.dependencies.js` files and `assets.json` / `assets.js`
  */
 module.exports = class DependenciesPlugin {
+	/**
+	 * @param {import('webpack').Compiler} compiler
+	 */
 	apply(compiler) {
 		compiler.hooks.emit.tap('DependenciesPlugin', (compilation) => {
 			const

@@ -1,6 +1,6 @@
 # components/icons/b-progress-icon
 
-This module provides a component to indicate loading.
+This module provides a component to display loading, for example, as a spinner.
 
 ## Synopsis
 
@@ -8,9 +8,7 @@ This module provides a component to indicate loading.
 
 * The component is functional.
 
-* The component can be used as a flyweight.
-
-* By default, the root tag of the component is `<span>`.
+* By default, the component's root tag is set to `<span>`.
 
 ## Usage
 

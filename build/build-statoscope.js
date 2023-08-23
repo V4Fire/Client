@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	fs = require('fs'),
@@ -22,7 +22,7 @@ const
  * The function processes template statoscope config file and
  * generates actual statoscope config with predefined limits from config.
  *
- * @param buildName - name of build process
+ * @param {string} buildName - name of build process
  */
 function buildStatoscopeConfig(buildName) {
 	const

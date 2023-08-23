@@ -14,6 +14,7 @@ import type { RenderFactory, RenderFn } from 'components/friends/vdom/interface'
 
 /**
  * Renders the specified VNode and returns the result
+ *
  * @param vnode
  *
  * @example
@@ -28,6 +29,7 @@ export function render(this: Friend, vnode: VNode): Node;
 
 /**
  * Renders the specified list of VNodes and returns the result
+ *
  * @param vnodes
  *
  * @example
@@ -65,7 +67,7 @@ export function getRenderFactory(this: Friend, path: string): CanUndef<RenderFac
 	const
 		chunks = path.split('.');
 
-		if (path.endsWith('/')) {
+	if (path.endsWith('/')) {
 		const l = chunks.length - 1;
 		chunks[l] = chunks[l].slice(0, -1);
 		chunks.push('index');
@@ -130,9 +132,13 @@ export function getRenderFn(
 	}
 
 	const
-		cache = [],
-		instanceCtx = Object.create(ctx, {isVirtualTpl: {value: true}}),
-		render = factory(instanceCtx, cache);
+		cache: unknown[] = [],
+		instanceCtx = Object.create(ctx, {isVirtualTpl: {value: true}});
+
+	const render = factory(
+		instanceCtx,
+		SSR ? cache.push.bind(cache) : cache
+	);
 
 	return (bindings) => {
 		if (bindings != null) {
@@ -151,6 +157,7 @@ export function getRenderFn(
 			});
 		}
 
-		return Object.cast(render());
+		const renderResult = render();
+		return SSR ? cache : renderResult;
 	};
 }

@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { app } from 'core/component';
+import { app, ComponentInterface } from 'core/component';
 import { render, create } from 'components/friends/vdom';
 
-import iBlock from 'components/super/i-block/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 import type { ComponentElement } from 'components/super/i-static-page/i-static-page';
 
 import { expandedParse } from 'core/prelude/test-env/components/json';
@@ -30,7 +30,7 @@ globalThis.renderComponents = (
 	}
 
 	const
-		ID_ATTR = 'data-test-id';
+		ID_ATTR = 'data-dynamic-component-id';
 
 	const
 		ctx = <Nullable<iBlock['unsafe']>>app.component;
@@ -39,14 +39,14 @@ globalThis.renderComponents = (
 		throw new ReferenceError('The root context for rendering is not defined');
 	}
 
-	if (!(ctx.instance instanceof iBlock)) {
+	if (!(ctx.instance instanceof ComponentInterface) || !('vdom' in ctx)) {
 		throw new TypeError('The root context does not implement the iBlock interface');
 	}
 
 	const
 		ids = scheme.map(() => Math.random().toString(16).slice(2));
 
-	const vNodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
+	const vnodes = create.call(ctx.vdom, scheme.map(({attrs, children}, i) => ({
 		type: componentName,
 
 		attrs: {
@@ -57,7 +57,7 @@ globalThis.renderComponents = (
 		children
 	})));
 
-	const nodes = render.call(ctx.vdom, vNodes);
+	const nodes = render.call(ctx.vdom, vnodes);
 	ctx.$el?.append(...nodes);
 
 	const components = globalThis[createdComponents] ?? new Set();

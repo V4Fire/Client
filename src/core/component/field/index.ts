@@ -17,13 +17,13 @@ import type { ComponentInterface, ComponentField } from 'core/component/interfac
 export * from 'core/component/field/interface';
 
 /**
- * Initializes all fields of the passed component instance.
- * While a component field is being initialized, its name will be stored in the `$activeField` property.
- * The function returns a dictionary with the initialized fields.
+ * Initializes all fields of a given component instance.
+ * This function returns a dictionary that contains the names of the initialized fields as keys,
+ * with their corresponding initialized values as values.
  *
- * @param from - a dictionary where is stored the passed component fields, like `$fields` or `$systemFields`
+ * @param from - the dictionary where is stored the passed component fields, like `$fields` or `$systemFields`
  * @param component - the component instance
- * @param [store] - a store for initialized fields
+ * @param [store] - the store for initialized fields
  */
 export function initFields(
 	from: Dictionary<ComponentField>,
@@ -34,8 +34,10 @@ export function initFields(
 		component
 	);
 
-	const
-		{params, instance} = unsafe.meta;
+	const {
+		params,
+		instance
+	} = unsafe.meta;
 
 	const
 		isFunctional = params.functional === true;
@@ -65,8 +67,8 @@ export function initFields(
 
 		if (val === undefined) {
 			if (store[name] === undefined) {
-				// We need to clone the default value from the constructor
-				// to prevent linking to the same type component for a non-primitive value
+				// To prevent linking to the same type of component for non-primitive values,
+				// it's important to clone the default value from the component constructor.
 				val = field.default !== undefined ? field.default : Object.fastClone(instance[name]);
 				store[name] = val;
 			}

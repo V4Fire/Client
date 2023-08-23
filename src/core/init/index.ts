@@ -11,9 +11,41 @@
  * @packageDocumentation
  */
 
-import 'core/init/dom';
-import 'core/init/state';
-import 'core/init/abt';
-import 'core/init/prefetch';
+import { initGlobalEnv } from 'core/env';
 
-export { default } from 'core/init/semaphore';
+import semaphore from 'core/init/semaphore';
+import type { InitAppOptions } from 'core/init/interface';
+
+/**
+ * Initializes the application
+ *
+ * @param rootComponent - the root component name for initialization
+ * @param [opts] - additional options
+ */
+export default async function initApp(
+	rootComponent: Nullable<string>,
+	opts?: InitAppOptions
+): Promise<string | Element> {
+	initGlobalEnv(opts);
+
+	void loadModule(import('core/init/dom'));
+	void loadModule(import('core/init/state'));
+	void loadModule(import('core/init/abt'));
+	void loadModule(import('core/init/prefetch'));
+
+	const createApp = await semaphore('');
+	return createApp(rootComponent, opts);
+
+	async function loadModule(promise: Promise<{default?: unknown}>) {
+		try {
+			const {default: init} = await promise;
+
+			if (Object.isFunction(init)) {
+				init(opts);
+			}
+
+		} catch (err) {
+			stderr(err);
+		}
+	}
+}

@@ -23,7 +23,7 @@ import { supports, proxyGetters } from 'core/component/engines/vue3/const';
 import * as r from 'core/component/engines/vue3/render';
 
 /**
- * Returns a component declaration object from the specified meta object
+ * Returns a component declaration object from the specified metaobject
  * @param meta
  */
 export function getComponent(meta: ComponentMeta): ComponentOptions<typeof ComponentEngine> {
@@ -45,7 +45,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			init.beforeDataCreateState(ctx);
 
 			const emitter = (_, handler) => {
-				// eslint-disable-next-line @typescript-eslint/unbound-method
+				// eslint-disable-next-line @v4fire/unbound-method
 				const {unwatch} = watch(ctx.$fields, {deep: true, immediate: true}, handler);
 				return unwatch;
 			};
@@ -66,7 +66,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 
 				const
 					firstPathProp = String(path[0]),
-					shouldUpdate = meta.fields[firstPathProp]?.forceUpdate !== false;
+					shouldUpdate = meta.fields[firstPathProp]?.forceUpdate === true;
 
 				if (shouldUpdate) {
 					ctx.$async.setImmediate(() => ctx.$forceUpdate(), {label: 'forceUpdate'});
@@ -149,7 +149,9 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 				return init;
 
 			} finally {
-				void Promise.resolve(init).then(() => ctx.$destroy());
+				void Promise.resolve(init)
+					.then(() => ctx.$async.sleep(0))
+					.then(() => ctx.$destroy());
 			}
 		}
 	};

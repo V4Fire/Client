@@ -15,9 +15,9 @@ import type iBlock from 'components/super/i-block/i-block';
 import * as api from 'components/friends/storage/api';
 
 interface Storage {
-	get: typeof api.get;
-	set: typeof api.set;
-	remove: typeof api.remove;
+	get<T extends object = Dictionary>(key?: string, ...args: unknown[]): Promise<CanUndef<T>>;
+	set<T extends object = Dictionary>(value: T, key?: string, ...args: unknown[]): Promise<void>;
+	remove(key?: string, ...args: unknown[]): Promise<void>;
 }
 
 class Storage extends Friend {

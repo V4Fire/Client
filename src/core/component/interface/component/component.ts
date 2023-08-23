@@ -1,10 +1,3 @@
-/*
-eslint-disable
-@typescript-eslint/no-unused-vars-experimental,
-@typescript-eslint/no-empty-function,
-@typescript-eslint/unified-signatures
-*/
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -12,6 +5,8 @@ eslint-disable
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+/* eslint-disable @typescript-eslint/unified-signatures */
 
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb } from 'core/async';
@@ -29,7 +24,7 @@ import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/in
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
 /**
- * An abstract class that represents Vue compatible component API
+ * An abstract class that encapsulates the Vue-compatible component API
  */
 export abstract class ComponentInterface {
 	/**
@@ -53,41 +48,41 @@ export abstract class ComponentInterface {
 	readonly componentName!: string;
 
 	/**
-	 * A link to the component class instance.
-	 * Basically, this parameter is mainly used for `instanceof` checks and to get component default property values.
-	 * Mind, all components of the same type refer to the one shareable class instance.
+	 * A reference to the class instance of the component.
+	 * This parameter is primarily used for instance checks and to access default property values of components.
+	 * Note that all components of the same type share a single class instance.
 	 */
 	readonly instance!: this;
 
 	/**
 	 * Additional modifiers for the component.
-	 * Modifiers allow binding component state properties directly to CSS classes without
-	 * unnecessary re-rendering of a component.
+	 * Modifiers allow binding the state properties of a component directly to CSS classes,
+	 * without the need for unnecessary re-rendering.
 	 */
 	abstract readonly modsProp?: ModsProp;
 
 	/**
-	 * A dictionary with applied component modifiers
+	 * A dictionary containing applied component modifiers
 	 */
 	abstract readonly mods: ModsDict;
 
 	/**
 	 * Shareable component modifiers.
-	 * These modifiers are automatically provided to all child components.
-	 * So, for example, you have a component that uses another component within your template,
-	 * and you specify to the outer component some theme modifier.
+	 * These modifiers are automatically propagated to child components.
+	 * For instance, suppose you have a component in your template that utilizes another component,
+	 * and you assign a theme modifier to the outer component.
 	 */
 	abstract get sharedMods(): CanUndef<Readonly<ModsDict>>;
 
 	/**
-	 * Additional classes for component elements.
-	 * This option can be useful if you need to attach some extra classes to the internal component elements.
+	 * Additional classes for the component elements.
+	 * This option can be useful if you need to attach some extra classes to the inner component elements.
 	 * Be sure you know what you are doing because this mechanism is tied to the private component markup.
 	 *
 	 * @example
 	 * ```js
 	 * // Key names are tied with the component elements
-	 * // Values contain a CSS class or a list of classes we want to add
+	 * // Values contain CSS classes we want to add
 	 *
 	 * {
 	 *   foo: 'bla',
@@ -98,14 +93,14 @@ export abstract class ComponentInterface {
 	abstract readonly classes?: Dictionary<CanArray<string>>;
 
 	/**
-	 * Additional styles for component elements.
-	 * This option can be useful if you need to attach some extra styles to the internal component elements.
+	 * Additional styles for the component elements.
+	 * This option can be useful if you need to attach some extra styles to the inner component elements.
 	 * Be sure you know what you are doing because this mechanism is tied to the private component markup.
 	 *
 	 * @example
 	 * ```js
 	 * // Key names are tied with component elements,
-	 * // Values contains a CSS style string, a style object or a list of style strings
+	 * // Values contains CSS styles we want to add
 	 *
 	 * {
 	 *   foo: 'color: red',
@@ -117,15 +112,17 @@ export abstract class ComponentInterface {
 	abstract readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
 
 	/**
-	 * A string value that indicates what lifecycle hook the component is in.
+	 * A string value indicating the lifecycle hook that the component is currently in.
 	 * For instance, `created`, `mounted` or `destroyed`.
+	 *
 	 * @see https://vuejs.org/guide/essentials/lifecycle.html
 	 */
 	abstract hook: Hook;
 
 	/**
-	 * An API for unsafely invoking of some internal properties of the component.
-	 * This parameter allows to avoid TS errors while using protected properties and methods outside from the main class.
+	 * An API for safely invoking some internal properties and methods of a component.
+	 * This parameter allows you to use protected properties and methods from outside the class without
+	 * causing TypeScript errors.
 	 * Use it when you need to decompose the component class into a composition of friendly classes.
 	 */
 	get unsafe(): UnsafeGetter<UnsafeComponentInterface<this>> {
@@ -143,7 +140,7 @@ export abstract class ComponentInterface {
 	readonly $options!: ComponentOptions;
 
 	/**
-	 * A dictionary with the initialized component props
+	 * A dictionary containing the initialized component props
 	 */
 	readonly $props!: Dictionary;
 
@@ -163,7 +160,7 @@ export abstract class ComponentInterface {
 	readonly $normalParent!: this['Component'] | null;
 
 	/**
-	 * A link to the component parent if the current component was dynamically created and mounted
+	 * A link to the parent component if the current component was dynamically created and mounted
 	 */
 	readonly $remoteParent?: this['Component'];
 
@@ -178,126 +175,128 @@ export abstract class ComponentInterface {
 	readonly $renderEngine!: RenderEngine<any>;
 
 	/**
-	 * A link to the component meta object.
-	 * This object contains all information of the component properties, methods and other stuff.
-	 * It's used to create a "real" component by the used render engine.
+	 * A link to the component metaobject.
+	 * This object contains all information of the component properties, methods, etc.
 	 */
 	protected readonly meta!: ComponentMeta;
 
 	/**
-	 * A dictionary with the watchable component properties that can force re-rendering
-	 */
-	protected readonly $fields!: Dictionary;
-
-	/**
-	 * A dictionary with the watchable component properties that can't force re-rendering
-	 */
-	protected readonly $systemFields!: Dictionary;
-
-	/**
-	 * A dictionary with component properties that have been modified and need to be synchronized
-	 * (only for functional components)
-	 */
-	protected readonly $modifiedFields!: Dictionary;
-
-	/**
-	 * The active property name to initialize
-	 */
-	protected readonly $activeField?: string;
-
-	/**
-	 * A number that is incremented each time the component is re-rendered
-	 */
-	protected readonly $renderCounter!: number;
-
-	/**
-	 * A dictionary with component attributes that aren't recognized as input properties
+	 * A dictionary containing component attributes that are not identified as input properties
 	 */
 	protected readonly $attrs!: Dictionary<string>;
 
 	/**
-	 * A dictionary with references to component elements that have the "ref" attribute
+	 * A dictionary containing the watchable component fields that can trigger a re-rendering of the component
+	 */
+	protected readonly $fields!: Dictionary;
+
+	/**
+	 * A dictionary containing the watchable component fields that do not cause a re-rendering of
+	 * the component when they change
+	 */
+	protected readonly $systemFields!: Dictionary;
+
+	/**
+	 * A dictionary containing component properties that have undergone modifications and require synchronization
+	 * (applicable only to functional components)
+	 */
+	protected readonly $modifiedFields!: Dictionary;
+
+	/**
+	 * The name of the component's field being initialized at the current moment
+	 */
+	protected readonly $activeField?: string;
+
+	/**
+	 * A number that increments every time the component is re-rendered
+	 */
+	protected readonly $renderCounter!: number;
+
+	/**
+	 * A dictionary containing references to component elements with the "ref" attribute
 	 */
 	protected readonly $refs!: Dictionary;
 
 	/**
-	 * A dictionary with available render slots
+	 * A dictionary containing available render slots
 	 */
 	protected readonly $slots!: Slots;
 
 	/**
-	 * The cache for component links
+	 * The cache dedicated to component links
 	 */
 	protected readonly $syncLinkCache!: SyncLinkCache;
 
 	/**
-	 * An API to tie and control async operations
+	 * An API for binding and managing asynchronous operations
 	 */
 	protected readonly async!: Async<ComponentInterface>;
 
 	/**
-	 * An API to tie and control async operations.
-	 * This API is used for protected/private consumers, such as private directives or component engines.
+	 * An API for binding and managing asynchronous operations.
+	 * This property is used by restricted/private consumers, such as private directives or component engines.
 	 */
 	protected readonly $async!: Async<ComponentInterface>;
 
 	/**
-	 * A promise of the component initializing
+	 * A promise that resolves when the component is initialized.
+	 * This property is used during SSR for rendering the component.
 	 */
 	protected $initializer?: Promise<unknown>;
 
 	/**
 	 * Activates the component.
-	 * The deactivated component won't load data from its providers during initializing.
+	 * A deactivated component will not load data from its providers during initialization.
 	 *
-	 * Basically, you don't need to think about the component activation,
-	 * because it's automatically synchronized with `keep-alive` or the component prop.
+	 * Generally, you don't need to consider component activation,
+	 * as it is automatically synchronized with the `keep-alive` feature or the respective component property.
 	 *
-	 * @param [force] - if true, then the component will be forced to activate, even if it's already activated
+	 * @param [force] - If set to true, the component will undergo forced activation, even if it is already activated
 	 */
 	abstract activate(force?: boolean): void;
 
 	/**
 	 * Deactivates the component.
-	 * The deactivated component won't load data from its providers during initializing.
+	 * A deactivated component will not load data from its providers during initialization.
 	 *
-	 * Basically, you don't need to think about the component activation,
-	 * because it's automatically synchronized with `keep-alive` or the component prop.
+	 * Generally, you don't need to consider component activation,
+	 * as it is automatically synchronized with the keep-alive feature or the respective component property
 	 */
 	abstract deactivate(): void;
 
 	/**
-	 * Returns a dictionary with information for debugging or logging the component
+	 * Returns a dictionary containing information about the component, useful for debugging or logging purposes
 	 */
 	abstract getComponentInfo?(): Dictionary;
 
 	/**
 	 * The component render function
 	 *
-	 * @param ctx
-	 * @param cache
+	 * @param _ctx
+	 * @param _cache
 	 */
-	render(ctx: ComponentInterface, cache: unknown[]): VNode {
+	render(_ctx: ComponentInterface, _cache: unknown[]): VNode {
 		return Object.throw();
 	}
 
 	/**
-	 * Forces the component to re-render
+	 * Initiates a forced re-render of the component
 	 */
 	$forceUpdate(): void {
 		return Object.throw();
 	}
 
 	/**
-	 * Executes the specified function on the next render tick
+	 * Runs the specified function during the next render tick
 	 * @param cb
 	 */
 	$nextTick(cb: Function | BoundFn<this>): void;
 
 	/**
-	 * Returns a promise that will be resolved on the next render tick
+	 * Returns a promise that resolves during the next render tick
 	 */
 	$nextTick(): Promise<void>;
+
 	$nextTick(): CanPromise<void> {
 		return Object.throw();
 	}
@@ -310,28 +309,28 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Sets a new reactive value to the specified property of the passed object
+	 * Assigns a new reactive value to the specified property of the given object
 	 *
-	 * @param object
-	 * @param key
-	 * @param value
+	 * @param _object
+	 * @param _key
+	 * @param _value
 	 */
-	protected $set<T = unknown>(object: object, key: unknown, value: T): T {
+	protected $set<T = unknown>(_object: object, _key: unknown, _value: T): T {
 		return Object.throw();
 	}
 
 	/**
-	 * Deletes the specified reactive property from the passed object
+	 * Removes the specified reactive property from the given object
 	 *
-	 * @param object
-	 * @param key
+	 * @param _object
+	 * @param _key
 	 */
-	protected $delete(object: object, key: unknown): void {
+	protected $delete(_object: object, _key: unknown): void {
 		Object.throw();
 	}
 
 	/**
-	 * Sets a watcher to a component/object property by the specified path
+	 * Establishes a watcher for a component/object property using the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -344,7 +343,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to a component/object property by the specified path
+	 * Establishes a watcher for a component/object property using the specified path
 	 *
 	 * @param path
 	 * @param handler
@@ -355,7 +354,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to the specified watchable object
+	 * Establishes a watcher for a watchable object
 	 *
 	 * @param obj
 	 * @param handler
@@ -366,7 +365,7 @@ export abstract class ComponentInterface {
 	): Nullable<Function>;
 
 	/**
-	 * Sets a watcher to the specified watchable object
+	 * Establishes a watcher for a watchable object
 	 *
 	 * @param obj
 	 * @param handler
@@ -383,61 +382,63 @@ export abstract class ComponentInterface {
 	}
 
 	/**
-	 * Attaches a listener to the specified component event
+	 * Attaches a listener to the specified component's event
 	 *
-	 * @param event
-	 * @param handler
+	 * @param _event
+	 * @param _handler
 	 */
-	protected $on<E = unknown, R = unknown>(event: CanArray<string>, handler: ProxyCb<E, R, this>): this {
+	protected $on<E = unknown, R = unknown>(_event: CanArray<string>, _handler: ProxyCb<E, R, this>): this {
 		return Object.throw();
 	}
 
 	/**
-	 * Attaches a disposable listener to the specified component event
+	 * Attaches a disposable listener to the specified component's event
 	 *
-	 * @param event
-	 * @param handler
+	 * @param _event
+	 * @param _handler
 	 */
-	protected $once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): this {
+	protected $once<E = unknown, R = unknown>(_event: string, _handler: ProxyCb<E, R, this>): this {
 		return Object.throw();
 	}
 
 	/**
 	 * Detaches the specified event listeners from the component
 	 *
-	 * @param [event]
-	 * @param [handler]
+	 * @param [_event]
+	 * @param [_handler]
 	 */
-	protected $off(event?: CanArray<string>, handler?: Function): this {
+	protected $off(_event?: CanArray<string>, _handler?: Function): this {
 		return Object.throw();
 	}
 
 	/**
 	 * Emits the specified component event
 	 *
-	 * @param event
-	 * @param args
+	 * @param _event
+	 * @param _args
 	 */
-	protected $emit(event: string, ...args: unknown[]): this {
+	protected $emit(_event: string, ..._args: unknown[]): this {
 		return Object.throw();
 	}
 
 	/**
-	 * Resolves the specified ref attribute
-	 * @param ref
+	 * Resolves the specified `ref` attribute
+	 * @param _ref
 	 */
-	protected $resolveRef(ref: Function): Function;
-	protected $resolveRef(ref: null | undefined): undefined;
-	protected $resolveRef(ref: unknown): string;
-	protected $resolveRef(ref: unknown): CanUndef<string | Function> {
+	protected $resolveRef(_ref: Function): Function;
+	protected $resolveRef(_ref: null | undefined): undefined;
+	protected $resolveRef(_ref: unknown): string;
+	protected $resolveRef(_ref: unknown): CanUndef<string | Function> {
 		return Object.throw();
 	}
 
 	/**
-	 * Executes the given function in the component render context.
+	 * Executes the given function within the component's render context.
 	 * This function is necessary to render components asynchronously.
+	 *
+	 * @param _cb
 	 */
-	protected $withCtx<T>(cb: (...args: any) => T): T {
+	protected $withCtx<T>(_cb: (...args: any) => T): T {
 		return Object.throw();
 	}
 }

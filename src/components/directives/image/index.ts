@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import config from 'config';
 import { ComponentEngine, VNode } from 'core/component/engines';
 
 import { setVNodePatchFlags, mergeProps } from 'core/component/render';
@@ -38,7 +39,7 @@ ComponentEngine.directive('image', {
 		}
 
 		let
-			p = params.value;
+			p = Object.mixin(true, {}, config.image, params.value);
 
 		if (p.optionsResolver != null) {
 			p = p.optionsResolver(p);

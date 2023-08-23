@@ -57,10 +57,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The default logging level is `info` (logging requires the `verbose` prop to be set to true),
 	 * but you can set the logging level explicitly.
 	 *
-	 * Note that `selfEmitter.emit` always fires two events:
+	 * Note that `selfEmitter.emit` always fires three events:
 	 *
 	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-	 * 2. `on-${event}`(...args)
+	 * 2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+	 * 3. `on-${event}`(...args)
 	 *
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
 	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
@@ -137,15 +138,18 @@ export default abstract class iBlockEvent extends iBlockBase {
 		unique: true,
 		init: (o, d) => (<Async>d.async).wrapEventEmitter({
 			get on() {
-				return o.$parent?.unsafe.$on.bind(o.$parent) ?? (() => Object.throw());
+				const ee = o.$parent?.unsafe.selfEmitter;
+				return ee?.on.bind(ee) ?? (() => Object.throw());
 			},
 
 			get once() {
-				return o.$parent?.unsafe.$once.bind(o.$parent) ?? (() => Object.throw());
+				const ee = o.$parent?.unsafe.selfEmitter;
+				return ee?.once.bind(ee) ?? (() => Object.throw());
 			},
 
 			get off() {
-				return o.$parent?.unsafe.$off.bind(o.$parent) ?? (() => Object.throw());
+				const ee = o.$parent?.unsafe.selfEmitter;
+				return ee?.off.bind(ee) ?? (() => Object.throw());
 			}
 		})
 	})
@@ -170,11 +174,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	@system({
 		atom: true,
 		unique: true,
-		init: (o, d) => (<Async>d.async).wrapEventEmitter({
-			on: o.$root.unsafe.$on.bind(o.$root),
-			once: o.$root.unsafe.$once.bind(o.$root),
-			off: o.$root.unsafe.$off.bind(o.$root)
-		})
+		init: (o, d) => (<Async>d.async).wrapEventEmitter(o.$root.unsafe.selfEmitter)
 	})
 
 	protected readonly rootEmitter!: ReadonlyEventEmitterWrapper<this>;
@@ -213,8 +213,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Attaches an event listener to the specified component event
+	 * {@link Async.on}
 	 *
-	 * @see [[Async.on]]
 	 * @param event
 	 * @param handler
 	 * @param [opts] - additional options
@@ -225,8 +225,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Attaches a disposable event listener to the specified component event
+	 * {@link Async.once}
 	 *
-	 * @see [[Async.once]]
 	 * @param event
 	 * @param handler
 	 * @param [opts] - additional options
@@ -237,8 +237,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 	/**
 	 * Returns a promise that is resolved after emitting the specified component event
+	 * {@link Async.promisifyOnce}
 	 *
-	 * @see [[Async.promisifyOnce]]
 	 * @param event
 	 * @param [opts] - additional options
 	 */
@@ -252,8 +252,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * Note that to detach a listener, you can specify not only a link to the listener, but also the name of
 	 * the group/label to which the listener is attached. By default, all listeners have a group name equal to
 	 * the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+	 * {@link Async.off}
 	 *
-	 * @see [[Async.off]]
 	 * @param [opts] - additional options
 	 *
 	 * @example
@@ -296,10 +296,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * The default logging level is `info` (logging requires the `verbose` prop to be set to true),
 	 * but you can set the logging level explicitly.
 	 *
-	 * Note that this method always fires two events:
+	 * Note that this method always fires three events:
 	 *
 	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-	 * 2. `on-${event}`(...args)
+	 * 2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+	 * 3. `on-${event}`(...args)
 	 *
 	 * @param event - the event name to dispatch
 	 * @param args - the event arguments
@@ -322,6 +323,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 			eventName = eventDecl.event;
 
 		this.$emit(eventName, this, ...args);
+		this.$emit(getComponentEventName(eventName), this, ...args);
 		this.$emit(getWrappedEventName(eventName), ...args);
 
 		if (this.dispatching) {
@@ -350,10 +352,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * All events fired by this method can be listened to "outside" using the `v-on` directive.
 	 * Also, if the component is in `dispatching` mode, then this event will start bubbling up to the parent component.
 	 *
-	 * Note that this method always fires two events:
+	 * Note that this method always fires three events:
 	 *
 	 * 1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-	 * 2. `on-${event}`(...args)
+	 * 2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+	 * 3. `on-${event}`(...args)
 	 *
 	 * @param event - the event name to dispatch
 	 * @param args - the event arguments
@@ -421,6 +424,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 		while (parent != null) {
 			if (parent.selfDispatching && parent.canSelfDispatchEvent(eventName)) {
 				parent.$emit(eventName, this, ...args);
+				parent.$emit(getComponentEventName(eventName), this, ...args);
 				parent.$emit(wrappedEventName, ...args);
 				logFromParent(parent, `event:${eventName}`);
 
@@ -453,14 +457,14 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param event
 	 */
 	canSelfDispatchEvent(event: string): boolean {
-		return !/^component-(?:status|hook)(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
+		return !/^(?:component-status|hook)(?::\w+(-\w+)*|-change)$/.test(event.dasherize());
 	}
 
 	/**
 	 * Waits until the specified template reference won't be available and returns it.
 	 * The method returns a promise.
+	 * {@link Async.wait}
 	 *
-	 * @see [[Async.wait]]
 	 * @see https://vuejs.org/guide/essentials/template-refs.html
 	 *
 	 * @param ref - the reference name
@@ -497,18 +501,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * ```
 	 */
 	protected waitRef<T = CanArray<iBlock | Element>>(ref: string, opts?: AsyncOptions): Promise<T> {
-		let
-			that = <iBlock>this;
-
-		if (this.isFunctional) {
-			ref += `:${this.componentId}`;
-			that = this.$normalParent ?? that;
-		}
-
-		const
-			refVal = that.$refs[ref];
-
 		return this.async.promise<T>(() => new SyncPromise((resolve) => {
+			const
+				refVal = this.$refs[ref];
+
 			if (refVal != null && (!Object.isArray(refVal) || refVal.length > 0)) {
 				resolve(<T>refVal);
 
@@ -543,13 +539,15 @@ export default abstract class iBlockEvent extends iBlockBase {
 	/**
 	 * Initializes the parent `callChild` event listener.
 	 * It is used to provide general functionality for proxy calls from the parent.
+	 *
+	 * @param enable
 	 */
 	@watch({path: 'proxyCall', immediate: true})
-	protected initCallChildListener(value: boolean): void {
+	protected initCallChildListener(enable: boolean): void {
 		const label = {label: $$.initCallChildListener};
 		this.parentEmitter.off(label);
 
-		if (!value) {
+		if (!enable) {
 			return;
 		}
 
@@ -583,6 +581,10 @@ function normalizeEvent(event: ComponentEvent | string): ComponentEvent {
 
 function getWrappedEventName(event: string): string {
 	return normalizeEventName(`on-${event}`);
+}
+
+function getComponentEventName(event: string): string {
+	return normalizeEventName(`${event}:component`);
 }
 
 function normalizeEventName(event: string): string {

@@ -24,13 +24,32 @@ if (this.r.providerDataStore.has('users.List')) {
 console.log(this.r.providerDataStore.get('foo')?.data);
 ```
 
-## providerDataStore
+## How to use?
 
-Is a property from the root component that implements the [[Cache]] data structure.
-The structure contains elements as [[ProviderDataItem]]. Each element has an additional API based on `core/object/select`
-to find a fragment from all the data for the given query. Alternatively, you can touch `data` property to access the raw data object.
+By default, any component that inherited from [[iStaticPage]] has the `providerDataStore` property.
+This property implements the [[Cache]] data structure and contains elements as [[ProviderDataItem]].
+Each element has an additional API based on `core/object/select` to find a fragment from all the data for the given query.
+Alternatively, you can touch `data` property to access the raw data object.
 
-### Specifying an engine to cache data
+To access this API from an arbitrary component, use it via the root component.
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    if (this.r.providerDataStore.has('users.List')) {
+      /// See `core/object/select`
+      console.log(this.r.providerDataStore.get('users.List').select({where: {id: 1}}));
+    }
+
+    console.log(this.r.providerDataStore.get('foo')?.data);
+  }
+}
+```
+
+## Specifying an engine to cache data
 
 By default, providers data are stored in the [[RestrictedCache]] structure, but you can specify the cache structure manually.
 
@@ -38,10 +57,8 @@ By default, providers data are stored in the [[RestrictedCache]] structure, but 
 import Cache from 'core/cache/simple';
 import iStaticPage, { component, system, field, createProviderDataStore, ProviderDataStore } from 'components/super/i-static-page/i-static-page';
 
-export * from 'components/super/i-static-page/i-static-page';
-
 @component({root: true})
-export default class pV4ComponentsDemo extends iStaticPage {
+export default class bExample extends iStaticPage {
   @system(() => createProviderDataStore(new Cache()))
   providerDataStore!: ProviderDataStore;
 }

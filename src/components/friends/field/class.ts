@@ -11,12 +11,17 @@ import Friend, { fakeMethods } from 'components/friends/friend';
 import { getField } from 'components/friends/field/get';
 import { setField } from 'components/friends/field/set';
 
-import type * as api from 'components/friends/field/api';
+import type { KeyGetter, ValueGetter } from 'components/friends/field/interface';
 
 interface Field {
-	get: typeof api.getField;
-	set: typeof api.setField;
-	delete: typeof api.deleteField;
+	get<T = unknown>(path: string, getter: ValueGetter): CanUndef<T>;
+	get<T = unknown>(path: string, obj?: Nullable<object>, getter?: ValueGetter): CanUndef<T>;
+
+	set<T = unknown>(path: string, value: T, keyGetter: KeyGetter): T;
+	set<T = unknown>(path: string, value: T, obj?: Nullable<object>, keyGetter?: KeyGetter): T;
+
+	delete(path: string, keyGetter?: KeyGetter): boolean;
+	delete(path: string, obj?: Nullable<object>, keyGetter?: KeyGetter): boolean;
 }
 
 @fakeMethods('delete')

@@ -9,6 +9,24 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.50.0 (2023-06-??)
+
+#### :rocket: New Feature
+
+* Fill original route path parameters from URL of the route that redirects on it
+
+## v3.44.3 (2023-03-30)
+
+#### :bug: Bug Fix
+
+* Overriding original parameter by alias in route
+
+## v3.44.1 (2023-03-28)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path
+
 ## v3.23.0 (2022-05-27)
 
 #### :bug: Bug Fix

@@ -24,6 +24,9 @@ export type Listener<A extends any[] = any[], E extends any[] = any[]> =
 export interface Handle<A extends any[]> {
 	/**
 	 * A function to handle listeners
+	 *
+	 * @param el
+	 * @param args
 	 */
 	then(el: Element, ...args: A): void;
 
@@ -36,6 +39,9 @@ export interface Handle<A extends any[]> {
 export interface ErrorHandle<A extends any[], E extends any[]> extends Handle<A> {
 	/**
 	 * A function to handle errors
+	 *
+	 * @param el
+	 * @param args
 	 */
 	catch?(el: Element, ...args: E): void;
 }
@@ -56,7 +62,7 @@ export interface EventListener<A extends any[]> extends Handle<A> {
 	/**
 	 * An event emitter to listen
 	 */
-	emitter?: EventEmitterLike;
+	emitter?: EventEmitterLike | EventEmitterLike['on'];
 
 	/**
 	 * The event name to listen for, or a list of such events
@@ -77,6 +83,9 @@ export interface EventListener<A extends any[]> extends Handle<A> {
 export interface CallbackListener<A extends any[], E extends any[]> extends ErrorHandle<A, E> {
 	/**
 	 * A function to add handlers
+	 *
+	 * @param handler
+	 * @param [errorHandler]
 	 */
 	callback(handler: AnyFunction, errorHandler?: AnyFunction): void;
 }

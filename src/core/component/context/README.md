@@ -4,18 +4,21 @@ This module provides a bunch of helpers to work with a component context.
 
 ## What problem is being solved?
 
-The V4Fire library creates a DSL wrapper over the used component library.
-Thanks to this, we can use TS classes to describe our components, regardless of the library used under the hood.
-In order for a component library to be used as an engine for V4Fire, it must implement a set of necessary properties and
-methods that are described in the [[ComponentInterface]] interface. Also, for the correct working of the entire platform,
-V4Fire must redefine some properties and methods from the engine. But since these properties can be marked as read-only,
-i.e. we can’t do simple property override. To solve these problems, this module was created.
-It provides an API to create a new context object whose properties can be overridden.
+The V4Fire library creates a domain-specific language (DSL) wrapper over the component libraries it uses.
+This allows developers to use TypeScript classes to describe their components, regardless of the underlying library.
+To be used as an engine for V4Fire, a component library must implement a set of necessary properties and
+methods described in the [[ComponentInterface]] interface.
+However, because V4Fire needs to redefine some properties and methods from the engine for correct platform operation
+and some of these properties may be marked as read-only, simple property overrides are not possible.
+This module provides an API to create a new context object whose properties can be overridden,
+allowing developers to customize and extend the components they use in V4Fire, and providing greater flexibility and
+modularity in application development.
 
 ## Functions
 
 ### getComponentContext
 
 Returns a wrapped component context object based on the passed one.
-This function is used to allow overwriting component properties and methods without hacking the original object.
-Basically, this function returns a new object that contains the original object as a prototype.
+This function allows developers to override component properties and methods without altering the original object.
+Essentially, override creates a new object that contains the original object as its prototype,
+allowing for the addition, modification, or removal of properties and methods without affecting the original object.

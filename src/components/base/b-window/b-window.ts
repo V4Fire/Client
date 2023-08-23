@@ -43,7 +43,7 @@ import type { StageTitles } from 'components/base/b-window/interface';
 export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
 
-Block.addToPrototype(getElementSelector);
+Block.addToPrototype({getElementSelector});
 
 const
 	$$ = symbolGenerator();
@@ -58,7 +58,7 @@ interface bWindow extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScrol
 class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageScroll {
 	override readonly proxyCall: boolean = true;
 
-	/** @see [[iVisible.prototype.hideIfOffline]] */
+	/** {@link [iVisible.prototype.hideIfOffline]]} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -149,21 +149,21 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Window title store
-	 * @see [[bWindow.titleProp]]
+	 * {@link bWindow.titleProp}
 	 */
 	@field((o) => o.sync.link())
 	protected titleStore?: string;
 
 	/**
 	 * Slot name store
-	 * @see [[bWindow.slotNameProp]]
+	 * {@link bWindow.slotNameProp}
 	 */
 	@field((o) => o.sync.link())
 	protected slotNameStore?: string;
 
 	/**
 	 * Name of the active third-party slot to show
-	 * @see [[bWindow.slotNameProp]]
+	 * {@link bWindow.slotNameProp}
 	 */
 	get slotName(): CanUndef<string> {
 		return this.field.get('slotNameStore');
@@ -171,8 +171,8 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Sets a new third-party slot to show
+	 * {@link bWindow.slotNameProp}
 	 *
-	 * @see [[bWindow.slotNameProp]]
 	 * @param value
 	 */
 	set slotName(value: CanUndef<string>) {
@@ -181,7 +181,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Window title
-	 * @see [[bWindow.titleStore]]
+	 * {@link bWindow.titleStore}
 	 */
 	get title(): string {
 		const
@@ -197,7 +197,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 			}
 
 			if (stageValue != null) {
-				stageValue = this.t(Object.isFunction(stageValue) ? stageValue(this) : stageValue);
+				stageValue = Object.isFunction(stageValue) ? stageValue(this) : stageValue;
 			}
 
 			return stageValue ?? v;
@@ -208,13 +208,14 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 
 	/**
 	 * Sets a new window title
+	 * @param value
 	 */
 	set title(value: string) {
 		this.field.set('titleStore', value);
 	}
 
 	/**
-	 * @see [[iOpenToggle.open]]
+	 * {@link iOpenToggle.prototype.open}
 	 * @param [stage] - component stage to open
 	 */
 	async open(stage?: Stage): Promise<boolean> {
@@ -232,7 +233,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		return false;
 	}
 
-	/** @see [[iOpenToggle.close]] */
+	/** {@link iOpenToggle.prototype.close} */
 	async close(): Promise<boolean> {
 		if (await iOpenToggle.close(this)) {
 			this.setRootMod('opened', false);
@@ -243,18 +244,18 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		return false;
 	}
 
-	/** @see [[iLockPageScroll.lock]] */
+	/** {@link iLockPageScroll.prototype.lockPageScroll} */
 	@wait('loading', {label: $$.lock})
 	lockPageScroll(): Promise<void> {
 		return iLockPageScroll.lockPageScroll(this, this.$refs.window);
 	}
 
-	/** @see [[iOpenToggle.onOpenedChange]] */
+	/** {@link iOpenToggle.prototype.onOpenedChange} */
 	async onOpenedChange(e: ModEvent | SetModEvent): Promise<void> {
 		await this.setMod('hidden', e.type === 'remove' ? true : e.value === 'false');
 	}
 
-	/** @see [[iOpenToggle.onTouchClose]] */
+	/** {@link iOpenToggle.prototype.onTouchClose} */
 	async onTouchClose(e: MouseEvent): Promise<void> {
 		const
 			target = <CanUndef<Element>>e.target;
@@ -285,7 +286,7 @@ class bWindow extends iData implements iVisible, iWidth, iOpenToggle, iLockPageS
 		}
 	}
 
-	/** @see iOpenToggle.initCloseHelpers */
+	/** {@link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
 		iOpenToggle.initCloseHelpers(this, events);

@@ -19,10 +19,11 @@ import type { VirtualContextOptions } from 'core/component/functional/interface'
 /**
  * Creates a virtual context for the passed functional component
  *
- * @param component - the component meta object
- * @param parent - the component parent
- * @param [props] - the component props
- * @param [slots] - the component slots
+ * @param component - the component metaobject
+ * @param [opts] - the component options
+ * @param [opts.parent] - the component parent
+ * @param [opts.props] - the component props
+ * @param [opts.slots] - the component slots
  */
 export function createVirtualContext(
 	component: ComponentMeta,
@@ -151,6 +152,6 @@ export function createVirtualContext(
 		}
 	});
 
-	init.beforeDataCreateState(virtualCtx, {tieFields: true});
+	init.beforeDataCreateState(virtualCtx);
 	return initDynamicComponentLifeCycle(virtualCtx);
 }

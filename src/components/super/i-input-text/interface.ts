@@ -17,17 +17,8 @@ export interface UnsafeIInputText<CTX extends iInputText = iInputText> extends U
 	updateTextStore: CTX['updateTextStore'];
 
 	// @ts-ignore (access)
-	maskRepetitions: CTX['maskRepetitions'];
-
-	// @ts-ignore (access)
-	compiledMask: CTX['compiledMask'];
+	maskAPI: CTX['maskAPI'];
 
 	// @ts-ignore (access)
 	initMask: CTX['initMask'];
-
-	// @ts-ignore (access)
-	compileMask: CTX['compileMask'];
-
-	// @ts-ignore (access)
-	syncMaskWithText: CTX['syncMaskWithText'];
 }

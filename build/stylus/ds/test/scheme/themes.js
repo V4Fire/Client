@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const unThemeText = {
 	meta: {
@@ -37,7 +37,8 @@ const unThemeText = {
 			fontFamily: 'Roboto',
 			fontWeight: 400,
 			fontSize: '16px',
-			lineHeight: '16px'
+			lineHeight: '16px',
+			letterSpacing: '-0.02em'
 		},
 		Small: {
 			fontFamily: 'Roboto',

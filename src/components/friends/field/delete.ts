@@ -122,7 +122,6 @@ export function deleteField(
 		if (isSystem || isField) {
 			// If the property has not yet been watched, do not force proxy creation
 			needDeleteToWatch = isReady && (
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				!ctx.isFunctional || Object.isFunction(Object.getOwnPropertyDescriptor(ctx, info.name)?.get)
 			);
 

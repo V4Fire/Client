@@ -16,7 +16,7 @@ The layout includes basic CSS/JS/... files and a set of meta tags such as `<titl
 
 * The component extends [[iPage]].
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
 ## Modifiers
 
@@ -299,7 +299,7 @@ exports.Lib = Lib;
  *   2. [js] - if true, the function returns JS code to load the library
  *   3. [staticAttrs] - a string with additional attributes
  *
- * @see Lib
+ * {@link Lib}
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
@@ -354,7 +354,7 @@ exports.StyleLib = StyleLib;
  *   2. [js] - if true, the function returns JS code to load the library
  *   3. [staticAttrs] - a string with additional attributes
  *
- * @see StyleLib
+ * {@link StyleLib}
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
@@ -407,7 +407,7 @@ exports.Link = Link;
  *   3. [js] - if true, the function returns JS code to load the library
  *   4. [staticAttrs] - a string with additional attributes
  *
- * @see Link
+ * {@link Link}
  * @typedef {{
  *   src: string,
  *   tag?: string,
@@ -483,7 +483,7 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
   - charset = 'latin-1'
 ```
 
-## Runtime API
+## API
 
 ### Getters
 
@@ -506,6 +506,17 @@ See `core/net` for more information.
 
 The name of the active route page.
 See [[bDynamicPage]] for more information.
+
+### pageMetaData
+
+A module for manipulating page metadata, such as the page title or description.
+
+```js
+this.r.pageMetaData.title = 'Example';
+console.log(this.r.pageMetaData.description);
+```
+
+See `components/super/i-static-page/modules/page-meta-data` for more information.
 
 ### providerDataStore
 
@@ -530,11 +541,10 @@ See `components/super/i-static-page/modules/provider-data-store` for more inform
 
 ### theme
 
-A module to manage app themes from the Design System.
+A module for managing application themes.
 
 ```js
 console.log(this.r.theme.current);
-
 this.r.theme.current = 'dark';
 ```
 
@@ -552,14 +562,6 @@ this.r.locale = 'ru';
 ```
 
 ### Methods
-
-#### setPageTitle
-
-Sets a new page title.
-
-```js
-this.r.setPageTitle('Hello page');
-```
 
 #### reset
 

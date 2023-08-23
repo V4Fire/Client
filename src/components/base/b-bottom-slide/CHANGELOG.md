@@ -9,6 +9,25 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Removed deprecated events: `changeStep`, `changeMoveState`
+
+#### :house: Internal
+
+* All offsets and heights have been moved to the `Geometry` friend class
+* Methods: `onPullStart`, `onPullEnd`, `onPull` - have been moved to the `SwipeControl` friend class
+* All animation methods have been moved to the `Animation` friend class
+* Methods controlling overlay opacity have been moved to the `Overlay` friend class
+
+## v3.32.1 (2022-12-26)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with not setting an initial value of `hidden` modifier
+
 ## v3.19.2 (2022-04-19)
 
 #### :bug: Bug Fix

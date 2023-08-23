@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,20 +6,49 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
-	$C = require('collection.js'),
-	{webpack} = require('@config/config');
+	$C = require('collection.js');
+
+const
+	{webpack} = require('@config/config'),
+	{resolve} = require('@pzlr/build-core');
 
 if (webpack.ssr) {
-	const
-		nodeExternals = require('webpack-node-externals');
-
 	/**
 	 * Returns parameters for `webpack.externals`
-	 * @returns {!Array}
+	 * @returns {Array}
 	 */
 	module.exports = function externals() {
-		return [nodeExternals()];
+		const cache = Object.createDict();
+
+		return [
+			({request}, cb) => {
+				if (cache[request] != null) {
+					return cb(...cache[request]);
+				}
+
+				if (resolve.isNodeModule(request)) {
+					try {
+						require.resolve(request);
+
+						try {
+							require.resolve(resolve.blockSync(request));
+
+						} catch {
+							require(request);
+							cache[request] = [null, `commonjs ${request}`];
+							return cb(...cache[request]);
+						}
+
+					} catch {}
+				}
+
+				cache[request] = [];
+				cb();
+			}
+		];
 	};
 
 } else {
@@ -56,7 +83,7 @@ if (webpack.ssr) {
 	 * Returns parameters for `webpack.externals`
 	 *
 	 * @param {(number|string)} buildId
-	 * @returns {!Array}
+	 * @returns {Array}
 	 */
 	module.exports = function externals({buildId}) {
 		if (buildId !== STANDALONE) {

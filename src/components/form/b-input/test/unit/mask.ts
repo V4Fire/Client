@@ -206,11 +206,7 @@ test.describe('<b-input> mask API', () => {
 		})).toBe('6-7');
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
-	async function renderInput(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bInput>> {
+	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 		return Component.createComponent(page, 'b-input', {
 			attrs: {
 				'data-id': 'target',

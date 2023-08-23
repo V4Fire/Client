@@ -13,7 +13,7 @@ import type { LinkDecl } from 'components/friends/sync/interface';
  * Synchronizes component reference values with the values they are linked with
  *
  * @param [path] - a path to the property/event we are referring to, or
- *   [a path to the property containing the reference, a path to the property/event we are referring to]
+ * [a path to the property containing the reference, a path to the property/event we are referring to]
  *
  * @param [value] - the value to synchronize links
  *
@@ -22,7 +22,7 @@ import type { LinkDecl } from 'components/friends/sync/interface';
  * import iBlock, { component } from 'components/super/i-block/i-block';
  * import Sync, { object, syncLinks } from 'components/friends/sync';
  *
- * Sync.addToPrototype(syncLinks);
+ * Sync.addToPrototype({syncLinks});
  *
  * @component()
  * export default class bInput extends iBlock {
@@ -70,7 +70,7 @@ export function syncLinks(this: Sync, path?: LinkDecl, value?: unknown): void {
 			return;
 		}
 
-		Object.entries(([key, el]) => {
+		Object.forEach(Object.entries(o), ([key, el]) => {
 			if (el == null) {
 				return;
 			}

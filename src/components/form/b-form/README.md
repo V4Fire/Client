@@ -11,7 +11,7 @@ The component is based on the native `<form>` element and implements the same be
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
-* By default, the root tag of the component is `<form>`.
+* By default, the component's root tag is set to `<form>`.
 
 ## Modifiers
 
@@ -60,7 +60,6 @@ Also, you can see the [[iVisible]] trait and the [[iData]] component.
   < b-input :name = 'lname'
   < b-input :name = 'bd' | :type = 'date'
   < b-button :type = 'submit'
-
 
 /// Association of the form and components by id
 < b-form :dataProvider = 'User' | :method = 'upd' | :id = 'upd-user-form'
@@ -113,15 +112,14 @@ The component supports the `default` slot to provide associated components.
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### Props
 
 #### [id]
 
 The form identifier.
-You can use it to connect a form to components that lie "outside".
-from the form body (using the `form` attribute).
+You can use it to connect the form to components lying "outside" from the form body (using the `form` attribute).
 
 ```
 < b-form :id = 'bla'
@@ -205,7 +203,7 @@ Clears the values of all related components.
 
 #### reset
 
-Resets the default values for all related components.
+Resets the values to default for all related components.
 
 #### validate
 

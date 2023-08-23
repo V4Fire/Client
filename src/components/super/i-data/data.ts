@@ -9,6 +9,7 @@
 import symbolGenerator from 'core/symbol';
 import { derive } from 'core/functools/trait';
 
+import type iData from 'components/super/i-data/i-data';
 import type DataProvider from 'components/friends/data-provider';
 import type { DataProviderProp, DataProviderOptions } from 'components/friends/data-provider';
 
@@ -23,6 +24,7 @@ import iBlock, {
 	system,
 	watch,
 
+	hydrationStore,
 	ModsDecl
 
 } from 'components/super/i-block/i-block';
@@ -44,25 +46,25 @@ interface iDataData extends Trait<typeof iDataProvider> {}
 
 @component({functional: null})
 @derive(iDataProvider)
-abstract class iDataData extends iBlock {
+abstract class iDataData extends iBlock implements iDataProvider {
 	/**
 	 * Type: the raw provider data
 	 */
 	readonly DB!: object;
 
-	/** @see [[iDataProvider.dataProviderProp]] */
-	@prop({type: String, required: false})
+	/** {@link iDataProvider.dataProviderProp} */
+	@prop({type: [String, Object, Function], required: false})
 	readonly dataProviderProp?: DataProviderProp;
 
-	/** @see [[iDataProvider.dataProvider]] */
+	/** {@link iDataProvider.dataProvider} */
 	@system()
 	dataProvider?: DataProvider;
 
-	/** @see [[iDataProvider.dataProviderOptions]] */
+	/** {@link iDataProvider.dataProviderOptions} */
 	@prop({type: Object, required: false})
 	readonly dataProviderOptions?: DataProviderOptions;
 
-	/** @see [[iDataProvider.request]] */
+	/** {@link iDataProvider.request} */
 	@prop({type: [Object, Array], required: false})
 	readonly request?: RequestParams;
 
@@ -82,7 +84,7 @@ abstract class iDataData extends iBlock {
 	/**
 	 * A list of remote data converters.
 	 * These functions step by step transform the original provider data before storing it in `db`.
-	 * @see [[iDataProvider.dbConverter]]
+	 * {@link iDataProvider.dbConverter}
 	 */
 	@system((o) => o.sync.link('dbConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
 	dbConverters!: ComponentConverter[];
@@ -101,7 +103,7 @@ abstract class iDataData extends iBlock {
 
 	/**
 	 * A list of converters from the raw `db` to the component field
-	 * @see [[iDataProvider.componentConverterProp]]
+	 * {@link iDataProvider.componentConverterProp}
 	 */
 	@system((o) => o.sync.link('componentConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
 	componentConverters!: ComponentConverter[];
@@ -115,11 +117,11 @@ abstract class iDataData extends iBlock {
 	@prop({type: [Boolean, Function], required: false})
 	readonly defaultRequestFilter?: RequestFilter;
 
-	/** @see [[iDataProvider.suspendedRequestsProp]] */
+	/** {@link iDataProvider.suspendedRequestsProp} */
 	@prop(Boolean)
 	readonly suspendedRequestsProp: boolean = false;
 
-	/** @see [[iDataProvider.suspendRequests]] */
+	/** {@link iDataProvider.suspendedRequestsProp} */
 	@system((o) => o.sync.link())
 	suspendedRequests!: boolean;
 
@@ -136,7 +138,7 @@ abstract class iDataData extends iBlock {
 	@prop({type: [Boolean, Function]})
 	readonly checkDBEquality: CheckDBEquality = true;
 
-	/** @see [[iDataProvider.requestParams]] */
+	/** {@link iDataProvider.requestParams} */
 	@system({merge: true})
 	readonly requestParams: RequestParams = {get: {}};
 
@@ -150,6 +152,7 @@ abstract class iDataData extends iBlock {
 	/**
 	 * Sets new component data from the data provider
 	 *
+	 * @param value
 	 * @emits `dbCanChange(value: CanUndef<this['DB']>)`
 	 * @emits `dbChange(value: CanUndef<this['DB']>)`
 	 */
@@ -169,6 +172,11 @@ abstract class iDataData extends iBlock {
 
 		this.field.set('dbStore', value);
 
+		if (SSR) {
+			hydrationStore.set(this.componentId, 'dbStore', Object.cast(value));
+			hydrationStore.set(this.componentId, 'initRemoteData', null);
+		}
+
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData.bind(this), {
 				deep: true,
@@ -185,7 +193,7 @@ abstract class iDataData extends iBlock {
 
 	/**
 	 * Component data store
-	 * @see [[iData.db]]
+	 * {@link iData.db}
 	 */
 	@field()
 	// @ts-ignore (recursive type)

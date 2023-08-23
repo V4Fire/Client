@@ -56,7 +56,7 @@ export default class Session extends Provider {
 		async addSession(this: Session, {opts}: MiddlewareParams): Promise<void> {
 			if (opts.api) {
 				const h = await this.getAuthParams();
-				Object.mixin({traits: true}, opts.headers, h);
+				Object.mixin({propsToCopy: 'new'}, opts.headers, h);
 			}
 		}
 	};
@@ -94,11 +94,11 @@ export default class Session extends Provider {
 		const update = async (res) => {
 			const
 				info = <Response>res.response,
-				refreshHeader = info.getHeader(this.authRefreshHeader);
+				refreshHeader = info.headers.get(this.authRefreshHeader);
 
 			try {
 				if (refreshHeader != null) {
-					await s.set(refreshHeader, {csrf: info.getHeader(this.csrfHeader)});
+					await s.set(refreshHeader, {csrf: info.headers.get(this.csrfHeader) ?? undefined});
 				}
 
 			} catch {}

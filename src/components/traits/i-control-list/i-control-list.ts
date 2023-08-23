@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -11,10 +9,14 @@
 import type iBlock from 'components/super/i-block/i-block';
 import type { Control, ControlEvent } from 'components/traits/i-control-list/interface';
 
+//#if runtime has prelude/test-env
+import('components/traits/i-control-list/test/b-traits-i-control-list-dummy');
+//#endif
+
 export * from 'components/traits/i-control-list/interface';
 
 export default abstract class iControlList {
-	/** @see [[iControlList.callControlAction]] */
+	/** {@link iControlList.prototype.callControlAction} */
 	static callControlAction: AddSelf<iControlList['callControlAction'], iBlock> = (component, opts = {}, ...args) => {
 		const
 			{action, analytics} = opts;
@@ -114,10 +116,10 @@ export default abstract class iControlList {
 	/**
 	 * Calls an event handler for the specified control
 	 *
-	 * @param [opts] - the control options
-	 * @param [args] - additional arguments
+	 * @param [_opts] - the control options
+	 * @param [_args] - additional arguments
 	 */
-	callControlAction<R = unknown>(opts?: ControlEvent, ...args: unknown[]): CanPromise<CanUndef<R>> {
+	callControlAction<R = unknown>(_opts?: ControlEvent, ..._args: unknown[]): CanPromise<CanUndef<R>> {
 		return Object.throw();
 	}
 }

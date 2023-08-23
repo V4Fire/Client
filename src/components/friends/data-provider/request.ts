@@ -10,7 +10,7 @@ import type Provider from 'core/data';
 import type { RequestQuery, RequestBody, ModelMethod } from 'core/data';
 
 import { asyncOptionsKeys } from 'core/async';
-import type { CreateRequestOptions } from 'components/super/i-data';
+import type { CreateRequestOptions } from 'components/traits/i-data-provider/i-data-provider';
 
 import type DataProvider from 'components/friends/data-provider/class';
 import type { DefaultRequest } from 'components/friends/data-provider/interface';
@@ -104,7 +104,7 @@ export function peek<D = unknown>(
 	const
 		args = arguments.length > 0 ? [query, opts] : getDefaultRequestParams.call(this, 'peek');
 
-		if (Object.isArray(args)) {
+	if (Object.isArray(args)) {
 		return createRequest.call(this, 'peek', ...Object.cast<[RequestQuery, CreateRequestOptions<D>]>(args));
 	}
 
@@ -239,17 +239,20 @@ export function createRequest<D = unknown>(
 
 		const then = () => {
 			if (is(opts.hideProgress)) {
-				void this.lfc.execCbAtTheRightTime(() => ctx.setMod('progress', false));
+				return ctx.setMod('progress', false);
 			}
 		};
 
-		req.then(then, (err) => {
-			try {
-				this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
-			} catch {}
+		req
+			.then(then, (err) => {
+				try {
+					this.provider.emitter.emit('error', err, () => createRequest.call(this, method, body, opts));
+				} catch {}
 
-			then();
-		});
+				return then();
+			})
+
+			.catch(stderr);
 	}
 
 	return req.then((res) => res.data).then((data) => data ?? undefined);
@@ -259,7 +262,10 @@ export function createRequest<D = unknown>(
  * Returns the default query options for the specified data provider method
  * @param method
  */
-export function getDefaultRequestParams<T = unknown>(this: DataProvider, method: string): CanUndef<DefaultRequest<T>> {
+export function getDefaultRequestParams<T = unknown>(
+	this: DataProvider,
+	method: ModelMethod
+): CanNull<DefaultRequest<T>> {
 	const
 		{field} = this;
 
@@ -283,7 +289,7 @@ export function getDefaultRequestParams<T = unknown>(this: DataProvider, method:
 
 	if (Object.isPlainObject(res[0]) && Object.isPlainObject(customData)) {
 		res[0] = Object.mixin({
-			onlyNew: true,
+			propsToCopy: 'new',
 			filter: (el) => {
 				if (isGet) {
 					return el != null;
@@ -320,7 +326,7 @@ export function getDefaultRequestParams<T = unknown>(this: DataProvider, method:
 	}
 
 	if (needSkip) {
-		return;
+		return null;
 	}
 
 	return res;

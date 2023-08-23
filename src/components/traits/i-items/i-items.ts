@@ -18,7 +18,7 @@ export * from 'components/traits/i-items/interface';
 
 export default abstract class iItems {
 	/**
-	 * Returns a unique key (to optimize re-rendering) of the specified item
+	 * Returns the unique key (to optimize re-rendering) of the specified item
 	 *
 	 * @param component
 	 * @param item
@@ -30,7 +30,7 @@ export default abstract class iItems {
 		i: number
 	): CanUndef<IterationKey> {
 		const
-			{unsafe, itemKey} = component;
+			{itemKey} = component;
 
 		let
 			id;
@@ -39,24 +39,7 @@ export default abstract class iItems {
 			id = itemKey.call(component, item, i);
 
 		} else if (Object.isString(itemKey)) {
-			const
-				cacheKey = `[[FN:${itemKey}]]`;
-
-			let
-				compiledFn = <CanUndef<Function>>unsafe.tmp[cacheKey];
-
-			if (!Object.isFunction(compiledFn)) {
-				const
-					normalize = (str) => str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-
-				// eslint-disable-next-line no-new-func
-				compiledFn = Function('item', 'i', `return item['${normalize(itemKey)}']`);
-
-				// @ts-ignore (invalid type)
-				unsafe.tmp[cacheKey] = compiledFn;
-			}
-
-			id = compiledFn.call(component, item, i);
+			id = item[itemKey];
 		}
 
 		if (Object.isPrimitive(id) && !Object.isSymbol(id)) {

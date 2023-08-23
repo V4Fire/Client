@@ -11,7 +11,6 @@
  * @packageDocumentation
  */
 
-import symbolGenerator from 'core/symbol';
 import SyncPromise from 'core/promise/sync';
 
 import iSize from 'components/traits/i-size/i-size';
@@ -166,7 +165,6 @@ export default class bCheckbox extends iInput implements iSize {
 	};
 
 	static override validators: ValidatorsDecl = {
-		//#if runtime has iInput/validators
 		...iInput.validators,
 
 		async required({message, showMessage = true}: ValidatorParams): Promise<ValidatorResult<boolean>> {
@@ -174,14 +172,12 @@ export default class bCheckbox extends iInput implements iSize {
 				value = await this.groupFormValue;
 
 			if (value.length === 0) {
-				this.setValidationMessage(this.getValidatorMessage(false, message, t`Required field`), showMessage);
+				this.setValidationMessage(this.getValidatorMessage(false, message, this.t`Required field`), showMessage);
 				return false;
 			}
 
 			return true;
 		}
-
-		//#endif
 	};
 
 	@system()
@@ -193,6 +189,7 @@ export default class bCheckbox extends iInput implements iSize {
 
 	/**
 	 * Checks the checkbox
+	 * @param value
 	 */
 	check(value?: CheckType): Promise<boolean> {
 		return SyncPromise.resolve(this.setMod('checked', value ?? true));
@@ -304,11 +301,10 @@ export default class bCheckbox extends iInput implements iSize {
 	/**
 	 * Handler: the checkbox has been clicked
 	 *
-	 * @param e
+	 * @param _e
 	 * @emits `actionChange(value: this['Value'])`
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	protected onClick(e: Event): void {
+	protected onClick(_e: Event): void {
 		void this.focus();
 
 		if (this.value === undefined || this.value === false || this.changeable) {

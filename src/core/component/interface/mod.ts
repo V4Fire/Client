@@ -9,12 +9,12 @@
 import type { PARENT } from 'core/component/const';
 
 /**
- * Modifier value primitives
+ * Modifier's value primitives
  */
 export type ModVal = string | boolean | number;
 
 /**
- * Modifier value types.
+ * Modifier's value types.
  * If a value is wrapped by an array, it interprets as the value by default.
  */
 export type ModDeclVal = CanArray<ModVal>;
@@ -26,17 +26,17 @@ export type ModDeclVal = CanArray<ModVal>;
 export type ExpandedModDeclVal = ModDeclVal | typeof PARENT;
 
 /**
- * A dictionary with modifiers to pass to the component
+ * A dictionary that contains modifiers to pass to the component
  */
 export type ModsProp = Dictionary<ModVal>;
 
 /**
- * A dictionary with normalized modifiers
+ * A dictionary that contains normalized modifiers
  */
 export type ModsDict = Dictionary<CanUndef<string>>;
 
 /**
- * A dictionary with predefined modifiers and their possible values
+ * A dictionary that contains predefined modifiers and their possible values
  *
  * @example
  * ```typescript

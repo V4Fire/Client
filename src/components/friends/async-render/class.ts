@@ -9,15 +9,17 @@
 import Friend, { fakeMethods } from 'components/friends/friend';
 
 import type iBlock from 'components/super/i-block/i-block';
-import type * as api from 'components/friends/async-render/api';
+import type { TaskOptions } from 'components/friends/async-render/api';
 
 interface AsyncRender {
-	forceRender: typeof api.forceRender;
-	deferForceRender: typeof api.deferForceRender;
-	iterate: typeof api.iterate;
+	waitForceRender(elementToDrop?: string | ((ctx: Friend['component']) => CanPromise<CanUndef<string | Element>>)): void;
+	forceRender(): void;
+	deferForceRender(): void;
+	iterate(value: unknown, sliceOrOpts?: number | [number?, number?] | TaskOptions, opts?: TaskOptions): unknown[];
 }
 
 @fakeMethods(
+	'waitForceRender',
 	'forceRender',
 	'deferForceRender',
 	'iterate'

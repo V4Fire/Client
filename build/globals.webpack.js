@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js'),
@@ -27,13 +27,15 @@ const
 
 /**
  * A dictionary to provide to `webpack.DefinePlugin`
- * @type {!Object}
+ * @type {object}
  */
 module.exports = {
 	IS_PROD,
 
 	DEBUG: runtime.debug === true,
-	BUILD_MODE: s(build.mode),
+	BUILD_MODE: s(build.mode()),
+
+	PUBLIC_PATH: s(webpack.publicPath()),
 	CSP_NONCE_STORE: s(csp.nonceStore()),
 
 	SSR: webpack.ssr,
@@ -44,12 +46,13 @@ module.exports = {
 	API_URL: s(API_URL),
 
 	LOCALE: s(LOCALE),
-	PUBLIC_PATH: s(webpack.publicPath()),
+	LANG_PACKS: s(config.i18n.langPacksStore),
 
 	COMPONENTS: projectGraph.then(({components}) => {
 		if (Object.isMap(components)) {
 			return $C(components).to({}).reduce((res, el, key) => {
 				res[key] = {
+					parent: JSON.stringify(el.parent),
 					dependencies: JSON.stringify(el.dependencies)
 				};
 

@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,14 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-const modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags');
+'use strict';
 
-module.exports = {
-	before: {
-		modernRegExpFlagsTransformer
-	},
+const
+	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags');
 
+/**
+ * @param {import('typescript').Program} program
+ * @returns {object}
+ */
+module.exports = (program) => ({
+	before: [modernRegExpFlagsTransformer(program)],
 	after: {},
-
 	afterDeclarations: {}
-};
+});

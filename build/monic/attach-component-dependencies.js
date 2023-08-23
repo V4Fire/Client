@@ -1,7 +1,3 @@
-/* eslint-disable require-atomic-updates */
-
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -9,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js'),
@@ -26,7 +24,7 @@ const
  *
  * @param {string} str
  * @param {string} filePath
- * @returns {!Promise<string>}
+ * @returns {Promise<string>}
  */
 module.exports = async function attachComponentDependencies(str, filePath) {
 	if (webpack.fatHTML()) {
@@ -88,6 +86,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 				const
 					styles = await component.styles;
 
+				/* eslint-disable indent */
 				decl += `
 	(() => {
 		if (TPLS['${dep}']) {
@@ -95,18 +94,9 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		}
 
 		requestAnimationFrame(async () => {
-			try {
-				const el = document.createElement('i');
-				el.className = '${dep}-is-style-loaded';
-				document.body.appendChild(el);
-
-				const isStylesLoaded = getComputedStyle(el).color === 'rgba(0, 250, 154, 0)';
-				document.body.removeChild(el);
-
-				if (isStylesLoaded) {
-					return;
-				}
-			} catch (err) { stderr(err); }
+			if (__webpack_component_styles_are_loaded__('${dep}')) {
+				return;
+			}
 
 			try {
 				${
@@ -129,6 +119,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 			} catch {
 			}
 		}
+		/* eslint-enable */
 
 		const depChunks = [
 			'logic',

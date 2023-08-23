@@ -36,6 +36,15 @@ export interface ValidatorParams extends Dictionary {
 	showMessage?: boolean;
 }
 
+export interface CustomValidatorParams<P extends ValidatorParams = any> extends ValidatorParams {
+	/**
+	 * A custom validator function
+	 */
+	validator: CustomValidator<P>;
+}
+
+type CustomValidator<P> = (params: P) => unknown;
+
 export interface ValidatorError<E = unknown> extends Dictionary {
 	name: string;
 	value?: E;

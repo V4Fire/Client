@@ -16,7 +16,7 @@ This module provides a component to create a modal window.
 
 * The component automatically places itself within the document body.
 
-* By default, the root tag of the component is `<div>`.
+* By default, the component's root tag is set to `<div>`.
 
 ## Modifiers
 
@@ -25,7 +25,7 @@ This module provides a component to create a modal window.
 | `opened`   | The component is opened                  | `boolean`               | `false`   |
 | `position` | A value of the `position` style property | `'fixed'  │ 'absolute'` | `'fixed'` |
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ## Events
 
@@ -34,7 +34,7 @@ Also, you can see the implemented traits or the parent component.
 | `open`    | The component has been opened | -                   | -       |
 | `close`   | The component has been closed | -                   | -       |
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ## Usage
 
@@ -60,63 +60,63 @@ The component supports a bunch of slots to provide.
 
 1. `default` to override the default component layout.
 
-```
-< b-window
-  Window content
-```
+   ```
+   < b-window
+     Window content
+   ```
 
-```
-< b-window
-  < template #default = {ctx}
-    < .title
-      {{ ctx.title }}
+   ```
+   < b-window
+     < template #default = {ctx}
+       < .title
+         {{ ctx.title }}
 
-    < .content
-      Window content
-```
+       < .content
+         Window content
+   ```
 
-Please note that when using this slot,
-other slots become unavailable to you since the default slot will overwrite all other slots.
+   Please note that when using this slot,
+   other slots become unavailable to you since the default slot will overwrite all other slots.
 
 2. `title` to provide a window title.
 
-```
-< b-window
-  < template #title
-    Title
-```
+   ```
+   < b-window
+     < template #title
+       Title
+   ```
 
-```
-< b-window
-  < template #title = {title}
-    < span.title
-      {{ title }}
-```
+   ```
+   < b-window
+     < template #title = {title}
+       < span.title
+         {{ title }}
+   ```
 
 3. `body` to provide the main window content.
 
-```
-< b-window :title = 'Title'
-  < template #body
-    Main content
-```
+   ```
+   < b-window :title = 'Title'
+     < template #body
+       Main content
+   ```
 
 4. `controls` to provide additional controls like buttons to hide/show.
 
-```
-< b-window
-  < template #title
-    Title
+   ```
+   < b-window
+     < template #title
+       Title
 
-  < template #body
-    Main content
+     < template #body
+       Main content
 
-  < template #controls = {ctx}
-    < button @click = ctx.close()
-      Close the window
-```
+     < template #controls = {ctx}
+       < button @click = ctx.close()
+         Close the window
+   ```
 
-By default, the component defines a control to close the window.
+   By default, the component defines a control to close the window.
 
 ### Third-party slots
 
@@ -173,7 +173,7 @@ b-window extends i-data
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### Props
 

@@ -32,7 +32,7 @@ export default abstract class AbstractEngine {
 	 */
 	protected elements: ObservableElements = new Map();
 
-	/** @see [[Async]] */
+	/** {@link Async} */
 	protected async: Async<this> = new Async(this);
 
 	/**
@@ -222,8 +222,8 @@ export default abstract class AbstractEngine {
 	/**
 	 * Sets a new size for the specified watcher
 	 *
-	 * @param size
 	 * @param watcher
+	 * @param size
 	 */
 	protected setWatcherSize(watcher: Writable<Watcher>, size: ElementSize): void {
 		watcher.size.width = size.width;

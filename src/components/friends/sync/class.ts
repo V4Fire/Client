@@ -14,13 +14,44 @@ import type { SyncLinkCache } from 'components/super/i-block/i-block';
 import { mod } from 'components/friends/sync/mod';
 import { link } from 'components/friends/sync/link';
 
-import type * as api from 'components/friends/sync/api';
+import type {
+
+	Link,
+	LinkDecl,
+	LinkGetter,
+	PropLinks,
+
+	AsyncWatchOptions,
+	ModValueConverter
+
+} from 'components/friends/sync/interface';
 
 interface Sync {
-	mod: typeof api.mod;
-	link: typeof api.link;
-	object: typeof api.object;
-	syncLinks: typeof api.syncLinks;
+	mod<D = unknown, R = unknown>(
+		modName: string,
+		path: string,
+		converter?: ModValueConverter<Sync['C'], D, R>
+	): void;
+
+	mod<D = unknown, R = unknown>(
+		modName: string,
+		path: string,
+		opts: AsyncWatchOptions,
+		converter?: ModValueConverter<Sync['C'], D, R>
+	): void;
+
+	link<D = unknown, R = D>(optsOrGetter?: AsyncWatchOptions | LinkGetter<Sync['C'], D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(opts: AsyncWatchOptions, getter?: LinkGetter<Sync['C'], D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(path: LinkDecl, optsOrGetter?: AsyncWatchOptions | LinkGetter<Sync['C'], D, R>): CanUndef<R>;
+	link<D = unknown, R = D>(path: LinkDecl, opts: AsyncWatchOptions, getter?: LinkGetter<Sync['C'], D, R>): CanUndef<R>;
+
+	object(decl: PropLinks): Dictionary;
+	object(opts: AsyncWatchOptions, fields: PropLinks): Dictionary;
+	// eslint-disable-next-line @typescript-eslint/unified-signatures
+	object(path: Link, fields: PropLinks): Dictionary;
+	object(path: Link, opts: AsyncWatchOptions, fields: PropLinks): Dictionary;
+
+	syncLinks(path?: LinkDecl, value?: unknown): void;
 }
 
 @fakeMethods('object')
@@ -35,12 +66,12 @@ class Sync extends Friend {
 	 */
 	protected readonly linksCache!: Dictionary<Dictionary>;
 
-	/** @see [[iBlock.$syncLinkCache]] */
+	/** {@link iBlock.$syncLinkCache} */
 	protected get syncLinkCache(): SyncLinkCache {
 		return this.ctx.$syncLinkCache;
 	}
 
-	/** @see [[iBlock.$syncLinkCache]] */
+	/** {@link iBlock.$syncLinkCache} */
 	protected set syncLinkCache(value: SyncLinkCache) {
 		Object.set(this.ctx, '$syncLinkCache', value);
 	}
@@ -54,6 +85,6 @@ class Sync extends Friend {
 	}
 }
 
-Sync.addToPrototype(link, mod);
+Sync.addToPrototype({link, mod});
 
 export default Sync;

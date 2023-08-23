@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	{src, webpack} = require('@config/config'),
@@ -16,7 +16,7 @@ const
  * Returns parameters for `webpack.output`
  *
  * @param {(number|string)} buildId
- * @returns {!Object}
+ * @returns {object}
  */
 module.exports = function output({buildId}) {
 	const params = {

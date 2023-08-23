@@ -1,10 +1,11 @@
 # core/component/directives/in-view
 
-This module provides a directive to track elements entering or leaving the viewport.
-The directive uses the `core/dom/intersection-watcher` module to watch elements.
-For more information, please refer its documentation.
+This module provides a directive that allows you to track when an element to which it is added enters or
+leaves the viewport.
+The module `core/dom/intersection-watcher` is used for efficient tracking of element entry into the viewport.
+For a deeper understanding of all possible settings and modes, please refer to the documentation of that module.
 
-## How to include a directive?
+## How to include this directive?
 
 Just add the directive import in your component code.
 
@@ -22,13 +23,13 @@ class bExample extends iBlock {}
 ### Simple watching
 
 ```
-< div v-on-in-view = console.log
+< div v-in-view = console.log
 ```
 
 ### Providing extra options
 
 ```
-< div v-on-in-view = {once: true, handler: console.log}
+< div v-in-view = {once: true, handler: console.log}
 ```
 
 ### Defining multiple watchers

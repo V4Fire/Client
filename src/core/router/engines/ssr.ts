@@ -97,7 +97,6 @@ export default function createRouter(): Router {
 			}
 
 			const
-				// eslint-disable-next-line @typescript-eslint/unbound-method
 				{load} = params.meta;
 
 			if (load == null) {

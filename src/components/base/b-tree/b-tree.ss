@@ -16,24 +16,26 @@
 		? rootAttrs['v-async-target'] = TRUE
 
 	- block body
-		< template &
-			v-for = (el, i) in asyncRender.iterate(items, renderChunks, renderTaskParams) |
-			:key = getItemKey(el, i)
-		.
+		< template v-for = (el, i) in (lazyRender ? asyncRender.iterate(items, renderChunks, renderTaskParams) : items)
 			< .&__node &
-				:-id = dom.getId(el.id) |
+				:key = getItemKey(el, i) |
+
+				:-id = values.getIndex(el.value) |
 				:-level = level |
+
 				:class = provide.elementClasses({
 					node: {
 						level,
-						folded: getFoldedPropValue(el)
+						id: values.getIndex(el.value),
+						active: isActive(el.value),
+						...(hasChildren(el) && {folded: getFoldedPropValue(el)}),
 					}
 				})
 			.
 				< .&__item-wrapper
 					< .&__marker
 						- block fold
-							< template v-if = Object.size(field.get('children.length', el)) > 0
+							< template v-if = hasChildren(el)
 								+= self.slot('fold', {':params': 'getFoldProps(el)'})
 									< .&__fold v-attrs = getFoldProps(el)
 
@@ -46,11 +48,16 @@
 							.
 
 				- block children
-					< .&__children v-if = Object.size(field.get('children', el)) > 0
+					< .&__children v-if = hasChildren(el)
 						< b-tree.&__child &
+							ref = children |
+							v-func = nestedTreeProps.isFunctional |
+
 							:items = el.children |
-							:folded = getFoldedPropValue(el) |
 							:item = item |
+							:itemProps = itemProps |
+
+							:folded = getFoldedPropValue(el) |
 							:v-attrs = nestedTreeProps
 						.
 							< template &

@@ -11,18 +11,13 @@ import { bindRemoteWatchers, implementComponentWatchAPI } from 'core/component/w
 import { runHook } from 'core/component/hook';
 
 import type { ComponentInterface } from 'core/component/interface';
-import type { InitBeforeDataCreateStateOptions } from 'core/component/init/interface';
 
 /**
  * Initializes the "beforeDataCreate" state to the specified component instance
  *
  * @param component
- * @param [opts] - additional options
  */
-export function beforeDataCreateState(
-	component: ComponentInterface,
-	opts?: InitBeforeDataCreateStateOptions
-): void {
+export function beforeDataCreateState(component: ComponentInterface): void {
 	const {meta, $fields} = component.unsafe;
 	initFields(meta.fields, component, $fields);
 
@@ -36,7 +31,7 @@ export function beforeDataCreateState(
 		.catch(stderr);
 
 	if (!SSR) {
-		implementComponentWatchAPI(component, {tieFields: opts?.tieFields});
+		implementComponentWatchAPI(component);
 		bindRemoteWatchers(component);
 	}
 }

@@ -13,7 +13,7 @@ import type { ComponentInterface } from 'core/component/interface';
  * Returns the unique directive identifier for the passed element
  *
  * @param el - the element to which the directive applies
- * @param idsCache - a store for the registered elements
+ * @param idsCache - the store for the registered elements
  */
 export function getElementId(el: Element, idsCache: WeakMap<Element, string>): string {
 	let
@@ -28,7 +28,7 @@ export function getElementId(el: Element, idsCache: WeakMap<Element, string>): s
 }
 
 /**
- * Returns a directive context associated with the directive
+ * Returns the context of the component within which the directive is being used
  *
  * @param binding - the directive binding
  * @param vnode - the VNode to which the directive is applied
@@ -36,18 +36,20 @@ export function getElementId(el: Element, idsCache: WeakMap<Element, string>): s
 export function getDirectiveContext(
 	binding: Nullable<DirectiveBinding>,
 	vnode: Nullable<VNode>
-): CanUndef<ComponentInterface['unsafe']> {
-	return Object.cast(vnode?.virtualContext ?? binding?.instance);
+): CanNull<ComponentInterface['unsafe']> {
+	return Object.cast(binding?.virtualContext ?? vnode?.virtualContext ?? binding?.instance ?? null);
 }
 
 /**
- * Returns a component context associated with the directive
+ * Returns the context of the component to which the directive is applied.
+ * If the directive is applied to a regular node instead of a component, `null` will be returned.
+ *
  * @param vnode - the VNode to which the directive is applied
  */
-export function getDirectiveComponent(vnode: Nullable<VNode>): CanUndef<ComponentInterface['unsafe']> {
+export function getDirectiveComponent(vnode: Nullable<VNode>): CanNull<ComponentInterface['unsafe']> {
 	if (vnode == null) {
-		return undefined;
+		return null;
 	}
 
-	return Object.cast(vnode.virtualComponent ?? vnode.component?.['ctx']);
+	return Object.cast(vnode.virtualComponent ?? vnode.component?.['ctx'] ?? null);
 }

@@ -19,29 +19,15 @@
 
 	- block body
 		: putIn content
-			< template v-if = item || option
-				/*
-				 * @deprecated
-				 * @see beforeItems
-				 */
-				+= self.slot('beforeOptions')
-
+			< template v-if = item
 				+= self.slot('beforeItems')
 
-				< template &
-					v-for = (el, i) in items |
-					:key = getItemKey(el, i)
-				.
+				< template v-for = (el, i) in items
 					< component.&__option.&__item &
 						:is = getItemComponentName(el, i) |
+						:key = getItemKey(el, i) |
 						:v-attrs = getItemAttrs(el, i)
 					.
-
-				/*
-				 * @deprecated
-				 * @see beforeItems
-				 */
-				+= self.slot('afterOptions')
 
 				+= self.slot('afterItems')
 
@@ -56,10 +42,10 @@
 		.
 			< .&__view &
 				ref = view |
-				v-resize-observer = {
+				v-on-resize = {
 					watchHeight: false,
 					watchWidth: true,
-					callback: isSlideMode ? syncStateDefer : undefined
+					handler: isSlideMode ? syncStateDefer : undefined
 				}
 			.
 				< .&__view-content ref = content

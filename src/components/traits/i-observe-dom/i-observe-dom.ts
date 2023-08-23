@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars-experimental */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -26,6 +24,10 @@ import type {
 	ChangedNodes
 
 } from 'components/traits/i-observe-dom/interface';
+
+//#if runtime has prelude/test-env
+import('components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy');
+//#endif
 
 export * from 'components/traits/i-observe-dom/interface';
 
@@ -111,7 +113,7 @@ export default abstract class iObserveDOM {
 		return res;
 	}
 
-	/** @see [[iObserveDOM.onDOMChange]] */
+	/** {@link iObserveDOM.prototype.onDOMChange} */
 	static onDOMChange: AddSelf<iObserveDOM['onDOMChange'], iBlock & iObserveDOM> = (
 		component,
 		records,
@@ -197,10 +199,10 @@ export default abstract class iObserveDOM {
 	/**
 	 * Handler: the DOM tree has been changed
 	 *
-	 * @param records
-	 * @param opts
+	 * @param _records
+	 * @param _opts
 	 */
-	onDOMChange(records: MutationRecord[], opts: ObserveOptions): void {
+	onDOMChange(_records: MutationRecord[], _opts: ObserveOptions): void {
 		return Object.throw();
 	}
 }

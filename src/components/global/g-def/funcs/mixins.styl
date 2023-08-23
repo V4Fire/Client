@@ -74,7 +74,7 @@ z-index-pos($pos, $mod = 0)
  * Generates rules for `flexbox` (direction: row)
  *
  * @param {string} $justify - justify-content (`def` for default)
- * @param {string=} [$align] - align-items (`def` for default)
+ * @param {string} [$align] - align-items (`def` for default)
  *
  * @example
  * ```stylus
@@ -95,7 +95,7 @@ flex-row($justify, $align = $justify)
  * Generates rules for `flexbox` (direction: row-reverse)
  *
  * @param {string} $justify - justify-content (`def` for default)
- * @param {string=} [$align] - align-items (`def` for default)
+ * @param {string} [$align] - align-items (`def` for default)
  *
  * @example
  * ```stylus
@@ -111,7 +111,7 @@ flex-row-rev($justify, $align = $justify)
  * Generates rules for `flexbox` (direction: column)
  *
  * @param {string} $justify - justify-content (`def` for default)
- * @param {string=} [$align] - align-items (`def` for default)
+ * @param {string} [$align] - align-items (`def` for default)
  *
  * @example
  * ```stylus
@@ -127,7 +127,7 @@ flex-col($justify, $align = $justify)
  * Generates rules for `flexbox` (direction: column-reverse)
  *
  * @param {string} $justify - justify-content (`def` for default)
- * @param {string=} [$align] - align-items (`def` for default)
+ * @param {string} [$align] - align-items (`def` for default)
  *
  * @example
  * ```stylus
@@ -143,7 +143,7 @@ flex-col-rev($justify, $align = $justify)
  * Generates rules for a stretch modal layer
  *
  * @param {string} $position - position type
- * @param {string=} [$zIndexPos] - `zIndex` position
+ * @param {string} [$zIndexPos] - `zIndex` position
  */
 stretch-layer($position, $zIndexPos = "modal")
 	position $position
@@ -156,8 +156,8 @@ stretch-layer($position, $zIndexPos = "modal")
 /**
  * Generates rules from object properties
  *
- * @param {Object} $opts
- * @param {boolean=} $normalize
+ * @param {object} $opts
+ * @param {boolean} $normalize
  */
 interpolate-props($opts, $normalize = true)
 	if type($opts) == "object"
@@ -168,7 +168,7 @@ interpolate-props($opts, $normalize = true)
 /**
  * Generates a path from the specified sequence
  *
- * @param {!Array<string>} $arr
+ * @param {Array<string>} $arr
  *
  * @example
  * ```styl

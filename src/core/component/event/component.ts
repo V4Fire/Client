@@ -13,31 +13,34 @@ import { globalEmitter } from 'core/component/event/emitter';
 import type { ComponentResetType } from 'core/component/event/interface';
 
 /**
- * Emits the special event for all component to reset the passed component state.
- * By default, this means a complete reload of all providers and storages bound to components.
+ * Emits a special event to reset components' state to its default settings.
+ * By default, this event triggers a complete reload of all providers and storages bound to components.
+ * Additionally, you can choose from several types of component resets:
  *
- * @param [type] - the reset type:
+ * @param [type] - reset type:
  *   1. `'load'` - reloads all data providers bound to components;
- *   2. `'load.silence'` - reloads all data providers bound to components,
- *      but without changing components statuses to `loading`;
+ *   2. `'load.silence'` - reloads all data providers bound to components without changing
+ *      components' statuses to `loading`;
  *
- *   3. `'router'` - resets all component bindings to the application router;
- *   4. `'router.silence'` - resets all component bindings to the application router,
- *      but without changing components statuses to `loading`;
+ *   3. `'router'` - resets all components' bindings to the application router;
+ *   4. `'router.silence'` - resets all components' bindings to the application router without
+ *      changing components' statuses to `loading`;
  *
  *   5. `'storage'` - reloads all storages bound to components;
- *   6. `'storage'` - reloads all storages bound to components,
- *      but without changing components statuses to `loading`;
+ *   6. `'storage'` - reload all storages bound to components without changing components' statuses to `loading`;
  *
- *   7. `'silence'` - reloads all providers and storages bound to components,
- *      but without changing components statuses to `loading`.
+ *   7. `'silence'` - reloads all providers and storages bound to components without
+ *      changing components' statuses to `loading`.
  */
 export function resetComponents(type?: ComponentResetType): void {
 	globalEmitter.emit(type != null ? `reset.${type}` : 'reset');
 }
 
 /**
- * Implements event emitter API for the specified component instance
+ * Implements the event emitter interface for a given component.
+ * The interface includes methods such as `on`, `once`, `off`, and `emit`.
+ * All event handlers are proxied by a component internal [[Async]] instance.
+ *
  * @param component
  */
 export function implementEventEmitterAPI(component: object): void {
@@ -46,11 +49,11 @@ export function implementEventEmitterAPI(component: object): void {
 	const
 		ctx = Object.cast<UnsafeComponentInterface>(component);
 
-	const $e = new EventEmitter({
+	const $e = ctx.$async.wrapEventEmitter(new EventEmitter({
 		maxListeners: 1e3,
 		newListener: false,
 		wildcard: true
-	});
+	}));
 
 	const
 		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
@@ -94,12 +97,15 @@ export function implementEventEmitterAPI(component: object): void {
 	function getMethod(method: 'on' | 'once' | 'off') {
 		return function wrapper(this: unknown, event, cb) {
 			Array.concat([], event).forEach((event) => {
-				$e[method](Object.cast(event), Object.cast(cb));
+				if (method === 'off' && cb == null) {
+					$e.removeAllListeners(event);
+
+				} else {
+					$e[method](Object.cast(event), Object.cast(cb));
+				}
 			});
 
 			return this;
 		};
 	}
-
-	/* eslint-enable @typescript-eslint/typedef */
 }

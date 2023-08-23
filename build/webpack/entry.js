@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	path = require('upath'),
@@ -17,7 +17,7 @@ const
  *
  * @param {string} name - entry point name
  * @param {string} src - entry point src
- * @returns {!Object}
+ * @returns {object}
  */
 module.exports = async function entry(name, src) {
 	const

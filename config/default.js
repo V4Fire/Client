@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	config = require('@v4fire/core/config/default');
@@ -30,7 +30,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @cli engine
 	 * @env ENGINE
 	 *
-	 * @param {string=} [def] - default value
+	 * @param {string} [def] - default value
 	 * @returns {string}
 	 */
 	engine(def = 'vue3') {
@@ -41,7 +41,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
-	/** @inheritDoc */
 	build: {
 		/**
 		 * Project build mode
@@ -49,7 +48,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli build-mode
 		 * @env BUILD_MODE
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		mode(def = IS_PROD ? 'production' : 'development') {
@@ -119,7 +118,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli component-lock-prefix
 		 * @env COMPONENT_LOCK_PREFIX
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		componentLockPrefix(def = this.config.webpack.fatHTML() ? 'fat-html' : '') {
@@ -156,7 +155,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli demo-page
 		 * @env DEMO_PAGE
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		demoPage(def = 'p-v4-components-demo') {
@@ -186,7 +185,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli mode
 		 * @env MODE
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		mode(def = IS_PROD ? 'production' : 'development') {
@@ -202,7 +201,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli cache-type
 		 * @env CACHE_TYPE
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		cacheType(def = 'memory') {
@@ -218,7 +217,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli target
 		 * @env TARGET
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {?string}
 		 */
 		target(
@@ -238,7 +237,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli devtool
 		 * @env DEVTOOL
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {?string}
 		 */
 		devtool(def) {
@@ -254,8 +253,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli stats
 		 * @env STATS
 		 *
-		 * @param {boolean=} [def] - default value
-		 * @returns {(boolean|string|Object)}
+		 * @param {boolean} [def] - default value
+		 * @returns {(boolean|string|object)}
 		 */
 		stats(def = true) {
 			return o('stats', {
@@ -292,7 +291,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli hydration
 		 * @env HYDRATION
 		 *
-		 * @param {boolean=} [def] - default value
+		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
 		hydration(def = this.ssr) {
@@ -312,7 +311,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli fat-html
 		 * @env FAT_HTML
 		 *
-		 * @param {number=} [def] - default value
+		 * @param {number} [def] - default value
 		 * @returns {number}
 		 */
 		fatHTML(def = 0) {
@@ -330,7 +329,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli inline-initial
 		 * @env INLINE_INITIAL
 		 *
-		 * @param {boolean=} [def] - default value
+		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
 		inlineInitial(def = false) {
@@ -361,7 +360,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			/**
 			 * Returns parameters for `optimization.splitChunks`
-			 * @returns {!Object}
+			 * @returns {object}
 			 */
 			splitChunks() {
 				return {};
@@ -373,7 +372,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 * @cli optimize-data-uri-limit
 			 * @env OPTIMIZE_DATA_URI_LIMIT
 			 *
-			 * @param {number=} [def] - default value
+			 * @param {number} [def] - default value
 			 * @returns {(number|undefined)}
 			 */
 			dataURILimit(def = 2 * 1024) {
@@ -393,7 +392,18 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Returns the `webpack.aliases` value
+		 *
+		 * @see https://webpack.js.org/configuration/resolve/#resolvealias
+		 * @returns {object}
+		 */
+		aliases() {
+			return {};
+		},
+
+		/**
 		 * Returns the `webpack.externals` value
+		 * @returns {object}
 		 */
 		externals() {
 			return {
@@ -412,7 +422,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli dynamic-public-path
 		 * @env DYNAMIC_PUBLIC_PATH
 		 *
-		 * @param {(boolean|string)=} [def] - default value
+		 * @param {(boolean|string)} [def] - default value
 		 * @returns {(?string|boolean)}
 		 */
 		dynamicPublicPath(def) {
@@ -434,9 +444,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @cli provide-public-path-with-query
 		 * @env PROVIDE_PUBLIC_PATH_WITH_QUERY
-		 * @default `true`
 		 *
-		 * @param {boolean=} [def] - default value
+		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
 		providePublicPathWithQuery(def = true) {
@@ -454,7 +463,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli public-path
 		 * @env PUBLIC_PATH
 		 *
-		 * @param args
+		 * @param {...Array<string>} args
 		 * @returns {string}
 		 *
 		 * @example
@@ -508,7 +517,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `output.filename` value.
 		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param vars
+		 * @param {object} vars
 		 * @returns {string}
 		 *
 		 * @example
@@ -538,7 +547,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `DllPlugin.output.filename` value.
 		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param vars
+		 * @param {object} vars
 		 * @returns {string}
 		 *
 		 * @example
@@ -555,7 +564,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * Returns the `FileLoader.output.filename` value.
 		 * The method can take a dictionary with values to expand macros.
 		 *
-		 * @param params
+		 * @param {object} params
 		 * @returns {string}
 		 *
 		 * @example
@@ -627,8 +636,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @env PROGRESS
 		 *
 		 * @see https://github.com/npkgz/cli-progress
-		 * @param [def] - default value
-		 * @returns {Object}
+		 * @param {boolean} [def] - default value
+		 * @returns {void|object}
 		 */
 		progress(def = true) {
 			const enabled = o('progress', {
@@ -697,20 +706,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * 2. client - options for compiling the app as a client app.
 	 *
 	 * @override
-	 * @returns {{server: !Object, client: !Object}}
+	 * @returns {{server: object, client: object}}
 	 */
 	typescript() {
-		const
-			server = super.typescript();
-
 		const configFile = fs.existsSync(path.join(this.src.cwd(), 'client.tsconfig.json')) ?
 			'client.tsconfig.json' :
 			'tsconfig.json';
 
+		const
+			server = super.typescript();
+
+		const {
+			compilerOptions: {module}
+		} = require(path.join(this.src.cwd(), configFile));
+
 		const client = this.extend({}, server, {
 			configFile,
 			compilerOptions: {
-				module: this.webpack.ssr || this.webpack.fatHTML() ? 'commonjs' : 'ES2020'
+				module: this.webpack.ssr ? 'commonjs' : module
 			}
 		});
 
@@ -730,7 +743,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `stylus-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	stylus() {
 		return {
@@ -744,7 +757,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `css-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	css() {
 		return {};
@@ -752,7 +765,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `CssMinimizerPlugin`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	cssMinimizer() {
 		return {};
@@ -760,7 +773,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `MiniCssExtractPlugin`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	miniCssExtractPlugin() {
 		return {};
@@ -770,7 +783,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * Returns parameters for `Statoscope`
 	 *
 	 * @see https://github.com/statoscope/statoscope/tree/master/packages/webpack-plugin#usage
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	statoscope() {
 		return {
@@ -805,7 +818,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `postcss-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	postcss() {
 		return {};
@@ -813,7 +826,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `postcss/autoprefixer`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	autoprefixer() {
 		return {remove: false};
@@ -821,7 +834,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `style-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	style() {
 		return {
@@ -839,7 +852,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli t
 		 * @env THEME
 		 *
-		 * @param {string=} [def] - default value
+		 * @param {string} [def] - default value
 		 * @returns {string}
 		 */
 		default(def) {
@@ -857,8 +870,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @cli include-themes
 		 * @env INCLUDE_THEMES
 		 *
-		 * @param {string=} [def] - default value
-		 * @returns {!Array<string>|boolean}
+		 * @param {string} [def] - default value
+		 * @returns {Array<string>|boolean}
 		 */
 		include(def) {
 			return o('include-themes', {
@@ -887,7 +900,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * 1. server - for .ess files;
 	 * 2. client - for .ss files.
 	 *
-	 * @returns {{server: !Object, client: !Object}}
+	 * @returns {{server: object, client: object}}
 	 */
 	snakeskin() {
 		const
@@ -919,7 +932,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `html-loader`
-	 * @returns {!Object}
+	 *
+	 * @see https://webpack.js.org/loaders/html-loader/#options
+	 * @returns {object}
 	 */
 	html() {
 		const
@@ -927,20 +942,26 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		return {
 			sources: false,
-
-			minimize: {
-				useShortDoctype: true,
+			minimize: isProd && {
+				caseSensitive: true,
+				collapseWhitespace: true,
 				conservativeCollapse: true,
-				removeAttributeQuotes: true,
-				removeComments: isProd,
-				collapseWhitespace: isProd
+				keepClosingSlash: true,
+				minifyCSS: true,
+				minifyJS: false,
+				// Keep comments for SSI
+				removeComments: false,
+				removeScriptTypeAttributes: true,
+				removeStyleLinkTypeAttributes: true
 			}
 		};
 	},
 
 	/**
 	 * Returns parameters for a favicon generator
-	 * @returns {!Object}
+	 *
+	 * @see https://github.com/itgalaxy/favicons#usage
+	 * @returns {object}
 	 */
 	favicons() {
 		return {
@@ -953,13 +974,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			orientation: 'portrait',
 			version: 1.0,
 			logging: false,
-			manifestName: 'manifest.json'
+			manifestName: 'manifest.json',
+			// Custom manifest URL
+			manifestHref: ''
 		};
 	},
 
 	/**
 	 * Returns parameters for `image-webpack-loader`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	imageOpts() {
 		return {
@@ -975,23 +998,75 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	/**
 	 * Returns parameters for `typograf`
-	 * @returns {!Object}
+	 * @returns {object}
 	 */
 	typograf() {
 		return {
-			locale: this.locale
+			// Typograf dont support en locale
+			locale: this.locale === 'en' ? 'en-US' : this.locale
 		};
+	},
+
+	i18n: {
+		/**
+		 * A strategy for loading localization files into the application:
+		 *
+		 *  1. `inlineSingleHTML` - all localization files found will be included in the application HTML files themselves;
+		 *  2. `inlineMultipleHTML` - based on the original HTML files of the application, new ones will be generated for
+		 *      each supported locale;
+		 *  3. `externalMultipleJSON` - all found localization files will be combined into several JSON files
+		 *      for each locale.
+		 *
+		 * @cli i18n-strategy
+		 * @env I18N_STRATEGY
+		 * @param {string} [def]
+		 *
+		 * @returns {string}
+		 */
+		strategy(def = 'inlineSingleHTML') {
+			return o('i18n-strategy', {
+				env: true,
+				default: def
+			});
+		},
+
+		/**
+		 * A list of supported languages for application internationalization.
+		 * JS files with names that match the name of the locale and located in folders named i18n will be
+		 * loaded into the application.
+		 *
+		 * @cli supported-locales
+		 * @env SUPPORTED_LOCALES
+		 *
+		 * @param {string} [def] - default value
+		 * @returns {Array<import('@v4fire/core').Language>}
+		 *
+		 * @example
+		 * ```bash
+		 * npx webpack --env supported-locales=en,ru
+		 * ```
+		 */
+		supportedLocales(def = this.config.locale) {
+			return o('supported-locales', {
+				env: true,
+				coerce: (str) => str.split(/\s*,\s*/),
+				default: def
+			});
+		},
+
+		/**
+		 * The name of the generated global variable where the language packs are stored
+		 */
+		langPacksStore: 'LANG_PACKS'
 	},
 
 	/** @override */
 	runtime() {
 		return {
 			...super.runtime(),
-			engine: this.engine(),
 
+			engine: this.engine(),
 			ssr: this.webpack.ssr,
-			// eslint-disable-next-line camelcase
-			node_js: this.webpack.ssr,
 
 			debug: false,
 			dynamicPublicPath: this.webpack.dynamicPublicPath(),
@@ -1002,7 +1077,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			blockNames: false,
 			passDesignSystem: false,
 
-			'prelude/test-env': !isProd
+			'prelude/test-env': !isProd && !this.webpack.ssr
 		};
 	},
 
@@ -1010,7 +1085,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * Returns a component dependency map.
 	 * This map can be used to provide dynamic component dependencies in `index.js` files.
 	 *
-	 * @returns {!Object}
+	 * @returns {object}
 	 *
 	 * @example
 	 * ```

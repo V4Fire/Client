@@ -80,7 +80,7 @@ test.describe('<b-checkbox>', () => {
 	});
 
 	test.describe('the component should change its value on click', () => {
-		test('if the component does not have the `value` prop, then when it is selected, it will have a value equal to true - otherwise undefined', async ({page}) => {
+		test('if the component does not have the `value` prop, then when it is checked, it will have a value equal to true - otherwise undefined', async ({page}) => {
 			const target = await renderCheckbox(page);
 
 			test.expect(
@@ -100,7 +100,7 @@ test.describe('<b-checkbox>', () => {
 			).toBeUndefined();
 		});
 
-		test('if the component has the `value` prop, then when it is selected, it will have a value equal to the value passed to the prop - otherwise undefined', async ({page}) => {
+		test('if the component has the `value` prop, then when it is checked, it will have a value equal to the value passed to the prop - otherwise undefined', async ({page}) => {
 			const target = await renderCheckbox(page, {value: 'bar'});
 
 			test.expect(
@@ -142,7 +142,7 @@ test.describe('<b-checkbox>', () => {
 	});
 
 	test.describe('the component should change its value when calling special methods', () => {
-		test('if the component does not have the `value` prop, then when it is selected, it will have a value equal to true - otherwise undefined', async ({page}) => {
+		test('if the component does not have the `value` prop, then when it is checked, it will have a value equal to true - otherwise undefined', async ({page}) => {
 			const target = await renderCheckbox(page);
 
 			test.expect(
@@ -174,7 +174,7 @@ test.describe('<b-checkbox>', () => {
 			).toBeUndefined();
 		});
 
-		test('if the component has the `value` prop, then when it is selected, it will have a value equal to the value passed to the prop - otherwise undefined', async ({page}) => {
+		test('if the component has the `value` prop, then when it is checked, it will have a value equal to the value passed to the prop - otherwise undefined', async ({page}) => {
 			const target = await renderCheckbox(page, {value: 'bar'});
 
 			test.expect(
@@ -209,9 +209,9 @@ test.describe('<b-checkbox>', () => {
 
 	/**
 	 * @param page
-	 * @param attrs
+	 * @param [attrs]
 	 */
-	async function renderCheckbox(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bCheckbox>> {
+	async function renderCheckbox(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bCheckbox>> {
 		return Component.createComponent(page, 'b-checkbox', {
 			attrs: {
 				'data-id': 'target',

@@ -9,10 +9,11 @@
 import { component, ComponentInterface } from 'core/component';
 import type { Module } from 'components/friends/module-loader';
 
+import type iBlock from 'components/super/i-block/i-block';
+import type { Stage } from 'components/super/i-block/interface';
+
 import type { ModsProp } from 'components/super/i-block/modules/mods';
 import { prop, DecoratorMethodWatcher } from 'components/super/i-block/decorators';
-
-import type { Stage } from 'components/super/i-block/interface';
 
 @component()
 export default abstract class iBlockProps extends ComponentInterface {
@@ -156,7 +157,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 *      Also, the method can take additional observation parameters.
 	 *      Keep in mind that properties or events are taken from the component that contains the current one.
 	 *
-	 * @see [[iBlock.watch]]
+	 * {@link iBlock.watch}
+	 *
 	 * @example
 	 * ```js
 	 * // We have two components: A and B.
@@ -255,12 +257,6 @@ export default abstract class iBlockProps extends ComponentInterface {
 
 	@prop({type: Object, required: false})
 	override readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
-
-	/**
-	 * A link to the `i18n` function that will be used to localize string literals
-	 */
-	@prop(Function)
-	readonly i18n: typeof i18n = i18n;
 
 	/**
 	 * Whether to add classes to the component markup with its identifier

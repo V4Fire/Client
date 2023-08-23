@@ -13,7 +13,7 @@ import { propRgxp, attrRgxp, storeRgxp, hasSeparator } from 'core/component/refl
 import type { PropertyInfo } from 'core/component/reflect/interface';
 
 /**
- * Returns an information object of a component property by the specified path
+ * Returns an object containing information of the component property by the specified path
  *
  * @param path
  * @param component - the tied component instance
@@ -91,6 +91,7 @@ export function getPropertyInfo(path: string, component: ComponentInterface): Pr
 		systemFields,
 		computedFields,
 		accessors,
+		// eslint-disable-next-line deprecation/deprecation
 		params: {deprecatedProps}
 	} = component.unsafe.meta;
 

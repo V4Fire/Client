@@ -7,7 +7,7 @@
  */
 
 const
-	{webpack, csp} = require('@config/config'),
+	{webpack, csp, i18n} = require('@config/config'),
 	{getScriptDecl} = include('src/components/super/i-static-page/modules/ss-helpers/tags');
 
 exports.getVarsDecl = getVarsDecl;
@@ -16,7 +16,8 @@ exports.getVarsDecl = getVarsDecl;
  * Returns declaration of global variables to initialize the application.
  * You need to put this declaration within a script tag or use the `wrap` option.
  *
- * @param {boolean=} [wrap] - if true, the declaration is wrapped by a script tag
+ * @param {object} [opts]
+ * @param {boolean} [opts.wrap] - if true, the declaration is wrapped by a script tag
  * @returns {string}
  */
 function getVarsDecl({wrap} = {}) {
@@ -24,6 +25,8 @@ function getVarsDecl({wrap} = {}) {
 Object.defineProperty(window, '${csp.nonceStore()}', {
 	value: ${csp.postProcessor ? JSON.stringify(csp.nonce()) : csp.nonce()}
 });
+
+var ${i18n.langPacksStore} = {};
 
 var PATH = Object.create(null);
 var PUBLIC_PATH = ${Object.isString(webpack.dynamicPublicPath()) ? `String(${webpack.dynamicPublicPath()}).trim()` : 'undefined'};

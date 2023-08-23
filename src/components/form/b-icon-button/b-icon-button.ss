@@ -22,9 +22,8 @@
 		< _.&__cell.&__icon v-else
 			< component &
 				v-if = iconComponent |
-				:instanceOf = bIcon |
 				:is = iconComponent |
 				:value = icon
 			.
 
-			< @b-icon v-else | :value = icon
+			< .g-icon v-else | v-icon:[icon]

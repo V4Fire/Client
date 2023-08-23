@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 require('@config/config');
 
@@ -87,7 +87,7 @@ describe('build/stylus/plugins/get-ds-field-value', () => {
 			'.foo { content: join(".", keys(getDSValue(colors))) }',
 			{use: [plugins]},
 			(err, colors) => {
-				expect(colors.includes(Object.keys(plainWithAbstractColors.colors).join('.'))).toBeTrue();
+				expect(colors.includes(Object.keys(plainWithAbstractColors.colors).join('.'))).toBeTruthy();
 			}
 		);
 	});

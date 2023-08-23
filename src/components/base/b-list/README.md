@@ -10,7 +10,7 @@ If you need a more complex layout, provide it via a slot or `item/itemProps` pro
 
 * The component extends [[iData]].
 
-* The component implements [[iVisible]], [[iWidth]], [[iItems]] traits.
+* The component implements [[iVisible]], [[iWidth]], [[iActiveItems]] traits.
 
 * The component is used as functional if there is no provided the `dataProvider` prop.
 
@@ -40,28 +40,28 @@ Also, you can see the parent component and the component traits.
 
 ## Events
 
-| EventName         | Description                                                                                                                     | Payload description | Payload  |
-|-------------------|---------------------------------------------------------------------------------------------------------------------------------|---------------------|----------|
-| `change`          | The active element of the component has been changed                                                                            | The active item(s)  | `Active` |
-| `immediateChange` | The active element of the component has been changed (the event can fire at component initializing if `activeProp` is provided) | The active item(s)  | `Active` |
-| `actionChange`    | The active element of the component has been changed due to some user action                                                    | The active item(s)  | `Active` |
-| `itemsChange`     | The list of items has been changed                                                                                              | The list of items   | `Items`  |
+| EventName      | Description                                                                     | Payload description | Payload  |
+|----------------|---------------------------------------------------------------------------------|---------------------|----------|
+| `change`       | The active element(s) of the component has been changed                         | The active item(s)  | `Active` |
+| `actionChange` | The active element(s) of the component has been changed due to some user action | The active item(s)  | `Active` |
+| `itemsChange`  | The list of component items has been changed                                    | The list of items   | `Items`  |
 
 Also, you can see the parent component and the component traits.
 
 ## Associated types
 
-The component has one associated type to specify the active component item: **Active**.
+The component has two associated types to specify the active component item(s): **ActiveProp** and **Active**.
 
 ```typescript
 import bList, { component } from 'components/super/b-list/b-list';
 
-export * from 'components/super/b-list/b-list';
-
 @component()
-export default class myList extends bList {
+export default class MyList extends bList {
   /** @override */
-  readonly Active!: number;
+  readonly ActiveProp!: CanIter<number>;
+
+  /** @override */
+  readonly Active!: number | Set<number>;
 }
 ```
 
@@ -70,10 +70,8 @@ In addition, there are associated types to specify the item types: **Item** and 
 ```typescript
 import bList, { component } from 'components/super/b-list/b-list';
 
-export * from 'components/super/b-list/b-list';
-
 @component()
-export default class myList extends bList {
+export default class MyList extends bList {
   /** @override */
   readonly Item!: MyItem;
 }
@@ -91,7 +89,7 @@ The component can be used with the `v-model` directive.
 
 ## Usage
 
-### Using the component with a provided list of items and a default active item
+### Using a component with a provided list of elements and a default active element
 
 ```
 < b-list :items = [ &
@@ -100,7 +98,7 @@ The component can be used with the `v-model` directive.
 ] .
 ```
 
-### Using the component with a provided active item
+### Using a component with a provided active item
 
 ```
 < b-list :active = 0 | :items = [ &
@@ -109,7 +107,7 @@ The component can be used with the `v-model` directive.
 ] .
 ```
 
-### Using the component with provided links and custom attributes
+### Using a component with provided links and custom attributes
 
 ```
 < b-list :items = [ &
@@ -118,13 +116,13 @@ The component can be used with the `v-model` directive.
 ] .
 ```
 
-### Loading items from a data provider
+### Loading component items from a data provider
 
 ```
 < b-list :active = true | :dataProvider = 'MyProvider'
 ```
 
-### Using the component with creating an additional component for each element
+### Using a component with creating an additional component for each element
 
 ```
 < b-list &
@@ -200,17 +198,9 @@ The component supports a bunch of slots to provide.
 
 ## API
 
-Also, you can see the implemented traits or the parent component.
+Additionally, you can view the implemented traits or the parent component.
 
 ### Props
-
-#### [listTag = `'ul'`]
-
-List root tag type.
-
-#### [listElTag = `'li'`]
-
-List element tag type.
 
 #### [activeProp]
 
@@ -234,6 +224,14 @@ By default, if the component is switched to the `multiple` mode, this value is s
 
 Additional attributes that are provided to the native list tag.
 
+#### [listTag = `'ul'`]
+
+List root tag type.
+
+#### [listElTag = `'li'`]
+
+List element tag type.
+
 ### Fields
 
 #### items
@@ -244,7 +242,7 @@ A list of the component items.
 
 #### active
 
-A component active item/s.
+A component active item(s).
 If the component is switched to the `multiple` mode, the getter will return a `Set` object.
 
 #### attrs

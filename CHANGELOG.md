@@ -11,6 +11,292 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Major update to `b-virtual-scroll`. Please see the component readme for changes and migration guide `components/base/b-virtual-scroll`.
+
+#### :rocket: New Feature
+
+* Added new testing API `ComponentObject` that allows for easier interaction with components in the testing environment `test/helpers/component-object`.
+* Added new testing API for mocking and spying on functions at runtime `test/helpers/mock`.
+
+## v4.0.0-beta.9 (2023-07-19)
+
+#### :boom: Breaking Change
+
+* The string value compilation in `getItemKey` helper was removed.
+  Now the string parameter is used as a property name to get the key value. `components/traits/i-items/i-items`
+
+* The `data-cached-dynamic-class` attribute format is changed to the `core/json#evalWith` reviver format `core/component/render/helpers/attrs`
+
+#### :rocket: New Feature
+
+* Added a new method `getHref` `b-list`
+* Added a new `hrefTransition` event to provide the ability to prevent router navigation when a link is clicked `bRouter`
+
+#### :house: Internal
+
+* The `kv-storage/engines/cookies` engine now inherits from `kv-storage/engines/string`
+
+## v4.0.0-beta.8 (2023-07-07)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect update of the `selected` parameter in the native mode of the `b-select`
+
+## v4.0.0-beta.7 (2023-06-27)
+
+#### :rocket: New Feature
+
+* Added support for `mailto:` and `tel:` href-s `b-router`
+
+## v3.57.1 (2023-06-27)
+
+#### :bug: Bug Fix
+
+* Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
+
+## v3.50.0 (2023-06-??)
+
+#### :rocket: New Feature
+
+* Fill original route path parameters from URL of the route that redirects on it in `core/router`
+
+## v3.49.0 (2023-05-31)
+
+#### :rocket: New Feature
+
+* Added ability to specify a custom validator function in `i-input`
+
+## v3.48.0 (2023-05-30)
+
+#### :rocket: New Feature
+
+* Added new helpers for working with gradients and shadows from the design system `global/g-def/funcs`
+
+## v3.47.4 (2023-05-29)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when observing fields that are redefined from props `core/component/decorators`
+
+## v3.47.3 (2023-05-26)
+
+#### :rocket: New Feature
+
+* Added a new helper for collecting i18n keysets `build/helpers`
+
+## v3.47.2 (2023-05-18)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when the overridden getter with cache had a value equal to the parent's getter value `core/component/decorators`
+
+## v3.47.1 (2023-05-18)
+
+#### :bug: [Bug Fix]
+
+* Replace `undefined` values in `route.params` by an alias or query param, if necessary, in `b-router`
+
+## v3.47.0 (2023-05-05)
+
+#### :rocket: New Feature
+
+* Added ability to exclude an item from being activated by specifying `activatable` flag in `i-active-items` trait
+* Added `getItemByValue` method in `i-active-items` trait, `b-list` and `b-tree`
+
+## v3.46.4 (2023-05-05)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with negative values in design system `build/stylus/ds/helpers`
+
+## v3.46.3 (2023-04-28)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with the `typograf` filter that didn't work due to the wrong locale path.
+
+## v3.46.2 (2023-04-26)
+
+#### :house: Internal
+
+* Migrate on `node@18`
+
+## v3.46.1 (2023-04-13)
+
+#### :bug: Bug Fix
+
+* Disabled js minify in html loader
+
+## v3.46.0 (2023-04-10)
+
+#### :house: Internal
+
+* Updated `playwright@1.32.1`
+
+## v3.45.0 (2023-04-04)
+
+#### :house: Internal
+
+* Moving to `yarn` package manager
+* Updated CI script to `yarn`
+* Removed unused dependencies
+* Updated dependencies:
+  * `favicons@7.1.0`
+  * `@statoscope/webpack-plugin@5.25.1`
+  * `webpack-cli@5.0.1`
+  * `webpack@5.76.0`
+
+## v3.44.3 (2023-03-30)
+
+#### :bug: [Bug Fix]
+
+* Overriding original parameter by alias in route `b-router` `core/router`
+
+## v3.44.2 (2023-03-29)
+
+#### :house: Internal
+
+* Changed `optionProps` and `itemProps` params `bSlider`
+
+## v3.44.1 (2023-03-28)
+
+#### :rocket: New Feature
+
+* Added possibility to specify aliases for dynamic parameters in path `b-router` `core/router`
+
+## v3.43.1 (2023-03-27)
+
+#### :bug: Bug Fix
+
+* Fixed a bug when typograf does not support the given locale `build/snakeskin`
+
+## v3.43.0 (2023-03-23)
+
+#### :bug: Bug Fix
+
+* Added automatic `item.value` generation `bTree` `bList`
+* Fixed overloads for `fold`/`unfold` methods `bTree`
+
+## v3.42.1 (2023-03-14)
+
+#### :nail_care: Polish
+
+* Changed `activeElement` getter return type `bList`
+
+## v3.42.0 (2023-03-14)
+
+#### :bug: Bug Fix
+
+* Removed some options of `html-webpack-plugin` that causes bugs
+* Fixed replace pattern for `i18n` webpack plugin
+
+## v3.41.0 (2023-03-14)
+
+#### :boom: Breaking Change
+
+* Renamed option `Item['id']` to `Item['value']` `bTree`
+
+#### :rocket: New Feature
+
+* Added a new trait `iActiveItems`
+* Added `iActiveItems` implementation `bTree` `bList`
+
+## v3.40.1 (2023-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed Windows support in localization plugin `build/webpack/plugins/i18n-plugin`
+
+## v3.40.0 (2023-03-10)
+
+#### :house: Internal
+
+* Updated `html-loader@4.2.0`
+* Added variable `BUILD_MODE` into `index.d.ts` from webpack globals
+* Added the possibility to change the manifest href and added `use-credentials` attribute
+
+## v3.39.0 (2023-03-07)
+
+#### :rocket: New Feature
+
+* Added new options `i18n` `config`
+* Added a new plugin `i18n-plugin` `build/webpack`
+
+## v3.38.0 (2023-02-20)
+
+#### :bug: Bug Fix
+
+* Fixed use of `i18n` function in default prop values `iBlock`
+
+## v3.37.0 (2023-02-20)
+
+#### :bug: Bug Fix
+
+* Downgraded `css-loader` version for fix svg bundling
+
+## v3.36.0 (2023-02-14)
+
+#### :house: Internal
+
+* Replaced `fast-css-loader` with `css-loader`
+
+## v3.35.0 (2023-02-14)
+
+#### :boom: Breaking Change
+
+* Changed `i18n` function type from prop to getter `iBlock`
+
+#### :rocket: New Feature
+
+* Integrating the new internationalization API
+
+## v3.34.1 (2023-01-31)
+
+#### :house: Internal
+
+* Added the ability to specify webpack aliases from the config `build/webpack/alias`
+
+## v3.34.0 (2023-01-30)
+
+#### :boom: Breaking Change
+
+* [Now `commonjs` module will not be installed for typescript processing into `fathtml` mode, instead `module` from `tsconfig` will be taken by default `config/default`](https://github.com/V4Fire/Client/discussions/773)
+
+#### :house: Internal
+
+* Added `test:circular-deps` npm script for analyzing circular deps
+* Fixed few circular deps
+
+## v3.33.0 (2022-12-28)
+
+#### :rocket: New Feature
+
+* Added the ability to manipulate meta information of a page with `super/i-static-page/modules/page-meta-data`
+
+## v3.32.1 (2022-12-26)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with not setting an initial value of `hidden` modifier `base/b-bottom-slide`
+
+## v3.32.0 (2022-12-21)
+
+#### :rocket: New Feature
+
+* `bTree`:
+  * Added new methods `traverse`, `fold`, `unfold`, `toggleFold`
+
+#### :bug: Bug Fix
+
+* `bTree`:
+  * Fixed passing props to nested trees
+  * Fixed an issue with the prop `itemProps` not being added to items attributes
+  * Fixed adding the `folded_false` class to items without children
+
 ## v3.31.0 (2022-12-06)
 
 #### :rocket: New Feature
@@ -231,8 +517,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 ## v3.19.1 (2022-04-12)
 
 #### :house: Internal
-
-* Updated dependencies: typescript@4.6.3
+5.0 typescript@4.6.3
 
 ## v3.19.0 (2022-04-06)
 
@@ -3990,7 +4275,7 @@ export default class bExample extends iBlock {
 #### :boom: Breaking Change
 
 * Removed legacy `inject` and `provide` support for components
-* Static libraries now will be saved by a key name, instead of a file basename
+* Static libraries now will be saved by a key name instead of a file basename
 * Removed `bInputNumber`
 * Removed `iDataList`
 

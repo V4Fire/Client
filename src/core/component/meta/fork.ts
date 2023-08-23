@@ -9,7 +9,7 @@
 import type { ComponentMeta } from 'core/component/interface';
 
 /**
- * Creates a new meta object based on the specified
+ * Forks the metaobject of the passed component and returns the copy
  * @param base
  */
 export function forkMeta(base: ComponentMeta): ComponentMeta {
@@ -29,7 +29,6 @@ export function forkMeta(base: ComponentMeta): ComponentMeta {
 	});
 
 	Object.entries(base.watchers).forEach(([key, watchers]) => {
-		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (watchers != null) {
 			meta.watchers[key] = watchers.slice();
 		}

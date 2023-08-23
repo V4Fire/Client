@@ -21,6 +21,7 @@ import {
 	renderSlot as superRenderSlot,
 
 	withDirectives as superWithDirectives,
+	resolveDirective as superResolveDirective,
 
 	VNode
 
@@ -42,13 +43,17 @@ import {
 	wrapRenderList,
 	wrapRenderSlot,
 
-	wrapWithDirectives
+	wrapWithDirectives,
+	wrapResolveDirective
 
 } from 'core/component/render';
 
 import type { ComponentInterface } from 'core/component/interface';
 
 export {
+
+	Static,
+	Comment,
 
 	Fragment,
 	Teleport,
@@ -59,6 +64,7 @@ export {
 	getCurrentInstance,
 
 	toHandlers,
+	toHandlerKey,
 	toDisplayString,
 
 	openBlock,
@@ -78,7 +84,6 @@ export {
 	normalizeStyle,
 	mergeProps,
 
-	resolveDirective,
 	resolveTransitionHooks,
 
 	withCtx,
@@ -117,7 +122,8 @@ export const
 	renderSlot = wrapRenderSlot(superRenderSlot);
 
 export const
-	withDirectives = wrapWithDirectives(superWithDirectives);
+	withDirectives = wrapWithDirectives(superWithDirectives),
+	resolveDirective = wrapResolveDirective(superResolveDirective);
 
 /**
  * Renders the specified VNode and returns the result

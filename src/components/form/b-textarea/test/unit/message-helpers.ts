@@ -140,11 +140,7 @@ test.describe('<b-textarea> disallow form value', () => {
 			.toBe('true');
 	});
 
-	/**
-	 * @param page
-	 * @param attrs
-	 */
-	async function renderTextarea(page: Page, attrs: Dictionary = {}): Promise<JSHandle<bTextarea>> {
+	async function renderTextarea(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bTextarea>> {
 		await Component.createComponent(page, 'b-textarea', {
 			attrs: {
 				'data-id': 'target',
@@ -154,5 +150,4 @@ test.describe('<b-textarea> disallow form value', () => {
 
 		return Component.waitForComponentStatus(page, '[data-id="target"]', 'ready');
 	}
-
 });

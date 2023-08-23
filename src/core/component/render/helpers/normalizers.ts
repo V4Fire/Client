@@ -9,7 +9,7 @@
 import type { ComponentMeta } from 'core/component/meta';
 
 /**
- * Normalizes the passed CSS classes and returns the result
+ * Normalizes the provided CSS classes and returns the resulting output
  * @param classes
  */
 export function normalizeClass(classes: CanArray<string | Dictionary>): string {
@@ -41,13 +41,13 @@ export function normalizeClass(classes: CanArray<string | Dictionary>): string {
 }
 
 /**
- * Normalizes the passed CSS styles and returns the result
+ * Normalizes the provided CSS styles and returns the resulting output
  * @param styles
  */
 export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): string | Dictionary<string> {
 	if (Object.isArray(styles)) {
 		const
-			res = {};
+			normalizedStyles = {};
 
 		styles.forEach((style) => {
 			const normalizedStyle = Object.isString(style) ?
@@ -55,11 +55,11 @@ export function normalizeStyle(styles: CanArray<string | Dictionary<string>>): s
 				normalizeStyle(style);
 
 			if (Object.size(normalizedStyle) > 0) {
-				Object.entries(normalizedStyle).forEach(([name, style]) => res[name] = style);
+				Object.entries(normalizedStyle).forEach(([name, style]) => normalizedStyles[name] = style);
 			}
 		});
 
-		return res;
+		return normalizedStyles;
 	}
 
 	if (Object.isString(styles)) {
@@ -78,12 +78,12 @@ const
 	propertyDelimiterRE = /:(.+)/;
 
 /**
- * Parses the specified CSS style string and returns a dictionary with the parsed rules
+ * Analyzes the given CSS style string and returns a dictionary containing the parsed rules
  * @param style
  */
 export function parseStringStyle(style: string): Dictionary<string> {
 	const
-		res = {};
+		styles = {};
 
 	style.split(listDelimiterRE).forEach((singleStyle) => {
 		singleStyle = singleStyle.trim();
@@ -93,16 +93,16 @@ export function parseStringStyle(style: string): Dictionary<string> {
 				chunks = singleStyle.split(propertyDelimiterRE);
 
 			if (chunks.length > 1) {
-				res[chunks[0].trim()] = chunks[1].trim();
+				styles[chunks[0].trim()] = chunks[1].trim();
 			}
 		}
 	});
 
-	return res;
+	return styles;
 }
 
 /**
- * Normalizes the passed attributes using the specified component meta object
+ * Normalizes the passed VNode's attributes using the specified component metaobject and returns a new object
  *
  * @param attrs
  * @param dynamicProps
@@ -112,19 +112,25 @@ export function normalizeComponentAttrs(
 	attrs: Nullable<Dictionary>,
 	dynamicProps: Nullable<string[]>,
 	component: ComponentMeta
-): void {
+): CanNull<Dictionary> {
 	const {
 		props,
+		// eslint-disable-next-line deprecation/deprecation
 		params: {deprecatedProps}
 	} = component;
 
 	if (attrs == null) {
-		return;
+		return null;
 	}
 
-	normalizeComponentAttrs(Object.cast(attrs['v-attrs']), dynamicProps, component);
+	const
+		normalizedAttrs = {...attrs};
 
-	Object.keys(attrs).forEach((name) => {
+	if (Object.isDictionary(normalizedAttrs['v-attrs'])) {
+		normalizedAttrs['v-attrs'] = normalizeComponentAttrs(normalizedAttrs['v-attrs'], dynamicProps, component);
+	}
+
+	Object.keys(normalizedAttrs).forEach((name) => {
 		let
 			propName = `${name}Prop`.camelize(false);
 
@@ -148,13 +154,11 @@ export function normalizeComponentAttrs(
 		}
 	});
 
-	function updateAttrName(name: string, newName: string) {
-		if (attrs == null) {
-			return;
-		}
+	return normalizedAttrs;
 
-		attrs[newName] = attrs[name];
-		delete attrs[name];
+	function updateAttrName(name: string, newName: string) {
+		normalizedAttrs[newName] = normalizedAttrs[name];
+		delete normalizedAttrs[name];
 
 		if (dynamicProps == null) {
 			return;

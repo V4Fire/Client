@@ -1,5 +1,3 @@
-/* eslint-disable prefer-spread, prefer-rest-params */
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -8,8 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { componentRenderFactories } from 'core/component/const';
+/* eslint-disable prefer-spread */
+
+import { app, componentRenderFactories } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
+
+import { isSmartComponent } from 'core/component/reflect';
 import { createVirtualContext } from 'core/component/functional';
 
 import type {
@@ -27,6 +29,7 @@ import type {
 	renderSlot,
 
 	withDirectives,
+	resolveDirective,
 
 	VNode,
 	DirectiveArguments,
@@ -63,8 +66,8 @@ export function wrapCreateElementVNode<T extends typeof createElementVNode>(orig
  */
 export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 	return Object.cast(function wrapCreateBlock(this: ComponentInterface, ...args: Parameters<T>) {
-		const
-			[name, attrs, slots, _, dynamicProps] = args;
+		let
+			[name, attrs, slots, patchFlag, dynamicProps] = args;
 
 		let
 			component: CanUndef<ComponentMeta>;
@@ -76,20 +79,33 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			component = registerComponent(name.name);
 		}
 
-		const
-			vnode = resolveAttrs.call(this, original.apply(null, args));
+		const createVNode = (name, attrs, slots, patchFlag, dynamicProps) => {
+			const vnode = original(name, attrs, slots, patchFlag, dynamicProps);
+			return resolveAttrs.call(this, vnode);
+		};
 
 		if (component == null) {
-			return vnode;
+			return createVNode(name, attrs, slots, patchFlag, dynamicProps);
 		}
 
-		normalizeComponentAttrs(attrs, dynamicProps, component);
+		attrs = normalizeComponentAttrs(attrs, dynamicProps, component);
 
 		const
 			{componentName, params} = component,
 			{supports, r} = this.$renderEngine;
 
-		if (params.functional !== true || !supports.functional) {
+		const
+			isRegular = params.functional !== true || !supports.functional,
+			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
+
+		if (vnode.ref != null && vnode.ref.i == null) {
+			vnode.ref.i ??= {
+				refs: this.$refs,
+				setupState: {}
+			};
+		}
+
+		if (isRegular) {
 			return vnode;
 		}
 
@@ -140,16 +156,17 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			instance: Object.cast(virtualCtx)
 		});
 
-		if (functionalVNode.shapeFlag > vnode.shapeFlag) {
+		if (vnode.shapeFlag < functionalVNode.shapeFlag) {
 			// eslint-disable-next-line no-bitwise
 			vnode.shapeFlag |= functionalVNode.shapeFlag;
 		}
 
-		if (functionalVNode.patchFlag > vnode.patchFlag) {
+		if (vnode.patchFlag < functionalVNode.patchFlag) {
 			// eslint-disable-next-line no-bitwise
 			vnode.patchFlag |= functionalVNode.patchFlag;
 		}
 
+		functionalVNode.ignore = true;
 		functionalVNode.props = {};
 		functionalVNode.dirs = null;
 		functionalVNode.children = [];
@@ -176,9 +193,35 @@ export function wrapCreateElementBlock<T extends typeof createElementBlock>(orig
 export function wrapResolveComponent<T extends typeof resolveComponent | typeof resolveDynamicComponent>(
 	original: T
 ): T {
-	return Object.cast(function resolveComponent(this: ComponentInterface, name: string, ...args: any[]) {
-		const component = registerComponent(name);
-		return component?.params.functional === true ? name : original(name, ...args);
+	return Object.cast(function resolveComponent(this: ComponentInterface, name: string) {
+		if (!this.$renderEngine.supports.functional) {
+			name = name.replace(isSmartComponent, '');
+		}
+
+		const
+			component = registerComponent(name);
+
+		if (component?.params.functional === true) {
+			return name;
+		}
+
+		if (SSR) {
+			return original(name);
+		}
+
+		return app.context != null ? app.context.component(name) ?? original(name) : original(name);
+	});
+}
+
+/**
+ * Wrapper for the component library `resolveDirective` function
+ * @param original
+ */
+export function wrapResolveDirective<T extends typeof resolveDirective>(
+	original: T
+): T {
+	return Object.cast(function resolveDirective(this: ComponentInterface, name: string) {
+		return app.context != null ? app.context.directive(name) ?? original(name) : original(name);
 	});
 }
 
@@ -237,21 +280,8 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		vnode: VNode,
 		dirs: DirectiveArguments
 	) {
-		if (this == null) {
-			Object.defineProperty(vnode, 'virtualComponent', {
-				configurable: true,
-				enumerable: true,
-				get: () => vnode.el?.component
-			});
-
-		} else if (!('virtualContext' in vnode)) {
-			Object.defineProperty(vnode, 'virtualContext', {
-				configurable: true,
-				enumerable: true,
-				writable: true,
-				value: this
-			});
-		}
+		const that = this;
+		patchVNode(vnode);
 
 		const bindings = vnode.dirs ?? [];
 		vnode.dirs = bindings;
@@ -267,6 +297,9 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			const binding: DirectiveBinding = {
 				dir: Object.isFunction(dir) ? {created: dir, mounted: dir} : dir,
 				instance: Object.cast(instance),
+
+				virtualContext: vnode.virtualContext,
+				virtualComponent: vnode.virtualComponent,
 
 				value,
 				oldValue: undefined,
@@ -285,6 +318,7 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 
 					if (newVnode != null) {
 						vnode = newVnode;
+						patchVNode(vnode);
 					}
 
 					if (Object.keys(dir).length > 1 && cantIgnoreDir) {
@@ -301,5 +335,23 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		});
 
 		return vnode;
+
+		function patchVNode(vnode: VNode) {
+			if (that == null) {
+				Object.defineProperty(vnode, 'virtualComponent', {
+					configurable: true,
+					enumerable: true,
+					get: () => vnode.el?.component
+				});
+
+			} else if (!('virtualContext' in vnode)) {
+				Object.defineProperty(vnode, 'virtualContext', {
+					configurable: true,
+					enumerable: true,
+					writable: true,
+					value: that
+				});
+			}
+		}
 	});
 }

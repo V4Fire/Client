@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	$C = require('collection.js');
@@ -17,7 +17,10 @@ const
 
 /**
  * Returns parameters for `webpack.plugins`
- * @returns {!Map}
+ *
+ * @param {object} opts
+ * @param {string} opts.name
+ * @returns {Map}
  */
 module.exports = async function plugins({name}) {
 	const
@@ -27,12 +30,14 @@ module.exports = async function plugins({name}) {
 		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
 		createProgressPlugin = include('build/webpack/plugins/progress-plugin'),
 		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings'),
+		I18NGeneratorPlugin = include('build/webpack/plugins/i18n-plugin'),
 		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
 
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
 		['dependencies', new DependenciesPlugin()],
-		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()]
+		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()],
+		['i18nGeneratorPlugin', new I18NGeneratorPlugin()]
 	]);
 
 	const
@@ -47,6 +52,12 @@ module.exports = async function plugins({name}) {
 
 	if (config.webpack.progress()) {
 		plugins.set('progress-plugin', createProgressPlugin(name));
+	}
+
+	if (config.webpack.fatHTML()) {
+		plugins.set('limit-chunk-count-plugin', new webpack.optimize.LimitChunkCountPlugin({
+			maxChunks: 1
+		}));
 	}
 
 	return plugins;

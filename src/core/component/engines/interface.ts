@@ -12,7 +12,7 @@ import type {
 	ObjectDirective as SuperObjectDirective,
 	VNode as SuperVNode,
 
-	DirectiveBinding,
+	DirectiveBinding as SuperDirectiveBinding,
 	FunctionDirective
 
 } from 'vue';
@@ -29,6 +29,7 @@ export interface VNode<
 	HostElement = RendererElement,
 	ExtraProps = {[key: string]: any}
 > extends SuperVNode<HostNode, HostElement, ExtraProps> {
+	ignore?: boolean;
 	dynamicProps?: string[];
 	dynamicChildren?: VNode[];
 	virtualContext?: ComponentInterface;
@@ -38,6 +39,11 @@ export interface VNode<
 export interface ResolveDirective<E = Element> {
 	directive(name: string): CanUndef<Directive>;
 	directive(name: string, directive: Directive): ReturnType<CreateAppFunction<E>>;
+}
+
+export interface DirectiveBinding<T = any> extends SuperDirectiveBinding<T> {
+	virtualContext?: ComponentInterface;
+	virtualComponent?: ComponentInterface;
 }
 
 export interface ObjectDirective<T = any, V = any> extends SuperObjectDirective<T, V> {

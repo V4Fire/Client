@@ -1,11 +1,15 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
  *
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+'use strict';
+
+/**
+ * @typedef {import('@v4fire/design-system')} DesignSystem
  */
 
 const
@@ -18,17 +22,18 @@ const
 /**
  * Returns a function to register Stylus plugins by the specified options
  *
- * @param {DesignSystem} ds - design system object prepared to use with Stylus
- * @param {!Object} cssVariables - dictionary of CSS variables
- * @param {boolean=} [useCSSVarsInRuntime] - true, if the design system object values provided
+ * @param {object} opts
+ * @param {DesignSystem} opts.ds - design system object prepared to use with Stylus
+ * @param {object} opts.cssVariables - dictionary of CSS variables
+ * @param {boolean} [opts.useCSSVarsInRuntime] - true, if the design system object values provided
  * to style files as css-variables
  *
- * @param {string=} [theme] - current theme value
- * @param {(Array<string>|boolean)=} [includeThemes] - list of themes to include or
- *   `true` (will include all available themes)
+ * @param {string} [opts.theme] - current theme value
+ * @param {(Array<string>|boolean)} [opts.includeThemes] - list of themes to include or
+ * `true` (will include all available themes)
  *
- * @param {Object=} [stylus] - link to a Stylus package instance
- * @returns {!Function}
+ * @param {object} [opts.stylus] - link to a Stylus package instance
+ * @returns {Function}
  */
 module.exports = function getPlugins({
 	ds,
@@ -74,7 +79,7 @@ module.exports = function getPlugins({
 		 * Injects additional options to component mixin options ($p)
 		 *
 		 * @param {string} string - component name
-		 * @returns {!Object}
+		 * @returns {object}
 		 *
 		 * @example
 		 * ```stylus
@@ -132,7 +137,7 @@ module.exports = function getPlugins({
 		 * Returns design system CSS variables with their values
 		 *
 		 * @param {string} [theme]
-		 * @returns {!Object}
+		 * @returns {object}
 		 *
 		 * @example
 		 * ```stylus
@@ -162,8 +167,8 @@ module.exports = function getPlugins({
 		 * but not just the one value. If no arguments are passed, it returns the whole design system object.
 		 *
 		 * @param {string} [group] - first level field name (colors, rounding, etc.)
-		 * @param {!Object} [path] - dot-delimited path to the value
-		 * @returns {!Object}
+		 * @param {object} [path] - dot-delimited path to the value
+		 * @returns {object}
 		 *
 		 * @example
 		 * ```stylus
@@ -193,7 +198,7 @@ module.exports = function getPlugins({
 		 * Returns an object with text styles for the specified style name
 		 *
 		 * @param {string} name
-		 * @returns {!Object}
+		 * @returns {object}
 		 *
 		 * @example
 		 * ```stylus
@@ -244,9 +249,9 @@ module.exports = function getPlugins({
 		/**
 		 * Returns color(s) from the design system by the specified name and identifier (optional)
 		 *
-		 * @param {!Object} name
-		 * @param {!Object} [id]
-		 * @returns {(!Object|!Array)}
+		 * @param {object} name
+		 * @param {object} [id]
+		 * @returns {(object|Array)}
 		 *
 		 * @example
 		 * ```stylus
@@ -271,7 +276,7 @@ module.exports = function getPlugins({
 				}
 			}
 
-			path.push(name);
+			path.push(...name.split('.'));
 
 			if (id !== undefined) {
 				path.push(String(id));
@@ -286,13 +291,13 @@ module.exports = function getPlugins({
 
 		/**
 		 * Returns the current theme value
-		 * @returns {!string}
+		 * @returns {string}
 		 */
 		api.define('defaultTheme', () => theme);
 
 		/**
 		 * Returns a list of available themes
-		 * @returns {!Array<string>}
+		 * @returns {Array<string>}
 		 */
 		api.define('availableThemes', () => themesList);
 	};

@@ -15,7 +15,7 @@ import symbolGenerator from 'core/symbol';
 import iVisible from 'components/traits/i-visible/i-visible';
 
 import iData, { component, prop, system, computed, watch, hook, ModsDecl } from 'components/super/i-data/i-data';
-import type { TitleValue, StageTitles, ScrollOptions } from 'components/super/i-page/interface';
+import type { TitleValue, StageTitles, ScrollOptions, DescriptionValue } from 'components/super/i-page/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/super/i-page/interface';
@@ -28,7 +28,7 @@ export default abstract class iPage extends iData implements iVisible {
 	override readonly reloadOnActivation: boolean = true;
 	override readonly syncRouterStoreOnInit: boolean = true;
 
-	/** @see [[iVisible.hideIfOffline]] */
+	/** {@link iVisible.hideIfOffline} */
 	@prop(Boolean)
 	readonly hideIfOffline: boolean = false;
 
@@ -38,6 +38,13 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	@prop({type: [String, Function]})
 	readonly pageTitleProp: TitleValue = '';
+
+	/**
+	 * The current page description.
+	 * Basically this description is set via `<meta name="description" content="..."/>`.
+	 */
+	@prop({type: [String, Function]})
+	readonly pageDescriptionProp: DescriptionValue = '';
 
 	/**
 	 * A dictionary of page titles (basically these titles are set via `document.title`).
@@ -52,21 +59,23 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * The current page title
 	 *
-	 * @see [[iPage.pageTitleProp]]
-	 * @see [[iPage.stagePageTitles]]
+	 * {@link iPage.pageTitleProp}
+	 * {@link iPage.stagePageTitles}
 	 */
-	@computed({cache: true, dependencies: ['r.pageTitle']})
+	@computed({cache: false})
 	get pageTitle(): string {
-		return this.r.pageTitle;
+		return this.r.pageMetaData.title;
 	}
 
 	/**
 	 * Sets a new page title.
 	 * Basically this title is set via `document.title`.
+	 *
+	 * @param value
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
-			void this.r.setPageTitle(value, this);
+			this.r.pageMetaData.title = value;
 		}
 	}
 
@@ -74,7 +83,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 * A wrapped version of the `scrollTo` method.
 	 * The calling cancels all previous tasks.
 	 *
-	 * @see [[iPage.scrollTo]]
+	 * {@link iPage.scrollTo}
 	 */
 	@computed({cache: true})
 	get scrollToProxy(): this['scrollTo'] {
@@ -94,6 +103,12 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	@system((o) => o.sync.link((v) => Object.isFunction(v) ? v(o) : v))
 	protected pageTitleStore!: string;
+
+	/**
+	 * Page description store
+	 */
+	@system((o) => o.sync.link((v) => Object.isFunction(v) ? v(o) : v))
+	protected pageDescriptionStore!: string;
 
 	/**
 	 * Scrolls the page by the specified options
@@ -163,7 +178,7 @@ export default abstract class iPage extends iData implements iVisible {
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (v != null) {
-				return this.pageTitle = this.t(Object.isFunction(v) ? v(this) : v);
+				return this.r.pageMetaData.title = this.t(Object.isFunction(v) ? v(this) : v);
 			}
 		}
 	}
@@ -172,9 +187,13 @@ export default abstract class iPage extends iData implements iVisible {
 	 * Initializes the custom page title
 	 */
 	@hook(['created', 'activated'])
-	protected initTitle(): void {
+	protected initPageMetaData(): void {
 		if (this.syncStageTitles() == null && Object.isTruly(this.pageTitleStore)) {
-			this.pageTitle = this.pageTitleStore;
+			this.r.pageMetaData.title = this.pageTitleStore;
+		}
+
+		if (Object.isTruly(this.pageDescriptionStore)) {
+			this.r.pageMetaData.description = this.pageDescriptionStore;
 		}
 	}
 

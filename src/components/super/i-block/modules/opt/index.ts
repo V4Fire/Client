@@ -12,12 +12,14 @@
  */
 
 import Friend from 'components/friends/friend';
+
+import type iBlock from 'components/super/i-block/i-block';
 import type { IfOnceValue } from 'components/super/i-block/modules/opt/interface';
 
 export * from 'components/super/i-block/modules/opt/interface';
 
 export default class Opt extends Friend {
-	/** @see [[iBlock.ifOnceStore]] */
+	/** {@link iBlock.ifOnceStore} */
 	protected get ifOnceStore(): Dictionary<number> {
 		return this.ctx.ifOnceStore;
 	}
@@ -73,11 +75,13 @@ export default class Opt extends Friend {
 	 */
 	showAnyChanges(): void {
 		const cg = (name, key, val, oldVal, info) => {
+			/* eslint-disable no-console */
 			console.group(`${name} "${key}" (${this.ctx.componentName})`);
 			console.log(Object.fastClone(val));
 			console.log(oldVal);
 			console.log('Path: ', info?.path);
 			console.groupEnd();
+			/* eslint-enable no-console */
 		};
 
 		Object.forEach(this.ctx.$systemFields, (val, key) => {

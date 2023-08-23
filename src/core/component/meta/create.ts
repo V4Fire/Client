@@ -13,8 +13,8 @@ import { inheritMeta } from 'core/component/meta/inherit';
 import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/interface';
 
 /**
- * Creates a meta object for the specified component and returns it
- * @param component - the component constructor info
+ * Creates a component metaobject based on the information from its constructor, and then returns this object
+ * @param component - information obtained from the component constructor using the `getInfoFromConstructor` function
  */
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const meta: ComponentMeta = {
@@ -46,8 +46,10 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			beforeRuntime: [],
 			beforeCreate: [],
 			beforeDataCreate: [],
+			'before:created': [],
 			created: [],
 			beforeMount: [],
+			'before:mounted': [],
 			mounted: [],
 			beforeUpdate: [],
 			updated: [],
@@ -76,20 +78,20 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	};
 
 	const
-		map = new WeakMap();
+		cache = new WeakMap();
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx, ...args) => {
 		const
 			unsafe = getComponentContext(ctx);
 
-		if (map.has(ctx)) {
-			return map.get(ctx)();
+		if (cache.has(ctx)) {
+			return cache.get(ctx)();
 		}
 
 		const
 			fn = meta.methods.render!.fn(unsafe, ...args);
 
-		map.set(ctx, fn);
+		cache.set(ctx, fn);
 		return fn();
 	});
 

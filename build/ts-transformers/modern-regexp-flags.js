@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const ts = require('typescript');
 
@@ -34,7 +34,7 @@ const ts = require('typescript');
  * new RegExp('\\W+', 'su');
  * ```
  */
-function modernRegExpFlagsTransformer(context) {
+const modernRegExpFlagsTransformer = (context) => {
 	const modernRegExpFlags = ['s', 'y', 'u'];
 
 	/**
@@ -65,6 +65,6 @@ function modernRegExpFlagsTransformer(context) {
 	}
 
 	return (node) => ts.visitNode(node, visitor);
-}
+};
 
-module.exports = modernRegExpFlagsTransformer;
+module.exports = () => modernRegExpFlagsTransformer;

@@ -17,6 +17,7 @@ export * from 'tests/helpers/bom/interface';
 /**
  * Class provides API to work with BOM (browser object model)
  */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class BOM {
 	/**
 	 * Returns a promise that will be resolved when the passed page process is switched to idle
@@ -87,23 +88,5 @@ export default class BOM {
 		} catch {}
 
 		await delay(normalizedRafOptions.sleepAfterRAF);
-	}
-
-	/**
-	 * @deprecated
-	 * @see [[BOM.waitForIdleCallback]]
-	 */
-	waitForIdleCallback(page: Page, idleOptions: WaitForIdleOptions = {}): Promise<void> {
-		return BOM.waitForIdleCallback(page, idleOptions);
-	}
-
-	/**
-	 * @param page
-	 * @param [rafOptions]
-	 * @deprecated
-	 * @see [[BOM.waitForRAF]]
-	 */
-	async waitForRAF(page: Page, rafOptions: WaitForRAFOptions = {}): Promise<void> {
-		return BOM.waitForRAF(page, rafOptions);
 	}
 }

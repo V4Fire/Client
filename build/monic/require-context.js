@@ -1,5 +1,3 @@
-'use strict';
-
 /*!
  * V4Fire Client Core
  * https://github.com/V4Fire/Client
@@ -7,6 +5,8 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+'use strict';
 
 const
 	config = require('@config/config');
@@ -19,7 +19,7 @@ const
 	{config: pzlr} = require('@pzlr/build-core');
 
 const
-	aliases = include('build/webpack/alias');
+	aliases = include('build/webpack/resolve/alias');
 
 const
 	contextRgxp = /\/\/\s*@context:\s*(.*?)\n([\s\S]*?)\/\/\s*@endcontext\n/g,
@@ -67,7 +67,7 @@ module.exports = function requireContextReplacer(str) {
 
 		contextPaths = contextPaths.slice(1).flatMap((el) => {
 			if (el === pzlr.super) {
-				return pzlr.dependencies;
+				return contextPaths[0].startsWith('@') ? pzlr.dependencies : config.src.roots;
 			}
 
 			return el;

@@ -16,7 +16,7 @@ import { send as sendAnalytics } from 'core/analytics';
 import Friend, { fakeMethods } from 'components/friends/friend';
 
 interface Analytics {
-	send: typeof send;
+	send(...args: unknown[]): void;
 }
 
 @fakeMethods('send')

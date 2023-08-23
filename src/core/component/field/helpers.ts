@@ -12,14 +12,14 @@ import type { ComponentField } from 'core/component/interface';
 import type { SortedFields } from 'core/component/field/interface';
 
 /**
- * Returns a weight of the specified field from the given scope.
- * The weight describes when a field should initialize relative to other fields:
+ * Returns the weight of a specified field from a given scope.
+ * This weight describes when a field should initialize relative to other fields within the same scope:
  *
- *   1. First, we initialize all fields with the zero weight.
- *   2. After that, all fields with a minimum non-zero weight will be initialized, and so on.
+ *   1. When initializing component fields, fields with a weight of zero are initialized first.
+ *   2. After all zero-weight fields are initialized, fields with a minimum non-zero weight are initialized, and so on.
  *
  * @param field - the field to calculate the weight
- * @param scope - the scope where is stored the passed component field, like `$fields` or `$systemFields`
+ * @param scope - the scope where is stored the field, like `$fields` or `$systemFields`
  */
 export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionary<ComponentField>): number {
 	if (field == null) {
@@ -40,7 +40,7 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 				dep = scope[name];
 
 			if (dep == null) {
-				throw new ReferenceError(`The specified dependency "${dep}" is not found in the given scope`);
+				throw new ReferenceError(`The specified dependency ${dep} could not be found in the given scope`);
 			}
 
 			weight += getFieldWeight(dep, scope);
@@ -55,7 +55,7 @@ export function getFieldWeight(field: CanUndef<ComponentField>, scope: Dictionar
 }
 
 /**
- * Sorts the specified fields and returns an array with ordering is ready to initialize
+ * Sorts the specified fields and returns an array that is ordered and ready for initialization
  * @param fields
  */
 export function sortFields(fields: Dictionary<ComponentField>): SortedFields {

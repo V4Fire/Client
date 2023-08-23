@@ -18,6 +18,7 @@ export * from 'tests/helpers/scroll/interface';
 /**
  * Class provides API to work with scroll on a page
  */
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export default class Scroll {
 	/**
 	 * Scrolls a page by the specified parameters
@@ -27,6 +28,16 @@ export default class Scroll {
 	 */
 	static scrollBy(page: Page, opts: ScrollToOptions): Promise<void> {
 		return page.evaluate((options) => globalThis.scrollBy(options), opts);
+	}
+
+	/**
+	 * Scrolls a page to the specified parameters
+	 *
+	 * @param page
+	 * @param opts
+	 */
+	static scrollTo(page: Page, opts: ScrollToOptions): Promise<void> {
+		return page.evaluate((options) => globalThis.scrollTo(options), opts);
 	}
 
 	/**
@@ -53,6 +64,9 @@ export default class Scroll {
 	 * @param ctx
 	 * @param refName
 	 * @param [scrollIntoViewOpts]
+	 *
+	 * @deprecated
+	 * {@link DOM.waitRef}
 	 */
 	static async scrollRefIntoViewIfNeeded(
 		ctx: Page | ElementHandle,
@@ -116,67 +130,10 @@ export default class Scroll {
 	}
 
 	/**
-	 * @param ctx
-	 * @param selector
-	 * @param [scrollIntoViewOpts]
-	 * @deprecated
-	 * @see [[Scroll.scrollIntoViewIfNeeded]]
-	 */
-	async scrollIntoViewIfNeeded(
-		ctx: Page | ElementHandle,
-		selector: string,
-		scrollIntoViewOpts: Dictionary
-	): Promise<void> {
-		return Scroll.scrollRefIntoViewIfNeeded(ctx, selector, scrollIntoViewOpts);
-	}
-
-	/**
-	 * @param ctx
-	 * @param refName
-	 * @param [scrollIntoViewOpts]
-	 * @deprecated
-	 * @see [[Scroll.scrollRefIntoViewIfNeeded]]
-	 */
-	async scrollRefIntoViewIfNeeded(
-		ctx: Page | ElementHandle,
-		refName: string,
-		scrollIntoViewOpts: Dictionary
-	): Promise<void> {
-		return Scroll.scrollRefIntoViewIfNeeded(ctx, refName, scrollIntoViewOpts);
-	}
-
-	/**
 	 * @param page
-	 * @param opts
-	 * @deprecated
-	 * @see [[Scroll.scrollBy]]
+	 * @param [options]
 	 */
-	scrollBy(page: Page, opts: ScrollToOptions): Promise<void> {
-		return Scroll.scrollBy(page, opts);
-	}
-
-	/**
-	 * @param page
-	 * @param [opts]
-	 * @deprecated
-	 * @see [[Scroll.scrollToBottom]]
-	 */
-	scrollToBottom(page: Page, opts?: ScrollOptions): Promise<void> {
-		return Scroll.scrollToBottom(page, opts);
-	}
-
-	/**
-	 * @param page
-	 * @param [checkFn]
-	 * @param [opts]
-	 * @deprecated
-	 * @see [[Scroll.scrollToBottomWhile]]
-	 */
-	async scrollToBottomWhile(
-		page: Page,
-		checkFn?: () => CanPromise<boolean>,
-		opts?: ScrollToBottomWhileOptions
-	): Promise<void> {
-		return Scroll.scrollToBottomWhile(page, checkFn, opts);
+	static scrollToTop(page: Page, options?: ScrollOptions): Promise<void> {
+		return this.scrollTo(page, {top: 0, left: 0, ...options});
 	}
 }

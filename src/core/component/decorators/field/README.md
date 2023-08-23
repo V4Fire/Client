@@ -208,10 +208,10 @@ class bExample extends iBlock {
 }
 ```
 
-### [forceUpdate = `true`]
+### [forceUpdate = `false`]
 
-If false, then property changes don't directly force re-rendering the template.
-Keep in mind that the template can still be re-rendered, but only at the initiative of the engine being used.
+If true, property changes will cause the template to be guaranteed to be re-rendered.
+Be aware that enabling this property may result in redundant redraws.
 
 ### [after]
 

@@ -10,7 +10,6 @@ import type {
 
 	ComponentEngine,
 	ComponentOptions as ComponentEngineOptions,
-
 	CreateAppFunction
 
 } from 'core/component/engines';
@@ -20,20 +19,19 @@ import type {
 	ComponentMeta,
 	ComponentInterface,
 	ComponentOptions,
-
 	RenderFactory
 
 } from 'core/component/interface';
 
 /**
- * A dictionary with component declaration parameters
+ * A dictionary with the component declaration parameters
  */
 export const componentParams = new Map<Function | string, ComponentOptions>();
 
 /**
  * A dictionary with the registered root components
  */
-export const rootComponents = Object.createDict<Promise<ComponentEngineOptions<typeof ComponentEngine>>>();
+export const rootComponents = Object.createDict<CanPromise<ComponentEngineOptions<typeof ComponentEngine>>>();
 
 interface App {
 	context: Nullable<ReturnType<CreateAppFunction>>;
@@ -55,8 +53,8 @@ export const components = new Map<Function | string, ComponentMeta>();
 
 /**
  * A dictionary with the registered component initializers.
- * By default, all components don't register automatically, but the first call from some template.
- * This structure contains functions to register components.
+ * By default, components are not registered automatically, but only upon the component's first call from a template.
+ * This dictionary contains functions to register components.
  */
 export const componentRegInitializers = Object.createDict<Function[]>();
 
@@ -66,6 +64,6 @@ export const componentRegInitializers = Object.createDict<Function[]>();
 export const componentRenderFactories = Object.createDict<RenderFactory>();
 
 /**
- * A dictionary with component pointers for meta tables
+ * A dictionary with component pointers for metatables
  */
 export const metaPointers = Object.createDict<Dictionary<boolean>>();

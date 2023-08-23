@@ -6,22 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { UnsafeIInputText, ModsTable } from 'components/super/i-input-text/i-input-text';
-import type bSelect from 'components/form/b-select/b-select';
+import type { ModsDict, UnsafeIInputText } from 'components/super/i-input-text/i-input-text';
+import type { Item as Super, Active } from 'components/traits/i-active-items/i-active-items';
 
-export type Value = unknown | Set<unknown>;
+import type bSelect from 'components/form/b-select/b-select';
+import type SelectEventHandlers from 'components/form/b-select/modules/select-event-handlers';
+
+export type Value = Active;
+
 export type FormValue = CanUndef<CanArray<unknown>>;
 
-export interface Item extends Dictionary {
+export interface Item extends Super {
 	/**
 	 * Item label text
 	 */
 	label?: string;
-
-	/**
-	 * Item value
-	 */
-	value?: unknown;
 
 	/**
 	 * True if the item is selected
@@ -36,7 +35,7 @@ export interface Item extends Dictionary {
 	/**
 	 * Map of additional modifiers of the item
 	 */
-	mods?: ModsTable;
+	mods?: ModsDict;
 
 	/**
 	 * Map of additional classes of the item
@@ -62,18 +61,13 @@ export interface UnsafeBSelect<CTX extends bSelect = bSelect> extends UnsafeIInp
 	// @ts-ignore (access)
 	setScrollToMarkedOrSelectedItem: CTX['setScrollToMarkedOrSelectedItem'];
 
-	// @ts-ignore (access)
-	onNativeChange: CTX['onNativeChange'];
+	onNativeChange: SelectEventHandlers['onNativeChange'];
 
-	// @ts-ignore (access)
-	onSearchInput: CTX['onSearchInput'];
+	onSearchInput: SelectEventHandlers['onSearchInput'];
 
-	// @ts-ignore (access)
-	onTextChange: CTX['onTextChange'];
+	onTextChange: SelectEventHandlers['onTextChange'];
 
-	// @ts-ignore (access)
-	onItemClick: CTX['onItemClick'];
+	onItemClick: SelectEventHandlers['onItemClick'];
 
-	// @ts-ignore (access)
-	onItemsNavigate: CTX['onItemsNavigate'];
+	onItemsNavigate: SelectEventHandlers['onItemsNavigate'];
 }

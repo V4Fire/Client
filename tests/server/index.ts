@@ -28,4 +28,5 @@ http.createServer((req, res) => {
 
 }).listen(build.testPort);
 
+// eslint-disable-next-line no-console
 console.log(`listen at ${build.testPort}`);

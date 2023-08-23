@@ -12,40 +12,40 @@ export const
 	isHandler = /^on[^a-z]/;
 
 /**
- * Merges the specified props into one and returns it
+ * Merges the specified props into one and returns a single merged prop object
  * @param args
  */
 export function mergeProps(...args: Dictionary[]): Dictionary {
 	const
-		res: Dictionary = {};
+		props: Dictionary = {};
 
 	args.forEach((toMerge) => {
 		for (const key in toMerge) {
 			if (key === 'class') {
-				if (res.class !== toMerge.class) {
-					res.class = normalizeClass(Object.cast([res.class, toMerge.class]));
+				if (props.class !== toMerge.class) {
+					props.class = normalizeClass(Object.cast([props.class, toMerge.class]));
 				}
 
 			} else if (key === 'style') {
-				res.style = normalizeStyle(Object.cast([res.style, toMerge.style]));
+				props.style = normalizeStyle(Object.cast([props.style, toMerge.style]));
 
 			} else if (isHandler.test(key)) {
 				const
-					existing = res[key],
+					existing = props[key],
 					incoming = toMerge[key];
 
 				if (
 					existing !== incoming &&
 					!(Object.isArray(existing) && existing.includes(incoming))
 				) {
-					res[key] = Object.isTruly(existing) ? (<unknown[]>[]).concat(existing, incoming) : incoming;
+					props[key] = Object.isTruly(existing) ? (<unknown[]>[]).concat(existing, incoming) : incoming;
 				}
 
 			} else if (key !== '') {
-				res[key] = toMerge[key];
+				props[key] = toMerge[key];
 			}
 		}
 	});
 
-	return res;
+	return props;
 }

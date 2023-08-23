@@ -17,13 +17,23 @@ import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
-import { resetComponents, ComponentResetType, ComponentInterface } from 'core/component';
+
+import {
+
+	remoteState,
+	resetComponents,
+
+	GlobalEnvironment,
+	ComponentResetType
+
+} from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, watch } from 'components/super/i-page/i-page';
 
+import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
@@ -68,6 +78,15 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
+	 * A module for manipulating page metadata, such as the page title or description
+	 */
+	@system<iStaticPage>((o) => new PageMetaData({
+		document: o.globalEnv.ssr?.document ?? document
+	}))
+
+	readonly pageMetaData!: PageMetaData;
+
+	/**
 	 * A module to work with data of data providers globally
 	 */
 	@system(() => createProviderDataStore(new RestrictedCache(10)))
@@ -98,10 +117,23 @@ export default abstract class iStaticPage extends iPage {
 	lastOnlineDate?: Date;
 
 	/**
-	 * The initial route for the router (used for SSR)
+	 * The initial route for initializing the router.
+	 * Usually, this value is used during SSR.
 	 */
-	@system()
+	@system(() => remoteState.route)
 	initialRoute?: InitialRoute;
+
+	/**
+	 * An object whose properties will extend the global object.
+	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
+	 * Using this object, polyfills for all necessary APIs can be passed through.
+	 */
+	@system<iStaticPage>({
+		atom: true,
+		init: (o) => o.initGlobalEnv(remoteState)
+	})
+
+	globalEnv!: GlobalEnvironment;
 
 	/**
 	 * The name of the active route page
@@ -127,41 +159,18 @@ export default abstract class iStaticPage extends iPage {
 		this.emit('setRoute', value);
 	}
 
-	override get pageTitle(): string {
-		return this.field.get<string>('pageTitleStore')!;
-	}
-
-	override set pageTitle(value: string) {
-		if (!Object.isString(value)) {
-			return;
-		}
-
-		let
-			title = value;
-
-		try {
-			const div = Object.assign(document.createElement('div'), {innerHTML: value});
-			title = div.textContent ?? '';
-
-			// Fix strange Chrome bug
-			document.title = `${title} `;
-			document.title = title;
-		} catch {}
-
-		this.field.set('pageTitleStore', title);
-	}
-
 	/**
 	 * The application locale
 	 */
-	get locale(): string {
-		return this.field.get<string>('localeStore')!;
+	get locale(): Language {
+		return this.field.get<Language>('localeStore')!;
 	}
 
 	/**
 	 * Sets a new application locale
+	 * @param value
 	 */
-	set locale(value: string) {
+	set locale(value: Language) {
 		this.field.set('localeStore', value);
 
 		try {
@@ -173,9 +182,9 @@ export default abstract class iStaticPage extends iPage {
 
 	/**
 	 * The route information object store
-	 * @see [[iStaticPage.route]]
+	 * {@link iStaticPage.route}
 	 */
-	@field({forceUpdate: false})
+	@field()
 	protected routeStore?: this['CurrentPage'];
 
 	/**
@@ -184,7 +193,7 @@ export default abstract class iStaticPage extends iPage {
 	@system()
 	protected routerStore?: this['Router'];
 
-	/** @see [[iStaticPage.locale]]  */
+	/** {@link iStaticPage.locale} */
 	@field(() => {
 		const
 			lang = locale.value;
@@ -194,7 +203,6 @@ export default abstract class iStaticPage extends iPage {
 				const
 					el = document.documentElement;
 
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				if (lang != null) {
 					el.setAttribute('lang', lang);
 
@@ -215,18 +223,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system()
 	protected rootMods: Dictionary<RootMod> = {};
-
-	/**
-	 * Sets a new page title
-	 *
-	 * @param value
-	 * @param [component]
-	 */
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-	setPageTitle(value: string, component: ComponentInterface = this): CanPromise<boolean> {
-		this.pageTitle = value;
-		return this.pageTitle === value;
-	}
 
 	/**
 	 * Sends a message to reset data of all components.
@@ -365,7 +361,7 @@ export default abstract class iStaticPage extends iPage {
 	 * @param locale
 	 */
 	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
-	protected syncLocaleWatcher(locale: string): void {
+	protected syncLocaleWatcher(locale: Language): void {
 		if (this.locale === locale) {
 			return;
 		}

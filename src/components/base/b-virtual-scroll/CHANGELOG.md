@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.??.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Major update. Visit [readme](./readme) to see migration guide.
+
 ## v3.30.1 (2022-10-25)
 
 #### :bug: Bug Fix

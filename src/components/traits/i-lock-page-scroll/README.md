@@ -75,7 +75,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bWindow extends iBlock implements iLockPageScroll {
-  /** @see [[iLockPageScroll.enlockable]] */
+  /** {@link iLockPageScroll.enlockable} */
   lockPageScroll(scrollableNode?: Element): Promise<void> {
     return iLockPageScroll.lockPageScroll(this, scrollableNode);
   }
@@ -93,7 +93,7 @@ import iBlock, { component } from 'components/super/i-block/i-block';
 
 @component()
 export default class bWindow extends iBlock implements iLockPageScroll {
-  /** @see [[iLockPageScroll.unlockPageScroll]] */
+  /** {@link iLockPageScroll.unlockPageScroll} */
   unlockPageScroll(): Promise<void> {
     return iLockPageScroll.unlockPageScroll(this);
   }

@@ -12,9 +12,10 @@ import { storeRgxp } from 'core/component/reflect';
 import { initEmitter } from 'core/component/event';
 
 import { metaPointers } from 'core/component/const';
-import { inverseFieldMap, tiedFieldMap } from 'core/component/decorators/const';
+import { invertedFieldMap, tiedFieldMap } from 'core/component/decorators/const';
 
-import type { ComponentMeta } from 'core/component/interface';
+import type { ComponentMeta, ComponentProp, ComponentField } from 'core/component/interface';
+
 import type {
 
 	DecoratorFunctionalOptions,
@@ -24,10 +25,10 @@ import type {
 } from 'core/component/decorators/interface';
 
 /**
- * Factory to create a component property decorator
+ * Factory to create component property decorators
  *
- * @param cluster - the property cluster to decorate
- * @param [transformer] - transformer for the passed decorator parameters
+ * @param cluster - the property cluster to decorate, like `fields` or `systemFields`
+ * @param [transformer] - a transformer for the passed decorator parameters
  */
 export function paramsFactory<T = object>(
 	cluster: Nullable<string>,
@@ -55,13 +56,13 @@ export function paramsFactory<T = object>(
 				p = params;
 
 			if (desc != null) {
-				decorateMethod();
+				decorateMethodOrAccessor();
 
 			} else {
 				decorateProperty();
 			}
 
-			function decorateMethod() {
+			function decorateMethodOrAccessor() {
 				delete meta.props[key];
 				delete meta.fields[key];
 				delete meta.systemFields[key];
@@ -95,6 +96,13 @@ export function paramsFactory<T = object>(
 					info = metaCluster[key] ?? {src: meta.componentName};
 
 				if (metaKey === 'methods') {
+					decorateMethod();
+
+				} else {
+					decorateAccessor();
+				}
+
+				function decorateMethod() {
 					const
 						name = key;
 
@@ -140,27 +148,30 @@ export function paramsFactory<T = object>(
 					}
 
 					metaCluster[key] = wrapOpts({...info, ...p, watchers, hooks});
-					return;
 				}
 
-				const needOverrideComputed = metaKey === 'accessors' ?
-					key in meta.computedFields :
-					!('cache' in p) && key in meta.accessors;
-
-				if (needOverrideComputed) {
-					metaCluster[key] = wrapOpts({...meta.computedFields[key], ...p, cache: false});
+				function decorateAccessor() {
+					delete meta.accessors[key];
 					delete meta.computedFields[key];
 
-				} else {
-					metaCluster[key] = wrapOpts({
-						...info,
-						...p,
-						cache: metaKey === 'computedFields' ? p.cache ?? true : false
-					});
-				}
+					const needOverrideComputed = metaKey === 'accessors' ?
+						key in meta.computedFields :
+						!('cache' in p) && key in meta.accessors;
 
-				if (p.dependencies != null) {
-					meta.watchDependencies.set(key, p.dependencies);
+					if (needOverrideComputed) {
+						metaCluster[key] = wrapOpts({...meta.computedFields[key], ...p, cache: false});
+
+					} else {
+						metaCluster[key] = wrapOpts({
+							...info,
+							...p,
+							cache: metaKey === 'computedFields' ? p.cache ?? true : false
+						});
+					}
+
+					if (p.dependencies != null) {
+						meta.watchDependencies.set(key, p.dependencies);
+					}
 				}
 			}
 
@@ -180,23 +191,11 @@ export function paramsFactory<T = object>(
 
 				const
 					metaKey = cluster ?? (key in meta.props ? 'props' : 'fields'),
-					inverseKeys = inverseFieldMap[metaKey],
-					metaCluster = meta[metaKey];
+					metaCluster: ComponentProp | ComponentField = meta[metaKey];
 
-				if (inverseKeys != null) {
-					for (let i = 0; i < inverseKeys.length; i++) {
-						const
-							tmp = meta[inverseKeys[i]];
+				inheritFromParent();
 
-						if (key in tmp) {
-							metaCluster[key] = tmp[key];
-							delete tmp[key];
-							break;
-						}
-					}
-				}
-
-				if (transformer) {
+				if (transformer != null) {
 					p = transformer(p, metaKey);
 				}
 
@@ -240,6 +239,39 @@ export function paramsFactory<T = object>(
 
 				if (tiedFieldMap[metaKey] != null && RegExp.test(storeRgxp, key)) {
 					meta.tiedFields[key] = key.replace(storeRgxp, '');
+				}
+
+				function inheritFromParent() {
+					const
+						invertedMetaKeys = invertedFieldMap[metaKey];
+
+					if (invertedMetaKeys != null) {
+						for (let i = 0; i < invertedMetaKeys.length; i++) {
+							const
+								invertedMetaKey = invertedMetaKeys[i],
+								invertedMetaCluster = meta[invertedMetaKey];
+
+							if (key in invertedMetaCluster) {
+								const info = {...invertedMetaCluster[key]};
+								delete info.functional;
+
+								if (invertedMetaKey === 'prop') {
+									if (Object.isFunction(info.default)) {
+										(<ComponentField>info).init = info.default;
+										delete info.default;
+									}
+
+								} else if (metaKey === 'prop') {
+									delete (<ComponentField>info).init;
+								}
+
+								metaCluster[key] = info;
+								delete invertedMetaCluster[key];
+
+								break;
+							}
+						}
+					}
 				}
 			}
 
