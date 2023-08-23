@@ -280,3 +280,15 @@ export interface ComponentDb {
 export interface ComponentItemFactory<DATA = unknown> {
 	(state: VirtualScrollState<DATA>, ctx: bVirtualScroll): ComponentItem[];
 }
+
+/**
+ * A middleware function used to modify elements compiled within {@link bVirtualScroll.itemsFactory}.
+ */
+export interface ItemsProcessor {
+	(componentItems: ComponentItem[]): ComponentItem[];
+}
+
+/**
+ * Type for {@link bVirtualScroll.itemsProcessors}.
+ */
+export type ItemsProcessors = ItemsProcessor | Record<string, ItemsProcessor> | ItemsProcessor[];

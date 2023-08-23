@@ -18,11 +18,13 @@ import type {
 	RequestQueryFn,
 	ShouldPerform,
 	ComponentItemFactory,
-	ComponentItemType
+	ComponentItemType,
+	ComponentItem,
+	ItemsProcessors
 
 } from 'components/base/b-virtual-scroll/interface';
 
-import { defaultShouldProps, componentItemType } from 'components/base/b-virtual-scroll/const';
+import { defaultShouldProps, componentItemType, itemsProcessors } from 'components/base/b-virtual-scroll/const';
 
 import { Observer } from 'components/base/b-virtual-scroll/modules/observer';
 
@@ -122,6 +124,96 @@ export default abstract class iVirtualScrollProps extends iData {
 
 	readonly itemsFactory!: ComponentItemFactory;
 
+	/**
+	 * This processor function enables you to perform additional manipulations on previously compiled
+	 * {@link ComponentItem}s using {@link bVirtualScroll.itemsFactory}. In simpler terms, it serves as middleware for
+	 * components that need to be rendered.
+	 * 
+	 * This function can be valuable when implementing global processing for each component
+	 * rendered in `b-virtual-scroll`.
+	 * 
+	 * Let's explore scenarios where you might want to use this functionality:
+	 * 
+	 * **Scenario**: Adding an advertisement component after each component rendered in `b-virtual-scroll` throughout the entire application.
+	 *
+	 * **Solution**: While you can override {@link bVirtualScroll.itemsFactory} inline, it's not the most convenient approach.
+	 * Instead, you can use {@link bVirtualScroll.itemsProcessors} for a more streamlined and centralized solution to this task.
+	 * 
+	 * @example
+	 * ```typescript
+	 * const addAds = (items: ComponentItem[]) => {
+	 *   const newItems = [];
+	 *
+	 *   items.forEach((item) => {
+	 *     newItems.push(item);
+	 *
+	 *     if (item.type === 'item') {
+	 *       newItems.push({
+	 *         type: 'separator',
+	 *         item: 'b-ads-component',
+	 *         props: {
+	 *           prop: 'val'
+	 *         },
+	 *         key: 'uniqkey'
+	 *       });
+	 *     }
+	 *   });
+	 * 
+	 *   return newItems;
+	 * }
+	 * ```
+	 * 
+	 * To set this manipulation as the global component processor in `b-virtual-scroll`, you need to override the
+	 * `itemsProcessors` constant, which `b-virtual-scroll` defaults to, in the `base/b-virtual-scroll/const.ts` file of your layer
+	 * and export it.
+	 *
+	 * @example
+	 * ```typescript
+	 * const itemsProcessors = {
+	 *   addAds
+	 * }
+	 * ```
+	 * 
+	 * Once you have this manipulation, the `b-ads-component` will be rendered within each `b-virtual-scroll` in your application
+	 * after an `item` type component.
+	 * 
+	 * Additionally, this prop allows you to mutate component props, component names, child elements, and add new elements.
+	 * For example, you might want to replace deprecated `b-card` components with `b-mega-card` components.
+	 * 
+	 * @example
+	 * ```typescript
+	 * const itemsProcessors = {
+	 *   addAds,
+	 *   migrateCardComponent: (items: ComponentItem[]) => {
+	 *     return items.map((item) => {
+	 *       if (item.item === 'b-card') {
+	 *         console.warn('Deprecation warning: b-card is deprecated.');
+	 *
+	 *         return {
+	 *           ...item,
+	 *           props: convertProps(item.props)
+	 *           item: 'b-mega-card'
+	 *         }
+	 *       }
+	 *
+	 *       return item;
+	 *     });
+	 *   }
+	 * }
+	 * ```
+	 * 
+	 * Now, `b-card` components will be replaced with `b-mega-card` components, and using the deprecated `b-card` component will trigger a warning.
+	 * 
+	 * Just like other props, you can also specify `itemsProcessors` inline. This allows you to establish global behavior,
+	 * such as adding advertisement components, and selectively override it on specific pages.
+	 */
+	@prop({
+		type: [Function, Object, Array],
+		default: itemsProcessors
+	})
+
+	readonly itemsProcessors?: ItemsProcessors;
+
 	override readonly DB!: ComponentDb;
 
 	/**
@@ -211,4 +303,3 @@ export default abstract class iVirtualScrollProps extends iData {
 	@prop(Boolean)
 	readonly disableObserver: boolean = false;
 }
-

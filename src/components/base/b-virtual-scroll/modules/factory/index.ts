@@ -10,7 +10,7 @@ import Friend from 'components/friends/friend';
 import type { VNodeDescriptor } from 'components/friends/vdom';
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
-import type { ComponentItem, MountedChild, MountedItem } from 'components/base/b-virtual-scroll/interface';
+import type { ComponentItem, ItemsProcessor, MountedChild, MountedItem } from 'components/base/b-virtual-scroll/interface';
 import { isItem } from 'components/base/b-virtual-scroll/modules/helpers';
 
 import * as vdomRender from 'components/base/b-virtual-scroll/modules/factory/engines/vdom';
@@ -29,7 +29,7 @@ export class ComponentFactory extends Friend {
 		const
 			{ctx} = this;
 
-		return ctx.itemsFactory(ctx.getComponentState(), ctx);
+		return this.itemsProcessor(ctx.itemsFactory(ctx.getComponentState(), ctx));
 	}
 
 	/**
@@ -77,6 +77,30 @@ export class ComponentFactory extends Friend {
 			};
 		});
 	}
+
+	/**
+	 * Invokes the {@link bVirtualScroll.itemsProcessors} function and returns its result.
+	 * @param items - The list of items to process.
+	 */
+	protected itemsProcessor(items: ComponentItem[]): ComponentItem[] {
+		const
+			{ctx} = this;
+	
+		if (!ctx.itemsProcessors) {
+			return items;
+		}
+	
+		if (Object.isFunction(ctx.itemsProcessors)) {
+			return ctx.itemsProcessors(items);
+		}
+	
+		Object.forEach<ItemsProcessor>(ctx.itemsProcessors, (processor) => {
+			items = processor(items);
+		});
+	
+		return items;
+	}
+
 
 	/**
 	 * Calls the render engine to render the components based on the provided descriptors.

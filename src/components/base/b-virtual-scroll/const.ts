@@ -16,7 +16,8 @@ import type {
 	ComponentObserverLocalEvents,
 	ComponentRenderLocalEvents,
 	VirtualScrollState,
-	RenderGuardRejectionReason
+	RenderGuardRejectionReason,
+	ItemsProcessors
 
 } from 'components/base/b-virtual-scroll/interface';
 
@@ -111,3 +112,7 @@ export const defaultShouldProps = <const>{
 		state.isInitialRender || state.remainingItems === 0
 };
 
+/**
+ * {@link bVirtualScroll.itemsProcessors}
+ */
+export const itemsProcessors: ItemsProcessors = {};

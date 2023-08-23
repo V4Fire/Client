@@ -135,4 +135,33 @@ test.describe('<b-virtual-scroll>', () => {
 			await test.expect(component.waitForChildCountEqualsTo(chunkSize * 2)).resolves.toBeUndefined();
 		});
 	});
+
+	test.describe('`itemsProcessors`', () => {
+		test('Should modify components before rendering', async () => {
+			const
+				chunkSize = 12;
+
+			provider.response(200, () => ({data: state.data.addData(chunkSize)}));
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					shouldPerformDataRequest: () => false,
+					itemsProcessors: (items) => items.concat([
+						{
+							item: 'b-dummy',
+							type: 'separator',
+							props: {},
+							key: 'uniq'
+						}
+					])
+				})
+				.build();
+
+			await component.waitForChildCountEqualsTo(chunkSize + 1);
+
+			await test.expect(component.container.locator('.b-dummy').waitFor({state: 'attached'})).resolves.toBeUndefined();
+		});
+	});
 });
