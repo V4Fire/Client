@@ -244,7 +244,7 @@ export default class ResizeWatcher {
 	}
 
 	/**
-	 * Cancels watching for the all registered elements and destroys the instance
+	 * Cancels watching for all registered elements and destroys the instance
 	 *
 	 * @example
 	 * ```js
