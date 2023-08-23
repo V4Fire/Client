@@ -52,12 +52,12 @@ export function renderTemporarily<T extends Friend['C']>(
 	elOrCb: CanUndef<Element | string> | ElCb<T> = this.node
 ): Promise<void> {
 	let
-		cb,
-		el;
+		cb: CanUndef<ElCb<T>>,
+		el: CanUndef<string | Element>;
 
 	if (Object.isFunction(cbOrEl)) {
 		cb = cbOrEl;
-		el = elOrCb;
+		el = Object.cast(elOrCb);
 
 	} else if (Object.isFunction(elOrCb)) {
 		cb = elOrCb;
@@ -81,7 +81,7 @@ export function renderTemporarily<T extends Friend['C']>(
 		}
 
 		if (resolvedEl.clientHeight > 0) {
-			await cb.call(this.component, resolvedEl);
+			await cb!.call(this.component, resolvedEl);
 			return;
 		}
 
@@ -105,7 +105,7 @@ export function renderTemporarily<T extends Friend['C']>(
 		wrapper.appendChild(resolvedEl);
 		document.body.appendChild(wrapper);
 
-		await cb.call(this.component, resolvedEl);
+		await cb!.call(this.component, resolvedEl);
 
 		if (parent != null) {
 			if (before != null) {

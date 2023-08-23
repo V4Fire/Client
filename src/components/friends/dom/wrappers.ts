@@ -96,7 +96,7 @@ export function watchForIntersection(
 		{async: $a} = this.ctx;
 
 	let
-		opts;
+		opts: Nullable<IntersectionWatcher.WatchOptions & AsyncOptions>;
 
 	if (Object.isFunction(handlerOrOpts)) {
 		handler = handlerOrOpts;
@@ -160,7 +160,7 @@ export function watchForResize(
 		{async: $a} = this.ctx;
 
 	let
-		opts;
+		opts: ResizeWatcher.WatchOptions & AsyncOptions;
 
 	if (Object.isFunction(handlerOrOpts)) {
 		handler = handlerOrOpts;
