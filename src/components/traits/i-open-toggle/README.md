@@ -1,6 +1,6 @@
 # components/traits/i-open-toggle-toggle
 
-This module provides a trait for a component that extends the "opening/closing" behaviour with an API to toggle.
+This module provides a trait for a component that extends the "opening/closing" behavior with an API to toggle.
 
 ## Synopsis
 

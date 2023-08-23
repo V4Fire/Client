@@ -19,8 +19,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `module-parallelism` option, which sets the
   [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
   * Added `trace-build-times` option, which enables build time tracing
+  * Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
+  them in webpack watch mode
 
 * Added build time tracing, which can be visualized using the [Perfetto UI](https://ui.perfetto.dev)
+
+* Webpack build helpers
+  * Added `getManagedPath` helper, which generates managed path for node_modules with excludes
+  * Added `prepareLibsForRegExp` helper, which converts list of library names to a regexp string
+  * Added `createDepRegExp` helper, which create a regexp matching all deps except excluded
 
 ## v4.0.0-beta.12 (2023-08-21)
 

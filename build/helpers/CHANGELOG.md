@@ -9,13 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-
 ## v4.??.? (2023-??-??)
 
 #### :rocket: New Feature
 
 * Added `tracer` helper, which can be used to trace build events,
 it uses [Trace Event Format](https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/edit#heading=h.q8di1j2nawlp)
+* Added `getManagedPath` helper, which generates managed path for node_modules with excludes
+* Added `prepareLibsForRegExp` helper, which converts list of library names to a regexp string
+* Added `createDepRegExp` helper, which create a regexp matching all deps except excluded
 
 ## v3.47.3 (2023-05-26)
 

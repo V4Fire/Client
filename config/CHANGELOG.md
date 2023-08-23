@@ -16,6 +16,8 @@ Changelog
 * Added `module-parallelism` option, which sets the
 [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
 * Added `trace-build-times` option, which enables build time tracing
+* Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
+them in webpack watch mode
 
 ## v3.39.0 (2023-03-07)
 
