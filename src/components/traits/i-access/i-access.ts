@@ -74,7 +74,7 @@ export default abstract class iAccess {
 		(component) => SyncPromise.resolve(component.setMod('focused', false));
 
 	/**
-	 * Returns true if the component in focus
+	 * Returns true if the component is in focus
 	 * @param component
 	 */
 	static isFocused<T extends iBlock>(component: T): boolean {
@@ -130,7 +130,7 @@ export default abstract class iAccess {
 				$el.setAttribute('aria-disabled', String(!enabled));
 
 				if (!enabled) {
-					const handler = (e) => {
+					const handler = (e: Event) => {
 						e.preventDefault();
 						e.stopImmediatePropagation();
 					};
@@ -202,7 +202,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Sets focus to the component
+	 * Sets focus on the component
 	 * @param _args
 	 */
 	focus(..._args: unknown[]): Promise<boolean> {
@@ -210,7 +210,7 @@ export default abstract class iAccess {
 	}
 
 	/**
-	 * Unsets focus from the component
+	 * Unsets focus on the component
 	 * @param _args
 	 */
 	blur(..._args: unknown[]): Promise<boolean> {
