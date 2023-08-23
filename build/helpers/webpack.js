@@ -112,9 +112,9 @@ exports.getManagedPath = getManagedPath;
  * @returns {RegExp}
  * @example
  * ```js
- * getManagedPaths(['@v4fire/client', '@v4fire/core'])
+ * getManagedPath(['@v4fire/client', '@v4fire/core'])
  * // or
- * getManagedPaths('@v4fire[\\\\/]client|@v4fire[\\\\/]core')
+ * getManagedPath('@v4fire[\\\\/]client|@v4fire[\\\\/]core')
  * ```
  */
 function getManagedPath(exclude) {
@@ -131,7 +131,7 @@ exports.prepareLibsForRegExp = prepareLibsForRegExp;
  * @returns {string}
  * @example
  * ```js
- * prepareLibListForRegexp(['@v4fire/client', '@v4fire/core']) // '@v4fire[\\\\/]client|@v4fire[\\\\/]core'
+ * prepareLibsForRegExp(['@v4fire/client', '@v4fire/core']) // '@v4fire[\\\\/]client|@v4fire[\\\\/]core'
  * ```
  */
 function prepareLibsForRegExp(libs) {
