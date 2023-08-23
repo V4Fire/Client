@@ -85,6 +85,7 @@ test.describe('components/traits/i-lock-page-scroll - desktop', () => {
 						const body = document.querySelector('body');
 						body!.style.setProperty('padding-right', paddingRight);
 					},
+
 					paddingRightValue
 				);
 			});
@@ -106,13 +107,15 @@ test.describe('components/traits/i-lock-page-scroll - desktop', () => {
 			const getScrollTop = () =>
 				page.evaluate(() => document.documentElement.scrollTop);
 
-			const scrollYPosition = 500;
+			const
+				scrollYPosition = 500;
 
 			await page.evaluate(
 				(yPos) => {
 					document.querySelector('body')!.style.setProperty('height', '5000px');
 					globalThis.scrollTo(0, yPos);
 				},
+
 				scrollYPosition
 			);
 
@@ -129,10 +132,12 @@ test.describe('components/traits/i-lock-page-scroll - desktop', () => {
 	}
 
 	async function assertRootLockPageScrollModIs(page: Page, expected: boolean) {
-		const lockClassName = /lock-page-scroll-desktop-true/;
+		const
+			lockClassName = /lock-page-scroll-desktop-true/;
 
 		if (expected) {
 			await test.expect(page.locator(':root')).toHaveClass(lockClassName);
+
 		} else {
 			await test.expect(page.locator(':root')).not.toHaveClass(lockClassName);
 		}
