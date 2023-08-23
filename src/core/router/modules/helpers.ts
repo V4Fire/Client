@@ -351,10 +351,14 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 			route = routes[name] ?? {},
 			originalPathParams: Key[] = [];
 
+		const defaultPathOpts: RegExpOptions = {
+			endsWith: '?'
+		};
+
 		if (Object.isString(route)) {
 			const
 				pattern = concatURLs(basePath, route),
-				rgxp = parsePattern(pattern, originalPathParams);
+				rgxp = parsePattern(pattern, originalPathParams, defaultPathOpts);
 
 			const pathParams: PathParam[] = originalPathParams.map((param) => ({
 				...param,
@@ -383,7 +387,12 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 			if (Object.isString(route.path)) {
 				pattern = concatURLs(basePath, route.path);
-				rgxp = parsePattern(pattern, originalPathParams, <RegExpOptions>route.pathOpts);
+				const pathOpts = {
+					...defaultPathOpts,
+					...(route.pathOpts ?? {})
+				};
+
+				rgxp = parsePattern(pattern, originalPathParams, pathOpts);
 			}
 
 			const pathParams: PathParam[] = originalPathParams.map((param) => ({
