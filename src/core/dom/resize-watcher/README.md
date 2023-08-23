@@ -73,7 +73,8 @@ resizeWatcher.destroy();
 ### watch
 
 Watches for the size of the given element and invokes the specified handler when it changes.
-Note, changes occurring at the same tick are merged into one. You can disable this behavior by passing the `immediate: true` option.
+Note, changes occurring at the same tick are merged into one.
+You can disable this behavior by passing the `immediate: true` option.
 
 ```js
 import * as ResizeWatcher from 'core/dom/resize-watcher';
