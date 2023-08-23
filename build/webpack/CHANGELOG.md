@@ -9,16 +9,6 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.??.?? (2023-??-??)
-
-* Added `getManagedPath` helper, which generates managed path for node_modules with excludes
-* Added `prepareLibsForRegExp` helper, which converts list of library names to a regexp string
-* Added `createDepRegExp` helper, which create a regexp matching all deps except excluded
-
-#### :rocket: New Feature
-
-* Added a new plugin `i18n-plugin`
-
 ## v3.42.0 (2023-03-14)
 
 #### :bug: Bug Fix
