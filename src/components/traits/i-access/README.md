@@ -130,7 +130,7 @@ The trait specifies a bunch of methods to implement.
 ### enable
 
 Enables the component.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
@@ -147,7 +147,7 @@ export default class bButton extends iBlock implements iAccess {
 ### disable
 
 Disables the component.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
@@ -164,7 +164,7 @@ export default class bButton extends iBlock implements iAccess {
 ### focus
 
 Sets focus on the component.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
@@ -181,7 +181,7 @@ export default class bButton extends iBlock implements iAccess {
 ### blur
 
 Unsets focus on the component.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';

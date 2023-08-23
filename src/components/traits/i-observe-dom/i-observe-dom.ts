@@ -102,7 +102,7 @@ export default abstract class iObserveDOM {
 			removedNodes: []
 		};
 
-		records.forEach((mut) => {
+		records.forEach((mut: MutationRecord | ObserverMutationRecord) => {
 			res.addedNodes = res.addedNodes.concat(Array.from(mut.addedNodes));
 			res.removedNodes = res.removedNodes.concat(Array.from(mut.removedNodes));
 		});

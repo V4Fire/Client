@@ -83,7 +83,7 @@ The trait specifies a bunch of methods to implement.
 ### open
 
 Opens the component.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
@@ -101,7 +101,7 @@ export default class bButton extends iBlock implements iOpen {
 ### close
 
 Disables the component.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
@@ -119,7 +119,7 @@ export default class bButton extends iBlock implements iOpen {
 ### onOpenedChange
 
 Handler: the opened modifier has been changed.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
@@ -137,7 +137,7 @@ export default class bButton extends iBlock implements iOpen {
 ### onKeyClose
 
 Handler: closing the component by a keyboard event.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';
@@ -155,7 +155,7 @@ export default class bButton extends iBlock implements iOpen {
 ### onTouchClose
 
 Handler: closing the component by a touch event.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iOpen from 'components/traits/i-open/i-open';

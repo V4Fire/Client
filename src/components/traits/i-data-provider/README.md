@@ -155,7 +155,7 @@ The trait specifies a bunch of methods to implement.
 ### unsuspendRequests
 
 Unsuspends all requests to the data provider.
-The method has the default implementation.
+The method has a default implementation.
 
 You can use `suspendedRequestsProp` and `unsuspendRequests` to lazy load components.
 For example, you can only load components in the viewport.
@@ -174,7 +174,7 @@ For example, you can only load components in the viewport.
 ### waitPermissionToRequest
 
 Returns a promise that will be resolved when the component can make requests to the data provider.
-The method has the default implementation.
+The method has a default implementation.
 
 ## Helpers
 

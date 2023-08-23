@@ -85,7 +85,7 @@ export default class bWindow extends iBlock implements iLockPageScroll {
 ### unlockPageScroll
 
 Unlocks scrolling of the document.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
