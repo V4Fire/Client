@@ -458,7 +458,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * This option should be used to specify managed libs, which will
-		 * be excluded from `snapshot.managedPaths` and from `watchOptions.ignore`.
+		 * be excluded from `snapshot.managedPaths` and from `watchOptions.ignore`
 		 *
 		 * @cli managed-libs
 		 * @env MANAGED_LIBS
