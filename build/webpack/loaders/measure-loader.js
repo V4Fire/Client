@@ -10,9 +10,8 @@
 
 /**
  * @typedef {object} LoadersMetrics
- * @prop {Map<string, bigint>} sums Total execution time for the loader
- * @prop {Map<string, bigint>} timestamps Execution start time for a specific resource and the loader
- * @prop {Map<string, bigint>} firstExecTimestamp Loader's first execution timestamp
+ * @prop {Map<string, bigint>} sums - total execution time for the loader
+ * @prop {Map<string, bigint>} timestamps - execution start time for a specific resource and the loader
  *
  * @typedef {Object<string, LoadersMetrics>} CompilationLoadersMetrics
  */
@@ -21,33 +20,55 @@
 const metrics = {};
 
 /**
- * It measures execution time of loaders
+ * This function measures the execution time of loaders.
+ * It should be inserted between existing loaders in the configuration.
+ *
+ * Assuming we have the following loaders:
+ *
+ * ```
+ * [
+ *   'css-loader',
+ *   'sass-loader'
+ * ]
+ * ```
+ *
+ * They will be wrapped using the `wrapLoaders` helper, resulting in:
+ *
+ * ```
+ * [
+ *   {loader: 'measure-loader', options: {prev: 'css-loader'}},
+ *   'css-loader',
+ *   {loader: 'measure-loader', options: {prev: 'sass-loader', next: 'css-loader'}},
+ *   'sass-loader',
+ *   {loader: 'measure-loader', options: {next: 'sass-loader'}}
+ * ]
+ * ```
+ *
+ * Each time this loader is executed, it will save the timestamp for the `next` loader
+ * and calculate the execution time for the `prev` loader.
  *
  * @param {string} str
  * @returns {string}
+ * @this {import('webpack').LoaderContext<{prev: string, next: string}>}
  */
 exports.default = function measureLoader(str) {
 	// NOTE: `style-loader` is executed in batch before all loaders, currently there is no fix
 	const {next, prev} = this.getOptions();
 
 	const
-		{name} = this._compilation,
+		name = this._compilation?.name ?? 'unknown',
 		now = process.hrtime.bigint();
 
-	const {sums, execTimestamps, firstExecTimestamp} = getLoadersMetrics(name);
+	const {sums, timestamps} = getLoadersMetrics(name);
 
 	if (next) {
 		const key = `${next}:${this.resourcePath}`;
 
-		if (!firstExecTimestamp.has(next)) {
-			firstExecTimestamp.set(next, now / 1000n);
-		}
-
-		if (execTimestamps.has(key)) {
+		if (timestamps.has(key)) {
 			this.getLogger('measure loader').warn(`Duplicate key: ${key}`);
 
 		} else {
-			execTimestamps.set(key, now);
+			timestamps.set(key, now);
 		}
 	}
 
@@ -55,12 +76,12 @@ exports.default = function measureLoader(str) {
 		const key = `${prev}:${this.resourcePath}`;
 
 		const
-			start = execTimestamps.get(key) ?? now,
+			start = timestamps.get(key) ?? now,
 			sum = sums.get(prev) ?? 0n;
 
 		sums.set(prev, sum + (now - start) / 1000n);
 
-		execTimestamps.delete(key);
+		timestamps.delete(key);
 	}
 
 	return str;
@@ -80,8 +101,7 @@ function getLoadersMetrics(compilationName) {
 	if (metrics[compilationName] == null) {
 		metrics[compilationName] = {
 			sums: new Map(),
-			execTimestamps: new Map(),
-			firstExecTimestamp: new Map()
+			timestamps: new Map()
 		};
 	}
 
@@ -92,7 +112,7 @@ function getLoadersMetrics(compilationName) {
  * Wraps loaders with measure loader
  *
  * @param {import('webpack').RuleSetRule|import('webpack').RuleSetRule[]|undefined} rules
- * @returns {void}
+ * @returns {import('webpack').RuleSetRule|import('webpack').RuleSetRule[]|undefined}
  */
 function wrapLoaders(rules) {
 	if (rules == null) {
