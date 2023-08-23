@@ -44,9 +44,9 @@ export default abstract class iLockPageScroll {
 		}
 
 		const lockLabel = {
-			join: true,
 			group,
-			label: $$.lock
+			label: $$.lock,
+			join: true
 		};
 
 		if (is.mobile !== false) {
@@ -214,9 +214,7 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * Locks scrolling of the document,
-	 * i.e., prevents any scrolling of the document except within the specified node.
-	 *
+	 * Locks scrolling of the document, preventing any scrolling of the document except within that node
 	 * @param [_scrollableNode] - the node within which scrolling is allowed
 	 */
 	lockPageScroll(_scrollableNode?: Element): Promise<void> {

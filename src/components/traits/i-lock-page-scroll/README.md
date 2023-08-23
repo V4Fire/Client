@@ -1,7 +1,7 @@
 # components/traits/i-lock-page-scroll
 
 This trait provides an API for blocking document scrolling.
-It is used if you have a problem with page scrolling under popups or other overlay elements.
+It is useful if you have an issue with page scrolling under popups or other overlay elements.
 
 ## Synopsis
 
@@ -66,7 +66,7 @@ The trait specifies a bunch of methods to implement.
 
 ### lockPageScroll
 
-Blocks scrolling of the document, i.e., prevents any scrolling of the document except within the specified node.
+Locks scrolling of the document, preventing any scrolling of the document except within that node.
 The method has a default implementation.
 
 ```typescript
