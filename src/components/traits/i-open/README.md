@@ -100,7 +100,7 @@ export default class bButton extends iBlock implements iOpen {
 
 ### close
 
-Disables the component.
+Closes the component.
 The method has a default implementation.
 
 ```typescript
