@@ -35,6 +35,7 @@ exports.tracer = {
 
 		if (queue.has(name)) {
 			end();
+
 		} else {
 			trace.begin({...fields, name, id});
 
