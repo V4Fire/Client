@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.?.? (2023-??-??)
+
+#### :bug: [Bug Fix]
+
+* A default 'endsWith: "?"' parameter has been added to the route configuration to correctly parse route parameters when there are query parameters in the path.
+
 ## v4.0.0-beta.12 (2023-08-21)
 
 #### :bug: Bug Fix
