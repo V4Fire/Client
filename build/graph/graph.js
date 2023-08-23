@@ -60,7 +60,7 @@ let
  * @returns {Promise<{entry, components, processes, dependencies}>}
  */
 async function buildProjectGraph() {
-	const done = tracer.measure('Build graph', {cat: ['graph']});
+	const buildFinished = tracer.measure('Build graph', {cat: ['graph']});
 
 	block.setObjToHash(config.componentDependencies());
 
@@ -70,7 +70,7 @@ async function buildProjectGraph() {
 	// The graph is already in the cache, and we can read it
 	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
 		const cache = loadFromCache();
-		done();
+		buildFinished();
 		return cache;
 	}
 
@@ -140,7 +140,7 @@ async function buildProjectGraph() {
 	);
 
 	console.log('The project graph is initialized');
-	done();
+	buildFinished();
 
 	return res;
 
