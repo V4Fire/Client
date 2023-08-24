@@ -15,15 +15,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Webpack build helpers
+* Webpack build helpers:
   * Added `getManagedPath` helper, which generates a managed path for node_modules with excluding
   * Added `prepareLibsForRegExp` helper, which converts the list of library names to a regexp string
   * Added `createDepRegExp` helper, which create a regexp matching all deps except excluded
 
-* Webpack plugins
+* Webpack plugins:
   * Added a new plugin `invalidate-external-cache`
 
-* Config
+* Config:
   * Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
   them in webpack watch mode
 
