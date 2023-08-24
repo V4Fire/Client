@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Webpack plugins
+  * Added a new plugin `invalidate-external-cache`
+
 ## v3.56.0 (2023-08-18)
 
 #### :rocket: New Feature
