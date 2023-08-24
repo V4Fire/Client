@@ -15,8 +15,16 @@ const
 	trace = new Tracer({noStream: true});
 
 exports.tracer = {
+	/**
+	 * Instance of the {@link Tracer}
+	 */
 	trace,
+
+	/**
+	 * Counter should be used to generate unique IDs for the events
+	 */
 	counter: 0,
+
 	/**
 	 * Accepts event name and checks event queue,
 	 * if there is an event with matching name
