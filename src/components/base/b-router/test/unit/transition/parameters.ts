@@ -99,6 +99,22 @@ test.describe('<b-router> passing transition parameters', () => {
 		);
 
 		test(
+			'correctly parses parameters in href with query parameters',
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					user: {
+						path: '/user/:userId?'
+					}
+				})(page);
+
+				await test.expect(root.evaluate(async (ctx) => {
+					await ctx.router!.push('/user/42?from=testFrom');
+					return location.pathname + location.search;
+				})).resolves.toBe('/user/42?from=testFrom');
+			}
+		);
+
+		test(
 			'by default, parameters for path interpolation can be taken not only from params, but also from query',
 
 			async ({page}) => {
