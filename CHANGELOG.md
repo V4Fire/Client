@@ -11,11 +11,25 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.?.? (2023-??-??)
+## v4.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Webpack build helpers
+  * Added `getManagedPath` helper, which generates managed path for node_modules with excludes
+  * Added `prepareLibsForRegExp` helper, which converts list of library names to a regexp string
+  * Added `createDepRegExp` helper, which create a regexp matching all deps except excluded
+
+* Webpack plugins
+  * Added a new plugin `invalidate-external-cache`
+
+* Config
+  * Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
+  them in webpack watch mode
 
 #### :bug: [Bug Fix]
 
-* A default 'endsWith: "?"' parameter has been added to the route configuration to correctly parse route parameters when there are query parameters in the path.
+* A default 'endsWith: "?"' parameter has been added to the route configuration to correctly parse route parameters when there are query parameters in the path
 
 ## v4.0.0-beta.12 (2023-08-21)
 

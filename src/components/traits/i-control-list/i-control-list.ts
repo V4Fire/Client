@@ -7,7 +7,16 @@
  */
 
 import type iBlock from 'components/super/i-block/i-block';
-import type { Control, ControlEvent } from 'components/traits/i-control-list/interface';
+
+import type {
+
+	Control,
+	ControlEvent,
+
+	ControlActionHandler,
+	ControlActionArgsMap
+
+} from 'components/traits/i-control-list/interface';
 
 //#if runtime has dummyComponents
 import('components/traits/i-control-list/test/b-traits-i-control-list-dummy');
@@ -16,7 +25,10 @@ import('components/traits/i-control-list/test/b-traits-i-control-list-dummy');
 export * from 'components/traits/i-control-list/interface';
 
 export default abstract class iControlList {
-	/** {@link iControlList.prototype.callControlAction} */
+	/**
+	 * @throws {TypeError} if the action handler is not provided
+	 * {@link iControlList.prototype.callControlAction}
+	 */
 	static callControlAction: AddSelf<iControlList['callControlAction'], iBlock> = (component, opts = {}, ...args) => {
 		const
 			{action, analytics} = opts;
@@ -59,24 +71,24 @@ export default abstract class iControlList {
 				{field} = component;
 
 			let
-				argsMapFn,
-				handlerFn;
+				argsMapFn: Nullable<CanPromise<ControlActionArgsMap>>,
+				handlerFn: Nullable<CanPromise<ControlActionHandler>>;
 
 			if (Object.isFunction(argsMap)) {
 				argsMapFn = argsMap;
 
 			} else {
-				argsMapFn = argsMap != null ? field.get<CanPromise<Function>>(argsMap) : null;
+				argsMapFn = argsMap != null ? field.get(argsMap) : null;
 			}
 
 			if (Object.isFunction(handler)) {
 				handlerFn = handler;
 
 			} else if (Object.isString(handler)) {
-				handlerFn = field.get<Function>(handler);
+				handlerFn = field.get(handler);
 			}
 
-			const callHandler = (methodFn, argsMapFn) => {
+			const callHandler = (methodFn: ControlActionHandler, argsMapFn: Nullable<ControlActionArgsMap>) => {
 				const args = argsMapFn != null ? argsMapFn.call(component, fullArgs) ?? [] : fullArgs;
 				return methodFn.call(component, ...args);
 			};
@@ -97,7 +109,8 @@ export default abstract class iControlList {
 				}
 
 				if (Object.isPromise(argsMapFn)) {
-					return argsMapFn.then((argsMapFn) => callHandler(handlerFn, argsMapFn));
+					return argsMapFn
+						.then((argsMapFn) => callHandler(Object.cast(handlerFn), argsMapFn));
 				}
 
 				return callHandler(handlerFn, argsMapFn);
