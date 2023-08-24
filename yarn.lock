@@ -2978,16 +2978,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pzlr/stylus-inheritance@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@pzlr/stylus-inheritance@npm:3.1.0"
+"@pzlr/stylus-inheritance@npm:3.3.0":
+  version: 3.3.0
+  resolution: "@pzlr/stylus-inheritance@npm:3.3.0"
   dependencies:
-    escaper: ^3.0.3
-    sugar: ^2.0.6
-    upath: ^1.2.0
+    escaper: 3.0.3
+    sugar: 2.0.6
+    upath: 1.2.0
   peerDependencies:
     "@pzlr/build-core": "*"
-  checksum: c16b8cd1b8c70cdd7a8a82f1147a5ef488196d85c5bb24c86d0bd35eddda3b0a3edc88b9bad6a257425ca0f28b5058bb78b13f860f62f639b3468977cf579092
+  checksum: d9b436d463b34daf043df15071dff75fa6a3779dca3ccf55efd7557b8d9ea10b672c2a088650fccf7e2d936243a0d3876d874e6f531fd62bca7c81542f3588cd
   languageName: node
   linkType: hard
 
@@ -5331,7 +5331,7 @@ __metadata:
     "@config/config": "npm:config@1.31.0"
     "@playwright/test": 1.32.1
     "@pzlr/build-core": 2.13.0
-    "@pzlr/stylus-inheritance": 3.1.0
+    "@pzlr/stylus-inheritance": 3.3.0
     "@statoscope/webpack-plugin": 5.25.1
     "@storybook/addon-essentials": 7.0.23
     "@storybook/addon-interactions": 7.0.23
@@ -11161,6 +11161,13 @@ __metadata:
   version: 4.0.0
   resolution: "escape-string-regexp@npm:4.0.0"
   checksum: 98b48897d93060f2322108bf29db0feba7dd774be96cd069458d1453347b25ce8682ecc39859d4bca2203cc0ab19c237bcc71755eff49a0f8d90beadeeba5cc5
+  languageName: node
+  linkType: hard
+
+"escaper@npm:3.0.3":
+  version: 3.0.3
+  resolution: "escaper@npm:3.0.3"
+  checksum: acbeb7968897391339a12d6b6623bec23bc3c6e496a398d1fec7ae4d86207d12eef3f07939c533b64d6f90cd188a2e5af2999e38d0f064fb62295c87d6fa8438
   languageName: node
   linkType: hard
 

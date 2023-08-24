@@ -15,19 +15,33 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocker: New Feature
 
-* Config
+* Config:
   * Added `module-parallelism` option, which sets the
   [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
   * Added `trace-build-times` option, which enables build time tracing, see [MeasurePlugin](./build/webpack/plugins/measure-plugin)
-  * Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
-  them in webpack watch mode
 
 * Added build time tracing, which can be visualized using the [Perfetto UI](https://ui.perfetto.dev)
 
-* Webpack build helpers
-  * Added `getManagedPath` helper, which generates managed path for node_modules with excludes
-  * Added `prepareLibsForRegExp` helper, which converts list of library names to a regexp string
+## v4.0.0-beta.13 (2023-08-24)
+
+#### :rocker: New Feature
+
+* Webpack build helpers:
+  * Added `getManagedPath` helper, which generates a managed path for node_modules with excluding
+  * Added `prepareLibsForRegExp` helper, which converts the list of library names to a regexp string
   * Added `createDepRegExp` helper, which create a regexp matching all deps except excluded
+
+* Webpack plugins:
+  * Added a new plugin `invalidate-external-cache`
+
+* Config:
+  * Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
+  them in webpack watch mode
+
+#### :bug: Bug Fix
+
+* A default `endsWith: "?"` parameter has been added to the route configuration to correctly parse route parameters when
+  there are query parameters in the path `core/router`
 
 ## v4.0.0-beta.12 (2023-08-21)
 
@@ -77,6 +91,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new method `getHref` `b-list`
 * Added a new `hrefTransition` event to provide the ability to prevent router navigation when a link is clicked `bRouter`
+* Added `.scrollTo()` and `.scrollToTop()` methods `tests/helpers/scroll`
 
 #### :house: Internal
 
@@ -138,7 +153,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.47.1 (2023-05-18)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Replace `undefined` values in `route.params` by an alias or query param, if necessary, in `b-router`
 
@@ -194,7 +209,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.44.3 (2023-03-30)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Overriding original parameter by alias in route `b-router` `core/router`
 
@@ -2973,7 +2988,7 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
   * Fixed providing of a watch context
   * Fixed an invalid caching of old values with `collapse = false`
 
-#### :house: [Internal]
+#### :house: Internal
 
 * Set `DEFAULT_TIMEOUT_INTERVAL = (10).seconds()` `build/test.gulp`
 
