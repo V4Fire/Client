@@ -9,12 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-beta.13 (2023-08-24)
 
 #### :rocket: New Feature
 
-* Added `getManagedPath` helper, which generates managed path for node_modules with excludes
-* Added `prepareLibsForRegExp` helper, which converts list of library names to a regexp string
+* Added `getManagedPath` helper, which generates a managed path for node_modules with excluding
+* Added `prepareLibsForRegExp` helper, which converts the list of library names to a regexp string
 * Added `createDepRegExp` helper, which create a regexp matching all deps except excluded
 
 ## v3.47.3 (2023-05-26)

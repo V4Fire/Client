@@ -11,13 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-beta.13 (2023-08-24)
 
 #### :rocket: New Feature
 
 * Webpack build helpers
-  * Added `getManagedPath` helper, which generates managed path for node_modules with excludes
-  * Added `prepareLibsForRegExp` helper, which converts list of library names to a regexp string
+  * Added `getManagedPath` helper, which generates a managed path for node_modules with excluding
+  * Added `prepareLibsForRegExp` helper, which converts the list of library names to a regexp string
   * Added `createDepRegExp` helper, which create a regexp matching all deps except excluded
 
 * Webpack plugins
@@ -29,7 +29,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: [Bug Fix]
 
-* A default 'endsWith: "?"' parameter has been added to the route configuration to correctly parse route parameters when there are query parameters in the path
+* A default `endsWith: "?"` parameter has been added to the route configuration to correctly parse route parameters when
+  there are query parameters in the path `core/router`
 
 ## v4.0.0-beta.12 (2023-08-21)
 
@@ -79,6 +80,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new method `getHref` `b-list`
 * Added a new `hrefTransition` event to provide the ability to prevent router navigation when a link is clicked `bRouter`
+* Added `.scrollTo()` and `.scrollToTop()` methods `tests/helpers/scroll`
 
 #### :house: Internal
 

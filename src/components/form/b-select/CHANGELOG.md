@@ -15,11 +15,12 @@ Changelog
 
 * Fixed incorrect update of the `selected` parameter in the native mode
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
 
-* `toggleValue` with `unsetPrevious = true` will unset previous value and set given value as new, previously, it would just unset the value.
+* `toggleValue` with `unsetPrevious = true` will unset previous value and set given value as new, previously,
+  it would just unset the value.
 
 #### :rocket: New Feature
 

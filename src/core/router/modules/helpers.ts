@@ -387,6 +387,7 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 			if (Object.isString(route.path)) {
 				pattern = concatURLs(basePath, route.path);
+
 				const pathOpts = {
 					...defaultPathOpts,
 					...(route.pathOpts ?? {})
