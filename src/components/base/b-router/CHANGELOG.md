@@ -42,13 +42,13 @@ Changelog
 
 ## v3.47.1 (2023-05-18)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Replace `undefined` values in `route.params` by an alias or query param, if necessary
 
 ## v3.44.3 (2023-03-30)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Overriding original parameter by alias in route
 

@@ -27,7 +27,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
   them in webpack watch mode
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * A default `endsWith: "?"` parameter has been added to the route configuration to correctly parse route parameters when
   there are query parameters in the path `core/router`
@@ -142,7 +142,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.47.1 (2023-05-18)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Replace `undefined` values in `route.params` by an alias or query param, if necessary, in `b-router`
 
@@ -198,7 +198,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.44.3 (2023-03-30)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Overriding original parameter by alias in route `b-router` `core/router`
 
@@ -2977,7 +2977,7 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
   * Fixed providing of a watch context
   * Fixed an invalid caching of old values with `collapse = false`
 
-#### :house: [Internal]
+#### :house: Internal
 
 * Set `DEFAULT_TIMEOUT_INTERVAL = (10).seconds()` `build/test.gulp`
 
