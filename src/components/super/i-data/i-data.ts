@@ -86,6 +86,10 @@ export default abstract class iData extends iDataHandlers {
 				this.emit('initLoadStart', opts);
 			}
 
+			if (this.dataProviderProp != null && this.dataProvider == null) {
+				this.syncDataProviderWatcher(false);
+			}
+
 			if (HYDRATION && !this.isReadyOnce && hydrationStore.has(this.componentId)) {
 				return callSuper();
 			}
@@ -112,10 +116,6 @@ export default abstract class iData extends iDataHandlers {
 				}
 
 				return res;
-			}
-
-			if (this.dataProviderProp != null && this.dataProvider == null) {
-				this.syncDataProviderWatcher(false);
 			}
 
 			const
