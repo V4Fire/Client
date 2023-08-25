@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.14 (2023-08-25)
+
+#### :house: Internal
+
+* The default control is a button
+
 ## v4.0.0-beta.13 (2023-08-24)
 
 #### :rocket: New Feature

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.14 (2023-08-25)
+
+#### :house: Internal
+
+* The default control is a button
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
