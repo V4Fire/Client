@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* The default control is a button
+* The default control is a button `iControlList`
 
 ## v4.0.0-beta.13 (2023-08-24)
 
