@@ -1170,6 +1170,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			svgSprite: true,
 			'ds/use-css-vars': false,
 
+			usePrefersColorScheme: false,
+
 			blockNames: false,
 			passDesignSystem: false,
 
