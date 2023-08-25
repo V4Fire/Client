@@ -19,16 +19,14 @@
 //#endif
 
 //#if runtime has includeThemes
-//#unless runtime has usePreferColorScheme
-for name in availableThemes()
-	html[data-theme={"%s" % name}]
-		interpolate-props(getDSVariables(name), false)
-//#endunless
-//#endif
-
 //#if runtime.usePrefersColorScheme
 for name in availableThemes()
 	@media (prefers-color-scheme: unquote(name))
 		:root
 			interpolate-props(getDSVariables(name), false)
+//#endif
+
+for name in availableThemes()
+	html[data-theme={"%s" % name}]
+		interpolate-props(getDSVariables(name), false)
 //#endif
