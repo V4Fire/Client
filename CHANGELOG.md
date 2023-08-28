@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to icons change its color according to selected theme `global/funcs/ds`
+
 ## v3.56.0 (2023-08-18)
 
 #### :rocket: New Feature
