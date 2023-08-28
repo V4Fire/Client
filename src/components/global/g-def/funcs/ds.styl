@@ -66,18 +66,18 @@ i($name, $params = null, $opts = null)
 	$repeat = no-repeat
 	$align = center
 	$imgPath = join(".", $name svg)
-	$color = inherit
+	$color = c('text icons/primary')
 
 	if type($opts) == "object"
 		$repeat = $opts.repeat || no-repeat
 		$align = $opts.align || center
 
-	else if type($opts) == "ident"
+	else if type($opts) == "ident" || type($opts) == "unit"
 		$align = $opts
 
 	if type($params) == "object"
 		$imgPath = createURL({href: $imgPath, query: $params})
-		$color = $params.fill || inherit
+		$color = $params.fill || $color
 
 	else if type($params) == "ident"
 		$repeat = $params
