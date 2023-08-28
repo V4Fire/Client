@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v??.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with resolving a promise returned by the `iLockPageScroll.lock`
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :bug: Bug Fix
