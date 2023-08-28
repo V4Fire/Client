@@ -10,7 +10,7 @@ Changelog
 > - :nail_care:  [Polish]
 
 
-## v4.??.?? (2023-??-??)
+## v3.57.0 (2023-08-28)
 
 #### :rocket: New Feature
 

@@ -11,12 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.? (2023-??-??)
+## v3.57.0 (2023-08-28)
 
 #### :rocket: New Feature
 
-* Webpack plugins
+* Webpack plugins:
   * Added a new plugin `invalidate-external-cache`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with resolving a promise returned by the `iLockPageScroll.lock`
 
 ## v3.56.0 (2023-08-18)
 
