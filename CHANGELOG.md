@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added detecting themes css variables from media-query `components/global/g-def`
+
 ## v4.0.0-beta.14 (2023-08-25)
 
 #### :house: Internal
