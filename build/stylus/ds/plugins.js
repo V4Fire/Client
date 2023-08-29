@@ -43,6 +43,8 @@ module.exports = function getPlugins({
 	usePrefersColorScheme,
 	theme,
 	includeThemes,
+	darkThemeName,
+	lightThemeName,
 	stylus = require('stylus')
 }) {
 	const
@@ -61,7 +63,7 @@ module.exports = function getPlugins({
 		isThemesIncluded = themesList != null && themesList.length > 0,
 		isOneTheme = Object.isArray(themesList) && themesList.length === 1 && themesList[0] === theme;
 
-	if (usePrefersColorScheme && (!themesList?.includes('dark') || !themesList?.includes('light'))) {
+	if (usePrefersColorScheme && (!themesList?.includes(darkThemeName) || !themesList?.includes(lightThemeName))) {
 		throw new Error(dsNotIncludedRequiredThemes);
 	}
 
@@ -310,5 +312,10 @@ module.exports = function getPlugins({
 		 * @returns {Array<string>}
 		 */
 		api.define('availableThemes', () => themesList);
+
+		/**
+		 *
+		 */
+		api.define('contextThemeNames', () => (stylus.utils.coerce({dark: darkThemeName, light: lightThemeName}, true)));
 	};
 };
