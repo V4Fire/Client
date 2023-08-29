@@ -34,7 +34,7 @@ const
  *
  * @param {string} [opts.darkThemeName]
  * @param {string} [opts.lightThemeName] - parameters are used in pair with {@link usePrefersColorScheme} and
- * provides the theme names that will be used as dark and light themes
+ * provides theme names that will be used as dark and light themes
  *
  * @param {string} [opts.theme] - current theme value
  * @param {(Array<string>|boolean)} [opts.includeThemes] - list of themes to include or
