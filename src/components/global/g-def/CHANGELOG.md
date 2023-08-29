@@ -14,6 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added detecting themes css variables from media-query
+* Added possibility to icons change its color according to selected theme
 
 ## v3.48.0 (2023-05-30)
 
