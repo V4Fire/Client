@@ -15,10 +15,10 @@ const
 
 const
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
-	{fullThemed} = include('build/stylus/ds/test/scheme/themes'),
+	{fullThemed, prefersColorSchemeThemes} = include('build/stylus/ds/test/scheme/themes'),
 	{getCSSVariable} = include('build/stylus/ds/test/helpers'),
 	{createDesignSystem} = include('build/stylus/ds/helpers'),
-	{dsHasThemesNotIncluded} = include('build/stylus/ds/const');
+	{dsHasThemesNotIncluded, dsNotIncludedRequiredThemes} = include('build/stylus/ds/const');
 
 describe('build/stylus/plugins', () => {
 	it('throws an error on creating plugins for a package with themes without specifying the current theme', () => {
@@ -56,6 +56,63 @@ describe('build/stylus/plugins', () => {
 
 		stylus.render('getDSValue("colors" "blue.1")', {use: [plugins]}, (err, hex) => {
 			expect(hex.trim()).toEqual(`${getCSSVariable('colors.blue.1')}`);
+		});
+	});
+
+	describe('creating ds with "ds/use-prefers-color-scheme" param', () => {
+		const
+			stylus = require('stylus');
+
+		it('should create a design system', () => {
+			const
+				{data: ds, variables: cssVariables} = createDesignSystem(prefersColorSchemeThemes.both);
+
+			expect(() => getPlugins({
+				ds,
+				cssVariables,
+				stylus,
+				usePrefersColorScheme: true,
+				includeThemes: true
+			})).toBeDefined();
+		});
+
+		it('throws an error on creating plugins for a package with themes but without required themes', () => {
+			const
+				{data: ds, variables: cssVariables} = createDesignSystem(fullThemed);
+
+			expect(() => getPlugins({
+				ds,
+				cssVariables,
+				stylus,
+				usePrefersColorScheme: true,
+				includeThemes: true
+			})).toThrowError(dsNotIncludedRequiredThemes);
+		});
+
+		it('throws an error on creating plugins for a package with themes but without dark theme', () => {
+			const
+				{data: ds, variables: cssVariables} = createDesignSystem(prefersColorSchemeThemes.onlyLight);
+
+			expect(() => getPlugins({
+				ds,
+				cssVariables,
+				stylus,
+				usePrefersColorScheme: true,
+				includeThemes: true
+			})).toThrowError(dsNotIncludedRequiredThemes);
+		});
+
+		it('throws an error on creating plugins for a package with themes but without light theme', () => {
+			const
+				{data: ds, variables: cssVariables} = createDesignSystem(prefersColorSchemeThemes.onlyDark);
+
+			expect(() => getPlugins({
+				ds,
+				cssVariables,
+				stylus,
+				usePrefersColorScheme: true,
+				includeThemes: true
+			})).toThrowError(dsNotIncludedRequiredThemes);
 		});
 	});
 });

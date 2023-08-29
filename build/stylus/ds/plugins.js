@@ -17,7 +17,8 @@ const
 
 const
 	{getThemes} = include('build/ds'),
-	{getThemedPathChunks, checkDeprecated} = include('build/stylus/ds/helpers');
+	{getThemedPathChunks, checkDeprecated} = include('build/stylus/ds/helpers'),
+	{dsNotIncludedRequiredThemes} = include('build/stylus/ds/const');
 
 /**
  * Returns a function to register Stylus plugins by the specified options
@@ -39,6 +40,7 @@ module.exports = function getPlugins({
 	ds,
 	cssVariables,
 	useCSSVarsInRuntime,
+	usePrefersColorScheme,
 	theme,
 	includeThemes,
 	stylus = require('stylus')
@@ -58,6 +60,10 @@ module.exports = function getPlugins({
 		themesList = getThemes(ds.raw, buildThemes),
 		isThemesIncluded = themesList != null && themesList.length > 0,
 		isOneTheme = Object.isArray(themesList) && themesList.length === 1 && themesList[0] === theme;
+
+	if (usePrefersColorScheme && (!themesList?.includes('dark') || !themesList?.includes('light'))) {
+		throw new Error(dsNotIncludedRequiredThemes);
+	}
 
 	if (!isThemesIncluded) {
 		if (Object.isString(theme)) {
