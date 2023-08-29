@@ -283,17 +283,17 @@ const prefersColorSchemeThemes = {
 		},
 		text: {
 			theme: {
-				light: fullThemed.text.theme.day,
+				light: fullThemed.text.theme.day
 			}
 		},
 		rounding: {
 			theme: {
-				light: fullThemed.rounding.theme.day,
+				light: fullThemed.rounding.theme.day
 			}
 		},
 		colors: {
 			theme: {
-				light: fullThemed.colors.theme.day,
+				light: fullThemed.colors.theme.day
 			}
 		}
 	}
