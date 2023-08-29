@@ -974,6 +974,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			});
 		},
 
+		/**
+		 * Returns the theme name from ds that will be used as application dark theme
+		 *
+		 * @cli dark-theme-name
+		 * @env DARK_THEME_NAME
+		 *
+		 * @returns {string}
+		 */
 		darkThemeName() {
 			return o('dark-theme-name', {
 				env: true,
@@ -981,6 +989,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			})
 		},
 
+		/**
+		 * Returns the theme name from ds that will be used as application light theme
+		 *
+		 * @cli light-theme-name
+		 * @env LIGHT_THEME_NAME
+		 *
+		 * @returns {string}
+		 */
 		lightThemeName() {
 			return o('light-theme-name', {
 				env: true,
