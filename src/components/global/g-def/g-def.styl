@@ -19,11 +19,11 @@
 //#endif
 
 //#if runtime has includeThemes
-//#if runtime['ds/use-prefers-color-scheme']
-for name in availableThemes()
-	@media (prefers-color-scheme: unquote(name))
+//#if runtime has 'ds/use-prefers-color-scheme'
+for k, v in contextThemeNames()
+	@media (prefers-color-scheme: unquote(k))
 		:root
-			interpolate-props(getDSVariables(name), false)
+			interpolate-props(getDSVariables(v), false)
 //#endif
 
 for name in availableThemes()
