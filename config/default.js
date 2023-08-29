@@ -986,7 +986,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return o('dark-theme-name', {
 				env: true,
 				default: 'dark'
-			})
+			});
 		},
 
 		/**
@@ -1001,7 +1001,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return o('light-theme-name', {
 				env: true,
 				default: 'light'
-			})
+			});
 		},
 
 		/**

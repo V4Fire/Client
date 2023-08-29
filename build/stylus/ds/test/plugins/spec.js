@@ -9,7 +9,6 @@
 'use strict';
 
 require('@config/config');
-const config = require("@config/config");
 
 const
 	getPlugins = include('build/stylus/ds/plugins');
