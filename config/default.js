@@ -974,6 +974,20 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			});
 		},
 
+		darkThemeName() {
+			return o('dark-theme-name', {
+				env: true,
+				default: 'dark'
+			})
+		},
+
+		lightThemeName() {
+			return o('light-theme-name', {
+				env: true,
+				default: 'light'
+			})
+		},
+
 		/**
 		 * Returns the attribute name to set the topic value to the root element
 		 *
@@ -1169,8 +1183,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			svgSprite: true,
 			'ds/use-css-vars': false,
-
-			usePrefersColorScheme: false,
+			'ds/use-prefers-color-scheme': false,
 
 			blockNames: false,
 			passDesignSystem: false,
