@@ -9,6 +9,7 @@
 'use strict';
 
 require('@config/config');
+const config = require("@config/config");
 
 const
 	getPlugins = include('build/stylus/ds/plugins');
@@ -61,7 +62,9 @@ describe('build/stylus/plugins', () => {
 
 	describe('creating ds with "ds/use-prefers-color-scheme" param', () => {
 		const
-			stylus = require('stylus');
+			stylus = require('stylus'),
+			darkThemeName = 'dark',
+			lightThemeName = 'light';
 
 		it('should create a design system', () => {
 			const
@@ -71,6 +74,8 @@ describe('build/stylus/plugins', () => {
 				ds,
 				cssVariables,
 				stylus,
+				darkThemeName,
+				lightThemeName,
 				usePrefersColorScheme: true,
 				includeThemes: true
 			})).toBeDefined();
@@ -84,6 +89,8 @@ describe('build/stylus/plugins', () => {
 				ds,
 				cssVariables,
 				stylus,
+				darkThemeName,
+				lightThemeName,
 				usePrefersColorScheme: true,
 				includeThemes: true
 			})).toThrowError(dsNotIncludedRequiredThemes);
@@ -97,6 +104,8 @@ describe('build/stylus/plugins', () => {
 				ds,
 				cssVariables,
 				stylus,
+				darkThemeName,
+				lightThemeName,
 				usePrefersColorScheme: true,
 				includeThemes: true
 			})).toThrowError(dsNotIncludedRequiredThemes);
@@ -110,6 +119,8 @@ describe('build/stylus/plugins', () => {
 				ds,
 				cssVariables,
 				stylus,
+				darkThemeName,
+				lightThemeName,
 				usePrefersColorScheme: true,
 				includeThemes: true
 			})).toThrowError(dsNotIncludedRequiredThemes);
