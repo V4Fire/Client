@@ -19,7 +19,7 @@
 //#endif
 
 //#if runtime has includeThemes
-//#if runtime.usePrefersColorScheme
+//#if runtime['ds/use-prefers-color-scheme']
 for name in availableThemes()
 	@media (prefers-color-scheme: unquote(name))
 		:root
