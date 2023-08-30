@@ -1197,12 +1197,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'ds/use-css-vars': false,
 
 			/**
-			 * If true, dark or light themes will be detected based on user settings.
-			 * Specify in `config.theme` names of themes which associated with dark and light theme
-			 * in your design system
-			 * If your design system does not provide themes from
-			 * `config.theme.darkThemeName` or `config.theme.lightThemeName` (which default values are 'dark' and 'light')
-			 * the build will be failed
+			 * If true, dark or light themes will be detected based on user settings
+			 * Specify in `config.theme` names of themes which associated with dark and light theme in your design system
+			 * If your design system does not provide themes from `config.theme.darkThemeName`
+			 * or `config.theme.lightThemeName` (which default values are 'dark' and 'light') the build will be failed
 			 */
 			'ds/use-prefers-color-scheme': false,
 
