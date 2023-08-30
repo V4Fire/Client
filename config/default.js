@@ -982,12 +982,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @returns {string}
 		 */
-		darkThemeName() {
-			return o('dark-theme-name', {
-				env: true,
-				default: 'dark'
-			});
-		},
+		darkThemeName: o('dark-theme-name', {
+			env: true,
+			default: 'dark'
+		}),
 
 		/**
 		 * Returns the theme name from ds that will be used as application light theme
@@ -997,12 +995,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @returns {string}
 		 */
-		lightThemeName() {
-			return o('light-theme-name', {
-				env: true,
-				default: 'light'
-			});
-		},
+		lightThemeName: o('light-theme-name', {
+			env: true,
+			default: 'light'
+		}),
 
 		/**
 		 * Returns the attribute name to set the topic value to the root element
@@ -1204,7 +1200,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			 * If true, dark or light themes will be detected based on user settings.
 			 * Specify in `config.theme` names of themes which associated with dark and light theme
 			 * in your design system
-			 * You must not specify default theme if you want to use this feature
 			 * If your design system does not provide themes from
 			 * `config.theme.darkThemeName` or `config.theme.lightThemeName` (which default values are 'dark' and 'light')
 			 * the build will be failed
