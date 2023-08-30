@@ -6,10 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import Friend from 'components/friends/friend';
+
+const
+	$$ = symbolGenerator();
 
 export default class ThemeManager extends Friend {
 	override readonly C!: iStaticPage;
@@ -43,8 +48,19 @@ export default class ThemeManager extends Friend {
 
 		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
 
-		this.current = THEME;
-		this.initialValue = THEME;
+		let theme = THEME;
+
+		if (USE_SYSTEM_THEME && Object.isString(DARK_THEME_NAME) && Object.isString(LIGHT_THEME_NAME)) {
+			const
+				darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
+
+			theme = darkThemeMq.matches ? DARK_THEME_NAME : LIGHT_THEME_NAME;
+
+			this.initThemeListener(darkThemeMq, DARK_THEME_NAME, LIGHT_THEME_NAME);
+		}
+
+		this.current = theme;
+		this.initialValue = theme;
 
 		if (!Object.isString(this.themeAttribute)) {
 			throw new ReferenceError('An attribute name to set themes is not specified');
@@ -81,5 +97,22 @@ export default class ThemeManager extends Friend {
 		void this.component.lfc.execCbAtTheRightTime(() => {
 			this.component.emit('theme:change', value, oldValue);
 		});
+	}
+
+	/**
+	 * Initialize listener for change system theme event
+	 *
+	 * @param mq
+	 * @param darkTheme
+	 * @param lightTheme
+	 */
+	protected initThemeListener(mq: MediaQueryList, darkTheme: string, lightTheme: string) {
+		if (USE_SYSTEM_THEME) {
+			this.async.on(mq, 'change', (event: MediaQueryListEvent) => (
+				event.matches ?
+					this.current = darkTheme :
+					this.current = lightTheme
+			), {label: $$.themeChanges});
+		}
 	}
 }

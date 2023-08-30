@@ -974,19 +974,31 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			});
 		},
 
-		darkThemeName() {
-			return o('dark-theme-name', {
-				env: true,
-				default: 'dark'
-			})
-		},
+		/**
+		 * Returns the theme name from ds that will be used as application dark theme
+		 *
+		 * @cli dark-theme-name
+		 * @env DARK_THEME_NAME
+		 *
+		 * @returns {string}
+		 */
+		darkThemeName: o('dark-theme-name', {
+			env: true,
+			default: 'dark'
+		}),
 
-		lightThemeName() {
-			return o('light-theme-name', {
-				env: true,
-				default: 'light'
-			})
-		},
+		/**
+		 * Returns the theme name from ds that will be used as application light theme
+		 *
+		 * @cli light-theme-name
+		 * @env LIGHT_THEME_NAME
+		 *
+		 * @returns {string}
+		 */
+		lightThemeName: o('light-theme-name', {
+			env: true,
+			default: 'light'
+		}),
 
 		/**
 		 * Returns the attribute name to set the topic value to the root element
@@ -1183,6 +1195,15 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			svgSprite: true,
 			'ds/use-css-vars': false,
+
+			/**
+			 * If true, dark or light themes will be detected based on user settings.
+			 * Specify in `config.theme` names of themes which associated with dark and light theme
+			 * in your design system
+			 * If your design system does not provide themes from
+			 * `config.theme.darkThemeName` or `config.theme.lightThemeName` (which default values are 'dark' and 'light')
+			 * the build will be failed
+			 */
 			'ds/use-prefers-color-scheme': false,
 
 			blockNames: false,

@@ -79,6 +79,10 @@ module.exports = {
 		s(getThemes(getDS(), config.theme.include() || [config.theme.default()])) :
 		null,
 
+	USE_SYSTEM_THEME: s(config.runtime['ds/use-prefers-color-scheme']),
+	DARK_THEME_NAME: s(config.theme.darkThemeName),
+	LIGHT_THEME_NAME: s(config.theme.lightThemeName),
+
 	DS: runtime.passDesignSystem && pzlr.designSystem ?
 		s(getDS()) :
 		null,
