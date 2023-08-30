@@ -113,7 +113,7 @@ export default class ThemeManager extends Friend {
 				event.matches ?
 					this.current = darkTheme :
 					this.current = lightTheme
-			))
+			), {single: false, label: $$.themeChange})
 		}
 	}
 }
