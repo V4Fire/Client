@@ -92,9 +92,10 @@ describe('build/stylus/plugins', () => {
 				lightThemeName,
 				usePrefersColorScheme: true,
 				includeThemes: true
-			})).toThrowError(dsNotIncludedRequiredThemes
-				.replace('{{dark}}', darkThemeName)
-				.replace('{{light}}', lightThemeName)
+			})).toThrowError(
+				dsNotIncludedRequiredThemes
+					.replace('{{dark}}', darkThemeName)
+					.replace('{{light}}', lightThemeName)
 			);
 		});
 

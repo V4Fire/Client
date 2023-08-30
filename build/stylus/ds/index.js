@@ -24,8 +24,7 @@ const
 const
 	theme = config.theme.default(),
 	includeThemes = config.theme.include(),
-	darkThemeName = config.theme.darkThemeName,
-	lightThemeName = config.theme.lightThemeName,
+	{darkThemeName, lightThemeName} = config.theme,
 	{
 		'ds/use-css-vars': useCSSVarsInRuntime,
 		'ds/use-prefers-color-scheme': usePrefersColorScheme

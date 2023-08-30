@@ -108,10 +108,10 @@ export default class ThemeManager extends Friend {
 	 */
 	protected initThemeListener(mq: MediaQueryList, darkTheme: string, lightTheme: string): void {
 		if (USE_SYSTEM_THEME) {
-			// TODO: understand why cant we use `this.async.on(mq, 'change', ...)`
+			// TODO: understand why cant we use `this.async.on(mq, 'change', ...)`; https://github.com/V4Fire/Core/issues/369
 			const wrappedMq = this.async.wrapEventEmitter<MediaQueryList>(mq);
 
-			wrappedMq.addEventListener('change',  (event) => (
+			wrappedMq.addEventListener('change', (event) => (
 				(<MediaQueryListEvent>event).matches ?
 					this.current = darkTheme :
 					this.current = lightTheme
