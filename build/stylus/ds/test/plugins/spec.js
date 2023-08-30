@@ -18,7 +18,7 @@ const
 	{fullThemed, prefersColorSchemeThemes} = include('build/stylus/ds/test/scheme/themes'),
 	{getCSSVariable} = include('build/stylus/ds/test/helpers'),
 	{createDesignSystem} = include('build/stylus/ds/helpers'),
-	{dsHasThemesNotIncluded, dsNotIncludedRequiredThemes} = include('build/stylus/ds/const');
+	{dsHasThemesNotIncluded, dsNotIncludedRequiredThemes, dsNotIncludedDarkTheme, dsNotIncludedLightTheme} = include('build/stylus/ds/const');
 
 describe('build/stylus/plugins', () => {
 	it('throws an error on creating plugins for a package with themes without specifying the current theme', () => {
@@ -92,7 +92,10 @@ describe('build/stylus/plugins', () => {
 				lightThemeName,
 				usePrefersColorScheme: true,
 				includeThemes: true
-			})).toThrowError(dsNotIncludedRequiredThemes);
+			})).toThrowError(dsNotIncludedRequiredThemes
+				.replace('{{dark}}', darkThemeName)
+				.replace('{{light}}', lightThemeName)
+			);
 		});
 
 		it('throws an error on creating plugins for a package with themes but without dark theme', () => {
@@ -107,7 +110,7 @@ describe('build/stylus/plugins', () => {
 				lightThemeName,
 				usePrefersColorScheme: true,
 				includeThemes: true
-			})).toThrowError(dsNotIncludedRequiredThemes);
+			})).toThrowError(dsNotIncludedDarkTheme.replace('{{dark}}', darkThemeName));
 		});
 
 		it('throws an error on creating plugins for a package with themes but without light theme', () => {
@@ -122,7 +125,7 @@ describe('build/stylus/plugins', () => {
 				lightThemeName,
 				usePrefersColorScheme: true,
 				includeThemes: true
-			})).toThrowError(dsNotIncludedRequiredThemes);
+			})).toThrowError(dsNotIncludedLightTheme.replace('{{light}}', lightThemeName));
 		});
 	});
 });

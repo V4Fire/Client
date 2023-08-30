@@ -10,5 +10,7 @@
 
 module.exports = {
 	dsHasThemesNotIncluded: 'The design system object has themes, but no one included into the build',
-	dsNotIncludedRequiredThemes: 'The design system object does not provide dark or light theme to use "prefers-color-scheme"'
+	dsNotIncludedRequiredThemes: 'The design system object does not provide "{{dark}}" and "{{light}}" theme to use "prefers-color-scheme"',
+	dsNotIncludedDarkTheme: 'The design system object does not provide "{{dark}}" theme to use "prefers-color-scheme"',
+	dsNotIncludedLightTheme: 'The design system object does not provide "{{light}}" theme to use "prefers-color-scheme"',
 };
