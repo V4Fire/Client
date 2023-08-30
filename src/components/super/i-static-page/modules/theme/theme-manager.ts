@@ -52,7 +52,7 @@ export default class ThemeManager extends Friend {
 
 		if (USE_SYSTEM_THEME && Object.isString(DARK_THEME_NAME) && Object.isString(LIGHT_THEME_NAME)) {
 			const
-				darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
+				darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
 
 			theme = darkThemeMq.matches ? DARK_THEME_NAME : LIGHT_THEME_NAME;
 
@@ -106,7 +106,7 @@ export default class ThemeManager extends Friend {
 	 * @param darkTheme
 	 * @param lightTheme
 	 */
-	protected initThemeListener(mq: MediaQueryList, darkTheme: string, lightTheme: string) {
+	protected initThemeListener(mq: MediaQueryList, darkTheme: string, lightTheme: string): void {
 		if (USE_SYSTEM_THEME) {
 			this.async.on(mq, 'change', (event: MediaQueryListEvent) => (
 				event.matches ?
