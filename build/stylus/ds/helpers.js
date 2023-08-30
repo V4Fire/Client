@@ -18,7 +18,8 @@
  */
 
 const
-	$C = require('collection.js');
+	$C = require('collection.js'),
+	{dsNotIncludedRequiredThemes, dsNotIncludedDarkTheme, dsNotIncludedLightTheme} = include('build/stylus/ds/const');
 
 /**
  * Returns a name of a CSS variable, created from the specified path with a dot delimiter
@@ -296,10 +297,27 @@ function checkDeprecated(ds, path) {
 	return true;
 }
 
+function checkRequiredThemes({usePrefersColorScheme, themesList, darkThemeName, lightThemeName}) {
+	if (usePrefersColorScheme && (!themesList?.includes(darkThemeName) || !themesList?.includes(lightThemeName))) {
+		if (!themesList?.includes(darkThemeName) && !themesList?.includes(lightThemeName)) {
+			throw new Error(dsNotIncludedRequiredThemes
+				.replace('{{dark}}', darkThemeName)
+				.replace('{{light}}', lightThemeName));
+		} else if (!themesList?.includes(darkThemeName)) {
+			throw new Error(dsNotIncludedDarkTheme
+				.replace('{{dark}}', darkThemeName));
+		} else {
+			throw new Error(dsNotIncludedLightTheme
+				.replace('{{light}}', lightThemeName));
+		}
+	}
+}
+
 module.exports = {
 	saveVariable,
 	checkDeprecated,
 	getVariableName,
 	createDesignSystem,
-	getThemedPathChunks
+	getThemedPathChunks,
+	checkRequiredThemes
 };
