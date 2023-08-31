@@ -59,6 +59,15 @@ export default abstract class iVirtualScrollProps extends iData {
 	readonly itemProps!: iItems['itemProps'];
 
 	/**
+	 * Meta information for a component that will not be used during rendering,
+	 * but will be available for reading/changing in `itemsProcessors`.
+	 *
+	 * If a function is provided, it will be called; otherwise, the value will be preserved "as is".
+	 */
+	@prop()
+	readonly itemMeta?: CreateFromItemFn<object, unknown> | unknown;
+
+	/**
 	 * Specifies the number of times the `tombstone` component will be rendered.
 	 *
 	 * This prop can be useful if you want to render multiple `tombstone` components
@@ -109,6 +118,7 @@ export default abstract class iVirtualScrollProps extends iData {
 
 				item: Object.isFunction(ctx.item) ? ctx.item(data, i) : ctx.item,
 				type: Object.isFunction(ctx.itemType) ? ctx.itemType(data, i) : ctx.itemType,
+				meta: Object.isFunction(ctx.itemMeta) ? ctx.itemMeta(data, i) : ctx.itemMeta,
 
 				props: Object.isFunction(ctx.itemProps) ?
 					ctx.itemProps(data, i, {
@@ -125,20 +135,18 @@ export default abstract class iVirtualScrollProps extends iData {
 	readonly itemsFactory!: ComponentItemFactory;
 
 	/**
-	 * This processor function enables you to perform additional manipulations on previously compiled
-	 * {@link ComponentItem}s using {@link bVirtualScroll.itemsFactory}. In simpler terms, it serves as middleware for
-	 * components that need to be rendered.
-	 * 
-	 * This function can be valuable when implementing global processing for each component
-	 * rendered in `b-virtual-scroll`.
-	 * 
-	 * Let's explore scenarios where you might want to use this functionality:
-	 * 
-	 * **Scenario**: Adding an advertisement component after each component rendered in `b-virtual-scroll` throughout the entire application.
+	 * This processor function enables you to manipulate previously compiled
+	 * {@link ComponentItem}s via {@link bVirtualScroll.itemsFactory}. It allows you to add components to render,
+	 * mutate props, and add children. It acts as middleware for rendering components.
 	 *
-	 * **Solution**: While you can override {@link bVirtualScroll.itemsFactory} inline, it's not the most convenient approach.
-	 * Instead, you can use {@link bVirtualScroll.itemsProcessors} for a more streamlined and centralized solution to this task.
-	 * 
+	 * Scenarios where you might use this functionality:
+	 *
+	 * **Scenario**: Add an advertisement component after each rendered component
+	 * in `b-virtual-scroll` throughout the app.
+	 *
+	 * **Solution**: Instead of overriding {@link bVirtualScroll.itemsFactory} inline,
+	 * use {@link bVirtualScroll.itemsProcessors} for a centralized solution.
+	 *
 	 * @example
 	 * ```typescript
 	 * const addAds = (items: ComponentItem[]) => {
@@ -151,35 +159,34 @@ export default abstract class iVirtualScrollProps extends iData {
 	 *       newItems.push({
 	 *         type: 'separator',
 	 *         item: 'b-ads-component',
-	 *         props: {
-	 *           prop: 'val'
-	 *         },
-	 *         key: 'uniqkey'
+	 *         props: { prop: 'val' },
+	 *         key: 'uniqueKey'
 	 *       });
 	 *     }
 	 *   });
-	 * 
+	 *
 	 *   return newItems;
 	 * }
 	 * ```
-	 * 
-	 * To set this manipulation as the global component processor in `b-virtual-scroll`, you need to override the
-	 * `itemsProcessors` constant, which `b-virtual-scroll` defaults to, in the `base/b-virtual-scroll/const.ts` file of your layer
-	 * and export it.
+	 *
+	 * To set this function as the global component processor in `b-virtual-scroll`,
+	 * override the `itemsProcessors` constant (in `base/b-virtual-scroll/const.ts`) of your layer and export it.
 	 *
 	 * @example
 	 * ```typescript
-	 * const itemsProcessors = {
+	 * export const itemsProcessors = {
 	 *   addAds
 	 * }
 	 * ```
-	 * 
-	 * Once you have this manipulation, the `b-ads-component` will be rendered within each `b-virtual-scroll` in your application
-	 * after an `item` type component.
-	 * 
-	 * Additionally, this prop allows you to mutate component props, component names, child elements, and add new elements.
-	 * For example, you might want to replace deprecated `b-card` components with `b-mega-card` components.
-	 * 
+	 *
+	 * After redefining this, `b-virtual-scroll` renders `b-ads-component` after
+	 * each `item` component.
+	 *
+	 * **Scenario**: Replace `b-card` components with `b-mega-card` throughout the app
+	 * and modify props.
+	 *
+	 * **Solution**: Add a processor function that changes the component name and mutates props.
+	 *
 	 * @example
 	 * ```typescript
 	 * const itemsProcessors = {
@@ -187,13 +194,13 @@ export default abstract class iVirtualScrollProps extends iData {
 	 *   migrateCardComponent: (items: ComponentItem[]) => {
 	 *     return items.map((item) => {
 	 *       if (item.item === 'b-card') {
-	 *         console.warn('Deprecation warning: b-card is deprecated.');
+	 *         console.warn('Deprecation: b-card is deprecated.');
 	 *
 	 *         return {
 	 *           ...item,
-	 *           props: convertProps(item.props)
+	 *           props: convertProps(item.props),
 	 *           item: 'b-mega-card'
-	 *         }
+	 *         };
 	 *       }
 	 *
 	 *       return item;
@@ -201,11 +208,6 @@ export default abstract class iVirtualScrollProps extends iData {
 	 *   }
 	 * }
 	 * ```
-	 * 
-	 * Now, `b-card` components will be replaced with `b-mega-card` components, and using the deprecated `b-card` component will trigger a warning.
-	 * 
-	 * Just like other props, you can also specify `itemsProcessors` inline. This allows you to establish global behavior,
-	 * such as adding advertisement components, and selectively override it on specific pages.
 	 */
 	@prop({
 		type: [Function, Object, Array],

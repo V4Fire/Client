@@ -190,6 +190,12 @@ export interface ComponentItem {
 	 * Children nodes of the component.
 	 */
 	children?: VNodeChildren;
+
+	/**
+	 * Meta information for a component that will not be used during rendering,
+	 * but will be available for reading/changing in `itemsProcessors`.
+	 */
+	meta?: unknown;
 }
 
 /**

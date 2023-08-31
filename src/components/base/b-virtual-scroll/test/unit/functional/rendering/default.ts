@@ -12,9 +12,12 @@
 
 import test from 'tests/config/unit/test';
 
+import { Scroll } from 'tests/helpers';
+
 import type { VirtualScrollState, ShouldPerform } from 'components/base/b-virtual-scroll/interface';
 import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
+import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
 test.describe('<b-virtual-scroll>', () => {
 	let
@@ -118,6 +121,49 @@ test.describe('<b-virtual-scroll>', () => {
 				await component.scrollToBottom();
 
 				await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
+			});
+		});
+	});
+
+	test.describe('`chunkSize` is 6', () => {
+		test.describe('provider responded once, returning 45 elements', () => {
+			test.describe('`shouldStopRequestingData` returns true after first request', () => {
+				test('should render all 45 elements within 8 rendering cycles', async () => {
+					const
+						chunkSize = 6,
+						providerChunkSize = 45;
+
+					provider
+						.responseOnce(200, {data: state.data.addData(providerChunkSize)});
+
+					const shouldPerformDataRender = await component.mockFn<ShouldPerform>(
+						({isInitialRender, remainingItems: remainingItems}) => isInitialRender || remainingItems === 0
+					);
+
+					await component
+						.withDefaultPaginationProviderProps({chunkSize})
+						.withProps({
+							shouldPerformDataRender,
+							shouldStopRequestingData: () => true,
+							chunkSize,
+							'@hook:beforeDataCreate': (ctx: bVirtualScroll) => jestMock.spy(ctx.unsafe.componentFactory, 'produceNodes')
+						});
+
+					await component.build();
+
+					await Scroll.scrollToBottomWhile(component.page, async () => {
+						const
+							isEqual = await component.getChildCount() === providerChunkSize;
+
+						return isEqual;
+					});
+
+					const
+						spy = await component.getSpy((ctx) => ctx.unsafe.componentFactory.produceNodes);
+
+					await test.expect(spy.callsLength).resolves.toBe(8);
+					await test.expect(component.childList).toHaveCount(providerChunkSize);
+				});
 			});
 		});
 	});

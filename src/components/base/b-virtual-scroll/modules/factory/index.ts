@@ -85,22 +85,21 @@ export class ComponentFactory extends Friend {
 	protected itemsProcessor(items: ComponentItem[]): ComponentItem[] {
 		const
 			{ctx} = this;
-	
+
 		if (!ctx.itemsProcessors) {
 			return items;
 		}
-	
+
 		if (Object.isFunction(ctx.itemsProcessors)) {
 			return ctx.itemsProcessors(items);
 		}
-	
+
 		Object.forEach<ItemsProcessor>(ctx.itemsProcessors, (processor) => {
 			items = processor(items);
 		});
-	
+
 		return items;
 	}
-
 
 	/**
 	 * Calls the render engine to render the components based on the provided descriptors.

@@ -159,8 +159,7 @@ test.describe('<b-virtual-scroll>', () => {
 				})
 				.build();
 
-			await component.waitForChildCountEqualsTo(chunkSize + 1);
-
+			await test.expect(component.waitForChildCountEqualsTo(chunkSize + 1)).resolves.toBeUndefined();
 			await test.expect(component.container.locator('.b-dummy')).toHaveCount(1);
 		});
 	});

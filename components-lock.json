@@ -1,5 +1,5 @@
 {
-  "hash": "06e86e53358c1b27da7c16c79eca66626018d542b8baafb42ad2a27db11e94ba",
+  "hash": "2183515ca30acdcc3fbd34f8abea947dd980fdfdf2b258921d3ad019b4ef9ed2",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -870,38 +870,6 @@
             "src/components/base/b-router/b-router.styl"
           ],
           "tpl": "src/components/base/b-router/b-router.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-scrolly",
-        {
-          "index": "src/components/base/b-scrolly/index.js",
-          "declaration": {
-            "name": "b-scrolly",
-            "parent": "i-data",
-            "dependencies": [],
-            "libs": []
-          },
-          "name": "b-scrolly",
-          "parent": "i-data",
-          "dependencies": [],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": "src/components/base/b-scrolly/b-scrolly.ts",
-          "styles": [
-            "src/components/base/b-scrolly/b-scrolly.styl"
-          ],
-          "tpl": "src/components/base/b-scrolly/b-scrolly.ss",
           "etpl": null
         }
       ],
