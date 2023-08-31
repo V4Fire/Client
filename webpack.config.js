@@ -79,8 +79,18 @@ async function buildFactory(entry, buildId) {
 const tasks = (async () => {
 	await include('build/snakeskin');
 
+	const processes = [
+		{
+			entries: {
+				'p-v4-components-demo': '/Users/geoprv/Documents/projects/v4fire/client/src/entries/tmp/82b5160e/p-v4-components-demo.js',
+				'p-v4-components-demo_tpl': '/Users/geoprv/Documents/projects/v4fire/client/src/entries/tmp/82b5160e/p-v4-components-demo.ss.js'
+			},
+			name: 'runtime'
+		}
+	];
+
 	const
-		{processes} = await include('build/graph'),
+		// {processes} = await include('build/graph'),
 		tasks = await $C(processes).async.map((el, i) => buildFactory(el, i));
 
 	globalThis.WEBPACK_CONFIG = tasks;

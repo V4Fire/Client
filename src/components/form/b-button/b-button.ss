@@ -10,6 +10,8 @@
 
 - include 'components/super/i-data'|b as placeholder
 
+/// Загрузка на s3 произойдет сама из папки dist/images
+
 - template index() extends ['i-data'].index
 	- rootWrapper = true
 	- skeletonMarker = true
@@ -34,6 +36,7 @@
 
 			${attrs|!html}
 		.
+			? console.log('\n\n\n\nDEBUG:\n\n\n\n', require('assets/logo.png'))
 
 			< _.&__wrapper
 				- block preIcon

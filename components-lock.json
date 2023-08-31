@@ -1,5 +1,5 @@
 {
-  "hash": "03854e082d49ae27fc8bbdb4569eb9f8f157ca205c1124b6f6216df47bcb05bc",
+  "hash": "32825b679e286bc506d96c602ec5954181627c4e0b1fa604bdb61932fe0e35e9",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2191,113 +2191,23 @@
             "name": "p-v4-components-demo",
             "parent": "i-static-page",
             "dependencies": [
-              "b-dummy",
-              "b-router",
-              "b-dynamic-page",
-              "b-remote-provider",
-              "b-list",
-              "b-tree",
-              "b-virtual-scroll",
-              "b-window",
-              "b-bottom-slide",
-              "b-slider",
-              "b-sidebar",
-              "b-form",
-              "b-button",
-              "b-icon-button",
-              "b-checkbox",
-              "b-radio-button",
-              "b-input",
-              "b-hidden-input",
-              "b-textarea",
-              "b-select",
-              "b-select-date",
-              "p-v4-dynamic-page1",
-              "p-v4-dynamic-page2",
-              "p-v4-dynamic-page3"
+              "b-button"
             ],
-            "libs": [
-              "components/directives/bind-with",
-              "components/directives/image",
-              "components/directives/icon",
-              "components/directives/in-view",
-              "core/router/engines/browser-history",
-              "core/router/engines/in-memory",
-              "components/traits/i-control-list/i-control-list",
-              "core/browser",
-              "core/cookies",
-              "core/html"
-            ]
+            "libs": []
           },
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
           "dependencies": [
-            "b-dummy",
-            "b-router",
-            "b-dynamic-page",
-            "b-remote-provider",
-            "b-list",
-            "b-tree",
-            "b-virtual-scroll",
-            "b-window",
-            "b-bottom-slide",
-            "b-slider",
-            "b-sidebar",
-            "b-form",
-            "b-button",
-            "b-icon-button",
-            "b-checkbox",
-            "b-radio-button",
-            "b-input",
-            "b-hidden-input",
-            "b-textarea",
-            "b-select",
-            "b-select-date",
-            "p-v4-dynamic-page1",
-            "p-v4-dynamic-page2",
-            "p-v4-dynamic-page3"
+            "b-button"
           ],
-          "libs": [
-            "components/directives/bind-with",
-            "components/directives/image",
-            "components/directives/icon",
-            "components/directives/in-view",
-            "core/router/engines/browser-history",
-            "core/router/engines/in-memory",
-            "components/traits/i-control-list/i-control-list",
-            "core/browser",
-            "core/cookies",
-            "core/html"
-          ],
+          "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
-            "%data:Set": [
-              "components/directives/bind-with",
-              "components/directives/icon",
-              "components/directives/image",
-              "components/directives/in-view",
-              "components/traits/i-control-list/i-control-list",
-              "core/browser",
-              "core/cookies",
-              "core/html",
-              "core/router/engines/browser-history",
-              "core/router/engines/in-memory"
-            ]
+            "%data:Set": []
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
-            "%data:Set": [
-              "components/directives/bind-with",
-              "components/directives/icon",
-              "components/directives/image",
-              "components/directives/in-view",
-              "components/traits/i-control-list/i-control-list",
-              "core/browser",
-              "core/cookies",
-              "core/html",
-              "core/router/engines/browser-history",
-              "core/router/engines/in-memory"
-            ]
+            "%data:Set": []
           },
           "type": "page",
           "mixin": false,
