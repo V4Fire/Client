@@ -97,7 +97,7 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 	['reset', 'reset.silence', 'reset.load', 'reset.load.silence'].forEach((event, i) => {
-		test.describe(`Случилось событие ${event}`, () => {
+		test.describe(`${event} fired`, () => {
 			test('Should reset state and reload the component data', async () => {
 				const
 					chunkSize = 12;
@@ -164,8 +164,3 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 });
-
-// * `reset` - reloads all data providers (including the tied storage and router);
-// * `reset.silence` - reloads all data providers (including the tied storage and router) in silent mode;
-// * `reset.load` - reloads the tied data providers;
-// * `reset.load.silence` - reloads the tied data providers in silent mode;
