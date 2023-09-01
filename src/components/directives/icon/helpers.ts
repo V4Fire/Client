@@ -80,16 +80,21 @@ export function updateIconHref(this: iBlock, id: string, el: SVGElement, href?: 
 	}, group);
 }
 
-function setIconStyles(el: SVGElement, name: string) {
+/**
+ * Sets styles from ds for the specified svg element
+ *
+ * @param el
+ * @param name
+ */
+function setIconStyles(el: SVGElement, name: string): void {
 	if (DS != null) {
-		const style = Object.get(DS, `iconMetaData.${name}.style`)
+		const style = Object.get(DS, `iconMetaData.${name}.style`);
 
 		if (Object.isDictionary(style)) {
-			const styleString = (
-				Object.entries(style).map(([k, v]) => `${k}:${v}`).join(';')
-			);
+			const
+				styleString = Object.entries(style).map(([k, v]) => `${k}:${String(v)}`).join(';');
 
-			el.setAttribute('style', styleString)
+			el.setAttribute('style', styleString);
 		}
 	}
 }
