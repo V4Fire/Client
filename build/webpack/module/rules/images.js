@@ -41,6 +41,20 @@ module.exports = function imagesRules() {
 				use: imgHelperLoaders(true)
 			},
 
+			{
+				resourceQuery: /myQuery/,
+				use: [
+					{
+						loader: 'responsive-loader',
+						options: {
+							sizes: [320, 640, 960],
+							outputPath: urlLoaderOpts.outputPath,
+							adapter: require('responsive-loader/sharp')
+						}
+					}
+				]
+			},
+
 			{use: imgHelperLoaders()}
 		]
 	};

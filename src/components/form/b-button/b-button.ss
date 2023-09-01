@@ -19,6 +19,10 @@
 	- block body
 		- super
 
+		< img &
+			:srcSet = require('assets/logo.png?myQuery').srcSet
+		.
+
 		< .&__button &
 			ref = button |
 
@@ -36,7 +40,6 @@
 
 			${attrs|!html}
 		.
-			? console.log('\n\n\n\nDEBUG:\n\n\n\n', require('assets/logo.png'))
 
 			< _.&__wrapper
 				- block preIcon

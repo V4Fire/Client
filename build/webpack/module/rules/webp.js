@@ -40,19 +40,6 @@ module.exports = function webpRules() {
 				use: webpHelperLoaders(true)
 			},
 
-			{
-				resourceQuery: /myQuery/,
-				use: [
-					{
-						loader: 'responsive-loader',
-						options: {
-							sizes: [320, 640, 960],
-							adapter: require('responsive-loader/sharp')
-						}
-					}
-				]
-			},
-
 			{use: webpHelperLoaders()}
 		]
 	};

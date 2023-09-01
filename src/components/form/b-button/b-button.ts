@@ -43,6 +43,8 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
 export * from 'components/form/b-button/interface';
 
+const logo = require('assets/logo.png?myQuery');
+
 DataProvider.addToPrototype({getDefaultRequestParams, base, get});
 
 interface bButton extends Trait<typeof iAccess>, Trait<typeof iOpenToggle> {}
