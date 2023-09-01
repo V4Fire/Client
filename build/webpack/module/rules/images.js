@@ -45,11 +45,25 @@ module.exports = function imagesRules() {
 				resourceQuery: /myQuery/,
 				use: [
 					{
+						loader: 'my-loader'
+					},
+					{
 						loader: 'responsive-loader',
 						options: {
-							sizes: [320, 640, 960],
 							outputPath: urlLoaderOpts.outputPath,
-							adapter: require('responsive-loader/sharp')
+							format: 'webp',
+							name: '[name]-[width].[ext]',
+							adapter: require('../../../adapters/my-adapter'),
+							sizes: [1, 2, 3]
+						}
+					},
+					{
+						loader: 'responsive-loader',
+						options: {
+							outputPath: urlLoaderOpts.outputPath,
+							name: '[name]-[width].[ext]',
+							adapter: require('../../../adapters/my-adapter'),
+							sizes: [1, 2, 3]
 						}
 					}
 				]
