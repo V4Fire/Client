@@ -41,10 +41,11 @@ export function getIconHref(iconId: Nullable<string>): Promise<CanUndef<string>>
 /**
  * Updates the `href` attribute of the child `use` element to the given value
  *
+ * @param id
  * @param el
  * @param [href]
  */
-export function updateIconHref(this: iBlock, el: SVGElement, href?: string): void {
+export function updateIconHref(this: iBlock, id: string, el: SVGElement, href?: string): void {
 	const {
 		async: $a,
 		$normalParent
@@ -53,6 +54,8 @@ export function updateIconHref(this: iBlock, el: SVGElement, href?: string): voi
 	if (this.componentStatus === 'inactive' || $normalParent?.componentStatus === 'inactive') {
 		return;
 	}
+
+	setIconStyles(el, id);
 
 	const group = {group: getElementId(el, idsCache)};
 	$a.clearAll(group);
@@ -75,4 +78,18 @@ export function updateIconHref(this: iBlock, el: SVGElement, href?: string): voi
 			el.removeChild(newUseEl);
 		} catch {}
 	}, group);
+}
+
+function setIconStyles(el: SVGElement, name: string) {
+	if (DS != null) {
+		const style = Object.get(DS, `iconMetaData.${name}.style`)
+
+		if (Object.isDictionary(style)) {
+			const styleString = (
+				Object.entries(style).map(([k, v]) => `${k}:${v}`).join(';')
+			);
+
+			el.setAttribute('style', styleString)
+		}
+	}
 }

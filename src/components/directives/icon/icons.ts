@@ -38,35 +38,45 @@ export function getIcon(id?: string): CanPromise<Icon> {
 //#if runtime has svgSprite
 // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
 
-let
-	ctx;
+const
+	ctx: any[] = [];
 
 if (!SSR && MODULE === 'ES2020') {
 	if (IS_PROD) {
 		// @ts-ignore (require)
-		ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy');
+		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy'));
+		// @ts-ignore (require)
+		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/, 'lazy'));
 
 	} else {
 		// @ts-ignore (require)
-		ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy');
+		ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy'));
+		// @ts-ignore (require)
+		ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/, 'lazy'));
 	}
 
 } else if (IS_PROD) {
 	// @ts-ignore (require)
-	ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/);
+	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/));
+	// @ts-ignore (require)
+	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/));
 
 } else {
 	// @ts-ignore (require)
-	ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/);
+	ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/));
+	// @ts-ignore (require)
+	ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/));
 }
 
-Object.forEach(ctx.keys(), (path: string) => {
-	const
-		id = normalize(path);
+ctx.forEach((el) => {
+	Object.forEach(el.keys(), (path: string) => {
+		const
+			id = normalize(path);
 
-	if (iconsStore[id] == null) {
-		iconsStore[id] = {ctx, path};
-	}
+		if (iconsStore[id] == null) {
+			iconsStore[id] = {ctx: el, path};
+		}
+	});
 });
 
 // @endcontext
