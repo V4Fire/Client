@@ -274,100 +274,87 @@ class pPage extends extends iDynamicPage {
 
 This method returns the current "internal" state of the component.
 
-### Как использовать should-like функции?
+### How to Use "Should-Like" Functions?
 
-### Обзор функций
+### Overview of Functions
 
-Компонент предоставляет несколько пропов-функций которые отвечают за необходимость выполнить то или иное действие.
-У каждой из этих функций разное назначение, каждая из них вызывается в свой момент времени. Разберем детально каждую из этих функций и для чего они нужны:
+The component provides several "should-like" props that determine whether to perform certain actions. Each of these functions serves a different purpose and is called at a specific moment in time. Let's take a detailed look at each of these functions and their purposes:
 
-- `shouldPerformDataRequest` - Данная функция указывает на необходимость загрузить данные чанк данных. В случае если она вернет `true` будет выполнен запрос
-данных. На вход функция принимает "внутренее" состояние компонента и должна вернуть `boolean` значение. Функция вызывается когда какой-либо компонент отрисованный
-`b-virtual-scroll`ом который еще не входил в область видимости вошел в область видимости.
+- `shouldPerformDataRequest`: This function indicates the need to load a chunk of data. If it returns `true`, a data request will be made. This function takes the "internal" component state as input and should return a boolean value. It is called when any component rendered by `b-virtual-scroll`, which has not yet entered the viewport, enters the viewport.
 
-> Важно отметить что клиенту в данной функции нет нужды проверять идет ли сейчас загрузка данных или нет, компонент `b-virtual-scroll` сам реализует данную проверку
-и не позволит инициировать загрузку данных если процесс загрузки уже активен.
+  > It's important to note that clients do not need to check whether data is currently being loaded or not; the `b-virtual-scroll` component handles this check itself and prevents data from being requested if a loading process is already active.
 
-Примером реализации данной функции может быть проверка на то, сколько еще попали во вьюпорт и если попала половина от отрисованных - можно начать загрузку.
+  An example implementation of this function could be to check how many items are left in the viewport, and if half of the rendered items are within the viewport, start loading more:
 
-```typescript
-const shouldPerformDataRequest = (state: VirtualScrollState): boolean => {
-  // Example: Request data if the remaining items till the end is less than or equal to 10
-  return state.remainingItems <= 10;
-};
-```
+  ```typescript
+  const shouldPerformDataRequest = (state: VirtualScrollState): boolean => {
+    // Example: Request data if the remaining items till the end is less than or equal to 10
+    return state.remainingItems <= 10;
+  };
+  ```
 
-Реализация по умолчанию же проверяет было ли загруженно хоть что-то в последнем запросе и если да, то значит можно сделать еще запрос:
+  The default implementation checks whether anything was loaded in the last request and, if so, allows another request:
 
-```typescript
-const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
-  const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
-  return isLastRequestNotEmpty();
-}
-```
+  ```typescript
+  const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
+    const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
+    return isLastRequestNotEmpty();
+  };
+  ```
 
-- `shouldStopRequestingData` - Данная функция указывает на необходимость завершить загрузку данных и указывает компоненту что лайф цикл со стороны загрузки данных завершен.
-В случае если она вернет `true` компонент `b-virtual-scroll` не будет пытаться запрашивать данные более до тех пор, пока не будет выполнена переинициализация компонента что приведет
-к обновлению лайф цикла. Функция вызывается после каждой успешной загрузки данных.
+- `shouldStopRequestingData`: This function indicates the need to stop requesting data and tells the component that the data loading lifecycle has completed. If it returns `true`, the `b-virtual-scroll` component will not attempt to request more data until the component is reinitialized, which leads to an update of the lifecycle. This function is called after every successful data load.
 
-Примером реализации данной функции может быть проверка на то, сколько данных загружено и сколько всего может вернуть пагинация по данному запросу:
+  An example implementation of this function could be to check whether the number of loaded items equals the total number of items that can be returned by the pagination for the current query:
 
-```typescript
-const shouldStopRequestingData = (state: VirtualScrollState): boolean => {
-  // Example: Stop requesting data when the total number of items equals the current number of loaded items
-  return state.lastLoadedRawData?.total === state.data.length;
-};
-```
+  ```typescript
+  const shouldStopRequestingData = (state: VirtualScrollState): boolean => {
+    // Example: Stop requesting data when the total number of items equals the current number of loaded items
+    return state.lastLoadedRawData?.total === state.data.length;
+  };
+  ```
 
+  The default implementation checks whether anything was loaded in the last request and, if so, allows requests to continue:
 
-Реализация по умолчанию же проверяет было ли загруженно хоть что-то в последнем запросе и если да, то значит прекращать запросы еще рано:
+  ```typescript
+  const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
+    const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
+    return isLastRequestNotEmpty();
+  };
+  ```
 
-```typescript
-const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
-  const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
-  return isLastRequestNotEmpty();
-}
-```
+- `shouldPerformDataRender`: This function indicates the need to render the loaded data. If it returns `true`, the `b-virtual-scroll` component will call the component rendering functions and insert them into the DOM tree. This function is called when there is loaded but unrendered data.
 
-- `shouldPerformDataRender` - Данная функция указывает на необходимость произвести отрисовку загруженных данных.
-В случае если она вернет `true` компонент `b-virtual-scroll` вызовет функции отрисовки компонент и вставит их в DOM дерево. Функция вызывается в случае если есть загруженные
-но не отрисованные данные.
+  An example implementation of this function could be to check how many items are left before reaching the end of the component's container:
 
-Примером реализации данной функции может быть проверка на то, сколько элементов осталось до конца контейнера с компонента:
+  ```typescript
+  const shouldPerformDataRender = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => state.remainingItems === 0;
+  ```
 
-```typescript
-const shouldPerformDataRender = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => state.remainingItems === 0
-```
+  The default implementation is similar to the example above.
 
-По умолчанию реализация точно такая же как и в примере выше.
+### Best Practices
 
-### Best Practice
+Here are some tips for efficiently implementing data loading on the client side while providing a seamless user experience:
 
-Несколько советов который позволит максимально эффективно со стороны клиента реализовать загрузку и при этом доставлять удовольствие от просмотра
-контента пользователю (а не заставлять его постоянно упираться в низ страницы) является таким:
+- Load data well in advance before you intend to render it. Data loading can be slow, but rendering data is much faster. Therefore, it is recommended to start data loading significantly in advance and perform rendering closer to the end of the scroll. This way, users will experience a smoother scrolling of the component.
 
-- Загружайте данные прилично заранее чем собираетесь отрисовывать - загрузка данных дело не быстрое, куда быстрее отрисовывать данные, поэтому рекомендуется начинать
-загрузку данных сильно заранее, а отрисовку производить уже ближе к концу ленты. Таким образом пользователь будет получать максимально бесшовный скроллинг компонента.
+  For example, you can implement this approach as follows:
 
-Например такой подход можно реализовать так:
+  ```typescript
+  const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
+    // Start loading when half of the components are in the viewport
+    return state.remainingItems <= chunkSize / 2;
+  }
+  ```
 
-```typescript
-const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
-  // Start loading when half of the components were in the viewport
-  return state.remainingItems <= chunkSize / 2;
-}
-```
+  ```typescript
+  const shouldPerformDataRender = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
+    // Start rendering when only 2 components are left to the end
+    return state.remainingItems <= 2;
+  }
+  ```
 
-```typescript
-const shouldPerformDataRender = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
-  // Start rendering when only 2 components are left to the end
-  return state.remainingItems <= 2
-}
-```
-
-- Не делайте последнего запроса - разговор про функции `shouldPerformDataRequest` и `shouldStopRequestingData`, по умолчанию данные функции проверяют последний чанк данных, вернул
-ли он что-нибудь, лучше этого избегать и заранее сообщать компоненту что все данные загруженны, это можно реализовать в случае если ваш сервер отдает сколько всего элементов будет
-с данными параметрами фильтрации с помощью сравнения этого значения и кол-во всех данных что есть в `b-virtual-scroll` (пример выше мы рассматривали).
+- Avoid making the last useless request: This pertains to the `shouldPerformDataRequest` and `shouldStopRequestingData` functions. By default, these functions check the last data chunk to see if it returned anything. It's better to avoid this and inform the component in advance that all data has been loaded. You can achieve this by comparing the value returned by your server, indicating the total number of items with the current number of items in `b-virtual-scroll`, as demonstrated in the example above.
 
 ### iItems и itemsFactory
 
@@ -377,7 +364,13 @@ const shouldPerformDataRender = (state: VirtualScrollState, _ctx: bVirtualScroll
 
 ### Глобальные переопределения
 
+### Часто возникающие вопросы
 
+Q: Можно ли использовать только `shouldPerformDataRequest` и не использовать `shouldStopRequestingData`?
+A:
+
+Q: Загрузка данны завершена, но компоненты не отрисовали, почему такое может быть?
+A: 
 
 ### How to implement on click rendering?
 
