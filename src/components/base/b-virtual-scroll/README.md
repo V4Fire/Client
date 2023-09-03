@@ -69,7 +69,7 @@ To achieve this, use the `requestQuery` prop in the `b-virtual-scroll` component
 < b-virtual-scroll &
   :dataProvider = 'Provider' |
   :request = {get: {count: 12}} |
-  :requestQuery = (state) => ({page: state.loadPage}) |
+  :requestQuery = (state) => ({get: {page: state.loadPage}}) |
   :chunkSize = 12
 .
 ```
@@ -92,7 +92,7 @@ Rendering occurs after data is loaded.
 < b-virtual-scroll &
   :dataProvider = 'Provider' |
   :request = {get: {count: 12}} |
-  :requestQuery = (state) => ({page: state.loadPage}) |
+  :requestQuery = (state) => ({get: {page: state.loadPage}}) |
   :chunkSize = 12 |
   :item = 'b-dummy' |
   :itemKey = (el) => el.uuid |
@@ -112,7 +112,7 @@ Let's add a `loader` slot to our component to provide a better user experience d
 < b-virtual-scroll &
   :dataProvider = 'Provider' |
   :request = {get: {count: 12}} |
-  :requestQuery = (state) => ({page: state.loadPage}) |
+  :requestQuery = (state) => ({get: {page: state.loadPage}}) |
   :chunkSize = 12 |
   :item = 'b-dummy' |
   :itemProps = (el) => ({name: el.name, type: el.type})
@@ -274,9 +274,32 @@ class pPage extends extends iDynamicPage {
 
 This method returns the current "internal" state of the component.
 
+### Converting Data to the Required Format
+
+The `b-virtual-scroll` component expects data in a specific format:
+
+```typescript
+interface VirtualScrollDb {
+  data: unknown[];
+}
+```
+
+The `data` array should contain the data items used to render the components.
+The `dbConverter` prop allows you to convert data into a format suitable for `b-virtual-scroll` after data has been loaded.
+
+```
+< b-virtual-scroll &
+  ...
+  :dbConverter = (data) => ({data: data.nestedData.data})
+.
+  < template #loader
+    < .&__loader
+      Data loading in progress
+```
+
 ### How to Use "Should-Like" Functions?
 
-### Overview of Functions
+#### Overview of Functions
 
 The component provides several "should-like" props that determine whether to perform certain actions. Each of these functions serves a different purpose and is called at a specific moment in time. Let's take a detailed look at each of these functions and their purposes:
 
@@ -332,7 +355,7 @@ The component provides several "should-like" props that determine whether to per
 
   The default implementation is similar to the example above.
 
-### Best Practices
+#### Best Practices
 
 Here are some tips for efficiently implementing data loading on the client side while providing a seamless user experience:
 
@@ -356,121 +379,206 @@ Here are some tips for efficiently implementing data loading on the client side 
 
 - Avoid making the last useless request: This pertains to the `shouldPerformDataRequest` and `shouldStopRequestingData` functions. By default, these functions check the last data chunk to see if it returned anything. It's better to avoid this and inform the component in advance that all data has been loaded. You can achieve this by comparing the value returned by your server, indicating the total number of items with the current number of items in `b-virtual-scroll`, as demonstrated in the example above.
 
-### iItems и itemsFactory
+### `itemsFactory`
 
-### request и requestQuery
+`itemsFactory` is a prop that allows you to take control of component rendering. Suppose you want to render twice as many components for a single data slice. Achieving this using `iItems` props (`item`, `itemProps`, etc.) might not be possible. However, such situations may arise, and this prop is created to solve them.
 
-### Использование слотов
+Let's consider a scenario in which we need to add a date separator component before each component with a different date from the next one. To achieve this, we will create an implementation of `itemsFactory` in which:
 
-### Глобальные переопределения
-
-### Часто возникающие вопросы
-
-Q: Можно ли использовать только `shouldPerformDataRequest` и не использовать `shouldStopRequestingData`?
-A:
-
-Q: Загрузка данны завершена, но компоненты не отрисовали, почему такое может быть?
-A: 
-
-### How to implement on click rendering?
-
-### How
-
-### Converting Data to the Required Format
-
-The `b-virtual-scroll` component expects data in a specific format:
+1. We will access the `b-virtual-scroll` state to retrieve the loaded data.
+2. We will take the previous element to determine if their dates differ, indicating whether we need to insert a date separator.
+3. We will assemble an array with an abstract representation of the components to be rendered and return it from `itemsFactory`.
 
 ```typescript
-interface VirtualScrollDb {
-  data: unknown[];
+const itemsFactory = (state, ctx) => {
+  const
+    lastLoadedData = state.lastLoadedData,
+    allData = state.data,
+    items = [];
+
+  lastLoadedData.forEach((current, i) => {
+    const
+      // Retrieve the previous data element relative to the given
+      prev = allData[(allData.length - lastLoadedData.length + i) - 1],
+      // Retrieve the next data element relative to the given
+      next = allData[i + 1];
+
+    if (!prev || prev.date !== current.date) {
+      items.push({
+        item: 'b-date-separator',
+        key: current.uuid + 'separator',
+        type: 'separator',
+        children: [],
+        props: {
+          date: current.date
+        }
+      });
+    }
+
+    items.push({
+      item: 'b-main-item',
+      key: current.uuid,
+      type: 'item',
+      children: [],
+      props: {
+        data: current
+      }
+    });
+  });
+
+  return items;
 }
 ```
 
-The `data` array should contain the data items used to render the components.
-The `dbConverter` prop allows you to convert data into a format suitable for `b-virtual-scroll` after data has been loaded.
+As you can see in the example above, we access the last chunk of loaded data and all component data to find the previous and next data elements relative to the current one. Then, we compare their dates, and if they are not equal, we add the `b-date-separator` component before adding the `b-main-item`. This way, we collect the components to be rendered in an array and return it from the `itemsFactory` function.
 
-```
-< b-virtual-scroll &
-  ...
-  :dbConverter = (data) => ({data: data.nestedData.data})
-.
-  < template #loader
-    < .&__loader
-      Data loading in progress
-```
+### `request` and `requestQuery`
 
-### Rendering Components
+To pass query parameters from the `b-virtual-scroll` component to the data provider, two props are specified: `request` and `requestQuery`. But why are there two of them, and what is the difference between them? Let's break it down:
 
-```
-< b-virtual-scroll &
-  :dataProvider = 'Provider' |
-  :request = {get: {chunkSize: 12}} |
-  :requestQuery = (state) => ({page: state.loadPage}) |
-  :chunkSize = 12 |
-  :item = 'b-dummy' |
-  :itemProps = (data) => ({name: data.name, type: data.type})
-.
-  < template #loader
-    < .&__loader
-      Data loading in progress
-```
+- `request` is a prop inherited from `iData`. When the value of this prop changes, it triggers the `initLoad` method. In the case of `b-virtual-scroll`, this is interpreted as a need to reset the component's state to its initial state and start a new lifecycle from scratch. In essence, `request` represents static request parameters for one lifecycle of the component. This prop is suitable for parameters that directly affect the need to invalidate the `b-virtual-scroll` state.
 
-In this example:
+- `requestQuery` is a prop defined by `b-virtual-scroll`. One key difference from `request` is that this prop can be a function, and whatever is returned from this function will be set as query parameters. This prop is used to implement pagination. It takes the "internal" state of `b-virtual-scroll` as input and returns query parameters. Changing this prop does not lead to the reinitialization of the component.
 
-- The `b-virtual-scroll` component is used to render 12 items per one render cycle.
-It interacts with the `Provider` data provider to fetch the data. The `request` prop is set to `{ get: { chunkSize: 12 } }`, specifying that each request should fetch 12 items.
-- The `requestQuery` function computes additional request parameters based on the component state, specifically the `loadPage` property. These request parameters are merged with the `request` prop.
-- The `b-virtual-scroll` component renders `b-dummy` components using the `item` prop.
-Each `b-dummy` component receives the `name` and `type` props, which are derived from the `data` object for each item using the `itemProps` function.
-- The component includes a `loader` slot that displays the message "Data loading in progress" while the data is being fetched.
-- By default, the component stops loading data when it receives an empty response from the `dataProvider`, indicating that there are no more items to load.
+The `request` prop and the result of calling the `requestQuery` function are merged together and then passed to the data provider as query parameters.
 
-### Rendering on click
+### Component Understanding
 
-In addition to the standard scroll-based loading, you can implement on-demand loading.
+#### Lifecycle
 
-To achieve this, you need to disable the observer module, allow component rendering, and use the special `initLoadNext` method.
+The component's lifecycle consists of several events and states. When the component is initialized and starts its initial data loading, it emits two events: `initLoadStart` and `dataLoadStart`. The `initLoadStart` event is a standard event emitted by every component and occurs each time the component's data is initially loaded. The `dataLoadStart` event is emitted for every data loading.
 
-```
-< b-virtual-scroll &
-  :disableObserver = true |
-  :shouldPerformDataRender = () => true |
-  ref = scroll
-.
-```
+1. `initLoadStart` - The initial data loading of the component has started.
+2. `dataLoadStart` - The data loading of the component has started.
 
-```typescript
-class pSomePage {
-  @watch('something')
-  onSomething() {
-    this.$refs.scroll.initLoadNext();
-  }
-}
-```
+After successful data loading, the following events are emitted:
 
-Additionally, for ease of implementation, when you need to load and render data on a button click, the `renderNext` slot is available. It will be displayed only when the component is not loading data, the last load did not result in an error, and the component's lifecycle is not completed. In combination with the `initLoadNext` method, this allows for easy implementation of lazy rendering on button click.
+1. `convertDataToDB` - The data conversion has been performed.
+2. `initLoad` - The initial data loading of the component has completed.
+3. `dataLoadSuccess` - The data loading of the component has completed.
 
-```
-< b-virtual-scroll &
-  :disableObserver = true |
-  :shouldPerformDataRender = () => true |
-  ref = scroll
-.
-  < template #renderNext
-    < .&__render-next @click = $refs.scroll.initLoadNext
-      Render next
+When the `convertDataToDB` event is emitted, the component's state is already updated with the `lastLoadedRawData` field. The `initLoad` and `dataLoadSuccess` events are emitted after updating the component's state, including `VirtualScrollState.data`, `VirtualScrollState.loadPage`, and some other fields.
+
+After successful data loading, the component consults the `shouldStopRequestingData` method to determine whether it should stop loading further data.
+
+Next, the component invokes the `renderGuard` to determine if the data can be rendered or not. If the `renderGuard` allows rendering, the following events are emitted:
+
+1. `renderStart` - The component rendering has started.
+2. `renderEngineStart` - The component rendering using the rendering engine has started.
+3. `renderEngineDone` - The component rendering using the rendering engine has completed.
+4. `domInsertStart` - The DOM insertion has started.
+5. `domInsertDone` - The DOM insertion has completed. This event is asynchronous as it uses RAF (Request Animation Frame) for DOM insertion.
+6. `renderDone` - The component rendering has finished.
+
+Afterward, the component waits for user actions, specifically when the user sees any component on the page. The component then calls the
+
+`shouldPerformDataRequest` or `shouldPerformDataRender` functions on the client side, depending on the availability of data. This process repeats until all data has been loaded and rendered.
+
+1. `lifecycleDone` - Occurs when all data has been loaded and rendered on the page.
+
+#### `renderGuard` and `loadDataOrPerformRender`
+
+The `b-virtual-scroll` component relies on the `renderGuard` and `loadDataOrPerformRender` functions to determine whether to render data, load data, or complete the component's lifecycle.
+
+The `loadDataOrPerformRender` function is the entry point for the data loading and rendering cycle.
+This function consults the `renderGuard`, which determines whether data can be rendered based on the data state and provides reasons for rejection only if it has not permitted the rendering.
+
+Understanding `renderGuard`:
+
+```mermaid
+graph TB
+    A["renderGuard"] -->|Get chunk size and next data slice| B["Is the data slice length = 0?"]
+    B -- True --> C["Are requests stopped?"]
+    C -- True --> E["Return: result=false, reason=done"]
+    E --> X["Function ends"]
+    C -- False --> F["Return: result=false, reason=noData"]
+    B -- False --> G["Is the data slice smaller than chunk size?"]
+    G -- True --> H["Return: result=false, reason=notEnoughData"]
+    G -- False --> I["Is it initial render?"]
+    I -- True --> J["Return: result=true"]
+    I -- False --> K["Get client response from shouldPerformDataRender"]
+    K --> L["Return: result=clientResponse, reason=noPermission if clientResponse is false"]
 ```
 
-### Component Reload
+Understanding `loadDataOrPerformRender`:
 
-To reload the `b-virtual-scroll` component, you have several options:
+```mermaid
+graph TB
+    A[loadDataOrPerformRender] -->|Get component state| B[Is the last request errored?]
+    B -- True --> X[return]
+    B -- False ---> C["renderGuard()"]
+    C -- If Render Guard Result is True --> D["performRender()"]
+    C -- If Render Guard Result is False --> E[Check the Render Guard Rejection Reason]
+    E -- reason=done --> F["onLifecycleDone()"]
+    E -- reason=noData --> G[isRequestsStopped?]
+    G -- False --> H["shouldPerformDataRequest()"]
+    H -- True --> I["initLoadNext()"]
+    E -- reason=notEnoughData --> J[isRequestsStopped?]
+    J -- True --> K["performRender() and onLifecycleDone()"]
+    J -- False --> L["shouldPerformDataRequest()"]
+    L -- True --> M["initLoadNext()"]
+    L -- False --> N[initial render?]
+    N -- True --> P["performRender()"]
+```
 
-1. Call `bVirtualScroll.initLoad()`.
-2. Call `bVirtualScroll.reload()`.
-3. Modify the `request` prop.
-4. Trigger a global event of type `reset`.
+#### Difference between ComponentItem with type `item` and `separator`
 
-In all of these cases, the component's lifecycle will be reset to its initial state, and the component will start rendering new data, discarding any previous data.
+The component allows rendering two types of components:
+
+- `item` - Main component (main content).
+- `separator` - Other components, such as dividers or separators.
+
+There is no significant difference between them, except that they are treated differently in fields like `remainingItems` in the `VirtualScrollState`. As the name suggests, the `remainingItems` property only considers components with the `item` type, while `remainingChildren` considers components with both `item` and `separator` types.
+
+The distinction between `item` and `separator` types is mainly used for calculating certain properties based on the type of components present in the `VirtualScrollState`, such as the number of items till the end of the scroll.
+
+#### Overriding in Child Layers
+
+The main use case for overriding in child layers is to modify the default behavior of functions or methods.
+
+For example, it may be useful to override the logic of `shouldStopRequestingData` if you want to implement a default logic that takes into account the `total` field of the response when making a decision.
+
+There may also be situations where you need to modify the `renderGuard`. Currently, the component loads data until the number of items reaches the `chunkSize` and then renders them. By overriding the `renderGuard`, you can achieve partial rendering, where the component renders the available data regardless of whether it reaches the `chunkSize`.
+
+### Frequently Asked Questions
+
+- Can I use only `shouldPerformDataRequest` and not use `shouldStopRequestingData`?
+
+  Hypothetically, you can. However, this may cause issues with the `done` slot and the `lifecycleDone` event; they will not work correctly. Therefore, it is strongly recommended to separate the logic into whether data should be loaded now (`shouldPerformDataRequest`) and whether data loading is completed (all data is loaded) (`shouldStopRequestingData`).
+
+- Can I set `chunkSize` to 10 if the request returns 89 items at a time?
+
+  Yes, you can. `b-virtual-scroll` will render the data in chunks until it has rendered all of it.
+
+- Can I set `chunkSize` to 10 if the request returns 5 items at a time?
+
+  Yes, you can. `b-virtual-scroll` will make requests (one at a time!) until the number of loaded items is greater than or equal to the value specified in `chunkSize`.
+
+- Suppose I want to load 1000 data items once and not make any more requests. How can I achieve this?
+
+  1. Set `chunkSize` to a suitable value, for example, 10, if you want 10 components to be rendered in one rendering cycle.
+
+  2. Set up `dataProvider` and request parameters.
+
+  3. Set the `shouldStopRequestingData` function to always return `true`.
+
+  After these manipulations, `b-virtual-scroll` will load the data using `dataProvider` once and then render all the loaded data in chunks.
+
+- Data loading is complete, but the components are not rendering. Why could this happen?
+
+  1. Ensure that your data has a format suitable for `b-virtual-scroll`, specifically `{data: any[]}`. If your data has a different format, you can convert it using the `dbConverter` prop, which should return the transformed data, or convert the data in another location, such as in the provider's post-processor.
+
+  2. Make sure that your `should-*` functions are correctly defined, and their conditions are met.
+
+  3. Ensure that your component is included in the bundle in the `index.js` file of your page or component.
+
+  4. Verify that there are no errors in specifying the component's name in the `item` prop and no issues with props in `itemProps`.
+
+- The same components are being rendered multiple times in a row. Why could this happen?
+
+  1. Ensure that you implement pagination using request parameters, and possibly the `requestQuery` prop. You might be loading the same data repeatedly because the request parameters are not changing.
+
+  2. If you have overridden `itemsFactory` and are managing the data rendering flow yourself, ensure that there are no errors in the data slice you are using for rendering.
 
 ## Slots
 
@@ -663,10 +771,10 @@ const requestQuery = (state: VirtualScrollState): Dictionary<Dictionary> => {
 A factory function used to generate an array of `ComponentItem` objects representing the components to be rendered.
 This function is called during the rendering process and receives the component state and context as arguments. It should return an array of `ComponentItem` objects.
 
-The default implementation uses the `chunkSize` and `iItems` trait to slice the data and generate the components.
+The default implementation uses the `chunkSize` and `iItems` trait props to slice the data and generate the components.
 However, you can override this function to implement a custom rendering strategy.
 
-Here's an example of how you can use the itemsFactory property to generate ComponentItem objects based on the lastLoadedData property:
+Here's an example of how you can use the itemsFactory property to generate ComponentItem objects based on the `lastLoadedData` property:
 
 ```typescript
 const itemsFactory = (state: VirtualScrollState): ComponentItem[] => {
@@ -707,126 +815,28 @@ The `bVirtualScroll` class extends `iData` and includes additional properties re
 
 ### API
 
-- Prop `renderGap` -> `shouldPerformDataRender`.
-- Props with `option-like` -> `iItems` props.
-- Method `getDataStateSnapshot` -> `getComponentState`.
-- Method `reloadLast` -> `initLoadNext`.
+- Prop `renderGap` deleted -> use `shouldPerformDataRender`;
+- Deprecated props `option-like` deleted -> use `iItems` props;
+- Method renamed `getDataStateSnapshot` -> `getComponentState`;
+- Method `reloadLast` -> `initLoadNext`;
 - `VirtualItemEl` interface is removed. Now, the client receives a single data item in the `iItems` methods. To maintain logic with `current`, `prev`, `next`, you can use the following approach:
 
-```typescript
-function getProps(data: DataInterface, index: number): Dictionary {
-  const
-    state = this.$refs.scroll.getComponentState();
+  ```typescript
+  function getProps(data: DataInterface, index: number): Dictionary {
+    const
+      state = this.$refs.scroll.getComponentState();
 
-  const
-    current = data,
-    prev = state.data[index - 1],
-    next = state.data[index + 1];
-}
-```
+    const
+      current = data,
+      prev = state.data[index - 1],
+      next = state.data[index + 1];
+  }
+  ```
 
 - Interface `DataState` -> `VirtualScrollState`:
   - `DataState.currentPage` -> `VirtualScrollState.loadPage`;
   - `DataState.lastLoadedChunk.raw` -> `VirtualScrollState.lastLoadedRaw`;
   - etc.
-
-## Deep dive into the component
-
-### Lifecycle
-
-The component's lifecycle consists of several events and states. When the component is initialized and starts its initial data loading, it emits two events: `initLoadStart` and `dataLoadStart`. The `initLoadStart` event is a standard event emitted by every component and occurs each time the component's data is initially loaded. The `dataLoadStart` event is emitted for every data loading.
-
-1. `initLoadStart` - The initial data loading of the component has started.
-2. `dataLoadStart` - The data loading of the component has started.
-
-After successful data loading, the following events are emitted:
-
-1. `convertDataToDB` - The data conversion has been performed.
-2. `initLoad` - The initial data loading of the component has completed.
-3. `dataLoadSuccess` - The data loading of the component has completed.
-
-When the `convertDataToDB` event is emitted, the component's state is already updated with the `lastLoadedRawData` field. The `initLoad` and `dataLoadSuccess` events are emitted after updating the component's state, including `VirtualScrollState.data`, `VirtualScrollState.loadPage`, and some other fields.
-
-After successful data loading, the component consults the `shouldStopRequestingData` method to determine whether it should stop loading further data.
-
-Next, the component invokes the `renderGuard` to determine if the data can be rendered or not. If the `renderGuard` allows rendering, the following events are emitted:
-
-1. `renderStart` - The component rendering has started.
-2. `renderEngineStart` - The component rendering using the rendering engine has started.
-3. `renderEngineDone` - The component rendering using the rendering engine has completed.
-4. `domInsertStart` - The DOM insertion has started.
-5. `domInsertDone` - The DOM insertion has completed. This event is asynchronous as it uses RAF (Request Animation Frame) for DOM insertion.
-6. `renderDone` - The component rendering has finished.
-
-Afterward, the component waits for user actions, specifically when the user sees any component on the page. The component then calls the
-
-`shouldPerformDataRequest` or `shouldPerformDataRender` functions on the client side, depending on the availability of data. This process repeats until all data has been loaded and rendered.
-
-1. `lifecycleDone` - Occurs when all data has been loaded and rendered on the page.
-
-### `renderGuard` and `loadDataOrPerformRender`
-
-The `b-virtual-scroll` component relies on the `renderGuard` and `loadDataOrPerformRender` functions to determine whether to render data, load data, or complete the component's lifecycle.
-
-The `loadDataOrPerformRender` function is the entry point for the data loading and rendering cycle.
-This function consults the `renderGuard`, which determines whether data can be rendered based on the data state and provides reasons for rejection only if it has not permitted the rendering.
-
-Understanding `renderGuard`:
-
-```mermaid
-graph TB
-    A["renderGuard"] -->|Get chunk size and next data slice| B["Is the data slice length = 0?"]
-    B -- True --> C["Are requests stopped?"]
-    C -- True --> E["Return: result=false, reason=done"]
-    E --> X["Function ends"]
-    C -- False --> F["Return: result=false, reason=noData"]
-    B -- False --> G["Is the data slice smaller than chunk size?"]
-    G -- True --> H["Return: result=false, reason=notEnoughData"]
-    G -- False --> I["Is it initial render?"]
-    I -- True --> J["Return: result=true"]
-    I -- False --> K["Get client response from shouldPerformDataRender"]
-    K --> L["Return: result=clientResponse, reason=noPermission if clientResponse is false"]
-```
-
-Understanding `loadDataOrPerformRender`:
-
-```mermaid
-graph TB
-    A[loadDataOrPerformRender] -->|Get component state| B[Is the last request errored?]
-    B -- True --> X[return]
-    B -- False ---> C["renderGuard()"]
-    C -- If Render Guard Result is True --> D["performRender()"]
-    C -- If Render Guard Result is False --> E[Check the Render Guard Rejection Reason]
-    E -- reason=done --> F["onLifecycleDone()"]
-    E -- reason=noData --> G[isRequestsStopped?]
-    G -- False --> H["shouldPerformDataRequest()"]
-    H -- True --> I["initLoadNext()"]
-    E -- reason=notEnoughData --> J[isRequestsStopped?]
-    J -- True --> K["performRender() and onLifecycleDone()"]
-    J -- False --> L["shouldPerformDataRequest()"]
-    L -- True --> M["initLoadNext()"]
-    L -- False --> N[initial render?]
-    N -- True --> P["performRender()"]
-```
-
-### Difference between ComponentItem with type `item` and `separator`
-
-The component allows rendering two types of components:
-
-- `item` - Main component (main content).
-- `separator` - Other components, such as dividers or separators.
-
-There is no significant difference between them, except that they are treated differently in fields like `remainingItems` in the `VirtualScrollState`. As the name suggests, the `remainingItems` property only considers components with the `item` type, while `remainingChildren` considers components with both `item` and `separator` types.
-
-The distinction between `item` and `separator` types is mainly used for calculating certain properties based on the type of components present in the `VirtualScrollState`, such as the number of items till the end of the scroll.
-
-### Overriding in Child Layers
-
-The main use case for overriding in child layers is to modify the default behavior of functions or methods.
-
-For example, it may be useful to override the logic of `shouldStopRequestingData` if you want to implement a default logic that takes into account the `total` field of the response when making a decision.
-
-There may also be situations where you need to modify the `renderGuard`. Currently, the component loads data until the number of items reaches the `chunkSize` and then renders them. By overriding the `renderGuard`, you can achieve partial rendering, where the component renders the available data regardless of whether it reaches the `chunkSize`.
 
 ## What's Next
 
