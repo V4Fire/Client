@@ -37,13 +37,11 @@ Also, you can see the implemented traits or the parent component.
 
 ## Usage
 
-### Как реализовать простой рендеринг?
+### How to Implement Simple Rendering?
 
-Для того чтобы реализовать простой рендеринг необходимо проделать несколько простых манипуляций:
+To implement simple rendering, you need to follow several steps:
 
-Установите дата-провайдер компоненту. Для примера мы будем использовать провайдер
-с именем `Provider` который возвращает N кол-во данных в формате: `{data: object[]}`, где N зависит
-от параметра запроса `count`.
+1. Set up a data provider for the component. For example, we'll use a provider named `Provider` that returns data in the format `{data: object[]}`, where the number of objects depends on the request parameter `count`.
 
 ```
 < b-virtual-scroll &
@@ -51,13 +49,9 @@ Also, you can see the implemented traits or the parent component.
 .
 ```
 
-> Важно отметить что `b-virtual-scroll` ожидает именно такой (`{data: object[]}`) формат данных, если ваш провайдер
-возвращает данные в каком-либо другом формате - вы можете использовать различные процессоры либо в пройдере, либо в компонент с помощью пропа
-`convertDataToDb`.
+> It's important to note that `b-virtual-scroll` expects data in this specific format (`{data: object[]}`). If your provider returns data in a different format, you can use processors in either the provider or the component using the `convertDataToDb` prop.
 
-Допустим мы хотим загружать и рисовать 12 компонентов за раз, для этого необходимо так же компоненту `b-virtual-scroll`
-указать пропы: `request` и `chunkSize`. `request` проп отвечает за параметры запроса (стандартное поведение `iData`) а `chunkSize`
-отвечает за кол-во отрисоваемых элементов за один цикл отрисовки.
+2. Let's say we want to load and render 12 components at a time. To achieve this, you need to specify the `request` and `chunkSize` props for the `b-virtual-scroll` component. The `request` prop defines the request parameters (standard behavior of `iData`), and `chunkSize` specifies the number of items to render in each rendering cycle.
 
 ```
 < b-virtual-scroll &
@@ -67,15 +61,9 @@ Also, you can see the implemented traits or the parent component.
 .
 ```
 
-После того как мы установили данные параметры наш провайдер будет загружать одни и те же данные, чтобы этого избежать и загружать
-каждый раз различные данные (следующий кусок данных) нам необходимо передавать параметр запроса `page` в `Provider` который указывает
-на номер страницы загрузки.
+3. To avoid loading the same data repeatedly and load different data for each subsequent request, you need to pass the `page` request parameter to the `Provider`. This parameter indicates the page number of the data to be loaded.
 
-Для того чтобы реализовать передачу данного параметра запроса компоненту `b-virtual-scroll` необходимо указать дополнительный проп
-`requestQuery`. `requestQuery` это функция-проп, которую вызывает `b-virtual-scroll` передавая аргументом свое состояние, перед тем как сделать запрос.
-На основе состояния `b-virtual-scroll` можно из этой функции вернуть походящее значение для параметра `page`. Разница между `request` и `requestQuery` заключается в том, 
-что в случае изменения последнего, не произойдет переинициализации компонента. Эти два пропа, после того как возвращают значения, мержутся между собой и получаются 
-финальные параметры запроса которые будут переданы в провайдер.
+To achieve this, use the `requestQuery` prop in the `b-virtual-scroll` component. `requestQuery` is a function prop that `b-virtual-scroll` calls, passing its own state as an argument, before making a request. You can return the appropriate `page` value based on the component's state. The difference between `request` and `requestQuery` is that changes to the latter won't cause the component to reinitialize. These two props are merged to form the final request parameters passed to the provider.
 
 ```
 < b-virtual-scroll &
@@ -86,21 +74,19 @@ Also, you can see the implemented traits or the parent component.
 .
 ```
 
-Как видно из примера выше параметр `page` берется из состояния компонента, а именно `loadPage`, `loadPage` же в свою очередь это число которое увеличивается
-после каждой успешной загрузки данных.
+In the example above, the `page` parameter is extracted from the component's state, specifically `loadPage`, which increments after each successful data load.
 
-Теперь, когда у нас есть загрузка данных с помощью пагинация, остается вопрос, что же будет отрисовываться в нашем `b-virtual-scroll`?
+4. Now that you have set up data loading with pagination, you need to specify what `b-virtual-scroll` will render.
 
-Для управления тем что будет отрисовано `b-virtual-scroll` предоставляет несколько пропов:
+To control what `b-virtual-scroll` renders, you can use the following props:
 
-- `item` - Имя компонента который должен быть отрисован. Так же `item` может быть функцией, которая будет вызвана и результат которой
-будет считаться именем компонента.
+- `item`: The name of the component to be rendered. It can also be a function that returns the component's name.
 
-- `itemProps` - Пропы компонента. Обычно это функция которая возвращает пропы компонента. На вход получает один элемент
-данных из загруженных данных.
+- `itemProps`: The props for the component. Typically, this is a function that returns the props for each item based on the loaded data.
 
-Отрисовка происходит после загрузки данных, компонент загрузки 12 элементов в массиве `data` и для каждого из 12
-элементов будет вызвана функция `itemProps`.
+- `itemKey`: The uniq id of the component.
+
+Rendering occurs after data is loaded.
 
 ```
 < b-virtual-scroll &
@@ -109,18 +95,18 @@ Also, you can see the implemented traits or the parent component.
   :requestQuery = (state) => ({page: state.loadPage}) |
   :chunkSize = 12 |
   :item = 'b-dummy' |
-  :itemProps = (data) => ({name: data.name, type: data.type})
+  :itemKey = (el) => el.uuid |
+  :itemProps = (el) => ({name: el.name, type: el.type})
 .
 ```
 
-Таким образом, у нас на странице будет отображаться компонент, который загружает 12 элементов и отрисовывает тоже 12 за один раз,
-при прокрутке к низу компонента будет происходит новый запрос с другим значением `page` и, после успешной загрузки, отрисовываться новые компоненты.
+What is `el` you can inquire about in the `itemKey` and `itemProps` functions? `el` is one of the objects in the `data` array loaded by the `dataProvider`. `b-virtual-scroll` takes the array of loaded data and calls these functions for each of the objects in this array, allowing you to transform data into components that are suitable for rendering in the `b-virtual-scroll` component.
 
-Но допустим наш компонент будет загружать данные очень долго, например 1 секунду, таким образом мы получим ситуацию что у нас сначала было пустое место, а потом
-бац и появился контент, пользователь будет в шоке от неожиданности. Чтобы этого не допустить компонент `b-virtual-scroll` предоставляет клиентам несколько
-слотов которые позволяет отрисовать "загрузчик" который будет показываться пока загружаются данные.
+This setup will display a component on the page that loads and renders 12 items at once. When scrolling down, a new request with a different `page` value will be made, and after a successful load, new components will be rendered.
 
-Давайте добавим слот `loader` нашему компоненту чтобы не пугать пользователя.
+However, if your component takes a long time to load data (e.g., 1 second), you might notice that there is initially empty space, and then the content suddenly appears, which can be unexpected for users. To avoid this, `b-virtual-scroll` provides slots that allow you to render a "loader" while data is being loaded.
+
+Let's add a `loader` slot to our component to provide a better user experience during loading:
 
 ```
 < b-virtual-scroll &
@@ -129,23 +115,22 @@ Also, you can see the implemented traits or the parent component.
   :requestQuery = (state) => ({page: state.loadPage}) |
   :chunkSize = 12 |
   :item = 'b-dummy' |
-  :itemProps = (data) => ({name: data.name, type: data.type})
+  :itemProps = (el) => ({name: el.name, type: el.type})
 .
   < template #loader
     < .&__loader
       Data loading in progress
 ```
 
-Теперь пользователь будет виден симпатичную надпись которая намекает на наличие контента который появится чуть позже.
+Now, users will see a friendly message indicating that content will appear shortly, preventing them from being surprised by sudden content changes.
 
-### Как реализовать рендеринг компонент не по скролу, а по клику?
+### How to Implement Component Rendering on Click Instead of Scroll?
 
-Компонент `b-virtual-scroll`, помимо стратегии загрузки по скролу, так же имеет возможность
-загружать данные по какому-либо событию, например по клику на кнопку.
+The `b-virtual-scroll` component, in addition to scroll-based loading, can also load data on other events, such as a click on a button.
 
-Для реализации такого подхода необходимо проделать несколько шагов.
+To implement this approach, follow these steps:
 
-1. Отключить наблюдателей за скролом с помощью пропа `disableObserver` и установки его в `true`.
+1. Disable scroll observers using the `disableObserver` prop by setting it to `true`.
 
 ```
 < b-virtual-scroll &
@@ -155,8 +140,7 @@ Also, you can see the implemented traits or the parent component.
 .
 ```
 
-2. Установить проп `shouldPerformDataRender` как функцию которая всегда возвращает `true`. Данная функция
-будет вызываться при каждой попытке отрисовать данные, более детально о ней мы поговорим в следующих главах.
+2. Set the `shouldPerformDataRender` prop to a function that always returns `true`. This function will be called for each attempt to render data. We will discuss this function in more detail in the following sections.
 
 ```
 < b-virtual-scroll &
@@ -167,7 +151,7 @@ Also, you can see the implemented traits or the parent component.
 .
 ```
 
-3. Получить возможность обращаться к методам `b-virtual-scroll`, для этого используем стандартный механизм `ref`.
+3. Gain access to the methods of `b-virtual-scroll` using the standard `ref` mechanism.
 
 ```
 < b-virtual-scroll &
@@ -179,10 +163,9 @@ Also, you can see the implemented traits or the parent component.
 .
 ```
 
-После данных манипуляций `b-virtual-scroll` перестанет загружать данные по скролу и будет это делать только после вызова метода `initLoadNext`.
-Собственно именно этот метод мы и будем использовать чтобы загружать и отрисовывать данные.
+After these manipulations, `b-virtual-scroll` will no longer load data on scroll, and data loading will only occur when the `initLoadNext` method is called. This method will be used to load and render data on a button click event.
 
-Теперь необходимо добавить какую-нибудь кнопку которая будет на события клик по себе вызывать метод `initLoadNext`.
+4. Now, you need to add a button that triggers the `initLoadNext` method when clicked.
 
 ```
 < b-virtual-scroll &
@@ -199,10 +182,7 @@ Also, you can see the implemented traits or the parent component.
   Load more data
 ```
 
-Отлично, теперь по клику на данную кнопку будет происходить загрузка и отрисовка данных. Но при использовании
-можно будет заметить что кнопка загрузки данных не исчезает ни когда все данные загружены, ни когда происходит загрузка данных, ни в случае ошибки.
-К счастью `b-virtual-scroll` предоставляет слот для отображения такой кнопки и всю логику скрытия ее во время загрузки, ошибки и так далее берет на себя.
-Клиенту в данном случае никакой дополнительной логики реализовывать не надо, нужно просто нашу кнопку переместить в подходящий слот, а именно в слот `renderNext`.
+Now, when you click the button, data will be loaded and rendered. However, you may notice that the data loading button doesn't disappear when all data is loaded, during data loading, or in case of an error. Fortunately, `b-virtual-scroll` provides a slot for displaying such a button, and it handles the logic of hiding it during loading, errors, and so on. Clients don't need to implement additional logic; you just need to move your button to the appropriate slot, specifically the `renderNext` slot.
 
 ```
 < b-virtual-scroll &
@@ -220,34 +200,31 @@ Also, you can see the implemented traits or the parent component.
       Load more data
 ```
 
-### Как переинициализировать компонент?
+Now, your button will be displayed only when there's more data to load, and it will automatically hide during data loading and in case of any errors.
 
-Часто возникают ситуации когда необходимо перерисовать все данные что были отрисованы с помощью `b-virtual-scroll`, например
-включилась какая-то дополнительная фильтрация из-за которой отрисованные ранее данные в `b-virtual-scroll` стали неактуальны.
+### How to Reinitialize the Component?
 
-В таком случае компонент предоставляет несколько путей повторной инициализации компонента, это позволит очистить состояние на "первозданное",
-то есть удалить ранее отрисованные компоненты и скинуть состояние. После того как состояние сброшено компонент опять начнет свой жизненный цикл будто бы
-он создан с "нуля". Рассмотрим ниже варианты сброса состояния.
+There are often situations where you need to redraw all the data that was rendered using `b-virtual-scroll`. For example, additional filtering may have been applied, making previously rendered data in `b-virtual-scroll` outdated.
 
-1. Обновление пропа `request`;
+In such cases, the component provides several ways to reinitialize it. This allows you to clear the state to its initial state, effectively removing previously rendered components and resetting the state. After the state is reset, the component will start its lifecycle as if it were created from scratch. Let's explore the options for resetting the state.
 
-2. Всплытие какого-либо события в `globalEmitter` из списка:
-  - `reset`;
-  - `reset.silence`;
-  - `reset.load`;
-  - `reset.load.silence`.
+1. Updating the `request` prop.
 
-То есть компонент автоматически будет перезагружаться когда всплывает какое-либо из данных событий (стандартная логика `iData`).
+2. Triggering an event in the `globalEmitter` from the following list:
+   - `reset`
+   - `reset.silence`
+   - `reset.load`
+   - `reset.load.silence`
 
-3. Вызов метода `reload` или `initLoad`.
+   This means the component will automatically reload when any of these events are triggered (standard `iData` logic).
 
-В каких случаях какой вариант использовать?
+3. Calling the `reload` or `initLoad` method.
 
-В случае если у вас есть на странице фильтры и запрос за данными которые должны быть отрисованы с помощью `b-virtual-scroll` - `request` проп
-будет как нельзя кстати, вы можете использовать в пропе `request` ссылку на текущее состояние фильтров и таким образом при изменении этого состояния
-на странице будет произведена автоматическая переинициализация.
+In which cases should you use each option?
 
-Рассмотрим на примере:
+If you have filters on the page and a data request that should be rendered using `b-virtual-scroll`, the `request` prop is the most suitable option. You can set the `request` prop to reference the current filter state. This way, when the filter state changes on the page, the component will be automatically reinitialized.
+
+Let's consider an example:
 
 __p-page.ts__
 ```typescript
@@ -271,11 +248,126 @@ __p-page.ss__
 .
 ```
 
-Таким образом при изменении поля `filterUuid` на странице `pPage` `b-virtual-scroll` будет выполнять переинициализации и перезагружаться.
+In this example, when the `filterUuid` field on the `pPage` changes, `b-virtual-scroll` will perform reinitialization and reload the data.
 
-В случае если же вам нужно обновить состояние компонента в какое-то момент времени без зависимости от контекста - можно использовать функции `reload` или `initLoad`.
+If you need to update the component's state at a specific moment in time, regardless of the context, you can use the `reload` or `initLoad` methods.
+
+### Component State
+
+The `b-virtual-scroll` component is quite substantial and has its own internal state that complements the component's state. This internal state is reset when the component is reinitialized to its initial state and changes regularly during the component's lifecycle. The component's state contains a wealth of information useful for the client, such as the loaded data, the number of elements remaining outside the user's viewport, and more.
+
+To retrieve the component's state, you can use a special method called `getComponentState`:
+
+__p-page.ts__
+```typescript
+@component()
+class pPage extends extends iDynamicPage {
+  protected override readonly $refs!: {
+    scroll: bVirtualScroll;
+  };
+
+  getScrollState(): VirtualScrollState {
+    return this.$refs.scroll.getComponentState();
+  }
+}
+```
+
+This method returns the current "internal" state of the component.
 
 ### Как использовать should-like функции?
+
+### Обзор функций
+
+Компонент предоставляет несколько пропов-функций которые отвечают за необходимость выполнить то или иное действие.
+У каждой из этих функций разное назначение, каждая из них вызывается в свой момент времени. Разберем детально каждую из этих функций и для чего они нужны:
+
+- `shouldPerformDataRequest` - Данная функция указывает на необходимость загрузить данные чанк данных. В случае если она вернет `true` будет выполнен запрос
+данных. На вход функция принимает "внутренее" состояние компонента и должна вернуть `boolean` значение. Функция вызывается когда какой-либо компонент отрисованный
+`b-virtual-scroll`ом который еще не входил в область видимости вошел в область видимости.
+
+> Важно отметить что клиенту в данной функции нет нужды проверять идет ли сейчас загрузка данных или нет, компонент `b-virtual-scroll` сам реализует данную проверку
+и не позволит инициировать загрузку данных если процесс загрузки уже активен.
+
+Примером реализации данной функции может быть проверка на то, сколько еще попали во вьюпорт и если попала половина от отрисованных - можно начать загрузку.
+
+```typescript
+const shouldPerformDataRequest = (state: VirtualScrollState): boolean => {
+  // Example: Request data if the remaining items till the end is less than or equal to 10
+  return state.remainingItems <= 10;
+};
+```
+
+Реализация по умолчанию же проверяет было ли загруженно хоть что-то в последнем запросе и если да, то значит можно сделать еще запрос:
+
+```typescript
+const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
+  const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
+  return isLastRequestNotEmpty();
+}
+```
+
+- `shouldStopRequestingData` - Данная функция указывает на необходимость завершить загрузку данных и указывает компоненту что лайф цикл со стороны загрузки данных завершен.
+В случае если она вернет `true` компонент `b-virtual-scroll` не будет пытаться запрашивать данные более до тех пор, пока не будет выполнена переинициализация компонента что приведет
+к обновлению лайф цикла. Функция вызывается после каждой успешной загрузки данных.
+
+Примером реализации данной функции может быть проверка на то, сколько данных загружено и сколько всего может вернуть пагинация по данному запросу:
+
+```typescript
+const shouldStopRequestingData = (state: VirtualScrollState): boolean => {
+  // Example: Stop requesting data when the total number of items equals the current number of loaded items
+  return state.lastLoadedRawData?.total === state.data.length;
+};
+```
+
+
+Реализация по умолчанию же проверяет было ли загруженно хоть что-то в последнем запросе и если да, то значит прекращать запросы еще рано:
+
+```typescript
+const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
+  const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
+  return isLastRequestNotEmpty();
+}
+```
+
+- `shouldPerformDataRender` - Данная функция указывает на необходимость произвести отрисовку загруженных данных.
+В случае если она вернет `true` компонент `b-virtual-scroll` вызовет функции отрисовки компонент и вставит их в DOM дерево. Функция вызывается в случае если есть загруженные
+но не отрисованные данные.
+
+Примером реализации данной функции может быть проверка на то, сколько элементов осталось до конца контейнера с компонента:
+
+```typescript
+const shouldPerformDataRender = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => state.remainingItems === 0
+```
+
+По умолчанию реализация точно такая же как и в примере выше.
+
+### Best Practice
+
+Несколько советов который позволит максимально эффективно со стороны клиента реализовать загрузку и при этом доставлять удовольствие от просмотра
+контента пользователю (а не заставлять его постоянно упираться в низ страницы) является таким:
+
+- Загружайте данные прилично заранее чем собираетесь отрисовывать - загрузка данных дело не быстрое, куда быстрее отрисовывать данные, поэтому рекомендуется начинать
+загрузку данных сильно заранее, а отрисовку производить уже ближе к концу ленты. Таким образом пользователь будет получать максимально бесшовный скроллинг компонента.
+
+Например такой подход можно реализовать так:
+
+```typescript
+const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
+  // Start loading when half of the components were in the viewport
+  return state.remainingItems <= chunkSize / 2;
+}
+```
+
+```typescript
+const shouldPerformDataRender = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
+  // Start rendering when only 2 components are left to the end
+  return state.remainingItems <= 2
+}
+```
+
+- Не делайте последнего запроса - разговор про функции `shouldPerformDataRequest` и `shouldStopRequestingData`, по умолчанию данные функции проверяют последний чанк данных, вернул
+ли он что-нибудь, лучше этого избегать и заранее сообщать компоненту что все данные загруженны, это можно реализовать в случае если ваш сервер отдает сколько всего элементов будет
+с данными параметрами фильтрации с помощью сравнения этого значения и кол-во всех данных что есть в `b-virtual-scroll` (пример выше мы рассматривали).
 
 ### iItems и itemsFactory
 
