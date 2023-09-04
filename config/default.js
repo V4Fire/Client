@@ -953,7 +953,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return o('theme', {
 				short: 't',
 				env: true,
-				default: def
+				default: 'light'
 			});
 		},
 
@@ -970,7 +970,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		include(def) {
 			return o('include-themes', {
 				env: true,
-				default: def
+				default: true
 			});
 		},
 
@@ -1171,7 +1171,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'ds/use-css-vars': false,
 
 			blockNames: false,
-			passDesignSystem: true,
+			passDesignSystem: false,
 
 			'prelude/test-env': this.build.isTestEnv(),
 			storybook: this.webpack.storybook(),
