@@ -93,64 +93,64 @@ To implement simple rendering, you need to follow several steps:
 
 1. Set up a data provider for the component. For example, we'll use a provider named `Provider` that returns data in the format `{data: object[]}`, where the number of objects depends on the request parameter `count`.
 
-  ```
-  < b-virtual-scroll &
-    :dataProvider = 'Provider'
-  .
-  ```
+```
+< b-virtual-scroll &
+  :dataProvider = 'Provider'
+.
+```
 
 > It's important to note that `b-virtual-scroll` expects data in this specific format (`{data: object[]}`). If your provider returns data in a different format, you can use processors in either the provider or the component using the `convertDataToDb` prop.
 
 2. Let's say we want to load and render 12 components at a time. To achieve this, you need to specify the `request` and `chunkSize` props for the `b-virtual-scroll` component. The `request` prop defines the request parameters (standard behavior of `iData`), and `chunkSize` specifies the number of items to render in each rendering cycle.
 
-  ```
-  < b-virtual-scroll &
-    :dataProvider = 'Provider' |
-    :request = {get: {count: 12}} |
-    :chunkSize = 12
-  .
-  ```
+```
+< b-virtual-scroll &
+  :dataProvider = 'Provider' |
+  :request = {get: {count: 12}} |
+  :chunkSize = 12
+.
+```
 
 3. To avoid loading the same data repeatedly and load different data for each subsequent request, you need to pass the `page` request parameter to the `Provider`. This parameter indicates the page number of the data to be loaded.
 
-  To achieve this, use the `requestQuery` prop in the `b-virtual-scroll` component. `requestQuery` is a function prop that `b-virtual-scroll` calls, passing its own state as an argument, before making a request. You can return the appropriate `page` value based on the component's state. The difference between `request` and `requestQuery` is that changes to the latter won't cause the component to reinitialize. These two props are merged to form the final request parameters passed to the provider.
+To achieve this, use the `requestQuery` prop in the `b-virtual-scroll` component. `requestQuery` is a function prop that `b-virtual-scroll` calls, passing its own state as an argument, before making a request. You can return the appropriate `page` value based on the component's state. The difference between `request` and `requestQuery` is that changes to the latter won't cause the component to reinitialize. These two props are merged to form the final request parameters passed to the provider.
 
-  ```
-  < b-virtual-scroll &
-    :dataProvider = 'Provider' |
-    :request = {get: {count: 12}} |
-    :requestQuery = (state) => ({get: {page: state.loadPage}}) |
-    :chunkSize = 12
-  .
-  ```
+```
+< b-virtual-scroll &
+  :dataProvider = 'Provider' |
+  :request = {get: {count: 12}} |
+  :requestQuery = (state) => ({get: {page: state.loadPage}}) |
+  :chunkSize = 12
+.
+```
 
-  In the example above, the `page` parameter is extracted from the component's state, specifically `loadPage`, which increments after each successful data load.
+In the example above, the `page` parameter is extracted from the component's state, specifically `loadPage`, which increments after each successful data load.
 
 4. Now that you have set up data loading with pagination, you need to specify what `b-virtual-scroll` will render.
 
-  To control what `b-virtual-scroll` renders, you can use the following props:
+To control what `b-virtual-scroll` renders, you can use the following props:
 
-  - `item`: The name of the component to be rendered. It can also be a function that returns the component's name.
+- `item`: The name of the component to be rendered. It can also be a function that returns the component's name.
 
-  - `itemProps`: The props for the component. Typically, this is a function that returns the props for each item based on the loaded data.
+- `itemProps`: The props for the component. Typically, this is a function that returns the props for each item based on the loaded data.
 
-  - `itemKey`: The uniq id of the component.
+- `itemKey`: The uniq id of the component.
 
-  Rendering occurs after data is loaded.
+Rendering occurs after data is loaded.
 
-  ```
-  < b-virtual-scroll &
-    :dataProvider = 'Provider' |
-    :request = {get: {count: 12}} |
-    :requestQuery = (state) => ({get: {page: state.loadPage}}) |
-    :chunkSize = 12 |
-    :item = 'b-dummy' |
-    :itemKey = (el) => el.uuid |
-    :itemProps = (el) => ({name: el.name, type: el.type})
-  .
-  ```
+```
+< b-virtual-scroll &
+  :dataProvider = 'Provider' |
+  :request = {get: {count: 12}} |
+  :requestQuery = (state) => ({get: {page: state.loadPage}}) |
+  :chunkSize = 12 |
+  :item = 'b-dummy' |
+  :itemKey = (el) => el.uuid |
+  :itemProps = (el) => ({name: el.name, type: el.type})
+.
+```
 
-  What is `el` you can inquire about in the `itemKey` and `itemProps` functions? `el` is one of the objects in the `data` array loaded by the `dataProvider`. `b-virtual-scroll` takes the array of loaded data and calls these functions for each of the objects in this array, allowing you to transform data into components that are suitable for rendering in the `b-virtual-scroll` component.
+What is `el` you can inquire about in the `itemKey` and `itemProps` functions? `el` is one of the objects in the `data` array loaded by the `dataProvider`. `b-virtual-scroll` takes the array of loaded data and calls these functions for each of the objects in this array, allowing you to transform data into components that are suitable for rendering in the `b-virtual-scroll` component.
 
 This setup will display a component on the page that loads and renders 12 items at once. When scrolling down, a new request with a different `page` value will be made, and after a successful load, new components will be rendered.
 
@@ -158,19 +158,19 @@ However, if your component takes a long time to load data (e.g., 1 second), you 
 
 Let's add a `loader` slot to our component to provide a better user experience during loading:
 
-  ```
-  < b-virtual-scroll &
-    :dataProvider = 'Provider' |
-    :request = {get: {count: 12}} |
-    :requestQuery = (state) => ({get: {page: state.loadPage}}) |
-    :chunkSize = 12 |
-    :item = 'b-dummy' |
-    :itemProps = (el) => ({name: el.name, type: el.type})
-  .
-    < template #loader
-      < .&__loader
-        Data loading in progress
-  ```
+```
+< b-virtual-scroll &
+  :dataProvider = 'Provider' |
+  :request = {get: {count: 12}} |
+  :requestQuery = (state) => ({get: {page: state.loadPage}}) |
+  :chunkSize = 12 |
+  :item = 'b-dummy' |
+  :itemProps = (el) => ({name: el.name, type: el.type})
+.
+  < template #loader
+    < .&__loader
+      Data loading in progress
+```
 
 Now, users will see a friendly message indicating that content will appear shortly, preventing them from being surprised by sudden content changes.
 
