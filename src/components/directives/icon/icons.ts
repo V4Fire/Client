@@ -71,7 +71,6 @@ ctx.forEach((el) => {
 		}
 	});
 });
-console.trace()
 
 //#endif
 
