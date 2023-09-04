@@ -42,31 +42,8 @@ module.exports = function imagesRules() {
 			},
 
 			{
-				resourceQuery: /myQuery/,
-				use: [
-					{
-						loader: 'my-loader'
-					},
-					{
-						loader: 'responsive-loader',
-						options: {
-							outputPath: urlLoaderOpts.outputPath,
-							format: 'webp',
-							name: '[name]-[width].[ext]',
-							adapter: require('../../../adapters/my-adapter'),
-							sizes: [1, 2, 3]
-						}
-					},
-					{
-						loader: 'responsive-loader',
-						options: {
-							outputPath: urlLoaderOpts.outputPath,
-							name: '[name]-[width].[ext]',
-							adapter: require('../../../adapters/my-adapter'),
-							sizes: [1, 2, 3]
-						}
-					}
-				]
+				resourceQuery: /responsive/,
+				use: [{loader: 'responsive-images-loader'}]
 			},
 
 			{use: imgHelperLoaders()}

@@ -19,9 +19,11 @@
 	- block body
 		- super
 
-		< img &
-			:srcSet = require('assets/logo.png?myQuery').srcSet
-		.
+		/* < img &
+			:srcSet = require('assets/logo.png?responsive').srcSet
+		. */
+
+		< .my-image v-image = require('assets/logo.png?responsive')
 
 		< .&__button &
 			ref = button |

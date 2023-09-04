@@ -43,7 +43,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
 export * from 'components/form/b-button/interface';
 
-const logo = require('assets/logo.png?myQuery');
+const logo = require('assets/logo.png?responsive');
 
 DataProvider.addToPrototype({getDefaultRequestParams, base, get});
 
