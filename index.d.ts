@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable no-var, vars-on-top, camelcase, @typescript-eslint/triple-slash-reference */
+/* eslint-disable no-var, vars-on-top, @typescript-eslint/triple-slash-reference */
 
 /// <reference types="@v4fire/core"/>
 /// <reference path="./ts-definitions/playwright.d.ts"/>
