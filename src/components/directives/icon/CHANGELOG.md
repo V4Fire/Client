@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Add possibility to load icons also from design-system
+* Add possibility to load icons from design-system
 
 ## v4.0.0-alpha.1 (2022-12-14)
 
