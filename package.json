@@ -85,6 +85,7 @@
     "cssnano": "5.0.17",
     "del": "6.0.0",
     "delay": "5.0.0",
+    "doctoc": "2.2.1",
     "extract-loader": "5.1.0",
     "fast-glob": "3.2.12",
     "favicons": "7.1.0",

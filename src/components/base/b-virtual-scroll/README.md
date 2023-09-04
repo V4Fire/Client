@@ -1,3 +1,53 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [components/base/b-virtual-scroll](#componentsbaseb-virtual-scroll)
+  - [Synopsis](#synopsis)
+  - [Modifiers](#modifiers)
+  - [Events](#events)
+  - [Usage](#usage)
+    - [How to Implement Simple Rendering?](#how-to-implement-simple-rendering)
+    - [How to Implement Component Rendering on Click Instead of Scroll?](#how-to-implement-component-rendering-on-click-instead-of-scroll)
+    - [How to Reinitialize the Component?](#how-to-reinitialize-the-component)
+    - [Component State](#component-state)
+    - [Converting Data to the Required Format](#converting-data-to-the-required-format)
+    - [Sliders or Multi-Column Content](#sliders-or-multi-column-content)
+    - [How to Use "Should-Like" Functions?](#how-to-use-should-like-functions)
+      - [Overview of Functions](#overview-of-functions)
+      - [Best Practices](#best-practices)
+    - [Controlling the Rendering Flow with `itemsFactory`](#controlling-the-rendering-flow-with-itemsfactory)
+    - [`itemsProcessors` and Global Component Processing](#itemsprocessors-and-global-component-processing)
+    - [`request` and `requestQuery`](#request-and-requestquery)
+    - [Component Understanding](#component-understanding)
+      - [Lifecycle](#lifecycle)
+      - [`renderGuard` and `loadDataOrPerformRender`](#renderguard-and-loaddataorperformrender)
+      - [Difference between ComponentItem with type `item` and `separator`](#difference-between-componentitem-with-type-item-and-separator)
+      - [Overriding in Child Layers](#overriding-in-child-layers)
+    - [Frequently Asked Questions](#frequently-asked-questions)
+  - [Slots](#slots)
+  - [API](#api)
+    - [Props](#props)
+      - [`shouldPerformDataRender`](#shouldperformdatarender)
+      - [`shouldPerformDataRequest`](#shouldperformdatarequest)
+      - [`shouldStopRequestingData`](#shouldstoprequestingdata)
+      - [`chunkSize`](#chunksize)
+      - [`requestQuery`](#requestquery)
+      - [`itemsFactory`](#itemsfactory)
+      - [`itemsProcessors`](#itemsprocessors)
+      - [`tombstonesSize`](#tombstonessize)
+    - [Other Properties](#other-properties)
+  - [Migration from `b-virtual-scroll` version 3.x.x](#migration-from-b-virtual-scroll-version-3xx)
+    - [API](#api-1)
+  - [What's Next](#whats-next)
+    - [Streaming Data Rendering](#streaming-data-rendering)
+    - [Alternative Approach to Component Rendering](#alternative-approach-to-component-rendering)
+    - [Partial Rendering (can be achieved easily through `renderGuard`)](#partial-rendering-can-be-achieved-easily-through-renderguard)
+    - [Updating Nodes in the DOM Tree (describe implementation challenges, component allows inserting different components)](#updating-nodes-in-the-dom-tree-describe-implementation-challenges-component-allows-inserting-different-components)
+    - [Integration with RTX](#integration-with-rtx)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # components/base/b-virtual-scroll
 
 The `b-virtual-scroll` component is designed for rendering a large array of various data.
