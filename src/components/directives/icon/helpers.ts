@@ -88,7 +88,7 @@ export function updateIconHref(this: iBlock, id: string, el: SVGElement, href?: 
  */
 function setIconStyles(el: SVGElement, name: string): void {
 	if (DS != null) {
-		const style = Object.get(DS, `iconMetaData.${name}.style`);
+		const style = Object.get(DS, `icons.${name}.style`);
 
 		if (Object.isDictionary(style)) {
 			const
