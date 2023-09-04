@@ -1171,7 +1171,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'ds/use-css-vars': false,
 
 			blockNames: false,
-			passDesignSystem: false,
+			passDesignSystem: true,
 
 			'prelude/test-env': this.build.isTestEnv(),
 			storybook: this.webpack.storybook(),
