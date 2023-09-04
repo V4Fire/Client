@@ -46,20 +46,28 @@ const
 if (!SSR && MODULE === 'ES2020') {
 	if (IS_PROD) {
 		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy'));
-		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/, 'lazy'));
+		if(Object.isDictionary(DS)){
+			ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/, 'lazy'));
+		}
 
 	} else {
 		ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy'));
-		ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/, 'lazy'));
+		if(Object.isDictionary(DS)) {
+			ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/, 'lazy'));
+		}
 	}
 
 } else if (IS_PROD) {
 	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/));
-	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/));
+	if(Object.isDictionary(DS)) {
+		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/));
+	}
 
 } else {
 	ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/));
-	ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/));
+	if (Object.isDictionary(DS)) {
+		ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/));
+	}
 }
 
 ctx.forEach((el) => {
