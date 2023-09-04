@@ -15,8 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Add possibility to specify paths with alias to `@context` directive
-* Add possibility to load icons from design-system
+* Added possibility to specify paths with alias to `@context` directive
+* Added possibility to load icons from design-system
 
 ## v4.0.0-beta.14 (2023-08-25)
 
