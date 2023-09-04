@@ -72,7 +72,7 @@ ctx.forEach((el) => {
 		}
 	});
 });
-console.trace()
+
 // @endcontext
 //#endif
 
