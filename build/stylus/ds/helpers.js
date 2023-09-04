@@ -316,19 +316,15 @@ function checkRequiredThemes({usePrefersColorScheme, themesList, darkThemeName, 
 	}
 
 	if (!themesList?.includes(darkThemeName) && !themesList?.includes(lightThemeName)) {
-		throw new Error(dsNotIncludedRequiredThemes
-			.replace('{{dark}}', darkThemeName)
-			.replace('{{light}}', lightThemeName));
+		throw new Error(dsNotIncludedRequiredThemes(darkThemeName, lightThemeName));
 	}
 
 	if (!themesList?.includes(darkThemeName)) {
-		throw new Error(dsNotIncludedDarkTheme
-			.replace('{{dark}}', darkThemeName));
+		throw new Error(dsNotIncludedDarkTheme(darkThemeName));
 	}
 
 	if (!themesList?.includes(lightThemeName)) {
-		throw new Error(dsNotIncludedLightTheme
-			.replace('{{light}}', lightThemeName));
+		throw new Error(dsNotIncludedLightTheme(lightThemeName));
 	}
 }
 
