@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import RequireContext = __WebpackModuleApi.RequireContext;
-
 import { iconsStore } from 'components/directives/icon/const';
 import type { Icon } from 'components/directives/icon/interface';
 
@@ -41,7 +39,7 @@ export function getIcon(id?: string): CanPromise<Icon> {
 // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super', 'ds/icons']
 
 let
-	ctx: RequireContext;
+	ctx: __WebpackModuleApi.RequireContext;
 
 if (!SSR && MODULE === 'ES2020') {
 	if (IS_PROD) {
