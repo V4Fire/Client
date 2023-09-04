@@ -297,15 +297,25 @@ function checkDeprecated(ds, path) {
 	return true;
 }
 
+/**
+ * Checks that ds provides all required themes
+ *
+ * @param usePrefersColorScheme
+ * @param themesList
+ * @param darkThemeName
+ * @param lightThemeName
+ */
 function checkRequiredThemes({usePrefersColorScheme, themesList, darkThemeName, lightThemeName}) {
 	if (usePrefersColorScheme && (!themesList?.includes(darkThemeName) || !themesList?.includes(lightThemeName))) {
 		if (!themesList?.includes(darkThemeName) && !themesList?.includes(lightThemeName)) {
 			throw new Error(dsNotIncludedRequiredThemes
 				.replace('{{dark}}', darkThemeName)
 				.replace('{{light}}', lightThemeName));
+
 		} else if (!themesList?.includes(darkThemeName)) {
 			throw new Error(dsNotIncludedDarkTheme
 				.replace('{{dark}}', darkThemeName));
+
 		} else {
 			throw new Error(dsNotIncludedLightTheme
 				.replace('{{light}}', lightThemeName));
