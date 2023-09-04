@@ -16,19 +16,23 @@ class Adapter {
 				{width, height} = await clone.metadata();
 
 			if (width == null || height == null) {
-				reject('Unable to recieve width and height of the image', this.image);
+				reject('Unable to receive width and height of the image', this.image);
 				return;
 			}
 
 			const
-				maxSize = sizes.length,
+				maxSize = 3,
 				stepWidth = Math.floor(width / maxSize),
 				stepHeight = Math.floor(height / maxSize);
 
-			let result = clone.resize(
-				width - (stepWidth * (maxSize - x)),
-				height - (stepHeight * (maxSize - x))
-			);
+			let result = clone;
+
+			if (x < maxSize) {
+				result = clone.resize(
+					stepWidth * x,
+					stepHeight * x
+				);
+			}
 
 			switch (mime) {
 				case 'image/webp': {
