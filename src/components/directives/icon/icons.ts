@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import RequireContext = __WebpackModuleApi.RequireContext;
+
 import { iconsStore } from 'components/directives/icon/const';
 import type { Icon } from 'components/directives/icon/interface';
 
@@ -39,33 +41,25 @@ export function getIcon(id?: string): CanPromise<Icon> {
 // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
 
 const
-	ctx: any[] = [];
+	ctx: RequireContext[] = [];
 
 if (!SSR && MODULE === 'ES2020') {
 	if (IS_PROD) {
-		// @ts-ignore (require)
 		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy'));
-		// @ts-ignore (require)
-		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@v4fire/design-system/icons', true, /\.svg$/, 'lazy'));
+		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/, 'lazy'));
 
 	} else {
-		// @ts-ignore (require)
 		ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy'));
-		// @ts-ignore (require)
-		ctx.push(require.context('!!svg-sprite-loader!@v4fire/design-system/icons', true, /\.svg$/, 'lazy'));
+		ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/, 'lazy'));
 	}
 
 } else if (IS_PROD) {
-	// @ts-ignore (require)
 	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/));
-	// @ts-ignore (require)
-	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@v4fire/design-system/icons', true, /\.svg$/));
+	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/));
 
 } else {
-	// @ts-ignore (require)
 	ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/));
-	// @ts-ignore (require)
-	ctx.push(require.context('!!svg-sprite-loader!@v4fire/design-system/icons', true, /\.svg$/));
+	ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/));
 }
 
 ctx.forEach((el) => {
@@ -78,7 +72,7 @@ ctx.forEach((el) => {
 		}
 	});
 });
-
+console.trace()
 // @endcontext
 //#endif
 
