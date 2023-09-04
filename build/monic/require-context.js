@@ -90,8 +90,7 @@ module.exports = function requireContextReplacer(str) {
 					key = contextChunks[0];
 
 				if (aliases[key]) {
-					resolvedSrc = path.join(aliases[key], ...contextChunks.slice(1));
-					isPathExists = true;
+					resolvedSrc = path.resolve(path.join(aliases[key], ...contextChunks.slice(1)));
 
 				} else if (src[0] === '@') {
 					const
@@ -120,7 +119,7 @@ module.exports = function requireContextReplacer(str) {
 					return v ? `/${v}` : v;
 				});
 
-				if (!isPathExists && fs.existsSync(resolvedSrc)) {
+				if (fs.existsSync(resolvedSrc)) {
 					isPathExists = true;
 				}
 
