@@ -38,37 +38,28 @@ export function getIcon(id?: string): CanPromise<Icon> {
 }
 
 //#if runtime has svgSprite
-// @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
 
 const
 	ctx: RequireContext[] = [];
 
+// @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super', 'ds/icons']
+
 if (!SSR && MODULE === 'ES2020') {
 	if (IS_PROD) {
 		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy'));
-		if(Object.isDictionary(DS)){
-			ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/, 'lazy'));
-		}
 
 	} else {
 		ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy'));
-		if(Object.isDictionary(DS)) {
-			ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/, 'lazy'));
-		}
 	}
 
 } else if (IS_PROD) {
 	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/));
-	if(Object.isDictionary(DS)) {
-		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/));
-	}
 
 } else {
 	ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/));
-	if (Object.isDictionary(DS)) {
-		ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/));
-	}
 }
+
+// @endcontext
 
 ctx.forEach((el) => {
 	Object.forEach(el.keys(), (path: string) => {
@@ -80,8 +71,8 @@ ctx.forEach((el) => {
 		}
 	});
 });
+console.trace()
 
-// @endcontext
 //#endif
 
 function normalize(key: string): string {
