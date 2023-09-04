@@ -19,7 +19,11 @@
 
 const
 	$C = require('collection.js'),
-	{dsNotIncludedRequiredThemes, dsNotIncludedDarkTheme, dsNotIncludedLightTheme} = include('build/stylus/ds/const');
+	{
+		dsNotIncludedRequiredThemes,
+		dsNotIncludedDarkTheme,
+		dsNotIncludedLightTheme
+	} = include('build/stylus/ds/const');
 
 /**
  * Returns a name of a CSS variable, created from the specified path with a dot delimiter
@@ -300,26 +304,31 @@ function checkDeprecated(ds, path) {
 /**
  * Checks that ds provides all required themes
  *
- * @param usePrefersColorScheme
- * @param themesList
- * @param darkThemeName
- * @param lightThemeName
+ * @param {object} opts
+ * @param {boolean} opts.usePrefersColorScheme
+ * @param {string[]} opts.themesList
+ * @param {string} opts.darkThemeName
+ * @param {string} opts.lightThemeName
  */
 function checkRequiredThemes({usePrefersColorScheme, themesList, darkThemeName, lightThemeName}) {
-	if (usePrefersColorScheme && (!themesList?.includes(darkThemeName) || !themesList?.includes(lightThemeName))) {
-		if (!themesList?.includes(darkThemeName) && !themesList?.includes(lightThemeName)) {
-			throw new Error(dsNotIncludedRequiredThemes
-				.replace('{{dark}}', darkThemeName)
-				.replace('{{light}}', lightThemeName));
+	if (!usePrefersColorScheme) {
+		return;
+	}
 
-		} else if (!themesList?.includes(darkThemeName)) {
-			throw new Error(dsNotIncludedDarkTheme
-				.replace('{{dark}}', darkThemeName));
+	if (!themesList?.includes(darkThemeName) && !themesList?.includes(lightThemeName)) {
+		throw new Error(dsNotIncludedRequiredThemes
+			.replace('{{dark}}', darkThemeName)
+			.replace('{{light}}', lightThemeName));
+	}
 
-		} else {
-			throw new Error(dsNotIncludedLightTheme
-				.replace('{{light}}', lightThemeName));
-		}
+	if (!themesList?.includes(darkThemeName)) {
+		throw new Error(dsNotIncludedDarkTheme
+			.replace('{{dark}}', darkThemeName));
+	}
+
+	if (!themesList?.includes(lightThemeName)) {
+		throw new Error(dsNotIncludedLightTheme
+			.replace('{{light}}', lightThemeName));
 	}
 }
 
