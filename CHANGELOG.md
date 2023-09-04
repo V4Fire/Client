@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Add possibility to specify paths with alias to `@context` directive
+* Add possibility to load icons also from design-system
+
 ## v4.0.0-beta.14 (2023-08-25)
 
 #### :house: Internal

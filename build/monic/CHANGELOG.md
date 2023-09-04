@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Add possibility to specify paths with alias to `@context` directive
+
 ## v3.23.9 (2022-08-04)
 
 #### :bug: Bug Fix
