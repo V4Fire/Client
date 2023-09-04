@@ -46,26 +46,26 @@ if (!SSR && MODULE === 'ES2020') {
 		// @ts-ignore (require)
 		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy'));
 		// @ts-ignore (require)
-		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/, 'lazy'));
+		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@v4fire/design-system/icons', true, /\.svg$/, 'lazy'));
 
 	} else {
 		// @ts-ignore (require)
 		ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy'));
 		// @ts-ignore (require)
-		ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/, 'lazy'));
+		ctx.push(require.context('!!svg-sprite-loader!@v4fire/design-system/icons', true, /\.svg$/, 'lazy'));
 	}
 
 } else if (IS_PROD) {
 	// @ts-ignore (require)
 	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/));
 	// @ts-ignore (require)
-	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!ds/icons', true, /\.svg$/));
+	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@v4fire/design-system/icons', true, /\.svg$/));
 
 } else {
 	// @ts-ignore (require)
 	ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/));
 	// @ts-ignore (require)
-	ctx.push(require.context('!!svg-sprite-loader!ds/icons', true, /\.svg$/));
+	ctx.push(require.context('!!svg-sprite-loader!@v4fire/design-system/icons', true, /\.svg$/));
 }
 
 ctx.forEach((el) => {
