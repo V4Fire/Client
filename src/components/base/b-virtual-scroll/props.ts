@@ -20,7 +20,8 @@ import type {
 	ComponentItemFactory,
 	ComponentItemType,
 	ComponentItem,
-	ItemsProcessors
+	ItemsProcessors,
+	ComponentItemMeta
 
 } from 'components/base/b-virtual-scroll/interface';
 
@@ -63,9 +64,16 @@ export default abstract class iVirtualScrollProps extends iData {
 	 * but will be available for reading/changing in `itemsProcessors`.
 	 *
 	 * If a function is provided, it will be called; otherwise, the value will be preserved "as is".
+	 *
+	 * @example
+	 * ```typescript
+	 * const itemMeta = (data) => ({
+	 *   componentData: data
+	 * })
+	 * ```
 	 */
 	@prop()
-	readonly itemMeta?: CreateFromItemFn<object, unknown> | unknown;
+	readonly itemMeta?: CreateFromItemFn<object, ComponentItemMeta>;
 
 	/**
 	 * Specifies the number of times the `tombstone` component will be rendered.
@@ -118,7 +126,10 @@ export default abstract class iVirtualScrollProps extends iData {
 
 				item: Object.isFunction(ctx.item) ? ctx.item(data, i) : ctx.item,
 				type: Object.isFunction(ctx.itemType) ? ctx.itemType(data, i) : ctx.itemType,
-				meta: Object.isFunction(ctx.itemMeta) ? ctx.itemMeta(data, i) : ctx.itemMeta,
+				meta: {
+					_data: data,
+					...Object.isFunction(ctx.itemMeta) ? ctx.itemMeta(data, i) : ctx.itemMeta
+				},
 
 				props: Object.isFunction(ctx.itemProps) ?
 					ctx.itemProps(data, i, {

@@ -297,6 +297,13 @@ The `dbConverter` prop allows you to convert data into a format suitable for `b-
       Data loading in progress
 ```
 
+### Sliders or Multi-Column Content
+
+Sometimes, there is a need to render a large amount of data not in a typical vertical strip where one item follows another, but, for example, in a strip consisting of multiple columns or in a slider.
+
+All of these can be implemented using HTML/CSS layout and providing CSS classes in `b-virtual-scroll`.
+There is no need to specify any additional props for `b-virtual-scroll`. For `b-virtual-scroll`, the content layout doesn't matter.
+
 ### How to Use "Should-Like" Functions?
 
 #### Overview of Functions
@@ -379,7 +386,7 @@ Here are some tips for efficiently implementing data loading on the client side 
 
 - Avoid making the last useless request: This pertains to the `shouldPerformDataRequest` and `shouldStopRequestingData` functions. By default, these functions check the last data chunk to see if it returned anything. It's better to avoid this and inform the component in advance that all data has been loaded. You can achieve this by comparing the value returned by your server, indicating the total number of items with the current number of items in `b-virtual-scroll`, as demonstrated in the example above.
 
-### `itemsFactory`
+### Controlling the Rendering Flow with `itemsFactory`
 
 `itemsFactory` is a prop that allows you to take control of component rendering. Suppose you want to render twice as many components for a single data slice. Achieving this using `iItems` props (`item`, `itemProps`, etc.) might not be possible. However, such situations may arise, and this prop is created to solve them.
 
@@ -431,6 +438,108 @@ const itemsFactory = (state, ctx) => {
 ```
 
 As you can see in the example above, we access the last chunk of loaded data and all component data to find the previous and next data elements relative to the current one. Then, we compare their dates, and if they are not equal, we add the `b-date-separator` component before adding the `b-main-item`. This way, we collect the components to be rendered in an array and return it from the `itemsFactory` function.
+
+### `itemsProcessors` and Global Component Processing
+
+This prop is a middleware function that is called after `b-virtual-scroll` has compiled the abstract representation of components and before it passes this representation to the rendering engine. Each function in the chain receives the result of the previous function, with the first function in the chain receiving the result of the `itemsFactory` call. The function should return an abstract representation of components that conforms to the `ComponentItem[]` interface.
+
+Here is an example to illustrate when `itemsProcessors` is called:
+
+-> itemsFactory -> **itemsProcessors** -> render components via render engine -> insert components into the DOM tree
+
+With this prop, you can implement various scenarios, such as changing one component to another, adding components, prop migrations, and more. For some scenarios, you can also use global overrides if you need to implement some processing for all `b-virtual-scroll` instances in your application. To add a global processor, you can override the `itemsProcessors` constant located in `base/b-virtual-scroll/const.ts` within your codebase and add a function to it.
+
+Here's an example scenario where we need to change the name of one component to another:
+
+__@v4fire/client/components/base/b-virtual-scroll/const.ts__
+```typescript
+export const itemsProcessors: ItemsProcessors = {};
+```
+
+__your-project/components/base/b-virtual-scroll/const.ts__
+```typescript
+import { itemsProcessors } from '@v4fire/client/components/base/b-virtual-scroll/const.ts'
+
+export const itemsProcessors: ItemsProcessors = {
+  ...itemsProcessors,
+
+  migrateCardComponent: (items: ComponentItem[]) => {
+    return items.map((item) => {
+      if (item.item === 'b-card') {
+        console.warn('Deprecation: b-card is deprecated.');
+
+        return {
+          ...item,
+          props: convertProps(item.props),
+          item: 'b-mega-card'
+        };
+      }
+
+      return item;
+    });
+  }
+};
+```
+
+> It's important to note that `itemsProcessors` functions cannot be asynchronous.
+
+Let's also look at another common scenario:
+
+**Task**: Add advertising components after certain components throughout the entire application.
+
+**Solution**: Instead of manually defining the `itemsFactory` function in multiple places to call a pre-prepared function, you can:
+
+1. Establish an agreement with clients to mark the components before or after which advertising should be displayed using meta information of the component's abstract representation (`ComponentItem`), which will be passed from the client to the component via the `itemMeta` prop.
+
+  ```
+    < b-virtual-scroll &
+      // ...
+      :itemMeta = (data) => ({ads: data.component === 'b-card' ? 'after' : false})
+    .
+  ```
+
+2. Implement a global `itemsProcessor` that will add advertisements based on the meta-information.
+
+   ```typescript
+   import { itemsProcessors } from '@v4fire/client/components/base/b-virtual-scroll/const.ts'
+
+   export const itemsProcessors: ItemsProcessors = {
+     ...itemsProcessors,
+
+     addAds: (items: ComponentItem[]) => {
+       const newItems: ComponentItem[] = [];
+
+       const adsComponent = {
+         item: 'b-ads',
+         key: current.uuid + 'ads',
+         type: 'item',
+         children: [],
+         props: {
+           // ...
+         }
+       }
+
+       return items.map((item) => {
+         const itemsToPush = [];
+         itemsToPush.push(item);
+
+         if (item.meta.ads === 'after') {
+           itemsToPush.push(adsComponent);
+         }
+
+         if (item.meta.ads === 'before') {
+           itemsToPush.unshift(adsComponent);
+         }
+
+         newItems.push(...itemsToPush);
+       });
+
+       return newItems;
+     }
+   };
+   ```
+
+After these steps, a neighboring advertising component will be added to all components with the appropriate `meta.ads` value.
 
 ### `request` and `requestQuery`
 
@@ -541,6 +650,17 @@ For example, it may be useful to override the logic of `shouldStopRequestingData
 There may also be situations where you need to modify the `renderGuard`. Currently, the component loads data until the number of items reaches the `chunkSize` and then renders them. By overriding the `renderGuard`, you can achieve partial rendering, where the component renders the available data regardless of whether it reaches the `chunkSize`.
 
 ### Frequently Asked Questions
+
+- How to assign a class to components rendered within `b-virtual-scroll`?
+
+  To achieve this, you need to include the `class` field in the props of the component that should be rendered. You can do this by returning it from the `itemProps` function, like this:
+
+  ```typescript
+  const itemProps = (this: bMyComponent) => ({
+    // ...
+    class: this.provide.classes({'virtual-scroll-item': true})
+  })
+  ```
 
 - Can I use only `shouldPerformDataRequest` and not use `shouldStopRequestingData`?
 
@@ -796,6 +916,15 @@ const itemsFactory = (state: VirtualScrollState): ComponentItem[] => {
   return items;
 };
 ```
+
+#### `itemsProcessors`
+
+- Type: `Function | Record<string, Function> | Function[]`
+- Default: `undefined`
+
+This prop is a middleware function that is called after `b-virtual-scroll` has compiled the abstract representation of components and before it passes this representation to the rendering engine.
+
+This function can be useful in cases where you need to implement some processing of the abstract representation of components, such as mutating props or adding additional components.
 
 #### `tombstonesSize`
 

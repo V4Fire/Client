@@ -192,10 +192,24 @@ export interface ComponentItem {
 	children?: VNodeChildren;
 
 	/**
-	 * Meta information for a component that will not be used during rendering,
-	 * but will be available for reading/changing in `itemsProcessors`.
+	 * {@link ComponentItemMeta}
 	 */
-	meta?: unknown;
+	meta?: ComponentItemMeta;
+}
+
+/**
+ * Meta information for a component that will not be used during rendering,
+ * but will be available for reading/changing in `itemsProcessors`.
+ */
+export interface ComponentItemMeta extends Dictionary {
+	/**
+	 * A conditionally reserved property that contains the data based
+	 * on which this abstract representation of the component was created.
+	 *
+	 * If `iItems` props are used to create representations, `b-virtual-scroll` will automatically add
+	 * this property to the `meta` parameters.
+	 */
+	readonly _data?: unknown;
 }
 
 /**
