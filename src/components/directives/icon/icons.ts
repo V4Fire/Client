@@ -38,40 +38,36 @@ export function getIcon(id?: string): CanPromise<Icon> {
 }
 
 //#if runtime has svgSprite
-
-const
-	ctx: RequireContext[] = [];
-
 // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super', 'ds/icons']
+
+let
+	ctx: RequireContext;
 
 if (!SSR && MODULE === 'ES2020') {
 	if (IS_PROD) {
-		ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy'));
+		ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy');
 
 	} else {
-		ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy'));
+		ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy');
 	}
 
 } else if (IS_PROD) {
-	ctx.push(require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/));
+	ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/);
 
 } else {
-	ctx.push(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/));
+	ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/);
 }
 
-// @endcontext
+Object.forEach(ctx.keys(), (path: string) => {
+	const
+		id = normalize(path);
 
-ctx.forEach((el) => {
-	Object.forEach(el.keys(), (path: string) => {
-		const
-			id = normalize(path);
-
-		if (iconsStore[id] == null) {
-			iconsStore[id] = {ctx: el, path};
-		}
-	});
+	if (iconsStore[id] == null) {
+		iconsStore[id] = {ctx, path};
+	}
 });
 
+// @endcontext
 //#endif
 
 function normalize(key: string): string {
