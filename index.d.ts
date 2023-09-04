@@ -21,10 +21,6 @@ declare var ssr: Nullable<{
 	document?: Document;
 }>;
 
-declare let __webpack_nonce__: CanUndef<string>;
-declare let __webpack_public_path__: CanUndef<string>;
-declare let __webpack_require__: (moduleId: string) => any;
-
 declare const BUILD_MODE: CanUndef<string>;
 
 declare const CSP_NONCE_STORE: string;
