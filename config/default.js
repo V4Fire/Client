@@ -953,7 +953,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return o('theme', {
 				short: 't',
 				env: true,
-				default: 'light'
+				default: def
 			});
 		},
 
@@ -970,7 +970,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		include(def) {
 			return o('include-themes', {
 				env: true,
-				default: true
+				default: def
 			});
 		},
 
