@@ -61,7 +61,7 @@ const
  * // @endcontext
  * ```
  *
- * Will be transformed to
+ * Will be transformed to:
  *
  * ```js
  * console.log(require.context('!!svg-sprite!/path3', true, /\.svg$/)); // resolved alias `sprite`
@@ -71,7 +71,7 @@ const
  * // The path `/path1/bla` does not exist, so the resolution is not included in the build
  * ```
  *
- * Also, you can take values that are passed as monic flags
+ * Also, you can take values that are passed as monic flags:
  *
  * ```js
  * // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
