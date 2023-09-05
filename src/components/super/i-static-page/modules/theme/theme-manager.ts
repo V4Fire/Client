@@ -100,7 +100,7 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Initialize listener for change system theme event
+	 * Initialises event listener on change system appearance
 	 *
 	 * @param mq
 	 * @param darkTheme
