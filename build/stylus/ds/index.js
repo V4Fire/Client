@@ -24,11 +24,12 @@ const
 const
 	theme = config.theme.default(),
 	includeThemes = config.theme.include(),
-	{darkThemeName, lightThemeName} = config.theme,
-	{
-		'ds/use-css-vars': useCSSVarsInRuntime,
-		'ds/use-prefers-color-scheme': usePrefersColorScheme
-	} = config.runtime();
+	{darkThemeName, lightThemeName} = config.theme;
+
+const {
+	'ds/use-css-vars': useCSSVarsInRuntime,
+	'ds/use-prefers-color-scheme': usePrefersColorScheme
+} = config.runtime();
 
 let
 	ds = {},

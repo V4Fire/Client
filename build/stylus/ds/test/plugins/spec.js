@@ -17,13 +17,14 @@ const
 	{plainDesignSystem} = include('build/stylus/ds/test/scheme/plain'),
 	{fullThemed, prefersColorSchemeThemes} = include('build/stylus/ds/test/scheme/themes'),
 	{getCSSVariable} = include('build/stylus/ds/test/helpers'),
-	{createDesignSystem} = include('build/stylus/ds/helpers'),
-	{
-		dsHasThemesNotIncluded,
-		dsNotIncludedRequiredThemes,
-		dsNotIncludedDarkTheme,
-		dsNotIncludedLightTheme
-	} = include('build/stylus/ds/const');
+	{createDesignSystem} = include('build/stylus/ds/helpers');
+
+const {
+	dsHasThemesNotIncluded,
+	dsNotIncludedRequiredThemes,
+	dsNotIncludedDarkTheme,
+	dsNotIncludedLightTheme
+} = include('build/stylus/ds/const');
 
 describe('build/stylus/plugins', () => {
 	it('throws an error on creating plugins for a package with themes without specifying the current theme', () => {

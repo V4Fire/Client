@@ -316,11 +316,5 @@ module.exports = function getPlugins({
 		 * @returns {Array<string>}
 		 */
 		api.define('availableThemes', () => themesList);
-
-		/**
-		 * Returns a map that declares which theme will be used as dark and which will be used as light
-		 * @returns {object}
-		 */
-		api.define('contextThemeNames', () => (stylus.utils.coerce({dark: darkThemeName, light: lightThemeName}, true)));
 	};
 };

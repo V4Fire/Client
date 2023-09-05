@@ -18,12 +18,13 @@
  */
 
 const
-	$C = require('collection.js'),
-	{
-		dsNotIncludedRequiredThemes,
-		dsNotIncludedDarkTheme,
-		dsNotIncludedLightTheme
-	} = include('build/stylus/ds/const');
+	$C = require('collection.js');
+
+const {
+	dsNotIncludedRequiredThemes,
+	dsNotIncludedDarkTheme,
+	dsNotIncludedLightTheme
+} = include('build/stylus/ds/const');
 
 /**
  * Returns a name of a CSS variable, created from the specified path with a dot delimiter
