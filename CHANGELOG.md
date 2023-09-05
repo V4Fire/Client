@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.15 (2023-09-05)
+
+#### :bug: Bug Fix
+
+* Added filtering of empty leading and trailing text nodes during rendering of a VNode array `core/component/engines/vue`
+
 ## v4.0.0-beta.14 (2023-08-25)
 
 #### :house: Internal

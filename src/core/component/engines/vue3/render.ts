@@ -179,5 +179,25 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): Can
 		el = document.createElement('div'),
 		root = vue.mount(el);
 
-	return Object.isArray(vnode) ? Array.from(el.childNodes) : root.$el;
+	if (Object.isArray(vnode)) {
+		const children = Array.from(el.childNodes);
+
+		if (vnode.length !== children.length) {
+			if (isEmptyText(children[0])) {
+				children.shift();
+			}
+
+			if (isEmptyText(children[children.length - 1])) {
+				children.pop();
+			}
+		}
+
+		return children;
+	}
+
+	return root.$el;
+
+	function isEmptyText(node?: Node) {
+		return node?.nodeType === 3 && node.textContent === '';
+	}
 }
