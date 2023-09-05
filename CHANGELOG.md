@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-09-??)
+
+#### :bug: Bug Fix
+
+* Fixed working in SSR `core/component/directives/render`
+
 ## v4.0.0-beta.15 (2023-09-05)
 
 #### :bug: Bug Fix
