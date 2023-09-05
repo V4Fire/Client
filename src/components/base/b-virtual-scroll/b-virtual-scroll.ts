@@ -155,13 +155,6 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Resets the component state to its initial state.
-	 */
-	reset(): void {
-		this.onReset();
-	}
-
-	/**
 	 * Returns the component state.
 	 * {@link VirtualScrollState}
 	 */
@@ -170,10 +163,42 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
+	 * Returns the next slice of data that should be rendered.
+	 *
+	 * @param state
+	 * @param chunkSize
+	 */
+	getNextDataSlice(state: VirtualScrollState, chunkSize: number): object[] {
+		const
+			{data} = state,
+			nextDataSliceStartIndex = this.componentInternalState.getDataCursor(),
+			nextDataSliceEndIndex = nextDataSliceStartIndex + chunkSize;
+
+		return data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
+	}
+
+	/**
+	 * Returns the chunk size that should be rendered.
+	 * @param state
+	 */
+	getChunkSize(state: VirtualScrollState): number {
+		return Object.isFunction(this.chunkSize) ?
+			this.chunkSize(state, this) :
+			this.chunkSize;
+	}
+
+	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
+		this.onConvertDataToDB(data);
+		const result = super.convertDataToDB(data);
+
+		return <O | this['DB']>result;
+	}
+
+	/**
 	 * Gathers all request parameters from the component fields `requestProp` and `requestQuery`.
 	 * {@link RequestParams}
 	 */
-	getRequestParams(): RequestParams {
+	protected getRequestParams(): RequestParams {
 		const label: AsyncOptions = {
 			label: $$.initLoadNext,
 			group: bVirtualScrollAsyncGroup,
@@ -192,7 +217,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	/**
 	 * Wrapper for {@link bVirtualScroll.shouldStopRequestingData}.
 	 */
-	shouldStopRequestingDataWrapper(this: bVirtualScroll): boolean {
+	protected shouldStopRequestingDataWrapper(this: bVirtualScroll): boolean {
 		const state = this.getComponentState();
 
 		if (state.areRequestsStopped) {
@@ -208,40 +233,15 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	/**
 	 * Wrapper for {@link bVirtualScroll.shouldPerformDataRequest}.
 	 */
-	shouldPerformDataRequestWrapper(this: bVirtualScroll): boolean {
+	protected shouldPerformDataRequestWrapper(this: bVirtualScroll): boolean {
 		return this.shouldPerformDataRequest(this.getComponentState(), this);
 	}
 
 	/**
-	 * Returns the chunk size that should be rendered.
-	 * @param state
+	 * Resets the component state to its initial state.
 	 */
-	getChunkSize(state: VirtualScrollState): number {
-		return Object.isFunction(this.chunkSize) ?
-			this.chunkSize(state, this) :
-			this.chunkSize;
-	}
-
-	/**
-	 * Returns the next slice of data that should be rendered.
-	 *
-	 * @param state
-	 * @param chunkSize
-	 */
-	getNextDataSlice(state: VirtualScrollState, chunkSize: number): object[] {
-		const
-			{data} = state,
-			nextDataSliceStartIndex = this.componentInternalState.getDataCursor(),
-			nextDataSliceEndIndex = nextDataSliceStartIndex + chunkSize;
-
-		return data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
-	}
-
-	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
-		this.onConvertDataToDB(data);
-		const result = super.convertDataToDB(data);
-
-		return <O | this['DB']>result;
+	protected reset(): void {
+		this.onReset();
 	}
 
 	/**

@@ -10,13 +10,14 @@
     - [How to Implement Simple Rendering?](#how-to-implement-simple-rendering)
     - [How to Implement Component Rendering on Click Instead of Scroll?](#how-to-implement-component-rendering-on-click-instead-of-scroll)
     - [How to Reinitialize the Component?](#how-to-reinitialize-the-component)
+    - [How to Reload a Failed Request?](#how-to-reload-a-failed-request)
     - [Component State](#component-state)
     - [Converting Data to the Required Format](#converting-data-to-the-required-format)
     - [Sliders or Multi-Column Content](#sliders-or-multi-column-content)
     - [How to Use "Should-Like" Functions?](#how-to-use-should-like-functions)
       - [Overview of Functions](#overview-of-functions)
       - [Best Practices](#best-practices)
-    - [Controlling the Rendering Flow with `itemsFactory`](#controlling-the-rendering-flow-with-itemsfactory)
+    - [Control the Rendering Conveyor with `itemsFactory`](#control-the-rendering-conveyor-with-itemsfactory)
     - [`itemsProcessors` and Global Component Processing](#itemsprocessors-and-global-component-processing)
     - [`request` and `requestQuery`](#request-and-requestquery)
     - [Component Understanding](#component-understanding)
@@ -36,6 +37,10 @@
       - [`itemsFactory`](#itemsfactory)
       - [`itemsProcessors`](#itemsprocessors)
       - [`tombstonesSize`](#tombstonessize)
+    - [Methods](#methods)
+      - [getNextDataSlice](#getnextdataslice)
+      - [getComponentState](#getcomponentstate)
+      - [initLoadNext](#initloadnext)
     - [Other Properties](#other-properties)
   - [Migration from `b-virtual-scroll` version 3.x.x](#migration-from-b-virtual-scroll-version-3xx)
     - [API](#api-1)
@@ -302,6 +307,24 @@ In this example, when the `filterUuid` field on the `pPage` changes, `b-virtual-
 
 If you need to update the component's state at a specific moment in time, regardless of the context, you can use the `reload` or `initLoad` methods.
 
+### How to Reload a Failed Request?
+
+Did your data fail to load due to a network or server error? No worries! The `initLoadNext` method comes to the rescue, allowing you to retry the failed request.
+In addition to the `initLoadNext` method, `b-virtual-scroll` provides a `retry` slot that is displayed only when the request fails.
+
+This makes it straightforward to implement a retry mechanism for a failed request:
+
+```
+< b-virtual-scroll &
+  :dataProvider = 'Provider' |
+  :request = {get: {count: 12, filter: filterUuid}} |
+  ...
+.
+  < template #retry
+    < .&__retry @click = initLoadNext
+      Retry last request
+```
+
 ### Component State
 
 The `b-virtual-scroll` component is quite substantial and has its own internal state that complements the component's state. This internal state is reset when the component is reinitialized to its initial state and changes regularly during the component's lifecycle. The component's state contains a wealth of information useful for the client, such as the loaded data, the number of elements remaining outside the user's viewport, and more.
@@ -436,7 +459,7 @@ Here are some tips for efficiently implementing data loading on the client side 
 
 - Avoid making the last useless request: This pertains to the `shouldPerformDataRequest` and `shouldStopRequestingData` functions. By default, these functions check the last data chunk to see if it returned anything. It's better to avoid this and inform the component in advance that all data has been loaded. You can achieve this by comparing the value returned by your server, indicating the total number of items with the current number of items in `b-virtual-scroll`, as demonstrated in the example above.
 
-### Controlling the Rendering Flow with `itemsFactory`
+### Control the Rendering Conveyor with `itemsFactory`
 
 `itemsFactory` is a prop that allows you to take control of component rendering. Suppose you want to render twice as many components for a single data slice. Achieving this using `iItems` props (`item`, `itemProps`, etc.) might not be possible. However, such situations may arise, and this prop is created to solve them.
 
@@ -777,7 +800,7 @@ The component supports several slots for customization:
 ```
 < b-virtual-scroll
   < template #retry
-    < .&__retry @click = initLoad
+    < .&__retry @click = initLoadNext
       Retry last request
 ```
 
@@ -970,7 +993,7 @@ const itemsFactory = (state: VirtualScrollState): ComponentItem[] => {
 #### `itemsProcessors`
 
 - Type: `Function | Record<string, Function> | Function[]`
-- Default: `undefined`
+- Default: `{}`
 
 This prop is a middleware function that is called after `b-virtual-scroll` has compiled the abstract representation of components and before it passes this representation to the rendering engine.
 
@@ -985,6 +1008,20 @@ Specifies the number of times the `tombstone` component will be rendered. This p
 For example, if you set `tombstonesSize` to 3, then three `tombstone` components will be rendered on your page.
 
 Note: The `tombstone` component is used to represent empty or unloaded components in the virtual scroll. It is rendered as a placeholder until the actual component data is loaded and rendered.
+
+### Methods
+
+#### getNextDataSlice
+
+Returns the next data slice that should be rendered based on the `chunkSize`.
+
+#### getComponentState
+
+Returns the current state of the component.
+
+#### initLoadNext
+
+Initializes the loading of the next data chunk. In case the loading fails, calling this method again will attempt to reload it.
 
 ### Other Properties
 

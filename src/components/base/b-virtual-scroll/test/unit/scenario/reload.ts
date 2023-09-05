@@ -30,7 +30,7 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 	test.describe('`request` prop was changed', () => {
-		test('Should reset state and reload the component data', async ({demoPage}) => {
+		test('Should reset state and reload the component data', async () => {
 			const
 				chunkSize = [12, 20];
 
@@ -46,11 +46,11 @@ test.describe('<b-virtual-scroll>', () => {
 					shouldPerformDataRequest: ({remainingItems}) => remainingItems === 0,
 					'@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
 				})
-				.pick(demoPage.buildTestComponent(component.componentName, component.props));
+				.build({useDummy: true});
 
 			await component.waitForChildCountEqualsTo(chunkSize[0]);
 
-			await demoPage.updateTestComponent({
+			await component.updatePropsViaDummy({
 				request: {
 					get: {
 						chunkSize: chunkSize[1]

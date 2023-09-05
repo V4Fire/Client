@@ -20,3 +20,18 @@ export interface SpyOptions {
 	 */
 	proto?: boolean;
 }
+
+/**
+ * Options for the `build` method.
+ */
+export interface BuildOptions {
+	/**
+	 * If `true`, the component will be created inside a `b-dummy`, and its props will be set
+	 * through the `field` property of `b-dummy`.
+	 *
+	 * Building the component with this option allows updating the component's props using the `updateProps` method.
+	 *
+	 * Using this option does not allow creating child nodes!!!
+	 */
+	useDummy?: boolean;
+}

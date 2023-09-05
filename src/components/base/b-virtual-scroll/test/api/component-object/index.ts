@@ -61,7 +61,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Returns the count of children in the container.
 	 */
-	async getChildCount(): Promise<number> {
+	getChildCount(): Promise<number> {
 		return this.childList.count();
 	}
 

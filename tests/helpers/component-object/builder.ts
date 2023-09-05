@@ -13,7 +13,12 @@ import { resolve } from '@pzlr/build-core';
 import { Component, DOM, Utils } from 'tests/helpers';
 import type ComponentObject from 'tests/helpers/component-object';
 
+import { expandedStringify } from 'core/prelude/test-env/components/json';
+
 import type iBlock from 'components/super/i-block/i-block';
+import type bDummy from 'components/dummies/b-dummy/b-dummy';
+
+import type { BuildOptions } from 'tests/helpers/component-object/interface';
 
 /**
  * A class implementing the `ComponentObject` approach that encapsulates different
@@ -68,6 +73,11 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * Stores a reference to the component's `JSHandle`.
 	 */
 	protected componentStore?: JSHandle<COMPONENT>;
+
+	/**
+	 * Reference to the `b-dummy` wrapper component.
+	 */
+	protected dummy?: JSHandle<bDummy>;
 
 	/**
 	 * The component styles that should be inserted into the page.
@@ -144,18 +154,30 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	/**
 	 * Renders the component with the previously set props and children
 	 * using the `withProps` and `withChildren` methods.
+	 *
+	 * @param [options]
 	 */
-	async build(): Promise<JSHandle<COMPONENT>> {
+	async build(options?: BuildOptions): Promise<JSHandle<COMPONENT>> {
 		if (this.componentStyles != null) {
 			await this.page.addStyleTag({content: this.componentStyles});
 		}
 
-		this.componentStore = await Component.createComponent(this.page, this.componentName, {
-			attrs: {
-				...this.props
-			},
-			children: this.children
-		});
+		if (options?.useDummy) {
+			this.dummy = await Component.createComponent<bDummy>(this.page, 'b-dummy', {
+				attrs: {
+					functional: false
+				}
+			});
+
+			await this.updatePropsViaDummy(this.props);
+			this.componentStore = await this.dummy.evaluateHandle((ctx) => <COMPONENT>ctx.unsafe.$refs.testComponent);
+
+		} else {
+			this.componentStore = await Component.createComponent(this.page, this.componentName, {
+				attrs: this.props,
+				children: this.children
+			});
+		}
 
 		return this.componentStore;
 	}
@@ -234,5 +256,29 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	withChildren(children: VNodeChildren): this {
 		Object.assign(this.children, children);
 		return this;
+	}
+
+	/**
+	 * Updates the component's props using the `b-dummy` component.
+	 *
+	 * This method will not work if the component was built without the `useDummy` option.
+	 *
+	 * @param props
+	 *
+	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
+	 */
+	async updatePropsViaDummy(props: Dictionary): Promise<void> {
+		if (!this.dummy) {
+			throw new ReferenceError('Failed to update props. Missing "b-dummy" component.');
+		}
+
+		const
+			serializedAttrs = expandedStringify(props);
+
+		return this.dummy.evaluate((ctx, [attrs, componentName]) => {
+			Object.assign(ctx.testComponentAttrs, globalThis.expandedParse(attrs));
+			ctx.testComponent = componentName;
+
+		}, [serializedAttrs, this.componentName]);
 	}
 }

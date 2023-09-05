@@ -11,7 +11,8 @@
  * @packageDocumentation
  */
 
-import iData, { component } from 'components/super/i-data/i-data';
+import type iBlock from 'components/super/i-block/i-block';
+import iData, { component, field } from 'components/super/i-data/i-data';
 
 export * from 'components/super/i-data/i-data';
 
@@ -21,7 +22,21 @@ export * from 'components/super/i-data/i-data';
 	}
 })
 class bDummy extends iData {
+	/**
+	 * Name of the test component.
+	 */
+	@field()
+	testComponent?: string;
 
+	/**
+	 * Attributes for the test component.
+	 */
+	@field()
+	testComponentAttrs: Dictionary = {};
+
+	protected override readonly $refs!: iData['$refs'] & {
+		testComponent?: iBlock;
+	};
 }
 
 export default bDummy;

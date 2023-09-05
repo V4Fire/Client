@@ -12,7 +12,6 @@ import { expandedStringify } from 'core/prelude/test-env/components/json';
 
 import type iBlock from 'components/super/i-block/i-block';
 
-import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
 import { isRenderComponentsVnodeParams } from 'tests/helpers/component/helpers';
 
 /**
@@ -160,39 +159,6 @@ export default class Component {
 		}
 
 		return components;
-	}
-
-	/**
-	 * Sets the passed props to a component by the specified selector and waits for `nextTick` after that
-	 *
-	 * @param page
-	 * @param componentSelector
-	 * @param props
-	 * @param [opts]
-	 */
-	static async setPropsToComponent<T extends iBlock>(
-		page: Page,
-		componentSelector: string,
-		props: Dictionary,
-		opts?: WaitForIdleOptions
-	): Promise<JSHandle<T>> {
-		const ctx = await this.waitForComponentByQuery(page, componentSelector);
-
-		await ctx.evaluate(async (ctx, props) => {
-			for (let keys = Object.keys(props), i = 0; i < keys.length; i++) {
-				const
-					prop = keys[i],
-					val = props[prop];
-
-				ctx.field.set(prop, val);
-			}
-
-			await ctx.nextTick();
-		}, props);
-
-		await BOM.waitForIdleCallback(page, opts);
-
-		return this.waitForComponentByQuery(page, componentSelector);
 	}
 
 	/**

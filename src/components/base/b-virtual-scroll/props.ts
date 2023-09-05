@@ -126,6 +126,7 @@ export default abstract class iVirtualScrollProps extends iData {
 
 				item: Object.isFunction(ctx.item) ? ctx.item(data, i) : ctx.item,
 				type: Object.isFunction(ctx.itemType) ? ctx.itemType(data, i) : ctx.itemType,
+
 				meta: {
 					_data: data,
 					...Object.isFunction(ctx.itemMeta) ? ctx.itemMeta(data, i) : ctx.itemMeta
