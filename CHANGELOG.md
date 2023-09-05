@@ -17,6 +17,18 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added possibility to change icons color according to the selected theme `components/global/g-def`
 
+## v4.0.0-beta.?? (2023-09-??)
+
+#### :bug: Bug Fix
+
+* Fixed working in SSR `core/component/directives/render`
+
+## v4.0.0-beta.15 (2023-09-05)
+
+#### :bug: Bug Fix
+
+* Added filtering of empty leading and trailing text nodes during rendering of a VNode array `core/component/engines/vue`
+
 ## v4.0.0-beta.14 (2023-08-25)
 
 #### :house: Internal
