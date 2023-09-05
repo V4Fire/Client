@@ -14,7 +14,7 @@ const
 	vm = require('vm');
 
 const
-	{urlLoaderOpts} = include('build/webpack/module/const');
+	{urlLoaderOpts, isProd} = include('build/webpack/module/const');
 
 const staticOptions = {
 	outputPath: urlLoaderOpts.outputPath,
@@ -23,10 +23,15 @@ const staticOptions = {
 	sizes: [1, 2, 3]
 };
 
+if (!isProd) {
+	staticOptions.name = '[name].[ext]';
+	staticOptions.sizes = [1];
+}
+
 /**
- * Wepback loader for converting and scaling images to different formats and sizes
- * The loader is basically a wrapper for responsiveLoader that it calls for each format convertation
- * It also adds support for scaling images by 1x and 2x resolution of its original size
+ * Wepback loader for converting and scaling images to different formats and sizes.
+ * The loader is essentially a wrapper for responsiveLoader that it's called for each format conversion.
+ * It also adds support for scaling images to 1x and 2x resolutions of their original size.
  *
  * @param {string} imageBuffer - contents of the image
  * @returns {string}
@@ -70,10 +75,18 @@ const staticOptions = {
  * ```
  */
 module.exports = async function responsiveImagesLoader(imageBuffer) {
+	if (!isProd) {
+		const
+			loaderResponses = await collectLoaderResponses.call(this, imageBuffer, [undefined]),
+			[[imageName]] = getImageNames(loaderResponses);
+
+		return `module.exports = {src: ${imageName}}`;
+	}
+
 	const
-		loaderResponses = await collectLoaderResponses.call(this, imageBuffer),
-		imageNames = getImageNames(loaderResponses),
-		[, source2xImageName] = imageNames[0];
+		formatsToConvert = [undefined, 'webp', 'avif'],
+		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, formatsToConvert),
+		[, [source2xImageName]] = getImageNames(loaderResponses);
 
 	const result = {
 		src: source2xImageName,
@@ -84,7 +97,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 };
 
 /**
- * Converts image names to object with srcset for each resolution
+ * Converts image names to an object with 'srcset' for each resolution
  *
  * @param {string[]} imageNames
  * @returns {object}
@@ -105,7 +118,7 @@ function getSources(imageNames) {
 /**
  * Extracts only image names without the rest of the path
  *
- * @param {string[]} loaderResponses - original response returns by responsiveLoader
+ * @param {string[]} loaderResponses - original response returned by the responsiveLoader
  * @returns {string[]}
  */
 function getImageNames(loaderResponses) {
@@ -116,7 +129,7 @@ function getImageNames(loaderResponses) {
 }
 
 /**
- * Compiles the code returned by responsiveLoader to the NodeJS module
+ * Compiles the code returned by the responsiveLoader to the NodeJS module
  *
  * @param {string} code
  * @returns {module}
@@ -137,22 +150,19 @@ function compileCodeToModule(code) {
  * Calls the responsiveLoader multiple times for each image format and collects responses
  *
  * @param {string} imageBuffer
- * @returns {string[]}
+ * @param {string[]} formats
+ * @returns {Promise<string[]>}
  */
-function collectLoaderResponses(imageBuffer) {
+function collectLoaderResponses(imageBuffer, formats) {
 	let
 		convertationTime = 0;
 
 	const
-		// Undefined for source format
-		formatsToConvert = [undefined, 'webp', 'avif'],
 		loaderResponses = [];
 
 	const createContext = (resolve, reject, format) => ({
 		...this,
 
-		// Overriding this function so that we can call the responsiveLoader multiple times without
-		// going to the next loader
 		async: () => (err, data) => {
 			if (err != null) {
 				reject('Failed to process the image', err);
@@ -161,7 +171,7 @@ function collectLoaderResponses(imageBuffer) {
 
 			loaderResponses.push(data);
 
-			if (++convertationTime >= formatsToConvert.length) {
+			if (++convertationTime >= formats.length) {
 				resolve(loaderResponses);
 			}
 		},
@@ -169,12 +179,12 @@ function collectLoaderResponses(imageBuffer) {
 		getOptions: () => ({
 			...staticOptions,
 			format,
-			...this.getOptions()
+			...(isProd ? this.getOptions() : {})
 		})
 	});
 
 	return new Promise((resolve, reject) => {
-		formatsToConvert.forEach(
+		formats.forEach(
 			(format) => responsiveLoader.call(createContext(resolve, reject, format), imageBuffer)
 		);
 	});

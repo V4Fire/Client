@@ -67,9 +67,9 @@ class Adapter {
 }
 
 /**
- * Adapter for scaling an image by 1x or 2x of its size
+ * Adapter for scaling an image by 1x and 2x resolution of its original size
  *
- * @param {string} imagePath - path to the image we want to scale
+ * @param {string} imagePath
  * @returns {Adapter}
  */
 module.exports = (imagePath) => new Adapter(imagePath);
