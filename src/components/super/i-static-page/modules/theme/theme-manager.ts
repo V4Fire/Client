@@ -107,13 +107,15 @@ export default class ThemeManager extends Friend {
 	 * @param lightTheme
 	 */
 	protected initThemeListener(mq: MediaQueryList, darkTheme: string, lightTheme: string): void {
-		if (USE_SYSTEM_THEME) {
-			// TODO: understand why cant we use `this.async.on(mq, 'change', ...)`; https://github.com/V4Fire/Core/issues/369
-			mq.onchange = this.async.proxy((event: MediaQueryListEvent) => (
-				event.matches ?
-					this.current = darkTheme :
-					this.current = lightTheme
-			), {single: false, label: $$.themeChange});
+		if (!USE_SYSTEM_THEME) {
+			return;
 		}
+
+		// TODO: understand why cant we use `this.async.on(mq, 'change', ...)`; https://github.com/V4Fire/Core/issues/369
+		mq.onchange = this.async.proxy((event: MediaQueryListEvent) => (
+			event.matches ?
+				this.current = darkTheme :
+				this.current = lightTheme
+		), {single: false, label: $$.themeChange});
 	}
 }
