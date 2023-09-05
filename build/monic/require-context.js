@@ -61,7 +61,7 @@ const
  * // @endcontext
  * ```
  *
- * Will be transformed into the following fragment:
+ * Will be transformed to
  *
  * ```js
  * console.log(require.context('!!svg-sprite!/path3', true, /\.svg$/)); // resolved alias `sprite`
