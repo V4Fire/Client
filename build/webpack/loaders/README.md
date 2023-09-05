@@ -4,7 +4,7 @@ This module provides a bunch of custom loaders for Webpack.
 
 ### symbol-generator-loader
 
-The loader adds support for module `core/symbol` in old browsers
+The loader adds support for the module `core/symbol` in older browsers
 
 ### responsive-images-loader
 
@@ -16,6 +16,8 @@ To use this loader in a template, the basic syntax is:
 ```ss
 < .my-image v-image = require('path/to/image.png?responsive')
 ```
+
+Please note that the image you want to apply the loader to should be 3x resolution of its original size
 
 The loader returns the following structure:
 
