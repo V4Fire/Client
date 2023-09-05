@@ -80,7 +80,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 			loaderResponses = await collectLoaderResponses.call(this, imageBuffer, [undefined]),
 			[[imageName]] = getImageNames(loaderResponses);
 
-		return `module.exports = {src: ${imageName}}`;
+		return `module.exports = {src: '${imageName}'}`;
 	}
 
 	const
