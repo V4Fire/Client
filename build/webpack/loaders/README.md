@@ -74,7 +74,6 @@ require('path/to/image.png?responsive'); // {src: 'image.png'}
 In addition to the [options](https://github.com/dazuaz/responsive-loader/tree/master#options) provided by the
 `responsive-loader`, this loader also offers a few additional ones.
 
-
 Please note that the options can be specified using only JSON5 notation for a specific image. For example:
 
 ```
