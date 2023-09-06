@@ -65,9 +65,12 @@ const
  * Will be transformed to:
  *
  * ```js
- * console.log(require.context('!!svg-sprite!/path3', true, /\.svg$/)); // resolved alias `sprite`
- * console.log(require.context('!!svg-sprite!/path2', true, /\.svg$/)); // resolved alias `@v4fire/client/sprite`
- * console.log(require.context('!!svg-sprite!/path1/icons', true, /\.svg$/)); // resolved alias `ds` and substituted path `icons`
+ * // resolved alias `sprite`
+ * console.log(require.context('!!svg-sprite!/path3', true, /\.svg$/));
+ * // resolved alias `@v4fire/client/sprite`
+ * console.log(require.context('!!svg-sprite!/path2', true, /\.svg$/));
+ * // resolved alias `ds` and substituted path `icons`
+ * console.log(require.context('!!svg-sprite!/path1/icons', true, /\.svg$/));
  * // There is no alias for `@v4fire/core/sprite`, so the resolution is not included in the build
  * // The path `/path1/bla` does not exist, so the resolution is not included in the build
  * ```
@@ -117,7 +120,7 @@ module.exports = function requireContextReplacer(str) {
 					resolvedSrc,
 					alias;
 
-				for (let k in aliases) {
+				for (const k in aliases) {
 					const el = aliases[k];
 
 					if (contextPath.startsWith(el)) {
