@@ -93,7 +93,7 @@ The format should be in the following pattern: `[resolution].[extension]`.
 Example of usage:
 
 ```ts
-require('path/to/image.png?{reponsive:true,defaultSrcPath:"1x.jpg"}');
+require('path/to/image.png?{responsive:true,defaultSrcPath:"1x.jpg"}');
 
 /*
 {
