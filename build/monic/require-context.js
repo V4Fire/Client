@@ -54,7 +54,7 @@ const
  * };
  * ```
  *
- * Then, the following construct:
+ * Then, the following code:
  *
  * ```js
  * // @context: ['@sprite', ['@v4fire/core', '@v4fire/client', 'ds/icons', 'ds/bla']]
