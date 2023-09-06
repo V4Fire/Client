@@ -97,8 +97,13 @@ ComponentEngine.directive('render', {
 		}
 
 		async function getSSRInnerHTML(content: CanArray<CanPromise<VNode>>) {
-			content = await Promise.all(Array.concat([], content));
-			return content.join('');
+			let normalizedContent = Array.concat([], content);
+
+			while (normalizedContent.some(Object.isPromise)) {
+				normalizedContent = (await Promise.all(normalizedContent)).flat();
+			}
+
+			return normalizedContent.join('');
 		}
 
 		function renderSSRFragment(content: CanArray<CanPromise<VNode>>) {
