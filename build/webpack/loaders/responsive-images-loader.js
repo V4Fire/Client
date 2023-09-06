@@ -81,7 +81,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, formats),
 		imageNames = getImageNames(loaderResponses, options.outputPath),
 		sources = getSources(imageNames),
-		[resolution, ext] = options.defaultSrcPath.split('.'),
+		[resolution, ext] = (options.defaultSrcPath ?? '').split('.'),
 		source = sources.find(({type}) => type === ext);
 
 	const result = {
