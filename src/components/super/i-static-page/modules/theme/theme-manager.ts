@@ -50,13 +50,20 @@ export default class ThemeManager extends Friend {
 
 		let theme = THEME;
 
-		if (USE_SYSTEM_THEME && Object.isString(DARK_THEME_NAME) && Object.isString(LIGHT_THEME_NAME)) {
+		if (Object.isDictionary(DETECT_USER_PREFERENCES)) {
 			const
-				darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
+				prefersColorSchemeEnabled = Object.get<boolean>(DETECT_USER_PREFERENCES, 'prefersColorScheme.enabled') ?? false,
+				darkTheme = Object.get<string>(DETECT_USER_PREFERENCES, 'prefersColorScheme.aliases.dark') ?? 'dark',
+				lightTheme = Object.get<string>(DETECT_USER_PREFERENCES, 'prefersColorScheme.aliases.light') ?? 'light';
 
-			theme = darkThemeMq.matches ? DARK_THEME_NAME : LIGHT_THEME_NAME;
+			if (prefersColorSchemeEnabled) {
+				const
+					darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
 
-			this.initThemeListener(darkThemeMq, DARK_THEME_NAME, LIGHT_THEME_NAME);
+				theme = darkThemeMq.matches ? darkTheme : lightTheme;
+
+				this.initThemeListener(darkThemeMq, prefersColorSchemeEnabled, darkTheme, lightTheme);
+			}
 		}
 
 		this.current = theme;
@@ -103,11 +110,12 @@ export default class ThemeManager extends Friend {
 	 * Initialises event listener on change system appearance
 	 *
 	 * @param mq
+	 * @param enabled
 	 * @param darkTheme
 	 * @param lightTheme
 	 */
-	protected initThemeListener(mq: MediaQueryList, darkTheme: string, lightTheme: string): void {
-		if (!USE_SYSTEM_THEME) {
+	protected initThemeListener(mq: MediaQueryList, enabled: boolean, darkTheme: string, lightTheme: string): void {
+		if (!enabled) {
 			return;
 		}
 

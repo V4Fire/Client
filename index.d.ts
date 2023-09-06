@@ -45,9 +45,12 @@ declare const THEME: CanUndef<string>;
 declare const THEME_ATTRIBUTE: CanUndef<string>;
 declare const AVAILABLE_THEMES: CanUndef<string[]>;
 
-declare const USE_SYSTEM_THEME: boolean;
-declare const DARK_THEME_NAME: CanUndef<string>;
-declare const LIGHT_THEME_NAME: CanUndef<string>;
+declare const DETECT_USER_PREFERENCES: CanUndef<
+	Dictionary<Dictionary<{
+		enabled: boolean,
+		aliases?: Dictionary<string>
+	}>>
+>;
 
 declare const DS: CanUndef<DesignSystem>;
 declare const DS_COMPONENTS_MODS: CanUndef<{

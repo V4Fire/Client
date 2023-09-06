@@ -65,11 +65,12 @@ describe('build/stylus/plugins', () => {
 		});
 	});
 
-	describe('creating ds with "ds/use-prefers-color-scheme" param', () => {
+	describe('creating ds with "detectUserPreferences" param', () => {
 		const
 			stylus = require('stylus'),
-			darkThemeName = 'dark',
-			lightThemeName = 'light';
+			detectUserPreferences = {
+				prefersColorScheme: {enabled: true}
+			};
 
 		it('should create a design system', () => {
 			const
@@ -79,9 +80,7 @@ describe('build/stylus/plugins', () => {
 				ds,
 				cssVariables,
 				stylus,
-				darkThemeName,
-				lightThemeName,
-				usePrefersColorScheme: true,
+				detectUserPreferences,
 				includeThemes: true
 			})).toBeDefined();
 		});
@@ -94,11 +93,9 @@ describe('build/stylus/plugins', () => {
 				ds,
 				cssVariables,
 				stylus,
-				darkThemeName,
-				lightThemeName,
-				usePrefersColorScheme: true,
+				detectUserPreferences,
 				includeThemes: true
-			})).toThrowError(dsNotIncludedRequiredThemes(darkThemeName, lightThemeName));
+			})).toThrowError(dsNotIncludedRequiredThemes('dark', 'light'));
 		});
 
 		it('throws an error on creating plugins for a package with themes but without dark theme', () => {
@@ -109,11 +106,9 @@ describe('build/stylus/plugins', () => {
 				ds,
 				cssVariables,
 				stylus,
-				darkThemeName,
-				lightThemeName,
-				usePrefersColorScheme: true,
+				detectUserPreferences,
 				includeThemes: true
-			})).toThrowError(dsNotIncludedDarkTheme(darkThemeName));
+			})).toThrowError(dsNotIncludedDarkTheme('dark'));
 		});
 
 		it('throws an error on creating plugins for a package with themes but without light theme', () => {
@@ -124,11 +119,9 @@ describe('build/stylus/plugins', () => {
 				ds,
 				cssVariables,
 				stylus,
-				darkThemeName,
-				lightThemeName,
-				usePrefersColorScheme: true,
+				detectUserPreferences,
 				includeThemes: true
-			})).toThrowError(dsNotIncludedLightTheme(lightThemeName));
+			})).toThrowError(dsNotIncludedLightTheme('light'));
 		});
 	});
 });

@@ -975,29 +975,36 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns the theme name from ds that will be used as application dark theme
+		 * Map of user preference parameters that will be automatically detected based on system settings
 		 *
-		 * @cli dark-theme-name
-		 * @env DARK_THEME_NAME
+		 * @cli detect-user-preferences
+		 * @env DETECT_USER_PREFERENCES
 		 *
-		 * @returns {string}
+		 * @default {prefersColorScheme: {enabled: false}}
+		 *
+		 * @example
+		 * ```js
+		 * {
+		 *   prefersColorScheme: {
+		 *     enabled: true, // If true, dark or light themes will be detected based on user settings
+		 *     // You can pass custom aliases for theme names
+		 *     // If your design system does not provide themes from this dictionary the build will be failed
+		 *     // If aliases dictionary not specified, default values are 'dark' and 'light'
+		 *     aliases: {
+		 *       dark: 'night',
+		 *       light: 'day'
+		 *     }
+		 *   }
+		 * }
+		 * ```
 		 */
-		darkThemeName: o('dark-theme-name', {
+		detectUserPreferences: o('detect-user-preferences', {
 			env: true,
-			default: 'dark'
-		}),
-
-		/**
-		 * Returns the theme name from ds that will be used as application light theme
-		 *
-		 * @cli light-theme-name
-		 * @env LIGHT_THEME_NAME
-		 *
-		 * @returns {string}
-		 */
-		lightThemeName: o('light-theme-name', {
-			env: true,
-			default: 'light'
+			default: {
+				prefersColorScheme: {
+					enabled: false
+				}
+			}
 		}),
 
 		/**
@@ -1195,14 +1202,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			svgSprite: true,
 			'ds/use-css-vars': false,
-
-			/**
-			 * If true, dark or light themes will be detected based on user settings
-			 * Specify in `config.theme` names of themes which associated with dark and light theme in your design system
-			 * If your design system does not provide themes from `config.theme.darkThemeName`
-			 * or `config.theme.lightThemeName` (which default values are 'dark' and 'light') the build will be failed
-			 */
-			'ds/use-prefers-color-scheme': false,
 
 			blockNames: false,
 			passDesignSystem: false,
