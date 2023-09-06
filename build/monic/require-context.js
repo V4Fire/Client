@@ -34,10 +34,9 @@ const
  * The following transformation rules are used:
  *
  * 0. The token will be substituted with itself (without the `@` prefix).
- * 1. If the path starts with the webpack alias, the path will be substituted as is with the resolved alias.
+ * 1. If the path starts with the webpack alias, the path will be substituted as is.
  * 2. Else, if the token starts with the `@` prefix, the provided path will
- * be concatenated with the token (without the prefix) and resolved as the webpack alias
- * and substituted if the alias exists.
+ * be concatenated with the token (without the prefix) and substituted.
  * 3. Else, the provided path will be concatenated with the token and substituted.
  *
  * In all cases, there is a check to ensure that the file exists at the resulting path.
@@ -117,31 +116,13 @@ module.exports = function requireContextReplacer(str) {
 
 			const res = wrappedCode.replace(contextVarRgxp, (str, src) => {
 				let
-					resolvedSrc,
-					alias;
+					resolvedSrc;
 
-				for (const k in aliases) {
-					const el = aliases[k];
-
-					if (contextPath.startsWith(el)) {
-						alias = el;
-						break;
-					}
-				}
-
-				if (alias != null) {
-					resolvedSrc = path.resolve(path.join(aliases[alias], contextPath.replace(alias, '')));
+				if (getAliasFromPath(contextPath) != null) {
+					resolvedSrc = contextPath;
 
 				} else if (src[0] === '@') {
-					const
-						srcChunks = src.split(/[\\/]/),
-						key = path.join(contextPath, srcChunks[0].slice(1));
-
-					if (!aliases[key]) {
-						return str;
-					}
-
-					resolvedSrc = path.join(aliases[key], ...srcChunks.slice(1));
+					resolvedSrc = path.join(contextPath, src.slice(1));
 
 				} else {
 					resolvedSrc = path.join(contextPath, src);
@@ -159,9 +140,7 @@ module.exports = function requireContextReplacer(str) {
 					return v ? `/${v}` : v;
 				});
 
-				if (fs.existsSync(resolvedSrc)) {
-					isPathExists = true;
-				}
+				isPathExists = checkFileExists(resolvedSrc);
 
 				return path.normalize(resolvedSrc);
 			});
@@ -174,6 +153,62 @@ module.exports = function requireContextReplacer(str) {
 		return res;
 	});
 };
+
+/**
+ * Checks if a file exists at the given path
+ *
+ * @param pathToCheck
+ * @returns {boolean}
+ *
+ * @example
+ * ```js
+ * checkFileExists('/foo/bla/bar'); // checks absolute path
+ * checkFileExists('bla/bar'); // checks webpack aliases
+ * ```
+ */
+function checkFileExists(pathToCheck) {
+	if (path.isAbsolute(pathToCheck)) {
+		return fs.existsSync(pathToCheck);
+	}
+
+	const alias = getAliasFromPath(pathToCheck);
+
+	if (alias == null) {
+		return false;
+	}
+
+	const
+		aliasRes = aliases[alias],
+		tail = pathToCheck.replace(alias, ''),
+		resolvedPath = path.join(aliasRes, tail);
+
+	if (path.isAbsolute(resolvedPath)) {
+		return fs.existsSync(resolvedPath);
+	}
+
+	const pathToDep = path.dirname(require.resolve(path.join(aliases[alias], 'package.json')));
+
+	return fs.existsSync(path.join(pathToDep, tail));
+}
+
+/**
+ * Retrieves the alias from a given path
+ *
+ * @param {string} path - the path to retrieve the alias from
+ * @returns {?string} the alias corresponding to the given path, or undefined if no alias is found
+ */
+function getAliasFromPath(path) {
+	let alias;
+
+	for (const a of Object.keys(aliases)) {
+		if (path.startsWith(a)) {
+			alias = a;
+			break;
+		}
+	}
+
+	return alias;
+}
 
 Object.assign(module.exports, {
 	contextRgxp,
