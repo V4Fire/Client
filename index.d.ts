@@ -47,8 +47,8 @@ declare const AVAILABLE_THEMES: CanUndef<string[]>;
 
 declare const DETECT_USER_PREFERENCES: CanUndef<
 	Dictionary<Dictionary<{
-		enabled: boolean,
-		aliases?: Dictionary<string>
+		enabled: boolean;
+		aliases?: Dictionary<string>;
 	}>>
 >;
 
