@@ -118,13 +118,14 @@ function parseResourceQuery(query) {
 function getSources(imageNames) {
 	return imageNames.map((names) => {
 		const
-			[x1, x2, x3] = names,
-			type = path.extname(x1).replace('.', '');
+			srcset = {},
+			type = path.extname(names[0]).replace('.', '');
 
-		return {
-			type,
-			srcset: {'1x': x1, '2x': x2, '3x': x3}
-		};
+		names.forEach((name, idx) => {
+			srcset[`${idx + 1}x`] = name;
+		});
+
+		return {type, srcset};
 	});
 }
 
