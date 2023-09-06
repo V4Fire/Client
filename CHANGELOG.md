@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.17 (2023-09-06)
+
+#### :bug: Bug Fix
+
+* Added a special element for teleports `iStaticPage`
+
 ## v4.0.0-beta.16 (2023-09-06)
 
 #### :bug: Bug Fix

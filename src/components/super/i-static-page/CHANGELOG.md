@@ -9,11 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.17 (2023-09-06)
+
+#### :bug: Bug Fix
+
+* Added a special element for teleports
+
 ## v3.33.0 (2022-12-28)
 
 #### :rocket: New Feature
 
-* Added the ability to manipulate meta information of a page
+* Added the ability to manipulate meta-information of a page
 
 ## v3.29.0 (2022-09-13)
 
