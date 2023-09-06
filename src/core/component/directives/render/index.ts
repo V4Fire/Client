@@ -32,10 +32,9 @@ ComponentEngine.directive('render', {
 			return;
 		}
 
-		const canReplaceOriginalVNode =
-			vnode.type === 'template' &&
-			!Object.isArray(newVNode) &&
-			Object.size(vnode.props) === 0;
+		const
+			isTemplate = vnode.type === 'template' && Object.size(vnode.props) === 0,
+			canReplaceOriginalVNode = isTemplate && !Object.isArray(newVNode);
 
 		if (canReplaceOriginalVNode) {
 			return SSR ? renderSSRFragment(newVNode) : newVNode;
@@ -46,6 +45,10 @@ ComponentEngine.directive('render', {
 				children = Array.concat([], newVNode);
 
 			if (SSR) {
+				if (isTemplate) {
+					vnode.type = 'ssr-fragment';
+				}
+
 				vnode.props = {
 					...vnode.props,
 					innerHTML: getSSRInnerHTML(children)
@@ -93,8 +96,9 @@ ComponentEngine.directive('render', {
 			}
 		}
 
-		function getSSRInnerHTML(content: CanArray<CanPromise<VNode>>) {
-			return Promise.all(Array.concat([], content)).then((content) => content.join(''));
+		async function getSSRInnerHTML(content: CanArray<CanPromise<VNode>>) {
+			content = await Promise.all(Array.concat([], content));
+			return content.join('');
 		}
 
 		function renderSSRFragment(content: CanArray<CanPromise<VNode>>) {

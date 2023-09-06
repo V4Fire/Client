@@ -24,11 +24,8 @@ const
 const
 	theme = config.theme.default(),
 	includeThemes = config.theme.include(),
-	{darkThemeName, lightThemeName} = config.theme,
-	{
-		'ds/use-css-vars': useCSSVarsInRuntime,
-		'ds/use-prefers-color-scheme': usePrefersColorScheme
-	} = config.runtime();
+	{detectUserPreferences} = config.theme,
+	{'ds/use-css-vars': useCSSVarsInRuntime} = config.runtime();
 
 let
 	ds = {},
@@ -54,7 +51,5 @@ module.exports = getPlugins({
 	theme,
 	includeThemes,
 	useCSSVarsInRuntime,
-	usePrefersColorScheme,
-	darkThemeName,
-	lightThemeName
+	detectUserPreferences
 });

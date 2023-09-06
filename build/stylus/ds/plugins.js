@@ -28,12 +28,8 @@ const
  * @param {boolean} [opts.useCSSVarsInRuntime] - true, if the design system object values provided
  * to style files as css-variables
  *
- * @param {boolean} [opts.usePrefersColorScheme] - if true the app will automatically detect dark
- * or light theme
- *
- * @param {string} [opts.darkThemeName]
- * @param {string} [opts.lightThemeName] - parameters are used in pair with usePrefersColorScheme and
- * provides theme names that will be used as dark and light themes
+ * @param {object} [opts.detectUserPreferences] - map of user preference parameters that will be automatically
+ * detected based on system settings
  *
  * @param {string} [opts.theme] - current theme value
  * @param {(Array<string>|boolean)} [opts.includeThemes] - list of themes to include or
@@ -46,11 +42,9 @@ module.exports = function getPlugins({
 	ds,
 	cssVariables,
 	useCSSVarsInRuntime,
-	usePrefersColorScheme,
+	detectUserPreferences,
 	theme,
 	includeThemes,
-	darkThemeName,
-	lightThemeName,
 	stylus = require('stylus')
 }) {
 	const
@@ -69,7 +63,7 @@ module.exports = function getPlugins({
 		isThemesIncluded = themesList != null && themesList.length > 0,
 		isOneTheme = Object.isArray(themesList) && themesList.length === 1 && themesList[0] === theme;
 
-	checkRequiredThemes({usePrefersColorScheme, themesList, darkThemeName, lightThemeName});
+	checkRequiredThemes({detectUserPreferences, themesList});
 
 	if (!isThemesIncluded) {
 		if (Object.isString(theme)) {
@@ -316,11 +310,5 @@ module.exports = function getPlugins({
 		 * @returns {Array<string>}
 		 */
 		api.define('availableThemes', () => themesList);
-
-		/**
-		 * Returns a map that declares which theme will be used as dark and which will be used as light
-		 * @returns {object}
-		 */
-		api.define('contextThemeNames', () => (stylus.utils.coerce({dark: darkThemeName, light: lightThemeName}, true)));
 	};
 };

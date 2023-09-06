@@ -18,12 +18,13 @@
  */
 
 const
-	$C = require('collection.js'),
-	{
-		dsNotIncludedRequiredThemes,
-		dsNotIncludedDarkTheme,
-		dsNotIncludedLightTheme
-	} = include('build/stylus/ds/const');
+	$C = require('collection.js');
+
+const {
+	dsNotIncludedRequiredThemes,
+	dsNotIncludedDarkTheme,
+	dsNotIncludedLightTheme
+} = include('build/stylus/ds/const');
 
 /**
  * Returns a name of a CSS variable, created from the specified path with a dot delimiter
@@ -305,26 +306,45 @@ function checkDeprecated(ds, path) {
  * Checks that ds provides all required themes
  *
  * @param {object} opts
- * @param {boolean} opts.usePrefersColorScheme
+ * @param {object} opts.detectUserPreferences
  * @param {string[]} opts.themesList
- * @param {string} opts.darkThemeName
- * @param {string} opts.lightThemeName
  */
-function checkRequiredThemes({usePrefersColorScheme, themesList, darkThemeName, lightThemeName}) {
-	if (!usePrefersColorScheme) {
+function checkRequiredThemes({detectUserPreferences, themesList}) {
+	Object.forEach(detectUserPreferences, (v, k) => {
+		switch (k) {
+			case 'prefersColorScheme':
+				checkPrefersColorScheme(v, themesList);
+				break;
+			default:
+				throw new Error(`Unknown parameter "${k}" in "detectUserPreferences"`)
+		}
+	});
+}
+
+/**
+ * Checks if the design system provides "dark" and "light" themes to use the "prefersColorScheme" parameter
+ *
+ * @param {object} prefersColorScheme
+ * @param {boolean} prefersColorScheme.enabled
+ * @param {string} prefersColorScheme.aliases.dark
+ * @param {string} prefersColorScheme.aliases.light
+ * @param {string[]} themesList
+ */
+function checkPrefersColorScheme({enabled, aliases: {dark, light} = {dark: 'dark', light: 'light'}}, themesList) {
+	if (!enabled) {
 		return;
 	}
 
-	if (!themesList?.includes(darkThemeName) && !themesList?.includes(lightThemeName)) {
-		throw new Error(dsNotIncludedRequiredThemes(darkThemeName, lightThemeName));
+	if (!themesList?.includes(dark) && !themesList?.includes(light)) {
+		throw new Error(dsNotIncludedRequiredThemes(dark, light));
 	}
 
-	if (!themesList?.includes(darkThemeName)) {
-		throw new Error(dsNotIncludedDarkTheme(darkThemeName));
+	if (!themesList?.includes(dark)) {
+		throw new Error(dsNotIncludedDarkTheme(dark));
 	}
 
-	if (!themesList?.includes(lightThemeName)) {
-		throw new Error(dsNotIncludedLightTheme(lightThemeName));
+	if (!themesList?.includes(light)) {
+		throw new Error(dsNotIncludedLightTheme(light));
 	}
 }
 
