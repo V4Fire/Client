@@ -19,8 +19,8 @@ const
 
 /**
  * Wepback loader for converting and scaling images to different formats and sizes.
- * The loader is essentially a wrapper for responsiveLoader that it's called for each format conversion.
- * It also adds support for scaling images to 1x and 2x resolutions of their original size.
+ * The loader is essentially a wrapper for `responsive-loader` that it's called for each format conversion.
+ * It also adds support for the provided scaling of the original image size (1x, 2x, etc)
  *
  * @param {string} imageBuffer - contents of the image
  * @returns {string}

@@ -30,7 +30,7 @@ class Adapter {
 	}
 
 	/**
-	 * Resizes the image to 1x and 2x of its original size and converts to webp and avif formats
+	 * Scales the image to the provided amount of its original size and converts to the specified formats
 	 *
 	 * @param {{width: number, mime: string, options: object}} data - information and the image and provided options
 	 * @returns Promise<{data: Buffer, width: number, height: number}>
@@ -109,7 +109,7 @@ class Adapter {
 }
 
 /**
- * Adapter for scaling an image by 1x and 2x resolution of its original size
+ * Adapter for scaling an image by the provided amount of its original size
  *
  * @param {string} imagePath
  * @returns {Adapter}
