@@ -17,6 +17,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed working in SSR `core/component/directives/render`
 
+## v4.0.0-beta.16 (2023-09-06)
+
+#### :nail_care: Polish
+
+* Exported `isCI` from `tests/config/super`
+* Set `workers: 1` and `fullyParallel: false` on CI in `tests/config/super`.
+See https://github.com/microsoft/playwright/issues/26739
+
 ## v4.0.0-beta.15 (2023-09-05)
 
 #### :bug: Bug Fix
