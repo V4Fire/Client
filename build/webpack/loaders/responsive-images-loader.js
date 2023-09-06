@@ -18,7 +18,7 @@ const
 	{urlLoaderOpts, isProd} = include('build/webpack/module/const');
 
 /**
- * Wepback loader for converting and scaling images to different formats and sizes.
+ * Webpack loader for converting and scaling images to different formats and sizes.
  * The loader is essentially a wrapper for `responsive-loader` that it's called for each format conversion.
  * It also adds support for the provided scaling of the original image size (1x, 2x, etc)
  *
@@ -94,7 +94,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 /**
  * Parses the specified resourceQuery. Supports only json5 notation
  *
- * @param {string} query
+ * @param {string} query - '?{responsive:true,key1:value1,key2:value2}'
  * @returns {object}
  */
 function parseResourceQuery(query) {
@@ -143,10 +143,13 @@ function getImageNames(loaderResponses) {
 }
 
 /**
- * Compiles the code returned by the responsiveLoader to the NodeJS module
+ * Compiles the code returned by the `responsive-loader` info a NodeJS module
+ * The code is a string containing the code of a NodeJS module, and this function
+ * converts this string into a real module returning the object that it exports
  *
  * @param {string} code
- * @returns {module}
+ * @returns {object}
+ * @see https://github.com/dazuaz/responsive-loader/blob/master/src/index.ts#L178
  */
 function compileCodeToModule(code) {
 	const context = vm.createContext({

@@ -48,8 +48,8 @@ class Adapter {
 			}
 
 			const
-				scaledImage = this.#scale(imageClone, width, height, scaleBy, sizes.length),
-				convertedImage = this.#convert(scaledImage, mime, quality);
+				scaledImage = this.scale(imageClone, width, height, scaleBy, sizes.length),
+				convertedImage = this.convert(scaledImage, mime, quality);
 
 			convertedImage.toBuffer((err, data, {width, height}) => {
 				if (err) {
@@ -72,7 +72,7 @@ class Adapter {
 	 * @param {number} maxScaleSize
 	 * @returns {sharp.Sharp}
 	 */
-	#scale(image, width, height, scaleBy, maxScaleSize) {
+	scale(image, width, height, scaleBy, maxScaleSize) {
 		if (scaleBy === maxScaleSize) {
 			return image;
 		}
@@ -95,7 +95,7 @@ class Adapter {
 	 * @param {number} quality
 	 * @returns {sharp.Sharp}
 	 */
-	#convert(image, mimeType, quality) {
+	convert(image, mimeType, quality) {
 		const formatMethods = {
 			'image/png': image.png,
 			'image/jpeg': image.jpeg,
