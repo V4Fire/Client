@@ -117,9 +117,11 @@ module.exports = function requireContextReplacer(str) {
 					resolvedSrc,
 					alias;
 
-				for (let e of aliases) {
-					if (contextPath.startsWith(e)) {
-						alias = e;
+				for (let k in aliases) {
+					const el = aliases[k];
+
+					if (contextPath.startsWith(el)) {
+						alias = el;
 						break;
 					}
 				}
