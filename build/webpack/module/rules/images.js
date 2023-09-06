@@ -51,6 +51,8 @@ module.exports = function imagesRules() {
 							name: isProd ? '[hash]-[width].[ext]' : '[name].[ext]',
 							adapter: include('build/webpack/loaders/adapters/scale-image-adapter'),
 							sizes: [1, 2, 3],
+							formats: ['webp', 'avif'],
+							defaultSrcPath: '2x.png',
 							disable: !isProd
 						}
 					}

@@ -4,12 +4,18 @@ This module provides a bunch of custom loaders for Webpack.
 
 ### symbol-generator-loader
 
+#### Description
+
 The loader adds support for the module `core/symbol` in older browsers
 
 ### responsive-images-loader
 
+#### Description
+
 The loader is used to compress and convert responsive images.
 It utilizes the [responsiveLoader](https://github.com/dazuaz/responsive-loader/tree/master) library underneath for each conversion operation.
+
+#### Usage
 
 To use this loader in a template, the basic syntax is:
 
@@ -17,7 +23,7 @@ To use this loader in a template, the basic syntax is:
 < .my-image v-image = require('path/to/image.png?responsive')
 ```
 
-Please note that the image you want to apply the loader to should be 3x resolution of its original size
+Please note that the image you want to apply the loader to should be the maximum resolution
 
 The loader returns the following structure:
 
@@ -62,3 +68,45 @@ In development mode, the loader will simply return the name of the image without
 ```js
 require('path/to/image.png?responsive'); // {src: 'image.png'}
 ```
+
+#### Options
+
+In addition to the [options](https://github.com/dazuaz/responsive-loader/tree/master#options) provided by the
+`responsive-loader`, this loader also offers a few additional ones.
+
+Please note that you can only specify the options using JSON5 notation:
+
+```
+require('image.png?{responsive:true,key1:value1,key2:value2}');
+```
+
+The `responsive` field in the above example is the `resourceQuery` of the loader.
+This parameter is required and should always be set to `true` if you want to process your image using this loader.
+
+The additional options are the following:
+
+##### defaultSrcPath ['2x.png']
+
+The path for the default image in the `src` field.
+The format should be in the following pattern: `[resolution].[extension]`.
+
+Example of usage:
+
+```ts
+require('path/to/image.png?{reponsive:true,defaultSrcPath:"1x.jpg"}');
+
+/*
+{
+  src: '[hash]-[width].jpg' // Here will be the hashed image scaled by 1x of its original size
+}
+*/
+```
+
+##### formats ['webp', 'avif']
+
+The formats to convert your image to.
+
+#### sizes [1, 2, 3]
+
+Although this option is specified in the `responsive-loader` options, it works differently with this loader.
+The numbers you provide indicate the scaling that should be applied to the image (1x, 2x, etc.), not the size in pixels

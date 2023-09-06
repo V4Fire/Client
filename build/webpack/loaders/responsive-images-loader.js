@@ -9,6 +9,7 @@
 'use strict';
 
 const
+	json5 = require('json5'),
 	responsiveLoader = require('responsive-loader'),
 	path = require('node:path'),
 	vm = require('node:vm');
@@ -63,27 +64,50 @@ const
  * ```
  */
 module.exports = async function responsiveImagesLoader(imageBuffer) {
+	const
+		originalImageFormat = undefined,
+		options = {...this.getOptions(), ...parseResourceQuery(this.resourceQuery)};
+
 	if (!isProd) {
 		const
-			loaderResponses = await collectLoaderResponses.call(this, imageBuffer, [undefined]),
+			loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, [originalImageFormat]),
 			[[imageName]] = getImageNames(loaderResponses);
 
 		return `module.exports = {src: '${imageName}'}`;
 	}
 
 	const
-		formats = [undefined, 'webp', 'avif'],
-		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, formats),
-		imageNames = getImageNames(loaderResponses),
-		[[, source2xImageName]] = imageNames;
+		formats = [originalImageFormat, ...(options.formats ?? [])],
+		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, formats),
+		sources = getSources(getImageNames(loaderResponses)),
+		[resolution, ext] = options.defaultSrcPath.split('.'),
+		source = sources.find(({type}) => type === ext);
 
 	const result = {
-		src: source2xImageName,
-		sources: getSources(imageNames)
+		src: source?.srcset[resolution] ?? sources[0]['2x'],
+		sources
 	};
 
 	return `module.exports = ${JSON.stringify(result)}`;
 };
+
+/**
+ * Parses the specified resourceQuery. Supports only json5 notation
+ *
+ * @param {string} query
+ * @returns {object}
+ */
+function parseResourceQuery(query) {
+	if (query[1] !== '{' || query[query.length - 1] !== '}') {
+		return {};
+	}
+
+	const
+		options = json5.parse(query.slice(1)),
+		loaderResourceQuery = 'responsive';
+
+	return Object.reject(options, loaderResourceQuery);
+}
 
 /**
  * Converts image names to an object with 'srcset' for each resolution
@@ -139,10 +163,11 @@ function compileCodeToModule(code) {
  * Calls the responsiveLoader multiple times for each image format and collects responses
  *
  * @param {string} imageBuffer
+ * @param {object} options
  * @param {string[]} formats
  * @returns {Promise<string[]>}
  */
-function collectLoaderResponses(imageBuffer, formats) {
+function collectLoaderResponses(imageBuffer, options, formats) {
 	let
 		convertationTime = 0;
 
@@ -167,7 +192,7 @@ function collectLoaderResponses(imageBuffer, formats) {
 
 		getOptions: () => ({
 			format,
-			...this.getOptions()
+			...options
 		})
 	});
 
