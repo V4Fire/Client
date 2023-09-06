@@ -64,14 +64,11 @@ const
  * Will be transformed to:
  *
  * ```js
- * // resolved alias `sprite`
- * console.log(require.context('!!svg-sprite!/path3', true, /\.svg$/));
- * // resolved alias `@v4fire/client/sprite`
- * console.log(require.context('!!svg-sprite!/path2', true, /\.svg$/));
- * // resolved alias `ds` and substituted path `icons`
- * console.log(require.context('!!svg-sprite!/path1/icons', true, /\.svg$/));
+ * console.log(require.context('!!svg-sprite!sprite', true, /\.svg$/));
+ * console.log(require.context('!!svg-sprite!@v4fire/client/sprite', true, /\.svg$/));
+ * console.log(require.context('!!svg-sprite!ds/icons', true, /\.svg$/));
  * // There is no alias for `@v4fire/core/sprite`, so the resolution is not included in the build
- * // The path `/path1/bla` does not exist, so the resolution is not included in the build
+ * // The path `ds/bla` does not exist, so the resolution is not included in the build
  * ```
  *
  * Also, you can take values that are passed as monic flags:
