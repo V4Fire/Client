@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added possibility to specify paths with alias to `@context` `directive build/monic`
+* Added possibility to specify paths with alias to `@context` directive `build/monic`
 * Added possibility to load icons from design-system `components/directives/icon`
 
 ## v4.0.0-beta.?? (2023-09-??)
