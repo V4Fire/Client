@@ -74,7 +74,8 @@ require('path/to/image.png?responsive'); // {src: 'image.png'}
 In addition to the [options](https://github.com/dazuaz/responsive-loader/tree/master#options) provided by the
 `responsive-loader`, this loader also offers a few additional ones.
 
-Please note that you can only specify the options using JSON5 notation for a certain image:
+
+Please note that the options can be specified using only JSON5 notation for a specific image. For example:
 
 ```
 require('image.png?{responsive:true,key1:value1,key2:value2}');
@@ -83,7 +84,7 @@ require('image.png?{responsive:true,key1:value1,key2:value2}');
 The `responsive` field in the above example is the `resourceQuery` of the loader.
 This parameter is required and should always be set to `true` if you want to process your image using this loader.
 
-Or override the `responsiveImagesOpts` that specifies the base options for every image in `config/default`.
+Alternatively, you can also override the `responsiveImagesOpts` method that specifies the base options for every image in `config/default`.
 
 The additional options are the following:
 
@@ -115,13 +116,14 @@ The numbers you provide indicate the scaling that should be applied to the image
 
 #### Providing multiple custom options
 
-Here the example of providing multiple options for a certain image:
+Here is an example of providing multiple options for a specific image:
 
 ```ts
+require('path/to/image.png.png?{responsive:true,formats:["webp"],sizes:[1,2,3,4],defaultSrcPath:"3x.png"}');
 
 /*
 {
-  src: '1275606184e9d451-260.png',
+  src: '41225eda88e198f9-390.png',
   sources: [
     {
       type: 'png',
