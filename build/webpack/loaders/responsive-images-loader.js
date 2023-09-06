@@ -83,7 +83,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 		formats = [undefined, 'webp', 'avif'],
 		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, formats),
 		imageNames = getImageNames(loaderResponses),
-		[, [source2xImageName]] = imageNames;
+		[[, source2xImageName]] = imageNames;
 
 	const result = {
 		src: source2xImageName,
