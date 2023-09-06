@@ -17,7 +17,7 @@ import serverConfig from 'tests/server/config';
 
 import 'tests/config/super/matchers';
 
-export const isCI = process.env.CI === 'true';
+export const isCI = Boolean(process.env.CI);
 
 const config: PlaywrightTestConfig = {
 	webServer: serverConfig,
