@@ -15,7 +15,7 @@ const
 	vm = require('node:vm');
 
 const
-	{urlLoaderOpts, isProd} = include('build/webpack/module/const');
+	{isProd} = include('build/webpack/module/const');
 
 /**
  * Webpack loader for converting and scaling images to different formats and sizes.
@@ -71,7 +71,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 	if (!isProd) {
 		const
 			loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, [originalImageFormat]),
-			[[imageName]] = getImageNames(loaderResponses);
+			[[imageName]] = getImageNames(loaderResponses, options.outputPath);
 
 		return `module.exports = {src: '${imageName}'}`;
 	}
@@ -79,7 +79,8 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 	const
 		formats = [originalImageFormat, ...(options.formats ?? [])],
 		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, formats),
-		sources = getSources(getImageNames(loaderResponses)),
+		imageNames = getImageNames(loaderResponses, options.outputPath),
+		sources = getSources(imageNames),
 		[resolution, ext] = options.defaultSrcPath.split('.'),
 		source = sources.find(({type}) => type === ext);
 
@@ -133,12 +134,13 @@ function getSources(imageNames) {
  * Extracts only image names without the rest of the path
  *
  * @param {string[]} loaderResponses - original response returned by the responsiveLoader
+ * @param {string} outputPath - output path for assets
  * @returns {string[]}
  */
-function getImageNames(loaderResponses) {
+function getImageNames(loaderResponses, outputPath) {
 	return loaderResponses.map((code) => {
 		const {images} = compileCodeToModule(code);
-		return images.map(({path}) => path.replace(`${urlLoaderOpts.outputPath}/`, ''));
+		return images.map(({path}) => path.replace(`${outputPath}/`, ''));
 	});
 }
 

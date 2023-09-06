@@ -74,7 +74,7 @@ require('path/to/image.png?responsive'); // {src: 'image.png'}
 In addition to the [options](https://github.com/dazuaz/responsive-loader/tree/master#options) provided by the
 `responsive-loader`, this loader also offers a few additional ones.
 
-Please note that you can only specify the options using JSON5 notation:
+Please note that you can only specify the options using JSON5 notation for a certain image:
 
 ```
 require('image.png?{responsive:true,key1:value1,key2:value2}');
@@ -82,6 +82,8 @@ require('image.png?{responsive:true,key1:value1,key2:value2}');
 
 The `responsive` field in the above example is the `resourceQuery` of the loader.
 This parameter is required and should always be set to `true` if you want to process your image using this loader.
+
+Or override the `responsiveImagesOpts` that specifies the base options for every image in `config/default`.
 
 The additional options are the following:
 
@@ -110,3 +112,36 @@ The formats to convert your image to.
 
 Although this option is specified in the `responsive-loader` options, it works differently with this loader.
 The numbers you provide indicate the scaling that should be applied to the image (1x, 2x, etc.), not the size in pixels
+
+#### Providing multiple custom options
+
+Here the example of providing multiple options for a certain image:
+
+```ts
+
+/*
+{
+  src: '1275606184e9d451-260.png',
+  sources: [
+    {
+      type: 'png',
+      srcset: {
+        '1x': '00013521e68e82ad-130.png',
+        '2x': '1275606184e9d451-260.png',
+        '3x': '41225eda88e198f9-390.png',
+        '4x': '19b08609ec6e1165-521.png'
+      }
+    },
+    {
+      type: 'webp',
+      srcset: {
+        '1x': '7bc796c1451c0938-130.webp',
+        '2x': '65885d25dc384e15-260.webp',
+        '3x': '1b814b2471ed305d-390.webp',
+        '4x': '4ca48b9469e44566-521.webp'
+      }
+    }
+  ]
+}
+*/
+```
