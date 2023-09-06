@@ -17,7 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added the possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
 * Added the possibility to change icons color according to the selected theme `components/global/g-def`
-* Added the possibility to specify paths with alias to `@context` `build/monic`
+* Added the possibility to specify paths with alias to `@context` directive `build/monic`
 * Added the possibility to load icons from design-system `components/directives/icon`
 
 ## v4.0.0-beta.?? (2023-09-??)
