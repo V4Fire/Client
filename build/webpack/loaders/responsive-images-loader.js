@@ -10,8 +10,8 @@
 
 const
 	responsiveLoader = require('responsive-loader'),
-	path = require('path'),
-	vm = require('vm');
+	path = require('node:path'),
+	vm = require('node:vm');
 
 const
 	{urlLoaderOpts, isProd} = include('build/webpack/module/const');
