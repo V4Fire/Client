@@ -36,7 +36,7 @@ class Adapter {
 	 * @returns Promise<{data: Buffer, width: number, height: number}>
 	 * @see https://github.com/dazuaz/responsive-loader/tree/master#writing-your-own-adapter
 	 */
-	resize({mime, width: scaleBy, options: {quality}}) {
+	resize({mime, width: scaleBy, options: {quality, sizes}}) {
 		return new Promise(async (resolve, reject) => {
 			const
 				imageClone = this.image.clone(),
@@ -48,7 +48,7 @@ class Adapter {
 			}
 
 			const
-				scaledImage = this.#scale(imageClone, width, height, scaleBy),
+				scaledImage = this.#scale(imageClone, width, height, scaleBy, sizes.length),
 				convertedImage = this.#convert(scaledImage, mime, quality);
 
 			convertedImage.toBuffer((err, data, {width, height}) => {
@@ -69,19 +69,17 @@ class Adapter {
 	 * @param {number} width
 	 * @param {number} height
 	 * @param {number} scaleBy
+	 * @param {number} maxScaleSize
 	 * @returns {sharp.Sharp}
 	 */
-	#scale(image, width, height, scaleBy) {
-		const
-			originalScaleSize = 3;
-
-		if (scaleBy === originalScaleSize) {
+	#scale(image, width, height, scaleBy, maxScaleSize) {
+		if (scaleBy === maxScaleSize) {
 			return image;
 		}
 
 		const
-			stepWidth = Math.floor(width / originalScaleSize),
-			stepHeight = Math.floor(height / originalScaleSize);
+			stepWidth = Math.floor(width / maxScaleSize),
+			stepHeight = Math.floor(height / maxScaleSize);
 
 		return image.resize(
 			stepWidth * scaleBy,

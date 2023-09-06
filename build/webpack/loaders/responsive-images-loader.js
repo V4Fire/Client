@@ -16,14 +16,6 @@ const
 const
 	{urlLoaderOpts, isProd} = include('build/webpack/module/const');
 
-const staticOptions = {
-	outputPath: urlLoaderOpts.outputPath,
-	name: isProd ? '[hash]-[width].[ext]' : '[name].[ext]',
-	adapter: require('./adapters/scale-image-adapter'),
-	sizes: [1, 2, 3],
-	disable: !isProd
-};
-
 /**
  * Wepback loader for converting and scaling images to different formats and sizes.
  * The loader is essentially a wrapper for responsiveLoader that it's called for each format conversion.
@@ -174,7 +166,6 @@ function collectLoaderResponses(imageBuffer, formats) {
 		},
 
 		getOptions: () => ({
-			...staticOptions,
 			format,
 			...this.getOptions()
 		})

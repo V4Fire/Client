@@ -43,7 +43,18 @@ module.exports = function imagesRules() {
 
 			{
 				resourceQuery: /responsive/,
-				use: [{loader: 'responsive-images-loader'}]
+				use: [
+					{
+						loader: 'responsive-images-loader',
+						options: {
+							outputPath: urlLoaderOpts.outputPath,
+							name: isProd ? '[hash]-[width].[ext]' : '[name].[ext]',
+							adapter: include('build/webpack/loaders/adapters/scale-image-adapter'),
+							sizes: [1, 2, 3],
+							disable: !isProd
+						}
+					}
+				]
 			},
 
 			{use: imgHelperLoaders()}
