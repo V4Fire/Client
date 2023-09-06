@@ -85,7 +85,7 @@ This parameter is required and should always be set to `true` if you want to pro
 
 The additional options are the following:
 
-##### defaultSrcPath ['2x.png']
+##### defaultSrcPath ['2x.[original image extension]']
 
 The path for the default image in the `src` field.
 The format should be in the following pattern: `[resolution].[extension]`.
