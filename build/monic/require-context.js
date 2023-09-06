@@ -34,10 +34,11 @@ const
  * The following transformation rules are used:
  *
  * 0. The token will be substituted with itself (without the `@` prefix).
- * 1. If the path starts with the webpack alias, the path will be replaced as is with the resolved alias.
+ * 1. If the path starts with the webpack alias, the path will be substituted as is with the resolved alias.
  * 2. Else, if the token starts with the `@` prefix, the provided path will
- * be concatenated with the token (without the prefix) and resolved as the webpack alias, if the alias exists.
- * 3. Else, the provided path will be concatenated with the token.
+ * be concatenated with the token (without the prefix) and resolved as the webpack alias
+ * and substituted if the alias exists.
+ * 3. Else, the provided path will be concatenated with the token and substituted.
  *
  * In all cases, there is a check to ensure that the file exists at the resulting path.
  * If the file does not exist, the substitution will not be made.
