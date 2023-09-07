@@ -160,6 +160,9 @@ test.describe('<b-virtual-scroll>', () => {
 					type: 'item',
 					props: {
 						'data-index': item.i
+					},
+					meta: {
+						data: item
 					}
 				}));
 

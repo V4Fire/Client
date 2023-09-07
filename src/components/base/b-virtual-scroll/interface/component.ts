@@ -209,7 +209,7 @@ export interface ComponentItemMeta extends Dictionary {
 	 * If `iItems` props are used to create representations, `b-virtual-scroll` will automatically add
 	 * this property to the `meta` parameters.
 	 */
-	readonly _data?: unknown;
+	readonly data?: unknown;
 }
 
 /**

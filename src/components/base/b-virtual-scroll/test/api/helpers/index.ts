@@ -270,7 +270,10 @@ export function createMountedItem(data: IndexedObj): MountedItem {
 		key: Object.cast(undefined),
 		item: 'section',
 		type: 'item',
-		node: <any>test.expect.anything()
+		node: <any>test.expect.anything(),
+		meta: {
+			data: test.expect.any(Object)
+		}
 	};
 }
 

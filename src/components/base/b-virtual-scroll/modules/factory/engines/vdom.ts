@@ -20,5 +20,5 @@ export function render(ctx: bVirtualScroll, items: VNodeDescriptor[]): HTMLEleme
 		vnodes = ctx.vdom.create(...items),
 		nodes = ctx.vdom.render(vnodes);
 
-	return <HTMLElement[]>nodes.slice(1, nodes.length - 1);
+	return <HTMLElement[]>nodes;
 }
