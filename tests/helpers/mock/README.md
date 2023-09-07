@@ -1,159 +1,98 @@
 # tests/helpers/mock
 
-This module provides utility functions for working with `jest-mock` and `Playwright`.
+This module provides the ability to create spies and mock functions from a Node.js testing environment and inject them into the page context.
 
 ## Usage
 
-Import the required functions from the `tests/helpers/mock` module to use the test helpers in your test files:
+### How to Create a Spy?
+
+To create a spy, you need to first identify the object you want to spy on. For example, let's say we have a global object `testObject` that has a method `doSomething`, and we want to track how many times this method is called.
+
+Let's break down the steps to achieve this:
+
+1. Get a `handle` for the `testObject`:
+
+   ```typescript
+   const testObjHandle = await page.evaluateHandle(() => globalThis.testObject);
+   ```
+
+2. Set up a spy on the `doSomething` method:
+
+   ```typescript
+   const spy = await createSpy(testObjHandle, (ctx) => jestMock.spy(ctx, 'doSomething'));
+   ```
+
+   The first argument to the `createSpy` function is the `handle` of the object on which you want to set up the spy. The second argument is the spy constructor function, which takes the object and the method to monitor. `jestMock` is an object available in the global scope that redirects calls to the `jest-mock` library.
+
+   It's important to note that the constructor function is passed from the Node.js context to the browser context, meaning it will be serialized and converted into a string for transmission to the browser.
+
+3. After setting up the spy, you can access it and, for example, check how many times it has been called:
+
+   ```typescript
+   const testObjHandle = await page.evaluateHandle(() => globalThis.testObject);
+   const spy = await createSpy(testObjHandle, (ctx) => jestMock.spy(ctx, 'doSomething'));
+
+   await page.evaluate(() => globalThis.testObject.doSomething());
+
+   console.log(await spy.calls); // [[]]
+   ```
+
+### How to Create a Spy and Access It Later?
+
+There are cases where a spy is created asynchronously, for example, in response to an event. In such situations, you can access the spy later using the `getSpy` function.
+
+Let's consider the scenario below where a spy is created for the `testObject.doSomething` method during a button click:
 
 ```typescript
-import {
-  wrapAsSpy,
-  createSpy,
-  getSpy,
-  createMockFn,
-  injectMockIntoPage
-} from 'tests/helpers/mock';
-```
+await page.evaluate(() => {
+  const button = document.querySelector('button');
 
-## API Reference
-
-### wrapAsSpy
-
-Wraps an object as a spy object by adding additional properties for accessing spy information.
-
-```typescript
-function wrapAsSpy(agent: JSHandle<ReturnType<ModuleMocker['fn']> | ReturnType<ModuleMocker['spyOn']>>, obj: T): T & SpyObject;
-```
-
-- `agent`: The JSHandle representing the spy or mock function.
-- `obj`: The object to wrap as a spy object.
-- Returns: The wrapped object with spy properties.
-
-### createSpy
-
-Creates a spy object.
-
-```typescript
-async function createSpy<T extends JSHandle, ARGS extends any[]>(
-  ctx: T,
-  spyCtor: (ctx: ExtractFromJSHandle<T>, ...args: ARGS) => ReturnType<ModuleMocker['spyOn']>,
-  ...argsToCtor: ARGS
-): Promise<SpyObject>;
-```
-
-- `ctx`: The `JSHandle` to spy on.
-- `spyCtor`: The function that creates the spy.
-- `argsToCtor`: The arguments to pass to the spy constructor function.
-- Returns: A promise that resolves to the created spy object.
-
-Usage:
-
-```typescript
-const ctx = ...; // JSHandle to spy on
-const spyCtor = (ctx) => jestMock.spy(ctx, 'prop'); // Spy constructor function
-const spy = await createSpy(ctx, spyCtor);
-
-// Access spy properties
-console.log(await spy.calls);
-console.log(await spy.callsLength);
-console.log(await spy.lastCall);
-console.log(await spy.results);
-```
-
-### getSpy
-
-Retrieves an existing `SpyObject` from a `JSHandle`.
-
-```typescript
-async function getSpy<T extends JSHandle>(
-  ctx: T,
-  spyExtractor: SpyExtractor<ExtractFromJSHandle<T>, []>
-): Promise<SpyObject>;
-```
-
-- `ctx`: The `JSHandle` containing the spy object.
-- `spyExtractor`: The function to extract the spy object.
-- Returns: A promise that resolves to the spy object.
-
-Usage:
-
-```typescript
-const component = await Component.createComponent(page, 'b-button', {
-  attrs: {
-    '@hook:beforeDataCreate': (ctx) => jestMock.spy(ctx.localEmitter, 'emit')
-  }
+  button.onclick = () => {
+    jestMock.spy(globalThis.testObject, 'doSomething');
+    globalThis.testObject.doSomething();
+  };
 });
 
-const spyExtractor = (ctx) => ctx.unsafe.localEmitter.emit;
+await page.click('button');
 
-const spyObject = await getSpy(component, spyExtractor);
+const testObjHandle = await page.evaluateHandle(() => globalThis.testObject);
+const spy = await getSpy(testObjHandle, (ctx) => ctx.doSomething);
 
-// Now you can access spy information from the spy object
-console.log(await spyObject.calls);
-console.log(await spyObject.callsLength);
-console.log(await spyObject.lastCall);
-console.log(await spyObject.results);
+await page.evaluate(() => globalThis.testObject.doSomething());
+
+console.log(await spy.calls); // [[], []]
 ```
 
-### createMockFn
+> While `getSpy` can be replaced with `createSpy`, it is recommended to use `getSpy` for semantic clarity in such cases.
 
-Creates a mock function and injects it into a Page object.
+### How to Create a Mock Function?
+
+To create a mock function, use the `createMockFn` function. It will create a mock function and automatically inject it into the page.
 
 ```typescript
-async function createMockFn(
-  page: Page,
-  fn: (...args: any[]) => any,
-  ...args: any[]
-): Promise<SpyObject>;
+import { expandedStringify } from 'core/prelude/test-env/components/json';
+
+const mockFn = await createMockFn(page, () => 1);
+
+await page.evaluate(([obj]) => {
+  const parsed = globalThis.expandedParse(obj);
+
+  parsed.mockFn();
+  parsed.mockFn();
+
+}, <const>[expandedStringify({ mockFn })]);
+
+console.log(await mockFn.calls); // [[], []]
 ```
 
-- `page`: The Page object to inject the mock function into.
-- `fn`: The mock function.
-- `args`: The arguments to pass to the function.
-- Returns: A promise that resolves to the mock function as a `SpyObject`.
+### How Does This Work?
 
-Usage:
+#### Mock Functions
 
-```typescript
-const page = ...; // Page object
-const fn = () => {}; // The mock function
-const mockFn = await createMockFn(page, fn);
- *
-// Access spy properties
-console.log(await mockFn.calls);
-console.log(await mockFn.callsLength);
-console.log(await mockFn.lastCall);
-console.log(await mockFn.results);
-```
+A mock function works by converting object representations into strings and then transferring them from Node.js to the browser. For the client, `createMockFn` returns a `SpyObject`, which includes methods for tracking calls, and it also overrides the `toJSON` method. This override is necessary to create a mapping of the mock function's ID to the real function that was previously inserted into the page context.
 
-### injectMockIntoPage
+#### Spy Functions
 
-Injects a mock function into a Page object and returns the `SpyObject`.
+Unlike mock functions, spy functions do not create anything extra. They are simply attached to a function within the context and return a wrapper with methods that, when called, make requests to the spy for various data.
 
-```typescript
-async function injectMockIntoPage(
-  page: Page,
-  fn: (...args: any[]) => any,
-  ...args: any[]
-): Promise<{agent: SpyObject; id: string}>;
-```
-
-- `page`: The Page object to inject the mock function into.
-- `fn`: The mock function.
-- `args`: The arguments to pass to the function.
-- Returns: A promise that resolves to an object containing the spy object and the ID of the injected mock function.
-
-Usage:
-
-```typescript
-const page = ...; // Page object
-const fn = () => {}; // The mock function
-const { agent, id } = await injectMockIntoPage(page, fn);
-
-// Access spy properties
-console.log(await agent.calls);
-console.log(await agent.callsLength);
-console.log(await agent.lastCall);
-console.log(await agent.results);
-```
+If you have any further questions or need assistance, please feel free to ask.
