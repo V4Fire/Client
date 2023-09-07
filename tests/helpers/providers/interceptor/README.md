@@ -1,8 +1,19 @@
 # tests/helpers/providers/interceptor
 
-API that provides a simple way to intercept and respond to any request.
-
+Это API предоставляет возможность вам перехватывать любой запрос и отвечать на него любыми данными.
 ## Usage
+
+### Как ответить на запрос?
+
+### Как указать статус код запросу?
+
+### Как реализовать задержку перед ответом?
+
+### Как просмотреть сколько запросов было перехвачено?
+
+### Как посмотреть с какими параметрами были перехвачены запросы?
+
+### Как реализовать собственный перехватчик на основе `RequestInterceptor`?
 
 ```typescript
 // Create a RequestInterceptor instance
