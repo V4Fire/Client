@@ -34,7 +34,7 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 	test.describe('`chunkSize` prop changes after the first chunk has been rendered', () => {
-		test('Should render the second chunk with the new chunk size', async ({demoPage}) => {
+		test('Should render the second chunk with the new chunk size', async () => {
 			const
 				chunkSize = 12;
 
@@ -46,10 +46,10 @@ test.describe('<b-virtual-scroll>', () => {
 					chunkSize,
 					'@hook:beforeDataCreate': (ctx: bVirtualScroll['unsafe']) => jestMock.spy(ctx.componentFactory, 'produceComponentItems')
 				})
-				.pick(demoPage.buildTestComponent(component.componentName, component.props));
+				.build({useDummy: true});
 
 			await component.waitForChildCountEqualsTo(chunkSize);
-			await demoPage.updateTestComponent({chunkSize: chunkSize * 2});
+			await component.updatePropsViaDummy({chunkSize: chunkSize * 2});
 			await component.scrollToBottom();
 			await component.waitForChildCountEqualsTo(chunkSize * 3);
 
