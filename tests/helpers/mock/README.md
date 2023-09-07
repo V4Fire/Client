@@ -1,3 +1,18 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+***Table of Contents*
+
+- [tests/helpers/mock](#testshelpersmock)
+  - [Usage](#usage)
+    - [How to Create a Spy?](#how-to-create-a-spy)
+    - [How to Create a Spy and Access It Later?](#how-to-create-a-spy-and-access-it-later)
+    - [How to Create a Mock Function?](#how-to-create-a-mock-function)
+    - [How Does This Work?](#how-does-this-work)
+      - [Mock Functions](#mock-functions)
+      - [Spy Functions](#spy-functions)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # tests/helpers/mock
 
 This module provides the ability to create spies and mock functions from a Node.js testing environment and inject them into the page context.

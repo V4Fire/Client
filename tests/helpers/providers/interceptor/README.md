@@ -1,3 +1,20 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**
+
+- [tests/helpers/providers/interceptor](#testshelpersprovidersinterceptor)
+  - [Usage](#usage)
+    - [How to Initialize a Request Interceptor?](#how-to-initialize-a-request-interceptor)
+    - [How to Respond to a Request Once?](#how-to-respond-to-a-request-once)
+    - [How to Implement a Delay Before Responding?](#how-to-implement-a-delay-before-responding)
+    - [How to Set a Custom Request Handler?](#how-to-set-a-custom-request-handler)
+    - [How to View the Number of Intercepted Requests?](#how-to-view-the-number-of-intercepted-requests)
+    - [How to View the Parameters of Intercepted Requests?](#how-to-view-the-parameters-of-intercepted-requests)
+    - [How to Remove Previously Set Request Handlers?](#how-to-remove-previously-set-request-handlers)
+    - [How to Stop Intercepting Requests?](#how-to-stop-intercepting-requests)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # tests/helpers/providers/interceptor
 
 This API allows you to intercept any request and respond to it with custom data.
