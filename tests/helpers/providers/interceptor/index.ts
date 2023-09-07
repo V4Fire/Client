@@ -121,17 +121,6 @@ export class RequestInterceptor {
 	 * interceptor.response((r: Route) => r.fulfill({status: 200}));
 	 * ```
 	 *
-	 * Sets the response that will occur with a delay to simulate network latency.
-	 *
-	 * @example
-	 * ```typescript
-	 * const interceptor = new RequestInterceptor(page, /api/);
-	 *
-	 * interceptor
-	 *   .response(200, {content: 1}, {delay: 200})
-	 *   .response(500, {}, {delay: 300});
-	 * ```
-	 *
 	 * @param handler - The response handler function.
 	 * @returns The current instance of RequestInterceptor.
 	 */
@@ -169,7 +158,7 @@ export class RequestInterceptor {
 	 *
 	 * @returns The current instance of RequestInterceptor.
 	 */
-	clearResponseOnce(): this {
+	removeHandlers(): this {
 		this.mock.mockReset();
 		return this;
 	}

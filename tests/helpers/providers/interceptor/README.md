@@ -1,140 +1,182 @@
 # tests/helpers/providers/interceptor
 
-Это API предоставляет возможность вам перехватывать любой запрос и отвечать на него любыми данными.
+This API allows you to intercept any request and respond to it with custom data.
+
 ## Usage
 
-### Как ответить на запрос?
+### How to Initialize a Request Interceptor?
 
-### Как указать статус код запросу?
-
-### Как реализовать задержку перед ответом?
-
-### Как просмотреть сколько запросов было перехвачено?
-
-### Как посмотреть с какими параметрами были перехвачены запросы?
-
-### Как реализовать собственный перехватчик на основе `RequestInterceptor`?
+To initialize a request interceptor, simply create an instance by calling its constructor. Provide the page or context as the first argument and the `url` you want to intercept as the second argument. The `url` can be either a string or a regular expression.
 
 ```typescript
 // Create a RequestInterceptor instance
 const interceptor = new RequestInterceptor(page, /api/);
-
-// Set a response for one request using a response handler function
-interceptor.responseOnce(async (route, request) => {
-  // Delay the response for 1 second
-  await delay(1000);
-
-  // Fulfill the request with a custom response
-  return route.fulfill({
-    status: 200,
-    body: JSON.stringify({ message: 'Success' }),
-    contentType: 'application/json'
-  });
-});
-
-// Set a response for every request using a response status and payload
-interceptor.response(500, { error: 'Server Error' });
-
-// Start the request interception
-await interceptor.start();
-
-// Make a request to the intercepted route
-const response = await page.goto('https://example.com/api/data');
-
-// Log the response status
-console.log(response.status()); // 200
-
-// Log the response body
-console.log(await response.json()); // { message: 'Success' }
-
-// Stop the request interception
-await interceptor.stop();
 ```
 
+However, after creating an instance of `RequestInterceptor`, request interceptions will not work until you do the following:
+
+1. Set a response for the request using the `response` method:
+
+   ```typescript
+   // Create a RequestInterceptor instance
+   const interceptor = new RequestInterceptor(page, /api/);
+
+   // Set a response for the request using a response status and payload
+   interceptor.response(200, { message: 'OK' });
+   ```
+
+2. Start intercepting requests using the `start` method:
+
+   ```typescript
+   // Create a RequestInterceptor instance
+   const interceptor = new RequestInterceptor(page, /api/);
+
+   // Set a response for the request using a response status and payload
+   interceptor.response(200, { message: 'OK' });
+
+   // Start intercepting requests
+   await interceptor.start();
+   ```
+
+After these steps, every request that matches the specified regular expression will be intercepted, and a response with a status code of 200 and a response body containing an object with a `message` field will be sent.
+
+### How to Respond to a Request Once?
+
+To respond to a request only once, you can use the `responseOnce` method:
+
 ```typescript
 // Create a RequestInterceptor instance
 const interceptor = new RequestInterceptor(page, /api/);
 
-// Set a response for one request using a response status and payload
+// Set a response for the request using a response status and payload
 interceptor.responseOnce(200, { message: 'OK' });
 
-// Set a response for every request using a response handler function
-interceptor.response(async (route, request) => {
-  // Add a delay of 500 milliseconds to each response
-  await delay(500);
-
-  // Fulfill the request with a custom response
-  return route.fulfill({
-    status: 404,
-    body: JSON.stringify({ error: 'Not Found' }),
-    contentType: 'application/json'
-  });
-});
-
-// Start the request interception
+// Start intercepting requests
 await interceptor.start();
-
-// Make multiple requests to the intercepted route
-const response1 = await page.goto('https://example.com/api/data');
-const response2 = await page.goto('https://example.com/api/users');
-
-// Log the response status
-console.log(response1.status()); // 200
-console.log(response2.status()); // 404
-
-// Log the response body
-console.log(await response1.json()); // { message: 'OK' }
-console.log(await response2.json()); // { error: 'Not Found' }
-
-// Stop the request interception
-await interceptor.stop();
 ```
 
-```typescript
+This way, you can combine different response scenarios. For example, you can set the first request to respond with a status code of 500, the second with 404, and all others with 200:
 
+```typescript
 // Create a RequestInterceptor instance
 const interceptor = new RequestInterceptor(page, /api/);
 
-// Set a response for one request using a response handler function
-interceptor.responseOnce(async (route, request) => {
-  // Delay the response for 1 second
-  await delay(1000);
+interceptor
+  .responseOnce(500, { message: 'OK' })
+  .responseOnce(404, { message: 'OK' })
+  .response(200, { message: 'OK' });
 
-  // Fulfill the request with a custom response
-  return route.fulfill({
-    status: 200,
-    body: JSON.stringify({ message: 'Success' }),
-    contentType: 'application/json'
-  });
-});
+// Start intercepting requests
+await interceptor.start();
+```
 
-// Set a response for every request using a response status and payload
-interceptor.response(500, { error: 'Server Error' });
+### How to Implement a Delay Before Responding?
 
-// Start the request interception
+`RequestInterceptor` provides an option to introduce a delay before responding. You can pass this delay as the third argument in the `response` method:
+
+```typescript
+// Create a RequestInterceptor instance
+const interceptor = new RequestInterceptor(page, /api/);
+
+// Set a response for the request using a response status, payload, and delay
+interceptor.response(200, { message: 'OK' }, { delay: 200 });
+
+// Start intercepting requests
+await interceptor.start();
+```
+
+This delay causes a 200ms wait before sending a response to the request. Note that using `delay` in tests is generally not recommended, as it can slow down test execution. However, there are cases where it may be necessary, which is why this feature exists.
+
+### How to Set a Custom Request Handler?
+
+To set a custom request handler, pass a function instead of response parameters to the `response` method. This allows you to have full control over request interception.
+
+```typescript
+// Create a RequestInterceptor instance
+const interceptor = new RequestInterceptor(page, /api/);
+
+// Set a custom response handler for the request
+interceptor.response((route: Route) => route.fulfill({ status: 200 }));
+
+// Start intercepting requests
+await interceptor.start();
+```
+
+### How to View the Number of Intercepted Requests?
+
+Since `RequestInterceptor` uses the `jest-mock` API, you can access all the functionality provided by this API. To see the number of intercepted requests, you can access the `mock` property of the class and use the `jest-mock` API.
+
+```typescript
+// Create a RequestInterceptor instance
+const interceptor = new RequestInterceptor(page, /api/);
+
+// Set a response for the request using a response status and payload
+interceptor.responseOnce(200, { message: 'OK' });
+
+// Start intercepting requests
 await interceptor.start();
 
-// Make a request to the intercepted route
-const response = await page.goto('https://example.com/api/data?param1=param1&chunkSize=12&id=tttt');
+// ...
 
-// Log the response status
-console.log(response.status()); // 200
+// Logs the number of times interception occurred
+console.log(interceptor.mock.mock.calls.length);
+```
 
-// Log the response body
-console.log(await response.json()); // { message: 'Success' }
+### How to View the Parameters of Intercepted Requests?
 
-// Stop the request interception
+```typescript
+// Create a RequestInterceptor instance
+const interceptor = new RequestInterceptor(page, /api/);
+
+// Set a response for the request using a response status and payload
+interceptor.responseOnce(200, { message: 'OK' });
+
+// Start intercepting requests
+await interceptor.start();
+
+// ...
+
+const calls = provider.mock.mock.calls;
+const query = fromQueryString(new URL((<Route>providerCalls[0][0]).request().url()).search);
+
+// Logs the query parameters of the first intercepted request
+console.log(query);
+```
+
+### How to Remove Previously Set Request Handlers?
+
+To remove handlers set using the `response` and `responseOnce` methods, you can use the `removeHandlers` method:
+
+```typescript
+// Create a RequestInterceptor instance
+const interceptor = new RequestInterceptor(page, /api/);
+
+// Set a response for the request using a response status and payload
+interceptor.response(200, { message: 'OK' });
+
+// Start intercepting requests
+await interceptor.start();
+
+// Remove all request handlers
+interceptor.removeHandlers();
+```
+
+After calling `removeHandlers`, the handler set using the `response` method will no longer trigger.
+
+### How to Stop Intercepting Requests?
+
+To stop intercepting requests, use the `stop` method:
+
+```typescript
+// Create a RequestInterceptor instance
+const interceptor = new RequestInterceptor(page, /api/);
+
+// Set a response for the request using a response status and payload
+interceptor.response(200, { message: 'OK' });
+
+// Start intercepting requests
+await interceptor.start();
+
+// Stop intercepting requests
 await interceptor.stop();
-
-const
-  providerCalls = interceptor.mock.mock.calls,
-  query = fromQueryString(new URL((<Route>providerCalls[0][0]).request().url()).search);
-
-test.expect(providerCalls).toHaveLength(1);
-test.expect(query).toEqual({
-  param1: 'param1',
-  chunkSize: 12,
-  id: test.expect.anything()
-});
-
 ```
