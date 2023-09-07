@@ -95,7 +95,7 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 	 */
 	@computed({cache: true, dependencies: ['stepsStore']})
 	get stepCount(): number {
-		// The component has always at least 2 steps
+		// The component always has at least 2 steps
 		return 2 + this.stepsStore.length;
 	}
 
@@ -207,7 +207,7 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 
 	/**
 	 * The minimum value of the height of the component visible part (in percent),
-	 * i.e. even if the component is closed, this part will still be visible
+	 * i.e., even if the component is closed, this part will still be visible
 	 * {@link bBottomSlide.visible}
 	 */
 	@computed({cache: false})
@@ -372,15 +372,6 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 		this.sync.mod('opened', 'visible', Boolean);
 	}
 
-	/**
-	 * Puts the component node to the top level of the DOM tree
-	 */
-	@hook('mounted')
-	@wait('ready', {label: $$.initNodePosition})
-	protected initNodePosition(): CanPromise<void> {
-		document.body.insertAdjacentElement('afterbegin', this.$el!);
-	}
-
 	/** {@link Geometry.init} */
 	@hook('mounted')
 	@wait('ready')
@@ -444,16 +435,6 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 	}
 
 	/**
-	 * Removes the component element from the DOM if its transition is complete
-	 */
-	@hook('beforeDestroy')
-	protected removeFromDOMIfPossible(): void {
-		if (!this.isStepTransitionInProgress) {
-			this.$el?.remove();
-		}
-	}
-
-	/**
 	 * Handler: the component history was cleared
 	 */
 	@watch(':history:clear')
@@ -491,10 +472,6 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 					}
 
 					this.isStepTransitionInProgress = false;
-
-					if (this.componentStatus === 'destroyed') {
-						this.removeFromDOMIfPossible();
-					}
 
 				}, {group: ':zombie', label: $$.waitAnimationToFinish});
 

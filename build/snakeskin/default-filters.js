@@ -10,7 +10,8 @@
 
 const
 	$C = require('collection.js'),
-	Snakeskin = require('snakeskin');
+	Snakeskin = require('snakeskin'),
+	hasha = require('hasha');
 
 const
 	{webpack} = require('@config/config'),
@@ -37,12 +38,12 @@ const bind = {
 };
 
 Snakeskin.importFilters({
-	tagFilter,
+	tagFilter: Snakeskin.setFilterParams(tagFilter, {bind: ['TPL_NAME']}),
 	tagNameFilter: Snakeskin.setFilterParams(tagNameFilter, bind),
 	bemFilter: Snakeskin.setFilterParams(bemFilter, bind)
 });
 
-function tagFilter({name, attrs = {}}) {
+function tagFilter({name, attrs = {}}, tplName) {
 	Object.forEach(tagFilters, (filter) => filter({name, attrs}));
 
 	const isSimpleTag =
@@ -71,8 +72,35 @@ function tagFilter({name, attrs = {}}) {
 		return;
 	}
 
-	if (component.inheritMods !== false && !attrs[':mods-prop']) {
-		attrs[':mods-prop'] = ['sharedMods'];
+	if (attrs['v-tag']) {
+		delete attrs['v-tag'];
+		return;
+	}
+
+	if (!attrs[':componentIdProp']) {
+		const id = hasha(JSON.stringify([
+			componentName,
+			tplName.replace(/\d{4,}$/, '_'),
+			Object.reject(attrs, [
+				'v-ref',
+				'v-once',
+				'v-memo',
+
+				':is',
+				'v-tag',
+
+				'data-cached-class-component-id',
+				':data-cached-class-component-id'
+			])
+		])).slice(0, 10);
+
+		attrs[':componentIdProp'] = [JSON.stringify(id)];
+	}
+
+	attrs[':getRoot'] = ["() => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];
+
+	if (component.inheritMods !== false && !attrs[':modsProp']) {
+		attrs[':modsProp'] = ['sharedMods'];
 	}
 
 	const funcDir = attrs['v-func']?.[0];
@@ -84,7 +112,7 @@ function tagFilter({name, attrs = {}}) {
 	if (component && component.functional === true) {
 		isFunctional = true;
 
-	} else if (!funcDir) {
+	} else if (!funcDir && attrs[SMART_PROPS] != null) {
 		isFunctional = $C(attrs[SMART_PROPS]).every((propVal, prop) => {
 			prop = prop.dasherize(true);
 
@@ -111,6 +139,10 @@ function tagFilter({name, attrs = {}}) {
 
 	const
 		isSmartFunctional = attrs[SMART_PROPS] && (isFunctional || funcDir);
+
+	if (isFunctional && webpack.ssr) {
+		attrs[':renderComponentId'] = [false];
+	}
 
 	if (isSmartFunctional) {
 		if (funcDir == null || funcDir === 'true') {

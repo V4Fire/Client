@@ -56,7 +56,7 @@ because once created, any change to such fields can cause re-rendering and can b
 We have links, initializers, and API to control the order of initialization, but what if we need to get the entire
 watchable store and modify it in a complex way. It is to solve this problem that the `beforeDataCreate` hook exists:
 it will be called exactly when all observable properties have been created, but not yet linked to the component,
-i.e. we can safely change them and not expect consequences.
+i.e., we can safely change them and not expect consequences.
 
 ```typescript
 import iBlock, { component, field, hook } from 'components/super/i-block/i-block';

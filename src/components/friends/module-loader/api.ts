@@ -25,6 +25,10 @@ export function load(this: Friend, ...modules: Module[]): CanPromise<IterableIte
 		tasks: Array<Promise<unknown>> = [];
 
 	modules.forEach((module) => {
+		if (module.ssr === false && SSR) {
+			return;
+		}
+
 		const
 			resolvedModule = resolveModule.call(this, module);
 

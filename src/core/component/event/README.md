@@ -64,6 +64,17 @@ This event emitter is used to broadcast components' initialization events.
 
 ### Functions
 
+#### destroyApp
+
+The directive emits a special event to completely destroy the entire application by its root component's identifier.
+This method is typically used in conjunction with SSR.
+
+```js
+import { destroyApp } from 'core/component/event';
+
+destroyApp(rootComponentId);
+```
+
 #### resetComponents
 
 The method emits a special event to reset components' state to its default settings.
@@ -82,10 +93,10 @@ Additionally, you can choose from several types of component resets:
 7. `'silence'` - reloads all providers and storages bound to components without changing components' statuses to `loading`.
 
 ```js
-import { reset } from 'core/component/event';
+import { resetComponents } from 'core/component/event';
 
-reset('load');
-reset('storage.silence');
+resetComponents('load');
+resetComponents('storage.silence');
 ```
 
 #### implementEventEmitterAPI

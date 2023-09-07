@@ -21,6 +21,7 @@ export * from 'components/super/i-data/i-data';
 		functional: true
 	}
 })
+
 class bDummy extends iData {
 	/**
 	 * Name of the test component.

@@ -53,7 +53,9 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	emptyField: unknown = undefined;
 
 	protected beforeCreate(): void {
+		//#unless runtime has storybook
 		// eslint-disable-next-line no-console
 		console.time('Render');
+		//#endunless
 	}
 }

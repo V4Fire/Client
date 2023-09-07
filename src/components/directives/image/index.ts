@@ -58,7 +58,7 @@ ComponentEngine.directive('image', {
 				placeholder = p[kind];
 
 			let
-				url;
+				url: CanUndef<string>;
 
 			if (Object.isString(placeholder)) {
 				url = `url("${placeholder}")`;

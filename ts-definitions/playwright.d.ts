@@ -11,16 +11,11 @@ export {};
 declare global {
 	namespace PlaywrightTest {
 		interface Matchers<R> {
-			/** @deprecated */
-			toBeResolved(): R;
-			/** @deprecated */
-			toBeResolvedTo(val: any): R;
-			/** @deprecated */
-			toBeRejected(): R;
-			/** @deprecated */
-			toBeRejectedWith(val: any): R;
-			/** @deprecated */
-			toBePending(): R;
+			toBeResolved(): Promise<R>;
+			toBeResolvedTo(val: any): Promise<R>;
+			toBeRejected(): Promise<R>;
+			toBeRejectedWith(val: any): Promise<R>;
+			toBePending(): Promise<R>;
 		}
 	}
 

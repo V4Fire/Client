@@ -20,7 +20,7 @@ export interface DecoratorSystem<
 	 * Also, the parameter can take a function that returns a boolean value.
 	 * If this value is true, then the parameter is considered unique.
 	 *
-	 * Please note that the uniqueness guarantee must be provided by the "external" code,
+	 * Please note that the "external" code must provide the uniqueness guarantee
 	 * because V4Fire does not perform special checks for uniqueness.
 	 *
 	 * @default `false`
@@ -156,7 +156,8 @@ export interface DecoratorSystem<
 	 *
 	 *     // Also, see core/object/watch
 	 *     {
-	 *       // If false, then a handler that is invoked on the watcher event does not take any arguments from the event
+	 *       // If set to false,
+	 *       // then a handler that is invoked on the watcher event does not take any arguments from the event
 	 *       provideArgs: false,
 	 *
 	 *       // How the event handler should be called:
@@ -186,7 +187,7 @@ export interface DecoratorSystem<
 	watch?: DecoratorFieldWatcher<CTX, A, B>;
 
 	/**
-	 * If false, the field can't be watched if created inside a functional component.
+	 * If set to false, the field can't be watched if created inside a functional component.
 	 * This option is useful when you are writing a superclass or a smart component that can be created
 	 * as regular or functional.
 	 *
@@ -238,7 +239,7 @@ export interface DecoratorField<
 	B = A
 > extends DecoratorSystem<CTX, A, B> {
 	/**
-	 * If true, property changes will cause the template to be guaranteed to be re-rendered.
+	 * If set to true, property changes will cause the template to be guaranteed to be re-rendered.
 	 * Be aware that enabling this property may result in redundant redraws.
 	 *
 	 * @default `false`

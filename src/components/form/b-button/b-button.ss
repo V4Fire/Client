@@ -86,7 +86,7 @@
 
 		- block dropdown
 			< . &
-				ref dropdown |
+				ref = dropdown |
 				v-if = hasDropdown |
 				:id = dom.getId('dropdown') |
 				:class = provide.elementClasses({dropdown: {pos: dropdown}})

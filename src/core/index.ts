@@ -7,6 +7,9 @@
  */
 
 import '@v4fire/core/core';
+
+//#unless runtime has storybook
 import 'core/init';
 
 export { default as initApp } from 'core/init';
+//#endunless

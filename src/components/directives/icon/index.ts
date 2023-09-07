@@ -86,7 +86,7 @@ function setIcon(el: Element, params: DirectiveParams, vnode: VNode): void {
 	const bind = {
 		promise: getIconHref(params.value),
 		then: updateIconHref.bind(ctx),
-		catch: (el, err) => {
+		catch: (el: Element, err: Error) => {
 			stderr(err);
 			updateIconHref.call(ctx, el);
 		}

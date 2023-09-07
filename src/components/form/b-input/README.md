@@ -46,12 +46,14 @@ See the parent component and the component traits.
 < b-input :dataProvide = 'MyProvider' | @onActionChange = console.log($event)
 ```
 
-When a provider returns a dictionary, it gets mapped onto the component. To pass a complex property path, you can use dots as separators.
+When a provider returns a dictionary, it gets mapped onto the component.
+To pass a complex property path, you can use dots as separators.
 
 If a key from the response corresponds to a component method, this method will be invoked using the value from that key.
 If the value is an array, it will be spread to the method as separate arguments.
 
-The provider should not return any properties which are in the component props list (marked with `@prop` decorator), they won't be updated.
+The provider should not return any properties that are in the component props list (marked with `@prop` decorator),
+they won't be updated.
 
 ```
 {

@@ -1,12 +1,18 @@
 # components/traits
 
-The module provides a set of traits for components. A trait is a special kind of abstract class that is used as an interface.
-Why do we need it? Well, unlike Java or Kotlin, TypeScript interfaces cannot have default method implementations.
-Therefore, we need to implement every method in our classes, even if the implementation doesn't change.
-This is where traits come into play. How it works? Okay, let's list the steps to create a trait.
+The module provides a set of traits for components.
+A trait in TypeScript is an interface-like abstract class that serves as an interface.
+But why do we need it?
+Unlike Java or Kotlin, TypeScript interfaces cannot have default method implementations.
+Consequently, in TypeScript, we have to implement every method in our classes,
+even if the implementation remains unchanged.
+This is where traits become useful.
 
-1. Create an abstract class where you define all the necessary abstract methods and properties (yes, a trait can also define properties,
-   not just methods)..
+## How it works?
+
+Let's list the steps to create a trait.
+
+1. Create an abstract class that includes all the essential abstract methods and properties.
 
    ```typescript
    abstract class Duckable {
@@ -15,8 +21,8 @@ This is where traits come into play. How it works? Okay, let's list the steps to
    }
    ```
 
-2. Define all non-abstract methods as simple methods with no implementation: use loopback code as the method body,
-   such as `return Object.throw()`.
+2. Define all non-abstract methods as simple methods without any implementation.
+   You can use loopback code as the method body, such as returning `Object.throw()`.
 
    ```typescript
    abstract class Duckable {
@@ -29,8 +35,10 @@ This is where traits come into play. How it works? Okay, let's list the steps to
    }
    ```
 
-3. Define non-abstract methods as static methods of a class with the same names and signatures, but add a reference to
-   the class instance as the first argument, as we do in Python or Rust. Also, we can use the `AddSelf` helper to generate less code.
+3. Define the non-abstract methods as static methods of a class with the same names and signatures,
+   but include a reference to the class instance as the first argument,
+   similar to the way it is done in Python or Rust.
+   Additionally, you can use the `AddSelf` helper to generate less code.
 
    ```typescript
    abstract class Duckable {
@@ -41,8 +49,8 @@ This is where traits come into play. How it works? Okay, let's list the steps to
        return Object.throw();
      }
 
-     // The first parameter provides a method to wrap.
-     // The second parameter declares what type `self` is.
+     // The first parameter represents the method to be wrapped.
+     // The second parameter defines the type of 'self'.
      static getQuack: AddSelf<Duckable['getQuack'], Duckable> = (self, size) => {
        if (size < 10) {
          return 'quack!';
@@ -57,7 +65,7 @@ This is where traits come into play. How it works? Okay, let's list the steps to
    }
    ```
 
-We have created a trait. Now we can implement it in a simple class.
+We have defined a trait. We can now proceed to implement it in a basic class.
 
 1. Create a simple class and implement the trait using the `implements` keyword.
    Do not implement methods whose implementations you want to keep default.
@@ -72,7 +80,8 @@ We have created a trait. Now we can implement it in a simple class.
    }
    ```
 
-2. Create an interface with the same name as our class and extend it from the trait using the `Trait` type.
+2. Create an interface with the same name as our class, and extend it
+   based on the trait using the `extends` keyword with the type `Trait`.
 
    ```typescript
    interface DuckLike extends Trait<typeof Duckable> {}
@@ -86,7 +95,8 @@ We have created a trait. Now we can implement it in a simple class.
    }
    ```
 
-3. Use the `derive` decorator from `core/functools/trait` with our class and specify any traits we want to implement automatically.
+3. Use the `derive` decorator from `core/functools/trait` with our class and
+   specify any traits we want to automatically implement.
 
    ```typescript
    import { derive } from 'core/functools/trait';
@@ -103,7 +113,7 @@ We have created a trait. Now we can implement it in a simple class.
    }
    ```
 
-4. Profit! Now TS understands interface methods by default and works at runtime.
+4. Profit! Now TS will automatically understand the methods of the interface, and they will work at runtime.
 
    ```typescript
    import { derive } from 'core/functools/trait';
@@ -138,26 +148,26 @@ We have created a trait. Now we can implement it in a simple class.
        // Do some logic to fly
      }
    }
-  ```
+   ```
 
-Apart from the normal methods, you can also define get/set accessors like this:
+6. In addition to regular methods, you can also define get/set accessor methods like this:
 
-```typescript
-abstract class Duckable {
-  get canFly(): boolean {
-    return Object.throw();
-  }
+   ```typescript
+   abstract class Duckable {
+     get canFly(): boolean {
+       return Object.throw();
+     }
 
-  set canFly(value: boolean) {};
+     set canFly(value: boolean) {};
 
-  static canFly(self: Duckable): string {
-    if (arguments.length > 1) {
-      const value = arguments[1];
-      // Setter code
+     static canFly(self: Duckable): string {
+       if (arguments.length > 1) {
+         const value = arguments[1];
+         // Setter code
 
-    } else {
-      return /* Getter code */;
-    }
-  }
-}
-```
+       } else {
+         return /* Getter code */;
+       }
+     }
+   }
+   ```

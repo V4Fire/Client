@@ -19,7 +19,7 @@ export type SessionKey = Nullable<
  */
 export interface SessionParams extends Dictionary {
 	/**
-	 * A value for the `CSRF` token
+	 * The CSRF token
 	 */
 	csrf?: string;
 }

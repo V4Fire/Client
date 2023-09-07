@@ -12,6 +12,11 @@
 /// <reference path="./ts-definitions/playwright.d.ts"/>
 /// <reference path="./ts-definitions/stylus-ds.d.ts"/>
 
+declare module '*?raw' {
+	const content: string;
+	export default content;
+}
+
 declare var ssr: Nullable<{
 	document?: Document;
 }>;
@@ -115,6 +120,20 @@ declare var
 	 * This function should only be used when writing tests.
 	 */
 	removeCreatedComponents: () => void,
+
+	/**
+	 * Auxiliary functions for building a component showcase
+	 * @see https://storybook.js.org/
+	 */
+	V4Storybook: {
+		/**
+		 * Initializes the application within the Storybook's canvas
+		 *
+		 * @param canvasElement - the storybook canvas element
+		 * @param [rootComponent] - the name of the root component to initialize
+		 */
+		initApp(canvasElement: HTMLElement, rootComponent?: string): Promise<import('./src/core/component').App>;
+	},
 
 	/**
 	 * Requires a module by the specified path.

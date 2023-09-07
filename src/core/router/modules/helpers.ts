@@ -145,8 +145,15 @@ export function getRoute(ref: string, routes: RouteBlueprints, opts: AdditionalG
 					break;
 				}
 
+				const
+					routeRgxp = route.rgxp;
+
+				if (routeRgxp == null) {
+					continue;
+				}
+
 				// Try validating the passed link with a route pattern
-				if (route.rgxp?.test(resolvedRef)) {
+				if (routeRgxp.test(resolvedRef) || routeRgxp.test(resolvedRef.replace(/\?.*/, ''))) {
 					if (resolvedRoute == null) {
 						resolvedRoute = route;
 						continue;
@@ -344,10 +351,14 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 			route = routes[name] ?? {},
 			originalPathParams: Key[] = [];
 
+		const defaultPathOpts: RegExpOptions = {
+			endsWith: '?'
+		};
+
 		if (Object.isString(route)) {
 			const
 				pattern = concatURLs(basePath, route),
-				rgxp = parsePattern(pattern, originalPathParams);
+				rgxp = parsePattern(pattern, originalPathParams, defaultPathOpts);
 
 			const pathParams: PathParam[] = originalPathParams.map((param) => ({
 				...param,
@@ -376,7 +387,13 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 			if (Object.isString(route.path)) {
 				pattern = concatURLs(basePath, route.path);
-				rgxp = parsePattern(pattern, originalPathParams, <RegExpOptions>route.pathOpts);
+
+				const pathOpts = {
+					...defaultPathOpts,
+					...(route.pathOpts ?? {})
+				};
+
+				rgxp = parsePattern(pattern, originalPathParams, pathOpts);
 			}
 
 			const pathParams: PathParam[] = originalPathParams.map((param) => ({
@@ -440,20 +457,16 @@ export function resolvePathParameters(pathParams: PathParam[], params: Dictionar
 	const
 		parameters = {...params};
 
-	const
-		aliases = new Map<string, string | number>();
-
 	pathParams.forEach((param) => {
-		param.aliases.forEach((alias) => aliases.set(alias, param.name));
-	});
+		if (parameters.hasOwnProperty(param.name)) {
+			return;
+		}
 
-	Object.entries(parameters).forEach(([key, param]) => {
-		if (aliases.has(key)) {
-			const originalParamName = aliases.get(key)!;
+		const
+			alias = param.aliases.find((e) => parameters.hasOwnProperty(e));
 
-			if (!Object.hasOwnProperty(parameters, originalParamName)) {
-				parameters[originalParamName] = param;
-			}
+		if (alias != null) {
+			parameters[param.name] = parameters[alias];
 		}
 	});
 

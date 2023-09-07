@@ -14,7 +14,7 @@
 /**
  * Returns a value for the `srcset` attribute, based on the passed dictionary
  *
- * @param dict - map, where keys are image queries and values are image URLs
+ * @param dict - the dictionary, where keys are image queries and values are image URLs
  *
  * @example
  * ```js

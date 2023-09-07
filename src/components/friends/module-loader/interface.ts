@@ -7,7 +7,7 @@
  */
 
 /**
- * A structure to define a module to load
+ * A structure that defines a module for loading
  */
 export interface Module extends Dictionary {
 	/**
@@ -16,19 +16,24 @@ export interface Module extends Dictionary {
 	id?: unknown;
 
 	/**
-	 * A function to load the module
+	 * A function that loads the module
 	 */
 	load(): Promise<unknown>;
+
+	/**
+	 * If false, the module will not be loaded in case of SSR
+	 */
+	ssr?: boolean;
 }
 
 export interface ResolvedModule extends Module {
 	/**
-	 * The module loading status
+	 * The module's loading status
 	 */
 	status: 'pending' | 'loaded' | 'failed';
 
 	/**
-	 * The module loading promise
+	 * The module's loading promise
 	 */
 	promise: Promise<unknown>;
 }

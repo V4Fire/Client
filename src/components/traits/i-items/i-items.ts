@@ -18,11 +18,11 @@ export * from 'components/traits/i-items/interface';
 
 export default abstract class iItems {
 	/**
-	 * Returns the unique key (to optimize re-rendering) of the specified item
+	 * The function returns the unique key of the specified item, which is used to optimize re-rendering
 	 *
 	 * @param component
 	 * @param item
-	 * @param i - iteration index
+	 * @param i - the iteration index
 	 */
 	static getItemKey<T extends iBlock>(
 		component: T & iItems,
@@ -33,7 +33,7 @@ export default abstract class iItems {
 			{itemKey} = component;
 
 		let
-			id;
+			id: unknown;
 
 		if (Object.isFunction(itemKey)) {
 			id = itemKey.call(component, item, i);

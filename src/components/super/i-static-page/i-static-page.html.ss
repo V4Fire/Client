@@ -158,3 +158,6 @@
 						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
 
 						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
+
+				- block teleports
+					< #teleports

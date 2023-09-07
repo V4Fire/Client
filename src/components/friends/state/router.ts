@@ -134,7 +134,7 @@ export async function saveToRouter(this: State, data?: Dictionary): Promise<bool
 
 	const {
 		ctx,
-		ctx: {r: {router}}
+		ctx: {r: {router}, routerStateUpdateMethod}
 	} = this;
 
 	data = ctx.syncRouterState(data, 'remote');
@@ -144,7 +144,7 @@ export async function saveToRouter(this: State, data?: Dictionary): Promise<bool
 		return false;
 	}
 
-	await router.push(null, {query: data});
+	await router[routerStateUpdateMethod](null, {query: data});
 	ctx.log('state:save:router', this, data);
 
 	return true;
@@ -154,7 +154,7 @@ export async function saveToRouter(this: State, data?: Dictionary): Promise<bool
  * Resets the component router state.
  * The function takes the result of `convertStateToRouterReset` and maps it to the component.
  */
-export async function resetRouter(this: State): Promise<boolean> {
+export function resetRouter(this: State): boolean {
 	const {
 		ctx,
 		ctx: {r: {router}}
@@ -167,7 +167,6 @@ export async function resetRouter(this: State): Promise<boolean> {
 		return false;
 	}
 
-	await router.push(null);
 	ctx.log('state:reset:router', this, stateFields);
 
 	return true;

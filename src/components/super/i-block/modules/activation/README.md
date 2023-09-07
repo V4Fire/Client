@@ -18,7 +18,7 @@ we simply put its DOM nodes from the cache and send an "unfreeze" event, which w
 if necessary, process those that occurred while the page was in the cache.
 
 This is where activation and deactivation come in. When we want to "freeze" a component, we initialize its deactivation.
-When we "defrost" it - this is activation. It should be noted that these are recursive operations, i.e. by calling activation
+When we "defrost" it - this is activation. It should be noted that these are recursive operations, i.e., by calling activation
 on a component, we will also call it on all child non-functional components. Each component may or may not handle this lifecycle hook.
 For example, a component can re-request its providers and show updated information.
 

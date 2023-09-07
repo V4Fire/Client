@@ -1,13 +1,18 @@
 # core/dom/intersection-watcher
 
 This module provides an API to track elements entering or leaving the viewport.
-The module supports several element tracking strategies. The default is IntersectionObserver, but if the environment does not support it,
-then a strategy based on the elements heightmap and MutationObserver will be used.
+The module supports several element tracking strategies.
+
+The default strategy used is the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API).
+However, if the current environment does not support the Intersection Observer API,
+then the module falls back to a different strategy.
+This fallback strategy is based on using the elements' heightmap
+and the [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver).
 
 ## Why is this module needed?
 
-Often when working with Intersection we just want to register some kind of handler on an element.
-However, the native API is based on classes, so we first have to create an instance of the class,
+Often when working with IntersectionObserver, we simply want to register a handler on an element.
+However, the native API is based on classes, so we first need to create an instance of the class,
 pass the handler to it, and then register the element.
 
 ```js
@@ -18,7 +23,7 @@ const observer2 = new IntersectionObserver(handler2, {threshold: 0.5});
 observer2.observe(document.getElementById('my-elem'));
 ```
 
-This module allows you to do it more gracefully.
+This module provides a more elegant way to achieve that.
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -27,10 +32,12 @@ IntersectionWatcher.watch(document.getElementById('my-elem'), handler1);
 IntersectionWatcher.watch(document.getElementById('my-elem'), {threshold: 0.5}, handler2);
 ```
 
-All registered handlers with the same watching parameters share the same IntersectionObserver instance, which helps improve performance.
-In addition, this module provides a number of useful additional options. For example, you can add handlers for the appearance or
-disappearance of an element. If the environment does not support IntersectionObserver, then an alternative observation
-strategy based on the elements heightmap is used.
+All registered handlers that have the same observation parameters will share the same IntersectionObserver instance.
+This optimization helps improve performance.
+Additionally, this module offers several useful additional options.
+For instance, you can add handlers for when an element appears or disappears.
+If the browser environment does not support IntersectionObserver,
+an alternative observation strategy based on the element's heightmap will be used.
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -38,9 +45,11 @@ import * as IntersectionWatcher from 'core/dom/intersection-watcher';
 IntersectionWatcher.watch(document.getElementById('my-elem'), {onEnter: console.log, onLeave: console.log, delay: 1500}, handler);
 ```
 
-However, you can use this module just like the original IntersectionObserver by creating your own watcher instance.
-This approach allows you to cancel all registered handlers at once within a single instance.
-Keep in mind, each instance has its own IntersectionObserver instances.
+Alternatively, you can use this module in a similar way to the original IntersectionObserver
+by creating your own watcher instance.
+With this approach, you can cancel all registered handlers at once within a single instance.
+It's important to note that each instance has its own IntersectionObserver instances,
+providing more flexibility in managing the handlers.
 
 ```js
 import IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -61,7 +70,8 @@ intersectionWatcher.destroy();
 
 ### watch
 
-Tracks the intersection of the passed element with the viewport, and invokes the specified handler each time the element enters the viewport.
+Tracks the intersection of the passed element with the viewport,
+and invokes the specified handler each time the element enters the viewport.
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -90,13 +100,15 @@ watcher.unwatch();
 An element whose bounds are treated as the bounding box of the viewport for the element which is the observer target.
 This option can also be given as a function that returns the root element.
 
-Note, when using a heightmap-based watching strategy, this element will be used to calculate the geometry of the observed elements.
+Note, when using a heightmap-based watching strategy,
+this element will be used to calculate the geometry of the observed elements.
 See [this](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver/root) for more information.
 
 ##### [onlyRoot = `true`]
 
 This option only affects the heightmap-based watching strategy and when the `root` option is passed.
-If false, then registered handlers will be called for any scroll event, not just root events.
+If set to false, registered event handlers will be called for every scroll event,
+including those not related to the root element.
 
 ##### [threshold = `0`]
 
@@ -116,8 +128,9 @@ IntersectionWatcher.watch(document.getElementById('my-elem'), {threshold: 0.5}, 
 
 ##### [delay = `0`]
 
-The minimum delay in milliseconds before calling the intersection handler.
-If after this delay the observable element leaves the viewport, then the intersection handler won't be called.
+The minimum delay, in milliseconds, before calling the intersection handler.
+If the observable element leaves the viewport before this delay elapses,
+the intersection handler will not be called.
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -129,7 +142,7 @@ IntersectionWatcher.watch(document.getElementById('my-elem'), {delay: 1500}, (wa
 
 ##### [once = `false`]
 
-If true, then after the first intersection handler firing, the observation will be canceled.
+If set to true, then after the first intersection handler is called, the observation will be canceled
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -153,8 +166,9 @@ functionality is truly insufficient.
 ##### [onEnter]
 
 Handler: the observable element has entered the viewport.
-If the handler returns false, then the main watcher handler won't be called.
-Note that this handler is always called immediately, i.e. ignores the `delay` option.
+If the handler function returns false, the main watcher handler will not be called.
+It's important to note that this handler is always called immediately,
+meaning it ignores the delay option specified.
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -170,8 +184,9 @@ function onEnter(watcher) {
 
 ##### [onLeave]
 
-Handler: the observable element has leaved the viewport.
-Note that this handler is always called immediately, i.e. ignores the `delay` option.
+Handler: the observable element has left the viewport.
+It's important to note that this handler is always called immediately,
+meaning it ignores the delay option specified.
 
 ```js
 import * as IntersectionWatcher from 'core/dom/intersection-watcher';
@@ -270,7 +285,7 @@ IntersectionWatcher.unwatch();
 
 ## destroy
 
-Cancels watching for the all registered elements and destroys the instance.
+Cancels watching for all registered elements and destroys the instance.
 This method is available only when you explicitly instantiate IntersectionWatcher.
 
 ```js

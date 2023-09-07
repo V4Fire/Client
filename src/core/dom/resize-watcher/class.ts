@@ -31,10 +31,15 @@ export default class ResizeWatcher {
 
 	constructor() {
 		this.observer = new ResizeObserver((entries) => {
-			entries.forEach(({target, contentRect}) => {
+			entries.forEach(({target, contentRect, contentBoxSize, borderBoxSize}) => {
 				this.elements.get(target)?.forEach((watcher) => {
+					const newBoxSize = watcher.box === 'border-box' ?
+						borderBoxSize :
+						contentBoxSize;
+
 					if (watcher.rect == null) {
 						watcher.rect = contentRect;
+						watcher.boxSize = newBoxSize;
 
 						if (watcher.watchInit) {
 							watcher.handler(watcher.rect, undefined, watcher);
@@ -44,10 +49,12 @@ export default class ResizeWatcher {
 					}
 
 					const
-						oldRect = watcher.rect;
+						oldRect = watcher.rect,
+						oldBoxSize = watcher.boxSize;
 
-					if (shouldInvokeHandler(contentRect, oldRect, watcher)) {
+					if (shouldInvokeHandler(contentRect, oldRect, newBoxSize, oldBoxSize, watcher)) {
 						watcher.rect = contentRect;
+						watcher.boxSize = newBoxSize;
 
 						const cb = () => {
 							watcher.handler(contentRect, oldRect, watcher);
@@ -207,10 +214,10 @@ export default class ResizeWatcher {
 	 * // Cancel only `handler2` from `document.body`
 	 * ResizeWatcher.unwatch(document.body, handler2);
 	 *
-	 * // Cancel the all registered handlers from `document.body`
+	 * // Cancel all registered handlers from `document.body`
 	 * ResizeWatcher.unwatch(document.body);
 	 *
-	 * // Cancel the all registered handlers
+	 * // Cancel all registered handlers
 	 * ResizeWatcher.unwatch();
 	 * ```
 	 */
@@ -237,7 +244,7 @@ export default class ResizeWatcher {
 	}
 
 	/**
-	 * Cancels watching for the all registered elements and destroys the instance
+	 * Cancels watching for all registered elements and destroys the instance
 	 *
 	 * @example
 	 * ```js
@@ -249,7 +256,7 @@ export default class ResizeWatcher {
 	 * resizeWatcher.watch(document.getElementById('my-elem'), {once: true, box: 'border-box'}, handler1);
 	 * resizeWatcher.watch(document.getElementById('my-elem'), handler2);
 	 *
-	 * // Cancel the all registered handlers and prevent new ones
+	 * // Cancel all registered handlers and prevent new ones
 	 * resizeWatcher.destroy();
 	 * ```
 	 */

@@ -1,6 +1,6 @@
 # components/traits/i-visible
 
-This module provides a trait for a component that needs to implement the "visibility" behavior, like "hiding" or "showing".
+This module provides a trait for a component that needs to implement visibility behavior such as hiding or showing.
 
 ## Synopsis
 
@@ -51,6 +51,14 @@ export default class bButton extends iBlock implements iVisible {
   }
 }
 ```
+
+## Props
+
+The trait specifies a bunch of optional props.
+
+### [hideIfOffline]
+
+If this is true, then the component won't be displayed if there is no Internet connection.
 
 ## Helpers
 

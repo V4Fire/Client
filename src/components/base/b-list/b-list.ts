@@ -41,6 +41,7 @@ interface bList extends Trait<typeof iActiveItems> {}
 
 @component({
 	functional: {
+		wait: undefined,
 		dataProvider: undefined,
 		vModel: undefined
 	}

@@ -25,7 +25,7 @@ import type {
 
 } from 'components/traits/i-observe-dom/interface';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/traits/i-observe-dom/test/b-traits-i-observe-dom-dummy');
 //#endif
 
@@ -102,7 +102,7 @@ export default abstract class iObserveDOM {
 			removedNodes: []
 		};
 
-		records.forEach((mut) => {
+		records.forEach((mut: MutationRecord | ObserverMutationRecord) => {
 			res.addedNodes = res.addedNodes.concat(Array.from(mut.addedNodes));
 			res.removedNodes = res.removedNodes.concat(Array.from(mut.removedNodes));
 		});

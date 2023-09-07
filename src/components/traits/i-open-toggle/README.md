@@ -1,6 +1,6 @@
 # components/traits/i-open-toggle-toggle
 
-This module provides a trait for a component that extends the "opening/closing" behaviour with an API to toggle.
+This module provides a trait for a component that extends the "opening/closing" behavior with an API to toggle.
 
 ## Synopsis
 
@@ -43,7 +43,7 @@ The trait specifies a bunch of methods to implement.
 ### toggle
 
 Toggles the component to open or close.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iOpenToggle from 'components/traits/i-open-toggle/i-open-toggle';

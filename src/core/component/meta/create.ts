@@ -80,7 +80,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const
 		cache = new WeakMap();
 
-	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx, ...args) => {
+	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
 		const
 			unsafe = getComponentContext(ctx);
 
@@ -89,10 +89,14 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		}
 
 		const
-			fn = meta.methods.render!.fn(unsafe, ...args);
+			render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
 
-		cache.set(ctx, fn);
-		return fn();
+		if (!Object.isFunction(render)) {
+			return render;
+		}
+
+		cache.set(ctx, render);
+		return render();
 	});
 
 	if (component.parentMeta) {

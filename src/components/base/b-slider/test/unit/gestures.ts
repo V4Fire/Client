@@ -141,10 +141,6 @@ test.describe('<b-slider> gestures', () => {
 		});
 	});
 
-	/**
-	 * @param page
-	 * @param [params]
-	 */
 	function renderSlider(page: Page, params: RenderComponentsVnodeParams = {}): Promise<JSHandle<bSlider>> {
 		const children = items.map((i) => ({
 			type: 'img',

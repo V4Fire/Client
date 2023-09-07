@@ -66,6 +66,7 @@ interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>,
 
 @component({
 	functional: {
+		wait: undefined,
 		dataProvider: undefined
 	}
 })

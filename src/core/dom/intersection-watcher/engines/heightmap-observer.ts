@@ -77,7 +77,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 				label: $$.checkViewport
 			});
 
-			$a.on(document, 'scroll', (e) => checkViewport(e.target), {options: {capture: true}});
+			$a.on(document, 'scroll', (e: Event) => checkViewport(e.target), {options: {capture: true}});
 			$a.on(globalThis, 'resize', () => this.checkViewportFromScratch({join: false}));
 		});
 	}

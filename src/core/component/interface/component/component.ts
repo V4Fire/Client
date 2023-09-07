@@ -11,7 +11,8 @@
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb } from 'core/async';
 
-import type { VNode, Slots, ComponentOptions } from 'core/component/engines';
+import type { HydrationStore } from 'core/component/hydration';
+import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/meta';
 
 import type { Hook } from 'core/component/interface/lc';
@@ -38,7 +39,16 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
-	 * The unique component identifier
+	 * The unique component identifier.
+	 * The value for this prop is automatically generated during the build process,
+	 * but it can also be manually specified.
+	 * If the prop is not provided, the ID will be generated at runtime.
+	 */
+	readonly componentIdProp?: string;
+
+	/**
+	 * The unique component identifier.
+	 * The value is formed based on the passed prop or dynamically.
 	 */
 	readonly componentId!: string;
 
@@ -67,12 +77,14 @@ export abstract class ComponentInterface {
 	abstract readonly mods: ModsDict;
 
 	/**
-	 * Shareable component modifiers.
-	 * These modifiers are automatically propagated to child components.
-	 * For instance, suppose you have a component in your template that utilizes another component,
-	 * and you assign a theme modifier to the outer component.
+	 * The base component modifiers that can be shared with other components.
+	 * These modifiers are automatically provided to child components.
+	 *
+	 * So, for example, you have a component that uses another component in your template,
+	 * and you give the outer component some theme modifier. This modifier will be recursively provided to
+	 * all child components.
 	 */
-	abstract get sharedMods(): CanUndef<Readonly<ModsDict>>;
+	abstract get sharedMods(): CanNull<Readonly<ModsDict>>;
 
 	/**
 	 * Additional classes for the component elements.
@@ -84,10 +96,10 @@ export abstract class ComponentInterface {
 	 * // Key names are tied with the component elements
 	 * // Values contain CSS classes we want to add
 	 *
-	 * {
+	 * const classes = {
 	 *   foo: 'bla',
 	 *   bar: ['bla', 'baz']
-	 * }
+	 * };
 	 * ```
 	 */
 	abstract readonly classes?: Dictionary<CanArray<string>>;
@@ -102,14 +114,20 @@ export abstract class ComponentInterface {
 	 * // Key names are tied with component elements,
 	 * // Values contains CSS styles we want to add
 	 *
-	 * {
+	 * const styles = {
 	 *   foo: 'color: red',
 	 *   bar: {color: 'blue'},
 	 *   baz: ['color: red', 'background: green']
-	 * }
+	 * };
 	 * ```
 	 */
 	abstract readonly styles?: Dictionary<CanArray<string> | Dictionary<string>>;
+
+	/**
+	 * The getter is used to retrieve the root component.
+	 * It is commonly used for dynamically mounting components.
+	 */
+	abstract readonly getRoot?: () => this['Root'];
 
 	/**
 	 * A string value indicating the lifecycle hook that the component is currently in.
@@ -179,6 +197,12 @@ export abstract class ComponentInterface {
 	 * This object contains all information of the component properties, methods, etc.
 	 */
 	protected readonly meta!: ComponentMeta;
+
+	/**
+	 * Hydrated data repository.
+	 * This API is used only for SSR.
+	 */
+	protected readonly hydrationStore?: HydrationStore;
 
 	/**
 	 * A dictionary containing component attributes that are not identified as input properties
@@ -300,6 +324,18 @@ export abstract class ComponentInterface {
 	$nextTick(): CanPromise<void> {
 		return Object.throw();
 	}
+
+	/**
+	 * Initializes the component.
+	 * This method accepts input parameters and an initialization context,
+	 * and can return an object containing additional fields and methods for the component.
+	 * If the method returns a Promise, the component will not be rendered until it is resolved.
+	 * This method only works for non-functional components.
+	 *
+	 * @param props
+	 * @param ctx
+	 */
+	protected abstract setup(props: Dictionary, ctx: SetupContext): CanPromise<CanUndef<Dictionary>>;
 
 	/**
 	 * Destroys the component

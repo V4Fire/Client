@@ -46,7 +46,7 @@ export interface ImageOptions {
 	baseSrc?: string;
 
 	/**
-	 * A value of the `srcset` image attribute.
+	 * Value of the `srcset` image attribute.
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-srcset
 	 *
 	 * This option helps to create responsive images.
@@ -54,10 +54,10 @@ export interface ImageOptions {
 	 *
 	 * @example
 	 * ```js
-	 * {
+	 * const srcset = {
 	 *   src: 'img.jpg',
 	 *   srcset: {'2x': 'http://img-hdpi.png', '3x': 'http://img-xhdpi.png'}
-	 * }
+	 * };
 	 * ```
 	 */
 	srcset?: Dictionary<string> | string;
@@ -75,7 +75,7 @@ export interface ImageOptions {
 	height?: string | number;
 
 	/**
-	 * A value of the `sizes` image attribute.
+	 * Value of the `sizes` image attribute.
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-sizes
 	 *
 	 * This option helps to create responsive images.
@@ -140,10 +140,9 @@ export interface ImageOptions {
 	optionsResolver?: OptionsResolver;
 }
 
-/** @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source */
 export interface ImageSource {
 	/**
-	 * A value of the `srcset` source attribute.
+	 * Value of the `srcset` source attribute.
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-srcset
 	 *
 	 * This option helps to create responsive images.
@@ -184,7 +183,7 @@ export interface ImageSource {
 	height?: string | number;
 
 	/**
-	 * A value of the `sizes` source attribute.
+	 * Value of the `sizes` source attribute.
 	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/source#attr-sizes
 	 *
 	 * This option helps to create responsive images.

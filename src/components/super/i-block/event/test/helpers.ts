@@ -19,7 +19,8 @@ import type bDummy from 'components/dummies/b-dummy/b-dummy';
  * @param attrs
  */
 export async function renderDummy(
-	page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}
+	page: Page,
+	attrs: RenderComponentsVnodeParams['attrs'] = {}
 ): Promise<JSHandle<bDummy>> {
 	return Component.createComponent(page, 'b-dummy', attrs);
 }

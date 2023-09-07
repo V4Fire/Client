@@ -76,7 +76,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	redirect?: string;
 
 	/**
-	 * Marks the route as "external", i.e. transitions to this route will be made using `location.href`
+	 * Marks the route as "external", i.e., transitions to this route will be made using `location.href`
 	 */
 	external?: boolean;
 

@@ -35,24 +35,28 @@ test.describe('components/traits/i-observe-dom', () => {
 		await test.expect(domChanged).toBeResolved();
 	});
 
-	test([
-		'should not emit `DOMChange` event',
-		'when the child is appended to the component element',
-		'and `unobserve` was called on the component\'s element '
-	].join(' '), async ({page}) => {
-		await target.evaluate((ctx) =>
-			ctx.unsafe.localEmitter.once('DOMChange', () => globalThis.tVal = true));
+	test(
+		[
+			'should not emit `DOMChange` event',
+			'when the child is appended to the component element',
+			'and `unobserve` was called on the component\'s element '
+		].join(' '),
 
-		await target.evaluate((ctx) => {
-			ctx.observeAPI.unobserve(ctx, ctx.$el!);
+		async ({page}) => {
+			await target.evaluate((ctx) =>
+				ctx.unsafe.localEmitter.once('DOMChange', () => globalThis.tVal = true));
 
-			const div = document.createElement('div');
-			ctx.$el!.append(div);
-		});
+			await target.evaluate((ctx) => {
+				ctx.observeAPI.unobserve(ctx, ctx.$el!);
 
-		await BOM.waitForIdleCallback(page);
-		await test.expect(page.evaluate(() => globalThis.tVal)).resolves.toBeUndefined();
-	});
+				const div = document.createElement('div');
+				ctx.$el!.append(div);
+			});
+
+			await BOM.waitForIdleCallback(page);
+			await test.expect(page.evaluate(() => globalThis.tVal)).resolves.toBeUndefined();
+		}
+	);
 
 	test('`isNodeBeingObserved` should return `true` for the component\'s element', async () => {
 		const result = await target.evaluate((ctx) =>

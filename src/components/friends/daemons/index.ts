@@ -16,6 +16,6 @@ export { default } from 'components/friends/daemons/class';
 export * from 'components/friends/daemons/api';
 export * from 'components/friends/daemons/interface';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/friends/daemons/test/b-friends-daemons-dummy');
 //#endif

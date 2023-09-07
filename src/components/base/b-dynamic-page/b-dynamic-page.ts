@@ -240,13 +240,34 @@ export default class bDynamicPage extends iDynamicPage {
 			return 1;
 		}
 
+		if (HYDRATION) {
+			return 99999;
+		}
+
 		return SyncPromise.resolve(Infinity);
+	}
+
+	/**
+	 * True if the current page is successfully hydrated
+	 */
+	protected get hydrated(): boolean {
+		return HYDRATION && $$.hydrated in this;
+	}
+
+	/**
+	 * Sets the page hydration status
+	 * @param complete
+	 */
+	protected set hydrated(complete: boolean) {
+		if (HYDRATION) {
+			this[$$.hydrated] = complete;
+		}
 	}
 
 	override initLoad(): Promise<void> {
 		if (SSR && this.page == null && this.event != null) {
 			this.syncEmitterWatcher();
-			this.$initializer = this.async.promisifyOnce(this.emitter ?? this.$root, this.event);
+			this.$initializer = this.async.promisifyOnce(this.emitter ?? this.r, this.event);
 		}
 
 		return Promise.resolve();
@@ -278,7 +299,14 @@ export default class bDynamicPage extends iDynamicPage {
 	 * Render loop filter (used with `asyncRender`)
 	 */
 	protected renderFilter(): CanPromise<boolean> {
-		if (SSR || this.lfc.isBeforeCreate()) {
+		const canPass =
+			SSR ||
+			HYDRATION && !this.hydrated ||
+			this.lfc.isBeforeCreate();
+
+		this.hydrated = true;
+
+		if (canPass) {
 			return true;
 		}
 
@@ -370,7 +398,7 @@ export default class bDynamicPage extends iDynamicPage {
 	 * @param [route] - the application route object
 	 */
 	protected getKeepAliveStrategy(page: CanUndef<string>, route: this['route'] = this.route): KeepAliveStrategy {
-		const loopbackStrategy = {
+		const loopbackStrategy: KeepAliveStrategy = {
 			isLoopback: true,
 			has: () => false,
 			get: () => undefined,
@@ -402,7 +430,7 @@ export default class bDynamicPage extends iDynamicPage {
 		const
 			globalCache = this.keepAliveCache.global!;
 
-		const globalStrategy = {
+		const globalStrategy: KeepAliveStrategy = {
 			isLoopback: false,
 			has: () => globalCache.has(cacheKey),
 			get: () => globalCache.get(cacheKey),
@@ -509,7 +537,7 @@ export default class bDynamicPage extends iDynamicPage {
 			.clearAll(group);
 
 		if (this.event != null) {
-			$a.on(this.emitter ?? this.$root, this.event, (component, e) => {
+			$a.on(this.emitter ?? this.r, this.event, (component, e) => {
 				if (component != null && !((<Dictionary>component).instance instanceof iBlock)) {
 					e = component;
 				}
@@ -533,6 +561,10 @@ export default class bDynamicPage extends iDynamicPage {
 	 */
 	@watch({path: 'page', immediate: true})
 	protected syncPageWatcher(page: CanUndef<string>, oldPage: CanUndef<string>): void {
+		if (HYDRATION && !this.hydrated) {
+			return;
+		}
+
 		if (this.onPageChange == null) {
 			const label = {
 				label: $$.syncPageWatcher

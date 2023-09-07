@@ -13,6 +13,7 @@
 
 import symbolGenerator from 'core/symbol';
 
+import { Xor128 } from 'core/random/xor128';
 import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
 
@@ -117,11 +118,11 @@ export default abstract class iStaticPage extends iPage {
 	lastOnlineDate?: Date;
 
 	/**
-	 * The initial route for initializing the router.
-	 * Usually, this value is used during SSR.
+	 * Initial value for the active route.
+	 * This field is typically used in cases of SSR and hydration.
 	 */
 	@system(() => remoteState.route)
-	initialRoute?: InitialRoute;
+	initialRoute?: InitialRoute | this['CurrentPage'];
 
 	/**
 	 * An object whose properties will extend the global object.
@@ -180,11 +181,16 @@ export default abstract class iStaticPage extends iPage {
 		setLocale(value);
 	}
 
+	override get randomGenerator(): IterableIterator<number> {
+		this[$$.randomGenerator] ??= new Xor128(19881989);
+		return this[$$.randomGenerator];
+	}
+
 	/**
 	 * The route information object store
 	 * {@link iStaticPage.route}
 	 */
-	@field()
+	@field<iStaticPage>((o) => SSR ? undefined : o.initialRoute)
 	protected routeStore?: this['CurrentPage'];
 
 	/**
@@ -245,6 +251,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
+	 * @inheritDoc
 	 * @param name
 	 * @param value
 	 * @param [component] - an instance of the component that wants to set the modifier
@@ -297,6 +304,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
+	 * @inheritDoc
 	 * @param name
 	 * @param [value]
 	 * @param [component] - an instance of the component that wants to remove the modifier
@@ -339,6 +347,7 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
+	 * @inheritDoc
 	 * @param name
 	 * @param [component] - an instance of the component that wants to get the modifier
 	 */

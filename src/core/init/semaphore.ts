@@ -9,7 +9,17 @@
 import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
 import { set } from 'core/component/state';
-import Component, { app, rootComponents, hydrationStore, ComponentElement } from 'core/component';
+import Component, {
+
+	app,
+	destroyApp,
+
+	rootComponents,
+	HydrationStore,
+
+	ComponentElement
+
+} from 'core/component';
 
 import flags from 'core/init/flags';
 import type { InitAppOptions } from 'core/init/interface';
@@ -18,7 +28,10 @@ const semaphore = createsAsyncSemaphore(createAppInitializer, ...flags);
 
 export default semaphore;
 
-if (!SSR) {
+if (SSR) {
+	process.on('unhandledRejection', stderr);
+
+} else {
 	resolveAfterDOMLoaded()
 		.then(async () => {
 			const
@@ -34,6 +47,9 @@ if (!SSR) {
 
 function createAppInitializer() {
 	return async (rootComponentName: Nullable<string>, opts: InitAppOptions = {}) => {
+		let
+			appId: CanUndef<string>;
+
 		const
 			state = Object.reject(opts, ['targetToMount']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
@@ -47,13 +63,38 @@ function createAppInitializer() {
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
 				{renderToString} = require('vue/server-renderer');
 
-			const rootComponent = new Component(rootComponentParams);
+			let
+				{inject} = rootComponentParams;
+
+			if (Object.isArray(inject)) {
+				inject = Object.fromArray(inject, {value: (key) => key});
+			}
+
+			rootComponentParams.inject = {
+				...inject,
+				hydrationStore: 'hydrationStore'
+			};
+
+			const
+				hydrationStore = new HydrationStore(),
+				rootComponent = new Component(rootComponentParams);
+
+			rootComponent.provide('hydrationStore', hydrationStore);
 			app.context = rootComponent;
 
-			return [
-				(await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
-				`<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`
-			].join('');
+			try {
+				const
+					ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
+					hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+
+				// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+				return ssrContent + hydratedData;
+
+			} finally {
+				if (appId != null) {
+					destroyApp(appId);
+				}
+			}
 		}
 
 		const
@@ -94,6 +135,7 @@ function createAppInitializer() {
 				...rootComponentParams,
 
 				data() {
+					appId = this.componentId;
 					return rootComponentParams.data?.call(this) ?? {};
 				}
 			};

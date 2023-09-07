@@ -71,7 +71,7 @@ It is called when the component is created.
 ```typescript
 interface InitLoadOptions {
   /**
-   * If true, the component is loaded silently, i.e. without switching `componentStatus` to `loading`
+   * If true, the component is loaded silently, i.e., without switching `componentStatus` to `loading`
    * @default `false`
    */
   silent?: boolean;
@@ -93,5 +93,5 @@ interface InitLoadOptions {
 #### reload
 
 Reloads component providers: the method delegates functionality to the `initLoad` method.
-By default, the reboot will run in silent mode, i.e. without switching the component status to `loading`.
+By default, the reboot will run in silent mode, i.e., without switching the component status to `loading`.
 You can customize this behavior by passing additional parameters.

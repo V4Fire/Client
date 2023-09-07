@@ -17,7 +17,7 @@ import { is } from 'core/browser';
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModEvent } from 'components/super/i-block/i-block';
 
-//#if runtime has prelude/test-env
+//#if runtime has dummyComponents
 import('components/traits/i-lock-page-scroll/test/b-traits-i-lock-page-scroll-dummy');
 //#endif
 
@@ -45,7 +45,8 @@ export default abstract class iLockPageScroll {
 
 		const lockLabel = {
 			group,
-			label: $$.lock
+			label: $$.lock,
+			join: true
 		};
 
 		if (is.mobile !== false) {
@@ -122,7 +123,7 @@ export default abstract class iLockPageScroll {
 					res();
 
 				}, lockLabel);
-			}), {join: true, ...lockLabel});
+			}), lockLabel);
 
 		} else {
 			promise = $a.promise(new Promise((res) => {
@@ -141,7 +142,7 @@ export default abstract class iLockPageScroll {
 					res();
 
 				}, lockLabel);
-			}), {join: true, ...lockLabel});
+			}), lockLabel);
 		}
 
 		return promise;
@@ -213,9 +214,7 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * Locks scrolling of the document,
-	 * i.e. prevents any scrolling of the document except within the specified node.
-	 *
+	 * Locks scrolling of the document, preventing any scrolling of the document except within that node
 	 * @param [_scrollableNode] - the node within which scrolling is allowed
 	 */
 	lockPageScroll(_scrollableNode?: Element): Promise<void> {

@@ -9,11 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.??.?? (2022-??-??)
+## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
 
 * Migration to Vue3
+
+#### :house: Internal
+
+* Added `App` interface
 
 ## v3.0.0-rc.206 (2021-06-28)
 

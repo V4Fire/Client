@@ -4,7 +4,7 @@ This module provides a class to manage dynamically loaded modules.
 
 ## How to include this module in your component?
 
-By default, any component that inherits from [[iBlock]] has the moduleLoader property.
+By default, any component that inherits from [[iBlock]] has the `moduleLoader` property.
 However, to use the module methods, attach them explicitly to enable tree-shake code optimizations.
 Simply place the required import declaration within your component file.
 

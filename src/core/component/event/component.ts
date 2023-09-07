@@ -13,6 +13,16 @@ import { globalEmitter } from 'core/component/event/emitter';
 import type { ComponentResetType } from 'core/component/event/interface';
 
 /**
+ * The directive emits a special event to completely destroy the entire application by its root component's identifier.
+ * This method is typically used in conjunction with SSR.
+ *
+ * @param rootComponentId - the identifier of the application root component
+ */
+export function destroyApp(rootComponentId: string): void {
+	globalEmitter.emit(`destroy.${rootComponentId}`);
+}
+
+/**
  * Emits a special event to reset components' state to its default settings.
  * By default, this event triggers a complete reload of all providers and storages bound to components.
  * Additionally, you can choose from several types of component resets:

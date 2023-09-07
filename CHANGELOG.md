@@ -22,6 +22,92 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added new testing API `ComponentObject` that allows for easier interaction with components in the testing environment `test/helpers/component-object`.
 * Added new testing API for mocking and spying on functions at runtime `test/helpers/mock`.
 
+## v4.0.0-beta.17 (2023-09-06)
+
+#### :bug: Bug Fix
+
+* Added a special element for teleports `iStaticPage`
+
+## v4.0.0-beta.16 (2023-09-06)
+
+#### :bug: Bug Fix
+
+* Fixed working in SSR `core/component/directives/render`
+
+#### :nail_care: Polish
+
+* Exported `isCI` from `tests/config/super`
+* Set `workers: 1` and `fullyParallel: false` on CI in `tests/config/super`.
+See https://github.com/microsoft/playwright/issues/26739
+
+## v4.0.0-beta.15 (2023-09-05)
+
+#### :bug: Bug Fix
+
+* Added filtering of empty leading and trailing text nodes during rendering of a VNode array `core/component/engines/vue`
+
+## v4.0.0-beta.14 (2023-08-25)
+
+#### :house: Internal
+
+* The default control is a button `iControlList`
+
+## v4.0.0-beta.13 (2023-08-24)
+
+#### :rocket: New Feature
+
+* Webpack build helpers:
+  * Added `getManagedPath` helper, which generates a managed path for node_modules with excluding
+  * Added `prepareLibsForRegExp` helper, which converts the list of library names to a regexp string
+  * Added `createDepRegExp` helper, which create a regexp matching all deps except excluded
+
+* Webpack plugins:
+  * Added a new plugin `invalidate-external-cache`
+
+* Config:
+  * Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
+  them in webpack watch mode
+
+#### :bug: Bug Fix
+
+* A default `endsWith: "?"` parameter has been added to the route configuration to correctly parse route parameters when
+  there are query parameters in the path `core/router`
+
+## v4.0.0-beta.12 (2023-08-21)
+
+#### :bug: Bug Fix
+
+* If the element was in focus, it needs to be restored after validating `iInput`
+
+## v4.0.0-beta.11 (2023-08-18)
+
+#### :rocket: New Feature
+
+* Improved display of warnings about deprecated design system fields `build/stylus/ds`
+* Added possibility to specify a complicated color tokens `build/stylus/ds`
+* Added possibility to change the method that will be used for transitions when the router
+  synchronizes its state with the component's state by using `syncRouterState` `iBlock`
+
+#### :bug: Bug Fix
+
+* Fixed an issue where the default behavior of the `convertStateToRouterReset` did not affect the router `iBlock`
+* Fixed resetting router state `friends/state`
+* Fixed a bug with resolving a promise returned by the `iLockPageScroll.lock` `traits/i-lock-page-scroll`
+
+## v4.0.0-beta.10 (2023-07-27)
+
+#### :boom: Breaking Change
+
+* Merging of parameters when navigating to a route with the same name as the current one has been removed `bRouter`
+
+#### :rocket: New Feature
+
+* Added storybook support
+
+#### :bug: Bug Fix
+
+* Fixed alias priority when resolve path parameters `core/router`
+
 ## v4.0.0-beta.9 (2023-07-19)
 
 #### :boom: Breaking Change
@@ -35,6 +121,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new method `getHref` `b-list`
 * Added a new `hrefTransition` event to provide the ability to prevent router navigation when a link is clicked `bRouter`
+* Added `.scrollTo()` and `.scrollToTop()` methods `tests/helpers/scroll`
 
 #### :house: Internal
 
@@ -58,7 +145,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Handle unsuitable `pathParams` values in the `fillRouteParams` function `bRouter`
 
-## v3.50.0 (2023-06-??)
+## v3.50.0 (2023-06-16)
 
 #### :rocket: New Feature
 
@@ -96,7 +183,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.47.1 (2023-05-18)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Replace `undefined` values in `route.params` by an alias or query param, if necessary, in `b-router`
 
@@ -152,7 +239,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v3.44.3 (2023-03-30)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Overriding original parameter by alias in route `b-router` `core/router`
 
@@ -296,6 +383,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Fixed passing props to nested trees
   * Fixed an issue with the prop `itemProps` not being added to items attributes
   * Fixed adding the `folded_false` class to items without children
+
+## v4.0.0-alpha.1 (2022-12-14)
+
+#### :boom: Breaking Change
+
+* The first public release of the 4th version
 
 ## v3.31.0 (2022-12-06)
 
@@ -2925,7 +3018,7 @@ gulp test:component:run --test-entry base/b-virtual-scroll/test --runner events/
   * Fixed providing of a watch context
   * Fixed an invalid caching of old values with `collapse = false`
 
-#### :house: [Internal]
+#### :house: Internal
 
 * Set `DEFAULT_TIMEOUT_INTERVAL = (10).seconds()` `build/test.gulp`
 

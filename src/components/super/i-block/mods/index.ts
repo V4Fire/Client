@@ -24,27 +24,19 @@ export default abstract class iBlockMods extends iBlockEvent {
 	@system({merge: mergeMods, init: initMods})
 	override readonly mods!: ModsDict;
 
-	/**
-	 * The base component modifiers that can be shared with other components.
-	 * These modifiers are automatically provided to child components.
-	 *
-	 * So, for example, you have a component that uses another component in your template,
-	 * and you give the outer component some theme modifier. This modifier will be recursively provided to
-	 * all child components.
-	 */
 	@computed({cache: 'auto'})
-	get sharedMods(): CanUndef<Readonly<ModsDict>> {
+	override get sharedMods(): CanNull<Readonly<ModsDict>> {
 		const
 			m = this.mods;
 
 		let
-			res;
+			res: CanUndef<ModsDict>;
 
 		if (m.theme != null) {
 			res = {theme: m.theme};
 		}
 
-		return res != null ? Object.freeze(res) : undefined;
+		return res != null ? Object.freeze(res) : null;
 	}
 
 	/**
@@ -116,9 +108,12 @@ export default abstract class iBlockMods extends iBlockEvent {
 	protected reactiveModsStore!: ModsDict;
 
 	/**
-	 * A special getter for component modifiers: the first time a property from this object is touched,
-	 * a modifier by property name will be registered, which can cause the component to re-render.
-	 * Don't use this getter outside the component template.
+	 * A special getter for applied modifiers.
+	 * When accessing any modifier using this getter,
+	 * a reactive binding will be created between its value and the template.
+	 *
+	 * It is not recommended to use this getter outside the component's template,
+	 * as it may lead to unexpected behavior or unnecessary re-renders.
 	 */
 	@computed({cache: true})
 	protected get m(): Readonly<ModsDict> {
@@ -146,11 +141,11 @@ export default abstract class iBlockMods extends iBlockEvent {
 	}
 
 	/**
-	 * Returns a value of the specified root application element modifier.
-	 * The method uses the component `globalName` prop if it's provided. Otherwise, the `componentName` property.
-	 * Notice that the method returns a normalized value.
+	 * Returns the value of the specified modifier for the root element of the application.
+	 * The method uses the component's `globalName` prop if provided, otherwise it uses the `componentName` property.
+	 * Note that the method returns the normalized value of the modifier.
 	 *
-	 * @param name - modifier name
+	 * @param name - the modifier name
 	 * @example
 	 * ```js
 	 * this.setRootMod('foo', 'blaBar');
@@ -162,12 +157,12 @@ export default abstract class iBlockMods extends iBlockEvent {
 	}
 
 	/**
-	 * Sets a modifier to the root application element by the specified name.
+	 * Sets a modifier for the root element of the application based on the specified name.
 	 *
 	 * This method is useful when you need to attach a class that can affect the entire application.
-	 * For example, you want to block page scrolling, meaning you need to add a class to the root HTML tag.
+	 * For example, if you want to disable page scrolling, you would need to add a class to the root HTML element.
 	 *
-	 * The method uses the component `globalName` prop if it's provided. Otherwise, the `componentName` property.
+	 * The method uses the component's `globalName` prop if provided, otherwise it uses the `componentName` property.
 	 *
 	 * @param name - the modifier name
 	 * @param value - the modifier value
@@ -184,12 +179,12 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 * ```
 	 */
 	setRootMod(name: string, value: unknown): boolean {
-		return this.$root.setRootMod(name, value, Object.cast(this));
+		return this.r.setRootMod(name, value, Object.cast(this));
 	}
 
 	/**
-	 * Removes a modifier from the root application element by the specified name.
-	 * The method uses the component `globalName` prop if it's provided. Otherwise, the `componentName` property.
+	 * Removes a modifier from the root element of the application based on the specified name.
+	 * The method uses the component's `globalName` prop if provided, otherwise it uses the `componentName` property.
 	 *
 	 * @param name - the modifier name
 	 * @param [value] - the modifier value (if not specified, the method removes the matched modifier with any value)

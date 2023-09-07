@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.10 (2023-07-27)
+
+#### :boom: Breaking Change
+
+* Merging of parameters when navigating to a route with the same name as the current one has been removed
+
 ## v4.0.0-beta.8 (2023-07-19)
 
 #### :rocket: New Feature
@@ -36,13 +42,13 @@ Changelog
 
 ## v3.47.1 (2023-05-18)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Replace `undefined` values in `route.params` by an alias or query param, if necessary
 
 ## v3.44.3 (2023-03-30)
 
-#### :bug: [Bug Fix]
+#### :bug: Bug Fix
 
 * Overriding original parameter by alias in route
 

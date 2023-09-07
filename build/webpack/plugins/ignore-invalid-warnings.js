@@ -18,6 +18,8 @@ module.exports = class IgnoreInvalidWarningsPlugin {
 	apply(compiler) {
 		compiler.hooks.done.tap('IgnoreInvalidWarningsPlugin', doneHook);
 
+		compiler.hooks.infrastructureLog.tap('IgnoreInvalidWarningsPlugin', infrastructureLogHook);
+
 		function doneHook(stats) {
 			stats.compilation.warnings = stats.compilation.warnings.filter((warn) => {
 				switch (warn.constructor.name) {
@@ -33,6 +35,26 @@ module.exports = class IgnoreInvalidWarningsPlugin {
 						return true;
 				}
 			});
+		}
+
+		function infrastructureLogHook(origin, type, args) {
+			switch (origin) {
+				case 'webpack.cache.PackFileCacheStrategy/webpack.FileSystemInfo':
+					// Specifying `snapshot.managedPaths` with excluded libs generates warnings
+					// even with the example regexp from the docs
+					// @see https://webpack.js.org/configuration/other-options/#managedpaths
+					if (
+						Object.isString(args[0]) &&
+						type === 'warn' &&
+						/Managed item .*? isn't a directory or doesn't contain a package.json/.test(args[0])
+					) {
+						return false;
+					}
+
+					break;
+
+				default:
+			}
 		}
 	}
 };

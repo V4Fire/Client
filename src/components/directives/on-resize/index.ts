@@ -14,7 +14,16 @@
 import * as ResizeWatcher from 'core/dom/resize-watcher';
 
 import { ComponentEngine } from 'core/component/engines';
-import type { DirectiveValue, DirectiveParams } from 'components/directives/on-resize/interface';
+
+import type {
+
+	DirectiveValue,
+	DirectiveParams,
+
+	WatchHandler,
+	WatchOptions
+
+} from 'components/directives/on-resize/interface';
 
 export * from 'components/directives/on-resize/interface';
 
@@ -42,20 +51,21 @@ function registerDirectiveValue(el: Element, value: CanUndef<DirectiveValue>): v
 		return;
 	}
 
-	Array.concat([], value).forEach((opts) => {
+	Array.concat([], value).forEach((dirOpts: Exclude<DirectiveValue, any[]>) => {
 		let
-			handler;
+			watchOpts: WatchOptions,
+			handler: WatchHandler;
 
-		if (Object.isFunction(opts)) {
-			handler = opts;
-			opts = {};
+		if (Object.isFunction(dirOpts)) {
+			handler = dirOpts;
+			watchOpts = {};
 
 		} else {
-			handler = opts.handler;
-			opts = Object.reject(opts, 'handler');
+			handler = dirOpts.handler;
+			watchOpts = Object.reject(dirOpts, 'handler');
 		}
 
-		ResizeWatcher.watch(el, opts, handler);
+		ResizeWatcher.watch(el, watchOpts, handler);
 	});
 }
 
@@ -64,7 +74,7 @@ function unregisterDirectiveValue(el: Element, value: Nullable<DirectiveValue>) 
 		return;
 	}
 
-	Array.concat([], value).forEach((opts) => {
+	Array.concat([], value).forEach((opts: Exclude<DirectiveValue, any[]>) => {
 		ResizeWatcher.unwatch(el, Object.isFunction(opts) ? opts : opts.handler);
 	});
 }

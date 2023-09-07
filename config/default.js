@@ -41,7 +41,44 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
+	src: {
+		/**
+		 * Returns a path to the application dist directory for client scripts
+		 *
+		 * @cli client-output
+		 * @env CLIENT_OUTPUT
+		 *
+		 * @param {string[]} args
+		 * @returns {string}
+		 */
+		clientOutput(...args) {
+			const v = o('client-output', {
+				env: true,
+				default: this.config.webpack.storybook() ? 'storybook' : 'client'
+			});
+
+			return this.output(v, ...args);
+		}
+	},
+
 	build: {
+		/**
+		 * Returns true if the current build environment is a testing environment
+		 * @returns {boolean}
+		 */
+		isTestEnv() {
+			return !isProd && !this.config.webpack.ssr;
+		},
+
+		/**
+		 * Test server port
+		 * @env TEST_PORT
+		 */
+		testPort: o('test-port', {
+			env: true,
+			default: 8000
+		}),
+
 		/**
 		 * Project build mode
 		 *
@@ -166,13 +203,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Test server port
-		 * @env TEST_PORT
+		 * Returns true if the application build should include special stub components for testing purposes.
+		 * By default, these components are only loaded in the development environment.
+		 *
+		 * @cli load-dummy-components
+		 * @env LOAD_DUMMY_COMPONENTS
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
 		 */
-		testPort: o('test-port', {
-			env: true,
-			default: 8000
-		})
+		loadDummyComponents(def) {
+			def ??= this.isTestEnv() && !this.config.webpack.storybook();
+
+			return o('load-dummy-components', {
+				env: true,
+				type: 'boolean',
+				default: def
+			});
+		}
 	},
 
 	/**
@@ -221,7 +269,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {?string}
 		 */
 		target(
-			def = /ES[35]$/.test(this.config.es()) ?
+			def = /ES[35]$/.test(this.config.es()) && !this.webpack.storybook() ?
 				'browserslist:ie 11' :
 				'web'
 		) {
@@ -294,7 +342,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
-		hydration(def = this.ssr) {
+		hydration(def = false) {
 			return o('hydration', {
 				env: true,
 				type: 'boolean',
@@ -319,6 +367,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true,
 				type: 'number',
 				coerce: (value) => value === 'script-link' ? 2 : Number(value),
+				default: def
+			});
+		},
+
+		/**
+		 * Returns true if the bundle should be built for the [storybook](https://storybook.js.org/)
+		 *
+		 * @cli storybook
+		 * @env STORYBOOK
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		storybook(def = false) {
+			return o('storybook', {
+				env: true,
+				type: 'boolean',
 				default: def
 			});
 		},
@@ -389,6 +454,29 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					default: def
 				});
 			}
+		},
+
+		/**
+		 * This option should be used to specify managed libs, which will
+		 * be excluded from `snapshot.managedPaths` and from `watchOptions.ignore`
+		 *
+		 * @cli managed-libs
+		 * @env MANAGED_LIBS
+		 *
+		 * @example
+		 * ```bash
+		 * npx webpack --env managed-libs="@scope/helpers,@scope/core"
+		 * ```
+		 *
+		 * @returns {string[]}
+		 */
+		managedLibs() {
+			return o('managed-libs', {
+				env: true,
+				default: ''
+			})
+				.split(',')
+				.map((str) => str.trim());
 		},
 
 		/**
@@ -483,13 +571,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const
 				{concatURLs} = require('@v4fire/core/lib/core/url');
 
+			const def = concatURLs('/', this.config.src.rel('clientOutput'));
+
 			let pathVal = o('public-path', {
 				env: true,
-				default: concatURLs('/', this.config.src.rel('clientOutput'))
+				default: def
 			});
 
 			if (!Object.isString(pathVal)) {
 				pathVal = '';
+			}
+
+			if (this.storybook() && pathVal === def) {
+				pathVal = '//';
 			}
 
 			if (pathVal[0] === '\\') {
@@ -507,7 +601,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}
 
 			if (pathVal) {
-				return concatURLs(pathVal, '/').replace(/^[/]+/, '/');
+				return concatURLs(pathVal, '/').replace(/^\/+/, '/');
 			}
 
 			return pathVal;
@@ -903,8 +997,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	 * @returns {{server: object, client: object}}
 	 */
 	snakeskin() {
-		const
-			snakeskinVars = include('build/snakeskin/vars');
+		const snakeskinVars = {
+			...include('build/snakeskin/vars'),
+			teleport: this.webpack.storybook() ? '#storybook-root' : '#teleports'
+		};
 
 		return {
 			client: this.extend(super.snakeskin(), {
@@ -1077,7 +1173,10 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			blockNames: false,
 			passDesignSystem: false,
 
-			'prelude/test-env': !isProd && !this.webpack.ssr
+			'prelude/test-env': this.build.isTestEnv(),
+			storybook: this.webpack.storybook(),
+
+			dummyComponents: this.build.loadDummyComponents()
 		};
 	},
 

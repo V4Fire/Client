@@ -51,7 +51,7 @@ Well, how can we solve this problem? If we are using Vue as the engine of our ap
 It works but only works with Vue. Also, this directive has a rather bad API: we can't manually invalidate the cache;
 we cannot configure caching of various components. Yes, we can use `include/exclude/max`, but there is no way to define
 different `max` for different components. And the main problem is that this directive uses the component name as a cache key,
-i.e. we cannot cache pages with the same name but different query parameters as separate components.
+i.e., we cannot cache pages with the same name but different query parameters as separate components.
 
 `bDynamicPage` solves all these problems. This is a fairly simple wrapper around the `component :is` directive with
 own powerful cache API. You can specify custom cache keys, use different cache groups for different components, and other cool stuff.

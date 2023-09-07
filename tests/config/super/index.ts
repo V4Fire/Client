@@ -17,6 +17,8 @@ import serverConfig from 'tests/server/config';
 
 import 'tests/config/super/matchers';
 
+export const isCI = Boolean(process.env.CI);
+
 const config: PlaywrightTestConfig = {
 	webServer: serverConfig,
 
@@ -28,9 +30,11 @@ const config: PlaywrightTestConfig = {
 		baseURL: `http://localhost:${serverConfig.port}`
 	},
 
-	forbidOnly: Boolean(process.env.CI),
+	forbidOnly: isCI,
 
 	retries: 2,
+	fullyParallel: !isCI,
+	workers: isCI ? 1 : undefined,
 
 	reportSlowTests: {
 		max: 0,

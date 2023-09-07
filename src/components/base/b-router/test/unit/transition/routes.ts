@@ -136,7 +136,7 @@ test.describe('<b-router> route handling', () => {
 
 			// eslint-disable-next-line playwright/no-conditional-in-test
 			if (engineName === 'history') {
-				test.expect(new URL(await page.url()).pathname).toBe('/some/fake/page');
+				test.expect(new URL(page.url()).pathname).toBe('/some/fake/page');
 			}
 		});
 
@@ -169,7 +169,7 @@ test.describe('<b-router> route handling', () => {
 
 				// eslint-disable-next-line playwright/no-conditional-in-test
 				if (engineName === 'history') {
-					test.expect(new URL(await page.url()).pathname).toBe('/tpl-alias/foo/bar');
+					test.expect(new URL(page.url()).pathname).toBe('/tpl-alias/foo/bar');
 				}
 			}
 		);
@@ -210,7 +210,7 @@ test.describe('<b-router> route handling', () => {
 
 				// eslint-disable-next-line playwright/no-conditional-in-test
 				if (engineName === 'history') {
-					test.expect(new URL(await page.url()).pathname).toBe('/tpl/1/2');
+					test.expect(new URL(page.url()).pathname).toBe('/tpl/1/2');
 				}
 			});
 		});
@@ -237,12 +237,12 @@ test.describe('<b-router> route handling', () => {
 			await test.expect(root.evaluate(async (ctx) => {
 				await ctx.router!.back();
 				return ctx.route!.meta.content;
-			})).resolves.toBe('Main page');
+			})).toBeResolvedTo('Main page');
 
 			await test.expect(root.evaluate(async (ctx) => {
 				await ctx.router!.forward();
 				return ctx.route!.meta.content;
-			})).resolves.toBe('Second page');
+			})).toBeResolvedTo('Second page');
 		});
 
 		test('`go` method should navigate back and forth between one page and another', async () => {
@@ -256,19 +256,19 @@ test.describe('<b-router> route handling', () => {
 				await router.push('second');
 
 				return router.route!.meta.content;
-			})).resolves.toBe('Second page');
+			})).toBeResolvedTo('Second page');
 
 			await test.expect(root.evaluate(async (ctx) => {
 				const router = ctx.router!;
 				await router.go(-2);
 				return router.route?.meta.content;
-			})).resolves.toBe('Second page');
+			})).toBeResolvedTo('Second page');
 
 			await test.expect(root.evaluate(async (ctx) => {
 				const router = ctx.router!;
 				await router.go(1);
 				return router.route?.meta.content;
-			})).resolves.toBe('Main page');
+			})).toBeResolvedTo('Main page');
 		});
 
 		test('should transition by setting arbitrary properties on the root component', async () => {
@@ -303,7 +303,7 @@ test.describe('<b-router> route handling', () => {
 			await test.expect(root.evaluate(async (ctx, path) => {
 				await ctx.router!.push(path);
 				return ctx.route!.meta.content;
-			}, path)).resolves.toBe(content);
+			}, path)).toBeResolvedTo(content);
 		}
 
 		async function assertActivePageIs(routeId: string) {
@@ -311,7 +311,7 @@ test.describe('<b-router> route handling', () => {
 		}
 
 		async function assertRouteNameIs(name: string) {
-			await test.expect(root.evaluate(({route}) => route!.name)).resolves.toBe(name);
+			await test.expect(root.evaluate(({route}) => route!.name)).toBeResolvedTo(name);
 		}
 	}
 });

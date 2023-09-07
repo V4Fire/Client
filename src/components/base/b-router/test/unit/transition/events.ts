@@ -131,22 +131,22 @@ test.describe('<b-router> standard transition events', () => {
 
 				await router.push('main');
 
-				await router.push('main', {query: {foo: 1}});
-				await router.push('main', {query: {foo: 1}});
-				await router.push('main', {query: {foo: 1}});
-				await router.push('main', {query: {foo: 1}});
+				await router.push(null, {query: {foo: 1}});
+				await router.push(null, {query: {foo: 1}});
+				await router.push(null, {query: {foo: 1}});
+				await router.push(null, {query: {foo: 1}});
 				res.queryChanges?.push(location.search);
 
-				await router.push('main', {query: {bar: 2}});
+				await router.push(null, {query: {bar: 2}});
 				res.queryChanges?.push(location.search);
 
-				await router.replace('main', {query: {foo: null, bar: undefined}});
+				await router.replace(null, {query: {foo: null, bar: undefined}});
 				res.queryChanges?.push(location.search);
 
-				await router.replace('main', {query: {bla: [1, 2]}});
+				await router.replace(null, {query: {bla: [1, 2]}});
 				res.queryChanges?.push(location.search);
 
-				await router.push('main', {query: {bla: [3]}});
+				await router.push(null, {query: {bla: [3]}});
 				res.queryChanges?.push(location.search);
 
 				await router.push('second');
@@ -203,13 +203,13 @@ test.describe('<b-router> standard transition events', () => {
 
 				await router.push('main');
 
-				await router.push('main', {query: {foo: 1}});
+				await router.push(null, {query: {foo: 1}});
 				res.queryChanges?.push(location.search);
 
-				await router.push('main', {query: {foo: 2}});
+				await router.push(null, {query: {foo: 2}});
 				res.queryChanges?.push(location.search);
 
-				await router.push('main', {query: {foo: 3}});
+				await router.push(null, {query: {foo: 3}});
 				res.queryChanges?.push(location.search);
 
 				await router.back();
@@ -281,8 +281,8 @@ test.describe('<b-router> standard transition events', () => {
 				res.pathChanges?.push(getPath());
 
 				await router.push('second', {query: {bar: 2}});
-				await router.push('second', {query: {bar: 3}});
-				await router.push('second', {query: {bar: 4}});
+				await router.push(null, {query: {bar: 3}});
+				await router.push(null, {query: {bar: 4}});
 				res.pathChanges?.push(getPath());
 
 				await router.push('main');
@@ -420,10 +420,10 @@ test.describe('<b-router> standard transition events', () => {
 				res.pathChanges?.push(getPath());
 
 				await router.push('second', {query: {bar: 4}});
-				await router.push('second', {query: {bar: 4}});
-				await router.replace('second', {query: {bar: 4}});
-				await router.replace('second', {query: {bar: 4}});
-				await router.replace('second', {query: {bar: 4}});
+				await router.push(null, {query: {bar: 4}});
+				await router.replace(null, {query: {bar: 4}});
+				await router.replace(null, {query: {bar: 4}});
+				await router.replace(null, {query: {bar: 4}});
 				res.pathChanges?.push(getPath());
 
 				await router.push('main');
@@ -491,7 +491,7 @@ test.describe('<b-router> standard transition events', () => {
 				await router.push('second', {query: {foo: 2}});
 				res.pathChanges?.push(getPath());
 
-				await router.push('second', {query: {bar: 3}});
+				await router.push(null, {query: {bar: 3}});
 				res.pathChanges?.push(getPath());
 
 				await router.back();
@@ -512,7 +512,7 @@ test.describe('<b-router> standard transition events', () => {
 					'/?foo=1',
 					'/second?foo=2',
 					'/second?bar=3&foo=2',
-					'/second?bar=3&foo=2',
+					'/second?foo=2',
 					'/?foo=1'
 				],
 
@@ -520,7 +520,7 @@ test.describe('<b-router> standard transition events', () => {
 					{foo: 1},
 					{foo: 2},
 					{foo: 2, bar: 3},
-					{foo: 2, bar: 3},
+					{foo: 2},
 					{foo: 1}
 				]
 			});

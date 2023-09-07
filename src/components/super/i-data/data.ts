@@ -24,7 +24,6 @@ import iBlock, {
 	system,
 	watch,
 
-	hydrationStore,
 	ModsDecl
 
 } from 'components/super/i-block/i-block';
@@ -103,7 +102,7 @@ abstract class iDataData extends iBlock implements iDataProvider {
 
 	/**
 	 * A list of converters from the raw `db` to the component field
-	 * {@link iDataProvider.componentConverterProp}
+	 * {@link iDataProvider.componentConverter}
 	 */
 	@system((o) => o.sync.link('componentConverter', (val) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
 	componentConverters!: ComponentConverter[];
@@ -171,11 +170,8 @@ abstract class iDataData extends iBlock implements iDataProvider {
 		});
 
 		this.field.set('dbStore', value);
-
-		if (SSR) {
-			hydrationStore.set(this.componentId, 'dbStore', Object.cast(value));
-			hydrationStore.set(this.componentId, 'initRemoteData', null);
-		}
+		this.hydrationStore?.set(this.componentId, 'dbStore', Object.cast(value));
+		this.hydrationStore?.set(this.componentId, 'initRemoteData', null);
 
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData.bind(this), {

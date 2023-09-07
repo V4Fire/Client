@@ -8,47 +8,49 @@
 
 export interface WatchOptions {
 	/**
-	 * This property allows you to change which box model is used to determine size changes.
+	 * This property allows you to specify the box model that is used to determine size changes:
 	 *
-	 * 1. The `content-box` option only includes the actual content of the element.
-	 * 2. The `border-box` option takes into account things like border and padding changes.
-	 * 3. The `device-pixel-content-box` option is similar to the `content-box` option, but it takes into account the
-	 *    actual pixel size of the device it is rendering too. This means that the `device-pixel-content-box` will change
-	 *    at a different rate than the `content-box` depending on the pixel density of the device.
+	 * 1. The `content-box` option includes only the actual content of the element.
+	 * 2. The `border-box` option takes into account changes in `border` and `padding`.
+	 * 3. The `device-pixel-content-box` option is similar to `content-box`,
+	 *    but it also considers the actual pixel size of the device it is rendering to.
+	 *    This means that `device-pixel-content-box` will change at a different rate than content-box depending on
+	 *    the pixel density of the device.
 	 *
 	 * @default `'content-box'`
 	 */
 	box?: ResizeObserverBoxOptions;
 
 	/**
-	 * If false, then the handler won't be called when only the wight of the observed element changes
+	 * If set to false, then the handler won't be called when only the width of the observed element changes
 	 * @default `true`
 	 */
 	watchWidth?: boolean;
 
 	/**
-	 * If false, then the handler won't be called when only the height of the observed element changes
+	 * If set to false, then the handler won't be called when only the height of the observed element changes
 	 * @default `true`
 	 */
 	watchHeight?: boolean;
 
 	/**
-	 * If true, then the handler will be called after the first resizing
+	 * If set to true, then the handler will be called after the first resizing
 	 * @default `true`
 	 */
 	watchInit?: boolean;
 
 	/**
-	 * If true, then the handler will be called immediately when the size of the observed element changes.
-	 * Be careful using this option as it can degrade application performance.
+	 * If set to true, the handler will be called immediately when the size of the observed element changes.
+	 * However, it's important to exercise caution when using this option,
+	 * as it can potentially degrade the performance of your application.
 	 *
 	 * @default `false`
 	 */
 	immediate?: boolean;
 
 	/**
-	 * If true, then after the first handler invoking, the observation of the element will be canceled.
-	 * Note that the handler firing caused by the `watchInit` option is ignored.
+	 * If set to true, after the first handler is invoked, the observation of the element will be canceled.
+	 * It's important to note that the handler firing caused by the `watchInit` option will be ignored in this case.
 	 *
 	 * @default `false`
 	 */
@@ -78,6 +80,12 @@ export interface Watcher extends Readonly<
 	 * The observable element geometry
 	 */
 	readonly rect?: DOMRectReadOnly;
+
+	/**
+	 * Observable element `boxSize`.
+	 * Less browser support than DOMRectReadOnly.
+	 */
+	readonly boxSize?: readonly ResizeObserverSize[];
 
 	/**
 	 * Cancels watching for the element geometry

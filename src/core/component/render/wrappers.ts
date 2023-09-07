@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import { app, componentRenderFactories } from 'core/component/const';
+import { app, isComponent, componentRenderFactories } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -25,6 +25,7 @@ import type {
 	createBlock,
 	createElementBlock,
 
+	mergeProps,
 	renderList,
 	renderSlot,
 
@@ -38,7 +39,7 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/init';
-import { resolveAttrs, normalizeComponentAttrs, mergeProps } from 'core/component/render/helpers';
+import { resolveAttrs, normalizeComponentAttrs, mergeProps as merge } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -79,8 +80,14 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			component = registerComponent(name.name);
 		}
 
-		const createVNode = (name, attrs, slots, patchFlag, dynamicProps) => {
-			const vnode = original(name, attrs, slots, patchFlag, dynamicProps);
+		const createVNode: (...args: Parameters<typeof createBlock>) => VNode = (
+			type,
+			props,
+			children,
+			patchFlag,
+			dynamicProps
+		) => {
+			const vnode = original(type, props, children, patchFlag, dynamicProps);
 			return resolveAttrs.call(this, vnode);
 		};
 
@@ -92,11 +99,14 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 		const
 			{componentName, params} = component,
-			{supports, r} = this.$renderEngine;
+			{r} = this.$renderEngine;
 
 		const
-			isRegular = params.functional !== true || !supports.functional,
+			isRegular = params.functional !== true,
 			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
+
+		vnode.props ??= {};
+		vnode.props.getRoot ??= () => ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
 
 		if (vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
@@ -130,12 +140,12 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		);
 
 		vnode.type = functionalVNode.type;
-		vnode.props = mergeProps(filteredAttrs, functionalVNode.props ?? {});
+		vnode.props = merge(filteredAttrs, functionalVNode.props ?? {});
 
 		vnode.children = functionalVNode.children;
 		vnode.dynamicChildren = functionalVNode.dynamicChildren;
 
-		vnode.dirs = functionalVNode.dirs ?? [];
+		vnode.dirs = Array.concat([], vnode.dirs, functionalVNode.dirs);
 		vnode.dirs.push({
 			dir: Object.cast(r.resolveDirective.call(virtualCtx, 'hook')),
 
@@ -143,13 +153,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			arg: undefined,
 
 			value: {
-				created: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
-				beforeMount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
-				mounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
-				beforeUpdate: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
-				updated: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
-				beforeUnmount: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
-				unmounted: (n) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
+				created: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'created', n),
+				beforeMount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeMount', n),
+				mounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'mounted', n),
+				beforeUpdate: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeUpdate', n),
+				updated: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'updated', n),
+				beforeUnmount: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'beforeDestroy', n),
+				unmounted: (n: Element) => virtualCtx.$emit('[[COMPONENT_HOOK]]', 'destroyed', n)
 			},
 
 			oldValue: undefined,
@@ -194,7 +204,7 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 	original: T
 ): T {
 	return Object.cast(function resolveComponent(this: ComponentInterface, name: string) {
-		if (!this.$renderEngine.supports.functional) {
+		if (SSR) {
 			name = name.replace(isSmartComponent, '');
 		}
 
@@ -205,11 +215,11 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 			return name;
 		}
 
-		if (SSR) {
-			return original(name);
+		if (isComponent.test(name) && app.context != null) {
+			return app.context.component(name) ?? original(name);
 		}
 
-		return app.context != null ? app.context.component(name) ?? original(name) : original(name);
+		return original(name);
 	});
 }
 
@@ -222,6 +232,23 @@ export function wrapResolveDirective<T extends typeof resolveDirective>(
 ): T {
 	return Object.cast(function resolveDirective(this: ComponentInterface, name: string) {
 		return app.context != null ? app.context.directive(name) ?? original(name) : original(name);
+	});
+}
+
+/**
+ * Wrapper for the component library `mergeProps` function
+ * @param original
+ */
+export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
+	return Object.cast(function mergeProps(this: ComponentInterface, ...args: Parameters<T>) {
+		const
+			props = original.apply(null, args);
+
+		if (SSR) {
+			return resolveAttrs.call(this, {props}).props;
+		}
+
+		return props;
 	});
 }
 

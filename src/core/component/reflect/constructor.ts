@@ -88,6 +88,10 @@ export function getInfoFromConstructor(
 			name
 		};
 
+	if (SSR) {
+		params.functional = false;
+	}
+
 	// Mix the "functional" parameter from the parent @component declaration
 	if (parentParams) {
 		let
