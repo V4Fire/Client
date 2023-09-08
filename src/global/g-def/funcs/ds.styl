@@ -66,7 +66,7 @@ i($name, $params = null, $opts = null)
 	$repeat = no-repeat
 	$align = center
 	$imgPath = join(".", $name svg)
-	$color = DEFAULT_ICON_COLOR
+	$color = DS_ICON_COLOR
 
 	if type($opts) == "object"
 		$repeat = $opts.repeat || no-repeat
@@ -83,6 +83,10 @@ i($name, $params = null, $opts = null)
 		$repeat = $params
 
 	//#if runtime has includeThemes
+	/**
+	 * @see https://dev.to/hasantezcan/how-to-colorize-svg-image-1kc8#2-css-mask
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/mask
+	 */
 	mask-size 100%
 	mask-repeat $repeat
 	mask-position $align
