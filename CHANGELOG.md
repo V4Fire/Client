@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.58.0 (2023-09-08)
+
+#### :rocket: New Feature
+
+* Added possibility to change icons' color according to the selected theme `global/g-def`
+
 ## v3.57.0 (2023-08-28)
 
 #### :rocket: New Feature

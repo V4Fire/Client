@@ -66,21 +66,37 @@ i($name, $params = null, $opts = null)
 	$repeat = no-repeat
 	$align = center
 	$imgPath = join(".", $name svg)
+	$color = DS_ICON_COLOR
 
 	if type($opts) == "object"
 		$repeat = $opts.repeat || no-repeat
 		$align = $opts.align || center
 
-	else if type($opts) == "ident"
+	else if type($opts) == "ident" || type($opts) == "unit"
 		$align = $opts
 
 	if type($params) == "object"
 		$imgPath = createURL({href: $imgPath, query: $params})
+		$color = $params.fill || $color
 
 	else if type($params) == "ident"
 		$repeat = $params
 
+	//#if runtime has includeThemes
+	/**
+	 * @see https://dev.to/hasantezcan/how-to-colorize-svg-image-1kc8#2-css-mask
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/mask
+	 */
+	mask-size 100%
+	mask-repeat $repeat
+	mask-position $align
+	mask-image img($imgPath, true)
+	background-color $color
+	//#endif
+
+	//#unless runtime has includeThemes
 	background img($imgPath, true) $repeat $align
+	//#endunless
 
 	$chunks = split("/", $name)
 
