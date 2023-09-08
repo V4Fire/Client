@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to change icons color according to the selected theme
+
 ## v3.48.0 (2023-05-30)
 
 #### :rocket: New Feature
