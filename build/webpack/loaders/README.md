@@ -114,7 +114,7 @@ The numbers you provide indicate the scaling that should be applied to the image
 Here is an example of providing multiple options for a specific image:
 
 ```js
-require('path/to/image.png.png?{responsive:true,formats:["webp"],sizes:[1,2,3,4],defaultSrcPath:"3x.png"}');
+require('path/to/image.png?{responsive:true,formats:["webp"],sizes:[1,2,3,4],defaultSrcPath:"3x.png"}');
 
 /*
 {
