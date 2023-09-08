@@ -17,6 +17,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added possibility to icons change its color according to selected theme `global/g-def`
 
+## v3.57.0 (2023-08-28)
+
+#### :rocket: New Feature
+
+* Webpack plugins:
+  * Added a new plugin `invalidate-external-cache`
+
+#### :bug: Bug Fix
+
+* Fixed a bug with resolving a promise returned by the `iLockPageScroll.lock`
+
 ## v3.56.0 (2023-08-18)
 
 #### :rocket: New Feature

@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+
+## v3.57.0 (2023-08-28)
+
+#### :rocket: New Feature
+
+* Added a new plugin `invalidate-external-cache`
+
 ## v3.42.0 (2023-03-14)
 
 #### :bug: Bug Fix

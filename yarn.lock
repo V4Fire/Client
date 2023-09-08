@@ -1748,16 +1748,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pzlr/stylus-inheritance@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@pzlr/stylus-inheritance@npm:3.1.0"
+"@pzlr/stylus-inheritance@npm:3.3.0":
+  version: 3.3.0
+  resolution: "@pzlr/stylus-inheritance@npm:3.3.0"
   dependencies:
-    escaper: ^3.0.3
-    sugar: ^2.0.6
-    upath: ^1.2.0
+    escaper: 3.0.3
+    sugar: 2.0.6
+    upath: 1.2.0
   peerDependencies:
     "@pzlr/build-core": "*"
-  checksum: c16b8cd1b8c70cdd7a8a82f1147a5ef488196d85c5bb24c86d0bd35eddda3b0a3edc88b9bad6a257425ca0f28b5058bb78b13f860f62f639b3468977cf579092
+  checksum: d9b436d463b34daf043df15071dff75fa6a3779dca3ccf55efd7557b8d9ea10b672c2a088650fccf7e2d936243a0d3876d874e6f531fd62bca7c81542f3588cd
   languageName: node
   linkType: hard
 
@@ -2555,7 +2555,7 @@ __metadata:
     "@config/config": "npm:config@1.31.0"
     "@playwright/test": 1.32.1
     "@pzlr/build-core": 2.13.0
-    "@pzlr/stylus-inheritance": 3.1.0
+    "@pzlr/stylus-inheritance": 3.3.0
     "@statoscope/webpack-plugin": 5.25.1
     "@swc/core": 1.2.153
     "@swc/helpers": 0.3.8
@@ -7205,6 +7205,13 @@ __metadata:
   version: 4.0.0
   resolution: "escape-string-regexp@npm:4.0.0"
   checksum: 98b48897d93060f2322108bf29db0feba7dd774be96cd069458d1453347b25ce8682ecc39859d4bca2203cc0ab19c237bcc71755eff49a0f8d90beadeeba5cc5
+  languageName: node
+  linkType: hard
+
+"escaper@npm:3.0.3":
+  version: 3.0.3
+  resolution: "escaper@npm:3.0.3"
+  checksum: acbeb7968897391339a12d6b6623bec23bc3c6e496a398d1fec7ae4d86207d12eef3f07939c533b64d6f90cd188a2e5af2999e38d0f064fb62295c87d6fa8438
   languageName: node
   linkType: hard
 
@@ -16373,7 +16380,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sugar@npm:^2.0.6":
+"sugar@npm:2.0.6, sugar@npm:^2.0.6":
   version: 2.0.6
   resolution: "sugar@npm:2.0.6"
   dependencies:
@@ -17567,17 +17574,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"upath@npm:1.2.0, upath@npm:^1.1.1, upath@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "upath@npm:1.2.0"
+  checksum: 4c05c094797cb733193a0784774dbea5b1889d502fc9f0572164177e185e4a59ba7099bf0b0adf945b232e2ac60363f9bf18aac9b2206fb99cbef971a8455445
+  languageName: node
+  linkType: hard
+
 "upath@npm:2.0.1":
   version: 2.0.1
   resolution: "upath@npm:2.0.1"
   checksum: 2db04f24a03ef72204c7b969d6991abec9e2cb06fb4c13a1fd1c59bc33b46526b16c3325e55930a11ff86a77a8cbbcda8f6399bf914087028c5beae21ecdb33c
-  languageName: node
-  linkType: hard
-
-"upath@npm:^1.1.1, upath@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "upath@npm:1.2.0"
-  checksum: 4c05c094797cb733193a0784774dbea5b1889d502fc9f0572164177e185e4a59ba7099bf0b0adf945b232e2ac60363f9bf18aac9b2206fb99cbef971a8455445
   languageName: node
   linkType: hard
 
