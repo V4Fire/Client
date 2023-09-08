@@ -2,20 +2,16 @@
 
 This module provides a bunch of custom loaders for Webpack.
 
-### symbol-generator-loader
-
-#### Description
+## symbol-generator-loader
 
 The loader adds support for the module `core/symbol` in older browsers
 
-### responsive-images-loader
-
-#### Description
+## responsive-images-loader
 
 The loader is used to compress and convert responsive images.
 It utilizes the [responsiveLoader](https://github.com/dazuaz/responsive-loader/tree/master) library underneath for each conversion operation.
 
-#### Usage
+### Usage
 
 To use this loader in a template, the basic syntax is:
 
@@ -23,7 +19,7 @@ To use this loader in a template, the basic syntax is:
 < .my-image v-image = require('path/to/image.png?responsive')
 ```
 
-Please note that the image you want to apply the loader to should be the maximum resolution
+Please note that the image you want to apply the loader to should be in the highest quality.
 
 The loader returns the following structure:
 
@@ -69,7 +65,7 @@ In development mode, the loader will simply return the name of the image without
 require('path/to/image.png?responsive'); // {src: 'image.png'}
 ```
 
-#### Options
+### Options
 
 In addition to the [options](https://github.com/dazuaz/responsive-loader/tree/master#options) provided by the
 `responsive-loader`, this loader also offers a few additional ones.
@@ -87,14 +83,14 @@ Alternatively, you can also override the `responsiveImagesOpts` method that spec
 
 The additional options are the following:
 
-##### defaultSrcPath ['2x.[original image extension]']
+#### defaultSrcPath ['2x.[original image extension]']
 
 The path for the default image in the `src` field.
 The format should be in the following pattern: `[resolution].[extension]`.
 
 Example of usage:
 
-```ts
+```js
 require('path/to/image.png?{responsive:true,defaultSrcPath:"1x.jpg"}');
 
 /*
@@ -104,7 +100,7 @@ require('path/to/image.png?{responsive:true,defaultSrcPath:"1x.jpg"}');
 */
 ```
 
-##### formats ['webp', 'avif']
+#### formats ['webp', 'avif']
 
 The formats to convert your image to.
 
@@ -113,11 +109,11 @@ The formats to convert your image to.
 Although this option is specified in the `responsive-loader` options, it works differently with this loader.
 The numbers you provide indicate the scaling that should be applied to the image (1x, 2x, etc.), not the size in pixels
 
-#### Providing multiple custom options
+### Providing multiple custom options
 
 Here is an example of providing multiple options for a specific image:
 
-```ts
+```js
 require('path/to/image.png.png?{responsive:true,formats:["webp"],sizes:[1,2,3,4],defaultSrcPath:"3x.png"}');
 
 /*
