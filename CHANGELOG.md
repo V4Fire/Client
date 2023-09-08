@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added possibility to change icons color according to the selected theme `components/global/g-def`
+* Added possibility to change icons' color according to the selected theme `components/global/g-def`
 
 ## v4.0.0-beta.18 (2023-09-08)
 
