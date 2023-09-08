@@ -17,6 +17,30 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new webpack loader for responsive images `responsive-images-loader`
 
+## v4.0.0-beta.17 (2023-09-06)
+
+#### :bug: Bug Fix
+
+* Added a special element for teleports `iStaticPage`
+
+## v4.0.0-beta.16 (2023-09-06)
+
+#### :bug: Bug Fix
+
+* Fixed working in SSR `core/component/directives/render`
+
+#### :nail_care: Polish
+
+* Exported `isCI` from `tests/config/super`
+* Set `workers: 1` and `fullyParallel: false` on CI in `tests/config/super`.
+See https://github.com/microsoft/playwright/issues/26739
+
+## v4.0.0-beta.15 (2023-09-05)
+
+#### :bug: Bug Fix
+
+* Added filtering of empty leading and trailing text nodes during rendering of a VNode array `core/component/engines/vue`
+
 ## v4.0.0-beta.14 (2023-08-25)
 
 #### :house: Internal
