@@ -13,6 +13,8 @@ import { expandedStringify } from 'core/prelude/test-env/components/json';
 import type iBlock from 'components/super/i-block/i-block';
 
 import { isRenderComponentsVnodeParams } from 'tests/helpers/component/helpers';
+import type { ComponentInDummy } from 'tests/helpers/component/interface';
+import type bDummy from 'components/dummies/b-dummy/b-dummy';
 
 /**
  * Class provides API to work with components on a page
@@ -107,6 +109,52 @@ export default class Component {
 		}, [{componentName, schemeAsString}]);
 
 		return this.waitForComponentByQuery(page, `[data-render-id="${renderId}"]`);
+	}
+
+	/**
+	 * Creates a component inside the `b-dummy` component and uses the `field-like` property of `b-dummy`
+	 * to pass props to the inner component.
+	 *
+	 * This function can be useful when you need to test changes to component props.
+	 * Since component props are readonly properties, you cannot change them directly;
+	 * changes are only available through the parent component. This is why the `b-dummy` wrapper is created,
+	 * and the props for the component you want to render are passed as references to the property of `b-dummy`.
+	 *
+	 * The function returns a `handle` to the created component (not to `b-dummy`)
+	 * and adds a method and property for convenience:
+	 *
+	 * - `setProps` - a method that allows you to modify the component's props.
+	 *
+	 * - `dummy` - the `handle` of the `b-dummy` component.
+	 *
+	 * @param page
+	 * @param componentName
+	 * @param attrs
+	 */
+	static async createComponentInDummy<T extends iBlock>(
+		page: Page,
+		componentName: string,
+		attrs: RenderComponentsVnodeParams['attrs']
+	): Promise<ComponentInDummy<T>> {
+		const dummy = await this.createComponent<bDummy>(page, 'b-dummy');
+
+		const setProps = async (props) => {
+			await dummy.evaluate((ctx, [name, props]) => {
+				ctx.testComponentAttrs = globalThis.expandedParse(props);
+				ctx.testComponent = name;
+
+			}, [componentName, expandedStringify(props)]);
+		};
+
+		await setProps(attrs);
+		const component = await dummy.evaluateHandle((ctx) => ctx.unsafe.$refs.testComponent);
+
+		Object.assign(component, {
+			setProps,
+			dummy
+		});
+
+		return <ComponentInDummy<T>>component;
 	}
 
 	/**

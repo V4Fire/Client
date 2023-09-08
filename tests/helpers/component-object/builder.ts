@@ -13,12 +13,10 @@ import { resolve } from '@pzlr/build-core';
 import { Component, DOM, Utils } from 'tests/helpers';
 import type ComponentObject from 'tests/helpers/component-object';
 
-import { expandedStringify } from 'core/prelude/test-env/components/json';
-
 import type iBlock from 'components/super/i-block/i-block';
-import type bDummy from 'components/dummies/b-dummy/b-dummy';
 
 import type { BuildOptions } from 'tests/helpers/component-object/interface';
+import type { ComponentInDummy } from 'tests/helpers/component/interface';
 
 /**
  * A class implementing the `ComponentObject` approach that encapsulates different
@@ -77,7 +75,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	/**
 	 * Reference to the `b-dummy` wrapper component.
 	 */
-	protected dummy?: JSHandle<bDummy>;
+	protected dummy?: ComponentInDummy<COMPONENT>;
 
 	/**
 	 * The component styles that should be inserted into the page.
@@ -163,14 +161,10 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 		}
 
 		if (options?.useDummy) {
-			this.dummy = await Component.createComponent<bDummy>(this.page, 'b-dummy', {
-				attrs: {
-					functional: false
-				}
-			});
+			const component = await Component.createComponentInDummy<COMPONENT>(this.page, this.componentName, this.props);
 
-			await this.updatePropsViaDummy(this.props);
-			this.componentStore = await this.dummy.evaluateHandle((ctx) => <COMPONENT>ctx.unsafe.$refs.testComponent);
+			this.dummy = component;
+			this.componentStore = component;
 
 		} else {
 			this.componentStore = await Component.createComponent(this.page, this.componentName, {
@@ -267,18 +261,11 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 *
 	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
 	 */
-	async updatePropsViaDummy(props: Dictionary): Promise<void> {
+	updatePropsViaDummy(props: Dictionary): Promise<void> {
 		if (!this.dummy) {
 			throw new ReferenceError('Failed to update props. Missing "b-dummy" component.');
 		}
 
-		const
-			serializedAttrs = expandedStringify(props);
-
-		return this.dummy.evaluate((ctx, [attrs, componentName]) => {
-			Object.assign(ctx.testComponentAttrs, globalThis.expandedParse(attrs));
-			ctx.testComponent = componentName;
-
-		}, [serializedAttrs, this.componentName]);
+		return this.dummy.setProps(props);
 	}
 }

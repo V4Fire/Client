@@ -19,7 +19,7 @@
 				ref = tombstones |
 				v-if = $slots['tombstone']
 			.
-				< .&__tombstone v-for = i in tombstonesSize || chunkSize
+				< .&__tombstone v-for = i in tombstoneCount || chunkSize
 					+= self.slot('tombstone')
 
 			< .&__loader &

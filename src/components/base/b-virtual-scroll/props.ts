@@ -79,16 +79,16 @@ export default abstract class iVirtualScrollProps extends iData {
 	 * Specifies the number of times the `tombstone` component will be rendered.
 	 *
 	 * This prop can be useful if you want to render multiple `tombstone` components
-	 * using a single specified element. For example, if you set `tombstonesSize` to 3,
+	 * using a single specified element. For example, if you set `tombstoneCount` to 3,
 	 * then three `tombstone` components will be rendered on your page.
 	 */
 	@prop(Number)
-	readonly tombstonesSize?: number;
+	readonly tombstoneCount?: number;
 
 	/**
 	 * This factory function is used to pass information about the components that need to be rendered.
 	 * The function should return an array of arbitrary length consisting of objects that satisfy the
-	 * `ComponentItem` interface.
+	 * {@link ComponentItem} interface.
 	 *
 	 * By default, the rendering strategy is based on the `chunkSize` and `iItems` trait.
 	 * In other words, the default implementation takes a data slice of length `chunkSize`
@@ -231,9 +231,9 @@ export default abstract class iVirtualScrollProps extends iData {
 	override readonly DB!: ComponentDb;
 
 	/**
-	 * Function that returns the GET parameters for a request. This function is called for each request. It receives the
+	 * A function that returns the GET parameters for a request. This function is called for each request. It receives the
 	 * current component state and should return the request parameters. These parameters are merged with the parameters
-	 * from the `request` prop in favor of the `request` prop.
+	 * from the `request` prop in favor of the second one.
 	 *
 	 * This function is useful when you need to pass pagination parameters or any other parameters that should not trigger
 	 * a component's state reload, unlike changing the `request` prop.
@@ -268,7 +268,7 @@ export default abstract class iVirtualScrollProps extends iData {
 	readonly chunkSize: number | ShouldPerform<number> = 10;
 
 	/**
-	 * When this function returns `true` the component will stop to request new data.
+	 * When this function returns true the component will stop to request new data.
 	 * This function will be called on each data loading cycle.
 	 */
 	@prop({
@@ -279,7 +279,7 @@ export default abstract class iVirtualScrollProps extends iData {
 	readonly shouldStopRequestingData!: ShouldPerform;
 
 	/**
-	 * When this function returns `true` the component will be able to request additional data.
+	 * When this function returns true the component will be able to request additional data.
 	 * This function will be called each time a new element enters the viewport.
 	 */
 	@prop({
@@ -296,7 +296,7 @@ export default abstract class iVirtualScrollProps extends iData {
 	 * should determine whether the component should render the next chunk of components.
 	 *
 	 * For example, if we want to render the next data chunk only when the client
-	 * has seen all the main (type=item) components, we can implement the following function:
+	 * has seen all the main (`type=item`) components, we can implement the following function:
 	 *
 	 * @example
 	 * ```typescript
@@ -309,10 +309,9 @@ export default abstract class iVirtualScrollProps extends iData {
 	readonly shouldPerformDataRender?: ShouldPerform<boolean>;
 
 	/**
-	 * If `true`, the element {@link Observer observation module} will not be initialized.
-	 *
-	 * Setting this prop to `true` can be useful if you want to implement lazy rendering
-	 * and control it using the `renderNext` method.
+	 * Setting this property to false will disable the {@link Observer observation module}. This is useful when you
+	 * want to implement lazy rendering not based on scrolling but on some other event, such as a click. In this case,
+	 * you should use manual invocation of the `initLoadNext` method to render chunks.
 	 */
 	@prop(Boolean)
 	readonly disableObserver: boolean = false;

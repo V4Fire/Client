@@ -36,7 +36,7 @@
       - [`requestQuery`](#requestquery)
       - [`itemsFactory`](#itemsfactory)
       - [`itemsProcessors`](#itemsprocessors)
-      - [`tombstonesSize`](#tombstonessize)
+      - [`tombstoneCount`](#tombstoneCount)
     - [Methods](#methods)
       - [getNextDataSlice](#getnextdataslice)
       - [getComponentState](#getcomponentstate)
@@ -786,10 +786,10 @@ The component supports several slots for customization:
       Data loading in progress
 ```
 
-2. The `tombstone` slot allows you to display different content (usually skeletons) that will be repeated `tombstonesSize` times while the data is being loaded.
+2. The `tombstone` slot allows you to display different content (usually skeletons) that will be repeated `tombstoneCount` times while the data is being loaded.
 
 ```
-< b-virtual-scroll :tombstonesSize = 3
+< b-virtual-scroll :tombstoneCount = 3
   < template #tombstone
     < .&__skeleton
       Skeleton
@@ -999,13 +999,13 @@ This prop is a middleware function that is called after `b-virtual-scroll` has c
 
 This function can be useful in cases where you need to implement some processing of the abstract representation of components, such as mutating props or adding additional components.
 
-#### `tombstonesSize`
+#### `tombstoneCount`
 
 - Type: `number`
 - Default: `undefined`
 
 Specifies the number of times the `tombstone` component will be rendered. This prop can be useful if you want to render multiple `tombstone` components using a single specified element.
-For example, if you set `tombstonesSize` to 3, then three `tombstone` components will be rendered on your page.
+For example, if you set `tombstoneCount` to 3, then three `tombstone` components will be rendered on your page.
 
 Note: The `tombstone` component is used to represent empty or unloaded components in the virtual scroll. It is rendered as a placeholder until the actual component data is loaded and rendered.
 

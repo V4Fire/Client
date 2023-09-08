@@ -72,7 +72,7 @@ test.describe('<b-virtual-scroll>', () => {
 		});
 
 		await component.withProps({
-			tombstonesSize: 1
+			tombstoneCount: 1
 		});
 	});
 

@@ -36,13 +36,6 @@ const $$ = symbolGenerator();
 
 VDOM.addToPrototype({create, render});
 
-/**
- * Component that implements loading and rendering of large data arrays in chunks.
- * The `bVirtualScroll` component extends the `iData` class and implements the `iItems` interface.
- *
- * It provides functionality for efficiently loading and displaying large amounts of data
- * by dynamically rendering chunks of data as the user scrolls.
- */
 @component()
 export default class bVirtualScroll extends iVirtualScrollHandlers implements iItems {
 
@@ -80,41 +73,6 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 
 	override get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return Object.cast(this);
-	}
-
-	override reload(...args: Parameters<iData['reload']>): ReturnType<iData['reload']> {
-		this.componentStatus = 'loading';
-		return super.reload(...args);
-	}
-
-	override initLoad(...args: Parameters<iData['initLoad']>): ReturnType<iData['initLoad']> {
-		if (!this.lfc.isBeforeCreate()) {
-			this.reset();
-		}
-
-		this.componentInternalState.setIsLoadingInProgress(true);
-
-		const
-			initLoadResult = super.initLoad(...args);
-
-		this.onDataLoadStart(true);
-
-		if (Object.isPromise(initLoadResult)) {
-			initLoadResult
-				.then(() => {
-					if (this.db == null) {
-						return;
-					}
-
-					this.onDataLoadSuccess(true, this.db);
-				})
-				.catch(stderr);
-
-		} else {
-			this.onDataLoadSuccess(true, this.db);
-		}
-
-		return initLoadResult;
 	}
 
 	/**
@@ -185,6 +143,41 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 		return Object.isFunction(this.chunkSize) ?
 			this.chunkSize(state, this) :
 			this.chunkSize;
+	}
+
+	override reload(...args: Parameters<iData['reload']>): ReturnType<iData['reload']> {
+		this.componentStatus = 'loading';
+		return super.reload(...args);
+	}
+
+	override initLoad(...args: Parameters<iData['initLoad']>): ReturnType<iData['initLoad']> {
+		if (!this.lfc.isBeforeCreate()) {
+			this.reset();
+		}
+
+		this.componentInternalState.setIsLoadingInProgress(true);
+
+		const
+			initLoadResult = super.initLoad(...args);
+
+		this.onDataLoadStart(true);
+
+		if (Object.isPromise(initLoadResult)) {
+			initLoadResult
+				.then(() => {
+					if (this.db == null) {
+						return;
+					}
+
+					this.onDataLoadSuccess(true, this.db);
+				})
+				.catch(stderr);
+
+		} else {
+			this.onDataLoadSuccess(true, this.db);
+		}
+
+		return initLoadResult;
 	}
 
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
@@ -368,12 +361,12 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 			{renderPage} = this.getComponentState(),
 			asyncGroup = `${bVirtualScrollDomInsertAsyncGroup}:${renderPage}`;
 
-		for (let i = 0; i < nodes.length; i++) {
-			this.dom.appendChild(fragment, nodes[i], {
+		nodes.forEach((node) => {
+			this.dom.appendChild(fragment, node, {
 				group: asyncGroup,
 				destroyIfComponent: true
 			});
-		}
+		});
 
 		this.async.requestAnimationFrame(() => {
 			this.$refs.container.appendChild(fragment);
