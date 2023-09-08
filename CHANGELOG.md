@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.18 (2023-09-08)
+
+#### :rocket: New Feature
+
+* Added a new parameter `setup` `core/init`
+
 ## v4.0.0-beta.17 (2023-09-06)
 
 #### :bug: Bug Fix
