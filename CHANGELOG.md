@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.?.? (2023-??-??)
+
+#### :house: Internal
+
+* Discard the function constructor in prelude
+
 ## v4.??.?? (2023-??-??)
 
 #### :rocket: New Feature
