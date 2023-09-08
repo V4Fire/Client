@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable camelcase,no-new-func */
+
 import global from 'core/shims/global';
 
 try {

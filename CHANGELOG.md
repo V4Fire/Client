@@ -11,17 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.?.? (2023-??-??)
-
-#### :house: Internal
-
-* Discard the function constructor in prelude
-
 ## v4.??.?? (2023-??-??)
 
 #### :rocket: New Feature
 
 * Added possibility to change icons' color according to the selected theme `components/global/g-def`
+
+#### :house: Internal
+
+* Discard the function constructor in prelude
 
 ## v4.0.0-beta.18 (2023-09-08)
 
