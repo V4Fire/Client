@@ -9,7 +9,7 @@
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
 /**
- * Component state.
+ * State of the current component lifecycle.
  *
  * @typeParam DATA - Instance of the data element.
  * @typeParam RAW_DATA - The data loaded from the server but not yet processed.

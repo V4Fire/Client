@@ -54,8 +54,8 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Returns the internal component state.
 	 */
-	getComponentState(): Promise<VirtualScrollState> {
-		return this.component.evaluate((ctx) => ctx.getComponentState());
+	getVirtualScrollState(): Promise<VirtualScrollState> {
+		return this.component.evaluate((ctx) => ctx.getVirtualScrollState());
 	}
 
 	/**
@@ -116,7 +116,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 */
 	async waitForLifecycleDone(): Promise<void> {
 		await this.component.evaluate((ctx) => {
-			const state = ctx.getComponentState();
+			const state = ctx.getVirtualScrollState();
 
 			if (state.isLifecycleDone) {
 				return;

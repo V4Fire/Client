@@ -35,7 +35,7 @@ test.describe('<b-virtual-scroll>', () => {
 	test('Initial state', async () => {
 		const
 			chunkSize = 12,
-			mockFn = await component.mockFn((ctx: bVirtualScroll) => ctx.getComponentState());
+			mockFn = await component.mockFn((ctx: bVirtualScroll) => ctx.getVirtualScrollState());
 
 		provider.response(200, {data: []}, {delay: (10).seconds()});
 
@@ -93,7 +93,7 @@ test.describe('<b-virtual-scroll>', () => {
 			await component.waitForChildCountEqualsTo(chunkSize);
 
 			const
-				currentState = await component.getComponentState();
+				currentState = await component.getVirtualScrollState();
 
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,
@@ -119,7 +119,7 @@ test.describe('<b-virtual-scroll>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				currentState = await component.getComponentState();
+				currentState = await component.getVirtualScrollState();
 
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,
@@ -193,7 +193,7 @@ test.describe('<b-virtual-scroll>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				currentState = await component.getComponentState();
+				currentState = await component.getVirtualScrollState();
 
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,
@@ -245,7 +245,7 @@ test.describe('<b-virtual-scroll>', () => {
 			await component.waitForLifecycleDone();
 
 			const
-				currentState = await component.getComponentState();
+				currentState = await component.getVirtualScrollState();
 
 			test.expect(currentState).toEqual(state.compile({
 				isInitialLoading: false,

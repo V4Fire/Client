@@ -76,7 +76,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 						ctx.emit = jestMock.mock((...args) => {
 							original(...args);
-							return [args[0], Object.fastClone(ctx.getComponentState())];
+							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
 					}
 				})
@@ -157,7 +157,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 						ctx.emit = jestMock.mock((...args) => {
 							original(...args);
-							return [args[0], Object.fastClone(ctx.getComponentState())];
+							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
 						});
 					}
 				})

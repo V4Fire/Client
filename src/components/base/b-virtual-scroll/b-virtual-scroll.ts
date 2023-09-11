@@ -65,7 +65,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	override get requestParams(): iData['requestParams'] {
 		return {
 			get: {
-				...this.requestQuery?.(this.getComponentState())?.get,
+				...this.requestQuery?.(this.getVirtualScrollState())?.get,
 				...Object.isDictionary(this.request?.get) ? this.request?.get : undefined
 			}
 		};
@@ -85,7 +85,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 		}
 
 		const
-			state = this.getComponentState();
+			state = this.getVirtualScrollState();
 
 		if (state.isLoadingInProgress) {
 			return;
@@ -113,10 +113,10 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Returns the component state.
+	 * Returns the internal component state.
 	 * {@link VirtualScrollState}
 	 */
-	getComponentState(): Readonly<VirtualScrollState> {
+	getVirtualScrollState(): Readonly<VirtualScrollState> {
 		return this.componentInternalState.compile();
 	}
 
@@ -128,16 +128,15 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	 */
 	getNextDataSlice(state: VirtualScrollState, chunkSize: number): object[] {
 		const
-			{data} = state,
 			nextDataSliceStartIndex = this.componentInternalState.getDataCursor(),
 			nextDataSliceEndIndex = nextDataSliceStartIndex + chunkSize;
 
-		return data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
+		return state.data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
 	}
 
 	/**
 	 * Returns the chunk size that should be rendered.
-	 * @param state
+	 * @param state - Current lifecycle state.
 	 */
 	getChunkSize(state: VirtualScrollState): number {
 		return Object.isFunction(this.chunkSize) ?
@@ -188,7 +187,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Gathers all request parameters from the component fields `requestProp` and `requestQuery`.
+	 * Merges all request parameters from the component fields `requestProp` and `requestQuery`.
 	 * {@link RequestParams}
 	 */
 	protected getRequestParams(): RequestParams {
@@ -208,10 +207,12 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Wrapper for {@link bVirtualScroll.shouldStopRequestingData}.
+	 * Short-hand wrapper for calling {@link bVirtualScroll.shouldStopRequestingData}, which also caches the
+	 * result of the call and, if {@link bVirtualScroll.shouldStopRequestingData} returns `true`, does not call
+	 * this function again until the life cycle is updated and the state is reset.
 	 */
-	protected shouldStopRequestingDataWrapper(this: bVirtualScroll): boolean {
-		const state = this.getComponentState();
+	protected shouldStopRequestingDataWrapper(): boolean {
+		const state = this.getVirtualScrollState();
 
 		if (state.areRequestsStopped) {
 			return state.areRequestsStopped;
@@ -224,10 +225,11 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Wrapper for {@link bVirtualScroll.shouldPerformDataRequest}.
+	 * Short-hand wrapper for calling {@link bVirtualScroll.shouldPerformDataRequest}, removing the need to pass
+	 * state and context when calling {@link bVirtualScroll.shouldPerformDataRequest}.
 	 */
-	protected shouldPerformDataRequestWrapper(this: bVirtualScroll): boolean {
-		return this.shouldPerformDataRequest(this.getComponentState(), this);
+	protected shouldPerformDataRequestWrapper(): boolean {
+		return this.shouldPerformDataRequest(this.getVirtualScrollState(), this);
 	}
 
 	/**
@@ -238,10 +240,9 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * This function is called after successful data loading or when the child components enters the visible area.
-	 *
-	 * This function asks the client whether rendering can be performed. The client responds with an object
-	 * indicating whether rendering is allowed or the reason for denial.
+	 * This function asks the client whether rendering can be performed.
+	 * It is called after successful data load or when the child component enters the visible area.
+	 * The client responds with an object indicating whether rendering is allowed or the reason for denial.
 	 *
 	 * Based on the result of this function, the component takes appropriate actions. For example,
 	 * it may load data if it is not sufficient for rendering, or perform rendering if all conditions are met.
@@ -285,7 +286,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 
 		return {
 			result: clientResponse,
-			reason: clientResponse === false ? renderGuardRejectionReason.noPermission : undefined
+			reason: !clientResponse ? renderGuardRejectionReason.noPermission : undefined
 		};
 	}
 
@@ -298,7 +299,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	 */
 	protected loadDataOrPerformRender(): void {
 		const
-			state = this.getComponentState();
+			state = this.getVirtualScrollState();
 
 		if (state.isLastErrored) {
 			return;
@@ -342,8 +343,6 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 
 	/**
 	 * Renders components using {@link bVirtualScroll.componentFactory} and inserts them into the DOM tree.
-	 * {@link bVirtualScroll.componentFactory}, in turn, calls {@link bVirtualScroll.itemsFactory} to obtain
-	 * the set of components to render.
 	 */
 	protected performRender(): void {
 		this.onRenderStart();
@@ -358,7 +357,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 
 		const
 			fragment = document.createDocumentFragment(),
-			{renderPage} = this.getComponentState(),
+			{renderPage} = this.getVirtualScrollState(),
 			asyncGroup = `${bVirtualScrollDomInsertAsyncGroup}:${renderPage}`;
 
 		nodes.forEach((node) => {

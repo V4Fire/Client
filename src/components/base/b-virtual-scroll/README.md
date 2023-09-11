@@ -39,7 +39,7 @@
       - [`tombstoneCount`](#tombstoneCount)
     - [Methods](#methods)
       - [getNextDataSlice](#getnextdataslice)
-      - [getComponentState](#getcomponentstate)
+      - [getVirtualScrollState](#getVirtualScrollState)
       - [initLoadNext](#initloadnext)
     - [Other Properties](#other-properties)
   - [Migration from `b-virtual-scroll` version 3.x.x](#migration-from-b-virtual-scroll-version-3xx)
@@ -329,7 +329,7 @@ This makes it straightforward to implement a retry mechanism for a failed reques
 
 The `b-virtual-scroll` component is quite substantial and has its own internal state that complements the component's state. This internal state is reset when the component is reinitialized to its initial state and changes regularly during the component's lifecycle. The component's state contains a wealth of information useful for the client, such as the loaded data, the number of elements remaining outside the user's viewport, and more.
 
-To retrieve the component's state, you can use a special method called `getComponentState`:
+To retrieve the component's state, you can use a special method called `getVirtualScrollState`:
 
 __p-page.ts__
 ```typescript
@@ -340,7 +340,7 @@ class pPage extends extends iDynamicPage {
   };
 
   getScrollState(): VirtualScrollState {
-    return this.$refs.scroll.getComponentState();
+    return this.$refs.scroll.getVirtualScrollState();
   }
 }
 ```
@@ -747,6 +747,18 @@ There may also be situations where you need to modify the `renderGuard`. Current
 
   Yes, you can. `b-virtual-scroll` will make requests (one at a time!) until the number of loaded items is greater than or equal to the value specified in `chunkSize`.
 
+- Can I render a different number of items on each render cycle?
+
+  Yes, you can. `b-virtual-scroll` provides two options:
+
+  1. Specify the `chunkSize` prop as a function that returns a number depending on something. Let’s say we want to render 6 elements at the first render, 12 at the second, and 18 in subsequent ones:
+
+    ```typescript
+    const chunkSize = (state: VirtualScrollState) => [6, 12, 18][state.renderPage] ?? 18
+    ```
+
+  2. Use the `itemsFactory` prop and return any number of elements from this function.
+
 - Suppose I want to load 1000 data items once and not make any more requests. How can I achieve this?
 
   1. Set `chunkSize` to a suitable value, for example, 10, if you want 10 components to be rendered in one rendering cycle.
@@ -1015,7 +1027,7 @@ Note: The `tombstone` component is used to represent empty or unloaded component
 
 Returns the next data slice that should be rendered based on the `chunkSize`.
 
-#### getComponentState
+#### getVirtualScrollState
 
 Returns the current state of the component.
 
@@ -1033,14 +1045,14 @@ The `bVirtualScroll` class extends `iData` and includes additional properties re
 
 - Prop `renderGap` deleted -> use `shouldPerformDataRender`;
 - Deprecated props `option-like` deleted -> use `iItems` props;
-- Method renamed `getDataStateSnapshot` -> `getComponentState`;
+- Method renamed `getDataStateSnapshot` -> `getVirtualScrollState`;
 - Method `reloadLast` -> `initLoadNext`;
 - `VirtualItemEl` interface is removed. Now, the client receives a single data item in the `iItems` methods. To maintain logic with `current`, `prev`, `next`, you can use the following approach:
 
   ```typescript
   function getProps(data: DataInterface, index: number): Dictionary {
     const
-      state = this.$refs.scroll.getComponentState();
+      state = this.$refs.scroll.getVirtualScrollState();
 
     const
       current = data,

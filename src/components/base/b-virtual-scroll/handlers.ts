@@ -96,9 +96,9 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 */
 	protected onLifecycleDone(this: bVirtualScroll): void {
 		const
-			state = this.getComponentState();
+			state = this.getVirtualScrollState();
 
-		if (state.isLifecycleDone === true) {
+		if (state.isLifecycleDone) {
 			return;
 		}
 
@@ -193,7 +193,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 		}
 
 		const
-			state = this.getComponentState();
+			state = this.getVirtualScrollState();
 
 		this.onDataLoadError(state.isInitialLoading);
 		return super.onRequestError(err, this.initLoad.bind(this));

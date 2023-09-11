@@ -29,7 +29,7 @@ export class ComponentFactory extends Friend {
 		const
 			{ctx} = this;
 
-		return this.itemsProcessor(ctx.itemsFactory(ctx.getComponentState(), ctx));
+		return this.itemsProcessor(ctx.itemsFactory(ctx.getVirtualScrollState(), ctx));
 	}
 
 	/**
@@ -58,7 +58,7 @@ export class ComponentFactory extends Friend {
 	produceMounted(items: ComponentItem[], nodes: HTMLElement[]): Array<MountedChild | MountedItem> {
 		const
 			{ctx} = this,
-			{items: mountedItems, childList} = ctx.getComponentState();
+			{items: mountedItems, childList} = ctx.getVirtualScrollState();
 
 		return items.map((item, i) => {
 			if (isItem(item)) {
