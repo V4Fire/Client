@@ -23,6 +23,15 @@ export function evalFn<T extends Function>(func: T): T {
  * Overrides the `toJSON` method of the provided object to return the identifier of a mock function
  * within the page context.
  *
+ * @example
+ * ```
+ * const val1 = JSON.stringify({val: 1}); // '{"val": 1}';
+ * const val2 = JSON.stringify(setSerializerAsMockFn({val: 1}, 'id')); // '"id"'
+ * ```
+ *
+ * This function is needed in order to extract a previously inserted mock function
+ * into the context of a browser page by its ID.
+ *
  * @param obj - The object to override the `toJSON` method for.
  * @param id - The identifier of the mock function.
  * @returns The modified object with the overridden `toJSON` method.

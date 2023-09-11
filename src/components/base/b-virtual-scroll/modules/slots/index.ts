@@ -128,7 +128,7 @@ export class SlotsStateController extends Friend {
 	 * Sets the visibility state of the slots.
 	 *
 	 * @param stateObj - An object specifying the visibility state of each slot.
-	 * @param [immediate] - if set to true, {@link requestAnimationFrame} will not be used to switch the state.
+	 * @param [immediate] - If set to true, {@link requestAnimationFrame} will not be used to switch the state.
 	 */
 	protected setSlotsVisibility(stateObj: Required<SlotsStateObj>, immediate: boolean = false): void {
 		this.lastState = stateObj;

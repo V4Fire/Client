@@ -81,6 +81,20 @@ export default abstract class iVirtualScrollProps extends iData {
 	 * This prop can be useful if you want to render multiple `tombstone` components
 	 * using a single specified element. For example, if you set `tombstoneCount` to 3,
 	 * then three `tombstone` components will be rendered on your page.
+	 *
+	 * @example
+	 * ```
+	 * < b-virtual-scroll :tombstoneCount = 3
+	 *   < template #tombstone
+	 *     < .&__skeleton
+	 *       Skeleton
+	 * ```
+	 *
+	 * ```html
+	 * <div class="..__skeleton">Skeleton</div>
+	 * <div class="..__skeleton">Skeleton</div>
+	 * <div class="..__skeleton">Skeleton</div>
+	 * ```
 	 */
 	@prop(Number)
 	readonly tombstoneCount?: number;
