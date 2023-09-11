@@ -11,101 +11,31 @@ import type { MountedChild } from 'components/base/b-virtual-scroll/interface/co
 import {
 
 	componentDataLocalEvents,
-	componentLocalEvents,
+	componentLifecycleEvents,
 	componentObserverLocalEvents,
 	componentRenderLocalEvents
 
 } from 'components/base/b-virtual-scroll/const';
 
 /**
- * Component data-related events (emitted in `selfEmitter`).
+ * {@link componentDataLocalEvents}
  */
-export interface ComponentDataLocalEvents {
-	/**
-	 * Data loading has started.
-	 */
-	dataLoadStart: 'dataLoadStart';
-
-	/**
-	 * An error occurred while loading data.
-	 */
-	dataLoadError: 'dataLoadError';
-
-	/**
-	 * Data has been successfully loaded.
-	 */
-	dataLoadSuccess: 'dataLoadSuccess';
-
-	/**
-	 * Successful load with no data.
-	 */
-	dataLoadEmpty: 'dataLoadEmpty';
-}
+export type ComponentDataLocalEvents = typeof componentDataLocalEvents;
 
 /**
- * Component events.
+ * {@link componentLifecycleEvents}
  */
-export interface ComponentLifecycleEvents {
-	/**
-	 * Reset component state.
-	 */
-	resetState: 'resetState';
-
-	/**
-	 * Trigger data conversion to the `DB`.
-	 */
-	convertDataToDB: 'convertDataToDB';
-
-	/**
-	 * This event is emitted when all component data is rendered and loaded.
-	 */
-	lifecycleDone: 'lifecycleDone';
-}
+export type ComponentLifecycleEvents = typeof componentLifecycleEvents;
 
 /**
- * Component rendering events.
+ * {@link componentRenderLocalEvents}
  */
-export interface ComponentRenderLocalEvents {
-	/**
-	 * Rendering of items has started.
-	 */
-	renderStart: 'renderStart';
-
-	/**
-	 * Rendering of items has finished.
-	 */
-	renderDone: 'renderDone';
-
-	/**
-	 * Rendering of items has started with the render engine.
-	 */
-	renderEngineStart: 'renderEngineStart';
-
-	/**
-	 * Rendering of items has finished with the render engine.
-	 */
-	renderEngineDone: 'renderEngineDone';
-
-	/**
-	 * DOM node insertion has started.
-	 */
-	domInsertStart: 'domInsertStart';
-
-	/**
-	 * DOM node insertion has finished.
-	 */
-	domInsertDone: 'domInsertDone';
-}
+export type ComponentRenderLocalEvents = typeof componentRenderLocalEvents;
 
 /**
- * Events of the element observer.
+ * {@link componentObserverLocalEvents}
  */
-export interface ComponentObserverLocalEvents {
-	/**
-	 * The element has entered the viewport.
-	 */
-	elementEnter: 'elementEnter';
-}
+export type ComponentObserverLocalEvents = typeof componentObserverLocalEvents;
 
 /**
  * Possible component events.
@@ -126,9 +56,9 @@ export interface LocalEventPayloadMap {
 	[componentDataLocalEvents.dataLoadError]: [isInitialLoading: boolean];
 	[componentDataLocalEvents.dataLoadEmpty]: [];
 
-	[componentLocalEvents.resetState]: [];
-	[componentLocalEvents.lifecycleDone]: [];
-	[componentLocalEvents.convertDataToDB]: [data: unknown];
+	[componentLifecycleEvents.resetState]: [];
+	[componentLifecycleEvents.lifecycleDone]: [];
+	[componentLifecycleEvents.convertDataToDB]: [data: unknown];
 
 	[componentObserverLocalEvents.elementEnter]: [componentItem: MountedChild];
 

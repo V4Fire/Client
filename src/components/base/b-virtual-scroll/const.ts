@@ -8,18 +8,7 @@
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
-import type {
-
-	ComponentDataLocalEvents,
-	ComponentItemType,
-	ComponentLifecycleEvents,
-	ComponentObserverLocalEvents,
-	ComponentRenderLocalEvents,
-	VirtualScrollState,
-	RenderGuardRejectionReason,
-	ItemsProcessors
-
-} from 'components/base/b-virtual-scroll/interface';
+import type { ComponentItemType, VirtualScrollState, ItemsProcessors } from 'components/base/b-virtual-scroll/interface';
 
 /**
  * Base group for performing asynchronous operations of the component.
@@ -32,57 +21,124 @@ export const bVirtualScrollAsyncGroup = 'b-virtual-scroll';
 export const bVirtualScrollDomInsertAsyncGroup = `${bVirtualScrollAsyncGroup}:dom-insert`;
 
 /**
- * {@link ComponentDataLocalEvents}
+ * Component data-related events (emitted in `selfEmitter`).
  */
-export const componentDataLocalEvents: ComponentDataLocalEvents = <const>{
+export const componentDataLocalEvents = <const>{
+	/**
+	 * Data loading has started.
+	 */
 	dataLoadStart: 'dataLoadStart',
+
+	/**
+	 * An error occurred while loading data.
+	 */
 	dataLoadError: 'dataLoadError',
+
+	/**
+	 * Data has been successfully loaded.
+	 */
 	dataLoadSuccess: 'dataLoadSuccess',
+
+	/**
+	 * Successful load with no data.
+	 */
 	dataLoadEmpty: 'dataLoadEmpty'
 };
 
 /**
- * {@link ComponentLifecycleEvents}
+ * Component events.
  */
-export const componentLocalEvents: ComponentLifecycleEvents = <const>{
+export const componentLifecycleEvents = <const>{
+	/**
+	 * Reset component state.
+	 */
 	resetState: 'resetState',
+
+	/**
+	 * Trigger data conversion to the `DB`.
+	 */
 	convertDataToDB: 'convertDataToDB',
+
+	/**
+	 * This event is emitted when all component data is rendered and loaded.
+	 */
 	lifecycleDone: 'lifecycleDone'
 };
 
 /**
- * {@link ComponentRenderLocalEvents}
+ * Component rendering events.
  */
-export const componentRenderLocalEvents: ComponentRenderLocalEvents = <const>{
+export const componentRenderLocalEvents = <const>{
+	/**
+	 * Rendering of items has started.
+	 */
 	renderStart: 'renderStart',
+
+	/**
+	 * Rendering of items has finished.
+	 */
 	renderDone: 'renderDone',
+
+	/**
+	 * Rendering of items has started with the render engine.
+	 */
 	renderEngineStart: 'renderEngineStart',
+
+	/**
+	 * Rendering of items has finished with the render engine.
+	 */
 	renderEngineDone: 'renderEngineDone',
+
+	/**
+	 * DOM node insertion has started.
+	 */
 	domInsertStart: 'domInsertStart',
+
+	/**
+	 * DOM node insertion has finished.
+	 */
 	domInsertDone: 'domInsertDone'
 };
 
 /**
- * {@link ComponentObserverLocalEvents}
+ * Events of the element observer.
  */
-export const componentObserverLocalEvents: ComponentObserverLocalEvents = <const>{
+export const componentObserverLocalEvents = <const>{
+	/**
+	 * The element has entered the viewport.
+	 */
 	elementEnter: 'elementEnter'
 };
 
 export const componentEvents = <const>{
 	...componentDataLocalEvents,
 	...componentRenderLocalEvents,
-	...componentLocalEvents,
+	...componentLifecycleEvents,
 	...componentObserverLocalEvents
 };
 
 /**
- * {@link RenderGuardRejectionReason}
+ * Reasons for rejecting a render operation.
  */
-export const renderGuardRejectionReason: RenderGuardRejectionReason = <const>{
+export const renderGuardRejectionReason = <const>{
+	/**
+	 * Insufficient data to perform a render (e.g., `data.length` is 5 and `chunkSize` is 12).
+	 */
 	notEnoughData: 'notEnoughData',
+
+	/**
+	 * No data available to perform a render (e.g., `data.length` is 0).
+	 */
 	noData: 'noData',
+
+	/**
+	 * All rendering operations have been completed.
+	 */
 	done: 'done',
+
+	/**
+	 * The client returns `false` in `shouldPerformDataRender`.
+	 */
 	noPermission: 'noPermission'
 };
 

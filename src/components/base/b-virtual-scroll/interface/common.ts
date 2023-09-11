@@ -7,7 +7,10 @@
  */
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
+
+import type { renderGuardRejectionReason } from 'components/base/b-virtual-scroll/b-virtual-scroll';
 import type { VirtualScrollState } from 'components/base/b-virtual-scroll/interface/component';
+
 import type { UnsafeIData } from 'components/super/i-data/i-data';
 
 /**
@@ -46,29 +49,9 @@ export interface RenderGuardResult {
 }
 
 /**
- * Reasons for rejecting a render operation.
+ * {@link renderGuardRejectionReason}
  */
-export interface RenderGuardRejectionReason {
-	/**
-	 * Insufficient data to perform a render (e.g., `data.length` is 5 and `chunkSize` is 12).
-	 */
-	notEnoughData: 'notEnoughData';
-
-	/**
-	 * No data available to perform a render (e.g., `data.length` is 0).
-	 */
-	noData: 'noData';
-
-	/**
-	 * All rendering operations have been completed.
-	 */
-	done: 'done';
-
-	/**
-	 * The client returns `false` in `shouldPerformDataRender`.
-	 */
-	noPermission: 'noPermission';
-}
+export type RenderGuardRejectionReason = typeof renderGuardRejectionReason;
 
 /**
  * A function used to query the client about whether to perform a specific action or not.
