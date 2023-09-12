@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added `verbose` flag to `build` config `config`
+* Warnings about deprecated design system fields are hidden under the `verbose` flag `build/stylus/ds`
+
 ## v4.0.0-beta.19 (2023-09-08)
 
 #### :rocket: New Feature

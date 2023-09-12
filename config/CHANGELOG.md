@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added `verbose` flag to `build` config
+
 ## v4.0.0-beta.13 (2023-08-24)
 
 #### :rocker: New Feature
