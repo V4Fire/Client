@@ -17,6 +17,22 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added the possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
 
+## v4.0.0-beta.19 (2023-09-08)
+
+#### :rocket: New Feature
+
+* Added possibility to change icons' color according to the selected theme `components/global/g-def`
+
+#### :house: Internal
+
+* Discard the function constructor in prelude
+
+## v4.0.0-beta.18 (2023-09-08)
+
+#### :rocket: New Feature
+
+* Added a new parameter `setup` `core/init`
+
 ## v4.0.0-beta.17 (2023-09-06)
 
 #### :bug: Bug Fix
@@ -33,7 +49,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Exported `isCI` from `tests/config/super`
 * Set `workers: 1` and `fullyParallel: false` on CI in `tests/config/super`.
-See https://github.com/microsoft/playwright/issues/26739
+  See https://github.com/microsoft/playwright/issues/26739.
 
 ## v4.0.0-beta.15 (2023-09-05)
 

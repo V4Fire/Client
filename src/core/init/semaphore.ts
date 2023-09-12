@@ -9,6 +9,7 @@
 import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
 import { set } from 'core/component/state';
+
 import Component, {
 
 	app,
@@ -51,8 +52,10 @@ function createAppInitializer() {
 			appId: CanUndef<string>;
 
 		const
-			state = Object.reject(opts, ['targetToMount']),
+			state = Object.reject(opts, ['targetToMount', 'setup']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
+
+		opts.setup?.(Object.cast(rootComponentParams));
 
 		Object.entries(state).forEach(([key, value]) => {
 			set(key, value);

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.?.? (2023-??-??)
+
+#### :house: Internal
+
+* Discard the function constructor
+
 ## v3.15.3 (2021-12-28)
 
 #### :bug: Bug Fix
