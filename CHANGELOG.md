@@ -16,15 +16,42 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added the possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
-* Added the possibility to change icons color according to the selected theme `components/global/g-def`
 * Added the possibility to specify paths with alias to `@context` directive `build/monic`
 * Added the possibility to load icons from design-system `components/directives/icon`
 
-## v4.0.0-beta.?? (2023-09-??)
+## v4.0.0-beta.19 (2023-09-08)
+
+#### :rocket: New Feature
+
+* Added possibility to change icons' color according to the selected theme `components/global/g-def`
+
+#### :house: Internal
+
+* Discard the function constructor in prelude
+
+## v4.0.0-beta.18 (2023-09-08)
+
+#### :rocket: New Feature
+
+* Added a new parameter `setup` `core/init`
+
+## v4.0.0-beta.17 (2023-09-06)
+
+#### :bug: Bug Fix
+
+* Added a special element for teleports `iStaticPage`
+
+## v4.0.0-beta.16 (2023-09-06)
 
 #### :bug: Bug Fix
 
 * Fixed working in SSR `core/component/directives/render`
+
+#### :nail_care: Polish
+
+* Exported `isCI` from `tests/config/super`
+* Set `workers: 1` and `fullyParallel: false` on CI in `tests/config/super`.
+  See https://github.com/microsoft/playwright/issues/26739.
 
 ## v4.0.0-beta.15 (2023-09-05)
 

@@ -1032,7 +1032,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	snakeskin() {
 		const snakeskinVars = {
 			...include('build/snakeskin/vars'),
-			teleport: this.webpack.storybook() ? '#storybook-root' : 'body'
+			teleport: this.webpack.storybook() ? '#storybook-root' : '#teleports'
 		};
 
 		return {
