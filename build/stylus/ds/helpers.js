@@ -316,7 +316,7 @@ function checkRequiredThemes({detectUserPreferences, themesList}) {
 				checkPrefersColorScheme(v, themesList);
 				break;
 			default:
-				throw new Error(`Unknown parameter "${k}" in "detectUserPreferences"`)
+				throw new Error(`Unknown parameter "${k}" in "detectUserPreferences"`);
 		}
 	});
 }
