@@ -220,7 +220,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				type: 'boolean',
 				default: def
 			});
-		}
+		},
+
+		/**
+		 * Controls the level of verbosity in the project's build output.
+		 * This parameter is useful for users who want to have more detailed information about the project's build
+		 *
+		 * @cli verbose
+		 * @env VERBOSE
+		 */
+		verbose: o('verbose', {
+			env: true,
+			default: false
+		})
 	},
 
 	/**
