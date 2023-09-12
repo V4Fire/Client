@@ -8,9 +8,11 @@
 
 /* eslint-disable camelcase,no-new-func */
 
+import global from 'core/shims/global';
+
 try {
 	const
-		ctx = Function('return this')();
+		ctx = global;
 
 	__webpack_nonce__ = ctx[CSP_NONCE_STORE];
 	__webpack_public_path__ = ctx.PUBLIC_PATH ?? PUBLIC_PATH;

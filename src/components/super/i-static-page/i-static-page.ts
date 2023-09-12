@@ -32,7 +32,7 @@ import {
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
 
-import iPage, { component, field, system, computed, watch } from 'components/super/i-page/i-page';
+import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
 
 import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
@@ -363,6 +363,16 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	protected getRootModKey(name: string, component: iBlock = this): string {
 		return `${(component.globalName ?? component.componentName).dasherize()}_${name.camelize(false)}`;
+	}
+
+	/**
+	 * Initializes the slot for component teleports
+	 */
+	@hook('beforeCreate')
+	protected createTeleportsSlot(): void {
+		if (!SSR) {
+			document.body.append(Object.assign(document.createElement('div'), {id: 'teleports'}));
+		}
 	}
 
 	/**
