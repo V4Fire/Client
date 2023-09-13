@@ -14,6 +14,7 @@ Changelog
 #### :rocket: New Feature
 
 * Added `verbose` flag to `build` config
+* Added `detectUserPreferences` parameter to `theme` config
 
 ## v4.0.0-beta.13 (2023-08-24)
 

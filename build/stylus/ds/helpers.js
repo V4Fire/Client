@@ -24,6 +24,12 @@ const
 const
 	{verbose} = config.build;
 
+const {
+	dsNotIncludedRequiredThemes,
+	dsNotIncludedDarkTheme,
+	dsNotIncludedLightTheme
+} = include('build/stylus/ds/const');
+
 /**
  * Returns a name of a CSS variable, created from the specified path with a dot delimiter
  *
@@ -108,47 +114,21 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 		variables = Object.create({map: {}});
 
 	const
-		builtinFnRgxp = /^[a-z-_]+\(.*\)$/,
-		colorHEXRgxp = /^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/,
+		builtinFnRgxp = /^[_a-z-]+\(.*\)$/,
+		colorHEXRgxp = /^#(?=[\dA-Fa-f]*$)(?:.{3,4}|.{6}|.{8})$/,
 		unitRgxp = /(-?\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/;
 
-	const
-		data = parseRawDS(ds);
-
+	const data = parseRawDS(ds);
 	return {data, variables};
 
-	/**
-	 * @param {Array<string>} keys
-	 * @param {string} theme
-	 * @returns {Array<string>}
-	 */
 	function getVariablePath(keys, theme) {
 		return keys.filter((field) => !['theme', theme].includes(field));
 	}
 
-	/**
-	 * Creates an array of key chunks from the passed head and tail
-	 *
-	 * @param {Array} [head]
-	 * @param {string|number} tail
-	 * @returns {Array<string>}
-	 *
-	 * @example
-	 * ```js
-	 * createArrayFrom(['deep', 'path', 'to'], 'variable', 'name') // ['deep', 'path', 'to', 'variable', 'name']
-	 * ```
-	 */
 	function createArrayFrom(head, ...tail) {
 		return [...(head || []), ...tail];
 	}
 
-	/**
-	 * @param {object} obj
-	 * @param {(object|Array)} [res]
-	 * @param {Array<string>} [path]
-	 * @param {(string|boolean)} [theme]
-	 * @returns {object}
-	 */
 	function parseRawDS(obj, res, path, theme) {
 		if (!res) {
 			res = {};
@@ -300,10 +280,69 @@ function checkDeprecated(ds, path) {
 	return true;
 }
 
+/**
+ * Checks that the design system provides all required themes
+ *
+ * @param {object} opts
+ * @param {object} opts.detectUserPreferences - an object containing user preferences configuration to check
+ * @param {string[]} opts.themesList - an array of themes included to the build
+ */
+function checkRequiredThemes({detectUserPreferences, themesList}) {
+	Object.forEach(detectUserPreferences, (v, k) => {
+		switch (k) {
+			case 'prefersColorScheme':
+				checkPrefersColorScheme(v, themesList);
+				break;
+
+			default:
+				throw new Error(`A parameter with the name "${k}" is unknown in the "detectUserPreferences" context`);
+		}
+	});
+}
+
+/**
+ * Checks if the design system provides "dark" and "light" themes to use the `prefersColorScheme` parameter
+ *
+ * @param {object} prefersColorScheme
+ * @param {boolean} prefersColorScheme.enabled - a flag indicating whether the detecting of
+ *   the user's preferred color scheme is enabled
+ *
+ * @param {string} prefersColorScheme.aliases.dark - an alias for the "dark" theme
+ * @param {string} prefersColorScheme.aliases.light - an alias for the "light" theme
+ * @param {string[]} themesList - an array of themes included to the build
+ *
+ * @throws {Error}
+ */
+function checkPrefersColorScheme(
+	{
+		enabled,
+		aliases: {dark, light} = {dark: 'dark', light: 'light'}
+	},
+
+	themesList
+) {
+	if (!enabled) {
+		return;
+	}
+
+	if (!themesList?.includes(dark) && !themesList?.includes(light)) {
+		throw new Error(dsNotIncludedRequiredThemes(dark, light));
+	}
+
+	if (!themesList?.includes(dark)) {
+		throw new Error(dsNotIncludedDarkTheme(dark));
+	}
+
+	if (!themesList?.includes(light)) {
+		throw new Error(dsNotIncludedLightTheme(light));
+	}
+}
+
 module.exports = {
 	saveVariable,
 	checkDeprecated,
 	getVariableName,
 	createDesignSystem,
-	getThemedPathChunks
+	getThemedPathChunks,
+	checkRequiredThemes
 };
