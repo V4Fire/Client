@@ -51,7 +51,7 @@ test.describe('<b-slider> auto slide', () => {
 				});
 			});
 
-			test('should automatically move to the next slide when `autoSlideInterval` is positive', async ({page}) => {
+			test('should automatically move to the next slide when `autoSlideInterval` is positive', async () => {
 				test.expect(await current(slider)).toBe(0);
 
 				const timeStart = new Date().getTime();

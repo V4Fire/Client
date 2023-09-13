@@ -8,7 +8,7 @@
 
 export const
 	sliderAsyncGroup = 'b-slider',
-	autoSlidingAsyncGroup = `${sliderAsyncGroup}:autoSliding`
+	autoSlidingAsyncGroup = `${sliderAsyncGroup}:autoSliding`;
 
 export const alignTypes = {
 	start: true,

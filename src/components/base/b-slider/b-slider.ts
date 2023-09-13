@@ -56,12 +56,6 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	};
 
 	/**
-	 * The number of slides in the slider
-	 */
-	@system()
-	length: number = 0;
-
-	/**
 	 * A link to the content node
 	 */
 	get content(): CanUndef<HTMLElement> {
@@ -142,6 +136,12 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 				return 0;
 		}
 	}
+
+	/**
+	 * The number of slides in the slider
+	 */
+	@system()
+	protected length: number = 0;
 
 	/** {@link iItems.items} */
 	@field((o) => o.sync.link())
@@ -324,7 +324,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Performs auto slide change.
+	 * Performs auto slide change
 	 */
 	protected async performAutoSlide(): Promise<void> {
 		const
