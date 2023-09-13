@@ -224,7 +224,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Controls the level of verbosity in the project's build output.
-		 * This parameter is useful for users who want to have more detailed information about the project's build
+		 * This parameter is useful for users who want to have more detailed information about the project's build.
 		 *
 		 * @cli verbose
 		 * @env VERBOSE
