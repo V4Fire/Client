@@ -280,8 +280,8 @@ function checkDeprecated(ds, path) {
  * Checks that ds provides all required themes
  *
  * @param {object} opts
- * @param {object} opts.detectUserPreferences
- * @param {string[]} opts.themesList
+ * @param {object} opts.detectUserPreferences - an object containing user preferences configuration to check
+ * @param {string[]} opts.themesList - an array of themes included to the build
  */
 function checkRequiredThemes({detectUserPreferences, themesList}) {
 	Object.forEach(detectUserPreferences, (v, k) => {
@@ -300,10 +300,10 @@ function checkRequiredThemes({detectUserPreferences, themesList}) {
  * Checks if the design system provides "dark" and "light" themes to use the "prefersColorScheme" parameter
  *
  * @param {object} prefersColorScheme
- * @param {boolean} prefersColorScheme.enabled
- * @param {string} prefersColorScheme.aliases.dark
- * @param {string} prefersColorScheme.aliases.light
- * @param {string[]} themesList
+ * @param {boolean} prefersColorScheme.enabled - a flag indicating whether the detecting of user preferred color scheme is enabled.
+ * @param {string} prefersColorScheme.aliases.dark - the alias for the "dark" theme
+ * @param {string} prefersColorScheme.aliases.light - The alias for the "light" theme
+ * @param {string[]} themesList - an array of themes included to the build
  */
 function checkPrefersColorScheme({enabled, aliases: {dark, light} = {dark: 'dark', light: 'light'}}, themesList) {
 	if (!enabled) {
