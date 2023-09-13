@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added the possibility to detect the theme based on user system settings
+* Added possibility to detect the theme based on user system settings
 
 ## v3.0.0-rc.164 (2021-03-22)
 

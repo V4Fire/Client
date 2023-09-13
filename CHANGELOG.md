@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added the possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
+* Added possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
 
 ## v4.0.0-beta.19 (2023-09-08)
 
