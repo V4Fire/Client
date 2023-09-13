@@ -35,6 +35,7 @@ import {
 
 import iSliderProps from 'components/base/b-slider/props';
 import type { Mode, SlideRect, SlideDirection } from 'components/base/b-slider/interface';
+import { autoSlidingAsyncGroup } from 'components/base/b-slider/const';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-slider/interface';
@@ -47,18 +48,18 @@ interface bSlider extends Trait<typeof iObserveDOM> {}
 @component()
 @derive(iObserveDOM)
 class bSlider extends iSliderProps implements iObserveDOM, iItems {
-	/**
-	 * The number of slides in the slider
-	 */
-	@system()
-	length: number = 0;
-
 	static override readonly mods: ModsDecl = {
 		swipe: [
 			'true',
 			'false'
 		]
 	};
+
+	/**
+	 * The number of slides in the slider
+	 */
+	@system()
+	length: number = 0;
 
 	/**
 	 * A link to the content node
@@ -261,12 +262,13 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		if (length - 1 >= index) {
 			this.current = index;
 
-			if (!animate) {
+			if (animate) {
+				await this.removeMod('swipe');
+			} else {
 				await this.setMod('swipe', true);
 			}
 
 			this.syncState();
-			this.performSliderMove();
 
 			return true;
 		}
@@ -324,72 +326,63 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	/**
 	 * Performs auto slide change.
 	 */
-	protected performAutoSlide(): void {
-		void this.removeMod('swipe');
-		this.moveSlide(1);
-		this.syncState();
-		void this.removeMod('swipe');
-	}
+	protected async performAutoSlide(): Promise<void> {
+		const
+			{current, length} = this;
 
-	/**
-	 * Repeats auto slide changes at a given interval.
-	 */
-	protected repeatAutoSlide(): void {
-		this.async.setInterval(
-			() => this.performAutoSlide(),
-			this.autoSlideInterval,
-			{label: $$.autoSlide}
-		);
+		if (current === length - 1) {
+			await this.slideTo(0, true);
+
+		} else {
+			await this.slideTo(current + 1, true);
+		}
 	}
 
 	/**
 	 * Resets auto slide moves
 	 * @param firstInterval - an interval (in ms) before first auto slide change.
 	 */
-	protected resetAutoSlide(firstInterval: number): void {
-		this.clearAutoSlide();
+	protected initAutoSliding(firstInterval: number = this.autoSlideInterval): void {
+		this.stopAutoSliding();
 
 		if (!this.isSlideMode || !Number.isPositive(firstInterval)) {
 			return;
 		}
 
 		this.async.setTimeout(
-			() => {
-				this.performAutoSlide();
-				this.repeatAutoSlide();
+			async () => {
+				await this.performAutoSlide();
+
+				this.async.setInterval(
+					() => this.performAutoSlide(),
+					this.autoSlideInterval,
+					{label: $$.autoSlide, group: autoSlidingAsyncGroup, join: false}
+				);
 			},
 			firstInterval,
-			{label: $$.autoSlideFirst}
-		);
-	}
-
-	/**
-	 * Synchronizes auto slide moves by (re-)setting the corresponding interval.
-	 */
-	@hook('mounted')
-	@wait('ready')
-	@watch(['db', 'autoSlideInterval', 'mode'])
-	protected syncAutoSlide(): void {
-		this.resetAutoSlide(this.autoSlideInterval);
-	}
-
-	/**
-	 * Resumes auto slide moves. First auto slide move will occur in
-	 * `Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay)`
-	 */
-	protected resumeAutoSlide(): void {
-		this.resetAutoSlide(
-			Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay)
+			{label: $$.autoSlideFirst, group: autoSlidingAsyncGroup, join: false}
 		);
 	}
 
 	/**
 	 * Clears auto slide moves.
 	 */
-	@hook('beforeDestroy')
-	protected clearAutoSlide(): void {
-		this.async.clearTimeout({label: $$.autoSlideFirst});
-		this.async.clearInterval({label: $$.autoSlide});
+	protected stopAutoSliding(): void {
+		this.async.clearAll({group: new RegExp(autoSlidingAsyncGroup)});
+	}
+
+	/**
+	 * Synchronizes auto slide moves by (re-)setting the corresponding interval.
+	 *
+	 * Waiting for `ready` state because slides may be loaded via data provider.
+	 * Watching `db` for possible slide changes and `mode` because
+	 * auto slide only works in `slide` mode.
+	 */
+	@hook('mounted')
+	@wait('ready')
+	@watch(['db', 'autoSlideInterval', 'mode'])
+	protected syncAutoSlide(): void {
+		this.initAutoSliding(this.autoSlideInterval);
 	}
 
 	/**
@@ -483,7 +476,6 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 			});
 		}
 
-		void this.setMod('swipe', true);
 		this.performSliderMove();
 	}
 
@@ -559,7 +551,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
-		this.clearAutoSlide();
+		this.stopAutoSliding();
 		this.scrolling = false;
 
 		const
@@ -669,7 +661,8 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
-		this.resumeAutoSlide();
+
+		this.initAutoSliding(Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay));
 	}
 }
 
