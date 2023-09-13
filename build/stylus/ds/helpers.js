@@ -304,7 +304,9 @@ function checkRequiredThemes({detectUserPreferences, themesList}) {
  * Checks if the design system provides "dark" and "light" themes to use the "prefersColorScheme" parameter
  *
  * @param {object} prefersColorScheme
- * @param {boolean} prefersColorScheme.enabled - a flag indicating whether the detecting of user preferred color scheme is enabled.
+ * @param {boolean} prefersColorScheme.enabled - a flag indicating whether the detecting of
+ * user preferred color scheme is enabled
+ *
  * @param {string} prefersColorScheme.aliases.dark - the alias for the "dark" theme
  * @param {string} prefersColorScheme.aliases.light - The alias for the "light" theme
  * @param {string[]} themesList - an array of themes included to the build
