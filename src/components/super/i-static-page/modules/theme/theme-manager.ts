@@ -57,9 +57,7 @@ export default class ThemeManager extends Friend {
 				lightTheme = Object.get<string>(DETECT_USER_PREFERENCES, 'prefersColorScheme.aliases.light') ?? 'light';
 
 			if (prefersColorSchemeEnabled) {
-				const
-					darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
-
+				const darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
 				theme = darkThemeMq.matches ? darkTheme : lightTheme;
 
 				this.initThemeListener(darkThemeMq, prefersColorSchemeEnabled, darkTheme, lightTheme);
@@ -107,7 +105,7 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Initialises event listener on change system appearance
+	 * Initializes an event listener for changes in system appearance
 	 *
 	 * @param mq
 	 * @param enabled
