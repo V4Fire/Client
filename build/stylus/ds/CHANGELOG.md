@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Warnings about deprecated design system fields are hidden under the `verbose` flag
+
 ## v3.56.0 (2023-08-18)
 
 #### :rocket: New Feature
