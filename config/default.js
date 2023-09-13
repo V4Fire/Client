@@ -975,10 +975,12 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Map of user preference parameters that will be automatically detected based on system settings
+		 * Returns map of user preference parameters that will be automatically detected based on system settings
 		 *
 		 * @cli detect-user-preferences
 		 * @env DETECT_USER_PREFERENCES
+		 *
+		 * @returns {object}
 		 *
 		 * @default {prefersColorScheme: {enabled: false}}
 		 *
@@ -1000,14 +1002,16 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * }
 		 * ```
 		 */
-		detectUserPreferences: o('detect-user-preferences', {
-			env: true,
-			default: {
-				prefersColorScheme: {
-					enabled: false
+		detectUserPreferences() {
+			return o('detect-user-preferences', {
+				env: true,
+				default: {
+					prefersColorScheme: {
+						enabled: false
+					}
 				}
-			}
-		}),
+			})
+		},
 
 		/**
 		 * Returns the attribute name to set the topic value to the root element

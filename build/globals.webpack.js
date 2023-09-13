@@ -79,7 +79,7 @@ module.exports = {
 		s(getThemes(getDS(), config.theme.include() || [config.theme.default()])) :
 		null,
 
-	DETECT_USER_PREFERENCES: s(config.theme.detectUserPreferences),
+	DETECT_USER_PREFERENCES: s(config.theme.detectUserPreferences()),
 
 	DS: runtime.passDesignSystem && pzlr.designSystem ?
 		s(getDS()) :

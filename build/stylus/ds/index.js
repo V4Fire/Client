@@ -24,7 +24,7 @@ const
 const
 	theme = config.theme.default(),
 	includeThemes = config.theme.include(),
-	{detectUserPreferences} = config.theme,
+	detectUserPreferences = config.theme.detectUserPreferences(),
 	{'ds/use-css-vars': useCSSVarsInRuntime} = config.runtime();
 
 let
