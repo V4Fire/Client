@@ -11,10 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-beta.?? (2023-??-??)
 
 #### :rocket: New Feature
 
+* Added `verbose` flag to `build` config `config`
+* Warnings about deprecated design system fields are hidden under the `verbose` flag `build/stylus/ds`
 * Added possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
 * Added possibility to specify paths with alias to `@context` directive `build/monic`
 * Added possibility to load icons from design-system `components/directives/icon`

@@ -18,7 +18,11 @@
  */
 
 const
-	$C = require('collection.js');
+	$C = require('collection.js'),
+	config = require('@config/config');
+
+const
+	{verbose} = config.build;
 
 const {
 	dsNotIncludedRequiredThemes,
@@ -231,7 +235,7 @@ function getThemedPathChunks(field, theme, isFieldThemed) {
  * @returns {boolean}
  */
 function checkDeprecated(ds, path) {
-	if (!Object.isDictionary($C(ds).get('meta.deprecated'))) {
+	if (!Object.isDictionary($C(ds).get('meta.deprecated')) || !verbose) {
 		return false;
 	}
 
