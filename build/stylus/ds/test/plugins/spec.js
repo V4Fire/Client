@@ -65,7 +65,7 @@ describe('build/stylus/plugins', () => {
 		});
 	});
 
-	describe('creating ds with "detectUserPreferences" param', () => {
+	describe('creating the design system with the `detectUserPreferences` param', () => {
 		const
 			stylus = require('stylus'),
 			detectUserPreferences = {

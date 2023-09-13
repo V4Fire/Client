@@ -23,19 +23,19 @@ const
  * Returns a function to register Stylus plugins by the specified options
  *
  * @param {object} opts
- * @param {DesignSystem} opts.ds - design system object prepared to use with Stylus
- * @param {object} opts.cssVariables - dictionary of CSS variables
+ * @param {DesignSystem} opts.ds - the design system object prepared to use with Stylus
+ * @param {object} opts.cssVariables - a dictionary of CSS variables
  * @param {boolean} [opts.useCSSVarsInRuntime] - true, if the design system object values provided
- * to style files as css-variables
+ *   to style files as css-variables
  *
- * @param {object} [opts.detectUserPreferences] - map of user preference parameters that will be automatically
- * detected based on system settings
+ * @param {object} [opts.detectUserPreferences] - a map of user preference parameters that
+ *   will be automatically detected based on system settings.
  *
- * @param {string} [opts.theme] - current theme value
- * @param {(Array<string>|boolean)} [opts.includeThemes] - list of themes to include or
- * `true` (will include all available themes)
+ * @param {string} [opts.theme] - the current theme value
+ * @param {(Array<string>|boolean)} [opts.includeThemes] - a list of themes to include or
+ *   `true` (will include all available themes)
  *
- * @param {object} [opts.stylus] - link to a Stylus package instance
+ * @param {object} [opts.stylus] - a link to the Stylus package instance
  * @returns {Function}
  */
 module.exports = function getPlugins({
@@ -105,6 +105,7 @@ module.exports = function getPlugins({
 		 * //       }
 		 * //     }
 		 * //   }
+		 * // }
 		 *
 		 * // Otherwise
 		 * //
@@ -120,6 +121,7 @@ module.exports = function getPlugins({
 		 * //       }
 		 * //     }
 		 * //   }
+		 * // }
 		 * ```
 		 */
 		api.define('injector', ({string}) => {

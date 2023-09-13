@@ -281,7 +281,7 @@ function checkDeprecated(ds, path) {
 }
 
 /**
- * Checks that ds provides all required themes
+ * Checks that the design system provides all required themes
  *
  * @param {object} opts
  * @param {object} opts.detectUserPreferences - an object containing user preferences configuration to check
@@ -295,23 +295,32 @@ function checkRequiredThemes({detectUserPreferences, themesList}) {
 				break;
 
 			default:
-				throw new Error(`Unknown parameter "${k}" in "detectUserPreferences"`);
+				throw new Error(`A parameter with the name "${k}" is unknown in the "detectUserPreferences" context`);
 		}
 	});
 }
 
 /**
- * Checks if the design system provides "dark" and "light" themes to use the "prefersColorScheme" parameter
+ * Checks if the design system provides "dark" and "light" themes to use the `prefersColorScheme` parameter
  *
  * @param {object} prefersColorScheme
  * @param {boolean} prefersColorScheme.enabled - a flag indicating whether the detecting of
- * user preferred color scheme is enabled
+ *   the user's preferred color scheme is enabled
  *
- * @param {string} prefersColorScheme.aliases.dark - the alias for the "dark" theme
- * @param {string} prefersColorScheme.aliases.light - The alias for the "light" theme
+ * @param {string} prefersColorScheme.aliases.dark - an alias for the "dark" theme
+ * @param {string} prefersColorScheme.aliases.light - an alias for the "light" theme
  * @param {string[]} themesList - an array of themes included to the build
+ *
+ * @throws {Error}
  */
-function checkPrefersColorScheme({enabled, aliases: {dark, light} = {dark: 'dark', light: 'light'}}, themesList) {
+function checkPrefersColorScheme(
+	{
+		enabled,
+		aliases: {dark, light} = {dark: 'dark', light: 'light'}
+	},
+
+	themesList
+) {
 	if (!enabled) {
 		return;
 	}
