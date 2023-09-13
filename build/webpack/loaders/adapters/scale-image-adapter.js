@@ -22,7 +22,7 @@ class Adapter {
 	/**
 	 * Returns metadata of the image
 	 *
-	 * @returns {sharp.Metadata}
+	 * @returns {import('@v4fire/storybook-framework-webpack5').Metadata}
 	 * @see https://github.com/dazuaz/responsive-loader/tree/master#writing-your-own-adapter
 	 */
 	metadata() {
@@ -33,7 +33,7 @@ class Adapter {
 	 * Scales the image to the provided amount of its original size and converts to the specified formats
 	 *
 	 * @param {{width: number, mime: string, options: object}} data - information and the image and provided options
-	 * @returns Promise<{data: Buffer, width: number, height: number}>
+	 * @returns {Promise<{data: Buffer, width: number, height: number}>}
 	 * @see https://github.com/dazuaz/responsive-loader/tree/master#writing-your-own-adapter
 	 */
 	resize({mime, width: scaleBy, options: {quality, sizes}}) {
@@ -65,12 +65,12 @@ class Adapter {
 	/**
 	 * Scales the image by the provided amount of its original size
 	 *
-	 * @param {sharp.Sharp} image
+	 * @param {import('sharp').Sharp} image
 	 * @param {number} width
 	 * @param {number} height
 	 * @param {number} scaleBy
 	 * @param {number} maxScaleSize
-	 * @returns {sharp.Sharp}
+	 * @returns {import('sharp').Sharp}
 	 */
 	scale(image, width, height, scaleBy, maxScaleSize) {
 		if (scaleBy === maxScaleSize) {
@@ -90,10 +90,10 @@ class Adapter {
 	/**
 	 * Converts the original image to another format
 	 *
-	 * @param {sharp.Sharp} image
+	 * @param {import('sharp').Sharp} image
 	 * @param {string} mimeType
 	 * @param {number} quality
-	 * @returns {sharp.Sharp}
+	 * @returns {import('sharp').Sharp}
 	 */
 	convert(image, mimeType, quality) {
 		const formatMethods = {
