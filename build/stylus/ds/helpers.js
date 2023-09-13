@@ -18,7 +18,11 @@
  */
 
 const
-	$C = require('collection.js');
+	$C = require('collection.js'),
+	config = require('@config/config');
+
+const
+	{verbose} = config.build;
 
 /**
  * Returns a name of a CSS variable, created from the specified path with a dot delimiter
@@ -251,7 +255,7 @@ function getThemedPathChunks(field, theme, isFieldThemed) {
  * @returns {boolean}
  */
 function checkDeprecated(ds, path) {
-	if (!Object.isDictionary($C(ds).get('meta.deprecated'))) {
+	if (!Object.isDictionary($C(ds).get('meta.deprecated')) || !verbose) {
 		return false;
 	}
 
