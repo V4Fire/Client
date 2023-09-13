@@ -7,7 +7,7 @@
  */
 
 import type { VNode } from 'core/component/engines';
-import type { ComponentInterface } from 'components/super/i-block';
+import type { ComponentInterface } from 'components/super/i-block/i-block';
 
 import type Friend from 'components/friends/friend';
 import type { RenderFactory, RenderFn } from 'components/friends/vdom/interface';

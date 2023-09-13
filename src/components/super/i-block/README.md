@@ -98,6 +98,13 @@ Refer to their respective module documentation for more details on each property
 
 ## Props
 
+### [componentIdProp]
+
+The unique component identifier.
+The value for this prop is automatically generated during the build process,
+but it can also be manually specified.
+If the prop is not provided, the ID will be generated at runtime.
+
 ### [globalName]
 
 The unique or global name of the component.
@@ -170,6 +177,17 @@ class bExample extends iBlock {
     {name: 'b-input', load: () => import('components/form/b-input')}
   ];
 }
+```
+
+### [wait]
+
+A promise that will block the rendering of the component until it is resolved.
+This should be used together with [Suspense](https://vuejs.org/guide/built-ins/suspense.html#async-components) and
+non-functional components.
+
+```
+< suspense
+  < b-popup :wait = promisifyOnce('showPopup')
 ```
 
 ### [remoteProvider = `false`]
@@ -456,7 +474,7 @@ Generates a slot declaration by the specified parameters.
         :value = el.preIcon
       .
 
-      < @b-icon v-else | :value = el.preIcon
+      < b-icon v-else | :value = el.preIcon
 ```
 
 #### appendToRootClasses

@@ -50,6 +50,7 @@ const
 
 @component({
 	functional: {
+		wait: undefined,
 		dataProvider: undefined
 	}
 })
@@ -434,18 +435,18 @@ export default class bForm extends iFormProps implements iVisible {
 	}
 
 	/**
-	 * Returns the value to send from the specified element
-	 * @param el
+	 * Returns the value that should be sent from the specified form component
+	 * @param component
 	 */
-	protected async getElementValueToSubmit(el: iInput): Promise<unknown> {
-		if (!Object.isTruly(el.name)) {
+	protected async getElementValueToSubmit(component: iInput): Promise<unknown> {
+		if (!Object.isTruly(component.name)) {
 			return undefined;
 		}
 
 		let
-			val: unknown = await el.groupFormValue;
+			val: unknown = await component.groupFormValue;
 
-		for (const converter of el.formConverters) {
+		for (const converter of component.formConverters) {
 			const
 				newVal = converter(val, this);
 
@@ -461,7 +462,7 @@ export default class bForm extends iFormProps implements iVisible {
 	}
 
 	/**
-	 * Toggles the progress/enable statuses of related form controls
+	 * Toggles the progress/enable statuses of the related form controls
 	 * @param disable
 	 */
 	protected async toggleControls(disable: boolean): Promise<void> {

@@ -32,6 +32,7 @@ export default async function initApp(
 	void loadModule(import('core/init/state'));
 	void loadModule(import('core/init/abt'));
 	void loadModule(import('core/init/prefetch'));
+	void loadModule(import('core/init/hydrated-route'));
 
 	const createApp = await semaphore('');
 	return createApp(rootComponent, opts);

@@ -4,7 +4,9 @@ This module provides a class for low-level interaction with a component's VDOM t
 
 ## How to include this module in your component?
 
-By default, any component that inherits from [[iBlock]] has the vdom property. However, to use the module methods, you need to attach them explicitly to enable tree-shake code optimizations. Simply add the necessary import declaration within your component file.
+By default, any component that inherits from [[iBlock]] has the `vdom` property.
+However, to use the module methods, you need to attach them explicitly to enable tree-shake code optimizations.
+Simply add the necessary import declaration within your component file.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -33,7 +35,8 @@ console.log(this.vdom.closest('bWrapper'));
 
 ### findElement
 
-Searches for a VNode element by the specified element name from another VNode and context. The function returns the found VNode or undefined.
+Searches for a VNode element by the specified element name from another VNode and context.
+The function returns the found VNode or undefined.
 
 ```js
 const vnode = this.vdom.create('div', {

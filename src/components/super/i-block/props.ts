@@ -18,6 +18,9 @@ import type { TransitionMethod } from 'components/base/b-router/interface';
 
 @component()
 export default abstract class iBlockProps extends ComponentInterface {
+	@prop({type: String, required: false})
+	override readonly componentIdProp?: string;
+
 	/**
 	 * The unique or global name of the component.
 	 * Used to synchronize component data with various external storages.
@@ -106,6 +109,25 @@ export default abstract class iBlockProps extends ComponentInterface {
 	})
 
 	readonly dependenciesProp?: Iterable<Module>;
+
+	/**
+	 * A promise that will block the rendering of the component until it is resolved.
+	 * This should be used together with Suspense and non-functional components.
+	 *
+	 * @see https://vuejs.org/guide/built-ins/suspense.html#async-components
+	 *
+	 * @example
+	 * ```
+	 * < suspense
+	 *   < b-popup :wait = promisifyOnce('showPopup')
+	 * ```
+	 */
+	@prop({
+		validator: Object.isPromiseLike,
+		required: false
+	})
+
+	readonly wait?: Promise<unknown>;
 
 	/**
 	 * If set to true, the component is marked as a removed provider.
@@ -286,7 +308,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * Whether to add classes to the component markup with its unique identifier.
 	 * For functional components, the value of this parameter can only be false.
 	 */
-	@prop(Boolean)
+	@prop({type: Boolean, forceDefault: true})
 	readonly renderComponentId: boolean = true;
 
 	@prop({type: Function, required: false})

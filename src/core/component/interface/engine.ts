@@ -13,6 +13,7 @@ import type {
 	Static,
 	Comment,
 
+	Suspense,
 	Fragment,
 	Teleport,
 
@@ -69,6 +70,8 @@ import type {
 
 import type { ComponentInterface } from 'core/component/interface';
 
+export type { SetupContext } from 'core/component/engines';
+
 export interface RenderEngine<T extends object = object> {
 	supports: RenderEngineFeatures;
 	proxyGetters: ProxyGetters<T>;
@@ -76,7 +79,7 @@ export interface RenderEngine<T extends object = object> {
 }
 
 export interface RenderEngineFeatures {
-	functional: boolean;
+
 }
 
 export type ProxyGetters<T extends object = object> = Record<ProxyGetterType, ProxyGetter<T>>;
@@ -103,6 +106,7 @@ export interface RenderAPI {
 	Static: typeof Static;
 	Comment: typeof Comment;
 
+	Suspense: typeof Suspense;
 	Fragment: typeof Fragment;
 	Teleport: typeof Teleport;
 

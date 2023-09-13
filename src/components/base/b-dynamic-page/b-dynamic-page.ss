@@ -30,6 +30,7 @@
 
 				:is = page |
 				:dispatching = true |
+				:renderComponentId = true |
 
 				${attrs}
 			.

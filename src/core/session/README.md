@@ -1,21 +1,25 @@
 # core/session
 
-This module provides an API to work with a user session. The API contains functions to authorize/unauthorize,
-compare different sessions and broadcast session events.
+This module offers an API for managing user sessions.
+The API includes functions for authorizing/unauthorizing users, comparing different sessions,
+and broadcasting session events.
 
-The way how to store and extract the active session is encapsulated within engines. By default, the session is stored within a
-browser local storage and is attached to requests via the `Authorization` header. You can add a new engine to use.
-Just put it in the `engine` folder and export it from `engines/index.ts`.
+The storage and retrieval of active sessions are handled by engines, which encapsulate the functionality.
+By default, the session is stored in the browser's local storage and attached
+to requests through the `Authorization` header.
+You can add a new engine to use by placing it in the engine folder and exporting it from `engines/index.ts`.
 
-In a simple web case, we strongly recommend storing session keys within the `HTTP_ONLY` cookies.
-Then, the rest of the non-secure information, like a hash of the session or simple auth predicate,
-can be stored in a browser's local storage.
+In a simple web scenario, it is highly recommended to store session keys in `HTTP_ONLY` cookies.
+This ensures that the session information is only accessible to the server
+and cannot be modified by client-side scripts.
+The remaining non-sensitive information, such as a hash of the session or a simple authentication predicate,
+can be stored in the browser's local storage.
 
 ```js
 import * as session from 'core/session';
 
 session.emitter.on('set', ({auth, params}) => {
-  console.log(`Session was registered with for ${auth}`);
+  console.log(`The session has been registered for ${auth}`);
   console.log(params);
 });
 
@@ -57,7 +61,7 @@ interface Session {
 import * as session from 'core/session';
 
 session.emitter.on('set', ({auth, params}) => {
-  console.log(`A session has been registered with for ${auth}`);
+  console.log(`The session has been registered for ${auth}`);
   console.log(params);
 });
 
@@ -107,7 +111,7 @@ Sets a new session with the specified parameters.
 ```typescript
 import * as session from 'core/session';
 
-session.set('Secret session key', {csrf: 'Secret header to avoid CSRF'}).then((res: boolean) => {
+session.set('SECRET_SESSION_KEY', {csrf: 'SECRET_HEADER_TO_AVOID_CSRF'}).then((res: boolean) => {
   if (res) {
     alert('The session is set!');
   }
@@ -130,12 +134,12 @@ session.clear().then((res: boolean) => {
 
 ### match
 
-Matches the passed session with the current.
+Matches the passed session with the current one.
 
 ```typescript
 import * as session from 'core/session';
 
-session.match('Secret session key').then((res: boolean) => {
+session.match('SECRET_SESSION_KEY').then((res: boolean) => {
   if (res) {
     alert('The session is equal!');
   }

@@ -34,7 +34,7 @@ export function paramsFactory<T = object>(
 	cluster: Nullable<string>,
 	transformer?: ParamsFactoryTransformer
 ): FactoryTransformer<T> {
-	return (params: Dictionary<any> = {}) => (target, key, desc) => {
+	return (params: Dictionary<any> = {}) => (_: object, key: string, desc?: PropertyDescriptor) => {
 		initEmitter.once('bindConstructor', (componentName) => {
 			metaPointers[componentName] = metaPointers[componentName] ?? Object.createDict();
 
@@ -63,12 +63,16 @@ export function paramsFactory<T = object>(
 			}
 
 			function decorateMethodOrAccessor() {
+				if (desc == null) {
+					return;
+				}
+
 				delete meta.props[key];
 				delete meta.fields[key];
 				delete meta.systemFields[key];
 
 				let
-					metaKey;
+					metaKey: string;
 
 				if (cluster != null) {
 					metaKey = cluster;

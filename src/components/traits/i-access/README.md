@@ -1,6 +1,7 @@
 # components/traits/i-access
 
-This module provides a trait for a component that needs to implement the "accessibility" behavior, like "focusing" or "disabling".
+This module provides a trait for a component that needs to implement accessibility behavior such as focusing
+or disabling.
 
 ## Synopsis
 
@@ -103,11 +104,11 @@ the document with the risk of harming usability and accessibility if done incorr
 
 ## Accessors
 
-The trait specifies a getter to determine when the component in focus or not.
+The trait specifies a getter to determine when the component is in focus or not.
 
 ### isFocused
 
-True if the component in focus.
+True if the component is in focus.
 The getter has the default implementation.
 
 ```typescript
@@ -115,7 +116,7 @@ import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** {@link iAccess.isFocused
+  /** {@link iAccess.isFocused} */
   get isFocused(): Promise<boolean> {
     return iAccess.isFocused(this);
   }
@@ -129,14 +130,14 @@ The trait specifies a bunch of methods to implement.
 ### enable
 
 Enables the component.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** {@link iAccess.enable
+  /** {@link iAccess.enable} */
   enable(): Promise<boolean> {
     return iAccess.enable(this);
   }
@@ -146,14 +147,14 @@ export default class bButton extends iBlock implements iAccess {
 ### disable
 
 Disables the component.
-The method has the default implementation.
+The method has a default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** {@link iAccess.disable
+  /** {@link iAccess.disable} */
   disable(): Promise<boolean> {
     return iAccess.disable(this);
   }
@@ -162,15 +163,15 @@ export default class bButton extends iBlock implements iAccess {
 
 ### focus
 
-Sets focus to the component
-The method has the default implementation.
+Sets focus on the component.
+The method has a default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** {@link iAccess.focus
+  /** {@link iAccess.focus} */
   focus(): Promise<boolean> {
     return iAccess.focus(this);
   }
@@ -179,15 +180,15 @@ export default class bButton extends iBlock implements iAccess {
 
 ### blur
 
-Unsets focus from the component.
-The method has the default implementation.
+Unsets focus on the component.
+The method has a default implementation.
 
 ```typescript
 import iAccess from 'components/traits/i-access/i-access';
 import iBlock, { component } from 'components/super/i-block/i-block';
 
 export default class bButton extends iBlock implements iAccess {
-  /** {@link iAccess.blur
+  /** {@link iAccess.blur} */
   blur(): Promise<boolean> {
     return iAccess.blur(this);
   }

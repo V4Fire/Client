@@ -521,10 +521,6 @@ test.describe('<b-input> validation API', () => {
 			});
 		});
 
-		/**
-		 * @param page
-		 * @param [attrs]
-		 */
 		async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 			await page.evaluate((attrs) => {
 				const scheme = [

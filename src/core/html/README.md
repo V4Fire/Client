@@ -1,6 +1,6 @@
 # core/html
 
-This module provides a bunch of helper functions to work with HTML tags and attributes.
+This module provides a bunch of helper functions for working with HTML tags and attributes.
 
 ## Functions
 

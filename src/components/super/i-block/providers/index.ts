@@ -71,10 +71,10 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		this.beforeReadyListeners = 0;
 
-		const
-			hydrationMode = !this.isReadyOnce && hydrationStore.has(this.componentId);
+		const hydrationMode =
+			HYDRATION && !this.isReadyOnce;
 
-		if (hydrationMode) {
+		if (hydrationMode && hydrationStore.has(this.componentId)) {
 			this.state.set(hydrationStore.get(this.componentId));
 			done();
 			return;
@@ -97,12 +97,17 @@ export default abstract class iBlockProviders extends iBlockState {
 				this.componentStatus = 'loading';
 			}
 
-			const tasks = <Array<CanPromise<unknown>>>Array.concat(
-				[],
+			const
+				tasks: Array<CanPromise<unknown>> = [];
 
-				// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-				this.state.globalName != null && this.state.initFromStorage() || []
-			);
+			if (this.state.globalName != null) {
+				const
+					storageInitialization = this.state.initFromStorage();
+
+				if (!hydrationMode) {
+					tasks.push(storageInitialization);
+				}
+			}
 
 			if (this.dependencies.length > 0) {
 				tasks.push(this.moduleLoader.load(...this.dependencies));
@@ -234,7 +239,7 @@ export default abstract class iBlockProviders extends iBlockState {
 
 	/**
 	 * Reloads component providers: the method delegates functionality to the `initLoad` method.
-	 * By default, the reboot will run in silent mode, i.e. without switching the component status to `loading`.
+	 * By default, the reboot will run in silent mode, i.e., without switching the component status to `loading`.
 	 * You can customize this behavior by passing additional parameters.
 	 *
 	 * @param [opts] - additional options

@@ -17,6 +17,7 @@ export * from 'components/super/i-input/i-input';
 
 @component({
 	functional: {
+		wait: undefined,
 		dataProvider: undefined
 	}
 })

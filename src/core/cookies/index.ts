@@ -16,7 +16,7 @@ import type { SetOptions, RemoveOptions } from 'core/cookies/interface';
 export * from 'core/cookies/interface';
 
 /**
- * Returns true if a cookie with the specified name is defined.
+ * Returns true if a cookie with the specified name is defined
  * @param name
  */
 export function has(name: string): boolean {

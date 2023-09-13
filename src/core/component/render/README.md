@@ -12,6 +12,7 @@ These wrappers are intended to be used for encapsulating the original component 
 * `wrapCreateElementBlock` – a wrapper for the `createElementBlock` function of the component library;
 * `wrapResolveComponent` – a wrapper for the `resolveComponent` or `resolveDynamicComponent` functions of the component library;
 * `wrapResolveDirective` – a wrapper for the `resolveDirective` function of the component library;
+* `wrapMergeProps` – a wrapper for the `mergeProps` function of the component library;
 * `wrapRenderList` – a wrapper for the `renderList` function of the component library;
 * `wrapRenderSlot` – a wrapper for the `renderSlot` function of the component library;
 * `wrapWithDirectives` – a wrapper for the `withDirectives` function of the component library.

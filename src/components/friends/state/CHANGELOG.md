@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
 
@@ -20,6 +20,10 @@ Changelog
 
 * Added possibility to change the method that will be used for transitions when the router
   synchronizes its state with the component's state by using `syncRouterState`
+
+#### :bug: Bug Fix
+
+* Fixed resetting router state
 
 #### :memo: Documentation
 

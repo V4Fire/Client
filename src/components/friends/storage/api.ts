@@ -9,7 +9,7 @@
 import type Storage from 'components/friends/storage/class';
 
 /**
- * Returns a value from the storage by the specified key
+ * Returns the value from the storage using the specified key
  *
  * @param [key]
  * @param [args] - additional arguments for the storage

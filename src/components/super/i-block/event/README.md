@@ -23,11 +23,12 @@ export default class bExample extends iBlock {
 }
 ```
 
-It is worth noting here that in addition to the arguments that we explicitly passed to `emit`, the event handler received a
-reference to the component that fired this event. This is very handy in cases where we listen to the events of one component
-from another component. However, this behavior is not always convenient. Therefore, the `emit` method automatically sends a second event,
-where only explicit arguments are passed. The name of such an event is formed according to the pattern `on${eventName}`,
-for example, `click` and `onClick`.
+It is worth noting that in addition to the arguments explicitly passed to the `emit`,
+the event handler also receives a reference to the component that triggered the event.
+This is very convenient when listening to events from one component within another component.
+However, this behavior is not always desirable.
+Therefore, the `emit` method automatically triggers a second event, where only the explicit arguments are passed.
+The name of such an event is formed using the pattern `on${eventName}`, for example, `click` becomes `onClick`.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -44,7 +45,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-All event names are converted to camelCase.
+All event names passed to the method are automatically converted to camelCase.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -61,8 +62,9 @@ export default class bExample extends iBlock {
 }
 ```
 
-In addition to the `on` method, we can use the `once` and `promisifyOnce` methods, which will only catch the event once,
-and then the listener will be detached. The `promisifyOnce` method takes the event name to listen for and returns a promise.
+In addition to the `on` method, we can also use the `once` and `promisifyOnce` methods,
+which will handle an event only once, and then detach the listener.
+The `promisifyOnce` method takes an event name to listen for and returns a promise.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -82,9 +84,9 @@ export default class bExample extends iBlock {
 }
 ```
 
-Also, all methods for listening to events are wrapped by the [[Async]] instance of the component within which they are used.
-Therefore, you do not need to think about clearing events after the component is destroyed, and you can also provide
-additional Async parameters when adding a listener.
+Moreover, all event listening methods are wrapped by the [[Async]] instance of the component in which they are used.
+Therefore, you don't need to worry about cleaning up events after the component is destroyed.
+Optionally, you can provide additional parameters to the Async instance when adding a listener.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -108,8 +110,9 @@ export default class bExample extends iBlock {
 
 ### Detaching listeners
 
-To cancel listening to an event, use the `off` method. Event listeners can be detached by a link,
-or by a group and/or label. If nothing is passed, all registered handlers will be detached.
+To stop listening to an event, you can use the `off` method.
+Event listeners can be detached by reference, by group, or by label.
+If nothing is passed, all registered handlers will be detached.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -138,7 +141,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-To cancel a listener with `promisefyOnce`, simply use the `async.cancelPromise` method.
+To cancel a listener set up with `promisifyOnce`, simply use the `async.cancelPromise` method.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -152,7 +155,8 @@ export default class bExample extends iBlock {
 }
 ```
 
-Note that if you do not explicitly set a group name, it will be equal to the event name being listened to.
+Please note that if you don't explicitly specify a group name,
+it will be set to the name of the event being listened to.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -172,9 +176,12 @@ export default class bExample extends iBlock {
 
 ### Firing events
 
-To emit an event, use the `emit` method. In addition to `emit`, there is also the `emitError` method.
-The main difference between these methods is the logging level of emitted events. See the section on event logging for more details.
-All such events can be caught both using the `on`, `once`, `promisifyOnce` methods, and using the `v-on` directive in the component template.
+To fire an event, you can use the `emit` method.
+In addition to `emit`, there is also the `emitError` method.
+The main difference between these methods is the level of event logging.
+For more details, please refer to the event registration section.
+All such events can be caught using the `on`, `once`, `promisifyOnce` methods,
+and by using the `v-on` directive in the component template.
 
 __b-example.ts__
 
@@ -203,10 +210,11 @@ __b-another-example.ss__
 
 ### Event bubbling
 
-In addition, if you set the `dispatching` prop to a component, then when an event is fired, the component will emit the same event,
-but from its parent. That is, the event begins to "bubble up" in the hierarchy, like DOM events. If the parent component also
-has `dispatching` set, then bubbling will continue. When bubbling, the name of such an event changes according to
-the pattern `${componentName}::${eventName}`.
+Additionally, if you set the `dispatching` prop for a component, then when triggering an event,
+the component will emit the same event but from its parent.
+This means the event starts to bubble up in the hierarchy, similar to DOM events.
+If the parent component also has the `dispatching` property set, the event bubbling will continue.
+When bubbling up, the name of such an event changes according to the template `${componentName}::${eventName}`.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -223,8 +231,8 @@ export default class bExample extends iBlock {
 }
 ```
 
-If the component, in addition to `dispatching`, also has `globalName` set, then such events also bubble up with a name
-based on the pattern `${globalName}::${eventName}`.
+If a component has the `dispatching` prop set, and also has the `globalName` property set,
+events will additionally bubble up with a name based on
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -242,8 +250,8 @@ export default class bExample extends iBlock {
 }
 ```
 
-Finally, if the parent component has the `selfDispatching` prop set to true, then such bubbling events will be fired
-on the component as their own, rather than by the changed name.
+Finally, if in the parent component the `selfDispatching` prop is set to true,
+such bubbling events will be emitted on the component as their own, rather than with the modified name.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -264,10 +272,11 @@ export default class bExample extends iBlock {
 }
 ```
 
-However, there are a number of events that cannot bubble up in this way, because this would lead to errors.
-There is a special `canSelfDispatchEvent` method that returns true if the component can handle the passed event in `selfDispatching` mode.
+However, there are certain events that cannot bubble up in this way, as it would lead to errors.
+There is a special method called `canSelfDispatchEvent` that returns true if the component can handle
+the event passed to it in `selfDispatching` mode.
 
-In addition to the above, any component also has the `dispatch` method that triggers the event dispatch mechanism.
+In addition to the above, any component also has the `dispatch` method that triggers the event dispatching mechanism.
 Generally, you don't need to explicitly use this method.
 
 ```typescript
@@ -288,8 +297,9 @@ export default class bExample extends iBlock {
 
 ### Event logging
 
-All component events that are emitted by the `emit` method are additionally logged. The `log` method is used for logging.
-To enable logging of certain events, simply set the required pattern using the `setEnv` function.
+All component events generated by the emit method are additionally logged.
+The `log` method is used for logging.
+To enable logging for specific events, simply set the desired template using the `setEnv` function.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -303,8 +313,9 @@ export default class bExample extends iBlock {
 }
 ```
 
-By default, events that are emitted via `emit` use the `info` logging context. Such messages will be ignored unless
-the component explicitly sets the `verbose` prop to true. It is allowed to explicitly specify the logging level for the emitted event.
+By default, events generated through `emit` use the `info` logging context.
+Such messages will be ignored unless the component explicitly sets the verbose property to true.
+It is allowed to explicitly specify the logging level for the generated event.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -319,7 +330,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-Events emitted with the `emitError` method always have the `error` logging context.
+Events triggered using the `emitError` method always have the `error` logging context.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -335,10 +346,13 @@ export default class bExample extends iBlock {
 
 ## Call proxy protocol
 
-Often, when creating an application, we need to organize the management of a group of child components by their parent,
-i.e., use the "mediator" pattern. To simplify and standardize this approach, V4Fire implements a special call proxy protocol.
-Any component has a special `proxyCall` prop. When set to true, the component starts listening to the `callChild` event from its parent.
-The event handler expects an object of the following type as an argument.
+When creating an application, it is often necessary to organize control over a group of child components
+by their parent, i.e., using the "mediator" pattern.
+To simplify and standardize this approach, V4Fire implements a special proxy call protocol.
+
+Every component has a special property called `proxyCall`.
+If set to true, the component starts listening for the callChild event from its parent.
+The event handler expects an argument of the following type.
 
 ```typescript
 interface CallChild<CTX extends iBlockEvent = iBlockEvent> {
@@ -347,10 +361,12 @@ interface CallChild<CTX extends iBlockEvent = iBlockEvent> {
 }
 ```
 
-Here the `if` and `then` functions take a link to the component that handled the event. If `if` returns any positive value,
-then `then` will be automatically called as well. Within `then`, you can call any of the component public methods.
+Here, the `if` `and` then functions take a reference to the component that handled the event.
+If the `if` function returns any positive value, then the `then` function will also be automatically called.
+In the `then` function, you can invoke any of the public methods of the component.
 
-Let's look at an example: we have a component that will generate the `callChild` event, as well as child components that will handle it.
+Let's consider an example: we have a component that will generate the `callChild` event,
+and we also have child components that will handle it.
 
 __b-parent.ts__
 
@@ -399,10 +415,11 @@ __b-parent.ss__
 
 ## Global events
 
-All non-functional components listen to a set of events from `core/component/event`.
-With the help of these events, we can initialize the reloading of these components, for example, in the event of a user
-re-login under a different account. All events are divided into two types: normal and "silent".
-In the case of non-silent events, the components will force their statuses to change, thereby causing redraws.
+All non-functional components listen to a set of events from the `core/component/event` module.
+With these events, we can initiate a reload of these components, for example,
+when a user logs in again with a different account.
+All events are divided into two types: regular and "silent".
+For non-silent events, components forcefully change their statuses, thereby triggering a re-render.
 
 ```js
 import { globalEmitter } from 'core/component';
@@ -475,23 +492,25 @@ class bExample extends iBlock {
 
 If true, then the component event dispatching mode is enabled.
 
-This means that all component events will bubble up to the parent component:
-if the parent also has this property set to true, then events will bubble up to the next (from the hierarchy) parent component.
+This means that all component events will bubble up to the parent component.
+If the parent also has this property set to true,
+then events will bubble up to the next (from the hierarchy) parent component.
 
 All dispatched events have special prefixes to avoid collisions with events from other components.
-For example: bButton `click` will bubble up as `b-button::click`.
+For example, bButton `click` will bubble up as `b-button::click`.
 Or if the component has the `globalName` prop, it will additionally bubble up as `${globalName}::click`.
 
 ### [selfDispatching = `false`]
 
-If true, then all events that are bubbled up by child components will be fired as the component own events without any prefixes.
+If true, then all events that are bubbled up by child components will be fired as the component own events without any
+prefixes.
 
 ### Getters
 
 #### selfEmitter
 
 The component event emitter.
-In fact, component methods such as `on` or `off` are just aliases to the methods of the given emitter.
+In fact, the component methods such as `on` or `off` are just aliases to the methods of the given emitter.
 
 All events fired by this emitter can be listened to "outside" using the `v-on` directive.
 Also, if the component is in `dispatching` mode, then the emitted events will start bubbling up to
@@ -508,8 +527,9 @@ Note that `selfEmitter.emit` always fires three events:
 3. `on-${event}`(...args)
 
 Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-the group/label to which the listener is attached. By default, all listeners have a group name equal to
-the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+the group/label to which the listener is attached.
+By default, all listeners have a group name equal to the event name being listened to.
+If nothing is specified, then all component event listeners will be detached.
 
 __b-example.ts__
 
@@ -541,11 +561,13 @@ __b-another-example.ss__
 The component local event emitter.
 
 Unlike `selfEmitter`, events that are fired by this emitter cannot be caught "outside" with the `v-on` directive,
-and these events do not bubble up. Also, such events can be listened to by a wildcard mask.
+and these events do not bubble up.
+Also, such events can be listened to by a wildcard mask.
 
 Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-the group/label to which the listener is attached. By default, all listeners have a group name equal to
-the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+the group/label to which the listener is attached.
+By default, all listeners have a group name equal to the event name being listened to.
+If nothing is specified, then all component event listeners will be detached.
 
 ```typescript
 import iBlock, { component } from 'components/super/i-block/i-block';
@@ -589,8 +611,9 @@ The root component event emitter.
 To avoid memory leaks, only this emitter is used to listen for root events.
 
 Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-the group/label to which the listener is attached. By default, all listeners have a group name equal to
-the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+the group/label to which the listener is attached.
+By default, all listeners have a group name equal to the event name being listened to.
+If nothing is specified, then all component event listeners will be detached.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -610,12 +633,13 @@ export default class bExample extends iBlock {
 The global event emitter located in `core/component/event`.
 
 This emitter should be used to listen for external events, such as events coming over a WebSocket connection, etc.
-Also, such events can be listened to by a wildcard mask. To avoid memory leaks, only this emitter is used to listen
-for global events.
+Also, such events can be listened to by a wildcard mask.
+To avoid memory leaks, only this emitter is used to listen for global events.
 
 Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-the group/label to which the listener is attached. By default, all listeners have a group name equal to
-the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+the group/label to which the listener is attached.
+By default, all listeners have a group name equal to the event name being listened to.
+If nothing is specified, then all component event listeners will be detached.
 
 ```typescript
 import { globalEmitter } from 'core/component';
@@ -691,8 +715,9 @@ export default class bExample extends iBlock {
 Detaches an event listener from the component.
 
 Note that to detach a listener, you can specify not only a link to the listener, but also the name of
-the group/label to which the listener is attached. By default, all listeners have a group name equal to
-the event name being listened to. If nothing is specified, then all component event listeners will be detached.
+the group/label to which the listener is attached.
+By default, all listeners have a group name equal to the event name being listened to.
+If nothing is specified, then all component event listeners will be detached.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -729,8 +754,8 @@ but you can set the logging level explicitly.
 
 Note that this method always fires three events:
 
-1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event.
+2. `${event}:component`(self, ...args) - the event to avoid collisions between component events and native DOM events.
 3. `on-${event}`(...args)
 
 ```typescript
@@ -762,8 +787,8 @@ Also, if the component is in `dispatching` mode, then this event will start bubb
 
 Note that this method always fires three events:
 
-1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event
-2. `${event}:component`(self, ...args) - event to avoid collisions between component events and native DOM events
+1. `${event}`(self, ...args) - the first argument is passed as a link to the component that emitted the event.
+2. `${event}:component`(self, ...args) - the event to avoid collisions between component events and native DOM events.
 3. `on-${event}`(...args)
 
 ```typescript
@@ -786,12 +811,12 @@ export default class bExample extends iBlock {
 
 Emits a component event to the parent component.
 
-This means that all component events will bubble up to the parent component:
-if the parent also has the `dispatching` property set to true, then events will bubble up to the next
+This means that all component events will bubble up to the parent component.
+If the parent also has the `dispatching` property set to true, then events will bubble up to the next
 (from the hierarchy) parent component.
 
 All dispatched events have special prefixes to avoid collisions with events from other components.
-For example: bButton `click` will bubble up as `b-button::click`.
+For example, bButton `click` will bubble up as `b-button::click`.
 Or if the component has the `globalName` prop, it will additionally bubble up as `${globalName}::click`.
 
 In addition, all emitted events are automatically logged using the `log` method.

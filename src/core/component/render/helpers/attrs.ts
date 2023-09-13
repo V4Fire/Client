@@ -53,7 +53,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 	} = this;
 
 	if (ref != null) {
-		ref['i'] ??= r.getCurrentInstance();
+		ref.i ??= r.getCurrentInstance();
 	}
 
 	if (Object.isArray(children)) {
@@ -132,7 +132,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			names = props[key];
 
 		if (names != null) {
-			names.split(' ').forEach((name) => {
+			names.split(' ').forEach((name: string) => {
 				if ('classes' in this && this.classes?.[name] != null) {
 					Object.assign(props, mergeProps({class: props?.class}, {class: this.classes[name]}));
 				}

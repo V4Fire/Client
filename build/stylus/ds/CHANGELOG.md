@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Warnings about deprecated design system fields are hidden under the `verbose` flag
+
+## v4.0.0-beta.11 (2023-08-18)
+
+#### :rocket: New Feature
+
+* Improved display of warnings about deprecated design system fields
+* Added possibility to specify a complicated color tokens
+
 ## v3.46.4 (2023-05-05)
 
 #### :bug: Bug Fix

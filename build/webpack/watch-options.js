@@ -9,7 +9,16 @@
 'use strict';
 
 const
-	{isExternalDep} = include('build/const');
+	{webpack} = require('@config/config'),
+	{depsRgxpStr} = include('build/const'),
+	{createDepRegExp, prepareLibsForRegExp} = include('build/helpers');
+
+const exclude = [
+	depsRgxpStr,
+	prepareLibsForRegExp(webpack.managedLibs())
+]
+	.filter(Boolean)
+	.join('|');
 
 /**
  * Options for `webpack.watchOptions`
@@ -17,5 +26,5 @@ const
 module.exports = {
 	aggregateTimeout: 200,
 	poll: 1000,
-	ignored: isExternalDep
+	ignored: createDepRegExp(exclude)
 };

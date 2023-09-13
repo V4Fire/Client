@@ -220,7 +220,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				type: 'boolean',
 				default: def
 			});
-		}
+		},
+
+		/**
+		 * Controls the level of verbosity in the project's build output.
+		 * This parameter is useful for users who want to have more detailed information about the project's build.
+		 *
+		 * @cli verbose
+		 * @env VERBOSE
+		 */
+		verbose: o('verbose', {
+			env: true,
+			default: false
+		})
 	},
 
 	/**
@@ -342,7 +354,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
-		hydration(def = this.ssr) {
+		hydration(def = false) {
 			return o('hydration', {
 				env: true,
 				type: 'boolean',
@@ -454,6 +466,29 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					default: def
 				});
 			}
+		},
+
+		/**
+		 * This option should be used to specify managed libs, which will
+		 * be excluded from `snapshot.managedPaths` and from `watchOptions.ignore`
+		 *
+		 * @cli managed-libs
+		 * @env MANAGED_LIBS
+		 *
+		 * @example
+		 * ```bash
+		 * npx webpack --env managed-libs="@scope/helpers,@scope/core"
+		 * ```
+		 *
+		 * @returns {string[]}
+		 */
+		managedLibs() {
+			return o('managed-libs', {
+				env: true,
+				default: ''
+			})
+				.split(',')
+				.map((str) => str.trim());
 		},
 
 		/**
@@ -578,7 +613,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}
 
 			if (pathVal) {
-				return concatURLs(pathVal, '/').replace(/^[/]+/, '/');
+				return concatURLs(pathVal, '/').replace(/^\/+/, '/');
 			}
 
 			return pathVal;
@@ -976,7 +1011,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	snakeskin() {
 		const snakeskinVars = {
 			...include('build/snakeskin/vars'),
-			teleport: this.webpack.storybook() ? '#storybook-root' : 'body'
+			teleport: this.webpack.storybook() ? '#storybook-root' : '#teleports'
 		};
 
 		return {

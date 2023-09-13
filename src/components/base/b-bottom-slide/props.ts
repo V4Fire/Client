@@ -31,7 +31,7 @@ export default abstract class iBottomSlideProps extends iBlock {
 	readonly stepsProp: number[] = [];
 
 	/**
-	 * The minimum value of the height of the visible part (in pixels), i.e. even if the component is closed,
+	 * The minimum value of the height of the visible part (in pixels), i.e., even if the component is closed,
 	 * this part will still be visible
 	 */
 	@prop({type: Number, validator: Number.isNonNegative})

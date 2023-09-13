@@ -42,6 +42,7 @@ export { Value, FormValue };
 
 @component({
 	functional: {
+		wait: undefined,
 		dataProvider: undefined
 	}
 })

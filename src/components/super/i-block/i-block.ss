@@ -66,8 +66,7 @@
 	 * ```
 	 */
 	- block loadModules(path, opts = {}, content)
-		- if require('@config/config').webpack.ssr
-			- return
+		: SSR = require('@config/config').webpack.ssr
 
 		- if arguments.length < 3
 			? content = opts
@@ -75,35 +74,40 @@
 
 		: &
 			buble = require('buble'),
-			paths = Array.concat([], path)
+			paths = Array.concat([], path),
+			wait = opts.wait
 		.
 
+		- if SSR
+			- if paths.length > 0 || wait
+				? wait = '() => { const {Promise} = global; return new Promise(() => {}); }'
+
 		: &
-			waitFor = opts.wait || 'undefined',
-			filter = (opts.wait ? buble.transform("`" + opts.wait + "`").code : 'undefined')
+			filter = (wait ? buble.transform("`" + wait + "`").code : 'undefined')
 				.replace(/^\(?['"]/, '')
 				.replace(/['"]\)?$/, '')
 				.replace(/\\(['"])/g, '$1')
 		.
 
+		{{
+			void(require('components/friends/module-loader').default.addToPrototype(require('components/friends/module-loader')))
+		}}
+
+		{{
+			void(require('components/friends/async-render').default.addToPrototype(require('components/friends/async-render').iterate))
+		}}
+
 		- forEach paths => path
 			: &
-				id = [path, waitFor].concat(opts.wait ? '${componentId}' : []).join(':'),
+				id = [path, wait || 'undefined'].concat(wait ? '${componentId}' : []).join(':'),
 				interpolatedId = buble.transform("`" + id + "`").code
 			.
 
 			{{
-				void(require('components/friends/module-loader').default.addToPrototype(require('components/friends/module-loader')))
-			}}
-
-			{{
-				void(require('components/friends/async-render').default.addToPrototype(require('components/friends/async-render').iterate))
-			}}
-
-			{{
 				void(moduleLoader.addToBucket('global', {
 					id: ${interpolatedId},
-					load: () => import('${path}')
+					load: () => import('${path}'),
+					ssr: false
 				}))
 			}}
 

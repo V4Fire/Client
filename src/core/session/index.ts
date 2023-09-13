@@ -103,7 +103,7 @@ export async function clear(): Promise<boolean> {
 }
 
 /**
- * Matches the passed session with the current
+ * Matches the passed session with the current one
  *
  * @param [auth]
  * @param [params] - additional parameters

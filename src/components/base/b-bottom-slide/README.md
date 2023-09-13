@@ -246,8 +246,8 @@ Also, you can see the parent component and the component traits.
 
 Component height mode:
 
-1. `content` - the height value is based on the component content, but no larger than the viewport height;
-2. `full` - the height value is equal to the height of the viewport.
+* `content` - the height value is based on the component content, but no larger than the viewport height;
+* `full` - the height value is equal to the height of the viewport.
 
 #### [stepsProp = `[]`]
 

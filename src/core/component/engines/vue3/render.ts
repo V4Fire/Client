@@ -17,6 +17,7 @@ import {
 	createBlock as superCreateBlock,
 	createElementBlock as superCreateElementBlock,
 
+	mergeProps as superMergeProps,
 	renderList as superRenderList,
 	renderSlot as superRenderSlot,
 
@@ -44,7 +45,7 @@ import {
 	wrapRenderSlot,
 
 	wrapWithDirectives,
-	wrapResolveDirective
+	wrapResolveDirective, wrapMergeProps
 
 } from 'core/component/render';
 
@@ -55,6 +56,7 @@ export {
 	Static,
 	Comment,
 
+	Suspense,
 	Fragment,
 	Teleport,
 
@@ -82,7 +84,6 @@ export {
 
 	normalizeClass,
 	normalizeStyle,
-	mergeProps,
 
 	resolveTransitionHooks,
 
@@ -118,6 +119,7 @@ export const
 	createElementBlock = wrapCreateElementBlock(superCreateElementBlock);
 
 export const
+	mergeProps = wrapMergeProps(superMergeProps),
 	renderList = wrapRenderList(superRenderList),
 	renderSlot = wrapRenderSlot(superRenderSlot);
 
@@ -177,5 +179,25 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): Can
 		el = document.createElement('div'),
 		root = vue.mount(el);
 
-	return Object.isArray(vnode) ? Array.from(el.childNodes) : root.$el;
+	if (Object.isArray(vnode)) {
+		const children = Array.from(el.childNodes);
+
+		if (vnode.length !== children.length) {
+			if (isEmptyText(children[0])) {
+				children.shift();
+			}
+
+			if (isEmptyText(children[children.length - 1])) {
+				children.pop();
+			}
+		}
+
+		return children;
+	}
+
+	return root.$el;
+
+	function isEmptyText(node?: Node) {
+		return node?.nodeType === 3 && node.textContent === '';
+	}
 }

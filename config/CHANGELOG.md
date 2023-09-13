@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added `verbose` flag to `build` config
+
+## v4.0.0-beta.13 (2023-08-24)
+
+#### :rocker: New Feature
+
+* Added `managed-libs` option, which add specified libraries to `snapshot.managedPaths` and watches
+them in webpack watch mode
+
 ## v3.39.0 (2023-03-07)
 
 #### :rocket: New Feature
