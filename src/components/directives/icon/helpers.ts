@@ -55,7 +55,7 @@ export function updateIconHref(this: iBlock, id: string, el: SVGElement, href?: 
 		return;
 	}
 
-	setIconStyles(el, id);
+	setDSIconStyles(el, id);
 
 	const group = {group: getElementId(el, idsCache)};
 	$a.clearAll(group);
@@ -81,22 +81,21 @@ export function updateIconHref(this: iBlock, id: string, el: SVGElement, href?: 
 }
 
 /**
- * Sets styles from ds for the specified svg element
+ * Sets styles from the design system for the specified svg element
  *
  * @param el
  * @param name
  */
-function setIconStyles(el: SVGElement, name: string): void {
+function setDSIconStyles(el: SVGElement, name: string): void {
 	if (DS == null) {
 		return;
 	}
 
-	const style = Object.get(DS, `icons.${name}.style`);
+	const
+		style = Object.get(DS, `icons.${name}.style`);
 
 	if (Object.isDictionary(style)) {
-		const
-			styleString = Object.entries(style).map(([k, v]) => `${k}:${String(v)}`).join(';');
-
-		el.setAttribute('style', styleString);
+		const styleAttr = Object.entries(style).map(([k, v]) => `${k}:${String(v)}`).join(';');
+		el.setAttribute('style', styleAttr);
 	}
 }

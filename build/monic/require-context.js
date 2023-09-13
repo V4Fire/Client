@@ -22,7 +22,7 @@ const
 	aliases = include('build/webpack/resolve/alias');
 
 const
-	contextRgxp = /\/\/\s*@context:\s*(.*?)\n([\s\S]*?)\/\/\s*@endcontext\n/g,
+	contextRgxp = /\/\/\s*@context:\s*(.*?)\n([\S\s]*?)\/\/\s*@endcontext\n/g,
 	tplRgxp = /\/?\${(.*?)}/g;
 
 /**
@@ -36,7 +36,7 @@ const
  * 0. The token will be substituted with itself (without the `@` prefix).
  * 1. If the path starts with the webpack alias, the path will be substituted as is.
  * 2. Else, if the token starts with the `@` prefix, the provided path will
- * be concatenated with the token (without the prefix) and substituted.
+ *    be concatenated with the token (without the prefix) and substituted.
  * 3. Else, the provided path will be concatenated with the token and substituted.
  *
  * In all cases, there is a check to ensure that the file exists at the resulting path.
@@ -154,13 +154,13 @@ module.exports = function requireContextReplacer(str) {
 /**
  * Checks if a file exists at the given path
  *
- * @param pathToCheck
+ * @param {string} pathToCheck
  * @returns {boolean}
  *
  * @example
  * ```js
- * checkFileExists('/foo/bla/bar'); // checks absolute path
- * checkFileExists('bla/bar'); // checks webpack aliases
+ * checkFileExists('/foo/bla/bar'); // checks an absolute path
+ * checkFileExists('bla/bar');      // checks webpack aliases
  * ```
  */
 function checkFileExists(pathToCheck) {
@@ -175,9 +175,9 @@ function checkFileExists(pathToCheck) {
 	}
 
 	const
-		aliasRes = aliases[alias],
-		tail = pathToCheck.replace(alias, ''),
-		resolvedPath = path.join(aliasRes, tail);
+		resolvedAlias = aliases[alias],
+		pathWithoutAlias = pathToCheck.replace(alias, ''),
+		resolvedPath = path.join(resolvedAlias, pathWithoutAlias);
 
 	if (path.isAbsolute(resolvedPath)) {
 		return fs.existsSync(resolvedPath);
@@ -185,14 +185,14 @@ function checkFileExists(pathToCheck) {
 
 	const pathToDep = path.dirname(require.resolve(path.join(aliases[alias], 'package.json')));
 
-	return fs.existsSync(path.join(pathToDep, tail));
+	return fs.existsSync(path.join(pathToDep, pathWithoutAlias));
 }
 
 /**
  * Retrieves the alias from a given path
  *
  * @param {string} path - the path to retrieve the alias from
- * @returns {?string} the alias corresponding to the given path, or undefined if no alias is found
+ * @returns {(string|undefined)}
  */
 function getAliasFromPath(path) {
 	let alias;
