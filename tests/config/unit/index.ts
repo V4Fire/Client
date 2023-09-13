@@ -8,7 +8,7 @@
 
 import type { PlaywrightTestConfig } from '@playwright/test';
 
-import superConfig from 'tests/config/super';
+import superConfig, { isCI } from 'tests/config/super';
 
 const config: PlaywrightTestConfig = {
 	...superConfig,
@@ -17,7 +17,7 @@ const config: PlaywrightTestConfig = {
 
 	testMatch: ['src/**/test/unit/**/*.ts'],
 
-	reporter: Object.isTruly(process.env.GITHUB_ACTIONS) ? 'github' : undefined,
+	reporter: isCI ? 'github' : undefined,
 
 	globalSetup: require.resolve('tests/config/unit/setup')
 };

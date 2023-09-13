@@ -85,7 +85,7 @@ function run(): void {
 			const
 				canRender = val.task();
 
-			const exec = (canRender) => {
+			const exec = (canRender: unknown) => {
 				if (Object.isTruly(canRender)) {
 					done -= val.weight ?? 1;
 					queue.delete(val);

@@ -102,7 +102,6 @@ test.describe('<b-checkbox> hierarchical groups', () => {
 		]);
 	});
 
-	/** @param page */
 	async function renderCheckboxes(page: Page) {
 		await Component.createComponents(page, 'b-checkbox', [
 			{

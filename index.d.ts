@@ -6,19 +6,20 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable no-var, vars-on-top, camelcase, @typescript-eslint/triple-slash-reference */
+/* eslint-disable no-var, vars-on-top, @typescript-eslint/triple-slash-reference */
 
 /// <reference types="@v4fire/core"/>
 /// <reference path="./ts-definitions/playwright.d.ts"/>
 /// <reference path="./ts-definitions/stylus-ds.d.ts"/>
 
+declare module '*?raw' {
+	const content: string;
+	export default content;
+}
+
 declare var ssr: Nullable<{
 	document?: Document;
 }>;
-
-declare let __webpack_nonce__: CanUndef<string>;
-declare let __webpack_public_path__: CanUndef<string>;
-declare let __webpack_require__: (moduleId: string) => any;
 
 declare const BUILD_MODE: CanUndef<string>;
 
@@ -117,15 +118,15 @@ declare var
 	removeCreatedComponents: () => void,
 
 	/**
-	 * Storybook helpers
+	 * Auxiliary functions for building a component showcase
+	 * @see https://storybook.js.org/
 	 */
 	V4Storybook: {
-
 		/**
-		 * Inits the app for the storybook canvas
+		 * Initializes the application within the Storybook's canvas
 		 *
-		 * @param canvasElement - storybook canvas element
-		 * @param [rootComponent] - name of the root component
+		 * @param canvasElement - the storybook canvas element
+		 * @param [rootComponent] - the name of the root component to initialize
 		 */
 		initApp(canvasElement: HTMLElement, rootComponent?: string): Promise<import('./src/core/component').App>;
 	},

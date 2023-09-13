@@ -205,7 +205,7 @@ export default abstract class AbstractEngine {
 	}
 
 	/**
-	 * Cancels watching for the all registered elements and destroys the instance
+	 * Cancels watching for all registered elements and destroys the instance
 	 */
 	destroy(): void {
 		this.unwatch();

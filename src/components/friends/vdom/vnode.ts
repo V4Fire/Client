@@ -131,22 +131,27 @@ function createVNode(
 		} = this;
 
 		let
-			resolvedChildren;
+			resolvedChildren: CanUndef<VNode[] | Dictionary<() => VNode>>;
 
 		const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) => {
 			if (Object.isDictionary(vnode) && !('patchFlag' in vnode)) {
-				return createVNode.call(this, vnode.type, vnode);
+				return createVNode.call(this, (Object.cast<VNode>(vnode)).type, vnode);
 			}
 
 			return vnode;
 		};
+
+		if (isComponent.test(type) && children != null && !Object.isDictionary(children)) {
+			const slot = children;
+			children = {default: () => slot};
+		}
 
 		if (children != null) {
 			if (Object.isArray(children)) {
 				resolvedChildren = new Array(children.length);
 
 				children.forEach((child, i) => {
-					resolvedChildren[i] = factory(child);
+					(<VNode[]>resolvedChildren)[i] = factory(child);
 				});
 
 			} else {
@@ -168,7 +173,7 @@ function createVNode(
 		}
 
 		let
-			vnode;
+			vnode: VNode;
 
 		if (isComponent.test(type)) {
 			const resolvedType = r.resolveDynamicComponent.call(ctx, type);

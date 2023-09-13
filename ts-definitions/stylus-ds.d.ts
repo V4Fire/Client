@@ -60,6 +60,7 @@ declare interface DesignSystem {
 	text?: StrictDictionary;
 	rounding?: StrictDictionary;
 	colors?: StrictDictionary;
+	icons?: StrictDictionary;
 }
 
 /**

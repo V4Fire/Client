@@ -13,8 +13,8 @@ This module provides a bunch of helper functions to work with DOM objects.
 
 Wraps the specified function as an event handler with delegation.
 In simple terms, the wrapped function will be executed only if the event happened on the element by the given
-selector or in its descendant node. Also, the function adds to the event object a reference to the element to which
-the selector is specified.
+selector or in its descendant node.
+Also, the function adds to the event object a reference to the element to which the selector is specified.
 
 ```js
 import { wrapAsDelegateHandler } from 'core/dom';

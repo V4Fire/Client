@@ -22,7 +22,7 @@ const copyrightTemplate = [
 
 base.rules['header/header'] = [2, 'block', copyrightTemplate];
 
-base.overrides.at(-1).rules['@typescript-eslint/member-ordering'] = [
+base.overrides[1].rules['@typescript-eslint/member-ordering'] = [
 	'error', {
 		default: [
 			'signature',

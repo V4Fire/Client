@@ -9,12 +9,21 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.??.?? (2022-??-??)
+## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
 
 * Renamed `waitStatus` to `waitComponentStatus`
 * Renamed `watchTmp ` to `reactiveTmp`
+
+#### :rocket: New Feature
+
+* Added possibility to change the method that will be used for transitions when the router
+  synchronizes its state with the component's state by using `syncRouterState`
+
+#### :bug: Bug Fix
+
+* Fixed an issue where the default behavior of the `convertStateToRouterReset` did not affect the router
 
 #### :memo: Documentation
 

@@ -252,8 +252,8 @@ export default abstract class iBlockFriends extends iBlockProps {
 	protected readonly presets!: typeof presets;
 
 	/**
-	 * A dictionary with some helper functions.
-	 * These helpers are used to provide additional functionality within the component template.
+	 * A dictionary containing a set of helper functions
+	 * that can be utilized within the component template to extend its functionality
 	 */
 	@system({
 		atom: true,
@@ -300,7 +300,7 @@ export default abstract class iBlockFriends extends iBlockProps {
 	protected readonly console!: Console;
 
 	/**
-	 * Initializes the collection of debugging information for the component
+	 * Initializes the process of collecting debugging information for the component
 	 */
 	@hook(['mounted', 'updated'])
 	protected initInfoRender(): void {

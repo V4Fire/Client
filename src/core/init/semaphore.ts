@@ -9,13 +9,14 @@
 import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
 import { set } from 'core/component/state';
+
 import Component, {
 
 	app,
 	destroyApp,
 
 	rootComponents,
-	hydrationStore,
+	HydrationStore,
 
 	ComponentElement
 
@@ -28,7 +29,10 @@ const semaphore = createsAsyncSemaphore(createAppInitializer, ...flags);
 
 export default semaphore;
 
-if (!SSR) {
+if (SSR) {
+	process.on('unhandledRejection', stderr);
+
+} else {
 	resolveAfterDOMLoaded()
 		.then(async () => {
 			const
@@ -48,8 +52,10 @@ function createAppInitializer() {
 			appId: CanUndef<string>;
 
 		const
-			state = Object.reject(opts, ['targetToMount']),
+			state = Object.reject(opts, ['targetToMount', 'setup']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
+
+		opts.setup?.(Object.cast(rootComponentParams));
 
 		Object.entries(state).forEach(([key, value]) => {
 			set(key, value);
@@ -60,7 +66,23 @@ function createAppInitializer() {
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
 				{renderToString} = require('vue/server-renderer');
 
-			const rootComponent = new Component(rootComponentParams);
+			let
+				{inject} = rootComponentParams;
+
+			if (Object.isArray(inject)) {
+				inject = Object.fromArray(inject, {value: (key) => key});
+			}
+
+			rootComponentParams.inject = {
+				...inject,
+				hydrationStore: 'hydrationStore'
+			};
+
+			const
+				hydrationStore = new HydrationStore(),
+				rootComponent = new Component(rootComponentParams);
+
+			rootComponent.provide('hydrationStore', hydrationStore);
 			app.context = rootComponent;
 
 			try {

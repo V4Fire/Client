@@ -2978,16 +2978,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pzlr/stylus-inheritance@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@pzlr/stylus-inheritance@npm:3.1.0"
+"@pzlr/stylus-inheritance@npm:3.3.0":
+  version: 3.3.0
+  resolution: "@pzlr/stylus-inheritance@npm:3.3.0"
   dependencies:
-    escaper: ^3.0.3
-    sugar: ^2.0.6
-    upath: ^1.2.0
+    escaper: 3.0.3
+    sugar: 2.0.6
+    upath: 1.2.0
   peerDependencies:
     "@pzlr/build-core": "*"
-  checksum: c16b8cd1b8c70cdd7a8a82f1147a5ef488196d85c5bb24c86d0bd35eddda3b0a3edc88b9bad6a257425ca0f28b5058bb78b13f860f62f639b3468977cf579092
+  checksum: d9b436d463b34daf043df15071dff75fa6a3779dca3ccf55efd7557b8d9ea10b672c2a088650fccf7e2d936243a0d3876d874e6f531fd62bca7c81542f3588cd
   languageName: node
   linkType: hard
 
@@ -5069,6 +5069,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/webpack-env@npm:1.18.1":
+  version: 1.18.1
+  resolution: "@types/webpack-env@npm:1.18.1"
+  checksum: 3173c069763e51a96565d602af7e6dac9d772ae4aa6f26cac187cbf599a7f0b88f790b4b050b9dbdb0485daed3061b4a337863f3b8ce66f8a4e51f75ad387c6a
+  languageName: node
+  linkType: hard
+
 "@types/webpack@npm:5.28.0":
   version: 5.28.0
   resolution: "@types/webpack@npm:5.28.0"
@@ -5331,7 +5338,7 @@ __metadata:
     "@config/config": "npm:config@1.31.0"
     "@playwright/test": 1.32.1
     "@pzlr/build-core": 2.13.0
-    "@pzlr/stylus-inheritance": 3.1.0
+    "@pzlr/stylus-inheritance": 3.3.0
     "@statoscope/webpack-plugin": 5.25.1
     "@storybook/addon-essentials": 7.0.23
     "@storybook/addon-interactions": 7.0.23
@@ -5344,13 +5351,14 @@ __metadata:
     "@types/jest": 29.5.1
     "@types/semver": 7.3.10
     "@types/webpack": 5.28.0
+    "@types/webpack-env": 1.18.1
     "@v4fire/cli": ^1.6.0
     "@v4fire/config": 1.0.0
     "@v4fire/core": "github:V4Fire/Core#v4"
     "@v4fire/design-system": 1.23.0
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules"
-    "@v4fire/storybook": 0.7.0
-    "@v4fire/storybook-framework-webpack5": 0.7.0
+    "@v4fire/storybook": 0.8.0
+    "@v4fire/storybook-framework-webpack5": 0.8.0
     "@vue/compiler-sfc": 3.2.47
     arg: 5.0.1
     autoprefixer: 10.4.2
@@ -5801,23 +5809,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/storybook-framework-webpack5@npm:0.7.0":
-  version: 0.7.0
-  resolution: "@v4fire/storybook-framework-webpack5@npm:0.7.0"
+"@v4fire/storybook-framework-webpack5@npm:0.8.0":
+  version: 0.8.0
+  resolution: "@v4fire/storybook-framework-webpack5@npm:0.8.0"
   dependencies:
     "@storybook/builder-webpack5": 7.0.23
     html-webpack-plugin: 5.5.0
   peerDependencies:
     "@babel/core": ^7.17.5
     webpack: ^5.82.1
-  checksum: ee3fee3ad07d5c58c7cde3770555425d695b7f4f04bce09345230ed0490e2ef67f1f403d8afb517cbb821074b0f6fffa6347c3720616c0025e4d9492ee1beb25
+  checksum: 6fb33a8babfe1081abf559e331a66303aa1fd477d97786aa32b27e2db278d98b325885c03d1dd1e222f06ff39ab382136b691e069d5dbfd87af63b5d7e7da74a
   languageName: node
   linkType: hard
 
-"@v4fire/storybook@npm:0.7.0":
-  version: 0.7.0
-  resolution: "@v4fire/storybook@npm:0.7.0"
+"@v4fire/storybook@npm:0.8.0":
+  version: 0.8.0
+  resolution: "@v4fire/storybook@npm:0.8.0"
   dependencies:
+    "@storybook/blocks": 7.0.23
     "@storybook/global": ^5.0.0
     "@storybook/preview-api": 7.0.23
     "@storybook/types": 7.0.23
@@ -5826,7 +5835,7 @@ __metadata:
     "@v4fire/client": ^4.0.0-beta.7
     "@v4fire/core": ^4.0.0-alpha.4
     "@v4fire/storybook-framework-webpack5": 0.1.0
-  checksum: e949b480ba9108b09f14cac3766ae59f4b520252048e1edc61a4d5876c055012585f55b099c7d16eac8c7cbdfbe917c995b0718982d9f5da550f9708c63ee762
+  checksum: 20d24d5170593bc2836399f12ece6b42dbf70893eacffea639413f92ea831a34c79e1c9e4515c19d49dc163a67c2ec7ab74195158b0ae456bcf4f91f78042242
   languageName: node
   linkType: hard
 
@@ -11159,6 +11168,13 @@ __metadata:
   version: 4.0.0
   resolution: "escape-string-regexp@npm:4.0.0"
   checksum: 98b48897d93060f2322108bf29db0feba7dd774be96cd069458d1453347b25ce8682ecc39859d4bca2203cc0ab19c237bcc71755eff49a0f8d90beadeeba5cc5
+  languageName: node
+  linkType: hard
+
+"escaper@npm:3.0.3":
+  version: 3.0.3
+  resolution: "escaper@npm:3.0.3"
+  checksum: acbeb7968897391339a12d6b6623bec23bc3c6e496a398d1fec7ae4d86207d12eef3f07939c533b64d6f90cd188a2e5af2999e38d0f064fb62295c87d6fa8438
   languageName: node
   linkType: hard
 

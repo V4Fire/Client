@@ -96,14 +96,14 @@ export default abstract class iOpen {
 				};
 
 				try {
-					$a.on(document, events.key ?? 'keyup', (e) => {
+					$a.on(document, events.key ?? 'keyup', (e?: KeyboardEvent) => {
 						if (e != null) {
 							return component.onKeyClose(e);
 						}
 
 					}, opts);
 
-					$a.on(document, events.touch ?? 'click touchend', (e) => {
+					$a.on(document, events.touch ?? 'click touchend', (e?: MouseEvent) => {
 						if (e != null) {
 							return component.onTouchClose(e);
 						}

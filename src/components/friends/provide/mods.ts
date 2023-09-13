@@ -20,11 +20,12 @@ import { modsCache } from 'components/friends/provide/const';
 import type { Mods } from 'components/friends/provide/interface';
 
 /**
- * Returns a dictionary with the base component modifiers.
- * The base modifiers are taken from the `sharedMods` getter and can be mix in with the specified additional modifiers.
+ * Returns a dictionary containing the base component modifiers.
+ * These base modifiers are retrieved from the `sharedMods` getter and
+ * can be combined with any additional modifiers specified.
  * {@link iBlock.sharedMods}
  *
- * @param [mods] - additional modifiers to returns
+ * @param [mods] - the additional modifiers
  *
  * @example
  * ```js
@@ -56,14 +57,10 @@ export function mods(this: Friend, mods?: Mods): CanUndef<Readonly<ModsDict>> {
 	const
 		res = {...sharedMods};
 
-	if (mods) {
-		for (let keys = Object.keys(mods), i = 0; i < keys.length; i++) {
-			const
-				key = keys[i],
-				val = mods[key];
-
+	if (mods != null) {
+		Object.entries(mods).forEach(([key, val]) => {
 			res[key.dasherize()] = val != null ? String(val) : undefined;
-		}
+		});
 	}
 
 	modsCache[key] = Object.freeze(res);

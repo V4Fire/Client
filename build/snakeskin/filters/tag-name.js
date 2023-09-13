@@ -39,15 +39,14 @@ module.exports = [
 				return rootTag;
 			}
 
-			const
-				tag = ["rootTag || 'div'"];
+			const tag = ["rootTag || 'div'"];
+			attrs['v-tag'] = tag;
 
 			if (webpack.ssr) {
 				attrs[':is'] = tag;
 				return 'component';
 			}
 
-			attrs['v-tag'] = tag;
 			return 'div';
 		}
 

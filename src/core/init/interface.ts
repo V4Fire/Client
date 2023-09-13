@@ -7,7 +7,9 @@
  */
 
 import type { InitialRoute } from 'core/router';
+
 import type { GlobalEnvironment } from 'core/component/state';
+import type { ComponentOptions } from 'core/component/engines';
 
 export interface InitAppOptions {
 	/**
@@ -39,4 +41,10 @@ export interface InitAppOptions {
 	 * ```
 	 */
 	globalEnv?: GlobalEnvironment;
+
+	/**
+	 * A function that is called before the initialization of the root component
+	 * @param rootComponentParams
+	 */
+	setup?(rootComponentParams: ComponentOptions): void;
 }

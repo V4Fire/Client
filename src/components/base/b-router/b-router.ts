@@ -372,7 +372,9 @@ export default class bRouter extends bRouterProps {
 	 * @param [route] - the route value
 	 */
 	@hook('beforeDataCreate')
-	protected initRoute(route: Nullable<router.InitialRoute> = this.initialRoute ?? this.r.initialRoute): Promise<void> {
+	protected initRoute(
+		route: Nullable<router.InitialRoute> = this.initialRoute ?? (SSR ? this.r.initialRoute : null)
+	): Promise<void> {
 		if (route != null) {
 			if (Object.isString(route)) {
 				return this.replace(route);

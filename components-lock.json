@@ -1,5 +1,5 @@
 {
-  "hash": "17bfa44323e931383d4a43be899be3cf78ecf604c7aa870b764c3f3097aac294",
+  "hash": "03854e082d49ae27fc8bbdb4569eb9f8f157ca205c1124b6f6216df47bcb05bc",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2223,7 +2223,10 @@
               "components/directives/in-view",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
-              "components/traits/i-control-list/i-control-list"
+              "components/traits/i-control-list/i-control-list",
+              "core/browser",
+              "core/cookies",
+              "core/html"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2261,7 +2264,10 @@
             "components/directives/in-view",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
-            "components/traits/i-control-list/i-control-list"
+            "components/traits/i-control-list/i-control-list",
+            "core/browser",
+            "core/cookies",
+            "core/html"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -2271,6 +2277,9 @@
               "components/directives/image",
               "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
+              "core/browser",
+              "core/cookies",
+              "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
             ]
@@ -2283,6 +2292,9 @@
               "components/directives/image",
               "components/directives/in-view",
               "components/traits/i-control-list/i-control-list",
+              "core/browser",
+              "core/cookies",
+              "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory"
             ]

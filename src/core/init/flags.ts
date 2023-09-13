@@ -10,5 +10,6 @@ export default [
 	'DOMReady',
 	'ABTReady',
 	'prefetchReady',
-	'stateReady'
+	'stateReady',
+	'hydratedRoute'
 ];

@@ -63,6 +63,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 	build: {
 		/**
+		 * Returns true if the current build environment is a testing environment
+		 * @returns {boolean}
+		 */
+		isTestEnv() {
+			return !isProd && !this.config.webpack.ssr;
+		},
+
+		/**
+		 * Test server port
+		 * @env TEST_PORT
+		 */
+		testPort: o('test-port', {
+			env: true,
+			default: 8000
+		}),
+
+		/**
 		 * Project build mode
 		 *
 		 * @cli build-mode
@@ -186,26 +203,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Test server port
-		 * @env TEST_PORT
-		 */
-		testPort: o('test-port', {
-			env: true,
-			default: 8000
-		}),
-
-		/**
-		 * Returns true if it is a test env
-		 * @returns {boolean}
-		 */
-		isTestEnv() {
-			return !isProd && !this.config.webpack.ssr;
-		},
-
-		/**
-		 * Returns true if the dummy components should be imported dynamically.
-		 * Dummy components specified as dependencies of any component will always be imported
-		 * regardless of this option.
+		 * Returns true if the application build should include special stub components for testing purposes.
+		 * By default, these components are only loaded in the development environment.
 		 *
 		 * @cli load-dummy-components
 		 * @env LOAD_DUMMY_COMPONENTS
@@ -221,7 +220,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				type: 'boolean',
 				default: def
 			});
-		}
+		},
+
+		/**
+		 * Controls the level of verbosity in the project's build output.
+		 * This parameter is useful for users who want to have more detailed information about the project's build.
+		 *
+		 * @cli verbose
+		 * @env VERBOSE
+		 */
+		verbose: o('verbose', {
+			env: true,
+			default: false
+		})
 	},
 
 	/**
@@ -343,7 +354,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
-		hydration(def = this.ssr) {
+		hydration(def = false) {
 			return o('hydration', {
 				env: true,
 				type: 'boolean',
@@ -373,7 +384,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if the bundle should be built for the storybook
+		 * Returns true if the bundle should be built for the [storybook](https://storybook.js.org/)
 		 *
 		 * @cli storybook
 		 * @env STORYBOOK
@@ -455,6 +466,29 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					default: def
 				});
 			}
+		},
+
+		/**
+		 * This option should be used to specify managed libs, which will
+		 * be excluded from `snapshot.managedPaths` and from `watchOptions.ignore`
+		 *
+		 * @cli managed-libs
+		 * @env MANAGED_LIBS
+		 *
+		 * @example
+		 * ```bash
+		 * npx webpack --env managed-libs="@scope/helpers,@scope/core"
+		 * ```
+		 *
+		 * @returns {string[]}
+		 */
+		managedLibs() {
+			return o('managed-libs', {
+				env: true,
+				default: ''
+			})
+				.split(',')
+				.map((str) => str.trim());
 		},
 
 		/**
@@ -579,7 +613,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}
 
 			if (pathVal) {
-				return concatURLs(pathVal, '/').replace(/^[/]+/, '/');
+				return concatURLs(pathVal, '/').replace(/^\/+/, '/');
 			}
 
 			return pathVal;
@@ -977,7 +1011,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	snakeskin() {
 		const snakeskinVars = {
 			...include('build/snakeskin/vars'),
-			teleport: this.webpack.storybook() ? '#storybook-root' : 'body'
+			teleport: this.webpack.storybook() ? '#storybook-root' : '#teleports'
 		};
 
 		return {

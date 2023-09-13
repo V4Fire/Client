@@ -9,13 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.12 (2023-08-21)
+
+#### :bug: Bug Fix
+
+* If the element was in focus, it needs to be restored after validating
+
 ## v3.49.0 (2023-05-31)
 
 #### :rocket: New Feature
 
 * Added ability to specify a custom validator function
 
-## v3.??.?? (2022-??-??)
+## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
 

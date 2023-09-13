@@ -1,6 +1,7 @@
 # components/friends/storage
 
-This module provides a class for the persistent storage of component data. The module utilizes the `core/kv-storage` module with the default engine.
+This module provides a class for persistently storing component data.
+The module uses the `core/kv-storage` module with the default engine.
 However, you can also manually specify the engine to be used.
 
 ```js
@@ -19,7 +20,8 @@ There are two reasons to use the `Storage` class instead of the pure `core/kv-st
 
 1. `Storage` wraps the `core/kv-storage` module with `Async` to prevent race conditions and memory leaks.
 
-2. `Storage` utilizes the `globalName` prop to store values, which helps prevent conflicts between different components that store data using the same key.
+2. `Storage` utilizes the `globalName` prop to store values,
+   which helps prevent conflicts between different components that store data using the same key.
 
    ```typescript
    import iBlock, { component } from 'components/super/i-block/i-block';
@@ -35,17 +37,17 @@ There are two reasons to use the `Storage` class instead of the pure `core/kv-st
    ```
    < b-example
 
-   /// This component overrides data from the previous, because there is no `globalName` specified
+   /// This component overrides data from the previous one, because there is no `globalName` specified
    < b-example
 
    /// This component stores its data as `myComponent_${key}`,
-   /// i.e., it does not conflict with the previous components.
+   /// i.e., it does not conflict with the previous components
    < b-example :globalName = 'myComponent'
    ```
 
-## How to specify an engine for storage?
+## How to specify an engine for the storage?
 
-Override the `storage` system field by specifying the desired engine to be used.
+Нou can pass the engine as a parameter when creating an instance of the `Storage` class.
 
 ```typescript
 import * as IDBEngine from 'core/kv-storage/engines/browser-indexeddb';
@@ -63,7 +65,7 @@ export default class bExample extends iBlock {
 
 ### get
 
-Returns a value from storage based on the specified key.
+Returns the value from the storage using the specified key.
 
 ### set
 

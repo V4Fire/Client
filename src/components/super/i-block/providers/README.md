@@ -71,7 +71,7 @@ It is called when the component is created.
 ```typescript
 interface InitLoadOptions {
   /**
-   * If true, the component is loaded silently, i.e. without switching `componentStatus` to `loading`
+   * If true, the component is loaded silently, i.e., without switching `componentStatus` to `loading`
    * @default `false`
    */
   silent?: boolean;

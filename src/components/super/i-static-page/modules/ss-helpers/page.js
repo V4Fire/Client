@@ -294,7 +294,7 @@ async function generateInitJS(pageName, {
 	head.push(await loadLinks(deps.links, {assets, js: true}));
 
 	// - block headStyles
-	head.push(await getStyleDeclByName('std', {assets, optional: true, js: true}));
+	head.push(getStyleDeclByName('std', {assets, optional: true, js: true}));
 
 	// - block headScripts
 	head.push(await loadLibs(deps.headScripts, {assets, js: true}));
@@ -314,7 +314,7 @@ async function generateInitJS(pageName, {
 
 	// - block scripts
 	body.push(
-		await getScriptDeclByName('std', {assets, optional: true}),
+		getScriptDeclByName('std', {assets, optional: true}),
 		await loadLibs(deps.scripts, {assets, js: true}),
 
 		getScriptDeclByName('index-core', {assets, optional: true}),

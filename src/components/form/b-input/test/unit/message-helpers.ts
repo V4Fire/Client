@@ -140,10 +140,6 @@ test.describe('<b-input> disallow form value', () => {
 			.toBe('true');
 	});
 
-	/**
-	 * @param page
-	 * @param [attrs]
-	 */
 	async function renderInput(page: Page, attrs: RenderComponentsVnodeParams['attrs'] = {}): Promise<JSHandle<bInput>> {
 		await Component.createComponent(page, 'b-input', {
 			attrs: {

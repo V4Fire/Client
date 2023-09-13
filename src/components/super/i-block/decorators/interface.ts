@@ -9,7 +9,7 @@
 import type { AsyncOptions } from 'core/async';
 import type { ComponentInterface } from 'core/component';
 
-import type iBlock from 'components/super/i-block';
+import type iBlock from 'components/super/i-block/i-block';
 import type { ComponentStatus } from 'components/super/i-block/interface';
 
 import type {

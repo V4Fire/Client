@@ -224,7 +224,8 @@ package('p-v4-components-demo')
 This function allows you to create components at the runtime.
 Let's use it and create a new component for testing.
 
-**test/unit/functional.ts**
+**test/unit/main.ts**
+
 ```typescript
 import type { JSHandle } from 'playwright';
 

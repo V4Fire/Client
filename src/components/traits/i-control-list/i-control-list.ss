@@ -50,7 +50,7 @@
 		:class = ${componentName} ? provide.elementClasses(${componentName}, ${wrapperClassesJSON}) : provide.elementClasses(${wrapperClassesJSON})
 	.
 		< component &
-			:is = el.component |
+			:is = el.component || 'b-button' |
 			:class = ${componentName} ? provide.elementClasses(${componentName}, ${controlClassesJSON}) : provide.elementClasses(${controlClassesJSON}) |
 			:v-attrs = el.attrs |
 			@[getControlEvent(el)] = (...args) => callControlAction(el, ...args)

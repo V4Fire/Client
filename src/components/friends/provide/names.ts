@@ -91,8 +91,8 @@ export function fullComponentName(
 	modValue?: unknown
 ): string {
 	let
-		componentName,
-		modName;
+		componentName: string,
+		modName: unknown;
 
 	if (arguments.length === 2) {
 		componentName = this.componentName;
@@ -206,9 +206,9 @@ export function fullElementName(
 		l = arguments.length;
 
 	let
-		componentName,
-		elName,
-		modName;
+		componentName: string,
+		elName: CanUndef<string>,
+		modName: unknown;
 
 	if (l !== 2 && l !== 4) {
 		componentName = this.componentName;

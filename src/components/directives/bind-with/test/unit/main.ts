@@ -27,7 +27,7 @@ test.describe('components/directives/bind-with', () => {
 			'the handler should be executed when the component, within which the directive is used, fires an event',
 
 			async ({page}) => {
-				const el = await createElementWithDirective(page, {
+				const el = await renderDirective(page, {
 					on: 'testEvent'
 				});
 
@@ -44,7 +44,7 @@ test.describe('components/directives/bind-with', () => {
 		);
 
 		test('the handler should be executed when the provided emitter fires an event', async ({page}) => {
-			const el = await createElementWithDirective(page, {
+			const el = await renderDirective(page, {
 				emitter: (event: string, listener: AnyFunction) => {
 					document.body.addEventListener(event, listener);
 				},
@@ -64,7 +64,7 @@ test.describe('components/directives/bind-with', () => {
 		});
 
 		test('the handler should be executed only once when the `once` option is set', async ({page}) => {
-			const el = await createElementWithDirective(page, {
+			const el = await renderDirective(page, {
 				once: 'testEvent'
 			});
 
@@ -81,7 +81,7 @@ test.describe('components/directives/bind-with', () => {
 		});
 
 		test('the handler should receive correct arguments', async ({page}) => {
-			const el = await createElementWithDirective(page, {
+			const el = await renderDirective(page, {
 				on: 'onTestEvent'
 			});
 
@@ -100,7 +100,7 @@ test.describe('components/directives/bind-with', () => {
 			'the handler should be triggered when each of the specified events of the component is fired',
 
 			async ({page}) => {
-				const el = await createElementWithDirective(page, [
+				const el = await renderDirective(page, [
 					{
 						once: 'testEvent'
 					},
@@ -126,7 +126,7 @@ test.describe('components/directives/bind-with', () => {
 
 	test.describe("tracking changes of a component's property by a given path", () => {
 		test('the handler should be executed when a property is changed', async ({page}) => {
-			const el = await createElementWithDirective(page, {
+			const el = await renderDirective(page, {
 				path: 'testField'
 			});
 
@@ -144,7 +144,7 @@ test.describe('components/directives/bind-with', () => {
 
 	test.describe("passing the directive's handler as a handler to another function", () => {
 		test('the handler should be executed as a callback', async ({page}) => {
-			const el = await createElementWithDirective(page, {
+			const el = await renderDirective(page, {
 				callback: (handler) => [1].forEach(handler)
 			});
 
@@ -159,7 +159,7 @@ test.describe('components/directives/bind-with', () => {
 
 	test.describe("passing the directive's handler as a promise handler", () => {
 		test('the handler should be executed when a promise is resolved', async ({page}) => {
-			const el = await createElementWithDirective(page, {
+			const el = await renderDirective(page, {
 				promise: () => Promise.resolve()
 			});
 
@@ -172,7 +172,7 @@ test.describe('components/directives/bind-with', () => {
 		});
 
 		test('the error handler should be executed when a promise is rejected', async ({page}) => {
-			const el = await createElementWithDirective(page, {
+			const el = await renderDirective(page, {
 				promise: () => Promise.reject(new Error('rejection'))
 			});
 
@@ -237,15 +237,7 @@ test.describe('components/directives/bind-with', () => {
 		el.setAttribute('data-test-bind-with', JSON.stringify(newInfo));
 	}
 
-	/**
-	 * Creates an element with the applied `bind-with` directive
-	 *
-	 * @param page
-	 * @param bindWithOpts - options for the `bind-with` directive
-	 */
-	async function createElementWithDirective(
-		page: Page, bindWithOpts: CanArray<Partial<Listener>>
-	): Promise<Locator> {
+	async function renderDirective(page: Page, bindWithOpts: CanArray<Partial<Listener>>): Promise<Locator> {
 		await Component.createComponent(page, 'div', {
 			'v-bind-with': Object.isArray(bindWithOpts) ?
 				bindWithOpts.map(addHandler) :

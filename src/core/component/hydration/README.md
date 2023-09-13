@@ -28,7 +28,11 @@ There are two ways to use this API.
 
 In this case, the module's API is used to save component data,
 followed by JSON serialization and insertion somewhere in the markup.
-Note that the element containing the data must have the ID `hydration-store`.
+
+Please note that in order to store the data,
+you should use the `hydrationStore` field of the component, rather than importing it separately.
+
+Also, please keep in mind that serialized data should be placed within a node with the ID `hydration-store`.
 
 ### Client-side
 

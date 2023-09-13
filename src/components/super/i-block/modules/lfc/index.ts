@@ -33,7 +33,7 @@ export default class Lfc extends Friend {
 	 * 2. `beforeCreate`
 	 * 3. `beforeDataCreate`
 	 *
-	 * @param [skip] - a hook name to be ignored, i.e. method with this hook value will return false
+	 * @param [skip] - a hook name to be ignored, i.e., method with this hook value will return false
 	 *
 	 * @example
 	 * ```js

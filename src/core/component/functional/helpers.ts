@@ -10,9 +10,8 @@ import * as init from 'core/component/init';
 import type { ComponentInterface, ComponentElement } from 'core/component/interface';
 
 /**
- * Initializes the default component dynamic lifecycle handlers for the passed functional component.
- * Also, the function adds the ability for the component to emit lifecycle events,
- * such as `mounted` or `destroyed` hooks.
+ * Initializes the default dynamic lifecycle handlers for the given functional component.
+ * It also enables the component to emit lifecycle events such as `mounted` or `destroyed` hooks.
  *
  * @param component
  */
@@ -61,7 +60,7 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 }
 
 /**
- * Overrides inheritable parameters to the given functional component context from the parent
+ * Overrides inheritable parameters for the given component based on the parent
  *
  * @param ctx
  * @param parentCtx

@@ -36,9 +36,9 @@ This module provides a trait for a component to observe DOM changes by using [`M
 
 ## Events
 
-| Name                     | Description                               | Payload description                | Payload                                                   |
-|--------------------------|-------------------------------------------|------------------------------------|-----------------------------------------------------------|
-| `localEmitter:DOMChange` | The observable DOM tree has been changed. | Mutation records; Observer options | `CanUndef<MutationRecord[]>`; `CanUndef<ObserverOptions>` |
+| Name                     | Description                              | Payload description                | Payload                                                   |
+|--------------------------|------------------------------------------|------------------------------------|-----------------------------------------------------------|
+| `localEmitter:DOMChange` | The observable DOM tree has been changed | Mutation records; Observer options | `CanUndef<MutationRecord[]>`; `CanUndef<ObserverOptions>` |
 
 ## Methods
 
@@ -68,11 +68,12 @@ export default class bExample extends iBlock implements iObserveDOM {
 
 ### onDOMChange
 
-This method is a handler. Every time a change occurs, the handler will be called.
+This method is a handler.
+It will be called every time a change occurs.
 The list of changes to the observed node will be passed to this method as an argument.
 
-The trait provides a static method `emitDOMChange` that will emit the `localEmitter:DOMChange` event.
-The method has the default implementation.
+The trait also provides a static method emitDOMChange that emits the `localEmitter:DOMChange` event.
+The method has a default implementation.
 
 ```typescript
 import iObserveDOM from 'components/traits/i-observe-dom/i-observe-dom';

@@ -80,7 +80,7 @@ export function createVirtualContext(
 	}
 
 	let
-		$options;
+		$options: {directives: Dictionary; components: Dictionary};
 
 	if ('$options' in parent) {
 		const {

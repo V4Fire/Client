@@ -243,11 +243,6 @@ test.describe('<b-textarea>', () => {
 		]);
 	});
 
-	/**
-	 * @param page
-	 * @param [attrs]
-	 * @param [children]
-	 */
 	async function renderTextarea(
 		page: Page,
 		attrs?: RenderComponentsVnodeParams['attrs'],

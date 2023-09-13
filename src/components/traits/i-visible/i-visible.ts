@@ -16,9 +16,10 @@ import type { ModEvent, ModsDecl } from 'components/super/i-block/i-block';
 
 export default abstract class iVisible {
 	/**
-	 * If true, then the component won't be displayed if there is no Internet connection
+	 * If this is true, then the component won't be displayed if there is no Internet connection
+	 * @prop
 	 */
-	hideIfOffline: boolean = false;
+	abstract readonly hideIfOffline: boolean;
 
 	/**
 	 * Trait modifiers
