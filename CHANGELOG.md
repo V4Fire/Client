@@ -17,6 +17,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `verbose` flag to `build` config `config`
 * Warnings about deprecated design system fields are hidden under the `verbose` flag `build/stylus/ds`
+* Added possibility to specify paths with alias to `@context` directive `build/monic`
+* Added possibility to load icons from design-system `components/directives/icon`
 
 ## v4.0.0-beta.19 (2023-09-08)
 
