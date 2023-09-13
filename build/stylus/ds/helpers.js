@@ -110,47 +110,21 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 		variables = Object.create({map: {}});
 
 	const
-		builtinFnRgxp = /^[a-z-_]+\(.*\)$/,
-		colorHEXRgxp = /^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/,
+		builtinFnRgxp = /^[_a-z-]+\(.*\)$/,
+		colorHEXRgxp = /^#(?=[\dA-Fa-f]*$)(?:.{3,4}|.{6}|.{8})$/,
 		unitRgxp = /(-?\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/;
 
-	const
-		data = parseRawDS(ds);
-
+	const data = parseRawDS(ds);
 	return {data, variables};
 
-	/**
-	 * @param {Array<string>} keys
-	 * @param {string} theme
-	 * @returns {Array<string>}
-	 */
 	function getVariablePath(keys, theme) {
 		return keys.filter((field) => !['theme', theme].includes(field));
 	}
 
-	/**
-	 * Creates an array of key chunks from the passed head and tail
-	 *
-	 * @param {Array} [head]
-	 * @param {string|number} tail
-	 * @returns {Array<string>}
-	 *
-	 * @example
-	 * ```js
-	 * createArrayFrom(['deep', 'path', 'to'], 'variable', 'name') // ['deep', 'path', 'to', 'variable', 'name']
-	 * ```
-	 */
 	function createArrayFrom(head, ...tail) {
 		return [...(head || []), ...tail];
 	}
 
-	/**
-	 * @param {object} obj
-	 * @param {(object|Array)} [res]
-	 * @param {Array<string>} [path]
-	 * @param {(string|boolean)} [theme]
-	 * @returns {object}
-	 */
 	function parseRawDS(obj, res, path, theme) {
 		if (!res) {
 			res = {};
@@ -315,6 +289,7 @@ function checkRequiredThemes({detectUserPreferences, themesList}) {
 			case 'prefersColorScheme':
 				checkPrefersColorScheme(v, themesList);
 				break;
+
 			default:
 				throw new Error(`Unknown parameter "${k}" in "detectUserPreferences"`);
 		}

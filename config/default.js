@@ -986,7 +986,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * ```js
 		 * {
 		 *   prefersColorScheme: {
-		 *     enabled: true, // If true, dark or light themes will be detected based on user settings
+		 *     enabled: true,
+		 *
+		 *     // If true, dark or light themes will be detected based on user settings
 		 *     // You can pass custom aliases for theme names
 		 *     // If your design system does not provide themes from this dictionary the build will be failed
 		 *     // If aliases dictionary not specified, default values are 'dark' and 'light'
