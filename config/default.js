@@ -994,8 +994,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 *
 		 * @returns {object}
 		 *
-		 * @default {prefersColorScheme: {enabled: false}}
-		 *
 		 * @example
 		 * ```js
 		 * {
@@ -1022,7 +1020,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						enabled: false
 					}
 				}
-			})
+			});
 		},
 
 		/**
