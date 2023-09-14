@@ -18,9 +18,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added a new modifier `after:` for hooks `core/component/hook`
 * Added a new hook `after:beforeDataCreate` `core/component/meta`
 
+* `bSlider`:
+  * Added a new prop ``alignLastToEnd`` which is similar to existing ``alignFirstToStart`` and is also `true` by default
+  * Added a new prop `autoSlideInterval`
+  * Added a new prop `autoSlidePostGestureDelay`
+
 #### :bug: Bug Fix
 
 * The method `initLoad` is now called on `after:beforeDataCreate` `iBlock`
+* Fixed incorrect `align="end"` behaviour `bSlider`
 
 ## v4.0.0-beta.20 (2023-09-13)
 
