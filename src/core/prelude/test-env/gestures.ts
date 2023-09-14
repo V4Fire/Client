@@ -27,23 +27,25 @@ export default class Gestures {
 
 	/**
 	 * Dispatches a touch event.
-	 * This method is intended for use in cases where the standard functionality of
-	 * Gestures is not suitable for solving your problem, for example:
-	 * - if you need to pass several points in one event, then pass an array of coordinates as the second parameter;
-	 * - if only the emission of a certain event (touchstart, touchmove, touchend) is required, for example,
-	 * to check the reaction of the tested component to it, then fill the last two parameters with the corresponding
-	 * elements or selectors;
-	 * - if you want to emit a touch event over the entire document, and not over a specific element, then the last
-	 * two parameters are omitted.
+	 * It is intended for use in cases where the standard functionality of Gestures is not suitable for
+	 * solving a specific problem:
+	 *
+	 * 1. If you need to pass several points in one event, you can pass an array of coordinates as the second parameter.
+	 * 2. If only the emission of a specific event (touchstart, touchmove, touchend) is required,
+	 *    you can fill the last two parameters with the corresponding elements or selectors.
+	 *
+	 * 3. If you want to emit a touch event over the entire document,
+	 *    and not over a specific element, you can omit the last two parameters.
 	 *
 	 * @param eventType - the type of the event
 	 * @param touchPoints - a point or an array of points for touches
 	 * @param [targetEl] - the target element, defaults to `document.documentElement`
-	 * @param [dispatchEl] - the dispatch element, defaults to `document.elementFromPoint(<first point>)`
+	 * @param [dispatchEl] - the element from which the event is dispatched,
+	 *   defaults to `document.elementFromPoint(<first point>)`
 	 */
 	static dispatchTouchEvent(
 		eventType: 'touchstart' | 'touchmove' | 'touchend',
-		touchPoints: CanArray<{ x: number; y: number }>,
+		touchPoints: CanArray<{x: number; y: number}>,
 		targetEl: CanNull<Element> = null,
 		dispatchEl: CanNull<Element> = null
 	): void {
@@ -224,7 +226,7 @@ export default class Gestures {
 
 	/**
 	 * Returns a DOM node if the passed element is a DOM node or
-	 * performs a querySelector to find a DOM node based on the passed string.
+	 * performs a `querySelector` to find a DOM node based on the passed selector
 	 *
 	 * @param element - an element to resolve
 	 */

@@ -34,8 +34,8 @@ import {
 } from 'components/super/i-data/i-data';
 
 import iSliderProps from 'components/base/b-slider/props';
-import type { Mode, SlideRect, SlideDirection } from 'components/base/b-slider/interface';
 import { autoSlidingAsyncGroup } from 'components/base/b-slider/const';
+import type { Mode, SlideRect, SlideDirection } from 'components/base/b-slider/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-slider/interface';
@@ -56,6 +56,13 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	};
 
 	/**
+	 * The number of slides in the slider
+	 */
+	get length(): number {
+		return this.lengthStore;
+	}
+
+	/**
 	 * A link to the content node
 	 */
 	get content(): CanUndef<HTMLElement> {
@@ -63,7 +70,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Number of DOM nodes within a content block
+	 * The number of DOM nodes in the content block
 	 */
 	get contentLength(): number {
 		return this.content?.children.length ?? 0;
@@ -141,7 +148,16 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * The number of slides in the slider
 	 */
 	@system()
-	protected length: number = 0;
+	protected lengthStore: number = 0;
+
+	/**
+	 * Sets the number of slides in the slider
+	 * @param value
+	 */
+	// eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
+	protected set length(value: number) {
+		this.field.set('lengthStore', value);
+	}
 
 	/** {@link iItems.items} */
 	@field((o) => o.sync.link())
@@ -174,7 +190,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	protected startY: number = 0;
 
 	/**
-	 * The difference between a touch position on X axis at the beginning of the swipe and at the end
+	 * The difference between a touch position on the X-axis at the beginning of the swipe and at the end
 	 */
 	@system()
 	protected diffX: number = 0;
@@ -264,6 +280,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 
 			if (animate) {
 				await this.removeMod('swipe');
+
 			} else {
 				await this.setMod('swipe', true);
 			}
@@ -340,7 +357,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 
 	/**
 	 * Resets auto slide moves
-	 * @param firstInterval - an interval (in ms) before first auto slide change.
+	 * @param firstInterval - an interval (in ms) before first auto slide change
 	 */
 	protected initAutoSliding(firstInterval: number = this.autoSlideInterval): void {
 		this.stopAutoSliding();
@@ -356,16 +373,27 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 				this.async.setInterval(
 					() => this.performAutoSlide(),
 					this.autoSlideInterval,
-					{label: $$.autoSlide, group: autoSlidingAsyncGroup, join: false}
+
+					{
+						label: $$.autoSlide,
+						group: autoSlidingAsyncGroup,
+						join: false
+					}
 				);
 			},
+
 			firstInterval,
-			{label: $$.autoSlideFirst, group: autoSlidingAsyncGroup, join: false}
+
+			{
+				label: $$.autoSlideFirst,
+				group: autoSlidingAsyncGroup,
+				join: false
+			}
 		);
 	}
 
 	/**
-	 * Clears auto slide moves.
+	 * Clears auto slide moves
 	 */
 	protected stopAutoSliding(): void {
 		this.async.clearAll({group: new RegExp(autoSlidingAsyncGroup)});
@@ -374,9 +402,9 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	/**
 	 * Synchronizes auto slide moves by (re-)setting the corresponding interval.
 	 *
-	 * Waiting for `ready` state because slides may be loaded via data provider.
-	 * Watching `db` for possible slide changes and `mode` because
-	 * auto slide only works in `slide` mode.
+	 * The code waits for the `ready` state because the slides may be loaded asynchronously via a data provider.
+	 * It also watches for changes in the `db` property, as well as the `mode`,
+	 * because the auto slide functionality only works when the slider is in `slide` mode.
 	 */
 	@hook('mounted')
 	@wait('ready')
@@ -463,8 +491,8 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		const
 			{children} = content;
 
-		this.viewRect = view.getBoundingClientRect();
 		this.length = children.length;
+		this.viewRect = view.getBoundingClientRect();
 		this.slideRects = [];
 
 		for (let i = 0; i < children.length; i++) {

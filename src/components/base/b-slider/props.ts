@@ -120,15 +120,16 @@ export default abstract class iSliderProps extends iData {
 	readonly swipeToleranceY: number = 50;
 
 	/**
-	 * The interval (in ms) between auto slide moves. 0 means no auto slide moves.
+	 * The interval (in milliseconds) between auto slide moves.
+	 * If it is set to `0`, it means that there will be no auto slide moves.
 	 */
 	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
 	readonly autoSlideInterval: number = 0;
 
 	/**
-	 * The delay (in ms) between last user gesture and first auto slide move.
-	 * A maximum of `autoSlideInterval` and `autoSlidePostGestureDelay` will be used
-	 * as a timeout for the first auto slide move after user gesture.
+	 * The delay (in milliseconds) between the last user gesture and the first automatic slide movement.
+	 * It will be capped at the maximum value between `autoSlideInterval` and `autoSlidePostGestureDelay`,
+	 * and will be used as a timeout for the first automatic slide movement after a user gesture.
 	 */
 	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
 	readonly autoSlidePostGestureDelay: number = 0;

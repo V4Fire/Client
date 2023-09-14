@@ -16,28 +16,28 @@ import type bSlider from 'components/base/b-slider/b-slider';
  * Renders the slider using given options
  *
  * @param page
- * @param options - options for rendering, may contain `params`, `attrs`, `children`, `childrenIds`
- * (in ascending order by priority). The last one option is used to construct images
- * with given ids and use them as slides.
+ * @param [opts] - options for rendering the slider:
+ *   it may contain parameters, attributes, children, and `childrenIds` (this option is used to construct images
+ *   with given IDs and use them as slides)
  */
-export function renderSlider(page: Page, options: {
+export function renderSlider(page: Page, opts: {
 	params?: RenderComponentsVnodeParams;
 	attrs?: RenderComponentsVnodeParams['attrs'];
 	children?: RenderComponentsVnodeParams['children'];
 	childrenIds?: Array<number | string>;
 }): Promise<JSHandle<bSlider>> {
-	const params: RenderComponentsVnodeParams = {...options.params};
+	const params: RenderComponentsVnodeParams = {...opts.params};
 
-	if (options.attrs != null) {
-		params.attrs = options.attrs;
+	if (opts.attrs != null) {
+		params.attrs = opts.attrs;
 	}
 
-	if (options.children != null) {
-		params.children = options.children;
+	if (opts.children != null) {
+		params.children = opts.children;
 	}
 
-	if (options.childrenIds != null) {
-		params.children = options.childrenIds.map((i) => ({
+	if (opts.childrenIds != null) {
+		params.children = opts.childrenIds.map((i) => ({
 			type: 'img',
 			attrs: {
 				id: i,

@@ -182,5 +182,4 @@ test.describe('<b-slider> auto slide', () => {
 			test.expect(await current(slider)).toBe(0);
 		}
 	});
-
 });
