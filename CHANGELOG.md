@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.21 (2023-09-14)
+
+#### :rocket: New Feature
+
+* Added a new modifier `after:` for hooks `core/component/hook`
+* Added a new hook `after:beforeDataCreate` `core/component/meta`
+
+#### :bug: Bug Fix
+
+* The method `initLoad` is now called on `after:beforeDataCreate` `iBlock`
+
 ## v4.0.0-beta.20 (2023-09-13)
 
 #### :rocket: New Feature
