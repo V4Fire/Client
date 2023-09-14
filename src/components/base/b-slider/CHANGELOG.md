@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new prop ``alignLastToEnd`` which is similar to existing ``alignFirstToStart`` and is also `true` by default
+* Added a new prop `alignLastToEnd` which is similar to existing `alignFirstToStart` and is also `true` by default
 * Added a new prop `autoSlideInterval`
 * Added a new prop `autoSlidePostGestureDelay`
 
