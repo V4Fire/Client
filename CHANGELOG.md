@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added a new property `ssrState` `core/component/interface`
 * Added support for `ssrState` `iBlock` `core/init`
+* Added state forwarding to provider parameters `components/friends/data-provider`
 
 ## v4.0.0-beta.21 (2023-09-14)
 
