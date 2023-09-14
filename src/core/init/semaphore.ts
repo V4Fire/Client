@@ -8,7 +8,7 @@
 
 import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
-import { set } from 'core/component/state';
+import remoteState, { set } from 'core/component/state';
 
 import App, {
 
@@ -75,7 +75,8 @@ function createAppInitializer() {
 
 			rootComponentParams.inject = {
 				...inject,
-				hydrationStore: 'hydrationStore'
+				hydrationStore: 'hydrationStore',
+				ssrState: 'ssrState'
 			};
 
 			const
@@ -83,6 +84,8 @@ function createAppInitializer() {
 				rootComponent = new App(rootComponentParams);
 
 			rootComponent.provide('hydrationStore', hydrationStore);
+			rootComponent.provide('ssrState', Object.fastClone(remoteState));
+
 			app.context = rootComponent;
 
 			try {

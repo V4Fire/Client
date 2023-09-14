@@ -687,6 +687,15 @@ export default abstract class iBlockBase extends iBlockFriends {
 					return this.r.hydrationStore;
 				}
 			});
+
+			Object.defineProperty(this, 'ssrState', {
+				enumerable: true,
+				configurable: true,
+
+				get() {
+					return this.r.ssrState;
+				}
+			});
 		}
 	}
 }

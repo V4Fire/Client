@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added support for `ssrState`
+
 ## v4.0.0-beta.21 (2023-09-14)
 
 #### :bug: Bug Fix

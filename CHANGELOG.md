@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added a new property `ssrState` `core/component/interface`
+* Added support for `ssrState` `iBlock` `core/init`
+
 ## v4.0.0-beta.21 (2023-09-14)
 
 #### :rocket: New Feature

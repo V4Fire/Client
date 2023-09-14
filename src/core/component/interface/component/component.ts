@@ -11,6 +11,7 @@
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb } from 'core/async';
 
+import type { State } from 'core/component/state';
 import type { HydrationStore } from 'core/component/hydration';
 import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/meta';
@@ -203,6 +204,12 @@ export abstract class ComponentInterface {
 	 * This API is used only for SSR.
 	 */
 	protected readonly hydrationStore?: HydrationStore;
+
+	/**
+	 * The global state with which the SSR rendering process is initialized.
+	 * This API is used only for SSR.
+	 */
+	protected readonly ssrState?: State;
 
 	/**
 	 * A dictionary containing component attributes that are not identified as input properties
