@@ -46,6 +46,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			beforeRuntime: [],
 			beforeCreate: [],
 			beforeDataCreate: [],
+			'after:beforeDataCreate': [],
 			'before:created': [],
 			created: [],
 			beforeMount: [],

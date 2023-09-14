@@ -13,6 +13,7 @@ export type Hook =
 	'beforeRuntime' |
 	'beforeCreate' |
 	'beforeDataCreate' |
+	'after:beforeDataCreate' |
 	'before:created' |
 	'created' |
 	'beforeMount' |
