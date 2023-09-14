@@ -10,7 +10,7 @@ import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
 import { set } from 'core/component/state';
 
-import Component, {
+import App, {
 
 	app,
 	destroyApp,
@@ -80,7 +80,7 @@ function createAppInitializer() {
 
 			const
 				hydrationStore = new HydrationStore(),
-				rootComponent = new Component(rootComponentParams);
+				rootComponent = new App(rootComponentParams);
 
 			rootComponent.provide('hydrationStore', hydrationStore);
 			app.context = rootComponent;
@@ -107,7 +107,7 @@ function createAppInitializer() {
 			throw new ReferenceError('Application mount node not found');
 		}
 
-		app.context = new Component({
+		app.context = new App({
 			...rootComponentParams,
 			el: targetToMount
 		});
