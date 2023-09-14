@@ -44,7 +44,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		hooks: ComponentHook[] = [];
 
 	if (`before:${hook}` in m.hooks) {
-		hooks.push(...m.hooks[`after:${hook}`]);
+		hooks.push(...m.hooks[`before:${hook}`]);
 	}
 
 	hooks.push(...m.hooks[hook]);
