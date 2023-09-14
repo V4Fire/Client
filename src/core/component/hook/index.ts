@@ -40,11 +40,18 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 	unsafe.hook = hook;
 
 	const
-		m = component.unsafe.meta;
+		m = component.unsafe.meta,
+		hooks: ComponentHook[] = [];
 
-	const hooks = `before:${hook}` in m.hooks ?
-		Array.concat([], <ComponentHook[]>m.hooks[`before:${hook}`], m.hooks[hook]) :
-		m.hooks[hook];
+	if (`before:${hook}` in m.hooks) {
+		hooks.push(...m.hooks[`after:${hook}`]);
+	}
+
+	hooks.push(...m.hooks[hook]);
+
+	if (`after:${hook}` in m.hooks) {
+		hooks.push(...m.hooks[`after:${hook}`]);
+	}
 
 	switch (hooks.length) {
 		case 0:
