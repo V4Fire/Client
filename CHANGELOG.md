@@ -11,13 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.22 (2023-09-15)
 
 #### :rocket: New Feature
 
 * Added a new property `ssrState` `core/component/interface`
 * Added support for `ssrState` `iBlock` `core/init`
 * Added state forwarding to provider parameters `components/friends/data-provider`
+
+#### :bug: Bug Fix
+
+* Fixed the race condition issue with fast re-rendering of functional components `core/component/functional`
 
 ## v4.0.0-beta.21 (2023-09-14)
 
