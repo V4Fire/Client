@@ -5606,8 +5606,8 @@ __metadata:
   linkType: hard
 
 "@v4fire/core@github:V4Fire/Core#v4":
-  version: 4.0.0-alpha.6
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=a8d49c3b4a31f89093eef245dc2ecd2f3f1200c2"
+  version: 4.0.0-alpha.8
+  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=128e72c3659f5d24eb30119a1c25e887ac96b141"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -5751,7 +5751,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: caa52f52a3357e994775908793d576fec385315e138b8a83bf7380640ede2ae5965e819ebd0e85052f50e944556652fece5f77172787e5e5ef539d54ea243af9
+  checksum: 79ac267eb36845cdb21aad25c46e66e60ed8a46173c1e907856fdaa0822dbecb2e3156b74fb0a54148c4aac60a2afb220314c59935acf2c10863e41283565b79
   languageName: node
   linkType: hard
 
@@ -5762,9 +5762,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/eslint-plugin@npm:1.0.0-alpha.10":
-  version: 1.0.0-alpha.10
-  resolution: "@v4fire/eslint-plugin@npm:1.0.0-alpha.10"
+"@v4fire/eslint-plugin@npm:1.0.0-alpha.11":
+  version: 1.0.0-alpha.11
+  resolution: "@v4fire/eslint-plugin@npm:1.0.0-alpha.11"
   peerDependencies:
     "@es-joy/jsdoccomment": ^0.39
     "@typescript-eslint/eslint-plugin": ^5
@@ -5774,13 +5774,13 @@ __metadata:
     jest: ^29
     jest-runner-eslint: ^2
     typescript: ^4
-  checksum: 1ca0edea6c0ba417a6374fa34e2b3eb87421484cb5eb37d2b429737d237c76abb740103ee1cb5c4a1a3973c413cf1145a2b2b974849f816dc573de2af6d6becd
+  checksum: 38ba4839f14a6e91b76b7ae696e13258fa7944f2498554b93ab6a1295b70f16ef44751ea0f204eec2641a4925f450de7623760770f325d88494f8ca09a3e6e75
   languageName: node
   linkType: hard
 
 "@v4fire/linters@git+https://github.com/v4fire/linters#rework_rules":
   version: 2.4.0
-  resolution: "@v4fire/linters@https://github.com/v4fire/linters.git#commit=d44ec885f44de48fb82211196cab2d6ee226f99b"
+  resolution: "@v4fire/linters@https://github.com/v4fire/linters.git#commit=be954e778ef6bf3c224183734211c2b7f022f1e0"
   dependencies:
     "@babel/helper-validator-identifier": 7.18.6
     "@eslint/eslintrc": 1.3.0
@@ -5788,7 +5788,7 @@ __metadata:
     "@statoscope/stats-validator-reporter-console": 5.22.0
     "@typescript-eslint/eslint-plugin": 5.57.1
     "@typescript-eslint/parser": 5.57.1
-    "@v4fire/eslint-plugin": 1.0.0-alpha.10
+    "@v4fire/eslint-plugin": 1.0.0-alpha.11
     "@v4fire/typescript-check": 1.4.2
     eslint: 8.38.0
     eslint-import-resolver-typescript: 3.5.5
@@ -5805,7 +5805,10 @@ __metadata:
     jest: ^29.5.0
     jest-runner-eslint: ^2.0.0
     typescript: ^4.4.4
-  checksum: 3603e0f0c55e99f89799f5a2a9f164dd7a0e881e4117b10837548fdfd2fc9bf68fefdc02bdcaa16d524082dbab3ff4f95b5b9b83179b64bb58a7f34c6dd07e07
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 59487ff45fb70ea37c493dbfc09f3b3d982ecfef908bafe4df444ec9047b0957124b41d87a0e2263e8c7bb46e4b1918b5482322679ef8f503aa3c21459907789
   languageName: node
   linkType: hard
 
@@ -22023,11 +22026,11 @@ __metadata:
 
 "ss2vue3@github:snakeskintpl/ss2vue3":
   version: 1.0.0
-  resolution: "ss2vue3@https://github.com/snakeskintpl/ss2vue3.git#commit=910228b2cb5d9f5aba87d7c14cb8801c026c3c6c"
+  resolution: "ss2vue3@https://github.com/snakeskintpl/ss2vue3.git#commit=7119d71afe4b33112677aee5572e94d6997408b8"
   peerDependencies:
     "@vue/compiler-sfc": "*"
     snakeskin: ^7.5.1
-  checksum: fbffad5c9cf5ff75b56706464ef16a5557cfdb896ce04739aa0dc610793091d0e707fd93b30c560bc86c845f06f4d4d5acf2a6ac4aeedde705470848af1823e0
+  checksum: b48f85692f30a3704be0ed27da3fbc5ddb537127b22e5392f2743c940aa43da1410525d9b444b7575863255047da06ce12cd80aa9b102ef0f8d1eb0c481f2192
   languageName: node
   linkType: hard
 
