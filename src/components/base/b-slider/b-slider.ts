@@ -99,7 +99,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * True if a slider mode is `slide`.
+	 * True if a slider mode is `slide`
 	 */
 	get isSlideMode(): boolean {
 		return this.mode === 'slide';

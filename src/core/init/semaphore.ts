@@ -93,7 +93,6 @@ function createAppInitializer() {
 					ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
 					hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
 
-				// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
 				return ssrContent + hydratedData;
 
 			} finally {

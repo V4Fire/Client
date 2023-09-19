@@ -14,7 +14,7 @@ import Component from 'tests/helpers/component';
 import type bList from 'components/base/b-list/b-list';
 
 /**
- * Provides an API to intercept and mock response for the `b-list` request.
+ * Provides an API to intercept and mock response for the `b-list` request
  * @param pageOrContext
  */
 export async function interceptListRequest(
