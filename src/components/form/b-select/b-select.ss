@@ -31,7 +31,7 @@
 					? itemAttrs.role = 'option'
 					? itemAttrs[':aria-selected'] = 'isSelected(el.value)'
 
-				< ${tag} &
+				< ${tag}.&__item &
 					:key = getItemKey(el, i) |
 					:-id = values.getIndex(el.value) |
 
