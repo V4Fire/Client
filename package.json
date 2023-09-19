@@ -6,7 +6,7 @@
   "packageManager": "yarn@3.5.0",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "4.0.0-beta.23",
+  "version": "4.0.0-beta.24",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -160,8 +160,8 @@
     "@v4fire/storybook-framework-webpack5": "0.8.0",
     "dpdm": "3.10.0",
     "husky": "7.0.4",
-    "jest": "29.5.0",
-    "jest-runner-eslint": "2.0.0",
+    "jest": "29.7.0",
+    "jest-runner-eslint": "2.1.2",
     "json5": "2.2.3",
     "nyc": "15.1.0",
     "playwright": "1.32.1",
@@ -172,12 +172,13 @@
     "ts-jest": "29.1.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "^4.0.0-alpha.4",
+    "@v4fire/core": "^4.0.0-alpha.9",
     "webpack": "^5.82.1"
   },
   "resolutions": {
     "sharp": "0.31.3",
     "webpack": "5.82.1",
-    "html-webpack-plugin": "5.5.0"
+    "html-webpack-plugin": "5.5.0",
+    "globals": "13.19.0"
   }
 }

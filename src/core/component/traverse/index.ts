@@ -14,7 +14,7 @@
 import type { ComponentInterface } from 'core/component/interface';
 
 /**
- * Returns a link to the non-functional parent component of the given one.
+ * Returns a link to the non-functional parent component of the given one
  * @param component
  */
 export function getNormalParent(component: ComponentInterface): ComponentInterface | null {

@@ -299,7 +299,7 @@ export default class bInput extends iInputText {
 	}
 
 	/**
-	 * Synchronizes the typed text with the text hint, if one is provided.
+	 * Synchronizes the typed text with the text hint, if one is provided
 	 */
 	protected syncTextHintValue(): void {
 		if (!this.hasTextHint) {

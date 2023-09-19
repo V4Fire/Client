@@ -35,7 +35,29 @@ export class HydrationStore {
 	 * Returns a JSON string representation of the hydrated data
 	 */
 	toString(): string {
-		return JSON.stringify(this.store, expandedStringify);
+		const extraTypes = [
+			Date,
+			typeof BigInt === 'function' ? BigInt : Object,
+			Function,
+			Map,
+			Set
+		];
+
+		const toJSON = extraTypes.reduce<Array<CanUndef<PropertyDescriptor>>>((res, constr) => {
+			res.push(Object.getOwnPropertyDescriptor(constr.prototype, 'toJSON'));
+			delete constr.prototype['toJSON'];
+			return res;
+		}, []);
+
+		const serializedData = JSON.stringify(this.store, expandedStringify);
+
+		toJSON.forEach((fn, i) => {
+			if (fn != null) {
+				Object.defineProperty(extraTypes[i].prototype, 'toJSON', fn);
+			}
+		});
+
+		return serializedData;
 	}
 
 	/**
