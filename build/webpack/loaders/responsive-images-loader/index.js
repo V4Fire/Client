@@ -177,12 +177,12 @@ function compileCodeToModule(code) {
  */
 function collectLoaderResponses(imageBuffer, options, formats) {
 	let
-		convertationTime = 0;
+		proceededImagesCount = 0;
 
 	const
 		loaderResponses = new Array(formats.length);
 
-	const createContext = (resolve, reject, format) => ({
+	const createContext = (resolve, reject, format, index) => ({
 		...this,
 
 		async: () => (err, data) => {
@@ -191,9 +191,9 @@ function collectLoaderResponses(imageBuffer, options, formats) {
 				return;
 			}
 
-			loaderResponses[convertationTime++] = data;
+			loaderResponses[index] = data;
 
-			if (convertationTime >= formats.length) {
+			if (++proceededImagesCount >= formats.length) {
 				resolve(loaderResponses);
 			}
 		},
@@ -206,7 +206,7 @@ function collectLoaderResponses(imageBuffer, options, formats) {
 
 	return new Promise((resolve, reject) => {
 		formats.forEach(
-			(format) => responsiveLoader.call(createContext(resolve, reject, format), imageBuffer)
+			(format, index) => responsiveLoader.call(createContext(resolve, reject, format, index), imageBuffer)
 		);
 	});
 }
