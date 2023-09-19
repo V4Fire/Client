@@ -10,7 +10,7 @@
 
 const
 	config = require('@config/config'),
-	path = require('path');
+	path = require('node:path');
 
 const
 	{isProd, urlLoaderOpts, urlLoaderInlineOpts} = include('build/webpack/module/const');

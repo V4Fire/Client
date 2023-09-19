@@ -11,7 +11,7 @@
 const
 	config = require('@config/config'),
 	{resolve} = require('@pzlr/build-core'),
-	path = require('path');
+	path = require('node:path');
 
 const
 	{isExternalDep} = include('build/const'),
