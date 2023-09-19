@@ -8,8 +8,9 @@
 
 import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
-import { set } from 'core/component/state';
-import Component, {
+import remoteState, { set } from 'core/component/state';
+
+import App, {
 
 	app,
 	destroyApp,
@@ -51,8 +52,10 @@ function createAppInitializer() {
 			appId: CanUndef<string>;
 
 		const
-			state = Object.reject(opts, ['targetToMount']),
+			state = Object.reject(opts, ['targetToMount', 'setup']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
+
+		opts.setup?.(Object.cast(rootComponentParams));
 
 		Object.entries(state).forEach(([key, value]) => {
 			set(key, value);
@@ -72,14 +75,17 @@ function createAppInitializer() {
 
 			rootComponentParams.inject = {
 				...inject,
-				hydrationStore: 'hydrationStore'
+				hydrationStore: 'hydrationStore',
+				ssrState: 'ssrState'
 			};
 
 			const
 				hydrationStore = new HydrationStore(),
-				rootComponent = new Component(rootComponentParams);
+				rootComponent = new App(rootComponentParams);
 
 			rootComponent.provide('hydrationStore', hydrationStore);
+			rootComponent.provide('ssrState', Object.fastClone(remoteState));
+
 			app.context = rootComponent;
 
 			try {
@@ -104,7 +110,7 @@ function createAppInitializer() {
 			throw new ReferenceError('Application mount node not found');
 		}
 
-		app.context = new Component({
+		app.context = new App({
 			...rootComponentParams,
 			el: targetToMount
 		});

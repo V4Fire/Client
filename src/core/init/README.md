@@ -7,7 +7,8 @@ You can add additional tasks before initialization.
 ## Why is this module needed?
 
 When developing applications, it is often necessary to do some work before initializing the entire application.
-For example, get the AB experiment ID for a user (if any). This module solves this problem by allowing you to define tasks
+For example, get the AB experiment ID for a user (if any).
+This module solves this problem by allowing you to define tasks
 that will block application initialization until all required dependencies are resolved.
 
 ## How does this module work?
@@ -165,12 +166,20 @@ where the root component was mounted (if the function is called in a browser).
 When calling this function from SSR, it is necessary to pass the name of the root component being created,
 and additional parameters can also be passed.
 
-```js
+```typescript
 // Or, import { initApp } from 'core';
 import initApp from 'core/init';
+import type { ComponentOptions } from 'core/component/engines';
 
 initApp('p-v4-components-demo', {
   route: '/user/12345',
+
+  setup(rootComponentParams: ComponentOptions) {
+    rootComponentParams.inject = {
+      ...rootComponentParams.inject,
+      hydrationStore: 'hydrationStore'
+    };
+  },
 
   globalEnv: {
     ssr: {
@@ -217,6 +226,12 @@ interface InitAppOptions {
    * Using this object, polyfills for all necessary APIs can be passed through.
    */
   globalEnv?: GlobalEnvironment;
+
+  /**
+   * A function that is called before the initialization of the root component
+   * @param rootComponentParams
+   */
+  setup?(rootComponentParams: ComponentOptions): void;
 }
 
 export interface GlobalEnvironment extends Dictionary {

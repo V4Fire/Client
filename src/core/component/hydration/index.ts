@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import { expandedStringify, expandedParse } from 'core/json';
 import type { Store, HydratedData } from 'core/component/hydration/interface';
 
 export * from 'core/component/hydration/interface';
@@ -34,7 +35,7 @@ export class HydrationStore {
 	 * Returns a JSON string representation of the hydrated data
 	 */
 	toString(): string {
-		return JSON.stringify(this.store);
+		return JSON.stringify(this.store, expandedStringify);
 	}
 
 	/**
@@ -74,7 +75,7 @@ export class HydrationStore {
 	 * @param store
 	 */
 	protected parse(store: string): Store {
-		return JSON.parse(store) ?? Object.createDict();
+		return JSON.parse(store, expandedParse) ?? Object.createDict();
 	}
 }
 

@@ -22,7 +22,7 @@ const
 	aliases = include('build/webpack/resolve/alias');
 
 const
-	contextRgxp = /\/\/\s*@context:\s*(.*?)\n([\s\S]*?)\/\/\s*@endcontext\n/g,
+	contextRgxp = /\/\/\s*@context:\s*(.*?)\n([\S\s]*?)\/\/\s*@endcontext\n/g,
 	tplRgxp = /\/?\${(.*?)}/g;
 
 /**
@@ -31,19 +31,49 @@ const
  * @param {string} str
  * @returns {string}
  *
+ * The following transformation rules are used:
+ *
+ * 0. The token will be substituted with itself (without the `@` prefix).
+ * 1. If the path starts with the webpack alias, the path will be substituted as is.
+ * 2. Else, if the token starts with the `@` prefix, the provided path will
+ *    be concatenated with the token (without the prefix) and substituted.
+ * 3. Else, the provided path will be concatenated with the token and substituted.
+ *
+ * In all cases, there is a check to ensure that the file exists at the resulting path.
+ * If the file does not exist, the substitution will not be made.
+ *
  * @example
+ * Suppose the following aliases are defined in the webpack config:
+ *
  * ```js
- * // @context: ['@sprite', ['./assets', './node_modules/a/assets']]
+ * const aliases = {
+ *   ds: '/path1',
+ *   '@v4fire/client/sprite': '/path2',
+ *   sprite: '/path3'
+ * };
+ * ```
+ *
+ * Then, the following code:
+ *
+ * ```js
+ * // @context: ['@sprite', ['@v4fire/core', '@v4fire/client', 'ds/icons', 'ds/bla']]
  * console.log(require.context('!!svg-sprite!@sprite', true, /\.svg$/));
  * // @endcontext
+ * ```
  *
- * // The declaration will be transformed to
+ * Will be transformed to:
  *
- * console.log(require.context('!!svg-sprite-loader!./assets', true, /\.svg$/));
- * console.log(require.context('!!svg-sprite-loader!./node_modules/a/assets', true, /\.svg$/));
+ * ```js
+ * console.log(require.context('!!svg-sprite!sprite', true, /\.svg$/));
+ * console.log(require.context('!!svg-sprite!@v4fire/client/sprite', true, /\.svg$/));
+ * console.log(require.context('!!svg-sprite!ds/icons', true, /\.svg$/));
+ * // There is no alias for `@v4fire/core/sprite`, so the resolution is not included in the build
+ * // The path `ds/bla` does not exist, so the resolution is not included in the build
+ * ```
  *
- * // Also, you can take values that are passed as monic flags
+ * Also, you can take values that are passed as monic flags:
  *
+ * ```js
  * // @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
  * console.log(require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/));
  * // @endcontext
@@ -85,16 +115,11 @@ module.exports = function requireContextReplacer(str) {
 				let
 					resolvedSrc;
 
-				if (src[0] === '@') {
-					const
-						srcChunks = src.split(/[\\/]/),
-						key = path.join(contextPath, srcChunks[0].slice(1));
+				if (getAliasFromPath(contextPath) != null) {
+					resolvedSrc = contextPath;
 
-					if (!aliases[key]) {
-						return str;
-					}
-
-					resolvedSrc = path.join(aliases[key], ...srcChunks.slice(1));
+				} else if (src[0] === '@') {
+					resolvedSrc = path.join(contextPath, src.slice(1));
 
 				} else {
 					resolvedSrc = path.join(contextPath, src);
@@ -112,9 +137,7 @@ module.exports = function requireContextReplacer(str) {
 					return v ? `/${v}` : v;
 				});
 
-				if (fs.existsSync(resolvedSrc)) {
-					isPathExists = true;
-				}
+				isPathExists = checkFileExists(resolvedSrc);
 
 				return path.normalize(resolvedSrc);
 			});
@@ -127,6 +150,62 @@ module.exports = function requireContextReplacer(str) {
 		return res;
 	});
 };
+
+/**
+ * Checks if a file exists at the given path
+ *
+ * @param {string} pathToCheck
+ * @returns {boolean}
+ *
+ * @example
+ * ```js
+ * checkFileExists('/foo/bla/bar'); // checks an absolute path
+ * checkFileExists('bla/bar');      // checks webpack aliases
+ * ```
+ */
+function checkFileExists(pathToCheck) {
+	if (path.isAbsolute(pathToCheck)) {
+		return fs.existsSync(pathToCheck);
+	}
+
+	const alias = getAliasFromPath(pathToCheck);
+
+	if (alias == null) {
+		return false;
+	}
+
+	const
+		resolvedAlias = aliases[alias],
+		pathWithoutAlias = pathToCheck.replace(alias, ''),
+		resolvedPath = path.join(resolvedAlias, pathWithoutAlias);
+
+	if (path.isAbsolute(resolvedPath)) {
+		return fs.existsSync(resolvedPath);
+	}
+
+	const pathToDep = path.dirname(require.resolve(path.join(aliases[alias], 'package.json')));
+
+	return fs.existsSync(path.join(pathToDep, pathWithoutAlias));
+}
+
+/**
+ * Retrieves the alias from a given path
+ *
+ * @param {string} path - the path to retrieve the alias from
+ * @returns {(string|undefined)}
+ */
+function getAliasFromPath(path) {
+	let alias;
+
+	for (const a of Object.keys(aliases)) {
+		if (path.startsWith(a)) {
+			alias = a;
+			break;
+		}
+	}
+
+	return alias;
+}
 
 Object.assign(module.exports, {
 	contextRgxp,

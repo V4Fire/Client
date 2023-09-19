@@ -45,7 +45,8 @@ import {
 	wrapRenderSlot,
 
 	wrapWithDirectives,
-	wrapResolveDirective, wrapMergeProps
+	wrapResolveDirective,
+	wrapMergeProps
 
 } from 'core/component/render';
 

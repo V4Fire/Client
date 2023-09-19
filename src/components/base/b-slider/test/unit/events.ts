@@ -10,12 +10,12 @@ import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 import Gestures from 'tests/helpers/gestures';
-import Component from 'tests/helpers/component';
 import DOM from 'tests/helpers/dom';
 
 import type GesturesInterface from 'core/prelude/test-env/gestures';
 
 import type bSlider from 'components/base/b-slider/b-slider';
+import { renderSlider } from 'components/base/b-slider/test/helpers';
 
 test.describe('<b-slider> standard component events', () => {
 	let
@@ -35,7 +35,7 @@ test.describe('<b-slider> standard component events', () => {
 			}
 		}));
 
-		slider = await Component.createComponent<bSlider>(page, 'b-slider', {children});
+		slider = await renderSlider(page, {children});
 
 		const
 			selector = DOM.elNameSelectorGenerator('b-slider', 'window');

@@ -76,6 +76,7 @@ export interface RenderEngine<T extends object = object> {
 	supports: RenderEngineFeatures;
 	proxyGetters: ProxyGetters<T>;
 	r: RenderAPI;
+	wrapAPI<T extends Dictionary>(this: ComponentInterface, path: string, api: T): T;
 }
 
 export interface RenderEngineFeatures {

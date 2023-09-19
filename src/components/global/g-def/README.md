@@ -39,4 +39,9 @@ BASE_FONT_PATTERN = '"Open Sans%t", Arial, sans-serif'
  * Base system font
  */
 BASE_FONT = getGlobalFont()
+
+/**
+ * The default color of icons included by the `i` mixin from the design system
+ */
+DS_ICON_COLOR = #000
 ```

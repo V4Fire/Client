@@ -382,3 +382,30 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 		}
 	});
 }
+
+/**
+ * Decorates the given component API and returns it
+ *
+ * @param path - the path from which the API was loaded
+ * @param api
+ */
+export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: string, api: T): T {
+	if (path === 'vue/server-renderer') {
+		api = {...api};
+
+		if (Object.isFunction(api.ssrRenderComponent)) {
+			const {ssrRenderComponent} = api;
+
+			Object.set(api, 'ssrRenderComponent', (
+				component: object,
+				props: Nullable<Dictionary>,
+				...args: unknown[]
+			) => {
+				props = normalizeComponentAttrs(props, [], this.meta);
+				return ssrRenderComponent(component, props, ...args);
+			});
+		}
+	}
+
+	return api;
+}

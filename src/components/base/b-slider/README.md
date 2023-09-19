@@ -149,6 +149,10 @@ For example, by specifying `center`, the slider will stop when the active slide 
 
 If true, the first slide will be aligned to the start position (the left bound).
 
+#### [alignLastToEnd = `true`]
+
+If true, the last slide will be aligned to the end position (the right bound).
+
 #### [deltaX = `0.9`]
 
 This prop controls how much does the shift along the X-axis corresponds to a finger movement.
@@ -172,6 +176,17 @@ The minimum displacement threshold along the X-axis at which the slider will be 
 #### [swipeToleranceY = `50`]
 
 The minimum Y-axis offset threshold at which the slider will be considered to be used (in px).
+
+#### [autoSlideInterval = `0`]
+
+The interval (in milliseconds) between auto slide moves.
+If it is set to `0`, it means that there will be no auto slide moves.
+
+#### [autoSlidePostGestureDelay = `0`]
+
+The delay (in milliseconds) between the last user gesture and the first automatic slide movement.
+It will be capped at the maximum value between `autoSlideInterval` and `autoSlidePostGestureDelay`,
+and will be used as a timeout for the first automatic slide movement after a user gesture.
 
 ## Fields
 

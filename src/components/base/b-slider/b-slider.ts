@@ -34,6 +34,7 @@ import {
 } from 'components/super/i-data/i-data';
 
 import iSliderProps from 'components/base/b-slider/props';
+import { autoSlidingAsyncGroup } from 'components/base/b-slider/const';
 import type { Mode, SlideRect, SlideDirection } from 'components/base/b-slider/interface';
 
 export * from 'components/super/i-data/i-data';
@@ -47,18 +48,19 @@ interface bSlider extends Trait<typeof iObserveDOM> {}
 @component()
 @derive(iObserveDOM)
 class bSlider extends iSliderProps implements iObserveDOM, iItems {
-	/**
-	 * The number of slides in the slider
-	 */
-	@system()
-	length: number = 0;
-
 	static override readonly mods: ModsDecl = {
 		swipe: [
 			'true',
 			'false'
 		]
 	};
+
+	/**
+	 * The number of slides in the slider
+	 */
+	get length(): number {
+		return this.lengthStore;
+	}
 
 	/**
 	 * A link to the content node
@@ -68,7 +70,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	}
 
 	/**
-	 * Number of DOM nodes within a content block
+	 * The number of DOM nodes in the content block
 	 */
 	get contentLength(): number {
 		return this.content?.children.length ?? 0;
@@ -119,8 +121,12 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 			return 0;
 		}
 
-		if (current === 0 && this.alignFirstToStart) {
+		if (this.alignFirstToStart && current === 0) {
 			return 0;
+		}
+
+		if (this.alignLastToEnd && current === slideRects.length - 1) {
+			return slideRect.offsetLeft + slideRect.width - viewRect.width;
 		}
 
 		switch (align) {
@@ -131,11 +137,26 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 				return slideRect.offsetLeft;
 
 			case 'end':
-				return slideRect.offsetLeft + slideRect.width;
+				return slideRect.offsetLeft + slideRect.width - viewRect.width;
 
 			default:
 				return 0;
 		}
+	}
+
+	/**
+	 * The number of slides in the slider
+	 */
+	@system()
+	protected lengthStore: number = 0;
+
+	/**
+	 * Sets the number of slides in the slider
+	 * @param value
+	 */
+	// eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
+	protected set length(value: number) {
+		this.field.set('lengthStore', value);
 	}
 
 	/** {@link iItems.items} */
@@ -169,7 +190,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	protected startY: number = 0;
 
 	/**
-	 * The difference between a touch position on X axis at the beginning of the swipe and at the end
+	 * The difference between a touch position on the X-axis at the beginning of the swipe and at the end
 	 */
 	@system()
 	protected diffX: number = 0;
@@ -257,12 +278,14 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		if (length - 1 >= index) {
 			this.current = index;
 
-			if (!animate) {
+			if (animate) {
+				await this.removeMod('swipe');
+
+			} else {
 				await this.setMod('swipe', true);
 			}
 
 			this.syncState();
-			this.performSliderMove();
 
 			return true;
 		}
@@ -315,6 +338,79 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 				childList: true
 			});
 		}
+	}
+
+	/**
+	 * Performs auto slide change
+	 */
+	protected async performAutoSlide(): Promise<void> {
+		const
+			{current, length} = this;
+
+		if (current === length - 1) {
+			await this.slideTo(0, true);
+
+		} else {
+			await this.slideTo(current + 1, true);
+		}
+	}
+
+	/**
+	 * Resets auto slide moves
+	 * @param firstInterval - an interval (in ms) before first auto slide change
+	 */
+	protected initAutoSliding(firstInterval: number = this.autoSlideInterval): void {
+		this.stopAutoSliding();
+
+		if (!this.isSlideMode || !Number.isPositive(firstInterval)) {
+			return;
+		}
+
+		this.async.setTimeout(
+			async () => {
+				await this.performAutoSlide();
+
+				this.async.setInterval(
+					() => this.performAutoSlide(),
+					this.autoSlideInterval,
+
+					{
+						label: $$.autoSlide,
+						group: autoSlidingAsyncGroup,
+						join: false
+					}
+				);
+			},
+
+			firstInterval,
+
+			{
+				label: $$.autoSlideFirst,
+				group: autoSlidingAsyncGroup,
+				join: false
+			}
+		);
+	}
+
+	/**
+	 * Clears auto slide moves
+	 */
+	protected stopAutoSliding(): void {
+		this.async.clearAll({group: new RegExp(autoSlidingAsyncGroup)});
+	}
+
+	/**
+	 * Synchronizes auto slide moves by (re-)setting the corresponding interval.
+	 *
+	 * The code waits for the `ready` state because the slides may be loaded asynchronously via a data provider.
+	 * It also watches for changes in the `db` property, as well as the `mode`,
+	 * because the auto slide functionality only works when the slider is in `slide` mode.
+	 */
+	@hook('mounted')
+	@wait('ready')
+	@watch(['db', 'autoSlideInterval', 'mode'])
+	protected syncAutoSlide(): void {
+		this.initAutoSliding(this.autoSlideInterval);
 	}
 
 	/**
@@ -395,8 +491,8 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		const
 			{children} = content;
 
-		this.viewRect = view.getBoundingClientRect();
 		this.length = children.length;
+		this.viewRect = view.getBoundingClientRect();
 		this.slideRects = [];
 
 		for (let i = 0; i < children.length; i++) {
@@ -408,7 +504,6 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 			});
 		}
 
-		void this.setMod('swipe', true);
 		this.performSliderMove();
 	}
 
@@ -484,6 +579,7 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
+		this.stopAutoSliding();
 		this.scrolling = false;
 
 		const
@@ -593,6 +689,8 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		this.emit('swipeEnd', dir, isSwiped);
 		this.isTolerancePassed = false;
 		this.swiping = false;
+
+		this.initAutoSliding(Math.max(this.autoSlideInterval, this.autoSlidePostGestureDelay));
 	}
 }
 
