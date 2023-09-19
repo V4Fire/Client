@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-09-??)
+
+#### :bug: Bug Fix
+
+* Fixed initializing during SSR
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

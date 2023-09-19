@@ -268,6 +268,10 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 			this.items = this.normalizeItems(<this['Items']>val);
 		}
 
+		if (SSR) {
+			this.initComponentValues();
+		}
+
 		return this.items;
 	}
 

@@ -334,6 +334,10 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 			return this.items = val;
 		}
 
+		if (SSR) {
+			this.initComponentValues();
+		}
+
 		return this.items;
 	}
 

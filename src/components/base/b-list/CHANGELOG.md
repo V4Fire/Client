@@ -14,6 +14,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Fixed providing of external classes
+* Fixed initializing during SSR
 
 ## v4.0.0-beta.8 (2023-07-19)
 
