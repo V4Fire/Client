@@ -67,9 +67,9 @@ export function registerParentComponents(component: ComponentConstructorInfo): b
  *
  * @param name - the component name
  */
-export function registerComponent(name: CanUndef<string>): CanUndef<ComponentMeta> {
+export function registerComponent(name: CanUndef<string>): CanNull<ComponentMeta> {
 	if (name == null || !isComponent.test(name)) {
-		return;
+		return null;
 	}
 
 	const
@@ -80,5 +80,5 @@ export function registerComponent(name: CanUndef<string>): CanUndef<ComponentMet
 		delete componentRegInitializers[name];
 	}
 
-	return components.get(name);
+	return components.get(name) ?? null;
 }
