@@ -176,13 +176,7 @@ function compileCodeToModule(code) {
  * @returns {Promise<string[]>}
  */
 function collectLoaderResponses(imageBuffer, options, formats) {
-	let
-		proceededImagesCount = 0;
-
-	const
-		loaderResponses = new Array(formats.length);
-
-	const createContext = (resolve, reject, format, index) => ({
+	const createContext = (resolve, reject, format) => ({
 		...this,
 
 		async: () => (err, data) => {
@@ -191,11 +185,7 @@ function collectLoaderResponses(imageBuffer, options, formats) {
 				return;
 			}
 
-			loaderResponses[index] = data;
-
-			if (++proceededImagesCount >= formats.length) {
-				resolve(loaderResponses);
-			}
+			resolve(data);
 		},
 
 		getOptions: () => ({
@@ -204,9 +194,10 @@ function collectLoaderResponses(imageBuffer, options, formats) {
 		})
 	});
 
-	return new Promise((resolve, reject) => {
-		formats.forEach(
-			(format, index) => responsiveLoader.call(createContext(resolve, reject, format, index), imageBuffer)
-		);
+	const callLoader = (format) => new Promise((resolve, reject) => {
+		const context = createContext(resolve, reject, format);
+		responsiveLoader.call(context, imageBuffer);
 	});
+
+	return Promise.all(formats.map(callLoader));
 }
