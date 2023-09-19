@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.24 (2023-09-19)
+
+#### :bug: Bug Fix
+
+* Added support for serialization of custom objects during hydration `core/component/hydration`
+
 ## v4.0.0-beta.23 (2023-09-18)
 
 #### :bug: Bug Fix

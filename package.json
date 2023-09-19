@@ -6,7 +6,7 @@
   "packageManager": "yarn@3.5.0",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "4.0.0-beta.23",
+  "version": "4.0.0-beta.24",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -170,7 +170,7 @@
     "ts-jest": "29.1.0"
   },
   "peerDependencies": {
-    "@v4fire/core": "^4.0.0-alpha.4",
+    "@v4fire/core": "^4.0.0-alpha.9",
     "webpack": "^5.82.1"
   },
   "resolutions": {

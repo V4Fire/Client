@@ -5474,7 +5474,7 @@ __metadata:
     webpack: 5.82.1
     webpack-cli: 5.0.1
   peerDependencies:
-    "@v4fire/core": ^4.0.0-alpha.4
+    "@v4fire/core": ^4.0.0-alpha.9
     webpack: ^5.82.1
   dependenciesMeta:
     "@pzlr/build-core":
@@ -5632,8 +5632,8 @@ __metadata:
   linkType: hard
 
 "@v4fire/core@github:V4Fire/Core#v4":
-  version: 4.0.0-alpha.8
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=128e72c3659f5d24eb30119a1c25e887ac96b141"
+  version: 4.0.0-alpha.9
+  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=d792b0aa0674f570153fb81f790f4c03fa2a3d8f"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -5777,7 +5777,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: 79ac267eb36845cdb21aad25c46e66e60ed8a46173c1e907856fdaa0822dbecb2e3156b74fb0a54148c4aac60a2afb220314c59935acf2c10863e41283565b79
+  checksum: a25c6b57959cbf72d50181d8986e0cfd710d04c7729494bf3e8ee63da08fc516c6d3456ca10a5f12087ead50524454dfcf4a1e021415726a6c91d52447669865
   languageName: node
   linkType: hard
 
