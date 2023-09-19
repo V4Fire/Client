@@ -1146,7 +1146,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			outputPath: path.dirname(this.webpack.assetsOutput()),
 			name: isProd ? '[hash]-[width].[ext]' : '[name].[ext]',
-			adapter: include('build/webpack/loaders/adapters/scale-image-adapter'),
+			adapter: include('build/webpack/loaders/responsive-images-loader/adapter'),
 			sizes: [1, 2, 3],
 			formats: ['webp', 'avif'],
 			disable: !isProd

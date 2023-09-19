@@ -9,7 +9,8 @@
 'use strict';
 
 const
-	config = require('@config/config');
+	config = require('@config/config'),
+	path = require('path');
 
 const
 	{isProd, urlLoaderOpts, urlLoaderInlineOpts} = include('build/webpack/module/const');
@@ -45,7 +46,7 @@ module.exports = function imagesRules() {
 				resourceQuery: /responsive/,
 				use: [
 					{
-						loader: 'responsive-images-loader',
+						loader: path.resolve('build', 'webpack', 'loaders', 'responsive-images-loader'),
 						options: config.responsiveImagesOpts()
 					}
 				]
