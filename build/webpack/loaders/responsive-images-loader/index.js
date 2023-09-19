@@ -100,15 +100,16 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
  * @returns {object}
  */
 function parseResourceQuery(query) {
-	if (query[1] !== '{' || query[query.length - 1] !== '}') {
+	try {
+		const
+			options = json5.parse(query.slice(1)),
+			loaderResourceQuery = 'responsive';
+
+		return Object.reject(options, loaderResourceQuery);
+
+	} catch {
 		return {};
 	}
-
-	const
-		options = json5.parse(query.slice(1)),
-		loaderResourceQuery = 'responsive';
-
-	return Object.reject(options, loaderResourceQuery);
 }
 
 /**
