@@ -84,7 +84,9 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 
 	/** {@link bSelect.items} */
 	set items(value: this['Items']) {
+		const old = this.items;
 		this.field.set('itemsStore', value);
+		this.syncItemsWatcher(this.items, old);
 	}
 
 	/** {@link iActiveItems.activeChangeEvent} */
