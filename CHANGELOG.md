@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-09-??)
+
+#### :bug: Bug Fix
+
+* Fixed providing of external classes `bList`
+
 ## v4.0.0-beta.25 (2023-09-19)
 
 #### :bug: Bug Fix
