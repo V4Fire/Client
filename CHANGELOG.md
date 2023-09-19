@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed providing of external classes `bList`
+* Fixed initializing during SSR `bList` `bTree`
 
 ## v4.0.0-beta.25 (2023-09-19)
 
