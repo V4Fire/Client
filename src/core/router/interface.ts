@@ -376,7 +376,7 @@ export type AnyRoute =
  */
 export interface AdditionalGetRouteOpts {
 	basePath?: string;
-	defaultRoute?: RouteBlueprint;
+	defaultRoute?: CanNull<RouteBlueprint>;
 }
 
 /**
