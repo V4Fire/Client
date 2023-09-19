@@ -180,7 +180,7 @@ function collectLoaderResponses(imageBuffer, options, formats) {
 		convertationTime = 0;
 
 	const
-		loaderResponses = [];
+		loaderResponses = new Array(formats.length);
 
 	const createContext = (resolve, reject, format) => ({
 		...this,
@@ -191,9 +191,9 @@ function collectLoaderResponses(imageBuffer, options, formats) {
 				return;
 			}
 
-			loaderResponses.push(data);
+			loaderResponses[convertationTime++] = data;
 
-			if (++convertationTime >= formats.length) {
+			if (convertationTime >= formats.length) {
 				resolve(loaderResponses);
 			}
 		},
