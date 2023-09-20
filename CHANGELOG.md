@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.26 (2023-09-??)
 
+#### :rocket: New Feature
+
+* Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
+
 #### :bug: Bug Fix
 
 * Fixed providing of external classes `bList` `bSelect`
