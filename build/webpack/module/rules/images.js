@@ -46,7 +46,7 @@ module.exports = function imagesRules() {
 				resourceQuery: /responsive/,
 				use: [
 					{
-						loader: path.resolve('build', 'webpack', 'loaders', 'responsive-images-loader'),
+						loader: 'responsive-images-loader',
 						options: config.responsiveImagesOpts()
 					}
 				]

@@ -49,7 +49,7 @@ module.exports = function tsRules() {
 			},
 
 			{
-				loader: path.resolve('build', 'webpack', 'loaders', 'symbol-generator-loader'),
+				loader: 'symbol-generator-loader',
 				options: {
 					modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 				}
