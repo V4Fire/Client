@@ -233,7 +233,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @param {boolean} [def] - default value
 		 * @returns {boolean}
 		 */
-		traceBuildTimes(def = false) {
+		trace(def = false) {
 			return o('trace-build-times', {
 				env: true,
 				type: 'boolean',

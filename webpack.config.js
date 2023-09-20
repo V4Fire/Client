@@ -67,7 +67,7 @@ async function buildFactory(entry, buildId) {
 		...await include('build/webpack/custom/options')({buildId})
 	};
 
-	if (build.traceBuildTimes()) {
+	if (build.trace()) {
 		wrapLoaders(config.module.rules);
 	}
 

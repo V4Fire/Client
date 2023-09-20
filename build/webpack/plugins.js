@@ -43,10 +43,10 @@ module.exports = async function plugins({name}) {
 		['invalidateExternalCache', new InvalidateExternalCachePlugin()]
 	]);
 
-	if (config.webpack.mode() !== 'production' || config.build.traceBuildTimes()) {
+	if (config.webpack.mode() !== 'production' || config.build.trace()) {
 		plugins.set('measurePlugin', new MeasurePlugin({
 			output: 'trace.json',
-			trace: config.build.traceBuildTimes()
+			trace: config.build.trace()
 		}));
 	}
 
