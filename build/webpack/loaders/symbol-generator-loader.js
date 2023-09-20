@@ -18,7 +18,7 @@ const
 
 const
 	creationRgxp = /(\$\$ = symbolGenerator\()(\))/,
-	symbolRgxp = /\$\$\.([$_a-z][\w$]*)/gi;
+	symbolRgxp = /\$\$\.([a-z_$][\w$]*)/gi;
 
 /**
  * Webpack loader to shim `core/symbol` module for old browsers

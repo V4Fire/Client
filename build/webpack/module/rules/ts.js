@@ -10,10 +10,9 @@
 
 const
 	config = require('@config/config'),
-	path = require('node:path');
+	{resolve} = require('@pzlr/build-core');
 
 const
-	{resolve} = require('@pzlr/build-core'),
 	{isExternalDep} = include('build/const'),
 	{isTsFile} = include('build/webpack/module/const');
 
@@ -49,7 +48,7 @@ module.exports = function tsRules() {
 			},
 
 			{
-				loader: path.resolve('build', 'webpack', 'loaders', 'symbol-generator-loader'),
+				loader: 'symbol-generator-loader',
 				options: {
 					modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
 				}
