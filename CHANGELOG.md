@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.26 (2023-09-??)
+## v4.0.0-beta.26 (2023-09-20)
 
 #### :rocket: New Feature
 
@@ -21,6 +21,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed providing of external classes `bList` `bSelect`
 * Fixed initializing during SSR `bList` `bTree` `bSelect`
+
+#### :house: Internal
+
+* The module has been moved to a separate folder `build/webpack/loaders/symbol-generator-loader`
 
 ## v4.0.0-beta.25 (2023-09-19)
 
