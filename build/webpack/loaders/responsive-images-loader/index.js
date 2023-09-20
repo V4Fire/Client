@@ -94,9 +94,10 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 };
 
 /**
- * Parses the specified resourceQuery. Supports only json5 notation
+ * Parses the specified resourceQuery.
+ * Supports only json5 notation.
  *
- * @param {string} query - '?{responsive:true,key1:value1,key2:value2}'
+ * @param {string} query - the loader query, like, '?{responsive:true,key1:value1,key2:value2}'
  * @returns {object}
  */
 function parseResourceQuery(query) {

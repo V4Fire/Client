@@ -1,11 +1,13 @@
 # build/webpack/loaders/responsive-images-loader
 
 The loader is used to compress and convert responsive images.
-It utilizes the [responsiveLoader](https://github.com/dazuaz/responsive-loader/tree/master) library underneath for each conversion operation.
+It utilizes the [responsiveLoader](https://github.com/dazuaz/responsive-loader/tree/master)
+library underneath for each conversion operation.
 
 ### Usage
 
-To use this loader in a template, the basic syntax is:
+By default, this loader is configured to be used optionally with the `responsive` query parameter.
+This means that you just need to require the desired image and specify this parameter.
 
 ```ss
 < .my-image v-image = require('path/to/image.png?responsive')
@@ -17,9 +19,9 @@ The loader returns the following structure:
 
 ```js
 ({
-  // 4e3edf6d108c0701 - hash
+  // 4e3edf6d108c0701 - the image hash
   // 346 - 2x size of the original image
-  // png - format of the original image
+  // png - the format of the original image
   src: '4e3edf6d108c0701-346.png',
   sources: [
     {
@@ -51,7 +53,8 @@ The loader returns the following structure:
 ```
 
 Please note that this loader is only applied in production mode.
-In development mode, the loader will simply return the name of the image without any compression or conversion:
+In development mode, the loader will simply return the name of the image without any
+compression or conversion.
 
 ```js
 require('path/to/image.png?responsive'); // {src: 'image.png'}
@@ -62,18 +65,21 @@ require('path/to/image.png?responsive'); // {src: 'image.png'}
 In addition to the [options](https://github.com/dazuaz/responsive-loader/tree/master#options) provided by the
 `responsive-loader`, this loader also offers a few additional ones.
 
-Please note that the options can be specified using only JSON5 notation for a specific image. For example:
+Please note that the options can be specified using only JSON5 notation for a specific image.
+For example:
 
 ```
 require('image.png?{responsive:true,key1:value1,key2:value2}');
 ```
 
 The `responsive` field in the above example is the `resourceQuery` of the loader.
-This parameter is required and should always be set to `true` if you want to process your image using this loader.
+This parameter is required and should always be set to `true`
+if you want to process your image using this loader.
 
-Alternatively, you can also override the `responsiveImagesOpts` method that specifies the base options for every image in `config/default`.
+Alternatively, you can also override the `responsiveImagesOpts` method that specifies
+the base options for every image in `config/default`.
 
-The additional options are the following:
+The additional options are the following.
 
 #### defaultSrcPath ['2x.[original image extension]']
 
@@ -98,8 +104,10 @@ The formats to convert your image to.
 
 #### sizes [1, 2, 3]
 
-Although this option is specified in the `responsive-loader` options, it works differently with this loader.
-The numbers you provide indicate the scaling that should be applied to the image (1x, 2x, etc.), not the size in pixels
+Although this option is specified in the `responsive-loader` options,
+it works differently with this loader.
+The numbers you provide indicate the scaling that should be applied to
+the image (1x, 2x, etc.), not the size in pixels.
 
 ### Providing multiple custom options
 

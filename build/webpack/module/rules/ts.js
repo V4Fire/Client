@@ -10,10 +10,10 @@
 
 const
 	config = require('@config/config'),
-	{resolve} = require('@pzlr/build-core'),
 	path = require('node:path');
 
 const
+	{resolve} = require('@pzlr/build-core'),
 	{isExternalDep} = include('build/const'),
 	{isTsFile} = include('build/webpack/module/const');
 
