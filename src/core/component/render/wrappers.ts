@@ -71,7 +71,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			[name, attrs, slots, patchFlag, dynamicProps] = args;
 
 		let
-			component: CanUndef<ComponentMeta>;
+			component: CanNull<ComponentMeta> = null;
 
 		if (Object.isString(name)) {
 			component = registerComponent(name);
@@ -397,11 +397,17 @@ export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: st
 			const {ssrRenderComponent} = api;
 
 			Object.set(api, 'ssrRenderComponent', (
-				component: object,
+				component: {name: string},
 				props: Nullable<Dictionary>,
 				...args: unknown[]
 			) => {
-				props = normalizeComponentAttrs(props, [], this.meta);
+				const
+					meta = registerComponent(component.name);
+
+				if (meta != null) {
+					props = normalizeComponentAttrs(props, [], meta);
+				}
+
 				return ssrRenderComponent(component, props, ...args);
 			});
 		}

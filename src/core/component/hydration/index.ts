@@ -43,9 +43,17 @@ export class HydrationStore {
 			Set
 		];
 
-		const toJSON = extraTypes.reduce<Array<CanUndef<PropertyDescriptor>>>((res, constr) => {
-			res.push(Object.getOwnPropertyDescriptor(constr.prototype, 'toJSON'));
-			delete constr.prototype['toJSON'];
+		const toJSON = extraTypes.reduce<Array<Nullable<PropertyDescriptor>>>((res, constr) => {
+			if ('toJSON' in constr.prototype) {
+				res.push(Object.getOwnPropertyDescriptor(constr.prototype, 'toJSON'));
+
+				// @ts-ignore (ts)
+				delete constr.prototype.toJSON;
+
+			} else {
+				res.push(null);
+			}
+
 			return res;
 		}, []);
 

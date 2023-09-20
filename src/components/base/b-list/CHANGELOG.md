@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.26 (2023-09-??)
+
+#### :bug: Bug Fix
+
+* Fixed providing of external classes
+* Fixed initializing during SSR
+
 ## v4.0.0-beta.8 (2023-07-19)
 
 #### :boom: Breaking Change

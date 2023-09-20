@@ -11,11 +11,22 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.26 (2023-09-??)
 
 #### :rocket: New Feature
 
-* Added a new webpack loader for responsive images `responsive-images-loader`
+* Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
+
+#### :bug: Bug Fix
+
+* Fixed providing of external classes `bList` `bSelect`
+* Fixed initializing during SSR `bList` `bTree` `bSelect`
+
+## v4.0.0-beta.25 (2023-09-19)
+
+#### :bug: Bug Fix
+
+* Fixed components' props normalization during SSR `core/component`
 
 ## v4.0.0-beta.24 (2023-09-19)
 
