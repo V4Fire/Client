@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v??? (2023-10-??)
+
+#### :rocket: New Feature
+
+* Added new config option `webpack.externalizeInline`
+
 ## v4.0.0-beta.20 (2023-09-13)
 
 #### :rocket: New Feature

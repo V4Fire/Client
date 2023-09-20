@@ -23,7 +23,7 @@ const
 const
 	{isURL, files, folders} = include('src/components/super/i-static-page/modules/const'),
 	{getScriptDecl, getStyleDecl, getLinkDecl} = include('src/components/super/i-static-page/modules/ss-helpers/tags'),
-	{needInline, addPublicPath} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
+	{needInline, addPublicPath, canLoadStylesDeferred} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
 
 exports.loadLibs = loadLibs;
 
@@ -79,7 +79,7 @@ async function loadStyles(libs, {assets, js, wrap} = {}) {
 	}
 
 	for (const lib of await initLibs(libs, assets)) {
-		lib.defer = lib.defer !== false;
+		lib.defer = lib.defer !== false && canLoadStylesDeferred;
 		lib.js = js;
 
 		decl += await getStyleDecl(lib);

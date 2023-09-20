@@ -13,6 +13,9 @@
 - import config from '@config/config'
 - import fs from 'fs-extra'
 
+: canInlineSourceCode = !config.webpack.externalizeInline()
+: inlineDepsDeclarations = Boolean(config.webpack.dynamicPublicPath())
+
 /**
  * Injects the specified file to a template
  * @param {string} src
@@ -109,27 +112,38 @@
 						.
 
 					- block varsDecl
-						+= h.getVarsDecl({wrap: true})
+						: varsDeclStr = h.getVarsDecl({wrap: canInlineSourceCode})
+
+						- if canInlineSourceCode
+							+= varsDeclStr
+
+						- else
+							: loadPath = h.emitFile(varsDeclStr, self.name() + '.vars-decl.js').loadPath
+							+= h.getScriptDecl({src: loadPath})
 
 					- block favicons
 						- if attachFavicons
-							+= h.getFaviconsDecl()
+							+= h.getFaviconsDecl(canInlineSourceCode, Boolean(config.webpack.dynamicPublicPath()))
 
 					- block title
 						< title
 							{title}
 
 					- block assets
-						+= h.getAssetsDecl({inline: !assetsRequest, wrap: true})
+						+= h.getAssetsDecl({inline: canInlineSourceCode && !assetsRequest, wrap: true})
 
 					- block links
-						+= await h.loadLinks(deps.links, {assets, wrap: true})
+						+= await h.loadLinks(deps.links, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
 					- block headStyles
-						+= h.getStyleDeclByName('std', {assets, optional: true, wrap: true, js: true})
+						+= h.getStyleDeclByName('std', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+
+						- if !inlineDepsDeclarations
+							+= await h.loadStyles(deps.styles, {assets, wrap: false, js: false})
+							+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: false, js: false})
 
 					- block headScripts
-						+= await h.loadLibs(deps.headScripts, {assets, wrap: true, js: true})
+						+= await h.loadLibs(deps.headScripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
 			< body ${rootAttrs|!html}
 				<! :: SSR
@@ -147,14 +161,15 @@
 
 				- block deps
 					- block styles
-						+= await h.loadStyles(deps.styles, {assets, wrap: true})
-						+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true})
+						- if inlineDepsDeclarations
+							+= await h.loadStyles(deps.styles, {assets, wrap: true, js: true})
+							+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true, js: true})
 
 					- block scripts
-						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: true})
-						+= await h.loadLibs(deps.scripts, {assets, wrap: true, js: true})
+						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+						+= await h.loadLibs(deps.scripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
-						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: true})
-						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: true})
+						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
-						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: true})
+						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})

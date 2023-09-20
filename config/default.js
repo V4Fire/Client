@@ -401,7 +401,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if all resources from the initial entry point should be embedded in HTML files
+		 * Returns true if all resources from the initial entry point should be embedded in HTML files.
+		 * Otherwise, they will be loaded via tags, either dynamically inserted or inlined
 		 *
 		 * @cli inline-initial
 		 * @env INLINE_INITIAL
@@ -414,6 +415,32 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true,
 				type: 'boolean',
 				default: def
+			});
+		},
+
+		/**
+		 * Returns true if no source code should be inlined directly in HTML
+		 *
+		 * @cli externalize-inline
+		 * @env EXTERNALIZE_INLINE
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		externalizeInline(def = false) {
+			return o('externalize-inline', {
+				env: true,
+				type: 'boolean',
+				default: def,
+				validate: (externalizeInline) => {
+					const {webpack} = this.config;
+
+					return !externalizeInline || (
+						!webpack.dynamicPublicPath() &&
+						!webpack.inlineInital &&
+						!webpack.fatHTML()
+					);
+				}
 			});
 		},
 
@@ -1188,7 +1215,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * npx webpack --env supported-locales=en,ru
 		 * ```
 		 */
-		supportedLocales(def = this.config.locale) {
+		supportedLocales(def = 'en,ru') {
 			return o('supported-locales', {
 				env: true,
 				coerce: (str) => str.split(/\s*,\s*/),

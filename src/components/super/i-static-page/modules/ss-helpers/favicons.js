@@ -23,9 +23,11 @@ exports.getFaviconsDecl = getFaviconsDecl;
 
 /**
  * Returns declaration of the project favicons
+ *
+ * @param {boolean} canInlineSourceCode
  * @returns {string}
  */
-function getFaviconsDecl() {
+function getFaviconsDecl(canInlineSourceCode) {
 	const
 		params = favicons(),
 		faviconsFolder = include(src.rel('assets', 'favicons'), {return: 'path'});
@@ -80,14 +82,18 @@ function getFaviconsDecl() {
 		manifestRgxp = /<link\s(.*?)\bhref="(.*?\bmanifest.json)"(.*?)\/?>/g,
 		faviconsDecl = fs.readFileSync(src.clientOutput(dest, params.html)).toString();
 
-	return faviconsDecl.replace(manifestRgxp, (str, attrs1, href, attrs2) => getScriptDecl(getLinkDecl({
-		js: true,
-		staticAttrs: attrs1 + attrs2,
-		attrs: {
-			href: [`'${params.manifestHref || href}?from=' + location.pathname + location.search`],
-			crossorigin: 'use-credentials'
-		}
-	})));
+	return faviconsDecl.replace(manifestRgxp, (str, attrs1, href, attrs2) => {
+		const manifestLinkDecl = getLinkDecl({
+			js: canInlineSourceCode,
+			staticAttrs: attrs1 + attrs2,
+			attrs: {
+				href: canInlineSourceCode ? [`'${params.manifestHref || href}?from=' + location.pathname + location.search`] : (params.manifestHref || href),
+				crossorigin: 'use-credentials'
+			}
+		});
+
+		return canInlineSourceCode ? getScriptDecl(manifestLinkDecl) : manifestLinkDecl;
+	});
 
 	function resolveFaviconPath(str) {
 		return str.replace(pathPlaceholderRgxp, `${webpack.publicPath(dest)}/`.replace(/\/+$/, '/'));

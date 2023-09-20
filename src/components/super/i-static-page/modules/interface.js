@@ -47,9 +47,19 @@ exports.Lib = Lib;
 /**
  * Parameters of an initialized script library:
  *
- *   1. src - a path to the loaded file
- *   2. [js] - if true, the function returns JS code to load the library
- *   3. [staticAttrs] - a string with additional attributes
+ *   1. src - the path to the library file
+ *   2. [inline=false] - whether to include the library code inline in the script tag
+ *   3. [defer=true] - whether the script should be deferred
+ *   4. [load=true] - whether the library should be loaded at all
+ *   5. [js=false] - if true, the function returns JS code to create and append a script element
+ *   6. [attrs] - a dictionary with attributes to set. You can provide an attribute value in different ways:
+ *     1. a simple string, as `null` (when an attribute does not have a value);
+ *     2. an array (to interpolate the value as JS);
+ *     3. an object with the predefined `toString` method
+ *       (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
+ *       and `interpolate: true` to enable interpolation of a value).
+ *
+ *   7. [staticAttrs] - a string with additional attributes for the script tag
  *
  * {@link Lib}
  * @typedef {{
