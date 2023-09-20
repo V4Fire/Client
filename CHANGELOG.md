@@ -22,6 +22,123 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added build time tracing, which can be visualized using the [Perfetto UI](https://ui.perfetto.dev)
 
+## v4.0.0-beta.26 (2023-09-20)
+
+#### :bug: Bug Fix
+
+* Fixed providing of external classes `bList` `bSelect`
+* Fixed initializing during SSR `bList` `bTree` `bSelect`
+
+#### :house: Internal
+
+* The module has been moved to a separate folder `build/webpack/loaders/symbol-generator-loader`
+
+## v4.0.0-beta.25 (2023-09-19)
+
+#### :bug: Bug Fix
+
+* Fixed components' props normalization during SSR `core/component`
+
+## v4.0.0-beta.24 (2023-09-19)
+
+#### :bug: Bug Fix
+
+* Added support for serialization of custom objects during hydration `core/component/hydration`
+
+## v4.0.0-beta.23 (2023-09-18)
+
+#### :bug: Bug Fix
+
+* Fixed components' props normalization during SSR `core/component`
+
+## v4.0.0-beta.22 (2023-09-15)
+
+#### :rocket: New Feature
+
+* Added a new property `ssrState` `core/component/interface`
+* Added support for `ssrState` `iBlock` `core/init`
+* Added state forwarding to provider parameters `components/friends/data-provider`
+
+#### :bug: Bug Fix
+
+* Fixed the race condition issue with fast re-rendering of functional components `core/component/functional`
+
+## v4.0.0-beta.21 (2023-09-14)
+
+#### :rocket: New Feature
+
+* Added a new modifier `after:` for hooks `core/component/hook`
+* Added a new hook `after:beforeDataCreate` `core/component/meta`
+
+* `bSlider`:
+  * Added a new prop `alignLastToEnd` which is similar to existing `alignFirstToStart` and is also `true` by default
+  * Added a new prop `autoSlideInterval`
+  * Added a new prop `autoSlidePostGestureDelay`
+
+#### :bug: Bug Fix
+
+* The method `initLoad` is now called on `after:beforeDataCreate` `iBlock`
+* Fixed incorrect `align="end"` behaviour `bSlider`
+
+## v4.0.0-beta.20 (2023-09-13)
+
+#### :rocket: New Feature
+
+* `config`:
+  * Added `verbose` flag to `build` config
+  * Added `detectUserPreferences` parameter to `theme` config
+
+* Warnings about deprecated design system fields are hidden under the `verbose` flag `build/stylus/ds`
+* Added possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
+* Added possibility to specify paths with alias to `@context` directive `build/monic`
+* Added possibility to load icons from design-system `components/directives/icon`
+
+## v4.0.0-beta.19 (2023-09-08)
+
+#### :rocket: New Feature
+
+* Added possibility to change icons' color according to the selected theme `components/global/g-def`
+
+#### :house: Internal
+
+* Discard the function constructor in prelude
+
+## v4.0.0-beta.18 (2023-09-08)
+
+#### :rocket: New Feature
+
+* Added a new parameter `setup` `core/init`
+
+## v4.0.0-beta.17 (2023-09-06)
+
+#### :bug: Bug Fix
+
+* Added a special element for teleports `iStaticPage`
+
+## v4.0.0-beta.16 (2023-09-06)
+
+#### :bug: Bug Fix
+
+* Fixed working in SSR `core/component/directives/render`
+
+#### :nail_care: Polish
+
+* Exported `isCI` from `tests/config/super`
+* Set `workers: 1` and `fullyParallel: false` on CI in `tests/config/super`.
+  See https://github.com/microsoft/playwright/issues/26739.
+
+## v4.0.0-beta.15 (2023-09-05)
+
+#### :bug: Bug Fix
+
+* Added filtering of empty leading and trailing text nodes during rendering of a VNode array `core/component/engines/vue`
+
+## v4.0.0-beta.14 (2023-08-25)
+
+#### :house: Internal
+
+* The default control is a button `iControlList`
+
 ## v4.0.0-beta.13 (2023-08-24)
 
 #### :rocker: New Feature

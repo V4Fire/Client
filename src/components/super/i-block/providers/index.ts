@@ -60,7 +60,7 @@ export default abstract class iBlockProviders extends iBlockState {
 	 * @emits `initLoadStart(opts: InitLoadOptions)`
 	 * @emits `initLoad(data: unknown, opts: InitLoadOptions)`
 	 */
-	@hook('beforeDataCreate')
+	@hook('after:beforeDataCreate')
 	initLoad(data?: unknown | InitLoadCb, opts: InitLoadOptions = {}): CanPromise<void> {
 		const
 			that = this;

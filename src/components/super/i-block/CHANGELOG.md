@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.22 (2023-09-15)
+
+#### :rocket: New Feature
+
+* Added support for `ssrState`
+
+## v4.0.0-beta.21 (2023-09-14)
+
+#### :bug: Bug Fix
+
+* The method `initLoad` is now called on `after:beforeDataCreate`
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

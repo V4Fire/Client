@@ -17,7 +17,7 @@ import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
 import { initGlobalEnv } from 'core/env';
-import { component, remoteState, hook, Hook } from 'core/component';
+import { component, remoteState, hook, Hook, State } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -56,7 +56,11 @@ export default abstract class iBlockState extends iBlockMods {
 	 * properties directly. Note that the state object is observable and can be reactively bond to component templates.
 	 */
 	@computed({watchable: true})
-	get remoteState(): typeof remoteState {
+	get remoteState(): State {
+		if (SSR) {
+			return {...this.ssrState, ...remoteState};
+		}
+
 		return remoteState;
 	}
 

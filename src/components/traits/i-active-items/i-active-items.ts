@@ -392,7 +392,7 @@ export default abstract class iActiveItems extends iItems {
 	}
 
 	/**
-	 * Returns an item object by the specified value.
+	 * Returns an item object by the specified value
 	 * @param _value
 	 */
 	getItemByValue(_value: Item['value']): CanUndef<Item> {

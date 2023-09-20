@@ -239,7 +239,19 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				type: 'boolean',
 				default: def
 			});
-		}
+		},
+
+		/**
+		 * Controls the level of verbosity in the project's build output.
+		 * This parameter is useful for users who want to have more detailed information about the project's build.
+		 *
+		 * @cli verbose
+		 * @env VERBOSE
+		 */
+		verbose: o('verbose', {
+			env: true,
+			default: false
+		})
 	},
 
 	/**
@@ -1012,6 +1024,40 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Returns a map of user preference parameters that are automatically detected based on the system settings
+		 *
+		 * @cli detect-user-preferences
+		 * @env DETECT_USER_PREFERENCES
+		 *
+		 * @param {object} [def] - default value
+		 * @returns {object}
+		 *
+		 * @example
+		 * ```js
+		 * {
+		 *   prefersColorScheme: {
+		 *     enabled: true,
+		 *
+		 *     // This flag indicates whether dark or light themes will be detected based on the user's settings.
+		 *     // If you want to provide custom aliases for theme names, you can pass them as a dictionary.
+		 *     // If your design system does not provide themes from this dictionary, the build will fail.
+		 *     // If you do not specify an aliases dictionary, the default values `dark` and `light` will be used.
+		 *     aliases: {
+		 *       dark: 'night',
+		 *       light: 'day'
+		 *     }
+		 *   }
+		 * }
+		 * ```
+		 */
+		detectUserPreferences(def = {prefersColorScheme: {enabled: false}}) {
+			return o('detect-user-preferences', {
+				env: true,
+				default: def
+			});
+		},
+
+		/**
 		 * Returns the attribute name to set the topic value to the root element
 		 *
 		 * @cli theme-attribute
@@ -1036,7 +1082,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	snakeskin() {
 		const snakeskinVars = {
 			...include('build/snakeskin/vars'),
-			teleport: this.webpack.storybook() ? '#storybook-root' : 'body'
+			teleport: this.webpack.storybook() ? '#storybook-root' : '#teleports'
 		};
 
 		return {

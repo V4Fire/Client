@@ -123,7 +123,7 @@ export default class bRouter extends bRouterProps {
 	 * ```
 	 */
 	@computed({cache: true, dependencies: ['routes']})
-	get defaultRoute(): CanUndef<router.RouteBlueprint> {
+	get defaultRoute(): CanNull<router.RouteBlueprint> {
 		for (let routes = Object.values(this.routes), i = 0; i < routes.length; i++) {
 			const
 				route = routes[i];
@@ -132,6 +132,8 @@ export default class bRouter extends bRouterProps {
 				return route;
 			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -303,9 +305,11 @@ export default class bRouter extends bRouterProps {
 		activeRouteOrRoutes?: Nullable<router.InitialRoute> | StaticRoutes
 	): Promise<router.RouteBlueprints> {
 		let
-			basePath,
-			routes,
-			activeRoute;
+			basePath: string | undefined;
+
+		let
+			routes: Nullable<StaticRoutes>,
+			activeRoute: Nullable<router.InitialRoute>;
 
 		if (Object.isString(basePathOrRoutes)) {
 			basePath = basePathOrRoutes;
@@ -315,7 +319,7 @@ export default class bRouter extends bRouterProps {
 				activeRoute = routesOrActiveRoute;
 
 			} else {
-				routes = routesOrActiveRoute;
+				routes = Object.cast(routesOrActiveRoute);
 				activeRoute = <Nullable<router.InitialRoute>>activeRouteOrRoutes;
 			}
 

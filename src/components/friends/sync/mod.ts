@@ -87,20 +87,20 @@ export function mod<D = unknown, R = unknown>(
 	modName = modName.camelize(false);
 
 	let
-		opts;
+		opts: AsyncWatchOptions;
 
 	if (Object.isFunction(optsOrConverter)) {
 		converter = optsOrConverter;
 
 	} else {
-		opts = optsOrConverter;
+		opts = Object.cast(optsOrConverter);
 	}
 
 	const
 		{ctx} = this;
 
 	const setWatcher = () => {
-		const wrapper = (val, ...args) => {
+		const wrapper = (val: unknown, ...args: unknown[]) => {
 			val = (<LinkGetter>converter).call(this.component, val, ...args);
 
 			if (val !== undefined) {
@@ -109,7 +109,7 @@ export function mod<D = unknown, R = unknown>(
 		};
 
 		if (converter.length > 1) {
-			ctx.watch(path, opts, (val, oldVal) => wrapper(val, oldVal));
+			ctx.watch(path, opts, (val: unknown, oldVal: unknown) => wrapper(val, oldVal));
 
 		} else {
 			ctx.watch(path, opts, wrapper);

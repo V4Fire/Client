@@ -46,7 +46,7 @@ export default abstract class iControlList {
 					if (Object.isPromise(fn)) {
 						return fn.then((fn) => {
 							if (!Object.isFunction(fn)) {
-								throw new TypeError(`The action method "${action}" is not a function`);
+								throw new TypeError(`The action handler "${action}" is not a function`);
 							}
 
 							return fn.call(component);
@@ -56,7 +56,7 @@ export default abstract class iControlList {
 					return fn.call(component);
 				}
 
-				throw new TypeError(`The action method "${action}" is not a function`);
+				throw new TypeError(`The action handler "${action}" is not a function`);
 			}
 
 			if (Object.isSimpleFunction(action)) {
@@ -97,7 +97,7 @@ export default abstract class iControlList {
 				if (Object.isPromise(handlerFn)) {
 					return handlerFn.then((methodFn) => {
 						if (!Object.isFunction(methodFn)) {
-							throw new TypeError('The action method is not a function');
+							throw new TypeError('The action handler is not a function');
 						}
 
 						if (Object.isPromise(argsMapFn)) {
@@ -116,7 +116,7 @@ export default abstract class iControlList {
 				return callHandler(handlerFn, argsMapFn);
 			}
 
-			throw new TypeError('The action method is not a function');
+			throw new TypeError('The action handler is not a function');
 		}
 	};
 

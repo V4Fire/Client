@@ -21,7 +21,7 @@
 		- block list(items)
 			< template v-for = (el, i) in ${items}
 				< .&__item v-tag = listElementTag
-					< . &
+					< .&__link &
 						v-tag = getHref(el) !== undefined ? 'a' : 'button' |
 						:key = getItemKey(el, i) |
 

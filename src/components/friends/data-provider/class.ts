@@ -6,7 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Provider, { providers, ModelMethod, RequestQuery, RequestBody } from 'core/data';
+import Provider, {
+
+	providers,
+
+	requestCache,
+	instanceCache,
+
+	ModelMethod,
+	RequestQuery,
+	RequestBody
+
+} from 'core/data';
+
 import type { ReadonlyEventEmitterWrapper } from 'core/async';
 
 import Friend, { fakeMethods } from 'components/friends/friend';
@@ -67,6 +79,15 @@ class DataProvider extends Friend {
 	constructor(component: iBlock & iDataProvider, provider: DataProviderProp, opts?: DataProviderOptions) {
 		super(component);
 
+		const
+			{ctx} = this;
+
+		opts = {
+			id: ctx.r.componentId,
+			remoteState: ctx.remoteState,
+			...opts
+		};
+
 		let
 			dp: Provider;
 
@@ -83,10 +104,13 @@ class DataProvider extends Friend {
 			}
 
 			dp = new ProviderConstructor(opts);
+			registerDestructor();
 
 		} else if (Object.isFunction(provider)) {
 			const ProviderConstructor = Object.cast<typeof Provider>(provider);
+
 			dp = new ProviderConstructor(opts);
+			registerDestructor();
 
 		} else {
 			dp = <Provider>provider;
@@ -107,6 +131,14 @@ class DataProvider extends Friend {
 				return dp.emitter.off.bind(dp.emitter) ?? (() => Object.throw());
 			}
 		});
+
+		function registerDestructor() {
+			ctx.r.unsafe.async.worker(() => {
+				const key = dp.getCacheKey();
+				delete instanceCache[key];
+				delete requestCache[key];
+			});
+		}
 	}
 
 	/**
