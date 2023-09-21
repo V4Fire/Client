@@ -47,7 +47,8 @@ module.exports = function imagesRules() {
 					{
 						loader: 'responsive-images-loader',
 						options: config.responsiveImagesOpts()
-					}
+					},
+					!isProd ? {loader: 'url-loader', options: urlLoaderOpts} : {}
 				]
 			},
 

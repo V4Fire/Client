@@ -53,11 +53,11 @@ The loader returns the following structure:
 ```
 
 Please note that this loader is only applied in production mode.
-In development mode, the loader will simply return the name of the image without any
-compression or conversion.
+In development mode, the image will be processed using `url-loader`, which will either return the inline image or the path to the image:
 
 ```js
-require('path/to/image.png?responsive'); // {src: 'image.png'}
+require('path/to/image.png?responsive'); // {src: 'path/to/image.png'}
+require('path/to/huge-image.png?responsive'); // {src: 'data:image/png;base64,.....'}
 ```
 
 ### Options

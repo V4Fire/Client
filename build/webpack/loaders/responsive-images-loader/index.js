@@ -11,6 +11,7 @@
 const
 	json5 = require('json5'),
 	responsiveLoader = require('responsive-loader'),
+	urlLoader = require('url-loader'),
 	path = require('node:path'),
 	vm = require('node:vm');
 
@@ -64,20 +65,22 @@ const
  * ```
  */
 module.exports = async function responsiveImagesLoader(imageBuffer) {
-	const
-		originalImageFormat = undefined,
-		options = {...this.getOptions(), ...parseResourceQuery(this.resourceQuery)};
-
 	if (!isProd) {
 		const
-			loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, [originalImageFormat]),
-			[[imageName]] = getImageNames(loaderResponses, options.outputPath);
+			// In dev mode the 'url-loader' will be applied first returning either inline image or path to the image
+			src = compileCodeToModule(imageBuffer);
 
-		return `module.exports = {src: '${imageName}'}`;
+		return `module.exports = {src: '${src}'}`;
 	}
 
 	const
-		formats = [originalImageFormat, ...(options.formats ?? [])],
+		options = {...this.getOptions(), ...parseResourceQuery(this.resourceQuery)};
+
+	const
+		originalImageFormat = undefined,
+		formats = [originalImageFormat, ...(options.formats ?? [])];
+
+	const
 		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, formats),
 		imageNames = getImageNames(loaderResponses, options.outputPath),
 		sources = getSources(imageNames);
