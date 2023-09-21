@@ -9,8 +9,7 @@
 'use strict';
 
 const
-	config = require('@config/config'),
-	path = require('node:path');
+	config = require('@config/config');
 
 const
 	{isProd, urlLoaderOpts, urlLoaderInlineOpts} = include('build/webpack/module/const');
