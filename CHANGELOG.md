@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed icons' size in multi-theme mode
+* Fixed icons' size in multi-theme mode `components/global/g-def`
 
 ## v4.0.0-beta.26 (2023-09-20)
 
