@@ -11,7 +11,6 @@
 const
 	json5 = require('json5'),
 	responsiveLoader = require('responsive-loader'),
-	urlLoader = require('url-loader'),
 	path = require('node:path'),
 	vm = require('node:vm');
 
