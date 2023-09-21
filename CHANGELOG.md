@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed icons' size in multi-theme mode `global/g-def`
+
 ## v3.59.0 (2023-09-13)
 
 #### :rocket: New Feature

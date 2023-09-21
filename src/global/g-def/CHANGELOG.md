@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed icons' size in multi-theme mode
+
 ## v3.58.0 (2023-09-08)
 
 #### :rocket: New Feature
