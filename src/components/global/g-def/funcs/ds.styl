@@ -87,9 +87,7 @@ i($name, $params = null, $opts = null)
 	 * @see https://dev.to/hasantezcan/how-to-colorize-svg-image-1kc8#2-css-mask
 	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/mask
 	 */
-	mask-repeat $repeat
-	mask-position $align
-	mask-image img($imgPath, true)
+	mask img($imgPath, true) $repeat $align
 	background-color $color
 	//#endif
 
