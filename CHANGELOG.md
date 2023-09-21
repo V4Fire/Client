@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed icons' size in multi-theme mode
+
 ## v4.0.0-beta.26 (2023-09-20)
 
 #### :bug: Bug Fix
