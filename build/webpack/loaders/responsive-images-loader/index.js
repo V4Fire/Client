@@ -15,7 +15,11 @@ const
 	vm = require('node:vm');
 
 const
+	{webpack} = require('@config/config'),
 	{isProd} = include('build/webpack/module/const');
+
+const
+	publicPath = webpack.publicPath();
 
 /**
  * Webpack loader for converting and scaling images to different formats and sizes.
@@ -81,7 +85,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 
 	const
 		loaderResponses = await collectLoaderResponses.call(this, imageBuffer, options, formats),
-		imageNames = getImageNames(loaderResponses, options.outputPath),
+		imageNames = getImageNames(loaderResponses, `${publicPath}${options.outputPath}/`),
 		sources = getSources(imageNames);
 
 	const
@@ -145,7 +149,7 @@ function getSources(imageNames) {
 function getImageNames(loaderResponses, outputPath) {
 	return loaderResponses.map((code) => {
 		const {images} = compileCodeToModule(code);
-		return images.map(({path}) => path.replace(`${outputPath}/`, ''));
+		return images.map(({path}) => path.replace(outputPath, ''));
 	});
 }
 
@@ -161,7 +165,7 @@ function getImageNames(loaderResponses, outputPath) {
 function compileCodeToModule(code) {
 	const context = vm.createContext({
 		// eslint-disable-next-line camelcase
-		__webpack_public_path__: '',
+		__webpack_public_path__: publicPath,
 		module
 	});
 
