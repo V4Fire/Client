@@ -5,7 +5,7 @@ This module offers an API to store hydrated component data.
 ```js
 import { hydrationStore } from 'core/component';
 
-const myComponentId = 'uid-42';
+const myComponentId = 'u42';
 
 hydrationStore.set(myComponentId, 'dbStore', {
   someComponentData: 42
@@ -17,7 +17,7 @@ if (hydrationStore.has(myComponentId)) {
   console.log(hydrationStore.get(myComponentId)); // {dbStore: {someComponentData: 42}, stageStore: 'example'}
 }
 
-console.log(hydrationStore.toString()); // {"uid-42":{"dbStore": {"someComponentData": 42}, "stageStore": "example"}}
+console.log(hydrationStore.toString()); // {"u42":{"dbStore": {"someComponentData": 42}, "stageStore": "example"}}
 ```
 
 ## Usage
