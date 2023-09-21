@@ -38,12 +38,13 @@ const bind = {
 };
 
 Snakeskin.importFilters({
-	tagFilter: Snakeskin.setFilterParams(tagFilter, {bind: ['TPL_NAME']}),
+	tagFilter: Snakeskin.setFilterParams(tagFilter, {bind: ['TPL_NAME', (o) => o.i, '$i']}),
 	tagNameFilter: Snakeskin.setFilterParams(tagNameFilter, bind),
-	bemFilter: Snakeskin.setFilterParams(bemFilter, bind)
+	bemFilter: Snakeskin.setFilterParams(bemFilter, bind),
+	line: Snakeskin.setFilterParams((_, line) => line, {bind: [(o) => o.i]})
 });
 
-function tagFilter({name, attrs = {}}, tplName) {
+function tagFilter({name, attrs = {}}, tplName, currentLine, globalLine) {
 	Object.forEach(tagFilters, (filter) => filter({name, attrs}));
 
 	const isSimpleTag =
@@ -56,13 +57,16 @@ function tagFilter({name, attrs = {}}, tplName) {
 	}
 
 	let
-		componentName;
+		componentName,
+		realComponentName;
 
 	if (attrs[TYPE_OF]) {
 		componentName = attrs[TYPE_OF];
+		realComponentName = componentName;
 
 	} else {
 		componentName = name === 'component' ? 'iBlock' : name.camelize(false);
+		realComponentName = name === 'component' ? attrs[':is'] || attrs['is'] : componentName;
 	}
 
 	const
@@ -79,8 +83,12 @@ function tagFilter({name, attrs = {}}, tplName) {
 
 	if (!attrs[':componentIdProp']) {
 		const id = hasha(JSON.stringify([
-			componentName,
+			currentLine,
+			globalLine,
+
+			realComponentName,
 			tplName.replace(/\d{4,}$/, '_'),
+
 			Object.reject(attrs, [
 				'v-ref',
 				'v-once',
