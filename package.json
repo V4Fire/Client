@@ -64,7 +64,7 @@
     "path-to-regexp": "3.2.0",
     "requestidlecallback": "0.3.0",
     "sharp": "0.30.6",
-    "snakeskin": "7.5.1",
+    "snakeskin": "github:SnakeskinTpl/Snakeskin#new-var",
     "tslib": "2.4.1",
     "vinyl": "2.2.1",
     "vue": "3.2.47"

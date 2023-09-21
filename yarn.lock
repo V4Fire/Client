@@ -5448,7 +5448,7 @@ __metadata:
     react-dom: 18.2.0
     requestidlecallback: 0.3.0
     sharp: 0.30.6
-    snakeskin: 7.5.1
+    snakeskin: "github:SnakeskinTpl/Snakeskin#new-var"
     snakeskin-loader: 8.0.1
     ss2vue3: "github:snakeskintpl/ss2vue3"
     storybook: 7.0.23
@@ -21906,9 +21906,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"snakeskin@npm:7.5.1":
-  version: 7.5.1
-  resolution: "snakeskin@npm:7.5.1"
+"snakeskin@github:SnakeskinTpl/Snakeskin#new-var":
+  version: 7.6.0
+  resolution: "snakeskin@https://github.com/SnakeskinTpl/Snakeskin.git#commit=f9aed2dc3f5d0875d23c2d3453ea60347e78fa3b"
   dependencies:
     babel-core: ^6.26.3
     babylon: ^6.8.1
@@ -21919,7 +21919,7 @@ __metadata:
     findup-sync: ^2.0.0
     glob: ^7.1.3
     js-beautify: ^1.8.6
-  checksum: fac264cfd459314a674d54cb8d03bd6b73b16c8667b066fa2ae5908405d827228fbc67e8c26ca07cca4e31eb0571aac0a7e3217556e3429377e6f77b0378ffee
+  checksum: ff70802e5d167c5adbcf2a12fa45d1a452052b3c35043028471adb60d5270d4e3dbfd556be21ba7858c71c0ee6031478eaf5ef05c3dfb9629595fa4188af3c22
   languageName: node
   linkType: hard
 
