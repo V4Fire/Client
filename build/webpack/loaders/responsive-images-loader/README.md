@@ -6,7 +6,7 @@ library underneath for each conversion operation.
 
 ### Usage
 
-By default, this loader is configured to be used optionally with the `responsive` query parameter.
+By default, this loader is configured to be used with the `responsive` query parameter.
 This means that you just need to require the desired image and specify this parameter.
 
 ```ss
@@ -56,8 +56,8 @@ Please note that this loader is only applied in production mode.
 In development mode, the image will be processed using `url-loader`, which will either return the inline image or the path to the image:
 
 ```js
-require('path/to/image.png?responsive'); // {src: 'path/to/image.png'}
-require('path/to/huge-image.png?responsive'); // {src: 'data:image/png;base64,.....'}
+require('path/to/small-image.png?responsive'); // {src: 'data:image/png;base64,.....'}
+require('path/to/huge-image.png?responsive'); // {src: 'path/to/image.png'}
 ```
 
 ### Options
@@ -68,7 +68,7 @@ In addition to the [options](https://github.com/dazuaz/responsive-loader/tree/ma
 Please note that the options can be specified using only JSON5 notation for a specific image.
 For example:
 
-```
+```js
 require('image.png?{responsive:true,key1:value1,key2:value2}');
 ```
 
@@ -79,7 +79,7 @@ if you want to process your image using this loader.
 Alternatively, you can also override the `responsiveImagesOpts` method that specifies
 the base options for every image in `config/default`.
 
-The additional options are the following.
+The additional options are the following:
 
 #### defaultSrcPath ['2x.[original image extension]']
 
