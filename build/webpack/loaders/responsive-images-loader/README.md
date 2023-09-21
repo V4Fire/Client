@@ -109,6 +109,29 @@ it works differently with this loader.
 The numbers you provide indicate the scaling that should be applied to
 the image (1x, 2x, etc.), not the size in pixels.
 
+#### baseSrc [undefined]
+
+If this option is passed, it will be returned in the resulting object only in production.
+It's useful if you have your assets on a static server and you want to specify the base path to the image on it:
+
+```js
+require('path/to/image.png?{responsive:true,baseSrc:"path/on/static/server"}')
+
+/*
+{
+  src: '...',
+  sources: [...],
+  baseSrc: 'path/on/static/server'
+}
+*/
+```
+
+This option is useless if you don't pass the object to the `v-image` directive:
+
+```ss
+< . v-image = require('path/to/image.png?{responsive:true,baseSrc:"path/on/static/server"}')
+```
+
 ### Providing multiple custom options
 
 Here is an example of providing multiple options for a specific image:

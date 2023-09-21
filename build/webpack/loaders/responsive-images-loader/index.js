@@ -94,7 +94,7 @@ module.exports = async function responsiveImagesLoader(imageBuffer) {
 		src = source?.srcset[resolution] ?? sources[0].srcset['2x'];
 
 	const
-		result = {src, sources};
+		result = {src, sources, baseSrc: options.baseSrc};
 
 	return `module.exports = ${JSON.stringify(result)}`;
 };
