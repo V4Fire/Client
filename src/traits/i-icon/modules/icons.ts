@@ -35,27 +35,23 @@ export function getIcon(id?: string): CanPromise<Icon> {
 }
 
 //#if runtime has svgSprite
-// @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super']
+// @context: ['@sprite', 'sprite' in flags ? flags.sprite : '@super', 'ds/icons']
 
 let
-	ctx;
+	ctx: __WebpackModuleApi.RequireContext;
 
 if (MODULE === 'ES2020') {
 	if (IS_PROD) {
-		// @ts-ignore (require)
 		ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/, 'lazy');
 
 	} else {
-		// @ts-ignore (require)
 		ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/, 'lazy');
 	}
 
 } else if (IS_PROD) {
-	// @ts-ignore (require)
 	ctx = require.context('!!svg-sprite-loader!svgo-loader!@sprite', true, /\.svg$/);
 
 } else {
-	// @ts-ignore (require)
 	ctx = require.context('!!svg-sprite-loader!@sprite', true, /\.svg$/);
 }
 

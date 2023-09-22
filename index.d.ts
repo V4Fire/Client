@@ -12,10 +12,6 @@
 /// <reference types="./build/stylus/ds"/>
 /// <reference path="./ts-definitions/playwright.d.ts"/>
 
-declare let __webpack_nonce__: CanUndef<string>;
-declare let __webpack_public_path__: CanUndef<string>;
-declare let __webpack_require__: (moduleId: string) => any;
-
 declare const MODULE: string;
 declare const CSP_NONCE_STORE: string;
 declare const LANG_PACKS: string;

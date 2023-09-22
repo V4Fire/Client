@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to load icons from design-system
+
 # v3.18.5 (2022-04-02)
 
 #### :bug: Bug Fix

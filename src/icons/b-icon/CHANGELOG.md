@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to load icons from design-system `icon/b-icon`
+
 ## v3.0.0-rc.123 (2021-01-15)
 
 #### :memo: Documentation

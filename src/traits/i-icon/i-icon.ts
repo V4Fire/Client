@@ -49,10 +49,11 @@ export default abstract class iIcon {
 	 * Updates `href` of the specified `use` element
 	 *
 	 * @param component
+	 * @param id
 	 * @param el
 	 * @param [href]
 	 */
-	static updateIconHref: AddSelf<iIcon['updateIconHref'], iBlock> = (component, el: SVGUseElement, href?) => {
+	static updateIconHref: AddSelf<iIcon['updateIconHref'], iBlock> = (component, id, el: SVGUseElement, href?) => {
 		const {
 			async: $a,
 			$normalParent
@@ -61,6 +62,8 @@ export default abstract class iIcon {
 		if (component.componentStatus === 'inactive' || $normalParent?.componentStatus === 'inactive') {
 			return;
 		}
+
+		iIcon.setDSIconStyles(el, id);
 
 		const group = {group: el.getAttribute(ID_ATTRIBUTE) ?? undefined};
 		$a.clearAll(group);
@@ -96,15 +99,36 @@ export default abstract class iIcon {
 	};
 
 	/**
+	 * Sets styles from the design system for the specified svg element
+	 *
+	 * @param el
+	 * @param name
+	 */
+	static setDSIconStyles(el: SVGElement, name: string): void {
+		if (DS == null) {
+			return;
+		}
+
+		const
+			style = Object.get(DS, `icons.${name}.style`);
+
+		if (Object.isDictionary(style)) {
+			const styleAttr = Object.entries(style).map(([k, v]) => `${k}:${String(v)}`).join(';');
+			el.setAttribute('style', styleAttr);
+		}
+	}
+
+	/**
 	 * Handles an error of the icon loading
 	 *
 	 * @param component
+	 * @param id
 	 * @param el - link to the source `use` element
 	 * @param err
 	 */
-	static handleIconError: AddSelf<iIcon['handleIconError'], iBlock & iIcon> = (component, el, err) => {
+	static handleIconError: AddSelf<iIcon['handleIconError'], iBlock & iIcon> = (component, id, el, err) => {
 		stderr(err);
-		component.updateIconHref(el);
+		component.updateIconHref(id, el);
 	};
 
 	/**
@@ -117,20 +141,22 @@ export default abstract class iIcon {
 	/**
 	 * Updates `href` of the specified `use` element
 	 *
+	 * @param id
 	 * @param el
 	 * @param [href]
 	 */
-	updateIconHref(el: SVGUseElement, href?: string): void {
+	updateIconHref(id: string, el: SVGUseElement, href?: string): void {
 		return Object.throw();
 	}
 
 	/**
 	 * Handles an error of the icon loading
 	 *
+	 * @param id
 	 * @param el - link to the source `use` element
 	 * @param err
 	 */
-	handleIconError(el: SVGUseElement, err: Error): void {
+	handleIconError(id: string, el: SVGUseElement, err: Error): void {
 		return Object.throw();
 	}
 }
