@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added `detectUserPreferences` parameter to `theme` config `config`
+* Added possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
+
 ## v3.59.1 (2023-09-22)
 
 #### :bug: Bug Fix

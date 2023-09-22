@@ -24,6 +24,7 @@ const
 const
 	theme = config.theme.default(),
 	includeThemes = config.theme.include(),
+	detectUserPreferences = config.theme.detectUserPreferences(),
 	{'ds/use-css-vars': useCSSVarsInRuntime} = config.runtime();
 
 let
@@ -44,4 +45,11 @@ if (Object.isDictionary(designSystem)) {
 	throw new TypeError('[stylus] Design system must be an object');
 }
 
-module.exports = getPlugins({ds, cssVariables, theme, useCSSVarsInRuntime, includeThemes});
+module.exports = getPlugins({
+	ds,
+	cssVariables,
+	theme,
+	includeThemes,
+	useCSSVarsInRuntime,
+	detectUserPreferences
+});

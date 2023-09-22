@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.??.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added `detectUserPreferences` parameter to `theme` config
+
 ## v3.59.0 (2023-09-13)
 
 #### :rocket: New Feature
