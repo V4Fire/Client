@@ -71,7 +71,29 @@ export default abstract class iBlockBase extends iBlockFriends {
 			!ctx.$el?.classList.contains(oldCtx.componentId),
 
 		init: (o) => {
-			const id = o.componentIdProp ?? o.randomGenerator.next().value;
+			const
+				{r} = o;
+
+			let
+				id = o.componentIdProp;
+
+			if (id != null) {
+				if (!($$.propIds in r)) {
+					r[$$.propIds] = Object.createDict();
+				}
+
+				const
+					propId = id,
+					propIds = r[$$.propIds];
+
+				if (propIds[propId] != null) {
+					id += `-${propIds[propId]++}`;
+				}
+
+				propIds[propId] ??= 0;
+			}
+
+			id ??= o.randomGenerator.next().value;
 			return `u${Object.fastHash((o.$parent?.componentId ?? '') + id)}`;
 		}
 	})
