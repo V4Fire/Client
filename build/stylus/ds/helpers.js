@@ -15,6 +15,12 @@ const
 const
 	{verbose} = config.build;
 
+const {
+	dsNotIncludedRequiredThemes,
+	dsNotIncludedDarkTheme,
+	dsNotIncludedLightTheme
+} = include('build/stylus/ds/const');
+
 /**
  * Returns a name of a CSS variable, created from the specified path with a dot delimiter
  *
