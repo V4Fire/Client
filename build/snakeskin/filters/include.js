@@ -45,6 +45,12 @@ Snakeskin.importFilters({
 	 * ```
 	 */
 	b(filePath, sourceFilePath) {
+		const
+			chunks = filePath.split(':'),
+			as = chunks[1];
+
+		filePath = chunks[0];
+
 		let
 			start = 0;
 
@@ -104,16 +110,31 @@ Snakeskin.importFilters({
 					paths.push(...glob.sync(fullPath));
 
 				} else if (fs.existsSync(fullPath)) {
-					return fullPath;
+					return applyAsModifier(fullPath);
 				}
 			}
 		}
 
 		if (hasMagic) {
-			return paths;
+			return paths.map(applyAsModifier);
 		}
 
-		return filePath + end;
+		return applyAsModifier(filePath + end);
+
+		function applyAsModifier(originalPath) {
+			if (!as || !fs.existsSync(originalPath)) {
+				return originalPath;
+			}
+
+			const
+				alias = path.extname(originalPath, `.${as}${path.extname(originalPath)}`);
+
+			if (!fs.existsSync(alias)) {
+				fs.copyFileSync(originalPath, alias);
+			}
+
+			return alias;
+		}
 	}
 });
 
