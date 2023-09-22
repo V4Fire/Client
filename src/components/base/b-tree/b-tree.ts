@@ -65,7 +65,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 		const oldValue = this.items;
 		this.field.set('itemsStore', normalizeItems.call(this, value));
 
-		if (SSR || HYDRATION && !this.isReadyOnce) {
+		if (this.isRelatedToSSR) {
 			this.syncItemsWatcher(this.items, oldValue);
 		}
 	}

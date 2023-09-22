@@ -47,6 +47,13 @@ export default abstract class iBlockState extends iBlockMods {
 	isReadyOnce: boolean = false;
 
 	/**
+	 * True if the component is in the context of SSR or hydration
+	 */
+	get isRelatedToSSR(): boolean {
+		return SSR || HYDRATION && !this.isReadyOnce;
+	}
+
+	/**
 	 * A link to an application state object located in `core/component/state`.
 	 *
 	 * This object is used to set any general application parameters. For example, the status of user authorization or

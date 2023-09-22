@@ -104,11 +104,12 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 	get hasDropdown(): boolean {
 		return Boolean(
 			this.$slots['dropdown'] && (
-				SSR ||
-				HYDRATION && !this.isReadyOnce ||
-
 				this.isFunctional ||
-				this.opt.ifOnce('opened', this.m.opened !== 'false') > 0 && delete this.reactiveModsStore.opened
+
+				this.opt.ifOnce(
+					'opened',
+					this.isRelatedToSSR || this.m.opened !== 'false'
+				) > 0 && delete this.reactiveModsStore.opened
 			)
 		);
 	}

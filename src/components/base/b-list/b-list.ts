@@ -79,7 +79,7 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 		const oldValue = this.items;
 		this.field.set('itemsStore', value);
 
-		if (SSR || HYDRATION && !this.isReadyOnce) {
+		if (this.isRelatedToSSR) {
 			this.syncItemsWatcher(this.items, oldValue);
 		}
 	}
