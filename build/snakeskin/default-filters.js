@@ -85,7 +85,7 @@ function tagFilter({name, attrs = {}}, tplName, cursor) {
 			tplName.replace(/\d{4,}$/, '_')
 		])).slice(0, 6);
 
-		attrs[':componentIdProp'] = [`componentId.slice(1, 5) + ${JSON.stringify(id)}`];
+		attrs[':componentIdProp'] = [JSON.stringify(id)];
 	}
 
 	attrs[':getRoot'] = ["() => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];
