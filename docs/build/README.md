@@ -98,7 +98,48 @@
 
 ### Диаграмма сборки
 
-![build diagram](./images/build-diagram.png)
+```mermaid
+flowchart TB
+  A((Start)) -->|npx webpack| prepare
+
+  subgraph prepare
+      direction TB
+
+      B(Load `webpack.config.js`)
+      B --> C(Add custom filters to `snakeskin` compiler)
+
+  end
+
+  prepare --> |call buildProjectGraph|buildgraph
+
+  subgraph buildgraph [module build/graph]
+      direction TB
+
+      A1(Scan layers for the components)
+      A1 --> B1(Generate `component-lock.json`)
+      B1 --> C1(Read entries from `./src/entries`)
+      C1 --> D1(Build graph using `entries` and `components`)
+      D1 --> E1(Transform graph entries using `entryReducer`)
+      E1 --> F1(Write entries to `./src/entries/tmp`)
+
+  end
+
+  buildgraph --> build
+
+  subgraph build
+      direction TB
+
+      A2(Generate webpack config\n using graph `processes`)
+      Runtime(Build runtime)
+      Standalone(Build standalone)
+      Styles(Build styles)
+      A2 --> Runtime & Standalone & Styles
+      Runtime & Standalone & Styles --> HTML(Build HTML)
+
+  end
+
+  build --> Z((End))
+```
 ## Конфигурация
 
 Конфиги проекта расположены в директории `config`.
