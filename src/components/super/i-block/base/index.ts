@@ -93,7 +93,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			}
 
 			id ??= o.randomGenerator.next().value.toString().slice(2);
-			return `uid-${id}`;
+			return `u${id}`;
 		}
 	})
 
