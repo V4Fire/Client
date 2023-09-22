@@ -127,7 +127,7 @@ Snakeskin.importFilters({
 			}
 
 			const
-				alias = path.extname(originalPath, `.${as}${path.extname(originalPath)}`);
+				alias = path.changeExt(originalPath, `.${as}${path.extname(originalPath)}`);
 
 			if (!fs.existsSync(alias)) {
 				fs.copyFileSync(originalPath, alias);
