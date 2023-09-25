@@ -94,7 +94,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 			}
 
 			id ??= o.randomGenerator.next().value;
-			return `u${Object.fastHash((o.$parent?.componentId ?? '') + id)}`;
+			return `u${Object.fastHash(id)}`;
 		}
 	})
 
