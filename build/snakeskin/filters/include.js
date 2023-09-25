@@ -162,7 +162,7 @@ Snakeskin.importFilters({
 				fs.linkSync(originalPath, aliasFName);
 			}
 
-			aliases[originalFName] = aliasFName;
+			namespaces[originalFName] = aliasFName;
 
 			return alias;
 		}
