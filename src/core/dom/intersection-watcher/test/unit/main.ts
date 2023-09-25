@@ -38,17 +38,17 @@ test.describe('core/dom/intersection-watcher', () => {
 			enter?: {
 				x: number;
 				y: number;
-			},
+			};
 			leave?: {
 				x: number;
 				y: number;
-			},
-			delay?: number
+			};
+			delay?: number;
 		}) => Promise<void>;
 
-	const ENGINES = ['heightmap', 'intersection'] as const;
+	const ENGINES = ['heightmap', 'intersection'];
 
-	const getObserver = (engine: typeof ENGINES[number]) => engine === 'intersection' ? intersectionObserver : heightmapObserver;
+	const getObserver = (engine: string) => engine === 'intersection' ? intersectionObserver : heightmapObserver;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
@@ -59,7 +59,7 @@ test.describe('core/dom/intersection-watcher', () => {
 
 			Object.assign(target.style, {
 				width: '100px',
-				height: '100px',
+				height: '100px'
 			});
 
 			return target;
@@ -71,7 +71,7 @@ test.describe('core/dom/intersection-watcher', () => {
 			if (enter != null) {
 				await page.evaluate(({enter}) => {
 					const {x, y} = enter;
-					window.scrollTo(x, y);
+					globalThis.scrollTo(x, y);
 				}, {enter});
 
 				await Bom.waitForRAF(page, {sleepAfterRAF: delay});
@@ -80,7 +80,7 @@ test.describe('core/dom/intersection-watcher', () => {
 			if (leave != null) {
 				await page.evaluate(({leave}) => {
 					const {x, y} = leave;
-					window.scrollTo(x, y);
+					globalThis.scrollTo(x, y);
 				}, {leave});
 
 				await Bom.waitForRAF(page);
@@ -101,7 +101,7 @@ test.describe('core/dom/intersection-watcher', () => {
 
 				await getObserver(engine).evaluate((observer, {target, watchError}) => {
 					try {
-						// @ts-expect-error
+						// @ts-expect-error Checking for the absence of a required argument
 						observer.watch(target);
 					} catch (error) {
 						watchError.message = error.message;
@@ -125,11 +125,13 @@ test.describe('core/dom/intersection-watcher', () => {
 			test('Watcher handler execution should be delayed when the delay option is provided', async () => {
 				const delay = 1_000;
 
-				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => new Promise<number>((resolve) => {
-					const startTime = performance.now();
+				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => (
+					new Promise<number>((resolve) => {
+						const startTime = performance.now();
 
-					observer.watch(target, {delay}, () => resolve(performance.now() - startTime));
-				}), {target, delay});
+						observer.watch(target, {delay}, () => resolve(performance.now() - startTime));
+					})
+				), {target, delay});
 
 				// Scroll vertically by the full target height
 				await enterAndLeaveTarget({enter: {x: 0, y: 100}});
@@ -241,13 +243,15 @@ test.describe('core/dom/intersection-watcher', () => {
 			test('onEnter callback should be executed immediately, ignoring the delay option value', async () => {
 				const delay = 3_000;
 
-				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => new Promise<number>((resolve) => {
-					const startTime = performance.now();
+				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => (
+					new Promise<number>((resolve) => {
+						const startTime = performance.now();
 
-					const onEnter = () => resolve(performance.now() - startTime);
+						const onEnter = () => resolve(performance.now() - startTime);
 
-					observer.watch(target, {delay, onEnter}, () => {});
-				}), {target, delay});
+						observer.watch(target, {delay, onEnter}, (watcher) => watcher);
+					})
+				), {target, delay});
 
 				// Scroll vertically by the full target height
 				await enterAndLeaveTarget({enter: {x: 0, y: 100}});
@@ -257,7 +261,7 @@ test.describe('core/dom/intersection-watcher', () => {
 
 			test('onLeave callback should be executed when the target leaves the viewport', async () => {
 				const watchPromise = getObserver(engine).evaluate((observer, target) => new Promise((resolve) => {
-					observer.watch(target, {onLeave: resolve}, () => {});
+					observer.watch(target, {onLeave: resolve}, (watcher) => watcher);
 				}), target);
 
 				// Scroll vertically by the full target height and then go back to top after 200ms
@@ -269,13 +273,15 @@ test.describe('core/dom/intersection-watcher', () => {
 			test('onLeave callback should be executed immediately, ignoring the delay option value', async () => {
 				const delay = 3_000;
 
-				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => new Promise<number>((resolve) => {
-					const startTime = performance.now();
+				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => (
+					new Promise<number>((resolve) => {
+						const startTime = performance.now();
 
-					observer.watch(target, {delay, onLeave: () => {
-						resolve(performance.now() - startTime);
-					}}, () => {});
-				}), {target, delay});
+						const onLeave = () => resolve(performance.now() - startTime);
+
+						observer.watch(target, {delay, onLeave}, (watcher) => watcher);
+					})
+				), {target, delay});
 
 				// Scroll vertically by the full target height and then go back to top after 200ms
 				await enterAndLeaveTarget({enter: {x: 0, y: 100}, leave: {x: 0, y: 0}, delay: 200});
@@ -358,7 +364,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				// Trying to watch with destroyed observer instance
 				await getObserver(engine).evaluate((observer, {target, watchError}) => {
 					try {
-						observer.watch(target, () => {});
+						observer.watch(target, (watcher) => watcher);
 					} catch (error) {
 						watchError.message = error.message;
 					}
