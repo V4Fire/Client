@@ -156,15 +156,15 @@ Snakeskin.importFilters({
 
 			const
 				aliasFName = `${originalFName}_${as}`,
-				alias = path.join(path.dirname(originalPath), aliasFName + ext);
+				aliasPath = path.join(path.dirname(originalPath), aliasFName + ext);
 
-			if (!fs.existsSync(alias)) {
-				fs.linkSync(originalPath, aliasFName);
+			if (!fs.existsSync(aliasPath)) {
+				fs.linkSync(originalPath, aliasPath);
 			}
 
 			namespaces[originalFName] = aliasFName;
 
-			return alias;
+			return aliasPath;
 		}
 	}
 });
