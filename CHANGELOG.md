@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added `themeAttribute` stylus function `build/stylus/ds`
+* Added `theme` space to `monic` `config`
+* Added possibility to configure theme attribute `components/global/g-def`
+
 ## v4.0.0-beta.27 (2023-09-22)
 
 #### :bug: Bug Fix

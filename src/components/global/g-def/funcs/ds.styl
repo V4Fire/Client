@@ -82,7 +82,7 @@ i($name, $params = null, $opts = null)
 	else if type($params) == "ident"
 		$repeat = $params
 
-	//#if runtime has includeThemes
+	//#if theme has include
 	/**
 	 * @see https://dev.to/hasantezcan/how-to-colorize-svg-image-1kc8#2-css-mask
 	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/mask
@@ -91,7 +91,7 @@ i($name, $params = null, $opts = null)
 	background-color $color
 	//#endif
 
-	//#unless runtime has includeThemes
+	//#unless theme has include
 	background img($imgPath, true) $repeat $align
 	//#endunless
 

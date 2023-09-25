@@ -11,15 +11,15 @@
 @import "components/global/g-def/animations.styl"
 @import "components/global/g-def/reset.styl"
 
-//#if runtime has theme
-//#unless runtime has includeThemes
+//#if theme has default
+//#unless theme has include
 :root
 	interpolate-props(getDSVariables(defaultTheme()), false)
 //#endunless
 //#endif
 
-//#if runtime has includeThemes
+//#if theme has include
 for name in availableThemes()
-	html[data-theme={"%s" % name}]
+	html[{themeAttribute()}={"%s" % name}]
 		interpolate-props(getDSVariables(name), false)
 //#endif

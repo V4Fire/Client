@@ -1265,10 +1265,17 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			es: this.es()
 		};
 
+		const theme = {
+			default: this.theme.default(),
+			include: this.theme.include(),
+			prefersColorSchemeEnabled: this.theme.detectUserPreferences().prefersColorScheme.enabled
+		};
+
 		return {
 			stylus: {
 				flags: {
 					...defFlags,
+					theme,
 					'+:*': true
 				}
 			},
