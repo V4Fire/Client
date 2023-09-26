@@ -11,13 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.28 (2023-09-26)
 
 #### :rocket: New Feature
 
 * `build/snakeskin`:
   * Added the `n` filter for correctly overriding templates within the same namespace
   * Added the ability to create hard links in the `b` filter for correctly overriding templates
+
+#### :bug: Bug Fix
+
+* Now, data for hydration is saved before applying converters `iData`
 
 ## v4.0.0-beta.27 (2023-09-22)
 
