@@ -170,8 +170,6 @@ abstract class iDataData extends iBlock implements iDataProvider {
 		});
 
 		this.field.set('dbStore', value);
-		this.hydrationStore?.set(this.componentId, 'dbStore', Object.cast(value));
-		this.hydrationStore?.set(this.componentId, 'initRemoteData', null);
 
 		if (this.initRemoteData() !== undefined) {
 			this.watch('dbStore', this.initRemoteData.bind(this), {

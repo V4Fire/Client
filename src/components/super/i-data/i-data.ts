@@ -90,7 +90,23 @@ export default abstract class iData extends iDataHandlers {
 				this.syncDataProviderWatcher(false);
 			}
 
+			const
+				providerHydrationKey = '[[DATA_PROVIDER]]';
+
+			const setDBData = (data: CanUndef<this['DB']>) => {
+				this.saveDataToRootStore(data);
+				this.hydrationStore?.set(this.componentId, providerHydrationKey, Object.cast(data));
+				this.db = this.convertDataToDB<this['DB']>(data);
+			};
+
 			if (HYDRATION && !this.isReadyOnce && hydrationStore.has(this.componentId)) {
+				const
+					store = hydrationStore.get(this.componentId),
+					data = Object.cast<CanUndef<this['DB']>>(store![providerHydrationKey]);
+
+				delete data![providerHydrationKey];
+				setDBData(data);
+
 				return callSuper();
 			}
 
@@ -163,11 +179,7 @@ export default abstract class iData extends iDataHandlers {
 
 						.then(
 							(data) => {
-								void this.lfc.execCbAtTheRightTime(() => {
-									this.saveDataToRootStore(data);
-									this.db = this.convertDataToDB<this['DB']>(data);
-								}, label);
-
+								void this.lfc.execCbAtTheRightTime(() => setDBData(data), label);
 								return callSuper();
 							},
 
