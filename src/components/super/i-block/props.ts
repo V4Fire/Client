@@ -319,4 +319,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 
 	@prop({type: Function, required: false})
 	override readonly getRoot?: () => this['Root'];
+
+	@prop({type: Function, required: false})
+	override readonly getParent?: () => this['$parent'];
 }

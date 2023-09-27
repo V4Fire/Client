@@ -144,7 +144,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	/**
 	 * A link to the root component
 	 */
-	get r(): this['$root'] {
+	get r(): this['Root'] {
 		const
 			r = ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
 
@@ -675,9 +675,20 @@ export default abstract class iBlockBase extends iBlockFriends {
 	/**
 	 * Initializes the core component API
 	 */
-	@hook({beforeRuntime: {functional: false}})
+	@hook('beforeRuntime')
 	protected initBaseAPI(): void {
 		this.watch = this.instance.watch.bind(this);
+
+		if (this.$parent == null && this.getParent != null) {
+			Object.defineProperty(this, '$parent', {
+				enumerable: true,
+				configurable: true,
+
+				get() {
+					return this.getParent?.();
+				}
+			});
+		}
 
 		if (!this.meta.params.root) {
 			Object.defineProperty(this, 'hydrationStore', {

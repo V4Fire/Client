@@ -107,6 +107,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 		vnode.props ??= {};
 		vnode.props.getRoot ??= () => ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
+		vnode.props.getParent ??= () => this;
 
 		if (vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {

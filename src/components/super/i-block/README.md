@@ -384,6 +384,11 @@ For functional components, the value of this parameter can only be false.
 The getter is used to retrieve the root component.
 It is commonly used for dynamically mounting components.
 
+### [getParent]
+
+The getter is used to retrieve the parent component.
+It is commonly used for dynamically mounting components.
+
 ## Template helpers
 
 ### Constants
