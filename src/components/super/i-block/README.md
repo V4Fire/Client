@@ -179,6 +179,10 @@ class bExample extends iBlock {
 }
 ```
 
+### [onlyClient = `false`]
+
+If set to true, the component will not render its content during server-side rendering.
+
 ### [wait]
 
 A promise that will block the rendering of the component until it is resolved.
