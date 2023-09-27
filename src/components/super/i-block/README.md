@@ -459,6 +459,32 @@ Should or not the component have a skeleton marker attribute.
   - skeletonMarker = true
 ```
 
+#### [teleport = `false`]
+
+A selector to mount component via teleport or false.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - teleport = '#content'
+```
+
+#### [ssrRendering = `true`]
+
+If set to false, the component will generate a special markup to allow it to not render during server-side rendering.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].index
+  - ssrRendering = false
+```
+
 ### Methods
 
 #### slot

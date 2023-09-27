@@ -33,6 +33,12 @@
 	- teleport = false
 
 	/**
+	 * If set to false, the component will generate a special markup to
+	 * allow it to not render during server-side rendering
+	 */
+	- ssrRendering = true
+
+	/**
 	 * Returns the component name
 	 * @param {string} [name] - the custom template name
 	 */
@@ -245,9 +251,13 @@
 							- block helpers
 							- block providers
 
-					< template v-if = !ssrRendering
-						+= self.render({wait: 'async.idle.bind(async)'})
+					- if !ssrRendering
+						< template v-if = !ssrRendering
+							+= self.render({wait: 'async.idle.bind(async)'})
+								+= self.renderRoot()
+
+						< template v-else
 							+= self.renderRoot()
 
-					< template v-else
+					- else
 						+= self.renderRoot()
