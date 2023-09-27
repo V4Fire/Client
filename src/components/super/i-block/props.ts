@@ -113,7 +113,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	/**
 	 * If set to false, the component will not render its content during server-side rendering
 	 */
-	@prop(Boolean)
+	@prop({type: Boolean, forceDefault: true})
 	readonly ssrRendering: boolean = true;
 
 	/**

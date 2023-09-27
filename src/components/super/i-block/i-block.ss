@@ -232,7 +232,7 @@
 						< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
 							+= content
 
-					- block renderContent()
+					- block renderRoot()
 						- block headHelpers
 
 						- block innerRoot
@@ -247,7 +247,7 @@
 
 					< template v-if = !ssrRendering
 						+= self.render({wait: 'async.idle.bind(async)'})
-							+= self.renderContent()
+							+= self.renderRoot()
 
 					< template v-else
-						+= self.renderContent()
+						+= self.renderRoot()
