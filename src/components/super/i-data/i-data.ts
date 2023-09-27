@@ -145,7 +145,7 @@ export default abstract class iData extends iDataHandlers {
 				const db = this.convertDataToDB<this['DB']>(data);
 				void this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
-			} else if ((!SSR || this.ssrRender) && dataProvider?.provider.baseURL != null) {
+			} else if ((!SSR || this.ssrRendering) && dataProvider?.provider.baseURL != null) {
 				const
 					needRequest = Object.isArray(dataProvider.getDefaultRequestParams('get'));
 

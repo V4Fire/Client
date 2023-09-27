@@ -114,7 +114,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * If set to false, the component will not render its content during server-side rendering
 	 */
 	@prop(Boolean)
-	readonly ssrRender: boolean = true;
+	readonly ssrRendering: boolean = true;
 
 	/**
 	 * A promise that will block the rendering of the component until it is resolved.

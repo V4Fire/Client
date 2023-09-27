@@ -177,7 +177,7 @@
 	- rootAttrs = { &
 		class: 'i-block-helper',
 		'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]',
-		'v-async-target': '!ssrRender'
+		'v-async-target': '!ssrRendering'
 	} .
 
 	- if teleport
@@ -245,7 +245,7 @@
 							- block helpers
 							- block providers
 
-					< template v-if = !ssrRender
+					< template v-if = !ssrRendering
 						+= self.render({wait: 'async.idle.bind(async)'})
 							+= self.renderContent()
 

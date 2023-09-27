@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added a new prop `ssrRender`
+* Added a new prop `ssrRendering`
 
 ## v4.0.0-beta.22 (2023-09-15)
 

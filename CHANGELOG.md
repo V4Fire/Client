@@ -16,7 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Support for canceling the execution of the directive `v-async-target`
-* Added a new prop `ssrRender` `iBlock`
+* Added a new prop `ssrRendering` `iBlock`
 
 ## v4.0.0-beta.28 (2023-09-26)
 
