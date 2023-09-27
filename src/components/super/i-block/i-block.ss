@@ -245,7 +245,7 @@
 							- block helpers
 							- block providers
 
-					< template v-if = ssrRender
+					< template v-if = !ssrRender
 						+= self.render({wait: 'async.idle.bind(async)'})
 							+= self.renderContent()
 
