@@ -11,12 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.29 (2023-09-27)
+## v4.0.0-beta.?? (2023-??-??)
 
 #### :rocket: New Feature
 
 * Support for canceling the execution of the directive `v-async-target`
 * Added a new prop `ssrRendering` `iBlock`
+
+#### :bug: Bug Fix
+
+* Teleports should not be rendered during SSR `iStaticPage`
 
 ## v4.0.0-beta.28 (2023-09-26)
 
