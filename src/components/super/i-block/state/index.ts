@@ -460,7 +460,6 @@ export default abstract class iBlockState extends iBlockMods {
 		return initGlobalEnv(env);
 	}
 
-	@hook({beforeRuntime: {functional: false}})
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 

@@ -33,6 +33,12 @@
 	- teleport = false
 
 	/**
+	 * If set to false, the component will generate a special markup to
+	 * allow it to not render during server-side rendering
+	 */
+	- ssrRendering = true
+
+	/**
 	 * Returns the component name
 	 * @param {string} [name] - the custom template name
 	 */
@@ -176,7 +182,8 @@
 
 	- rootAttrs = { &
 		class: 'i-block-helper',
-		'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'
+		'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]',
+		'v-async-target': '!ssrRendering'
 	} .
 
 	- if teleport
@@ -231,17 +238,29 @@
 						< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
 							+= content
 
-					- block headHelpers
+					- block renderRoot()
+						- block headHelpers
 
-					- block innerRoot
-						< ${rootWrapper ? '_' : '?'}.&__root-wrapper
-							< ${overWrapper ? '_' : '?'}.&__over-wrapper
-								- block overWrapper
+						- block innerRoot
+							< ${rootWrapper ? '_' : '?'}.&__root-wrapper
+								< ${overWrapper ? '_' : '?'}.&__over-wrapper
+									- block overWrapper
 
-							- block body
+								- block body
 
-						- block helpers
-						- block providers
+							- block helpers
+							- block providers
+
+					- if !ssrRendering
+						< template v-if = !ssrRendering
+							+= self.render({wait: 'async.idle.bind(async)'})
+								+= self.renderRoot()
+
+						< template v-else
+							+= self.renderRoot()
+
+					- else
+						+= self.renderRoot()
 
 	- block root
 		- if teleport

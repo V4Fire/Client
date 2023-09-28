@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.29 (2023-09-27)
+
+#### :rocket: New Feature
+
+* Added a new prop `ssrRendering`
+
 ## v4.0.0-beta.22 (2023-09-15)
 
 #### :rocket: New Feature
