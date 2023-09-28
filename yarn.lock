@@ -2406,6 +2406,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/webpack-env@npm:1.18.1":
+  version: 1.18.1
+  resolution: "@types/webpack-env@npm:1.18.1"
+  checksum: 3173c069763e51a96565d602af7e6dac9d772ae4aa6f26cac187cbf599a7f0b88f790b4b050b9dbdb0485daed3061b4a337863f3b8ce66f8a4e51f75ad387c6a
+  languageName: node
+  linkType: hard
+
 "@types/webpack@npm:5.28.0":
   version: 5.28.0
   resolution: "@types/webpack@npm:5.28.0"
@@ -2563,6 +2570,7 @@ __metadata:
     "@types/jasmine": 3.10.3
     "@types/semver": 7.3.10
     "@types/webpack": 5.28.0
+    "@types/webpack-env": 1.18.1
     "@v4fire/config": 1.0.0
     "@v4fire/core": 3.96.0
     "@v4fire/design-system": 1.23.0

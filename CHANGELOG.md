@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.60.0 (2023-09-28)
+
+#### :rocket: New Feature
+
+* Added possibility to specify paths with alias to `@context` directive `build/monic`
+* Added possibility to load icons from design-system `traits/i-icon` `icon/b-icon`
+
 ## v3.59.1 (2023-09-22)
 
 #### :bug: Bug Fix

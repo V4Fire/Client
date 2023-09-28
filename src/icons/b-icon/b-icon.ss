@@ -16,6 +16,6 @@
 	- block body
 		< use v-update-on = { &
 			emitter: getIconLink(value),
-			handler: updateIconHref,
-			errorHandler: handleIconError
+			handler: (...args) => updateIconHref(value, ...args),
+			errorHandler: (...args) => handleIconError(value, ...args)
 		} .
