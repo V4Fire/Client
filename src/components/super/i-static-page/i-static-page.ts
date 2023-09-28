@@ -189,8 +189,8 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * True if component teleports should be mounted
 	 */
-	@field(() => false)
-	protected shouldMountTeleports!: boolean;
+	@field()
+	protected shouldMountTeleports: boolean = false;
 
 	/**
 	 * The route information object store
