@@ -97,6 +97,10 @@ export default abstract class iData extends iDataHandlers {
 				this.saveDataToRootStore(data);
 				this.hydrationStore?.set(this.componentId, providerHydrationKey, Object.cast(data));
 				this.db = this.convertDataToDB<this['DB']>(data);
+
+				// During hydration, there may be a situation where the cache on the DB getter is set before rendering occurs,
+				// so we forcibly touch it to log this access in Vue
+				void this.db;
 			};
 
 			if (HYDRATION && !this.isReadyOnce && hydrationStore.has(this.componentId)) {
