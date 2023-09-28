@@ -13,27 +13,32 @@ const
 
 const
 	{getThemes} = include('build/ds'),
-	{getThemedPathChunks, checkDeprecated} = include('build/stylus/ds/helpers');
+	{getThemedPathChunks, checkDeprecated, checkRequiredThemes} = include('build/stylus/ds/helpers');
 
 /**
  * Returns a function to register Stylus plugins by the specified options
  *
- * @param {DesignSystem} ds - design system object prepared to use with Stylus
- * @param {!Object} cssVariables - dictionary of CSS variables
- * @param {boolean=} [useCSSVarsInRuntime] - true, if the design system object values provided
- * to style files as css-variables
+ * @param {object} opts
+ * @param {DesignSystem} opts.ds - the design system object prepared to use with Stylus
+ * @param {object} opts.cssVariables - a dictionary of CSS variables
+ * @param {boolean} [opts.useCSSVarsInRuntime] - true, if the design system object values provided
+ *   to style files as css-variables
  *
- * @param {string=} [theme] - current theme value
- * @param {(Array<string>|boolean)=} [includeThemes] - list of themes to include or
+ * @param {object} [opts.detectUserPreferences] - a map of user preference parameters that
+ *   will be automatically detected based on system settings.
+ *
+ * @param {string} [opts.theme] - the current theme value
+ * @param {(Array<string>|boolean)} [opts.includeThemes] - a list of themes to include or
  *   `true` (will include all available themes)
  *
- * @param {Object=} [stylus] - link to a Stylus package instance
- * @returns {!Function}
+ * @param {object} [opts.stylus] - a link to the Stylus package instance
+ * @returns {Function}
  */
 module.exports = function getPlugins({
 	ds,
 	cssVariables,
 	useCSSVarsInRuntime,
+	detectUserPreferences,
 	theme,
 	includeThemes,
 	stylus = require('stylus')
@@ -53,6 +58,8 @@ module.exports = function getPlugins({
 		themesList = getThemes(ds.raw, buildThemes),
 		isThemesIncluded = themesList != null && themesList.length > 0,
 		isOneTheme = Object.isArray(themesList) && themesList.length === 1 && themesList[0] === theme;
+
+	checkRequiredThemes({detectUserPreferences, themesList});
 
 	if (!isThemesIncluded) {
 		if (Object.isString(theme)) {

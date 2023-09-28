@@ -6,10 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 import type iBlock from 'super/i-block/i-block';
 import type iStaticPage from 'super/i-static-page/i-static-page';
 
 import Friend from 'super/i-block/modules/friend';
+
+const
+	$$ = symbolGenerator();
 
 /**
  * Class to manage interface themes
@@ -46,12 +51,33 @@ export default class ThemeManager extends Friend {
 
 		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
 
-		this.current = THEME;
-		this.initialValue = THEME;
+		let theme = THEME;
+
+		if (Object.isDictionary(DETECT_USER_PREFERENCES)) {
+			const
+				prefersColorSchemeEnabled = Object.get<boolean>(DETECT_USER_PREFERENCES, 'prefersColorScheme.enabled') ?? false,
+				darkTheme = Object.get<string>(DETECT_USER_PREFERENCES, 'prefersColorScheme.aliases.dark') ?? 'dark',
+				lightTheme = Object.get<string>(DETECT_USER_PREFERENCES, 'prefersColorScheme.aliases.light') ?? 'light';
+
+			if (prefersColorSchemeEnabled) {
+				const darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
+				theme = darkThemeMq.matches ? darkTheme : lightTheme;
+
+				this.initThemeListener(darkThemeMq, prefersColorSchemeEnabled, darkTheme, lightTheme);
+			}
+		}
+
+		this.current = theme;
+		this.initialValue = theme;
 
 		if (!Object.isString(this.themeAttribute)) {
 			throw new ReferenceError('An attribute name to set themes is not specified');
 		}
+	}
+
+	/** @see [[ThemeManager.currentStore]] */
+	get current(): string {
+		return this.currentStore;
 	}
 
 	/**
@@ -80,8 +106,24 @@ export default class ThemeManager extends Friend {
 		});
 	}
 
-	/** @see [[ThemeManager.currentStore]] */
-	get current(): string {
-		return this.currentStore;
+	/**
+	 * Initializes an event listener for changes in system appearance
+	 *
+	 * @param mq
+	 * @param enabled
+	 * @param darkTheme
+	 * @param lightTheme
+	 */
+	protected initThemeListener(mq: MediaQueryList, enabled: boolean, darkTheme: string, lightTheme: string): void {
+		if (!enabled) {
+			return;
+		}
+
+		// TODO: understand why cant we use `this.async.on(mq, 'change', ...)`; https://github.com/V4Fire/Core/issues/369
+		mq.onchange = this.async.proxy((event: MediaQueryListEvent) => (
+			event.matches ?
+				this.current = darkTheme :
+				this.current = lightTheme
+		), {single: false, label: $$.themeChange});
 	}
 }
