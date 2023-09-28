@@ -202,7 +202,7 @@
 	- slotAttrs = {':stage': 'stage', ':ctx': 'self'}
 	- block slotAttrs
 
-	- block root
+	- block rootContent()
 		< ${teleport ? 'span' : '?'}.i-block-helper.${self.name()} -teleport
 			< ${teleport ? 'teleport' : '?'} to = ${teleport}
 				< _ v-attrs = rootAttrs | ${rootAttrs|!html}
@@ -242,3 +242,11 @@
 
 						- block helpers
 						- block providers
+
+	- block root
+		- if teleport
+			< template v-if = r.shouldMountTeleports
+				+= self.rootContent()
+
+		- else
+			+= self.rootContent()

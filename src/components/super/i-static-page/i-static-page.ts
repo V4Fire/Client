@@ -100,6 +100,12 @@ export default abstract class iStaticPage extends iPage {
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
+	 * True if teleports should be mounted
+	 */
+	@field(() => false)
+	shouldMountTeleports!: boolean;
+
+	/**
 	 * True if the current user is authorized
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
@@ -366,13 +372,16 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Initializes the slot for component teleports
+	 * Initializes the slot for component teleports and mounts the teleported content
 	 */
-	@hook('beforeCreate')
-	protected createTeleportsSlot(): void {
-		if (!SSR) {
-			document.body.append(Object.assign(document.createElement('div'), {id: 'teleports'}));
+	@hook('mounted')
+	protected async mountTeleports(): Promise<void> {
+		if (SSR) {
+			return;
 		}
+
+		await this.async.nextTick();
+		this.shouldMountTeleports = true;
 	}
 
 	/**
