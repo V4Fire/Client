@@ -380,7 +380,10 @@ export default abstract class iStaticPage extends iPage {
 			return;
 		}
 
+		document.body.append(Object.assign(document.createElement('div'), {id: 'teleports'}));
+
 		await this.async.nextTick();
+
 		this.shouldMountTeleports = true;
 	}
 
