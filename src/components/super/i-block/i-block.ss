@@ -209,7 +209,7 @@
 	- slotAttrs = {':stage': 'stage', ':ctx': 'self'}
 	- block slotAttrs
 
-	- block rootContent()
+	- block renderRoot()
 		< ${teleport ? 'span' : '?'}.i-block-helper.${self.name()} -teleport
 			< ${teleport ? 'teleport' : '?'} to = ${teleport}
 				< _ v-attrs = rootAttrs | ${rootAttrs|!html}
@@ -238,7 +238,7 @@
 						< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
 							+= content
 
-					- block renderRoot()
+					- block renderRootContent()
 						- block headHelpers
 
 						- block innerRoot
@@ -254,18 +254,18 @@
 					- if !ssrRendering
 						< template v-if = !ssrRendering
 							+= self.render({wait: 'async.idle.bind(async)'})
-								+= self.renderRoot()
+								+= self.renderRootContent()
 
 						< template v-else
-							+= self.renderRoot()
+							+= self.renderRootContent()
 
 					- else
-						+= self.renderRoot()
+						+= self.renderRootContent()
 
 	- block root
 		- if teleport
 			< template v-if = r.shouldMountTeleports
-				+= self.rootContent()
+				+= self.renderRoot()
 
 		- else
-			+= self.rootContent()
+			+= self.renderRoot()

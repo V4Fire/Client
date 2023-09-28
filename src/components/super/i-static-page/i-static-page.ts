@@ -100,12 +100,6 @@ export default abstract class iStaticPage extends iPage {
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
-	 * True if teleports should be mounted
-	 */
-	@field(() => false)
-	shouldMountTeleports!: boolean;
-
-	/**
 	 * True if the current user is authorized
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
@@ -191,6 +185,12 @@ export default abstract class iStaticPage extends iPage {
 		this[$$.randomGenerator] ??= new Xor128(19881989);
 		return this[$$.randomGenerator];
 	}
+
+	/**
+	 * True if component teleports should be mounted
+	 */
+	@field(() => false)
+	protected shouldMountTeleports!: boolean;
 
 	/**
 	 * The route information object store
