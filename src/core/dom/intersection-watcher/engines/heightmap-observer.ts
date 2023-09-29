@@ -110,7 +110,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 			this.checkViewport();
 		};
 
-		if (opts === false) {
+		if (opts === true) {
 			run();
 			return;
 		}
