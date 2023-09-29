@@ -284,8 +284,21 @@ export default class MutationObserverEngine extends AbstractEngine {
 			});
 		});
 
-		positions.sort((a, b) => a.top - b.top);
-		this.watchersXPositions = positions.slice().sort((a, b) => a.left - b.left);
+		positions.sort((a, b) => {
+			if (a.watcher.target === b.watcher.target) {
+				return a.watcher.threshold - b.watcher.threshold;
+			}
+
+			return a.top - b.top;
+		});
+
+		this.watchersXPositions = positions.slice().sort((a, b) => {
+			if (a.watcher.target === b.watcher.target) {
+				return a.watcher.threshold - b.watcher.threshold;
+			}
+
+			return a.left - b.left;
+		});
 	}
 
 	/**
