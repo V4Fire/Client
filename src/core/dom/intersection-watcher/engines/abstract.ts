@@ -309,6 +309,10 @@ export default abstract class AbstractEngine {
 		if (Object.isSet(thresholdGroup)) {
 			thresholdGroup.delete(watcher);
 
+			if (thresholdGroup.size === 0) {
+				s.delete(watcher.threshold);
+			}
+
 		} else {
 			s.delete(watcher.threshold);
 		}
