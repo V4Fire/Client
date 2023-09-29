@@ -165,6 +165,10 @@ export default class MutationObserverEngine extends AbstractEngine {
 
 		if (fromY == null || toY == null || fromX == null || toX == null) {
 			if (this.intersectionWindow.length > 0) {
+				this.intersectionWindow.forEach((watcher) => {
+					this.onObservableOut(watcher, scrollTarget);
+				});
+
 				this.intersectionWindow = [];
 			}
 
