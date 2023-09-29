@@ -91,7 +91,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 				}
 			});
 
-			if (observerHasWatchers === false) {
+			if (!<boolean>observerHasWatchers) {
 				observer.value.disconnect();
 				observer.destroy();
 
@@ -99,7 +99,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 					this.observersPool.delete(resolvedRoot);
 				}
 
-			} else if (elementHasWatchers === false) {
+			} else if (!<boolean>elementHasWatchers) {
 				observer.value.unobserve(watcher.target);
 				observer.free();
 			}
