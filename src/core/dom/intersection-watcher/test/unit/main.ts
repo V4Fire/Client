@@ -305,8 +305,6 @@ test.describe('core/dom/intersection-watcher', () => {
 			});
 
 			test('Watcher should cancel a target watching by the unwatch method and specified handler', async ({page}) => {
-				test.fail(engine === 'intersection', 'unwatch method removes all handlers, not only the specified one');
-
 				const intersectionResults = await page.evaluateHandle<string[]>(() => []);
 
 				await getObserver(engine).evaluate((observer, {target, intersectionResults}) => {
