@@ -108,7 +108,7 @@ export default abstract class AbstractEngine {
 		}
 
 		watcher = {
-			id: Math.random().toString().slice(2),
+			id: Object.fastHash(Math.random()),
 			target: el,
 
 			handler,

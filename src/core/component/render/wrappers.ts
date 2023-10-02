@@ -71,7 +71,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			[name, attrs, slots, patchFlag, dynamicProps] = args;
 
 		let
-			component: CanUndef<ComponentMeta>;
+			component: CanNull<ComponentMeta> = null;
 
 		if (Object.isString(name)) {
 			component = registerComponent(name);
@@ -107,6 +107,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 		vnode.props ??= {};
 		vnode.props.getRoot ??= () => ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
+		vnode.props.getParent ??= () => this;
 
 		if (vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
@@ -381,4 +382,37 @@ export function wrapWithDirectives<T extends typeof withDirectives>(_: T): T {
 			}
 		}
 	});
+}
+
+/**
+ * Decorates the given component API and returns it
+ *
+ * @param path - the path from which the API was loaded
+ * @param api
+ */
+export function wrapAPI<T extends Dictionary>(this: ComponentInterface, path: string, api: T): T {
+	if (path === 'vue/server-renderer') {
+		api = {...api};
+
+		if (Object.isFunction(api.ssrRenderComponent)) {
+			const {ssrRenderComponent} = api;
+
+			Object.set(api, 'ssrRenderComponent', (
+				component: {name: string},
+				props: Nullable<Dictionary>,
+				...args: unknown[]
+			) => {
+				const
+					meta = registerComponent(component.name);
+
+				if (meta != null) {
+					props = normalizeComponentAttrs(props, [], meta);
+				}
+
+				return ssrRenderComponent(component, props, ...args);
+			});
+		}
+	}
+
+	return api;
 }

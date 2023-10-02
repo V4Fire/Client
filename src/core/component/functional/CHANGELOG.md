@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.22 (2023-09-15)
+
+#### :bug: Bug Fix
+
+* Fixed the race condition issue with fast re-rendering of functional components
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :memo: Documentation

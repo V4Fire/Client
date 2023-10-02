@@ -48,12 +48,11 @@ export function initDynamicComponentLifeCycle(component: ComponentInterface): Co
 		}
 
 		function mount() {
-			unsafe.$async.nextTick()
-				.then(() => {
-					unsafe.unsafe.$el = node;
-					init.mountedState(unsafe);
-				})
+			unsafe.unsafe.$el = node;
+			node.component = unsafe;
 
+			unsafe.$async.nextTick()
+				.then(() => init.mountedState(unsafe))
 				.catch(stderr);
 		}
 	}

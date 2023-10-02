@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Teleports should not be rendered during SSR
+
 ## v4.0.0-beta.17 (2023-09-06)
 
 #### :bug: Bug Fix

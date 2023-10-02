@@ -33,6 +33,12 @@
 	- teleport = false
 
 	/**
+	 * If set to false, the component will generate a special markup to
+	 * allow it to not render during server-side rendering
+	 */
+	- ssrRendering = true
+
+	/**
 	 * Returns the component name
 	 * @param {string} [name] - the custom template name
 	 */
@@ -176,7 +182,8 @@
 
 	- rootAttrs = { &
 		class: 'i-block-helper',
-		'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'
+		'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]',
+		'v-async-target': '!ssrRendering'
 	} .
 
 	- if teleport
@@ -203,42 +210,55 @@
 	- block slotAttrs
 
 	- block root
-		< ${teleport ? 'span' : '?'}.i-block-helper.${self.name()} -teleport
-			< ${teleport ? 'teleport' : '?'} to = ${teleport}
-				< _ v-attrs = rootAttrs | ${rootAttrs|!html}
-					{{ void(vdom.saveRenderContext()) }}
-					{{ void(r.initGlobalEnv()) }}
+		< ${teleport ? 'template' : '?'} v-if = r.shouldMountTeleports
+			< ${teleport ? 'span' : '?'}.i-block-helper.${self.name()} -teleport
+				< ${teleport ? 'teleport' : '?'} to = ${teleport}
+					< _ v-attrs = rootAttrs | ${rootAttrs|!html}
+						{{ void(vdom.saveRenderContext()) }}
+						{{ void(r.initGlobalEnv()) }}
 
-					/**
-					 * Generates a slot declaration by the specified parameters
-					 *
-					 * @param {string} [name] - the slot name
-					 * @param {object} [attrs] - the scoped slot attributes
-					 * @param {string} [content] - the slot content
-					 */
-					- block slot(name = 'default', attrs, content)
-						- switch arguments.length
-							> 1
-								- if name instanceof Unsafe
-									? content = name
-									? name = 'default'
+						/**
+						 * Generates a slot declaration by the specified parameters
+						 *
+						 * @param {string} [name] - the slot name
+						 * @param {object} [attrs] - the scoped slot attributes
+						 * @param {string} [content] - the slot content
+						 */
+						- block slot(name = 'default', attrs, content)
+							- switch arguments.length
+								> 1
+									- if name instanceof Unsafe
+										? content = name
+										? name = 'default'
 
-							> 2
-								- if attrs instanceof Unsafe
-									? content = attrs
-									? attrs = {}
+								> 2
+									- if attrs instanceof Unsafe
+										? content = attrs
+										? attrs = {}
 
-						< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
-							+= content
+							< slot name = ${name} | ${Object.assign({}, slotAttrs, attrs)|!html}
+								+= content
 
-					- block headHelpers
+						- block renderRootContent()
+							- block headHelpers
 
-					- block innerRoot
-						< ${rootWrapper ? '_' : '?'}.&__root-wrapper
-							< ${overWrapper ? '_' : '?'}.&__over-wrapper
-								- block overWrapper
+							- block innerRoot
+								< ${rootWrapper ? '_' : '?'}.&__root-wrapper
+									< ${overWrapper ? '_' : '?'}.&__over-wrapper
+										- block overWrapper
 
-							- block body
+									- block body
 
-						- block helpers
-						- block providers
+								- block helpers
+								- block providers
+
+						- if !ssrRendering
+							< template v-if = !ssrRendering
+								+= self.render({wait: 'async.idle.bind(async)'})
+									+= self.renderRootContent()
+
+							< template v-else
+								+= self.renderRootContent()
+
+						- else
+							+= self.renderRootContent()

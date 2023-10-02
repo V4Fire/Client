@@ -157,7 +157,7 @@ export default class ResizeWatcher {
 		}
 
 		const watcher: Writable<Watcher> = {
-			id: Math.random().toString().slice(2),
+			id: Object.fastHash(Math.random()),
 			target: el,
 			handler,
 

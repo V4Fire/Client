@@ -13,7 +13,7 @@ import type { ComponentMeta } from 'core/component/interface';
  * Attaches templates to the specified metaobject
  *
  * @param meta - the component metaobject
- * @param [templates] - A dictionary containing the registered templates
+ * @param [templates] - a dictionary containing the registered templates
  */
 export function attachTemplatesToMeta(meta: ComponentMeta, templates?: Dictionary): void {
 	const

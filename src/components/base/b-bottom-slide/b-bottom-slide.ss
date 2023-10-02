@@ -27,7 +27,7 @@
 			v-if =
 				isFunctional ||
 				forceInnerRender ||
-				opt.ifOnce('opened', m.opened === 'true') && delete reactiveModsStore.opened
+				opt.ifOnce('opened', isRelatedToSSR || m.opened === 'true') && delete reactiveModsStore.opened
 		.
 			- block header
 				< header.&__header &

@@ -85,13 +85,13 @@ export function getFullElementName(this: Friend, name: string, modName?: string,
  *
  * @example
  * ```js
- * this.componentId === 'uid-123';
+ * this.componentId === 'u123';
  * this.componentName === 'b-example';
  *
- * // '.uid-123.b-example__foo'
+ * // '.u123.b-example__foo'
  * console.log(this.block.getElementSelector('foo'));
  *
- * // '.uid-123.b-example__foo.b-example__foo_focused_true'
+ * // '.u123.b-example__foo.b-example__foo_focused_true'
  * console.log(this.block.getElementSelector('foo', {focused: true}));
  * ```
  */

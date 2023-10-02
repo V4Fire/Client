@@ -17,7 +17,7 @@ import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
 import { initGlobalEnv } from 'core/env';
-import { component, remoteState, hook, Hook } from 'core/component';
+import { component, remoteState, hook, Hook, State } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -47,6 +47,13 @@ export default abstract class iBlockState extends iBlockMods {
 	isReadyOnce: boolean = false;
 
 	/**
+	 * True if the component is in the context of SSR or hydration
+	 */
+	get isRelatedToSSR(): boolean {
+		return SSR || HYDRATION && !this.isReadyOnce;
+	}
+
+	/**
 	 * A link to an application state object located in `core/component/state`.
 	 *
 	 * This object is used to set any general application parameters. For example, the status of user authorization or
@@ -56,7 +63,11 @@ export default abstract class iBlockState extends iBlockMods {
 	 * properties directly. Note that the state object is observable and can be reactively bond to component templates.
 	 */
 	@computed({watchable: true})
-	get remoteState(): typeof remoteState {
+	get remoteState(): State {
+		if (SSR) {
+			return {...this.ssrState, ...remoteState};
+		}
+
 		return remoteState;
 	}
 
@@ -449,7 +460,6 @@ export default abstract class iBlockState extends iBlockMods {
 		return initGlobalEnv(env);
 	}
 
-	@hook({beforeRuntime: {functional: false}})
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 

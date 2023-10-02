@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.21 (2023-09-14)
+
+#### :rocket: New Feature
+
+* Added a new modifier `after:` for hooks
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :memo: Documentation

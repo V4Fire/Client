@@ -89,7 +89,27 @@ export default abstract class iData extends iDataHandlers {
 				this.syncDataProviderWatcher(false);
 			}
 
+			const
+				providerHydrationKey = '[[DATA_PROVIDER]]';
+
+			const setDBData = (data: CanUndef<this['DB']>) => {
+				this.saveDataToRootStore(data);
+				this.hydrationStore?.set(this.componentId, providerHydrationKey, Object.cast(data));
+				this.db = this.convertDataToDB<this['DB']>(data);
+
+				// During hydration, there may be a situation where the cache on the DB getter is set before rendering occurs,
+				// so we forcibly touch it to log this access in Vue
+				void this.db;
+			};
+
 			if (HYDRATION && !this.isReadyOnce && hydrationStore.has(this.componentId)) {
+				const
+					store = hydrationStore.get(this.componentId),
+					data = Object.cast<CanUndef<this['DB']>>(store![providerHydrationKey]);
+
+				delete data![providerHydrationKey];
+				setDBData(data);
+
 				return callSuper();
 			}
 
@@ -128,7 +148,7 @@ export default abstract class iData extends iDataHandlers {
 				const db = this.convertDataToDB<this['DB']>(data);
 				void this.lfc.execCbAtTheRightTime(() => this.db = db, label);
 
-			} else if (dataProvider?.provider.baseURL != null) {
+			} else if ((!SSR || this.ssrRendering) && dataProvider?.provider.baseURL != null) {
 				const
 					needRequest = Object.isArray(dataProvider.getDefaultRequestParams('get'));
 
@@ -162,11 +182,7 @@ export default abstract class iData extends iDataHandlers {
 
 						.then(
 							(data) => {
-								void this.lfc.execCbAtTheRightTime(() => {
-									this.saveDataToRootStore(data);
-									this.db = this.convertDataToDB<this['DB']>(data);
-								}, label);
-
+								void this.lfc.execCbAtTheRightTime(() => setDBData(data), label);
 								return callSuper();
 							},
 

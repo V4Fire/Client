@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.20 (2023-09-13)
+
+#### :rocket: New Feature
+
+* Added `verbose` flag to `build` config
+* Added `detectUserPreferences` parameter to `theme` config
+
 ## v4.0.0-beta.13 (2023-08-24)
 
 #### :rocker: New Feature

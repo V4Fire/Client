@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import { expandedStringify, expandedParse } from 'core/json';
 import type { Store, HydratedData } from 'core/component/hydration/interface';
 
 export * from 'core/component/hydration/interface';
@@ -34,7 +35,37 @@ export class HydrationStore {
 	 * Returns a JSON string representation of the hydrated data
 	 */
 	toString(): string {
-		return JSON.stringify(this.store);
+		const extraTypes = [
+			Date,
+			typeof BigInt === 'function' ? BigInt : Object,
+			Function,
+			Map,
+			Set
+		];
+
+		const toJSON = extraTypes.reduce<Array<Nullable<PropertyDescriptor>>>((res, constr) => {
+			if ('toJSON' in constr.prototype) {
+				res.push(Object.getOwnPropertyDescriptor(constr.prototype, 'toJSON'));
+
+				// @ts-ignore (ts)
+				delete constr.prototype.toJSON;
+
+			} else {
+				res.push(null);
+			}
+
+			return res;
+		}, []);
+
+		const serializedData = JSON.stringify(this.store, expandedStringify);
+
+		toJSON.forEach((fn, i) => {
+			if (fn != null) {
+				Object.defineProperty(extraTypes[i].prototype, 'toJSON', fn);
+			}
+		});
+
+		return serializedData;
 	}
 
 	/**
@@ -74,7 +105,7 @@ export class HydrationStore {
 	 * @param store
 	 */
 	protected parse(store: string): Store {
-		return JSON.parse(store) ?? Object.createDict();
+		return JSON.parse(store, expandedParse) ?? Object.createDict();
 	}
 }
 

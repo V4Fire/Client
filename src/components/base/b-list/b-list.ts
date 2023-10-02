@@ -76,7 +76,12 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	 * {@link bList.items}
 	 */
 	set items(value: this['Items']) {
+		const oldValue = this.items;
 		this.field.set('itemsStore', value);
+
+		if (this.isRelatedToSSR) {
+			this.syncItemsWatcher(this.items, oldValue);
+		}
 	}
 
 	/** {@link iActiveItems.activeChangeEvent} */

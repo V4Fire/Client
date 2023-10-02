@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.26 (2023-09-20)
+
+#### :rocket: New Feature
+
+* Added a new loader for responsive images `responsive-images-loader`
+
 ## v4.0.0-beta.13 (2023-08-24)
 
 #### :rocket: New Feature

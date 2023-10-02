@@ -71,7 +71,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 			!ctx.$el?.classList.contains(oldCtx.componentId),
 
 		init: (o) => {
-			const {r} = o;
+			const
+				{r} = o;
 
 			let
 				id = o.componentIdProp;
@@ -92,8 +93,8 @@ export default abstract class iBlockBase extends iBlockFriends {
 				propIds[propId] ??= 0;
 			}
 
-			id ??= o.randomGenerator.next().value.toString().slice(2);
-			return `uid-${id}`;
+			id ??= o.randomGenerator.next().value;
+			return `u${Object.fastHash(id)}`;
 		}
 	})
 
@@ -143,7 +144,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 	/**
 	 * A link to the root component
 	 */
-	get r(): this['$root'] {
+	get r(): this['Root'] {
 		const
 			r = ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
 
@@ -674,9 +675,20 @@ export default abstract class iBlockBase extends iBlockFriends {
 	/**
 	 * Initializes the core component API
 	 */
-	@hook({beforeRuntime: {functional: false}})
+	@hook('beforeRuntime')
 	protected initBaseAPI(): void {
 		this.watch = this.instance.watch.bind(this);
+
+		if (this.$parent == null && this.getParent != null) {
+			Object.defineProperty(this, '$parent', {
+				enumerable: true,
+				configurable: true,
+
+				get() {
+					return this.getParent?.();
+				}
+			});
+		}
 
 		if (!this.meta.params.root) {
 			Object.defineProperty(this, 'hydrationStore', {
@@ -685,6 +697,15 @@ export default abstract class iBlockBase extends iBlockFriends {
 
 				get() {
 					return this.r.hydrationStore;
+				}
+			});
+
+			Object.defineProperty(this, 'ssrState', {
+				enumerable: true,
+				configurable: true,
+
+				get() {
+					return this.r.ssrState;
 				}
 			});
 		}

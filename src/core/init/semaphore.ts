@@ -8,9 +8,9 @@
 
 import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
-import { set } from 'core/component/state';
+import remoteState, { set } from 'core/component/state';
 
-import Component, {
+import App, {
 
 	app,
 	destroyApp,
@@ -75,14 +75,17 @@ function createAppInitializer() {
 
 			rootComponentParams.inject = {
 				...inject,
-				hydrationStore: 'hydrationStore'
+				hydrationStore: 'hydrationStore',
+				ssrState: 'ssrState'
 			};
 
 			const
 				hydrationStore = new HydrationStore(),
-				rootComponent = new Component(rootComponentParams);
+				rootComponent = new App(rootComponentParams);
 
 			rootComponent.provide('hydrationStore', hydrationStore);
+			rootComponent.provide('ssrState', Object.fastClone(remoteState));
+
 			app.context = rootComponent;
 
 			try {
@@ -90,7 +93,6 @@ function createAppInitializer() {
 					ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
 					hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
 
-				// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
 				return ssrContent + hydratedData;
 
 			} finally {
@@ -107,7 +109,7 @@ function createAppInitializer() {
 			throw new ReferenceError('Application mount node not found');
 		}
 
-		app.context = new Component({
+		app.context = new App({
 			...rootComponentParams,
 			el: targetToMount
 		});
