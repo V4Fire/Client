@@ -9,7 +9,7 @@
 import routes from 'routes';
 import { getRoute, compileStaticRoutes } from 'core/router';
 
-import { set } from 'core/component/state';
+import { set } from 'core/component/client-state';
 import semaphore from 'core/init/semaphore';
 
 /**
