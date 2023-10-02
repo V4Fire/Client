@@ -9,7 +9,7 @@
 import type { VirtualScrollState, PrivateComponentState } from 'components/base/b-virtual-scroll/interface';
 
 /**
- * Creates an initial state object for a component.
+ * Creates an initial state object for a component
  */
 export function createInitialState(): VirtualScrollState {
 	return {
@@ -35,7 +35,7 @@ export function createInitialState(): VirtualScrollState {
 }
 
 /**
- * Creates an initial private state object for a component.
+ * Creates an initial private state object for a component
  */
 export function createPrivateInitialState(): PrivateComponentState {
 	return {

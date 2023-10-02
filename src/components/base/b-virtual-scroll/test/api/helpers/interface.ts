@@ -19,7 +19,7 @@ export interface DataConveyor<DATA = any> {
 	/**
 	 * Adds a specified number of data items to the conveyor.
 	 *
-	 * @param count - The number of data items to add.
+	 * @param count - the number of data items to add.
 	 * @returns An array containing the newly added data items.
 	 */
 	addData(count: number): DATA[];
@@ -27,7 +27,7 @@ export interface DataConveyor<DATA = any> {
 	/**
 	 * Adds a specified number of mounted items to the conveyor.
 	 *
-	 * @param count - The number of mounted items to add.
+	 * @param count - the number of mounted items to add.
 	 * @returns An array containing the newly added mounted items.
 	 */
 	addItems(count: number): MountedItem[];
@@ -35,7 +35,7 @@ export interface DataConveyor<DATA = any> {
 	/**
 	 * Adds a specified number of mounted child items (separators) to the conveyor.
 	 *
-	 * @param count - The number of mounted child items to add.
+	 * @param count - the number of mounted child items to add.
 	 * @returns An array containing the newly added mounted child items.
 	 */
 	addSeparators(count: number): MountedChild[];
@@ -43,7 +43,7 @@ export interface DataConveyor<DATA = any> {
 	/**
 	 * Adds an array of component items as mounted child items to the conveyor.
 	 *
-	 * @param child - The array of component items to add as mounted child items.
+	 * @param child - the array of component items to add as mounted child items.
 	 * @returns The updated array of mounted child items.
 	 */
 	addChild(child: ComponentItem[]): MountedChild[];
@@ -51,7 +51,7 @@ export interface DataConveyor<DATA = any> {
 	/**
 	 * Returns an array of data for the given index added using the `addData` method.
 	 *
-	 * @param index - The index of the data chunk.
+	 * @param index - the index of the data chunk.
 	 * @returns An array of data.
 	 */
 	getDataChunk(index: number): DATA[];

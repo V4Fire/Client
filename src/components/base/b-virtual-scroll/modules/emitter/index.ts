@@ -15,7 +15,7 @@ import type { ComponentTypedEmitter } from 'components/base/b-virtual-scroll/mod
 export * from 'components/base/b-virtual-scroll/modules/emitter/interface';
 
 /**
- * Provides methods for interacting with the `selfEmitter` using typed events.
+ * Provides methods for interacting with the `selfEmitter` using typed events
  * @param ctx
  */
 export function componentTypedEmitter(ctx: bVirtualScroll): ComponentTypedEmitter {

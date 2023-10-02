@@ -23,8 +23,8 @@ import type { DataConveyor, DataItemCtor, MountedItemCtor, StateApi, VirtualScro
 export * from 'components/base/b-virtual-scroll/test/api/component-object';
 
 /**
- * Creates a helper API for convenient testing of the `b-virtual-scroll` component.
- * @param page - The page object representing the testing page.
+ * Creates a helper API for convenient testing of the `b-virtual-scroll` component
+ * @param page - the page object representing the testing page.
  */
 export async function createTestHelpers(page: Page): Promise<VirtualScrollTestHelpers> {
 	const
@@ -53,9 +53,9 @@ export async function createTestHelpers(page: Page): Promise<VirtualScrollTestHe
  * For example, the `extractStateFromDataConveyor` function can be used to generate the component's data state based on
  * the provided data conveyor.
  *
- * @param itemsCtor - The constructor function for data items.
- * @param separatorCtor - The constructor function for mounted separators.
- * @param mountedCtor - The constructor function for mounted items.
+ * @param itemsCtor - the constructor function for data items.
+ * @param separatorCtor - the constructor function for mounted separators.
+ * @param mountedCtor - the constructor function for mounted items.
  */
 export function createDataConveyor<DATA>(
 	itemsCtor: DataItemCtor<DATA>,
@@ -170,8 +170,8 @@ export function createDataConveyor<DATA>(
 /**
  * Creates an API for convenient manipulation of a component's state fork.
  *
- * @param initial - The initial partial state of the component.
- * @param dataConveyor - The data conveyor used for managing data within the component.
+ * @param initial - the initial partial state of the component.
+ * @param dataConveyor - the data conveyor used for managing data within the component.
  */
 export function createStateApi(
 	initial: Partial<VirtualScrollState>,
@@ -213,7 +213,7 @@ export function createStateApi(
  * Creates the "initial" component state and returns it.
  * Since this state is intended for comparison in tests, some fields use `expect.any` since they are not "stable".
  *
- * @param state - The partial component state to override the default values.
+ * @param state - the partial component state to override the default values.
  */
 export function createInitialState(state: Partial<VirtualScrollState>): VirtualScrollState {
 	return {
@@ -228,8 +228,8 @@ export function createInitialState(state: Partial<VirtualScrollState>): VirtualS
 }
 
 /**
- * Extracts state data from the data conveyor and returns it.
- * @param conveyor - The data conveyor to extract state data from.
+ * Extracts state data from the data conveyor and returns it
+ * @param conveyor - the data conveyor to extract state data from.
  */
 export function extractStateFromDataConveyor(conveyor: DataConveyor): Pick<VirtualScrollState, 'data' | 'lastLoadedData' | 'lastLoadedRawData' | 'items' | 'childList'> {
 	return {
@@ -244,9 +244,9 @@ export function extractStateFromDataConveyor(conveyor: DataConveyor): Pick<Virtu
 /**
  * Calls `objCtor` on each element of the `data` array and returns a new array with the results.
  *
- * @param data - The array of data elements.
- * @param objCtor - The constructor function to create new objects from the data elements.
- * @param start - The starting index for creating objects (default: 0).
+ * @param data - the array of data elements.
+ * @param objCtor - the constructor function to create new objects from the data elements.
+ * @param start - the starting index for creating objects (default: 0).
  */
 export function createFromData<DATA, ITEM>(
 	data: DATA[],
@@ -257,8 +257,8 @@ export function createFromData<DATA, ITEM>(
 }
 
 /**
- * Creates a simple object that matches the {@link MountedItem} interface.
- * @param data - The object with index of the mounted item.
+ * Creates a simple object that matches the {@link MountedItem} interface
+ * @param data - the object with index of the mounted item.
  */
 export function createMountedItem(data: IndexedObj): MountedItem {
 	return {
@@ -278,8 +278,8 @@ export function createMountedItem(data: IndexedObj): MountedItem {
 }
 
 /**
- * Creates a simple object that matches the {@link MountedChild}` interface.
- * @param data - The object with index of the mounted child.
+ * Creates a simple object that matches the {@link MountedChild}` interface
+ * @param data - the object with index of the mounted child.
  */
 export function createMountedSeparator(data: IndexedObj): MountedChild {
 	return {
@@ -298,9 +298,9 @@ export function createMountedSeparator(data: IndexedObj): MountedChild {
  * Creates an array of data with the specified length and uses the `itemCtor` function to build items within the array.
  * The `start` parameter can be used to specify the starting index that will be passed to the `itemCtor` function.
  *
- * @param count - The number of items to create.
- * @param itemCtor - The constructor function to create items.
- * @param [start] - The starting index (default: 0).
+ * @param count - the number of items to create.
+ * @param itemCtor - the constructor function to create items.
+ * @param [start] - the starting index (default: 0).
  */
 export function createChunk<DATA extends unknown = unknown>(
 	count: number,
@@ -311,8 +311,8 @@ export function createChunk<DATA extends unknown = unknown>(
 }
 
 /**
- * Creates a simple indexed object.
- * @param i - The index of the object.
+ * Creates a simple indexed object
+ * @param i - the index of the object.
  */
 export function createIndexedObj(i: number): IndexedObj {
 	return {i};
@@ -322,8 +322,8 @@ export function createIndexedObj(i: number): IndexedObj {
  * Filters emitter emit calls and removes unnecessary events.
  * It only keeps component events.
  *
- * @param emitCalls - The array of emit calls.
- * @param [filterObserverEvents] - Whether to filter out observer events (default: true).
+ * @param emitCalls - the array of emit calls.
+ * @param [filterObserverEvents] - whether to filter out observer events (default: true).
  * @param [allowedEvents]
  */
 export function filterEmitterCalls(
@@ -340,8 +340,8 @@ export function filterEmitterCalls(
  * Filters emitter emit results and removes unnecessary events.
  * It only keeps component events.
  *
- * @param results - The array of emit results.
- * @param [filterObserverEvents] - Whether to filter out observer events (default: true).
+ * @param results - the array of emit results.
+ * @param [filterObserverEvents] - whether to filter out observer events (default: true).
  * @param [allowedEvents]
  */
 export function filterEmitterResults<VAL extends [event: string, ...rest: any[]]>(

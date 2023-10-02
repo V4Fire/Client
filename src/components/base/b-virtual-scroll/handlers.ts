@@ -111,7 +111,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: convert data to database event.
 	 * Triggered when the loaded data is converted.
 	 *
-	 * @param data - The converted data.
+	 * @param data - the converted data.
 	 */
 	protected onConvertDataToDB(this: bVirtualScroll, data: unknown): void {
 		this.componentInternalState.setRawLastLoaded(data);
@@ -122,7 +122,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: data load start event.
 	 * Triggered when data loading starts.
 	 *
-	 * @param isInitialLoading - Indicates whether it is an initial component loading.
+	 * @param isInitialLoading - indicates whether it is an initial component loading.
 	 */
 	protected onDataLoadStart(this: bVirtualScroll, isInitialLoading: boolean): void {
 		this.componentInternalState.setIsLoadingInProgress(true);
@@ -136,8 +136,8 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: data load success event.
 	 * Triggered when data loading is successfully completed.
 	 *
-	 * @param isInitialLoading - Indicates whether it is an initial component loading.
-	 * @param data - The loaded data.
+	 * @param isInitialLoading - indicates whether it is an initial component loading.
+	 * @param data - the loaded data.
 	 * @throws {@link ReferenceError} if the loaded data does not have a "data" field.
 	 */
 	protected onDataLoadSuccess(this: bVirtualScroll, isInitialLoading: boolean, data: unknown): void {
@@ -174,7 +174,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Handler: data load error event.
 	 * Triggered when data loading fails.
 	 *
-	 * @param isInitialLoading - Indicates whether it is an initial component loading.
+	 * @param isInitialLoading - indicates whether it is an initial component loading.
 	 */
 	protected onDataLoadError(this: bVirtualScroll, isInitialLoading: boolean): void {
 		this.componentInternalState.setIsLoadingInProgress(false);
@@ -210,8 +210,8 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	}
 
 	/**
-	 * Handler: component enters the viewport.
-	 * @param component - The component that enters the viewport.
+	 * Handler: component enters the viewport
+	 * @param component - the component that enters the viewport.
 	 */
 	protected onElementEnters(this: bVirtualScroll, component: MountedChild): void {
 		this.componentInternalState.setMaxViewedIndex(component);

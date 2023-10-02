@@ -32,8 +32,8 @@ export function evalFn<T extends Function>(func: T): T {
  * This function is needed in order to extract a previously inserted mock function
  * into the context of a browser page by its ID.
  *
- * @param obj - The object to override the `toJSON` method for.
- * @param id - The identifier of the mock function.
+ * @param obj - the object to override the `toJSON` method for.
+ * @param id - the identifier of the mock function.
  * @returns The modified object with the overridden `toJSON` method.
  */
 export function setSerializerAsMockFn<T extends object>(obj: T, id: string): T {

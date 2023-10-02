@@ -41,7 +41,7 @@ export interface SpyExtractor<CTX, ARGS extends any[]> {
 	/**
 	 * Extracts or creates a spy object from a `JSHandle`.
 	 *
-	 * @param ctx - The `JSHandle` containing the spy object.
+	 * @param ctx - the `JSHandle` containing the spy object.
 	 * @param args
 	 */
 	(ctx: CTX, ...args: ARGS): ReturnType<ModuleMocker['spyOn']>;

@@ -41,7 +41,7 @@ export class SlotsStateController extends Friend {
 	protected lastState?: SlotsStateObj;
 
 	/**
-	 * Displays the slots that should be shown when the data state is empty.
+	 * Displays the slots that should be shown when the data state is empty
 	 */
 	emptyState(): void {
 		this.setSlotsVisibility({
@@ -56,7 +56,7 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Displays the slots that should be shown when the lifecycle is done.
+	 * Displays the slots that should be shown when the lifecycle is done
 	 */
 	doneState(): void {
 		this.setSlotsVisibility({
@@ -71,7 +71,7 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Displays the slots that should be shown during data loading progress.
+	 * Displays the slots that should be shown during data loading progress
 	 * @param [immediate] - if set to true, {@link requestAnimationFrame} will not be used to switch the state.
 	 */
 	loadingProgressState(immediate: boolean = false): void {
@@ -87,7 +87,7 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Displays the slots that should be shown when data loading fails.
+	 * Displays the slots that should be shown when data loading fails
 	 */
 	loadingFailedState(): void {
 		this.setSlotsVisibility({
@@ -102,7 +102,7 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Displays the slots that should be shown when data loading is successful.
+	 * Displays the slots that should be shown when data loading is successful
 	 */
 	loadingSuccessState(): void {
 		this.setSlotsVisibility({
@@ -117,7 +117,7 @@ export class SlotsStateController extends Friend {
 	}
 
 	/**
-	 * Resets the state of the module.
+	 * Resets the state of the module
 	 */
 	reset(): void {
 		this.async.clearAll({group: new RegExp(slotsStateControllerAsyncGroup)});
@@ -127,8 +127,8 @@ export class SlotsStateController extends Friend {
 	/**
 	 * Sets the visibility state of the slots.
 	 *
-	 * @param stateObj - An object specifying the visibility state of each slot.
-	 * @param [immediate] - If set to true, {@link requestAnimationFrame} will not be used to switch the state.
+	 * @param stateObj - an object specifying the visibility state of each slot.
+	 * @param [immediate] - if set to true, {@link requestAnimationFrame} will not be used to switch the state.
 	 */
 	protected setSlotsVisibility(stateObj: Required<SlotsStateObj>, immediate: boolean = false): void {
 		this.lastState = stateObj;
@@ -151,8 +151,8 @@ export class SlotsStateController extends Friend {
 	/**
 	 * Sets the display state of a slot.
 	 *
-	 * @param name - The name of the slot.
-	 * @param state - The visibility state of the slot.
+	 * @param name - the name of the slot.
+	 * @param state - the visibility state of the slot.
 	 */
 	protected setDisplayState(name: keyof SlotsStateObj, state: boolean): void {
 		const ref = this.ctx.$refs[name];

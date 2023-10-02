@@ -39,7 +39,7 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
-	 * Resets the state of the component.
+	 * Resets the state of the component
 	 */
 	reset(): void {
 		this.state = createInitialState();
@@ -47,14 +47,14 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
-	 * Increments the load page pointer.
+	 * Increments the load page pointer
 	 */
 	incrementLoadPage(): void {
 		this.state.loadPage++;
 	}
 
 	/**
-	 * Increments the render page pointer.
+	 * Increments the render page pointer
 	 */
 	incrementRenderPage(): void {
 		this.state.renderPage++;
@@ -63,8 +63,8 @@ export class ComponentInternalState extends Friend {
 	/**
 	 * Updates the loaded data state.
 	 *
-	 * @param data - The new data to update the state.
-	 * @param isInitialLoading - Indicates if it's the initial loading.
+	 * @param data - the new data to update the state.
+	 * @param isInitialLoading - indicates if it's the initial loading.
 	 */
 	updateData(data: object[], isInitialLoading: boolean): void {
 		this.state.data = this.state.data.concat(data);
@@ -74,8 +74,8 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
-	 * Updates the arrays with mounted child elements of the component.
-	 * @param mounted - The mounted child elements.
+	 * Updates the arrays with mounted child elements of the component
+	 * @param mounted - the mounted child elements.
 	 */
 	updateMounted(mounted: MountedChild[]): void {
 		const
@@ -91,16 +91,16 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
-	 * Updates the state of the last raw loaded data.
-	 * @param data - The last raw loaded data.
+	 * Updates the state of the last raw loaded data
+	 * @param data - the last raw loaded data.
 	 */
 	setRawLastLoaded(data: unknown): void {
 		this.state.lastLoadedRawData = data;
 	}
 
 	/**
-	 * Sets the flag indicating if it's the initial render cycle.
-	 * @param value - The value of the flag.
+	 * Sets the flag indicating if it's the initial render cycle
+	 * @param value - the value of the flag.
 	 */
 	setIsInitialRender(value: boolean): void {
 		this.state.isInitialRender = value;
@@ -110,39 +110,39 @@ export class ComponentInternalState extends Friend {
 	 * Sets the flag indicating if requests are stopped and the component won't make any more requests
 	 * until the lifecycle is refreshed.
 	 *
-	 * @param value - The value of the flag.
+	 * @param value - the value of the flag.
 	 */
 	setIsRequestsStopped(value: boolean): void {
 		this.state.areRequestsStopped = value;
 	}
 
 	/**
-	 * Sets the flag indicating if the component's lifecycle is done.
-	 * @param value - The value of the flag.
+	 * Sets the flag indicating if the component's lifecycle is done
+	 * @param value - the value of the flag.
 	 */
 	setIsLifecycleDone(value: boolean): void {
 		this.state.isLifecycleDone = value;
 	}
 
 	/**
-	 * Sets the flag indicating if the component is currently loading data.
-	 * @param value - The value of the flag.
+	 * Sets the flag indicating if the component is currently loading data
+	 * @param value - the value of the flag.
 	 */
 	setIsLoadingInProgress(value: boolean): void {
 		this.state.isLoadingInProgress = value;
 	}
 
 	/**
-	 * Sets a flag indicating whether the last load operation ended with an error.
-	 * @param value - The value to set.
+	 * Sets a flag indicating whether the last load operation ended with an error
+	 * @param value - the value to set.
 	 */
 	setIsLastErrored(value: boolean): void {
 		this.state.isLastErrored = value;
 	}
 
 	/**
-	 * Sets the maximum viewed index based on the passed component's index.
-	 * @param component - The component to compare and update the maximum viewed index.
+	 * Sets the maximum viewed index based on the passed component's index
+	 * @param component - the component to compare and update the maximum viewed index.
 	 */
 	setMaxViewedIndex(component: MountedChild): void {
 		const
@@ -163,14 +163,14 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
-	 * Returns the cursor indicating the last index of the last rendered data element.
+	 * Returns the cursor indicating the last index of the last rendered data element
 	 */
 	getDataCursor(): number {
 		return this.privateState.dataOffset;
 	}
 
 	/**
-	 * Updates the cursor indicating the last index of the last rendered data element.
+	 * Updates the cursor indicating the last index of the last rendered data element
 	 */
 	updateDataOffset(): void {
 		const

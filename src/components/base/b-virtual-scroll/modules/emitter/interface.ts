@@ -14,8 +14,8 @@ import type { ComponentEvents, LocalEventPayload } from 'components/base/b-virtu
  */
 export interface ComponentTypedEmitter {
 	/**
-	 * @param event - The event name.
-	 * @param handler - The event handler function.
+	 * @param event - the event name.
+	 * @param handler - the event handler function.
 	 * @param [asyncOpts] - Optional async options.
 	 */
 	once<EVENT extends ComponentEvents>(
@@ -25,8 +25,8 @@ export interface ComponentTypedEmitter {
 	): void;
 
 	/**
-	 * @param event - The event name.
-	 * @param handler - The event handler function.
+	 * @param event - the event name.
+	 * @param handler - the event handler function.
 	 * @param [asyncOpts] - Optional async options.
 	 */
 	on<EVENT extends ComponentEvents>(
@@ -36,7 +36,7 @@ export interface ComponentTypedEmitter {
 	): void;
 
 	/**
-	 * @param event - The event name.
+	 * @param event - the event name.
 	 * @param [asyncOpts] - Optional async options.
 	 */
 	promisifyOnce<EVENT extends ComponentEvents>(
@@ -45,8 +45,8 @@ export interface ComponentTypedEmitter {
 	): Promise<LocalEventPayload<EVENT>>;
 
 	/**
-	 * @param event - The event name.
-	 * @param payload - The event payload.
+	 * @param event - the event name.
+	 * @param payload - the event payload.
 	 */
 	emit<EVENT extends ComponentEvents>(
 		event: EVENT,

@@ -76,7 +76,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Initializes the loading of the next data chunk.
+	 * Initializes the loading of the next data chunk
 	 * @throws {@link ReferenceError} if there is no `dataProvider` set.
 	 */
 	initLoadNext(): CanUndef<CanPromise<void>> {
@@ -135,8 +135,8 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Returns the chunk size that should be rendered.
-	 * @param state - Current lifecycle state.
+	 * Returns the chunk size that should be rendered
+	 * @param state - current lifecycle state.
 	 */
 	getChunkSize(state: VirtualScrollState): number {
 		return Object.isFunction(this.chunkSize) ?
@@ -233,7 +233,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Resets the component state to its initial state.
+	 * Resets the component state to its initial state
 	 */
 	protected reset(): void {
 		this.onReset();
@@ -342,7 +342,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Renders components using {@link bVirtualScroll.componentFactory} and inserts them into the DOM tree.
+	 * Renders components using {@link bVirtualScroll.componentFactory} and inserts them into the DOM tree
 	 */
 	protected performRender(): void {
 		this.onRenderStart();

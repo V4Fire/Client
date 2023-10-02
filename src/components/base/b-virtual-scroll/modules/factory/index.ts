@@ -36,7 +36,7 @@ export class ComponentFactory extends Friend {
 	 * Produces DOM nodes from an array of component items.
 	 * Returns an array of DOM nodes representing the component items.
 	 *
-	 * @param componentItems - An array of component items.
+	 * @param componentItems - an array of component items
 	 */
 	produceNodes(componentItems: ComponentItem[]): HTMLElement[] {
 		const createDescriptor = (item: ComponentItem): VNodeDescriptor => ({
@@ -79,8 +79,8 @@ export class ComponentFactory extends Friend {
 	}
 
 	/**
-	 * Invokes the {@link bVirtualScroll.itemsProcessors} function and returns its result.
-	 * @param items - The list of items to process.
+	 * Invokes the {@link bVirtualScroll.itemsProcessors} function and returns its result
+	 * @param items - the list of items to process.
 	 */
 	protected itemsProcessor(items: ComponentItem[]): ComponentItem[] {
 		const
@@ -105,7 +105,7 @@ export class ComponentFactory extends Friend {
 	 * Calls the render engine to render the components based on the provided descriptors.
 	 * Returns an array of rendered DOM nodes.
 	 *
-	 * @param descriptors - An array of VNode descriptors.
+	 * @param descriptors - an array of VNode descriptors.
 	 */
 	protected callRenderEngine(descriptors: VNodeDescriptor[]): HTMLElement[] {
 		const

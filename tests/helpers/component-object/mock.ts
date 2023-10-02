@@ -23,11 +23,11 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 	/**
 	 * Creates a spy to observe calls to the specified method.
 	 *
-	 * @param path - The path to the method relative to the context (component).
+	 * @param path - the path to the method relative to the context (component).
 	 * The {@link Object.get} method is used for searching, so you can use a complex path with separators.
 	 *
-	 * @param spyOptions - Options for setting up the spy.
-	 * @param spyOptions.proto - If set to `true`, the spy will be installed on the prototype of the component class.
+	 * @param spyOptions - options for setting up the spy.
+	 * @param spyOptions.proto - if set to `true`, the spy will be installed on the prototype of the component class.
 	 * In this case, you don't need to add `prototype` to the `path`; it will be added automatically.
 	 *
 	 * @returns A promise that resolves to the spy object.
@@ -78,7 +78,7 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 	/**
 	 * Extracts the spy using the provided function. The provided function should return a reference to the spy.
 	 *
-	 * @param spyExtractor - The function that extracts the spy.
+	 * @param spyExtractor - the function that extracts the spy.
 	 * @returns A promise that resolves to the spy object.
 	 *
 	 * @example
@@ -102,8 +102,8 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 	/**
 	 * Creates a mock function.
 	 *
-	 * @param fn - The mock function.
-	 * @param args - Arguments to pass to the mock function.
+	 * @param fn - the mock function.
+	 * @param args - arguments to pass to the mock function.
 	 *
 	 * @returns A promise that resolves to the mock function object.
 	 *

@@ -10,15 +10,15 @@ import { componentItemType } from 'components/base/b-virtual-scroll/const';
 import type { MountedItem } from 'components/base/b-virtual-scroll/interface';
 
 /**
- * Returns `true` if the value is of type `MountedItem`, otherwise `false`.
- * @param val - The value to check.
+ * Returns `true` if the value is of type `MountedItem`, otherwise `false`
+ * @param val - the value to check.
  */
 export function isItem(val: any): val is MountedItem {
 	return Object.isPlainObject(val) && val.type === componentItemType.item;
 }
 
 /**
- * Returns `true` if the specified value is an `async replace` error.
+ * Returns `true` if the specified value is an `async replace` error
  * @param val
  */
 export function isAsyncReplaceError(val: unknown): boolean {

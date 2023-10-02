@@ -28,7 +28,7 @@ export class Observer extends Friend {
 	protected engine: IoObserver;
 
 	/**
-	 * @param ctx - The `bVirtualScroll` component instance.
+	 * @param ctx - the `bVirtualScroll` component instance.
 	 */
 	constructor(ctx: bVirtualScroll) {
 		super(ctx);
@@ -37,8 +37,8 @@ export class Observer extends Friend {
 	}
 
 	/**
-	 * Starts observing the specified mounted elements.
-	 * @param mounted - An array of elements to be observed.
+	 * Starts observing the specified mounted elements
+	 * @param mounted - an array of elements to be observed.
 	 */
 	observe(mounted: MountedChild[]): void {
 		const
@@ -52,7 +52,7 @@ export class Observer extends Friend {
 	}
 
 	/**
-	 * Resets the module state.
+	 * Resets the module state
 	 */
 	reset(): void {
 		this.engine.reset();

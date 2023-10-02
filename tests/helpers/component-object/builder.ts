@@ -78,7 +78,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	protected dummy?: ComponentInDummy<COMPONENT>;
 
 	/**
-	 * The component styles that should be inserted into the page.
+	 * The component styles that should be inserted into the page
 	 */
 	get componentStyles(): CanUndef<string> {
 		return undefined;
@@ -98,7 +98,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	}
 
 	/**
-	 * Public access to the reference of the component's `JSHandle`.
+	 * Public access to the reference of the component's `JSHandle`
 	 * @throws {@link Error} if trying to access a component that has not been built or picked
 	 */
 	get component(): JSHandle<COMPONENT> {
@@ -110,15 +110,15 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	}
 
 	/**
-	 * Returns `true` if the component is built or picked.
+	 * Returns `true` if the component is built or picked
 	 */
 	get isBuilded(): boolean {
 		return Boolean(this.componentStore);
 	}
 
 	/**
-	 * @param page - The page on which the component is located
-	 * @param componentName - The name of the component to be rendered
+	 * @param page - the page on which the component is located
+	 * @param componentName - the name of the component to be rendered
 	 */
 	constructor(page: Page, componentName: string) {
 		this.page = page;
@@ -133,7 +133,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	}
 
 	/**
-	 * Returns the base class of the component.
+	 * Returns the base class of the component
 	 */
 	async getComponentClass(): Promise<JSHandle<new () => COMPONENT>> {
 		const {componentClassImportPath} = this;
@@ -183,7 +183,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * After this operation, the `ComponentObject` will be marked as built
 	 * and the {@link ComponentObject.component} property will be accessible.
 	 *
-	 * @param selector - The selector or locator for the component node
+	 * @param selector - the selector or locator for the component node
 	 */
 	async pick(selector: string): Promise<this>;
 
@@ -194,7 +194,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * After this operation, the `ComponentObject` will be marked as built
 	 * and the {@link ComponentObject.component} property will be accessible.
 	 *
-	 * @param locator - The locator for the component node
+	 * @param locator - the locator for the component node
 	 */
 	async pick(locator: Locator): Promise<this>;
 
@@ -205,7 +205,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * After this operation, the `ComponentObject` will be marked as built
 	 * and the {@link ComponentObject.component} property will be accessible.
 	 *
-	 * @param locatorPromise - The promise that resolves to locator for the component node
+	 * @param locatorPromise - the promise that resolves to locator for the component node
 	 */
 	async pick(locatorPromise: Promise<Locator>): Promise<this>;
 
@@ -231,7 +231,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * Stores the provided props.
 	 * The stored props will be assigned when the component is created or picked.
 	 *
-	 * @param props - The props to set
+	 * @param props - the props to set
 	 */
 	withProps(props: Dictionary): this {
 		if (!this.isBuilded) {
@@ -245,7 +245,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * Stores the provided children.
 	 * The stored children will be assigned when the component is created.
 	 *
-	 * @param children - The children to set
+	 * @param children - the children to set
 	 */
 	withChildren(children: VNodeChildren): this {
 		Object.assign(this.children, children);

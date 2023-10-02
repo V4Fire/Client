@@ -39,8 +39,8 @@ export class RequestInterceptor {
 	/**
 	 * Creates a new instance of RequestInterceptor.
 	 *
-	 * @param ctx - The page or browser context.
-	 * @param pattern - The route pattern to match against requests.
+	 * @param ctx - the page or browser context.
+	 * @param pattern - the route pattern to match against requests.
 	 */
 	constructor(ctx: Page | BrowserContext, pattern: string | RegExp) {
 		this.routeCtx = ctx;
@@ -66,8 +66,8 @@ export class RequestInterceptor {
 	 *   .responseOnce((r: Route) => r.fulfill({status: 500}));
 	 * ```
 	 *
-	 * @param handler - The response handler function.
-	 * @param opts - The response options.
+	 * @param handler - the response handler function.
+	 * @param opts - the response options.
 	 * @returns The current instance of RequestInterceptor.
 	 */
 	responseOnce(handler: ResponseHandler, opts?: ResponseOptions): this;
@@ -95,9 +95,9 @@ export class RequestInterceptor {
 	 *   .responseOnce(500, {}, {delay: 300});
 	 * ```
 	 *
-	 * @param status - The response status.
-	 * @param payload - The response payload.
-	 * @param opts - The response options.
+	 * @param status - the response status.
+	 * @param payload - the response payload.
+	 * @param opts - the response options.
 	 * @returns The current instance of RequestInterceptor.
 	 */
 	responseOnce(status: number, payload: ResponsePayload | ResponseHandler, opts?: ResponseOptions): this;
@@ -121,7 +121,7 @@ export class RequestInterceptor {
 	 * interceptor.response((r: Route) => r.fulfill({status: 200}));
 	 * ```
 	 *
-	 * @param handler - The response handler function.
+	 * @param handler - the response handler function.
 	 * @returns The current instance of RequestInterceptor.
 	 */
 	response(handler: ResponseHandler): this;
@@ -136,9 +136,9 @@ export class RequestInterceptor {
 	 * interceptor.response(200, {});
 	 * ```
 	 *
-	 * @param status - The response status.
-	 * @param payload - The response payload.
-	 * @param opts - The response options.
+	 * @param status - the response status.
+	 * @param payload - the response payload.
+	 * @param opts - the response options.
 	 * @returns The current instance of RequestInterceptor.
 	 */
 	response(status: number, payload: ResponsePayload | ResponseHandler, opts?: ResponseOptions): this;
@@ -211,9 +211,9 @@ export class RequestInterceptor {
 	/**
 	 * Cooks a response handler.
 	 *
-	 * @param status - The response status.
-	 * @param payload - The response payload.
-	 * @param opts - The response options.
+	 * @param status - the response status.
+	 * @param payload - the response payload.
+	 * @param opts - the response options.
 	 * @returns The response handler function.
 	 */
 	protected cookResponseFn(

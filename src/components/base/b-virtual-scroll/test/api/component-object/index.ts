@@ -35,7 +35,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	}
 
 	/**
-	 * @param page - The Playwright page instance.
+	 * @param page - the Playwright page instance.
 	 */
 	constructor(page: Page) {
 		super(page, 'b-virtual-scroll');
@@ -45,21 +45,21 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	}
 
 	/**
-	 * Calls the reload method of the component.
+	 * Calls the reload method of the component
 	 */
 	reload(): Promise<void> {
 		return this.component.evaluate((ctx) => ctx.reload());
 	}
 
 	/**
-	 * Returns the internal component state.
+	 * Returns the internal component state
 	 */
 	getVirtualScrollState(): Promise<VirtualScrollState> {
 		return this.component.evaluate((ctx) => ctx.getVirtualScrollState());
 	}
 
 	/**
-	 * Returns the count of children in the container.
+	 * Returns the count of children in the container
 	 */
 	getChildCount(): Promise<number> {
 		return this.childList.count();
@@ -69,7 +69,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 * Waits for the container child count to be equal to N.
 	 * Throws an error if there are more items in the child list than expected.
 	 *
-	 * @param count - The expected child count.
+	 * @param count - the expected child count.
 	 */
 	async waitForChildCountEqualsTo(count: number): Promise<void> {
 		await this.childList.nth(count - 1).waitFor({state: 'attached'});
@@ -84,7 +84,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Returns a promise that resolves when an element matching the given selector is inserted into the container.
 	 *
-	 * @param selector - The selector to match the element.
+	 * @param selector - the selector to match the element.
 	 * @returns A promise that resolves when the element is attached.
 	 */
 	async waitForChild(selector: string): Promise<void> {
@@ -94,7 +94,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Returns a promise that resolves when an element with the attribute data-index="n" is inserted into the container.
 	 *
-	 * @param index - The index value for the data-index attribute.
+	 * @param index - the index value for the data-index attribute.
 	 * @returns A promise that resolves when the element is attached.
 	 */
 	async waitForDataIndexChild(index: number): Promise<void> {
@@ -104,7 +104,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Returns a promise that resolves when the specified event occurs.
 	 *
-	 * @param eventName - The name of the event to wait for.
+	 * @param eventName - the name of the event to wait for.
 	 * @returns A promise that resolves to the payload of the event, or `undefined`.
 	 */
 	async waitForEvent<PAYLOAD extends unknown>(eventName: string): Promise<CanUndef<PAYLOAD>> {
@@ -112,7 +112,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	}
 
 	/**
-	 * Waits for the component lifecycle to be done.
+	 * Waits for the component lifecycle to be done
 	 */
 	async waitForLifecycleDone(): Promise<void> {
 		await this.component.evaluate((ctx) => {
@@ -129,9 +129,9 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Waits for the provided slot to reach the specified visibility state.
 	 *
-	 * @param slotName - The name of the slot.
-	 * @param isVisible - The expected visibility state.
-	 * @param timeout - The timeout for waiting (optional).
+	 * @param slotName - the name of the slot.
+	 * @param isVisible - the expected visibility state.
+	 * @param timeout - the timeout for waiting (optional).
 	 */
 	async waitForSlotState(slotName: keyof ComponentRefs, isVisible: boolean, timeout?: number): Promise<void> {
 		const slot = this.node.locator(this.elSelector(slotName.dasherize()));
@@ -164,7 +164,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	}
 
 	/**
-	 * Scrolls the page to the bottom.
+	 * Scrolls the page to the bottom
 	 */
 	async scrollToBottom(): Promise<this> {
 		await Scroll.scrollToBottom(this.page);
@@ -172,7 +172,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	}
 
 	/**
-	 * Adds default `itemProps` for pagination.
+	 * Adds default `itemProps` for pagination
 	 */
 	withPaginationItemProps(): this {
 		this.withProps({
@@ -186,7 +186,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	/**
 	 * Adds a `requestProp` for pagination.
 	 *
-	 * @param requestParams - The request parameters.
+	 * @param requestParams - the request parameters.
 	 */
 	withRequestPaginationProps(requestParams: Dictionary = {}): this {
 		this.withProps({
@@ -203,7 +203,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	}
 
 	/**
-	 * Adds a `Provider` into the provider prop for pagination.
+	 * Adds a `Provider` into the provider prop for pagination
 	 */
 	withPaginationProvider(): this {
 		this.withProps({dataProvider: 'Provider'});
@@ -216,7 +216,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 * - `withPaginationItemProps`
 	 * - `withRequestProp`
 	 *
-	 * @param requestParams - The request parameters.
+	 * @param requestParams - the request parameters.
 	 */
 	withDefaultPaginationProviderProps(requestParams: Dictionary = {}): this {
 		this.withPaginationProvider();

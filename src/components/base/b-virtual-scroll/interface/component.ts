@@ -12,7 +12,7 @@ import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scro
  * State of the current component lifecycle.
  *
  * @typeParam DATA - Instance of the data element.
- * @typeParam RAW_DATA - The data loaded from the server but not yet processed.
+ * @typeParam RAW_DATA - the data loaded from the server but not yet processed.
  * This type parameter determines the type of the {@link VirtualScrollState.lastLoadedRawData} property
  */
 export interface VirtualScrollState<DATA = object, RAW_DATA = unknown> {
