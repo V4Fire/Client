@@ -72,7 +72,6 @@ export function set(this: Friend, data: Nullable<Dictionary>): Array<Promise<unk
 			this.field.set(key, newVal);
 		}
 
-		// FIXME: This will break if newVal contains non-serializable data
 		this.ctx.hydrationStore?.set(this.componentId, key, Object.cast(newVal));
 	});
 
