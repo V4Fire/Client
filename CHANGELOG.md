@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed data restoration of provider after hydration `iData`
+
 ## v4.0.0-beta.29 (2023-10-02)
 
 #### :rocket: New Feature
