@@ -54,7 +54,7 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * A link to an application state object located in `core/component/state`.
+	 * A link to an application state object located in `core/component/client-state`.
 	 *
 	 * This object is used to set any general application parameters. For example, the status of user authorization or
 	 * online connection; global sharable application data, etc.
