@@ -13,6 +13,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2023-??-??)
 
+#### :boom: Breaking Change
+
+* Now the `saveEnv` function takes the state as an argument `core/abt`
+
 #### :bug: Bug Fix
 
 * Fixed data restoration of provider after hydration `iData`
