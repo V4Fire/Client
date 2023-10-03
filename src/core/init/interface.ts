@@ -11,7 +11,11 @@ import type { InitialRoute } from 'core/router';
 import type { State } from 'core/component/state';
 import type { ComponentOptions } from 'core/component/engines';
 
-export interface InitAppOptions extends State {
+type OptionalState = {
+	[K in keyof State]?: State[K];
+};
+
+export interface InitAppOptions extends OptionalState {
 	/**
 	 * A link to the element where the application should be mounted.
 	 * This parameter is only used when initializing the application in a browser.
