@@ -18,9 +18,12 @@ import semaphore from 'core/init/semaphore';
 export default async function init(): Promise<void> {
 	try {
 		if (HYDRATION) {
+			const compiledRoutes = compileStaticRoutes(routes);
+
 			const route = getRoute(
 				location.pathname + location.search,
-				compileStaticRoutes(routes)
+				compiledRoutes,
+				{defaultRoute: Object.values(compiledRoutes).find((route) => route?.meta.default)}
 			);
 
 			await route?.meta.load?.();
