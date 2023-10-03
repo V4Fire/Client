@@ -23,7 +23,11 @@ export default async function init(): Promise<void> {
 				compileStaticRoutes(routes)
 			);
 
-			await route?.meta.load?.();
+			if (route != null) {
+				Object.mixin({propsToCopy: 'new'}, route.meta, route.meta.meta);
+				await route.meta.load?.();
+			}
+
 			set('route', route);
 		}
 
