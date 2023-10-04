@@ -184,7 +184,7 @@ export default abstract class iData extends iDataHandlers {
 								void this.state.initFromStorage();
 							}
 
-							return dataProvider.get(<RequestQuery>query, opts]);
+							return dataProvider.get(<RequestQuery>query, opts);
 						})
 
 						.then(
