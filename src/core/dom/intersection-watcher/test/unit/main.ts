@@ -346,6 +346,31 @@ test.describe('core/dom/intersection-watcher', () => {
 
 				test.expect(await watchError.evaluate(({message}) => message)).toBe('It isn\'t possible to add an element to watch because the watcher instance is destroyed');
 			});
+
+			test('threshold option should represent the ratio of intersection area of a target', async ({page}) => {
+				// Move the target outside of the viewport
+				await target.evaluate((element) => {
+					element.style.marginLeft = '100%';
+				});
+
+				await getObserver(engine).evaluate((observer, {target, wasInvoked}) => {
+					observer.watch(target, {threshold: 0.75}, () => {
+						wasInvoked.flag = true;
+					});
+				}, {target, wasInvoked});
+
+				// Scroll by the 80% of the target height and width
+				// Now the 64% of a target area is in the viewport: 0.8h by 0.8w
+				await enterAndLeaveTarget(page, {enter: {top: 80, left: 80}, delay: 100});
+
+				test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+
+				// Scroll horizontally by the 20% of the target width
+				// Now the 80% of a target area is in the viewport: 0.8h by 1w
+				await enterAndLeaveTarget(page, {enter: {left: 20}, delay: 100});
+
+				test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(true);
+			});
 		});
 	}
 
