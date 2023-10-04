@@ -6,10 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle } from 'playwright';
+import type { JSHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
+import Scroll from 'tests/helpers/scroll';
 import Bom from 'tests/helpers/bom';
 
 import type IntersectionWatcherAPI from 'core/dom/intersection-watcher/engines/abstract';
@@ -26,25 +27,14 @@ test.use({
 test.describe('core/dom/intersection-watcher', () => {
 	let
 		IntersectionObserverModule: JSHandle<{default: typeof IntersectionObserver}>,
-		intersectionObserver: JSHandle<IntersectionWatcherAPI>,
-
 		HeightmapObserverModule: JSHandle<{default: typeof HeightmapObserver}>,
-		heightmapObserver: JSHandle<IntersectionWatcherAPI>,
 
+		intersectionObserver: JSHandle<IntersectionWatcherAPI>,
+		heightmapObserver: JSHandle<IntersectionWatcherAPI>;
+
+	let
 		target: JSHandle<HTMLDivElement>,
-		wasInvoked: JSHandle<{flag: boolean}>,
-
-		enterAndLeaveTarget: (opts: {
-			enter?: {
-				x: number;
-				y: number;
-			};
-			leave?: {
-				x: number;
-				y: number;
-			};
-			delay?: number;
-		}) => Promise<void>;
+		wasInvoked: JSHandle<{flag: boolean}>;
 
 	const ENGINES = ['heightmap', 'intersection'];
 
@@ -54,38 +44,19 @@ test.describe('core/dom/intersection-watcher', () => {
 		await demoPage.goto();
 
 		target = await page.evaluateHandle(() => {
-			const target = document.createElement('div');
-			document.body.append(target);
+			const element = document.createElement('div');
+			document.body.append(element);
 
-			Object.assign(target.style, {
+			Object.assign(element.style, {
 				width: '100px',
-				height: '100px'
+				height: '100px',
+				background: 'red'
 			});
 
-			return target;
+			return element;
 		});
 
 		wasInvoked = await page.evaluateHandle(() => ({flag: false}));
-
-		enterAndLeaveTarget = async ({enter, leave, delay = 0}) => {
-			if (enter != null) {
-				await page.evaluate(({enter}) => {
-					const {x, y} = enter;
-					globalThis.scrollTo(x, y);
-				}, {enter});
-
-				await Bom.waitForRAF(page, {sleepAfterRAF: delay});
-			}
-
-			if (leave != null) {
-				await page.evaluate(({leave}) => {
-					const {x, y} = leave;
-					globalThis.scrollTo(x, y);
-				}, {leave});
-
-				await Bom.waitForRAF(page);
-			}
-		};
 
 		IntersectionObserverModule = await Utils.import(page, 'core/dom/intersection-watcher/engines/intersection-observer.ts');
 		intersectionObserver = await IntersectionObserverModule.evaluateHandle(({default: Observer}) => new Observer());
@@ -96,7 +67,7 @@ test.describe('core/dom/intersection-watcher', () => {
 
 	for (const engine of ENGINES) {
 		test.describe(`core/dom/intersection-watcher with ${engine} engine`, () => {
-			test('Watcher method watch should throw if the handler callback is not specified', async ({page}) => {
+			test('watcher method watch should throw if the handler callback is not specified', async ({page}) => {
 				const watchError = await page.evaluateHandle(() => ({message: ''}));
 
 				await getObserver(engine).evaluate((observer, {target, watchError}) => {
@@ -111,18 +82,18 @@ test.describe('core/dom/intersection-watcher', () => {
 				test.expect(await watchError.evaluate(({message}) => message)).toBe('The watcher handler is not specified');
 			});
 
-			test('Watcher handler should be executed when the target enters the viewport', async () => {
+			test('watcher handler should be executed when the target enters the viewport', async ({page}) => {
 				const watchPromise = getObserver(engine).evaluate((observer, target) => new Promise((resolve) => {
 					observer.watch(target, resolve);
 				}), target);
 
 				// Scroll vertically by the full target height (default threshold option value is 1)
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}});
+				await enterAndLeaveTarget(page, {enter: {top: 100}});
 
 				await test.expect(watchPromise).toBeResolved();
 			});
 
-			test('Watcher handler execution should be delayed when the delay option is provided', async () => {
+			test('watcher handler execution should be delayed when the delay option is provided', async ({page}) => {
 				const delay = 1_000;
 
 				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => (
@@ -134,25 +105,25 @@ test.describe('core/dom/intersection-watcher', () => {
 				), {target, delay});
 
 				// Scroll vertically by the full target height
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}});
+				await enterAndLeaveTarget(page, {enter: {top: 100}});
 
 				test.expect(await watchPromise).toBeGreaterThanOrEqual(delay);
 			});
 
-			test('Watcher handler should not be executed when the target leaves the viewport before the delay elapses', async () => {
-				getObserver(engine).evaluate((observer, {target, wasInvoked}) => {
+			test('watcher handler should not be executed when the target leaves the viewport before the delay elapses', async ({page}) => {
+				await getObserver(engine).evaluate((observer, {target, wasInvoked}) => {
 					observer.watch(target, {delay: 300}, () => {
 						wasInvoked.flag = true;
 					});
 				}, {target, wasInvoked});
 
 				// Scroll vertically by the full target height and then go back to top after 100ms
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}, leave: {x: 0, y: 0}, delay: 100});
+				await enterAndLeaveTarget(page, {enter: {top: 100}, leave: {top: 0}, delay: 100});
 
 				test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
 			});
 
-			test('Target observation should be cancelled after first intersection when the once option is true', async ({page}) => {
+			test('target observation should be cancelled after first intersection when the once option is true', async ({page}) => {
 				const intersectionTimes = await page.evaluateHandle(() => ({count: 0}));
 
 				await getObserver(engine).evaluate((observer, {target, intersectionTimes}) => {
@@ -165,13 +136,13 @@ test.describe('core/dom/intersection-watcher', () => {
 				let scrollTries = 3;
 				while (scrollTries > 0) {
 					scrollTries -= 1;
-					await enterAndLeaveTarget({enter: {x: 0, y: 100}, leave: {x: 0, y: 0}, delay: 200});
+					await enterAndLeaveTarget(page, {enter: {top: 100}, leave: {top: 0}, delay: 200});
 				}
 
 				test.expect(await intersectionTimes.evaluate(({count}) => count)).toBe(1);
 			});
 
-			test('Single watcher should be able to handle different handler callbacks / watch options', async ({page}) => {
+			test('single watcher should be able to handle different handler callbacks / watch options', async ({page}) => {
 				const intersectionResults = await page.evaluateHandle<string[]>(() => []);
 
 				await getObserver(engine).evaluate((observer, {target, intersectionResults}) => {
@@ -193,7 +164,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				}, {target, intersectionResults});
 
 				// Scroll vertically by 50% of the target height and then go back to top after 500ms
-				await enterAndLeaveTarget({enter: {x: 0, y: 50}, leave: {x: 0, y: 0}, delay: 500});
+				await enterAndLeaveTarget(page, {enter: {top: 50}, leave: {top: 0}, delay: 500});
 
 				// Due to specified delay value
 				test.expect(await intersectionResults.evaluate((results) => results)).not.toContain('second');
@@ -204,7 +175,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				test.expect(await intersectionResults.evaluate((results) => results.length)).toBe(2);
 			});
 
-			test('onEnter callback should be executed before the main watcher is', async () => {
+			test('onEnter callback should be executed before the main watcher is', async ({page}) => {
 				const watchPromise = getObserver(engine).evaluate((observer, target) => new Promise<string[]>((resolve) => {
 					const watchResults: string[] = [];
 
@@ -222,12 +193,12 @@ test.describe('core/dom/intersection-watcher', () => {
 				}), target);
 
 				// Scroll vertically by the full target height
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}});
+				await enterAndLeaveTarget(page, {enter: {top: 100}});
 
 				test.expect(await watchPromise).toMatchObject(['onEnter', 'handler']);
 			});
 
-			test('Main watcher handler should not be executed when the onEnter callback returns a falsy value', async () => {
+			test('main watcher handler should not be executed when the onEnter callback returns a falsy value', async ({page}) => {
 				await getObserver(engine).evaluate((observer, {target, wasInvoked}) => {
 					observer.watch(target, {onEnter: () => null}, () => {
 						wasInvoked.flag = true;
@@ -235,12 +206,12 @@ test.describe('core/dom/intersection-watcher', () => {
 				}, {target, wasInvoked});
 
 				// Scroll vertically by the full target height
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}, delay: 100});
+				await enterAndLeaveTarget(page, {enter: {top: 100}, delay: 100});
 
 				test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
 			});
 
-			test('onEnter callback should be executed immediately, ignoring the delay option value', async () => {
+			test('onEnter callback should be executed immediately, ignoring the delay option value', async ({page}) => {
 				const delay = 3_000;
 
 				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => (
@@ -254,23 +225,23 @@ test.describe('core/dom/intersection-watcher', () => {
 				), {target, delay});
 
 				// Scroll vertically by the full target height
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}});
+				await enterAndLeaveTarget(page, {enter: {top: 100}});
 
 				test.expect(await watchPromise).toBeLessThan(delay);
 			});
 
-			test('onLeave callback should be executed when the target leaves the viewport', async () => {
+			test('onLeave callback should be executed when the target leaves the viewport', async ({page}) => {
 				const watchPromise = getObserver(engine).evaluate((observer, target) => new Promise((resolve) => {
 					observer.watch(target, {onLeave: resolve}, (watcher) => watcher);
 				}), target);
 
 				// Scroll vertically by the full target height and then go back to top after 200ms
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}, leave: {x: 0, y: 0}, delay: 200});
+				await enterAndLeaveTarget(page, {enter: {top: 100}, leave: {top: -100}, delay: 200});
 
 				await test.expect(watchPromise).toBeResolved();
 			});
 
-			test('onLeave callback should be executed immediately, ignoring the delay option value', async () => {
+			test('onLeave callback should be executed immediately, ignoring the delay option value', async ({page}) => {
 				const delay = 3_000;
 
 				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => (
@@ -284,12 +255,12 @@ test.describe('core/dom/intersection-watcher', () => {
 				), {target, delay});
 
 				// Scroll vertically by the full target height and then go back to top after 200ms
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}, leave: {x: 0, y: 0}, delay: 200});
+				await enterAndLeaveTarget(page, {enter: {top: 100}, leave: {top: -100}, delay: 200});
 
 				test.expect(await watchPromise).toBeLessThan(delay);
 			});
 
-			test('Watcher should cancel a target watching by the unwatch method', async () => {
+			test('watcher should cancel a target watching by the unwatch method', async ({page}) => {
 				await getObserver(engine).evaluate((observer, {target, wasInvoked}) => {
 					observer.watch(target, () => {
 						wasInvoked.flag = true;
@@ -299,12 +270,12 @@ test.describe('core/dom/intersection-watcher', () => {
 				}, {target, wasInvoked});
 
 				// Scroll vertically by the full target height
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}, delay: 100});
+				await enterAndLeaveTarget(page, {enter: {top: 100}, delay: 100});
 
 				test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
 			});
 
-			test('Watcher should cancel a target watching by the unwatch method and specified handler', async ({page}) => {
+			test('watcher should cancel a target watching by the unwatch method and specified handler', async ({page}) => {
 				const intersectionResults = await page.evaluateHandle<string[]>(() => []);
 
 				await getObserver(engine).evaluate((observer, {target, intersectionResults}) => {
@@ -319,14 +290,14 @@ test.describe('core/dom/intersection-watcher', () => {
 				}, {target, intersectionResults});
 
 				// Scroll vertically by the full target height
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}, delay: 100});
+				await enterAndLeaveTarget(page, {enter: {top: 100}, delay: 100});
 
 				test.expect(await intersectionResults.evaluate((results) => results)).not.toContain('second');
 
 				test.expect(await intersectionResults.evaluate((results) => results.length)).toBe(2);
 			});
 
-			test('Watcher should cancel a target watching by the unwatch method and specified threshold value', async ({page}) => {
+			test('watcher should cancel a target watching by the unwatch method and specified threshold value', async ({page}) => {
 				const intersectionResults = await page.evaluateHandle<number[]>(() => []);
 
 				await getObserver(engine).evaluate((observer, {target, intersectionResults}) => {
@@ -341,14 +312,14 @@ test.describe('core/dom/intersection-watcher', () => {
 				}, {target, intersectionResults});
 
 				// Scroll vertically by the full target height
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}, delay: 100});
+				await enterAndLeaveTarget(page, {enter: {top: 100}, delay: 100});
 
 				test.expect(await intersectionResults.evaluate((results) => results)).not.toContain(0.5);
 
 				test.expect(await intersectionResults.evaluate((results) => results.length)).toBe(2);
 			});
 
-			test('Watcher should cancel watching for all the registered targets and prevent registering the new ones by the destroy method', async ({page}) => {
+			test('watcher should cancel watching for all the registered targets and prevent registering the new ones by the destroy method', async ({page}) => {
 				const watchError = await page.evaluateHandle<{message: string}>(() => ({message: ''}));
 
 				await getObserver(engine).evaluate((observer, {target, wasInvoked}) => {
@@ -369,12 +340,37 @@ test.describe('core/dom/intersection-watcher', () => {
 				}, {target, watchError});
 
 				// Scroll vertically by the full target height
-				await enterAndLeaveTarget({enter: {x: 0, y: 100}, delay: 100});
+				await enterAndLeaveTarget(page, {enter: {top: 100}, delay: 100});
 
 				test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
 
 				test.expect(await watchError.evaluate(({message}) => message)).toBe('It isn\'t possible to add an element to watch because the watcher instance is destroyed');
 			});
 		});
+	}
+
+	async function enterAndLeaveTarget(
+		page: Page,
+		{
+			enter,
+			leave,
+			delay = 0
+		}: {
+			enter?: Omit<ScrollToOptions, 'behavior'>;
+			leave?: Omit<ScrollToOptions, 'behavior'>;
+			delay?: number;
+		}
+	): Promise<void> {
+		if (enter != null) {
+			await Scroll.scrollBy(page, enter);
+
+			await Bom.waitForRAF(page, {sleepAfterRAF: delay});
+		}
+
+		if (leave != null) {
+			await Scroll.scrollBy(page, leave);
+
+			await Bom.waitForRAF(page);
+		}
 	}
 });
