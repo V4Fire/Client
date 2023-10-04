@@ -20,9 +20,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an issue with `i-data` `initLoad` mutating a request params which leads to the data reload `components/super/i-data`
-
-#### :bug: Bug Fix
-
 * Fixed data restoration of provider after hydration `iData`
 
 ## v4.0.0-beta.29 (2023-10-02)
