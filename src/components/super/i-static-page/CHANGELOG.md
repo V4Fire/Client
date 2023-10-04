@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-10-??)
+
+#### :bug: Bug Fix
+
+* Fix initializing of the `helpers` and `providers` blocks for SSR
+
 ## v4.0.0-beta.29 (2023-10-02)
 
 #### :bug: Bug Fix
