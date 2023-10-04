@@ -140,43 +140,39 @@ export function isElementInView(el: Element, root: Element, threshold: number): 
 			rootRect = rectCache.get(root)!,
 			areaInView = calcElementAreaInView(rect, rootRect);
 
-		if (
-			(
+		if (areaInView < threshold) {
+			if (
 				rect.bottom > rootRect.bottom ||
 				rect.right > rootRect.right
-			) && areaInView < threshold
-		) {
-			return InViewStatus.left;
-		}
+			) {
+				return InViewStatus.left;
+			}
 
-		if (
-			(
+			if (
 				rect.top > rootRect.top ||
 				rect.left > rootRect.left
-			) && areaInView < threshold
-		) {
-			return InViewStatus.right;
+			) {
+				return InViewStatus.right;
+			}
 		}
 	}
 
 	const areaInView = calcElementAreaInView(rect);
 
-	if (
-		(
+	if (areaInView < threshold) {
+		if (
 			rect.bottom > innerHeight ||
 			rect.right > innerWidth
-		) && areaInView < threshold
-	) {
-		return InViewStatus.left;
-	}
+		) {
+			return InViewStatus.left;
+		}
 
-	if (
-		(
+		if (
 			rect.top < 0 ||
 			rect.left < 0
-		) && areaInView < threshold
-	) {
-		return InViewStatus.right;
+		) {
+			return InViewStatus.right;
+		}
 	}
 
 	return InViewStatus.true;
