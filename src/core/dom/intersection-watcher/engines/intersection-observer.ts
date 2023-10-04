@@ -81,7 +81,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 				observerHasWatchers = false,
 				elementHasWatchers = false;
 
-			this.observers.forEach((observerItem, watcherItem) => {
+			for (const [watcherItem, observerItem] of this.observers) {
 				if (observerItem === observer.value) {
 					observerHasWatchers = true;
 				}
@@ -89,17 +89,17 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 				if (watcherItem.target === watcher.target) {
 					elementHasWatchers = true;
 				}
-			});
+			}
 
-			if (!<boolean>observerHasWatchers) {
+			if (!observerHasWatchers) {
 				observer.value.disconnect();
 				observer.destroy();
 
-				if (observerPool != null && observerPool.size === 0) {
+				if (observerPool?.size === 0) {
 					this.observersPool.delete(resolvedRoot);
 				}
 
-			} else if (!<boolean>elementHasWatchers) {
+			} else if (!elementHasWatchers) {
 				observer.value.unobserve(watcher.target);
 				observer.free();
 			}
