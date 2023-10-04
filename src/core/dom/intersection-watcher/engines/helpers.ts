@@ -202,7 +202,7 @@ function calcElementAreaInView(rect: DOMRect, rootRect?: DOMRect): number {
 		heightInView: number,
 		widthInView: number;
 
-	if (rect.left > leftBound && rect.right < rightBound) {
+	if (rect.left >= leftBound && rect.right <= rightBound) {
 		widthInView = rect.width;
 	} else if (rect.left < leftBound && rect.right > rightBound) {
 		widthInView = rootWidth;
@@ -212,7 +212,7 @@ function calcElementAreaInView(rect: DOMRect, rootRect?: DOMRect): number {
 		widthInView = Math.max(0, rect.right);
 	}
 
-	if (rect.top > topBound && rect.bottom < bottomBound) {
+	if (rect.top >= topBound && rect.bottom <= bottomBound) {
 		heightInView = rect.height;
 	} else if (rect.top < topBound && rect.bottom > bottomBound) {
 		heightInView = rootHeight;
