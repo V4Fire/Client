@@ -151,7 +151,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 					await component.build();
 
-					await Scroll.scrollToBottomWhile(component.page, async () => {
+					await Scroll.scrollToBottomWhile(component.pwPage, async () => {
 						const
 							isEqual = await component.getChildCount() === providerChunkSize;
 

@@ -60,7 +60,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	/**
 	 * The page on which the component is located.
 	 */
-	readonly page: Page;
+	readonly pwPage: Page;
 
 	/**
 	 * The unique ID of the component generated when the constructor is called.
@@ -99,11 +99,11 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 
 	/**
 	 * Public access to the reference of the component's `JSHandle`
-	 * @throws {@link Error} if trying to access a component that has not been built or picked
+	 * @throws {@link ReferenceError} if trying to access a component that has not been built or picked
 	 */
 	get component(): JSHandle<COMPONENT> {
 		if (!this.componentStore) {
-			throw new Error('Bad access to the component without `build` or `pick` call');
+			throw new ReferenceError('Bad access to the component without "build" or "pick" call');
 		}
 
 		return this.componentStore;
@@ -121,7 +121,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * @param componentName - the name of the component to be rendered
 	 */
 	constructor(page: Page, componentName: string) {
-		this.page = page;
+		this.pwPage = page;
 		this.componentName = componentName;
 		this.id = `${this.componentName}_${Math.random().toString()}`;
 		this.props = {'data-testid': this.id};
@@ -143,7 +143,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 		}
 
 		const
-			classModule = await Utils.import<{default: new () => COMPONENT}>(this.page, componentClassImportPath),
+			classModule = await Utils.import<{default: new () => COMPONENT}>(this.pwPage, componentClassImportPath),
 			classInstance = await classModule.evaluateHandle((ctx) => ctx.default);
 
 		return classInstance;
@@ -156,18 +156,16 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * @param [options]
 	 */
 	async build(options?: BuildOptions): Promise<JSHandle<COMPONENT>> {
-		if (this.componentStyles != null) {
-			await this.page.addStyleTag({content: this.componentStyles});
-		}
+		await this.insertComponentStyles();
 
 		if (options?.useDummy) {
-			const component = await Component.createComponentInDummy<COMPONENT>(this.page, this.componentName, this.props);
+			const component = await Component.createComponentInDummy<COMPONENT>(this.pwPage, this.componentName, this.props);
 
 			this.dummy = component;
 			this.componentStore = component;
 
 		} else {
-			this.componentStore = await Component.createComponent(this.page, this.componentName, {
+			this.componentStore = await Component.createComponent(this.pwPage, this.componentName, {
 				attrs: this.props,
 				children: this.children
 			});
@@ -210,13 +208,10 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	async pick(locatorPromise: Promise<Locator>): Promise<this>;
 
 	async pick(selectorOrLocator: string | Locator | Promise<Locator>): Promise<this> {
-		if (this.componentStyles != null) {
-			await this.page.addStyleTag({content: this.componentStyles});
-		}
-
+		await this.insertComponentStyles();
 		// eslint-disable-next-line no-nested-ternary
 		const locator = Object.isString(selectorOrLocator) ?
-			this.page.locator(selectorOrLocator) :
+			this.pwPage.locator(selectorOrLocator) :
 			Object.isPromise(selectorOrLocator) ? await selectorOrLocator : selectorOrLocator;
 
 		this.componentStore = await locator.elementHandle().then(async (el) => {
@@ -225,6 +220,15 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 		});
 
 		return this;
+	}
+
+	/**
+	 * Inserts into the DOM tree styles of components that are defined in the {@link ComponentObject.componentStyles} property
+	 */
+	async insertComponentStyles() {
+		if (this.componentStyles != null) {
+			await this.pwPage.addStyleTag({content: this.componentStyles});
+		}
 	}
 
 	/**

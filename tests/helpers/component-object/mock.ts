@@ -126,6 +126,6 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 	>(fn?: FN, ...args: any[]): Promise<SpyObject> {
 		fn ??= Object.cast(() => undefined);
 
-		return createMockFn(this.page, fn!, ...args);
+		return createMockFn(this.pwPage, fn!, ...args);
 	}
 }

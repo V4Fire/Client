@@ -167,7 +167,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 * Scrolls the page to the bottom
 	 */
 	async scrollToBottom(): Promise<this> {
-		await Scroll.scrollToBottom(this.page);
+		await Scroll.scrollToBottom(this.pwPage);
 		return this;
 	}
 
