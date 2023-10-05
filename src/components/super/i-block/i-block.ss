@@ -243,14 +243,14 @@
 							- block headHelpers
 
 							- block innerRoot
+								- block helpers
+								- block providers
+
 								< ${rootWrapper ? '_' : '?'}.&__root-wrapper
 									< ${overWrapper ? '_' : '?'}.&__over-wrapper
 										- block overWrapper
 
 									- block body
-
-								- block helpers
-								- block providers
 
 						- if !ssrRendering
 							< template v-if = !ssrRendering
