@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added `theme` space to `monic`
+* Added default values for `runtime` theme parameters
 
 ## v4.0.0-beta.20 (2023-09-13)
 
