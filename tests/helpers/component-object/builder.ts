@@ -223,9 +223,9 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	}
 
 	/**
-	 * Inserts into the DOM tree styles of components that are defined in the {@link ComponentObject.componentStyles} property
+	 * Inserts into page styles of components that are defined in the {@link ComponentObject.componentStyles} property
 	 */
-	async insertComponentStyles() {
+	async insertComponentStyles(): Promise<void> {
 		if (this.componentStyles != null) {
 			await this.pwPage.addStyleTag({content: this.componentStyles});
 		}
