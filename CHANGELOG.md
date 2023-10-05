@@ -9,13 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+_Note: Gaps between patch versions are faulty, broken or test releases._
+
+## v4.0.0-beta.?? (2023-10-??)
+
+#### :rocket: New Feature
+
+* Added theme modifier calculation to components `components/super/i-block`
+
 ## v4.0.0-beta.?? (2023-10-??)
 
 #### :bug: Bug Fix
 
 * Fix initializing of the `helpers` and `providers` blocks in `i-static-page` and `i-block` for SSR
-
-_Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2023-??-??)
 

@@ -11,6 +11,12 @@ Changelog
 
 ## v4.0.0-beta.?? (2023-10-??)
 
+#### :rocket: New Feature
+
+* Added theme modifier calculation to components
+
+## v4.0.0-beta.?? (2023-10-??)
+
 #### :bug: Bug Fix
 
 * Fix initializing of the `helpers` and `providers` blocks for SSR
