@@ -35,7 +35,7 @@ const
  * @param {(Array<string>|boolean)} [opts.includeThemes] - a list of themes to include or
  *   `true` (will include all available themes)
  *
- * @param {string} [opts.themeAttribute] - attribute name to set the theme value to the root element
+ * @param {string} [opts.themeAttribute] - an attribute name to set the theme value to the root element
  *
  * @param {object} [opts.stylus] - a link to the Stylus package instance
  * @returns {Function}
