@@ -9,12 +9,6 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2023-??-??)
-
-#### :rocket: New Feature
-
-* Added possibility to configure theme attribute
-
 ## v4.0.0-beta.27 (2023-09-22)
 
 #### :bug: Bug Fix
