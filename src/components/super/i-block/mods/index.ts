@@ -211,5 +211,6 @@ export default abstract class iBlockMods extends iBlockEvent {
 	@hook('beforeCreate')
 	protected initModEvents(): void {
 		this.sync.mod('stage', 'stageStore', (v) => v == null ? v : String(v));
+		this.sync.mod('theme', 'r.theme.current', (v) => v == null ? v : String(v));
 	}
 }
