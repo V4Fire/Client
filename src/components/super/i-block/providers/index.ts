@@ -72,9 +72,10 @@ export default abstract class iBlockProviders extends iBlockState {
 		this.beforeReadyListeners = 0;
 
 		const hydrationMode =
-			HYDRATION && !this.isReadyOnce;
+			HYDRATION &&
+			hydrationStore.has(this.componentId);
 
-		if (hydrationMode && hydrationStore.has(this.componentId)) {
+		if (hydrationMode) {
 			this.state.set(hydrationStore.get(this.componentId));
 			done();
 			return;
@@ -101,12 +102,8 @@ export default abstract class iBlockProviders extends iBlockState {
 				tasks: Array<CanPromise<unknown>> = [];
 
 			if (this.state.globalName != null) {
-				const
-					storageInitialization = this.state.initFromStorage();
-
-				if (!hydrationMode) {
-					tasks.push(storageInitialization);
-				}
+				const storageInitialization = this.state.initFromStorage();
+				tasks.push(storageInitialization);
 			}
 
 			if (this.dependencies.length > 0) {
@@ -253,5 +250,13 @@ export default abstract class iBlockProviders extends iBlockState {
 		}
 
 		return Promise.resolve();
+	}
+
+	/**
+	 * Clears the component hydration data
+	 */
+	@hook('mounted')
+	protected clearComponentHydratedData(): void {
+		hydrationStore.remove(this.componentId);
 	}
 }

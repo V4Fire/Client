@@ -101,6 +101,14 @@ export class HydrationStore {
 	}
 
 	/**
+	 * Removes hydration data by the specified component ID
+	 * @param componentId
+	 */
+	remove(componentId: string): void {
+		delete this.store[componentId];
+	}
+
+	/**
 	 * Parses the given string as JSON and stores it in the hydrated store
 	 * @param store
 	 */
