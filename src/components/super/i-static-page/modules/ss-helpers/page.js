@@ -165,7 +165,7 @@ function getScriptDeclByName(name, {
 		decl = getScriptDecl({
 			...defAttrs,
 			defer,
-			js: !externalizeInitial,
+			js: externalizeInitial,
 			src: externalizeInitial ? assets[name].publicPath : addPublicPath([`PATH['${name}']`])
 		});
 
@@ -236,7 +236,7 @@ function getStyleDeclByName(name, {
 		decl = getStyleDecl({
 			...defAttrs,
 			defer,
-			js: !externalizeInitial,
+			js: externalizeInitial,
 			rel: 'stylesheet',
 			src: externalizeInitial ? assets[rname].publicPath : addPublicPath([`PATH['${rname}']`])
 		});
