@@ -236,7 +236,7 @@ function getStyleDeclByName(name, {
 		decl = getStyleDecl({
 			...defAttrs,
 			defer,
-			js: externalizeInitial,
+			js,
 			rel: 'stylesheet',
 			src: externalizeInitial ? assets[rname].publicPath : addPublicPath([`PATH['${rname}']`])
 		});
