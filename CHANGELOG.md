@@ -19,6 +19,46 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added default values for `runtime` theme parameters
 * Added possibility to configure theme attribute `components/global/g-def`
 
+## v4.0.0-beta.?? (2023-10-??)
+
+#### :bug: Bug Fix
+
+* Fix initializing of the `helpers` and `providers` blocks in `i-static-page` and `i-block` for SSR
+
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Now the `saveEnv` function takes the state as an argument `core/abt`
+
+#### :bug: Bug Fix
+
+* Fixed data restoration of provider after hydration `iData`
+
+## v4.0.0-beta.29 (2023-10-02)
+
+#### :rocket: New Feature
+
+* Support for canceling the execution of the directive `v-async-target`
+* Added a new prop `ssrRendering` `iBlock`
+
+#### :bug: Bug Fix
+
+* Teleports should not be rendered during SSR `iStaticPage`
+* Save state to hydration store during SSR `components/friends/state`
+
+## v4.0.0-beta.28 (2023-09-26)
+
+#### :rocket: New Feature
+
+* `build/snakeskin`:
+  * Added the `n` filter for correctly overriding templates within the same namespace
+  * Added the ability to create hard links in the `b` filter for correctly overriding templates
+
+#### :bug: Bug Fix
+
+* Now, data for hydration is saved before applying converters `iData`
+
 ## v4.0.0-beta.27 (2023-09-22)
 
 #### :bug: Bug Fix

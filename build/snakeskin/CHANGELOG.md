@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.28 (2023-09-26)
+
+#### :rocket: New Feature
+
+* Added the `n` filter for correctly overriding templates within the same namespace
+* Added the ability to create hard links in the `b` filter for correctly overriding templates
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

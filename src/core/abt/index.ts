@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import state from 'core/component/state';
+import type { State } from 'core/component/state';
 import adapter from 'core/abt/engines';
 
 import { emitter } from 'core/abt/const';
@@ -24,10 +24,11 @@ export * from 'core/abt/interface';
  * Saves the specified ABT options
  *
  * @param opts
+ * @param remoteState
  * @emits `set(config:` [[ExperimentsSet]]`)`
  * @emits `clear(config:` [[ExperimentsSet]]`)`
  */
-export default async function saveABT(opts: unknown): Promise<void> {
+export default async function saveABT(opts: unknown, remoteState: State): Promise<void> {
 	let
 		config = <CanPromise<CanUndef<Experiments>>>adapter(opts);
 
@@ -42,13 +43,13 @@ export default async function saveABT(opts: unknown): Promise<void> {
 	}
 
 	if (Object.isArray(config)) {
-		if (!Object.fastCompare(state.experiments, config)) {
-			state.experiments = config;
+		if (!Object.fastCompare(remoteState.experiments, config)) {
+			remoteState.experiments = config;
 			emitter.emit('set', config);
 		}
 
 	} else {
-		state.experiments = [];
+		remoteState.experiments = [];
 		emitter.emit('clear', config);
 	}
 }

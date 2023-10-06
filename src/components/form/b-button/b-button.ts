@@ -105,7 +105,11 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		return Boolean(
 			this.$slots['dropdown'] && (
 				this.isFunctional ||
-				this.opt.ifOnce('opened', this.m.opened !== 'false') > 0 && delete this.reactiveModsStore.opened
+
+				this.opt.ifOnce(
+					'opened',
+					this.isRelatedToSSR || this.m.opened !== 'false'
+				) > 0 && delete this.reactiveModsStore.opened
 			)
 		);
 	}

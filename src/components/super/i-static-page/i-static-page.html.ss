@@ -136,14 +136,14 @@
 				- block headHelpers
 
 				- block innerRoot
+					- block helpers
+					- block providers
+
 					- if overWrapper
 						< .&__over-wrapper
 							- block overWrapper
 
 						- block body
-
-					- block helpers
-					- block providers
 
 				- block deps
 					- block styles

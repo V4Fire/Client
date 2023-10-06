@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed data restoration of provider after hydration
+
+## v4.0.0-beta.28 (2023-09-26)
+
+#### :bug: Bug Fix
+
+* Now, data for hydration is saved before applying converters
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

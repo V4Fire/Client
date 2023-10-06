@@ -12,7 +12,7 @@
  */
 
 import { expandedStringify, expandedParse } from 'core/json';
-import type { Store, HydratedData } from 'core/component/hydration/interface';
+import type { Store, HydratedData, HydratedValue } from 'core/component/hydration/interface';
 
 export * from 'core/component/hydration/interface';
 
@@ -91,13 +91,21 @@ export class HydrationStore {
 	 * @param path
 	 * @param data
 	 */
-	set(componentId: string, path: string, data: CanUndef<JSONLikeValue>): void {
+	set(componentId: string, path: string, data: CanUndef<HydratedValue>): void {
 		if (data === undefined) {
 			return;
 		}
 
 		this.store[componentId] ??= Object.createDict();
 		this.store[componentId]![path] = data;
+	}
+
+	/**
+	 * Removes hydration data by the specified component ID
+	 * @param componentId
+	 */
+	remove(componentId: string): void {
+		delete this.store[componentId];
 	}
 
 	/**

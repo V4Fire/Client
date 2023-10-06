@@ -11,7 +11,6 @@ import { initGlobalEnv } from 'core/env';
 import * as net from 'core/net';
 import * as session from 'core/session';
 
-import state from 'core/component/state';
 import semaphore from 'core/init/semaphore';
 
 import type { InitAppOptions } from 'core/init/interface';
@@ -22,18 +21,18 @@ import type { InitAppOptions } from 'core/init/interface';
  */
 export default async function initState(params: InitAppOptions): Promise<void> {
 	initGlobalEnv(params);
-	state.isOnline = true;
+	params.isOnline = true;
 
 	net.isOnline()
 		.then((v) => {
-			state.isOnline = v.status;
-			state.lastOnlineDate = v.lastOnline;
+			params.isOnline = v.status;
+			params.lastOnlineDate = v.lastOnline;
 		})
 
 		.catch(stderr);
 
 	try {
-		await session.isExists().then((v) => state.isAuth = v);
+		await session.isExists().then((v) => params.isAuth = v);
 
 	} catch (err) {
 		stderr(err);
