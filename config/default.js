@@ -1222,7 +1222,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'prelude/test-env': this.build.isTestEnv(),
 			storybook: this.webpack.storybook(),
 
-			dummyComponents: this.build.loadDummyComponents()
+			dummyComponents: this.build.loadDummyComponents(),
+
+			theme: this.theme.default(),
+			includeThemes: this.theme.include(),
+			prefersColorSchemeEnabled: this.theme.detectUserPreferences().prefersColorScheme.enabled
 		};
 	},
 
