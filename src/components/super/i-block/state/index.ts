@@ -17,7 +17,7 @@ import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
 import { initGlobalEnv } from 'core/env';
-import { component, remoteState, hook, Hook, State } from 'core/component';
+import { component, remoteState, hook, hydrationStore, Hook, State } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -50,7 +50,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * True if the component is in the context of SSR or hydration
 	 */
 	get isRelatedToSSR(): boolean {
-		return SSR || HYDRATION && !this.isReadyOnce;
+		return SSR || HYDRATION && hydrationStore.has(this.componentId);
 	}
 
 	/**
