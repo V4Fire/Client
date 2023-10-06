@@ -5426,6 +5426,8 @@ __metadata:
       optional: true
     "@statoscope/webpack-plugin":
       optional: true
+    "@types/webpack-env":
+      optional: true
     "@v4fire/config":
       optional: true
     "@v4fire/design-system":
