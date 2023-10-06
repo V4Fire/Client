@@ -47,9 +47,10 @@ exports.getPageScriptDepsDecl = getPageScriptDepsDecl;
  * @param {object} opts
  * @param {Object.<string>} opts.assets - a dictionary with static page assets
  * @param {boolean} [opts.wrap] - if true, the final code is wrapped by a script tag
+ * @param {boolean} [opts.js] - if true, the function will always return JS code to load the dependency
  * @returns {string}
  */
-function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
+function getPageScriptDepsDecl(dependencies, {assets, wrap, js} = {}) {
 	if (!dependencies) {
 		return '';
 	}
@@ -59,8 +60,8 @@ function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
 
 	for (const dep of dependencies) {
 		const scripts = [
-			getScriptDeclByName(`${dep}_tpl`, {assets}),
-			getScriptDeclByName(dep, {assets})
+			getScriptDeclByName(`${dep}_tpl`, {assets, js}),
+			getScriptDeclByName(dep, {assets, js})
 		];
 
 		// We can't compile styles into static CSS files because
@@ -132,6 +133,7 @@ exports.getScriptDeclByName = getScriptDeclByName;
  * @param {boolean} [defer=true] - if true, the script is loaded with the "defer" attribute
  * @param {boolean} [inline] - if true, the script is placed as a text
  * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
+ * @param {boolean} [js] - if true, the function will always return JS code to load the dependency
  * @returns {string}
  */
 function getScriptDeclByName(name, {
@@ -139,7 +141,8 @@ function getScriptDeclByName(name, {
 	optional,
 	defer = true,
 	inline,
-	wrap
+	wrap,
+	js
 }) {
 	let
 		decl;
@@ -165,7 +168,7 @@ function getScriptDeclByName(name, {
 		decl = getScriptDecl({
 			...defAttrs,
 			defer,
-			js: externalizeInitial,
+			js,
 			src: externalizeInitial ? assets[name].publicPath : addPublicPath([`PATH['${name}']`])
 		});
 
@@ -319,13 +322,13 @@ async function generateInitJS(pageName, {
 
 	// - block scripts
 	body.push(
-		await getScriptDeclByName('std', {assets, optional: true}),
+		await getScriptDeclByName('std', {assets, optional: true, js: true}),
 		await loadLibs(deps.scripts, {assets, js: true}),
 
-		getScriptDeclByName('index-core', {assets, optional: true}),
-		getScriptDeclByName('vendor', {assets, optional: true}),
+		getScriptDeclByName('index-core', {assets, optional: true, js: true}),
+		getScriptDeclByName('vendor', {assets, optional: true, js: true}),
 
-		getPageScriptDepsDecl(ownDeps, {assets})
+		getPageScriptDepsDecl(ownDeps, {assets, js: true})
 	);
 
 	const bodyInitializer = `
