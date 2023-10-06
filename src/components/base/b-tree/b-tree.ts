@@ -62,11 +62,10 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 
 	/** {@link iItems.items} */
 	set items(value: this['Items']) {
-		const oldValue = this.items;
 		this.field.set('itemsStore', normalizeItems.call(this, value));
 
 		if (this.isRelatedToSSR) {
-			this.syncItemsWatcher(this.items, oldValue);
+			this.syncItemsWatcher(this.items);
 		}
 	}
 
@@ -421,7 +420,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	 * Synchronization of items
 	 *
 	 * @param items
-	 * @param oldItems
+	 * @param [oldItems]
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
 	@watch({path: 'items', flush: 'sync'})
