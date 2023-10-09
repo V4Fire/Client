@@ -25,6 +25,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed an issue with `i-data` `initLoad` mutating a request params which leads to the data reload `components/super/i-data`
 * Fix initializing of the `helpers` and `providers` blocks in `i-static-page` and `i-block` for SSR
 * Fixed data restoration of provider after hydration `iData`
 
