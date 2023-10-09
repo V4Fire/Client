@@ -209,6 +209,7 @@ test.describe('core/dom/resize-watcher', () => {
 
 	test(
 		'watcher should cancel watching for all the registered targets and prevent registering the new ones by the `destroy` method',
+
 		async ({page}) => {
 			const watchError = await page.evaluateHandle<{message: string}>(() => ({message: ''}));
 
@@ -239,7 +240,8 @@ test.describe('core/dom/resize-watcher', () => {
 
 			test.expect(await watchError.evaluate(({message}) => message))
 				.toBe("It isn't possible to add an element to watch because the watcher instance is destroyed");
-	});
+		}
+	);
 
 	async function changeTargetSize(
 		page: Page,
