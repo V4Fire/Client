@@ -87,18 +87,16 @@ test.describe('core/dom/resize-watcher', () => {
 	});
 
 	test('watcher handler should be executed when the target size changes', async ({page}) => {
-		await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
-			watcher.watch(target, {watchInit: false}, () => {
-				wasInvoked.flag = true;
-			});
-		}, {target, wasInvoked});
+		const watchPromise = resizeWatcher.evaluate((watcher, target) => new Promise((resolve) => {
+			watcher.watch(target, {watchInit: false}, resolve);
+		}), target);
 
 		await BOM.waitForIdleCallback(page);
 
 		// Increasing the target width by 10px
 		await changeTargetSize(page, target, {w: 110});
 
-		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(true);
+		await test.expect(watchPromise).toBeResolved();
 	});
 
 	test(
