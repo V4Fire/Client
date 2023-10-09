@@ -9,8 +9,7 @@
 import type { JSHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
-import Utils from 'tests/helpers/utils';
-import Bom from 'tests/helpers/bom';
+import { Utils, BOM } from 'tests/helpers';
 
 import type ResizeWatcher from 'core/dom/resize-watcher';
 
@@ -74,7 +73,7 @@ test.describe('core/dom/resize-watcher', () => {
 			});
 		}, {target, wasInvoked});
 
-		await Bom.waitForIdleCallback(page);
+		await BOM.waitForIdleCallback(page);
 
 		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(true);
 	});
@@ -87,7 +86,7 @@ test.describe('core/dom/resize-watcher', () => {
 
 		}, {target, wasInvoked});
 
-		await Bom.waitForIdleCallback(page);
+		await BOM.waitForIdleCallback(page);
 
 		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
 	});
@@ -99,7 +98,7 @@ test.describe('core/dom/resize-watcher', () => {
 			});
 		}, {target, wasInvoked});
 
-		await Bom.waitForIdleCallback(page);
+		await BOM.waitForIdleCallback(page);
 
 		// Increasing the target width by 10px
 		await changeTargetSize(page, target, {w: 110});
@@ -117,7 +116,7 @@ test.describe('core/dom/resize-watcher', () => {
 				});
 			}, {target, wasInvoked});
 
-			await Bom.waitForIdleCallback(page);
+			await BOM.waitForIdleCallback(page);
 
 			// Increasing the target width by 10px
 			await changeTargetSize(page, target, {w: 110});
@@ -136,7 +135,7 @@ test.describe('core/dom/resize-watcher', () => {
 				});
 			}, {target, wasInvoked});
 
-			await Bom.waitForIdleCallback(page);
+			await BOM.waitForIdleCallback(page);
 
 			// Increasing the target height by 10px
 			await changeTargetSize(page, target, {h: 110});
@@ -156,7 +155,7 @@ test.describe('core/dom/resize-watcher', () => {
 
 		}, {target, resizingTimes});
 
-		await Bom.waitForIdleCallback(page);
+		await BOM.waitForIdleCallback(page);
 
 		// Gradually changing the target width by provided widthValues
 		for (const w of widthValues) {
@@ -175,7 +174,7 @@ test.describe('core/dom/resize-watcher', () => {
 			watcher.unwatch(target);
 		}, {target, wasInvoked});
 
-		await Bom.waitForIdleCallback(page);
+		await BOM.waitForIdleCallback(page);
 
 		// Increasing the target height by 10px
 		await changeTargetSize(page, target, {h: 110});
@@ -197,7 +196,7 @@ test.describe('core/dom/resize-watcher', () => {
 			watcher.unwatch(target, handlers[1]);
 		}, {target, resizingResults});
 
-		await Bom.waitForIdleCallback(page);
+		await BOM.waitForIdleCallback(page);
 
 		// Increasing the target height by 10px
 		await changeTargetSize(page, target, {h: 110});
@@ -231,7 +230,7 @@ test.describe('core/dom/resize-watcher', () => {
 				}
 			}, {target, watchError});
 
-			await Bom.waitForIdleCallback(page);
+			await BOM.waitForIdleCallback(page);
 
 			// Increasing the target height by 10px
 			await changeTargetSize(page, target, {h: 110});
@@ -258,6 +257,6 @@ test.describe('core/dom/resize-watcher', () => {
 			}
 		}, {target, w, h});
 
-		await Bom.waitForIdleCallback(page);
+		await BOM.waitForIdleCallback(page);
 	}
 });
