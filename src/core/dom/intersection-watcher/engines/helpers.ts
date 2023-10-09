@@ -179,8 +179,9 @@ export function isElementInView(el: Element, root: Element, threshold: number): 
 }
 
 /**
- * Calculates the area of the specified element that is in the viewport / in the view of a given scrollable root element
- * The function returns the size of the area in relative units
+ * Calculates the area of the specified element that is in the viewport / in the view of a
+ * given scrollable root element.
+ * The function returns the size of the area in relative units.
  *
  * @param rect
  * @param rootRect
@@ -200,20 +201,26 @@ function calcElementAreaInView(rect: DOMRect, rootRect?: DOMRect): number {
 
 	if (rect.left >= leftBound && rect.right <= rightBound) {
 		widthInView = rect.width;
+
 	} else if (rect.left < leftBound && rect.right > rightBound) {
 		widthInView = rootWidth;
+
 	} else if (rect.right > rightBound) {
 		widthInView = Math.max(0, rect.width - (rect.right - rightBound));
+
 	} else {
 		widthInView = Math.max(0, rect.right);
 	}
 
 	if (rect.top >= topBound && rect.bottom <= bottomBound) {
 		heightInView = rect.height;
+
 	} else if (rect.top < topBound && rect.bottom > bottomBound) {
 		heightInView = rootHeight;
+
 	} else if (rect.bottom > bottomBound) {
 		heightInView = Math.max(0, rect.height - (rect.bottom - bottomBound));
+
 	} else {
 		heightInView = Math.max(0, rect.bottom);
 	}

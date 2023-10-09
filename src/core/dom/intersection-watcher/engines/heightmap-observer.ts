@@ -163,8 +163,11 @@ export default class MutationObserverEngine extends AbstractEngine {
 			fromX = fromY != null ? searchWatcher(true, watchersXPositions) : null,
 			toX = fromX != null && fromY != null ? searchWatcher(false, watchersXPositions) : null;
 
-		const
-			noElementsInView = fromY == null || toY == null || fromX == null || toX == null;
+		const noElementsInView =
+			fromY == null ||
+			toY == null ||
+			fromX == null ||
+			toX == null;
 
 		// If none of the elements intersect the viewport / root view,
 		// execute onLeave for the remaining elements of the intersectionWindow and clean up
