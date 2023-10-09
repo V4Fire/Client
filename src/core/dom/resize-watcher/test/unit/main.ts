@@ -50,32 +50,27 @@ test.describe('core/dom/resize-watcher', () => {
 		resizeWatcher = await ResizeWatcherModule.evaluateHandle(({default: Watcher}) => new Watcher());
 	});
 
-	test('watcher method watch should throw if the handler callback is not specified', async ({page}) => {
-		const watchError = await page.evaluateHandle(() => ({message: ''}));
-
-		await resizeWatcher.evaluate((watcher, {target, watchError}) => {
+	test('watcher should throw if the handler callback is not specified', async () => {
+		const watchPromise = resizeWatcher.evaluate((watcher, target) => new Promise((resolve) => {
 			try {
 				// @ts-expect-error Checking for the absence of a required argument
 				watcher.watch(target);
-
 			} catch (error) {
-				watchError.message = error.message;
+				resolve(error.message);
 			}
-		}, {target, watchError});
+		}), target);
 
-		test.expect(await watchError.evaluate(({message}) => message)).toBe('The watcher handler is not specified');
+		await test.expect(watchPromise).toBeResolvedTo('The watcher handler is not specified');
 	});
 
-	test('watcher handler should be executed initially (due to default `watchInit` option value)', async ({page}) => {
-		await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
-			watcher.watch(target, () => {
-				wasInvoked.flag = true;
-			});
-		}, {target, wasInvoked});
+	test('watcher handler should be executed initially (`watchInit` by default is equal to `true`)', async ({page}) => {
+		const watchPromise = resizeWatcher.evaluate((watcher, target) => new Promise((resolve) => {
+			watcher.watch(target, resolve);
+		}), target);
 
 		await BOM.waitForIdleCallback(page);
 
-		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(true);
+		await test.expect(watchPromise).toBeResolved();
 	});
 
 	test('watcher handler should not be executed initially when `watchInit` option value is false)', async ({page}) => {
