@@ -58,6 +58,7 @@ test.describe('core/dom/resize-watcher', () => {
 			try {
 				// @ts-expect-error Checking for the absence of a required argument
 				watcher.watch(target);
+
 			} catch (error) {
 				watchError.message = error.message;
 			}
@@ -106,35 +107,43 @@ test.describe('core/dom/resize-watcher', () => {
 		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(true);
 	});
 
-	test('watcher handler should not be executed when the target width changes and the watchWidth option values is false', async ({page}) => {
-		await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
-			watcher.watch(target, {watchInit: false, watchWidth: false}, () => {
-				wasInvoked.flag = true;
-			});
-		}, {target, wasInvoked});
+	test(
+		'watcher handler should not be executed when the target width changes and the watchWidth option values is false',
 
-		await Bom.waitForIdleCallback(page);
+		async ({page}) => {
+			await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
+				watcher.watch(target, {watchInit: false, watchWidth: false}, () => {
+					wasInvoked.flag = true;
+				});
+			}, {target, wasInvoked});
 
-		// Increasing the target width by 10px
-		await changeTargetSize(page, target, {w: 110});
+			await Bom.waitForIdleCallback(page);
 
-		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
-	});
+			// Increasing the target width by 10px
+			await changeTargetSize(page, target, {w: 110});
 
-	test('watcher handler should not be executed when the target height changes and the watchHeight option values is false', async ({page}) => {
-		await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
-			watcher.watch(target, {watchInit: false, watchHeight: false}, () => {
-				wasInvoked.flag = true;
-			});
-		}, {target, wasInvoked});
+			test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+		}
+	);
 
-		await Bom.waitForIdleCallback(page);
+	test(
+		'watcher handler should not be executed when the target height changes and the watchHeight option values is false',
 
-		// Increasing the target height by 10px
-		await changeTargetSize(page, target, {h: 110});
+		async ({page}) => {
+			await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
+				watcher.watch(target, {watchInit: false, watchHeight: false}, () => {
+					wasInvoked.flag = true;
+				});
+			}, {target, wasInvoked});
 
-		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
-	});
+			await Bom.waitForIdleCallback(page);
+
+			// Increasing the target height by 10px
+			await changeTargetSize(page, target, {h: 110});
+
+			test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+		}
+	);
 
 	test('target observation should be cancelled after first resizing when the once option is true', async ({page}) => {
 		const resizingTimes = await page.evaluateHandle(() => ({count: 0}));
@@ -198,34 +207,38 @@ test.describe('core/dom/resize-watcher', () => {
 		test.expect(await resizingResults.evaluate((results) => results.length)).toBe(2);
 	});
 
-	test('watcher should cancel watching for all the registered targets and prevent registering the new ones by the destroy method', async ({page}) => {
-		const watchError = await page.evaluateHandle<{message: string}>(() => ({message: ''}));
+	test(
+		'watcher should cancel watching for all the registered targets and prevent registering the new ones by the destroy method',
+		async ({page}) => {
+			const watchError = await page.evaluateHandle<{message: string}>(() => ({message: ''}));
 
-		await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
-			watcher.watch(target, {watchInit: false}, () => {
-				wasInvoked.flag = true;
-			});
+			await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
+				watcher.watch(target, {watchInit: false}, () => {
+					wasInvoked.flag = true;
+				});
 
-			watcher.destroy();
-		}, {target, wasInvoked});
+				watcher.destroy();
+			}, {target, wasInvoked});
 
-		// Trying to watch with destroyed watcher instance
-		await resizeWatcher.evaluate((watcher, {target, watchError}) => {
-			try {
-				watcher.watch(target, (newGeometry) => newGeometry);
-			} catch (error) {
-				watchError.message = error.message;
-			}
-		}, {target, watchError});
+			// Trying to watch with destroyed watcher instance
+			await resizeWatcher.evaluate((watcher, {target, watchError}) => {
+				try {
+					watcher.watch(target, (newGeometry) => newGeometry);
 
-		await Bom.waitForIdleCallback(page);
+				} catch (error) {
+					watchError.message = error.message;
+				}
+			}, {target, watchError});
 
-		// Increasing the target height by 10px
-		await changeTargetSize(page, target, {h: 110});
+			await Bom.waitForIdleCallback(page);
 
-		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+			// Increasing the target height by 10px
+			await changeTargetSize(page, target, {h: 110});
 
-		test.expect(await watchError.evaluate(({message}) => message)).toBe('It isn\'t possible to add an element to watch because the watcher instance is destroyed');
+			test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+
+			test.expect(await watchError.evaluate(({message}) => message))
+				.toBe("It isn't possible to add an element to watch because the watcher instance is destroyed");
 	});
 
 	async function changeTargetSize(
