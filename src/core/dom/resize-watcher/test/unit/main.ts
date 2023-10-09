@@ -50,32 +50,27 @@ test.describe('core/dom/resize-watcher', () => {
 		resizeWatcher = await ResizeWatcherModule.evaluateHandle(({default: Watcher}) => new Watcher());
 	});
 
-	test('watcher method watch should throw if the handler callback is not specified', async ({page}) => {
-		const watchError = await page.evaluateHandle(() => ({message: ''}));
-
-		await resizeWatcher.evaluate((watcher, {target, watchError}) => {
+	test('watcher should throw if the handler callback is not specified', async () => {
+		const watchPromise = resizeWatcher.evaluate((watcher, target) => new Promise((resolve) => {
 			try {
 				// @ts-expect-error Checking for the absence of a required argument
 				watcher.watch(target);
-
 			} catch (error) {
-				watchError.message = error.message;
+				resolve(error.message);
 			}
-		}, {target, watchError});
+		}), target);
 
-		test.expect(await watchError.evaluate(({message}) => message)).toBe('The watcher handler is not specified');
+		await test.expect(watchPromise).toBeResolvedTo('The watcher handler is not specified');
 	});
 
-	test('watcher handler should be executed initially (due to default `watchInit` option value)', async ({page}) => {
-		await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
-			watcher.watch(target, () => {
-				wasInvoked.flag = true;
-			});
-		}, {target, wasInvoked});
+	test('watcher handler should be executed initially (`watchInit` by default is equal to `true`)', async ({page}) => {
+		const watchPromise = resizeWatcher.evaluate((watcher, target) => new Promise((resolve) => {
+			watcher.watch(target, resolve);
+		}), target);
 
 		await BOM.waitForIdleCallback(page);
 
-		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(true);
+		await test.expect(watchPromise).toBeResolved();
 	});
 
 	test('watcher handler should not be executed initially when `watchInit` option value is false)', async ({page}) => {
@@ -92,18 +87,16 @@ test.describe('core/dom/resize-watcher', () => {
 	});
 
 	test('watcher handler should be executed when the target size changes', async ({page}) => {
-		await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
-			watcher.watch(target, {watchInit: false}, () => {
-				wasInvoked.flag = true;
-			});
-		}, {target, wasInvoked});
+		const watchPromise = resizeWatcher.evaluate((watcher, target) => new Promise((resolve) => {
+			watcher.watch(target, {watchInit: false}, resolve);
+		}), target);
 
 		await BOM.waitForIdleCallback(page);
 
 		// Increasing the target width by 10px
 		await changeTargetSize(page, target, {w: 110});
 
-		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(true);
+		await test.expect(watchPromise).toBeResolved();
 	});
 
 	test(
@@ -210,8 +203,6 @@ test.describe('core/dom/resize-watcher', () => {
 		'watcher should cancel watching for all the registered targets and prevent registering the new ones by the `destroy` method',
 
 		async ({page}) => {
-			const watchError = await page.evaluateHandle<{message: string}>(() => ({message: ''}));
-
 			await resizeWatcher.evaluate((watcher, {target, wasInvoked}) => {
 				watcher.watch(target, {watchInit: false}, () => {
 					wasInvoked.flag = true;
@@ -221,14 +212,13 @@ test.describe('core/dom/resize-watcher', () => {
 			}, {target, wasInvoked});
 
 			// Trying to watch with the destroyed watcher instance
-			await resizeWatcher.evaluate((watcher, {target, watchError}) => {
+			const watchWithDestroyedPromise = resizeWatcher.evaluate((watcher, target) => new Promise((resolve) => {
 				try {
 					watcher.watch(target, (newGeometry) => newGeometry);
-
 				} catch (error) {
-					watchError.message = error.message;
+					resolve(error.message);
 				}
-			}, {target, watchError});
+			}), target);
 
 			await BOM.waitForIdleCallback(page);
 
@@ -237,8 +227,8 @@ test.describe('core/dom/resize-watcher', () => {
 
 			await assertWasInvokedIs(false);
 
-			test.expect(await watchError.evaluate(({message}) => message))
-				.toBe("It isn't possible to add an element to watch because the watcher instance is destroyed");
+			await test.expect(watchWithDestroyedPromise)
+				.toBeResolvedTo('It isn\'t possible to add an element to watch because the watcher instance is destroyed');
 		}
 	);
 
