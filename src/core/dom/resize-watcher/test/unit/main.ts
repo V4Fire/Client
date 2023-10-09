@@ -83,7 +83,7 @@ test.describe('core/dom/resize-watcher', () => {
 
 		await BOM.waitForIdleCallback(page);
 
-		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+		await assertWasInvokedIs(false);
 	});
 
 	test('watcher handler should be executed when the target size changes', async ({page}) => {
@@ -114,7 +114,7 @@ test.describe('core/dom/resize-watcher', () => {
 			// Increasing the target width by 10px
 			await changeTargetSize(page, target, {w: 110});
 
-			test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+			await assertWasInvokedIs(false);
 		}
 	);
 
@@ -133,7 +133,7 @@ test.describe('core/dom/resize-watcher', () => {
 			// Increasing the target height by 10px
 			await changeTargetSize(page, target, {h: 110});
 
-			test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+			await assertWasInvokedIs(false);
 		}
 	);
 
@@ -172,7 +172,7 @@ test.describe('core/dom/resize-watcher', () => {
 		// Increasing the target height by 10px
 		await changeTargetSize(page, target, {h: 110});
 
-		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+		await assertWasInvokedIs(false);
 	});
 
 	test('watcher should cancel a target watching by the `unwatch` method and specified handler', async ({page}) => {
@@ -228,7 +228,7 @@ test.describe('core/dom/resize-watcher', () => {
 			// Increasing the target height by 10px
 			await changeTargetSize(page, target, {h: 110});
 
-			test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
+			await assertWasInvokedIs(false);
 
 			test.expect(await watchError.evaluate(({message}) => message))
 				.toBe("It isn't possible to add an element to watch because the watcher instance is destroyed");
@@ -251,5 +251,9 @@ test.describe('core/dom/resize-watcher', () => {
 		}, {target, w, h});
 
 		await BOM.waitForIdleCallback(page);
+	}
+
+	async function assertWasInvokedIs(assertion: boolean): Promise<void> {
+		test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(assertion);
 	}
 });
