@@ -74,8 +74,9 @@ test.describe('core/dom/intersection-watcher', () => {
 					try {
 						// @ts-expect-error Checking for the absence of a required argument
 						observer.watch(target);
-					} catch (error) {
-						watchError.message = error.message;
+
+					} catch (err) {
+						watchError.message = err.message;
 					}
 				}, {target, watchError});
 
@@ -93,7 +94,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				await test.expect(watchPromise).toBeResolved();
 			});
 
-			test('watcher handler execution should be delayed when the delay option is provided', async ({page}) => {
+			test('watcher handler execution should be delayed when the `delay` option is provided', async ({page}) => {
 				const delay = 1_000;
 
 				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => (
@@ -123,7 +124,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
 			});
 
-			test('target observation should be cancelled after first intersection when the once option is true', async ({page}) => {
+			test('target observation should be cancelled after first intersection when the once `option` is true', async ({page}) => {
 				const intersectionTimes = await page.evaluateHandle(() => ({count: 0}));
 
 				await getObserver(engine).evaluate((observer, {target, intersectionTimes}) => {
@@ -163,7 +164,7 @@ test.describe('core/dom/intersection-watcher', () => {
 					});
 				}, {target, intersectionResults});
 
-				// Scroll vertically by 50% of the target height and then go back to top after 500ms
+				// Scroll vertically by 50% of the target height and then go back to the top after 500ms
 				await enterAndLeaveTarget(page, {enter: {top: 50}, leave: {top: 0}, delay: 500});
 
 				// Due to specified delay value
@@ -175,7 +176,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				test.expect(await intersectionResults.evaluate((results) => results.length)).toBe(2);
 			});
 
-			test('onEnter callback should be executed before the main watcher is', async ({page}) => {
+			test('`onEnter` callback should be executed before the main watcher is', async ({page}) => {
 				const watchPromise = getObserver(engine).evaluate((observer, target) => new Promise<string[]>((resolve) => {
 					const watchResults: string[] = [];
 
@@ -211,7 +212,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				test.expect(await wasInvoked.evaluate(({flag}) => flag)).toBe(false);
 			});
 
-			test('onEnter callback should be executed immediately, ignoring the delay option value', async ({page}) => {
+			test('`onEnter` callback should be executed immediately, ignoring the delay option value', async ({page}) => {
 				const delay = 3_000;
 
 				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => (
@@ -230,7 +231,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				test.expect(await watchPromise).toBeLessThan(delay);
 			});
 
-			test('onLeave callback should be executed when the target leaves the viewport', async ({page}) => {
+			test('`onLeave` callback should be executed when the target leaves the viewport', async ({page}) => {
 				const watchPromise = getObserver(engine).evaluate((observer, target) => new Promise((resolve) => {
 					observer.watch(target, {onLeave: resolve}, (watcher) => watcher);
 				}), target);
@@ -241,7 +242,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				await test.expect(watchPromise).toBeResolved();
 			});
 
-			test('onLeave callback should be executed immediately, ignoring the delay option value', async ({page}) => {
+			test('`onLeave` callback should be executed immediately, ignoring the delay option value', async ({page}) => {
 				const delay = 3_000;
 
 				const watchPromise = getObserver(engine).evaluate((observer, {target, delay}) => (
@@ -297,7 +298,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				test.expect(await intersectionResults.evaluate((results) => results.length)).toBe(2);
 			});
 
-			test('watcher should cancel a target watching by the unwatch method and specified threshold value', async ({page}) => {
+			test('watcher should cancel a target watching by the `unwatch` method and specified `threshold` value', async ({page}) => {
 				const intersectionResults = await page.evaluateHandle<number[]>(() => []);
 
 				await getObserver(engine).evaluate((observer, {target, intersectionResults}) => {
@@ -319,7 +320,7 @@ test.describe('core/dom/intersection-watcher', () => {
 				test.expect(await intersectionResults.evaluate((results) => results.length)).toBe(2);
 			});
 
-			test('watcher should cancel watching for all the registered targets and prevent registering the new ones by the destroy method', async ({page}) => {
+			test('watcher should cancel watching for all the registered targets and prevent registering the new ones by the `destroy` method', async ({page}) => {
 				const watchError = await page.evaluateHandle<{message: string}>(() => ({message: ''}));
 
 				await getObserver(engine).evaluate((observer, {target, wasInvoked}) => {
@@ -334,8 +335,9 @@ test.describe('core/dom/intersection-watcher', () => {
 				await getObserver(engine).evaluate((observer, {target, watchError}) => {
 					try {
 						observer.watch(target, (watcher) => watcher);
-					} catch (error) {
-						watchError.message = error.message;
+
+					} catch (err) {
+						watchError.message = err.message;
 					}
 				}, {target, watchError});
 
@@ -347,8 +349,8 @@ test.describe('core/dom/intersection-watcher', () => {
 				test.expect(await watchError.evaluate(({message}) => message)).toBe('It isn\'t possible to add an element to watch because the watcher instance is destroyed');
 			});
 
-			test('threshold option should represent the ratio of intersection area of a target', async ({page}) => {
-				// Move the target outside of the viewport
+			test('`threshold` option should represent the ratio of intersection area of a target', async ({page}) => {
+				// Move the target outside the viewport
 				await target.evaluate((element) => {
 					element.style.marginLeft = '100%';
 				});
