@@ -17,9 +17,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now the `saveEnv` function takes the state as an argument `core/abt`
 
+#### :rocket: New Feature
+
+* Added `themeAttribute` stylus function `build/stylus/ds`
+* Added default values for `runtime` theme parameters
+* Added possibility to configure theme attribute `components/global/g-def`
+
 #### :bug: Bug Fix
 
 * Fixed an issue with `i-data` `initLoad` mutating a request params which leads to the data reload `components/super/i-data`
+* Fix initializing of the `helpers` and `providers` blocks in `i-static-page` and `i-block` for SSR
 * Fixed data restoration of provider after hydration `iData`
 
 ## v4.0.0-beta.29 (2023-10-02)

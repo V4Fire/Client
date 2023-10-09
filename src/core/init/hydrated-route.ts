@@ -29,7 +29,10 @@ export default async function init(): Promise<void> {
 			);
 
 			if (route != null) {
+				// FIXME: https://github.com/V4Fire/Client/issues/1000
 				Object.mixin({propsToCopy: 'new'}, route.meta, route.meta.meta);
+				Object.mixin({propsToCopy: 'new'}, route.params, route.meta.params);
+				Object.mixin({propsToCopy: 'new'}, route.query, route.meta.query);
 				await route.meta.load?.();
 			}
 

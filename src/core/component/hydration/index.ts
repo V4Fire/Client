@@ -85,6 +85,14 @@ export class HydrationStore {
 	}
 
 	/**
+	 * Initializes hydration data storage for the given component ID
+	 * @param componentId
+	 */
+	init(componentId: string): void {
+		this.store[componentId] ??= Object.createDict();
+	}
+
+	/**
 	 * Sets hydration data for the specified component ID and path
 	 *
 	 * @param componentId
@@ -96,8 +104,16 @@ export class HydrationStore {
 			return;
 		}
 
-		this.store[componentId] ??= Object.createDict();
+		this.init(componentId);
 		this.store[componentId]![path] = data;
+	}
+
+	/**
+	 * Removes hydration data by the specified component ID
+	 * @param componentId
+	 */
+	remove(componentId: string): void {
+		delete this.store[componentId];
 	}
 
 	/**
