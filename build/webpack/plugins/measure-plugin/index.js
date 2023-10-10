@@ -18,12 +18,13 @@ const
  */
 module.exports = class MeasurePlugin {
 	/**
-	 * Active compiler count. It is static because plugin is applied to multiple configurations.
+	 * Active compiler count.
+	 * It is static because the plugin is applied to multiple configurations.
 	 */
 	static activeCompilers = 0;
 
 	/**
-	 * Store for pending events
+	 * The store for pending events
 	 */
 	events = new Map();
 
@@ -48,7 +49,7 @@ module.exports = class MeasurePlugin {
 	}
 
 	/**
-	 * Applies measurements to webpack build
+	 * Applies measurements to the webpack build
 	 * @param {import('webpack').Compiler} compiler
 	 */
 	apply(compiler) {
@@ -62,6 +63,7 @@ module.exports = class MeasurePlugin {
 			MeasurePlugin.activeCompilers++;
 
 			const {name} = compilation;
+
 			const event = {
 				name: `Compilation '${name}'`,
 				id: ++tracer.counter,

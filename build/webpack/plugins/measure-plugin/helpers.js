@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	{createWriteStream} = require('fs'),
+	{createWriteStream} = require('node:fs'),
 	path = require('upath');
 
 const

@@ -109,7 +109,7 @@ function getLoadersMetrics(compilationName) {
 }
 
 /**
- * Wraps loaders with measure loader
+ * Wraps the passed loaders with the measure loader
  *
  * @param {import('webpack').RuleSetRule|import('webpack').RuleSetRule[]|undefined} rules
  * @returns {import('webpack').RuleSetRule|import('webpack').RuleSetRule[]|undefined}
@@ -187,7 +187,7 @@ function wrapLoaders(rules) {
 }
 
 /**
- * Removes excess path from loaders name
+ * Removes an excess path from the given loader's name
  *
  * @param {string} name
  * @returns {string}

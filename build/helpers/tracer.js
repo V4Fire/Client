@@ -16,19 +16,18 @@ const
 
 exports.tracer = {
 	/**
-	 * Instance of the {@link Tracer}
+	 * An instance of the {@link Tracer}
 	 */
 	trace,
 
 	/**
-	 * Counter should be used to generate unique IDs for the events
+	 * A counter should be used to generate unique IDs for the events
 	 */
 	counter: 0,
 
 	/**
-	 * Accepts event name and checks event queue,
-	 * if there is an event with matching name
-	 * the event end will be registered.
+	 * Accepts the event name and checks the event queue.
+	 * If there is an event with a matching name, the end of the event will be registered.
 	 *
 	 * @param {string} name
 	 * @param {object} [fields]
@@ -36,6 +35,7 @@ exports.tracer = {
 	 */
 	measure(name, fields = {}) {
 		const {id = ++this.counter} = fields;
+
 		const end = () => {
 			trace.end({...fields, name, id: queue.get(name)});
 			queue.delete(name);

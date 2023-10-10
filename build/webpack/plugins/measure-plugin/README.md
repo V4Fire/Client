@@ -6,7 +6,7 @@ and can also measure the overall execution time of each loader.
 When saving the summary to a file, it uses a [format](https://docs.google.com/document/d/1CvAClvFfyA5R-PhYUmn5OOQtYMH4h6I0nSsKchNAySU/edit#heading=h.q8di1j2nawlp)
 that can be visualized in [Perfetto UI](https://ui.perfetto.dev/#!/info) or through `browser://tracing`.
 
-The execution time of loaders is measured by [measure-loader](../../loaders/measure-loader).
+The execution time of loaders is measured by the [measure-loader](../../loaders/measure-loader) loader.
 
 ## Usage
 

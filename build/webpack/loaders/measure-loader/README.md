@@ -33,7 +33,7 @@ const {wrapLoaders} = require('./build/webpack/loaders/measure-loader');
 wrapLoaders(webpackConfig.module.rules);
 ```
 
-As the result, the loaders list will be changed as follows:
+As a result, the loader's list will be changed as follows:
 
 ```js
 [
@@ -47,6 +47,7 @@ As the result, the loaders list will be changed as follows:
 
 Each time the measure loader is executed, it will save the timestamp for the `next` loader
 and calculate the execution time for the `prev` loader.
+Mind, `wrapLoaders` does not wrap loaders that are defined as functions.
 
 You can get the metrics using the `getLoadersMetrics` helper:
 
@@ -64,7 +65,3 @@ process.on('beforeExit', () => {
 });
 
 ```
-
-## Limitations
-
-- `wrapLoaders` does not wrap loaders defined as functions
