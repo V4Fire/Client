@@ -55,6 +55,7 @@ test.describe('core/dom/resize-watcher', () => {
 			try {
 				// @ts-expect-error Checking for the absence of a required argument
 				watcher.watch(target);
+
 			} catch (error) {
 				resolve(error.message);
 			}
@@ -219,6 +220,7 @@ test.describe('core/dom/resize-watcher', () => {
 			const watchWithDestroyedPromise = resizeWatcher.evaluate((watcher, target) => new Promise((resolve) => {
 				try {
 					watcher.watch(target, (newGeometry) => newGeometry);
+
 				} catch (error) {
 					resolve(error.message);
 				}
