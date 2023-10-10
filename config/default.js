@@ -223,6 +223,25 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Returns `true` if the application build times should be traced.
+		 * Trace file will be created in the project's root.
+		 * It's highly recommended to use this option with `module-parallelism=1`.
+		 *
+		 * @cli trace-build-times
+		 * @env TRACE_BUILD_TIMES
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		trace(def = false) {
+			return o('trace-build-times', {
+				env: true,
+				type: 'boolean',
+				default: def
+			});
+		},
+
+		/**
 		 * Controls the level of verbosity in the project's build output.
 		 * This parameter is useful for users who want to have more detailed information about the project's build.
 		 *
@@ -763,6 +782,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					}
 				};
 			}
+		},
+
+		/**
+		 * Returns number of modules to build in parallel
+		 *
+		 * @cli module-parallelism
+		 * @env MODULE_PARALLELISM
+		 *
+		 * @see https://webpack.js.org/configuration/other-options/#parallelism
+		 * @param {number} [def] - default value
+		 * @returns {number}
+		 */
+		moduleParallelism(def = 100) {
+			return o('module-parallelism', {
+				env: true,
+				default: def,
+				type: 'number'
+			});
 		}
 	},
 

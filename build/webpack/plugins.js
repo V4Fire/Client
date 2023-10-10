@@ -29,6 +29,7 @@ module.exports = async function plugins({name}) {
 	const
 		DependenciesPlugin = include('build/webpack/plugins/dependencies'),
 		createProgressPlugin = include('build/webpack/plugins/progress-plugin'),
+		MeasurePlugin = include('build/webpack/plugins/measure-plugin'),
 		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings'),
 		I18NGeneratorPlugin = include('build/webpack/plugins/i18n-plugin'),
 		InvalidateExternalCachePlugin = include('build/webpack/plugins/invalidate-external-cache'),
@@ -41,6 +42,13 @@ module.exports = async function plugins({name}) {
 		['i18nGeneratorPlugin', new I18NGeneratorPlugin()],
 		['invalidateExternalCache', new InvalidateExternalCachePlugin()]
 	]);
+
+	if (config.webpack.mode() !== 'production' || config.build.trace()) {
+		plugins.set('measurePlugin', new MeasurePlugin({
+			output: 'trace.json',
+			trace: config.build.trace()
+		}));
+	}
 
 	const
 		statoscopeConfig = config.statoscope();

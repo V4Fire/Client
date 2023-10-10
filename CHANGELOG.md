@@ -17,10 +17,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now the `saveEnv` function takes the state as an argument `core/abt`
 
-#### :rocket: New Feature
+#### :rocker: New Feature
 
+* `config`:
+  * Added default values for `runtime` theme parameters
+  * Added `module-parallelism` option, which sets the
+  [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
+  * Added `trace-build-times` option, which enables build time tracing, see [MeasurePlugin](./build/webpack/plugins/measure-plugin)
+
+* Added build time tracing, which can be visualized using the [Perfetto UI](https://ui.perfetto.dev)
 * Added `themeAttribute` stylus function `build/stylus/ds`
-* Added default values for `runtime` theme parameters
 * Added possibility to configure theme attribute `components/global/g-def`
 
 #### :bug: Bug Fix
@@ -58,6 +64,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed icons' size in multi-theme mode `components/global/g-def`
+>>>>>>> v4
 
 ## v4.0.0-beta.26 (2023-09-20)
 
@@ -178,7 +185,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.13 (2023-08-24)
 
-#### :rocket: New Feature
+#### :rocker: New Feature
 
 * Webpack build helpers:
   * Added `getManagedPath` helper, which generates a managed path for node_modules with excluding
