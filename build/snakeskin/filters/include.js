@@ -26,12 +26,36 @@ const
 	{ssExtRgxp} = include('build/snakeskin/filters/const');
 
 const
-	resourcesRgxp = $C(dependencies).map((el) => new RegExp(`^${RegExp.escape(el)}`));
+	resourcesRgxp = $C(dependencies).map((el) => new RegExp(`^${RegExp.escape(el)}`)),
+	namespaces = Object.createDict();
 
 Snakeskin.importFilters({
 	/**
+	 * Resolves the specified namespace and returns it.
+	 * This filter is necessary for correctly resolving templates
+	 * that exist within the same namespace but are declared in multiple files.
+	 *
+	 * @param {string} namespace
+	 * @returns {string}
+	 *
+	 * ```
+	 * - namespace ['m-component'|n]
+	 *
+	 * - template a()
+	 *   ...
+	 * ```
+	 */
+	n(namespace) {
+		return namespaces[namespace] ?? namespace;
+	},
+
+	/**
 	 * Resolves the specified file path to use with the Snakeskin include directive.
 	 * The filter adds the support of layers.
+	 *
+	 * If the path ends with the symbols `:$postfix`,
+	 * then during path resolution a hard link will be created to the original file with the name `$fname_$postfix`.
+	 * This functionality is necessary for correctly overriding templates in a layered monorepository.
 	 *
 	 * @param {string} filePath
 	 * @param {string} sourceFilePath - the original source file path
@@ -39,12 +63,18 @@ Snakeskin.importFilters({
 	 *
 	 * @example
 	 * ```
-	 * - include 'super/i-data'|b as placeholder
+	 * - include 'super/i-data:core'|b as placeholder
 	 *
-	 * - template index() extends ['i-data'].index
+	 * - template index() extends ['i-data_core'].index
 	 * ```
 	 */
 	b(filePath, sourceFilePath) {
+		const
+			chunks = filePath.split(':'),
+			as = chunks[1];
+
+		filePath = chunks[0];
+
 		let
 			start = 0;
 
@@ -104,16 +134,38 @@ Snakeskin.importFilters({
 					paths.push(...glob.sync(fullPath));
 
 				} else if (fs.existsSync(fullPath)) {
-					return fullPath;
+					return applyAsModifier(fullPath);
 				}
 			}
 		}
 
 		if (hasMagic) {
-			return paths;
+			return paths.map(applyAsModifier);
 		}
 
-		return filePath + end;
+		return applyAsModifier(filePath + end);
+
+		function applyAsModifier(originalPath) {
+			if (!as || !fs.existsSync(originalPath)) {
+				return originalPath;
+			}
+
+			const
+				ext = path.extname(originalPath),
+				originalFName = path.basename(originalPath, ext);
+
+			const
+				aliasFName = `${originalFName}_${as}`,
+				aliasPath = path.join(path.dirname(originalPath), aliasFName + ext);
+
+			if (!fs.existsSync(aliasPath)) {
+				fs.linkSync(originalPath, aliasPath);
+			}
+
+			namespaces[originalFName] = aliasFName;
+
+			return aliasPath;
+		}
 	}
 });
 

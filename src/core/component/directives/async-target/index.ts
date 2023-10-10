@@ -23,7 +23,7 @@ ComponentEngine.directive('async-target', {
 		const
 			ctx = getDirectiveContext(params, vnode);
 
-		if (ctx == null) {
+		if (ctx == null || params.value === false) {
 			return;
 		}
 

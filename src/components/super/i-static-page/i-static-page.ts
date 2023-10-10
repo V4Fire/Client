@@ -187,6 +187,12 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
+	 * True if component teleports should be mounted
+	 */
+	@field()
+	protected shouldMountTeleports: boolean = false;
+
+	/**
 	 * The route information object store
 	 * {@link iStaticPage.route}
 	 */
@@ -366,13 +372,19 @@ export default abstract class iStaticPage extends iPage {
 	}
 
 	/**
-	 * Initializes the slot for component teleports
+	 * Initializes the slot for component teleports and mounts the teleported content
 	 */
-	@hook('beforeCreate')
-	protected createTeleportsSlot(): void {
-		if (!SSR) {
-			document.body.append(Object.assign(document.createElement('div'), {id: 'teleports'}));
+	@hook('mounted')
+	protected async mountTeleports(): Promise<void> {
+		if (SSR) {
+			return;
 		}
+
+		document.body.append(Object.assign(document.createElement('div'), {id: 'teleports'}));
+
+		await this.async.nextTick();
+
+		this.shouldMountTeleports = true;
 	}
 
 	/**

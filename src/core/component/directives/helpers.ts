@@ -20,7 +20,7 @@ export function getElementId(el: Element, idsCache: WeakMap<Element, string>): s
 		id = idsCache.get(el);
 
 	if (id == null) {
-		id = Math.random().toString().slice(2);
+		id = Object.fastHash(Math.random());
 		idsCache.set(el, id);
 	}
 

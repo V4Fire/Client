@@ -84,11 +84,10 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 
 	/** {@link bSelect.items} */
 	set items(value: this['Items']) {
-		const oldValue = this.items;
 		this.field.set('itemsStore', value);
 
-		if (SSR || HYDRATION && !this.isReadyOnce) {
-			this.syncItemsWatcher(this.items, oldValue);
+		if (this.isRelatedToSSR) {
+			this.syncItemsWatcher(this.items);
 		}
 	}
 
@@ -476,11 +475,11 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	 * Synchronization of items
 	 *
 	 * @param items
-	 * @param oldItems
+	 * @param [oldItems]
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
 	@watch('itemsStore')
-	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues();
 			this.emit('itemsChange', items);

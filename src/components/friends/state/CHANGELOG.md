@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.29 (2023-10-02)
+
+#### :bug: Bug Fix
+
+* Save state to hydration store during SSR
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

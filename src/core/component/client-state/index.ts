@@ -6,6 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { DirectiveBinding } from 'core/component/engines';
-
-export interface DirectiveParams extends DirectiveBinding<CanUndef<boolean>> {}
+export * from 'core/component/state';
+export { default } from 'core/component/state';

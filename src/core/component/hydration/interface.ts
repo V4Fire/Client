@@ -7,4 +7,15 @@
  */
 
 export type Store = Dictionary<HydratedData>;
-export type HydratedData = Dictionary<JSONLikeValue>;
+
+export type HydratedValue =
+	JSONLikeValue |
+	bigint |
+	Function |
+	Date |
+	Map<unknown, unknown> |
+	Set<unknown> |
+	HydratedValue[] |
+	Dictionary<HydratedValue>;
+
+export type HydratedData = Dictionary<HydratedValue>;

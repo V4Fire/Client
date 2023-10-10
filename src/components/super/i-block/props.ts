@@ -111,6 +111,12 @@ export default abstract class iBlockProps extends ComponentInterface {
 	readonly dependenciesProp?: Iterable<Module>;
 
 	/**
+	 * If set to false, the component will not render its content during server-side rendering
+	 */
+	@prop({type: Boolean, forceDefault: true})
+	readonly ssrRendering: boolean = true;
+
+	/**
 	 * A promise that will block the rendering of the component until it is resolved.
 	 * This should be used together with Suspense and non-functional components.
 	 *
@@ -313,4 +319,7 @@ export default abstract class iBlockProps extends ComponentInterface {
 
 	@prop({type: Function, required: false})
 	override readonly getRoot?: () => this['Root'];
+
+	@prop({type: Function, required: false})
+	override readonly getParent?: () => this['$parent'];
 }

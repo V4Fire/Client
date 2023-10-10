@@ -15,8 +15,8 @@
 		? Object.assign(rootAttrs, {'id': 'root-component'})
 
 	- block innerRoot
-		< .&__root-wrapper[.page-wrapper]
-			- block body
-
 		- block helpers
 		- block providers
+
+		< .&__root-wrapper[.page-wrapper]
+			- block body

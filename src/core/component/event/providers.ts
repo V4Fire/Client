@@ -12,18 +12,20 @@ import { emitter as sessionEmitter } from 'core/session';
 
 import { globalEmitter } from 'core/component/event/emitter';
 
-i18nEmitter.on('setLocale', (...args) => {
-	globalEmitter.emit('i18n.setLocale', ...args);
-});
+if (!SSR) {
+	i18nEmitter.on('setLocale', (...args) => {
+		globalEmitter.emit('i18n.setLocale', ...args);
+	});
 
-netEmitter.on('status', (...args) => {
-	globalEmitter.emit('net.status', ...args);
-});
+	netEmitter.on('status', (...args) => {
+		globalEmitter.emit('net.status', ...args);
+	});
 
-sessionEmitter.on('set', (...args) => {
-	globalEmitter.emit('session.set', ...args);
-});
+	sessionEmitter.on('set', (...args) => {
+		globalEmitter.emit('session.set', ...args);
+	});
 
-sessionEmitter.on('clear', (...args) => {
-	globalEmitter.emit('session.clear', ...args);
-});
+	sessionEmitter.on('clear', (...args) => {
+		globalEmitter.emit('session.clear', ...args);
+	});
+}
