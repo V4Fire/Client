@@ -221,11 +221,11 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 * Initializes theme modifier and attaches listener to watch changing of the theme
 	 */
 	@hook('created')
-	protected initThemeModListener() {
-		this.setMod('theme', this.r.theme?.current);
+	protected initThemeModListener(): void {
+		void this.setMod('theme', this.r.theme?.current);
 		this.rootEmitter.on(
-			'theme:change',
-			(_, v: string) => this.setMod('theme', v),
+			'onTheme:change',
+			(v: string) => this.setMod('theme', v),
 			{label: $$.themeChanged}
 		);
 	}
