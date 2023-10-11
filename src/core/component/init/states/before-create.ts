@@ -77,7 +77,7 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value: (ref) => {
+		value: (ref: unknown) => {
 			if (ref == null) {
 				return undefined;
 			}

@@ -40,11 +40,23 @@ import type { ComponentEvent, CallChild } from 'components/super/i-block/interfa
 
 import iBlockBase from 'components/super/i-block/base';
 
+import type { InferComponentEvents } from 'components/super/i-block/event/interface';
+
+export * from 'components/super/i-block/event/interface';
+
 const
 	$$ = symbolGenerator();
 
 @component()
 export default abstract class iBlockEvent extends iBlockBase {
+	/**
+	 * Associative type for typing events emitted by the component.
+	 * Events are described using tuples, where the first element is the event name, and the rest are arguments.
+	 */
+	readonly SelfEmitter!: InferComponentEvents<this, [
+		['error', ...unknown[]]
+	]>;
+
 	/**
 	 * The component event emitter.
 	 * In fact, the component methods such as `on` or `off` are just aliases to the methods of the given emitter.
@@ -89,7 +101,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 		})
 	})
 
-	protected readonly selfEmitter!: EventEmitterWrapper<this>;
+	// @ts-ignore (ts)
+	readonly selfEmitter!: this['SelfEmitter'] & EventEmitterWrapper<this>;
 
 	/**
 	 * The component local event emitter.
@@ -182,7 +195,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 		init: (o, d) => (<Async>d.async).wrapEventEmitter(o.r.unsafe.selfEmitter)
 	})
 
-	protected readonly rootEmitter!: ReadonlyEventEmitterWrapper<this>;
+	// @ts-ignore (ts)
+	protected readonly rootEmitter!: ReadonlyEventEmitterWrapper<this['Root']>;
 
 	/**
 	 * The global event emitter located in `core/component/event`.
@@ -225,9 +239,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param handler
 	 * @param [opts] - additional options
 	 */
-	on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): object {
-		return this.selfEmitter.on(event, handler, opts);
-	}
+	on: typeof this['selfEmitter']['on'] =
+		function on(this: iBlockEvent, event: string, handler: Function, opts?: AsyncOptions): object {
+			return this.selfEmitter.on(event, <any>handler, opts);
+		};
 
 	/**
 	 * Attaches a disposable event listener to the specified component event
@@ -237,9 +252,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param handler
 	 * @param [opts] - additional options
 	 */
-	once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>, opts?: AsyncOptions): object {
-		return this.selfEmitter.once(event, handler, opts);
-	}
+	once: typeof this['selfEmitter']['once'] =
+		function once(this: iBlockEvent, event: string, handler: Function, opts?: AsyncOptions): object {
+			return this.selfEmitter.once(event, handler, opts);
+		};
 
 	/**
 	 * Returns a promise that is resolved after emitting the specified component event
@@ -248,9 +264,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param event
 	 * @param [opts] - additional options
 	 */
-	promisifyOnce<T = unknown>(event: string, opts?: AsyncOptions): Promise<CanUndef<T>> {
-		return this.selfEmitter.promisifyOnce(event, opts);
-	}
+	promisifyOnce: typeof this['selfEmitter']['promisifyOnce'] =
+		function promisifyOnce(this: iBlockEvent, event: string, opts?: AsyncOptions): Promise<any> {
+			return this.selfEmitter.promisifyOnce(event, opts);
+		};
 
 	/**
 	 * Detaches an event listener from the component.
@@ -260,8 +277,6 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * By default, all listeners have a group name equal to the event name being listened to.
 	 * If nothing is specified, then all component event listeners will be detached.
 	 * {@link Async.off}
-	 *
-	 * @param [opts] - additional options
 	 *
 	 * @example
 	 * ```js
@@ -278,19 +293,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.off();
 	 * ```
 	 */
-	off(opts?: ClearOptionsId<EventId>): void;
-
-	/**
-	 * Detaches an event listener from the component
-	 *
-	 * @param [event] - the event to detach
-	 * @param [handler] - the event handler to detach
-	 */
-	off(event?: string, handler?: Function): void;
-
-	off(...args: any[]): void {
-		this.selfEmitter.off(...args);
-	}
+	off: typeof this['selfEmitter']['off'] =
+		function promisifyOnce(this: iBlockEvent, ...args: any[]): void {
+			return this.selfEmitter.off(...args);
+		};
 
 	/**
 	 * Emits a component event.
@@ -326,7 +332,13 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.emit({event: 'someEvent', logLevel: 'warn'}, 42);
 	 * ```
 	 */
-	emit(event: string | ComponentEvent, ...args: unknown[]): void {
+	emit<E extends this['SelfEmitter']['Events']>(event: E | ComponentEvent<E>, ...args: this['SelfEmitter']['Args'][E]): void;
+	emit<E extends this['SelfEmitter']['Events']>(event: string | ComponentEvent, ...args: unknown[]): void;
+
+	emit(
+		event: string | ComponentEvent,
+		...args: unknown[]
+	): void {
 		const
 			eventDecl = normalizeEvent(event),
 			eventName = eventDecl.event;
@@ -542,6 +554,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 
 		this.on = i.on.bind(this);
 		this.once = i.once.bind(this);
+		this.promisifyOnce = i.promisifyOnce.bind(this);
 		this.off = i.off.bind(this);
 		this.emit = i.emit.bind(this);
 	}
