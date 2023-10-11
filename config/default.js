@@ -41,16 +41,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		});
 	},
 
-	theme: {
-		default() {
-			return 'light';
-		},
-
-		include() {
-			return true;
-		}
-	},
-
 	src: {
 		/**
 		 * Returns a path to the application dist directory for client scripts
