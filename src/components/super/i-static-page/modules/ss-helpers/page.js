@@ -24,11 +24,10 @@ const
 
 const
 	{getVarsDecl} = include('src/components/super/i-static-page/modules/ss-helpers/base-declarations'),
-	{needInline, addPublicPath} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
+	{needInline, addPublicPath, canLoadStylesDeferred} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
 
 const
-	canLoadStylesDeferred = !csp.nonce(),
-	needLoadStylesAsJS = webpack.dynamicPublicPath();
+	needLoadStylesAsJS = Boolean(webpack.dynamicPublicPath());
 
 const defAttrs = {
 	crossorigin: webpack.publicPath() === '' ? undefined : 'anonymous'
@@ -48,7 +47,7 @@ exports.getPageScriptDepsDecl = getPageScriptDepsDecl;
  * @param {boolean} [opts.wrap] - if true, the final code is wrapped by a script tag
  * @returns {string}
  */
-function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
+function getPageScriptDepsDecl(dependencies, {assets, wrap, js} = {}) {
 	if (!dependencies) {
 		return '';
 	}
@@ -58,8 +57,8 @@ function getPageScriptDepsDecl(dependencies, {assets, wrap} = {}) {
 
 	for (const dep of dependencies) {
 		const scripts = [
-			getScriptDeclByName(`${dep}_tpl`, {assets}),
-			getScriptDeclByName(dep, {assets})
+			getScriptDeclByName(`${dep}_tpl`, {assets, js}),
+			getScriptDeclByName(dep, {assets, js})
 		];
 
 		// We can't compile styles into static CSS files because
@@ -138,37 +137,37 @@ function getScriptDeclByName(name, {
 	optional,
 	defer = true,
 	inline,
-	wrap
+	wrap,
+	js = false
 }) {
 	let
 		decl;
 
-	if (needInline(inline)) {
-		if (assets[name]) {
-			const
-				filePath = src.clientOutput(assets[name].path);
-
-			if (fs.existsSync(filePath)) {
-				decl = `include('${filePath}');`;
-			}
-
-		} else {
-			if (!optional) {
-				throw new ReferenceError(`A script by the name "${name}" is not defined`);
-			}
-
+	if (!assets[name] && !js) {
+		if (optional) {
 			return '';
+		}
+
+		throw new ReferenceError(`A script by the name "${name}" is not defined`);
+	}
+
+	if (needInline(inline)) {
+		const
+			filePath = src.clientOutput(assets[name].path);
+
+		if (fs.existsSync(filePath)) {
+			decl = `include('${filePath}');`;
 		}
 
 	} else {
 		decl = getScriptDecl({
 			...defAttrs,
 			defer,
-			js: true,
-			src: addPublicPath([`PATH['${name}']`])
+			js,
+			src: js ? addPublicPath([`PATH['${name}']`]) : assets[name].publicPath
 		});
 
-		if (optional) {
+		if (optional && js) {
 			decl = `if ('${name}' in PATH) {
 	${decl}
 }`;
@@ -214,29 +213,33 @@ function getStyleDeclByName(name, {
 	let
 		decl;
 
+	if (!assets[rname] && !js) {
+		if (optional) {
+			return '';
+
+		}
+
+		throw new ReferenceError(`A style by the name "${name}" is not defined`);
+	}
+
 	if (needInline(inline)) {
-		if (assets[rname]) {
-			const
-				filePath = src.clientOutput(assets[rname].path);
+		const
+			filePath = src.clientOutput(assets[rname].path);
 
-			if (fs.existsSync(filePath)) {
-				decl = getStyleDecl({...defAttrs, js}, `include('${filePath}');`);
-			}
-
-		} else if (!optional) {
-			throw new ReferenceError(`A style by the name "${name}" is not defined`);
+		if (fs.existsSync(filePath)) {
+			decl = getStyleDecl({...defAttrs, js}, `include('${filePath}');`);
 		}
 
 	} else {
 		decl = getStyleDecl({
 			...defAttrs,
 			defer,
-			js: true,
+			js,
 			rel: 'stylesheet',
-			src: addPublicPath([`PATH['${rname}']`])
+			src: js ? addPublicPath([`PATH['${rname}']`]) : assets[rname].publicPath
 		});
 
-		if (optional) {
+		if (optional && js) {
 			decl = `if ('${rname}' in PATH) {
 	${decl}
 }`;
@@ -314,13 +317,13 @@ async function generateInitJS(pageName, {
 
 	// - block scripts
 	body.push(
-		getScriptDeclByName('std', {assets, optional: true}),
+		getScriptDeclByName('std', {assets, optional: true, js: true}),
 		await loadLibs(deps.scripts, {assets, js: true}),
 
-		getScriptDeclByName('index-core', {assets, optional: true}),
-		getScriptDeclByName('vendor', {assets, optional: true}),
+		getScriptDeclByName('index-core', {assets, optional: true, js: true}),
+		getScriptDeclByName('vendor', {assets, optional: true, js: true}),
 
-		getPageScriptDepsDecl(ownDeps, {assets})
+		getPageScriptDepsDecl(ownDeps, {assets, js: true})
 	);
 
 	const bodyInitializer = `
