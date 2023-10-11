@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.29 (2023-10-02)
+
+#### :rocket: New Feature
+
+* Support for canceling the execution of the directive
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :rocket: New Feature

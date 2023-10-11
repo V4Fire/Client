@@ -5334,6 +5334,7 @@ __metadata:
     browserslist: 4.19.1
     buble: 0.20.0
     chalk: 4.1.2
+    chrome-trace-event: 1.0.3
     cli-progress: 3.10.0
     collection.js: 6.8.1
     copy-dir: 1.3.0
@@ -5425,6 +5426,8 @@ __metadata:
     "@pzlr/stylus-inheritance":
       optional: true
     "@statoscope/webpack-plugin":
+      optional: true
+    "@types/webpack-env":
       optional: true
     "@v4fire/config":
       optional: true
@@ -8662,7 +8665,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chrome-trace-event@npm:^1.0.2":
+"chrome-trace-event@npm:1.0.3, chrome-trace-event@npm:^1.0.2":
   version: 1.0.3
   resolution: "chrome-trace-event@npm:1.0.3"
   checksum: cb8b1fc7e881aaef973bd0c4a43cd353c2ad8323fb471a041e64f7c2dd849cde4aad15f8b753331a32dda45c973f032c8a03b8177fc85d60eaa75e91e08bfb97

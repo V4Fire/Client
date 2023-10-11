@@ -35,11 +35,7 @@ module.exports = [
 	 */
 	function expandRootTag(tag, attrs, rootTag) {
 		if (tag === '_') {
-			if (rootTag) {
-				return rootTag;
-			}
-
-			const tag = ["rootTag || 'div'"];
+			const tag = rootTag ? [JSON.stringify(rootTag)] : ["rootTag || 'div'"];
 			attrs['v-tag'] = tag;
 
 			if (webpack.ssr) {

@@ -21,7 +21,6 @@
 
 			< .&__back
 			< .&__wrapper v-if = &
-				isFunctional ||
 				forceInnerRender ||
 				opt.ifOnce('opened', m.opened === 'true') && delete reactiveModsStore.opened
 			.

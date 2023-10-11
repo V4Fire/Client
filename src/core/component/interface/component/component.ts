@@ -131,6 +131,12 @@ export abstract class ComponentInterface {
 	abstract readonly getRoot?: () => this['Root'];
 
 	/**
+	 * The getter is used to retrieve the parent component.
+	 * It is commonly used for dynamically mounting components.
+	 */
+	abstract readonly getParent?: () => this['$parent'];
+
+	/**
 	 * A string value indicating the lifecycle hook that the component is currently in.
 	 * For instance, `created`, `mounted` or `destroyed`.
 	 *

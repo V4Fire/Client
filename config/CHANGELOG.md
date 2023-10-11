@@ -9,11 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v??? (2023-10-??)
+## v4.0.0-beta.?? (2023-??-??)
 
 #### :rocket: New Feature
 
 * Added new config option `webpack.externalizeInline`
+
+## v4.0.0-beta.30 (2023-10-11)
+
+#### :rocket: New Feature
+
+* Added default values for `runtime` theme parameters
+* Added a new option `module-parallelism` option, which sets the [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
+* Added a new option `trace-build-times`, which enables the build time tracing
 
 ## v4.0.0-beta.20 (2023-09-13)
 

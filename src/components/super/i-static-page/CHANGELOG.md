@@ -9,11 +9,23 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v??? (2023-10-??)
+## v4.0.0-beta.?? (2023-??-??)
 
 #### :rocket: New Feature
 
 * Added the ability to build initial HTML file without any inline Javascript by configuring `webpack.externalizeInline`
+*
+## v4.0.0-beta.30 (2023-10-11)
+
+#### :bug: Bug Fix
+
+* Fix initializing of the `helpers` and `providers` blocks for SSR
+
+## v4.0.0-beta.29 (2023-10-02)
+
+#### :bug: Bug Fix
+
+* Teleports should not be rendered during SSR
 
 ## v4.0.0-beta.17 (2023-09-06)
 

@@ -9,14 +9,8 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.20 (2023-09-13)
+## v4.??.? (2023-??-??)
 
 #### :rocket: New Feature
 
-* Added possibility to detect the theme based on user system settings
-
-## v3.0.0-rc.164 (2021-03-22)
-
-#### :rocket: New Feature
-
-* Module released
+* Added a new webpack plugin for build time measurement
