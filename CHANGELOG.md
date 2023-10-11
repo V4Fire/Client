@@ -128,7 +128,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.20 (2023-09-13)
 
-#### :ro ket: New Feature
+#### :rocket: New Feature
 
 * `config`:
   * Added `verbose` flag to `build` config
