@@ -13,6 +13,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2023-??-??)
 
+#### :rocket: New Feature
+
+* Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
+
+## v4.0.0-beta.?? (2023-??-??)
+
 #### :boom: Breaking Change
 
 * Now the `saveEnv` function takes the state as an argument `core/abt`
@@ -64,13 +70,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed icons' size in multi-theme mode `components/global/g-def`
->>>>>>> v4
-
-## v4.0.0-beta.26 (2023-09-20)
-
-#### :rocket: New Feature
-
-* Added a new webpack loader for responsive images `build/webpack/loaders/responsive-images-loader`
 
 #### :bug: Bug Fix
 
@@ -130,7 +129,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.20 (2023-09-13)
 
-#### :rocket: New Feature
+#### :ro ket: New Feature
 
 * `config`:
   * Added `verbose` flag to `build` config
