@@ -39,7 +39,8 @@ const {
 const {
 	output,
 	cacheDir,
-	isStandalone
+	isStandalone,
+	tracer
 } = include('build/helpers');
 
 /**
@@ -59,6 +60,8 @@ let
  * @returns {Promise<{entry, components, processes, dependencies}>}
  */
 async function buildProjectGraph() {
+	const buildFinished = tracer.measure('Build graph', {cat: ['graph']});
+
 	block.setObjToHash(config.componentDependencies());
 
 	const
@@ -66,7 +69,9 @@ async function buildProjectGraph() {
 
 	// The graph is already in the cache, and we can read it
 	if (build.buildGraphFromCache && fs.existsSync(graphCacheFile)) {
-		return loadFromCache();
+		const cache = loadFromCache();
+		buildFinished();
+		return cache;
 	}
 
 	fs.mkdirpSync(cacheDir);
@@ -135,6 +140,7 @@ async function buildProjectGraph() {
 	);
 
 	console.log('The project graph is initialized');
+	buildFinished();
 
 	return res;
 

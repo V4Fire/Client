@@ -13,18 +13,32 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2023-10-??)
 
-#### :boom: Breaking Change
-
-* Now the `saveEnv` function takes the state as an argument `core/abt`
-
 #### :rocket: New Feature
 
 * Added theme modifier calculation to components `components/super/i-block`
 
+## v4.0.0-beta.30 (2023-10-11)
+
+#### :boom: Breaking Change
+
+* Now the `saveEnv` function takes the state as an argument `core/abt`
+
+#### :rocker: New Feature
+
+* `config`:
+  * Added default values for `runtime` theme parameters
+  * Added a new option `module-parallelism` option, which sets the [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
+  * Added a new option `trace-build-times`, which enables the build time tracing
+
+* Added build time tracing, which can be visualized using the [Perfetto UI](https://ui.perfetto.dev)
+* Added a new stylus function `themeAttribute` `build/stylus/ds`
+* Added possibility to configure the theme attribute `components/global/g-def`
+
 #### :bug: Bug Fix
 
-* Fixed data restoration of provider after hydration `iData`
+* Fixed an issue with `i-data` `initLoad` mutating a request params which leads to the data reload `components/super/i-data`
 * Fix initializing of the `helpers` and `providers` blocks in `i-static-page` and `i-block` for SSR
+* Fixed data restoration of provider after hydration `iData`
 
 ## v4.0.0-beta.29 (2023-10-02)
 
@@ -55,6 +69,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed icons' size in multi-theme mode `components/global/g-def`
+>>>>>>> v4
 
 ## v4.0.0-beta.26 (2023-09-20)
 
@@ -175,7 +190,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.13 (2023-08-24)
 
-#### :rocket: New Feature
+#### :rocker: New Feature
 
 * Webpack build helpers:
   * Added `getManagedPath` helper, which generates a managed path for node_modules with excluding
