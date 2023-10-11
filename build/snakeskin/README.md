@@ -5,6 +5,19 @@ Also, the module sets some default filters for component tags.
 
 ## Filters
 
+### n
+
+Resolves the specified namespace and returns it.
+This filter is necessary for correctly resolving templates
+that exist within the same namespace but are declared in multiple files.
+
+```
+- namespace ['m-component'|n]
+
+- template a()
+  ...
+```
+
 ### b
 
 Resolves the specified file path to use with the Snakeskin include directive.
@@ -17,6 +30,16 @@ The filter adds the support of layers.
 - include '**/*.window.ss'|b
 
 - template index() extends ['i-data'].index
+```
+
+If the path ends with the symbols `:$postfix`,
+then during path resolution a hard link will be created to the original file with the name `$fname_$postfix`.
+This functionality is necessary for correctly overriding templates in a layered monorepository.
+
+```
+- include 'super/i-data:core'|b as placeholder
+
+- template index() extends ['i-data_core'].index
 ```
 
 ### typograf

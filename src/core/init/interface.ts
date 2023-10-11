@@ -8,10 +8,14 @@
 
 import type { InitialRoute } from 'core/router';
 
-import type { GlobalEnvironment } from 'core/component/state';
+import type { State } from 'core/component/state';
 import type { ComponentOptions } from 'core/component/engines';
 
-export interface InitAppOptions {
+type OptionalState = {
+	[K in keyof State]?: State[K];
+};
+
+export interface InitAppOptions extends OptionalState {
 	/**
 	 * A link to the element where the application should be mounted.
 	 * This parameter is only used when initializing the application in a browser.
@@ -23,24 +27,6 @@ export interface InitAppOptions {
 	 * Usually, this value is used during SSR.
 	 */
 	route?: InitialRoute;
-
-	/**
-	 * An object whose properties will extend the global object.
-	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-	 * Using this object, polyfills for all necessary APIs can be passed through.
-	 *
-	 * @example
-	 * ```js
-	 * ({
-	 *   globalEnv: {
-	 *     location: {
-	 *       href: 'https://foo.com'
-	 *     }
-	 *   }
-	 * })
-	 * ```
-	 */
-	globalEnv?: GlobalEnvironment;
 
 	/**
 	 * A function that is called before the initialization of the root component

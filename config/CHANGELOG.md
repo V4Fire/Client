@@ -9,6 +9,15 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added default values for `runtime` theme parameters
+* Added `module-parallelism` option, which sets the
+  [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
+* Added `trace-build-times` option, which enables build time tracing
+
 ## v4.0.0-beta.20 (2023-09-13)
 
 #### :rocket: New Feature

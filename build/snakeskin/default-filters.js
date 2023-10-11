@@ -38,12 +38,13 @@ const bind = {
 };
 
 Snakeskin.importFilters({
-	tagFilter: Snakeskin.setFilterParams(tagFilter, {bind: ['TPL_NAME']}),
+	tagFilter: Snakeskin.setFilterParams(tagFilter, {bind: ['TPL_NAME', '$i++']}),
 	tagNameFilter: Snakeskin.setFilterParams(tagNameFilter, bind),
-	bemFilter: Snakeskin.setFilterParams(bemFilter, bind)
+	bemFilter: Snakeskin.setFilterParams(bemFilter, bind),
+	line: Snakeskin.setFilterParams((_, line) => line, {bind: [(o) => o.i]})
 });
 
-function tagFilter({name, attrs = {}}, tplName) {
+function tagFilter({name, attrs = {}}, tplName, cursor) {
 	Object.forEach(tagFilters, (filter) => filter({name, attrs}));
 
 	const isSimpleTag =
@@ -79,25 +80,16 @@ function tagFilter({name, attrs = {}}, tplName) {
 
 	if (!attrs[':componentIdProp']) {
 		const id = hasha(JSON.stringify([
+			cursor,
 			componentName,
-			tplName.replace(/\d{4,}$/, '_'),
-			Object.reject(attrs, [
-				'v-ref',
-				'v-once',
-				'v-memo',
+			tplName.replace(/\d{4,}$/, '_')
+		])).slice(0, 6);
 
-				':is',
-				'v-tag',
-
-				'data-cached-class-component-id',
-				':data-cached-class-component-id'
-			])
-		])).slice(0, 10);
-
-		attrs[':componentIdProp'] = [JSON.stringify(id)];
+		attrs[':componentIdProp'] = [`componentId + ${JSON.stringify(id)}`];
 	}
 
 	attrs[':getRoot'] = ["() => ('getRoot' in self ? self.getRoot?.() : null) ?? self.$root"];
+	attrs[':getParent'] = ['() => self'];
 
 	if (component.inheritMods !== false && !attrs[':modsProp']) {
 		attrs[':modsProp'] = ['sharedMods'];

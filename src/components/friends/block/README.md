@@ -491,13 +491,13 @@ console.log(this.block.getBlockSelector('foo', 'focused', true));
 Returns a CSS selector to the specified block element.
 
 ```js
-this.componentId === 'uid-123';
+this.componentId === 'u123';
 this.componentName === 'b-example';
 
-// '.uid-123.b-example__foo'
+// '.u123.b-example__foo'
 console.log(this.block.getElementSelector('foo'));
 
-// '.uid-123.b-example__foo.b-example__foo_focused_true'
+// '.u123.b-example__foo.b-example__foo_focused_true'
 console.log(this.block.getElementSelector('foo', {focused: true}));
 ```
 

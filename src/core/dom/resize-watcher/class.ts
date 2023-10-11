@@ -157,7 +157,7 @@ export default class ResizeWatcher {
 		}
 
 		const watcher: Writable<Watcher> = {
-			id: Math.random().toString().slice(2),
+			id: Object.fastHash(Math.random()),
 			target: el,
 			handler,
 
@@ -185,8 +185,11 @@ export default class ResizeWatcher {
 				store?.delete(handler);
 			}
 
-			this.observer.unobserve(watcher.target);
-			this.async.clearAll({group: watcher.id});
+			if (store?.size === 0) {
+				this.elements.delete(el);
+				this.observer.unobserve(watcher.target);
+				this.async.clearAll({group: watcher.id});
+			}
 		};
 
 		this.observer.observe(el, Object.select(optsOrHandler, 'box'));
