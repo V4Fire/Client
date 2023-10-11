@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.30 (2023-10-11)
 
 #### :boom: Breaking Change
 
@@ -21,13 +21,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * `config`:
   * Added default values for `runtime` theme parameters
-  * Added `module-parallelism` option, which sets the
-  [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
-  * Added `trace-build-times` option, which enables build time tracing, see [MeasurePlugin](./build/webpack/plugins/measure-plugin)
+  * Added a new option `module-parallelism` option, which sets the [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
+  * Added a new option `trace-build-times`, which enables the build time tracing
 
 * Added build time tracing, which can be visualized using the [Perfetto UI](https://ui.perfetto.dev)
-* Added `themeAttribute` stylus function `build/stylus/ds`
-* Added possibility to configure theme attribute `components/global/g-def`
+* Added a new stylus function `themeAttribute` `build/stylus/ds`
+* Added possibility to configure the theme attribute `components/global/g-def`
 
 #### :bug: Bug Fix
 
