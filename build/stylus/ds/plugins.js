@@ -31,6 +31,8 @@ const
  * @param {(Array<string>|boolean)} [opts.includeThemes] - a list of themes to include or
  *   `true` (will include all available themes)
  *
+ * @param {string} [opts.themeAttribute] - an attribute name to set the theme value to the root element
+ *
  * @param {object} [opts.stylus] - a link to the Stylus package instance
  * @returns {Function}
  */
@@ -41,6 +43,7 @@ module.exports = function getPlugins({
 	detectUserPreferences,
 	theme,
 	includeThemes,
+	themeAttribute,
 	stylus = require('stylus')
 }) {
 	const
@@ -306,5 +309,11 @@ module.exports = function getPlugins({
 		 * @returns {!Array<string>}
 		 */
 		api.define('availableThemes', () => themesList);
+
+		/**
+		 * Returns the attribute name to set the theme value to the root element
+		 * @returns {string}
+		 */
+		api.define('themeAttribute', () => themeAttribute);
 	};
 };

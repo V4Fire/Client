@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.61.00 (2023-10-12)
+
+#### :rocket: New Feature
+
+* Added `themeAttribute` stylus function
+
 ## v3.59.0 (2023-09-13)
 
 #### :rocket: New Feature

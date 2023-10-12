@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.61.00 (2023-10-12)
+
+#### :rocket: New Feature
+
+* Added default values for `runtime` theme parameters
+
 ## v3.60.0 (2023-09-28)
 
 #### :rocket: New Feature

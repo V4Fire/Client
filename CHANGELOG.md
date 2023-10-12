@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.61.00 (2023-10-12)
+
+#### :rocket: New Feature
+
+* Added `themeAttribute` stylus function `build/stylus/ds`
+* Added default values for `runtime` theme parameters
+* Added possibility to configure theme attribute `components/global/g-def`
+
 ## v3.60.0 (2023-09-28)
 
 #### :rocket: New Feature
