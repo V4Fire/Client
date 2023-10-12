@@ -2555,6 +2555,19 @@ export default abstract class iBlock extends ComponentInterface {
 	}
 
 	/**
+	 * Initializes theme modifier and attaches listener to watch changing of the theme
+	 */
+	@hook('created')
+	protected initThemeModListener(): void {
+		void this.setMod('theme', this.r.theme?.current);
+		this.rootEmitter.on(
+			'onTheme:change',
+			(v: string) => this.setMod('theme', v),
+			{label: $$.themeChanged}
+		);
+	}
+
+	/**
 	 * Initializes remote watchers from the prop
 	 */
 	@hook({beforeDataCreate: {functional: false}})

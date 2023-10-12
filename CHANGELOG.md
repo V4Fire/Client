@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (2023-10-??)
+
+#### :rocket: New Feature
+
+* Added theme modifier calculation to components `components/super/i-block`
+
 ## v3.61.00 (2023-10-12)
 
 #### :rocket: New Feature
