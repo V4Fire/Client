@@ -11,6 +11,7 @@
  * @packageDocumentation
  */
 
+import symbolGenerator from 'core/symbol';
 import { component, PARENT } from 'core/component';
 
 import { field, system, computed, hook } from 'components/super/i-block/decorators';
@@ -18,6 +19,9 @@ import { initMods, mergeMods, getReactiveMods, ModsDict, ModsDecl } from 'compon
 
 import type iBlock from 'components/super/i-block/i-block';
 import iBlockEvent from 'components/super/i-block/event';
+
+const
+	$$ = symbolGenerator();
 
 @component()
 export default abstract class iBlockMods extends iBlockEvent {
@@ -211,5 +215,18 @@ export default abstract class iBlockMods extends iBlockEvent {
 	@hook('beforeCreate')
 	protected initModEvents(): void {
 		this.sync.mod('stage', 'stageStore', (v) => v == null ? v : String(v));
+	}
+
+	/**
+	 * Initializes theme modifier and attaches listener to watch changing of the theme
+	 */
+	@hook('created')
+	protected initThemeModListener(): void {
+		void this.setMod('theme', this.r.theme?.current);
+		this.rootEmitter.on(
+			'onTheme:change',
+			(v: string) => this.setMod('theme', v),
+			{label: $$.themeChanged}
+		);
 	}
 }

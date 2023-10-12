@@ -321,5 +321,17 @@ module.exports = function getPlugins({
 		 * @returns {string}
 		 */
 		api.define('themeAttribute', () => themeAttribute);
+
+		/**
+		 * Returns a dark theme name
+		 * @returns {string}
+		 */
+		api.define('darkThemeName', () => detectUserPreferences.prefersColorScheme.aliases?.dark ?? 'dark');
+
+		/**
+		 * Returns a light theme name
+		 * @returns {string}
+		 */
+		api.define('lightThemeName', () => detectUserPreferences.prefersColorScheme.aliases?.light ?? 'light');
 	};
 };
