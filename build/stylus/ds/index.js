@@ -25,6 +25,7 @@ const
 	theme = config.theme.default(),
 	includeThemes = config.theme.include(),
 	detectUserPreferences = config.theme.detectUserPreferences(),
+	themeAttribute = config.theme.attribute,
 	{'ds/use-css-vars': useCSSVarsInRuntime} = config.runtime();
 
 let
@@ -50,6 +51,7 @@ module.exports = getPlugins({
 	cssVariables,
 	theme,
 	includeThemes,
+	themeAttribute,
 	useCSSVarsInRuntime,
 	detectUserPreferences
 });
