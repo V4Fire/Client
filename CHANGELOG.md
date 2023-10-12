@@ -18,7 +18,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added theme modifier calculation to components `components/super/i-block`
 * Added `darkThemeName` `lightThemeName` stylus function `build/stylus/ds`
 
-## v3.61.00 (2023-10-12)
+## v3.61.0 (2023-10-12)
 
 #### :rocket: New Feature
 

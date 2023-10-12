@@ -9,13 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v3.62.00 (2023-10-12)
+## v3.62.0 (2023-10-12)
 
 #### :rocket: New Feature
 
 * Added `darkThemeName` `lightThemeName` stylus function
 
-## v3.61.00 (2023-10-12)
+## v3.61.0 (2023-10-12)
 
 #### :rocket: New Feature
 
