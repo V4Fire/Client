@@ -1239,7 +1239,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'iInput/validators': true,
 			'bInput/validators': true,
 
-			'iInputText/mask': true
+			'iInputText/mask': true,
+
+			theme: this.theme.default(),
+			includeThemes: this.theme.include(),
+			prefersColorSchemeEnabled: this.theme.detectUserPreferences().prefersColorScheme.enabled
 		};
 	},
 
