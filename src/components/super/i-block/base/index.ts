@@ -163,20 +163,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * A function for internationalizing texts used in the component
-	 */
-	get i18n(): ReturnType<typeof i18n> {
-		return i18n(this.componentI18nKeysets);
-	}
-
-	/**
-	 * An alias for `i18n`
-	 */
-	get t(): ReturnType<typeof i18n> {
-		return this.i18n;
-	}
-
-	/**
 	 * An iterator for generating pseudo-random numbers.
 	 * It is used for generating identical component IDs during SSR and hydration.
 	 */
