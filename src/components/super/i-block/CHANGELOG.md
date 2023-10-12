@@ -9,11 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.30 (2023-10-11)
+## v4.0.0-beta.31 (2023-10-12)
 
 #### :rocket: New Feature
 
-* Added theme modifier calculation to components
+* Added the `theme` modifier calculation to components
+
+## v4.0.0-beta.30 (2023-10-12)
 
 #### :bug: Bug Fix
 

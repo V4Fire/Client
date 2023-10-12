@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-10-??)
+## v4.0.0-beta.31 (2023-10-12)
 
 #### :rocket: New Feature
 
-* Added theme modifier calculation to components `components/super/i-block`
+* Added the `theme` modifier calculation to components `components/super/i-block`
 
 ## v4.0.0-beta.30 (2023-10-11)
 
