@@ -65,7 +65,7 @@ export default abstract class iBlockState extends iBlockMods {
 	@computed({watchable: true})
 	get remoteState(): State {
 		if (SSR) {
-			return this.ssrState!;
+			return {...this.ssrState!, ...this.remoteState};
 		}
 
 		return remoteState;
@@ -292,7 +292,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * A function for internationalizing texts used in the component
 	 */
 	i18n(keysetName: CanArray<string>): ReturnType<typeof i18n> {
-		return i18n(keysetName, this.Component.remoteState.lang);
+		return i18n(keysetName, this.remoteState.lang);
 	}
 
 	/**
