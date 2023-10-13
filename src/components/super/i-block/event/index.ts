@@ -51,8 +51,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * Events are described using tuples, where the first element is the event name, and the rest are arguments.
 	 */
 	readonly LocalEmitter!: InferEvents<this, [
-		[string, ...unknown[]],
-		['ddd', ...unknown[]]
+		[string, ...unknown[]]
 	]>;
 
 	/**
@@ -332,7 +331,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * ```
 	 */
 	emit<E extends this['SelfEmitter']['Events']>(event: E | ComponentEvent<E>, ...args: this['SelfEmitter']['Args'][E]): void;
-	emit<E extends this['SelfEmitter']['Events']>(event: string | ComponentEvent, ...args: unknown[]): void;
+	emit(event: string | ComponentEvent, ...args: unknown[]): void;
 
 	emit(
 		event: string | ComponentEvent,
