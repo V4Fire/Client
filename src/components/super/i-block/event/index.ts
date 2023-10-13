@@ -40,7 +40,7 @@ import type { ComponentEvent, CallChild } from 'components/super/i-block/interfa
 
 import iBlockBase from 'components/super/i-block/base';
 
-import type { InferComponentEvents } from 'components/super/i-block/event/interface';
+import type { InferEvents, InferComponentEvents } from 'components/super/i-block/event/interface';
 
 export * from 'components/super/i-block/event/interface';
 
@@ -55,6 +55,15 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 */
 	readonly SelfEmitter!: InferComponentEvents<this, [
 		['error', ...unknown[]]
+	]>;
+
+	/**
+	 * Associative type for typing events emitted by the `localEmitter`.
+	 * Events are described using tuples, where the first element is the event name, and the rest are arguments.
+	 */
+	readonly LocalEmitter!: InferEvents<this, [
+		[string, ...unknown[]],
+		['ddd', ...unknown[]]
 	]>;
 
 	/**
@@ -133,7 +142,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 		}), {group: ':suspend'})
 	})
 
-	protected readonly localEmitter!: EventEmitterWrapper<this>;
+	// @ts-ignore (ts)
+	protected readonly localEmitter!: this['LocalEmitter'] & EventEmitterWrapper<this>;
 
 	/**
 	 * The parent component event emitter.
@@ -196,7 +206,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	})
 
 	// @ts-ignore (ts)
-	protected readonly rootEmitter!: ReadonlyEventEmitterWrapper<this['Root']>;
+	protected readonly rootEmitter!: this['Root']['SelfEmitter'] & ReadonlyEventEmitterWrapper<this['Root']>;
 
 	/**
 	 * The global event emitter located in `core/component/event`.
@@ -294,7 +304,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * ```
 	 */
 	off: typeof this['selfEmitter']['off'] =
-		function promisifyOnce(this: iBlockEvent, ...args: any[]): void {
+		function off(this: iBlockEvent, ...args: any[]): void {
 			return this.selfEmitter.off(...args);
 		};
 
