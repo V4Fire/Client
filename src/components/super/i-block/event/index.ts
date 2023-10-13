@@ -12,23 +12,12 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-
 import SyncPromise from 'core/promise/sync';
+
 import type Async from 'core/async';
-
-import type {
-
-	ProxyCb,
-	AsyncOptions,
-
-	EventId,
-	ClearOptionsId,
-
-	EventEmitterWrapper,
-	ReadonlyEventEmitterWrapper
-
-} from 'core/async';
+import type { AsyncOptions, EventEmitterWrapper, ReadonlyEventEmitterWrapper } from 'core/async';
 
 import { component, globalEmitter } from 'core/component';
 
