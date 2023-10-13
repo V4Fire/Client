@@ -9,10 +9,10 @@
 'use strict';
 
 const
-	config = require('@config/config'),
-	{resolve} = require('@pzlr/build-core');
+	config = require('@config/config');
 
 const
+	{resolve} = require('@pzlr/build-core'),
 	{isExternalDep} = include('build/const'),
 	{isTsFile} = include('build/webpack/module/const');
 

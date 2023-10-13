@@ -41,6 +41,17 @@ module.exports = function imagesRules() {
 				use: imgHelperLoaders(true)
 			},
 
+			{
+				resourceQuery: /responsive/,
+				use: [
+					{
+						loader: 'responsive-images-loader',
+						options: config.responsiveImagesOpts()
+					},
+					!isProd ? {loader: 'url-loader', options: urlLoaderOpts} : {}
+				]
+			},
+
 			{use: imgHelperLoaders()}
 		]
 	};
