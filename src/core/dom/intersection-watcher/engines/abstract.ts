@@ -86,7 +86,8 @@ export default abstract class AbstractEngine {
 		const opts = {
 			once: false,
 			threshold: 1,
-			delay: 0
+			delay: 0,
+			onlyRoot: true
 		};
 
 		if (Object.isFunction(optsOrHandler)) {
