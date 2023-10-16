@@ -83,7 +83,7 @@ class DataProvider extends Friend {
 			{ctx} = this;
 
 		opts = {
-			id: ctx.r.componentId,
+			id: ctx.r.appId,
 			remoteState: ctx.remoteState,
 			...opts
 		};

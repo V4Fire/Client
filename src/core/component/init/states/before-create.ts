@@ -167,7 +167,6 @@ export function beforeCreateState(
 	} = meta;
 
 	initFields(systemFields, component, unsafe);
-	unsafe.$async.once(globalEmitter, `destroy.${unsafe.$root.componentId}`, unsafe.$destroy.bind(unsafe));
 
 	const
 		fakeHandler = () => undefined;

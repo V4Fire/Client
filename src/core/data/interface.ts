@@ -12,6 +12,6 @@ import type { ProviderOptions as SuperProviderOptions } from '@v4fire/core/core/
 export * from '@v4fire/core/core/data/interface';
 
 export interface ProviderOptions extends SuperProviderOptions {
-	id?: string;
+	id: string;
 	remoteState?: State;
 }

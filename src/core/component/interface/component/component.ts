@@ -40,6 +40,11 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
+	 * The unique application identifier
+	 */
+	readonly appId!: string;
+
+	/**
 	 * The unique component identifier.
 	 * The value for this prop is automatically generated during the build process,
 	 * but it can also be manually specified.
