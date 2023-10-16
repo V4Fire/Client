@@ -19,7 +19,7 @@ import { attachAccessorsFromMeta } from 'core/component/accessor';
 import { attachMethodsFromMeta, callMethodFromComponent } from 'core/component/method';
 
 import { runHook } from 'core/component/hook';
-import { globalEmitter, implementEventEmitterAPI } from 'core/component/event';
+import { implementEventEmitterAPI } from 'core/component/event';
 
 import { beforeDestroyState } from 'core/component/init/states/before-destroy';
 import { destroyedState } from 'core/component/init/states/destroyed';
