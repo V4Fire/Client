@@ -12,6 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import Provider, { providers, instanceCache, requestCache, ProviderOptions } from 'core/data';
 
 import SyncPromise from 'core/promise/sync';
 import config from 'config';
@@ -26,6 +27,9 @@ import type iBlock from 'components/super/i-block/i-block';
 import type { InitLoadCb, InitLoadOptions } from 'components/super/i-block/interface';
 
 import iBlockState from 'components/super/i-block/state';
+import type { DataProviderProp } from 'components/super/i-block/providers/interface';
+
+export * from 'components/super/i-block/providers/interface';
 
 const
 	$$ = symbolGenerator();
@@ -254,6 +258,62 @@ export default abstract class iBlockProviders extends iBlockState {
 		}
 
 		return Promise.resolve();
+	}
+
+	/**
+	 * Creates an instance of the DataProvider based on the specified parameters
+	 *
+	 * @param provider
+	 * @param opts
+	 * @throws {ReferenceError} if it is not possible to create a provider based on the provided parameters
+	 */
+	createDataProviderInstance(provider: DataProviderProp, opts?: ProviderOptions): CanNull<Provider> {
+		const
+			that = this;
+
+		opts = {
+			...opts,
+			id: this.r.appId,
+			remoteState: this.remoteState
+		};
+
+		let
+			dp: Provider;
+
+		if (Object.isString(provider)) {
+			const
+				ProviderConstructor = <CanUndef<typeof Provider>>providers[provider];
+
+			if (ProviderConstructor == null) {
+				if (provider === 'Provider') {
+					return null;
+				}
+
+				throw new ReferenceError(`The provider "${provider}" is not defined`);
+			}
+
+			dp = new ProviderConstructor(opts);
+			registerDestructor();
+
+		} else if (Object.isFunction(provider)) {
+			const ProviderConstructor = Object.cast<typeof Provider>(provider);
+
+			dp = new ProviderConstructor(opts);
+			registerDestructor();
+
+		} else {
+			dp = <Provider>provider;
+		}
+
+		return dp;
+
+		function registerDestructor() {
+			that.r.unsafe.async.worker(() => {
+				const key = dp.getCacheKey();
+				delete instanceCache[key];
+				delete requestCache[key];
+			});
+		}
 	}
 
 	/**
