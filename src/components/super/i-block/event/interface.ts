@@ -6,11 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export type InferComponentEvents<C, I extends Array<[string, ...any[]]>, R = {}> = {
-	0: InferComponentEvents<C, TB.Tail<I>, {[K in keyof R]: R[K]} &
+export type InferComponentEvents<C, I extends Array<[string, ...any[]]>, R extends Dictionary = {}> = {
+	0: InferComponentEvents<C, TB.Tail<I>, Omit<R, 'Events'> &
 		(TB.Head<I> extends [infer E, ...infer A] ? E extends string ? {
-			Events: E | `${E}:component` | `on${Capitalize<E>}`;
-			Args: {[K in E | `${E}:component` | `on${Capitalize<E>}`]: A};
+			Args: {[K in E]: A};
 
 			on(event: `on${Capitalize<E>}`, cb: (...args: A) => void): void;
 			on(event: E | `${E}:component`, cb: (component: C, ...args: A) => void): void;
@@ -27,13 +26,12 @@ export type InferComponentEvents<C, I extends Array<[string, ...any[]]>, R = {}>
 			emit(event: string, ...args: unknown[]): void;
 		} : {} : {})>;
 
-	1: R;
+	1: Omit<R, 'Events'> & {Events: keyof R['Args']};
 }[TB.Length<I> extends 0 ? 1 : 0];
 
-export type InferEvents<C, I extends Array<[string, ...any[]]>, R = {}> = {
-	0: InferComponentEvents<C, TB.Tail<I>, {[K in keyof R]: R[K]} & (TB.Head<I> extends [infer E, ...infer A] ?
+export type InferEvents<C, I extends Array<[string, ...any[]]>, R extends Dictionary = {}> = {
+	0: InferComponentEvents<C, TB.Tail<I>, Omit<R, 'Events'> & (TB.Head<I> extends [infer E, ...infer A] ?
 		E extends string ? {
-			Events: E;
 			Args: {[K in E]: A};
 
 			on(event: E, cb: (component: C, ...args: A) => void): void;
@@ -46,5 +44,5 @@ export type InferEvents<C, I extends Array<[string, ...any[]]>, R = {}> = {
 			emit(event: string, ...args: unknown[]): void;
 		} : {} : {})>;
 
-	1: R;
+	1: Omit<R, 'Events'> & {Events: keyof R['Args']};
 }[TB.Length<I> extends 0 ? 1 : 0];
