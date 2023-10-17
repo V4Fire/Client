@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.32 (2023-10-17)
+
+#### :rocket: New Feature
+
+* Added a factory to create data providers
+
 ## v4.0.0-beta.31 (2023-10-12)
 
 #### :rocket: New Feature
