@@ -51,7 +51,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection of a
 	});
 
 	for (const engine of ENGINES) {
-		test.describe(`core/dom/intersection-watcher with ${engine} engine`, () => {
+		test.describe(`using the ${engine} engine`, () => {
 			test(
 				'calling the `watch` without passing a handler should throw an exception',
 

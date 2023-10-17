@@ -54,7 +54,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 	});
 
 	for (const engine of ENGINES) {
-		test.describe(`core/dom/intersection-watcher with ${engine} engine`, () => {
+		test.describe(`using the ${engine} engine`, () => {
 			test(
 				'the watcher handler execution should be delayed for the time specified in the `delay` option',
 

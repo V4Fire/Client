@@ -54,7 +54,7 @@ test.describe('core/dom/intersection-watcher: cancelling watching for the inters
 	});
 
 	for (const engine of ENGINES) {
-		test.describe(`core/dom/intersection-watcher with ${engine} engine`, () => {
+		test.describe(`using the ${engine} engine`, () => {
 			test(
 				'calling the `unwatch` with a specific element passed should cancel the observing of that element',
 

@@ -58,7 +58,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 	});
 
 	for (const engine of ENGINES) {
-		test.describe(`core/dom/intersection-watcher with ${engine} engine`, () => {
+		test.describe(`using the ${engine} engine`, () => {
 			test(
 				'the watcher handler should be executed when the element intersects the root element view',
 

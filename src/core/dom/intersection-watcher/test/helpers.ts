@@ -14,7 +14,7 @@ import { BOM } from 'tests/helpers';
 /**
  * Creates a div element, applies styles to it and appends it into the parent element
  * or into the body element if the parent is not passed.
- * The function returns a Promise that resolves to the ElementHandle container
+ * The function returns a Promise that resolves to the ElementHandle container.
  *
  * @param page
  * @param styles
@@ -38,7 +38,7 @@ export async function createElement(
 
 /**
  * Assertion helper for the wasInvoked boolean flag.
- * The function returns a Promise
+ * The function returns a Promise.
  *
  * @param wasInvoked
  * @param assertion
@@ -53,7 +53,7 @@ export async function assertWasInvokedIs(
 /**
  * Scrolls the element or the page if the element is not passed
  * by the provided top/left values with the optional delay.
- * The function returns a Promise
+ * The function returns a Promise.
  *
  * @param page
  * @param opts
