@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.32 (2023-10-17)
+
+#### :rocket: New Feature
+
+* Added support for setting a global application ID
+
 ## v4.0.0-beta.22 (2023-09-15)
 
 #### :rocket: New Feature

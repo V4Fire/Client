@@ -17,6 +17,11 @@ type OptionalState = {
 
 export interface InitAppOptions extends OptionalState {
 	/**
+	 * The unique application identifier
+	 */
+	appId?: string;
+
+	/**
 	 * A link to the element where the application should be mounted.
 	 * This parameter is only used when initializing the application in a browser.
 	 */

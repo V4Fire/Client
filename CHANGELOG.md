@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.32 (2023-10-17)
+
+#### :rocket: New Feature
+
+* Added a factory to create data providers `iBlock`
+* Added support for setting a global application ID `core/init`
+
+## v4.0.0-beta.31 (2023-10-12)
+
+#### :rocket: New Feature
+
+* Added the `theme` modifier calculation to components `components/super/i-block`
+
 ## v4.0.0-beta.30 (2023-10-11)
 
 #### :boom: Breaking Change
