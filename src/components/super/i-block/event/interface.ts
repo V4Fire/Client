@@ -7,7 +7,7 @@
  */
 
 export type InferEvents<I extends Array<[string, ...any[]]>, R extends Dictionary = {}> = {
-	0: InferEvents<TB.Tail<I>, Omit<R, 'Events'> & (TB.Head<I> extends [infer E, ...infer A] ?
+	0: InferEvents<TB.Tail<I>, R & (TB.Head<I> extends [infer E, ...infer A] ?
 		E extends string ? {
 			Args: {[K in E]: A};
 
@@ -21,7 +21,7 @@ export type InferEvents<I extends Array<[string, ...any[]]>, R extends Dictionar
 			emit(event: string, ...args: unknown[]): void;
 		} : {} : {})>;
 
-	1: Omit<R, 'Events'> & {Events: keyof R['Args']};
+	1: R;
 }[TB.Length<I> extends 0 ? 1 : 0];
 
 export type GetComponentEvents<R extends {Args: Record<string, any[]>}> =
