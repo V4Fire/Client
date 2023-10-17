@@ -76,11 +76,10 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	 * {@link bList.items}
 	 */
 	set items(value: this['Items']) {
-		const oldValue = this.items;
 		this.field.set('itemsStore', value);
 
-		if (SSR || HYDRATION && !this.isReadyOnce) {
-			this.syncItemsWatcher(this.items, oldValue);
+		if (this.isRelatedToSSR) {
+			this.syncItemsWatcher(this.items);
 		}
 	}
 
@@ -345,11 +344,11 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	 * Synchronization of the component items
 	 *
 	 * @param items
-	 * @param oldItems
+	 * @param [oldItems]
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
 	@watch(['value', 'itemsStore'])
-	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues();
 			this.emit('itemsChange', items);

@@ -30,7 +30,9 @@ describe('components/super/i-static-page/modules/ss-helpers/page', () => {
 				name = 'p-v4-components-demo',
 				file = src.clientOutput(`${webpack.output({name})}.init.js`);
 
-			fs.unlinkSync(file);
+			if (fs.existsSync(file)) {
+				fs.unlinkSync(file);
+			}
 
 			await ss.generateInitJS(name, {
 				deps,

@@ -40,6 +40,11 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
+	 * The unique application identifier
+	 */
+	readonly appId!: string;
+
+	/**
 	 * The unique component identifier.
 	 * The value for this prop is automatically generated during the build process,
 	 * but it can also be manually specified.
@@ -129,6 +134,12 @@ export abstract class ComponentInterface {
 	 * It is commonly used for dynamically mounting components.
 	 */
 	abstract readonly getRoot?: () => this['Root'];
+
+	/**
+	 * The getter is used to retrieve the parent component.
+	 * It is commonly used for dynamically mounting components.
+	 */
+	abstract readonly getParent?: () => this['$parent'];
 
 	/**
 	 * A string value indicating the lifecycle hook that the component is currently in.

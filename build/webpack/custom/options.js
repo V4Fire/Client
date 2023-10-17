@@ -8,10 +8,14 @@
 
 'use strict';
 
+const {webpack} = require('@config/config');
+
 /**
  * Returns options for other webpack options
  * @returns {object}
  */
 module.exports = function other() {
-	return {};
+	return {
+		parallelism: webpack.moduleParallelism()
+	};
 };

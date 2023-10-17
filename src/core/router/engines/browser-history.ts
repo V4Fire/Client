@@ -388,7 +388,7 @@ export default function createRouter(component: bRouter): Router {
 
 			// The route ID is needed to support the history clearing feature
 			if (params._id == null) {
-				params._id = Math.random().toString().slice(2);
+				params._id = Object.fastHash(Math.random());
 			}
 
 			if (method !== 'replaceState') {

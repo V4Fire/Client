@@ -534,7 +534,6 @@ export default abstract class iBlockEvent extends iBlockBase {
 		initGlobalListeners(Object.cast(this), resetListener);
 	}
 
-	@hook({beforeRuntime: {functional: false}})
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 

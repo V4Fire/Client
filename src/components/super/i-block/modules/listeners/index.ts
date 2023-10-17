@@ -43,13 +43,15 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 	} = ctx;
 
 	resetListener = Boolean(
-		(resetListener != null ? resetListener : baseInitLoad !== ctx.instance.initLoad) ||
+		(resetListener ?? baseInitLoad !== ctx.instance.initLoad) ||
 		(globalName ?? needRouterSync)
 	);
 
 	if (!resetListener) {
 		return;
 	}
+
+	$e.once(`destroy.${ctx.r.appId}`, ctx.$destroy.bind(ctx));
 
 	$e.on('reset.load', waitNextTickForReset(ctx.initLoad.bind(ctx)));
 	$e.on('reset.load.silence', waitNextTickForReset(ctx.reload.bind(ctx)));

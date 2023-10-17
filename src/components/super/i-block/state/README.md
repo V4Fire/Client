@@ -389,6 +389,10 @@ the router after initialization.
 A string value that indicates what lifecycle hook the component is in.
 For instance, `created`, `mounted` or `destroyed`.
 
+#### isRelatedToSSR
+
+True if the component is in the context of SSR or hydration.
+
 #### remoteState
 
 A link to an application state object located in `core/component/state`.

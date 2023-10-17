@@ -52,7 +52,7 @@ export interface State {
 	 * })
 	 * ```
 	 */
-	globalEnv: GlobalEnvironment;
+	globalEnv?: GlobalEnvironment;
 }
 
 export interface GlobalEnvironment extends Dictionary {

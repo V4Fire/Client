@@ -20,6 +20,6 @@
 
 //#if runtime has includeThemes
 for name in availableThemes()
-	html[data-theme={"%s" % name}]
+	html[{themeAttribute()}={"%s" % name}]
 		interpolate-props(getDSVariables(name), false)
 //#endif
