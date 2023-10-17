@@ -29,7 +29,7 @@ import type { ComponentEvent, CallChild } from 'components/super/i-block/interfa
 
 import iBlockBase from 'components/super/i-block/base';
 
-import type { InferEvents, InferComponentEvents } from 'components/super/i-block/event/interface';
+import type { InferEvents, InferComponentEvents, GetComponentEvents } from 'components/super/i-block/event/interface';
 
 export * from 'components/super/i-block/event/interface';
 
@@ -43,14 +43,14 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * Events are described using tuples, where the first element is the event name, and the rest are arguments.
 	 */
 	readonly SelfEmitter!: InferComponentEvents<this, [
-		['error', ...unknown[]]
+		['error', boolean]
 	]>;
 
 	/**
 	 * Associative type for typing events emitted by the `localEmitter`.
 	 * Events are described using tuples, where the first element is the event name, and the rest are arguments.
 	 */
-	readonly LocalEmitter!: InferEvents<this, [
+	readonly LocalEmitter!: InferEvents<[
 		[string, ...unknown[]]
 	]>;
 
@@ -330,7 +330,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.emit({event: 'someEvent', logLevel: 'warn'}, 42);
 	 * ```
 	 */
-	emit<E extends this['SelfEmitter']['Events']>(event: E | ComponentEvent<E>, ...args: this['SelfEmitter']['Args'][E]): void;
+	emit<E extends GetComponentEvents<this['SelfEmitter']>>(
+		event: E | ComponentEvent<E>,
+		...args: this['SelfEmitter']['Args'][E]
+	): void;
+
 	emit(event: string | ComponentEvent, ...args: unknown[]): void;
 
 	emit(
@@ -468,7 +472,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 			parent = parent.$parent;
 		}
 
-		function logFromParent(parent: iBlockEvent, context: string) {
+		function logFromParent(parent: iBlock, context: string) {
 			parent.log({context, logLevel: eventDecl.logLevel}, that, ...logArgs);
 		}
 	}

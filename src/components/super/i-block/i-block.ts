@@ -26,11 +26,12 @@ import('components/super/i-block/test/b-super-i-block-lfc-dummy');
 //#endif
 
 export * from 'core/component';
+export { Module } from 'components/friends/module-loader';
+
 export * from 'components/super/i-block/const';
 export * from 'components/super/i-block/interface';
 
-export { Module } from 'components/friends/module-loader';
-export { InferEvents, InferComponentEvents } from 'components/super/i-block/event';
+export { InferEvents, InferComponentEvents, GetComponentEvents } from 'components/super/i-block/event';
 export { prop, field, system, computed, hook, watch, wait } from 'components/super/i-block/decorators';
 
 export {
@@ -50,7 +51,6 @@ export { Classes, ModVal, ModsDecl, ModsProp, ModsDict };
 
 @component()
 export default abstract class iBlock extends iBlockProviders {
-
 	override get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
 		return Object.cast(this);
 	}
