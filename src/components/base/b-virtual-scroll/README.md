@@ -71,22 +71,22 @@ See the implemented modifiers or the parent component.
 
 ## Events
 
-| EventName                       | Description                                                     | Payload description                           | Payload                     |
-| ------------------------------- | --------------------------------------------------------------- | --------------------------------------------- | --------------------------- |
-| `dataLoadSuccess`               | Data loading has succeeded.                                     | `data: object[], isInitialLoading: boolean`   | `[data, isInitialLoading]`  |
-| `dataLoadStart`                 | Data loading has started.                                       | `isInitialLoading: boolean`                   | `[isInitialLoading]`        |
-| `dataLoadError`                 | An error occurred while loading data.                           | `isInitialLoading: boolean`                   | `[isInitialLoading]`        |
-| `dataLoadEmpty`                 | Successful load with no data.                                   |                                               | `[]`                        |
-| `resetState`                    | Reset component state.                                          |                                               | `[]`                        |
-| `lifecycleDone`                 | All component data is rendered and loaded.                      |                                               | `[]`                        |
-| `convertDataToDB`               | Trigger data conversion to the `DB`.                            | `data: unknown`                               | `[data]`                    |
-| `elementEnter`                  | The element has entered the viewport.                           | `componentItem: MountedChild`                 | `[componentItem]`           |
-| `renderStart`                   | Rendering of items has started.                                 |                                               | `[]`                        |
-| `renderDone`                    | Rendering of items has finished.                                |                                               | `[]`                        |
-| `renderEngineStart`             | Rendering of items has started with the render engine.          |                                               | `[]`                        |
-| `renderEngineDone`              | Rendering of items has finished with the render engine.         |                                               | `[]`                        |
-| `domInsertStart`                | DOM node insertion has started.                                 |                                               | `[]`                        |
-| `domInsertDone`                 | DOM node insertion has finished.                                |                                               | `[]`                        |
+| EventName           | Description                                             | Payload description                         | Payload                    |
+|---------------------|---------------------------------------------------------|---------------------------------------------|----------------------------|
+| `dataLoadSuccess`   | Data loading has succeeded.                             | `data: object[], isInitialLoading: boolean` | `[data, isInitialLoading]` |
+| `dataLoadStart`     | Data loading has started.                               | `isInitialLoading: boolean`                 | `[isInitialLoading]`       |
+| `dataLoadError`     | An error occurred while loading data.                   | `isInitialLoading: boolean`                 | `[isInitialLoading]`       |
+| `dataLoadEmpty`     | Successful load with no data.                           |                                             | `[]`                       |
+| `resetState`        | Reset component state.                                  |                                             | `[]`                       |
+| `lifecycleDone`     | All component data is rendered and loaded.              |                                             | `[]`                       |
+| `convertDataToDB`   | Trigger data conversion to the `DB`.                    | `data: unknown`                             | `[data]`                   |
+| `elementEnter`      | The element has entered the viewport.                   | `componentItem: MountedChild`               | `[componentItem]`          |
+| `renderStart`       | Rendering of items has started.                         |                                             | `[]`                       |
+| `renderDone`        | Rendering of items has finished.                        |                                             | `[]`                       |
+| `renderEngineStart` | Rendering of items has started with the render engine.  |                                             | `[]`                       |
+| `renderEngineDone`  | Rendering of items has finished with the render engine. |                                             | `[]`                       |
+| `domInsertStart`    | DOM node insertion has started.                         |                                             | `[]`                       |
+| `domInsertDone`     | DOM node insertion has finished.                        |                                             | `[]`                       |
 
 Also, you can see the implemented traits or the parent component.
 
