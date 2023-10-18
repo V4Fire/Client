@@ -27,7 +27,7 @@ import type {
 
 import { defaultShouldProps, componentItemType, itemsProcessors } from 'components/base/b-virtual-scroll/const';
 
-import { Observer } from 'components/base/b-virtual-scroll/modules/observer';
+import type { Observer } from 'components/base/b-virtual-scroll/modules/observer';
 
 import iData, { component, prop } from 'components/super/i-data/i-data';
 
