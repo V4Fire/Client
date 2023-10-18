@@ -34,4 +34,10 @@ export interface BuildOptions {
 	 * Using this option does not allow creating child nodes!!!
 	 */
 	useDummy?: boolean;
+
+	/**
+	 * If true, a functional version of the component will be created.
+	 * The functional version is achieved by adding a -functional suffix to the component name during its creation.
+	 */
+	functional?: boolean;
 }

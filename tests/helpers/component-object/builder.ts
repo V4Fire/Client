@@ -158,14 +158,18 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	async build(options?: BuildOptions): Promise<JSHandle<COMPONENT>> {
 		await this.insertComponentStyles();
 
+		const
+			name = this.componentName,
+			fullComponentName = `${name}${options?.functional && !name.endsWith('-functional') ? '-functional' : ''}`;
+
 		if (options?.useDummy) {
-			const component = await Component.createComponentInDummy<COMPONENT>(this.pwPage, this.componentName, this.props);
+			const component = await Component.createComponentInDummy<COMPONENT>(this.pwPage, fullComponentName, this.props);
 
 			this.dummy = component;
 			this.componentStore = component;
 
 		} else {
-			this.componentStore = await Component.createComponent(this.pwPage, this.componentName, {
+			this.componentStore = await Component.createComponent(this.pwPage, fullComponentName, {
 				attrs: this.props,
 				children: this.children
 			});
