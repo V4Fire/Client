@@ -226,10 +226,16 @@ export class RequestInterceptor {
 				await delay(opts.delay);
 			}
 
+			const
+				fulfillOpts = Object.reject(opts, 'delay'),
+				body = Object.isFunction(payload) ? await payload(route, request) : payload,
+				contentType = fulfillOpts.contentType ?? 'application/json';
+
 			return route.fulfill({
 				status,
-				body: JSON.stringify(Object.isFunction(payload) ? await payload(route, request) : payload),
-				contentType: 'application/json'
+				body: contentType === 'application/json' && !Object.isString(body) ? JSON.stringify(body) : body,
+				contentType,
+				...fulfillOpts
 			});
 		};
 	}
