@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Route, Request, Page } from 'playwright';
+import type { Route, Request } from 'playwright';
 
 export type ResponseHandler = (route: Route, request: Request) => CanPromise<any>;
 
 /**
  * {@link Route.fulfill} function options.
- * Playwright does not provide an options interface for the fulfill function 
+ * Playwright does not provide an options interface for the fulfill function
  */
 export type FulfillOptions = Exclude<Parameters<Route['fulfill']>[0], undefined>;
 
