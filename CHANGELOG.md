@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+Added the ability to type events `iBlock`
+
 ## v4.0.0-beta.34 (2023-10-20)
 
 #### :bug: Bug Fix

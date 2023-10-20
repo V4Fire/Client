@@ -35,8 +35,8 @@ export type Stage =
 	string |
 	number;
 
-export interface ComponentEvent {
-	event: string;
+export interface ComponentEvent<E extends string = string> {
+	event: E;
 	logLevel?: LogLevel;
 }
 

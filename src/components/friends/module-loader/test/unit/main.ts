@@ -24,7 +24,7 @@ test.describe('friends/module-loader', () => {
 	test('should load dynamic modules from the template using `loadModules`', async ({page}) => {
 		const target = await renderDummy(page, 'loading dynamic modules from a template');
 
-		await target.evaluate(async (ctx) => ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete'));
+		await target.evaluate((ctx) => ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete'));
 
 		await test.expect(page.locator(resultSelector)).toHaveText([
 			'Dummy module #1',
