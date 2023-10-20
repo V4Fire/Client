@@ -208,6 +208,36 @@ __b-another-example.ss__
     < b-example @myEvent = console.log
 ```
 
+### How to type events?
+
+By default, component events do not have any TypeScript type support.
+However, you can explicitly declare the possible events and arguments when describing the component.
+This will improve autocompletion and protect against certain errors.
+
+To type an event, it needs to be declared in the static type `SelfEmitter` using
+a special type function called `InferComponentEvents`.
+Events are typed using tuples, where the first element is the event name and the subsequent elements are the arguments.
+
+```typescript
+import iBlock, { component, InferComponentEvents } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override readonly SelfEmitter!: InferComponentEvents<this, [
+    ['myEvent', {data: string}],
+    ['anotherEvent', string, boolean]
+  ], iBlock['SelfEmitter']>;
+
+  created() {
+    this.emit('myEvent', {data: 'some message'});
+
+    this.on('anotherEvent', (arg1, arg2) => {
+      // ...
+    });
+  }
+}
+```
+
 ### Event Bubbling
 
 Additionally, if you set the `dispatching` prop for a component, then when triggering an event,
@@ -579,6 +609,31 @@ export default class bExample extends iBlock {
     this.localEmitter.emit('example.a', 1);
     this.localEmitter.emit('example.b', 2);
     this.localEmitter.off({group: 'example.*'});
+  }
+}
+```
+
+##### How to type events?
+
+By default, `localEmitter` events do not have any TypeScript type support.
+However, you can explicitly declare the possible events and arguments when describing the component.
+This will improve autocompletion and protect against certain errors.
+
+To type an event, it needs to be declared in the static type `LocalEmitter` using
+a special type function called `InferEvents`.
+Events are typed using tuples, where the first element is the event name and the subsequent elements are the arguments.
+
+```typescript
+import iBlock, { component, InferEvents } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override readonly LocalEmitter!: InferEvents<[
+    ['myEvent', {data: string}]
+  ], iBlock['LocalEmitter']>;
+
+  created() {
+    this.localEmitter.on('myEvent', {data: 'some message'});
   }
 }
 ```
