@@ -128,7 +128,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 				].join(' '),
 
 				async ({page}) => {
-					test.skip(engine === 'intersection');
+					test.skip(engine === 'intersection', 'the intersection-observer strategy does not have the onlyRoot option');
 
 					const intersectionCount = await page.evaluateHandle(() => ({count: 0}));
 
@@ -136,7 +136,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 					await page.evaluate((target) => {
 						Object.assign(target.style, {
 							position: 'absolute',
-							top: '400px'
+							top: '300px'
 						});
 					}, target);
 
