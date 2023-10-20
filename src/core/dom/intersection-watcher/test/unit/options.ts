@@ -86,10 +86,10 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 					}, {target, wasInvoked});
 
 					// Scroll vertically by the full target height, wait 100ms
-					await scrollBy(page, {top: 100, delay: 100});
+					await scrollBy(page, {top: 100, delay: 200});
 
 					// Go back to the top
-					await scrollBy(page, {top: -100, delay: 100});
+					await scrollBy(page, {top: -100, delay: 200});
 
 					await assertWasInvokedIs(wasInvoked, false);
 				}
@@ -139,13 +139,13 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 
 					// Scroll by the 80% of the target height and width
 					// Now the 64% of a target area is in the viewport: 0.8h by 0.8w
-					await scrollBy(page, {top: 80, left: 80, delay: 100});
+					await scrollBy(page, {top: 80, left: 80, delay: 200});
 
 					await assertWasInvokedIs(wasInvoked, false);
 
 					// Scroll horizontally by the 20% of the target width
 					// Now the 80% of a target area is in the viewport: 0.8h by 1w
-					await scrollBy(page, {left: 20, delay: 100});
+					await scrollBy(page, {left: 20, delay: 200});
 
 					await assertWasInvokedIs(wasInvoked, true);
 				}
@@ -230,7 +230,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 					}, {target, wasInvoked});
 
 					// Scroll vertically by the full target height
-					await scrollBy(page, {top: 100, delay: 100});
+					await scrollBy(page, {top: 100, delay: 200});
 
 					await assertWasInvokedIs(wasInvoked, false);
 				}
