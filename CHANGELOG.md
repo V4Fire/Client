@@ -23,6 +23,13 @@ Added the ability to type events `iBlock`
 
 * The method `createDataProviderInstance` should be accessible at `beforeCreate` `iBlock`
 
+## v4.0.0-beta.33 (2023-10-18)
+
+#### :rocket: New Feature
+
+* Added new config option `webpack.externalizeInline` `config`
+* Added the ability to build initial HTML file without any inline Javascript by configuring `webpack.externalizeInline` `iStaticPage`
+
 ## v4.0.0-beta.32 (2023-10-17)
 
 #### :rocket: New Feature
