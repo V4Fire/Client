@@ -84,6 +84,178 @@ test.describe('core/dom/intersection-watcher: watching for the intersection of a
 					await test.expect(watchPromise).toBeResolved();
 				}
 			);
+
+			test(
+				'the watcher should be able to observe multiple elements at the same time',
+
+				async ({page}) => {
+					const newTargetsOffsets = [100, 200];
+
+					// Adding two elements with a horizontal offset
+					const newTargets = newTargetsOffsets.map((value) => createElement(page, {
+						...TARGET_STYLES,
+						marginLeft: `${value}px`
+					}));
+
+					const [secondTarget, thirdTarget] = await Promise.all(newTargets);
+
+					const intersectionResults = await page.evaluateHandle<string[]>(() => []);
+
+					await getObserver(engine).evaluate((observer, {target, secondTarget, thirdTarget, intersectionResults}) => {
+						observer.watch(target, () => {
+							intersectionResults.push('first');
+						});
+
+						observer.watch(secondTarget, () => {
+							intersectionResults.push('second');
+						});
+
+						observer.watch(thirdTarget, () => {
+							intersectionResults.push('third');
+						});
+					}, {target, secondTarget, thirdTarget, intersectionResults});
+
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
+
+					await assertIntersectionResultsIs(intersectionResults, ['first']);
+
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
+
+					await assertIntersectionResultsIs(intersectionResults, ['first', 'second']);
+
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
+
+					await assertIntersectionResultsIs(intersectionResults, ['first', 'second', 'third']);
+				}
+			);
+
+			test(
+				[
+					'the watcher should be able to observe multiple elements at the same time,',
+					'alternate elements placement (the topmost element is the rightmost)'
+				].join(' '),
+
+				async ({page}) => {
+					test.fail(engine === 'heightmap', 'issue #1017 - correction of the search algorithm is required');
+
+					// Moving the first element 200px to the right
+					await target.evaluate((element) => {
+						Object.assign(element.style, {
+							marginLeft: '200px'
+						});
+					});
+
+					const newTargetsOffsets = [100, 0];
+
+					// Adding two elements with a horizontal offset
+					const newTargets = newTargetsOffsets.map((value) => createElement(page, {
+						...TARGET_STYLES,
+						marginLeft: `${value}px`
+					}));
+
+					const [secondTarget, thirdTarget] = await Promise.all(newTargets);
+
+					const intersectionResults = await page.evaluateHandle<string[]>(() => []);
+
+					await getObserver(engine).evaluate((observer, {target, secondTarget, thirdTarget, intersectionResults}) => {
+						observer.watch(target, () => {
+							intersectionResults.push('first');
+						});
+
+						observer.watch(secondTarget, () => {
+							intersectionResults.push('second');
+						});
+
+						observer.watch(thirdTarget, () => {
+							intersectionResults.push('third');
+						});
+					}, {target, secondTarget, thirdTarget, intersectionResults});
+
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
+
+					await assertIntersectionResultsIs(intersectionResults, ['first']);
+
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
+
+					await assertIntersectionResultsIs(intersectionResults, ['first', 'second']);
+
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
+
+					await assertIntersectionResultsIs(intersectionResults, ['first', 'second', 'third']);
+				}
+			);
+
+			test(
+				[
+					'the watcher should be able to observe multiple elements at the same time,',
+					'alternate elements placement (the lowest element is the leftmost) and a horizontal scroll'
+				].join(' '),
+
+				async ({page}) => {
+					test.fail(engine === 'heightmap', 'issue #1017 - correction of the search algorithm is required');
+
+					// Moving the first element 200px beyond the right border of the viewport
+					await target.evaluate((element) => {
+						Object.assign(element.style, {
+							marginLeft: 'calc(100vw + 200px)'
+						});
+					});
+
+					const newTargetsOffsets = [100, 0];
+
+					// Adding two elements with a horizontal offset
+					const newTargets = newTargetsOffsets.map((value) => createElement(page, {
+						...TARGET_STYLES,
+						marginLeft: `calc(100vw + ${value}px)`
+					}));
+
+					const [secondTarget, thirdTarget] = await Promise.all(newTargets);
+
+					const intersectionResults = await page.evaluateHandle<string[]>(() => []);
+
+					await getObserver(engine).evaluate((observer, {target, secondTarget, thirdTarget, intersectionResults}) => {
+						observer.watch(target, () => {
+							intersectionResults.push('first');
+						});
+
+						observer.watch(secondTarget, () => {
+							intersectionResults.push('second');
+						});
+
+						observer.watch(thirdTarget, () => {
+							intersectionResults.push('third');
+						});
+					}, {target, secondTarget, thirdTarget, intersectionResults});
+
+					// Scrolling vertically to the bottom of the page and horizontally by the full target width
+					await scrollBy(page, {top: 300, left: 100, delay: 200});
+
+					await assertIntersectionResultsIs(intersectionResults, ['third']);
+
+					// Scrolling horizontally by the full target width
+					await scrollBy(page, {left: 100, delay: 200});
+
+					await assertIntersectionResultsIs(intersectionResults, ['third', 'second']);
+
+					// Scrolling horizontally by the full target width
+					await scrollBy(page, {left: 100, delay: 200});
+
+					await assertIntersectionResultsIs(intersectionResults, ['third', 'second', 'first']);
+				}
+			);
 		});
+	}
+
+	async function assertIntersectionResultsIs(
+		intersectionResults: JSHandle<string[]>,
+		assertion: string[]
+	) {
+		test.expect(await intersectionResults.evaluate((results) => results)).toMatchObject(assertion);
 	}
 });
