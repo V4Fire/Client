@@ -78,7 +78,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection of a
 						observer.watch(target, resolve);
 					}), target);
 
-					// Scroll vertically by the full target height (default `threshold` option value is 1)
+					// Scrolling vertically by the full target height (default `threshold` option value is `1`)
 					await scrollBy(page, {top: 100});
 
 					await test.expect(watchPromise).toBeResolved();

@@ -85,7 +85,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 						});
 					}, {target, wasInvoked});
 
-					// Scroll vertically by the full target height, wait 100ms
+					// Scrolling vertically by the full target height
 					await scrollBy(page, {top: 100, delay: 200});
 
 					// Go back to the top
@@ -107,7 +107,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 						});
 					}, {target, intersectionTimes});
 
-					// Scroll vertically by the full target height and then go back to the top after 200ms several times
+					// Scrolling vertically by the full target height and then go back to the top several times
 					let scrollTries = 3;
 					while (scrollTries > 0) {
 						scrollTries -= 1;
@@ -126,7 +126,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 				].join(' '),
 
 				async ({page}) => {
-					// Move the target outside the viewport
+					// Moving the target outside the viewport
 					await target.evaluate((element) => {
 						element.style.marginLeft = '100%';
 					});
@@ -137,13 +137,13 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 						});
 					}, {target, wasInvoked});
 
-					// Scroll by the 80% of the target height and width
+					// Scrolling by the 80% of the target height and width
 					// Now the 64% of a target area is in the viewport: 0.8h by 0.8w
 					await scrollBy(page, {top: 80, left: 80, delay: 200});
 
 					await assertWasInvokedIs(wasInvoked, false);
 
-					// Scroll horizontally by the 20% of the target width
+					// Scrolling horizontally by the 20% of the target width
 					// Now the 80% of a target area is in the viewport: 0.8h by 1w
 					await scrollBy(page, {left: 20, delay: 200});
 
@@ -175,7 +175,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 						});
 					}, {target, intersectionResults});
 
-					// Scroll vertically by 50% of the target height, wait 500ms
+					// Scrolling vertically by 50% of the target height, wait 500ms
 					await scrollBy(page, {top: 50, delay: 500});
 
 					// Go back to the top
@@ -212,7 +212,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 							observer.watch(target, {onEnter}, handler);
 						}), target);
 
-					// Scroll vertically by the full target height
+					// Scrolling vertically by the full target height
 					await scrollBy(page, {top: 100});
 
 					test.expect(await watchPromise).toMatchObject(['onEnter', 'handler']);
@@ -229,7 +229,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 						});
 					}, {target, wasInvoked});
 
-					// Scroll vertically by the full target height
+					// Scrolling vertically by the full target height
 					await scrollBy(page, {top: 100, delay: 200});
 
 					await assertWasInvokedIs(wasInvoked, false);
@@ -251,7 +251,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 							observer.watch(target, {delay, onEnter}, (watcher) => watcher);
 						}), {target, delay});
 
-					// Scroll vertically by the full target height
+					// Scrolling vertically by the full target height
 					await scrollBy(page, {top: 100});
 
 					test.expect(await watchPromise).toBeLessThan(delay);
@@ -267,7 +267,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 							observer.watch(target, {onLeave: resolve}, (watcher) => watcher);
 						}), target);
 
-					// Scroll vertically by the full target height, wait 200ms
+					// Scrolling vertically by the full target height
 					await scrollBy(page, {top: 100, delay: 200});
 
 					// Go back to the top
@@ -292,7 +292,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 							observer.watch(target, {delay, onLeave}, (watcher) => watcher);
 						}), {target, delay});
 
-					// Scroll vertically by the full target height, wait 200ms
+					// Scrolling vertically by the full target height
 					await scrollBy(page, {top: 100, delay: 200});
 
 					// Go back to the top
