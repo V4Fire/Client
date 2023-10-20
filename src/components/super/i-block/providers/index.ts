@@ -333,4 +333,9 @@ export default abstract class iBlockProviders extends iBlockState {
 	protected clearComponentHydratedData(): void {
 		hydrationStore.remove(this.componentId);
 	}
+
+	protected override initBaseAPI(): void {
+		super.initBaseAPI();
+		this.createDataProviderInstance = this.instance.createDataProviderInstance.bind(this);
+	}
 }
