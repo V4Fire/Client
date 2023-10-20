@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-Added the ability to type events
+* Added the ability to type events
 
 ## v4.0.0-beta.34 (2023-10-20)
 
