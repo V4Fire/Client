@@ -47,9 +47,6 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 		rootInner = await createElement(page, ROOT_INNER_STYLES, root);
 		target = await createElement(page, TARGET_STYLES, rootInner);
 
-		// Scrolling until the root element is entirely in the viewport
-		await scrollBy(page, {top: 300});
-
 		IntersectionObserverModule = await Utils.import(page, 'core/dom/intersection-watcher/engines/intersection-observer.ts');
 		intersectionObserver = await IntersectionObserverModule.evaluateHandle(({default: Observer}) => new Observer());
 
@@ -77,6 +74,9 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 							observer.watch(target, {root}, resolve);
 						}), {root, target});
 
+					// Scrolling until the root element is entirely in the viewport
+					await scrollBy(page, {top: 300, delay: 200});
+
 					// Scrolling the root element so that the target is in the root view
 					await scrollBy(page, {top: 100, left: 100}, root);
 
@@ -94,7 +94,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 					await page.evaluate((target) => {
 						Object.assign(target.style, {
 							position: 'absolute',
-							top: '400px'
+							top: '300px'
 						});
 					}, target);
 
@@ -103,6 +103,9 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 							intersectionCount.count += 1;
 						});
 					}, {root, target, intersectionCount});
+
+					// Scrolling until the root element is entirely in the viewport
+					await scrollBy(page, {top: 300, delay: 200});
 
 					// Scrolling vertically so that the target is in the root view
 					await scrollBy(page, {top: 200, delay: 200}, root);
@@ -142,6 +145,9 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 							intersectionCount.count += 1;
 						});
 					}, {root, target, intersectionCount});
+
+					// Scrolling until the root element is entirely in the viewport
+					await scrollBy(page, {top: 300, delay: 200});
 
 					// Scrolling vertically so that the target is in the root view
 					await scrollBy(page, {top: 200, delay: 200}, root);
