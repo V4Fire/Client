@@ -65,7 +65,7 @@ export default abstract class iBlockState extends iBlockMods {
 	@computed({watchable: true})
 	get remoteState(): State {
 		if (SSR) {
-			return {...this.ssrState!, ...this.remoteState};
+			return {...this.ssrState!, ...remoteState};
 		}
 
 		return remoteState;
