@@ -77,14 +77,31 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 			unwatch();
 			this.observers.delete(watcher);
 
-			if (this.elements.has(watcher.target)) {
-				observer.value.unobserve(watcher.target);
-				observer.free();
+			let
+				observerHasWatchers = false,
+				elementHasWatchers = false;
 
-			} else {
-				this.observersPool.delete(watcher.target);
+			for (const [watcherItem, observerItem] of this.observers) {
+				if (observerItem === observer.value) {
+					observerHasWatchers = true;
+				}
+
+				if (watcherItem.target === watcher.target) {
+					elementHasWatchers = true;
+				}
+			}
+
+			if (!observerHasWatchers) {
 				observer.value.disconnect();
 				observer.destroy();
+
+				if (observerPool?.size === 0) {
+					this.observersPool.delete(resolvedRoot);
+				}
+
+			} else if (!elementHasWatchers) {
+				observer.value.unobserve(watcher.target);
+				observer.free();
 			}
 		};
 

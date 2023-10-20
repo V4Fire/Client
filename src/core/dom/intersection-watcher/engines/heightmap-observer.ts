@@ -110,7 +110,7 @@ export default class MutationObserverEngine extends AbstractEngine {
 			this.checkViewport();
 		};
 
-		if (opts === false) {
+		if (opts === true) {
 			run();
 			return;
 		}
@@ -163,8 +163,20 @@ export default class MutationObserverEngine extends AbstractEngine {
 			fromX = fromY != null ? searchWatcher(true, watchersXPositions) : null,
 			toX = fromX != null && fromY != null ? searchWatcher(false, watchersXPositions) : null;
 
-		if (fromY == null || toY == null || fromX == null || toX == null) {
+		const noElementsInView =
+			fromY == null ||
+			toY == null ||
+			fromX == null ||
+			toX == null;
+
+		// If none of the elements intersect the viewport / root view,
+		// execute onLeave for the remaining elements of the intersectionWindow and clean up
+		if (noElementsInView) {
 			if (this.intersectionWindow.length > 0) {
+				this.intersectionWindow.forEach((watcher) => {
+					this.onObservableOut(watcher, scrollTarget);
+				});
+
 				this.intersectionWindow = [];
 			}
 
@@ -280,8 +292,21 @@ export default class MutationObserverEngine extends AbstractEngine {
 			});
 		});
 
-		positions.sort((a, b) => a.top - b.top);
-		this.watchersXPositions = positions.slice().sort((a, b) => a.left - b.left);
+		positions.sort((a, b) => {
+			if (a.watcher.target === b.watcher.target) {
+				return a.watcher.threshold - b.watcher.threshold;
+			}
+
+			return a.top - b.top;
+		});
+
+		this.watchersXPositions = positions.slice().sort((a, b) => {
+			if (a.watcher.target === b.watcher.target) {
+				return a.watcher.threshold - b.watcher.threshold;
+			}
+
+			return a.left - b.left;
+		});
 	}
 
 	/**

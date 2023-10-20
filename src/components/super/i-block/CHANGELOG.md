@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.34 (2023-10-20)
+
+#### :bug: Bug Fix
+
+* The method `createDataProviderInstance` should be accessible at `beforeCreate`
+
 ## v4.0.0-beta.32 (2023-10-17)
 
 #### :rocket: New Feature
