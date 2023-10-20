@@ -231,7 +231,11 @@ export default class bExample extends iBlock {
   created() {
     this.emit('myEvent', {data: 'some message'});
 
-    this.on('anotherEvent', (arg1, arg2) => {
+    this.on('anotherEvent', (component, arg1, arg2) => {
+      // ...
+    });
+
+    this.on('onAnotherEvent', (arg1, arg2) => {
       // ...
     });
   }
