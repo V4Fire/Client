@@ -37,6 +37,13 @@ export class RequestInterceptor {
 	readonly mock: ReturnType<ModuleMocker['fn']>;
 
 	/**
+	 * Short-hand for {@link RequestInterceptor.prototype.mock.mock.calls}
+	 */
+	get calls(): any[] {
+		return this.mock.mock.calls;
+	}
+
+	/**
 	 * Creates a new instance of RequestInterceptor.
 	 *
 	 * @param ctx - the page or browser context.

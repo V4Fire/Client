@@ -136,7 +136,7 @@ await interceptor.start();
 // ...
 
 // Logs the number of times interception occurred
-console.log(interceptor.mock.mock.calls.length);
+console.log(interceptor.calls.length);
 ```
 
 ### How to View the Parameters of Intercepted Requests?
@@ -153,7 +153,7 @@ await interceptor.start();
 
 // ...
 
-const calls = provider.mock.mock.calls;
+const calls = provider.calls;
 const query = fromQueryString(new URL((<Route>providerCalls[0][0]).request().url()).search);
 
 // Logs the query parameters of the first intercepted request
