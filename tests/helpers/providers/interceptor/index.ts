@@ -10,7 +10,9 @@ import type { BrowserContext, Page, Request, Route } from 'playwright';
 import delay from 'delay';
 import { ModuleMocker } from 'jest-mock';
 
-import type { ResponseHandler, ResponseOptions, ResponsePayload } from 'tests/helpers/providers/interceptor/interface';
+import { fromQueryString } from 'core/url';
+
+import type { InterceptedRequest, ResponseHandler, ResponseOptions, ResponsePayload } from 'tests/helpers/providers/interceptor/interface';
 
 /**
  * API that provides a simple way to intercept and respond to any request.
@@ -65,8 +67,16 @@ export class RequestInterceptor {
 	 * Returns the intercepted request
 	 * @param at - the index of the request (starting from 0)
 	 */
-	request(at: number): CanUndef<Request> {
-		return this.calls[at][0].request();
+	request(at: number): CanUndef<InterceptedRequest> {
+		const request: Request = this.calls[at]?.[0]?.request();
+
+		if (request == null) {
+			return;
+		}
+
+		return Object.assign(request, {
+			query: () => fromQueryString(request.url())
+		});
 	}
 
 	/**
