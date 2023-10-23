@@ -62,6 +62,14 @@ export class RequestInterceptor {
 	}
 
 	/**
+	 * Returns the intercepted request
+	 * @param at - the index of the request (starting from 0)
+	 */
+	request(at: number): CanUndef<Request> {
+		return this.calls[at][0].request();
+	}
+
+	/**
 	 * Sets a response for one request.
 	 *
 	 * @example
