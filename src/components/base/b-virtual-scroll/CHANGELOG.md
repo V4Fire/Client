@@ -9,17 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-beta.36 (2023-10-23)
 
 #### :bug: Bug Fix
 
 * Added missed `itemsProp` property
-
-## v4.??.?? (2023-??-??)
-
-#### :house: Internal
-
-* API migration
 
 ## v3.30.1 (2022-10-25)
 

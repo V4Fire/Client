@@ -11,11 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.??.?? (2023-??-??)
+## v4.0.0-beta.36 (2023-10-23)
 
 #### :bug: Bug Fix
 
-* Added missed `itemsProp` property `components/base/b-virtual-scroll`
+* Added missed `itemsProp` property `bVirtualScroll`
 
 ## v4.0.0-beta.35 (2023-10-20)
 
