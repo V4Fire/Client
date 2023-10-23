@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Added missed `itemsProp` property `bVirtualScroll`
+* Added the missed `itemsProp` property `bVirtualScroll`
 
 ## v4.0.0-beta.35 (2023-10-20)
 

@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Added missed `itemsProp` property
+* Added the missed `itemsProp` property
 
 ## v3.30.1 (2022-10-25)
 
