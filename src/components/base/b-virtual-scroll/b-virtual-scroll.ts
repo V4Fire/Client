@@ -106,6 +106,10 @@ export default class bVirtualScroll extends iData implements iItems {
 	@prop({type: [Function, Object], default: () => ({})})
 	readonly itemProps!: iItems['itemProps'];
 
+	/** {@link iItems.items} */
+	@prop(Array)
+	readonly itemsProp: this['Items'] = [];
+
 	/**
 	 * The maximum number of elements to cache
 	 */
