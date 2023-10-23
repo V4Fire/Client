@@ -129,8 +129,9 @@ exports.getScriptDeclByName = getScriptDeclByName;
  * @param {boolean} [optional] - if true, the missing of this script won't throw an error
  * @param {boolean} [defer=true] - if true, the script is loaded with the "defer" attribute
  * @param {boolean} [inline] - if true, the script is placed as a text
- * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
- * @returns {string}
+ * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag * @returns {string}
+ * @param {boolean} [js]
+ *
  */
 function getScriptDeclByName(name, {
 	assets,
@@ -143,31 +144,32 @@ function getScriptDeclByName(name, {
 	let
 		decl;
 
-	if (!assets[name] && !js) {
-		if (optional) {
-			return '';
-		}
-
-		throw new ReferenceError(`A script by the name "${name}" is not defined`);
-	}
-
 	if (needInline(inline)) {
-		const
-			filePath = src.clientOutput(assets[name].path);
+		if (assets[name]) {
+			const
+				filePath = src.clientOutput(assets[name].path);
 
-		if (fs.existsSync(filePath)) {
-			decl = `include('${filePath}');`;
+			if (fs.existsSync(filePath)) {
+				decl = `include('${filePath}');`;
+			}
+
+		} else {
+			if (!optional) {
+				throw new ReferenceError(`A script by the name "${name}" is not defined`);
+			}
+
+			return '';
 		}
 
 	} else {
 		decl = getScriptDecl({
 			...defAttrs,
 			defer,
-			js,
-			src: js ? addPublicPath([`PATH['${name}']`]) : assets[name].publicPath
+			js: true,
+			src: addPublicPath([`PATH['${name}']`])
 		});
 
-		if (optional && js) {
+		if (optional) {
 			decl = `if ('${name}' in PATH) {
 	${decl}
 }`;
