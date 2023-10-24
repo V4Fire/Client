@@ -33,7 +33,7 @@ export interface InterceptedRequest extends Request {
 	/**
 	 * Returns an object containing the GET parameters from the request
 	 */
-	query(): Dictionary;
+	query(): Record<string, unknown>;
 }
 
 export type ResponsePayload = object | string | number;
