@@ -72,7 +72,7 @@ function getPageScriptDepsDecl(dependencies, {assets, wrap, js} = {}) {
 		// We can't compile styles into static CSS files because
 		// we have to provide a dynamic public path to them via runtime
 		if (needLoadStylesAsJS) {
-			scripts.unshift(getScriptDeclByName(`${dep}_style`, {assets}));
+			scripts.unshift(getScriptDeclByName(`${dep}_style`, {assets, js}));
 		}
 
 		if (dep === 'index') {
@@ -153,10 +153,10 @@ function getScriptDeclByName(name, {
 	wrap,
 	js = false
 }) {
-	let
-		decl;
+	const
+		inlineDecl = needInline(inline);
 
-	if (!assets[name] && !js) {
+	if (!assets[name] && (inlineDecl || !js)) {
 		if (optional) {
 			return '';
 		}
@@ -164,7 +164,10 @@ function getScriptDeclByName(name, {
 		throw new ReferenceError(`A script with the name "${name}" is not defined`);
 	}
 
-	if (needInline(inline)) {
+	let
+		decl;
+
+	if (inlineDecl) {
 		const
 			filePath = src.clientOutput(assets[name].path);
 
@@ -226,19 +229,21 @@ function getStyleDeclByName(name, {
 		return getScriptDeclByName(rname, {assets, optional, defer, inline, wrap});
 	}
 
-	let
-		decl;
+	const
+		inlineDecl = needInline(inline);
 
-	if (!assets[rname] && !js) {
+	if (!assets[rname] && (inlineDecl || !js)) {
 		if (optional) {
 			return '';
-
 		}
 
 		throw new ReferenceError(`A style with the name "${name}" is not defined`);
 	}
 
-	if (needInline(inline)) {
+	let
+		decl;
+
+	if (inlineDecl) {
 		const
 			filePath = src.clientOutput(assets[rname].path);
 
