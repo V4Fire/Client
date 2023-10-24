@@ -35,8 +35,8 @@ export type Stage =
 	string |
 	number;
 
-export interface ComponentEvent {
-	event: string;
+export interface ComponentEvent<E extends string = string> {
+	event: E;
 	logLevel?: LogLevel;
 }
 
@@ -120,6 +120,9 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 
 	// @ts-ignore (access)
 	ifOnceStore: CTX['ifOnceStore'];
+
+	// @ts-ignore (access)
+	hydrationStore: CTX['hydrationStore'];
 
 	// @ts-ignore (access)
 	syncRouterState: CTX['syncRouterState'];

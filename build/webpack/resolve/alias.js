@@ -10,7 +10,7 @@
 
 const
 	$C = require('collection.js'),
-	path = require('path');
+	path = require('upath');
 
 const
 	{src, webpack} = require('@config/config'),

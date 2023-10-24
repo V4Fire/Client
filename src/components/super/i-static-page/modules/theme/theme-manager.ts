@@ -119,9 +119,7 @@ export default class ThemeManager extends Friend {
 
 		// TODO: understand why cant we use `this.async.on(mq, 'change', ...)`; https://github.com/V4Fire/Core/issues/369
 		mq.onchange = this.async.proxy((event: MediaQueryListEvent) => (
-			event.matches ?
-				this.current = darkTheme :
-				this.current = lightTheme
+			this.current = event.matches ? darkTheme : lightTheme
 		), {single: false, label: $$.themeChange});
 	}
 }

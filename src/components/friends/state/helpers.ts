@@ -42,6 +42,7 @@ export function set(this: Friend, data: Nullable<Dictionary>): Array<Promise<unk
 			p = key.split('.'),
 			originalVal = this.field.get(key);
 
+		// Is property setter
 		if (Object.isFunction(originalVal)) {
 			const
 				res = originalVal.call(this.ctx, ...Array.concat([], newVal));
@@ -50,6 +51,7 @@ export function set(this: Friend, data: Nullable<Dictionary>): Array<Promise<unk
 				promises.push(res);
 			}
 
+		// Modifier
 		} else if (p[0] === 'mods') {
 			let
 				res;
@@ -65,9 +67,12 @@ export function set(this: Friend, data: Nullable<Dictionary>): Array<Promise<unk
 				promises.push(res);
 			}
 
+		// Field
 		} else if (!Object.fastCompare(newVal, originalVal)) {
 			this.field.set(key, newVal);
 		}
+
+		this.ctx.hydrationStore?.set(this.componentId, key, Object.cast(newVal));
 	});
 
 	return promises;

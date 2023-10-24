@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type remoteState from 'core/component/state';
+import type { State } from 'core/component/client-state';
 import type { ComponentInterface } from 'core/component';
 
 export { globalEmitter, ComponentResetType } from 'core/component';
-export type RemoteState = typeof remoteState;
+export type RemoteState = State;
 
 export interface RootMod {
 	name: string;

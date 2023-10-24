@@ -13,6 +13,8 @@
 
 import { derive } from 'core/functools/trait';
 
+import Block, { getElementSelector } from 'components/friends/block';
+
 import iVisible from 'components/traits/i-visible/i-visible';
 import iOpenToggle, { CloseHelperEvents } from 'components/traits/i-open-toggle/i-open-toggle';
 import iLockPageScroll from 'components/traits/i-lock-page-scroll/i-lock-page-scroll';
@@ -21,6 +23,8 @@ import iData, { component, hook, prop, ModsDecl } from 'components/super/i-data/
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/traits/i-open-toggle/i-open-toggle';
+
+Block.addToPrototype({getElementSelector});
 
 interface bSidebar extends Trait<typeof iOpenToggle>, Trait<typeof iLockPageScroll> {}
 

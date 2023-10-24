@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	{statoscope} = require('@config/config'),
 	{entryDownloadDiffSizeLimits, entryDownloadDiffTimeLimits} = statoscope();
 

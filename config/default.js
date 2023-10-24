@@ -12,7 +12,7 @@ const
 	config = require('@v4fire/core/config/default');
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	path = require('upath');
 
 const
@@ -223,6 +223,25 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Returns `true` if the application build times should be traced.
+		 * Trace file will be created in the project's root.
+		 * It's highly recommended to use this option with `module-parallelism=1`.
+		 *
+		 * @cli trace-build-times
+		 * @env TRACE_BUILD_TIMES
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		trace(def = false) {
+			return o('trace-build-times', {
+				env: true,
+				type: 'boolean',
+				default: def
+			});
+		},
+
+		/**
 		 * Controls the level of verbosity in the project's build output.
 		 * This parameter is useful for users who want to have more detailed information about the project's build.
 		 *
@@ -281,7 +300,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {?string}
 		 */
 		target(
-			def = /ES[35]$/.test(this.config.es()) && !this.webpack.storybook() ?
+			def = /ES[35]$/.test(this.config.es()) && !this.storybook() ?
 				'browserslist:ie 11' :
 				'web'
 		) {
@@ -401,7 +420,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if all resources from the initial entry point should be embedded in HTML files
+		 * Returns true if all resources from the initial entry point should be embedded in HTML files.
+		 * Otherwise, they will be loaded via tags, either dynamically inserted or inlined
 		 *
 		 * @cli inline-initial
 		 * @env INLINE_INITIAL
@@ -414,6 +434,32 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true,
 				type: 'boolean',
 				default: def
+			});
+		},
+
+		/**
+		 * Returns true if no source code should be inlined directly in HTML
+		 *
+		 * @cli externalize-inline
+		 * @env EXTERNALIZE_INLINE
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		externalizeInline(def = false) {
+			return o('externalize-inline', {
+				env: true,
+				type: 'boolean',
+				default: def,
+				validate: (externalizeInline) => {
+					const {webpack} = this.config;
+
+					return !externalizeInline || (
+						!webpack.dynamicPublicPath() &&
+						!webpack.inlineInital &&
+						!webpack.fatHTML()
+					);
+				}
 			});
 		},
 
@@ -763,6 +809,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					}
 				};
 			}
+		},
+
+		/**
+		 * Returns number of modules to build in parallel
+		 *
+		 * @cli module-parallelism
+		 * @env MODULE_PARALLELISM
+		 *
+		 * @see https://webpack.js.org/configuration/other-options/#parallelism
+		 * @param {number} [def] - default value
+		 * @returns {number}
+		 */
+		moduleParallelism(def = 100) {
+			return o('module-parallelism', {
+				env: true,
+				default: def,
+				type: 'number'
+			});
 		}
 	},
 
@@ -1188,7 +1252,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * npx webpack --env supported-locales=en,ru
 		 * ```
 		 */
-		supportedLocales(def = this.config.locale) {
+		supportedLocales(def = 'en,ru') {
 			return o('supported-locales', {
 				env: true,
 				coerce: (str) => str.split(/\s*,\s*/),
@@ -1222,7 +1286,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'prelude/test-env': this.build.isTestEnv(),
 			storybook: this.webpack.storybook(),
 
-			dummyComponents: this.build.loadDummyComponents()
+			dummyComponents: this.build.loadDummyComponents(),
+
+			theme: this.theme.default(),
+			includeThemes: this.theme.include(),
+			prefersColorSchemeEnabled: this.theme.detectUserPreferences().prefersColorScheme.enabled
 		};
 	},
 

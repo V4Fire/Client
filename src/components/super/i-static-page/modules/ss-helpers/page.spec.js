@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	fs = require('fs-extra'),
 	{src, webpack} = require('@config/config');
@@ -30,7 +32,9 @@ describe('components/super/i-static-page/modules/ss-helpers/page', () => {
 				name = 'p-v4-components-demo',
 				file = src.clientOutput(`${webpack.output({name})}.init.js`);
 
-			fs.unlinkSync(file);
+			if (fs.existsSync(file)) {
+				fs.unlinkSync(file);
+			}
 
 			await ss.generateInitJS(name, {
 				deps,
@@ -74,7 +78,7 @@ try {
 \t\t\t\treturn typeof v === 'string' ? v : v.publicPath || v.path;
 \t\t\t}
 
-\t\t\tthrow new ReferenceError('A resource by the path "' + prop + '" is not defined');
+\t\t\tthrow new ReferenceError('The resource at the path "' + prop + '" is not defined');
 \t\t}
 \t});
 } catch (_) {}

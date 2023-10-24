@@ -28,7 +28,7 @@ module.exports = function getHash(value, length = build.hashLength) {
 
 	const
 		path = require('upath'),
-		glob = require('glob');
+		glob = require('fast-glob');
 
 	const
 		hasha = require('hasha'),
@@ -37,7 +37,7 @@ module.exports = function getHash(value, length = build.hashLength) {
 	let
 		res;
 
-	if (Object.isString(value) && (path.extname(value) || glob.hasMagic(value))) {
+	if (Object.isString(value) && (path.extname(value) || glob.isDynamicPattern(value))) {
 		res = hashFiles.sync({files: [value], algorithm});
 
 	} else {

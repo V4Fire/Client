@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('./modules/interface');
+'use strict';
+
+const {Libs, StyleLibs, Links} = require('./modules/interface');
 
 const
 	config = require('@config/config'),
@@ -57,7 +59,7 @@ if (!ssr) {
 
 		default:
 			if (!runtime.engine) {
-				throw new Error('An engine to use is not specified');
+				throw new Error('The engine to use is not specified');
 			}
 	}
 }

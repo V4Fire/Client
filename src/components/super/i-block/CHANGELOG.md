@@ -9,7 +9,37 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.35 (2023-10-20)
+
+#### :rocket: New Feature
+
+* Added the ability to type events
+
+## v4.0.0-beta.34 (2023-10-20)
+
+#### :bug: Bug Fix
+
+* The method `createDataProviderInstance` should be accessible at `beforeCreate`
+
+## v4.0.0-beta.32 (2023-10-17)
+
+#### :rocket: New Feature
+
+* Added a factory to create data providers
+
+## v4.0.0-beta.31 (2023-10-12)
+
+#### :rocket: New Feature
+
+* Added the `theme` modifier calculation to components
+
+## v4.0.0-beta.30 (2023-10-12)
+
+#### :bug: Bug Fix
+
+* Fix initializing of the `helpers` and `providers` blocks for SSR
+
+## v4.0.0-beta.29 (2023-10-02)
 
 #### :rocket: New Feature
 

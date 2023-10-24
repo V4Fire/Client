@@ -9,11 +9,17 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## 4.??.?? (2023-??-??)
+## v4.0.0-beta.?? (2023-??-??)
 
 #### :boom: Breaking Change
 
 * Major update. Visit [readme](./readme) to see migration guide.
+
+## v4.0.0-beta.36 (2023-10-23)
+
+#### :bug: Bug Fix
+
+* Added the missed `itemsProp` property
 
 ## v3.30.1 (2022-10-25)
 

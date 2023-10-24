@@ -6,18 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Provider, {
-
-	providers,
-
-	requestCache,
-	instanceCache,
-
-	ModelMethod,
-	RequestQuery,
-	RequestBody
-
-} from 'core/data';
+import type Provider from 'core/data';
+import type { ModelMethod, RequestQuery, RequestBody } from 'core/data';
 
 import type { ReadonlyEventEmitterWrapper } from 'core/async';
 
@@ -80,40 +70,10 @@ class DataProvider extends Friend {
 		super(component);
 
 		const
-			{ctx} = this;
+			dp = component.createDataProviderInstance(provider, opts);
 
-		opts = {
-			id: ctx.r.componentId,
-			remoteState: ctx.remoteState,
-			...opts
-		};
-
-		let
-			dp: Provider;
-
-		if (Object.isString(provider)) {
-			const
-				ProviderConstructor = <CanUndef<typeof Provider>>providers[provider];
-
-			if (ProviderConstructor == null) {
-				if (provider === 'Provider') {
-					return;
-				}
-
-				throw new ReferenceError(`The provider "${provider}" is not defined`);
-			}
-
-			dp = new ProviderConstructor(opts);
-			registerDestructor();
-
-		} else if (Object.isFunction(provider)) {
-			const ProviderConstructor = Object.cast<typeof Provider>(provider);
-
-			dp = new ProviderConstructor(opts);
-			registerDestructor();
-
-		} else {
-			dp = <Provider>provider;
+		if (dp == null) {
+			return;
 		}
 
 		this.provider = dp;
@@ -131,14 +91,6 @@ class DataProvider extends Friend {
 				return dp.emitter.off.bind(dp.emitter) ?? (() => Object.throw());
 			}
 		});
-
-		function registerDestructor() {
-			ctx.r.unsafe.async.worker(() => {
-				const key = dp.getCacheKey();
-				delete instanceCache[key];
-				delete requestCache[key];
-			});
-		}
 	}
 
 	/**

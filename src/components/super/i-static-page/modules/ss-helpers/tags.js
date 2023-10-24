@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('../interface');
+'use strict';
+
+const {InitializedLib, InitializedStyleLib, InitializedLink} = require('../interface');
 
 const
 	config = require('@config/config');
@@ -41,10 +43,10 @@ exports.getScriptDecl = getScriptDecl;
 
 /**
  * Returns code to load the specified library.
- * If the `inline` parameter is set to `true`, the function will return a promise.
+ * If the `inline` parameter is set to true, the function will return a promise.
  *
- * @param {(InitializedLib|body)} lib - the library or raw code
- * @param {string} [body] - the library body
+ * @param {(InitializedLib|string)} lib - the library or its raw code
+ * @param {string} [body] - the library raw code
  * @returns {(Promise<string>|string)}
  *
  * @example
@@ -69,7 +71,7 @@ exports.getScriptDecl = getScriptDecl;
  * getScriptDecl('var a = 1;');
  * ```
  */
-function getScriptDecl(lib, body) {
+function getScriptDecl(lib, body = '') {
 	if (lib.load === false || isFolder.test(lib.src)) {
 		return '';
 	}
@@ -78,11 +80,11 @@ function getScriptDecl(lib, body) {
 		return `<script ${normalizeAttrs(defInlineAttrs)}>${lib}</script>`;
 	}
 
-	body = body || '';
+	lib.defer = lib.defer !== false;
 
 	const
 		isInline = Boolean(needInline(lib.inline) || body),
-		createElement = lib.js && lib.defer !== false;
+		createElement = lib.js && lib.defer;
 
 	let
 		attrs,
@@ -111,7 +113,7 @@ function getScriptDecl(lib, body) {
 		} else if (createElement) {
 			props += 'el.async = false;';
 
-		} else if (!lib.js && lib.defer !== false) {
+		} else if (!lib.js && lib.defer) {
 			attrsObj.defer = null;
 		}
 
@@ -172,10 +174,10 @@ exports.getStyleDecl = getStyleDecl;
 
 /**
  * Returns code to load the specified style library.
- * If the `inline` parameter is set to `true`, the function will return a promise.
+ * If the `inline` parameter is set to true, the function will return a promise.
  *
- * @param {(InitializedStyleLib|body)} lib - the library or raw code
- * @param {string} [body] - the library body
+ * @param {(InitializedStyleLib|string)} lib - the library or its raw code
+ * @param {string} [body] - the library raw code
  * @returns {(Promise<string>|string)}
  *
  * @example
@@ -195,12 +197,12 @@ exports.getStyleDecl = getStyleDecl;
  * getStyleDecl({src: 'node_modules/font-awesome/dist/font-awesome.css', js: true});
  * ```
  */
-function getStyleDecl(lib, body) {
+function getStyleDecl(lib, body = '') {
 	if (Object.isString(lib)) {
 		return `<style ${normalizeAttrs(defInlineAttrs)}>${lib}</style>`;
 	}
 
-	body = body || '';
+	lib.defer = lib.defer !== false;
 
 	const
 		rel = lib.attrs?.rel ?? 'stylesheet',
@@ -221,7 +223,7 @@ function getStyleDecl(lib, body) {
 			rel
 		});
 
-		if (lib.defer !== false) {
+		if (lib.defer) {
 			Object.assign(attrsObj, {
 				media: 'print',
 				onload: `this.media='${lib.attrs?.media ?? 'all'}'; this.onload=null;`
@@ -354,7 +356,7 @@ exports.normalizeAttrs = normalizeAttrs;
  *     (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
  *     and `interpolate: true` to enable interpolation of a value).
  *
- * @param {boolean} [dynamic] - if true, the attributes are applied dynamically via `setAttribute`
+ * @param {boolean} [dynamic] - if set to true, the attributes are applied dynamically via `setAttribute`
  * @returns {Array<string>}
  *
  * @example

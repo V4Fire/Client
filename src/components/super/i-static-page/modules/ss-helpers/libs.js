@@ -6,7 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('../interface');
+'use strict';
+
+const {
+	Libs,
+	StyleLibs,
+	Links,
+
+	InitializedLib,
+	InitializedStyleLib,
+	InitializedLink
+} = require('../interface');
 
 const
 	{resolve} = require('@pzlr/build-core'),
@@ -23,7 +33,7 @@ const
 const
 	{isURL, files, folders} = include('src/components/super/i-static-page/modules/const'),
 	{getScriptDecl, getStyleDecl, getLinkDecl} = include('src/components/super/i-static-page/modules/ss-helpers/tags'),
-	{needInline, addPublicPath} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
+	{needInline, addPublicPath, canLoadStylesDeferred} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
 
 exports.loadLibs = loadLibs;
 
@@ -31,10 +41,10 @@ exports.loadLibs = loadLibs;
  * Initializes the specified libraries and returns code to load
  *
  * @param {Libs} libs
- * @param {object} [opts]
- * @param {Object.<string>} [opts.assets] - a dictionary with static page assets
- * @param {boolean} [opts.js] - if true, the function returns JS code to load the libraries
- * @param {boolean} [opts.wrap] - if true, the final code is wrapped by a script tag
+ * @param {object} [opts] - additional options
+ * @param {Object<string>} [opts.assets] - a dictionary with static page assets
+ * @param {boolean} [opts.js] - if set to true, the function will return JS code to load the libraries
+ * @param {boolean} [opts.wrap] - if set to true, the final code will be wrapped by a `<script>` tag
  * @returns {Promise<string>}
  */
 async function loadLibs(libs, {assets, js, wrap} = {}) {
@@ -65,9 +75,10 @@ exports.loadStyles = loadStyles;
  * Initializes the specified styles and returns code to load
  *
  * @param {StyleLibs} libs
- * @param {Object.<string>} [assets] - a dictionary with static page assets
- * @param {boolean} [js] - if true, the function returns JS code to load the libraries
- * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
+ * @param {object} [opts] - additional options
+ * @param {Object<string>} [opts.assets] - a dictionary with static page assets
+ * @param {boolean} [opts.js] - if set to true, the function will return JS code to load the libraries
+ * @param {boolean} [opts.wrap] - if set to true, the final code will be wrapped by a `<script>` tag
  * @returns {Promise<string>}
  */
 async function loadStyles(libs, {assets, js, wrap} = {}) {
@@ -79,7 +90,7 @@ async function loadStyles(libs, {assets, js, wrap} = {}) {
 	}
 
 	for (const lib of await initLibs(libs, assets)) {
-		lib.defer = lib.defer !== false;
+		lib.defer = lib.defer !== false && canLoadStylesDeferred;
 		lib.js = js;
 
 		decl += await getStyleDecl(lib);
@@ -99,9 +110,10 @@ exports.loadLinks = loadLinks;
  * Initializes the specified links and returns code to load
  *
  * @param {Links} libs
- * @param {Object.<string>} [assets] - a dictionary with static page assets
- * @param {boolean} [js] - if true, the function returns JS code to load the links
- * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
+ * @param {object} [opts] - additional options
+ * @param {Object<string>} [opts.assets] - a dictionary with static page assets
+ * @param {boolean} [opts.js] - if set to true, the function will return JS code to load the links
+ * @param {boolean} [opts.wrap] - if set to true, the final code will be wrapped by a `<script>` tag
  * @returns {Promise<string>}
  */
 async function loadLinks(libs, {assets, js, wrap} = {}) {
@@ -133,7 +145,7 @@ exports.initLibs = initLibs;
  * The function returns a list of initialized libraries to load.
  *
  * @param {(Libs|StyleLibs)} libs
- * @param {Object.<string>} [assets] - a dictionary with static page assets
+ * @param {Object<string>} [assets] - a dictionary with static page assets
  * @returns {Promise<Array<(InitializedLib|InitializedStyleLib|InitializedLink)>>}
  */
 async function initLibs(libs, assets) {
@@ -193,9 +205,11 @@ exports.resolveAsLib = resolveAsLib;
  * Loads the specified file or directory as an external library to the output folder.
  * The function returns a path to the library from the output folder.
  *
- * @param {string} [name] - the library name (if not specified, the name will be taken from the source file basename)
- * @param {boolean} [dest='lib'] - where to place the library
- * @param {boolean} [relative=true] - if false, the function will return an absolute path
+ * @param {object} [lib] - the library parameters
+ * @param {string} [lib.name] - the library name (if not specified,
+ *   the name will be taken from the source file basename)
+ * @param {boolean} [lib.dest] - where to place the library
+ * @param {boolean} [lib.relative] - if set to false, the function will return an absolute path
  * @param {(Array<string>|string)} [cwd] - the active working directory (can be defined as an array to enable layers)
  * @param {...string} paths - string paths to join (also, can take URL(s))
  * @returns {string}
@@ -276,10 +290,10 @@ function resolveAsLib(
 
 		} else {
 			const
-				clrfx = /\/\/# sourceMappingURL=.*/;
+				sourceMap = /\/\/# sourceMappingURL=.*/;
 
 			fs.mkdirpSync(libDest);
-			fs.writeFileSync(newSrc, fileContent.toString().replace(clrfx, ''));
+			fs.writeFileSync(newSrc, fileContent.toString().replace(sourceMap, ''));
 		}
 	}
 

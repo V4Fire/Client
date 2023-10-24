@@ -15,7 +15,8 @@ import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
 
-import Block, { setElementMod, removeElementMod } from 'components/friends/block';
+import Block, { setElementMod, removeElementMod, getElementSelector } from 'components/friends/block';
+import DOM, { delegateElement } from 'components/friends/dom';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
 import iActiveItems from 'components/traits/i-active-items/i-active-items';
@@ -59,7 +60,8 @@ export * from 'components/form/b-select/interface';
 
 export { Value, FormValue };
 
-Block.addToPrototype({setElementMod, removeElementMod});
+DOM.addToPrototype({delegateElement});
+Block.addToPrototype({setElementMod, removeElementMod, getElementSelector});
 Mask.addToPrototype(MaskAPI);
 
 interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof SelectEventHandlers> {}
@@ -84,11 +86,10 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 
 	/** {@link bSelect.items} */
 	set items(value: this['Items']) {
-		const oldValue = this.items;
 		this.field.set('itemsStore', value);
 
 		if (this.isRelatedToSSR) {
-			this.syncItemsWatcher(this.items, oldValue);
+			this.syncItemsWatcher(this.items);
 		}
 	}
 
@@ -476,11 +477,11 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	 * Synchronization of items
 	 *
 	 * @param items
-	 * @param oldItems
+	 * @param [oldItems]
 	 * @emits `itemsChange(value: this['Items'])`
 	 */
 	@watch('itemsStore')
-	protected syncItemsWatcher(items: this['Items'], oldItems: this['Items']): void {
+	protected syncItemsWatcher(items: this['Items'], oldItems?: this['Items']): void {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues();
 			this.emit('itemsChange', items);

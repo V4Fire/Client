@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.30 (2023-10-11)
+
+#### :bug: Bug Fix
+
+* Fixed data restoration of provider after hydration
+
 ## v4.0.0-beta.28 (2023-09-26)
 
 #### :bug: Bug Fix

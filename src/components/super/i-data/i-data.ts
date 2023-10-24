@@ -102,12 +102,15 @@ export default abstract class iData extends iDataHandlers {
 				void this.db;
 			};
 
-			if (HYDRATION && !this.isReadyOnce && hydrationStore.has(this.componentId)) {
+			if (HYDRATION && hydrationStore.has(this.componentId)) {
 				const
 					store = hydrationStore.get(this.componentId),
-					data = Object.cast<CanUndef<this['DB']>>(store![providerHydrationKey]);
+					data = Object.cast<CanUndef<this['DB']>>(store?.[providerHydrationKey]);
 
-				delete data![providerHydrationKey];
+				if (store != null) {
+					delete store[providerHydrationKey];
+				}
+
 				setDBData(data);
 
 				return callSuper();
@@ -164,10 +167,13 @@ export default abstract class iData extends iDataHandlers {
 								return;
 							}
 
-							Object.assign(defParams[1], {
-								...label,
-								important: this.componentStatus === 'unloaded'
-							});
+							const
+								query = defParams[0],
+								opts = {
+									...defParams[1],
+									...label,
+									important: this.componentStatus === 'unloaded'
+								};
 
 							if (this.dependencies.length > 0) {
 								void this.moduleLoader.load(...this.dependencies);
@@ -177,7 +183,7 @@ export default abstract class iData extends iDataHandlers {
 								void this.state.initFromStorage();
 							}
 
-							return dataProvider.get(<RequestQuery>defParams[0], defParams[1]);
+							return dataProvider.get(<RequestQuery>query, opts);
 						})
 
 						.then(

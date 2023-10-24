@@ -115,7 +115,7 @@ export default abstract class iActiveItems extends iItems {
 				newVal;
 
 			if (ctx.multiple) {
-				newVal = new Set(Object.isIterable(val) ? val : Array.concat([], val));
+				newVal = new Set(Object.isIterable(val) && !Object.isString(val) ? val : Array.concat([], val));
 
 				if (Object.fastCompare(newVal, ctx.activeStore)) {
 					return ctx.activeStore;
@@ -220,7 +220,7 @@ export default abstract class iActiveItems extends iItems {
 				res = true;
 			};
 
-			if (Object.isIterable(value)) {
+			if (Object.isIterable(value) && !Object.isString(value)) {
 				Object.forEach(value, set);
 
 			} else {
@@ -264,7 +264,7 @@ export default abstract class iActiveItems extends iItems {
 				res = true;
 			};
 
-			if (Object.isIterable(value)) {
+			if (Object.isIterable(value) && !Object.isString(value)) {
 				Object.forEach(value, unset);
 
 			} else {
@@ -313,7 +313,7 @@ export default abstract class iActiveItems extends iItems {
 				ctx.unsetActive(ctx.active);
 			}
 
-			if (Object.isIterable(value)) {
+			if (Object.isIterable(value) && !Object.isString(value)) {
 				Object.forEach(value, toggle);
 
 			} else {

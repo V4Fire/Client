@@ -12,7 +12,7 @@ const
 	config = require('@config/config');
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	path = require('upath');
 
 const

@@ -48,10 +48,8 @@ if (SSR) {
 
 function createAppInitializer() {
 	return async (rootComponentName: Nullable<string>, opts: InitAppOptions = {}) => {
-		let
-			appId: CanUndef<string>;
-
 		const
+			appId = opts.appId ?? Object.fastHash(Math.random()),
 			state = Object.reject(opts, ['targetToMount', 'setup']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
 
@@ -76,13 +74,15 @@ function createAppInitializer() {
 			rootComponentParams.inject = {
 				...inject,
 				hydrationStore: 'hydrationStore',
-				ssrState: 'ssrState'
+				ssrState: 'ssrState',
+				appId: 'appId'
 			};
 
 			const
 				hydrationStore = new HydrationStore(),
 				rootComponent = new App(rootComponentParams);
 
+			rootComponent.provide('appId', appId);
 			rootComponent.provide('hydrationStore', hydrationStore);
 			rootComponent.provide('ssrState', Object.fastClone(remoteState));
 
@@ -96,9 +96,7 @@ function createAppInitializer() {
 				return ssrContent + hydratedData;
 
 			} finally {
-				if (appId != null) {
-					destroyApp(appId);
-				}
+				destroyApp(appId);
 			}
 		}
 
@@ -136,14 +134,7 @@ function createAppInitializer() {
 				throw new ReferenceError(`The root component with the specified name "${rootComponentName}" was not found`);
 			}
 
-			return {
-				...rootComponentParams,
-
-				data() {
-					appId = this.componentId;
-					return rootComponentParams.data?.call(this) ?? {};
-				}
-			};
+			return rootComponentParams;
 		}
 	};
 }

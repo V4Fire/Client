@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.? (2023-??-??)
+## v4.0.0-beta.?? (2023-??-??)
 
 #### :boom: Breaking Change
 
@@ -22,7 +22,68 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added new testing API `ComponentObject` that allows for easier interaction with components in the testing environment `test/helpers/component-object`.
 * Added new testing API for mocking and spying on functions at runtime `test/helpers/mock`.
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.36 (2023-10-23)
+
+#### :bug: Bug Fix
+
+* Added the missed `itemsProp` property `bVirtualScroll`
+
+## v4.0.0-beta.35 (2023-10-20)
+
+#### :rocket: New Feature
+
+* Added the ability to type events `iBlock`
+
+## v4.0.0-beta.34 (2023-10-20)
+
+#### :bug: Bug Fix
+
+* The method `createDataProviderInstance` should be accessible at `beforeCreate` `iBlock`
+
+## v4.0.0-beta.33 (2023-10-18)
+
+#### :rocket: New Feature
+
+* Added new config option `webpack.externalizeInline` `config`
+* Added the ability to build initial HTML file without any inline Javascript by configuring `webpack.externalizeInline` `iStaticPage`
+
+## v4.0.0-beta.32 (2023-10-17)
+
+#### :rocket: New Feature
+
+* Added a factory to create data providers `iBlock`
+* Added support for setting a global application ID `core/init`
+
+## v4.0.0-beta.31 (2023-10-12)
+
+#### :rocket: New Feature
+
+* Added the `theme` modifier calculation to components `components/super/i-block`
+
+## v4.0.0-beta.30 (2023-10-11)
+
+#### :boom: Breaking Change
+
+* Now the `saveEnv` function takes the state as an argument `core/abt`
+
+#### :rocker: New Feature
+
+* `config`:
+  * Added default values for `runtime` theme parameters
+  * Added a new option `module-parallelism` option, which sets the [`parallelism`](https://webpack.js.org/configuration/other-options/#parallelism) option for a webpack
+  * Added a new option `trace-build-times`, which enables the build time tracing
+
+* Added build time tracing, which can be visualized using the [Perfetto UI](https://ui.perfetto.dev)
+* Added a new stylus function `themeAttribute` `build/stylus/ds`
+* Added possibility to configure the theme attribute `components/global/g-def`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with `i-data` `initLoad` mutating a request params which leads to the data reload `components/super/i-data`
+* Fix initializing of the `helpers` and `providers` blocks in `i-static-page` and `i-block` for SSR
+* Fixed data restoration of provider after hydration `iData`
+
+## v4.0.0-beta.29 (2023-10-02)
 
 #### :rocket: New Feature
 
@@ -32,6 +93,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Teleports should not be rendered during SSR `iStaticPage`
+* Save state to hydration store during SSR `components/friends/state`
 
 ## v4.0.0-beta.28 (2023-09-26)
 
@@ -50,6 +112,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed icons' size in multi-theme mode `components/global/g-def`
+>>>>>>> v4
 
 ## v4.0.0-beta.26 (2023-09-20)
 
@@ -170,7 +233,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.13 (2023-08-24)
 
-#### :rocket: New Feature
+#### :rocker: New Feature
 
 * Webpack build helpers:
   * Added `getManagedPath` helper, which generates a managed path for node_modules with excluding
