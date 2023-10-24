@@ -43,7 +43,7 @@ exports.getScriptDecl = getScriptDecl;
 
 /**
  * Returns code to load the specified library.
- * If the `inline` parameter is set to `true`, the function will return a promise.
+ * If the `inline` parameter is set to true, the function will return a promise.
  *
  * @param {(InitializedLib|string)} lib - the library or its raw code
  * @param {string} [body] - the library raw code
@@ -174,7 +174,7 @@ exports.getStyleDecl = getStyleDecl;
 
 /**
  * Returns code to load the specified style library.
- * If the `inline` parameter is set to `true`, the function will return a promise.
+ * If the `inline` parameter is set to true, the function will return a promise.
  *
  * @param {(InitializedStyleLib|string)} lib - the library or its raw code
  * @param {string} [body] - the library raw code
@@ -356,7 +356,7 @@ exports.normalizeAttrs = normalizeAttrs;
  *     (in that way you can also provide flags `escape: ` to disable escaping non-secure characters
  *     and `interpolate: true` to enable interpolation of a value).
  *
- * @param {boolean} [dynamic] - if true, the attributes are applied dynamically via `setAttribute`
+ * @param {boolean} [dynamic] - if set to true, the attributes are applied dynamically via `setAttribute`
  * @returns {Array<string>}
  *
  * @example

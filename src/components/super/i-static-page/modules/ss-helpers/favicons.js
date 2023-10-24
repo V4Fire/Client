@@ -24,7 +24,7 @@ const
 exports.getFaviconsDecl = getFaviconsDecl;
 
 /**
- * Returns declaration of the project favicons
+ * Returns the declaration of project favicons
  *
  * @param {boolean} canInlineSourceCode
  * @returns {string}

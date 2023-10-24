@@ -23,7 +23,7 @@ const
 exports.getAssets = getAssets;
 
 /**
- * Returns a dictionary with static page assets by the specified entry points
+ * Returns a dictionary with static page assets for the specified entry points
  *
  * @param {Object<Array<string>>} entryPoints
  * @returns {Promise<Object<string>>}
@@ -55,12 +55,12 @@ function getAssets(entryPoints) {
 exports.getAssetsDecl = getAssetsDecl;
 
 /**
- * Returns declaration of the project assets
+ * Returns the declaration of project assets
  *
  * @param {object} [opts]
- * @param {boolean} [opts.inline] - if true, the declaration is placed as a text
- * @param {boolean} [opts.wrap] - if true, the declaration is wrapped by a script tag
- * @param {boolean} [opts.js] - if true, the function returns JS code to load the declaration
+ * @param {boolean} [opts.inline] - if set to true, the declaration will be placed as a text
+ * @param {boolean} [opts.wrap] - if set to true, the declaration will be wrapped by a `<script>` tag
+ * @param {boolean} [opts.js] - if set to true, the function will return JS code to load the declaration
  * @returns {string}
  */
 function getAssetsDecl({inline, wrap, js} = {}) {
