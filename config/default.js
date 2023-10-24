@@ -300,7 +300,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {?string}
 		 */
 		target(
-			def = /ES[35]$/.test(this.config.es()) && !this.webpack.storybook() ?
+			def = /ES[35]$/.test(this.config.es()) && !this.config.webpack.storybook() ?
 				'browserslist:ie 11' :
 				'web'
 		) {
