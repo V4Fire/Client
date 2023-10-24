@@ -14,7 +14,7 @@ const
 
 const
 	glob = require('fast-glob'),
-	path = require('node:path');
+	path = require('upath');
 
 /**
  * Map with aliases for custom (not external) loaders from all layers
