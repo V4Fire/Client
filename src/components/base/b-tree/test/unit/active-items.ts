@@ -17,6 +17,7 @@ import type { Item } from 'components/base/b-tree/interface';
 
 import { renderTree, createTreeSelector, createTestModIs, waitForItems } from 'components/base/b-tree/test/helpers';
 
+// eslint-disable-next-line max-lines-per-function
 test.describe('<b-tree> active items', () => {
 	const
 		testFoldedModIs = createTestModIs('folded'),
@@ -41,7 +42,8 @@ test.describe('<b-tree> active items', () => {
 			value: 6,
 			label: '6',
 			activatable: false
-		}
+		},
+		{value: '007', label: '7'}
 	];
 
 	test.beforeEach(async ({demoPage}) => {
@@ -78,6 +80,15 @@ test.describe('<b-tree> active items', () => {
 				);
 
 				test.expect(await evaluateActive(target)).toEqual([0, 1]);
+			});
+
+			test('`active` prop should accept `String`', async ({page}) => {
+				const target = await renderTree(
+					page,
+					{items, attrs: {active: '007', multiple: true}}
+				);
+
+				test.expect(await evaluateActive(target)).toEqual(['007']);
 			});
 		});
 	});
@@ -198,6 +209,33 @@ test.describe('<b-tree> active items', () => {
 				})
 			).toEqual([]);
 		});
+
+		test('should change correctly with `multiple = true` when string value is passed', async ({page}) => {
+			const
+				target = await renderTree(page, {items, attrs: {multiple: true}});
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.setActive(1);
+					ctx.setActive('007');
+					return [...<Set<number>>ctx.active];
+				})
+			).toEqual([1, '007']);
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.unsetActive(1);
+					return [...<Set<number>>ctx.active];
+				})
+			).toEqual(['007']);
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.unsetActive('007');
+					return [...<Set<number>>ctx.active];
+				})
+			).toEqual([]);
+		});
 	});
 
 	test.describe('changing active item', () => {
@@ -237,6 +275,20 @@ test.describe('<b-tree> active items', () => {
 					return [...<Set<number>>ctx.active];
 				})
 			).toEqual([0]);
+		});
+
+		test('should accept string value with `multiple = true`', async ({page}) => {
+			const
+				target = await renderTree(page, {items, attrs: {multiple: true}});
+
+			test.expect(
+				await target.evaluate((ctx) => {
+					ctx.toggleActive(1);
+					ctx.toggleActive('007');
+					ctx.toggleActive(1);
+					return [...<Set<number>>ctx.active];
+				})
+			).toEqual(['007']);
 		});
 
 		test('should accept `Iterable` with `multiple = true`', async ({page}) => {
