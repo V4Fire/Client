@@ -6,5 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
 package('b-sidebar')
 	.extends('i-data');
