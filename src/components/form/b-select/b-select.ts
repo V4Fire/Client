@@ -15,7 +15,7 @@ import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
 
-import Block, { setElementMod, removeElementMod } from 'components/friends/block';
+import Block, { setElementMod, removeElementMod, getElementSelector } from 'components/friends/block';
 import DOM, { delegateElement } from 'components/friends/dom';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
@@ -61,7 +61,7 @@ export * from 'components/form/b-select/interface';
 export { Value, FormValue };
 
 DOM.addToPrototype({delegateElement});
-Block.addToPrototype({setElementMod, removeElementMod});
+Block.addToPrototype({setElementMod, removeElementMod, getElementSelector});
 Mask.addToPrototype(MaskAPI);
 
 interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof SelectEventHandlers> {}
