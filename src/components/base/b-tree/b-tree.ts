@@ -17,7 +17,7 @@ import SyncPromise from 'core/promise/sync';
 import { derive } from 'core/functools/trait';
 
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
-import Block, { getElementMod, setElementMod, getElementSelector } from 'components/friends/block';
+import Block, { getElementMod, setElementMod, getElementSelector, getFullElementName } from 'components/friends/block';
 import DOM, { delegateElement } from 'components/friends/dom';
 
 import iItems from 'components/traits/i-items/i-items';
@@ -37,7 +37,7 @@ export * from 'components/super/i-data/i-data';
 export * from 'components/base/b-tree/interface';
 
 AsyncRender.addToPrototype({iterate});
-Block.addToPrototype({getElementMod, setElementMod, getElementSelector});
+Block.addToPrototype({getElementMod, setElementMod, getElementSelector, getFullElementName});
 DOM.addToPrototype({delegateElement});
 
 const
