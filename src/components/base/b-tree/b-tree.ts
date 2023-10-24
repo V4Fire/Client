@@ -18,6 +18,7 @@ import { derive } from 'core/functools/trait';
 
 import AsyncRender, { iterate, TaskOptions } from 'components/friends/async-render';
 import Block, { getElementMod, setElementMod } from 'components/friends/block';
+import DOM, { delegateElement } from 'components/friends/dom';
 
 import iItems from 'components/traits/i-items/i-items';
 import iActiveItems, { IterationKey } from 'components/traits/i-active-items/i-active-items';
@@ -37,6 +38,7 @@ export * from 'components/base/b-tree/interface';
 
 AsyncRender.addToPrototype({iterate});
 Block.addToPrototype({getElementMod, setElementMod});
+DOM.addToPrototype({delegateElement});
 
 const
 	$$ = symbolGenerator();
