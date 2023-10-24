@@ -12,7 +12,7 @@ const
 	{src, webpack, favicons} = require('@config/config');
 
 const
-	glob = require('glob'),
+	glob = require('fast-glob'),
 	fs = require('fs-extra'),
 	path = require('upath');
 

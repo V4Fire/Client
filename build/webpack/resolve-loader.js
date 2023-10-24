@@ -13,7 +13,7 @@ const
 	{config, resolve} = require('@pzlr/build-core');
 
 const
-	glob = require('glob'),
+	glob = require('fast-glob'),
 	path = require('node:path');
 
 /**

@@ -15,7 +15,7 @@ const
 const
 	fs = require('node:fs'),
 	path = require('upath'),
-	glob = require('glob'),
+	glob = require('fast-glob'),
 	isPathInside = require('is-path-inside');
 
 const
@@ -102,7 +102,7 @@ Snakeskin.importFilters({
 		}
 
 		const
-			hasMagic = glob.hasMagic(filePath),
+			isDynamicPattern = glob.isDynamicPattern(filePath),
 			end = ssExtRgxp.removeFlags('g').test(filePath) ? '' : '/',
 			ends = [];
 
@@ -110,7 +110,7 @@ Snakeskin.importFilters({
 			const
 				basename = path.basename(filePath);
 
-			if (!glob.hasMagic(basename)) {
+			if (!glob.isDynamicPattern(basename)) {
 				ends.push(`${basename}.ss`);
 			}
 
@@ -130,7 +130,7 @@ Snakeskin.importFilters({
 				const
 					fullPath = path.join(resources[i], filePath, ends[j] || '');
 
-				if (hasMagic) {
+				if (isDynamicPattern) {
 					paths.push(...glob.sync(fullPath));
 
 				} else if (fs.existsSync(fullPath)) {
@@ -139,7 +139,7 @@ Snakeskin.importFilters({
 			}
 		}
 
-		if (hasMagic) {
+		if (isDynamicPattern) {
 			return paths.map(applyAsModifier);
 		}
 

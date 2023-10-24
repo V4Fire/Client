@@ -13,7 +13,7 @@ const
 
 const
 	path = require('upath'),
-	glob = require('glob');
+	glob = require('fast-glob');
 
 const
 	{validators, resolve} = require('@pzlr/build-core');
