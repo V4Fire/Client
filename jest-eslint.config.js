@@ -14,6 +14,7 @@ module.exports = {
 	...base,
 	testMatch: [
 		'<rootDir>/src/**/*.ts',
+		'<rootDir>/src/**/*.js',
 		'<rootDir>/config/**/*.js',
 		'<rootDir>/build/**/*.js',
 		'<rootDir>/tests/**/*.ts',
