@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 /**
  * [[include:components/super/i-static-page/modules/ss-helpers/README.md]]
  * @packageDocumentation

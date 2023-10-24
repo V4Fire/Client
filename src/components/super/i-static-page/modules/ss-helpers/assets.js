@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	{webpack} = require('@config/config');
 
@@ -23,7 +25,7 @@ exports.getAssets = getAssets;
 /**
  * Returns a dictionary with static page assets by the specified entry points
  *
- * @param {Object.<Array<string>>} entryPoints
+ * @param {Object<Array<string>>} entryPoints
  * @returns {Promise<Object<string>>}
  */
 function getAssets(entryPoints) {

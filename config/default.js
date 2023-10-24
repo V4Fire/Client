@@ -12,7 +12,7 @@ const
 	config = require('@v4fire/core/config/default');
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	path = require('upath');
 
 const

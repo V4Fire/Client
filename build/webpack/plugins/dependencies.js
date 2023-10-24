@@ -12,7 +12,7 @@ const
 	$C = require('collection.js');
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	path = require('upath');
 
 const

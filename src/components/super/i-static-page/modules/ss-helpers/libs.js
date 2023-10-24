@@ -32,7 +32,7 @@ exports.loadLibs = loadLibs;
  *
  * @param {Libs} libs
  * @param {object} [opts]
- * @param {Object.<string>} [opts.assets] - a dictionary with static page assets
+ * @param {Object<string>} [opts.assets] - a dictionary with static page assets
  * @param {boolean} [opts.js] - if true, the function returns JS code to load the libraries
  * @param {boolean} [opts.wrap] - if true, the final code is wrapped by a script tag
  * @returns {Promise<string>}
@@ -65,7 +65,7 @@ exports.loadStyles = loadStyles;
  * Initializes the specified styles and returns code to load
  *
  * @param {StyleLibs} libs
- * @param {Object.<string>} [assets] - a dictionary with static page assets
+ * @param {Object<string>} [assets] - a dictionary with static page assets
  * @param {boolean} [js] - if true, the function returns JS code to load the libraries
  * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {Promise<string>}
@@ -99,7 +99,7 @@ exports.loadLinks = loadLinks;
  * Initializes the specified links and returns code to load
  *
  * @param {Links} libs
- * @param {Object.<string>} [assets] - a dictionary with static page assets
+ * @param {Object<string>} [assets] - a dictionary with static page assets
  * @param {boolean} [js] - if true, the function returns JS code to load the links
  * @param {boolean} [wrap] - if true, the final code is wrapped by a script tag
  * @returns {Promise<string>}
@@ -133,7 +133,7 @@ exports.initLibs = initLibs;
  * The function returns a list of initialized libraries to load.
  *
  * @param {(Libs|StyleLibs)} libs
- * @param {Object.<string>} [assets] - a dictionary with static page assets
+ * @param {Object<string>} [assets] - a dictionary with static page assets
  * @returns {Promise<Array<(InitializedLib|InitializedStyleLib|InitializedLink)>>}
  */
 async function initLibs(libs, assets) {
@@ -194,8 +194,8 @@ exports.resolveAsLib = resolveAsLib;
  * The function returns a path to the library from the output folder.
  *
  * @param {string} [name] - the library name (if not specified, the name will be taken from the source file basename)
- * @param {boolean} [dest='lib'] - where to place the library
- * @param {boolean} [relative=true] - if false, the function will return an absolute path
+ * @param {boolean} [dest] - where to place the library
+ * @param {boolean} [relative] - if false, the function will return an absolute path
  * @param {(Array<string>|string)} [cwd] - the active working directory (can be defined as an array to enable layers)
  * @param {...string} paths - string paths to join (also, can take URL(s))
  * @returns {string}

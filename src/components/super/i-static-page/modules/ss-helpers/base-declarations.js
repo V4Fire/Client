@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	{webpack, csp, i18n} = require('@config/config'),
 	{getScriptDecl} = include('src/components/super/i-static-page/modules/ss-helpers/tags');

@@ -13,7 +13,7 @@ const
 	escaper = require('escaper');
 
 const
-	fs = require('fs');
+	fs = require('node:fs');
 
 const {
 	componentRgxp,

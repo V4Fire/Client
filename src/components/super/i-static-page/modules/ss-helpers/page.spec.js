@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
 	fs = require('fs-extra'),
 	{src, webpack} = require('@config/config');

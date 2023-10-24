@@ -10,7 +10,7 @@
 
 const
 	config = require('@config/config'),
-	path = require('path');
+	path = require('node:path');
 
 const
 	{src, build, webpack: wp} = config;

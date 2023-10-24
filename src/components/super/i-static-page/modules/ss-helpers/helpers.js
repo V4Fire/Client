@@ -6,8 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 const
-	fs = require('fs');
+	fs = require('node:fs');
 
 const
 	{webpack, src, csp} = require('@config/config'),

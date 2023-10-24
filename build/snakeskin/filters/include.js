@@ -13,7 +13,7 @@ const
 	Snakeskin = require('snakeskin');
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	path = require('upath'),
 	glob = require('glob'),
 	isPathInside = require('is-path-inside');

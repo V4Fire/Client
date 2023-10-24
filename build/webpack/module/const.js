@@ -10,7 +10,7 @@
 
 const
 	config = require('@config/config'),
-	path = require('path');
+	path = require('node:path');
 
 const
 	{assetsOutput} = include('build/helpers');

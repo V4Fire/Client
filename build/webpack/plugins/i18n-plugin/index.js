@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	glob = require('fast-glob'),
 	path = require('upath');
 

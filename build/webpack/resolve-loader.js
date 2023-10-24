@@ -14,7 +14,7 @@ const
 
 const
 	glob = require('glob'),
-	path = require('path');
+	path = require('node:path');
 
 /**
  * Map with aliases for custom (not external) loaders from all layers

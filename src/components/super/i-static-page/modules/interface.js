@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 /**
  * Source type of library:
  *
@@ -47,7 +49,7 @@ exports.Lib = Lib;
 /**
  * Parameters of an initialized script library:
  *
- *   1. src - the path to the library file
+ *   1. src - the path to library file
  *   2. [inline=false] - whether to include the library code inline in the script tag
  *   3. [defer=true] - whether the script should be deferred
  *   4. [load=true] - whether the library should be loaded at all
@@ -62,6 +64,7 @@ exports.Lib = Lib;
  *   7. [staticAttrs] - a string with additional attributes for the script tag
  *
  * {@link Lib}
+ *
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
@@ -117,6 +120,7 @@ exports.StyleLib = StyleLib;
  *   3. [staticAttrs] - a string with additional attributes
  *
  * {@link StyleLib}
+ *
  * @typedef {{
  *   src: string,
  *   inline?: boolean,
@@ -165,11 +169,12 @@ exports.Link = Link;
  * Parameters of an initialized link:
  *
  *   1. src - a path to the loaded file
- *   2. [tag='link'] - a tag to create the link
+ *   2. [tag='link'] - a tag to create link
  *   3. [js] - if true, the function returns JS code to load the library
  *   4. [staticAttrs] - a string with additional attributes
  *
  * {@link Link}
+ *
  * @typedef {{
  *   src: string,
  *   tag?: string,

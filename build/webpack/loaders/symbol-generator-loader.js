@@ -13,7 +13,7 @@ const
 	$C = require('collection.js');
 
 const
-	fs = require('fs'),
+	fs = require('node:fs'),
 	isPathInside = require('is-path-inside');
 
 const

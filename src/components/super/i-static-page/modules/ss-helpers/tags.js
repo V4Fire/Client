@@ -6,7 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-require('../interface');
+'use strict';
+
+const {InitializedLib, InitializedStyleLib, InitializedLink} = require('../interface');
 
 const
 	config = require('@config/config');
