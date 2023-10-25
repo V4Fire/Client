@@ -197,3 +197,30 @@ await interceptor.start();
 // Stop intercepting requests
 await interceptor.stop();
 ```
+
+### How to Respond to Requests Using a Method Instead of Automatically?
+
+Sometimes there are situations where you need to delay the moment of responding to a request for some unknown time in advance, and to solve this problem a special "responder" mode is provided.
+In this mode, the `RequestInterceptor` still intercepts requests but does not automatically respond to them.
+To respond to a request, you need to call a special method. Let's see how it works using an example:
+
+```typescript
+// Create a RequestInterceptor instance
+const interceptor = new RequestInterceptor(page, /api/);
+
+// Set a response for the request using a response status and payload
+interceptor.response(200, { message: 'OK' });
+
+// Transform the RequestInterceptor to the responder mode
+await interceptor.responder();
+
+// Start intercepting requests
+await interceptor.start();
+
+await sleep(2000);
+await makeRequest();
+await sleep(2000);
+
+// Responds to the first request that was made
+await interceptor.respond();
+```

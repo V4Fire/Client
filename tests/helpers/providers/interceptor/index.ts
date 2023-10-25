@@ -38,6 +38,10 @@ export class RequestInterceptor {
 	 */
 	readonly mock: ReturnType<ModuleMocker['fn']>;
 
+	protected isResponder: boolean = false;
+
+	protected respondQueue: any[] = [];
+
 	/**
 	 * Short-hand for {@link RequestInterceptor.prototype.mock.mock.calls}
 	 */
@@ -61,6 +65,47 @@ export class RequestInterceptor {
 
 		const mocker = new ModuleMocker(globalThis);
 		this.mock = mocker.fn();
+	}
+
+	/**
+	 * Disables automatic responses to requests and makes the current instance a "responder".
+	 * The responder allows responding to requests not in automatic mode, but by calling
+	 * the {@link RequestInterceptor.respond} method. That is, when a request is intercepted,
+	 * the response will be sent only after the {@link RequestInterceptor.respond} method is called.
+	 *
+	 * The requests themselves are collected in a queue, and calling the {@link RequestInterceptor.respond} method
+	 * responds to the first request in the queue and removes it from the queue.
+	 */
+	responder(): this {
+		this.isResponder = true;
+		return this;
+	}
+
+	/**
+	 * Enables automatic responses to requests and responds to all requests in the queue
+	 */
+	async unresponder(): Promise<void> {
+		if (!this.isResponder) {
+			throw new Error('Failed to call unresponder on an instance that is not a responder');
+		}
+
+		this.isResponder = false;
+
+		for (const response of this.respondQueue) {
+			await response();
+		}
+	}
+
+	/**
+	 * Responds to the first request in the queue and removes it from the queue
+	 */
+	respond(): Promise<void> {
+		if (!this.isResponder) {
+			throw new Error('Failed to call respond on an instance that is not a responder');
+		}
+
+		const response = this.respondQueue.shift();
+		return response();
 	}
 
 	/**
@@ -247,21 +292,30 @@ export class RequestInterceptor {
 		opts?: ResponseOptions
 	): ResponseHandler {
 		return async (route, request) => {
-			if (opts?.delay != null) {
-				await delay(opts.delay);
+			const response = async () => {
+				if (opts?.delay != null) {
+					await delay(opts.delay);
+				}
+	
+				const
+					fulfillOpts = Object.reject(opts, 'delay'),
+					body = Object.isFunction(payload) ? await payload(route, request) : payload,
+					contentType = fulfillOpts.contentType ?? 'application/json';
+	
+				return route.fulfill({
+					status,
+					body: contentType === 'application/json' && !Object.isString(body) ? JSON.stringify(body) : body,
+					contentType,
+					...fulfillOpts
+				});
 			}
 
-			const
-				fulfillOpts = Object.reject(opts, 'delay'),
-				body = Object.isFunction(payload) ? await payload(route, request) : payload,
-				contentType = fulfillOpts.contentType ?? 'application/json';
+			if (this.isResponder) {
+				this.respondQueue.push(response);
 
-			return route.fulfill({
-				status,
-				body: contentType === 'application/json' && !Object.isString(body) ? JSON.stringify(body) : body,
-				contentType,
-				...fulfillOpts
-			});
+			} else {
+				return response();
+			}
 		};
 	}
 }
