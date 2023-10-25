@@ -24,7 +24,7 @@ exports.folders = Object.create(null);
  * RegExp to determine paths that refer to a folder
  * @type {RegExp}
  */
-exports.isFolder = /[\\/]+$/;
+exports.isFolder = /[/\\]+$/;
 
 /**
  * RegExp to determine URL declaration

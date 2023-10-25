@@ -4685,7 +4685,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/glob@npm:7.2.0, @types/glob@npm:^7.1.1, @types/glob@npm:^7.1.3, @types/glob@npm:^7.2.0":
+"@types/glob@npm:^7.1.1, @types/glob@npm:^7.1.3, @types/glob@npm:^7.2.0":
   version: 7.2.0
   resolution: "@types/glob@npm:7.2.0"
   dependencies:
@@ -5316,7 +5316,6 @@ __metadata:
     "@storybook/testing-library": 0.0.14-next.2
     "@swc/core": 1.2.153
     "@swc/helpers": 0.3.8
-    "@types/glob": 7.2.0
     "@types/jest": 29.5.1
     "@types/semver": 7.3.10
     "@types/webpack": 5.28.0
@@ -5465,8 +5464,6 @@ __metadata:
     file-loader:
       optional: true
     fs-extra:
-      optional: true
-    glob:
       optional: true
     gulp:
       optional: true
@@ -22101,11 +22098,11 @@ __metadata:
 
 "ss2vue3@github:snakeskintpl/ss2vue3":
   version: 1.0.0
-  resolution: "ss2vue3@https://github.com/snakeskintpl/ss2vue3.git#commit=7119d71afe4b33112677aee5572e94d6997408b8"
+  resolution: "ss2vue3@https://github.com/snakeskintpl/ss2vue3.git#commit=2866810567a574bde62c8ff8274770027d538904"
   peerDependencies:
     "@vue/compiler-sfc": "*"
     snakeskin: ^7.5.1
-  checksum: b48f85692f30a3704be0ed27da3fbc5ddb537127b22e5392f2743c940aa43da1410525d9b444b7575863255047da06ce12cd80aa9b102ef0f8d1eb0c481f2192
+  checksum: 2899dd9bdf9df4b86414ecc519f066c5468efa1783e8beeb8f804ba237671e7dc8b0616e8cc920c08b69f6f74da9fcb9d8c324b85be4bfc824872f3f10193975
   languageName: node
   linkType: hard
 

@@ -14,14 +14,19 @@ const
 
 const
 	glob = require('fast-glob'),
-	path = require('node:path');
+	path = require('upath');
 
 /**
  * Map with aliases for custom (not external) loaders from all layers
  * @type {object}
  */
 const alias = $C([resolve.cwd, ...config.dependencies]).to({}).reduce((map, el, i) => {
-	$C(glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*.js'))).forEach((el) => {
+	const loaders = [].concat(
+		glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*.js')),
+		glob.sync(path.join(i ? resolve.lib : '', el, 'build/webpack/loaders/*/index.js'))
+	);
+
+	$C(loaders).forEach((el) => {
 		const
 			key = path.basename(el, path.extname(el));
 

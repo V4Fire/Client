@@ -78,7 +78,7 @@ try {
 \t\t\t\treturn typeof v === 'string' ? v : v.publicPath || v.path;
 \t\t\t}
 
-\t\t\tthrow new ReferenceError('A resource by the path "' + prop + '" is not defined');
+\t\t\tthrow new ReferenceError('The resource at the path "' + prop + '" is not defined');
 \t\t}
 \t});
 } catch (_) {}
