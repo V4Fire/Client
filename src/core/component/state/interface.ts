@@ -57,7 +57,7 @@ export interface State {
 	/**
 	 * The application locale
 	 */
-	lang: Language;
+	lang?: Language;
 }
 
 export interface GlobalEnvironment extends Dictionary {
