@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 /* eslint-disable max-lines-per-function,no-template-curly-in-string */
 
 require('@config/config');

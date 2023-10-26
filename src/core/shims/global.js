@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 /* eslint-disable no-restricted-globals */
 
 const _global =

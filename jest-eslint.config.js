@@ -10,8 +10,11 @@
 
 const base = require('@v4fire/linters/jest-eslint.config');
 
+console.log(base.testPathIgnorePatterns);
+
 module.exports = {
 	...base,
+
 	testMatch: [
 		'<rootDir>/src/**/*.ts',
 		'<rootDir>/src/**/*.js',
@@ -23,6 +26,13 @@ module.exports = {
 		'<rootDir>/eslint-config.js',
 		'<rootDir>/ts-definitions/**/*.ts',
 		'<rootDir>/index.d.ts',
-		'<rootDir>/gulptfile.js'
+		'<rootDir>/gulpfile.js'
+	],
+
+	testPathIgnorePatterns: [
+		'<rootDir>/src/components/(.*?/)?[ibpgv]-.*?/index[.]js',
+		'<rootDir>/src/.*?/test/.*[.]js',
+		'<rootDir>/src/assets/.*',
+		'<rootDir>/src/entries/.*'
 	]
 };

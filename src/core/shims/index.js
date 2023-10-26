@@ -6,5 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+'use strict';
+
 require('core/shims/set-immediate');
 require('core/shims/ssr');
