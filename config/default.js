@@ -1121,6 +1121,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					ssrCssVars: {}
 				},
 
+				i18nFn: 't',
 				tagFilter: 'tagFilter',
 				tagNameFilter: 'tagNameFilter',
 				bemFilter: 'bemFilter',
@@ -1128,6 +1129,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			}),
 
 			server: this.extend(super.snakeskin(), {
+				i18nFn: 't',
 				vars: {
 					...snakeskinVars,
 					publicPath: this.webpack.publicPath
