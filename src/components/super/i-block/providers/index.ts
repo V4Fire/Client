@@ -274,9 +274,9 @@ export default abstract class iBlockProviders extends iBlockState {
 	 * @param provider
 	 * @param opts
 	 */
-	createDataProviderInstance<T extends Provider>(
-		provider: T | {new(opts: ProviderOptions): T} | (() => T | {new(opts: ProviderOptions): T}),
-		opts?: ProviderOptions
+	createDataProviderInstance<T extends Provider, O extends ProviderOptions>(
+		provider: T | {new(opts: O): T} | (() => T | {new(opts: O): T}),
+		opts?: O
 	): T;
 
 	/**
