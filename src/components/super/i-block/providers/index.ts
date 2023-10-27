@@ -279,6 +279,14 @@ export default abstract class iBlockProviders extends iBlockState {
 		opts?: ProviderOptions
 	): T;
 
+	/**
+	 * Creates an instance of the DataProvider based on the specified parameters
+	 *
+	 * @param provider
+	 * @param opts
+	 */
+	createDataProviderInstance(provider: DataProviderProp, opts?: ProviderOptions): Provider;
+
 	createDataProviderInstance(provider: DataProviderProp, opts?: ProviderOptions): CanNull<Provider> {
 		const
 			that = this;
