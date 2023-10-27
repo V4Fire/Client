@@ -242,6 +242,26 @@ export default class bExample extends iBlock {
 }
 ```
 
+By default, the `emit` method allows firing undeclared events,
+but it has a special alias called `strictEmit`, which allows emitting only explicitly declared events.
+
+```typescript
+import iBlock, { component, InferComponentEvents } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override readonly SelfEmitter!: InferComponentEvents<this, [
+    ['myEvent', {data: string}],
+    ['anotherEvent', string, boolean]
+  ], iBlock['SelfEmitter']>;
+
+  created() {
+    // @ts-expect-error
+    this.strictEmit('bla', 1);
+  }
+}
+```
+
 ### Event Bubbling
 
 Additionally, if you set the `dispatching` prop for a component, then when triggering an event,
@@ -638,6 +658,25 @@ export default class bExample extends iBlock {
 
   created() {
     this.localEmitter.on('myEvent', {data: 'some message'});
+  }
+}
+```
+
+By default, the `emit` method allows firing undeclared events,
+but it has a special alias called `strictEmit`, which allows emitting only explicitly declared events.
+
+```typescript
+import iBlock, { component, InferComponentEvents } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override readonly LocalEmitter!: InferEvents<[
+    ['myEvent', {data: string}]
+  ], iBlock['LocalEmitter']>;
+
+  created() {
+    // @ts-expect-error
+    this.localEmitter.strictEmit('bla', 1);
   }
 }
 ```
