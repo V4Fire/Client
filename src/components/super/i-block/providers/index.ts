@@ -273,9 +273,11 @@ export default abstract class iBlockProviders extends iBlockState {
 	 *
 	 * @param provider
 	 * @param opts
-	 * @throws {ReferenceError} if it is not possible to create a provider based on the provided parameters
 	 */
-	createDataProviderInstance(provider: DataProviderProp, opts?: ProviderOptions): Provider;
+	createDataProviderInstance<T extends Provider>(
+		provider: T | {new(opts: ProviderOptions): T} | (() => T | {new(opts: ProviderOptions): T}),
+		opts?: ProviderOptions
+	): T;
 
 	createDataProviderInstance(provider: DataProviderProp, opts?: ProviderOptions): CanNull<Provider> {
 		const
