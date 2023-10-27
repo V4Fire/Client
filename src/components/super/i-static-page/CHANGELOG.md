@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.37 (2023-10-27)
+
+#### :bug: Bug Fix
+
+* Fixed declarations of optional deps
+
 ## v4.0.0-beta.33 (2023-10-18)
 
 #### :rocket: New Feature

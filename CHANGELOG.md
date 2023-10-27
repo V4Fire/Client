@@ -21,6 +21,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue with passing Iterable strings as values `iActiveItems`
 * Fixed an issue with folding tree items `bTree`
+* Fixed declarations of optional deps `iStaticPage`
 
 ## v4.0.0-beta.36 (2023-10-23)
 
