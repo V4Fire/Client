@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.37 (2023-10-27)
+
+#### :rocket: New Feature
+
+* Added a new method `strictEmit` for strict event type checking `iBlock`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with passing Iterable strings as values `iActiveItems`
+* Fixed an issue with folding tree items `bTree`
+
 ## v4.0.0-beta.36 (2023-10-23)
 
 #### :bug: Bug Fix

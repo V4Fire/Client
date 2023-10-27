@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.37 (2023-10-27)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with folding tree items
+
 ## v4.0.0-beta.26 (2023-09-20)
 
 #### :bug: Bug Fix
