@@ -13,7 +13,7 @@ import { expandedStringify } from 'core/prelude/test-env/components/json';
 import type iBlock from 'components/super/i-block/i-block';
 
 import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
-import { isRenderComponentsVnodeParams } from 'tests/helpers/component/helpers';
+import { isRenderComponentsVNodeParams } from 'tests/helpers/component/helpers';
 
 /**
  * Class provides API to work with components on a page
@@ -81,7 +81,7 @@ export default class Component {
 			attrs: RenderComponentsVnodeParams['attrs'],
 			children: RenderComponentsVnodeParams['children'];
 
-		if (isRenderComponentsVnodeParams(schemeOrAttrs)) {
+		if (isRenderComponentsVNodeParams(schemeOrAttrs)) {
 			attrs = schemeOrAttrs.attrs;
 			children = schemeOrAttrs.children;
 

@@ -7,10 +7,10 @@
  */
 
 /**
- * Checks if given value is a RenderComponentsVnodeParams
+ * Checks if given value is a RenderComponentsVNodeParams
  * @param value
  */
-export function isRenderComponentsVnodeParams(
+export function isRenderComponentsVNodeParams(
 	value: RenderComponentsVnodeParams | RenderComponentsVnodeParams['attrs']
 ): value is RenderComponentsVnodeParams {
 	return (<RenderComponentsVnodeParams>value).attrs != null || (<RenderComponentsVnodeParams>value).children != null;
