@@ -37,7 +37,7 @@
 						- block fold
 							< template v-if = hasChildren(el)
 								+= self.slot('fold', {':params': 'getFoldProps(el)'})
-									< .&__fold v-attrs = getFoldProps(el)
+									< .&__fold :v-attrs = getFoldProps(el)
 
 					- block item
 						+= self.slot('default', {':item': 'getItemProps(el, i)'})
