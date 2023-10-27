@@ -208,7 +208,7 @@ __b-another-example.ss__
     < b-example @myEvent = console.log
 ```
 
-### How to type events?
+### How to Type Events?
 
 By default, component events do not have any TypeScript type support.
 However, you can explicitly declare the possible events and arguments when describing the component.
@@ -637,7 +637,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-##### How to type events?
+##### How to Type Events?
 
 By default, `localEmitter` events do not have any TypeScript type support.
 However, you can explicitly declare the possible events and arguments when describing the component.
