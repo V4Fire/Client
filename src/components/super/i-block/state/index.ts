@@ -289,14 +289,14 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * A function for internationalizing texts used in the component
+	 * Factory for creating internationalizing function
 	 */
 	i18n(keysetName: CanArray<string>): ReturnType<typeof i18n> {
 		return i18n(keysetName, this.remoteState.lang);
 	}
 
 	/**
-	 * An alias for `i18n`
+	 * A function for internationalizing texts
 	 */
 	get t(): ReturnType<typeof i18n> {
 		return this.i18n(this.componentI18nKeysets);
