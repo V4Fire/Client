@@ -70,7 +70,7 @@ function generateSpecs(engineName: EngineName) {
 			await root.evaluate(async ({router}) => {
 				// Reset scroll before the transition ends to check scroll restoration
 				router?.once('transition', () => {
-					// @ts-ignore "instance" behavior is available according to MDN docs
+					// @ts-ignore "instant" behavior is available according to MDN docs
 					globalThis.scrollTo({top: 0, left: 0, behavior: 'instant'});
 				});
 
