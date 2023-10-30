@@ -15,6 +15,7 @@ import type { EngineName } from 'components/base/b-router/test/interface';
 
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
+// eslint-disable-next-line max-lines-per-function
 test.describe('<b-router> route handling', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -26,6 +27,7 @@ test.describe('<b-router> route handling', () => {
 		});
 	});
 
+	// eslint-disable-next-line max-lines-per-function
 	function generateSpecs(engineName: EngineName) {
 				const root = await createInitRouter(engineName, {
 			main: {

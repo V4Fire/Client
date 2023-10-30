@@ -12,6 +12,7 @@ import { Component } from 'tests/helpers';
 import { createInitRouter } from 'components/base/b-router/test/helpers';
 import type { HrefTransitionEvent } from 'components/base/b-router';
 
+// eslint-disable-next-line max-lines-per-function
 test.describe('<b-router> intercepting links on a page', () => {
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
