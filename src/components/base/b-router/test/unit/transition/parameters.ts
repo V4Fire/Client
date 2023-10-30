@@ -100,6 +100,7 @@ test.describe('<b-router> passing transition parameters', () => {
 
 		test(
 			'correctly parses parameters in href with query parameters',
+
 			async ({page}) => {
 				const root = await createInitRouter('history', {
 					user: {
@@ -151,53 +152,57 @@ test.describe('<b-router> passing transition parameters', () => {
 			}
 		);
 
-		test('support for aliases for interpolation parameters', async ({page}) => {
-			const root = await createInitRouter('history', {
-				tpl: {
-					path: '/tpl/:param1/:param2?',
-					pathOpts: {
-						aliases: {
-							param1: ['_param1', 'Param1'],
-							param2: ['Param2']
+		test(
+			'support for aliases for interpolation parameters',
+
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					tpl: {
+						path: '/tpl/:param1/:param2?',
+						pathOpts: {
+							aliases: {
+								param1: ['_param1', 'Param1'],
+								param2: ['Param2']
+							}
 						}
 					}
-				}
-			})(page);
+				})(page);
 
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					router = ctx.router!,
-					transitions: Dictionary = {};
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						router = ctx.router!,
+						transitions: Dictionary = {};
 
-				await router.push('tpl', {params: {param1: 'foo'}});
-				transitions.path1 = getPath();
+					await router.push('tpl', {params: {param1: 'foo'}});
+					transitions.path1 = getPath();
 
-				await router.push('tpl', {params: {param1: 'foo', _param1: 'bar'}});
-				transitions.path2 = getPath();
+					await router.push('tpl', {params: {param1: 'foo', _param1: 'bar'}});
+					transitions.path2 = getPath();
 
-				await router.push('tpl', {params: {Param1: 'foo'}});
-				transitions.path3 = getPath();
+					await router.push('tpl', {params: {Param1: 'foo'}});
+					transitions.path3 = getPath();
 
-				await router.push('tpl', {params: {Param1: 'bar', _param1: 'foo'}});
-				transitions.path4 = getPath();
+					await router.push('tpl', {params: {Param1: 'bar', _param1: 'foo'}});
+					transitions.path4 = getPath();
 
-				await router.push('tpl', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}});
-				transitions.path5 = getPath();
+					await router.push('tpl', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}});
+					transitions.path5 = getPath();
 
-				return transitions;
+					return transitions;
 
-				function getPath() {
-					return location.pathname + location.search;
-				}
+					function getPath() {
+						return location.pathname + location.search;
+					}
 
-			})).resolves.toEqual({
-				path1: '/tpl/foo',
-				path2: '/tpl/foo',
-				path3: '/tpl/foo',
-				path4: '/tpl/foo',
-				path5: '/tpl/foo/bar?Param1=bla'
-			});
-		});
+				})).resolves.toEqual({
+					path1: '/tpl/foo',
+					path2: '/tpl/foo',
+					path3: '/tpl/foo',
+					path4: '/tpl/foo',
+					path5: '/tpl/foo/bar?Param1=bla'
+				});
+			}
+		);
 	});
 
 	test.describe('passing parameters to a route with the same name as the current one', () => {
@@ -245,9 +250,9 @@ test.describe('<b-router> passing transition parameters', () => {
 
 		test(
 			[
-				'if the route name is explicitly set as a string, ',
+				'if the route name is explicitly set as a string,',
 				'then the new parameters should completely replace the old ones'
-			].join(''),
+			].join(' '),
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {

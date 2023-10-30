@@ -86,99 +86,120 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test.describe('links that should not be intercepted by the router but should be intercepted by the browser', () => {
+		test(
+			'links with absolute URLs',
+
+			async ({page}) => {
 				await createInitRouter('history')(page);
 
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: 'https://www.google.com',
-				text: 'Go'
-			});
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: 'https://www.google.com',
+					text: 'Go'
+				});
 
-			await page.getByTestId('target').click();
-			test.expect(page.url()).toBe('https://www.google.com/');
-		});
+				await page.getByTestId('target').click();
+				test.expect(page.url()).toBe('https://www.google.com/');
+			}
+		);
 
-		test('anchor links', async ({page}) => {
-			const root = await createInitRouter('history', {
-				main: {
-					path: '/'
-				}
+		test(
+			'anchor links',
+
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
 				})(page, {
 					initialRoute: 'main'
 				});
 
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: '#foo',
-				text: 'Go'
-			});
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: '#foo',
+					text: 'Go'
+				});
 
-			await page.getByTestId('target').click();
+				await page.getByTestId('target').click();
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
-			test.expect(new URL(page.url()).hash).toBe('#foo');
-		});
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
+				test.expect(new URL(page.url()).hash).toBe('#foo');
+			}
+		);
 
-		test('`javascript:` links', async ({page}) => {
-			const root = await createInitRouter('history', {
-				main: {
-					path: '/'
-				}
+		test(
+			'`javascript:` links',
+
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
 				})(page, {
 					initialRoute: 'main'
 				});
 
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: 'javascript:void(globalThis.foo = "bar")',
-				text: 'Go'
-			});
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: 'javascript:void(globalThis.foo = "bar")',
+					text: 'Go'
+				});
 
-			await page.getByTestId('target').click();
+				await page.getByTestId('target').click();
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
-			await test.expect(root.evaluate(() => globalThis.foo)).toBeResolvedTo('bar');
-		});
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
+				await test.expect(root.evaluate(() => globalThis.foo)).toBeResolvedTo('bar');
+			}
+		);
 
-		test('`mailto:` links', async ({page}) => {
-			const root = await createInitRouter('history', {
-				main: {
-					path: '/'
-				}
+		test(
+			'`mailto:` links',
+
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
 				})(page, {
 					initialRoute: 'main'
 				});
 
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: 'mailto:foo@bar.com',
-				text: 'Go'
-			});
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: 'mailto:foo@bar.com',
+					text: 'Go'
+				});
 
-			await page.getByTestId('target').click();
+				await page.getByTestId('target').click();
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
-		});
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
+			}
+		);
 
-		test('`tel:` links', async ({page}) => {
-			const root = await createInitRouter('history', {
-				main: {
-					path: '/'
-				}
+		test(
+			'`tel:` links',
+
+			async ({page}) => {
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
 				})(page, {
 					initialRoute: 'main'
 				});
 
-			await Component.createComponent(page, 'a', {
-				'data-testid': 'target',
-				href: 'tel:+71234567890',
-				text: 'Go'
-			});
+				await Component.createComponent(page, 'a', {
+					'data-testid': 'target',
+					href: 'tel:+71234567890',
+					text: 'Go'
+				});
 
-			await page.getByTestId('target').click();
+				await page.getByTestId('target').click();
 
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
-		});
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
+			}
+		);
 	});
 
 	test(
@@ -454,9 +475,9 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 		test(
 			[
-				"calling the `preventRouterTransition` method on the event object should cancel the router's transition, " +
+				"calling the `preventRouterTransition` method on the event object should cancel the router's transition,",
 				"but not the browser's transition"
-			].join(''),
+			].join(' '),
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {

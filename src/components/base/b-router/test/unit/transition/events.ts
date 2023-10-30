@@ -382,9 +382,9 @@ test.describe('<b-router> standard transition events', () => {
 
 	test(
 		[
-			'The change event should be emitted whenever there is any transition in which any parameters have changed ',
+			'The change event should be emitted whenever there is any transition in which any parameters have changed',
 			'or the length of the history has changed'
-		].join(''),
+		].join(' '),
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -615,9 +615,9 @@ test.describe('<b-router> standard transition events', () => {
 
 	test(
 		[
-			'the order of event triggering should be as follows: ',
+			'the order of event triggering should be as follows:',
 			'`beforeChange`, `softChange/hardChange`, `change`, `transition`, `$root.transition`'
-		].join(''),
+		].join(' '),
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {

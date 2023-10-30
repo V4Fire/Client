@@ -43,90 +43,98 @@ function generateSpecs(engineName: EngineName) {
 		}
 	});
 
-	test('should watch for the `route` property changes', async ({page}) => {
-		const root = await initRouter(page);
+	test(
+		'should watch for the `route` property changes',
 
-		const scan = root.evaluate(async (ctx, engineName) => {
-			const {router} = ctx;
+		async ({page}) => {
+			const root = await initRouter(page);
 
-			const result: RouterTestResult = {routeChanges: [], queryChanges: []};
+			const scan = root.evaluate(async (ctx, engineName) => {
+				const {router} = ctx;
 
-			await router!.push('/second');
-			await router!.push('/');
+				const result: RouterTestResult = {routeChanges: [], queryChanges: []};
 
-			result.initialQuery = engineName === 'history' ? location.search : '';
-			result.initialContent = ctx.route?.meta.content;
+				await router!.push('/second');
+				await router!.push('/');
 
-			const group = {group: Math.random().toString()};
+				result.initialQuery = engineName === 'history' ? location.search : '';
+				result.initialContent = ctx.route?.meta.content;
 
-			ctx.watch('route', group, (val, old) => {
-				result.routeChanges!.push([
-					Object.fastClone(val.query),
-					Object.fastClone(old?.query)
-				]);
+				const group = {group: Math.random().toString()};
+
+				ctx.watch('route', group, (val, old) => {
+					result.routeChanges!.push([
+						Object.fastClone(val.query),
+						Object.fastClone(old?.query)
+					]);
+				});
+
+				ctx.watch('route.query', {deep: true, withProto: true, collapse: false, ...group}, (val, old) => {
+					result.queryChanges!.push([Object.fastClone(val), Object.fastClone(old)]);
+				});
+
+				await router!.push('second', {query: {foo: 1}});
+				await router!.push(null, {query: {foo: 2}});
+
+				ctx.unsafe.async.terminateWorker(group);
+
+				await router!.push(null, {query: {foo: 3}});
+				return result;
+
+			}, engineName);
+
+			await test.expect(scan).resolves.toEqual({
+				initialContent: 'Main page',
+				initialQuery: '',
+				routeChanges: [[{foo: 1}, undefined]],
+				queryChanges: [[{foo: 1}, undefined], [{foo: 2}, {foo: 1}]]
 			});
+		}
+	);
 
-			ctx.watch('route.query', {deep: true, withProto: true, collapse: false, ...group}, (val, old) => {
-				result.queryChanges!.push([Object.fastClone(val), Object.fastClone(old)]);
+	test(
+		'should create link to the `route` property',
+
+		async ({page}) => {
+			const root = await initRouter(page);
+
+			const scan = root.evaluate(async (ctx, engineName) => {
+				const
+					{router} = ctx;
+
+				const
+					result: RouterTestResult = {};
+
+				await router!.push('/second');
+				await router!.push('/');
+
+				result.initialQuery = engineName === 'history' ? location.search : '';
+				result.initialContent = ctx.route?.meta.content;
+
+				const
+					group = {group: Math.random().toString()},
+					watchOpts = {deep: true, withProto: true, collapse: false, ...group};
+
+				result.initialRouteLink =
+					ctx.sync.link(['routeLink', 'route.query'], watchOpts, (query) => Object.fastClone(query));
+
+				await router!.push('second', {query: {foo: 1}});
+				result.routeLink = (<any>ctx).routeLink;
+				ctx.unsafe.async.terminateWorker(group);
+
+				await router!.push('second', {query: {foo: 3}});
+				result.routeLink = (<any>ctx).routeLink;
+
+				return result;
+
+			}, engineName);
+
+			await test.expect(scan).resolves.toEqual({
+				initialContent: 'Main page',
+				initialQuery: '',
+				initialRouteLink: {},
+				routeLink: {foo: 1}
 			});
-
-			await router!.push('second', {query: {foo: 1}});
-			await router!.push(null, {query: {foo: 2}});
-
-			ctx.unsafe.async.terminateWorker(group);
-
-			await router!.push(null, {query: {foo: 3}});
-			return result;
-
-		}, engineName);
-
-		await test.expect(scan).resolves.toEqual({
-			initialContent: 'Main page',
-			initialQuery: '',
-			routeChanges: [[{foo: 1}, undefined]],
-			queryChanges: [[{foo: 1}, undefined], [{foo: 2}, {foo: 1}]]
-		});
-	});
-
-	test('should create link to the `route` property', async ({page}) => {
-		const root = await initRouter(page);
-
-		const scan = root.evaluate(async (ctx, engineName) => {
-			const
-				{router} = ctx;
-
-			const
-				result: RouterTestResult = {};
-
-			await router!.push('/second');
-			await router!.push('/');
-
-			result.initialQuery = engineName === 'history' ? location.search : '';
-			result.initialContent = ctx.route?.meta.content;
-
-			const
-				group = {group: Math.random().toString()},
-				watchOpts = {deep: true, withProto: true, collapse: false, ...group};
-
-			result.initialRouteLink =
-				ctx.sync.link(['routeLink', 'route.query'], watchOpts, (query) => Object.fastClone(query));
-
-			await router!.push('second', {query: {foo: 1}});
-			result.routeLink = (<any>ctx).routeLink;
-			ctx.unsafe.async.terminateWorker(group);
-
-			await router!.push('second', {query: {foo: 3}});
-			result.routeLink = (<any>ctx).routeLink;
-
-			return result;
-
-		}, engineName);
-
-		await test.expect(scan).resolves.toEqual({
-			initialContent: 'Main page',
-			initialQuery: '',
-			initialRouteLink: {},
-			routeLink: {foo: 1}
-		});
-	});
+		}
+	);
 }

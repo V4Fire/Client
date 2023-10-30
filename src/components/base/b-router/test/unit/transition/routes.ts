@@ -29,27 +29,32 @@ test.describe('<b-router> route handling', () => {
 
 	// eslint-disable-next-line max-lines-per-function
 	function generateSpecs(engineName: EngineName) {
-				const root = await createInitRouter(engineName, {
-			main: {
-						path: '/'
-			},
+		test(
+			'should switch to the default page if the specified route was not found',
 
-			notFound: {
-				default: true,
-				content: '404'
-			}
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/'
+					},
+
+					notFound: {
+						default: true,
+						content: '404'
+					}
 				})(page, {
 					initialRoute: 'main'
-		});
+				});
 
 				await assertPathTransitionsTo(root, '/some/fake/page', '404');
 				await assertRouteNameIs(root, 'notFound');
 
-			// eslint-disable-next-line playwright/no-conditional-in-test
-			if (engineName === 'history') {
-				test.expect(new URL(page.url()).pathname).toBe('/some/fake/page');
+				// eslint-disable-next-line playwright/no-conditional-in-test
+				if (engineName === 'history') {
+					test.expect(new URL(page.url()).pathname).toBe('/some/fake/page');
+				}
 			}
-		});
+		);
 
 		test(
 			[
@@ -159,6 +164,9 @@ test.describe('<b-router> route handling', () => {
 			}
 		);
 
+		test(
+			'should switch to the original page using the chained aliases',
+
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
 					main: {
@@ -187,6 +195,11 @@ test.describe('<b-router> route handling', () => {
 				await assertPathTransitionsTo(root, '/alias-to-alias', 'Second page');
 				await assertActivePageIs(root, 'second');
 				await assertRouteNameIs(root, 'aliasToAlias');
+			}
+		);
+
+		test(
+			'should redirect to the page using the redirect path without parameters',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -211,6 +224,12 @@ test.describe('<b-router> route handling', () => {
 				await assertPathTransitionsTo(root, '/second/redirect', 'Second page');
 				await assertActivePageIs(root, 'second');
 				await assertRouteNameIs(root, 'second');
+			}
+		);
+
+		test(
+			'should redirect to the page using the redirect path with parameters',
+
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
 					main: {
@@ -247,8 +266,11 @@ test.describe('<b-router> route handling', () => {
 				if (engineName === 'history') {
 					test.expect(new URL(page.url()).pathname).toBe('/tpl/1/2');
 				}
-			});
-		});
+			}
+		);
+
+		test(
+			'should redirect to the page using an alias path with the redirect',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -278,6 +300,11 @@ test.describe('<b-router> route handling', () => {
 				await assertPathTransitionsTo(root, '/redirect-alias', 'Second page');
 				await assertActivePageIs(root, 'second');
 				await assertRouteNameIs(root, 'secondAlias');
+			}
+		);
+
+		test(
+			'should redirect to the page using the chained redirect',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -307,10 +334,15 @@ test.describe('<b-router> route handling', () => {
 				await assertPathTransitionsTo(root, '/redirect-redirect', 'Second page');
 				await assertActivePageIs(root, 'second');
 				await assertRouteNameIs(root, 'second');
+			}
+		);
 
-		test([
-			'`back` and `forward` methods',
-			'should navigate back and forth between one page and another'
+		test(
+			[
+				'`back` and `forward` methods',
+				'should navigate back and forth between one page and another'
+			].join(' '),
+
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
 					main: {
@@ -327,16 +359,20 @@ test.describe('<b-router> route handling', () => {
 				await assertPathTransitionsTo(root, 'main', 'Main page');
 				await assertPathTransitionsTo(root, 'second', 'Second page');
 
-			await test.expect(root.evaluate(async (ctx) => {
-				await ctx.router!.back();
-				return ctx.route!.meta.content;
-			})).toBeResolvedTo('Main page');
+				await test.expect(root.evaluate(async (ctx) => {
+					await ctx.router!.back();
+					return ctx.route!.meta.content;
+				})).toBeResolvedTo('Main page');
 
-			await test.expect(root.evaluate(async (ctx) => {
-				await ctx.router!.forward();
-				return ctx.route!.meta.content;
-			})).toBeResolvedTo('Second page');
-		});
+				await test.expect(root.evaluate(async (ctx) => {
+					await ctx.router!.forward();
+					return ctx.route!.meta.content;
+				})).toBeResolvedTo('Second page');
+			}
+		);
+
+		test(
+			'`go` method should navigate back and forth between one page and another',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -351,30 +387,34 @@ test.describe('<b-router> route handling', () => {
 					}
 				})(page);
 
-			await test.expect(root.evaluate(async (ctx) => {
-				const
-					router = ctx.router!;
+				await test.expect(root.evaluate(async (ctx) => {
+					const
+						router = ctx.router!;
 
-				await router.push('main');
-				await router.push('second');
-				await router.push('main');
-				await router.push('second');
+					await router.push('main');
+					await router.push('second');
+					await router.push('main');
+					await router.push('second');
 
-				return router.route!.meta.content;
-			})).toBeResolvedTo('Second page');
+					return router.route!.meta.content;
+				})).toBeResolvedTo('Second page');
 
-			await test.expect(root.evaluate(async (ctx) => {
-				const router = ctx.router!;
-				await router.go(-2);
-				return router.route?.meta.content;
-			})).toBeResolvedTo('Second page');
+				await test.expect(root.evaluate(async (ctx) => {
+					const router = ctx.router!;
+					await router.go(-2);
+					return router.route?.meta.content;
+				})).toBeResolvedTo('Second page');
 
-			await test.expect(root.evaluate(async (ctx) => {
-				const router = ctx.router!;
-				await router.go(1);
-				return router.route?.meta.content;
-			})).toBeResolvedTo('Main page');
-		});
+				await test.expect(root.evaluate(async (ctx) => {
+					const router = ctx.router!;
+					await router.go(1);
+					return router.route?.meta.content;
+				})).toBeResolvedTo('Main page');
+			}
+		);
+
+		test(
+			'should transition by setting arbitrary properties on the root component',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -392,32 +432,33 @@ test.describe('<b-router> route handling', () => {
 					initialRoute: 'main'
 				});
 
-			const transition = root.evaluate(async (ctx) => {
-				const
-					router = ctx.router!;
+				const transition = root.evaluate(async (ctx) => {
+					const
+						router = ctx.router!;
 
-				await router.push('/second');
-				await router.push('/');
+					await router.push('/second');
+					await router.push('/');
 
-				// eslint-disable-next-line require-atomic-updates
-				ctx['rootParam'] = 1;
+					// eslint-disable-next-line require-atomic-updates
+					ctx['rootParam'] = 1;
 
-				await router.push('second');
+					await router.push('second');
 
-				// eslint-disable-next-line require-atomic-updates
-				ctx['rootParam'] = undefined;
+					// eslint-disable-next-line require-atomic-updates
+					ctx['rootParam'] = undefined;
 
-				return {
-					queryObject: ctx.route?.query,
-					queryString: location.search
-				};
-			});
+					return {
+						queryObject: ctx.route?.query,
+						queryString: location.search
+					};
+				});
 
-			await test.expect(transition).resolves.toEqual({
-				queryObject: {rootParam: 1},
-				queryString: engineName === 'in-memory' ? '' : '?rootParam=1'
-			});
-		});
+				await test.expect(transition).resolves.toEqual({
+					queryObject: {rootParam: 1},
+					queryString: engineName === 'in-memory' ? '' : '?rootParam=1'
+				});
+			}
+		);
 
 		async function assertPathTransitionsTo(root: JSHandle<iStaticPage>, path: string, content: string) {
 			await test.expect(root.evaluate(async (ctx, path) => {
