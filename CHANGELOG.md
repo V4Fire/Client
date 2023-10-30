@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-10-30)
+
+#### :house: Internal
+
+* Fixed typings in `core/init` and `models/modules/session`
+
+#### :boom: Breaking Change
+
+* Now `i18n` is a factory for creating internationalizing function `components/super/i-block/state`
+* Now `t` is an internationalization function for the component, and not an alias for `i18n` `components/super/i-block/state`
+
 ## v4.0.0-beta.38 (2023-11-15)
 
 #### :bug: Bug Fix
