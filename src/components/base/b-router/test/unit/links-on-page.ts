@@ -22,19 +22,19 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go'
 			});
 
 			await page.getByTestId('target').click();
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('second');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 		}
 	);
 
@@ -43,20 +43,20 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go',
 				'data-router-prevent-transition': 'true'
 			});
 
 			await page.getByTestId('target').click();
-			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.not.toBe('second');
+			await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.not.toBe('main');
 		}
 	);
 
@@ -65,14 +65,14 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			}, {interceptLinks: false})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go'
 			});
 
@@ -85,12 +85,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test.describe('links that should not be intercepted by the router but should be intercepted by the browser', () => {
-		test('links with absolute URLs', async ({page}) => {
-			await createInitRouter('history', {
-				second: {
-					path: '/second'
-				}
-			})(page);
+				await createInitRouter('history')(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
@@ -106,12 +101,10 @@ test.describe('<b-router> intercepting links on a page', () => {
 			const root = await createInitRouter('history', {
 				main: {
 					path: '/'
-				},
-
-				second: {
-					path: '/second'
 				}
-			})(page);
+				})(page, {
+					initialRoute: 'main'
+				});
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
@@ -119,7 +112,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 				text: 'Go'
 			});
 
-			await root.evaluate((ctx) => ctx.router?.push('main'));
 			await page.getByTestId('target').click();
 
 			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
@@ -130,12 +122,10 @@ test.describe('<b-router> intercepting links on a page', () => {
 			const root = await createInitRouter('history', {
 				main: {
 					path: '/'
-				},
-
-				second: {
-					path: '/second'
 				}
-			})(page);
+				})(page, {
+					initialRoute: 'main'
+				});
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
@@ -143,7 +133,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 				text: 'Go'
 			});
 
-			await root.evaluate((ctx) => ctx.router?.push('main'));
 			await page.getByTestId('target').click();
 
 			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
@@ -154,12 +143,10 @@ test.describe('<b-router> intercepting links on a page', () => {
 			const root = await createInitRouter('history', {
 				main: {
 					path: '/'
-				},
-
-				second: {
-					path: '/second'
 				}
-			})(page);
+				})(page, {
+					initialRoute: 'main'
+				});
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
@@ -167,7 +154,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 				text: 'Go'
 			});
 
-			await root.evaluate((ctx) => ctx.router?.push('main'));
 			await page.getByTestId('target').click();
 
 			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
@@ -177,12 +163,10 @@ test.describe('<b-router> intercepting links on a page', () => {
 			const root = await createInitRouter('history', {
 				main: {
 					path: '/'
-				},
-
-				second: {
-					path: '/second'
 				}
-			})(page);
+				})(page, {
+					initialRoute: 'main'
+				});
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
@@ -190,7 +174,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 				text: 'Go'
 			});
 
-			await root.evaluate((ctx) => ctx.router?.push('main'));
 			await page.getByTestId('target').click();
 
 			await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
@@ -202,14 +185,14 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second?foo=bar&baz=bla',
+				href: '/?foo=bar&baz=bla',
 				text: 'Go'
 			});
 
@@ -233,6 +216,10 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 				second: {
 					path: '/second'
+				},
+
+				notFound: {
+					default: true
 				}
 			})(page);
 
@@ -290,14 +277,14 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go',
 				'data-router-query': JSON.stringify({foo: 'bar'})
 			});
@@ -314,14 +301,14 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second?a=1&b=2',
+				href: '/?a=1&b=2',
 				text: 'Go',
 				'data-router-query': JSON.stringify({a: 3, c: 4})
 			});
@@ -362,14 +349,14 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
-				second: {
-					path: '/second'
+				main: {
+					path: '/'
 				}
 			})(page);
 
 			await Component.createComponent(page, 'a', {
 				'data-testid': 'target',
-				href: '/second',
+				href: '/',
 				text: 'Go',
 				'data-router-meta': JSON.stringify({foo: 'bar'})
 			});
@@ -379,8 +366,8 @@ test.describe('<b-router> intercepting links on a page', () => {
 				foo: 'bar',
 				default: false,
 				external: false,
-				name: 'second',
-				path: '/second'
+				name: 'main',
+				path: '/'
 			});
 		}
 	);
@@ -444,14 +431,14 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
-					second: {
-						path: '/second'
+					main: {
+						path: '/'
 					}
 				})(page);
 
 				await Component.createComponent(page, 'a', {
 					'data-testid': 'target',
-					href: '/second',
+					href: '/',
 					text: 'Go'
 				});
 
@@ -460,7 +447,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 				}));
 
 				await page.getByTestId('target').click();
-				await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.not.toBe('second');
+				await test.expect(root.evaluate((ctx) => ctx.route?.name)).resolves.not.toBe('main');
 			}
 		);
 
@@ -472,14 +459,14 @@ test.describe('<b-router> intercepting links on a page', () => {
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
-					second: {
-						path: '/second'
+					main: {
+						path: '/'
 					}
 				}, {interceptLinks: false})(page);
 
 				await Component.createComponent(page, 'a', {
 					'data-testid': 'target',
-					href: '/second',
+					href: '/',
 					text: 'Go'
 				});
 

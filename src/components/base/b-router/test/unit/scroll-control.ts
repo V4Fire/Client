@@ -37,12 +37,22 @@ test.describe('<b-router> scroll control', () => {
  */
 function generateSpecs(engineName: EngineName) {
 	/* eslint-disable playwright/require-top-level-describe */
-	const initRouter = createInitRouter(engineName);
+	const initRouter = createInitRouter(engineName, {
+		main: {
+			path: '/'
+		},
+
+		second: {
+			path: '/second'
+		}
+	});
 
 	let root: JSHandle<iStaticPage>;
 
 	test.beforeEach(async ({page}) => {
-		root = await initRouter(page);
+		root = await initRouter(page, {
+			initialRoute: 'main'
+		});
 
 		await page.addStyleTag({
 			content: '#root-component {height: 3000px;}'

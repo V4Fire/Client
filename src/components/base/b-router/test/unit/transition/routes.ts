@@ -27,112 +27,21 @@ test.describe('<b-router> route handling', () => {
 	});
 
 	function generateSpecs(engineName: EngineName) {
-		const initRouter = createInitRouter(engineName, {
+				const root = await createInitRouter(engineName, {
 			main: {
-				path: '/',
-				content: 'Main page'
-			},
-
-			second: {
-				// The path should not match the page identifier so that we can test the non-normalized path as an argument
-				path: '/second-page',
-				content: 'Second page',
-
-				query: {
-					rootParam: (o) => o.r.rootParam
-				}
-			},
-
-			secondAlias: {
-				path: '/second/alias',
-				alias: 'second'
-			},
-
-			aliasToAlias: {
-				path: '/alias-to-alias',
-				alias: 'secondAlias'
-			},
-
-			aliasToRedirect: {
-				path: '/second/alias-redirect',
-				alias: 'indexRedirect'
-			},
-
-			indexRedirect: {
-				path: '/redirect',
-				redirect: 'main'
-			},
-
-			secondRedirect: {
-				path: '/second/redirect',
-				redirect: 'second'
-			},
-
-			redirectToAlias: {
-				path: '/redirect-alias',
-				redirect: 'secondAlias'
-			},
-
-			redirectToRedirect: {
-				path: '/redirect-redirect',
-				redirect: 'secondRedirect'
-			},
-
-			external: {
-				path: 'https://www.google.com'
-			},
-
-			externalRedirect: {
-				path: '/external-redirect',
-				redirect: 'https://www.google.com'
-			},
-
-			localExternal: {
-				path: '/',
-				external: true
-			},
-
-			template: {
-				path: '/tpl/:param1/:param2?',
-				pathOpts: {
-					aliases: {
-						param1: ['_param1', 'Param1'],
-						param2: ['Param2']
-					}
-				}
-			},
-
-			strictTemplate: {
-				paramsFromQuery: false,
-				path: '/strict-tpl/:param1/:param2?'
-			},
-
-			templateAlias: {
-				path: '/tpl-alias/:param1/:param2?',
-				alias: 'template'
-			},
-
-			redirectTemplate: {
-				path: '/tpl/redirect/:param1/:param2',
-				redirect: 'template'
+						path: '/'
 			},
 
 			notFound: {
 				default: true,
 				content: '404'
 			}
+				})(page, {
+					initialRoute: 'main'
 		});
 
-		let
-			root: JSHandle<iStaticPage>;
-
-		test.beforeEach(async ({page}) => {
-			root = await initRouter(page);
-		});
-
-		test('should switch to the default page if the specified route was not found', async ({page}) => {
-			await assertPathTransitionsTo('/some/fake/page', '404');
-			await assertRouteNameIs('notFound');
+				await assertPathTransitionsTo(root, '/some/fake/page', '404');
+				await assertRouteNameIs(root, 'notFound');
 
 			// eslint-disable-next-line playwright/no-conditional-in-test
 			if (engineName === 'history') {
@@ -146,10 +55,29 @@ test.describe('<b-router> route handling', () => {
 				'but the route name should match the name of the alias route'
 			].join(' '),
 
-			async () => {
-				await assertPathTransitionsTo('/second/alias', 'Second page');
-				await assertActivePageIs('second');
-				await assertRouteNameIs('secondAlias');
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/'
+					},
+
+					second: {
+						// The path should not match the page identifier so that we can test the non-normalized path as an argument
+						path: '/second-page',
+						content: 'Second page'
+					},
+
+					secondAlias: {
+						path: '/second/alias',
+						alias: 'second'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
+				await assertPathTransitionsTo(root, '/second/alias', 'Second page');
+				await assertActivePageIs(root, 'second');
+				await assertRouteNameIs(root, 'secondAlias');
 			}
 		);
 
@@ -160,12 +88,35 @@ test.describe('<b-router> route handling', () => {
 			].join(' '),
 
 			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/'
+					},
+
+					template: {
+						path: '/tpl/:param1/:param2?',
+						pathOpts: {
+							aliases: {
+								param1: ['_param1', 'Param1'],
+								param2: ['Param2']
+							}
+						}
+					},
+
+					templateAlias: {
+						path: '/tpl-alias/:param1/:param2?',
+						alias: 'template'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
 				await test.expect(root.evaluate(async (ctx) => {
 					await ctx.router?.push('/tpl-alias/foo/bar');
 					return ctx.route?.params;
 				})).resolves.toEqual({param1: 'foo', param2: 'bar'});
 
-				await assertActivePageIs('template');
+				await assertActivePageIs(root, 'template');
 
 				// eslint-disable-next-line playwright/no-conditional-in-test
 				if (engineName === 'history') {
@@ -180,33 +131,115 @@ test.describe('<b-router> route handling', () => {
 				'which points to a redirect route that subsequently redirects to the main page'
 			].join(' '),
 
-			async () => {
-				await assertPathTransitionsTo('/second/alias-redirect', 'Main page');
-				await assertActivePageIs('main');
-				await assertRouteNameIs('aliasToRedirect');
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/',
+						content: 'Main page'
+					},
+
+					aliasToRedirect: {
+						path: '/second/alias-redirect',
+						alias: 'indexRedirect'
+					},
+
+					indexRedirect: {
+						path: '/redirect',
+						redirect: 'main'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
+				await assertPathTransitionsTo(root, '/second/alias-redirect', 'Main page');
+				await assertActivePageIs(root, 'main');
+				await assertRouteNameIs(root, 'aliasToRedirect');
 			}
 		);
 
-		test('should switch to the original page using the chained aliases', async () => {
-			await assertPathTransitionsTo('/alias-to-alias', 'Second page');
-			await assertActivePageIs('second');
-			await assertRouteNameIs('aliasToAlias');
-		});
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/',
+						content: 'Main page'
+					},
 
-		test.describe('should redirect to the page using the redirect path', () => {
-			test('without parameters', async () => {
-				await assertPathTransitionsTo('/second/redirect', 'Second page');
-				await assertActivePageIs('second');
-				await assertRouteNameIs('second');
-			});
+					second: {
+						path: '/second',
+						content: 'Second page'
+					},
 
-			test('with parameters', async ({page}) => {
+					secondAlias: {
+						path: '/second/alias',
+						alias: 'second'
+					},
+
+					aliasToAlias: {
+						path: '/alias-to-alias',
+						alias: 'secondAlias'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
+				await assertPathTransitionsTo(root, '/alias-to-alias', 'Second page');
+				await assertActivePageIs(root, 'second');
+				await assertRouteNameIs(root, 'aliasToAlias');
+
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/',
+						content: 'Main page'
+					},
+
+					second: {
+						path: '/second',
+						content: 'Second page'
+					},
+
+					secondRedirect: {
+						path: '/second/redirect',
+						redirect: 'second'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
+				await assertPathTransitionsTo(root, '/second/redirect', 'Second page');
+				await assertActivePageIs(root, 'second');
+				await assertRouteNameIs(root, 'second');
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/',
+						content: 'Main page'
+					},
+
+					template: {
+						path: '/tpl/:param1/:param2?',
+						pathOpts: {
+							aliases: {
+								param1: ['_param1', 'Param1'],
+								param2: ['Param2']
+							}
+						}
+					},
+
+					redirectTemplate: {
+						path: '/tpl/redirect/:param1/:param2',
+						redirect: 'template'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
 				await test.expect(root.evaluate(async (ctx) => {
 					await ctx.router?.push('/tpl/redirect/1/2');
 					return ctx.route?.params;
 				})).resolves.toEqual({param1: '1', param2: '2'});
 
-				await assertActivePageIs('template');
+				await assertActivePageIs(root, 'template');
 
 				// eslint-disable-next-line playwright/no-conditional-in-test
 				if (engineName === 'history') {
@@ -215,24 +248,82 @@ test.describe('<b-router> route handling', () => {
 			});
 		});
 
-		test('should redirect to the page using an alias path with the redirect', async () => {
-			await assertPathTransitionsTo('/redirect-alias', 'Second page');
-			await assertActivePageIs('second');
-			await assertRouteNameIs('secondAlias');
-		});
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/',
+						content: 'Main page'
+					},
 
-		test('should redirect to the page using the chained redirect', async () => {
-			await assertPathTransitionsTo('/redirect-redirect', 'Second page');
-			await assertActivePageIs('second');
-			await assertRouteNameIs('second');
-		});
+					second: {
+						path: '/second',
+						content: 'Second page'
+					},
+
+					secondAlias: {
+						path: '/second/alias',
+						alias: 'second'
+					},
+
+					redirectToAlias: {
+						path: '/redirect-alias',
+						redirect: 'secondAlias'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
+				await assertPathTransitionsTo(root, '/redirect-alias', 'Second page');
+				await assertActivePageIs(root, 'second');
+				await assertRouteNameIs(root, 'secondAlias');
+
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/',
+						content: 'Main page'
+					},
+
+					second: {
+						path: '/second',
+						content: 'Second page'
+					},
+
+					secondRedirect: {
+						path: '/second/redirect',
+						redirect: 'second'
+					},
+
+					redirectToRedirect: {
+						path: '/redirect-redirect',
+						redirect: 'secondRedirect'
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
+				await assertPathTransitionsTo(root, '/redirect-redirect', 'Second page');
+				await assertActivePageIs(root, 'second');
+				await assertRouteNameIs(root, 'second');
 
 		test([
 			'`back` and `forward` methods',
 			'should navigate back and forth between one page and another'
-		].join(' '), async () => {
-			await assertPathTransitionsTo('main', 'Main page');
-			await assertPathTransitionsTo('second', 'Second page');
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/',
+						content: 'Main page'
+					},
+
+					second: {
+						path: '/second',
+						content: 'Second page'
+					}
+				})(page);
+
+				await assertPathTransitionsTo(root, 'main', 'Main page');
+				await assertPathTransitionsTo(root, 'second', 'Second page');
 
 			await test.expect(root.evaluate(async (ctx) => {
 				await ctx.router!.back();
@@ -245,7 +336,19 @@ test.describe('<b-router> route handling', () => {
 			})).toBeResolvedTo('Second page');
 		});
 
-		test('`go` method should navigate back and forth between one page and another', async () => {
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/',
+						content: 'Main page'
+					},
+
+					second: {
+						path: '/second',
+						content: 'Second page'
+					}
+				})(page);
+
 			await test.expect(root.evaluate(async (ctx) => {
 				const
 					router = ctx.router!;
@@ -271,7 +374,22 @@ test.describe('<b-router> route handling', () => {
 			})).toBeResolvedTo('Main page');
 		});
 
-		test('should transition by setting arbitrary properties on the root component', async () => {
+			async ({page}) => {
+				const root = await createInitRouter(engineName, {
+					main: {
+						path: '/'
+					},
+
+					second: {
+						path: '/second',
+						query: {
+							rootParam: (o) => o.r.rootParam
+						}
+					}
+				})(page, {
+					initialRoute: 'main'
+				});
+
 			const transition = root.evaluate(async (ctx) => {
 				const
 					router = ctx.router!;
@@ -299,18 +417,18 @@ test.describe('<b-router> route handling', () => {
 			});
 		});
 
-		async function assertPathTransitionsTo(path: string, content: string) {
+		async function assertPathTransitionsTo(root: JSHandle<iStaticPage>, path: string, content: string) {
 			await test.expect(root.evaluate(async (ctx, path) => {
 				await ctx.router!.push(path);
 				return ctx.route!.meta.content;
 			}, path)).toBeResolvedTo(content);
 		}
 
-		async function assertActivePageIs(routeId: string) {
+		async function assertActivePageIs(root: JSHandle<iStaticPage>, routeId: string) {
 			await test.expect(root.evaluate(({activePage}) => activePage)).resolves.toEqual(routeId);
 		}
 
-		async function assertRouteNameIs(name: string) {
+		async function assertRouteNameIs(root: JSHandle<iStaticPage>, name: string) {
 			await test.expect(root.evaluate(({route}) => route!.name)).toBeResolvedTo(name);
 		}
 	}

@@ -31,7 +31,17 @@ test.describe('<b-router> watch', () => {
  */
 function generateSpecs(engineName: EngineName) {
 	/* eslint-disable playwright/require-top-level-describe */
-	const initRouter = createInitRouter(engineName);
+	const initRouter = createInitRouter(engineName, {
+		main: {
+			path: '/',
+			content: 'Main page'
+		},
+
+		second: {
+			path: '/second',
+			content: 'Second page'
+		}
+	});
 
 	test('should watch for the `route` property changes', async ({page}) => {
 		const root = await initRouter(page);

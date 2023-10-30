@@ -257,8 +257,12 @@ test.describe('<b-router> standard transition events', () => {
 
 				second: {
 					path: '/second'
+				},
+
+				third: {
+					path: '/third'
 				}
-			})(page);
+			})(page, {initialRoute: 'main'});
 
 			const log = await root.evaluate(async (ctx) => {
 				const
@@ -277,10 +281,10 @@ test.describe('<b-router> standard transition events', () => {
 					}
 				});
 
-				await router.push('main', {query: {foo: 1}});
+				await router.push('second', {query: {foo: 1}});
 				res.pathChanges?.push(getPath());
 
-				await router.push('second', {query: {bar: 2}});
+				await router.push('third', {query: {bar: 2}});
 				await router.push(null, {query: {bar: 3}});
 				await router.push(null, {query: {bar: 4}});
 				res.pathChanges?.push(getPath());
@@ -296,7 +300,7 @@ test.describe('<b-router> standard transition events', () => {
 			});
 
 			test.expect(log).toEqual({
-				pathChanges: ['/?foo=1', '/second?bar=4', '/'],
+				pathChanges: ['/second?foo=1', '/third?bar=4', '/'],
 				onHardChange: [['initial', {}], {foo: 1}, {bar: 2}, {}]
 			});
 		}
@@ -624,7 +628,7 @@ test.describe('<b-router> standard transition events', () => {
 				second: {
 					path: '/second'
 				}
-			})(page);
+			})(page, {initialRoute: 'main'});
 
 			const log = await root.evaluate(async (ctx) => {
 				const

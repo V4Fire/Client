@@ -28,12 +28,24 @@ test.describe('<b-router> simple use-cases', () => {
 
 		// Specific tests
 		test.describe('-', () => {
-			const initRouter = createInitRouter('history');
+			const initRouter = createInitRouter('history', {
+				main: {
+					path: '/',
+					content: 'Main page'
+				},
+
+				second: {
+					path: '/second',
+					content: 'Second page'
+				}
+			});
 
 			let root: JSHandle<iStaticPage>;
 
 			test.beforeEach(async ({page}) => {
-				root = await initRouter(page);
+				root = await initRouter(page, {
+					initialRoute: 'main'
+				});
 			});
 
 			test.describe('`replace`', () => {
@@ -43,7 +55,7 @@ test.describe('<b-router> simple use-cases', () => {
 							historyLength = history.length,
 							res: Dictionary = {};
 
-						await ctx.router!.replace('second-page');
+							await ctx.router!.replace('second');
 
 						res.content = ctx.route!.meta.content;
 						res.lengthDoesntChange = historyLength === history.length;
@@ -94,7 +106,17 @@ test.describe('<b-router> simple use-cases', () => {
 
 		// Specific tests
 		test.describe('-', () => {
-			const initRouter = createInitRouter('in-memory');
+			const initRouter = createInitRouter('in-memory', {
+				main: {
+					path: '/',
+					content: 'Main page'
+				},
+
+				second: {
+					path: '/second',
+					content: 'Second page'
+				}
+			});
 
 			test('the `route` property should be `null` when `initialRoute` is not set', async ({page}) => {
 				const root = await initRouter(page, {initialRoute: null});
@@ -111,7 +133,7 @@ test.describe('<b-router> simple use-cases', () => {
 							historyLength = router!.unsafe.engine.history.length,
 							res: Dictionary = {};
 
-						await router!.replace('second-page');
+							await router!.replace('second');
 
 						res.content = ctx.route!.meta.content;
 						res.lengthDoesntChange = historyLength === router!.unsafe.engine.history.length;
@@ -163,7 +185,21 @@ test.describe('<b-router> simple use-cases', () => {
  */
 function generateSpecs(engineName: EngineName) {
 	/* eslint-disable playwright/require-top-level-describe */
-	const initRouter = createInitRouter(engineName);
+	const initRouter = createInitRouter(engineName, {
+		main: {
+			path: '/',
+			content: 'Main page'
+		},
+
+		second: {
+			path: '/second',
+			content: 'Second page'
+		},
+
+		notFound: {
+			default: true
+		}
+	});
 
 	let root: JSHandle<iStaticPage>;
 
@@ -288,7 +324,7 @@ function generateSpecs(engineName: EngineName) {
 
 	test('`getRoutePath` should return URL of the route with the specified `query`', async () => {
 		test.expect(await root.evaluate(({router}) => router!.getRoutePath('second', {query: {bla: 1}})))
-			.toBe('/second-page?bla=1');
+				.toBe('/second?bla=1');
 
 		test.expect(await root.evaluate(({router}) => router!.getRoutePath('/', {query: {bla: 1}})))
 			.toBe('/?bla=1');

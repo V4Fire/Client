@@ -205,7 +205,11 @@ test.describe('<b-router> passing transition parameters', () => {
 			'if the route name is set to null, then the new parameters should be merged with the old ones',
 
 			async ({page}) => {
-				const root = await createInitRouter('history')(page);
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
+				})(page);
 
 				await test.expect(root.evaluate(async (ctx) => {
 					const
@@ -246,7 +250,15 @@ test.describe('<b-router> passing transition parameters', () => {
 			].join(''),
 
 			async ({page}) => {
-				const root = await createInitRouter('history')(page);
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					},
+
+					second: {
+						path: '/second-page'
+					}
+				})(page);
 
 				await test.expect(root.evaluate(async (ctx) => {
 					const
@@ -284,7 +296,11 @@ test.describe('<b-router> passing transition parameters', () => {
 			'parameters should never be merged if we are navigating through the history',
 
 			async ({page}) => {
-				const root = await createInitRouter('history')(page);
+				const root = await createInitRouter('history', {
+					main: {
+						path: '/'
+					}
+				})(page);
 
 				await test.expect(root.evaluate(async (ctx) => {
 					const
