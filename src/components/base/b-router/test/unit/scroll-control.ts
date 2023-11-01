@@ -60,7 +60,7 @@ function generateSpecs(engineName: EngineName) {
 	});
 
 	test(
-		'should restore scroll position after the transition',
+		'the router should restore the scroll position after a transition',
 
 		async ({page}) => {
 			await scrollBy(page, [0, 500]);
@@ -87,7 +87,7 @@ function generateSpecs(engineName: EngineName) {
 	);
 
 	test(
-		'should reset scroll position on the hard change',
+		'the router should reset the scroll position on the hard change',
 
 		async ({page}) => {
 			await scrollBy(page, [0, 500]);
@@ -102,7 +102,7 @@ function generateSpecs(engineName: EngineName) {
 	);
 
 	test(
-		'should add scroll position to the current route meta',
+		'the router should add the scroll position to the current route meta',
 
 		async ({page}) => {
 			await scrollBy(page, [0, 500]);

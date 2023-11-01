@@ -40,7 +40,10 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'a link with the `data-router-prevent-transition` attribute should not be intercepted by the router and the browser',
+		[
+			'a click on a link with the `data-router-prevent-transition` attribute',
+			'should not be intercepted by the router and the browser'
+		].join(' '),
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -62,7 +65,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'clicks on links should not be intercepted if the router is initialized with the prop `interceptLinks` set to false',
+		'clicking on links should not be intercepted when the router is initialized with `interceptLinks` set to `false`',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -198,7 +201,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	});
 
 	test(
-		'query parameters in the link should be passed to the transition',
+		'the query parameters in the link should be passed to the transition',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -222,7 +225,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-method` attribute should set the method of transition used by the router',
+		'the `data-router-method` attribute should set the transition method used by the router',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -257,7 +260,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-go` attribute should set the parameters for the transition using the `router.go` method',
+		'the `data-router-go` attribute should set the transition parameters when using the `router.go` method',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -289,7 +292,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-query` attribute should set the query parameters for the transition',
+		'the `data-router-query` attribute should set the query parameters for a transition',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -313,7 +316,10 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the query parameters passed through the URL link and the `data-router-query` attribute should be merged together',
+		[
+			'the query parameters passed in through the URL link and',
+			'the `data-router-query` attribute should be merged together'
+		].join(' '),
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -339,7 +345,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-params` attribute should set the path parameters for the transition',
+		'the `data-router-params` attribute should set the path parameters for a transition',
 
 		async ({page}) => {
 			await createInitRouter('history', {
@@ -361,7 +367,7 @@ test.describe('<b-router> intercepting links on a page', () => {
 	);
 
 	test(
-		'the `data-router-meta` attribute should set the meta parameters for the transition',
+		'the `data-router-meta` attribute should set the meta parameters for a transition',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -388,9 +394,9 @@ test.describe('<b-router> intercepting links on a page', () => {
 		}
 	);
 
-	test.describe('should emit the `hrefTransition` event when clicking a link', () => {
+	test.describe('the router should emit the `hrefTransition` event when a link is clicked', () => {
 		test(
-			'the event object should contain information about the link that was clicked',
+			'the event object should contain the information about the link that has been clicked',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {

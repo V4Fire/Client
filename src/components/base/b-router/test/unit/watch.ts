@@ -93,7 +93,7 @@ function generateSpecs(engineName: EngineName) {
 	);
 
 	test(
-		'should create link to the `route` property',
+		'should create a link to the `route` property',
 
 		async ({page}) => {
 			const root = await initRouter(page);

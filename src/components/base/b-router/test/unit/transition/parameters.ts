@@ -17,7 +17,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		await demoPage.goto();
 	});
 
-	test.describe('transition through paths that include interpolation of values from transition parameters', () => {
+	test.describe('transition through paths, including interpolation of values from transition parameters', () => {
 		test(
 			'parameters from `params` should be passed as values into the transition path where `:paramName` constructs are located',
 
@@ -41,7 +41,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		);
 
 		test(
-			'if path parameters are not passed along with the transition, the transition to this path will not be made',
+			'if the path parameters are not included in the transition, the transition will not take place',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -59,7 +59,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		);
 
 		test(
-			'if a parameter in the path has a `?` symbol at the end during interpolation, it should be optional',
+			'if a parameter in the path ends with a `?` symbol, it should be optional',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -77,7 +77,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		);
 
 		test(
-			'correctly parses parameters in href with query parameters',
+			'the router should be able to parse parameters from an href with query parameters',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -93,7 +93,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		);
 
 		test(
-			'by default, parameters for path interpolation can be taken not only from params, but also from query',
+			'by default, path interpolation parameters can be taken not only from params, but also from the query',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -110,7 +110,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		);
 
 		test(
-			"if the route's `paramsFromQuery` option is set to false, the parameters for interpolation should only be taken from `params`",
+			'if the route\'s `paramsFromQuery` option is set to `false`, interpolation parameters should be taken only from the `params`',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -128,7 +128,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		);
 
 		test(
-			'support for aliases for interpolation parameters',
+			'the router should support aliases for interpolation parameters',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -163,7 +163,7 @@ test.describe('<b-router> passing transition parameters', () => {
 
 	test.describe('passing parameters to a route with the same name as the current one', () => {
 		test(
-			'if the route name is set to null, then the new parameters should be merged with the old ones',
+			'if the route name is set to `null`, new parameters should be merged with the existing ones',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {
@@ -188,8 +188,8 @@ test.describe('<b-router> passing transition parameters', () => {
 
 		test(
 			[
-				'if the route name is explicitly set as a string,',
-				'then the new parameters should completely replace the old ones'
+				'if the route name is explicitly specified as a string,',
+				'then the new parameters should entirely replace the existing ones'
 			].join(' '),
 
 			async ({page}) => {
@@ -218,7 +218,7 @@ test.describe('<b-router> passing transition parameters', () => {
 		);
 
 		test(
-			'parameters should never be merged if we are navigating through the history',
+			'parameters should not merge if navigation occurs through history',
 
 			async ({page}) => {
 				const root = await createInitRouter('history', {

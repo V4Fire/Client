@@ -30,7 +30,7 @@ test.describe('<b-router> route handling', () => {
 	// eslint-disable-next-line max-lines-per-function
 	function generateSpecs(engineName: EngineName) {
 		test(
-			'should switch to the default page if the specified route was not found',
+			'the router should switch to the default page if the specified route could not be found',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -58,8 +58,8 @@ test.describe('<b-router> route handling', () => {
 
 		test(
 			[
-				'should switch to the original page using an alias path,',
-				'but the route name should match the name of the alias route'
+				'the router should switch to the original page, using an alias path.',
+				'However, the route name must match the name of the alias route'
 			].join(' '),
 
 			async ({page}) => {
@@ -90,7 +90,7 @@ test.describe('<b-router> route handling', () => {
 
 		test(
 			[
-				'should switch to the original page using an alias path with the parameters,',
+				'the router should switch to the original page using an alias path with parameters,',
 				'but the page URL should have the path of the alias route'
 			].join(' '),
 
@@ -134,8 +134,8 @@ test.describe('<b-router> route handling', () => {
 
 		test(
 			[
-				'should redirect to the main page using an alias path,',
-				'which points to a redirect route that subsequently redirects to the main page'
+				'the router should redirect to the main page using an alias path,',
+				'that points to a redirect route which in turn redirects to the main page'
 			].join(' '),
 
 			async ({page}) => {
@@ -165,7 +165,7 @@ test.describe('<b-router> route handling', () => {
 		);
 
 		test(
-			'should switch to the original page using the chained aliases',
+			'the router should switch to the original page using a chain of aliases',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -199,7 +199,7 @@ test.describe('<b-router> route handling', () => {
 		);
 
 		test(
-			'should redirect to the page using the redirect path without parameters',
+			'the router should redirect to the page using a redirect path without parameters',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -228,7 +228,7 @@ test.describe('<b-router> route handling', () => {
 		);
 
 		test(
-			'should redirect to the page using the redirect path with parameters',
+			'the router should redirect to the page using a redirect path with parameters',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -270,7 +270,7 @@ test.describe('<b-router> route handling', () => {
 		);
 
 		test(
-			'should redirect to the page using an alias path with the redirect',
+			'the router should redirect to the page using an alias path with the redirect',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -304,7 +304,7 @@ test.describe('<b-router> route handling', () => {
 		);
 
 		test(
-			'should redirect to the page using the chained redirect',
+			'the router should redirect to the page using a chained redirect',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -338,10 +338,7 @@ test.describe('<b-router> route handling', () => {
 		);
 
 		test(
-			[
-				'`back` and `forward` methods',
-				'should navigate back and forth between one page and another'
-			].join(' '),
+			'the `back` and `forward` methods should navigate back and forth between pages',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -372,7 +369,7 @@ test.describe('<b-router> route handling', () => {
 		);
 
 		test(
-			'`go` method should navigate back and forth between one page and another',
+			'the `go` method should navigate back and forth between pages',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {
@@ -414,7 +411,7 @@ test.describe('<b-router> route handling', () => {
 		);
 
 		test(
-			'should transition by setting arbitrary properties on the root component',
+			'the router should be able to handle query params that are specified as functions',
 
 			async ({page}) => {
 				const root = await createInitRouter(engineName, {

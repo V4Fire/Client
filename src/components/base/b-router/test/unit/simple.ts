@@ -50,7 +50,7 @@ test.describe('<b-router> simple use-cases', () => {
 
 			test.describe('`replace`', () => {
 				test(
-					'should switch page using a non-normalized path',
+					'should switch the page and not change the length of the history',
 
 					async () => {
 						await test.expect(root.evaluate(async (ctx) => {
@@ -73,7 +73,7 @@ test.describe('<b-router> simple use-cases', () => {
 				);
 
 				test(
-					'should not switch page and query should be updated when `null` and opts are passed',
+					'should merge the new query parameters with the existing ones if the route name is set to `null`',
 
 					async () => {
 						await test.expect(root.evaluate(async (ctx) => {
@@ -132,7 +132,7 @@ test.describe('<b-router> simple use-cases', () => {
 
 			test.describe('`replace`', () => {
 				test(
-					'should switch page using a non-normalized path',
+					'should switch the page and not change the length of the history',
 
 					async ({page}) => {
 						const root = await initRouter(page);
@@ -158,7 +158,7 @@ test.describe('<b-router> simple use-cases', () => {
 				);
 
 				test(
-					'should not switch page and query should be updated when `null` and opts are passed',
+					'should merge the new query parameters with the existing ones if the route name is set to `null`',
 
 					async ({page}) => {
 						const root = await initRouter(page);
@@ -229,7 +229,7 @@ function generateSpecs(engineName: EngineName) {
 	);
 
 	test(
-		'root component should have the `root` property in the meta params',
+		'the root component should have a `root` property in the meta params',
 
 		async () => {
 			test.expect(await root.evaluate((ctx) => ctx.unsafe.meta.params.root)).toBe(true);
@@ -237,7 +237,7 @@ function generateSpecs(engineName: EngineName) {
 	);
 
 	test(
-		'root\'s component `router` should be a `b-router`',
+		'the root\'s `router` field should be a `b-router` component',
 
 		async () => {
 			test.expect(await root.evaluate(({router}) => router?.componentName)).toBe('b-router');
@@ -246,7 +246,7 @@ function generateSpecs(engineName: EngineName) {
 
 	test.describe('`push`', () => {
 		test(
-			'should switch page using a route identifier',
+			'should switch the page using a route identifier',
 
 			async () => {
 				await assertPathTransitionsTo(root, 'second', 'Second page');
@@ -254,7 +254,7 @@ function generateSpecs(engineName: EngineName) {
 		);
 
 		test(
-			'should switch page using a path',
+			'should switch the page using a path',
 
 			async () => {
 				await assertPathTransitionsTo(root, '/', 'Main page');
@@ -263,7 +263,7 @@ function generateSpecs(engineName: EngineName) {
 	});
 
 	test(
-		'`activePage` property should return identifier of the active route',
+		'`activePage` property should return the identifier of the active route',
 
 		async () => {
 			await test.expect(root.evaluate(async (ctx) => {
@@ -280,7 +280,7 @@ function generateSpecs(engineName: EngineName) {
 
 	test.describe('`updateRoutes`', () => {
 		test(
-			'should switch page to a new default route',
+			'should switch the page to a new default route',
 
 			async () => {
 				await test.expect(root.evaluate(async (ctx) => {
@@ -317,7 +317,7 @@ function generateSpecs(engineName: EngineName) {
 		);
 
 		test(
-			'should update `basePath` and switch page to the specified `activeRoute`',
+			'should update `basePath` and switch the page to the specified `activeRoute`',
 
 			async () => {
 				await test.expect(root.evaluate(async (ctx) => {
@@ -362,7 +362,7 @@ function generateSpecs(engineName: EngineName) {
 	});
 
 	test(
-		'`getRoutePath` should return URL of the route with the specified `query`',
+		'`getRoutePath` should return an URL of the route with a specified `query`',
 
 		async () => {
 			await test.expect(root.evaluate(({router}) => router!.getRoutePath('second', {query: {bla: 1}})))
@@ -374,7 +374,7 @@ function generateSpecs(engineName: EngineName) {
 	);
 
 	test(
-		'`getRoute` should return route descriptor using a route identifier or path',
+		'`getRoute` should return the route descriptor using either a route identifier or a path',
 
 		async () => {
 			const pageMeta = {
