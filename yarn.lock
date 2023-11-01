@@ -3742,7 +3742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"argparse@npm:^1.0.7, argparse@npm:~ 1.0.0":
+"argparse@npm:^1.0.7":
   version: 1.0.10
   resolution: "argparse@npm:1.0.10"
   dependencies:
@@ -7597,16 +7597,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esprima@npm:~ 2.0.0":
-  version: 2.0.0
-  resolution: "esprima@npm:2.0.0"
-  bin:
-    esparse: ./bin/esparse.js
-    esvalidate: ./bin/esvalidate.js
-  checksum: 7a819fd03a35cdf143e3f362f6b0eaa92b8a51e88fb8768b2f81ab717de3b11cf4e1c4eadc07d6ae491bdc641970c4ae7c2ece2e20954d9b9eec1b4b6823c874
-  languageName: node
-  linkType: hard
-
 "esquery@npm:^1.4.0":
   version: 1.5.0
   resolution: "esquery@npm:1.5.0"
@@ -11103,7 +11093,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:3.x.x, js-yaml@npm:^3.13.1":
+"js-yaml@npm:3.14.1":
   version: 3.14.1
   resolution: "js-yaml@npm:3.14.1"
   dependencies:
@@ -11112,18 +11102,6 @@ __metadata:
   bin:
     js-yaml: bin/js-yaml.js
   checksum: bef146085f472d44dee30ec34e5cf36bf89164f5d585435a3d3da89e52622dff0b188a580e4ad091c3341889e14cb88cac6e4deb16dc5b1e9623bb0601fc255c
-  languageName: node
-  linkType: hard
-
-"js-yaml@npm:~3.2.3":
-  version: 3.2.7
-  resolution: "js-yaml@npm:3.2.7"
-  dependencies:
-    argparse: ~ 1.0.0
-    esprima: ~ 2.0.0
-  bin:
-    js-yaml: bin/js-yaml.js
-  checksum: fa4ef7749128515e83351054bbead077407a19ee8b7f7a8a6c01ed927bdc3fe3674d5a01b43ab1d62304620d0cd268fd57c1468fa114cdbe96a1728e90f5fa62
   languageName: node
   linkType: hard
 

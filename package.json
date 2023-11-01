@@ -157,7 +157,8 @@
     "webpack": "^5.76.2"
   },
   "resolutions": {
-    "sharp": "0.31.3"
+    "sharp": "0.31.3",
+    "js-yaml": "3.14.1"
   },
   "packageManager": "yarn@3.5.0"
 }
