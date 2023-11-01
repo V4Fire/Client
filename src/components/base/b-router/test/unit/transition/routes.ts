@@ -454,18 +454,25 @@ test.describe('<b-router> route handling', () => {
 			}
 		);
 
-		async function assertPathTransitionsTo(root: JSHandle<iStaticPage>, path: string, content: string) {
-			await test.expect(root.evaluate(async (ctx, path) => {
-				await ctx.router!.push(path);
-				return ctx.route!.meta.content;
-			}, path)).toBeResolvedTo(content);
-		}
-
-		async function assertActivePageIs(root: JSHandle<iStaticPage>, routeId: string) {
+		/**
+		 * Checks whether the name of the active route page matches the assertion.
+		 * The function returns a Promise.
+		 *
+		 * @param root
+		 * @param routeId
+		 */
+		async function assertActivePageIs(root: JSHandle<iStaticPage>, routeId: string): Promise<void> {
 			await test.expect(root.evaluate(({activePage}) => activePage)).resolves.toEqual(routeId);
 		}
 
-		async function assertRouteNameIs(root: JSHandle<iStaticPage>, name: string) {
+		/**
+		 * Checks whether the route name matches the assertion.
+		 * The function returns a Promise.
+		 *
+		 * @param root
+		 * @param name
+		 */
+		async function assertRouteNameIs(root: JSHandle<iStaticPage>, name: string): Promise<void> {
 			await test.expect(root.evaluate(({route}) => route!.name)).toBeResolvedTo(name);
 		}
 	}
