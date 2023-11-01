@@ -507,6 +507,15 @@ class bList extends iData implements iVisible, iWidth, iActiveItems {
 		return iItems.getItemKey(this, item, i);
 	}
 
+	/**
+	 * Returns href for item. Is used at the rendering stage
+	 *
+	 * @param item
+	 */
+	protected getHref(item: Item): CanUndef<string> {
+		return item.href;
+	}
+
 	protected override initModEvents(): void {
 		super.initModEvents();
 		iVisible.initModEvents(this);

@@ -97,7 +97,7 @@ function convertDsToBuildTimeUsableObject(ds, stylus) {
 	const
 		builtinFnRgxp = /^[a-z-_]+\(.*\)$/,
 		colorHEXRgxp = /^#(?=[0-9a-fA-F]*$)(?:.{3,4}|.{6}|.{8})$/,
-		unitRgxp = /(-?\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/;
+		unitRgxp = /(\d+(?:\.\d+)?)(?=(px|em|rem|%)$)/;
 
 	const
 		data = parseRawDS(ds);
