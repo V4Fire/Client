@@ -10,7 +10,7 @@ import type { JSHandle } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
-import { createInitRouter } from 'components/base/b-router/test/helpers';
+import { createInitRouter, assertPathTransitionsTo } from 'components/base/b-router/test/helpers';
 import type { EngineName } from 'components/base/b-router/test/interface';
 
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
@@ -425,6 +425,7 @@ test.describe('<b-router> route handling', () => {
 					second: {
 						path: '/second',
 						query: {
+							// The argument is an instance of the router, `r` is a link to the root component
 							rootParam: (o) => o.r.rootParam
 						}
 					}
@@ -433,16 +434,9 @@ test.describe('<b-router> route handling', () => {
 				});
 
 				const transition = root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!;
-
-					await router.push('/second');
-					await router.push('/');
-
-					// eslint-disable-next-line require-atomic-updates
 					ctx['rootParam'] = 1;
 
-					await router.push('second');
+					await ctx.router!.push('second');
 
 					// eslint-disable-next-line require-atomic-updates
 					ctx['rootParam'] = undefined;

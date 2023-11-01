@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
 import { createInitRouter } from 'components/base/b-router/test/helpers';
@@ -30,23 +32,11 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
+				await root.evaluate((ctx) => ctx.router!.push('user', {params: {userId: '42'}}));
+				await test.expect(page.evaluate(() => location.pathname)).toBeResolvedTo('/user/42');
 
-					await router.push('user', {params: {userId: '42'}});
-					transitions.user = location.pathname;
-
-					await router.push('userProfile', {params: {userId: '42'}});
-					transitions.userProfile = location.pathname;
-
-					return transitions;
-
-				})).resolves.toEqual({
-					user: '/user/42',
-					userProfile: '/user/42/profile'
-				});
+				await root.evaluate((ctx) => ctx.router!.push('userProfile', {params: {userId: '42'}}));
+				await test.expect(page.evaluate(() => location.pathname)).toBeResolvedTo('/user/42/profile');
 			}
 		);
 
@@ -78,23 +68,11 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
+				await root.evaluate((ctx) => ctx.router!.push('direct', {params: {userId: 42}}));
+				await test.expect(page.evaluate(() => location.pathname)).toBeResolvedTo('/user/42/direct');
 
-					await router.push('direct', {params: {userId: 42}});
-					transitions.direct = location.pathname;
-
-					await router.push('direct', {params: {userId: 42, conversationId: 15}});
-					transitions.conversation = location.pathname;
-
-					return transitions;
-
-				})).resolves.toEqual({
-					direct: '/user/42/direct',
-					conversation: '/user/42/direct/15'
-				});
+				await root.evaluate((ctx) => ctx.router!.push('direct', {params: {userId: 42, conversationId: 15}}));
+				await test.expect(page.evaluate(() => location.pathname)).toBeResolvedTo('/user/42/direct/15');
 			}
 		);
 
@@ -108,10 +86,9 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					await ctx.router!.push('/user/42?from=testFrom');
-					return location.pathname + location.search;
-				})).resolves.toBe('/user/42?from=testFrom');
+				await root.evaluate(async (ctx) => ctx.router!.push('/user/42?from=testFrom'));
+
+				await assertPathWithQueryIs(page, '/user/42?from=testFrom');
 			}
 		);
 
@@ -125,11 +102,10 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					await ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}});
-					return location.pathname + location.search;
+				await root.evaluate(async (ctx) =>
+					ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}}));
 
-				})).toBeResolvedTo('/user/42/direct/15?utm=portal');
+				await assertPathWithQueryIs(page, '/user/42/direct/15?utm=portal');
 			}
 		);
 
@@ -144,11 +120,10 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					await ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}});
-					return location.pathname + location.search;
+				await root.evaluate(async (ctx) =>
+					ctx.router!.push('direct', {params: {userId: 42}, query: {conversationId: 15, utm: 'portal'}}));
 
-				})).toBeResolvedTo('/user/42/direct?conversationId=15&utm=portal');
+				await assertPathWithQueryIs(page, '/user/42/direct?conversationId=15&utm=portal');
 			}
 		);
 
@@ -168,39 +143,20 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {param1: 'foo'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo');
 
-					await router.push('tpl', {params: {param1: 'foo'}});
-					transitions.path1 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {param1: 'foo', _param1: 'bar'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo');
 
-					await router.push('tpl', {params: {param1: 'foo', _param1: 'bar'}});
-					transitions.path2 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {Param1: 'foo'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo');
 
-					await router.push('tpl', {params: {Param1: 'foo'}});
-					transitions.path3 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {Param1: 'bar', _param1: 'foo'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo');
 
-					await router.push('tpl', {params: {Param1: 'bar', _param1: 'foo'}});
-					transitions.path4 = getPath();
-
-					await router.push('tpl', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}});
-					transitions.path5 = getPath();
-
-					return transitions;
-
-					function getPath() {
-						return location.pathname + location.search;
-					}
-
-				})).resolves.toEqual({
-					path1: '/tpl/foo',
-					path2: '/tpl/foo',
-					path3: '/tpl/foo',
-					path4: '/tpl/foo',
-					path5: '/tpl/foo/bar?Param1=bla'
-				});
+				await root.evaluate((ctx) => ctx.router!.push('tpl', {params: {_param1: 'foo'}, query: {Param1: 'bla', Param2: 'bar'}}));
+				await assertPathWithQueryIs(page, '/tpl/foo/bar?Param1=bla');
 			}
 		);
 	});
@@ -216,35 +172,17 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {foo: 1}}));
+				await assertPathWithQueryIs(page, '/?foo=1');
 
-					await router.push('main', {query: {foo: 1}});
-					transitions.path1 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push(null, {query: {baz: 1}}));
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
 
-					await router.push(null, {query: {baz: 1}});
-					transitions.path2 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push(null, {query: {bar: 2}}));
+				await assertPathWithQueryIs(page, '/?bar=2&baz=1&foo=1');
 
-					await router.push(null, {query: {bar: 2}});
-					transitions.path3 = getPath();
-
-					await router.push(null, {query: {bar: null}});
-					transitions.path4 = getPath();
-
-					return transitions;
-
-					function getPath() {
-						return location.pathname + location.search;
-					}
-
-				})).resolves.toEqual({
-					path1: '/?foo=1',
-					path2: '/?baz=1&foo=1',
-					path3: '/?bar=2&baz=1&foo=1',
-					path4: '/?baz=1&foo=1'
-				});
+				await root.evaluate((ctx) => ctx.router!.push(null, {query: {bar: null}}));
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
 			}
 		);
 
@@ -265,35 +203,17 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {foo: 1}}));
+				await assertPathWithQueryIs(page, '/?foo=1');
 
-					await router.push('main', {query: {foo: 1}});
-					transitions.path1 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {baz: 1}}));
+				await assertPathWithQueryIs(page, '/?baz=1');
 
-					await router.push('main', {query: {baz: 1}});
-					transitions.path2 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push('second', {query: {bar: 1}}));
+				await assertPathWithQueryIs(page, '/second-page?bar=1');
 
-					await router.push('second', {query: {bar: 1}});
-					transitions.path3 = getPath();
-
-					await router.push('second', {query: {}});
-					transitions.path4 = getPath();
-
-					return transitions;
-
-					function getPath() {
-						return location.pathname + location.search;
-					}
-
-				})).resolves.toEqual({
-					path1: '/?foo=1',
-					path2: '/?baz=1',
-					path3: '/second-page?bar=1',
-					path4: '/second-page'
-				});
+				await root.evaluate((ctx) => ctx.router!.push('second', {query: {}}));
+				await assertPathWithQueryIs(page, '/second-page');
 			}
 		);
 
@@ -307,44 +227,35 @@ test.describe('<b-router> passing transition parameters', () => {
 					}
 				})(page);
 
-				await test.expect(root.evaluate(async (ctx) => {
-					const
-						router = ctx.router!,
-						transitions: Dictionary = {};
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {foo: 1}}));
+				await assertPathWithQueryIs(page, '/?foo=1');
 
-					await router.push('main', {query: {foo: 1}});
-					transitions.path1 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push(null, {query: {baz: 1}}));
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
 
-					await router.push(null, {query: {baz: 1}});
-					transitions.path2 = getPath();
+				await root.evaluate((ctx) => ctx.router!.push('main', {query: {baz: 2}}));
+				await assertPathWithQueryIs(page, '/?baz=2');
 
-					await router.push('main', {query: {baz: 2}});
-					transitions.path3 = getPath();
+				await root.evaluate((ctx) => ctx.router!.back());
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
 
-					await router.back();
-					transitions.path4 = getPath();
+				await root.evaluate((ctx) => ctx.router!.back());
+				await assertPathWithQueryIs(page, '/?foo=1');
 
-					await router.back();
-					transitions.path5 = getPath();
-
-					await router.forward();
-					transitions.path6 = getPath();
-
-					return transitions;
-
-					function getPath() {
-						return location.pathname + location.search;
-					}
-
-				})).resolves.toEqual({
-					path1: '/?foo=1',
-					path2: '/?baz=1&foo=1',
-					path3: '/?baz=2',
-					path4: '/?baz=1&foo=1',
-					path5: '/?foo=1',
-					path6: '/?baz=1&foo=1'
-				});
+				await root.evaluate((ctx) => ctx.router!.forward());
+				await assertPathWithQueryIs(page, '/?baz=1&foo=1');
 			}
 		);
 	});
+
+	/**
+	 * Checks whether the location pathname with query params matches the assertion.
+	 * The function returns a Promise.
+	 *
+	 * @param page
+	 * @param assertion
+	 */
+	async function assertPathWithQueryIs(page: Page, assertion: string): Promise<void> {
+		await test.expect(page.evaluate(() => location.pathname + location.search)).toBeResolvedTo(assertion);
+	}
 });

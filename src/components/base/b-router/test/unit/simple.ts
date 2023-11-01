@@ -13,7 +13,7 @@ import test from 'tests/config/unit/test';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import type { EngineName } from 'components/base/b-router/test/interface';
-import { createInitRouter } from 'components/base/b-router/test/helpers';
+import { createInitRouter, assertPathTransitionsTo } from 'components/base/b-router/test/helpers';
 
 test.describe('<b-router> simple use-cases', () => {
 	test.beforeEach(async ({demoPage}) => {
@@ -78,16 +78,11 @@ test.describe('<b-router> simple use-cases', () => {
 					async () => {
 						await test.expect(root.evaluate(async (ctx) => {
 							const
-								{router} = ctx;
-
-							await router!.replace('/');
-
-							const
 								historyLength = history.length,
 								res: Dictionary = {};
 
-							await router!.replace('second');
-							await router!.replace(null, {query: {bla: 1}});
+							await ctx.router!.replace('second', {query: {foo: 2}});
+							await ctx.router!.replace(null, {query: {bla: 1}});
 
 							res.content = ctx.route!.meta.content;
 							res.query = location.search;
@@ -96,7 +91,7 @@ test.describe('<b-router> simple use-cases', () => {
 							return res;
 
 						})).resolves.toEqual({
-							query: '?bla=1',
+							query: '?bla=1&foo=2',
 							content: 'Second page',
 							lengthDoesntChange: true
 						});
@@ -172,13 +167,11 @@ test.describe('<b-router> simple use-cases', () => {
 							const
 								{router} = ctx;
 
-							await router!.replace('/');
-
 							const
 								historyLength = router!.unsafe.engine.history.length,
 								res: Dictionary = {};
 
-							await router!.replace('second');
+							await router!.replace('second', {query: {foo: 2}});
 							await router!.replace(null, {query: {bla: 1}});
 
 							res.content = ctx.route!.meta.content;
@@ -189,7 +182,7 @@ test.describe('<b-router> simple use-cases', () => {
 
 						})).resolves.toEqual({
 							content: 'Second page',
-							query: {bla: 1},
+							query: {foo: 2, bla: 1},
 							lengthDoesntChange: true
 						});
 					}
@@ -256,10 +249,7 @@ function generateSpecs(engineName: EngineName) {
 			'should switch page using a route identifier',
 
 			async () => {
-				await test.expect(root.evaluate(async (ctx) => {
-					await ctx.router!.push('second');
-					return ctx.route!.meta.content;
-				})).toBeResolvedTo('Second page');
+				await assertPathTransitionsTo(root, 'second', 'Second page');
 			}
 		);
 
@@ -267,10 +257,7 @@ function generateSpecs(engineName: EngineName) {
 			'should switch page using a path',
 
 			async () => {
-				await test.expect(root.evaluate(async (ctx) => {
-					await ctx.router!.push('/');
-					return ctx.route!.meta.content;
-				})).toBeResolvedTo('Main page');
+				await assertPathTransitionsTo(root, '/', 'Main page');
 			}
 		);
 	});
@@ -378,11 +365,11 @@ function generateSpecs(engineName: EngineName) {
 		'`getRoutePath` should return URL of the route with the specified `query`',
 
 		async () => {
-			test.expect(await root.evaluate(({router}) => router!.getRoutePath('second', {query: {bla: 1}})))
-				.toBe('/second?bla=1');
+			await test.expect(root.evaluate(({router}) => router!.getRoutePath('second', {query: {bla: 1}})))
+				.toBeResolvedTo('/second?bla=1');
 
-			test.expect(await root.evaluate(({router}) => router!.getRoutePath('/', {query: {bla: 1}})))
-				.toBe('/?bla=1');
+			await test.expect(root.evaluate(({router}) => router!.getRoutePath('/', {query: {bla: 1}})))
+				.toBeResolvedTo('/?bla=1');
 		}
 	);
 

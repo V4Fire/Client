@@ -78,7 +78,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 			});
 
 			await page.getByTestId('target').click();
-
 			await test.expect(
 				root.evaluate((ctx) => ctx.route?.name).catch((err) => err.message)
 			).toBeResolvedTo('jsHandle.evaluate: Execution context was destroyed, most likely because of a navigation');
@@ -122,7 +121,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 				});
 
 				await page.getByTestId('target').click();
-
 				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 				test.expect(new URL(page.url()).hash).toBe('#foo');
 			}
@@ -147,7 +145,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 				});
 
 				await page.getByTestId('target').click();
-
 				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 				await test.expect(root.evaluate(() => globalThis.foo)).toBeResolvedTo('bar');
 			}
@@ -172,7 +169,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 				});
 
 				await page.getByTestId('target').click();
-
 				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 			}
 		);
@@ -196,7 +192,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 				});
 
 				await page.getByTestId('target').click();
-
 				await test.expect(root.evaluate((ctx) => ctx.route?.name)).toBeResolvedTo('main');
 			}
 		);
@@ -219,7 +214,6 @@ test.describe('<b-router> intercepting links on a page', () => {
 			});
 
 			await page.getByTestId('target').click();
-
 			await test.expect(root.evaluate((ctx) => ctx.route?.query)).resolves.toEqual({
 				foo: 'bar',
 				baz: 'bla'
