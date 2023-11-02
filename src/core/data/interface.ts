@@ -14,4 +14,5 @@ export * from '@v4fire/core/core/data/interface';
 export interface ProviderOptions extends SuperProviderOptions {
 	id: string;
 	remoteState?: State;
+	i18n?: i18nFactory;
 }

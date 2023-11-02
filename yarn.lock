@@ -5322,7 +5322,7 @@ __metadata:
     "@types/webpack-env": 1.18.1
     "@v4fire/cli": ^1.6.0
     "@v4fire/config": 1.0.0
-    "@v4fire/core": "github:V4Fire/Core#v4"
+    "@v4fire/core": "github:V4Fire/Core#v4_state"
     "@v4fire/design-system": 1.23.0
     "@v4fire/linters": "git+https://github.com/v4fire/linters#rework_rules"
     "@v4fire/storybook": 0.8.0
@@ -5573,9 +5573,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@v4fire/core@github:V4Fire/Core#v4":
-  version: 4.0.0-alpha.9
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=d792b0aa0674f570153fb81f790f4c03fa2a3d8f"
+"@v4fire/core@github:V4Fire/Core#v4_state":
+  version: 4.0.0-alpha.12
+  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=bc3445de101a6bc56787a1c81d766435b6b3dd63"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -5719,7 +5719,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: a25c6b57959cbf72d50181d8986e0cfd710d04c7729494bf3e8ee63da08fc516c6d3456ca10a5f12087ead50524454dfcf4a1e021415726a6c91d52447669865
+  checksum: 20927bbe6c2fbbbc1a3bba48e68a62d8af071d47d0c4b57af624d4c75bfd662eabf0d2ebbfbeb54beef15a520b175595d892bfbc91308bd4f78338b7a2bededf
   languageName: node
   linkType: hard
 
