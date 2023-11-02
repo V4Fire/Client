@@ -297,6 +297,19 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
+	 * A function for internationalizing texts inside traits.
+	 * Because traits are called within the context of components, standard `i18n` does not work,
+	 * and you need to explicitly pass the key set name (trait names).
+	 *
+	 * @param traitName - the trait name
+	 * @param text - the text for internationalization
+	 * @param [opts] - additional internationalization options
+	 */
+	i18nTrait(traitName: string, text: string, opts?: I18nParams): string {
+		return this.i18n(traitName)(text, opts);
+	}
+
+	/**
 	 * A function for internationalizing texts
 	 */
 	get t() {
@@ -481,6 +494,7 @@ export default abstract class iBlockState extends iBlockMods {
 		const
 			i = this.instance;
 
+		this.i18n = i.i18n.bind(this);
 		this.syncStorageState = i.syncStorageState.bind(this);
 		this.syncRouterState = i.syncRouterState.bind(this);
 		this.initGlobalEnv = i.initGlobalEnv.bind(this);
