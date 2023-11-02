@@ -40,7 +40,17 @@ export class RequestInterceptor {
 
 	protected isResponder: boolean = false;
 
-	protected respondQueue: any[] = [];
+	/**
+	 * Queue of requests awaiting response
+	 */
+	protected respondQueue: Function[] = [];
+
+	/**
+	 * Number of requests awaiting response
+	 */
+	get respondQueueLength(): number {
+		return this.respondQueue.length;
+	}
 
 	/**
 	 * Short-hand for {@link RequestInterceptor.prototype.mock.mock.calls}
@@ -105,7 +115,7 @@ export class RequestInterceptor {
 		}
 
 		const response = this.respondQueue.shift();
-		return response();
+		return response?.();
 	}
 
 	/**
