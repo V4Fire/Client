@@ -40,9 +40,7 @@ test.describe('<i-page>', () => {
 
 		async ({page}) => {
 			const target = await createTarget(page, {
-				// Values must be serializable, so the function is defined here as a string,
-				// we will construct that function later within the `createTarget` helper
-				pageTitleProp: 'return (ctx) => ctx.componentName'
+				pageTitleProp: (ctx) => ctx.componentName
 			});
 
 			await assertPageTitleIs(target, 'p-v4-dynamic-page1');
@@ -70,9 +68,7 @@ test.describe('<i-page>', () => {
 
 		async ({page}) => {
 			const target = await createTarget(page, {
-				// Values must be serializable, so the function is defined here as a string,
-				// we will construct that function later within the `createTarget` helper
-				pageDescriptionProp: 'return (ctx) => ctx.componentName'
+				pageDescriptionProp: (ctx) => ctx.componentName
 			});
 
 			await test.expect(target.evaluate(({r}) => r.pageMetaData.description))
@@ -128,9 +124,7 @@ test.describe('<i-page>', () => {
 				pageTitleProp: 'Initial testing title',
 				stage: 'foo',
 				stagePageTitles: {
-					// Values must be serializable, so the function is defined here as a string,
-					// we will construct that function later within the `createTarget` helper
-					foo: 'return (ctx) => ctx.componentName'
+					foo: (ctx) => ctx.componentName
 				}
 			});
 
@@ -209,7 +203,7 @@ test.describe('<i-page>', () => {
 	);
 
 	/**
-	 * Renders the `p-v4-dynamic-page1` component with specified attributes.
+	 * Creates the `p-v4-dynamic-page1` component with specified attributes.
 	 * The function returns a Promise that resolves to the `iBlock` wrapped with the `JSHandle` container.
 	 *
 	 * @param page
@@ -217,43 +211,7 @@ test.describe('<i-page>', () => {
 	 *
 	 */
 	async function createTarget(page: Page, attrs: PageAttrs = {}): Promise<JSHandle<iBlock>> {
-		await page.evaluate((attrs) => {
-			if (attrs.stagePageTitles != null) {
-				Object.forEach(attrs.stagePageTitles, (value, key, titles) => {
-					titles[key] = normalizeValue(value);
-				});
-			}
-
-			if (attrs.pageTitleProp != null) {
-				attrs.pageTitleProp = normalizeValue(attrs.pageTitleProp);
-			}
-
-			if (attrs.pageDescriptionProp != null) {
-				attrs.pageDescriptionProp = normalizeValue(attrs.pageDescriptionProp);
-			}
-
-			const scheme = [
-				{
-					attrs: {
-						id: 'target',
-						...attrs
-					}
-				}
-			];
-
-			globalThis.renderComponents('p-v4-dynamic-page1', scheme);
-
-			function normalizeValue(val: string | Function): string | Function {
-				if (typeof val === 'string' && val.startsWith('return')) {
-					// eslint-disable-next-line no-new-func
-					return Function(val)();
-				}
-
-				return val;
-			}
-		}, attrs);
-
-		return Component.waitForComponentByQuery(page, '#target');
+		return Component.createComponent(page, 'p-v4-dynamic-page1', {attrs});
 	}
 
 	/**
