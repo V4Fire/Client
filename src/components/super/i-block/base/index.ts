@@ -253,19 +253,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * A function for internationalizing texts inside traits.
-	 * Because traits are called within the context of components, standard `i18n` does not work,
-	 * and you need to explicitly pass the key set name (trait names).
-	 *
-	 * @param traitName - the trait name
-	 * @param text - the text for internationalization
-	 * @param [opts] - additional internationalization options
-	 */
-	i18nTrait(traitName: string, text: string, opts?: I18nParams): string {
-		return i18n(traitName)(text, opts);
-	}
-
-	/**
 	 * {@link iBlock.activatedProp}
 	 * @param [force]
 	 */
