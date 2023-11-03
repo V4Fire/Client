@@ -21,6 +21,7 @@ import {
 	renderList as superRenderList,
 	renderSlot as superRenderSlot,
 
+	withCtx as superWithCtx,
 	withDirectives as superWithDirectives,
 	resolveDirective as superResolveDirective,
 
@@ -46,7 +47,7 @@ import {
 
 	wrapWithDirectives,
 	wrapResolveDirective,
-	wrapMergeProps
+	wrapMergeProps, wrapWithCtx
 
 } from 'core/component/render';
 
@@ -88,8 +89,6 @@ export {
 
 	resolveTransitionHooks,
 
-	withCtx,
-
 	// @ts-ignore (private)
 	withAsyncContext,
 
@@ -125,6 +124,7 @@ export const
 	renderSlot = wrapRenderSlot(superRenderSlot);
 
 export const
+	withCtx = wrapWithCtx(superWithCtx),
 	withDirectives = wrapWithDirectives(superWithDirectives),
 	resolveDirective = wrapResolveDirective(superResolveDirective);
 

@@ -29,6 +29,7 @@ import type {
 	renderList,
 	renderSlot,
 
+	withCtx,
 	withDirectives,
 	resolveDirective,
 
@@ -295,6 +296,16 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 		}
 
 		return this.$withCtx(() => original.apply(null, args));
+	});
+}
+
+/**
+ * Wrapper for the component library `withCtx` function
+ * @param original
+ */
+export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
+	return Object.cast(function withCtx(this: ComponentInterface, fn: Function) {
+		return original((slotArgs: object) => fn(slotArgs, slotArgs));
 	});
 }
 
