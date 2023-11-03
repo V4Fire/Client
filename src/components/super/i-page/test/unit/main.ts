@@ -40,7 +40,7 @@ test.describe('<i-page>', () => {
 
 		async ({page}) => {
 			const target = await createTarget(page, {
-				pageTitleProp: (ctx) => ctx.componentName
+				pageTitleProp: (ctx: iBlock) => ctx.componentName
 			});
 
 			await assertPageTitleIs(target, 'p-v4-dynamic-page1');
@@ -68,7 +68,7 @@ test.describe('<i-page>', () => {
 
 		async ({page}) => {
 			const target = await createTarget(page, {
-				pageDescriptionProp: (ctx) => ctx.componentName
+				pageDescriptionProp: (ctx: iBlock) => ctx.componentName
 			});
 
 			await test.expect(target.evaluate(({r}) => r.pageMetaData.description))
@@ -124,7 +124,7 @@ test.describe('<i-page>', () => {
 				pageTitleProp: 'Initial testing title',
 				stage: 'foo',
 				stagePageTitles: {
-					foo: (ctx) => ctx.componentName
+					foo: (ctx: iBlock) => ctx.componentName
 				}
 			});
 
