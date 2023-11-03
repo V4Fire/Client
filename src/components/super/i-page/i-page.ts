@@ -35,6 +35,7 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * The current page title.
 	 * Basically this title is set via `document.title`.
+	 * If the prop value is defined as a function, it will be called (the result will be used as the title).
 	 */
 	@prop({type: [String, Function]})
 	readonly pageTitleProp: TitleValue = '';
@@ -42,6 +43,7 @@ export default abstract class iPage extends iData implements iVisible {
 	/**
 	 * The current page description.
 	 * Basically this description is set via `<meta name="description" content="..."/>`.
+	 * If the prop value is defined as a function, it will be called (the result will be used as the description content).
 	 */
 	@prop({type: [String, Function]})
 	readonly pageDescriptionProp: DescriptionValue = '';
