@@ -133,7 +133,7 @@ export default abstract class iPage extends iData implements iVisible {
 					globalThis.scrollTo(opts);
 
 				} catch {
-					globalThis.scrollTo(opts.left == null ? scrollX : opts.left, opts.top == null ? scrollY : opts.top);
+					globalThis.scrollTo(opts.left ?? scrollX, opts.top ?? scrollY);
 				}
 			} catch {}
 		};
