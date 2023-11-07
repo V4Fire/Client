@@ -24,6 +24,10 @@ import type { ComponentInterface } from 'core/component/interface';
 export * from '@vue/runtime-dom';
 //#endif
 
+export interface VNodeVirtualParent {
+	value: CanNull<VNode>;
+}
+
 export type VNode<
 	HostNode = RendererNode,
 	HostElement = RendererElement,
@@ -34,6 +38,7 @@ export type VNode<
 	dynamicChildren?: VNode[];
 	virtualContext?: ComponentInterface;
 	virtualComponent?: ComponentInterface;
+	virtualParent?: VNodeVirtualParent;
 	ref: SuperVNode['ref'] & Nullable<{i?: Nullable<{refs: Dictionary; setupState?: Dictionary}>}>;
 }>;
 
