@@ -1,5 +1,5 @@
 {
-  "hash": "03854e082d49ae27fc8bbdb4569eb9f8f157ca205c1124b6f6216df47bcb05bc",
+  "hash": "e9e25867c650058a6d9fee28f603185961280d719f107210d0f40c81d88c8442",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2226,7 +2226,8 @@
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
-              "core/html"
+              "core/html",
+              "models/modules/session"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2267,7 +2268,8 @@
             "components/traits/i-control-list/i-control-list",
             "core/browser",
             "core/cookies",
-            "core/html"
+            "core/html",
+            "models/modules/session"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -2281,7 +2283,8 @@
               "core/cookies",
               "core/html",
               "core/router/engines/browser-history",
-              "core/router/engines/in-memory"
+              "core/router/engines/in-memory",
+              "models/modules/session"
             ]
           },
           "resolvedOwnLibs": {
@@ -2296,7 +2299,8 @@
               "core/cookies",
               "core/html",
               "core/router/engines/browser-history",
-              "core/router/engines/in-memory"
+              "core/router/engines/in-memory",
+              "models/modules/session"
             ]
           },
           "type": "page",
