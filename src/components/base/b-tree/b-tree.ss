@@ -53,7 +53,7 @@
 							ref = children |
 							v-func = nestedTreeProps.isFunctional |
 
-							:is = componentName |
+							:is = childrenTreeComponent |
 							:items = el.children |
 							:item = item |
 							:itemProps = itemProps |

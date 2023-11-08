@@ -71,6 +71,9 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 		}
 	}
 
+	@system()
+	childrenTreeComponent: string = 'b-tree';
+
 	/**
 	 * {@link iActiveItems.activeStore}
 	 * {@link iActiveItems.linkActiveStore}
