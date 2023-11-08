@@ -8,15 +8,15 @@
 
 import type { Route } from 'playwright';
 
-interface RouteHandler {
+interface Handler {
 	(
 		resolve: (value: void | PromiseLike<void>) => void,
 		route: Route
 	): void;
 }
 
-export default interface RouteHandleOptions {
-	handler: RouteHandler;
+export default interface APIMockOptions {
+	handler: Handler;
 	status: number | (() => number);
 	withRefreshToken?: boolean;
 }

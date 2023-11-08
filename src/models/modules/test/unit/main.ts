@@ -13,7 +13,7 @@ import { Utils, Component } from 'tests/helpers';
 
 import type * as Session from 'core/session';
 
-import type RouteHandleOptions from 'models/modules/test/interface';
+import type APIMockOptions from 'models/modules/test/interface';
 
 test.describe('models/modules/session', () => {
 	let
@@ -228,7 +228,7 @@ test.describe('models/modules/session', () => {
 	 * @param page
 	 * @param opts
 	 */
-	async function createAPIMock(page: Page, opts: RouteHandleOptions): Promise<void> {
+	async function createAPIMock(page: Page, opts: APIMockOptions): Promise<void> {
 		return new Promise(async (resolve) => {
 			const {handler, status, withRefreshToken = false} = opts;
 
