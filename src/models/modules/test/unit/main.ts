@@ -34,7 +34,7 @@ test.describe('models/modules/session', () => {
 
 			await sessionHandlers.evaluate(({set}) => set('test-session'));
 
-			const routeHandlePromise = createRouteHandler(page, {
+			const routeHandlePromise = createAPIMock(page, {
 				handler: (resolve, route) => {
 					headers = route.request().headers();
 					resolve();
@@ -42,7 +42,7 @@ test.describe('models/modules/session', () => {
 				status: 200
 			});
 
-			await init(page);
+			await createDummyWithProvider(page);
 			await routeHandlePromise;
 
 			test.expect(headers.authorization).toBe('Bearer test-session');
@@ -60,7 +60,7 @@ test.describe('models/modules/session', () => {
 				csrf: 'test-csrf'
 			}));
 
-			const routeHandlePromise = createRouteHandler(page, {
+			const routeHandlePromise = createAPIMock(page, {
 				handler: (resolve, route) => {
 					headers = route.request().headers();
 					resolve();
@@ -68,7 +68,7 @@ test.describe('models/modules/session', () => {
 				status: 200
 			});
 
-			await init(page);
+			await createDummyWithProvider(page);
 			await routeHandlePromise;
 
 			test.expect(headers['x-xsrf-token']).toBe('test-csrf');
@@ -82,7 +82,7 @@ test.describe('models/modules/session', () => {
 			let
 				headers: Dictionary<string> = {};
 
-			const routeHandlePromise = createRouteHandler(page, {
+			const routeHandlePromise = createAPIMock(page, {
 				handler: (resolve, route) => {
 					headers = route.request().headers();
 					resolve();
@@ -90,7 +90,7 @@ test.describe('models/modules/session', () => {
 				status: 200
 			});
 
-			await init(page);
+			await createDummyWithProvider(page);
 			await routeHandlePromise;
 
 			test.expect(headers.authorization).toBeUndefined();
@@ -104,12 +104,12 @@ test.describe('models/modules/session', () => {
 		async ({page}) => {
 			await sessionHandlers.evaluate(({set}) => set('test-session'));
 
-			const routeHandlePromise = createRouteHandler(page, {
+			const routeHandlePromise = createAPIMock(page, {
 				handler: (resolve) => resolve(),
 				status: 401
 			});
 
-			await init(page);
+			await createDummyWithProvider(page);
 			await routeHandlePromise;
 
 			const {auth, params} = await sessionHandlers.evaluate(({get}) => get());
@@ -124,22 +124,30 @@ test.describe('models/modules/session', () => {
 
 		async ({page}) => {
 			let
+				isInitialRequest = true,
 				requestCount = 0;
 
 			await sessionHandlers.evaluate(({set}) => set('test-session'));
 
-			const routeHandlePromise = createRouteHandler(page, {
+			const routeHandlePromise = createAPIMock(page, {
 				handler: (resolve) => {
 					requestCount += 1;
 
-					if (requestCount === 2) {
+					if (!isInitialRequest) {
 						resolve();
 					}
 				},
-				status: () => requestCount === 1 ? 401 : 200
+				status: () => {
+					if (isInitialRequest) {
+						isInitialRequest = false;
+						return 401;
+					}
+
+					return 200;
+				}
 			});
 
-			await init(page);
+			await createDummyWithProvider(page);
 			await routeHandlePromise;
 
 			test.expect(requestCount).toBe(2);
@@ -152,13 +160,13 @@ test.describe('models/modules/session', () => {
 		async ({page}) => {
 			await sessionHandlers.evaluate(({set}) => set('test-session'));
 
-			const routeHandlePromise = createRouteHandler(page, {
+			const routeHandlePromise = createAPIMock(page, {
 				handler: (resolve) => resolve(),
 				status: 200,
 				withRefreshToken: true
 			});
 
-			await init(page);
+			await createDummyWithProvider(page);
 			await routeHandlePromise;
 
 			const {auth, params} = await sessionHandlers.evaluate(({get}) => get());
@@ -176,13 +184,13 @@ test.describe('models/modules/session', () => {
 		async ({page}) => {
 			await sessionHandlers.evaluate(({set}) => set('test-session'));
 
-			const routeHandlePromise = createRouteHandler(page, {
+			const routeHandlePromise = createAPIMock(page, {
 				handler: (resolve) => resolve(),
 				status: 401,
 				withRefreshToken: true
 			});
 
-			await init(page);
+			await createDummyWithProvider(page);
 			await routeHandlePromise;
 
 			const {auth, params} = await sessionHandlers.evaluate(({get}) => get());
@@ -200,7 +208,7 @@ test.describe('models/modules/session', () => {
 	 *
 	 * @param page
 	 */
-	async function init(page: Page): Promise<void> {
+	async function createDummyWithProvider(page: Page): Promise<void> {
 		await Component.createComponent(
 			page,
 			'b-dummy',
@@ -219,9 +227,8 @@ test.describe('models/modules/session', () => {
 	 *
 	 * @param page
 	 * @param opts
-	 * @returns
 	 */
-	async function createRouteHandler(page: Page, opts: RouteHandleOptions): Promise<void> {
+	async function createAPIMock(page: Page, opts: RouteHandleOptions): Promise<void> {
 		return new Promise(async (resolve) => {
 			const {handler, status, withRefreshToken = false} = opts;
 
