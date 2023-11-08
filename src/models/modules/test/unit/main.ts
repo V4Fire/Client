@@ -222,7 +222,7 @@ test.describe('models/modules/session', () => {
 
 	/**
 	 * Handles requests to the **\/session URL.
-	 * Adds specified headers to the request, fulfils the request with the specified status code.
+	 * Fulfils the request with the specified status code and headers.
 	 * The function returns the Promise.
 	 *
 	 * @param page
