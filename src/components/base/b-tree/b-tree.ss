@@ -49,10 +49,11 @@
 
 				- block children
 					< .&__children v-if = hasChildren(el)
-						< b-tree.&__child &
+						< component.&__child &
 							ref = children |
 							v-func = nestedTreeProps.isFunctional |
 
+							:is = componentName |
 							:items = el.children |
 							:item = item |
 							:itemProps = itemProps |
