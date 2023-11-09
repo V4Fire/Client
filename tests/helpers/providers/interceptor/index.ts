@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async from '@v4fire/core/core/async';
 import type { BrowserContext, Page, Request, Route } from 'playwright';
 import delay from 'delay';
 import { ModuleMocker } from 'jest-mock';
@@ -38,6 +39,15 @@ export class RequestInterceptor {
 	 */
 	readonly mock: ReturnType<ModuleMocker['fn']>;
 
+	/**
+	 * {@link Async}
+	 */
+	protected readonly async: Async = new Async();
+
+	/**
+	 * If true, intercepted requests are not automatically responded to, instead use the
+	 * {@link RequestInterceptor.respond} method.
+	 */
 	protected isResponder: boolean = false;
 
 	/**
@@ -48,7 +58,7 @@ export class RequestInterceptor {
 	/**
 	 * Number of requests awaiting response
 	 */
-	get respondQueueLength(): number {
+	get requestQueueLength(): number {
 		return this.respondQueue.length;
 	}
 
@@ -107,15 +117,19 @@ export class RequestInterceptor {
 	}
 
 	/**
-	 * Responds to the first request in the queue and removes it from the queue
+	 * Responds to the first request in the queue and removes it from the queue.
+	 * If there are no requests in the queue yet, it will wait for the first received one and respond to it.
 	 */
-	respond(): Promise<void> {
+	async respond(): Promise<void> {
 		if (!this.isResponder) {
 			throw new Error('Failed to call respond on an instance that is not a responder');
 		}
 
-		const response = this.respondQueue.shift();
-		return response?.();
+		if (this.requestQueueLength === 0) {
+			await this.async.wait(() => this.requestQueueLength > 0)
+		}
+
+		return this.respondQueue.shift()?.();
 	}
 
 	/**
