@@ -17,7 +17,7 @@ const
 		setToCache = rectCache.set.bind(rectCache);
 
 	let
-		timer: Nullable<NodeJS.Timeout>;
+		timer: CanNull<ReturnType<typeof setTimeout>> = null;
 
 	rectCache.get = (key) => {
 		let
