@@ -126,7 +126,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 		unique: true,
 		init: (_, d) => {
 			const emitter = (<Async>d.async).wrapEventEmitter(new EventEmitter({
-				maxListeners: 1e3,
+				maxListeners: 10e3,
 				newListener: false,
 				wildcard: true
 			}), {group: ':suspend'});

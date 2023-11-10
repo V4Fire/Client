@@ -11,7 +11,6 @@ import type Friend from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModsProp } from 'components/super/i-block/i-block';
 
-import { baseClassesCache, componentClassesCache, elementClassesCache } from 'components/friends/provide/const';
 import { fullComponentName, fullElementName } from 'components/friends/provide/names';
 
 import type { Classes } from 'components/friends/provide/interface';
@@ -87,14 +86,6 @@ export function classes(
 	classes ??= {};
 
 	const
-		key = JSON.stringify(classes) + componentName,
-		cacheVal = baseClassesCache[key];
-
-	if (cacheVal != null) {
-		return cacheVal;
-	}
-
-	const
 		map = {};
 
 	Object.entries(classes).forEach(([innerEl, outerEl]) => {
@@ -120,8 +111,7 @@ export function classes(
 		map[innerEl.dasherize()] = fullElementName.apply(this, Object.cast(Array.concat([componentName], outerEl)));
 	});
 
-	baseClassesCache[key] = Object.freeze(map);
-	return map;
+	return Object.freeze(map);
 }
 
 /**
@@ -187,17 +177,6 @@ export function componentClasses(
 
 	mods ??= {};
 
-	const cache = componentClassesCache[this.componentName] ?? Object.createDict();
-	componentClassesCache[this.componentName] = cache;
-
-	const
-		key = JSON.stringify(mods) + componentName,
-		cacheVal = cache[key];
-
-	if (cacheVal != null) {
-		return cacheVal;
-	}
-
 	const
 		classes = [(<Function>fullComponentName).call(this, componentName)];
 
@@ -207,8 +186,7 @@ export function componentClasses(
 		}
 	});
 
-	cache[key] = Object.freeze(classes);
-	return classes;
+	return Object.freeze(classes);
 }
 
 /**
@@ -286,20 +264,6 @@ export function elementClasses(
 	}
 
 	const
-		cacheId = componentId ?? componentName,
-		cache = elementClassesCache[cacheId] ?? Object.createDict();
-
-	elementClassesCache[cacheId] = cache;
-
-	const
-		key = JSON.stringify(els),
-		cacheVal = cache[key];
-
-	if (cacheVal != null) {
-		return cacheVal;
-	}
-
-	const
 		classes = componentId != null ? [componentId] : [];
 
 	Object.entries(els).forEach(([el, mods]) => {
@@ -318,8 +282,7 @@ export function elementClasses(
 		});
 	});
 
-	cache[key] = Object.freeze(classes);
-	return classes;
+	return Object.freeze(classes);
 }
 
 /**
