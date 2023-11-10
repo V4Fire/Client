@@ -34,6 +34,9 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 	const
 		p = meta.params;
 
+	let
+		forceUpdate: CanNull<ReturnType<typeof setImmediate>> = null;
+
 	return {
 		...Object.cast(component),
 		inheritAttrs: p.inheritAttrs,
@@ -70,7 +73,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					shouldUpdate = meta.fields[firstPathProp]?.forceUpdate === true;
 
 				if (shouldUpdate) {
-					ctx.$async.setImmediate(() => ctx.$forceUpdate(), {label: 'forceUpdate'});
+					forceUpdate = setImmediate(() => ctx.$forceUpdate());
 				}
 			}
 		},
@@ -133,10 +136,11 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			init.errorCapturedState(getComponentContext(this), ...args);
 		},
 
-		renderTracked(...args: unknown[]): void {
-			const ctx = getComponentContext(this);
-			ctx.$async.clearImmediate({label: 'forceUpdate'});
-			init.renderTrackedState(ctx, ...args);
+		renderTracked(): void {
+			if (forceUpdate != null) {
+				clearImmediate(forceUpdate);
+				forceUpdate = null;
+			}
 		},
 
 		renderTriggered(...args: unknown[]): void {
