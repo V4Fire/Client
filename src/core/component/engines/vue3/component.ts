@@ -140,13 +140,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			init.errorCapturedState(getComponentContext(this), ...args);
 		},
 
-		renderTracked(): void {
-			if (forceUpdate != null) {
-				clearImmediate(forceUpdate);
-				forceUpdate = null;
-			}
-		},
-
 		renderTriggered(...args: unknown[]): void {
 			init.renderTriggeredState(getComponentContext(this), ...args);
 		},
