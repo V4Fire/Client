@@ -28,7 +28,7 @@
 						level,
 						id: values.getIndex(el.value),
 						active: isActive(el.value),
-						...(hasChildren(el) && {folded: getFoldedPropValue(el)}),
+						...(hasChildren(el) && {folded: getFoldedPropValue(el)})
 					}
 				})
 			.
