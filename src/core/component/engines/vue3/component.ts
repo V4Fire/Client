@@ -73,6 +73,10 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 					shouldUpdate = meta.fields[firstPathProp]?.forceUpdate === true;
 
 				if (shouldUpdate) {
+					if (forceUpdate != null) {
+						clearImmediate(forceUpdate);
+					}
+
 					forceUpdate = setImmediate(() => ctx.$forceUpdate());
 				}
 			}
