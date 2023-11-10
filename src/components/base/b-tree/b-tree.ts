@@ -176,6 +176,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 			lazyRender: this.lazyRender,
 			renderChunks: this.renderChunks,
 			activeProp: this.active,
+			isFunctional: this.isFunctional,
 			nestedRenderFilter,
 			renderFilter
 		};

@@ -59,7 +59,7 @@
 							:itemProps = itemProps |
 
 							:folded = getFoldedPropValue(el) |
-							:v-attrs = nestedTreeProps
+							:v-attrs = Object.reject(nestedTreeProps, ['isFunctional'])
 						.
 							< template &
 								#default = o |
