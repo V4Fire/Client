@@ -25,6 +25,5 @@ export type Hook =
 	'deactivated' |
 	'beforeDestroy' |
 	'destroyed' |
-	'renderTracked' |
 	'renderTriggered' |
 	'errorCaptured';

@@ -18,5 +18,4 @@ export * from 'core/component/init/states/deactivated';
 export * from 'core/component/init/states/before-destroy';
 export * from 'core/component/init/states/destroyed';
 export * from 'core/component/init/states/error-captured';
-export * from 'core/component/init/states/render-tracked';
 export * from 'core/component/init/states/render-trigered';

@@ -45,7 +45,7 @@ test.describe('friends/async-render', () => {
 				test(desc, async ({page}) => {
 					const target = await renderDummy(page, desc);
 
-					await assertResultText(page, 'Element: 0; Hook: renderTracked;');
+					await assertResultText(page, 'Element: 0; Hook: beforeMount;');
 
 					await waitForRender(target, () => page.locator(createSelector('force')).click());
 					await assertResultText(page, 'Element: 1; Hook: mounted;');
@@ -60,55 +60,55 @@ test.describe('friends/async-render', () => {
 			[
 				'simple array rendering',
 				'Element: 4',
-				'Element: 1; Hook: renderTracked; Element: 2; Hook: mounted; Element: 3; Hook: mounted; Element: 4; Hook: mounted;'
+				'Element: 1; Hook: beforeMount; Element: 2; Hook: mounted; Element: 3; Hook: mounted; Element: 4; Hook: mounted;'
 			],
 
 			[
 				'array rendering with the specified chunk size',
 				'Element: 4',
-				'Element: 1; Hook: renderTracked; Element: 2; Hook: renderTracked; Element: 3; Hook: renderTracked; Element: 4; Hook: mounted;'
+				'Element: 1; Hook: beforeMount; Element: 2; Hook: beforeMount; Element: 3; Hook: beforeMount; Element: 4; Hook: mounted;'
 			],
 
 			[
 				'array rendering with the specified start position and chunk size',
 				'Element: 4',
-				'Element: 2; Hook: renderTracked; Element: 3; Hook: renderTracked; Element: 4; Hook: mounted;'
+				'Element: 2; Hook: beforeMount; Element: 3; Hook: beforeMount; Element: 4; Hook: mounted;'
 			],
 
 			[
 				'simple object rendering',
 				'Element: b,',
-				'Element: a,1; Hook: renderTracked; Element: b,2; Hook: mounted;'
+				'Element: a,1; Hook: beforeMount; Element: b,2; Hook: mounted;'
 			],
 
 			[
 				'object rendering with the specified start position',
 				'Element: b,',
-				'Element: b,2; Hook: renderTracked;'
+				'Element: b,2; Hook: beforeMount;'
 			],
 
 			[
 				'simple string rendering',
 				'Element: 🇷🇺',
-				'Element: 1; Hook: renderTracked; Element: 😃; Hook: mounted; Element: à; Hook: mounted; Element: 🇷🇺; Hook: mounted;'
+				'Element: 1; Hook: beforeMount; Element: 😃; Hook: mounted; Element: à; Hook: mounted; Element: 🇷🇺; Hook: mounted;'
 			],
 
 			[
 				'simple iterable rendering',
 				'Element: 2',
-				'Element: 1; Hook: renderTracked; Element: 2; Hook: mounted;'
+				'Element: 1; Hook: beforeMount; Element: 2; Hook: mounted;'
 			],
 
 			[
 				'range rendering with the specified filter',
 				'Element: 2',
-				'Element: 0; Hook: renderTracked; Element: 2; Hook: mounted;'
+				'Element: 0; Hook: beforeMount; Element: 2; Hook: mounted;'
 			],
 
 			[
 				'range rendering with `useRAF`',
 				'Element: 1',
-				'Element: 0; Hook: renderTracked; Element: 1; Hook: mounted;'
+				'Element: 0; Hook: beforeMount; Element: 1; Hook: mounted;'
 			]
 		].forEach(([desc, last, expected]) => {
 			test(`${desc} should work`, async ({page}) => {
@@ -173,10 +173,10 @@ test.describe('friends/async-render', () => {
 
 	test('should re-render async content when the parent component is updated', async ({page}) => {
 		const target = await renderDummy(page, 'updating the parent component state');
-		await assertResultText(page, 'Element: 0; Hook: renderTracked;  Element: 1; Hook: renderTracked;');
+		await assertResultText(page, 'Element: 0; Hook: beforeMount;  Element: 1; Hook: beforeMount;');
 
 		await waitForRender(target, () => page.locator(createSelector('update')).click());
-		await assertResultText(page, 'Element: 0; Hook: beforeUpdate;  Element: 1; Hook: renderTracked;');
+		await assertResultText(page, 'Element: 0; Hook: beforeUpdate;  Element: 1; Hook: beforeMount;');
 
 		const hooks = await target.evaluate((ctx) => {
 			const oldRefs = <ComponentInterface[]>ctx.unsafe.tmp.oldRefs;
@@ -192,7 +192,7 @@ test.describe('friends/async-render', () => {
 
 	test('should clear async content when `async.clearAll` is invoked', async ({page}) => {
 		const target = await renderDummy(page, 'clearing by the specified group name');
-		await assertResultText(page, 'Element: 0; Hook: renderTracked; Element: 1; Hook: mounted;');
+		await assertResultText(page, 'Element: 0; Hook: beforeMount; Element: 1; Hook: mounted;');
 
 		await waitForRender(target, () => page.locator(createSelector('update')).click());
 		await assertResultText(page, 'Element: 0; Hook: beforeUpdate; Element: 1; Hook: mounted; Element: 1; Hook: updated;');

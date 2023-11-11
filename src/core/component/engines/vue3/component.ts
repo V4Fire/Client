@@ -133,12 +133,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 			init.errorCapturedState(getComponentContext(this), ...args);
 		},
 
-		renderTracked(...args: unknown[]): void {
-			const ctx = getComponentContext(this);
-			ctx.$async.clearImmediate({label: 'forceUpdate'});
-			init.renderTrackedState(ctx, ...args);
-		},
-
 		renderTriggered(...args: unknown[]): void {
 			init.renderTriggeredState(getComponentContext(this), ...args);
 		},

@@ -58,7 +58,6 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			deactivated: [],
 			beforeDestroy: [],
 			destroyed: [],
-			renderTracked: [],
 			renderTriggered: [],
 			errorCaptured: []
 		},
