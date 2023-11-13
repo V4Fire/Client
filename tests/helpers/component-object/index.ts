@@ -33,4 +33,18 @@ export default class ComponentObject<COMPONENT extends iBlock = iBlock> extends 
 			.waitForFunction(([ctx, modName, modVal]) => ctx.mods[modName] === modVal, <const>[this.component, modName, modVal])
 			.then(() => undefined);
 	}
+
+	/**
+	 * Activates the component (a shorthand for {@link iBlock.activate})
+	 */
+	activate(): Promise<void> {
+		return this.component.evaluate((ctx) => ctx.activate());
+	}
+
+	/**
+	 * Deactivates the component (a shorthand for {@link iBlock.deactivate})
+	 */
+	deactivate(): Promise<void> {
+		return this.component.evaluate((ctx) => ctx.deactivate());
+	}
 }
