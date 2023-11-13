@@ -283,9 +283,10 @@ class bSlider extends iData implements iObserveDOM, iItems {
 
 		const
 			{slideRects, current, align, viewRect} = this,
+			slidesCount = slideRects.length,
 			slideRect = slideRects[current];
 
-		if (current >= slideRects.length || !viewRect) {
+		if (current >= slidesCount || !viewRect) {
 			return 0;
 		}
 
@@ -293,7 +294,7 @@ class bSlider extends iData implements iObserveDOM, iItems {
 			return 0;
 		}
 
-		if (this.alignLastToEnd && current === slideRects.length - 1) {
+		if (this.alignLastToEnd && current === slidesCount - 1 && slidesCount !== 1) {
 			return slideRect.offsetLeft + slideRect.width - viewRect.width;
 		}
 
