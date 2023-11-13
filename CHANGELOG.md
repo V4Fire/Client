@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * The function `getParent` now checks if the component is inside a slot `core/component/render` `build/snakeskin`
+* Fixed incorrect slide alignment when there is only one slide presented `base/b-slider`
 
 ## v4.0.0-beta.37 (2023-10-27)
 
