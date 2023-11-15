@@ -49,10 +49,14 @@ Additionally, you can view the implemented traits or the parent component.
 The current page title.
 Basically this title is set via `document.title`.
 
-#### [pageTitleProp]
+If the prop value is defined as a function, it will be called (the result will be used as the title).
 
-The current page title.
+#### [pageDescriptionProp]
+
+The current page description.
 Basically this description is set via `<meta name="description" content="..."/>`.
+
+If the prop value is defined as a function, it will be called (the result will be used as the description content).
 
 #### [stagePageTitles]
 
@@ -102,11 +106,12 @@ class bMyPage extends iPage {
 #### scrollTo
 
 Scrolls the page to the specified coordinates.
+The scrolling can be done by specified coordinates (x, y) or by specified options.
 
 ```typescript
 class bMyPage extends iPage {
-  toTop() {
-    this.scrollTo({y: 0, behaviour: 'smooth'});
+  toTop(): void {
+    this.scrollTo({y: 0, behavior: 'smooth'});
   }
 }
 ```
