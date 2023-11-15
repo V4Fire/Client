@@ -21,6 +21,10 @@ import Provider, {
 
 import * as s from 'core/session';
 
+//#if runtime has dummyComponents
+import('models/modules/test/test-session');
+//#endif
+
 export * from 'core/data';
 
 @provider
