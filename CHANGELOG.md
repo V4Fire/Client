@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.62.1 (2023-11-13)
+
+#### :big: Bug Fix
+
+* Fixed incorrect slide alignment when there is only one slide presented `base/b-slider`
+
 ## v3.62.0 (2023-10-12)
 
 #### :rocket: New Feature

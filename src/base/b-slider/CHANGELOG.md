@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.62.1 (2023-11-13)
+
+#### :big: Bug Fix
+
+* Fixed incorrect slide alignment when there is only one slide presented
+
 ## v3.55.0 (2023-08-04)
 
 #### :rocket: New Feature
