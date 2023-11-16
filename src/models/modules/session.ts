@@ -68,7 +68,7 @@ export default class Session extends Provider {
 		}
 	};
 
-	override async getAuthParams(_params): Promise<Dictionary> {
+	override async getAuthParams(_params: MiddlewareParams): Promise<Dictionary> {
 		const
 			session = await s.get();
 
