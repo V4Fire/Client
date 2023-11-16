@@ -12,7 +12,7 @@ export type TitleValue<CTX extends iPage = iPage['unsafe']> =
 	string |
 	((ctx: CTX) => string);
 
-export type DescriptionValue = string;
+export type DescriptionValue<CTX extends iPage = iPage['unsafe']> = TitleValue<CTX>;
 
 export interface StageTitles<CTX extends iPage = iPage['unsafe']> extends Dictionary<TitleValue<CTX>> {
 	'[[DEFAULT]]': TitleValue<CTX>;

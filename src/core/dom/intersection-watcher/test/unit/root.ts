@@ -47,9 +47,6 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 		rootInner = await createElement(page, ROOT_INNER_STYLES, root);
 		target = await createElement(page, TARGET_STYLES, rootInner);
 
-		// Scrolling until the root element is entirely in the viewport
-		await scrollBy(page, {top: 300});
-
 		IntersectionObserverModule = await Utils.import(page, 'core/dom/intersection-watcher/engines/intersection-observer.ts');
 		intersectionObserver = await IntersectionObserverModule.evaluateHandle(({default: Observer}) => new Observer());
 
@@ -77,6 +74,9 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 							observer.watch(target, {root}, resolve);
 						}), {root, target});
 
+					// Scrolling until the root element is entirely in the viewport
+					await scrollBy(page, {top: 300, delay: 200});
+
 					// Scrolling the root element so that the target is in the root view
 					await scrollBy(page, {top: 100, left: 100}, root);
 
@@ -94,7 +94,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 					await page.evaluate((target) => {
 						Object.assign(target.style, {
 							position: 'absolute',
-							top: '400px'
+							top: '300px'
 						});
 					}, target);
 
@@ -104,15 +104,18 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 						});
 					}, {root, target, intersectionCount});
 
+					// Scrolling until the root element is entirely in the viewport
+					await scrollBy(page, {top: 300, delay: 200});
+
 					// Scrolling vertically so that the target is in the root view
-					await scrollBy(page, {top: 200, delay: 100}, root);
+					await scrollBy(page, {top: 200, delay: 200}, root);
 
 					// Scrolling the page by the full height of the root element
 					// so that both the root and the target are out of the viewport
-					await scrollBy(page, {top: -300, delay: 100});
+					await scrollBy(page, {top: -300, delay: 200});
 
 					// Both the root and the target are in the viewport again
-					await scrollBy(page, {top: 300, delay: 100});
+					await scrollBy(page, {top: 300, delay: 200});
 
 					test.expect(await intersectionCount.evaluate(({count}) => count)).toBe(1);
 				}
@@ -125,7 +128,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 				].join(' '),
 
 				async ({page}) => {
-					test.skip(engine === 'intersection');
+					test.skip(engine === 'intersection', 'the intersection-observer strategy does not have the onlyRoot option');
 
 					const intersectionCount = await page.evaluateHandle(() => ({count: 0}));
 
@@ -133,7 +136,7 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 					await page.evaluate((target) => {
 						Object.assign(target.style, {
 							position: 'absolute',
-							top: '400px'
+							top: '300px'
 						});
 					}, target);
 
@@ -143,15 +146,18 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 						});
 					}, {root, target, intersectionCount});
 
+					// Scrolling until the root element is entirely in the viewport
+					await scrollBy(page, {top: 300, delay: 200});
+
 					// Scrolling vertically so that the target is in the root view
-					await scrollBy(page, {top: 200, delay: 100}, root);
+					await scrollBy(page, {top: 200, delay: 200}, root);
 
 					// Scrolling the page by the full height of the root element
 					// so that both the root and the target are out of the viewport
-					await scrollBy(page, {top: -300, delay: 100});
+					await scrollBy(page, {top: -300, delay: 200});
 
 					// Both the root and the target are in the viewport again
-					await scrollBy(page, {top: 300, delay: 100});
+					await scrollBy(page, {top: 300, delay: 200});
 
 					test.expect(await intersectionCount.evaluate(({count}) => count)).toBe(2);
 				}

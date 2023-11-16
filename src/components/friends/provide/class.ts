@@ -12,7 +12,6 @@ import type iBlock from 'components/super/i-block/i-block';
 import type { Classes, ModsDict, ModsProp } from 'components/super/i-block/i-block';
 
 import * as api from 'components/friends/provide/api';
-import { elementClassesCache } from 'components/friends/provide/const';
 
 import type { Mods } from 'components/friends/provide/interface';
 
@@ -46,13 +45,7 @@ interface Provide {
 }
 
 class Provide extends Friend {
-	constructor(component: iBlock) {
-		super(component);
 
-		this.ctx.meta.hooks.beforeDestroy.push({
-			fn: () => delete elementClassesCache[this.componentId]
-		});
-	}
 }
 
 Provide.addToPrototype(api);

@@ -2226,7 +2226,8 @@
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
-              "core/html"
+              "core/html",
+              "models/modules/session"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2267,7 +2268,8 @@
             "components/traits/i-control-list/i-control-list",
             "core/browser",
             "core/cookies",
-            "core/html"
+            "core/html",
+            "models/modules/session"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -2281,7 +2283,8 @@
               "core/cookies",
               "core/html",
               "core/router/engines/browser-history",
-              "core/router/engines/in-memory"
+              "core/router/engines/in-memory",
+              "models/modules/session"
             ]
           },
           "resolvedOwnLibs": {
@@ -2296,7 +2299,8 @@
               "core/cookies",
               "core/html",
               "core/router/engines/browser-history",
-              "core/router/engines/in-memory"
+              "core/router/engines/in-memory",
+              "models/modules/session"
             ]
           },
           "type": "page",

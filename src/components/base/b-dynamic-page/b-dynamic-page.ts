@@ -586,6 +586,9 @@ export default class bDynamicPage extends iDynamicPage {
 
 	protected override initModEvents(): void {
 		super.initModEvents();
-		this.sync.mod('hidden', 'page', (v) => !Object.isTruly(v));
+
+		if (!SSR) {
+			this.sync.mod('hidden', 'page', (v) => !Object.isTruly(v));
+		}
 	}
 }

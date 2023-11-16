@@ -65,6 +65,7 @@ where the first parameter is the number to skip, and the second one is the rende
 
 The parameter for iterate can be any iterable JS value, such as arrays, maps, or sets.
 
+```
 < .container v-async-target
   < .&__item v-for = el in asyncRender.iterate([1, 2, 3])
     {{ el }}
@@ -77,6 +78,7 @@ The parameter for iterate can be any iterable JS value, such as arrays, maps, or
   /// All built-in JS iterators are iterable objects
   < .&__item v-for = el in asyncRender.iterate(new Map([['a', 1], ['b', 2]]).entries())
     {{ el }}
+```
 
 Any string values are iterated by graphemes or letters, not by Unicode symbols.
 

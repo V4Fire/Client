@@ -88,10 +88,6 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
       init.errorCapturedState(getComponentContext(this), ...args);
     },
 
-    renderTracked(...args: unknown[]): void {
-      init.renderTrackedState(getComponentContext(this), ...args);
-    },
-
     renderTriggered(...args: unknown[]): void {
       init.errorCapturedState(getComponentContext(this), ...args);
     }

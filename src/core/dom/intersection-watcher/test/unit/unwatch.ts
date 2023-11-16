@@ -67,8 +67,8 @@ test.describe('core/dom/intersection-watcher: cancelling watching for the inters
 						observer.unwatch(target);
 					}, {target, wasInvoked});
 
-					// Scroll vertically by the full target height
-					await scrollBy(page, {top: 100, delay: 100});
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
 
 					await assertWasInvokedIs(wasInvoked, false);
 				}
@@ -94,8 +94,8 @@ test.describe('core/dom/intersection-watcher: cancelling watching for the inters
 						observer.unwatch(target, handlers[1]);
 					}, {target, intersectionResults});
 
-					// Scroll vertically by the full target height
-					await scrollBy(page, {top: 100, delay: 100});
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
 
 					test.expect(await intersectionResults.evaluate((results) => results)).not.toContain('second');
 
@@ -123,8 +123,8 @@ test.describe('core/dom/intersection-watcher: cancelling watching for the inters
 						observer.unwatch(target, 0.5);
 					}, {target, intersectionResults});
 
-					// Scroll vertically by the full target height
-					await scrollBy(page, {top: 100, delay: 100});
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
 
 					test.expect(await intersectionResults.evaluate((results) => results)).not.toContain(0.5);
 
@@ -144,8 +144,8 @@ test.describe('core/dom/intersection-watcher: cancelling watching for the inters
 						observer.unwatch();
 					}, {target, wasInvoked});
 
-					// Scroll vertically by the full target height
-					await scrollBy(page, {top: 100, delay: 100});
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
 
 					await assertWasInvokedIs(wasInvoked, false);
 				}
@@ -174,8 +174,8 @@ test.describe('core/dom/intersection-watcher: cancelling watching for the inters
 							}
 						}), target);
 
-					// Scroll vertically by the full target height
-					await scrollBy(page, {top: 100, delay: 100});
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 200});
 
 					await assertWasInvokedIs(wasInvoked, false);
 

@@ -22,6 +22,36 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added new testing API `ComponentObject` that allows for easier interaction with components in the testing environment `test/helpers/component-object`.
 * Added new testing API for mocking and spying on functions at runtime `test/helpers/mock`.
 
+## v4.0.0-beta.39 (2023-11-16)
+
+#### :house: Internal
+
+* Fixed typings in `core/init` and `models/modules/session`
+
+#### :boom: Breaking Change
+
+* Now `i18n` is a factory for creating internationalizing function `components/super/i-block/state`
+* Now `t` is an internationalization function for the component, and not an alias for `i18n` `components/super/i-block/state`
+
+## v4.0.0-beta.38 (2023-11-15)
+
+#### :bug: Bug Fix
+
+* The function `getParent` now checks if the component is inside a slot `core/component/render` `build/snakeskin`
+* Fixed incorrect slide alignment when there is only one slide presented `base/b-slider`
+
+## v4.0.0-beta.37 (2023-10-27)
+
+#### :rocket: New Feature
+
+* Added a new method `strictEmit` for strict event type checking `iBlock`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with passing Iterable strings as values `iActiveItems`
+* Fixed an issue with folding tree items `bTree`
+* Fixed declarations of optional deps `iStaticPage`
+
 ## v4.0.0-beta.36 (2023-10-23)
 
 #### :bug: Bug Fix
@@ -112,7 +142,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed icons' size in multi-theme mode `components/global/g-def`
->>>>>>> v4
 
 ## v4.0.0-beta.26 (2023-09-20)
 

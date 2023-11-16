@@ -12,9 +12,9 @@ import { expandedStringify } from 'core/prelude/test-env/components/json';
 
 import type iBlock from 'components/super/i-block/i-block';
 
-import { isRenderComponentsVnodeParams } from 'tests/helpers/component/helpers';
 import type { ComponentInDummy } from 'tests/helpers/component/interface';
 import type bDummy from 'components/dummies/b-dummy/b-dummy';
+import { isRenderComponentsVNodeParams } from 'tests/helpers/component/helpers';
 
 /**
  * Class provides API to work with components on a page
@@ -82,7 +82,7 @@ export default class Component {
 			attrs: RenderComponentsVnodeParams['attrs'],
 			children: RenderComponentsVnodeParams['children'];
 
-		if (isRenderComponentsVnodeParams(schemeOrAttrs)) {
+		if (isRenderComponentsVNodeParams(schemeOrAttrs)) {
 			attrs = schemeOrAttrs.attrs;
 			children = schemeOrAttrs.children;
 

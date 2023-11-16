@@ -38,10 +38,16 @@ export function normalizeItems<T extends Item[]>(this: bTree, items: T): T {
 	let
 		i = -1;
 
-	items = Object.fastClone(items);
-	items.forEach((el) => normalize(el));
+	if (items.some(needNormalize)) {
+		items = Object.fastClone(items);
+		items.forEach((el) => normalize(el));
+	}
 
 	return items;
+
+	function needNormalize(item: bTree['Item']) {
+		return item.value === undefined || !('parentValue' in item);
+	}
 
 	function normalize(item: bTree['Item'], parentValue?: unknown): boolean {
 		i++;

@@ -69,7 +69,7 @@ test.describe('<b-router> standard transition events', () => {
 	);
 
 	test(
-		'changes made to the route parameters during the handling of the `beforeChange` event should affect the transition',
+		'changes made to the route parameters during handling of the `beforeChange` event should affect the transition',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -99,7 +99,7 @@ test.describe('<b-router> standard transition events', () => {
 	);
 
 	test(
-		'the `softChange` event should only be fired in transitions where only query parameters have changed',
+		'the `softChange` event should be fired only in those transitions where the query parameters have been changed',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -175,7 +175,7 @@ test.describe('<b-router> standard transition events', () => {
 	);
 
 	test(
-		'the `softChange` event should be fired when navigating through history',
+		'the `softChange` event should fire when navigating through history',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -247,7 +247,7 @@ test.describe('<b-router> standard transition events', () => {
 	);
 
 	test(
-		'the `hardChange` event should be fired only in those transitions where route IDs have changed',
+		'the `hardChange` event should only be fired in those transitions where the route ID has changed',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -257,8 +257,12 @@ test.describe('<b-router> standard transition events', () => {
 
 				second: {
 					path: '/second'
+				},
+
+				third: {
+					path: '/third'
 				}
-			})(page);
+			})(page, {initialRoute: 'main'});
 
 			const log = await root.evaluate(async (ctx) => {
 				const
@@ -277,10 +281,10 @@ test.describe('<b-router> standard transition events', () => {
 					}
 				});
 
-				await router.push('main', {query: {foo: 1}});
+				await router.push('second', {query: {foo: 1}});
 				res.pathChanges?.push(getPath());
 
-				await router.push('second', {query: {bar: 2}});
+				await router.push('third', {query: {bar: 2}});
 				await router.push(null, {query: {bar: 3}});
 				await router.push(null, {query: {bar: 4}});
 				res.pathChanges?.push(getPath());
@@ -296,14 +300,14 @@ test.describe('<b-router> standard transition events', () => {
 			});
 
 			test.expect(log).toEqual({
-				pathChanges: ['/?foo=1', '/second?bar=4', '/'],
+				pathChanges: ['/second?foo=1', '/third?bar=4', '/'],
 				onHardChange: [['initial', {}], {foo: 1}, {bar: 2}, {}]
 			});
 		}
 	);
 
 	test(
-		'the `hardChange` event should be fired when navigating through history',
+		'the `hardChange` event should fire when navigating through history',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -378,9 +382,9 @@ test.describe('<b-router> standard transition events', () => {
 
 	test(
 		[
-			'The change event should be emitted whenever there is any transition in which any parameters have changed ',
-			'or the length of the history has changed'
-		].join(''),
+			'the `change` event should be fired whenever there is a transition that changes any parameters',
+			'or when the history length changes'
+		].join(' '),
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -459,7 +463,7 @@ test.describe('<b-router> standard transition events', () => {
 	);
 
 	test(
-		'the `change` event should be fired when navigating through history',
+		'the `change` event should fire when navigating through history',
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -611,9 +615,9 @@ test.describe('<b-router> standard transition events', () => {
 
 	test(
 		[
-			'the order of event triggering should be as follows: ',
+			'the order of triggering events should be as follows:',
 			'`beforeChange`, `softChange/hardChange`, `change`, `transition`, `$root.transition`'
-		].join(''),
+		].join(' '),
 
 		async ({page}) => {
 			const root = await createInitRouter('history', {
@@ -624,7 +628,7 @@ test.describe('<b-router> standard transition events', () => {
 				second: {
 					path: '/second'
 				}
-			})(page);
+			})(page, {initialRoute: 'main'});
 
 			const log = await root.evaluate(async (ctx) => {
 				const

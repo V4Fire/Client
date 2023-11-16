@@ -24,7 +24,7 @@ import type { InitAppOptions } from 'core/init/interface';
  */
 export default async function initApp(
 	rootComponent: Nullable<string>,
-	opts?: InitAppOptions
+	opts: InitAppOptions
 ): Promise<string | Element> {
 	initGlobalEnv(opts);
 

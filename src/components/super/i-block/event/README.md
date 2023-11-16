@@ -208,7 +208,7 @@ __b-another-example.ss__
     < b-example @myEvent = console.log
 ```
 
-### How to type events?
+### How to Type Events?
 
 By default, component events do not have any TypeScript type support.
 However, you can explicitly declare the possible events and arguments when describing the component.
@@ -238,6 +238,26 @@ export default class bExample extends iBlock {
     this.on('onAnotherEvent', (arg1, arg2) => {
       // ...
     });
+  }
+}
+```
+
+By default, the `emit` method allows firing undeclared events,
+but it has a special alias called `strictEmit`, which allows emitting only explicitly declared events.
+
+```typescript
+import iBlock, { component, InferComponentEvents } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override readonly SelfEmitter!: InferComponentEvents<this, [
+    ['myEvent', {data: string}],
+    ['anotherEvent', string, boolean]
+  ], iBlock['SelfEmitter']>;
+
+  created() {
+    // @ts-expect-error
+    this.strictEmit('bla', 1);
   }
 }
 ```
@@ -617,7 +637,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-##### How to type events?
+##### How to Type Events?
 
 By default, `localEmitter` events do not have any TypeScript type support.
 However, you can explicitly declare the possible events and arguments when describing the component.
@@ -638,6 +658,25 @@ export default class bExample extends iBlock {
 
   created() {
     this.localEmitter.on('myEvent', {data: 'some message'});
+  }
+}
+```
+
+By default, the `emit` method allows firing undeclared events,
+but it has a special alias called `strictEmit`, which allows emitting only explicitly declared events.
+
+```typescript
+import iBlock, { component, InferComponentEvents } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  override readonly LocalEmitter!: InferEvents<[
+    ['myEvent', {data: string}]
+  ], iBlock['LocalEmitter']>;
+
+  created() {
+    // @ts-expect-error
+    this.localEmitter.strictEmit('bla', 1);
   }
 }
 ```

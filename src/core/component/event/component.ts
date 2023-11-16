@@ -37,7 +37,8 @@ export function destroyApp(appId: string): void {
  *      changing components' statuses to `loading`;
  *
  *   5. `'storage'` - reloads all storages bound to components;
- *   6. `'storage'` - reload all storages bound to components without changing components' statuses to `loading`;
+ *   6. `'storage.silence'` - reload all storages bound to components without
+ *       changing components' statuses to `loading`;
  *
  *   7. `'silence'` - reloads all providers and storages bound to components without
  *      changing components' statuses to `loading`.

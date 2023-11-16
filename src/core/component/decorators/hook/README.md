@@ -229,7 +229,7 @@ export default class bExample extends iBlock {
 
 ### Asynchronous handlers
 
-Some hooks support asynchronous handlers: `mounted`, `updated`, `destroyed`, `renderTracked`,
+Some hooks support asynchronous handlers: `mounted`, `updated`, `destroyed`,
 `renderTriggered` and `errorCaptured`.
 That is, if one of the hook handlers returns a Promise,
 then the rest will wait for its resolving to preserve the initialization order.

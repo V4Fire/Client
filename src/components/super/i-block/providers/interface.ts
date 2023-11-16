@@ -7,5 +7,10 @@
  */
 
 import type Provider from 'core/data';
+import type { ProviderOptions } from 'core/data';
 
-export type DataProviderProp = string | Provider | typeof Provider | (() => Provider | typeof Provider);
+export type DataProviderProp =
+	string |
+	Provider |
+	typeof Provider |
+	(() => Provider | {new(opts: ProviderOptions): Provider});

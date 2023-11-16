@@ -7,7 +7,7 @@
  */
 
 import { isComponent } from 'core/component';
-import type { VNode } from 'core/component/engines';
+import type { VNode, VNodeVirtualParent } from 'core/component/engines';
 
 import type VDOM from 'components/friends/vdom/class';
 import type { VNodeOptions, VNodeDescriptor } from 'components/friends/vdom/interface';
@@ -118,11 +118,18 @@ export function create(
  * @param [opts]
  * @param [opts.attrs]
  * @param [opts.children]
+ * @param [virtualParent]
  */
 function createVNode(
 	this: VDOM,
 	type: string,
-	{attrs, children}: VNodeOptions = {}
+
+	{
+		attrs,
+		children
+	}: VNodeOptions = {},
+
+	virtualParent?: VNodeVirtualParent
 ): VNode {
 	return this.withRenderContext(() => {
 		const {
@@ -130,12 +137,18 @@ function createVNode(
 			ctx: {$renderEngine: {r}}
 		} = this;
 
-		let
-			resolvedChildren: CanUndef<VNode[] | Dictionary<() => VNode>>;
+		let resolvedChildren: CanUndef<
+			VNode[] |
+			Dictionary<() => VNode>
+		>;
+
+		const current: VNodeVirtualParent = {
+			value: null
+		};
 
 		const factory = (vnode: Nullable<string | VNode | VNodeDescriptor>) => {
 			if (Object.isDictionary(vnode) && !('patchFlag' in vnode)) {
-				return createVNode.call(this, (Object.cast<VNode>(vnode)).type, vnode);
+				return createVNode.call(this, (Object.cast<VNode>(vnode)).type, vnode, current);
 			}
 
 			return vnode;
@@ -182,6 +195,9 @@ function createVNode(
 		} else {
 			vnode = r.createVNode.call(ctx, type, {'v-attrs': attrs}, resolvedChildren);
 		}
+
+		current.value = vnode;
+		vnode.virtualParent = virtualParent;
 
 		return vnode;
 	});

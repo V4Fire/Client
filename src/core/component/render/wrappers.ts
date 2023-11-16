@@ -29,6 +29,7 @@ import type {
 	renderList,
 	renderSlot,
 
+	withCtx,
 	withDirectives,
 	resolveDirective,
 
@@ -39,6 +40,7 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/init';
+import { getDirectiveComponent } from 'core/component/directives/helpers';
 import { resolveAttrs, normalizeComponentAttrs, mergeProps as merge } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
@@ -107,7 +109,9 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 
 		vnode.props ??= {};
 		vnode.props.getRoot ??= () => ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
-		vnode.props.getParent ??= () => this;
+		vnode.props.getParent ??= () => vnode.virtualParent?.value != null ?
+			getDirectiveComponent(vnode.virtualParent.value) :
+			this;
 
 		if (vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
@@ -295,6 +299,16 @@ export function wrapRenderSlot<T extends typeof renderSlot>(original: T): T {
 		}
 
 		return this.$withCtx(() => original.apply(null, args));
+	});
+}
+
+/**
+ * Wrapper for the component library `withCtx` function
+ * @param original
+ */
+export function wrapWithCtx<T extends typeof withCtx>(original: T): T {
+	return Object.cast(function withCtx(this: ComponentInterface, fn: Function) {
+		return original((slotArgs: object) => fn(slotArgs, slotArgs));
 	});
 }
 

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.37 (2023-10-27)
+
+#### :rocket: New Feature
+
+* Added a new method `strictEmit` for strict event type checking
+
 ## v4.0.0-beta.35 (2023-10-20)
 
 #### :rocket: New Feature

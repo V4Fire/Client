@@ -32,7 +32,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 	$fields: CTX['$fields'];
 
 	// @ts-ignore (access)
-	$systemFields: CTX['$fields'];
+	$systemFields: CTX['$systemFields'];
 
 	// @ts-ignore (access)
 	$modifiedFields: CTX['$modifiedFields'];

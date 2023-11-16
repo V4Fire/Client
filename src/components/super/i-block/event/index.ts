@@ -94,7 +94,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 			on: (event: string, handler: Function) => o.$on(normalizeEventName(event), handler),
 			once: (event: string, handler: Function) => o.$once(normalizeEventName(event), handler),
 			off: o.$off.bind(o),
-			emit: o.emit.bind(o)
+			emit: o.emit.bind(o),
+			strictEmit: o.emit.bind(o)
 		})
 	})
 
@@ -123,11 +124,16 @@ export default abstract class iBlockEvent extends iBlockBase {
 	@system({
 		atom: true,
 		unique: true,
-		init: (_, d) => (<Async>d.async).wrapEventEmitter(new EventEmitter({
-			maxListeners: 1e3,
-			newListener: false,
-			wildcard: true
-		}), {group: ':suspend'})
+		init: (_, d) => {
+			const emitter = (<Async>d.async).wrapEventEmitter(new EventEmitter({
+				maxListeners: 10e3,
+				newListener: false,
+				wildcard: true
+			}), {group: ':suspend'});
+
+			emitter['strictEmit'] = (event: string, ...args: unknown[]) => emitter.emit(event, ...args);
+			return emitter;
+		}
 	})
 
 	// @ts-ignore (ts)
@@ -224,7 +230,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 	@system({
 		atom: true,
 		unique: true,
-		init: (_, d) => (<Async>d.async).wrapEventEmitter(globalEmitter)
+		init: (_, d) => {
+			const emitter = (<Async>d.async).wrapEventEmitter(globalEmitter);
+			emitter['strictEmit'] = (event: string, ...args: unknown[]) => emitter.emit(event, ...args);
+			return emitter;
+		}
 	})
 
 	protected readonly globalEmitter!: EventEmitterWrapper<this>;
@@ -365,6 +375,20 @@ export default abstract class iBlockEvent extends iBlockBase {
 		}
 
 		this.log({context: `event:${eventName}`, logLevel: eventDecl.logLevel}, this, ...logArgs);
+	}
+
+	/**
+	 * An alias for the `emit` method, but with stricter type checking
+	 *
+	 * @alias
+	 * @param event
+	 * @param args
+	 */
+	strictEmit<E extends GetComponentEvents<this['SelfEmitter']>>(
+		event: E | ComponentEvent<E>,
+		...args: this['SelfEmitter']['Args'][E]
+	): void {
+		this.emit(event, ...args);
 	}
 
 	/**

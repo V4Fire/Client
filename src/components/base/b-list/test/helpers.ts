@@ -44,7 +44,7 @@ export async function renderList(
 		attrs: RenderComponentsVnodeParams['attrs'],
 		children: RenderComponentsVnodeParams['children'];
 
-	if (isRenderComponentsVnodeParams(paramsOrAttrs)) {
+	if (isRenderComponentsVNodeParams(paramsOrAttrs)) {
 		attrs = paramsOrAttrs.attrs;
 		children = paramsOrAttrs.children;
 
@@ -78,10 +78,10 @@ export async function renderList(
 }
 
 /**
- * Checks if the given value is `RenderComponentsVnodeParams`
+ * Checks if the given value is `RenderComponentsVNodeParams`
  * @param value
  */
-function isRenderComponentsVnodeParams(
+function isRenderComponentsVNodeParams(
 	value: RenderComponentsVnodeParams | RenderComponentsVnodeParams['attrs']
 ): value is RenderComponentsVnodeParams {
 	return (<RenderComponentsVnodeParams>value).attrs != null || (<RenderComponentsVnodeParams>value).children != null;

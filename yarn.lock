@@ -5641,8 +5641,8 @@ __metadata:
   linkType: hard
 
 "@v4fire/core@github:V4Fire/Core#v4":
-  version: 4.0.0-alpha.9
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=d792b0aa0674f570153fb81f790f4c03fa2a3d8f"
+  version: 4.0.0-alpha.13
+  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=8d79a4402a21bfff1df63467118d9b246e82a23e"
   dependencies:
     "@babel/core": 7.17.5
     "@babel/helper-module-transforms": 7.16.7
@@ -5786,7 +5786,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: a25c6b57959cbf72d50181d8986e0cfd710d04c7729494bf3e8ee63da08fc516c6d3456ca10a5f12087ead50524454dfcf4a1e021415726a6c91d52447669865
+  checksum: 91497ba63cbce7e75a60ab22b6d9fefc4229eff215319edac51ec42ea49c9d235b6c316c6f48c9f58e2f477f8f098d69a76997100af417f8d46aa46651e85ed3
   languageName: node
   linkType: hard
 
@@ -22592,11 +22592,11 @@ __metadata:
 
 "ss2vue3@github:snakeskintpl/ss2vue3":
   version: 1.0.0
-  resolution: "ss2vue3@https://github.com/snakeskintpl/ss2vue3.git#commit=2866810567a574bde62c8ff8274770027d538904"
+  resolution: "ss2vue3@https://github.com/snakeskintpl/ss2vue3.git#commit=e0e2e900fff169c2e5a6469cd052123557c2f9da"
   peerDependencies:
     "@vue/compiler-sfc": "*"
     snakeskin: ^7.5.1
-  checksum: 2899dd9bdf9df4b86414ecc519f066c5468efa1783e8beeb8f804ba237671e7dc8b0616e8cc920c08b69f6f74da9fcb9d8c324b85be4bfc824872f3f10193975
+  checksum: 52ce7fa298200077e247b4c2506fab162b7d156dd63f2405818d90e33f6513e511279926f813e9b8e6b6641c4cd1ac91ad1cc6615995147d67b336e6fc613b0e
   languageName: node
   linkType: hard
 
