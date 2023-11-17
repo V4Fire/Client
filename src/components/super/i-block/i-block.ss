@@ -246,11 +246,15 @@
 								- block helpers
 								- block providers
 
+								- block bodyHeader
+
 								< ${rootWrapper ? '_' : '?'}.&__root-wrapper
 									< ${overWrapper ? '_' : '?'}.&__over-wrapper
 										- block overWrapper
 
 									- block body
+
+								- block bodyFooter
 
 						- if !ssrRendering
 							< template v-if = !ssrRendering
