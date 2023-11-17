@@ -18,5 +18,9 @@
 		- block helpers
 		- block providers
 
+		- block bodyHeader
+
 		< .&__root-wrapper[.page-wrapper]
 			- block body
+
+		- block bodyFooter

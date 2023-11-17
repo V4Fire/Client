@@ -153,11 +153,15 @@
 					- block helpers
 					- block providers
 
+					- block bodyHeader
+
 					- if overWrapper
 						< .&__over-wrapper
 							- block overWrapper
 
 						- block body
+
+					- block bodyFooter
 
 				- block deps
 					- block styles

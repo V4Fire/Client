@@ -20,7 +20,7 @@
 		- block wrapper
 			+= self.nativeInput({attrs: {'@input': 'onEdit'}})
 
-	- block helpers
+	- block bodyFooter
 		- super
 
 		- block limit

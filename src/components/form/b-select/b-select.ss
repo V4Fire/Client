@@ -135,7 +135,7 @@
 
 				- block icons
 
-	- block helpers
+	- block bodyFooter
 		- super
 
 		- block dropdown

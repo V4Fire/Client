@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added new layout blocks - `bodyHeader` and `bodyFooter`
+
 ## v4.0.0-beta.37 (2023-10-27)
 
 #### :rocket: New Feature

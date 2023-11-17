@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Moved `dropdown` block from `helpers` to `bodyFooter` block
+
 ## v4.0.0-beta.26 (2023-09-20)
 
 #### :bug: Bug Fix
