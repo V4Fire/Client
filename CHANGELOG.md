@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Moved `dropdown` block from `helpers` to `bodyFooter` block `components/form/b-select`
+* Moved `limit` block from `helpers` to `bodyFooter` block `components/form/b-textarea`
+* Moved `message` block from `helpers` to `bodyFooter` block `components/super/i-block`
+
+#### :rocket: New Feature
+
+* Added new layout blocks - `bodyHeader` and `bodyFooter` `components/super/i-block`
+
 ## v4.0.0-beta.39 (2023-11-16)
 
 #### :house: Internal

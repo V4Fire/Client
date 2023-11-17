@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Moved `message` block from `helpers` to `bodyFooter` block
+
 ## v4.0.0-beta.12 (2023-08-21)
 
 #### :bug: Bug Fix
