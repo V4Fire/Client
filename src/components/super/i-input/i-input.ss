@@ -80,8 +80,9 @@
 				}
 			}) .
 
-	- block helpers
+	- block bodyFooter
 		- super
+
 		- block message
 			< template v-if = messageHelpers
 				- forEach ['error', 'info'] => el
