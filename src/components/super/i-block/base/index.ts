@@ -163,20 +163,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
-	 * A function for internationalizing texts used in the component
-	 */
-	get i18n(): ReturnType<typeof i18n> {
-		return i18n(this.componentI18nKeysets);
-	}
-
-	/**
-	 * An alias for `i18n`
-	 */
-	get t(): ReturnType<typeof i18n> {
-		return this.i18n;
-	}
-
-	/**
 	 * An iterator for generating pseudo-random numbers.
 	 * It is used for generating identical component IDs during SSR and hydration.
 	 */
@@ -264,19 +250,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	@computed()
 	protected get self(): this {
 		return this;
-	}
-
-	/**
-	 * A function for internationalizing texts inside traits.
-	 * Because traits are called within the context of components, standard `i18n` does not work,
-	 * and you need to explicitly pass the key set name (trait names).
-	 *
-	 * @param traitName - the trait name
-	 * @param text - the text for internationalization
-	 * @param [opts] - additional internationalization options
-	 */
-	i18nTrait(traitName: string, text: string, opts?: I18nParams): string {
-		return i18n(traitName)(text, opts);
 	}
 
 	/**
