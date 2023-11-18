@@ -246,8 +246,8 @@ function getStyleDecl(lib, body = '') {
 
 	if (isInline && !body) {
 		return (async () => {
-			while (!fs.existsSync(lib.src)) {
-				await delay(500);
+			if (!fs.existsSync(lib.src)) {
+				throw new Error(`No asset with ${lib.src} found!`);
 			}
 
 			if (lib.js) {

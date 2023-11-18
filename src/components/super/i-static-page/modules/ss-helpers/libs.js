@@ -24,8 +24,7 @@ const
 
 const
 	fs = require('fs-extra'),
-	path = require('upath'),
-	delay = require('delay');
+	path = require('upath');
 
 const
 	genHash = include('build/hash');
@@ -185,8 +184,8 @@ async function initLibs(libs, assets) {
 		}
 
 		if (p.inline) {
-			while (!fs.existsSync(p.src)) {
-				await delay((1).second());
+			if (!fs.existsSync(p.src)) {
+				throw new Error(`Asset for inline ${p} is not found!`);
 			}
 
 		} else {
