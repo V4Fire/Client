@@ -82,9 +82,9 @@ PATH['std'] = 'std.js';
 PATH['favicons'] = 'assets/favicons';
 PATH['p-v4-components-demo'] = 'p-v4-components-demo.js';
 PATH['p-v4-components-demo_tpl'] = 'p-v4-components-demo_tpl.js';
+PATH['vendor'] = 'vendor.js';
 PATH['p-v4-components-demo_style'] = 'p-v4-components-demo_style.css';
 PATH['p-v4-components-demo_view'] = 'p-v4-components-demo_view.js';
-PATH['vendor'] = 'vendor.js';
 
 
 if ('std_style' in PATH) {
