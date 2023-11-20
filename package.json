@@ -12,7 +12,7 @@
     "url": "https://github.com/kobezzza"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.0.0"
   },
   "repository": {
     "type": "git",
@@ -160,5 +160,5 @@
   "resolutions": {
     "sharp": "0.31.3"
   },
-  "packageManager": "yarn@3.5.0"
+  "packageManager": "yarn@4.0.2"
 }
