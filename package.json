@@ -160,5 +160,5 @@
   "resolutions": {
     "sharp": "0.31.3"
   },
-  "packageManager": "yarn@3.5.0"
+  "packageManager": "yarn@4.0.2"
 }
