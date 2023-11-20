@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.? (2023-??-??)
+
+#### :house:  Internal
+
+* Moving on new major `yarn@4` version
+* Updated actions in CI
+* Migrate on `node@20`
+
 ## v3.62.1 (2023-11-13)
 
 #### :big: Bug Fix
