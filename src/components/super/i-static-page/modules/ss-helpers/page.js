@@ -102,6 +102,7 @@ exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
  * @param {Object<string>} opts.assets - a dictionary with static page assets
  * @param {boolean} [opts.wrap] - if set to true, the final code is wrapped by a tag to load
  * @param {boolean} [opts.js] - if set to true, the function will always return JS code to load the dependency
+ * @param {boolean} [opts.inline] - if set to true, the styles is placed as a text
  * @returns {string}
  */
 function getPageStyleDepsDecl(dependencies, {assets, wrap, js, inline}) {

@@ -15,7 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Now styles always inlined in html `core/components/super/i-static-page`
+* Now styles are always inlined in html `core/components/super/i-static-page`
+
+#### :boom: Breaking Change
+
+* Removed generation of init.js `core/components/super/i-static-page`
 
 ## v4.0.0-beta.40 (2023-11-17)
 
@@ -39,10 +43,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now `i18n` is a factory for creating internationalizing function `components/super/i-block/state`
 * Now `t` is an internationalization function for the component, and not an alias for `i18n` `components/super/i-block/state`
-
-#### :boom: Breaking Change
-
-* Removed generation of init.js `core/components/super/i-static-page`
 
 ## v4.0.0-beta.38 (2023-11-15)
 
