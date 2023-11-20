@@ -147,7 +147,7 @@ exports.initLibs = initLibs;
  * @param {Object<string>} [assets] - a dictionary with static page assets
  * @returns {Promise<Array<(InitializedLib|InitializedStyleLib|InitializedLink)>>}
  */
-async function initLibs(libs, assets) {
+function initLibs(libs, assets) {
 	const
 		res = [];
 

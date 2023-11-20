@@ -8,12 +8,6 @@
 
 'use strict';
 
-const {
-	Libs,
-	StyleLibs,
-	Links
-} = require('../interface');
-
 const
 	config = require('@config/config'),
 	{src, webpack} = config;
@@ -22,16 +16,7 @@ const
 	fs = require('fs-extra');
 
 const
-	buble = require('buble'),
-	monic = require('monic');
-
-const
-	{getAssetsDecl} = include('src/components/super/i-static-page/modules/ss-helpers/assets'),
-	{getScriptDecl, getStyleDecl, normalizeAttrs} = include('src/components/super/i-static-page/modules/ss-helpers/tags'),
-	{loadLibs, loadStyles, loadLinks} = include('src/components/super/i-static-page/modules/ss-helpers/libs');
-
-const
-	{getVarsDecl} = include('src/components/super/i-static-page/modules/ss-helpers/base-declarations'),
+	{getScriptDecl, getStyleDecl} = include('src/components/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline, addPublicPath, canLoadStylesDeferred} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
 
 const
