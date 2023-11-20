@@ -46,9 +46,9 @@ describe('super/i-static-page/modules/ss-helpers/tags', () => {
 
 			it('with inlining', async () => {
 				const
-					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/.prettierrc.js', inline: true});
+					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/.pzlrrc', inline: true});
 
-				expect(decl).toBe("<script >include('node_modules/@v4fire/core/.prettierrc.js');</script>");
+				expect(decl).toBe("<script >include('node_modules/@v4fire/core/.pzlrrc');</script>");
 			});
 
 			it('with JS initializing', () => {
@@ -88,9 +88,9 @@ describe('super/i-static-page/modules/ss-helpers/tags', () => {
 
 			it('with JS initializing and inlining', async () => {
 				const
-					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/.prettierrc.js', js: true, inline: true});
+					decl = await ss.getScriptDecl({src: 'node_modules/@v4fire/core/.pzlrrc', js: true, inline: true});
 
-				expect(decl.trim()).toBe("include('node_modules/@v4fire/core/.prettierrc.js');");
+				expect(decl.trim()).toBe("include('node_modules/@v4fire/core/.pzlrrc');");
 			});
 
 			describe('providing additional attributes', () => {
