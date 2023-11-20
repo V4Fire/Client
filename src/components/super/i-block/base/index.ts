@@ -652,14 +652,14 @@ export default abstract class iBlockBase extends iBlockFriends {
 	protected initBaseAPI(): void {
 		this.watch = this.instance.watch.bind(this);
 
-		if (this.$parent == null && this.getParent != null) {
+		if (this.getParent != null) {
+			const $parent = this.getParent() ?? this.$parent;
+
 			Object.defineProperty(this, '$parent', {
 				enumerable: true,
 				configurable: true,
-
-				get() {
-					return this.getParent?.();
-				}
+				writable: false,
+				value: $parent
 			});
 		}
 
