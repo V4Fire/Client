@@ -35,7 +35,7 @@ jobs:
       - name: Build project
         run: yarn webpack
 
-      - name: Run components' unit tests
+      - name: Run components unit tests
         run: yarn test:unit --reporter github
 
   # Run components tests
@@ -62,7 +62,7 @@ jobs:
       - name: Build tsconfig
         run: yarn build:tsconfig
 
-      - name: Run components' tests
+      - name: Run components tests
         run: yarn test:components:chrome
 
   components-fat-html:
@@ -88,7 +88,7 @@ jobs:
       - name: Build tsconfig
         run: yarn build:tsconfig
 
-      - name: Run components' tests with --fat-html --mode production
+      - name: Run components tests with --fat-html --mode production
         run: yarn test:components:chrome --fat-html --mode production
 
   components-fat-html-es5:
@@ -114,7 +114,7 @@ jobs:
       - name: Build tsconfig
         run: yarn build:tsconfig
 
-      - name: Run components' tests with --fat-html --es ES5
+      - name: Run components tests with --fat-html --es ES5
         run: yarn test:components:chrome --fat-html --es ES5
 
   # Run module tests
@@ -147,7 +147,7 @@ jobs:
       - name: Build the project
         run: yarn webpack
 
-      - name: Run modules' tests
+      - name: Run modules tests
         run: yarn test:jasmine
 
   # Run linters
