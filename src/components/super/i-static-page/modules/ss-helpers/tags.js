@@ -246,7 +246,7 @@ function getStyleDecl(lib, body = '') {
 	if (isInline && !body) {
 		return (() => {
 			if (!fs.existsSync(lib.src)) {
-				throw new Error(`Asset ${lib.src} not found`);
+				throw new Error(`The asset ${lib.src} cannot be found`);
 			}
 
 			if (lib.js) {
