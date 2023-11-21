@@ -11,26 +11,26 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.41 (2023-11-21)
 
 #### :boom: Breaking Change
 
-* Removed generation of init.js `core/components/super/i-static-page`
+* Removed generation of init.js `iStaticPage`
 
 #### :rocket: New Feature
 
-* Now styles are always inlined in html `core/components/super/i-static-page`
+* Now styles are always inlined in html `iStaticPage`
 
 #### :bug: Bug Fix
 
-* Now the `nonce` attribute is correctly set in inline mode
+* Now the `nonce` attribute is correctly set in inline mode `iStaticPage`
 
 #### :house: Internal
 
 * Fixed typings in `core/data`
-* Moved to a new major version of yarn@4
-* Updated actions in CI
+* Moved to yarn@4
 * Migrated to node@20
+* Updated actions in CI
 
 ## v4.0.0-beta.40 (2023-11-17)
 
