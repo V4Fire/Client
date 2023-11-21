@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :house: Internal
+
+* Moving on new major yarn@4 version
+* Updated actions in CI
+* Migrate on node@20
+
 ## v4.0.0-beta.40 (2023-11-17)
 
 #### :boom: Breaking Change
