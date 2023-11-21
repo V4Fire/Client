@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Now `nonce` attribute is correctly set in inline mode
 
+#### :house: Internal
+
+* Fixed typings in `core/data`
+
 ## v4.0.0-beta.40 (2023-11-17)
 
 #### :boom: Breaking Change
