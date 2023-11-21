@@ -56,16 +56,8 @@ export type InferComponentEvents<
 
 		off(event: E | `${E}:component` | `on${Capitalize<E>}` | string, handler?: Function): void;
 
-		strictEmit(
-			event: E | `${E}:component` | `on${Capitalize<E>}` | ComponentEvent<E | `${E}:component` | `on${Capitalize<E>}`>,
-			...args: A
-		): void;
-
-		emit(
-			event: E | `${E}:component` | `on${Capitalize<E>}` | ComponentEvent<E | `${E}:component` | `on${Capitalize<E>}`>,
-			...args: A
-		): void;
-
+		strictEmit(event: E | ComponentEvent<E>, ...args: A): void;
+		emit(event: E | ComponentEvent<E>, ...args: A): void;
 		emit(event: string | ComponentEvent, ...args: unknown[]): void;
 	} : {} : {}) & R>;
 
@@ -87,16 +79,8 @@ export type OverrideParentComponentEvents<C, P extends Dictionary, A = P['Args']
 
 		off(event: E | `${E}:component` | `on${Capitalize<E>}` | string, handler?: Function): void;
 
-		strictEmit(
-			event: E | `${E}:component` | `on${Capitalize<E>}` | ComponentEvent<E | `${E}:component` | `on${Capitalize<E>}`>,
-			...args: A[E]
-		): void;
-
-		emit(
-			event: E | `${E}:component` | `on${Capitalize<E>}` | ComponentEvent<E | `${E}:component` | `on${Capitalize<E>}`>,
-			...args: A[E]
-		): void;
-
+		strictEmit(event: E | ComponentEvent<E>, ...args: A[E]): void;
+		emit(event: E | ComponentEvent<E>, ...args: A[E]): void;
 		emit(event: string | ComponentEvent, ...args: unknown[]): void;
 	} : {};
 }[keyof A] : {};
