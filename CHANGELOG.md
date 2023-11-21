@@ -13,13 +13,24 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2023-??-??)
 
+#### :boom: Breaking Change
+
+* Removed generation of init.js `core/components/super/i-static-page`
+
 #### :rocket: New Feature
 
 * Now styles are always inlined in html `core/components/super/i-static-page`
 
-#### :boom: Breaking Change
+#### :bug: Bug Fix
 
-* Removed generation of init.js `core/components/super/i-static-page`
+* Now the `nonce` attribute is correctly set in inline mode
+
+#### :house: Internal
+
+* Fixed typings in `core/data`
+* Moved to a new major version of yarn@4
+* Updated actions in CI
+* Migrated to node@20
 
 ## v4.0.0-beta.40 (2023-11-17)
 

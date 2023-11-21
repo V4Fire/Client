@@ -25,7 +25,7 @@ export * from '@vue/runtime-dom';
 //#endif
 
 export interface VNodeVirtualParent {
-	value: CanNull<VNode>;
+	value: CanNull<ComponentInterface>;
 }
 
 export type VNode<
