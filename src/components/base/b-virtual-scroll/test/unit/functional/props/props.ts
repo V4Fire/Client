@@ -49,7 +49,7 @@ test.describe('<b-virtual-scroll>', () => {
 				.build({useDummy: true});
 
 			await component.waitForChildCountEqualsTo(chunkSize);
-			await component.updatePropsViaDummy({chunkSize: chunkSize * 2});
+			await component.updateProps({chunkSize: chunkSize * 2});
 			await component.scrollToBottom();
 			await component.waitForChildCountEqualsTo(chunkSize * 3);
 

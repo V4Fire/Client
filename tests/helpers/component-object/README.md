@@ -146,7 +146,7 @@ console.log(myComponent.props) // {prop1: 'newVal'}
 
 Once a component is created (by calling the `build` or `pick` method), you cannot directly change its props because props are `readonly` properties of the component. However, if a prop is linked to a parent component's property, changing the parent's property will also change the prop's value in the component.
 
-To facilitate this behavior, there is a "sugar" method that encapsulates this logic, using a `b-dummy` component as the parent. To use this sugar method in the `build` method, pass the option `useDummy: true`. This will create a wrapper for the component using `b-dummy`, and you can change props using a special method called `updatePropsViaDummy`:
+To facilitate this behavior, there is a "sugar" method that encapsulates this logic, using a `b-dummy` component as the parent. To use this sugar method in the `build` method, pass the option `useDummy: true`. This will create a wrapper for the component using `b-dummy`, and you can change props using a special method called `updateProps`:
 
 ```typescript
 // Create an instance of ComponentObject
@@ -160,7 +160,7 @@ myComponent
 await myComponent.build({ useDummy: true });
 
 // Change props
-await myComponent.updatePropsViaDummy({ prop1: 'newVal' });
+await myComponent.updateProps({ prop1: 'newVal' });
 ```
 
 Please note that there are some nuances to consider when creating a component with a `b-dummy` wrapper, such as you cannot set slots for such a component.

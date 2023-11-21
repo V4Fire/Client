@@ -50,7 +50,7 @@ test.describe('<b-virtual-scroll>', () => {
 
 			await component.waitForChildCountEqualsTo(chunkSize[0]);
 
-			await component.updatePropsViaDummy({
+			await component.updateProps({
 				request: {
 					get: {
 						chunkSize: chunkSize[1]

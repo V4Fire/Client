@@ -269,7 +269,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 *
 	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
 	 */
-	updatePropsViaDummy(props: Dictionary): Promise<void> {
+	updateProps(props: Dictionary): Promise<void> {
 		if (!this.dummy) {
 			throw new ReferenceError('Failed to update props. Missing "b-dummy" component.');
 		}
