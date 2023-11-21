@@ -13,11 +13,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2023-??-??)
 
+#### :bug: Bug Fix
+
+* Now the `nonce` attribute is correctly set in inline mode
+
 #### :house: Internal
 
-* Moving on new major yarn@4 version
+* Fixed typings in `core/data`
+* Moved to a new major version of yarn@4
 * Updated actions in CI
-* Migrate on node@20
+* Migrated to node@20
 
 ## v4.0.0-beta.40 (2023-11-17)
 
