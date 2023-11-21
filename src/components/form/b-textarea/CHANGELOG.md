@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.40 (2023-11-17)
+
+#### :boom: Breaking Change
+
+* Moved `limit` block from `helpers` to `bodyFooter` block
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

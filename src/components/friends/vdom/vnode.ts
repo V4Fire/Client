@@ -7,6 +7,7 @@
  */
 
 import { isComponent } from 'core/component';
+import { getDirectiveComponent } from 'core/component/directives/helpers';
 import type { VNode, VNodeVirtualParent } from 'core/component/engines';
 
 import type VDOM from 'components/friends/vdom/class';
@@ -196,9 +197,30 @@ function createVNode(
 			vnode = r.createVNode.call(ctx, type, {'v-attrs': attrs}, resolvedChildren);
 		}
 
-		current.value = vnode;
-		vnode.virtualParent = virtualParent;
+		Object.defineProperty(current, 'value', {
+			enumerable: true,
+			configurable: true,
 
+			get() {
+				let
+					ctxFromVNode = getDirectiveComponent(vnode);
+
+				if (ctxFromVNode?.$parent != null && !('componentName' in ctxFromVNode.$parent)) {
+					ctxFromVNode = Object.create(ctxFromVNode, {
+						$parent: {
+							enumerable: true,
+							configurable: true,
+							writable: false,
+							value: ctx.r
+						}
+					});
+				}
+
+				return ctxFromVNode;
+			}
+		});
+
+		vnode.virtualParent = virtualParent;
 		return vnode;
 	});
 }
