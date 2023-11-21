@@ -375,7 +375,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 */
 	strictEmit: typeof this['selfEmitter']['strictEmit'] =
 		function strictEmit(this: iBlockEvent, event: string | ComponentEvent, ...args: any[]): void {
-			return this.emit(event, ...args);
+			this.emit(event, ...args);
 		};
 
 	/**
@@ -407,9 +407,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.emitError('someEvent', 42);
 	 * ```
 	 */
-	emitError(event: string, ...args: unknown[]): void {
-		this.emit({event, logLevel: 'error'}, ...args);
-	}
+	emitError: typeof this['selfEmitter']['emit'] =
+		function emitError(this: iBlockEvent, event: string | ComponentEvent, ...args: unknown[]): void {
+			this.emit(Object.isString(event) ? {event, logLevel: 'error'} : {...event, logLevel: 'error'}, ...args);
+		};
 
 	/**
 	 * Emits a component event to the parent component.
@@ -429,64 +430,65 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param event - the event name to dispatch
 	 * @param args - the event arguments
 	 */
-	dispatch(event: string | ComponentEvent, ...args: unknown[]): void {
-		const
-			that = this;
+	dispatch: typeof this['selfEmitter']['emit'] =
+		function dispatch(this: iBlockEvent, event: string | ComponentEvent, ...args: unknown[]): void {
+			const
+				that = this;
 
-		const
-			eventDecl = normalizeEvent(event);
+			const
+				eventDecl = normalizeEvent(event);
 
-		const
-			eventName = eventDecl.event,
-			wrappedEventName = getWrappedEventName(eventName);
+			const
+				eventName = eventDecl.event,
+				wrappedEventName = getWrappedEventName(eventName);
 
-		let {
-			globalName,
-			componentName,
-			$parent: parent
-		} = this;
+			let {
+				globalName,
+				componentName,
+				$parent: parent
+			} = this;
 
-		const
-			logArgs = args.slice();
+			const
+				logArgs = args.slice();
 
-		if (eventDecl.logLevel === 'error') {
-			logArgs.forEach((el, i) => {
-				if (Object.isFunction(el)) {
-					logArgs[i] = () => el;
-				}
-			});
-		}
-
-		while (parent != null) {
-			if (parent.selfDispatching && parent.canSelfDispatchEvent(eventName)) {
-				parent.$emit(eventName, this, ...args);
-				parent.$emit(getComponentEventName(eventName), this, ...args);
-				parent.$emit(wrappedEventName, ...args);
-				logFromParent(parent, `event:${eventName}`);
-
-			} else {
-				parent.$emit(normalizeEventName(`${componentName}::${eventName}`), this, ...args);
-				parent.$emit(normalizeEventName(`${componentName}::${wrappedEventName}`), ...args);
-				logFromParent(parent, `event:${componentName}::${eventName}`);
-
-				if (globalName != null) {
-					parent.$emit(normalizeEventName(`${globalName}::${eventName}`), this, ...args);
-					parent.$emit(normalizeEventName(`${globalName}::${wrappedEventName}`), ...args);
-					logFromParent(parent, `event:${globalName}::${eventName}`);
-				}
+			if (eventDecl.logLevel === 'error') {
+				logArgs.forEach((el, i) => {
+					if (Object.isFunction(el)) {
+						logArgs[i] = () => el;
+					}
+				});
 			}
 
-			if (!parent.dispatching) {
-				break;
+			while (parent != null) {
+				if (parent.selfDispatching && parent.canSelfDispatchEvent(eventName)) {
+					parent.$emit(eventName, this, ...args);
+					parent.$emit(getComponentEventName(eventName), this, ...args);
+					parent.$emit(wrappedEventName, ...args);
+					logFromParent(parent, `event:${eventName}`);
+
+				} else {
+					parent.$emit(normalizeEventName(`${componentName}::${eventName}`), this, ...args);
+					parent.$emit(normalizeEventName(`${componentName}::${wrappedEventName}`), ...args);
+					logFromParent(parent, `event:${componentName}::${eventName}`);
+
+					if (globalName != null) {
+						parent.$emit(normalizeEventName(`${globalName}::${eventName}`), this, ...args);
+						parent.$emit(normalizeEventName(`${globalName}::${wrappedEventName}`), ...args);
+						logFromParent(parent, `event:${globalName}::${eventName}`);
+					}
+				}
+
+				if (!parent.dispatching) {
+					break;
+				}
+
+				parent = parent.$parent;
 			}
 
-			parent = parent.$parent;
-		}
-
-		function logFromParent(parent: iBlock, context: string) {
-			parent.log({context, logLevel: eventDecl.logLevel}, that, ...logArgs);
-		}
-	}
+			function logFromParent(parent: iBlock, context: string) {
+				parent.log({context, logLevel: eventDecl.logLevel}, that, ...logArgs);
+			}
+		};
 
 	/**
 	 * Returns true if the specified event can be dispatched as the component own event (`selfDispatching`)
@@ -570,6 +572,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 		this.promisifyOnce = i.promisifyOnce.bind(this);
 		this.off = i.off.bind(this);
 		this.emit = i.emit.bind(this);
+		this.dispatch = i.dispatch.bind(this);
 	}
 
 	/**
