@@ -185,7 +185,7 @@ function initLibs(libs, assets) {
 
 		if (p.inline) {
 			if (!fs.existsSync(p.src)) {
-				throw new Error(`Asset for inline ${p} is not found!`);
+				throw new Error(`The asset for inline ${p} cannot be found`);
 			}
 
 		} else {
