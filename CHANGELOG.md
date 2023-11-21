@@ -13,6 +13,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2023-??-??)
 
+#### :boom: Breaking Change
+
+* Removed generation of init.js `core/components/super/i-static-page`
+
+#### :rocket: New Feature
+
+* Now styles are always inlined in html `core/components/super/i-static-page`
+
 #### :bug: Bug Fix
 
 * Now the `nonce` attribute is correctly set in inline mode

@@ -8,12 +8,6 @@
 
 'use strict';
 
-const {
-	Libs,
-	StyleLibs,
-	Links
-} = require('../interface');
-
 const
 	config = require('@config/config'),
 	{src, webpack} = config;
@@ -22,16 +16,7 @@ const
 	fs = require('fs-extra');
 
 const
-	buble = require('buble'),
-	monic = require('monic');
-
-const
-	{getAssetsDecl} = include('src/components/super/i-static-page/modules/ss-helpers/assets'),
-	{getScriptDecl, getStyleDecl, normalizeAttrs} = include('src/components/super/i-static-page/modules/ss-helpers/tags'),
-	{loadLibs, loadStyles, loadLinks} = include('src/components/super/i-static-page/modules/ss-helpers/libs');
-
-const
-	{getVarsDecl} = include('src/components/super/i-static-page/modules/ss-helpers/base-declarations'),
+	{getScriptDecl, getStyleDecl} = include('src/components/super/i-static-page/modules/ss-helpers/tags'),
 	{needInline, addPublicPath, canLoadStylesDeferred} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
 
 const
@@ -102,9 +87,10 @@ exports.getPageStyleDepsDecl = getPageStyleDepsDecl;
  * @param {Object<string>} opts.assets - a dictionary with static page assets
  * @param {boolean} [opts.wrap] - if set to true, the final code is wrapped by a tag to load
  * @param {boolean} [opts.js] - if set to true, the function will always return JS code to load the dependency
+ * @param {boolean} [opts.inline] - if set to true, the styles will be placed as text
  * @returns {string}
  */
-function getPageStyleDepsDecl(dependencies, {assets, wrap, js}) {
+function getPageStyleDepsDecl(dependencies, {assets, wrap, js, inline}) {
 	if (!dependencies || needLoadStylesAsJS) {
 		return '';
 	}
@@ -113,7 +99,7 @@ function getPageStyleDepsDecl(dependencies, {assets, wrap, js}) {
 		decl = '';
 
 	for (const dep of dependencies) {
-		decl += getStyleDeclByName(dep, {assets, js});
+		decl += getStyleDeclByName(dep, {assets, js, inline});
 		decl += '\n';
 	}
 
@@ -248,7 +234,7 @@ function getStyleDeclByName(name, {
 			filePath = src.clientOutput(assets[rname].path);
 
 		if (fs.existsSync(filePath)) {
-			decl = getStyleDecl({...defAttrs, js}, `include('${filePath}');`);
+			decl = getStyleDecl({...defAttrs, js, inline: inlineDecl}, `include('${filePath}');`);
 		}
 
 	} else {
@@ -272,100 +258,4 @@ function getStyleDeclByName(name, {
 	}
 
 	return wrap ? getScriptDecl(decl) : decl;
-}
-
-exports.generateInitJS = generateInitJS;
-
-/**
- * Generates a JS script to initialize the specified page
- *
- * @param {string} pageName - the page name
- * @param {object} page - the page parameters
- * @param {{headScripts: Libs, scripts: Libs, links: Links, styles: StyleLibs}} page.deps - a dictionary
- *   with external libraries to load
- * @param {Array<string>} page.ownDeps - the page dependencies
- * @param {Object<string>} page.assets - a dictionary with static page assets
- * @param {boolean} page.assetsRequest - should or not do a request for assets.js
- * @param {object} page.rootAttrs - attributes for the root tag
- * @returns {Promise<void>}
- */
-async function generateInitJS(pageName, {
-	deps,
-	ownDeps,
-
-	assets,
-	assetsRequest,
-
-	rootAttrs
-}) {
-	if (needInline()) {
-		return;
-	}
-
-	const
-		head = [],
-		body = [];
-
-	// - block varsDecl
-	head.push(getVarsDecl());
-
-	// - block assets
-	head.push(getAssetsDecl({inline: !assetsRequest, js: true}));
-
-	// - block links
-	head.push(await loadLinks(deps.links, {assets, js: true}));
-
-	// - block headStyles
-	head.push(getStyleDeclByName('std', {assets, optional: true, js: true}));
-
-	// - block headScripts
-	head.push(await loadLibs(deps.headScripts, {assets, js: true}));
-
-	body.push(`
-(function () {
-	var el = document.body;
-	${normalizeAttrs(rootAttrs, true)}
-})();
-`);
-
-	// - block styles
-	body.push(
-		await loadStyles(deps.styles, {assets, js: true}),
-		getPageStyleDepsDecl(ownDeps, {assets, js: true})
-	);
-
-	// - block scripts
-	body.push(
-		getScriptDeclByName('std', {assets, optional: true, js: true}),
-		await loadLibs(deps.scripts, {assets, js: true}),
-
-		getScriptDeclByName('index-core', {assets, optional: true, js: true}),
-		getScriptDeclByName('vendor', {assets, optional: true, js: true}),
-
-		getPageScriptDepsDecl(ownDeps, {assets, js: true})
-	);
-
-	const bodyInitializer = `
-function $__RENDER_ROOT() {
-	${body.join('\n')}
-}
-`;
-
-	const
-		initPath = src.clientOutput(`${webpack.output({name: pageName})}.init.js`),
-		content = head.join('\n') + bodyInitializer;
-
-	fs.writeFileSync(initPath, content);
-
-	let {result} = await monic.compile(initPath, {
-		content,
-		saveFiles: false,
-		replacers: [include('build/monic/include')]
-	});
-
-	if (/ES[35]$/.test(config.es())) {
-		result = buble.transform(result).code;
-	}
-
-	fs.writeFileSync(initPath, result);
 }

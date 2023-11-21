@@ -71,16 +71,6 @@
 		- block pageData
 			? rootAttrs['data-root-component'] = self.name()
 
-		? await h.generateInitJS(self.name(), { &
-			deps,
-			ownDeps,
-
-			assets,
-			assetsRequest,
-
-			rootAttrs
-		}) .
-
 		- block doctype
 			- doctype
 
@@ -139,11 +129,18 @@
 						+= h.getStyleDeclByName('std', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
 						- if !inlineDepsDeclarations
-							+= await h.loadStyles(deps.styles, {assets, wrap: false, js: false})
-							+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: false, js: false})
+							+= await h.loadStyles(deps.styles, {assets, wrap: false, js: false, inline: true})
+							+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: false, js: false, inline: true})
 
 					- block headScripts
 						+= await h.loadLibs(deps.headScripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+						+= await h.loadLibs(deps.scripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+
+						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
+
+						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
 
 			< body ${rootAttrs|!html}
 				<! :: SSR
@@ -168,12 +165,3 @@
 						- if inlineDepsDeclarations
 							+= await h.loadStyles(deps.styles, {assets, wrap: true, js: true})
 							+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: true, js: true})
-
-					- block scripts
-						+= h.getScriptDeclByName('std', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
-						+= await h.loadLibs(deps.scripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
-
-						+= h.getScriptDeclByName('vendor', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
-						+= h.getScriptDeclByName('index-core', {assets, optional: true, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
-
-						+= h.getPageScriptDepsDecl(ownDeps, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})
