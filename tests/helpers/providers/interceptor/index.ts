@@ -126,7 +126,7 @@ export class RequestInterceptor {
 		}
 
 		if (this.requestQueueLength === 0) {
-			await this.async.wait(() => this.requestQueueLength > 0)
+			await this.async.wait(() => this.requestQueueLength > 0);
 		}
 
 		return this.respondQueue.shift()?.();
@@ -134,10 +134,10 @@ export class RequestInterceptor {
 
 	/**
 	 * Returns the intercepted request
-	 * @param at - the index of the request (starting from 0)
+	 * @param index - the index of the request (starting from 0)
 	 */
-	request(at: number): CanUndef<InterceptedRequest> {
-		const request: Request = this.calls[at]?.[0]?.request();
+	request(index: number): CanUndef<InterceptedRequest> {
+		const request: CanUndef<Request> = this.calls[index]?.[0]?.request();
 
 		if (request == null) {
 			return;
@@ -320,19 +320,19 @@ export class RequestInterceptor {
 				if (opts?.delay != null) {
 					await delay(opts.delay);
 				}
-	
+
 				const
 					fulfillOpts = Object.reject(opts, 'delay'),
 					body = Object.isFunction(payload) ? await payload(route, request) : payload,
 					contentType = fulfillOpts.contentType ?? 'application/json';
-	
+
 				return route.fulfill({
 					status,
 					body: contentType === 'application/json' && !Object.isString(body) ? JSON.stringify(body) : body,
 					contentType,
 					...fulfillOpts
 				});
-			}
+			};
 
 			if (this.isResponder) {
 				this.respondQueue.push(response);
