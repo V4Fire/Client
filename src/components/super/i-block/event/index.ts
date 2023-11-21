@@ -572,6 +572,8 @@ export default abstract class iBlockEvent extends iBlockBase {
 		this.promisifyOnce = i.promisifyOnce.bind(this);
 		this.off = i.off.bind(this);
 		this.emit = i.emit.bind(this);
+		this.strictEmit = i.strictEmit.bind(this);
+		this.emitError = i.emitError.bind(this);
 		this.dispatch = i.dispatch.bind(this);
 	}
 
