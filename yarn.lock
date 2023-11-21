@@ -4656,16 +4656,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fs-extra@npm:11.0.1":
-  version: 11.0.1
-  resolution: "@types/fs-extra@npm:11.0.1"
-  dependencies:
-    "@types/jsonfile": "npm:*"
-    "@types/node": "npm:*"
-  checksum: 4db061c31bcc2294de06c20794cd9247c894414c4f315f4d45c974317bae6f1a820c7ee7e1ab2b5c47f47c406414405aa4934a59b256f3ac5e9b8b828c5be570
-  languageName: node
-  linkType: hard
-
 "@types/fs-extra@npm:^9.0.13":
   version: 9.0.13
   resolution: "@types/fs-extra@npm:9.0.13"
@@ -4771,15 +4761,6 @@ __metadata:
   version: 0.0.29
   resolution: "@types/json5@npm:0.0.29"
   checksum: 4e5aed58cabb2bbf6f725da13421aa50a49abb6bc17bfab6c31b8774b073fa7b50d557c61f961a09a85f6056151190f8ac95f13f5b48136ba5841f7d4484ec56
-  languageName: node
-  linkType: hard
-
-"@types/jsonfile@npm:*":
-  version: 6.1.2
-  resolution: "@types/jsonfile@npm:6.1.2"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 3e020944de09e54ef7c4200dfbbedba76da417a58c712611ff9d30921e214dfabbe81dadd4d6608647a3ee8900d445407d7336dd991b8fe6df4249320ad4a1b4
   languageName: node
   linkType: hard
 
@@ -4918,15 +4899,6 @@ __metadata:
   version: 6.9.8
   resolution: "@types/qs@npm:6.9.8"
   checksum: c28e07d00d07970e5134c6eed184a0189b8a4649e28fdf36d9117fe671c067a44820890de6bdecef18217647a95e9c6aebdaaae69f5fe4b0bec9345db885f77e
-  languageName: node
-  linkType: hard
-
-"@types/ramda@npm:0.29.3":
-  version: 0.29.3
-  resolution: "@types/ramda@npm:0.29.3"
-  dependencies:
-    types-ramda: "npm:^0.29.4"
-  checksum: 172b18d62473d4bffb1e4e92fa293e56fa4f85fcf91b1b2c9178955f775e34065cc408e93f1171436b52e240599ecb1be51955dab07ca389bf2da98f85f820a9
   languageName: node
   linkType: hard
 
@@ -12064,18 +12036,6 @@ __metadata:
     fs-extra: "npm:11.1.1"
     ramda: "npm:0.29.0"
   checksum: 8f0530aaa8bed115ef1b00f69accde8d1311d0eaffc6e37bb0b5057b8be79e6e960823025ea3c980a58147eed0ba690b9906c2229e132f5d96158e9b635a052c
-  languageName: node
-  linkType: hard
-
-"file-system-cache@npm:^2.0.0":
-  version: 2.4.4
-  resolution: "file-system-cache@npm:2.4.4"
-  dependencies:
-    "@types/fs-extra": "npm:11.0.1"
-    "@types/ramda": "npm:0.29.3"
-    fs-extra: "npm:11.1.1"
-    ramda: "npm:0.29.0"
-  checksum: 3f45d75afaba21bee90b7cf133477206e325f1fcaa1f619862d4b860a804d205b22d0f1587e5c8e3d8a55d27ce113c34aebfcb9e30bfbab95d39d644d8175f25
   languageName: node
   linkType: hard
 
@@ -23420,13 +23380,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-toolbelt@npm:^9.6.0":
-  version: 9.6.0
-  resolution: "ts-toolbelt@npm:9.6.0"
-  checksum: 2c2dea2631dbd7372a79cccc6d09a377a6ca2f319f767fd239d2e312cd1d9165a90f8c1777a047227bfdcda6aeba3addbadce88fdfc7f43caf4534d385a43c82
-  languageName: node
-  linkType: hard
-
 "tsc-alias@npm:1.6.1":
   version: 1.6.1
   resolution: "tsc-alias@npm:1.6.1"
@@ -23706,15 +23659,6 @@ __metadata:
   bin:
     typedoc: bin/typedoc
   checksum: bfbac9b61c3062073004eb91e543cd01d3005bc01e7652b9e331c9e851fec5aaab04b80f97f530cb3783dcd26a84fe5ffa7a398ca7d2c8f350299703e1c9c50e
-  languageName: node
-  linkType: hard
-
-"types-ramda@npm:^0.29.4":
-  version: 0.29.4
-  resolution: "types-ramda@npm:0.29.4"
-  dependencies:
-    ts-toolbelt: "npm:^9.6.0"
-  checksum: d1c0cb35d1424898641a0ca996b176b9fa8dab46eccf759bfab4d0ff2f9314d70a2cd56ad7ef676cfa85665ee94a1217f091b2d2992c9335c21389835fcd70b6
   languageName: node
   linkType: hard
 

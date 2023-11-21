@@ -25,11 +25,11 @@ import { system, hook, watch } from 'components/super/i-block/decorators';
 import { initGlobalListeners } from 'components/super/i-block/modules/listeners';
 
 import type iBlock from 'components/super/i-block/i-block';
-import type { ComponentEvent, CallChild } from 'components/super/i-block/interface';
+import type { CallChild } from 'components/super/i-block/interface';
 
 import iBlockBase from 'components/super/i-block/base';
 
-import type { InferEvents, InferComponentEvents, GetComponentEvents } from 'components/super/i-block/event/interface';
+import type { ComponentEvent, InferComponentEvents } from 'components/super/i-block/event/interface';
 
 export * from 'components/super/i-block/event/interface';
 
@@ -50,9 +50,7 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * Associative type for typing events emitted by the `localEmitter`.
 	 * Events are described using tuples, where the first element is the event name, and the rest are arguments.
 	 */
-	readonly LocalEmitter!: InferEvents<[
-		[string, ...unknown[]]
-	]>;
+	readonly LocalEmitter!: {};
 
 	/**
 	 * The component event emitter.
@@ -340,42 +338,33 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * this.emit({event: 'someEvent', logLevel: 'warn'}, 42);
 	 * ```
 	 */
-	emit<E extends GetComponentEvents<this['SelfEmitter']>>(
-		event: E | ComponentEvent<E>,
-		...args: this['SelfEmitter']['Args'][E]
-	): void;
+	emit: typeof this['selfEmitter']['emit'] =
+		function emit(this: iBlockEvent, event: string | ComponentEvent, ...args: unknown[]): void {
+			const
+				eventDecl = normalizeEvent(event),
+				eventName = eventDecl.event;
 
-	emit(event: string | ComponentEvent, ...args: unknown[]): void;
+			this.$emit(eventName, this, ...args);
+			this.$emit(getComponentEventName(eventName), this, ...args);
+			this.$emit(getWrappedEventName(eventName), ...args);
 
-	emit(
-		event: string | ComponentEvent,
-		...args: unknown[]
-	): void {
-		const
-			eventDecl = normalizeEvent(event),
-			eventName = eventDecl.event;
+			if (this.dispatching) {
+				this.dispatch(eventDecl, ...args);
+			}
 
-		this.$emit(eventName, this, ...args);
-		this.$emit(getComponentEventName(eventName), this, ...args);
-		this.$emit(getWrappedEventName(eventName), ...args);
+			const
+				logArgs = args.slice();
 
-		if (this.dispatching) {
-			this.dispatch(eventDecl, ...args);
-		}
+			if (eventDecl.logLevel === 'error') {
+				logArgs.forEach((el, i) => {
+					if (Object.isFunction(el)) {
+						logArgs[i] = () => el;
+					}
+				});
+			}
 
-		const
-			logArgs = args.slice();
-
-		if (eventDecl.logLevel === 'error') {
-			logArgs.forEach((el, i) => {
-				if (Object.isFunction(el)) {
-					logArgs[i] = () => el;
-				}
-			});
-		}
-
-		this.log({context: `event:${eventName}`, logLevel: eventDecl.logLevel}, this, ...logArgs);
-	}
+			this.log({context: `event:${eventName}`, logLevel: eventDecl.logLevel}, this, ...logArgs);
+		};
 
 	/**
 	 * An alias for the `emit` method, but with stricter type checking
@@ -384,12 +373,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 	 * @param event
 	 * @param args
 	 */
-	strictEmit<E extends GetComponentEvents<this['SelfEmitter']>>(
-		event: E | ComponentEvent<E>,
-		...args: this['SelfEmitter']['Args'][E]
-	): void {
-		this.emit(event, ...args);
-	}
+	strictEmit: typeof this['selfEmitter']['strictEmit'] =
+		function strictEmit(this: iBlockEvent, event: string | ComponentEvent, ...args: any[]): void {
+			return this.emit(event, ...args);
+		};
 
 	/**
 	 * Emits a component event with the `error` logging level.

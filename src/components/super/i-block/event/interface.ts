@@ -6,8 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export type InferEvents<I extends Array<[string, ...any[]]>, R extends Dictionary = {}> = {
-	0: InferEvents<TB.Tail<I>, (TB.Head<I> extends [infer E, ...infer A] ?
+import type { LogLevel } from 'core/log';
+
+export type InferEvents<
+	I extends Array<[string, ...any[]]>,
+	P extends Dictionary = {},
+	R extends Dictionary = {}
+> = {
+	0: InferEvents<TB.Tail<I>, P, (TB.Head<I> extends [infer E, ...infer A] ?
 		E extends string ? {
 			Args: {[K in E]: A};
 
@@ -22,11 +28,13 @@ export type InferEvents<I extends Array<[string, ...any[]]>, R extends Dictionar
 			emit(event: string, ...args: unknown[]): void;
 		} : {} : {}) & R>;
 
-	1: R;
+	1: R & P;
 }[TB.Length<I> extends 0 ? 1 : 0];
 
-export type GetComponentEvents<R extends {Args: Record<string, any[]>}> =
-	R extends {Args: Record<infer K, any[]>} ? K : never;
+export interface ComponentEvent<E extends string = string> {
+	event: E;
+	logLevel?: LogLevel;
+}
 
 export type InferComponentEvents<
 	C,
@@ -48,9 +56,17 @@ export type InferComponentEvents<
 
 		off(event: E | `${E}:component` | `on${Capitalize<E>}` | string, handler?: Function): void;
 
-		strictEmit(event: E | `${E}:component` | `on${Capitalize<E>}`, ...args: A): void;
-		emit(event: E | `${E}:component` | `on${Capitalize<E>}`, ...args: A): void;
-		emit(event: string, ...args: unknown[]): void;
+		strictEmit(
+			event: E | `${E}:component` | `on${Capitalize<E>}` | ComponentEvent<E | `${E}:component` | `on${Capitalize<E>}`>,
+			...args: A
+		): void;
+
+		emit(
+			event: E | `${E}:component` | `on${Capitalize<E>}` | ComponentEvent<E | `${E}:component` | `on${Capitalize<E>}`>,
+			...args: A
+		): void;
+
+		emit(event: string | ComponentEvent, ...args: unknown[]): void;
 	} : {} : {}) & R>;
 
 	1: R & OverrideParentComponentEvents<C, P>;
@@ -71,8 +87,16 @@ export type OverrideParentComponentEvents<C, P extends Dictionary, A = P['Args']
 
 		off(event: E | `${E}:component` | `on${Capitalize<E>}` | string, handler?: Function): void;
 
-		strictEmit(event: E | `${E}:component` | `on${Capitalize<E>}`, ...args: A[E]): void;
-		emit(event: E | `${E}:component` | `on${Capitalize<E>}`, ...args: A[E]): void;
-		emit(event: string, ...args: unknown[]): void;
+		strictEmit(
+			event: E | `${E}:component` | `on${Capitalize<E>}` | ComponentEvent<E | `${E}:component` | `on${Capitalize<E>}`>,
+			...args: A[E]
+		): void;
+
+		emit(
+			event: E | `${E}:component` | `on${Capitalize<E>}` | ComponentEvent<E | `${E}:component` | `on${Capitalize<E>}`>,
+			...args: A[E]
+		): void;
+
+		emit(event: string | ComponentEvent, ...args: unknown[]): void;
 	} : {};
 }[keyof A] : {};
