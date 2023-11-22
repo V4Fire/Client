@@ -176,6 +176,7 @@
     "sharp": "0.31.3",
     "webpack": "5.82.1",
     "html-webpack-plugin": "5.5.0",
-    "globals": "13.19.0"
+    "globals": "13.19.0",
+    "file-system-cache": "2.3.0"
   }
 }
