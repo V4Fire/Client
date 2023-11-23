@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* The `load` function now accepts the router context `core/router`
+
 ## v4.0.0-beta.41 (2023-11-21)
 
 #### :boom: Breaking Change
