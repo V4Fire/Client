@@ -13,6 +13,6 @@ export * from '@v4fire/core/core/data';
 @provider
 export default class Provider extends Super {
 	override getCacheKey(paramsForCache: ProviderOptions = this.params): string {
-		return super.getCacheKey(Object.reject(paramsForCache, 'remoteState'));
+		return super.getCacheKey(Object.reject(paramsForCache, ['i18n', 'remoteState']));
 	}
 }
