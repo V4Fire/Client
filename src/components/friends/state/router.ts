@@ -56,14 +56,14 @@ export function initFromRouter(this: State): boolean {
 
 		set.call(this, stateFields);
 
-		if (ctx.syncRouterStoreOnInit) {
+		if (!SSR && ctx.syncRouterStoreOnInit) {
 			const
 				stateForRouter = ctx.syncRouterState(stateFields, 'remote'),
 				stateKeys = Object.keys(stateForRouter);
 
 			if (stateKeys.length > 0) {
 				let
-					query;
+					query: CanUndef<Dictionary>;
 
 				stateKeys.forEach((key) => {
 					const
@@ -99,7 +99,7 @@ export function initFromRouter(this: State): boolean {
 					$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
 
 				} else {
-					ctx.watch(key, (val, ...args) => {
+					ctx.watch(key, (val: unknown, ...args: unknown[]) => {
 						if (!Object.fastCompare(val, args[0])) {
 							sync();
 						}
