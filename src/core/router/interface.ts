@@ -29,7 +29,7 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 	 * Dependencies that are loaded with this route
 	 * @param routerCtx
 	 */
-	load?(routerCtx: bRouter): Promise<unknown>;
+	load?(routerCtx?: bRouter): Promise<unknown>;
 
 	/**
 	 * The path to the route.
