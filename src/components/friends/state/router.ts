@@ -56,59 +56,61 @@ export function initFromRouter(this: State): boolean {
 
 		set.call(this, stateFields);
 
-		if (!SSR && ctx.syncRouterStoreOnInit) {
-			const
-				stateForRouter = ctx.syncRouterState(stateFields, 'remote'),
-				stateKeys = Object.keys(stateForRouter);
+		if (!SSR) {
+			if (ctx.syncRouterStoreOnInit) {
+				const
+					stateForRouter = ctx.syncRouterState(stateFields, 'remote'),
+					stateKeys = Object.keys(stateForRouter);
 
-			if (stateKeys.length > 0) {
-				let
-					query: CanUndef<Dictionary>;
+				if (stateKeys.length > 0) {
+					let
+						query: CanUndef<Dictionary>;
 
-				stateKeys.forEach((key) => {
-					const
-						currentParams = route.params,
-						currentQuery = route.query;
+					stateKeys.forEach((key) => {
+						const
+							currentParams = route.params,
+							currentQuery = route.query;
 
-					const
-						val = stateForRouter[key],
-						currentVal = Object.get(currentParams, key) ?? Object.get(currentQuery, key);
+						const
+							val = stateForRouter[key],
+							currentVal = Object.get(currentParams, key) ?? Object.get(currentQuery, key);
 
-					if (currentVal === undefined && val !== undefined) {
-						query ??= {};
-						query[key] = val;
+						if (currentVal === undefined && val !== undefined) {
+							query ??= {};
+							query[key] = val;
+						}
+					});
+
+					if (query != null) {
+						await router.replace(null, {query});
 					}
-				});
-
-				if (query != null) {
-					await router.replace(null, {query});
 				}
 			}
-		}
 
-		const sync = $a.debounce(saveToRouter.bind(this), 0, {
-			label: $$.syncRouter
-		});
-
-		if (Object.isDictionary(stateFields)) {
-			Object.keys(stateFields).forEach((key) => {
-				const
-					p = key.split('.');
-
-				if (p[0] === 'mods') {
-					$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
-
-				} else {
-					ctx.watch(key, (val: unknown, ...args: unknown[]) => {
-						if (!Object.fastCompare(val, args[0])) {
-							sync();
-						}
-					}, {
-						...routerWatchers,
-						deep: true
-					});
-				}
+			const sync = $a.debounce(saveToRouter.bind(this), 0, {
+				label: $$.syncRouter
 			});
+
+			if (Object.isDictionary(stateFields)) {
+				Object.keys(stateFields).forEach((key) => {
+					const
+						p = key.split('.');
+
+					if (p[0] === 'mods') {
+						$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
+
+					} else {
+						ctx.watch(key, (val: unknown, ...args: unknown[]) => {
+							if (!Object.fastCompare(val, args[0])) {
+								sync();
+							}
+						}, {
+							...routerWatchers,
+							deep: true
+						});
+					}
+				});
+			}
 		}
 
 		ctx.log('state:init:router', this, stateFields);
