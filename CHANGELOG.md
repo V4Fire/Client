@@ -11,6 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.43 (2023-11-26)
+
+#### :rocket: New Feature
+
+* Added data deduplication `core/component/hydration`
+
+#### :bug: Bug Fix
+
+* There is no need to synchronize router data during SSR `components/friends/state`
+* Fixed cache key generation `core/data`
+
 ## v4.0.0-beta.42 (2023-11-23)
 
 #### :rocket: New Feature

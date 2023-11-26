@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.43 (2023-11-26)
+
+#### :rocket: New Feature
+
+* Added data deduplication
+
 ## v4.0.0-beta.24 (2023-09-19)
 
 #### :bug: Bug Fix
