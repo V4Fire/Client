@@ -115,8 +115,7 @@ module.exports = async function dynamicComponentImportReplacer(str) {
 
 			if (ssr) {
 				if (!entryDeps.has(resourceName)) {
-					const key = src.rel(src.src(stylPath));
-					imports.unshift(`require('core/component/hydration').styles.set('${key}', (${decl})).get('${key}')`);
+					imports.unshift(`require('core/component/hydration').styles.set('${resourceName}', (${decl})).get('${resourceName}')`);
 				}
 
 			} else {

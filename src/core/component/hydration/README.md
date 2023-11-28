@@ -41,5 +41,5 @@ Afterward, you will be able to access the saved data for any component by its `c
 
 ### Styles
 
-This module also exports a constant called `styles`,
+This store also exports a property called `styles`,
 which is a dictionary containing the necessary styles for inline rendering during SSR.

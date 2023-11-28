@@ -85,8 +85,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 				return '';
 			}
 
-			src = path.normalize(src);
-			return [src, `import('${src}')`];
+			return [path.basename(src, path.extname(src)), `import('${path.normalize(src)}')`];
 		});
 
 		let
@@ -94,8 +93,7 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 
 		if (webpack.ssr) {
 			if (!entryDeps.has(component.name)) {
-				styles.forEach(([stylPath, style]) => {
-					const key = src.rel(src.src(stylPath));
+				styles.forEach(([key, style]) => {
 					decl += `require('core/component/hydration').styles.set('${key}', ${style});`;
 				});
 			}

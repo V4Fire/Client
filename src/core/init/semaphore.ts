@@ -16,7 +16,6 @@ import App, {
 	destroyApp,
 
 	rootComponents,
-	hydratedStyles,
 
 	HydrationStore,
 	ComponentElement
@@ -96,7 +95,7 @@ function createAppInitializer() {
 
 				return {
 					content: ssrContent + hydratedData,
-					styles: (await Promise.all(hydratedStyles.values())).map((i) => i.default).join('')
+					styles: (await Promise.all(hydrationStore.styles.values())).map((i) => i.default).join('')
 				};
 
 			} finally {
