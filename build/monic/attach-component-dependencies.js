@@ -31,8 +31,10 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		return str;
 	}
 
-	const
-		{components} = await graph;
+	const {
+		components,
+		entryDeps
+	} = await graph;
 
 	const
 		ext = path.extname(filePath),
@@ -91,10 +93,12 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 			decl = '';
 
 		if (webpack.ssr) {
-			styles.forEach(([stylPath, style]) => {
-				const key = src.rel(src.src(stylPath));
-				decl += `require('core/component/hydration').styles.set('${key}', ${style});`;
-			});
+			if (!entryDeps.has(component.name)) {
+				styles.forEach(([stylPath, style]) => {
+					const key = src.rel(src.src(stylPath));
+					decl += `require('core/component/hydration').styles.set('${key}', ${style});`;
+				});
+			}
 
 		} else {
 			try {

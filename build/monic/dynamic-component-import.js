@@ -12,6 +12,9 @@ const
 	{src, typescript, webpack, webpack: {ssr}} = require('@config/config'),
 	{commentModuleExpr: commentExpr} = include('build/const');
 
+const
+	graph = include('build/graph');
+
 const importRgxp = new RegExp(
 	`\\bimport${commentExpr}\\((${commentExpr})(["'])((?:.*?[\\\\/]|)([bp]-[^.\\\\/"')]+)+)\\2${commentExpr}\\)`,
 	'g'
@@ -35,7 +38,9 @@ const
  * });
  * ```
  */
-module.exports = function dynamicComponentImportReplacer(str) {
+module.exports = async function dynamicComponentImportReplacer(str) {
+	const {entryDeps} = await graph;
+
 	return str.replace(importRgxp, (str, magicComments, q, resourcePath, resourceName) => {
 		const
 			chunks = resourcePath.split(/[/\\]/);
@@ -109,8 +114,10 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			}
 
 			if (ssr) {
-				const key = src.rel(src.src(stylPath));
-				imports.unshift(`require('core/component/hydration').styles.set('${key}', (${decl})).get('${key}')`);
+				if (!entryDeps.has(resourceName)) {
+					const key = src.rel(src.src(stylPath));
+					imports.unshift(`require('core/component/hydration').styles.set('${key}', (${decl})).get('${key}')`);
+				}
 
 			} else {
 				decl = `function () { return ${decl}; }`;
