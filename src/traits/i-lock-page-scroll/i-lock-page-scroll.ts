@@ -18,13 +18,19 @@ import { is } from 'core/browser';
 
 import type iBlock from 'super/i-block/i-block';
 import type { ModEvent } from 'super/i-block/i-block';
-import { group } from 'traits/i-lock-page-scroll/const';
-import { initIOSScrollableNodeListeners } from 'traits/i-lock-page-scroll/helpers';
 
 export const
 	$$ = symbolGenerator();
 
+const
+	group = 'lockHelpers';
+
 export default abstract class iLockPageScroll {
+	/**
+	 * The map of scrollable nodes for iOS platform
+	 */
+	protected static iOSScrollableNodesMap = new Map<Element, number>();
+
 	/** @see [[iLockPageScroll.lock]] */
 	static lock: AddSelf<iLockPageScroll['lock'], iBlock> = (component, scrollableNode?) => {
 		const {
@@ -32,7 +38,7 @@ export default abstract class iLockPageScroll {
 			r: {unsafe: {async: $a}}
 		} = component;
 
-		initIOSScrollableNodeListeners(component, scrollableNode);
+		this.initIOSScrollableNodeListeners(component, scrollableNode);
 
 		let
 			promise = Promise.resolve();
@@ -118,6 +124,7 @@ export default abstract class iLockPageScroll {
 				r.removeRootMod('lockScrollMobile', true);
 				r.removeRootMod('lockScrollDesktop', true);
 				r[$$.isLocked] = false;
+				this.iOSScrollableNodesMap.clear();
 
 				if (is.mobile !== false) {
 					globalThis.scrollTo(0, r[$$.scrollTop]);
@@ -163,6 +170,73 @@ export default abstract class iLockPageScroll {
 			delete r[$$.paddingRight];
 			delete r[$$.scrollTop];
 		});
+	}
+
+	/**
+	 * Initializes touch events listeners for provided node on iOS platform
+	 *
+	 * @param component
+	 * @param [scrollableNode]
+	 */
+	protected static initIOSScrollableNodeListeners(component: iBlock, scrollableNode?: Element): void {
+		const
+			{r: {unsafe: {async: $a}}} = component;
+
+		if (is.mobile && is.iOS && scrollableNode) {
+			let
+				uniqueKey = this.iOSScrollableNodesMap.get(scrollableNode);
+
+			if (Object.isNumber(uniqueKey)) {
+				return;
+			} else {
+				uniqueKey = Math.random();
+				this.iOSScrollableNodesMap.set(scrollableNode, uniqueKey);
+			}
+
+			const
+				onTouchStart = (e: TouchEvent) => component[$$.initialY] = e.targetTouches[0].clientY;
+
+			$a.on(scrollableNode, 'touchstart', onTouchStart, {
+				group,
+				label: $$[`${uniqueKey}_touchstart`]
+			});
+
+			const onTouchMove = (e: TouchEvent) => {
+				let
+					scrollTarget = <HTMLElement>(e.target ?? scrollableNode);
+
+				while (scrollTarget !== scrollableNode) {
+					if (scrollTarget.scrollHeight > scrollTarget.clientHeight || !scrollTarget.parentElement) {
+						break;
+					}
+
+					scrollTarget = scrollTarget.parentElement;
+				}
+
+				const {
+					scrollTop,
+					scrollHeight,
+					clientHeight
+				} = scrollTarget;
+
+				const
+					clientY = e.targetTouches[0].clientY - component[$$.initialY],
+					isOnTop = clientY > 0 && scrollTop === 0,
+					isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
+
+				if ((isOnTop || isOnBottom) && e.cancelable) {
+					return e.preventDefault();
+				}
+
+				e.stopPropagation();
+			};
+
+			$a.on(scrollableNode, 'touchmove', onTouchMove, {
+				group,
+				label: $$[`${uniqueKey}_touchmove`],
+				options: {passive: false}
+			});
+		}
 	}
 
 	/**
