@@ -119,7 +119,7 @@ export default abstract class iLockPageScroll {
 				r.removeRootMod('lockScrollMobile', true);
 				r.removeRootMod('lockScrollDesktop', true);
 				r[$$.isLocked] = false;
-				this.iOSScrollableNodesMap.clear();
+				this.scrollableNodes = new WeakSet<Element>();
 
 				if (is.mobile !== false) {
 					globalThis.scrollTo(0, r[$$.scrollTop]);
@@ -168,9 +168,9 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * The map of scrollable nodes for iOS platform
+	 * Set of scrollable nodes for iOS platform
 	 */
-	protected static iOSScrollableNodesMap: Map<Element, number> = new Map<Element, number>();
+	protected static scrollableNodes: WeakSet<Element> = new WeakSet<Element>();
 
 	/**
 	 * Initializes touch events listeners for provided node on iOS platform
@@ -183,22 +183,17 @@ export default abstract class iLockPageScroll {
 			{r: {unsafe: {async: $a}}} = component;
 
 		if (is.mobile !== false && is.iOS !== false && scrollableNode != null) {
-			let
-				uniqueKey = this.iOSScrollableNodesMap.get(scrollableNode);
-
-			if (Object.isNumber(uniqueKey)) {
+			if (this.scrollableNodes.has(scrollableNode)) {
 				return;
 			}
 
-			uniqueKey = Math.random();
-			this.iOSScrollableNodesMap.set(scrollableNode, uniqueKey);
+			this.scrollableNodes.add(scrollableNode);
 
 			const
 				onTouchStart = (e: TouchEvent) => component[$$.initialY] = e.targetTouches[0].clientY;
 
 			$a.on(scrollableNode, 'touchstart', onTouchStart, {
-				group,
-				label: $$[`${uniqueKey}_touchstart`]
+				group
 			});
 
 			const onTouchMove = (e: TouchEvent) => {
@@ -233,7 +228,6 @@ export default abstract class iLockPageScroll {
 
 			$a.on(scrollableNode, 'touchmove', onTouchMove, {
 				group,
-				label: $$[`${uniqueKey}_touchmove`],
 				options: {passive: false}
 			});
 		}
