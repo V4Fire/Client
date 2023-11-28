@@ -101,7 +101,7 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			let
 				decl;
 
-			if (isESImport) {
+			if (ssr || isESImport) {
 				decl = `import(${magicComments} '${stylPath}')`;
 
 			} else {
