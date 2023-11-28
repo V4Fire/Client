@@ -160,8 +160,11 @@ we usually do not need to manually call the creation of the root component, sinc
 On the contrary, in the case of SSR, we need to be able to manually call the initialization for each request.
 
 Therefore, the main `core/init` module exports a function that will not be automatically called in the case of SSR.
-The result of this function will be a string with a rendered application or a reference to the element
-where the root component was mounted (if the function is called in a browser).
+The result of the function depends on the context.
+In SSR, the function will return an object of the following format: `{content: string; styles: string}`.
+Here, the `content` is a string containing the rendered application, and `styles` are the required styles.
+When working in a browser context,
+the function will return a reference to the element where the root component was mounted.
 
 When calling this function from SSR, it is necessary to pass the name of the root component being created,
 and additional parameters can also be passed.
@@ -199,8 +202,8 @@ initApp('p-v4-components-demo', {
       href: 'https://example.com/user/12345'
     }
   }
-}).then((renderedHTML) => {
-  console.log(renderedHTML);
+}).then(({content: renderedHTML, styles: inlinedStyles}) => {
+  console.log(renderedHTML, inlinedStyles);
 })
 ```
 
