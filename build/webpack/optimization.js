@@ -37,12 +37,12 @@ const
  * @returns {object}
  */
 module.exports = function optimization({buildId, plugins}) {
-	const params = {
-		minimizer: [new CssMinimizerPlugin(config.cssMinimizer())]
-	};
+	const
+		params = {},
+		cssMinimizer = new CssMinimizerPlugin(config.cssMinimizer());
 
 	if (ssr) {
-		console.log(params);
+		params.minimizer = [cssMinimizer];
 		return params;
 	}
 
@@ -87,30 +87,31 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		es = config.es();
 
-	params.minimizer.push([
-		/* eslint-disable camelcase */
+	/* eslint-disable camelcase */
 
-		new TerserPlugin({
-			parallel: true,
-			// Disable extraction of license headers into separate files
-			extractComments: false,
-			terserOptions: inherit({
-				ecma: es,
+	const jsMinimizer = new TerserPlugin({
+		parallel: true,
 
-				safari10: true,
-				warnings: false,
+		// Disable extraction of license headers into separate files
+		extractComments: false,
 
-				keep_fnames: /ES[35]$/.test(es),
-				keep_classnames: true,
+		terserOptions: inherit({
+			ecma: es,
 
-				output: {
-					comments: false
-				}
-			}, config.terser())
-		})
+			safari10: true,
+			warnings: false,
 
-		/* eslint-enable camelcase */
-	]);
+			keep_fnames: /ES[35]$/.test(es),
+			keep_classnames: true,
 
+			output: {
+				comments: false
+			}
+		}, config.terser())
+	});
+
+	/* eslint-enable camelcase */
+
+	params.minimizer = [cssMinimizer, jsMinimizer];
 	return params;
 };
