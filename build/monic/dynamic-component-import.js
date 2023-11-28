@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	{typescript, webpack, webpack: {ssr}} = require('@config/config'),
+	{src, typescript, webpack, webpack: {ssr}} = require('@config/config'),
 	{commentModuleExpr: commentExpr} = include('build/const');
 
 const importRgxp = new RegExp(
@@ -23,7 +23,7 @@ const
 	fatHTML = webpack.fatHTML();
 
 /**
- * Monic replacer to enable dynamic imports of components
+ * A Monic replacer is used to enable dynamic imports of components
  *
  * @param {string} str
  * @returns {string}
@@ -36,16 +36,16 @@ const
  * ```
  */
 module.exports = function dynamicComponentImportReplacer(str) {
-	return str.replace(importRgxp, (str, magicComments, q, path, nm) => {
+	return str.replace(importRgxp, (str, magicComments, q, resourcePath, resourceName) => {
 		const
-			chunks = path.split(/[\\/]/);
+			chunks = resourcePath.split(/[/\\]/);
 
 		if (chunks.length > 1 && chunks[chunks.length - 1] === chunks[chunks.length - 2]) {
 			return str;
 		}
 
 		const
-			fullPath = `${path}/${nm}`,
+			fullPath = `${resourcePath}/${resourceName}`,
 			imports = [];
 
 		{
@@ -69,43 +69,53 @@ module.exports = function dynamicComponentImportReplacer(str) {
 			imports.push(decl);
 		}
 
-		if (!ssr && !fatHTML) {
-			let
-				decl;
-
-			if (isESImport) {
-				decl = `import(${magicComments} '${fullPath}.styl')`;
-
-			} else {
-				decl = `new Promise(function (r) { return r(require('${fullPath}.styl')); })`;
-			}
-
-			decl = `function () { return ${decl}; }`;
-			imports[0] = `TPLS['${nm}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
-		}
-
 		{
 			const
-				regTpl = `function (module) { TPLS['${nm}'] = module${isESImport ? '.default' : ''}['${nm}']; return module; }`;
+				tplPath = `${fullPath}.ss`,
+				regTpl = `function (module) { TPLS['${resourceName}'] = module${isESImport ? '.default' : ''}['${resourceName}']; return module; }`;
 
 			let
 				decl;
 
 			if (ssr) {
-				decl = `(${regTpl})(require('${fullPath}.ss'))`;
+				decl = `(${regTpl})(require('${tplPath}'))`;
 
 			} else {
 				if (isESImport) {
-					decl = `import(${magicComments} '${fullPath}.ss').then(${regTpl})`;
+					decl = `import(${magicComments} '${tplPath}').then(${regTpl})`;
 
 				} else {
-					decl = `new Promise(function (r) { return r(require('${fullPath}.ss')); }).then(${regTpl})`;
+					decl = `new Promise(function (r) { return r(require('${tplPath}')); }).then(${regTpl})`;
 				}
 
 				decl += '.catch(function (err) { stderr(err) })';
 			}
 
 			imports.push(decl);
+		}
+
+		if (!fatHTML) {
+			const
+				stylPath = `${fullPath}.styl`;
+
+			let
+				decl;
+
+			if (isESImport) {
+				decl = `import(${magicComments} '${stylPath}')`;
+
+			} else {
+				decl = `new Promise(function (r) { return r(require('${stylPath}')); })`;
+			}
+
+			if (ssr) {
+				const key = src.rel(src.src(stylPath));
+				imports.unshift(`require('core/component/hydration').styles.set('${key}', (${decl})).get('${key}')`);
+
+			} else {
+				decl = `function () { return ${decl}; }`;
+				imports[0] = `TPLS['${resourceName}'] ? ${imports[0]} : ${imports[0]}.then(${decl}, function (err) { stderr(err); return ${decl}(); })`;
+			}
 		}
 
 		if (ssr) {

@@ -37,11 +37,12 @@ const
  * @returns {object}
  */
 module.exports = function optimization({buildId, plugins}) {
-	const
-		params = {};
+	const params = {
+		minimizer: [new CssMinimizerPlugin(config.cssMinimizer())]
+	};
 
 	if (ssr) {
-		params.minimizer = [];
+		console.log(params);
 		return params;
 	}
 
@@ -86,9 +87,7 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		es = config.es();
 
-	params.minimizer = [
-		new CssMinimizerPlugin(config.cssMinimizer()),
-
+	params.minimizer.push([
 		/* eslint-disable camelcase */
 
 		new TerserPlugin({
@@ -111,7 +110,7 @@ module.exports = function optimization({buildId, plugins}) {
 		})
 
 		/* eslint-enable camelcase */
-	];
+	]);
 
 	return params;
 };

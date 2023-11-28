@@ -14,6 +14,7 @@
 import { expandedStringify, expandedParse } from 'core/json';
 import type { Store, HydratedData, HydratedValue } from 'core/component/hydration/interface';
 
+export * from 'core/component/hydration/const';
 export * from 'core/component/hydration/interface';
 
 export class HydrationStore {
