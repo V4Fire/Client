@@ -18,12 +18,11 @@ import { is } from 'core/browser';
 
 import type iBlock from 'super/i-block/i-block';
 import type { ModEvent } from 'super/i-block/i-block';
+import { group } from 'traits/i-lock-page-scroll/const';
+import { initIOSScrollableNodeListeners } from 'traits/i-lock-page-scroll/helpers';
 
 export const
 	$$ = symbolGenerator();
-
-const
-	group = 'lockHelpers';
 
 export default abstract class iLockPageScroll {
 	/** @see [[iLockPageScroll.lock]] */
@@ -33,11 +32,12 @@ export default abstract class iLockPageScroll {
 			r: {unsafe: {async: $a}}
 		} = component;
 
+		initIOSScrollableNodeListeners(component, scrollableNode);
+
 		let
 			promise = Promise.resolve();
 
 		if (r[$$.isLocked] === true) {
-			$a.clearAll({group});
 			return promise;
 		}
 
@@ -49,52 +49,6 @@ export default abstract class iLockPageScroll {
 
 		if (is.mobile !== false) {
 			if (is.iOS !== false) {
-				if (scrollableNode) {
-					const
-						onTouchStart = (e: TouchEvent) => component[$$.initialY] = e.targetTouches[0].clientY;
-
-					$a.on(scrollableNode, 'touchstart', onTouchStart, {
-						group,
-						label: $$.touchstart
-					});
-
-					const onTouchMove = (e: TouchEvent) => {
-						let
-							scrollTarget = <HTMLElement>(e.target ?? scrollableNode);
-
-						while (scrollTarget !== scrollableNode) {
-							if (scrollTarget.scrollHeight > scrollTarget.clientHeight || !scrollTarget.parentElement) {
-								break;
-							}
-
-							scrollTarget = scrollTarget.parentElement;
-						}
-
-						const {
-							scrollTop,
-							scrollHeight,
-							clientHeight
-						} = scrollTarget;
-
-						const
-							clientY = e.targetTouches[0].clientY - component[$$.initialY],
-							isOnTop = clientY > 0 && scrollTop === 0,
-							isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
-
-						if ((isOnTop || isOnBottom) && e.cancelable) {
-							return e.preventDefault();
-						}
-
-						e.stopPropagation();
-					};
-
-					$a.on(scrollableNode, 'touchmove', onTouchMove, {
-						group,
-						label: $$.touchmove,
-						options: {passive: false}
-					});
-				}
-
 				$a.on(document, 'touchmove', (e: TouchEvent) => e.cancelable && e.preventDefault(), {
 					group,
 					label: $$.preventTouchMove,
@@ -114,7 +68,7 @@ export default abstract class iLockPageScroll {
 						body.scrollTop;
 
 					r[$$.scrollTop] = scrollTop;
-					body.style.top = `-${scrollTop}px`;
+					body.style.top = (-scrollTop).px;
 					r.setRootMod('lockScrollMobile', true);
 
 					r[$$.isLocked] = true;
@@ -133,7 +87,7 @@ export default abstract class iLockPageScroll {
 						scrollBarWidth = globalThis.innerWidth - body.clientWidth;
 
 					r[$$.paddingRight] = body.style.paddingRight;
-					body.style.paddingRight = `${scrollBarWidth}px`;
+					body.style.paddingRight = scrollBarWidth.px;
 					r.setRootMod('lockScrollDesktop', true);
 
 					r[$$.isLocked] = true;
