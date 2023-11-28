@@ -5464,6 +5464,7 @@ __metadata:
     svgo-loader: "npm:3.0.0"
     svgo-sync: "npm:0.5.1"
     terser-webpack-plugin: "npm:5.3.1"
+    to-string-loader: "npm:^1.2.0"
     ts-jest: "npm:29.1.0"
     ts-loader: "npm:9.2.6"
     tslib: "npm:2.4.1"
@@ -5604,6 +5605,8 @@ __metadata:
     svgo-sync:
       optional: true
     terser-webpack-plugin:
+      optional: true
+    to-string-loader:
       optional: true
     ts-loader:
       optional: true
@@ -16717,7 +16720,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^1.0.3, loader-utils@npm:^1.1.0":
+"loader-utils@npm:^1.0.0, loader-utils@npm:^1.0.3, loader-utils@npm:^1.1.0":
   version: 1.4.2
   resolution: "loader-utils@npm:1.4.2"
   dependencies:
@@ -23289,6 +23292,15 @@ __metadata:
     regex-not: "npm:^1.0.2"
     safe-regex: "npm:^1.1.0"
   checksum: ab87c22f0719f7def00145b53e2c90d2fdcc75efa0fec1227b383aaf88ed409db2542b2b16bcbfbf95fe0727f879045803bb635b777c0306762241ca3e5562c6
+  languageName: node
+  linkType: hard
+
+"to-string-loader@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "to-string-loader@npm:1.2.0"
+  dependencies:
+    loader-utils: "npm:^1.0.0"
+  checksum: 738d51379aab962c843b0764335b0a1f89f42402b18c1a75d1e2653ef938702a7a6f132cfe7fb888cd14ca2e9a76ed779f9be34ea0a257c500d3f8edde8a1140
   languageName: node
   linkType: hard
 
