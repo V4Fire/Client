@@ -26,11 +26,6 @@ const
 	group = 'lockHelpers';
 
 export default abstract class iLockPageScroll {
-	/**
-	 * The map of scrollable nodes for iOS platform
-	 */
-	protected static iOSScrollableNodesMap = new Map<Element, number>();
-
 	/** @see [[iLockPageScroll.lock]] */
 	static lock: AddSelf<iLockPageScroll['lock'], iBlock> = (component, scrollableNode?) => {
 		const {
@@ -173,6 +168,11 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
+	 * The map of scrollable nodes for iOS platform
+	 */
+	protected static iOSScrollableNodesMap: Map<Element, number> = new Map<Element, number>();
+
+	/**
 	 * Initializes touch events listeners for provided node on iOS platform
 	 *
 	 * @param component
@@ -182,16 +182,16 @@ export default abstract class iLockPageScroll {
 		const
 			{r: {unsafe: {async: $a}}} = component;
 
-		if (is.mobile && is.iOS && scrollableNode) {
+		if (is.mobile !== false && is.iOS !== false && scrollableNode != null) {
 			let
 				uniqueKey = this.iOSScrollableNodesMap.get(scrollableNode);
 
 			if (Object.isNumber(uniqueKey)) {
 				return;
-			} else {
-				uniqueKey = Math.random();
-				this.iOSScrollableNodesMap.set(scrollableNode, uniqueKey);
 			}
+
+			uniqueKey = Math.random();
+			this.iOSScrollableNodesMap.set(scrollableNode, uniqueKey);
 
 			const
 				onTouchStart = (e: TouchEvent) => component[$$.initialY] = e.targetTouches[0].clientY;
