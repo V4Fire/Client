@@ -119,7 +119,7 @@ export default abstract class iLockPageScroll {
 				r.removeRootMod('lockScrollMobile', true);
 				r.removeRootMod('lockScrollDesktop', true);
 				r[$$.isLocked] = false;
-				this.scrollableNodes = new WeakSet<Element>();
+				iLockPageScroll.scrollableNodes = new WeakSet<Element>();
 
 				if (is.mobile !== false) {
 					globalThis.scrollTo(0, r[$$.scrollTop]);
@@ -182,55 +182,57 @@ export default abstract class iLockPageScroll {
 		const
 			{r: {unsafe: {async: $a}}} = component;
 
-		if (is.mobile !== false && is.iOS !== false && scrollableNode != null) {
-			if (this.scrollableNodes.has(scrollableNode)) {
-				return;
+		if (
+			is.mobile === false ||
+			is.iOS === false ||
+			scrollableNode == null ||
+			iLockPageScroll.scrollableNodes.has(scrollableNode)
+		) {
+			return;
+		}
+
+		iLockPageScroll.scrollableNodes.add(scrollableNode);
+
+		const
+			onTouchStart = (e: TouchEvent) => component[$$.initialY] = e.targetTouches[0].clientY;
+
+		$a.on(scrollableNode, 'touchstart', onTouchStart, {
+			group
+		});
+
+		const onTouchMove = (e: TouchEvent) => {
+			let
+				scrollTarget = <HTMLElement>(e.target ?? scrollableNode);
+
+			while (
+				scrollTarget !== scrollableNode &&
+				scrollTarget.scrollHeight <= scrollTarget.clientHeight && scrollTarget.parentElement
+			) {
+				scrollTarget = scrollTarget.parentElement;
 			}
 
-			this.scrollableNodes.add(scrollableNode);
+			const {
+				scrollTop,
+				scrollHeight,
+				clientHeight
+			} = scrollTarget;
 
 			const
-				onTouchStart = (e: TouchEvent) => component[$$.initialY] = e.targetTouches[0].clientY;
+				clientY = e.targetTouches[0].clientY - component[$$.initialY],
+				isOnTop = clientY > 0 && scrollTop === 0,
+				isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
 
-			$a.on(scrollableNode, 'touchstart', onTouchStart, {
-				group
-			});
+			if ((isOnTop || isOnBottom) && e.cancelable) {
+				return e.preventDefault();
+			}
 
-			const onTouchMove = (e: TouchEvent) => {
-				let
-					scrollTarget = <HTMLElement>(e.target ?? scrollableNode);
+			e.stopPropagation();
+		};
 
-				while (scrollTarget !== scrollableNode) {
-					if (scrollTarget.scrollHeight > scrollTarget.clientHeight || !scrollTarget.parentElement) {
-						break;
-					}
-
-					scrollTarget = scrollTarget.parentElement;
-				}
-
-				const {
-					scrollTop,
-					scrollHeight,
-					clientHeight
-				} = scrollTarget;
-
-				const
-					clientY = e.targetTouches[0].clientY - component[$$.initialY],
-					isOnTop = clientY > 0 && scrollTop === 0,
-					isOnBottom = clientY < 0 && scrollTop + clientHeight + 1 >= scrollHeight;
-
-				if ((isOnTop || isOnBottom) && e.cancelable) {
-					return e.preventDefault();
-				}
-
-				e.stopPropagation();
-			};
-
-			$a.on(scrollableNode, 'touchmove', onTouchMove, {
-				group,
-				options: {passive: false}
-			});
-		}
+		$a.on(scrollableNode, 'touchmove', onTouchMove, {
+			group,
+			options: {passive: false}
+		});
 	}
 
 	/**
