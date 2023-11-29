@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.??.?? (2023-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with clearing event listeners on ios `components/traits/i-lock-page-scroll`
+
 ## v4.0.0-beta.43 (2023-11-26)
 
 #### :rocket: New Feature
