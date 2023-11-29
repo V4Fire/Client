@@ -33,7 +33,7 @@ export default abstract class iLockPageScroll {
 			r: {unsafe: {async: $a}}
 		} = component;
 
-		this.initIOSScrollableNodeListeners(component, scrollableNode);
+		iLockPageScroll.initIOSScrollableNodeListeners(component, scrollableNode);
 
 		let
 			promise = Promise.resolve();
