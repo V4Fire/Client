@@ -49,7 +49,7 @@
 	/** A dictionary with attributes of <html> tag */
 	- htmlAttrs = { &
 		lang: config.locale,
-		[themeAttribute]: config.theme.postProcessorTemplate
+		[themeAttribute]: theme
 	} .
 
 	/** Should or not generate the `<base>` tag */
