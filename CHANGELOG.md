@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Reworked theme manager for working in ssr `components/super/i-static-page`
+
+#### :house: Internal
+
+* Removed comments in css for dev build
+
 ## v4.0.0-beta.43 (2023-11-26)
 
 #### :rocket: New Feature
