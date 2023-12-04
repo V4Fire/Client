@@ -1034,6 +1034,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Returns the name of the generated global runtime variable that holds the nonce value
+		 * @returns {?string}
+		 */
+		postProcessorTemplate: o('post-processor-theme-template', {
+			default: 'COLOR_THEME',
+			env: true
+		}),
+
+		/**
+		 * If true, the theme attribute will be processed by a proxy such as Nginx
+		 * If false, the theme attributes will be inserted from the JS runtime.
+		 */
+		postProcessor: false,
+
+		/**
 		 * Returns an array of available themes to pass from the design system to the runtime,
 		 * or `true` to pass all themes from the design system
 		 *
