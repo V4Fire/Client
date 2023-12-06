@@ -114,6 +114,7 @@ function styleHelperLoaders(isStatic = false) {
 					postcssOptions: {
 						plugins: [].concat(
 							require('autoprefixer')(config.autoprefixer()),
+							require('postcss-discard-comments')(),
 
 							webpack.mode() === 'production' && !usePureCSSFiles ?
 								require('cssnano')(config.cssMinimizer().minimizerOptions) :

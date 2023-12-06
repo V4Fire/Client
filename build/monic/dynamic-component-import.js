@@ -9,7 +9,7 @@
 'use strict';
 
 const
-	{src, typescript, webpack, webpack: {ssr}} = require('@config/config'),
+	{typescript, webpack, webpack: {ssr}} = require('@config/config'),
 	{commentModuleExpr: commentExpr} = include('build/const');
 
 const

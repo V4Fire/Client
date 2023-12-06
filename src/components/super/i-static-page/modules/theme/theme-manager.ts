@@ -90,7 +90,7 @@ export default class ThemeManager extends Friend {
 			throw new ReferenceError(`A theme with the name "${value}" is not defined`);
 		}
 
-		if (!Object.isString(this.themeAttribute)) {
+		if (SSR || !Object.isString(this.themeAttribute)) {
 			return;
 		}
 
