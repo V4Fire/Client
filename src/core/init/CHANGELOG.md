@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.44 (2023-12-06)
+
+#### :boom: Breaking Change
+
+* Now, the `initApp` call returns an object in the form `{content, styles}`
+
 ## v4.0.0-beta.32 (2023-10-17)
 
 #### :rocket: New Feature
