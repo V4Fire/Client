@@ -15,6 +15,7 @@
 
 : canInlineSourceCode = !config.webpack.externalizeInline()
 : inlineDepsDeclarations = Boolean(config.webpack.dynamicPublicPath())
+
 : themeAttribute = config.theme.attribute
 : theme = config.theme.postProcessor ? config.theme.postProcessorTemplate : config.theme.default()
 

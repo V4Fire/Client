@@ -15,11 +15,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Reworked theme manager for working in ssr `components/super/i-static-page`
+* Reworked the theme manager to work with SSR `components/super/i-static-page`
 
 #### :house: Internal
 
-* Removed comments in css for dev build
+* Removed comments in CSS for the development build
 
 ## v4.0.0-beta.43 (2023-11-26)
 
