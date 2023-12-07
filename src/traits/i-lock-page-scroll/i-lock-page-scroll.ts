@@ -173,7 +173,7 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * Set of scrollable nodes for iOS platform
+	 * A set of scrollable nodes for the iOS platform
 	 */
 	protected static scrollableNodes: WeakSet<Element> = new WeakSet<Element>();
 
