@@ -178,7 +178,7 @@ export default abstract class iLockPageScroll {
 	protected static scrollableNodes: WeakSet<Element> = new WeakSet<Element>();
 
 	/**
-	 * Initializes touch events listeners for provided node on iOS platform
+	 * Initializes touch event listeners for the provided node on the iOS platform
 	 *
 	 * @param component
 	 * @param [scrollableNode]
