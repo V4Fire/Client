@@ -33,7 +33,12 @@ export default abstract class iLockPageScroll {
 			r: {unsafe: {async: $a}}
 		} = component;
 
-		iLockPageScroll.initIOSScrollableNodeListeners(component, scrollableNode);
+		if (
+			is.mobile !== false &&
+			is.iOS !== false
+		) {
+			iLockPageScroll.initIOSScrollableNodeListeners(component, scrollableNode);
+		}
 
 		let
 			promise = Promise.resolve();
@@ -183,8 +188,6 @@ export default abstract class iLockPageScroll {
 			{r: {unsafe: {async: $a}}} = component;
 
 		if (
-			is.mobile === false ||
-			is.iOS === false ||
 			scrollableNode == null ||
 			iLockPageScroll.scrollableNodes.has(scrollableNode)
 		) {
