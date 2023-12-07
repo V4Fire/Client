@@ -178,8 +178,8 @@ export default abstract class iLockPageScroll {
 
 	/**
 	 * Initializes touch event listeners for the provided node on the iOS platform
-	 * @see https://stackoverflow.com/questions/59193062/how-to-disable-scrolling-on-body-in-ios-13-safari-when-saved-as-pwa-to-the-hom
 	 *
+	 * @see https://stackoverflow.com/questions/59193062/how-to-disable-scrolling-on-body-in-ios-13-safari-when-saved-as-pwa-to-the-hom
 	 * @param component
 	 * @param [scrollableNode]
 	 */
@@ -207,7 +207,7 @@ export default abstract class iLockPageScroll {
 			while (
 				scrollTarget !== scrollableNode &&
 				scrollTarget.scrollHeight <= scrollTarget.clientHeight && scrollTarget.parentElement
-				) {
+			) {
 				scrollTarget = scrollTarget.parentElement;
 			}
 
