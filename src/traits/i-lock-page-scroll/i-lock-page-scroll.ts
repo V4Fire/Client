@@ -173,12 +173,12 @@ export default abstract class iLockPageScroll {
 	}
 
 	/**
-	 * Set of scrollable nodes for iOS platform
+	 * A set of scrollable nodes for the iOS platform
 	 */
 	protected static scrollableNodes: WeakSet<Element> = new WeakSet<Element>();
 
 	/**
-	 * Initializes touch events listeners for provided node on iOS platform
+	 * Initializes touch event listeners for the provided node on the iOS platform
 	 * @see https://stackoverflow.com/questions/59193062/how-to-disable-scrolling-on-body-in-ios-13-safari-when-saved-as-pwa-to-the-hom
 	 *
 	 * @param component
