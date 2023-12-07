@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.44 (2023-12-06)
+
+#### :bug: Bug Fix
+
+* Fixes for SSR
+
 ## v4.0.0-beta.40 (2023-11-17)
 
 #### :rocket: New Feature

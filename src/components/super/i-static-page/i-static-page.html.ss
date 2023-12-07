@@ -16,6 +16,9 @@
 : canInlineSourceCode = !config.webpack.externalizeInline()
 : inlineDepsDeclarations = Boolean(config.webpack.dynamicPublicPath())
 
+: themeAttribute = config.theme.attribute
+: theme = config.theme.postProcessor ? config.theme.postProcessorTemplate : config.theme.default()
+
 /**
  * Injects the specified file to a template
  * @param {string} src
@@ -46,7 +49,8 @@
 
 	/** A dictionary with attributes of <html> tag */
 	- htmlAttrs = { &
-		lang: config.locale
+		lang: config.locale,
+		[themeAttribute]: theme
 	} .
 
 	/** Should or not generate the `<base>` tag */
@@ -131,6 +135,8 @@
 						- if !inlineDepsDeclarations
 							+= await h.loadStyles(deps.styles, {assets, wrap: false, js: false, inline: true})
 							+= h.getPageStyleDepsDecl(ownDeps, {assets, wrap: false, js: false, inline: true})
+
+					<! :: STYLES
 
 					- block headScripts
 						+= await h.loadLibs(deps.headScripts, {assets, wrap: inlineDepsDeclarations, js: inlineDepsDeclarations})

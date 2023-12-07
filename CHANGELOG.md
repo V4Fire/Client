@@ -17,6 +17,24 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed a bug with clearing event listeners on ios `components/traits/i-lock-page-scroll`
 
+## v4.0.0-beta.44 (2023-12-06)
+
+#### :boom: Breaking Change
+
+* Now, the `initApp` call returns an object in the form `{content, styles}` `core/init`
+
+#### :rocket: New Feature
+
+* Reworked the theme manager to work with SSR `components/super/i-static-page`
+
+#### :bug: Bug Fix
+
+* Fixes for SSR `iBlock`
+
+#### :house: Internal
+
+* Removed comments in CSS for the development build
+
 ## v4.0.0-beta.43 (2023-11-26)
 
 #### :rocket: New Feature

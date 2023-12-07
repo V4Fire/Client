@@ -5444,6 +5444,7 @@ __metadata:
     playwright: "npm:1.32.1"
     portfinder: "npm:1.0.28"
     postcss: "npm:8.4.6"
+    postcss-discard-comments: "npm:6.0.0"
     postcss-loader: "npm:6.2.1"
     raw-loader: "npm:4.0.2"
     react: "npm:18.2.0"
@@ -5577,6 +5578,8 @@ __metadata:
     portfinder:
       optional: true
     postcss:
+      optional: true
+    postcss-discard-comments:
       optional: true
     postcss-loader:
       optional: true
@@ -19557,6 +19560,15 @@ __metadata:
   peerDependencies:
     postcss: ^8.2.15
   checksum: dacb41296a4d730c9e84c1b6ba8a13f6515b65811689b8b62ad6c7174bb462b5c0bfa21803cc06d1d3af16dbc8f4be1e225970844297fab0bedfe2fef8dc603e
+  languageName: node
+  linkType: hard
+
+"postcss-discard-comments@npm:6.0.0":
+  version: 6.0.0
+  resolution: "postcss-discard-comments@npm:6.0.0"
+  peerDependencies:
+    postcss: ^8.2.15
+  checksum: 9be073707b5ef781c616ddd32ffd98faf14bf8b40027f341d5a4fb7989fa7b017087ad54146a370fe38295b1f2568b9f5522f4e4c1a1d09fe0e01abd9f5ae00d
   languageName: node
   linkType: hard
 
