@@ -38,10 +38,11 @@ const
  */
 module.exports = function optimization({buildId, plugins}) {
 	const
-		params = {};
+		params = {},
+		cssMinimizer = new CssMinimizerPlugin(config.cssMinimizer());
 
 	if (ssr) {
-		params.minimizer = [];
+		params.minimizer = [cssMinimizer];
 		return params;
 	}
 
@@ -86,32 +87,31 @@ module.exports = function optimization({buildId, plugins}) {
 	const
 		es = config.es();
 
-	params.minimizer = [
-		new CssMinimizerPlugin(config.cssMinimizer()),
+	/* eslint-disable camelcase */
 
-		/* eslint-disable camelcase */
+	const jsMinimizer = new TerserPlugin({
+		parallel: true,
 
-		new TerserPlugin({
-			parallel: true,
-			// Disable extraction of license headers into separate files
-			extractComments: false,
-			terserOptions: inherit({
-				ecma: es,
+		// Disable extraction of license headers into separate files
+		extractComments: false,
 
-				safari10: true,
-				warnings: false,
+		terserOptions: inherit({
+			ecma: es,
 
-				keep_fnames: /ES[35]$/.test(es),
-				keep_classnames: true,
+			safari10: true,
+			warnings: false,
 
-				output: {
-					comments: false
-				}
-			}, config.terser())
-		})
+			keep_fnames: /ES[35]$/.test(es),
+			keep_classnames: true,
 
-		/* eslint-enable camelcase */
-	];
+			output: {
+				comments: false
+			}
+		}, config.terser())
+	});
 
+	/* eslint-enable camelcase */
+
+	params.minimizer = [cssMinimizer, jsMinimizer];
 	return params;
 };

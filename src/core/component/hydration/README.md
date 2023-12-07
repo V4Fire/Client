@@ -38,3 +38,8 @@ Also, please keep in mind that serialized data should be placed within a node wi
 
 In this case, the module will automatically load data from the markup element with the ID `hydration-store`.
 Afterward, you will be able to access the saved data for any component by its `componentId`.
+
+### Styles
+
+This store also exports a property called `styles`,
+which is a dictionary containing the necessary styles for inline rendering during SSR.

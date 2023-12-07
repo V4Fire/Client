@@ -1034,6 +1034,36 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * If set to true, the theme attribute will be processed by a proxy server, such as Nginx.
+		 * Otherwise, the theme attributes will be sourced from the JS runtime.
+		 */
+		postProcessor: false,
+
+		/**
+		 * The name of the template variable that will be replaced by the proxy server for forwarding the active theme
+		 *
+		 * @cli theme-post-processor-template
+		 * @env THEME_POST_PROCESSOR_TEMPLATE
+		 */
+		postProcessorTemplate: o('theme-post-processor-template', {
+			default: 'COLOR_THEME',
+			env: true
+		}),
+
+		/**
+		 * Returns the attribute name to set the topic value to the root element
+		 *
+		 * @cli theme-attribute
+		 * @env THEME_ATTRIBUTE
+		 *
+		 * @default `data-theme`
+		 */
+		attribute: o('theme-attribute', {
+			env: true,
+			default: 'data-theme'
+		}),
+
+		/**
 		 * Returns an array of available themes to pass from the design system to the runtime,
 		 * or `true` to pass all themes from the design system
 		 *
@@ -1082,20 +1112,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				env: true,
 				default: def
 			});
-		},
-
-		/**
-		 * Returns the attribute name to set the topic value to the root element
-		 *
-		 * @cli theme-attribute
-		 * @env THEME_ATTRIBUTE
-		 *
-		 * @default `data-theme`
-		 */
-		attribute: o('theme-attribute', {
-			env: true,
-			default: 'data-theme'
-		})
+		}
 	},
 
 	/**

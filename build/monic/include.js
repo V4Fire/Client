@@ -9,13 +9,13 @@
 'use strict';
 
 const
-	includeRgxp = /\binclude\((['"`])(.*?)\1\);/g,
+	includeRgxp = /\binclude\((["'`])(.*?)\1\);/g,
 	hasInclude = includeRgxp.removeFlags('g'),
-	escapeStringLiteralRgxp = /(['`\n\\]|\${)/g;
+	escapeStringLiteralRgxp = /([\n'\\`]|\${)/g;
 
 /**
- * Monic replacer that adds extra syntax to use the "#include" directive.
- * This replacer is useful to include some content by a path within SS files.
+ * A Monic replacer that adds extra syntax to use the `#include` directive is provided by this module.
+ * This replacer is useful for including content by a specific path within SS files.
  *
  * @param {string} str
  * @returns {string}
@@ -23,7 +23,7 @@ const
  * @example
  * ```
  * < .bla
- *   /// This declaration will be replaced by a content of the specified file
+ *   /// This declaration will be replaced by the content of the specified file
  *   include(bla/foo.html)
  * ```
  */

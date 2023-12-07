@@ -103,7 +103,7 @@ export default abstract class iData extends iDataHandlers {
 				void this.db;
 			};
 
-			if (HYDRATION && hydrationStore.has(this.componentId)) {
+			if (this.canUseHydratedData) {
 				const
 					store = hydrationStore.get(this.componentId),
 					data = Object.cast<CanUndef<this['DB']>>(store?.[providerHydrationKey]);

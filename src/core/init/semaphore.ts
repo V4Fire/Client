@@ -16,8 +16,8 @@ import App, {
 	destroyApp,
 
 	rootComponents,
-	HydrationStore,
 
+	HydrationStore,
 	ComponentElement
 
 } from 'core/component';
@@ -93,7 +93,10 @@ function createAppInitializer() {
 					ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
 					hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
 
-				return ssrContent + hydratedData;
+				return {
+					content: ssrContent + hydratedData,
+					styles: (await Promise.all(hydrationStore.styles.values())).map((i) => i.default).join('')
+				};
 
 			} finally {
 				destroyApp(appId);

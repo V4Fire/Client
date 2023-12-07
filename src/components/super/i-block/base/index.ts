@@ -37,6 +37,8 @@ import {
 	bindRemoteWatchers,
 	customWatcherRgxp,
 
+	hydratedStyles,
+
 	RawWatchHandler,
 	WatchPath,
 
@@ -681,6 +683,18 @@ export default abstract class iBlockBase extends iBlockFriends {
 					return this.r.ssrState;
 				}
 			});
+		}
+	}
+
+	/**
+	 * Hydrates the component styles for SSR
+	 */
+	@hook('created')
+	protected hydrateStyles(): void {
+		const stylesToHydrate = hydratedStyles.get(this.componentName);
+
+		if (stylesToHydrate != null) {
+			this.hydrationStore?.styles.set(this.componentName, stylesToHydrate);
 		}
 	}
 }

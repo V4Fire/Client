@@ -34,7 +34,7 @@ const config: PlaywrightTestConfig = {
 
 	retries: 2,
 	fullyParallel: !isCI,
-	workers: isCI ? 1 : undefined,
+	workers: isCI ? 1 : 32,
 
 	reportSlowTests: {
 		max: 0,

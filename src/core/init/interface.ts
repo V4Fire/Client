@@ -15,6 +15,13 @@ type OptionalState = {
 	[K in keyof State]?: State[K];
 };
 
+export interface AppSSR {
+	content: string;
+	styles: string;
+}
+
+export type App = Element | AppSSR;
+
 export interface InitAppOptions extends OptionalState {
 	/**
 	 * The unique application identifier

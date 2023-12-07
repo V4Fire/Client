@@ -12,7 +12,7 @@ const
 	isMainComponentStyleFile = /[/\\]([bp]-[^/\\]+)[/\\]\1\.styl$/;
 
 /**
- * Monic replacer to apply component styles that have been loaded via the `import` function.
+ * A Monic replacer is used to apply the styles of the components that have been loaded via the `import` function
  *
  * @param {string} str
  * @param {string} filePath
