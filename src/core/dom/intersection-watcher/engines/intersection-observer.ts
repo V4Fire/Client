@@ -29,7 +29,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	/**
 	 * A map of currently intersecting elements
 	 */
-	protected intersectingTargets: WeakMap<IntersectionObserver, Set<Element>> = new Map();
+	protected intersectingTargets: Map<IntersectionObserver, Set<Element>> = new Map();
 
 	override destroy(): void {
 		this.observers.forEach((observer) => {
