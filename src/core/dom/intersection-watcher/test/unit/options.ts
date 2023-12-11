@@ -301,6 +301,31 @@ test.describe('core/dom/intersection-watcher: watching for the intersection with
 					test.expect(await watchPromise).toBeLessThan(delay);
 				}
 			);
+
+			test(
+				'the watcher should execute the handler if the registered element is already being observed and is in the viewport',
+
+				async ({page}) => {
+					const intersectionResults = await page.evaluateHandle<string[]>(() => []);
+
+					await getObserver(engine).evaluate((observer, {target, intersectionResults}) => {
+						setTimeout(() => {
+							observer.watch(target, {threshold: 0.5}, () => {
+								intersectionResults.push('first');
+							});
+						}, 500);
+
+						observer.watch(target, {threshold: 0.5}, () => {
+							intersectionResults.push('second');
+						});
+					}, {target, intersectionResults});
+
+					// Scrolling vertically by the full target height
+					await scrollBy(page, {top: 100, delay: 700});
+
+					await test.expect(intersectionResults.evaluate((res) => res)).resolves.toEqual(['second', 'first']);
+				}
+			);
 		});
 	}
 });
