@@ -41,6 +41,10 @@ module.exports = function optimization({buildId, plugins}) {
 
 	if (ssr) {
 		params.minimizer = [cssMinimizer];
+		params.chunkIds = 'named';
+		params.moduleIds = 'named';
+		params.mangleExports = false;
+
 		return params;
 	}
 
