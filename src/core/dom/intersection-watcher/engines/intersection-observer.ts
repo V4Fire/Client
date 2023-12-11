@@ -13,6 +13,8 @@ import { isElementInView, resolveScrollTarget } from 'core/dom/intersection-watc
 
 import type { Watcher } from 'core/dom/intersection-watcher/interface';
 
+import type { PartialIOEntry } from 'core/dom/intersection-watcher/engines/interface';
+
 export default class IntersectionObserverEngine extends AbstractEngine {
 	/**
 	 * A map of IntersectionObserver instances
@@ -156,7 +158,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	 * @param watcher
 	 * @param entry
 	 */
-	protected onObservableIn(watcher: Writable<Watcher>, entry: IntersectionObserverEntry): void {
+	protected onObservableIn(watcher: Writable<Watcher>, entry: PartialIOEntry): void {
 		watcher.time = entry.time;
 		watcher.timeIn = entry.time;
 
@@ -171,7 +173,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 	 * @param watcher
 	 * @param entry
 	 */
-	protected onObservableOut(watcher: Writable<Watcher>, entry: IntersectionObserverEntry): void {
+	protected onObservableOut(watcher: Writable<Watcher>, entry: PartialIOEntry): void {
 		watcher.time = entry.time;
 		watcher.timeOut = entry.time;
 
