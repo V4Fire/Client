@@ -47,6 +47,8 @@ declare const DETECT_USER_PREFERENCES: CanUndef<
 	}>>
 >;
 
+declare const POST_PROCESS_THEME: CanUndef<boolean>;
+
 declare const DS: CanUndef<DesignSystem>;
 declare const DS_COMPONENTS_MODS: CanUndef<{
 	[name: string]: Nullable<Array<string | boolean | number>>;
