@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Added possibility to get (set) theme from (to) cookie `components/super/i-static-page/modules/theme/theme-manager`
+
 ## v4.0.0-beta.45 (2023-12-07)
 
 #### :bug: Bug Fix
