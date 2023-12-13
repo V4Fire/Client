@@ -7,10 +7,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { syncLocalStorage } from 'core/kv-storage/engines/cookie';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
+import storage from 'components/super/i-static-page/modules/theme/storage';
 
 import Friend from 'components/friends/friend';
 
@@ -52,7 +52,7 @@ export default class ThemeManager extends Friend {
 		let theme = THEME;
 
 		if (POST_PROCESS_THEME) {
-			const themeFromCookie = syncLocalStorage.get('colorTheme');
+			const themeFromCookie = storage.get<string>('colorTheme');
 
 			if (themeFromCookie != null && this.availableThemes.has(themeFromCookie)) {
 				theme = themeFromCookie;
@@ -104,7 +104,7 @@ export default class ThemeManager extends Friend {
 		const oldValue = this.currentStore;
 
 		this.currentStore = value;
-		syncLocalStorage.set('colorTheme', value);
+		storage.set('colorTheme', value);
 		document.documentElement.setAttribute(this.themeAttribute, value);
 
 		void this.component.lfc.execCbAtTheRightTime(() => {
