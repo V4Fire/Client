@@ -555,7 +555,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			return {
 				vue: 'root Vue',
 				eventemitter2: 'EventEmitter2',
-				setimmediate: 'setImmediate'
+				setimmediate: 'setImmediate',
+				jsdom: 'jsdom'
 			};
 		},
 
