@@ -7,10 +7,12 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { factory } from 'core/kv-storage';
+import type { SyncStorage } from 'core/kv-storage';
+import CookieEngine, { syncLocalStorage } from 'core/kv-storage/engines/cookie';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
-import storage from 'components/super/i-static-page/modules/theme/storage';
 
 import Friend from 'components/friends/friend';
 
@@ -36,12 +38,19 @@ export default class ThemeManager extends Friend {
 	protected readonly initialValue!: string;
 
 	/**
+	 * Storage to store selected color theme
+	 */
+	protected readonly themeStorage!: SyncStorage;
+
+	/**
 	 * An attribute to set the theme value to the root element
 	 */
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
 
-	constructor(component: iBlock) {
+	constructor(component: iBlock, themeStorageEngine: CookieEngine = syncLocalStorage) {
 		super(component);
+
+		this.themeStorage = factory(themeStorageEngine);
 
 		if (!Object.isString(THEME)) {
 			throw new ReferenceError('A theme to initialize is not specified');
@@ -52,7 +61,7 @@ export default class ThemeManager extends Friend {
 		let theme = THEME;
 
 		if (POST_PROCESS_THEME) {
-			const themeFromCookie = storage.get<string>('colorTheme');
+			const themeFromCookie = this.themeStorage.get<string>('colorTheme');
 
 			if (themeFromCookie != null && this.availableThemes.has(themeFromCookie)) {
 				theme = themeFromCookie;
@@ -104,7 +113,7 @@ export default class ThemeManager extends Friend {
 		const oldValue = this.currentStore;
 
 		this.currentStore = value;
-		storage.set('colorTheme', value);
+		this.themeStorage.set('colorTheme', value);
 		document.documentElement.setAttribute(this.themeAttribute, value);
 
 		void this.component.lfc.execCbAtTheRightTime(() => {
