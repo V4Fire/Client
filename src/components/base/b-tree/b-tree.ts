@@ -47,7 +47,9 @@ interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
 
 @component({
 	functional: {
-		functional: true
+		wait: undefined,
+		dataProvider: undefined,
+		vModel: undefined
 	}
 })
 
