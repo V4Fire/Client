@@ -8,8 +8,8 @@
 
 import symbolGenerator from 'core/symbol';
 import { factory } from 'core/kv-storage';
-import type { SyncStorage } from 'core/kv-storage';
-import CookieEngine, { syncLocalStorage } from 'core/kv-storage/engines/cookie';
+import type { SyncStorage, StorageEngine } from 'core/kv-storage';
+import { syncLocalStorage } from 'core/kv-storage/engines/cookie';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
@@ -47,7 +47,7 @@ export default class ThemeManager extends Friend {
 	 */
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
 
-	constructor(component: iBlock, themeStorageEngine: CookieEngine = syncLocalStorage) {
+	constructor(component: iBlock, themeStorageEngine: StorageEngine = syncLocalStorage) {
 		super(component);
 
 		this.themeStorage = factory(themeStorageEngine);
