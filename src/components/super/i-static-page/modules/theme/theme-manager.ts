@@ -38,7 +38,7 @@ export default class ThemeManager extends Friend {
 	protected readonly initialValue!: string;
 
 	/**
-	 * Storage to store selected color theme
+	 * Storage for selected color theme
 	 */
 	protected readonly themeStorage!: SyncStorage;
 
