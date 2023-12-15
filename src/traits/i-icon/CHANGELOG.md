@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.62.3 (2023-12-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with opening the browser when clicking on the svg icon nested to the link
+
 ## v3.60.0 (2023-09-28)
 
 #### :rocket: New Feature

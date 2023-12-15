@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.62.3 (2023-12-15)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with opening the browser when clicking on the svg icon nested to the link `traits/i-icon`
+
 ## v3.62.2 (2023-12-07)
 
 #### :bug: Bug Fix
