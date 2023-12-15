@@ -48,26 +48,27 @@
 							.
 
 				- block children
-					< .&__children v-if = hasChildren(el)
-						< b-tree.&__child &
-							ref = children |
-							v-func = nestedTreeProps.isFunctional |
+					< .&__children v-if = hasChildren(el) | v-async-target
+						+= self.render({wait: 'getNestedTreeFilter(el)'})
+							< b-tree.&__child &
+								ref = children |
+								v-func = true |
 
-							:items = el.children |
-							:item = item |
-							:itemProps = itemProps |
+								:items = el.children |
+								:item = item |
+								:itemProps = itemProps |
 
-							:folded = getFoldedPropValue(el) |
-							:v-attrs = nestedTreeProps
-						.
-							< template &
-								#default = o |
-								v-if = $slots['default']
+								:folded = getFoldedPropValue(el) |
+								:v-attrs = nestedTreeProps
 							.
-								+= self.slot('default', {':item': 'o.item'})
+								< template &
+									#default = o |
+									v-if = $slots['default']
+								.
+									+= self.slot('default', {':item': 'o.item'})
 
-							< template &
-								#fold = o |
-								v-if = $slots['fold']
-							.
-								+= self.slot('fold', {':params': 'o.params'})
+								< template &
+									#fold = o |
+									v-if = $slots['fold']
+								.
+									+= self.slot('fold', {':params': 'o.params'})

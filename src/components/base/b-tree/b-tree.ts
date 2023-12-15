@@ -47,9 +47,7 @@ interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
 
 @component({
 	functional: {
-		wait: undefined,
-		dataProvider: undefined,
-		vModel: undefined
+		functional: true
 	}
 })
 
@@ -85,8 +83,8 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	activeStore!: iActiveItems['activeStore'];
 
 	/** {@link Foldable.unfoldedStore} */
-	@system()
-	unfoldedStore: Foldable['unfoldedStore'] = new Set();
+	@system<bTree>((o) => o.topProp?.unfoldedStore ?? new Set())
+	unfoldedStore!: Foldable['unfoldedStore'];
 
 	/** {@link iActiveItems.activeChangeEvent} */
 	@system()
@@ -179,7 +177,6 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 			lazyRender: this.lazyRender,
 			renderChunks: this.renderChunks,
 			activeProp: this.active,
-			isFunctional: this.isFunctional,
 			nestedRenderFilter,
 			renderFilter
 		};
@@ -444,7 +441,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	@hook('beforeDataCreate')
 	protected initComponentValues(itemsChanged: boolean = false): void {
 		if (itemsChanged) {
-			this.field.set('unfoldedStore', new Set());
+			this.field.get<typeof this['unfoldedStore']>('unfoldedStore')!.clear();
 		}
 
 		this.values.init(itemsChanged);
@@ -456,6 +453,35 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 		if (this.topProp == null) {
 			iActiveItems.initActiveStoreListeners(this.top);
 		}
+	}
+
+	/**
+	 * Returns a filter function to check if an item needs to be rendered in a nested tree
+	 * @param item
+	 */
+	protected getNestedTreeFilter(item: this['Item']): () => CanPromise<boolean> {
+		return () => {
+			if (!this.getFoldedPropValue(item)) {
+				return true;
+			}
+
+			const group = {
+				group: 'nestedTree',
+				label: String(this.values.getIndex(item.value)),
+				join: true
+			};
+
+			const promise = () => new Promise<boolean>((resolve) => {
+				const id = this.top.on('onUnfold', (_, el) => {
+					if (item.value === el.value) {
+						resolve(true);
+						this.top.off(id);
+					}
+				}, group);
+			});
+
+			return this.top.async.promise(promise, group);
+		};
 	}
 
 	/**
