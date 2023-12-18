@@ -804,6 +804,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 					opts: {
 						clearOnComplete: true,
 						stopOnComplete: true,
+						gracefulExit: true,
 						forceRedraw: true,
 						noTTYOutput: this.config.build.ci,
 						hideCursor: null

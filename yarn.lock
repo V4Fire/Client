@@ -5394,7 +5394,7 @@ __metadata:
     buble: "npm:0.20.0"
     chalk: "npm:4.1.2"
     chrome-trace-event: "npm:1.0.3"
-    cli-progress: "npm:3.10.0"
+    cli-progress: "npm:3.12.0"
     collection.js: "npm:6.8.1"
     copy-dir: "npm:1.3.0"
     cross-env: "npm:7.0.3"
@@ -5475,11 +5475,11 @@ __metadata:
     url-loader: "npm:4.1.1"
     vinyl: "npm:2.2.1"
     vue: "npm:3.2.47"
-    webpack: "npm:5.82.1"
-    webpack-cli: "npm:5.0.1"
+    webpack: "npm:5.89.0"
+    webpack-cli: "npm:5.1.4"
   peerDependencies:
     "@v4fire/core": ^4.0.0-alpha.9
-    webpack: ^5.82.1
+    webpack: ^5.89.0
   dependenciesMeta:
     "@pzlr/build-core":
       optional: true
@@ -6155,7 +6155,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webpack-cli/configtest@npm:^2.0.1":
+"@webpack-cli/configtest@npm:^2.1.1":
   version: 2.1.1
   resolution: "@webpack-cli/configtest@npm:2.1.1"
   peerDependencies:
@@ -6165,7 +6165,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webpack-cli/info@npm:^2.0.1":
+"@webpack-cli/info@npm:^2.0.2":
   version: 2.0.2
   resolution: "@webpack-cli/info@npm:2.0.2"
   peerDependencies:
@@ -6175,7 +6175,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@webpack-cli/serve@npm:^2.0.1":
+"@webpack-cli/serve@npm:^2.0.5":
   version: 2.0.5
   resolution: "@webpack-cli/serve@npm:2.0.5"
   peerDependencies:
@@ -8810,12 +8810,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-progress@npm:3.10.0":
-  version: 3.10.0
-  resolution: "cli-progress@npm:3.10.0"
+"cli-progress@npm:3.12.0":
+  version: 3.12.0
+  resolution: "cli-progress@npm:3.12.0"
   dependencies:
-    string-width: "npm:^4.2.0"
-  checksum: 4f910c7b7a07ec4781de6037edc0ac4c757ea5aaede4bbe33d05a30f8a4156e4f6e2ce10b8959dff4d1c5d244fa097fbb3cc1b6ecae237bb4e9dd734e9338ab1
+    string-width: "npm:^4.2.3"
+  checksum: a6a549919a7461f5e798b18a4a19f83154bab145d3ec73d7f3463a8db8e311388c545ace1105557760a058cc4999b7f28c9d8d24d9783ee2912befb32544d4b8
   languageName: node
   linkType: hard
 
@@ -9190,7 +9190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^10.0.0":
+"commander@npm:^10.0.0, commander@npm:^10.0.1":
   version: 10.0.1
   resolution: "commander@npm:10.0.1"
   checksum: 8799faa84a30da985802e661cc9856adfaee324d4b138413013ef7f087e8d7924b144c30a1f1405475f0909f467665cd9e1ce13270a2f41b141dab0b7a58f3fb
@@ -9218,7 +9218,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^9.0.0, commander@npm:^9.4.1":
+"commander@npm:^9.0.0":
   version: 9.5.0
   resolution: "commander@npm:9.5.0"
   checksum: 41c49b3d0f94a1fbeb0463c85b13f15aa15a9e0b4d5e10a49c0a1d58d4489b549d62262b052ae0aa6cfda53299bee487bfe337825df15e342114dde543f82906
@@ -24676,16 +24676,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-cli@npm:5.0.1":
-  version: 5.0.1
-  resolution: "webpack-cli@npm:5.0.1"
+"webpack-cli@npm:5.1.4":
+  version: 5.1.4
+  resolution: "webpack-cli@npm:5.1.4"
   dependencies:
     "@discoveryjs/json-ext": "npm:^0.5.0"
-    "@webpack-cli/configtest": "npm:^2.0.1"
-    "@webpack-cli/info": "npm:^2.0.1"
-    "@webpack-cli/serve": "npm:^2.0.1"
+    "@webpack-cli/configtest": "npm:^2.1.1"
+    "@webpack-cli/info": "npm:^2.0.2"
+    "@webpack-cli/serve": "npm:^2.0.5"
     colorette: "npm:^2.0.14"
-    commander: "npm:^9.4.1"
+    commander: "npm:^10.0.1"
     cross-spawn: "npm:^7.0.3"
     envinfo: "npm:^7.7.3"
     fastest-levenshtein: "npm:^1.0.12"
@@ -24704,7 +24704,7 @@ __metadata:
       optional: true
   bin:
     webpack-cli: bin/cli.js
-  checksum: 84085a25d5ccd13e26483d76572fa784989057cfdfc6a17febe946d865ba177e06701ccc9e72f901ad4df7f54994346db941a810f803230119c04e563ed53aa5
+  checksum: 9ac3ae7c43b032051de2803d751bd3b44e1f226b931dcd56066a8e01b12734d49730903df9235e1eb1b67b2ee7451faf24a219c8f4a229c4f42c42e827eac44c
   languageName: node
   linkType: hard
 
