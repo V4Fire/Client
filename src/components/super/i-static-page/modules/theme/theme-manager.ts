@@ -7,9 +7,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import { factory } from 'core/kv-storage';
 import type { SyncStorage, StorageEngine } from 'core/kv-storage';
-import { syncLocalStorage } from 'core/kv-storage/engines/cookie';
+import * as cookieEngine from 'core/kv-storage/engines/cookie';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
@@ -38,7 +39,7 @@ export default class ThemeManager extends Friend {
 	protected readonly initialValue!: string;
 
 	/**
-	 * Storage for selected color theme
+	 * An API for persistent theme storage
 	 */
 	protected readonly themeStorage!: SyncStorage;
 
@@ -47,15 +48,18 @@ export default class ThemeManager extends Friend {
 	 */
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
 
-	constructor(component: iBlock, themeStorageEngine: StorageEngine = syncLocalStorage) {
+	/**
+	 * @param component
+	 * @param themeStorageEngine - engine for persistent theme storage
+	 */
+	constructor(component: iBlock, themeStorageEngine: StorageEngine = cookieEngine.syncLocalStorage) {
 		super(component);
-
-		this.themeStorage = factory(themeStorageEngine);
 
 		if (!Object.isString(THEME)) {
 			throw new ReferenceError('A theme to initialize is not specified');
 		}
 
+		this.themeStorage = factory(themeStorageEngine);
 		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
 
 		let theme = THEME;
@@ -66,6 +70,7 @@ export default class ThemeManager extends Friend {
 			if (themeFromCookie != null && this.availableThemes.has(themeFromCookie)) {
 				theme = themeFromCookie;
 			}
+
 		} else if (Object.isDictionary(DETECT_USER_PREFERENCES)) {
 			const
 				prefersColorSchemeEnabled = Object.get<boolean>(DETECT_USER_PREFERENCES, 'prefersColorScheme.enabled') ?? false,
