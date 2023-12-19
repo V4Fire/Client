@@ -11,13 +11,13 @@ import SyncPromise from 'core/promise/sync';
 import { wait } from 'components/super/i-data/i-data';
 import type bTree from 'components/base/b-tree/b-tree';
 
-export default abstract class Foldable {
+export default abstract class iFoldable {
 	/**
 	 * A set of values for unfolded items
 	 */
 	abstract unfoldedStore: Set<bTree['Item']['value']>;
 
-	/** {@link Foldable.prototype.fold} */
+	/** {@link iFoldable.prototype.fold} */
 	static fold(ctx: bTree, itemValue?: unknown): Promise<boolean> {
 		if (arguments.length === 1) {
 			const values: Array<Promise<boolean>> = [];
@@ -40,7 +40,7 @@ export default abstract class Foldable {
 		return this.toggleFold(ctx, itemValue, true);
 	}
 
-	/** {@link Foldable.prototype.unfold} */
+	/** {@link iFoldable.prototype.unfold} */
 	static unfold(ctx: bTree, value?: unknown): Promise<boolean> {
 		const values: Array<Promise<boolean>> = [];
 
@@ -87,7 +87,7 @@ export default abstract class Foldable {
 			.then((res) => res.some((value) => value === true));
 	}
 
-	/** {@link Foldable.prototype.toggleFold} */
+	/** {@link iFoldable.prototype.toggleFold} */
 	static toggleFold(ctx: bTree, itemValue: unknown, folded?: boolean): Promise<boolean> {
 		const {
 			unsafe,

@@ -28,7 +28,7 @@ import type { Item, ItemMeta, UnsafeBTree } from 'components/base/b-tree/interfa
 
 import iTreeProps from 'components/base/b-tree/props';
 
-import Foldable from 'components/base/b-tree/modules/foldable';
+import iFoldable from 'components/base/b-tree/modules/foldable';
 import Values from 'components/base/b-tree/modules/values';
 
 import { setActiveMod, normalizeItems } from 'components/base/b-tree/modules/helpers';
@@ -43,7 +43,7 @@ DOM.addToPrototype({delegateElement});
 const
 	$$ = symbolGenerator();
 
-interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
+interface bTree extends Trait<typeof iActiveItems>, Trait<typeof iFoldable> {}
 
 @component({
 	functional: {
@@ -51,8 +51,8 @@ interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
 	}
 })
 
-@derive(iActiveItems, Foldable)
-class bTree extends iTreeProps implements iActiveItems, Foldable {
+@derive(iActiveItems, iFoldable)
+class bTree extends iTreeProps implements iActiveItems, iFoldable {
 	override get unsafe(): UnsafeGetter<UnsafeBTree<this>> {
 		return Object.cast(this);
 	}
@@ -82,9 +82,9 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 
 	activeStore!: iActiveItems['activeStore'];
 
-	/** {@link Foldable.unfoldedStore} */
+	/** {@link iFoldable.unfoldedStore} */
 	@system<bTree>((o) => o.topProp?.unfoldedStore ?? new Set())
-	unfoldedStore!: Foldable['unfoldedStore'];
+	unfoldedStore!: iFoldable['unfoldedStore'];
 
 	/** {@link iActiveItems.activeChangeEvent} */
 	@system()
