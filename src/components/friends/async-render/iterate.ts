@@ -17,7 +17,7 @@ import { render } from 'components/friends/vdom';
 import { addRenderTask, destroyNode as nodeDestructor } from 'components/friends/async-render/helpers/render';
 import { getIterDescriptor } from 'components/friends/async-render/helpers/iter';
 
-import type {TaskOptions, TaskParams, IterDescriptor} from 'components/friends/async-render/interface';
+import type { TaskOptions, TaskParams, IterDescriptor } from 'components/friends/async-render/interface';
 
 const
 	isCached = Symbol('Is cached');
@@ -73,7 +73,7 @@ export function iterate(
 
 	let
 		start: CanUndef<number>,
-		perChunk: number = 1;
+		perChunk = 1;
 
 	if (Object.isArray(sliceOrOpts)) {
 		start = sliceOrOpts[0];
@@ -112,7 +112,7 @@ export function iterate(
 		vnodesToRender: Array<CanPromise<VNode>> = [];
 
 	let
-		lastTask: Nullable<() => Promise<void>>,
+		lastTask: Nullable<() => CanPromise<void>>,
 		lastTaskParams: Nullable<TaskParams>;
 
 	if (SSR) {
@@ -159,6 +159,7 @@ export function iterate(
 				break;
 			}
 
+			// eslint-disable-next-line require-atomic-updates
 			nextIter = iter.iterator.next();
 
 			try {
@@ -243,6 +244,7 @@ export function iterate(
 		} else {
 			const id = localEmitter.on('asyncRenderChunkComplete', async () => {
 				try {
+					// eslint-disable-next-line require-atomic-updates
 					nextIter = Object.isPromise(nextIter) ? await $a.promise(nextIter, {group}) : nextIter;
 
 				} catch (err) {
@@ -285,7 +287,7 @@ export function iterate(
 		const isNotLastLast =
 			chunkTotal < perChunk &&
 			!Object.isPromise(vnode) &&
-			!Object.isPromise(nextIter) && nextIter?.done !== true
+			!Object.isPromise(nextIter) && nextIter?.done !== true;
 
 		if (isNotLastLast) {
 			return;
