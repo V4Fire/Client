@@ -10,7 +10,20 @@ import test from 'tests/config/unit/test';
 
 import BOM from 'tests/helpers/bom';
 
-import { renderTree, checkOptionTree, waitForCheckboxCount, createTestModIs, waitForItems, getDefaultItems } from 'components/base/b-tree/test/helpers';
+import type bTree from 'components/base/b-tree/b-tree';
+
+import {
+
+	renderTree,
+	checkOptionTree,
+
+	waitForCheckboxCount,
+	waitForItems,
+
+	createTestModIs,
+	getDefaultItems
+
+} from 'components/base/b-tree/test/helpers';
 
 test.describe('<b-tree>', () => {
 	const
@@ -94,7 +107,7 @@ test.describe('<b-tree>', () => {
 					children: [],
 					attrs: {
 						...baseAttrs,
-						renderFilter: (ctx) => ctx.level === 0
+						renderFilter: (ctx: bTree) => ctx.level === 0
 					}
 				});
 
@@ -161,7 +174,7 @@ test.describe('<b-tree>', () => {
 			{value: 2, children: [{value: 4, label: '4'}]}
 		].map((item) => ({...item, label: `${item.value}`}));
 
-		test('`onItemsChange` event should be emitted', async ({page}) => {
+		test('the `onItemsChange` event should be emitted', async ({page}) => {
 			const
 				target = await renderTree(page);
 
@@ -169,7 +182,7 @@ test.describe('<b-tree>', () => {
 				const
 					log: any[] = [];
 
-				ctx.on('onItemsChange', (val) => {
+				ctx.on('onItemsChange', (val: bTree['items']) => {
 					log.push(Object.fastClone(val));
 				});
 
@@ -198,7 +211,7 @@ test.describe('<b-tree>', () => {
 			await testFoldedModIs(false, await waitForItems(page, target, [1, 2]));
 		});
 
-		test('unfolded node should become folded after change', async ({page}) => {
+		test('the unfolded node should become folded after change', async ({page}) => {
 			const
 				target = await renderTree(page, {items: defaultItems});
 

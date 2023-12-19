@@ -28,6 +28,7 @@ test.describe('<b-tree> foldable', () => {
 					value: '1',
 					children: [{label: 'item 1.1', value: '1.1'}]
 				},
+
 				{
 					label: 'item 2',
 					value: '2',
@@ -44,7 +45,7 @@ test.describe('<b-tree> foldable', () => {
 	test.describe('with `folded = false`', () => {
 		const attrs = {folded: false};
 
-		test('should fold the children of the item when it\'s `fold` element is clicked', async ({page}) => {
+		test("should fold the children of the item when it's `fold` element is clicked", async ({page}) => {
 			const target = await renderTree(page, {items, attrs});
 			await page.getByText('item 1').locator(foldSelector).click();
 
@@ -56,7 +57,7 @@ test.describe('<b-tree> foldable', () => {
 	test.describe('with `folded = true`', () => {
 		const attrs = {folded: true};
 
-		test('should unfold the children of the item when it\'s `fold` element is clicked', async ({page}) => {
+		test("should unfold the children of the item when it's `fold` element is clicked", async ({page}) => {
 			const target = await renderTree(page, {items, attrs});
 			await page.getByText('item 1').locator(foldSelector).click();
 

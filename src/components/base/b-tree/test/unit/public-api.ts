@@ -12,9 +12,11 @@ import { renderTree, waitForItem, createTestModIs } from 'components/base/b-tree
 
 test.describe('<b-tree> public API', () => {
 	const testFoldedModIs = createTestModIs('folded');
+
 	const items = [
 		{value: 1},
 		{value: 2},
+
 		{
 			value: 3,
 			children: [
@@ -24,6 +26,7 @@ test.describe('<b-tree> public API', () => {
 				}
 			]
 		},
+
 		{value: 5}
 	];
 

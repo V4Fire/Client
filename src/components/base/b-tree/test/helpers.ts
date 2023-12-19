@@ -24,7 +24,7 @@ interface CheckOptionTreeCtx {
 }
 
 /**
- * Returns the rendered `b-tree` component
+ * Returns the rendered bTree component
  *
  * @param page
  * @param opts
@@ -62,7 +62,7 @@ export function getFoldedClass(target: JSHandle<bTree>, value: boolean = true): 
 
 /**
  * Iterates over all tree items depth-first and unfolds closed items by clicking them.
- * Also, it checks that all items have correct `data-level` attribute and `folded` class modifier.
+ * Also, it checks that all items have the correct `data-level` attribute and `folded` class modifier.
  *
  * @param page
  * @param items
@@ -215,7 +215,7 @@ export function createTestModIs(modName: string) {
 }
 
 /**
- * Checks if page has expected count of b-checkbox elements
+ * Checks if the page has expected count of bCheckbox elements
  *
  * @param page
  * @param expectedCount
@@ -225,7 +225,7 @@ export async function waitForCheckboxCount(page: Page, expectedCount: number): P
 }
 
 /**
- * Returns default items for tests
+ * Returns the default items for tests
  */
 export function getDefaultItems(): Item[] {
 	return [
