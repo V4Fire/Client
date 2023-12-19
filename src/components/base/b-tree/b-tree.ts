@@ -76,7 +76,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	 * {@link iActiveItems.linkActiveStore}
 	 */
 	@system<bTree>((o) => {
-		o.watch('modelValue', (val) => o.setActive(val, true));
+		o.watch('modelValue', (val: bTree['modelValue']) => o.setActive(val, true));
 		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
 	})
 
@@ -122,8 +122,8 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Stores `bTree` normalized items.
-	 * This store is needed because the `items` property should only be accessed via get/set.
+	 * Stores bTree normalized items.
+	 * This store is needed because the `items` property should only be accessed through the get/set methods.
 	 */
 	@field<bTree>((o) => o.sync.link<Item[]>((val) => {
 		if (o.dataProvider != null) {
@@ -159,7 +159,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Props for recursively inserted tree components
+	 * Props for recursively inserted bTree components
 	 */
 	protected get nestedTreeProps(): Dictionary {
 		const
@@ -359,7 +359,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	 * Returns a dictionary with props for the specified item
 	 *
 	 * @param item
-	 * @param i - position index
+	 * @param i - the position index
 	 */
 	protected getItemProps(item: this['Item'], i: number): Dictionary {
 		const
@@ -391,7 +391,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Returns a value of the `folded` property from the specified item
+	 * Returns the value of the `folded` property from the specified item
 	 * @param item
 	 */
 	protected getFoldedPropValue(item: this['Item']): boolean {
@@ -410,7 +410,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	 * Searches an HTML element by the specified item value and returns it
 	 * @param value
 	 */
-	protected findItemElement(value: this['Item']['value']): HTMLElement | null {
+	protected findItemElement(value: this['Item']['value']): CanNull<HTMLElement> {
 		const
 			{top} = this,
 			id = this.values.getIndex(value);
@@ -423,7 +423,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Synchronization of items
+	 * Synchronization of tree items
 	 *
 	 * @param items
 	 * @param [oldItems]
@@ -485,7 +485,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Handler: fold element has been clicked
+	 * Handler: the fold element has been clicked
 	 * @param item
 	 */
 	protected onFoldClick(item: this['Item']): void {
@@ -493,7 +493,7 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	}
 
 	/**
-	 * Handler: click to some item element
+	 * Handler: click on some item element
 	 *
 	 * @param e
 	 * @emits `actionChange(active: this['Active'])`
