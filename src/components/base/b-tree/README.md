@@ -151,8 +151,9 @@ Also, you can see the parent component.
 
 ## Branch Folding
 
-The module supports the function of collapsing the child branches of each item. This is implemented using CSS modifiers, and by default
-elements do not have styles. Thus, you need to write some CSS rules to hide child items when the item node has the `folded` modifier.
+The module supports the function of collapsing the child branches of each item.
+This is implemented using CSS modifiers, and by default elements do not have styles.
+Thus, you need to write some CSS rules to hide child items when the item node has the `folded` modifier.
 
 For instance:
 
@@ -170,7 +171,7 @@ For instance:
 ```
 
 All elements have the `folded` modifier in `true` by default.
-To change this, just provide the modifier values as a prop.
+To change this, provide the modifier values as a prop.
 
 ```
 < b-tree &
@@ -299,7 +300,7 @@ If true, then all nested elements are folded by default.
 ### [activeProp]
 
 The active element(s) of the component.
-If the component is switched to "multiple" mode, you can pass in an iterable to define multiple active elements.
+If the component is switched to "multiple" mode, you can pass in an iterable object to define multiple active elements.
 
 ### [multiple = `false`]
 
@@ -308,12 +309,14 @@ If true, the component supports the multiple active items feature.
 ### [cancelable]
 
 If set to true, the active item can be canceled by clicking it again.
-By default, if the component is switched to the `multiple` mode, this value is set to `true`, otherwise it is set to `false`.
+By default, if the component is switched to the `multiple` mode, this value is set to `true`,
+otherwise it is set to `false`.
 
 ### [lazyRender = `false`]
 
 If set to true, the component will be lazily rendered using `asyncRender`.
-This mode allows you to optimize the rendering of large trees, but there may be "flickering" when the component is completely re-rendered.
+This mode allows you to optimize the rendering of large trees,
+but there may be "flickering" when the component is completely re-rendered.
 
 ### [renderFilter]
 
