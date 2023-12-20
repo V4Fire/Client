@@ -109,7 +109,7 @@ export function iterate(
 
 	let
 		group = 'asyncComponents',
-		vnodesToRender: Array<CanPromise<VNode>> = [];
+		valuesToRender: Array<CanPromise<unknown>> = [];
 
 	let
 		lastTask: Nullable<() => CanPromise<void>>,
@@ -163,12 +163,12 @@ export function iterate(
 			nextIter = iter.iterator.next();
 
 			try {
-				const vnode: VNode = Object.cast(
-					Object.isPromise(iterRes.value) ? await $a.promise(iterRes.value, {group}) : iterRes.value
-				);
+				const el = Object.isPromise(iterRes.value) ?
+					await $a.promise(iterRes.value, {group}) :
+					iterRes.value;
 
 				if (filter != null) {
-					const needRender = filter.call(this.ctx, vnode, iterI, {
+					const needRender = filter.call(this.ctx, el, iterI, {
 						total,
 						chunk: chunkI,
 						iterable: iter.iterable
@@ -176,12 +176,12 @@ export function iterate(
 
 					if (Object.isPromise(needRender)) {
 						await $a.promise(needRender, {group}).then(
-							(res) => createRenderTask(vnode, res === undefined || Object.isTruly(res))
+							(res) => createRenderTask(el, res === undefined || Object.isTruly(res))
 						);
 
 					} else {
 						const
-							res = createRenderTask(vnode, Object.isTruly(needRender));
+							res = createRenderTask(el, Object.isTruly(needRender));
 
 						if (res != null) {
 							await res;
@@ -189,7 +189,7 @@ export function iterate(
 					}
 
 				} else {
-					const res = createRenderTask(vnode);
+					const res = createRenderTask(el);
 
 					if (res != null) {
 						await res;
@@ -216,7 +216,7 @@ export function iterate(
 							break;
 
 						default:
-						// Ignore
+							// Ignore
 					}
 				}
 
@@ -269,14 +269,14 @@ export function iterate(
 		target = t;
 	}
 
-	function createRenderTask(vnode: CanPromise<VNode>, filter?: boolean) {
+	function createRenderTask(value: CanPromise<unknown>, filter?: boolean) {
 		if (filter === false) {
 			return;
 		}
 
 		total++;
 		chunkTotal++;
-		vnodesToRender.push(vnode);
+		valuesToRender.push(value);
 
 		lastTask = () => {
 			lastTask = null;
@@ -286,7 +286,7 @@ export function iterate(
 
 		const isNotLastLast =
 			chunkTotal < perChunk &&
-			!Object.isPromise(vnode) &&
+			!Object.isPromise(value) &&
 			!Object.isPromise(nextIter) && nextIter?.done !== true;
 
 		if (isNotLastLast) {
@@ -300,7 +300,7 @@ export function iterate(
 				renderedVNodes: Node[] = [];
 
 			ctx.vdom.withRenderContext(() => {
-				vnodesToRender.forEach((el) => {
+				valuesToRender.forEach((el) => {
 					const vnodes = Array.concat([], toVNode(el, iterI)).flatMap((vnode) => {
 						if (Object.isSymbol(vnode.type) && Object.isArray(vnode.children)) {
 							return <VNode[]>vnode.children;
@@ -312,7 +312,7 @@ export function iterate(
 					vnodes.forEach(renderVNode);
 				});
 
-				vnodesToRender = [];
+				valuesToRender = [];
 
 				chunkI++;
 				chunkTotal = 0;
