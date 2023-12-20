@@ -461,7 +461,7 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 	 */
 	protected getNestedTreeFilter(item: this['Item']): () => CanPromise<boolean> {
 		return () => {
-			if (!this.getFoldedPropValue(item)) {
+			if (!this.getFoldedPropValue(item) || this.lazyRender === false || this.lazyRender === 'items') {
 				return true;
 			}
 

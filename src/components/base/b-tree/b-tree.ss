@@ -16,7 +16,11 @@
 		? rootAttrs['v-async-target'] = TRUE
 
 	- block body
-		< template v-for = (el, i) in (lazyRender ? asyncRender.iterate(items, renderChunks, renderTaskParams) : items)
+		< template v-for = (el, i) in ( &
+			lazyRender === false || lazyRender === 'folded' ?
+				items :
+				asyncRender.iterate(items, renderChunks, renderTaskParams)
+		) .
 			< .&__node &
 				:key = getItemKey(el, i) |
 
