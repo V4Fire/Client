@@ -300,18 +300,19 @@ export function iterate(
 				renderedVNodes: Node[] = [];
 
 			ctx.vdom.withRenderContext(() => {
-				valuesToRender.forEach((el) => {
-					const vnodes = Array.concat([], toVNode(el, iterI)).flatMap((vnode) => {
+				const vnodes = valuesToRender.flatMap((el) => {
+					const rawVNodes = Array.concat([], toVNode(el, iterI));
+
+					return rawVNodes.flatMap((vnode) => {
 						if (Object.isSymbol(vnode.type) && Object.isArray(vnode.children)) {
 							return <VNode[]>vnode.children;
 						}
 
 						return vnode;
 					});
-
-					vnodes.forEach(renderVNode);
 				});
 
+				vnodes.forEach(renderVNode);
 				valuesToRender = [];
 
 				chunkI++;
