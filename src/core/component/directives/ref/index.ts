@@ -108,7 +108,7 @@ function updateRef(el: Element | ComponentElement, opts: DirectiveOptions, vnode
 			refVal = getRefVal();
 
 		let
-			ref;
+			ref: unknown;
 
 		if (Object.isArray(refVal)) {
 			if (key != null) {
