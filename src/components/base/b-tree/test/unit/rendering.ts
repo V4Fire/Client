@@ -6,15 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle } from 'playwright';
-
 import test from 'tests/config/unit/test';
 
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/b-tree';
 
-import {renderTree, waitForCheckboxCount} from 'components/base/b-tree/test/helpers';
-import BOM from "../../../../../../tests/helpers/bom";
+import {
+
+	sleep,
+	renderTree,
+
+	getItemsCount,
+	getRenderedNodesCount,
+	waitForNumberOfNodes
+
+} from 'components/base/b-tree/test/helpers';
 
 test.describe('<b-tree> rendering modes', () => {
 	const items: Item[] = [
@@ -84,7 +90,7 @@ test.describe('<b-tree> rendering modes', () => {
 
 			test.expect(await getRenderedNodesCount(tree)).toBe(8);
 		});
-	})
+	});
 
 	test(
 		'when passing the prop `lazyRendering = false`, the tree should be fully rendered immediately',
@@ -137,32 +143,6 @@ test.describe('<b-tree> rendering modes', () => {
 		);
 
 		test.describe('the `renderFilter` prop allows you to control the lazy rendering', () => {
-			test.only(
-				'the tree nodes should be rendered sequentially, one by one, with a delay of half a second between each rendering',
-
-				async ({page}) => {
-					const tree = await renderTree(page, {
-						items,
-						attrs: {
-							renderChunks: 1,
-							lazyRender: 'items',
-							renderFilter: () => new Promise((res) => setTimeout(() => res(true), 500))
-						}
-					});
-
-					const waitForRender = () => tree.evaluate((ctx) => ctx.unsafe.async.sleep(500));
-
-					await waitForRender();
-					test.expect(await getRenderedNodesCount(tree)).toBe(1);
-
-					await waitForRender();
-					test.expect(await getRenderedNodesCount(tree)).toBe(2);
-
-					await waitForRender();
-					test.expect(await getRenderedNodesCount(tree)).toBe(3);
-				}
-			);
-
 			test('only the first two levels of the tree should be rendered', async ({page}) => {
 				const tree = await renderTree(page, {
 					items,
@@ -173,6 +153,100 @@ test.describe('<b-tree> rendering modes', () => {
 				});
 
 				test.expect(await getRenderedNodesCount(tree)).toBe(3);
+			});
+
+			test(
+				'the tree nodes should be rendered sequentially, one by one, with a delay of half a second between each rendering',
+
+				async ({page}) => {
+					const tree = await renderTree(page, {
+						items: [
+							{
+								label: 'root',
+								value: '0',
+
+								children: [
+									{
+										label: 'item 1',
+										value: '1'
+									},
+
+									{
+										label: 'item 2',
+										value: '2'
+									}
+								]
+							}
+						],
+
+						attrs: {
+							renderChunks: 1,
+							lazyRender: 'items',
+							renderFilter: () => new Promise((res) => setTimeout(() => res(true), 500))
+						}
+					});
+
+					await sleep(500);
+					test.expect(await getRenderedNodesCount(tree)).toBe(1);
+
+					await sleep(500);
+					test.expect(await getRenderedNodesCount(tree)).toBe(2);
+
+					await sleep(500);
+					test.expect(await getRenderedNodesCount(tree)).toBe(3);
+				}
+			);
+		});
+
+		test.describe('`the `nestedRenderFilter` prop allows you to control the lazy rendering of nested sub-trees`', () => {
+			test('should render top-level items immediately and other items after a delay', async ({page}) => {
+				const tree = await renderTree(page, {
+					items: [
+						{
+							label: 'root',
+							value: '0',
+
+							children: [
+								{
+									label: 'item 1',
+									value: '1',
+
+									children: [
+										{label: 'item 1.1', value: '1.1'},
+										{label: 'item 1.2', value: '1.2'},
+										{label: 'item 1.3', value: '1.3'},
+										{label: 'item 1.4', value: '1.4'},
+										{label: 'item 1.5', value: '1.5'}
+									]
+								}
+							]
+						}
+					],
+
+					attrs: {
+						lazyRender: 'items',
+						renderChunks: 1,
+						nestedRenderFilter: () => new Promise((res) => setTimeout(() => res(true), 500))
+					}
+				});
+
+				await sleep(500);
+				test.expect(await getRenderedNodesCount(tree)).toBe(2);
+
+				await sleep(500);
+				test.expect(await getRenderedNodesCount(tree)).toBe(3);
+
+				await sleep(500);
+				test.expect(await getRenderedNodesCount(tree)).toBe(4);
+
+				await sleep(500);
+				test.expect(await getRenderedNodesCount(tree)).toBe(5);
+
+				await sleep(500);
+				test.expect(await getRenderedNodesCount(tree)).toBe(6);
+
+				await sleep(500);
+				test.expect(await getRenderedNodesCount(tree)).toBe(7);
 			});
 		});
 	});
@@ -204,36 +278,4 @@ test.describe('<b-tree> rendering modes', () => {
 			test.expect(await getRenderedNodesCount(tree)).toBe(8);
 		}
 	);
-
-	type Items = typeof items;
-
-	function getItemsCount(items: Items) {
-		let count = 0;
-
-		items.forEach(({children}) => {
-			count++;
-
-			if (children != null) {
-				count += getItemsCount(children);
-			}
-		})
-
-		return count;
-	}
-
-	function getRenderedNodesCount(tree: JSHandle<bTree>) {
-		return tree.evaluate((ctx) => {
-			const nodes = ctx.$el!.querySelectorAll(`.${ctx.provide.fullElementName('node')}`);
-			return nodes.length;
-		});
-	}
-
-	function waitForNumberOfNodes(tree: JSHandle<bTree>, number: number) {
-		return tree.evaluate(({unsafe}, number) => {
-			return unsafe.async.wait(() => {
-				const nodes = unsafe.$el!.querySelectorAll(`.${unsafe.provide.fullElementName('node')}`);
-				return nodes.length === number;
-			})
-		}, number);
-	}
 });

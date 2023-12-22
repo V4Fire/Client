@@ -16,6 +16,38 @@ import Component from 'tests/helpers/component';
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/interface';
 
+export function getItemsCount(items: Item[]) {
+	let count = 0;
+
+	items.forEach(({children}) => {
+		count++;
+
+		if (children != null) {
+			count += getItemsCount(children);
+		}
+	});
+
+	return count;
+}
+
+export function getRenderedNodesCount(tree: JSHandle<bTree>) {
+	return tree.evaluate((ctx) => {
+		const nodes = ctx.$el!.querySelectorAll(`.${ctx.provide.fullElementName('node')}`);
+		return nodes.length;
+	});
+}
+
+export function waitForNumberOfNodes(tree: JSHandle<bTree>, number: number) {
+	return tree.evaluate(({unsafe}, number) => unsafe.async.wait(() => {
+		const nodes = unsafe.$el!.querySelectorAll(`.${unsafe.provide.fullElementName('node')}`);
+		return nodes.length === number;
+	}), number);
+}
+
+export function sleep(ms: number) {
+	return new Promise((res) => setTimeout(() => res(true), ms));
+}
+
 interface CheckOptionTreeCtx {
 	target: JSHandle<bTree>;
 	queue?:Array<Promise<void>>;
@@ -33,7 +65,11 @@ export async function renderTree(
 	page: Page,
 	opts: Partial<{items: Item[]} & RenderComponentsVnodeParams> = {}
 ): Promise<JSHandle<bTree>> {
-	const {items, attrs, children} = opts;
+	const {
+		items,
+		attrs,
+		children
+	} = opts;
 
 	return Component.createComponent(page, 'b-tree', {
 		attrs: {
@@ -55,7 +91,7 @@ export async function renderTree(
  */
 export function getFoldedClass(target: JSHandle<bTree>, value: boolean = true): Promise<string> {
 	return target.evaluate(
-		(ctx, v) => ctx.unsafe.block!.getFullElementName('node', 'folded', v),
+		(ctx, v) => ctx.unsafe.provide.fullElementName('node', 'folded', v),
 		value
 	);
 }
@@ -66,7 +102,7 @@ export function getFoldedClass(target: JSHandle<bTree>, value: boolean = true): 
  *
  * @param page
  * @param items
- * @param param2
+ * @param params
  */
 export function checkOptionTree(
 	page: Page,
@@ -77,26 +113,27 @@ export function checkOptionTree(
 		const isBranch = Object.isArray(item.children);
 
 		const promise = (async () => {
-			const
-				id = await target.evaluate((ctx, value) => `${ctx.unsafe.values.getIndex(value)}`, item.value),
-				elementSelector = `[data-id="${id}"]`,
-				element = await page.waitForSelector(elementSelector, {state: 'attached'});
+			const itemId = String(
+				await target.evaluate((ctx, value) => ctx.unsafe.values.getIndex(value), item.value)
+			);
 
 			const
 				isFolded = item.folded ?? await target.evaluate((ctx) => ctx.folded),
-				foldedClass = await getFoldedClass(
-					target,
-					isFolded
-				);
+				foldedClass = await getFoldedClass(target, isFolded);
 
-			await test.expect(element.getAttribute('data-level')).toBeResolvedTo(String(level));
+			const
+				itemSelector = `[data-id="${itemId}"]`,
+				itemElement = await page.waitForSelector(itemSelector, {state: 'attached'});
+
+			await test.expect(itemElement.getAttribute('data-level')).toBeResolvedTo(String(level));
 
 			if (isBranch) {
 				const
 					selector = foldSelector ?? DOM.elNameSelectorGenerator('b-tree', 'fold'),
-					fold = await element.waitForSelector(selector, {state: 'attached'});
+					fold = await itemElement.waitForSelector(selector, {state: 'attached'});
 
-				await test.expect(page.locator(elementSelector)).toHaveClass(new RegExp(foldedClass));
+				await test.expect(page.locator(itemSelector))
+					.toHaveClass(new RegExp(foldedClass));
 
 				if (isFolded) {
 					await fold.click();
