@@ -305,7 +305,7 @@ export interface ComponentItemFactory<DATA = unknown> {
  * A middleware function used to modify elements compiled within {@link bVirtualScroll.itemsFactory}.
  */
 export interface ItemsProcessor {
-	(componentItems: ComponentItem[]): ComponentItem[];
+	(componentItems: ComponentItem[], ctx: bVirtualScroll): ComponentItem[];
 }
 
 /**

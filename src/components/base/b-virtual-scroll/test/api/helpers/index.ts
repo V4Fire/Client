@@ -113,6 +113,8 @@ export function createDataConveyor<DATA>(
 		},
 
 		addChild(list: ComponentItem[]) {
+			let itemsCounter = 0;
+
 			const newChild = <MountedChild[]>list.map((child, i) => {
 				const v = {
 					childIndex: childI + i,
@@ -120,11 +122,21 @@ export function createDataConveyor<DATA>(
 					...child
 				};
 
+				if (child.type === 'item') {
+					Object.assign(v, {
+						itemIndex: items.length + itemsCounter
+					});
+
+					itemsCounter++;
+				}
+
 				return v;
 			});
 
+			items.push(...<MountedItem[]>newChild.filter((item) => item.type === 'item'));
 			childList.push(...newChild);
 			childI = childList.length;
+			itemsI = items.length;
 
 			return childList;
 		},

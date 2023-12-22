@@ -135,7 +135,82 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 	test.describe('state after rendering via `itemsFactory`', () => {
-		test('`itemsFactory` returns items with `item` and `separator` type', async () => {
+		test.only('`itemsFactory` returns mixed items with `item` and `separator` type', async ({page}) => {
+			const chunkSize = 12;
+
+			const separator: ComponentItem = {
+				item: 'b-button',
+				key: Object.cast(undefined),
+				children: {
+					default: 'ima button'
+				},
+				props: {
+					id: 'button'
+				},
+				type: 'separator'
+			};
+
+			const item = (data): ComponentItem => ({
+				item: 'section',
+				key: Object.cast(undefined),
+				type: 'item',
+				props: {
+					'data-index': data.i
+				},
+				meta: {
+					data
+				}
+			});
+
+			const compileItemsFn = (state, ctx, separator, item) => {
+				const
+					data = state.lastLoadedData,
+					result: ComponentItem[] = [];
+
+				data.forEach((data) => {
+					result.push(separator, item(data));
+				});
+
+				return result;
+			}
+
+			const itemsFactory = await component.mockFn(compileItemsFn, separator, item);
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(200, {data: state.data.addData(0)});
+
+			state.data.addChild(compileItemsFn({lastLoadedData: state.data.data}, null, separator, item));
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					itemsFactory,
+					shouldPerformDataRender: () => true,
+					chunkSize
+				})
+				.build();
+
+			await component.waitForChildCountEqualsTo(chunkSize * 2);
+			await component.waitForLifecycleDone();
+
+			const
+				currentState = await component.getVirtualScrollState();
+
+			test.expect(currentState).toEqual(state.compile({
+				isInitialLoading: false,
+				isInitialRender: false,
+				areRequestsStopped: true,
+				isLoadingInProgress: false,
+				isLastEmpty: true,
+				isLifecycleDone: true,
+				loadPage: 2,
+				renderPage: 1
+			}));
+		});
+
+
+		test('`itemsFactory` returns items with `item` and last item with `separator` type', async () => {
 			const chunkSize = 12;
 
 			const separator: ComponentItem = {

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page, JSHandle, ElementHandle } from 'playwright';
+import type { Page, JSHandle } from 'playwright';
 
 import { evalFn } from 'core/prelude/test-env/components/json';
 
