@@ -11,6 +11,12 @@
  * @packageDocumentation
  */
 
+import abt from 'core/init/abt';
+import 'core/init/dom';
+import state from 'core/init/state';
+import prefetch from 'core/init/prefetch';
+import hydratedRoute from 'core/init/hydrated-route';
+
 import { initGlobalEnv } from 'core/env';
 
 import semaphore from 'core/init/semaphore';
@@ -28,23 +34,17 @@ export default async function initApp(
 ): Promise<App> {
 	initGlobalEnv(opts);
 
-	void loadModule(import('core/init/dom'));
-	void loadModule(import('core/init/state'));
-	void loadModule(import('core/init/abt'));
-	void loadModule(import('core/init/prefetch'));
-	void loadModule(import('core/init/hydrated-route'));
+	loadModule(state);
+	loadModule(abt);
+	loadModule(prefetch);
+	loadModule(hydratedRoute);
 
 	const createApp = await semaphore('');
 	return createApp(rootComponent, opts);
 
-	async function loadModule(promise: Promise<{default?: unknown}>) {
+	function loadModule(init: (InitAppOptions) => void) {
 		try {
-			const {default: init} = await promise;
-
-			if (Object.isFunction(init)) {
-				init(opts);
-			}
-
+			init(opts);
 		} catch (err) {
 			stderr(err);
 		}
