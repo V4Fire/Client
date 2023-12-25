@@ -11,32 +11,26 @@
 - include 'super/i-static-page/i-static-page.component.ss'|b as placeholder
 
 - template index() extends ['i-static-page.component'].index
+	- block helpers
+		- block router
+			< b-router &
+				v-once |
+				:initialRoute = "page1"
+			.
+
 	- block body
-		: config = require('@config/config').build
+		< h1
+			Active page: {{ activePage }}
 
-		- forEach config.components => @component
-			- if config.inspectComponents
-				< b-v4-component-demo
-					< ${@name} &
-						v-func = false |
-						slot-scope = {ctx} |
-						@statusReady = ctx.debug |
-						${@attrs}
-					.
-						- if Object.isString(@content)
-							+= @content
+		< hr
 
-						- else
-							- forEach @content => el, key
-								< template #${key} = {ctx}
-									+= el
+		< b-button :type = 'link' | :href = '/page1'
+			Page1
+		< b-button :type = 'link' | :href = '/page2'
+			Page2
+		< b-button :type = 'link' | :href = '/page3'
+			Page3
 
-			- else
-				< ${@name} ${@attrs}
-					- if Object.isString(@content)
-						+= @content
+		< hr
 
-					- else
-						- forEach @content => el, key
-							< template #${key} = {ctx}
-								+= el
+		< b-dynamic-page
