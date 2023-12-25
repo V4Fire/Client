@@ -124,8 +124,8 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 		this.pwPage = page;
 		this.componentName = componentName;
 		this.id = `${this.componentName}_${Math.random().toString()}`;
-		this.props = {'data-testid': this.id};
-		this.node = page.getByTestId(this.id);
+		this.props = {'data-component-object-id': this.id};
+		this.node = page.locator(`[data-component-object-id="${this.id}"]`);
 		this.componentClassImportPath = path.join(
 			path.relative(`${process.cwd()}/src`, resolve.blockSync(this.componentName)!),
 			`/${this.componentName}.ts`
@@ -219,7 +219,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			Object.isPromise(selectorOrLocator) ? await selectorOrLocator : selectorOrLocator;
 
 		this.componentStore = await locator.elementHandle().then(async (el) => {
-			await el?.evaluate((ctx, [id]) => ctx.setAttribute('data-test-id', id), [this.id]);
+			await el?.evaluate((ctx, [id]) => ctx.setAttribute('data-component-object-id', id), [this.id]);
 			return el?.getProperty('component');
 		});
 
