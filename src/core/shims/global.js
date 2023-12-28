@@ -8,9 +8,9 @@
 
 'use strict';
 
-/* eslint-disable no-restricted-globals */
+/* eslint-disable no-var, no-restricted-globals */
 
-const _global =
+var _global =
 	typeof globalThis === 'object' && isGlobal(globalThis) && globalThis ||
 	typeof window === 'object' && isGlobal(window) && window ||
 	typeof global === 'object' && isGlobal(global) && global ||

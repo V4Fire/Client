@@ -59,6 +59,7 @@ function createAppInitializer() {
 			set(key, value);
 		});
 
+		//#if context = ssr
 		if (SSR) {
 			const
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -102,6 +103,7 @@ function createAppInitializer() {
 				destroyApp(appId);
 			}
 		}
+		//#endif
 
 		const
 			{targetToMount} = opts;
