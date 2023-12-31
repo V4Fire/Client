@@ -31,7 +31,7 @@ export default class Utils {
 	 * // `ctx` refers to `imgNode`
 	 * Utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
 	 * ```
-	 * 
+	 *
 	 * @deprecated https://playwright.dev/docs/api/class-page#page-wait-for-function
 	 */
 	static waitForFunction<ARGS extends any[] = any[], CTX extends JSHandle = JSHandle>(

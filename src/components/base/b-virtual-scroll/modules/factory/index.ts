@@ -90,17 +90,18 @@ export class ComponentFactory extends Friend {
 	 */
 	protected itemsProcessor(items: ComponentItem[]): ComponentItem[] {
 		const
-			{ctx} = this;
+			{ctx} = this,
+			itemsProcessors = ctx.getItemsProcessors();
 
-		if (!ctx.itemsProcessors) {
+		if (!itemsProcessors) {
 			return items;
 		}
 
-		if (Object.isFunction(ctx.itemsProcessors)) {
-			return ctx.itemsProcessors(items, ctx);
+		if (Object.isFunction(itemsProcessors)) {
+			return itemsProcessors(items, ctx);
 		}
 
-		Object.forEach<ItemsProcessor>(ctx.itemsProcessors, (processor) => {
+		Object.forEach<ItemsProcessor>(itemsProcessors, (processor) => {
 			items = processor(items, ctx);
 		});
 

@@ -135,7 +135,7 @@ test.describe('<b-virtual-scroll>', () => {
 	});
 
 	test.describe('state after rendering via `itemsFactory`', () => {
-		test.only('`itemsFactory` returns mixed items with `item` and `separator` type', async ({page}) => {
+		test('`itemsFactory` returns mixed items with `item` and `separator` type', async () => {
 			const chunkSize = 12;
 
 			const separator: ComponentItem = {
@@ -172,7 +172,7 @@ test.describe('<b-virtual-scroll>', () => {
 				});
 
 				return result;
-			}
+			};
 
 			const itemsFactory = await component.mockFn(compileItemsFn, separator, item);
 
@@ -208,7 +208,6 @@ test.describe('<b-virtual-scroll>', () => {
 				renderPage: 1
 			}));
 		});
-
 
 		test('`itemsFactory` returns items with `item` and last item with `separator` type', async () => {
 			const chunkSize = 12;

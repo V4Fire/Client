@@ -91,6 +91,27 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
+	 * Updates the indicator that shows whether the current rendering process is the
+	 * last one in this lifecycle.
+	 */
+	updateIsLastRender(): void {
+		const
+			{state, ctx} = this;
+
+		if (!state.areRequestsStopped) {
+			return;
+		}
+
+		const
+			chunkSize = ctx.getChunkSize(state),
+			dataOffset = this.getDataCursor() + chunkSize;
+
+		if (<CanUndef<object>>state.data[dataOffset] == null) {
+			state.isLastRender = true;
+		}
+	}
+
+	/**
 	 * Updates the state of the last raw loaded data
 	 * @param data - the last raw loaded data.
 	 */

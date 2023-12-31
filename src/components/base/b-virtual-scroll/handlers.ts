@@ -40,6 +40,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 * Triggered when the component rendering starts.
 	 */
 	protected onRenderStart(this: bVirtualScroll): void {
+		this.componentInternalState.updateIsLastRender();
 		this.componentEmitter.emit(componentEvents.renderStart);
 	}
 

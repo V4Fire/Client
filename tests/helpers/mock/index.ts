@@ -172,10 +172,10 @@ export async function injectMockIntoPage(
 		tmpFn = `tmp_${Math.random().toString()}`;
 
 	const agent = await page.evaluateHandle(([tmpFn, fnString, args]) =>
-		// eslint-disable-next-line no-new-func
-		globalThis[tmpFn] = jestMock.mock((...fnArgs) => {
-			return Object.cast(new Function(`return ${fnString}`)()(...fnArgs, ...globalThis.expandedParse(args)))
-		}), <const>[tmpFn, fn.toString(), expandedStringify(args)]);
+		globalThis[tmpFn] = jestMock.mock((...fnArgs) =>
+			// eslint-disable-next-line no-new-func
+			Object.cast(new Function(`return ${fnString}`)()(...fnArgs, ...globalThis.expandedParse(args)))),
+		<const>[tmpFn, fn.toString(), expandedStringify(args)]);
 
 	return {agent: wrapAsSpy(agent, {}), id: tmpFn};
 }

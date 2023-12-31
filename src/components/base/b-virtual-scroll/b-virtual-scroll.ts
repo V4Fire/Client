@@ -18,7 +18,7 @@ import type iItems from 'components/traits/i-items/i-items';
 import VDOM, { create, render } from 'components/friends/vdom';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll/handlers';
 import { bVirtualScrollAsyncGroup, bVirtualScrollDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-virtual-scroll/const';
-import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll } from 'components/base/b-virtual-scroll/interface';
+import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll, ItemsProcessors } from 'components/base/b-virtual-scroll/interface';
 
 import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll/modules/emitter';
 import { ComponentInternalState } from 'components/base/b-virtual-scroll/modules/state';
@@ -142,6 +142,14 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 		return Object.isFunction(this.chunkSize) ?
 			this.chunkSize(state, this) :
 			this.chunkSize;
+	}
+
+	/**
+	 * Returns an items processors
+	 * @returns
+	 */
+	getItemsProcessors(): CanUndef<ItemsProcessors> {
+		return this.itemsProcessors;
 	}
 
 	override reload(...args: Parameters<iData['reload']>): ReturnType<iData['reload']> {

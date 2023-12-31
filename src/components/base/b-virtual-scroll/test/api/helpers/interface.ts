@@ -57,6 +57,12 @@ export interface DataConveyor<DATA = any> {
 	getDataChunk(index: number): DATA[];
 
 	/**
+	 * Sets the value of total data
+	 * @param newTotal
+	 */
+	setTotal(newTotal: number): number;
+
+	/**
 	 * Resets the data conveyor, clearing all data and items.
 	 */
 	reset(): void;
@@ -65,6 +71,12 @@ export interface DataConveyor<DATA = any> {
 	 * Retrieves the array of data items in the conveyor.
 	 */
 	get data(): DATA[];
+
+	/**
+	 * Returns the data amount
+	 * @param newTotal
+	 */
+	get total(): CanUndef<number>;
 
 	/**
 	 * Returns a data page.
