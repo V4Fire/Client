@@ -30,11 +30,10 @@ export default class ComponentObject<COMPONENT extends iBlock = iBlock> extends 
 	 */
 	waitForModVal(modName: string, modVal: string): Promise<void> {
 		return this.pwPage
-			.waitForFunction(([ctx, modName, modVal]) => ctx.mods[modName] === modVal, <const>[
-				this.component,
-				modName,
-				modVal
-			])
+			.waitForFunction(
+				([ctx, modName, modVal]) => ctx.mods[modName] === modVal,
+				<const>[this.component, modName, modVal]
+			)
 			.then(() => undefined);
 	}
 

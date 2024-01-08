@@ -72,7 +72,8 @@ export function createDataConveyor<DATA>(
 		dataI = 0,
 		itemsI = 0,
 		childI = 0,
-		page = 0;
+		page = 0,
+		total: CanUndef<number> = undefined;
 
 	const obj: DataConveyor = {
 		addData(count: number) {
@@ -113,6 +114,8 @@ export function createDataConveyor<DATA>(
 		},
 
 		addChild(list: ComponentItem[]) {
+			let itemsCounter = 0;
+
 			const newChild = <MountedChild[]>list.map((child, i) => {
 				const v = {
 					childIndex: childI + i,
@@ -120,11 +123,21 @@ export function createDataConveyor<DATA>(
 					...child
 				};
 
+				if (child.type === 'item') {
+					Object.assign(v, {
+						itemIndex: items.length + itemsCounter
+					});
+
+					itemsCounter++;
+				}
+
 				return v;
 			});
 
+			items.push(...<MountedItem[]>newChild.filter((item) => item.type === 'item'));
 			childList.push(...newChild);
 			childI = childList.length;
+			itemsI = items.length;
 
 			return childList;
 		},
@@ -133,10 +146,16 @@ export function createDataConveyor<DATA>(
 			return dataChunks[index];
 		},
 
+		setTotal(newTotal: number) {
+			total = newTotal;
+			return total;
+		},
+
 		reset() {
 			dataI = 0;
 			itemsI = 0;
 			childI = 0;
+			total = undefined;
 			childList = [];
 			items = [];
 			data = [];
@@ -145,6 +164,10 @@ export function createDataConveyor<DATA>(
 
 		get items() {
 			return items;
+		},
+
+		get total() {
+			return total;
 		},
 
 		get childList() {
@@ -235,7 +258,12 @@ export function extractStateFromDataConveyor(conveyor: DataConveyor): Pick<Virtu
 	return {
 		data: [...conveyor.data],
 		lastLoadedData: [...conveyor.lastLoadedData],
-		lastLoadedRawData: conveyor.page === 0 ? undefined : {data: [...conveyor.lastLoadedData]},
+		lastLoadedRawData: conveyor.page === 0 ?
+			undefined :
+			{
+				data: [...conveyor.lastLoadedData],
+				...(conveyor.total != null ? {total: conveyor.total} : undefined)
+			},
 		items: [...conveyor.items],
 		childList: [...conveyor.childList]
 	};

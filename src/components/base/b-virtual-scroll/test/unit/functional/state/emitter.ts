@@ -14,6 +14,7 @@ import test from 'tests/config/unit/test';
 
 import { createTestHelpers, filterEmitterResults } from 'components/base/b-virtual-scroll/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
+import type { VirtualScrollState } from 'components/base/b-virtual-scroll/interface';
 
 test.describe('<b-virtual-scroll>', () => {
 	let
@@ -49,6 +50,9 @@ test.describe('<b-virtual-scroll>', () => {
 				(
 					state.data.addData(chunkSize),
 					state.set({loadPage: 1, areRequestsStopped: true}).compile(observerInitialStateFields)
+				),
+				(
+					state.set({isLastRender: true}).compile(observerInitialStateFields)
 				),
 				(
 					state.data.addItems(chunkSize),
@@ -94,13 +98,13 @@ test.describe('<b-virtual-scroll>', () => {
 				['convertDataToDB', {...states[0], lastLoadedRawData: states[1].lastLoadedRawData}],
 				['initLoad', {...states[0], lastLoadedRawData: states[1].lastLoadedRawData}],
 				['dataLoadSuccess', states[1]],
-				['renderStart', states[1]],
-				['renderEngineStart', states[1]],
-				['renderEngineDone', states[1]],
-				['domInsertStart', states[2]],
-				['domInsertDone', states[3]],
-				['renderDone', states[3]],
-				['lifecycleDone', states[4]]
+				['renderStart', states[2]],
+				['renderEngineStart', states[2]],
+				['renderEngineDone', states[2]],
+				['domInsertStart', states[3]],
+				['domInsertDone', states[4]],
+				['renderDone', states[4]],
+				['lifecycleDone', states[5]]
 			]);
 		});
 	});
@@ -208,6 +212,114 @@ test.describe('<b-virtual-scroll>', () => {
 				['dataLoadStart', states[5]],
 				['convertDataToDB', {...states[5], lastLoadedRawData: states[6].lastLoadedRawData}],
 				['dataLoadSuccess', states[6]],
+				['lifecycleDone', states[7]]
+			]);
+		});
+	});
+
+	test.describe('all data has been loaded after few scrolls', () => {
+		test('state at the time of emitting events must be correct', async () => {
+			const
+				chunkSize = 12,
+				providerChunkSize = chunkSize,
+				total = chunkSize * 2;
+
+			state.data.setTotal(total);
+
+			const states = [
+				state.compile(observerInitialStateFields),
+				(
+					// 1
+					state.data.addData(providerChunkSize),
+					state.set({loadPage: 1}).compile(observerInitialStateFields)
+				),
+				(
+					// 2
+					state.data.addItems(chunkSize),
+					state.set({renderPage: 1, isInitialRender: false}).compile(observerLoadedStateFields)
+				),
+				(
+					// 3
+					state.compile()
+				),
+				(
+					// 4
+					state.data.addData(providerChunkSize),
+					state.set({
+						loadPage: 2,
+						areRequestsStopped: true,
+						isLastEmpty: false,
+						isInitialLoading: false
+					}).compile()
+				),
+				(
+					// 5
+					state.set({isLastRender: true}).compile()
+				),
+				(
+					// 6
+					state.data.addItems(chunkSize),
+					state.set({renderPage: 2}).compile()
+				),
+				(
+					// 7
+					state.set({isLifecycleDone: true}).compile()
+				)
+			];
+
+			provider
+				.responseOnce(200, {data: state.data.getDataChunk(0), total})
+				.responseOnce(200, {data: state.data.getDataChunk(1), total});
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
+				.withProps({
+					chunkSize,
+					shouldStopRequestingData: (state: VirtualScrollState): boolean =>
+						Object.get(state, 'lastLoadedRawData.total') === state.data.length,
+
+					'@hook:beforeDataCreate': (ctx) => {
+						const original = ctx.emit;
+
+						ctx.emit = jestMock.mock((...args) => {
+							original(...args);
+							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
+						});
+					}
+				})
+				.build();
+
+			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
+			await component.waitForChildCountEqualsTo(chunkSize * 2);
+			await component.scrollToBottom();
+			await component.waitForLifecycleDone();
+
+			const
+				spy = await component.getSpy((ctx) => ctx.emit),
+				results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
+
+			test.expect(results).toEqual([
+				['initLoadStart', {...states[0], isLoadingInProgress: true}],
+				['dataLoadStart', {...states[0], isLoadingInProgress: true}],
+				['convertDataToDB', {...states[0], lastLoadedRawData: states[1].lastLoadedRawData}],
+				['initLoad', {...states[0], lastLoadedRawData: states[1].lastLoadedRawData}],
+				['dataLoadSuccess', states[1]],
+				['renderStart', states[1]],
+				['renderEngineStart', states[1]],
+				['renderEngineDone', states[1]],
+				['domInsertStart', states[2]],
+				['domInsertDone', states[2]],
+				['renderDone', states[2]],
+				['dataLoadStart', {...states[3], isLoadingInProgress: true}],
+				['convertDataToDB', {...states[3], lastLoadedRawData: states[4].lastLoadedRawData}],
+				['dataLoadSuccess', states[4]],
+				['renderStart', states[5]],
+				['renderEngineStart', states[5]],
+				['renderEngineDone', states[5]],
+				['domInsertStart', states[6]],
+				['domInsertDone', states[6]],
+				['renderDone', states[6]],
 				['lifecycleDone', states[7]]
 			]);
 		});

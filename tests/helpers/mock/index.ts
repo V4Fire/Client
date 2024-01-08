@@ -9,7 +9,7 @@
 import type { ModuleMocker } from 'jest-mock';
 import type { JSHandle, Page } from 'playwright';
 
-import { setSerializerAsMockFn } from 'core/prelude/test-env/components/json';
+import { expandedStringify, setSerializerAsMockFn } from 'core/prelude/test-env/components/json';
 import type { ExtractFromJSHandle, SpyExtractor, SpyObject } from 'tests/helpers/mock/interface';
 
 export * from 'tests/helpers/mock/interface';
@@ -172,8 +172,10 @@ export async function injectMockIntoPage(
 		tmpFn = `tmp_${Math.random().toString()}`;
 
 	const agent = await page.evaluateHandle(([tmpFn, fnString, args]) =>
-		// eslint-disable-next-line no-new-func
-		globalThis[tmpFn] = jestMock.mock((...fnArgs) => Object.cast(new Function(`return ${fnString}`)()(...fnArgs, ...args))), <const>[tmpFn, fn.toString(), args]);
+		globalThis[tmpFn] = jestMock.mock((...fnArgs) =>
+			// eslint-disable-next-line no-new-func
+			Object.cast(new Function(`return ${fnString}`)()(...fnArgs, ...globalThis.expandedParse(args)))),
+		<const>[tmpFn, fn.toString(), expandedStringify(args)]);
 
 	return {agent: wrapAsSpy(agent, {}), id: tmpFn};
 }

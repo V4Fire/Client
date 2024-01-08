@@ -60,14 +60,20 @@ export class ComponentFactory extends Friend {
 			{ctx} = this,
 			{items: mountedItems, childList} = ctx.getVirtualScrollState();
 
+		let
+			itemsCounter = 0;
+
 		return items.map((item, i) => {
 			if (isItem(item)) {
-				return {
+				const res = {
 					...item,
 					node: nodes[i],
-					itemIndex: mountedItems.length + i,
+					itemIndex: mountedItems.length + itemsCounter,
 					childIndex: childList.length + i
 				};
+
+				itemsCounter++;
+				return res;
 			}
 
 			return {
@@ -84,18 +90,19 @@ export class ComponentFactory extends Friend {
 	 */
 	protected itemsProcessor(items: ComponentItem[]): ComponentItem[] {
 		const
-			{ctx} = this;
+			{ctx} = this,
+			itemsProcessors = ctx.getItemsProcessors();
 
-		if (!ctx.itemsProcessors) {
+		if (!itemsProcessors) {
 			return items;
 		}
 
-		if (Object.isFunction(ctx.itemsProcessors)) {
-			return ctx.itemsProcessors(items);
+		if (Object.isFunction(itemsProcessors)) {
+			return itemsProcessors(items, ctx);
 		}
 
-		Object.forEach<ItemsProcessor>(ctx.itemsProcessors, (processor) => {
-			items = processor(items);
+		Object.forEach<ItemsProcessor>(itemsProcessors, (processor) => {
+			items = processor(items, ctx);
 		});
 
 		return items;
