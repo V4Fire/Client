@@ -9,6 +9,8 @@
 import type { RegExpOptions, ParseOptions, Key } from 'path-to-regexp';
 import type { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
+import type bRouter from 'components/base/b-router/b-router';
+
 /**
  * Route meta information that can be declared statically as a literal
  */
@@ -25,8 +27,9 @@ export type StaticRouteMeta<M extends object = Dictionary> = M & {
 
 	/**
 	 * Dependencies that are loaded with this route
+	 * @param routerCtx
 	 */
-	load?(): Promise<unknown>;
+	load?(routerCtx?: bRouter): Promise<unknown>;
 
 	/**
 	 * The path to the route.

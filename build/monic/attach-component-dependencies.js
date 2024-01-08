@@ -20,7 +20,7 @@ const
 	decls = Object.create(null);
 
 /**
- * Monic replacer to attach component dependencies into the TS/JS file
+ * A Monic replacer is used to attach component dependencies into the TS/JS file
  *
  * @param {string} str
  * @param {string} filePath
@@ -31,8 +31,10 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 		return str;
 	}
 
-	const
-		{components} = await graph;
+	const {
+		components,
+		entryDeps
+	} = await graph;
 
 	const
 		ext = path.extname(filePath),
@@ -78,15 +80,26 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 			return;
 		}
 
+		const styles = (await component.styles).map((src) => {
+			if (src == null) {
+				return '';
+			}
+
+			return [path.basename(src, path.extname(src)), `import('${path.normalize(src)}')`];
+		});
+
 		let
 			decl = '';
 
-		if (!webpack.ssr) {
-			try {
-				const
-					styles = await component.styles;
+		if (webpack.ssr) {
+			if (!entryDeps.has(component.name)) {
+				styles.forEach(([key, style]) => {
+					decl += `require('core/component/hydration').styles.set('${key}', ${style});`;
+				});
+			}
 
-				/* eslint-disable indent */
+		} else {
+			try {
 				decl += `
 	(() => {
 		if (TPLS['${dep}']) {
@@ -98,28 +111,12 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 				return;
 			}
 
-			try {
-				${
-					styles
-						.map((src) => {
-							if (src == null) {
-								return '';
-							}
-
-							src = path.normalize(src);
-							return `await import('${src}');`;
-						})
-
-						.join('')
-				}
-			} catch (err) { stderr(err); }
+			try { ${styles.map(([_, style]) => `await ${style}`).join(';')} } catch (err) { stderr(err); }
 		});
 	})();`;
 
-			} catch {
-			}
+			} catch {}
 		}
-		/* eslint-enable */
 
 		const depChunks = [
 			'logic',

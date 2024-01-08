@@ -14,7 +14,7 @@
 import { initGlobalEnv } from 'core/env';
 
 import semaphore from 'core/init/semaphore';
-import type { InitAppOptions } from 'core/init/interface';
+import type { InitAppOptions, App } from 'core/init/interface';
 
 /**
  * Initializes the application
@@ -25,7 +25,7 @@ import type { InitAppOptions } from 'core/init/interface';
 export default async function initApp(
 	rootComponent: Nullable<string>,
 	opts: InitAppOptions
-): Promise<string | Element> {
+): Promise<App> {
 	initGlobalEnv(opts);
 
 	void loadModule(import('core/init/dom'));

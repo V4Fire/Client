@@ -12,22 +12,38 @@
  */
 
 import { expandedStringify, expandedParse } from 'core/json';
+
+import type { styles } from 'core/component/hydration/const';
 import type { Store, HydratedData, HydratedValue } from 'core/component/hydration/interface';
 
+export * from 'core/component/hydration/const';
 export * from 'core/component/hydration/interface';
 
 export class HydrationStore {
 	/**
+	 * A dictionary containing the necessary styles for hydration
+	 */
+	readonly styles: typeof styles = new Map();
+
+	/**
 	 * Hydrated data store
 	 */
 	protected store: Store;
+
+	/**
+	 * A dictionary where the keys are the stored data and the values are their IDs
+	 */
+	protected data: Map<HydratedValue, string> = new Map();
 
 	constructor() {
 		try {
 			this.store = this.parse(document.getElementById('hydration-store')?.textContent ?? '');
 
 		} catch {
-			this.store = Object.createDict();
+			this.store = {
+				data: Object.createDict(),
+				store: Object.createDict()
+			};
 		}
 	}
 
@@ -73,7 +89,7 @@ export class HydrationStore {
 	 * @param componentId
 	 */
 	has(componentId: string): boolean {
-		return componentId in this.store;
+		return componentId in this.store.store;
 	}
 
 	/**
@@ -81,7 +97,14 @@ export class HydrationStore {
 	 * @param componentId
 	 */
 	get(componentId: string): CanUndef<HydratedData> {
-		return this.store[componentId];
+		const
+			data = this.store.store[componentId];
+
+		if (data != null) {
+			return Object.fromEntries(
+				Object.entries(data).map(([key, value]) => [key, this.store.data[value!]])
+			);
+		}
 	}
 
 	/**
@@ -89,7 +112,7 @@ export class HydrationStore {
 	 * @param componentId
 	 */
 	init(componentId: string): void {
-		this.store[componentId] ??= Object.createDict();
+		this.store.store[componentId] ??= Object.createDict();
 	}
 
 	/**
@@ -104,8 +127,12 @@ export class HydrationStore {
 			return;
 		}
 
+		const
+			key = this.getDataKey(data);
+
 		this.init(componentId);
-		this.store[componentId]![path] = data;
+		this.store.store[componentId]![path] = key;
+		this.store.data[key] = data;
 	}
 
 	/**
@@ -113,7 +140,23 @@ export class HydrationStore {
 	 * @param componentId
 	 */
 	remove(componentId: string): void {
-		delete this.store[componentId];
+		delete this.store.store[componentId];
+	}
+
+	/**
+	 * Returns a unique ID for the specified data
+	 * @param data
+	 */
+	protected getDataKey(data: HydratedValue): string {
+		let
+			key = this.data.get(data);
+
+		if (key == null) {
+			key = Object.fastHash(Math.random());
+			this.data.set(data, key);
+		}
+
+		return key;
 	}
 
 	/**

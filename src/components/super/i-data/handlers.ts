@@ -107,10 +107,18 @@ export default abstract class iDataHandlers extends iDataData {
 				key.split(':', 1)[0]
 			);
 
+			if (providerMethod === 'get' && this.canUseHydratedData) {
+				return;
+			}
+
 			const group = {group: `requestSync:${providerMethod}`};
 			$a.clearAll(group);
 
 			if (providerMethod === 'get') {
+				if (this.canUseHydratedData) {
+					return;
+				}
+
 				this.componentStatus = 'loading';
 				$a.setImmediate(this.initLoad.bind(this), group);
 

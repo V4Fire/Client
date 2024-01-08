@@ -40,7 +40,6 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/init';
-import { getDirectiveComponent } from 'core/component/directives/helpers';
 import { resolveAttrs, normalizeComponentAttrs, mergeProps as merge } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
@@ -108,9 +107,12 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
 
 		vnode.props ??= {};
-		vnode.props.getRoot ??= () => ('getRoot' in this ? this.getRoot?.() : null) ?? this.$root;
+		vnode.props.getRoot ??= () =>
+			('getRoot' in this ? this.getRoot?.() : null) ??
+			this.$root;
+
 		vnode.props.getParent ??= () => vnode.virtualParent?.value != null ?
-			getDirectiveComponent(vnode.virtualParent.value) :
+			vnode.virtualParent.value :
 			this;
 
 		if (vnode.ref != null && vnode.ref.i == null) {

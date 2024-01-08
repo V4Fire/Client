@@ -102,7 +102,7 @@ export default abstract class iData extends iDataHandlers {
 				void this.db;
 			};
 
-			if (HYDRATION && hydrationStore.has(this.componentId)) {
+			if (this.canUseHydratedData) {
 				const
 					store = hydrationStore.get(this.componentId),
 					data = Object.cast<CanUndef<this['DB']>>(store?.[providerHydrationKey]);
@@ -167,13 +167,13 @@ export default abstract class iData extends iDataHandlers {
 								return;
 							}
 
-							const
-								query = defParams[0],
-								opts = {
-									...defParams[1],
-									...label,
-									important: this.componentStatus === 'unloaded'
-								};
+							const query = defParams[0];
+
+							const opts = {
+								...defParams[1],
+								...label,
+								important: this.componentStatus === 'unloaded'
+							};
 
 							if (this.dependencies.length > 0) {
 								void this.moduleLoader.load(...this.dependencies);
@@ -183,7 +183,37 @@ export default abstract class iData extends iDataHandlers {
 								void this.state.initFromStorage();
 							}
 
-							return dataProvider.get(<RequestQuery>query, opts);
+							const
+								req = dataProvider.get(<RequestQuery>query, opts);
+
+							const timeout = $a.sleep(SSR ? 20 : (3).seconds()).then(() => {
+								throw 'timeout';
+							});
+
+							void Promise.race([req, timeout]).catch((err) => {
+								if (err !== 'timeout') {
+									return;
+								}
+
+								this.log(
+									{
+										logLevel: 'warn',
+										context: 'initLoad:dataProvider'
+									},
+
+									{
+										message: 'The component is waiting too long for data from its data provider. It is recommended to add data prefetching for the page.',
+										waitFor: {
+											route: this.route,
+											globalName: this.globalName,
+											component: this.componentName,
+											dataProvider: this.dataProvider!.provider.constructor.name
+										}
+									}
+								);
+							});
+
+							return req;
 						})
 
 						.then(

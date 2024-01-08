@@ -152,7 +152,7 @@ export default class Transition {
 		// We didn't find any route matching the given ref
 		if (this.newRouteInfo == null) {
 			// The transition was user-generated, then we need to save the scroll
-			if (this.method !== 'event' && this.ref != null) {
+			if (!SSR && this.method !== 'event' && this.ref != null) {
 				await engine[this.method](this.ref, this.scroll.getSnapshot());
 			}
 
@@ -274,7 +274,7 @@ export default class Transition {
 					// because `Object.getPrototypeOf` returns a non-watchable object
 
 					const
-						proto = r.route?.__proto__;
+						proto = r.route?.['__proto__'];
 
 					if (Object.isDictionary(proto)) {
 						Object.keys(nonWatchRouteValues).forEach((key) => {

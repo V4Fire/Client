@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.45 (2023-12-07)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with clearing event listeners on ios
+
 ## v4.0.0-beta.11 (2023-08-18)
 
 #### :bug: Bug Fix

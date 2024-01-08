@@ -156,14 +156,13 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): Can
 
 		beforeCreate() {
 			if (parent != null) {
-				const
-					root = Object.create(parent.$root);
-
-				Object.defineProperty(root, '$remoteParent', {
-					configurable: true,
-					enumerable: true,
-					writable: true,
-					value: parent
+				const root = Object.create(parent.$root, {
+					$remoteParent: {
+						configurable: true,
+						enumerable: true,
+						writable: true,
+						value: parent
+					}
 				});
 
 				Object.defineProperty(this, 'unsafe', {

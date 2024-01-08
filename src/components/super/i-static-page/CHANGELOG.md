@@ -9,6 +9,20 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.41 (2023-11-21)
+
+#### :boom: Breaking Change
+
+* Removed generation of init.js
+
+#### :rocket: New Feature
+
+* Now styles are always inlined in html
+
+#### :bug: Bug Fix
+
+* Now the `nonce` attribute is correctly set in inline mode
+
 ## v4.0.0-beta.37 (2023-10-27)
 
 #### :bug: Bug Fix

@@ -22,6 +22,80 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added new testing API `ComponentObject` that allows for easier interaction with components in the testing environment `test/helpers/component-object`.
 * Added new testing API for mocking and spying on functions at runtime `test/helpers/mock`.
 
+## v4.0.0-beta.45 (2023-12-07)
+
+#### :bug: Bug Fix
+
+* Fixed a bug with clearing event listeners on ios `components/traits/i-lock-page-scroll`
+
+## v4.0.0-beta.44 (2023-12-06)
+
+#### :boom: Breaking Change
+
+* Now, the `initApp` call returns an object in the form `{content, styles}` `core/init`
+
+#### :rocket: New Feature
+
+* Reworked the theme manager to work with SSR `components/super/i-static-page`
+
+#### :bug: Bug Fix
+
+* Fixes for SSR `iBlock`
+
+#### :house: Internal
+
+* Removed comments in CSS for the development build
+
+## v4.0.0-beta.43 (2023-11-26)
+
+#### :rocket: New Feature
+
+* Added data deduplication `core/component/hydration`
+
+#### :bug: Bug Fix
+
+* There is no need to synchronize router data during SSR `components/friends/state`
+* Fixed cache key generation `core/data`
+
+## v4.0.0-beta.42 (2023-11-23)
+
+#### :rocket: New Feature
+
+* The `load` function now accepts the router context `core/router`
+
+## v4.0.0-beta.41 (2023-11-21)
+
+#### :boom: Breaking Change
+
+* Removed generation of init.js `iStaticPage`
+
+#### :rocket: New Feature
+
+* Now styles are always inlined in html `iStaticPage`
+
+#### :bug: Bug Fix
+
+* Now the `nonce` attribute is correctly set in inline mode `iStaticPage`
+
+#### :house: Internal
+
+* Fixed typings in `core/data`
+* Moved to yarn@4
+* Migrated to node@20
+* Updated actions in CI
+
+## v4.0.0-beta.40 (2023-11-17)
+
+#### :boom: Breaking Change
+
+* Moved `dropdown` block from `helpers` to `bodyFooter` block `components/form/b-select`
+* Moved `limit` block from `helpers` to `bodyFooter` block `components/form/b-textarea`
+* Moved `message` block from `helpers` to `bodyFooter` block `components/super/i-block`
+
+#### :rocket: New Feature
+
+* Added new layout blocks - `bodyHeader` and `bodyFooter` `components/super/i-block`
+
 ## v4.0.0-beta.39 (2023-11-16)
 
 #### :house: Internal

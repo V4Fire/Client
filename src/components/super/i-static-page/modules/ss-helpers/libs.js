@@ -24,8 +24,7 @@ const
 
 const
 	fs = require('fs-extra'),
-	path = require('upath'),
-	delay = require('delay');
+	path = require('upath');
 
 const
 	genHash = include('build/hash');
@@ -148,7 +147,7 @@ exports.initLibs = initLibs;
  * @param {Object<string>} [assets] - a dictionary with static page assets
  * @returns {Promise<Array<(InitializedLib|InitializedStyleLib|InitializedLink)>>}
  */
-async function initLibs(libs, assets) {
+function initLibs(libs, assets) {
 	const
 		res = [];
 
@@ -185,8 +184,8 @@ async function initLibs(libs, assets) {
 		}
 
 		if (p.inline) {
-			while (!fs.existsSync(p.src)) {
-				await delay((1).second());
+			if (!fs.existsSync(p.src)) {
+				throw new Error(`The asset for inline ${p} cannot be found`);
 			}
 
 		} else {

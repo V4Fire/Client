@@ -57,7 +57,7 @@ let
 
 /**
  * Builds a project graph
- * @returns {Promise<{entry, components, processes, dependencies}>}
+ * @returns {Promise<{entry, entryDeps, components, processes, dependencies}>}
  */
 async function buildProjectGraph() {
 	const buildFinished = tracer.measure('Build graph', {cat: ['graph']});
@@ -129,8 +129,18 @@ async function buildProjectGraph() {
 
 	const res = {
 		entry,
+
+		entryDeps: $C(graph.entry).reduce((res, deps) => {
+			deps.forEach((el, key) => {
+				res.set(key, el);
+			});
+
+			return res;
+		}, new Map()),
+
 		components,
 		processes,
+
 		dependencies: $C(graph.dependencies).map((el, key) => [...el, key])
 	};
 

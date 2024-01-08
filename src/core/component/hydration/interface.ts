@@ -6,7 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export type Store = Dictionary<HydratedData>;
+export interface Store {
+	data: Dictionary<HydratedValue>;
+	store: Dictionary<Dictionary<string>>;
+}
 
 export type HydratedValue =
 	JSONLikeValue |

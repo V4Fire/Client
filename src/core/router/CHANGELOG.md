@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.42 (2023-11-23)
+
+#### :rocket: New Feature
+
+* The `load` function now accepts the router context
+
 ## v4.0.0-beta.13 (2023-08-24)
 
 #### :bug: Bug Fix

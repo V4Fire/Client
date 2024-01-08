@@ -133,7 +133,11 @@ class bList extends iListProps implements iVisible, iWidth, iActiveItems {
 	/**
 	 * Internal API for working with component values
 	 */
-	@system((o) => new Values(o))
+	@system({
+		unique: true,
+		init: (o) => new Values(o)
+	})
+
 	protected values!: Values;
 
 	/** {@link iActiveItems.activeElement} */

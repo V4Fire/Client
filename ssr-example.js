@@ -43,7 +43,7 @@ require('./dist/ssr/p-v4-components-demo')
 		}
 	})
 
-	.then((res) => {
-		require('node:fs').writeFileSync('ssr-example.html', res);
+	.then(({content, styles}) => {
+		require('node:fs').writeFileSync('ssr-example.html', `<style>${styles}</style>${content}`);
 	});
 

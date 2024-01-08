@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { LogLevel } from 'core/log';
 import type { UnsafeComponentInterface } from 'core/component';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -34,11 +33,6 @@ export interface CallChild<CTX extends iBlockEvent = iBlockEvent> {
 export type Stage =
 	string |
 	number;
-
-export interface ComponentEvent<E extends string = string> {
-	event: E;
-	logLevel?: LogLevel;
-}
 
 export interface InitLoadOptions {
 	/**

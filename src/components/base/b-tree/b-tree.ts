@@ -47,7 +47,9 @@ interface bTree extends Trait<typeof iActiveItems>, Trait<typeof Foldable> {}
 
 @component({
 	functional: {
-		functional: true
+		wait: undefined,
+		dataProvider: undefined,
+		vModel: undefined
 	}
 })
 
@@ -142,7 +144,11 @@ class bTree extends iTreeProps implements iActiveItems, Foldable {
 	/**
 	 * Internal API for working with component values
 	 */
-	@system<bTree>((o) => new Values(o))
+	@system<bTree>({
+		unique: true,
+		init: (o) => new Values(o)
+	})
+
 	protected values!: Values;
 
 	/**

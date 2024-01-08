@@ -15,7 +15,6 @@ const
 
 const
 	fs = require('fs-extra'),
-	delay = require('delay'),
 	buble = require('buble');
 
 const
@@ -28,15 +27,14 @@ const
 	{needInline} = include('src/components/super/i-static-page/modules/ss-helpers/helpers');
 
 const
-	nonce = csp.nonce(),
-	nonceAttr = {toString: () => nonce, escape: false, interpolate: false};
+	nonce = csp.nonce();
 
 const defAttrs = {
 	nonce: nonce ? [`window['${csp.nonceStore()}']`] : undefined
 };
 
 const defInlineAttrs = {
-	nonce: nonce != null && csp.postProcessor ? nonceAttr : undefined
+	nonce: (nonce != null && csp.postProcessor) ? nonce : undefined
 };
 
 exports.getScriptDecl = getScriptDecl;
@@ -101,7 +99,7 @@ function getScriptDecl(lib, body = '') {
 		const attrsObj = {
 			src: lib.src,
 			staticAttrs: lib.staticAttrs,
-			...defAttrs,
+			...(createElement || lib.js) ? defAttrs : defInlineAttrs,
 			...lib.attrs
 		};
 
@@ -121,9 +119,9 @@ function getScriptDecl(lib, body = '') {
 	}
 
 	if (isInline && !body) {
-		return (async () => {
-			while (!fs.existsSync(lib.src)) {
-				await delay(500);
+		return (() => {
+			if (!fs.existsSync(lib.src)) {
+				throw new Error(`The asset ${lib.src} cannot be found`);
 			}
 
 			const
@@ -245,9 +243,9 @@ function getStyleDecl(lib, body = '') {
 		attrs = normalizeAttrs(attrsObj, lib.js);
 
 	if (isInline && !body) {
-		return (async () => {
-			while (!fs.existsSync(lib.src)) {
-				await delay(500);
+		return (() => {
+			if (!fs.existsSync(lib.src)) {
+				throw new Error(`The asset ${lib.src} cannot be found`);
 			}
 
 			if (lib.js) {
@@ -327,7 +325,7 @@ function getLinkDecl(link) {
 	const attrs = normalizeAttrs({
 		href: link.src,
 		staticAttrs: link.staticAttrs,
-		...defAttrs,
+		...link.js ? defAttrs : defInlineAttrs,
 		...link.attrs
 	}, link.js);
 

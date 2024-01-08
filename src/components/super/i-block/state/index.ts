@@ -48,10 +48,17 @@ export default abstract class iBlockState extends iBlockMods {
 	isReadyOnce: boolean = false;
 
 	/**
+	 * Checks whether the hydrated data can be used
+	 */
+	get canUseHydratedData(): boolean {
+		return HYDRATION && hydrationStore.has(this.componentId);
+	}
+
+	/**
 	 * True if the component is in the context of SSR or hydration
 	 */
 	get isRelatedToSSR(): boolean {
-		return SSR || HYDRATION && hydrationStore.has(this.componentId);
+		return SSR || this.canUseHydratedData;
 	}
 
 	/**
