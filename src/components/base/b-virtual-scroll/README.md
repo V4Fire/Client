@@ -29,13 +29,13 @@
   - [Slots](#slots)
   - [API](#api)
     - [Props](#props)
-      - [`shouldPerformDataRender`](#shouldperformdatarender)
-      - [`shouldPerformDataRequest`](#shouldperformdatarequest)
-      - [`shouldStopRequestingData`](#shouldstoprequestingdata)
-      - [`chunkSize`](#chunksize)
-      - [`requestQuery`](#requestquery)
-      - [`itemsFactory`](#itemsfactory)
-      - [`itemsProcessors`](#itemsprocessors)
+      - [\[shouldPerformDataRender = `(state: VirtualScrollState) => state.isInitialRender || state.remainingItems === 0`\]](#shouldperformdatarender--state-virtualscrollstate--stateisinitialrender--stateremainingitems--0)
+      - [\[shouldPerformDataRequest = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`\]](#shouldperformdatarequest--state-virtualscrollstate--statelastloadeddatalength--0)
+      - [\[shouldStopRequestingData = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`\]](#shouldstoprequestingdata--state-virtualscrollstate--statelastloadeddatalength--0)
+      - [\[chunkSize = `10`\]](#chunksize--10)
+      - [\[requestQuery\]](#requestquery)
+      - [\[itemsFactory\]](#itemsfactory)
+      - [\[itemsProcessors = `{}`\]](#itemsprocessors--)
       - [`tombstoneCount`](#tombstonecount)
     - [Methods](#methods)
       - [getNextDataSlice](#getnextdataslice)
@@ -43,7 +43,7 @@
       - [initLoadNext](#initloadnext)
     - [Other Properties](#other-properties)
   - [Migration from `b-virtual-scroll` version 3.x.x](#migration-from-b-virtual-scroll-version-3xx)
-    - [API](#api-1)
+    - [API Migration](#api-migration)
   - [What's Next](#whats-next)
     - [Streaming Data Rendering](#streaming-data-rendering)
     - [Alternative Approach to Component Rendering](#alternative-approach-to-component-rendering)
@@ -862,10 +862,7 @@ This slot can be useful when implementing lazy content rendering on button click
 
 ### Props
 
-#### `shouldPerformDataRender`
-
-- Type: `Function`
-- Default: `(state: VirtualScrollState) => state.isInitialRender || state.remainingItems === 0`
+#### [shouldPerformDataRender = `(state: VirtualScrollState) => state.isInitialRender || state.remainingItems === 0`]
 
 This function is called in the `bVirtualScroll.renderGuard` after other checks are completed.
 It receives the component state as input and determines whether the component should render the next chunk of components.
@@ -879,10 +876,7 @@ const shouldPerformDataRender = (state: VirtualScrollState): boolean => {
 };
 ```
 
-#### `shouldPerformDataRequest`
-
-- Type: `Function`
-- Default: `(state: VirtualScrollState) => state.lastLoadedData.length > 0`
+#### [shouldPerformDataRequest = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]
 
 The `shouldPerformDataRequest` property of `bVirtualScroll` allows you to control whether the component should request additional data based on the component state.
 This function allows the component to understand whether the data loading lifecycle is complete or not.
@@ -903,10 +897,7 @@ You can adjust the condition based on your specific requirements.
 By implementing the `shouldPerformDataRequest` function, you have control over when the component should request additional data.
 This allows you to customize the data loading behavior based on the state of the component.
 
-#### `shouldStopRequestingData`
-
-- Type: `Function`
-- Default: `(state: VirtualScrollState) => state.lastLoadedData.length > 0`
+#### [shouldStopRequestingData = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]
 
 This function is called on each data loading cycle. It determines whether the component should stop requesting new data.
 The function should return a boolean value: `true` to stop requesting data, or `false` to continue requesting data.
@@ -927,10 +918,7 @@ This condition suggests that all available items have been loaded, and there is 
 You can customize the `shouldStopRequestingData` function to fit your specific scenario.
 By implementing this function, you have control over when the component should stop requesting new data, based on the comparison between the total number of items and the current number of loaded items.
 
-#### `chunkSize`
-
-- Type: `number | Function`
-- Default: `10`
+#### [chunkSize = `10`]
 
 The amount of data required to perform one cycle of item rendering. This prop is used by the `bVirtualScroll` component to determine the number of components to render in each cycle.
 It can be either a fixed number or a function that returns the number dynamically based on the component state.
@@ -959,7 +947,7 @@ In Example 2, the chunk size is dynamically determined based on the component st
 
 By using a function for `chunkSize`, you have the flexibility to adjust the rendering behavior based on the state of the component and other factors.
 
-#### `requestQuery`
+#### [requestQuery]
 
 - Type: `Function`
 - Default: `undefined`
@@ -981,10 +969,7 @@ const requestQuery = (state: VirtualScrollState): Dictionary<Dictionary> => {
 };
 ```
 
-#### `itemsFactory`
-
-- Type: `Function`
-- Default: See description
+#### [itemsFactory]
 
 A factory function used to generate an array of `ComponentItem` objects representing the components to be rendered.
 This function is called during the rendering process and receives the component state and context as arguments. It should return an array of `ComponentItem` objects.
@@ -1015,10 +1000,7 @@ const itemsFactory = (state: VirtualScrollState): ComponentItem[] => {
 };
 ```
 
-#### `itemsProcessors`
-
-- Type: `Function | Record<string, Function> | Function[]`
-- Default: `{}`
+#### [itemsProcessors = `{}`]
 
 This prop is a middleware function that is called after `b-virtual-scroll` has compiled the abstract representation of components, and before it passes this representation to the rendering engine.
 
@@ -1054,9 +1036,12 @@ The `bVirtualScroll` class extends `iData` and includes additional properties re
 
 ## Migration from `b-virtual-scroll` version 3.x.x
 
-### API
+### API Migration
 
 - Prop `renderGap` deleted -> use `shouldPerformDataRender`;
+- Prop `shouldRequestMore` deleted -> use `shouldPerformDataRequest`;
+- Prop `shouldStopRequest` deleted -> use `shouldStopRequestingData`;
+- Prop `getData` was removed;
 - Deprecated props `option-like` deleted -> use `iItems` props;
 - Method renamed `getDataStateSnapshot` -> `getVirtualScrollState`;
 - Method `reloadLast` -> `initLoadNext`;
@@ -1076,7 +1061,7 @@ The `bVirtualScroll` class extends `iData` and includes additional properties re
 
 - Interface `DataState` -> `VirtualScrollState`:
   - `DataState.currentPage` -> `VirtualScrollState.loadPage`;
-  - `DataState.lastLoadedChunk.raw` -> `VirtualScrollState.lastLoadedRaw`;
+  - `DataState.lastLoadedChunk.raw` -> `VirtualScrollState.lastLoadedRawData`;
   - etc.
 
 ## What's Next

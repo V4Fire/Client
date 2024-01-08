@@ -93,8 +93,8 @@ export interface VirtualScrollState<DATA = object, RAW_DATA = unknown> {
 	 * then {@link VirtualScrollState.isLastRender} will always be `undefined`.
 	 *
 	 * To achieve correct `isLastRender` behavior, it is necessary to implement a request
-	 * stopping strategy in such a way that the last render occurs after all loading has
-	 * been completed. For example, this can be implemented if your backend pagination
+	 * stopping strategy in such a way that **the last render occurs after all loading has
+	 * been completed**. For example, this can be implemented if your backend pagination
 	 * response has a property indicating the total number of items that can be loaded,
 	 * this property can be used for comparison:
 	 *
