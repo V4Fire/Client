@@ -36,10 +36,10 @@
       - [`requestQuery`](#requestquery)
       - [`itemsFactory`](#itemsfactory)
       - [`itemsProcessors`](#itemsprocessors)
-      - [`tombstoneCount`](#tombstoneCount)
+      - [`tombstoneCount`](#tombstonecount)
     - [Methods](#methods)
       - [getNextDataSlice](#getnextdataslice)
-      - [getVirtualScrollState](#getVirtualScrollState)
+      - [getVirtualScrollState](#getvirtualscrollstate)
       - [initLoadNext](#initloadnext)
     - [Other Properties](#other-properties)
   - [Migration from `b-virtual-scroll` version 3.x.x](#migration-from-b-virtual-scroll-version-3xx)
@@ -56,14 +56,18 @@
 # components/base/b-virtual-scroll
 
 The `b-virtual-scroll` component is designed for rendering a large array of various data.
+It uses a special approach that renders chunks of components while avoiding changes to the parent component's state.
+This allows for optimizing the rendering of large lists of components, making it more efficient.
+If you have ever tried to render 100 components using v-for, you may have noticed that the interface starts to lag.
+The `b-virtual-scroll` component aims to eliminate this lag by rendering components in portions, providing a better alternative to using v-for for such cases.
 
 ## Synopsis
 
-* The component extends [[iData]].
+- The component extends [[iData]].
 
-* The component implements [[iItems]] traits.
+- The component implements [[iItems]] traits.
 
-* By default, the component's root tag is set to `<div>`.
+- By default, the component's root tag is set to `<div>`.
 
 ## Modifiers
 
@@ -92,70 +96,74 @@ Also, you can see the implemented traits or the parent component.
 
 ## Usage
 
+The component offers various usage options: it can load and render data on scroll, on click, or even load a large volume of data at once but render it in portions. Would you like to implement a global rendering process for components in order to integrate a specific element (e.g., an advertisement) after each component? No problem - the component provides processor functions that enable this functionality. Do you want to implement your own strategy for "when to load" and "when to render"? The component also offers special functions that allow for this customization.
+
+Below, we will explore a few basic usage scenarios and delve into the component's API in greater detail.
+
 ### How to Implement Simple Rendering?
 
 To implement simple rendering, you need to follow several steps:
 
-1. Set up a data provider for the component. For example, we'll use a provider named `Provider` that returns data in the format `{data: object[]}`, where the number of objects depends on the request parameter `count`.
+1. Set up a data provider for the component. For example, we'll use a provider named `Provider` that returns data in the format `{data: object[]}`, where the number of objects depends on the request parameter `count`:
 
-```
-< b-virtual-scroll &
-  :dataProvider = 'Provider'
-.
-```
+   ```snakeskin
+   < b-virtual-scroll &
+     :dataProvider = 'Provider'
+   .
+   ```
 
-> It's important to note that `b-virtual-scroll` expects data in this specific format (`{data: object[]}`). If your provider returns data in a different format, you can use processors in either the provider or the component using the `convertDataToDb` prop.
+   > It's important to note that `b-virtual-scroll` expects data in this specific format (`{data: object[]}`). If your provider returns data in a different format, you can use processors in either the provider or the component using the `convertDataToDb` prop.
 
-2. Let's say we want to load and render 12 components at a time. To achieve this, you need to specify the `request` and `chunkSize` props for the `b-virtual-scroll` component. The `request` prop defines the request parameters (standard behavior of `iData`), and `chunkSize` specifies the number of items to render in each rendering cycle.
+2. Let's say we want to load and render 12 components at a time. To achieve this, you need to specify the `request` and `chunkSize` props for the `b-virtual-scroll` component. The `request` prop defines the request parameters (standard behavior of `iData`), and `chunkSize` specifies the number of items to render in each rendering cycle:
 
-```
-< b-virtual-scroll &
-  :dataProvider = 'Provider' |
-  :request = {get: {count: 12}} |
-  :chunkSize = 12
-.
-```
+   ```snakeskin
+   < b-virtual-scroll &
+     :dataProvider = 'Provider' |
+     :request = {get: {count: 12}} |
+     :chunkSize = 12
+   .
+   ```
 
-3. To avoid loading the same data repeatedly and load different data for each subsequent request, you need to pass the `page` request parameter to the `Provider`. This parameter indicates the page number of the data to be loaded.
+3. To avoid loading the same data repeatedly and load different data for each subsequent request, you need to pass the `page` request parameter to the `Provider`. This parameter indicates the page number of the data to be loaded:
 
-To achieve this, use the `requestQuery` prop in the `b-virtual-scroll` component. `requestQuery` is a function prop that `b-virtual-scroll` calls, passing its own state as an argument, before making a request. You can return the appropriate `page` value based on the component's state. The difference between `request` and `requestQuery` is that changes to the latter won't cause the component to reinitialize. These two props are merged to form the final request parameters passed to the provider.
+   To achieve this, use the `requestQuery` prop in the `b-virtual-scroll` component. `requestQuery` is a function prop that `b-virtual-scroll` calls, passing its own state as an argument, before making a request. You can return the appropriate `page` value based on the component's state. The difference between `request` and `requestQuery` is that changes to the latter won't cause the component to reinitialize. These two props are merged to form the final request parameters passed to the provider.
 
-```
-< b-virtual-scroll &
-  :dataProvider = 'Provider' |
-  :request = {get: {count: 12}} |
-  :requestQuery = (state) => ({get: {page: state.loadPage}}) |
-  :chunkSize = 12
-.
-```
+   ```snakeskin
+   < b-virtual-scroll &
+     :dataProvider = 'Provider' |
+     :request = {get: {count: 12}} |
+     :requestQuery = (state) => ({get: {page: state.loadPage}}) |
+     :chunkSize = 12
+   .
+   ```
 
-In the example above, the `page` parameter is extracted from the component's state, specifically `loadPage`, which increments after each successful data load.
+   In the example above, the `page` parameter is extracted from the component's state, specifically `loadPage`, which increments after each successful data load.
 
-4. Now that you have set up data loading with pagination, you need to specify what `b-virtual-scroll` will render.
+4. Now that you have set up data loading with pagination, you need to specify what `b-virtual-scroll` will render:
 
-To control what `b-virtual-scroll` renders, you can use the following props:
+   To control what `b-virtual-scroll` renders, you can use the following props:
 
-- `item`: The name of the component to be rendered. It can also be a function that returns the component's name.
+   - `item`: The name of the component to be rendered. It can also be a function that returns the component's name.
 
-- `itemProps`: The props for the component. Typically, this is a function that returns the props for each item based on the loaded data.
+   - `itemProps`: The props for the component. Typically, this is a function that returns the props for each item based on the loaded data.
 
-- `itemKey`: The uniq id of the component.
+   - `itemKey`: The uniq id of the component.
 
-Rendering occurs after data is loaded.
+   Rendering occurs after data is loaded.
 
-```
-< b-virtual-scroll &
-  :dataProvider = 'Provider' |
-  :request = {get: {count: 12}} |
-  :requestQuery = (state) => ({get: {page: state.loadPage}}) |
-  :chunkSize = 12 |
-  :item = 'b-dummy' |
-  :itemKey = (el) => el.uuid |
-  :itemProps = (el) => ({name: el.name, type: el.type})
-.
-```
+   ```snakeskin
+   < b-virtual-scroll &
+     :dataProvider = 'Provider' |
+     :request = {get: {count: 12}} |
+     :requestQuery = (state) => ({get: {page: state.loadPage}}) |
+     :chunkSize = 12 |
+     :item = 'b-dummy' |
+     :itemKey = (el) => el.uuid |
+     :itemProps = (el) => ({name: el.name, type: el.type})
+   .
+   ```
 
-What is `el` you can inquire about in the `itemKey` and `itemProps` functions? `el` is one of the objects in the `data` array loaded by the `dataProvider`. `b-virtual-scroll` takes the array of loaded data and calls these functions for each of the objects in this array, allowing you to transform data into components that are suitable for rendering in the `b-virtual-scroll` component.
+   What is `el` you can inquire about in the `itemKey` and `itemProps` functions? `el` is one of the objects in the `data` array loaded by the `dataProvider`. `b-virtual-scroll` takes the array of loaded data and calls these functions for each of the objects in this array, allowing you to transform data into components that are suitable for rendering in the `b-virtual-scroll` component.
 
 This setup will display a component on the page that loads and renders 12 items at once. When scrolling down, a new request with a different `page` value will be made, and after a successful load, new components will be rendered.
 
@@ -163,7 +171,7 @@ However, if your component takes a long time to load data (e.g., 1 second), you 
 
 Let's add a `loader` slot to our component to provide a better user experience during loading:
 
-```
+```snakeskin
 < b-virtual-scroll &
   :dataProvider = 'Provider' |
   :request = {get: {count: 12}} |
@@ -187,59 +195,59 @@ To implement this approach, follow these steps:
 
 1. Disable scroll observers using the `disableObserver` prop by setting it to `true`.
 
-```
-< b-virtual-scroll &
-  :dataProvider = 'Provider' |
-  :disableObserver = true |
-  ...
-.
-```
+   ```snakeskin
+   < b-virtual-scroll &
+     :dataProvider = 'Provider' |
+     :disableObserver = true |
+     ...
+   .
+   ```
 
 2. Set the `shouldPerformDataRender` prop to a function that always returns `true`. This function will be called for each attempt to render data. We will discuss this function in more detail in the following sections.
 
-```
-< b-virtual-scroll &
-  :dataProvider = 'Provider' |
-  :disableObserver = true |
-  :shouldPerformDataRender = () => true |
-  ...
-.
-```
+   ```snakeskin
+   < b-virtual-scroll &
+     :dataProvider = 'Provider' |
+     :disableObserver = true |
+     :shouldPerformDataRender = () => true |
+     ...
+   .
+   ```
 
 3. Gain access to the methods of `b-virtual-scroll` using the standard `ref` mechanism.
 
-```
-< b-virtual-scroll &
-  ref = scroll |
-  :dataProvider = 'Provider' |
-  :disableObserver = true |
-  :shouldPerformDataRender = () => true |
-  ...
-.
-```
+   ```snakeskin
+   < b-virtual-scroll &
+     ref = scroll |
+     :dataProvider = 'Provider' |
+     :disableObserver = true |
+     :shouldPerformDataRender = () => true |
+     ...
+   .
+   ```
 
-After these manipulations, `b-virtual-scroll` will no longer load data on scroll, and data loading will only occur when the `initLoadNext` method is called. This method will be used to load and render data on a button click event.
+   After these manipulations, `b-virtual-scroll` will no longer load data on scroll, and data loading will only occur when the `initLoadNext` method is called. This method will be used to load and render data on a button click event.
 
 4. Now, you need to add a button that triggers the `initLoadNext` method when clicked.
 
-```
-< b-virtual-scroll &
-  ref = scroll |
-  :dataProvider = 'Provider' |
-  :disableObserver = true |
-  :shouldPerformDataRender = () => true |
-  ...
-.
+   ```snakeskin
+   < b-virtual-scroll &
+     ref = scroll |
+     :dataProvider = 'Provider' |
+     :disableObserver = true |
+     :shouldPerformDataRender = () => true |
+     ...
+   .
 
-< b-button &
-  @click = $refs.scroll.initLoadNext
-.
-  Load more data
-```
+   < b-button &
+     @click = $refs.scroll.initLoadNext
+   .
+     Load more data
+   ```
 
 Now, when you click the button, data will be loaded and rendered. However, you may notice that the data loading button doesn't disappear when all data is loaded, during data loading, or in case of an error. Fortunately, `b-virtual-scroll` provides a slot for displaying such a button, and it handles the logic of hiding it during loading, errors, and so on. Clients don't need to implement additional logic; you just need to move your button to the appropriate slot, specifically the `renderNext` slot.
 
-```
+```snakeskin
 < b-virtual-scroll &
   ref = scroll |
   :dataProvider = 'Provider' |
@@ -281,10 +289,11 @@ If you have filters on the page and a data request that should be rendered using
 
 Let's consider an example:
 
-__p-page.ts__
+**p-page.ts**
+
 ```typescript
 @component()
-class pPage extends extends iDynamicPage {
+class pPage extends iDynamicPage {
   @field()
   filterUuid: string;
 
@@ -294,8 +303,9 @@ class pPage extends extends iDynamicPage {
 }
 ```
 
-__p-page.ss__
-```
+**p-page.ss**
+
+```snakeskin
 < b-virtual-scroll &
   :dataProvider = 'Provider' |
   :request = {get: {count: 12, filter: filterUuid}} |
@@ -314,7 +324,7 @@ In addition to the `initLoadNext` method, `b-virtual-scroll` provides a `retry` 
 
 This makes it straightforward to implement a retry mechanism for a failed request:
 
-```
+```snakeskin
 < b-virtual-scroll &
   :dataProvider = 'Provider' |
   :request = {get: {count: 12, filter: filterUuid}} |
@@ -331,10 +341,11 @@ The `b-virtual-scroll` component is quite substantial and has its own internal s
 
 To retrieve the component's state, you can use a special method called `getVirtualScrollState`:
 
-__p-page.ts__
+**p-page.ts**
+
 ```typescript
 @component()
-class pPage extends extends iDynamicPage {
+class pPage extends iDynamicPage {
   protected override readonly $refs!: {
     scroll: bVirtualScroll;
   };
@@ -360,7 +371,7 @@ interface VirtualScrollDb {
 The `data` array should contain the data items used to render the components.
 The `dbConverter` prop allows you to convert data into a format suitable for `b-virtual-scroll` after data has been loaded.
 
-```
+```snakeskin
 < b-virtual-scroll &
   ...
   :dbConverter = (data) => ({data: data.nestedData.data})
@@ -514,7 +525,7 @@ As you can see in the example above, we access the last chunk of loaded data and
 
 ### `itemsProcessors` and Global Component Processing
 
-This prop is a middleware function that is called after `b-virtual-scroll` has compiled the abstract representation of components and before it passes this representation to the rendering engine. Each function in the chain receives the result of the previous function, with the first function in the chain receiving the result of the `itemsFactory` call. The function should return an abstract representation of components that conforms to the `ComponentItem[]` interface.
+This prop is a middleware function that is called after `b-virtual-scroll` has compiled the abstract representation of components, and before it passes this representation to the rendering engine. Each function in the chain receives the result of the previous function, with the first function in the chain receiving the result of the `itemsFactory` call. The function should return an abstract representation of components that conforms to the `ComponentItem[]` interface.
 
 Here is an example to illustrate when `itemsProcessors` is called:
 
@@ -524,12 +535,14 @@ With this prop, you can implement various scenarios, such as changing one compon
 
 Here's an example scenario where we need to change the name of one component to another:
 
-__@v4fire/client/components/base/b-virtual-scroll/const.ts__
+**@v4fire/client/components/base/b-virtual-scroll/const.ts**
+
 ```typescript
 export const itemsProcessors: ItemsProcessors = {};
 ```
 
-__your-project/components/base/b-virtual-scroll/const.ts__
+**your-project/components/base/b-virtual-scroll/const.ts**
+
 ```typescript
 import { itemsProcessors } from '@v4fire/client/components/base/b-virtual-scroll/const.ts'
 
@@ -562,55 +575,55 @@ Let's also look at another common scenario:
 
 **Solution**: Instead of manually defining the `itemsFactory` function in multiple places to call a pre-prepared function, you can:
 
-1. Establish an agreement with clients to mark the components before or after which advertising should be displayed using meta information of the component's abstract representation (`ComponentItem`), which will be passed from the client to the component via the `itemMeta` prop.
+   1. Establish an agreement with clients to mark the components before or after which advertising should be displayed using meta information of the component's abstract representation (`ComponentItem`), which will be passed from the client to the component via the `itemMeta` prop:
 
-  ```
-    < b-virtual-scroll &
-      // ...
-      :itemMeta = (data) => ({ads: data.component === 'b-card' ? 'after' : false})
-    .
-  ```
+      ```snakeskin
+       < b-virtual-scroll &
+         // ...
+         :itemMeta = (data) => ({ads: data.component === 'b-card' ? 'after' : false})
+       .
+      ```
 
-2. Implement a global `itemsProcessor` that will add advertisements based on the meta-information.
+   2. Implement a global `itemsProcessor` that will add advertisements based on the meta-information.
 
-   ```typescript
-   import { itemsProcessors } from '@v4fire/client/components/base/b-virtual-scroll/const.ts'
+      ```typescript
+      import { itemsProcessors } from '@v4fire/client/components/base/b-virtual-scroll/const.ts'
 
-   export const itemsProcessors: ItemsProcessors = {
-     ...itemsProcessors,
+      export const itemsProcessors: ItemsProcessors = {
+        ...itemsProcessors,
 
-     addAds: (items: ComponentItem[]) => {
-       const newItems: ComponentItem[] = [];
+        addAds: (items: ComponentItem[]) => {
+          const newItems: ComponentItem[] = [];
 
-       const adsComponent = {
-         item: 'b-ads',
-         key: current.uuid + 'ads',
-         type: 'item',
-         children: [],
-         props: {
-           // ...
-         }
-       }
+          const adsComponent = {
+            item: 'b-ads',
+            key: current.uuid + 'ads',
+            type: 'item',
+            children: [],
+            props: {
+              // ...
+            }
+          }
 
-       return items.map((item) => {
-         const itemsToPush = [];
-         itemsToPush.push(item);
+          return items.map((item) => {
+            const itemsToPush = [];
+            itemsToPush.push(item);
 
-         if (item.meta.ads === 'after') {
-           itemsToPush.push(adsComponent);
-         }
+            if (item.meta.ads === 'after') {
+              itemsToPush.push(adsComponent);
+            }
 
-         if (item.meta.ads === 'before') {
-           itemsToPush.unshift(adsComponent);
-         }
+            if (item.meta.ads === 'before') {
+              itemsToPush.unshift(adsComponent);
+            }
 
-         newItems.push(...itemsToPush);
-       });
+            newItems.push(...itemsToPush);
+          });
 
-       return newItems;
-     }
-   };
-   ```
+          return newItems;
+        }
+      };
+      ```
 
 After these steps, a neighboring advertising component will be added to all components with the appropriate `meta.ads` value.
 
@@ -751,13 +764,13 @@ There may also be situations where you need to modify the `renderGuard`. Current
 
   Yes, you can. `b-virtual-scroll` provides two options:
 
-  1. Specify the `chunkSize` prop as a function that returns a number depending on something. Let’s say we want to render 6 elements at the first render, 12 at the second, and 18 in subsequent ones:
+    1. Specify the `chunkSize` prop as a function that returns a number depending on something. Let’s say we want to render 6 elements at the first render, 12 at the second, and 18 in subsequent ones:
 
-    ```typescript
-    const chunkSize = (state: VirtualScrollState) => [6, 12, 18][state.renderPage] ?? 18
-    ```
+        ```typescript
+        const chunkSize = (state: VirtualScrollState) => [6, 12, 18][state.renderPage] ?? 18
+        ```
 
-  2. Use the `itemsFactory` prop and return any number of elements from this function.
+    2. Use the `itemsFactory` prop and return any number of elements from this function.
 
 - Suppose I want to load 1000 data items once and not make any more requests. How can I achieve this?
 
@@ -789,61 +802,61 @@ There may also be situations where you need to modify the `renderGuard`. Current
 
 The component supports several slots for customization:
 
-1. The `loader` slot allows you to display different content (usually skeletons) while the data is being loaded.
+1. The `loader` slot allows you to display different content (usually skeletons) while the data is being loaded:
 
-```
-< b-virtual-scroll
-  < template #loader
-    < .&__loader
-      Data loading in progress
-```
+   ```snakeskin
+   < b-virtual-scroll
+     < template #loader
+       < .&__loader
+         Data loading in progress
+   ```
 
-2. The `tombstone` slot allows you to display different content (usually skeletons) that will be repeated `tombstoneCount` times while the data is being loaded.
+2. The `tombstone` slot allows you to display different content (usually skeletons) that will be repeated `tombstoneCount` times while the data is being loaded:
 
-```
-< b-virtual-scroll :tombstoneCount = 3
-  < template #tombstone
-    < .&__skeleton
-      Skeleton
-```
+   ```snakeskin
+   < b-virtual-scroll :tombstoneCount = 3
+     < template #tombstone
+       < .&__skeleton
+         Skeleton
+   ```
 
-3. The `retry` slot allows you to display different content (usually a prompt to retry loading data) when there is an error in data loading.
+3. The `retry` slot allows you to display different content (usually a prompt to retry loading data) when there is an error in data loading:
 
-```
-< b-virtual-scroll
-  < template #retry
-    < .&__retry @click = initLoadNext
-      Retry last request
-```
+   ```snakeskin
+   < b-virtual-scroll
+     < template #retry
+       < .&__retry @click = initLoadNext
+         Retry last request
+   ```
 
-4. The `empty` slot allows you to display different content when the component receives an empty data set during the initial loading.
+4. The `empty` slot allows you to display different content when the component receives an empty data set during the initial loading:
 
-```
-< b-virtual-scroll
-  < template #empty
-    < .&__empty
-      No data
-```
+   ```snakeskin
+   < b-virtual-scroll
+     < template #empty
+       < .&__empty
+         No data
+   ```
 
 5. The `done` slot allows you to display different content when the component has finished loading and rendering all the data. The `done` slot
-will be displayed after `lifecycleDone` event is fired.
+will be displayed after `lifecycleDone` event is fired:
 
-```
-< b-virtual-scroll
-  < template #done
-    < .&__done
-      Load and render complete
-```
+   ```snakeskin
+   < b-virtual-scroll
+     < template #done
+       < .&__done
+         Load and render complete
+   ```
 
 6. The `renderNext` slot allows you to display different content when the component is not loading data and has not entered the lifecycle completion state.
-This slot can be useful when implementing lazy content rendering on button click.
+This slot can be useful when implementing lazy content rendering on button click:
 
-```
-< b-virtual-scroll
-  < template #renderNext
-    < .&__render-next
-      Render next
-```
+   ```snakeskin
+   < b-virtual-scroll
+     < template #renderNext
+       < .&__render-next
+         Render next
+   ```
 
 ## API
 
@@ -1007,7 +1020,7 @@ const itemsFactory = (state: VirtualScrollState): ComponentItem[] => {
 - Type: `Function | Record<string, Function> | Function[]`
 - Default: `{}`
 
-This prop is a middleware function that is called after `b-virtual-scroll` has compiled the abstract representation of components and before it passes this representation to the rendering engine.
+This prop is a middleware function that is called after `b-virtual-scroll` has compiled the abstract representation of components, and before it passes this representation to the rendering engine.
 
 This function can be useful in cases where you need to implement some processing of the abstract representation of components, such as mutating props or adding additional components.
 

@@ -113,7 +113,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Returns the internal component state.
+	 * Returns the internal component state
 	 * {@link VirtualScrollState}
 	 */
 	getVirtualScrollState(): Readonly<VirtualScrollState> {
@@ -121,7 +121,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Returns the next slice of data that should be rendered.
+	 * Returns the next slice of data that should be rendered
 	 *
 	 * @param state
 	 * @param chunkSize
@@ -187,7 +187,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
-	 * Merges all request parameters from the component fields `requestProp` and `requestQuery`.
+	 * Merges all request parameters from the component fields `requestProp` and `requestQuery`
 	 * {@link RequestParams}
 	 */
 	protected getRequestParams(): RequestParams {

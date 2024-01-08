@@ -17,10 +17,11 @@ import type {
 	ComponentDb,
 	RequestQueryFn,
 	ShouldPerform,
+	ItemsProcessors,
+
 	ComponentItemFactory,
 	ComponentItemType,
 	ComponentItem,
-	ItemsProcessors,
 	ComponentItemMeta
 
 } from 'components/base/b-virtual-scroll/interface';
@@ -31,10 +32,6 @@ import type { Observer } from 'components/base/b-virtual-scroll/modules/observer
 
 import iData, { component, prop } from 'components/super/i-data/i-data';
 
-/**
- * A class that is a part of the {@link bVirtualScroll}.
- * It contains the properties of the {@link bVirtualScroll} component.
- */
 @component()
 export default abstract class iVirtualScrollProps extends iData {
 	/** {@link iItems.item} */
