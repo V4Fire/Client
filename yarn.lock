@@ -5646,8 +5646,8 @@ __metadata:
   linkType: hard
 
 "@v4fire/core@github:V4Fire/Core#v4":
-  version: 4.0.0-alpha.13
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=8d79a4402a21bfff1df63467118d9b246e82a23e"
+  version: 4.0.0-alpha.16
+  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=44bf4e874e6c0e3a086cb37c6fc1d9c92d6ad563"
   dependencies:
     "@babel/core": "npm:7.17.5"
     "@babel/helper-module-transforms": "npm:7.16.7"
@@ -5791,7 +5791,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: bdb8cd0d3e956fedd1dcf29f84685f2345ecff96b4be8043bbd9f2a8056bcf79b7cb114433a8c1916f846cef70321433755614e7ba10ca64a642087a6f6aaac8
+  checksum: c9fcab75ac8ca0549beeca11e7ac7d2b2bd2107ec579c7a7482a4108d2de6252548bf1dd8743d3a8ea11816ebf82c6eb6a591fc44df7adca0abd490020590c73
   languageName: node
   linkType: hard
 
