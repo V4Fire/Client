@@ -89,9 +89,6 @@ export interface UnsafeIBlock<CTX extends iBlock = iBlock> extends UnsafeCompone
 	localEmitter: CTX['localEmitter'];
 
 	// @ts-ignore (access)
-	selfEmitter: CTX['selfEmitter'];
-
-	// @ts-ignore (access)
 	parentEmitter: CTX['parentEmitter'];
 
 	// @ts-ignore (access)
