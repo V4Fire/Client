@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.?.? (2024-01-??)
+
+#### :bug: Bug Fix
+
+* Fixed a bug of image loading state on SSR
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
