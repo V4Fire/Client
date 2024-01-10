@@ -295,12 +295,7 @@ export default abstract class iBlockProviders extends iBlockState {
 		const
 			that = this;
 
-		opts = {
-			...opts,
-			i18n: this.i18n.bind(this),
-			id: this.r.appId,
-			remoteState: this.remoteState
-		};
+		opts = this.prepareDataProviderInstanceOpts(opts);
 
 		let
 			dp: Provider;
@@ -339,6 +334,19 @@ export default abstract class iBlockProviders extends iBlockState {
 				delete requestCache[key];
 			});
 		}
+	}
+
+	/**
+	 * Prepares data provider instance options by merging them with default values
+	 * @param opts
+	 */
+	protected prepareDataProviderInstanceOpts(opts?: ProviderOptions): ProviderOptions {
+		return {
+			...opts,
+			i18n: this.i18n.bind(this),
+			id: this.r.appId,
+			remoteState: this.remoteState
+		};
 	}
 
 	/**
