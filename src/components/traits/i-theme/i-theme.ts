@@ -14,6 +14,7 @@
 import type iBlock from 'components/super/i-block/i-block';
 import type { ThemeManager } from 'components/super/i-static-page/modules/theme';
 import type { Theme } from 'components/traits/i-theme/interface';
+import * as assert from "assert";
 
 export * from 'components/traits/i-theme/interface';
 
@@ -27,7 +28,8 @@ export default abstract class iTheme {
 	 */
 	static changeTheme: AddSelf<iTheme['changeTheme'], iBlock & iTheme> =
 		(component, theme) => {
-			component.theme!.current = theme;
+			iTheme.assertThemeManagerIsNotNull(component.theme);
+			component.theme.current = theme;
 		};
 
 	/**
@@ -36,7 +38,20 @@ export default abstract class iTheme {
 	 * @see [[iTheme.changeTheme]]
 	 */
 	static hasTheme: AddSelf<iTheme['hasTheme'], iBlock & iTheme> =
-		(component, theme) => component.theme!.availableThemes.has(theme);
+		(component, theme) => {
+			iTheme.assertThemeManagerIsNotNull(component.theme);
+			return component.theme.availableThemes.has(theme);
+		}
+
+	/**
+	 * Asserts that themeManager is initialized
+	 * @param themeManager
+	 */
+		static assertThemeManagerIsNotNull(themeManager: CanUndef<ThemeManager>): asserts themeManager is ThemeManager {
+			if (themeManager == null) {
+				throw new Error("ThemeManager is not initialized");
+			}
+		}
 
 	/**
 	 * Checks if theme is available in application
