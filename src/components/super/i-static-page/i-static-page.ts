@@ -37,9 +37,9 @@ import iPage, { component, field, system, computed, hook, watch } from 'componen
 import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
+import iTheme from 'components/traits/i-theme/i-theme';
 
 import type { RootMod } from 'components/super/i-static-page/interface';
-import iTheme from 'components/traits/i-theme/i-theme';
 import { derive } from 'core/functools/trait';
 
 export * from 'components/super/i-page/i-page';

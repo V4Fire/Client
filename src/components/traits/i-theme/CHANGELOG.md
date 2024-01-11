@@ -9,7 +9,7 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## (2023-12-26) @sinelnikovweb
+## (2024-01-11) @sinelnikov-web
 
 #### :rocket: New Feature
 
