@@ -7,7 +7,8 @@
  */
 
 import { resolveAfterDOMLoaded } from 'core/event';
+import type { InitAppOptions } from 'core/init/interface';
 
-export default function initDom(semaphore: any): Promise<void> {
-	return resolveAfterDOMLoaded().then(() => semaphore('DOMReady'));
+export default function initDom(params: InitAppOptions): Promise<void> {
+	return resolveAfterDOMLoaded().then(() => params.semaphore('DOMReady'));
 }

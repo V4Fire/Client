@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
+import { createsAsyncSemaphore } from 'core/event';
 
 import remoteState, { set } from 'core/component/state';
 
@@ -26,7 +26,7 @@ import flags from 'core/init/flags';
 import initApp from 'core/init';
 import type { InitAppOptions } from 'core/init/interface';
 
-function createSemaphore() {
+export function createSemaphore() {
 	return createsAsyncSemaphore(createAppInitializer, ...flags);
 }
 

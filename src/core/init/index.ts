@@ -32,14 +32,12 @@ export default async function initApp(
 	opts: InitAppOptions
 ): Promise<App> {
 	initGlobalEnv(opts);
-	const {semaphore} = opts;
+	void initDom(opts);
+	void initState(opts);
+	void initABT(opts);
+	void prefetchInit(opts);
+	void hydratedRouteInit(opts);
 
-	void initDom(semaphore);
-	void initState(semaphore);
-	void initABT(semaphore);
-	void prefetchInit(semaphore);
-	void hydratedRouteInit(semaphore);
-
-	const createApp = await semaphore('');
+	const createApp = await opts.semaphore('');
 	return createApp(rootComponent, opts);
 }
