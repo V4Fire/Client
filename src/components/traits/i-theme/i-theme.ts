@@ -36,7 +36,7 @@ export default abstract class iTheme {
 	 * @see [[iTheme.changeTheme]]
 	 */
 	static hasTheme: AddSelf<iTheme['hasTheme'], iBlock & iTheme> =
-		(component, theme) => component.theme!.availableThemes.has(theme)
+		(component, theme) => component.theme!.availableThemes.has(theme);
 
 	/**
 	 * Checks if theme is available in application
