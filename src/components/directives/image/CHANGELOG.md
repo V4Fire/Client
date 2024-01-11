@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed a bug of image loading state on SSR
+* Fixed incorrect image state during hydration
 
 ## v4.0.0-alpha.1 (2022-12-14)
 

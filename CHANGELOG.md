@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a bug of image loading state on SSR
+* Fixed incorrect image state during hydration `components/directives/image`
 
 ## v4.0.0-beta.45 (2023-12-07)
 
