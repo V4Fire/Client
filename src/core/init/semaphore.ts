@@ -23,27 +23,23 @@ import App, {
 } from 'core/component';
 
 import flags from 'core/init/flags';
+import initApp from 'core/init';
 import type { InitAppOptions } from 'core/init/interface';
 
-const semaphore = createsAsyncSemaphore(createAppInitializer, ...flags);
-
-export default semaphore;
+function createSemaphore() {
+	return createsAsyncSemaphore(createAppInitializer, ...flags);
+}
 
 if (SSR) {
 	process.on('unhandledRejection', stderr);
 
 } else {
-	resolveAfterDOMLoaded()
-		.then(async () => {
-			const
-				targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
-				rootComponentName = targetToMount?.getAttribute('data-root-component');
+	const
+		targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
+		rootComponentName = targetToMount?.getAttribute('data-root-component'),
+		semaphore = createSemaphore();
 
-			const initApp = (await import('core/init')).default;
-			return initApp(rootComponentName, {targetToMount});
-		})
-
-		.catch(stderr);
+	initApp(rootComponentName, {targetToMount, semaphore}).catch(stderr);
 }
 
 function createAppInitializer() {

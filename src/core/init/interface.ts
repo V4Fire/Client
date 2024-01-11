@@ -45,4 +45,6 @@ export interface InitAppOptions extends OptionalState {
 	 * @param rootComponentParams
 	 */
 	setup?(rootComponentParams: ComponentOptions): void;
+
+	semaphore?: any;
 }

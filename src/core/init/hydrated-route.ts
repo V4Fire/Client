@@ -8,14 +8,15 @@
 
 import routes from 'routes';
 import { getRoute, compileStaticRoutes } from 'core/router';
+import type { InitAppOptions } from 'core/init/interface';
 
 import { set } from 'core/component/client-state';
-import semaphore from 'core/init/semaphore';
 
 /**
  * Initializes the initial route of the application
+ * @param params
  */
-export default async function init(): Promise<void> {
+export default async function init(params: InitAppOptions): Promise<void> {
 	try {
 		if (HYDRATION) {
 			const
@@ -40,6 +41,6 @@ export default async function init(): Promise<void> {
 		}
 
 	} finally {
-		void semaphore('hydratedRoute');
+		void params.semaphore('hydratedRoute');
 	}
 }
