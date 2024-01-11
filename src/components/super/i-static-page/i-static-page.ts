@@ -39,6 +39,8 @@ import createProviderDataStore, { ProviderDataStore } from 'components/super/i-s
 import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
 import type { RootMod } from 'components/super/i-static-page/interface';
+import iTheme from 'components/traits/i-theme/i-theme';
+import { derive } from 'core/functools/trait';
 
 export * from 'components/super/i-page/i-page';
 export * from 'components/super/i-static-page/modules/theme';
@@ -51,8 +53,11 @@ export * from 'components/super/i-static-page/interface';
 const
 	$$ = symbolGenerator();
 
+interface iStaticPage extends Trait<typeof iTheme> {}
+
 @component()
-export default abstract class iStaticPage extends iPage {
+@derive(iTheme)
+abstract class iStaticPage extends iPage implements iTheme {
 	/**
 	 * Type: the page parameters
 	 */
@@ -410,3 +415,5 @@ export default abstract class iStaticPage extends iPage {
 		this.setRootMod('online', status);
 	}
 }
+
+export default iStaticPage;
