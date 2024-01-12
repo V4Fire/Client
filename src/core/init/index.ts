@@ -13,8 +13,13 @@
 
 import { initGlobalEnv } from 'core/env';
 
-import semaphore from 'core/init/semaphore';
 import type { InitAppOptions, App } from 'core/init/interface';
+
+import initDom from 'core/init/dom';
+import initState from 'core/init/state';
+import initABT from 'core/init/abt';
+import prefetchInit from 'core/init/prefetch';
+import hydratedRouteInit from 'core/init/hydrated-route';
 
 /**
  * Initializes the application
@@ -27,26 +32,12 @@ export default async function initApp(
 	opts: InitAppOptions
 ): Promise<App> {
 	initGlobalEnv(opts);
+	void initDom(opts);
+	void initState(opts);
+	void initABT(opts);
+	void prefetchInit(opts);
+	void hydratedRouteInit(opts);
 
-	void loadModule(import('core/init/dom'));
-	void loadModule(import('core/init/state'));
-	void loadModule(import('core/init/abt'));
-	void loadModule(import('core/init/prefetch'));
-	void loadModule(import('core/init/hydrated-route'));
-
-	const createApp = await semaphore('');
+	const createApp = await opts.semaphore('');
 	return createApp(rootComponent, opts);
-
-	async function loadModule(promise: Promise<{default?: unknown}>) {
-		try {
-			const {default: init} = await promise;
-
-			if (Object.isFunction(init)) {
-				init(opts);
-			}
-
-		} catch (err) {
-			stderr(err);
-		}
-	}
 }

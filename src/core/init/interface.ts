@@ -45,4 +45,14 @@ export interface InitAppOptions extends OptionalState {
 	 * @param rootComponentParams
 	 */
 	setup?(rootComponentParams: ComponentOptions): void;
+
+	/**
+	 * Semaphore for...
+	 *
+	 * @param flag
+	 */
+	semaphore(flag: string): Promise<(
+		rootComponentName: Nullable<string>,
+		opts: InitAppOptions
+	) => Promise<HTMLElement | AppSSR>>;
 }

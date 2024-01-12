@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* A factory is now used to create a semaphore `core/init`
+* During the initialization phase of `core/init` semaphore from params should now be used
+
 ## v4.0.0-beta.47 (2024-01-16)
 
 #### :bug: Bug Fix
