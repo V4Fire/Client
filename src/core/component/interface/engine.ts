@@ -99,8 +99,8 @@ export type ProxyGetterType =
 	'mounted';
 
 export interface RenderAPI {
-	render(vnode: VNode, parent?: ComponentInterface): Node;
-	render(vnode: VNode[], parent?: ComponentInterface): Node[];
+	render(vnode: VNode, parent?: ComponentInterface, group?: string): Node;
+	render(vnode: VNode[], parent?: ComponentInterface, group?: string): Node[];
 
 	getCurrentInstance: typeof getCurrentInstance;
 

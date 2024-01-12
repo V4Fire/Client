@@ -310,7 +310,7 @@ export function iterate(
 					renderedVnode = Object.cast(vnode.el);
 
 				} else {
-					renderedVnode = render.call(that, Object.cast(vnode));
+					renderedVnode = render.call(that, Object.cast(vnode), group);
 				}
 
 				const

@@ -133,10 +133,12 @@ export const
  *
  * @param vnode
  * @param [parent] - the parent component
+ * @param [group] - the name of the async group within which rendering takes place
  */
 export function render(
 	vnode: VNode,
-	parent?: ComponentInterface
+	parent?: ComponentInterface,
+	group?: string
 ): Node;
 
 /**
@@ -144,13 +146,15 @@ export function render(
  *
  * @param vnodes
  * @param [parent] - the parent component
+ * @param [group] - the name of the async group within which rendering takes place
  */
 export function render(
 	vnodes: VNode[],
-	parent?: ComponentInterface
+	parent?: ComponentInterface,
+	group?: string
 ): Node[];
 
-export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): CanArray<Node> {
+export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, group?: string): CanArray<Node> {
 	const vue = new Vue({
 		render: () => vnode,
 
@@ -171,6 +175,10 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): Can
 					writable: true,
 					value: root
 				});
+
+				parent.unsafe.async.worker(() => {
+					vue.unmount();
+				}, {group});
 			}
 		}
 	});
