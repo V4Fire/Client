@@ -8,7 +8,6 @@
 
 import { initGlobalEnv } from 'core/env';
 
-import semaphore from 'core/init/semaphore';
 import type { InitAppOptions } from 'core/init/interface';
 
 /**
@@ -18,5 +17,5 @@ import type { InitAppOptions } from 'core/init/interface';
 // eslint-disable-next-line @typescript-eslint/require-await
 export default async function initABT(params: InitAppOptions): Promise<void> {
 	initGlobalEnv(params);
-	void semaphore('ABTReady');
+	void params.semaphore('ABTReady');
 }
