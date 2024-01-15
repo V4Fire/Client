@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Now it is necessary to pass the application initialization flags to the ready method from
+* Now it is necessary to pass the application initialization flags to the `ready` method from
   the initialization parameters, instead of importing it from `core/init`
 
 ## v4.0.0-beta.44 (2023-12-06)
