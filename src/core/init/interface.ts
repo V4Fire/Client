@@ -55,5 +55,5 @@ export interface InitAppOptions extends OptionalState {
 	ready(flag: string): Promise<(
 		rootComponentName: Nullable<string>,
 		opts: InitAppOptions
-	) => Promise<HTMLElement | AppSSR>>;
+	) => Promise<App>>;
 }
