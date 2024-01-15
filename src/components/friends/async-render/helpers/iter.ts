@@ -16,8 +16,8 @@ import type { IterOptions, IterDescriptor } from 'components/friends/async-rende
  * Returns an iterator descriptor based on the passed value and options
  *
  * @param value
- * @param [start]
  * @param [opts]
+ * @param [opts.start]
  * @param [opts.perChunk]
  * @param [opts.filter]
  */
@@ -50,8 +50,8 @@ export function getIterDescriptor(
 		isAsyncIterable = true;
 
 		let
-			innerIter,
-			pendedResult;
+			innerIter: Nullable<Iterator<unknown>>,
+			pendedResult: Nullable<Promise<IteratorResult<unknown>>>;
 
 		iterator = {
 			[Symbol.asyncIterator]() {
@@ -70,7 +70,7 @@ export function getIterDescriptor(
 				const res = iterable.then(async (v) => {
 					const i = await getIterable.call(this, v);
 					innerIter = i[Object.isAsyncIterable(i) ? Symbol.asyncIterator : Symbol.iterator]();
-					return innerIter.next();
+					return innerIter!.next();
 				});
 
 				pendedResult = res;

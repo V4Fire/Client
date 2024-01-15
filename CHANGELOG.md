@@ -11,6 +11,22 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* A factory is now used to create a semaphore `core/init`
+* During the initialization phase of `core/init` semaphore from params should now be used
+
+## v4.0.0-beta.46 (2024-01-11)
+
+#### :bug: Bug Fix
+
+* `components/friends/async-render/iterate`:
+  * Fixed `asyncRenderComplete` event not being emitted
+  ([issue 1057](https://github.com/V4Fire/Client/issues/1057))
+  * Fixed race condition
+
 ## v4.0.0-beta.45 (2023-12-07)
 
 #### :bug: Bug Fix

@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
+import { createsAsyncSemaphore } from 'core/event';
 
 import remoteState, { set } from 'core/component/state';
 
@@ -23,31 +23,33 @@ import App, {
 } from 'core/component';
 
 import flags from 'core/init/flags';
-import type { InitAppOptions } from 'core/init/interface';
+import initApp from 'core/init';
+import type { InitAppOptions, AppSSR } from 'core/init/interface';
 
-const semaphore = createsAsyncSemaphore(createAppInitializer, ...flags);
-
-export default semaphore;
+/**
+ * Factory for creating semaphore
+ */
+export function createSemaphore(): (flag: string) => Promise<ReturnType<typeof createAppInitializer>> {
+	return createsAsyncSemaphore(createAppInitializer, ...flags);
+}
 
 if (SSR) {
 	process.on('unhandledRejection', stderr);
 
 } else {
-	resolveAfterDOMLoaded()
-		.then(async () => {
-			const
-				targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
-				rootComponentName = targetToMount?.getAttribute('data-root-component');
+	const
+		targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
+		rootComponentName = targetToMount?.getAttribute('data-root-component'),
+		semaphore = createSemaphore();
 
-			const initApp = (await import('core/init')).default;
-			return initApp(rootComponentName, {targetToMount});
-		})
-
-		.catch(stderr);
+	initApp(rootComponentName, {targetToMount, semaphore}).catch(stderr);
 }
 
 function createAppInitializer() {
-	return async (rootComponentName: Nullable<string>, opts: InitAppOptions = {}) => {
+	return async (
+		rootComponentName: Nullable<string>,
+		opts: InitAppOptions
+	): Promise<HTMLElement | AppSSR> => {
 		const
 			appId = opts.appId ?? Object.fastHash(Math.random()),
 			state = Object.reject(opts, ['targetToMount', 'setup']),

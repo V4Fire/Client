@@ -14,7 +14,7 @@ that will block application initialization until all required dependencies are r
 ## How does this module work?
 
 The code responsible for initializing the application is located in the `core/init/semaphore` module.
-The module exports the default initialization function, which in turn is wrapped in an asynchronous semaphore.
+The module exports factory for the default initialization function, which in turn is wrapped in an asynchronous semaphore.
 This means that this function can be called multiple times from different modules,
 but in fact, it will be executed only once and only when all necessary conditions are met.
 
@@ -39,13 +39,13 @@ export default [
 __core/init/sleep.ts__
 
 ```js
-import semaphore from 'core/init/semaphore';
+import type { InitAppOptions } from 'core/init/interface';
 
-export default (() => {
+export default function initSleep(params: InitAppOptions) {
   setTimeout(() => {
-    semaphore('sleep');
+    params.semaphore('sleep');
   }, 100);
-})();
+};
 ```
 
 __core/init/index.ts__
@@ -85,12 +85,11 @@ __core/init/abt.ts__
 ```typescript
 import { initGlobalEnv } from 'core/env';
 
-import semaphore from 'core/init/semaphore';
 import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initABT(params: InitAppOptions): Promise<void> {
   initGlobalEnv(params);
-  void semaphore('ABTReady');
+  void params.semaphore('ABTReady');
 }
 ```
 
@@ -104,12 +103,11 @@ __core/init/prefetch.ts__
 ```typescript
 import { initGlobalEnv } from 'core/env';
 
-import semaphore from 'core/init/semaphore';
 import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initPrefetch(params: InitAppOptions): Promise<void> {
   initGlobalEnv(params);
-  void semaphore('prefetchReady');
+  void params.semaphore('prefetchReady');
 }
 ```
 
@@ -126,7 +124,6 @@ import * as net from 'core/net';
 import * as session from 'core/session';
 
 import state from 'core/component/state';
-import semaphore from 'core/init/semaphore';
 
 import type { InitAppOptions } from 'core/init/interface';
 
@@ -149,7 +146,7 @@ export default async function initState(params: InitAppOptions): Promise<void> {
     stderr(err);
   }
 
-  void semaphore('stateReady');
+  void params.semaphore('stateReady');
 }
 ```
 
@@ -263,12 +260,11 @@ use a special function from the `core/env` module.
 ```typescript
 import { initGlobalEnv } from 'core/env';
 
-import semaphore from 'core/init/semaphore';
 import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initPrefetch(params: InitAppOptions): Promise<void> {
   initGlobalEnv(params);
-  void semaphore('prefetchReady');
+  void params.semaphore('prefetchReady');
 }
 ```
 
