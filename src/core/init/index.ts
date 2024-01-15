@@ -12,8 +12,10 @@
  */
 
 import { initGlobalEnv } from 'core/env';
+import { resolveAfterDOMLoaded } from 'core/event';
 
-import type { InitAppOptions, App } from 'core/init/interface';
+import createSemaphore from 'core/init/semaphore';
+import type { App, InitAppOptions } from 'core/init/interface';
 
 import initDom from 'core/init/dom';
 import initState from 'core/init/state';
@@ -41,4 +43,21 @@ export default async function initApp(
 
 	const createApp = await opts.ready('');
 	return createApp(rootComponent, opts);
+}
+
+if (SSR) {
+	process.on('unhandledRejection', stderr);
+
+} else {
+	resolveAfterDOMLoaded()
+		.then(() => {
+			const
+				targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
+				rootComponentName = targetToMount?.getAttribute('data-root-component'),
+				ready = createSemaphore();
+
+			return initApp(rootComponentName, {targetToMount, ready});
+		})
+
+		.catch(stderr);
 }
