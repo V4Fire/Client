@@ -32,6 +32,7 @@ export default async function initApp(
 	opts: InitAppOptions
 ): Promise<App> {
 	initGlobalEnv(opts);
+
 	void initDom(opts);
 	void initState(opts);
 	void initABT(opts);
