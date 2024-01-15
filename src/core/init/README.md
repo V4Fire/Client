@@ -168,15 +168,12 @@ When calling this function from SSR, it is necessary to pass the name of the roo
 and additional parameters can also be passed.
 
 ```typescript
-// Or, import { initApp } from 'core';
-
-import initApp from 'core/init';
-import createSemaphore from 'core/init/semaphore';
+import { initApp, createInitAppSemaphore } from 'core';
 
 import type { ComponentOptions } from 'core/component/engines';
 
 initApp('p-v4-components-demo', {
-  ready: createSemaphore(),
+  ready: createInitAppSemaphore(),
   route: '/user/12345',
 
   setup(rootComponentParams: ComponentOptions) {

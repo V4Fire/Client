@@ -29,7 +29,7 @@ import type { InitAppOptions, AppSSR } from 'core/init/interface';
 /**
  * A factory for creating a semaphore over application initialization
  */
-export default function createSemaphore(): (flag: string) => Promise<ReturnType<typeof createAppInitializer>> {
+export default function createInitAppSemaphore(): (flag: string) => Promise<ReturnType<typeof createAppInitializer>> {
 	return createsAsyncSemaphore(createAppInitializer, ...flags);
 }
 
