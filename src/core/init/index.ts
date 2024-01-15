@@ -19,7 +19,7 @@ import initABT from 'core/init/abt';
 import prefetchInit from 'core/init/prefetch';
 import hydratedRouteInit from 'core/init/hydrated-route';
 
-import type { App, InitAppOptions } from 'core/init/interface';
+import type { InitAppOptions, App } from 'core/init/interface';
 
 /**
  * Initializes the application

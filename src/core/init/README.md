@@ -51,10 +51,20 @@ export default function initSleep(params: InitAppOptions) {
 
 __core/init/index.ts__
 
-```js
-import 'core/init/sleep';
+```typescript
+import initAppSuper from '@super/core/init';
+import initSleep from 'core/init/sleep';
 
-export { default } from '@super/core/init';
+import type { InitAppOptions, App } from 'core/init/interface';
+
+export default async function initApp(
+  rootComponent: Nullable<string>,
+  opts: InitAppOptions
+): Promise<App> {
+  const app = initAppSuper(rootComponent, opts);
+  initSleep(opts).catch(stderr);
+  return app;
+}
 ```
 
 ### Built-in initialization flags
