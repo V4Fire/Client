@@ -10,7 +10,7 @@ import { createsAsyncSemaphore } from 'core/event';
 
 import remoteState, { set } from 'core/component/state';
 
-import App, {
+import AppClass, {
 
 	app,
 	destroyApp,
@@ -24,7 +24,7 @@ import App, {
 
 import flags from 'core/init/flags';
 
-import type { InitAppOptions, AppSSR } from 'core/init/interface';
+import type { InitAppOptions, App } from 'core/init/interface';
 
 /**
  * A factory for creating a semaphore over application initialization
@@ -37,7 +37,7 @@ function createAppInitializer() {
 	return async (
 		rootComponentName: Nullable<string>,
 		opts: InitAppOptions
-	): Promise<HTMLElement | AppSSR> => {
+	): Promise<App> => {
 		const
 			appId = opts.appId ?? Object.fastHash(Math.random()),
 			state = Object.reject(opts, ['targetToMount', 'setup']),
@@ -70,7 +70,7 @@ function createAppInitializer() {
 
 			const
 				hydrationStore = new HydrationStore(),
-				rootComponent = new App(rootComponentParams);
+				rootComponent = new AppClass(rootComponentParams);
 
 			rootComponent.provide('appId', appId);
 			rootComponent.provide('hydrationStore', hydrationStore);
@@ -100,7 +100,7 @@ function createAppInitializer() {
 			throw new ReferenceError('Application mount node was not found');
 		}
 
-		app.context = new App({
+		app.context = new AppClass({
 			...rootComponentParams,
 			el: targetToMount
 		});
