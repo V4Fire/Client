@@ -163,7 +163,10 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			fullComponentName = `${name}${options?.functional && !name.endsWith('-functional') ? '-functional' : ''}`;
 
 		if (options?.useDummy) {
-			const component = await Component.createComponentInDummy<COMPONENT>(this.pwPage, fullComponentName, this.props);
+			const component = await Component.createComponentInDummy<COMPONENT>(this.pwPage, fullComponentName, {
+				attrs: this.props,
+				children: this.children
+			});
 
 			this.dummy = component;
 			this.componentStore = component;
@@ -269,7 +272,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 *
 	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
 	 */
-	updateProps(props: Dictionary): Promise<void> {
+	updateProps(props: RenderComponentsVnodeParams): Promise<void> {
 		if (!this.dummy) {
 			throw new ReferenceError('Failed to update props. Missing "b-dummy" component.');
 		}

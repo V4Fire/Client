@@ -160,7 +160,7 @@ myComponent
 await myComponent.build({ useDummy: true });
 
 // Change props
-await myComponent.updateProps({ prop1: 'newVal' });
+await myComponent.updateProps({ attrs: { prop1: 'newVal' } });
 ```
 
 Please note that there are some nuances to consider when creating a component with a `b-dummy` wrapper, such as you cannot set slots for such a component.

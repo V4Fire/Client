@@ -8,6 +8,7 @@
 
 import type { ElementHandle, JSHandle, Page } from 'playwright';
 
+import type { VNodeDescriptor } from 'components/friends/vdom';
 import { expandedStringify } from 'core/prelude/test-env/components/json';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -129,28 +130,45 @@ export default class Component {
 	 *
 	 * @param page
 	 * @param componentName
-	 * @param attrs
+	 * @param params
 	 */
 	static async createComponentInDummy<T extends iBlock>(
 		page: Page,
 		componentName: string,
-		attrs: RenderComponentsVnodeParams['attrs']
+		params: RenderComponentsVnodeParams
 	): Promise<ComponentInDummy<T>> {
 		const dummy = await this.createComponent<bDummy>(page, 'b-dummy');
 
-		const setProps = async (props) => {
+		const update = async (props) => {
 			await dummy.evaluate((ctx, [name, props]) => {
-				ctx.testComponentAttrs = globalThis.expandedParse(props);
+				const parsed: RenderComponentsVnodeParams = globalThis.expandedParse(props);
+
+				ctx.testComponentAttrs = parsed.attrs ?? {};
+
+				if (parsed.children) {
+					ctx.testComponentSlots = compileChild();
+				}
+			
 				ctx.testComponent = name;
+
+				function compileChild() {
+					return ctx.vdom.create(Object.entries(parsed.children ?? {}).map(([slotName, child]) => ({
+						type: 'template',
+						attrs: {
+							slot: slotName
+						},
+						children: (<VNodeDescriptor[]>[]).concat(<VNodeDescriptor>child ?? [])
+					})));
+				}
 
 			}, [componentName, expandedStringify(props)]);
 		};
 
-		await setProps(attrs);
+		await update(params);
 		const component = await dummy.evaluateHandle((ctx) => ctx.unsafe.$refs.testComponent);
 
 		Object.assign(component, {
-			setProps,
+			setProps: update,
 			dummy
 		});
 
