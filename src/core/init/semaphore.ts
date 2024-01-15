@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createsAsyncSemaphore } from 'core/event';
+import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
 
 import remoteState, { set } from 'core/component/state';
 
@@ -38,12 +38,17 @@ if (SSR) {
 	process.on('unhandledRejection', stderr);
 
 } else {
-	const
-		targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
-		rootComponentName = targetToMount?.getAttribute('data-root-component'),
-		ready = createSemaphore();
+	resolveAfterDOMLoaded()
+		.then(() => {
+			const
+				targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
+				rootComponentName = targetToMount?.getAttribute('data-root-component'),
+				ready = createSemaphore();
 
-	initApp(rootComponentName, {targetToMount, ready}).catch(stderr);
+			return initApp(rootComponentName, {targetToMount, ready});
+		})
+
+		.catch(stderr);
 }
 
 function createAppInitializer() {
