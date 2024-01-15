@@ -17,5 +17,5 @@ import type { InitAppOptions } from 'core/init/interface';
 // eslint-disable-next-line @typescript-eslint/require-await
 export default async function initPrefetch(params: InitAppOptions): Promise<void> {
 	initGlobalEnv(params);
-	void params.semaphore('prefetchReady');
+	void params.ready('prefetchReady');
 }

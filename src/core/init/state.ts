@@ -36,5 +36,5 @@ export default async function initState(params: InitAppOptions): Promise<void> {
 		stderr(err);
 	}
 
-	void params.semaphore('stateReady');
+	void params.ready('stateReady');
 }

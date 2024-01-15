@@ -22,12 +22,13 @@ import App, {
 
 } from 'core/component';
 
-import flags from 'core/init/flags';
 import initApp from 'core/init';
+import flags from 'core/init/flags';
+
 import type { InitAppOptions, AppSSR } from 'core/init/interface';
 
 /**
- * Factory for creating semaphore
+ * A factory for creating a semaphore over application initialization
  */
 export function createSemaphore(): (flag: string) => Promise<ReturnType<typeof createAppInitializer>> {
 	return createsAsyncSemaphore(createAppInitializer, ...flags);
@@ -40,9 +41,9 @@ if (SSR) {
 	const
 		targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
 		rootComponentName = targetToMount?.getAttribute('data-root-component'),
-		semaphore = createSemaphore();
+		ready = createSemaphore();
 
-	initApp(rootComponentName, {targetToMount, semaphore}).catch(stderr);
+	initApp(rootComponentName, {targetToMount, ready}).catch(stderr);
 }
 
 function createAppInitializer() {
@@ -109,7 +110,7 @@ function createAppInitializer() {
 			{targetToMount} = opts;
 
 		if (targetToMount == null) {
-			throw new ReferenceError('Application mount node not found');
+			throw new ReferenceError('Application mount node was not found');
 		}
 
 		app.context = new App({
