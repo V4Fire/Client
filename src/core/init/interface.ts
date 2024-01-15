@@ -47,11 +47,12 @@ export interface InitAppOptions extends OptionalState {
 	setup?(rootComponentParams: ComponentOptions): void;
 
 	/**
-	 * Semaphore for...
+	 * Sets the passed flag to a ready status.
+	 * When all the declared flags are ready, the application itself will be initialized.
 	 *
 	 * @param flag
 	 */
-	semaphore(flag: string): Promise<(
+	ready(flag: string): Promise<(
 		rootComponentName: Nullable<string>,
 		opts: InitAppOptions
 	) => Promise<HTMLElement | AppSSR>>;

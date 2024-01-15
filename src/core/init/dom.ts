@@ -14,5 +14,5 @@ import type { InitAppOptions } from 'core/init/interface';
  * @param params
  */
 export default function initDom(params: InitAppOptions): Promise<void> {
-	return resolveAfterDOMLoaded().then(() => params.semaphore('DOMReady'));
+	return resolveAfterDOMLoaded().then(() => params.ready('DOMReady'));
 }

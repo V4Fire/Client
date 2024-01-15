@@ -38,6 +38,6 @@ export default async function initApp(
 	void prefetchInit(opts);
 	void hydratedRouteInit(opts);
 
-	const createApp = await opts.semaphore('');
+	const createApp = await opts.ready('');
 	return createApp(rootComponent, opts);
 }

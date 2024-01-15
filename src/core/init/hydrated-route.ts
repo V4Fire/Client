@@ -41,6 +41,6 @@ export default async function init(params: InitAppOptions): Promise<void> {
 		}
 
 	} finally {
-		void params.semaphore('hydratedRoute');
+		void params.ready('hydratedRoute');
 	}
 }
