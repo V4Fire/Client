@@ -15,6 +15,7 @@ import createInitAppSemaphore from 'core/init/semaphore';
 export { initApp, createInitAppSemaphore };
 
 //#unless runtime has storybook
+
 if (SSR) {
 	process.on('unhandledRejection', stderr);
 
