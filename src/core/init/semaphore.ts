@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
+import { createsAsyncSemaphore } from 'core/event';
 
 import remoteState, { set } from 'core/component/state';
 
@@ -22,7 +22,6 @@ import App, {
 
 } from 'core/component';
 
-import initApp from 'core/init';
 import flags from 'core/init/flags';
 
 import type { InitAppOptions, AppSSR } from 'core/init/interface';
@@ -30,25 +29,8 @@ import type { InitAppOptions, AppSSR } from 'core/init/interface';
 /**
  * A factory for creating a semaphore over application initialization
  */
-export function createSemaphore(): (flag: string) => Promise<ReturnType<typeof createAppInitializer>> {
+export default function createSemaphore(): (flag: string) => Promise<ReturnType<typeof createAppInitializer>> {
 	return createsAsyncSemaphore(createAppInitializer, ...flags);
-}
-
-if (SSR) {
-	process.on('unhandledRejection', stderr);
-
-} else {
-	resolveAfterDOMLoaded()
-		.then(() => {
-			const
-				targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
-				rootComponentName = targetToMount?.getAttribute('data-root-component'),
-				ready = createSemaphore();
-
-			return initApp(rootComponentName, {targetToMount, ready});
-		})
-
-		.catch(stderr);
 }
 
 function createAppInitializer() {

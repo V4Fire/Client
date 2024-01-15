@@ -8,9 +8,9 @@
 
 import routes from 'routes';
 import { getRoute, compileStaticRoutes } from 'core/router';
-import type { InitAppOptions } from 'core/init/interface';
 
 import { set } from 'core/component/client-state';
+import type { InitAppOptions } from 'core/init/interface';
 
 /**
  * Initializes the initial route of the application
