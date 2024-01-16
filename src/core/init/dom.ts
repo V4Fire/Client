@@ -13,6 +13,6 @@ import type { InitAppOptions } from 'core/init/interface';
  * Resolved after DOMContentLoaded event
  * @param params
  */
-export default function initDom(params: InitAppOptions): Promise<void> {
-	return resolveAfterDOMLoaded().then(() => params.semaphore('DOMReady'));
+export default function initDOM(params: InitAppOptions): Promise<void> {
+	return resolveAfterDOMLoaded().then(() => params.ready('DOMReady'));
 }

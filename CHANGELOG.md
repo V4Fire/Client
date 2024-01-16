@@ -15,8 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* A factory is now used to create a semaphore `core/init`
-* During the initialization phase of `core/init` semaphore from params should now be used
+* Now it is necessary to pass the application initialization flags to the `ready` method from
+  the initialization parameters, instead of importing it from `core/init`, due to SSR
 
 ## v4.0.0-beta.46 (2024-01-11)
 

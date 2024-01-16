@@ -13,13 +13,13 @@
 
 import { initGlobalEnv } from 'core/env';
 
-import type { InitAppOptions, App } from 'core/init/interface';
-
 import initDom from 'core/init/dom';
 import initState from 'core/init/state';
 import initABT from 'core/init/abt';
 import prefetchInit from 'core/init/prefetch';
 import hydratedRouteInit from 'core/init/hydrated-route';
+
+import type { InitAppOptions, App } from 'core/init/interface';
 
 /**
  * Initializes the application
@@ -32,12 +32,13 @@ export default async function initApp(
 	opts: InitAppOptions
 ): Promise<App> {
 	initGlobalEnv(opts);
+
 	void initDom(opts);
 	void initState(opts);
 	void initABT(opts);
 	void prefetchInit(opts);
 	void hydratedRouteInit(opts);
 
-	const createApp = await opts.semaphore('');
+	const createApp = await opts.ready('');
 	return createApp(rootComponent, opts);
 }

@@ -14,14 +14,15 @@ that will block application initialization until all required dependencies are r
 ## How does this module work?
 
 The code responsible for initializing the application is located in the `core/init/semaphore` module.
-The module exports factory for the default initialization function, which in turn is wrapped in an asynchronous semaphore.
+The module exports a factory for the default initialization function, which is wrapped in an asynchronous semaphore.
 This means that this function can be called multiple times from different modules,
 but in fact, it will be executed only once and only when all necessary conditions are met.
 
 The necessary conditions for executing this function are represented as flags and
 described in the `core/init/flags` module.
 The module simply exports an array of string flags.
-In turn, these flags need to be passed when calling the application initialization function.
+In turn, these flags should be passed when calling the application initialization function.
+You can do this by calling the `ready` method on the application initialization parameters object.
 If all the flags specified in this array were passed as arguments to the initialization function,
 then only then will the initialization itself be called, and only once.
 
@@ -38,22 +39,32 @@ export default [
 
 __core/init/sleep.ts__
 
-```js
+```typescript
 import type { InitAppOptions } from 'core/init/interface';
 
 export default function initSleep(params: InitAppOptions) {
   setTimeout(() => {
-    params.semaphore('sleep');
+    params.ready('sleep');
   }, 100);
 };
 ```
 
 __core/init/index.ts__
 
-```js
-import 'core/init/sleep';
+```typescript
+import initAppSuper from '@super/core/init';
+import initSleep from 'core/init/sleep';
 
-export { default } from '@super/core/init';
+import type { InitAppOptions, App } from 'core/init/interface';
+
+export default async function initApp(
+  rootComponent: Nullable<string>,
+  opts: InitAppOptions
+): Promise<App> {
+  const app = initAppSuper(rootComponent, opts);
+  initSleep(opts).catch(stderr);
+  return app;
+}
 ```
 
 ### Built-in initialization flags
@@ -89,7 +100,7 @@ import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initABT(params: InitAppOptions): Promise<void> {
   initGlobalEnv(params);
-  void params.semaphore('ABTReady');
+  void params.ready('ABTReady');
 }
 ```
 
@@ -107,7 +118,7 @@ import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initPrefetch(params: InitAppOptions): Promise<void> {
   initGlobalEnv(params);
-  void params.semaphore('prefetchReady');
+  void params.ready('prefetchReady');
 }
 ```
 
@@ -146,7 +157,7 @@ export default async function initState(params: InitAppOptions): Promise<void> {
     stderr(err);
   }
 
-  void params.semaphore('stateReady');
+  void params.ready('stateReady');
 }
 ```
 
@@ -167,11 +178,12 @@ When calling this function from SSR, it is necessary to pass the name of the roo
 and additional parameters can also be passed.
 
 ```typescript
-// Or, import { initApp } from 'core';
-import initApp from 'core/init';
+import { initApp, createInitAppSemaphore } from 'core';
+
 import type { ComponentOptions } from 'core/component/engines';
 
 initApp('p-v4-components-demo', {
+  ready: createInitAppSemaphore(),
   route: '/user/12345',
 
   setup(rootComponentParams: ComponentOptions) {
@@ -208,6 +220,17 @@ initApp('p-v4-components-demo', {
 
 ```typescript
 interface InitAppOptions {
+  /**
+   * Sets the passed flag to a ready status.
+   * When all the declared flags are ready, the application itself will be initialized.
+   *
+   * @param flag
+   */
+  ready(flag: string): Promise<(
+    rootComponentName: Nullable<string>,
+    opts: InitAppOptions
+  ) => Promise<HTMLElement | AppSSR>>;
+
   /**
    * A link to the element where the application should be mounted.
    * This parameter is only used when initializing the application in a browser.
@@ -264,7 +287,7 @@ import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initPrefetch(params: InitAppOptions): Promise<void> {
   initGlobalEnv(params);
-  void params.semaphore('prefetchReady');
+  void params.ready('prefetchReady');
 }
 ```
 
