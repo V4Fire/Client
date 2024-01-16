@@ -226,7 +226,11 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	/**
 	 * Internal API for working with component values
 	 */
-	@system<bSelect>((o) => new Values(o))
+	@system<bSelect>({
+		unique: true,
+		init: (o) => new Values(o)
+	})
+
 	protected values!: Values;
 
 	/** {@link bSelect.items} */

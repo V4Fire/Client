@@ -20,6 +20,8 @@ import config from 'config';
 import type { AsyncOptions } from 'core/async';
 import { component, hydrationStore } from 'core/component';
 
+import type iData from 'components/super/i-data/i-data';
+
 import { statuses } from 'components/super/i-block/const';
 import { system, hook } from 'components/super/i-block/decorators';
 
@@ -147,34 +149,36 @@ export default abstract class iBlockProviders extends iBlockState {
 						}
 					}
 
-					let
-						isLoaded = false;
+					const waitReady = component.waitComponentStatus('ready');
 
-					tasks.push(Promise.race([
-						component.waitComponentStatus('ready').then(() => isLoaded = true),
+					const timeout = $a.sleep((3).seconds()).then(() => {
+						throw 'timeout';
+					});
 
-						$a.sleep((10).seconds(), {}).then(() => {
-							if (isLoaded) {
-								return;
-							}
+					const task = Promise.race([waitReady, timeout]).catch((err) => {
+						if (err !== 'timeout') {
+							throw err;
+						}
 
-							this.log(
-								{
-									logLevel: 'warn',
-									context: 'initLoad:remoteProviders'
-								},
+						this.log(
+							{
+								logLevel: 'warn',
+								context: 'initLoad:remoteProviders'
+							},
 
-								{
-									message: 'The component waits too long for the remote provider',
-									waitFor: {
-										globalName: component.globalName,
-										component: component.componentName,
-										dataProvider: Object.get(component, 'dataProvider')
-									}
+							{
+								message: 'The component is waiting too long for data from a remote provider',
+								waitFor: {
+									route: this.route,
+									globalName: component.globalName,
+									component: component.componentName,
+									dataProvider: (<iData>component).dataProvider?.provider.constructor.name
 								}
-							);
-						})
-					]));
+							}
+						);
+					});
+
+					tasks.push(task);
 				});
 
 				return $a.promise(SyncPromise.all(tasks), label).then(done, doneWithError);

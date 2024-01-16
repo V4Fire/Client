@@ -9,6 +9,14 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.46 (2024-01-11)
+
+#### :bug: Bug Fix
+
+* Fixed `asyncRenderComplete` event not being emitted
+([issue 1057](https://github.com/V4Fire/Client/issues/1057))
+* Fixed race condition in `iterate`
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
