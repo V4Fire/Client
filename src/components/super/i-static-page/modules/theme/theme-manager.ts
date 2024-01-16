@@ -8,8 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import { factory } from 'core/kv-storage';
-import type { SyncStorage, StorageEngine } from 'core/kv-storage';
+import { factory, SyncStorage, StorageEngine } from 'core/kv-storage';
 import * as cookieEngine from 'core/kv-storage/engines/cookie';
 
 import type iBlock from 'components/super/i-block/i-block';
