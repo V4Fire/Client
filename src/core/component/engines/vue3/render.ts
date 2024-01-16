@@ -25,7 +25,9 @@ import {
 	withDirectives as superWithDirectives,
 	resolveDirective as superResolveDirective,
 
-	VNode
+	VNode,
+	VNodeChild,
+	VNodeArrayChildren
 
 } from 'vue';
 
@@ -207,5 +209,67 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 
 	function isEmptyText(node?: Node) {
 		return node?.nodeType === 3 && node.textContent === '';
+	}
+}
+
+/**
+ * Deletes the specified node and frees up memory
+ * @param node
+ */
+export function destroy(node: VNode | Node): void {
+	if (node instanceof Node) {
+		if (('__vnode' in node)) {
+			removeVNode(node['__vnode']);
+		}
+
+		node.parentNode?.removeChild(node);
+
+		if (node instanceof Element) {
+			node.innerHTML = '';
+		}
+
+	} else {
+		removeVNode(node);
+	}
+
+	function removeVNode(vnode: Nullable<VNode | VNodeArrayChildren | VNodeChild>) {
+		if (vnode == null || Object.isPrimitive(vnode)) {
+			return;
+		}
+
+		if (Object.isArray(vnode)) {
+			vnode.forEach(removeVNode);
+			return;
+		}
+
+		if (Object.isArray(vnode.children)) {
+			vnode.children.forEach(removeVNode);
+		}
+
+		if (Object.isArray(vnode['dynamicChildren'])) {
+			vnode['dynamicChildren'].forEach((vnode) => removeVNode(Object.cast(vnode)));
+		}
+
+		if (Object.isArray(vnode.dirs)) {
+			vnode.dirs.forEach((binding) => {
+				binding.dir.beforeUnmount?.(vnode.el, binding, vnode, null);
+				binding.dir.unmounted?.(vnode.el, binding, vnode, null);
+			});
+		}
+
+		if (vnode.component != null) {
+			vnode.component.effect.stop();
+			vnode.component = null;
+		}
+
+		vnode.props = {};
+
+		['dirs', 'children', 'dynamicChildren', 'dynamicProps'].forEach((key) => {
+			vnode[key] = [];
+		});
+
+		['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
+			vnode[key] = null;
+		});
 	}
 }

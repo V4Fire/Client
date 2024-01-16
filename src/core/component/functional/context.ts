@@ -8,6 +8,7 @@
 
 import * as init from 'core/component/init';
 
+import { saveRawComponentContext } from 'core/component/context';
 import { forkMeta, ComponentMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
 
@@ -131,6 +132,8 @@ export function createVirtualContext(
 			return undefined;
 		}
 	});
+
+	saveRawComponentContext(virtualCtx, virtualCtx);
 
 	initProps(virtualCtx, {
 		from: $props,

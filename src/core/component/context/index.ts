@@ -25,16 +25,40 @@ export * from 'core/component/context/const';
  * @param component
  */
 export function getComponentContext(component: object): Dictionary & ComponentInterface['unsafe'] {
-	component = toRaw in component ? component[toRaw] : component;
-
-	let
-		v = wrappedContexts.get(component);
-
-	if (v == null) {
-		v = Object.create(component);
-		Object.defineProperty(v, toRaw, {value: component});
-		wrappedContexts.set(component, v);
+	if (toRaw in component) {
+		return Object.cast(component);
 	}
 
-	return v;
+	let
+		wrappedCtx = wrappedContexts.get(component);
+
+	if (wrappedCtx == null) {
+		wrappedCtx = Object.create(component);
+		saveRawComponentContext(wrappedCtx, component);
+		wrappedContexts.set(component, wrappedCtx);
+	}
+
+	return wrappedCtx;
+}
+
+/**
+ * Stores a reference to the "raw" component context in the main context
+ *
+ * @param ctx - the main context object
+ * @param rawCtx - the raw context object to be stored
+ */
+export function saveRawComponentContext(ctx: object, rawCtx: object): void {
+	Object.defineProperty(ctx, toRaw, {configurable: true, value: rawCtx});
+}
+
+/**
+ * Drops a reference to the "raw" component context from the main context
+ * @param ctx - the main context object
+ */
+export function dropRawComponentContext(ctx: object): void {
+	if (toRaw in ctx) {
+		wrappedContexts.delete(ctx[toRaw]);
+	}
+
+	delete ctx[toRaw];
 }
