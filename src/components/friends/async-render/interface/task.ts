@@ -115,6 +115,8 @@ export interface TaskFilter<E = unknown, D = unknown> {
 	(): CanPromise<boolean>;
 
 	/**
+	 * A filter function for render tasks
+	 *
 	 * @param el - a data element to render
 	 * @param i - an iteration index
 	 * @param task - an element of the render task
@@ -122,11 +124,10 @@ export interface TaskFilter<E = unknown, D = unknown> {
 	(el: E, i: number, task: TaskEl<D>): CanPromise<boolean>;
 }
 
-/**
- * A function to destroy the unmounted node
- */
 export interface NodeDestructor {
 	/**
+	 * A function to destroy the unmounted node
+	 *
 	 * @param node - a node to remove
 	 * @param childComponentEls - root elements of the child components
 	 */
