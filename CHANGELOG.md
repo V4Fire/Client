@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.47 (2024-01-16)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect image state during hydration `components/directives/image`
+
 ## v4.0.0-beta.46 (2024-01-11)
 
 #### :bug: Bug Fix
