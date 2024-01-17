@@ -35,6 +35,7 @@ import type iBlock from 'components/super/i-block/i-block';
 import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
 
 import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
+import SSRPageMetaData from 'components/super/i-static-page/modules/ssr-page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
@@ -81,9 +82,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * A module for manipulating page metadata, such as the page title or description
 	 */
-	@system<iStaticPage>((o) => new PageMetaData({
-		document: o.globalEnv.ssr?.document ?? document
-	}))
+	@system<iStaticPage>((o) => SSR ? new SSRPageMetaData(o) : new PageMetaData())
 
 	readonly pageMetaData!: PageMetaData;
 
