@@ -112,7 +112,7 @@ export function implementEventEmitterAPI(component: object): void {
 				isOnLike = method !== 'off';
 
 			Array.concat([], event).forEach((event) => {
-				if (isOnLike && cb == null) {
+				if (method === 'off' && cb == null) {
 					$e.removeAllListeners(event);
 
 				} else {
