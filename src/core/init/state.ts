@@ -11,8 +11,6 @@ import { initGlobalEnv } from 'core/env';
 import * as net from 'core/net';
 import * as session from 'core/session';
 
-import semaphore from 'core/init/semaphore';
-
 import type { InitAppOptions } from 'core/init/interface';
 
 /**
@@ -38,5 +36,5 @@ export default async function initState(params: InitAppOptions): Promise<void> {
 		stderr(err);
 	}
 
-	void semaphore('stateReady');
+	void params.ready('stateReady');
 }
