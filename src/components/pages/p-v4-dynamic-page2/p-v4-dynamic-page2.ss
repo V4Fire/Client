@@ -17,12 +17,3 @@
 
 		< b-button.&__button-func
 			Functional button
-
-		< b-tree &
-			:items = r.items |
-			:theme = 'demo' |
-			:folded = false |
-			:cancelable = true
-		.
-			< template #default = {item}
-				{{item.label}}: {{item.data}}
