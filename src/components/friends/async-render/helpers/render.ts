@@ -30,7 +30,7 @@ export function addRenderTask(
 ): Promise<void> {
 	const
 		$a = this.async,
-		group = opts.group ?? 'asyncComponents';
+		group = (Object.isFunction(opts.group) ? opts.group() : opts.group) ?? 'asyncComponents';
 
 	return new SyncPromise((resolve, reject) => {
 		const taskDesc = {
