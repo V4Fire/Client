@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks when switching pages
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

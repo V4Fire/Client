@@ -9,7 +9,7 @@
 /* eslint-disable @typescript-eslint/unified-signatures */
 
 import type Async from 'core/async';
-import type { BoundFn, ProxyCb } from 'core/async';
+import type { BoundFn, ProxyCb, EventId } from 'core/async';
 
 import type { State } from 'core/component/state';
 import type { HydrationStore } from 'core/component/hydration';
@@ -438,30 +438,61 @@ export abstract class ComponentInterface {
 	/**
 	 * Attaches a listener to the specified component's event
 	 *
-	 * @param _event
-	 * @param _handler
+	 * @param event
+	 * @param handler
 	 */
-	protected $on<E = unknown, R = unknown>(_event: CanArray<string>, _handler: ProxyCb<E, R, this>): this {
+	protected $on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): EventId;
+
+	/**
+	 * Attaches a listener to the specified component's events
+	 *
+	 * @param events
+	 * @param handler
+	 */
+	protected $on<E = unknown, R = unknown>(events: string[], handler: ProxyCb<E, R, this>): EventId[];
+
+	protected $on<E = unknown, R = unknown>(_event: CanArray<string>, _handler: ProxyCb<E, R, this>): CanArray<EventId> {
 		return Object.throw();
 	}
 
 	/**
 	 * Attaches a disposable listener to the specified component's event
 	 *
-	 * @param _event
-	 * @param _handler
+	 * @param event
+	 * @param handler
 	 */
-	protected $once<E = unknown, R = unknown>(_event: string, _handler: ProxyCb<E, R, this>): this {
+	protected $once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): EventId;
+
+	/**
+	 * Attaches a disposable listener to the specified component's event
+	 *
+	 * @param events
+	 * @param handler
+	 */
+	protected $once<E = unknown, R = unknown>(events: string[], handler: ProxyCb<E, R, this>): EventId[];
+
+	protected $once<E = unknown, R = unknown>(
+		_event: CanArray<string>,
+		_handler: ProxyCb<E, R, this>
+	): CanArray<EventId> {
 		return Object.throw();
 	}
 
 	/**
 	 * Detaches the specified event listeners from the component
-	 *
-	 * @param [_event]
-	 * @param [_handler]
+	 * @param [link]
 	 */
-	protected $off(_event?: CanArray<string>, _handler?: Function): this {
+	protected $off(link: CanArray<EventId>): this;
+
+	/**
+	 * Detaches the specified event listeners from the component
+	 *
+	 * @param [event]
+	 * @param [handler]
+	 */
+	protected $off(event?: CanArray<string>, handler?: Function): this;
+
+	protected $off(_event?: CanArray<string | EventId>, _handler?: Function): this {
 		return Object.throw();
 	}
 

@@ -78,7 +78,8 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	};
 
 	const
-		cache = new WeakMap();
+		label = Symbol('Render cache'),
+		cache = new Map();
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
 		const
@@ -95,7 +96,14 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			return render;
 		}
 
-		cache.set(ctx, render);
+		if (unsafe.meta.params.functional !== true) {
+			cache.set(ctx, render);
+
+			unsafe.$async.worker(() => {
+				cache.delete(ctx);
+			}, {label});
+		}
+
 		return render();
 	});
 

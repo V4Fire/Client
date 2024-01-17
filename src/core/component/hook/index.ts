@@ -16,9 +16,6 @@ import QueueEmitter from 'core/component/queue-emitter';
 
 import type { Hook, ComponentHook, ComponentInterface } from 'core/component/interface';
 
-const
-	resolvedPromise = SyncPromise.resolve();
-
 /**
  * Runs a hook on the specified component instance.
  * The function returns a promise that is resolved when all hook handlers are executed.
@@ -114,5 +111,5 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		}
 	}
 
-	return resolvedPromise;
+	return SyncPromise.resolve();
 }

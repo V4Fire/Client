@@ -11,6 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :rocket: New Feature
+
+* Now the `render` method can accept the name of an asynchronous group to control the invocation of destructors `components/friends/vdom`
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks when switching pages `bDynamicPage`
+* Fixed a memory leak when creating dynamic components via the VDOM API `core/component/engines/vue3`
+* Fixed memory leaks when removing components `core/component/init`
+* Added memoization for the `getParent` and `getRoot` props to prevent unnecessary re-renders `build/snakeskin`
+
 ## v4.0.0-beta.48 (2024-01-17)
 
 #### :boom: Breaking Change
