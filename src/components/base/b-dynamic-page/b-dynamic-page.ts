@@ -95,7 +95,8 @@ export default class bDynamicPage extends iDynamicPage {
 	readonly pageGetter!: PageGetter;
 
 	/**
-	 * If set to true, the previous pages will be cached under their own names, allowing them to be restored when revisited.
+	 * If set to true, the previous pages will be cached under their own names,
+	 * allowing them to be restored when revisited.
 	 * This optimization helps improve page switching but may increase memory usage.
 	 *
 	 * Please note that when a page is switched, it will be deactivated through the `deactivate` function.
@@ -240,7 +241,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * The name of the current rendering group
 	 */
-	protected get currentRenderGroup() {
+	protected get currentRenderGroup(): string {
 		return `pageRendering-${this.renderCounter}`;
 	}
 
@@ -310,7 +311,7 @@ export default class bDynamicPage extends iDynamicPage {
 	/**
 	 * Creates a page destructor function
 	 */
-	protected createPageDestructor() {
+	protected createPageDestructor(): Function {
 		const
 			group = this.currentRenderGroup,
 			groupRgxp = new RegExp(RegExp.escape(group));
