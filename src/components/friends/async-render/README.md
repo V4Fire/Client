@@ -190,7 +190,7 @@ This can optimize the browser rendering process.
 
 A group name for manually clearing pending tasks via the `async` module.
 Providing this value disables the automatic cleanup of render tasks on the `update` hook.
-If this parameter is set as a function, the group name will be dynamically calculated on each new iteration.
+If this parameter is set as a function, the group name will be dynamically calculated on each iteration.
 
 ```
 < .container v-async-target

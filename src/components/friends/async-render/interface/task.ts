@@ -32,7 +32,7 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	/**
 	 * A group name to manual clearing of pending tasks via the [[Async]] module.
 	 * Providing this value disables automatically cleanup of render tasks on the `update` hook.
-	 * If this parameter is set as a function, the group name will be dynamically calculated on each new iteration.
+	 * If this parameter is set as a function, the group name will be dynamically calculated on each iteration.
 	 *
 	 * @example
 	 * ```

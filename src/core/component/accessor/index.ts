@@ -149,6 +149,7 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		});
 	});
 
+	// Register a worker to clean up memory upon component destruction
 	$a.worker(() => {
 		computedFields.forEach(([name]) => {
 			delete component[name]?.[cacheStatus];

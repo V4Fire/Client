@@ -133,6 +133,10 @@ export function createVirtualContext(
 		}
 	});
 
+	// When extending the context of the original component (e.g., Vue), to avoid conflicts,
+	// we create an object with the original context in the prototype: `V4Context<__proto__: OriginalContext>`.
+	// However, for functional components, this approach is redundant and can lead to memory leaks.
+	// Instead, we simply assign a reference to the raw context, which points to the original context.
 	saveRawComponentContext(virtualCtx, virtualCtx);
 
 	initProps(virtualCtx, {
