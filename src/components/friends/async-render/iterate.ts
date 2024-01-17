@@ -132,7 +132,7 @@ export function iterate(
 			// eslint-disable-next-line no-constant-condition
 			rendering: while (true) {
 				if (opts.group != null) {
-					group = `asyncComponents:${opts.group}:${chunkI}`;
+					group = `asyncComponents:${Object.isFunction(opts.group) ? opts.group() : opts.group}:${chunkI}`;
 				}
 
 				let
