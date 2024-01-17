@@ -138,8 +138,27 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 			break;
 
 		default:
+			handleDefaultCase();
+	}
+
+	function handleDefaultCase() {
+		if (img == null) {
+			return;
+		}
+
+		if (!img.complete) {
 			$a.once(img, 'load', onLoad, group);
 			$a.once(img, 'error', onError, group);
+
+			return;
+		}
+
+		if (img.naturalWidth > 0) {
+			void onLoad();
+
+		} else {
+			onError();
+		}
 	}
 
 	async function onLoad() {
@@ -152,7 +171,6 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		try {
 			await $a.sleep(50, group);
 
-			// eslint-disable-next-line require-atomic-updates
 			img.style.opacity = '1';
 
 			el.style['background-image'] = '';
@@ -171,6 +189,8 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		if (img == null) {
 			return;
 		}
+
+		img.style.opacity = '0';
 
 		el.style['background-image'] = el.getAttribute('data-broken-image') ?? '';
 		el.setAttribute('data-image', 'broken');

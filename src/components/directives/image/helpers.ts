@@ -69,7 +69,6 @@ export function createImgElement(
 		onerror(e: Event) {
 			const img = (<HTMLImageElement>e.target);
 			img.setAttribute('data-img', 'failed');
-			img.style.opacity = '0';
 		},
 
 		style: {
