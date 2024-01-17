@@ -64,7 +64,7 @@ export function getComponentMods(component: ComponentConstructorInfo): ModsDecl 
 				cache = new Map();
 
 			let
-				active;
+				active: CanUndef<string>;
 
 			modDecl.forEach((modVal) => {
 				if (Object.isArray(modVal)) {

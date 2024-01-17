@@ -63,6 +63,8 @@ import type { ComponentInterface } from 'core/component/interface';
  */
 export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const {
+		async: $a,
+
 		meta,
 		// eslint-disable-next-line deprecation/deprecation
 		meta: {params: {deprecatedProps}}
@@ -71,7 +73,28 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 	const
 		isFunctional = meta.params.functional === true;
 
-	Object.entries(meta.computedFields).forEach(([name, computed]) => {
+	Object.entries(meta.accessors).forEach(([name, accessor]) => {
+		const canSkip =
+			accessor == null ||
+			component[name] != null ||
+			!SSR && isFunctional && accessor.functional === false;
+
+		if (canSkip) {
+			return;
+		}
+
+		Object.defineProperty(component, name, {
+			configurable: true,
+			enumerable: true,
+			get: accessor.get,
+			set: accessor.set
+		});
+	});
+
+	const
+		computedFields = Object.entries(meta.computedFields);
+
+	computedFields.forEach(([name, computed]) => {
 		const canSkip =
 			component[name] != null ||
 			computed == null || computed.cache === 'auto' ||
@@ -126,21 +149,10 @@ export function attachAccessorsFromMeta(component: ComponentInterface): void {
 		});
 	});
 
-	Object.entries(meta.accessors).forEach(([name, accessor]) => {
-		const canSkip =
-			accessor == null ||
-			component[name] != null ||
-			!SSR && isFunctional && accessor.functional === false;
-
-		if (canSkip) {
-			return;
-		}
-
-		Object.defineProperty(component, name, {
-			configurable: true,
-			enumerable: true,
-			get: accessor.get,
-			set: accessor.set
+	// Register a worker to clean up memory upon component destruction
+	$a.worker(() => {
+		computedFields.forEach(([name]) => {
+			delete component[name]?.[cacheStatus];
 		});
 	});
 

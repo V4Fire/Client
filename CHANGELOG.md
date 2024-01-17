@@ -11,6 +11,41 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :rocket: New Feature
+
+* Now the `render` method can accept the name of an asynchronous group to control the invocation of destructors `components/friends/vdom`
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks when switching pages `bDynamicPage`
+* Fixed a memory leak when creating dynamic components via the VDOM API `core/component/engines/vue3`
+* Fixed memory leaks when removing components `core/component/init`
+* Added memoization for the `getParent` and `getRoot` props to prevent unnecessary re-renders `build/snakeskin`
+
+## v4.0.0-beta.48 (2024-01-17)
+
+#### :boom: Breaking Change
+
+* Now it is necessary to pass the application initialization flags to the `ready` method from
+  the initialization parameters, instead of importing it from `core/init`, due to SSR
+
+## v4.0.0-beta.47 (2024-01-16)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect image state during hydration `components/directives/image`
+
+## v4.0.0-beta.46 (2024-01-11)
+
+#### :bug: Bug Fix
+
+* `components/friends/async-render/iterate`:
+  * Fixed `asyncRenderComplete` event not being emitted
+  ([issue 1057](https://github.com/V4Fire/Client/issues/1057))
+  * Fixed race condition
+
 ## v4.0.0-beta.45 (2023-12-07)
 
 #### :bug: Bug Fix

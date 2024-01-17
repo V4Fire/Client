@@ -16,6 +16,7 @@ import type { RenderFactory, RenderFn } from 'components/friends/vdom/interface'
  * Renders the specified VNode and returns the result
  *
  * @param vnode
+ * @param [group] - the name of the async group within which rendering takes place
  *
  * @example
  * ```js
@@ -25,12 +26,13 @@ import type { RenderFactory, RenderFn } from 'components/friends/vdom/interface'
  * console.log(div.classList.contains('foo')); // true
  * ```
  */
-export function render(this: Friend, vnode: VNode): Node;
+export function render(this: Friend, vnode: VNode, group?: string): Node;
 
 /**
  * Renders the specified list of VNodes and returns the result
  *
  * @param vnodes
+ * @param [group] - the name of the async group within which rendering takes place
  *
  * @example
  * ```js
@@ -43,9 +45,10 @@ export function render(this: Friend, vnode: VNode): Node;
  * console.log(div[1].classList.contains('bar')); // true
  * ```
  */
-export function render(this: Friend, vnodes: VNode[]): Node[];
-export function render(this: Friend, vnode: CanArray<VNode>): CanArray<Node> {
-	return this.ctx.$renderEngine.r.render(Object.cast(vnode), this.ctx);
+export function render(this: Friend, vnodes: VNode[], group?: string): Node[];
+
+export function render(this: Friend, vnode: CanArray<VNode>, group?: string): CanArray<Node> {
+	return this.ctx.$renderEngine.r.render(Object.cast(vnode), this.ctx, group);
 }
 
 /**
