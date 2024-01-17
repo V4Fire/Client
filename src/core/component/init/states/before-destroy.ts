@@ -41,11 +41,19 @@ export function beforeDestroyState(component: ComponentInterface): void {
 			unsafe.$renderEngine.r.destroy($el);
 		}
 
+		const destroyedComponent = {
+			componentId: unsafe.componentId,
+			componentName: unsafe.componentName,
+			hook: unsafe.hook
+		};
+
 		Object.getOwnPropertyNames(unsafe).forEach((key) => {
 			delete unsafe[key];
 		});
 
-		Object.setPrototypeOf(unsafe, null);
+		Object.assign(unsafe, destroyedComponent);
+		Object.setPrototypeOf(unsafe, destroyedComponent);
+
 		dropRawComponentContext(unsafe);
 	}, 0);
 }
