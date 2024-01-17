@@ -37,13 +37,13 @@ export function beforeDestroyState(component: ComponentInterface): void {
 	}
 
 	setTimeout(() => {
-		if ($el != null) {
+		if ($el != null && unsafe.meta.params.functional === true) {
 			unsafe.$renderEngine.r.destroy($el);
 		}
 
 		Object.getOwnPropertyNames(unsafe).forEach((key) => {
 			delete unsafe[key];
-		})
+		});
 
 		Object.setPrototypeOf(unsafe, null);
 		dropRawComponentContext(unsafe);
