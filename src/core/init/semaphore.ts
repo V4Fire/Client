@@ -6,11 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createsAsyncSemaphore, resolveAfterDOMLoaded } from 'core/event';
+import { createsAsyncSemaphore } from 'core/event';
 
 import remoteState, { set } from 'core/component/state';
 
-import App, {
+import AppClass, {
 
 	app,
 	destroyApp,
@@ -23,31 +23,21 @@ import App, {
 } from 'core/component';
 
 import flags from 'core/init/flags';
-import type { InitAppOptions } from 'core/init/interface';
 
-const semaphore = createsAsyncSemaphore(createAppInitializer, ...flags);
+import type { InitAppOptions, App } from 'core/init/interface';
 
-export default semaphore;
-
-if (SSR) {
-	process.on('unhandledRejection', stderr);
-
-} else {
-	resolveAfterDOMLoaded()
-		.then(async () => {
-			const
-				targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
-				rootComponentName = targetToMount?.getAttribute('data-root-component');
-
-			const initApp = (await import('core/init')).default;
-			return initApp(rootComponentName, {targetToMount});
-		})
-
-		.catch(stderr);
+/**
+ * A factory for creating a semaphore over application initialization
+ */
+export default function createInitAppSemaphore(): (flag: string) => Promise<ReturnType<typeof createAppInitializer>> {
+	return createsAsyncSemaphore(createAppInitializer, ...flags);
 }
 
 function createAppInitializer() {
-	return async (rootComponentName: Nullable<string>, opts: InitAppOptions = {}) => {
+	return async (
+		rootComponentName: Nullable<string>,
+		opts: InitAppOptions
+	): Promise<App> => {
 		const
 			appId = opts.appId ?? Object.fastHash(Math.random()),
 			state = Object.reject(opts, ['targetToMount', 'setup']),
@@ -80,7 +70,7 @@ function createAppInitializer() {
 
 			const
 				hydrationStore = new HydrationStore(),
-				rootComponent = new App(rootComponentParams);
+				rootComponent = new AppClass(rootComponentParams);
 
 			rootComponent.provide('appId', appId);
 			rootComponent.provide('hydrationStore', hydrationStore);
@@ -107,10 +97,10 @@ function createAppInitializer() {
 			{targetToMount} = opts;
 
 		if (targetToMount == null) {
-			throw new ReferenceError('Application mount node not found');
+			throw new ReferenceError('Application mount node was not found');
 		}
 
-		app.context = new App({
+		app.context = new AppClass({
 			...rootComponentParams,
 			el: targetToMount
 		});

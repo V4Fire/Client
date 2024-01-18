@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak when creating dynamic components via the VDOM API
+
 ## v4.0.0-beta.23 (2023-09-18)
 
 #### :bug: Bug Fix

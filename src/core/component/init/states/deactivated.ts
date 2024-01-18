@@ -16,6 +16,10 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function deactivatedState(component: ComponentInterface): void {
+	if (component.hook === 'deactivated') {
+		return;
+	}
+
 	runHook('deactivated', component).catch(stderr);
 	callMethodFromComponent(component, 'deactivated');
 }

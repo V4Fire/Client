@@ -17,6 +17,26 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added possibility to get (set) theme from (to) cookie `components/super/i-static-page/modules/theme/theme-manager`
 
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :rocket: New Feature
+
+* Now the `render` method can accept the name of an asynchronous group to control the invocation of destructors `components/friends/vdom`
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks when switching pages `bDynamicPage`
+* Fixed a memory leak when creating dynamic components via the VDOM API `core/component/engines/vue3`
+* Fixed memory leaks when removing components `core/component/init`
+* Added memoization for the `getParent` and `getRoot` props to prevent unnecessary re-renders `build/snakeskin`
+
+## v4.0.0-beta.48 (2024-01-17)
+
+#### :boom: Breaking Change
+
+* Now it is necessary to pass the application initialization flags to the `ready` method from
+  the initialization parameters, instead of importing it from `core/init`, due to SSR
+
 ## v4.0.0-beta.47 (2024-01-16)
 
 #### :bug: Bug Fix

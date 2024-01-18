@@ -519,10 +519,13 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 		function wrapDestructor<T>(destructor: T): T {
 			if (Object.isFunction(destructor)) {
-				// Every worker that passed to Async have a counter with a number of consumers of this worker,
+				// Every worker passed to Async has a counter with a number of consumers of this worker,
 				// but in this case this behaviour is redundant and can produce an error,
-				// that why we wrap original destructor with a new function
-				component.unsafe.$async.worker(() => destructor());
+				// that's why we wrap original destructor with a new function
+				component.unsafe.$async.worker(() => {
+					watchCache.clear();
+					return destructor();
+				});
 			}
 
 			return destructor;
