@@ -68,8 +68,10 @@ export function iterate(
 		sliceOrOpts = [];
 	}
 
-	const
-		{filter, weight = 1} = opts;
+	const {
+		filter,
+		weight = 1
+	} = opts;
 
 	let
 		start: CanUndef<number>,
@@ -107,9 +109,13 @@ export function iterate(
 	let
 		awaiting = 0;
 
-	let
-		group = 'asyncComponents',
+	const
+		mainGroup = 'asyncComponents',
 		valuesToRender: Array<CanPromise<unknown>> = [];
+
+	let
+		vdomGroup: string,
+		group = mainGroup;
 
 	let
 		lastTask: Nullable<() => CanPromise<void>>,
@@ -141,14 +147,19 @@ export function iterate(
 		// eslint-disable-next-line no-constant-condition
 		rendering: while (true) {
 			if (opts.group != null) {
-				group = `asyncComponents:${Object.isFunction(opts.group) ? opts.group() : opts.group}:${chunkI}`;
+				const postfix = `${Object.isFunction(opts.group) ? opts.group() : opts.group}:${chunkI}`;
+				group = `${mainGroup}:${postfix}`;
+				vdomGroup = `${mainGroup}:vdom:${postfix}`;
 			}
 
-			let
-				iterRes: CanPromise<IteratorResult<unknown>> = nextIter ?? iter.iterator.next();
+			let iterRes: CanPromise<IteratorResult<unknown>> =
+				nextIter ??
+				iter.iterator.next();
 
 			try {
-				iterRes = Object.isPromise(iterRes) ? await $a.promise(iterRes, {group}) : iterRes;
+				iterRes = Object.isPromise(iterRes) ?
+					await $a.promise(iterRes, {group}) :
+					iterRes;
 
 				if (iterRes.done) {
 					break;
@@ -313,7 +324,7 @@ export function iterate(
 				});
 
 				vnodes.forEach(renderVNode);
-				valuesToRender = [];
+				valuesToRender.splice(0, valuesToRender.length);
 
 				chunkI++;
 				chunkTotal = 0;
@@ -334,7 +345,7 @@ export function iterate(
 					renderedVnode = Object.cast(vnode.el);
 
 				} else {
-					renderedVnode = render.call(that, Object.cast(vnode), group);
+					renderedVnode = render.call(that, Object.cast(vnode), vdomGroup);
 				}
 
 				const

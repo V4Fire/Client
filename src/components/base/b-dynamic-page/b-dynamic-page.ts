@@ -343,6 +343,11 @@ export default class bDynamicPage extends iDynamicPage {
 		} = this;
 
 		return new SyncPromise((resolve) => {
+			[...this.renderGroups].slice(0, this.renderGroups.size - 2).forEach((group) => {
+				this.async.clearAll({group: new RegExp(RegExp.escape(`asyncComponents:${group}`))});
+				this.renderGroups.delete(group);
+			});
+
 			this.onPageChange = onPageChange(resolve, this.route);
 		});
 
