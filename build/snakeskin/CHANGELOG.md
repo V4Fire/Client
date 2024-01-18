@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :bug: Bug Fix
+
+* Added memoization for the `getParent` and `getRoot` props to prevent unnecessary re-renders
+
 ## v4.0.0-beta.38 (2023-11-15)
 
 #### :bug: Bug Fix

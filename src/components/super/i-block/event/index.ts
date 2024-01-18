@@ -17,7 +17,7 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import SyncPromise from 'core/promise/sync';
 
 import type Async from 'core/async';
-import type { AsyncOptions, EventEmitterWrapper, ReadonlyEventEmitterWrapper } from 'core/async';
+import type { AsyncOptions, EventEmitterWrapper, ReadonlyEventEmitterWrapper, EventId } from 'core/async';
 
 import { component, globalEmitter } from 'core/component';
 
@@ -91,7 +91,15 @@ export default abstract class iBlockEvent extends iBlockBase {
 		init: (o, d) => (<Async>d.async).wrapEventEmitter({
 			on: (event: string, handler: Function) => o.$on(normalizeEventName(event), handler),
 			once: (event: string, handler: Function) => o.$once(normalizeEventName(event), handler),
-			off: o.$off.bind(o),
+
+			off: (eventOrLink: string | EventId, handler: Function) => {
+				if (Object.isString(eventOrLink)) {
+					return o.$off(normalizeEventName(eventOrLink), handler);
+				}
+
+				return o.$off(eventOrLink);
+			},
+
 			emit: o.emit.bind(o),
 			strictEmit: o.emit.bind(o)
 		})

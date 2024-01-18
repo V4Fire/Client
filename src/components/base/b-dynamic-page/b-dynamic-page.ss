@@ -23,7 +23,7 @@
 		? delete attrs[':keepAlive']
 		? delete attrs[':dispatching']
 
-		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter, group: registerRenderingGroup()})
+		< template v-for = el in asyncRender.iterate(renderIterator, {filter: renderFilter, group: registerRenderGroup})
 			< component.&__component &
 				v-if = !pageTakenFromCache |
 				ref = component |
@@ -32,5 +32,6 @@
 				:dispatching = true |
 				:renderComponentId = true |
 
+				v-attrs = {'@hook:destroyed': createPageDestructor()} |
 				${attrs}
 			.
