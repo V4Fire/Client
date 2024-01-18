@@ -218,6 +218,8 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
  * @param node
  */
 export function destroy(node: VNode | Node): void {
+	const destroyedVNodes = new WeakSet<VNode>();
+
 	if (node instanceof Node) {
 		if (('__vnode' in node)) {
 			removeVNode(node['__vnode']);
@@ -242,6 +244,12 @@ export function destroy(node: VNode | Node): void {
 			vnode.forEach(removeVNode);
 			return;
 		}
+
+		if (destroyedVNodes.has(vnode)) {
+			return;
+		}
+
+		destroyedVNodes.add(vnode);
 
 		if (Object.isArray(vnode.children)) {
 			vnode.children.forEach(removeVNode);
