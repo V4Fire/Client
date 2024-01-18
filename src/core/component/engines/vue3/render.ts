@@ -223,10 +223,12 @@ export function destroy(node: VNode | Node): void {
 			removeVNode(node['__vnode']);
 		}
 
-		node.parentNode?.removeChild(node);
+		if (!node.isConnected) {
+			node.parentNode?.removeChild(node);
 
-		if (node instanceof Element) {
-			node.innerHTML = '';
+			if (node instanceof Element) {
+				node.innerHTML = '';
+			}
 		}
 
 	} else {
