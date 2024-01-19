@@ -96,7 +96,12 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * A module to manage app themes from the Design System
 	 */
-	@system<iStaticPage>(themeManagerFactory)
+	@system<iStaticPage>((o) => themeManagerFactory(
+		o,
+		import('core/kv-storage/engines/cookie').then((cookie) => cookie.syncLocalStorage),
+		import('core/system-theme-extractor/engines/web').then((engine) => engine.webEngineFactory(o))
+	))
+
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
