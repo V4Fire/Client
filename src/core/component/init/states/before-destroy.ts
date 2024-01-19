@@ -37,7 +37,7 @@ export function beforeDestroyState(component: ComponentInterface): void {
 	}
 
 	setTimeout(() => {
-		if ($el != null && !$el.isConnected && unsafe.meta.params.functional === true) {
+		if ($el != null && !$el.isConnected) {
 			unsafe.$renderEngine.r.destroy($el);
 		}
 
