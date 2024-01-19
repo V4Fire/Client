@@ -13,3 +13,5 @@
 
 export { default } from 'components/super/i-static-page/modules/theme/factory';
 export { default as ThemeManager } from 'components/super/i-static-page/modules/theme/theme-manager';
+export * from 'components/super/i-static-page/modules/theme/interface';
+export * from 'components/super/i-static-page/modules/theme/const';

@@ -9,7 +9,6 @@
 import symbolGenerator from 'core/symbol';
 
 import { factory, SyncStorage, StorageEngine } from 'core/kv-storage';
-import SyncPromise from 'core/promise/sync';
 
 import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
@@ -143,7 +142,7 @@ export default class ThemeManager extends Friend {
 	 * Changes current theme value
 	 *
 	 * @param theme
-	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
+	 * @emits `theme:change(value: Theme, oldValue: CanUndef<Theme>)`
 	 */
 	protected async changeTheme(theme: Theme): Promise<void> {
 		let
@@ -174,14 +173,14 @@ export default class ThemeManager extends Friend {
 			return;
 		}
 
-		const oldValue = this.field.get('currentStore.value');
+		const oldValue = this.currentStore;
 
 		this.currentStore = {value, isSystem};
 		this.themeStorage.set('colorTheme', this.currentStore);
 		document.documentElement.setAttribute(this.themeAttribute, value);
 
 		void this.component.lfc.execCbAtTheRightTime(() => {
-			this.component.emit('theme:change', value, oldValue);
+			this.component.emit('theme:change', this.currentStore, oldValue);
 		});
 	}
 }
