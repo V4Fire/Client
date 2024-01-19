@@ -55,5 +55,5 @@ export function beforeDestroyState(component: ComponentInterface): void {
 		Object.setPrototypeOf(unsafe, destroyedComponent);
 
 		dropRawComponentContext(unsafe);
-	}, 0);
+	}, Math.floor(Math.random() * 100));
 }
