@@ -25,11 +25,12 @@ import {
 	withDirectives as superWithDirectives,
 	resolveDirective as superResolveDirective,
 
-	VNode,
 	VNodeChild,
 	VNodeArrayChildren
 
 } from 'vue';
+
+import type { VNode } from 'core/component/engines/interface';
 
 import Vue from 'core/component/engines/vue3/lib';
 
@@ -257,13 +258,6 @@ export function destroy(node: VNode | Node): void {
 
 		if (Object.isArray(vnode['dynamicChildren'])) {
 			vnode['dynamicChildren'].forEach((vnode) => removeVNode(Object.cast(vnode)));
-		}
-
-		if (Object.isArray(vnode.dirs)) {
-			vnode.dirs.forEach((binding) => {
-				binding.dir.beforeUnmount?.(vnode.el, binding, vnode, null);
-				binding.dir.unmounted?.(vnode.el, binding, vnode, null);
-			});
 		}
 
 		if (vnode.component != null) {
