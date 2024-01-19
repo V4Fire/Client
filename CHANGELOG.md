@@ -13,7 +13,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.51 (2024-01-19)
 
-#### :rocket: New Feature
+#### :bug: Bug Fix
 
 * Fixed an error when deleting the getters cache `core/component/accessor`
 
