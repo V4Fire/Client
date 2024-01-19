@@ -55,5 +55,8 @@ export function beforeDestroyState(component: ComponentInterface): void {
 		Object.setPrototypeOf(unsafe, destroyedComponent);
 
 		dropRawComponentContext(unsafe);
-	}, Math.floor(Math.random() * 100));
+
+	// To avoid freezing during cleaning of a larger number of components at once,
+	// a little randomness is added to the process
+	}, Math.floor(Math.random() * 1000));
 }
