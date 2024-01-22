@@ -136,7 +136,7 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 *
+	 * Sets actual system theme and activates system theme change listener
 	 */
 	async useSystemTheme(): Promise<void> {
 		const
