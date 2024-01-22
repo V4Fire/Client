@@ -154,20 +154,18 @@ export default class ThemeManager extends Friend {
 	 * Initializes system theme and theme change listener
 	 */
 	protected async initSystemTheme(): Promise<void> {
-		const
+		let
 			value = await this.systemThemeExtractor.getSystemTheme();
 
 		this.systemThemeExtractor.terminateThemeChangeListener();
 		this.systemThemeExtractor.initThemeChangeListener(
 			(value: string) => {
-				if (prefersColorSchemeEnabled) {
-					value = value === 'dark' ? darkThemeName : lightThemeName;
-				}
-
+				value = this.getThemeAlias(value);
 				void this.changeTheme(value, true);
 			}
 		);
 
+		value = this.getThemeAlias(value);
 		return this.changeTheme(value, true);
 	}
 
@@ -209,5 +207,17 @@ export default class ThemeManager extends Friend {
 		void this.component.lfc.execCbAtTheRightTime(() => {
 			this.component.emit('theme:change', this.currentStore, oldValue);
 		});
+	}
+
+	/**
+	 * Returns actual theme name for provided value
+	 * @param value
+	 */
+	protected getThemeAlias(value: string): string {
+		if (prefersColorSchemeEnabled) {
+			return value === 'dark' ? darkThemeName : lightThemeName;
+		}
+
+		return value;
 	}
 }
