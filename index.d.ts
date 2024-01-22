@@ -49,6 +49,7 @@ declare const DETECT_USER_PREFERENCES: CanUndef<
 
 /**
  * If set to true, the theme attribute will be processed by a proxy server, such as Nginx.
+ * The proxy server will interpolate the theme value from a cookie or header to the theme attribute.
  * Otherwise, the theme attributes will be sourced from the JS runtime.
  */
 declare const POST_PROCESS_THEME: CanUndef<boolean>;
