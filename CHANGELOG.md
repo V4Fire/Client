@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added possibility to get (set) theme from (to) cookie `components/super/i-static-page/modules/theme/theme-manager`
+* Added possibility to get/set theme from/to cookie `components/super/i-static-page/modules/theme/theme-manager`
 
 ## v4.0.0-beta.49 (2024-01-17)
 
