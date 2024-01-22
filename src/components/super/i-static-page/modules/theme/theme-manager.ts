@@ -36,7 +36,7 @@ export default class ThemeManager extends Friend {
 	/**
 	 * Current theme value
 	 */
-	protected currentStore!: Theme;
+	protected current!: Theme;
 
 	/**
 	 * A promise that resolves when the ThemeManager is initialized.
@@ -117,7 +117,7 @@ export default class ThemeManager extends Friend {
 					return this.changeTheme(theme);
 				})
 				.then(() => {
-					this.initialValue = {...this.currentStore};
+					this.initialValue = {...this.current};
 					return this;
 				}),
 			{label: $$.themeManagerInit}
@@ -127,16 +127,16 @@ export default class ThemeManager extends Friend {
 	/**
 	 * Returns current theme
 	 */
-	async getTheme(): Promise<Theme> {
+	async get(): Promise<Theme> {
 		await this.initPromise;
-		return this.currentStore;
+		return this.current;
 	}
 
 	/**
 	 * Sets a new value to the current theme
 	 * @param value
 	 */
-	async setTheme(value: string): Promise<void> {
+	async set(value: string): Promise<void> {
 		await this.initPromise;
 		return this.changeTheme({value, isSystem: false});
 	}
@@ -144,7 +144,7 @@ export default class ThemeManager extends Friend {
 	/**
 	 * Sets actual system theme and activates system theme change listener
 	 */
-	async useSystemTheme(): Promise<void> {
+	async useSystem(): Promise<void> {
 		await this.initPromise;
 		return this.initSystemTheme();
 	}
@@ -156,8 +156,8 @@ export default class ThemeManager extends Friend {
 		let
 			value = await this.systemThemeExtractor.getSystemTheme();
 
-		this.systemThemeExtractor.terminateThemeChangeListener();
-		this.systemThemeExtractor.initThemeChangeListener(
+		this.systemThemeExtractor.unsubscribe();
+		this.systemThemeExtractor.subscribe(
 			(value: string) => {
 				value = this.getThemeAlias(value);
 				void this.changeTheme({value, isSystem: true});
@@ -181,7 +181,7 @@ export default class ThemeManager extends Friend {
 		if (
 			SSR ||
 			!Object.isString(this.themeAttribute) ||
-			Object.fastCompare(this.currentStore, {value, isSystem})
+			Object.fastCompare(this.current, {value, isSystem})
 		) {
 			return;
 		}
@@ -195,17 +195,17 @@ export default class ThemeManager extends Friend {
 		}
 
 		if (!isSystem) {
-			this.systemThemeExtractor.terminateThemeChangeListener();
+			this.systemThemeExtractor.unsubscribe();
 		}
 
-		const oldValue = this.currentStore;
+		const oldValue = this.current;
 
-		this.currentStore = {value, isSystem};
-		this.themeStorage.set('colorTheme', this.currentStore);
+		this.current = {value, isSystem};
+		this.themeStorage.set('colorTheme', this.current);
 		document.documentElement.setAttribute(this.themeAttribute, value);
 
 		void this.component.lfc.execCbAtTheRightTime(() => {
-			this.component.emit('theme:change', this.currentStore, oldValue);
+			this.component.emit('theme:change', this.current, oldValue);
 		});
 	}
 

@@ -227,7 +227,7 @@ export default abstract class iBlockMods extends iBlockEvent {
 			return;
 		}
 
-		const cur = await this.r.theme.getTheme();
+		const cur = await this.r.theme.get();
 
 		void this.setMod('theme', cur.value);
 
