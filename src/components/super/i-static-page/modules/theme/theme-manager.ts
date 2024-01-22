@@ -64,6 +64,11 @@ export default class ThemeManager extends Friend {
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
 
 	/**
+	 * Default theme from config
+	 */
+	protected readonly defaultTheme: string;
+
+	/**
 	 * @param component
 	 * @param themeStorageEngine - engine for persistent theme storage
 	 * @param systemThemeExtractor
@@ -79,6 +84,11 @@ export default class ThemeManager extends Friend {
 			throw new ReferenceError('An attribute name to set themes is not specified');
 		}
 
+		if (!Object.isString(THEME)) {
+			throw new ReferenceError('A theme to initialize is not specified');
+		}
+
+		this.defaultTheme = THEME;
 		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
 
 		this.initPromise = this.async.promise(
@@ -112,17 +122,6 @@ export default class ThemeManager extends Friend {
 				}),
 			{label: $$.themeManagerInit}
 		);
-	}
-
-	/**
-	 * Default theme from config
-	 */
-	protected get defaultTheme(): string {
-		if (!Object.isString(THEME)) {
-			throw new ReferenceError('A theme to initialize is not specified');
-		}
-
-		return THEME;
 	}
 
 	/**
