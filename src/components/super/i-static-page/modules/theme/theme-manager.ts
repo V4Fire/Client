@@ -75,10 +75,6 @@ export default class ThemeManager extends Friend {
 	) {
 		super(component);
 
-		if (!Object.isString(THEME)) {
-			throw new ReferenceError('A theme to initialize is not specified');
-		}
-
 		if (!Object.isString(this.themeAttribute)) {
 			throw new ReferenceError('An attribute name to set themes is not specified');
 		}
@@ -92,7 +88,7 @@ export default class ThemeManager extends Friend {
 					this.systemThemeExtractor = systemThemeExtractor;
 
 					let
-						theme: ThemeSetterArg = {value: THEME, isSystem: false};
+						theme: ThemeSetterArg = {value: this.defaultTheme, isSystem: false};
 
 					if (POST_PROCESS_THEME) {
 						const themeFromStore = this.themeStorage.get<Theme>('colorTheme');
@@ -116,6 +112,17 @@ export default class ThemeManager extends Friend {
 				}),
 			{label: $$.themeManagerInit}
 		);
+	}
+
+	/**
+	 * Default theme from config
+	 */
+	protected get defaultTheme(): string {
+		if (!Object.isString(THEME)) {
+			throw new ReferenceError('A theme to initialize is not specified');
+		}
+
+		return THEME;
 	}
 
 	/**
@@ -182,7 +189,11 @@ export default class ThemeManager extends Friend {
 		}
 
 		if (!this.availableThemes.has(value)) {
-			throw new ReferenceError(`A theme with the name "${value}" is not defined`);
+			if (!isSystem) {
+				throw new ReferenceError(`A theme with the name "${value}" is not defined`);
+			}
+
+			value = this.defaultTheme;
 		}
 
 		if (!isSystem) {
