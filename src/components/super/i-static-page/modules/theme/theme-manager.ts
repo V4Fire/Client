@@ -91,7 +91,8 @@ export default class ThemeManager extends Friend {
 					this.themeStorage = factory(storageEngine);
 					this.systemThemeExtractor = systemThemeExtractor;
 
-					let theme = {value: THEME, isSystem: false};
+					let
+						theme: ThemeSetterArg = {value: THEME, isSystem: false};
 
 					if (POST_PROCESS_THEME) {
 						const themeFromStore = this.themeStorage.get<Theme>('colorTheme');
@@ -100,13 +101,15 @@ export default class ThemeManager extends Friend {
 							theme = themeFromStore;
 						}
 					} else if (prefersColorSchemeEnabled) {
-						theme.isSystem = true;
+						theme = {isSystem: true};
 					}
 
-					this.initialValue = theme;
 					return this.changeTheme(theme);
 				})
-				.then(() => this),
+				.then(() => {
+					this.initialValue = {...this.currentStore};
+					return this;
+				}),
 			{label: $$.themeManagerInit}
 		);
 	}
