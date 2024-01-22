@@ -14,7 +14,7 @@ import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import Friend from 'components/friends/friend';
-import type { Theme, ThemeSetterArg } from 'components/super/i-static-page/modules/theme/interface';
+import type { Theme } from 'components/super/i-static-page/modules/theme/interface';
 import type { SystemThemeExtractor } from 'core/system-theme-extractor';
 
 import { prefersColorSchemeEnabled, darkThemeName, lightThemeName } from 'components/super/i-static-page/modules/theme/const';
@@ -98,7 +98,7 @@ export default class ThemeManager extends Friend {
 					this.systemThemeExtractor = systemThemeExtractor;
 
 					let
-						theme: ThemeSetterArg = {value: this.defaultTheme, isSystem: false};
+						theme: Theme = {value: this.defaultTheme, isSystem: false};
 
 					if (POST_PROCESS_THEME) {
 						const themeFromStore = this.themeStorage.get<Theme>('colorTheme');
@@ -114,7 +114,7 @@ export default class ThemeManager extends Friend {
 						return this.initSystemTheme();
 					}
 
-					return this.changeTheme(theme.value);
+					return this.changeTheme(theme);
 				})
 				.then(() => {
 					this.initialValue = {...this.currentStore};
@@ -138,7 +138,7 @@ export default class ThemeManager extends Friend {
 	 */
 	async setTheme(value: string): Promise<void> {
 		await this.initPromise;
-		return this.changeTheme(value);
+		return this.changeTheme({value, isSystem: false});
 	}
 
 	/**
@@ -160,23 +160,24 @@ export default class ThemeManager extends Friend {
 		this.systemThemeExtractor.initThemeChangeListener(
 			(value: string) => {
 				value = this.getThemeAlias(value);
-				void this.changeTheme(value, true);
+				void this.changeTheme({value, isSystem: true});
 			}
 		);
 
 		value = this.getThemeAlias(value);
-		return this.changeTheme(value, true);
+		return this.changeTheme({value, isSystem: true});
 	}
 
 	/**
 	 * Changes current theme value
 	 *
-	 * @param value
-	 * @param isSystem
+	 * @param theme
+	 * @param theme.value
+	 * @param theme.isSystem
 	 * @throws ReferenceError
 	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 */
-	protected changeTheme(value: string, isSystem: boolean = false): void {
+	protected changeTheme({value, isSystem}: Theme): void {
 		if (
 			SSR ||
 			!Object.isString(this.themeAttribute) ||

@@ -20,8 +20,3 @@ export interface Theme {
 	 */
 	isSystem: boolean;
 }
-
-/**
- * Helper type to annotate theme setter function's argument
- */
-export type ThemeSetterArg = { value: string; isSystem: false } | { isSystem: true };
