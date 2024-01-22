@@ -101,11 +101,11 @@ export default class ThemeManager extends Friend {
 							theme = themeFromStore;
 						}
 					} else if (prefersColorSchemeEnabled) {
-						return this.useSystemTheme();
+						return this.initSystemTheme();
 					}
 
 					if (theme.isSystem) {
-						return this.useSystemTheme();
+						return this.initSystemTheme();
 					}
 
 					return this.changeTheme(theme.value);
@@ -139,6 +139,14 @@ export default class ThemeManager extends Friend {
 	 * Sets actual system theme and activates system theme change listener
 	 */
 	async useSystemTheme(): Promise<void> {
+		await this.initPromise;
+		return this.initSystemTheme();
+	}
+
+	/**
+	 * Initializes system theme and theme change listener
+	 */
+	protected async initSystemTheme(): Promise<void> {
 		const
 			value = await this.systemThemeExtractor.getSystemTheme();
 
