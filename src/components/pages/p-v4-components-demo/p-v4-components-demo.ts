@@ -46,10 +46,26 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	@field()
+	selectValue: string = '1';
+
 	protected beforeCreate(): void {
 		//#unless runtime has storybook
 		// eslint-disable-next-line no-console
 		console.time('Render');
 		//#endunless
+	}
+
+	protected onSelectChange(value: string): void {
+		this.console.log('select changed', value);
+		// reset input on select change
+		this.selectValue = value;
+		this.someField = '';
+	}
+
+	protected onInputChange(value: unknown): void {
+		this.console.log('input changed', value);
+		// update state on input change
+		this.someField = value;
 	}
 }
