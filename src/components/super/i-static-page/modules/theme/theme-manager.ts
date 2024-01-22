@@ -101,10 +101,14 @@ export default class ThemeManager extends Friend {
 							theme = themeFromStore;
 						}
 					} else if (prefersColorSchemeEnabled) {
-						theme = {isSystem: true};
+						return this.useSystemTheme();
 					}
 
-					return this.changeTheme(theme);
+					if (theme.isSystem) {
+						return this.useSystemTheme();
+					}
+
+					return this.changeTheme(theme.value);
 				})
 				.then(() => {
 					this.initialValue = {...this.currentStore};
@@ -126,68 +130,65 @@ export default class ThemeManager extends Friend {
 	 * Sets a new value to the current theme
 	 * @param value
 	 */
-	async setTheme(value: ThemeSetterArg): Promise<void> {
+	async setTheme(value: string): Promise<void> {
 		await this.initPromise;
 		return this.changeTheme(value);
 	}
 
 	/**
-	 * Changes current theme value
-	 * @param theme
+	 *
 	 */
-	protected async changeTheme(theme: ThemeSetterArg): Promise<void> {
-		if (SSR || !Object.isString(this.themeAttribute)) {
+	async useSystemTheme(): Promise<void> {
+		const
+			value = await this.systemThemeExtractor.getSystemTheme();
+
+		this.systemThemeExtractor.terminateThemeChangeListener();
+		this.systemThemeExtractor.initThemeChangeListener(
+			(value: string) => {
+				if (prefersColorSchemeEnabled) {
+					value = value === 'dark' ? darkThemeName : lightThemeName;
+				}
+
+				void this.changeTheme(value, true);
+			}
+		);
+
+		return this.changeTheme(value, true);
+	}
+
+	/**
+	 * Changes current theme value
+	 *
+	 * @param value
+	 * @param isSystem
+	 * @throws ReferenceError
+	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
+	 */
+	protected changeTheme(value: string, isSystem: boolean = false): void {
+		if (
+			SSR ||
+			!Object.isString(this.themeAttribute) ||
+			Object.fastCompare(this.currentStore, {value, isSystem})
+		) {
 			return;
 		}
 
-		const
-			updateTheme = ({value, isSystem}: Theme) => {
-				if (!this.availableThemes.has(value)) {
-					throw new ReferenceError(`A theme with the name "${value}" is not defined`);
-				}
+		if (!this.availableThemes.has(value)) {
+			throw new ReferenceError(`A theme with the name "${value}" is not defined`);
+		}
 
-				if (
-					!Object.isString(this.themeAttribute) ||
-					Object.fastCompare(this.currentStore, {value, isSystem})
-				) {
-					return;
-				}
-
-				const oldValue = this.currentStore;
-
-				this.currentStore = {value, isSystem};
-				this.themeStorage.set('colorTheme', this.currentStore);
-				document.documentElement.setAttribute(this.themeAttribute, value);
-
-				void this.component.lfc.execCbAtTheRightTime(() => {
-					this.component.emit('theme:change', this.currentStore, oldValue);
-				});
-			};
-
-		const
-			{isSystem} = theme;
-
-		let value: string;
-
-		if (isSystem) {
-			value = await this.systemThemeExtractor.getSystemTheme();
-
-			this.systemThemeExtractor.terminateThemeChangeListener();
-			this.systemThemeExtractor.initThemeChangeListener(
-				(value: string) => {
-					if (prefersColorSchemeEnabled) {
-						value = value === 'dark' ? darkThemeName : lightThemeName;
-					}
-
-					updateTheme({value, isSystem: true});
-				}
-			);
-
-		} else {
-			value = theme.value;
+		if (!isSystem) {
 			this.systemThemeExtractor.terminateThemeChangeListener();
 		}
 
-		return updateTheme({value, isSystem});
+		const oldValue = this.currentStore;
+
+		this.currentStore = {value, isSystem};
+		this.themeStorage.set('colorTheme', this.currentStore);
+		document.documentElement.setAttribute(this.themeAttribute, value);
+
+		void this.component.lfc.execCbAtTheRightTime(() => {
+			this.component.emit('theme:change', this.currentStore, oldValue);
+		});
 	}
 }
