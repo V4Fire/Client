@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added possibility to get (set) theme from (to) cookie
+* Added possibility to get/set theme from/to cookie
 
 ## v4.0.0-beta.20 (2023-09-13)
 
