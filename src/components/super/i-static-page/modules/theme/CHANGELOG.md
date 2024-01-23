@@ -11,6 +11,10 @@ Changelog
 
 ## v4.0.0-beta.?? (2023-??-??)
 
+#### :boom: Breaking Change
+
+* Redesigned theme-manager class to work asynchronously
+
 #### :rocket: New Feature
 
 * Added possibility to get/set theme from/to cookie
