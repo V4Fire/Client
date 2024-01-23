@@ -74,6 +74,26 @@ export default class SSRPageMetaData {
 	}
 
 	/**
+	 * Searches for meta elements with the given attributes and returns them
+	 * @param attrs - additional attributes of the searched elements
+	 */
+	findMetas(attrs: MetaAttributes): MetaAttributes[] {
+		return this.remoteState.seo.meta.filter(
+			(meta: MetaAttributes) => Object.fastCompare(attrs, meta)
+		);
+	}
+
+	/**
+	 * Searches for link elements with the given attributes and returns them
+	 * @param attrs - attributes of the searched elements
+	 */
+	findLinks(attrs: LinkAttributes): LinkAttributes[] {
+		return this.remoteState.seo.links.filter(
+			(meta: LinkAttributes) => Object.fastCompare(attrs, meta)
+		);
+	}
+
+	/**
 	 * Creates a new element and inserts it into the page `<head>`
 	 *
 	 * @param tag - the element tag name to create

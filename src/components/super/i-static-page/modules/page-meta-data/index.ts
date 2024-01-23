@@ -88,9 +88,9 @@ export default class PageMetaData {
 
 	/**
 	 * Searches for link elements with the given attributes and returns them
-	 * @param [attrs] - additional attributes of the searched elements
+	 * @param attrs - attributes of the searched elements
 	 */
-	findLinks(attrs?: LinkAttributes): NodeListOf<HTMLLinkElement> {
+	findLinks(attrs: LinkAttributes): NodeListOf<HTMLLinkElement> {
 		return this.findElementsWithAttrs('link', attrs);
 	}
 
@@ -104,9 +104,9 @@ export default class PageMetaData {
 
 	/**
 	 * Searches for meta elements with the given attributes and returns them
-	 * @param [attrs] - additional attributes of the searched elements
+	 * @param attrs - attributes of the searched elements
 	 */
-	findMetas(attrs?: MetaAttributes): NodeListOf<HTMLMetaElement> {
+	findMetas(attrs: MetaAttributes): NodeListOf<HTMLMetaElement> {
 		return this.findElementsWithAttrs<HTMLMetaElement>('meta', attrs);
 	}
 
