@@ -49,11 +49,6 @@ export default class ThemeManager extends Friend {
 	protected systemThemeExtractor!: SystemThemeExtractor;
 
 	/**
-	 * Initial theme value
-	 */
-	protected initialValue!: Theme;
-
-	/**
 	 * An API for persistent theme storage
 	 */
 	protected themeStorage!: SyncStorage;
@@ -116,10 +111,7 @@ export default class ThemeManager extends Friend {
 
 					return this.changeTheme(theme);
 				})
-				.then(() => {
-					this.initialValue = {...this.current};
-					return this;
-				}),
+				.then(() => this),
 			{label: $$.themeManagerInit}
 		);
 	}
