@@ -222,12 +222,12 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 * Initializes the theme modifier and attaches a listener to watch changing of the theme
 	 */
 	@hook('created')
-	protected async initThemeModListener(): Promise<void> {
+	protected initThemeModListener(): void {
 		if (this.r.theme == null) {
 			return;
 		}
 
-		const cur = await this.r.theme.get();
+		const cur = this.r.theme.get();
 
 		void this.setMod('theme', cur.value);
 
