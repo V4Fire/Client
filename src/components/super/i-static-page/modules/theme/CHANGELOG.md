@@ -13,11 +13,12 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Redesigned theme-manager class to work asynchronously
+* Refactored api: change get/set current to get/set methods
 
 #### :rocket: New Feature
 
 * Added possibility to get/set theme from/to cookie
+* Added possibility to use systemTheme by calling `useSystem` method
 
 ## v4.0.0-beta.20 (2023-09-13)
 

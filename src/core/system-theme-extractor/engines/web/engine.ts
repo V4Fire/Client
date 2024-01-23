@@ -10,6 +10,7 @@ import symbolGenerator from 'core/symbol';
 
 import type { SystemThemeExtractor } from 'core/system-theme-extractor';
 import Friend from 'components/friends/friend';
+import SyncPromise from 'core/promise/sync';
 
 const
 	$$ = symbolGenerator();
@@ -25,10 +26,10 @@ export default class WebEngine extends Friend implements SystemThemeExtractor {
 	protected darkThemeMq?: MediaQueryList;
 
 	/** @inheritDoc */
-	getSystemTheme(): string {
+	getSystemTheme(): SyncPromise<string> {
 		const darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
 
-		return darkThemeMq.matches ? 'dark' : 'light';
+		return new SyncPromise((resolve) => resolve(darkThemeMq.matches ? 'dark' : 'light'));
 	}
 
 	/** @inheritDoc */

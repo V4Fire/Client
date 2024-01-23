@@ -13,7 +13,7 @@ export interface SystemThemeExtractor {
 	/**
 	 * Retrieves the current system visual appearance theme.
 	 */
-	getSystemTheme(): CanPromise<string>;
+	getSystemTheme(): PromiseLike<string>;
 
 	/**
 	 * Initializes an event listener for changes in the system's visual appearance theme.

@@ -18,6 +18,8 @@ import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
+import * as cookie from 'core/kv-storage/engines/cookie';
+import { webEngineFactory } from 'core/system-theme-extractor/engines/web';
 
 import {
 
@@ -98,8 +100,8 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>((o) => themeManagerFactory(
 		o,
-		import('core/kv-storage/engines/cookie').then((cookie) => cookie.syncLocalStorage),
-		import('core/system-theme-extractor/engines/web').then((engine) => engine.webEngineFactory(o))
+		cookie.syncLocalStorage,
+		webEngineFactory(o)
 	))
 
 	readonly theme: CanUndef<ThemeManager>;
