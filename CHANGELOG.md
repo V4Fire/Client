@@ -15,12 +15,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Redesigned theme-manager class to work asynchronously `components/super/i-static-page/modules/theme/theme-manager`
+* Refactored api: change get/set current to get/set methods `components/super/i-static-page/modules/theme/theme-manager`
 
 #### :rocket: New Feature
 
-* Added possibility to get/set theme from/to cookie `components/super/i-static-page/modules/theme/theme-manager`
-* Added possibility to specify system theme extractor for theme-manager `components/super/i-static-page/modules/theme/theme-manager`
+* `components/super/i-static-page/modules/theme/theme-manager`
+  * Added possibility to get/set theme from/to cookie
+  * Added possibility to specify system theme extractor for theme-manager
+  * Added possibility to use systemTheme by calling `useSystem` method
 * Released module `core/system-theme-extractor`
 
 ## v4.0.0-beta.49 (2024-01-17)
