@@ -17,6 +17,7 @@ import type {
 	LinkAttributes
 
 } from 'components/super/i-static-page/modules/page-meta-data/interface';
+import { concatURLs } from 'core/url';
 
 export * from 'components/super/i-static-page/modules/page-meta-data/interface';
 
@@ -108,6 +109,44 @@ export default class PageMetaData {
 	 */
 	findMetas(attrs: MetaAttributes): NodeListOf<HTMLMetaElement> {
 		return this.findElementsWithAttrs<HTMLMetaElement>('meta', attrs);
+	}
+
+	/**
+	 * Устанавливает ссылку `<link rel="canonical" />`
+	 * @param [pathname] - строка содержащая первый '/' после хоста с последующим текстом URL
+	 */
+	setCanonicalLink(pathname?: string): void {
+		const
+			links = this.findLinks({rel: 'canonical'}),
+			href = concatURLs(location.origin, pathname, location.search);
+
+		if (Object.size(links) === 0) {
+			this.addLink({rel: 'canonical', href});
+
+		} else {
+			links.item(0).href = href;
+		}
+	}
+
+	/**
+	 * Удаляет ссылку `<link rel="canonical" />`
+	 */
+	removeCanonicalLink(): NodeListOf<HTMLLinkElement> {
+		const links = this.findLinks({rel: 'canonical'});
+		links.forEach((link) => document.head.removeChild(link));
+
+		return links;
+	}
+
+	/**
+	 * Удаляет мета элемент со страницы
+	 * @param attrs
+	 */
+	removeMeta(attrs: MetaAttributes): NodeListOf<HTMLMetaElement> {
+		const metas = this.findMetas(attrs);
+		metas.forEach((meta) => document.head.removeChild(meta));
+
+		return metas;
 	}
 
 	/**

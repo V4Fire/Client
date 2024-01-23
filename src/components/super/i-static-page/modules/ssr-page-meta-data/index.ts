@@ -94,6 +94,29 @@ export default class SSRPageMetaData {
 	}
 
 	/**
+	 * Устанавливает ссылку `<link rel="canonical" />`
+	 * @param [pathname] - строка содержащая первый '/' после хоста с последующим текстом URL
+	 */
+	setCanonicalLink(pathname?: string): void {
+		// todo
+	}
+
+	/**
+	 * Удаляет ссылку `<link rel="canonical" />`
+	 */
+	removeCanonicalLink(): NodeListOf<HTMLLinkElement> {
+		// todo
+	}
+
+	/**
+	 * Удаляет мета элемент со страницы
+	 * @param attrs
+	 */
+	removeMeta(attrs: MetaAttributes): NodeListOf<HTMLMetaElement> {
+		// todo
+	}
+
+	/**
 	 * Creates a new element and inserts it into the page `<head>`
 	 *
 	 * @param tag - the element tag name to create
