@@ -100,7 +100,7 @@ The component offers various usage options: it can load and render data on scrol
 
 Below, we will explore a few basic usage scenarios and delve into the component's API in greater detail.
 
-### How to Implement Simple Rendering?
+### How to Implement Simple Rendering via DataProvider?
 
 To implement simple rendering, you need to follow several steps:
 
@@ -186,6 +186,31 @@ Let's add a `loader` slot to our component to provide a better user experience d
 ```
 
 Now, users will see a friendly message indicating that content will appear shortly, preventing them from being surprised by sudden content changes.
+
+### How to Implement Simple Rendering via `items`?
+
+The approach to rendering data using the `items` prop is not significantly different from the approach when data is obtained from a `dataProvider`.
+
+Instead of passing the `dataProvider` and request* parameters,
+you need to pass the items prop which contains an array of data to be rendered by the components:
+
+   ```snakeskin
+   < b-virtual-scroll &
+     :chunkSize = 12 |
+     :items = data |
+     :item = 'b-dummy' |
+     :itemKey = (el) => el.uuid |
+     :itemProps = (el) => ({name: el.name, type: el.type})
+   .
+   ```
+
+   These data can be loaded by some other component or they can be static.
+   It doesn't matter, what's important is that the `b-virtual-scroll` component will take these data and process them through the rendering pipeline.
+
+There are also some minor differences in the component's event model.
+Unlike `b-virtual-scroll` which uses a `dataProvider`, a component with items will not emit certain events, specifically `dataLoadStart` and `convertDataToDB`.
+
+The component will also ignore the `shouldPerformDataRequest` and `shouldStopRequestingData` props, as they have no meaning when there is no `dataProvider`.
 
 ### How to Implement Component Rendering on Click Instead of Scroll?
 

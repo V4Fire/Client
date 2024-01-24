@@ -41,7 +41,7 @@ class bDummy extends iData {
 	 * Slots for the test component
 	 */
 	@field()
-	testComponentSlots?: CanArray<VNode>
+	testComponentSlots?: CanArray<VNode>;
 
 	protected override readonly $refs!: iData['$refs'] & {
 		testComponent?: iBlock;

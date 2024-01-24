@@ -155,6 +155,7 @@ export function createDataConveyor<DATA>(
 			dataI = 0;
 			itemsI = 0;
 			childI = 0;
+			page = 0;
 			total = undefined;
 			childList = [];
 			items = [];
@@ -201,28 +202,41 @@ export function createStateApi(
 	dataConveyor: DataConveyor
 ): StateApi {
 	let
-		state = createInitialState(initial);
+		state = createInitialState(initial),
+		settled = {};
 
 	const obj: StateApi = {
 		compile(override?: Partial<VirtualScrollState>): VirtualScrollState {
-			return {
+			const compiled = {
 				...state,
-				...extractStateFromDataConveyor(dataConveyor),
-				...override
+				...extractStateFromDataConveyor(dataConveyor)
 			};
+
+			Object.keys(settled).forEach((key) => {
+				compiled[key] = settled[key];
+			});
+
+			if (override) {
+				Object.keys(override).forEach((key) => {
+					compiled[key] = override[key];
+				});
+			}
+
+			return compiled;
 		},
 
 		set(props: Partial<VirtualScrollState>): StateApi {
-			state = {
-				...state,
-				...props
-			};
+			Object.keys(props).forEach((key) => {
+				settled[key] = props[key];
+				state[key] = props[key];
+			});
 
 			return obj;
 		},
 
 		reset(): void {
 			state = createInitialState(initial);
+			settled = {};
 			dataConveyor.reset();
 		},
 

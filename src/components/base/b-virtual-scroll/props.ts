@@ -44,6 +44,10 @@ export default abstract class iVirtualScrollProps extends iData {
 	@prop({type: [String, Function]})
 	readonly item?: iItems['item'];
 
+	/** {@link iItems.items} */
+	@prop({type: [String, Function]})
+	readonly items: iItems['items'];
+
 	/** {@link iItems.itemKey} */
 	@prop({type: [String, Function]})
 	readonly itemKey?: CreateFromItemFn<object, string>;

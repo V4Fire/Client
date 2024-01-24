@@ -60,10 +60,10 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 				path = `prototype.${path}`;
 			}
 
-			const pathArray = path.split('.');
-			const method = <string>pathArray.pop();
-
-			const obj = pathArray.length >= 1 ? Object.get<object>(ctx, pathArray.join('.')) : ctx;
+			const
+				pathArray = path.split('.'),
+				method = <string>pathArray.pop(),
+				obj = pathArray.length >= 1 ? Object.get<object>(ctx, pathArray.join('.')) : ctx;
 
 			if (!obj) {
 				throw new ReferenceError(`Cannot find object by the provided path: ${path}`);

@@ -148,7 +148,7 @@ export default class Component {
 				if (parsed.children) {
 					ctx.testComponentSlots = compileChild();
 				}
-			
+
 				ctx.testComponent = name;
 
 				function compileChild() {
@@ -157,7 +157,7 @@ export default class Component {
 						attrs: {
 							slot: slotName
 						},
-						children: (<VNodeDescriptor[]>[]).concat(<VNodeDescriptor>child ?? [])
+						children: (<VNodeDescriptor[]>[]).concat(<VNodeDescriptor>(child ?? []))
 					})));
 				}
 

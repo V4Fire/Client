@@ -21,6 +21,21 @@ export const bVirtualScrollAsyncGroup = 'b-virtual-scroll';
 export const bVirtualScrollDomInsertAsyncGroup = `${bVirtualScrollAsyncGroup}:dom-insert`;
 
 /**
+ * Component modes.
+ */
+export const componentModes = <const>{
+	/**
+	 * In this mode, data is not loaded via a data provider, but instead passed in through the items prop.
+	 */
+	items: 'items',
+
+	/**
+	 * In this mode, data is loaded via a data provider.
+	 */
+	dataProvider: 'dataProvider'
+};
+
+/**
  * Component data-related events (emitted in `selfEmitter`).
  */
 export const componentDataLocalEvents = <const>{

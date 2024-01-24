@@ -144,24 +144,27 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	protected onDataLoadSuccess(this: bVirtualScroll, isInitialLoading: boolean, data: unknown): void {
 		this.componentInternalState.setIsLoadingInProgress(false);
 
-		if (!Object.isPlainObject(data) || !Array.isArray(data.data)) {
-			throw new ReferenceError('Missing "data" field in the loaded data');
+		const
+			dataToProvide = Object.isPlainObject(data) ? data.data : data;
+
+		if (!Array.isArray(dataToProvide)) {
+			throw new ReferenceError('Missing data to perform render');
 		}
 
-		this.componentInternalState.updateData(data.data, isInitialLoading);
+		this.componentInternalState.updateData(dataToProvide, isInitialLoading);
 		this.componentInternalState.incrementLoadPage();
 
 		const
 			isRequestsStopped = this.shouldStopRequestingDataWrapper();
 
-		this.componentEmitter.emit(componentEvents.dataLoadSuccess, data.data, isInitialLoading);
+		this.componentEmitter.emit(componentEvents.dataLoadSuccess, dataToProvide, isInitialLoading);
 
 		this.slotsStateController.loadingSuccessState();
 
 		if (
 			isInitialLoading &&
 			isRequestsStopped &&
-			Object.size(data.data) === 0
+			Object.size(dataToProvide) === 0
 		) {
 			this.onDataEmpty();
 			this.onLifecycleDone();
@@ -219,5 +222,13 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 		this.loadDataOrPerformRender();
 
 		this.componentEmitter.emit(componentEvents.elementEnter, component);
+	}
+
+	/**
+	 * Handler: items to render was updated
+	 * @param items
+	 */
+	protected onItemsInit(this: bVirtualScroll, items: Exclude<bVirtualScroll['items'], undefined>): void {
+		this.onDataLoadSuccess(true, items);
 	}
 }

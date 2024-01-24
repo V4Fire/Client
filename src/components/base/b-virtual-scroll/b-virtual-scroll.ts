@@ -17,8 +17,8 @@ import type { AsyncOptions } from 'core/async';
 import type iItems from 'components/traits/i-items/i-items';
 import VDOM, { create, render } from 'components/friends/vdom';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll/handlers';
-import { bVirtualScrollAsyncGroup, bVirtualScrollDomInsertAsyncGroup, renderGuardRejectionReason } from 'components/base/b-virtual-scroll/const';
-import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll, ItemsProcessors } from 'components/base/b-virtual-scroll/interface';
+import { bVirtualScrollAsyncGroup, bVirtualScrollDomInsertAsyncGroup, componentModes, renderGuardRejectionReason } from 'components/base/b-virtual-scroll/const';
+import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll, ItemsProcessors, ComponentMode } from 'components/base/b-virtual-scroll/interface';
 
 import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll/modules/emitter';
 import { ComponentInternalState } from 'components/base/b-virtual-scroll/modules/state';
@@ -26,7 +26,7 @@ import { SlotsStateController } from 'components/base/b-virtual-scroll/modules/s
 import { ComponentFactory } from 'components/base/b-virtual-scroll/modules/factory';
 import { Observer } from 'components/base/b-virtual-scroll/modules/observer';
 
-import iData, { component, system, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
+import iData, { component, system, watch, wait, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-virtual-scroll/interface';
 export * from 'components/base/b-virtual-scroll/const';
@@ -76,6 +76,13 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	}
 
 	/**
+	 * {@link ComponentMode}
+	 */
+	get componentMode(): ComponentMode {
+		return this.items ? componentModes.items : componentModes.dataProvider;
+	}
+
+	/**
 	 * Initializes the loading of the next data chunk
 	 * @throws {@link ReferenceError} if there is no `dataProvider` set.
 	 */
@@ -99,7 +106,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 
 		const
 			params = this.getRequestParams(),
-			get = this.dataProvider.get(params[0], params[1]);
+			get = this.dataProvider.get(params[0], {...params[1], showProgress: false});
 
 		return get
 			.then((res) => {
@@ -157,6 +164,7 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 		return super.reload(...args);
 	}
 
+	@watch({path: 'items', provideArgs: false})
 	override initLoad(...args: Parameters<iData['initLoad']>): ReturnType<iData['initLoad']> {
 		if (!this.lfc.isBeforeCreate()) {
 			this.reset();
@@ -166,6 +174,16 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 
 		const
 			initLoadResult = super.initLoad(...args);
+
+		if (this.componentMode === componentModes.items) {
+			if (Object.isPromise(initLoadResult)) {
+				return initLoadResult
+					.then(() => this.initItems())
+					.catch(stderr);
+			}
+
+			return this.initItems();
+		}
 
 		this.onDataLoadStart(true);
 
@@ -179,12 +197,24 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 					this.onDataLoadSuccess(true, this.db);
 				})
 				.catch(stderr);
-
-		} else {
-			this.onDataLoadSuccess(true, this.db);
 		}
 
 		return initLoadResult;
+	}
+
+	/**
+	 * Initializes the data passed through the items prop
+	 */
+	@wait({defer: true})
+	protected initItems(): CanPromise<void> {
+		if (
+			this.componentMode !== componentModes.items ||
+			!this.items
+		) {
+			return;
+		}
+
+		this.onItemsInit(this.items);
 	}
 
 	protected override convertDataToDB<O>(data: unknown): O | this['DB'] {
@@ -220,6 +250,11 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	 * this function again until the life cycle is updated and the state is reset.
 	 */
 	protected shouldStopRequestingDataWrapper(): boolean {
+		if (this.componentMode === componentModes.items) {
+			this.componentInternalState.setIsRequestsStopped(true);
+			return true;
+		}
+
 		const state = this.getVirtualScrollState();
 
 		if (state.areRequestsStopped) {
@@ -237,6 +272,10 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 	 * state and context when calling {@link bVirtualScroll.shouldPerformDataRequest}.
 	 */
 	protected shouldPerformDataRequestWrapper(): boolean {
+		if (this.componentMode === componentModes.items) {
+			return false;
+		}
+
 		return this.shouldPerformDataRequest(this.getVirtualScrollState(), this);
 	}
 

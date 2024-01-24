@@ -172,6 +172,14 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	}
 
 	/**
+	 * Scrolls the page to the top
+	 */
+	async scrollToTop(): Promise<this> {
+		await Scroll.scrollToTop(this.pwPage);
+		return this;
+	}
+
+	/**
 	 * Adds default `itemProps` for pagination
 	 */
 	withPaginationItemProps(): this {

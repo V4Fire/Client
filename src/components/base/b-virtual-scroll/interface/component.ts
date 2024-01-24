@@ -7,6 +7,7 @@
  */
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
+import type { componentModes } from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
 /**
  * State of the current component lifecycle.
@@ -145,6 +146,16 @@ export interface PrivateComponentState {
 	 */
 	dataOffset: number;
 }
+
+/**
+ * {@link componentModes}
+ */
+export type ComponentModes = typeof componentModes;
+
+/**
+ * {@link ComponentModes}
+ */
+export type ComponentMode = keyof ComponentModes;
 
 /**
  * Types of rendered components.

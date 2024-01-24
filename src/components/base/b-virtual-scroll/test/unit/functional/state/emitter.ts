@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/* eslint-disable max-lines-per-function */
+
 /**
  * @file This file contains test cases that verify the correctness of the component state during event emission.
  */
@@ -322,6 +324,194 @@ test.describe('<b-virtual-scroll>', () => {
 				['renderDone', states[6]],
 				['lifecycleDone', states[7]]
 			]);
+		});
+	});
+
+	test.describe('24 elements was provided in items prop', () => {
+		test('state at the time of emitting events must be correct', async () => {
+			const
+				chunkSize = 12,
+				total = chunkSize * 2;
+
+			const states = [
+				state.compile(observerInitialStateFields),
+				(
+					state.data.addData(chunkSize * 2),
+					state.data.setTotal(total),
+
+					state.set({
+						loadPage: 1,
+						lastLoadedRawData: undefined,
+						areRequestsStopped: true
+					}).compile(observerInitialStateFields)
+				),
+				(
+					state.data.addItems(chunkSize),
+					state.set({renderPage: 1, isInitialRender: false}).compile(observerLoadedStateFields)
+				),
+				(
+					state.set({isLastRender: true}).compile()
+				),
+				(
+					state.data.addItems(chunkSize),
+					state.set({renderPage: 2}).compile()
+				),
+				(
+					state.set({isLifecycleDone: true}).compile()
+				)
+			];
+
+			await component
+				.withPaginationItemProps()
+				.withProps({
+					chunkSize,
+					items: state.data.getDataChunk(0),
+
+					'@hook:beforeDataCreate': (ctx) => {
+						const original = ctx.emit;
+
+						ctx.emit = jestMock.mock((...args) => {
+							original(...args);
+							return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
+						});
+					}
+				})
+				.build();
+
+			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
+			await component.waitForChildCountEqualsTo(chunkSize * 2);
+			await component.scrollToBottom();
+			await component.waitForLifecycleDone();
+
+			const
+				spy = await component.getSpy((ctx) => ctx.emit),
+				results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
+
+			test.expect(results).toEqual([
+				['initLoadStart', {...states[0], isLoadingInProgress: true}],
+				['initLoad', {...states[0], isLoadingInProgress: true}],
+				['dataLoadSuccess', states[1]],
+				['renderStart', states[1]],
+				['renderEngineStart', states[1]],
+				['renderEngineDone', states[1]],
+				['domInsertStart', states[2]],
+				['domInsertDone', states[2]],
+				['renderDone', states[2]],
+				['renderStart', states[3]],
+				['renderEngineStart', states[3]],
+				['renderEngineDone', states[3]],
+				['domInsertStart', states[4]],
+				['domInsertDone', states[4]],
+				['renderDone', states[4]],
+				['lifecycleDone', states[5]]
+			]);
+		});
+	});
+
+	test.describe('24 elements was provided in items prop', () => {
+		const
+			chunkSize = 12,
+			total = chunkSize * 2;
+
+		test.beforeEach(async () => {
+			state.data.addData(chunkSize * 2);
+			state.data.setTotal(total);
+
+			await component
+				.withPaginationItemProps()
+				.withProps({
+					chunkSize,
+					items: state.data.getDataChunk(0)
+				})
+				.build({useDummy: true});
+
+			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
+			await component.waitForChildCountEqualsTo(chunkSize * 2);
+			await component.scrollToBottom();
+			await component.waitForLifecycleDone();
+		});
+
+		test.describe('items prop has been updated', () => {
+			test('state at the time of emitting events must be correct', async () => {
+				state.reset();
+
+				await component.component.evaluate((ctx) => {
+					const original = Object.cast<Function>(ctx.emit);
+
+					ctx.emit = jestMock.mock((...args) => {
+						original(...args);
+						return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
+					});
+				});
+
+				const states = [
+					state.compile(observerInitialStateFields),
+					(
+						state.data.addData(chunkSize * 2),
+						state.data.setTotal(total),
+
+						state.set({
+							loadPage: 1,
+							lastLoadedRawData: undefined,
+							areRequestsStopped: true
+						}).compile(observerInitialStateFields)
+					),
+					(
+						state.data.addItems(chunkSize),
+						state.set({renderPage: 1, isInitialRender: false}).compile(observerLoadedStateFields)
+					),
+					(
+						state.set({isLastRender: true}).compile()
+					),
+					(
+						state.data.addItems(chunkSize),
+						state.set({renderPage: 2}).compile()
+					),
+					(
+						state.set({isLifecycleDone: true}).compile()
+					)
+				];
+
+				const resetEvent = component.waitForEvent('resetState');
+
+				await component.scrollToTop();
+				await component.updateProps({
+					items: state.data.getDataChunk(0)
+				});
+
+				await resetEvent;
+				await component.waitForChildCountEqualsTo(chunkSize);
+				await component.scrollToBottom();
+				await component.waitForChildCountEqualsTo(chunkSize * 2);
+				await component.scrollToBottom();
+				await component.waitForLifecycleDone();
+
+				const
+					spy = await component.getSpy((ctx) => ctx.emit),
+					results = filterEmitterResults(await spy.results, true, ['initLoadStart', 'initLoad']);
+
+				test.expect(results).toEqual([
+					['resetState', states[0]],
+					['initLoadStart', {...states[0], isLoadingInProgress: true}],
+					['initLoad', {...states[0], isLoadingInProgress: true}],
+					['dataLoadSuccess', states[1]],
+					['renderStart', states[1]],
+					['renderEngineStart', states[1]],
+					['renderEngineDone', states[1]],
+					['domInsertStart', states[2]],
+					['domInsertDone', states[2]],
+					['renderDone', states[2]],
+					['renderStart', states[3]],
+					['renderEngineStart', states[3]],
+					['renderEngineDone', states[3]],
+					['domInsertStart', states[4]],
+					['domInsertDone', states[4]],
+					['renderDone', states[4]],
+					['lifecycleDone', states[5]]
+				]);
+			});
 		});
 	});
 });
