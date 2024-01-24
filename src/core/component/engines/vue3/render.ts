@@ -123,9 +123,8 @@ export const
 
 export const
 	mergeProps = wrapMergeProps(superMergeProps),
-	renderList = wrapRenderList(superRenderList),
+	renderList = wrapRenderList(superRenderList, superWithCtx),
 	renderSlot = wrapRenderSlot(superRenderSlot);
-
 export const
 	withCtx = wrapWithCtx(superWithCtx),
 	withDirectives = wrapWithDirectives(superWithDirectives),
