@@ -261,7 +261,9 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
 
 /**
  * Wrapper for the component library `renderList` function
+ *
  * @param original
+ * @param withCtx
  */
 export function wrapRenderList<T extends typeof renderList, C extends typeof withCtx>(original: T, withCtx: C): T {
 	return Object.cast(function renderList(
@@ -270,19 +272,9 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 		cb: AnyFunction
 	) {
 		const
-			// `v-for` is executed during rendering,
-			// so `r.getCurrentInstance` should return `currentRenderingInstance`
 			ctx = this.$renderEngine.r.getCurrentInstance(),
-			// Preserve ctx for callback. It will guarantee
-			// that during async render there will be correct `currentRenderingInstance`
-			// which affects components' refs
+			// Preserve rendering context for the async render
 			wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
-
-		// Enable block tracking
-		// @see https://github.com/vuejs/core/blob/45984d559fe0c036657d5f2626087ea8eec205a8/packages/runtime-core/src/componentRenderContext.ts#L88
-		if ('_d' in wrappedCb) {
-			(<AnyFunction & {_d: boolean}>wrappedCb)._d = false;
-		}
 
 		this.$emit('[[V_FOR_CB]]', wrappedCb);
 		return original(src, wrappedCb);
