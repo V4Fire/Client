@@ -11,9 +11,8 @@
  * @packageDocumentation
  */
 
-import iStaticPage, { component, prop, field, system, hook } from 'components/super/i-static-page/i-static-page';
+import iStaticPage, { component, prop, field, system } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
-import type iBlock from 'components/super/i-block/i-block';
 
 export * from 'components/super/i-static-page/i-static-page';
 
@@ -28,13 +27,6 @@ console.time('Initializing');
  */
 @component({root: true})
 export default class pV4ComponentsDemo extends iStaticPage {
-	protected override readonly $refs!: iStaticPage['$refs'] & {
-		select?: iBlock;
-		selectAsync?: iBlock;
-		dummy?: iBlock;
-		dummyAsync?: iBlock;
-	};
-
 	/** {@link iStaticPage.selfDispatching} */
 	@prop(Boolean)
 	readonly selfDispatchingProp: boolean = false;
@@ -53,18 +45,6 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	 */
 	@field()
 	someField: unknown = 'foo';
-
-
-	@hook('mounted')
-	protected logRefs(): void {
-		this.console.log('select ref', this.$refs.select);
-		this.console.log('dummy ref', this.$refs.dummy);
-
-		this.waitRef('dummyAsync').then(() => {
-			this.console.log('async select ref', this.$refs.selectAsync);
-			this.console.log('async dummy ref', this.$refs.dummyAsync);
-		});
-	}
 
 	protected beforeCreate(): void {
 		//#unless runtime has storybook
