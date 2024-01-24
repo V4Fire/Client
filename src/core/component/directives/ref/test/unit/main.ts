@@ -37,7 +37,7 @@ test.describe('core/component/directives/ref', () => {
 
 					await assertRefsAreCorrect(target);
 				});
-			})
+			});
 		});
 
 		test.describe('during async render', () => {
@@ -49,11 +49,13 @@ test.describe('core/component/directives/ref', () => {
 
 					await assertRefsAreCorrect(target);
 				});
-			})
+			});
 		});
 	});
 
-	function createComponent(page: Page, stage: string, useAsyncRender: boolean = false): Promise<JSHandle<bDirectivesRefDummy>> {
+	function createComponent(
+		page: Page, stage: string, useAsyncRender: boolean = false
+	): Promise<JSHandle<bDirectivesRefDummy>> {
 		return Component.createComponent(page, 'b-directives-ref-dummy', {stage, useAsyncRender});
 	}
 
