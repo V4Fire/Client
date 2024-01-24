@@ -32,4 +32,8 @@ export default class CustomEngine implements SystemThemeExtractor {
 }
 ```
 
+The `SystemThemeExtractor` interface specifies that the `getSystemTheme` method
+should return a promise-like object so that you can compute the system theme asynchronously.
+If synchronous computation is relevant in your case, you can use `SyncPromise`.
+
 See `components/super/i-static-page/modules/theme` for details
