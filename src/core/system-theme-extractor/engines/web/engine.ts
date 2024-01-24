@@ -29,7 +29,7 @@ export default class WebEngine extends Friend implements SystemThemeExtractor {
 	getSystemTheme(): SyncPromise<string> {
 		const darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
 
-		return new SyncPromise((resolve) => resolve(darkThemeMq.matches ? 'dark' : 'light'));
+		return SyncPromise.resolve(darkThemeMq.matches ? 'dark' : 'light');
 	}
 
 	/** @inheritDoc */
