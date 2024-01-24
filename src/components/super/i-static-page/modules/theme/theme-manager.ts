@@ -34,11 +34,6 @@ export default class ThemeManager extends Friend {
 	protected current!: Theme;
 
 	/**
-	 * A promise that resolves when the ThemeManager is initialized.
-	 */
-	protected readonly initPromise!: Promise<ThemeManager>;
-
-	/**
 	 * An API for obtaining and observing system appearance.
 	 */
 	protected systemThemeExtractor!: SystemThemeExtractor;
@@ -86,6 +81,7 @@ export default class ThemeManager extends Friend {
 
 			if (theme.isSystem) {
 				void this.useSystem();
+
 			} else {
 				this.changeTheme(theme);
 			}
@@ -145,20 +141,21 @@ export default class ThemeManager extends Friend {
 	/**
 	 * Changes current theme value
 	 *
-	 * @param theme
-	 * @param theme.value
-	 * @param theme.isSystem
+	 * @param newTheme
 	 * @throws ReferenceError
 	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 */
-	protected changeTheme({value, isSystem}: Theme): void {
+	protected changeTheme(newTheme: Theme): void {
 		if (
 			SSR ||
 			!Object.isString(this.themeAttribute) ||
-			Object.fastCompare(this.current, {value, isSystem})
+			Object.fastCompare(this.current, newTheme)
 		) {
 			return;
 		}
+
+		let
+			{value, isSystem} = newTheme;
 
 		if (!this.availableThemes.has(value)) {
 			if (!isSystem) {
@@ -174,7 +171,7 @@ export default class ThemeManager extends Friend {
 
 		const oldValue = this.current;
 
-		this.current = {value, isSystem};
+		this.current = newTheme;
 		this.themeStorage.set('colorTheme', this.current);
 		document.documentElement.setAttribute(this.themeAttribute, value);
 
