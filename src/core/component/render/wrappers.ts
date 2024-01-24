@@ -281,7 +281,7 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 		// Enable block tracking
 		// @see https://github.com/vuejs/core/blob/45984d559fe0c036657d5f2626087ea8eec205a8/packages/runtime-core/src/componentRenderContext.ts#L88
 		if ('_d' in wrappedCb) {
-			wrappedCb._d = false;
+			(<AnyFunction & {_d: boolean}>wrappedCb)._d = false;
 		}
 
 		this.$emit('[[V_FOR_CB]]', wrappedCb);
