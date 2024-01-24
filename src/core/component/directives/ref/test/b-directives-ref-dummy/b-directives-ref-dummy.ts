@@ -12,14 +12,14 @@ export * from 'components/dummies/b-dummy/b-dummy';
 
 @component()
 class bDirectivesRefDummy extends bDummy {
+	@prop(Boolean)
+	useAsyncRender: boolean = false;
+
 	protected override $refs!: bDummy['$refs'] & {
 		component?: CanArray<bDummy>;
 		slotComponent?: CanArray<bDummy>;
 		nestedSlotComponent?: CanArray<bDummy>;
-	}
-
-	@prop(Boolean)
-	useAsyncRender: boolean = false;
+	};
 }
 
 export default bDirectivesRefDummy;
