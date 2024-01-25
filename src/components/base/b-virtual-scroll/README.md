@@ -1123,9 +1123,9 @@ The `bVirtualScroll` class extends `iData` and includes additional properties re
     const
       current = dataItem,
       /* Retrieve the previous data element relative to the given */
-      prev = allData[(allData.length - lastLoadedData.length + i) - 1],
+      prev = data[(data.length - lastLoadedData.length + i) - 1],
       /* Retrieve the next data element relative to the given */
-      next = allData[i + 1];
+      next = lastLoadedData[i + 1];
   }
   ```
 
