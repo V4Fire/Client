@@ -52,12 +52,15 @@
 					+= content
 
 		< .&__window v-else
-			< .&__view ref = view
-				< .&__fake-view-content v-if = dynamicHeight
-					+= content
-
-				< .&__outer-view-wrapper ref = contentWrapper
-					< .&__view-content ref = content
+			< template v-if = useScrollSnap
+				< .&__view ref = view
+					< .&__fake-view-content v-if = dynamicHeight
 						+= content
+
+					< .&__outer-view-wrapper ref = contentWrapper
+						< .&__view-content ref = content
+							+= content
+			< .g-slider v-else
+				+= content
 
 		+= self.slot('after')

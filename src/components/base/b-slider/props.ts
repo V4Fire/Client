@@ -133,4 +133,10 @@ export default abstract class iSliderProps extends iData {
 	 */
 	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
 	readonly autoSlidePostGestureDelay: number = 0;
+
+	@prop(Boolean)
+	/**
+	 * TO DO
+	 */
+	readonly useScrollSnap: boolean = false;
 }

@@ -29,7 +29,7 @@ import {
 	watch,
 	wait,
 
-	ModsDecl
+	ModsDecl, prop
 
 } from 'components/super/i-data/i-data';
 
@@ -261,6 +261,9 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	set items(value: this['Items']) {
 		this.field.set('itemsStore', value);
 	}
+
+	@field()
+	override useScrollSnap!: boolean;
 
 	/**
 	 * Switches to the specified slide by an index
