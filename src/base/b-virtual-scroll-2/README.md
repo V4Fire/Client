@@ -518,7 +518,7 @@ const itemsFactory = (state, ctx) => {
       // Retrieve the previous data element relative to the given
       prev = allData[(allData.length - lastLoadedData.length + i) - 1],
       // Retrieve the next data element relative to the given
-      next = allData[i + 1];
+      next = lastLoadedData[i + 1];
 
     if (!prev || prev.date !== current.date) {
       items.push({
@@ -1121,11 +1121,13 @@ The `bVirtualScroll` class extends `iData` and includes additional properties re
       {data, lastLoadedData} = this.$refs.scroll.getVirtualScrollState();
 
     const
-      current = dataItem,
-      /* Retrieve the previous data element relative to the given */
-      prev = allData[(allData.length - lastLoadedData.length + i) - 1],
-      /* Retrieve the next data element relative to the given */
-      next = allData[i + 1];
+      current = dataItem;
+
+    const
+      // Retrieve the previous data element relative to the given
+      prev = data[(data.length - lastLoadedData.length + i) - 1],
+      // Retrieve the next data element relative to the given
+      next = lastLoadedData[i + 1];
   }
   ```
 
