@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.63.0 (2024-01-25)
+
+#### :rocket: New Feature
+
+* Added new component `b-virtual-scroll-new` (temporarily ported from v4v4) `base/b-virtual-scroll-new/b-virtual-scroll-new`
+
 ## v3.62.2 (2023-12-07)
 
 #### :bug: Bug Fix
