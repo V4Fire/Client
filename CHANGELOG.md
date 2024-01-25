@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed the memoization of `getParent`: it was saved in the context of the main component, as a
 result of which the components in the slots had an incorrect `$parent` `build/snakeskin`
+* Fixed loss of refs in slots inside async render `core/component/render`
 
 ## v4.0.0-beta.51 (2024-01-19)
 
