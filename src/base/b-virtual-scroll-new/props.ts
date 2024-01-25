@@ -21,14 +21,11 @@ import type {
 
 	ComponentItemFactory,
 	ComponentItemType,
-	ComponentItem,
 	ComponentItemMeta
 
 } from 'base/b-virtual-scroll-new/interface';
 
 import { defaultShouldProps, componentItemType, itemsProcessors } from 'base/b-virtual-scroll-new/const';
-
-import type { Observer } from 'base/b-virtual-scroll-new/modules/observer';
 
 import iData, { component, prop } from 'super/i-data/i-data';
 

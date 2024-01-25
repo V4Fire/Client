@@ -33,7 +33,6 @@ export * from 'super/i-data/i-data';
 
 const $$ = symbolGenerator();
 
-
 @component()
 export default class bVirtualScrollNew extends iVirtualScrollHandlers implements iItems {
 
