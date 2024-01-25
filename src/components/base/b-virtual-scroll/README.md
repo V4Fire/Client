@@ -653,6 +653,48 @@ Let's also look at another common scenario:
 
 After these steps, a neighboring advertising component will be added to all components with the appropriate `meta.ads` value.
 
+It is also perfectly valid to do without using global processing itemsProcessors.
+To achieve this, you just need to avoid overriding the constant and instead pass processors as props:
+
+   ```typescript
+   class MyPageComponent {
+    get itemsProcessors() {
+      return [
+        (items: ComponentItem[]) => {
+          const newItems: ComponentItem[] = [];
+
+          const adsComponent = {
+            item: 'b-ads',
+            key: current.uuid + 'ads',
+            type: 'item',
+            children: [],
+            props: {
+              // ...
+            }
+          }
+
+          return items.map((item) => {
+            const itemsToPush = [];
+            itemsToPush.push(item);
+
+            if (item.meta.ads === 'after') {
+              itemsToPush.push(adsComponent);
+            }
+
+            if (item.meta.ads === 'before') {
+              itemsToPush.unshift(adsComponent);
+            }
+
+            newItems.push(...itemsToPush);
+          });
+
+          return newItems;
+        }
+      ]
+    }
+   }
+   ```
+
 ### `request` and `requestQuery`
 
 To pass query parameters from the `b-virtual-scroll` component to the data provider, two props are specified: `request` and `requestQuery`. But why are there two of them, and what is the difference between them? Let's break it down:
