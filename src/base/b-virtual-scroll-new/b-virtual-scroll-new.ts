@@ -111,6 +111,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			get = this.dp.get(params[0], {...params[1], showProgress: false});
 
 		return get
+			.then((res) => res.data)
 			.then((res) => {
 				if (res == null) {
 					return;
