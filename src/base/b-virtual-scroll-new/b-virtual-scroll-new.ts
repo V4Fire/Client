@@ -69,6 +69,10 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		};
 	}
 
+	override set requestParams(_value: RequestParams) {
+		// ...
+	}
+
 	override get unsafe(): UnsafeGetter<UnsafeBVirtualScroll<this>> {
 		return Object.cast(this);
 	}

@@ -17,7 +17,7 @@ import type { VNodeDescriptor } from 'base/b-virtual-scroll-new/interface';
  */
 export function render(ctx: bVirtualScrollNew, items: VNodeDescriptor[]): HTMLElement[] {
 	const
-		vnodes = items.map((item) => ctx.unsafe.$createElement(item.type, {props: {'v-attrs': item.attrs}}, item.children)),
+		vnodes = items.map((item) => ctx.unsafe.$createElement(item.type, {attrs: {'v-attrs': item.attrs}}, item.children)),
 		nodes = ctx.vdom.render(vnodes);
 
 	return <HTMLElement[]>nodes;
