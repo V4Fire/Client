@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-01-??)
+
+#### :bug: Bug Fix
+
+* Fixed the memoization of `getParent`: it was saved in the context of the main component, as a
+result of which the components in the slots had an incorrect `$parent` `build/snakeskin`
+
 ## v4.0.0-beta.51 (2024-01-19)
 
 #### :bug: Bug Fix
