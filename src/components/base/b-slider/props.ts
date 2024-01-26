@@ -134,9 +134,11 @@ export default abstract class iSliderProps extends iData {
 	@prop({type: Number, validator: (v) => Number.isNonNegative(v)})
 	readonly autoSlidePostGestureDelay: number = 0;
 
-	@prop(Boolean)
 	/**
-	 * TO DO
+	 * The flag that turning off / on using of Scroll Snap slider (component g-slider).
+	 * if value is true, then b-slider will not handle touch events and will use g-slider component as container for slides.
+	 * Value is false by default
 	 */
+	@prop(Boolean)
 	readonly useScrollSnap: boolean = false;
 }

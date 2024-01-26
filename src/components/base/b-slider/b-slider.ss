@@ -12,9 +12,9 @@
 
 - template index() extends ['i-data'].index
 	- windowEvents = { &
-		'@touchstart': 'onStart',
-		'@touchmove': 'onMove',
-		'@touchend': 'onRelease'
+		'@touchstart': '!useScrollSnap ? onStart($event) : undefined',
+		'@touchmove': '!useScrollSnap ? onMove($event) : undefined',
+		'@touchend': '!useScrollSnap ? onRelease($event) : undefined'
 	} .
 
 	- block body
@@ -52,7 +52,10 @@
 					+= content
 
 		< .&__window v-else
-			< template v-if = useScrollSnap
+			< .g-slider v-if = useScrollSnap
+				+= content
+
+			< template v-else
 				< .&__view ref = view
 					< .&__fake-view-content v-if = dynamicHeight
 						+= content
@@ -60,7 +63,5 @@
 					< .&__outer-view-wrapper ref = contentWrapper
 						< .&__view-content ref = content
 							+= content
-			< .g-slider v-else
-				+= content
 
 		+= self.slot('after')

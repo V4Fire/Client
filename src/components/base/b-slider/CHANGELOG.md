@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+
+## v4.0.0-beta.48 (2024-01-26)
+
+#### :rocket: New feature
+
+* Added prop `useScrollSnap` for b-slider component that turn on mode of using `scroll snap` instead handling of touch events.
+
 ## v4.0.0-beta.38 (2023-11-15)
 
 #### :big: Bug Fix
