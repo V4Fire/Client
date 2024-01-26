@@ -10,7 +10,6 @@
 
 
 - include 'components/super/i-block'|b as placeholder
-- include 'components/base/b-slider/modules/**/*.ss'|b
 
 - template index(content) extends ['i-block'].index
 	- block root
