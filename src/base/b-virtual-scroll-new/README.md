@@ -1116,7 +1116,7 @@ The `bVirtualScroll` class extends `iData` and includes additional properties re
 - `VirtualItemEl` interface is removed. Now, the client receives a single data item in the `iItems` methods. To maintain logic with `current`, `prev`, `next`, you can use the following approach:
 
   ```typescript
-  function getProps(dataItem: DataInterface, index: number): Dictionary {
+  function getProps(dataItem: DataInterface, i: number): Dictionary {
     const
       {data, lastLoadedData} = this.$refs.scroll.getVirtualScrollState();
 
