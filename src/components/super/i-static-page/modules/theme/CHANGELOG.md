@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* Refactored api: change get/set current to get/set methods
+* Refactored api: replaced the getter/setter named `current` with get/set methods
 
 #### :rocket: New Feature
 

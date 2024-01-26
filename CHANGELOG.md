@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Refactored api: change get/set current to get/set methods `components/super/i-static-page/modules/theme/theme-manager`
+* Refactored api: replaced the getter/setter named `current` with get/set methods `components/super/i-static-page/modules/theme/theme-manager`
 
 #### :rocket: New Feature
 
