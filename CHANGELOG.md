@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.63.1 (2023-01-26)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with slots not being displayed in `b-virtual-scroll-new` `base/b-virtual-scroll-new/b-virtual-scroll-new`
+
 ## v3.63.0 (2024-01-25)
 
 #### :rocket: New Feature
