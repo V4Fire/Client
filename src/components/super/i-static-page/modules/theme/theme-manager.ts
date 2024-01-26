@@ -64,6 +64,10 @@ export default class ThemeManager extends Friend {
 			throw new ReferenceError('An attribute name to set themes is not specified');
 		}
 
+		if (POST_PROCESS_THEME && prefersColorSchemeEnabled) {
+			throw new Error('postProcessor param cant be enabled with detectUserPreferences');
+		}
+
 		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
 
 		this.themeStorage = factory(themeStorageEngine);
@@ -78,15 +82,9 @@ export default class ThemeManager extends Friend {
 			if (themeFromStore != null) {
 				theme = themeFromStore;
 			}
+		}
 
-			if (theme.isSystem) {
-				void this.useSystem();
-
-			} else {
-				this.changeTheme(theme);
-			}
-
-		} else if (prefersColorSchemeEnabled) {
+		if (theme.isSystem || prefersColorSchemeEnabled) {
 			void this.useSystem();
 
 		} else {
