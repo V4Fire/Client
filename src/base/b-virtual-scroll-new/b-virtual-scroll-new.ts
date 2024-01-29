@@ -302,21 +302,14 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			chunkSize = this.getChunkSize(state),
 			dataSlice = this.getNextDataSlice(state, chunkSize);
 
-		if (dataSlice.length === 0) {
-			if (state.areRequestsStopped) {
+		if (dataSlice.length < chunkSize) {
+			if (state.areRequestsStopped && state.isLastRender) {
 				return {
 					result: false,
 					reason: renderGuardRejectionReason.done
 				};
 			}
 
-			return {
-				result: false,
-				reason: renderGuardRejectionReason.noData
-			};
-		}
-
-		if (dataSlice.length < chunkSize) {
 			return {
 				result: false,
 				reason: renderGuardRejectionReason.notEnoughData
@@ -363,16 +356,6 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		if (reason === renderGuardRejectionReason.done) {
 			this.onLifecycleDone();
 			return;
-		}
-
-		if (reason === renderGuardRejectionReason.noData) {
-			if (state.areRequestsStopped) {
-				return;
-			}
-
-			if (this.shouldPerformDataRequestWrapper()) {
-				void this.initLoadNext();
-			}
 		}
 
 		if (reason === renderGuardRejectionReason.notEnoughData) {

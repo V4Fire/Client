@@ -38,6 +38,10 @@ export class ComponentFactory extends Friend {
 	 * @param componentItems - an array of component items
 	 */
 	produceNodes(componentItems: ComponentItem[]): HTMLElement[] {
+		if (componentItems.length === 0) {
+			return [];
+		}
+
 		const createDescriptor = (item: ComponentItem): VNodeDescriptor => ({
 			type: item.item,
 			attrs: item.props,

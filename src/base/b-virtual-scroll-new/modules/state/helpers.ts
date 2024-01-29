@@ -30,7 +30,8 @@ export function createInitialState(): VirtualScrollState {
 		areRequestsStopped: false,
 		isLoadingInProgress: false,
 		isLifecycleDone: false,
-		isLastErrored: false
+		isLastErrored: false,
+		isLastRender: false
 	};
 }
 
