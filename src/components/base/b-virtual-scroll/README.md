@@ -24,9 +24,9 @@
     - [Component Understanding](#component-understanding)
       - [Lifecycle](#lifecycle)
       - [`renderGuard` and `loadDataOrPerformRender`](#renderguard-and-loaddataorperformrender)
+      - [Performing Last Render](#performing-last-render)
       - [Difference between ComponentItem with type `item` and `separator`](#difference-between-componentitem-with-type-item-and-separator)
       - [Overriding in Child Layers](#overriding-in-child-layers)
-      - [Performing Last Render](#performing-last-render)
     - [Frequently Asked Questions](#frequently-asked-questions)
   - [Slots](#slots)
   - [API](#api)
@@ -782,25 +782,6 @@ flowchart TD
     M -- "False" --> O["Return"]
 ```
 
-#### Difference between ComponentItem with type `item` and `separator`
-
-The component allows rendering two types of components:
-
-- `item` - Main component (main content).
-- `separator` - Other components, such as dividers or separators.
-
-There is no significant difference between them, except that they are treated differently in fields like `remainingItems` in the `VirtualScrollState`. As the name suggests, the `remainingItems` property only considers components with the `item` type, while `remainingChildren` considers components with both `item` and `separator` types.
-
-The distinction between `item` and `separator` types is mainly used for calculating certain properties based on the type of components present in the `VirtualScrollState`, such as the number of items till the end of the scroll.
-
-#### Overriding in Child Layers
-
-The main use case for overriding in child layers is to modify the default behavior of functions or methods.
-
-For example, it may be useful to override the logic of `shouldStopRequestingData` if you want to implement a default logic that takes into account the `total` field of the response when making a decision.
-
-There may also be situations where you need to modify the `renderGuard`. Currently, the component loads data until the number of items reaches the `chunkSize` and then renders them. By overriding the `renderGuard`, you can achieve partial rendering, where the component renders the available data regardless of whether it reaches the `chunkSize`.
-
 #### Performing Last Render
 
 The `b-virtual-scroll` component adheres to a strategy where it always performs a "final" rendering.
@@ -851,6 +832,25 @@ class pPage {
 ```
 
 This example demonstrates the `b-virtual-scroll` component's capability to handle a final rendering phase, even when the incoming data stream has been exhausted. This flexibility allows for dynamic and versatile implementations, like adding a unique element at the end of a list, ensuring a seamless and user-centric experience.
+
+#### Difference between ComponentItem with type `item` and `separator`
+
+The component allows rendering two types of components:
+
+- `item` - Main component (main content).
+- `separator` - Other components, such as dividers or separators.
+
+There is no significant difference between them, except that they are treated differently in fields like `remainingItems` in the `VirtualScrollState`. As the name suggests, the `remainingItems` property only considers components with the `item` type, while `remainingChildren` considers components with both `item` and `separator` types.
+
+The distinction between `item` and `separator` types is mainly used for calculating certain properties based on the type of components present in the `VirtualScrollState`, such as the number of items till the end of the scroll.
+
+#### Overriding in Child Layers
+
+The main use case for overriding in child layers is to modify the default behavior of functions or methods.
+
+For example, it may be useful to override the logic of `shouldStopRequestingData` if you want to implement a default logic that takes into account the `total` field of the response when making a decision.
+
+There may also be situations where you need to modify the `renderGuard`. Currently, the component loads data until the number of items reaches the `chunkSize` and then renders them. By overriding the `renderGuard`, you can achieve partial rendering, where the component renders the available data regardless of whether it reaches the `chunkSize`.
 
 ### Frequently Asked Questions
 
