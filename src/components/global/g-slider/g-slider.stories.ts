@@ -11,19 +11,32 @@ import readme from './README.md?raw';
 
 const config: Meta = {
 	title: 'Global/gSlider',
-	component: 'g-slider',
+	component: 'div',
 	tags: ['autodocs'],
 	parameters: {
 		docs: {
 			readme
 		}
+	},
+	argTypes: {
 	}
 };
 
 export default config;
 
-export const Default: StoryObj = {
+export const Default: StoryObj<any> = {
 	args: {
-		'slot-default': 'Content or slides'
+		class: 'g-slider g-slider__horizontal_true',
+		style: 'width: 300px',
+		children: [
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}}
+		]
 	}
 };

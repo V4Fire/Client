@@ -14,7 +14,7 @@ Changelog
 
 #### :rocket: New feature
 
-* Added prop `useScrollSnap` for b-slider component that turn on mode of using `scroll snap` instead handling of touch events.
+* Added the option `useScrollSnap` for the b-slider component, which enables the mode of using `scroll snap` instead of handling touch events.
 
 ## v4.0.0-beta.38 (2023-11-15)
 
