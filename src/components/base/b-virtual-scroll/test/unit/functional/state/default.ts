@@ -128,6 +128,7 @@ test.describe('<b-virtual-scroll>', () => {
 				isLoadingInProgress: false,
 				isLastEmpty: true,
 				isLifecycleDone: true,
+				isLastRender: true,
 				loadPage: 5,
 				renderPage: 2
 			}));
@@ -204,6 +205,7 @@ test.describe('<b-virtual-scroll>', () => {
 				isLoadingInProgress: false,
 				isLastEmpty: true,
 				isLifecycleDone: true,
+				isLastRender: true,
 				loadPage: 2,
 				renderPage: 1
 			}));
@@ -276,6 +278,7 @@ test.describe('<b-virtual-scroll>', () => {
 				isLoadingInProgress: false,
 				isLastEmpty: true,
 				isLifecycleDone: true,
+				isLastRender: true,
 				loadPage: 2,
 				renderPage: 1
 			}));
@@ -328,6 +331,7 @@ test.describe('<b-virtual-scroll>', () => {
 				isLoadingInProgress: false,
 				isLastEmpty: true,
 				isLifecycleDone: true,
+				isLastRender: true,
 				maxViewedItem: undefined,
 				loadPage: 2,
 				renderPage: 1

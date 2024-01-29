@@ -113,6 +113,8 @@ test.describe('<b-virtual-scroll>', () => {
 				['dataLoadStart', false],
 				['convertDataToDB', {data: []}],
 				['dataLoadSuccess', [], false],
+				['renderStart'],
+				['renderDone'],
 				['lifecycleDone']
 			]);
 		});

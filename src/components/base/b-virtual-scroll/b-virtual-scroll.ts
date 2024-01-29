@@ -301,21 +301,14 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 			chunkSize = this.getChunkSize(state),
 			dataSlice = this.getNextDataSlice(state, chunkSize);
 
-		if (dataSlice.length === 0) {
-			if (state.areRequestsStopped) {
+		if (dataSlice.length < chunkSize) {
+			if (state.areRequestsStopped && state.isLastRender) {
 				return {
 					result: false,
 					reason: renderGuardRejectionReason.done
 				};
 			}
 
-			return {
-				result: false,
-				reason: renderGuardRejectionReason.noData
-			};
-		}
-
-		if (dataSlice.length < chunkSize) {
 			return {
 				result: false,
 				reason: renderGuardRejectionReason.notEnoughData
@@ -364,16 +357,6 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 			return;
 		}
 
-		if (reason === renderGuardRejectionReason.noData) {
-			if (state.areRequestsStopped) {
-				return;
-			}
-
-			if (this.shouldPerformDataRequestWrapper()) {
-				void this.initLoadNext();
-			}
-		}
-
 		if (reason === renderGuardRejectionReason.notEnoughData) {
 			if (state.areRequestsStopped) {
 				this.performRender();
@@ -398,6 +381,10 @@ export default class bVirtualScroll extends iVirtualScrollHandlers implements iI
 			items = this.componentFactory.produceComponentItems(),
 			nodes = this.componentFactory.produceNodes(items),
 			mounted = this.componentFactory.produceMounted(items, nodes);
+
+		if (mounted.length === 0) {
+			return this.onRenderDone();
+		}
 
 		this.observer.observe(mounted);
 		this.onDomInsertStart(mounted);

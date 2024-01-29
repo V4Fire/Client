@@ -26,6 +26,7 @@
       - [`renderGuard` and `loadDataOrPerformRender`](#renderguard-and-loaddataorperformrender)
       - [Difference between ComponentItem with type `item` and `separator`](#difference-between-componentitem-with-type-item-and-separator)
       - [Overriding in Child Layers](#overriding-in-child-layers)
+      - [Performing Last Render](#performing-last-render)
     - [Frequently Asked Questions](#frequently-asked-questions)
   - [Slots](#slots)
   - [API](#api)
@@ -749,39 +750,36 @@ This function consults the `renderGuard`, which determines whether data can be r
 Understanding `renderGuard`:
 
 ```mermaid
-graph TB
-    A["renderGuard"] -->|Get chunk size and next data slice| B["Is the data slice length = 0?"]
-    B -- True --> C["Are requests stopped?"]
-    C -- True --> E["Return: result=false, reason=done"]
-    E --> X["Function ends"]
-    C -- False --> F["Return: result=false, reason=noData"]
-    B -- False --> G["Is the data slice smaller than chunk size?"]
-    G -- True --> H["Return: result=false, reason=notEnoughData"]
-    G -- False --> I["Is it initial render?"]
-    I -- True --> J["Return: result=true"]
-    I -- False --> K["Get client response from shouldPerformDataRender"]
-    K --> L["Return: result=clientResponse, reason=noPermission if clientResponse is false"]
+flowchart TD
+    A["Start: renderGuard Function"] --> B["Check if dataSlice.length < chunkSize"]
+    B -- "True" --> C["Check if state.areRequestsStopped and state.isLastRender"]
+    C -- "True" --> D["Return: {result: false, reason: 'done'}"]
+    C -- "False" --> E["Return: {result: false, reason: 'notEnoughData'}"]
+    B -- "False" --> F["Check if state.isInitialRender"]
+    F -- "True" --> G["Return: {result: true}"]
+    F -- "False" --> H["Invoke shouldPerformDataRender"]
+    H -- "Not Defined or True" --> I["Return: {result: true}"]
+    H -- "False" --> J["Return: {result: false, reason: 'noPermission'}"]
 ```
 
 Understanding `loadDataOrPerformRender`:
 
 ```mermaid
-graph TB
-    A[loadDataOrPerformRender] -->|Get component state| B[Is the last request errored?]
-    B -- True --> X[return]
-    B -- False ---> C["renderGuard()"]
-    C -- If Render Guard Result is True --> D["performRender()"]
-    C -- If Render Guard Result is False --> E[Check the Render Guard Rejection Reason]
-    E -- reason=done --> F["onLifecycleDone()"]
-    E -- reason=noData --> G[isRequestsStopped?]
-    G -- False --> H["shouldPerformDataRequest()"]
-    H -- True --> I["initLoadNext()"]
-    E -- reason=notEnoughData --> J[isRequestsStopped?]
-    J -- True --> K["performRender() and onLifecycleDone()"]
-    J -- False --> L["shouldPerformDataRequest()"]
-    L -- True --> M["initLoadNext()"]
-    L -- False --> N[initial render?]
-    N -- True --> P["performRender()"]
+flowchart TD
+    A["Start: loadDataOrPerformRender Function"] --> B["Check if state.isLastErrored"]
+    B -- "True" --> C["Return"]
+    B -- "False" --> D["Invoke renderGuard(state)"]
+    D --> E["Check renderGuard result"]
+    E -- "True" --> F["Invoke performRender()"]
+    E -- "False" --> G["Check renderGuard reason"]
+    G -- "done" --> H["Invoke onLifecycleDone()"]
+    G -- "notEnoughData" --> I["Check if state.areRequestsStopped"]
+    I -- "True" --> J["Invoke performRender() and onLifecycleDone()"]
+    I -- "False" --> K["Check if shouldPerformDataRequest()"]
+    K -- "True" --> L["Invoke initLoadNext()"]
+    K -- "False" --> M["Check if state.isInitialRender"]
+    M -- "True" --> N["Invoke performRender()"]
+    M -- "False" --> O["Return"]
 ```
 
 #### Difference between ComponentItem with type `item` and `separator`
@@ -802,6 +800,57 @@ The main use case for overriding in child layers is to modify the default behavi
 For example, it may be useful to override the logic of `shouldStopRequestingData` if you want to implement a default logic that takes into account the `total` field of the response when making a decision.
 
 There may also be situations where you need to modify the `renderGuard`. Currently, the component loads data until the number of items reaches the `chunkSize` and then renders them. By overriding the `renderGuard`, you can achieve partial rendering, where the component renders the available data regardless of whether it reaches the `chunkSize`.
+
+#### Performing Last Render
+
+The `b-virtual-scroll` component adheres to a strategy where it always performs a "final" rendering.
+This final rendering is always triggered after the client has indicated that data requests are complete (`shouldStopRequestingData`) and the data for rendering is nearing its end or has been exhausted.
+To inform the client that the current rendering cycle is the last, the component sets the `isLastRender` flag in its state to `true` before the `renderStart` event and before initiating the rendering cycle, as well as before calling `itemsFactory` and `itemsProcessors`.
+
+Let's consider a scenario where this can be useful. Suppose we need to render 10 items at a time, and after all data has been loaded and rendered, we need to add an advertising block.
+Imagine a situation where our provider initially responds with an array of 10 items, and then with an array of 0 items. If our `shouldStopRequestingData` strategy returns `true` when the provider returns less than 10 items, the `b-virtual-scroll` component will still attempt to render, even without data. This rendering will occur with the `isLastRender` flag set to `true`.
+The actual rendering through rendering engines will only happen if the chain of `itemsFactory` -> `itemsProcessors` returns components for rendering; otherwise, no rendering will occur.
+Also, if no rendering occurs, certain events such as `renderEngine*` and `domInsert*` will not be emitted, as there is nothing to render or insert.
+This approach guarantees that the client will always have the opportunity to insert something at the end of the feed. Below is a demonstration of this approach:
+
+```typescript
+@component()
+class pPage {
+  shouldStopRequestingData(state: VirtualScrollState): boolean {
+    return state.lastLoadedData < 10;
+  }
+
+  itemsFactory(state: VirtualScrollState): ComponentItem[] {
+    const items: ComponentItem[] = state.lastLoadedData.map((itemData, index) => {
+      return {
+        type: 'item',
+        item: 'section',
+        props: {
+          id: `element-${index}`
+        },
+        key: `item-${index}`,
+        children: []
+      };
+    });
+
+    if (state.isLastRender) {
+      items.push({
+        type: 'item',
+        item: 'button',
+        props: {
+          id: `lastElement`
+        },
+        key: `lastElement`,
+        children: []
+      })
+    }
+
+    return items;
+  }
+}
+```
+
+This example demonstrates the `b-virtual-scroll` component's capability to handle a final rendering phase, even when the incoming data stream has been exhausted. This flexibility allows for dynamic and versatile implementations, like adding a unique element at the end of a list, ensuring a seamless and user-centric experience.
 
 ### Frequently Asked Questions
 

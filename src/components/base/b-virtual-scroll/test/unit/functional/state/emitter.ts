@@ -142,6 +142,9 @@ test.describe('<b-virtual-scroll>', () => {
 					state.set({loadPage: 3, areRequestsStopped: true, isLastEmpty: true}).compile()
 				),
 				(
+					state.set({isLastRender: true}).compile()
+				),
+				(
 					state.set({isLifecycleDone: true}).compile()
 				)
 			];
@@ -195,7 +198,9 @@ test.describe('<b-virtual-scroll>', () => {
 				['dataLoadStart', states[5]],
 				['convertDataToDB', {...states[5], lastLoadedRawData: states[6].lastLoadedRawData}],
 				['dataLoadSuccess', states[6]],
-				['lifecycleDone', states[7]],
+				['renderStart', states[7]],
+				['renderDone', states[7]],
+				['lifecycleDone', states[8]],
 				['resetState', states[0]],
 				['initLoadStart', {...states[0], isLoadingInProgress: true}],
 				['dataLoadStart', {...states[0], isLoadingInProgress: true}],
@@ -214,7 +219,9 @@ test.describe('<b-virtual-scroll>', () => {
 				['dataLoadStart', states[5]],
 				['convertDataToDB', {...states[5], lastLoadedRawData: states[6].lastLoadedRawData}],
 				['dataLoadSuccess', states[6]],
-				['lifecycleDone', states[7]]
+				['renderStart', states[7]],
+				['renderDone', states[7]],
+				['lifecycleDone', states[8]]
 			]);
 		});
 	});

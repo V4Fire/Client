@@ -12,7 +12,7 @@
 
 import test from 'tests/config/unit/test';
 
-import type { ComponentItemFactory, ComponentItem, ShouldPerform } from 'components/base/b-virtual-scroll/interface';
+import type { ComponentItemFactory, ComponentItem, ShouldPerform, VirtualScrollState } from 'components/base/b-virtual-scroll/interface';
 
 import { createTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll/test/api/helpers/interface';
@@ -89,9 +89,9 @@ test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 				type: 'separator'
 			};
 
-			const itemsFactory = await component.mockFn((state, ctx, separator) => {
+			const itemsFactory = await component.mockFn((state: VirtualScrollState, ctx, separator) => {
 				const
-					data = state.lastLoadedData;
+					data = <Array<{i: number}>>state.lastLoadedData;
 
 				const items = data.map((item) => ({
 					item: 'section',
@@ -103,7 +103,9 @@ test.describe('<b-virtual-scroll> rendering via itemsFactory', () => {
 					}
 				}));
 
-				items.push(separator);
+				if (items.length > 0) {
+					items.push(separator);
+				}
 
 				return items;
 			}, separator);
