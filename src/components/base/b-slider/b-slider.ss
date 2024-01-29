@@ -51,11 +51,12 @@
 				< .&__view-content ref = content
 					+= content
 
-		< .&__window v-else
-			< .g-slider v-if = useScrollSnap
+		< .&__window v-else-if = useScrollSnap
+			< .g-slider
 				+= content
 
-			< template v-else
+		< .&__window v-else
+			< template
 				< .&__view ref = view
 					< .&__fake-view-content v-if = dynamicHeight
 						+= content

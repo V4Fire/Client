@@ -13,6 +13,6 @@
 
 - template index(content) extends ['i-block'].index
 	- block root
-		< .g-slider.&__scroll_direction_horizontal
+		< .g-slider.&__horizontal_true
 			{content}
 

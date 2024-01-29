@@ -13,8 +13,25 @@ $p = {
 .g-slider
 	overflow-x auto
 	white-space nowrap
-	scroll-snap-points-x repeat(100%)
+	display flex
 	scroll-snap-type x mandatory
 
-  & > *
+	&__horizontal_true
+		scroll-snap-type x mandatory
+
+	&__vertical_true
+		flex-direction column
+		scroll-snap-type y mandatory
+		height 100vh
+
+	& > *
 		scroll-snap-align center
+
+	&__slide_snap_start
+		scroll-snap-align start
+
+	&__slide_snap_center
+		scroll-snap-align center
+
+	&__slide_snap_end
+		scroll-snap-align end

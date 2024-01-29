@@ -1,33 +1,61 @@
 # components/global/g-slider
 
-This module provides a block with `scroll snap` CSS logic for slider
+This module provides a block with [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap) logic for slider
 
 ## Usage
 
-You can use this component with invocation of getTpl function: `['i-block'].getTpl('g-slider/')()`
+You can use this component with invocation of getTpl function (`block slider1`) or using simple block with specials modifiers (`block slider2`)
 
 ```
 - include 'components/global/g-slider/g-slider.ss'|b
 
 ...
 
-- block slides()
-  < img src = https://fakeimg.pl/375x300
-  < img src = https://fakeimg.pl/375x300
-  < img src = https://fakeimg.pl/375x300
-  < img src = https://fakeimg.pl/375x300
-  < img src = https://fakeimg.pl/375x300
+- block slider1
+  - block slides()
+    < img src = https://fakeimg.pl/375x300
+    < img src = https://fakeimg.pl/375x300
+    < img src = https://fakeimg.pl/375x300
 
-+= self.getTpl('g-slider/')()
-  += self.slides()
+  += self.getTpl('g-slider/')()
+    += self.slides()
+
+- block slider2
+  < .g-slider
+    < img src = https://fakeimg.pl/155x300
+    < img src = https://fakeimg.pl/130x300
 ```
 
-## Scroll Snap API
+1. g-slider component uses horizontal slider by default, but you can use vertical slider by adding modifier `.g-slider__vertical_true` for the slides-container `.g-slider`
 
-| Property            | Description                                                                                                                                                     | Values                   | Default     |
-|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|-------------|
-| `scroll-snap-type`  | Type of container scrolling. Property sets how strictly snap points are enforced on the scroll container in case there is one                                   | `mandatory`, `proximity` | `mandatory` |
-| `scroll-padding`    | Padding between elements and container border. It has the same syntax as the padding property                                                                   | `number`                 | -           |
-| `scroll-snap-align` | Specifies the box's snap position as an alignment of its snap area (as the alignment subject) within its snap container's snapport (as the alignment container) | `start`, `end`, `center` | `center`    |
-| `scroll-snap-stop`  | Property defines whether or not the scroll container is allowed to "pass over" possible snap positions                                                          | `start`, `end`, `center` | `center`    |
+```
+< .g-slider.&__vertical_true
+  < img src = https://fakeimg.pl/155x300
+  < img src = https://fakeimg.pl/130x300
+  < img src = https://fakeimg.pl/375x300
+  ...
+```
+
+2. Also, if you need to explicitly set a horizontal slider then add special modifier `.g-slider__horizontal_true` for the slide's container `.g-slider`
+
+```
+< .g-slider.&__horizontal_true
+  < img src = https://fakeimg.pl/375x300
+  < img src = https://fakeimg.pl/375x300
+  < img src = https://fakeimg.pl/35x300
+```
+
+3. For specifying the box's snap position as an alignment of its area ([scroll-snap-align](https://www.markdownguide.org/basic-syntax/#links)) you should use modifiers for child nodes of slide's container (or just slides):
+
+   - `.g-slider__slide_snap_start`
+   - `.glider__slide_snap_end`
+   - `.g-slider__slide_snap_center`
+
+```
+< .g-slider.&__horizontal_true
+  < img.&__slide_snap_start src = https://fakeimg.pl/375x300
+  < img.&__slide_snap_center src = https://fakeimg.pl/375x300
+  < img.&__slide_snap_start src = https://fakeimg.pl/35x300
+```
+
 

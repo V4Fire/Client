@@ -136,7 +136,7 @@ export default abstract class iSliderProps extends iData {
 
 	/**
 	 * The flag that turning off / on using of Scroll Snap slider (component g-slider).
-	 * if value is true, then b-slider will not handle touch events and will use g-slider component as container for slides.
+	 * if value is true, then b-slider will use CSS scroll snap mechanism that is handling by native browser API.
 	 * Value is false by default
 	 */
 	@prop(Boolean)

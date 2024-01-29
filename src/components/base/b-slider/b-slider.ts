@@ -29,7 +29,7 @@ import {
 	watch,
 	wait,
 
-	ModsDecl,
+	ModsDecl
 
 } from 'components/super/i-data/i-data';
 
