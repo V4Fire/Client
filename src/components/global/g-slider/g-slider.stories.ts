@@ -27,7 +27,7 @@ const config: Meta = {
 
 export default config;
 
-export const Default: StoryObj<any> = {
+export const HorizontalSlider: StoryObj<any> = {
 	args: {
 		class: 'g-slider g-slider__horizontal_true',
 		style: 'width: 400px; height: 300px',
@@ -40,6 +40,21 @@ export const Default: StoryObj<any> = {
 			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
 			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
 			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}}
+		]
+	}
+};
+
+export const VerticalSlider: StoryObj<any> = {
+	args: {
+		class: 'g-slider g-slider__vertical_true',
+		style: 'width: 300px; height: 300px',
+		children: [
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x150'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/150x150'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x150'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x150'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x150'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x150'}}
 		]
 	}
 };
