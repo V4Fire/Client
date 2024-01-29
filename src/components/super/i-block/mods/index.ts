@@ -19,10 +19,12 @@ import { initMods, mergeMods, getReactiveMods, ModsDict, ModsDecl } from 'compon
 
 import type iBlock from 'components/super/i-block/i-block';
 import iBlockEvent from 'components/super/i-block/event';
-import type { Theme } from 'components/super/i-static-page/modules/theme';
+import type { Theme } from 'components/super/i-block/mods/interface';
 
 const
 	$$ = symbolGenerator();
+
+export * from 'components/super/i-block/mods/interface';
 
 @component()
 export default abstract class iBlockMods extends iBlockEvent {

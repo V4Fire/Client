@@ -12,12 +12,11 @@ import type iBlock from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import Friend from 'components/friends/friend';
-import type { Theme } from 'components/super/i-static-page/modules/theme/interface';
+import type { Theme } from 'components/super/i-block/i-block';
 import type { SystemThemeExtractor } from 'core/system-theme-extractor';
 
 import { prefersColorSchemeEnabled, darkThemeName, lightThemeName } from 'components/super/i-static-page/modules/theme/const';
 
-export * from 'components/super/i-static-page/modules/theme/interface';
 export * from 'components/super/i-static-page/modules/theme/const';
 
 export default class ThemeManager extends Friend {
@@ -65,7 +64,7 @@ export default class ThemeManager extends Friend {
 		}
 
 		if (POST_PROCESS_THEME && prefersColorSchemeEnabled) {
-			throw new Error('postProcessor param cant be enabled with detectUserPreferences');
+			throw new Error('"postProcessor" param cant be enabled with "detectUserPreferences"');
 		}
 
 		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
