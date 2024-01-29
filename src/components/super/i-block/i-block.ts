@@ -31,8 +31,8 @@ export { Module } from 'components/friends/module-loader';
 export * from 'components/super/i-block/const';
 export * from 'components/super/i-block/interface';
 
-export { ComponentEvent, InferEvents, InferComponentEvents } from 'components/super/i-block/event';
 export { Theme } from 'components/super/i-block/mods';
+export { ComponentEvent, InferEvents, InferComponentEvents } from 'components/super/i-block/event';
 export { prop, field, system, computed, hook, watch, wait } from 'components/super/i-block/decorators';
 
 export {
