@@ -142,11 +142,6 @@ export const renderGuardRejectionReason = <const>{
 	notEnoughData: 'notEnoughData',
 
 	/**
-	 * No data available to perform a render (e.g., `data.length` is 0).
-	 */
-	noData: 'noData',
-
-	/**
 	 * All rendering operations have been completed.
 	 */
 	done: 'done',
