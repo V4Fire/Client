@@ -369,6 +369,38 @@ test.describe('<b-virtual-scroll>', () => {
 				tombstones: false
 			});
 		});
+
+		test('activates when a data load error ocurred during loading of second data chunk', async () => {
+			const chunkSize = 12;
+
+			provider
+				.responseOnce(200, {data: state.data.addData(chunkSize)})
+				.response(500, {});
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize
+				})
+				.build();
+
+			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
+			await component.waitForSlotState('retry', true);
+
+			const
+				slots = await component.getSlotsState();
+
+			test.expect(slots).toEqual(<Required<SlotsStateObj>>{
+				container: true,
+				done: false,
+				empty: false,
+				loader: false,
+				renderNext: false,
+				retry: true,
+				tombstones: false
+			});
+		});
 	});
 
 	test.describe('renderNext', () => {
