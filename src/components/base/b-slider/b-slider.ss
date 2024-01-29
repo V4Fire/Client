@@ -51,11 +51,7 @@
 				< .&__view-content ref = content
 					+= content
 
-		< .&__window v-else-if = useScrollSnap
-			< .g-slider
-				+= content
-
-		< .&__window v-else
+		< .&__window v-else-if = !useScrollSnap
 			< template
 				< .&__view ref = view
 					< .&__fake-view-content v-if = dynamicHeight
@@ -64,5 +60,9 @@
 					< .&__outer-view-wrapper ref = contentWrapper
 						< .&__view-content ref = content
 							+= content
+
+		< .&__window v-else
+			< .g-slider
+				+= content
 
 		+= self.slot('after')
