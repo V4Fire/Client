@@ -48,8 +48,8 @@ You can use this component with invocation of getTpl function (`block slider1`) 
 3. For specifying the box's snap position as an alignment of its area ([scroll-snap-align](https://www.markdownguide.org/basic-syntax/#links)) you should use modifiers for child nodes of slide's container (or just slides):
 
    - `.g-slider__slide_snap_start`
-   - `.glider__slide_snap_end`
    - `.g-slider__slide_snap_center`
+   - `.g-slider__slide_snap_end`
 
 ```
 < .g-slider.&__horizontal_true

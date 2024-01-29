@@ -15,7 +15,10 @@ const config: Meta = {
 	tags: ['autodocs'],
 	parameters: {
 		docs: {
-			readme
+			readme,
+			story: {
+				iframeHeight: '340px'
+			}
 		}
 	},
 	argTypes: {
@@ -27,11 +30,11 @@ export default config;
 export const Default: StoryObj<any> = {
 	args: {
 		class: 'g-slider g-slider__horizontal_true',
-		style: 'width: 300px',
+		style: 'width: 400px; height: 300px',
 		children: [
-			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
-			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
-			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300', class: 'g-slider__slide_snap_end'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/100x300', class: 'g-slider__slide_snap_start'}},
+			{type: 'img', attrs: {src: 'https://fakeimg.pl/250x300', class: 'g-slider__slide_snap_center'}},
 			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
 			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},
 			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300'}},

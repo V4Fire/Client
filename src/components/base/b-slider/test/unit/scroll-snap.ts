@@ -5,11 +5,13 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
+import type { JSHandle } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
-import { renderSlider } from 'components/base/b-slider/test/helpers';
-import type { JSHandle } from 'playwright';
 import type bSlider from 'components/base/b-slider/b-slider';
+import { renderSlider } from 'components/base/b-slider/test/helpers';
 
 test.use({
 	isMobile: true,
