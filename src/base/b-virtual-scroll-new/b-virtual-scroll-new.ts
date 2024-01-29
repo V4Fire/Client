@@ -383,6 +383,10 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			nodes = this.componentFactory.produceNodes(items),
 			mounted = this.componentFactory.produceMounted(items, nodes);
 
+		if (mounted.length === 0) {
+			return this.onRenderDone();
+		}
+
 		this.observer.observe(mounted);
 		this.onDomInsertStart(mounted);
 
