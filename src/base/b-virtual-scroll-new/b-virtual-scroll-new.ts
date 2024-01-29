@@ -107,10 +107,9 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 
 		const
 			params = this.getRequestParams(),
-			get = this.dp.get(params[0], {...params[1], showProgress: false});
+			get = this.get(params[0], {...params[1], showProgress: false});
 
 		return get
-			.then((res) => res.data)
 			.then((res) => {
 				if (res == null) {
 					return;

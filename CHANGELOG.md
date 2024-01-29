@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.63.2 (2023-01-29)
+
+#### :bug: Bug Fix
+
+* Fixed an issue where, during a request error in the `initLoadNext` call, the error was not handled properly, leading to incorrect behavior of the component, including in terms of slot rendering `base/b-virtual-scroll-new/b-virtual-scroll-new`
+
 ## v3.63.1 (2023-01-26)
 
 #### :bug: Bug Fix
