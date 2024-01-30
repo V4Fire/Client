@@ -86,28 +86,15 @@ export interface VirtualScrollState<DATA = object, RAW_DATA = unknown> {
 	isLifecycleDone: boolean;
 
 	/**
-	 * Indicates if the current render process is the last one in the current lifecycle.
+	 * Indicates whether the current render process is the last one in the current lifecycle.
 	 *
-	 * It is important to understand that the component uses the
-	 * {@link VirtualScrollState.areRequestsStopped} property to calculate this value,
-	 * which means, if your loading completion strategy relies on the fact that no elements
-	 * will be received in the last request,
-	 * then {@link VirtualScrollState.isLastRender} will always be `undefined`.
-	 *
-	 * To achieve correct `isLastRender` behavior, it is necessary to implement a request
-	 * stopping strategy in such a way that **the last render occurs after all loading has
-	 * been completed**. For example, this can be implemented if your backend pagination
-	 * response has a property indicating the total number of items that can be loaded,
-	 * this property can be used for comparison:
-	 *
-	 * ```typescript
-	 *   const shouldStopRequestingData = (state: VirtualScrollState): boolean => {
-	 *    // Example: Stop requesting data when the total number of items equals the current number of loaded items
-	 *     return state.lastLoadedRawData?.total === state.data.length;
-	 *   };
-	 * ```
+	 * The isLastRender flag is set to true after a request,
+	 * when the client notifies the component that it has finished loading all its data
+	 * ({@link VirtualScrollState.areRequestsStopped} is set to true) and there is either no data left to render
+	 * or there is less than {@link VirtualScrollState.chunkSize} remaining to render.
+	 * When these conditions are met, the isLastRender flag will be set to true.
 	 */
-	isLastRender?: boolean;
+	isLastRender: boolean;
 
 	/**
 	 * The last loaded data.
