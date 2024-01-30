@@ -51,15 +51,13 @@
 ----
 ## Design System Package
 
-Using the design system provides an opportunity to have a consistent UI throughout the application,
-as well as connecting various themes.
-
-Let's see what a design system package looks like.
+Utilizing a design system offers the chance to maintain a consistent user interface throughout the application and connect diverse themes.
+Now, let's delve into the structure and features of a design system package.
 
 ### Meta
 
-Meta-information about the design system: deprecated tokens and their alternatives, themes supported by the design system,
-or other auxiliary information.
+This includes details about deprecated tokens and their replacements, themes that the design system supports,
+or any other relevant supporting information.
 
 ```js
 // ds.js
@@ -76,9 +74,9 @@ module.exports = {
 
 ### colors
 
-In the `colors` section, you can set the colors used in the project.
+Within the color section, you are able to establish the color palette for your project.
 
-For example:
+Here’s an example:
 
 ```js
 // ds.js
@@ -96,7 +94,7 @@ module.exports = {
 }
 ```
 
-Theme colors:
+You can also set theme colors:
 
 ```js
 // ds.js
@@ -116,7 +114,7 @@ module.exports = {
 
 ### text
 
-Text styles used in the project are defined as follows:
+Text styles used in the project are defined in the following manner:
 
 ```js
 // ds.js
@@ -178,19 +176,19 @@ module.exports = {
 
 ### Miscellaneous
 
-Styles for gradients, rounding, spacing, and other elements can be set similarly to [shadows](#shadows).
+The styles for elements such as gradients, rounding, spacing, etc., can be established in a similar manner as with [shadows](#shadows).
 
 ### Icons and Illustrations
 
-Icons in the design system package are stored in the `icons` folder. If there is a division into groups in the designers' layouts,
-the package will contain subfolders. For example: the design system in designer tools contains several icon sizes
-with identical names but different geometry.
-To distinguish them, you can split the names into groups: `24/icon_name`, `16/icon_name`, and so on.
-In the design system package, the developer will get folders `24`, `16`, inside which there will be corresponding
-sets of icons in `svg` format.
+Icons within the design system package are stored in the `icons` folder.
+If there's a division into groups within the designers' blueprints, the package will incorporate subfolders.
+For instance: if the design system tools contain several icon sizes with the same names but different shapes,
+these can be differentiated by dividing them into groups like `24/icon_name`, `16/icon_name`, etc.
+Thus, in the design system package, developers obtain folders named `24`, `16`,
+each of which contain corresponding sets of icons in `SVG` format.
 
-You can also place various illustrations in the design system. Put them in the `illustrations` folder, and later
-you can connect them to the template or styles.
+Various illustrations can also be included in the design system. These should be placed in the `illustrations` folder
+and can later be integrated with the template or styles.
 
 ```snakeskin
 - template index
@@ -207,8 +205,12 @@ you can connect them to the template or styles.
 ---
 ## Installation and Configuration
 
-To install the design system, you need to install the package as a dependency,
-specify the package name in the `designSystem` field of the `.pzlrrc` file, and you can build the project.
+To install the design system, follow the steps below:
+
+- Install the package as a dependency
+- Specify the package name in the `designSystem` field of the `.pzlrrc` file
+
+Once you've done these, you will be able to build the project.
 
 ### runtime
 
@@ -222,8 +224,8 @@ If `true`, the design system object will be available as a global variable `DS`.
 
 ### theme
 
-To use themes, it is necessary that the available themes are defined in the [meta](#meta) of the design system.
-As well as a set of fields that will change their appearance depending on the theme
+To utilize themes, ensure that the available themes are defined in the [meta](#meta) section of the design system.
+Additionally, a collection of fields that will vary their appearance depending on the chosen theme should be present.
 
 ```js
 // ds.js
@@ -235,7 +237,7 @@ module.exports = {
 }
 ```
 
-Now you need to configure the project to work with themes.
+After setting up the themes in your design system, your project needs to be configured to support theme usage.
 
 #### default
 
@@ -393,12 +395,12 @@ See example [here](src/components/form/b-button/b-button-ds.styl)
 ---
 ## Plugins
 
-There are also custom Stylus plugins for working with the design system. Some of them are used in the mixins above,
-but there are also those that can be used independently.
+Custom Stylus plugins are available for working with the design system.
+Some plugins are utilized in previously mentioned mixins, while others can operate independently.
 
 ### injector(componentName: string)
 
-Injects additional options to component mixin options ($p)
+This plugin injects additional options into component mixin options ($p).
 
 ```stylus
 $p = {
@@ -439,7 +441,7 @@ $p = {
 ```
 ### getDSVariables
 
-Returns design system CSS variables with their values
+This function retrieves the design system CSS variables along with their values.
 
 ```stylus
 getDSVariables()
@@ -448,7 +450,7 @@ getDSVariables()
 //   '--colors-primary': #0F9
 // }
 
-// To transform object to props use interpolate-props
+// To convert an object to properties, use interpolate-props.
 
 interpolate-props(getDSVariables("light"), false)
 // --colors-primary #0F9
@@ -456,9 +458,9 @@ interpolate-props(getDSVariables("light"), false)
 
 ### getDSValue(obj: Dictionary, path: string)
 
-Returns a value from the design system by the specified group and path.
-If passed only the first argument, the function returns parameters for the whole group,
-but not just the one value. If no arguments are passed, it returns the whole design system object.
+This function returns a value from the design system based on the specified group and path.
+Providing only the first argument returns parameters for the entire group, rather than a single value.
+No arguments will return the entire design system object.
 
 ```stylus
 getDSValue(colors "green.0") // rgba(0, 255, 0, 1)
@@ -466,7 +468,7 @@ getDSValue(colors "green.0") // rgba(0, 255, 0, 1)
 
 ### getDSTextStyles(styleName: string)
 
-Returns an object with text styles for the specified style name
+Returns an object containing text styles for the given style name.
 
 ```stylus
 getDSTextStyles(Small)
@@ -483,7 +485,7 @@ getDSTextStyles(Small)
 
 ### getDSColor(colorName: string, idx: number)
 
-Returns color(s) (or css var(s) if themes included) from the design system by the specified name and identifier (optional)
+Retrieves color(s) (or CSS var(s) if themes are included) from the design system by the specified name and identifier (optional).
 
 ```stylus
 getDSColor("blue", 1) // rgba(0, 0, 255, 1)
@@ -495,14 +497,14 @@ Returns the default theme value. See [default](#default)
 
 ### availableThemes
 
-Returns a list of available themes. See [include](#include)
+Provides a list of available themes. See the [include](#include) section.
 
 ### themeAttribute
 
 Returns the attribute name to set the theme value to the root element. See [attribute](#attribute)
 
 ```stylus
-// These plugins are used to associate css-vars with correspond theme
+// Associating CSS variables with corresponding theme
 for name in availableThemes()
   html[{themeAttribute()}={"%s" % name}]
     interpolate-props(getDSVariables(name), false)
@@ -519,7 +521,7 @@ Returns the theme name that will be associated with the light theme.
 By default, it is `light`. See [detectUserPreferences](#detectuserpreferences)
 
 ```stylus
-// These plugins are used to style components in specific theme
+// Styling components for specific themes
 b-my-component
   &_theme_{lightThemeName()}
     // ...
