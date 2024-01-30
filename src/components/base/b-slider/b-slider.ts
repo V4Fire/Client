@@ -327,6 +327,16 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		return false;
 	}
 
+	@hook('beforeDataCreate')
+	protected validateData(): void {
+		const
+			{useScrollSnap} = this;
+
+		if (useScrollSnap && this.modeProp === 'slide') {
+			throw new Error("You can't use `useScrollSnap` in `slide` mode");
+		}
+	}
+
 	/** {@link iObserveDOM.initDOMObservers} */
 	@hook('mounted')
 	initDOMObservers(): void {

@@ -24,13 +24,19 @@ test.use({
 
 test.describe('<b-slider> in scroll snap mode', () => {
 	let
-		slider: JSHandle<bSlider>;
+		scrollSnapSlider: JSHandle<bSlider>;
 
 	test.beforeEach(async ({page, demoPage}) => {
 		await demoPage.goto();
 
-		slider = await renderSlider(page, {
+		scrollSnapSlider = await renderSlider(page, {
 			childrenIds: [1, 2, 3, 4],
+			children: [
+				{type: 'img', attrs: {id: 'slide_1', src: 'https://fakeimg.pl/375x300'}},
+				{type: 'img', attrs: {id: 'slide_2', src: 'https://fakeimg.pl/375x300'}},
+				{type: 'img', attrs: {id: 'slide_3', src: 'https://fakeimg.pl/375x300'}},
+				{type: 'img', attrs: {id: 'slide_4', src: 'https://fakeimg.pl/375x300'}}
+			],
 			attrs: {
 				useScrollSnap: true,
 				mode: 'scroll'
@@ -39,6 +45,17 @@ test.describe('<b-slider> in scroll snap mode', () => {
 	});
 
 	test('should render g-slider', async ({page}) => {
-		await test.expect(page.locator('.g-slider')).toBeVisible();
+		await test.expect(page.locator('div:nth-child(2) > .b-slider__window > .g-slider')).toBeVisible();
 	});
+
+	test('should throw error if slider in `slide` mode uses the CSS Scroll Snap (useScrollSnap = true)', async ({page}) => {
+		await test.expect(renderSlider(page, {
+			childrenIds: [1, 2, 3],
+			attrs: {
+				useScrollSnap: true,
+				mode: 'slide'
+			}
+		})).rejects.toThrowError();
+	});
+
 });

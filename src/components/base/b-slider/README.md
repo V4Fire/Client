@@ -188,6 +188,12 @@ The delay (in milliseconds) between the last user gesture and the first automati
 It will be capped at the maximum value between `autoSlideInterval` and `autoSlidePostGestureDelay`,
 and will be used as a timeout for the first automatic slide movement after a user gesture.
 
+#### [useScrollSnap = `false`]
+
+The flag that turning off / on using of Scroll Snap slider (component g-slider).
+if the value is true, then b-slider will use the CSS scroll snap mechanism, which is handled by native browser API. This flag should be used only in `slide` mode.
+The default value is false.
+
 ## Fields
 
 #### current
