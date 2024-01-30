@@ -190,7 +190,7 @@ and will be used as a timeout for the first automatic slide movement after a use
 
 #### [useScrollSnap = `false`]
 
-The flag that turning off / on using of Scroll Snap slider (component g-slider).
+The flag that disables/enables the use of the Scroll Snap slider (g-slider component).
 if the value is true, then b-slider will use the CSS scroll snap mechanism, which is handled by native browser API. This flag should be used only in `slide` mode.
 The default value is false.
 

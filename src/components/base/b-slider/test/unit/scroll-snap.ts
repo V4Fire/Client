@@ -45,10 +45,10 @@ test.describe('<b-slider> in scroll snap mode', () => {
 	});
 
 	test('should render g-slider', async ({page}) => {
-		await test.expect(page.locator('div:nth-child(2) > .b-slider__window > .g-slider')).toBeVisible();
+		await test.expect(page.locator('div > .g-slider')).toBeVisible();
 	});
 
-	test('should throw error if slider in `slide` mode uses the CSS Scroll Snap (useScrollSnap = true)', async ({page}) => {
+	test('should throw error `useScrollSnap = true` and `mode = slide`', async ({page}) => {
 		await test.expect(renderSlider(page, {
 			childrenIds: [1, 2, 3],
 			attrs: {
