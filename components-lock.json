@@ -1,5 +1,5 @@
 {
-  "hash": "90998e4c7a0a5a2478284963c99dcdb2aa52779fe00c55335be5845844fcc130",
+  "hash": "c90f98f3c814bab5a159949fb38f8e8910986f366aa2af78293c76d96ac1abcc",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1192,6 +1192,38 @@
             "src/base/b-virtual-scroll/b-virtual-scroll.styl"
           ],
           "tpl": "src/base/b-virtual-scroll/b-virtual-scroll.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-virtual-scroll-new",
+        {
+          "index": "src/base/b-virtual-scroll-new/index.js",
+          "declaration": {
+            "name": "b-virtual-scroll-new",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-virtual-scroll-new",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-virtual-scroll-new/b-virtual-scroll-new.ts",
+          "styles": [
+            "src/base/b-virtual-scroll-new/b-virtual-scroll-new.styl"
+          ],
+          "tpl": "src/base/b-virtual-scroll-new/b-virtual-scroll-new.ss",
           "etpl": null
         }
       ],

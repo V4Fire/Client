@@ -1,5 +1,5 @@
 {
-  "hash": "2a22eb53756a6e760e1a06bf1948e34c9f61422a803f720888f02d15cf887846",
+  "hash": "514ba9b05a600c0c69394345608c803932507bcd6cde154f00a95cb0eaf7ecf1",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1196,6 +1196,38 @@
         }
       ],
       [
+        "b-virtual-scroll-new",
+        {
+          "index": "src/base/b-virtual-scroll-new/index.js",
+          "declaration": {
+            "name": "b-virtual-scroll-new",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-virtual-scroll-new",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-virtual-scroll-new/b-virtual-scroll-new.ts",
+          "styles": [
+            "src/base/b-virtual-scroll-new/b-virtual-scroll-new.styl"
+          ],
+          "tpl": "src/base/b-virtual-scroll-new/b-virtual-scroll-new.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-window",
         {
           "index": "src/base/b-window/index.js",
@@ -1387,6 +1419,36 @@
           "styles": [
             "src/traits/i-access/i-access.styl"
           ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "i-active-items",
+        {
+          "index": "src/traits/i-active-items/index.js",
+          "declaration": {
+            "name": "i-active-items",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-active-items",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/traits/i-active-items/i-active-items.ts",
+          "styles": [],
           "tpl": null,
           "etpl": null
         }
@@ -1999,7 +2061,11 @@
               "b-dummy-control-list",
               "b-dummy-decorators"
             ],
-            "libs": []
+            "libs": [
+              "core/cookies",
+              "core/kv-storage/engines/cookie",
+              "models/demo/form"
+            ]
           },
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
@@ -2040,14 +2106,26 @@
             "b-dummy-control-list",
             "b-dummy-decorators"
           ],
-          "libs": [],
+          "libs": [
+            "core/cookies",
+            "core/kv-storage/engines/cookie",
+            "models/demo/form"
+          ],
           "resolvedLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/cookies",
+              "core/kv-storage/engines/cookie",
+              "models/demo/form"
+            ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/cookies",
+              "core/kv-storage/engines/cookie",
+              "models/demo/form"
+            ]
           },
           "type": "page",
           "mixin": false,
