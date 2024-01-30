@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.64.0 (2023-01-30)
+
+#### :rocket: New Feature
+
+* Now the b-virtual-scroll component always attempts to perform the last rendering after the requests have been completed, even if there is no data left to render `base/b-virtual-scroll-new/b-virtual-scroll-new`
+
 ## v3.63.2 (2023-01-29)
 
 #### :bug: Bug Fix
