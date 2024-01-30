@@ -388,12 +388,7 @@ with settings correspond to the `CSSStyleDeclaration` type, and the field names 
 Among the built-in functions, there is also `interpolate-props(obj: CSSStyleDeclaration)`,
 which will expand your object into a set of CSS rules.
 
-```stylus
-createStyles($o)
-  // ...
-
-generateRules($p, createStyles)
-```
+See example [here](src/components/form/b-button/b-button-ds.styl)
 
 ---
 ## Plugins
