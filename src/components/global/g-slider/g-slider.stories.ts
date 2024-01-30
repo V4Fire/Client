@@ -21,8 +21,7 @@ const config: Meta = {
 			}
 		}
 	},
-	argTypes: {
-	}
+	argTypes: {}
 };
 
 export default config;
