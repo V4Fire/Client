@@ -506,6 +506,13 @@ Returns a list of available themes. See [include](#include)
 
 Returns the attribute name to set the theme value to the root element. See [attribute](#attribute)
 
+```stylus
+// These plugins are used to associate css-vars with correspond theme
+for name in availableThemes()
+  html[{themeAttribute()}={"%s" % name}]
+    interpolate-props(getDSVariables(name), false)
+```
+
 ### darkThemeName
 
 Returns the theme name that will be associated with the dark theme.
@@ -515,5 +522,14 @@ By default, it is `dark`. See [detectUserPreferences](#detectuserpreferences)
 
 Returns the theme name that will be associated with the light theme.
 By default, it is `light`. See [detectUserPreferences](#detectuserpreferences)
+
+```stylus
+// These plugins are used to style components in specific theme
+b-my-component
+  &_theme_{lightThemeName()}
+    // ...
+  &_theme_{darkThemeName()}
+    // ...
+```
 
 ---
