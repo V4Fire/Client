@@ -25,11 +25,12 @@ import {
 	withDirectives as superWithDirectives,
 	resolveDirective as superResolveDirective,
 
-	VNode,
 	VNodeChild,
 	VNodeArrayChildren
 
 } from 'vue';
+
+import type { VNode } from 'core/component/engines/interface';
 
 import Vue from 'core/component/engines/vue3/lib';
 
@@ -122,8 +123,25 @@ export const
 
 export const
 	mergeProps = wrapMergeProps(superMergeProps),
-	renderList = wrapRenderList(superRenderList),
 	renderSlot = wrapRenderSlot(superRenderSlot);
+
+export const renderList = wrapRenderList(
+	superRenderList,
+	(...args: Parameters<typeof superWithCtx>) => {
+		// Vue has two contexts for instances: `currentInstance` and `currentRenderingInstance`.
+		// The context for the renderList should be a `currentRenderingInstance`
+		// because `renderList` is called during component rendering.
+		const fn = superWithCtx(...args);
+
+		// Enable block tracking
+		// @see https://github.com/vuejs/core/blob/45984d559fe0c036657d5f2626087ea8eec205a8/packages/runtime-core/src/componentRenderContext.ts#L88
+		if ('_d' in fn) {
+			(<Function & {_d: boolean}>fn)._d = false;
+		}
+
+		return fn;
+	}
+);
 
 export const
 	withCtx = wrapWithCtx(superWithCtx),
@@ -218,6 +236,8 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
  * @param node
  */
 export function destroy(node: VNode | Node): void {
+	const destroyedVNodes = new WeakSet<VNode>();
+
 	if (node instanceof Node) {
 		if (('__vnode' in node)) {
 			removeVNode(node['__vnode']);
@@ -243,19 +263,18 @@ export function destroy(node: VNode | Node): void {
 			return;
 		}
 
+		if (destroyedVNodes.has(vnode)) {
+			return;
+		}
+
+		destroyedVNodes.add(vnode);
+
 		if (Object.isArray(vnode.children)) {
 			vnode.children.forEach(removeVNode);
 		}
 
 		if (Object.isArray(vnode['dynamicChildren'])) {
 			vnode['dynamicChildren'].forEach((vnode) => removeVNode(Object.cast(vnode)));
-		}
-
-		if (Object.isArray(vnode.dirs)) {
-			vnode.dirs.forEach((binding) => {
-				binding.dir.beforeUnmount?.(vnode.el, binding, vnode, null);
-				binding.dir.unmounted?.(vnode.el, binding, vnode, null);
-			});
 		}
 
 		if (vnode.component != null) {

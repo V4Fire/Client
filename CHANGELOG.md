@@ -25,6 +25,25 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Added possibility to use systemTheme by calling `useSystem` method
 * Released module `core/system-theme-extractor`
 
+#### :bug: Bug Fix
+
+* Fixed the memoization of `getParent`: it was saved in the context of the main component, as a
+result of which the components in the slots had an incorrect `$parent` `build/snakeskin`
+* Fixed loss of refs in slots inside async render `core/component/render`
+
+## v4.0.0-beta.51 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* Fixed an error when deleting the getters cache `core/component/accessor`
+
+## v4.0.0-beta.50 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* When calling the destructor, it is necessary to clean up nodes of any components `core/component/init`
+* Fixes an error that caused the application to go into an infinite loop when deleting nodes `core/component/engines/vue3`
+
 ## v4.0.0-beta.49 (2024-01-17)
 
 #### :rocket: New Feature
