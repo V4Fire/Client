@@ -65,7 +65,11 @@ or other auxiliary information.
 // ds.js
 module.exports = {
   meta: {
-    themes: ['dark', 'light']
+    themes: ['dark', 'light'],
+    deprecated: {
+      'blue': {renamedTo: 'darkBlue'},
+      'yellow': true
+    }
   }
 }
 ```
@@ -81,18 +85,18 @@ For example:
 module.exports = {
   colors: {
     blue: '#0000FF',
-    // также поддерживаются вложенные пути
+    // nested paths are also supported
     static: {
       black: '#000000',
       white: '#FFFFFF',
     },
-    // и массивы
+    // and arrays
     black: ['#000000', '#000001', '#000002']
   }
 }
 ```
 
-If there are themes provided:
+Theme colors:
 
 ```js
 // ds.js
@@ -158,13 +162,13 @@ module.exports = {
           l: { /* styles */ }
         },
         exterior: {
-          ex1: { /* styles */ },
-          ex2: { /* styles */ }
+          switch: { /* styles */ },
+          button: { /* styles */ }
         }
       },
       block: {
-        block1: { /* styles */ },
-        block2: { /* styles */ },
+        checkbox: { /* styles */ },
+        label: { /* styles */ },
       }
     },
     // ...
@@ -214,12 +218,12 @@ If `true`, the values of the design system will be written in CSS variables.
 
 #### passDesignSystem
 
-If `true`, the design system object will be available as a global variable DS.
+If `true`, the design system object will be available as a global variable `DS`.
 
 ### theme
 
 To use themes, it is necessary that the available themes are defined in the [meta](#meta) of the design system.
-As well as a set of fields that will change the display in different themes
+As well as a set of fields that will change their appearance depending on the theme
 
 ```js
 // ds.js
@@ -243,7 +247,9 @@ Themes that need to be included in the build. If `true`, then all themes.
 
 #### postProcessor
 
-Если `true`, то атрибут темы будет обработан прокси-сервером (например Nginx). Иначе атрибут будет выставлен в js рантайме
+If set to true, the theme attribute will be processed by a proxy server, such as Nginx.
+The proxy server will interpolate the theme value from a cookie or header to the theme attribute.
+Otherwise, the theme attributes will be sourced from the JS runtime.
 
 #### postProcessorTemplate
 
@@ -316,7 +322,7 @@ If you need to connect a colored icon, you can use a directive.
 
 ```snakeskin
 - template index
-  < . v-icon = '24/bla'
+  < . v-icon = '24/foo'
 
 ```
 
@@ -377,7 +383,7 @@ If you want to write all the rules using variables, return flag
 You can get properties by key using the [getDSValue](#getdsvalueobj-dictionary-path-string) function.
 
 Typically, adapters are written in such a way that the output object/field content
-with settings corresponded to the `CSSStyleDeclaration` type, and the field names to the element names in the code.
+with settings correspond to the `CSSStyleDeclaration` type, and the field names to the element names in the code.
 
 Among the built-in functions, there is also `interpolate-props(obj: CSSStyleDeclaration)`,
 which will expand your object into a set of CSS rules.
@@ -400,7 +406,9 @@ but there are also those that can be used independently.
 Injects additional options to component mixin options ($p)
 
 ```stylus
-injector('bButton')
+$p = {
+  bButton: injector("bButton")
+}
 
 // If `useCSSVarsInRuntime` is enabled
 //
@@ -444,6 +452,11 @@ getDSVariables()
 // {
 //   '--colors-primary': #0F9
 // }
+
+// To transform object to props use interpolate-props
+
+interpolate-props(getDSVariables("light"), false)
+// --colors-primary #0F9
 ```
 
 ### getDSValue(obj: Dictionary, path: string)
@@ -475,7 +488,7 @@ getDSTextStyles(Small)
 
 ### getDSColor(colorName: string, idx: number)
 
-Returns color(s) from the design system by the specified name and identifier (optional)
+Returns color(s) (or css var(s) if themes included) from the design system by the specified name and identifier (optional)
 
 ```stylus
 getDSColor("blue", 1) // rgba(0, 0, 255, 1)
