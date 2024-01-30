@@ -6,5 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export type Value = string;
+export type Value = CanUndef<string>;
 export type FormValue = CanUndef<Value>;

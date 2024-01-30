@@ -204,11 +204,11 @@ export default class bInput extends iInputText {
 	readonly progressIcon?: string | boolean;
 
 	override get value(): this['Value'] {
-		return this.field.get<this['Value']>('valueStore')!;
+		return this.field.get<this['Value']>('valueStore');
 	}
 
 	override set value(value: this['Value']) {
-		this.text = value;
+		this.text = value ?? '';
 		this.field.set('valueStore', this.text);
 	}
 
