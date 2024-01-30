@@ -87,9 +87,11 @@ export interface VirtualScrollState<DATA = object, RAW_DATA = unknown> {
 	/**
 	 * Indicates whether the current render process is the last one in the current lifecycle.
 	 *
-	 * The isLastRender flag is set after each data load. The component checks whether requests have stopped
-	 * ({@link VirtualScrollState.areRequestsStopped}) and whether there is no more data to render.
-	 * If both conditions are met, the next render after the request will have the isLastRender flag set to true.
+	 * The isLastRender flag is set to true after a request,
+	 * when the client notifies the component that it has finished loading all its data
+	 * ({@link VirtualScrollState.areRequestsStopped} is set to true) and there is either no data left to render
+	 * or there is less than {@link VirtualScrollState.chunkSize} remaining to render.
+	 * When these conditions are met, the isLastRender flag will be set to true.
 	 */
 	isLastRender: boolean;
 
