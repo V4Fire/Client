@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.50 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* When calling the destructor, it is necessary to clean up nodes of any components
+
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks when removing components
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change

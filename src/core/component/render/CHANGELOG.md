@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-01-??)
+
+#### :bug: Bug Fix
+
+* Fixed loss of refs in slots inside async render
+
 ## v4.0.0-beta.38 (2023-11-15)
 
 #### :bug: Bug Fix

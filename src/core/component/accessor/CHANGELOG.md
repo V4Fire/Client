@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.51 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* Fixed an error when deleting the getters cache
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :rocket: New Feature

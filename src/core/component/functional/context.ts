@@ -8,6 +8,7 @@
 
 import * as init from 'core/component/init';
 
+import { saveRawComponentContext } from 'core/component/context';
 import { forkMeta, ComponentMeta } from 'core/component/meta';
 import { initProps } from 'core/component/prop';
 
@@ -131,6 +132,12 @@ export function createVirtualContext(
 			return undefined;
 		}
 	});
+
+	// When extending the context of the original component (e.g., Vue), to avoid conflicts,
+	// we create an object with the original context in the prototype: `V4Context<__proto__: OriginalContext>`.
+	// However, for functional components, this approach is redundant and can lead to memory leaks.
+	// Instead, we simply assign a reference to the raw context, which points to the original context.
+	saveRawComponentContext(virtualCtx, virtualCtx);
 
 	initProps(virtualCtx, {
 		from: $props,

@@ -6,8 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { StaticRoutes } from 'components/base/b-router/b-router';
-
-export default <StaticRoutes>{
-
-};
+package('b-directives-ref-dummy')
+	.extends('b-dummy');

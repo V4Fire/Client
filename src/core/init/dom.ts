@@ -6,7 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import semaphore from 'core/init/semaphore';
 import { resolveAfterDOMLoaded } from 'core/event';
+import type { InitAppOptions } from 'core/init/interface';
 
-export default resolveAfterDOMLoaded().then(() => semaphore('DOMReady'));
+/**
+ * Resolved after DOMContentLoaded event
+ * @param params
+ */
+export default function initDOM(params: InitAppOptions): Promise<void> {
+	return resolveAfterDOMLoaded().then(() => params.ready('DOMReady'));
+}

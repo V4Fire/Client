@@ -32,6 +32,7 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	/**
 	 * A group name to manual clearing of pending tasks via the [[Async]] module.
 	 * Providing this value disables automatically cleanup of render tasks on the `update` hook.
+	 * If this parameter is set as a function, the group name will be dynamically calculated on each iteration.
 	 *
 	 * @example
 	 * ```
@@ -45,7 +46,7 @@ export interface TaskOptions<El = unknown, D = unknown> {
 	 *   Cancel rendering
 	 * ```
 	 */
-	group?: string;
+	group?: string | (() => string);
 
 	/**
 	 * A function to filter elements to render.
@@ -115,6 +116,8 @@ export interface TaskFilter<E = unknown, D = unknown> {
 	(): CanPromise<boolean>;
 
 	/**
+	 * A filter function for render tasks
+	 *
 	 * @param el - a data element to render
 	 * @param i - an iteration index
 	 * @param task - an element of the render task
@@ -122,11 +125,10 @@ export interface TaskFilter<E = unknown, D = unknown> {
 	(el: E, i: number, task: TaskEl<D>): CanPromise<boolean>;
 }
 
-/**
- * A function to destroy the unmounted node
- */
 export interface NodeDestructor {
 	/**
+	 * A function to destroy the unmounted node
+	 *
 	 * @param node - a node to remove
 	 * @param childComponentEls - root elements of the child components
 	 */

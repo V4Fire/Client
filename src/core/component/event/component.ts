@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { EventId } from 'core/async';
+
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import type { UnsafeComponentInterface } from 'core/component/interface';
 
@@ -55,8 +57,6 @@ export function resetComponents(type?: ComponentResetType): void {
  * @param component
  */
 export function implementEventEmitterAPI(component: object): void {
-	/* eslint-disable @typescript-eslint/typedef */
-
 	const
 		ctx = Object.cast<UnsafeComponentInterface>(component);
 
@@ -74,7 +74,7 @@ export function implementEventEmitterAPI(component: object): void {
 		enumerable: false,
 		writable: false,
 
-		value(event: string, ...args) {
+		value(event: string, ...args: unknown[]) {
 			if (!event.startsWith('[[')) {
 				nativeEmit?.(event, ...args);
 			}
@@ -106,15 +106,27 @@ export function implementEventEmitterAPI(component: object): void {
 	});
 
 	function getMethod(method: 'on' | 'once' | 'off') {
-		return function wrapper(this: unknown, event, cb) {
+		return function wrapper(this: unknown, event: CanArray<string>, cb?: Function) {
+			const
+				links: EventId[] = [],
+				isOnLike = method !== 'off';
+
 			Array.concat([], event).forEach((event) => {
 				if (method === 'off' && cb == null) {
 					$e.removeAllListeners(event);
 
 				} else {
-					$e[method](Object.cast(event), Object.cast(cb));
+					const link = $e[method](Object.cast(event), Object.cast(cb));
+
+					if (isOnLike) {
+						links.push(Object.cast(link));
+					}
 				}
 			});
+
+			if (isOnLike) {
+				return Object.isArray(event) ? links : links[0];
+			}
 
 			return this;
 		};

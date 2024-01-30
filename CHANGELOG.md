@@ -22,6 +22,62 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added new testing API `ComponentObject` that allows for easier interaction with components in the testing environment `test/helpers/component-object`.
 * Added new testing API for mocking and spying on functions at runtime `test/helpers/mock`.
 
+## v4.0.0-beta.?? (2024-01-??)
+
+#### :bug: Bug Fix
+
+* Fixed the memoization of `getParent`: it was saved in the context of the main component, as a
+result of which the components in the slots had an incorrect `$parent` `build/snakeskin`
+* Fixed loss of refs in slots inside async render `core/component/render`
+
+## v4.0.0-beta.51 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* Fixed an error when deleting the getters cache `core/component/accessor`
+
+## v4.0.0-beta.50 (2024-01-19)
+
+#### :bug: Bug Fix
+
+* When calling the destructor, it is necessary to clean up nodes of any components `core/component/init`
+* Fixes an error that caused the application to go into an infinite loop when deleting nodes `core/component/engines/vue3`
+
+## v4.0.0-beta.49 (2024-01-17)
+
+#### :rocket: New Feature
+
+* Now the `render` method can accept the name of an asynchronous group to control the invocation of destructors `components/friends/vdom`
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks when switching pages `bDynamicPage`
+* Fixed a memory leak when creating dynamic components via the VDOM API `core/component/engines/vue3`
+* Fixed memory leaks when removing components `core/component/init`
+* Added memoization for the `getParent` and `getRoot` props to prevent unnecessary re-renders `build/snakeskin`
+
+## v4.0.0-beta.48 (2024-01-17)
+
+#### :boom: Breaking Change
+
+* Now it is necessary to pass the application initialization flags to the `ready` method from
+  the initialization parameters, instead of importing it from `core/init`, due to SSR
+
+## v4.0.0-beta.47 (2024-01-16)
+
+#### :bug: Bug Fix
+
+* Fixed incorrect image state during hydration `components/directives/image`
+
+## v4.0.0-beta.46 (2024-01-11)
+
+#### :bug: Bug Fix
+
+* `components/friends/async-render/iterate`:
+  * Fixed `asyncRenderComplete` event not being emitted
+  ([issue 1057](https://github.com/V4Fire/Client/issues/1057))
+  * Fixed race condition
+
 ## v4.0.0-beta.45 (2023-12-07)
 
 #### :bug: Bug Fix

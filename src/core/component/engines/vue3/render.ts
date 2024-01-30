@@ -25,9 +25,12 @@ import {
 	withDirectives as superWithDirectives,
 	resolveDirective as superResolveDirective,
 
-	VNode
+	VNodeChild,
+	VNodeArrayChildren
 
 } from 'vue';
+
+import type { VNode } from 'core/component/engines/interface';
 
 import Vue from 'core/component/engines/vue3/lib';
 
@@ -120,8 +123,25 @@ export const
 
 export const
 	mergeProps = wrapMergeProps(superMergeProps),
-	renderList = wrapRenderList(superRenderList),
 	renderSlot = wrapRenderSlot(superRenderSlot);
+
+export const renderList = wrapRenderList(
+	superRenderList,
+	(...args: Parameters<typeof superWithCtx>) => {
+		// Vue has two contexts for instances: `currentInstance` and `currentRenderingInstance`.
+		// The context for the renderList should be a `currentRenderingInstance`
+		// because `renderList` is called during component rendering.
+		const fn = superWithCtx(...args);
+
+		// Enable block tracking
+		// @see https://github.com/vuejs/core/blob/45984d559fe0c036657d5f2626087ea8eec205a8/packages/runtime-core/src/componentRenderContext.ts#L88
+		if ('_d' in fn) {
+			(<Function & {_d: boolean}>fn)._d = false;
+		}
+
+		return fn;
+	}
+);
 
 export const
 	withCtx = wrapWithCtx(superWithCtx),
@@ -133,10 +153,12 @@ export const
  *
  * @param vnode
  * @param [parent] - the parent component
+ * @param [group] - the name of the async group within which rendering takes place
  */
 export function render(
 	vnode: VNode,
-	parent?: ComponentInterface
+	parent?: ComponentInterface,
+	group?: string
 ): Node;
 
 /**
@@ -144,13 +166,15 @@ export function render(
  *
  * @param vnodes
  * @param [parent] - the parent component
+ * @param [group] - the name of the async group within which rendering takes place
  */
 export function render(
 	vnodes: VNode[],
-	parent?: ComponentInterface
+	parent?: ComponentInterface,
+	group?: string
 ): Node[];
 
-export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): CanArray<Node> {
+export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, group?: string): CanArray<Node> {
 	const vue = new Vue({
 		render: () => vnode,
 
@@ -171,6 +195,11 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): Can
 					writable: true,
 					value: root
 				});
+
+				// Register a worker to clean up memory upon component destruction
+				parent.unsafe.async.worker(() => {
+					vue.unmount();
+				}, {group});
 			}
 		}
 	});
@@ -199,5 +228,68 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface): Can
 
 	function isEmptyText(node?: Node) {
 		return node?.nodeType === 3 && node.textContent === '';
+	}
+}
+
+/**
+ * Deletes the specified node and frees up memory
+ * @param node
+ */
+export function destroy(node: VNode | Node): void {
+	const destroyedVNodes = new WeakSet<VNode>();
+
+	if (node instanceof Node) {
+		if (('__vnode' in node)) {
+			removeVNode(node['__vnode']);
+		}
+
+		node.parentNode?.removeChild(node);
+
+		if (node instanceof Element) {
+			node.innerHTML = '';
+		}
+
+	} else {
+		removeVNode(node);
+	}
+
+	function removeVNode(vnode: Nullable<VNode | VNodeArrayChildren | VNodeChild>) {
+		if (vnode == null || Object.isPrimitive(vnode)) {
+			return;
+		}
+
+		if (Object.isArray(vnode)) {
+			vnode.forEach(removeVNode);
+			return;
+		}
+
+		if (destroyedVNodes.has(vnode)) {
+			return;
+		}
+
+		destroyedVNodes.add(vnode);
+
+		if (Object.isArray(vnode.children)) {
+			vnode.children.forEach(removeVNode);
+		}
+
+		if (Object.isArray(vnode['dynamicChildren'])) {
+			vnode['dynamicChildren'].forEach((vnode) => removeVNode(Object.cast(vnode)));
+		}
+
+		if (vnode.component != null) {
+			vnode.component.effect.stop();
+			vnode.component = null;
+		}
+
+		vnode.props = {};
+
+		['dirs', 'children', 'dynamicChildren', 'dynamicProps'].forEach((key) => {
+			vnode[key] = [];
+		});
+
+		['el', 'ctx', 'ref', 'virtualComponent', 'virtualContext'].forEach((key) => {
+			vnode[key] = null;
+		});
 	}
 }

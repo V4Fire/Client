@@ -1,5 +1,5 @@
 {
-  "hash": "3ae069d52d1989b96e528e8e9288454145d1b772025f020f37e2e2148bfea48d",
+  "hash": "52bd32a41b18a060d9cd5ac088d14367e133caf34a55162d1de59d82a7c299fd",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -108,6 +108,38 @@
             "src/components/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/components/form/b-checkbox/b-checkbox.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-directives-ref-dummy",
+        {
+          "index": "src/core/component/directives/ref/test/b-directives-ref-dummy/index.js",
+          "declaration": {
+            "name": "b-directives-ref-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-directives-ref-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy.ts",
+          "styles": [
+            "src/core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy.styl"
+          ],
+          "tpl": "src/core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy.ss",
           "etpl": null
         }
       ],
