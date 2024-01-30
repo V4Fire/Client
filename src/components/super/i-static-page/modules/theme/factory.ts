@@ -20,8 +20,8 @@ import type { SystemThemeExtractor } from 'core/system-theme-extractor';
  */
 export default function themeManagerFactory(
 	component: iBlock,
-	store: CanPromise<StorageEngine>,
-	systemTheme: CanPromise<SystemThemeExtractor>
+	store: StorageEngine,
+	systemTheme: SystemThemeExtractor
 ): CanNull<ThemeManager> {
 	return Object.isString(THEME) ? new ThemeManager(component, store, systemTheme) : null;
 }

@@ -9,10 +9,10 @@
 import { factory, SyncStorage, StorageEngine } from 'core/kv-storage';
 
 import type iBlock from 'components/super/i-block/i-block';
+import type { Theme } from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import Friend from 'components/friends/friend';
-import type { Theme } from 'components/super/i-block/i-block';
 import type { SystemThemeExtractor } from 'core/system-theme-extractor';
 
 import { prefersColorSchemeEnabled, darkThemeName, lightThemeName } from 'components/super/i-static-page/modules/theme/const';
