@@ -10,7 +10,7 @@ Changelog
 > - :nail_care:  [Polish]
 
 
-## v4.0.0-beta.?? (2024-01-??)
+## v4.0.0-beta.52 (2023-01-31)
 
 #### :bug: Bug Fix
 
