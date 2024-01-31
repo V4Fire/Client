@@ -4,26 +4,13 @@ This module provides a block with [CSS scroll snap](https://developer.mozilla.or
 
 ## Usage
 
-You can use this component with invocation of getTpl function (`block slider1`) or using simple block with specials modifiers (`block slider2`)
+You can use this component using simple block with specials modifiers
 
 ```
-- include 'components/global/g-slider/g-slider.ss'|b
-
-...
-
-- block slider1
-  - block slides()
-    < img src = https://fakeimg.pl/375x300
-    < img src = https://fakeimg.pl/375x300
-    < img src = https://fakeimg.pl/375x300
-
-  += self.getTpl('g-slider/')()
-    += self.slides()
-
-- block slider2
-  < .g-slider
-    < img src = https://fakeimg.pl/155x300
-    < img src = https://fakeimg.pl/130x300
+< .g-slider
+  < img src = https://fakeimg.pl/155x300
+  < img src = https://fakeimg.pl/130x300
+  < img src = https://fakeimg.pl/130x300
 ```
 
 1. g-slider component uses horizontal slider by default, but you can use vertical slider by adding modifier `.g-slider__vertical_true` for the slides-container `.g-slider`

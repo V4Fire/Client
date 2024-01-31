@@ -22,7 +22,7 @@ test.use({
 	}
 });
 
-test.describe('<b-slider> in scroll snap mode', () => {
+test.describe.only('<b-slider> in scroll snap mode', () => {
 	let
 		scrollSnapSlider: JSHandle<bSlider>;
 
@@ -45,7 +45,7 @@ test.describe('<b-slider> in scroll snap mode', () => {
 	});
 
 	test('should render g-slider', async ({page}) => {
-		await test.expect(page.locator('div > .g-slider')).toBeVisible();
+		await test.expect(page.locator('.b-slider .g-slider')).toBeVisible();
 	});
 
 	test('should throw error `useScrollSnap = true` and `mode = slide`', async ({page}) => {

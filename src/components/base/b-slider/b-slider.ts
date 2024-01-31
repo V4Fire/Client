@@ -327,6 +327,9 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		return false;
 	}
 
+	/**
+	 * Validates properties
+	 */
 	@hook('beforeDataCreate')
 	protected validateProps(): void {
 		const
