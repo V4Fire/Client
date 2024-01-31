@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.53 (2023-01-31)
+
+#### :rocket: New Feature
+
+* Released module `b-virtual-scroll-new`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with memory leaks in `b-virtual-scroll`
+
 ## v4.0.0-beta.52 (2023-01-31)
 
 #### :boom: Breaking Change
