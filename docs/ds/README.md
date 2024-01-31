@@ -390,7 +390,7 @@ with settings correspond to the `CSSStyleDeclaration` type, and the field names 
 Among the built-in functions, there is also `interpolate-props(obj: CSSStyleDeclaration)`,
 which will expand your object into a set of CSS rules.
 
-See example [here](src/components/form/b-button/b-button-ds.styl)
+See example [here]([src/components/form/b-button/b-button-ds.styl](https://github.com/V4Fire/Client/blob/0ce859731c7dbc44629ee0b41e849c9f5fa1ca11/src/components/form/b-button/b-button-ds.styl))
 
 ---
 ## Plugins
