@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.52 (2023-01-31)
 
 #### :boom: Breaking Change
 
@@ -31,6 +31,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 result of which the components in the slots had an incorrect `$parent` `build/snakeskin`
 * Fixed loss of refs in slots inside async render `core/component/render`
 * Fixed unexpected async chunk generation during build
+* Fixed an issue where Intersection Watcher would not remove nodes from memory, resulting in leaks `core/dom/intersection-watcher/engines`
 
 ## v4.0.0-beta.51 (2024-01-19)
 
