@@ -16,7 +16,8 @@ import { isItem } from 'components/base/b-virtual-scroll-new/modules/helpers';
 import * as vdomRender from 'components/base/b-virtual-scroll-new/modules/factory/engines/vdom';
 
 /**
- * A friendly class that provides an API for component production, specifically tailored for the `bVirtualScrollNew` class.
+ * A friendly class that provides an API for component production,
+ * specifically tailored for the `bVirtualScrollNew` class.
  */
 export class ComponentFactory extends Friend {
 	override readonly C!: bVirtualScrollNew;
