@@ -8,20 +8,20 @@
 
 import test from 'tests/config/unit/test';
 
-import Gestures from 'tests/helpers/gestures';
+import { renderSlider, current } from 'components/base/b-slider/test/helpers';
 
-import { current, renderSlider } from 'components/base/b-slider/test/helpers';
+const VIEWPORT_WIDTH = 375;
 
 test.use({
 	isMobile: true,
 	hasTouch: true,
 	viewport: {
-		width: 375,
+		width: VIEWPORT_WIDTH,
 		height: 667
 	}
 });
 
-test.describe.only('<b-slider> in scroll snap mode', () => {
+test.describe('<b-slider> in scroll snap mode', () => {
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -87,22 +87,36 @@ test.describe.only('<b-slider> in scroll snap mode', () => {
 		test.expect(await current(scrollSnapSlider)).toBe(0);
 	});
 
-	test('should not be handled by touch events', async ({page}) => {
-		const scrollSnapSlider = await renderSlider(page, {
+	test('swipe: should snap slides to the edge of the container', async ({page}) => {
+		const children = [1, 2, 3, 4].map((i) => ({
+			type: 'img',
+			attrs: {
+				id: `slide_${i}`,
+				src: `https://fakeimg.pl/${VIEWPORT_WIDTH}x300`,
+				width: VIEWPORT_WIDTH,
+				height: 300
+			}
+		}));
+
+		await renderSlider(page, {
+			children: {
+				default: children
+			},
 			attrs: {
 				useScrollSnap: true,
 				mode: 'scroll'
 			}
 		});
 
-		test.expect(await current(scrollSnapSlider)).toBe(0);
+		const position = await page.evaluate(() => {
+			const sliderContainer = document.getElementsByClassName('g-slider')[0];
+			sliderContainer.scrollLeft = 250;
 
-		await Gestures.dispatchTouchEvent(page, 'touchstart', {x: 0, y: 0});
-		await Gestures.dispatchTouchEvent(page, 'touchend', {x: 0, y: 0});
+			return sliderContainer.scrollLeft;
+		});
 
-		await scrollSnapSlider.evaluate((ctx) => ctx.unsafe.async.sleep(200));
+		await test.expect(position % VIEWPORT_WIDTH).toBe(0);
 
-		test.expect(await current(scrollSnapSlider)).toBe(0);
 	});
 
 });
