@@ -6,11 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { JSHandle } from 'playwright';
-
 import test from 'tests/config/unit/test';
 
-import type bSlider from 'components/base/b-slider/b-slider';
+import Gestures from 'tests/helpers/gestures';
+
 import { current, renderSlider } from 'components/base/b-slider/test/helpers';
 
 test.use({
@@ -22,59 +21,42 @@ test.use({
 	}
 });
 
-test.describe('<b-slider> in scroll snap mode', () => {
-	let
-		scrollSnapSlider: JSHandle<bSlider>,
-		scrollSlider: JSHandle<bSlider>,
-		swipeSlider: JSHandle<bSlider>;
+test.describe.only('<b-slider> in scroll snap mode', () => {
 
-	test.beforeEach(async ({page, demoPage}) => {
+	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
-
-		const children = [
-			{type: 'img', attrs: {id: 'slide_1', src: 'https://fakeimg.pl/375x300'}},
-			{type: 'img', attrs: {id: 'slide_2', src: 'https://fakeimg.pl/375x300'}},
-			{type: 'img', attrs: {id: 'slide_3', src: 'https://fakeimg.pl/375x300'}},
-			{type: 'img', attrs: {id: 'slide_4', src: 'https://fakeimg.pl/375x300'}}
-		];
-
-		scrollSnapSlider = await renderSlider(page, {
-			childrenIds: [1, 2, 3, 4],
-			children,
-			attrs: {
-				useScrollSnap: true,
-				mode: 'scroll'
-			}
-		});
-
-		swipeSlider = await renderSlider(page, {
-			childrenIds: [1, 2, 3, 4],
-			children,
-			attrs: {
-				id: 'swipe_slider'
-			}
-		});
-
-		scrollSlider = await renderSlider(page, {
-			childrenIds: [1, 2, 3, 4],
-			children,
-			attrs: {
-				id: 'scroll_slider',
-				mode: 'scroll'
-			}
-		});
 	});
 
 	test.describe('g-slider rendering', () => {
 		test('should render g-slider', async ({page}) => {
+			await renderSlider(page, {
+				childrenIds: [1, 2, 3, 4],
+				attrs: {
+					useScrollSnap: true,
+					mode: 'scroll'
+				}
+			});
+
 			await test.expect(page.locator('.b-slider .g-slider')).toBeVisible();
 		});
 
 		test('should not render g-slider if mode is `swipe`', async ({page}) => {
+			await renderSlider(page, {
+				attrs: {
+					id: 'swipe_slider'
+				}
+			});
+
 			await test.expect(page.locator('#swipe_slider .g-slider')).not.toBeVisible();
 		});
 
 		test('should not render g-slider if mode is `scroll` and useSnapScroll is `false`', async ({page}) => {
+			await renderSlider(page, {
+				attrs: {
+					mode: 'scroll'
+				}
+			});
+
 			await test.expect(page.locator('#scroll_slider .g-slider')).not.toBeVisible();
 		});
 
@@ -90,16 +72,35 @@ test.describe('<b-slider> in scroll snap mode', () => {
 		})).rejects.toThrowError();
 	});
 
-	test('shouldn\'t automatically scroll', async () => {
+	test('shouldn\'t automatically scroll', async ({page}) => {
+		const scrollSnapSlider = await renderSlider(page, {
+			attrs: {
+				useScrollSnap: true,
+				mode: 'scroll'
+			}
+		});
+
 		test.expect(await current(scrollSnapSlider)).toBe(0);
 
-		const timeStart = new Date().getTime();
+		await scrollSnapSlider.evaluate((ctx) => ctx.unsafe.async.sleep(200));
 
-		await test.expect
-			.poll(() => new Date().getTime() - timeStart, {
-				timeout: 200
-			})
-			.toBeGreaterThan(100);
+		test.expect(await current(scrollSnapSlider)).toBe(0);
+	});
+
+	test('should not be handled by touch events', async ({page}) => {
+		const scrollSnapSlider = await renderSlider(page, {
+			attrs: {
+				useScrollSnap: true,
+				mode: 'scroll'
+			}
+		});
+
+		test.expect(await current(scrollSnapSlider)).toBe(0);
+
+		await Gestures.dispatchTouchEvent(page, 'touchstart', {x: 0, y: 0});
+		await Gestures.dispatchTouchEvent(page, 'touchend', {x: 0, y: 0});
+
+		await scrollSnapSlider.evaluate((ctx) => ctx.unsafe.async.sleep(200));
 
 		test.expect(await current(scrollSnapSlider)).toBe(0);
 	});
