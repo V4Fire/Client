@@ -21,7 +21,7 @@ test.use({
 	}
 });
 
-test.describe('<b-slider> in scroll snap mode', () => {
+test.describe.only('<b-slider> in scroll snap mode', () => {
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -80,11 +80,11 @@ test.describe('<b-slider> in scroll snap mode', () => {
 			}
 		});
 
-		test.expect(await current(scrollSnapSlider)).toBe(0);
+		await test.expect(current(scrollSnapSlider)).toBeResolvedTo(0);
 
 		await scrollSnapSlider.evaluate((ctx) => ctx.unsafe.async.sleep(200));
 
-		test.expect(await current(scrollSnapSlider)).toBe(0);
+		await test.expect(current(scrollSnapSlider)).toBeResolvedTo(0);
 	});
 
 	test('swipe: should snap slides to the edge of the container', async ({page}) => {
@@ -109,10 +109,11 @@ test.describe('<b-slider> in scroll snap mode', () => {
 		});
 
 		const position = await page.evaluate(() => {
-			const sliderContainer = document.getElementsByClassName('g-slider')[0];
-			sliderContainer.scrollLeft = 250;
+			const sliderContainer = document.querySelector('.g-slider');
 
-			return sliderContainer.scrollLeft;
+			sliderContainer!.scrollLeft = 250;
+
+			return sliderContainer!.scrollLeft;
 		});
 
 		await test.expect(position % VIEWPORT_WIDTH).toBe(0);

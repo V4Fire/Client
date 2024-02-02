@@ -590,7 +590,6 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * @param e
 	 */
 	protected onStart(e: TouchEvent): void {
-		console.log('onStart');
 		this.stopAutoSliding();
 		this.scrolling = false;
 
@@ -619,7 +618,6 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * @emits `swipeStart()`
 	 */
 	protected onMove(e: TouchEvent): void {
-		console.log('onMove');
 		if (this.scrolling) {
 			return;
 		}
@@ -659,7 +657,6 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 	 * @emits `swipeEnd(dir:` [[SwipeDirection]]`, isChanged: boolean)`
 	 */
 	protected onRelease(): void {
-		console.log('onRelease');
 		if (this.scrolling) {
 			this.scrolling = false;
 			return;
