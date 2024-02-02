@@ -135,8 +135,8 @@ export default abstract class iSliderProps extends iData {
 	readonly autoSlidePostGestureDelay: number = 0;
 
 	/**
-	 * The flag that disables/enables the use of the Scroll Snap slider (g-slider component).
-	 * if the value is true, then b-slider will use the CSS scroll snap mechanism, which is handled by native browser API.
+	 * The flag that disables/enables the use of the scroll snap slider (g-slider component).
+	 * if the value is true, then the b-slider will use the CSS scroll snap mechanism, which is handled by the browser's own API.
 	 * The default value is false
 	 */
 	@prop(Boolean)

@@ -28,7 +28,7 @@ export default config;
 
 export const HorizontalSlider: StoryObj<any> = {
 	args: {
-		class: 'g-slider g-slider__horizontal_true',
+		class: 'g-slider g-slider_horizontal_true',
 		style: 'width: 400px; height: 300px',
 		children: [
 			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x300', class: 'g-slider__slide_snap_end'}},
@@ -45,7 +45,7 @@ export const HorizontalSlider: StoryObj<any> = {
 
 export const VerticalSlider: StoryObj<any> = {
 	args: {
-		class: 'g-slider g-slider__vertical_true',
+		class: 'g-slider g-slider_vertical_true',
 		style: 'width: 300px; height: 300px',
 		children: [
 			{type: 'img', attrs: {src: 'https://fakeimg.pl/300x150'}},

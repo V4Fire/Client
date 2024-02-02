@@ -4,29 +4,29 @@ This module provides a block with [CSS scroll snap](https://developer.mozilla.or
 
 ## Usage
 
-You can use this component using simple block with specials modifiers
+You can use this component using a simple block with special modifiers
 
-```
+```snakeskin
 < .g-slider
   < img src = https://fakeimg.pl/155x300
   < img src = https://fakeimg.pl/130x300
   < img src = https://fakeimg.pl/130x300
 ```
 
-1. g-slider component uses horizontal slider by default, but you can use vertical slider by adding modifier `.g-slider__vertical_true` for the slides-container `.g-slider`
+1. g-slider component uses a horizontal slider by default, but you can use a vertical slider by adding the modifier `.g-slider__vertical_true` for the slide container `.g-slider`
 
-```
-< .g-slider.&__vertical_true
+```snakeskin
+< [.g-slider].&_vertical_true
   < img src = https://fakeimg.pl/155x300
   < img src = https://fakeimg.pl/130x300
   < img src = https://fakeimg.pl/375x300
   ...
 ```
 
-2. Also, if you need to explicitly set a horizontal slider then add special modifier `.g-slider__horizontal_true` for the slide's container `.g-slider`
+2. Also, if you need to explicitly set a horizontal slider then add special modifier `.g-slider_horizontal_true` for the slide's container `.g-slider`
 
-```
-< .g-slider.&__horizontal_true
+```snakeskin
+< [.g-slider].&_horizontal_true
   < img src = https://fakeimg.pl/375x300
   < img src = https://fakeimg.pl/375x300
   < img src = https://fakeimg.pl/35x300
@@ -38,8 +38,8 @@ You can use this component using simple block with specials modifiers
    - `.g-slider__slide_snap_center`
    - `.g-slider__slide_snap_end`
 
-```
-< .g-slider.&__horizontal_true
+```snakeskin
+< [.g-slider].&_horizontal_true
   < img.&__slide_snap_start src = https://fakeimg.pl/375x300
   < img.&__slide_snap_center src = https://fakeimg.pl/375x300
   < img.&__slide_snap_start src = https://fakeimg.pl/35x300

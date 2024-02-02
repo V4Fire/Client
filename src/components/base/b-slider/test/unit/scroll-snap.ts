@@ -40,14 +40,14 @@ test.describe.only('<b-slider> in scroll snap mode', () => {
 			await test.expect(page.locator('.b-slider .g-slider')).toBeVisible();
 		});
 
-		test('should not render g-slider if mode is `swipe`', async ({page}) => {
+		test('should not render g-slider if mode is `slide`', async ({page}) => {
 			await renderSlider(page, {
 				attrs: {
 					id: 'swipe_slider'
 				}
 			});
 
-			await test.expect(page.locator('#swipe_slider .g-slider')).not.toBeVisible();
+			await test.expect(page.locator('#swipe_slider .g-slider')).toBeHidden();
 		});
 
 		test('should not render g-slider if mode is `scroll` and useSnapScroll is `false`', async ({page}) => {
@@ -57,7 +57,7 @@ test.describe.only('<b-slider> in scroll snap mode', () => {
 				}
 			});
 
-			await test.expect(page.locator('#scroll_slider .g-slider')).not.toBeVisible();
+			await test.expect(page.locator('#scroll_slider .g-slider')).toBeHidden();
 		});
 
 	});
@@ -76,7 +76,8 @@ test.describe.only('<b-slider> in scroll snap mode', () => {
 		const scrollSnapSlider = await renderSlider(page, {
 			attrs: {
 				useScrollSnap: true,
-				mode: 'scroll'
+				mode: 'scroll',
+				autoSlideInterval: (1).second()
 			}
 		});
 
