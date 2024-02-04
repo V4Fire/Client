@@ -199,6 +199,7 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 				// Register a worker to clean up memory upon component destruction
 				parent.unsafe.async.worker(() => {
 					vue.unmount();
+					Array.concat([], vnode).forEach(destroy);
 				}, {group});
 			}
 		}
