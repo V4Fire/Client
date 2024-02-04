@@ -22,13 +22,37 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added new testing API `ComponentObject` that allows for easier interaction with components in the testing environment `test/helpers/component-object`.
 * Added new testing API for mocking and spying on functions at runtime `test/helpers/mock`.
 
-## v4.0.0-beta.?? (2024-01-??)
+## v4.0.0-beta.53 (2023-01-31)
+
+#### :rocket: New Feature
+
+* Released module `b-virtual-scroll-new`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with memory leaks in `b-virtual-scroll`
+
+## v4.0.0-beta.52 (2023-01-31)
+
+#### :boom: Breaking Change
+
+* Refactored api: replaced the getter/setter named `current` with get/set methods `components/super/i-static-page/modules/theme/theme-manager`
+
+#### :rocket: New Feature
+
+* `components/super/i-static-page/modules/theme/theme-manager`
+  * Added possibility to get/set theme from/to cookie
+  * Added possibility to specify system theme extractor for theme-manager
+  * Added possibility to use systemTheme by calling `useSystem` method
+* Released module `core/system-theme-extractor`
 
 #### :bug: Bug Fix
 
 * Fixed the memoization of `getParent`: it was saved in the context of the main component, as a
 result of which the components in the slots had an incorrect `$parent` `build/snakeskin`
 * Fixed loss of refs in slots inside async render `core/component/render`
+* Fixed unexpected async chunk generation during build
+* Fixed an issue where Intersection Watcher would not remove nodes from memory, resulting in leaks `core/dom/intersection-watcher/engines`
 
 ## v4.0.0-beta.51 (2024-01-19)
 
