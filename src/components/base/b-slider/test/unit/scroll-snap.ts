@@ -21,7 +21,7 @@ test.use({
 	}
 });
 
-test.describe.only('<b-slider> in scroll snap mode', () => {
+test.describe('<b-slider> in scroll snap mode', () => {
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -115,7 +115,7 @@ test.describe.only('<b-slider> in scroll snap mode', () => {
 			sliderContainer!.scrollLeft = 250;
 
 			return sliderContainer!.scrollLeft;
-		});
+		}, {mouse: page.mouse});
 
 		await test.expect(position % VIEWPORT_WIDTH).toBe(0);
 
