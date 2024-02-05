@@ -4,7 +4,7 @@ This module provides a block with [CSS scroll snap](https://developer.mozilla.or
 
 ## Usage
 
-You can use this component using a simple block with special modifiers.
+You can use this block with special modifiers.
 
 ```snakeskin
 < .g-slider
@@ -13,7 +13,7 @@ You can use this component using a simple block with special modifiers.
   < img src = https://fakeimg.pl/130x300
 ```
 
-1. g-slider component uses a horizontal slider by default, but you can use a vertical slider by adding the modifier `.g-slider__vertical_true` for the slide container `.g-slider`.
+1. .g-slider uses a horizontal slider by default, but you can use a vertical slider by adding the modifier `.g-slider__vertical_true` for the slide container `.g-slider`.
 
 ```snakeskin
 < [.g-slider].&_vertical_true
