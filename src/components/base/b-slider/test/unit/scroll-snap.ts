@@ -118,7 +118,6 @@ test.describe('<b-slider> in scroll snap mode', () => {
 		});
 
 		await test.expect(position % VIEWPORT_WIDTH).toBe(0);
-
 	});
 
 });

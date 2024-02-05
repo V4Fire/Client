@@ -190,9 +190,11 @@ and will be used as a timeout for the first automatic slide movement after a use
 
 #### [useScrollSnap = `false`]
 
-The flag that disables/enables the use of the scroll snap slider (g-slider component).
-If the value is true, then the b-slider will use the CSS scroll snap mechanism, which is handled by the browser's own API.
+The flag enables CSS scroll snap mechanism. When set to `true` the [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap) will be enabled.
 The default value is `false`.
+
+CSS Scroll Snap is a feature that allows for smooth scrolling by defining specific snap points.
+Regular scrolling is the default behavior of unrestricted scrolling through content.
 
 ## Fields
 
