@@ -109,13 +109,13 @@ test.describe('<b-slider> in scroll snap mode', () => {
 			}
 		});
 
+		await page.mouse.wheel(250, 0);
+
 		const position = await page.evaluate(() => {
 			const sliderContainer = document.querySelector('.g-slider');
 
-			sliderContainer!.scrollLeft = 250;
-
-			return sliderContainer!.scrollLeft;
-		}, {mouse: page.mouse});
+			return Number(sliderContainer?.scrollLeft);
+		});
 
 		await test.expect(position % VIEWPORT_WIDTH).toBe(0);
 
