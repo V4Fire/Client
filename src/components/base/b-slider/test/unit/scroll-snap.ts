@@ -21,7 +21,7 @@ test.use({
 	}
 });
 
-test.describe('<b-slider> in scroll snap mode', () => {
+test.describe.only('<b-slider> in scroll snap mode', () => {
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -53,6 +53,7 @@ test.describe('<b-slider> in scroll snap mode', () => {
 		test('should not render g-slider if mode is `scroll` and useSnapScroll is `false`', async ({page}) => {
 			await renderSlider(page, {
 				attrs: {
+					id: 'scroll_slider',
 					mode: 'scroll'
 				}
 			});
@@ -62,7 +63,7 @@ test.describe('<b-slider> in scroll snap mode', () => {
 
 	});
 
-	test('should throw error `useScrollSnap = true` and `mode = slide`', async ({page}) => {
+	test('should throw error with `useScrollSnap = true` and `mode = slide`', async ({page}) => {
 		await test.expect(renderSlider(page, {
 			childrenIds: [1, 2, 3],
 			attrs: {
@@ -72,7 +73,7 @@ test.describe('<b-slider> in scroll snap mode', () => {
 		})).rejects.toThrowError();
 	});
 
-	test('shouldn\'t automatically scroll', async ({page}) => {
+	test('shouldn\'t automatically scroll when `autoSliderInterval` prop is set', async ({page}) => {
 		const scrollSnapSlider = await renderSlider(page, {
 			attrs: {
 				useScrollSnap: true,
@@ -83,7 +84,7 @@ test.describe('<b-slider> in scroll snap mode', () => {
 
 		await test.expect(current(scrollSnapSlider)).toBeResolvedTo(0);
 
-		await scrollSnapSlider.evaluate((ctx) => ctx.unsafe.async.sleep(200));
+		await scrollSnapSlider.evaluate((ctx) => ctx.unsafe.async.sleep(3000));
 
 		await test.expect(current(scrollSnapSlider)).toBeResolvedTo(0);
 	});
@@ -111,11 +112,7 @@ test.describe('<b-slider> in scroll snap mode', () => {
 
 		await page.mouse.wheel(250, 0);
 
-		const position = await page.evaluate(() => {
-			const sliderContainer = document.querySelector('.g-slider');
-
-			return Number(sliderContainer?.scrollLeft);
-		});
+		const position = await page.evaluate(() => Number(document.querySelector('.g-slider')?.scrollLeft));
 
 		await test.expect(position % VIEWPORT_WIDTH).toBe(0);
 	});
