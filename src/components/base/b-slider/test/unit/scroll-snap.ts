@@ -21,7 +21,7 @@ test.use({
 	}
 });
 
-test.describe.only('<b-slider> in scroll snap mode', () => {
+test.describe('<b-slider> in scroll snap mode', () => {
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
