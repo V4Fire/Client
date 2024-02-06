@@ -13,6 +13,8 @@ Changelog
 
 #### :bug: Bug Fix
 
+* Changed component deactivation behavior: the component is now deactivated
+before the deactivation hooks are called
 * Changed `$parent` property to getter.
 This fixes the incorrect functional parent for a regular component.
 

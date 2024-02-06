@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue with memory leaks in `vdom.render` `core/component/engines/vue3`
 * Changed `$parent` property to getter in `i-block`. This fixes the incorrect functional parent for a regular component.
+* Changed component deactivation behavior: the component is now deactivated before the deactivation hooks are called `components/super/i-block/modules/activation`
 
 #### :house: Internal
 
