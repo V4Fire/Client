@@ -11,12 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-02-??)
+## v4.0.0-beta.?? (2024-??-??)
 
 #### :bug: Bug Fix
 
-* Changed `$parent` property to getter in `i-block`.
-This fixes the incorrect functional parent for a regular component.
+* Fixed an issue with memory leaks in `vdom.render` `core/component/engines/vue3`
+* Changed `$parent` property to getter in `i-block`. This fixes the incorrect functional parent for a regular component.
+
+#### :house: Internal
+
+* The entry threshold for counting an element as visible is set to the minimum value `components/base/b-virtual-scroll-new`
 
 ## v4.0.0-beta.53 (2024-01-31)
 
