@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-02-??)
+
+#### :bug: Bug Fix
+
+* Changed component deactivation behavior: the component is now deactivated
+before the deactivation hooks are called
+
 ## v4.0.0-beta.44 (2023-12-06)
 
 #### :bug: Bug Fix

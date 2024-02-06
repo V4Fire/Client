@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-02-??)
+
+#### :bug: Bug Fix
+
+* Changed component deactivation behavior: the component is now deactivated
+before the deactivation hooks are called `components/super/i-block/modules/activation`
+
 ## v4.0.0-beta.53 (2023-01-31)
 
 #### :rocket: New Feature
