@@ -34,6 +34,7 @@ export default class IoObserver extends Friend implements ObserverEngine {
 				group: observerAsyncGroup,
 				label: component.childIndex.toString(),
 				once: true,
+				threshold: 0.00001,
 				delay: 0
 			}, () => ctx.onElementEnters(component));
 		}

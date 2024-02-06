@@ -15,6 +15,8 @@ Changelog
 
 * Changed component deactivation behavior: the component is now deactivated
 before the deactivation hooks are called
+* Changed `$parent` property to getter.
+This fixes the incorrect functional parent for a regular component.
 
 ## v4.0.0-beta.44 (2023-12-06)
 

@@ -11,14 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-02-??)
+## v4.0.0-beta.?? (2024-??-??)
 
 #### :bug: Bug Fix
 
-* Changed component deactivation behavior: the component is now deactivated
-before the deactivation hooks are called `components/super/i-block/modules/activation`
+* Fixed an issue with memory leaks in `vdom.render` `core/component/engines/vue3`
+* Changed `$parent` property to getter in `i-block`. This fixes the incorrect functional parent for a regular component.
+* Changed component deactivation behavior: the component is now deactivated before the deactivation hooks are called `components/super/i-block/modules/activation`
 
-## v4.0.0-beta.53 (2023-01-31)
+#### :house: Internal
+
+* The entry threshold for counting an element as visible is set to the minimum value `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.53 (2024-01-31)
 
 #### :rocket: New Feature
 
@@ -28,7 +33,7 @@ before the deactivation hooks are called `components/super/i-block/modules/activ
 
 * Fixed an issue with memory leaks in `b-virtual-scroll`
 
-## v4.0.0-beta.52 (2023-01-31)
+## v4.0.0-beta.52 (2024-01-31)
 
 #### :boom: Breaking Change
 
