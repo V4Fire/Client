@@ -11,7 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.53 (2023-01-31)
+## v4.0.0-beta.?? (2024-02-??)
+
+#### :bug: Bug Fix
+
+* Changed `$parent` property to getter in `i-block`.
+This fixes the incorrect functional parent for a regular component.
+
+## v4.0.0-beta.53 (2024-01-31)
 
 #### :rocket: New Feature
 
@@ -21,7 +28,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue with memory leaks in `b-virtual-scroll`
 
-## v4.0.0-beta.52 (2023-01-31)
+## v4.0.0-beta.52 (2024-01-31)
 
 #### :boom: Breaking Change
 

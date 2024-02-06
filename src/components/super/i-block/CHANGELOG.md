@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-02-??)
+
+#### :bug: Bug Fix
+
+* Changed `$parent` property to getter.
+This fixes the incorrect functional parent for a regular component.
+
 ## v4.0.0-beta.44 (2023-12-06)
 
 #### :bug: Bug Fix
