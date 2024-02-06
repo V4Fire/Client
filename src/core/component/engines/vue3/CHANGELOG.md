@@ -8,6 +8,12 @@ Changelog
 > - :memo:       [Documentation]
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
+>
+> ## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with memory leaks in `vdom.render`
 
 ## v4.0.0-beta.50 (2024-01-19)
 

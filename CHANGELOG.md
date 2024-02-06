@@ -11,7 +11,17 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.53 (2023-01-31)
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with memory leaks in `vdom.render` `core/component/engines/vue3`
+
+#### :house: Internal
+
+* The entry threshold for counting an element as visible is set to the minimum value `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.53 (2024-01-31)
 
 #### :rocket: New Feature
 
@@ -21,7 +31,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue with memory leaks in `b-virtual-scroll`
 
-## v4.0.0-beta.52 (2023-01-31)
+## v4.0.0-beta.52 (2024-01-31)
 
 #### :boom: Breaking Change
 
