@@ -73,7 +73,6 @@ const Vue = makeLazy(
 				}
 
 				const ctx = contexts[contexts.length - 1];
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				return ctx?.component.apply(ctx, Object.cast(args));
 			},
 
@@ -87,7 +86,6 @@ const Vue = makeLazy(
 				}
 
 				const ctx = contexts[contexts.length - 1];
-				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 				return ctx?.directive.apply(ctx, Object.cast(args));
 			},
 
