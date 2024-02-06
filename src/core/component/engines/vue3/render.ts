@@ -127,6 +127,11 @@ export const
 	mergeProps = wrapMergeProps(superMergeProps),
 	renderSlot = wrapRenderSlot(superRenderSlot);
 
+export const
+	withCtx = wrapWithCtx(superWithCtx),
+	withDirectives = wrapWithDirectives(superWithDirectives),
+	resolveDirective = wrapResolveDirective(superResolveDirective);
+
 export const renderList = wrapRenderList(
 	superRenderList,
 	(...args: Parameters<typeof superWithCtx>) => {
@@ -144,11 +149,6 @@ export const renderList = wrapRenderList(
 		return fn;
 	}
 );
-
-export const
-	withCtx = wrapWithCtx(superWithCtx),
-	withDirectives = wrapWithDirectives(superWithDirectives),
-	resolveDirective = wrapResolveDirective(superResolveDirective);
 
 /**
  * Renders the specified VNode and returns the result
