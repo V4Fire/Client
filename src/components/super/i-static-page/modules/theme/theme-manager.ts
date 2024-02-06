@@ -15,7 +15,14 @@ import type iStaticPage from 'components/super/i-static-page/i-static-page';
 import Friend from 'components/friends/friend';
 import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 
-import { prefersColorSchemeEnabled, darkThemeName, lightThemeName } from 'components/super/i-static-page/modules/theme/const';
+import {
+
+	prefersColorSchemeEnabled,
+
+	lightThemeName,
+	darkThemeName
+
+} from 'components/super/i-static-page/modules/theme/const';
 
 export * from 'components/super/i-static-page/modules/theme/const';
 
@@ -28,12 +35,12 @@ export default class ThemeManager extends Friend {
 	availableThemes!: Set<string>;
 
 	/**
-	 * Current theme value
+	 * The current theme value
 	 */
 	protected current!: Theme;
 
 	/**
-	 * An API for obtaining and observing system appearance.
+	 * An API for obtaining and observing system appearance
 	 */
 	protected systemThemeExtractor!: SystemThemeExtractor;
 
@@ -49,8 +56,8 @@ export default class ThemeManager extends Friend {
 
 	/**
 	 * @param component
-	 * @param themeStorageEngine - engine for persistent theme storage
-	 * @param systemThemeExtractor
+	 * @param themeStorageEngine - an engine for persistent theme storage
+	 * @param systemThemeExtractor - an engine for extracting the system theme
 	 */
 	constructor(
 		component: iBlock,
@@ -103,14 +110,14 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Returns current theme
+	 * Returns the current theme
 	 */
 	get(): Theme {
 		return this.current;
 	}
 
 	/**
-	 * Sets a new value to the current theme
+	 * Sets a new value for the current theme
 	 * @param value
 	 */
 	set(value: string): void {
@@ -136,7 +143,7 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Changes current theme value
+	 * Changes the current theme value
 	 *
 	 * @param newTheme
 	 * @throws ReferenceError
@@ -178,7 +185,7 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Returns actual theme name for provided value
+	 * Returns the actual theme name for the provided value
 	 * @param value
 	 */
 	protected getThemeAlias(value: string): string {

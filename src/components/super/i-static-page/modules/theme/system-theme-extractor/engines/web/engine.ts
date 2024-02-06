@@ -7,10 +7,10 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
 
 import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 import Friend from 'components/friends/friend';
-import SyncPromise from 'core/promise/sync';
 
 const
 	$$ = symbolGenerator();

@@ -11,8 +11,7 @@ import type iBlock from 'components/super/i-block/i-block';
 import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 
 /**
- * Factory for creating web engine instances
- *
+ * A factory for creating web engine instances
  * @param ctx
  */
 export const webEngineFactory = (ctx: iBlock): SystemThemeExtractor => new WebEngine(ctx);
