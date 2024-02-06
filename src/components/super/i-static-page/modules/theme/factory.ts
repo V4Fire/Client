@@ -9,7 +9,7 @@
 import type iBlock from 'components/super/i-block/i-block';
 import ThemeManager from 'components/super/i-static-page/modules/theme/theme-manager';
 import type { StorageEngine } from 'core/kv-storage';
-import type { SystemThemeExtractor } from 'core/system-theme-extractor';
+import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 
 /**
  * Returns an instance of the class for managing interface themes, if that functionality is available

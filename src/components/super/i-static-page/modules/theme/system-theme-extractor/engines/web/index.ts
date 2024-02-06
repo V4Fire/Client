@@ -6,9 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import WebEngine from 'core/system-theme-extractor/engines/web/engine';
+import WebEngine from 'components/super/i-static-page/modules/theme/system-theme-extractor/engines/web/engine';
 import type iBlock from 'components/super/i-block/i-block';
-import type { SystemThemeExtractor } from 'core/system-theme-extractor';
+import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 
 /**
  * Factory for creating web engine instances

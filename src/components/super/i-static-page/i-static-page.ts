@@ -19,7 +19,7 @@ import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
 import * as cookie from 'core/kv-storage/engines/cookie';
-import { webEngineFactory } from 'core/system-theme-extractor/engines/web';
+import { webEngineFactory } from 'components/super/i-static-page/modules/theme/system-theme-extractor/engines/web';
 
 import {
 

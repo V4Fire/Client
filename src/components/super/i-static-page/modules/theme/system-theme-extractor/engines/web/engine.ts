@@ -8,7 +8,7 @@
 
 import symbolGenerator from 'core/symbol';
 
-import type { SystemThemeExtractor } from 'core/system-theme-extractor';
+import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 import Friend from 'components/friends/friend';
 import SyncPromise from 'core/promise/sync';
 

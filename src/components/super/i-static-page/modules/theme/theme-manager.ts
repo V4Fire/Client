@@ -13,7 +13,7 @@ import type { Theme } from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import Friend from 'components/friends/friend';
-import type { SystemThemeExtractor } from 'core/system-theme-extractor';
+import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 
 import { prefersColorSchemeEnabled, darkThemeName, lightThemeName } from 'components/super/i-static-page/modules/theme/const';
 
