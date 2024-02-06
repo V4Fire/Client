@@ -125,7 +125,7 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Sets actual system theme and activates system theme change listener
+	 * Sets the actual system theme and activates the system theme change listener
 	 */
 	useSystem(): PromiseLike<void> {
 		return this.systemThemeExtractor.getSystemTheme().then((value) => {
