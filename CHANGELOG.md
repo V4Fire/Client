@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :house: Internal
+
+* Moved `system-theme-extractor` from `core` to `components/super/i-static-page/modules/theme`
+
 ## v4.0.0-beta.53 (2023-01-31)
 
 #### :rocket: New Feature
