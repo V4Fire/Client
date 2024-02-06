@@ -77,13 +77,13 @@ test.describe('<b-slider> in scroll snap mode', () => {
 			attrs: {
 				useScrollSnap: true,
 				mode: 'scroll',
-				autoSlideInterval: 100
+				autoSlideInterval: 10
 			}
 		});
 
 		await test.expect(current(scrollSnapSlider)).toBeResolvedTo(0);
 
-		await scrollSnapSlider.evaluate((ctx) => ctx.unsafe.async.sleep(200));
+		await scrollSnapSlider.evaluate((ctx) => ctx.unsafe.async.sleep(20));
 
 		await test.expect(current(scrollSnapSlider)).toBeResolvedTo(0);
 	});
