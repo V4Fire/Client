@@ -55,14 +55,12 @@
 
 		< template v-if = stage === 'updating the parent component state'
 			< .&__result v-async-target
-				{{ void(tmp.oldRefs = $refs.btn) }}
-
 				< template v-for = el in asyncRender.iterate(2)
 					< b-button ref = btn | v-func = false
 						< template #default = {ctx}
 							Element: {{ el }}; Hook: {{ ctx.hook }};
 
-			< button.&__update @click = $forceUpdate
+			< button.&__update @click = tmp.oldRefs=$refs.btn.slice(), $forceUpdate()
 				Update state
 
 		< template v-if = stage === 'clearing by the specified group name'

@@ -16,6 +16,10 @@ import type { ComponentInterface } from 'core/component/interface';
  * @param component
  */
 export function activatedState(component: ComponentInterface): void {
+	if (component.hook === 'activated') {
+		return;
+	}
+
 	runHook('activated', component).catch(stderr);
 	callMethodFromComponent(component, 'activated');
 }

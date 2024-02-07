@@ -180,8 +180,7 @@ test.describe('friends/async-render', () => {
 
 		const hooks = await target.evaluate((ctx) => {
 			const oldRefs = <ComponentInterface[]>ctx.unsafe.tmp.oldRefs;
-
-			return [oldRefs[0].hook, oldRefs[1].hook];
+			return [oldRefs[0].hook, oldRefs[1]?.hook];
 		});
 
 		test.expect(hooks).toEqual([

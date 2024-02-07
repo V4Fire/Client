@@ -21,6 +21,10 @@ const
  * @param component
  */
 export function createdState(component: ComponentInterface): void {
+	if (component.hook !== 'beforeDataCreate') {
+		return;
+	}
+
 	const {
 		unsafe,
 		unsafe: {

@@ -95,6 +95,7 @@ export default class IntersectionObserverEngine extends AbstractEngine {
 		watcher.unwatch = () => {
 			unwatch();
 			this.observers.delete(watcher);
+			this.removeIntersectingTarget(observer.value, watcher.target);
 
 			let
 				observerHasWatchers = false,

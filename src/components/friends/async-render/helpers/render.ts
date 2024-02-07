@@ -30,7 +30,7 @@ export function addRenderTask(
 ): Promise<void> {
 	const
 		$a = this.async,
-		group = opts.group ?? 'asyncComponents';
+		group = (Object.isFunction(opts.group) ? opts.group() : opts.group) ?? 'asyncComponents';
 
 	return new SyncPromise((resolve, reject) => {
 		const taskDesc = {
@@ -70,8 +70,6 @@ export function addRenderTask(
  * @param [childComponentEls] - root elements of the child components
  */
 export function destroyNode(this: Friend, node: Node, childComponentEls: Element[] = []): void {
-	node.parentNode?.removeChild(node);
-
 	childComponentEls.forEach((child) => {
 		try {
 			(<ComponentElement<iBlock>>child).component?.unsafe.$destroy();
@@ -87,4 +85,6 @@ export function destroyNode(this: Friend, node: Node, childComponentEls: Element
 	} catch (err) {
 		stderr(err);
 	}
+
+	node.parentNode?.removeChild(node);
 }

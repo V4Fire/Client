@@ -22,3 +22,11 @@ Returns a wrapped component context object based on the passed one.
 This function allows developers to override component properties and methods without altering the original object.
 Essentially, override creates a new object that contains the original object as its prototype,
 allowing for the addition, modification, or removal of properties and methods without affecting the original object.
+
+### saveRawComponentContext
+
+Stores a reference to the "raw" component context in the main context.
+
+### dropRawComponentContext
+
+Drops a reference to the "raw" component context from the main context.

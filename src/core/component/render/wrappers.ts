@@ -261,16 +261,23 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
 
 /**
  * Wrapper for the component library `renderList` function
+ *
  * @param original
+ * @param withCtx
  */
-export function wrapRenderList<T extends typeof renderList>(original: T): T {
+export function wrapRenderList<T extends typeof renderList, C extends typeof withCtx>(original: T, withCtx: C): T {
 	return Object.cast(function renderList(
 		this: ComponentInterface,
 		src: Iterable<unknown> | Dictionary,
 		cb: AnyFunction
 	) {
-		this.$emit('[[V_FOR_CB]]', cb);
-		return original(src, cb);
+		const
+			ctx = this.$renderEngine.r.getCurrentInstance(),
+			// Preserve rendering context for the async render
+			wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
+
+		this.$emit('[[V_FOR_CB]]', wrappedCb);
+		return original(src, wrappedCb);
 	});
 }
 

@@ -18,6 +18,8 @@ import { RestrictedCache } from 'core/cache';
 import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
+import * as cookie from 'core/kv-storage/engines/cookie';
+import { webEngineFactory } from 'core/system-theme-extractor/engines/web';
 
 import {
 
@@ -96,7 +98,12 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * A module to manage app themes from the Design System
 	 */
-	@system<iStaticPage>(themeManagerFactory)
+	@system<iStaticPage>((o) => themeManagerFactory(
+		o,
+		cookie.syncLocalStorage,
+		webEngineFactory(o)
+	))
+
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
@@ -380,10 +387,11 @@ export default abstract class iStaticPage extends iPage {
 			return;
 		}
 
-		document.body.append(Object.assign(document.createElement('div'), {id: 'teleports'}));
+		document.body.append(Object.assign(document.createElement('div'), {
+			id: 'teleports'
+		}));
 
 		await this.async.nextTick();
-
 		this.shouldMountTeleports = true;
 	}
 
@@ -399,6 +407,11 @@ export default abstract class iStaticPage extends iPage {
 
 		this.locale = locale;
 		this.forceUpdate().catch(stderr);
+	}
+
+	protected override beforeDestroy(): void {
+		super.beforeDestroy();
+		this.hydrationStore?.clear();
 	}
 
 	/**
