@@ -6,14 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import symbolGenerator from 'core/symbol';
+import type { EventEmitterLikeP, AsyncOptions } from 'core/async';
 import SyncPromise from 'core/promise/sync';
 
 import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 import Friend from 'components/friends/friend';
-
-const
-	$$ = symbolGenerator();
+import type iBlock from 'components/super/i-block/i-block';
 
 /**
  * Represents a `SystemThemeExtractor` implementation tailored for web environments.
@@ -23,38 +21,32 @@ export default class WebEngine extends Friend implements SystemThemeExtractor {
 	/**
 	 * Media query to watch theme changes
 	 */
-	protected darkThemeMq?: MediaQueryList;
+	protected darkThemeMq: MediaQueryList;
+
+	/**
+	 * Event emitter
+	 */
+	protected emitter: EventEmitterLikeP;
+
+	constructor(component: iBlock) {
+		super(component);
+		this.darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
+		this.emitter = <EventEmitterLikeP>((...args: [string, (e: Event) => void]) => {
+			this.darkThemeMq.addEventListener(...args);
+			return (...args: [string, (e: Event) => void]) => this.darkThemeMq.removeEventListener(...args);
+		});
+	}
 
 	/** @inheritDoc */
 	getSystemTheme(): SyncPromise<string> {
-		const darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
-
-		return SyncPromise.resolve(darkThemeMq.matches ? 'dark' : 'light');
+		return SyncPromise.resolve(this.darkThemeMq.matches ? 'dark' : 'light');
 	}
 
 	/** @inheritDoc */
-	onChange(cb: (value: string) => void): void {
-		if (this.darkThemeMq != null) {
-			return;
-		}
+	onThemeChange(cb: (value: string) => void, asyncOptions?: AsyncOptions): void {
+		const
+			changeHandler = (e: MediaQueryListEvent) => cb(e.matches ? 'dark' : 'light');
 
-		this.darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
-
-		// TODO: understand why cant we use `this.async.on(mq, 'change', ...)`; https://github.com/V4Fire/Core/issues/369
-		this.darkThemeMq.onchange = this.ctx.async.proxy((event: MediaQueryListEvent) =>
-			cb(event.matches ? 'dark' : 'light'),
-		{single: false, label: $$.themeChange});
-	}
-
-	/** @inheritDoc */
-	destroy(): void {
-		if (this.darkThemeMq == null) {
-			return;
-		}
-
-		this.darkThemeMq.onchange = null;
-		delete this.darkThemeMq;
-
-		this.ctx.async.clearProxy({label: $$.themeChange});
+		this.ctx.async.on(this.emitter, 'change', changeHandler, asyncOptions);
 	}
 }

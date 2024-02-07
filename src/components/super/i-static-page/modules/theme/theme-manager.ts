@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import { factory, SyncStorage, StorageEngine } from 'core/kv-storage';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -25,6 +26,9 @@ import {
 } from 'components/super/i-static-page/modules/theme/const';
 
 export * from 'components/super/i-static-page/modules/theme/const';
+
+const
+	$$ = symbolGenerator();
 
 export default class ThemeManager extends Friend {
 	override readonly C!: iStaticPage;
@@ -132,12 +136,12 @@ export default class ThemeManager extends Friend {
 	 */
 	useSystem(): Promise<void> {
 		return this.systemThemeExtractor.getSystemTheme().then((value) => {
-			this.systemThemeExtractor.destroy();
-			this.systemThemeExtractor.onChange(
+			this.systemThemeExtractor.onThemeChange(
 				(value: string) => {
 					value = this.getThemeAlias(value);
 					void this.changeTheme({value, isSystem: true});
-				}
+				},
+				{label: $$.onThemeChange}
 			);
 
 			value = this.getThemeAlias(value);
@@ -173,7 +177,7 @@ export default class ThemeManager extends Friend {
 		}
 
 		if (!isSystem) {
-			this.systemThemeExtractor.destroy();
+			this.ctx.async.clearAll({label: $$.onThemeChange});
 		}
 
 		const oldValue = this.current;
