@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-02-??)
+
+#### :house: Internal
+
+* Create `i-block.tpl` template for dynamic mono components. It disables
+caching of the `:class` prop.
+
 ## v4.0.0-beta.54 (2024-02-06)
 
 #### :bug: Bug Fix
