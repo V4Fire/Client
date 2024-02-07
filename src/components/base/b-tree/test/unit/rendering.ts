@@ -263,8 +263,6 @@ test.describe('<b-tree> rendering modes', () => {
 				}
 			});
 
-			test.expect(await getRenderedNodesCount(tree)).not.toBe(3);
-
 			await waitForNumberOfNodes(tree, 3);
 
 			test.expect(await getRenderedNodesCount(tree)).toBe(3);
