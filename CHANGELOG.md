@@ -57,7 +57,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added theme modifier calculation to components `components/super/i-block`
+* Added theme modifier calculation to components `super/i-block`
 * Added `darkThemeName` `lightThemeName` stylus function `build/stylus/ds`
 
 ## v3.61.0 (2023-10-12)
@@ -75,7 +75,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added possibility to specify paths with alias to `@context` directive `build/monic`
 * Added possibility to load icons from design-system `traits/i-icon` `icon/b-icon`
 * Added `detectUserPreferences` parameter to `theme` config `config`
-* Added possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
+* Added possibility to detect the theme based on user system settings `super/i-static-page/modules/theme/theme-manager`
 
 ## v3.59.1 (2023-09-22)
 

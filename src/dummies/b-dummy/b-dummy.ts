@@ -37,7 +37,8 @@ import iData, {
 	field,
 	hook,
 	wait,
-	ModsNTable
+	ModsNTable,
+	VNode
 
 } from 'super/i-data/i-data';
 
@@ -45,6 +46,7 @@ import bBottomSlide from 'base/b-bottom-slide/b-bottom-slide';
 
 import daemons from 'dummies/b-dummy/daemons';
 import type { Directives, Modules, Engines } from 'dummies/b-dummy/interface';
+import type iBlock from 'super/i-block/i-block';
 
 const
 	inViewMutation = inViewFactory('mutation'),
@@ -55,17 +57,34 @@ export * from 'dummies/b-dummy/interface';
 
 interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM> {}
 
-@component({
-	functional: {
-		functional: true,
-		dataProvider: undefined
-	}
-})
+@component()
 
 @derive(iLockPageScroll, iObserveDOM)
 class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	@field()
 	testField: unknown = undefined;
+
+	/**
+	 * Name of the test component
+	 */
+	@field()
+	testComponent?: string;
+
+	/**
+	 * Attributes for the test component
+	 */
+	@field()
+	testComponentAttrs: Dictionary = {};
+
+	/**
+	 * Slots for the test component
+	 */
+	@field()
+	testComponentSlots?: CanArray<VNode>;
+
+	protected override readonly $refs!: iData['$refs'] & {
+		testComponent?: iBlock;
+	};
 
 	get directives(): Directives {
 		return {

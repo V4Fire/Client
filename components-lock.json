@@ -1,5 +1,5 @@
 {
-  "hash": "90998e4c7a0a5a2478284963c99dcdb2aa52779fe00c55335be5845844fcc130",
+  "hash": "03fa61a881bd04afbdd232c20cf9eca80b7179078fb85630fb59b00940df6e6e",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1196,6 +1196,38 @@
         }
       ],
       [
+        "b-virtual-scroll-new",
+        {
+          "index": "src/base/b-virtual-scroll-new/index.js",
+          "declaration": {
+            "name": "b-virtual-scroll-new",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-virtual-scroll-new",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-virtual-scroll-new/b-virtual-scroll-new.ts",
+          "styles": [
+            "src/base/b-virtual-scroll-new/b-virtual-scroll-new.styl"
+          ],
+          "tpl": "src/base/b-virtual-scroll-new/b-virtual-scroll-new.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-window",
         {
           "index": "src/base/b-window/index.js",
@@ -2012,6 +2044,7 @@
               "b-select",
               "b-select-date",
               "b-virtual-scroll",
+              "b-virtual-scroll-new",
               "b-window",
               "b-sidebar",
               "b-slider",
@@ -2057,6 +2090,7 @@
             "b-select",
             "b-select-date",
             "b-virtual-scroll",
+            "b-virtual-scroll-new",
             "b-window",
             "b-sidebar",
             "b-slider",

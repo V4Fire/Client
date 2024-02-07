@@ -133,6 +133,16 @@ export const componentEvents = <const>{
 };
 
 /**
+ * Internal component events (emitted in localEmitter)
+ */
+export const componentLocalEvents = <const>{
+	/**
+	 * The rendering cycle of components has completed (the path from renderStart to renderDone has been traversed)
+	 */
+	renderCycleDone: 'renderCycleDone'
+};
+
+/**
  * Reasons for rejecting a render operation.
  */
 export const renderGuardRejectionReason = <const>{

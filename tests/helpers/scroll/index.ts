@@ -30,6 +30,16 @@ export default class Scroll {
 	}
 
 	/**
+	 * Scrolls a page to the specified parameters
+	 *
+	 * @param page
+	 * @param opts
+	 */
+	static scrollTo(page: Page, opts: ScrollToOptions): Promise<void> {
+		return page.evaluate((options) => globalThis.scrollTo(options), opts);
+	}
+
+	/**
 	 * Waits an element by the specified selector appear and scrolls a page to it if needed.
 	 * Throws an error when `elementHandle` does not refer to an element connected to a document or shadow root.
 	 *
@@ -69,6 +79,14 @@ export default class Scroll {
 	 */
 	static scrollToBottom(page: Page, options?: ScrollOptions): Promise<void> {
 		return this.scrollBy(page, {top: 1e7, left: 0, ...options});
+	}
+
+	/**
+	 * @param page
+	 * @param [options]
+	 */
+	static scrollToTop(page: Page, options?: ScrollOptions): Promise<void> {
+		return this.scrollTo(page, {top: 0, left: 0, ...options});
 	}
 
 	/**

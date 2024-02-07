@@ -10,10 +10,24 @@ import DOM from 'tests/helpers/dom';
 import BOM from 'tests/helpers/bom';
 import Utils from 'tests/helpers/utils';
 import Component from 'tests/helpers/component';
+import ComponentObject from 'tests/helpers/component-object';
 import Scroll from 'tests/helpers/scroll';
 import Router from 'tests/helpers/router';
 import Request from 'tests/helpers/request';
 import Gestures from 'tests/helpers/gestures';
+
+export {
+
+	BOM,
+	DOM,
+	Utils,
+	Component,
+	ComponentObject,
+	Scroll,
+	Router,
+	Gestures
+
+};
 
 /**
  * @deprecated - use static methods instead

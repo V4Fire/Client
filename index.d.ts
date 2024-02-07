@@ -197,7 +197,60 @@ declare var
 	/**
 	 * Requires a module by the specified path
 	 */
-	importModule: (path: string) => any;
+	importModule: (path: string) => any,
+
+	/**
+	 * Jest mock API for test environment.
+	 */
+	jestMock: {
+		/**
+		 * Wrapper for jest `spyOn` function.
+		 * @see https://jestjs.io/docs/mock-functions
+		 */
+		spy: import('jest-mock').ModuleMocker['spyOn'];
+
+		/**
+		 * Wrapper for jest `fn` function.
+		 * @see https://jestjs.io/docs/mock-functions
+		 */
+		mock: import('jest-mock').ModuleMocker['fn'];
+	};
+
+
+type RenderComponentsScheme = RenderComponentsVnodeParams[] | string;
+
+interface RenderComponentsVnodeDescriptor extends RenderComponentsVnodeParams {
+	/**
+	 * A simple tag name or component name
+	 */
+	type: string;
+}
+
+interface RenderComponentsVnodeParams<A extends object = Dictionary> {
+	/**
+	 * A dictionary with attributes to pass to the created VNode
+	 */
+	attrs?: A;
+
+	/**
+	 * An array of children VNode descriptors or dictionary with slot functions
+	 */
+	children?: VNodeChildren;
+}
+
+type VNodeChild = string | RenderComponentsVnodeDescriptor;
+
+type VNodeChildren =
+	VNodeChild[] |
+	Dictionary<CanArray<VNodeChild> | ((...args: any[]) => CanArray<VNodeChild>)>;
+
+/**
+ * The results returned by a mock or spy function from `jestMock`.
+ */
+interface JestMockResult<VAL = any> {
+	type: 'throw' | 'return';
+	value: VAL;
+}
 
 interface TouchGesturesCreateOptions {
 	/**
