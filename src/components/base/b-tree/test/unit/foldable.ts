@@ -57,11 +57,11 @@ test.describe('<b-tree> foldable API', () => {
 		const attrs = {folded: false};
 
 		test("should fold the children of the item when it's `fold` element is clicked", async ({page}) => {
-			const target = await renderTree(page, {items, attrs});
+			const tree = await renderTree(page, {items, attrs});
 			await page.getByText('item 1').locator(foldSelector).click();
 
-			await expectFolded(true, await waitForItemsWithValues(page, target, ['1']));
-			await expectFolded(false, await waitForItemsWithValues(page, target, ['2']));
+			await expectFolded(true, await waitForItemsWithValues(page, tree, ['1']));
+			await expectFolded(false, await waitForItemsWithValues(page, tree, ['2']));
 		});
 	});
 
@@ -69,11 +69,11 @@ test.describe('<b-tree> foldable API', () => {
 		const attrs = {folded: true};
 
 		test("should unfold the children of the item when it's `fold` element is clicked", async ({page}) => {
-			const target = await renderTree(page, {items, attrs});
+			const tree = await renderTree(page, {items, attrs});
 			await page.getByText('item 1').locator(foldSelector).click();
 
-			await expectFolded(false, await waitForItemsWithValues(page, target, ['1']));
-			await expectFolded(true, await waitForItemsWithValues(page, target, ['2']));
+			await expectFolded(false, await waitForItemsWithValues(page, tree, ['1']));
+			await expectFolded(true, await waitForItemsWithValues(page, tree, ['2']));
 		});
 	});
 
@@ -110,9 +110,9 @@ test.describe('<b-tree> foldable API', () => {
 
 		test('the `onItemsChange` event should be emitted', async ({page}) => {
 			const
-				target = await renderTree(page);
+				tree = await renderTree(page);
 
-			const changesLogPromise = target.evaluate(async (ctx) => {
+			const changesLogPromise = tree.evaluate(async (ctx) => {
 				const
 					log: any[] = [];
 
@@ -135,29 +135,32 @@ test.describe('<b-tree> foldable API', () => {
 		});
 
 		test('new items should be unfolded with `folded = false`', async ({page}) => {
-			const
-				target = await renderTree(page, {items: defaultItems, attrs: {folded: false}});
+			const tree = await renderTree(page, {
+				items: defaultItems,
+				attrs: {folded: false}
+			});
 
-			await target.evaluate((ctx, newItems) => {
+			await tree.evaluate((ctx, newItems) => {
 				ctx.items = newItems;
 			}, newItems);
 
-			await testFoldedModIs(false, await waitForItemsWithValues(page, target, [1, 2]));
+			await testFoldedModIs(false, await waitForItemsWithValues(page, tree, [1, 2]));
 		});
 
 		test('the unfolded node should become folded after change', async ({page}) => {
-			const
-				target = await renderTree(page, {items: defaultItems});
+			const tree = await renderTree(page, {
+				items: defaultItems
+			});
 
-			await test.expect(target.evaluate((ctx) => ctx.unfold('foo'))).toBeResolvedTo(true);
+			await test.expect(tree.evaluate((ctx) => ctx.unfold('foo'))).toBeResolvedTo(true);
 
-			await testFoldedModIs(false, await waitForItemsWithValues(page, target, ['foo']));
+			await testFoldedModIs(false, await waitForItemsWithValues(page, tree, ['foo']));
 
-			await target.evaluate((ctx, newItems) => {
+			await tree.evaluate((ctx, newItems) => {
 				ctx.items = newItems;
 			}, newItems);
 
-			await testFoldedModIs(true, await waitForItemsWithValues(page, target, [1]));
+			await testFoldedModIs(true, await waitForItemsWithValues(page, tree, [1]));
 		});
 	});
 
