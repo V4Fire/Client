@@ -199,7 +199,7 @@ test.describe('<b-tree> foldable API', () => {
 			await waitForItemWithValue(page, tree, 4)
 		]);
 
-		await tree.evaluate((ctx) => ctx.unfold(ctx.items[2].value));
+		await tree.evaluate((ctx) => ctx.unfold(ctx.items[0].value));
 
 		await expectFolded(false, [await waitForItemWithValue(page, tree, 3)]);
 	});
