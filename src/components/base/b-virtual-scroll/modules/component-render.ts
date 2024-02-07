@@ -63,6 +63,7 @@ export default class ComponentRender extends Friend {
 		});
 
 		this.nodesCache = Object.createDict();
+		this.ctx.async.clearAll({group: new RegExp(this.asyncGroup)});
 	}
 
 	/**
