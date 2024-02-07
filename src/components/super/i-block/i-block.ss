@@ -39,6 +39,11 @@
 	- ssrRendering = true
 
 	/**
+	 * If set to true attributes as class, id, style, etc. will be cached
+	 */
+	- cacheAttributes = true
+
+	/**
 	 * Returns the component name
 	 * @param {string} [name] - the custom template name
 	 */
@@ -182,8 +187,11 @@
 
 	- rootAttrs = { &
 		class: 'i-block-helper',
-		'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]',
-		'v-async-target': '!ssrRendering'
+		'v-async-target': '!ssrRendering',
+		...(cacheAttributes ?
+			{'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'} :
+			{':class': '[...provide.componentClasses("' + self.name() + '", [get, mods])]'}
+		)
 	} .
 
 	- if teleport
