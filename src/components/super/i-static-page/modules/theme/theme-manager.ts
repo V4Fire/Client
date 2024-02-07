@@ -18,7 +18,6 @@ import type { SystemThemeExtractor } from 'components/super/i-static-page/module
 import {
 
 	prefersColorSchemeEnabled,
-
 	lightThemeName,
 	darkThemeName
 
