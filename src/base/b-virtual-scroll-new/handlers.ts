@@ -126,7 +126,6 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 		return handler();
 	}
 
-
 	/**
 	 * Handler: convert data to database event.
 	 * Triggered when the loaded data is converted.

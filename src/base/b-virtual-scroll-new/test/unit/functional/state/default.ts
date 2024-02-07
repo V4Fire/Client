@@ -136,7 +136,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('state after rendering via `itemsFactory`', () => {
-		test('`itemsFactory` returns mixed items with `item` and `separator` type', async ({page}) => {
+		test('`itemsFactory` returns mixed items with `item` and `separator` type', async () => {
 			const chunkSize = 12;
 
 			const separator: ComponentItem = {

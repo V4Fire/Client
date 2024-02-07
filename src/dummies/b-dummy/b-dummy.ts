@@ -66,6 +66,7 @@ interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM
 
 @derive(iLockPageScroll, iObserveDOM)
 class bDummy extends iData implements iLockPageScroll, iObserveDOM {
+
 	@field()
 	testField: unknown = undefined;
 
@@ -86,10 +87,6 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	 */
 	@field()
 	testComponentSlots?: CanArray<VNode>;
-
-	protected override readonly $refs!: iData['$refs'] & {
-		testComponent?: iBlock;
-	};
 
 	get directives(): Directives {
 		return {
@@ -132,6 +129,10 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 	}
 
 	static override readonly daemons: typeof daemons = daemons;
+
+	protected override readonly $refs!: iData['$refs'] & {
+		testComponent?: iBlock;
+	};
 
 	setStage(value: string): void {
 		this.stage = value;

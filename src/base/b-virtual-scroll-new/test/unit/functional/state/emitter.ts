@@ -354,7 +354,10 @@ test.describe('<b-virtual-scroll-new>', () => {
 				),
 				(
 					state.data.addItems(chunkSize),
-					state.set({renderPage: 1, isInitialRender: false}).compile({maxViewedChild: undefined, maxViewedItem: undefined})
+					state.set({renderPage: 1, isInitialRender: false}).compile({
+						maxViewedChild: undefined,
+						maxViewedItem: undefined
+					})
 				),
 				(
 					state.set({isLastRender: true}).compile()
