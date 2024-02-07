@@ -13,15 +13,14 @@ import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
 
 import type bTree from 'components/base/b-tree/b-tree';
-import type { Item } from 'components/base/b-tree/interface';
+import type { Item } from 'components/base/b-tree/b-tree';
 
-import { renderTree, createTreeSelector, createTestModIs, waitForItems } from 'components/base/b-tree/test/helpers';
+import { renderTree, createTreeSelector, createExpectMod, waitForItemsWithValues } from 'components/base/b-tree/test/helpers';
 
-// eslint-disable-next-line max-lines-per-function
-test.describe('<b-tree> active items', () => {
+test.describe('<b-tree> API of active items', () => {
 	const
-		testFoldedModIs = createTestModIs('folded'),
-		testActiveModIs = createTestModIs('active');
+		expectFolded = createExpectMod('folded'),
+		expectActive = createExpectMod('active');
 
 	const items: Item[] = [
 		{value: 0, label: '0'},
@@ -54,97 +53,105 @@ test.describe('<b-tree> active items', () => {
 		await demoPage.goto();
 	});
 
-	test.describe('initialize', () => {
+	test.describe('initialization with specifying active items', () => {
 		test('should have the `active` item', async ({page}) => {
-			const target = await renderTree(page, {items, attrs: {active: 0}});
+			const tree = await renderTree(page, {
+				items,
+				attrs: {
+					active: 0
+				}
+			});
 
-			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
+			test.expect(await tree.evaluate((ctx) => ctx.active)).toBe(0);
+
 			test.expect(
-				await target.evaluate(async (ctx) => ctx.unsafe.block?.getElementMod(<Element>await ctx.activeElement, 'node', 'active'))
+				await tree.evaluate(async (ctx) =>
+					ctx.unsafe.block?.getElementMod(<Element>await ctx.activeElement, 'node', 'active'))
 			).toBe('true');
 		});
 
 		test.describe('with `multiple = true`', () => {
-			const evaluateActive = (target: JSHandle<bTree>) => target.evaluate((ctx) => [...<Set<number>>ctx.active]);
+			const evaluateActive = (tree: JSHandle<bTree>) => tree.evaluate((ctx) => [...<Set<number>>ctx.active]);
 
 			test('the `active` prop should accept scalar value', async ({page}) => {
-				const target = await renderTree(page, {items, attrs: {active: 0, multiple: true}});
-				test.expect(await evaluateActive(target)).toEqual([0]);
+				const tree = await renderTree(page, {items, attrs: {active: 0, multiple: true}});
+				test.expect(await evaluateActive(tree)).toEqual([0]);
 			});
 
 			test('the `active` prop should accept `Array`', async ({page}) => {
-				const target = await renderTree(page, {items, attrs: {active: [0, 1], multiple: true}});
-				test.expect(await evaluateActive(target)).toEqual([0, 1]);
+				const tree = await renderTree(page, {items, attrs: {active: [0, 1], multiple: true}});
+				test.expect(await evaluateActive(tree)).toEqual([0, 1]);
 			});
 
 			test('the `active` prop should accept `Iterable`', async ({page}) => {
-				const target = await renderTree(
+				const tree = await renderTree(
 					page,
 					{items, attrs: {active: Utils.evalInBrowser(() => [0, 1].values()), multiple: true}}
 				);
 
-				test.expect(await evaluateActive(target)).toEqual([0, 1]);
+				test.expect(await evaluateActive(tree)).toEqual([0, 1]);
 			});
 
 			test('the `active` prop should accept `String`', async ({page}) => {
-				const target = await renderTree(
+				const tree = await renderTree(
 					page,
 					{items, attrs: {active: '007', multiple: true}}
 				);
 
-				test.expect(await evaluateActive(target)).toEqual(['007']);
+				test.expect(await evaluateActive(tree)).toEqual(['007']);
 			});
 		});
 	});
 
-	test.describe('`active`', () => {
+	test.describe('`active` status', () => {
 		test('should not be changeable with `activatable = false` on an item', async ({page}) => {
-			const target = await renderTree(page, {items});
+			const tree = await renderTree(page, {items});
 
-			await target.evaluate((ctx) => ctx.setActive(0));
-			await target.evaluate((ctx) => ctx.setActive(6));
+			await tree.evaluate((ctx) => ctx.setActive(0));
+			await tree.evaluate((ctx) => ctx.setActive(6));
 
-			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(0);
+			test.expect(await tree.evaluate((ctx) => ctx.active)).toBe(0);
 		});
 
 		test('should not be changeable by default', async ({page}) => {
-			const
-				target = await renderTree(page, {items});
+			const tree = await renderTree(page, {items});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.setActive(0);
 					return ctx.active;
 				})
 			).toBe(0);
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.setActive(1);
 					return ctx.active;
 				})
 			).toBe(1);
 
-			test.expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeFalsy();
-			test.expect(await target.evaluate((ctx) => ctx.active)).toBe(1);
+			test.expect(await tree.evaluate((ctx) => ctx.unsetActive(1))).toBeFalsy();
+			test.expect(await tree.evaluate((ctx) => ctx.active)).toBe(1);
 		});
 
 		test('should be changeable with `cancelable = true`', async ({page}) => {
-			const
-				target = await renderTree(page, {items, attrs: {cancelable: true}});
+			const tree = await renderTree(page, {
+				items,
+				attrs: {cancelable: true}
+			});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.setActive(1);
 					return ctx.active;
 				})
 			).toBe(1);
 
-			test.expect(await target.evaluate((ctx) => ctx.unsetActive(1))).toBeTruthy();
-			test.expect(await target.evaluate((ctx) => ctx.active)).toBeUndefined();
+			test.expect(await tree.evaluate((ctx) => ctx.unsetActive(1))).toBeTruthy();
+			test.expect(await tree.evaluate((ctx) => ctx.active)).toBeUndefined();
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.toggleActive(1);
 					return ctx.active;
 				})
@@ -152,11 +159,13 @@ test.describe('<b-tree> active items', () => {
 		});
 
 		test('should be changeable with `multiple = true`', async ({page}) => {
-			const
-				target = await renderTree(page, {items, attrs: {multiple: true}});
+			const tree = await renderTree(page, {
+				items,
+				attrs: {multiple: true}
+			});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.setActive(1);
 					ctx.setActive(0);
 					return [...(<Set<number>>ctx.active).keys()];
@@ -164,7 +173,7 @@ test.describe('<b-tree> active items', () => {
 			).toEqual([1, 0]);
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.unsetActive(1);
 					ctx.unsetActive(0);
 					return [...(<Set<number>>ctx.active).values()];
@@ -173,11 +182,16 @@ test.describe('<b-tree> active items', () => {
 		});
 
 		test('should not be changeable with `multiple = true; cancelable = false`', async ({page}) => {
-			const
-				target = await renderTree(page, {items, attrs: {multiple: true, cancelable: false}});
+			const tree = await renderTree(page, {
+				items,
+				attrs: {
+					multiple: true,
+					cancelable: false
+				}
+			});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.setActive(1);
 					ctx.setActive(5);
 					return [...(<Set<number>>ctx.active).keys()];
@@ -185,7 +199,7 @@ test.describe('<b-tree> active items', () => {
 			).toEqual([1, 5]);
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.unsetActive(1);
 					ctx.unsetActive(5);
 					return [...(<Set<number>>ctx.active).values()];
@@ -194,11 +208,16 @@ test.describe('<b-tree> active items', () => {
 		});
 
 		test('should be changeable with `multiple = true; cancelable = true`', async ({page}) => {
-			const
-				target = await renderTree(page, {items, attrs: {multiple: true, cancelable: true}});
+			const tree = await renderTree(page, {
+				items,
+				attrs: {
+					multiple: true,
+					cancelable: true
+				}
+			});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.setActive(1);
 					ctx.setActive(0);
 					return [...<Set<number>>ctx.active];
@@ -206,7 +225,7 @@ test.describe('<b-tree> active items', () => {
 			).toEqual([1, 0]);
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.unsetActive(1);
 					ctx.unsetActive(0);
 					return [...<Set<number>>ctx.active];
@@ -215,11 +234,15 @@ test.describe('<b-tree> active items', () => {
 		});
 
 		test('should change correctly with `multiple = true` when string value is passed', async ({page}) => {
-			const
-				target = await renderTree(page, {items, attrs: {multiple: true}});
+			const tree = await renderTree(page, {
+				items,
+				attrs: {
+					multiple: true
+				}
+			});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.setActive(1);
 					ctx.setActive('007');
 					return [...<Set<number>>ctx.active];
@@ -227,14 +250,14 @@ test.describe('<b-tree> active items', () => {
 			).toEqual([1, '007']);
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.unsetActive(1);
 					return [...<Set<number>>ctx.active];
 				})
 			).toEqual(['007']);
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.unsetActive('007');
 					return [...<Set<number>>ctx.active];
 				})
@@ -245,34 +268,36 @@ test.describe('<b-tree> active items', () => {
 	test.describe('changing the active item', () => {
 		test('should unfold parents when `setActive` is invoked', async ({page}) => {
 			const
-				target = await renderTree(page, {items});
+				tree = await renderTree(page, {items});
 
-			await target.evaluate((ctx) => ctx.setActive(4));
+			await tree.evaluate((ctx) => ctx.setActive(4));
 
-			const nodes = await waitForItems(page, target, [2, 3]);
+			const nodes = await waitForItemsWithValues(page, tree, [2, 3]);
 
-			await testFoldedModIs(false, nodes);
+			await expectFolded(false, nodes);
 		});
 
 		test('should unfold parents when `toggleActive` is invoked', async ({page}) => {
 			const
-				target = await renderTree(page, {items});
+				tree = await renderTree(page, {items});
 
-			await target.evaluate((ctx) => ctx.toggleActive(4));
+			await tree.evaluate((ctx) => ctx.toggleActive(4));
 
-			const nodes = await waitForItems(page, target, [2, 3]);
+			const nodes = await waitForItemsWithValues(page, tree, [2, 3]);
 
-			await testFoldedModIs(false, nodes);
+			await expectFolded(false, nodes);
 		});
 	});
 
 	test.describe('`toggleActive`', () => {
 		test('should accept a scalar value with `multiple = true`', async ({page}) => {
-			const
-				target = await renderTree(page, {items, attrs: {multiple: true}});
+			const tree = await renderTree(page, {
+				items,
+				attrs: {multiple: true}
+			});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.toggleActive(1);
 					ctx.toggleActive(0);
 					ctx.toggleActive(1);
@@ -282,11 +307,13 @@ test.describe('<b-tree> active items', () => {
 		});
 
 		test('should accept a string value with `multiple = true`', async ({page}) => {
-			const
-				target = await renderTree(page, {items, attrs: {multiple: true}});
+			const tree = await renderTree(page, {
+				items,
+				attrs: {multiple: true}
+			});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.toggleActive(1);
 					ctx.toggleActive('007');
 					ctx.toggleActive(1);
@@ -296,49 +323,51 @@ test.describe('<b-tree> active items', () => {
 		});
 
 		test('should accept `Iterable` with `multiple = true`', async ({page}) => {
-			const
-				target = await renderTree(page, {items, attrs: {multiple: true}});
+			const tree = await renderTree(page, {
+				items,
+				attrs: {multiple: true}
+			});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.toggleActive(new Set([0, 1]));
 					return [...<Set<number>>ctx.active];
 				})
 			).toEqual([0, 1]);
 
-			const nodes = await waitForItems(page, target, [0, 1]);
+			const nodes = await waitForItemsWithValues(page, tree, [0, 1]);
 
-			await testActiveModIs(true, nodes);
+			await expectActive(true, nodes);
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.toggleActive([1, 3].values());
 					return [...<Set<number>>ctx.active];
 				})
 			).toEqual([0, 3]);
 
 			const
-				activeNodes = await waitForItems(page, target, [0, 3]),
-				inactiveNodes = await waitForItems(page, target, [1]);
+				activeNodes = await waitForItemsWithValues(page, tree, [0, 3]),
+				inactiveNodes = await waitForItemsWithValues(page, tree, [1]);
 
-			await testActiveModIs(true, activeNodes);
-			await testActiveModIs(false, inactiveNodes);
+			await expectActive(true, activeNodes);
+			await expectActive(false, inactiveNodes);
 
 		});
 
 		test('should unset the previous active items with `unsetPrevious = true`', async ({page}) => {
 			const
-				target = await renderTree(page, {items, attrs: {multiple: true}});
+				tree = await renderTree(page, {items, attrs: {multiple: true}});
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.toggleActive(new Set([0, 1]));
 					return [...<Set<number>>ctx.active];
 				})
 			).toEqual([0, 1]);
 
 			test.expect(
-				await target.evaluate((ctx) => {
+				await tree.evaluate((ctx) => {
 					ctx.toggleActive([2, 4].values(), true);
 					return [...<Set<number>>ctx.active];
 				})
@@ -348,10 +377,10 @@ test.describe('<b-tree> active items', () => {
 
 	test('should emit change events on click', async ({page}) => {
 		const
-			target = await renderTree(page, {items}),
+			tree = await renderTree(page, {items}),
 			nodeSelector = createTreeSelector('node');
 
-		const scan = target.evaluate((ctx) => new Promise((resolve) => {
+		const scan = tree.evaluate((ctx) => new Promise((resolve) => {
 			const
 				log: any[] = [];
 
@@ -386,10 +415,10 @@ test.describe('<b-tree> active items', () => {
 
 	test('should watch the changes of `active`', async ({page}) => {
 		const
-			target = await renderTree(page, {items});
+			tree = await renderTree(page, {items});
 
 		test.expect(
-			await target.evaluate(async (ctx) => {
+			await tree.evaluate(async (ctx) => {
 				const
 					log: any[] = [];
 
@@ -415,11 +444,13 @@ test.describe('<b-tree> active items', () => {
 	});
 
 	test('should watch the changes of `active` with `multiple = true`', async ({page}) => {
-		const
-			target = await renderTree(page, {items, attrs: {multiple: true}});
+		const tree = await renderTree(page, {
+			items,
+			attrs: {multiple: true}
+		});
 
 		test.expect(
-			await target.evaluate(async (ctx) => {
+			await tree.evaluate(async (ctx) => {
 				const
 					log: any[] = [];
 
@@ -446,7 +477,7 @@ test.describe('<b-tree> active items', () => {
 
 	test.describe('`traverseActiveNodes`', () => {
 		test('should return the IDs and values of items associated with the active nodes', async ({page}) => {
-			const target = await renderTree(page, {
+			const tree = await renderTree(page, {
 				items,
 				attrs: {
 					active: [0, 1],
@@ -455,7 +486,7 @@ test.describe('<b-tree> active items', () => {
 			});
 
 			test.expect(
-				await target.evaluate((ctx) =>
+				await tree.evaluate((ctx) =>
 					Array.from(ctx.unsafe.traverseActiveNodes())
 						.map(([, ctx]) => ctx))
 
@@ -468,12 +499,12 @@ test.describe('<b-tree> active items', () => {
 
 	test.describe('`activeElement`', () => {
 		test('should have one active element', async ({page}) => {
-			const target = await renderTree(page, {items, attrs: {active: 0}});
-			test.expect(await target.evaluate((ctx) => (<HTMLElement>ctx.activeElement).tagName)).toBe('DIV');
+			const tree = await renderTree(page, {items, attrs: {active: 0}});
+			test.expect(await tree.evaluate((ctx) => (<HTMLElement>ctx.activeElement).tagName)).toBe('DIV');
 		});
 
 		test('should have multiple active elements with `multiple = true`', async ({page}) => {
-			const target = await renderTree(page, {
+			const tree = await renderTree(page, {
 				items,
 				attrs: {
 					active: [0, 1],
@@ -481,7 +512,7 @@ test.describe('<b-tree> active items', () => {
 				}
 			});
 
-			test.expect(await target.evaluate((ctx) => Array.from(<HTMLElement[]>ctx.activeElement).map((el) => el.tagName)))
+			test.expect(await tree.evaluate((ctx) => Array.from(<HTMLElement[]>ctx.activeElement).map((el) => el.tagName)))
 				.toEqual(['DIV', 'DIV']);
 		});
 	});

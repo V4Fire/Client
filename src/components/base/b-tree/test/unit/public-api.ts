@@ -8,7 +8,7 @@
 
 import test from 'tests/config/unit/test';
 
-import { renderTree, waitForItemWithValue, createTestModIs } from 'components/base/b-tree/test/helpers';
+import { renderTree, waitForItemWithValue, createExpectMod } from 'components/base/b-tree/test/helpers';
 
 test.describe('<b-tree> public API', () => {
 	const items = [
@@ -36,9 +36,9 @@ test.describe('<b-tree> public API', () => {
 
 	test.describe('traverse', () => {
 		test('should return an iterator over all rendered tree items', async ({page}) => {
-			const target = await renderTree(page, {items});
+			const tree = await renderTree(page, {items});
 
-			const values = await target.evaluate(
+			const values = await tree.evaluate(
 				(ctx) => [...ctx.traverse(ctx)].map(([item]) => item.value)
 			);
 
@@ -46,14 +46,14 @@ test.describe('<b-tree> public API', () => {
 		});
 
 		test('if it is fully rendered at once, it should return an iterator over all tree items', async ({page}) => {
-			const target = await renderTree(page, {
+			const tree = await renderTree(page, {
 				items,
 				attrs: {
 					lazyRender: false
 				}
 			});
 
-			const values = await target.evaluate(
+			const values = await tree.evaluate(
 				(ctx) => [...ctx.traverse(ctx)].map(([item]) => item.value)
 			);
 
@@ -64,14 +64,14 @@ test.describe('<b-tree> public API', () => {
 			'the flag `deep: false` means that the iterator should only traverse top-level items',
 
 			async ({page}) => {
-				const target = await renderTree(page, {
+				const tree = await renderTree(page, {
 					items,
 					attrs: {
 						lazyRender: false
 					}
 				});
 
-				const values = await target.evaluate(
+				const values = await tree.evaluate(
 					(ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.value)
 				);
 
@@ -80,29 +80,29 @@ test.describe('<b-tree> public API', () => {
 		);
 	});
 
-	test('fold/unfold', async ({page}) => {
-		const target = await renderTree(page, {
+	test('`fold/unfold`', async ({page}) => {
+		const tree = await renderTree(page, {
 			items,
 			attrs: {
 				lazyRender: false
 			}
 		});
 
-		const expectFolded = createTestModIs('folded');
+		const expectFolded = createExpectMod('folded');
 
-		await target.evaluate(async (ctx) => ctx.unfold());
+		await tree.evaluate(async (ctx) => ctx.unfold());
 
-		await expectFolded(false, [await waitForItemWithValue(page, target, 3)]);
+		await expectFolded(false, [await waitForItemWithValue(page, tree, 3)]);
 
-		await target.evaluate(async (ctx) => ctx.fold());
+		await tree.evaluate(async (ctx) => ctx.fold());
 
 		await expectFolded(true, [
-			await waitForItemWithValue(page, target, 3),
-			await waitForItemWithValue(page, target, 4)
+			await waitForItemWithValue(page, tree, 3),
+			await waitForItemWithValue(page, tree, 4)
 		]);
 
-		await target.evaluate((ctx) => ctx.unfold(ctx.items[2].value));
+		await tree.evaluate((ctx) => ctx.unfold(ctx.items[2].value));
 
-		await expectFolded(false, [await waitForItemWithValue(page, target, 3)]);
+		await expectFolded(false, [await waitForItemWithValue(page, tree, 3)]);
 	});
 });

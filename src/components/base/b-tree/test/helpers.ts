@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { BrowserContext, ElementHandle, JSHandle, Page } from 'playwright';
+import type { ElementHandle, JSHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
@@ -14,7 +14,7 @@ import DOM from 'tests/helpers/dom';
 import Component from 'tests/helpers/component';
 
 import type bTree from 'components/base/b-tree/b-tree';
-import type { Item } from 'components/base/b-tree/interface';
+import type { Item } from 'components/base/b-tree/b-tree';
 
 export function getItemsCount(items: Item[]) {
 	let count = 0;
@@ -179,7 +179,7 @@ export async function waitForItemWithValue(
  * @param target
  * @param values
  */
-export async function waitForItems(
+export async function waitForItemsWithValues(
 	page: Page,
 	target: JSHandle<bTree>,
 	values: Iterable<unknown>
@@ -193,43 +193,6 @@ export async function waitForItems(
 }
 
 /**
- * Provides an API to intercept and mock response for the b-tree request
- * @param pageOrContext
- */
-export function interceptTreeRequest(
-	pageOrContext: Page | BrowserContext
-): Promise<void> {
-	return pageOrContext.route(/api/, async (route) => route.fulfill({
-		status: 200,
-		contentType: 'application/json',
-		body: JSON.stringify([
-			{value: 'foo_0_0'},
-			{
-				value: 'foo_0_1',
-				children: [
-					{value: 'foo_1_0'},
-					{value: 'foo_1_1'},
-
-					{
-						value: 'foo_1_2',
-						children: [{value: 'foo_2_0'}]
-					},
-
-					{value: 'foo_1_3'},
-					{value: 'foo_1_4'},
-					{value: 'foo_1_5'}
-				]
-			},
-			{value: 'foo_0_2'},
-			{value: 'foo_0_3'},
-			{value: 'foo_0_4'},
-			{value: 'foo_0_5'},
-			{value: 'foo_0_6'}
-		])
-	}));
-}
-
-/**
  * Returns a selector for the passed element
  * @param elName
  */
@@ -239,50 +202,12 @@ export const createTreeSelector = DOM.elNameSelectorGenerator('b-tree');
  * Creates a function to test if nodes have given modifier classes
  * @param modName
  */
-export function createTestModIs(modName: string) {
+export function createExpectMod(modName: string) {
 	return async (
 		status: boolean,
 		nodes: Array<ElementHandle<HTMLElement | SVGElement>>
 	): Promise<void> => {
 		const classes = await Promise.all(nodes.map((node) => node.getAttribute('class')));
-
-		test.expect(classes.every((x) => x?.includes(status ? `${modName}_true` : `${modName}_false`)))
-			.toBeTruthy();
+		test.expect(classes.every((x) => x?.includes(status ? `${modName}_true` : `${modName}_false`))).toBeTruthy();
 	};
-}
-
-/**
- * Checks if the page has expected count of bCheckbox elements
- *
- * @param page
- * @param expectedCount
- */
-export async function waitForCheckboxCount(page: Page, expectedCount: number): Promise<void> {
-	await test.expect(page.locator('.b-checkbox')).toHaveCount(expectedCount);
-}
-
-/**
- * Returns the default items for tests
- */
-export function getDefaultItems(): Item[] {
-	return [
-		{value: 'bar'},
-
-		{
-			value: 'foo',
-			children: [
-				{value: 'foo_1'},
-				{value: 'foo_2'},
-
-				{
-					value: 'foo_3',
-					children: [{value: 'foo_3_1'}]
-				},
-
-				{value: 'foo_4'},
-				{value: 'foo_5'},
-				{value: 'foo_6'}
-			].map((item) => ({...item, label: item.value}))
-		}
-	].map((item) => ({...item, label: item.value}));
 }
