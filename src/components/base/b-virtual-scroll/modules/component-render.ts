@@ -63,6 +63,7 @@ export default class ComponentRender extends Friend {
 		});
 
 		this.nodesCache = Object.createDict();
+		this.ctx.async.clearAll({group: new RegExp(this.asyncGroup)});
 	}
 
 	/**
@@ -172,13 +173,14 @@ export default class ComponentRender extends Friend {
 	 */
 	protected createComponents(items: RenderItem[]): HTMLElement[] {
 		const
-			{ctx: c, scrollRender: {items: totalItems}} = this;
+			{ctx: c, scrollRender: {items: totalItems}} = this,
+			state = c.getCurrentDataState();
 
 		const render = (children: DataToRender[]) => {
 			const map = ({itemAttrs, itemParams, index}) =>
 				this.ctx.vdom.create(c.getItemComponentName(itemParams, index), itemAttrs);
 
-			return <HTMLElement[]>c.vdom.render(children.map(map));
+			return <HTMLElement[]>c.vdom.render(children.map(map), `${this.asyncGroup}:${state.currentPage}`);
 		};
 
 		const getChildrenAttrs = (props: ItemAttrs) => ({

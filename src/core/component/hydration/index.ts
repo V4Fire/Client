@@ -144,6 +144,20 @@ export class HydrationStore {
 	}
 
 	/**
+	 * Clears the store
+	 */
+	clear(): void {
+		this.data.clear();
+		this.styles.clear();
+
+		Object.forEach(this.store, (store: Dictionary) => {
+			Object.forEach(store, (_, key) => {
+				delete store[key];
+			});
+		});
+	}
+
+	/**
 	 * Returns a unique ID for the specified data
 	 * @param data
 	 */

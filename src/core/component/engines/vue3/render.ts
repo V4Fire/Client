@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { disposeLazy } from 'core/lazy';
+
 import {
 
 	resolveComponent as superResolveComponent,
@@ -123,13 +125,30 @@ export const
 
 export const
 	mergeProps = wrapMergeProps(superMergeProps),
-	renderList = wrapRenderList(superRenderList),
 	renderSlot = wrapRenderSlot(superRenderSlot);
 
 export const
 	withCtx = wrapWithCtx(superWithCtx),
 	withDirectives = wrapWithDirectives(superWithDirectives),
 	resolveDirective = wrapResolveDirective(superResolveDirective);
+
+export const renderList = wrapRenderList(
+	superRenderList,
+	(...args: Parameters<typeof superWithCtx>) => {
+		// Vue has two contexts for instances: `currentInstance` and `currentRenderingInstance`.
+		// The context for the renderList should be a `currentRenderingInstance`
+		// because `renderList` is called during component rendering.
+		const fn = superWithCtx(...args);
+
+		// Enable block tracking
+		// @see https://github.com/vuejs/core/blob/45984d559fe0c036657d5f2626087ea8eec205a8/packages/runtime-core/src/componentRenderContext.ts#L88
+		if ('_d' in fn) {
+			(<Function & {_d: boolean}>fn)._d = false;
+		}
+
+		return fn;
+	}
+);
 
 /**
  * Renders the specified VNode and returns the result
@@ -182,6 +201,8 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 				// Register a worker to clean up memory upon component destruction
 				parent.unsafe.async.worker(() => {
 					vue.unmount();
+					Array.concat([], vnode).forEach(destroy);
+					disposeLazy(vue);
 				}, {group});
 			}
 		}
