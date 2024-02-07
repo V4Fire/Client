@@ -32,7 +32,7 @@ export default class ThemeManager extends Friend {
 	/**
 	 * A set of available app themes
 	 */
-	availableThemes!: Set<string>;
+	readonly availableThemes!: Set<string>;
 
 	/**
 	 * The current theme value
@@ -42,12 +42,12 @@ export default class ThemeManager extends Friend {
 	/**
 	 * An API for obtaining and observing system appearance
 	 */
-	protected systemThemeExtractor!: SystemThemeExtractor;
+	protected readonly systemThemeExtractor!: SystemThemeExtractor;
 
 	/**
 	 * An API for persistent theme storage
 	 */
-	protected themeStorage!: SyncStorage;
+	protected readonly themeStorage!: SyncStorage;
 
 	/**
 	 * An attribute to set the theme value to the root element
@@ -56,13 +56,16 @@ export default class ThemeManager extends Friend {
 
 	/**
 	 * @param component
-	 * @param themeStorageEngine - an engine for persistent theme storage
-	 * @param systemThemeExtractor - an engine for extracting the system theme
+	 * @param engines
+	 * @param engines.themeStorageEngine - an engine for persistent theme storage
+	 * @param engines.systemThemeExtractor - an engine for extracting the system theme
 	 */
 	constructor(
 		component: iBlock,
-		themeStorageEngine: StorageEngine,
-		systemThemeExtractor: SystemThemeExtractor
+		{themeStorageEngine, systemThemeExtractor}: {
+			themeStorageEngine: StorageEngine;
+			systemThemeExtractor: SystemThemeExtractor;
+		}
 	) {
 		super(component);
 

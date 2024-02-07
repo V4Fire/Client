@@ -100,8 +100,10 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>((o) => themeManagerFactory(
 		o,
-		cookie.syncLocalStorage,
-		webEngineFactory(o)
+		{
+			themeStorageEngine: cookie.syncLocalStorage,
+			systemThemeExtractor: webEngineFactory(o)
+		}
 	))
 
 	readonly theme: CanUndef<ThemeManager>;

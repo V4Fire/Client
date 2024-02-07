@@ -17,13 +17,11 @@ import type { SystemThemeExtractor } from 'components/super/i-static-page/module
  * Returns an instance of the class for managing interface themes if that functionality is available
  *
  * @param component
- * @param store
- * @param systemTheme
+ * @param engines
  */
 export default function themeManagerFactory(
 	component: iBlock,
-	store: StorageEngine,
-	systemTheme: SystemThemeExtractor
+	engines: {themeStorageEngine: StorageEngine; systemThemeExtractor: SystemThemeExtractor}
 ): CanNull<ThemeManager> {
-	return Object.isString(THEME) ? new ThemeManager(component, store, systemTheme) : null;
+	return Object.isString(THEME) ? new ThemeManager(component, engines) : null;
 }
