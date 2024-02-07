@@ -131,9 +131,11 @@ export function deactivate(component: iBlock): void {
 	}
 
 	if (unsafe.isActivated) {
+		// It's important to deactivate the component ASAP to prevent any unexpected rerenders
+		// because state of the component might change during the deactivation process
+		onDeactivated(component);
 		runHook('deactivated', component).then(() => {
 			callMethodFromComponent(component, 'deactivated');
-			onDeactivated(component);
 		}).catch(stderr);
 	}
 

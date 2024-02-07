@@ -96,6 +96,7 @@ class Block extends Friend {
 
 		if (originalNode != null && node != null && originalNode !== node) {
 			Object.defineProperty(this.ctx, '$el', {
+				configurable: true,
 				get: () => node
 			});
 
