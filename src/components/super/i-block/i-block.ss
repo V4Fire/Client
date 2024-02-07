@@ -190,7 +190,7 @@
 		'v-async-target': '!ssrRendering',
 		...(cacheAttributes ?
 			{'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'} :
-			{':class': '[...provide.componentClasses("' + self.name() + '", [get, mods])]'}
+			{':class': '[...provide.componentClasses("' + self.name() + '", mods)]'}
 		)
 	} .
 
