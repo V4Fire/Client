@@ -57,7 +57,12 @@ export * from 'dummies/b-dummy/interface';
 
 interface bDummy extends Trait<typeof iLockPageScroll>, Trait<typeof iObserveDOM> {}
 
-@component()
+@component({
+	functional: {
+		functional: true,
+		dataProvider: undefined
+	}
+})
 
 @derive(iLockPageScroll, iObserveDOM)
 class bDummy extends iData implements iLockPageScroll, iObserveDOM {
