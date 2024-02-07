@@ -27,6 +27,7 @@ const aliases = {
 	'graceful-fs': false,
 	path: false,
 	picomatch: false,
+	url: false,
 
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
 		const
