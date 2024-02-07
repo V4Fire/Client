@@ -163,7 +163,7 @@ export function checkOptionTree(
  * @param target
  * @param value
  */
-export async function waitForItem(
+export async function waitForItemWithValue(
 	page: Page,
 	target: JSHandle<bTree>,
 	value: unknown

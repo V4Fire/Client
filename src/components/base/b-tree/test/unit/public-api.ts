@@ -8,17 +8,17 @@
 
 import test from 'tests/config/unit/test';
 
-import { renderTree, waitForItem, createTestModIs } from 'components/base/b-tree/test/helpers';
+import { renderTree, waitForItemWithValue, createTestModIs } from 'components/base/b-tree/test/helpers';
 
 test.describe('<b-tree> public API', () => {
-	const testFoldedModIs = createTestModIs('folded');
-
 	const items = [
 		{value: 1},
 		{value: 2},
 
 		{
 			value: 3,
+			folded: true,
+
 			children: [
 				{
 					value: 4,
@@ -34,32 +34,75 @@ test.describe('<b-tree> public API', () => {
 		await demoPage.goto();
 	});
 
-	test('traverse', async ({page}) => {
-		const target = await renderTree(page, {items});
+	test.describe('traverse', () => {
+		test('should return an iterator over all rendered tree items', async ({page}) => {
+			const target = await renderTree(page, {items});
 
-		let res = await target.evaluate((ctx) => [...ctx.traverse()].map(([item]) => item.value));
-		test.expect(res).toEqual([1, 2, 3, 5, 4, 6]);
+			const values = await target.evaluate(
+				(ctx) => [...ctx.traverse(ctx)].map(([item]) => item.value)
+			);
 
-		res = await target.evaluate((ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.value));
-		test.expect(res).toEqual([1, 2, 3, 5]);
+			test.expect(values).toEqual([1, 2, 3, 5]);
+		});
+
+		test('if it is fully rendered at once, it should return an iterator over all tree items', async ({page}) => {
+			const target = await renderTree(page, {
+				items,
+				attrs: {
+					lazyRender: false
+				}
+			});
+
+			const values = await target.evaluate(
+				(ctx) => [...ctx.traverse(ctx)].map(([item]) => item.value)
+			);
+
+			test.expect(values).toEqual([1, 2, 3, 5, 4, 6]);
+		});
+
+		test(
+			'the flag `deep: false` means that the iterator should only traverse top-level items',
+
+			async ({page}) => {
+				const target = await renderTree(page, {
+					items,
+					attrs: {
+						lazyRender: false
+					}
+				});
+
+				const values = await target.evaluate(
+					(ctx) => [...ctx.traverse(ctx, {deep: false})].map(([item]) => item.value)
+				);
+
+				test.expect(values).toEqual([1, 2, 3, 5]);
+			}
+		);
 	});
 
 	test('fold/unfold', async ({page}) => {
-		const target = await renderTree(page, {items});
+		const target = await renderTree(page, {
+			items,
+			attrs: {
+				lazyRender: false
+			}
+		});
+
+		const expectFolded = createTestModIs('folded');
 
 		await target.evaluate(async (ctx) => ctx.unfold());
 
-		await testFoldedModIs(false, [await waitForItem(page, target, 3)]);
+		await expectFolded(false, [await waitForItemWithValue(page, target, 3)]);
 
 		await target.evaluate(async (ctx) => ctx.fold());
 
-		await testFoldedModIs(true, [
-			await waitForItem(page, target, 3),
-			await waitForItem(page, target, 4)
+		await expectFolded(true, [
+			await waitForItemWithValue(page, target, 3),
+			await waitForItemWithValue(page, target, 4)
 		]);
 
 		await target.evaluate((ctx) => ctx.unfold(ctx.items[2].value));
 
-		await testFoldedModIs(false, [await waitForItem(page, target, 3)]);
+		await expectFolded(false, [await waitForItemWithValue(page, target, 3)]);
 	});
 });
