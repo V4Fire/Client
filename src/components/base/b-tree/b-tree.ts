@@ -500,7 +500,7 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 	 */
 	@watch<bTree>({
 		path: '?$el:click',
-		wrapper: (o, cb) => o.dom.delegateElement('node', cb)
+		wrapper: (o, cb) => o.dom.delegateElement('node', Object.cast(cb))
 	})
 
 	protected onItemClick(e: Event): void {
