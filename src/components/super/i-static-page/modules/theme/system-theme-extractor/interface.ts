@@ -13,7 +13,7 @@ export interface SystemThemeExtractor {
 	/**
 	 * Retrieves the current system visual appearance theme
 	 */
-	getSystemTheme(): PromiseLike<string>;
+	getSystemTheme(): Promise<string>;
 
 	/**
 	 * Initializes an event listener for changes in the system's visual appearance theme
@@ -21,10 +21,10 @@ export interface SystemThemeExtractor {
 	 * @param cb - A callback function to be invoked when the theme changes.
 	 *             It receives the color scheme identifier as a string parameter by which project theme can be selected.
 	 */
-	subscribe(cb: (value: string) => void): void;
+	onChange(cb: (value: string) => void): void;
 
 	/**
 	 * Terminates the event listener for changes in the system's visual appearance theme
 	 */
-	unsubscribe(): void;
+	destroy(): void;
 }

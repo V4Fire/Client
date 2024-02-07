@@ -33,7 +33,7 @@ export default class WebEngine extends Friend implements SystemThemeExtractor {
 	}
 
 	/** @inheritDoc */
-	subscribe(cb: (value: string) => void): void {
+	onChange(cb: (value: string) => void): void {
 		if (this.darkThemeMq != null) {
 			return;
 		}
@@ -47,7 +47,7 @@ export default class WebEngine extends Friend implements SystemThemeExtractor {
 	}
 
 	/** @inheritDoc */
-	unsubscribe(): void {
+	destroy(): void {
 		if (this.darkThemeMq == null) {
 			return;
 		}

@@ -130,10 +130,10 @@ export default class ThemeManager extends Friend {
 	/**
 	 * Sets the actual system theme and activates the system theme change listener
 	 */
-	useSystem(): PromiseLike<void> {
+	useSystem(): Promise<void> {
 		return this.systemThemeExtractor.getSystemTheme().then((value) => {
-			this.systemThemeExtractor.unsubscribe();
-			this.systemThemeExtractor.subscribe(
+			this.systemThemeExtractor.destroy();
+			this.systemThemeExtractor.onChange(
 				(value: string) => {
 					value = this.getThemeAlias(value);
 					void this.changeTheme({value, isSystem: true});
@@ -173,7 +173,7 @@ export default class ThemeManager extends Friend {
 		}
 
 		if (!isSystem) {
-			this.systemThemeExtractor.unsubscribe();
+			this.systemThemeExtractor.destroy();
 		}
 
 		const oldValue = this.current;
