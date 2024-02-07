@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 import iVirtualScrollProps from 'components/base/b-virtual-scroll-new/props';
 
 import type bVirtualScrollNew from 'components/base/b-virtual-scroll-new/b-virtual-scroll-new';
@@ -15,6 +17,8 @@ import { bVirtualScrollNewAsyncGroup, componentEvents } from 'components/base/b-
 import { isAsyncReplaceError } from 'components/base/b-virtual-scroll-new/modules/helpers';
 
 import iData, { component } from 'components/super/i-data/i-data';
+
+const $$ = symbolGenerator();
 
 /**
  * A class that provides an API to handle events emitted by the {@link bVirtualScrollNew} component.
@@ -97,15 +101,27 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 */
 	protected onLifecycleDone(this: bVirtualScrollNew): void {
 		const
-			state = this.getVirtualScrollState();
+			state = this.getVirtualScrollState(),
+			isDomInsertInProgress = this.componentInternalState.getIsDomInsertInProgress();
 
 		if (state.isLifecycleDone) {
 			return;
 		}
 
-		this.slotsStateController.doneState();
-		this.componentInternalState.setIsLifecycleDone(true);
-		this.componentEmitter.emit(componentEvents.lifecycleDone);
+		const handler = () => {
+			this.slotsStateController.doneState();
+			this.componentInternalState.setIsLifecycleDone(true);
+			this.componentEmitter.emit(componentEvents.lifecycleDone);
+		};
+
+		if (isDomInsertInProgress) {
+			return this.componentEmitter.once(componentEvents.renderDone, handler, {
+				group: bVirtualScrollNewAsyncGroup,
+				label: $$.waitUntilRenderDone
+			});
+		}
+
+		return handler();
 	}
 
 	/**

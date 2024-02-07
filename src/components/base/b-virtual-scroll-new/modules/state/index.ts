@@ -128,6 +128,14 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
+	 * Sets the flag indicating that the process of inserting components into the DOM tree is currently in progress
+	 * @param value
+	 */
+	setIsDomInsertInProgress(value: boolean): void {
+		this.privateState.isDomInsertInProgress = value;
+	}
+
+	/**
 	 * Sets the flag indicating if requests are stopped and the component won't make any more requests
 	 * until the lifecycle is refreshed.
 	 *
@@ -188,6 +196,14 @@ export class ComponentInternalState extends Friend {
 	 */
 	getDataCursor(): number {
 		return this.privateState.dataOffset;
+	}
+
+	/**
+	 * Returns the value of the flag indicating whether the process
+	 * of inserting components into the DOM tree is currently in progress
+	 */
+	getIsDomInsertInProgress(): boolean {
+		return this.privateState.isDomInsertInProgress;
 	}
 
 	/**

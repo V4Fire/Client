@@ -161,9 +161,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 				['renderEngineStart'],
 				['renderEngineDone'],
 				['domInsertStart'],
-				['lifecycleDone'],
 				['domInsertDone'],
-				['renderDone']
+				['renderDone'],
+				['lifecycleDone']
 			]);
 		});
 	});
