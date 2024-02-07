@@ -16,44 +16,11 @@ import Component from 'tests/helpers/component';
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item } from 'components/base/b-tree/b-tree';
 
-export function getItemsCount(items: Item[]) {
-	let count = 0;
-
-	items.forEach(({children}) => {
-		count++;
-
-		if (children != null) {
-			count += getItemsCount(children);
-		}
-	});
-
-	return count;
-}
-
-export function getRenderedNodesCount(tree: JSHandle<bTree>) {
-	return tree.evaluate((ctx) => {
-		const nodes = ctx.$el!.querySelectorAll(`.${ctx.provide.fullElementName('node')}`);
-		return nodes.length;
-	});
-}
-
-export function waitForNumberOfNodes(tree: JSHandle<bTree>, number: number) {
-	return tree.evaluate(({unsafe}, number) => unsafe.async.wait(() => {
-		const nodes = unsafe.$el!.querySelectorAll(`.${unsafe.provide.fullElementName('node')}`);
-		return nodes.length === number;
-	}), number);
-}
-
-export function sleep(ms: number) {
-	return new Promise((res) => setTimeout(() => res(true), ms));
-}
-
-interface CheckOptionTreeCtx {
-	target: JSHandle<bTree>;
-	queue?:Array<Promise<void>>;
-	level?: number;
-	foldSelector?: string;
-}
+/**
+ * Returns a selector for the passed bTree element
+ * @param elName
+ */
+export const createTreeSelector = DOM.elNameSelectorGenerator('b-tree');
 
 /**
  * Returns the rendered bTree component
@@ -84,76 +51,45 @@ export async function renderTree(
 }
 
 /**
- * Returns the `folded` class modifier for the given value
- *
- * @param target
- * @param value
- */
-export function getFoldedClass(target: JSHandle<bTree>, value: boolean = true): Promise<string> {
-	return target.evaluate(
-		(ctx, v) => ctx.unsafe.provide.fullElementName('node', 'folded', v),
-		value
-	);
-}
-
-/**
- * Iterates over all tree items depth-first and unfolds closed items by clicking them.
- * Also, it checks that all items have the correct `data-level` attribute and `folded` class modifier.
- *
- * @param page
+ * Returns the total number of tree items based on the value of the component's prop
  * @param items
- * @param params
  */
-export function checkOptionTree(
-	page: Page,
-	items: Item[],
-	{target, queue = [], level = 0, foldSelector}: CheckOptionTreeCtx
-): Array<Promise<void>> {
-	items.forEach((item) => {
-		const isBranch = Object.isArray(item.children);
+export function getItemsCount(items: Item[]): number {
+	let count = 0;
 
-		const promise = (async () => {
-			const itemId = String(
-				await target.evaluate((ctx, value) => ctx.unsafe.values.getIndex(value), item.value)
-			);
+	items.forEach(({children}) => {
+		count++;
 
-			const
-				isFolded = item.folded ?? await target.evaluate((ctx) => ctx.folded),
-				foldedClass = await getFoldedClass(target, isFolded);
-
-			const
-				itemSelector = `[data-id="${itemId}"]`,
-				itemElement = await page.waitForSelector(itemSelector, {state: 'attached'});
-
-			await test.expect(itemElement.getAttribute('data-level')).toBeResolvedTo(String(level));
-
-			if (isBranch) {
-				const
-					selector = foldSelector ?? DOM.elNameSelectorGenerator('b-tree', 'fold'),
-					fold = await itemElement.waitForSelector(selector, {state: 'attached'});
-
-				await test.expect(page.locator(itemSelector))
-					.toHaveClass(new RegExp(foldedClass));
-
-				if (isFolded) {
-					await fold.click();
-				}
-			}
-		})();
-
-		queue.push(promise);
-
-		if (isBranch) {
-			checkOptionTree(page, item.children ?? [], {
-				level: level + 1,
-				target,
-				queue,
-				foldSelector
-			});
+		if (children != null) {
+			count += getItemsCount(children);
 		}
 	});
 
-	return queue;
+	return count;
+}
+
+/**
+ * Returns the number of rendered tree items
+ * @param tree
+ */
+export function getRenderedNodesCount(tree: JSHandle<bTree>): Promise<number> {
+	return tree.evaluate((ctx) => {
+		const nodes = ctx.$el!.querySelectorAll(`.${ctx.provide.fullElementName('node')}`);
+		return nodes.length;
+	});
+}
+
+/**
+ * Returns a promise that will not resolve until the tree has a specified number of rendered items
+ *
+ * @param tree
+ * @param number
+ */
+export function waitForNumberOfNodes(tree: JSHandle<bTree>, number: number): Promise<boolean> {
+	return tree.evaluate(({unsafe}, number) => unsafe.async.wait(() => {
+		const nodes = unsafe.$el!.querySelectorAll(`.${unsafe.provide.fullElementName('node')}`);
+		return nodes.length === number;
+	}), number);
 }
 
 /**
@@ -173,7 +109,7 @@ export async function waitForItemWithValue(
 }
 
 /**
- * Waits for rendering of items with given values
+ * Waits for rendering of items with the given values
  *
  * @param page
  * @param target
@@ -193,13 +129,7 @@ export async function waitForItemsWithValues(
 }
 
 /**
- * Returns a selector for the passed element
- * @param elName
- */
-export const createTreeSelector = DOM.elNameSelectorGenerator('b-tree');
-
-/**
- * Creates a function to test if nodes have given modifier classes
+ * Creates a function to test if nodes have the given modifier classes
  * @param modName
  */
 export function createExpectMod(modName: string) {

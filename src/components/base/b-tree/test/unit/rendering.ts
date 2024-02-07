@@ -13,7 +13,6 @@ import type { Item } from 'components/base/b-tree/b-tree';
 
 import {
 
-	sleep,
 	renderTree,
 
 	getItemsCount,
@@ -276,4 +275,8 @@ test.describe('<b-tree> rendering modes', () => {
 			test.expect(await getRenderedNodesCount(tree)).toBe(8);
 		}
 	);
+
+	function sleep(ms: number) {
+		return new Promise((res) => setTimeout(() => res(true), ms));
+	}
 });

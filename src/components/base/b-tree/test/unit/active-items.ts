@@ -17,7 +17,7 @@ import type { Item } from 'components/base/b-tree/b-tree';
 
 import { renderTree, createTreeSelector, createExpectMod, waitForItemsWithValues } from 'components/base/b-tree/test/helpers';
 
-test.describe('<b-tree> API of active items', () => {
+test.describe('<b-tree> active items API', () => {
 	const
 		expectFolded = createExpectMod('folded'),
 		expectActive = createExpectMod('active');
