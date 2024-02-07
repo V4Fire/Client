@@ -135,17 +135,18 @@ export default class ThemeManager extends Friend {
 	 * Sets the actual system theme and activates the system theme change listener
 	 */
 	useSystem(): Promise<void> {
+		const changeTheme = (value: string) => {
+			value = this.getThemeAlias(value);
+			void this.changeTheme({value, isSystem: true});
+		};
+
 		return this.systemThemeExtractor.getSystemTheme().then((value) => {
 			this.systemThemeExtractor.onThemeChange(
-				(value: string) => {
-					value = this.getThemeAlias(value);
-					void this.changeTheme({value, isSystem: true});
-				},
+				changeTheme,
 				{label: $$.onThemeChange}
 			);
 
-			value = this.getThemeAlias(value);
-			return this.changeTheme({value, isSystem: true});
+			changeTheme(value);
 		});
 	}
 
