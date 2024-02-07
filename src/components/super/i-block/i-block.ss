@@ -39,9 +39,9 @@
 	- ssrRendering = true
 
 	/**
-	 * If set to true attributes as class, id, style, etc. will be cached
+	 * If set to true `:class` prop will be cached
 	 */
-	- cacheAttributes = true
+	- cacheClass = true
 
 	/**
 	 * Returns the component name
@@ -188,7 +188,7 @@
 	- rootAttrs = { &
 		class: 'i-block-helper',
 		'v-async-target': '!ssrRendering',
-		...(cacheAttributes ?
+		...(cacheClass ?
 			{'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'} :
 			{':class': '[...provide.componentClasses("' + self.name() + '", mods)]'}
 		)

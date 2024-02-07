@@ -12,4 +12,4 @@
 - include 'components/super/i-block'|b as placeholder
 
 - template index() extends ['i-block'].index
-	- cacheAttributes = false
+	- cacheClass = false
