@@ -9,12 +9,6 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2023-??-??)
-
-#### :boom: Breaking Change
-
-* Major update. Visit [readme](./readme) to see migration guide.
-
 ## v4.0.0-beta.36 (2023-10-23)
 
 #### :bug: Bug Fix

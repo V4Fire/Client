@@ -126,6 +126,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 		this.id = `${this.componentName}_${Math.random().toString()}`;
 		this.props = {'data-component-object-id': this.id};
 		this.node = page.locator(`[data-component-object-id="${this.id}"]`);
+
 		this.componentClassImportPath = path.join(
 			path.relative(`${process.cwd()}/src`, resolve.blockSync(this.componentName)!),
 			`/${this.componentName}.ts`
