@@ -269,29 +269,36 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * This method will not work if the component was built without the `useDummy` option.
 	 *
 	 * @param props
+	 * @param [mixInitialProps] - if true, the initially set props will be mixed with the passed props
+	 *
 	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
 	 */
-	update(props: RenderComponentsVnodeParams): Promise<void> {
+	update(props: RenderComponentsVnodeParams, mixInitialProps: boolean = true): Promise<void> {
 		if (!this.dummy) {
 			throw new ReferenceError('Failed to update component. Missing "b-dummy" component.');
 		}
 
-		return this.dummy.update(props);
+		return this.dummy.update(props, mixInitialProps);
 	}
 
 	/**
 	 * Updates the component's props using the `b-dummy` component.
 	 * This method will not work if the component was built without the `useDummy` option.
 	 *
+	 * By default, the passed props will be merged with the previously set props,
+	 * but this behavior can be cancelled by specifying the second argument as false.
+	 *
 	 * @param props
+	 * @param [mixInitialProps] - if true, the initially set props will be mixed with the passed props
+	 *
 	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
 	 */
-	updateProps(props: RenderComponentsVnodeParams['attrs']): Promise<void> {
+	updateProps(props: RenderComponentsVnodeParams['attrs'], mixInitialProps: boolean = true): Promise<void> {
 		if (!this.dummy) {
 			throw new ReferenceError('Failed to update props. Missing "b-dummy" component.');
 		}
 
-		return this.dummy.update({attrs: props});
+		return this.dummy.update({attrs: props}, mixInitialProps);
 	}
 
 	/**
@@ -299,6 +306,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * This method will not work if the component was built without the `useDummy` option.
 	 *
 	 * @param children
+	 *
 	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
 	 */
 	updateChildren(children: RenderComponentsVnodeParams['children']): Promise<void> {

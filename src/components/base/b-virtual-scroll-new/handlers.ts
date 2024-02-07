@@ -13,7 +13,7 @@ import iVirtualScrollProps from 'components/base/b-virtual-scroll-new/props';
 import type bVirtualScrollNew from 'components/base/b-virtual-scroll-new/b-virtual-scroll-new';
 import type { MountedChild } from 'components/base/b-virtual-scroll-new/interface';
 
-import { bVirtualScrollNewAsyncGroup, componentEvents } from 'components/base/b-virtual-scroll-new/const';
+import { bVirtualScrollNewAsyncGroup, componentEvents, componentLocalEvents } from 'components/base/b-virtual-scroll-new/const';
 import { isAsyncReplaceError } from 'components/base/b-virtual-scroll-new/modules/helpers';
 
 import iData, { component } from 'components/super/i-data/i-data';
@@ -93,6 +93,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 */
 	protected onRenderDone(this: bVirtualScrollNew): void {
 		this.componentEmitter.emit(componentEvents.renderDone);
+		this.localEmitter.emit(componentLocalEvents.renderCycleDone);
 	}
 
 	/**
@@ -115,10 +116,12 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 		};
 
 		if (isDomInsertInProgress) {
-			return this.componentEmitter.once(componentEvents.renderDone, handler, {
+			this.localEmitter.once(componentLocalEvents.renderCycleDone, handler, {
 				group: bVirtualScrollNewAsyncGroup,
 				label: $$.waitUntilRenderDone
 			});
+
+			return;
 		}
 
 		return handler();

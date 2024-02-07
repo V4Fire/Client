@@ -13,6 +13,13 @@ import type { JSHandle } from 'playwright';
  * Handle component interface that was created with a dummy wrapper.
  */
 export interface ComponentInDummy<T> extends JSHandle<T> {
-	update(props: RenderComponentsVnodeParams): Promise<void>;
+	/**
+	 * Updates props and children of a component
+	 *
+	 * @param params
+	 * @param [mixInitialProps] - if true, then the props will not be overwritten, but added to the current ones
+	 */
+	update(params: RenderComponentsVnodeParams, mixInitialProps?: boolean): Promise<void>;
+
 	dummy: JSHandle<bDummy>;
 }

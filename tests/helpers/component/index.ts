@@ -139,11 +139,13 @@ export default class Component {
 	): Promise<ComponentInDummy<T>> {
 		const dummy = await this.createComponent<bDummy>(page, 'b-dummy');
 
-		const update = async (props) => {
-			await dummy.evaluate((ctx, [name, props]) => {
+		const update = async (props, mixInitialProps = false) => {
+			await dummy.evaluate((ctx, [name, props, mixInitialProps]) => {
 				const parsed: RenderComponentsVnodeParams = globalThis.expandedParse(props);
 
-				ctx.testComponentAttrs = parsed.attrs ?? {};
+				ctx.testComponentAttrs = mixInitialProps ?
+					Object.assign(ctx.testComponentAttrs, parsed.attrs) :
+					parsed.attrs ?? {};
 
 				if (parsed.children) {
 					ctx.testComponentSlots = compileChild();
@@ -161,7 +163,7 @@ export default class Component {
 					})));
 				}
 
-			}, [componentName, expandedStringify(props)]);
+			}, <const>[componentName, expandedStringify(props), mixInitialProps]);
 		};
 
 		await update(params);
