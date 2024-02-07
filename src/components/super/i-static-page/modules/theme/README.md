@@ -93,22 +93,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 ## Accessors
 
-## current
-
-Current theme value.
-
-```typescript
-import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
-
-@component()
-export default class bExample extends iBlock {
-  created() {
-    console.log(this.r.theme.current);
-  }
-}
-```
-
-## availableThemes
+### availableThemes
 
 A set of available app themes.
 
@@ -119,6 +104,53 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 export default class bExample extends iBlock {
   created() {
     console.log(this.r.theme.availableThemes);
+  }
+}
+```
+
+## Methods
+
+### get
+
+Current theme value.
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    console.log(this.r.theme.get());
+  }
+}
+```
+
+### set
+
+Sets a new value for the current theme
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  changeTheme(value: 'dark' | 'light') {
+    this.r.theme.set(value);
+  }
+}
+```
+
+### useSystem
+
+Sets the actual system theme and activates the system theme change listener
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.r.theme.useSystem();
   }
 }
 ```
