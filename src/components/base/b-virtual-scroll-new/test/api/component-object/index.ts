@@ -46,6 +46,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 
 	/**
 	 * Calls the reload method of the component
+	 * {@link bVirtualScrollNew.reload}
 	 */
 	reload(): Promise<void> {
 		return this.component.evaluate((ctx) => ctx.reload());
@@ -53,13 +54,14 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 
 	/**
 	 * Returns the internal component state
+	 * {@link bVirtualScrollNew.getVirtualScrollState}
 	 */
 	getVirtualScrollState(): Promise<VirtualScrollState> {
 		return this.component.evaluate((ctx) => ctx.getVirtualScrollState());
 	}
 
 	/**
-	 * Returns the count of children in the container
+	 * Returns the count of children in the container ref
 	 */
 	getChildCount(): Promise<number> {
 		return this.childList.count();

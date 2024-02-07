@@ -20,7 +20,7 @@ test.describe('components/traits/i-lock-page-scroll - desktop', () => {
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 		await Component.waitForComponentTemplate(page, 'b-traits-i-lock-page-scroll-dummy');
-		target = await Component.createComponent(page, 'b-traits-i-lock-page-scroll-dummy', undefined);
+		target = await Component.createComponent(page, 'b-traits-i-lock-page-scroll-dummy');
 	});
 
 	test.describe('lock', () => {

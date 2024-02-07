@@ -266,11 +266,9 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 
 	/**
 	 * Updates the component's props or children using the `b-dummy` component.
-	 *
 	 * This method will not work if the component was built without the `useDummy` option.
 	 *
 	 * @param props
-	 *
 	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
 	 */
 	update(props: RenderComponentsVnodeParams): Promise<void> {
@@ -278,16 +276,14 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			throw new ReferenceError('Failed to update component. Missing "b-dummy" component.');
 		}
 
-		return this.dummy.setProps(props);
+		return this.dummy.update(props);
 	}
 
 	/**
 	 * Updates the component's props using the `b-dummy` component.
-	 *
 	 * This method will not work if the component was built without the `useDummy` option.
 	 *
 	 * @param props
-	 *
 	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
 	 */
 	updateProps(props: RenderComponentsVnodeParams['attrs']): Promise<void> {
@@ -295,16 +291,14 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			throw new ReferenceError('Failed to update props. Missing "b-dummy" component.');
 		}
 
-		return this.dummy.setProps({attrs: props});
+		return this.dummy.update({attrs: props});
 	}
 
 	/**
 	 * Updates the component's children using the `b-dummy` component.
-	 *
 	 * This method will not work if the component was built without the `useDummy` option.
 	 *
 	 * @param children
-	 *
 	 * @throws {@link ReferenceError} - if the component object was not built or was built without the `useDummy` option
 	 */
 	updateChildren(children: RenderComponentsVnodeParams['children']): Promise<void> {
@@ -312,6 +306,6 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			throw new ReferenceError('Failed to update children. Missing "b-dummy" component.');
 		}
 
-		return this.dummy.setProps({children});
+		return this.dummy.update({children});
 	}
 }

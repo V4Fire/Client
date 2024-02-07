@@ -124,7 +124,7 @@ export default class Component {
 	 * The function returns a `handle` to the created component (not to `b-dummy`)
 	 * and adds a method and property for convenience:
 	 *
-	 * - `setProps` - a method that allows you to modify the component's props.
+	 * - `update` - a method that allows you to modify the component's props.
 	 *
 	 * - `dummy` - the `handle` of the `b-dummy` component.
 	 *
@@ -168,7 +168,7 @@ export default class Component {
 		const component = await dummy.evaluateHandle((ctx) => ctx.unsafe.$refs.testComponent);
 
 		Object.assign(component, {
-			setProps: update,
+			update,
 			dummy
 		});
 

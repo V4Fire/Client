@@ -46,12 +46,6 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
-	/**
-	 * Field for tests purposes
-	 */
-	@field()
-	emptyField: unknown = undefined;
-
 	protected beforeCreate(): void {
 		//#unless runtime has storybook
 		// eslint-disable-next-line no-console
