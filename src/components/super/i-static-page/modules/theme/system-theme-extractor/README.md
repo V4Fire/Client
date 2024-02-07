@@ -9,12 +9,12 @@ By default, the engine for the web is supported.
 The engine needs to be passed to the `themeManager` constructor.
 
 ```ts
-import { webEngineFactory } from 'components/super/i-static-page/modules/theme/system-theme-extractor/engines/web';
+import WebEngine from 'components/super/i-static-page/modules/theme/system-theme-extractor/engines/web/engine';
 
 class iRoot extends iStaticPage {
   @system<iStaticPage>((o) => themeManagerFactory(
     // ...other required parameters for themeManager
-    webEngineFactory(o)
+    new WebEngine(o)
   ))
 
   readonly theme: CanUndef<ThemeManager>;
@@ -33,7 +33,7 @@ export default class CustomEngine implements SystemThemeExtractor {
 ```
 
 The `SystemThemeExtractor` interface specifies that the `getSystemTheme` method
-should return a promise-like object so that you can compute the system theme asynchronously.
+should return a promise object so that you can compute the system theme asynchronously.
 If synchronous computation is relevant in your case, you can use `SyncPromise`.
 
 See `components/super/i-static-page/modules/theme` for details
