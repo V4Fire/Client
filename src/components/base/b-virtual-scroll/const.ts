@@ -21,6 +21,11 @@ export const bVirtualScrollAsyncGroup = 'b-virtual-scroll';
 export const bVirtualScrollDomInsertAsyncGroup = `${bVirtualScrollAsyncGroup}:dom-insert`;
 
 /**
+ * Group for asynchronous operations related to rendering nodes via vdom.render.
+ */
+export const bVirtualScrollVDomRenderGroup = `${bVirtualScrollAsyncGroup}:vdom-render`;
+
+/**
  * Component modes.
  */
 export const componentModes = <const>{

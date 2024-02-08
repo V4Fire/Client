@@ -55,6 +55,7 @@ import {
 } from 'core/component/render';
 
 import type { ComponentInterface } from 'core/component/interface';
+import { disposeLazy } from 'core/lazy';
 
 export {
 
@@ -175,7 +176,7 @@ export function render(
 ): Node[];
 
 export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, group?: string): CanArray<Node> {
-	const vue = new Vue({
+	let vue = new Vue({
 		render: () => vnode,
 
 		beforeCreate() {
@@ -198,7 +199,9 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 
 				// Register a worker to clean up memory upon component destruction
 				parent.unsafe.async.worker(() => {
-					vue.unmount();
+					destroyVueInstance(vue);
+					disposeLazy(vue);
+					Array.concat([], vnode).forEach(destroyVNode);
 				}, {group});
 			}
 		}
@@ -231,11 +234,24 @@ export function render(vnode: CanArray<VNode>, parent?: ComponentInterface, grou
 	}
 }
 
+export function destroyVueInstance(vue: InstanceType<typeof Vue>): void {
+	vue.unmount();
+
+	setTimeout(() => {
+		Object.forEach(vue, (el, key) => {
+			console.log(key);
+			vue[key] = undefined;
+		});
+
+		vue.__proto__ = undefined;
+	}, 0);
+}
+
 /**
  * Deletes the specified node and frees up memory
  * @param node
  */
-export function destroy(node: VNode | Node): void {
+export function destroyVNode(node: VNode | Node): void {
 	const destroyedVNodes = new WeakSet<VNode>();
 
 	if (node instanceof Node) {

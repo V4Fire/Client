@@ -32,8 +32,9 @@ export default class IoObserver extends Friend implements ObserverEngine {
 		for (const component of components) {
 			ctx.dom.watchForIntersection(component.node, {
 				group: observerAsyncGroup,
-				label: component.key,
+				label: component.childIndex.toString(),
 				once: true,
+				threshold: 0.0001,
 				delay: 0
 			}, () => ctx.onElementEnters(component));
 		}

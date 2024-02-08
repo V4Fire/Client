@@ -8,6 +8,7 @@
 
 import type { VNodeDescriptor } from 'components/friends/vdom';
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
+import { bVirtualScrollVDomRenderGroup } from 'components/base/b-virtual-scroll/b-virtual-scroll';
 
 /**
  * Renders the provided `VNodes` to the `HTMLElements` via `vdom.render` API.
@@ -17,8 +18,11 @@ import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scro
  */
 export function render(ctx: bVirtualScroll, items: VNodeDescriptor[]): HTMLElement[] {
 	const
+		{renderPage} = ctx.getVirtualScrollState();
+
+	const
 		vnodes = ctx.vdom.create(...items),
-		nodes = ctx.vdom.render(vnodes);
+		nodes = ctx.vdom.render(vnodes, `${bVirtualScrollVDomRenderGroup}:${renderPage}`);
 
 	return <HTMLElement[]>nodes;
 }

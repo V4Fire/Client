@@ -24,42 +24,51 @@ test.describe('<b-virtual-scroll>', () => {
 		await component.reload();
 	};
 
+	const chunkSize = 10;
+
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();
 
 		({component, provider, state} = await createTestHelpers(page));
 		await provider.start();
-		await provider.responder();
 
 		await provider.response(200, () => state.data.addData(10));
 	});
 
 	test.describe('working with memory', () => {
 		test.describe('created components', () => {
-			test('are destroyed after reset event', async () => {
-				// ...
+			test.skip('are destroyed after reset event', async ({page}) => {
+				await component
+					.withDefaultPaginationProviderProps()
+					.withProps({chunkSize})
+					.build();
+
+				await component.waitForChildCountEqualsTo(chunkSize);
+				await component.scrollToBottom();
+				await component.waitForChildCountEqualsTo(chunkSize * 2);
+
+				await page.pause();
 			});
 		});
 
 		test.describe('created nested components ', () => {
-			test('are destroyed after reset event', () => {
+			test.skip('are destroyed after reset event', () => {
 				// ...
 			});
 
-			test('DOM nodes is removed after reset event', () => {
+			test.skip('DOM nodes is removed after reset event', () => {
 				// ...
 			});
 		});
 
 		test.only('memory is freed after many components have been rendered and the state has been cleared', async ({page}) => {
+			await provider.responder();
+
 			const
 				session = await page.context().newCDPSession(page);
 
 			await session.send('HeapProfiler.enable');
 			await session.send('HeapProfiler.startSampling');
-
-			const
-				chunkSize = 10;
 
 			console.log('before component create', await getMemoryUsage(session));
 
@@ -101,9 +110,12 @@ test.describe('<b-virtual-scroll>', () => {
 				console.log(i, 'after reset after third chunk render', await getMemoryUsage(session));
 				await reset();
 				console.log(i, 'after reset and cycle done', await getMemoryUsage(session));
+				console.log(i, 'DOM Count', await session.send('Memory.getDOMCounters'));
 
 				i++;
 			}
+
+			await page.pause();
 		});
 	});
 
@@ -127,3 +139,7 @@ test.describe('<b-virtual-scroll>', () => {
 	}
 });
 
+
+/*
+ * Функция makeLazy context/actions в ней не очищается, что приводит к утечке памяти при использовании vdom
+ */

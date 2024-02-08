@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import makeLazy from 'core/lazy';
+import { makeLazy } from 'core/lazy';
 
 import { createApp, createSSRApp, defineAsyncComponent, App, Component } from 'vue';
 import type { CreateAppFunction } from 'core/component/engines/interface';
