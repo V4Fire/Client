@@ -39,9 +39,12 @@
 	- ssrRendering = true
 
 	/**
-	 * If set to true `:class` prop will be cached
+	 * Should be set to 'component' for components with runtime,
+	 * for dynamic mono components use 'mono'.
+	 * If set to 'component' some optimizations will be applied to hoist
+	 * vnode attributes.
 	 */
-	- cacheClass = true
+	- renderMode = 'component'
 
 	/**
 	 * Returns the component name
@@ -185,13 +188,16 @@
 		- else
 			? rootAttrs[':class'] = value
 
+
+	- rootClass = {'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'}
+
+	- if renderMode == 'mono'
+		? rootClass = {':class': '[...provide.componentClasses("' + self.name() + '", mods)]'}
+
 	- rootAttrs = { &
 		class: 'i-block-helper',
 		'v-async-target': '!ssrRendering',
-		...(cacheClass ?
-			{'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'} :
-			{':class': '[...provide.componentClasses("' + self.name() + '", mods)]'}
-		)
+		...rootClass
 	} .
 
 	- if teleport
@@ -274,3 +280,6 @@
 
 						- else
 							+= self.renderRootContent()
+
+- template mono() extends ['i-block'].index
+	- renderMode = 'mono'
