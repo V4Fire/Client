@@ -10,6 +10,7 @@ import delay from 'delay';
 import type { Page, JSHandle, BrowserContext, ElementHandle } from 'playwright';
 
 import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
+import type { ExtractFromJSHandle } from 'tests/helpers/mock';
 
 import type { SetupOptions } from 'tests/helpers/utils/interface';
 
@@ -31,9 +32,9 @@ export default class Utils {
 	 * h.utils.waitForFunction(imgNode, (ctx, imgUrl) => ctx.src === imgUrl, imgUrl)
 	 * ```
 	 */
-	static waitForFunction<ARGS extends any[] = any[]>(
-		ctx: ElementHandle,
-		fn: (this: any, ctx: any, ...args: ARGS) => unknown,
+	static waitForFunction<ARGS extends any[] = any[], CTX extends JSHandle = JSHandle>(
+		ctx: CTX,
+		fn: (this: any, ctx: ExtractFromJSHandle<CTX>, ...args: ARGS) => unknown,
 		...args: ARGS
 	): Promise<void> {
 		const
@@ -248,9 +249,9 @@ export default class Utils {
 	 * @param fn
 	 * @param args
 	 */
-	waitForFunction<ARGS extends any[] = any[]>(
-		ctx: ElementHandle,
-		fn: (this: any, ctx: any, ...args: ARGS) => unknown,
+	waitForFunction<ARGS extends any[] = any[], CTX extends JSHandle = JSHandle>(
+		ctx: CTX,
+		fn: (this: any, ctx: ExtractFromJSHandle<CTX>, ...args: ARGS) => unknown,
 		...args: ARGS
 	): Promise<void> {
 		return Utils.waitForFunction(ctx, fn, ...args);
