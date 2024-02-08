@@ -25,7 +25,6 @@ import AppClass, {
 import flags from 'core/init/flags';
 
 import type { InitAppOptions, App } from 'core/init/interface';
-import {renderToString} from "vue/server-renderer";
 
 /**
  * A factory for creating a semaphore over application initialization
