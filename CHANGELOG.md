@@ -27,6 +27,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed errors when using the tree as a functional component `bTree`
 
+#### :house: Internal
+
+* Create `mono` template in `i-block` for dynamic mono components. It disables
+vnode attributes hoisting.
+
 ## v4.0.0-beta.54 (2024-02-06)
 
 #### :bug: Bug Fix

@@ -39,6 +39,14 @@
 	- ssrRendering = true
 
 	/**
+	 * Should be set to 'component' for components with runtime,
+	 * for dynamic mono components use 'mono'.
+	 * If set to 'component' some optimizations will be applied to hoist
+	 * vnode attributes.
+	 */
+	- renderMode = 'component'
+
+	/**
 	 * Returns the component name
 	 * @param {string} [name] - the custom template name
 	 */
@@ -180,10 +188,16 @@
 		- else
 			? rootAttrs[':class'] = value
 
+
+	- rootClass = {'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'}
+
+	- if renderMode == 'mono'
+		? rootClass = {':class': '[...provide.componentClasses("' + self.name() + '", mods)]'}
+
 	- rootAttrs = { &
 		class: 'i-block-helper',
-		'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]',
-		'v-async-target': '!ssrRendering'
+		'v-async-target': '!ssrRendering',
+		...rootClass
 	} .
 
 	- if teleport
@@ -266,3 +280,6 @@
 
 						- else
 							+= self.renderRootContent()
+
+- template mono() extends ['i-block'].index
+	- renderMode = 'mono'
