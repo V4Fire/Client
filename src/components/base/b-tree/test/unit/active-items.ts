@@ -75,7 +75,7 @@ test.describe('<b-tree> active items API', () => {
 
 			test('the `active` prop should accept scalar value', async ({page}) => {
 				const tree = await renderTree(page, {items, attrs: {active: 0, multiple: true}});
-				test.expect(await evaluateActive(tree)).toEqual([0]);
+				await test.expect(evaluateActive(tree)).resolves.toEqual([0]);
 			});
 
 			test('the `active` prop should accept `Array`', async ({page}) => {
