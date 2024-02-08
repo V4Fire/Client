@@ -36,20 +36,21 @@
 					}
 				})
 			.
-				< .&__item-wrapper
-					< .&__marker
-						- block fold
-							< template v-if = hasChildren(el)
-								+= self.slot('fold', {':params': 'getFoldProps(el)'})
-									< .&__fold :v-attrs = getFoldProps(el)
+				- block itemWrapper
+					< .&__item-wrapper
+						< .&__marker
+							- block fold
+								< template v-if = hasChildren(el)
+									+= self.slot('fold', {':params': 'getFoldProps(el)'})
+										< .&__fold :v-attrs = getFoldProps(el)
 
-					- block item
-						+= self.slot('default', {':item': 'getItemProps(el, i)'})
-							< component.&__item &
-								v-if = item |
-								:is = Object.isFunction(item) ? item(el, i) : item |
-								:v-attrs = getItemProps(el, i)
-							.
+						- block item
+							+= self.slot('default', {':item': 'getItemProps(el, i)'})
+								< component.&__item &
+									v-if = item |
+									:is = Object.isFunction(item) ? item(el, i) : item |
+									:v-attrs = getItemProps(el, i)
+								.
 
 				- block children
 					< .&__children v-if = hasChildren(el) | v-async-target
