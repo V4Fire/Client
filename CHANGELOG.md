@@ -26,7 +26,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed errors when using the tree as a functional component `bTree`
-* Fixed move to the closest step in `heightMode = content` `b-bottom-slide`
+* Fixed move to the closest step in `heightMode = content` `bBottomSlide`
+* Added cleanup of hydrated data upon component destroying `iStaticPage`
 
 #### :house: Internal
 
