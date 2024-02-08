@@ -21,7 +21,7 @@ test.describe('core/component/directives/ref', () => {
 		await Component.waitForComponentTemplate(page, 'b-directives-ref-dummy');
 	});
 
-	test.describe('ref should be correctly resolved', () => {
+	test.describe('the ref should be correctly resolved', () => {
 		const stages = [
 			'all components are regular',
 			'all components are functional',
@@ -61,19 +61,19 @@ test.describe('core/component/directives/ref', () => {
 
 	async function assertRefsAreCorrect(target: JSHandle<bDirectivesRefDummy>) {
 		const refs = await target.evaluate((ctx) => {
-			const getRefId = (refName: RefKey): CanUndef<string> => {
-				const
-					refVal = ctx.unsafe.$refs[refName],
-					ref = Array.isArray(refVal) ? refVal[0] : refVal;
-
-				return ref?.$el?.id;
-			};
-
 			return [
 				getRefId('component'),
 				getRefId('slotComponent'),
 				getRefId('nestedSlotComponent')
 			];
+
+			function getRefId(refName: RefKey): CanUndef<string> {
+				const
+					refVal = ctx.unsafe.$refs[refName],
+					ref = Array.isArray(refVal) ? refVal[0] : refVal;
+
+				return ref?.$el?.id;
+			}
 		});
 
 		test.expect(refs).toEqual(['main', 'slot', 'nested']);

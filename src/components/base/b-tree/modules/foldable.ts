@@ -11,14 +11,14 @@ import SyncPromise from 'core/promise/sync';
 import { wait } from 'components/super/i-data/i-data';
 import type bTree from 'components/base/b-tree/b-tree';
 
-export default abstract class Foldable {
+export default abstract class iFoldable {
 	/**
-	 * Stores values of unfolded items
+	 * A set of values for unfolded items
 	 */
 	abstract unfoldedStore: Set<bTree['Item']['value']>;
 
-	/** {@link Foldable.prototype.fold} */
-	static fold(ctx: bTree, value?: unknown): Promise<boolean> {
+	/** {@link iFoldable.prototype.fold} */
+	static fold(ctx: bTree, itemValue?: unknown): Promise<boolean> {
 		if (arguments.length === 1) {
 			const values: Array<Promise<boolean>> = [];
 
@@ -30,16 +30,17 @@ export default abstract class Foldable {
 				.then((res) => res.some((value) => value === true));
 		}
 
-		const isFolded = this.getFoldedModByValue(ctx, value) === 'true';
+		const
+			isFolded = this.getFoldedModByValue(ctx, itemValue) === 'true';
 
 		if (isFolded) {
 			return SyncPromise.resolve(false);
 		}
 
-		return this.toggleFold(ctx, value, true);
+		return this.toggleFold(ctx, itemValue, true);
 	}
 
-	/** {@link Foldable.prototype.unfold} */
+	/** {@link iFoldable.prototype.unfold} */
 	static unfold(ctx: bTree, value?: unknown): Promise<boolean> {
 		const values: Array<Promise<boolean>> = [];
 
@@ -86,31 +87,31 @@ export default abstract class Foldable {
 			.then((res) => res.some((value) => value === true));
 	}
 
-	/** {@link Foldable.prototype.toggleFold} */
-	static toggleFold(ctx: bTree, value: unknown, folded?: boolean): Promise<boolean> {
+	/** {@link iFoldable.prototype.toggleFold} */
+	static toggleFold(ctx: bTree, itemValue: unknown, folded?: boolean): Promise<boolean> {
 		const {
 			unsafe,
 			unsafe: {top}
 		} = ctx;
 
 		const
-			oldVal = this.getFoldedModByValue(ctx, value) === 'true',
+			oldVal = this.getFoldedModByValue(ctx, itemValue) === 'true',
 			newVal = folded ?? !oldVal;
 
 		if (newVal) {
-			ctx.unfoldedStore.delete(value);
+			ctx.unfoldedStore.delete(itemValue);
 
 		} else {
-			ctx.unfoldedStore.add(value);
+			ctx.unfoldedStore.add(itemValue);
 		}
 
 		const
-			el = top.unsafe.findItemElement(value),
-			item = unsafe.values.getItem(value);
+			el = top.unsafe.findItemElement(itemValue),
+			item = unsafe.values.getItem(itemValue);
 
 		if (oldVal !== newVal && el != null && item != null && unsafe.hasChildren(item)) {
 			unsafe.block?.setElementMod(el, 'node', 'folded', newVal);
-			top.emit('fold', el, item, newVal);
+			top.emit(newVal ? 'fold' : 'unfold', el, item);
 			return SyncPromise.resolve(true);
 		}
 
@@ -118,17 +119,17 @@ export default abstract class Foldable {
 	}
 
 	/**
-	 * Returns a value of the `folded` modifier from an element by the specified identifier
+	 * Returns the value of the `folded` modifier from an item by its value
 	 *
 	 * @param ctx
-	 * @param value
+	 * @param itemValue
 	 */
-	protected static getFoldedModByValue(ctx: bTree, value: unknown): CanUndef<string> {
+	protected static getFoldedModByValue(ctx: bTree, itemValue: unknown): CanUndef<string> {
 		const
 			{unsafe} = ctx;
 
 		const
-			target = unsafe.findItemElement(value);
+			target = unsafe.findItemElement(itemValue);
 
 		if (target == null) {
 			return;
@@ -138,37 +139,37 @@ export default abstract class Foldable {
 	}
 
 	/**
-	 * Folds the specified item.
-	 * If the method is called without an element passed, all tree sibling elements will be folded.
+	 * Folds the specified item by its value.
+	 * If the method is called without an item being passed, all sibling elements in the tree will be folded.
 	 *
-	 * @param [_value]
+	 * @param [_itemValue]
 	 */
 	@wait('ready')
-	fold(_value?: unknown): Promise<boolean> {
+	fold(_itemValue?: unknown): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
-	 * Unfolds the specified item.
-	 * If method is called on nested item, all parent items will be unfolded.
-	 * If the method is called without an element passed, all tree sibling elements will be unfolded.
+	 * Unfolds the specified item by its value.
+	 * If the method is called on a nested item, all parent items will be unfolded.
+	 * If the method is called without an item being passed, all sibling elements in the tree will be unfolded.
 	 *
-	 * @param [_value]
+	 * @param [_itemValue]
 	 */
 	@wait('ready')
-	unfold(_value?: unknown): Promise<boolean> {
+	unfold(_itemValue?: unknown): Promise<boolean> {
 		return Object.throw();
 	}
 
 	/**
-	 * Toggles the passed item fold value
+	 * Toggles the folded status of an item with the specified value
 	 *
-	 * @param _value
-	 * @param [_folded] - if value is not passed the current state will be toggled
+	 * @param _itemValue
+	 * @param [_folded] - if an item value is not passed, the method will toggle the current state.
 	 * @emits `fold(target: HTMLElement, item: `[[Item]]`, value: boolean)`
 	 */
 	@wait('ready')
-	toggleFold(_value: unknown, _folded?: boolean): Promise<boolean> {
+	toggleFold(_itemValue: unknown, _folded?: boolean): Promise<boolean> {
 		return Object.throw();
 	}
 }

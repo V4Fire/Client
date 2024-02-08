@@ -11,7 +11,40 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.53 (2023-01-31)
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* `bTree`:
+  * Now all nested trees are rendered as functional
+  * Now, by default, folded items are not rendered
+
+#### :rocket: New Feature
+
+* Added new values for the `lazyRender` prop `bTree`
+
+#### :bug: Bug Fix
+
+* Fixed errors when using the tree as a functional component `bTree`
+
+#### :house: Internal
+
+* Create `mono` template in `i-block` for dynamic mono components. It disables
+vnode attributes hoisting.
+
+## v4.0.0-beta.54 (2024-02-06)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with memory leaks in `vdom.render` `core/component/engines/vue3`
+* Changed `$parent` property to getter in `i-block`. This fixes the incorrect functional parent for a regular component.
+* Changed component deactivation behavior: the component is now deactivated before the deactivation hooks are called `components/super/i-block/modules/activation`
+
+#### :house: Internal
+
+* The entry threshold for counting an element as visible is set to the minimum value `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.53 (2024-01-31)
 
 #### :rocket: New Feature
 
@@ -21,7 +54,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue with memory leaks in `b-virtual-scroll`
 
-## v4.0.0-beta.52 (2023-01-31)
+## v4.0.0-beta.52 (2024-01-31)
 
 #### :boom: Breaking Change
 
