@@ -25,6 +25,7 @@ import AppClass, {
 import flags from 'core/init/flags';
 
 import type { InitAppOptions, App } from 'core/init/interface';
+import {renderToString} from "vue/server-renderer";
 
 /**
  * A factory for creating a semaphore over application initialization
@@ -78,10 +79,13 @@ function createAppInitializer() {
 
 			app.context = rootComponent;
 
+			let
+				ssrContent: string,
+				hydratedData: string;
+
 			try {
-				const
-					ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
-					hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+				ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, '');
+				hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
 
 				return {
 					content: ssrContent + hydratedData,
@@ -89,6 +93,8 @@ function createAppInitializer() {
 				};
 
 			} finally {
+				ssrContent = '';
+				hydratedData = '';
 				destroyApp(appId);
 			}
 		}
