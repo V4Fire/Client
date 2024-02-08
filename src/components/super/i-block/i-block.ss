@@ -39,10 +39,10 @@
 	- ssrRendering = true
 
 	/**
-	 * Should be set to 'component' for components with runtime,
-	 * for dynamic mono components use 'mono'.
-	 * If set to 'component' some optimizations will be applied to hoist
-	 * vnode attributes.
+	 * Defines the rendering mode of the template.
+	 * For regular components, the default value of `'component'` can be used,
+	 * whereas for templates that are rendered as a separate render function,
+	 * rather than as a component, the value `'mono'` should be used.
 	 */
 	- renderMode = 'component'
 

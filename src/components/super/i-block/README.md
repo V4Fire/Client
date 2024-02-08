@@ -487,9 +487,13 @@ If set to false, the component will generate a special markup to allow it to not
 
 #### [renderMode = `component`]
 
-If set to `'component'` some optimizations will be applied to hoist vnode attributes.
-If your template is used with `v-render` then renderMode must be set to `'mono'` or
-you can extend from `mono` template in `i-block` namespace:
+The constant defines the rendering mode of the template.
+For regular components, the default value of `'component'` can be used,
+whereas for templates that are rendered as a separate render function,
+rather than as a component, the value `'mono'` should be used.
+
+Also, if you are creating a template that you want to use separately of a component,
+you can simply inherit from `ё`['i-block'].mono`.
 
 ```
 - namespace [%fileName%]
