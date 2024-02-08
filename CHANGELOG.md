@@ -26,6 +26,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed errors when using the tree as a functional component `bTree`
+* Fixed move to closest step in `heightMode = content` `b-bottom-slide`
 
 #### :house: Internal
 
