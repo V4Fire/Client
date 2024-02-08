@@ -127,7 +127,7 @@ test.describe('<b-tree> foldable API', () => {
 				return log;
 			});
 
-			test.expect(await changesLogPromise)
+			await test.expect(changesLogPromise).resolves
 				.toEqual([
 					[{label: 'Bar', value: 1}],
 					[{label: 'Bar', value: 1}]
