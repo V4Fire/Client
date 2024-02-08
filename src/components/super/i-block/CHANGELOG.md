@@ -13,8 +13,8 @@ Changelog
 
 #### :house: Internal
 
-* Create `i-block.tpl` template for dynamic mono components. It disables
-caching of the `:class` prop.
+* Create `mono` template in `i-block` for dynamic mono components. It disables
+vnode attributes hoisting.
 
 ## v4.0.0-beta.54 (2024-02-06)
 
