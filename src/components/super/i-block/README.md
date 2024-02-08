@@ -485,6 +485,21 @@ If set to false, the component will generate a special markup to allow it to not
   - ssrRendering = false
 ```
 
+#### [renderMode = `component`]
+
+If set to `'component'` some optimizations will be applied to hoist vnode attributes.
+If your template is used with `v-render` then renderMode must be set to `'mono'` or
+you can extend from `mono` template in `i-block` namespace:
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].mono
+  /// ...
+```
+
 ### Methods
 
 #### slot
