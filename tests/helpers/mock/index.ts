@@ -163,7 +163,7 @@ export async function createMockFn(
  * console.log(await agent.results);
  * ```
  */
-export async function injectMockIntoPage(
+async function injectMockIntoPage(
 	page: Page,
 	fn: (...args: any[]) => any,
 	...args: any[]
