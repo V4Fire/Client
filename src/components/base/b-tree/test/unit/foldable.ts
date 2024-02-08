@@ -79,7 +79,7 @@ test.describe('<b-tree> foldable API', () => {
 
 	test.describe('when items change', () => {
 		const
-			testFoldedModIs = createExpectMod('folded');
+			expectFolded = createExpectMod('folded');
 
 		const defaultItems = [
 			{value: 'bar'},
@@ -144,7 +144,7 @@ test.describe('<b-tree> foldable API', () => {
 				ctx.items = newItems;
 			}, newItems);
 
-			await testFoldedModIs(false, await waitForItemsWithValues(page, tree, [1, 2]));
+			await expectFolded(false, await waitForItemsWithValues(page, tree, [1, 2]));
 		});
 
 		test('the unfolded node should become folded after change', async ({page}) => {
@@ -154,13 +154,13 @@ test.describe('<b-tree> foldable API', () => {
 
 			await test.expect(tree.evaluate((ctx) => ctx.unfold('foo'))).toBeResolvedTo(true);
 
-			await testFoldedModIs(false, await waitForItemsWithValues(page, tree, ['foo']));
+			await expectFolded(false, await waitForItemsWithValues(page, tree, ['foo']));
 
 			await tree.evaluate((ctx, newItems) => {
 				ctx.items = newItems;
 			}, newItems);
 
-			await testFoldedModIs(true, await waitForItemsWithValues(page, tree, [1]));
+			await expectFolded(true, await waitForItemsWithValues(page, tree, [1]));
 		});
 	});
 
