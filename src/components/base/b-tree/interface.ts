@@ -11,25 +11,27 @@ import type { UnsafeIData } from 'components/super/i-data/i-data';
 import type bTree from 'components/base/b-tree/b-tree';
 import type { Item as Super } from 'components/traits/i-active-items/i-active-items';
 
+export type LazyRenderMode = 'all' | 'folded' | 'items';
+export type LazyRender = boolean | LazyRenderMode;
+
 export interface Item extends Super {
 	/**
-	 * Item label text
+	 * The label text for the item
 	 */
 	label?: string;
 
 	/**
-	 * Parent element value
-	 * (for nested items)
+	 * The value of the parent element (for nested items)
 	 */
 	parentValue?: this['value'];
 
 	/**
-	 * Nested items
+	 * The nested items for this item
 	 */
 	children?: Item[];
 
 	/**
-	 * Folding flag
+	 * A flag indicating whether the item is folded or not
 	 */
 	folded?: boolean;
 }

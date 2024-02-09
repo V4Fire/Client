@@ -69,7 +69,7 @@ export default class Values extends Friend {
 
 	/**
 	 * Initializes component values
-	 * @param [itemsChanged] - true, if the method is invoked after items changed
+	 * @param [itemsChanged] - set to true, if the method is invoked after items changed
 	 */
 	init(itemsChanged: boolean = false): void {
 		const
@@ -78,7 +78,7 @@ export default class Values extends Friend {
 
 		let
 			hasActive = false,
-			activeItem;
+			activeItem: Nullable<Item>;
 
 		if (ctx.topProp == null) {
 			this.itemKeyPrefix++;

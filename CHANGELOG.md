@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.55 (2024-02-09)
+## v4.0.0-beta.56 (2024-02-09)
 
 #### :rocket: New Feature
 
@@ -24,6 +24,28 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house:  Internal
 
 * Added tests for `b-virtual-scroll-new` `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :boom: Breaking Change
+
+* `bTree`:
+  * Now all nested trees are rendered as functional
+  * Now, by default, folded items are not rendered
+
+#### :rocket: New Feature
+
+* Added new values for the `lazyRender` prop `bTree`
+
+#### :bug: Bug Fix
+
+* Fixed errors when using the tree as a functional component `bTree`
+* Fixed move to the closest step in `heightMode = content` `bBottomSlide`
+* Added cleanup of hydrated data upon component destroying `iStaticPage`
+
+#### :house: Internal
+
+* Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
 
 ## v4.0.0-beta.54 (2024-02-06)
 
