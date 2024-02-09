@@ -9,12 +9,12 @@ By default, the engine for the web is supported.
 The engine needs to be passed to the `themeManager` constructor.
 
 ```ts
-import WebEngine from 'components/super/i-static-page/modules/theme/system-theme-extractor/engines/web/engine';
+import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
 
 class iRoot extends iStaticPage {
   @system<iStaticPage>((o) => themeManagerFactory(
     // ...other required parameters for themeManager
-    new WebEngine(o)
+    new SystemThemeExtractorWeb(o)
   ))
 
   readonly theme: CanUndef<ThemeManager>;

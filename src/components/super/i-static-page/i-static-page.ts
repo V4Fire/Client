@@ -19,7 +19,7 @@ import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
 import * as cookie from 'core/kv-storage/engines/cookie';
-import WebEngine from 'components/super/i-static-page/modules/theme/system-theme-extractor/engines/web/engine';
+import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
 
 import {
 
@@ -102,7 +102,7 @@ export default abstract class iStaticPage extends iPage {
 		o,
 		{
 			themeStorageEngine: cookie.syncLocalStorage,
-			systemThemeExtractor: new WebEngine(o)
+			systemThemeExtractor: new SystemThemeExtractorWeb(o)
 		}
 	))
 
