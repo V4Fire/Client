@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.65.0 (2023-02-09)
+
+#### :rocket: New Feature
+
+* New test APIs:
+  * Request interceptor `tests/helpers/network/interceptor`;
+  * ComponentObject `tests/helpers/component-object`;
+  * Spy and mock `tests/helpers/mock`;
+  * Component.createComponentInDummy `tests/helpers/component`.
+
+#### :house:  Internal
+
+* Added tests for `b-virtual-scroll-new` from v4 branch
+
 ## v3.64.0 (2023-01-30)
 
 #### :rocket: New Feature
