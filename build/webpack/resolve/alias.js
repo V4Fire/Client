@@ -22,12 +22,7 @@ const
 const aliases = {
 	'@super': resolve.rootDependencies[0],
 
-	// This is required for using jest-mock,
-	// otherwise jest-mock pulls various Node.js modules into the browser environment.
-	'graceful-fs': false,
-	path: false,
-	picomatch: false,
-	url: false,
+
 
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
 		const
@@ -50,6 +45,17 @@ if (pzlr.designSystem != null) {
 
 if (pzlr.assets?.['sprite'] != null) {
 	aliases.sprite = src.assets(pzlr.assets.sprite);
+}
+
+if (webpack.ssr) {
+	Object.assign(aliases, {
+		// This is required for using jest-mock,
+		// otherwise jest-mock pulls various Node.js modules into the browser environment.
+		'graceful-fs': false,
+		path: false,
+		picomatch: false,
+		url: false
+	});
 }
 
 module.exports = aliases;
