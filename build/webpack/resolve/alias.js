@@ -47,7 +47,7 @@ if (pzlr.assets?.['sprite'] != null) {
 	aliases.sprite = src.assets(pzlr.assets.sprite);
 }
 
-if (webpack.ssr) {
+if (!webpack.ssr) {
 	Object.assign(aliases, {
 		// This is required for using jest-mock,
 		// otherwise jest-mock pulls various Node.js modules into the browser environment.
