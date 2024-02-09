@@ -52,4 +52,7 @@ export default class pV4ComponentsDemo extends iStaticPage {
 		console.time('Render');
 		//#endunless
 	}
+
+	@field()
+	activeTab: number = 0;
 }
