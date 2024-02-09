@@ -11,16 +11,19 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-??-??)
-
-#### :boom: Breaking Change
-
-* Major update to `b-virtual-scroll`. Please see the component readme for changes and migration guide `components/base/b-virtual-scroll`.
+## v4.0.0-beta.55 (2024-02-09)
 
 #### :rocket: New Feature
 
-* Added new testing API `ComponentObject` that allows for easier interaction with components in the testing environment `test/helpers/component-object`.
-* Added new testing API for mocking and spying on functions at runtime `test/helpers/mock`.
+* New test APIs:
+  * Request interceptor `tests/helpers/network/interceptor`;
+  * ComponentObject `tests/helpers/component-object`;
+  * Spy and mock `tests/helpers/mock`;
+  * Component.createComponentInDummy `tests/helpers/component`.
+
+#### :house:  Internal
+
+* Added tests for `b-virtual-scroll-new` `components/base/b-virtual-scroll-new`
 
 ## v4.0.0-beta.54 (2024-02-06)
 
