@@ -6,15 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import iVirtualScrollProps from 'base/b-virtual-scroll-new/props';
 
 import type bVirtualScrollNew from 'base/b-virtual-scroll-new/b-virtual-scroll-new';
 import type { MountedChild } from 'base/b-virtual-scroll-new/interface';
 
-import { bVirtualScrollAsyncGroup, componentEvents } from 'base/b-virtual-scroll-new/const';
+import { bVirtualScrollAsyncGroup, componentEvents, componentLocalEvents } from 'base/b-virtual-scroll-new/const';
 import { isAsyncReplaceError } from 'base/b-virtual-scroll-new/modules/helpers';
 
 import iData, { component } from 'super/i-data/i-data';
+
+const $$ = symbolGenerator();
 
 /**
  * A class that provides an API to handle events emitted by the {@link bVirtualScroll} component.
@@ -89,6 +92,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 */
 	protected onRenderDone(this: bVirtualScrollNew): void {
 		this.componentEmitter.emit(componentEvents.renderDone);
+		this.localEmitter.emit(componentLocalEvents.renderCycleDone);
 	}
 
 	/**
@@ -97,15 +101,29 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 */
 	protected onLifecycleDone(this: bVirtualScrollNew): void {
 		const
-			state = this.getVirtualScrollState();
+			state = this.getVirtualScrollState(),
+			isDomInsertInProgress = this.componentInternalState.getIsDomInsertInProgress();
 
 		if (state.isLifecycleDone) {
 			return;
 		}
 
-		this.slotsStateController.doneState();
-		this.componentInternalState.setIsLifecycleDone(true);
-		this.componentEmitter.emit(componentEvents.lifecycleDone);
+		const handler = () => {
+			this.slotsStateController.doneState();
+			this.componentInternalState.setIsLifecycleDone(true);
+			this.componentEmitter.emit(componentEvents.lifecycleDone);
+		};
+
+		if (isDomInsertInProgress) {
+			this.localEmitter.once(componentLocalEvents.renderCycleDone, handler, {
+				group: bVirtualScrollAsyncGroup,
+				label: $$.waitUntilRenderDone
+			});
+
+			return;
+		}
+
+		return handler();
 	}
 
 	/**

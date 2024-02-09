@@ -40,6 +40,7 @@ export function createInitialState(): VirtualScrollState {
  */
 export function createPrivateInitialState(): PrivateComponentState {
 	return {
-		dataOffset: 0
+		dataOffset: 0,
+		isDomInsertInProgress: false
 	};
 }

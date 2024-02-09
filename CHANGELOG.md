@@ -11,6 +11,24 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.65.0 (2023-02-09)
+
+#### :rocket: New Feature
+
+* New test APIs:
+  * Request interceptor `tests/helpers/network/interceptor`;
+  * ComponentObject `tests/helpers/component-object`;
+  * Spy and mock `tests/helpers/mock`;
+  * Component.createComponentInDummy `tests/helpers/component`.
+
+ #### :bug: Bug Fix
+
+* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/base/b-virtual-scroll-new`
+
+#### :house:  Internal
+
+* Added tests for `b-virtual-scroll-new` from v4 branch
+
 ## v3.64.0 (2023-01-30)
 
 #### :rocket: New Feature
@@ -57,7 +75,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added theme modifier calculation to components `components/super/i-block`
+* Added theme modifier calculation to components `super/i-block`
 * Added `darkThemeName` `lightThemeName` stylus function `build/stylus/ds`
 
 ## v3.61.0 (2023-10-12)
@@ -75,7 +93,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added possibility to specify paths with alias to `@context` directive `build/monic`
 * Added possibility to load icons from design-system `traits/i-icon` `icon/b-icon`
 * Added `detectUserPreferences` parameter to `theme` config `config`
-* Added possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
+* Added possibility to detect the theme based on user system settings `super/i-static-page/modules/theme/theme-manager`
 
 ## v3.59.1 (2023-09-22)
 

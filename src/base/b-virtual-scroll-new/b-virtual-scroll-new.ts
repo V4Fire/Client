@@ -402,8 +402,11 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			});
 		});
 
+		this.componentInternalState.setIsDomInsertInProgress(true);
+
 		this.async.requestAnimationFrame(() => {
 			this.$refs.container.appendChild(fragment);
+			this.componentInternalState.setIsDomInsertInProgress(false);
 
 			this.onDomInsertDone();
 			this.onRenderDone();

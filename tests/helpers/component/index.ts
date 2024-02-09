@@ -13,6 +13,11 @@ import { expandedStringify } from 'core/prelude/test-env/components/json';
 import type iBlock from 'super/i-block/i-block';
 
 import BOM, { WaitForIdleOptions } from 'tests/helpers/bom';
+import type bDummy from 'dummies/b-dummy/b-dummy';
+import type { ComponentInDummy } from 'tests/helpers/component/interface';
+
+// Temporary import until v4v4 migration
+import type { VNodeDescriptor } from 'base/b-virtual-scroll-new/interface';
 
 /**
  * Class provides API to work with components on a page
@@ -277,6 +282,71 @@ export default class Component {
 		opts?: RenderOptions
 	): Promise<JSHandle<T>> {
 		return Component.createComponent(page, componentName, scheme, opts);
+	}
+
+	/**
+	 * Creates a component inside the `b-dummy` component and uses the `field-like` property of `b-dummy`
+	 * to pass props to the inner component.
+	 *
+	 * This function can be useful when you need to test changes to component props.
+	 * Since component props are readonly properties, you cannot change them directly;
+	 * changes are only available through the parent component. This is why the `b-dummy` wrapper is created,
+	 * and the props for the component you want to render are passed as references to the property of `b-dummy`.
+	 *
+	 * The function returns a `handle` to the created component (not to `b-dummy`)
+	 * and adds a method and property for convenience:
+	 *
+	 * - `update` - a method that allows you to modify the component's props.
+	 *
+	 * - `dummy` - the `handle` of the `b-dummy` component.
+	 *
+	 * @param page
+	 * @param componentName
+	 * @param params
+	 */
+	static async createComponentInDummy<T extends iBlock>(
+		page: Page,
+		componentName: string,
+		params: RenderComponentsVnodeParams
+	): Promise<ComponentInDummy<T>> {
+		const dummy = await this.createComponent<bDummy>(page, 'b-dummy');
+
+		const update = async (props, mixInitialProps = false) => {
+			await dummy.evaluate((ctx, [name, props, mixInitialProps]) => {
+				const parsed: RenderComponentsVnodeParams = globalThis.expandedParse(props);
+
+				ctx.testComponentAttrs = mixInitialProps ?
+					Object.assign(ctx.testComponentAttrs, parsed.attrs) :
+					parsed.attrs ?? {};
+
+
+				if (parsed.children) {
+					ctx.testComponentSlots = compileChild();
+				}
+
+				ctx.testComponent = name;
+
+				function compileChild() {
+					const
+						slots = Object.entries(parsed.children ?? {}),
+						// @ts-expect-error (misstype)
+						vnodes = slots.map(([slotName, child]) => ctx.unsafe.$createElement('template', {attrs: {slot: slotName}}, child ?? []));
+
+					return vnodes;
+				}
+
+			}, <const>[componentName, expandedStringify(props), mixInitialProps]);
+		};
+
+		await update(params);
+		const component = await dummy.evaluateHandle((ctx) => ctx.unsafe.$refs.testComponent);
+
+		Object.assign(component, {
+			update,
+			dummy
+		});
+
+		return <ComponentInDummy<T>>component;
 	}
 
 	/**
