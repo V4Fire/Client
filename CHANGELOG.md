@@ -21,6 +21,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Spy and mock `tests/helpers/mock`;
   * Component.createComponentInDummy `tests/helpers/component`.
 
+ #### :bug: Bug Fix
+
+* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/base/b-virtual-scroll-new`
+
 #### :house:  Internal
 
 * Added tests for `b-virtual-scroll-new` from v4 branch
