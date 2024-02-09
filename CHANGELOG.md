@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.?? (2024-??-??)
 
 #### :house: Internal
 
@@ -29,7 +29,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * The entry threshold for counting an element as visible is set to the minimum value `components/base/b-virtual-scroll-new`
 
-## v4.0.0-beta.53 (2023-01-31)
+## v4.0.0-beta.53 (2024-01-31)
 
 #### :rocket: New Feature
 
