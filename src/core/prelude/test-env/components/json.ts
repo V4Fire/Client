@@ -11,11 +11,49 @@ const fnEvalSymbol = Symbol('Function for eval');
 export const
 	fnAlias = 'FN__',
 	fnEvalAlias = 'FNEVAL__',
+	fnMockAlias = 'FNMOCK__',
 	regExpAlias = 'REGEX__';
 
 export function evalFn<T extends Function>(func: T): T {
 	func[fnEvalSymbol] = true;
 	return func;
+}
+
+/**
+ * Overrides the `toJSON` method of the provided object to return the identifier of a mock function
+ * within the page context.
+ *
+ * @example
+ * ```
+ * const val1 = JSON.stringify({val: 1}); // '{"val": 1}';
+ * const val2 = JSON.stringify(setSerializerAsMockFn({val: 1}, 'id')); // '"id"'
+ * ```
+ *
+ * This function is needed in order to extract a previously inserted mock function
+ * into the context of a browser page by its ID.
+ *
+ * @param obj - the object to override the `toJSON` method for.
+ * @param id - the identifier of the mock function.
+ * @returns The modified object with the overridden `toJSON` method.
+ */
+export function setSerializerAsMockFn<T extends object>(obj: T, id: string): T {
+	Object.assign(obj, {
+		toJSON: () => `${fnMockAlias}${id}`
+	});
+
+	return obj;
+}
+
+export function stringifyFunction(val: Function): string {
+	if (val[fnEvalSymbol] != null) {
+		return `${fnEvalAlias}${val.toString()}`;
+	}
+
+	return `${fnAlias}${val.toString()}`;
+}
+
+export function stringifyRegExp(regExp: RegExp): string {
+	return `${regExpAlias}${JSON.stringify({source: regExp.source, flags: regExp.flags})}`;
 }
 
 /**
@@ -27,15 +65,11 @@ export function evalFn<T extends Function>(func: T): T {
 export function expandedStringify(obj: object): string {
 	return JSON.stringify(obj, (_, val) => {
 		if (Object.isFunction(val)) {
-			if (val[fnEvalSymbol] != null) {
-				return `${fnEvalAlias}${val.toString()}`;
-			}
-
-			return `${fnAlias}${val.toString()}`;
+			return stringifyFunction(val);
 		}
 
 		if (Object.isRegExp(val)) {
-			return `${regExpAlias}${JSON.stringify({source: val.source, flags: val.flags})}`;
+			return stringifyRegExp(val);
 		}
 
 		return val;
@@ -61,6 +95,11 @@ export function expandedParse<T = JSONLikeValue>(str: string): T {
 				return Function(`return ${val.replace(fnEvalAlias, '')}`)()();
 			}
 
+			if (val.startsWith(fnMockAlias)) {
+				const mockId = val.replace(fnMockAlias, '');
+				return globalThis[mockId];
+			}
+
 			if (val.startsWith(regExpAlias)) {
 				const obj = JSON.parse(val.replace(regExpAlias, ''));
 				return new RegExp(obj.source, obj.flags);
@@ -70,3 +109,5 @@ export function expandedParse<T = JSONLikeValue>(str: string): T {
 		return val;
 	});
 }
+
+globalThis.expandedParse = expandedParse;
