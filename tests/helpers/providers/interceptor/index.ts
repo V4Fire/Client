@@ -134,10 +134,11 @@ export class RequestInterceptor {
 
 	/**
 	 * Returns the intercepted request
-	 * @param index - the index of the request (starting from 0)
+	 * @param at - the index of the request (starting from 0)
 	 */
-	request(index: number): CanUndef<InterceptedRequest> {
-		const request: CanUndef<Request> = this.calls[index]?.[0]?.request();
+	request(at: number): CanUndef<InterceptedRequest> {
+		// eslint-disable-next-line no-restricted-syntax
+		const request: CanUndef<Request> = this.calls.at(at)?.[0]?.request();
 
 		if (request == null) {
 			return;
