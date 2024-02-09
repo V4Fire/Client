@@ -37,7 +37,9 @@ package('p-v4-components-demo')
 
 		'p-v4-dynamic-page1',
 		'p-v4-dynamic-page2',
-		'p-v4-dynamic-page3'
+		'p-v4-dynamic-page3',
+
+		'b-fake'
 	)
 
 	.libs(
