@@ -12,6 +12,7 @@
     - [How to View the Parameters of Intercepted Requests?](#how-to-view-the-parameters-of-intercepted-requests)
     - [How to Remove Previously Set Request Handlers?](#how-to-remove-previously-set-request-handlers)
     - [How to Stop Intercepting Requests?](#how-to-stop-intercepting-requests)
+    - [How to Respond to Requests Using a Method Instead of Automatically?](#how-to-respond-to-requests-using-a-method-instead-of-automatically)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -158,6 +159,15 @@ const query = fromQueryString(new URL((<Route>providerCalls[0][0]).request().url
 
 // Logs the query parameters of the first intercepted request
 console.log(query);
+
+// Or a better way:
+
+const firstRequest = interceptor.request(0); // Get the first request
+// Or
+const lastRequest = interceptor.request(-1); // Get the last request
+
+// Get the query of the first request
+const firstRequestQuery = firstRequest?.query();
 ```
 
 ### How to Remove Previously Set Request Handlers?

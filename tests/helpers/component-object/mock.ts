@@ -45,9 +45,10 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 	 * @example
 	 * ```typescript
 	 * const component = new ComponentObject(page, 'b-virtual-scroll');
-	 * const spy = await component.spyOn('someModule.someMethod');
-	 *
 	 * await component.build();
+	 *
+	 * const spy = await component.spyOn('someModule.someMethod');
+	 * // ...
 	 * console.log(await spy.calls);
 	 * ```
 	 */
