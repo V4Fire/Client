@@ -12,9 +12,8 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		< .
-			< b-button @click = activeTab += 1
-				ActiveTab: {{activeTab}}
+		< b-button @click = activeTab += 1
+			ActiveTab: {{activeTab}}
 
 		< b-form @onSubmitStart = console.log('onSubmit')
 			< b-button :type = 'submit'
