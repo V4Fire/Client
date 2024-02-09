@@ -21,7 +21,7 @@ export interface SpyObject {
 	/**
 	 * The number of times the spy function has been called.
 	 */
-	readonly callsLength: Promise<number>;
+	readonly callsCount: Promise<number>;
 
 	/**
 	 * The arguments of the most recent call to the spy function.
