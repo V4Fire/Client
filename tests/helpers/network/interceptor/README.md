@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
-- [tests/helpers/providers/interceptor](#testshelpersprovidersinterceptor)
+- [tests/helpers/network/interceptor](#testshelpersnetworkinterceptor)
   - [Usage](#usage)
     - [How to Initialize a Request Interceptor?](#how-to-initialize-a-request-interceptor)
     - [How to Respond to a Request Once?](#how-to-respond-to-a-request-once)
@@ -15,7 +15,7 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# tests/helpers/providers/interceptor
+# tests/helpers/network/interceptor
 
 This API allows you to intercept any request and respond to it with custom data.
 

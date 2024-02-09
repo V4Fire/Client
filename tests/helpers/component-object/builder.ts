@@ -85,19 +85,6 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	}
 
 	/**
-	 * A shorthand for generating selectors for component elements.
-	 * {@link DOM.elNameSelectorGenerator}
-	 *
-	 * @example
-	 * ```typescript
-	 * this.elSelector('element') // .${componentName}__element
-	 * ```
-	 */
-	get elSelector(): (elName: string) => string {
-		return DOM.elNameSelectorGenerator(this.componentName);
-	}
-
-	/**
 	 * Public access to the reference of the component's `JSHandle`
 	 * @throws {@link ReferenceError} if trying to access a component that has not been built or picked
 	 */
@@ -112,7 +99,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	/**
 	 * Returns `true` if the component is built or picked
 	 */
-	get isBuilded(): boolean {
+	get isBuilt(): boolean {
 		return Boolean(this.componentStore);
 	}
 
@@ -130,6 +117,19 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			path.relative(`${process.cwd()}/src`, resolve.blockSync(this.componentName)!),
 			`/${this.componentName}.ts`
 		);
+	}
+
+	/**
+	 * A shorthand for generating selectors for component elements.
+	 * {@link DOM.elNameSelectorGenerator}
+	 *
+	 * @example
+	 * ```typescript
+	 * this.elSelector('element') // .${componentName}__element
+	 * ```
+	 */
+	elSelector(elName: string): string {
+		return DOM.elNameSelectorGenerator(this.componentName, elName);
 	}
 
 	/**
@@ -170,7 +170,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			Object.entries(this.children).forEach(([slotName, child]) => {
 				if (child == null || Object.isString(child) || Object.isFunction(child)) {
 					result[slotName] = Object.cast(child);
-					return
+					return;
 				}
 
 				if (Array.isArray(child)) {
@@ -181,7 +181,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 			});
 
 			return result;
-		}
+		};
 
 		if (options?.useDummy) {
 			const component = await Component.createComponentInDummy<COMPONENT>(this.pwPage, fullComponentName, {
@@ -266,7 +266,7 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * @param props - the props to set
 	 */
 	withProps(props: Dictionary): this {
-		if (!this.isBuilded) {
+		if (!this.isBuilt) {
 			Object.assign(this.props, props);
 		}
 

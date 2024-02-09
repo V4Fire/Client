@@ -27,7 +27,7 @@ export function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMoc
 			get: () => agent.evaluate((ctx) => ctx.mock.calls)
 		},
 
-		callsLength: {
+		callsCount: {
 			get: () => agent.evaluate((ctx) => ctx.mock.calls.length)
 		},
 
@@ -59,7 +59,7 @@ export function wrapAsSpy<T extends object>(agent: JSHandle<ReturnType<ModuleMoc
  *
  * // Access spy properties
  * console.log(await spy.calls);
- * console.log(await spy.callsLength);
+ * console.log(await spy.callsCount);
  * console.log(await spy.lastCall);
  * console.log(await spy.results);
  * ```
@@ -95,7 +95,7 @@ export async function createSpy<T extends JSHandle, ARGS extends any[]>(
  *
  * // Access spy properties
  * console.log(await spy.calls);
- * console.log(await spy.callsLength);
+ * console.log(await spy.callsCount);
  * console.log(await spy.lastCall);
  * console.log(await spy.results);
  * ```
@@ -123,7 +123,7 @@ export async function getSpy<T extends JSHandle>(
  *
  * // Access spy properties
  * console.log(await mockFn.calls);
- * console.log(await mockFn.callsLength);
+ * console.log(await mockFn.callsCount);
  * console.log(await mockFn.lastCall);
  * console.log(await mockFn.results);
  * ```
@@ -158,7 +158,7 @@ export async function createMockFn(
  *
  * // Access spy properties
  * console.log(await agent.calls);
- * console.log(await agent.callsLength);
+ * console.log(await agent.callsCount);
  * console.log(await agent.lastCall);
  * console.log(await agent.results);
  * ```
@@ -175,7 +175,7 @@ export async function injectMockIntoPage(
 	const agent = await page.evaluateHandle(([tmpFn, fnString, args]) =>
 		globalThis[tmpFn] = jestMock.mock((...fnArgs) =>
 			// eslint-disable-next-line no-new-func
-			Object.cast(new Function(`return ${fnString}`)()(...fnArgs, ...globalThis.expandedParse(args)))),
+			new Function(`return ${fnString}`)()(...fnArgs, ...globalThis.expandedParse(args))),
 	argsToProvide);
 
 	return {agent: wrapAsSpy(agent, {}), id: tmpFn};
