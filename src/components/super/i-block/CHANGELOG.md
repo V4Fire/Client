@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :house: Internal
+
+* Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
+
 ## v4.0.0-beta.54 (2024-02-06)
 
 #### :bug: Bug Fix

@@ -78,10 +78,13 @@ function createAppInitializer() {
 
 			app.context = rootComponent;
 
+			let
+				ssrContent: string,
+				hydratedData: string;
+
 			try {
-				const
-					ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, ''),
-					hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
+				ssrContent = (await renderToString(rootComponent)).replace(/<\/?ssr-fragment>/g, '');
+				hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
 
 				return {
 					content: ssrContent + hydratedData,
@@ -89,6 +92,8 @@ function createAppInitializer() {
 				};
 
 			} finally {
+				ssrContent = '';
+				hydratedData = '';
 				destroyApp(appId);
 			}
 		}

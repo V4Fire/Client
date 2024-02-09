@@ -485,6 +485,25 @@ If set to false, the component will generate a special markup to allow it to not
   - ssrRendering = false
 ```
 
+#### [renderMode = `component`]
+
+The constant defines the rendering mode of the template.
+For regular components, the default value of `'component'` can be used,
+whereas for templates that are rendered as a separate render function,
+rather than as a component, the value `'mono'` should be used.
+
+Also, if you are creating a template that you want to use separately of a component,
+you can simply inherit from `ё`['i-block'].mono`.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-block'|b as placeholder
+
+- template index() extends ['i-block'].mono
+  /// ...
+```
+
 ### Methods
 
 #### slot

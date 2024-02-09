@@ -161,7 +161,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 					const
 						spy = await component.getSpy((ctx) => ctx.unsafe.componentFactory.produceNodes);
 
-					await test.expect(spy.callsLength).resolves.toBe(8);
+					await test.expect(spy.callsCount).resolves.toBe(8);
 					await test.expect(component.childList).toHaveCount(providerChunkSize);
 				});
 			});

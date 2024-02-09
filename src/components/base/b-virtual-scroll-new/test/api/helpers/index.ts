@@ -14,8 +14,8 @@ import { createInitialState as createInitialStateObj } from 'components/base/b-v
 import type { MountedChild, ComponentItem, VirtualScrollState, MountedItem } from 'components/base/b-virtual-scroll-new/interface';
 import { componentEvents, componentObserverLocalEvents } from 'components/base/b-virtual-scroll-new/const';
 
-import { paginationHandler } from 'tests/helpers/providers/pagination';
-import { RequestInterceptor } from 'tests/helpers/providers/interceptor';
+import { paginationHandler } from 'tests/network-interceptors/pagination';
+import { RequestInterceptor } from 'tests/helpers/network/interceptor';
 
 import { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll-new/test/api/component-object';
 import type { DataConveyor, DataItemCtor, MountedItemCtor, StateApi, VirtualScrollTestHelpers, MountedSeparatorCtor, IndexedObj } from 'components/base/b-virtual-scroll-new/test/api/helpers/interface';

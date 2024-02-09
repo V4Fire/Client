@@ -9,9 +9,9 @@
 import { fromQueryString } from 'core/url';
 import type { BrowserContext, Page, Route } from 'playwright';
 
-import type { RequestState, RequestQuery } from 'tests/helpers/providers/pagination/interface';
+import type { RequestState, RequestQuery } from 'tests/network-interceptors/pagination/interface';
 
-export * from 'tests/helpers/providers/pagination/interface';
+export * from 'tests/network-interceptors/pagination/interface';
 
 const requestStates: Dictionary<RequestState> = {
 

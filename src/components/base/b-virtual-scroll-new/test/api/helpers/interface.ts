@@ -9,7 +9,7 @@
 import type { ComponentItem, VirtualScrollState, MountedChild, MountedItem } from 'components/base/b-virtual-scroll-new/interface';
 
 import type { SpyObject } from 'tests/helpers/mock/interface';
-import type { RequestInterceptor } from 'tests/helpers/providers/interceptor';
+import type { RequestInterceptor } from 'tests/helpers/network/interceptor';
 import type { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll-new/test/api/component-object';
 
 /**

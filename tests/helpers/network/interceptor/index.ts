@@ -13,7 +13,7 @@ import { ModuleMocker } from 'jest-mock';
 
 import { fromQueryString } from 'core/url';
 
-import type { InterceptedRequest, ResponseHandler, ResponseOptions, ResponsePayload } from 'tests/helpers/providers/interceptor/interface';
+import type { InterceptedRequest, ResponseHandler, ResponseOptions, ResponsePayload } from 'tests/helpers/network/interceptor/interface';
 
 /**
  * API that provides a simple way to intercept and respond to any request.

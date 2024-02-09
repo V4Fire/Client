@@ -57,7 +57,7 @@ export function getElementMod(
  * @param value - the modifier name to set
  * @param [reason] - a reason to set the modifier
  *
- * @emits `localEmitter` `el.mod.set.$name.$value(event: SetElementModEvent)`
+ * @emits `localEmitter.el.mod.set.$name.$value(event: SetElementModEvent)`
  *
  * @example
  * ```js
@@ -116,7 +116,7 @@ export function setElementMod(
  * @param [value] - the modifier value to remove
  * @param [reason] - a reason to remove the modifier
  *
- * @emits `localEmitter` `el.mod.remove.$name.$value(event: ElementModEvent)`
+ * @emits `localEmitter.el.mod.remove.$name.$value(event: ElementModEvent)`
  *
  * @example
  * ```js
