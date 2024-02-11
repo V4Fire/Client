@@ -15,6 +15,8 @@ import Scroll from 'tests/helpers/scroll';
 import Router from 'tests/helpers/router';
 import Request from 'tests/helpers/request';
 import Gestures from 'tests/helpers/gestures';
+import RequestInterceptor from 'tests/helpers/network/interceptor';
+import * as Mock from 'tests/helpers/mock';
 
 export {
 
@@ -22,40 +24,12 @@ export {
 	DOM,
 	Utils,
 	Component,
+	Request,
 	ComponentObject,
 	Scroll,
 	Router,
-	Gestures
+	Gestures,
+	RequestInterceptor,
+	Mock
 
 };
-
-/**
- * @deprecated - use static methods instead
- */
-export class Helpers {
-	/** @see [[Request]] */
-	request: Request = new Request();
-
-	/** @see [[Utils]] */
-	utils: Utils = new Utils();
-
-	/** @see [[Component]] */
-	component: Component = new Component();
-
-	/** @see [[Gestures]] */
-	gestures: Gestures = new Gestures();
-
-	/** @see [[BOM]] */
-	bom: BOM = new BOM();
-
-	/** @see [[Router]] */
-	router: Router = new Router();
-
-	/** @see [[DOM]] */
-	dom: DOM = new DOM();
-
-	/** @see [[Scroll]] */
-	scroll: Scroll = new Scroll();
-}
-
-export default new Helpers();

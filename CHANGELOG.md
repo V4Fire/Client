@@ -11,6 +11,22 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.66.0 (2023-02-09)
+
+#### :house:  Internal
+
+* Added re-export of modules from `tests/helpers`:
+  - Request
+  - RequestInterceptor
+  - Mock
+
+* Removed bad import of async module from `tests/helpers/network/interceptor`
+
+#### :boom: Breaking Change
+
+* Removed export of deprecated Helpers class from tests/helpers `tests/helpers`
+* `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
+
 ## v3.65.0 (2023-02-09)
 
 #### :rocket: New Feature
