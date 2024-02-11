@@ -24,7 +24,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Removed export of deprecated Helpers class from tests/helpers `tests/helpers`
 * `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
 
 ## v3.65.0 (2023-02-09)

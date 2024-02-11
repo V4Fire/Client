@@ -33,3 +33,34 @@ export {
 	Mock
 
 };
+
+/**
+ * @deprecated - use static methods instead
+ */
+export class Helpers {
+	/** @see [[Request]] */
+	request: Request = new Request();
+
+	/** @see [[Utils]] */
+	utils: Utils = new Utils();
+
+	/** @see [[Component]] */
+	component: Component = new Component();
+
+	/** @see [[Gestures]] */
+	gestures: Gestures = new Gestures();
+
+	/** @see [[BOM]] */
+	bom: BOM = new BOM();
+
+	/** @see [[Router]] */
+	router: Router = new Router();
+
+	/** @see [[DOM]] */
+	dom: DOM = new DOM();
+
+	/** @see [[Scroll]] */
+	scroll: Scroll = new Scroll();
+}
+
+export default new Helpers();
