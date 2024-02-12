@@ -59,7 +59,6 @@ async function buildFactory(entry, buildId) {
 		module: {...modules, rules: [...modules.rules.values()]},
 		plugins: [
 			new ModifySourcePlugin({
-				// Debug: true,
 				rules: [
 					{
 						test: () => true,
