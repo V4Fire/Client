@@ -138,6 +138,8 @@ export interface ComponentMeta {
 	 */
 	hooks: ComponentHooks;
 
+	layer?: string;
+
 	/**
 	 * A less abstract representation of the component would typically include the following elements,
 	 * which are useful for building component libraries:
