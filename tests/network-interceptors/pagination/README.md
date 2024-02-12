@@ -1,4 +1,4 @@
-# tests/helpers/providers/pagination
+# tests/network-interceptors/pagination
 
 This module provides API for working with request mocking.
 
