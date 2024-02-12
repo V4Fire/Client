@@ -7,6 +7,7 @@
  */
 
 import { createsAsyncSemaphore } from 'core/event';
+import { disposeLazy } from 'core/lazy';
 
 import remoteState, { set } from 'core/component/state';
 
@@ -95,6 +96,7 @@ function createAppInitializer() {
 				ssrContent = '';
 				hydratedData = '';
 				destroyApp(appId);
+				disposeLazy(app);
 			}
 		}
 
