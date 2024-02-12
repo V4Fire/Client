@@ -14,7 +14,10 @@
 import symbolGenerator from 'core/symbol';
 
 import { Xor128 } from 'core/random/xor128';
+
 import { RestrictedCache } from 'core/cache';
+import { instanceCache } from 'core/data';
+
 import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
@@ -412,6 +415,19 @@ export default abstract class iStaticPage extends iPage {
 	protected override beforeDestroy(): void {
 		super.beforeDestroy();
 		this.hydrationStore?.clear();
+
+		Object.forEach(this.ssrState, (_, key: string, state) => {
+			delete state![key];
+		});
+
+		const
+			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.appId)}:`));
+
+		Object.forEach(instanceCache, (provider, key) => {
+			if (isThisApp.test(key)) {
+				provider.destroy();
+			}
+		});
 	}
 
 	/**
