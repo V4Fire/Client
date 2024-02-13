@@ -30,12 +30,12 @@ module.exports = (page) => {
 				target = await init({value: 'foo'});
 
 			expect(clrfx(await target.evaluate((ctx) => ctx.$el.innerHTML)))
-				.toBe('<use data-update-on-id="id"></use><use xlink:href="#foo" data-tmp=""></use>');
+				.toBe('<use data-update-on-id="id" xlink:href="#foo"></use>');
 
 			await Promise.resolve('next tick');
 
 			expect(clrfx(await target.evaluate((ctx) => ctx.$el.innerHTML)))
-				.toBe('<use data-update-on-id="id"></use><use xlink:href="#foo" data-tmp=""></use>');
+				.toBe('<use data-update-on-id="id" xlink:href="#foo"></use>');
 		});
 	});
 

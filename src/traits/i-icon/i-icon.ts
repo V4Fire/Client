@@ -55,7 +55,6 @@ export default abstract class iIcon {
 	 */
 	static updateIconHref: AddSelf<iIcon['updateIconHref'], iBlock> = (component, id, el: SVGUseElement, href?) => {
 		const {
-			async: $a,
 			$normalParent
 		} = component.unsafe;
 
@@ -65,37 +64,11 @@ export default abstract class iIcon {
 
 		iIcon.setDSIconStyles(el, id);
 
-		const group = {group: el.getAttribute(ID_ATTRIBUTE) ?? undefined};
-		$a.clearAll(group);
-
-		const
-			parent = el.parentNode;
-
-		if (!parent) {
-			return;
-		}
-
-		Object.forEach(parent.querySelectorAll('[data-tmp]'), (el: Node) => parent.removeChild(el));
-
 		if (!Object.isTruly(href)) {
 			return;
 		}
 
-		const
-			newEl = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-
-		newEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href!);
-		newEl.setAttribute('data-tmp', '');
-
-		$a.requestAnimationFrame(() => {
-			parent.appendChild(newEl);
-		}, group);
-
-		$a.worker(() => {
-			try {
-				parent.removeChild(newEl);
-			} catch {}
-		}, group);
+		el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', href!);
 	};
 
 	/**
