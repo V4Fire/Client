@@ -36,7 +36,7 @@ const globalCookie = new Cookie(
  * Returns an API for managing the cookie of the specified store
  * @param from
  */
-export const from = (from: CookieStore) => new Cookie(from);
+export const from = (from: CookieStore): Cookie => new Cookie(from);
 
 export const
 	has = globalCookie.has.bind(globalCookie),
