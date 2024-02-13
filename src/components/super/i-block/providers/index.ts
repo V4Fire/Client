@@ -12,7 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import Provider, { providers, instanceCache, requestCache, ProviderOptions } from 'core/data';
+import Provider, { providers, instanceCache, ProviderOptions } from 'core/data';
 
 import SyncPromise from 'core/promise/sync';
 import config from 'config';
