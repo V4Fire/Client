@@ -19,17 +19,17 @@ export * from 'core/cookies/interface';
 
 const globalCookie = new Cookie(
 	SSR ?
-			{
-				get cookie() {
-					return '';
-				},
+		{
+			get cookie() {
+				return '';
+			},
 
-				set cookie(_) {
-					// Loopback
-				}
-			} :
+			set cookie(_: string) {
+				// Loopback
+			}
+		} :
 
-			document
+		document
 );
 
 /**
