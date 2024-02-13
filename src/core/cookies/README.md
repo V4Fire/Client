@@ -1,6 +1,8 @@
 # core/cookies
 
-This module provides an API to work with cookies within a browser.
+This module provides an API for working with cookies within a browser or in Node.js.
+
+## When using within a browser
 
 ```js
 import * as cookie from 'core/cookies';
@@ -12,9 +14,40 @@ cookie.remove('foo');
 console.log(cookie.has('foo') === false);
 ```
 
+## When using within Node.js
+
+```js
+import * as from from 'core/cookies';
+import * as from from 'core/cookies';
+
+const cookie = from(new (require('jsdom').JSDOM)().window.document);
+
+cookie.set('foo', 'bar');
+console.log(cookie.get('foo') === 'bar');
+
+cookie.remove('foo');
+console.log(cookie.has('foo') === false);
+```
+
 ## API
 
 Cookies support a bunch of methods to work with them.
+
+### from
+
+Returns an API for managing the cookie of the specified store.
+
+```js
+import * as from from 'core/cookies';
+
+const cookie = from(new (require('jsdom').JSDOM)().window.document);
+
+cookie.set('foo', 'bar');
+console.log(cookie.get('foo') === 'bar');
+
+cookie.remove('foo');
+console.log(cookie.has('foo') === false);
+```
 
 ### has
 
