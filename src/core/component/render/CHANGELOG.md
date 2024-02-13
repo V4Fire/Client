@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed the loss of event handlers in functional components
+
 ## v4.0.0-beta.52 (2023-01-31)
 
 #### :bug: Bug Fix

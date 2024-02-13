@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak in `core/init/semaphore`
+
 ## v4.0.0-beta.48 (2024-01-17)
 
 #### :boom: Breaking Change

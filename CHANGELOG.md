@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks in:
+  * `components/super/i-block/providers`
+  * `core/init/semaphore`
+  * `components/super/i-static-page/i-static-page`
+* Fixed the loss of event handlers in functional components `core/component/render/wrappers`
+
+#### :house: Internal
+
+* Removed `id` property from `ProviderOptions` interface `core/data/interface/types`
+
 ## v4.0.0-beta.56 (2024-02-09)
 
 #### :rocket: New Feature
