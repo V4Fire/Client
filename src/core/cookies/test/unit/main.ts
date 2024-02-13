@@ -79,7 +79,7 @@ test.describe('core/cookies', () => {
 			test.expect(res.includes('testCookie=testCookieVal')).toBe(true);
 		});
 
-		test.only('should set multiply cookies', async () => {
+		test('should set multiply cookies', async () => {
 			await cookiesAPI.evaluate((cookies) => {
 				cookies.set('testCookie', 'testCookieVal');
 				cookies.set('testCookie2', 'testCookieVal2');
