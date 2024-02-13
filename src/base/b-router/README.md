@@ -124,7 +124,7 @@ If you need to disable intercepting a specific link click, you can handle the `l
 which provides the `HTMLElement` on which this `CustomEvent` was dispatched
 
 ```typescript
-import iBlock, { component, watch } from 'components/super/i-block/i-block';
+import iBlock, { component, watch } from 'super/i-block/i-block';
 import type { LinkNavigateEvent } from 'base/b-router/b-router';
 
 @component()

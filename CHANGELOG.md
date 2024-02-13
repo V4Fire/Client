@@ -11,11 +11,54 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.62.3 (2023-12-15)
+## v3.65.1 (2024-02-13)
 
 #### :bug: Bug Fix
 
 * Fixed a bug with opening the browser when clicking on the svg icon nested to the link `traits/i-icon`
+* Added the `default` getter to static compiled routes `core/router/modules`
+
+## v3.65.0 (2024-02-09)
+
+#### :rocket: New Feature
+
+* New test APIs:
+  * Request interceptor `tests/helpers/network/interceptor`;
+  * ComponentObject `tests/helpers/component-object`;
+  * Spy and mock `tests/helpers/mock`;
+  * Component.createComponentInDummy `tests/helpers/component`.
+
+ #### :bug: Bug Fix
+
+* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/base/b-virtual-scroll-new`
+
+#### :house:  Internal
+
+* Added tests for `b-virtual-scroll-new` from v4 branch
+
+## v3.64.0 (2024-01-30)
+
+#### :rocket: New Feature
+
+* Now the b-virtual-scroll component always attempts to perform the last rendering after the requests have been completed, even if there is no data left to render `base/b-virtual-scroll-new/b-virtual-scroll-new`
+
+## v3.63.2 (2024-01-29)
+
+#### :bug: Bug Fix
+
+* Fixed an issue where, during a request error in the `initLoadNext` call, the error was not handled properly, leading to incorrect behavior of the component, including in terms of slot rendering `base/b-virtual-scroll-new/b-virtual-scroll-new`
+
+## v3.63.1 (2024-01-26)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with slots not being displayed in `b-virtual-scroll-new` `base/b-virtual-scroll-new/b-virtual-scroll-new`
+
+## v3.63.0 (2024-01-25)
+
+#### :rocket: New Feature
+
+* Added new component `b-virtual-scroll-new` (temporarily ported from v4v4) `base/b-virtual-scroll-new/b-virtual-scroll-new`
 
 ## v3.62.2 (2023-12-07)
 
@@ -39,7 +82,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added theme modifier calculation to components `components/super/i-block`
+* Added theme modifier calculation to components `super/i-block`
 * Added `darkThemeName` `lightThemeName` stylus function `build/stylus/ds`
 
 ## v3.61.0 (2023-10-12)
@@ -57,7 +100,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added possibility to specify paths with alias to `@context` directive `build/monic`
 * Added possibility to load icons from design-system `traits/i-icon` `icon/b-icon`
 * Added `detectUserPreferences` parameter to `theme` config `config`
-* Added possibility to detect the theme based on user system settings `components/super/i-static-page/modules/theme/theme-manager`
+* Added possibility to detect the theme based on user system settings `super/i-static-page/modules/theme/theme-manager`
 
 ## v3.59.1 (2023-09-22)
 

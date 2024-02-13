@@ -21,6 +21,17 @@ const
  */
 const aliases = {
 	'@super': resolve.rootDependencies[0],
+
+	// This is required for using jest-mock,
+	// otherwise jest-mock pulls various Node.js modules into the browser environment.
+	'graceful-fs': false,
+	path: false,
+	picomatch: false,
+	url: false,
+	process: false,
+	os: false,
+	tty: false,
+
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
 		const
 			asset = resolve.depMap[el].config.assets;

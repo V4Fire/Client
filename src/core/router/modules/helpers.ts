@@ -375,6 +375,10 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 					return this.meta.default;
 				},
 
+				get default(): boolean {
+					return this.meta.default;
+				},
+
 				meta: {
 					name,
 					external: isExternal.test(pattern),
@@ -412,6 +416,10 @@ export function compileStaticRoutes(routes: StaticRoutes, opts: CompileRoutesOpt
 
 				/** @deprecated */
 				get index(): boolean {
+					return this.meta.default;
+				},
+
+				get default(): boolean {
 					return this.meta.default;
 				},
 

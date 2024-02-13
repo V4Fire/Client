@@ -35,6 +35,7 @@ package('p-v4-components-demo')
 		'b-select-date',
 
 		'b-virtual-scroll',
+		'b-virtual-scroll-new',
 		'b-window',
 
 		'b-sidebar',

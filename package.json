@@ -5,7 +5,7 @@
   "main": "src/core/index.js",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "3.62.3",
+  "version": "3.65.0",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
@@ -149,6 +149,7 @@
     "dpdm": "3.10.0",
     "husky": "7.0.4",
     "jasmine": "3.99.0",
+    "jest": "29.7.0",
     "nyc": "15.1.0",
     "playwright": "1.32.1",
     "webpack-bundle-analyzer": "4.5.0"
