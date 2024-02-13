@@ -69,7 +69,7 @@ test.describe('core/cookies', () => {
 	});
 
 	test.describe('`set`', () => {
-		test('simple usage', async ({page}) => {
+		test('simple usage', async () => {
 			await cookiesAPI.evaluate((cookies) => cookies.set('testCookie', 'testCookieVal'));
 
 			const res = await cookiesAPI.evaluate(
