@@ -18,6 +18,7 @@ export * from 'components/dummies/b-dummy/b-dummy';
 		functional: true
 	}
 })
+
 export default class bFunctionalDummy extends bDummy {
 	@field()
 	clickCount: number = 0;
