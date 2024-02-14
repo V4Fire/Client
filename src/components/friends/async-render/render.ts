@@ -62,7 +62,7 @@ export function waitForceRender(
 ): () => CanPromise<boolean> {
 	return () => {
 		if (!this.ctx.isFunctional && beforeMountHooks[this.hook] != null ||
-			// Functional components are rendered during `beforeDataCreate` hook
+			// Render function of a functional component is called during `beforeDataCreate` hook
 			this.hook === 'beforeDataCreate'
 		) {
 			return true;
