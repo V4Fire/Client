@@ -5688,7 +5688,7 @@ __metadata:
 
 "@v4fire/core@github:V4Fire/Core#v4":
   version: 4.0.0-alpha.21
-  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=e58524b3a0f7a3c1b7a3e6ae4707c06882260896"
+  resolution: "@v4fire/core@https://github.com/V4Fire/Core.git#commit=bf6fc95f9a3d267d411a225244a07ac6b29c4b0f"
   dependencies:
     "@babel/core": "npm:7.17.5"
     "@babel/helper-module-transforms": "npm:7.16.7"
@@ -5832,7 +5832,7 @@ __metadata:
       optional: true
     xhr2:
       optional: true
-  checksum: 31cfa92d8393c21f218a47fe42507dd839899bac48d67187c103cc77139a8c4d9864b734860ede279124c9d6736429a3c239c185bc9cf5be897fbcedc529ab12
+  checksum: bea8d60fe71539d8f5ef106fb87b4fb5a49e14bd5a7e1058317f8d431c47aa7e69723963f18eaf03e722f852668ecd1b9a9d607cb880b2960b02d8aeae008c51
   languageName: node
   linkType: hard
 
@@ -9519,9 +9519,9 @@ __metadata:
   linkType: hard
 
 "core-js@npm:^3.4":
-  version: 3.35.1
-  resolution: "core-js@npm:3.35.1"
-  checksum: 5d31f22eb05cf66bd1a2088a04b7106faa5d0b91c1ffa5d72c5203e4974c31bd7e11969297f540a806c00c74c23991eaad5639592df8b5dbe4412fff3c075cd5
+  version: 3.36.0
+  resolution: "core-js@npm:3.36.0"
+  checksum: 896326c6391c1607dc645293c214cd31c6c535d4a77a88b15fc29e787199f9b06dc15986ddfbc798335bf7a7afd1e92152c94aa5a974790a7f97a98121774302
   languageName: node
   linkType: hard
 
