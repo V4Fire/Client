@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added support for different cookie stores `core/cookies`
+* Added support for different cookie stores: `core/cookies`, `core/kv-storage/engines/cookie`
 
 ## v4.0.0-beta.57 (2024-02-13)
 
