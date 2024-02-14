@@ -26,9 +26,8 @@ test.describe('core/session', () => {
 		test('should store session with the specified parameters', async () => {
 			await sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1}));
 
-			const testVal = await sessionAPI.evaluate((ctx) => ctx.get());
-
-			test.expect(testVal).toEqual({auth: 'authToken', params: {someParam: 1}});
+			const res = await sessionAPI.evaluate((ctx) => ctx.get());
+			test.expect(res).toEqual({auth: 'authToken', params: {someParam: 1}});
 		});
 
 		test('should emit a `set` event with the parameters of the specified session', async () => {
@@ -36,7 +35,6 @@ test.describe('core/session', () => {
 				eventPr = sessionAPI.evaluate(({emitter}) => new Promise((res) => emitter.on('set', res)));
 
 			await sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1}));
-
 			await test.expect(eventPr).toBeResolvedTo({auth: 'authToken', params: {someParam: 1}});
 		});
 	});
@@ -45,17 +43,13 @@ test.describe('core/session', () => {
 		test('should return session data if the session was initialized', async () => {
 			await sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1}));
 
-			const
-				testVal = await sessionAPI.evaluate((ctx) => ctx.get());
-
-			test.expect(testVal).toEqual({auth: 'authToken', params: {someParam: 1}});
+			const res = await sessionAPI.evaluate((ctx) => ctx.get());
+			test.expect(res).toEqual({auth: 'authToken', params: {someParam: 1}});
 		});
 
 		test('should return `undefined` if the session was not initialized', async () => {
-			const
-				testVal = await sessionAPI.evaluate((ctx) => ctx.get());
-
-			test.expect(testVal).toEqual({auth: undefined, params: undefined});
+			const res = await sessionAPI.evaluate((ctx) => ctx.get());
+			test.expect(res).toEqual({auth: undefined, params: undefined});
 		});
 	});
 
@@ -64,10 +58,8 @@ test.describe('core/session', () => {
 			await sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1}));
 			await sessionAPI.evaluate((ctx) => ctx.clear());
 
-			const
-				testVal = await sessionAPI.evaluate((ctx) => ctx.get());
-
-			test.expect(testVal).toEqual({auth: undefined, params: undefined});
+			const res = await sessionAPI.evaluate((ctx) => ctx.get());
+			test.expect(res).toEqual({auth: undefined, params: undefined});
 		});
 
 		test('should emit a `clear` event', async () => {
@@ -85,17 +77,13 @@ test.describe('core/session', () => {
 		test.beforeEach(() => sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1})));
 
 		test('should return `true` if the current session and the provided session are the same', async () => {
-			const
-				testVal = await sessionAPI.evaluate((ctx) => ctx.match('authToken', {someParam: 1}));
-
-			test.expect(testVal).toBe(true);
+			const res = await sessionAPI.evaluate((ctx) => ctx.match('authToken', {someParam: 1}));
+			test.expect(res).toBe(true);
 		});
 
 		test('should return `false` if the current session and the provided session are not the same', async () => {
-			const
-				testVal = await sessionAPI.evaluate((ctx) => ctx.match('newAuthToken', {someParam: 1}));
-
-			test.expect(testVal).toBe(false);
+			const res = await sessionAPI.evaluate((ctx) => ctx.match('newAuthToken', {someParam: 1}));
+			test.expect(res).toBe(false);
 		});
 	});
 
@@ -103,17 +91,13 @@ test.describe('core/session', () => {
 		test('should return `true` if the session exists', async () => {
 			await sessionAPI.evaluate((ctx) => ctx.set('authToken', {someParam: 1}));
 
-			const
-				testVal = await sessionAPI.evaluate((ctx) => ctx.isExists());
-
-			test.expect(testVal).toBe(true);
+			const res = await sessionAPI.evaluate((ctx) => ctx.isExists());
+			test.expect(res).toBe(true);
 		});
 
 		test('should return `false` if the session does not exist', async () => {
-			const
-				testVal = await sessionAPI.evaluate((ctx) => ctx.isExists());
-
-			test.expect(testVal).toBe(false);
+			const res = await sessionAPI.evaluate((ctx) => ctx.isExists());
+			test.expect(res).toBe(false);
 		});
 	});
 });
