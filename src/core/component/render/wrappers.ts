@@ -40,7 +40,18 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/init';
-import { resolveAttrs, normalizeComponentAttrs, mergeProps as merge } from 'core/component/render/helpers';
+
+import {
+
+	isHandler,
+
+	resolveAttrs,
+	normalizeComponentAttrs,
+
+	setVNodePatchFlags,
+	mergeProps as merge
+
+} from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -181,6 +192,16 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 		if (vnode.patchFlag < functionalVNode.patchFlag) {
 			// eslint-disable-next-line no-bitwise
 			vnode.patchFlag |= functionalVNode.patchFlag;
+		}
+
+		if (Object.size(functionalVNode.dynamicProps) > 0) {
+			vnode.dynamicProps ??= [];
+			functionalVNode.dynamicProps?.forEach((propName) => {
+				if (isHandler.test(propName)) {
+					vnode.dynamicProps!.push(propName);
+					setVNodePatchFlags(vnode, 'props');
+				}
+			});
 		}
 
 		functionalVNode.ignore = true;
