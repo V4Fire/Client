@@ -15,7 +15,7 @@ import type * as CookiesAPI from 'core/cookies';
 
 test.describe('core/cookies', () => {
 	let
-		cookiesAPI: JSHandle<CookiesAPI.Cookie>;
+		cookiesAPI: JSHandle<CookiesAPI.Cookies>;
 
 	test.beforeEach(async ({demoPage, page}) => {
 		await demoPage.goto();

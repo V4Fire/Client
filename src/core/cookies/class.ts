@@ -8,7 +8,7 @@
 
 import type { SetOptions, RemoveOptions, CookieStore } from 'core/cookies/interface';
 
-export class Cookie {
+export class Cookies {
 	/**
 	 * A store of the original cookies
 	 */

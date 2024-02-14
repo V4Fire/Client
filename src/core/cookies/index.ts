@@ -11,13 +11,13 @@
  * @packageDocumentation
  */
 
-import { Cookie } from 'core/cookies/class';
+import { Cookies } from 'core/cookies/class';
 import type { CookieStore } from 'core/cookies/interface';
 
 export * from 'core/cookies/class';
 export * from 'core/cookies/interface';
 
-const globalCookie = new Cookie(
+const globalCookie = new Cookies(
 	SSR ?
 		{
 			get cookie() {
@@ -36,7 +36,7 @@ const globalCookie = new Cookie(
  * Returns an API for managing the cookie of the specified store
  * @param from
  */
-export const from = (from: CookieStore): Cookie => new Cookie(from);
+export const from = (from: CookieStore): Cookies => new Cookies(from);
 
 export const
 	has = globalCookie.has.bind(globalCookie),
