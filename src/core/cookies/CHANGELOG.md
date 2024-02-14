@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added support for different cookie stores
+
 ## v3.0.0-rc.36 (2020-07-13)
 
 #### :house: Internal

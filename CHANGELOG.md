@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added support for different cookie stores `core/cookies`
+
 ## v4.0.0-beta.57 (2024-02-13)
 
 #### :bug: Bug Fix
