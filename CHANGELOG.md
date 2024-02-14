@@ -16,6 +16,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :rocket: New Feature
 
 * Added support for different cookie stores: `core/cookies`, `core/kv-storage/engines/cookie`
+* Added support for different session stores `core/session`
 
 #### :house: Internal
 
