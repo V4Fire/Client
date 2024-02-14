@@ -17,7 +17,7 @@ import type { CookieStore } from 'core/cookies/interface';
 export * from 'core/cookies/class';
 export * from 'core/cookies/interface';
 
-const globalCookie = new Cookies(
+const globalCookies = new Cookies(
 	SSR ?
 		{
 			get cookie() {
@@ -39,7 +39,7 @@ const globalCookie = new Cookies(
 export const from = (from: CookieStore): Cookies => new Cookies(from);
 
 export const
-	has = globalCookie.has.bind(globalCookie),
-	get = globalCookie.get.bind(globalCookie),
-	set = globalCookie.set.bind(globalCookie),
-	remove = globalCookie.remove.bind(globalCookie);
+	has = globalCookies.has.bind(globalCookies),
+	get = globalCookies.get.bind(globalCookies),
+	set = globalCookies.set.bind(globalCookies),
+	remove = globalCookies.remove.bind(globalCookies);
