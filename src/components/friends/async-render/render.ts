@@ -61,7 +61,10 @@ export function waitForceRender(
 	elementToDrop?: string | ((ctx: Friend['component']) => CanPromise<CanUndef<string | Element>>)
 ): () => CanPromise<boolean> {
 	return () => {
-		if (beforeMountHooks[this.hook] != null) {
+		if (!this.ctx.isFunctional && beforeMountHooks[this.hook] != null ||
+			// Functional components are rendered during `beforeDataCreate` hook
+			this.hook === 'beforeDataCreate'
+		) {
 			return true;
 		}
 
