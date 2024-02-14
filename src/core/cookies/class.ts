@@ -12,7 +12,7 @@ export class Cookies {
 	/**
 	 * A store of the original cookies
 	 */
-	store: CookieStore;
+	readonly store: CookieStore;
 
 	/**
 	 * @param cookie - a store of the original cookies

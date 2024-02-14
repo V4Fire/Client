@@ -20,14 +20,14 @@ import type { SystemThemeExtractor } from 'components/super/i-static-page/module
  */
 export default class WebEngine extends Friend implements SystemThemeExtractor {
 	/**
-	 * Media query to watch theme changes
+	 * A media query object for monitoring theme changes
 	 */
-	protected darkThemeMq: MediaQueryList;
+	protected readonly darkThemeMq: MediaQueryList;
 
 	/**
-	 * Event emitter
+	 * An event emitter to broadcast theme events
 	 */
-	protected emitter: EventEmitterLikeP;
+	protected readonly emitter: EventEmitterLikeP;
 
 	constructor(component: iBlock) {
 		super(component);
