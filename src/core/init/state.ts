@@ -21,19 +21,21 @@ export default async function initState(params: InitAppOptions): Promise<void> {
 	initGlobalEnv(params);
 	params.isOnline = true;
 
-	net.isOnline()
-		.then((v) => {
-			params.isOnline = v.status;
-			params.lastOnlineDate = v.lastOnline;
-		})
+	if (!SSR) {
+		net.isOnline()
+			.then((v) => {
+				params.isOnline = v.status;
+				params.lastOnlineDate = v.lastOnline;
+			})
 
-		.catch(stderr);
+			.catch(stderr);
 
-	try {
-		await session.isExists().then((v) => params.isAuth = v);
+		try {
+			await session.isExists().then((status: boolean) => params.isAuth = status);
 
-	} catch (err) {
-		stderr(err);
+		} catch (err) {
+			stderr(err);
+		}
 	}
 
 	void params.ready('stateReady');
