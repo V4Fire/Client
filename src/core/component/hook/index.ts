@@ -34,6 +34,7 @@ export function runHook(hook: Hook, component: ComponentInterface, ...args: unkn
 		component
 	);
 
+	console.log(Date.now(), '[runHook]', unsafe.componentName, hook);
 	unsafe.hook = hook;
 
 	const

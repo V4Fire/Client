@@ -61,6 +61,8 @@ export function waitForceRender(
 	elementToDrop?: string | ((ctx: Friend['component']) => CanPromise<CanUndef<string | Element>>)
 ): () => CanPromise<boolean> {
 	return () => {
+		console.log(Date.now(), '[waitForceRender]', this.componentName, this.hook);
+
 		if (beforeMountHooks[this.hook] != null) {
 			return true;
 		}

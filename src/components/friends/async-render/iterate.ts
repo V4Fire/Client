@@ -140,6 +140,8 @@ export function iterate(
 		// with a single loop
 		// eslint-disable-next-line no-constant-condition
 		rendering: while (true) {
+			console.log(Date.now(), '[asyncRender.iterate]', this.componentName, 'starting next render', iterI);
+
 			if (opts.group != null) {
 				group = `asyncComponents:${Object.isFunction(opts.group) ? opts.group() : opts.group}:${chunkI}`;
 			}
@@ -258,6 +260,8 @@ export function iterate(
 			});
 		}
 	}, {group});
+
+	console.log(Date.now(), '[asyncRender.iterate]', this.componentName, 'sync items', iter.readEls);
 
 	return iter.readEls;
 
