@@ -77,8 +77,6 @@ function createAppInitializer() {
 			rootComponent.provide('hydrationStore', hydrationStore);
 			rootComponent.provide('ssrState', Object.fastClone(remoteState));
 
-			app.context = rootComponent;
-
 			let
 				ssrContent: string,
 				hydratedData: string;
