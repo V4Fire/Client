@@ -11,6 +11,7 @@ import BOM from 'tests/helpers/bom';
 import Utils from 'tests/helpers/utils';
 import Assert from 'tests/helpers/assert';
 import Component from 'tests/helpers/component';
+import ComponentObject from 'tests/helpers/component-object';
 import Scroll from 'tests/helpers/scroll';
 import Router from 'tests/helpers/router';
 import Gestures from 'tests/helpers/gestures';
@@ -22,6 +23,7 @@ export {
 	Utils,
 	Assert,
 	Component,
+	ComponentObject,
 	Scroll,
 	Router,
 	Gestures

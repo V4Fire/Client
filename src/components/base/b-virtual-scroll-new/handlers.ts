@@ -6,15 +6,19 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
+
 import iVirtualScrollProps from 'components/base/b-virtual-scroll-new/props';
 
 import type bVirtualScrollNew from 'components/base/b-virtual-scroll-new/b-virtual-scroll-new';
 import type { MountedChild } from 'components/base/b-virtual-scroll-new/interface';
 
-import { bVirtualScrollNewAsyncGroup, componentEvents } from 'components/base/b-virtual-scroll-new/const';
+import { bVirtualScrollNewAsyncGroup, componentEvents, componentLocalEvents } from 'components/base/b-virtual-scroll-new/const';
 import { isAsyncReplaceError } from 'components/base/b-virtual-scroll-new/modules/helpers';
 
 import iData, { component } from 'components/super/i-data/i-data';
+
+const $$ = symbolGenerator();
 
 /**
  * A class that provides an API to handle events emitted by the {@link bVirtualScrollNew} component.
@@ -89,6 +93,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 */
 	protected onRenderDone(this: bVirtualScrollNew): void {
 		this.componentEmitter.emit(componentEvents.renderDone);
+		this.localEmitter.emit(componentLocalEvents.renderCycleDone);
 	}
 
 	/**
@@ -97,15 +102,29 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 	 */
 	protected onLifecycleDone(this: bVirtualScrollNew): void {
 		const
-			state = this.getVirtualScrollState();
+			state = this.getVirtualScrollState(),
+			isDomInsertInProgress = this.componentInternalState.getIsDomInsertInProgress();
 
 		if (state.isLifecycleDone) {
 			return;
 		}
 
-		this.slotsStateController.doneState();
-		this.componentInternalState.setIsLifecycleDone(true);
-		this.componentEmitter.emit(componentEvents.lifecycleDone);
+		const handler = () => {
+			this.slotsStateController.doneState();
+			this.componentInternalState.setIsLifecycleDone(true);
+			this.componentEmitter.emit(componentEvents.lifecycleDone);
+		};
+
+		if (isDomInsertInProgress) {
+			this.localEmitter.once(componentLocalEvents.renderCycleDone, handler, {
+				group: bVirtualScrollNewAsyncGroup,
+				label: $$.waitUntilRenderDone
+			});
+
+			return;
+		}
+
+		return handler();
 	}
 
 	/**

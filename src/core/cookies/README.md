@@ -1,29 +1,61 @@
 # core/cookies
 
-This module provides an API to work with cookies within a browser.
+This module provides an API for working with cookies within a browser or in Node.js.
+
+## When using within a browser
 
 ```js
-import * as cookie from 'core/cookies';
+import * as cookies from 'core/cookies';
 
-cookie.set('foo', 'bar');
-console.log(cookie.get('foo') === 'bar');
+cookies.set('foo', 'bar');
+console.log(cookies.get('foo') === 'bar');
 
-cookie.remove('foo');
-console.log(cookie.has('foo') === false);
+cookies.remove('foo');
+console.log(cookies.has('foo') === false);
+```
+
+## When using within Node.js
+
+```js
+import { from } from 'core/cookies';
+
+const cookies = from(new (require('jsdom').JSDOM)().window.document);
+
+cookies.set('foo', 'bar');
+console.log(cookies.get('foo') === 'bar');
+
+cookies.remove('foo');
+console.log(cookies.has('foo') === false);
 ```
 
 ## API
 
 Cookies support a bunch of methods to work with them.
 
+### from
+
+Returns an API for managing the cookie of the specified store.
+
+```js
+import { from } from 'core/cookies';
+
+const cookies = from(new (require('jsdom').JSDOM)().window.document);
+
+cookies.set('foo', 'bar');
+console.log(cookies.get('foo') === 'bar');
+
+cookies.remove('foo');
+console.log(cookies.has('foo') === false);
+```
+
 ### has
 
 Returns true, if a cookie by the specified name is defined.
 
 ```js
-import * as cookie from 'core/cookies';
+import * as cookies from 'core/cookies';
 
-console.log(cookie.has('foo'));
+console.log(cookies.has('foo'));
 ```
 
 ### get
@@ -31,9 +63,9 @@ console.log(cookie.has('foo'));
 Returns a cookie value by the specified name.
 
 ```js
-import * as cookie from 'core/cookies';
+import * as cookies from 'core/cookies';
 
-console.log(cookie.get('foo'));
+console.log(cookies.get('foo'));
 ```
 
 ### set
@@ -41,17 +73,17 @@ console.log(cookie.get('foo'));
 Sets a cookie value by the specified name.
 
 ```js
-import * as cookie from 'core/cookies';
+import * as cookies from 'core/cookies';
 
-cookie.set('foo', 'bar');
+cookies.set('foo', 'bar');
 ```
 
 The function accepts an optional third argument that can be used to provide additional options for setting the cookie.
 
 ```js
-import * as cookie from 'core/cookies';
+import * as cookies from 'core/cookies';
 
-cookie.set('foo', 'bar', {
+cookies.set('foo', 'bar', {
   secure: true,
   expires: Date.create('tomorrow'),
   path: '/foo',
@@ -125,17 +157,17 @@ Removes a cookie by the specified name.
 Notice, the cookie to be removed must have the same domain and path that was used to set it.
 
 ```js
-import * as cookie from 'core/cookies';
+import * as cookies from 'core/cookies';
 
-cookie.remove('foo');
+cookies.remove('foo');
 ```
 
 The function accepts an optional second argument that can be used to provide additional options for removing the cookie.
 
 ```js
-import * as cookie from 'core/cookies';
+import * as cookies from 'core/cookies';
 
-cookie.remove('foo', {
+cookies.remove('foo', {
   path: '/foo',
   domain: 'my-site.com'
 });

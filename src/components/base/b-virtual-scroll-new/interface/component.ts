@@ -132,6 +132,11 @@ export interface PrivateComponentState {
 	 * Pointer to the index of the data element that was last rendered.
 	 */
 	dataOffset: number;
+
+	/**
+	 * If true, it means that the process of inserting components into the DOM tree is currently in progress.
+	 */
+	isDomInsertInProgress: boolean;
 }
 
 /**

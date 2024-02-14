@@ -39,6 +39,14 @@
 	- ssrRendering = true
 
 	/**
+	 * Defines the rendering mode of the template.
+	 * For regular components, the default value of `'component'` can be used,
+	 * whereas for templates that are rendered as a separate render function,
+	 * rather than as a component, the value `'mono'` should be used.
+	 */
+	- renderMode = 'component'
+
+	/**
 	 * Returns the component name
 	 * @param {string} [name] - the custom template name
 	 */
@@ -180,10 +188,16 @@
 		- else
 			? rootAttrs[':class'] = value
 
+
+	- rootClass = {'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]'}
+
+	- if renderMode == 'mono'
+		? rootClass = {':class': '[...provide.componentClasses("' + self.name() + '", mods)]'}
+
 	- rootAttrs = { &
 		class: 'i-block-helper',
-		'data-cached-dynamic-class': '["call", "provide.componentClasses", "' + self.name() + '", ["get", "mods"]]',
-		'v-async-target': '!ssrRendering'
+		'v-async-target': '!ssrRendering',
+		...rootClass
 	} .
 
 	- if teleport
@@ -266,3 +280,6 @@
 
 						- else
 							+= self.renderRootContent()
+
+- template mono() extends ['i-block'].index
+	- renderMode = 'mono'

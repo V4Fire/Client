@@ -9,6 +9,18 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak
+
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :bug: Bug Fix
+
+* Added cleanup of hydrated data upon component destroying
+
 ## v4.0.0-beta.41 (2023-11-21)
 
 #### :boom: Breaking Change
