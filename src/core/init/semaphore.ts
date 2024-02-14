@@ -95,8 +95,14 @@ function createAppInitializer() {
 			} finally {
 				ssrContent = '';
 				hydratedData = '';
-				destroyApp(appId);
-				disposeLazy(app);
+
+				try {
+					destroyApp(appId);
+				} catch {}
+
+				try {
+					disposeLazy(rootComponent);
+				} catch {}
 			}
 		}
 
