@@ -127,7 +127,7 @@ export default class bExample extends iBlock {
 
 ### set
 
-Sets a new value for the current theme
+Sets a new value for the current theme.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -142,7 +142,7 @@ export default class bExample extends iBlock {
 
 ### useSystem
 
-Sets the actual system theme and activates the system theme change listener
+Sets the actual system theme and activates the system theme change listener.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
