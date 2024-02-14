@@ -20,8 +20,9 @@ export interface SystemThemeExtractor {
 	/**
 	 * Initializes an event listener for changes in the system's visual appearance theme
 	 *
-	 * @param cb - A callback function to be invoked when the theme changes.
-	 *             It receives the color scheme identifier as a string parameter by which project theme can be selected.
+	 * @param cb - a callback function to be invoked when the theme changes.
+	 *             It receives the color scheme identifier as a string parameter,
+	 *             by which the project's theme can be selected.
 	 *
 	 * @param [asyncOptions]
 	 */

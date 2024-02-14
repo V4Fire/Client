@@ -9,9 +9,10 @@
 import type { EventEmitterLikeP, AsyncOptions } from 'core/async';
 import SyncPromise from 'core/promise/sync';
 
-import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 import Friend from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
+
+import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 
 /**
  * Represents a `SystemThemeExtractor` implementation tailored for web environments.
@@ -30,10 +31,14 @@ export default class WebEngine extends Friend implements SystemThemeExtractor {
 
 	constructor(component: iBlock) {
 		super(component);
+
 		this.darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
-		this.emitter = <EventEmitterLikeP>((...args: [string, (e: Event) => void]) => {
+
+		type EmitterArgs = [string, (e: Event) => void];
+
+		this.emitter = Object.cast((...args: EmitterArgs) => {
 			this.darkThemeMq.addEventListener(...args);
-			return (...args: [string, (e: Event) => void]) => this.darkThemeMq.removeEventListener(...args);
+			return (...args: EmitterArgs) => this.darkThemeMq.removeEventListener(...args);
 		});
 	}
 
@@ -44,9 +49,7 @@ export default class WebEngine extends Friend implements SystemThemeExtractor {
 
 	/** @inheritDoc */
 	onThemeChange(cb: (value: string) => void, asyncOptions?: AsyncOptions): void {
-		const
-			changeHandler = (e: MediaQueryListEvent) => cb(e.matches ? 'dark' : 'light');
-
+		const changeHandler = (e: MediaQueryListEvent) => cb(e.matches ? 'dark' : 'light');
 		this.ctx.async.on(this.emitter, 'change', changeHandler, asyncOptions);
 	}
 }
