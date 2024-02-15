@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.59 (2024-02-15)
+
+#### :rocket: New Feature
+
+* Added adapters for easy creation of cookie stores `core/cookies/stores`
+
 ## v4.0.0-beta.58 (2024-02-14)
 
 #### :rocket: New Feature

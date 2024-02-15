@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.59 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Everything except for interfaces has been moved to `core/component/client-state` `core/component/state`
+
+#### :rocket: New Feature
+
+* Added adapters for easy creation of cookie stores `core/cookies/stores`
+
+#### :bug: Bug Fix
+
+* Removed all references to the global state `iStaticPage`
+
 ## v4.0.0-beta.58 (2024-02-14)
 
 #### :rocket: New Feature
