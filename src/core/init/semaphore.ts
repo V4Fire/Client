@@ -9,7 +9,7 @@
 import { createsAsyncSemaphore } from 'core/event';
 import { disposeLazy } from 'core/lazy';
 
-import remoteState, { set } from 'core/component/state';
+import remoteState, { set } from 'core/component/client-state';
 
 import AppClass, {
 
