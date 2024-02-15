@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.61 (2024-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with missing aliases `build/webpack/resolve/alias`
+
 ## v4.0.0-beta.60 (2024-02-15)
 
 #### :boom: Breaking Change
