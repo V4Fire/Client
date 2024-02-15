@@ -15,7 +15,7 @@ import type { MountedChild, ComponentItem, VirtualScrollState, MountedItem } fro
 import { componentEvents, componentObserverLocalEvents } from 'components/base/b-virtual-scroll-new/const';
 
 import { paginationHandler } from 'tests/network-interceptors/pagination';
-import { RequestInterceptor } from 'tests/helpers/network/interceptor';
+import { RequestInterceptor } from 'tests/helpers';
 
 import { VirtualScrollComponentObject } from 'components/base/b-virtual-scroll-new/test/api/component-object';
 import type { DataConveyor, DataItemCtor, MountedItemCtor, StateApi, VirtualScrollTestHelpers, MountedSeparatorCtor, IndexedObj } from 'components/base/b-virtual-scroll-new/test/api/helpers/interface';

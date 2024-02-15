@@ -11,6 +11,30 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `base/b-virtual-scroll-new`
+* `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with aliases being set for build in ssr `build/webpack/resolve/alias`
+
+#### :rocket: New Feature
+
+* Added `preloadAmount` prop in b`-virtual-scroll-new` `base/b-virtual-scroll-new`
+
+#### :house:  Internal
+
+* Added re-export of modules from `tests/helpers`:
+  - Request
+  - RequestInterceptor
+  - Mock
+
+* Removed bad import of async module from `tests/helpers/network/interceptor`
+
 ## v4.0.0-beta.59 (2024-02-15)
 
 #### :boom: Breaking Change
