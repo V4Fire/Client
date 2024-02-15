@@ -136,7 +136,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	 */
 	getNextDataSlice(state: VirtualScrollState, chunkSize: number): object[] {
 		const
-			nextDataSliceStartIndex = this.componentInternalState.getDataCursor(),
+			nextDataSliceStartIndex = this.componentInternalState.getDataOffset(),
 			nextDataSliceEndIndex = nextDataSliceStartIndex + chunkSize;
 
 		return state.data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
@@ -150,6 +150,16 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		return Object.isFunction(this.chunkSize) ?
 			this.chunkSize(state, this) :
 			this.chunkSize;
+	}
+
+	/**
+	 * Returns the amount of data that should be preloaded
+	 * @param state - current lifecycle state
+	 */
+	getPreloadAmount(state: VirtualScrollState): number {
+		return Object.isFunction(this.preloadAmount) ?
+			this.preloadAmount(state, this) :
+			this.preloadAmount;
 	}
 
 	/**
@@ -350,7 +360,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			{result, reason} = this.renderGuard(state);
 
 		if (result) {
-			return this.performRender();
+			this.performRender();
 		}
 
 		if (reason === renderGuardRejectionReason.done) {
@@ -362,13 +372,26 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			if (state.areRequestsStopped) {
 				this.performRender();
 				this.onLifecycleDone();
+				return;
+			}
 
-			} else if (this.shouldPerformDataRequestWrapper()) {
+			if (this.shouldPerformDataRequestWrapper()) {
 				void this.initLoadNext();
 
 			} else if (state.isInitialRender) {
 				this.performRender();
 			}
+		}
+
+		const
+			preloadAmount = this.getPreloadAmount(state),
+			dataOffset = this.componentInternalState.getDataOffset();
+
+		if (
+			!state.areRequestsStopped &&
+			state.data.length - dataOffset - preloadAmount < 0
+		) {
+			void this.initLoadNext();
 		}
 	}
 

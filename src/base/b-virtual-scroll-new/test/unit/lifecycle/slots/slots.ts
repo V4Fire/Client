@@ -121,6 +121,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				})
 				.build();
 
+			await component.waitForDataIndexChild(chunkSize - 1);
 			await component.scrollToBottom();
 			await component.waitForSlotState('done', true);
 

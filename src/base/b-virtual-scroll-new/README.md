@@ -31,13 +31,14 @@
   - [Slots](#slots)
   - [API](#api)
     - [Props](#props)
-      - [\[shouldPerformDataRender = `(state: VirtualScrollState) => state.isInitialRender || state.remainingItems === 0`\]](#shouldperformdatarender--state-virtualscrollstate--stateisinitialrender--stateremainingitems--0)
-      - [\[shouldPerformDataRequest = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`\]](#shouldperformdatarequest--state-virtualscrollstate--statelastloadeddatalength--0)
-      - [\[shouldStopRequestingData = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`\]](#shouldstoprequestingdata--state-virtualscrollstate--statelastloadeddatalength--0)
-      - [\[chunkSize = `10`\]](#chunksize--10)
-      - [\[requestQuery\]](#requestquery)
-      - [\[itemsFactory\]](#itemsfactory)
-      - [\[itemsProcessors = `{}`\]](#itemsprocessors--)
+      - [[shouldPerformDataRender = `(state: VirtualScrollState) => state.isInitialRender || state.remainingItems === 0`]](#shouldperformdatarender--state-virtualscrollstate--stateisinitialrender--stateremainingitems--0)
+      - [[shouldPerformDataRequest = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]](#shouldperformdatarequest--state-virtualscrollstate--statelastloadeddatalength--0)
+      - [[shouldStopRequestingData = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]](#shouldstoprequestingdata--state-virtualscrollstate--statelastloadeddatalength--0)
+      - [[chunkSize = `10`]](#chunksize--10)
+      - [[requestQuery]](#requestquery)
+      - [[itemsFactory]](#itemsfactory)
+      - [[itemsProcessors = `{}`]](#itemsprocessors--)
+      - [[preloadAmount = `0`]](#preloadamount--0)
       - [`tombstoneCount`](#tombstonecount)
     - [Methods](#methods)
       - [getNextDataSlice](#getnextdataslice)
@@ -779,7 +780,10 @@ graph TB
     K -- "True" --> L["Invoke initLoadNext()"]
     K -- "False" --> M["Check if state.isInitialRender"]
     M -- "True" --> N["Invoke performRender()"]
-    M -- "False" --> O["Return"]
+    N --> F
+    L -->  F["Check if state.areRequestsStopped"]
+    F -- "False" --> Z["Check if preloadAmount is reached"]
+    Z -- "False" --> X["Invoke initLoadNext()"]
 ```
 
 #### Performing Last Render
@@ -1122,6 +1126,27 @@ const itemsFactory = (state: VirtualScrollState): ComponentItem[] => {
 This prop is a middleware function that is called after `b-virtual-scroll` has compiled the abstract representation of components, and before it passes this representation to the rendering engine.
 
 This function can be useful in cases where you need to implement some processing of the abstract representation of components, such as mutating props or adding additional components.
+
+#### [preloadAmount = `0`]
+
+The amount of data that the component can preload and use afterwards.
+By default, `b-virtual-scroll-new` requests data only when it is not enough to render a chunk,
+but often it is necessary to have a behavior where data is preloaded in advance.
+
+This prop allows you to configure data preloading and allows `b-virtual-scroll-new`
+to preload as much data as you specify.
+
+The prop can also be a function, for example, you can configure data preloading depending on loadPage:
+
+```typescript
+preloadAmount(state: VirtualScrollState, _ctx: bVirtualScrollNew): number {
+  const
+    chunkSize = this.getRequestChunkSize(feed),
+  {loadPage} = v;
+
+  return loadPage < 4 ? chunkSize : chunkSize * 4;
+}
+```
 
 #### `tombstoneCount`
 
