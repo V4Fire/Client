@@ -12,26 +12,14 @@
  */
 
 import { Cookies } from 'core/cookies/class';
+import { createCookieStore } from 'core/cookies/stores';
 import type { CookieStore } from 'core/cookies/interface';
 
 export * from 'core/cookies/class';
 export * from 'core/cookies/stores';
 export * from 'core/cookies/interface';
 
-const globalCookies = new Cookies(
-	SSR ?
-		{
-			get cookie() {
-				return '';
-			},
-
-			set cookie(_: string) {
-				// Loopback
-			}
-		} :
-
-		document
-);
+const globalCookies = new Cookies(createCookieStore(''));
 
 /**
  * Returns an API for managing the cookie of the specified store
