@@ -15,6 +15,8 @@ import Scroll from 'tests/helpers/scroll';
 import Router from 'tests/helpers/router';
 import Request from 'tests/helpers/request';
 import Gestures from 'tests/helpers/gestures';
+import RequestInterceptor from 'tests/helpers/network/interceptor';
+import * as Mock from 'tests/helpers/mock';
 
 export {
 
@@ -22,10 +24,13 @@ export {
 	DOM,
 	Utils,
 	Component,
+	Request,
 	ComponentObject,
 	Scroll,
 	Router,
-	Gestures
+	Gestures,
+	RequestInterceptor,
+	Mock
 
 };
 

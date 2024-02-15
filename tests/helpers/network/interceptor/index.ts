@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Async from '@v4fire/core/core/async';
 import type { BrowserContext, Page, Request, Route } from 'playwright';
 import delay from 'delay';
 import { ModuleMocker } from 'jest-mock';
@@ -18,7 +17,7 @@ import type { InterceptedRequest, ResponseHandler, ResponseOptions, ResponsePayl
 /**
  * API that provides a simple way to intercept and respond to any request.
  */
-export class RequestInterceptor {
+export default class RequestInterceptor {
 	/**
 	 * The route context.
 	 */
@@ -38,11 +37,6 @@ export class RequestInterceptor {
 	 * An instance of jest-mock that handles the implementation logic of responses.
 	 */
 	readonly mock: ReturnType<ModuleMocker['fn']>;
-
-	/**
-	 * {@link Async}
-	 */
-	protected readonly async: Async = new Async();
 
 	/**
 	 * If true, intercepted requests are not automatically responded to, instead use the
@@ -125,9 +119,10 @@ export class RequestInterceptor {
 			throw new Error('Failed to call respond on an instance that is not a responder');
 		}
 
-		if (this.requestQueueLength === 0) {
-			await this.async.wait(() => this.requestQueueLength > 0);
-		}
+		do {
+			await delay(16);
+
+		} while (this.requestQueueLength === 0)
 
 		return this.respondQueue.shift()?.();
 	}

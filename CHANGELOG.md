@@ -16,10 +16,20 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :boom: Breaking Change
 
 * Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `base/b-virtual-scroll-new`
+* `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
 
 #### :rocket: New Feature
 
 * Added `preloadAmount` prop in b`-virtual-scroll-new` `base/b-virtual-scroll-new`
+
+#### :house:  Internal
+
+* Added re-export of modules from `tests/helpers`:
+  - Request
+  - RequestInterceptor
+  - Mock
+
+* Removed bad import of async module from `tests/helpers/network/interceptor`
 
 ## v3.65.1 (2024-02-13)
 
