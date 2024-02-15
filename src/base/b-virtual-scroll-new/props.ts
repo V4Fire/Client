@@ -280,6 +280,29 @@ export default abstract class iVirtualScrollProps extends iData {
 	readonly chunkSize: number | ShouldPerform<number> = 10;
 
 	/**
+	 * The amount of data that the component can preload and use afterwards.
+	 * By default, `b-virtual-scroll-new` requests data only when it is not enough to render a chunk,
+	 * but often it is necessary to have a behavior where data is preloaded in advance.
+	 *
+	 * This prop allows you to configure data preloading and allows `b-virtual-scroll-new`
+	 * to preload as much data as you specify.
+	 *
+	 * The prop can also be a function, for example, you can configure data preloading depending on loadPage:
+	 *
+	 * ```typescript
+	 * preloadAmount(state: VirtualScrollState, _ctx: bVirtualScrollNew): number {
+	 *   const
+	 *     chunkSize = this.getRequestChunkSize(feed),
+	 *    {loadPage} = v;
+	 *
+	 *   return loadPage < 4 ? chunkSize : chunkSize * 4;
+	 * }
+	 * ```
+	 */
+	@prop({type: [Number, Function]})
+	readonly preloadAmount: number | ShouldPerform<number> = 0;
+
+	/**
 	 * When this function returns true the component will stop to request new data.
 	 * This function will be called on each data loading cycle.
 	 */
@@ -289,17 +312,6 @@ export default abstract class iVirtualScrollProps extends iData {
 	})
 
 	readonly shouldStopRequestingData!: ShouldPerform;
-
-	/**
-	 * When this function returns true the component will be able to request additional data.
-	 * This function will be called each time a new element enters the viewport.
-	 */
-	@prop({
-		type: Function,
-		default: defaultShouldProps.shouldPerformDataRequest
-	})
-
-	readonly shouldPerformDataRequest!: ShouldPerform;
 
 	/**
 	 * This function is called in the {@link bVirtualScroll.renderGuard} after other checks are completed.

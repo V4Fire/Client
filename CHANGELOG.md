@@ -11,7 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (2024-??-??)
+## v3.??.?? (2024-02-13)
+
+#### :boom: Breaking Change
+
+* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `base/b-virtual-scroll-new`
+* `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
+
+#### :rocket: New Feature
+
+* Added `preloadAmount` prop in b`-virtual-scroll-new` `base/b-virtual-scroll-new`
 
 #### :house:  Internal
 
@@ -22,11 +31,14 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed bad import of async module from `tests/helpers/network/interceptor`
 
-#### :boom: Breaking Change
+## v3.65.1 (2024-02-13)
 
-* `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
+#### :bug: Bug Fix
 
-## v3.65.0 (2023-02-09)
+* Fixed a bug with opening the browser when clicking on the svg icon nested to the link `traits/i-icon`
+* Added the `default` getter to static compiled routes `core/router/modules`
+
+## v3.65.0 (2024-02-09)
 
 #### :rocket: New Feature
 
@@ -44,19 +56,19 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added tests for `b-virtual-scroll-new` from v4 branch
 
-## v3.64.0 (2023-01-30)
+## v3.64.0 (2024-01-30)
 
 #### :rocket: New Feature
 
 * Now the b-virtual-scroll component always attempts to perform the last rendering after the requests have been completed, even if there is no data left to render `base/b-virtual-scroll-new/b-virtual-scroll-new`
 
-## v3.63.2 (2023-01-29)
+## v3.63.2 (2024-01-29)
 
 #### :bug: Bug Fix
 
 * Fixed an issue where, during a request error in the `initLoadNext` call, the error was not handled properly, leading to incorrect behavior of the component, including in terms of slot rendering `base/b-virtual-scroll-new/b-virtual-scroll-new`
 
-## v3.63.1 (2023-01-26)
+## v3.63.1 (2024-01-26)
 
 #### :bug: Bug Fix
 
