@@ -41,6 +41,10 @@ This property signifies if an Internet connection is currently active or not.
 
 This property indicates the date of the most recent Internet connection.
 
+### state.lang
+
+The application default language.
+
 ### state.experiments
 
 This property contains a list of registered AB experiments.
