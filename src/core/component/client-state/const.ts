@@ -7,7 +7,7 @@
  */
 
 import watchObj from 'core/object/watch';
-import type { State } from 'core/component/state/interface';
+import type { State } from 'core/component/state';
 
 const watcher = watchObj<State>({
 	isAuth: undefined,
