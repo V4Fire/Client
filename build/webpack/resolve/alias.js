@@ -52,7 +52,10 @@ if (!webpack.ssr) {
 		'graceful-fs': false,
 		path: false,
 		picomatch: false,
-		url: false
+		url: false,
+		process: false,
+		os: false,
+		tty: false
 	});
 }
 
