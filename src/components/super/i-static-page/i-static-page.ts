@@ -90,7 +90,7 @@ export default abstract class iStaticPage extends iPage {
 	 * A module for manipulating page metadata, such as the page title or description
 	 */
 	@system<iStaticPage>((o) => new PageMetaData({
-		document: o.globalEnv.ssr?.document ?? document
+		document: o.remoteState.document ?? document
 	}))
 
 	readonly pageMetaData!: PageMetaData;
@@ -108,7 +108,7 @@ export default abstract class iStaticPage extends iPage {
 		o,
 		{
 			themeStorageEngine: new CookieStorage('v4ls', {
-				cookies: cookies.from(o.globalEnv.ssr?.document ?? document),
+				cookies: cookies.from(o.remoteState.cookies ?? document),
 				maxAge: 2 ** 31 - 1
 			}),
 
