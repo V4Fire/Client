@@ -17,9 +17,11 @@ console.log(cookies.has('foo') === false);
 ## When using within Node.js
 
 ```js
-import { from } from 'core/cookies';
+import { from, createCookieStore } from 'core/cookies';
 
-const cookies = from(new (require('jsdom').JSDOM)().window.document);
+const cookieStore = createCookieStore('id=1; name=bob');
+
+const cookies = from(cookieStore);
 
 cookies.set('foo', 'bar');
 console.log(cookies.get('foo') === 'bar');
@@ -32,14 +34,34 @@ console.log(cookies.has('foo') === false);
 
 Cookies support a bunch of methods to work with them.
 
+### createCookieStore
+
+Creates a cookie store with a browser-like interface based on a cookie string.
+By default, Node.js uses the [cookiejar](https://www.npmjs.com/package/cookiejar) library,
+while in the browser, the native `document.cookie` is used.
+
+```js
+import { from, createCookieStore } from 'core/cookies';
+
+const cookieStore = createCookieStore('id=1; name=bob');
+
+console.log(cookieStore.cookie); // 'id=1; name=bob'
+
+cookieStore.cookie = 'age=25';
+
+console.log(cookieStore.cookie); // id=1; name=bob; age=25
+```
+
 ### from
 
 Returns an API for managing the cookie of the specified store.
 
 ```js
-import { from } from 'core/cookies';
+import { from, createCookieStore } from 'core/cookies';
 
-const cookies = from(new (require('jsdom').JSDOM)().window.document);
+const cookieStore = createCookieStore('id=1; name=bob');
+
+const cookies = from(cookieStore);
 
 cookies.set('foo', 'bar');
 console.log(cookies.get('foo') === 'bar');
