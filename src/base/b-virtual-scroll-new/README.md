@@ -32,7 +32,6 @@
   - [API](#api)
     - [Props](#props)
       - [[shouldPerformDataRender = `(state: VirtualScrollState) => state.isInitialRender || state.remainingItems === 0`]](#shouldperformdatarender--state-virtualscrollstate--stateisinitialrender--stateremainingitems--0)
-      - [[shouldPerformDataRequest = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]](#shouldperformdatarequest--state-virtualscrollstate--statelastloadeddatalength--0)
       - [[shouldStopRequestingData = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]](#shouldstoprequestingdata--state-virtualscrollstate--statelastloadeddatalength--0)
       - [[chunkSize = `10`]](#chunksize--10)
       - [[requestQuery]](#requestquery)
@@ -213,7 +212,7 @@ you need to pass the items prop which contains an array of data to be rendered b
 There are also some minor differences in the component's event model.
 Unlike `b-virtual-scroll` which uses a `dataProvider`, a component with items will not emit certain events, specifically `dataLoadStart` and `convertDataToDB`.
 
-The component will also ignore the `shouldPerformDataRequest` and `shouldStopRequestingData` props, as they have no meaning when there is no `dataProvider`.
+The component will also ignore the `shouldStopRequestingData` prop, as they have no meaning when there is no `dataProvider`.
 
 ### How to Implement Component Rendering on Click Instead of Scroll?
 
@@ -420,30 +419,6 @@ There is no need to specify any additional props for `b-virtual-scroll`. For `b-
 
 #### Overview of Functions
 
-The component provides several "should-like" props that determine whether to perform certain actions. Each of these functions serves a different purpose and is called at a specific moment in time. Let's take a detailed look at each of these functions and their purposes:
-
-- `shouldPerformDataRequest`: This function indicates the need to load a chunk of data. If it returns `true`, a data request will be made. This function takes the "internal" component state as input and should return a boolean value. It is called when any component rendered by `b-virtual-scroll`, which has not yet entered the viewport, enters the viewport.
-
-  > It's important to note that clients do not need to check whether data is currently being loaded or not; the `b-virtual-scroll` component handles this check itself and prevents data from being requested if a loading process is already active.
-
-  An example implementation of this function could be to check how many items are left in the viewport, and if half of the rendered items are within the viewport, start loading more:
-
-  ```typescript
-  const shouldPerformDataRequest = (state: VirtualScrollState): boolean => {
-    // Example: Request data if the remaining items till the end is less than or equal to 10
-    return state.remainingItems <= 10;
-  };
-  ```
-
-  The default implementation checks whether anything was loaded in the last request and, if so, allows another request:
-
-  ```typescript
-  const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
-    const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
-    return isLastRequestNotEmpty();
-  };
-  ```
-
 - `shouldStopRequestingData`: This function indicates the need to stop requesting data and tells the component that the data loading lifecycle has completed. If it returns `true`, the `b-virtual-scroll` component will not attempt to request more data until the component is reinitialized, which leads to an update of the lifecycle. This function is called after every successful data load.
 
   An example implementation of this function could be to check whether the number of loaded items equals the total number of items that can be returned by the pagination for the current query:
@@ -458,7 +433,7 @@ The component provides several "should-like" props that determine whether to per
   The default implementation checks whether anything was loaded in the last request and, if so, allows requests to continue:
 
   ```typescript
-  const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
+  const shouldStopRequestingData = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
     const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
     return isLastRequestNotEmpty();
   };
@@ -482,11 +457,12 @@ Here are some tips for efficiently implementing data loading on the client side 
 
   For example, you can implement this approach as follows:
 
-  ```typescript
-  const shouldPerformDataRequest = (state: VirtualScrollState, _ctx: bVirtualScroll): boolean => {
-    // Start loading when half of the components are in the viewport
-    return state.remainingItems <= chunkSize / 2;
-  }
+  ```snakeskin
+  // Set `preloadAmount` prop for the component so that it loads data in advance
+  < b-virtual-scroll &
+    // ...
+    :preloadAmount = 30
+  .
   ```
 
   ```typescript
@@ -496,7 +472,7 @@ Here are some tips for efficiently implementing data loading on the client side 
   }
   ```
 
-- Avoid making the last useless request: This pertains to the `shouldPerformDataRequest` and `shouldStopRequestingData` functions. By default, these functions check the last data chunk to see if it returned anything. It's better to avoid this and inform the component in advance that all data has been loaded. You can achieve this by comparing the value returned by your server, indicating the total number of items with the current number of items in `b-virtual-scroll`, as demonstrated in the example above.
+- Avoid making the last useless request: This pertains to the `shouldStopRequestingData` function. By default, this function check the last data chunk to see if it returned anything. It's better to avoid this and inform the component in advance that all data has been loaded. You can achieve this by comparing the value returned by your server, indicating the total number of items with the current number of items in `b-virtual-scroll`, as demonstrated in the example above.
 
 ### Control the Rendering Conveyor with `itemsFactory`
 
@@ -735,9 +711,8 @@ Next, the component invokes the `renderGuard` to determine if the data can be re
 5. `domInsertDone` - The DOM insertion has completed. This event is asynchronous as it uses RAF (Request Animation Frame) for DOM insertion.
 6. `renderDone` - The component rendering has finished.
 
-Afterward, the component waits for user actions, specifically when the user sees any component on the page. The component then calls the
-
-`shouldPerformDataRequest` or `shouldPerformDataRender` functions on the client side, depending on the availability of data. This process repeats until all data has been loaded and rendered.
+Afterward, the component waits for user actions, specifically when the user sees any component on the page.
+The component then calls the `shouldPerformDataRender` function on the client side. This process repeats until all data has been loaded and rendered.
 
 1. `lifecycleDone` - Occurs when all data has been loaded and rendered on the page.
 
@@ -755,7 +730,9 @@ flowchart TD
     A["Start: renderGuard Function"] --> B["Check if dataSlice.length < chunkSize"]
     B -- "True" --> C["Check if state.areRequestsStopped and state.isLastRender"]
     C -- "True" --> D["Return: {result: false, reason: 'done'}"]
-    C -- "False" --> E["Return: {result: false, reason: 'notEnoughData'}"]
+    C -- "False" --> E["Invoke shouldPerformDataRender"]
+    E -- "Not Defined or True" --> Z["Return: {result: false, reason: 'notEnoughData'}"]
+    E -- "False" --> X["Return: {result: false, reason: 'noPermission'}"]
     B -- "False" --> F["Check if state.isInitialRender"]
     F -- "True" --> G["Return: {result: true}"]
     F -- "False" --> H["Invoke shouldPerformDataRender"]
@@ -776,11 +753,7 @@ graph TB
     G -- "done" --> H["Invoke onLifecycleDone()"]
     G -- "notEnoughData" --> I["Check if state.areRequestsStopped"]
     I -- "True" --> J["Invoke performRender() and onLifecycleDone()"]
-    I -- "False" --> K["Check if shouldPerformDataRequest()"]
-    K -- "True" --> L["Invoke initLoadNext()"]
-    K -- "False" --> M["Check if state.isInitialRender"]
-    M -- "True" --> N["Invoke performRender()"]
-    N --> F
+    I -- "False" --> L["Invoke initLoadNext()"]
     L -->  F["Check if state.areRequestsStopped"]
     F -- "False" --> Z["Check if preloadAmount is reached"]
     Z -- "False" --> X["Invoke initLoadNext()"]
@@ -868,10 +841,6 @@ There may also be situations where you need to modify the `renderGuard`. Current
     class: this.provide.classes({'virtual-scroll-item': true})
   })
   ```
-
-- Can I use only `shouldPerformDataRequest` and not use `shouldStopRequestingData`?
-
-  Hypothetically, you can. However, this may cause issues with the `done` slot and the `lifecycleDone` event; they will not work correctly. Therefore, it is strongly recommended to separate the logic into whether data should be loaded now (`shouldPerformDataRequest`) and whether data loading is completed (all data is loaded) (`shouldStopRequestingData`).
 
 - Can I set `chunkSize` to 10 if the request returns 89 items at a time?
 
@@ -996,27 +965,6 @@ const shouldPerformDataRender = (state: VirtualScrollState): boolean => {
   return state.isInitialRender || state.remainingItems === 0;
 };
 ```
-
-#### [shouldPerformDataRequest = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]
-
-The `shouldPerformDataRequest` property of `bVirtualScroll` allows you to control whether the component should request additional data based on the component state.
-This function allows the component to understand whether the data loading lifecycle is complete or not.
-
-Here's an example of how you can use `shouldPerformDataRequest`:
-
-```typescript
-const shouldPerformDataRequest = (state: VirtualScrollState): boolean => {
-  // Example: Request data if the remaining items till the end is less than or equal to 10
-  return state.remainingItems <= 10;
-};
-```
-
-In this example, the function checks the `remainingItems` property of the component state.
-If the remaining number of items till the end is less than or equal to 10, it returns `true` to indicate that the component should perform a data request.
-You can adjust the condition based on your specific requirements.
-
-By implementing the `shouldPerformDataRequest` function, you have control over when the component should request additional data.
-This allows you to customize the data loading behavior based on the state of the component.
 
 #### [shouldStopRequestingData = `(state: VirtualScrollState) => state.lastLoadedData.length > 0`]
 

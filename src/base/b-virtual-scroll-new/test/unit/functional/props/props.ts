@@ -34,7 +34,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('`chunkSize` prop changes after the first chunk has been rendered', () => {
-		test('should render the second chunk with the new chunk size', async ({page}) => {
+		test('should render the second chunk with the new chunk size', async () => {
 			const
 				chunkSize = 12;
 
@@ -48,7 +48,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				})
 				.build({useDummy: true});
 
-			await page.pause();
 			await component.waitForChildCountEqualsTo(chunkSize);
 			await component.updateProps({chunkSize: chunkSize * 2});
 			await component.scrollToBottom();
@@ -76,7 +75,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({
 					chunkSize,
 					requestQuery: () => ({get: {param1: 'param1'}}),
-					shouldPerformDataRequest: () => false,
 					'@componentHook:beforeDataCreate': (ctx: bVirtualScrollNew['unsafe']) => jestMock.spy(ctx.componentFactory, 'produceComponentItems')
 				})
 				.build();
@@ -107,7 +105,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest: () => false,
 					dbConverter: ({data: {nestedData}}) => ({data: nestedData})
 				})
 				.build();
@@ -125,7 +122,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest: ({remainingItems}) => remainingItems === 0,
 					dbConverter: ({data: {nestedData}}) => ({data: nestedData})
 				})
 				.build();
@@ -148,7 +144,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest: () => false,
 					itemsProcessors: (items) => items.concat([
 						{
 							item: 'b-dummy',
@@ -190,7 +185,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 		});
 
 		test.describe('`shouldStopRequestingData` returns true during preload requests', () => {
-			test('should not continue to load data', async () => {
+			test('should not continue to load data', async ({page}) => {
 				const
 					chunkSize = 10,
 					preloadAmount = 30;
@@ -209,6 +204,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 					.build();
 
 				await component.waitForChildCountEqualsTo(chunkSize);
+				await page.waitForFunction(([ctx]) => ctx.getVirtualScrollState().areRequestsStopped, [component.component]);
 
 				const
 					currentState = await component.getVirtualScrollState();

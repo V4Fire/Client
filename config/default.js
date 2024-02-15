@@ -258,7 +258,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		testPort: o('test-port', {
 			env: true,
-			default: 8000
+			default: 9000
 		}),
 
 		/**
