@@ -11,10 +11,10 @@ Changelog
 
 ## v3.??.?? (2024-02-13)
 
-#### :rocket: New Feature
-
-* Added `preloadAmount` prop in b`-virtual-scroll-new` `base/b-virtual-scroll-new`
-
 #### :boom: Breaking Change
 
 * Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `base/b-virtual-scroll-new`
+
+#### :rocket: New Feature
+
+* Added `preloadAmount` prop in b`-virtual-scroll-new` `base/b-virtual-scroll-new`
