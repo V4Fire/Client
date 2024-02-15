@@ -29,7 +29,6 @@ import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/
 
 import {
 
-	remoteState,
 	resetComponents,
 
 	GlobalEnvironment,
@@ -140,7 +139,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Initial value for the active route.
 	 * This field is typically used in cases of SSR and hydration.
 	 */
-	@system(() => remoteState.route)
+	@system((o) => o.remoteState.route)
 	initialRoute?: InitialRoute | this['CurrentPage'];
 
 	/**
@@ -150,7 +149,7 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>({
 		atom: true,
-		init: (o) => o.initGlobalEnv(remoteState)
+		init: (o) => o.initGlobalEnv(o.remoteState)
 	})
 
 	globalEnv!: GlobalEnvironment;
