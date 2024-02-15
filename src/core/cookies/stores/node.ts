@@ -22,7 +22,7 @@ export function createCookieStore(cookie: CanArray<string>): CookieStore {
 
 	return {
 		get cookie() {
-			return cookieJar.getCookies(CookieAccessInfo.All).toValueString();
+			return cookieJar.getCookies(CookieAccessInfo.All).toString();
 		},
 
 		set cookie(cookie: string) {
