@@ -34,7 +34,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('`chunkSize` prop changes after the first chunk has been rendered', () => {
-		test('Should render the second chunk with the new chunk size', async () => {
+		test('should render the second chunk with the new chunk size', async () => {
 			const
 				chunkSize = 12;
 
@@ -64,7 +64,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('`requestQuery`', () => {
-		test('Should pass the parameters to the GET parameters of the request', async () => {
+		test('should pass the parameters to the GET parameters of the request', async () => {
 			const
 				chunkSize = 12;
 
@@ -75,7 +75,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({
 					chunkSize,
 					requestQuery: () => ({get: {param1: 'param1'}}),
-					shouldPerformDataRequest: () => false,
 					'@hook:beforeDataCreate': (ctx: bVirtualScrollNew['unsafe']) => jestMock.spy(ctx.componentFactory, 'produceComponentItems')
 				})
 				.build();
@@ -96,7 +95,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('`dbConverter`', () => {
-		test('Should convert data to the component', async () => {
+		test('should convert data to the component', async () => {
 			const
 				chunkSize = 12;
 
@@ -106,7 +105,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest: () => false,
 					dbConverter: ({data: {nestedData}}) => ({data: nestedData})
 				})
 				.build();
@@ -114,7 +112,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
 		});
 
-		test('Should convert second data chunk to the component', async () => {
+		test('should convert second data chunk to the component', async () => {
 			const
 				chunkSize = 12;
 
@@ -124,7 +122,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest: ({remainingItems}) => remainingItems === 0,
 					dbConverter: ({data: {nestedData}}) => ({data: nestedData})
 				})
 				.build();
@@ -137,7 +134,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 	});
 
 	test.describe('`itemsProcessors`', () => {
-		test('Should modify components before rendering', async () => {
+		test('should modify components before rendering', async () => {
 			const
 				chunkSize = 12;
 
@@ -147,7 +144,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest: () => false,
 					itemsProcessors: (items) => items.concat([
 						{
 							item: 'b-dummy',
@@ -161,6 +157,114 @@ test.describe('<b-virtual-scroll-new>', () => {
 
 			await test.expect(component.waitForChildCountEqualsTo(chunkSize + 1)).resolves.toBeUndefined();
 			await test.expect(component.container.locator('.b-dummy')).toHaveCount(1);
+		});
+	});
+
+	test.describe('`preloadAmount`', () => {
+		test('should preload 30 data items', async () => {
+			const
+				chunkSize = 10,
+				preloadAmount = 30;
+
+			provider.response(200, () => ({data: state.data.addData(chunkSize)}));
+
+			await component
+				.withDefaultPaginationProviderProps({chunkSize})
+				.withProps({
+					chunkSize,
+					preloadAmount
+				})
+				.build();
+
+			await component.waitForChildCountEqualsTo(chunkSize);
+
+			const
+				currentState = await component.getVirtualScrollState();
+
+			test.expect(currentState.data).toHaveLength(chunkSize + preloadAmount);
+		});
+
+		test.describe('`shouldStopRequestingData` returns true during preload requests', () => {
+			test('should not continue to load data', async ({page}) => {
+				const
+					chunkSize = 10,
+					preloadAmount = 30;
+
+				provider
+					.responseOnce(200, state.data.addData(chunkSize))
+					.responseOnce(200, state.data.addData(chunkSize))
+					.responseOnce(200, []);
+
+				await component
+					.withDefaultPaginationProviderProps({chunkSize})
+					.withProps({
+						chunkSize,
+						preloadAmount
+					})
+					.build();
+
+				await component.waitForChildCountEqualsTo(chunkSize);
+				await page.waitForFunction(([ctx]) => ctx.getVirtualScrollState().areRequestsStopped, [component.component]);
+
+				const
+					currentState = await component.getVirtualScrollState();
+
+				test.expect(provider.calls).toHaveLength(3);
+				test.expect(currentState.data).toHaveLength(20);
+			});
+
+			test('should not complete the lifecycle until all elements have been rendered', async () => {
+				const
+					chunkSize = 10,
+					preloadAmount = 30;
+
+				provider
+					.responseOnce(200, state.data.addData(chunkSize))
+					.responseOnce(200, state.data.addData(chunkSize))
+					.responseOnce(200, []);
+
+				await component
+					.withDefaultPaginationProviderProps({chunkSize})
+					.withProps({
+						chunkSize,
+						preloadAmount
+					})
+					.build();
+
+				await component.waitForChildCountEqualsTo(chunkSize);
+
+				const
+					currentState = await component.getVirtualScrollState();
+
+				test.expect(currentState.isLifecycleDone).toBe(false);
+			});
+
+			test('should complete the lifecycle when all elements have been rendered', async ({page}) => {
+				const
+					chunkSize = 10,
+					preloadAmount = 30;
+
+				provider
+					.responseOnce(200, state.data.addData(chunkSize))
+					.responseOnce(200, state.data.addData(chunkSize))
+					.responseOnce(200, []);
+
+				await component
+					.withDefaultPaginationProviderProps({chunkSize})
+					.withProps({
+						chunkSize,
+						preloadAmount
+					})
+					.build();
+
+				await page.waitForFunction(([ctx]) => ctx.getVirtualScrollState().areRequestsStopped, [component.component]);
+				await component.waitForChildCountEqualsTo(chunkSize);
+				await component.scrollToBottom();
+				await component.waitForChildCountEqualsTo(chunkSize * 2);
+				await component.scrollToBottom();
+
+				await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
+			});
 		});
 	});
 });

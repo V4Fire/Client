@@ -148,6 +148,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 
 			await component.waitForChildCountEqualsTo(chunkSize);
 			await component.waitForDataIndexChild(chunkSize - 1);
+			await component.scrollToBottom();
 			await component.waitForLifecycleDone();
 
 			await test.expect(component.waitForChildCountEqualsTo(chunkSize)).resolves.toBeUndefined();
@@ -168,6 +169,8 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize})
 				.build();
 
+			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
 			await component.node.locator('#retry').click();
 
 			test.expect(provider.mock.mock.calls.length).toBe(3);
