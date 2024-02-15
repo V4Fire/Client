@@ -7,10 +7,10 @@
  */
 
 import { emitter as netEmitter, NetStatus } from 'core/net';
-import { emitter as sessionEmitter, Session } from 'core/session';
+import { emitter as sessionEmitter, SessionDescriptor } from 'core/session';
 import { set } from 'core/component/state/const';
 
-sessionEmitter.on('set', (e: Session) => {
+sessionEmitter.on('set', (e: SessionDescriptor) => {
 	set('isAuth', Boolean(e.auth));
 });
 

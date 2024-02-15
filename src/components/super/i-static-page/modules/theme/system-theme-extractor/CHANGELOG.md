@@ -11,12 +11,12 @@ Changelog
 
 ## v4.0.0-beta.58 (2024-02-14)
 
-#### :rocket: New Feature
-
-* Added support for different session stores
-
-## v3.0.0-rc.37 (2020-07-20)
-
 #### :house: Internal
 
-* Fixed ESLint warnings
+* Moved from `core` to `components/super/i-static-page/modules/theme`
+
+## v4.0.0-beta.52 (2023-01-31)
+
+#### :rocket: New Feature
+
+* Module released

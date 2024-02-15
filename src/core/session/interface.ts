@@ -6,6 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { AsyncStorageNamespace } from 'core/kv-storage';
+
+export type SessionStore = CanPromise<AsyncStorageNamespace>;
+
 /**
  * The session identifier
  */
@@ -27,7 +31,7 @@ export interface SessionParams extends Dictionary {
 /**
  * Session information
  */
-export interface Session {
+export interface SessionDescriptor {
 	/**
 	 * The session key or a simple predicate (authorized/non-authorized)
 	 */

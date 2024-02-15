@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import { factory, SyncStorage, StorageEngine } from 'core/kv-storage';
 
 import type iBlock from 'components/super/i-block/i-block';
@@ -13,11 +14,21 @@ import type { Theme } from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import Friend from 'components/friends/friend';
-import type { SystemThemeExtractor } from 'core/system-theme-extractor';
+import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
 
-import { prefersColorSchemeEnabled, darkThemeName, lightThemeName } from 'components/super/i-static-page/modules/theme/const';
+import {
+
+	prefersColorSchemeEnabled,
+
+	lightThemeName,
+	darkThemeName
+
+} from 'components/super/i-static-page/modules/theme/const';
 
 export * from 'components/super/i-static-page/modules/theme/const';
+
+const
+	$$ = symbolGenerator();
 
 export default class ThemeManager extends Friend {
 	override readonly C!: iStaticPage;
@@ -25,22 +36,22 @@ export default class ThemeManager extends Friend {
 	/**
 	 * A set of available app themes
 	 */
-	availableThemes!: Set<string>;
+	readonly availableThemes!: Set<string>;
 
 	/**
-	 * Current theme value
+	 * The current theme value
 	 */
 	protected current!: Theme;
 
 	/**
-	 * An API for obtaining and observing system appearance.
+	 * An API for obtaining and observing system appearance
 	 */
-	protected systemThemeExtractor!: SystemThemeExtractor;
+	protected readonly systemThemeExtractor!: SystemThemeExtractor;
 
 	/**
 	 * An API for persistent theme storage
 	 */
-	protected themeStorage!: SyncStorage;
+	protected readonly themeStorage!: SyncStorage;
 
 	/**
 	 * An attribute to set the theme value to the root element
@@ -49,13 +60,16 @@ export default class ThemeManager extends Friend {
 
 	/**
 	 * @param component
-	 * @param themeStorageEngine - engine for persistent theme storage
-	 * @param systemThemeExtractor
+	 * @param engines
+	 * @param engines.themeStorageEngine - an engine for persistent theme storage
+	 * @param engines.systemThemeExtractor - an engine for extracting the system theme
 	 */
 	constructor(
 		component: iBlock,
-		themeStorageEngine: StorageEngine,
-		systemThemeExtractor: SystemThemeExtractor
+		{themeStorageEngine, systemThemeExtractor}: {
+			themeStorageEngine: StorageEngine;
+			systemThemeExtractor: SystemThemeExtractor;
+		}
 	) {
 		super(component);
 
@@ -103,14 +117,14 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Returns current theme
+	 * Returns the current theme
 	 */
 	get(): Theme {
 		return this.current;
 	}
 
 	/**
-	 * Sets a new value to the current theme
+	 * Sets a new value for the current theme
 	 * @param value
 	 */
 	set(value: string): void {
@@ -118,25 +132,26 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Sets actual system theme and activates system theme change listener
+	 * Sets the actual system theme and activates the system theme change listener
 	 */
-	useSystem(): PromiseLike<void> {
+	useSystem(): Promise<void> {
+		const changeTheme = (value: string) => {
+			value = this.getThemeAlias(value);
+			void this.changeTheme({value, isSystem: true});
+		};
+
 		return this.systemThemeExtractor.getSystemTheme().then((value) => {
-			this.systemThemeExtractor.unsubscribe();
-			this.systemThemeExtractor.subscribe(
-				(value: string) => {
-					value = this.getThemeAlias(value);
-					void this.changeTheme({value, isSystem: true});
-				}
+			this.systemThemeExtractor.onThemeChange(
+				changeTheme,
+				{label: $$.onThemeChange}
 			);
 
-			value = this.getThemeAlias(value);
-			return this.changeTheme({value, isSystem: true});
+			changeTheme(value);
 		});
 	}
 
 	/**
-	 * Changes current theme value
+	 * Changes the current theme value
 	 *
 	 * @param newTheme
 	 * @throws ReferenceError
@@ -163,7 +178,7 @@ export default class ThemeManager extends Friend {
 		}
 
 		if (!isSystem) {
-			this.systemThemeExtractor.unsubscribe();
+			this.ctx.async.clearAll({label: $$.onThemeChange});
 		}
 
 		const oldValue = this.current;
@@ -178,7 +193,7 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Returns actual theme name for provided value
+	 * Returns the actual theme name for the provided value
 	 * @param value
 	 */
 	protected getThemeAlias(value: string): string {

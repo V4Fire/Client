@@ -11,6 +11,21 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.58 (2024-02-14)
+
+#### :rocket: New Feature
+
+* Added support for different cookie stores: `core/cookies`, `core/kv-storage/engines/cookie`
+* Added support for different session stores `core/session`
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks `core/init/semaphore` `iStaticPage`
+
+#### :house: Internal
+
+* Moved `system-theme-extractor` from `core` to `components/super/i-static-page/modules/theme`
+
 ## v4.0.0-beta.57 (2024-02-13)
 
 #### :bug: Bug Fix
@@ -64,6 +79,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
+>>>>>>> v4
 
 ## v4.0.0-beta.54 (2024-02-06)
 

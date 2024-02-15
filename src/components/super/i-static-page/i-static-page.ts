@@ -21,8 +21,11 @@ import { instanceCache } from 'core/data';
 import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
-import * as cookie from 'core/kv-storage/engines/cookie';
-import { webEngineFactory } from 'core/system-theme-extractor/engines/web';
+
+import * as cookies from 'core/cookies';
+import CookieStorage from 'core/kv-storage/engines/cookie';
+
+import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
 
 import {
 
@@ -102,8 +105,14 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>((o) => themeManagerFactory(
 		o,
-		cookie.syncLocalStorage,
-		webEngineFactory(o)
+		{
+			themeStorageEngine: new CookieStorage('v4ls', {
+				cookies: cookies.from(o.globalEnv.ssr?.document ?? document),
+				maxAge: 2 ** 31 - 1
+			}),
+
+			systemThemeExtractor: new SystemThemeExtractorWeb(o)
+		}
 	))
 
 	readonly theme: CanUndef<ThemeManager>;
