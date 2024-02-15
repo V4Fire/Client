@@ -104,7 +104,7 @@ export class ComponentInternalState extends Friend {
 
 		const
 			chunkSize = ctx.getChunkSize(state),
-			dataOffset = this.getDataCursor() + chunkSize;
+			dataOffset = this.getDataOffset() + chunkSize;
 
 		if (<CanUndef<object>>state.data[dataOffset] == null) {
 			state.isLastRender = true;
@@ -194,7 +194,7 @@ export class ComponentInternalState extends Friend {
 	/**
 	 * Returns the cursor indicating the last index of the last rendered data element
 	 */
-	getDataCursor(): number {
+	getDataOffset(): number {
 		return this.privateState.dataOffset;
 	}
 
@@ -212,7 +212,7 @@ export class ComponentInternalState extends Friend {
 	updateDataOffset(): void {
 		const
 			{ctx, state} = this,
-			current = this.getDataCursor(),
+			current = this.getDataOffset(),
 			chunkSize = ctx.getChunkSize(state);
 
 		this.privateState.dataOffset = current + chunkSize;

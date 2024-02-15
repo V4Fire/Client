@@ -136,7 +136,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	 */
 	getNextDataSlice(state: VirtualScrollState, chunkSize: number): object[] {
 		const
-			nextDataSliceStartIndex = this.componentInternalState.getDataCursor(),
+			nextDataSliceStartIndex = this.componentInternalState.getDataOffset(),
 			nextDataSliceEndIndex = nextDataSliceStartIndex + chunkSize;
 
 		return state.data.slice(nextDataSliceStartIndex, nextDataSliceEndIndex);
@@ -150,6 +150,16 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		return Object.isFunction(this.chunkSize) ?
 			this.chunkSize(state, this) :
 			this.chunkSize;
+	}
+
+	/**
+	 * Returns the amount of data that should be preloaded
+	 * @param state - current lifecycle state
+	 */
+	getPreloadAmount(state: VirtualScrollState): number {
+		return Object.isFunction(this.preloadAmount) ?
+			this.preloadAmount(state, this) :
+			this.preloadAmount;
 	}
 
 	/**
@@ -269,18 +279,6 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	}
 
 	/**
-	 * Short-hand wrapper for calling {@link bVirtualScrollNew.shouldPerformDataRequest}, removing the need to pass
-	 * state and context when calling {@link bVirtualScrollNew.shouldPerformDataRequest}.
-	 */
-	protected shouldPerformDataRequestWrapper(): boolean {
-		if (this.componentMode === componentModes.items) {
-			return false;
-		}
-
-		return this.shouldPerformDataRequest(this.getVirtualScrollState(), this);
-	}
-
-	/**
 	 * Resets the component state to its initial state
 	 */
 	protected reset(): void {
@@ -310,9 +308,19 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 				};
 			}
 
+			const
+				clientResponse = this.shouldPerformDataRender?.(state, this) ?? true;
+
+			if (clientResponse) {
+				return {
+					result: false,
+					reason: renderGuardRejectionReason.notEnoughData
+				};
+			}
+
 			return {
-				result: false,
-				reason: renderGuardRejectionReason.notEnoughData
+				result: clientResponse,
+				reason: renderGuardRejectionReason.noPermission
 			};
 		}
 
@@ -350,24 +358,37 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			{result, reason} = this.renderGuard(state);
 
 		if (result) {
-			return this.performRender();
+			this.performRender();
 		}
 
-		if (reason === renderGuardRejectionReason.done) {
-			this.onLifecycleDone();
-			return;
-		}
-
-		if (reason === renderGuardRejectionReason.notEnoughData) {
-			if (state.areRequestsStopped) {
-				this.performRender();
+		switch (reason) {
+			case renderGuardRejectionReason.done:
 				this.onLifecycleDone();
+				break;
 
-			} else if (this.shouldPerformDataRequestWrapper()) {
+			case renderGuardRejectionReason.notEnoughData:
+				if (state.areRequestsStopped) {
+					this.performRender();
+					this.onLifecycleDone();
+
+					return;
+				}
+
 				void this.initLoadNext();
 
-			} else if (state.isInitialRender) {
-				this.performRender();
+				break;
+
+			default: {
+				const
+					preloadAmount = this.getPreloadAmount(state),
+					dataOffset = this.componentInternalState.getDataOffset();
+
+				if (
+					!state.areRequestsStopped &&
+					state.data.length - dataOffset - preloadAmount < 0
+				) {
+					void this.initLoadNext();
+				}
 			}
 		}
 	}

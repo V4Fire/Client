@@ -68,8 +68,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 
 		const
 			shouldStopRequestingData = <ShouldPerform>(defaultShouldProps.shouldStopRequestingData),
-			shouldPerformDataRequest = <ShouldPerform>(({isInitialLoading, remainingItems: remainingItems, isLastEmpty}) =>
-				isInitialLoading || (remainingItems === 0 && !isLastEmpty)),
 			shouldPerformDataRender = <ShouldPerform>(({isInitialRender, remainingItems: remainingItems}) =>
 				isInitialRender || remainingItems === 0);
 
@@ -85,7 +83,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({
 					chunkSize,
 					shouldStopRequestingData,
-					shouldPerformDataRequest,
 					shouldPerformDataRender
 				})
 				.build();

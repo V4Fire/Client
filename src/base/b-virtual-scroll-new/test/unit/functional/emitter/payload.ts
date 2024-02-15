@@ -85,13 +85,14 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest: () => true,
 					shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
 					'@componentHook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
 				})
 				.build();
 
 			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
+			await component.waitForLifecycleDone();
 
 			const
 				spy = await component.getSpy((ctx) => ctx.emit),
@@ -137,7 +138,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize: providerChunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest: () => true,
 					shouldStopRequestingData: ({lastLoadedData}) => lastLoadedData.length === 0,
 					'@componentHook:beforeDataCreate': (ctx) => jestMock.spy(ctx, 'emit')
 				})

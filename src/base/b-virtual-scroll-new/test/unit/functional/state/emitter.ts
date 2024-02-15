@@ -172,8 +172,12 @@ test.describe('<b-virtual-scroll-new>', () => {
 				})
 				.build();
 
+			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
 			await component.waitForLifecycleDone();
 			await component.reload();
+			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
 			await component.waitForLifecycleDone();
 
 			const

@@ -89,6 +89,8 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withProps({chunkSize})
 				.build();
 
+			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.scrollToBottom();
 			await component.waitForSlotState('done', true);
 
 			const
@@ -121,6 +123,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 				})
 				.build();
 
+			await component.waitForDataIndexChild(chunkSize - 1);
 			await component.scrollToBottom();
 			await component.waitForSlotState('done', true);
 
@@ -178,9 +181,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.responseOnce(200, {data: state.data.addData(chunkSize)})
 				.response(200, {data: []});
 
-			const shouldPerformDataRequest =
-				<ShouldPerform>(({isInitialLoading, remainingItems}) => isInitialLoading || remainingItems === 0);
-
 			const shouldPerformDataRender =
 				<ShouldPerform>(({isInitialRender, remainingItems}) => isInitialRender || remainingItems === 0);
 
@@ -188,7 +188,6 @@ test.describe('<b-virtual-scroll-new>', () => {
 				.withDefaultPaginationProviderProps({chunkSize})
 				.withProps({
 					chunkSize,
-					shouldPerformDataRequest,
 					shouldPerformDataRender
 				})
 				.build();
