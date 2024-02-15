@@ -11,7 +11,7 @@ the application.
 ## Usage
 
 ```js
-import state, { watch, set, unset } from 'core/component/state';
+import state, { watch, set, unset } from 'core/component/client-state';
 
 // Online status check
 console.log(state.isOnline);
