@@ -57,6 +57,6 @@ export function beforeDestroyState(component: ComponentInterface): void {
 		dropRawComponentContext(unsafe);
 
 	// To avoid freezing during cleaning of a larger number of components at once,
-	// a little randomness is added to the process
-	}, Math.floor(Math.random() * 1000));
+	// a little randomness is added to the process (!!! disabled randomization for the example)
+	}, 1000);
 }

@@ -11,3 +11,6 @@
 - include 'components/super/i-page'|b as placeholder
 
 - template index() extends ['i-page'].index
+	- block body
+		< p
+			Mount counter: {{mountCounter}}

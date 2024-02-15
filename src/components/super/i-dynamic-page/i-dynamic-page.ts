@@ -11,11 +11,19 @@
  * @packageDocumentation
  */
 
-import iPage, { component } from 'components/super/i-page/i-page';
+/* eslint-disable @v4fire/require-jsdoc */
+import iPage, { component, field } from 'components/super/i-page/i-page';
 
 export * from 'components/super/i-page/i-page';
 
 @component()
 export default abstract class iDynamicPage extends iPage {
 	override readonly rootTag: string = 'main';
+
+	@field()
+	mountCounter: number = 0;
+
+	mounted(): void {
+		this.mountCounter += 1;
+	}
 }

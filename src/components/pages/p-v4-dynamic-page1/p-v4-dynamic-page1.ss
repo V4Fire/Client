@@ -12,6 +12,8 @@
 
 - template index() extends ['i-dynamic-page'].index
 	- block body
+		- super
+
 		< b-button.&__button v-func = false
 			p-v4-dynamic-page1
 
