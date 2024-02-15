@@ -314,17 +314,6 @@ export default abstract class iVirtualScrollProps extends iData {
 	readonly shouldStopRequestingData!: ShouldPerform;
 
 	/**
-	 * When this function returns true the component will be able to request additional data.
-	 * This function will be called each time a new element enters the viewport.
-	 */
-	@prop({
-		type: Function,
-		default: defaultShouldProps.shouldPerformDataRequest
-	})
-
-	readonly shouldPerformDataRequest!: ShouldPerform;
-
-	/**
 	 * This function is called in the {@link bVirtualScroll.renderGuard} after other checks are completed.
 	 *
 	 * This function receives the component state as input, based on which the client
