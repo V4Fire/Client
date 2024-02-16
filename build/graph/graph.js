@@ -111,6 +111,20 @@ async function buildProjectGraph() {
 		graph = await buildConfig.getUnionEntryPoints({cache: components}),
 		processes = $C(MIN_PROCESS).map(() => ({entries: {}}));
 
+	if (webpack.ssr) {
+		const ssrEntry = {
+			main: new Map()
+		};
+
+		Object.entries(graph.entry).forEach(([name, value]) => {
+			if (name === 'std' || !isStandalone(name)) {
+				ssrEntry.main = new Map([...ssrEntry.main, ...value]);
+			}
+		});
+
+		graph.entry = ssrEntry;
+	}
+
 	// Generate dynamic entries to build with webpack
 	const entry = await $C(graph.entry)
 		.parallel()
@@ -167,6 +181,7 @@ async function buildProjectGraph() {
 
 		const
 			componentsToIgnore = /^[iv]-/,
+			usedLibs = {},
 			cursor = isStandalone(name) ? STANDALONE : RUNTIME;
 
 		const
@@ -201,7 +216,12 @@ async function buildProjectGraph() {
 					logic = await component?.logic;
 
 				if (component) {
-					$C(component.libs).forEach((el) => str += `require('${el}');\n`);
+					$C(component.libs).forEach((el) => {
+						if (!usedLibs[el]) {
+							usedLibs[el] = true;
+							str += `require('${el}');\n`;
+						}
+					});
 				}
 
 				const needRequireAsLogic = component ?

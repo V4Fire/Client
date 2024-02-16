@@ -13,12 +13,11 @@
 
 import type {
 
-	PageMetaDataOptions,
-
 	MetaAttributes,
 	LinkAttributes
 
 } from 'components/super/i-static-page/modules/page-meta-data/interface';
+import { concatURLs } from 'core/url';
 
 export * from 'components/super/i-static-page/modules/page-meta-data/interface';
 
@@ -27,7 +26,7 @@ export default class PageMetaData {
 	 * Current page title
 	 */
 	get title(): string {
-		return this.document.title;
+		return globalThis.document.title;
 	}
 
 	/**
@@ -36,12 +35,12 @@ export default class PageMetaData {
 	 */
 	set title(value: string) {
 		const
-			div = Object.assign(this.document.createElement('div'), {innerHTML: value}),
+			div = Object.assign(globalThis.document.createElement('div'), {innerHTML: value}),
 			title = div.textContent ?? '';
 
 		// Fix for a strange Chrome bug
-		this.document.title = `${title} `;
-		this.document.title = title;
+		globalThis.document.title = `${title} `;
+		globalThis.document.title = title;
 	}
 
 	/**
@@ -81,18 +80,6 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * A link to the object for working with the document
-	 */
-	protected document: Document;
-
-	/**
-	 * @param [opts] - additional options
-	 */
-	constructor(opts: PageMetaDataOptions = {document}) {
-		this.document = opts.document;
-	}
-
-	/**
 	 * Adds a new link tag with the given attributes to the current page
 	 * @param attrs - attributes for the created tag
 	 */
@@ -102,9 +89,9 @@ export default class PageMetaData {
 
 	/**
 	 * Searches for link elements with the given attributes and returns them
-	 * @param [attrs] - additional attributes of the searched elements
+	 * @param attrs - attributes of the searched elements
 	 */
-	findLinks(attrs?: LinkAttributes): NodeListOf<HTMLLinkElement> {
+	findLinks(attrs: LinkAttributes): NodeListOf<HTMLLinkElement> {
 		return this.findElementsWithAttrs('link', attrs);
 	}
 
@@ -118,10 +105,48 @@ export default class PageMetaData {
 
 	/**
 	 * Searches for meta elements with the given attributes and returns them
-	 * @param [attrs] - additional attributes of the searched elements
+	 * @param attrs - attributes of the searched elements
 	 */
-	findMetas(attrs?: MetaAttributes): NodeListOf<HTMLMetaElement> {
+	findMetas(attrs: MetaAttributes): NodeListOf<HTMLMetaElement> {
 		return this.findElementsWithAttrs<HTMLMetaElement>('meta', attrs);
+	}
+
+	/**
+	 * Устанавливает ссылку `<link rel="canonical" />`
+	 * @param [pathname] - строка содержащая первый '/' после хоста с последующим текстом URL
+	 */
+	setCanonicalLink(pathname?: string): void {
+		const
+			links = this.findLinks({rel: 'canonical'}),
+			href = concatURLs(location.origin, pathname, location.search);
+
+		if (Object.size(links) === 0) {
+			this.addLink({rel: 'canonical', href});
+
+		} else {
+			links.item(0).href = href;
+		}
+	}
+
+	/**
+	 * Удаляет ссылку `<link rel="canonical" />`
+	 */
+	removeCanonicalLink(): NodeListOf<HTMLLinkElement> {
+		const links = this.findLinks({rel: 'canonical'});
+		links.forEach((link) => document.head.removeChild(link));
+
+		return links;
+	}
+
+	/**
+	 * Удаляет мета элемент со страницы
+	 * @param attrs
+	 */
+	removeMeta(attrs: MetaAttributes): NodeListOf<HTMLMetaElement> {
+		const metas = this.findMetas(attrs);
+		metas.forEach((meta) => document.head.removeChild(meta));
+
+		return metas;
 	}
 
 	/**
@@ -140,7 +165,7 @@ export default class PageMetaData {
 			});
 		}
 
-		return this.document.querySelectorAll<T>(tag + selector.join(''));
+		return globalThis.document.querySelectorAll<T>(tag + selector.join(''));
 	}
 
 	/**
@@ -150,7 +175,7 @@ export default class PageMetaData {
 	 * @param [attrs] - additional attributes of the created element
 	 */
 	protected createElement<T extends HTMLElement>(tag: string, attrs?: Dictionary<string>): T {
-		const el = Object.assign(<T>this.document.createElement(tag), attrs);
-		return this.document.head.appendChild(el);
+		const el = Object.assign(<T>globalThis.document.createElement(tag), attrs);
+		return globalThis.document.head.appendChild(el);
 	}
 }
