@@ -28,6 +28,9 @@ const aliases = {
 	path: false,
 	picomatch: false,
 	url: false,
+	process: false,
+	os: false,
+	tty: false,
 
 	...$C(pzlr.dependencies).to({}).reduce((map, el, i) => {
 		const
