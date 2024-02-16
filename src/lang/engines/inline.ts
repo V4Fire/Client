@@ -13,5 +13,5 @@ import type { LangPacs } from 'lang/interface';
  * when all translations at build time are inserted into js source
  */
 export default function inlineEngine(): LangPacs {
-	return LANG_KEYSETS;
+	return <LangPacs>LANG_KEYSETS;
 }
