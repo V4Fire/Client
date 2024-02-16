@@ -182,12 +182,6 @@ export const defaultShouldProps = <const>{
 		return isLastRequestEmpty();
 	},
 
-	/** {@link bVirtualScrollNew.shouldPerformDataRequest} */
-	shouldPerformDataRequest: (state: VirtualScrollState, _ctx: bVirtualScrollNew): boolean => {
-		const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
-		return isLastRequestNotEmpty();
-	},
-
 	/** {@link bVirtualScrollNew.shouldPerformDataRender} */
 	shouldPerformDataRender: (state: VirtualScrollState, _ctx: bVirtualScrollNew): boolean =>
 		state.isInitialRender || state.remainingItems === 0

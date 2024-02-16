@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.59 (2024-02-15)
+
+#### :bug: Bug Fix
+
+* Removed all references to the global state
+
 ## v4.0.0-beta.58 (2024-02-14)
 
 #### :bug: Bug Fix

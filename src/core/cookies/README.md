@@ -28,6 +28,8 @@ console.log(cookies.get('foo') === 'bar');
 
 cookies.remove('foo');
 console.log(cookies.has('foo') === false);
+
+console.log(cookieStore.cookie);
 ```
 
 ## API
