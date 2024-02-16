@@ -11,6 +11,22 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-?)
+
+#### :rocket: New Feature
+
+*  Implemented a new engine for translate keys `lang/engines`
+
+#### :house:  Internal
+
+* Refactored the build ssr: all code has now been bundled into one file
+* Replaced the progress plugin's total time log with measure-loader
+
+#### :bug: Bug Fix
+
+* Resolved an issue with the progress plugin's view in relation to empty builds
+* Corrected the theme-manager to function properly in server-side rendering (ssr)
+
 ## v4.0.0-beta.64 (2024-02-19)
 
 #### :bug: Bug Fix
@@ -28,11 +44,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added an app property to get a reference to the application object `core/component`
+* Added an app property to get a reference to the application object core/component
 
 #### :bug: Bug Fix
 
-* Fixed bugs in the initialization of SSR rendering `core/init` `iStaticPage` `core/cookies`
+* Fixed bugs in the initialization of SSR rendering core/init iStaticPage core/cookies
 
 ## v4.0.0-beta.61 (2024-02-15)
 
@@ -146,7 +162,6 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
->>>>>>> v4
 
 ## v4.0.0-beta.54 (2024-02-06)
 

@@ -6,9 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { LinkAttributes, MetaAttributes } from 'components/super/i-static-page/modules/page-meta-data';
 import type { Experiments } from 'core/abt';
 import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
+
+interface SeoState {
+	title: string;
+	description: string;
+	meta: MetaAttributes[];
+	links: LinkAttributes[];
+}
 
 export interface State {
 	/**
@@ -27,9 +35,9 @@ export interface State {
 	lastOnlineDate?: Date;
 
 	/**
-	 * The application default language
+	 * The application locale
 	 */
-	lang?: Language;
+	lang: Language;
 
 	/**
 	 * A list of registered AB experiments
