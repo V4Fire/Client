@@ -6,10 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export interface PageMetaDataOptions {
-	document: Document;
-}
-
 export type LinkAttributes = {
 	[Property in keyof Partial<HTMLLinkElement>]: string;
 };
