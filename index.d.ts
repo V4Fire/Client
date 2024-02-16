@@ -25,6 +25,7 @@ declare const BUILD_MODE: CanUndef<string>;
 
 declare const CSP_NONCE_STORE: string;
 declare const LANG_PACKS: string;
+declare const LANG_KEYSETS: string;
 
 declare const HYDRATION: boolean;
 declare const MODULE: string;

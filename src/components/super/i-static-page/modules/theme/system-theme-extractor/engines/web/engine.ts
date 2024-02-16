@@ -32,7 +32,9 @@ export default class WebEngine extends Friend implements SystemThemeExtractor {
 	constructor(component: iBlock) {
 		super(component);
 
-		this.darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
+		if (!SSR) {
+			this.darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
+		}
 
 		type EmitterArgs = [string, (e: Event) => void];
 

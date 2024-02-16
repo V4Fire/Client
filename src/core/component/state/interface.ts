@@ -6,8 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { LinkAttributes, MetaAttributes } from 'components/super/i-static-page/modules/page-meta-data';
 import type { Experiments } from 'core/abt';
 import type { InitialRoute, AppliedRoute } from 'core/router';
+
+interface SeoState {
+	title: string;
+	description: string;
+	meta: MetaAttributes[];
+	links: LinkAttributes[];
+}
 
 export interface State {
 	/**
@@ -24,6 +32,11 @@ export interface State {
 	 * Date of the last Internet connection
 	 */
 	lastOnlineDate?: Date;
+
+	/**
+	 * The application locale
+	 */
+	lang?: Language;
 
 	/**
 	 * A list of registered AB experiments
@@ -54,10 +67,7 @@ export interface State {
 	 */
 	globalEnv?: GlobalEnvironment;
 
-	/**
-	 * The application locale
-	 */
-	lang?: Language;
+	seo: SeoState;
 }
 
 export interface GlobalEnvironment extends Dictionary {

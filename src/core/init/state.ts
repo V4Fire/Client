@@ -20,6 +20,12 @@ import type { InitAppOptions } from 'core/init/interface';
 export default async function initState(params: InitAppOptions): Promise<void> {
 	initGlobalEnv(params);
 	params.isOnline = true;
+	params.seo = {
+		title: '',
+		description: '',
+		meta: [],
+		links: []
+	};
 
 	if (!SSR) {
 		net.isOnline()

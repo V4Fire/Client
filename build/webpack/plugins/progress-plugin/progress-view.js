@@ -8,9 +8,6 @@
 
 'use strict';
 
-const
-	chalk = require('chalk');
-
 module.exports = class ProgressView {
 	constructor() {
 		this.handlers = {};
@@ -42,43 +39,5 @@ module.exports = class ProgressView {
 		}
 
 		return progress;
-	}
-
-	/**
-	 * Updates a process build progress by the passed name
-	 *
-	 * @protected
-	 * @param {string} processName
-	 * @param {number} newProgress
-	 */
-	_updateProgress(processName, newProgress) {
-		const
-			percentage = this._convertProgressToPercent(newProgress);
-
-		if (percentage === 100) {
-			this._finishProgress(processName);
-		}
-	}
-
-	/**
-	 * Prints a message with the execution time of a build process by the passed name
-	 *
-	 * @protected
-	 * @param {string} _processName
-	 */
-	_finishProgress(_processName) {
-		const
-			executionTime = Date.now() - this.startTime,
-			executionTimeInSeconds = Math.round(executionTime / 1000);
-
-		this.finishedProcess++;
-
-		if (this.finishedProcess === Object.size(this.handlers)) {
-			console.log('\n');
-
-			console.log(
-				chalk.blue(`Webpack build takes ${executionTimeInSeconds} seconds`)
-			);
-		}
 	}
 };
