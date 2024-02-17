@@ -11,7 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.66.0 (2024-02-13)
+## v3.66.?? (????-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a next data chunk response checking before converting `base/b-virtual-scroll-new`
 
 #### :boom: Breaking Change
 
