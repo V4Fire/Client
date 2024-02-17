@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (????-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed a next data chunk response checking before converting `base/b-virtual-scroll-new`
+
 ## v4.0.0-beta.61 (2024-02-15)
 
 #### :bug: Bug Fix
