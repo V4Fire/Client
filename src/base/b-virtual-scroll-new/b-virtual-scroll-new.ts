@@ -111,13 +111,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 
 		return get
 			.then((res) => {
-				const dataConverted = this.convertDataToDB(res);
-
-				if (dataConverted == null) {
-					throw ReferenceError('Missing data converted to DB');
-				}
-
-				this.onDataLoadSuccess(false, dataConverted);
+				this.onDataLoadSuccess(false, this.convertDataToDB(res));
 			})
 			.catch(stderr);
 	}
