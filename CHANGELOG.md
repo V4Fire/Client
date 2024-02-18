@@ -17,6 +17,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed a next data chunk response checking before converting `base/b-virtual-scroll-new`
 
+## v3.66.0 (2024-02-13)
+
 #### :boom: Breaking Change
 
 * Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `base/b-virtual-scroll-new`
