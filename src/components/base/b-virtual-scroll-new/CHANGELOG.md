@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed a next data chunk response checking before converting
+* Removed an unnecessary next data chunk response checking
 
 ## v4.0.0-beta.60 (2024-02-15)
 
