@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed a next data chunk response checking before converting `base/b-virtual-scroll-new`
+* Removed an unnecessary next data chunk response checking `base/b-virtual-scroll-new`
 
 ## v3.66.0 (2024-02-13)
 
