@@ -11,6 +11,7 @@ import { isAbstractComponent, isSmartComponent } from 'core/component/reflect/va
 
 import type { ComponentOptions, ComponentMeta, ComponentConstructor } from 'core/component/interface';
 import type { ComponentConstructorInfo } from 'core/component/reflect/interface';
+import { component } from 'core/component';
 
 /**
  * Returns a component's name based on the given constructor.
@@ -67,6 +68,8 @@ export function getInfoFromConstructor(
 	const
 		name = declParams?.name ?? getComponentName(constructor);
 
+	const layer = declParams?.layer ?? undefined;
+
 	const
 		parent = Object.getPrototypeOf(constructor),
 		parentParams = parent != null ? componentParams.get(parent) : undefined;
@@ -115,6 +118,7 @@ export function getInfoFromConstructor(
 
 	return {
 		name,
+		layer,
 		componentName: name.replace(isSmartComponent, ''),
 		constructor,
 		params,
@@ -126,7 +130,9 @@ export function getInfoFromConstructor(
 		parentParams,
 
 		get parentMeta(): CanUndef<ComponentMeta> {
-			return parent != null ? components.get(parent) : undefined;
+			const parentComponent = components.get(parent);
+
+			return parent != null ? parentComponent : undefined;
 		}
 	};
 }

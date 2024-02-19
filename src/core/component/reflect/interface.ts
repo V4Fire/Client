@@ -19,6 +19,9 @@ import type {
  * Information about a component that can be obtained from its constructor
  */
 export interface ComponentConstructorInfo {
+	/**
+	 *
+	 */
 	layer?: string;
 
 	/**

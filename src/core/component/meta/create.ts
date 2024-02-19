@@ -18,8 +18,8 @@ import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/int
  */
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const meta: ComponentMeta = {
-		layer: '$PACKAGE_NAME',
 		name: component.name,
+		layer: component.layer,
 		componentName: component.componentName,
 
 		parentMeta: component.parentMeta,

@@ -12,10 +12,6 @@ const
 	$C = require('collection.js'),
 	{webpack, build} = require('@config/config');
 
-const {ModifySourcePlugin, ReplaceOperation} = require('modify-source-webpack-plugin');
-
-const packageJson = require('./package.json');
-
 const
 	{tracer} = include('build/helpers/tracer'),
 	{wrapLoaders} = include('build/webpack/loaders/measure-loader');
@@ -57,17 +53,7 @@ async function buildFactory(entry, buildId) {
 		externals: await include('build/webpack/externals')({buildId}),
 
 		module: {...modules, rules: [...modules.rules.values()]},
-		plugins: [
-			new ModifySourcePlugin({
-				rules: [
-					{
-						test: () => true,
-						operations: [new ReplaceOperation('once', '$PACKAGE_NAME', packageJson.name)]
-					}
-				]
-			}),
-			...plugins.values()
-		],
+		plugins: [...plugins.values()],
 
 		mode: webpack.mode(),
 		optimization: await include('build/webpack/optimization')({buildId, plugins}),

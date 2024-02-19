@@ -27,6 +27,8 @@ const
 const
 	{inherit} = include('build/helpers');
 
+const path = require('upath');
+
 /**
  * Returns webpack rules for the typescript files
  *
@@ -44,6 +46,13 @@ module.exports = function tsRules() {
 				options: {
 					...typescript.client,
 					getCustomTransformers: tsTransformers
+				}
+			},
+
+			{
+				loader: path.resolve('build/webpack/loaders/components-loader.js'),
+				options: {
+					...typescript.client
 				}
 			},
 

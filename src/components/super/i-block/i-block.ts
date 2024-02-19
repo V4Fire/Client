@@ -50,7 +50,11 @@ export {
 
 export { Classes, ModVal, ModsDecl, ModsProp, ModsDict };
 
-@component()
+@component(
+	{
+		functional: true
+	}
+)
 export default abstract class iBlock extends iBlockProviders {
 	override get unsafe(): UnsafeGetter<UnsafeIBlock<this>> {
 		return Object.cast(this);

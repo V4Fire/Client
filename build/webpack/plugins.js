@@ -33,14 +33,16 @@ module.exports = async function plugins({name}) {
 		IgnoreInvalidWarningsPlugin = include('build/webpack/plugins/ignore-invalid-warnings'),
 		I18NGeneratorPlugin = include('build/webpack/plugins/i18n-plugin'),
 		InvalidateExternalCachePlugin = include('build/webpack/plugins/invalidate-external-cache'),
-		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
+		StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default,
+		LayerPropertyPlugin = include('build/webpack/plugins/layer-property-plugin');
 
 	const plugins = new Map([
 		['globals', new webpack.DefinePlugin(await $C(globals).async.map())],
 		['dependencies', new DependenciesPlugin()],
 		['ignoreNotFoundExport', new IgnoreInvalidWarningsPlugin()],
 		['i18nGeneratorPlugin', new I18NGeneratorPlugin()],
-		['invalidateExternalCache', new InvalidateExternalCachePlugin()]
+		['invalidateExternalCache', new InvalidateExternalCachePlugin()],
+		['layerPropertyPlugin', new LayerPropertyPlugin()]
 	]);
 
 	if (config.webpack.mode() !== 'production' || config.build.trace()) {

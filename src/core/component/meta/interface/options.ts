@@ -11,6 +11,11 @@
  */
 export interface ComponentOptions {
 	/**
+	 * TODO;
+	 */
+	layer?: string;
+
+	/**
 	 * The name of the component.
 	 * If not specified, the name is obtained from the class name via reflection.
 	 * This parameter cannot be inherited from the parent component.
