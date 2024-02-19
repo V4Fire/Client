@@ -6,4 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export * from 'core/system-theme-extractor/interface';
+export const cookieSeparator = /\s*;\s*/;

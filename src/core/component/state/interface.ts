@@ -8,6 +8,7 @@
 
 import type { LinkAttributes, MetaAttributes } from 'components/super/i-static-page/modules/page-meta-data';
 import type { Experiments } from 'core/abt';
+import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
 interface SeoState {
@@ -34,7 +35,7 @@ export interface State {
 	lastOnlineDate?: Date;
 
 	/**
-	 * The application locale
+	 * The application default language
 	 */
 	lang?: Language;
 
@@ -48,6 +49,16 @@ export interface State {
 	 * This field is typically used in cases of SSR and hydration.
 	 */
 	route?: InitialRoute | AppliedRoute;
+
+	/**
+	 * A store of application cookies
+	 */
+	cookies?: CookieStore;
+
+	/**
+	 * A shim for the `window.document` API
+	 */
+	document?: Document;
 
 	/**
 	 * An object whose properties will extend the global object.
@@ -68,19 +79,4 @@ export interface State {
 	globalEnv?: GlobalEnvironment;
 }
 
-export interface GlobalEnvironment extends Dictionary {
-	/**
-	 * A shim for the `window.location` API
-	 */
-	location?: Location;
-
-	/**
-	 * SSR environment object
-	 */
-	ssr?: {
-		/**
-		 * A shim for the `window.document` API
-		 */
-		document?: Document;
-	};
-}
+export interface GlobalEnvironment extends Dictionary {}

@@ -9,7 +9,7 @@
 import { createsAsyncSemaphore } from 'core/event';
 import { disposeLazy } from 'core/lazy';
 
-import remoteState, { set } from 'core/component/state';
+import remoteState, { set } from 'core/component/client-state';
 
 import AppClass, {
 
@@ -77,8 +77,6 @@ function createAppInitializer() {
 			rootComponent.provide('hydrationStore', hydrationStore);
 			rootComponent.provide('ssrState', Object.fastClone(remoteState));
 
-			app.context = rootComponent;
-
 			let
 				ssrContent: string,
 				hydratedData: string;
@@ -95,8 +93,14 @@ function createAppInitializer() {
 			} finally {
 				ssrContent = '';
 				hydratedData = '';
-				destroyApp(appId);
-				disposeLazy(app);
+
+				try {
+					destroyApp(appId);
+				} catch {}
+
+				try {
+					disposeLazy(rootComponent);
+				} catch {}
 			}
 		}
 
