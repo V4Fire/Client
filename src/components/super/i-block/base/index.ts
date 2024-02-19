@@ -665,22 +665,15 @@ export default abstract class iBlockBase extends iBlockFriends {
 		}
 
 		if (!this.meta.params.root) {
-			Object.defineProperty(this, 'hydrationStore', {
-				enumerable: true,
-				configurable: true,
+			['app', 'appId', 'hydrationStore', 'ssrState'].forEach((prop) => {
+				Object.defineProperty(this, prop, {
+					enumerable: true,
+					configurable: true,
 
-				get() {
-					return this.r.hydrationStore;
-				}
-			});
-
-			Object.defineProperty(this, 'ssrState', {
-				enumerable: true,
-				configurable: true,
-
-				get() {
-					return this.r.ssrState;
-				}
+					get() {
+						return this.r[prop];
+					}
+				});
 			});
 		}
 	}

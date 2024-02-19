@@ -13,7 +13,7 @@ import type { BoundFn, ProxyCb, EventId } from 'core/async';
 
 import type { State } from 'core/component/state';
 import type { HydrationStore } from 'core/component/hydration';
-import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
+import type { VNode, Slots, ComponentOptions, SetupContext, CreateAppFunction } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/meta';
 
 import type { Hook } from 'core/component/interface/lc';
@@ -38,6 +38,11 @@ export abstract class ComponentInterface {
 	 * Type: the base superclass for all components
 	 */
 	readonly Component!: ComponentInterface;
+
+	/**
+	 * A link to the application object
+	 */
+	readonly app!: ReturnType<CreateAppFunction>;
 
 	/**
 	 * The unique application identifier
