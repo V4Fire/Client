@@ -71,6 +71,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed all references to the global state `iStaticPage`
 
+=======
+>>>>>>> v4.0.0-beta.58
 ## v4.0.0-beta.58 (2024-02-14)
 
 #### :rocket: New Feature
@@ -139,6 +141,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :house: Internal
 
 * Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
+>>>>>>> v4
 
 ## v4.0.0-beta.54 (2024-02-06)
 
