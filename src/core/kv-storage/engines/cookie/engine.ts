@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { from, Cookies, SetOptions } from 'core/cookies';
+import { from, createCookieStore, Cookies, SetOptions } from 'core/cookies';
 
 import StringEngine from 'core/kv-storage/engines/string/engine';
 import type { StorageOptions } from 'core/kv-storage/engines/cookie/interface';
@@ -46,7 +46,7 @@ export default class CookieEngine extends StringEngine {
 	 */
 	constructor(cookieName: string, opts?: StorageOptions) {
 		super(Object.select(opts, 'separators'));
-		this.cookies = opts?.cookies ?? from(document);
+		this.cookies = opts?.cookies ?? from(createCookieStore(''));
 		this.cookieName = cookieName;
 		this.setOptions = Object.reject(opts, ['cookies', 'separators']);
 	}
