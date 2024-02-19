@@ -243,8 +243,11 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 			return name;
 		}
 
-		if (isComponent.test(name) && app.context != null) {
-			return app.context.component(name) ?? original(name);
+		const
+			appCtx = SSR ? this.app : app.context;
+
+		if (isComponent.test(name) && appCtx != null) {
+			return appCtx.component(name) ?? original(name);
 		}
 
 		return original(name);
@@ -259,7 +262,8 @@ export function wrapResolveDirective<T extends typeof resolveDirective>(
 	original: T
 ): T {
 	return Object.cast(function resolveDirective(this: ComponentInterface, name: string) {
-		return app.context != null ? app.context.directive(name) ?? original(name) : original(name);
+		const appCtx = SSR ? this.app : app.context;
+		return appCtx != null ? appCtx.directive(name) ?? original(name) : original(name);
 	});
 }
 

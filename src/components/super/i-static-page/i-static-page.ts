@@ -105,7 +105,7 @@ export default abstract class iStaticPage extends iPage {
 		o,
 		{
 			themeStorageEngine: new CookieStorage('v4ls', {
-				cookies: cookies.from(o.remoteState.cookies ?? document),
+				cookies: cookies.from(o.remoteState.cookies ?? cookies.createCookieStore('')),
 				maxAge: 2 ** 31 - 1
 			}),
 
