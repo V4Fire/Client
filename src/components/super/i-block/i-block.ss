@@ -96,6 +96,9 @@
 			- if paths.length > 0 || wait
 				? wait = '() => { const {Promise} = global; return new Promise(() => {}); }'
 
+		- else if paths.length > 0 && wait
+			? wait = '(() => { const promise = ' + wait + '.call(); return () => promise; })()'
+
 		: &
 			filter = (wait ? buble.transform("`" + wait + "`").code : 'undefined')
 				.replace(/^\(?['"]/, '')
