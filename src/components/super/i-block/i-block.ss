@@ -89,15 +89,13 @@
 		: &
 			buble = require('buble'),
 			paths = Array.concat([], path),
+			ids = [],
 			wait = opts.wait
 		.
 
 		- if SSR
 			- if paths.length > 0 || wait
 				? wait = '() => { const {Promise} = global; return new Promise(() => {}); }'
-
-		- else if paths.length > 0 && wait
-			? wait = '(() => { const promise = ' + wait + '.call(); return () => promise; })()'
 
 		: &
 			filter = (wait ? buble.transform("`" + wait + "`").code : 'undefined')
@@ -115,18 +113,26 @@
 		}}
 
 		- forEach paths => path
+			? ids.push([path, wait || 'undefined'].concat(wait ? '${componentId}' : []).join(':'))
+
+		: bucket = "'" + Object.fastHash(ids.join(';')) + "'"
+
+		- forEach paths => path, i
 			: &
-				id = [path, wait || 'undefined'].concat(wait ? '${componentId}' : []).join(':'),
+				id = ids[i],
 				interpolatedId = buble.transform("`" + id + "`").code
 			.
 
 			{{
-				void(moduleLoader.addToBucket('global', {
+				void(moduleLoader.addToBucket(${bucket}, {
 					id: ${interpolatedId},
-					load: () => import('${path}'),
+					load: () => global.Promise.resolve().then(${filter}).then(() => import('${path}')),
 					ssr: false
 				}))
 			}}
+
+		- if paths.length > 0
+			? filter = 'undefined'
 
 		- if content != null
 			- if opts.renderKey
@@ -135,7 +141,7 @@
 				< template v-if = !field.get('ifOnceStore.' + ${renderKey})
 					{{ void(field.set('ifOnceStore.' + ${renderKey}, true)) }}
 
-					< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket('global'), 1, { &
+					< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${bucket}), 1, { &
 						useRaf: true,
 						group: 'module:' + ${renderKey},
 						filter: ${filter}
@@ -143,7 +149,7 @@
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket('global'), 1, {useRaf: true, filter: ${filter}})
+				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${bucket}), 1, {useRaf: true, filter: ${filter}})
 					+= content
 
 	/**
