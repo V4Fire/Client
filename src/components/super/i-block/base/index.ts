@@ -671,7 +671,7 @@ export default abstract class iBlockBase extends iBlockFriends {
 					configurable: true,
 
 					get() {
-						return this.r[prop];
+						return prop in this.r ? this.r[prop] : undefined;
 					}
 				});
 			});
