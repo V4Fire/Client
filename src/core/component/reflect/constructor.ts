@@ -67,7 +67,7 @@ export function getInfoFromConstructor(
 	const
 		name = declParams?.name ?? getComponentName(constructor);
 
-	const layer = declParams?.layer ?? undefined;
+	const layer = declParams?.layer;
 
 	const
 		parent = Object.getPrototypeOf(constructor),

@@ -9,30 +9,49 @@
 'use strict';
 
 const ts = require('typescript');
-const path = require('upath');
+const {validators} = require('@pzlr/build-core');
 
-const prefixPathRegExp = new RegExp(`.+(${path.sep}|\\|)src`);
+/**
+ * @typedef {import('typescript').TransformationContext} Context
+ * @typedef {import('typescript').Node} Node
+ * @typedef {import('typescript').VisitResult} VisitResult
+ * @typedef {import('typescript').Transformer} Transformer
+ */
+
+const prefixPathRegExp = /(?<path>.+)[/\\]src.*?/;
+const componentRegExp = new RegExp(`[\\/](${validators.blockTypeList.join('|')})-.+?[\\/]?`);
+
+function isComponent(path) {
+	return componentRegExp.test(path);
+}
 
 function getLayerName(filePath) {
-	const prefixPath = filePath.match(prefixPathRegExp)[0];
-	const packageJson = require(`${prefixPath}/../package.json`);
-	return packageJson.name;
+	const prefixPath = filePath.match(prefixPathRegExp).groups.path;
+	return require(`${prefixPath}/package.json`).name;
 }
 
 /**
  *
- * @param context
+ * @param {Context} context
+ * @returns {Transformer}
  */
 const setComponentLayerTransformer = (context) => (sourceFile) => {
+
+	if (!isComponent(sourceFile.path)) {
+		return sourceFile;
+	}
 
 	const layer = getLayerName(sourceFile.path);
 	const {factory} = context;
 
+	/**
+	 * @param {Node} node
+	 * @returns {VisitResult}
+	 */
 	const visitor = (node) => {
 		if (node.kind === ts.SyntaxKind.CallExpression &&
-		node.parent?.kind === ts.SyntaxKind.Decorator &&
-		node.expression?.escapedText === 'component') {
-
+			node.parent?.kind === ts.SyntaxKind.Decorator &&
+			node.expression?.escapedText === 'component') {
 			const properties = node.arguments?.[0]?.properties ?? [];
 
 			return factory.createCallExpression(
