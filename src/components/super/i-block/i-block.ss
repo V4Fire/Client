@@ -115,7 +115,7 @@
 		- forEach paths => path
 			? ids.push([path, wait || 'undefined'].concat(wait ? '${componentId}' : []).join(':'))
 
-		: bucket = "'" + Object.fastHash(ids.join(';')) + "'"
+		: bucket = Object.fastHash(ids.join(';')) |json
 
 		- forEach paths => path, i
 			: &
