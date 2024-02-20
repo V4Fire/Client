@@ -11,15 +11,15 @@
 const {validators} = require('@pzlr/build-core');
 const path = require('upath');
 
+const componentRegExp = new RegExp(`(${path.sep}|\\|)(${validators.blockTypeList.join('|')})-.+?(${path.sep}|\\|)?`);
+const prefixPathRegExp = new RegExp(`.+(${path.sep}|\\|)src`);
+
 /**
  *
  * @param source
  */
 exports.default = function loader(source) {
 	let modified = source;
-
-	const componentRegExp = new RegExp(`(${path.sep}|\\|)(${validators.blockTypeList.join('|')})-.+?(${path.sep}|\\|)?`);
-	const prefixPathRegExp = new RegExp(`.+(${path.sep}|\\|)src`);
 
 	if (componentRegExp.test(this.resourcePath)) {
 		const srcPrefixPath = this.resourcePath.match(prefixPathRegExp)[0];
@@ -37,6 +37,13 @@ exports.default = function loader(source) {
 
 				if (options !== '') {
 
+					// Options.pop(); // Remove symbol '}'
+					// options.push(`, layer: "${packageName}" }`); // Add layer prop
+
+					options = `${options.substring(0, options.length - 1)}, layer: "${packageName}" }`;
+
+					// Console.log(options);
+
 				} else {
 					options = `{ layer: "${packageName}"}`;
 				}
@@ -44,7 +51,7 @@ exports.default = function loader(source) {
 				return `@component(${options})`;
 			});
 
-		return source;
+		return modified;
 	}
 
 	return modified;

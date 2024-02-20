@@ -12,5 +12,5 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		< b-button
+		< b-slider
 			hello
