@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.63 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Fixed a typo when extending the property for inject `core/init`
+
 ## v4.0.0-beta.62 (2024-02-19)
 
 #### :rocket: New Feature
