@@ -14,16 +14,21 @@
 import symbolGenerator from 'core/symbol';
 
 import { Xor128 } from 'core/random/xor128';
+
 import { RestrictedCache } from 'core/cache';
+import { instanceCache } from 'core/data';
+
 import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
-import * as cookie from 'core/kv-storage/engines/cookie';
-import { webEngineFactory } from 'core/system-theme-extractor/engines/web';
+
+import * as cookies from 'core/cookies';
+import CookieStorage from 'core/kv-storage/engines/cookie';
+
+import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
 
 import {
 
-	remoteState,
 	resetComponents,
 
 	GlobalEnvironment,
@@ -84,7 +89,7 @@ export default abstract class iStaticPage extends iPage {
 	 * A module for manipulating page metadata, such as the page title or description
 	 */
 	@system<iStaticPage>((o) => new PageMetaData({
-		document: o.globalEnv.ssr?.document ?? document
+		document: o.remoteState.document ?? document
 	}))
 
 	readonly pageMetaData!: PageMetaData;
@@ -100,8 +105,14 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>((o) => themeManagerFactory(
 		o,
-		cookie.syncLocalStorage,
-		webEngineFactory(o)
+		{
+			themeStorageEngine: new CookieStorage('v4ls', {
+				cookies: cookies.from(o.remoteState.cookies ?? cookies.createCookieStore('')),
+				maxAge: 2 ** 31 - 1
+			}),
+
+			systemThemeExtractor: new SystemThemeExtractorWeb(o)
+		}
 	))
 
 	readonly theme: CanUndef<ThemeManager>;
@@ -128,7 +139,7 @@ export default abstract class iStaticPage extends iPage {
 	 * Initial value for the active route.
 	 * This field is typically used in cases of SSR and hydration.
 	 */
-	@system(() => remoteState.route)
+	@system((o) => o.remoteState.route)
 	initialRoute?: InitialRoute | this['CurrentPage'];
 
 	/**
@@ -138,7 +149,7 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system<iStaticPage>({
 		atom: true,
-		init: (o) => o.initGlobalEnv(remoteState)
+		init: (o) => o.initGlobalEnv(o.remoteState)
 	})
 
 	globalEnv!: GlobalEnvironment;
@@ -412,6 +423,19 @@ export default abstract class iStaticPage extends iPage {
 	protected override beforeDestroy(): void {
 		super.beforeDestroy();
 		this.hydrationStore?.clear();
+
+		Object.forEach(this.ssrState, (_, key: string, state) => {
+			delete state![key];
+		});
+
+		const
+			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.appId)}:`));
+
+		Object.forEach(instanceCache, (provider, key) => {
+			if (isThisApp.test(key)) {
+				provider.destroy();
+			}
+		});
 	}
 
 	/**

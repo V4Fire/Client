@@ -9,6 +9,22 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.63 (2024-02-20)
+
+#### :bug: Bug Fix
+
+* Removed an unnecessary next data chunk response checking
+
+## v4.0.0-beta.60 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new`
+
+#### :rocket: New Feature
+
+* Added `preloadAmount` prop in `b-virtual-scroll-new`
+
 ## v4.0.0-beta.54 (2024-02-06)
 
 #### :bug: Bug Fix

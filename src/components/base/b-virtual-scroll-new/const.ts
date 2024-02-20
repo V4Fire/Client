@@ -138,6 +138,16 @@ export const componentEvents = <const>{
 };
 
 /**
+ * Internal component events (emitted in localEmitter)
+ */
+export const componentLocalEvents = <const>{
+	/**
+	 * The rendering cycle of components has completed (the path from renderStart to renderDone has been traversed)
+	 */
+	renderCycleDone: 'renderCycleDone'
+};
+
+/**
  * Reasons for rejecting a render operation.
  */
 export const renderGuardRejectionReason = <const>{
@@ -170,12 +180,6 @@ export const defaultShouldProps = <const>{
 	shouldStopRequestingData: (state: VirtualScrollState, _ctx: bVirtualScrollNew): boolean => {
 		const isLastRequestEmpty = () => state.lastLoadedData.length === 0;
 		return isLastRequestEmpty();
-	},
-
-	/** {@link bVirtualScrollNew.shouldPerformDataRequest} */
-	shouldPerformDataRequest: (state: VirtualScrollState, _ctx: bVirtualScrollNew): boolean => {
-		const isLastRequestNotEmpty = () => state.lastLoadedData.length > 0;
-		return isLastRequestNotEmpty();
 	},
 
 	/** {@link bVirtualScrollNew.shouldPerformDataRender} */

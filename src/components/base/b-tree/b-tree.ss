@@ -16,7 +16,11 @@
 		? rootAttrs['v-async-target'] = TRUE
 
 	- block body
-		< template v-for = (el, i) in (lazyRender ? asyncRender.iterate(items, renderChunks, renderTaskParams) : items)
+		< template v-for = (el, i) in ( &
+			lazyRender === false || lazyRender === 'folded' ?
+				items :
+				asyncRender.iterate(items, renderChunks, renderTaskParams)
+		) .
 			< .&__node &
 				:key = getItemKey(el, i) |
 
@@ -32,42 +36,44 @@
 					}
 				})
 			.
-				< .&__item-wrapper
-					< .&__marker
-						- block fold
-							< template v-if = hasChildren(el)
-								+= self.slot('fold', {':params': 'getFoldProps(el)'})
-									< .&__fold :v-attrs = getFoldProps(el)
+				- block itemWrapper
+					< .&__item-wrapper
+						< .&__marker
+							- block fold
+								< template v-if = hasChildren(el)
+									+= self.slot('fold', {':params': 'getFoldProps(el)'})
+										< .&__fold :v-attrs = getFoldProps(el)
 
-					- block item
-						+= self.slot('default', {':item': 'getItemProps(el, i)'})
-							< component.&__item &
-								v-if = item |
-								:is = Object.isFunction(item) ? item(el, i) : item |
-								:v-attrs = getItemProps(el, i)
-							.
+						- block item
+							+= self.slot('default', {':item': 'getItemProps(el, i)'})
+								< component.&__item &
+									v-if = item |
+									:is = Object.isFunction(item) ? item(el, i) : item |
+									:v-attrs = getItemProps(el, i)
+								.
 
 				- block children
-					< .&__children v-if = hasChildren(el)
-						< b-tree.&__child &
-							ref = children |
-							v-func = nestedTreeProps.isFunctional |
+					< .&__children v-if = hasChildren(el) | v-async-target
+						+= self.render({wait: 'getNestedTreeFilter(el)'})
+							< b-tree.&__child &
+								ref = children |
+								v-func = true |
 
-							:items = el.children |
-							:item = item |
-							:itemProps = itemProps |
+								:items = el.children |
+								:item = item |
+								:itemProps = itemProps |
 
-							:folded = getFoldedPropValue(el) |
-							:v-attrs = nestedTreeProps
-						.
-							< template &
-								#default = o |
-								v-if = $slots['default']
+								:folded = getFoldedPropValue(el) |
+								:v-attrs = nestedTreeProps
 							.
-								+= self.slot('default', {':item': 'o.item'})
+								< template &
+									#default = o |
+									v-if = $slots['default']
+								.
+									+= self.slot('default', {':item': 'o.item'})
 
-							< template &
-								#fold = o |
-								v-if = $slots['fold']
-							.
-								+= self.slot('fold', {':params': 'o.params'})
+								< template &
+									#fold = o |
+									v-if = $slots['fold']
+								.
+									+= self.slot('fold', {':params': 'o.params'})

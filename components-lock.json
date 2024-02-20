@@ -1,5 +1,5 @@
 {
-  "hash": "865280bfec97ef8005ed118094d96b33afcfece456c2a8b26c419ca2093656e6",
+  "hash": "07710505007b95955dfd65aa25872b4c407bf711cc915e42cd15b7b1a9e2dd75",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -620,6 +620,70 @@
             "src/components/friends/vdom/test/b-friends-vdom-dummy/b-friends-vdom-dummy.styl"
           ],
           "tpl": "src/components/friends/vdom/test/b-friends-vdom-dummy/b-friends-vdom-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-functional-button-dummy",
+        {
+          "index": "src/core/component/functional/test/b-functional-button-dummy/index.js",
+          "declaration": {
+            "name": "b-functional-button-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-functional-button-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy.ts",
+          "styles": [
+            "src/core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy.styl"
+          ],
+          "tpl": "src/core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-functional-dummy",
+        {
+          "index": "src/core/component/functional/test/b-functional-dummy/index.js",
+          "declaration": {
+            "name": "b-functional-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-functional-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.ts",
+          "styles": [
+            "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.styl"
+          ],
+          "tpl": "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.ss",
           "etpl": null
         }
       ],
@@ -2261,8 +2325,9 @@
               "b-remote-provider",
               "b-list",
               "b-tree",
-              "b-virtual-scroll",
               "b-window",
+              "b-virtual-scroll",
+              "b-virtual-scroll-new",
               "b-bottom-slide",
               "b-slider",
               "b-sidebar",
@@ -2303,8 +2368,9 @@
             "b-remote-provider",
             "b-list",
             "b-tree",
-            "b-virtual-scroll",
             "b-window",
+            "b-virtual-scroll",
+            "b-virtual-scroll-new",
             "b-bottom-slide",
             "b-slider",
             "b-sidebar",

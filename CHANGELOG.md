@@ -11,6 +11,143 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Fixed a typo when extending the property for inject `core/init`
+* Need to check for the existence of provide properties using `in` `iBlock`
+
+## v4.0.0-beta.63 (2024-02-20)
+
+#### :bug: Bug Fix
+
+* Removed an unnecessary next data chunk response checking `base/b-virtual-scroll-new`
+
+## v4.0.0-beta.62 (2024-02-19)
+
+#### :rocket: New Feature
+
+* Added an app property to get a reference to the application object `core/component`
+
+#### :bug: Bug Fix
+
+* Fixed bugs in the initialization of SSR rendering `core/init` `iStaticPage` `core/cookies`
+
+## v4.0.0-beta.61 (2024-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with missing aliases `build/webpack/resolve/alias`
+
+## v4.0.0-beta.60 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `base/b-virtual-scroll-new`
+* `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with aliases being set for build in ssr `build/webpack/resolve/alias`
+
+#### :rocket: New Feature
+
+* Added `preloadAmount` prop in b`-virtual-scroll-new` `base/b-virtual-scroll-new`
+
+#### :house:  Internal
+
+* Added re-export of modules from `tests/helpers`:
+  - Request
+  - RequestInterceptor
+  - Mock
+
+* Removed bad import of async module from `tests/helpers/network/interceptor`
+
+## v4.0.0-beta.59 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Everything except for interfaces has been moved to `core/component/client-state` `core/component/state`
+
+#### :rocket: New Feature
+
+* Added adapters for easy creation of cookie stores `core/cookies/stores`
+
+#### :bug: Bug Fix
+
+* Removed all references to the global state `iStaticPage`
+
+## v4.0.0-beta.58 (2024-02-14)
+
+#### :rocket: New Feature
+
+* Added support for different cookie stores: `core/cookies`, `core/kv-storage/engines/cookie`
+* Added support for different session stores `core/session`
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks `core/init/semaphore` `iStaticPage`
+
+#### :house: Internal
+
+* Moved `system-theme-extractor` from `core` to `components/super/i-static-page/modules/theme`
+
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks in:
+  * `components/super/i-block/providers`
+  * `core/init/semaphore`
+  * `components/super/i-static-page/i-static-page`
+* Fixed the loss of event handlers in functional components `core/component/render/wrappers`
+
+#### :house: Internal
+
+* Removed `id` property from `ProviderOptions` interface `core/data/interface/types`
+
+## v4.0.0-beta.56 (2024-02-09)
+
+#### :rocket: New Feature
+
+* New test APIs:
+  * Request interceptor `tests/helpers/network/interceptor`;
+  * ComponentObject `tests/helpers/component-object`;
+  * Spy and mock `tests/helpers/mock`;
+  * Component.createComponentInDummy `tests/helpers/component`.
+
+#### :bug: Bug Fix
+
+* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/base/b-virtual-scroll-new`
+
+#### :house:  Internal
+
+* Added tests for `b-virtual-scroll-new` `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :boom: Breaking Change
+
+* `bTree`:
+  * Now all nested trees are rendered as functional
+  * Now, by default, folded items are not rendered
+
+#### :rocket: New Feature
+
+* Added new values for the `lazyRender` prop `bTree`
+
+#### :bug: Bug Fix
+
+* Fixed errors when using the tree as a functional component `bTree`
+* Fixed move to the closest step in `heightMode = content` `bBottomSlide`
+* Added cleanup of hydrated data upon component destroying `iStaticPage`
+
+#### :house: Internal
+
+* Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
+>>>>>>> v4
+
 ## v4.0.0-beta.54 (2024-02-06)
 
 #### :bug: Bug Fix
