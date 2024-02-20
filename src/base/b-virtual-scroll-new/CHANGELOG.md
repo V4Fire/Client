@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.66.?? (????-??-??)
+
+#### :bug: Bug Fix
+
+* Removed an unnecessary next data chunk response checking
+
 ## v3.66.0 (2024-02-13)
 
 #### :boom: Breaking Change
