@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.63 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Need to check for the existence of provide properties using `in`
+
 ## v4.0.0-beta.57 (2024-02-13)
 
 #### :bug: Bug Fix
