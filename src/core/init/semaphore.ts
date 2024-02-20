@@ -68,7 +68,7 @@ function createAppInitializer() {
 				// eslint-disable-next-line @typescript-eslint/no-var-requires
 				{renderToString} = require('vue/server-renderer');
 
-			Object.assign(rootComponentParams, {
+			Object.assign(rootComponentParams.inject, {
 				hydrationStore: 'hydrationStore',
 				ssrState: 'ssrState'
 			});
