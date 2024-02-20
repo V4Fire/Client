@@ -17,6 +17,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Removed an unnecessary next data chunk response checking `base/b-virtual-scroll-new`
 
+## v4.0.0-beta.62 (2024-02-19)
+
+#### :rocket: New Feature
+
+* Added an app property to get a reference to the application object `core/component`
+
+#### :bug: Bug Fix
+
+* Fixed bugs in the initialization of SSR rendering `core/init` `iStaticPage` `core/cookies`
+
 ## v4.0.0-beta.61 (2024-02-15)
 
 #### :bug: Bug Fix
