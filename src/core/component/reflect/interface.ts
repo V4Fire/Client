@@ -20,7 +20,7 @@ import type {
  */
 export interface ComponentConstructorInfo {
 	/**
-	 *
+	 * The package name where component is defined or override
 	 */
 	layer?: string;
 

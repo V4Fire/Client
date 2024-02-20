@@ -11,7 +11,7 @@
  */
 export interface ComponentOptions {
 	/**
-	 * TODO;
+	 * The package name where component is defined or override
 	 */
 	layer?: string;
 
