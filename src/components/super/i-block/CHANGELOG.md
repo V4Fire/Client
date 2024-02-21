@@ -9,12 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-02-??)
+## v4.0.0-beta.65 (2024-02-21)
 
 #### :bug: Bug Fix
 
 * Created separate buckets for each `loadModules` call
-* Fixed wait in `loadModules`: now, modules are not loaded until the wait is resolved
+* Fixed the `wait` option in `loadModules`: now, all modules are not loaded until the wait option is resolved
 
 ## v4.0.0-beta.64 (2024-02-19)
 
