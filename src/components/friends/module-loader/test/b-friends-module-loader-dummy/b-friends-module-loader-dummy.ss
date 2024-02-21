@@ -27,3 +27,25 @@
 			< .&__result
 				< b-friends-module-loader-dummy1
 				< b-friends-module-loader-dummy2
+
+		< template v-if = stage === 'multiple loadModules should not affect each other'
+			< .&__result v-async-target
+				+= self.loadModules('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy1', { &
+					wait: "localEmitter.promisifyOnce.bind(null, 'dummy1')"
+				}) .
+					< b-friends-module-loader-dummy1
+
+				+= self.loadModules('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy2', { &
+					wait: "localEmitter.promisifyOnce.bind(null, 'dummy2')"
+				}) .
+					< b-friends-module-loader-dummy2
+
+		< template v-if = stage === 'load module only after wait is resolved'
+			< .&__result v-async-target
+				+= self.loadModules('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy1')
+					< b-friends-module-loader-dummy1
+
+				+= self.loadModules('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy2', { &
+					wait: "localEmitter.promisifyOnce.bind(null, 'dummy2')"
+				}) .
+					< b-friends-module-loader-dummy2
