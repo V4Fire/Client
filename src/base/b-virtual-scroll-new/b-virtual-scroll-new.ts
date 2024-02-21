@@ -12,6 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
 import type { AsyncOptions } from 'core/async';
 
 import type iItems from 'traits/i-items/i-items';
@@ -180,33 +181,31 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		this.componentInternalState.setIsLoadingInProgress(true);
 
 		const
-			initLoadResult = super.initLoad(...args);
+			initLoadResult = super.initLoad(...args),
+			initLoadPromise = Object.isPromise(initLoadResult) ? initLoadResult : SyncPromise.resolve(),
+			wrappedInitLoadPromise = this.async.promise(initLoadPromise, {
+				label: $$.initLoad,
+				group: bVirtualScrollAsyncGroup,
+				join: 'replace'
+			});
 
 		if (this.componentMode === componentModes.items) {
-			if (Object.isPromise(initLoadResult)) {
-				return initLoadResult
-					.then(() => this.initItems())
-					.catch(stderr);
-			}
-
-			return this.initItems();
+			return wrappedInitLoadPromise
+				.then(() => this.initItems())
+				.catch(stderr);
 		}
 
 		this.onDataLoadStart(true);
 
-		if (Object.isPromise(initLoadResult)) {
-			initLoadResult
-				.then(() => {
-					if (this.db == null) {
-						return;
-					}
+		wrappedInitLoadPromise
+			.then(() => {
+				if (this.db == null) {
+					return;
+				}
 
-					this.onDataLoadSuccess(true, this.db);
-				})
-				.catch(stderr);
-		}
-
-		return initLoadResult;
+				this.onDataLoadSuccess(true, this.db);
+			})
+			.catch(stderr);
 	}
 
 	/**
