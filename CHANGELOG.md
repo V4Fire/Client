@@ -19,6 +19,19 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   * Created separate buckets for each `loadModules` call
   * Fixed wait in `loadModules`: now modules are not loaded until wait is resolved
 
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Fixed a typo when extending the property for inject `core/init`
+* Need to check for the existence of provide properties using `in` `iBlock`
+
+## v4.0.0-beta.63 (2024-02-20)
+
+#### :bug: Bug Fix
+
+* Removed an unnecessary next data chunk response checking `base/b-virtual-scroll-new`
+
 ## v4.0.0-beta.62 (2024-02-19)
 
 #### :rocket: New Feature

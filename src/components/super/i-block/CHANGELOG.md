@@ -16,6 +16,12 @@ Changelog
 * Created separate buckets for each `loadModules` call
 * Fixed wait in `loadModules`: now modules are not loaded until wait is resolved
 
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Need to check for the existence of provide properties using `in`
+
 ## v4.0.0-beta.57 (2024-02-13)
 
 #### :bug: Bug Fix
