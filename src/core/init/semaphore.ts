@@ -8,6 +8,7 @@
 
 import { createsAsyncSemaphore } from 'core/event';
 import { disposeLazy } from 'core/lazy';
+import { expandedStringify } from 'core/json';
 
 import remoteState, { set } from 'core/component/client-state';
 
@@ -87,6 +88,7 @@ function createAppInitializer() {
 
 				return {
 					content: ssrContent + hydratedData,
+					meta: remoteState.seo?.toString() ?? '',
 					styles: (await Promise.all(hydrationStore.styles.values())).map((i) => i.default).join('')
 				};
 

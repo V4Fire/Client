@@ -11,13 +11,6 @@ import type { Experiments } from 'core/abt';
 import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
-interface SeoState {
-	title: string;
-	description: string;
-	meta: MetaAttributes[];
-	links: LinkAttributes[];
-}
-
 export interface State {
 	/**
 	 * True, if the current user session is authorized
@@ -78,7 +71,17 @@ export interface State {
 	 */
 	globalEnv?: GlobalEnvironment;
 
-	seo: SeoState;
+	/**
+	 * An object containing seo meta information of the current page. It is used for inlining elements in SSR
+	 */
+	seo?: SeoState;
 }
 
 export interface GlobalEnvironment extends Dictionary {}
+
+export interface SeoState {
+	title: string;
+	description: string;
+	meta: MetaAttributes[];
+	links: LinkAttributes[];
+}

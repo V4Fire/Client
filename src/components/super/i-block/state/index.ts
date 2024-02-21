@@ -13,7 +13,6 @@
 
 import SyncPromise from 'core/promise/sync';
 
-import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
 import { initGlobalEnv } from 'core/env';
@@ -21,7 +20,6 @@ import { i18nFactory } from 'core/prelude/i18n';
 import { component, clientState, hook, hydrationStore, Hook, State } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
-import type iBlock from 'components/super/i-block/i-block';
 
 import type { Module } from 'components/friends/module-loader';
 import type { ConverterCallType } from 'components/friends/state';

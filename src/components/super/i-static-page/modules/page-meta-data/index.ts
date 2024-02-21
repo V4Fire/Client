@@ -112,8 +112,8 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * Устанавливает ссылку `<link rel="canonical" />`
-	 * @param [pathname] - строка содержащая первый '/' после хоста с последующим текстом URL
+	 * Sets canonical link `<link rel="canonical" />` to the page
+	 * @param [pathname] - string containing the first '/' after the domain with the subsequent URL text
 	 */
 	setCanonicalLink(pathname?: string): void {
 		const
@@ -129,7 +129,7 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * Удаляет ссылку `<link rel="canonical" />`
+	 * Removes canonical link `<link rel="canonical" />` from the page
 	 */
 	removeCanonicalLink(): NodeListOf<HTMLLinkElement> {
 		const links = this.findLinks({rel: 'canonical'});
@@ -139,7 +139,7 @@ export default class PageMetaData {
 	}
 
 	/**
-	 * Удаляет мета элемент со страницы
+	 * Removes meta element from the page
 	 * @param attrs
 	 */
 	removeMeta(attrs: MetaAttributes): NodeListOf<HTMLMetaElement> {
