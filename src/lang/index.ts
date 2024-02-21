@@ -12,7 +12,7 @@ import keysetsCollector from 'lang/engines';
 
 export * from '@v4fire/core/lang';
 
-const langPacs = { 
+const langPacs = {
 	...Super
 };
 

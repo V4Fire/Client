@@ -19,8 +19,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house:  Internal
 
-* Refactored the build ssr: all code has now been bundled into one file
-* Replaced the progress plugin's total time log with measure-loader
+* Refactored the build ssr: all code has now been bundled into one file `build/graph`
+* Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
 
 #### :bug: Bug Fix
 
