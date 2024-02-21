@@ -8,7 +8,6 @@
 
 import { createsAsyncSemaphore } from 'core/event';
 import { disposeLazy } from 'core/lazy';
-import { expandedStringify } from 'core/json';
 
 import remoteState, { set } from 'core/component/client-state';
 
