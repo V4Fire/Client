@@ -49,14 +49,14 @@ test.describe('friends/module-loader', () => {
 		].join(' '));
 	});
 
-	test('multiple `loadModules` should not affect each other and only required modules should render', async ({page}) => {
-		const target = await renderDummy(page, 'multiple loadModules should not affect each other');
+	test('simultaneous `loadModules` calls should function independently, and only relevant modules should render', async ({page}) => {
+		const target = await renderDummy(page, 'simultaneous loadModules calls should function independently');
 
 		await performAsyncRender(target, 'dummy1');
 		await test.expect(page.locator(resultSelector)).toHaveText('Dummy module #1');
 	});
 
-	test('should load module only after it\'s wait function is resolved', async ({page}) => {
+	test('module should be loaded only after its associated "wait" function is resolved', async ({page}) => {
 		let contents: Array<Promise<string>> = [];
 
 		page.on('response', (response) => {
@@ -102,8 +102,8 @@ test.describe('friends/module-loader', () => {
 	}
 
 	/**
-	 * Initiates async render of the specified component and resolves
-	 * after render is completed
+	 * Initiates an asynchronous rendering of a specified component. The function then resolves
+	 * after the rendering process is completed.
 	 *
 	 * @param dummy
 	 * @param target

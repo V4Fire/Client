@@ -28,7 +28,7 @@
 				< b-friends-module-loader-dummy1
 				< b-friends-module-loader-dummy2
 
-		< template v-if = stage === 'multiple loadModules should not affect each other'
+		< template v-if = stage === 'simultaneous loadModules calls should function independently'
 			< .&__result v-async-target
 				+= self.loadModules('components/friends/module-loader/test/b-friends-module-loader-dummy/b-friends-module-loader-dummy1', { &
 					wait: "localEmitter.promisifyOnce.bind(null, 'dummy1')"
