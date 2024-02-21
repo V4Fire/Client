@@ -89,7 +89,6 @@
 		: &
 			buble = require('buble'),
 			paths = Array.concat([], path),
-			ids = [],
 			wait = opts.wait
 		.
 
@@ -111,6 +110,8 @@
 		{{
 			void(require('components/friends/async-render').default.addToPrototype(require('components/friends/async-render').iterate))
 		}}
+
+		: ids = []
 
 		- forEach paths => path
 			? ids.push([path, wait || 'undefined'].concat(wait ? '${componentId}' : []).join(':'))

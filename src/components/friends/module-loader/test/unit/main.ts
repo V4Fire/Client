@@ -102,8 +102,8 @@ test.describe('friends/module-loader', () => {
 	}
 
 	/**
-	 * Initiates an asynchronous rendering of a specified component. The function then resolves
-	 * after the rendering process is completed.
+	 * Initiates an asynchronous rendering of a specified component.
+	 * The function returns a promise that resolves after the rendering process is completed.
 	 *
 	 * @param dummy
 	 * @param target
