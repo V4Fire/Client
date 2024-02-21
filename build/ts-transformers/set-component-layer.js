@@ -18,7 +18,7 @@ const {validators} = require('@pzlr/build-core');
  * @typedef {import('typescript').Transformer} Transformer
  */
 
-const prefixPathRegExp = /(?<path>.+)[/\\]src.*?/;
+const prefixPathRegExp = /(?<path>.+)[/\\]src[/\\].*?/;
 const componentRegExp = new RegExp(`[\\/](${validators.blockTypeList.join('|')})-.+?[\\/]?`);
 
 function isComponent(path) {
