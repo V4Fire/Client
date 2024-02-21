@@ -87,6 +87,7 @@ function createAppInitializer() {
 
 				return {
 					content: ssrContent + hydratedData,
+					meta: remoteState.seo?.toString() ?? '',
 					styles: (await Promise.all(hydrationStore.styles.values())).map((i) => i.default).join('')
 				};
 

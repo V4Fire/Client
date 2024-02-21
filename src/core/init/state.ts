@@ -13,8 +13,6 @@ import * as session from 'core/session';
 
 import type { InitAppOptions } from 'core/init/interface';
 
-import semaphore from 'core/init/semaphore';
-
 /**
  * Initializes the global state of the application (user session initialization, online status loading, etc.)
  * @param params - additional initialization parameters
@@ -22,6 +20,7 @@ import semaphore from 'core/init/semaphore';
 export default async function initState(params: InitAppOptions): Promise<void> {
 	initGlobalEnv(params);
 	params.isOnline = true;
+
 	params.seo = {
 		title: '',
 		description: '',
