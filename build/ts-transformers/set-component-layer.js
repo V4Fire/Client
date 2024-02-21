@@ -46,12 +46,13 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 
 	/**
 	 * @param {Node} node
-	 * @returns {VisitResult}
+	 * @returns {Node}
 	 */
 	const visitor = (node) => {
 		if (node.kind === ts.SyntaxKind.CallExpression &&
 			node.parent?.kind === ts.SyntaxKind.Decorator &&
 			node.expression?.escapedText === 'component') {
+
 			const properties = node.arguments?.[0]?.properties ?? [];
 
 			return factory.createCallExpression(
@@ -80,6 +81,7 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 };
 
 /**
- *
+ * The transformer that adds "layer" property to component objects to indicate the name
+ * of the package which it is defined
  */
 module.exports = () => setComponentLayerTransformer;
