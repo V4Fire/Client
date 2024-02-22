@@ -736,8 +736,10 @@ flowchart TD
     B -- "False" --> F["Check if state.isInitialRender"]
     F -- "True" --> G["Return: {result: true}"]
     F -- "False" --> H["Invoke shouldPerformDataRender"]
-    H -- "Not Defined or True" --> I["Return: {result: true}"]
-    H -- "False" --> J["Return: {result: false, reason: 'noPermission'}"]
+    H -- "True" --> I["Return: {result: true}"]
+    H -- "Not Defined or False" --> J["state.isTombstonesInView"]
+    J -- "True" --> K["Return: {result: true}"]
+    J -- "False" --> L["Return: {result: false, reason: 'noPermission'}"]
 ```
 
 Understanding `loadDataOrPerformRender`:
@@ -754,8 +756,7 @@ graph TB
     G -- "notEnoughData" --> I["Check if state.areRequestsStopped"]
     I -- "True" --> J["Invoke performRender() and onLifecycleDone()"]
     I -- "False" --> L["Invoke initLoadNext()"]
-    L -->  F["Check if state.areRequestsStopped"]
-    F -- "False" --> Z["Check if preloadAmount is reached"]
+    F --> Z["Check if preloadAmount is reached"]
     Z -- "False" --> X["Invoke initLoadNext()"]
 ```
 
