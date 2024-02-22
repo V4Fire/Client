@@ -176,8 +176,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 			isRequestsStopped = this.shouldStopRequestingDataWrapper();
 
 		this.componentEmitter.emit(componentEvents.dataLoadSuccess, dataToProvide, isInitialLoading);
-
-		this.slotsStateController.loadingSuccessState();
+		this.componentInternalState.setIsTombstonesInView(false);
 
 		if (
 			isInitialLoading &&
@@ -240,6 +239,21 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 		this.loadDataOrPerformRender();
 
 		this.componentEmitter.emit(componentEvents.elementEnter, component);
+	}
+
+	/**
+	 * Handler: The tombstones slot entered the viewport
+	 */
+	protected onTombstonesEnter(this: bVirtualScrollNew): void {
+		this.componentInternalState.setIsTombstonesInView(true);
+		this.loadDataOrPerformRender();
+	}
+
+	/**
+	 * Handler: The tombstones slot leaves the viewport
+	 */
+	protected onTombstonesLeave(this: bVirtualScrollNew): void {
+		this.componentInternalState.setIsTombstonesInView(false);
 	}
 
 	/**

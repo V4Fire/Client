@@ -12,6 +12,7 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import SyncPromise from 'core/promise/sync';
 import type { AsyncOptions } from 'core/async';
 
 import type iItems from 'traits/i-items/i-items';
@@ -180,33 +181,31 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		this.componentInternalState.setIsLoadingInProgress(true);
 
 		const
-			initLoadResult = super.initLoad(...args);
+			initLoadResult = super.initLoad(...args),
+			initLoadPromise = Object.isPromise(initLoadResult) ? initLoadResult : SyncPromise.resolve(),
+			wrappedInitLoadPromise = this.async.promise(initLoadPromise, {
+				label: $$.initLoad,
+				group: bVirtualScrollAsyncGroup,
+				join: 'replace'
+			});
 
 		if (this.componentMode === componentModes.items) {
-			if (Object.isPromise(initLoadResult)) {
-				return initLoadResult
-					.then(() => this.initItems())
-					.catch(stderr);
-			}
-
-			return this.initItems();
+			return wrappedInitLoadPromise
+				.then(() => this.initItems())
+				.catch(stderr);
 		}
 
 		this.onDataLoadStart(true);
 
-		if (Object.isPromise(initLoadResult)) {
-			initLoadResult
-				.then(() => {
-					if (this.db == null) {
-						return;
-					}
+		wrappedInitLoadPromise
+			.then(() => {
+				if (this.db == null) {
+					return;
+				}
 
-					this.onDataLoadSuccess(true, this.db);
-				})
-				.catch(stderr);
-		}
-
-		return initLoadResult;
+				this.onDataLoadSuccess(true, this.db);
+			})
+			.catch(stderr);
 	}
 
 	/**
@@ -327,11 +326,12 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		}
 
 		const
-			clientResponse = this.shouldPerformDataRender?.(state, this) ?? true;
+			clientResponse = this.shouldPerformDataRender?.(state, this),
+			result = clientResponse || state.isTombstonesInView;
 
 		return {
-			result: clientResponse,
-			reason: !clientResponse ? renderGuardRejectionReason.noPermission : undefined
+			result,
+			reason: !result ? renderGuardRejectionReason.noPermission : undefined
 		};
 	}
 
@@ -422,6 +422,15 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		this.componentInternalState.setIsDomInsertInProgress(true);
 
 		this.async.requestAnimationFrame(() => {
+			const
+				state = this.getVirtualScrollState();
+
+			this.slotsStateController.loadingSuccessState(true);
+
+			if (state.isLoadingInProgress) {
+				this.slotsStateController.loadingProgressState();
+			}
+
 			this.$refs.container.appendChild(fragment);
 			this.componentInternalState.setIsDomInsertInProgress(false);
 

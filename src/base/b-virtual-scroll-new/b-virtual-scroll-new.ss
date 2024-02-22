@@ -17,7 +17,12 @@
 
 			< .&__tombstones &
 				ref = tombstones |
-				v-if = vdom.getSlot('tombstone')
+				v-if = vdom.getSlot('tombstone') |
+				v-in-view = {
+					threshold: 0.0000001,
+					onEnter: onTombstonesEnter,
+					onLeave: onTombstonesLeave
+				}
 			.
 				< .&__tombstone v-for = i in tombstoneCount || chunkSize
 					+= self.slot('tombstone')
