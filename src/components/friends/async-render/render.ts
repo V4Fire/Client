@@ -6,16 +6,15 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { beforeMountHooks } from 'core/component/const';
 import { restart, deferRestart } from 'core/component/render/daemon';
 
-import type Friend from 'components/friends/friend';
+import type AsyncRender from 'components/friends/async-render/class';
 
 /**
  * Restarts the `asyncRender` daemon to force rendering of async chunks
  * @see core/component/render/daemon
  */
-export function forceRender(this: Friend): void {
+export function forceRender(this: AsyncRender): void {
 	restart();
 	this.localEmitter.emit('forceRender');
 }
@@ -26,7 +25,7 @@ export function forceRender(this: Friend): void {
  * @see forceRender
  * @see core/component/render/daemon
  */
-export function deferForceRender(this: Friend): void {
+export function deferForceRender(this: AsyncRender): void {
 	deferRestart();
 	this.localEmitter.emit('forceRender');
 }
@@ -57,14 +56,11 @@ export function deferForceRender(this: Friend): void {
  * ```
  */
 export function waitForceRender(
-	this: Friend,
-	elementToDrop?: string | ((ctx: Friend['component']) => CanPromise<CanUndef<string | Element>>)
+	this: AsyncRender,
+	elementToDrop?: string | ((ctx: AsyncRender['component']) => CanPromise<CanUndef<string | Element>>)
 ): () => CanPromise<boolean> {
 	return () => {
-		if (!this.ctx.isFunctional && beforeMountHooks[this.hook] != null ||
-			// Render function of a functional component is called during `beforeDataCreate` hook
-			this.hook === 'beforeDataCreate'
-		) {
+		if (!this.hasRendered) {
 			return true;
 		}
 
