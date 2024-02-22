@@ -133,6 +133,7 @@ export class SlotsStateController extends Friend {
 	 */
 	protected setSlotsVisibility(stateObj: Required<SlotsStateObj>, immediate: boolean = false): void {
 		this.lastState = stateObj;
+		this.async.cancelAnimationFrame(this.asyncUpdateLabel);
 
 		const update = () => {
 			for (const [name, state] of Object.entries(stateObj)) {
@@ -144,7 +145,6 @@ export class SlotsStateController extends Friend {
 			return update();
 		}
 
-		this.async.cancelAnimationFrame(this.asyncUpdateLabel);
 		this.async.requestAnimationFrame(update, this.asyncUpdateLabel);
 	}
 

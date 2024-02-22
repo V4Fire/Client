@@ -425,11 +425,12 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			const
 				state = this.getVirtualScrollState();
 
+			this.slotsStateController.loadingSuccessState(true);
+
 			if (state.isLoadingInProgress) {
 				this.slotsStateController.loadingProgressState();
 			}
 
-			this.slotsStateController.loadingSuccessState(true);
 			this.$refs.container.appendChild(fragment);
 			this.componentInternalState.setIsDomInsertInProgress(false);
 
