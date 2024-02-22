@@ -18,16 +18,16 @@ const {validators} = require('@pzlr/build-core');
  * @typedef {import('typescript').Transformer} Transformer
  */
 
-const prefixPathRegExp = /(?<path>.+)[/\\]src[/\\].*?/;
+const pathToRootRegExp = /(?<path>.+)[/\\]src[/\\]/;
 const componentRegExp = new RegExp(`[\\/](${validators.blockTypeList.join('|')})-.+?[\\/]?`);
 
-function isComponent(path) {
+function isInsideComponent(path) {
 	return componentRegExp.test(path);
 }
 
 function getLayerName(filePath) {
-	const prefixPath = filePath.match(prefixPathRegExp).groups.path;
-	return require(`${prefixPath}/package.json`).name;
+	const pathToRootDir = filePath.match(pathToRootRegExp).groups.path;
+	return require(`${pathToRootDir}/package.json`).name;
 }
 
 /**
@@ -37,7 +37,7 @@ function getLayerName(filePath) {
  */
 const setComponentLayerTransformer = (context) => (sourceFile) => {
 
-	if (!isComponent(sourceFile.path)) {
+	if (!isInsideComponent(sourceFile.path)) {
 		return sourceFile;
 	}
 
@@ -50,8 +50,9 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 	 */
 	const visitor = (node) => {
 		if (node.kind === ts.SyntaxKind.CallExpression &&
-			node.parent?.kind === ts.SyntaxKind.Decorator &&
-			node.expression?.escapedText === 'component') {
+				node.parent?.kind === ts.SyntaxKind.Decorator &&
+				node.expression?.escapedText === 'component'
+		) {
 
 			const properties = node.arguments?.[0]?.properties ?? [];
 
@@ -81,7 +82,7 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 };
 
 /**
- * The transformer that adds "layer" property to component objects to indicate the name
- * of the package which it is defined
+ * The transformer that adds the "layer" property to component objects
+ * to indicate the name of the package in which it is defined
  */
 module.exports = () => setComponentLayerTransformer;
