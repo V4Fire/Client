@@ -5487,7 +5487,6 @@ __metadata:
     jsdom: "npm:16.7.0"
     merge2: "npm:1.4.1"
     mini-css-extract-plugin: "npm:2.5.3"
-    modify-source-webpack-plugin: "npm:^4.1.0"
     monic: "npm:2.6.1"
     monic-loader: "npm:3.0.2"
     nanoid: "npm:3.2.0"
@@ -16934,17 +16933,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loader-utils-webpack-v4@npm:loader-utils@^2.0.4, loader-utils@npm:^2.0.0, loader-utils@npm:~2.0.0":
-  version: 2.0.4
-  resolution: "loader-utils@npm:2.0.4"
-  dependencies:
-    big.js: "npm:^5.2.2"
-    emojis-list: "npm:^3.0.0"
-    json5: "npm:^2.1.2"
-  checksum: 28bd9af2025b0cb2fc6c9c2d8140a75a3ab61016e5a86edf18f63732216e985a50bf2479a662555beb472a54d12292e380423705741bfd2b54cab883aa067f18
-  languageName: node
-  linkType: hard
-
 "loader-utils@npm:^1.0.0, loader-utils@npm:^1.0.3, loader-utils@npm:^1.1.0":
   version: 1.4.2
   resolution: "loader-utils@npm:1.4.2"
@@ -16953,6 +16941,17 @@ __metadata:
     emojis-list: "npm:^3.0.0"
     json5: "npm:^1.0.1"
   checksum: 2ae94cc88ad9cf2991e322b9ddf547cff80cf6fc0f9c77546b258c5ed9f77b0827f64c2625cb0baa06432f1f441bb4744c9ab1e1412ee6f8e97d31f8e9c730d6
+  languageName: node
+  linkType: hard
+
+"loader-utils@npm:^2.0.0, loader-utils@npm:~2.0.0":
+  version: 2.0.4
+  resolution: "loader-utils@npm:2.0.4"
+  dependencies:
+    big.js: "npm:^5.2.2"
+    emojis-list: "npm:^3.0.0"
+    json5: "npm:^2.1.2"
+  checksum: 28bd9af2025b0cb2fc6c9c2d8140a75a3ab61016e5a86edf18f63732216e985a50bf2479a662555beb472a54d12292e380423705741bfd2b54cab883aa067f18
   languageName: node
   linkType: hard
 
@@ -18271,18 +18270,6 @@ __metadata:
   bin:
     mkdirp: bin/cmd.js
   checksum: d71b8dcd4b5af2fe13ecf3bd24070263489404fe216488c5ba7e38ece1f54daf219e72a833a3a2dc404331e870e9f44963a33399589490956bff003a3404d3b2
-  languageName: node
-  linkType: hard
-
-"modify-source-webpack-plugin@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "modify-source-webpack-plugin@npm:4.1.0"
-  dependencies:
-    loader-utils-webpack-v4: "npm:loader-utils@^2.0.4"
-    schema-utils: "npm:^4.0.0"
-  peerDependencies:
-    webpack: ^4.37.0 || ^5.0.0
-  checksum: 05625dacceba434a080a6b4adf900b70ebf41335e6ff3b9b8f9351c883f91f42779c48a90b2f78b8fb520aa415f07e0531cc49c56d64ca83fe3b99e2c8db05bd
   languageName: node
   linkType: hard
 
