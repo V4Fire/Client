@@ -36,7 +36,6 @@ function getLayerName(filePath) {
  * @returns {Transformer}
  */
 const setComponentLayerTransformer = (context) => (sourceFile) => {
-
 	if (!isInsideComponent(sourceFile.path)) {
 		return sourceFile;
 	}
