@@ -11,6 +11,24 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.66 (2024-02-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the incorrect transition into the loading state. Now the loading state will be removed in one requestAnimationFrame call along with the content insertion into the DOM,
+and the loading state will be restored on the following one. This trick helps avoid generating CLS errors. `components/base/b-virtual-scroll-new`
+
+* Fixed a race condition when calling `initLoad` multiple times `components/base/b-virtual-scroll-new`
+
+* Added visibility tracking for the tombstones slot, now if this slot is on the screen,
+an attempt will be made to render the data regardless of what the client returned in `shouldPerformDataRender`.
+Also added a flag in VirtualScrollState indicating the visibility of the slot.
+All this will help avoid situations when for some reason the `IntersectionObserver` did not trigger on the elements and as a result `shouldPerformDataRender` was not called. `components/base/b-virtual-scroll-new`
+
+#### :rocket: New Feature
+
+* Added the `BOM.clsScore` method that allows measuring Cumulative Layout Shift (CLS) during any actions.
+
 ## v4.0.0-beta.65 (2024-02-21)
 
 #### :bug: Bug Fix
@@ -30,7 +48,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Removed an unnecessary next data chunk response checking `base/b-virtual-scroll-new`
+* Removed an unnecessary next data chunk response checking `components/base/b-virtual-scroll-new`
 
 ## v4.0.0-beta.62 (2024-02-19)
 
@@ -52,7 +70,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
-* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `base/b-virtual-scroll-new`
+* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `components/base/b-virtual-scroll-new`
 * `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
 
 #### :bug: Bug Fix
@@ -61,7 +79,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `preloadAmount` prop in b`-virtual-scroll-new` `base/b-virtual-scroll-new`
+* Added `preloadAmount` prop in b`-virtual-scroll-new` `components/base/b-virtual-scroll-new`
 
 #### :house:  Internal
 
@@ -127,11 +145,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/base/b-virtual-scroll-new`
+* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/components/base/b-virtual-scroll-new`
 
 #### :house:  Internal
 
-* Added tests for `b-virtual-scroll-new` `components/base/b-virtual-scroll-new`
+* Added tests for `b-virtual-scroll-new` `components/components/base/b-virtual-scroll-new`
 
 ## v4.0.0-beta.55 (2024-02-08)
 
@@ -166,7 +184,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :house: Internal
 
-* The entry threshold for counting an element as visible is set to the minimum value `components/base/b-virtual-scroll-new`
+* The entry threshold for counting an element as visible is set to the minimum value `components/components/base/b-virtual-scroll-new`
 
 ## v4.0.0-beta.53 (2024-01-31)
 
