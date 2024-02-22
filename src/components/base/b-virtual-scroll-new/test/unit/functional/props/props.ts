@@ -19,6 +19,7 @@ import { fromQueryString } from 'core/url';
 import type bVirtualScrollNew from 'components/base/b-virtual-scroll-new/b-virtual-scroll-new';
 import { createTestHelpers } from 'components/base/b-virtual-scroll-new/test/api/helpers';
 import type { VirtualScrollTestHelpers } from 'components/base/b-virtual-scroll-new/test/api/helpers/interface';
+import { BOM } from 'tests/helpers';
 
 test.describe('<b-virtual-scroll-new>', () => {
 	let
@@ -264,6 +265,49 @@ test.describe('<b-virtual-scroll-new>', () => {
 				await component.scrollToBottom();
 
 				await test.expect(component.waitForLifecycleDone()).resolves.toBeUndefined();
+			});
+		});
+	});
+
+	test.describe('request', () => {
+		test.describe('the prop has changed while the first loading process is in progress', () => {
+			test('should ignore first loading and reset state', async ({page}) => {
+				const
+					chunkSize = 12;
+
+				provider.response(200, () => ({data: state.data.addData(chunkSize)}));
+				provider.responder();
+
+				await component
+					.withDefaultPaginationProviderProps({chunkSize})
+					.withProps({
+						chunkSize,
+						request: {get: {test: 1}},
+						'@hook:beforeDataCreate': (ctx) => {
+							const original = ctx.emit;
+
+							ctx.emit = jestMock.mock((...args) => {
+								original(...args);
+								return [args[0], Object.fastClone(ctx.getVirtualScrollState())];
+							});
+						}
+					})
+					.build({useDummy: true});
+
+				await BOM.waitForIdleCallback(page);
+				await component.updateProps({request: {get: {test: 2}}});
+				await BOM.waitForIdleCallback(page);
+				await provider.unresponder();
+				await component.waitForChildCountEqualsTo(chunkSize);
+
+				const
+					virtualScrolLState = await component.getVirtualScrollState(),
+					spy = await component.getSpy((ctx) => ctx.emit),
+					loadSuccessCalls = (await spy.results).filter(({value: [event]}) => event === 'dataLoadSuccess');
+
+				test.expect(loadSuccessCalls).toHaveLength(1);
+				test.expect(virtualScrolLState.data).toHaveLength(chunkSize);
+				test.expect(virtualScrolLState.data[0]).toMatchObject({i: 12});
 			});
 		});
 	});
