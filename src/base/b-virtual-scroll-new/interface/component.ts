@@ -86,6 +86,11 @@ export interface VirtualScrollState<DATA = object, RAW_DATA = unknown> {
 	isLifecycleDone: boolean;
 
 	/**
+	 *  Indicates whether the tombstones slot is currently in the viewport.
+	 */
+	isTombstonesInView: boolean;
+
+	/**
 	 * Indicates whether the current render process is the last one in the current lifecycle.
 	 *
 	 * The isLastRender flag is set to true after a request,

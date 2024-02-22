@@ -326,11 +326,12 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		}
 
 		const
-			clientResponse = this.shouldPerformDataRender?.(state, this) ?? true;
+			clientResponse = this.shouldPerformDataRender?.(state, this),
+			result = clientResponse || state.isTombstonesInView;
 
 		return {
-			result: clientResponse,
-			reason: !clientResponse ? renderGuardRejectionReason.noPermission : undefined
+			result,
+			reason: !result ? renderGuardRejectionReason.noPermission : undefined
 		};
 	}
 
@@ -421,6 +422,14 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 		this.componentInternalState.setIsDomInsertInProgress(true);
 
 		this.async.requestAnimationFrame(() => {
+			const
+				state = this.getVirtualScrollState();
+
+			if (state.isLoadingInProgress) {
+				this.slotsStateController.loadingProgressState();
+			}
+
+			this.slotsStateController.loadingSuccessState(true);
 			this.$refs.container.appendChild(fragment);
 			this.componentInternalState.setIsDomInsertInProgress(false);
 

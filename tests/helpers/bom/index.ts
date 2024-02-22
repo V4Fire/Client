@@ -18,6 +18,54 @@ export * from 'tests/helpers/bom/interface';
  * Class provides API to work with BOM (browser object model)
  */
 export default class BOM {
+
+	/**
+	 * Creates a {@link PerformanceObserver} that monitors the CLS metric while fn is executed,
+	 * and returns the sum of the value of all {@link PerformanceEntry PerformanceEntries}.
+	 *
+	 * @param page
+	 * @param fn
+	 * @param [waitForIdle]
+	 */
+	static async clsScore(page: Page, fn: Function, waitForIdle: boolean = true): Promise<number> {
+		interface ObserverData {
+			score: number;
+			observer: PerformanceObserver;
+		}
+
+		const uniqId = Math.random().toString();
+
+		await page.evaluate(([uniqId]) => {
+			const data: ObserverData = {
+				score: 0,
+				observer: new PerformanceObserver((list) => {
+					for (const entry of list.getEntries()) {
+						data.score += Object.cast<{value: number}>(entry).value;
+					}
+				})
+			};
+
+			globalThis[uniqId] = data;
+			data.observer.observe({type: 'layout-shift'});
+
+		}, [uniqId]);
+
+		await fn();
+
+		if (waitForIdle) {
+			await this.waitForIdleCallback(page, {sleepAfterIdles: 0});
+		}
+
+		return page.evaluate(([uniqId]) => {
+			const data: ObserverData = globalThis[uniqId];
+
+			data.observer.takeRecords();
+			data.observer.disconnect();
+
+			return data.score;
+		}, [uniqId]);
+	}
+
 	/**
 	 * Returns a promise that will be resolved when the passed page process is switched to idle
 	 *
