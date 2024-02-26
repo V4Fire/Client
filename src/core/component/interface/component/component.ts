@@ -71,6 +71,11 @@ export abstract class ComponentInterface {
 	readonly instance!: this;
 
 	/**
+	 * The property is set to `true` once the render function of a component has been called
+	 */
+	readonly renderedOnce: boolean = false;
+
+	/**
 	 * Additional modifiers for the component.
 	 * Modifiers allow binding the state properties of a component directly to CSS classes,
 	 * without the need for unnecessary re-rendering.
@@ -285,11 +290,6 @@ export abstract class ComponentInterface {
 	 * This property is used during SSR for rendering the component.
 	 */
 	protected $initializer?: Promise<unknown>;
-
-	/**
-	 * The property is set to `true` once the render function of a component has been called
-	 */
-	protected $renderedOnce: boolean = false;
 
 	/**
 	 * Activates the component.
