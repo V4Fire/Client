@@ -43,12 +43,6 @@ test.describe('friends/async-render inside functional component', () => {
 		});
 	});
 
-	/**
-	 * Returns the rendered dummy component
-	 *
-	 * @param page
-	 * @param stage
-	 */
 	async function renderDummy(page: Page, stage: string): Promise<JSHandle<bFriendsAsyncRenderDummy>> {
 		return Component.createComponent(page, componentName, {stage});
 	}
