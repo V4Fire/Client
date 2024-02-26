@@ -11,7 +11,7 @@ Changelog
 
 ## v4.0.0-beta.?? (2024-??-?)
 
-*  Implemented a new engine for translate keys `lang/engines`
+* Implemented a new engine for translate keys `lang/engines`
 
 #### :house:  Internal
 
