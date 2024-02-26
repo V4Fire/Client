@@ -25,15 +25,38 @@ function isInsideComponent(path) {
 	return componentRegExp.test(path);
 }
 
+/**
+ * The function calculates the package where
+ * the module is defined and returns the name
+ * of this package from the package.json file
+ *
+ * @param {string} filePath
+ * @returns {string}
+ */
 function getLayerName(filePath) {
 	const pathToRootDir = filePath.match(pathToRootRegExp).groups.path;
 	return require(`${pathToRootDir}/package.json`).name;
 }
 
 /**
+ * The transformer that adds the "layer" property to component-meta objects
+ * to indicate the name of the package in which it is defined
  *
  * @param {Context} context
  * @returns {Transformer}
+ * @example
+ * ```typescript
+ * @component()
+ * // Becomes
+ * @component({ layer: '@v4fire/client' })
+ *
+ * @component({ functional: true })
+ * // Becomes
+ * @component({
+ * functional: true,
+ * layer: '@v4fire/client'
+ * })
+ * ```
  */
 const setComponentLayerTransformer = (context) => (sourceFile) => {
 	if (!isInsideComponent(sourceFile.path)) {
