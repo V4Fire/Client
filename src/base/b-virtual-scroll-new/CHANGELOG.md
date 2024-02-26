@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.67.1 (2024-02-26)
+
+#### :bug: Bug Fix
+
+* Fixed an with transition into loading success state was not made
+
 ## v3.67.0 (2024-02-22)
 
 #### :bug: Bug Fix
