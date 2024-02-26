@@ -85,26 +85,33 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		const
 			unsafe = getComponentContext(ctx);
 
-		if (cache.has(ctx)) {
-			return cache.get(ctx)();
-		}
+		const callRenderFunction = () => {
+			if (cache.has(ctx)) {
+				return cache.get(ctx)();
+			}
 
-		const
-			render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
+			const
+				render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
 
-		if (!Object.isFunction(render)) {
-			return render;
-		}
+			if (!Object.isFunction(render)) {
+				return render;
+			}
 
-		if (unsafe.meta.params.functional !== true) {
-			cache.set(ctx, render);
+			if (unsafe.meta.params.functional !== true) {
+				cache.set(ctx, render);
 
-			unsafe.$async.worker(() => {
-				cache.delete(ctx);
-			}, {label});
-		}
+				unsafe.$async.worker(() => {
+					cache.delete(ctx);
+				}, {label});
+			}
 
-		return render();
+			return render();
+		};
+
+		const result = callRenderFunction();
+		unsafe.renderCalled = true;
+
+		return result;
 	});
 
 	if (component.parentMeta) {
