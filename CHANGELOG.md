@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed the `wait` option in `loadModules` for SSR build `iBlock`
+
 ## v4.0.0-beta.67 (2024-02-26)
 
 #### :bug: Bug Fix
