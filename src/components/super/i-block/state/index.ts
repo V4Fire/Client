@@ -48,12 +48,6 @@ export default abstract class iBlockState extends iBlockMods {
 	isReadyOnce: boolean = false;
 
 	/**
-	 * The property is set to `true` once the render function of a component has been called
-	 */
-	@system({unique: true})
-	renderCalled: boolean = false;
-
-	/**
 	 * Checks whether the hydrated data can be used
 	 */
 	get canUseHydratedData(): boolean {

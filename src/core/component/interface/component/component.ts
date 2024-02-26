@@ -287,6 +287,11 @@ export abstract class ComponentInterface {
 	protected $initializer?: Promise<unknown>;
 
 	/**
+	 * The property is set to `true` once the render function of a component has been called
+	 */
+	protected $renderedOnce: boolean = false;
+
+	/**
 	 * Activates the component.
 	 * A deactivated component will not load data from its providers during initialization.
 	 *

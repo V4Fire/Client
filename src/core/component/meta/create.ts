@@ -109,7 +109,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 		};
 
 		const result = callRenderFunction();
-		unsafe.renderCalled = true;
+		unsafe.$renderedOnce = true;
 
 		return result;
 	});
