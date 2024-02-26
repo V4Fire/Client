@@ -5,6 +5,7 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import type { JSHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
