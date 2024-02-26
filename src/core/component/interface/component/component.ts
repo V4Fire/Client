@@ -71,7 +71,7 @@ export abstract class ComponentInterface {
 	readonly instance!: this;
 
 	/**
-	 * The property is set to `true` once the render function of a component has been called
+	 * True if the component has been rendered at least once
 	 */
 	readonly renderedOnce: boolean = false;
 
