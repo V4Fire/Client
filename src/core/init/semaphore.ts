@@ -80,7 +80,7 @@ function createAppInitializer() {
 			app.provide('app', app);
 			app.provide('appId', appId);
 			app.provide('hydrationStore', hydrationStore);
-			app.provide('ssrState', Object.fastClone(remoteState));
+			app.provide('ssrState', Object.mixin(true, remoteState));
 
 			let
 				ssrContent: string,
