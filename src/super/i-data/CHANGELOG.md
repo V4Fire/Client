@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.67.1 (2024-02-26)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the unnecessary mutation of request parameters leading to unnecessary component rerendering
+
 ## v3.18.3 (2022-04-01)
 
 #### :bug: Bug Fix
