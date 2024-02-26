@@ -21,11 +21,6 @@ export const bVirtualScrollAsyncGroup = 'b-virtual-scroll-new';
 export const bVirtualScrollDomInsertAsyncGroup = `${bVirtualScrollAsyncGroup}:dom-insert`;
 
 /**
- * Group for asynchronous operations related to tombstones
- */
-export const bVirtualScrollPerformRenderNextTickGroup = `${bVirtualScrollAsyncGroup}:perform-render-next-tick`;
-
-/**
  * Component modes.
  */
 export const componentModes = <const>{

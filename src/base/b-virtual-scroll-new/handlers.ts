@@ -12,7 +12,7 @@ import iVirtualScrollProps from 'base/b-virtual-scroll-new/props';
 import type bVirtualScrollNew from 'base/b-virtual-scroll-new/b-virtual-scroll-new';
 import type { MountedChild } from 'base/b-virtual-scroll-new/interface';
 
-import { bVirtualScrollAsyncGroup, bVirtualScrollPerformRenderNextTickGroup, componentEvents, componentLocalEvents } from 'base/b-virtual-scroll-new/const';
+import { bVirtualScrollAsyncGroup, componentEvents, componentLocalEvents } from 'base/b-virtual-scroll-new/const';
 import { isAsyncReplaceError } from 'base/b-virtual-scroll-new/modules/helpers';
 
 import iData, { component } from 'super/i-data/i-data';
@@ -187,19 +187,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 			this.onLifecycleDone();
 
 		} else {
-			const
-				state = this.getVirtualScrollState();
-
-			if (isInitialLoading || state.isInitialRender) {
-				this.loadDataOrPerformRender();
-
-			} else {
-				void this.async.nextTick({
-					label: $$.loadDataOrPerformRenderOnNextTick,
-					group: bVirtualScrollPerformRenderNextTickGroup
-				})
-					.then(() => this.loadDataOrPerformRender());
-			}
+			this.loadDataOrPerformRender();
 		}
 	}
 
