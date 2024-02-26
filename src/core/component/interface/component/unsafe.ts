@@ -63,6 +63,7 @@ export interface UnsafeComponentInterface<CTX extends ComponentInterface = Compo
 
 	// @ts-ignore (access)
 	$initializer: CTX['$initializer'];
+
 	// @ts-ignore (access)
 	$watch: CTX['$watch'];
 
