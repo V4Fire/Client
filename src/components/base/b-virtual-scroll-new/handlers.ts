@@ -177,7 +177,7 @@ export abstract class iVirtualScrollHandlers extends iVirtualScrollProps {
 			isRequestsStopped = this.shouldStopRequestingDataWrapper();
 
 		this.componentEmitter.emit(componentEvents.dataLoadSuccess, dataToProvide, isInitialLoading);
-		this.componentInternalState.setIsTombstonesInView(false);
+		this.slotsStateController.loadingSuccessState();
 
 		if (
 			isInitialLoading &&

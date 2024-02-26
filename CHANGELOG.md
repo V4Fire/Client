@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an with transition into loading success state was not made `components/b-virtual-scroll-new` 
+
 ## v4.0.0-beta.66 (2024-02-22)
 
 #### :bug: Bug Fix
