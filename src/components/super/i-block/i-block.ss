@@ -127,7 +127,7 @@
 			{{
 				void(moduleLoader.addToBucket(${bucket}, {
 					id: ${interpolatedId},
-					load: () => (async () => ${filter}?.())().then(() => import('${path}')),
+					load: () => (async () => (${filter})?.())().then(() => import('${path}')),
 					ssr: false
 				}))
 			}}
