@@ -83,9 +83,14 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
 		const
-			unsafe = getComponentContext(ctx);
+			unsafe = getComponentContext(ctx),
+			result = callRenderFunction();
 
-		const callRenderFunction = () => {
+		Object.set(unsafe, 'renderedOnce', true);
+
+		return result;
+
+		function callRenderFunction() {
 			if (cache.has(ctx)) {
 				return cache.get(ctx)();
 			}
@@ -106,12 +111,7 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 			}
 
 			return render();
-		};
-
-		const result = callRenderFunction();
-		Object.set(unsafe, 'renderedOnce', true);
-
-		return result;
+		}
 	});
 
 	if (component.parentMeta) {
