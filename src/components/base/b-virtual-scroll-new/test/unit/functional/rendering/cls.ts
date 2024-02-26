@@ -66,7 +66,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 
 			const score = await BOM.clsScore(page, async () => {
 				await provider.unresponder();
-				await component.waitForChildCountEqualsTo(chunkSize);
+				await component.waitForDataIndexChild(chunkSize - 1);
 			});
 
 			test.expect(score).toBe(0);
@@ -85,9 +85,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 
 			const score = await BOM.clsScore(page, async () => {
 				await provider.unresponder();
-				await component.waitForChildCountEqualsTo(chunkSize);
+				await component.waitForDataIndexChild(chunkSize - 1);
 				await component.scrollToBottom();
-				await component.waitForChildCountEqualsTo(chunkSize * 2);
+				await component.waitForDataIndexChild(chunkSize * 2 - 1);
 			});
 
 			test.expect(score).toBe(0);
