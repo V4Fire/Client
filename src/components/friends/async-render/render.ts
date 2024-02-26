@@ -8,7 +8,7 @@
 
 import { restart, deferRestart } from 'core/component/render/daemon';
 
-import type Friend from 'components/friends/friend/class';
+import type Friend from 'components/friends/friend';
 
 /**
  * Restarts the `asyncRender` daemon to force rendering of async chunks
