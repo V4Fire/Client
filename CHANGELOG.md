@@ -11,12 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.??.?? (????-??-??)
+
+#### :rocket: New Feature
+
+* Added `v-safe-html` directive `core/component/directives/safe-html`
+
 ## v3.67.1 (2024-02-26)
 
 #### :bug: Bug Fix
 
 * Fixed an issue with the unnecessary mutation of request parameters leading to unnecessary component rerendering `super/i-data`
-* Fixed an with transition into loading success state was not made `base/b-virtual-scroll-new/b-virtual-scroll-new` 
+* Fixed an with transition into loading success state was not made `base/b-virtual-scroll-new/b-virtual-scroll-new`
 
 ## v3.67.0 (2024-02-22)
 
