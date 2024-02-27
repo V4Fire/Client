@@ -21,6 +21,7 @@ import { instanceCache } from 'core/data';
 import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
+import type PageMeta from 'core/page-meta';
 
 import * as cookies from 'core/cookies';
 import CookieStorage from 'core/kv-storage/engines/cookie';
@@ -41,7 +42,6 @@ import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
 
-import PageMetaData from 'core/page-meta';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
@@ -90,6 +90,12 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system(() => createProviderDataStore(new RestrictedCache(10)))
 	readonly providerDataStore!: ProviderDataStore;
+
+	/**
+	 * A module for manipulating page metadata, such as the page title or description
+	 */
+	@system((o) => o.remoteState.pageMeta)
+	readonly pageMeta!: PageMeta;
 
 	/**
 	 * A module to manage app themes from the Design System
