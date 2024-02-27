@@ -4714,6 +4714,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dompurify@npm:3.0.5":
+  version: 3.0.5
+  resolution: "@types/dompurify@npm:3.0.5"
+  dependencies:
+    "@types/trusted-types": "npm:*"
+  checksum: e544b3ce53c41215cabff3d89256ff707c7ee8e0c9a1b5034b22014725d288b16e6942cdcdeeb4221c578c3421a6a4721aa0676431f55d7abd18c07368855c5e
+  languageName: node
+  linkType: hard
+
 "@types/ejs@npm:^3.1.1":
   version: 3.1.2
   resolution: "@types/ejs@npm:3.1.2"
@@ -5131,6 +5140,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/trusted-types@npm:*":
+  version: 2.0.7
+  resolution: "@types/trusted-types@npm:2.0.7"
+  checksum: 8e4202766a65877efcf5d5a41b7dd458480b36195e580a3b1085ad21e948bc417d55d6f8af1fd2a7ad008015d4117d5fdfe432731157da3c68678487174e4ba3
+  languageName: node
+  linkType: hard
+
 "@types/unist@npm:^2, @types/unist@npm:^2.0.0, @types/unist@npm:^2.0.2":
   version: 2.0.8
   resolution: "@types/unist@npm:2.0.8"
@@ -5428,6 +5444,7 @@ __metadata:
     "@swc/core": "npm:1.2.153"
     "@swc/helpers": "npm:0.3.8"
     "@types/cookiejar": "npm:^2"
+    "@types/dompurify": "npm:3.0.5"
     "@types/jest": "npm:29.5.1"
     "@types/semver": "npm:7.3.10"
     "@types/webpack": "npm:5.28.0"
@@ -5457,6 +5474,8 @@ __metadata:
     del: "npm:6.0.0"
     delay: "npm:5.0.0"
     doctoc: "npm:2.2.1"
+    dompurify-v2: "npm:dompurify@2.4.7"
+    dompurify-v3: "npm:dompurify@3.0.8"
     dpdm: "npm:3.10.0"
     escaper: "npm:3.0.6"
     eventemitter2: "npm:6.4.5"
@@ -10720,6 +10739,20 @@ __metadata:
   dependencies:
     domelementtype: "npm:^2.2.0"
   checksum: e0d2af7403997a3ca040a9ace4a233b75ebe321e0ef628b417e46d619d65d47781b2f2038b6c2ef6e56e73e66aec99caf6a12c7e687ecff18ef74af6dfbde5de
+  languageName: node
+  linkType: hard
+
+"dompurify-v2@npm:dompurify@2.4.7":
+  version: 2.4.7
+  resolution: "dompurify@npm:2.4.7"
+  checksum: bf223b4608204b0f4ded4cad2e7711b9afbe4dc9646f645601463629484a6ccc83906571d24340c0df7776a147ceb6d42cc36697e514aa72c865662977164784
+  languageName: node
+  linkType: hard
+
+"dompurify-v3@npm:dompurify@3.0.8":
+  version: 3.0.8
+  resolution: "dompurify@npm:3.0.8"
+  checksum: 671fa18bd4bcb1a6ff2e59ecf919f807615b551e7add8834b27751d4e0f3d754a67725482d1efdd259317cadcaaccb72a8afc3aba829ac59730e760041591a1a
   languageName: node
   linkType: hard
 

@@ -10,6 +10,7 @@ This module provides a bunch of built-in directives for working with components 
 * `core/component/directives/attrs` - this directive provides a way to set any input parameters to a component or tag based on a passed dictionary.
 * `core/component/directives/render` - this directive allows you to create a composition of multiple functions that return VNodes, without the need for JSX.
 * `core/component/directives/async-target` - this directive serves to mark the element where dynamically rendered fragments should be appended.
+* `core/component/directives/safe-html` - this directive inserts content as sanitized HTML.
 
 ## Helpers
 
