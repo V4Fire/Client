@@ -9,14 +9,7 @@
 import watchObj from 'core/object/watch';
 import type { State } from 'core/component/state';
 
-const watcher = watchObj<State>({
-	isAuth: undefined,
-	isOnline: undefined,
-	lastOnlineDate: undefined,
-	experiments: undefined,
-	route: undefined,
-	globalEnv: {}
-});
+const watcher = watchObj(Object.cast<State>({}));
 
 export default watcher.proxy;
 

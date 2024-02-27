@@ -57,11 +57,6 @@ This property contains a store of application cookies.
 
 This property contains a shim for the `window.document` API.
 
-### state.globalEnv
-
-An object whose properties will extend the global object.
-Using this object, polyfills for all necessary APIs can be passed through.
-
 ## API
 
 By default, this module exports a link to the store object itself.
