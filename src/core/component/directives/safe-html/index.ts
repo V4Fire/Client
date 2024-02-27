@@ -21,29 +21,29 @@ export * from 'core/component/directives/safe-html/interface';
 
 ComponentEngine.directive('safe-html', {
 	beforeCreate({value, oldValue}: SafeHtmlDirectiveParams, vnode: VNode) {
-			if (value == null || value === oldValue) {
-				return;
-			}
-
-			let sanitized: string;
-
-			if (typeof value === 'string') {
-				sanitized = DOMPurify.sanitize(value, {USE_PROFILES: {html: true}});
-			} else {
-				sanitized = DOMPurify.sanitize(
-					value.value,
-					{
-						USE_PROFILES: {html: true},
-						...value.options,
-						RETURN_DOM_FRAGMENT: false,
-						RETURN_DOM: false
-					}
-				);
-			}
-
-			vnode.props = {
-				...vnode.props,
-				innerHTML: sanitized
-			};
+		if (value === oldValue) {
+			return;
 		}
+
+		let sanitized: string;
+
+		if (typeof value === 'string') {
+			sanitized = DOMPurify.sanitize(value, {USE_PROFILES: {html: true}});
+		} else {
+			sanitized = DOMPurify.sanitize(
+				value.value,
+				{
+					USE_PROFILES: {html: true},
+					...value.options,
+					RETURN_DOM_FRAGMENT: false,
+					RETURN_DOM: false
+				}
+			);
+		}
+
+		vnode.props = {
+			...vnode.props,
+			innerHTML: sanitized
+		};
+	}
 });

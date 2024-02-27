@@ -30,19 +30,18 @@ test.describe('core/component/directives/safe-html', () => {
 				options: {
 					USE_PROFILES: {
 						html: true,
-						svg: true,
-					},
+						svg: true
+					}
 				}
-			}
-		);
+			});
 
 		await test.expect((await component.innerHTML()).trim()).toEqual(htmlString);
 	});
-})
+});
 
 async function createComponent(
 	page: Page,
-	safeHtml: SafeHtmlDirectiveParams['value'],
+	safeHtml: SafeHtmlDirectiveParams['value']
 ): Promise<Locator> {
 	const componentTestId = 'target';
 	await Component.createComponent(page, 'b-dummy', {
