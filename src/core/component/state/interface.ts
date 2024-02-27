@@ -30,7 +30,7 @@ export interface State {
 	/**
 	 * The application locale
 	 */
-	lang?: Language;
+	lang: Language;
 
 	/**
 	 * A list of registered AB experiments
