@@ -6,69 +6,48 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type * as net from 'core/net';
+
+import type { Session } from 'core/session';
+import type { Cookies } from 'core/cookies';
+
 import type { Experiments } from 'core/abt';
-import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
 export interface State {
 	/**
-	 * True, if the current user session is authorized
+	 * An API to work with a network, such as testing of the network connection, etc.
 	 */
-	isAuth?: boolean;
+	net: typeof net;
 
 	/**
-	 * True, if the application is connected to the Internet
+	 * An API for managing user session
 	 */
-	isOnline?: boolean;
+	session: Session;
 
 	/**
-	 * Date of the last Internet connection
+	 * An API for working with cookies
 	 */
-	lastOnlineDate?: Date;
+	cookies: Cookies;
 
 	/**
-	 * The application default language
+	 * An API for working with the target document's URL
 	 */
-	lang?: Language;
+	location: URL;
 
 	/**
-	 * A list of registered AB experiments
+	 * The application default locale
 	 */
-	experiments?: Experiments;
+	locale: Language;
 
 	/**
-	 * Initial value for the active route.
+	 * The initial value for the active route.
 	 * This field is typically used in cases of SSR and hydration.
 	 */
 	route?: InitialRoute | AppliedRoute;
 
 	/**
-	 * A store of application cookies
+	 * A list of registered AB experiments
 	 */
-	cookies?: CookieStore;
-
-	/**
-	 * A shim for the `window.document` API
-	 */
-	document?: Document;
-
-	/**
-	 * An object whose properties will extend the global object.
-	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-	 * Using this object, polyfills for all necessary APIs can be passed through.
-	 *
-	 * @example
-	 * ```js
-	 * ({
-	 *   globalEnv: {
-	 *     location: {
-	 *       href: 'https://foo.com'
-	 *     }
-	 *   }
-	 * })
-	 * ```
-	 */
-	globalEnv?: GlobalEnvironment;
+	experiments?: Experiments;
 }
-
-export interface GlobalEnvironment extends Dictionary {}
