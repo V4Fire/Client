@@ -12,7 +12,7 @@ import test from 'tests/config/unit/test';
 import { Component } from 'tests/helpers';
 import type { SafeHtmlDirectiveParams } from 'core/component/directives/safe-html/interface';
 
-test.describe.only('core/component/directives/safe-html', () => {
+test.describe('core/component/directives/safe-html', () => {
 	const htmlString = '<p>Some</p><strong>HTML</strong>';
 
 	test.beforeEach(({demoPage}) => demoPage.goto());
