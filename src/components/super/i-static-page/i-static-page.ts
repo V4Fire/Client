@@ -18,11 +18,8 @@ import { Xor128 } from 'core/random/xor128';
 import { RestrictedCache } from 'core/cache';
 import { instanceCache } from 'core/data';
 
-import { setLocale, locale } from 'core/i18n';
-
 import type { AppliedRoute, InitialRoute } from 'core/router';
 
-import * as cookies from 'core/cookies';
 import CookieStorage from 'core/kv-storage/engines/cookie';
 
 import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
@@ -33,7 +30,6 @@ import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
 
-import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
@@ -78,15 +74,6 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
-	 * A module for manipulating page metadata, such as the page title or description
-	 */
-	@system<iStaticPage>((o) => new PageMetaData({
-		document: o.remoteState.document ?? document
-	}))
-
-	readonly pageMetaData!: PageMetaData;
-
-	/**
 	 * A module to work with data of data providers globally
 	 */
 	@system(() => createProviderDataStore(new RestrictedCache(10)))
@@ -99,7 +86,7 @@ export default abstract class iStaticPage extends iPage {
 		o,
 		{
 			themeStorageEngine: new CookieStorage('v4ls', {
-				cookies: cookies.from(o.remoteState.cookies ?? cookies.createCookieStore('')),
+				cookies: o.remoteState.cookies,
 				maxAge: 2 ** 31 - 1
 			}),
 
@@ -158,27 +145,6 @@ export default abstract class iStaticPage extends iPage {
 		this.emit('setRoute', value);
 	}
 
-	/**
-	 * The application locale
-	 */
-	get locale(): Language {
-		return this.field.get<Language>('localeStore')!;
-	}
-
-	/**
-	 * Sets a new application locale
-	 * @param value
-	 */
-	set locale(value: Language) {
-		this.field.set('localeStore', value);
-
-		try {
-			document.documentElement.setAttribute('lang', value);
-		} catch {}
-
-		setLocale(value);
-	}
-
 	override get randomGenerator(): IterableIterator<number> {
 		this[$$.randomGenerator] ??= new Xor128(19881989);
 		return this[$$.randomGenerator];
@@ -202,31 +168,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system()
 	protected routerStore?: this['Router'];
-
-	/** {@link iStaticPage.locale} */
-	@field(() => {
-		const
-			lang = locale.value;
-
-		if (Object.isTruly(lang)) {
-			try {
-				const
-					el = document.documentElement;
-
-				if (lang != null) {
-					el.setAttribute('lang', lang);
-
-				} else {
-					el.removeAttribute('lang');
-				}
-
-			} catch {}
-		}
-
-		return lang;
-	})
-
-	protected localeStore!: string;
 
 	/**
 	 * Cache of root modifiers
@@ -384,20 +325,6 @@ export default abstract class iStaticPage extends iPage {
 
 		await this.async.nextTick();
 		this.shouldMountTeleports = true;
-	}
-
-	/**
-	 * Synchronization of the `localeStore` field
-	 * @param locale
-	 */
-	@watch(['localeStore', 'globalEmitter:i18n.setLocale'])
-	protected syncLocaleWatcher(locale: Language): void {
-		if (this.locale === locale) {
-			return;
-		}
-
-		this.locale = locale;
-		this.forceUpdate().catch(stderr);
 	}
 
 	protected override beforeDestroy(): void {

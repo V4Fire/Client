@@ -17,7 +17,7 @@ import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
 import { i18nFactory } from 'core/prelude/i18n';
-import { component, clientState, hook, hydrationStore, Hook, State } from 'core/component';
+import { component, clientState, hydrationStore, Hook, State } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -309,7 +309,7 @@ export default abstract class iBlockState extends iBlockMods {
 		keysetName: CanArray<string>,
 		customLocale?: Language
 	): (key: string | TemplateStringsArray, params?: I18nParams) => string {
-		return i18nFactory(keysetName, customLocale ?? this.remoteState.lang);
+		return i18nFactory(keysetName, customLocale ?? this.remoteState.locale);
 	}
 
 	/**
