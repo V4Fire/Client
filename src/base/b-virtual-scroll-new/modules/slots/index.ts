@@ -103,8 +103,9 @@ export class SlotsStateController extends Friend {
 
 	/**
 	 * Displays the slots that should be shown when data loading is successful
+	 * @param immediate
 	 */
-	loadingSuccessState(): void {
+	loadingSuccessState(immediate: boolean = false): void {
 		this.setSlotsVisibility({
 			container: true,
 			done: false,
@@ -113,7 +114,7 @@ export class SlotsStateController extends Friend {
 			renderNext: true,
 			retry: false,
 			tombstones: false
-		});
+		}, immediate);
 	}
 
 	/**
@@ -132,7 +133,6 @@ export class SlotsStateController extends Friend {
 	 */
 	protected setSlotsVisibility(stateObj: Required<SlotsStateObj>, immediate: boolean = false): void {
 		this.lastState = stateObj;
-
 		this.async.cancelAnimationFrame(this.asyncUpdateLabel);
 
 		const update = () => {
