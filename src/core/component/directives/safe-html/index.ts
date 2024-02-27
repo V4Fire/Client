@@ -15,11 +15,11 @@ import DOMPurify from 'dompurify';
 
 import type { SafeHtmlDirectiveParams } from 'core/component/directives/safe-html/interface';
 
-import { ComponentEngine, VNode } from 'core/component/engines';
+import { ComponentEngine } from 'core/component/engines';
 
 export * from 'core/component/directives/safe-html/interface';
 
-ComponentEngine.directive('safe-html', (el: HTMLElement, {value, oldValue}: SafeHtmlDirectiveParams, vnode: VNode) => {
+ComponentEngine.directive('safe-html', (el: HTMLElement, {value, oldValue}: SafeHtmlDirectiveParams) => {
 	if (value == null || value === oldValue) {
 		return;
 	}
