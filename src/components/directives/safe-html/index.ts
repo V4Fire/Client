@@ -13,11 +13,13 @@
 
 import DOMPurify from 'dompurify';
 
-import type { SafeHtmlDirectiveParams } from 'core/component/directives/safe-html/interface';
+import config from 'config';
+
+import type { SafeHtmlDirectiveParams } from 'components/directives/safe-html/interface';
 
 import { ComponentEngine, VNode } from 'core/component/engines';
 
-export * from 'core/component/directives/safe-html/interface';
+export * from 'components/directives/safe-html/interface';
 
 ComponentEngine.directive('safe-html', {
 	beforeCreate({value, oldValue}: SafeHtmlDirectiveParams, vnode: VNode) {
@@ -28,13 +30,16 @@ ComponentEngine.directive('safe-html', {
 		let sanitized: string;
 
 		if (typeof value === 'string') {
-			sanitized = DOMPurify.sanitize(value, {USE_PROFILES: {html: true}});
+			sanitized = DOMPurify.sanitize(value, config.safeHtml);
+
 		} else {
 			sanitized = DOMPurify.sanitize(
 				value.value,
+
 				{
-					USE_PROFILES: {html: true},
+					...config.safeHtml,
 					...value.options,
+
 					RETURN_DOM_FRAGMENT: false,
 					RETURN_DOM: false
 				}

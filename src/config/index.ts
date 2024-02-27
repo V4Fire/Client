@@ -26,6 +26,12 @@ extend({
 		delay: 40
 	},
 
+	safeHtml: {
+		USE_PROFILES: {
+			html: true
+		}
+	},
+
 	components: (() => {
 		try {
 			return COMPONENTS;
