@@ -38,7 +38,7 @@ export interface State {
 	/**
 	 * The application default locale
 	 */
-	locale: Language;
+	locale?: Language;
 
 	/**
 	 * The initial value for the active route.

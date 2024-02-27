@@ -26,15 +26,7 @@ import * as cookies from 'core/cookies';
 import CookieStorage from 'core/kv-storage/engines/cookie';
 
 import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
-
-import {
-
-	resetComponents,
-
-	GlobalEnvironment,
-	ComponentResetType
-
-} from 'core/component';
+import { resetComponents, ComponentResetType } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -141,18 +133,6 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@system((o) => o.remoteState.route)
 	initialRoute?: InitialRoute | this['CurrentPage'];
-
-	/**
-	 * An object whose properties will extend the global object.
-	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-	 * Using this object, polyfills for all necessary APIs can be passed through.
-	 */
-	@system<iStaticPage>({
-		atom: true,
-		init: (o) => o.initGlobalEnv(o.remoteState)
-	})
-
-	globalEnv!: GlobalEnvironment;
 
 	/**
 	 * The name of the active route page

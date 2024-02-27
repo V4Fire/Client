@@ -7,12 +7,12 @@
  */
 
 import { resolveAfterDOMLoaded } from 'core/event';
-import type { InitAppOptions } from 'core/init/interface';
+import type { InitAppParams } from 'core/init/interface';
 
 /**
  * Resolved after DOMContentLoaded event
  * @param params
  */
-export default function initDOM(params: InitAppOptions): Promise<void> {
+export default function initDOM(params: InitAppParams): Promise<void> {
 	return resolveAfterDOMLoaded().then(() => params.ready('DOMReady'));
 }

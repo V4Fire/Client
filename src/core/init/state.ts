@@ -6,19 +6,16 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { initGlobalEnv } from 'core/env';
-
 import * as net from 'core/net';
 import * as session from 'core/session';
 
-import type { InitAppOptions } from 'core/init/interface';
+import type { InitAppParams } from 'core/init/interface';
 
 /**
  * Initializes the global state of the application (user session initialization, online status loading, etc.)
  * @param params - additional initialization parameters
  */
-export default async function initState(params: InitAppOptions): Promise<void> {
-	initGlobalEnv(params);
+export default async function initState(params: InitAppParams): Promise<void> {
 	params.isOnline = true;
 
 	if (!SSR) {

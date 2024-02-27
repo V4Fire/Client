@@ -94,12 +94,9 @@ By default, the flag is set immediately, but you can override the `core/init/abt
 __core/init/abt.ts__
 
 ```typescript
-import { initGlobalEnv } from 'core/env';
-
 import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initABT(params: InitAppOptions): Promise<void> {
-  initGlobalEnv(params);
   void params.ready('ABTReady');
 }
 ```
@@ -112,12 +109,9 @@ By default, the flag is set immediately, but you can override the `core/init/pre
 __core/init/prefetch.ts__
 
 ```typescript
-import { initGlobalEnv } from 'core/env';
-
 import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initPrefetch(params: InitAppOptions): Promise<void> {
-  initGlobalEnv(params);
   void params.ready('prefetchReady');
 }
 ```
@@ -129,8 +123,6 @@ Initializing the application global state (user session initialization, online s
 __core/init/abt.ts__
 
 ```typescript
-import { initGlobalEnv } from 'core/env';
-
 import * as net from 'core/net';
 import * as session from 'core/session';
 
@@ -139,7 +131,6 @@ import state from 'core/component/client-state';
 import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initState(params: InitAppOptions): Promise<void> {
-  initGlobalEnv(params);
   state.isOnline = true;
 
   net.isOnline()
@@ -193,24 +184,24 @@ initApp('p-v4-components-demo', {
     };
   },
 
-  globalEnv: {
-    ssr: {
-      document: {
-        get cookie() {
-          return 'cookie string';
-        },
-
-        set cookie(cookie) {
-          // Set the passed cookie
-          // ...
-        }
-      }
-    },
-
-    location: {
-      href: 'https://example.com/user/12345'
-    }
-  }
+  // globalEnv: {
+  //   ssr: {
+  //     document: {
+  //       get cookie() {
+  //         return 'cookie string';
+  //       },
+  //
+  //       set cookie(cookie) {
+  //         // Set the passed cookie
+  //         // ...
+  //       }
+  //     }
+  //   },
+  //
+  //   location: {
+  //     href: 'https://example.com/user/12345'
+  //   }
+  // }
 }).then(({content: renderedHTML, styles: inlinedStyles}) => {
   console.log(renderedHTML, inlinedStyles);
 })
@@ -244,34 +235,10 @@ interface InitAppOptions {
   route?: InitialRoute;
 
   /**
-   * An object whose properties will extend the global object.
-   * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-   * Using this object, polyfills for all necessary APIs can be passed through.
-   */
-  globalEnv?: GlobalEnvironment;
-
-  /**
    * A function that is called before the initialization of the root component
    * @param rootComponentParams
    */
   setup?(rootComponentParams: ComponentOptions): void;
-}
-
-export interface GlobalEnvironment extends Dictionary {
-  /**
-   * A shim for the `window.location` API
-   */
-  location?: Location;
-
-  /**
-   * SSR environment object
-   */
-  ssr?: {
-    /**
-     * A shim for the `window.document` API
-     */
-    document?: Document;
-  };
 }
 ```
 
@@ -281,12 +248,9 @@ To initialize the global environment passed as parameters to the initApp functio
 use a special function from the `core/env` module.
 
 ```typescript
-import { initGlobalEnv } from 'core/env';
-
 import type { InitAppOptions } from 'core/init/interface';
 
 export default async function initPrefetch(params: InitAppOptions): Promise<void> {
-  initGlobalEnv(params);
   void params.ready('prefetchReady');
 }
 ```

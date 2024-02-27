@@ -7,13 +7,10 @@
  */
 
 import type { InitialRoute } from 'core/router';
+import type { CookieStore } from 'core/cookies';
 
 import type { State } from 'core/component/state';
 import type { ComponentOptions } from 'core/component/engines';
-
-type OptionalState = {
-	[K in keyof State]?: State[K];
-};
 
 export interface AppSSR {
 	content: string;
@@ -22,11 +19,21 @@ export interface AppSSR {
 
 export type App = Element | AppSSR;
 
-export interface InitAppOptions extends OptionalState {
+export type InitAppOptions = Overwrite<State, {
 	/**
 	 * The unique application identifier
 	 */
-	appId?: string;
+	appId: string;
+
+	/**
+	 * An API to work with a network, such as testing of the network connection, etc.
+	 */
+	net?: State['net'];
+
+	/**
+	 * A store of application cookies
+	 */
+	cookies: CookieStore;
 
 	/**
 	 * A link to the element where the application should be mounted.
@@ -54,6 +61,11 @@ export interface InitAppOptions extends OptionalState {
 	 */
 	ready(flag: string): Promise<(
 		rootComponentName: Nullable<string>,
-		opts: InitAppOptions
+		opts: InitAppParams
 	) => Promise<App>>;
-}
+}>;
+
+export type InitAppParams = Overwrite<InitAppOptions, {
+	net: State['net'];
+	cookies: State['cookies'];
+}>;

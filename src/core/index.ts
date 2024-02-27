@@ -10,6 +10,10 @@ import '@v4fire/core/core';
 import { resolveAfterDOMLoaded } from 'core/event';
 
 import initApp from 'core/init';
+
+import * as session from 'core/session';
+import SessionEngine from 'core/session/engines';
+
 import createInitAppSemaphore from 'core/init/semaphore';
 
 export * as cookies from 'core/cookies';
@@ -28,7 +32,47 @@ if (SSR) {
 				rootComponentName = targetToMount?.getAttribute('data-root-component'),
 				ready = createInitAppSemaphore();
 
-			return initApp(rootComponentName, {targetToMount, ready});
+			return initApp(rootComponentName, {
+				appId: Object.fastHash(Math.random()),
+
+				cookies: document,
+				session: session.from(SessionEngine),
+				location: getLocationAPI(),
+
+				targetToMount,
+				ready
+			});
+
+			function getLocationAPI(): URL {
+				Object.defineProperties(location, {
+					username: {
+						configurable: true,
+						enumerable: true,
+						get: () => ''
+					},
+
+					password: {
+						configurable: true,
+						enumerable: true,
+						get: () => ''
+					},
+
+					searchParams: {
+						configurable: true,
+						enumerable: true,
+						get: () => new URLSearchParams(location.search)
+					},
+
+					toJSON: {
+						configurable: true,
+						enumerable: true,
+						writable: false,
+						value: () => location.toString()
+					}
+				});
+
+				return Object.cast(location);
+			}
 		})
 
 		.catch(stderr);

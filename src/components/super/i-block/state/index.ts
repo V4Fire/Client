@@ -16,7 +16,6 @@ import SyncPromise from 'core/promise/sync';
 import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
-import { initGlobalEnv } from 'core/env';
 import { i18nFactory } from 'core/prelude/i18n';
 import { component, clientState, hook, hydrationStore, Hook, State } from 'core/component';
 
@@ -493,18 +492,6 @@ export default abstract class iBlockState extends iBlockMods {
 		return state;
 	}
 
-	/**
-	 * Takes an object and uses its properties to extend the global object.
-	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-	 * Using this method, polyfills for all necessary APIs can be passed through.
-	 *
-	 * @param [env] - an object containing the environment for initialization
-	 */
-	@hook('beforeCreate')
-	protected initGlobalEnv(env: object = this.r): Dictionary {
-		return initGlobalEnv(env);
-	}
-
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
@@ -514,7 +501,6 @@ export default abstract class iBlockState extends iBlockMods {
 		this.i18n = i.i18n.bind(this);
 		this.syncStorageState = i.syncStorageState.bind(this);
 		this.syncRouterState = i.syncRouterState.bind(this);
-		this.initGlobalEnv = i.initGlobalEnv.bind(this);
 	}
 
 	/**

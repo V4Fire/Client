@@ -25,7 +25,7 @@ import AppClass, {
 
 import flags from 'core/init/flags';
 
-import type { InitAppOptions, App } from 'core/init/interface';
+import type { InitAppParams, App } from 'core/init/interface';
 
 /**
  * A factory for creating a semaphore over application initialization
@@ -37,10 +37,12 @@ export default function createInitAppSemaphore(): (flag: string) => Promise<Retu
 function createAppInitializer() {
 	return async (
 		rootComponentName: Nullable<string>,
-		opts: InitAppOptions
+		opts: InitAppParams
 	): Promise<App> => {
 		const
-			appId = opts.appId ?? Object.fastHash(Math.random()),
+			{appId} = opts;
+
+		const
 			state = Object.reject(opts, ['targetToMount', 'setup']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
 

@@ -11,13 +11,13 @@
  * @packageDocumentation
  */
 
-import { initGlobalEnv } from 'core/env';
-
 import initDom from 'core/init/dom';
 import initState from 'core/init/state';
 import initABT from 'core/init/abt';
 import prefetchInit from 'core/init/prefetch';
 import hydratedRouteInit from 'core/init/hydrated-route';
+
+import { initAPI } from 'core/init/helpers';
 
 import type { InitAppOptions, App } from 'core/init/interface';
 
@@ -31,14 +31,14 @@ export default async function initApp(
 	rootComponent: Nullable<string>,
 	opts: InitAppOptions
 ): Promise<App> {
-	initGlobalEnv(opts);
+	const params = initAPI(opts);
 
-	void initDom(opts);
-	void initState(opts);
-	void initABT(opts);
-	void prefetchInit(opts);
-	void hydratedRouteInit(opts);
+	void initDom(params);
+	void initState(params);
+	void initABT(params);
+	void prefetchInit(params);
+	void hydratedRouteInit(params);
 
-	const createApp = await opts.ready('');
-	return createApp(rootComponent, opts);
+	const createApp = await params.ready('');
+	return createApp(rootComponent, params);
 }
