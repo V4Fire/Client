@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed the `wait` option in `loadModules` for SSR build
+
 ## v4.0.0-beta.65 (2024-02-21)
 
 #### :bug: Bug Fix
