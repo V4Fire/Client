@@ -6,17 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { LinkAttributes, MetaAttributes } from 'components/super/i-static-page/modules/page-meta-data';
 import type { Experiments } from 'core/abt';
 import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
-
-interface SeoState {
-	title: string;
-	description: string;
-	meta: MetaAttributes[];
-	links: LinkAttributes[];
-}
+import type PageMeta from 'core/page-meta';
 
 export interface State {
 	/**
@@ -37,7 +30,7 @@ export interface State {
 	/**
 	 * The application locale
 	 */
-	lang: Language;
+	lang?: Language;
 
 	/**
 	 * A list of registered AB experiments
@@ -77,6 +70,13 @@ export interface State {
 	 * ```
 	 */
 	globalEnv?: GlobalEnvironment;
+
+	location: URL;
+
+	/**
+	 * API to work with seo meta information of the current page
+	 */
+	pageMeta: PageMeta;
 }
 
 export interface GlobalEnvironment extends Dictionary {}

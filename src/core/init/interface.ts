@@ -18,6 +18,7 @@ type OptionalState = {
 export interface AppSSR {
 	content: string;
 	styles: string;
+	state: State;
 }
 
 export type App = Element | AppSSR;

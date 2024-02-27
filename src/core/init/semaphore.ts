@@ -92,6 +92,7 @@ function createAppInitializer() {
 
 				return {
 					content: ssrContent + hydratedData,
+					state: remoteState,
 					styles: (await Promise.all(hydrationStore.styles.values())).map((i) => i.default).join('')
 				};
 
