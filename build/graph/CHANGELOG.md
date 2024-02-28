@@ -13,7 +13,7 @@ Changelog
 
 * Implemented a new engine for translate keys `lang/engines`
 
-#### :house:  Internal
+#### :house: Internal
 
 * Refactored the build ssr: all code has now been bundled into one file `build/graph`
 

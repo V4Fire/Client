@@ -17,7 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Implemented a new engine for translate keys `lang/engines`
 
-#### :house:  Internal
+#### :house: Internal
 
 * Refactored the build ssr: all code has now been bundled into one file `build/graph`
 * Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
@@ -71,12 +71,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added `preloadAmount` prop in b`-virtual-scroll-new` `base/b-virtual-scroll-new`
 
-#### :house:  Internal
+#### :house: Internal
 
 * Added re-export of modules from `tests/helpers`:
-  - Request
-  - RequestInterceptor
-  - Mock
+- Request
+- RequestInterceptor
+ - Mock
 
 * Removed bad import of async module from `tests/helpers/network/interceptor`
 

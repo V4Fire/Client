@@ -7,16 +7,19 @@
  */
 
 /* eslint-disable @typescript-eslint/no-var-requires */
+import type { LangPacs } from '@v4fire/core/lang';
 
 // eslint-disable-next-line import/no-mutable-exports
-let translates;
+let translates: () => LangPacs;
 
 //#if node_js
-translates = require('lang/engines/inline').default;
+import htmlTranslates from 'lang/engines/inline-html';
+translates = htmlTranslates;
 //#endif
 
 //#unless node_js
-translates = require('lang/engines/inline-html').default;
+import inlineTranslates from 'lang/engines/inline';
+translates = inlineTranslates;
 //#endunless
 
 export default translates;

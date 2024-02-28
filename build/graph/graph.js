@@ -118,7 +118,9 @@ async function buildProjectGraph() {
 
 		Object.entries(graph.entry).forEach(([name, value]) => {
 			if (name === 'std' || !isStandalone(name)) {
-				ssrEntry.main = new Map([...ssrEntry.main, ...value]);
+				for (const [entryPath, entryVal] of value) {
+					ssrEntry.main.set(entryPath, entryVal);
+				}
 			}
 		});
 
@@ -181,7 +183,7 @@ async function buildProjectGraph() {
 
 		const
 			componentsToIgnore = /^[iv]-/,
-			usedLibs = {},
+			usedLibs = new Set(),
 			cursor = isStandalone(name) ? STANDALONE : RUNTIME;
 
 		const
@@ -217,8 +219,8 @@ async function buildProjectGraph() {
 
 				if (component) {
 					$C(component.libs).forEach((el) => {
-						if (!usedLibs[el]) {
-							usedLibs[el] = true;
+						if (!usedLibs.has(el)) {
+							usedLibs.add(el);
 							str += `require('${el}');\n`;
 						}
 					});
