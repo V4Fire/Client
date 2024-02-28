@@ -32,6 +32,8 @@ const
 module.exports = {
 	IS_PROD,
 
+	ES: s(config.es()),
+
 	DEBUG: runtime.debug === true,
 	BUILD_MODE: s(build.mode()),
 

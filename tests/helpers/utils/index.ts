@@ -92,7 +92,7 @@ export default class Utils {
 			moduleName = `./src/${moduleName}`;
 		}
 
-		if (!moduleName.endsWith('.ts')) {
+		if (!moduleName.endsWith('.ts') && !moduleName.endsWith('.js')) {
 			moduleName = `${moduleName}/index.ts`;
 		}
 
