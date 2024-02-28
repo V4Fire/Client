@@ -6,11 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Page } from 'playwright';
+import type { JSHandle, Page } from 'playwright';
+import type iBlock from 'components/super/i-block/i-block';
 
 import test from 'tests/config/unit/test';
 
-import { Component, DOM } from 'tests/helpers';
+import { BOM, Component, DOM } from 'tests/helpers';
 
 test.describe('friends/module-loader', () => {
 	const
@@ -48,6 +49,47 @@ test.describe('friends/module-loader', () => {
 		].join(' '));
 	});
 
+	test('simultaneous `loadModules` calls should function independently, and only relevant modules should render', async ({page}) => {
+		const target = await renderDummy(page, 'simultaneous loadModules calls should function independently');
+
+		await performAsyncRender(target, 'dummy1');
+		await test.expect(page.locator(resultSelector)).toHaveText('Dummy module #1');
+	});
+
+	test('module should be loaded only after its associated "wait" function is resolved', async ({page}) => {
+		let contents: Array<Promise<string>> = [];
+
+		page.on('response', (response) => {
+			if (response.url().endsWith('js')) {
+				contents.push(response.text());
+			}
+		});
+
+		const target = await renderDummy(page, 'load module only after wait is resolved');
+
+		await BOM.waitForIdleCallback(page);
+
+		await test.expect(
+			Promise.all(contents).then((r) => r.every((text) => text.includes('dummy1')))
+		).resolves.toBeTruthy();
+
+		await test.expect(page.locator(resultSelector)).toHaveText('Dummy module #1');
+
+		// eslint-disable-next-line require-atomic-updates
+		contents = [];
+
+		await performAsyncRender(target, 'dummy2');
+
+		await test.expect(
+			Promise.all(contents).then((r) => r.every((text) => text.includes('dummy2')))
+		).resolves.toBeTruthy();
+
+		await test.expect(page.locator(resultSelector)).toHaveText([
+			'Dummy module #1',
+			'Dummy module #2'
+		].join(' '));
+	});
+
 	/**
 	 * Returns the rendered `b-friends-module-loader-dummy` component
 	 *
@@ -57,5 +99,18 @@ test.describe('friends/module-loader', () => {
 	async function renderDummy(page: Page, stage: string) {
 		await Component.waitForComponentTemplate(page, componentName);
 		return Component.createComponent(page, componentName, {stage});
+	}
+
+	/**
+	 * Initiates an asynchronous rendering of a specified component.
+	 * The function returns a promise that resolves after the rendering process is completed.
+	 *
+	 * @param dummy
+	 * @param target
+	 */
+	async function performAsyncRender(dummy: JSHandle<iBlock>, target: string): Promise<void> {
+		const renderCompleted = dummy.evaluate((ctx) => ctx.unsafe.localEmitter.promisifyOnce('asyncRenderComplete'));
+		await dummy.evaluate((ctx, target) => ctx.unsafe.localEmitter.emit(target), target);
+		await renderCompleted;
 	}
 });

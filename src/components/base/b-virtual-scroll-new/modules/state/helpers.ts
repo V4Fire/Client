@@ -31,7 +31,8 @@ export function createInitialState(): VirtualScrollState {
 		isLoadingInProgress: false,
 		isLifecycleDone: false,
 		isLastErrored: false,
-		isLastRender: false
+		isLastRender: false,
+		isTombstonesInView: false
 	};
 }
 
