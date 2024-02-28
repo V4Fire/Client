@@ -11,5 +11,5 @@ export default [
 	'ABTReady',
 	'prefetchReady',
 	'stateReady',
-	'hydratedRoute'
+	'hydratedRouteReady'
 ];

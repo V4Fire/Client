@@ -17,7 +17,7 @@ import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
 import { i18nFactory } from 'core/prelude/i18n';
-import { component, clientState, hydrationStore, Hook, State } from 'core/component';
+import { component, hydrationStore, Hook, State } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -71,11 +71,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@computed({watchable: true})
 	get remoteState(): State {
-		if (SSR) {
-			return {...clientState, ...this.ssrState!};
-		}
-
-		return clientState;
+		return this.$remoteState;
 	}
 
 	/**

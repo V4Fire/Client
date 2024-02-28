@@ -21,19 +21,15 @@ export type App = Element | AppSSR;
 
 export type InitAppOptions = Overwrite<State, {
 	/**
-	 * The unique application identifier
-	 */
-	appId: string;
-
-	/**
-	 * An API to work with a network, such as testing of the network connection, etc.
-	 */
-	net?: State['net'];
-
-	/**
 	 * A store of application cookies
 	 */
 	cookies: CookieStore;
+
+	/**
+	 * The initial route for initializing the router.
+	 * Usually, this value is used during SSR.
+	 */
+	route?: InitialRoute;
 
 	/**
 	 * A link to the element where the application should be mounted.
@@ -42,10 +38,9 @@ export type InitAppOptions = Overwrite<State, {
 	targetToMount?: Nullable<HTMLElement>;
 
 	/**
-	 * The initial route for initializing the router.
-	 * Usually, this value is used during SSR.
+	 * An API to work with a network, such as testing of the network connection, etc.
 	 */
-	route?: InitialRoute;
+	net?: State['net'];
 
 	/**
 	 * A function that is called before the initialization of the root component
@@ -66,6 +61,7 @@ export type InitAppOptions = Overwrite<State, {
 }>;
 
 export type InitAppParams = Overwrite<InitAppOptions, {
-	net: State['net'];
+	route: InitialRoute;
 	cookies: State['cookies'];
+	net: State['net'];
 }>;

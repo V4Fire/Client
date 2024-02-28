@@ -17,9 +17,11 @@ import initABT from 'core/init/abt';
 import prefetchInit from 'core/init/prefetch';
 import hydratedRouteInit from 'core/init/hydrated-route';
 
-import { initAPI } from 'core/init/helpers';
-
+import { getAppParams } from 'core/init/helpers';
 import type { InitAppOptions, App } from 'core/init/interface';
+
+export * from 'core/init/helpers';
+export * from 'core/init/interface';
 
 /**
  * Initializes the application
@@ -31,7 +33,7 @@ export default async function initApp(
 	rootComponent: Nullable<string>,
 	opts: InitAppOptions
 ): Promise<App> {
-	const params = initAPI(opts);
+	const params = getAppParams(opts);
 
 	void initDom(params);
 	void initState(params);

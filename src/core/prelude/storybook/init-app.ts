@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Component, { app, rootComponents, ComponentElement, App } from 'core/component';
+import Component, { app, rootComponents, ComponentElement, ComponentApp } from 'core/component';
 
 /**
  * Inits the app for the storybook canvas
@@ -14,7 +14,7 @@ import Component, { app, rootComponents, ComponentElement, App } from 'core/comp
  * @param canvasElement - storybook canvas element
  * @param [rootComponent] - name of the root component
  */
-export default async function initApp(canvasElement: HTMLElement, rootComponent?: string): Promise<App> {
+export default async function initApp(canvasElement: HTMLElement, rootComponent?: string): Promise<ComponentApp> {
 	const component = await rootComponents[rootComponent ?? 'p-v4-components-demo'];
 
 	if (component == null) {

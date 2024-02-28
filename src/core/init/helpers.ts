@@ -7,13 +7,19 @@
  */
 
 import * as net from 'core/net';
+import * as cookies from 'core/cookies';
+
 import type { InitAppOptions, InitAppParams } from 'core/init/interface';
 
 /**
- * Initializes the global state of the application (user session initialization, online status loading, etc.)
- * @param params - additional initialization parameters
+ * Returns application initialization parameters based on the passed options
+ * @param opts - initialization options
  */
-export function initAPI(params: InitAppOptions): InitAppParams {
-	params.net ??= net;
-	return Object.cast(params);
+export function getAppParams(opts: InitAppOptions): InitAppParams {
+	return {
+		...opts,
+		net: opts.net ?? net,
+		cookies: cookies.from(opts.cookies),
+		route: opts.location.pathname + opts.location.search
+	};
 }

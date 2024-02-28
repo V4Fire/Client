@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { createsAsyncSemaphore } from 'core/event';
 import { disposeLazy } from 'core/lazy';
+import { createsAsyncSemaphore } from 'core/event';
 
-import remoteState, { set } from 'core/component/client-state';
+import clientState, { set as setToClientState } from 'core/component/client-state';
 
 import AppClass, {
 
@@ -28,7 +28,7 @@ import flags from 'core/init/flags';
 import type { InitAppParams, App } from 'core/init/interface';
 
 /**
- * A factory for creating a semaphore over application initialization
+ * A factory for creating a semaphore for application initialization
  */
 export default function createInitAppSemaphore(): (flag: string) => Promise<ReturnType<typeof createAppInitializer>> {
 	return createsAsyncSemaphore(createAppInitializer, ...flags);
@@ -37,23 +37,26 @@ export default function createInitAppSemaphore(): (flag: string) => Promise<Retu
 function createAppInitializer() {
 	return async (
 		rootComponentName: Nullable<string>,
-		opts: InitAppParams
+		params: InitAppParams
 	): Promise<App> => {
-		const
-			{appId} = opts;
+		const {
+			appId,
+			targetToMount
+		} = params;
 
 		const
-			state = Object.reject(opts, ['targetToMount', 'setup']),
+			state = Object.reject(params, ['targetToMount', 'setup']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
 
-		opts.setup?.(Object.cast(rootComponentParams));
+		params.setup?.(Object.cast(rootComponentParams));
 
-		Object.entries(state).forEach(([key, value]) => {
-			set(key, value);
-		});
+		if (!SSR) {
+			Object.entries(state).forEach(([key, value]) => {
+				setToClientState(key, value);
+			});
+		}
 
-		let
-			{inject} = rootComponentParams;
+		let {inject} = rootComponentParams;
 
 		if (Object.isArray(inject)) {
 			inject = Object.fromArray(inject, {value: (key) => key});
@@ -61,28 +64,23 @@ function createAppInitializer() {
 
 		rootComponentParams.inject = {
 			...inject,
-			app: 'app',
-			appId: 'appId'
+			app: 'app'
 		};
 
 		if (SSR) {
-			const
-				// eslint-disable-next-line @typescript-eslint/no-var-requires
-				{renderToString} = require('vue/server-renderer');
+			// eslint-disable-next-line @typescript-eslint/no-var-requires
+			const {renderToString} = require('vue/server-renderer');
 
 			Object.assign(rootComponentParams.inject, {
-				hydrationStore: 'hydrationStore',
-				ssrState: 'ssrState'
+				hydrationStore: 'hydrationStore'
 			});
 
 			const
 				hydrationStore = new HydrationStore(),
 				app = new AppClass(rootComponentParams);
 
-			app.provide('app', app);
-			app.provide('appId', appId);
+			app.provide('app', {instance: app, state});
 			app.provide('hydrationStore', hydrationStore);
-			app.provide('ssrState', Object.fastClone(remoteState));
 
 			let
 				ssrContent: string,
@@ -111,11 +109,8 @@ function createAppInitializer() {
 			}
 		}
 
-		const
-			{targetToMount} = opts;
-
 		if (targetToMount == null) {
-			throw new ReferenceError('Application mount node was not found');
+			throw new ReferenceError('The application mount node was not found');
 		}
 
 		const app = new AppClass({
@@ -123,8 +118,7 @@ function createAppInitializer() {
 			el: targetToMount
 		});
 
-		app.provide('app', app);
-		app.provide('appId', appId);
+		app.provide('app', {instance: app, state: clientState});
 
 		Object.defineProperty(globalApp, 'context', {
 			configurable: true,
@@ -138,13 +132,19 @@ function createAppInitializer() {
 			get: () => document.querySelector<ComponentElement>('#root-component')?.component ?? null
 		});
 
+		Object.defineProperty(globalApp, 'state', {
+			configurable: true,
+			enumerable: true,
+			get: () => clientState
+		});
+
 		return targetToMount;
 
 		async function getRootComponentParams(
 			rootComponentName: Nullable<string>
 		): Promise<NonNullable<typeof rootComponents['component']>> {
 			if (rootComponentName == null) {
-				throw new Error('No name has been set for the root component of the application');
+				throw new Error("No name has been set for the application's root component");
 			}
 
 			const
@@ -154,7 +154,7 @@ function createAppInitializer() {
 				throw new ReferenceError(`The root component with the specified name "${rootComponentName}" was not found`);
 			}
 
-			return Object.fastClone(rootComponentParams);
+			return Object.mixin(true, {}, rootComponentParams);
 		}
 	};
 }

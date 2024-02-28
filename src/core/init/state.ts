@@ -6,9 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import * as net from 'core/net';
-import * as session from 'core/session';
-
 import type { InitAppParams } from 'core/init/interface';
 
 /**
@@ -16,19 +13,9 @@ import type { InitAppParams } from 'core/init/interface';
  * @param params - additional initialization parameters
  */
 export default async function initState(params: InitAppParams): Promise<void> {
-	params.isOnline = true;
-
 	if (!SSR) {
-		net.isOnline()
-			.then((v) => {
-				params.isOnline = v.status;
-				params.lastOnlineDate = v.lastOnline;
-			})
-
-			.catch(stderr);
-
 		try {
-			await session.isExists().then((status: boolean) => params.isAuth = status);
+			await params.session.isExists();
 
 		} catch (err) {
 			stderr(err);

@@ -23,11 +23,9 @@ export default async function init(params: InitAppParams): Promise<void> {
 				compiledRoutes = compileStaticRoutes(routes),
 				defaultRoute = Object.values(compiledRoutes).find((route) => route?.meta.default);
 
-			const route = getRoute(
-				location.pathname + location.search,
-				compiledRoutes,
-				{defaultRoute}
-			);
+			const
+				routePath = params.location.pathname + params.location.search,
+				route = getRoute(routePath, compiledRoutes, {defaultRoute});
 
 			if (route != null) {
 				// FIXME: https://github.com/V4Fire/Client/issues/1000
@@ -41,6 +39,6 @@ export default async function init(params: InitAppParams): Promise<void> {
 		}
 
 	} finally {
-		void params.ready('hydratedRoute');
+		void params.ready('hydratedRouteReady');
 	}
 }
