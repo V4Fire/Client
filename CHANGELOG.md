@@ -26,6 +26,40 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Resolved an issue with the progress plugin's view in relation to empty builds
 * Corrected the theme-manager to function properly in server-side rendering (ssr)
+* Fixed the `wait` option in `loadModules` for SSR build `iBlock`
+
+## v4.0.0-beta.67 (2024-02-26)
+
+#### :bug: Bug Fix
+
+* Fixed an with transition into loading success state was not made `components/b-virtual-scroll-new`
+* Fixed synchronous render for functional components in `waitForceRender` `components/friends/async-render`
+
+## v4.0.0-beta.66 (2024-02-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the incorrect transition into the loading state. Now the loading state will be removed in one requestAnimationFrame call along with the content insertion into the DOM,
+and the loading state will be restored on the following one. This trick helps avoid generating CLS errors. `components/base/b-virtual-scroll-new`
+
+* Fixed a race condition when calling `initLoad` multiple times `components/base/b-virtual-scroll-new`
+
+* Added visibility tracking for the tombstones slot, now if this slot is on the screen,
+an attempt will be made to render the data regardless of what the client returned in `shouldPerformDataRender`.
+Also added a flag in VirtualScrollState indicating the visibility of the slot.
+All this will help avoid situations when for some reason the `IntersectionObserver` did not trigger on the elements and as a result `shouldPerformDataRender` was not called. `components/base/b-virtual-scroll-new`
+
+#### :rocket: New Feature
+
+* Added the `BOM.clsScore` method that allows measuring Cumulative Layout Shift (CLS) during any actions.
+
+## v4.0.0-beta.65 (2024-02-21)
+
+#### :bug: Bug Fix
+
+* `iBlock`:
+  * Created separate buckets for each `loadModules` call
+  * Fixed the `wait` option in `loadModules`: now, all modules are not loaded until the wait option is resolved
 
 ## v4.0.0-beta.64 (2024-02-19)
 
