@@ -9,7 +9,7 @@
 import { disposeLazy } from 'core/lazy';
 import { createsAsyncSemaphore } from 'core/event';
 
-import clientState, { set as setToClientState } from 'core/component/client-state';
+import * as clientState from 'core/component/client-state';
 
 import AppClass, {
 
@@ -52,7 +52,7 @@ function createAppInitializer() {
 
 		if (!SSR) {
 			Object.entries(state).forEach(([key, value]) => {
-				setToClientState(key, value);
+				clientState.set(key, value);
 			});
 		}
 
@@ -78,6 +78,19 @@ function createAppInitializer() {
 			const
 				hydrationStore = new HydrationStore(),
 				app = new AppClass(rootComponentParams);
+
+			let
+				oneTimeState: Nullable<typeof state> = state;
+
+			Object.defineProperty(globalApp, 'state', {
+				configurable: true,
+				enumerable: true,
+				get: () => {
+					const state = oneTimeState;
+					oneTimeState = null;
+					return state;
+				}
+			});
 
 			app.provide('app', {instance: app, state});
 			app.provide('hydrationStore', hydrationStore);
@@ -118,7 +131,7 @@ function createAppInitializer() {
 			el: targetToMount
 		});
 
-		app.provide('app', {instance: app, state: clientState});
+		app.provide('app', {instance: app, state: clientState.default});
 
 		Object.defineProperty(globalApp, 'context', {
 			configurable: true,
@@ -135,7 +148,7 @@ function createAppInitializer() {
 		Object.defineProperty(globalApp, 'state', {
 			configurable: true,
 			enumerable: true,
-			get: () => clientState
+			get: () => clientState.default
 		});
 
 		return targetToMount;
