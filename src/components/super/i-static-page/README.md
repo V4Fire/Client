@@ -487,21 +487,6 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
 
 ### Getters
 
-#### isAuth
-
-True if the current user is authorized.
-See `core/session` for more information.
-
-#### isOnline
-
-True if there is a connection to the Internet
-See `core/net` for more information.
-
-#### lastOnlineDate
-
-The last date when the application was online.
-See `core/net` for more information.
-
 #### activePage
 
 The name of the active route page.

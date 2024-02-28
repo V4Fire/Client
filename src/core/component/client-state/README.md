@@ -29,18 +29,6 @@ set('newProp', someValue);
 
 V4Fire supports out-of-the-box integration with the `core/session`, `core/net`, and `core/abt` modules.
 
-### state.isAuth
-
-This property signifies if the session has been authorized or not.
-
-### state.isOnline
-
-This property signifies if an Internet connection is currently active or not.
-
-### state.lastOnlineDate
-
-This property indicates the date of the most recent Internet connection.
-
 ### state.lang
 
 The application default language.
@@ -52,10 +40,6 @@ This property contains a list of registered AB experiments.
 ### state.cookies
 
 This property contains a store of application cookies.
-
-### state.document
-
-This property contains a shim for the `window.document` API.
 
 ## API
 

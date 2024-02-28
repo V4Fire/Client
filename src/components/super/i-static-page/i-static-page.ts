@@ -97,24 +97,6 @@ export default abstract class iStaticPage extends iPage {
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
-	 * True if the current user is authorized
-	 */
-	@field((o) => o.sync.link('remoteState.isAuth'))
-	isAuth!: boolean;
-
-	/**
-	 * True if there is a connection to the Internet
-	 */
-	@field((o) => o.sync.link('remoteState.isOnline'))
-	isOnline!: boolean;
-
-	/**
-	 * Last date when the application was online
-	 */
-	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
-	lastOnlineDate?: Date;
-
-	/**
 	 * Initial value for the active route.
 	 * This field is typically used in cases of SSR and hydration.
 	 */
@@ -330,8 +312,6 @@ export default abstract class iStaticPage extends iPage {
 	protected override beforeDestroy(): void {
 		super.beforeDestroy();
 		this.hydrationStore?.clear();
-
-		this.app
 
 		const
 			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appId)}:`));
