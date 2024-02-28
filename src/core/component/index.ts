@@ -15,7 +15,7 @@ import 'core/component/directives';
 
 export * as init from 'core/component/init';
 
-export { default as clientState, State } from 'core/component/client-state';
+export { State } from 'core/component/state';
 export { ComponentEngine as default } from 'core/component/engines';
 
 export { runHook } from 'core/component/hook';

@@ -3,9 +3,9 @@
 This module defines an interface for the entire application's state.
 The state can include user sessions, cookie store, etc.
 
-> Note that the module provides types only.
-If you want to use global state on the client side, look at the module `core/component/client-state`,
-but be aware that using global state might lead to issues when implementing SSR.
+> Please note that this module only provides types.
+> The actual state is set at the time of application initialization.
+> To safely use the state from a component, you need to use a special getter.
 
 ## Interface
 

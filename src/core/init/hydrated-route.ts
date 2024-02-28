@@ -9,7 +9,6 @@
 import routes from 'routes';
 import { getRoute, compileStaticRoutes } from 'core/router';
 
-import { set } from 'core/component/client-state';
 import type { InitAppParams } from 'core/init/interface';
 
 /**
@@ -32,10 +31,10 @@ export default async function init(params: InitAppParams): Promise<void> {
 				Object.mixin({propsToCopy: 'new'}, route.meta, route.meta.meta);
 				Object.mixin({propsToCopy: 'new'}, route.params, route.meta.params);
 				Object.mixin({propsToCopy: 'new'}, route.query, route.meta.query);
-				await route.meta.load?.();
-			}
 
-			set('route', route);
+				await route.meta.load?.();
+				params.route = route;
+			}
 		}
 
 	} finally {

@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import watch from 'core/object/watch';
+
 import { disposeLazy } from 'core/lazy';
 import { createsAsyncSemaphore } from 'core/event';
-
-import * as clientState from 'core/component/client-state';
 
 import AppClass, {
 
@@ -44,17 +44,12 @@ function createAppInitializer() {
 			targetToMount
 		} = params;
 
-		const
-			state = Object.reject(params, ['targetToMount', 'setup']),
-			rootComponentParams = await getRootComponentParams(rootComponentName);
+		const {
+			proxy: state
+		} = watch(Object.reject(params, ['targetToMount', 'setup']));
 
+		const rootComponentParams = await getRootComponentParams(rootComponentName);
 		params.setup?.(Object.cast(rootComponentParams));
-
-		if (!SSR) {
-			Object.entries(state).forEach(([key, value]) => {
-				clientState.set(key, value);
-			});
-		}
 
 		let {inject} = rootComponentParams;
 
@@ -131,7 +126,7 @@ function createAppInitializer() {
 			el: targetToMount
 		});
 
-		app.provide('app', {instance: app, state: clientState.default});
+		app.provide('app', {instance: app, state});
 
 		Object.defineProperty(globalApp, 'context', {
 			configurable: true,
@@ -148,7 +143,7 @@ function createAppInitializer() {
 		Object.defineProperty(globalApp, 'state', {
 			configurable: true,
 			enumerable: true,
-			get: () => clientState.default
+			get: () => state
 		});
 
 		return targetToMount;
