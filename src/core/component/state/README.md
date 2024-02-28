@@ -20,9 +20,9 @@ import type { InitialRoute, AppliedRoute } from 'core/router';
 
 export interface State {
   /**
-   * An API to work with a network, such as testing of the network connection, etc.
+   * The unique application identifier
    */
-  net: typeof net;
+  appId: string;
 
   /**
    * An API for managing user session
@@ -40,15 +40,20 @@ export interface State {
   location: URL;
 
   /**
-   * The application default locale
+   * An API to work with a network, such as testing of the network connection, etc.
    */
-  locale: Language;
+  net: typeof net;
 
   /**
    * The initial value for the active route.
    * This field is typically used in cases of SSR and hydration.
    */
   route?: InitialRoute | AppliedRoute;
+
+  /**
+   * The application default locale
+   */
+  locale?: Language;
 
   /**
    * A list of registered AB experiments
