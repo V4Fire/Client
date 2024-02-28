@@ -9,7 +9,7 @@
 import type { InitAppParams } from 'core/init/interface';
 
 /**
- * Initializes the global state of the application (user session initialization, online status loading, etc.)
+ * Initializes the global state of the application (user session initialization, etc.)
  * @param params - additional initialization parameters
  */
 export default async function initState(params: InitAppParams): Promise<void> {

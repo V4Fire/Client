@@ -94,9 +94,9 @@ By default, the flag is set immediately, but you can override the `core/init/abt
 __core/init/abt.ts__
 
 ```typescript
-import type { InitAppOptions } from 'core/init/interface';
+import type { InitAppParams } from 'core/init/interface';
 
-export default async function initABT(params: InitAppOptions): Promise<void> {
+export default async function initABT(params: InitAppParams): Promise<void> {
   void params.ready('ABTReady');
 }
 ```
@@ -109,43 +109,30 @@ By default, the flag is set immediately, but you can override the `core/init/pre
 __core/init/prefetch.ts__
 
 ```typescript
-import type { InitAppOptions } from 'core/init/interface';
+import type { InitAppParams } from 'core/init/interface';
 
-export default async function initPrefetch(params: InitAppOptions): Promise<void> {
+export default async function initPrefetch(params: InitAppParams): Promise<void> {
   void params.ready('prefetchReady');
 }
 ```
 
 ### stateReady
 
-Initializing the application global state (user session initialization, online status loading, etc.).
+Initializing the application global state (user session initialization, etc.).
 
 __core/init/abt.ts__
 
 ```typescript
-import * as net from 'core/net';
-import * as session from 'core/session';
+import type { InitAppParams } from 'core/init/interface';
 
-import state from 'core/component/client-state';
+export default async function initState(params: InitAppParams): Promise<void> {
+  if (!SSR) {
+    try {
+      await params.session.isExists();
 
-import type { InitAppOptions } from 'core/init/interface';
-
-export default async function initState(params: InitAppOptions): Promise<void> {
-  state.isOnline = true;
-
-  net.isOnline()
-    .then((v) => {
-      state.isOnline = v.status;
-      state.lastOnlineDate = v.lastOnline;
-    })
-
-    .catch(stderr);
-
-  try {
-    await session.isExists().then((v) => state.isAuth = v);
-
-  } catch (err) {
-    stderr(err);
+    } catch (err) {
+      stderr(err);
+    }
   }
 
   void params.ready('stateReady');
@@ -169,39 +156,15 @@ When calling this function from SSR, it is necessary to pass the name of the roo
 and additional parameters can also be passed.
 
 ```typescript
-import { initApp, createInitAppSemaphore } from 'core';
+import { initApp, createInitAppSemaphore, cookies } from 'core';
+import { createCookieStore } from 'core/cookies';
 
 import type { ComponentOptions } from 'core/component/engines';
 
 initApp('p-v4-components-demo', {
   ready: createInitAppSemaphore(),
-  route: '/user/12345',
-
-  setup(rootComponentParams: ComponentOptions) {
-    rootComponentParams.inject = {
-      ...rootComponentParams.inject,
-      hydrationStore: 'hydrationStore'
-    };
-  },
-
-  // globalEnv: {
-  //   ssr: {
-  //     document: {
-  //       get cookie() {
-  //         return 'cookie string';
-  //       },
-  //
-  //       set cookie(cookie) {
-  //         // Set the passed cookie
-  //         // ...
-  //       }
-  //     }
-  //   },
-  //
-  //   location: {
-  //     href: 'https://example.com/user/12345'
-  //   }
-  // }
+  location: new URL('https://example.com/user/12345'),
+  cookies: createCookieStore('id=1')
 }).then(({content: renderedHTML, styles: inlinedStyles}) => {
   console.log(renderedHTML, inlinedStyles);
 })
@@ -239,19 +202,6 @@ interface InitAppOptions {
    * @param rootComponentParams
    */
   setup?(rootComponentParams: ComponentOptions): void;
-}
-```
-
-### Initializing the global environment for SSR
-
-To initialize the global environment passed as parameters to the initApp function,
-use a special function from the `core/env` module.
-
-```typescript
-import type { InitAppOptions } from 'core/init/interface';
-
-export default async function initPrefetch(params: InitAppOptions): Promise<void> {
-  void params.ready('prefetchReady');
 }
 ```
 

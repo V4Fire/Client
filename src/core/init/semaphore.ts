@@ -46,7 +46,7 @@ function createAppInitializer() {
 
 		const {
 			proxy: state
-		} = watch(Object.reject(params, ['targetToMount', 'setup']));
+		} = watch(Object.reject(params, ['targetToMount', 'setup', 'ready']));
 
 		const rootComponentParams = await getRootComponentParams(rootComponentName);
 		params.setup?.(Object.cast(rootComponentParams));
