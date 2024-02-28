@@ -13,19 +13,23 @@ import { Component } from 'tests/helpers';
 import type { SafeHtmlDirectiveParams } from 'components/directives/safe-html/interface';
 
 test.describe('components/directives/safe-html', () => {
-	const htmlString = '<p>Some</p><div>string</div><strong>with</strong><strong>HTML</strong>';
-
 	test.beforeEach(({demoPage}) => demoPage.goto());
 
 	test('should insert sanitized html', async ({page}) => {
-		const component = await createComponent(page, htmlString);
+		const dangerousString = '<div>HTML</div><img src="some/src" onerror=alert(1)><math></math>';
+		const safeString = '<div>HTML</div><img src="some/src">';
 
-		await test.expect(await component.innerHTML()).toEqual(htmlString);
+		const component = await createComponent(page, dangerousString);
+
+		await test.expect(component.innerHTML()).toBeResolvedTo(safeString);
 	});
 
-	test('should insert sanitized html with options', async ({page}) => {
+	test('should insert sanitized html that satisfies options', async ({page}) => {
+		const dangerousString = '<div>HTML</div><img src="some/src" onerror=alert(1)><svg><rect height="50"></rect></svg>';
+		const safeString = '<div>HTML</div><img src="some/src"><svg><rect height="50"></rect></svg>';
+
 		const component = await createComponent(page, {
-			value: htmlString,
+			value: dangerousString,
 
 			options: {
 				USE_PROFILES: {
@@ -35,7 +39,7 @@ test.describe('components/directives/safe-html', () => {
 			}
 		});
 
-		await test.expect(await component.innerHTML()).toEqual(htmlString);
+		await test.expect(component.innerHTML()).toBeResolvedTo(safeString);
 	});
 });
 
