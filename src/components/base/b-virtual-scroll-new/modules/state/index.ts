@@ -146,6 +146,14 @@ export class ComponentInternalState extends Friend {
 	}
 
 	/**
+	 * Sets a flag indicating whether the tombstones slot is in the viewport
+	 * @param value
+	 */
+	setIsTombstonesInView(value: boolean): void {
+		this.state.isTombstonesInView = value;
+	}
+
+	/**
 	 * Sets the flag indicating if the component's lifecycle is done
 	 * @param value - the value of the flag.
 	 */

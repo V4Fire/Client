@@ -9,6 +9,19 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed the `wait` option in `loadModules` for SSR build
+
+## v4.0.0-beta.65 (2024-02-21)
+
+#### :bug: Bug Fix
+
+* Created separate buckets for each `loadModules` call
+* Fixed the `wait` option in `loadModules`: now, all modules are not loaded until the wait option is resolved
+
 ## v4.0.0-beta.64 (2024-02-19)
 
 #### :bug: Bug Fix

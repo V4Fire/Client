@@ -72,7 +72,7 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 
 #### :bug: Bug Fix
 
-* Removed an unnecessary next data chunk response checking `base/b-virtual-scroll-new`
+* Removed an unnecessary next data chunk response checking `components/base/b-virtual-scroll-new`
 
 ## v4.0.0-beta.62 (2024-02-19)
 
@@ -94,7 +94,7 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 
 #### :boom: Breaking Change
 
-* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `base/b-virtual-scroll-new`
+* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `components/base/b-virtual-scroll-new`
 * `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
 
 #### :bug: Bug Fix
@@ -103,7 +103,7 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 
 #### :rocket: New Feature
 
-* Added `preloadAmount` prop in b`-virtual-scroll-new` `base/b-virtual-scroll-new`
+* Added `preloadAmount` prop in b`-virtual-scroll-new` `components/base/b-virtual-scroll-new`
 
 #### :house: Internal
 
@@ -169,11 +169,11 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 
 #### :bug: Bug Fix
 
-* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/base/b-virtual-scroll-new`
+* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/components/base/b-virtual-scroll-new`
 
 #### :house:  Internal
 
-* Added tests for `b-virtual-scroll-new` `components/base/b-virtual-scroll-new`
+* Added tests for `b-virtual-scroll-new` `components/components/base/b-virtual-scroll-new`
 
 ## v4.0.0-beta.55 (2024-02-08)
 
@@ -196,7 +196,6 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 #### :house: Internal
 
 * Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
->>>>>>> v4
 
 ## v4.0.0-beta.54 (2024-02-06)
 
@@ -208,7 +207,7 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 
 #### :house: Internal
 
-* The entry threshold for counting an element as visible is set to the minimum value `components/base/b-virtual-scroll-new`
+* The entry threshold for counting an element as visible is set to the minimum value `components/components/base/b-virtual-scroll-new`
 
 ## v4.0.0-beta.53 (2024-01-31)
 

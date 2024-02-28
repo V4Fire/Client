@@ -83,28 +83,35 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 
 	meta.component[SSR ? 'ssrRender' : 'render'] = Object.cast((ctx: object, ...args: unknown[]) => {
 		const
-			unsafe = getComponentContext(ctx);
+			unsafe = getComponentContext(ctx),
+			result = callRenderFunction();
 
-		if (cache.has(ctx)) {
-			return cache.get(ctx)();
+		Object.set(unsafe, 'renderedOnce', true);
+
+		return result;
+
+		function callRenderFunction() {
+			if (cache.has(ctx)) {
+				return cache.get(ctx)();
+			}
+
+			const
+				render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
+
+			if (!Object.isFunction(render)) {
+				return render;
+			}
+
+			if (unsafe.meta.params.functional !== true) {
+				cache.set(ctx, render);
+
+				unsafe.$async.worker(() => {
+					cache.delete(ctx);
+				}, {label});
+			}
+
+			return render();
 		}
-
-		const
-			render = meta.methods.render!.fn.call(unsafe, unsafe, ...args);
-
-		if (!Object.isFunction(render)) {
-			return render;
-		}
-
-		if (unsafe.meta.params.functional !== true) {
-			cache.set(ctx, render);
-
-			unsafe.$async.worker(() => {
-				cache.delete(ctx);
-			}, {label});
-		}
-
-		return render();
 	});
 
 	if (component.parentMeta) {
