@@ -13,6 +13,8 @@
 
 import DOMPurify from 'dompurify';
 
+import config from 'config';
+
 import type { SafeHtmlDirectiveParams } from 'core/component/directives/safe-html/interface';
 
 import { ComponentEngine } from 'core/component/engines';
@@ -27,13 +29,15 @@ ComponentEngine.directive('safe-html', (el: HTMLElement, {value, oldValue}: Safe
 	let sanitized: string;
 
 	if (typeof value === 'string') {
-		sanitized = DOMPurify.sanitize(value, {USE_PROFILES: {html: true}});
+		sanitized = DOMPurify.sanitize(value, config.safeHtml);
 	} else {
 		sanitized = DOMPurify.sanitize(
 			value.value,
+
 			{
-				USE_PROFILES: {html: true},
+				...config.safeHtml,
 				...value.options,
+
 				RETURN_DOM_FRAGMENT: false,
 				RETURN_DOM: false
 			}

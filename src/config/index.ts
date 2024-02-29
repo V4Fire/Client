@@ -17,6 +17,16 @@ export * from '@v4fire/core/config';
 export { default } from '@v4fire/core/config';
 
 extend({
+	/**
+	 * Default options for the `v-safe-html` directive.
+	 * @see https://github.com/cure53/DOMPurify#can-i-configure-dompurify
+	 */
+	safeHtml: {
+		USE_PROFILES: {
+			html: true
+		}
+	},
+
 	components: COMPONENTS,
 	componentStaticDependencies: {}
 });

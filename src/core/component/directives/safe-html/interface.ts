@@ -9,11 +9,11 @@
 import type { Config as SuperConfig } from 'dompurify';
 import type { VNodeDirective } from 'core/component/engines';
 
-interface Config extends Omit<SuperConfig, 'RETURN_DOM' | 'RETURN_DOM_FRAGMENT'> {}
+export interface Options extends Omit<SuperConfig, 'RETURN_DOM' | 'RETURN_DOM_FRAGMENT'> {}
 
 export interface SafeHtmlDirectiveParams extends VNodeDirective {
 	value?: string | {
 		value: string;
-		options?: Config;
+		options?: Options;
 	};
 }
