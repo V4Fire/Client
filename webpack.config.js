@@ -94,8 +94,8 @@ const tasks = (async () => {
 
 	const
 		tasks = await $C(processes).async
-		.filter((item) => !Object.isEmpty(item.entries))
-		.map((el, i) => buildFactory(el, i));
+			.filter((item) => !Object.isEmpty(item.entries))
+			.map((el, i) => buildFactory(el, i));
 
 	done();
 
