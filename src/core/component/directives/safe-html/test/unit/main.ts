@@ -24,7 +24,7 @@ test.describe('core/component/directives/safe-html', () => {
 		await test.expect(component.innerHTML()).toBeResolvedTo(safeString);
 	});
 
-	test('should insert sanitized html with options', async ({page}) => {
+	test('should insert sanitized html that satisfies options', async ({page}) => {
 		const dangerousString = '<div>HTML</div><img src="some/src" onerror=alert(1)><svg><rect height="50"></rect></svg>';
 		const safeString = '<div>HTML</div><img src="some/src"><svg><rect height="50"></rect></svg>';
 
