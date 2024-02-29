@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Actual theme added to client state
+
 ## v4.0.0-beta.52 (2023-01-31)
 
 #### :boom: Breaking Change

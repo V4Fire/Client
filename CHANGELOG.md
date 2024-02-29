@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :rocket: New Feature
+
+* Actual theme added to client state
+
 ## v4.0.0-beta.?? (2024-??-??)
 
 #### :bug: Bug Fix
