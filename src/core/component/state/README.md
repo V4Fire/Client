@@ -2,10 +2,47 @@
 
 This module defines an interface for the entire application's state.
 The state can include user sessions, cookie store, etc.
+Please note that this module only provides types.
 
-> Please note that this module only provides types.
-> The actual state is set at the time of application initialization.
-> To safely use the state from a component, you need to use a special getter.
+## How to use the state?
+
+The state of the application is set during its initialization in the `core/init` module.
+Also, in the case of SSR, you can explicitly pass state parameters in the render function call.
+
+```typescript
+import { createCookieStore } from 'core/cookies';
+import { initApp, createInitAppSemaphore, cookies } from 'core';
+
+initApp('p-v4-components-demo', {
+  ready: createInitAppSemaphore(),
+  location: new URL('https://example.com/user/12345'),
+  cookies: createCookieStore('id=1')
+}).then(({content: renderedHTML, styles: inlinedStyles}) => {
+  console.log(renderedHTML, inlinedStyles);
+});
+```
+
+To work with the state from a component context, you should use a special getter called `remoteState`.
+
+```typescript
+import iBlock, { component } from 'components/super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  created() {
+    console.log(this.remoteState.location.href);
+  }
+}
+```
+
+To access the state via a global reference, you can use `app.state` from the `core/component` module.
+But keep in mind that working with state through global import will not work with SSR.
+
+```typescript
+import { app } from 'core/component';
+
+console.log(app.state?.location);
+```
 
 ## Interface
 
