@@ -16,6 +16,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed the `wait` option in `loadModules` for SSR build `iBlock`
+* Fix the disappearance of functional components in cached pages:
+do not call the destroy method on the rendering engine if `$el` has the `component` property
+`core/component/init/states/before-destroy`
 
 ## v4.0.0-beta.67 (2024-02-26)
 
