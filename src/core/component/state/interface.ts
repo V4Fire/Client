@@ -9,6 +9,7 @@
 import type { Experiments } from 'core/abt';
 import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
+import type { Theme } from 'components/super/i-block/i-block';
 
 export interface State {
 	/**
@@ -69,6 +70,11 @@ export interface State {
 	 * ```
 	 */
 	globalEnv?: GlobalEnvironment;
+
+	/**
+	 * Actual app's color theme
+	 */
+	colorTheme: Theme;
 }
 
 export interface GlobalEnvironment extends Dictionary {}

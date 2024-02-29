@@ -185,6 +185,7 @@ export default class ThemeManager extends Friend {
 
 		this.current = newTheme;
 		this.themeStorage.set('colorTheme', this.current);
+		this.ctx.r.remoteState.colorTheme = this.current;
 		document.documentElement.setAttribute(this.themeAttribute, value);
 
 		void this.component.lfc.execCbAtTheRightTime(() => {
