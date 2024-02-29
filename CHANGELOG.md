@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added a new `v-safe-html` directive for inserting sanitized HTML `components/directives/safe-html`
+* Added a new `v-safe-html` directive for inserting sanitized HTML `core/component/directives/safe-html`
 
 ## v3.67.1 (2024-02-26)
 
