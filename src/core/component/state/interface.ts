@@ -74,7 +74,7 @@ export interface State {
 	/**
 	 * Actual app's color theme
 	 */
-	colorTheme: Theme;
+	colorTheme?: Theme;
 }
 
 export interface GlobalEnvironment extends Dictionary {}

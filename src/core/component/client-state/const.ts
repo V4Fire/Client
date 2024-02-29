@@ -15,6 +15,7 @@ const watcher = watchObj<State>({
 	lastOnlineDate: undefined,
 	experiments: undefined,
 	route: undefined,
+	colorTheme: undefined,
 	globalEnv: {}
 });
 
