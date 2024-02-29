@@ -21,8 +21,6 @@ declare var ssr: Nullable<{
 	document?: Document;
 }>;
 
-declare const ES: string;
-
 declare const BUILD_MODE: CanUndef<string>;
 
 declare const CSP_NONCE_STORE: string;

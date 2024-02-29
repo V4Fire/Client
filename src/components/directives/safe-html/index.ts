@@ -11,11 +11,11 @@
  * @packageDocumentation
  */
 
-import DOMPurifyV2 from 'dompurify-v2';
-import DOMPurifyV3 from 'dompurify-v3';
+import DOMPurify from 'dompurify';
 
 import config from 'config';
-import type { SafeHtmlDirectiveParams, Strategy } from 'components/directives/safe-html/interface';
+
+import type { SafeHtmlDirectiveParams } from 'components/directives/safe-html/interface';
 
 import { ComponentEngine, VNode } from 'core/component/engines';
 
@@ -27,14 +27,13 @@ ComponentEngine.directive('safe-html', {
 			return;
 		}
 
-		const strategy = getSanitizingStrategy(value);
 		let sanitized: string;
 
 		if (typeof value === 'string') {
-			sanitized = strategy.sanitize(value, config.safeHtml);
+			sanitized = DOMPurify.sanitize(value, config.safeHtml);
 
 		} else {
-			sanitized = strategy.sanitize(
+			sanitized = DOMPurify.sanitize(
 				value.value,
 
 				{
@@ -53,11 +52,3 @@ ComponentEngine.directive('safe-html', {
 		};
 	}
 });
-
-function getSanitizingStrategy(value: SafeHtmlDirectiveParams['value']): Strategy {
-	if (typeof value !== 'string' && 'use' in value && value.use != null) {
-		return value.use;
-	}
-
-	return ES.toLowerCase() === 'es5' ? DOMPurifyV2 : DOMPurifyV3;
-}
