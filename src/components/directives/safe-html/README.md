@@ -2,7 +2,7 @@
 
 [Changelog](./CHANGELOG.md)
 
-A directive is a safe alternative to [v-html](https://vuejs.org/api/built-in-directives.html#v-html), by inserting sanitized HTML. [dompurify](https://github.com/cure53/DOMPurify) is the default sanitizer, but you can set your own custom sanitizing strategy.
+A directive is a safe alternative to [v-html](https://vuejs.org/api/built-in-directives.html#v-html) inserting sanitized HTML by [dompurify](https://github.com/cure53/DOMPurify)
 
 ## Usage
 
