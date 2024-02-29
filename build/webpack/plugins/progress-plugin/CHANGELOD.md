@@ -11,7 +11,7 @@ Changelog
 
 ## v4.0.0-beta.?? (2024-??-?)
 
-#### :house:  Internal
+#### :house: Internal
 
 * Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
 

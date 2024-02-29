@@ -11,6 +11,8 @@ Changelog
 
 ## v4.0.0-beta.?? (2024-??-?)
 
+#### :rocket: New Feature
+
 * Implemented a new engine for translate keys `lang/engines`
 
 #### :house: Internal

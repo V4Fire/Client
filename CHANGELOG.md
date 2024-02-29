@@ -108,8 +108,8 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 #### :house: Internal
 
 * Added re-export of modules from `tests/helpers`:
-- Request
-- RequestInterceptor
+ - Request
+ - RequestInterceptor
  - Mock
 
 * Removed bad import of async module from `tests/helpers/network/interceptor`
