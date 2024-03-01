@@ -28,4 +28,5 @@ or with options
 ```
 
 ## Options
+
 All options are supported by [dompurify](https://github.com/cure53/DOMPurify), except for `RETURN_DOM_FRAGMENT` and `RETURN_DOM`, due to the fact that this directive inserts only strings.
