@@ -17,7 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * The `activeStore` system field is marked as unique in the `bList`, `bTree`, `bSelect`
-components because it has `unknown` type and it can't be merged correctly
+components because it has an `unknown` type and it cannot be correctly merged
 
 ## v4.0.0-beta.68 (2024-02-29)
 
