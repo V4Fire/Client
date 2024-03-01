@@ -21,6 +21,11 @@ export interface State {
 	appId: string;
 
 	/**
+	 * True, if the current user session is authorized
+	 */
+	isAuth?: boolean;
+
+	/**
 	 * An API for managing user session
 	 */
 	session: Session;
