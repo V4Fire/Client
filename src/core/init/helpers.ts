@@ -20,6 +20,6 @@ export function getAppParams(opts: InitAppOptions): InitAppParams {
 		...opts,
 		net: opts.net ?? net,
 		cookies: cookies.from(opts.cookies),
-		route: opts.location.pathname + opts.location.search
+		route: opts.route ?? opts.location.pathname + opts.location.search
 	};
 }

@@ -75,7 +75,24 @@ export default abstract class iBlockState extends iBlockMods {
 			return this.app.state;
 		}
 
-		return app.state!;
+		if ('_remoteState' in this) {
+			return this['_remoteState'];
+		}
+
+		// If this getter is called on the root component at the beforeCreate stage,
+		// the app property is simply not there yet.
+		// So we take it from the global one,
+		// but since it can change later during SSR, we cache it on the component.
+		const state = app.state!;
+
+		Object.defineProperty(this, '_remoteState', {
+			configurable: true,
+			enumerable: true,
+			writable: true,
+			value: state
+		});
+
+		return state;
 	}
 
 	/**

@@ -15,6 +15,9 @@ import * as session from 'core/session';
 import SessionEngine from 'core/session/engines';
 
 export * as cookies from 'core/cookies';
+export * as session from 'core/session';
+export * as kvStorage from 'core/kv-storage';
+
 export { initApp };
 
 //#unless runtime has storybook
