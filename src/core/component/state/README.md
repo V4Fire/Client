@@ -10,11 +10,10 @@ The state of the application is set during its initialization in the `core/init`
 Also, in the case of SSR, you can explicitly pass state parameters in the render function call.
 
 ```typescript
+import { initApp } from 'core';
 import { createCookieStore } from 'core/cookies';
-import { initApp, createInitAppSemaphore, cookies } from 'core';
 
 initApp('p-v4-components-demo', {
-  ready: createInitAppSemaphore(),
   location: new URL('https://example.com/user/12345'),
   cookies: createCookieStore('id=1')
 }).then(({content: renderedHTML, styles: inlinedStyles}) => {
