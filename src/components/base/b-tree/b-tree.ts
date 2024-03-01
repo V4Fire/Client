@@ -75,9 +75,12 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 	 * {@link iActiveItems.activeStore}
 	 * {@link iActiveItems.linkActiveStore}
 	 */
-	@system<bTree>((o) => {
-		o.watch('modelValue', (val: bTree['modelValue']) => o.setActive(val, true));
-		return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
+	@system<bTree>({
+		unique: true,
+		init: (o) => {
+			o.watch('modelValue', (val: bTree['modelValue']) => o.setActive(val, true));
+			return iActiveItems.linkActiveStore(o, (val) => o.modelValue ?? val);
+		}
 	})
 
 	activeStore!: iActiveItems['activeStore'];
