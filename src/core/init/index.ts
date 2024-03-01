@@ -11,7 +11,8 @@
  * @packageDocumentation
  */
 
-import dependencies, { createDependencyIterator } from 'core/init/dependencies';
+import dependencies from 'core/init/dependencies';
+import { createDependencyIterator } from 'core/init/dependencies/helpers';
 
 import { createApp } from 'core/init/create-app';
 import { getAppParams } from 'core/init/helpers';
