@@ -14,10 +14,8 @@ import initApp from 'core/init';
 import * as session from 'core/session';
 import SessionEngine from 'core/session/engines';
 
-import createInitAppSemaphore from 'core/init/semaphore';
-
 export * as cookies from 'core/cookies';
-export { initApp, createInitAppSemaphore };
+export { initApp };
 
 //#unless runtime has storybook
 
@@ -29,8 +27,7 @@ if (SSR) {
 		.then(() => {
 			const
 				targetToMount = document.querySelector<HTMLElement>('[data-root-component]'),
-				rootComponentName = targetToMount?.getAttribute('data-root-component'),
-				ready = createInitAppSemaphore();
+				rootComponentName = targetToMount?.getAttribute('data-root-component');
 
 			return initApp(rootComponentName, {
 				appId: Object.fastHash(Math.random()),
@@ -39,8 +36,7 @@ if (SSR) {
 				session: session.from(SessionEngine),
 				location: getLocationAPI(),
 
-				targetToMount,
-				ready
+				targetToMount
 			});
 
 			function getLocationAPI(): URL {

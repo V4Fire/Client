@@ -47,17 +47,6 @@ export type InitAppOptions = Overwrite<State, {
 	 * @param rootComponentParams
 	 */
 	setup?(rootComponentParams: ComponentOptions): void;
-
-	/**
-	 * Sets the passed flag to a ready status.
-	 * When all the declared flags are ready, the application itself will be initialized.
-	 *
-	 * @param flag
-	 */
-	ready(flag: string): Promise<(
-		rootComponentName: Nullable<string>,
-		opts: InitAppParams
-	) => Promise<App>>;
 }>;
 
 export type InitAppParams = Overwrite<InitAppOptions, {

@@ -11,23 +11,22 @@
  * @packageDocumentation
  */
 
-import initDom from 'core/init/dom';
-import initState from 'core/init/state';
-import initABT from 'core/init/abt';
-import prefetchInit from 'core/init/prefetch';
-import hydratedRouteInit from 'core/init/hydrated-route';
+import dependencies, { createDependencyIterator } from 'core/init/dependencies';
 
+import { createApp } from 'core/init/create-app';
 import { getAppParams } from 'core/init/helpers';
+
 import type { InitAppOptions, App } from 'core/init/interface';
 
+export * from 'core/init/dependencies/helpers';
 export * from 'core/init/helpers';
 export * from 'core/init/interface';
 
 /**
  * Initializes the application
  *
- * @param rootComponent - the root component name for initialization
- * @param [opts] - additional options
+ * @param rootComponent - the name of the created root component
+ * @param opts - additional options
  */
 export default async function initApp(
 	rootComponent: Nullable<string>,
@@ -35,12 +34,8 @@ export default async function initApp(
 ): Promise<App> {
 	const params = getAppParams(opts);
 
-	void initDom(params);
-	void initState(params);
-	void initABT(params);
-	void prefetchInit(params);
-	void hydratedRouteInit(params);
+	const tasks = [...createDependencyIterator(dependencies)].map(([_, {fn}]) => fn(params));
+	await Promise.all(tasks);
 
-	const createApp = await params.ready('');
 	return createApp(rootComponent, params);
 }

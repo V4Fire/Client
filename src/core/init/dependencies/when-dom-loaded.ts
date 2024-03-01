@@ -10,9 +10,9 @@ import { resolveAfterDOMLoaded } from 'core/event';
 import type { InitAppParams } from 'core/init/interface';
 
 /**
- * Resolved after DOMContentLoaded event
- * @param params
+ * Returns a promise that will be resolved after the `DOMContentLoaded` event
+ * @param _params
  */
-export default function initDOM(params: InitAppParams): Promise<void> {
-	return resolveAfterDOMLoaded().then(() => params.ready('DOMReady'));
+export function whenDOMLoaded(_params: InitAppParams): Promise<void> {
+	return resolveAfterDOMLoaded();
 }
