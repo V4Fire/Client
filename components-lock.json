@@ -1,5 +1,5 @@
 {
-  "hash": "e9e25867c650058a6d9fee28f603185961280d719f107210d0f40c81d88c8442",
+  "hash": "07710505007b95955dfd65aa25872b4c407bf711cc915e42cd15b7b1a9e2dd75",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -108,6 +108,38 @@
             "src/components/form/b-checkbox/b-checkbox.styl"
           ],
           "tpl": "src/components/form/b-checkbox/b-checkbox.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-directives-ref-dummy",
+        {
+          "index": "src/core/component/directives/ref/test/b-directives-ref-dummy/index.js",
+          "declaration": {
+            "name": "b-directives-ref-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-directives-ref-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy.ts",
+          "styles": [
+            "src/core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy.styl"
+          ],
+          "tpl": "src/core/component/directives/ref/test/b-directives-ref-dummy/b-directives-ref-dummy.ss",
           "etpl": null
         }
       ],
@@ -588,6 +620,70 @@
             "src/components/friends/vdom/test/b-friends-vdom-dummy/b-friends-vdom-dummy.styl"
           ],
           "tpl": "src/components/friends/vdom/test/b-friends-vdom-dummy/b-friends-vdom-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-functional-button-dummy",
+        {
+          "index": "src/core/component/functional/test/b-functional-button-dummy/index.js",
+          "declaration": {
+            "name": "b-functional-button-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-functional-button-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy.ts",
+          "styles": [
+            "src/core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy.styl"
+          ],
+          "tpl": "src/core/component/functional/test/b-functional-button-dummy/b-functional-button-dummy.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-functional-dummy",
+        {
+          "index": "src/core/component/functional/test/b-functional-dummy/index.js",
+          "declaration": {
+            "name": "b-functional-dummy",
+            "parent": "b-dummy",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-functional-dummy",
+          "parent": "b-dummy",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.ts",
+          "styles": [
+            "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.styl"
+          ],
+          "tpl": "src/core/component/functional/test/b-functional-dummy/b-functional-dummy.ss",
           "etpl": null
         }
       ],
@@ -1422,6 +1518,38 @@
         }
       ],
       [
+        "b-virtual-scroll-new",
+        {
+          "index": "src/components/base/b-virtual-scroll-new/index.js",
+          "declaration": {
+            "name": "b-virtual-scroll-new",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-virtual-scroll-new",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/base/b-virtual-scroll-new/b-virtual-scroll-new.ts",
+          "styles": [
+            "src/components/base/b-virtual-scroll-new/b-virtual-scroll-new.styl"
+          ],
+          "tpl": "src/components/base/b-virtual-scroll-new/b-virtual-scroll-new.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-window",
         {
           "index": "src/components/base/b-window/index.js",
@@ -2197,8 +2325,9 @@
               "b-remote-provider",
               "b-list",
               "b-tree",
-              "b-virtual-scroll",
               "b-window",
+              "b-virtual-scroll",
+              "b-virtual-scroll-new",
               "b-bottom-slide",
               "b-slider",
               "b-sidebar",
@@ -2239,8 +2368,9 @@
             "b-remote-provider",
             "b-list",
             "b-tree",
-            "b-virtual-scroll",
             "b-window",
+            "b-virtual-scroll",
+            "b-virtual-scroll-new",
             "b-bottom-slide",
             "b-slider",
             "b-sidebar",

@@ -125,6 +125,7 @@ export default class Session extends Provider {
 					r = () => this.updateRequest(url, Object.cast(event), <RequestFunctionResponse>factory);
 
 				if (response.status === 401) {
+					// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 					if (!await s.match(auth, params)) {
 						return r();
 					}

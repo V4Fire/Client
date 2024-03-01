@@ -12,6 +12,7 @@ import { resolveAfterDOMLoaded } from 'core/event';
 import initApp from 'core/init';
 import createInitAppSemaphore from 'core/init/semaphore';
 
+export * as cookies from 'core/cookies';
 export { initApp, createInitAppSemaphore };
 
 //#unless runtime has storybook

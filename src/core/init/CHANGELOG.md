@@ -9,7 +9,25 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2023-??-??)
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Fixed a typo when extending the property for inject
+
+## v4.0.0-beta.58 (2024-02-14)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak
+
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak
+
+## v4.0.0-beta.48 (2024-01-17)
 
 #### :boom: Breaking Change
 

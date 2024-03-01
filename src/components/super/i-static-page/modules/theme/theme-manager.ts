@@ -7,11 +7,25 @@
  */
 
 import symbolGenerator from 'core/symbol';
+import { factory, SyncStorage, StorageEngine } from 'core/kv-storage';
 
 import type iBlock from 'components/super/i-block/i-block';
+import type { Theme } from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import Friend from 'components/friends/friend';
+import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
+
+import {
+
+	prefersColorSchemeEnabled,
+
+	lightThemeName,
+	darkThemeName
+
+} from 'components/super/i-static-page/modules/theme/const';
+
+export * from 'components/super/i-static-page/modules/theme/const';
 
 const
 	$$ = symbolGenerator();
@@ -22,104 +36,171 @@ export default class ThemeManager extends Friend {
 	/**
 	 * A set of available app themes
 	 */
-	availableThemes!: Set<string>;
+	readonly availableThemes!: Set<string>;
 
 	/**
-	 * Current theme value
+	 * The current theme value
 	 */
-	protected currentStore!: string;
+	protected current!: Theme;
 
 	/**
-	 * Initial theme value
+	 * An API for obtaining and observing system appearance
 	 */
-	protected readonly initialValue!: string;
+	protected readonly systemThemeExtractor!: SystemThemeExtractor;
+
+	/**
+	 * An API for persistent theme storage
+	 */
+	protected readonly themeStorage!: SyncStorage;
 
 	/**
 	 * An attribute to set the theme value to the root element
 	 */
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
 
-	constructor(component: iBlock) {
+	/**
+	 * @param component
+	 * @param engines
+	 * @param engines.themeStorageEngine - an engine for persistent theme storage
+	 * @param engines.systemThemeExtractor - an engine for extracting the system theme
+	 */
+	constructor(
+		component: iBlock,
+		{themeStorageEngine, systemThemeExtractor}: {
+			themeStorageEngine: StorageEngine;
+			systemThemeExtractor: SystemThemeExtractor;
+		}
+	) {
 		super(component);
-
-		if (!Object.isString(THEME)) {
-			throw new ReferenceError('A theme to initialize is not specified');
-		}
-
-		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
-
-		let theme = THEME;
-
-		if (Object.isDictionary(DETECT_USER_PREFERENCES)) {
-			const
-				prefersColorSchemeEnabled = Object.get<boolean>(DETECT_USER_PREFERENCES, 'prefersColorScheme.enabled') ?? false,
-				darkTheme = Object.get<string>(DETECT_USER_PREFERENCES, 'prefersColorScheme.aliases.dark') ?? 'dark',
-				lightTheme = Object.get<string>(DETECT_USER_PREFERENCES, 'prefersColorScheme.aliases.light') ?? 'light';
-
-			if (prefersColorSchemeEnabled) {
-				const darkThemeMq = globalThis.matchMedia('(prefers-color-scheme: dark)');
-				theme = darkThemeMq.matches ? darkTheme : lightTheme;
-
-				this.initThemeListener(darkThemeMq, prefersColorSchemeEnabled, darkTheme, lightTheme);
-			}
-		}
-
-		this.current = theme;
-		this.initialValue = theme;
 
 		if (!Object.isString(this.themeAttribute)) {
 			throw new ReferenceError('An attribute name to set themes is not specified');
 		}
+
+		if (POST_PROCESS_THEME && prefersColorSchemeEnabled) {
+			throw new Error('"postProcessor" param cant be enabled with "detectUserPreferences"');
+		}
+
+		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
+
+		this.themeStorage = factory(themeStorageEngine);
+		this.systemThemeExtractor = systemThemeExtractor;
+
+		let
+			theme: Theme = {value: this.defaultTheme, isSystem: false};
+
+		if (POST_PROCESS_THEME) {
+			const themeFromStore = this.themeStorage.get<Theme>('colorTheme');
+
+			if (themeFromStore != null) {
+				theme = themeFromStore;
+			}
+		}
+
+		if (theme.isSystem || prefersColorSchemeEnabled) {
+			void this.useSystem();
+
+		} else {
+			this.changeTheme(theme);
+		}
 	}
 
 	/**
-	 * Current theme value
+	 * Default theme from config
 	 */
-	get current(): string {
-		return this.currentStore;
+	protected get defaultTheme(): string {
+		if (!Object.isString(THEME)) {
+			throw new ReferenceError('A theme to initialize is not specified');
+		}
+
+		return THEME;
 	}
 
 	/**
-	 * Sets a new value to the current theme
-	 *
+	 * Returns the current theme
+	 */
+	get(): Theme {
+		return this.current;
+	}
+
+	/**
+	 * Sets a new value for the current theme
 	 * @param value
-	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 */
-	set current(value: string) {
-		if (!this.availableThemes.has(value)) {
-			throw new ReferenceError(`A theme with the name "${value}" is not defined`);
-		}
+	set(value: string): void {
+		return this.changeTheme({value, isSystem: false});
+	}
 
-		if (SSR || !Object.isString(this.themeAttribute)) {
-			return;
-		}
+	/**
+	 * Sets the actual system theme and activates the system theme change listener
+	 */
+	useSystem(): Promise<void> {
+		const changeTheme = (value: string) => {
+			value = this.getThemeAlias(value);
+			void this.changeTheme({value, isSystem: true});
+		};
 
-		const oldValue = this.currentStore;
+		return this.systemThemeExtractor.getSystemTheme().then((value) => {
+			this.systemThemeExtractor.onThemeChange(
+				changeTheme,
+				{label: $$.onThemeChange}
+			);
 
-		this.currentStore = value;
-		document.documentElement.setAttribute(this.themeAttribute, value);
-
-		void this.component.lfc.execCbAtTheRightTime(() => {
-			this.component.emit('theme:change', value, oldValue);
+			changeTheme(value);
 		});
 	}
 
 	/**
-	 * Initializes an event listener for changes in system appearance
+	 * Changes the current theme value
 	 *
-	 * @param mq
-	 * @param enabled
-	 * @param darkTheme
-	 * @param lightTheme
+	 * @param newTheme
+	 * @throws ReferenceError
+	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 */
-	protected initThemeListener(mq: MediaQueryList, enabled: boolean, darkTheme: string, lightTheme: string): void {
-		if (!enabled) {
+	protected changeTheme(newTheme: Theme): void {
+		if (
+			SSR ||
+			!Object.isString(this.themeAttribute) ||
+			Object.fastCompare(this.current, newTheme)
+		) {
 			return;
 		}
 
-		// TODO: understand why cant we use `this.async.on(mq, 'change', ...)`; https://github.com/V4Fire/Core/issues/369
-		mq.onchange = this.async.proxy((event: MediaQueryListEvent) => (
-			this.current = event.matches ? darkTheme : lightTheme
-		), {single: false, label: $$.themeChange});
+		let
+			{value, isSystem} = newTheme;
+
+		if (!this.availableThemes.has(value)) {
+			if (!isSystem) {
+				throw new ReferenceError(`A theme with the name "${value}" is not defined`);
+			}
+
+			value = this.defaultTheme;
+		}
+
+		if (!isSystem) {
+			this.ctx.async.clearAll({label: $$.onThemeChange});
+		}
+
+		const oldValue = this.current;
+
+		this.current = newTheme;
+		this.themeStorage.set('colorTheme', this.current);
+		document.documentElement.setAttribute(this.themeAttribute, value);
+
+		void this.component.lfc.execCbAtTheRightTime(() => {
+			this.component.emit('theme:change', this.current, oldValue);
+		});
+	}
+
+	/**
+	 * Returns the actual theme name for the provided value
+	 * @param value
+	 */
+	protected getThemeAlias(value: string): string {
+		if (prefersColorSchemeEnabled) {
+			return value === 'dark' ? darkThemeName : lightThemeName;
+		}
+
+		return value;
 	}
 }
