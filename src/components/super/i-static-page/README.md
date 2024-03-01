@@ -487,6 +487,10 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
 
 ### Getters
 
+#### isAuth
+
+True if the current user is authorized. See `core/session` for more information.
+
 #### activePage
 
 The name of the active route page.

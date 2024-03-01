@@ -30,6 +30,7 @@ import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
 
+import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
@@ -95,6 +96,21 @@ export default abstract class iStaticPage extends iPage {
 	))
 
 	readonly theme: CanUndef<ThemeManager>;
+
+	/**
+	 * A module for manipulating page metadata, such as the page title or description
+	 */
+	@system<iStaticPage>((o) => new PageMetaData({
+		document: SSR ? Object.cast({}) : document
+	}))
+
+	readonly pageMetaData!: PageMetaData;
+
+	/**
+	 * True if the current user is authorized
+	 */
+	@field((o) => o.sync.link('remoteState.isAuth'))
+	readonly isAuth!: boolean;
 
 	/**
 	 * Initial value for the active route.
