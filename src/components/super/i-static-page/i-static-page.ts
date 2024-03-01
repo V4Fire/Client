@@ -100,7 +100,7 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * A module for manipulating page metadata, such as the page title or description
 	 */
-	@system<iStaticPage>((o) => new PageMetaData({
+	@system<iStaticPage>(() => new PageMetaData({
 		document: SSR ? Object.cast({}) : document
 	}))
 
