@@ -30,6 +30,7 @@ ComponentEngine.directive('safe-html', (el: HTMLElement, {value, oldValue}: Safe
 
 	if (typeof value === 'string') {
 		sanitized = DOMPurify.sanitize(value, config.safeHtml);
+
 	} else {
 		sanitized = DOMPurify.sanitize(
 			value.value,
