@@ -6,18 +6,18 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import Super, { LangPacs } from '@v4fire/core/lang';
+import Super from '@v4fire/core/lang';
 
 import keysetsCollector from 'lang/engines';
 
 export * from '@v4fire/core/lang';
 
-const langPacs = { 
+const langPacs = {
 	...Super
 };
 
 try {
-	Object.entries(<LangPacs>keysetsCollector()).forEach(([lang, keysets]) => {
+	Object.entries(keysetsCollector()).forEach(([lang, keysets]) => {
 		Object.entries(keysets).forEach(([keysetName, keyset]) => {
 			langPacs[lang] = langPacs[lang] ?? {};
 			langPacs[lang][keysetName] = {
