@@ -258,7 +258,7 @@ export default abstract class iData extends iDataHandlers {
 	}
 
 	override async reload(opts?: InitLoadOptions): Promise<void> {
-		if (await this.remoteState.net.isOnline() || this.offlineReload) {
+		if ((await this.remoteState.net.isOnline()).status || this.offlineReload) {
 			return super.reload(opts);
 		}
 	}
