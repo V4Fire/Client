@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* The fields `isOnline`, `lastOnlineDate`, and `locale` have been removed `iStaticPage`
+
 ## v4.0.0-beta.67 (2024-02-26)
 
 #### :bug: Bug Fix

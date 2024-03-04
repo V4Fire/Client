@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
+* The fields `isOnline`, `lastOnlineDate`, and `locale` have been removed
+
 ## v4.0.0-beta.62 (2024-02-19)
 
 #### :bug: Bug Fix
