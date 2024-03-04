@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable require-atomic-updates */
-
 import type { JSHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
