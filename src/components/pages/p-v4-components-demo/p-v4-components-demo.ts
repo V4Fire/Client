@@ -13,15 +13,8 @@
 
 import iStaticPage, { component, prop, field, system } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
-import {Component} from "tests/helpers";
 
 export * from 'components/super/i-static-page/i-static-page';
-
-export const enum Pages {
-	DYNAMIC_1 = 'p-v4-dynamic-page1',
-	DYNAMIC_2 = 'p-v4-dynamic-page2',
-	DYNAMIC_3 = 'p-v4-dynamic-page3'
-}
 
 VDOM.addToPrototype(VDOMAPI);
 
