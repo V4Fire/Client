@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v3.??.?? (????-??-??)
+## v3.68.0 (2024-03-04)
 
 #### :rocket: New Feature
 
