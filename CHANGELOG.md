@@ -13,6 +13,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.68 (2024-02-29)
 
+#### :rocket: New Feature
+
+* Added a new `v-safe-html` directive for inserting sanitized HTML `components/directives/safe-html`
+
+## v4.0.0-beta.?? (2024-??-??)
+
 #### :bug: Bug Fix
 
 * Fixed the `wait` option in `loadModules` for SSR build `iBlock`

@@ -1,5 +1,5 @@
 {
-  "hash": "07710505007b95955dfd65aa25872b4c407bf711cc915e42cd15b7b1a9e2dd75",
+  "hash": "ff612946926b2470b7562430f78e73e3d043da65636debb42984b0c28c4f111c",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2350,6 +2350,7 @@
               "components/directives/image",
               "components/directives/icon",
               "components/directives/in-view",
+              "components/directives/safe-html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "components/traits/i-control-list/i-control-list",
@@ -2393,6 +2394,7 @@
             "components/directives/image",
             "components/directives/icon",
             "components/directives/in-view",
+            "components/directives/safe-html",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
             "components/traits/i-control-list/i-control-list",
@@ -2408,6 +2410,7 @@
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",
+              "components/directives/safe-html",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
@@ -2424,6 +2427,7 @@
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",
+              "components/directives/safe-html",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",

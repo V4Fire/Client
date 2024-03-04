@@ -8,6 +8,7 @@
 
 import type { Config as SuperConfig } from '@v4fire/core/config/interface';
 import type { ImagePlaceholderOptions } from 'components/directives/image';
+import type { Options as SafeHtmlOptions } from 'components/directives/safe-html';
 
 export interface Config extends SuperConfig {
 	/**
@@ -67,6 +68,12 @@ export interface Config extends SuperConfig {
 		 */
 		delay: number;
 	};
+
+	/**
+	 * Default options for the `v-safe-html` directive.
+	 * See `components/directives/safe-html` for the more information.
+	 */
+	safeHtml: SafeHtmlOptions;
 
 	components: typeof COMPONENTS;
 }
