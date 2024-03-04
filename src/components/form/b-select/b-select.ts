@@ -485,20 +485,6 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	}
 
 	/**
-	 * {@link iInputText.prototype.updateTextStore}
-	 */
-	protected override updateTextStore(value: string): void {
-		this.field.set('textStore', value);
-
-		const {input} = this.$refs;
-
-		// Sync value of the <input /> with the text
-		if (!this.native && Object.isTruly(input)) {
-			input.value = value;
-		}
-	}
-
-	/**
 	 * Synchronization of items
 	 *
 	 * @param items
@@ -510,6 +496,17 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues();
 			this.emit('itemsChange', items);
+		}
+	}
+
+	protected override updateTextStore(value: string): void {
+		this.field.set('textStore', value);
+
+		const {input} = this.$refs;
+
+		// Sync value of the <input /> with the text
+		if (!this.native && Object.isTruly(input)) {
+			input.value = value;
 		}
 	}
 
