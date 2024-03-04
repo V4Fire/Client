@@ -24,13 +24,19 @@ export function getAppParams(opts: InitAppOptions): {
 	state: State;
 	createAppOpts: Pick<InitAppOptions, keyof CreateAppOptions>;
 } {
+	let {route} = opts;
+
+	if (route == null && SSR) {
+		route = opts.location.pathname + opts.location.search;
+	}
+
 	return {
 		// Make the state observable
 		state: watch({
 			...opts,
 			net: opts.net ?? net,
 			cookies: cookies.from(opts.cookies),
-			route: opts.route ?? SSR ? opts.location.pathname + opts.location.search : undefined
+			route
 		}).proxy,
 
 		createAppOpts: {
