@@ -110,7 +110,7 @@ export default abstract class iStaticPage extends iPage {
 	 * True if the current user is authorized
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
-	readonly isAuth!: boolean;
+	isAuth!: boolean;
 
 	/**
 	 * Initial value for the active route.
