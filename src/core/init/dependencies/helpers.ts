@@ -75,19 +75,8 @@ export function* createDependencyIterator(
 	const expandedDependencies = new Map<Dependency, ExpandedDependency>();
 	Object.entries(resolvedDeps).forEach((entry) => expandDependency(...entry));
 
-	for (const [dependency, {name, wait}] of expandedDependencies.entries()) {
-		yield [
-			name,
-
-			{
-				...dependency,
-
-				fn: async (...args) => {
-					await Promise.all([...wait].map(({fn}) => fn(...args)));
-					return dependency.fn(...args);
-				}
-			}
-		];
+	for (const [dependency, {name, fn}] of expandedDependencies.entries()) {
+		yield [name, {...dependency, fn}];
 	}
 
 	function expandDependency(
@@ -115,19 +104,37 @@ export function* createDependencyIterator(
 			nonStarDependencies :
 			[...dependency.wait];
 
+		const expandedWait = new Set(wait.map((childName) => {
+			const dependency = resolvedDeps[childName];
+
+			if (!expandedDependencies.has(dependency) && visitedDependencies.has(childName)) {
+				throw new Error(`A circular reference was found between "${name}" and "${childName}" dependencies`);
+			}
+
+			return expandDependency(childName);
+		}));
+
 		expandedDependency = {
-			...dependency,
-
 			name,
-			wait: new Set(wait.map((childName) => {
-				const dependency = resolvedDeps[childName];
 
-				if (!expandedDependencies.has(dependency) && visitedDependencies.has(childName)) {
-					throw new Error(`A circular reference was found between "${name}" and "${childName}" dependencies`);
+			fn: async (...args) => {
+				if (expandedWait.size > 0) {
+					await Promise.all([...flatWait(expandedWait)].map((fn) => fn(...args)));
 				}
 
-				return expandDependency(childName);
-			}))
+				await dependency.fn(...args);
+
+				function flatWait(wait: Set<ExpandedDependency>, deps: Set<Function> = new Set()) {
+					wait.forEach((dependency) => {
+						flatWait(dependency.wait, deps);
+						deps.add(dependency.fn);
+					});
+
+					return deps;
+				}
+			},
+
+			wait: expandedWait
 		};
 
 		expandedDependencies.set(dependency, expandedDependency);
