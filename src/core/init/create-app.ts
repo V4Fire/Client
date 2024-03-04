@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import watch from 'core/object/watch';
 import { disposeLazy } from 'core/lazy';
 
 import AppClass, {
@@ -21,26 +20,22 @@ import AppClass, {
 
 } from 'core/component';
 
-import type { InitAppParams, App } from 'core/init/interface';
+import type { InitAppParams, CreateAppOptions, App } from 'core/init/interface';
 
 /**
  * Creates an instance of the application with the specified root component and environment
  *
  * @param rootComponentName - the name of the created root component
- * @param params - additional application environment parameters
+ * @param opts - application creation options
+ * @param state - additional application environment parameters
  */
-export async function createApp(rootComponentName: Nullable<string>, params: InitAppParams): Promise<App> {
-	const {
-		appId,
-		targetToMount
-	} = params;
-
-	const {
-		proxy: state
-	} = watch(Object.reject(params, ['targetToMount', 'setup']));
-
+export async function createApp(
+	rootComponentName: Nullable<string>,
+	opts: CreateAppOptions,
+	state: InitAppParams
+): Promise<App> {
 	const rootComponentParams = await getRootComponentParams(rootComponentName);
-	params.setup?.(Object.cast(rootComponentParams));
+	opts.setup?.(Object.cast(rootComponentParams));
 
 	let {inject} = rootComponentParams;
 
@@ -99,7 +94,7 @@ export async function createApp(rootComponentName: Nullable<string>, params: Ini
 			hydratedData = '';
 
 			try {
-				destroyApp(appId);
+				destroyApp(state.appId);
 			} catch {}
 
 			try {
@@ -108,13 +103,13 @@ export async function createApp(rootComponentName: Nullable<string>, params: Ini
 		}
 	}
 
-	if (targetToMount == null) {
+	if (opts.targetToMount == null) {
 		throw new ReferenceError('The application mount node was not found');
 	}
 
 	const app = new AppClass({
 		...rootComponentParams,
-		el: targetToMount
+		el: opts.targetToMount
 	});
 
 	app.provide('app', {instance: app, state});
@@ -137,7 +132,7 @@ export async function createApp(rootComponentName: Nullable<string>, params: Ini
 		get: () => state
 	});
 
-	return targetToMount;
+	return opts.targetToMount;
 
 	async function getRootComponentParams(
 		rootComponentName: Nullable<string>

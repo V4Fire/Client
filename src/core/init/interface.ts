@@ -19,7 +19,21 @@ export interface AppSSR {
 
 export type App = Element | AppSSR;
 
-export type InitAppOptions = Overwrite<State, {
+export interface CreateAppOptions {
+	/**
+	 * A function that is called before the initialization of the root component
+	 * @param rootComponentParams
+	 */
+	setup?(rootComponentParams: ComponentOptions): void;
+
+	/**
+	 * A link to the element where the application should be mounted.
+	 * This parameter is only used when initializing the application in a browser.
+	 */
+	targetToMount?: Nullable<HTMLElement>;
+}
+
+export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 	/**
 	 * A store of application cookies
 	 */
@@ -32,25 +46,11 @@ export type InitAppOptions = Overwrite<State, {
 	route?: InitialRoute;
 
 	/**
-	 * A link to the element where the application should be mounted.
-	 * This parameter is only used when initializing the application in a browser.
-	 */
-	targetToMount?: Nullable<HTMLElement>;
-
-	/**
 	 * An API to work with a network, such as testing of the network connection, etc.
 	 */
 	net?: State['net'];
-
-	/**
-	 * A function that is called before the initialization of the root component
-	 * @param rootComponentParams
-	 */
-	setup?(rootComponentParams: ComponentOptions): void;
 }>;
 
-export type InitAppParams = Overwrite<InitAppOptions, {
+export type InitAppParams = Overwrite<State, {
 	route: InitialRoute;
-	cookies: State['cookies'];
-	net: State['net'];
 }>;

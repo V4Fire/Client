@@ -33,10 +33,10 @@ export default async function initApp(
 	rootComponent: Nullable<string>,
 	opts: InitAppOptions
 ): Promise<App> {
-	const params = getAppParams(opts);
+	const {state, createAppOpts} = getAppParams(opts);
 
-	const tasks = [...createDependencyIterator(dependencies)].map(([_, {fn}]) => fn(params));
+	const tasks = [...createDependencyIterator(dependencies)].map(([_, {fn}]) => fn(state));
 	await Promise.all(tasks);
 
-	return createApp(rootComponent, params);
+	return createApp(rootComponent, createAppOpts, state);
 }

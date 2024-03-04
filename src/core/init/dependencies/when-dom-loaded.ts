@@ -11,8 +11,8 @@ import type { InitAppParams } from 'core/init/interface';
 
 /**
  * Returns a promise that will be resolved after the `DOMContentLoaded` event
- * @param _params
+ * @param _state
  */
-export function whenDOMLoaded(_params: InitAppParams): Promise<void> {
+export function whenDOMLoaded(_state: InitAppParams): Promise<void> {
 	return resolveAfterDOMLoaded();
 }

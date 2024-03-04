@@ -13,9 +13,9 @@ import type { InitAppParams } from 'core/init/interface';
 
 /**
  * Loads the router page required for hydration
- * @param params - additional application environment parameters
+ * @param state - additional application environment parameters
  */
-export async function loadedHydratedPage(params: InitAppParams): Promise<void> {
+export async function loadedHydratedPage(state: InitAppParams): Promise<void> {
 	if (!HYDRATION) {
 		return;
 	}
@@ -26,7 +26,7 @@ export async function loadedHydratedPage(params: InitAppParams): Promise<void> {
 			defaultRoute = Object.values(compiledRoutes).find((route) => route?.meta.default);
 
 		const
-			routePath = params.location.pathname + params.location.search,
+			routePath = state.location.pathname + state.location.search,
 			route = getRoute(routePath, compiledRoutes, {defaultRoute});
 
 		if (route != null) {
@@ -37,7 +37,7 @@ export async function loadedHydratedPage(params: InitAppParams): Promise<void> {
 
 			await route.meta.load?.();
 			// eslint-disable-next-line require-atomic-updates
-			params.route = route;
+			state.route = route;
 		}
 	} catch {}
 }

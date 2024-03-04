@@ -9,17 +9,34 @@
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
 
-import type { InitAppOptions, InitAppParams } from 'core/init/interface';
+import watch from 'core/object/watch';
+
+import type { InitAppOptions, InitAppParams, CreateAppOptions } from 'core/init/interface';
 
 /**
- * Returns application initialization parameters based on the passed options
+ * Returns the application state object and parameters for creating an application instance based on
+ * the passed initialization parameters
+ *
  * @param opts - initialization options
  */
-export function getAppParams(opts: InitAppOptions): InitAppParams {
+export function getAppParams(opts: InitAppOptions): {
+	state: InitAppParams;
+	createAppOpts: Pick<InitAppOptions, keyof CreateAppOptions>;
+} {
 	return {
-		...opts,
-		net: opts.net ?? net,
-		cookies: cookies.from(opts.cookies),
-		route: opts.route ?? opts.location.pathname + opts.location.search
+		// Make the state observable
+		state: watch({
+			...opts,
+			net: opts.net ?? net,
+			cookies: cookies.from(opts.cookies),
+			route: opts.route ?? opts.location.pathname + opts.location.search
+		}).proxy,
+
+		createAppOpts: {
+			targetToMount: opts.targetToMount,
+
+			// eslint-disable-next-line @v4fire/unbound-method
+			setup: opts.setup
+		}
 	};
 }

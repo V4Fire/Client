@@ -10,12 +10,12 @@ import type { InitAppParams } from 'core/init/interface';
 
 /**
  * Loads the user's session and sets the `isAuth` flag
- * @param params - additional application environment parameters
+ * @param state - additional application environment parameters
  */
-export async function loadSession(params: InitAppParams): Promise<void> {
+export async function loadSession(state: InitAppParams): Promise<void> {
 	try {
 		// eslint-disable-next-line require-atomic-updates
-		params.isAuth = await params.session.isExists();
+		state.isAuth = await state.session.isExists();
 
 	} catch (err) {
 		stderr(err);
