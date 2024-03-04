@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an error that the text in native mode was not synchronized with the value
+
 ## v4.0.0-beta.40 (2023-11-17)
 
 #### :boom: Breaking Change
