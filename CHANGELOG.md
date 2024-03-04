@@ -11,13 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.68 (2024-02-29)
+## v4.0.0-beta.69 (2024-03-04)
 
 #### :rocket: New Feature
 
 * Added a new `v-safe-html` directive for inserting sanitized HTML `components/directives/safe-html`
 
-## v4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.68 (2024-02-29)
 
 #### :bug: Bug Fix
 
