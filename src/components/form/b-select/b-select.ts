@@ -113,10 +113,13 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	 * {@link iActiveItems.activeStore}
 	 * {@link iActiveItems.linkActiveStore}
 	 */
-	@system<bSelect>((o) => {
-		o.watch('valueProp', (val) => o.setActive(val, true));
-		o.watch('modelValue', (val) => o.setActive(val, true));
-		return iActiveItems.linkActiveStore(o, (val) => o.resolveValue(o.valueProp ?? o.modelValue ?? val));
+	@system<bSelect>({
+		unique: true,
+		init: (o) => {
+			o.watch('valueProp', (val) => o.setActive(val, true));
+			o.watch('modelValue', (val) => o.setActive(val, true));
+			return iActiveItems.linkActiveStore(o, (val) => o.resolveValue(o.valueProp ?? o.modelValue ?? val));
+		}
 	})
 
 	activeStore!: iActiveItems['activeStore'];
