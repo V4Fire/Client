@@ -227,8 +227,13 @@ export default abstract class SelectEventHandlers {
 			component.toggleValue(item.value);
 
 		} else {
-			component.text = item.label ?? component.text;
+			const prevText = component.text;
 			component.selectValue(item.value);
+
+			// Preserve previous text if item has no label
+			if (item.label == null) {
+				component.text = prevText;
+			}
 		}
 
 		component.emit('actionChange', component.value);

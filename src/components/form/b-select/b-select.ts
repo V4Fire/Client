@@ -143,11 +143,6 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 			this.selectValue(value, true);
 			void this.setScrollToMarkedOrSelectedItem();
 		}
-
-		if (!this.multiple) {
-			const item = this.values.getItemByValue(value);
-			this.text = item?.label ?? '';
-		}
 	}
 
 	override get default(): this['Active'] {
@@ -279,6 +274,11 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 			return false;
 		}
 
+		if (!this.multiple) {
+			const item = this.values.getItemByValue(value);
+			this.text = item?.label ?? '';
+		}
+
 		const {block: $b} = this;
 
 		if ($b == null) {
@@ -312,6 +312,10 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 
 		if (!iActiveItems.unsetActive(this, value)) {
 			return false;
+		}
+
+		if (!this.multiple) {
+			this.text = '';
 		}
 
 		if (this.block == null) {
@@ -478,6 +482,20 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	/** {@link iItems.getItemKey} */
 	protected getItemKey(item: this['Item'], i: number): CanUndef<IterationKey> {
 		return iItems.getItemKey(this, item, i);
+	}
+
+	/**
+	 * {@link iInputText.prototype.updateTextStore}
+	 */
+	protected override updateTextStore(value: string): void {
+		this.field.set('textStore', value);
+
+		const {input} = this.$refs;
+
+		// Sync value of the <input /> with the text
+		if (!this.native && Object.isTruly(input)) {
+			input.value = value;
+		}
 	}
 
 	/**
