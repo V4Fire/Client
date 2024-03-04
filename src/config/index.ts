@@ -26,6 +26,16 @@ extend({
 		delay: 40
 	},
 
+	/**
+	 * Default options for the `v-safe-html` directive.
+	 * @see https://github.com/cure53/DOMPurify#can-i-configure-dompurify
+	 */
+	safeHtml: {
+		USE_PROFILES: {
+			html: true
+		}
+	},
+
 	components: (() => {
 		try {
 			return COMPONENTS;

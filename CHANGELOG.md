@@ -11,13 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-
 ## v4.0.0-beta.?? (2024-??-??)
 
 #### :bug: Bug Fix
 
 * The `activeStore` system field is marked as unique in the `bList`, `bTree`, `bSelect`
 components because it has an `unknown` type and it cannot be correctly merged
+
+## v4.0.0-beta.69 (2024-03-04)
+
+#### :rocket: New Feature
+
+* Added a new `v-safe-html` directive for inserting sanitized HTML `components/directives/safe-html`
 
 ## v4.0.0-beta.68 (2024-02-29)
 
