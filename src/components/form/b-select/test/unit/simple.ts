@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
 import { assertValueIs, createSelector, renderSelect, selectValue } from 'components/form/b-select/test/helpers';
@@ -36,12 +38,16 @@ test.describe('<b-select> simple usage', () => {
 		await test.expect(textChanges).resolves.toEqual(['Foo', 'Bar']);
 	});
 
-	[true, false].forEach((native) => {
-		test.describe(`in \`native = ${native ? 'true' : 'false'}\` mode`, () => {
-			test('`text` should change when user selects an item', async ({page}) => {
+	test.describe('`text` should match the selected value', () => {
+		test('with `native = true`', textShouldMatchValue({native: true}));
+
+		test('with `native = false`', textShouldMatchValue({native: false}));
+
+		function textShouldMatchValue(opts: {native: boolean}) {
+			return async ({page}: {page: Page}) => {
 				const target = await renderSelect(page, {
 					value: 0,
-					native,
+					...opts,
 					items: [
 						{label: 'Foo', value: 0},
 						{label: 'Bar', value: 1}
@@ -51,8 +57,8 @@ test.describe('<b-select> simple usage', () => {
 				await selectValue(page, target, 'Bar');
 
 				await test.expect(target.evaluate((ctx) => ctx.text)).toBeResolvedTo('Bar');
-			});
-		});
+			};
+		}
 	});
 
 	test('`value` of the <select> should match with the selected option', async ({page}) => {
