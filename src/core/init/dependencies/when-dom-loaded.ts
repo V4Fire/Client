@@ -7,12 +7,12 @@
  */
 
 import { resolveAfterDOMLoaded } from 'core/event';
-import type { InitAppParams } from 'core/init/interface';
+import type { State } from 'core/component';
 
 /**
  * Returns a promise that will be resolved after the `DOMContentLoaded` event
  * @param _state
  */
-export function whenDOMLoaded(_state: InitAppParams): Promise<void> {
+export function whenDOMLoaded(_state: State): Promise<void> {
 	return resolveAfterDOMLoaded();
 }

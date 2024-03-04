@@ -6,13 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { InitAppParams } from 'core/init/interface';
+import type { State } from 'core/component';
 
 /**
  * Loads the user's session and sets the `isAuth` flag
- * @param state - additional application environment parameters
+ * @param state - the global application state
  */
-export async function loadSession(state: InitAppParams): Promise<void> {
+export async function loadSession(state: State): Promise<void> {
 	try {
 		// eslint-disable-next-line require-atomic-updates
 		state.isAuth = await state.session.isExists();

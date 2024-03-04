@@ -10,8 +10,9 @@ import * as net from 'core/net';
 import * as cookies from 'core/cookies';
 
 import watch from 'core/object/watch';
+import type { State } from 'core/component';
 
-import type { InitAppOptions, InitAppParams, CreateAppOptions } from 'core/init/interface';
+import type { InitAppOptions, CreateAppOptions } from 'core/init/interface';
 
 /**
  * Returns the application state object and parameters for creating an application instance based on
@@ -20,7 +21,7 @@ import type { InitAppOptions, InitAppParams, CreateAppOptions } from 'core/init/
  * @param opts - initialization options
  */
 export function getAppParams(opts: InitAppOptions): {
-	state: InitAppParams;
+	state: State;
 	createAppOpts: Pick<InitAppOptions, keyof CreateAppOptions>;
 } {
 	return {
@@ -29,7 +30,7 @@ export function getAppParams(opts: InitAppOptions): {
 			...opts,
 			net: opts.net ?? net,
 			cookies: cookies.from(opts.cookies),
-			route: opts.route ?? opts.location.pathname + opts.location.search
+			route: opts.route ?? SSR ? opts.location.pathname + opts.location.search : undefined
 		}).proxy,
 
 		createAppOpts: {

@@ -50,7 +50,3 @@ export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 	 */
 	net?: State['net'];
 }>;
-
-export type InitAppParams = Overwrite<State, {
-	route: InitialRoute;
-}>;

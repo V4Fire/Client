@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { InitAppParams } from 'core/init/interface';
+import type { State } from 'core/component';
 
 export interface DependencyFn {
-	(params: InitAppParams): Promise<void>;
+	(params: State): Promise<void>;
 }
 
 export interface Dependency {

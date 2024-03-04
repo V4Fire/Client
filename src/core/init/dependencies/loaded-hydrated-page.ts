@@ -9,13 +9,13 @@
 import routes from 'routes';
 import { getRoute, compileStaticRoutes } from 'core/router';
 
-import type { InitAppParams } from 'core/init/interface';
+import type { State } from 'core/component';
 
 /**
  * Loads the router page required for hydration
- * @param state - additional application environment parameters
+ * @param state - the global application state
  */
-export async function loadedHydratedPage(state: InitAppParams): Promise<void> {
+export async function loadedHydratedPage(state: State): Promise<void> {
 	if (!HYDRATION) {
 		return;
 	}

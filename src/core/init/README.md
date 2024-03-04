@@ -205,8 +205,10 @@ export default {
 The helper `dependency` returns an object of the form.
 
 ```typescript
+import type { State } from 'core/component';
+
 interface Dependency {
-  fn(params: InitAppParams): Promise<void>;
+  fn(params: State): Promise<void>;
   wait: Set<string>;
 }
 ```

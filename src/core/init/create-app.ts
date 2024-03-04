@@ -15,24 +15,25 @@ import AppClass, {
 
 	rootComponents,
 
+	State,
 	HydrationStore,
 	ComponentElement
 
 } from 'core/component';
 
-import type { InitAppParams, CreateAppOptions, App } from 'core/init/interface';
+import type { CreateAppOptions, App } from 'core/init/interface';
 
 /**
  * Creates an instance of the application with the specified root component and environment
  *
  * @param rootComponentName - the name of the created root component
  * @param opts - application creation options
- * @param state - additional application environment parameters
+ * @param state - the global application state
  */
 export async function createApp(
 	rootComponentName: Nullable<string>,
 	opts: CreateAppOptions,
-	state: InitAppParams
+	state: State
 ): Promise<App> {
 	const rootComponentParams = await getRootComponentParams(rootComponentName);
 	opts.setup?.(Object.cast(rootComponentParams));
