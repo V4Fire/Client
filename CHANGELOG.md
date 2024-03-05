@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.70 (2024-03-05)
+
+#### :bug: Bug Fix
+
+* Fixed the order of setting the "textStore" property in the "updateTextStore" method, which led to a bug with a non-disappearing "textHint" when input overflows
+
 ## v4.0.0-beta.?? (2024-??-??)
 
 #### :bug: Bug Fix
