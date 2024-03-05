@@ -23,8 +23,7 @@ export default abstract class SelectEventHandlers {
 	// eslint-disable-next-line @typescript-eslint/require-await
 	static async onOpenedChange(component: bSelect, e: ModEvent | SetModEvent): Promise<void> {
 		const {
-			unsafe,
-			unsafe: {async: $a}
+			unsafe
 		} = component;
 
 		if (unsafe.native) {
@@ -38,13 +37,13 @@ export default abstract class SelectEventHandlers {
 			}
 
 			if (unsafe.mods.focused !== 'true') {
-				$a.off(navigationEventOpts);
+				component.handleKeydown(false);
 			}
 
 			return;
 		}
 
-		$a.off(navigationEventOpts);
+		component.handleKeydown(false);
 
 		if (!unsafe.multiple) {
 			if (openedSelect.link != null) {
@@ -54,7 +53,7 @@ export default abstract class SelectEventHandlers {
 			openedSelect.link = unsafe;
 		}
 
-		$a.on(document, 'keydown', unsafe.onItemsNavigate.bind(unsafe), navigationEventOpts);
+		component.handleKeydown(true);
 	}
 
 	/** {@link SelectEventHandlers.prototype.onNativeChange} */
@@ -149,7 +148,7 @@ export default abstract class SelectEventHandlers {
 							$a.off(opts);
 
 						} else {
-							$a.off(navigationEventOpts);
+							component.handleKeydown(false);
 						}
 					}
 				}, opts);
@@ -302,6 +301,22 @@ export default abstract class SelectEventHandlers {
 		void component.close();
 	}
 
+	/** {@link SelectEventHandlers.prototype.handleKeydown} */
+	static handleKeydown(component: bSelect, enabled: boolean): void {
+		const
+			{unsafe} = component,
+			{async: $a} = unsafe;
+
+		component.keydownHandlerEnabled = enabled;
+
+		if (enabled) {
+			$a.on(document, 'keydown', unsafe.onItemsNavigate.bind(unsafe), navigationEventOpts);
+
+		} else {
+			$a.off(navigationEventOpts);
+		}
+	}
+
 	/** {@link iOpenToggle.prototype.onOpenedChange} */
 	onOpenedChange(_e: ModEvent | SetModEvent): Promise<void> {
 		return Object.throw();
@@ -356,6 +371,14 @@ export default abstract class SelectEventHandlers {
 	 * @emits `actionChange(value: V)`
 	 */
 	onTextChange(): void {
+		return Object.throw();
+	}
+
+	/**
+	 * Enables or disables `keydown` event handler
+	 * @param _enabled
+	 */
+	handleKeydown(_enabled: boolean): void {
 		return Object.throw();
 	}
 }
