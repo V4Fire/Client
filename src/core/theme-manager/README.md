@@ -1,4 +1,4 @@
-# components/super/i-static-page/modules/theme
+# core/theme-manager
 
 This module provides an API for managing application themes.
 

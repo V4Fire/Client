@@ -1,4 +1,4 @@
-# components/super/i-static-page/modules/theme/system-theme-extractor
+# core/theme-manager/system-theme-extractor
 
 This module provides an API for obtaining and observing the preferred color scheme of an application.
 
