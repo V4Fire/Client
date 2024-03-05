@@ -559,7 +559,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		if (this.isFunctional && this.keydownHandlerEnabled) {
 			this.handleKeydown(true);
 		}
-
+	}
 }
 
 export default bSelect;
