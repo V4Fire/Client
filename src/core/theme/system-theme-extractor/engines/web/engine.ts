@@ -12,7 +12,7 @@ import SyncPromise from 'core/promise/sync';
 import Friend from 'components/friends/friend';
 import type iBlock from 'components/super/i-block/i-block';
 
-import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
+import type { SystemThemeExtractor } from 'core/theme/system-theme-extractor';
 
 /**
  * Represents a `SystemThemeExtractor` implementation tailored for web environments.

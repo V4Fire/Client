@@ -22,7 +22,7 @@ import type { AppliedRoute, InitialRoute } from 'core/router';
 
 import CookieStorage from 'core/kv-storage/engines/cookie';
 
-import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
+import { SystemThemeExtractorWeb } from 'core/theme';
 import { resetComponents, ComponentResetType } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
@@ -32,12 +32,12 @@ import iPage, { component, field, system, computed, hook, watch } from 'componen
 
 import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
-import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
+import themeManagerFactory, { ThemeManager } from 'core/theme';
 
 import type { RootMod } from 'components/super/i-static-page/interface';
 
 export * from 'components/super/i-page/i-page';
-export * from 'components/super/i-static-page/modules/theme';
+export * from 'core/theme';
 
 export { createProviderDataStore };
 export * from 'components/super/i-static-page/modules/provider-data-store';
