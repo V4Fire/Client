@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Bug fix: implemented correct switching between elements when pressing the `Tab` key
+
 ## v4.0.0-beta.40 (2023-11-17)
 
 #### :boom: Breaking Change

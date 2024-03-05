@@ -17,6 +17,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * The `activeStore` system field is marked as unique in the `bList`, `bTree`, `bSelect`
 components because it has an `unknown` type and it cannot be correctly merged
+* Bug fix: implemented correct switching between elements when pressing the `Tab` key `bSelect`
 
 ## v4.0.0-beta.69 (2024-03-04)
 
