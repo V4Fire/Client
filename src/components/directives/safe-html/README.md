@@ -2,7 +2,9 @@
 
 [Changelog](./CHANGELOG.md)
 
-A directive is a safe alternative to [v-html](https://vuejs.org/api/built-in-directives.html#v-html) inserting sanitized HTML by [dompurify](https://github.com/cure53/DOMPurify)
+This module provides a directive that serves as a safe
+alternative to v-html (https://vuejs.org/api/built-in-directives.html#v-html),
+it inserts sanitized HTML using dompurify (https://github.com/cure53/DOMPurify).
 
 ## Usage
 
@@ -10,7 +12,10 @@ A directive is a safe alternative to [v-html](https://vuejs.org/api/built-in-dir
 < .&__test v-safe-html = someStringWithHtml
 ```
 
-or with options
+## Options
+
+Along with the directive call, you can additionally pass any settings supported by [dompurify](https://github.com/cure53/DOMPurify),
+except for `RETURN_DOM_FRAGMENT` and `RETURN_DOM`.
 
 ```
 < .&__test &
@@ -26,7 +31,3 @@ or with options
   }
 .
 ```
-
-## Options
-
-All options are supported by [dompurify](https://github.com/cure53/DOMPurify), except for `RETURN_DOM_FRAGMENT` and `RETURN_DOM`, due to the fact that this directive inserts only strings.
