@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable require-atomic-updates */
-
 import type { JSHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
@@ -113,53 +111,6 @@ test.describe('<i-static-page>', () => {
 			});
 
 			await test.expect(page.locator(':root')).not.toHaveClass(/b-dummy-foo-bar/);
-		});
-	});
-
-	test.describe('`locale`', () => {
-		test('should set a locale of the root component and read it\'s value', async () => {
-			await test.expect(root.evaluate((ctx) => Boolean(ctx.locale))).resolves.toBeTruthy();
-
-			const locale = await root.evaluate((ctx) => {
-				ctx.locale = 'ru';
-				return ctx.locale;
-			});
-
-			test.expect(locale).toBe('ru');
-		});
-
-		test('should set the `lang` attribute of the html root element', async ({page}) => {
-			await test.expect(page.locator(':root')).toHaveAttribute('lang', 'en');
-
-			await root.evaluate((ctx) => {
-				ctx.locale = 'ru';
-			});
-
-			await test.expect(page.locator(':root')).toHaveAttribute('lang', 'ru');
-		});
-
-		test('should be watchable', async () => {
-			const scan = await root.evaluate(async (ctx) => {
-				const res: any[] = [];
-
-				ctx.locale = 'ru';
-				ctx.watch('locale', (val, oldVal) => {
-					res.push([val, oldVal]);
-				});
-
-				ctx.locale = 'en';
-				await ctx.nextTick();
-
-				ctx.locale = 'ru';
-				await ctx.nextTick();
-
-				return res;
-			});
-
-			test.expect(scan).toEqual([
-				['en', undefined],
-				['ru', 'en']
-			]);
 		});
 	});
 

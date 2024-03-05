@@ -2,67 +2,103 @@
 
 This module defines an interface for the entire application's state.
 The state can include user sessions, cookie store, etc.
+Please note that this module only provides types.
 
-> Note that the module provides types only.
-If you want to use global state on the client side, look at the module `core/component/client-state`,
-but be aware that using global state might lead to issues when implementing SSR.
+## How to use the state?
+
+The state of the application is set during its initialization in the `core/init` module.
+Also, in the case of SSR, you can explicitly pass state parameters in the render function call.
+
+```typescript
+import { initApp } from 'core';
+import { createCookieStore } from 'core/cookies';
+
+initApp('p-v4-components-demo', {
+  location: new URL('https://example.com/user/12345'),
+  cookies: createCookieStore('id=1')
+}).then(({content: renderedHTML, styles: inlinedStyles}) => {
+  console.log(renderedHTML, inlinedStyles);
+});
+```
+
+To work with the state from a component context, you should use a special getter called `remoteState`.
+
+```typescript
+import iBlock, { component } from 'components/super/i-block/i-block';
+
+@component()
+class bExample extends iBlock {
+  created() {
+    console.log(this.remoteState.location.href);
+  }
+}
+```
+
+To access the state via a global reference, you can use `app.state` from the `core/component` module.
+But keep in mind that working with state through global import will not work with SSR.
+
+```typescript
+import { app } from 'core/component';
+
+console.log(app.state?.location);
+```
 
 ## Interface
 
 ```typescript
+import type * as net from 'core/net';
+
+import type { Session } from 'core/session';
+import type { Cookies } from 'core/cookies';
+
 import type { Experiments } from 'core/abt';
-import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
 export interface State {
+  /**
+   * The unique application identifier
+   */
+  appId: string;
+
   /**
    * True, if the current user session is authorized
    */
   isAuth?: boolean;
 
   /**
-   * True, if the application is connected to the Internet
+   * An API for managing user session
    */
-  isOnline?: boolean;
+  session: Session;
 
   /**
-   * Date of the last Internet connection
+   * An API for working with cookies
    */
-  lastOnlineDate?: Date;
+  cookies: Cookies;
 
   /**
-   * The application default language
+   * An API for working with the target document's URL
    */
-  lang?: Language;
+  location: URL;
 
   /**
-   * A list of registered AB experiments
+   * An API to work with a network, such as testing of the network connection, etc.
    */
-  experiments?: Experiments;
+  net: typeof net;
 
   /**
-   * Initial value for the active route.
+   * The initial value for the active route.
    * This field is typically used in cases of SSR and hydration.
    */
   route?: InitialRoute | AppliedRoute;
 
   /**
-   * A store of application cookies
+   * The application default locale
    */
-  cookies?: CookieStore;
+  locale?: Language;
 
   /**
-   * A shim for the `window.document` API
+   * A list of registered AB experiments
    */
-  document?: Document;
-
-  /**
-   * An object whose properties will extend the global object.
-   * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-   * Using this object, polyfills for all necessary APIs can be passed through.
-   */
-  globalEnv?: GlobalEnvironment;
+  experiments?: Experiments;
 }
-
-export interface GlobalEnvironment extends Dictionary {}
 ```

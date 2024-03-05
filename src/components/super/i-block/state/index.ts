@@ -16,9 +16,8 @@ import SyncPromise from 'core/promise/sync';
 import type Async from 'core/async';
 import type { BoundFn } from 'core/async';
 
-import { initGlobalEnv } from 'core/env';
 import { i18nFactory } from 'core/prelude/i18n';
-import { component, clientState, hook, hydrationStore, Hook, State } from 'core/component';
+import { component, app, hydrationStore, Hook, State } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -72,11 +71,28 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@computed({watchable: true})
 	get remoteState(): State {
-		if (SSR) {
-			return {...clientState, ...this.ssrState!};
+		if ('app' in this) {
+			return this.app.state;
 		}
 
-		return clientState;
+		if ('_remoteState' in this) {
+			return this['_remoteState'];
+		}
+
+		// If this getter is called on the root component at the beforeCreate stage,
+		// the app property is simply not there yet.
+		// So we take it from the global one,
+		// but since it can change later during SSR, we cache it on the component.
+		const state = app.state!;
+
+		Object.defineProperty(this, '_remoteState', {
+			configurable: true,
+			enumerable: true,
+			writable: true,
+			value: state
+		});
+
+		return state;
 	}
 
 	/**
@@ -310,7 +326,7 @@ export default abstract class iBlockState extends iBlockMods {
 		keysetName: CanArray<string>,
 		customLocale?: Language
 	): (key: string | TemplateStringsArray, params?: I18nParams) => string {
-		return i18nFactory(keysetName, customLocale ?? this.remoteState.lang);
+		return i18nFactory(keysetName, customLocale ?? this.remoteState.locale);
 	}
 
 	/**
@@ -493,18 +509,6 @@ export default abstract class iBlockState extends iBlockMods {
 		return state;
 	}
 
-	/**
-	 * Takes an object and uses its properties to extend the global object.
-	 * For example, for SSR rendering, the proper functioning of APIs such as `document.cookie` or `location` is required.
-	 * Using this method, polyfills for all necessary APIs can be passed through.
-	 *
-	 * @param [env] - an object containing the environment for initialization
-	 */
-	@hook('beforeCreate')
-	protected initGlobalEnv(env: object = this.r): Dictionary {
-		return initGlobalEnv(env);
-	}
-
 	protected override initBaseAPI(): void {
 		super.initBaseAPI();
 
@@ -514,7 +518,6 @@ export default abstract class iBlockState extends iBlockMods {
 		this.i18n = i.i18n.bind(this);
 		this.syncStorageState = i.syncStorageState.bind(this);
 		this.syncRouterState = i.syncRouterState.bind(this);
-		this.initGlobalEnv = i.initGlobalEnv.bind(this);
 	}
 
 	/**

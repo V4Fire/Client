@@ -257,12 +257,10 @@ export default abstract class iData extends iDataHandlers {
 		return super.initLoad(data, opts);
 	}
 
-	override reload(opts?: InitLoadOptions): Promise<void> {
-		if (!this.r.isOnline && !this.offlineReload) {
-			return Promise.resolve();
+	override async reload(opts?: InitLoadOptions): Promise<void> {
+		if ((await this.remoteState.net.isOnline()).status || this.offlineReload) {
+			return super.reload(opts);
 		}
-
-		return super.reload(opts);
 	}
 
 	/**

@@ -11,17 +11,16 @@
 import type Async from 'core/async';
 import type { BoundFn, ProxyCb, EventId } from 'core/async';
 
-import type { State } from 'core/component/state';
-import type { HydrationStore } from 'core/component/hydration';
-import type { VNode, Slots, ComponentOptions, SetupContext, CreateAppFunction } from 'core/component/engines';
 import type { ComponentMeta } from 'core/component/meta';
+import type { HydrationStore } from 'core/component/hydration';
+import type { VNode, Slots, ComponentOptions, SetupContext } from 'core/component/engines';
 
 import type { Hook } from 'core/component/interface/lc';
 import type { ModsProp, ModsDict } from 'core/component/interface/mod';
 import type { SyncLinkCache } from 'core/component/interface/link';
 import type { RenderEngine } from 'core/component/interface/engine';
 
-import type { ComponentElement } from 'core/component/interface/component/types';
+import type { ComponentApp, ComponentElement } from 'core/component/interface/component/types';
 import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
@@ -40,14 +39,9 @@ export abstract class ComponentInterface {
 	readonly Component!: ComponentInterface;
 
 	/**
-	 * A link to the application object
+	 * References to the instance of the entire application and its state
 	 */
-	readonly app!: ReturnType<CreateAppFunction>;
-
-	/**
-	 * The unique application identifier
-	 */
-	readonly appId!: string;
+	readonly app!: ComponentApp;
 
 	/**
 	 * The unique component identifier.
@@ -225,12 +219,6 @@ export abstract class ComponentInterface {
 	 * This API is used only for SSR.
 	 */
 	protected readonly hydrationStore?: HydrationStore;
-
-	/**
-	 * The global state with which the SSR rendering process is initialized.
-	 * This API is used only for SSR.
-	 */
-	protected readonly ssrState?: State;
 
 	/**
 	 * A dictionary containing component attributes that are not identified as input properties
