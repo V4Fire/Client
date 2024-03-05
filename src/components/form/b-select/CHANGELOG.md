@@ -14,6 +14,7 @@ Changelog
 #### :bug: Bug Fix
 
 * Fixed an error that the text in native mode was not synchronized with the value
+* Implemented correct switching between elements when pressing the `Tab` key
 
 ## v4.0.0-beta.40 (2023-11-17)
 

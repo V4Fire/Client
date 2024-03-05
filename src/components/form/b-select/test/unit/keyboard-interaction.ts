@@ -70,6 +70,18 @@ test.describe('<b-select> keyboard interaction', () => {
 		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeFalsy();
 	});
 
+	test('should close dropdown when `Tab` is pressed', async ({page}) => {
+		await renderSelect(page, {items});
+
+		await page.locator(createSelector('input')).focus();
+
+		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeTruthy();
+
+		await page.keyboard.press('Tab');
+
+		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeFalsy();
+	});
+
 	test('should loop through items using `ArrowDown`', async ({page}) => {
 		await renderSelect(page, {items});
 
@@ -107,5 +119,50 @@ test.describe('<b-select> keyboard interaction', () => {
 
 		await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(1);
 		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeFalsy();
+	});
+
+	test([
+		'should focus on the input when the user starts typing,',
+		'given that the input has no focus and the dropdown is open'
+	].join(' '), async ({page}) => {
+		await renderSelect(page, {items});
+
+		const input = page.locator(createSelector('input'));
+
+		await input.focus();
+		await test.expect(input).toBeFocused();
+
+		await input.blur();
+		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeTruthy();
+		await test.expect(input).not.toBeFocused();
+
+		await page.keyboard.type('Baz');
+		await test.expect(input).toBeFocused();
+		await test.expect(input).toHaveValue('Baz');
+	});
+
+	test([
+		'should not focus on the input when the user starts typing,',
+		'given that the input has no focus and the dropdown is closed'
+	].join(' '), async ({page}) => {
+		await renderSelect(page, {items});
+
+		const input = page.locator(createSelector('input'));
+
+		await input.focus();
+		await test.expect(input).toBeFocused();
+
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('Enter');
+
+		await test.expect(input).toHaveValue('Foo');
+		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeFalsy();
+
+		await page.keyboard.press('Tab');
+		await test.expect(input).not.toBeFocused();
+
+		await page.keyboard.type('Baz');
+		await test.expect(input).not.toBeFocused();
+		await test.expect(input).toHaveValue('Foo');
 	});
 });

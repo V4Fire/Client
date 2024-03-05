@@ -419,6 +419,13 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		SelectEventHandlers.onItemClick(this, itemEl);
 	}
 
+	/** {@link iOpenToggle.prototype.onKeyClose} */
+	async onKeyClose(e: KeyboardEvent): Promise<void> {
+		if (e.key === 'Escape' || (e.key === 'Tab' && !this.isFocused)) {
+			await this.close();
+		}
+	}
+
 	/** {@link h.setScrollToMarkedOrSelectedItem} */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
 		return h.setScrollToMarkedOrSelectedItem.call(this);

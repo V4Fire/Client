@@ -11,13 +11,11 @@
  * @packageDocumentation
  */
 
+import config from 'config';
 import DOMPurify from 'dompurify';
 
-import config from 'config';
-
-import type { SafeHtmlDirectiveParams } from 'components/directives/safe-html/interface';
-
 import { ComponentEngine, VNode } from 'core/component/engines';
+import type { SafeHtmlDirectiveParams } from 'components/directives/safe-html/interface';
 
 export * from 'components/directives/safe-html/interface';
 
