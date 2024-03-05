@@ -13,9 +13,25 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.70 (2024-03-05)
 
-### :bug: Bug Fix
+#### :bug: Bug Fix
 
 * Fixed the order of setting the "textStore" property in the "updateTextStore" method, which led to a bug with a non-disappearing "textHint" when input overflows
+
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* The `activeStore` system field is marked as unique in the `bList`, `bTree`, `bSelect`
+components because it has an `unknown` type and it cannot be correctly merged
+* Fixed an error that the text in native mode was not synchronized with the value `bSelect`
+* Implemented correct switching between elements when pressing the `Tab` key `bSelect`
+
+## v4.0.0-beta.69 (2024-03-04)
+
+#### :rocket: New Feature
+
+* Added a new `v-safe-html` directive for inserting sanitized HTML `components/directives/safe-html`
+>>>>>>> af5de854885444815ac1e44f7ed65b0b04589908
 
 ## v4.0.0-beta.68 (2024-02-29)
 
