@@ -73,7 +73,7 @@ export async function setValue(target: JSHandle<bSelect>, value: string | number
  * @param target
  * @param value
  */
-export async function selectValue(page: Page, target: JSHandle<bSelect>, value: string | string[]): Promise<void> {
+export async function selectValue(page: Page, target: JSHandle<bSelect>, value: CanArray<string>): Promise<void> {
 	const
 		isNative = await target.evaluate((ctx) => ctx.native),
 		input = page.locator(createSelector('input'));
