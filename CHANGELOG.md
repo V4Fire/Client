@@ -31,7 +31,6 @@ components because it has an `unknown` type and it cannot be correctly merged
 #### :rocket: New Feature
 
 * Added a new `v-safe-html` directive for inserting sanitized HTML `components/directives/safe-html`
->>>>>>> af5de854885444815ac1e44f7ed65b0b04589908
 
 ## v4.0.0-beta.68 (2024-02-29)
 
