@@ -11,3 +11,13 @@
 - include 'components/super/i-static-page/i-static-page.component.ss'|b as placeholder
 
 - template index() extends ['i-static-page.component'].index
+	- block body
+		< b-bottom-slide &
+			:steps = [50] |
+			:hideWithDelay = false |
+			:overlay = false |
+			:visible = 92 |
+			:heightMode = 'content'
+		.
+			< .&__content
+			hello world

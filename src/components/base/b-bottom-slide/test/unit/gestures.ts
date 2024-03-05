@@ -34,7 +34,7 @@ test.use({
 	}
 });
 
-test.describe('<b-bottom-slide> gestures', () => {
+test.describe.only('<b-bottom-slide> gestures', () => {
 	const
 		initialMaxVisiblePercent = 90,
 		selector = DOM.elNameSelectorGenerator('b-bottom-slide', 'view');

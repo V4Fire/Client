@@ -129,6 +129,7 @@ export default class SwipeControl extends Friend {
 			isThresholdPassed = !isFastSwipe && startEndDiff >= ctx.swipeThreshold;
 
 		ctx.animation.stopMoving();
+
 		this.moveToClosest(notScroll, isThresholdPassed);
 
 		this.endY += this.startY - this.currentY;
@@ -151,13 +152,13 @@ export default class SwipeControl extends Friend {
 			{geometry} = ctx;
 
 		if (ctx.heightMode === 'content') {
-			if (!respectDirection && isThresholdPassed) {
+			if (!respectDirection && isThresholdPassed && geometry.offset < geometry.getStepOffset(0)) {
+				void ctx.close();
+			} else if (!respectDirection && isThresholdPassed) {
 				void ctx[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
-
 			} else if (respectDirection) {
 				void ctx[direction > 0 ? 'next' : 'prev']();
 			}
-
 		} else {
 			let
 				step = 0;
