@@ -337,7 +337,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {Object}
 		 */
 		aliases() {
-			return {};
+			return {
+				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3'
+			};
 		},
 
 		/**
@@ -1232,6 +1234,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			'directives/in-view': true,
 			'directives/resize-observer': true,
 			'directives/update-on': true,
+			'directives/safe-html': true,
 
 			iData: true,
 			bRouter: true,

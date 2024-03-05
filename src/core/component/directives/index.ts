@@ -22,4 +22,8 @@ import 'core/component/directives/image';
 import 'core/component/directives/update-on';
 //#endif
 
+//#if runtime has directives/safe-html
+import 'core/component/directives/safe-html';
+//#endif
+
 import 'core/component/directives/hook';
