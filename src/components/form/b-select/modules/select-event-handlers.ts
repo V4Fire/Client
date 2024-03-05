@@ -145,11 +145,11 @@ export default abstract class SelectEventHandlers {
 					if (e.key === 'Tab') {
 						const isFocused = component.isFocused || component.$el?.contains(document.activeElement);
 
-						if (!isFocused) {
-							$a.off(navigationEventOpts);
+						if (isFocused) {
+							$a.off(opts);
 
 						} else {
-							$a.off(opts);
+							$a.off(navigationEventOpts);
 						}
 					}
 				}, opts);
