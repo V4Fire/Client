@@ -15,6 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :boom: Breaking Change
 
+* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
 * The fields `isOnline`, `lastOnlineDate`, and `locale` have been removed `iStaticPage`
 
 ## v4.0.0-beta.67 (2024-02-26)
