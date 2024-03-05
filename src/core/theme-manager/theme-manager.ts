@@ -14,7 +14,7 @@ import type { Theme } from 'components/super/i-block/i-block';
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
 import Friend from 'components/friends/friend';
-import type { SystemThemeExtractor } from 'core/theme/system-theme-extractor';
+import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
 
 import {
 
@@ -23,9 +23,9 @@ import {
 	lightThemeName,
 	darkThemeName
 
-} from 'core/theme/const';
+} from 'core/theme-manager/const';
 
-export * from 'core/theme/const';
+export * from 'core/theme-manager/const';
 
 const
 	$$ = symbolGenerator();
