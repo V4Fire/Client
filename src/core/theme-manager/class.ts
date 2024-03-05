@@ -7,36 +7,33 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { factory, SyncStorage, StorageEngine } from 'core/kv-storage';
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
-import type iBlock from 'components/super/i-block/i-block';
-import type { Theme } from 'components/super/i-block/i-block';
-import type iStaticPage from 'components/super/i-static-page/i-static-page';
+import { factory, SyncStorage } from 'core/kv-storage';
+import { prefersColorSchemeEnabled, lightThemeName, darkThemeName } from 'core/theme-manager/const';
 
-import Friend from 'components/friends/friend';
+import type { Theme, ThemeManagerOptions } from 'core/theme-manager/interface';
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
 
-import {
-
-	prefersColorSchemeEnabled,
-
-	lightThemeName,
-	darkThemeName
-
-} from 'core/theme-manager/const';
-
 export * from 'core/theme-manager/const';
+export * from 'core/theme-manager/interface';
 
 const
 	$$ = symbolGenerator();
 
-export default class ThemeManager extends Friend {
-	override readonly C!: iStaticPage;
-
+export default class ThemeManager {
 	/**
 	 * A set of available app themes
 	 */
-	readonly availableThemes!: Set<string>;
+	readonly availableThemes: Set<string> = new Set(AVAILABLE_THEMES ?? []);
+
+	/**
+	 * An event emitter for broadcasting theme manager events
+	 */
+	readonly emitter: EventEmitter = new EventEmitter({
+		maxListeners: 1e3,
+		newListener: false
+	});
 
 	/**
 	 * The current theme value
@@ -44,7 +41,7 @@ export default class ThemeManager extends Friend {
 	protected current!: Theme;
 
 	/**
-	 * An API for obtaining and observing system appearance
+	 * An API for obtaining and observing system theme
 	 */
 	protected readonly systemThemeExtractor!: SystemThemeExtractor;
 
@@ -58,36 +55,22 @@ export default class ThemeManager extends Friend {
 	 */
 	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
 
-	/**
-	 * @param component
-	 * @param engines
-	 * @param engines.themeStorageEngine - an engine for persistent theme storage
-	 * @param engines.systemThemeExtractor - an engine for extracting the system theme
-	 */
-	constructor(
-		component: iBlock,
-		{themeStorageEngine, systemThemeExtractor}: {
-			themeStorageEngine: StorageEngine;
-			systemThemeExtractor: SystemThemeExtractor;
-		}
-	) {
-		super(component);
-
-		if (!Object.isString(this.themeAttribute)) {
-			throw new ReferenceError('An attribute name to set themes is not specified');
+	constructor(opts: ThemeManagerOptions) {
+		if (!SSR && !Object.isString(this.themeAttribute)) {
+			throw new ReferenceError('The attribute name for setting themes is not specified');
 		}
 
 		if (POST_PROCESS_THEME && prefersColorSchemeEnabled) {
-			throw new Error('"postProcessor" param cant be enabled with "detectUserPreferences"');
+			throw new Error('The "postProcessor" parameter cannot be enabled with "detectUserPreferences"');
 		}
 
-		this.availableThemes = new Set(AVAILABLE_THEMES ?? []);
+		this.themeStorage = factory(opts.themeStorageEngine);
+		this.systemThemeExtractor = opts.systemThemeExtractor;
 
-		this.themeStorage = factory(themeStorageEngine);
-		this.systemThemeExtractor = systemThemeExtractor;
-
-		let
-			theme: Theme = {value: this.defaultTheme, isSystem: false};
+		let theme: Theme = {
+			value: this.defaultTheme,
+			isSystem: false
+		};
 
 		if (POST_PROCESS_THEME) {
 			const themeFromStore = this.themeStorage.get<Theme>('colorTheme');
@@ -106,7 +89,7 @@ export default class ThemeManager extends Friend {
 	}
 
 	/**
-	 * Default theme from config
+	 * Default theme from the app config
 	 */
 	protected get defaultTheme(): string {
 		if (!Object.isString(THEME)) {
@@ -136,7 +119,7 @@ export default class ThemeManager extends Friend {
 	 */
 	useSystem(): Promise<void> {
 		const changeTheme = (value: string) => {
-			value = this.getThemeAlias(value);
+			value = this.resolveThemeAlias(value);
 			void this.changeTheme({value, isSystem: true});
 		};
 
@@ -158,16 +141,14 @@ export default class ThemeManager extends Friend {
 	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 */
 	protected changeTheme(newTheme: Theme): void {
-		if (
-			SSR ||
-			!Object.isString(this.themeAttribute) ||
-			Object.fastCompare(this.current, newTheme)
-		) {
+		if (SSR || !Object.isString(this.themeAttribute) || Object.fastCompare(this.current, newTheme)) {
 			return;
 		}
 
-		let
-			{value, isSystem} = newTheme;
+		let {
+			value,
+			isSystem
+		} = newTheme;
 
 		if (!this.availableThemes.has(value)) {
 			if (!isSystem) {
@@ -178,7 +159,7 @@ export default class ThemeManager extends Friend {
 		}
 
 		if (!isSystem) {
-			this.ctx.async.clearAll({label: $$.onThemeChange});
+			this.systemThemeExtractor.unsubscribe({label: $$.onThemeChange});
 		}
 
 		const oldValue = this.current;
@@ -187,20 +168,18 @@ export default class ThemeManager extends Friend {
 		this.themeStorage.set('colorTheme', this.current);
 		document.documentElement.setAttribute(this.themeAttribute, value);
 
-		void this.component.lfc.execCbAtTheRightTime(() => {
-			this.component.emit('theme:change', this.current, oldValue);
-		});
+		this.emitter.emit('theme:change', this.current, oldValue);
 	}
 
 	/**
-	 * Returns the actual theme name for the provided value
-	 * @param value
+	 * Returns the actual theme name for the provided alias
+	 * @param alias
 	 */
-	protected getThemeAlias(value: string): string {
+	protected resolveThemeAlias(alias: string): string {
 		if (prefersColorSchemeEnabled) {
-			return value === 'dark' ? darkThemeName : lightThemeName;
+			return alias === 'dark' ? darkThemeName : lightThemeName;
 		}
 
-		return value;
+		return alias;
 	}
 }

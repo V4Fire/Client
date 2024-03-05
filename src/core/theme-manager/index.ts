@@ -14,5 +14,5 @@
 export * from 'core/theme-manager/const';
 export { default } from 'core/theme-manager/factory';
 
-export { default as ThemeManager } from 'core/theme-manager/theme-manager';
+export { default as ThemeManager } from 'core/theme-manager/class';
 export { default as SystemThemeExtractorWeb } from 'core/theme-manager/system-theme-extractor/engines/web/engine';
