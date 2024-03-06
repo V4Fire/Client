@@ -18,7 +18,6 @@ import { setVNodePatchFlags, mergeProps } from 'core/component/render';
 import { getDirectiveContext, getElementId } from 'core/component/directives/helpers';
 
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
-import { ImageOrigin } from 'components/directives/image/interface';
 import type { DirectiveParams } from 'components/directives/image/interface';
 
 export * from 'components/directives/image/interface';
@@ -131,7 +130,7 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 
 	switch (img.getAttribute('data-img')) {
 		case 'loaded':
-			void onLoad(ImageOrigin.BROWSER_CACHE);
+			void onLoad();
 			break;
 
 		case 'failed':
@@ -148,21 +147,28 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		}
 
 		if (!img.complete) {
-			$a.once(img, 'load', onLoad.bind(null, ImageOrigin.SERVER), group);
-			$a.once(img, 'error', onError, group);
+			const
+				sleepPromise = $a.sleep(50, group),
+				loadPromise = new Promise((resolve, reject) => {
+					$a.once(img, 'load', resolve, group);
+					$a.once(img, 'error', reject, group);
+				});
+
+			Promise.all([sleepPromise, loadPromise])
+				.then(onLoad)
+				.catch(onError);
 
 			return;
 		}
 
 		if (img.naturalWidth > 0) {
-			void onLoad(ImageOrigin.BROWSER_CACHE);
-
+			void onLoad();
 		} else {
 			onError();
 		}
 	}
 
-	async function onLoad(origin: ImageOrigin = ImageOrigin.SERVER) {
+	async function onLoad() {
 		$a.off(group);
 
 		if (img == null) {
@@ -170,10 +176,6 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		}
 
 		try {
-			if (origin === ImageOrigin.SERVER) {
-				await $a.sleep(50, group);
-			}
-
 			img.style.opacity = '1';
 
 			el.style['background-image'] = '';
