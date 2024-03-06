@@ -16,6 +16,11 @@ export type OptionsResolver = (opts: ImageOptions) => ImageOptions;
 
 export type ImagePlaceholderOptions = Omit<ImageOptions, 'lazy' | 'preview' | 'broken'>;
 
+export const enum ImageOrigin {
+	SERVER = 'server',
+	BROWSER_CACHE = 'browser_cache'
+}
+
 export interface ImageOptions {
 	/**
 	 * The image URL.

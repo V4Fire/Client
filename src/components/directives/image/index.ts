@@ -19,6 +19,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives/hel
 
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
 import type { DirectiveParams } from 'components/directives/image/interface';
+import { ImageOrigin } from './interface';
 
 export * from 'components/directives/image/interface';
 
@@ -130,7 +131,7 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 
 	switch (img.getAttribute('data-img')) {
 		case 'loaded':
-			void onLoad();
+			void onLoad(ImageOrigin.BROWSER_CACHE);
 			break;
 
 		case 'failed':
@@ -147,21 +148,21 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		}
 
 		if (!img.complete) {
-			$a.once(img, 'load', onLoad, group);
+			$a.once(img, 'load', onLoad.bind(null, ImageOrigin.SERVER), group);
 			$a.once(img, 'error', onError, group);
 
 			return;
 		}
 
 		if (img.naturalWidth > 0) {
-			void onLoad();
+			void onLoad(ImageOrigin.BROWSER_CACHE);
 
 		} else {
 			onError();
 		}
 	}
 
-	async function onLoad() {
+	async function onLoad(origin: ImageOrigin = ImageOrigin.SERVER) {
 		$a.off(group);
 
 		if (img == null) {
@@ -169,7 +170,9 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		}
 
 		try {
-			await $a.sleep(50, group);
+			if (origin === ImageOrigin.SERVER) {
+				await $a.sleep(50, group);
+			}
 
 			img.style.opacity = '1';
 
