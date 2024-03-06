@@ -278,7 +278,7 @@ export default abstract class iData extends iDataHandlers {
 			return;
 		}
 
-		this.r.providerDataStore.set(key, data);
+		this.r.providerDataStore?.set(key, data);
 
 		function getKey(val: string | CanUndef<iData['dataProviderProp']>): CanUndef<string> {
 			if (val == null || Object.isString(val)) {

@@ -77,8 +77,8 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * A module to work with data of data providers globally
 	 */
-	@system(() => createProviderDataStore(new RestrictedCache(10)))
-	readonly providerDataStore!: ProviderDataStore;
+	@system(() => SSR ? null : createProviderDataStore(new RestrictedCache(10)))
+	readonly providerDataStore?: ProviderDataStore;
 
 	/**
 	 * A module to manage app themes from the Design System
