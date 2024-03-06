@@ -168,7 +168,7 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		}
 	}
 
-	async function onLoad() {
+	function onLoad() {
 		$a.off(group);
 
 		if (img == null) {
