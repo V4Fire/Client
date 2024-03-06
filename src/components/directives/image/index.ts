@@ -18,8 +18,7 @@ import { setVNodePatchFlags, mergeProps } from 'core/component/render';
 import { getDirectiveContext, getElementId } from 'core/component/directives/helpers';
 
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
-import type { DirectiveParams } from 'components/directives/image/interface';
-import { ImageOrigin } from './interface';
+import type { DirectiveParams, ImageOrigin } from 'components/directives/image/interface';
 
 export * from 'components/directives/image/interface';
 
