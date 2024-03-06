@@ -152,26 +152,14 @@ export default class SwipeControl extends Friend {
 			{geometry} = ctx;
 
 		if (ctx.heightMode === 'content') {
-			const isSwipedViaFullScreenBottom = geometry.offset <= geometry.getStepOffset(1) && direction < 0;
-			const isSwipedViaFullScreenTop = geometry.offset >= geometry.lastStepOffset && direction > 0;
-
-			console.log({isSwipedViaFullScreenTop, isSwipedViaFullScreenBottom, direction});
-
 			if (!respectDirection && isThresholdPassed) {
-				if (isSwipedViaFullScreenBottom) {
-					console.log('close');
-					ctx.close();
-					return;
-				}
+				const isFullyPutDown = geometry.offset <= geometry.getStepOffset(1) && direction < 0;
 
-				if (isSwipedViaFullScreenTop) {
-					console.log('open');
-					ctx.open(ctx.steps[ctx.stepCount - 1]);
-					return;
+				if (isFullyPutDown) {
+					void ctx.close();
+				} else {
+					void ctx[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
 				}
-
-				console.log('next/prev');
-				void ctx[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
 			} else if (respectDirection) {
 				void ctx[direction > 0 ? 'next' : 'prev']();
 			}
