@@ -94,7 +94,7 @@
 
 		- if SSR
 			- if paths.length > 0 || wait
-				? wait = '() => { const {Promise} = global; return new Promise(() => {}); }'
+				? wait = '((f) => f == null ? f : () => { const {Promise} = global; return new Promise(() => {}); })(' + wait + ')'
 
 		: &
 			filter = (wait ? buble.transform("`" + wait + "`").code : 'undefined')
