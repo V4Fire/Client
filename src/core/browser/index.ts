@@ -19,7 +19,7 @@ export * from 'core/browser/helpers';
 export * from 'core/browser/interface';
 
 /**
- * Returns true if `navigator.userAgent` matches with the given parameters
+ * It returns true if the `navigator.userAgent` matches the given parameters
  *
  * @param platform - the browser platform
  * @param [operation] - the operation type (>, >=, etc.)
