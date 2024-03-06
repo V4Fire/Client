@@ -463,17 +463,17 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 	 * @param item
 	 */
 	protected getNestedTreeFilter(item: this['Item']): CanNull<() => CanPromise<boolean>> {
-		const canRenderSynchronously =
+		const canRenderSynchronously = () =>
 			this.getFoldedPropValue(item) ||
 			Object.isBoolean(this.lazyRender) ||
 			this.lazyRender === 'items';
 
-		if (SSR && canRenderSynchronously) {
+		if (SSR && canRenderSynchronously()) {
 			return null;
 		}
 
 		return () => {
-			if (canRenderSynchronously) {
+			if (canRenderSynchronously()) {
 				return true;
 			}
 
