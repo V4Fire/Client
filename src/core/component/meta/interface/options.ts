@@ -11,6 +11,11 @@
  */
 export interface ComponentOptions {
 	/**
+	 * The name of the package in which component is defined or overridden
+	 */
+	layer?: string;
+
+	/**
 	 * The name of the component.
 	 * If not specified, the name is obtained from the class name via reflection.
 	 * This parameter cannot be inherited from the parent component.

@@ -139,6 +139,11 @@ export interface ComponentMeta {
 	hooks: ComponentHooks;
 
 	/**
+	 * The name of the package in which component is defined or overridden
+	 */
+	layer?: string;
+
+	/**
 	 * A less abstract representation of the component would typically include the following elements,
 	 * which are useful for building component libraries:
 	 */

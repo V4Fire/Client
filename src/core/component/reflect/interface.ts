@@ -20,6 +20,11 @@ import type {
  */
 export interface ComponentConstructorInfo {
 	/**
+	 * The name of the package in which component is defined or overridden
+	 */
+	layer?: string;
+
+	/**
 	 * The full name of the component, which may include a `-functional` postfix if the component is smart
 	 */
 	name: string;

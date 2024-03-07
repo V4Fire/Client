@@ -67,6 +67,8 @@ export function getInfoFromConstructor(
 	const
 		name = declParams?.name ?? getComponentName(constructor);
 
+	const layer = declParams?.layer;
+
 	const
 		parent = Object.getPrototypeOf(constructor),
 		parentParams = parent != null ? componentParams.get(parent) : undefined;
@@ -115,6 +117,7 @@ export function getInfoFromConstructor(
 
 	return {
 		name,
+		layer,
 		componentName: name.replace(isSmartComponent, ''),
 		constructor,
 		params,

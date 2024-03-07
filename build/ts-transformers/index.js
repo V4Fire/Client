@@ -9,14 +9,15 @@
 'use strict';
 
 const
-	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags');
+	modernRegExpFlagsTransformer = include('build/ts-transformers/modern-regexp-flags'),
+	setComponentLayer = include('build/ts-transformers/set-component-layer');
 
 /**
  * @param {import('typescript').Program} program
  * @returns {object}
  */
 module.exports = (program) => ({
-	before: [modernRegExpFlagsTransformer(program)],
+	before: [modernRegExpFlagsTransformer(program), setComponentLayer(program)],
 	after: {},
 	afterDeclarations: {}
 });
