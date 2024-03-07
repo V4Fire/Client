@@ -327,16 +327,6 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		return false;
 	}
 
-	/**
-	 * Validates properties
-	 */
-	@hook('beforeDataCreate')
-	protected validateProps(): void {
-		if (this.useScrollSnap && this.modeProp === 'slide') {
-			throw new Error("Can't enable scroll snap in `slide` mode");
-		}
-	}
-
 	/** {@link iObserveDOM.initDOMObservers} */
 	@hook('mounted')
 	initDOMObservers(): void {
@@ -575,6 +565,16 @@ class bSlider extends iSliderProps implements iObserveDOM, iItems {
 		} else {
 			this.async.off(group);
 			content && iObserveDOM.unobserve(this, content);
+		}
+	}
+
+	/**
+	 * Validates the component props values
+	 */
+	@hook('beforeDataCreate')
+	protected validateProps(): void {
+		if (this.useScrollSnap && this.modeProp === 'slide') {
+			throw new Error('Scroll snap cannot be enabled in `slide` mode');
 		}
 	}
 

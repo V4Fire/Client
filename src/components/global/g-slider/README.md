@@ -1,48 +1,71 @@
 # components/global/g-slider
 
-This module provides a block with [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap) logic for slider.
+The module provides a Stylus mixin and a global class for creating sliders
+based on the [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap).
 
-## Usage
-
-You can use this block with special modifiers.
-
-```snakeskin
+```
 < .g-slider
   < img src = https://fakeimg.pl/155x300
   < img src = https://fakeimg.pl/130x300
   < img src = https://fakeimg.pl/130x300
 ```
 
-1. .g-slider uses a horizontal slider by default, but you can use a vertical slider by adding the modifier `.g-slider__vertical_true` for the slide container `.g-slider`.
+## Synopsis
 
-```snakeskin
-< [.g-slider].&_vertical_true
-  < img src = https://fakeimg.pl/155x300
-  < img src = https://fakeimg.pl/130x300
-  < img src = https://fakeimg.pl/375x300
-  ...
-```
+* This module provides a Stylus mixin and a global CSS class, not a component.
 
-2. Also, if you need to explicitly set a horizontal slider then add special modifier `.g-slider_horizontal_true` for the slide's container `.g-slider`.
+## Usage
 
-```snakeskin
-< [.g-slider].&_horizontal_true
-  < img src = https://fakeimg.pl/375x300
-  < img src = https://fakeimg.pl/375x300
-  < img src = https://fakeimg.pl/35x300
-```
+You can use this block with special modifiers.
 
-3. For specifying the box's snap position as an alignment of its area ([scroll-snap-align](https://www.markdownguide.org/basic-syntax/#links)) you should use modifiers for child nodes of slide's container (or just slides):
+1. gSlider uses a horizontal slider by default, but you can switch to a vertical slider
+   by adding the `vertical_true` modifier to the slide container.
+
+   ```
+   < [.g-slider].&_vertical_true
+     < img src = https://fakeimg.pl/155x300
+     < img src = https://fakeimg.pl/130x300
+     < img src = https://fakeimg.pl/375x300
+     ...
+   ```
+
+2. Also, if you need to explicitly set a horizontal slider,
+   then add the special modifier `horizontal_true` to the slide container.
+
+   ```
+   < [.g-slider].&_horizontal_true
+     < img src = https://fakeimg.pl/375x300
+     < img src = https://fakeimg.pl/375x300
+     < img src = https://fakeimg.pl/35x300
+   ```
+
+3. To specify the box's snap position as an alignment of
+   its area ([scroll-snap-align](https://www.markdownguide.org/basic-syntax/#links)),
+   you should use modifiers for the child nodes of the slide's container (or just slides):
 
    - `.g-slider__slide_snap_start`
    - `.g-slider__slide_snap_center`
    - `.g-slider__slide_snap_end`
 
-```snakeskin
-< [.g-slider].&_horizontal_true
-  < img.&__slide_snap_start src = https://fakeimg.pl/375x300
-  < img.&__slide_snap_center src = https://fakeimg.pl/375x300
-  < img.&__slide_snap_start src = https://fakeimg.pl/35x300
+   ```
+   < [.g-slider].&_horizontal_true
+     < img.&__slide_snap_start src = https://fakeimg.pl/375x300
+     < img.&__slide_snap_center src = https://fakeimg.pl/375x300
+     < img.&__slide_snap_start src = https://fakeimg.pl/35x300
+   ```
+
+### Using as a mixin
+
+You can use this mixin "as is", just import it into your styles.
+
+```stylus
+@import "components/global/g-slider/g-slider.styl"
+
+$p = {
+
+}
+
+b-example
+  &__slider
+    gSlider()
 ```
-
-

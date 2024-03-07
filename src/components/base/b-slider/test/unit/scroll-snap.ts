@@ -39,7 +39,7 @@ test.describe('<b-slider> in scroll snap mode', () => {
 			await test.expect(page.locator('.b-slider .g-slider')).toBeVisible();
 		});
 
-		test('should not render g-slider if mode is `slide`', async ({page}) => {
+		test('should not render g-slider if the mode is `slide`', async ({page}) => {
 			await renderSlider(page, {
 				attrs: {
 					id: 'swipe_slider'
@@ -49,7 +49,7 @@ test.describe('<b-slider> in scroll snap mode', () => {
 			await test.expect(page.locator('#swipe_slider .g-slider')).toBeHidden();
 		});
 
-		test('should not render g-slider if mode is `scroll` and useSnapScroll is `false`', async ({page}) => {
+		test('should not render g-slider if the mode is `scroll` and useSnapScroll is `false`', async ({page}) => {
 			await renderSlider(page, {
 				attrs: {
 					id: 'scroll_slider',
@@ -72,7 +72,7 @@ test.describe('<b-slider> in scroll snap mode', () => {
 		})).rejects.toThrowError();
 	});
 
-	test('shouldn\'t automatically scroll when `autoSliderInterval` prop is set', async ({page}) => {
+	test("shouldn't automatically scroll when `autoSliderInterval` prop is set", async ({page}) => {
 		const scrollSnapSlider = await renderSlider(page, {
 			attrs: {
 				useScrollSnap: true,
@@ -88,32 +88,34 @@ test.describe('<b-slider> in scroll snap mode', () => {
 		await test.expect(current(scrollSnapSlider)).toBeResolvedTo(0);
 	});
 
-	test('swipe: should snap slides to the edge of the container', async ({page}) => {
-		const children = [1, 2, 3, 4].map((i) => ({
-			type: 'img',
-			attrs: {
-				id: `slide_${i}`,
-				src: `https://fakeimg.pl/${VIEWPORT_WIDTH}x300`,
-				width: VIEWPORT_WIDTH,
-				height: 300
-			}
-		}));
+	test.describe('swipe', () => {
+		test('should align slides to the edge of the container', async ({page}) => {
+			const children = [1, 2, 3, 4].map((i) => ({
+				type: 'img',
+				attrs: {
+					id: `slide_${i}`,
+					src: `https://fakeimg.pl/${VIEWPORT_WIDTH}x300`,
+					width: VIEWPORT_WIDTH,
+					height: 300
+				}
+			}));
 
-		await renderSlider(page, {
-			children: {
-				default: children
-			},
-			attrs: {
-				useScrollSnap: true,
-				mode: 'scroll'
-			}
+			await renderSlider(page, {
+				children: {
+					default: children
+				},
+
+				attrs: {
+					useScrollSnap: true,
+					mode: 'scroll'
+				}
+			});
+
+			await page.mouse.wheel(250, 0);
+
+			const position = await page.evaluate(() => Number(document.querySelector('.g-slider')?.scrollLeft));
+
+			test.expect(position % VIEWPORT_WIDTH).toBe(0);
 		});
-
-		await page.mouse.wheel(250, 0);
-
-		const position = await page.evaluate(() => Number(document.querySelector('.g-slider')?.scrollLeft));
-
-		await test.expect(position % VIEWPORT_WIDTH).toBe(0);
 	});
-
 });

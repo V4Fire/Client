@@ -9,9 +9,8 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-
 ## v4.0.0-beta.?? (2024-??-??)
 
 #### :rocket: New feature
 
-* Created new global component `g-slider` that encapsulates CSS `scroll snap` logic
+* Created a new global component `g-slider` that encapsulates CSS `scroll snap` logic

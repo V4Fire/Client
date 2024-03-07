@@ -135,8 +135,8 @@ export default abstract class iSliderProps extends iData {
 	readonly autoSlidePostGestureDelay: number = 0;
 
 	/**
-	 * When set to `true` the [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap) will be enabled.
-	 * The default value is `false`.
+	 * If set to true, the CSS scroll snap mechanism will be used for rendering slides
+	 * @see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_scroll_snap
 	 */
 	@prop(Boolean)
 	readonly useScrollSnap: boolean = false;
