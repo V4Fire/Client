@@ -182,6 +182,8 @@ export default class ThemeManager {
 
 	/**
 	 * Returns the actual theme name for the provided alias
+	 *
+	 * @throws TypeError
 	 * @param alias
 	 */
 	protected resolveThemeAlias(alias: string): string {
