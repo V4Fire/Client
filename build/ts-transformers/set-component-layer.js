@@ -22,7 +22,7 @@ const {validators} = require('@pzlr/build-core');
 
 const
 	pathToRootRgxp = /(?<path>.+)[/\\]src[/\\]/,
-	isComponentPath = new RegExp(`[/\\](${validators.blockTypeList.join('|')})-.+?[/\\]?`);
+	isComponentPath = new RegExp(`\\/(${validators.blockTypeList.join('|')})-.+?\\/?`);
 
 /**
  * The transformer that adds the "layer" property to component-meta objects
