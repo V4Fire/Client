@@ -10,7 +10,16 @@ import symbolGenerator from 'core/symbol';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import { factory, SyncStorage } from 'core/kv-storage';
-import { prefersColorSchemeEnabled, lightThemeName, darkThemeName } from 'core/theme-manager/const';
+
+import {
+
+	prefersColorSchemeEnabled,
+	lightThemeName,
+	darkThemeName,
+	DARK,
+	LIGHT
+
+} from 'core/theme-manager/const';
 
 import type { Theme, ThemeManagerOptions } from 'core/theme-manager/interface';
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
@@ -97,6 +106,20 @@ export default class ThemeManager {
 		}
 
 		return THEME;
+	}
+
+	/**
+	 * True, if dark theme enabled
+	 */
+	get isDark(): boolean {
+		return this.current.value === this.resolveThemeAlias(DARK);
+	}
+
+	/**
+	 * True, if light theme enabled
+	 */
+	get isLight(): boolean {
+		return this.current.value === this.resolveThemeAlias(LIGHT);
 	}
 
 	/**
@@ -190,7 +213,7 @@ export default class ThemeManager {
 	 */
 	protected resolveThemeAlias(alias: string): string {
 		if (prefersColorSchemeEnabled) {
-			return alias === 'dark' ? darkThemeName : lightThemeName;
+			return alias === DARK ? darkThemeName : lightThemeName;
 		}
 
 		return alias;
