@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed closing the dropdown when clicking on an element with stop propagation
+
 ## v4.0.0-beta.70 (2024-03-05)
 
 #### :bug: Bug Fix

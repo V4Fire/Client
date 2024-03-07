@@ -21,6 +21,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
+* Fixed closing the dropdown when clicking on an element with stop propagation `bSelect`
 * Fixed an issue with missing methods `element` and `elements` in the Block prototype `bSelect`
 
 #### :house: Internal
