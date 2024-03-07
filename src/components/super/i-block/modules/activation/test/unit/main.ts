@@ -23,7 +23,9 @@ test.describe('<i-block> modules - activation', () => {
 	});
 
 	test.describe('events', () => {
-		test('should emit `hook:deactivated` event when `deactivate` is invoked', async () => {
+		// Disabling this test as the component must be deactivated ASAP,
+		// which means that no events will be emitted @see https://github.com/V4Fire/Client/issues/1108
+		test.fixme('should emit `hook:deactivated` event when `deactivate` is invoked', async () => {
 			const eventPromise = target.evaluate((ctx) => new Promise((resolve) => {
 				ctx.once('hook:deactivated', resolve);
 				ctx.deactivate();

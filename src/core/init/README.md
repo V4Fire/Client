@@ -134,7 +134,7 @@ import { initGlobalEnv } from 'core/env';
 import * as net from 'core/net';
 import * as session from 'core/session';
 
-import state from 'core/component/state';
+import state from 'core/component/client-state';
 
 import type { InitAppOptions } from 'core/init/interface';
 

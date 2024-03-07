@@ -40,7 +40,18 @@ import type {
 } from 'core/component/engines';
 
 import { registerComponent } from 'core/component/init';
-import { resolveAttrs, normalizeComponentAttrs, mergeProps as merge } from 'core/component/render/helpers';
+
+import {
+
+	isHandler,
+
+	resolveAttrs,
+	normalizeComponentAttrs,
+
+	setVNodePatchFlags,
+	mergeProps as merge
+
+} from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
 
@@ -183,6 +194,16 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.patchFlag |= functionalVNode.patchFlag;
 		}
 
+		if (Object.size(functionalVNode.dynamicProps) > 0) {
+			vnode.dynamicProps ??= [];
+			functionalVNode.dynamicProps?.forEach((propName) => {
+				if (isHandler.test(propName)) {
+					vnode.dynamicProps!.push(propName);
+					setVNodePatchFlags(vnode, 'props');
+				}
+			});
+		}
+
 		functionalVNode.ignore = true;
 		functionalVNode.props = {};
 		functionalVNode.dirs = null;
@@ -222,8 +243,11 @@ export function wrapResolveComponent<T extends typeof resolveComponent | typeof 
 			return name;
 		}
 
-		if (isComponent.test(name) && app.context != null) {
-			return app.context.component(name) ?? original(name);
+		const
+			appCtx = SSR ? this.app : app.context;
+
+		if (isComponent.test(name) && appCtx != null) {
+			return appCtx.component(name) ?? original(name);
 		}
 
 		return original(name);
@@ -238,7 +262,8 @@ export function wrapResolveDirective<T extends typeof resolveDirective>(
 	original: T
 ): T {
 	return Object.cast(function resolveDirective(this: ComponentInterface, name: string) {
-		return app.context != null ? app.context.directive(name) ?? original(name) : original(name);
+		const appCtx = SSR ? this.app : app.context;
+		return appCtx != null ? appCtx.directive(name) ?? original(name) : original(name);
 	});
 }
 
@@ -261,16 +286,23 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
 
 /**
  * Wrapper for the component library `renderList` function
+ *
  * @param original
+ * @param withCtx
  */
-export function wrapRenderList<T extends typeof renderList>(original: T): T {
+export function wrapRenderList<T extends typeof renderList, C extends typeof withCtx>(original: T, withCtx: C): T {
 	return Object.cast(function renderList(
 		this: ComponentInterface,
 		src: Iterable<unknown> | Dictionary,
 		cb: AnyFunction
 	) {
-		this.$emit('[[V_FOR_CB]]', cb);
-		return original(src, cb);
+		const
+			ctx = this.$renderEngine.r.getCurrentInstance(),
+			// Preserve rendering context for the async render
+			wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
+
+		this.$emit('[[V_FOR_CB]]', wrappedCb);
+		return original(src, wrappedCb);
 	});
 }
 

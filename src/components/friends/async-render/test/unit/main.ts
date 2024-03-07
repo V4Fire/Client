@@ -10,7 +10,8 @@ import type { JSHandle, Page } from 'playwright';
 
 import test from 'tests/config/unit/test';
 
-import { BOM, Component, DOM } from 'tests/helpers';
+import { BOM, Component } from 'tests/helpers';
+import { createSelector, assertResultText, waitForRender } from 'components/friends/async-render/test/helpers';
 
 import type bFriendsAsyncRenderDummy from 'components/friends/async-render/test/b-friends-async-render-dummy/b-friends-async-render-dummy';
 import type { ComponentInterface } from 'components/friends/async-render/test/b-friends-async-render-dummy/b-friends-async-render-dummy';
@@ -18,9 +19,7 @@ import type { ComponentInterface } from 'components/friends/async-render/test/b-
 // Disclaimer:
 // To understand the tests refer to the `b-friends-async-render-dummy` component template
 test.describe('friends/async-render', () => {
-	const
-		componentName = 'b-friends-async-render-dummy',
-		createSelector = DOM.elNameSelectorGenerator(componentName);
+	const componentName = 'b-friends-async-render-dummy';
 
 	test.beforeEach(async ({demoPage}) => {
 		await demoPage.goto();
@@ -215,30 +214,5 @@ test.describe('friends/async-render', () => {
 	 */
 	async function renderDummy(page: Page, stage: string): Promise<JSHandle<bFriendsAsyncRenderDummy>> {
 		return Component.createComponent(page, componentName, {stage});
-	}
-
-	/**
-	 * Asserts that the result element has the specified text
-	 *
-	 * @param page
-	 * @param text
-	 */
-	async function assertResultText(page: Page, text: string): Promise<void> {
-		await test.expect(page.locator(createSelector('result'))).toHaveText(text);
-	}
-
-	/**
-	 * Performs arbitrary action if needed and waits for the async render to complete
-	 *
-	 * @param target
-	 * @param [action]
-	 */
-	async function waitForRender(
-		target: JSHandle<bFriendsAsyncRenderDummy>,
-		action?: () => Promise<void>
-	): Promise<void> {
-		const renderDone = target.evaluate((ctx) => ctx.unsafe.localEmitter.promisifyOnce('asyncRenderChunkComplete'));
-		await action?.();
-		await renderDone;
 	}
 });

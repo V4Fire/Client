@@ -13,10 +13,257 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-??-??)
 
-#### :rocket: New feature
+#### :rocket: New Feature
 
 * Created a new global component `g-slider` that encapsulates CSS `scroll snap` logic `gSlider`
 * Added `useScrollSnap` prop, which enables the use of CSS scroll snap in the `scroll` mode `bSlider`
+* Added a new field `layer`, which allows you to obtain information about the package in which the component was declared `core/component/meta`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with missing methods `element` and `elements` in the Block prototype `bSelect`
+
+#### :house: Internal
+
+* Added support for the `layer` property `core/component/reflect`
+
+## v4.0.0-beta.70 (2024-03-05)
+
+#### :bug: Bug Fix
+
+* Fixed the order of setting the "textStore" property in the "updateTextStore" method, which led to a bug with a non-disappearing "textHint" when input overflows
+* The `activeStore` system field is marked as unique in the `bList`, `bTree`, `bSelect`
+components because it has an `unknown` type and it cannot be correctly merged
+* Fixed an error that the text in native mode was not synchronized with the value `bSelect`
+* Implemented correct switching between elements when pressing the `Tab` key `bSelect`
+
+## v4.0.0-beta.69 (2024-03-04)
+
+#### :rocket: New Feature
+
+* Added a new `v-safe-html` directive for inserting sanitized HTML `components/directives/safe-html`
+
+## v4.0.0-beta.68 (2024-02-29)
+
+#### :bug: Bug Fix
+
+* Fixed the `wait` option in `loadModules` for SSR build `iBlock`
+* Fix the disappearance of functional components in cached pages:
+do not call the destroy method on the rendering engine if `$el` has the `component` property
+`core/component/init/states/before-destroy`
+
+## v4.0.0-beta.67 (2024-02-26)
+
+#### :bug: Bug Fix
+
+* Fixed an with transition into loading success state was not made `components/b-virtual-scroll-new`
+* Fixed synchronous render for functional components in `waitForceRender` `components/friends/async-render`
+
+## v4.0.0-beta.66 (2024-02-22)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with the incorrect transition into the loading state. Now the loading state will be removed in one requestAnimationFrame call along with the content insertion into the DOM,
+and the loading state will be restored on the following one. This trick helps avoid generating CLS errors. `components/base/b-virtual-scroll-new`
+
+* Fixed a race condition when calling `initLoad` multiple times `components/base/b-virtual-scroll-new`
+
+* Added visibility tracking for the tombstones slot, now if this slot is on the screen,
+an attempt will be made to render the data regardless of what the client returned in `shouldPerformDataRender`.
+Also added a flag in VirtualScrollState indicating the visibility of the slot.
+All this will help avoid situations when for some reason the `IntersectionObserver` did not trigger on the elements and as a result `shouldPerformDataRender` was not called. `components/base/b-virtual-scroll-new`
+
+#### :rocket: New Feature
+
+* Added the `BOM.clsScore` method that allows measuring Cumulative Layout Shift (CLS) during any actions.
+
+## v4.0.0-beta.65 (2024-02-21)
+
+#### :bug: Bug Fix
+
+* `iBlock`:
+  * Created separate buckets for each `loadModules` call
+  * Fixed the `wait` option in `loadModules`: now, all modules are not loaded until the wait option is resolved
+
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Fixed a typo when extending the property for inject `core/init`
+* Need to check for the existence of provide properties using `in` `iBlock`
+
+## v4.0.0-beta.63 (2024-02-20)
+
+#### :bug: Bug Fix
+
+* Removed an unnecessary next data chunk response checking `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.62 (2024-02-19)
+
+#### :rocket: New Feature
+
+* Added an app property to get a reference to the application object `core/component`
+
+#### :bug: Bug Fix
+
+* Fixed bugs in the initialization of SSR rendering `core/init` `iStaticPage` `core/cookies`
+
+## v4.0.0-beta.61 (2024-02-15)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with missing aliases `build/webpack/resolve/alias`
+
+## v4.0.0-beta.60 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Removed `shouldPerformDataRequest` prop in `b-virtual-scroll-new` `components/base/b-virtual-scroll-new`
+* `tests/helpers/network/interceptor` no longer has a named export, the `RequestInterceptor` class is now exported as the default export `tests/helpers/network/interceptor`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with aliases being set for build in ssr `build/webpack/resolve/alias`
+
+#### :rocket: New Feature
+
+* Added `preloadAmount` prop in b`-virtual-scroll-new` `components/base/b-virtual-scroll-new`
+
+#### :house:  Internal
+
+* Added re-export of modules from `tests/helpers`:
+  - Request
+  - RequestInterceptor
+  - Mock
+
+* Removed bad import of async module from `tests/helpers/network/interceptor`
+
+## v4.0.0-beta.59 (2024-02-15)
+
+#### :boom: Breaking Change
+
+* Everything except for interfaces has been moved to `core/component/client-state` `core/component/state`
+
+#### :rocket: New Feature
+
+* Added adapters for easy creation of cookie stores `core/cookies/stores`
+
+#### :bug: Bug Fix
+
+* Removed all references to the global state `iStaticPage`
+
+## v4.0.0-beta.58 (2024-02-14)
+
+#### :rocket: New Feature
+
+* Added support for different cookie stores: `core/cookies`, `core/kv-storage/engines/cookie`
+* Added support for different session stores `core/session`
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks `core/init/semaphore` `iStaticPage`
+
+#### :house: Internal
+
+* Moved `system-theme-extractor` from `core` to `components/super/i-static-page/modules/theme`
+
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed memory leaks in:
+  * `components/super/i-block/providers`
+  * `core/init/semaphore`
+  * `components/super/i-static-page/i-static-page`
+* Fixed the loss of event handlers in functional components `core/component/render/wrappers`
+
+#### :house: Internal
+
+* Removed `id` property from `ProviderOptions` interface `core/data/interface/types`
+
+## v4.0.0-beta.56 (2024-02-09)
+
+#### :rocket: New Feature
+
+* New test APIs:
+  * Request interceptor `tests/helpers/network/interceptor`;
+  * ComponentObject `tests/helpers/component-object`;
+  * Spy and mock `tests/helpers/mock`;
+  * Component.createComponentInDummy `tests/helpers/component`.
+
+#### :bug: Bug Fix
+
+* Fixed the problem that the `lifecycleDone` event could fire before `renderDone` `components/components/base/b-virtual-scroll-new`
+
+#### :house:  Internal
+
+* Added tests for `b-virtual-scroll-new` `components/components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :boom: Breaking Change
+
+* `bTree`:
+  * Now all nested trees are rendered as functional
+  * Now, by default, folded items are not rendered
+
+#### :rocket: New Feature
+
+* Added new values for the `lazyRender` prop `bTree`
+
+#### :bug: Bug Fix
+
+* Fixed errors when using the tree as a functional component `bTree`
+* Fixed move to the closest step in `heightMode = content` `bBottomSlide`
+* Added cleanup of hydrated data upon component destroying `iStaticPage`
+
+#### :house: Internal
+
+* Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
+
+## v4.0.0-beta.54 (2024-02-06)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with memory leaks in `vdom.render` `core/component/engines/vue3`
+* Changed `$parent` property to getter in `i-block`. This fixes the incorrect functional parent for a regular component.
+* Changed component deactivation behavior: the component is now deactivated before the deactivation hooks are called `components/super/i-block/modules/activation`
+
+#### :house: Internal
+
+* The entry threshold for counting an element as visible is set to the minimum value `components/components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.53 (2024-01-31)
+
+#### :rocket: New Feature
+
+* Released module `b-virtual-scroll-new`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with memory leaks in `b-virtual-scroll`
+
+## v4.0.0-beta.52 (2024-01-31)
+
+#### :boom: Breaking Change
+
+* Refactored api: replaced the getter/setter named `current` with get/set methods `components/super/i-static-page/modules/theme/theme-manager`
+
+#### :rocket: New Feature
+
+* `components/super/i-static-page/modules/theme/theme-manager`
+  * Added possibility to get/set theme from/to cookie
+  * Added possibility to specify system theme extractor for theme-manager
+  * Added possibility to use systemTheme by calling `useSystem` method
+* Released module `core/system-theme-extractor`
+
+#### :bug: Bug Fix
+
+* Fixed the memoization of `getParent`: it was saved in the context of the main component, as a
+result of which the components in the slots had an incorrect `$parent` `build/snakeskin`
+* Fixed loss of refs in slots inside async render `core/component/render`
+* Fixed unexpected async chunk generation during build
+* Fixed an issue where Intersection Watcher would not remove nodes from memory, resulting in leaks `core/dom/intersection-watcher/engines`
 
 ## v4.0.0-beta.51 (2024-01-19)
 

@@ -17,8 +17,9 @@ package('p-v4-components-demo')
 
 		'b-list',
 		'b-tree',
-		'b-virtual-scroll',
 		'b-window',
+		'b-virtual-scroll',
+		'b-virtual-scroll-new',
 		'b-bottom-slide',
 		'b-slider',
 		'b-sidebar',
@@ -44,6 +45,7 @@ package('p-v4-components-demo')
 		'components/directives/image',
 		'components/directives/icon',
 		'components/directives/in-view',
+		'components/directives/safe-html',
 
 		'core/router/engines/browser-history',
 		'core/router/engines/in-memory',

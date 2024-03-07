@@ -9,6 +9,46 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.68 (2024-02-29)
+
+#### :bug: Bug Fix
+
+* Fixed the `wait` option in `loadModules` for SSR build
+
+## v4.0.0-beta.65 (2024-02-21)
+
+#### :bug: Bug Fix
+
+* Created separate buckets for each `loadModules` call
+* Fixed the `wait` option in `loadModules`: now, all modules are not loaded until the wait option is resolved
+
+## v4.0.0-beta.64 (2024-02-19)
+
+#### :bug: Bug Fix
+
+* Need to check for the existence of provide properties using `in`
+
+## v4.0.0-beta.57 (2024-02-13)
+
+#### :bug: Bug Fix
+
+* Fixed a memory leak in `components/super/i-block/providers`
+
+## v4.0.0-beta.55 (2024-02-08)
+
+#### :house: Internal
+
+* Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
+
+## v4.0.0-beta.54 (2024-02-06)
+
+#### :bug: Bug Fix
+
+* Changed component deactivation behavior: the component is now deactivated
+before the deactivation hooks are called
+* Changed `$parent` property to getter.
+This fixes the incorrect functional parent for a regular component.
+
 ## v4.0.0-beta.44 (2023-12-06)
 
 #### :bug: Bug Fix

@@ -18,7 +18,7 @@ import type { BoundFn } from 'core/async';
 
 import { initGlobalEnv } from 'core/env';
 import { i18nFactory } from 'core/prelude/i18n';
-import { component, remoteState, hook, hydrationStore, Hook, State } from 'core/component';
+import { component, clientState, hook, hydrationStore, Hook, State } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
 import type iBlock from 'components/super/i-block/i-block';
@@ -73,14 +73,14 @@ export default abstract class iBlockState extends iBlockMods {
 	@computed({watchable: true})
 	get remoteState(): State {
 		if (SSR) {
-			return {...this.ssrState!, ...remoteState};
+			return {...clientState, ...this.ssrState!};
 		}
 
-		return remoteState;
+		return clientState;
 	}
 
 	/**
-	 * A string value indicating the component initialize status:
+	 * A string value indicating the component initializing status:
 	 *
 	 *   1. `unloaded` - the component has just been created without any initializing:
 	 *      this status may overlap with some component hooks such as `beforeCreate` or `created`.
@@ -88,7 +88,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 *   2. `loading` - the component starts loading data from its providers:
 	 *      this status may overlap with some component hooks such as `created` or `mounted`.
 	 *      If the component has been mounted with this status, you can display this in the component UI.
-	 *      For example by showing a loading indicator.
+	 *      For example, by showing a loading indicator.
 	 *
 	 *   3. `beforeReady` - the component has been fully loaded and has started preparing to render:
 	 *      this status may overlap with some component hooks such as `created` or `mounted`.
@@ -149,7 +149,7 @@ export default abstract class iBlockState extends iBlockMods {
 
 	/**
 	 * True if the current component is completely ready to work.
-	 * The `ready` status is mean that the component is mounted an all data provider are loaded.
+	 * The `ready` status is mean that the component is mounted and all data providers are loaded.
 	 */
 	@computed()
 	get isReady(): boolean {
@@ -297,10 +297,18 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Factory for creating internationalizing function
+	 * A factory for creating internationalizing function
+	 *
+	 * @param keysetName - the name of keyset or array with names of keysets to use.
+	 *   If passed as an array, the priority of the cases will be arranged in the order of the elements,
+	 *   the first one will have the highest priority.
+	 *
+	 * @param [customLocale] - the locale used to search for translations (the default is taken from
+	 *   the application settings)
 	 */
 	i18n(
-		keysetName: CanArray<string>, customLocale?: Language
+		keysetName: CanArray<string>,
+		customLocale?: Language
 	): (key: string | TemplateStringsArray, params?: I18nParams) => string {
 		return i18nFactory(keysetName, customLocale ?? this.remoteState.lang);
 	}
@@ -408,7 +416,7 @@ export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * This method works as a two-way connector between the component and its storage.
 	 *
-	 * When the component is initializing, it requests the storage for its associated data, using the `globalName` prop
+	 * While the component is initializing, it requests the storage for its associated data, using the `globalName` prop
 	 * as the namespace to search. When the storage is ready to provide data to the component, it passes the data to
 	 * this method. After that, the method returns a dictionary associated with the component properties
 	 * (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
@@ -447,7 +455,7 @@ export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * This method works as a two-way connector between the component and the application router.
 	 *
-	 * When the component is initializing, it requests the router for its associated data.
+	 * While the component is initializing, it requests the router for its associated data.
 	 * The router provides the data by using this method. After that, the method returns a dictionary associated with
 	 * the component properties (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
 	 *

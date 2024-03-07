@@ -7,6 +7,7 @@
  */
 
 import type { Experiments } from 'core/abt';
+import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
 export interface State {
@@ -26,6 +27,11 @@ export interface State {
 	lastOnlineDate?: Date;
 
 	/**
+	 * The application default language
+	 */
+	lang?: Language;
+
+	/**
 	 * A list of registered AB experiments
 	 */
 	experiments?: Experiments;
@@ -35,6 +41,16 @@ export interface State {
 	 * This field is typically used in cases of SSR and hydration.
 	 */
 	route?: InitialRoute | AppliedRoute;
+
+	/**
+	 * A store of application cookies
+	 */
+	cookies?: CookieStore;
+
+	/**
+	 * A shim for the `window.document` API
+	 */
+	document?: Document;
 
 	/**
 	 * An object whose properties will extend the global object.
@@ -53,26 +69,6 @@ export interface State {
 	 * ```
 	 */
 	globalEnv?: GlobalEnvironment;
-
-	/**
-	 * The application locale
-	 */
-	lang?: Language;
 }
 
-export interface GlobalEnvironment extends Dictionary {
-	/**
-	 * A shim for the `window.location` API
-	 */
-	location?: Location;
-
-	/**
-	 * SSR environment object
-	 */
-	ssr?: {
-		/**
-		 * A shim for the `window.document` API
-		 */
-		document?: Document;
-	};
-}
+export interface GlobalEnvironment extends Dictionary {}
