@@ -12,6 +12,9 @@
  */
 
 export * from 'core/theme-manager/const';
+export * from 'core/theme-manager/helpers';
+export * from 'core/theme-manager/interface';
+
 export { default } from 'core/theme-manager/factory';
 
 export { default as ThemeManager } from 'core/theme-manager/class';

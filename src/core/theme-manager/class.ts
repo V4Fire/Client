@@ -11,21 +11,11 @@ import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
 import { factory, SyncStorage } from 'core/kv-storage';
 
-import {
-
-	prefersColorSchemeEnabled,
-	lightThemeName,
-	darkThemeName,
-	DARK,
-	LIGHT
-
-} from 'core/theme-manager/const';
+import { prefersColorSchemeEnabled, themeMapping, DARK, LIGHT } from 'core/theme-manager/const';
 
 import type { Theme, ThemeManagerOptions } from 'core/theme-manager/interface';
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
-
-export * from 'core/theme-manager/const';
-export * from 'core/theme-manager/interface';
+import { defaultTheme } from 'core/theme-manager/helpers';
 
 const
 	$$ = symbolGenerator();
@@ -69,24 +59,18 @@ export default class ThemeManager {
 			throw new ReferenceError('The attribute name for setting themes is not specified');
 		}
 
-		if (POST_PROCESS_THEME && prefersColorSchemeEnabled) {
-			throw new Error('The "postProcessor" parameter cannot be enabled with "detectUserPreferences"');
-		}
-
 		this.themeStorage = factory(opts.themeStorageEngine);
 		this.systemThemeExtractor = opts.systemThemeExtractor;
 
 		let theme: Theme = {
-			value: this.defaultTheme,
+			value: defaultTheme(),
 			isSystem: false
 		};
 
-		if (POST_PROCESS_THEME) {
-			const themeFromStore = this.themeStorage.get<Theme>('colorTheme');
+		const themeFromStore = this.themeStorage.get<Theme>('colorTheme');
 
-			if (themeFromStore != null) {
-				theme = themeFromStore;
-			}
+		if (themeFromStore != null) {
+			theme = themeFromStore;
 		}
 
 		if (theme.isSystem || prefersColorSchemeEnabled) {
@@ -95,17 +79,6 @@ export default class ThemeManager {
 		} else {
 			this.changeTheme(theme);
 		}
-	}
-
-	/**
-	 * Default theme from the app config
-	 */
-	protected get defaultTheme(): string {
-		if (!Object.isString(THEME)) {
-			throw new ReferenceError('A theme to initialize is not specified');
-		}
-
-		return THEME;
 	}
 
 	/**
@@ -143,7 +116,7 @@ export default class ThemeManager {
 	useSystem(): Promise<void> {
 		const changeTheme = (value: string) => {
 			value = this.resolveThemeAlias(value);
-			void this.changeTheme({value, isSystem: true});
+			this.changeTheme({value, isSystem: true});
 		};
 
 		return this.systemThemeExtractor.getSystemTheme().then((value) => {
@@ -178,7 +151,7 @@ export default class ThemeManager {
 				throw new ReferenceError(`A theme with the name "${value}" is not defined`);
 			}
 
-			value = this.defaultTheme;
+			value = defaultTheme();
 		}
 
 		if (!isSystem) {
@@ -212,10 +185,14 @@ export default class ThemeManager {
 	 * @param alias
 	 */
 	protected resolveThemeAlias(alias: string): string {
-		if (prefersColorSchemeEnabled) {
-			return alias === DARK ? darkThemeName : lightThemeName;
+		if (!prefersColorSchemeEnabled) {
+			return alias;
 		}
 
-		return alias;
+		if (themeMapping[alias] == null) {
+			throw TypeError(`Invalid theme alias: "${alias}"`);
+		}
+
+		return themeMapping[alias];
 	}
 }

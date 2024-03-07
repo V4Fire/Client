@@ -30,3 +30,8 @@ export const darkThemeName =
  */
 export const lightThemeName =
 	Object.get<string>(DETECT_USER_PREFERENCES, 'prefersColorScheme.aliases.light') ?? LIGHT;
+
+export const themeMapping = {
+	[DARK]: darkThemeName,
+	[LIGHT]: lightThemeName
+};
