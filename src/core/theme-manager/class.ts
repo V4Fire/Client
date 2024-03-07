@@ -141,7 +141,7 @@ export default class ThemeManager {
 	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
 	 */
 	protected changeTheme(newTheme: Theme): void {
-		if (SSR || !Object.isString(this.themeAttribute) || Object.fastCompare(this.current, newTheme)) {
+		if (Object.fastCompare(this.current, newTheme)) {
 			return;
 		}
 
@@ -166,9 +166,22 @@ export default class ThemeManager {
 
 		this.current = newTheme;
 		this.themeStorage.set('colorTheme', this.current);
-		document.documentElement.setAttribute(this.themeAttribute, value);
+		this.setThemeAttribute(value);
 
 		this.emitter.emit('theme:change', this.current, oldValue);
+	}
+
+	/**
+	 * Sets the current theme value to the DOM theme attribute
+	 *
+	 * @param value
+	 */
+	protected setThemeAttribute(value: string): void {
+		if (SSR || !Object.isString(this.themeAttribute) || this.current.value === value) {
+			return;
+		}
+
+		document.documentElement.setAttribute(this.themeAttribute, value);
 	}
 
 	/**
