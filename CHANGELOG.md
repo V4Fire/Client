@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.68 (2024-02-29)
+## v4.0.0-beta.71 (2024-03-07)
 
 #### :rocket: New Feature
 
@@ -22,11 +22,32 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Refactored the build ssr: all code has now been bundled into one file `build/graph`
 * Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
 
+## v4.0.0-beta.70 (2024-03-05)
+
+#### :bug: Bug Fix
+
+* Fixed the order of setting the "textStore" property in the "updateTextStore" method, which led to a bug with a non-disappearing "textHint" when input overflows
+* The `activeStore` system field is marked as unique in the `bList`, `bTree`, `bSelect`
+components because it has an `unknown` type and it cannot be correctly merged
+* Fixed an error that the text in native mode was not synchronized with the value `bSelect`
+* Implemented correct switching between elements when pressing the `Tab` key `bSelect`
+
+## v4.0.0-beta.69 (2024-03-04)
+
+#### :rocket: New Feature
+
+* Added a new `v-safe-html` directive for inserting sanitized HTML `components/directives/safe-html`
+
+## v4.0.0-beta.68 (2024-02-29)
+
 #### :bug: Bug Fix
 
 * Resolved an issue with the progress plugin's view in relation to empty builds
 * Corrected the theme-manager to function properly in server-side rendering (ssr)
 * Fixed the `wait` option in `loadModules` for SSR build `iBlock`
+* Fix the disappearance of functional components in cached pages:
+do not call the destroy method on the rendering engine if `$el` has the `component` property
+`core/component/init/states/before-destroy`
 
 ## v4.0.0-beta.67 (2024-02-26)
 
