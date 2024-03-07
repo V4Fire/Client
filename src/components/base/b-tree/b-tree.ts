@@ -464,7 +464,7 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 	 */
 	protected getNestedTreeFilter(item: this['Item']): CanNull<() => CanPromise<boolean>> {
 		const canRenderSynchronously = () =>
-			this.getFoldedPropValue(item) ||
+			!this.getFoldedPropValue(item) ||
 			Object.isBoolean(this.lazyRender) ||
 			this.lazyRender === 'items';
 
