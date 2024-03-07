@@ -13,6 +13,12 @@ Changelog
 
 #### :bug: Bug Fix
 
+* Fixed an issue with missing methods `element` and `elements` in the Block prototype
+
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
 * Fixed an error that the text in native mode was not synchronized with the value
 * Implemented correct switching between elements when pressing the `Tab` key
 
