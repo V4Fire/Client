@@ -13,9 +13,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :rocket: New Feature
+
+* Added a new field `layer`, which allows you to obtain information about the package in which the component was declared `core/component/meta`
+
 #### :bug: Bug Fix
 
 * Fixed an issue with missing methods `element` and `elements` in the Block prototype `bSelect`
+
+#### :house: Internal
+
+* Added support for the `layer` property `core/component/reflect`
 
 ## v4.0.0-beta.70 (2024-03-05)
 
