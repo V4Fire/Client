@@ -40,7 +40,12 @@ export interface ComponentMeta {
 	name: string;
 
 	/**
-	 * Component name without any special postfixes
+	 * The name of the NPM package in which the component is defined or overridden
+	 */
+	layer?: string;
+
+	/**
+	 * Component name without any special suffixes
 	 */
 	componentName: string;
 
@@ -137,11 +142,6 @@ export interface ComponentMeta {
 	 * which are essentially functions that are executed at specific stages in the V4Fire component's lifecycle
 	 */
 	hooks: ComponentHooks;
-
-	/**
-	 * The name of the package in which component is defined or overridden
-	 */
-	layer?: string;
 
 	/**
 	 * A less abstract representation of the component would typically include the following elements,

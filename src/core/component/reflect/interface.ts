@@ -20,11 +20,6 @@ import type {
  */
 export interface ComponentConstructorInfo {
 	/**
-	 * The name of the package in which component is defined or overridden
-	 */
-	layer?: string;
-
-	/**
 	 * The full name of the component, which may include a `-functional` postfix if the component is smart
 	 */
 	name: string;
@@ -71,6 +66,11 @@ export interface ComponentConstructorInfo {
 	 * A link to the metaobject of the parent component
 	 */
 	parentMeta?: ComponentMeta;
+
+	/**
+	 * The name of the NPM package in which the component is defined or overridden
+	 */
+	layer?: string;
 }
 
 /**
