@@ -73,6 +73,7 @@ export default abstract class iOpen {
 	 *
 	 * @param component
 	 * @param [events] - a map with events to listen
+	 * @param [eventOpts] - an options for the event listener {@link AddEventListenerOptions}
 	 */
 	static initCloseHelpers<T extends iBlock>(component: T & iOpen, events: CloseHelperEvents = {}, eventOpts: AddEventListenerOptions = {}): void {
 		const {
