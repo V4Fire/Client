@@ -190,12 +190,8 @@ test.describe('<b-select> simple usage', () => {
 		test('should close the dropdown when click on an element with .stopPropagation', async ({page}) => {
 			const btnText = 'buttonWithStopPropagation';
 			await Component.createComponent(page, 'b-button', {
-				attrs: {
-					'@click.stop': () => {},
-				},
-
 				children: {
-					default: btnText,
+					default: btnText
 				}
 			});
 
@@ -206,12 +202,12 @@ test.describe('<b-select> simple usage', () => {
 				]
 			});
 
-			await target.evaluate(ctx => ctx.open());
+			await target.evaluate((ctx) => ctx.open());
 			await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeTruthy();
 
 			await page.getByText(btnText).click();
 			await test.expect(page.locator(createSelector('dropdown')).isHidden()).resolves.toBeTruthy();
-		})
+		});
 
 		test('should be rendered to a native <select> with `native = true`', async ({page}) => {
 			const target = await renderSelect(page, {

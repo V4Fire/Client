@@ -281,7 +281,7 @@ test.describe('friends/dom', () => {
 		test('should find the component with the correct root selector', async ({page}) => {
 			const rootSelectorTarget = await Component.createComponent(page, 'b-button', {
 				attrs: {
-					class: 'correct-root-selector',
+					class: 'correct-root-selector'
 				}
 			});
 
@@ -289,7 +289,7 @@ test.describe('friends/dom', () => {
 			const targetComponentId = await rootSelectorTarget.evaluate((ctx) => ctx.componentId);
 
 			test.expect(componentId).toBe(targetComponentId);
-		})
+		});
 	});
 
 	test.describe('`watchForIntersection`', () => {
