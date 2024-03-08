@@ -23,7 +23,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Fixed an issue with missing methods `element` and `elements` in the Block prototype `bSelect`
 * Fixed closing the dropdown when clicking on an element with stop propagation `bSelect`
-* Fixed getting a component in `getComponent` when an additional selector is passed `components/friends/dom`
+* Fixed getting a component in `getComponent` when an additional root selector is passed `components/friends/dom`
 
 #### :house: Internal
 

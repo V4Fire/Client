@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed getting a component in `getComponent` when an additional selector is passed
+* Fixed getting a component in `getComponent` when an additional root selector is passed
 
 ## v4.0.0-alpha.1 (2022-12-14)
 
