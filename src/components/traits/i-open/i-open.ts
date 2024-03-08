@@ -93,6 +93,7 @@ export default abstract class iOpen {
 			$a.setTimeout(() => {
 				const opts = {
 					...helpersGroup,
+
 					options: {
 						passive: false,
 						...eventOpts,

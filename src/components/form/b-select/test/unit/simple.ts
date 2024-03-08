@@ -193,6 +193,7 @@ test.describe('<b-select> simple usage', () => {
 				attrs: {
 					'@click.stop': () => {},
 				},
+
 				children: {
 					default: btnText,
 				}

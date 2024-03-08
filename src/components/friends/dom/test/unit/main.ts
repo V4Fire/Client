@@ -278,7 +278,7 @@ test.describe('friends/dom', () => {
 			test.expect(component).toBeNull();
 		});
 
-		test('should find the component with correct root selector', async ({page}) => {
+		test('should find the component with the correct root selector', async ({page}) => {
 			const rootSelectorTarget = await Component.createComponent(page, 'b-button', {
 				attrs: {
 					class: 'correct-root-selector',
