@@ -205,7 +205,7 @@ test.describe('<b-select> simple usage', () => {
 				]
 			});
 
-			await target.evaluate(async ctx => await ctx.open());
+			await target.evaluate(ctx => ctx.open());
 			await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeTruthy();
 
 			await page.getByText(btnText).click();
