@@ -24,6 +24,13 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## v4.0.0-beta.70 (2024-03-05)
 
+#### :boom: Breaking Change
+
+* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
+* The fields `isOnline`, `lastOnlineDate`, and `locale` have been removed `iStaticPage`
+
+## v4.0.0-beta.?? (2024-??-??)
+
 #### :bug: Bug Fix
 
 * Fixed the order of setting the "textStore" property in the "updateTextStore" method, which led to a bug with a non-disappearing "textHint" when input overflows

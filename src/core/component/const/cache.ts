@@ -17,6 +17,7 @@ import type {
 
 	ComponentMeta,
 	ComponentOptions,
+
 	RenderFactory,
 	App
 
@@ -31,14 +32,6 @@ export const componentParams = new Map<Function | string, ComponentOptions>();
  * A dictionary with the registered root components
  */
 export const rootComponents = Object.createDict<CanPromise<ComponentEngineOptions<typeof ComponentEngine>>>();
-
-/**
- * A link to the application context and the root component
- */
-export const app: App = {
-	context: null,
-	component: null
-};
 
 /**
  * A dictionary with the registered components
@@ -61,3 +54,12 @@ export const componentRenderFactories = Object.createDict<RenderFactory>();
  * A dictionary with component pointers for metatables
  */
 export const metaPointers = Object.createDict<Dictionary<boolean>>();
+
+/**
+ * Global initialized application (not supported in SSR)
+ */
+export const app: App = {
+	context: null,
+	component: null,
+	state: null
+};
