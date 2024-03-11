@@ -330,7 +330,7 @@ export default abstract class iStaticPage extends iPage {
 		this.hydrationStore?.clear();
 
 		const
-			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appId)}:`));
+			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appProcessId)}:`));
 
 		Object.forEach(instanceCache, (provider, key) => {
 			if (isThisApp.test(key)) {

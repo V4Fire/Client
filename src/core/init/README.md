@@ -101,9 +101,9 @@ import type { InitialRoute } from 'core/router';
 
 interface InitAppOptions {
   /**
-   * The unique application identifier
+   * The unique identifier for the application process
    */
-  appId: string;
+  appProcessId: string;
 
   /**
    * True, if the current user session is authorized

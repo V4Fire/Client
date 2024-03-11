@@ -95,7 +95,7 @@ export async function createApp(
 			hydratedData = '';
 
 			try {
-				destroyApp(state.appId);
+				destroyApp(state.appProcessId);
 			} catch {}
 
 			try {

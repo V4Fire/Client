@@ -56,9 +56,9 @@ import type { InitialRoute, AppliedRoute } from 'core/router';
 
 export interface State {
   /**
-   * The unique application identifier
+   * The unique identifier for the application process
    */
-  appId: string;
+  appProcessId: string;
 
   /**
    * True, if the current user session is authorized
