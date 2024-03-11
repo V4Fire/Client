@@ -15,7 +15,7 @@ import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
 
-import Block, { setElementMod, removeElementMod, getElementSelector } from 'components/friends/block';
+import Block, { setElementMod, removeElementMod, getElementSelector, element, elements } from 'components/friends/block';
 import DOM, { delegateElement } from 'components/friends/dom';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
@@ -61,7 +61,7 @@ export * from 'components/form/b-select/interface';
 export { Value, FormValue };
 
 DOM.addToPrototype({delegateElement});
-Block.addToPrototype({setElementMod, removeElementMod, getElementSelector});
+Block.addToPrototype({setElementMod, removeElementMod, getElementSelector, element, elements});
 Mask.addToPrototype(MaskAPI);
 
 interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof SelectEventHandlers> {}
@@ -142,11 +142,6 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		} else {
 			this.selectValue(value, true);
 			void this.setScrollToMarkedOrSelectedItem();
-		}
-
-		if (!this.multiple) {
-			const item = this.values.getItemByValue(value);
-			this.text = item?.label ?? '';
 		}
 	}
 
@@ -279,6 +274,11 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 			return false;
 		}
 
+		if (!this.multiple) {
+			const item = this.values.getItemByValue(value);
+			this.text = item?.label ?? '';
+		}
+
 		const {block: $b} = this;
 
 		if ($b == null) {
@@ -312,6 +312,10 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 
 		if (!iActiveItems.unsetActive(this, value)) {
 			return false;
+		}
+
+		if (!this.multiple) {
+			this.text = '';
 		}
 
 		if (this.block == null) {
@@ -415,6 +419,13 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		SelectEventHandlers.onItemClick(this, itemEl);
 	}
 
+	/** {@link iOpenToggle.prototype.onKeyClose} */
+	async onKeyClose(e: KeyboardEvent): Promise<void> {
+		if (e.key === 'Escape' || (e.key === 'Tab' && !this.isFocused)) {
+			await this.close();
+		}
+	}
+
 	/** {@link h.setScrollToMarkedOrSelectedItem} */
 	protected setScrollToMarkedOrSelectedItem(): Promise<boolean> {
 		return h.setScrollToMarkedOrSelectedItem.call(this);
@@ -492,6 +503,17 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 		if (!Object.fastCompare(items, oldItems)) {
 			this.initComponentValues();
 			this.emit('itemsChange', items);
+		}
+	}
+
+	protected override updateTextStore(value: string): void {
+		this.field.set('textStore', value);
+
+		const {input} = this.$refs;
+
+		// Sync value of the <input /> with the text
+		if (!this.native && Object.isTruly(input)) {
+			input.value = value;
 		}
 	}
 

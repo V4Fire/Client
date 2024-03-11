@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* Added support for the `layer` property
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :memo: Documentation

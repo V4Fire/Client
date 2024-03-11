@@ -193,4 +193,9 @@ export interface ComponentOptions {
 	 * @default `true`
 	 */
 	inheritMods?: boolean;
+
+	/**
+	 * The name of the NPM package in which the component is defined or overridden
+	 */
+	layer?: string;
 }
