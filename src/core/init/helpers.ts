@@ -36,6 +36,7 @@ export function getAppParams(opts: InitAppOptions): {
 			...opts,
 			net: opts.net ?? net,
 			cookies: cookies.from(opts.cookies),
+			seo: {},
 			route
 		}).proxy,
 

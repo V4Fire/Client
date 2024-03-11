@@ -106,15 +106,6 @@ export default abstract class iStaticPage extends iPage {
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
-	 * A module for manipulating page metadata, such as the page title or description
-	 */
-	@system<iStaticPage>(() => new PageMetaData({
-		document: SSR ? Object.cast({}) : document
-	}))
-
-	readonly pageMetaData!: PageMetaData;
-
-	/**
 	 * True if the current user is authorized
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))

@@ -6,7 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { LinkAttributes, MetaAttributes } from 'components/super/i-static-page/modules/page-meta-data';
 import type * as net from 'core/net';
 
 import type { Session } from 'core/session';
@@ -20,6 +19,8 @@ export interface State {
 	 * The unique application identifier
 	 */
 	appId: string;
+
+	seo: Dictionary<unknown>;
 
 	/**
 	 * True, if the current user session is authorized
