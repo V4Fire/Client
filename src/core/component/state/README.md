@@ -81,6 +81,16 @@ export interface State {
   location: URL;
 
   /**
+   * True, if the application is connected to the Internet
+   */
+  isOnline?: boolean;
+
+  /**
+   * Date of the last Internet connection
+   */
+  lastOnlineDate?: Date;
+
+  /**
    * An API to work with a network, such as testing of the network connection, etc.
    */
   net: typeof net;
