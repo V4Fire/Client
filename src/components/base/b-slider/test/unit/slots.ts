@@ -5,11 +5,11 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
+
 import test from 'tests/config/unit/test';
 import Utils from 'tests/helpers/utils';
 
 import type * as Block from 'components/friends/block';
-
 import { renderSlider } from 'components/base/b-slider/test/helpers';
 
 test.describe('<b-slider> slots rendering', () => {
@@ -147,5 +147,4 @@ test.describe('<b-slider> slots rendering', () => {
 
 		test.expect(id).toEqual(slotId);
 	});
-
 });
