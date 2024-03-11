@@ -163,6 +163,7 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 
 		if (img.naturalWidth > 0) {
 			void onLoad();
+
 		} else {
 			onError();
 		}
