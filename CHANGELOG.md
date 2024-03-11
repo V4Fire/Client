@@ -22,6 +22,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Created a new global component `g-slider` that encapsulates CSS `scroll snap` logic `gSlider`
+* Added `useScrollSnap` prop, which enables the use of CSS scroll snap in the `scroll` mode `bSlider`
 * Added a new field `layer`, which allows you to obtain information about the package in which the component was declared `core/component/meta`
 
 #### :bug: Bug Fix
@@ -225,7 +227,6 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 #### :house: Internal
 
 * Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
->>>>>>> v4
 
 ## v4.0.0-beta.54 (2024-02-06)
 
