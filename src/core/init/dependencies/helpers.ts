@@ -32,7 +32,7 @@ export function dependency(depOrFn: Dependency | DependencyFn, ...wait: string[]
 export function dependency(depOrFn: Dependency | DependencyFn, ...wait: string[]): Dependency {
 	if (Object.isFunction(depOrFn)) {
 		return {
-			fn: depOrFn.once(),
+			fn: depOrFn,
 			wait: new Set(wait)
 		};
 	}
@@ -137,7 +137,9 @@ export function* createDependencyIterator(
 			wait: expandedWait
 		};
 
+		expandedDependency.fn = expandedDependency.fn.once();
 		expandedDependencies.set(dependency, expandedDependency);
+
 		return expandedDependency;
 	}
 }
