@@ -27,55 +27,6 @@ import('models/modules/test/test-session');
 
 export * from 'core/data';
 
-/* eslint-disable @typescript-eslint/no-unused-vars, require-yield */
-
-interface ParserToken<T = unknown> {type: string; value?: T}
-
-interface ParserValue<T = unknown> extends ParserToken<T> {}
-
-type ParserResult<T = unknown> = [ParserValue<T>, Iterable<string>];
-
-type Parser<T = unknown, R = unknown> = (iterable: Iterable<string>) => Generator<ParserToken<T>, ParserResult<R>>;
-
-interface ParserOptions<T = unknown> {
-	token?: string;
-	tokenValue?(unknown): T;
-}
-
-function tag<T, R>(template: Iterable<string | RegExp>, opts?: ParserOptions): Parser<T, R> {
-	// ...
-	return <any>null;
-}
-
-function seq<T = unknown, R = unknown>(
-	...parsers: Parser[]
-): Parser<T | T[], R[]>;
-
-function seq<T = unknown, R = unknown>(
-	opts: ParserOptions,
-	...parsers: Parser[]
-): Parser<T | T[], R[]>;
-
-function seq(
-	optsOrParser: ParserOptions | Parser,
-	...parsers: Parser[]
-): Parser {
-	return <any>{};
-}
-
-const sign = tag([/[-+]/], {token: 'SIGN'});
-const digit = tag([/\d+/], {token: 'DIGIT'});
-const digits = repeat(digit, {token: 'DIGITS', tokenValue: (tokens) => tokens.reduce((r, {value}) => r + value, '')});
-
-const expToken = {token: 'EXP', tokenValue: ([_, {value: sign}, {value: digits}]) => sign + digits};
-const exp = seq(expToken, tag('e'), opt(sign), digits);
-
-const significandToken = {token: 'SIGNIFICAND', tokenValue: (tokens) => tokens.reduce((r, {value}) => r + value, '')};
-const significand = seq(significandToken, opt(sign), digits, opt(seq(tag('.'), digits)));
-
-// Вот наш парсер
-const num = seq(significand, exp);
-
 @provider
 export default class Session extends Provider {
 	/**
