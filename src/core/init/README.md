@@ -220,6 +220,7 @@ You can manually add or remove additional dependencies, or, again, use the `depe
 Please note that V4Fire expects the initialization of three basic states described in the modules:
 
 * `core/init/dependencies/load-session`
+* `core/init/dependencies/check-online`
 * `core/init/dependencies/loaded-hydrated-page`
 * `core/init/dependencies/when-dom-loaded`
 
