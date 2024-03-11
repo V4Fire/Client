@@ -74,7 +74,7 @@ export async function createApp(
 			}
 		});
 
-		app.provide('app', {instance: app, state});
+		app.provide('app', {context: app, state});
 		app.provide('hydrationStore', hydrationStore);
 
 		let
@@ -113,7 +113,7 @@ export async function createApp(
 		el: opts.targetToMount
 	});
 
-	app.provide('app', {instance: app, state});
+	app.provide('app', {context: app, state});
 
 	Object.defineProperty(globalApp, 'context', {
 		configurable: true,
