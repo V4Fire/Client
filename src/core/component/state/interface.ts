@@ -16,9 +16,9 @@ import type { InitialRoute, AppliedRoute } from 'core/router';
 
 export interface State {
 	/**
-	 * The unique application identifier
+	 * The unique identifier for the application process
 	 */
-	appId: string;
+	appProcessId: string;
 
 	seo: Dictionary<unknown>;
 
@@ -41,6 +41,16 @@ export interface State {
 	 * An API for working with the target document's URL
 	 */
 	location: URL;
+
+	/**
+	 * True, if the application is connected to the Internet
+	 */
+	isOnline?: boolean;
+
+	/**
+	 * Date of the last Internet connection
+	 */
+	lastOnlineDate?: Date;
 
 	/**
 	 * An API to work with a network, such as testing of the network connection, etc.
