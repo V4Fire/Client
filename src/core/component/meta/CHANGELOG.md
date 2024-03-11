@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added a new field `layer`, which allows you to obtain information about the package in which the component was declared
+
 ## v4.0.0-beta.21 (2023-09-14)
 
 #### :rocket: New Feature

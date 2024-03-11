@@ -1,5 +1,5 @@
 {
-  "hash": "07710505007b95955dfd65aa25872b4c407bf711cc915e42cd15b7b1a9e2dd75",
+  "hash": "ff36220f58f3461dcfe70b0dc9e204ac3514c46e11a5b0962eef65d4cc6f16f8",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1682,6 +1682,38 @@
         }
       ],
       [
+        "g-slider",
+        {
+          "index": "src/components/global/g-slider/index.js",
+          "declaration": {
+            "name": "g-slider",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-slider",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/components/global/g-slider/g-slider.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
         "i-access",
         {
           "index": "src/components/traits/i-access/index.js",
@@ -2350,6 +2382,7 @@
               "components/directives/image",
               "components/directives/icon",
               "components/directives/in-view",
+              "components/directives/safe-html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
               "components/traits/i-control-list/i-control-list",
@@ -2393,6 +2426,7 @@
             "components/directives/image",
             "components/directives/icon",
             "components/directives/in-view",
+            "components/directives/safe-html",
             "core/router/engines/browser-history",
             "core/router/engines/in-memory",
             "components/traits/i-control-list/i-control-list",
@@ -2408,6 +2442,7 @@
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",
+              "components/directives/safe-html",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
@@ -2424,6 +2459,7 @@
               "components/directives/icon",
               "components/directives/image",
               "components/directives/in-view",
+              "components/directives/safe-html",
               "components/traits/i-control-list/i-control-list",
               "core/browser",
               "core/cookies",
