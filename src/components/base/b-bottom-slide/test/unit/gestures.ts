@@ -172,7 +172,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should stick to the closest step on a slow pull-up', () => {
-		test('when heightMode = \'full\'', async ({page}) => {
+		test('when heightMode = "full"', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				visible: 100,
@@ -191,7 +191,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 			test.expect(windowY).toBe(halfPageHeight);
 		});
 
-		test('when heightMode = \'content\'', async ({page}) => {
+		test('when heightMode = "content"', async ({page}) => {
 			await page.addStyleTag({
 				content: '#test-div {height: 3000px;}'
 			});
@@ -217,7 +217,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should stick to the closest step on a fast pull-up', () => {
-		test('when `heightMode` = \'full\'', async ({page}) => {
+		test('when `heightMode` = "full"', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				visible: 100,
@@ -236,7 +236,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 			test.expect(windowY).toBe(halfPageHeight);
 		});
 
-		test('when `heightMode` = \'content\'', async ({page}) => {
+		test('when `heightMode` = "content"', async ({page}) => {
 			await page.addStyleTag({
 				content: '#test-div {height:30px;}'
 			});
@@ -262,7 +262,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should skip all the steps on a full pull-up', () => {
-		test('when `heightMode` = \'full\'', async ({page}) => {
+		test('when `heightMode` = "full"', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
 				visible: 100,
@@ -281,7 +281,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 			test.expect(windowTopOffset).toBe(maxWindowHeight);
 		});
 
-		test('when `heightMode` = \'content\'', async ({page}) => {
+		test('when `heightMode` = "content"', async ({page}) => {
 			await page.addStyleTag({
 				content: '#test-div {height:3000px;}'
 			});
@@ -307,7 +307,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should not skip any steps before a full pull-up', () => {
-		test('when `heightMode` = \'full\'', async ({page}) => {
+		test('when `heightMode` = "full"', async ({page}) => {
 			const
 				steps = [30, 60];
 
@@ -338,7 +338,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 			test.expect(windowTopOffset).toBe(window60PercentOfHeight);
 		});
 
-		test('when `heightMode` = \'content\'', async ({page}) => {
+		test('when `heightMode` = "content"', async ({page}) => {
 			const
 				steps = [30, 60];
 
