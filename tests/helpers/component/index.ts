@@ -147,7 +147,7 @@ export default class Component {
 					Object.assign(ctx.testComponentAttrs, parsed.attrs) :
 					parsed.attrs ?? {};
 
-				if (parsed.children) {
+				if (!Object.isEmpty(parsed.children)) {
 					ctx.testComponentSlots = compileChild();
 				}
 
