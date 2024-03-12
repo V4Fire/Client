@@ -8,9 +8,12 @@
 
 import test from 'tests/config/unit/test';
 
-import { Assert } from 'tests/helpers';
+import { Assert, ComponentObject } from 'tests/helpers';
 
 import { createSelector, renderSelect } from 'components/form/b-select/test/helpers';
+
+import type bDummy from 'components/dummies/b-dummy/b-dummy';
+import type { ComponentElement } from 'components/dummies/b-dummy/b-dummy';
 
 test.describe('<b-select> keyboard interaction', () => {
 	const items = [
@@ -174,5 +177,49 @@ test.describe('<b-select> keyboard interaction', () => {
 		await page.keyboard.type('Baz');
 		await test.expect(input).not.toBeFocused();
 		await test.expect(input).toHaveValue('Foo');
+	});
+
+	test('should restore the keydown event handler after the functional component is recreated', async ({page}) => {
+		const builder = new ComponentObject(page, 'b-select');
+
+		const props = {
+			items,
+			'@onChange': (value: string) => {
+				const {component} = (<ComponentElement<bDummy>>document.querySelector('.b-dummy'));
+				component!.testComponentAttrs.value = value;
+			}
+		};
+
+		const
+			select = await builder.withProps(props).build({functional: true, useDummy: true}),
+			componentInstance = await select.evaluateHandle((ctx) => ctx.$el!.component!);
+
+		const
+			input = page.locator(createSelector('input')),
+			dropdown = page.locator(createSelector('dropdown'));
+
+		await input.focus();
+		await test.expect(input).toBeFocused();
+
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('Enter');
+
+		const instanceIsRecreated = await select.evaluate(
+			(current, previous) => current.$el!.component !== previous,
+			componentInstance
+		);
+
+		test.expect(instanceIsRecreated).toBeTruthy();
+
+		await test.expect(input).toHaveValue('Foo');
+		await test.expect(dropdown).toBeHidden();
+
+		await page.keyboard.press('ArrowDown');
+		await test.expect(dropdown).toBeVisible();
+
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('Enter');
+
+		await test.expect(input).toHaveValue('Bar');
 	});
 });
