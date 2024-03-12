@@ -33,6 +33,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
+* Created a new global component `g-slider` that encapsulates CSS `scroll snap` logic `gSlider`
+* Added `useScrollSnap` prop, which enables the use of CSS scroll snap in the `scroll` mode `bSlider`
 * Added a new field `layer`, which allows you to obtain information about the package in which the component was declared `core/component/meta`
 
 #### :bug: Bug Fix
