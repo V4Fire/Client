@@ -61,25 +61,29 @@ test.describe('<b-select> keyboard interaction', () => {
 	test('should close dropdown when `ArrowUp` is pressed', async ({page}) => {
 		await renderSelect(page, {items});
 
+		const dropdown = page.locator(createSelector('dropdown'));
+
 		await page.locator(createSelector('input')).focus();
 
-		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeTruthy();
+		await test.expect(dropdown).toBeVisible();
 
 		await page.keyboard.press('ArrowUp');
 
-		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeFalsy();
+		await test.expect(dropdown).toBeHidden();
 	});
 
 	test('should close dropdown when `Tab` is pressed', async ({page}) => {
 		await renderSelect(page, {items});
 
+		const dropdown = page.locator(createSelector('dropdown'));
+
 		await page.locator(createSelector('input')).focus();
 
-		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeTruthy();
+		await test.expect(dropdown).toBeVisible();
 
 		await page.keyboard.press('Tab');
 
-		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeFalsy();
+		await test.expect(dropdown).toBeHidden();
 	});
 
 	test('should loop through items using `ArrowDown`', async ({page}) => {
@@ -103,7 +107,9 @@ test.describe('<b-select> keyboard interaction', () => {
 	});
 
 	test('should select item when `Enter` is pressed', async ({page}) => {
-		const target = await renderSelect(page, {items});
+		const
+			target = await renderSelect(page, {items}),
+			dropdown = page.locator(createSelector('dropdown'));
 
 		await page.locator(createSelector('input')).focus();
 
@@ -111,14 +117,14 @@ test.describe('<b-select> keyboard interaction', () => {
 		await page.keyboard.press('Enter');
 
 		await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(0);
-		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeFalsy();
+		await test.expect(dropdown).toBeHidden();
 
 		await page.keyboard.press('ArrowDown');
 		await page.keyboard.press('ArrowDown');
 		await page.keyboard.press('Enter');
 
 		await test.expect(target.evaluate((ctx) => ctx.value)).resolves.toEqual(1);
-		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeFalsy();
+		await test.expect(dropdown).toBeHidden();
 	});
 
 	test([
@@ -127,13 +133,15 @@ test.describe('<b-select> keyboard interaction', () => {
 	].join(' '), async ({page}) => {
 		await renderSelect(page, {items});
 
-		const input = page.locator(createSelector('input'));
+		const
+			input = page.locator(createSelector('input')),
+			dropdown = page.locator(createSelector('dropdown'));
 
 		await input.focus();
 		await test.expect(input).toBeFocused();
 
 		await input.blur();
-		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeTruthy();
+		await test.expect(dropdown).toBeVisible();
 		await test.expect(input).not.toBeFocused();
 
 		await page.keyboard.type('Baz');
@@ -147,7 +155,9 @@ test.describe('<b-select> keyboard interaction', () => {
 	].join(' '), async ({page}) => {
 		await renderSelect(page, {items});
 
-		const input = page.locator(createSelector('input'));
+		const
+			input = page.locator(createSelector('input')),
+			dropdown = page.locator(createSelector('dropdown'));
 
 		await input.focus();
 		await test.expect(input).toBeFocused();
@@ -156,7 +166,7 @@ test.describe('<b-select> keyboard interaction', () => {
 		await page.keyboard.press('Enter');
 
 		await test.expect(input).toHaveValue('Foo');
-		await test.expect(page.locator(createSelector('dropdown')).isVisible()).resolves.toBeFalsy();
+		await test.expect(dropdown).toBeHidden();
 
 		await page.keyboard.press('Tab');
 		await test.expect(input).not.toBeFocused();
