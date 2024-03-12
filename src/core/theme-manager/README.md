@@ -4,8 +4,7 @@ This module provides an API for managing application themes.
 
 ## How to use?
 
-By default, any component that inherited from [[iStaticPage]] has the `theme` property.
-To access this API from an arbitrary component, use it via the root component.
+By default, any component has the `remoteState` property, which represents an API for theme managing in `theme` field.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -13,7 +12,12 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   created() {
-    console.log(this.r.theme.current);
+    // There is a possibilty that app has no themes and remote state doesn't provide theme API
+    if (this.remoteState.theme == null) {
+      return;
+    }
+
+    console.log(this.remoteState.theme.get());
   }
 }
 ```
@@ -87,9 +91,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 ## Events
 
-| EventName      | Description                  | Payload description   | Payload                      |
-|----------------|------------------------------|-----------------------|------------------------------|
-| `theme:change` | Theme value has been changed | The new and old value | `string`; `CanUndef<string>` |
+| EventName      | Description                  | Payload description   | Payload                    |
+|----------------|------------------------------|-----------------------|----------------------------|
+| `theme:change` | Theme value has been changed | The new and old value | `Theme`; `CanUndef<Theme>` |
 
 ## Accessors
 
@@ -103,7 +107,7 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   created() {
-    console.log(this.r.theme.availableThemes);
+    console.log(this.remoteState.theme.availableThemes);
   }
 }
 ```
@@ -120,7 +124,7 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   created() {
-    console.log(this.r.theme.get());
+    console.log(this.remoteState.theme.get());
   }
 }
 ```
@@ -135,7 +139,7 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   changeTheme(value: 'dark' | 'light') {
-    this.r.theme.set(value);
+    this.remoteState.theme.set(value);
   }
 }
 ```
@@ -150,7 +154,7 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   created() {
-    this.r.theme.useSystem();
+    this.remoteState.theme.useSystem();
   }
 }
 ```

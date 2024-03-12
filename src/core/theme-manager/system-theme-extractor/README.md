@@ -9,23 +9,25 @@ By default, the engine for the web is supported.
 The engine needs to be passed to the `themeManager` constructor.
 
 ```ts
-import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
+import themeManagerFactory, { SystemThemeExtractorWeb } from 'core/theme-manager';
 
-class iRoot extends iStaticPage {
-  @system<iStaticPage>((o) => themeManagerFactory(
-    // ...other required parameters for themeManager
-    new SystemThemeExtractorWeb(o)
-  ))
+// ...
+initApp(rootComponentName, {
+  // ...
+  theme: themeManagerFactory({
+    // ...
+    systemThemeExtractor: new SystemThemeExtractorWeb()
+  })
+  // ...
+});
 
-  readonly theme: CanUndef<ThemeManager>;
-}
 ```
 
 Also, you can implement your own engine.
 
 ```ts
-// src/components/super/i-static-page/modules/theme/system-theme-extractor/engines/custom/index.ts
-import type { SystemThemeExtractor } from 'components/super/i-static-page/modules/theme/system-theme-extractor';
+// src/core/theme-manger/system-theme-extractor/engines/custom/engine.ts
+import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
 
 export default class CustomEngine implements SystemThemeExtractor {
   // Implement all necessary methods of the interface here.
@@ -36,4 +38,4 @@ The `SystemThemeExtractor` interface specifies that the `getSystemTheme` method 
 allowing for asynchronous computation of the system theme.
 If synchronous computation is necessary for your case, you can use `SyncPromise`.
 
-See `components/super/i-static-page/modules/theme` for details.
+See `core/theme-manger` for details.
