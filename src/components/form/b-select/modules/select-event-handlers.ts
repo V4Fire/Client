@@ -307,7 +307,7 @@ export default abstract class SelectEventHandlers {
 			{unsafe} = component,
 			{async: $a} = unsafe;
 
-		component.keydownHandlerEnabled = enabled;
+		unsafe.keydownHandlerEnabled = enabled;
 
 		if (enabled) {
 			$a.on(document, 'keydown', unsafe.onItemsNavigate.bind(unsafe), navigationEventOpts);

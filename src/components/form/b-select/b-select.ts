@@ -124,13 +124,6 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 
 	activeStore!: iActiveItems['activeStore'];
 
-	/**
-	 * True if keydown handler is enabled.
-	 * This flag is needed to restore event handler for functional components.
-	 */
-	@system()
-	keydownHandlerEnabled: boolean = false;
-
 	@computed({cache: true, dependencies: ['active']})
 	override get value(): CanUndef<this['Active']> {
 		const val = this.active;
@@ -248,6 +241,13 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	}))
 
 	protected itemsStore!: this['Items'];
+
+	/**
+	 * True if keydown handler is enabled.
+	 * This flag is needed to restore event handler for functional components.
+	 */
+	@system()
+	protected keydownHandlerEnabled: boolean = false;
 
 	protected override readonly $refs!: iInputText['$refs'] & {
 		dropdown?: Element;
