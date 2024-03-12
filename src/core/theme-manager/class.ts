@@ -50,15 +50,9 @@ export default class ThemeManager {
 	protected readonly themeStorage!: SyncStorage;
 
 	/**
-	 * An attribute to set the theme value to the root element
+	 * @param opts
 	 */
-	protected readonly themeAttribute: CanUndef<string> = THEME_ATTRIBUTE;
-
 	constructor(opts: ThemeManagerOptions) {
-		if (!SSR && !Object.isString(this.themeAttribute)) {
-			throw new ReferenceError('The attribute name for setting themes is not specified');
-		}
-
 		this.themeStorage = factory(opts.themeStorageEngine);
 		this.systemThemeExtractor = opts.systemThemeExtractor;
 
@@ -171,13 +165,18 @@ export default class ThemeManager {
 	 * Sets the current theme value to the DOM theme attribute
 	 *
 	 * @param value
+	 * @throws ReferenceError
 	 */
 	protected setThemeAttribute(value: string): void {
-		if (SSR || !Object.isString(this.themeAttribute) || this.current.value === value) {
+		if (SSR || this.current.value === value) {
 			return;
 		}
 
-		document.documentElement.setAttribute(this.themeAttribute, value);
+		if (!Object.isString(THEME_ATTRIBUTE)) {
+			throw new ReferenceError('The attribute name for setting themes is not specified');
+		}
+
+		document.documentElement.setAttribute(THEME_ATTRIBUTE, value);
 	}
 
 	/**
