@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed the operation of loadModules during SSR
+
 ## v4.0.0-beta.68 (2024-02-29)
 
 #### :bug: Bug Fix
