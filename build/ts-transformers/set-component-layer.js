@@ -78,24 +78,25 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 			// noinspection JSAnnotator
 			const properties = expr.arguments?.[0]?.properties ?? [];
 
-			const
-				updatedCallExpression = factory.updateCallExpression(
-					expr,
-					expr.expression,
-					expr.typeArguments,
-					[
-						factory.createObjectLiteralExpression(
-							[
-								...properties,
-								factory.createPropertyAssignment(
-									factory.createIdentifier('layer'),
-									factory.createStringLiteral(layer)
-								)
-							],
-							false
-						)
-					]
-				);
+			const updatedCallExpression = factory.updateCallExpression(
+				expr,
+				expr.expression,
+				expr.typeArguments,
+
+				[
+					factory.createObjectLiteralExpression(
+						[
+							...properties,
+							factory.createPropertyAssignment(
+								factory.createIdentifier('layer'),
+								factory.createStringLiteral(layer)
+							)
+						],
+
+						false
+					)
+				]
+			);
 
 			return factory.updateDecorator(node, updatedCallExpression);
 		}
@@ -139,6 +140,7 @@ function isInsideComponent(filePath) {
  */
 function isComponentCallExpression(node) {
 	const expr = node.expression;
+
 	if (Boolean(expr) && !ts.isCallExpression(expr) || !ts.isIdentifier(expr?.expression)) {
 		return false;
 	}
