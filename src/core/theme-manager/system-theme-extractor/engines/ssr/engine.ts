@@ -15,7 +15,7 @@ import { defaultTheme } from 'core/theme-manager';
 
 /**
  * Represents a `SystemThemeExtractor` implementation tailored for ssr environments.
- * This implementation uses a request headers to monitor changes in the preferred color scheme.
+ * This implementation uses a request headers to extract preferred color scheme.
  */
 export default class SsrEngine implements SystemThemeExtractor {
 	/**
