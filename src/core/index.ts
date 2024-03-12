@@ -11,12 +11,17 @@ import { resolveAfterDOMLoaded } from 'core/event';
 
 import initApp from 'core/init';
 
+import * as cookies from 'core/cookies';
 import * as session from 'core/session';
 import SessionEngine from 'core/session/engines';
+import themeManagerFactory, { SystemThemeExtractorWeb } from 'core/theme-manager';
+import CookieStorage from 'core/kv-storage/engines/cookie';
 
 export * as cookies from 'core/cookies';
 export * as session from 'core/session';
 export * as kvStorage from 'core/kv-storage';
+export * as themeManager from 'core/theme-manager';
+export * as CookiesEngine from 'core/kv-storage/engines/cookie';
 
 export { initApp };
 
@@ -38,6 +43,16 @@ if (SSR) {
 				cookies: document,
 				session: session.from(SessionEngine),
 				location: getLocationAPI(),
+				theme: themeManagerFactory(
+					{
+						themeStorageEngine: new CookieStorage('v4ls', {
+							cookies: cookies.from(document),
+							maxAge: 2 ** 31 - 1
+						}),
+
+						systemThemeExtractor: new SystemThemeExtractorWeb()
+					}
+				),
 
 				targetToMount
 			});

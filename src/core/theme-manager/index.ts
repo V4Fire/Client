@@ -19,3 +19,4 @@ export { default } from 'core/theme-manager/factory';
 
 export { default as ThemeManager } from 'core/theme-manager/class';
 export { default as SystemThemeExtractorWeb } from 'core/theme-manager/system-theme-extractor/engines/web/engine';
+export { default as SystemThemeExtractorSsr } from 'core/theme-manager/system-theme-extractor/engines/ssr/engine';
