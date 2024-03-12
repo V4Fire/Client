@@ -10,6 +10,7 @@ import SyncPromise from 'core/promise/sync';
 import Async, { EventEmitterLikeP, AsyncOptions, ClearOptions } from 'core/async';
 
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
+import { defaultTheme } from 'core/theme-manager';
 
 /**
  * Represents a `SystemThemeExtractor` implementation tailored for web environments.
@@ -57,7 +58,7 @@ export default class WebEngine implements SystemThemeExtractor {
 	/** @inheritDoc */
 	getSystemTheme(): SyncPromise<string> {
 		if (this.darkThemeMq == null) {
-			return SyncPromise.resolve('light');
+			return SyncPromise.resolve(defaultTheme());
 		}
 
 		return SyncPromise.resolve(this.darkThemeMq.matches ? 'dark' : 'light');
