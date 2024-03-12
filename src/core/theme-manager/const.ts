@@ -6,8 +6,14 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * Represents a constant for a dark theme string.
+ */
 export const DARK = 'dark';
 
+/**
+ * Represents a constant for a light theme string.
+ */
 export const LIGHT = 'light';
 
 /**
@@ -31,6 +37,9 @@ export const darkThemeName =
 export const lightThemeName =
 	Object.get<string>(DETECT_USER_PREFERENCES, 'prefersColorScheme.aliases.light') ?? LIGHT;
 
+/**
+ * Represents a mapping between theme codes and their associated names.
+ */
 export const themeMapping = {
 	[DARK]: darkThemeName,
 	[LIGHT]: lightThemeName
