@@ -98,11 +98,9 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 				);
 
 			return factory.updateDecorator(node, updatedCallExpression);
-
 		}
 
 		return ts.visitEachChild(node, visitor, context);
-
 	};
 
 	return ts.visitNode(sourceFile, visitor);
