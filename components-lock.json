@@ -1,5 +1,5 @@
 {
-  "hash": "ff612946926b2470b7562430f78e73e3d043da65636debb42984b0c28c4f111c",
+  "hash": "ff36220f58f3461dcfe70b0dc9e204ac3514c46e11a5b0962eef65d4cc6f16f8",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -1676,6 +1676,38 @@
           "logic": null,
           "styles": [
             "src/components/global/g-icon/g-icon.styl"
+          ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "g-slider",
+        {
+          "index": "src/components/global/g-slider/index.js",
+          "declaration": {
+            "name": "g-slider",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "g-slider",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "global",
+          "mixin": false,
+          "logic": null,
+          "styles": [
+            "src/components/global/g-slider/g-slider.styl"
           ],
           "tpl": null,
           "etpl": null

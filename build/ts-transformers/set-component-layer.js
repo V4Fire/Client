@@ -53,6 +53,9 @@ const
  * ```
  */
 const setComponentLayerTransformer = (context) => (sourceFile) => {
+	// FIXME: the build breaks during SSR
+	return sourceFile;
+
 	if (!isInsideComponent(sourceFile.path)) {
 		return sourceFile;
 	}
