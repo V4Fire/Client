@@ -53,9 +53,6 @@ const
  * ```
  */
 const setComponentLayerTransformer = (context) => (sourceFile) => {
-	// FIXME: the build breaks during SSR
-	return sourceFile;
-
 	if (!isInsideComponent(sourceFile.path)) {
 		return sourceFile;
 	}
@@ -70,36 +67,42 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 	 * @returns {Node}
 	 */
 	const visitor = (node) => {
-		if (
-			node.kind === ts.SyntaxKind.CallExpression &&
-			node.parent?.kind === ts.SyntaxKind.Decorator &&
-			node.expression?.escapedText === 'component'
-		) {
+		if (ts.isDecorator(node) && isComponentCallExpression(node)) {
+			const
+				expr = node.expression;
+
+			if (!ts.isCallExpression(expr)) {
+				return node;
+			}
+
 			// noinspection JSAnnotator
-			const properties = node.arguments?.[0]?.properties ?? [];
+			const properties = expr.arguments?.[0]?.properties ?? [];
 
-			return factory.createCallExpression(
-				factory.createIdentifier('component'),
-				undefined,
+			const
+				updatedCallExpression = factory.updateCallExpression(
+					expr,
+					expr.expression,
+					expr.typeArguments,
+					[
+						factory.createObjectLiteralExpression(
+							[
+								...properties,
+								factory.createPropertyAssignment(
+									factory.createIdentifier('layer'),
+									factory.createStringLiteral(layer)
+								)
+							],
+							false
+						)
+					]
+				);
 
-				[
-					factory.createObjectLiteralExpression(
-						[
-							...properties,
-							factory.createPropertyAssignment(
-								factory.createIdentifier('layer'),
-								factory.createStringLiteral(layer)
-							)
-						],
-
-						false
-					)
-				]
-			);
+			return factory.updateDecorator(node, updatedCallExpression);
 
 		}
 
 		return ts.visitEachChild(node, visitor, context);
+
 	};
 
 	return ts.visitNode(sourceFile, visitor);
@@ -128,4 +131,19 @@ function getLayerName(filePath) {
  */
 function isInsideComponent(filePath) {
 	return isComponentPath.test(filePath);
+}
+
+/**
+ * Returns true if the specified call expression is `component()`
+ *
+ * @param {Node} node
+ * @returns {boolean}
+ */
+function isComponentCallExpression(node) {
+	const expr = node.expression;
+	if (Boolean(expr) && !ts.isCallExpression(expr) || !ts.isIdentifier(expr?.expression)) {
+		return false;
+	}
+
+	return expr.expression.escapedText === 'component';
 }
