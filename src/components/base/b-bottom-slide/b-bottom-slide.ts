@@ -154,6 +154,8 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 	 * @emits `stepChange(step: number)`
 	 */
 	protected set step(value: number) {
+		// TO BE REMOVED AFTER DEBUG
+		const prev = this.step;
 		if (value === this.step) {
 			return;
 		}

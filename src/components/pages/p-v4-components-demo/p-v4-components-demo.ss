@@ -13,7 +13,7 @@
 - template index() extends ['i-static-page.component'].index
 	- block body
 		< b-bottom-slide &
-			:steps = [50] |
+			:steps = [30,50,60] |
 			:hideWithDelay = false |
 			:overlay = false |
 			:visible = 92 |
