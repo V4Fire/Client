@@ -16,6 +16,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed the loss of the keydown event handler when recreating a functional component `bSelect`
+* Fixed the issue of the dropdown not closing when clicking on an element with stop propagation `bSelect`
+* Fixed getting a component in `getComponent` when an additional root selector is passed `components/friends/dom`
 
 ## 4.0.0-beta.71 (2024-03-12)
 

@@ -450,7 +450,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	/** {@link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
-		iOpenToggle.initCloseHelpers(this, events);
+		iOpenToggle.initCloseHelpers(this, events, {capture: true});
 	}
 
 	/** {@link Values.init} */
