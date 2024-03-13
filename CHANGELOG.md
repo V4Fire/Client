@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.?? (2024-03-??)
+
+#### :bug: Bug Fix
+
+* Fixed the loss of the keydown event handler when recreating a functional component `bSelect`
+
 ## 4.0.0-beta.71 (2024-03-12)
 
 #### :rocket: New Feature
