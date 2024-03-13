@@ -21,7 +21,7 @@ Changelog
 
 * Fixed an issue with missing methods `element` and `elements` in the Block prototype
 
-## v4.0.0-beta.?? (2024-??-??)
+## 4.0.0-beta.71 (2024-03-12)
 
 #### :bug: Bug Fix
 

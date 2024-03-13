@@ -67,17 +67,21 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 	 * @returns {Node}
 	 */
 	const visitor = (node) => {
-		if (
-			node.kind === ts.SyntaxKind.CallExpression &&
-			node.parent?.kind === ts.SyntaxKind.Decorator &&
-			node.expression?.escapedText === 'component'
-		) {
-			// noinspection JSAnnotator
-			const properties = node.arguments?.[0]?.properties ?? [];
+		if (ts.isDecorator(node) && isComponentCallExpression(node)) {
+			const
+				expr = node.expression;
 
-			return factory.createCallExpression(
-				factory.createIdentifier('component'),
-				undefined,
+			if (!ts.isCallExpression(expr)) {
+				return node;
+			}
+
+			// noinspection JSAnnotator
+			const properties = expr.arguments?.[0]?.properties ?? [];
+
+			const updatedCallExpression = factory.updateCallExpression(
+				expr,
+				expr.expression,
+				expr.typeArguments,
 
 				[
 					factory.createObjectLiteralExpression(
@@ -94,6 +98,7 @@ const setComponentLayerTransformer = (context) => (sourceFile) => {
 				]
 			);
 
+			return factory.updateDecorator(node, updatedCallExpression);
 		}
 
 		return ts.visitEachChild(node, visitor, context);
@@ -125,4 +130,20 @@ function getLayerName(filePath) {
  */
 function isInsideComponent(filePath) {
 	return isComponentPath.test(filePath);
+}
+
+/**
+ * Returns true if the specified call expression is `component()`
+ *
+ * @param {Node} node
+ * @returns {boolean}
+ */
+function isComponentCallExpression(node) {
+	const expr = node.expression;
+
+	if (Boolean(expr) && !ts.isCallExpression(expr) || !ts.isIdentifier(expr?.expression)) {
+		return false;
+	}
+
+	return expr.expression.escapedText === 'component';
 }

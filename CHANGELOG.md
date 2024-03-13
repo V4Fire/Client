@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-??-??)
+## 4.0.0-beta.71 (2024-03-12)
 
 #### :rocket: New Feature
 
@@ -22,8 +22,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an issue with missing methods `element` and `elements` in the Block prototype `bSelect`
-* Fixed closing the dropdown when clicking on an element with stop propagation `bSelect`
-* Fixed getting a component in `getComponent` when an additional root selector is passed `components/friends/dom`
+* Fixed the operation of loadModules during SSR `iBlock`
 
 #### :house: Internal
 
