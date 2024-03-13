@@ -198,13 +198,12 @@ test.describe('<b-bottom-slide> gestures', () => {
 
 			const component = await renderBottomSlide(page, {
 				heightMode: 'content',
-				steps: [50]
+				steps: [50],
+				visible: 100
 			});
 
-			await open(page, component);
-
 			await gestures.evaluate((ctx) =>
-				ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+				ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -110, {pause: 200})));
 
 			await BOM.waitForIdleCallback(page);
 
@@ -288,13 +287,12 @@ test.describe('<b-bottom-slide> gestures', () => {
 
 			const component = await renderBottomSlide(page, {
 				heightMode: 'content',
+				visible: 100,
 				steps: [30, 50, 60]
 			});
 
-			await open(page, component);
-
 			await gestures.evaluate((ctx) =>
-				ctx.swipe(ctx.buildSteps(7, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+				ctx.swipe(ctx.buildSteps(8, 20, globalThis.innerHeight, 0, -150, {pause: 200})));
 
 			await BOM.waitForIdleCallback(page);
 

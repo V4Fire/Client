@@ -233,7 +233,7 @@ class bBottomSlide extends iBottomSlideProps implements iLockPageScroll, iObserv
 	 * Component's geometry - stores different heights and offsets
 	 */
 	@system((o) => new Geometry(o))
-	protected geometry!: Geometry;
+	public geometry!: Geometry;
 
 	/**
 	 * Overlay API - provides control of the component's overlay
