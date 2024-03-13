@@ -9,7 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.70 (2024-03-05)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with missing methods `element` and `elements` in the Block prototype
+
+## 4.0.0-beta.71 (2024-03-12)
 
 #### :bug: Bug Fix
 

@@ -1,0 +1,43 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+$p = {
+
+}
+
+g-slider
+	display flex
+	white-space nowrap
+
+	overflow-x auto
+	scroll-snap-type x mandatory
+
+	&_horizontal_true
+		scroll-snap-type x mandatory
+
+	&_vertical_true
+		height 100%
+		flex-direction column
+
+		overflow-y scroll
+		scroll-snap-type y mandatory
+
+	& > *
+		scroll-snap-align start
+
+	&__slide_snap_start
+		scroll-snap-align start
+
+	&__slide_snap_center
+		scroll-snap-align center
+
+	&__slide_snap_end
+		scroll-snap-align end
+
+.g-slider
+	g-slider()
