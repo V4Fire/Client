@@ -272,7 +272,7 @@ test.describe('friends/dom', () => {
 			test.expect(component).toBeNull();
 		});
 
-		test('should return `null` if the component with root selector is not found', async () => {
+		test('should return `null` if the component with the root selector is not found', async () => {
 			const component = await target.evaluate((ctx) => ctx.unsafe.dom.getComponent('.b-friends-dom-dummy', '.unreachable-root-selector'));
 
 			test.expect(component).toBeNull();

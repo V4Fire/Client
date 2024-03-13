@@ -11,6 +11,13 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.?? (2024-03-??)
+
+#### :bug: Bug Fix
+
+* Fixed the issue of the dropdown not closing when clicking on an element with stop propagation `bSelect`
+* Fixed getting a component in `getComponent` when an additional root selector is passed `components/friends/dom`
+
 ## 4.0.0-beta.71 (2024-03-12)
 
 #### :rocket: New Feature

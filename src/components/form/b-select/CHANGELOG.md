@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed closing the dropdown when clicking on an element with stop propagation
+* Fixed the issue of the dropdown not closing when clicking on an element with stop propagation
 
 ## v4.0.0-beta.70 (2024-03-05)
 
