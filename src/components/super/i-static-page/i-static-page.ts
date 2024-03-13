@@ -21,7 +21,7 @@ import { instanceCache } from 'core/data';
 import { setLocale, locale } from 'core/i18n';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
-import type PageMeta from 'core/page-meta';
+import type PageMetaData from 'core/page-meta-data';
 
 import * as cookies from 'core/cookies';
 import CookieStorage from 'core/kv-storage/engines/cookie';
@@ -92,12 +92,6 @@ export default abstract class iStaticPage extends iPage {
 	readonly providerDataStore!: ProviderDataStore;
 
 	/**
-	 * A module for manipulating page metadata, such as the page title or description
-	 */
-	@system((o) => o.remoteState.pageMeta)
-	readonly pageMeta!: PageMeta;
-
-	/**
 	 * A module to manage app themes from the Design System
 	 */
 	@system<iStaticPage>((o) => themeManagerFactory(
@@ -150,6 +144,13 @@ export default abstract class iStaticPage extends iPage {
 	})
 
 	globalEnv!: GlobalEnvironment;
+
+	/**
+	 * A module for manipulating page metadata, such as the page title or description
+	 */
+	get pageMetaData(): PageMetaData {
+		return this.remoteState.pageMeta;
+	}
 
 	/**
 	 * The name of the active route page

@@ -12,7 +12,7 @@ import * as net from 'core/net';
 import * as session from 'core/session';
 
 import type { InitAppOptions } from 'core/init/interface';
-import PageMeta from 'core/page-meta';
+import PageMetaData from 'core/page-meta-data';
 
 /**
  * Initializes the global state of the application (user session initialization, online status loading, etc.)
@@ -22,7 +22,7 @@ export default async function initState(params: InitAppOptions): Promise<void> {
 	initGlobalEnv(params);
 	params.isOnline = true;
 
-	params.pageMeta = new PageMeta();
+	params.pageMeta = new PageMetaData();
 
 	if (!SSR) {
 		net.isOnline()

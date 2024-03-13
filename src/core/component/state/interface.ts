@@ -9,7 +9,7 @@
 import type { Experiments } from 'core/abt';
 import type { CookieStore } from 'core/cookies';
 import type { InitialRoute, AppliedRoute } from 'core/router';
-import type PageMeta from 'core/page-meta';
+import type PageMetaData from 'core/page-meta-data';
 
 export interface State {
 	/**
@@ -76,7 +76,7 @@ export interface State {
 	/**
 	 * API to work with seo meta information of the current page
 	 */
-	pageMeta: PageMeta;
+	pageMeta: PageMetaData;
 }
 
 export interface GlobalEnvironment extends Dictionary {}
