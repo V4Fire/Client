@@ -161,10 +161,10 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 
 		const
 			name = this.componentName,
-			{functional = false} = options ?? {},
+			{functional = false, useDummy = false} = options ?? {},
 			fullComponentName = `${name}${functional && !name.endsWith('-functional') ? '-functional' : ''}`;
 
-		if (options?.useDummy) {
+		if (useDummy) {
 			if (functional && !Object.isEmpty(this.children)) {
 				throw new Error('Children are not supported for functional components inside b-dummy');
 			}
