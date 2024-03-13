@@ -7,20 +7,20 @@
  */
 
 import symbolGenerator from 'core/symbol';
-import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 
+import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { factory, SyncStorage } from 'core/kv-storage';
 
 import { prefersColorSchemeEnabled, themeMapping, DARK, LIGHT } from 'core/theme-manager/const';
+import { defaultTheme } from 'core/theme-manager/helpers';
 
 import type { Theme, ThemeManagerOptions } from 'core/theme-manager/interface';
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
-import { defaultTheme } from 'core/theme-manager/helpers';
 
 const
 	$$ = symbolGenerator();
 
-export default class ThemeManager {
+export class ThemeManager {
 	/**
 	 * A set of available app themes
 	 */
@@ -50,7 +50,7 @@ export default class ThemeManager {
 	protected readonly themeStorage!: SyncStorage;
 
 	/**
-	 * @param opts
+	 * @param opts - options for initializing the theme manager
 	 */
 	constructor(opts: ThemeManagerOptions) {
 		this.themeStorage = factory(opts.themeStorageEngine);
@@ -76,14 +76,14 @@ export default class ThemeManager {
 	}
 
 	/**
-	 * True, if dark theme enabled
+	 * True, if the dark theme is enabled
 	 */
 	get isDark(): boolean {
 		return this.current.value === this.resolveThemeAlias(DARK);
 	}
 
 	/**
-	 * True, if light theme enabled
+	 * True, if the light theme enabled
 	 */
 	get isLight(): boolean {
 		return this.current.value === this.resolveThemeAlias(LIGHT);

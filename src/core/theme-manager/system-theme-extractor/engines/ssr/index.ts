@@ -6,6 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+/**
+ * [[include:core/theme-manager/system-theme-extractor/engines/ssr/README.md]]
+ * @packageDocumentation
+ */
+
 import SyncPromise from 'core/promise/sync';
 import type { AsyncOptions, ClearOptions } from 'core/async';
 
@@ -17,7 +22,7 @@ import { defaultTheme } from 'core/theme-manager';
  * Represents a `SystemThemeExtractor` implementation tailored for ssr environments.
  * This implementation uses a request headers to extract preferred color scheme.
  */
-export default class SsrEngine implements SystemThemeExtractor {
+export class SystemThemeExtractorSSR implements SystemThemeExtractor {
 	/**
 	 * The request headers
 	 */

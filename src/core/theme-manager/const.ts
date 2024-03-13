@@ -7,12 +7,12 @@
  */
 
 /**
- * Represents a constant for a dark theme string.
+ * Represents a constant for a dark theme string
  */
 export const DARK = 'dark';
 
 /**
- * Represents a constant for a light theme string.
+ * Represents a constant for a light theme string
  */
 export const LIGHT = 'light';
 
