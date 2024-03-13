@@ -93,7 +93,10 @@
 		.
 
 		- if SSR
-			- if paths.length > 0 || wait
+			- if paths.length > 0
+				? wait = '() => { const {Promise} = global; return new Promise(() => {}); }'
+
+			- else if wait
 				? wait = '((f) => f == null ? f : () => { const {Promise} = global; return new Promise(() => {}); })(' + wait + ')'
 
 		: &
