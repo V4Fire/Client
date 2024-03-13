@@ -40,6 +40,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed an issue with missing methods `element` and `elements` in the Block prototype `bSelect`
+* Fixed the operation of loadModules during SSR `iBlock`
 
 #### :house: Internal
 
