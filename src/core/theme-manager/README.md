@@ -1,10 +1,37 @@
 # core/theme-manager
 
-This module provides an API for managing application themes.
+This module provides an API for managing the appearance themes of applications.
 
 ## How to use?
 
-By default, any component has the `remoteState` property, which represents an API for theme managing in `theme` field.
+It is necessary to create an instance of the ThemeManager class and set it in the options:
+
+1. where to store the user's theme (for example, in cookies);
+2. the engine that will allow determining the user's default theme (for example,
+   the user's OS has a dark theme enabled).
+
+```typescript
+import { from } from 'core/cookies';
+import { CookieEngine } from 'core/kv-storage/engines/cookie';
+
+import { ThemeManager, SystemThemeExtractorWeb } from 'core/theme-manager';
+
+const themeManager = new ThemeManager({
+  themeStorageEngine: new CookieEngine('v4ss', {cookies: from(document)}),
+  systemThemeExtractor: new SystemThemeExtractorWeb()
+});
+
+console.log(themeManager.get());
+console.log(themeManager.set('dark'));
+```
+
+### How to use it inside a component?
+
+Explicit use of this class inside a component is discouraged,
+as this scheme will not work with SSR, because each request could have its own theme.
+Therefore, by default, the theme manager is instantiated in the global state of the application,
+which is described in the `core/component/state` module.
+To access it, you should use the `remoteState` property.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -13,13 +40,50 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 export default class bExample extends iBlock {
   created() {
     // There is a possibilty that app has no themes and remote state doesn't provide theme API
-    if (this.remoteState.theme == null) {
-      return;
-    }
-
-    console.log(this.remoteState.theme.get());
+    console.log(this.remoteState.theme?.get());
   }
 }
+```
+
+### How to use it with SSR?
+
+An instance of the theme manager needs to be explicitly instantiated when the application is created.
+
+```typescript
+import express from 'express';
+
+import { initApp } from 'core/init';
+
+import { from, createCookieStore } from 'core/cookies';
+import { CookieEngine } from 'core/kv-storage/engines/cookie';
+
+import { ThemeManager, SystemThemeExtractorSSR } from 'core/theme-manager';
+
+const app = express();
+const port = 3000;
+
+app.get('/', (req, res) => {
+  const cookies = createCookieStore(req.headers.cookies);
+
+  initApp('p-v4-components-demo', {
+    location: new URL('https://example.com/user/12345'),
+
+    cookies,
+
+    theme: new ThemeManager({
+      themeStorageEngine: new CookieEngine('app', {cookies}),
+      systemThemeExtractor: new SystemThemeExtractorSSR(req.headers)
+    })
+  })
+
+  .then(({content, styles}) => {
+    res.send(`<style>${styles}</style>${content}`);
+  });
+});
+
+app.listen(port, () => {
+  console.log(`Start: http://localhost:${port}`);
+});
 ```
 
 ## Configuration
