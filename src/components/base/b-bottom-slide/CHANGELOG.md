@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fixed full put up/down of slide in `heightMode = content`
+* Fixed full pull up/down of slide in `heightMode = content`
 
 ## v4.0.0-beta.55 (2024-02-08)
 
