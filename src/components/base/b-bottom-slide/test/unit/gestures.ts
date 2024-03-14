@@ -172,6 +172,10 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should stick to the closest step on a slow pull-up', () => {
+
+		const slowPullUp = () => gestures.evaluate((ctx) =>
+			ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+
 		test('when heightMode = "full"', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
@@ -179,8 +183,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 				steps: [50]
 			});
 
-			await gestures.evaluate((ctx) =>
-				ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+			await slowPullUp();
 
 			await BOM.waitForIdleCallback(page);
 
@@ -202,8 +205,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 				visible: 100
 			});
 
-			await gestures.evaluate((ctx) =>
-				ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -110, {pause: 200})));
+			await slowPullUp();
 
 			await BOM.waitForIdleCallback(page);
 
@@ -216,6 +218,10 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should stick to the closest step on a fast pull-up', () => {
+
+		const fastPullUp = () => gestures.evaluate((ctx) =>
+			ctx.swipe(ctx.buildSteps(3, 20, globalThis.innerHeight, 0, -20)));
+
 		test('when `heightMode` = "full"', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
@@ -223,8 +229,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 				steps: [50]
 			});
 
-			await gestures.evaluate((ctx) =>
-				ctx.swipe(ctx.buildSteps(3, 20, globalThis.innerHeight, 0, -20)));
+			await fastPullUp();
 
 			await BOM.waitForIdleCallback(page);
 
@@ -247,8 +252,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 
 			await open(page, component);
 
-			await gestures.evaluate((ctx) =>
-				ctx.swipe(ctx.buildSteps(3, 20, globalThis.innerHeight, 0, -10)));
+			await fastPullUp();
 
 			await BOM.waitForIdleCallback(page);
 
@@ -261,6 +265,10 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should skip all the steps on a full pull-up', () => {
+
+		const fullPullUp = () => gestures.evaluate((ctx) =>
+			ctx.swipe(ctx.buildSteps(7, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+
 		test('when `heightMode` = "full"', async ({page}) => {
 			const component = await renderBottomSlide(page, {
 				heightMode: 'full',
@@ -268,8 +276,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 				steps: [30, 50, 60]
 			});
 
-			await gestures.evaluate((ctx) =>
-				ctx.swipe(ctx.buildSteps(7, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+			await fullPullUp();
 
 			await BOM.waitForIdleCallback(page);
 
@@ -291,8 +298,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 				steps: [30, 50, 60]
 			});
 
-			await gestures.evaluate((ctx) =>
-				ctx.swipe(ctx.buildSteps(8, 20, globalThis.innerHeight, 0, -150, {pause: 200})));
+			await fullPullUp();
 
 			await BOM.waitForIdleCallback(page);
 
