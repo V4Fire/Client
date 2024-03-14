@@ -46,6 +46,12 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	@field()
 	someField: unknown = 'foo';
 
+	@system()
+	protected renderCount: number = 0;
+
+	@system()
+	protected readonly testDb: Dictionary[] = [{value: '1'}, {value: '2'}, {value: '3'}];
+
 	protected beforeCreate(): void {
 		//#unless runtime has storybook
 		// eslint-disable-next-line no-console
