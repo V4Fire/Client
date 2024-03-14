@@ -94,10 +94,10 @@
 
 		- if SSR
 			- if paths.length > 0
-				? wait = '() => { const {Promise} = global; return new Promise(() => {}); }'
+				? wait = 'waitComponentStatus("destroyed")'
 
 			- else if wait
-				? wait = '((f) => f == null ? f : () => { const {Promise} = global; return new Promise(() => {}); })(' + wait + ')'
+				? wait = '((f) => f == null ? f : waitComponentStatus("destroyed"))(' + wait + ')'
 
 		: &
 			filter = (wait ? buble.transform("`" + wait + "`").code : 'undefined')
@@ -128,10 +128,9 @@
 			.
 
 			{{
-				void(moduleLoader.addToBucket(${bucket}, {
+				void(${SSR} ? null : moduleLoader.addToBucket(${bucket}, {
 					id: ${interpolatedId},
-					load: () => (async () => (${filter})?.())().then(() => import('${path}')),
-					ssr: false
+					load: () => (async () => (${filter})?.())().then(() => import('${path}'))
 				}))
 			}}
 
