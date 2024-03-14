@@ -174,7 +174,7 @@ test.describe('<b-bottom-slide> gestures', () => {
 	test.describe('should stick to the closest step on a slow pull-up', () => {
 
 		const slowPullUp = () => gestures.evaluate((ctx) =>
-			ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+			ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -110, {pause: 200})));
 
 		test('when heightMode = "full"', async ({page}) => {
 			const component = await renderBottomSlide(page, {
