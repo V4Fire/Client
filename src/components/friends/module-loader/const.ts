@@ -12,5 +12,7 @@ export const
 	cache = new Map<unknown, Module>();
 
 if (SSR) {
-	Object.defineProperty(cache, 'set', {value: () => {}});
+	Object.defineProperty(cache, 'set', {value: () => {
+		// Do nothing
+	}});
 }

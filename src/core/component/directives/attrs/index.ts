@@ -417,7 +417,9 @@ ComponentEngine.directive('attrs', {
 				handlerStore = new Map();
 
 				if (SSR) {
-					Object.defineProperty(handlerStore, 'set', {value: () => {}});
+					Object.defineProperty(handlerStore, 'set', {value: () => {
+						// Do nothing
+					}});
 				}
 
 				handlers.set(ctx, handlerStore);
