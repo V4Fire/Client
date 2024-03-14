@@ -11,3 +11,17 @@
 - include 'components/super/i-static-page/i-static-page.component.ss'|b as placeholder
 
 - template index() extends ['i-static-page.component'].index
+	- block body
+
+		< button @click = asyncRender.forceRender()
+			Button
+
+		< .&__wrapper v-async-target
+			< template v-for = _ in asyncRender.iterate(true, { &
+				filter: asyncRender.waitForceRender('items-wrapper')
+			}) .
+				< .&__items-wrapper
+					< . v-async-target
+						< template v-for = n in asyncRender.iterate(2)
+							{{ n }}
+

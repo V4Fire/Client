@@ -12,10 +12,12 @@
  */
 
 import iStaticPage, { component, prop, field, system } from 'components/super/i-static-page/i-static-page';
+import AsyncRender, { waitForceRender, forceRender } from 'components/friends/async-render';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
 
 export * from 'components/super/i-static-page/i-static-page';
 
+AsyncRender.addToPrototype({waitForceRender, forceRender});
 VDOM.addToPrototype(VDOMAPI);
 
 // eslint-disable-next-line no-console
