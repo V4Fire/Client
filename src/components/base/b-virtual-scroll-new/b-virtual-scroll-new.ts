@@ -393,6 +393,10 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	 * Renders components using {@link bVirtualScrollNew.componentFactory} and inserts them into the DOM tree
 	 */
 	protected performRender(): void {
+		if (SSR) {
+			return;
+		}
+
 		this.onRenderStart();
 
 		const

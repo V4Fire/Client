@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* Fixed an issue with rendering errors in SSR `components/base/b-virtual-scroll-new`
+
 ## 4.0.0-beta.72 (2024-03-13)
 
 #### :bug: Bug Fix
