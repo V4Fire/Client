@@ -12,10 +12,10 @@
 
 - template index() extends ['i-static-page.component'].index
 	- block body
-		< button @click = asyncRender.forceRender()
+		< button @click = asyncRender.forceRender
 			Button
 
-		< .container v-async-target
+		< .&__container v-async-target
 			< template v-for = _ in asyncRender.iterate(true, {filter: asyncRender.waitForceRender('item')})
-				< .&__item
+				< .&__item v-async-target
 					test
