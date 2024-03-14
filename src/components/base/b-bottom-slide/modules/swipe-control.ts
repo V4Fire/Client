@@ -129,7 +129,6 @@ export default class SwipeControl extends Friend {
 			isThresholdPassed = !isFastSwipe && startEndDiff >= ctx.swipeThreshold;
 
 		ctx.animation.stopMoving();
-
 		this.moveToClosest(isLongSwipe, isThresholdPassed);
 
 		this.endY += this.startY - this.currentY;
