@@ -157,6 +157,7 @@ export default class SwipeControl extends Friend {
 		if (ctx.heightMode === 'content') {
 			if (isFullyPutDown) {
 				ctx.step = 0;
+
 			} else if (isFullyPutUp) {
 				ctx.step = ctx.stepCount - 1;
 			}
