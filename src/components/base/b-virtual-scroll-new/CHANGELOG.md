@@ -11,9 +11,9 @@ Changelog
 
 ## v4.0.0-beta.?? (2024-??-??)
 
-#### :bug: Bug Fix
+#### :rocket: New Feature
 
-* Fixed an issue with rendering errors in SSR
+* Added support for rendering the first chunk in SSR
 
 ## v4.0.0-beta.67 (2024-02-26)
 

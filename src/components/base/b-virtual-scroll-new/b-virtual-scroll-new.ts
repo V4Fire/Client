@@ -19,7 +19,7 @@ import type iItems from 'components/traits/i-items/i-items';
 import VDOM, { create, render } from 'components/friends/vdom';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll-new/handlers';
 import { bVirtualScrollNewAsyncGroup, bVirtualScrollNewDomInsertAsyncGroup, componentModes, renderGuardRejectionReason } from 'components/base/b-virtual-scroll-new/const';
-import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll, ItemsProcessors, ComponentMode } from 'components/base/b-virtual-scroll-new/interface';
+import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll, ItemsProcessors, ComponentMode, ComponentItem } from 'components/base/b-virtual-scroll-new/interface';
 
 import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll-new/modules/emitter';
 import { ComponentInternalState } from 'components/base/b-virtual-scroll-new/modules/state';
@@ -27,7 +27,7 @@ import { SlotsStateController } from 'components/base/b-virtual-scroll-new/modul
 import { ComponentFactory } from 'components/base/b-virtual-scroll-new/modules/factory';
 import { Observer } from 'components/base/b-virtual-scroll-new/modules/observer';
 
-import iData, { component, system, watch, wait, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
+import iData, { component, system, field, watch, wait, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-virtual-scroll-new/interface';
 export * from 'components/base/b-virtual-scroll-new/const';
@@ -82,6 +82,12 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	get componentMode(): ComponentMode {
 		return this.items ? componentModes.items : componentModes.dataProvider;
 	}
+
+	/**
+	 * The items of the first chunk are being rendered in SSR
+	 */
+	@field()
+	protected firstChunkItems: ComponentItem[] = [];
 
 	/**
 	 * Initializes the loading of the next data chunk
@@ -393,14 +399,16 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	 * Renders components using {@link bVirtualScrollNew.componentFactory} and inserts them into the DOM tree
 	 */
 	protected performRender(): void {
+		this.onRenderStart();
+
+		const items = this.componentFactory.produceComponentItems();
+
 		if (SSR) {
+			this.firstChunkItems = items;
 			return;
 		}
 
-		this.onRenderStart();
-
 		const
-			items = this.componentFactory.produceComponentItems(),
 			nodes = this.componentFactory.produceNodes(items),
 			mounted = this.componentFactory.produceMounted(items, nodes);
 
