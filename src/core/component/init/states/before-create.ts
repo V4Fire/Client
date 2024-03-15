@@ -65,7 +65,7 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value: () => {
+		value() {
 			if (component.hook !== 'beforeDestroy' && component.hook !== 'destroyed') {
 				beforeDestroyState(component);
 			}
@@ -80,7 +80,7 @@ export function beforeCreateState(
 		configurable: true,
 		enumerable: false,
 		writable: true,
-		value: (ref: unknown) => {
+		value(ref: unknown) {
 			if (ref == null) {
 				return undefined;
 			}
@@ -91,6 +91,38 @@ export function beforeCreateState(
 
 			return `${String(ref)}:${unsafe.componentId}`;
 		}
+	});
+
+	const $getRoot = Symbol('$getRoot');
+
+	Object.defineProperty(unsafe, '$getRoot', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: <ComponentInterface['$getRoot']>((ctx) =>
+			ctx[$getRoot] ??= () => ('getRoot' in ctx ? ctx.getRoot?.() : null) ?? ctx.$root)
+	});
+
+	const $getParent = Symbol('$getParent');
+
+	Object.defineProperty(unsafe, '$getParent', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: <ComponentInterface['$getParent']>((ctx, restArgs) => {
+			if (restArgs != null) {
+				// VNODE
+				if ('type' in restArgs && 'children' in restArgs) {
+					return ctx[$getParent] ??= () => restArgs.virtualParent?.value != null ? restArgs.virtualParent.value : ctx;
+				}
+
+				if ('ctx' in restArgs) {
+					return (restArgs.ctx ?? ctx)[$getParent] ??= () => restArgs.ctx ?? ctx;
+				}
+			}
+
+			return ctx[$getParent] ??= () => ctx;
+		})
 	});
 
 	const

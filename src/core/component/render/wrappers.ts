@@ -118,15 +118,13 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode = createVNode(name, attrs, isRegular ? slots : [], patchFlag, dynamicProps);
 
 		vnode.props ??= {};
-		vnode.props.getRoot ??= () =>
-			('getRoot' in this ? this.getRoot?.() : null) ??
-			this.$root;
+		vnode.props.getRoot ??= this.$getRoot(this);
 
 		vnode.props.getParent ??= () => vnode.virtualParent?.value != null ?
 			vnode.virtualParent.value :
 			this;
 
-		if (vnode.ref != null && vnode.ref.i == null) {
+		if (!SSR && vnode.ref != null && vnode.ref.i == null) {
 			vnode.ref.i ??= {
 				refs: this.$refs,
 				setupState: {}
@@ -184,24 +182,26 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			instance: Object.cast(virtualCtx)
 		});
 
-		if (vnode.shapeFlag < functionalVNode.shapeFlag) {
-			// eslint-disable-next-line no-bitwise
-			vnode.shapeFlag |= functionalVNode.shapeFlag;
-		}
+		if (!SSR) {
+			if (vnode.shapeFlag < functionalVNode.shapeFlag) {
+				// eslint-disable-next-line no-bitwise
+				vnode.shapeFlag |= functionalVNode.shapeFlag;
+			}
 
-		if (vnode.patchFlag < functionalVNode.patchFlag) {
-			// eslint-disable-next-line no-bitwise
-			vnode.patchFlag |= functionalVNode.patchFlag;
-		}
+			if (vnode.patchFlag < functionalVNode.patchFlag) {
+				// eslint-disable-next-line no-bitwise
+				vnode.patchFlag |= functionalVNode.patchFlag;
+			}
 
-		if (Object.size(functionalVNode.dynamicProps) > 0) {
-			vnode.dynamicProps ??= [];
-			functionalVNode.dynamicProps?.forEach((propName) => {
-				if (isHandler.test(propName)) {
-					vnode.dynamicProps!.push(propName);
-					setVNodePatchFlags(vnode, 'props');
-				}
-			});
+			if (Object.size(functionalVNode.dynamicProps) > 0) {
+				vnode.dynamicProps ??= [];
+				functionalVNode.dynamicProps?.forEach((propName) => {
+					if (isHandler.test(propName)) {
+						vnode.dynamicProps!.push(propName);
+						setVNodePatchFlags(vnode, 'props');
+					}
+				});
+			}
 		}
 
 		functionalVNode.ignore = true;
