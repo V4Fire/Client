@@ -40,6 +40,10 @@ const flagDest = {
  * ```
  */
 export function setVNodePatchFlags(vnode: VNode, ...flags: Array<keyof typeof flagValues>): void {
+	if (SSR) {
+		return;
+	}
+
 	flags.forEach((flag) => {
 		const
 			val = flagValues[flag],

@@ -52,7 +52,7 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 		$renderEngine: {r}
 	} = this;
 
-	if (ref != null) {
+	if (!SSR && ref != null) {
 		ref.i ??= r.getCurrentInstance();
 	}
 
@@ -104,7 +104,10 @@ export function resolveAttrs<T extends VNode>(this: ComponentInterface, vnode: T
 			vnode.dynamicProps = dynamicProps;
 
 			Object.keys(props).forEach((prop) => {
-				if (isHandler.test(prop)) {
+				if (SSR) {
+					delete props![prop];
+
+				} else if (isHandler.test(prop)) {
 					dynamicProps.push(prop);
 				}
 			});
