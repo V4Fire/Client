@@ -94,10 +94,10 @@
 
 		- if SSR
 			- if paths.length > 0
-				? wait = 'waitComponentStatus("destroyed")'
+				? wait = '() => waitComponentStatus("destroyed")'
 
 			- else if wait
-				? wait = '((f) => f == null ? f : waitComponentStatus("destroyed"))(' + wait + ')'
+				? wait = '((f) => f == null ? f : () => waitComponentStatus("destroyed"))(' + wait + ')'
 
 		: &
 			filter = (wait ? buble.transform("`" + wait + "`").code : 'undefined')
@@ -144,7 +144,7 @@
 				< template v-if = !field.get('ifOnceStore.' + ${renderKey})
 					{{ void(field.set('ifOnceStore.' + ${renderKey}, true)) }}
 
-					< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${bucket}), 1, { &
+					< template v-for = _ in asyncRender.iterate(${SSR} ? 1 : moduleLoader.loadBucket(${bucket}), 1, { &
 						useRaf: true,
 						group: 'module:' + ${renderKey},
 						filter: ${filter}
@@ -152,7 +152,7 @@
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${bucket}), 1, {useRaf: true, filter: ${filter}})
+				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${SSR} ? 1 : ${bucket}), 1, {useRaf: true, filter: ${filter}})
 					+= content
 
 	/**
