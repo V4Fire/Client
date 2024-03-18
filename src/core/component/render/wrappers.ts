@@ -192,7 +192,7 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			vnode.patchFlag |= functionalVNode.patchFlag;
 		}
 
-		if (Object.size(functionalVNode.dynamicProps) > 0) {
+		if (!SSR && Object.size(functionalVNode.dynamicProps) > 0) {
 			vnode.dynamicProps ??= [];
 			functionalVNode.dynamicProps?.forEach((propName) => {
 				if (isHandler.test(propName)) {

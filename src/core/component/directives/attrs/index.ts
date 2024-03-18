@@ -188,6 +188,10 @@ ComponentEngine.directive('attrs', {
 				}
 
 				case 'on': {
+					if (SSR) {
+						return;
+					}
+
 					if (Object.isDictionary(value)) {
 						Object.entries(value).forEach(([name, handler]) => {
 							attachEvent(name, handler);
@@ -312,6 +316,10 @@ ComponentEngine.directive('attrs', {
 		}
 
 		function attachEvent(event: string, handler: unknown) {
+			if (SSR) {
+				return;
+			}
+
 			event = `@${event}`;
 			attrsKeys.push(event);
 			attrs[event] = handler;
