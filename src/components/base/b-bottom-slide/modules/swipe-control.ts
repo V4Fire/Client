@@ -119,17 +119,17 @@ export default class SwipeControl extends Friend {
 			endTime - this.startTime <= ctx.fastSwipeDelay &&
 			startEndDiff >= ctx.fastSwipeThreshold;
 
-		const isLongSwipe = isFastSwipe && (
-			!ctx.isFullyOpened ||
-			ctx.isViewportTopReached ||
-			this.byTrigger
+		const isScroll = !isFastSwipe && (
+			ctx.isFullyOpened ||
+			!ctx.isViewportTopReached ||
+			!this.byTrigger
 		);
 
 		const
 			isThresholdPassed = !isFastSwipe && startEndDiff >= ctx.swipeThreshold;
 
 		ctx.animation.stopMoving();
-		this.moveToClosest(isLongSwipe, isThresholdPassed);
+		this.moveToClosest(!isScroll, isThresholdPassed);
 
 		this.endY += this.startY - this.currentY;
 		this.byTrigger = false;
