@@ -323,6 +323,5 @@ module.exports = {
 	checkDeprecated,
 	getVariableName,
 	createDesignSystem,
-	getThemedPathChunks,
-	checkRequiredThemes
+	getThemedPathChunks
 };

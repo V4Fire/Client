@@ -17,7 +17,7 @@ const
 
 const
 	{getThemes} = include('build/ds'),
-	{getThemedPathChunks, checkDeprecated, checkRequiredThemes} = include('build/stylus/ds/helpers');
+	{getThemedPathChunks, checkDeprecated} = include('build/stylus/ds/helpers');
 
 /**
  * Returns a function to register Stylus plugins by the specified options
