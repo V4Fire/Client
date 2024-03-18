@@ -713,13 +713,7 @@ Next, the component invokes the `renderGuard` to determine if the data can be re
 5. `domInsertDone` - The DOM insertion has completed. This event is asynchronous as it uses RAF (Request Animation Frame) for DOM insertion.
 6. `renderDone` - The component rendering has finished.
 
-> ##### How it works in SSR
-> In SSR, the sequence of events is different:
->
-> 1. `renderStart` - The component rendering has started.
-> 2. `renderDone` - The component rendering has finished.
->
-> **We don't use the rendering engine, asynchronous DOM insertion, and render the items of the first chunk**.
+**The first chunk of elements is rendered synchronously via `v-for`**.
 
 Afterward, the component waits for user actions, specifically when the user sees any component on the page.
 The component then calls the `shouldPerformDataRender` function on the client side.

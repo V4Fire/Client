@@ -84,7 +84,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	}
 
 	/**
-	 * The items of the first chunk are being rendered in SSR
+	 * The items of the first chunk
 	 */
 	@field()
 	protected firstChunkItems: ComponentItem[] = [];
@@ -360,7 +360,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			{result, reason} = this.renderGuard(state);
 
 		if (result) {
-			this.performRender();
+			this.performRender().catch(stderr);
 		}
 
 		switch (reason) {
@@ -370,8 +370,9 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 
 			case renderGuardRejectionReason.notEnoughData:
 				if (state.areRequestsStopped) {
-					this.performRender();
-					this.onLifecycleDone();
+					this.performRender()
+						.then(() => this.onLifecycleDone())
+						.catch(stderr);
 
 					return;
 				}
@@ -398,14 +399,15 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	/**
 	 * Renders components using {@link bVirtualScrollNew.componentFactory} and inserts them into the DOM tree
 	 */
-	protected performRender(): void {
+	protected async performRender(): Promise<void> {
 		this.onRenderStart();
 
-		const items = this.componentFactory.produceComponentItems();
+		const
+			items = this.componentFactory.produceComponentItems(),
+			{renderPage, isInitialRender} = this.getVirtualScrollState();
 
-		if (SSR) {
-			this.firstChunkItems = items;
-			return;
+		if (isInitialRender) {
+			return this.performFirstChunkRender(items);
 		}
 
 		const
@@ -421,7 +423,6 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 
 		const
 			fragment = document.createDocumentFragment(),
-			{renderPage} = this.getVirtualScrollState(),
 			asyncGroup = `${bVirtualScrollNewDomInsertAsyncGroup}:${renderPage}`;
 
 		nodes.forEach((node) => {
@@ -450,5 +451,29 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			this.onRenderDone();
 
 		}, {label: $$.insertDomRaf, group: asyncGroup});
+	}
+
+	/**
+	 * Renders the first chunk synchronously
+	 * @param items
+	 */
+	protected async performFirstChunkRender(items: ComponentItem[]): Promise<void> {
+		this.onRenderEngineStart();
+		this.firstChunkItems = items;
+		this.onRenderEngineDone();
+
+		await this.nextTick();
+
+		let mounted: ReturnType<typeof this.componentFactory.produceMounted> = [];
+
+		if (!SSR) {
+			mounted = this.componentFactory.produceMounted(items, <HTMLElement[]>Array.from(this.$refs.container.children));
+		}
+
+		this.observer.observe(mounted);
+		this.onDomInsertStart(mounted);
+
+		this.onDomInsertDone();
+		this.onRenderDone();
 	}
 }
