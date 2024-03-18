@@ -182,26 +182,24 @@ export function wrapCreateBlock<T extends typeof createBlock>(original: T): T {
 			instance: Object.cast(virtualCtx)
 		});
 
-		if (!SSR) {
-			if (vnode.shapeFlag < functionalVNode.shapeFlag) {
-				// eslint-disable-next-line no-bitwise
-				vnode.shapeFlag |= functionalVNode.shapeFlag;
-			}
+		if (vnode.shapeFlag < functionalVNode.shapeFlag) {
+			// eslint-disable-next-line no-bitwise
+			vnode.shapeFlag |= functionalVNode.shapeFlag;
+		}
 
-			if (vnode.patchFlag < functionalVNode.patchFlag) {
-				// eslint-disable-next-line no-bitwise
-				vnode.patchFlag |= functionalVNode.patchFlag;
-			}
+		if (vnode.patchFlag < functionalVNode.patchFlag) {
+			// eslint-disable-next-line no-bitwise
+			vnode.patchFlag |= functionalVNode.patchFlag;
+		}
 
-			if (Object.size(functionalVNode.dynamicProps) > 0) {
-				vnode.dynamicProps ??= [];
-				functionalVNode.dynamicProps?.forEach((propName) => {
-					if (isHandler.test(propName)) {
-						vnode.dynamicProps!.push(propName);
-						setVNodePatchFlags(vnode, 'props');
-					}
-				});
-			}
+		if (!SSR && Object.size(functionalVNode.dynamicProps) > 0) {
+			vnode.dynamicProps ??= [];
+			functionalVNode.dynamicProps?.forEach((propName) => {
+				if (isHandler.test(propName)) {
+					vnode.dynamicProps!.push(propName);
+					setVNodePatchFlags(vnode, 'props');
+				}
+			});
 		}
 
 		functionalVNode.ignore = true;

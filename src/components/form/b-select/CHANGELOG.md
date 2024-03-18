@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.72 (2024-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed the loss of the keydown event handler when recreating a functional component
+* Fixed the issue of the dropdown not closing when clicking on an element with stop propagation
+
 ## v4.0.0-beta.70 (2024-03-05)
 
 #### :bug: Bug Fix

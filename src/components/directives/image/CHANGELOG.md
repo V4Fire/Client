@@ -9,6 +9,10 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+#### :bug: Bug Fix
+
+* Fixed the preview show time for cached images
+
 ## v4.0.0-beta.47 (2024-01-16)
 
 #### :bug: Bug Fix

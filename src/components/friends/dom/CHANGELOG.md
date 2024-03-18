@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.72 (2024-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed getting a component in `getComponent` when an additional root selector is passed
+
 ## v4.0.0-alpha.1 (2022-12-14)
 
 #### :boom: Breaking Change
