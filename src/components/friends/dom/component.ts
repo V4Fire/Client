@@ -46,7 +46,7 @@ export function getComponent<T extends iBlock>(
 		query;
 
 	if (q != null) {
-		if (q.component?.instance instanceof iBlock) {
+		if (rootSelector === '' && q.component?.instance instanceof iBlock) {
 			return q.component;
 		}
 

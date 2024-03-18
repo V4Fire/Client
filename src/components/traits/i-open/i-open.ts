@@ -73,8 +73,13 @@ export default abstract class iOpen {
 	 *
 	 * @param component
 	 * @param [events] - a map with events to listen
+	 * @param [eventOpts] - an options for the event listener {@link AddEventListenerOptions}
 	 */
-	static initCloseHelpers<T extends iBlock>(component: T & iOpen, events: CloseHelperEvents = {}): void {
+	static initCloseHelpers<T extends iBlock>(
+		component: T & iOpen,
+		events: CloseHelperEvents = {},
+		eventOpts: AddEventListenerOptions = {}
+	): void {
 		const {
 			async: $a,
 			localEmitter: $e
@@ -92,7 +97,11 @@ export default abstract class iOpen {
 			$a.setTimeout(() => {
 				const opts = {
 					...helpersGroup,
-					options: {passive: false}
+
+					options: {
+						passive: false,
+						...eventOpts
+					}
 				};
 
 				try {
