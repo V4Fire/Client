@@ -23,7 +23,6 @@
       - [THEME](#theme-1)
       - [THEME_ATTRIBUTE](#themeattribute)
       - [AVAILABLE_THEMES](#availablethemes)
-      - [DETECT_USER_PREFERENCES](#detectuserpreferences-1)
       - [POST_PROCESS_THEME](#postprocesstheme)
   * [Working with the Design System in the Project](#working-with-the-design-system-in-the-project)
     + [Colors](#colors-1)
@@ -254,8 +253,7 @@ Otherwise, the theme attributes will be sourced from the JS runtime.
 
 #### postProcessorTemplate
 
-If `true`, the theme attribute will be processed by a proxy server (e.g., Nginx).
-Otherwise, the attribute will be set in the JS runtime.
+The name of the template variable that will be replaced by the proxy server for forwarding the active theme
 
 #### attribute
 
@@ -282,10 +280,6 @@ See [attribute](#attribute)
 #### AVAILABLE_THEMES
 
 Available themes. Uses the [include](#include) or [default](#default) configuration values, if `include` is not defined.
-
-#### DETECT_USER_PREFERENCES
-
-See [detectUserPreferences](#detectuserpreferences)
 
 #### POST_PROCESS_THEME
 
