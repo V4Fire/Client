@@ -17,7 +17,6 @@
       - [postProcessor](#postprocessor)
       - [postProcessorTemplate](#postprocessortemplate)
       - [attribute](#attribute)
-      - [detectUserPreferences](#detectuserpreferences)
     + [Global Variables Provided by Webpack](#global-variables-provided-by-webpack)
       - [DS](#ds)
       - [DS_COMPONENTS_MODS](#dscomponentsmods)
@@ -261,12 +260,6 @@ Otherwise, the attribute will be set in the JS runtime.
 #### attribute
 
 The name of the data attribute in which the current theme's value will be inserted.
-
-#### detectUserPreferences
-
-A dictionary of user preferences that will automatically be determined depending
-on the user's system settings. To use this parameter, it is necessary
-that the [postProcessor](#postprocessor) parameter is set to `false`.
 
 ### Global Variables Provided by Webpack
 
