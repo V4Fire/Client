@@ -140,6 +140,10 @@ export class ThemeManager {
 			this.systemThemeExtractor.unsubscribe({label: $$.onThemeChange});
 		}
 
+		if (Object.fastCompare(this.current, {isSystem, value})) {
+			return;
+		}
+
 		const oldValue = this.current;
 
 		this.current = newTheme;
@@ -156,7 +160,7 @@ export class ThemeManager {
 	 * @throws ReferenceError
 	 */
 	protected setThemeAttribute(value: string): void {
-		if (SSR || this.current.value === value) {
+		if (SSR) {
 			return;
 		}
 
