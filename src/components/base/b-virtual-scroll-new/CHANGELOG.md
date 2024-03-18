@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added support for rendering the first chunk in SSR
+* Added rendering of the first chunk via `v-for`
 
 ## v4.0.0-beta.67 (2024-02-26)
 

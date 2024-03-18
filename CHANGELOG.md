@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Added support for rendering the first chunk in SSR `components/base/b-virtual-scroll-new`
+* Added rendering of the first chunk via `v-for` `components/base/b-virtual-scroll-new`
 
 ## 4.0.0-beta.72 (2024-03-13)
 
