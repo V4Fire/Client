@@ -28,9 +28,6 @@ const
  * @param {boolean} [opts.useCSSVarsInRuntime] - true, if the design system object values provided
  *   to style files as css-variables
  *
- * @param {object} [opts.detectUserPreferences] - a map of user preference parameters that
- *   will be automatically detected based on system settings.
- *
  * @param {string} [opts.theme] - the current theme value
  * @param {(Array<string>|boolean)} [opts.includeThemes] - a list of themes to include or
  *   `true` (will include all available themes)
@@ -44,7 +41,6 @@ module.exports = function getPlugins({
 	ds,
 	cssVariables,
 	useCSSVarsInRuntime,
-	detectUserPreferences,
 	theme,
 	includeThemes,
 	themeAttribute,
@@ -65,8 +61,6 @@ module.exports = function getPlugins({
 		themesList = getThemes(ds.raw, buildThemes),
 		isThemesIncluded = themesList != null && themesList.length > 0,
 		isOneTheme = Object.isArray(themesList) && themesList.length === 1 && themesList[0] === theme;
-
-	checkRequiredThemes({detectUserPreferences, themesList});
 
 	if (!isThemesIncluded) {
 		if (Object.isString(theme)) {
@@ -321,17 +315,5 @@ module.exports = function getPlugins({
 		 * @returns {string}
 		 */
 		api.define('themeAttribute', () => themeAttribute);
-
-		/**
-		 * Returns a dark theme name
-		 * @returns {string}
-		 */
-		api.define('darkThemeName', () => detectUserPreferences.prefersColorScheme.aliases?.dark ?? 'dark');
-
-		/**
-		 * Returns a light theme name
-		 * @returns {string}
-		 */
-		api.define('lightThemeName', () => detectUserPreferences.prefersColorScheme.aliases?.light ?? 'light');
 	};
 };

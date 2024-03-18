@@ -1310,8 +1310,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			dummyComponents: this.build.loadDummyComponents(),
 
 			theme: this.theme.default(),
-			includeThemes: this.theme.include(),
-			prefersColorSchemeEnabled: this.theme.detectUserPreferences().prefersColorScheme.enabled
+			includeThemes: this.theme.include()
 		};
 	},
 
