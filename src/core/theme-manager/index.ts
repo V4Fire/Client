@@ -16,4 +16,4 @@ export * from 'core/theme-manager/class';
 export * from 'core/theme-manager/system-theme-extractor';
 export * from 'core/theme-manager/interface';
 
-export { defaultTheme, themeManagerFactory as default } from 'core/theme-manager/helpers';
+export { defaultTheme } from 'core/theme-manager/helpers';

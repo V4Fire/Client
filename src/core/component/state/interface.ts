@@ -39,7 +39,7 @@ export interface State {
 	/**
 	 * An API for managing app themes from the Design System
 	 */
-	theme: CanNull<ThemeManager>;
+	theme: ThemeManager;
 
 	/**
 	 * An API for working with the target document's URL

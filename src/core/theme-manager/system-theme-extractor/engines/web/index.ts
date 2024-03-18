@@ -14,8 +14,8 @@
 import SyncPromise from 'core/promise/sync';
 import Async, { EventEmitterLikeP, AsyncOptions, ClearOptions } from 'core/async';
 
+import { DARK, LIGHT } from 'core/theme-manager';
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
-import { defaultTheme } from 'core/theme-manager';
 
 /**
  * Represents a `SystemThemeExtractor` implementation tailored for web environments.
@@ -25,12 +25,12 @@ export class SystemThemeExtractorWeb implements SystemThemeExtractor {
 	/**
 	 * A media query object for monitoring theme changes
 	 */
-	protected readonly darkThemeMq?: MediaQueryList;
+	protected readonly darkThemeMq!: MediaQueryList;
 
 	/**
 	 * An event emitter to broadcast theme events
 	 */
-	protected readonly emitter?: EventEmitterLikeP;
+	protected readonly emitter!: EventEmitterLikeP;
 
 	/** {@link Async} */
 	protected readonly async: Async<this> = new Async(this);
@@ -44,8 +44,8 @@ export class SystemThemeExtractorWeb implements SystemThemeExtractor {
 		type EmitterArgs = [string, (e: Event) => void];
 
 		this.emitter = Object.cast((...args: EmitterArgs) => {
-			this.darkThemeMq!.addEventListener(...args);
-			return (...args: EmitterArgs) => this.darkThemeMq!.removeEventListener(...args);
+			this.darkThemeMq.addEventListener(...args);
+			return (...args: EmitterArgs) => this.darkThemeMq.removeEventListener(...args);
 		});
 	}
 
@@ -62,23 +62,13 @@ export class SystemThemeExtractorWeb implements SystemThemeExtractor {
 
 	/** @inheritDoc */
 	getSystemTheme(): SyncPromise<string> {
-		if (this.darkThemeMq == null) {
-			return SyncPromise.resolve(defaultTheme());
-		}
-
-		return SyncPromise.resolve(this.darkThemeMq.matches ? 'dark' : 'light');
+		return SyncPromise.resolve(this.darkThemeMq.matches ? DARK : LIGHT);
 	}
 
 	/** @inheritDoc */
 	onThemeChange(cb: (value: string) => void, asyncOptions?: AsyncOptions): Function {
-		if (this.emitter == null) {
-			return () => {
-				// Do nothing
-			};
-		}
-
 		const
-			changeHandler = (e: MediaQueryListEvent) => cb(e.matches ? 'dark' : 'light'),
+			changeHandler = (e: MediaQueryListEvent) => cb(e.matches ? DARK : LIGHT),
 			eventId = this.async.on(this.emitter, 'change', changeHandler, asyncOptions);
 
 		return () => {

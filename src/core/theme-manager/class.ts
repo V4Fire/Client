@@ -11,7 +11,7 @@ import symbolGenerator from 'core/symbol';
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
 import { factory, SyncStorage } from 'core/kv-storage';
 
-import { prefersColorSchemeEnabled, themeMapping, DARK, LIGHT } from 'core/theme-manager/const';
+import { DARK, LIGHT } from 'core/theme-manager/const';
 import { defaultTheme } from 'core/theme-manager/helpers';
 
 import type { Theme, ThemeManagerOptions } from 'core/theme-manager/interface';
@@ -56,18 +56,9 @@ export class ThemeManager {
 		this.themeStorage = factory(opts.themeStorageEngine);
 		this.systemThemeExtractor = opts.systemThemeExtractor;
 
-		let theme: Theme = {
-			value: defaultTheme(),
-			isSystem: false
-		};
+		const theme = this.themeStorage.get<Theme>('colorTheme');
 
-		const themeFromStore = this.themeStorage.get<Theme>('colorTheme');
-
-		if (themeFromStore != null) {
-			theme = themeFromStore;
-		}
-
-		if (theme.isSystem || prefersColorSchemeEnabled) {
+		if (theme == null || theme.isSystem) {
 			void this.useSystem();
 
 		} else {
@@ -79,14 +70,14 @@ export class ThemeManager {
 	 * True, if the dark theme is enabled
 	 */
 	get isDark(): boolean {
-		return this.current.value === this.resolveThemeAlias(DARK);
+		return this.current.value === DARK;
 	}
 
 	/**
 	 * True, if the light theme enabled
 	 */
 	get isLight(): boolean {
-		return this.current.value === this.resolveThemeAlias(LIGHT);
+		return this.current.value === LIGHT;
 	}
 
 	/**
@@ -108,10 +99,7 @@ export class ThemeManager {
 	 * Sets the actual system theme and activates the system theme change listener
 	 */
 	useSystem(): Promise<void> {
-		const changeTheme = (value: string) => {
-			value = this.resolveThemeAlias(value);
-			this.changeTheme({value, isSystem: true});
-		};
+		const changeTheme = (value: string) => this.changeTheme({value, isSystem: true});
 
 		return this.systemThemeExtractor.getSystemTheme().then((value) => {
 			this.systemThemeExtractor.onThemeChange(
@@ -177,23 +165,5 @@ export class ThemeManager {
 		}
 
 		document.documentElement.setAttribute(THEME_ATTRIBUTE, value);
-	}
-
-	/**
-	 * Returns the actual theme name for the provided alias
-	 *
-	 * @throws TypeError
-	 * @param alias
-	 */
-	protected resolveThemeAlias(alias: string): string {
-		if (!prefersColorSchemeEnabled) {
-			return alias;
-		}
-
-		if (themeMapping[alias] == null) {
-			throw TypeError(`Invalid theme alias: "${alias}"`);
-		}
-
-		return themeMapping[alias];
 	}
 }

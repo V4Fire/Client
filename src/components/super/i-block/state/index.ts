@@ -533,10 +533,6 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	@hook('created')
 	protected initThemeModListener(): void {
-		if (this.remoteState.theme == null) {
-			return;
-		}
-
 		const cur = this.remoteState.theme.get();
 
 		void this.setMod('theme', cur.value);
