@@ -732,7 +732,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			const
 				root = 'assets';
 
-			if (this.mode() !== 'production' || this.ssr || this.fatHTML()) {
+			if (this.mode() !== 'production' || this.fatHTML()) {
 				return this.output({
 					...params,
 					name: `${root}/[path][name].[ext]`,
