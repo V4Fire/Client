@@ -78,7 +78,7 @@ export function createWatchFn(component: ComponentInterface): ComponentInterface
 
 			meta = propCtx.meta;
 			isRoot = Boolean(ctxParams.root);
-			isFunctional = !isRoot && ctxParams.functional === true;
+			isFunctional = SSR || !isRoot && ctxParams.functional === true;
 		}
 
 		let canSkipWatching =

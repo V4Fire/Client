@@ -144,6 +144,14 @@ export default abstract class iBlockBase extends iBlockFriends {
 	}
 
 	/**
+	 * True if all component watchers are operating in functional mode
+	 */
+	@computed()
+	get isFunctionalWatchers(): boolean {
+		return SSR || this.isFunctional;
+	}
+
+	/**
 	 * A link to the root component
 	 */
 	get r(): this['Root'] {
@@ -450,10 +458,6 @@ export default abstract class iBlockBase extends iBlockFriends {
 	): void {
 		const
 			{async: $a} = this;
-
-		if (SSR) {
-			return;
-		}
 
 		let
 			handler: RawWatchHandler<this, T>,
