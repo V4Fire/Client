@@ -24,9 +24,7 @@
    ```
 */
 
-require('./dist/ssr/std');
-
-const app = require('./dist/ssr/p-v4-components-demo');
+const app = require('./dist/ssr/main');
 
 app
 	.initApp('p-v4-components-demo', {
