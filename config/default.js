@@ -683,7 +683,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		output(vars) {
 			const
-				res = this.mode() !== 'production' || this.ssr || this.fatHTML() ? '[name]' : '[hash]_[name]';
+				res = this.mode() !== 'production' || this.fatHTML() ? '[name]' : '[hash]_[name]';
 
 			if (vars) {
 				return res.replace(/_?\[(.*?)]/g, (str, key) => {
