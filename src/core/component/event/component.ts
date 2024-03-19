@@ -18,10 +18,10 @@ import type { ComponentResetType } from 'core/component/event/interface';
  * The directive emits a special event to completely destroy the entire application by its root component's identifier.
  * This method is typically used in conjunction with SSR.
  *
- * @param appId - the unique application identifier
+ * @param appProcessId - the unique identifier for the application process
  */
-export function destroyApp(appId: string): void {
-	globalEmitter.emit(`destroy.${appId}`);
+export function destroyApp(appProcessId: string): void {
+	globalEmitter.emit(`destroy.${appProcessId}`);
 }
 
 /**

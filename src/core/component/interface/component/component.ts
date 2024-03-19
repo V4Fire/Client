@@ -45,9 +45,9 @@ export abstract class ComponentInterface {
 	readonly app!: ReturnType<CreateAppFunction>;
 
 	/**
-	 * The unique application identifier
+	 * The unique identifier for the application process
 	 */
-	readonly appId!: string;
+	readonly appProcessId!: string;
 
 	/**
 	 * The unique component identifier.

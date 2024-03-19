@@ -40,7 +40,7 @@ function createAppInitializer() {
 		opts: InitAppOptions
 	): Promise<App> => {
 		const
-			appId = opts.appId ?? Object.fastHash(Math.random()),
+			appProcessId = opts.appProcessId ?? Object.fastHash(Math.random()),
 			state = Object.reject(opts, ['targetToMount', 'setup']),
 			rootComponentParams = await getRootComponentParams(rootComponentName);
 
@@ -60,7 +60,7 @@ function createAppInitializer() {
 		rootComponentParams.inject = {
 			...inject,
 			app: 'app',
-			appId: 'appId'
+			appProcessId: 'appProcessId'
 		};
 
 		if (SSR) {
@@ -78,7 +78,7 @@ function createAppInitializer() {
 				app = new AppClass(rootComponentParams);
 
 			app.provide('app', app);
-			app.provide('appId', appId);
+			app.provide('appProcessId', appProcessId);
 			app.provide('hydrationStore', hydrationStore);
 			app.provide('ssrState', Object.fastClone(remoteState));
 
@@ -100,7 +100,7 @@ function createAppInitializer() {
 				hydratedData = '';
 
 				try {
-					destroyApp(appId);
+					destroyApp(appProcessId);
 				} catch {}
 
 				try {
@@ -122,7 +122,7 @@ function createAppInitializer() {
 		});
 
 		app.provide('app', app);
-		app.provide('appId', appId);
+		app.provide('appProcessId', appProcessId);
 
 		Object.defineProperty(globalApp, 'context', {
 			configurable: true,
