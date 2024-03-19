@@ -51,7 +51,7 @@ export async function createApp(
 
 	if (SSR) {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const {renderToString} = require('vue/server-renderer');
+		const {renderToString} = require('assets/lib/server-renderer');
 
 		Object.assign(rootComponentParams.inject, {
 			hydrationStore: 'hydrationStore'
