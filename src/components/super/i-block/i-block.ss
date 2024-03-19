@@ -132,7 +132,7 @@
 				}))
 			}}
 
-		- if paths.length > 0
+		- if !SSR && paths.length > 0
 			? filter = 'undefined'
 
 		- if content != null

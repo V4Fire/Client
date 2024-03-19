@@ -15,7 +15,7 @@ import SyncPromise from 'core/promise/sync';
 
 import { derive } from 'core/functools/trait';
 
-import Block, { setElementMod, removeElementMod, getElementSelector } from 'components/friends/block';
+import Block, { setElementMod, removeElementMod, getElementSelector, element, elements } from 'components/friends/block';
 import DOM, { delegateElement } from 'components/friends/dom';
 
 import iItems, { IterationKey } from 'components/traits/i-items/i-items';
@@ -61,7 +61,7 @@ export * from 'components/form/b-select/interface';
 export { Value, FormValue };
 
 DOM.addToPrototype({delegateElement});
-Block.addToPrototype({setElementMod, removeElementMod, getElementSelector});
+Block.addToPrototype({setElementMod, removeElementMod, getElementSelector, element, elements});
 Mask.addToPrototype(MaskAPI);
 
 interface bSelect extends Trait<typeof iOpenToggle>, Trait<typeof iActiveItems>, Trait<typeof SelectEventHandlers> {}
@@ -241,6 +241,13 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	}))
 
 	protected itemsStore!: this['Items'];
+
+	/**
+	 * True if keydown handler is enabled.
+	 * This flag is needed to restore event handler for functional components.
+	 */
+	@system()
+	protected keydownHandlerEnabled: boolean = false;
 
 	protected override readonly $refs!: iInputText['$refs'] & {
 		dropdown?: Element;
@@ -443,7 +450,7 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	/** {@link iOpenToggle.initCloseHelpers} */
 	@hook('beforeDataCreate')
 	protected initCloseHelpers(events?: CloseHelperEvents): void {
-		iOpenToggle.initCloseHelpers(this, events);
+		iOpenToggle.initCloseHelpers(this, events, {capture: true});
 	}
 
 	/** {@link Values.init} */
@@ -543,6 +550,15 @@ class bSelect extends iSelectProps implements iOpenToggle, iActiveItems {
 	protected override onFocus(): void {
 		super.onFocus();
 		void this.open();
+	}
+
+	protected override mounted(): void {
+		super.mounted();
+
+		// Restore event handlers for functional components
+		if (this.isFunctional && this.keydownHandlerEnabled) {
+			this.handleKeydown(true);
+		}
 	}
 }
 

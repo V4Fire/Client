@@ -19,6 +19,7 @@ import type { ComponentMeta, ComponentConstructorInfo } from 'core/component/int
 export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 	const meta: ComponentMeta = {
 		name: component.name,
+		layer: component.layer,
 		componentName: component.componentName,
 
 		parentMeta: component.parentMeta,

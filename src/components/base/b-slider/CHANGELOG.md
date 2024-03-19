@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.71 (2024-03-12)
+
+#### :rocket: New feature
+
+* Added `useScrollSnap` prop, which enables the use of CSS scroll snap in the `scroll` mode
+
 ## v4.0.0-beta.38 (2023-11-15)
 
 #### :big: Bug Fix
