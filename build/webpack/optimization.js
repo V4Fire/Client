@@ -40,11 +40,6 @@ module.exports = function optimization({buildId, plugins}) {
 		params = {},
 		cssMinimizer = new CssMinimizerPlugin(config.cssMinimizer());
 
-	if (ssr) {
-		params.minimizer = [cssMinimizer];
-		return params;
-	}
-
 	if (optimize.minChunkSize) {
 		plugins.set(
 			'minChunkSize',
