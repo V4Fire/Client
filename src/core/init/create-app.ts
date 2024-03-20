@@ -61,15 +61,11 @@ export async function createApp(
 			hydrationStore = new HydrationStore(),
 			app = new AppClass(rootComponentParams);
 
-		let
-			oneTimeState: Nullable<typeof state> = state;
-
 		Object.defineProperty(globalApp, 'state', {
 			configurable: true,
 			enumerable: true,
 			get: () => {
-				const state = oneTimeState;
-				oneTimeState = null;
+				delete globalApp.state;
 				return state;
 			}
 		});
