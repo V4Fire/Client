@@ -22,7 +22,7 @@ export default async function initState(params: InitAppOptions): Promise<void> {
 	initGlobalEnv(params);
 	params.isOnline = true;
 
-	params.pageMeta = new PageMetaData();
+	params.pageMetaData = new PageMetaData();
 
 	if (!SSR) {
 		net.isOnline()

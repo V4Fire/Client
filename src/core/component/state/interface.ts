@@ -76,7 +76,7 @@ export interface State {
 	/**
 	 * API to work with seo meta information of the current page
 	 */
-	pageMeta: PageMetaData;
+	pageMetaData: PageMetaData;
 }
 
 export interface GlobalEnvironment extends Dictionary {}

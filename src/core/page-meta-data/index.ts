@@ -25,11 +25,20 @@ import {
 import ElementsStorage from "core/page-meta-data/storage";
 
 export default class PageMetaData {
+	/**
+	 * Elements storage
+	 */
 	protected elements: ElementsStorage = new ElementsStorage();
 
+	/**
+	 * Client state
+	 */
 	protected state: State = remoteState;
 
-	get meta(): AbstractElement[] {
+	/**
+	 * All added meta elements
+	 */
+	get metaElements(): AbstractElement[] {
 		return [...this.elements];
 	}
 
@@ -38,7 +47,7 @@ export default class PageMetaData {
 	 */
 	get title(): string {
 		const element = this.elements.getTitle();
-		return element?.getAttr('content') ?? '';
+		return element?.text ?? '';
 	}
 
 	/**
@@ -59,7 +68,7 @@ export default class PageMetaData {
 	 */
 	get description(): string {
 		const element = this.elements.getDescription();
-		return element?.getAttr('content') ?? '';
+		return element?.content ?? '';
 	}
 
 	/**
@@ -67,18 +76,12 @@ export default class PageMetaData {
 	 * @param value - the new description value
 	 */
 	set description(value: string) {
-		// this.addMeta({
-		// 	name: 'description',
-		// 	content: value
-		// });
+		const description = new Meta(
+			SSR ? new SSREngine() : new CSREngine(),
+			{name: 'description', content: value}
+		);
 
-		this.elements.setDescription(new Meta(
-			SSR ? SSREngine : CSREngine,
-			{
-				name: 'description',
-				content: value
-			}
-		));
+		this.elements.setDescription(description);
 	}
 
 	/**
@@ -86,10 +89,12 @@ export default class PageMetaData {
 	 * @param attrs - attributes for the created tag
 	 */
 	addLink(attrs: LinkAttributes): void {
-		this.elements.addLink(new Link(
-			SSR ? new SSREngine() : new CSREngine<HTMLLinkElement>(),
+		const link = new Link(
+			SSR ? new SSREngine() : new CSREngine(),
 			attrs
-		));
+		);
+
+		this.elements.addLink(link);
 	}
 
 	/**
@@ -97,7 +102,6 @@ export default class PageMetaData {
 	 * @param attrs - attributes of the searched elements
 	 */
 	findLinks(attrs: LinkAttributes): Array<HTMLLinkElement | Link> {
-		// const links = this.findElements<HTMLLinkElement>('links', attrs);
 		const links = this.elements.findLinks(attrs);
 		return links.map((el) => el.get());
 	}
@@ -107,10 +111,12 @@ export default class PageMetaData {
 	 * @param attrs - attributes for the created tag
 	 */
 	addMeta(attrs: MetaAttributes): void {
-		this.elements.addMeta(new Meta(
-			SSR ? new SSREngine() : new CSREngine<HTMLMetaElement>(),
+		const meta = new Meta(
+			SSR ? new SSREngine() : new CSREngine(),
 			attrs
-		));
+		);
+
+		this.elements.addMeta(meta);
 	}
 
 	/**
@@ -118,9 +124,15 @@ export default class PageMetaData {
 	 * @param attrs - attributes of the searched elements
 	 */
 	findMetas(attrs: MetaAttributes): Array<HTMLMetaElement | Meta> {
-		// const metas = this.findElements<HTMLMetaElement>('meta', attrs);
 		const metas = this.elements.findMetas(attrs);
 		return metas.map((el) => el.get());
+	}
+
+	/**
+	 * Returns canonical link `<link rel="canonical" />`
+	 */
+	getCanonicalLink(): CanUndef<HTMLLinkElement | Link> {
+		return this.elements.getCanonical()?.get();
 	}
 
 	/**
@@ -134,17 +146,20 @@ export default class PageMetaData {
 			{location} = this.state,
 			href = concatURLs(location.origin, pathname, query);
 
-		this.elements.setCanonical(new Meta(
-			SSR ? SSREngine : CSREngine,
+		const link = new Link(
+			SSR ? new SSREngine() : new CSREngine(),
 			{rel: 'canonical', href}
-		));
+		);
+
+		this.elements.setCanonical(link);
 	}
 
 	/**
 	 * Removes canonical link `<link rel="canonical" />` from the page
 	 */
 	removeCanonicalLink(): void {
-		this.elements.removeCanonical();
+		const canonical = this.elements.removeCanonical();
+		canonical?.remove();
 	}
 
 	/**
@@ -164,30 +179,4 @@ export default class PageMetaData {
 		const metas = this.elements.removeLinks(attrs);
 		metas.forEach((link) => link.remove());
 	}
-
-	/**
-	 * Searches for elements in the document with the given name and attributes and returns them
-	 *
-	 * @param tag - the tag name of the searched elements
-	 * @param [attrs] - additional attributes of the searched elements
-	 */
-	// protected findElements<T extends HTMLElement>(tag: string, attrs: Dictionary<string> = {}): AbstractElement<T>[] {
-	// 	return (<AbstractElement<T>[]>this.elements.filter((element) => element.is(tag, attrs)));
-	// }
-
-	// protected removeElements(tag: string, attrs: Dictionary<string>): void {
-	// 	const
-	// 		stateElements: AbstractElement[] = [];
-	//
-	// 	this.elements.forEach((element) => {
-	// 		if (element.is(tag, attrs)) {
-	// 			element.remove();
-	//
-	// 		} else {
-	// 			stateElements.push(element)
-	// 		}
-	// 	});
-	//
-	// 	this.elements = stateElements;
-	// }
 }

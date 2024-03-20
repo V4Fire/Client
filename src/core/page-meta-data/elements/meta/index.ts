@@ -13,10 +13,28 @@ import { AbstractElement } from 'core/page-meta-data/elements/abstract';
 export * from 'core/page-meta-data/elements/meta/interface';
 
 export class Meta extends AbstractElement<HTMLMetaElement> {
-	protected override tag!: 'meta';
-	// protected override attrs!: MetaAttributes;
+	/** {@link HTMLMetaElement.content} */
+	get content(): string {
+		return this.attrs.content ?? '';
+	}
 
-	constructor(engine: Engine<HTMLMetaElement>, attrs: MetaAttributes) {
+	set content(value: string) {
+		this.attrs.content = value;
+	}
+
+	/** {@link HTMLMetaElement.name} */
+	get name(): string {
+		return this.attrs.name ?? '';
+	}
+
+	set name(value: string) {
+		this.attrs.name = value;
+	}
+
+	protected override tag!: 'meta';
+	protected override attrs!: MetaAttributes;
+
+	constructor(engine: Engine, attrs: MetaAttributes) {
 		super(engine, 'meta', attrs);
 	}
 }

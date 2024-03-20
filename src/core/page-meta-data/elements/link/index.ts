@@ -12,12 +12,41 @@ import { AbstractElement } from 'core/page-meta-data/elements/abstract';
 
 export * from 'core/page-meta-data/elements/link/interface';
 
-
+/**
+ * Link element
+ */
 export class Link extends AbstractElement<HTMLLinkElement> {
-	protected override tag!: 'link';
-	// protected override attrs!: LinkAttributes;
+	/** {@link HTMLLinkElement.rel} */
+	get rel(): string {
+		return this.attrs.rel ?? '';
+	}
 
-	constructor(engine: Engine<HTMLLinkElement>, attrs: LinkAttributes) {
+	set rel(value: string) {
+		this.attrs.rel = value;
+	}
+
+	/** {@link HTMLLinkElement.href} */
+	get href(): string {
+		return this.attrs.href ?? '';
+	}
+
+	set href(value: string) {
+		this.attrs.href = value;
+	}
+
+	/** {@link HTMLLinkElement.type} */
+	get type(): string {
+		return this.attrs.type ?? '';
+	}
+
+	set type(value: string) {
+		this.attrs.type = value;
+	}
+
+	protected override tag!: 'link';
+	protected override attrs!: LinkAttributes;
+
+	constructor(engine: Engine, attrs: LinkAttributes) {
 		super(engine, 'link', attrs);
 	}
 }

@@ -8,9 +8,27 @@
 
 import type { AbstractElement } from 'core/page-meta-data/elements';
 
-export interface Engine<T extends HTMLElement = HTMLElement> {
-	render(element: T | AbstractElement<T>, tag: string, attrs: Dictionary<string>): T | string;
-	update(element: T | AbstractElement<T>, attrs: Dictionary<string>): T | AbstractElement<T>;
-	create?(tag: string, attrs: Dictionary<string>): T ;
-	remove?(element: T | AbstractElement<T>): T;
+export interface Engine {
+	/**
+	 * Renders the element as HTMLElement or string
+	 *
+	 * @param element
+	 * @param tag
+	 * @param attrs
+	 */
+	render(element: HTMLElement | AbstractElement, tag: string, attrs: Dictionary<string>): HTMLElement | string;
+
+	/**
+	 * Creates the element
+	 *
+	 * @param tag
+	 * @param attrs
+	 */
+	create?(tag: string, attrs: Dictionary<string>): HTMLElement;
+
+	/**
+	 * Removes the element
+	 * @param element
+	 */
+	remove?(element: HTMLElement | AbstractElement): HTMLElement | AbstractElement;
 }

@@ -66,7 +66,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	@computed({cache: false})
 	get pageTitle(): string {
-		return this.r.remoteState.pageMeta.title;
+		return this.r.remoteState.pageMetaData.title;
 	}
 
 	/**
@@ -77,7 +77,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 */
 	set pageTitle(value: string) {
 		if (this.isActivated) {
-			this.r.remoteState.pageMeta.title = value;
+			this.r.remoteState.pageMetaData.title = value;
 		}
 	}
 
@@ -180,7 +180,7 @@ export default abstract class iPage extends iData implements iVisible {
 
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			if (v != null) {
-				return this.r.remoteState.pageMeta.title = this.t(Object.isFunction(v) ? v(this) : v);
+				return this.r.remoteState.pageMetaData.title = this.t(Object.isFunction(v) ? v(this) : v);
 			}
 		}
 	}
@@ -191,11 +191,11 @@ export default abstract class iPage extends iData implements iVisible {
 	@hook(['created', 'activated'])
 	protected initPageMetaData(): void {
 		if (this.syncStageTitles() == null && Object.isTruly(this.pageTitleStore)) {
-			this.r.remoteState.pageMeta.title = this.pageTitleStore;
+			this.r.remoteState.pageMetaData.title = this.pageTitleStore;
 		}
 
 		if (Object.isTruly(this.pageDescriptionStore)) {
-			this.r.remoteState.pageMeta.description = this.pageDescriptionStore;
+			this.r.remoteState.pageMetaData.description = this.pageDescriptionStore;
 		}
 	}
 

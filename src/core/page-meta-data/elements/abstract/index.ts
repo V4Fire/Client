@@ -10,28 +10,31 @@ import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
 
 export * from 'core/page-meta-data/elements/abstract/engines/index';
 
+/**
+ * Abstract class for page meta data elements
+ */
 export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
+	/**
+	 * Element's tag
+	 */
 	protected tag!: string;
 
+	/**
+	 * The element instance due to the environment
+	 */
 	protected el!: T | this;
 
-	protected attrsStore!: Dictionary<string>;
+	/**
+	 * Element's attributes
+	 */
+	protected attrs!: Dictionary<string>;
 
-	protected engine!: Engine<T>;
+	/**
+	 * Render engine
+	 */
+	protected engine!: Engine;
 
-	get(): T | this {
-		return this.el;
-	}
-
-	get attrs(): Dictionary<string> {
-		return {...this.attrsStore};
-	}
-
-	set attrs(attrs: Dictionary<string>) {
-		this.attrsStore = attrs;
-	}
-
-	protected constructor(engine: Engine<T>, tag: string, attrs: Dictionary<string> = {}) {
+	protected constructor(engine: Engine, tag: string, attrs: Dictionary<string> = {}) {
 		this.tag = tag;
 		this.attrs = attrs;
 		this.engine = engine;
@@ -43,37 +46,38 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 * Creates the element due to the environment
 	 */
 	create(): T | this {
-		return this.engine.create?.(this.tag, this.attrs) ?? this;
+		return <T>this.engine.create?.(this.tag, this.attrs) ?? this;
 	}
 
-	render() {
-		return this.engine.render(this.el, this.tag, this.attrs);
+	/**
+	 * Renders the element due to the environment
+	 */
+	render(): T | string {
+		return <T>this.engine.render(this.el, this.tag, this.attrs);
 	}
 
+	/**
+	 * Removes the element due to the environment
+	 */
 	remove() {
 		return this.engine.remove?.(this.el);
 	}
 
-	update(attrs: Dictionary<string>) {
-		Object.assign(this.attrs, attrs);
-		return this.engine.update(this.el, this.attrs);
+	/**
+	 * Returns the element due to the environment
+	 */
+	get(): T | this {
+		return this.el;
 	}
 
-	// find() {
-	// 	return this.engine.find?.(this.tag, this.attrs);
-	// }
-
+	/**
+	 * Returns true, if the element has the same attributes
+	 *
+	 * @param tag
+	 * @param attrs
+	 */
 	is(tag: string, attrs: Dictionary<string> = {}): boolean {
 		return tag === this.tag &&
 			Object.keys(attrs).every((key) => attrs[key] === this.attrs[key]);
-	}
-
-	getAttr(attr: string): string {
-		return this.attrs[attr] ?? '';
-	}
-
-	equals(element: AbstractElement) {
-		// this.tag === element.tag &&
-		// 	Object
 	}
 }

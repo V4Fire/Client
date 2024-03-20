@@ -17,7 +17,7 @@ const watcher = watchObj<State>({
 	route: undefined,
 	globalEnv: {},
 	location: new URL(''),
-	pageMeta: undefined
+	pageMetaData: undefined
 });
 
 export default watcher.proxy;

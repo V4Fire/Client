@@ -8,29 +8,24 @@
 
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 
-export default class CSREngine<T extends HTMLElement> implements Engine<T> {
+/**
+ * Engine for client-side rendering
+ */
+export default class CSREngine<T extends HTMLElement> implements Engine {
+	/** {@link Engine.create}*/
 	create(tag: string, attrs: Dictionary<string>): T {
-		return  Object.assign(<T>globalThis.document.createElement(tag), attrs);
-		// return globalThis.document.head.appendChild(el);
+		return this.render(
+			Object.assign(<T>globalThis.document.createElement(tag), attrs)
+		);
 	}
 
+	/** {@link Engine.render}*/
 	render(el: T): T {
-		return globalThis.document.head.appendChild(el);
+		return <T>globalThis.document.head.appendChild(el);
 	}
 
+	/** {@link Engine.remove}*/
 	remove(el: T): T {
 		return globalThis.document.head.removeChild(el);
 	}
-
-	update(el: T, attrs: Dictionary<string>): T {
-		return Object.assign(el, attrs);
-	}
-
-	// find(tag: string, attrs: Dictionary<string> = {}): NodeListOf<T> {
-	// 	const selector = Object.entries(attrs).map(
-	// 		([attr, value]) => `[${attr}=${value}]`
-	// 	);
-	//
-	// 	return globalThis.document.querySelectorAll<T>(tag + selector.join(''));
-	// }
 }

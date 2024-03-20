@@ -57,15 +57,13 @@ test.describe('<i-static-page> page meta data', () => {
 
 	test('`addLink` should add link to the head of the page', async ({page}) => {
 		const href = 'https://edadeal.ru/';
-		await root.evaluate((ctx, href) => ctx.pageMetaData.addLink({rel: 'canonical', href}), href);
+		await root.evaluate((ctx, href) => ctx.pageMetaData.setCanonicalLink(href), href);
 
-		const linkInfo = await root.evaluate((ctx) => {
-			const links = ctx.pageMetaData.findLinks({rel: 'canonical'});
-			return {href: links[0].href, length: links.length};
+		const linkHref = await root.evaluate((ctx) => {
+			return ctx.pageMetaData.getCanonicalLink()?.href;
 		});
 
-		test.expect(linkInfo.href).toEqual(href);
-		test.expect(linkInfo.length).toEqual(1);
+		test.expect(linkHref).toEqual(href);
 		await test.expect(page.locator('head link[rel="canonical"]')).toHaveAttribute('href', href);
 	});
 
@@ -81,5 +79,25 @@ test.describe('<i-static-page> page meta data', () => {
 		test.expect(metaInfo.content).toEqual(content);
 		test.expect(metaInfo.length).toEqual(1);
 		await test.expect(page.locator('head meta[name="robots"]')).toHaveAttribute('content', content);
+	});
+
+	test('should give added elements for string render', async ({page}) => {
+		const
+			href = 'https://edadeal.ru/',
+			newDescription = 'Cool description';
+
+		const metaElements = await root.evaluate(
+			(ctx, [newDescription, href]) => {
+				ctx.pageMetaData.description = newDescription;
+				ctx.pageMetaData.setCanonicalLink(href);
+
+				return ctx.pageMetaData.metaElements.map((el) => el.render());
+			},
+			[newDescription, href]
+		);
+
+		test.expect(metaElements.length).toEqual(2);
+		test.expect(metaElements[0]).toEqual(`<meta name="description" content="${newDescription}" />`);
+		test.expect(metaElements[1]).toEqual(`<link rel="canonical" href="${href}" />`);
 	});
 });
