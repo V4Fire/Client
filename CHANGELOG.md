@@ -17,6 +17,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added rendering of the first chunk via `v-for` `components/base/b-virtual-scroll-new`
 
+## 4.0.0-beta.73 (2024-03-19)
+
+#### :house: Internal
+
+* Rename `appId` to `appProcessId` `ComponentInterface`
+
 ## 4.0.0-beta.72 (2024-03-13)
 
 #### :bug: Bug Fix

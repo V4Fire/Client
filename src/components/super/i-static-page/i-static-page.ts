@@ -429,7 +429,7 @@ export default abstract class iStaticPage extends iPage {
 		});
 
 		const
-			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.appId)}:`));
+			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.appProcessId)}:`));
 
 		Object.forEach(instanceCache, (provider, key) => {
 			if (isThisApp.test(key)) {
