@@ -544,7 +544,9 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * @returns {object}
 		 */
 		aliases() {
-			return {};
+			return {
+				dompurify: this.config.es().toLowerCase() === 'es5' ? 'dompurify-v2' : 'dompurify-v3'
+			};
 		},
 
 		/**

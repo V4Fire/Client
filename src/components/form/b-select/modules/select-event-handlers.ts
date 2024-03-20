@@ -6,12 +6,17 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import symbolGenerator from 'core/symbol';
 import type iOpenToggle from 'components/traits/i-open-toggle/i-open-toggle';
 
 import type bSelect from 'components/form/b-select/b-select';
 import type { ModEvent, SetModEvent } from 'components/form/b-select/b-select';
 
 import { openedSelect } from 'components/form/b-select/const';
+
+const
+	$$ = symbolGenerator(),
+	navigationEventOpts = {group: 'navigation'};
 
 export default abstract class SelectEventHandlers {
 	/** {@link SelectEventHandlers.prototype.onOpenedChange} */
@@ -33,17 +38,13 @@ export default abstract class SelectEventHandlers {
 			}
 
 			if (unsafe.mods.focused !== 'true') {
-				$a.off({
-					group: 'navigation'
-				});
+				$a.off(navigationEventOpts);
 			}
 
 			return;
 		}
 
-		$a.off({
-			group: 'navigation'
-		});
+		$a.off(navigationEventOpts);
 
 		if (!unsafe.multiple) {
 			if (openedSelect.link != null) {
@@ -53,9 +54,7 @@ export default abstract class SelectEventHandlers {
 			openedSelect.link = unsafe;
 		}
 
-		$a.on(document, 'keydown', unsafe.onItemsNavigate.bind(unsafe), {
-			group: 'navigation'
-		});
+		$a.on(document, 'keydown', unsafe.onItemsNavigate.bind(unsafe), navigationEventOpts);
 	}
 
 	/** {@link SelectEventHandlers.prototype.onNativeChange} */
@@ -124,7 +123,8 @@ export default abstract class SelectEventHandlers {
 	/** {@link SelectEventHandlers.prototype.onItemsNavigate} */
 	static async onItemsNavigate(component: bSelect, e: KeyboardEvent): Promise<void> {
 		const
-			{unsafe} = component;
+			{unsafe} = component,
+			{async: $a} = unsafe;
 
 		const validKeys = {
 			ArrowUp: true,
@@ -135,6 +135,24 @@ export default abstract class SelectEventHandlers {
 		if (unsafe.native || validKeys[e.key] !== true || unsafe.mods.focused !== 'true') {
 			if (e.key.length === 1) {
 				await unsafe.focus();
+			}
+
+			// Remove the navigation event handler if the user has switched to another element
+			if (e.key === 'Tab') {
+				const opts = {...navigationEventOpts, label: $$.onTabKeyup};
+
+				$a.on(document, 'keyup', (e: KeyboardEvent) => {
+					if (e.key === 'Tab') {
+						const isFocused = component.isFocused || component.$el?.contains(document.activeElement);
+
+						if (isFocused) {
+							$a.off(opts);
+
+						} else {
+							$a.off(navigationEventOpts);
+						}
+					}
+				}, opts);
 			}
 
 			return;
@@ -227,8 +245,13 @@ export default abstract class SelectEventHandlers {
 			component.toggleValue(item.value);
 
 		} else {
-			component.text = item.label ?? component.text;
+			const prevText = component.text;
 			component.selectValue(item.value);
+
+			// Preserve previous text if item has no label
+			if (item.label == null) {
+				component.text = prevText;
+			}
 		}
 
 		component.emit('actionChange', component.value);

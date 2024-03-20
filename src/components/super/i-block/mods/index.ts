@@ -225,11 +225,7 @@ export default abstract class iBlockMods extends iBlockEvent {
 	 */
 	@hook('created')
 	protected initThemeModListener(): void {
-		if (SSR) {
-			return;
-		}
-
-		if (this.r.theme == null) {
+		if (SSR || this.r.theme == null) {
 			return;
 		}
 
