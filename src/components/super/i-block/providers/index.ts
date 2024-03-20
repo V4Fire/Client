@@ -298,7 +298,7 @@ export default abstract class iBlockProviders extends iBlockState {
 		opts = {
 			...opts,
 			i18n: this.i18n.bind(this),
-			id: this.r.appProcessId,
+			id: SSR ? this.r.appProcessId : 'client',
 			remoteState: this.remoteState
 		};
 
