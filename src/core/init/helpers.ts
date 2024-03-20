@@ -34,6 +34,7 @@ export function getAppParams(opts: InitAppOptions): {
 		// Make the state observable
 		state: watch({
 			...opts,
+			appProcessId: opts.appProcessId ?? Object.fastHash(Math.random()),
 			net: opts.net ?? net,
 			cookies: cookies.from(opts.cookies),
 			seo: {},
