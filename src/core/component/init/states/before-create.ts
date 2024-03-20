@@ -209,6 +209,20 @@ export function beforeCreateState(
 		}
 	});
 
+	unsafe.$async.worker(() => {
+		// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
+		setTimeout(() => {
+			['$root', '$parent', '$normalParent', '$children'].forEach((key) => {
+				Object.defineProperty(unsafe, key, {
+					configurable: true,
+					enumerable: true,
+					writable: false,
+					value: null
+				});
+			});
+		}, 1000);
+	});
+
 	if (opts?.addMethods) {
 		attachMethodsFromMeta(component);
 	}
