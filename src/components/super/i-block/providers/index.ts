@@ -298,7 +298,10 @@ export default abstract class iBlockProviders extends iBlockState {
 		opts = {
 			...opts,
 			i18n: this.i18n.bind(this),
-			id: this.r.appProcessId,
+			// Hardcode the id during the client render
+			// because the providers cache must be preserved until the end of the user's session
+			// FIXME: remove this condition after PR#1171 is merged
+			id: SSR ? this.r.appProcessId : 'client',
 			remoteState: this.remoteState
 		};
 
