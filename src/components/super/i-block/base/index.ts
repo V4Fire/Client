@@ -456,6 +456,10 @@ export default abstract class iBlockBase extends iBlockFriends {
 		optsOrHandler: AsyncWatchOptions | RawWatchHandler<this, T>,
 		handlerOrOpts?: RawWatchHandler<this, T> | AsyncWatchOptions
 	): void {
+		if (SSR) {
+			return;
+		}
+
 		const
 			{async: $a} = this;
 
