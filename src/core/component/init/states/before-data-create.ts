@@ -30,9 +30,8 @@ export function beforeDataCreateState(component: ComponentInterface): void {
 	runHook('beforeDataCreate', component)
 		.catch(stderr);
 
-	implementComponentWatchAPI(component);
-
 	if (!SSR) {
+		implementComponentWatchAPI(component);
 		bindRemoteWatchers(component);
 	}
 }
