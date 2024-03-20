@@ -35,6 +35,11 @@ export interface CreateAppOptions {
 
 export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 	/**
+	 * The unique identifier for the application process
+	 */
+	appProcessId?: string;
+
+	/**
 	 * A store of application cookies
 	 */
 	cookies: CookieStore;
