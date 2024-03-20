@@ -209,17 +209,6 @@ export function beforeCreateState(
 		}
 	});
 
-	unsafe.$async.worker(() => {
-		['$root', '$parent', '$normalParent', '$children'].forEach((key) => {
-			Object.defineProperty(unsafe, key, {
-				configurable: true,
-				enumerable: true,
-				writable: false,
-				value: null
-			});
-		});
-	});
-
 	if (opts?.addMethods) {
 		attachMethodsFromMeta(component);
 	}
