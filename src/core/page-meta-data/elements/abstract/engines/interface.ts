@@ -27,16 +27,16 @@ export interface Engine {
 	update(element: HTMLElement | AbstractElement, attrs: Dictionary<string>): HTMLElement | AbstractElement;
 
 	/**
+	 * Removes the element
+	 * @param element
+	 */
+	remove(element: HTMLElement | AbstractElement): HTMLElement | AbstractElement;
+
+	/**
 	 * Creates the element
 	 *
 	 * @param tag
 	 * @param attrs
 	 */
 	create?(tag: string, attrs: Dictionary<string>): HTMLElement;
-
-	/**
-	 * Removes the element
-	 * @param element
-	 */
-	remove(element: HTMLElement | AbstractElement): HTMLElement | AbstractElement;
 }

@@ -11,21 +11,21 @@ import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
 export * from 'core/page-meta-data/elements/abstract/engines/index';
 
 /**
- * Abstract class for page meta data elements
+ * Abstract class for page meta data element
  */
 export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	/**
-	 * Element's tag
+	 * The element's tag
 	 */
 	protected tag!: string;
 
 	/**
-	 * The element instance due to the environment
+	 * The element's instance due to the environment
 	 */
 	protected el!: T | this;
 
 	/**
-	 * Element's attributes
+	 * The element's attributes
 	 */
 	protected attrs!: Dictionary<string>;
 
