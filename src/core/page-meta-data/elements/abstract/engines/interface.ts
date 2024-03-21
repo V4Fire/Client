@@ -19,6 +19,14 @@ export interface Engine {
 	render(element: HTMLElement | AbstractElement, tag: string, attrs: Dictionary<string>): HTMLElement | string;
 
 	/**
+	 * Updates the element with new attributes
+	 *
+	 * @param element
+	 * @param attrs
+	 */
+	update(element: HTMLElement | AbstractElement, attrs: Dictionary<string>): HTMLElement | AbstractElement;
+
+	/**
 	 * Creates the element
 	 *
 	 * @param tag
@@ -30,5 +38,5 @@ export interface Engine {
 	 * Removes the element
 	 * @param element
 	 */
-	remove?(element: HTMLElement | AbstractElement): HTMLElement | AbstractElement;
+	remove(element: HTMLElement | AbstractElement): HTMLElement | AbstractElement;
 }

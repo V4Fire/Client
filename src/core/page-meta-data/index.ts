@@ -9,7 +9,7 @@
 import { concatURLs } from 'core/url';
 import remoteState from 'core/component/client-state';
 import type { State } from 'core/component';
-import { SSREngine, CSREngine} from 'core/page-meta-data/elements/abstract/engines';
+import { SSREngine, CSREngine } from 'core/page-meta-data/elements/abstract/engines';
 import { CSRTitleEngine } from 'core/page-meta-data/elements/title';
 
 import {
@@ -23,6 +23,7 @@ import {
 
 } from 'core/page-meta-data/elements';
 import ElementsStorage from "core/page-meta-data/storage";
+import type {OGElements} from "core/page-meta-data/storage/interface";
 
 export default class PageMetaData {
 	/**
@@ -55,12 +56,14 @@ export default class PageMetaData {
 	 * @param value - the new title value
 	 */
 	set title(value: string) {
+		const attrs = {text: value};
+
 		const title = new Title(
 			SSR ? new SSREngine() : new CSRTitleEngine(),
-			{text: value}
+			attrs
 		);
 
-		this.elements.setTitle(title);
+		this.elements.setTitle(title, attrs);
 	}
 
 	/**
@@ -76,12 +79,14 @@ export default class PageMetaData {
 	 * @param value - the new description value
 	 */
 	set description(value: string) {
+		const attrs = {name: 'description', content: value};
+
 		const description = new Meta(
 			SSR ? new SSREngine() : new CSREngine(),
-			{name: 'description', content: value}
+			attrs
 		);
 
-		this.elements.setDescription(description);
+		this.elements.setDescription(description, attrs);
 	}
 
 	/**
@@ -144,22 +149,22 @@ export default class PageMetaData {
 	setCanonicalLink(pathname?: string, query: string = this.state.location.search): void {
 		const
 			{location} = this.state,
-			href = concatURLs(location.origin, pathname, query);
+			href = concatURLs(location.origin, pathname, query),
+			attrs = {rel: 'canonical', href};
 
 		const link = new Link(
 			SSR ? new SSREngine() : new CSREngine(),
-			{rel: 'canonical', href}
+			attrs
 		);
 
-		this.elements.setCanonical(link);
+		this.elements.setCanonical(link, attrs);
 	}
 
 	/**
 	 * Removes canonical link `<link rel="canonical" />` from the page
 	 */
 	removeCanonicalLink(): void {
-		const canonical = this.elements.removeCanonical();
-		canonical?.remove();
+		this.elements.removeCanonical();
 	}
 
 	/**
@@ -167,8 +172,7 @@ export default class PageMetaData {
 	 * @param attrs
 	 */
 	removeMeta(attrs: MetaAttributes): void {
-		const metas = this.elements.removeMetas(attrs);
-		metas.forEach((meta) => meta.remove());
+		this.elements.removeMetas(attrs);
 	}
 
 	/**
@@ -176,7 +180,6 @@ export default class PageMetaData {
 	 * @param attrs
 	 */
 	removeLink(attrs: MetaAttributes): void {
-		const metas = this.elements.removeLinks(attrs);
-		metas.forEach((link) => link.remove());
+		this.elements.removeLinks(attrs);
 	}
 }

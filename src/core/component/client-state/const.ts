@@ -16,7 +16,8 @@ const watcher = watchObj<State>({
 	experiments: undefined,
 	route: undefined,
 	globalEnv: {},
-	location: new URL(''),
+	location: new URL('https://www.default.com'),
+	// @ts-ignore
 	pageMetaData: undefined
 });
 

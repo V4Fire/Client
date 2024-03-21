@@ -49,6 +49,7 @@ export default class ElementsStorage {
 	 */
 	addMeta(element: Meta): void {
 		this.metas.push(element);
+		element.render();
 	}
 
 	/**
@@ -57,6 +58,7 @@ export default class ElementsStorage {
 	 */
 	addLink(element: Link): void {
 		this.links.push(element);
+		element.render();
 	}
 
 	/**
@@ -77,26 +79,50 @@ export default class ElementsStorage {
 
 	/**
 	 * Sets title element
+	 *
 	 * @param element
+	 * @param attrs
 	 */
-	setTitle(element: Title): void {
-		this.title = element;
+	setTitle(element: Title, attrs: Dictionary<string>): void {
+		if (this.title == null) {
+			this.title = element;
+			element.render();
+
+		} else {
+			this.title.update(attrs);
+		}
 	}
 
 	/**
 	 * Sets canonical link
+	 *
 	 * @param element
+	 * @param attrs
 	 */
-	setCanonical(element: Link): void {
-		this.canonical = element;
+	setCanonical(element: Link, attrs: Dictionary<string>): void {
+		if (this.canonical == null) {
+			this.canonical = element;
+			element.render();
+
+		} else {
+			this.canonical.update(attrs);
+		}
 	}
 
 	/**
 	 * Sets description meta element
+	 *
 	 * @param element
+	 * @param attrs
 	 */
-	setDescription(element: Meta): void {
-		this.description = element;
+	setDescription(element: Meta, attrs: Dictionary<string>): void {
+		if (this.description == null) {
+			this.description = element;
+			element.render();
+
+		} else {
+			this.description.update(attrs);
+		}
 	}
 
 	/**
@@ -104,15 +130,18 @@ export default class ElementsStorage {
 	 *
 	 * @param key
 	 * @param element
+	 * @param attrs
 	 */
-	addOG(key: string, element: Meta): void {
-		if (key.includes('image')) {
+	addOG(key: keyof OGElements, element: Meta, attrs: Dictionary<string>): void {
+		if (key === 'image') {
 			this.og.image ??= [];
 			this.og.image.push(element);
-			return;
+
+		} else {
+			this.og[key] = element;
 		}
 
-		this.og[key] = element;
+		element.render();
 	}
 
 	/**
@@ -150,6 +179,8 @@ export default class ElementsStorage {
 		const canonical = this.canonical;
 		this.canonical = undefined;
 
+		canonical?.remove();
+
 		return canonical;
 	}
 
@@ -160,6 +191,8 @@ export default class ElementsStorage {
 	removeMetas(attrs: Dictionary<string>): Meta[] {
 		const metas = this.findMetas(attrs);
 		this.metas = this.metas.filter((el) => !el.is('meta', attrs));
+
+		metas.forEach((meta) => meta.remove());
 
 		return metas;
 	}
@@ -172,11 +205,13 @@ export default class ElementsStorage {
 		const links = this.findLinks(attrs);
 		this.links = this.links.filter((el) => !el.is('link', attrs));
 
+		links.forEach((link) => link.remove());
+
 		return links;
 	}
 
 	/**
-	 * Clears the storage
+	 * Clears the storage and the elements
 	 */
 	clear(): void {
 		Object.assign(this, new ElementsStorage());

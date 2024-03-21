@@ -30,7 +30,7 @@ export interface State {
 	/**
 	 * The application locale
 	 */
-	lang: Language;
+	lang?: Language;
 
 	/**
 	 * A list of registered AB experiments
@@ -74,7 +74,7 @@ export interface State {
 	location: URL;
 
 	/**
-	 * API to work with seo meta information of the current page
+	 * API to work with meta information of the current page
 	 */
 	pageMetaData: PageMetaData;
 }

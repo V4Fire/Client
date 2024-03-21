@@ -56,7 +56,7 @@ test.describe('<i-static-page> page meta data', () => {
 	});
 
 	test('`addLink` should add link to the head of the page', async ({page}) => {
-		const href = 'https://edadeal.ru/';
+		const href = 'https://example.com/';
 		await root.evaluate((ctx, href) => ctx.pageMetaData.setCanonicalLink(href), href);
 
 		const linkHref = await root.evaluate((ctx) => {
@@ -81,23 +81,28 @@ test.describe('<i-static-page> page meta data', () => {
 		await test.expect(page.locator('head meta[name="robots"]')).toHaveAttribute('content', content);
 	});
 
-	test('should give added elements for string render', async ({page}) => {
+	test('Sets/gets/removes canonical link to the head of the page', async ({page}) => {
 		const
-			href = 'https://edadeal.ru/',
-			newDescription = 'Cool description';
+			href = 'https://example.com/',
+			locator = page.locator('link[rel="canonical"]');
 
-		const metaElements = await root.evaluate(
-			(ctx, [newDescription, href]) => {
-				ctx.pageMetaData.description = newDescription;
-				ctx.pageMetaData.setCanonicalLink(href);
+		await root.evaluate((ctx, href) => ctx.pageMetaData.setCanonicalLink(href), href);
 
-				return ctx.pageMetaData.metaElements.map((el) => el.render());
-			},
-			[newDescription, href]
-		);
+		let canonical = await root.evaluate((ctx) => ctx.pageMetaData.getCanonicalLink());
 
-		test.expect(metaElements.length).toEqual(2);
-		test.expect(metaElements[0]).toEqual(`<meta name="description" content="${newDescription}" />`);
-		test.expect(metaElements[1]).toEqual(`<link rel="canonical" href="${href}" />`);
+		const element = await root.evaluate((ctx, href) => {
+			const el = document.createElement('link');
+			return Object.assign(el, {rel: 'canonical', href});
+		}, href);
+
+		test.expect(canonical).toEqual(element);
+		await test.expect(locator).toHaveAttribute('href', href);
+
+		await root.evaluate((ctx) => ctx.pageMetaData.removeCanonicalLink());
+
+		canonical = await root.evaluate((ctx) => ctx.pageMetaData.getCanonicalLink());
+
+		test.expect(canonical).toBeUndefined();
+		await test.expect(locator).toBeHidden();
 	});
 });

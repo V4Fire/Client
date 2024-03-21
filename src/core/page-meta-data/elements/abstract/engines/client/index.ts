@@ -14,9 +14,7 @@ import type { Engine } from 'core/page-meta-data/elements/abstract/engines/inter
 export default class CSREngine<T extends HTMLElement> implements Engine {
 	/** {@link Engine.create}*/
 	create(tag: string, attrs: Dictionary<string>): T {
-		return this.render(
-			Object.assign(<T>globalThis.document.createElement(tag), attrs)
-		);
+		return Object.assign(<T>globalThis.document.createElement(tag), attrs);
 	}
 
 	/** {@link Engine.render}*/
@@ -27,5 +25,10 @@ export default class CSREngine<T extends HTMLElement> implements Engine {
 	/** {@link Engine.remove}*/
 	remove(el: T): T {
 		return globalThis.document.head.removeChild(el);
+	}
+
+	/** {@link Engine.update}*/
+	update(el: T, attrs): T {
+		return Object.assign(el, attrs);
 	}
 }

@@ -59,8 +59,16 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	/**
 	 * Removes the element due to the environment
 	 */
-	remove() {
-		return this.engine.remove?.(this.el);
+	remove(): T | this {
+		return <T>this.engine.remove(this.el);
+	}
+
+	/**
+	 * Updates the element due to the environment
+	 */
+	update(attrs: Dictionary<string>): T | this {
+		Object.assign(this.attrs, attrs);
+		return <T>this.engine.update(this.el, attrs);
 	}
 
 	/**
