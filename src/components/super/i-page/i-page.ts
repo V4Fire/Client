@@ -15,7 +15,16 @@ import symbolGenerator from 'core/symbol';
 import iVisible from 'components/traits/i-visible/i-visible';
 
 import iData, { component, prop, system, computed, watch, hook, ModsDecl } from 'components/super/i-data/i-data';
-import type { TitleValue, StageTitles, ScrollOptions, DescriptionValue } from 'components/super/i-page/interface';
+
+import type {
+
+	TitleValueProp,
+	DescriptionValueProp,
+
+	StageTitles,
+	ScrollOptions
+
+} from 'components/super/i-page/interface';
 
 export * from 'components/super/i-data/i-data';
 export * from 'components/super/i-page/interface';
@@ -38,7 +47,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 * If the prop value is defined as a function, it will be called (the result will be used as the title).
 	 */
 	@prop({type: [String, Function]})
-	readonly pageTitleProp: TitleValue = '';
+	readonly pageTitleProp: TitleValueProp = '';
 
 	/**
 	 * The current page description.
@@ -46,7 +55,7 @@ export default abstract class iPage extends iData implements iVisible {
 	 * If the prop value is defined as a function, it will be called (the result will be used as the description content).
 	 */
 	@prop({type: [String, Function]})
-	readonly pageDescriptionProp: DescriptionValue = '';
+	readonly pageDescriptionProp: DescriptionValueProp = '';
 
 	/**
 	 * A dictionary of page titles (basically these titles are set via `document.title`).

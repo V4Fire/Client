@@ -174,8 +174,8 @@ export default abstract class iBlockProps extends ComponentInterface {
 	 * ```
 	 *
 	 * However, in certain cases where the stage value is not present in the `route.query`,
-	 * and the component has a default value for stage,
-	 * we may encounter a situation where there is a route that has not been synchronized with the component.
+	 * and the component has a default value for stage.
+	 * We may encounter a situation where there is a route that has not been synchronized with the component.
 	 * This can impact the logic for "back" navigation as it may not meet our expectations.
 	 *
 	 * To address this, if you set `syncRouterStateOnInit` to true,

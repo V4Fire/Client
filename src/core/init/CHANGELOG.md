@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* The module has been completely redesigned for the new API
+
 ## v4.0.0-beta.64 (2024-02-19)
 
 #### :bug: Bug Fix

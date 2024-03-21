@@ -91,7 +91,7 @@ export default abstract class iTreeProps extends iData {
 	 * 1. `false` - lazy rendering is disabled.
 	 * 2. `true` - lazy rendering in the `'items'` mode.
 	 */
-	@prop(Boolean)
+	@prop([Boolean, String])
 	readonly lazyRender: LazyRender = 'folded';
 
 	/**

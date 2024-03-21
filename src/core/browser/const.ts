@@ -9,8 +9,10 @@
 import { match } from 'core/browser/helpers';
 
 /**
- * A map of the supported environments to detect. If the current `navigator.userAgent` matches one of the map keys,
- * the value will contain a tuple `[browserName, browserVersion?[]]`. Otherwise, it is `false`.
+ * A map of supported environments for detection.
+ * If the current `navigator.userAgent` matches one of the map keys,
+ * the value will be a tuple of `[browserName, browserVersion?[]]`.
+ * If it doesn't match, the value will be `false`.
  */
 export const is = {
 	Chrome: match('Chrome'),
@@ -26,8 +28,8 @@ export const is = {
 	}),
 
 	/**
-	 * A tuple `[browserName, browserVersion?[]]` if the current `navigator.userAgent` is a mobile browser.
-	 * Otherwise, it is `false`.
+	 * Returns the `[browserName, browserVersion?[]]` tuple if the current navigator.userAgent is a mobile browser.
+	 * Otherwise, it returns `false`.
 	 */
 	get mobile(): [string, number[] | null] | false {
 		// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions

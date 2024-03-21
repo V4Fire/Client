@@ -103,7 +103,11 @@ export function createMeta(component: ComponentConstructorInfo): ComponentMeta {
 				return render;
 			}
 
-			if (unsafe.meta.params.functional !== true) {
+			// With SSR or functional components, the render function is always called exactly once,
+			// so there's no point in caching the context
+			const needCacheRenderFn = !SSR && unsafe.meta.params.functional !== true;
+
+			if (needCacheRenderFn) {
 				cache.set(ctx, render);
 
 				unsafe.$async.worker(() => {

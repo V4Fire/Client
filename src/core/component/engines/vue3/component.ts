@@ -55,7 +55,7 @@ export function getComponent(meta: ComponentMeta): ComponentOptions<typeof Compo
 				group: 'watchers:suspend'
 			});
 
-			return ctx.$fields;
+			return SSR ? {} : ctx.$fields;
 
 			function watcher(value: unknown, oldValue: unknown, info: WatchHandlerParams): void {
 				const

@@ -11,7 +11,7 @@
  * @packageDocumentation
  */
 
-import { toRaw, wrappedContexts } from 'core/component/context/const';
+import { toRaw, toWrapped } from 'core/component/context/const';
 import type { ComponentInterface } from 'core/component/interface';
 
 export * from 'core/component/context/const';
@@ -29,16 +29,12 @@ export function getComponentContext(component: object): Dictionary & ComponentIn
 		return Object.cast(component);
 	}
 
-	let
-		wrappedCtx = wrappedContexts.get(component);
-
-	if (wrappedCtx == null) {
-		wrappedCtx = Object.create(component);
+	if (!(toWrapped in component)) {
+		const wrappedCtx = Object.create(component);
 		saveRawComponentContext(wrappedCtx, component);
-		wrappedContexts.set(component, wrappedCtx);
 	}
 
-	return wrappedCtx;
+	return component[toWrapped];
 }
 
 /**
@@ -49,6 +45,7 @@ export function getComponentContext(component: object): Dictionary & ComponentIn
  */
 export function saveRawComponentContext(ctx: object, rawCtx: object): void {
 	Object.defineProperty(ctx, toRaw, {configurable: true, value: rawCtx});
+	Object.defineProperty(rawCtx, toWrapped, {configurable: true, value: ctx});
 }
 
 /**
@@ -57,7 +54,7 @@ export function saveRawComponentContext(ctx: object, rawCtx: object): void {
  */
 export function dropRawComponentContext(ctx: object): void {
 	if (toRaw in ctx) {
-		wrappedContexts.delete(ctx[toRaw]);
+		Object.delete(ctx, [toRaw, toWrapped]);
 	}
 
 	delete ctx[toRaw];

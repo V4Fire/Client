@@ -34,7 +34,7 @@ test.describe('<i-static-page> provider data store', () => {
 		});
 
 		const data = await target.evaluate((ctx) =>
-			Object.fastClone(ctx.r.providerDataStore.get('Provider')?.select({where: {label: 'Foo'}})));
+			Object.fastClone(ctx.r.providerDataStore?.get('Provider')?.select({where: {label: 'Foo'}})));
 
 		test.expect(data).toEqual({label: 'Foo', value: 'foo'});
 	});
@@ -46,7 +46,7 @@ test.describe('<i-static-page> provider data store', () => {
 		});
 
 		const data = await target.evaluate((ctx) =>
-			Object.fastClone(ctx.r.providerDataStore.get('foo')?.select({where: {label: 'Foo'}})));
+			Object.fastClone(ctx.r.providerDataStore?.get('foo')?.select({where: {label: 'Foo'}})));
 
 		test.expect(data).toEqual({label: 'Foo', value: 'foo'});
 	});

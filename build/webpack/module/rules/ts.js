@@ -38,7 +38,7 @@ module.exports = function tsRules() {
 	return {
 		test: isTsFile,
 		exclude: isExternalDep,
-		use: [
+		use: [].concat(
 			{
 				loader: 'ts-loader',
 				options: {
@@ -47,7 +47,7 @@ module.exports = function tsRules() {
 				}
 			},
 
-			{
+			webpack.ssr ? [] : {
 				loader: 'symbol-generator-loader',
 				options: {
 					modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
@@ -71,6 +71,6 @@ module.exports = function tsRules() {
 					)
 				})
 			}
-		]
+		)
 	};
 };

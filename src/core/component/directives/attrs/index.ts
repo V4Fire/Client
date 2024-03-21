@@ -188,11 +188,13 @@ ComponentEngine.directive('attrs', {
 				}
 
 				case 'on': {
+					if (SSR) {
+						return;
+					}
+
 					if (Object.isDictionary(value)) {
 						Object.entries(value).forEach(([name, handler]) => {
-							const event = `@${name}`;
-							attrs[event] = handler;
-							attrsKeys.push(event);
+							attachEvent(name, handler);
 						});
 					}
 
@@ -239,22 +241,17 @@ ComponentEngine.directive('attrs', {
 					attrsKeys.push(modelProp);
 					attrs[modelProp] = value;
 
-					const attachEvent = (event: string) => {
-						attrsKeys.push(event);
-						attrs[event] = handler;
-					};
-
 					switch (vnode.type) {
 						case 'input':
 						case 'textarea':
 						case 'select': {
 							dir = r?.vModelDynamic;
-							attachEvent('@update:modelValue');
+							attachEvent('update:modelValue', handler);
 							break;
 						}
 
 						default: {
-							attachEvent(`@onUpdate:${modelProp}`);
+							attachEvent(`onUpdate:${modelProp}`, handler);
 							return;
 						}
 					}
@@ -316,6 +313,16 @@ ComponentEngine.directive('attrs', {
 			} else if (cantIgnoreDir) {
 				bindings.push(binding);
 			}
+		}
+
+		function attachEvent(event: string, handler: unknown) {
+			if (SSR) {
+				return;
+			}
+
+			event = `@${event}`;
+			attrsKeys.push(event);
+			attrs[event] = handler;
 		}
 
 		function parseEventListener(attrName: string, attrVal: unknown) {
@@ -408,6 +415,13 @@ ComponentEngine.directive('attrs', {
 
 			if (handlerStore == null) {
 				handlerStore = new Map();
+
+				if (SSR) {
+					Object.defineProperty(handlerStore, 'set', {value: () => {
+						// Do nothing
+					}});
+				}
+
 				handlers.set(ctx, handlerStore);
 			}
 

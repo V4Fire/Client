@@ -116,7 +116,7 @@ export function getField<T = unknown>(
 					break;
 
 				case 'field':
-					res = ctx.isFunctional || ctx.lfc.isBeforeCreate() ? ctx.$fields : ctx;
+					res = ctx.isFunctionalWatchers || ctx.lfc.isBeforeCreate() ? ctx.$fields : ctx;
 					break;
 
 				default:

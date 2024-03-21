@@ -462,9 +462,18 @@ class bTree extends iTreeProps implements iActiveItems, iFoldable {
 	 * Returns a filter function to check if an item needs to be rendered in a nested tree
 	 * @param item
 	 */
-	protected getNestedTreeFilter(item: this['Item']): () => CanPromise<boolean> {
+	protected getNestedTreeFilter(item: this['Item']): CanNull<() => CanPromise<boolean>> {
+		const canRenderSynchronously = () =>
+			!this.getFoldedPropValue(item) ||
+			Object.isBoolean(this.lazyRender) ||
+			this.lazyRender === 'items';
+
+		if (SSR && canRenderSynchronously()) {
+			return null;
+		}
+
 		return () => {
-			if (!this.getFoldedPropValue(item) || Object.isBoolean(this.lazyRender) || this.lazyRender === 'items') {
+			if (canRenderSynchronously()) {
 				return true;
 			}
 

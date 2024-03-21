@@ -34,6 +34,13 @@ This is a temporary solution until PR#1171 is merged `iBlockProviders`
 
 ## 4.0.0-beta.71 (2024-03-12)
 
+#### :boom: Breaking Change
+
+* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
+* The field `locale` has been removed `iStaticPage`
+
+## v4.0.0-beta.?? (2024-??-??)
+
 #### :rocket: New Feature
 
 * Created a new global component `g-slider` that encapsulates CSS `scroll snap` logic `gSlider`
