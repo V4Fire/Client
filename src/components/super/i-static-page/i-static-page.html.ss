@@ -119,13 +119,9 @@
 						- if attachFavicons
 							+= h.getFaviconsDecl(canInlineSourceCode, Boolean(config.webpack.dynamicPublicPath()))
 
-					- block metaData
-						<! :: META starts
-						- block title
-							< title
-								{title}
-
-						<! :: META ends
+					- block title
+						< title
+							{title}
 
 					- block assets
 						+= h.getAssetsDecl({inline: canInlineSourceCode && !assetsRequest, wrap: true})
