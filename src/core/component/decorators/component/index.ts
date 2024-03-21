@@ -146,6 +146,11 @@ export function component(opts?: ComponentOptions): Function {
 						return attachTemplatesAndResolve(fns);
 					}
 
+					if (SSR) {
+						attachTemplatesAndResolve();
+						return;
+					}
+
 					if (resolve === identity) {
 						return new Promise((r) => {
 							resolve = r;
