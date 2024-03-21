@@ -464,6 +464,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
+		 * Returns true if default meta information should be added to the page
+		 *
+		 * @cli default-page-meta
+		 * @env DEFAULT_PAGE_META
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		defaultPageMeta(def = true) {
+			return o('default-page-meta', {
+				env: true,
+				type: 'boolean',
+				default: def
+			});
+		},
+
+		/**
 		 * Webpack options for build optimization
 		 */
 		optimize: {
