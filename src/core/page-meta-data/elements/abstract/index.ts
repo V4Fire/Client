@@ -68,7 +68,7 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 */
 	update(attrs: Dictionary<string>): T | this {
 		Object.assign(this.attrs, attrs);
-		return <T>this.engine.update(this.el, attrs);
+		return <T>this.engine.update(this.el, this.attrs);
 	}
 
 	/**
