@@ -239,15 +239,13 @@ export default class ElementsStorage {
 
 				if (val instanceof AbstractElement) {
 					yield val;
-					continue;
-				}
 
-				if (Object.isArray(val)) {
+				} else if (Object.isArray(val)) {
 					yield* val;
-					continue;
-				}
 
-				yield* traverse(Object.values(val));
+				} else {
+					yield* traverse(Object.values(val));
+				}
 			}
 		}
 	}

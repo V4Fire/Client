@@ -9,16 +9,14 @@
 import watchObj from 'core/object/watch';
 import type { State } from 'core/component/state';
 
+// @ts-ignore
 const watcher = watchObj<State>({
 	isAuth: undefined,
 	isOnline: undefined,
 	lastOnlineDate: undefined,
 	experiments: undefined,
 	route: undefined,
-	globalEnv: {},
-	location: new URL('https://www.default.com'),
-	// @ts-ignore
-	pageMetaData: undefined
+	globalEnv: {}
 });
 
 export default watcher.proxy;
