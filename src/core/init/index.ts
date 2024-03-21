@@ -12,12 +12,14 @@
  */
 
 import dependencies from 'core/init/dependencies';
+import type { Dependency, DependencyFn } from 'core/init/dependencies';
 import { createDependencyIterator } from 'core/init/dependencies/helpers';
 
 import { createApp } from 'core/init/create-app';
 import { getAppParams } from 'core/init/helpers';
 
 import type { InitAppOptions, App } from 'core/init/interface';
+import type { State } from 'core/component/state';
 
 export * from 'core/init/dependencies/helpers';
 export * from 'core/init/helpers';
@@ -35,8 +37,21 @@ export default async function initApp(
 ): Promise<App> {
 	const {state, createAppOpts} = getAppParams(opts);
 
-	const tasks = [...createDependencyIterator(dependencies)].map(([_, {fn}]) => fn(state));
-	await Promise.all(tasks);
+	await initDependencies(dependencies, state);
 
 	return createApp(rootComponent, createAppOpts, state);
+}
+
+/**
+ * Initializes dependencies of the application
+ *
+ * @param dependencies
+ * @param state
+ */
+export async function initDependencies(
+	dependencies: Dictionary<Dependency | DependencyFn>,
+	state: State
+): Promise<void> {
+	const tasks = [...createDependencyIterator(dependencies)].map(([_, {fn}]) => fn(state));
+	await Promise.all(tasks);
 }
