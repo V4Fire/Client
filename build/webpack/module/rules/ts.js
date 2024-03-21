@@ -58,7 +58,7 @@ module.exports = function tsRules() {
 				loader: 'monic-loader',
 				options: inherit(monic.typescript, {
 					replacers: [].concat(
-						webpack.ssr || fatHTML ?
+						fatHTML ?
 							[] :
 							include('build/monic/attach-component-dependencies'),
 
