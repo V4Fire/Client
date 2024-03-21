@@ -149,7 +149,7 @@ export default abstract class iStaticPage extends iPage {
 	 * A module for manipulating page metadata, such as the page title or description
 	 */
 	get pageMetaData(): PageMetaData {
-		return this.remoteState.pageMetaData;
+		return this.r.remoteState.pageMetaData;
 	}
 
 	/**
