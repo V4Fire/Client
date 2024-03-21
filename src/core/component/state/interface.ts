@@ -71,6 +71,9 @@ export interface State {
 	 */
 	globalEnv?: GlobalEnvironment;
 
+	/**
+	 * A shim for the `window.location` API
+	 */
 	location: URL;
 
 	/**
