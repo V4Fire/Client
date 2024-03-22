@@ -474,7 +474,7 @@ export abstract class ComponentInterface {
 	protected $on<E = unknown, R = unknown>(
 		_event: CanArray<string>,
 		_handler: ProxyCb<E, R, this>,
-		_opts?: ComponentEmitterOptions,
+		_opts?: ComponentEmitterOptions
 	): CanArray<EventId> {
 		return Object.throw();
 	}
