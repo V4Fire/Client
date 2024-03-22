@@ -9,7 +9,7 @@
 import type { EventId } from 'core/async';
 
 import { EventEmitter2 as EventEmitter } from 'eventemitter2';
-import type { UnsafeComponentInterface } from 'core/component/interface';
+import type { UnsafeComponentInterface, ComponentEmitterOptions } from 'core/component/interface';
 
 import { globalEmitter } from 'core/component/event/emitter';
 import type { ComponentResetType } from 'core/component/event/interface';
@@ -106,10 +106,19 @@ export function implementEventEmitterAPI(component: object): void {
 	});
 
 	function getMethod(method: 'on' | 'once' | 'off') {
-		return function wrapper(this: unknown, event: CanArray<string>, cb?: Function) {
+		return function wrapper(
+			this: unknown,
+			event: CanArray<string>,
+			cb?: Function,
+			opts?: ComponentEmitterOptions,
+		) {
 			const
 				links: EventId[] = [],
 				isOnLike = method !== 'off';
+
+			if (isOnLike && opts?.prepend === true) {
+				method = Object.cast(method === 'on' ? 'prependListener' : 'prependOnceListener');
+			}
 
 			Array.concat([], event).forEach((event) => {
 				if (method === 'off' && cb == null) {
