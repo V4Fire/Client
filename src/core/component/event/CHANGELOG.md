@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added the ability to add event handlers before the others
+
 ## v4.0.0-alpha.1 (2022-12-14)a
 
 #### :memo: Documentation
