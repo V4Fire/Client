@@ -60,11 +60,19 @@ export function implementEventEmitterAPI(component: object): void {
 	const
 		ctx = Object.cast<UnsafeComponentInterface>(component);
 
-	const $e = ctx.$async.wrapEventEmitter(new EventEmitter({
+	const emitter = new EventEmitter({
 		maxListeners: 1e3,
 		newListener: false,
 		wildcard: true
-	}));
+	});
+
+	const regularEmitter = ctx.$async.wrapEventEmitter(emitter);
+
+	const reversedEmitter = ctx.$async.wrapEventEmitter({
+		__proto__: emitter,
+		on: (...args: Parameters<EventEmitter['prependListener']>) => emitter.prependListener(...args),
+		once: (...args: Parameters<EventEmitter['prependOnceListener']>) => emitter.prependOnceListener(...args)
+	});
 
 	const
 		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
@@ -79,7 +87,7 @@ export function implementEventEmitterAPI(component: object): void {
 				nativeEmit?.(event, ...args);
 			}
 
-			$e.emit(event, ...args);
+			reversedEmitter.emit(event, ...args);
 			return this;
 		}
 	});
@@ -110,22 +118,24 @@ export function implementEventEmitterAPI(component: object): void {
 			this: unknown,
 			event: CanArray<string>,
 			cb?: Function,
-			opts?: ComponentEmitterOptions,
+			opts?: ComponentEmitterOptions
 		) {
+			let emitter = regularEmitter;
+
 			const
 				links: EventId[] = [],
 				isOnLike = method !== 'off';
 
 			if (isOnLike && opts?.prepend === true) {
-				method = Object.cast(method === 'on' ? 'prependListener' : 'prependOnceListener');
+				emitter = Object.cast(reversedEmitter);
 			}
 
 			Array.concat([], event).forEach((event) => {
 				if (method === 'off' && cb == null) {
-					$e.removeAllListeners(event);
+					emitter.removeAllListeners(event);
 
 				} else {
-					const link = $e[method](Object.cast(event), Object.cast(cb));
+					const link = emitter[method](Object.cast(event), Object.cast(cb));
 
 					if (isOnLike) {
 						links.push(Object.cast(link));
