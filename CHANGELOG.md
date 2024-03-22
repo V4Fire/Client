@@ -11,11 +11,15 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## 4.0.0-beta.?? (2024-??-??)
+## 4.0.0-beta.75 (2024-03-22)
 
 #### :rocket: New Feature
 
 * Added the ability to add event handlers before the others `iBlock`
+
+#### :house: Internal
+
+* Removed the restriction on loading styles if a template is loaded `build`
 
 ## 4.0.0-beta.74 (2024-03-20)
 
