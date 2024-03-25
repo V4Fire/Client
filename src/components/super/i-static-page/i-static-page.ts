@@ -346,7 +346,9 @@ export default abstract class iStaticPage extends iPage {
 
 		Object.forEach(instanceCache, (provider, key) => {
 			if (isThisApp.test(key)) {
-				provider.destroy();
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				provider?.destroy();
+				delete instanceCache[key];
 			}
 		});
 	}
