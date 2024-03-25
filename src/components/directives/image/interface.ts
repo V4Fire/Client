@@ -9,7 +9,6 @@
 /* eslint-disable @v4fire/newline-after-description */
 
 import type { createVNode, VNode, DirectiveBinding } from 'core/component/engines';
-import { F } from '@v4fire/storybook-framework-webpack5/dist/types-cb507296';
 
 export interface DirectiveParams extends DirectiveBinding<ImageOptions> {}
 
@@ -141,17 +140,73 @@ export interface ImageOptions {
 	optionsResolver?: OptionsResolver;
 
 	/**
-	 *
+	 * The flag indicates whether the element can be dragged.
+	 * If value is `true` - element will be dragged.
 	 */
 	draggable?: boolean;
 
-	onDragStart?: Function;
-	onDragEnd?: Function;
+	/**
+	 * A Boolean value which is true if the image is being used for a server-side image map;
+	 * otherwise, the value is false.
+	 */
+	isMap?: boolean;
 
-	onDragOver?: Function;
+	/**
+	 * A string indicating which referrer to use when fetching the resource.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#referrerpolicy
+	 */
+	referrerPolicy?: ReferrerPolicy;
 
-	onDragDrop?: Function;
+	/**
+	 * The property Indicates if the fetching of the image must be done using a CORS request.
+	 *
+	 * Allowed values are:
+	 * - `anonymous` - a CORS request is sent with credentials omitted;
+	 * - `use-credentials` - The CORS request is sent with any credentials included.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#crossorigin
+	 */
+	crossOrigin?: 'anonymous' | 'use-credentials';
 
+	/**
+	 * The useMap property on the HTMLImageElement interface reflects the value of the HTML `usemap` attribute
+	 * which is a string providing the name of the client-side image map to apply to the image.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/useMap
+	 */
+	useMap?: string;
+
+	/**
+	 * This attribute indicates whether the browser should decode images synchronously with other DOM content
+	 * for a more accurate presentation, or asynchronously to render other content first and display the image later.
+	 *
+	 * Allowed values are:
+	 * - `sync` - decode the image synchronously along with rendering
+	 * the other DOM content, and present everything together;
+	 * - `async` - decode the image asynchronously, after rendering and
+	 * presenting the other DOM content;
+	 * - `auto` - No preference for the decoding mode; the browser decides
+	 * what is best for the user. This is the default value.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#decoding
+	 */
+	decoding?: 'sync' | 'async' | 'auto';
+
+	/**
+	 * This attribute is used to indicate that an element is flagged for tracking by PerformanceObserver
+	 * objects using the "element" type.
+	 *
+	 * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/elementtiming
+	 */
+	elementTiming?: string;
+
+	/**
+	 * Provides a hint of the relative priority to use when fetching the image.
+	 *
+	 * https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority
+	 */
+	fetchPriority?: 'high' | 'low' | 'auto';
 }
 
 export interface ImageSource {

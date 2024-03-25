@@ -20,6 +20,8 @@ import { getDirectiveContext, getElementId } from 'core/component/directives/hel
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
 import type { DirectiveParams } from 'components/directives/image/interface';
 
+import { NotAvailableComponentsTypes } from './constants';
+
 export * from 'components/directives/image/interface';
 
 export const
@@ -31,7 +33,7 @@ ComponentEngine.directive('image', {
 			throw new TypeError('The `v-image` directive cannot be applied to a component');
 		}
 
-		if (['img', 'picture', 'object'].includes(vnode.type)) {
+		if (NotAvailableComponentsTypes.has(vnode.type)) {
 			throw new TypeError('The `v-image` directive cannot be applied to `img`, `picture`, `object`');
 		}
 
@@ -95,19 +97,9 @@ ComponentEngine.directive('image', {
 			vnode.props.style.display = 'inline-block';
 		}
 
-		const image = createImageElement(p).toVNode(r.createVNode.bind(ctx));
-		image.props!.draggable = `${Boolean(params.value.draggable)}`;
+		const imageElement = createImageElement(p).toVNode(r.createVNode.bind(ctx));
 
-		if (params.value.draggable === true) {
-			const {onDragStart, onDragEnd, onDragOver, onDragDrop} = params.value;
-
-			image.props!.ondragstart = onDragStart;
-			image.props!.ondragend = onDragEnd;
-			image.props!.ondragover = onDragOver;
-			image.props!.ondrop = onDragDrop;
-		}
-
-		vnode.children = [image];
+		vnode.children = [imageElement];
 		vnode.dynamicChildren = Object.cast(vnode.children.slice());
 		setVNodePatchFlags(vnode, 'props', 'styles', 'children');
 

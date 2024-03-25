@@ -73,7 +73,16 @@ export function createImgElement(
 
 		style: {
 			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined
-		}
+		},
+
+		draggable: `${Boolean(imageParams.draggable)}`,
+		ismap: Boolean(imageParams.isMap),
+		referrerpolicy: imageParams.referrerPolicy,
+		usemap: imageParams.useMap,
+		decoding: imageParams.decoding,
+		elementtiming: imageParams.elementTiming,
+		fetchPriority: imageParams.fetchPriority,
+		crossorigin: imageParams.crossOrigin
 	};
 
 	return {
