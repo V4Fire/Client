@@ -98,7 +98,9 @@ export async function createApp(
 			ssrContent = '';
 			hydratedData = '';
 
-			state.async.clearAll().locked = true;
+			setTimeout(() => {
+				state.async.clearAll().locked = true;
+			}, 0);
 		}
 	}
 
