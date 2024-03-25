@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.?? (2024-03-??)
+
+#### :house: Internal
+
+* Changed the API usage of the `addToPrototype`
+
 ## 4.0.0-beta.75 (2024-03-22)
 
 #### :rocket: New Feature
