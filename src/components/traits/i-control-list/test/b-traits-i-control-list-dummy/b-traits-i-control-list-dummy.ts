@@ -48,8 +48,10 @@ class bTraitsIControlListDummy extends iBlock implements iControlList {
 		switch (opts.component) {
 			case 'b-button':
 				return 'click:component';
+
 			case 'b-file-button':
 				return 'change';
+
 			default:
 				return 'click';
 		}
