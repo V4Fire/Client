@@ -6,12 +6,13 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import Async from 'core/async';
+import watch from 'core/object/watch';
+
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
 
-import watch from 'core/object/watch';
 import type { State } from 'core/component';
-
 import type { InitAppOptions, CreateAppOptions } from 'core/init/interface';
 
 /**
@@ -30,15 +31,18 @@ export function getAppParams(opts: InitAppOptions): {
 		route = opts.location.pathname + opts.location.search;
 	}
 
+	const resolvedState = {
+		...opts,
+		appProcessId: opts.appProcessId ?? Object.fastHash(Math.random()),
+		net: opts.net ?? net,
+		cookies: cookies.from(opts.cookies),
+		route,
+		async: new Async()
+	};
+
 	return {
 		// Make the state observable
-		state: watch({
-			...opts,
-			appProcessId: opts.appProcessId ?? Object.fastHash(Math.random()),
-			net: opts.net ?? net,
-			cookies: cookies.from(opts.cookies),
-			route
-		}).proxy,
+		state: SSR ? resolvedState : watch(resolvedState).proxy,
 
 		createAppOpts: {
 			targetToMount: opts.targetToMount,

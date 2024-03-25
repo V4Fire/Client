@@ -18,11 +18,11 @@ export async function loadSession(state: State): Promise<void> {
 		// eslint-disable-next-line require-atomic-updates
 		state.isAuth = await state.session.isExists();
 
-		state.session.emitter.on('set', (e: SessionDescriptor) => {
+		state.async.on(state.session.emitter, 'set', (e: SessionDescriptor) => {
 			state.isAuth = Boolean(e.auth);
 		});
 
-		state.session.emitter.on('clear', () => {
+		state.async.on(state.session.emitter, 'clear', () => {
 			state.isAuth = false;
 		});
 

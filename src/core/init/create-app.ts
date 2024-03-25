@@ -89,6 +89,7 @@ export async function createApp(
 		} finally {
 			ssrContent = '';
 			hydratedData = '';
+			state.async.clearAll().locked = true;
 
 			try {
 				destroyApp(state.appProcessId);

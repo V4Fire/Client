@@ -6,6 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Async from 'core/async';
 import type * as net from 'core/net';
 
 import type { Session } from 'core/session';
@@ -70,4 +71,7 @@ export interface State {
 	 * A list of registered AB experiments
 	 */
 	experiments?: Experiments;
+
+	/** {@link Async} */
+	async: Async;
 }
