@@ -28,6 +28,11 @@ export * from 'components/directives/icon/interface';
 
 ComponentEngine.directive('icon', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): void {
+
+		if (vnode.type !== 'svg') {
+			throw new TypeError('The `v-image` directive cannot be applied to `img`, `picture`, `object`');
+		}
+
 		vnode.type = 'svg';
 
 		if (SSR) {

@@ -9,6 +9,7 @@
 /* eslint-disable @v4fire/newline-after-description */
 
 import type { createVNode, VNode, DirectiveBinding } from 'core/component/engines';
+import { F } from '@v4fire/storybook-framework-webpack5/dist/types-cb507296';
 
 export interface DirectiveParams extends DirectiveBinding<ImageOptions> {}
 
@@ -138,6 +139,19 @@ export interface ImageOptions {
 	 * ```
 	 */
 	optionsResolver?: OptionsResolver;
+
+	/**
+	 *
+	 */
+	draggable?: boolean;
+
+	onDragStart?: Function;
+	onDragEnd?: Function;
+
+	onDragOver?: Function;
+
+	onDragDrop?: Function;
+
 }
 
 export interface ImageSource {

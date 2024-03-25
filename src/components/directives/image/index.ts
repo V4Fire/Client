@@ -31,6 +31,10 @@ ComponentEngine.directive('image', {
 			throw new TypeError('The `v-image` directive cannot be applied to a component');
 		}
 
+		if (['img', 'picture', 'object'].includes(vnode.type)) {
+			throw new TypeError('The `v-image` directive cannot be applied to `img`, `picture`, `object`');
+		}
+
 		const
 			ctx = getDirectiveContext(params, vnode);
 
@@ -91,7 +95,19 @@ ComponentEngine.directive('image', {
 			vnode.props.style.display = 'inline-block';
 		}
 
-		vnode.children = [createImageElement(p).toVNode(r.createVNode.bind(ctx))];
+		const image = createImageElement(p).toVNode(r.createVNode.bind(ctx));
+		image.props!.draggable = `${Boolean(params.value.draggable)}`;
+
+		if (params.value.draggable === true) {
+			const {onDragStart, onDragEnd, onDragOver, onDragDrop} = params.value;
+
+			image.props!.ondragstart = onDragStart;
+			image.props!.ondragend = onDragEnd;
+			image.props!.ondragover = onDragOver;
+			image.props!.ondrop = onDragDrop;
+		}
+
+		vnode.children = [image];
 		vnode.dynamicChildren = Object.cast(vnode.children.slice());
 		setVNodePatchFlags(vnode, 'props', 'styles', 'children');
 
