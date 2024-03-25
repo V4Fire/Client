@@ -83,6 +83,7 @@ export async function createApp(
 
 			return {
 				content: ssrContent + hydratedData,
+				state,
 				styles: (await Promise.all(hydrationStore.styles.values())).map((i) => i.default).join('')
 			};
 

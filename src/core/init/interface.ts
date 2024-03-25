@@ -14,6 +14,7 @@ import type { ComponentOptions } from 'core/component/engines';
 
 export interface AppSSR {
 	content: string;
+	state: State;
 	styles: string;
 }
 
