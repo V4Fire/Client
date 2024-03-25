@@ -6,14 +6,14 @@
   "packageManager": "yarn@4.0.2",
   "typings": "index.d.ts",
   "license": "MIT",
-  "version": "4.0.0-beta.73",
+  "version": "4.0.0-beta.75",
   "author": {
     "name": "kobezzza",
     "email": "kobezzza@gmail.com",
     "url": "https://github.com/kobezzza"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",

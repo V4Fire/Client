@@ -17,6 +17,23 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added synchronous rendering of the first chunk using `v-for`. This is because SSR does not have access to the DOM API required for `vdom`. Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR. `components/base/b-virtual-scroll-new`
 
+## 4.0.0-beta.75 (2024-03-22)
+
+#### :rocket: New Feature
+
+* Added the ability to add event handlers before the others `iBlock`
+
+#### :house: Internal
+
+* Removed the restriction on loading styles if a template is loaded `build`
+
+## 4.0.0-beta.74 (2024-03-20)
+
+#### :house: Internal
+
+* Hardcode the ID during the client rendering in data provider's options.
+  This is a temporary solution until PR#1171 is merged `iBlockProviders`
+
 ## 4.0.0-beta.73 (2024-03-19)
 
 #### :house: Internal
