@@ -91,6 +91,7 @@ console.log(app?.state.isAuth);
 ### Additional initialization options
 
 ```typescript
+import type Async from 'core/async';
 import type * as net from 'core/net';
 
 import type { Session } from 'core/session';
@@ -157,6 +158,9 @@ interface InitAppOptions {
    * @param rootComponentParams
    */
   setup?(rootComponentParams: ComponentOptions): void;
+
+  /** {@link Async} */
+  async?: Async;
 }
 ```
 

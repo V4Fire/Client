@@ -88,9 +88,6 @@ export async function createApp(
 			};
 
 		} finally {
-			ssrContent = '';
-			hydratedData = '';
-
 			try {
 				destroyApp(state.appProcessId);
 			} catch {}
@@ -98,6 +95,11 @@ export async function createApp(
 			try {
 				disposeLazy(app);
 			} catch {}
+
+			ssrContent = '';
+			hydratedData = '';
+
+			state.async.clearAll().locked = true;
 		}
 	}
 

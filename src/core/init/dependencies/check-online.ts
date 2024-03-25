@@ -15,7 +15,7 @@ import type { NetStatus } from 'core/net';
  */
 export function checkOnline(state: State): Promise<void> {
 	state.net.isOnline().then(setState).catch(stderr);
-	state.net.emitter.on('status', setState);
+	state.async.on(state.net.emitter, 'status', setState);
 
 	return Promise.resolve();
 

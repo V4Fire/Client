@@ -12,7 +12,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import Provider, { providers, instanceCache, ProviderOptions } from 'core/data';
+import { unwrap as unwrapWatcher } from 'core/object/watch';
 
 import SyncPromise from 'core/promise/sync';
 import config from 'config';
@@ -299,7 +301,7 @@ export default abstract class iBlockProviders extends iBlockState {
 			...opts,
 			i18n: this.i18n.bind(this),
 			id: this.remoteState.appProcessId,
-			remoteState: this.remoteState
+			remoteState: Object.cast(unwrapWatcher(this.remoteState))
 		};
 
 		let
