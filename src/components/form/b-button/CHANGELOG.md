@@ -14,7 +14,7 @@ Changelog
 #### :boom: Breaking Change
 
 * The `stopPropagation` for the native click event has been removed.
-Now, native click events bubble up the DOM tree
+  Now, native click events bubble up the DOM tree.
 
 ## v3.0.0-rc.211 (2021-07-21)
 
