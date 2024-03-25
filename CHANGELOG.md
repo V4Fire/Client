@@ -11,7 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## 4.0.0-beta.?? (2024-03-??)
+## v4.0.0-beta.?? (2023-03-??)
+
+#### :boom: Breaking Change
+
+* The `stopPropagation` for the native click event has been removed.
+  Now, native click events bubble up the DOM tree `bButton`.
 
 #### :house: Internal
 
