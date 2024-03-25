@@ -282,9 +282,7 @@
 								- block bodyFooter
 
 						- if !ssrRendering
-							< template v-if = !ssrRendering
-								+= self.render({wait: 'async.idle.bind(async)'})
-									+= self.renderRootContent()
+							< template v-if = isRelatedToSSR && !ssrRendering
 
 							< template v-else
 								+= self.renderRootContent()
