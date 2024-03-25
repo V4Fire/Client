@@ -18,7 +18,15 @@ import SyncPromise from 'core/promise/sync';
 import type iItems from 'components/traits/i-items/i-items';
 import VDOM, { create, render } from 'components/friends/vdom';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll-new/handlers';
-import { bVirtualScrollNewAsyncGroup, bVirtualScrollNewDomInsertAsyncGroup, componentModes, renderGuardRejectionReason } from 'components/base/b-virtual-scroll-new/const';
+import {
+
+	bVirtualScrollNewAsyncGroup,
+	bVirtualScrollNewDomInsertAsyncGroup,
+	bVirtualScrollNewFirstChunkRenderAsyncGroup,
+	componentModes,
+	renderGuardRejectionReason
+
+} from 'components/base/b-virtual-scroll-new/const';
 import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll, ItemsProcessors, ComponentMode, ComponentItem } from 'components/base/b-virtual-scroll-new/interface';
 
 import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll-new/modules/emitter';
@@ -84,7 +92,10 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	}
 
 	/**
-	 * The items of the first chunk
+	 * The elements of the first chunk.
+	 *
+	 * Used for synchronous rendering in SSR and CSR via `v-for`,
+	 * as SSR lacks access to the DOM API required for `vdom`.
 	 */
 	@field()
 	protected firstChunkItems: ComponentItem[] = [];
@@ -360,7 +371,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			{result, reason} = this.renderGuard(state);
 
 		if (result) {
-			this.performRender().catch(stderr);
+			this.performRender();
 		}
 
 		switch (reason) {
@@ -370,9 +381,8 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 
 			case renderGuardRejectionReason.notEnoughData:
 				if (state.areRequestsStopped) {
-					this.performRender()
-						.then(() => this.onLifecycleDone())
-						.catch(stderr);
+					this.performRender();
+					this.onLifecycleDone();
 
 					return;
 				}
@@ -399,7 +409,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	/**
 	 * Renders components using {@link bVirtualScrollNew.componentFactory} and inserts them into the DOM tree
 	 */
-	protected async performRender(): Promise<void> {
+	protected performRender(): void {
 		this.onRenderStart();
 
 		const
@@ -454,26 +464,36 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	}
 
 	/**
-	 * Renders the first chunk synchronously
+	 * Renders the first chunk of elements synchronously using `v-for`.
+	 *
+	 * This is because SSR does not have access to the DOM API required for `vdom`.
+	 * Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR.
+	 *
 	 * @param items
 	 */
-	protected async performFirstChunkRender(items: ComponentItem[]): Promise<void> {
+	protected performFirstChunkRender(items: ComponentItem[]): void {
 		this.onRenderEngineStart();
 		this.firstChunkItems = items;
 		this.onRenderEngineDone();
 
-		await this.nextTick();
+		this.componentInternalState.setIsDomInsertInProgress(true);
 
-		let mounted: ReturnType<typeof this.componentFactory.produceMounted> = [];
+		const asyncGroup = bVirtualScrollNewFirstChunkRenderAsyncGroup;
 
-		if (!SSR) {
-			mounted = this.componentFactory.produceMounted(items, <HTMLElement[]>Array.from(this.$refs.container.children));
-		}
+		this.nextTick({label: $$.firstChunkRender, group: asyncGroup}).then(() => {
+			this.componentInternalState.setIsDomInsertInProgress(false);
 
-		this.observer.observe(mounted);
-		this.onDomInsertStart(mounted);
+			let mounted: ReturnType<typeof this.componentFactory.produceMounted> = [];
 
-		this.onDomInsertDone();
-		this.onRenderDone();
+			if (!SSR) {
+				mounted = this.componentFactory.produceMounted(items, <HTMLElement[]>Array.from(this.$refs.container.children));
+			}
+
+			this.observer.observe(mounted);
+			this.onDomInsertStart(mounted);
+
+			this.onDomInsertDone();
+			this.onRenderDone();
+		}).catch(stderr);
 	}
 }

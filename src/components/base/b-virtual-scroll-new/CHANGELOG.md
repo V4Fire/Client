@@ -13,7 +13,7 @@ Changelog
 
 #### :rocket: New Feature
 
-* Added rendering of the first chunk via `v-for`
+* Added synchronous rendering of the first chunk using `v-for`. This is because SSR does not have access to the DOM API required for `vdom`. Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR.
 
 ## v4.0.0-beta.67 (2024-02-26)
 

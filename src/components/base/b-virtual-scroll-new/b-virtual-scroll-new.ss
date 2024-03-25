@@ -14,7 +14,11 @@
 	- block body
 		< .&__wrapper
 			< .&__container ref = container | -test-ref = container
-				< component v-for = {item, props} in firstChunkItems | :is = item | :v-attrs = props
+				< component &
+					v-for = {item, props} in firstChunkItems |
+					:is = item |
+					:v-attrs = props
+				.
 
 			< .&__tombstones &
 				ref = tombstones |

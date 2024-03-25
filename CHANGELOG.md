@@ -15,7 +15,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* Added rendering of the first chunk via `v-for` `components/base/b-virtual-scroll-new`
+* Added synchronous rendering of the first chunk using `v-for`. This is because SSR does not have access to the DOM API required for `vdom`. Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR. `components/base/b-virtual-scroll-new`
 
 ## 4.0.0-beta.73 (2024-03-19)
 
