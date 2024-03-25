@@ -7,7 +7,7 @@
  */
 
 import Async from 'core/async';
-import watch from 'core/object/watch';
+import watch  from 'core/object/watch';
 
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
@@ -39,6 +39,14 @@ export function getAppParams(opts: InitAppOptions): {
 		route,
 		async: new Async()
 	};
+
+	resolvedState.async.worker(() => {
+		try {
+			Object.keys(resolvedState).forEach((key) => {
+				delete resolvedState[key];
+			});
+		} catch {}
+	});
 
 	return {
 		// Make the state observable
