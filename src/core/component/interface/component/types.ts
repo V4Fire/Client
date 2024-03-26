@@ -21,3 +21,11 @@ export interface ComponentConstructor<T = unknown> {
 export type ComponentElement<T = ComponentInterface> = Element & {
 	component?: T;
 };
+
+export interface ComponentEmitterOptions {
+	/**
+	 * If set to true, the handler will be added before all the other handlers
+	 * @default `false`
+	 */
+	prepend?: boolean;
+}

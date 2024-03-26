@@ -51,7 +51,7 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		return;
 	}
 
-	$e.once(`destroy.${ctx.r.appId}`, ctx.$destroy.bind(ctx));
+	$e.once(`destroy.${ctx.r.appProcessId}`, ctx.$destroy.bind(ctx));
 
 	$e.on('reset.load', waitNextTickForReset(ctx.initLoad.bind(ctx)));
 	$e.on('reset.load.silence', waitNextTickForReset(ctx.reload.bind(ctx)));

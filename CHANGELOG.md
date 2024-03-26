@@ -22,6 +22,40 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Refactored the build ssr: all code has now been bundled into one file `build/graph`
 * Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
 
+## v4.0.0-beta.76 (2023-03-25)
+
+#### :boom: Breaking Change
+
+* The `stopPropagation` for the native click event has been removed.
+  Now, native click events bubble up the DOM tree `bButton`.
+
+#### :house: Internal
+
+* Changed the API usage of the `addToPrototype`
+
+## 4.0.0-beta.75 (2024-03-22)
+
+#### :rocket: New Feature
+
+* Added the ability to add event handlers before the others `iBlock`
+
+#### :house: Internal
+
+* Removed the restriction on loading styles if a template is loaded `build`
+
+## 4.0.0-beta.74 (2024-03-20)
+
+#### :house: Internal
+
+* Hardcode the ID during the client rendering in data provider's options.
+  This is a temporary solution until PR#1171 is merged `iBlockProviders`
+
+## 4.0.0-beta.73 (2024-03-19)
+
+#### :house: Internal
+
+* Rename `appId` to `appProcessId` `ComponentInterface`
+
 ## 4.0.0-beta.72 (2024-03-13)
 
 #### :bug: Bug Fix

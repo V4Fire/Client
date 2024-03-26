@@ -21,7 +21,7 @@ import type { ModsProp, ModsDict } from 'core/component/interface/mod';
 import type { SyncLinkCache } from 'core/component/interface/link';
 import type { RenderEngine } from 'core/component/interface/engine';
 
-import type { ComponentElement } from 'core/component/interface/component/types';
+import type { ComponentElement, ComponentEmitterOptions } from 'core/component/interface/component/types';
 import type { WatchPath, WatchOptions, RawWatchHandler } from 'core/component/interface/watch';
 import type { UnsafeGetter, UnsafeComponentInterface } from 'core/component/interface/component/unsafe';
 
@@ -45,9 +45,9 @@ export abstract class ComponentInterface {
 	readonly app!: ReturnType<CreateAppFunction>;
 
 	/**
-	 * The unique application identifier
+	 * The unique identifier for the application process
 	 */
-	readonly appId!: string;
+	readonly appProcessId!: string;
 
 	/**
 	 * The unique component identifier.
@@ -450,18 +450,32 @@ export abstract class ComponentInterface {
 	 *
 	 * @param event
 	 * @param handler
+	 * @param [opts]
 	 */
-	protected $on<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): EventId;
+	protected $on<E = unknown, R = unknown>(
+		event: string,
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId;
 
 	/**
 	 * Attaches a listener to the specified component's events
 	 *
 	 * @param events
 	 * @param handler
+	 * @param [opts]
 	 */
-	protected $on<E = unknown, R = unknown>(events: string[], handler: ProxyCb<E, R, this>): EventId[];
+	protected $on<E = unknown, R = unknown>(
+		events: string[],
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId[];
 
-	protected $on<E = unknown, R = unknown>(_event: CanArray<string>, _handler: ProxyCb<E, R, this>): CanArray<EventId> {
+	protected $on<E = unknown, R = unknown>(
+		_event: CanArray<string>,
+		_handler: ProxyCb<E, R, this>,
+		_opts?: ComponentEmitterOptions
+	): CanArray<EventId> {
 		return Object.throw();
 	}
 
@@ -470,20 +484,31 @@ export abstract class ComponentInterface {
 	 *
 	 * @param event
 	 * @param handler
+	 * @param [opts]
 	 */
-	protected $once<E = unknown, R = unknown>(event: string, handler: ProxyCb<E, R, this>): EventId;
+	protected $once<E = unknown, R = unknown>(
+		event: string,
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId;
 
 	/**
 	 * Attaches a disposable listener to the specified component's event
 	 *
 	 * @param events
 	 * @param handler
+	 * @param opts
 	 */
-	protected $once<E = unknown, R = unknown>(events: string[], handler: ProxyCb<E, R, this>): EventId[];
+	protected $once<E = unknown, R = unknown>(
+		events: string[],
+		handler: ProxyCb<E, R, this>,
+		opts?: ComponentEmitterOptions
+	): EventId[];
 
 	protected $once<E = unknown, R = unknown>(
 		_event: CanArray<string>,
-		_handler: ProxyCb<E, R, this>
+		_handler: ProxyCb<E, R, this>,
+		_opts?: ComponentEmitterOptions
 	): CanArray<EventId> {
 		return Object.throw();
 	}
