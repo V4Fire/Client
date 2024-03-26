@@ -206,6 +206,13 @@ test.describe('friends/async-render', () => {
 		await assertResultText(page, 'Ok 1  Ok 2');
 	});
 
+	test('forceRender on nested async render targets', async ({page}) => {
+		const target = await renderDummy(page, 'check nested async render target');
+		await page.locator(createSelector('update')).click();
+		await waitForRender(target);
+		await assertResultText(page, '01');
+	});
+
 	/**
 	 * Returns the rendered dummy component
 	 *
