@@ -19,8 +19,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives/hel
 
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
 import type { DirectiveParams } from 'components/directives/image/interface';
-
-import { notAvailableComponentsTypes } from './constants';
+import { notAvailableComponentsTypes } from 'components/directives/image/const';
 
 export * from 'components/directives/image/interface';
 
