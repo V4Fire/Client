@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Async from 'core/async';
+
 import type { InitialRoute } from 'core/router';
 import type { CookieStore } from 'core/cookies';
 
@@ -14,6 +16,7 @@ import type { ComponentOptions } from 'core/component/engines';
 
 export interface AppSSR {
 	content: string;
+	state: State;
 	styles: string;
 }
 
@@ -54,4 +57,7 @@ export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 	 * An API to work with a network, such as testing of the network connection, etc.
 	 */
 	net?: State['net'];
+
+	/** {@link Async} */
+	async?: State['async'];
 }>;

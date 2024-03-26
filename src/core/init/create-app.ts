@@ -83,13 +83,11 @@ export async function createApp(
 
 			return {
 				content: ssrContent + hydratedData,
+				state,
 				styles: (await Promise.all(hydrationStore.styles.values())).map((i) => i.default).join('')
 			};
 
 		} finally {
-			ssrContent = '';
-			hydratedData = '';
-
 			try {
 				destroyApp(state.appProcessId);
 			} catch {}
@@ -97,6 +95,13 @@ export async function createApp(
 			try {
 				disposeLazy(app);
 			} catch {}
+
+			ssrContent = '';
+			hydratedData = '';
+
+			setTimeout(() => {
+				state.async.clearAll().locked = true;
+			}, 0);
 		}
 	}
 
