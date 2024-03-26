@@ -17,6 +17,17 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Added synchronous rendering of the first chunk using `v-for`. This is because SSR does not have access to the DOM API required for `vdom`. Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR. `components/base/b-virtual-scroll-new`
 
+## v4.0.0-beta.76 (2023-03-25)
+
+#### :boom: Breaking Change
+
+* The `stopPropagation` for the native click event has been removed.
+  Now, native click events bubble up the DOM tree `bButton`.
+
+#### :house: Internal
+
+* Changed the API usage of the `addToPrototype`
+
 ## 4.0.0-beta.75 (2024-03-22)
 
 #### :rocket: New Feature
