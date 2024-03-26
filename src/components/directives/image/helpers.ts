@@ -75,8 +75,8 @@ export function createImgElement(
 			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined
 		},
 
-		draggable: `${Boolean(imageParams.draggable)}`,
-		ismap: Boolean(imageParams.isMap),
+		draggable: imageParams.draggable != null ? `${imageParams.draggable}` : undefined,
+		ismap: imageParams.isMap,
 		referrerpolicy: imageParams.referrerPolicy,
 		usemap: imageParams.useMap,
 		decoding: imageParams.decoding,

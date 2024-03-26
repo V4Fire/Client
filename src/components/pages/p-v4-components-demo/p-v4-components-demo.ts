@@ -27,15 +27,6 @@ console.time('Initializing');
  */
 @component({root: true})
 export default class pV4ComponentsDemo extends iStaticPage {
-
-	/**
-	 *
-	 * @param e
-	 */
-	dragStart(e) {
-		console.log('1111', e);
-	}
-
 	/** {@link iStaticPage.selfDispatching} */
 	@prop(Boolean)
 	readonly selfDispatchingProp: boolean = false;

@@ -20,7 +20,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives/hel
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
 import type { DirectiveParams } from 'components/directives/image/interface';
 
-import { NotAvailableComponentsTypes } from './constants';
+import { notAvailableComponentsTypes } from './constants';
 
 export * from 'components/directives/image/interface';
 
@@ -33,7 +33,7 @@ ComponentEngine.directive('image', {
 			throw new TypeError('The `v-image` directive cannot be applied to a component');
 		}
 
-		if (NotAvailableComponentsTypes.has(vnode.type)) {
+		if (notAvailableComponentsTypes.has(vnode.type)) {
 			throw new TypeError('The `v-image` directive cannot be applied to `img`, `picture`, `object`');
 		}
 

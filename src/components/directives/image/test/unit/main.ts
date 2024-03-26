@@ -316,7 +316,7 @@ test.describe('components/directives/image', () => {
 				'if a fallback image is specified, it should be displayed as a placeholder',
 
 				async ({page}) => {
-					const {container, image} = await renderDirective(page, {
+					const {container} = await renderDirective(page, {
 						src: BROKEN_PICTURE_SRC,
 						broken: EXISTING_PICTURE_SRC,
 						draggable: false
@@ -356,7 +356,7 @@ test.describe('components/directives/image', () => {
 					broken: BROKEN_PICTURE_SRC
 				});
 
-				test.expect(await image.getAttribute('draggable')).toBe('false');
+				test.expect(await image.getAttribute('draggable')).toBe(null);
 			});
 		});
 	});

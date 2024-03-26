@@ -5,4 +5,4 @@
  * Released under the MIT license
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
-export const NotAvailableComponentsTypes = new Set(['image', 'picture', 'object']);
+export const notAvailableComponentsTypes = new Set(['image', 'picture', 'object']);
