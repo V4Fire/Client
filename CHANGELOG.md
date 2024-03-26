@@ -11,16 +11,50 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.71 (2024-03-07)
-
-#### :rocket: New Feature
-
-* Implemented a new engine for translate keys `lang/engines`
+## 4.0.0-beta.74 (2024-03-20)
 
 #### :house: Internal
 
-* Refactored the build ssr: all code has now been bundled into one file `build/graph`
-* Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
+* Hardcode the ID during the client rendering in data provider's options.
+This is a temporary solution until PR#1171 is merged `iBlockProviders`
+
+## 4.0.0-beta.73 (2024-03-19)
+
+#### :house: Internal
+
+* Rename `appId` to `appProcessId` `ComponentInterface`
+
+## 4.0.0-beta.72 (2024-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed the loss of the keydown event handler when recreating a functional component `bSelect`
+* Fixed the issue of the dropdown not closing when clicking on an element with stop propagation `bSelect`
+* Fixed getting a component in `getComponent` when an additional root selector is passed `components/friends/dom`
+
+## 4.0.0-beta.71 (2024-03-12)
+
+#### :boom: Breaking Change
+
+* The modules `core/init` and `core/component/state` have been completely redesigned for the new API
+* The field `locale` has been removed `iStaticPage`
+
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Created a new global component `g-slider` that encapsulates CSS `scroll snap` logic `gSlider`
+* Added `useScrollSnap` prop, which enables the use of CSS scroll snap in the `scroll` mode `bSlider`
+* Added a new field `layer`, which allows you to obtain information about the package in which the component was declared `core/component/meta`
+
+#### :bug: Bug Fix
+
+* Fixed an issue with missing methods `element` and `elements` in the Block prototype `bSelect`
+* Fixed the operation of loadModules during SSR `iBlock`
+
+#### :house: Internal
+
+* Added support for the `layer` property `core/component/reflect`
 
 ## v4.0.0-beta.70 (2024-03-05)
 
@@ -99,11 +133,11 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 
 #### :rocket: New Feature
 
-* Added an app property to get a reference to the application object core/component
+* Added an app property to get a reference to the application object `core/component`
 
 #### :bug: Bug Fix
 
-* Fixed bugs in the initialization of SSR rendering core/init iStaticPage core/cookies
+* Fixed bugs in the initialization of SSR rendering `core/init` `iStaticPage` `core/cookies`
 
 ## v4.0.0-beta.61 (2024-02-15)
 
@@ -126,12 +160,12 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 
 * Added `preloadAmount` prop in b`-virtual-scroll-new` `components/base/b-virtual-scroll-new`
 
-#### :house: Internal
+#### :house:  Internal
 
 * Added re-export of modules from `tests/helpers`:
-- Request
-- RequestInterceptor
- - Mock
+  - Request
+  - RequestInterceptor
+  - Mock
 
 * Removed bad import of async module from `tests/helpers/network/interceptor`
 

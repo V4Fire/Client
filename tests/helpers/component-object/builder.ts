@@ -169,6 +169,12 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 				children: this.children
 			});
 
+			const isFunctional = await component.evaluate((ctx) => ctx.isFunctional);
+
+			if (isFunctional && !Object.isEmpty(this.children)) {
+				throw new Error('Children are not supported for functional components inside b-dummy');
+			}
+
 			this.dummy = component;
 			this.componentStore = component;
 

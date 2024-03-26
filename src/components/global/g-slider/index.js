@@ -6,10 +6,4 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export default [
-	'DOMReady',
-	'ABTReady',
-	'prefetchReady',
-	'stateReady',
-	'hydratedRoute'
-];
+package('g-slider');

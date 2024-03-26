@@ -52,7 +52,7 @@ export function implementComponentWatchAPI(component: ComponentInterface): void 
 	} = component;
 
 	const
-		isFunctional = params.functional === true,
+		isFunctional = SSR || params.functional === true,
 		usedHandlers = new Set<Function>();
 
 	let

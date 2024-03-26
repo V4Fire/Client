@@ -57,18 +57,27 @@ export default class Session extends Provider {
 	static override readonly middlewares: Middlewares = {
 		...Provider.middlewares,
 
-		async addSession(this: Session, params: MiddlewareParams): Promise<void> {
-			const
-				{opts} = params;
+		...SSR ?
+			{} :
 
-			if (opts.api) {
-				const h = await this.getAuthParams(params);
-				Object.mixin({propsToCopy: 'new'}, opts.headers, h);
+			{
+				async addSession(this: Session, params: MiddlewareParams): Promise<void> {
+					const
+						{opts} = params;
+
+					if (opts.api) {
+						const h = await this.getAuthParams(params);
+						Object.mixin({propsToCopy: 'new'}, opts.headers, h);
+					}
+				}
 			}
-		}
 	};
 
 	override async getAuthParams(_params: MiddlewareParams): Promise<Dictionary> {
+		if (SSR) {
+			return {};
+		}
+
 		const
 			session = await s.get();
 
@@ -95,7 +104,13 @@ export default class Session extends Provider {
 		factory?: RequestFunctionResponse
 	): RequestPromise {
 		const
-			req = super.updateRequest(url, Object.cast(event), Object.cast<RequestFunctionResponse>(factory)),
+			req = super.updateRequest(url, Object.cast(event), Object.cast<RequestFunctionResponse>(factory));
+
+		if (SSR) {
+			return req;
+		}
+
+		const
 			session = s.get();
 
 		const update = async (res) => {
