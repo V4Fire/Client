@@ -26,7 +26,6 @@ import {
 	waitForImageLoadFail
 
 } from 'components/directives/image/test/helpers';
-import { Component } from 'tests/helpers';
 
 test.describe('components/directives/image', () => {
 	test.use({viewport: {width: 100, height: 100}});
