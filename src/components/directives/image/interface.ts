@@ -159,7 +159,7 @@ export interface ImageOptions {
 	referrerPolicy?: ReferrerPolicy;
 
 	/**
-	 * The property Indicates if the fetching of the image must be done using a CORS request.
+	 * The property indicates if the fetching of the image must be done using a CORS request.
 	 *
 	 * Allowed values are:
 	 * - `anonymous` - a CORS request is sent with credentials omitted;
@@ -204,7 +204,7 @@ export interface ImageOptions {
 	/**
 	 * Provides a hint of the relative priority to use when fetching the image.
 	 *
-	 * https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority
 	 */
 	fetchPriority?: 'high' | 'low' | 'auto';
 }

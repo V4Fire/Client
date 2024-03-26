@@ -304,6 +304,69 @@ The options returned by this function will be used to load the image.
 } .
 ```
 
+### [draggable]
+
+The optional boolean value indicates whether the element can be dragged. If value is `false` - element will not be dragged.
+
+### [isMap]
+
+A Boolean value which is true if the image is being used for a server-side image map;
+otherwise, the value is false.
+
+### [referrerPolicy]
+
+A string indicating which referrer to use when fetching the resource.
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#referrerpolicy) for more information.
+
+### [crossOrigin]
+
+The property indicates if the fetching of the image must be done using a CORS request.
+
+Allowed values are:
+- `anonymous` - a CORS request is sent with credentials omitted;
+- `use-credentials` - The CORS request is sent with any credentials included.
+
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#crossorigin) for more information.
+
+### [useMap]
+
+The `useMap` property on the HTMLImageElement interface reflects the value of the HTML `usemap` attribute
+which is a string providing the name of the client-side image map to apply to the image.
+
+Value is a string providing the page-local URL (that is, a URL that begins with the hash or pound symbol, "#")
+of the <map> element which defines the image map to apply to the image.
+
+See [this](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/useMap) for more information.
+
+### [decoding]
+
+This attribute indicates whether the browser should decode images synchronously with other DOM content
+for a more accurate presentation, or asynchronously to render other content first and display the image later.
+
+Allowed values are:
+- `sync` - decode the image synchronously along with rendering
+  the other DOM content, and present everything together;
+- `async` - decode the image asynchronously, after rendering and
+  presenting the other DOM content;
+- `auto` - No preference for the decoding mode; the browser decides
+  what is best for the user. This is the default value.
+
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#decoding) for more information.
+
+### [elementTiming]
+
+This attribute is used to indicate that an element is flagged for tracking by PerformanceObserver
+objects using the "element" type. See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/elementtiming) for more information.
+
+### [fetchPriority]
+
+Provides a hint of the relative priority to use when fetching the image. The value is one of following strings:
+- `high` - fetch the image at a high priority relative to other images;
+- `low` - fetch the image at a low priority relative to other images;
+- `auto` - default mode, which indicates no preference for the fetch priority. The browser decides what is best for the user.
+
+See [this](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority) for more information.
+
 ## Global configuration
 
 You can set some of the directive's parameters globally using the `src/config` module.
