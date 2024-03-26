@@ -27,7 +27,18 @@ import {
 	renderGuardRejectionReason
 
 } from 'components/base/b-virtual-scroll-new/const';
-import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll, ItemsProcessors, ComponentMode, ComponentItem } from 'components/base/b-virtual-scroll-new/interface';
+
+import type {
+
+	VirtualScrollState,
+	RenderGuardResult,
+	$ComponentRefs,
+	UnsafeBVirtualScroll,
+	ItemsProcessors,
+	ComponentMode,
+	ComponentItem
+
+} from 'components/base/b-virtual-scroll-new/interface';
 
 import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll-new/modules/emitter';
 import { ComponentInternalState } from 'components/base/b-virtual-scroll-new/modules/state';
@@ -473,7 +484,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	 */
 	protected performFirstChunkRender(items: ComponentItem[]): void {
 		this.onRenderEngineStart();
-		this.firstChunkItems = items;
+		this.field.set('firstChunkItems', items);
 		this.onRenderEngineDone();
 
 		this.componentInternalState.setIsDomInsertInProgress(true);
