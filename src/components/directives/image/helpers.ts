@@ -13,6 +13,7 @@ import { setVNodePatchFlags } from 'core/component/render';
 
 import type { VNode } from 'core/component/engines';
 import type { ImageOptions, ImageSource, VirtualElement } from 'components/directives/image/interface';
+import any = jasmine.any;
 
 /**
  * Returns the value of the `currentSrc` property from the passed image element
@@ -48,6 +49,24 @@ export function createImgElement(
 	imageParams: ImageOptions,
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLImageElement> {
+
+	const optionalAttrs = {
+		draggable: imageParams.draggable != null ? `${imageParams.draggable}` : undefined,
+		ismap: imageParams.isMap,
+		referrerpolicy: imageParams.referrerPolicy,
+		usemap: imageParams.useMap,
+		decoding: imageParams.decoding,
+		elementtiming: imageParams.elementTiming,
+		fetchPriority: imageParams.fetchPriority,
+		crossorigin: imageParams.crossOrigin
+	};
+
+	for (const key in optionalAttrs) {
+		if (optionalAttrs[key] == null) {
+			delete optionalAttrs[key];
+		}
+	}
+
 	const attrs = {
 		'data-img': Object.fastHash(imageParams),
 
@@ -75,14 +94,7 @@ export function createImgElement(
 			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined
 		},
 
-		draggable: imageParams.draggable != null ? `${imageParams.draggable}` : undefined,
-		ismap: imageParams.isMap,
-		referrerpolicy: imageParams.referrerPolicy,
-		usemap: imageParams.useMap,
-		decoding: imageParams.decoding,
-		elementtiming: imageParams.elementTiming,
-		fetchPriority: imageParams.fetchPriority,
-		crossorigin: imageParams.crossOrigin
+		...optionalAttrs
 	};
 
 	return {
