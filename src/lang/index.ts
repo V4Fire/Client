@@ -26,7 +26,6 @@ try {
 			};
 		});
 	});
-
 } catch {}
 
 export default langPacs;

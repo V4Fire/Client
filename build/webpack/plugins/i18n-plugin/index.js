@@ -14,6 +14,7 @@ const
 	path = require('upath');
 
 const
+	{collectI18NKeysets} = include('build/helpers'),
 	{src, i18n, locale, webpack} = require('@config/config');
 
 module.exports = class I18NGeneratorPlugin {
@@ -33,9 +34,7 @@ module.exports = class I18NGeneratorPlugin {
 				const
 					configLocale = locale,
 					locales = i18n.supportedLocales(),
-					// Extract translates from DefinePlugin
-					// translates declared in build/globals.webpack.js
-					localizations = JSON.parse(compilation.valueCacheVersions.get('webpack/DefinePlugin LANG_KEYSETS'));
+					localizations = collectI18NKeysets(locales);
 
 				const htmlFiles = () =>
 					glob.sync(path.normalize(src.clientOutput('*.html')), {

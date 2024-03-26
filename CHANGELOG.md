@@ -76,8 +76,6 @@ components because it has an `unknown` type and it cannot be correctly merged
 
 #### :bug: Bug Fix
 
-* Resolved an issue with the progress plugin's view in relation to empty builds
-* Corrected the theme-manager to function properly in server-side rendering (ssr)
 * Fixed the `wait` option in `loadModules` for SSR build `iBlock`
 * Fix the disappearance of functional components in cached pages:
 do not call the destroy method on the rendering engine if `$el` has the `component` property

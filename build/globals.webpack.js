@@ -13,9 +13,8 @@ const
 	config = require('@config/config');
 
 const
-	{csp, build, webpack, i18n} = config,
+	{csp, build, webpack} = config,
 	{config: pzlr} = require('@pzlr/build-core'),
-	{collectI18NKeysets} = include('build/helpers'),
 	{getDSComponentMods, getThemes, getDS} = include('build/ds');
 
 const
@@ -23,7 +22,6 @@ const
 	s = JSON.stringify;
 
 const
-	locales = i18n.supportedLocales(),
 	runtime = config.runtime(),
 	typescript = config.typescript();
 
@@ -48,7 +46,6 @@ module.exports = {
 	API_URL: s(API_URL),
 
 	LOCALE: s(LOCALE),
-	LANG_KEYSETS: s(collectI18NKeysets(locales)),
 	LANG_PACKS: s(config.i18n.langPacksStore),
 
 	COMPONENTS: projectGraph.then(({components}) => {

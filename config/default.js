@@ -556,7 +556,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		externals() {
 			return {
 				vue: 'root Vue',
-				jsdom: 'jsdom',
 				eventemitter2: 'EventEmitter2',
 				setimmediate: 'setImmediate'
 			};
