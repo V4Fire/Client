@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.** (2024-**-**)
+
+#### :rocket: New Feature
+
+* Extended API for v-image by properties for setting attributes of <img> element:
+
 ## v4.0.0-beta.20 (2023-09-13)
 
 #### :rocket: New Feature
