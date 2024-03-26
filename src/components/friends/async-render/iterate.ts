@@ -93,8 +93,8 @@ export function iterate(
 		toVNode: AnyFunction<unknown[], CanArray<VNode>>,
 		target: VNode;
 
-	ctx.$once('[[V_FOR_CB]]', setVNodeCompiler);
-	ctx.$once('[[V_ASYNC_TARGET]]', setTarget);
+	ctx.$on('[[V_FOR_CB]]', setVNodeCompiler, {prepend: true});
+	ctx.$on('[[V_ASYNC_TARGET]]', setTarget, {prepend: true});
 
 	let
 		iterI = iter.readI + 1,
@@ -261,12 +261,26 @@ export function iterate(
 
 	return iter.readEls;
 
-	function setVNodeCompiler(c: AnyFunction) {
-		toVNode = c;
+	function setVNodeCompiler(c: { wrappedCb: AnyFunction; handled?: boolean }) {
+		if (c.handled) {
+			return;
+		}
+
+		const {wrappedCb} = c;
+		toVNode = wrappedCb;
+		c.handled = true;
+		ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
 	}
 
-	function setTarget(t: VNode) {
-		target = t;
+	function setTarget(t: { vnode: VNode; handled?: boolean }) {
+		if (t.handled) {
+			return;
+		}
+
+		const {vnode} = t;
+		target = vnode;
+		t.handled = true;
+		ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
 	}
 
 	function createRenderTask(value: CanPromise<unknown>, filter?: boolean) {

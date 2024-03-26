@@ -301,7 +301,7 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 			// Preserve rendering context for the async render
 			wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
 
-		this.$emit('[[V_FOR_CB]]', wrappedCb);
+		this.$emit('[[V_FOR_CB]]', {wrappedCb});
 		return original(src, wrappedCb);
 	});
 }
