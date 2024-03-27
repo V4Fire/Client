@@ -19,6 +19,7 @@ import { RestrictedCache } from 'core/cache';
 import { instanceCache } from 'core/data';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
+import type PageMetaData from 'core/page-meta-data';
 
 import CookieStorage from 'core/kv-storage/engines/cookie';
 
@@ -30,7 +31,6 @@ import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
 
-import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
@@ -98,15 +98,6 @@ export default abstract class iStaticPage extends iPage {
 	readonly theme: CanUndef<ThemeManager>;
 
 	/**
-	 * A module for manipulating page metadata, such as the page title or description
-	 */
-	@system<iStaticPage>(() => new PageMetaData({
-		document: SSR ? Object.cast({}) : document
-	}))
-
-	readonly pageMetaData!: PageMetaData;
-
-	/**
 	 * True if the current user is authorized
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
@@ -158,6 +149,13 @@ export default abstract class iStaticPage extends iPage {
 	override get randomGenerator(): IterableIterator<number> {
 		this[$$.randomGenerator] ??= new Xor128(19881989);
 		return this[$$.randomGenerator];
+	}
+
+	/**
+	 * A module for manipulating page metadata, such as the page title or description
+	 */
+	get pageMetaData(): PageMetaData {
+		return this.r.remoteState.pageMetaData;
 	}
 
 	/**

@@ -14,6 +14,7 @@ import type { Cookies } from 'core/cookies';
 
 import type { Experiments } from 'core/abt';
 import type { InitialRoute, AppliedRoute } from 'core/router';
+import type PageMetaData from 'core/page-meta-data';
 
 export interface State {
 	/**
@@ -74,4 +75,9 @@ export interface State {
 
 	/** {@link Async} */
 	async: Async;
+
+	/**
+	 * API to work with meta information of the current page
+	 */
+	pageMetaData: PageMetaData;
 }

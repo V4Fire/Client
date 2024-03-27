@@ -131,3 +131,79 @@ export default class bExample extends iBlock {
   }
 }
 ```
+
+### getCanonicalLink
+
+Returns the current page canonical link `<link rel="canonical" />`
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  updated() {
+    console.log(this.r.pageMetaData.getCanonicalLink());
+  }
+}
+```
+
+### setCanonicalLink
+
+Sets the canonical link `<link rel="canonical" />` to the current page
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  created() {
+    this.r.pageMetaData.setCanonicalLink('https://example.com');
+    console.log(this.r.pageMetaData.getCanonicalLink());
+  }
+}
+```
+
+### removeCanonicalLink
+
+Removes the canonical link `<link rel="canonical" />` from the current page
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  updated() {
+    this.r.pageMetaData.removeCanonicalLink();
+  }
+}
+```
+
+### removeMeta
+
+Removes meta elements from the current page
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  updated() {
+    this.r.pageMetaData.removeMeta({name: 'robots', content: 'noindex'});
+  }
+}
+```
+
+### removeLink
+
+Removes link elements from the current page
+
+```typescript
+import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
+
+@component()
+export default class bExample extends iBlock {
+  updated() {
+    this.r.pageMetaData.removeLink({rel: 'canonical', href: 'https://example.com'});
+  }
+}
+```

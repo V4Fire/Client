@@ -17,6 +17,7 @@ import type { ComponentOptions } from 'core/component/engines';
 export interface AppSSR {
 	content: string;
 	styles: string;
+	state: State;
 }
 
 export type App = Element | AppSSR;
