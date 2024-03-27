@@ -103,7 +103,7 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	}
 
 	/**
-	 * The elements of the first chunk.
+	 * The elements that should be rendered in the first chunk using `v-for`.
 	 *
 	 * Used for synchronous rendering in SSR and CSR via `v-for`,
 	 * as SSR lacks access to the DOM API required for `vdom`.

@@ -713,7 +713,8 @@ Next, the component invokes the `renderGuard` to determine if the data can be re
 5. `domInsertDone` - The DOM insertion has completed. This event is asynchronous as it uses RAF (Request Animation Frame) for DOM insertion.
 6. `renderDone` - The component rendering has finished.
 
-**The first chunk of elements is rendered synchronously using `v-for`. This is because SSR does not have access to the DOM API required for `vdom`. Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR.**
+**The first chunk of elements is rendered synchronously using `v-for`. This is because SSR does not have access to the DOM API required for `vdom`.
+Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR.**
 
 Afterward, the component waits for user actions, specifically when the user sees any component on the page.
 The component then calls the `shouldPerformDataRender` function on the client side.
