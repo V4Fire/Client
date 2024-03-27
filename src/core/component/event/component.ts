@@ -66,9 +66,9 @@ export function implementEventEmitterAPI(component: object): void {
 		wildcard: true
 	});
 
-	const regularEmitter = ctx.$async.wrapEventEmitter(emitter);
+	const regularEmitter = emitter;
 
-	const reversedEmitter = ctx.$async.wrapEventEmitter({
+	const reversedEmitter = Object.cast<typeof emitter>({
 		__proto__: emitter,
 		on: (...args: Parameters<EventEmitter['prependListener']>) => emitter.prependListener(...args),
 		once: (...args: Parameters<EventEmitter['prependOnceListener']>) => emitter.prependOnceListener(...args)
