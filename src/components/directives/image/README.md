@@ -330,7 +330,7 @@ See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#crossor
 
 ### [useMap]
 
-The `useMap` property on the HTMLImageElement interface reflects the value of the HTML `usemap` attribute
+The `useMap` property reflects the value of the HTML `usemap` attribute
 which is a string providing the name of the client-side image map to apply to the image.
 
 Value is a string providing the page-local URL (that is, a URL that begins with the hash or pound symbol, "#")

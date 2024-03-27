@@ -13,7 +13,6 @@ import { setVNodePatchFlags } from 'core/component/render';
 
 import type { VNode } from 'core/component/engines';
 import type { ImageOptions, ImageSource, VirtualElement } from 'components/directives/image/interface';
-import any = jasmine.any;
 
 /**
  * Returns the value of the `currentSrc` property from the passed image element
@@ -57,7 +56,7 @@ export function createImgElement(
 		usemap: imageParams.useMap,
 		decoding: imageParams.decoding,
 		elementtiming: imageParams.elementTiming,
-		fetchPriority: imageParams.fetchPriority,
+		fetchpriority: imageParams.fetchPriority,
 		crossorigin: imageParams.crossOrigin
 	};
 
