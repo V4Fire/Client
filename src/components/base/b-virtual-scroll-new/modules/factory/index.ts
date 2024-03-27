@@ -40,7 +40,7 @@ export class ComponentFactory extends Friend {
 	 * @param componentItems - an array of component items
 	 */
 	produceNodes(componentItems: ComponentItem[]): HTMLElement[] {
-		if (componentItems.length === 0) {
+		if (componentItems.length === 0 || SSR) {
 			return [];
 		}
 
