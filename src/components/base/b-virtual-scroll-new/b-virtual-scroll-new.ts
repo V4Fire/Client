@@ -18,8 +18,27 @@ import SyncPromise from 'core/promise/sync';
 import type iItems from 'components/traits/i-items/i-items';
 import VDOM, { create, render } from 'components/friends/vdom';
 import { iVirtualScrollHandlers } from 'components/base/b-virtual-scroll-new/handlers';
-import { bVirtualScrollNewAsyncGroup, bVirtualScrollNewDomInsertAsyncGroup, componentModes, renderGuardRejectionReason } from 'components/base/b-virtual-scroll-new/const';
-import type { VirtualScrollState, RenderGuardResult, $ComponentRefs, UnsafeBVirtualScroll, ItemsProcessors, ComponentMode } from 'components/base/b-virtual-scroll-new/interface';
+import {
+
+	bVirtualScrollNewAsyncGroup,
+	bVirtualScrollNewDomInsertAsyncGroup,
+	bVirtualScrollNewFirstChunkRenderAsyncGroup,
+	componentModes,
+	renderGuardRejectionReason
+
+} from 'components/base/b-virtual-scroll-new/const';
+
+import type {
+
+	VirtualScrollState,
+	RenderGuardResult,
+	$ComponentRefs,
+	UnsafeBVirtualScroll,
+	ItemsProcessors,
+	ComponentMode,
+	ComponentItem
+
+} from 'components/base/b-virtual-scroll-new/interface';
 
 import { ComponentTypedEmitter, componentTypedEmitter } from 'components/base/b-virtual-scroll-new/modules/emitter';
 import { ComponentInternalState } from 'components/base/b-virtual-scroll-new/modules/state';
@@ -27,7 +46,7 @@ import { SlotsStateController } from 'components/base/b-virtual-scroll-new/modul
 import { ComponentFactory } from 'components/base/b-virtual-scroll-new/modules/factory';
 import { Observer } from 'components/base/b-virtual-scroll-new/modules/observer';
 
-import iData, { component, system, watch, wait, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
+import iData, { component, system, field, watch, wait, RequestParams, UnsafeGetter } from 'components/super/i-data/i-data';
 
 export * from 'components/base/b-virtual-scroll-new/interface';
 export * from 'components/base/b-virtual-scroll-new/const';
@@ -82,6 +101,15 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 	get componentMode(): ComponentMode {
 		return this.items ? componentModes.items : componentModes.dataProvider;
 	}
+
+	/**
+	 * The elements that should be rendered in the first chunk using `v-for`.
+	 *
+	 * Used for synchronous rendering in SSR and CSR via `v-for`,
+	 * as SSR lacks access to the DOM API required for `vdom`.
+	 */
+	@field()
+	protected firstChunkItems: ComponentItem[] = [];
 
 	/**
 	 * Initializes the loading of the next data chunk
@@ -397,6 +425,13 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 
 		const
 			items = this.componentFactory.produceComponentItems(),
+			{renderPage, isInitialRender} = this.getVirtualScrollState();
+
+		if (isInitialRender) {
+			return this.performFirstChunkRender(items);
+		}
+
+		const
 			nodes = this.componentFactory.produceNodes(items),
 			mounted = this.componentFactory.produceMounted(items, nodes);
 
@@ -409,7 +444,6 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 
 		const
 			fragment = document.createDocumentFragment(),
-			{renderPage} = this.getVirtualScrollState(),
 			asyncGroup = `${bVirtualScrollNewDomInsertAsyncGroup}:${renderPage}`;
 
 		nodes.forEach((node) => {
@@ -438,5 +472,39 @@ export default class bVirtualScrollNew extends iVirtualScrollHandlers implements
 			this.onRenderDone();
 
 		}, {label: $$.insertDomRaf, group: asyncGroup});
+	}
+
+	/**
+	 * Renders the first chunk of elements synchronously using `v-for`.
+	 *
+	 * This is because SSR does not have access to the DOM API required for `vdom`.
+	 * Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR.
+	 *
+	 * @param items
+	 */
+	protected performFirstChunkRender(items: ComponentItem[]): void {
+		this.onRenderEngineStart();
+		this.field.set('firstChunkItems', items);
+		this.onRenderEngineDone();
+
+		this.componentInternalState.setIsDomInsertInProgress(true);
+
+		const asyncGroup = bVirtualScrollNewFirstChunkRenderAsyncGroup;
+
+		this.nextTick({label: $$.firstChunkRender, group: asyncGroup}).then(() => {
+			this.componentInternalState.setIsDomInsertInProgress(false);
+
+			let mounted: ReturnType<typeof this.componentFactory.produceMounted> = [];
+
+			if (!SSR) {
+				mounted = this.componentFactory.produceMounted(items, <HTMLElement[]>Array.from(this.$refs.container.children));
+			}
+
+			this.observer.observe(mounted);
+			this.onDomInsertStart(mounted);
+
+			this.onDomInsertDone();
+			this.onRenderDone();
+		}).catch(stderr);
 	}
 }
