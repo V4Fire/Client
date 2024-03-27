@@ -19,6 +19,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives/hel
 
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
 import type { DirectiveParams } from 'components/directives/image/interface';
+import { notAvailableComponentsTypes } from 'components/directives/image/const';
 
 export * from 'components/directives/image/interface';
 
@@ -29,6 +30,10 @@ ComponentEngine.directive('image', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
 		if (!Object.isString(vnode.type)) {
 			throw new TypeError('The `v-image` directive cannot be applied to a component');
+		}
+
+		if (notAvailableComponentsTypes.has(vnode.type)) {
+			throw new TypeError('The `v-image` directive cannot be applied to `img`, `picture`, `object`');
 		}
 
 		const
@@ -91,7 +96,9 @@ ComponentEngine.directive('image', {
 			vnode.props.style.display = 'inline-block';
 		}
 
-		vnode.children = [createImageElement(p).toVNode(r.createVNode.bind(ctx))];
+		const imageElement = createImageElement(p).toVNode(r.createVNode.bind(ctx));
+
+		vnode.children = [imageElement];
 		vnode.dynamicChildren = Object.cast(vnode.children.slice());
 		setVNodePatchFlags(vnode, 'props', 'styles', 'children');
 
