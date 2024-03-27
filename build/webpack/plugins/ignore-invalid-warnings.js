@@ -24,8 +24,10 @@ module.exports = class IgnoreInvalidWarningsPlugin {
 			stats.compilation.warnings = stats.compilation.warnings.filter((warn) => {
 				switch (warn.constructor.name) {
 					// @see https://github.com/TypeStrong/ts-loader/issues/653
+					// @see https://github.com/jaredwray/keyv/issues/45
 					case 'ModuleDependencyWarning':
-						return !/export '.*'( \(reexported as '.*'\))? was not found in/.test(warn.message);
+						return !/export '.*'( \(reexported as '.*'\))? was not found in/.test(warn.message) &&
+									!/Critical dependency: the request of a dependency is an expression/.test(warn.message);
 
 					// `require.context` goes fucking crazy :(
 					case 'ModuleNotFoundError':
