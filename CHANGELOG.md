@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.77 (2024-03-27)
 
 #### :rocket: New Feature
 
@@ -21,6 +21,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Refactored the build ssr: all code has now been bundled into one file `build/graph`
 * Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
+
+#### :bug: Bug Fix
+
+* Resolved an issue with the progress plugin's view in relation to empty builds
+* Corrected the theme-manager to function properly in server-side rendering (ssr)
 
 ## v4.0.0-beta.76 (2023-03-25)
 
@@ -101,8 +106,6 @@ components because it has an `unknown` type and it cannot be correctly merged
 
 #### :bug: Bug Fix
 
-* Resolved an issue with the progress plugin's view in relation to empty builds
-* Corrected the theme-manager to function properly in server-side rendering (ssr)
 * Fixed the `wait` option in `loadModules` for SSR build `iBlock`
 * Fix the disappearance of functional components in cached pages:
 do not call the destroy method on the rendering engine if `$el` has the `component` property
