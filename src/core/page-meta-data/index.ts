@@ -7,7 +7,6 @@
  */
 
 import { concatURLs } from 'core/url';
-import remoteState from 'core/component/client-state';
 import type { State } from 'core/component';
 import { SSREngine, CSREngine } from 'core/page-meta-data/elements/abstract/engines';
 import { CSRTitleEngine } from 'core/page-meta-data/elements/title';
@@ -22,8 +21,8 @@ import {
 	LinkAttributes
 
 } from 'core/page-meta-data/elements';
-import ElementsStorage from "core/page-meta-data/storage";
-import type {OGElements} from "core/page-meta-data/storage/interface";
+
+import ElementsStorage from 'core/page-meta-data/storage';
 
 export default class PageMetaData {
 	/**
@@ -34,7 +33,11 @@ export default class PageMetaData {
 	/**
 	 * Client state
 	 */
-	protected state: State = remoteState;
+	protected state: State;
+
+	constructor(state: State) {
+		this.state = state;
+	}
 
 	/**
 	 * All added meta elements
@@ -148,8 +151,7 @@ export default class PageMetaData {
 	 */
 	setCanonicalLink(pathname?: string, query: string = this.state.location.search): void {
 		const
-			{location} = this.state,
-			href = concatURLs(location.origin, pathname, query),
+			href = concatURLs(this.state.location.origin, pathname) + query,
 			attrs = {rel: 'canonical', href};
 
 		const link = new Link(
