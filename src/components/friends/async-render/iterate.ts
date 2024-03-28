@@ -296,10 +296,8 @@ export function iterate(
 		ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
 	}
 
-	function setTarget(t: { vnode: VNode }) {
-		const {vnode} = t;
-		const isChild = isChildOf(vnode, iterateId);
-		if (isChild) {
+	function setTarget(vnode: VNode) {
+		if (isChildOf(vnode, iterateId)) {
 			target = vnode;
 			ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
 		}
