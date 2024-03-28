@@ -54,6 +54,7 @@ import {
 } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
+import { asyncRenderMarker } from 'core/component/engines';
 
 /**
  * Wrapper for the component library `createVNode` function
@@ -301,8 +302,21 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 			// Preserve rendering context for the async render
 			wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
 
-		this.$emit('[[V_FOR_CB]]', {wrappedCb});
-		return original(src, wrappedCb);
+		const vnodes = original(src, wrappedCb);
+
+		if (src[asyncRenderMarker] != null) {
+			const iterateId = src[asyncRenderMarker];
+
+			this.$emit('[[V_FOR_CB]]', {wrappedCb});
+			Object.defineProperty(vnodes, asyncRenderMarker, {
+				writable: false,
+				enumerable: false,
+				configurable: false,
+				value: iterateId
+			});
+		}
+
+		return vnodes;
 	});
 }
 
