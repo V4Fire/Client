@@ -60,19 +60,21 @@ export function implementEventEmitterAPI(component: object): void {
 	const
 		ctx = Object.cast<UnsafeComponentInterface>(component);
 
-	const emitter = new EventEmitter({
+	const regularEmitter = new EventEmitter({
 		maxListeners: 1e3,
 		newListener: false,
 		wildcard: true
 	});
 
-	const regularEmitter = emitter;
+	const wrappedEmitter = ctx.$async.wrapEventEmitter(regularEmitter);
 
-	const reversedEmitter = Object.cast<typeof emitter>({
-		__proto__: emitter,
-		on: (...args: Parameters<EventEmitter['prependListener']>) => emitter.prependListener(...args),
-		once: (...args: Parameters<EventEmitter['prependOnceListener']>) => emitter.prependOnceListener(...args)
+	const reversedEmitter = Object.cast<typeof regularEmitter>({
+		__proto__: regularEmitter,
+		on: (...args: Parameters<EventEmitter['prependListener']>) => regularEmitter.prependListener(...args),
+		once: (...args: Parameters<EventEmitter['prependOnceListener']>) => regularEmitter.prependOnceListener(...args)
 	});
+
+	const wrappedReversedEmitter = ctx.$async.wrapEventEmitter(reversedEmitter);
 
 	const
 		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
@@ -120,14 +122,14 @@ export function implementEventEmitterAPI(component: object): void {
 			cb?: Function,
 			opts?: ComponentEmitterOptions
 		) {
-			let emitter = regularEmitter;
+			let emitter = opts?.skipEmitterWrapping ? regularEmitter : wrappedEmitter;
 
 			const
 				links: EventId[] = [],
 				isOnLike = method !== 'off';
 
 			if (isOnLike && opts?.prepend === true) {
-				emitter = Object.cast(reversedEmitter);
+				emitter = Object.cast(opts?.skipEmitterWrapping ? reversedEmitter : wrappedReversedEmitter);
 			}
 
 			Array.concat([], event).forEach((event) => {

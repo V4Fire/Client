@@ -28,4 +28,6 @@ export interface ComponentEmitterOptions {
 	 * @default `false`
 	 */
 	prepend?: boolean;
+
+	skipEmitterWrapping?: boolean
 }
