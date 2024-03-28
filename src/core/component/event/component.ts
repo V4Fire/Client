@@ -66,13 +66,7 @@ export function implementEventEmitterAPI(component: object): void {
 		wildcard: true
 	});
 
-	const regularEmitter = ctx.$async.wrapEventEmitter(emitter);
-
-	const reversedEmitter = ctx.$async.wrapEventEmitter({
-		__proto__: emitter,
-		on: (...args: Parameters<EventEmitter['prependListener']>) => emitter.prependListener(...args),
-		once: (...args: Parameters<EventEmitter['prependOnceListener']>) => emitter.prependOnceListener(...args)
-	});
+	const wrappedEmitter = ctx.$async.wrapEventEmitter(emitter);
 
 	const
 		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
@@ -87,7 +81,7 @@ export function implementEventEmitterAPI(component: object): void {
 				nativeEmit?.(event, ...args);
 			}
 
-			reversedEmitter.emit(event, ...args);
+			wrappedEmitter.emit(event, ...args);
 			return this;
 		}
 	});
@@ -120,22 +114,21 @@ export function implementEventEmitterAPI(component: object): void {
 			cb?: Function,
 			opts?: ComponentEmitterOptions
 		) {
-			let emitter = regularEmitter;
-
+			let internalMethod: 'on' | 'once' | 'off'| 'prependListener' | 'prependOnceListener' = method;
 			const
 				links: EventId[] = [],
 				isOnLike = method !== 'off';
 
 			if (isOnLike && opts?.prepend === true) {
-				emitter = Object.cast(reversedEmitter);
+				internalMethod = method === 'on' ? 'prependListener' : 'prependOnceListener';
 			}
 
 			Array.concat([], event).forEach((event) => {
 				if (method === 'off' && cb == null) {
-					emitter.removeAllListeners(event);
+					wrappedEmitter.removeAllListeners(event);
 
 				} else {
-					const link = emitter[method](Object.cast(event), Object.cast(cb));
+					const link = wrappedEmitter[internalMethod](Object.cast(event), Object.cast(cb));
 
 					if (isOnLike) {
 						links.push(Object.cast(link));

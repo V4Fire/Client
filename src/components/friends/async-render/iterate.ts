@@ -10,6 +10,7 @@ import type { TaskCtx } from 'core/async';
 
 import type { ComponentElement } from 'core/component';
 import type { VNode } from 'core/component/engines';
+import { asyncRenderMarker } from 'core/component/engines';
 
 import type Friend from 'components/friends/friend';
 import { render } from 'components/friends/vdom';
@@ -21,6 +22,8 @@ import type { TaskOptions, TaskParams, IterDescriptor } from 'components/friends
 
 const
 	isCached = Symbol('Is cached');
+
+let iteratorCounter = 0;
 
 /**
  * Creates an asynchronous render stream from the specified value.
@@ -50,6 +53,7 @@ export function iterate(
 	sliceOrOpts?: number | [number?, number?] | TaskOptions,
 	opts: TaskOptions = {}
 ): unknown[] {
+	const iterateId = iteratorCounter++;
 	if (value == null) {
 		return [];
 	}
@@ -93,8 +97,8 @@ export function iterate(
 		toVNode: AnyFunction<unknown[], CanArray<VNode>>,
 		target: VNode;
 
-	ctx.$once('[[V_FOR_CB]]', setVNodeCompiler);
-	ctx.$once('[[V_ASYNC_TARGET]]', setTarget);
+	ctx.$on('[[V_FOR_CB]]', setVNodeCompiler, {prepend: true});
+	ctx.$on('[[V_ASYNC_TARGET]]', setTarget, {prepend: true});
 
 	let
 		iterI = iter.readI + 1,
@@ -115,6 +119,13 @@ export function iterate(
 		lastTask: Nullable<() => CanPromise<void>>,
 		lastTaskParams: Nullable<TaskParams>;
 
+	Object.defineProperty(iter.readEls, asyncRenderMarker, {
+		enumerable: false,
+		configurable: false,
+		writable: false,
+		value: iterateId
+	});
+
 	if (SSR) {
 		return iter.readEls;
 	}
@@ -125,6 +136,7 @@ export function iterate(
 	$a.setImmediate(async () => {
 		ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
 		ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
+		iteratorCounter = 0;
 
 		// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 		if (target == null) {
@@ -261,12 +273,34 @@ export function iterate(
 
 	return iter.readEls;
 
-	function setVNodeCompiler(c: AnyFunction) {
-		toVNode = c;
+	function isChildOf(vnode: VNode, id: number): boolean {
+		if (vnode.children?.[asyncRenderMarker] === id) {
+			return true;
+		}
+
+		if (Object.isArray(vnode.children)) {
+			return vnode.children.some((c) => isChildOf(Object.cast(c), id));
+		}
+
+		return false;
 	}
 
-	function setTarget(t: VNode) {
-		target = t;
+	function setVNodeCompiler(c: { wrappedCb: AnyFunction; handled?: boolean }) {
+		if (c.handled) {
+			return;
+		}
+
+		const {wrappedCb} = c;
+		toVNode = wrappedCb;
+		c.handled = true;
+		ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
+	}
+
+	function setTarget(vnode: VNode) {
+		if (isChildOf(vnode, iterateId)) {
+			target = vnode;
+			ctx.$off('[[V_ASYNC_TARGET]]', setTarget);
+		}
 	}
 
 	function createRenderTask(value: CanPromise<unknown>, filter?: boolean) {
