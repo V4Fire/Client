@@ -42,9 +42,11 @@ export function getAppParams(opts: InitAppOptions): {
 
 	resolvedState.async.worker(() => {
 		try {
-			Object.keys(resolvedState).forEach((key) => {
-				delete resolvedState[key];
-			});
+			setTimeout(() => {
+				Object.keys(resolvedState).forEach((key) => {
+					delete resolvedState[key];
+				});
+			}, 0);
 		} catch {}
 	});
 
