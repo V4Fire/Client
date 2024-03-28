@@ -36,5 +36,5 @@ export interface ComponentEmitterOptions {
 	 * This is relevant for methods like on and once on a component instance, but not relevant for $on and $once methods.
 	 * The $on and $once methods must be wrapped in async.
 	 */
-	rawEmitter?: boolean
+	rawEmitter?: boolean;
 }

@@ -129,7 +129,7 @@ export function implementEventEmitterAPI(component: object): void {
 				isOnLike = method !== 'off';
 
 			if (isOnLike && opts?.prepend === true) {
-				emitter = Object.cast(opts?.rawEmitter ? reversedEmitter : wrappedReversedEmitter);
+				emitter = Object.cast(opts.rawEmitter ? reversedEmitter : wrappedReversedEmitter);
 			}
 
 			Array.concat([], event).forEach((event) => {
