@@ -7,7 +7,7 @@
  */
 
 import Async from 'core/async';
-import watch  from 'core/object/watch';
+import watch from 'core/object/watch';
 
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
