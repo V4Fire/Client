@@ -27,6 +27,6 @@ ComponentEngine.directive('async-target', {
 			return;
 		}
 
-		ctx.$emit('[[V_ASYNC_TARGET]]', {vnode});
+		ctx.$emit('[[V_ASYNC_TARGET]]', vnode);
 	}
 });
