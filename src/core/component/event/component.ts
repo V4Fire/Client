@@ -122,14 +122,14 @@ export function implementEventEmitterAPI(component: object): void {
 			cb?: Function,
 			opts?: ComponentEmitterOptions
 		) {
-			let emitter = opts?.skipEmitterWrapping ? regularEmitter : wrappedEmitter;
+			let emitter = opts?.rawEmitter ? regularEmitter : wrappedEmitter;
 
 			const
 				links: EventId[] = [],
 				isOnLike = method !== 'off';
 
 			if (isOnLike && opts?.prepend === true) {
-				emitter = Object.cast(opts?.skipEmitterWrapping ? reversedEmitter : wrappedReversedEmitter);
+				emitter = Object.cast(opts?.rawEmitter ? reversedEmitter : wrappedReversedEmitter);
 			}
 
 			Array.concat([], event).forEach((event) => {

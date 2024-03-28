@@ -90,10 +90,10 @@ export default abstract class iBlockEvent extends iBlockBase {
 		unique: true,
 		init: (o, d) => (<Async>d.async).wrapEventEmitter({
 			on: (event: string, handler: Function, opts?: ComponentEmitterOptions) =>
-				o.$on(normalizeEventName(event), handler, {...opts, skipEmitterWrapping: true}),
+				o.$on(normalizeEventName(event), handler, {...opts, rawEmitter: true}),
 
 			once: (event: string, handler: Function, opts?: ComponentEmitterOptions) =>
-				o.$once(normalizeEventName(event), handler, {...opts, skipEmitterWrapping: true}),
+				o.$once(normalizeEventName(event), handler, {...opts, rawEmitter: true}),
 
 			off: (eventOrLink: string | EventId, handler: Function) => {
 				if (Object.isString(eventOrLink)) {
