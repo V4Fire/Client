@@ -281,26 +281,6 @@ function checkDeprecated(ds, path) {
 }
 
 /**
- * Checks that the design system provides all required themes
- *
- * @param {object} opts
- * @param {object} opts.detectUserPreferences - an object containing user preferences configuration to check
- * @param {string[]} opts.themesList - an array of themes included to the build
- */
-function checkRequiredThemes({detectUserPreferences, themesList}) {
-	Object.forEach(detectUserPreferences, (v, k) => {
-		switch (k) {
-			case 'prefersColorScheme':
-				checkPrefersColorScheme(v, themesList);
-				break;
-
-			default:
-				throw new Error(`A parameter with the name "${k}" is unknown in the "detectUserPreferences" context`);
-		}
-	});
-}
-
-/**
  * Checks if the design system provides "dark" and "light" themes to use the `prefersColorScheme` parameter
  *
  * @param {object} prefersColorScheme
@@ -343,6 +323,5 @@ module.exports = {
 	checkDeprecated,
 	getVariableName,
 	createDesignSystem,
-	getThemedPathChunks,
-	checkRequiredThemes
+	getThemedPathChunks
 };

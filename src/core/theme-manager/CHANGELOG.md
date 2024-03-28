@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Module moved to `core/theme-manager`
+
+#### :rocket: New Feature
+
+* Added getters isDark/isLight
+
 ## v4.0.0-beta.52 (2023-01-31)
 
 #### :boom: Breaking Change

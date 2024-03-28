@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Module moved to `core/theme-manager/system-theme-extractor`
+
 ## v4.0.0-beta.62 (2024-02-19)
 
 #### :bug: Bug Fix
