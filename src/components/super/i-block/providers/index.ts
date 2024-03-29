@@ -299,6 +299,7 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		opts = {
 			...opts,
+
 			i18n: (
 				keysetNameOrNames: CanArray<string>,
 				customLocale?: Language
