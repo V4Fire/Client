@@ -299,7 +299,10 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		opts = {
 			...opts,
-			i18n: (key) => i18nFactory(key, remoteState.lang),
+			i18n: (
+				keysetNameOrNames: CanArray<string>,
+				customLocale?: Language
+			) => i18nFactory(keysetNameOrNames, customLocale ?? remoteState.lang),
 			// Hardcode the id during the client render
 			// because the providers cache must be preserved until the end of the user's session
 			// FIXME: remove this condition after PR#1171 is merged
