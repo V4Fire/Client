@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* Now, the `component` property of the `ComponentObject` always returns a promise.
+It also means that the `component` property will not be cached anymore, but will be calculated every time it is accessed `tests/helpers/component-object`
+
+#### :rocket: New Feature
+
+* The ComponentObject can now accept a third argument — a component selector.
+If the selector is passed, it means there is no need to call pick or build, as the component will be taken from the page using the passed selector `tests/helpers/component-object`
+
 ## 4.0.0-beta.79 (2024-03-29)
 
 #### :house: Internal
