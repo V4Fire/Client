@@ -14,6 +14,8 @@ import { renderDummy } from 'components/super/i-block/test/helpers';
 
 import type bDummy from 'components/dummies/b-dummy/b-dummy';
 
+const j = (...args: string[]) => args.join(', ');
+
 test.describe('<i-block> modules - activation', () => {
 	let target: JSHandle<bDummy>;
 
@@ -24,7 +26,9 @@ test.describe('<i-block> modules - activation', () => {
 
 	test.describe('events', () => {
 		// Disabling this test as the component must be deactivated ASAP,
-		// which means that no events will be emitted @see https://github.com/V4Fire/Client/issues/1108
+		// which means that no events will be emitted
+		// @see https://github.com/V4Fire/Client/issues/1108
+		// @see https://github.com/V4Fire/Client/issues/1197
 		test.fixme('should emit `hook:deactivated` event when `deactivate` is invoked', async () => {
 			const eventPromise = target.evaluate((ctx) => new Promise((resolve) => {
 				ctx.once('hook:deactivated', resolve);
@@ -42,6 +46,35 @@ test.describe('<i-block> modules - activation', () => {
 			}));
 
 			await test.expect(eventPromise).toBeResolved();
+		});
+
+		test.describe(j(
+			'added an event handler for deactivated with group :suspend',
+			'component was deactivated',
+			'component was activated'
+		), () => {
+			test('should call the deactivated handler with group :suspend before the activated handlers are called', async () => {
+				const result = await target.evaluate((ctx) => {
+					const result = <string[]>[];
+
+					ctx.on('hook:activated', () => {
+						result.push('activated');
+					});
+
+					ctx.on('hook:deactivated', () => {
+						result.push('deactivated');
+					}, {
+						group: 'test-deactivation:suspend'
+					});
+
+					ctx.deactivate();
+					ctx.activate();
+
+					return result;
+				});
+
+				test.expect(result).toEqual(['deactivated', 'activated']);
+			});
 		});
 	});
 });
