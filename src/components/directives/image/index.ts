@@ -156,7 +156,11 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 
 			Promise.all([sleepPromise, loadPromise])
 				.then(onLoad)
-				.catch(onError);
+				.catch((e) => {
+					if (e.type !== 'clearAsync') {
+						onError();
+					}
+				});
 
 			return;
 		}
