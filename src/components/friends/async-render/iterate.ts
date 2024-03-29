@@ -119,6 +119,9 @@ export function iterate(
 		lastTask: Nullable<() => CanPromise<void>>,
 		lastTaskParams: Nullable<TaskParams>;
 
+	// Mark the set of output data with a unique iterator ID
+	// This ID will mark the vnode array to ensure that async-render is used
+	// for the correct async-target.
 	Object.defineProperty(iter.readEls, asyncRenderMarker, {
 		enumerable: false,
 		configurable: false,
