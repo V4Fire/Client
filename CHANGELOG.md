@@ -11,10 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-??-??)
+## 4.0.0-beta.78 (2024-03-29)
 
+#### :bug: Bug Fix
+
+* Fixed binding of the data provider to the component during initialization
 * Fixed an issue with the event emitter being wrapped unnecessarily into async wrapper,
-which was causing the :suspend flag and mute/unmute functions not to work correctly during deactivation/activation of components `src/core/component/event/component`. [see https://github.com/V4Fire/Client/pull/1199](https://github.com/V4Fire/Client/pull/1199)
+which was causing the :suspend flag and mute/unmute functions not to work correctly during deactivation/activation of components
+`src/core/component/event/component`. [see https://github.com/V4Fire/Client/pull/1199](https://github.com/V4Fire/Client/pull/1199)
 
 ## v4.0.0-beta.77 (2024-03-27)
 
