@@ -18,7 +18,7 @@ export default class ComponentObject<COMPONENT extends iBlock = iBlock> extends 
 	evaluate: JSHandle<COMPONENT>['evaluate'] = async (...args: Parameters<JSHandle<COMPONENT>['evaluate']>) => {
 		const component = await this.component;
 		return component.evaluate(...args);
-	}
+	};
 
 	/**
 	 * Returns the current value of the component's modifier. To extract the value,
