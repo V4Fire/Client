@@ -205,7 +205,9 @@ test.describe('<b-virtual-scroll-new>', () => {
 					.build();
 
 				await component.waitForChildCountEqualsTo(chunkSize);
-				await page.waitForFunction(([ctx]) => ctx.getVirtualScrollState().areRequestsStopped, [component.component]);
+
+				const ctx = await component.component;
+				await page.waitForFunction(([ctx]) => ctx.getVirtualScrollState().areRequestsStopped, [ctx]);
 
 				const
 					currentState = await component.getVirtualScrollState();
@@ -258,7 +260,8 @@ test.describe('<b-virtual-scroll-new>', () => {
 					})
 					.build();
 
-				await page.waitForFunction(([ctx]) => ctx.getVirtualScrollState().areRequestsStopped, [component.component]);
+				const ctx = await component.component;
+				await page.waitForFunction(([ctx]) => ctx.getVirtualScrollState().areRequestsStopped, [ctx]);
 				await component.waitForChildCountEqualsTo(chunkSize);
 				await component.scrollToBottom();
 				await component.waitForChildCountEqualsTo(chunkSize * 2);
