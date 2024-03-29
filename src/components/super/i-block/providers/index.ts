@@ -14,7 +14,7 @@
 import symbolGenerator from 'core/symbol';
 import Provider, { providers, instanceCache, ProviderOptions } from 'core/data';
 
-import { i18nFactory } from 'core/prelude/i18n';
+import { i18nFactory } from 'core/i18n';
 import SyncPromise from 'core/promise/sync';
 import config from 'config';
 
