@@ -9,7 +9,9 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.78 (2024-03-29)
+
+#### :bug: Bug Fix
 
 * Fixed an issue with the event emitter being wrapped unnecessarily into async wrapper,
 which was causing the :suspend flag and mute/unmute functions not to work correctly during deactivation/activation of components. [see https://github.com/V4Fire/Client/pull/1199](https://github.com/V4Fire/Client/pull/1199)
