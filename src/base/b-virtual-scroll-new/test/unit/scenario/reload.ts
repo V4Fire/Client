@@ -117,7 +117,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 					.build();
 
 				await component.waitForDataIndexChild(chunkSize - 1);
-				await component.component.evaluate((ctx, [event]) => ctx.unsafe.globalEmitter.emit(event), [event]);
+				await component.evaluate((ctx, [event]) => ctx.unsafe.globalEmitter.emit(event), [event]);
 				await component.waitForDataIndexChild(chunkSize * 2 - 1);
 
 				const

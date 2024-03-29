@@ -54,7 +54,7 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 	 */
 	async spyOn(path: string, spyOptions?: SpyOptions): Promise<SpyObject> {
 		const evaluateArgs = <const>[path, spyOptions];
-		const ctx = spyOptions?.proto ? await this.getComponentClass() : this.component;
+		const ctx = await (spyOptions?.proto ? this.getComponentClass() : this.component);
 
 		const instance = await createSpy(ctx, (ctx, [path, spyOptions]) => {
 			if (spyOptions?.proto === true) {
@@ -97,7 +97,7 @@ export default abstract class ComponentObjectMock<COMPONENT extends iBlock> exte
 	 * ```
 	 */
 	async getSpy(spyExtractor: SpyExtractor<COMPONENT, []>): Promise<SpyObject> {
-		return getSpy(this.component, spyExtractor);
+		return getSpy(await this.component, spyExtractor);
 	}
 
 	/**

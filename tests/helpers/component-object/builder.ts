@@ -78,6 +78,11 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	protected dummy?: ComponentInDummy<COMPONENT>;
 
 	/**
+	 * The component selector
+	 */
+	protected nodeSelector?: string;
+
+	/**
 	 * The component styles that should be inserted into the page
 	 */
 	get componentStyles(): CanUndef<string> {
@@ -88,12 +93,17 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	 * Public access to the reference of the component's `JSHandle`
 	 * @throws {@link ReferenceError} if trying to access a component that has not been built or picked
 	 */
-	get component(): JSHandle<COMPONENT> {
-		if (!this.componentStore) {
+	get component(): Promise<JSHandle<COMPONENT>> {
+		if (this.componentStore) {
+			return Promise.resolve(this.componentStore);
+		}
+
+		if (this.nodeSelector == null) {
 			throw new ReferenceError('Bad access to the component without "build" or "pick" call');
 		}
 
-		return this.componentStore;
+		return this.node.elementHandle()
+			.then((node) => node!.getProperty('component'));
 	}
 
 	/**
@@ -106,13 +116,15 @@ export default abstract class ComponentObjectBuilder<COMPONENT extends iBlock> {
 	/**
 	 * @param page - the page on which the component is located
 	 * @param componentName - the name of the component to be rendered
+	 * @param [nodeSelector] - the component selector (it can be passed later using the pick method).
 	 */
-	constructor(page: Page, componentName: string) {
+	constructor(page: Page, componentName: string, nodeSelector?: string) {
 		this.pwPage = page;
 		this.componentName = componentName;
 		this.id = `${this.componentName}_${Math.random().toString()}`;
 		this.props = {'data-component-object-id': this.id};
-		this.node = page.locator(`[data-component-object-id="${this.id}"]`);
+		this.node = page.locator(nodeSelector ?? `[data-component-object-id="${this.id}"]`);
+		this.nodeSelector = nodeSelector;
 		this.componentClassImportPath = path.join(
 			path.relative(`${process.cwd()}/src`, resolve.blockSync(this.componentName)!),
 			`/${this.componentName}.ts`
