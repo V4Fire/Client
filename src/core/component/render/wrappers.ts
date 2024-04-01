@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import { app, isComponent, componentRenderFactories } from 'core/component/const';
+import { app, isComponent, componentRenderFactories, ASYNC_RENDER_ID } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -298,11 +298,26 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 	) {
 		const
 			ctx = this.$renderEngine.r.getCurrentInstance(),
+
 			// Preserve rendering context for the async render
 			wrappedCb: AnyFunction = Object.cast(withCtx(cb, ctx));
 
-		this.$emit('[[V_FOR_CB]]', wrappedCb);
-		return original(src, wrappedCb);
+		const
+			vnodes = original(src, wrappedCb),
+			asyncRenderId = src[ASYNC_RENDER_ID];
+
+		if (asyncRenderId != null) {
+			this.$emit('[[V_FOR_CB]]', {wrappedCb});
+
+			Object.defineProperty(vnodes, ASYNC_RENDER_ID, {
+				writable: false,
+				enumerable: false,
+				configurable: false,
+				value: asyncRenderId
+			});
+		}
+
+		return vnodes;
 	});
 }
 

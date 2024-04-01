@@ -32,6 +32,7 @@ export {
 	isComponent,
 	rootComponents,
 
+	ASYNC_RENDER_ID,
 	PARENT
 
 } from 'core/component/const';
