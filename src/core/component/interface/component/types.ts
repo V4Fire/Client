@@ -30,11 +30,15 @@ export interface ComponentEmitterOptions {
 	prepend?: boolean;
 
 	/**
-	 * A flag indicating that an unwrapped async emitter needs to be called.
+	 * A flag indicating that the handler should be added directly to the component's event emitter.
+	 * Otherwise, the handler is always added to the emitter wrapped in an Async container.
 	 *
-	 * This flag is needed to avoid re-registering an event in the async module.
-	 * This is relevant for methods like on and once on a component instance, but not relevant for $on and $once methods.
-	 * The $on and $once methods must be wrapped in async.
+	 * Why is this necessary?
+	 * The thing is, there are situations when we pass the component's event emitter as
+	 * a parameter to another module or component.
+	 * And for safe operation with such an emitter, we use packaging in an Async container.
+	 * In fact, we get double packaging in Async, since the original emitter is already packed.
+	 * This flag solves this problem.
 	 */
 	rawEmitter?: boolean;
 }

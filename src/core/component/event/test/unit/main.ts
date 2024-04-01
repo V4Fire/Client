@@ -22,7 +22,7 @@ test.describe('core/component/event', () => {
 		target = await renderDummy(page);
 	});
 
-	test('adding an event handler using the $on method should be done using $async', async () => {
+	test('adding an event handler using the `$on` method should be done using `$async`', async () => {
 		const isWrapped = await target.evaluate((ctx) => {
 			ctx.unsafe.$on('$onTest', () => {
 				// ...
@@ -34,7 +34,7 @@ test.describe('core/component/event', () => {
 		test.expect(isWrapped).toBe(true);
 	});
 
-	test('adding an event handler using the $once method should be done using $async', async () => {
+	test('adding an event handler using the `$once` method should be done using `$async`', async () => {
 		const isWrapped = await target.evaluate((ctx) => {
 			ctx.unsafe.$once('$onTest', () => {
 				// ...
