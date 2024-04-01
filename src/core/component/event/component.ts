@@ -58,7 +58,8 @@ export function resetComponents(type?: ComponentResetType): void {
  */
 export function implementEventEmitterAPI(component: object): void {
 	const
-		ctx = Object.cast<UnsafeComponentInterface>(component);
+		ctx = Object.cast<UnsafeComponentInterface>(component),
+		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
 
 	const regularEmitter = new EventEmitter({
 		maxListeners: 1e3,
@@ -69,15 +70,12 @@ export function implementEventEmitterAPI(component: object): void {
 	const wrappedEmitter = ctx.$async.wrapEventEmitter(regularEmitter);
 
 	const reversedEmitter = Object.cast<typeof regularEmitter>({
-		__proto__: regularEmitter,
 		on: (...args: Parameters<EventEmitter['prependListener']>) => regularEmitter.prependListener(...args),
-		once: (...args: Parameters<EventEmitter['prependOnceListener']>) => regularEmitter.prependOnceListener(...args)
+		once: (...args: Parameters<EventEmitter['prependOnceListener']>) => regularEmitter.prependOnceListener(...args),
+		off: (...args: Parameters<EventEmitter['off']>) => regularEmitter.off(...args)
 	});
 
-	const wrappedReversedEmitter = ctx.$async.wrapEventEmitter(reversedEmitter);
-
-	const
-		nativeEmit = Object.cast<CanUndef<typeof ctx.$emit>>(ctx.$emit);
+	const wrappedReversedEmitter = Object.cast<typeof regularEmitter>(reversedEmitter);
 
 	Object.defineProperty(ctx, '$emit', {
 		configurable: true,
@@ -89,7 +87,7 @@ export function implementEventEmitterAPI(component: object): void {
 				nativeEmit?.(event, ...args);
 			}
 
-			reversedEmitter.emit(event, ...args);
+			regularEmitter.emit(event, ...args);
 			return this;
 		}
 	});
@@ -120,15 +118,17 @@ export function implementEventEmitterAPI(component: object): void {
 			this: unknown,
 			event: CanArray<string>,
 			cb?: Function,
-			opts?: ComponentEmitterOptions
+			opts: ComponentEmitterOptions = {}
 		) {
-			let emitter = opts?.rawEmitter ? regularEmitter : wrappedEmitter;
-
 			const
 				links: EventId[] = [],
 				isOnLike = method !== 'off';
 
-			if (isOnLike && opts?.prepend === true) {
+			let emitter = opts.rawEmitter ?
+				regularEmitter :
+				wrappedEmitter;
+
+			if (isOnLike && opts.prepend === true) {
 				emitter = Object.cast(opts.rawEmitter ? reversedEmitter : wrappedReversedEmitter);
 			}
 
@@ -137,10 +137,11 @@ export function implementEventEmitterAPI(component: object): void {
 					emitter.removeAllListeners(event);
 
 				} else {
-					const link = emitter[method](Object.cast(event), Object.cast(cb));
+					const
+						link = emitter[method](Object.cast(event), Object.cast(cb));
 
 					if (isOnLike) {
-						links.push(Object.cast(link));
+						links.push(Object.cast(opts.rawEmitter ? cb : link));
 					}
 				}
 			});

@@ -45,4 +45,73 @@ test.describe('core/component/event', () => {
 
 		test.expect(isWrapped).toBe(true);
 	});
+
+	test('the `prepend` flag should indicate the addition of the handler before all others', async () => {
+		const scan = await target.evaluate((ctx) => {
+			const {
+				unsafe
+			} = ctx;
+
+			const res: number[] = [];
+
+			unsafe.$on('foo', () => res.push(1));
+			unsafe.$on('foo', () => res.push(2), {prepend: true});
+			unsafe.$on('foo', () => res.push(3), {prepend: true});
+
+			unsafe.emit('foo');
+
+			return res;
+		});
+
+		test.expect(scan).toEqual([3, 2, 1]);
+	});
+
+	test.describe('`$off`', () => {
+		test('should cancel events added with `prepend`', async () => {
+			const scan = await target.evaluate((ctx) => {
+				const {
+					unsafe
+				} = ctx;
+
+				const res: number[] = [];
+
+				unsafe.$on('foo', () => res.push(1));
+
+				const cb1 = () => res.push(2);
+				unsafe.$on('foo', cb1, {prepend: true});
+				unsafe.$off('foo', cb1);
+
+				const cb2 = () => res.push(3);
+				unsafe.$on('foo', cb2, {prepend: true});
+				unsafe.$off('foo', cb2);
+
+				unsafe.$emit('foo');
+
+				return res;
+			});
+
+			test.expect(scan).toEqual([1]);
+		});
+
+		test('without a passed callback, all event handlers should be remove', async () => {
+			const scan = await target.evaluate((ctx) => {
+				const {
+					unsafe
+				} = ctx;
+
+				const res: number[] = [];
+
+				unsafe.$on('foo', () => res.push(1));
+				unsafe.$on('foo', () => res.push(2), {prepend: true});
+				unsafe.$on('foo', () => res.push(3), {prepend: true});
+
+				unsafe.$off('foo');
+				unsafe.emit('foo');
+
+				return res;
+			});
+
+			test.expect(scan).toEqual([]);
+		});
+	});
 });
