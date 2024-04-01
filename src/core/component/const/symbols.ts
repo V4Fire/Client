@@ -17,6 +17,6 @@ export const DEFAULT_WRAPPER = Symbol('This function is the generated default wr
 export const PARENT = {};
 
 /**
- * Symbol to mark async iterator data and VNodes. Used with async-target children test
+ * A symbol for extracting the unique ID of the async render task
  */
-export const asyncRenderId = Symbol('async-render');
+export const ASYNC_RENDER_ID = Symbol('Async render task ID');

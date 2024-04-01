@@ -206,9 +206,10 @@ test.describe('friends/async-render', () => {
 		await assertResultText(page, 'Ok 1  Ok 2');
 	});
 
-	test('nested async-render should use correct async-target', async ({page}) => {
+	test('nested asyncRender tasks should work correctly with nested async-target nodes', async ({page}) => {
 		const target = await renderDummy(page, 'check nested async render target');
 		await page.locator(createSelector('update')).click();
+
 		await waitForRender(target);
 		await assertResultText(page, '01');
 	});

@@ -8,9 +8,8 @@
 
 import type { TaskCtx } from 'core/async';
 
-import type { ComponentElement } from 'core/component';
+import { ASYNC_RENDER_ID, ComponentElement } from 'core/component';
 import type { VNode } from 'core/component/engines';
-import { asyncRenderId } from 'core/component/const';
 
 import type Friend from 'components/friends/friend';
 import { render } from 'components/friends/vdom';
@@ -53,7 +52,9 @@ export function iterate(
 	sliceOrOpts?: number | [number?, number?] | TaskOptions,
 	opts: TaskOptions = {}
 ): unknown[] {
-	const iterateId = iteratorCounter++;
+	const
+		iterateId = iteratorCounter++;
+
 	if (value == null) {
 		return [];
 	}
@@ -119,10 +120,8 @@ export function iterate(
 		lastTask: Nullable<() => CanPromise<void>>,
 		lastTaskParams: Nullable<TaskParams>;
 
-	// Mark the set of output data with a unique iterator ID
-	// This ID will mark the vnode array to ensure that async-render is used
-	// for the correct async-target.
-	Object.defineProperty(iter.readEls, asyncRenderId, {
+	// This ID will mark the vnode array to ensure that async-render is used for the correct async-target
+	Object.defineProperty(iter.readEls, ASYNC_RENDER_ID, {
 		enumerable: false,
 		configurable: false,
 		writable: false,
@@ -277,7 +276,7 @@ export function iterate(
 	return iter.readEls;
 
 	function isChildOf(vnode: VNode, id: number): boolean {
-		if (vnode.children?.[asyncRenderId] === id) {
+		if (vnode.children?.[ASYNC_RENDER_ID] === id) {
 			return true;
 		}
 
@@ -288,14 +287,14 @@ export function iterate(
 		return false;
 	}
 
-	function setVNodeCompiler(c: { wrappedCb: AnyFunction; handled?: boolean }) {
-		if (c.handled) {
+	function setVNodeCompiler(e: {wrappedCb: AnyFunction; handled?: boolean}) {
+		if (e.handled) {
 			return;
 		}
 
-		const {wrappedCb} = c;
-		toVNode = wrappedCb;
-		c.handled = true;
+		e.handled = true;
+		toVNode = e.wrappedCb;
+
 		ctx.$off('[[V_FOR_CB]]', setVNodeCompiler);
 	}
 
