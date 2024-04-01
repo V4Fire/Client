@@ -15,7 +15,8 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-Call `onError` handler only if the error wasn't caused by the "clearAsync" type `directives/image`
+* Call `onError` handler only if the error wasn't caused by the "clearAsync" type `directives/image`
+* Pass remoteState to the adapter `core/abt`
 
 ## 4.0.0-beta.80 (2024-03-29)
 
