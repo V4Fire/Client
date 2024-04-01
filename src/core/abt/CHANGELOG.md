@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-04-01)
+## 4.0.0-beta.81 (2024-04-01)
 
 #### :bug: Bug Fix
 
-* Pass remoteState to the adapter
+* Passed `remoteState` to the adapter
 
 ## v4.0.0-beta.30 (2023-10-11)
 
