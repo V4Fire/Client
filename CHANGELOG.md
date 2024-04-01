@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+Call `onError` handler only if the error wasn't caused by the "clearAsync" type `directives/image`
+
 ## 4.0.0-beta.80 (2024-03-29)
 
 #### :boom: Breaking Change
