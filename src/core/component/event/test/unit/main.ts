@@ -67,7 +67,7 @@ test.describe('core/component/event', () => {
 	});
 
 	test.describe('`$off`', () => {
-		test('should cancel events added with `prepend`', async () => {
+		test('should remove event handlers added with `prepend`', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const {
 					unsafe
@@ -93,7 +93,7 @@ test.describe('core/component/event', () => {
 			test.expect(scan).toEqual([1]);
 		});
 
-		test('without a passed callback, all event handlers should be remove', async () => {
+		test('without a passed callback, all event handlers should be removed', async () => {
 			const scan = await target.evaluate((ctx) => {
 				const {
 					unsafe
