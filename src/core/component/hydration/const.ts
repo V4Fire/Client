@@ -12,4 +12,4 @@ export const
 	/**
 	 * Key of empty data in hydration storage
 	 */
-	emptyDataStoreKey = 'EMPTY';
+	emptyDataStoreKey = '[[EMPTY]]';
