@@ -8,7 +8,7 @@
 
 /* eslint-disable prefer-spread */
 
-import { app, isComponent, componentRenderFactories } from 'core/component/const';
+import { app, isComponent, componentRenderFactories, asyncRenderId } from 'core/component/const';
 import { attachTemplatesToMeta, ComponentMeta } from 'core/component/meta';
 
 import { isSmartComponent } from 'core/component/reflect';
@@ -54,7 +54,6 @@ import {
 } from 'core/component/render/helpers';
 
 import type { ComponentInterface } from 'core/component/interface';
-import { asyncRenderMarker } from 'core/component/engines';
 
 /**
  * Wrapper for the component library `createVNode` function
@@ -304,11 +303,11 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 
 		const vnodes = original(src, wrappedCb);
 
-		if (src[asyncRenderMarker] != null) {
-			const iterateId = src[asyncRenderMarker];
+		if (src[asyncRenderId] != null) {
+			const iterateId = src[asyncRenderId];
 
 			this.$emit('[[V_FOR_CB]]', {wrappedCb});
-			Object.defineProperty(vnodes, asyncRenderMarker, {
+			Object.defineProperty(vnodes, asyncRenderId, {
 				writable: false,
 				enumerable: false,
 				configurable: false,

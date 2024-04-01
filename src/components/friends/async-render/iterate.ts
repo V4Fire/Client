@@ -10,7 +10,7 @@ import type { TaskCtx } from 'core/async';
 
 import type { ComponentElement } from 'core/component';
 import type { VNode } from 'core/component/engines';
-import { asyncRenderMarker } from 'core/component/engines';
+import { asyncRenderId } from 'core/component/const';
 
 import type Friend from 'components/friends/friend';
 import { render } from 'components/friends/vdom';
@@ -122,7 +122,7 @@ export function iterate(
 	// Mark the set of output data with a unique iterator ID
 	// This ID will mark the vnode array to ensure that async-render is used
 	// for the correct async-target.
-	Object.defineProperty(iter.readEls, asyncRenderMarker, {
+	Object.defineProperty(iter.readEls, asyncRenderId, {
 		enumerable: false,
 		configurable: false,
 		writable: false,
@@ -277,7 +277,7 @@ export function iterate(
 	return iter.readEls;
 
 	function isChildOf(vnode: VNode, id: number): boolean {
-		if (vnode.children?.[asyncRenderMarker] === id) {
+		if (vnode.children?.[asyncRenderId] === id) {
 			return true;
 		}
 

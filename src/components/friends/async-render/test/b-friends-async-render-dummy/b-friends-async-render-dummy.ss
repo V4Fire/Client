@@ -85,8 +85,8 @@
 						< .&__result v-async-target
 							< template v-for = n in asyncRender.iterate(2)
 								{{ n }}
-			< button.&__update @click = asyncRender.forceRender()
 
+			< button.&__update @click = asyncRender.forceRender()
 
 		< template v-if = stage === 'loading dynamic modules'
 			< .&__result v-async-target

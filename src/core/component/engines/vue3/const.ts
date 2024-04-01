@@ -6,8 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-export const asyncRenderMarker = Symbol('async-render');
-
 export const supports = {
 
 };
