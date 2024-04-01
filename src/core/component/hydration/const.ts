@@ -7,9 +7,9 @@
  */
 
 export const
-	styles = new Map<string, Promise<{default: string}>>(),
+	styles = new Map<string, Promise<{default: string}>>();
 
-	/**
-	 * Key of empty data in hydration storage
-	 */
-	emptyDataStoreKey = '[[EMPTY]]';
+/**
+ * A key for empty data in the hydration storage
+ */
+export const emptyDataStoreKey = '[[EMPTY]]';
