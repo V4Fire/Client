@@ -89,6 +89,8 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		if (hydrationMode) {
 			this.state.set(hydrationStore.get(this.componentId));
+			Promise.resolve(this.state.initFromStorage()).catch(stderr);
+
 			done();
 			return;
 		}
