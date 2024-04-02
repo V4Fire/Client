@@ -31,7 +31,8 @@ export class ThemeManager {
 	 */
 	readonly emitter: EventEmitter = new EventEmitter({
 		maxListeners: 1e3,
-		newListener: false
+		newListener: false,
+		wildcard: true
 	});
 
 	/**
@@ -150,7 +151,10 @@ export class ThemeManager {
 		this.themeStorage.set('colorTheme', this.current);
 		this.setThemeAttribute(value);
 
+		// @deprecated
 		this.emitter.emit('theme:change', this.current, oldValue);
+
+		this.emitter.emit('theme.change', this.current, oldValue);
 	}
 
 	/**

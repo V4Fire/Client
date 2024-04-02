@@ -157,7 +157,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 | EventName      | Description                  | Payload description   | Payload                    |
 |----------------|------------------------------|-----------------------|----------------------------|
-| `theme:change` | Theme value has been changed | The new and old value | `Theme`; `CanUndef<Theme>` |
+| `theme.change` | Theme value has been changed | The new and old value | `Theme`; `CanUndef<Theme>` |
 
 ## Accessors
 
