@@ -11,3 +11,15 @@
 - include 'components/super/i-static-page/i-static-page.component.ss'|b as placeholder
 
 - template index() extends ['i-static-page.component'].index
+	- block body
+		< b-dummy
+			/// No object
+			< template v-render = vdom.getRenderFn('b-dummy/')()
+
+			/// Inline object
+			< template v-render = vdom.getRenderFn('b-dummy/')({classes: 'test'})
+
+			/// Sparse object
+			< template v-render = vdom.getRenderFn('b-dummy/')({ &
+				classes: 'test'
+			}) .

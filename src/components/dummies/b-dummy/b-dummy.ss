@@ -21,4 +21,7 @@
 			.
 
 		< template v-else
+			< b-button v-func = false
+				Example
+
 			+= self.slot()
