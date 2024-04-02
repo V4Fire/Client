@@ -59,7 +59,7 @@ export function initFromRouter(this: State): boolean {
 			route = Object.mixin({deep: true, withProto: true}, {}, r.route),
 			stateFields = ctx.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
 
-		set.call(ctx, stateFields);
+		set.call(that, stateFields);
 
 		if (!SSR) {
 			if (ctx.syncRouterStoreOnInit) {
