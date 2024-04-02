@@ -293,7 +293,7 @@ export function wrapMergeProps<T extends typeof mergeProps>(original: T): T {
 export function wrapRenderList<T extends typeof renderList, C extends typeof withCtx>(original: T, withCtx: C): T {
 	return Object.cast(function renderList(
 		this: ComponentInterface,
-		src: Iterable<unknown> | Dictionary,
+		src: Iterable<unknown> | Dictionary | number | undefined | null,
 		cb: AnyFunction
 	) {
 		const
@@ -304,7 +304,7 @@ export function wrapRenderList<T extends typeof renderList, C extends typeof wit
 
 		const
 			vnodes = original(src, wrappedCb),
-			asyncRenderId = src[ASYNC_RENDER_ID];
+			asyncRenderId = src?.[ASYNC_RENDER_ID];
 
 		if (asyncRenderId != null) {
 			this.$emit('[[V_FOR_CB]]', {wrappedCb});
