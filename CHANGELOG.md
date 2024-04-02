@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-04-??)
+
+#### :bug: Bug Fix
+
+* Fixed crash on undefined value in renderList source `AsyncRender`
+
 ## 4.0.0-beta.81 (2024-04-01)
 
 #### :bug: Bug Fix

@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-04-??)
+
+#### :bug: Bug Fix
+
+* Fixed crash on undefined value in renderList source
+
 ## v4.0.0-beta.57 (2024-02-13)
 
 #### :bug: Bug Fix
