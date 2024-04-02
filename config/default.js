@@ -1036,21 +1036,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * If set to true, the theme attribute will be processed by a proxy server, such as Nginx.
-		 * Otherwise, the theme attributes will be sourced from the JS runtime.
-		 */
-		postProcessor: false,
-
-		/**
-		 * The name of the template variable that will be replaced by the proxy server for forwarding the active theme
+		 * Returns an array of available themes to pass from the design system to the runtime,
+		 * or returns true to pass all themes from the design system
 		 *
-		 * @cli theme-post-processor-template
-		 * @env THEME_POST_PROCESSOR_TEMPLATE
+		 * @cli include-themes
+		 * @env INCLUDE_THEMES
+		 *
+		 * @param {string} [def] - default value
+		 * @returns {Array<string>|boolean}
 		 */
-		postProcessorTemplate: o('theme-post-processor-template', {
-			default: 'COLOR_THEME',
-			env: true
-		}),
+		include(def) {
+			return o('include-themes', {
+				env: true,
+				default: def
+			});
+		},
 
 		/**
 		 * The attribute name used to assign the theme value to the root element
@@ -1066,21 +1066,21 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Returns an array of available themes to pass from the design system to the runtime,
-		 * or returns true to pass all themes from the design system
-		 *
-		 * @cli include-themes
-		 * @env INCLUDE_THEMES
-		 *
-		 * @param {string} [def] - default value
-		 * @returns {Array<string>|boolean}
+		 * If set to true, the theme attribute will be processed by a proxy server, such as Nginx.
+		 * Otherwise, the theme attributes will be sourced from the JS runtime.
 		 */
-		include(def) {
-			return o('include-themes', {
-				env: true,
-				default: def
-			});
-		}
+		postProcessor: false,
+
+		/**
+		 * The name of the template variable that will be replaced by the proxy server for forwarding the active theme
+		 *
+		 * @cli theme-post-processor-template
+		 * @env THEME_POST_PROCESSOR_TEMPLATE
+		 */
+		postProcessorTemplate: o('theme-post-processor-template', {
+			default: 'COLOR_THEME',
+			env: true
+		})
 	},
 
 	/**
