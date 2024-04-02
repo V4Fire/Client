@@ -529,17 +529,16 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Initializes the theme modifier and attaches a listener to watch changing of the theme
+	 * Initializes the theme modifier and attaches a listener to monitor changes of the theme
 	 */
 	@hook('created')
 	protected initThemeModListener(): void {
-		const cur = this.remoteState.theme.get();
-
-		void this.setMod('theme', cur.value);
+		const theme = this.remoteState.theme.get();
+		void this.setMod('theme', theme.value);
 
 		this.remoteState.theme.emitter.on(
 			'onTheme:change',
-			(v: Theme) => this.setMod('theme', v.value)
+			(theme: Theme) => this.setMod('theme', theme.value)
 		);
 	}
 }

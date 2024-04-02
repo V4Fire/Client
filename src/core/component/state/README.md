@@ -76,6 +76,11 @@ export interface State {
   cookies: Cookies;
 
   /**
+   * An API for managing the appearance themes of applications
+   */
+  theme: ThemeManager;
+
+  /**
    * An API for working with the target document's URL
    */
   location: URL;

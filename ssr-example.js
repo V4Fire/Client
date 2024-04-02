@@ -40,8 +40,9 @@ app.get('/', (req, res) => {
 
 			cookies: v4app.cookies.createCookieStore(''),
 			session: v4app.session.from(v4app.kvStorage.asyncSessionStorage),
+
 			theme: v4app.themeManager.default({
-				themeStorageEngine: v4app.CookiesEngine.syncLocalStorage,
+				themeStorageEngine: v4app.CookieEngine.syncLocalStorage,
 				systemThemeExtractor: new v4app.themeManager.SystemThemeExtractorSsr(req.headers)
 			})
 		})
