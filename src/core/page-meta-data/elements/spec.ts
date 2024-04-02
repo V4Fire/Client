@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import {Link, Meta, SSREngine} from 'core/page-meta-data/elements';
+import { Link, Meta, SSREngine } from 'core/page-meta-data/elements';
 
 describe('SSR page meta data', () => {
 	it('render as string', () => {

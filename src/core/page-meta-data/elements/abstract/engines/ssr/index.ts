@@ -13,7 +13,7 @@ import type { AbstractElement } from 'core/page-meta-data/elements';
  * Engine for server-side rendering
  */
 export default class SSREngine implements Engine {
-	/** {@link Engine.render}*/
+	/** {@link Engine.render} */
 	render(_element: AbstractElement, tag: string, attrs: Dictionary<string>): string {
 		const attrsString = Object.keys(attrs)
 			.map((key) => `${key}="${attrs[key]}"`)
@@ -22,12 +22,12 @@ export default class SSREngine implements Engine {
 		return `<${tag} ${attrsString} />`;
 	}
 
-	/** {@link Engine.remove}*/
+	/** {@link Engine.remove} */
 	remove(el: AbstractElement): AbstractElement {
 		return el;
 	}
 
-	/** {@link Engine.update}*/
+	/** {@link Engine.update} */
 	update(el: AbstractElement, _attrs: Dictionary<string>): AbstractElement {
 		return el;
 	}

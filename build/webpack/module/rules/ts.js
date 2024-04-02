@@ -47,12 +47,14 @@ module.exports = function tsRules() {
 				}
 			},
 
-			webpack.ssr ? [] : {
-				loader: 'symbol-generator-loader',
-				options: {
-					modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
-				}
-			},
+			webpack.ssr ?
+				[] :
+				{
+					loader: 'symbol-generator-loader',
+					options: {
+						modules: [resolve.blockSync(), resolve.sourceDir, ...resolve.rootDependencies]
+					}
+				},
 
 			{
 				loader: 'monic-loader',

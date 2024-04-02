@@ -59,9 +59,7 @@ test.describe('<i-static-page> page meta data', () => {
 		const href = 'https://example.com/';
 		await root.evaluate((ctx, href) => ctx.pageMetaData.setCanonicalLink(href), href);
 
-		const linkHref = await root.evaluate((ctx) => {
-			return ctx.pageMetaData.getCanonicalLink()?.href;
-		});
+		const linkHref = await root.evaluate((ctx) => ctx.pageMetaData.getCanonicalLink()?.href);
 
 		test.expect(linkHref).toEqual(href);
 		await test.expect(page.locator('head link[rel="canonical"]')).toHaveAttribute('href', href);

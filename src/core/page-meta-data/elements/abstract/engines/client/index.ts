@@ -12,23 +12,23 @@ import type { Engine } from 'core/page-meta-data/elements/abstract/engines/inter
  * Engine for client-side rendering
  */
 export default class CSREngine<T extends HTMLElement> implements Engine {
-	/** {@link Engine.create}*/
+	/** {@link Engine.create} */
 	create(tag: string, attrs: Dictionary<string>): T {
 		return Object.assign(<T>globalThis.document.createElement(tag), attrs);
 	}
 
-	/** {@link Engine.render}*/
+	/** {@link Engine.render} */
 	render(el: T): T {
-		return <T>globalThis.document.head.appendChild(el);
+		return globalThis.document.head.appendChild(el);
 	}
 
-	/** {@link Engine.remove}*/
+	/** {@link Engine.remove} */
 	remove(el: T): T {
 		return globalThis.document.head.removeChild(el);
 	}
 
-	/** {@link Engine.update}*/
-	update(el: T, attrs): T {
+	/** {@link Engine.update} */
+	update(el: T, attrs: Dictionary<string>): T {
 		return Object.assign(el, attrs);
 	}
 }

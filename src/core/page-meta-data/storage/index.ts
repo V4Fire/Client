@@ -130,9 +130,8 @@ export default class ElementsStorage {
 	 *
 	 * @param key
 	 * @param element
-	 * @param attrs
 	 */
-	addOG(key: keyof OGElements, element: Meta, attrs: Dictionary<string>): void {
+	addOG(key: keyof OGElements, element: Meta): void {
 		if (key === 'image') {
 			this.og.image ??= [];
 			this.og.image.push(element);
@@ -176,7 +175,7 @@ export default class ElementsStorage {
 	 * Removes canonical link
 	 */
 	removeCanonical(): CanUndef<Link> {
-		const canonical = this.canonical;
+		const {canonical} = this;
 		this.canonical = undefined;
 
 		canonical?.remove();
@@ -220,7 +219,7 @@ export default class ElementsStorage {
 	/**
 	 * Returns iterator
 	 */
-	[Symbol.iterator]() {
+	[Symbol.iterator](): IterableIterator<AbstractElement> {
 		const iter = traverse(Object.values(this));
 
 		return {

@@ -46,7 +46,7 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 * Creates the element due to the environment
 	 */
 	create(): T | this {
-		return <T>this.engine.create?.(this.tag, this.attrs) ?? this;
+		return <CanUndef<T>>this.engine.create?.(this.tag, this.attrs) ?? this;
 	}
 
 	/**
