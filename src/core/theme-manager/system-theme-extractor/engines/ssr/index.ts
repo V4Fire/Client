@@ -14,14 +14,11 @@
 import SyncPromise from 'core/promise/sync';
 import type { AsyncOptions, ClearOptions } from 'core/async';
 
+import { defaultTheme } from 'core/theme-manager/helpers';
+
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
 import { HEADER_NAME } from 'core/theme-manager/system-theme-extractor/engines/ssr/const';
-import { defaultTheme } from 'core/theme-manager';
 
-/**
- * Represents a `SystemThemeExtractor` implementation tailored for ssr environments.
- * This implementation uses a request headers to extract preferred color scheme.
- */
 export class SystemThemeExtractorSSR implements SystemThemeExtractor {
 	/**
 	 * The request headers
@@ -29,13 +26,13 @@ export class SystemThemeExtractorSSR implements SystemThemeExtractor {
 	protected readonly requestHeaders: Dictionary<string>;
 
 	/**
-	 * @param headers
+	 * @param headers - request headers
 	 */
 	constructor(headers: Dictionary<string>) {
 		this.requestHeaders = headers;
 
-		Object.forEach(this.requestHeaders, (v, k) => {
-			this.requestHeaders[k.toLowerCase()] = v;
+		Object.forEach(this.requestHeaders, (value, name) => {
+			this.requestHeaders[name.toLowerCase()] = value;
 		});
 	}
 
@@ -62,7 +59,7 @@ export class SystemThemeExtractorSSR implements SystemThemeExtractor {
 	}
 
 	/**
-	 * Returns header from the request
+	 * Retrieves the value of a specified header name from the request
 	 * @param headerName
 	 */
 	protected getHeader(headerName: string): CanUndef<string> {

@@ -14,13 +14,9 @@
 import SyncPromise from 'core/promise/sync';
 import Async, { EventEmitterLikeP, AsyncOptions, ClearOptions } from 'core/async';
 
-import { DARK, LIGHT } from 'core/theme-manager';
+import { DARK, LIGHT } from 'core/theme-manager/const';
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
 
-/**
- * Represents a `SystemThemeExtractor` implementation tailored for web environments.
- * This implementation uses a media query to monitor changes in the preferred color scheme.
- */
 export class SystemThemeExtractorWeb implements SystemThemeExtractor {
 	/**
 	 * A media query object for monitoring theme changes

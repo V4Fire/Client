@@ -9,7 +9,7 @@
 import { LIGHT } from 'core/theme-manager/const';
 
 /**
- * Default theme from the app config
+ * Returns the default theme from the app config
  * @throws ReferenceError
  */
 export function defaultTheme(): string {

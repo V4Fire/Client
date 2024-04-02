@@ -81,7 +81,7 @@ export class ThemeManager {
 	}
 
 	/**
-	 * Returns the current theme
+	 * Returns the current theme value
 	 */
 	get(): Theme {
 		return this.current;

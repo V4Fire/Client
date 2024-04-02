@@ -4,9 +4,8 @@ This module provides an API for obtaining and observing the preferred color sche
 
 ## Usage
 
-By default, the engine for the web is supported.
-
-The engine needs to be passed to the `themeManager` constructor.
+By default, engines for client-side browser or SSR are supported.
+You must pass the engine to the themeManager constructor.
 
 ```ts
 import themeManagerFactory, { SystemThemeExtractorWeb } from 'core/theme-manager';
@@ -20,7 +19,6 @@ initApp(rootComponentName, {
   })
   // ...
 });
-
 ```
 
 Also, you can implement your own engine.
@@ -30,12 +28,12 @@ Also, you can implement your own engine.
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
 
 export default class CustomEngine implements SystemThemeExtractor {
-  // Implement all necessary methods of the interface here.
+  // Implement all necessary methods of the interface here
 }
 ```
 
-The `SystemThemeExtractor` interface specifies that the `getSystemTheme` method should return a Promise object,
-allowing for asynchronous computation of the system theme.
-If synchronous computation is necessary for your case, you can use `SyncPromise`.
+The `SystemThemeExtractor` interface mandates that the getSystemTheme method must return a Promise object,
+facilitating asynchronous determination of the system theme.
+Should synchronous computation be required for your scenario, `SyncPromise` can be utilized.
 
 See `core/theme-manger` for details.

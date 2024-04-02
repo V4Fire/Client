@@ -1,6 +1,6 @@
 # core/theme-manager/system-theme-extractor/engines/web
 
-This module represents a `SystemThemeExtractor` implementation tailored for web environments.
-This implementation uses a media query to monitor changes in the preferred color scheme.
+The module provides a SystemThemeExtractor implementation suited for web environments.
+It uses a media query to track changes in the preferred color scheme.
 
-Read [core/theme-manager](../../README.md) for further information
+For more information, please read the [core/theme-manager](../../README.md) documentation.

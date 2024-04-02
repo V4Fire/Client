@@ -2,13 +2,13 @@
 
 This module provides an API for managing the appearance themes of applications.
 
-## How to use?
+## How To Use?
 
-It is necessary to create an instance of the ThemeManager class and set it in the options:
+It is necessary to create an instance of the ThemeManager class and set in its settings:
 
-1. where to store the user's theme (for example, in cookies);
-2. the engine that will allow determining the user's default theme (for example,
-   the user's OS has a dark theme enabled).
+1. Where to store the user's theme (for example, in cookies).
+2. The engine that will allow determining the user's default theme (for example,
+   if the user's OS has dark mode enabled).
 
 ```typescript
 import { from } from 'core/cookies';
@@ -25,13 +25,14 @@ console.log(themeManager.get());
 console.log(themeManager.set('dark'));
 ```
 
-### How to use it inside a component?
+### How To Use It Inside A Component?
 
-Explicit use of this class inside a component is discouraged,
-as this scheme will not work with SSR, because each request could have its own theme.
-Therefore, by default, the theme manager is instantiated in the global state of the application,
-which is described in the `core/component/state` module.
-To access it, you should use the `remoteState` property.
+It is advisable to avoid directly using the ThemeManager class within a component,
+as this approach is not compatible with Server-Side Rendering (SSR);
+this is due to each request potentially having a unique theme.
+Consequently, the ThemeManager is typically instantiated within the application's global state by default,
+as outlined in the `core/component/state` module.
+To interact with it, the `remoteState` property should be employed.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';
@@ -39,13 +40,12 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   created() {
-    // There is a possibilty that app has no themes and remote state doesn't provide theme API
-    console.log(this.remoteState.theme?.get());
+    console.log(this.remoteState.theme.get());
   }
 }
 ```
 
-### How to use it with SSR?
+### How To Use It With SSR?
 
 An instance of the theme manager needs to be explicitly instantiated when the application is created.
 
@@ -122,7 +122,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
     /**
      * Returns an array of available themes to pass from the design system to the runtime,
-     * or `true` to pass all themes from the design system
+     * or returns true to pass all themes from the design system
      *
      * @cli include-themes
      * @env INCLUDE_THEMES
@@ -138,7 +138,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
     },
 
     /**
-     * Returns the attribute name to set the topic value to the root element
+     * The attribute name used to assign the theme value to the root element
      *
      * @cli theme-attribute
      * @env THEME_ATTRIBUTE
@@ -180,7 +180,7 @@ export default class bExample extends iBlock {
 
 ### get
 
-Current theme value.
+Returns the current theme value.
 
 ```typescript
 import iBlock, { component, prop, field } from 'components/super/i-block/i-block';

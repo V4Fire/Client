@@ -1053,7 +1053,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Returns the attribute name to set the topic value to the root element
+		 * The attribute name used to assign the theme value to the root element
 		 *
 		 * @cli theme-attribute
 		 * @env THEME_ATTRIBUTE
@@ -1067,7 +1067,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 		/**
 		 * Returns an array of available themes to pass from the design system to the runtime,
-		 * or `true` to pass all themes from the design system
+		 * or returns true to pass all themes from the design system
 		 *
 		 * @cli include-themes
 		 * @env INCLUDE_THEMES
