@@ -10,7 +10,9 @@ import Async from 'core/async';
 import watch from 'core/object/watch';
 
 import CookieStorage from 'core/kv-storage/engines/cookie';
+
 import { SystemThemeExtractorStub, ThemeManager } from 'core/theme-manager';
+import PageMetaData from 'core/page-meta-data';
 
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
@@ -53,7 +55,9 @@ export function getAppParams(opts: InitAppOptions): {
 
 				systemThemeExtractor: new SystemThemeExtractorStub()
 			}
-		)
+		),
+
+		pageMetaData: opts.pageMetaData ?? new PageMetaData(opts.location)
 	};
 
 	resolvedState.async.worker(() => {
