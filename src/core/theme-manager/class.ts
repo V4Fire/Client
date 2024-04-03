@@ -117,7 +117,8 @@ export class ThemeManager {
 	 *
 	 * @param newTheme
 	 * @throws ReferenceError
-	 * @emits `theme:change(value: string, oldValue: CanUndef<string>)`
+	 * @emits `theme:change(value: Theme, oldValue: CanUndef<Theme>)`
+	 * @emits `theme.change(value: Theme, oldValue: CanUndef<Theme>)`
 	 */
 	protected changeTheme(newTheme: Theme): void {
 		if (Object.fastCompare(this.current, newTheme)) {
