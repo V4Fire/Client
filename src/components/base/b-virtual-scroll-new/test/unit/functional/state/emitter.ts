@@ -448,7 +448,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 			test('state at the time of emitting events must be correct', async () => {
 				state.reset();
 
-				await component.component.evaluate((ctx) => {
+				await component.evaluate((ctx) => {
 					const original = Object.cast<Function>(ctx.emit);
 
 					ctx.emit = jestMock.mock((...args) => {

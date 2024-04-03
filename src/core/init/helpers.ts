@@ -9,6 +9,9 @@
 import Async from 'core/async';
 import watch from 'core/object/watch';
 
+import CookieStorage from 'core/kv-storage/engines/cookie';
+import { SystemThemeExtractorStub, ThemeManager } from 'core/theme-manager';
+
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
 
@@ -34,17 +37,32 @@ export function getAppParams(opts: InitAppOptions): {
 	const resolvedState = {
 		...opts,
 		appProcessId: opts.appProcessId ?? Object.fastHash(Math.random()),
-		net: opts.net ?? net,
-		cookies: cookies.from(opts.cookies),
+
 		route,
-		async: new Async()
+		cookies: cookies.from(opts.cookies),
+
+		net: opts.net ?? net,
+		async: new Async(),
+
+		theme: opts.theme ?? new ThemeManager(
+			{
+				themeStorageEngine: new CookieStorage('v4ls', {
+					cookies: cookies.from(opts.cookies),
+					maxAge: 2 ** 31 - 1
+				}),
+
+				systemThemeExtractor: new SystemThemeExtractorStub()
+			}
+		)
 	};
 
 	resolvedState.async.worker(() => {
 		try {
-			Object.keys(resolvedState).forEach((key) => {
-				delete resolvedState[key];
-			});
+			setTimeout(() => {
+				Object.keys(resolvedState).forEach((key) => {
+					delete resolvedState[key];
+				});
+			}, 0);
 		} catch {}
 	});
 

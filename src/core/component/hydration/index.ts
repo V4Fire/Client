@@ -13,7 +13,7 @@
 
 import { expandedStringify, expandedParse } from 'core/json';
 
-import type { styles } from 'core/component/hydration/const';
+import { styles, emptyDataStoreKey } from 'core/component/hydration/const';
 import type { Store, HydratedData, HydratedValue } from 'core/component/hydration/interface';
 
 export * from 'core/component/hydration/const';
@@ -133,6 +133,17 @@ export class HydrationStore {
 		this.init(componentId);
 		this.store.store[componentId]![path] = key;
 		this.store.data[key] = data;
+	}
+
+	/**
+	 * Sets empty hydration data for the specified component ID and path
+	 *
+	 * @param componentId
+	 * @param path
+	 */
+	setEmpty(componentId: string, path: string): void {
+		this.init(componentId);
+		this.store.store[componentId]![path] = emptyDataStoreKey;
 	}
 
 	/**

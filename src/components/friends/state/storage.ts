@@ -19,6 +19,8 @@ const
  * This method is required for `syncStorageState` to work.
  */
 export function initFromStorage(this: Friend): CanPromise<boolean> {
+	const that = this;
+
 	if (this.globalName == null) {
 		return false;
 	}
@@ -38,51 +40,48 @@ export function initFromStorage(this: Friend): CanPromise<boolean> {
 	const storeWatchers = {group: 'storeWatchers'};
 	$a.clearAll(storeWatchers);
 
-	return this[key] = $a.promise(async () => {
-		const
-			data = await this.storage.get('[[STORE]]');
-
-		void this.lfc.execCbAtTheRightTime(() => {
-			const
-				stateFields = ctx.syncStorageState(data);
-
-			set.call(this, stateFields);
-
-			const sync = $a.debounce(saveToStorage.bind(this), 0, {
-				label: $$.syncLocalStorage
-			});
-
-			if (Object.isDictionary(stateFields)) {
-				for (let keys = Object.keys(stateFields), i = 0; i < keys.length; i++) {
-					const
-						key = keys[i],
-						p = key.split('.');
-
-					if (p[0] === 'mods') {
-						$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
-
-					} else {
-						ctx.watch(key, (val, ...args) => {
-							if (!Object.fastCompare(val, args[0])) {
-								sync();
-							}
-						}, {
-							...storeWatchers,
-							deep: true
-						});
-					}
-				}
-			}
-
-			ctx.log('state:init:storage', this, stateFields);
-		});
-
-		return true;
-
-	}, {
+	return this[key] = $a.promise(loadFromStorage, {
 		group: 'loadStore',
 		join: true
 	});
+
+	function loadFromStorage(): Promise<boolean> {
+		return ctx.storage.get('[[STORE]]').then((data) => {
+			void ctx.lfc.execCbAtTheRightTime(syncWithState);
+			return true;
+
+			function syncWithState() {
+				const stateFields = ctx.syncStorageState(data);
+				set.call(that, stateFields);
+
+				const sync = $a.debounce(saveToStorage.bind(that), 0, {
+					label: $$.syncLocalStorage
+				});
+
+				if (Object.isDictionary(stateFields)) {
+					Object.keys(stateFields).forEach((key) => {
+						const p = key.split('.');
+
+						if (p[0] === 'mods') {
+							$a.on(ctx.localEmitter, `block.mod.*.${p[1]}.*`, sync, storeWatchers);
+
+						} else {
+							ctx.watch(key, (val: unknown, ...args: unknown[]) => {
+								if (!Object.fastCompare(val, args[0])) {
+									sync();
+								}
+							}, {
+								...storeWatchers,
+								deep: true
+							});
+						}
+					});
+				}
+
+				ctx.log('state:init:storage', that, stateFields);
+			}
+		});
+	}
 }
 
 /**
@@ -97,8 +96,7 @@ export async function saveToStorage(this: Friend, data?: Dictionary): Promise<bo
 		return false;
 	}
 
-	const
-		{ctx} = this;
+	const {ctx} = this;
 
 	data = ctx.syncStorageState(data, 'remote');
 	set.call(this, ctx.syncStorageState(data));
@@ -118,13 +116,11 @@ export async function resetStorage(this: Friend): Promise<boolean> {
 		return false;
 	}
 
-	const
-		{ctx} = this;
+	const {ctx} = this;
 
-	const
-		stateFields = ctx.convertStateToStorageReset();
-
+	const stateFields = ctx.convertStateToStorageReset();
 	set.call(this, stateFields);
+
 	await saveToStorage.call(this);
 	ctx.log('state:reset:storage', this, stateFields);
 

@@ -19,6 +19,8 @@ const
  * This method is required for `syncRouterState` to work.
  */
 export function initFromRouter(this: State): boolean {
+	const that = this;
+
 	if (!this.needRouterSync) {
 		return false;
 	}
@@ -31,7 +33,10 @@ export function initFromRouter(this: State): boolean {
 	const routerWatchers = {group: 'routerWatchers'};
 	$a.clearAll(routerWatchers);
 
-	void this.lfc.execCbAtTheRightTime(async () => {
+	void this.lfc.execCbAtTheRightTime(loadFromRouter, {label: $$.initFromRouter});
+	return true;
+
+	async function loadFromRouter() {
 		const
 			{r} = ctx;
 
@@ -54,7 +59,7 @@ export function initFromRouter(this: State): boolean {
 			route = Object.mixin({deep: true, withProto: true}, {}, r.route),
 			stateFields = ctx.syncRouterState(Object.assign(Object.create(route), route.params, route.query));
 
-		set.call(this, stateFields);
+		set.call(that, stateFields);
 
 		if (!SSR) {
 			if (ctx.syncRouterStoreOnInit) {
@@ -63,8 +68,7 @@ export function initFromRouter(this: State): boolean {
 					stateKeys = Object.keys(stateForRouter);
 
 				if (stateKeys.length > 0) {
-					let
-						query: CanUndef<Dictionary>;
+					let query: CanUndef<Dictionary>;
 
 					stateKeys.forEach((key) => {
 						const
@@ -87,7 +91,7 @@ export function initFromRouter(this: State): boolean {
 				}
 			}
 
-			const sync = $a.debounce(saveToRouter.bind(this), 0, {
+			const sync = $a.debounce(saveToRouter.bind(that), 0, {
 				label: $$.syncRouter
 			});
 
@@ -97,7 +101,7 @@ export function initFromRouter(this: State): boolean {
 						p = key.split('.');
 
 					if (p[0] === 'mods') {
-						$a.on(this.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
+						$a.on(ctx.localEmitter, `block.mod.*.${p[1]}.*`, sync, routerWatchers);
 
 					} else {
 						ctx.watch(key, (val: unknown, ...args: unknown[]) => {
@@ -113,13 +117,8 @@ export function initFromRouter(this: State): boolean {
 			}
 		}
 
-		ctx.log('state:init:router', this, stateFields);
-
-	}, {
-		label: $$.initFromRouter
-	});
-
-	return true;
+		ctx.log('state:init:router', that, stateFields);
+	}
 }
 
 /**

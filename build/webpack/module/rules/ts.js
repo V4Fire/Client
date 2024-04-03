@@ -29,7 +29,6 @@ const
 
 /**
  * Returns webpack rules for the typescript files
- *
  * @returns {import('webpack').RuleSetRule}
  */
 module.exports = function tsRules() {
@@ -42,13 +41,14 @@ module.exports = function tsRules() {
 			{
 				loader: 'ts-loader',
 				options: {
-					...typescript.client,
+					...(webpack.ssr ? typescript.server : typescript.client),
 					getCustomTransformers: tsTransformers
 				}
 			},
 
 			webpack.ssr ?
 				[] :
+
 				{
 					loader: 'symbol-generator-loader',
 					options: {

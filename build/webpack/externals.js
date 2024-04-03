@@ -12,84 +12,45 @@ const
 	$C = require('collection.js');
 
 const
-	{webpack} = require('@config/config'),
-	{resolve} = require('@pzlr/build-core');
+	{webpack} = require('@config/config');
 
-if (webpack.ssr) {
-	/**
-	 * Returns parameters for `webpack.externals`
-	 * @returns {Array}
-	 */
-	module.exports = function externals() {
-		const cache = Object.createDict();
+const
+	{STANDALONE} = include('build/const');
 
-		return [
-			({request}, cb) => {
-				if (cache[request] != null) {
-					return cb(...cache[request]);
-				}
+const
+	externalList = [],
+	asRgxp = /^\/(.*?)\/$/;
 
-				if (resolve.isNodeModule(request)) {
-					try {
-						require.resolve(request);
-
-						try {
-							require.resolve(resolve.blockSync(request));
-
-						} catch {
-							require(request);
-							cache[request] = [null, `commonjs ${request}`];
-							return cb(...cache[request]);
-						}
-
-					} catch {}
-				}
-
-				cache[request] = [];
-				cb();
-			}
-		];
-	};
-
-} else {
-	const
-		{STANDALONE} = include('build/const');
+const externalMap = $C(webpack.externals()).filter((el, key) => {
+	if (!asRgxp.test(key)) {
+		return true;
+	}
 
 	const
-		externalList = [],
-		asRgxp = /^\/(.*?)\/$/;
+		rgxp = new RegExp(RegExp.$1);
 
-	const externalMap = $C(webpack.externals()).filter((el, key) => {
-		if (!asRgxp.test(key)) {
-			return true;
+	externalList.push((ctx, req, cb) => {
+		if (rgxp.test(req)) {
+			return cb(null, `root ${Object.isDictionary(el) ? el.root : el}`);
 		}
 
-		const
-			rgxp = new RegExp(RegExp.$1);
+		cb();
+	});
 
-		externalList.push((ctx, req, cb) => {
-			if (rgxp.test(req)) {
-				return cb(null, `root ${Object.isDictionary(el) ? el.root : el}`);
-			}
+	return false;
 
-			cb();
-		});
+}).map();
 
-		return false;
+/**
+ * Returns parameters for `webpack.externals`
+ *
+ * @param {(number|string)} buildId
+ * @returns {Array}
+ */
+module.exports = function externals({buildId}) {
+	if (buildId !== STANDALONE) {
+		return [externalMap].concat(externalList);
+	}
 
-	}).map();
-
-	/**
-	 * Returns parameters for `webpack.externals`
-	 *
-	 * @param {(number|string)} buildId
-	 * @returns {Array}
-	 */
-	module.exports = function externals({buildId}) {
-		if (buildId !== STANDALONE) {
-			return [externalMap].concat(externalList);
-		}
-
-		return [];
-	};
-}
+	return [];
+};
