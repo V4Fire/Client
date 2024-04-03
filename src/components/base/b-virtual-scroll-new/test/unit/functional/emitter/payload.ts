@@ -192,6 +192,7 @@ test.describe('<b-virtual-scroll-new>', () => {
 
 			await component.reload();
 			await component.waitForChildCountEqualsTo(chunkSize);
+			await component.waitForLifecycleDone();
 
 			const
 				spy = await component.getSpy((ctx) => ctx.emit),

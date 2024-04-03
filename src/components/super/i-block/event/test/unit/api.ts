@@ -78,6 +78,36 @@ test.describe('<i-block> event API', () => {
 		]);
 	});
 
+	test(
+		'the `prepend` flag should indicate the addition of the handler before all others',
+
+		async ({page}) => {
+			const target = await renderDummy(page);
+
+			const scan = await target.evaluate((ctx) => {
+				const res: number[] = [];
+
+				ctx.on('foo', () => {
+					res.push(1);
+				});
+
+				ctx.on('foo', () => {
+					res.push(2);
+				}, {prepend: true});
+
+				ctx.on('foo', () => {
+					res.push(3);
+				}, {prepend: true});
+
+				ctx.emit('foo');
+
+				return res;
+			});
+
+			test.expect(scan).toEqual([3, 2, 1]);
+		}
+	);
+
 	test('should remove all event listeners when `off` is invoked without a handler', async ({page}) => {
 		const target = await renderDummy(page);
 

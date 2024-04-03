@@ -158,7 +158,7 @@ export class SlotsStateController extends Friend {
 	protected setDisplayState(name: keyof SlotsStateObj, state: boolean): void {
 		const ref = this.ctx.$refs[name];
 
-		if (ref instanceof HTMLElement) {
+		if (!SSR && ref instanceof HTMLElement) {
 			ref.style.display = state ? '' : 'none';
 		}
 	}

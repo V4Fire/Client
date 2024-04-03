@@ -49,7 +49,7 @@
 							< .&__controls
 								+= self.slot('controls')
 									- block controls
-										< b-button @click = close
+										< b-button @click:component = close
 											{{ `Close` }}
 
 				< ?:-section
