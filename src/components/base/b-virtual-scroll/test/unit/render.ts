@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page } from '@playwright/test';
+
 import test from 'tests/config/unit/test';
 
 import type bVirtualScroll from 'components/base/b-virtual-scroll/b-virtual-scroll';
@@ -16,6 +18,44 @@ import BOM from 'tests/helpers/bom';
 import { interceptPaginationRequest } from 'tests/network-interceptors/pagination';
 
 test.describe('b-virtual-scroll render', () => {
+
+	const appendStyles = async (page: Page) => {
+		await page.addInitScript({content: `
+			const styles = \`
+				.b-virtual-scroll__option-el {
+					position: relative;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					width: 200px;
+					height: 200px;
+					margin: 20px;
+					background-color: #f00;
+				}
+				
+				.b-virtual-scroll__option-el:after {
+					content: attr(data-index);
+					font-size: 20px;
+					color: #fff;
+				}
+				
+				.b-virtual-scroll__skeleton {
+					width: 200px;
+					height: 200px;
+					margin: 20px;
+					background-color: #808080;
+				}
+			\`;
+
+			
+			const styleElement = document.createElement('style');
+			styleElement.innerHTML = styles;
+
+			globalThis.addEventListener('DOMContentLoaded', () => {
+				document.head.append(styleElement);
+			});
+		`});
+	};
 
 	const baseAttrs = {
 		theme: 'demo',
@@ -42,6 +82,7 @@ test.describe('b-virtual-scroll render', () => {
 
 	test.beforeEach(async ({context, demoPage}) => {
 		await interceptPaginationRequest(context);
+		await appendStyles(demoPage.page);
 		await demoPage.goto();
 	});
 
