@@ -11,6 +11,7 @@ import test from 'tests/config/unit/test';
 import { DOM } from 'tests/helpers';
 
 import { renderDummy } from 'components/super/i-block/test/helpers';
+import { defaultTheme } from 'core/theme-manager';
 
 test.describe('<i-block> props', () => {
 	const
@@ -45,9 +46,10 @@ test.describe('<i-block> props', () => {
 			foo: '1',
 			bla: 'true',
 			baz: 'ban',
+			context: undefined,
 			progress: undefined,
 			diff: undefined,
-			theme: undefined,
+			theme: defaultTheme(),
 			exterior: undefined,
 			stage: undefined
 		});
@@ -63,10 +65,11 @@ test.describe('<i-block> props', () => {
 			target.evaluate((ctx) => Object.fastClone(ctx.mods))
 
 		).resolves.toEqual({
+			context: undefined,
 			exterior: 'foo',
 			diff: 'true',
 			progress: undefined,
-			theme: undefined,
+			theme: defaultTheme(),
 			stage: undefined
 		});
 	});
