@@ -7,14 +7,14 @@
  */
 
 /**
- * [[include:core/theme-manager/system-theme-extractor/engines/ssr/README.md]]
+ * [[include:core/theme-manager/system-theme-extractor/engines/stub/README.md]]
  * @packageDocumentation
  */
 
-import { defaultTheme } from 'core/theme-manager';
 import SyncPromise from 'core/promise/sync';
 import type { AsyncOptions, ClearOptions } from 'core/async';
 
+import { defaultTheme } from 'core/theme-manager';
 import type { SystemThemeExtractor } from 'core/theme-manager/system-theme-extractor';
 
 export class SystemThemeExtractorStub implements SystemThemeExtractor {

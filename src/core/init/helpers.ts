@@ -36,8 +36,13 @@ export function getAppParams(opts: InitAppOptions): {
 	const resolvedState = {
 		...opts,
 		appProcessId: opts.appProcessId ?? Object.fastHash(Math.random()),
-		net: opts.net ?? net,
+
+		route,
 		cookies: cookies.from(opts.cookies),
+
+		net: opts.net ?? net,
+		async: new Async(),
+
 		theme: opts.theme ?? new ThemeManager(
 			{
 				themeStorageEngine: new CookieStorage('v4ls', {
@@ -47,9 +52,7 @@ export function getAppParams(opts: InitAppOptions): {
 
 				systemThemeExtractor: new SystemThemeExtractorStub()
 			}
-		),
-		route,
-		async: new Async()
+		)
 	};
 
 	resolvedState.async.worker(() => {
