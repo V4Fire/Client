@@ -14,7 +14,7 @@ import initApp from 'core/init';
 import * as cookies from 'core/cookies';
 import CookieStorage from 'core/kv-storage/engines/cookie';
 
-import { SystemThemeExtractorWeb, ThemeManager } from 'core/theme-manager';
+import ThemeManager, { SystemThemeExtractorWeb } from 'core/theme-manager';
 
 import * as session from 'core/session';
 import SessionEngine from 'core/session/engines';
@@ -22,6 +22,7 @@ import SessionEngine from 'core/session/engines';
 export * as cookies from 'core/cookies';
 export * as session from 'core/session';
 
+export { ThemeManager };
 export * as themeManager from 'core/theme-manager';
 
 export * as kvStorage from 'core/kv-storage';
