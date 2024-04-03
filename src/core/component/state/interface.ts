@@ -14,7 +14,8 @@ import type { Cookies } from 'core/cookies';
 
 import type { Experiments } from 'core/abt';
 import type { InitialRoute, AppliedRoute } from 'core/router';
-import type { ThemeManager } from 'core/theme-manager';
+
+import type ThemeManager from 'core/theme-manager';
 
 export interface State {
 	/**

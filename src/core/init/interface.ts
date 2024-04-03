@@ -10,7 +10,8 @@ import type Async from 'core/async';
 
 import type { InitialRoute } from 'core/router';
 import type { CookieStore } from 'core/cookies';
-import type { ThemeManager } from 'core/theme-manager';
+
+import type ThemeManager from 'core/theme-manager';
 
 import type { State } from 'core/component/state';
 import type { ComponentOptions } from 'core/component/engines';
