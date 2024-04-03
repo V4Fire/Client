@@ -8,6 +8,8 @@
 
 import Async from 'core/async';
 import watch from 'core/object/watch';
+import { SystemThemeExtractorStub, ThemeManager } from 'core/theme-manager';
+import CookieStorage from 'core/kv-storage/engines/cookie';
 
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
@@ -36,6 +38,16 @@ export function getAppParams(opts: InitAppOptions): {
 		appProcessId: opts.appProcessId ?? Object.fastHash(Math.random()),
 		net: opts.net ?? net,
 		cookies: cookies.from(opts.cookies),
+		theme: opts.theme ?? new ThemeManager(
+			{
+				themeStorageEngine: new CookieStorage('v4ls', {
+					cookies: cookies.from(opts.cookies),
+					maxAge: 2 ** 31 - 1
+				}),
+
+				systemThemeExtractor: new SystemThemeExtractorStub()
+			}
+		),
 		route,
 		async: new Async()
 	};
