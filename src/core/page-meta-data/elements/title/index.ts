@@ -6,19 +6,21 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { AbstractElement } from 'core/page-meta-data/elements/abstract';
+
 import type { TitleAttributes } from 'core/page-meta-data/elements/title/interface';
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
-import { AbstractElement } from 'core/page-meta-data/elements/abstract';
 
 export * from 'core/page-meta-data/elements/title/interface';
 export * from 'core/page-meta-data/elements/title/engines';
 
 export class Title extends AbstractElement<HTMLTitleElement> {
-	/** {@link HTMLTitleElement.content} */
+	/** {@link HTMLTitleElement.text} */
 	get text(): string {
 		return this.attrs.text ?? '';
 	}
 
+	/** {@link HTMLTitleElement.text} */
 	set text(value: string) {
 		this.attrs.text = value;
 	}

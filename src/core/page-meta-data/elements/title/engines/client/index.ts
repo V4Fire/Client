@@ -12,11 +12,10 @@ import { CSREngine } from 'core/page-meta-data/elements/abstract/engines';
 export default class CSRTitleEngine extends CSREngine<HTMLTitleElement> {
 	override create(_tag: 'title', attrs: TitleAttributes): HTMLTitleElement {
 		document.title = attrs.text?.trim() ?? '';
-
 		return document.querySelector('title')!;
 	}
 
-	override update(el: HTMLTitleElement, attrs: TitleAttributes): HTMLTitleElement {
+	override update(_el: HTMLTitleElement, attrs: TitleAttributes): HTMLTitleElement {
 		return this.create('title', attrs);
 	}
 }

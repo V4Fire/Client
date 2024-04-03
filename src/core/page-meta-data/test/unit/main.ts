@@ -14,7 +14,7 @@ import Component from 'tests/helpers/component';
 
 import type iStaticPage from 'components/super/i-static-page/i-static-page';
 
-test.describe('<i-static-page> page meta data', () => {
+test.describe('core/page-meta-data', () => {
 	let root: JSHandle<iStaticPage>;
 
 	test.beforeEach(async ({demoPage, page}) => {

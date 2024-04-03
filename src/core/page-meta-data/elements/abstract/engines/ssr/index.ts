@@ -9,9 +9,6 @@
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 import type { AbstractElement } from 'core/page-meta-data/elements';
 
-/**
- * Engine for server-side rendering
- */
 export default class SSREngine implements Engine {
 	/** {@link Engine.render} */
 	render(_element: AbstractElement, tag: string, attrs: Dictionary<string>): string {

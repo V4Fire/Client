@@ -7,7 +7,7 @@
  */
 
 import { concatURLs } from 'core/url';
-import type { State } from 'core/component';
+
 import { SSREngine, CSREngine } from 'core/page-meta-data/elements/abstract/engines';
 import { CSRTitleEngine } from 'core/page-meta-data/elements/title';
 
@@ -16,41 +16,45 @@ import {
 	Link,
 	Meta,
 	Title,
+
 	AbstractElement,
 	MetaAttributes,
 	LinkAttributes
 
 } from 'core/page-meta-data/elements';
 
-import ElementsStorage from 'core/page-meta-data/storage';
+import Store from 'core/page-meta-data/store';
 
 export default class PageMetaData {
 	/**
 	 * Elements storage
 	 */
-	protected elements: ElementsStorage = new ElementsStorage();
+	protected store: Store = new Store();
 
 	/**
-	 * Client state
+	 * An API for working with the target document's URL
 	 */
-	protected state: State;
+	protected location: URL;
 
-	constructor(state: State) {
-		this.state = state;
+	/**
+	 * @param location - an API for working with the target document's URL
+	 */
+	constructor(location: URL) {
+		this.location = location;
 	}
 
 	/**
 	 * All added meta elements
 	 */
 	get metaElements(): AbstractElement[] {
-		return [...this.elements];
+		return [...this.store];
 	}
 
 	/**
 	 * Current page title
 	 */
 	get title(): string {
-		const element = this.elements.getTitle();
+		const element = this.store.getTitle();
 		return element?.text ?? '';
 	}
 
@@ -66,14 +70,14 @@ export default class PageMetaData {
 			attrs
 		);
 
-		this.elements.setTitle(title, attrs);
+		this.store.setTitle(title, attrs);
 	}
 
 	/**
 	 * Current page description
 	 */
 	get description(): string {
-		const element = this.elements.getDescription();
+		const element = this.store.getDescription();
 		return element?.content ?? '';
 	}
 
@@ -89,12 +93,12 @@ export default class PageMetaData {
 			attrs
 		);
 
-		this.elements.setDescription(description, attrs);
+		this.store.setDescription(description, attrs);
 	}
 
 	/**
-	 * Adds a new link tag with the given attributes to the current page
-	 * @param attrs - attributes for the created tag
+	 * Adds a new link element with the given attributes to the current page
+	 * @param attrs - attributes for the created element
 	 */
 	addLink(attrs: LinkAttributes): void {
 		const link = new Link(
@@ -102,7 +106,15 @@ export default class PageMetaData {
 			attrs
 		);
 
-		this.elements.addLink(link);
+		this.store.addLink(link);
+	}
+
+	/**
+	 * Removes link elements with the given attributes from the current page
+	 * @param attrs - attributes of the removed elements
+	 */
+	removeLink(attrs: MetaAttributes): void {
+		this.store.removeLinks(attrs);
 	}
 
 	/**
@@ -110,48 +122,26 @@ export default class PageMetaData {
 	 * @param attrs - attributes of the searched elements
 	 */
 	findLinks(attrs: LinkAttributes): Array<HTMLLinkElement | Link> {
-		const links = this.elements.findLinks(attrs);
+		const links = this.store.findLinks(attrs);
 		return links.map((el) => el.get());
 	}
 
 	/**
-	 * Adds a new meta element on a page
-	 * @param attrs - attributes for the created tag
-	 */
-	addMeta(attrs: MetaAttributes): void {
-		const meta = new Meta(
-			SSR ? new SSREngine() : new CSREngine(),
-			attrs
-		);
-
-		this.elements.addMeta(meta);
-	}
-
-	/**
-	 * Searches for meta elements with the given attributes and returns them
-	 * @param attrs - attributes of the searched elements
-	 */
-	findMetas(attrs: MetaAttributes): Array<HTMLMetaElement | Meta> {
-		const metas = this.elements.findMetas(attrs);
-		return metas.map((el) => el.get());
-	}
-
-	/**
-	 * Returns canonical link `<link rel="canonical" />`
+	 * Returns a canonical link `<link rel="canonical" />`
 	 */
 	getCanonicalLink(): CanUndef<HTMLLinkElement | Link> {
-		return this.elements.getCanonical()?.get();
+		return this.store.getCanonical()?.get();
 	}
 
 	/**
-	 * Sets canonical link `<link rel="canonical" />` to the page
+	 * Sets a news canonical link `<link rel="canonical" />` to the current page
 	 *
-	 * @param [pathname] - string containing the first '/' after the domain with the subsequent URL text
-	 * @param [query] - query string
+	 * @param [pathname] - a string containing the URL text following the first `/` after the domain
+	 * @param [query] - a query string
 	 */
-	setCanonicalLink(pathname?: string, query: string = this.state.location.search): void {
+	setCanonicalLink(pathname?: string, query: string = this.location.search): void {
 		const
-			href = concatURLs(this.state.location.origin, pathname) + query,
+			href = concatURLs(this.location.origin, pathname) + query,
 			attrs = {rel: 'canonical', href};
 
 		const link = new Link(
@@ -159,29 +149,43 @@ export default class PageMetaData {
 			attrs
 		);
 
-		this.elements.setCanonical(link, attrs);
+		this.store.setCanonical(link, attrs);
 	}
 
 	/**
-	 * Removes canonical link `<link rel="canonical" />` from the page
+	 * Removes the canonical link `<link rel="canonical" />` from the current page
 	 */
 	removeCanonicalLink(): void {
-		this.elements.removeCanonical();
+		this.store.removeCanonical();
 	}
 
 	/**
-	 * Removes meta elements from the page
-	 * @param attrs
+	 * Adds a new meta-element with the given attributes to the current page
+	 * @param attrs - attributes for the created element
+	 */
+	addMeta(attrs: MetaAttributes): void {
+		const meta = new Meta(
+			SSR ? new SSREngine() : new CSREngine(),
+			attrs
+		);
+
+		this.store.addMeta(meta);
+	}
+
+	/**
+	 * Removes meta-elements with the given attributes from the page
+	 * @param attrs - attributes of the removed elements
 	 */
 	removeMeta(attrs: MetaAttributes): void {
-		this.elements.removeMetas(attrs);
+		this.store.removeMetas(attrs);
 	}
 
 	/**
-	 * Removes link elements from the page
-	 * @param attrs
+	 * Searches for meta elements with the given attributes and returns them
+	 * @param attrs - attributes of the searched elements
 	 */
-	removeLink(attrs: MetaAttributes): void {
-		this.elements.removeLinks(attrs);
+	findMetas(attrs: MetaAttributes): Array<HTMLMetaElement | Meta> {
+		const metas = this.store.findMetas(attrs);
+		return metas.map((el) => el.get());
 	}
 }

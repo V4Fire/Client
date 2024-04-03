@@ -10,9 +10,6 @@ import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
 
 export * from 'core/page-meta-data/elements/abstract/engines/index';
 
-/**
- * Abstract class for page meta data element
- */
 export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	/**
 	 * The element's tag
@@ -30,15 +27,19 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	protected attrs!: Dictionary<string>;
 
 	/**
-	 * Render engine
+	 * The element's render engine
 	 */
 	protected engine!: Engine;
 
+	/**
+	 * @param engine - a rendering engine for the created element
+	 * @param tag - a tag of the created element
+	 * @param [attrs] - additional attributes for the created element
+	 */
 	protected constructor(engine: Engine, tag: string, attrs: Dictionary<string> = {}) {
 		this.tag = tag;
 		this.attrs = attrs;
 		this.engine = engine;
-
 		this.el = this.create();
 	}
 
@@ -46,7 +47,7 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 * Creates the element due to the environment
 	 */
 	create(): T | this {
-		return <CanUndef<T>>this.engine.create?.(this.tag, this.attrs) ?? this;
+		return <Nullable<T>>this.engine.create?.(this.tag, this.attrs) ?? this;
 	}
 
 	/**
@@ -57,21 +58,6 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	}
 
 	/**
-	 * Removes the element due to the environment
-	 */
-	remove(): T | this {
-		return <T>this.engine.remove(this.el);
-	}
-
-	/**
-	 * Updates the element due to the environment
-	 */
-	update(attrs: Dictionary<string>): T | this {
-		Object.assign(this.attrs, attrs);
-		return <T>this.engine.update(this.el, this.attrs);
-	}
-
-	/**
 	 * Returns the element due to the environment
 	 */
 	get(): T | this {
@@ -79,13 +65,28 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	}
 
 	/**
-	 * Returns true, if the element has the same attributes
+	 * Updates attributes of the element due to the environment
+	 * @param attrs
+	 */
+	update(attrs: Dictionary<string>): T | this {
+		Object.assign(this.attrs, attrs);
+		return <T>this.engine.update(this.el, this.attrs);
+	}
+
+	/**
+	 * Removes the element due to the environment
+	 */
+	remove(): T | this {
+		return <T>this.engine.remove(this.el);
+	}
+
+	/**
+	 * Returns true, if the given element has the same attributes as the current one
 	 *
 	 * @param tag
 	 * @param attrs
 	 */
 	is(tag: string, attrs: Dictionary<string> = {}): boolean {
-		return tag === this.tag &&
-			Object.keys(attrs).every((key) => attrs[key] === this.attrs[key]);
+		return tag === this.tag && Object.keys(attrs).every((key) => attrs[key] === this.attrs[key]);
 	}
 }

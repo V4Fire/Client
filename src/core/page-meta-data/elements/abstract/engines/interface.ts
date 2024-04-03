@@ -10,7 +10,7 @@ import type { AbstractElement } from 'core/page-meta-data/elements';
 
 export interface Engine {
 	/**
-	 * Renders the element as HTMLElement or string
+	 * Renders the element as an HTMLElement or a string
 	 *
 	 * @param element
 	 * @param tag

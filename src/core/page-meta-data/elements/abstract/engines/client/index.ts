@@ -8,9 +8,6 @@
 
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 
-/**
- * Engine for client-side rendering
- */
 export default class CSREngine<T extends HTMLElement> implements Engine {
 	/** {@link Engine.create} */
 	create(tag: string, attrs: Dictionary<string>): T {

@@ -6,9 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { MetaAttributes } from 'core/page-meta-data/elements/meta/interface';
-import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
 import { AbstractElement } from 'core/page-meta-data/elements/abstract';
+
+import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
+import type { MetaAttributes } from 'core/page-meta-data/elements/meta/interface';
 
 export * from 'core/page-meta-data/elements/meta/interface';
 
@@ -18,6 +19,7 @@ export class Meta extends AbstractElement<HTMLMetaElement> {
 		return this.attrs.content ?? '';
 	}
 
+	/** {@link HTMLMetaElement.content} */
 	set content(value: string) {
 		this.attrs.content = value;
 	}
@@ -27,6 +29,7 @@ export class Meta extends AbstractElement<HTMLMetaElement> {
 		return this.attrs.name ?? '';
 	}
 
+	/** {@link HTMLMetaElement.name} */
 	set name(value: string) {
 		this.attrs.name = value;
 	}

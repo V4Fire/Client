@@ -6,21 +6,20 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { LinkAttributes } from 'core/page-meta-data/elements/link/interface';
-import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
 import { AbstractElement } from 'core/page-meta-data/elements/abstract';
+
+import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
+import type { LinkAttributes } from 'core/page-meta-data/elements/link/interface';
 
 export * from 'core/page-meta-data/elements/link/interface';
 
-/**
- * Link element
- */
 export class Link extends AbstractElement<HTMLLinkElement> {
 	/** {@link HTMLLinkElement.rel} */
 	get rel(): string {
 		return this.attrs.rel ?? '';
 	}
 
+	/** {@link HTMLLinkElement.rel} */
 	set rel(value: string) {
 		this.attrs.rel = value;
 	}
@@ -30,6 +29,7 @@ export class Link extends AbstractElement<HTMLLinkElement> {
 		return this.attrs.href ?? '';
 	}
 
+	/** {@link HTMLLinkElement.href} */
 	set href(value: string) {
 		this.attrs.href = value;
 	}
@@ -39,6 +39,7 @@ export class Link extends AbstractElement<HTMLLinkElement> {
 		return this.attrs.type ?? '';
 	}
 
+	/** {@link HTMLLinkElement.type} */
 	set type(value: string) {
 		this.attrs.type = value;
 	}
