@@ -13,4 +13,5 @@
 
 export * from 'core/theme-manager/system-theme-extractor/engines/web';
 export * from 'core/theme-manager/system-theme-extractor/engines/ssr';
+export * from 'core/theme-manager/system-theme-extractor/engines/stub';
 export * from 'core/theme-manager/system-theme-extractor/interface';
