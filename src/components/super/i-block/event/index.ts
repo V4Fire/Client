@@ -19,7 +19,7 @@ import SyncPromise from 'core/promise/sync';
 import type Async from 'core/async';
 import type { AsyncOptions, EventEmitterWrapper, ReadonlyEventEmitterWrapper, EventId } from 'core/async';
 
-import { component, globalEmitter } from 'core/component';
+import { component, globalEmitter, ComponentEmitterOptions } from 'core/component';
 
 import { system, hook, watch } from 'components/super/i-block/decorators';
 import { initGlobalListeners } from 'components/super/i-block/modules/listeners';
@@ -89,8 +89,11 @@ export default abstract class iBlockEvent extends iBlockBase {
 		atom: true,
 		unique: true,
 		init: (o, d) => (<Async>d.async).wrapEventEmitter({
-			on: (event: string, handler: Function) => o.$on(normalizeEventName(event), handler),
-			once: (event: string, handler: Function) => o.$once(normalizeEventName(event), handler),
+			on: (event: string, handler: Function, opts?: ComponentEmitterOptions) =>
+				o.$on(normalizeEventName(event), handler, {...opts, rawEmitter: true}),
+
+			once: (event: string, handler: Function, opts?: ComponentEmitterOptions) =>
+				o.$once(normalizeEventName(event), handler, {...opts, rawEmitter: true}),
 
 			off: (eventOrLink: string | EventId, handler: Function) => {
 				if (Object.isString(eventOrLink)) {

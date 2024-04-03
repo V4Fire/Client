@@ -303,7 +303,7 @@ await myComponent
   })
   .build();
 
-const result = await myComponent.component.evaluate((ctx) => ctx.module.method());
+const result = await mycomponent.evaluate((ctx) => ctx.module.method());
 
 console.log(result); // false
 ```
