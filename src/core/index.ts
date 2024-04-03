@@ -42,7 +42,7 @@ if (SSR) {
 				rootComponentName = targetToMount?.getAttribute('data-root-component');
 
 			return initApp(rootComponentName, {
-				appId: Object.fastHash(Math.random()),
+				appProcessId: Object.fastHash(Math.random()),
 
 				cookies: document,
 				session: session.from(SessionEngine),

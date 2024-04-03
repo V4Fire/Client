@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type Async from 'core/async';
+
 import type { InitialRoute } from 'core/router';
 import type { CookieStore } from 'core/cookies';
 
@@ -35,6 +37,11 @@ export interface CreateAppOptions {
 
 export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 	/**
+	 * The unique identifier for the application process
+	 */
+	appProcessId?: string;
+
+	/**
 	 * A store of application cookies
 	 */
 	cookies: CookieStore;
@@ -49,4 +56,7 @@ export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 	 * An API to work with a network, such as testing of the network connection, etc.
 	 */
 	net?: State['net'];
+
+	/** {@link Async} */
+	async?: State['async'];
 }>;

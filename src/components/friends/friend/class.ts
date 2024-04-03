@@ -117,5 +117,13 @@ export default class Friend {
 	constructor(component: iBlock) {
 		this.ctx = component.unsafe;
 		this.component = component;
+
+		this.ctx.$async.worker(() => {
+			// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
+			setTimeout(() => {
+				Object.delete(this, 'ctx');
+				Object.delete(this, 'component');
+			}, 1000);
+		});
 	}
 }

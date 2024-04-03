@@ -147,7 +147,10 @@ export default class Component {
 					Object.assign(ctx.testComponentAttrs, parsed.attrs) :
 					parsed.attrs ?? {};
 
-				if (parsed.children) {
+				const shouldSetSlots = !Object.isEmpty(parsed.children) ||
+					(!Object.isEmpty(ctx.testComponentSlots) && Object.isEmpty(parsed.children));
+
+				if (shouldSetSlots) {
 					ctx.testComponentSlots = compileChild();
 				}
 

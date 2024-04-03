@@ -18,7 +18,9 @@ try {
 	__webpack_public_path__ = ctx.PUBLIC_PATH ?? PUBLIC_PATH;
 } catch {}
 
-globalThis.__webpack_component_styles_are_loaded__ = __webpack_component_styles_are_loaded__;
+if (!SSR) {
+	globalThis.__webpack_component_styles_are_loaded__ = __webpack_component_styles_are_loaded__;
+}
 
 /**
  * Checks that styles for the given component are loaded

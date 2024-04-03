@@ -12,7 +12,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import Provider, { providers, instanceCache, ProviderOptions } from 'core/data';
+import { unwrap as unwrapWatcher } from 'core/object/watch';
 
 import SyncPromise from 'core/promise/sync';
 import config from 'config';
@@ -87,6 +89,8 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		if (hydrationMode) {
 			this.state.set(hydrationStore.get(this.componentId));
+			Promise.resolve(this.state.initFromStorage()).catch(stderr);
+
 			done();
 			return;
 		}
@@ -298,8 +302,8 @@ export default abstract class iBlockProviders extends iBlockState {
 		opts = {
 			...opts,
 			i18n: this.i18n.bind(this),
-			id: this.remoteState.appId,
-			remoteState: this.remoteState
+			id: this.remoteState.appProcessId,
+			remoteState: Object.cast(unwrapWatcher(this.remoteState))
 		};
 
 		let

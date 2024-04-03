@@ -7,6 +7,7 @@
  */
 
 import type { State } from 'core/component';
+import type { SessionDescriptor } from 'core/session';
 
 /**
  * Loads the user's session and sets the `isAuth` flag
@@ -16,6 +17,14 @@ export async function loadSession(state: State): Promise<void> {
 	try {
 		// eslint-disable-next-line require-atomic-updates
 		state.isAuth = await state.session.isExists();
+
+		state.async.on(state.session.emitter, 'set', (e: SessionDescriptor) => {
+			state.isAuth = Boolean(e.auth);
+		});
+
+		state.async.on(state.session.emitter, 'clear', () => {
+			state.isAuth = false;
+		});
 
 	} catch (err) {
 		stderr(err);

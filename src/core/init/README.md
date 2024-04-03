@@ -91,6 +91,7 @@ console.log(app?.state.isAuth);
 ### Additional initialization options
 
 ```typescript
+import type Async from 'core/async';
 import type * as net from 'core/net';
 
 import type { Session } from 'core/session';
@@ -101,9 +102,9 @@ import type { InitialRoute } from 'core/router';
 
 interface InitAppOptions {
   /**
-   * The unique application identifier
+   * The unique identifier for the application process
    */
-  appId: string;
+  appProcessId: string;
 
   /**
    * True, if the current user session is authorized
@@ -157,6 +158,9 @@ interface InitAppOptions {
    * @param rootComponentParams
    */
   setup?(rootComponentParams: ComponentOptions): void;
+
+  /** {@link Async} */
+  async?: Async;
 }
 ```
 
@@ -220,6 +224,7 @@ You can manually add or remove additional dependencies, or, again, use the `depe
 Please note that V4Fire expects the initialization of three basic states described in the modules:
 
 * `core/init/dependencies/load-session`
+* `core/init/dependencies/check-online`
 * `core/init/dependencies/loaded-hydrated-page`
 * `core/init/dependencies/when-dom-loaded`
 

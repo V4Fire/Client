@@ -23,7 +23,7 @@ export function beforeDataCreateState(component: ComponentInterface): void {
 
 	// Because in functional components,
 	// the watching of fields can be initialized in lazy mode
-	if (meta.params.functional === true) {
+	if (SSR || meta.params.functional === true) {
 		Object.assign(component, $fields);
 	}
 

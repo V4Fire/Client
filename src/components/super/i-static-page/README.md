@@ -491,6 +491,14 @@ __components/pages/p-v4-components-demo/p-v4-components-demo.ess__
 
 True if the current user is authorized. See `core/session` for more information.
 
+#### isOnline
+
+True if there is a connection to the Internet.
+
+#### lastOnlineDate
+
+Last date when the application was online.
+
 #### activePage
 
 The name of the active route page.

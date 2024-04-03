@@ -46,6 +46,7 @@ console.log(app.state?.location);
 ## Interface
 
 ```typescript
+import type Async from 'core/async';
 import type * as net from 'core/net';
 
 import type { Session } from 'core/session';
@@ -56,9 +57,9 @@ import type { InitialRoute, AppliedRoute } from 'core/router';
 
 export interface State {
   /**
-   * The unique application identifier
+   * The unique identifier for the application process
    */
-  appId: string;
+  appProcessId: string;
 
   /**
    * True, if the current user session is authorized
@@ -86,6 +87,16 @@ export interface State {
   location: URL;
 
   /**
+   * True, if the application is connected to the Internet
+   */
+  isOnline?: boolean;
+
+  /**
+   * Date of the last Internet connection
+   */
+  lastOnlineDate?: Date;
+
+  /**
    * An API to work with a network, such as testing of the network connection, etc.
    */
   net: typeof net;
@@ -105,5 +116,8 @@ export interface State {
    * A list of registered AB experiments
    */
   experiments?: Experiments;
+
+  /** {@link Async} */
+  async: Async;
 }
 ```

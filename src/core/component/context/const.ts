@@ -12,6 +12,6 @@
 export const toRaw = Symbol('A link to the raw component context');
 
 /**
- * A cache for the wrapped component contexts
+ * A symbol to extract the wrapped component context
  */
-export const wrappedContexts = new WeakMap();
+export const toWrapped = Symbol('A link to the wrapped component context');

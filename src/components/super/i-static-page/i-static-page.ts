@@ -72,8 +72,8 @@ export default abstract class iStaticPage extends iPage {
 	/**
 	 * A module to work with data of data providers globally
 	 */
-	@system(() => createProviderDataStore(new RestrictedCache(10)))
-	readonly providerDataStore!: ProviderDataStore;
+	@system(() => SSR ? null : createProviderDataStore(new RestrictedCache(10)))
+	readonly providerDataStore?: ProviderDataStore;
 
 	/**
 	 * A module for manipulating page metadata, such as the page title or description
@@ -89,6 +89,18 @@ export default abstract class iStaticPage extends iPage {
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
 	isAuth!: boolean;
+
+	/**
+	 * True if there is a connection to the Internet
+	 */
+	@field((o) => o.sync.link('remoteState.isOnline'))
+	isOnline!: boolean;
+
+	/**
+	 * Last date when the application was online
+	 */
+	@system((o) => o.sync.link('remoteState.lastOnlineDate'))
+	lastOnlineDate?: Date;
 
 	/**
 	 * Initial value for the active route.
@@ -308,11 +320,13 @@ export default abstract class iStaticPage extends iPage {
 		this.hydrationStore?.clear();
 
 		const
-			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appId)}:`));
+			isThisApp = new RegExp(RegExp.escape(`:${RegExp.escape(this.remoteState.appProcessId)}:`));
 
 		Object.forEach(instanceCache, (provider, key) => {
 			if (isThisApp.test(key)) {
-				provider.destroy();
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				provider?.destroy();
+				delete instanceCache[key];
 			}
 		});
 	}

@@ -11,19 +11,60 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-??-??)
+## 4.0.0-beta.74 (2024-03-20)
+
+#### :house: Internal
+
+* Hardcode the ID during the client rendering in data provider's options.
+This is a temporary solution until PR#1171 is merged `iBlockProviders`
+
+## 4.0.0-beta.73 (2024-03-19)
+
+#### :house: Internal
+
+* Rename `appId` to `appProcessId` `ComponentInterface`
+
+## 4.0.0-beta.72 (2024-03-13)
+
+#### :bug: Bug Fix
+
+* Fixed the loss of the keydown event handler when recreating a functional component `bSelect`
+* Fixed the issue of the dropdown not closing when clicking on an element with stop propagation `bSelect`
+* Fixed getting a component in `getComponent` when an additional root selector is passed `components/friends/dom`
+
+## 4.0.0-beta.71 (2024-03-12)
 
 #### :boom: Breaking Change
 
 * The modules `core/init` and `core/component/state` have been completely redesigned for the new API
-* The fields `isOnline`, `lastOnlineDate`, and `locale` have been removed `iStaticPage`
+* The field `locale` has been removed `iStaticPage`
 
 ## v4.0.0-beta.?? (2024-??-??)
 
+#### :rocket: New Feature
+
+* Created a new global component `g-slider` that encapsulates CSS `scroll snap` logic `gSlider`
+* Added `useScrollSnap` prop, which enables the use of CSS scroll snap in the `scroll` mode `bSlider`
+* Added a new field `layer`, which allows you to obtain information about the package in which the component was declared `core/component/meta`
+
 #### :bug: Bug Fix
 
+* Fixed an issue with missing methods `element` and `elements` in the Block prototype `bSelect`
+* Fixed the operation of loadModules during SSR `iBlock`
+
+#### :house: Internal
+
+* Added support for the `layer` property `core/component/reflect`
+
+## v4.0.0-beta.70 (2024-03-05)
+
+#### :bug: Bug Fix
+
+* Fixed the order of setting the "textStore" property in the "updateTextStore" method, which led to a bug with a non-disappearing "textHint" when input overflows
 * The `activeStore` system field is marked as unique in the `bList`, `bTree`, `bSelect`
 components because it has an `unknown` type and it cannot be correctly merged
+* Fixed an error that the text in native mode was not synchronized with the value `bSelect`
+* Implemented correct switching between elements when pressing the `Tab` key `bSelect`
 
 ## v4.0.0-beta.69 (2024-03-04)
 
@@ -208,7 +249,6 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 #### :house: Internal
 
 * Create a `mono` template in `i-block` for dynamic mono components. It disables vnode attribute hoisting.
->>>>>>> v4
 
 ## v4.0.0-beta.54 (2024-02-06)
 

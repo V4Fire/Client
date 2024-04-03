@@ -13,7 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
-* The fields `isOnline`, `lastOnlineDate`, and `locale` have been removed
+* The field `locale` has been removed
 
 ## v4.0.0-beta.62 (2024-02-19)
 

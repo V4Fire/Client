@@ -51,7 +51,7 @@ export async function createApp(
 
 	if (SSR) {
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
-		const {renderToString} = require('vue/server-renderer');
+		const {renderToString} = require('assets/lib/server-renderer');
 
 		Object.assign(rootComponentParams.inject, {
 			hydrationStore: 'hydrationStore'
@@ -61,20 +61,16 @@ export async function createApp(
 			hydrationStore = new HydrationStore(),
 			app = new AppClass(rootComponentParams);
 
-		let
-			oneTimeState: Nullable<typeof state> = state;
-
 		Object.defineProperty(globalApp, 'state', {
 			configurable: true,
 			enumerable: true,
 			get: () => {
-				const state = oneTimeState;
-				oneTimeState = null;
+				delete globalApp.state;
 				return state;
 			}
 		});
 
-		app.provide('app', {instance: app, state});
+		app.provide('app', {context: app, state});
 		app.provide('hydrationStore', hydrationStore);
 
 		let
@@ -91,16 +87,20 @@ export async function createApp(
 			};
 
 		} finally {
-			ssrContent = '';
-			hydratedData = '';
-
 			try {
-				destroyApp(state.appId);
+				destroyApp(state.appProcessId);
 			} catch {}
 
 			try {
 				disposeLazy(app);
 			} catch {}
+
+			ssrContent = '';
+			hydratedData = '';
+
+			setTimeout(() => {
+				state.async.clearAll().locked = true;
+			}, 0);
 		}
 	}
 
@@ -113,7 +113,7 @@ export async function createApp(
 		el: opts.targetToMount
 	});
 
-	app.provide('app', {instance: app, state});
+	app.provide('app', {context: app, state});
 
 	Object.defineProperty(globalApp, 'context', {
 		configurable: true,

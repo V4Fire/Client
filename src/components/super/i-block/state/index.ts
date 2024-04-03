@@ -35,14 +35,14 @@ import type { Theme } from 'core/theme-manager';
 @component()
 export default abstract class iBlockState extends iBlockMods {
 	/**
-	 * A list of additional dependencies to load when the component is initializing
+	 * A list of additional dependencies to load during the component's initialization
 	 * {@link iBlock.dependenciesProp}
 	 */
 	@system((o) => o.sync.link((val: Iterable<Module>) => Array.concat([], Object.isIterable(val) ? [...val] : val)))
 	dependencies!: Module[];
 
 	/**
-	 * True if the component has been in the `ready` state at least once
+	 * This is true if the component has been in the `ready` state at least once
 	 */
 	@system({unique: true})
 	isReadyOnce: boolean = false;
@@ -62,13 +62,14 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * A link to an application state object located in `core/component/client-state`.
+	 * A link to the global state of the application.
+	 * The state interface is described in the `core/component/state` module.
 	 *
-	 * This object is used to set any general application parameters. For example, the status of user authorization or
-	 * online connection; global sharable application data, etc.
+	 * The state object provides multiple APIs for interacting with the application environment,
+	 * for example, the location or session modules.
 	 *
-	 * The way you work with the state object itself is up to you. You can use an API like Redux or just set
-	 * properties directly. Note that the state object is observable and can be reactively bond to component templates.
+	 * Also, you can extend this object with any necessary properties.
+	 * Please note that the state object is observable and can be reactively bound to component templates.
 	 */
 	@computed({watchable: true})
 	get remoteState(): State {
@@ -97,26 +98,28 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * A string value indicating the component initializing status:
+	 * A string value indicating the initialization status of the component:
 	 *
-	 *   1. `unloaded` - the component has just been created without any initializing:
-	 *      this status may overlap with some component hooks such as `beforeCreate` or `created`.
+	 *   1. `unloaded` - the component has been just created without any initialization:
+	 *      this status might coincide with certain component hooks such as `beforeCreate` or `created`.
 	 *
-	 *   2. `loading` - the component starts loading data from its providers:
-	 *      this status may overlap with some component hooks such as `created` or `mounted`.
-	 *      If the component has been mounted with this status, you can display this in the component UI.
-	 *      For example, by showing a loading indicator.
+	 *   2. `loading` - the component begins its data loading process from providers:
+	 *      this status might coincide with certain component hooks such as `created` or `mounted`.
+	 *      If the component gets mounted with this status,
+	 *      it can be reflected in the component's UI, for instance, by displaying a loading indicator.
 	 *
-	 *   3. `beforeReady` - the component has been fully loaded and has started preparing to render:
-	 *      this status may overlap with some component hooks such as `created` or `mounted`.
+	 *   3. `beforeReady` - the component has fully loaded and is starting to prepare for rendering:
+	 *      this status might coincide with certain component hooks such as created or mounted.
 	 *
-	 *   4. `ready` - the component has been fully loaded and rendered: this status may overlap with the `mounted` hook.
+	 *   4. `ready` - the component has been completely loaded and rendered:
+	 *      this status might coincide with the mounted hook.
 	 *
-	 *   5. `inactive` - the component is frozen by a keep-alive manager or directly using `activatedProp`:
-	 *       this status can overlap with the `deactivated` hook.
+	 *   5. `inactive` - the component is in a dormant state,
+	 *      made so by a keep-alive manager or directly through an `activatedProp`:
+	 *      this status might coincide with the `deactivated` hook.
 	 *
 	 *   6. `destroyed` - the component has been destroyed:
-	 *      this status may overlap with some component hooks such as `beforeDestroy` or `destroyed`.
+	 *      this status might coincide with certain component hooks such as `beforeDestroy` or `destroyed`.
 	 */
 	@computed()
 	get componentStatus(): ComponentStatus {
@@ -124,9 +127,9 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Sets a new component status.
-	 * Notice, not all statuses cause the component to re-render: `unloaded`, `inactive`, `destroyed`
-	 * will only emit events.
+	 * Sets a new status for the component.
+	 * Note that not all statuses will trigger the component to re-render:
+	 * statuses such as unloaded, inactive, and destroyed will only emit events.
 	 *
 	 * @param value
 	 * @emits `componentStatus:{$value}(value: ComponentStatus, oldValue: ComponentStatus)`
@@ -164,9 +167,24 @@ export default abstract class iBlockState extends iBlockMods {
 		this.emit('componentStatusChange', value, oldValue);
 	}
 
+	// eslint-disable-next-line jsdoc/require-param
 	/**
-	 * True if the current component is completely ready to work.
-	 * The `ready` status is mean that the component is mounted and all data providers are loaded.
+	 * A function for text internationalization in the context of this component.
+	 * This function can also be used as a string tag.
+	 * For more information, read the documentation of the `core/i18n` module.
+	 *
+	 * @example
+	 * ```js
+	 * console.log(this.t`Hello world!`);
+	 * ```
+	 */
+	get t(): (key: string | TemplateStringsArray, params?: I18nParams) => string {
+		return this.i18n(this.componentI18nKeysets);
+	}
+
+	/**
+	 * True if the current component is fully prepared to function.
+	 * The `ready` status means that the component is mounted and all data providers have been loaded.
 	 */
 	@computed()
 	get isReady(): boolean {
@@ -179,9 +197,9 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * A string value that specifies in which logical state the component should run.
-	 * For instance, depending on this option, the component can render different templates
-	 * by separating them with `v-if` directives.
+	 * A string value specifying the logic state in which the component should operate.
+	 * For instance, depending on this option, the component may render different templates
+	 * by distinguishing them with the `v-if` directive.
 	 *
 	 * {@link iBlock.stageProp}
 	 */
@@ -191,7 +209,7 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Sets a new component stage value.
+	 * Sets a new stage value for the component.
 	 * By default, it clears all asynchronous listeners from the `stage.${oldGroup}` group.
 	 *
 	 * {@link iBlock.stageProp}
@@ -233,7 +251,7 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * A link to the active route object
+	 * A link to the current route object
 	 */
 	get route(): CanUndef<this['r']['CurrentPage']> {
 		return this.field.get('route', this.r);
@@ -241,7 +259,7 @@ export default abstract class iBlockState extends iBlockMods {
 
 	/**
 	 * A dictionary with component shadow statuses.
-	 * Switching to these states doesn't cause the component to re-render.
+	 * Switching to these states doesn't trigger the component to re-render.
 	 *
 	 * {@link iBlock.componentStatus}
 	 */
@@ -252,8 +270,8 @@ export default abstract class iBlockState extends iBlockMods {
 	};
 
 	/**
-	 * A string value indicating the component initialize status.
-	 * This property stores the statuses that cause the component to re-rendering.
+	 * A string value indicating the initialization status of the component.
+	 * This property stores the statuses that trigger the component to re-render.
 	 *
 	 * {@link iBlock.componentStatus}
 	 */
@@ -265,8 +283,8 @@ export default abstract class iBlockState extends iBlockMods {
 	protected componentStatusStore: ComponentStatus = 'unloaded';
 
 	/**
-	 * A string value indicating the component initialize status.
-	 * This property stores the statuses that don't cause the component to re-rendering.
+	 * A string value indicating the initialization status of the component.
+	 * This property stores the statuses that do not trigger the component to re-render.
 	 *
 	 * {@link iBlock.componentStatus}
 	 */
@@ -274,7 +292,7 @@ export default abstract class iBlockState extends iBlockMods {
 	protected shadowComponentStatusStore?: ComponentStatus;
 
 	/**
-	 * A string value that specifies in which logical state the component should run
+	 * A string value that specifies the logical state in which the component should operate
 	 * {@link iBlock.stageProp}
 	 */
 	@field({
@@ -288,7 +306,7 @@ export default abstract class iBlockState extends iBlockMods {
 	protected stageStore?: Stage;
 
 	/**
-	 * A string value that indicates what lifecycle hook the component is in
+	 * A string value that indicates which lifecycle hook the component is currently in
 	 *
 	 * @see https://vuejs.org/guide/essentials/lifecycle.html
 	 * {@link iBlock.hook}
@@ -316,38 +334,28 @@ export default abstract class iBlockState extends iBlockMods {
 	/**
 	 * A factory for creating internationalizing function
 	 *
-	 * @param keysetName - the name of keyset or array with names of keysets to use.
-	 *   If passed as an array, the priority of the cases will be arranged in the order of the elements,
-	 *   the first one will have the highest priority.
+	 * @param keysetName - the name of the keyset or an array with names of keysets to use.
+	 *   If passed as an array, the priority of the cases will follow the order of the elements,
+	 *   with the first one having the highest priority.
 	 *
 	 * @param [customLocale] - the locale used to search for translations (the default is taken from
-	 *   the application settings)
+	 *   the application state)
 	 */
-	i18n(
-		keysetName: CanArray<string>,
-		customLocale?: Language
-	): (key: string | TemplateStringsArray, params?: I18nParams) => string {
+	i18n(keysetName: CanArray<string>, customLocale?: Language): ReturnType<typeof i18nFactory> {
 		return i18nFactory(keysetName, customLocale ?? this.remoteState.locale);
 	}
 
 	/**
-	 * A function for internationalizing texts inside traits.
-	 * Because traits are called within the context of components, standard `i18n` does not work,
-	 * and you need to explicitly pass the key set name (trait names).
+	 * A function aimed at internationalizing texts within traits.
+	 * Since traits are invoked within the context of components, the standard `i18n` does not operate,
+	 * necessitating the explicit passing of the key set name (trait names).
 	 *
-	 * @param traitName - the trait name
-	 * @param text - the text for internationalization
+	 * @param traitName - the name of the trait
+	 * @param text - the text to be internationalized
 	 * @param [opts] - additional internationalization options
 	 */
 	i18nTrait(traitName: string, text: string, opts?: I18nParams): string {
 		return this.i18n(traitName)(text, opts);
-	}
-
-	/**
-	 * A function for internationalizing texts
-	 */
-	get t(): (key: string | TemplateStringsArray, params?: I18nParams) => string {
-		return this.i18n(this.componentI18nKeysets);
 	}
 
 	/** @inheritDoc */
@@ -360,7 +368,7 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * Returns a promise that will be resolved when the component is switched to the specified component status
+	 * Returns a promise that will be resolved when the component transitions to the specified component status
 	 *
 	 * {@link Async.promise}
 	 *
@@ -370,9 +378,9 @@ export default abstract class iBlockState extends iBlockMods {
 	waitComponentStatus(status: ComponentStatus, opts?: WaitDecoratorOptions): Promise<void>;
 
 	/**
-	 * Executes the passed callback when the component is switched to the specified component status.
-	 * The method returns a promise resulting from the function call, or the unwrapped raw result if the component is
-	 * already in the specified status.
+	 * Executes the passed callback when the component transitions to the specified component status.
+	 * The method returns a promise resulting from the callback function invocation,
+	 * or the unwrapped raw result if the component is already in the targeted status.
 	 *
 	 * {@link Async.promise}
 	 *
@@ -431,18 +439,20 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * This method works as a two-way connector between the component and its storage.
+	 * This method serves as a two-way connector between the component and its storage.
 	 *
-	 * While the component is initializing, it requests the storage for its associated data, using the `globalName` prop
-	 * as the namespace to search. When the storage is ready to provide data to the component, it passes the data to
-	 * this method. After that, the method returns a dictionary associated with the component properties
-	 * (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
+	 * During the component's initialization, it requests its associated data from the storage,
+	 * using the `globalName` prop as the namespace for the search.
+	 * When the storage is ready to supply the data to the component, it passes the data to this method.
+	 * Consequently, the method returns a dictionary associated with the component properties
+	 * (complex paths with dots can be specified, like `'foo.bla.bar'` or `'mods.hidden'`).
 	 *
-	 * Also, the component will watch for changes to each property in this dictionary.
-	 * If at least one of  these properties is changed, the entire data batch will be synchronized with the storage
-	 * using this method. When the component provides the storage data, the second argument to the method is `'remote'`.
+	 * Moreover, the component will monitor changes to each property in this dictionary.
+	 * If at least one of these properties changes, the entire data batch gets synchronized with
+	 * the storage using this method.
+	 * When the component delivers the storage data, the second argument to the method is `'remote'`.
 	 *
-	 * @param [data] - advanced data
+	 * @param [data] - additional data
 	 * @param [_type] - the call type
 	 */
 	protected syncStorageState(data?: Dictionary, _type: ConverterCallType = 'component'): Dictionary {
@@ -453,7 +463,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * Returns a dictionary with the default component properties to reset the storage state.
 	 * This method will be used when calling `state.resetStorage`.
 	 *
-	 * @param [data] - advanced data
+	 * @param [data] - additional data
 	 */
 	protected convertStateToStorageReset(data?: Dictionary): Dictionary {
 		const
@@ -470,20 +480,23 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
-	 * This method works as a two-way connector between the component and the application router.
+	 * This method serves as a two-way connector between the component and the application router.
 	 *
-	 * While the component is initializing, it requests the router for its associated data.
-	 * The router provides the data by using this method. After that, the method returns a dictionary associated with
-	 * the component properties (you can specify a complex path with dots, like `'foo.bla.bar'` or `'mods.hidden'`).
+	 * During the component's initialization, it requests its associated data from the router.
+	 * The router delivers the data by using this method.
+	 * Following this, the method returns a dictionary associated with the component properties
+	 * (you can specify a complex path with dots, such as `'foo.bla.bar'` or `'mods.hidden'`).
 	 *
-	 * Also, the component will watch for changes to each property in this dictionary.
-	 * If at least one of  these properties is changed, the entire data batch will be synchronized with the router
-	 * using this method. When the component provides the router data, the second argument to the method is `'remote'`.
+	 * Moreover, the component will monitor changes to each property within this dictionary.
+	 * If at least one of these properties changes,
+	 * the entire data batch is synchronized with the router using this method.
+	 * When the component supplies the data to the router, the second argument to the method is `'remote'`.
 	 *
-	 * Keep in mind that the router is global to all components, meaning the dictionary this method passes to the router
-	 * will extend the current route data, but not override  (`router.push(null, {...route, ...componentData}})`).
+	 * Keep in mind that the router is global to all components.
+	 * This means the dictionary passed to the router by this method will extend the existing route data,
+	 * but not override it (`router.push(null, {...route, ...componentData})`).
 	 *
-	 * @param [data] - advanced data
+	 * @param [data] - additional data
 	 * @param [_type] - the call type
 	 */
 	protected syncRouterState(data?: Dictionary, _type: ConverterCallType = 'component'): Dictionary {
@@ -494,7 +507,7 @@ export default abstract class iBlockState extends iBlockMods {
 	 * Returns a dictionary with the default component properties to reset the router state.
 	 * This method will be used when calling `state.resetRouter`.
 	 *
-	 * @param [data] - advanced data
+	 * @param [data] - additional data
 	 */
 	protected convertStateToRouterReset(data?: Dictionary): Dictionary {
 		const

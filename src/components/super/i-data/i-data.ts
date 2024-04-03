@@ -95,7 +95,14 @@ export default abstract class iData extends iDataHandlers {
 
 			const setDBData = (data: CanUndef<this['DB']>) => {
 				this.saveDataToRootStore(data);
-				this.hydrationStore?.set(this.componentId, providerHydrationKey, Object.cast(data));
+
+				if (data !== undefined) {
+					this.hydrationStore?.set(this.componentId, providerHydrationKey, Object.cast(data));
+
+				} else {
+					this.hydrationStore?.setEmpty(this.componentId, providerHydrationKey);
+				}
+
 				this.db = this.convertDataToDB<this['DB']>(data);
 
 				// During hydration, there may be a situation where the cache on the DB getter is set before rendering occurs,
@@ -278,7 +285,7 @@ export default abstract class iData extends iDataHandlers {
 			return;
 		}
 
-		this.r.providerDataStore.set(key, data);
+		this.r.providerDataStore?.set(key, data);
 
 		function getKey(val: string | CanUndef<iData['dataProviderProp']>): CanUndef<string> {
 			if (val == null || Object.isString(val)) {
