@@ -42,7 +42,7 @@ export async function renderTree(
 		attrs: {
 			items,
 			id: 'target',
-			theme: 'demo',
+			exterior: 'demo',
 			...attrs
 		},
 
