@@ -24,12 +24,6 @@ const
 const
 	{verbose} = config.build;
 
-const {
-	dsNotIncludedRequiredThemes,
-	dsNotIncludedDarkTheme,
-	dsNotIncludedLightTheme
-} = include('build/stylus/ds/const');
-
 /**
  * Returns a name of a CSS variable, created from the specified path with a dot delimiter
  *
@@ -278,44 +272,6 @@ function checkDeprecated(ds, path) {
 
 	console.warn(...message);
 	return true;
-}
-
-/**
- * Checks if the design system provides "dark" and "light" themes to use the `prefersColorScheme` parameter
- *
- * @param {object} prefersColorScheme
- * @param {boolean} prefersColorScheme.enabled - a flag indicating whether the detecting of
- *   the user's preferred color scheme is enabled
- *
- * @param {string} prefersColorScheme.aliases.dark - an alias for the "dark" theme
- * @param {string} prefersColorScheme.aliases.light - an alias for the "light" theme
- * @param {string[]} themesList - an array of themes included to the build
- *
- * @throws {Error}
- */
-function checkPrefersColorScheme(
-	{
-		enabled,
-		aliases: {dark, light} = {dark: 'dark', light: 'light'}
-	},
-
-	themesList
-) {
-	if (!enabled) {
-		return;
-	}
-
-	if (!themesList?.includes(dark) && !themesList?.includes(light)) {
-		throw new Error(dsNotIncludedRequiredThemes(dark, light));
-	}
-
-	if (!themesList?.includes(dark)) {
-		throw new Error(dsNotIncludedDarkTheme(dark));
-	}
-
-	if (!themesList?.includes(light)) {
-		throw new Error(dsNotIncludedLightTheme(light));
-	}
 }
 
 module.exports = {
