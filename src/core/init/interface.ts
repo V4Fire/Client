@@ -10,6 +10,7 @@ import type Async from 'core/async';
 
 import type { InitialRoute } from 'core/router';
 import type { CookieStore } from 'core/cookies';
+import type { ThemeManager } from 'core/theme-manager';
 
 import type { State } from 'core/component/state';
 import type { ComponentOptions } from 'core/component/engines';
@@ -45,6 +46,11 @@ export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 	 * A store of application cookies
 	 */
 	cookies: CookieStore;
+
+	/**
+	 * An API for managing app themes from the Design System
+	 */
+	theme?: ThemeManager;
 
 	/**
 	 * The initial route for initializing the router.
