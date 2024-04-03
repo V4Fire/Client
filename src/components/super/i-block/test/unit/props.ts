@@ -6,12 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import { LIGHT } from 'core/theme-manager';
 import test from 'tests/config/unit/test';
 
 import { DOM } from 'tests/helpers';
 
 import { renderDummy } from 'components/super/i-block/test/helpers';
-import { defaultTheme } from 'core/theme-manager';
 
 test.describe('<i-block> props', () => {
 	const
@@ -49,7 +49,7 @@ test.describe('<i-block> props', () => {
 			context: undefined,
 			progress: undefined,
 			diff: undefined,
-			theme: defaultTheme(),
+			theme: LIGHT,
 			exterior: undefined,
 			stage: undefined
 		});
@@ -69,7 +69,7 @@ test.describe('<i-block> props', () => {
 			exterior: 'foo',
 			diff: 'true',
 			progress: undefined,
-			theme: defaultTheme(),
+			theme: LIGHT,
 			stage: undefined
 		});
 	});
