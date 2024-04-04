@@ -8,7 +8,7 @@
 
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 
-export default class CSREngine<T extends HTMLElement> implements Engine {
+export class CSREngine<T extends HTMLElement> implements Engine {
 	/** {@link Engine.create} */
 	create(tag: string, attrs: Dictionary<string>): T {
 		return Object.assign(<T>document.createElement(tag), attrs);
@@ -29,3 +29,5 @@ export default class CSREngine<T extends HTMLElement> implements Engine {
 		return Object.assign(el, attrs);
 	}
 }
+
+export const csrEngine = new CSREngine();

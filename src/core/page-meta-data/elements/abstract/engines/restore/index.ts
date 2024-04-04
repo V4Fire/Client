@@ -6,10 +6,12 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { CSREngine } from 'core/page-meta-data/elements';
+import { CSREngine } from 'core/page-meta-data/elements/abstract/engines/client';
 
-export default class HydrationEngine<T extends HTMLElement> extends CSREngine<T> {
+export class RestoreEngine<T extends HTMLElement> extends CSREngine<T> {
 	override render(el: T): T {
 		return el;
 	}
 }
+
+export const restoreEngine = new RestoreEngine();

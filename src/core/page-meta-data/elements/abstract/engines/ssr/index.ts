@@ -9,7 +9,7 @@
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 import type { AbstractElement } from 'core/page-meta-data/elements';
 
-export default class SSREngine implements Engine {
+export class SSREngine implements Engine {
 	/** {@link Engine.render} */
 	render(_element: AbstractElement, tag: string, attrs: Dictionary<string>): string {
 		const attrsString = Object.keys(attrs)
@@ -29,3 +29,5 @@ export default class SSREngine implements Engine {
 		return el;
 	}
 }
+
+export const ssrEngine = new SSREngine();

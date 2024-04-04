@@ -9,7 +9,7 @@
 import type { TitleAttributes } from 'core/page-meta-data/elements';
 import { CSREngine } from 'core/page-meta-data/elements/abstract/engines';
 
-export default class CSRTitleEngine extends CSREngine<HTMLTitleElement> {
+export class CSRTitleEngine extends CSREngine<HTMLTitleElement> {
 	override create(_tag: 'title', attrs: TitleAttributes): HTMLTitleElement {
 		document.title = attrs.text?.trim() ?? '';
 		return document.querySelector('title')!;
@@ -23,3 +23,5 @@ export default class CSRTitleEngine extends CSREngine<HTMLTitleElement> {
 		return document.querySelector('title')!;
 	}
 }
+
+export const csrTitleEngine = new CSRTitleEngine();

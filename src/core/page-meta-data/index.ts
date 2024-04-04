@@ -8,16 +8,10 @@
 
 import { concatURLs } from 'core/url';
 
-import {
+import { ssrEngine, csrEngine, restoreEngine, EngineGetter } from 'core/page-meta-data/elements/abstract/engines';
+import { csrTitleEngine } from 'core/page-meta-data/elements/title';
 
-	SSREngine,
-	CSREngine,
-	HydrationEngine,
-	EngineGetter,
-
-} from 'core/page-meta-data/elements/abstract/engines';
-
-import { CSRTitleEngine } from 'core/page-meta-data/elements/title';
+import Store from 'core/page-meta-data/store';
 
 import {
 
@@ -26,45 +20,14 @@ import {
 	Title,
 
 	AbstractElement,
+	AbstractElementProperties,
+
 	MetaAttributes,
-	LinkAttributes,
-	AbstractElementProperties
+	LinkAttributes
 
 } from 'core/page-meta-data/elements';
 
-import Store from 'core/page-meta-data/store';
-
-const
-	csrEngine = new CSREngine(),
-	ssrEngine = new SSREngine(),
-	csrTitleEngine = new CSRTitleEngine(),
-	hydrationEngine = new HydrationEngine();
-
 export default class PageMetaData {
-	/**
-	 * Elements storage
-	 */
-	protected store: Store = new Store();
-
-	/**
-	 * An API for working with the target document's URL
-	 */
-	protected location: URL;
-
-	/**
-	 * True, if the elements are restoring at the current moment
-	 */
-	protected restoringElements: boolean = false;
-
-	/**
-	 * @param location - an API for working with the target document's URL
-	 * @param [elementsStore] - an array of elements properties
-	 */
-	constructor(location: URL, elementsStore: AbstractElementProperties[] = []) {
-		this.location = location;
-		this.restoreElements(elementsStore);
-	}
-
 	/**
 	 * All added meta elements
 	 */
@@ -119,6 +82,30 @@ export default class PageMetaData {
 	}
 
 	/**
+	 * Elements storage
+	 */
+	protected store: Store = new Store();
+
+	/**
+	 * An API for working with the target document's URL
+	 */
+	protected location: URL;
+
+	/**
+	 * True, if the elements are restoring at the current moment
+	 */
+	protected restoringElements: boolean = false;
+
+	/**
+	 * @param location - an API for working with the target document's URL
+	 * @param [elements] - an array of elements for setting in the constructor, used to restore data from the environment
+	 */
+	constructor(location: URL, elements: AbstractElementProperties[] = []) {
+		this.location = location;
+		this.restoreElements(elements);
+	}
+
+	/**
 	 * Adds a new link element with the given attributes to the current page
 	 * @param attrs - attributes for the created element
 	 */
@@ -166,11 +153,7 @@ export default class PageMetaData {
 			href = concatURLs(this.location.origin, pathname) + query,
 			attrs = {rel: 'canonical', href};
 
-		const link = new Link(
-			this.engineGetter,
-			attrs
-		);
-
+		const link = new Link(this.engineGetter, attrs);
 		this.store.setCanonical(link, attrs);
 	}
 
@@ -186,11 +169,7 @@ export default class PageMetaData {
 	 * @param attrs - attributes for the created element
 	 */
 	addMeta(attrs: MetaAttributes): void {
-		const meta = new Meta(
-			this.engineGetter,
-			attrs
-		);
-
+		const meta = new Meta(this.engineGetter, attrs);
 		this.store.addMeta(meta);
 	}
 
@@ -213,12 +192,12 @@ export default class PageMetaData {
 
 	/**
 	 * Restores the elements storage from the passed array of elements properties
-	 * @param elementsStore - array of elements properties
+	 * @param elements - an array of elements for setting in the constructor, used to restore data from the environment
 	 */
-	protected restoreElements(elementsStore: AbstractElementProperties[]): void {
+	protected restoreElements(elements: AbstractElementProperties[]): void {
 		this.restoringElements = true;
 
-		elementsStore.forEach(({tag, attrs}) => {
+		elements.forEach(({tag, attrs}) => {
 			switch (tag) {
 				case 'title':
 					this.title = attrs.text!;
@@ -253,9 +232,9 @@ export default class PageMetaData {
 		}
 
 		if (this.restoringElements) {
-			return hydrationEngine;
+			return restoreEngine;
 		}
 
 		return csrEngine;
-	}
+	};
 }
