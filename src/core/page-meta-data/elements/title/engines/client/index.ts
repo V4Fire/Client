@@ -18,4 +18,8 @@ export default class CSRTitleEngine extends CSREngine<HTMLTitleElement> {
 	override update(_el: HTMLTitleElement, attrs: TitleAttributes): HTMLTitleElement {
 		return this.create('title', attrs);
 	}
+
+	override render(_el: HTMLTitleElement): HTMLTitleElement {
+		return document.querySelector('title')!;
+	}
 }

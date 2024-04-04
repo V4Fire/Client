@@ -6,9 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AbstractElement } from 'core/page-meta-data/elements/abstract';
+import { AbstractElement, EngineGetter } from 'core/page-meta-data/elements/abstract';
 
-import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
 import type { MetaAttributes } from 'core/page-meta-data/elements/meta/interface';
 
 export * from 'core/page-meta-data/elements/meta/interface';
@@ -37,7 +36,7 @@ export class Meta extends AbstractElement<HTMLMetaElement> {
 	protected override tag!: 'meta';
 	protected override attrs!: MetaAttributes;
 
-	constructor(engine: Engine, attrs: MetaAttributes) {
+	constructor(engine: EngineGetter, attrs: MetaAttributes) {
 		super(engine, 'meta', attrs);
 	}
 }

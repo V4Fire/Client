@@ -40,3 +40,5 @@ export interface Engine {
 	 */
 	create?(tag: string, attrs: Dictionary<string>): HTMLElement;
 }
+
+export type EngineGetter = () => Engine;

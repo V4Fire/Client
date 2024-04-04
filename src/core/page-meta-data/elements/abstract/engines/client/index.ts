@@ -11,17 +11,17 @@ import type { Engine } from 'core/page-meta-data/elements/abstract/engines/inter
 export default class CSREngine<T extends HTMLElement> implements Engine {
 	/** {@link Engine.create} */
 	create(tag: string, attrs: Dictionary<string>): T {
-		return Object.assign(<T>globalThis.document.createElement(tag), attrs);
+		return Object.assign(<T>document.createElement(tag), attrs);
 	}
 
 	/** {@link Engine.render} */
 	render(el: T): T {
-		return globalThis.document.head.appendChild(el);
+		return document.head.appendChild(el);
 	}
 
 	/** {@link Engine.remove} */
 	remove(el: T): T {
-		return globalThis.document.head.removeChild(el);
+		return document.head.removeChild(el);
 	}
 
 	/** {@link Engine.update} */

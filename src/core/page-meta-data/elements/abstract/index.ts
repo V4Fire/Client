@@ -6,9 +6,11 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
+import type { EngineGetter } from 'core/page-meta-data/elements/abstract/engines';
+import type { AbstractElementProperties } from 'core/page-meta-data/elements/abstract/interface';
 
-export * from 'core/page-meta-data/elements/abstract/engines/index';
+export * from 'core/page-meta-data/elements/abstract/engines';
+export * from 'core/page-meta-data/elements/abstract/interface';
 
 export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	/**
@@ -27,16 +29,16 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	protected attrs!: Dictionary<string>;
 
 	/**
-	 * The element's render engine
+	 * The element's render engine getter
 	 */
-	protected engine!: Engine;
+	protected engine!: EngineGetter;
 
 	/**
-	 * @param engine - a rendering engine for the created element
+	 * @param engine - a rendering engine getter for the created element
 	 * @param tag - a tag of the created element
 	 * @param [attrs] - additional attributes for the created element
 	 */
-	protected constructor(engine: Engine, tag: string, attrs: Dictionary<string> = {}) {
+	protected constructor(engine: EngineGetter, tag: string, attrs: Dictionary<string> = {}) {
 		this.tag = tag;
 		this.attrs = attrs;
 		this.engine = engine;
@@ -47,21 +49,14 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 * Creates the element due to the environment
 	 */
 	create(): T | this {
-		return <Nullable<T>>this.engine.create?.(this.tag, this.attrs) ?? this;
+		return <Nullable<T>>this.engine().create?.(this.tag, this.attrs) ?? this;
 	}
 
 	/**
 	 * Renders the element due to the environment
 	 */
 	render(): T | string {
-		return <T>this.engine.render(this.el, this.tag, this.attrs);
-	}
-
-	/**
-	 * Returns the element due to the environment
-	 */
-	get(): T | this {
-		return this.el;
+		return <T>this.engine().render(this.el, this.tag, this.attrs);
 	}
 
 	/**
@@ -70,14 +65,14 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 */
 	update(attrs: Dictionary<string>): T | this {
 		Object.assign(this.attrs, attrs);
-		return <T>this.engine.update(this.el, this.attrs);
+		return <T>this.engine().update(this.el, this.attrs);
 	}
 
 	/**
 	 * Removes the element due to the environment
 	 */
 	remove(): T | this {
-		return <T>this.engine.remove(this.el);
+		return <T>this.engine().remove(this.el);
 	}
 
 	/**
@@ -88,5 +83,22 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 */
 	is(tag: string, attrs: Dictionary<string> = {}): boolean {
 		return tag === this.tag && Object.keys(attrs).every((key) => attrs[key] === this.attrs[key]);
+	}
+
+	/**
+	 * Returns the element due to the environment
+	 */
+	getElement(): T | this {
+		return this.el;
+	}
+
+	/**
+	 * Returns the element inner properties
+	 */
+	getProperties(): AbstractElementProperties {
+		return {
+			tag: this.tag,
+			attrs: {...this.attrs}
+		};
 	}
 }

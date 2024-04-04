@@ -8,7 +8,15 @@
 
 import { concatURLs } from 'core/url';
 
-import { SSREngine, CSREngine } from 'core/page-meta-data/elements/abstract/engines';
+import {
+
+	SSREngine,
+	CSREngine,
+	HydrationEngine,
+	EngineGetter,
+
+} from 'core/page-meta-data/elements/abstract/engines';
+
 import { CSRTitleEngine } from 'core/page-meta-data/elements/title';
 
 import {
@@ -19,11 +27,18 @@ import {
 
 	AbstractElement,
 	MetaAttributes,
-	LinkAttributes
+	LinkAttributes,
+	AbstractElementProperties
 
 } from 'core/page-meta-data/elements';
 
 import Store from 'core/page-meta-data/store';
+
+const
+	csrEngine = new CSREngine(),
+	ssrEngine = new SSREngine(),
+	csrTitleEngine = new CSRTitleEngine(),
+	hydrationEngine = new HydrationEngine();
 
 export default class PageMetaData {
 	/**
@@ -37,10 +52,17 @@ export default class PageMetaData {
 	protected location: URL;
 
 	/**
-	 * @param location - an API for working with the target document's URL
+	 * True, if the elements are restoring at the current moment
 	 */
-	constructor(location: URL) {
+	protected restoringElements: boolean = false;
+
+	/**
+	 * @param location - an API for working with the target document's URL
+	 * @param [elementsStore] - an array of elements properties
+	 */
+	constructor(location: URL, elementsStore: AbstractElementProperties[] = []) {
 		this.location = location;
+		this.restoreElements(elementsStore);
 	}
 
 	/**
@@ -66,7 +88,7 @@ export default class PageMetaData {
 		const attrs = {text: value};
 
 		const title = new Title(
-			SSR ? new SSREngine() : new CSRTitleEngine(),
+			() => SSR ? ssrEngine : csrTitleEngine,
 			attrs
 		);
 
@@ -89,7 +111,7 @@ export default class PageMetaData {
 		const attrs = {name: 'description', content: value};
 
 		const description = new Meta(
-			SSR ? new SSREngine() : new CSREngine(),
+			this.engineGetter,
 			attrs
 		);
 
@@ -102,7 +124,7 @@ export default class PageMetaData {
 	 */
 	addLink(attrs: LinkAttributes): void {
 		const link = new Link(
-			SSR ? new SSREngine() : new CSREngine(),
+			this.engineGetter,
 			attrs
 		);
 
@@ -123,14 +145,14 @@ export default class PageMetaData {
 	 */
 	findLinks(attrs: LinkAttributes): Array<HTMLLinkElement | Link> {
 		const links = this.store.findLinks(attrs);
-		return links.map((el) => el.get());
+		return links.map((el) => el.getElement());
 	}
 
 	/**
 	 * Returns a canonical link `<link rel="canonical" />`
 	 */
 	getCanonicalLink(): CanUndef<HTMLLinkElement | Link> {
-		return this.store.getCanonical()?.get();
+		return this.store.getCanonical()?.getElement();
 	}
 
 	/**
@@ -145,7 +167,7 @@ export default class PageMetaData {
 			attrs = {rel: 'canonical', href};
 
 		const link = new Link(
-			SSR ? new SSREngine() : new CSREngine(),
+			this.engineGetter,
 			attrs
 		);
 
@@ -165,7 +187,7 @@ export default class PageMetaData {
 	 */
 	addMeta(attrs: MetaAttributes): void {
 		const meta = new Meta(
-			SSR ? new SSREngine() : new CSREngine(),
+			this.engineGetter,
 			attrs
 		);
 
@@ -186,6 +208,54 @@ export default class PageMetaData {
 	 */
 	findMetas(attrs: MetaAttributes): Array<HTMLMetaElement | Meta> {
 		const metas = this.store.findMetas(attrs);
-		return metas.map((el) => el.get());
+		return metas.map((el) => el.getElement());
+	}
+
+	/**
+	 * Restores the elements storage from the passed array of elements properties
+	 * @param elementsStore - array of elements properties
+	 */
+	protected restoreElements(elementsStore: AbstractElementProperties[]): void {
+		this.restoringElements = true;
+
+		elementsStore.forEach(({tag, attrs}) => {
+			switch (tag) {
+				case 'title':
+					this.title = attrs.text!;
+					break;
+
+				case 'description':
+					this.description = attrs.value!;
+					break;
+
+				case 'link':
+					this.addLink(attrs);
+					break;
+
+				case 'meta':
+					this.addMeta(attrs);
+					break;
+
+				default:
+					break;
+			}
+		});
+
+		this.restoringElements = false;
+	}
+
+	/**
+	 * Returns the engine due to the environment
+	 */
+	protected engineGetter: EngineGetter = () => {
+		if (SSR) {
+			return ssrEngine;
+		}
+
+		if (this.restoringElements) {
+			return hydrationEngine;
+		}
+
+		return csrEngine;
 	}
 }

@@ -6,9 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AbstractElement } from 'core/page-meta-data/elements/abstract';
+import { AbstractElement, EngineGetter } from 'core/page-meta-data/elements/abstract';
 
-import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
 import type { LinkAttributes } from 'core/page-meta-data/elements/link/interface';
 
 export * from 'core/page-meta-data/elements/link/interface';
@@ -47,7 +46,7 @@ export class Link extends AbstractElement<HTMLLinkElement> {
 	protected override tag!: 'link';
 	protected override attrs!: LinkAttributes;
 
-	constructor(engine: Engine, attrs: LinkAttributes) {
+	constructor(engine: EngineGetter, attrs: LinkAttributes) {
 		super(engine, 'link', attrs);
 	}
 }

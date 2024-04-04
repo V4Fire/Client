@@ -6,10 +6,9 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { AbstractElement } from 'core/page-meta-data/elements/abstract';
+import { AbstractElement, EngineGetter } from 'core/page-meta-data/elements/abstract';
 
 import type { TitleAttributes } from 'core/page-meta-data/elements/title/interface';
-import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
 
 export * from 'core/page-meta-data/elements/title/interface';
 export * from 'core/page-meta-data/elements/title/engines';
@@ -28,7 +27,7 @@ export class Title extends AbstractElement<HTMLTitleElement> {
 	protected override tag!: 'title';
 	protected override attrs!: TitleAttributes;
 
-	constructor(engine: Engine, attrs: TitleAttributes) {
+	constructor(engine: EngineGetter, attrs: TitleAttributes) {
 		super(engine, 'title', attrs);
 	}
 }
