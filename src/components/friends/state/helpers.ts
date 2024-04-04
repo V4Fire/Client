@@ -72,7 +72,9 @@ export function set(this: Friend, data: Nullable<Dictionary>): Array<Promise<unk
 			this.field.set(key, newVal);
 		}
 
-		this.ctx.hydrationStore?.set(this.componentId, key, Object.cast(newVal));
+		if (SSR && this.ctx.ssrRendering) {
+			this.ctx.hydrationStore?.set(this.componentId, key, Object.cast(newVal));
+		}
 	});
 
 	return promises;

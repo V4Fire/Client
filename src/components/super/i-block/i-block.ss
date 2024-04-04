@@ -281,15 +281,13 @@
 
 								- block bodyFooter
 
-						- if !ssrRendering
-							< template v-if = !ssrRendering
-								+= self.render({wait: 'async.idle.bind(async)'})
-									+= self.renderRootContent()
+						- block ssrSkeleton
 
-							< template v-else
+						< template v-if = isRelatedToSSR && !ssrRendering
+							< teleport :to = $el
 								+= self.renderRootContent()
 
-						- else
+						< template v-else
 							+= self.renderRootContent()
 
 - template mono() extends ['i-block'].index
