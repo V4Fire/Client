@@ -11,7 +11,18 @@ import type { Engine } from 'core/page-meta-data/elements/abstract/engines/inter
 export class CSREngine<T extends HTMLElement> implements Engine {
 	/** {@link Engine.create} */
 	create(tag: string, attrs: Dictionary<string>): T {
-		return Object.assign(<T>document.createElement(tag), attrs);
+		const selector = Object.entries(attrs).reduce((acc, [key, val]) => {
+			acc += `[${key}='${val}']`;
+			return acc;
+		}, `${tag}`);
+
+		const el = document.querySelector<T>(selector);
+
+		if (el == null) {
+			return Object.assign(<T>document.createElement(tag), attrs);
+		}
+
+		return el;
 	}
 
 	/** {@link Engine.render} */

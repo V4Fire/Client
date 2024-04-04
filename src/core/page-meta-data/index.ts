@@ -8,7 +8,7 @@
 
 import { concatURLs } from 'core/url';
 
-import { ssrEngine, csrEngine, restoreEngine, EngineGetter } from 'core/page-meta-data/elements/abstract/engines';
+import { ssrEngine, csrEngine } from 'core/page-meta-data/elements/abstract/engines';
 import { csrTitleEngine } from 'core/page-meta-data/elements/title';
 
 import Store from 'core/page-meta-data/store';
@@ -51,7 +51,7 @@ export default class PageMetaData {
 		const attrs = {text: value};
 
 		const title = new Title(
-			() => SSR ? ssrEngine : csrTitleEngine,
+			SSR ? ssrEngine : csrTitleEngine,
 			attrs
 		);
 
@@ -74,7 +74,7 @@ export default class PageMetaData {
 		const attrs = {name: 'description', content: value};
 
 		const description = new Meta(
-			this.engineGetter,
+			SSR ? ssrEngine : csrEngine,
 			attrs
 		);
 
@@ -92,11 +92,6 @@ export default class PageMetaData {
 	protected location: URL;
 
 	/**
-	 * True, if the elements are restoring at the current moment
-	 */
-	protected restoringElements: boolean = false;
-
-	/**
 	 * @param location - an API for working with the target document's URL
 	 * @param [elements] - an array of elements for setting in the constructor, used to restore data from the environment
 	 */
@@ -111,7 +106,7 @@ export default class PageMetaData {
 	 */
 	addLink(attrs: LinkAttributes): void {
 		const link = new Link(
-			this.engineGetter,
+			SSR ? ssrEngine : csrEngine,
 			attrs
 		);
 
@@ -153,7 +148,11 @@ export default class PageMetaData {
 			href = concatURLs(this.location.origin, pathname) + query,
 			attrs = {rel: 'canonical', href};
 
-		const link = new Link(this.engineGetter, attrs);
+		const link = new Link(
+			SSR ? ssrEngine : csrEngine,
+			attrs
+		);
+
 		this.store.setCanonical(link, attrs);
 	}
 
@@ -169,7 +168,11 @@ export default class PageMetaData {
 	 * @param attrs - attributes for the created element
 	 */
 	addMeta(attrs: MetaAttributes): void {
-		const meta = new Meta(this.engineGetter, attrs);
+		const meta = new Meta(
+			SSR ? ssrEngine : csrEngine,
+			attrs
+		);
+
 		this.store.addMeta(meta);
 	}
 
@@ -195,8 +198,6 @@ export default class PageMetaData {
 	 * @param elements - an array of elements for setting in the constructor, used to restore data from the environment
 	 */
 	protected restoreElements(elements: AbstractElementProperties[]): void {
-		this.restoringElements = true;
-
 		elements.forEach(({tag, attrs}) => {
 			switch (tag) {
 				case 'title':
@@ -219,22 +220,5 @@ export default class PageMetaData {
 					break;
 			}
 		});
-
-		this.restoringElements = false;
 	}
-
-	/**
-	 * Returns the engine due to the environment
-	 */
-	protected engineGetter: EngineGetter = () => {
-		if (SSR) {
-			return ssrEngine;
-		}
-
-		if (this.restoringElements) {
-			return restoreEngine;
-		}
-
-		return csrEngine;
-	};
 }

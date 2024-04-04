@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import type { EngineGetter } from 'core/page-meta-data/elements/abstract/engines';
+import type { Engine } from 'core/page-meta-data/elements/abstract/engines';
 import type { AbstractElementProperties } from 'core/page-meta-data/elements/abstract/interface';
 
 export * from 'core/page-meta-data/elements/abstract/engines';
@@ -31,14 +31,14 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	/**
 	 * The element's render engine getter
 	 */
-	protected engine!: EngineGetter;
+	protected engine!: Engine;
 
 	/**
 	 * @param engine - a rendering engine getter for the created element
 	 * @param tag - a tag of the created element
 	 * @param [attrs] - additional attributes for the created element
 	 */
-	protected constructor(engine: EngineGetter, tag: string, attrs: Dictionary<string> = {}) {
+	protected constructor(engine: Engine, tag: string, attrs: Dictionary<string> = {}) {
 		this.tag = tag;
 		this.attrs = attrs;
 		this.engine = engine;
@@ -49,14 +49,14 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 * Creates the element due to the environment
 	 */
 	create(): T | this {
-		return <Nullable<T>>this.engine().create?.(this.tag, this.attrs) ?? this;
+		return <Nullable<T>>this.engine.create?.(this.tag, this.attrs) ?? this;
 	}
 
 	/**
 	 * Renders the element due to the environment
 	 */
 	render(): T | string {
-		return <T>this.engine().render(this.el, this.tag, this.attrs);
+		return <T>this.engine.render(this.el, this.tag, this.attrs);
 	}
 
 	/**
@@ -65,14 +65,14 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 */
 	update(attrs: Dictionary<string>): T | this {
 		Object.assign(this.attrs, attrs);
-		return <T>this.engine().update(this.el, this.attrs);
+		return <T>this.engine.update(this.el, this.attrs);
 	}
 
 	/**
 	 * Removes the element due to the environment
 	 */
 	remove(): T | this {
-		return <T>this.engine().remove(this.el);
+		return <T>this.engine.remove(this.el);
 	}
 
 	/**

@@ -8,5 +8,4 @@
 
 export * from 'core/page-meta-data/elements/abstract/engines/client';
 export * from 'core/page-meta-data/elements/abstract/engines/ssr';
-export * from 'core/page-meta-data/elements/abstract/engines/restore';
 export * from 'core/page-meta-data/elements/abstract/engines/interface';
