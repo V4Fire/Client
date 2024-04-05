@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.83 (2024-04-05)
+
+#### :house: Internal
+
+* Updated the `ssrRendering` prop usage mechanism `components/super/i-block`
+
 ## v4.0.0-beta.82 (2024-04-02)
 
 #### :bug: Bug Fix

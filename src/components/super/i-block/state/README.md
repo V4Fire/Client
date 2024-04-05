@@ -393,6 +393,11 @@ For instance, `created`, `mounted` or `destroyed`.
 
 True if the component is in the context of SSR or hydration.
 
+#### isClientOnly
+
+True if the component should not render it's content during server-side rendering, and it is in the context of SSR/hydration now.
+This getter is used to display a skeleton placeholder instead of the actual component content during server-side rendering.
+
 #### remoteState
 
 A link to an application state object located in `core/component/state`.

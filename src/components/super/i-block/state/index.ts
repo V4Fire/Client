@@ -62,6 +62,14 @@ export default abstract class iBlockState extends iBlockMods {
 	}
 
 	/**
+	 * True if the component should not render it's content during server-side rendering,
+	 * and it is in the context of SSR/hydration now
+	 */
+	get isClientOnly(): boolean {
+		return this.isRelatedToSSR && !this.ssrRendering;
+	}
+
+	/**
 	 * A link to an application state object located in `core/component/client-state`.
 	 *
 	 * This object is used to set any general application parameters. For example, the status of user authorization or
