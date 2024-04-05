@@ -31,7 +31,7 @@ export default class PageMetaData {
 	/**
 	 * All added meta elements
 	 */
-	get metaElements(): AbstractElement[] {
+	get elements(): AbstractElement[] {
 		return [...this.store];
 	}
 

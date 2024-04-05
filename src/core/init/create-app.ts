@@ -82,6 +82,7 @@ export async function createApp(
 			hydratedData = `<noframes id="hydration-store" style="display: none">${hydrationStore.toString()}</noframes>`;
 
 			return {
+				state,
 				content: ssrContent + hydratedData,
 				styles: (await Promise.all(hydrationStore.styles.values())).map((i) => i.default).join('')
 			};
@@ -100,7 +101,7 @@ export async function createApp(
 
 			setTimeout(() => {
 				state.async.clearAll().locked = true;
-			}, 0);
+			}, Math.random() * 50);
 		}
 	}
 

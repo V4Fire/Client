@@ -29,7 +29,7 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	protected attrs!: Dictionary<string>;
 
 	/**
-	 * The element's render engine getter
+	 * The element's render engine
 	 */
 	protected engine!: Engine;
 
