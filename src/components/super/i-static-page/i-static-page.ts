@@ -19,6 +19,7 @@ import { RestrictedCache } from 'core/cache';
 import { instanceCache } from 'core/data';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
+import type PageMetaData from 'core/page-meta-data';
 
 import { resetComponents, ComponentResetType } from 'core/component';
 
@@ -27,7 +28,6 @@ import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
 
-import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
 
 import type { RootMod } from 'components/super/i-static-page/interface';
@@ -76,15 +76,6 @@ export default abstract class iStaticPage extends iPage {
 	readonly providerDataStore?: ProviderDataStore;
 
 	/**
-	 * A module for manipulating page metadata, such as the page title or description
-	 */
-	@system<iStaticPage>(() => new PageMetaData({
-		document: SSR ? Object.cast({}) : document
-	}))
-
-	readonly pageMetaData!: PageMetaData;
-
-	/**
 	 * True if the current user is authorized
 	 */
 	@field((o) => o.sync.link('remoteState.isAuth'))
@@ -115,6 +106,14 @@ export default abstract class iStaticPage extends iPage {
 	@computed({cache: true, dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
 		return this.field.get('route.meta.name');
+	}
+
+	/**
+	 * An API for managing the meta information of a page,
+	 * such as the title, description, and other meta tags
+	 */
+	get pageMetaData(): PageMetaData {
+		return this.r.remoteState.pageMetaData;
 	}
 
 	@computed()

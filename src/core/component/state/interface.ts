@@ -15,6 +15,7 @@ import type { Cookies } from 'core/cookies';
 import type { Experiments } from 'core/abt';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
+import type PageMetaData from 'core/page-meta-data';
 import type ThemeManager from 'core/theme-manager';
 
 export interface State {
@@ -47,6 +48,11 @@ export interface State {
 	 * An API for working with the target document's URL
 	 */
 	location: URL;
+
+	/**
+	 * An API for working with the meta information of the current page
+	 */
+	pageMetaData: PageMetaData;
 
 	/**
 	 * True, if the application is connected to the Internet
