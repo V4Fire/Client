@@ -8,11 +8,11 @@
 
 import type { Engine } from 'core/page-meta-data/elements/abstract/engines/interface';
 
-export class CSREngine<T extends HTMLElement> implements Engine {
+export class DOMEngine<T extends HTMLElement> implements Engine {
 	/** {@link Engine.create} */
 	create(tag: string, attrs: Dictionary<string>): T {
 		const selector = Object.entries(attrs).reduce((acc, [key, val]) => {
-			acc += `[${key}='${val}']`;
+			acc += `[${key}="${val}"]`;
 			return acc;
 		}, `${tag}`);
 
@@ -27,6 +27,10 @@ export class CSREngine<T extends HTMLElement> implements Engine {
 
 	/** {@link Engine.render} */
 	render(el: T): T {
+		if (el.isConnected) {
+			return el;
+		}
+
 		return document.head.appendChild(el);
 	}
 
@@ -41,4 +45,4 @@ export class CSREngine<T extends HTMLElement> implements Engine {
 	}
 }
 
-export const csrEngine = new CSREngine();
+export const domEngine = new DOMEngine();

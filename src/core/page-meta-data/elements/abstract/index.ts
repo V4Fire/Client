@@ -14,7 +14,7 @@ export * from 'core/page-meta-data/elements/abstract/interface';
 
 export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	/**
-	 * The element's tag
+	 * The element's tag name
 	 */
 	protected tag!: string;
 

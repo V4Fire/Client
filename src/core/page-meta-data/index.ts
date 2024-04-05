@@ -6,10 +6,10 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-import { concatURLs } from 'core/url';
+import { isAbsURL, concatURLs } from 'core/url';
 
-import { ssrEngine, csrEngine } from 'core/page-meta-data/elements/abstract/engines';
-import { csrTitleEngine } from 'core/page-meta-data/elements/title';
+import { ssrEngine, domEngine } from 'core/page-meta-data/elements/abstract/engines';
+import { domTitleEngine } from 'core/page-meta-data/elements/title';
 
 import Store from 'core/page-meta-data/store';
 
@@ -26,6 +26,8 @@ import {
 	LinkAttributes
 
 } from 'core/page-meta-data/elements';
+
+export * from 'core/page-meta-data/elements';
 
 export default class PageMetaData {
 	/**
@@ -51,7 +53,7 @@ export default class PageMetaData {
 		const attrs = {text: value};
 
 		const title = new Title(
-			SSR ? ssrEngine : csrTitleEngine,
+			SSR ? ssrEngine : domTitleEngine,
 			attrs
 		);
 
@@ -74,7 +76,7 @@ export default class PageMetaData {
 		const attrs = {name: 'description', content: value};
 
 		const description = new Meta(
-			SSR ? ssrEngine : csrEngine,
+			SSR ? ssrEngine : domEngine,
 			attrs
 		);
 
@@ -106,7 +108,7 @@ export default class PageMetaData {
 	 */
 	addLink(attrs: LinkAttributes): void {
 		const link = new Link(
-			SSR ? ssrEngine : csrEngine,
+			SSR ? ssrEngine : domEngine,
 			attrs
 		);
 
@@ -145,11 +147,11 @@ export default class PageMetaData {
 	 */
 	setCanonicalLink(pathname?: string, query: string = this.location.search): void {
 		const
-			href = concatURLs(this.location.origin, pathname) + query,
+			href = (isAbsURL.test(pathname ?? '') ? pathname : concatURLs(this.location.origin, pathname)) + query,
 			attrs = {rel: 'canonical', href};
 
 		const link = new Link(
-			SSR ? ssrEngine : csrEngine,
+			SSR ? ssrEngine : domEngine,
 			attrs
 		);
 
@@ -169,7 +171,7 @@ export default class PageMetaData {
 	 */
 	addMeta(attrs: MetaAttributes): void {
 		const meta = new Meta(
-			SSR ? ssrEngine : csrEngine,
+			SSR ? ssrEngine : domEngine,
 			attrs
 		);
 
