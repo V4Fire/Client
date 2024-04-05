@@ -506,7 +506,7 @@ See [[bDynamicPage]] for more information.
 
 ### pageMetaData
 
-A module for manipulating page metadata, such as the page title or description.
+An API for managing the meta information of a page, such as the title, description, and other meta tags.
 
 ```js
 this.r.pageMetaData.title = 'Example';

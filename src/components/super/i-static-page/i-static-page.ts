@@ -108,6 +108,14 @@ export default abstract class iStaticPage extends iPage {
 		return this.field.get('route.meta.name');
 	}
 
+	/**
+	 * An API for managing the meta information of a page,
+	 * such as the title, description, and other meta tags
+	 */
+	get pageMetaData(): PageMetaData {
+		return this.r.remoteState.pageMetaData;
+	}
+
 	@computed()
 	override get route(): CanUndef<this['CurrentPage']> {
 		return this.field.get('routeStore');
@@ -127,13 +135,6 @@ export default abstract class iStaticPage extends iPage {
 	override get randomGenerator(): IterableIterator<number> {
 		this[$$.randomGenerator] ??= new Xor128(19881989);
 		return this[$$.randomGenerator];
-	}
-
-	/**
-	 * A module for manipulating page metadata, such as the page title or description
-	 */
-	get pageMetaData(): PageMetaData {
-		return this.r.remoteState.pageMetaData;
 	}
 
 	/**
