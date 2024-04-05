@@ -16,8 +16,8 @@ import { createCookieStore } from 'core/cookies';
 initApp('p-v4-components-demo', {
   location: new URL('https://example.com/user/12345'),
   cookies: createCookieStore('id=1')
-}).then(({content: renderedHTML, styles: inlinedStyles}) => {
-  console.log(renderedHTML, inlinedStyles);
+}).then(({content: renderedHTML, styles: inlinedStyles, state}) => {
+  console.log(renderedHTML, inlinedStyles, state);
 });
 ```
 
@@ -52,6 +52,9 @@ import type * as net from 'core/net';
 import type { Session } from 'core/session';
 import type { Cookies } from 'core/cookies';
 
+import type ThemeManager from 'core/theme-manager';
+import type PageMetaData from 'core/page-meta-data';
+
 import type { Experiments } from 'core/abt';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
@@ -77,14 +80,19 @@ export interface State {
   cookies: Cookies;
 
   /**
-   * An API for managing the appearance themes of applications
+   * An API for working with the target document's URL
+   */
+  location: URL;
+
+  /**
+   * An API for managing app themes from the Design System
    */
   theme: ThemeManager;
 
   /**
-   * An API for working with the target document's URL
+   * An API for working with the meta information of the current page
    */
-  location: URL;
+  pageMetaData: PageMetaData;
 
   /**
    * True, if the application is connected to the Internet

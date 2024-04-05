@@ -9,7 +9,7 @@ For example, initializing a user session or experiment.
 Typically, explicit application initialization is required when organizing SSR.
 We call the initialization function and pass the necessary environment parameters to it.
 In this case, the function will return a promise with values needed to be delivered to the client — this is
-a rendered string with markup and the necessary CSS styles.
+a rendered string with markup, the necessary CSS styles and the application state.
 
 ```typescript
 import { initApp } from 'core/init';
@@ -18,8 +18,8 @@ import { createCookieStore } from 'core/cookies';
 initApp('p-v4-components-demo', {
   location: new URL('https://example.com/user/12345'),
   cookies: createCookieStore('id=1')
-}).then(({content: renderedHTML, styles: inlinedStyles}) => {
-  console.log(renderedHTML, inlinedStyles);
+}).then(({content: renderedHTML, styles: inlinedStyles, state}) => {
+  console.log(renderedHTML, inlinedStyles, state);
 });
 ```
 
@@ -35,8 +35,8 @@ import { createCookieStore } from 'core/cookies';
 initApp('p-v4-components-demo', {
   location: new URL('https://example.com/user/12345'),
   cookies: createCookieStore('id=1')
-}).then(({content: renderedHTML, styles: inlinedStyles}) => {
-  console.log(renderedHTML, inlinedStyles);
+}).then(({content: renderedHTML, styles: inlinedStyles, state}) => {
+  console.log(renderedHTML, inlinedStyles, state);
 });
 ```
 
@@ -97,6 +97,9 @@ import type * as net from 'core/net';
 import type { Session } from 'core/session';
 import type { CookieStore } from 'core/cookies';
 
+import type ThemeManager from 'core/theme-manager';
+import type PageMetaData from 'core/page-meta-data';
+
 import type { Experiments } from 'core/abt';
 import type { InitialRoute } from 'core/router';
 
@@ -125,6 +128,16 @@ interface InitAppOptions {
    * An API for working with the target document's URL
    */
   location: URL;
+
+  /**
+   * An API for managing app themes from the Design System
+   */
+  theme: ThemeManager;
+
+  /**
+   * An API for working with the meta information of the current page
+   */
+  pageMetaData: PageMetaData;
 
   /**
    * An API to work with a network, such as testing of the network connection, etc.

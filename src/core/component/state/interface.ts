@@ -15,8 +15,8 @@ import type { Cookies } from 'core/cookies';
 import type { Experiments } from 'core/abt';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
-import type PageMetaData from 'core/page-meta-data';
 import type ThemeManager from 'core/theme-manager';
+import type PageMetaData from 'core/page-meta-data';
 
 export interface State {
 	/**
@@ -40,14 +40,14 @@ export interface State {
 	cookies: Cookies;
 
 	/**
-	 * An API for managing app themes from the Design System
-	 */
-	theme: ThemeManager;
-
-	/**
 	 * An API for working with the target document's URL
 	 */
 	location: URL;
+
+	/**
+	 * An API for managing app themes from the Design System
+	 */
+	theme: ThemeManager;
 
 	/**
 	 * An API for working with the meta information of the current page
