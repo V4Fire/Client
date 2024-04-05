@@ -47,7 +47,7 @@ export default class bExample extends iBlock {
 
 ### How To Use It With SSR?
 
-An instance of the theme manager needs to be explicitly instantiated when the application is created.
+An instance of the ThemeManager can be explicitly instantiated when the application is created.
 
 ```typescript
 import express from 'express';
