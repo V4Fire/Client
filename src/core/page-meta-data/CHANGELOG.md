@@ -9,7 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v?.??.0 (2024-03-15)
+## v4.0.0-beta.?? (2023-??-??)
+
+#### :boom: Breaking Change
+
+* Review API
+* Module moved to `core/theme-manager`
 
 #### :rocket: New Feature
 

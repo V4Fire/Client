@@ -13,6 +13,7 @@ Changelog
 
 #### :boom: Breaking Change
 
+* Review API
 * Module moved to `core/theme-manager`
 
 #### :rocket: New Feature
