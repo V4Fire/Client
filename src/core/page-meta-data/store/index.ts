@@ -16,17 +16,17 @@ export default class Store {
 	/**
 	 * Page title
 	 */
-	title?: Title;
+	title: CanNull<Title> = null;
 
 	/**
 	 * Page description
 	 */
-	description?: Meta;
+	description: CanNull<Meta> = null;
 
 	/**
 	 * Page canonical link
 	 */
-	canonical?: Link;
+	canonical: CanNull<Link> = null;
 
 	/**
 	 * Open Graph elements
@@ -77,7 +77,7 @@ export default class Store {
 	/**
 	 * Returns the page title
 	 */
-	getTitle(): CanUndef<Title> {
+	getTitle(): CanNull<Title> {
 		return this.title;
 	}
 
@@ -100,7 +100,7 @@ export default class Store {
 	/**
 	 * Returns the page description
 	 */
-	getDescription(): CanUndef<Meta> {
+	getDescription(): CanNull<Meta> {
 		return this.description;
 	}
 
@@ -123,7 +123,7 @@ export default class Store {
 	/**
 	 * Returns the canonical link
 	 */
-	getCanonical(): CanUndef<Link> {
+	getCanonical(): CanNull<Link> {
 		return this.canonical;
 	}
 
@@ -146,10 +146,10 @@ export default class Store {
 	/**
 	 * Removes the page canonical link
 	 */
-	removeCanonical(): CanUndef<Link> {
+	removeCanonical(): CanNull<Link> {
 		const {canonical} = this;
 
-		this.canonical = undefined;
+		this.canonical = null;
 		canonical?.remove();
 
 		return canonical;

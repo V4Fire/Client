@@ -216,7 +216,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-### removeLink
+### removeLinks
 
 Removes link elements with the given attributes from the current page.
 
@@ -226,7 +226,7 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   updated() {
-    this.r.pageMetaData.removeLink({rel: 'canonical', href: 'https://example.com'});
+    this.r.pageMetaData.removeLinks({rel: 'canonical', href: 'https://example.com'});
   }
 }
 ```
@@ -308,7 +308,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-### removeMeta
+### removeMetas
 
 Removes meta-elements with the given attributes from the page.
 
@@ -318,7 +318,7 @@ import iBlock, { component, prop, field } from 'components/super/i-block/i-block
 @component()
 export default class bExample extends iBlock {
   updated() {
-    this.r.pageMetaData.removeMeta({name: 'robots', content: 'noindex'});
+    this.r.pageMetaData.removeMetas({name: 'robots', content: 'noindex'});
   }
 }
 ```

@@ -133,7 +133,7 @@ export class PageMetaData {
 	 * Removes link elements with the given attributes from the current page
 	 * @param attrs - attributes of the removed elements
 	 */
-	removeLink(attrs: MetaAttributes): void {
+	removeLinks(attrs: MetaAttributes): void {
 		this.store.removeLinks(attrs);
 	}
 
@@ -141,16 +141,15 @@ export class PageMetaData {
 	 * Searches for link elements with the given attributes and returns them
 	 * @param attrs - attributes of the searched elements
 	 */
-	findLinks(attrs: LinkAttributes): Array<HTMLLinkElement | Link> {
-		const links = this.store.findLinks(attrs);
-		return links.map((el) => el.getElement());
+	findLinks(attrs: LinkAttributes): Link[] {
+		return this.store.findLinks(attrs);
 	}
 
 	/**
 	 * Returns a canonical link `<link rel="canonical" />`
 	 */
-	getCanonicalLink(): CanUndef<HTMLLinkElement | Link> {
-		return this.store.getCanonical()?.getElement();
+	getCanonicalLink(): CanNull<Link> {
+		return this.store.getCanonical();
 	}
 
 	/**
@@ -196,7 +195,7 @@ export class PageMetaData {
 	 * Removes meta-elements with the given attributes from the page
 	 * @param attrs - attributes of the removed elements
 	 */
-	removeMeta(attrs: MetaAttributes): void {
+	removeMetas(attrs: MetaAttributes): void {
 		this.store.removeMetas(attrs);
 	}
 
@@ -204,9 +203,8 @@ export class PageMetaData {
 	 * Searches for meta elements with the given attributes and returns them
 	 * @param attrs - attributes of the searched elements
 	 */
-	findMetas(attrs: MetaAttributes): Array<HTMLMetaElement | Meta> {
-		const metas = this.store.findMetas(attrs);
-		return metas.map((el) => el.getElement());
+	findMetas(attrs: MetaAttributes): Meta[] {
+		return this.store.findMetas(attrs);
 	}
 
 	/**
