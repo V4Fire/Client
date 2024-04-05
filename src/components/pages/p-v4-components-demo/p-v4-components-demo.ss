@@ -11,3 +11,16 @@
 - include 'components/super/i-static-page/i-static-page.component.ss'|b as placeholder
 
 - template index() extends ['i-static-page.component'].index
+	- block body
+		< .
+			< b-button @click:component = destroyDummy
+				Destroy b-dummy
+
+		< .
+			< b-button @click:component = self.globalEmitter.emit('reset.load.silence')
+				Reload all components
+
+		< hr
+
+		< b-dummy ref = dummy
+

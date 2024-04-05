@@ -1,5 +1,5 @@
 {
-  "hash": "ff36220f58f3461dcfe70b0dc9e204ac3514c46e11a5b0962eef65d4cc6f16f8",
+  "hash": "f292ff1dc2ed6f17ee4ae758b468db5c1beb776865ce6d6e3b0ccd85164468d4",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -2389,7 +2389,8 @@
               "core/browser",
               "core/cookies",
               "core/html",
-              "models/modules/session"
+              "models/modules/session",
+              "models/dummy"
             ]
           },
           "name": "p-v4-components-demo",
@@ -2433,7 +2434,8 @@
             "core/browser",
             "core/cookies",
             "core/html",
-            "models/modules/session"
+            "models/modules/session",
+            "models/dummy"
           ],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -2449,6 +2451,7 @@
               "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
+              "models/dummy",
               "models/modules/session"
             ]
           },
@@ -2466,6 +2469,7 @@
               "core/html",
               "core/router/engines/browser-history",
               "core/router/engines/in-memory",
+              "models/dummy",
               "models/modules/session"
             ]
           },
