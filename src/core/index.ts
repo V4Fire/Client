@@ -23,6 +23,9 @@ import SessionEngine from 'core/session/engines';
 export * as cookies from 'core/cookies';
 export * as session from 'core/session';
 
+export { PageMetaData };
+export * as pageMetaData from 'core/page-meta-data';
+
 export { ThemeManager };
 export * as themeManager from 'core/theme-manager';
 

@@ -44,6 +44,37 @@ export default class Store {
 	links: Link[] = [];
 
 	/**
+	 * Returns an iterator over the elements from the store
+	 */
+	[Symbol.iterator](): IterableIterator<AbstractElement> {
+		const iter = traverse(Object.values(this));
+
+		return {
+			[Symbol.iterator]() {
+				return this;
+			},
+
+			next: iter.next.bind(iter)
+		};
+
+		function* traverse(arr: Array<CanArray<AbstractElement> | StrictDictionary<CanArray<AbstractElement>>>) {
+			for (let i = 0; i < arr.length; i++) {
+				const val = arr[i];
+
+				if (val instanceof AbstractElement) {
+					yield val;
+
+				} else if (Object.isArray(val)) {
+					yield* val;
+
+				} else {
+					yield* traverse(Object.values(val));
+				}
+			}
+		}
+	}
+
+	/**
 	 * Returns the page title
 	 */
 	getTitle(): CanUndef<Title> {
@@ -215,36 +246,5 @@ export default class Store {
 	 */
 	clear(): void {
 		Object.assign(this, new Store());
-	}
-
-	/**
-	 * Returns an iterator over the elements from the store
-	 */
-	[Symbol.iterator](): IterableIterator<AbstractElement> {
-		const iter = traverse(Object.values(this));
-
-		return {
-			[Symbol.iterator]() {
-				return this;
-			},
-
-			next: iter.next.bind(iter)
-		};
-
-		function* traverse(arr: Array<CanArray<AbstractElement> | StrictDictionary<CanArray<AbstractElement>>>) {
-			for (let i = 0; i < arr.length; i++) {
-				const val = arr[i];
-
-				if (val instanceof AbstractElement) {
-					yield val;
-
-				} else if (Object.isArray(val)) {
-					yield* val;
-
-				} else {
-					yield* traverse(Object.values(val));
-				}
-			}
-		}
 	}
 }

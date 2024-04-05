@@ -29,10 +29,10 @@ import {
 
 export class PageMetaData {
 	/**
-	 * All added meta elements
+	 * An array of added meta-elements
 	 */
 	get elements(): AbstractElement[] {
-		return [...this.store];
+		return [...this];
 	}
 
 	/**
@@ -98,6 +98,22 @@ export class PageMetaData {
 	constructor(location: URL, elements: AbstractElementProperties[] = []) {
 		this.location = location;
 		this.restoreElements(elements);
+	}
+
+	/**
+	 * Returns an iterator over the added elements
+	 */
+	[Symbol.iterator](): IterableIterator<AbstractElement> {
+		return this.store[Symbol.iterator]();
+	}
+
+	/**
+	 * Renders a list of added elements and returns the result.
+	 * For SSR, this will be an HTML string.
+	 */
+	render(): HTMLElement[] | string {
+		const res = this.elements.map((el) => el.render());
+		return SSR ? res.join('\n') : '';
 	}
 
 	/**
