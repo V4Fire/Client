@@ -17,6 +17,11 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Updated the `ssrRendering` prop usage mechanism `components/super/i-block`
 
+#### :bug: Bug Fix
+
+* Set the component's hydration store if only the component is in the context of SSR
+  and should render it's content during the server-side rendering `components/friends/state`
+
 ## v4.0.0-beta.82 (2024-04-02)
 
 #### :bug: Bug Fix

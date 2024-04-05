@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.83 (2024-04-05)
+
+#### :bug: Bug Fix
+
+* Set the component's hydration store if only the component is in the context of SSR
+  and should render it's content during the server-side rendering
+
 ## v4.0.0-beta.43 (2023-11-26)
 
 #### :bug: Bug Fix
