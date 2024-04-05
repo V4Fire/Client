@@ -79,7 +79,7 @@ export abstract class AbstractElement<T extends HTMLElement = HTMLElement> {
 	 * Returns true, if the given element has the same attributes as the current one
 	 *
 	 * @param tag
-	 * @param attrs
+	 * @param [attrs]
 	 */
 	is(tag: string, attrs: Dictionary<string> = {}): boolean {
 		return tag === this.tag && Object.keys(attrs).every((key) => attrs[key] === this.attrs[key]);
