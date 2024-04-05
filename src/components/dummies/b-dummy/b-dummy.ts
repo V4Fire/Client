@@ -57,11 +57,13 @@ class bDummy extends iData {
 			remoteProvider.requestParams.get = {id: 1};
 		});
 
-		globalEmitter.on('reset.load.silence', () => {
+		globalEmitter.prependListener('reset.load.silence', () => {
 			if (remoteProvider != null && remoteProvider.hook !== 'destroyed') {
+				const {componentName, componentId, hook} = remoteProvider;
 				let {id} = <{id: number}>remoteProvider.requestParams.get;
-
 				remoteProvider.requestParams.get = {id: ++id <= 2 ? id : 1};
+
+				console.log(Date.now(), 'updating request params', `${componentName}:${componentId}`, `hook ${hook}`, 'request params', JSON.stringify(remoteProvider.requestParams));
 			}
 		});
 	}
