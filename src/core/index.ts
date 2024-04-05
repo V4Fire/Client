@@ -14,6 +14,7 @@ import initApp from 'core/init';
 import * as cookies from 'core/cookies';
 import CookieStorage from 'core/kv-storage/engines/cookie';
 
+import PageMetaData, { AbstractElementProperties } from 'core/page-meta-data';
 import ThemeManager, { SystemThemeExtractorWeb } from 'core/theme-manager';
 
 import * as session from 'core/session';
@@ -47,7 +48,9 @@ if (SSR) {
 
 				cookies: document,
 				session: session.from(SessionEngine),
+
 				location: getLocationAPI(),
+				pageMetaData: new PageMetaData(getLocationAPI(), getPageMetaElements()),
 
 				theme: new ThemeManager(
 					{
@@ -62,6 +65,24 @@ if (SSR) {
 
 				targetToMount
 			});
+
+			function getPageMetaElements(): AbstractElementProperties[] {
+				return [
+					{tag: 'title', attrs: {text: document.title}},
+					...getDescriptor(document.head.querySelectorAll('meta')),
+					...getDescriptor(document.head.querySelectorAll('link'))
+				];
+
+				function getDescriptor(list: NodeListOf<HTMLElement>) {
+					return Array.from(list).map(({tagName, attributes}) => ({
+						tag: tagName.toLowerCase(),
+						attrs: Array.from(attributes).reduce((dict, {nodeName, nodeValue}) => {
+							dict[nodeName] = nodeValue;
+							return dict;
+						}, {})
+					}));
+				}
+			}
 
 			function getLocationAPI(): URL {
 				Object.defineProperties(location, {
