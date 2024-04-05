@@ -23,11 +23,6 @@
 		< template v-else
 			+= self.slot()
 
-			< b-remote-provider &
-				:dataProvider = 'Dummy' |
-				ref = remoteProvider |
-				@hook:updated = console.log('remote provider updated') |
-				@hook:destroyed = console.log('remote provider destroyed')
-			.
-				< template #default = {db}
-					{{ db }}
+			< . v-async-target
+				< template v-for = _ in asyncRender.iterate(1)
+					< template v-render = vdom.getRenderFn('b-dummy-box/')({})

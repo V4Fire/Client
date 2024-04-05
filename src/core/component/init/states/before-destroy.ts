@@ -21,6 +21,8 @@ export function beforeDestroyState(component: ComponentInterface): void {
 		return;
 	}
 
+	console.log(Date.now(), `destroyed ${component.componentName}:${component.componentId}`);
+
 	runHook('beforeDestroy', component).catch(stderr);
 	callMethodFromComponent(component, 'beforeDestroy');
 

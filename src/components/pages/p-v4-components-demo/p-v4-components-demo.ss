@@ -22,5 +22,9 @@
 
 		< hr
 
-		< b-dummy ref = dummy
+		< b-virtual-scroll &
+			ref = dummy |
+			:item = 'b-dummy' |
+			:items = [{}]
+		.
 

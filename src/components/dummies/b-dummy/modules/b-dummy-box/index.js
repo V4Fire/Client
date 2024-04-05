@@ -6,6 +6,6 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-package('b-dummy')
-	.extends('i-data')
-	.dependencies('b-dummy-box');
+package('b-dummy-box')
+	.extends('i-block')
+	.dependencies('b-remote-provider');

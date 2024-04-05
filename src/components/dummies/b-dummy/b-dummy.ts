@@ -14,7 +14,7 @@
 import type { VNode } from 'core/component/engines';
 
 import type iBlock from 'components/super/i-block/i-block';
-import iData, { component, field } from 'components/super/i-data/i-data';
+import iData, { component, field, globalEmitter } from 'components/super/i-data/i-data';
 import type bRemoteProvider from 'components/base/b-remote-provider/b-remote-provider';
 
 export * from 'components/super/i-data/i-data';
@@ -50,12 +50,19 @@ class bDummy extends iData {
 	};
 
 	protected mounted(): void {
-		this.$refs.remoteProvider.requestParams.get = {id: 1};
+		let remoteProvider: CanNull<bRemoteProvider> = null;
 
-		this.globalEmitter.on('reset.load.silence', () => {
-			let {id} = <{id: number}>this.$refs.remoteProvider.requestParams.get;
+		void this.waitRef<bRemoteProvider>('remoteProvider').then((r) => {
+			remoteProvider = r;
+			remoteProvider.requestParams.get = {id: 1};
+		});
 
-			this.$refs.remoteProvider.requestParams.get = {id: ++id <= 2 ? id : 1};
+		globalEmitter.on('reset.load.silence', () => {
+			if (remoteProvider != null && remoteProvider.hook !== 'destroyed') {
+				let {id} = <{id: number}>remoteProvider.requestParams.get;
+
+				remoteProvider.requestParams.get = {id: ++id <= 2 ? id : 1};
+			}
 		});
 	}
 }

@@ -13,7 +13,7 @@
 
 import iStaticPage, { component, prop, field, system } from 'components/super/i-static-page/i-static-page';
 import VDOM, * as VDOMAPI from 'components/friends/vdom';
-import type bDummy from 'components/dummies/b-dummy/b-dummy';
+import type iBlock from 'components/super/i-block/i-block';
 
 export * from 'components/super/i-static-page/i-static-page';
 
@@ -48,7 +48,7 @@ export default class pV4ComponentsDemo extends iStaticPage {
 	someField: unknown = 'foo';
 
 	protected override readonly $refs!: iStaticPage['$refs'] & {
-		dummy?: bDummy;
+		dummy?: iBlock;
 	};
 
 	protected beforeCreate(): void {
