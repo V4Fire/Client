@@ -1,5 +1,5 @@
 {
-  "hash": "4f21d8924c8a188aca37e2c66780dd4472ae1a98d294834b38bbc52a81b601e5",
+  "hash": "f292ff1dc2ed6f17ee4ae758b468db5c1beb776865ce6d6e3b0ccd85164468d4",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -150,16 +150,12 @@
           "declaration": {
             "name": "b-dummy",
             "parent": "i-data",
-            "dependencies": [
-              "b-dummy-box"
-            ],
+            "dependencies": [],
             "libs": []
           },
           "name": "b-dummy",
           "parent": "i-data",
-          "dependencies": [
-            "b-dummy-box"
-          ],
+          "dependencies": [],
           "libs": [],
           "resolvedLibs": {
             "%data": "%data:Set",
@@ -176,42 +172,6 @@
             "src/components/dummies/b-dummy/b-dummy.styl"
           ],
           "tpl": "src/components/dummies/b-dummy/b-dummy.ss",
-          "etpl": null
-        }
-      ],
-      [
-        "b-dummy-box",
-        {
-          "index": "src/components/dummies/b-dummy/modules/b-dummy-box/index.js",
-          "declaration": {
-            "name": "b-dummy-box",
-            "parent": "i-block",
-            "dependencies": [
-              "b-remote-provider"
-            ],
-            "libs": []
-          },
-          "name": "b-dummy-box",
-          "parent": "i-block",
-          "dependencies": [
-            "b-remote-provider"
-          ],
-          "libs": [],
-          "resolvedLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "resolvedOwnLibs": {
-            "%data": "%data:Set",
-            "%data:Set": []
-          },
-          "type": "block",
-          "mixin": false,
-          "logic": null,
-          "styles": [
-            "src/components/dummies/b-dummy/modules/b-dummy-box/b-dummy-box.styl"
-          ],
-          "tpl": "src/components/dummies/b-dummy/modules/b-dummy-box/b-dummy-box.ss",
           "etpl": null
         }
       ],

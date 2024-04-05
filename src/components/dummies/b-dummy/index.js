@@ -7,5 +7,4 @@
  */
 
 package('b-dummy')
-	.extends('i-data')
-	.dependencies('b-dummy-box');
+	.extends('i-data');
