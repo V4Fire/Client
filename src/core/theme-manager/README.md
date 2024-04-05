@@ -14,7 +14,7 @@ It is necessary to create an instance of the ThemeManager class and set in its s
 import { from } from 'core/cookies';
 import { CookieEngine } from 'core/kv-storage/engines/cookie';
 
-import { ThemeManager, SystemThemeExtractorWeb } from 'core/theme-manager';
+import ThemeManager, { SystemThemeExtractorWeb } from 'core/theme-manager';
 
 const themeManager = new ThemeManager({
   themeStorageEngine: new CookieEngine('v4ss', {cookies: from(document)}),
@@ -57,7 +57,7 @@ import { initApp } from 'core/init';
 import { from, createCookieStore } from 'core/cookies';
 import { CookieEngine } from 'core/kv-storage/engines/cookie';
 
-import { ThemeManager, SystemThemeExtractorSSR } from 'core/theme-manager';
+import ThemeManager, { SystemThemeExtractorSSR } from 'core/theme-manager';
 
 const app = express();
 const port = 3000;

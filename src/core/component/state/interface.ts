@@ -16,7 +16,7 @@ import type { Experiments } from 'core/abt';
 import type { InitialRoute, AppliedRoute } from 'core/router';
 
 import type PageMetaData from 'core/page-meta-data';
-import type { ThemeManager } from 'core/theme-manager';
+import type ThemeManager from 'core/theme-manager';
 
 export interface State {
 	/**

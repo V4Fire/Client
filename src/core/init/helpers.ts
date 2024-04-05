@@ -11,8 +11,8 @@ import watch from 'core/object/watch';
 
 import CookieStorage from 'core/kv-storage/engines/cookie';
 
-import { SystemThemeExtractorStub, ThemeManager } from 'core/theme-manager';
 import PageMetaData from 'core/page-meta-data';
+import ThemeManager, { SystemThemeExtractorStub } from 'core/theme-manager';
 
 import * as net from 'core/net';
 import * as cookies from 'core/cookies';
