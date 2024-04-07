@@ -11,12 +11,94 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.82 (2024-04-02)
+
+#### :bug: Bug Fix
+
+* Fixed crash on undefined value in renderList source `AsyncRender`
+
+## 4.0.0-beta.81 (2024-04-01)
+
+#### :bug: Bug Fix
+
+* Fixed an error with incorrect handling of errors caused by the Async wrapper `directives/image`
+* Passed `remoteState` to the adapter `core/abt`
+* Fixed rendering of nested asynchronous tasks `AsyncRender`
+* Fixed an error with canceling handlers added with `prepend` `core/component/event`
+
+## 4.0.0-beta.80 (2024-03-29)
+
+#### :boom: Breaking Change
+
+* Now, the `component` property of the `ComponentObject` always returns a promise.
+  It also means that the `component` property will not be cached anymore,
+  but will be calculated every time it is accessed `tests/helpers/component-object`
+
+#### :rocket: New Feature
+
+* The ComponentObject can now accept a third argument — a component selector.
+  If the selector is passed, it means there is no need to call pick or build,
+  as the component will be taken from the page using the passed selector `tests/helpers/component-object`
+
+## 4.0.0-beta.79 (2024-03-29)
+
+#### :house: Internal
+
+* Fixed the signature of the i18n factory passed to the data provider's parameters
+
+## 4.0.0-beta.78 (2024-03-29)
+
+#### :bug: Bug Fix
+
+* Fixed binding of the data provider to the component during initialization
+* Fixed an issue with the event emitter being wrapped unnecessarily into async wrapper,
+  which was causing the :suspend flag and mute/unmute functions not to work correctly during deactivation/activation
+  of components `src/core/component/event/component`. [see https://github.com/V4Fire/Client/pull/1199](https://github.com/V4Fire/Client/pull/1199)
+
+## v4.0.0-beta.77 (2024-03-27)
+
+#### :rocket: New Feature
+
+* Implemented a new engine for translate keys `lang/engines`
+
+#### :house: Internal
+
+* Refactored the build ssr: all code has now been bundled into one file `build/graph`
+* Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
+
+#### :bug: Bug Fix
+
+* Resolved an issue with the progress plugin's view in relation to empty builds
+* Corrected the theme-manager to function properly in server-side rendering (ssr)
+* Added synchronous rendering of the first chunk using `v-for`. This is because SSR does not have access to the DOM API required for `vdom`. Therefore, we leverage Vue functionality to render the first chunk equally for SSR and CSR. `components/base/b-virtual-scroll-new`
+
+## v4.0.0-beta.76 (2023-03-25)
+
+#### :boom: Breaking Change
+
+* The `stopPropagation` for the native click event has been removed.
+  Now, native click events bubble up the DOM tree `bButton`.
+
+#### :house: Internal
+
+* Changed the API usage of the `addToPrototype`
+
+## 4.0.0-beta.75 (2024-03-22)
+
+#### :rocket: New Feature
+
+* Added the ability to add event handlers before the others `iBlock`
+
+#### :house: Internal
+
+* Removed the restriction on loading styles if a template is loaded `build`
+
 ## 4.0.0-beta.74 (2024-03-20)
 
 #### :house: Internal
 
 * Hardcode the ID during the client rendering in data provider's options.
-This is a temporary solution until PR#1171 is merged `iBlockProviders`
+  This is a temporary solution until PR#1171 is merged `iBlockProviders`
 
 ## 4.0.0-beta.73 (2024-03-19)
 
@@ -174,8 +256,8 @@ All this will help avoid situations when for some reason the `IntersectionObserv
 #### :house: Internal
 
 * Added re-export of modules from `tests/helpers`:
-- Request
-- RequestInterceptor
+ - Request
+ - RequestInterceptor
  - Mock
 
 * Removed bad import of async module from `tests/helpers/network/interceptor`

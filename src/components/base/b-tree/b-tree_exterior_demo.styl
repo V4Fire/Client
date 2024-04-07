@@ -1,0 +1,32 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
+b-tree_exterior_demo extends b-tree
+	/exterior &__item-wrapper
+		display flex
+
+	/exterior &__marker
+		width 16px
+
+	/exterior &__fold:before
+		content "-"
+		display block
+
+		text-align center
+
+	/exterior &__node_folded_true &__fold:before
+		content "+"
+
+	/exterior &__node_folded_true &__children
+		display none
+
+	/exterior &__node_level_1
+		margin-left 8px
+
+	/exterior &__node_level_2
+		margin-left 16px

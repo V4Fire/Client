@@ -6,7 +6,7 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-/* eslint-disable @typescript-eslint/no-var-requires, import/first */
+/* eslint-disable import/first */
 import type { LangPacs } from '@v4fire/core/lang';
 
 // eslint-disable-next-line import/no-mutable-exports

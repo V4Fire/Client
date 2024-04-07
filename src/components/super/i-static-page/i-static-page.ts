@@ -19,10 +19,8 @@ import { RestrictedCache } from 'core/cache';
 import { instanceCache } from 'core/data';
 
 import type { AppliedRoute, InitialRoute } from 'core/router';
+import type PageMetaData from 'core/page-meta-data';
 
-import CookieStorage from 'core/kv-storage/engines/cookie';
-
-import { SystemThemeExtractorWeb } from 'components/super/i-static-page/modules/theme';
 import { resetComponents, ComponentResetType } from 'core/component';
 
 import type bRouter from 'components/base/b-router/b-router';
@@ -30,15 +28,11 @@ import type iBlock from 'components/super/i-block/i-block';
 
 import iPage, { component, field, system, computed, hook, watch } from 'components/super/i-page/i-page';
 
-import PageMetaData from 'components/super/i-static-page/modules/page-meta-data';
-import SSRPageMetaData from 'components/super/i-static-page/modules/ssr-page-meta-data';
 import createProviderDataStore, { ProviderDataStore } from 'components/super/i-static-page/modules/provider-data-store';
-import themeManagerFactory, { ThemeManager } from 'components/super/i-static-page/modules/theme';
 
 import type { RootMod } from 'components/super/i-static-page/interface';
 
 export * from 'components/super/i-page/i-page';
-export * from 'components/super/i-static-page/modules/theme';
 
 export { createProviderDataStore };
 export * from 'components/super/i-static-page/modules/provider-data-store';
@@ -76,34 +70,10 @@ export default abstract class iStaticPage extends iPage {
 	readonly CurrentPage!: AppliedRoute<this['PageParams'], this['PageQuery'], this['PageMeta']>;
 
 	/**
-	 * A module for manipulating page metadata, such as the page title or description
-	 */
-	@system<iStaticPage>((o) => SSR ? new SSRPageMetaData(o) : new PageMetaData())
-
-	readonly pageMetaData!: PageMetaData;
-
-	/**
 	 * A module to work with data of data providers globally
 	 */
 	@system(() => SSR ? null : createProviderDataStore(new RestrictedCache(10)))
 	readonly providerDataStore?: ProviderDataStore;
-
-	/**
-	 * A module to manage app themes from the Design System
-	 */
-	@system<iStaticPage>((o) => themeManagerFactory(
-		o,
-		{
-			themeStorageEngine: new CookieStorage('v4ls', {
-				cookies: o.remoteState.cookies,
-				maxAge: 2 ** 31 - 1
-			}),
-
-			systemThemeExtractor: new SystemThemeExtractorWeb(o)
-		}
-	))
-
-	readonly theme: CanUndef<ThemeManager>;
 
 	/**
 	 * True if the current user is authorized
@@ -136,6 +106,14 @@ export default abstract class iStaticPage extends iPage {
 	@computed({cache: true, dependencies: ['route.meta.name']})
 	get activePage(): CanUndef<string> {
 		return this.field.get('route.meta.name');
+	}
+
+	/**
+	 * An API for managing the meta information of a page,
+	 * such as the title, description, and other meta tags
+	 */
+	get pageMetaData(): PageMetaData {
+		return this.r.remoteState.pageMetaData;
 	}
 
 	@computed()

@@ -26,10 +26,11 @@ import type { Module } from 'components/friends/module-loader';
 import type { ConverterCallType } from 'components/friends/state';
 import { readyStatuses } from 'components/super/i-block/modules/activation';
 
-import { field, system, computed, wait, WaitDecoratorOptions } from 'components/super/i-block/decorators';
+import { field, system, computed, wait, hook, WaitDecoratorOptions } from 'components/super/i-block/decorators';
 import type { Stage, ComponentStatus, ComponentStatuses } from 'components/super/i-block/interface';
 
 import iBlockMods from 'components/super/i-block/mods';
+import type { Theme } from 'core/theme-manager';
 
 @component()
 export default abstract class iBlockState extends iBlockMods {
@@ -538,5 +539,19 @@ export default abstract class iBlockState extends iBlockMods {
 	 */
 	protected beforeDestroy(): void {
 		this.componentStatus = 'destroyed';
+	}
+
+	/**
+	 * Initializes the theme modifier and attaches a listener to monitor changes of the theme
+	 */
+	@hook('created')
+	protected initThemeModListener(): void {
+		const theme = this.remoteState.theme.get();
+		void this.setMod('theme', theme.value);
+
+		this.remoteState.theme.emitter.on(
+			'theme.change',
+			(theme: Theme) => this.setMod('theme', theme.value)
+		);
 	}
 }

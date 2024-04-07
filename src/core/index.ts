@@ -11,12 +11,26 @@ import { resolveAfterDOMLoaded } from 'core/event';
 
 import initApp from 'core/init';
 
+import * as cookies from 'core/cookies';
+import CookieStorage from 'core/kv-storage/engines/cookie';
+
+import PageMetaData, { AbstractElementProperties } from 'core/page-meta-data';
+import ThemeManager, { SystemThemeExtractorWeb } from 'core/theme-manager';
+
 import * as session from 'core/session';
 import SessionEngine from 'core/session/engines';
 
 export * as cookies from 'core/cookies';
 export * as session from 'core/session';
+
+export { PageMetaData };
+export * as pageMetaData from 'core/page-meta-data';
+
+export { ThemeManager };
+export * as themeManager from 'core/theme-manager';
+
 export * as kvStorage from 'core/kv-storage';
+export * as CookieEngine from 'core/kv-storage/engines/cookie';
 
 export { initApp };
 
@@ -37,10 +51,41 @@ if (SSR) {
 
 				cookies: document,
 				session: session.from(SessionEngine),
+
 				location: getLocationAPI(),
+				pageMetaData: new PageMetaData(getLocationAPI(), getPageMetaElements()),
+
+				theme: new ThemeManager(
+					{
+						themeStorageEngine: new CookieStorage('v4ls', {
+							cookies: cookies.from(document),
+							maxAge: 2 ** 31 - 1
+						}),
+
+						systemThemeExtractor: new SystemThemeExtractorWeb()
+					}
+				),
 
 				targetToMount
 			});
+
+			function getPageMetaElements(): AbstractElementProperties[] {
+				return [
+					{tag: 'title', attrs: {text: document.title}},
+					...getDescriptor(document.head.querySelectorAll('meta')),
+					...getDescriptor(document.head.querySelectorAll('link'))
+				];
+
+				function getDescriptor(list: NodeListOf<HTMLElement>) {
+					return Array.from(list).map(({tagName, attributes}) => ({
+						tag: tagName.toLowerCase(),
+						attrs: Array.from(attributes).reduce((dict, {nodeName, nodeValue}) => {
+							dict[nodeName] = nodeValue;
+							return dict;
+						}, {})
+					}));
+				}
+			}
 
 			function getLocationAPI(): URL {
 				Object.defineProperties(location, {

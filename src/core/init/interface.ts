@@ -18,6 +18,7 @@ export interface AppSSR {
 	content: string;
 	state: State;
 	styles: string;
+	state: State;
 }
 
 export type App = Element | AppSSR;
@@ -46,6 +47,16 @@ export type InitAppOptions = CreateAppOptions & Overwrite<State, {
 	 * A store of application cookies
 	 */
 	cookies: CookieStore;
+
+	/**
+	 * An API for managing app themes from the Design System
+	 */
+	theme?: State['theme'];
+
+	/**
+	 * An API for working with the meta information of the current page
+	 */
+	pageMetaData?: State['pageMetaData'];
 
 	/**
 	 * The initial route for initializing the router.

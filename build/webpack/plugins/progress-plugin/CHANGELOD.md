@@ -9,9 +9,9 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-??-?)
+## v4.0.0-beta.77 (2024-03-27)
 
-#### :house:  Internal
+#### :house: Internal
 
 * Replaced the progress plugin's total time log with measure-loader `build/webpack/plugins/progress-plugin`
 

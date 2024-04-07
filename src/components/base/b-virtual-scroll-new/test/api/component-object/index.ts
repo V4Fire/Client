@@ -49,7 +49,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 * {@link bVirtualScrollNew.reload}
 	 */
 	reload(): Promise<void> {
-		return this.component.evaluate((ctx) => ctx.reload());
+		return this.evaluate((ctx) => ctx.reload());
 	}
 
 	/**
@@ -57,7 +57,7 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 * {@link bVirtualScrollNew.getVirtualScrollState}
 	 */
 	getVirtualScrollState(): Promise<VirtualScrollState> {
-		return this.component.evaluate((ctx) => ctx.getVirtualScrollState());
+		return this.evaluate((ctx) => ctx.getVirtualScrollState());
 	}
 
 	/**
@@ -110,14 +110,14 @@ export class VirtualScrollComponentObject extends ComponentObject<bVirtualScroll
 	 * @returns A promise that resolves to the payload of the event, or `undefined`.
 	 */
 	async waitForEvent<PAYLOAD extends unknown>(eventName: string): Promise<CanUndef<PAYLOAD>> {
-		return this.component.evaluate((ctx, [eventName]) => ctx.promisifyOnce(eventName), <const>[eventName]);
+		return this.evaluate((ctx, [eventName]) => ctx.promisifyOnce(eventName), <const>[eventName]);
 	}
 
 	/**
 	 * Waits for the component lifecycle to be done
 	 */
 	async waitForLifecycleDone(): Promise<void> {
-		await this.component.evaluate((ctx) => {
+		await this.evaluate((ctx) => {
 			const state = ctx.getVirtualScrollState();
 
 			if (state.isLifecycleDone) {

@@ -102,10 +102,6 @@ module.exports = async function attachComponentDependencies(str, filePath) {
 			try {
 				decl += `
 	(() => {
-		if (TPLS['${dep}']) {
-			return;
-		}
-
 		requestAnimationFrame(async () => {
 			if (__webpack_component_styles_are_loaded__('${dep}')) {
 				return;

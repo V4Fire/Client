@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.75 (2024-03-22)
+
+#### :house: Internal
+
+* Removed the restriction on loading styles if a template is loaded
+
 ## v3.24.1 (2022-08-19)
 
 #### :rocket: New Feature

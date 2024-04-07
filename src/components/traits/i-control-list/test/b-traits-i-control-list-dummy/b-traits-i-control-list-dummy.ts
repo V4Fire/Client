@@ -45,7 +45,16 @@ class bTraitsIControlListDummy extends iBlock implements iControlList {
 	}
 
 	getControlEvent(opts: Control): string {
-		return opts.component === 'b-file-button' ? 'change' : 'click';
+		switch (opts.component) {
+			case 'b-button':
+				return 'click:component';
+
+			case 'b-file-button':
+				return 'change';
+
+			default:
+				return 'click';
+		}
 	}
 }
 
