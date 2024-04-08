@@ -126,7 +126,7 @@ class bDummy extends iData implements iLockPageScroll, iObserveDOM {
 
 	override get baseMods(): CanUndef<Readonly<ModsNTable>> {
 		return Object.freeze({
-			...super['baseModsGetter'],
+			...super['baseModsGetter'](),
 			foo: 'bar'
 		});
 	}
