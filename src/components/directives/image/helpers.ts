@@ -90,6 +90,9 @@ export function createImgElement(
 				}
 			});
 
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			img.src ??= '';
+
 			return img;
 		},
 
@@ -98,7 +101,7 @@ export function createImgElement(
 				img: VNode = create('img');
 
 			const
-				props = {},
+				props: Dictionary = {},
 				dynamicProps: string[] = [];
 
 			Object.forEach(attrs, (prop, name) => {
@@ -108,8 +111,11 @@ export function createImgElement(
 				}
 			});
 
+			props.src ??= '';
+
 			img.props = props;
 			img.dynamicProps = dynamicProps;
+
 			setVNodePatchFlags(img, 'props', 'styles');
 
 			return img;
