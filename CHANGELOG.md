@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v3.69.1 (2024-04-09)
+
+#### :bug: Bug Fix
+
+* Add super call in `baseMods` getter override `dummies/b-dummy/b-dummy`
+
 ## v3.69.0 (2024-03-29)
 
 #### :boom: Breaking Change
