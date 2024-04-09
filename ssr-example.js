@@ -28,10 +28,14 @@ require('./dist/ssr/std');
 
 const v4app = require('./dist/ssr/p-v4-components-demo');
 
-const express = require('express');
+const
+	fs = require('node:fs'),
+	express = require('express');
 
 const app = express();
 const port = 3000;
+
+app.use('/dist', express.static('dist'));
 
 app.get('/', (req, res) => {
 	v4app
@@ -43,7 +47,13 @@ app.get('/', (req, res) => {
 		})
 
 		.then(({content, styles}) => {
-			res.send(`<style>${styles}</style>${content}`);
+			const html = fs.readFileSync('./dist/client/p-v4-components-demo.html', 'utf8');
+
+			res.send(
+				html
+					.replace(/<!-- SSR -->/, content)
+					.replace(/<!-- STYLES -->/, styles)
+			);
 		});
 });
 
