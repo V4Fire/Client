@@ -39,12 +39,7 @@ app.get('/', (req, res) => {
 			location: new URL('https://example.com/user/12345'),
 
 			cookies: v4app.cookies.createCookieStore(''),
-			session: v4app.session.from(v4app.kvStorage.asyncSessionStorage),
-
-			theme: new v4app.ThemeManager({
-				themeStorageEngine: v4app.CookieEngine.syncLocalStorage,
-				systemThemeExtractor: new v4app.themeManager.SystemThemeExtractorSsr(req.headers)
-			})
+			session: v4app.session.from(v4app.kvStorage.asyncSessionStorage)
 		})
 
 		.then(({content, styles}) => {
