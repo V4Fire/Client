@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v3.69.1 (2024-04-09)
+
+#### :bug: Bug Fix
+
+* Add super call in `baseMods` getter override
+
 ## v3.0.0-rc.199 (2021-06-16)
 
 #### :boom: Breaking Change
