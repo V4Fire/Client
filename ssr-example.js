@@ -24,9 +24,7 @@
    ```
 */
 
-require('./dist/ssr/std');
-
-const v4app = require('./dist/ssr/p-v4-components-demo');
+const v4app = require('./dist/ssr/main');
 
 const
 	fs = require('node:fs'),
