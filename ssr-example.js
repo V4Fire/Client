@@ -49,8 +49,8 @@ app.get('/', (req, res) => {
 
 			res.send(
 				html
-					.replace(/<!-- SSR -->/, content)
-					.replace(/<!-- STYLES -->/, styles)
+					.replace(/<!--SSR-->/, content)
+					.replace(/<!--STYLES-->/, styles)
 			);
 		});
 });
