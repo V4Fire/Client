@@ -15,13 +15,13 @@ export type ModVal = string | boolean | number;
 
 /**
  * Modifier's value types.
- * If a value is wrapped by an array, it interprets as the value by default.
+ * If an array wraps a value, it interprets as the value by default.
  */
 export type ModDeclVal = CanArray<ModVal>;
 
 /**
  * Expanded modifier types with parent reference support.
- * If a value is wrapped by an array, it interprets as the value by default.
+ * If an array wraps a value, it interprets as the value by default.
  */
 export type ExpandedModDeclVal = ModDeclVal | typeof PARENT;
 

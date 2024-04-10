@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :boom: Breaking Change
+
+* The field `locale` has been removed
+
 ## v4.0.0-beta.62 (2024-02-19)
 
 #### :bug: Bug Fix

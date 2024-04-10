@@ -55,7 +55,7 @@ test.describe('<i-page>', () => {
 				pageDescriptionProp: 'Testing page description'
 			});
 
-			await test.expect(target.evaluate(({r}) => r.pageMetaData.description))
+			await test.expect(target.evaluate(({r}) => r.remoteState.pageMetaData.description))
 				.resolves.toBe('Testing page description');
 		}
 	);
@@ -71,7 +71,7 @@ test.describe('<i-page>', () => {
 				pageDescriptionProp: (ctx: iBlock) => ctx.componentName
 			});
 
-			await test.expect(target.evaluate(({r}) => r.pageMetaData.description))
+			await test.expect(target.evaluate(({r}) => r.remoteState.pageMetaData.description))
 				.resolves.toBe('p-v4-dynamic-page1');
 		}
 	);

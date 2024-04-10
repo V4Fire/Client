@@ -39,6 +39,11 @@
 	- ssrRendering = true
 
 	/**
+	 * True if the application needs to be built for SSR
+	 */
+	- SSR = require('@config/config').webpack.ssr
+
+	/**
 	 * Defines the rendering mode of the template.
 	 * For regular components, the default value of `'component'` can be used,
 	 * whereas for templates that are rendered as a separate render function,
@@ -80,8 +85,6 @@
 	 * ```
 	 */
 	- block loadModules(path, opts = {}, content)
-		: SSR = require('@config/config').webpack.ssr
-
 		- if arguments.length < 3
 			? content = opts
 			? opts = {}
@@ -93,8 +96,11 @@
 		.
 
 		- if SSR
-			- if paths.length > 0 || wait
-				? wait = '() => { const {Promise} = global; return new Promise(() => {}); }'
+			- if paths.length > 0
+				? wait = '() => waitComponentStatus("destroyed")'
+
+			- else if wait
+				? wait = '((f) => f == null ? f : () => waitComponentStatus("destroyed"))(' + wait + ')'
 
 		: &
 			filter = (wait ? buble.transform("`" + wait + "`").code : 'undefined')
@@ -125,10 +131,9 @@
 			.
 
 			{{
-				void(moduleLoader.addToBucket(${bucket}, {
+				void(${SSR} ? null : moduleLoader.addToBucket(${bucket}, {
 					id: ${interpolatedId},
-					load: () => (async () => (${filter})?.())().then(() => import('${path}')),
-					ssr: false
+					load: () => (async () => (${filter})?.())().then(() => import('${path}'))
 				}))
 			}}
 
@@ -142,7 +147,7 @@
 				< template v-if = !field.get('ifOnceStore.' + ${renderKey})
 					{{ void(field.set('ifOnceStore.' + ${renderKey}, true)) }}
 
-					< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${bucket}), 1, { &
+					< template v-for = _ in asyncRender.iterate(${SSR} ? 1 : moduleLoader.loadBucket(${bucket}), 1, { &
 						useRaf: true,
 						group: 'module:' + ${renderKey},
 						filter: ${filter}
@@ -150,7 +155,7 @@
 						+= content
 
 			- else
-				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${bucket}), 1, {useRaf: true, filter: ${filter}})
+				< template v-for = _ in asyncRender.iterate(moduleLoader.loadBucket(${SSR} ? 1 : ${bucket}), 1, {useRaf: true, filter: ${filter}})
 					+= content
 
 	/**
@@ -239,7 +244,6 @@
 				< ${teleport ? 'teleport' : '?'} to = ${teleport}
 					< _ v-attrs = rootAttrs | ${rootAttrs|!html}
 						{{ void(vdom.saveRenderContext()) }}
-						{{ void(r.initGlobalEnv()) }}
 
 						/**
 						 * Generates a slot declaration by the specified parameters

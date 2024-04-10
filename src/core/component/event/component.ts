@@ -113,6 +113,20 @@ export function implementEventEmitterAPI(component: object): void {
 		value: getMethod('off')
 	});
 
+	ctx.$async.worker(() => {
+		// We are cleaning memory in a deferred way, because this API may be needed when processing the destroyed hook
+		setTimeout(() => {
+			['$emit', '$on', '$once', '$off'].forEach((key) => {
+				Object.defineProperty(ctx, key, {
+					configurable: true,
+					enumerable: true,
+					writable: false,
+					value: null
+				});
+			});
+		}, 1000);
+	});
+
 	function getMethod(method: 'on' | 'once' | 'off') {
 		return function wrapper(
 			this: unknown,

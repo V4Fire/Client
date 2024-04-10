@@ -12,7 +12,9 @@
  */
 
 import symbolGenerator from 'core/symbol';
+
 import Provider, { providers, instanceCache, ProviderOptions } from 'core/data';
+import { unwrap as unwrapWatcher } from 'core/object/watch';
 
 import { i18nFactory } from 'core/i18n';
 import SyncPromise from 'core/promise/sync';
@@ -88,6 +90,8 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		if (hydrationMode) {
 			this.state.set(hydrationStore.get(this.componentId));
+			Promise.resolve(this.state.initFromStorage()).catch(stderr);
+
 			done();
 			return;
 		}
@@ -299,17 +303,13 @@ export default abstract class iBlockProviders extends iBlockState {
 
 		opts = {
 			...opts,
-
 			i18n: (
 				keysetNameOrNames: CanArray<string>,
 				customLocale?: Language
-			) => i18nFactory(keysetNameOrNames, customLocale ?? remoteState.lang),
+			) => i18nFactory(keysetNameOrNames, customLocale ?? remoteState.locale),
 
-			// Hardcode the id during the client render
-			// because the providers cache must be preserved until the end of the user's session
-			// FIXME: remove this condition after PR#1171 is merged
-			id: SSR ? this.r.appProcessId : 'client',
-			remoteState: this.remoteState
+			id: this.remoteState.appProcessId,
+			remoteState: Object.cast(unwrapWatcher(this.remoteState))
 		};
 
 		let

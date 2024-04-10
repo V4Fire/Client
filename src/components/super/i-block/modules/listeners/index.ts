@@ -42,6 +42,8 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 		state: {needRouterSync}
 	} = ctx;
 
+	$e.once(`destroy.${ctx.remoteState.appProcessId}`, ctx.$destroy.bind(ctx));
+
 	resetListener = Boolean(
 		(resetListener ?? baseInitLoad !== ctx.instance.initLoad) ||
 		(globalName ?? needRouterSync)
@@ -50,8 +52,6 @@ export function initGlobalListeners(component: iBlock, resetListener?: boolean):
 	if (!resetListener) {
 		return;
 	}
-
-	$e.once(`destroy.${ctx.r.appProcessId}`, ctx.$destroy.bind(ctx));
 
 	$e.on('reset.load', waitNextTickForReset(ctx.initLoad.bind(ctx)));
 	$e.on('reset.load.silence', waitNextTickForReset(ctx.reload.bind(ctx)));
