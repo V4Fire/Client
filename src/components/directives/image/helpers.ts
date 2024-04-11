@@ -91,7 +91,7 @@ export function createImgElement(
 			});
 
 			// The "src" is a required attribute for the <img> tag.
-			// If it's not provided, the "onerror" and "onload" listeners not being called, and the image is not rendered.
+			// If it isn't provided, the "onerror" and "onload" listeners won't be called, and the image won't be rendered.
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			img.src ??= '';
 
