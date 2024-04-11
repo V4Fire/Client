@@ -19,6 +19,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives/hel
 
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
 import type { DirectiveParams } from 'components/directives/image/interface';
+import { styles } from '../../../core/component/hydration/const';
 
 export * from 'components/directives/image/interface';
 
@@ -85,6 +86,7 @@ ComponentEngine.directive('image', {
 
 		vnode.type = 'span';
 		vnode.props = vnode.props != null ? mergeProps(vnode.props, props) : props;
+
 		vnode.dynamicProps = Array.union(vnode.dynamicProps ?? [], Object.keys(props));
 
 		if (Object.isTruly(placeholders.preview) && !hasDisplay(vnode.props.style)) {

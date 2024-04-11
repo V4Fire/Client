@@ -1,5 +1,5 @@
 {
-  "hash": "ff36220f58f3461dcfe70b0dc9e204ac3514c46e11a5b0962eef65d4cc6f16f8",
+  "hash": "01163d672cbbf10a8ee06277258f2e105e2b6d85068c23291715625a0647bc33",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -204,6 +204,36 @@
             "src/components/base/b-dynamic-page/b-dynamic-page.styl"
           ],
           "tpl": "src/components/base/b-dynamic-page/b-dynamic-page.ss",
+          "etpl": null
+        }
+      ],
+      [
+        "b-example",
+        {
+          "index": "src/components/pages/b-example/index.js",
+          "declaration": {
+            "name": "b-example",
+            "parent": "i-block",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-example",
+          "parent": "i-block",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/components/pages/b-example/b-example.ts",
+          "styles": [],
+          "tpl": "src/components/pages/b-example/b-example.ss",
           "etpl": null
         }
       ],
@@ -2351,6 +2381,7 @@
             "name": "p-v4-components-demo",
             "parent": "i-static-page",
             "dependencies": [
+              "b-example",
               "b-dummy",
               "b-router",
               "b-dynamic-page",
@@ -2395,6 +2426,7 @@
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
           "dependencies": [
+            "b-example",
             "b-dummy",
             "b-router",
             "b-dynamic-page",

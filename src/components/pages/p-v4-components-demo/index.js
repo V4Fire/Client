@@ -9,6 +9,7 @@
 package('p-v4-components-demo')
 	.extends('i-static-page')
 	.dependencies(
+		'b-example',
 		'b-dummy',
 
 		'b-router',

@@ -36,6 +36,7 @@ const port = 3000;
 app.use('/dist', express.static('dist'));
 
 app.get('/', (req, res) => {
+	console.log(1);
 	v4app
 		.initApp('p-v4-components-demo', {
 			location: new URL('https://example.com/user/12345'),
@@ -45,7 +46,9 @@ app.get('/', (req, res) => {
 		})
 
 		.then(({content, styles}) => {
+			console.log('start');
 			const html = fs.readFileSync('./dist/client/p-v4-components-demo.html', 'utf8');
+			console.log('complete');
 
 			res.send(
 				html
