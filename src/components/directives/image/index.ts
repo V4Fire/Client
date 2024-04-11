@@ -17,9 +17,10 @@ import { ComponentEngine, VNode } from 'core/component/engines';
 import { setVNodePatchFlags, mergeProps } from 'core/component/render';
 import { getDirectiveContext, getElementId } from 'core/component/directives/helpers';
 
+import { unsupportedElements } from 'components/directives/image/const';
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
+
 import type { DirectiveParams } from 'components/directives/image/interface';
-import { notAvailableComponentsTypes } from 'components/directives/image/const';
 
 export * from 'components/directives/image/interface';
 
@@ -32,8 +33,8 @@ ComponentEngine.directive('image', {
 			throw new TypeError('The `v-image` directive cannot be applied to a component');
 		}
 
-		if (notAvailableComponentsTypes.has(vnode.type)) {
-			throw new TypeError('The `v-image` directive cannot be applied to `img`, `picture`, `object`');
+		if (unsupportedElements.has(vnode.type)) {
+			throw new TypeError('The `v-image` directive cannot be applied to `img`, `picture`, `object` elements');
 		}
 
 		const

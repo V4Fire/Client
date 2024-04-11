@@ -48,7 +48,6 @@ export function createImgElement(
 	imageParams: ImageOptions,
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLImageElement> {
-
 	const optionalAttrs = {
 		draggable: imageParams.draggable != null ? `${imageParams.draggable}` : undefined,
 		ismap: imageParams.isMap,

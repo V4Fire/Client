@@ -306,12 +306,18 @@ The options returned by this function will be used to load the image.
 
 ### [draggable]
 
-The optional boolean value indicates whether the element can be dragged. If value is `false` - element will not be dragged.
+This option indicates whether the image can be dragged,
+either with native browser behavior or the HTML Drag and Drop API.
 
 ### [isMap]
 
-A Boolean value which is true if the image is being used for a server-side image map;
-otherwise, the value is false.
+A boolean value which indicates that the image is to be used by a server-side image map.
+This may only be used on images located within an `<a>` element.
+
+### [useMap]
+
+The partial URL (starting with `#`) of an image map associated with the element.
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#usemap) for more information.
 
 ### [referrerPolicy]
 
@@ -320,27 +326,19 @@ See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#referre
 
 ### [crossOrigin]
 
-The property indicates if the fetching of the image must be done using a CORS request.
+This option indicates if the fetching of the image must be done using a CORS request.
+Image data from a CORS-enabled image returned from a CORS request can be reused in the `<canvas>` element
+without being marked `tainted`.
 
 Allowed values are:
 - `anonymous` - a CORS request is sent with credentials omitted;
-- `use-credentials` - The CORS request is sent with any credentials included.
+- `use-credentials` - the CORS request is sent with any credentials included.
 
 See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#crossorigin) for more information.
 
-### [useMap]
-
-The `useMap` property reflects the value of the HTML `usemap` attribute
-which is a string providing the name of the client-side image map to apply to the image.
-
-Value is a string providing the page-local URL (that is, a URL that begins with the hash or pound symbol, "#")
-of the <map> element which defines the image map to apply to the image.
-
-See [this](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/useMap) for more information.
-
 ### [decoding]
 
-This attribute indicates whether the browser should decode images synchronously with other DOM content
+This option indicates whether the browser should decode images synchronously with other DOM content
 for a more accurate presentation, or asynchronously to render other content first and display the image later.
 
 Allowed values are:
@@ -348,24 +346,24 @@ Allowed values are:
   the other DOM content, and present everything together;
 - `async` - decode the image asynchronously, after rendering and
   presenting the other DOM content;
-- `auto` - No preference for the decoding mode; the browser decides
-  what is best for the user. This is the default value.
+- `auto` - no preference for the decoding mode (the browser decides what is best for the user).
 
 See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#decoding) for more information.
 
 ### [elementTiming]
 
-This attribute is used to indicate that an element is flagged for tracking by PerformanceObserver
-objects using the "element" type. See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/elementtiming) for more information.
+This option indicates that an element is flagged for tracking by PerformanceObserver objects using the "element" type.
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/elementtiming) for more information.
 
 ### [fetchPriority]
 
-Provides a hint of the relative priority to use when fetching the image. The value is one of following strings:
+A hint of the relative priority to use when fetching the image.
+
+Allowed values are:
 - `high` - fetch the image at a high priority relative to other images;
 - `low` - fetch the image at a low priority relative to other images;
-- `auto` - default mode, which indicates no preference for the fetch priority. The browser decides what is best for the user.
-
-See [this](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/fetchPriority) for more information.
+- `auto` - default mode, which indicates no preference for the fetch priority
+  (the browser decides what is best for the user).
 
 ## Global configuration
 
