@@ -11,10 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## 4.0.0-beta.?? (2024-04-??)
+## 4.0.0-beta.84 (2024-04-11)
 
 #### :bug: Bug Fix
 
+* Fixed the full upward/downward slide in `heightMode = content` `bBottomSlide`
 * Fixed an error with incorrect handling of the empty required `src` attribute `directives/image`
 
 ## v4.0.0-beta.83 (2024-04-08)

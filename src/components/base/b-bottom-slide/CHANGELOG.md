@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.** (2024-03-**)
+## 4.0.0-beta.84 (2024-04-11)
 
 #### :bug: Bug Fix
 
-* Fixed full pull up/down of slide in `heightMode = content`
+* Fixed the full upward/downward slide in `heightMode = content`
 
 ## v4.0.0-beta.55 (2024-02-08)
 
