@@ -119,17 +119,17 @@ export default class SwipeControl extends Friend {
 			endTime - this.startTime <= ctx.fastSwipeDelay &&
 			startEndDiff >= ctx.fastSwipeThreshold;
 
-		const isScroll = !isFastSwipe && (
-			ctx.isFullyOpened ||
-			!ctx.isViewportTopReached ||
-			!this.byTrigger
+		const notScroll = isFastSwipe && (
+			!ctx.isFullyOpened ||
+			ctx.isViewportTopReached ||
+			this.byTrigger
 		);
 
 		const
 			isThresholdPassed = !isFastSwipe && startEndDiff >= ctx.swipeThreshold;
 
 		ctx.animation.stopMoving();
-		this.moveToClosest(!isScroll, isThresholdPassed);
+		this.moveToClosest(notScroll, isThresholdPassed);
 
 		this.endY += this.startY - this.currentY;
 		this.byTrigger = false;
@@ -150,26 +150,17 @@ export default class SwipeControl extends Friend {
 			{direction, ctx} = this,
 			{geometry} = ctx;
 
-		const
-			isFullyPutDown = geometry.offset < geometry.getStepOffset(1) && direction <= 0,
-			isFullyPutUp = geometry.offset >= geometry.getStepOffset(ctx.stepCount - 2) && direction >= 0;
-
 		if (ctx.heightMode === 'content') {
-			if (isFullyPutDown) {
-				ctx.step = 0;
-
-			} else if (isFullyPutUp) {
-				ctx.step = ctx.stepCount - 1;
-
-			} else if (!respectDirection && isThresholdPassed) {
+			if (!respectDirection && isThresholdPassed) {
 				void ctx[geometry.contentHeight / 2 < geometry.offset ? 'next' : 'prev']();
 
 			} else if (respectDirection) {
 				void ctx[direction > 0 ? 'next' : 'prev']();
 			}
+
 		} else {
 			let
-				closestStep = 0;
+				step = 0;
 
 			if (!respectDirection) {
 				let
@@ -177,11 +168,11 @@ export default class SwipeControl extends Friend {
 
 				for (let i = 0; i < ctx.stepCount; i++) {
 					const
-						offsetDiff = Math.abs(geometry.offset - geometry.getStepOffset(i));
+						res = Math.abs(geometry.offset - geometry.getStepOffset(i));
 
-					if (!Object.isNumber(min) || min > offsetDiff) {
-						min = offsetDiff;
-						closestStep = i;
+					if (!Object.isNumber(min) || min > res) {
+						min = res;
+						step = i;
 					}
 				}
 
@@ -198,24 +189,24 @@ export default class SwipeControl extends Friend {
 				}
 
 				if (direction > 0) {
-					closestStep = i > ctx.stepCount - 1 ? i - 1 : i;
+					step = i > ctx.stepCount - 1 ? i - 1 : i;
 
 				} else {
-					closestStep = i === 0 ? i : i - 1;
+					step = i === 0 ? i : i - 1;
 				}
 			}
 
 			const
 				prevStep = ctx.step;
 
-			if (closestStep === 0) {
+			if (step === 0) {
 				ctx.close().catch(stderr);
 
 			} else if (prevStep === 0) {
-				ctx.open(closestStep).catch(stderr);
+				ctx.open(step).catch(stderr);
 
 			} else {
-				ctx.step = closestStep;
+				ctx.step = step;
 			}
 
 		}

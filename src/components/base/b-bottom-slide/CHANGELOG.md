@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.85 (2024-04-11)
+
+#### :bug: Bug Fix
+
+* Reverted https://github.com/V4Fire/Client/commit/83005d73fcb96f98928a9ba7831d886a22d5f5a3
+
 ## 4.0.0-beta.84 (2024-04-11)
 
 #### :bug: Bug Fix
