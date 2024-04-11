@@ -549,7 +549,8 @@ export default abstract class iBlockState extends iBlockMods {
 		const theme = this.remoteState.theme.get();
 		void this.setMod('theme', theme.value);
 
-		this.remoteState.theme.emitter.on(
+		this.async.on(
+			this.remoteState.theme.emitter,
 			'theme.change',
 			(theme: Theme) => this.setMod('theme', theme.value)
 		);
