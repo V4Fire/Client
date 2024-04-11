@@ -9,6 +9,16 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.86 (2024-04-11)
+
+#### :boom: Breaking Change
+
+* The directive cannot be applied to img, picture, or object elements
+
+#### :rocket: New Feature
+
+* Added support for standard img tag attributes
+
 ## 4.0.0-beta.84 (2024-04-11)
 
 #### :bug: Bug Fix

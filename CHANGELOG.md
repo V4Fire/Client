@@ -11,6 +11,16 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.86 (2024-04-11)
+
+#### :boom: Breaking Change
+
+* The directive cannot be applied to img, picture, or object elements `components/directives/image`
+
+#### :rocket: New Feature
+
+* Added support for standard img tag attributes `components/directives/image`
+
 ## 4.0.0-beta.85 (2024-04-11)
 
 #### :bug: Bug Fix
@@ -22,7 +32,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 #### :bug: Bug Fix
 
 * Fixed the full upward/downward slide in `heightMode = content` `bBottomSlide`
-* Fixed an error with incorrect handling of the empty required `src` attribute `directives/image`
+* Fixed an error with incorrect handling of the empty required `src` attribute `components/directives/image`
 
 ## v4.0.0-beta.83 (2024-04-08)
 

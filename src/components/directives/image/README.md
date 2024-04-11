@@ -1,6 +1,7 @@
 # core/component/directives/image
 
 This module provides a directive for loading and displaying images using `img` and/or `picture` tags.
+The directive cannot be applied to `img`, `picture`, or `object` tags.
 
 ```
 < .my-image v-image = { &
