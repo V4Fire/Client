@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.?? (2024-04-??)
+
+#### :bug: Bug Fix
+
+* Fixed an error with incorrect handling of the empty required `src` attribute
+
 ## 4.0.0-beta.81 (2024-04-01)
 
 #### :bug: Bug Fix
