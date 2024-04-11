@@ -24,12 +24,16 @@
    ```
 */
 
-const app = require('./dist/ssr/main');
+const v4app = require('./dist/ssr/main');
 
-const express = require('express');
+const
+	fs = require('node:fs'),
+	express = require('express');
 
 const app = express();
 const port = 3000;
+
+app.use('/dist', express.static('dist'));
 
 app.get('/', (req, res) => {
 	v4app
@@ -37,16 +41,17 @@ app.get('/', (req, res) => {
 			location: new URL('https://example.com/user/12345'),
 
 			cookies: v4app.cookies.createCookieStore(''),
-			session: v4app.session.from(v4app.kvStorage.asyncSessionStorage),
-
-			theme: new v4app.ThemeManager.default({
-				themeStorageEngine: v4app.CookieEngine.syncLocalStorage,
-				systemThemeExtractor: new v4app.themeManager.SystemThemeExtractorSSR(req.headers)
-			})
+			session: v4app.session.from(v4app.kvStorage.asyncSessionStorage)
 		})
 
 		.then(({content, styles}) => {
-			res.send(`<style>${styles}</style>${content}`);
+			const html = fs.readFileSync('./dist/client/p-v4-components-demo.html', 'utf8');
+
+			res.send(
+				html
+					.replace(/<!--SSR-->/, content)
+					.replace(/<!--STYLES-->/, styles)
+			);
 		});
 });
 
