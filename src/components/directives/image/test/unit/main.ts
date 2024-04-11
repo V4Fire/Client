@@ -346,7 +346,7 @@ test.describe('components/directives/image', () => {
 			);
 		});
 
-		test.describe('the `draggable` parameter should be set to <img> element', () => {
+		test.describe('the `draggable` option should be set to the <img> element', () => {
 			test('when `draggable` is true', async ({page}) => {
 				const {image} = await renderDirective(page, {
 					src: EXISTING_PICTURE_SRC,
