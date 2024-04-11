@@ -275,7 +275,7 @@ test.describe('components/directives/image', () => {
 			);
 
 			test(
-				'the nested `<img> element should have the attribute "data-img" set to "loaded"',
+				'the nested `<img>` element should have the attribute "data-img" set to "loaded"',
 
 				async ({page}) => {
 					const {container, image} = await renderDirective(page, {src: EXISTING_PICTURE_SRC});
@@ -310,7 +310,7 @@ test.describe('components/directives/image', () => {
 			);
 
 			test(
-				'the nested `<img> element should have the attribute "data-img" set to "failed"',
+				'the nested `<img>` element should have the attribute "data-img" set to "failed"',
 
 				async ({page}) => {
 					const {container, image} = await renderDirective(page, {src: BROKEN_PICTURE_SRC});
@@ -320,7 +320,7 @@ test.describe('components/directives/image', () => {
 			);
 
 			test(
-				"the nested <img> element shouldn't be visible",
+				"the nested `<img>` element shouldn't be visible",
 
 				async ({page}) => {
 					const {container, image} = await renderDirective(page, {src: BROKEN_PICTURE_SRC});
