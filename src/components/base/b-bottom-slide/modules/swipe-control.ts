@@ -150,8 +150,9 @@ export default class SwipeControl extends Friend {
 			{direction, ctx} = this,
 			{geometry} = ctx;
 
-		const isFullyPutDown = geometry.offset < geometry.getStepOffset(1) && direction <= 0;
-		const isFullyPutUp = geometry.offset >= geometry.getStepOffset(ctx.stepCount - 2) && direction >= 0;
+		const
+			isFullyPutDown = geometry.offset < geometry.getStepOffset(1) && direction <= 0,
+			isFullyPutUp = geometry.offset >= geometry.getStepOffset(ctx.stepCount - 2) && direction >= 0;
 
 		if (ctx.heightMode === 'content') {
 			if (isFullyPutDown) {

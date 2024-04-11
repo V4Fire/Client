@@ -172,7 +172,6 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should stick to the closest step on a slow pull-up', () => {
-
 		const slowPullUp = () => gestures.evaluate((ctx) =>
 			ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -110, {pause: 200})));
 
@@ -218,7 +217,6 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should stick to the closest step on a fast pull-up', () => {
-
 		const fastPullUp = () => gestures.evaluate((ctx) =>
 			ctx.swipe(ctx.buildSteps(3, 20, globalThis.innerHeight, 0, -20)));
 
@@ -265,7 +263,6 @@ test.describe('<b-bottom-slide> gestures', () => {
 	});
 
 	test.describe('should skip all the steps on a full pull-up', () => {
-
 		const fullPullUp = () => gestures.evaluate((ctx) =>
 			ctx.swipe(ctx.buildSteps(7, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
 
