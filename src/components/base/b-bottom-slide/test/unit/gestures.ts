@@ -171,92 +171,217 @@ test.describe('<b-bottom-slide> gestures', () => {
 		test.expect(windowTopOffset).toBe(400);
 	});
 
-	test('should stick to the closest step on a slow pull-up', async ({page}) => {
-		const component = await renderBottomSlide(page, {
-			heightMode: 'full',
-			visible: 100,
-			steps: [50]
+	test.describe('should stick to the closest step on a slow pull-up', () => {
+		const slowPullUp = () => gestures.evaluate((ctx) =>
+			ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -110, {pause: 200})));
+
+		test('when heightMode = "full"', async ({page}) => {
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				visible: 100,
+				steps: [50]
+			});
+
+			await slowPullUp();
+
+			await BOM.waitForIdleCallback(page);
+
+			const
+				windowY = await getComponentWindowYPos(component),
+				halfPageHeight = await page.evaluate(() => Math.round(innerHeight / 2));
+
+			test.expect(windowY).toBe(halfPageHeight);
 		});
 
-		await gestures.evaluate((ctx) =>
-			ctx.swipe(ctx.buildSteps(4, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+		test('when heightMode = "content"', async ({page}) => {
+			await page.addStyleTag({
+				content: '#test-div {height: 3000px;}'
+			});
 
-		await BOM.waitForIdleCallback(page);
+			const component = await renderBottomSlide(page, {
+				heightMode: 'content',
+				steps: [50],
+				visible: 100
+			});
 
-		const
-			windowY = await getComponentWindowYPos(component),
-			halfPageHeight = await page.evaluate(() => Math.round(innerHeight / 2));
+			await slowPullUp();
 
-		test.expect(windowY).toBe(halfPageHeight);
+			await BOM.waitForIdleCallback(page);
+
+			const
+				windowY = await getComponentWindowYPos(component),
+				halfPageHeight = await page.evaluate(() => Math.round(innerHeight / 2));
+
+			test.expect(windowY).toBe(halfPageHeight);
+		});
 	});
 
-	test('should stick to the closest step on a fast pull-up', async ({page}) => {
-		const component = await renderBottomSlide(page, {
-			heightMode: 'full',
-			visible: 100,
-			steps: [50]
-		});
-
-		await gestures.evaluate((ctx) =>
+	test.describe('should stick to the closest step on a fast pull-up', () => {
+		const fastPullUp = () => gestures.evaluate((ctx) =>
 			ctx.swipe(ctx.buildSteps(3, 20, globalThis.innerHeight, 0, -20)));
 
-		await BOM.waitForIdleCallback(page);
+		test('when `heightMode` = "full"', async ({page}) => {
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				visible: 100,
+				steps: [50]
+			});
 
-		const
-			windowY = await getComponentWindowYPos(component),
-			halfPageHeight = await page.evaluate(() => Math.round(innerHeight / 2));
+			await fastPullUp();
 
-		test.expect(windowY).toBe(halfPageHeight);
-	});
+			await BOM.waitForIdleCallback(page);
 
-	test('should skip all the steps on a full pull-up', async ({page}) => {
-		const component = await renderBottomSlide(page, {
-			heightMode: 'full',
-			visible: 100,
-			steps: [30, 50, 60]
+			const
+				windowY = await getComponentWindowYPos(component),
+				halfPageHeight = await page.evaluate(() => Math.round(innerHeight / 2));
+
+			test.expect(windowY).toBe(halfPageHeight);
 		});
 
-		await gestures.evaluate((ctx) =>
+		test('when `heightMode` = "content"', async ({page}) => {
+			await page.addStyleTag({
+				content: '#test-div {height:30px;}'
+			});
+
+			const component = await renderBottomSlide(page, {
+				heightMode: 'content',
+				steps: [50]
+			});
+
+			await open(page, component);
+
+			await fastPullUp();
+
+			await BOM.waitForIdleCallback(page);
+
+			const
+				windowY = await getComponentWindowYPos(component),
+				halfPageHeight = await page.evaluate(() => Math.round(innerHeight / 2));
+
+			test.expect(windowY).toBe(halfPageHeight);
+		});
+	});
+
+	test.describe('should skip all the steps on a full pull-up', () => {
+		const fullPullUp = () => gestures.evaluate((ctx) =>
 			ctx.swipe(ctx.buildSteps(7, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
 
-		await BOM.waitForIdleCallback(page);
+		test('when `heightMode` = "full"', async ({page}) => {
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				visible: 100,
+				steps: [30, 50, 60]
+			});
 
-		const
-			windowTopOffset = await getAbsoluteComponentWindowOffset(component),
-			maxWindowHeight = await getAbsolutePageHeight(page, initialMaxVisiblePercent);
+			await fullPullUp();
 
-		test.expect(windowTopOffset).toBe(maxWindowHeight);
-	});
+			await BOM.waitForIdleCallback(page);
 
-	test('should not skip any steps before a full pull-up', async ({page}) => {
-		const
-			steps = [30, 60];
+			const
+				windowTopOffset = await getAbsoluteComponentWindowOffset(component),
+				maxWindowHeight = await getAbsolutePageHeight(page, initialMaxVisiblePercent);
 
-		const component = await renderBottomSlide(page, {
-			heightMode: 'full',
-			visible: 100,
-			steps
+			test.expect(windowTopOffset).toBe(maxWindowHeight);
 		});
 
-		const [window30PercentOfHeight, window60PercentOfHeight] = await page.evaluate(() => [
-			Math.round(globalThis.innerHeight * 0.3),
-			Math.round(globalThis.innerHeight * 0.6)
-		]);
+		test('when `heightMode` = "content"', async ({page}) => {
+			await page.addStyleTag({
+				content: '#test-div {height:3000px;}'
+			});
 
-		await gestures.evaluate((ctx) =>
-			ctx.swipe(ctx.buildSteps(2, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+			const component = await renderBottomSlide(page, {
+				heightMode: 'content',
+				visible: 100,
+				steps: [30, 50, 60]
+			});
 
-		let
+			await fullPullUp();
+
+			await BOM.waitForIdleCallback(page);
+
+			const
+				windowTopOffset = await getAbsoluteComponentWindowOffset(component),
+				maxWindowHeight = await getAbsolutePageHeight(page, initialMaxVisiblePercent);
+
+			test.expect(windowTopOffset).toBe(maxWindowHeight);
+		});
+	});
+
+	test.describe('should not skip any steps before a full pull-up', () => {
+		test('when `heightMode` = "full"', async ({page}) => {
+			const
+				steps = [30, 60];
+
+			const component = await renderBottomSlide(page, {
+				heightMode: 'full',
+				visible: 100,
+				steps
+			});
+
+			const [window30PercentOfHeight, window60PercentOfHeight] = await page.evaluate(() => [
+				Math.round(globalThis.innerHeight * 0.3),
+				Math.round(globalThis.innerHeight * 0.6)
+			]);
+
+			await gestures.evaluate((ctx) =>
+				ctx.swipe(ctx.buildSteps(2, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+
+			let
+				windowTopOffset = await getAbsoluteComponentWindowOffset(component);
+
+			test.expect(windowTopOffset).toBe(window30PercentOfHeight);
+
+			await gestures.evaluate((ctx) =>
+				ctx.swipe(ctx.buildSteps(2, 20, globalThis.innerHeight - 200, 0, -100, {pause: 200})));
+
 			windowTopOffset = await getAbsoluteComponentWindowOffset(component);
 
-		test.expect(windowTopOffset).toBe(window30PercentOfHeight);
+			test.expect(windowTopOffset).toBe(window60PercentOfHeight);
+		});
 
-		await gestures.evaluate((ctx) =>
-			ctx.swipe(ctx.buildSteps(2, 20, globalThis.innerHeight - 200, 0, -100, {pause: 200})));
+		test('when `heightMode` = "content"', async ({page}) => {
+			const
+				steps = [30, 60];
 
-		windowTopOffset = await getAbsoluteComponentWindowOffset(component);
+			const component = await renderBottomSlide(page, {
+				heightMode: 'content',
+				steps
+			});
 
-		test.expect(windowTopOffset).toBe(window60PercentOfHeight);
+			const [window30PercentOfHeight, window60PercentOfHeight] = await page.evaluate(() => [
+				Math.round(globalThis.innerHeight * 0.3),
+				Math.round(globalThis.innerHeight * 0.6)
+			]);
+
+			await gestures.evaluate((ctx) =>
+				ctx.swipe(ctx.buildSteps(2, 20, globalThis.innerHeight, 0, -100, {pause: 200})));
+
+			let
+				windowTopOffset = await getAbsoluteComponentWindowOffset(component);
+
+			test.expect(windowTopOffset).toBe(window30PercentOfHeight);
+
+			await gestures.evaluate((ctx) =>
+				ctx.swipe(ctx.buildSteps(2, 20, globalThis.innerHeight - 200, 0, -100, {pause: 200})));
+
+			windowTopOffset = await getAbsoluteComponentWindowOffset(component);
+
+			test.expect(windowTopOffset).toBe(window60PercentOfHeight);
+
+			await gestures.evaluate((ctx) =>
+				ctx.swipe(ctx.buildSteps(2, 20, globalThis.innerHeight - 400, 0, 100, {pause: 200})));
+
+			windowTopOffset = await getAbsoluteComponentWindowOffset(component);
+
+			test.expect(windowTopOffset).toBe(window30PercentOfHeight);
+
+			await gestures.evaluate((ctx) =>
+				ctx.swipe(ctx.buildSteps(2, 20, globalThis.innerHeight - 200, 0, -100, {pause: 200})));
+
+			windowTopOffset = await getAbsoluteComponentWindowOffset(component);
+
+			test.expect(windowTopOffset).toBe(window60PercentOfHeight);
+		});
 	});
 
 	test('should not be pulled more than the maximum height', async ({page}) => {
