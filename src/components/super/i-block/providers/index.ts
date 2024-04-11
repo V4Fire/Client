@@ -14,6 +14,7 @@
 import symbolGenerator from 'core/symbol';
 import Provider, { providers, instanceCache, ProviderOptions } from 'core/data';
 
+import { i18nFactory } from 'core/i18n';
 import SyncPromise from 'core/promise/sync';
 import config from 'config';
 
@@ -293,11 +294,17 @@ export default abstract class iBlockProviders extends iBlockState {
 
 	createDataProviderInstance(provider: DataProviderProp, opts?: ProviderOptions): CanNull<Provider> {
 		const
-			that = this;
+			that = this,
+			{remoteState} = this;
 
 		opts = {
 			...opts,
-			i18n: this.i18n.bind(this),
+
+			i18n: (
+				keysetNameOrNames: CanArray<string>,
+				customLocale?: Language
+			) => i18nFactory(keysetNameOrNames, customLocale ?? remoteState.lang),
+
 			// Hardcode the id during the client render
 			// because the providers cache must be preserved until the end of the user's session
 			// FIXME: remove this condition after PR#1171 is merged

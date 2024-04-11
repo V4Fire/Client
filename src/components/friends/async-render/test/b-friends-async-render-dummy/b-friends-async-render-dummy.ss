@@ -76,6 +76,18 @@
 			< button.&__clear @click = async.clearAll({group: /foo/})
 				Clear
 
+		< template v-if = stage === 'check nested async render target'
+			< .&__wrapper v-async-target
+				< template v-for = _ in asyncRender.iterate(true, { &
+					filter: asyncRender.waitForceRender('items-wrapper')
+				}) .
+					< .&__items-wrapper
+						< .&__result v-async-target
+							< template v-for = n in asyncRender.iterate(2)
+								{{ n }}
+
+			< button.&__update @click = asyncRender.forceRender()
+
 		< template v-if = stage === 'loading dynamic modules'
 			< .&__result v-async-target
 				+= self.loadModules('components/form/b-button')

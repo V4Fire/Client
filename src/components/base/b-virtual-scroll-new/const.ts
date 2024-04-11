@@ -21,6 +21,11 @@ export const bVirtualScrollNewAsyncGroup = 'b-virtual-scroll-new';
 export const bVirtualScrollNewDomInsertAsyncGroup = `${bVirtualScrollNewAsyncGroup}:dom-insert`;
 
 /**
+ * Group for asynchronous operations related to rendering the first chunk.
+ */
+export const bVirtualScrollNewFirstChunkRenderAsyncGroup = `${bVirtualScrollNewAsyncGroup}:first-chunk-render`;
+
+/**
  * Group for asynchronous operations related to rendering nodes via vdom.render.
  */
 export const bVirtualScrollNewVDomRenderGroup = `${bVirtualScrollNewAsyncGroup}:vdom-render`;

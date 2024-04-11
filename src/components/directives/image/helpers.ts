@@ -109,6 +109,11 @@ export function createImgElement(
 				}
 			});
 
+			// The "src" is a required attribute for the <img> tag.
+			// If it isn't provided, the "onerror" and "onload" listeners won't be called, and the image won't be rendered.
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			img.src ??= '';
+
 			return img;
 		},
 
@@ -117,7 +122,7 @@ export function createImgElement(
 				img: VNode = create('img');
 
 			const
-				props = {},
+				props: Dictionary = {},
 				dynamicProps: string[] = [];
 
 			Object.forEach(attrs, (prop, name) => {
@@ -127,8 +132,11 @@ export function createImgElement(
 				}
 			});
 
+			props.src ??= '';
+
 			img.props = props;
 			img.dynamicProps = dynamicProps;
+
 			setVNodePatchFlags(img, 'props', 'styles');
 
 			return img;
