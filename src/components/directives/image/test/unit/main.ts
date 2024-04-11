@@ -75,7 +75,7 @@ test.describe('components/directives/image', () => {
 	);
 
 	test(
-		'by default, the created `<img>` element should have the attribute `src=""` if it wasn\'t provided',
+		"the created `<img>` element should always have the `src` attribute, even if it's not explicitly provided",
 
 		async ({page}) => {
 			const {image} = await renderDirective(page, {});
@@ -131,9 +131,9 @@ test.describe('components/directives/image', () => {
 	});
 
 	test.describe('the provided `onError` handler should be called upon image loading errors', () => {
-		test('providing src of the broken image', ({page}) => checkOnErrorHandler(page, BROKEN_PICTURE_SRC));
+		test('if the specified `src` cannot be loaded', ({page}) => checkOnErrorHandler(page, BROKEN_PICTURE_SRC));
 
-		test('not providing the "src" attribute', ({page}) => checkOnErrorHandler(page));
+		test('if the `src` attribute is not explicitly provided', ({page}) => checkOnErrorHandler(page));
 
 		async function checkOnErrorHandler(page: Page, src?: string): Promise<void> {
 			const {image} = await renderDirective(page, {
