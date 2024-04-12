@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.87 (2024-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed an error with recursive rendering through `getRenderFn` and the slot `components/friends/vdom`
+
 ## 4.0.0-beta.86 (2024-04-11)
 
 #### :boom: Breaking Change
