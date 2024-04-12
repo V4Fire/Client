@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Fix hide on-screen keyboard when there are validators on the input field
+* Fixed the issue of the on-screen keyboard disappearing when validators are specified on the input field
 
 ## v4.0.0-beta.40 (2023-11-17)
 
