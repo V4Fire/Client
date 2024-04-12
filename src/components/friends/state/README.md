@@ -10,7 +10,7 @@ this.state.initFromRouter();
 this.state.resetRouter();
 ```
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] has the `state` property.
 However, to use the module methods, attach them explicitly to enable tree-shake code optimizations.
@@ -27,7 +27,7 @@ State.addToPrototype({initFromRouter, initFromStorage});
 export default class bExample extends iBlock {}
 ```
 
-## Why is this module needed?
+## Why is This Module Needed?
 
 Any component can bind its state to the state of another external module.
 For example, a component might store some of its properties in local storage.

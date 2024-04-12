@@ -2,7 +2,7 @@
 
 This module provides a class for creating daemons associated with a component.
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] will have the `daemons` property.
 However, to utilize module methods, you must attach them explicitly to enable tree-shake code optimizations.
@@ -19,7 +19,7 @@ Daemons.addToPrototype({init});
 export default class bExample extends iBlock {}
 ```
 
-## What is a daemon?
+## What is a Daemon?
 
 In V4Fire terminology, daemons are modules that are associated with a component but are not part of it.
 We can say that a daemon is an aspect from [AOP](https://en.wikipedia.org/wiki/Aspect-oriented_programming).
@@ -29,7 +29,7 @@ Daemons use the component context to which they are associated. From the daemon,
 listen to its events. If possible, you should avoid mutating properties of the associated component; this feature
 should be used only in extreme cases and with the utmost care.
 
-## Attaching daemons to a component
+## Attaching Daemons to a Component
 
 To add a daemon to a component, simply add it to the `daemons` static property.
 Also, don't forget to import the `init` method.
@@ -65,7 +65,7 @@ export default class bExample extends iBlock {
 }
 ```
 
-## Daemon creation options
+## Daemon Creation Options
 
 ### fn
 
