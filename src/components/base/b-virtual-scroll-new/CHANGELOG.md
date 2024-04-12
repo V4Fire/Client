@@ -13,7 +13,7 @@ Changelog
 
 #### :bug: Bug Fix
 
-* Added `handler` prop in `v-in-view`
+* `onEnter` prop for `v-in-view` is renamed to `handler`
 
 ## v4.0.0-beta.77 (2024-03-27)
 
