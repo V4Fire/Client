@@ -46,6 +46,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Re-export `withMemo` `core/component/engines/vue3`
 
+## v4.0.0-beta.?? (2024-04-??)
+
+#### :bug: Bug Fix
+
+* Fix hide on-screen keyboard when there are validators on the input field `iInput`
+
 ## v4.0.0-beta.82 (2024-04-02)
 
 #### :bug: Bug Fix
