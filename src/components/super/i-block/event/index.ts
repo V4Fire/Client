@@ -607,6 +607,28 @@ export default abstract class iBlockEvent extends iBlockBase {
 	}
 
 	/**
+	 * Attached a handler for destroying the parent component
+	 */
+	@hook('created')
+	protected initParentDestroyListener(): void {
+		const that = this;
+
+		if (this.$parent == null) {
+			return;
+		}
+
+		this.parentEmitter.once('hook:beforeDestroy', handler, {label: $$.initParentListener});
+
+		function handler() {
+			const p = that.$parent!;
+
+			if (!p.isFunctional || p.$el == null || p === p.$el.component) {
+				that.$destroy();
+			}
+		}
+	}
+
+	/**
 	 * Handler: the `callChild` event occurred in the parent component
 	 * @param e
 	 */
