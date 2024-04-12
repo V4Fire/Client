@@ -26,7 +26,8 @@
 				v-in-view = {
 					threshold: 0.0000001,
 					onEnter: onTombstonesEnter,
-					onLeave: onTombstonesLeave
+					onLeave: onTombstonesLeave,
+					handler: () => undefined
 				}
 			.
 				< .&__tombstone v-for = i in tombstoneCount || chunkSize
