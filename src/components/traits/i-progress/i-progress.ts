@@ -13,9 +13,9 @@
  * @packageDocumentation
  */
 
+import type iAccess from 'components/traits/i-access/i-access';
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModsDecl, ModEvent } from 'components/super/i-block/i-block';
-import type iAccess from 'components/traits/i-access/i-access';
 
 export default abstract class iProgress {
 	/**
@@ -50,8 +50,7 @@ export default abstract class iProgress {
 	}
 
 	/**
-	 * Initializes disable on progress behavior for the specified component
-	 *
+	 * Initializes the disable-on-progress behavior for the specified component
 	 * @param component
 	 */
 	static initDisableBehavior<T extends iBlock & iAccess>(component: T): void {
