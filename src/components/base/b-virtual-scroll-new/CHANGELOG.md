@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.XX (2024-XX-XX)
+
+#### :bug: Bug Fix
+
+* Added `handler` prop in `v-in-view`
+
 ## v4.0.0-beta.77 (2024-03-27)
 
 #### :rocket: New Feature
