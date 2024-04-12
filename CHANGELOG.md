@@ -11,6 +11,20 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-04-??)
+
+#### :boom: Breaking Change
+
+* The behavior of blocking the component during progress has been removed from `initModsEvents` `iProgress`
+
+#### :rocket: New Feature
+
+* Added a new static method `initDisableBehavior` `iProgress`
+
+#### :bug: Bug Fix
+
+* Fixed the issue of the on-screen keyboard disappearing when validators are specified on the input field `iInput`
+
 ## 4.0.0-beta.87 (2024-04-12)
 
 #### :bug: Bug Fix

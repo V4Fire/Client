@@ -13,6 +13,7 @@
  * @packageDocumentation
  */
 
+import type iAccess from 'components/traits/i-access/i-access';
 import type iBlock from 'components/super/i-block/i-block';
 import type { ModsDecl, ModEvent } from 'components/super/i-block/i-block';
 
@@ -38,16 +39,24 @@ export default abstract class iProgress {
 	static initModEvents<T extends iBlock>(component: T): void {
 		component.unsafe.localEmitter.on('block.mod.*.progress.*', (e: ModEvent) => {
 			if (e.value === 'false' || e.type === 'remove') {
-				void component.setMod('disabled', false);
-
 				if (e.type !== 'remove' || e.reason === 'removeMod') {
 					component.emit('progressEnd');
 				}
 
 			} else {
-				void component.setMod('disabled', true);
 				component.emit('progressStart');
 			}
+		});
+	}
+
+	/**
+	 * Initializes the disable-on-progress behavior for the specified component
+	 * @param component
+	 */
+	static initDisableBehavior<T extends iBlock & iAccess>(component: T): void {
+		component.unsafe.localEmitter.on('block.mod.*.progress.*', (e: ModEvent) => {
+			const isFinish = e.value === 'false' || e.type === 'remove';
+			void component.setMod('disabled', !isFinish);
 		});
 	}
 }
