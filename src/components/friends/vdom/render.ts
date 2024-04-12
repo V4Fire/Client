@@ -138,6 +138,13 @@ export function getRenderFn(
 		cache: unknown[] = [],
 		instanceCtx = Object.create(ctx, {isVirtualTpl: {value: true}});
 
+	Object.defineProperty(instanceCtx, '$slots', {
+		configurable: true,
+		enumerable: true,
+		writable: true,
+		value: {}
+	});
+
 	const render = factory(
 		instanceCtx,
 		SSR ? cache.push.bind(cache) : cache
