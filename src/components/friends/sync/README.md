@@ -2,7 +2,7 @@
 
 This module provides an API to synchronize fields and props of a component.
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] has the `sync` property. Certain methods, like `link` and `mod`, are available by default,
 while others need to be explicitly included to facilitate tree-shaking code optimization. To do this, simply add the required import declaration within your component file.

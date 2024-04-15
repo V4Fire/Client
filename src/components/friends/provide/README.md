@@ -7,7 +7,7 @@ This module provides a class that offers methods for supplying component classes
 this.provide.classes('b-foo', {button: 'bla'});
 ```
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] has the `provide` property.
 

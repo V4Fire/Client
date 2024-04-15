@@ -2,7 +2,7 @@
 
 This module provides a class for low-level interaction with a component's VDOM tree.
 
-## How to include this module in your component?
+## How to Include this Module in Your Component?
 
 By default, any component that inherits from [[iBlock]] has the `vdom` property.
 However, to use the module methods, you need to attach them explicitly to enable tree-shake code optimizations.
@@ -156,4 +156,32 @@ This function is useful when you want to decompose your component template into 
     /// Invokes the passed render function and joins the result fragment with the main fragment.
     /// Notice, you can pass parameters to another render function.
     < .content v-render = vdom.getRenderFn('pV4ComponentsDemo.sayHello')({p: {name: 'Bob'}})
+```
+
+Please note that the result of `getRenderFn` is in the context of the component from which `vdom` is called.
+This will have implications for the component hierarchy, i.e.,
+the created fragment's `$parent` will be the same as the component that owns vdom.
+
+You can explicitly pass through the context of the component that should serve as the basis for the created fragment.
+This is especially important to consider when working with slots.
+
+```
+- namespace [%fileName%]
+
+- include 'components/super/i-static-page/i-static-page.component.ss'|b as placeholder
+
+- template renderButton()
+  < .wrapper
+    < b-button @click:component = console.log($event.$parent.componentName)
+      Press on me!
+
+- template index() extends ['i-static-page.component'].index
+  - block body
+    < b-example
+      < template #default = {ctx}
+        /// Clicking on the button will display an incorrect value in the console
+        < template v-render = vdom.getRenderFn('pV4ComponentsDemo.renderButton')()
+
+        /// Everything is correct here, the parent will be b-example
+        < template v-render = vdom.getRenderFn('pV4ComponentsDemo.renderButton', ctx)()
 ```

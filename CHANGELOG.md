@@ -11,6 +11,55 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.88 (2024-04-12)
+
+#### :boom: Breaking Change
+
+* The behavior of blocking the component during progress has been removed from `initModsEvents` `iProgress`
+
+#### :rocket: New Feature
+
+* Added a new static method `initDisableBehavior` `iProgress`
+
+#### :bug: Bug Fix
+
+* Fixed the issue of the on-screen keyboard disappearing when validators are specified on the input field `iInput`
+
+## 4.0.0-beta.87 (2024-04-12)
+
+#### :bug: Bug Fix
+
+* Fixed an error with recursive rendering through `getRenderFn` and the slot `components/friends/vdom`
+
+## 4.0.0-beta.86 (2024-04-11)
+
+#### :boom: Breaking Change
+
+* The directive cannot be applied to img, picture, or object elements `components/directives/image`
+
+#### :rocket: New Feature
+
+* Added support for standard img tag attributes `components/directives/image`
+
+## 4.0.0-beta.85 (2024-04-11)
+
+#### :bug: Bug Fix
+
+* Reverted https://github.com/V4Fire/Client/commit/83005d73fcb96f98928a9ba7831d886a22d5f5a3
+
+## 4.0.0-beta.84 (2024-04-11)
+
+#### :bug: Bug Fix
+
+* Fixed the full upward/downward slide in `heightMode = content` `bBottomSlide`
+* Fixed an error with incorrect handling of the empty required `src` attribute `components/directives/image`
+
+## v4.0.0-beta.83 (2024-04-08)
+
+#### :house: Internal
+
+* Re-export `withMemo` `core/component/engines/vue3`
+
 ## v4.0.0-beta.82 (2024-04-02)
 
 #### :bug: Bug Fix

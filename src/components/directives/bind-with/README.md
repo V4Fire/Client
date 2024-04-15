@@ -17,7 +17,7 @@ which receives a reference to the element the directive is applied to as its fir
     } .
 ```
 
-## Why is this directive needed?
+## Why is This Directive Needed?
 
 When using regular components, we don't have to think about how the data used in the template is tied to
 the component's properties.

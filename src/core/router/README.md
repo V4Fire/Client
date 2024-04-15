@@ -3,7 +3,7 @@
 This module provides the base interfaces and helpers for the router engine, as well as the default implementations of those interfaces.
 Engines are not used directly, but with [[bRouter]].
 
-## Built-in engines
+## Built-in Engines
 
 ### History API Engine (`engines/browser-history`)
 

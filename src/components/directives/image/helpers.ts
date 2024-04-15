@@ -48,6 +48,23 @@ export function createImgElement(
 	imageParams: ImageOptions,
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLImageElement> {
+	const optionalAttrs = {
+		draggable: imageParams.draggable != null ? `${imageParams.draggable}` : undefined,
+		ismap: imageParams.isMap,
+		referrerpolicy: imageParams.referrerPolicy,
+		usemap: imageParams.useMap,
+		decoding: imageParams.decoding,
+		elementtiming: imageParams.elementTiming,
+		fetchpriority: imageParams.fetchPriority,
+		crossorigin: imageParams.crossOrigin
+	};
+
+	for (const key in optionalAttrs) {
+		if (optionalAttrs[key] == null) {
+			delete optionalAttrs[key];
+		}
+	}
+
 	const attrs = {
 		'data-img': Object.fastHash(imageParams),
 
@@ -73,7 +90,9 @@ export function createImgElement(
 
 		style: {
 			opacity: Object.isTruly(imageParams.preview) ? 0 : undefined
-		}
+		},
+
+		...optionalAttrs
 	};
 
 	return {
@@ -90,6 +109,11 @@ export function createImgElement(
 				}
 			});
 
+			// The "src" is a required attribute for the <img> tag.
+			// If it isn't provided, the "onerror" and "onload" listeners won't be called, and the image won't be rendered.
+			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+			img.src ??= '';
+
 			return img;
 		},
 
@@ -98,7 +122,7 @@ export function createImgElement(
 				img: VNode = create('img');
 
 			const
-				props = {},
+				props: Dictionary = {},
 				dynamicProps: string[] = [];
 
 			Object.forEach(attrs, (prop, name) => {
@@ -108,8 +132,11 @@ export function createImgElement(
 				}
 			});
 
+			props.src ??= '';
+
 			img.props = props;
 			img.dynamicProps = dynamicProps;
+
 			setVNodePatchFlags(img, 'props', 'styles');
 
 			return img;

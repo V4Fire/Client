@@ -161,6 +161,7 @@ class bButton extends iButtonProps implements iOpenToggle, iVisible, iWidth, iSi
 		super.initModEvents();
 
 		iProgress.initModEvents(this);
+		iProgress.initDisableBehavior(this);
 		iAccess.initModEvents(this);
 		iOpenToggle.initModEvents(this);
 		iVisible.initModEvents(this);

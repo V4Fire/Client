@@ -6,6 +6,8 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
+import type { Page } from 'playwright';
+
 import test from 'tests/config/unit/test';
 
 import {
@@ -73,6 +75,15 @@ test.describe('components/directives/image', () => {
 	);
 
 	test(
+		"the created `<img>` element should always have the `src` attribute, even if it's not explicitly provided",
+
+		async ({page}) => {
+			const {image} = await renderDirective(page, {});
+			await test.expect(image.getAttribute('src')).toBeResolvedTo('');
+		}
+	);
+
+	test(
 		[
 			'if the `sources` parameter is specified, ' +
 			'the directive should be rendered using the `<picture>` element instead of `<img>`'
@@ -119,17 +130,23 @@ test.describe('components/directives/image', () => {
 		await test.expect(image.getAttribute('data-on-load-called')).toBeResolvedTo('1');
 	});
 
-	test('the provided `onError` handler should be called upon image loading errors', async ({page}) => {
-		const {image} = await renderDirective(page, {
-			src: BROKEN_PICTURE_SRC,
+	test.describe('the provided `onError` handler should be called upon image loading errors', () => {
+		test('if the specified `src` cannot be loaded', ({page}) => checkOnErrorHandler(page, BROKEN_PICTURE_SRC));
 
-			onError: (el: Element) => {
-				el.setAttribute('data-on-error-called', '1');
-			}
-		});
+		test('if the `src` attribute is not explicitly provided', ({page}) => checkOnErrorHandler(page));
 
-		await waitForAttribute(page, image, 'data-on-error-called');
-		await test.expect(image.getAttribute('data-on-error-called')).toBeResolvedTo('1');
+		async function checkOnErrorHandler(page: Page, src?: string): Promise<void> {
+			const {image} = await renderDirective(page, {
+				src,
+
+				onError: (el: Element) => {
+					el.setAttribute('data-on-error-called', '1');
+				}
+			});
+
+			await waitForAttribute(page, image, 'data-on-error-called');
+			await test.expect(image.getAttribute('data-on-error-called')).toBeResolvedTo('1');
+		}
 	});
 
 	test(
@@ -258,7 +275,7 @@ test.describe('components/directives/image', () => {
 			);
 
 			test(
-				'the nested `<img> element should have the attribute "data-img" set to "loaded"',
+				'the nested `<img>` element should have the attribute "data-img" set to "loaded"',
 
 				async ({page}) => {
 					const {container, image} = await renderDirective(page, {src: EXISTING_PICTURE_SRC});
@@ -293,7 +310,7 @@ test.describe('components/directives/image', () => {
 			);
 
 			test(
-				'the nested `<img> element should have the attribute "data-img" set to "failed"',
+				'the nested `<img>` element should have the attribute "data-img" set to "failed"',
 
 				async ({page}) => {
 					const {container, image} = await renderDirective(page, {src: BROKEN_PICTURE_SRC});
@@ -303,7 +320,7 @@ test.describe('components/directives/image', () => {
 			);
 
 			test(
-				"the nested <img> element shouldn't be visible",
+				"the nested `<img>` element shouldn't be visible",
 
 				async ({page}) => {
 					const {container, image} = await renderDirective(page, {src: BROKEN_PICTURE_SRC});
@@ -318,7 +335,8 @@ test.describe('components/directives/image', () => {
 				async ({page}) => {
 					const {container} = await renderDirective(page, {
 						src: BROKEN_PICTURE_SRC,
-						broken: EXISTING_PICTURE_SRC
+						broken: EXISTING_PICTURE_SRC,
+						draggable: false
 					});
 
 					await waitForImageLoadFail(page, container);
@@ -326,6 +344,37 @@ test.describe('components/directives/image', () => {
 						.toBeResolvedTo(`background-image: url("${EXISTING_PICTURE_SRC}");`);
 				}
 			);
+		});
+
+		test.describe('the `draggable` option should be set to the <img> element', () => {
+			test('when `draggable` is true', async ({page}) => {
+				const {image} = await renderDirective(page, {
+					src: EXISTING_PICTURE_SRC,
+					broken: BROKEN_PICTURE_SRC,
+					draggable: true
+				});
+
+				test.expect(await image.getAttribute('draggable')).toBe('true');
+			});
+
+			test('when `draggable` is false', async ({page}) => {
+				const {image} = await renderDirective(page, {
+					src: EXISTING_PICTURE_SRC,
+					broken: BROKEN_PICTURE_SRC,
+					draggable: false
+				});
+
+				test.expect(await image.getAttribute('draggable')).toBe('false');
+			});
+
+			test("when `draggable` isn't set", async ({page}) => {
+				const {image} = await renderDirective(page, {
+					src: EXISTING_PICTURE_SRC,
+					broken: BROKEN_PICTURE_SRC
+				});
+
+				test.expect(await image.getAttribute('draggable')).toBe(null);
+			});
 		});
 	});
 });
