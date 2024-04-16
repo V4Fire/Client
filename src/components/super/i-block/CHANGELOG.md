@@ -9,6 +9,13 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
+* Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
+
 ## 4.0.0-beta.79 (2024-03-29)
 
 #### :house: Internal
