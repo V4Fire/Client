@@ -33,15 +33,18 @@
 	- teleport = false
 
 	/**
+	 * True if the application needs to be built for SSR
+	 */
+	- SSR = require('@config/config').webpack.ssr
+
+	/** If set to true, then during SSR rendering, the component can be immediately formed as a string, not a VDOM tree */
+	- renderSSRAsString = false
+
+	/**
 	 * If set to false, the component will generate a special markup to
 	 * allow it to not render during server-side rendering
 	 */
 	- ssrRendering = true
-
-	/**
-	 * True if the application needs to be built for SSR
-	 */
-	- SSR = require('@config/config').webpack.ssr
 
 	/**
 	 * Defines the rendering mode of the template.
