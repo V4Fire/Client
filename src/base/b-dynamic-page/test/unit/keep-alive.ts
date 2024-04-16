@@ -26,7 +26,7 @@ test.describe('<b-dynamic-page> providing `keep-alive`', () => {
 		test.expect(calls).toBe(1);
 	});
 
-	test.only('saves and applies horizontal scroll to the children page element', async ({page}) => {
+	test('saves and applies horizontal scroll to the children page element', async ({page}) => {
 		const
 			scrollLeft = 200,
 			target = await renderDynamicPage(page, {keepAlive: true});
