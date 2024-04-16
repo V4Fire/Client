@@ -17,3 +17,7 @@
 
 		< b-button.&__button-func
 			Functional button
+
+		< ul.&__horizontal-scroll ref = horizontalScroll | -testid = horizontalScroll
+			< li v-for = i of 50
+				Item {{i}}
