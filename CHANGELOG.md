@@ -19,6 +19,12 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added API for saving the horizontal scroll of nested DOM nodes on the page.
 [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes) `base/b-dynamic-page`
 
+## v3.69.1 (2024-04-09)
+
+#### :bug: Bug Fix
+
+* Add super call in `baseMods` getter override `dummies/b-dummy/b-dummy`
+
 ## v3.69.0 (2024-03-29)
 
 #### :boom: Breaking Change
