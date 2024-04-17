@@ -365,7 +365,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		}),
 
 		/**
-		 * Returns true if the app needs to be built with hydration support
+		 * Returns true if the application needs to be built with hydration support
 		 *
 		 * @cli hydration
 		 * @env HYDRATION
@@ -375,6 +375,23 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		hydration(def = false) {
 			return o('hydration', {
+				env: true,
+				type: 'boolean',
+				default: def
+			});
+		},
+
+		/**
+		 * Returns true if the application should be built for the [storybook](https://storybook.js.org/)
+		 *
+		 * @cli storybook
+		 * @env STORYBOOK
+		 *
+		 * @param {boolean} [def] - default value
+		 * @returns {boolean}
+		 */
+		storybook(def = false) {
+			return o('storybook', {
 				env: true,
 				type: 'boolean',
 				default: def
@@ -403,23 +420,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if the bundle should be built for the [storybook](https://storybook.js.org/)
-		 *
-		 * @cli storybook
-		 * @env STORYBOOK
-		 *
-		 * @param {boolean} [def] - default value
-		 * @returns {boolean}
-		 */
-		storybook(def = false) {
-			return o('storybook', {
-				env: true,
-				type: 'boolean',
-				default: def
-			});
-		},
-
-		/**
 		 * Returns true if all resources from the initial entry point should be embedded in HTML files.
 		 * Otherwise, they will be loaded via tags, either dynamically inserted or inlined
 		 *
@@ -438,7 +438,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		},
 
 		/**
-		 * Returns true if no source code should be inlined directly in HTML
+		 * Returns true if no code should be inlined directly in HTML
 		 *
 		 * @cli externalize-inline
 		 * @env EXTERNALIZE_INLINE
@@ -456,7 +456,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 					return !externalizeInline || (
 						!webpack.dynamicPublicPath() &&
-						!webpack.inlineInital &&
+						!webpack.inlineInitial() &&
 						!webpack.fatHTML()
 					);
 				}
@@ -629,8 +629,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 * ```
 		 */
 		publicPath(...args) {
-			const
-				{concatURLs} = require('@v4fire/core/lib/core/url');
+			const {concatURLs} = require('@v4fire/core/lib/core/url');
 
 			const def = concatURLs('/', this.config.src.rel('clientOutput'));
 
@@ -875,8 +874,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	/**
 	 * Returns parameters for a TypeScript compiler:
 	 *
-	 * 1. server - options for compiling the app as a node.js library;
-	 * 2. client - options for compiling the app as a client app.
+	 * 1. server - options for compiling the application as a node.js library;
+	 * 2. client - options for compiling the application as a client app.
 	 *
 	 * @override
 	 * @returns {{server: object, client: object}}
@@ -915,40 +914,25 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
-	 * Returns parameters for `stylus-loader`
+	 * Returns a component dependency map.
+	 * This map can be used to provide dynamic component dependencies in `index.js` files.
+	 *
 	 * @returns {object}
+	 *
+	 * @example
+	 * ```
+	 * componentDependencies() {
+	 *   return {'b-dummy': ['b-icon']};
+	 * }
+	 * ```
+	 *
+	 * ```
+	 * package('b-dummy')
+	 *   .extends('i-data')
+	 *   .dependencies(...require('@config/config').componentDependencies()['b-dummy'] ?? []);
+	 * ```
 	 */
-	stylus() {
-		return {
-			webpackImporter: false,
-
-			stylusOptions: {
-				compress: false
-			}
-		};
-	},
-
-	/**
-	 * Returns parameters for `css-loader`
-	 * @returns {object}
-	 */
-	css() {
-		return {};
-	},
-
-	/**
-	 * Returns parameters for `CssMinimizerPlugin`
-	 * @returns {object}
-	 */
-	cssMinimizer() {
-		return {};
-	},
-
-	/**
-	 * Returns parameters for `MiniCssExtractPlugin`
-	 * @returns {object}
-	 */
-	miniCssExtractPlugin() {
+	componentDependencies() {
 		return {};
 	},
 
@@ -987,6 +971,44 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 				open: false
 			}
 		};
+	},
+
+	/**
+	 * Returns parameters for `stylus-loader`
+	 * @returns {object}
+	 */
+	stylus() {
+		return {
+			webpackImporter: false,
+
+			stylusOptions: {
+				compress: false
+			}
+		};
+	},
+
+	/**
+	 * Returns parameters for `css-loader`
+	 * @returns {object}
+	 */
+	css() {
+		return {};
+	},
+
+	/**
+	 * Returns parameters for `CssMinimizerPlugin`
+	 * @returns {object}
+	 */
+	cssMinimizer() {
+		return {};
+	},
+
+	/**
+	 * Returns parameters for `MiniCssExtractPlugin`
+	 * @returns {object}
+	 */
+	miniCssExtractPlugin() {
+		return {};
 	},
 
 	/**
