@@ -45,6 +45,8 @@ app.get('/', (req, res) => {
 		})
 
 		.then(({content, styles}) => {
+			fs.writeFileSync('./ssr-example.html', content);
+
 			const html = fs.readFileSync('./dist/client/p-v4-components-demo.html', 'utf8');
 
 			res.send(
