@@ -22,18 +22,18 @@ import { ComponentEngine } from 'core/component/engines';
 export * from 'core/component/directives/safe-html/interface';
 
 ComponentEngine.directive('safe-html', (el: HTMLElement, {value, oldValue}: SafeHtmlDirectiveParams) => {
-	if (value == null || value === oldValue) {
+	if (value === oldValue) {
 		return;
 	}
 
 	let sanitized: string;
 
-	if (typeof value === 'string') {
-		sanitized = DOMPurify.sanitize(value, config.safeHtml);
+	if (Object.isPrimitive(value)) {
+		sanitized = DOMPurify.sanitize(String(value), config.safeHtml);
 
 	} else {
 		sanitized = DOMPurify.sanitize(
-			value.value,
+			String(value.value),
 
 			{
 				...config.safeHtml,
