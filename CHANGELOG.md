@@ -11,7 +11,11 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.XX (2024-XX-XX)
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Supported the insertion of a primitive as a value `directives/safe-html`
 
 #### :bug: Bug Fix
 

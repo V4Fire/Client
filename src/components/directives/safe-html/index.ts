@@ -27,12 +27,12 @@ ComponentEngine.directive('safe-html', {
 
 		let sanitized: string;
 
-		if (typeof value === 'string') {
-			sanitized = DOMPurify.sanitize(value, config.safeHtml);
+		if (Object.isPrimitive(value)) {
+			sanitized = DOMPurify.sanitize(toString(value), config.safeHtml);
 
 		} else {
 			sanitized = DOMPurify.sanitize(
-				value.value,
+				toString(value.value),
 
 				{
 					...config.safeHtml,
@@ -48,5 +48,13 @@ ComponentEngine.directive('safe-html', {
 			...vnode.props,
 			innerHTML: sanitized
 		};
+
+		/**
+		 * Converts the input value to a string for sanitization
+		 * @param value
+		 */
+		function toString(value: SafeHtmlDirectiveParams['value']): string {
+			return value == null ? '' : String(value);
+		}
 	}
 });
