@@ -1107,6 +1107,92 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	},
 
 	/**
+	 * Additional parameters for the template compiler
+	 */
+	template: {
+		/**
+		 * Returns a dictionary with directive descriptors that need to be specifically processed during code generation
+		 * @returns {Object<string, {tag?: string, generateSSRContent?: boolean}>}
+		 */
+		directives() {
+			return {
+				icon: include('src/components/directives/icon/compiler-info')
+			};
+		},
+
+		/**
+		 * Returns parameters for @vue/compiler-sfc
+		 * @returns {object}
+		 */
+		compilerSFC() {
+			const DIRECTIVE = 7;
+			const directives = this.directives();
+
+			const nodeTransforms = [
+				(node) => {
+					const propIndex = node.props?.findIndex((el) => el.type === DIRECTIVE && directives[el.name] != null);
+
+					if (propIndex == null || propIndex === -1) {
+						return;
+					}
+
+					const prop = node.props[propIndex];
+
+					const args = {
+						arg: stringifyProp(prop.arg),
+						value: stringifyProp(prop.exp),
+						modifiers: JSON.stringify(prop.modifiers),
+						instance: '_ctx'
+					};
+
+					const
+						argsStr = `{${Object.entries(args).map(([k, v]) => `"${k}": ${v}`).join(',')}}`,
+						directive = directives[prop.name];
+
+					if (directive.generateSSRContent) {
+						node.props.splice(propIndex, 1);
+
+						node.props.push({
+							type: 7,
+							name: 'html',
+
+							exp: {
+								type: 4,
+								content: `_ctx.$renderEngine.r.resolveDirective.call(_ctx, '${prop.name}')?.getSSRContent(${argsStr}) ?? ''`,
+								isStatic: false,
+								constType: 0,
+								loc: prop.exp?.loc ?? prop.loc
+							},
+
+							arg: undefined,
+							modifiers: [],
+							loc: prop.loc
+						});
+					}
+
+					if (directive.tag != null) {
+						node.tag = directive.tag;
+					}
+
+					function stringifyProp(prop) {
+						if (prop == null) {
+							return;
+						}
+
+						return prop.isStatic ? JSON.stringify(prop.content) : prop.content;
+					}
+				}
+			];
+
+			return {
+				ssr: this.config.webpack.ssr,
+				ssrCssVars: {},
+				compilerOptions: {nodeTransforms}
+			};
+		}
+	},
+
+	/**
 	 * Returns parameters for `snakeskin-loader`:
 	 *
 	 * 1. server - for .ess files;
@@ -1123,12 +1209,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		return {
 			client: this.extend(super.snakeskin(), {
 				adapter: 'ss2vue3',
-
-				adapterOptions: {
-					ssr: this.webpack.ssr,
-					ssrCssVars: {}
-				},
-
+				adapterOptions: this.template.compilerSFC(),
 				i18nFn: 't',
 				tagFilter: 'tagFilter',
 				tagNameFilter: 'tagNameFilter',
@@ -1301,29 +1382,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 			theme: this.theme.default(),
 			includeThemes: this.theme.include()
 		};
-	},
-
-	/**
-	 * Returns a component dependency map.
-	 * This map can be used to provide dynamic component dependencies in `index.js` files.
-	 *
-	 * @returns {object}
-	 *
-	 * @example
-	 * ```
-	 * componentDependencies() {
-	 *   return {'b-dummy': ['b-icon']};
-	 * }
-	 * ```
-	 *
-	 * ```
-	 * package('b-dummy')
-	 *   .extends('i-data')
-	 *   .dependencies(...require('@config/config').componentDependencies()['b-dummy'] ?? []);
-	 * ```
-	 */
-	componentDependencies() {
-		return {};
 	},
 
 	/** @override */
