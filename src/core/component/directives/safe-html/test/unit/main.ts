@@ -74,7 +74,7 @@ test.describe('core/component/directives/safe-html', () => {
 				await test.expect(component.innerHTML()).toBeResolvedTo(safeString);
 			});
 
-			test("should insert an empty string for the nullish value", async ({page}) => {
+			test('should insert an empty string for the nullish value', async ({page}) => {
 				const component = await createComponent(
 					page,
 
@@ -89,7 +89,7 @@ test.describe('core/component/directives/safe-html', () => {
 				);
 
 				await test.expect(component.innerHTML()).toBeResolvedTo('');
-			})
+			});
 		});
 	});
 });
