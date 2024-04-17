@@ -17,6 +17,10 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 * Supported the insertion of a primitive as a value `directives/safe-html`
 
+#### :bug: Bug Fix
+
+* `onEnter` prop for `v-in-view` is renamed to `handler` `components/base/b-virtual-scroll-new`
+
 ## v4.0.0-beta.88 (2024-04-12)
 
 #### :boom: Breaking Change

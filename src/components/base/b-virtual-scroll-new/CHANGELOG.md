@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :bug: Bug Fix
+
+* `onEnter` prop for `v-in-view` is renamed to `handler`
+
 ## v4.0.0-beta.77 (2024-03-27)
 
 #### :rocket: New Feature
