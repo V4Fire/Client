@@ -267,5 +267,5 @@ export interface ImageSource {
 
 export interface VirtualElement<E, V = VNode> {
 	toVNode(create: typeof createVNode): V extends [] ? VNode[] : VNode;
-	toElement(): E;
+	toElement(document?: Document): E;
 }

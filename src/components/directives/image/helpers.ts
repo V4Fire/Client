@@ -96,7 +96,7 @@ export function createImgElement(
 	};
 
 	return {
-		toElement: () => {
+		toElement(document = globalThis.document) {
 			const
 				img = document.createElement('img');
 
@@ -117,7 +117,7 @@ export function createImgElement(
 			return img;
 		},
 
-		toVNode: (create) => {
+		toVNode(create) {
 			const
 				img: VNode = create('img');
 
@@ -157,17 +157,17 @@ export function createPictureElement(
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<HTMLElement> {
 	return {
-		toElement: () => {
+		toElement(document = globalThis.document) {
 			const
 				picture = document.createElement('picture');
 
-			picture.appendChild(createSourceElements(imageParams, commonParams).toElement());
-			picture.appendChild(createImgElement(imageParams, commonParams).toElement());
+			picture.appendChild(createSourceElements(imageParams, commonParams).toElement(document));
+			picture.appendChild(createImgElement(imageParams, commonParams).toElement(document));
 
 			return picture;
 		},
 
-		toVNode: (create) => {
+		toVNode(create) {
 			const
 				picture: VNode = create('picture');
 
@@ -198,7 +198,7 @@ export function createSourceElements(
 	commonParams: ImageOptions = imageParams
 ): VirtualElement<DocumentFragment, []> {
 	return {
-		toElement: () => {
+		toElement(document = globalThis.document) {
 			const
 				fragment = document.createDocumentFragment();
 
@@ -215,7 +215,7 @@ export function createSourceElements(
 			return fragment;
 		},
 
-		toVNode: (create) => {
+		toVNode(create) {
 			const
 				fragment: VNode[] = [];
 

@@ -1131,13 +1131,11 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 			const nodeTransforms = [
 				(node) => {
-					const propIndex = node.props?.findIndex((el) => el.type === DIRECTIVE && directives[el.name] != null);
+					const prop = node.props?.find((el) => el.type === DIRECTIVE && directives[el.name] != null);
 
-					if (propIndex == null || propIndex === -1) {
+					if (prop == null) {
 						return;
 					}
-
-					const prop = node.props[propIndex];
 
 					const args = {
 						arg: stringifyProp(prop.arg),
@@ -1151,8 +1149,6 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						directive = directives[prop.name];
 
 					if (directive.innerHTML) {
-						node.props.splice(propIndex, 1);
-
 						node.props.push({
 							type: 7,
 							name: 'html',
