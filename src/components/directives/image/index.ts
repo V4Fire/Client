@@ -29,6 +29,10 @@ export const
 
 ComponentEngine.directive('image', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): CanUndef<VNode> {
+		if (SSR) {
+			return;
+		}
+
 		if (!Object.isString(vnode.type)) {
 			throw new TypeError('The `v-image` directive cannot be applied to a component');
 		}
@@ -113,7 +117,63 @@ ComponentEngine.directive('image', {
 	},
 
 	mounted,
-	updated: mounted
+	updated: mounted,
+
+	// FIXME: убрать дублирование с beforeCreate
+	getSSRProps(params: DirectiveParams) {
+		let
+			p = Object.mixin(true, {}, config.image, params.value);
+
+		if (p.optionsResolver != null) {
+			p = p.optionsResolver(p);
+		}
+
+		const placeholders = {
+			preview: undefined,
+			broken: undefined
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const {JSDOM} = require('jsdom');
+		const jsdom = new JSDOM();
+
+		Object.keys(placeholders).forEach((kind) => {
+			const
+				placeholder = p[kind];
+
+			let
+				url: CanUndef<string>;
+
+			if (Object.isString(placeholder)) {
+				url = `url("${placeholder}")`;
+
+			} else if (Object.isDictionary(placeholder)) {
+				url = `url("${getCurrentSrc(createImageElement(placeholder, p).toElement(jsdom.window.document))}")`;
+			}
+
+			if (url != null) {
+				placeholders[kind] = url;
+			}
+		});
+
+		const props = {
+			'data-image': 'preview',
+
+			'data-preview-image': placeholders.preview,
+			'data-broken-image': placeholders.broken,
+
+			style: {
+				'background-image': placeholders.preview
+			}
+		};
+
+		const imageElement = createImageElement(p).toElement(jsdom.window.document);
+
+		return {
+			...props,
+			innerHTML: imageElement.outerHTML
+		};
+	}
 });
 
 function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
