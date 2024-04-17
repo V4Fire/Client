@@ -27,12 +27,12 @@ ComponentEngine.directive('safe-html', {
 
 		let sanitized: string;
 
-		if (typeof value === 'string') {
-			sanitized = DOMPurify.sanitize(value, config.safeHtml);
+		if (Object.isPrimitive(value)) {
+			sanitized = DOMPurify.sanitize(String(value), config.safeHtml);
 
 		} else {
 			sanitized = DOMPurify.sanitize(
-				value.value,
+				String(value.value),
 
 				{
 					...config.safeHtml,
