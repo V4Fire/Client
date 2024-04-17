@@ -9,11 +9,11 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
-## v4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.90 (2024-04-17)
 
 #### :bug: Bug Fix
 
-* `onEnter` prop for `v-in-view` is renamed to `handler`
+* The `onEnter` parameter for the `v-in-view` directive is now passed as the `handler` parameter
 
 ## v4.0.0-beta.77 (2024-03-27)
 

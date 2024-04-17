@@ -11,7 +11,7 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
-## v4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.90 (2024-04-17)
 
 #### :rocket: New Feature
 
@@ -19,7 +19,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :bug: Bug Fix
 
-* `onEnter` prop for `v-in-view` is renamed to `handler` `components/base/b-virtual-scroll-new`
+* The `onEnter` parameter for the `v-in-view` directive is now passed as the `handler` parameter `components/base/b-virtual-scroll-new`
 
 ## v4.0.0-beta.88 (2024-04-12)
 
