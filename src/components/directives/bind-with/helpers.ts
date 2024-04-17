@@ -7,7 +7,7 @@
  */
 
 import { idsCache } from 'components/directives/bind-with/const';
-import { getElementId as getElementIdFromStore } from 'core/component/directives/helpers';
+import { getElementId as getElementIdFromStore } from 'core/component/directives';
 
 import type { ComponentInterface } from 'core/component/interface';
 import type { DirectiveValue, Listener } from 'components/directives/bind-with/interface';

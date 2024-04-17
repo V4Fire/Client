@@ -15,7 +15,7 @@ import config from 'config';
 import { ComponentEngine, VNode } from 'core/component/engines';
 
 import { setVNodePatchFlags, mergeProps } from 'core/component/render';
-import { getDirectiveContext, getElementId } from 'core/component/directives/helpers';
+import { getDirectiveContext, getElementId } from 'core/component/directives';
 
 import { unsupportedElements } from 'components/directives/image/const';
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';

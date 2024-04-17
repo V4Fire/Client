@@ -17,3 +17,5 @@ import 'core/component/directives/hook';
 import 'core/component/directives/attrs';
 import 'core/component/directives/render';
 import 'core/component/directives/async-target';
+
+export * from 'core/component/directives/helpers';
