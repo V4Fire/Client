@@ -51,9 +51,9 @@ ComponentEngine.directive('icon', {
 		idsCache.delete(el);
 	},
 
-	getSSRContent(params: DirectiveParams): string {
+	getSSRProps(params: DirectiveParams): Dictionary {
 		const href = SyncPromise.resolve(getIconHref(params.value ?? params.arg)).unwrap();
-		return `<use href="${href}" />`;
+		return {innerHTML: `<use href="${href}" />`};
 	}
 });
 

@@ -10,4 +10,4 @@
 
 exports.tag = 'svg';
 
-exports.generateSSRContent = true;
+exports.innerHTML = true;

@@ -1116,7 +1116,8 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 		 */
 		directives() {
 			return {
-				icon: include('src/components/directives/icon/compiler-info')
+				icon: include('src/components/directives/icon/compiler-info'),
+				image: include('src/components/directives/image/compiler-info')
 			};
 		},
 
@@ -1149,7 +1150,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						argsStr = `{${Object.entries(args).map(([k, v]) => `"${k}": ${v}`).join(',')}}`,
 						directive = directives[prop.name];
 
-					if (directive.generateSSRContent) {
+					if (directive.innerHTML) {
 						node.props.splice(propIndex, 1);
 
 						node.props.push({
@@ -1158,7 +1159,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 							exp: {
 								type: 4,
-								content: `_ctx.$renderEngine.r.resolveDirective.call(_ctx, '${prop.name}')?.getSSRContent(${argsStr}) ?? ''`,
+								content: `_ctx.$renderEngine.r.resolveDirective.call(_ctx, '${prop.name}')?.getSSRProps?.(${argsStr}).innerHTML`,
 								isStatic: false,
 								constType: 0,
 								loc: prop.exp?.loc ?? prop.loc

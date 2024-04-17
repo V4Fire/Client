@@ -58,11 +58,6 @@ export interface ObjectDirective<T = any, V = any> extends SuperObjectDirective<
 		binding: DirectiveBinding<V>,
 		vnode: VNode<any, T>
 	): CanVoid<VNode>;
-
-	getSSRContent?(
-		this: ResolveDirective & ObjectDirective<T, V>,
-		binding: DirectiveBinding<V>
-	): string;
 }
 
 export declare type Directive<T = any, V = any> =
