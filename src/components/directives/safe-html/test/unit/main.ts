@@ -49,7 +49,7 @@ test.describe('components/directives/safe-html', () => {
 			withOptions: true
 		},
 		{
-			title: 'with raw value',
+			title: 'with a raw value',
 			withOptions: false
 		}
 	].forEach(({title, withOptions}) => {
