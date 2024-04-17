@@ -28,11 +28,11 @@ ComponentEngine.directive('safe-html', {
 		let sanitized: string;
 
 		if (Object.isPrimitive(value)) {
-			sanitized = DOMPurify.sanitize(String(value), config.safeHtml);
+			sanitized = DOMPurify.sanitize(formatValue(value), config.safeHtml);
 
 		} else {
 			sanitized = DOMPurify.sanitize(
-				String(value.value),
+				formatValue(value.value),
 
 				{
 					...config.safeHtml,
@@ -48,5 +48,9 @@ ComponentEngine.directive('safe-html', {
 			...vnode.props,
 			innerHTML: sanitized
 		};
+
+		function formatValue(value: SafeHtmlDirectiveParams['value']): string {
+			return value == null ? '' : String(value);
+		}
 	}
 });
