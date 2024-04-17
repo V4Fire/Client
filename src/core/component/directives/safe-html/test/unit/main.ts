@@ -54,9 +54,9 @@ test.describe('core/component/directives/safe-html', () => {
 		}
 	].forEach(({title, withOptions}) => {
 		test.describe(title, () => {
-			test.only('should correctly insert a value with a primitive that is not a string', async ({page}) => {
-				const primitiveValue = null;
-				const safeString = 'null';
+			test('should correctly insert a non-nullish primitive value', async ({page}) => {
+				const primitiveValue = 123;
+				const safeString = '123';
 
 				const component = await createComponent(
 					page,
@@ -73,6 +73,23 @@ test.describe('core/component/directives/safe-html', () => {
 
 				await test.expect(component.innerHTML()).toBeResolvedTo(safeString);
 			});
+
+			test("should insert an empty string for the nullish value", async ({page}) => {
+				const component = await createComponent(
+					page,
+
+					withOptions ?
+
+						{
+							value: null,
+							options
+						} :
+
+						null
+				);
+
+				await test.expect(component.innerHTML()).toBeResolvedTo('');
+			})
 		});
 	});
 });
