@@ -47,6 +47,10 @@ ComponentEngine.directive('safe-html', (el: HTMLElement, {value, oldValue}: Safe
 
 	el.innerHTML = sanitized;
 
+	/**
+	 * Formats the input value to a string for sanitization
+	 * @param value
+	 */
 	function formatValue(value: SafeHtmlDirectiveParams['value']): string {
 		return value == null ? '' : String(value);
 	}
