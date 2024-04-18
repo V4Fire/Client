@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 3.??.?? (2024-04-??)
+
+#### :house: Internal
+
+* Use the `v-resize-observer` directive to recalculate `b-bottom-slide` state instead of `window:resize` and `DOMChange` watchers
+
 ## v3.70.0 (2024-04-17)
 
 #### :rocket: New Feature
