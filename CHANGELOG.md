@@ -19,6 +19,16 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 * Added API for saving the horizontal scroll of nested DOM nodes on the page.
 [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes) `components/base/b-dynamic-page`
 
+## v4.0.0-beta.90 (2024-04-17)
+
+#### :rocket: New Feature
+
+* Supported the insertion of a primitive as a value `directives/safe-html`
+
+#### :bug: Bug Fix
+
+* The `onEnter` parameter for the `v-in-view` directive is now passed as the `handler` parameter `components/base/b-virtual-scroll-new`
+
 ## v4.0.0-beta.88 (2024-04-12)
 
 #### :boom: Breaking Change
