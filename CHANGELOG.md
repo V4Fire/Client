@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.91 (2024-04-XX)
+
+#### :bug: Bug Fix
+
+* Fixed an incorrect size of the background image for `v-image`
+
 ## v4.0.0-beta.90 (2024-04-17)
 
 #### :rocket: New Feature

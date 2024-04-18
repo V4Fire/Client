@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## 4.0.0-beta.91 (2024-04-XX)
+
+#### :bug: Bug Fix
+
+* Fixed an incorrect size of the background image
+
 ## 4.0.0-beta.86 (2024-04-11)
 
 #### :boom: Breaking Change
