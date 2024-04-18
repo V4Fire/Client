@@ -1,5 +1,5 @@
 {
-  "hash": "2a22eb53756a6e760e1a06bf1948e34c9f61422a803f720888f02d15cf887846",
+  "hash": "97b772a9b9e7725ed696c082b0a77d35fef6fc74493c9efb88f96333f240e1b2",
   "data": {
     "%data": "%data:Map",
     "%data:Map": [
@@ -11,19 +11,27 @@
             "name": "b-bottom-slide",
             "parent": "i-block",
             "dependencies": [],
-            "libs": []
+            "libs": [
+              "core/component/directives/resize-observer"
+            ]
           },
           "name": "b-bottom-slide",
           "parent": "i-block",
           "dependencies": [],
-          "libs": [],
+          "libs": [
+            "core/component/directives/resize-observer"
+          ],
           "resolvedLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/component/directives/resize-observer"
+            ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/component/directives/resize-observer"
+            ]
           },
           "type": "block",
           "mixin": false,
@@ -1196,6 +1204,38 @@
         }
       ],
       [
+        "b-virtual-scroll-new",
+        {
+          "index": "src/base/b-virtual-scroll-new/index.js",
+          "declaration": {
+            "name": "b-virtual-scroll-new",
+            "parent": "i-data",
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "b-virtual-scroll-new",
+          "parent": "i-data",
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "block",
+          "mixin": false,
+          "logic": "src/base/b-virtual-scroll-new/b-virtual-scroll-new.ts",
+          "styles": [
+            "src/base/b-virtual-scroll-new/b-virtual-scroll-new.styl"
+          ],
+          "tpl": "src/base/b-virtual-scroll-new/b-virtual-scroll-new.ss",
+          "etpl": null
+        }
+      ],
+      [
         "b-window",
         {
           "index": "src/base/b-window/index.js",
@@ -1387,6 +1427,36 @@
           "styles": [
             "src/traits/i-access/i-access.styl"
           ],
+          "tpl": null,
+          "etpl": null
+        }
+      ],
+      [
+        "i-active-items",
+        {
+          "index": "src/traits/i-active-items/index.js",
+          "declaration": {
+            "name": "i-active-items",
+            "parent": null,
+            "dependencies": [],
+            "libs": []
+          },
+          "name": "i-active-items",
+          "parent": null,
+          "dependencies": [],
+          "libs": [],
+          "resolvedLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "resolvedOwnLibs": {
+            "%data": "%data:Set",
+            "%data:Set": []
+          },
+          "type": "interface",
+          "mixin": false,
+          "logic": "src/traits/i-active-items/i-active-items.ts",
+          "styles": [],
           "tpl": null,
           "etpl": null
         }
@@ -1982,6 +2052,7 @@
               "b-select",
               "b-select-date",
               "b-virtual-scroll",
+              "b-virtual-scroll-new",
               "b-window",
               "b-sidebar",
               "b-slider",
@@ -1999,7 +2070,11 @@
               "b-dummy-control-list",
               "b-dummy-decorators"
             ],
-            "libs": []
+            "libs": [
+              "core/cookies",
+              "core/kv-storage/engines/cookie",
+              "models/demo/form"
+            ]
           },
           "name": "p-v4-components-demo",
           "parent": "i-static-page",
@@ -2023,6 +2098,7 @@
             "b-select",
             "b-select-date",
             "b-virtual-scroll",
+            "b-virtual-scroll-new",
             "b-window",
             "b-sidebar",
             "b-slider",
@@ -2040,14 +2116,26 @@
             "b-dummy-control-list",
             "b-dummy-decorators"
           ],
-          "libs": [],
+          "libs": [
+            "core/cookies",
+            "core/kv-storage/engines/cookie",
+            "models/demo/form"
+          ],
           "resolvedLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/cookies",
+              "core/kv-storage/engines/cookie",
+              "models/demo/form"
+            ]
           },
           "resolvedOwnLibs": {
             "%data": "%data:Set",
-            "%data:Set": []
+            "%data:Set": [
+              "core/cookies",
+              "core/kv-storage/engines/cookie",
+              "models/demo/form"
+            ]
           },
           "type": "page",
           "mixin": false,
