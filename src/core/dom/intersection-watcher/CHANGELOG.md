@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-rc.153 (2023-??-??)
+
+#### :rocket: Polish
+
+* Add `rootMargin` property for intersection-watcher
+
 ## v3.0.0-rc.153 (2021-03-04)
 
 #### :nail_care: Polish
