@@ -15,23 +15,23 @@ test.describe('<b-dynamic-page> events', () => {
 		await demoPage.goto();
 	});
 
-	test('emits the `beforeRemovePage` event before removing the page element', async ({page}) => {
+	test('emits the `beforeSwitchPage` event before removing the page element', async ({page}) => {
 		const target = await renderDynamicPage(page, {keepAlive: true});
 
-		await target.evaluate((ctx) => {
-			globalThis.onBeforeRemovePageCalls = 0;
+		const count = await page.evaluateHandle(() => ({value: 0}));
 
-			ctx.watch('rootEmitter:onBeforeRemovePage', () => {
-				globalThis.onBeforeRemovePageCalls++;
+		await target.evaluate((ctx, count) => {
+			ctx.watch('rootEmitter:onBeforeSwitchPage', () => {
+				count.value++;
 			});
-		});
+		}, count);
 
 		await target.evaluate(async (ctx) => {
 			await ctx.router?.push('page1');
 			await ctx.router?.push('page2');
 		});
 
-		const calls = await target.evaluate(() => globalThis.onBeforeRemovePageCalls);
+		const calls = await count.evaluate(({value}) => value);
 		test.expect(calls).toBe(1);
 	});
 });
