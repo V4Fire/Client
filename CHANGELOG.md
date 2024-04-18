@@ -11,6 +11,12 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## 4.0.0-beta.?? (2024-04-??)
+
+#### :house: Internal
+
+* Use the `v-on-resize` directive to recalculate `b-bottom-slide` state instead of `window:resize` and `DOMChange` watchers
+
 ## v4.0.0-beta.90 (2024-04-17)
 
 #### :rocket: New Feature
