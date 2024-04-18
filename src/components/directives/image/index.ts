@@ -10,7 +10,6 @@
  * [[include:components/directives/image/README.md]]
  * @packageDocumentation
  */
-
 import config from 'config';
 import { ComponentEngine, VNode } from 'core/component/engines';
 
@@ -20,7 +19,7 @@ import { getDirectiveContext, getElementId } from 'core/component/directives';
 import { unsupportedElements } from 'components/directives/image/const';
 import { createImageElement, getCurrentSrc } from 'components/directives/image/helpers';
 
-import type { DirectiveParams } from 'components/directives/image/interface';
+import type { DirectiveParams, SSRDirectiveParams } from 'components/directives/image/interface';
 
 export * from 'components/directives/image/interface';
 
@@ -58,69 +57,23 @@ ComponentEngine.directive('image', {
 		const
 			{r} = ctx.$renderEngine;
 
-		const placeholders = {
-			preview: undefined,
-			broken: undefined
-		};
-
-		Object.keys(placeholders).forEach((kind) => {
-			const
-				placeholder = p[kind];
-
-			let
-				url: CanUndef<string>;
-
-			if (Object.isString(placeholder)) {
-				url = `url("${placeholder}")`;
-
-			} else if (Object.isDictionary(placeholder)) {
-				url = `url("${getCurrentSrc(createImageElement(placeholder, p).toElement())}")`;
-			}
-
-			if (url != null) {
-				placeholders[kind] = url;
-			}
-		});
-
-		const props = {
-			'data-image': 'preview',
-
-			'data-preview-image': placeholders.preview,
-			'data-broken-image': placeholders.broken,
-
-			style: {
-				'background-image': placeholders.preview
-			}
-		};
+		const props = generateProps(p, vnode.props?.style);
 
 		vnode.type = 'span';
 		vnode.props = vnode.props != null ? mergeProps(vnode.props, props) : props;
 		vnode.dynamicProps = Array.union(vnode.dynamicProps ?? [], Object.keys(props));
-
-		if (Object.isTruly(placeholders.preview) && !hasDisplay(vnode.props.style)) {
-			vnode.props.style.display = 'inline-block';
-		}
 
 		const imageElement = createImageElement(p).toVNode(r.createVNode.bind(ctx));
 
 		vnode.children = [imageElement];
 		vnode.dynamicChildren = Object.cast(vnode.children.slice());
 		setVNodePatchFlags(vnode, 'props', 'styles', 'children');
-
-		function hasDisplay(style: CanUndef<Dictionary<string>>): boolean {
-			if (style == null) {
-				return false;
-			}
-
-			return Object.isTruly(style.display?.trim());
-		}
 	},
 
 	mounted,
 	updated: mounted,
 
-	// FIXME: убрать дублирование с beforeCreate
-	getSSRProps(params: DirectiveParams) {
+	getSSRProps(params: SSRDirectiveParams) {
 		let
 			p = Object.mixin(true, {}, config.image, params.value);
 
@@ -128,44 +81,11 @@ ComponentEngine.directive('image', {
 			p = p.optionsResolver(p);
 		}
 
-		const placeholders = {
-			preview: undefined,
-			broken: undefined
-		};
-
 		// eslint-disable-next-line @typescript-eslint/no-var-requires
 		const {JSDOM} = require('jsdom');
 		const jsdom = new JSDOM();
 
-		Object.keys(placeholders).forEach((kind) => {
-			const
-				placeholder = p[kind];
-
-			let
-				url: CanUndef<string>;
-
-			if (Object.isString(placeholder)) {
-				url = `url("${placeholder}")`;
-
-			} else if (Object.isDictionary(placeholder)) {
-				url = `url("${getCurrentSrc(createImageElement(placeholder, p).toElement(jsdom.window.document))}")`;
-			}
-
-			if (url != null) {
-				placeholders[kind] = url;
-			}
-		});
-
-		const props = {
-			'data-image': 'preview',
-
-			'data-preview-image': placeholders.preview,
-			'data-broken-image': placeholders.broken,
-
-			style: {
-				'background-image': placeholders.preview
-			}
-		};
+		const props = generateProps(p, params.bindings?.style, jsdom.window);
 
 		const imageElement = createImageElement(p).toElement(jsdom.window.document);
 
@@ -274,5 +194,56 @@ function mounted(el: HTMLElement, params: DirectiveParams, vnode: VNode): void {
 		el.setAttribute('data-image', 'broken');
 
 		p.onError?.(img);
+	}
+}
+
+function generateProps(params: DirectiveParams['value'], styles: CanUndef<Dictionary<string>>, windowObject: typeof globalThis = globalThis): Dictionary {
+	const placeholders = {
+		preview: undefined,
+		broken: undefined
+	};
+
+	Object.keys(placeholders).forEach((kind) => {
+		const
+			placeholder = params[kind];
+
+		let
+			url: CanUndef<string>;
+
+		if (Object.isString(placeholder)) {
+			url = `url("${placeholder}")`;
+
+		} else if (Object.isDictionary(placeholder)) {
+			url = `url("${getCurrentSrc(createImageElement(placeholder, params).toElement(windowObject.document))}")`;
+		}
+
+		if (url != null) {
+			placeholders[kind] = url;
+		}
+	});
+
+	const props: Dictionary<any> = {
+		'data-image': 'preview',
+
+		'data-preview-image': placeholders.preview,
+		'data-broken-image': placeholders.broken,
+
+		style: {
+			'background-image': placeholders.preview
+		}
+	};
+
+	if (Object.isTruly(placeholders.preview) && !hasDisplay(styles)) {
+		props.style = {...props.style, display: 'inline-block'};
+	}
+
+	return props;
+
+	function hasDisplay(style: CanUndef<Dictionary<string>>): boolean {
+		if (style == null) {
+			return false;
+		}
+
+		return Object.isTruly(style.display?.trim());
 	}
 }

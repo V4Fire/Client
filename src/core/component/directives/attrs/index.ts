@@ -49,6 +49,10 @@ export * from 'core/component/directives/attrs/interface';
 
 ComponentEngine.directive('attrs', {
 	beforeCreate(params: DirectiveParams, vnode: VNode): void {
+		if (SSR) {
+			return;
+		}
+
 		const
 			ctx = getDirectiveContext(params, vnode),
 			resolveDirective = this.directive.bind(this);
@@ -96,68 +100,14 @@ ComponentEngine.directive('attrs', {
 		}
 
 		function parseProperty(attrName: string, attrVal: unknown) {
-			attrName = attrName.startsWith(':') ? attrName.slice(1) : attrName;
+			attrName = normalizePropertyAttribute(attrName);
 
-			if (modRgxp.test(attrName)) {
-				const attrChunks = attrName.split('.');
-				attrName = attrName.startsWith('.') ? `.${attrChunks[1]}` : attrChunks[0];
-
-				if (attrChunks.includes('camel')) {
-					attrName = attrName.camelize(false);
-				}
-
-				if (attrChunks.includes('prop') && !attrName.startsWith('.')) {
-					if (attrName.startsWith('^')) {
-						throw new SyntaxError('Invalid `v-bind` modifiers');
-					}
-
-					attrName = `.${attrName}`;
-				}
-
-				if (attrChunks.includes('attr') && !attrName.startsWith('^')) {
-					if (attrName.startsWith('.')) {
-						throw new SyntaxError('Invalid `v-bind` modifiers');
-					}
-
-					attrName = `^${attrName}`;
-				}
-			}
-
-			const needPathVNode =
+			const needPatchVNode =
 				componentCtx == null ||
 				componentMeta?.props[attrName] == null;
 
-			if (needPathVNode) {
-				if (classAttrs[attrName] != null) {
-					attrName = classAttrs[attrName];
-					attrVal = normalizeClass(Object.cast(attrVal));
-					setVNodePatchFlags(vnode, 'classes');
-
-				} else if (styleAttrs[attrName] != null) {
-					attrVal = normalizeStyle(Object.cast(attrVal));
-					setVNodePatchFlags(vnode, 'styles');
-
-				} else {
-					setVNodePatchFlags(vnode, 'props');
-
-					if (attrName.startsWith('-')) {
-						attrName = `data${attrName}`;
-					}
-
-					const dynamicProps = vnode.dynamicProps ?? [];
-					vnode.dynamicProps = dynamicProps;
-
-					if (!dynamicProps.includes(attrName)) {
-						dynamicProps.push(attrName);
-					}
-				}
-
-				if (props[attrName] != null) {
-					Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
-
-				} else {
-					props[attrName] = attrVal;
-				}
+			if (needPatchVNode) {
+				patchProps(props, attrName, attrVal, vnode);
 
 			} else {
 				componentCtx[attrName] = attrVal;
@@ -188,10 +138,6 @@ ComponentEngine.directive('attrs', {
 				}
 
 				case 'on': {
-					if (SSR) {
-						return;
-					}
-
 					if (Object.isDictionary(value)) {
 						Object.entries(value).forEach(([name, handler]) => {
 							attachEvent(name, handler);
@@ -267,14 +213,7 @@ ComponentEngine.directive('attrs', {
 				throw new ReferenceError(`The specified directive "${name}" is not registered`);
 			}
 
-			const modifiers = {};
-			rawModifiers.split('.').forEach((modifier) => {
-				modifier = modifier.trim();
-
-				if (modifier !== '') {
-					modifiers[modifier] = true;
-				}
-			});
+			const modifiers = normalizeDirectiveModifiers(rawModifiers);
 
 			const bindings = vnode.dirs ?? [];
 			vnode.dirs = bindings;
@@ -316,10 +255,6 @@ ComponentEngine.directive('attrs', {
 		}
 
 		function attachEvent(event: string, handler: unknown) {
-			if (SSR) {
-				return;
-			}
-
 			event = `@${event}`;
 			attrsKeys.push(event);
 			attrs[event] = handler;
@@ -416,16 +351,206 @@ ComponentEngine.directive('attrs', {
 			if (handlerStore == null) {
 				handlerStore = new Map();
 
-				if (SSR) {
-					Object.defineProperty(handlerStore, 'set', {value: () => {
-						// Do nothing
-					}});
-				}
-
 				handlers.set(ctx, handlerStore);
 			}
 
 			return handlerStore;
 		}
+	},
+
+	getSSRProps(params: DirectiveParams) {
+		const
+			ctx = getDirectiveContext(params, null),
+			props: Dictionary = {},
+			componentMeta = ctx?.meta,
+			r = ctx?.$renderEngine.r;
+
+		let
+			attrs = {...params.value};
+
+		if (componentMeta != null) {
+			attrs = normalizeComponentAttrs(attrs, null, componentMeta)!;
+		}
+
+		const attrsKeys = Object
+			.keys(attrs)
+			.sort(((key) => key.startsWith('v-') ? 1 : -1));
+
+		for (let i = 0; i < attrsKeys.length; i++) {
+			const
+				attrName = attrsKeys[i],
+				attrVal = attrs[attrName];
+
+			if (attrName.startsWith('v-')) {
+				parseDirective(attrName, attrVal);
+			} else if (!attrName.startsWith('@')) {
+				parseProperty(attrName, attrVal);
+			}
+		}
+
+		return props;
+
+		function parseProperty(attrName: string, attrVal: unknown) {
+			attrName = normalizePropertyAttribute(attrName);
+
+			const needPatchVNode =
+				ctx == null ||
+				componentMeta?.props[attrName] == null;
+
+			if (needPatchVNode) {
+				patchProps(props, attrName, attrVal);
+
+			} else {
+				ctx[attrName] = attrVal;
+			}
+		}
+
+		function parseDirective(attrName: string, attrVal: unknown) {
+			const
+				decl = directiveRgxp.exec(attrName);
+
+			if (decl == null) {
+				throw new SyntaxError('Invalid directive declaration');
+			}
+
+			const
+				[, name, arg = '', rawModifiers = ''] = decl;
+
+			let
+				dir: CanUndef<object>;
+
+			switch (name) {
+				case 'show': {
+					dir = r?.vShow;
+					break;
+				}
+
+				case 'bind': {
+					if (Object.isDictionary(attrVal)) {
+						Object.entries(attrVal).forEach(([name, val]) => {
+							props[name] = val;
+						});
+					}
+
+					return;
+				}
+
+				default:
+					dir = r?.resolveDirective.call(ctx, name);
+			}
+
+			if (dir == null) {
+				throw new ReferenceError(`The specified directive "${name}" is not registered`);
+			}
+
+			const modifiers = normalizeDirectiveModifiers(rawModifiers);
+
+			const binding: DirectiveBinding = {
+				dir,
+				instance: params.instance,
+
+				value: attrVal,
+				oldValue: undefined,
+
+				arg,
+				modifiers
+			};
+
+			if (Object.isDictionary(dir)) {
+				if (Object.isFunction(dir.getSSRProps)) {
+					const dirProps = dir.getSSRProps(binding);
+
+					Object.mixin({deep: true}, props, dirProps);
+				}
+			}
+		}
 	}
 });
+
+function normalizePropertyAttribute(name: string): string {
+	let attrName = name.startsWith(':') ? name.slice(1) : name;
+
+	if (modRgxp.test(attrName)) {
+		const attrChunks = attrName.split('.');
+		attrName = attrName.startsWith('.') ? `.${attrChunks[1]}` : attrChunks[0];
+
+		if (attrChunks.includes('camel')) {
+			attrName = attrName.camelize(false);
+		}
+
+		if (attrChunks.includes('prop') && !attrName.startsWith('.')) {
+			if (attrName.startsWith('^')) {
+				throw new SyntaxError('Invalid `v-bind` modifiers');
+			}
+
+			attrName = `.${attrName}`;
+		}
+
+		if (attrChunks.includes('attr') && !attrName.startsWith('^')) {
+			if (attrName.startsWith('.')) {
+				throw new SyntaxError('Invalid `v-bind` modifiers');
+			}
+
+			attrName = `^${attrName}`;
+		}
+	}
+
+	return attrName;
+}
+
+function patchProps(props: Dictionary, attrName: string, attrVal: unknown, vnode?: VNode): void {
+	if (classAttrs[attrName] != null) {
+		attrName = classAttrs[attrName];
+		attrVal = normalizeClass(Object.cast(attrVal));
+
+		if (vnode) {
+			setVNodePatchFlags(vnode, 'classes');
+		}
+
+	} else if (styleAttrs[attrName] != null) {
+		attrVal = normalizeStyle(Object.cast(attrVal));
+
+		if (vnode) {
+			setVNodePatchFlags(vnode, 'styles');
+		}
+
+	} else {
+		if (vnode) {
+			setVNodePatchFlags(vnode, 'props');
+		}
+
+		if (attrName.startsWith('-')) {
+			attrName = `data${attrName}`;
+		}
+
+		if (vnode) {
+			const dynamicProps = vnode.dynamicProps ?? [];
+			vnode.dynamicProps = dynamicProps;
+
+			if (!dynamicProps.includes(attrName)) {
+				dynamicProps.push(attrName);
+			}
+		}
+	}
+
+	if (props[attrName] != null) {
+		Object.assign(props, mergeProps({[attrName]: props[attrName]}, {[attrName]: attrVal}));
+
+	} else {
+		props[attrName] = attrVal;
+	}
+}
+
+function normalizeDirectiveModifiers(rawModifiers: string): Record<string, boolean> {
+	const modifiers = {};
+
+	rawModifiers.split('.').forEach((modifier) => {
+		modifier = modifier.trim();
+
+		if (modifier !== '') {
+			modifiers[modifier] = true;
+		}
+	});
+
+	return modifiers;
+}

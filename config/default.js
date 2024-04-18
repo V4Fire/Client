@@ -1112,12 +1112,14 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 	template: {
 		/**
 		 * Returns a dictionary with directive descriptors that need to be specifically processed during code generation
-		 * @returns {Object<string, {tag?: string, generateSSRContent?: boolean}>}
+		 * @returns {Object<string, {tag?: string, innerHTML?: boolean}>}
 		 */
 		directives() {
 			return {
 				icon: include('src/components/directives/icon/compiler-info'),
-				image: include('src/components/directives/image/compiler-info')
+				attrs: {},
+				image: include('src/components/directives/image/compiler-info'),
+				'safe-html': include('src/components/directives/safe-html/compiler-info')
 			};
 		},
 
@@ -1137,11 +1139,24 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 						return;
 					}
 
+					const bindings = node.props.reduce((acc, prop) => {
+						if (prop.name === 'bind' && prop.arg?.content) {
+							try {
+								acc[prop.arg.content] = JSON.parse(prop.exp.content);
+							} catch {
+								acc[prop.arg.content] = prop.exp.content;
+							}
+						}
+
+						return acc;
+					}, {});
+
 					const args = {
 						arg: stringifyProp(prop.arg),
 						value: stringifyProp(prop.exp),
 						modifiers: JSON.stringify(prop.modifiers),
-						instance: '_ctx'
+						instance: '_ctx',
+						bindings: JSON.stringify(bindings)
 					};
 
 					const
@@ -1150,7 +1165,7 @@ module.exports = config.createConfig({dirs: [__dirname, 'client']}, {
 
 					if (directive.innerHTML) {
 						node.props.push({
-							type: 7,
+							type: DIRECTIVE,
 							name: 'html',
 
 							exp: {

@@ -16,7 +16,24 @@
 	- rootTag = 'div'
 
 	- block body
-		< .foobaz style = display: block | v-image = {src: 'https://kartin.papik.pro/uploads/posts/2023-07/1688404965_kartin-papik-pro-p-kartinki-leta-v-visokom-kachestve-17.jpg'}
+		< .foobaz &
+			v-image = {
+				src: 'https://kartin.papik.pro/uploads/posts/2023-07/1688404965_kartin-papik-pro-p-kartinki-leta-v-visokom-kachestve-17.jpg',
+				preview: 'https://kartin.papik.pro/uploads/posts/2023-07/1688404965_kartin-papik-pro-p-kartinki-leta-v-visokom-kachestve-17.jpg'
+			}
+		.
 
-		< b-button
-			hello world!
+		< .test-with-attrs &
+			v-attrs = {
+				id: 'test-id',
+				'-test-ref': 'data-attribute',
+				style: 'margin-top: 10px;',
+				class: 'croatoan',
+				'v-show': true,
+				'v-safe-html': '<strong>Strong</strong>',
+				'@click': () => console.log('click')
+			}
+		.
+
+		< .test-with-safe-html v-safe-html = '<strong>Strong</strong>'
+
