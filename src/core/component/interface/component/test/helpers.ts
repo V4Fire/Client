@@ -29,7 +29,7 @@ export function trim(strings: TemplateStringsArray): string {
 		tabCount = excessTabs ? excessTabs[0].length : 1;
 
 	const regex = new RegExp(`^\\t{1,${tabCount}}`);
-	return lines.map((part) => part.replace(regex, '')).filter((x) => x !== '').join('\n');
+	return lines.map((line) => line.replace(regex, '')).filter((x) => x !== '').join('\n');
 }
 
 /**
