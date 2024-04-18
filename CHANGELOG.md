@@ -11,6 +11,18 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Added `$getRoot` and `$getParent` methods to the `ComponentInterface`
+* Implemented the `$getRoot` and `$getParent` methods on the component's instance `core/component/init`
+
+#### :house: Internal
+
+* Replaced anonymous functions for `getRoot` and `getParent` props
+with calls to the `$getRoot` and `$getParent` methods of the component `build/snakeskin`
+
 ## v4.0.0-beta.90 (2024-04-17)
 
 #### :rocket: New Feature

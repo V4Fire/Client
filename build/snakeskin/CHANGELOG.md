@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :house: Internal
+
+* Replaced anonymous functions for `getRoot` and `getParent` props
+with calls to the `$getRoot` and `$getParent` methods of the component
 
 ## v4.0.0-beta.52 (2023-01-31)
 

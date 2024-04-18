@@ -9,6 +9,12 @@ Changelog
 > - :house:      [Internal]
 > - :nail_care:  [Polish]
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Implemented the `$getRoot` and `$getParent` methods on the component's instance
+
 ## v4.0.0-beta.68 (2024-02-29)
 
 #### :bug: Bug Fix
