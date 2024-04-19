@@ -1,9 +1,17 @@
+/*!
+ * V4Fire Client Core
+ * https://github.com/V4Fire/Client
+ *
+ * Released under the MIT license
+ * https://github.com/V4Fire/Client/blob/master/LICENSE
+ */
+
 import type { JSHandle, Page } from 'playwright';
 import type bDynamicPage from 'base/b-dynamic-page/b-dynamic-page';
 import test from 'tests/config/unit/test';
 import { Component } from 'tests/helpers';
 
-test.describe('<b-dynamic-page>', () => {
+test.describe.only('<b-dynamic-page>', () => {
 	test.beforeEach(({demoPage}) => demoPage.goto());
 
 	test('should emit the `beforeSwitchPage` event before removing the page element', async ({page}) => {
