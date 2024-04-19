@@ -93,6 +93,70 @@ export function beforeCreateState(
 		}
 	});
 
+	const $getRoot = Symbol('$getRoot');
+
+	Object.defineProperty(unsafe, '$getRoot', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: <ComponentInterface['$getRoot']>((ctx) => {
+			if ($getRoot in ctx) {
+				return ctx[$getRoot];
+			}
+
+			const fn = () => ('getRoot' in ctx ? ctx.getRoot?.() : null) ?? ctx.$root;
+
+			Object.defineProperty(ctx, $getRoot, {
+				configurable: true,
+				enumerable: true,
+				writable: false,
+				value: fn
+			});
+
+			return fn;
+		})
+	});
+
+	const $getParent = Symbol('$getParent');
+
+	Object.defineProperty(unsafe, '$getParent', {
+		configurable: true,
+		enumerable: false,
+		writable: true,
+		value: <ComponentInterface['$getParent']>((ctx, restArgs) => {
+			const targetCtx = restArgs != null && 'ctx' in restArgs ? restArgs.ctx ?? ctx : ctx;
+
+			if ($getParent in targetCtx) {
+				return targetCtx[$getParent];
+			}
+
+			let fn: CanUndef<Function>;
+
+			if (restArgs != null) {
+				// VNODE
+				if ('type' in restArgs && 'children' in restArgs) {
+					fn = () => restArgs.virtualParent?.value != null ? restArgs.virtualParent.value : ctx;
+
+				} else if ('ctx' in restArgs) {
+					fn = () => restArgs.ctx ?? ctx;
+				}
+			}
+
+			if (fn == null) {
+				fn = () => ctx;
+			}
+
+			Object.defineProperty(targetCtx, $getParent, {
+				configurable: true,
+				enumerable: true,
+				writable: false,
+				value: fn
+			});
+
+			return fn;
+		})
+	});
+
 	const
 		root = unsafe.$root,
 		parent = unsafe.$parent;

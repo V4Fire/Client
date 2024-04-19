@@ -13,8 +13,15 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 ## 4.0.0-beta.?? (2024-??-??)
 
+#### :rocket: New Feature
+
+* Added `$getRoot` and `$getParent` methods to the `ComponentInterface`
+* Implemented the `$getRoot` and `$getParent` methods on the component's instance `core/component/init`
+
 #### :house: Internal
 
+* Replaced anonymous functions for `getRoot` and `getParent` props
+with calls to the `$getRoot` and `$getParent` methods of the component `build/snakeskin`
 * Removed optional chaining from load function in loadModules block
 to ensure compliance with ES2018 `iBlock`
 
