@@ -260,6 +260,7 @@ export function createInitialState(state: Partial<VirtualScrollState>): VirtualS
 		remainingItems: Object.cast(test.expect.any(Number)),
 		remainingChildren: Object.cast(test.expect.any(Number)),
 		isLoadingInProgress: Object.cast(test.expect.any(Boolean)),
+		dataOffset: Object.cast(test.expect.any(Number)),
 		...state
 	};
 }
