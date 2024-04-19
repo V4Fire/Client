@@ -16,7 +16,7 @@ Changelog
 * Added Snakeskin constant `SSR` to determine that the template is being assembled for SSR
 * Added Snakeskin constant `renderSSRAsString` for optimizing component assembly under SSR
 
-## 4.0.0-beta.?? (2024-??-??)
+## v4.0.0-beta.91 (2024-04-19)
 
 #### :house: Internal
 
