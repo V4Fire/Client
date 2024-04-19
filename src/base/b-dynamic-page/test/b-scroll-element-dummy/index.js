@@ -6,10 +6,5 @@
  * https://github.com/V4Fire/Client/blob/master/LICENSE
  */
 
-@import "super/i-dynamic-page/i-dynamic-page.styl"
-
-$p = {
-
-}
-
-p-v4-dynamic-page1 extends i-dynamic-page
+package('b-scroll-element-dummy')
+	.extends('b-dummy');

@@ -15,9 +15,9 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
 
 #### :rocket: New Feature
 
-* Added `beforeRemovePage` event that is emitted before removing the current page element `base/b-dynamic-page`
-* Added API for saving the horizontal scroll of nested DOM nodes on the page.
-[Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes) `base/b-dynamic-page`
+* Introduced a `beforeSwitchPage` event that is emitted prior to the removal of the current page element
+* Implemented an API for saving the scroll of nested DOM nodes on the page.
+  [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes).
 
 ## v3.69.1 (2024-04-09)
 

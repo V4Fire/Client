@@ -43,12 +43,11 @@ import type {
 
 	iDynamicPageEl,
 	KeepAliveStrategy,
-	UnsafeBDynamicPage,
-	OnBeforeRemovePage
+	UnsafeBDynamicPage
 
 } from 'base/b-dynamic-page/interface';
 
-import ScrollManager from 'base/b-dynamic-page/modules/scroll-manager';
+import { restorePageElementsScroll, saveScrollIntoAttribute } from 'base/b-dynamic-page/helpers';
 
 export * from 'super/i-data/i-data';
 export * from 'base/b-dynamic-page/interface';
@@ -266,7 +265,7 @@ export default class bDynamicPage extends iDynamicPage {
 					currentPageComponent = currentPageEl?.component?.unsafe;
 
 				if (currentPageEl != null) {
-					r.emit('beforeRemovePage', <OnBeforeRemovePage>{saveScroll: ScrollManager.saveScrollIntoAttribute});
+					r.emit('beforeSwitchPage', {saveScroll: saveScrollIntoAttribute});
 
 					if (currentPageComponent != null) {
 						const
@@ -307,7 +306,7 @@ export default class bDynamicPage extends iDynamicPage {
 						pageComponentFromCache.activate();
 
 						unsafe.async.requestAnimationFrame(() => {
-							ScrollManager.restorePageElementsScroll(pageElFromCache);
+							restorePageElementsScroll(pageElFromCache);
 						}, {label: $$.restorePageElementsScroll});
 
 						unsafe.$el?.append(pageElFromCache);

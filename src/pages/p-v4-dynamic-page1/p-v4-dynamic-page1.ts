@@ -11,8 +11,7 @@
  * @packageDocumentation
  */
 
-import type { OnBeforeRemovePage } from 'base/b-dynamic-page/b-dynamic-page';
-import iDynamicPage, { component, watch } from 'super/i-dynamic-page/i-dynamic-page';
+import iDynamicPage, { component } from 'super/i-dynamic-page/i-dynamic-page';
 
 export * from 'super/i-dynamic-page/i-dynamic-page';
 
@@ -20,14 +19,4 @@ export * from 'super/i-dynamic-page/i-dynamic-page';
  * Simple dynamic page for tests
  */
 @component()
-export default class pV4DynamicPage1 extends iDynamicPage {
-	override readonly $refs!: iDynamicPage['$refs'] & {
-		horizontalScroll: HTMLUListElement;
-	};
-
-	@watch('rootEmitter:onBeforeRemovePage')
-	protected saveSliderScroll({saveScroll}: OnBeforeRemovePage): void {
-		this.console.log(this.$refs.horizontalScroll);
-		saveScroll(this.$refs.horizontalScroll);
-	}
-}
+export default class pV4DynamicPage1 extends iDynamicPage {}

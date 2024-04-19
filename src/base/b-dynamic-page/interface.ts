@@ -65,7 +65,7 @@ export interface UnsafeBDynamicPage<CTX extends bDynamicPage = bDynamicPage> ext
 	wrapCache: CTX['wrapCache'];
 }
 
-export interface OnBeforeRemovePage {
+export interface OnBeforeSwitchPage {
 	/**
 	 * Saves the scroll position of an element
 	 * @param el
