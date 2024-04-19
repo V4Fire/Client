@@ -2,7 +2,7 @@
 
 This module provides an API for managing application themes.
 
-## How to use?
+## How to Use?
 
 By default, any component that inherited from [[iStaticPage]] has the `theme` property.
 To access this API from an arbitrary component, use it via the root component.

@@ -4,12 +4,12 @@ This module offers a cookie-based engine for storing key-value data.
 However, it's important to note that due to the limitations of cookies,
 the total amount of data that can be stored using this engine should not exceed 4 kb.
 
-## How is data stored inside a cookie?
+## How is Data Stored Inside a Cookie?
 
 This engine inherits from `core/kv-storage/engines/string`,
 which means that all data inside the storage is serialized into a single string and then saved as a cookie.
 
-## How to set the cookie name where to save the data?
+## How to Set the Cookie Name Where to Save the Data?
 
 To set the name of the cookie being used, as well as additional parameters,
 you need to pass arguments to the engine's constructor.
@@ -30,7 +30,7 @@ store.set('b', '2');
 console.log(store.serializedData); // a{{.}}1{{#}}b{{.}}2
 ```
 
-## How to use this engine?
+## How to Use This Engine?
 
 The engine can be used independently along with the `kv-storage` module.
 

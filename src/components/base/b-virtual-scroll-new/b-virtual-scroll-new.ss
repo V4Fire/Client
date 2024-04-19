@@ -25,7 +25,7 @@
 				v-if = $slots['tombstone'] |
 				v-in-view = {
 					threshold: 0.0000001,
-					onEnter: onTombstonesEnter,
+					handler: onTombstonesEnter,
 					onLeave: onTombstonesLeave
 				}
 			.

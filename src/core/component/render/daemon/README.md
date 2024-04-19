@@ -2,7 +2,7 @@
 
 This module provides an API that allows for the registration and management of asynchronous rendering tasks.
 
-## Why is this module needed?
+## Why is This Module Needed?
 
 When using the [[AsyncRender]] API, developers can split the rendering of a component template into multiple chunks and
 execute them deferred, resulting in significantly optimized component rendering times.
@@ -15,7 +15,7 @@ that calculates the "weight" of each task before executing it.
 This scheduler suspends the execution of other browser tasks when the total weight of
 tasks exceeds a specified threshold, allowing for the completion of the deferred rendering tasks.
 
-## How is task weight calculated?
+## How is Task Weight Calculated?
 
 The "weight" of each task can be set by a consumer.
 If the consumer does not set a weight, then the weight of the task is set to one by default.
@@ -29,7 +29,7 @@ If the consumer does not set a weight, then the weight of the task is set to one
     {{ el }}
 ```
 
-## How to set the maximum weight of tasks and the delay between their executions?
+## How to Set the Maximum Weight of Tasks and the Delay Between Their Executions?
 
 The necessary options are placed in the config module of your project.
 

@@ -1,6 +1,7 @@
 # core/component/directives/image
 
 This module provides a directive for loading and displaying images using `img` and/or `picture` tags.
+The directive cannot be applied to `img`, `picture`, or `object` tags.
 
 ```
 < .my-image v-image = { &
@@ -10,7 +11,7 @@ This module provides a directive for loading and displaying images using `img` a
 } .
 ```
 
-## Why is this directive needed?
+## Why is This Directive Needed?
 
 When working with images, it is common to display a placeholder or an error message during the loading process.
 However, there is no native API to implement this feature.
@@ -303,6 +304,67 @@ The options returned by this function will be used to load the image.
   optionsResolver: (opts) => ({...opts, src: opts.src + '?size=42'})
 } .
 ```
+
+### [draggable]
+
+This option indicates whether the image can be dragged,
+either with native browser behavior or the HTML Drag and Drop API.
+
+### [isMap]
+
+A boolean value which indicates that the image is to be used by a server-side image map.
+This may only be used on images located within an `<a>` element.
+
+### [useMap]
+
+The partial URL (starting with `#`) of an image map associated with the element.
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#usemap) for more information.
+
+### [referrerPolicy]
+
+A string indicating which referrer to use when fetching the resource.
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#referrerpolicy) for more information.
+
+### [crossOrigin]
+
+This option indicates if the fetching of the image must be done using a CORS request.
+Image data from a CORS-enabled image returned from a CORS request can be reused in the `<canvas>` element
+without being marked `tainted`.
+
+Allowed values are:
+- `anonymous` - a CORS request is sent with credentials omitted;
+- `use-credentials` - the CORS request is sent with any credentials included.
+
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#crossorigin) for more information.
+
+### [decoding]
+
+This option indicates whether the browser should decode images synchronously with other DOM content
+for a more accurate presentation, or asynchronously to render other content first and display the image later.
+
+Allowed values are:
+- `sync` - decode the image synchronously along with rendering
+  the other DOM content, and present everything together;
+- `async` - decode the image asynchronously, after rendering and
+  presenting the other DOM content;
+- `auto` - no preference for the decoding mode (the browser decides what is best for the user).
+
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#decoding) for more information.
+
+### [elementTiming]
+
+This option indicates that an element is flagged for tracking by PerformanceObserver objects using the "element" type.
+See [this](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/elementtiming) for more information.
+
+### [fetchPriority]
+
+A hint of the relative priority to use when fetching the image.
+
+Allowed values are:
+- `high` - fetch the image at a high priority relative to other images;
+- `low` - fetch the image at a low priority relative to other images;
+- `auto` - default mode, which indicates no preference for the fetch priority
+  (the browser decides what is best for the user).
 
 ## Global configuration
 
