@@ -11,6 +11,14 @@ Changelog
 
 _Note: Gaps between patch versions are faulty, broken or test releases._
 
+## v4.0.0-beta.?? (2024-??-??)
+
+#### :rocket: New Feature
+
+* Introduced a `beforeSwitchPage` event that is emitted prior to the removal of the current page element
+* Implemented an API for saving the scroll of nested DOM nodes on the page.
+  [Learn more](./README.md#api-for-saving-scroll-of-nested-dom-nodes).
+
 ## v4.0.0-beta.91 (2024-04-19)
 
 #### :rocket: New Feature
@@ -27,6 +35,7 @@ _Note: Gaps between patch versions are faulty, broken or test releases._
   with calls to the `$getRoot` and `$getParent` methods of the component `build/snakeskin`
 * Removed optional chaining from load function in loadModules block
   to ensure compliance with ES2018 `iBlock`
+>>>>>>> v4
 
 ## v4.0.0-beta.90 (2024-04-17)
 

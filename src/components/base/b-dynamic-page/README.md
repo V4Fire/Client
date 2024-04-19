@@ -139,6 +139,29 @@ Let's look at a few examples of using this component.
   Invalidate cache
 ```
 
+### API for saving scroll of nested DOM nodes
+
+This component offers a convenient API for retaining the scroll position of DOM nodes on the page,
+which is cached in `keepAlive`.
+
+To achieve this, add a listener for the `beforeSwitchPage` event and
+pass the scroll element that needs to be saved to the `saveScroll` method.
+
+```typescript
+import iBlock, { component } from 'components/super/i-block/i-block';
+import type { OnBeforeSwitchPage } from 'base/b-dynamic-page/b-dynamic-page';
+
+@component()
+export default class bExample extends iBlock {
+  @watch('rootEmitter:onBeforeSwitchPage')
+  onBeforeSwitchPage({saveScroll}: OnBeforeSwitchPage): void {
+    if (this.$refs.elementWithScroll) {
+      saveScroll(this.$refs.elementWithScroll.$el);
+    }
+  }
+}
+```
+
 ## Providing props to the inner page component
 
 By default, `bDynamicPage` provides all props defined in the [[iDynamicPage]] component to the inner page component.
